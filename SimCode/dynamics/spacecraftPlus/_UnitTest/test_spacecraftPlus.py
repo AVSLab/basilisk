@@ -49,6 +49,8 @@ def spacecraftPlusAllTest(show_plots):
     assert testResults < 1, testMessage
     [testResults, testMessage] = test_SCRotation(show_plots)
     assert testResults < 1, testMessage
+    [testResults, testMessage] = test_SCTransBOE(show_plots)
+    assert testResults < 1, testMessage
 
 def test_SCTranslation(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -191,7 +193,7 @@ def test_SCTransAndRotation(show_plots):
     unitTestSim.TotalSim.terminateSimulation()
     
     # Create test thread
-    testProcessRate = macros.sec2nano(0.1)  # update process rate update time
+    testProcessRate = macros.sec2nano(0.001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
     
@@ -216,7 +218,7 @@ def test_SCTransAndRotation(show_plots):
     scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
     scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.001], [-0.002], [0.003]]
+    scObject.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
 
     unitTestSim.InitializeSimulation()
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
@@ -243,7 +245,7 @@ def test_SCTransAndRotation(show_plots):
                 ]
 
     trueSigma = [
-                [2.51538718e-03,  -5.03759541e-03,   7.47497962e-03]
+                [3.73034285e-01,  -2.39564413e-03,   2.08570797e-01]
                 ]
 
     initialOrbAngMom_N = [
@@ -370,7 +372,8 @@ def test_SCRotation(show_plots):
     unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.001)  # update process rate update time
+    timeStep = 0.001
+    testProcessRate = macros.sec2nano(timeStep)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -381,8 +384,30 @@ def test_SCRotation(show_plots):
 
     # Define initial conditions of the spacecraft
     scObject.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     scObject.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
+
+    # BOE for rotational dynamics
+    h = numpy.dot(numpy.asarray(scObject.hub.IHubPntBc_B),numpy.asarray(scObject.hub.omega_BN_BInit).flatten())
+    H = numpy.linalg.norm(h)
+    n3_B = -h/H
+
+    # Find DCM
+    n2_B = numpy.zeros(3)
+    n2_B[1] = 0.1
+    n2_B[0] = -n2_B[1]*n3_B[1]/n3_B[0]
+    n2_B = n2_B/numpy.linalg.norm(n2_B)
+    n1_B = numpy.cross(n2_B,n3_B)
+    n1_B = n1_B/(numpy.linalg.norm(n1_B))
+    dcm_BN = numpy.zeros([3,3])
+    dcm_BN[:,0] = n1_B
+    dcm_BN[:,1] = n2_B
+    dcm_BN[:,2] = n3_B
+    h3_N = numpy.array([0,0,-H])
+    h3_B = numpy.dot(dcm_BN,h3_N)
+    h3_Ncheck = numpy.dot(dcm_BN.transpose(),h3_B)
+    sigmaCalc = RigidBodyKinematics.C2MRP(dcm_BN)
+    scObject.hub.sigma_BNInit = [[sigmaCalc[0]], [sigmaCalc[1]], [sigmaCalc[2]]]
+
     scObject.hub.useTranslation = False
     scObject.hub.useRotation = True
 
@@ -391,7 +416,7 @@ def test_SCRotation(show_plots):
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
 
-    stopTime = 5.0
+    stopTime = 10.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
@@ -399,16 +424,15 @@ def test_SCRotation(show_plots):
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
 
     trueSigma = [
-                [-6.82900501e-01,  -1.39727865e-01,  -2.84781790e-03]
+                [5.72693314e-01,   5.10734375e-01,  -3.07377611e-01]
                 ]
 
-
     initialRotAngMom_N = [
-                [rotAngMom_N[0,1], rotAngMom_N[0,2], rotAngMom_N[0,3]]
+                [numpy.linalg.norm(numpy.asarray(rotAngMom_N[0,1:4]))]
                 ]
 
     finalRotAngMom = [
-                [rotAngMom_N[-1,0], rotAngMom_N[-1,1], rotAngMom_N[-1,2], rotAngMom_N[-1,3]]
+                [rotAngMom_N[-1,0], numpy.linalg.norm(numpy.asarray(rotAngMom_N[-1,1:4]))]
                  ]
 
     initialRotEnergy = [
@@ -421,12 +445,14 @@ def test_SCRotation(show_plots):
 
     moduleOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
                                                   range(3))
+    omega_BNOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.omega_BN_B',
+                                                  range(3))
 
     check = 0
     for i in range(0,len(moduleOutput)):
-        if check == 0 and moduleOutput[i+1,1] > moduleOutput[i,1]:
+        if check == 0 and moduleOutput[i+1,2] < moduleOutput[i,2]:
             check = 1
-        if check == 1 and moduleOutput[i+1,1] < moduleOutput[i,1]:
+        if check == 1 and moduleOutput[i+1,2] > moduleOutput[i,2]:
             check = 2
             index = i+1
             break
@@ -438,6 +464,23 @@ def test_SCRotation(show_plots):
     yPrime = (sigmaBeforeSwitch - sigmaBeforeBefore)/deltaT
     sigmaGhost = sigmaBeforeSwitch + yPrime*deltaT
     sigmaAfterAnalytical = - sigmaGhost/numpy.dot(numpy.linalg.norm(numpy.asarray(sigmaGhost)),numpy.linalg.norm(numpy.asarray(sigmaGhost)))
+
+    timeArray = numpy.zeros(5)
+    sigmaArray = numpy.zeros([3,5])
+    omegaAnalyticalArray = numpy.zeros([3,5])
+    omegaArray = numpy.zeros([3,5])
+    for i in range(0,5):
+        timeArray[i] = moduleOutput[stopTime/timeStep*(i+1)/5,0]
+        sigmaArray[:,i] = moduleOutput[stopTime/timeStep*(i+1)/5,1:4]
+        sigma = sigmaArray[:,i]
+        sigmaNorm = numpy.linalg.norm(sigma)
+        sigma1 = sigma[0]
+        sigma2 = sigma[1]
+        sigma3 = sigma[2]
+        omegaArray[:,i] = omega_BNOutput[stopTime/timeStep*(i+1)/5,1:4]
+        omegaAnalyticalArray[0,i] = -H/(1 + sigmaNorm**2)**2*(8*sigma1*sigma3 - 4*sigma2*(1 - sigmaNorm**2))/scObject.hub.IHubPntBc_B[0][0]
+        omegaAnalyticalArray[1,i] = -H/(1 + sigmaNorm**2)**2*(8*sigma2*sigma3 + 4*sigma1*(1 - sigmaNorm**2))/scObject.hub.IHubPntBc_B[1][1]
+        omegaAnalyticalArray[2,i] = -H/(1 + sigmaNorm**2)**2*(4*(-sigma1**2 - sigma2**2 + sigma3**2) + (1 - sigmaNorm**2)**2)/scObject.hub.IHubPntBc_B[2][2]
 
     plt.figure()
     plt.clf()
@@ -469,6 +512,18 @@ def test_SCRotation(show_plots):
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
     unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergyRotationOnly", "Change in Rotational Energy Rotation Only", plt, "width=0.8\\textwidth", path)
+    plt.figure()
+    plt.clf()
+    plt.plot(omega_BNOutput[:,0]*1e-9,omega_BNOutput[:,1],label = "omega 1 Basilisk")
+    plt.plot(omega_BNOutput[:,0]*1e-9,omega_BNOutput[:,2],label = "omega 2 Basilisk")
+    plt.plot(omega_BNOutput[:,0]*1e-9,omega_BNOutput[:,3], label = "omega 3 Basilsik")
+    plt.plot(timeArray*1e-9,omegaAnalyticalArray[0,:],'bo', label = "omega 1 BOE")
+    plt.plot(timeArray*1e-9,omegaAnalyticalArray[1,:],'go', label = "omega 2 BOE")
+    plt.plot(timeArray*1e-9,omegaAnalyticalArray[2,:],'ro', label = "omega 3 BOE")
+    plt.xlabel("Time (s)")
+    plt.ylabel("Angular Velocity (rad/s)")
+    plt.legend(loc ='lower right',numpoints = 1, prop = {'size': 6.5})
+    unitTestSupport.writeFigureLaTeX("BasiliskVsBOECalcForRotation", "Basilisk Vs BOE Calc For Rotation", plt, "width=0.8\\textwidth", path)
     plt.show(show_plots)
     plt.close("all")
 
@@ -482,7 +537,7 @@ def test_SCRotation(show_plots):
     accuracy = 1e-10
     for i in range(0,len(initialRotAngMom_N)):
         # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalRotAngMom[i],initialRotAngMom_N[i],3,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(finalRotAngMom[i],initialRotAngMom_N[i],1,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed rotational angular momentum unit test")
 
@@ -499,6 +554,150 @@ def test_SCRotation(show_plots):
 
     if testFailCount == 0:
         print "PASSED: " + "Spacecraft Rotation Integrated test"
+
+    assert testFailCount < 1, testMessages
+
+    # return fail count and join into a single string all messages in the list
+    # testMessage
+    return [testFailCount, ''.join(testMessages)]
+
+def test_SCTransBOE(show_plots):
+    # The __tracebackhide__ setting influences pytest showing of tracebacks:
+    # the mrp_steering_tracking() function will not be shown unless the
+    # --fulltrace command line option is specified.
+    __tracebackhide__ = True
+
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
+
+    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject.ModelTag = "spacecraftBody"
+
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.TotalSim.terminateSimulation()
+
+    # Create test thread
+    timeStep = 0.1
+    testProcessRate = macros.sec2nano(timeStep)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, scObject)
+
+    # Define conditions for the forces and times
+    F1 = 3.
+    F2 = -7.
+    t1 = 3.
+    t2 = 6.
+    t3 = 10.
+
+    # Add external force and torque
+    extFTObject = ExtForceTorque.ExtForceTorque()
+    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.extTorquePntB_B = [[0], [0], [0]]
+    extFTObject.extForce_B = [[F1], [0], [0]]
+    scObject.addDynamicEffector(extFTObject)
+    unitTestSim.AddModelToTask(unitTaskName, extFTObject)
+
+    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+
+    # Define initial conditions of the spacecraft
+    scObject.hub.mHub = 100
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
+    # Set the initial values for the states
+    scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+
+    unitTestSim.InitializeSimulation()
+
+    stopTime = t1
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    unitTestSim.ExecuteSimulation()
+
+    extFTObject.extTorquePntB_B = [[0], [0], [0]]
+    extFTObject.extForce_B = [[0], [0], [0]]
+
+    stopTime = t2
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    unitTestSim.ExecuteSimulation()
+
+    extFTObject.extTorquePntB_B = [[0], [0], [0]]
+    extFTObject.extForce_B = [[F2], [0], [0]]
+
+    stopTime = t3
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    unitTestSim.ExecuteSimulation()
+
+    r_BN_NOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N',
+                                                  range(3))
+    v_BN_NOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N',
+                                                  range(3))
+
+    # BOE calcs
+    a1 = F1/scObject.hub.mHub
+    a2 = F2/scObject.hub.mHub
+    v1 = a1*t1
+    v2 = v1
+    v3 = v2 + a2*(t3-t2)
+    x1 = 0.5*v1*t1
+    x2 = x1 + v2*(t2-t1)
+    t0 = t2 - v2/a2
+    x3 = x2 + 0.5*v2*(t0-t2) + 0.5*v3*(t3-t0)
+
+    # truth and Basilisk
+    truthV = [v1, v2, v3]
+    truthX = [x1, x2, x3]
+    basiliskV = [v_BN_NOutput[t1/timeStep,1], v_BN_NOutput[t2/timeStep,1], v_BN_NOutput[t3/timeStep,1]]
+    basiliskX = [r_BN_NOutput[t1/timeStep,1], r_BN_NOutput[t2/timeStep,1], r_BN_NOutput[t3/timeStep,1]]
+
+    plt.figure()
+    plt.clf()
+    plt.plot(r_BN_NOutput[:,0]*1e-9, r_BN_NOutput[:,1],'-b',label = "Basilsik")
+    plt.plot([t1, t2, t3], [x1, x2, x3],'ro',markersize = 6.5,label = "BOE")
+    plt.xlabel('time (s)')
+    plt.ylabel('X (m)')
+    plt.legend(loc ='upper left',numpoints = 1)
+    PlotName = "TranslationPositionBOE"
+    PlotTitle = "Translation Position BOE"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
+    plt.figure()
+    plt.clf()
+    plt.plot(v_BN_NOutput[:,0]*1e-9, v_BN_NOutput[:,1],'-b',label = "Basilsik")
+    plt.plot([t1, t2, t3], [v1, v2, v3],'ro',markersize = 6.5,label = "BOE")
+    plt.xlabel('time (s)')
+    plt.ylabel('X velocity (m/s)')
+    plt.legend(loc ='lower left',numpoints = 1)
+    PlotName = "TranslationVelocityBOE"
+    PlotTitle = "Translation Velocity BOE"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    plt.show(show_plots)
+
+    accuracy = 1e-10
+    for i in range(0,3):
+        # check a vector values
+        if abs((truthX[i] - basiliskX[i])/truthX[i]) > accuracy:
+            testFailCount += 1
+            testMessages.append("FAILED: Spacecraft Translation BOE Integrated test failed pos unit test")
+
+    for i in range(0,3):
+        # check a vector values
+        if abs((truthV[i] - basiliskV[i])/truthV[i]) > accuracy:
+            testFailCount += 1
+            testMessages.append("FAILED: Spacecraft Translation BOE Integrated test failed velocity unit test")
+
+    if testFailCount == 0:
+        print "PASSED: " + " Spacecraft Translation BOE Integrated Sim Test"
 
     assert testFailCount < 1, testMessages
 
