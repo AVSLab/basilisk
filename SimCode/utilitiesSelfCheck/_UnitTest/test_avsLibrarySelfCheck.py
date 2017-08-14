@@ -136,7 +136,7 @@ if __name__ == "__main__":
     unitAVSLibrarySelfCheck(
                            True,           # rigidBodyKinematics
                            False,           # orbitalMotion
-                           True,           # linearAlgebra
+                           False,           # linearAlgebra
                            False            # environment
                            )
 
