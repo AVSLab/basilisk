@@ -17,19 +17,20 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>
         Lots of new module documentation which includes a discussion of what is being modeled, the validation tests, as well as a user guide to the module.  The new documentation includes:
         <ul>
-            <li>Thruster DynEffector module</li>
+            <li>Thruster `DynEffector` module</li>
             <li>ephemeris conversion module</li>
             <li>Coarse Sun Sensor module</li>
             <li>Updated BSK module template documentation</li>            
             <li>Updated documentation for IMU Sensor module</li>            
             <li>Gravity Effector module</li>            
             <li>SimpleNav Sensor module</li>            
-            <li>Hinged Panel StateEffector module</li>            
+            <li>Hinged Panel `StateEffector` module</li>            
         </ul>
     </li>
     <li>New tutorial script on
         <ul>
             <li>using CSS modules</li>
+            <li>using fuel tank module and the fuel slosh particle `StateEffector`</li>
         </ul>
     </li>
     <li>The CSS modules now use the planetary shadow message information to simulated being in a planet's shadow</li>
