@@ -35,7 +35,7 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     </li>
     <li>The CSS modules now use the planetary shadow message information to simulated being in a planet's shadow</li>
     <li>SRP DynEffector modules now simulates the impact of being in a planets shadow</li>
-    
+    <li>Included a method to validate all the AVS C-Function libraries like `rigidBodyKinematics`, `linearAlgebra` and `orbitalMotion` when the Basilisk `pytest` command is called.  There is also some documentation on using these libraries in `/SimCode/utilitiesSelfCheck/_Documentation` </li>
 </ul>
 
 
