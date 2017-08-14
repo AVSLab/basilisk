@@ -23,8 +23,8 @@
 #
 # Purpose:  Integrated tutorial of the spacecraftPlus(), gravity, and hinged rigid body modules illustrating
 #           how Delta_v maneuver from test_scenarioOrbitManeuver.py affects the motion of the hinged rigid bodies.
-#           Rotational motion is allowed on the spacecraft to simulation to full interaction of the hinged rigid
-#           bodies and he spacecraft.
+#           Rotational motion is allowed on the spacecraft to simulate the full interaction of the hinged rigid
+#           bodies and the spacecraft.
 # Author:   Scott Carnahan
 # Creation Date:  Jul. 17, 2017
 #
@@ -104,7 +104,7 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
 #
 # Scenario Description
 # -----
-# This script sets up a 6-DOF spacecraft which is orbiting Earth. It is nearly identical to the spacecraft
+# This script sets up a 8-DOF spacecraft (3 translational, 3 rotational and 2 solar panel DOFs) which is orbiting Earth. It is nearly identical to the spacecraft
 # which is demonstrated in test_scenarioOrbitManeuver.py  The purpose
 # is to illustrate the use of the hinged rigid body module and illustrate the effects that a disturbance has on
 # hinged rigid body motion.  Read [test_scenarioOrbitManeuver.py](@ref scenarioOrbitManeuver) to learn how to setup a
@@ -232,7 +232,7 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
 # scObject.addDynamicEffector(extFTObject)
 # scSim.AddModelToTask(simTaskName, extFTObject)
 #~~~~~~~~~~~~~~~~~
-# There are additional lines that must be added in order to retreive and plot the data from the panel messages. These
+# There are additional lines that must be added in order to retrieve and plot the data from the panel messages. These
 # lines are split before and after the simulation executes:
 #~~~~~~~~~~~~~~~~~{.py}
 # scSim.TotalSim.logThisMessage(scSim.panel1.HingedRigidBodyOutMsgName, samplingTime)
@@ -438,7 +438,7 @@ def run(doUnitTests, show_plots, maneuverCase):
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    rLEO = 7000.*1000;      # meters
+    rLEO = 7000.*1000      # meters
     oe.a     = rLEO
     oe.e     = 0.0001
     oe.i     = 0.0*macros.D2R
