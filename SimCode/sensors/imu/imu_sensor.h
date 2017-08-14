@@ -57,6 +57,7 @@ public:
     double senTransBias[3];             /// [m/s2] Translational acceleration sen bias
 	double senRotMax;					/// [r/s] Gyro saturation value
 	double senTransMax;					/// [m/s2] Accelerometer saturation value
+    double senVelPrev[3];               //!< [m/s] sensor velocity in platform frame calculated last time the IMU was called.
     uint64_t OutputBufferCount;         /// -- number of output msgs stored
     bool NominalReady;                  /// -- Flag indicating that system is in run
 	std::vector<double> PMatrixAccel;   //!< [-] Covariance matrix used to perturb state
