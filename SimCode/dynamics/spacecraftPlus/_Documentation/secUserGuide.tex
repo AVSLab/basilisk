@@ -1,17 +1,13 @@
 \section{User Guide}
 
-This section is to outline the steps needed to setup a Hinged Rigid Body State Effector in python using Basilisk.
+This section is to outline the steps needed to setup a spacecraft in python using Basilisk.
 
 \begin{enumerate}
-	\item Import the hingedRigidBodyStateEffector class: \newline \textit{import hingedRigidBodyStateEffector}
-	\item Create an instantiation of a Hinged Rigid body: \newline \textit{panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()}
-	\item Define all physical parameters for a Hinged Rigid Body. For example: \newline
-	\textit{IPntS\_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]}
-	Do this for all of the parameters for a Hinged Rigid Body seen in the Hinged Rigid Body 1 Parameters Table.
-	\item Define the initial conditions of the states:\newline
-	\textit{panel1.thetaInit = 5*numpy.pi/180.0 \quad panel1.thetaDotInit = 0.0}
-	\item Define a unique name for each state:\newline
-	\textit{panel1.nameOfThetaState = "hingedRigidBodyTheta1" \quad panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"}
-	\item Finally, add the panel to your spacecraftPlus:\newline
-	\textit{scObject.addStateEffector(unitTestSim.panel1)}. See spacecraftPlus documentation on how to set up a spacecraftPlus object. 
+	\item Import the spacecraftPlus class: \newline \textit{import spacecraftPlus}
+	\item Create an instantiation of a spacecraft: \newline \textit{scObject = spacecraftPlus.SpacecraftPlus()}
+	\item Define all physical parameters for the hub. For example: \newline
+	\textit{scObject.hub.IHubPntBc\_B = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]}
+	Do this for all of the parameters for a hub: \textit{scObject.hub.mHub, scObject.hub.r\_BcB\_B, scObject.hub.IHubPntBc\_B,} seen in the spacecraft Parameters Table. If you only have translation, you only need to specify the mass (if you only have conservative forces acting on the spacecraft then you don't even need to specify a mass). If you only have rotation, you only need to specify the inertia, and if you have both, you need to specify the mass, the inertia and if you have a offset between the center of mass of the spacecraft and point $B$.
+	\item Define the initial conditions of the states: \textit{scObject.hub.r\_CN\_NInit,  scObject.hub.v\_CN\_NInit, scObject.hub.sigma\_BNInit, scObject.hub.omega\_BN\_BInit}
+	\item Finally, add the spacecraft to the task: \textit{unitTestSim.AddModelToTask(unitTaskName, scObject)}
 \end{enumerate}

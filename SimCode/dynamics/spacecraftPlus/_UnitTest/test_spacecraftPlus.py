@@ -319,6 +319,7 @@ def test_SCTransAndRotation(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed attitude unit test")
 
+    accuracy = 1e-10
     for i in range(0,len(initialOrbAngMom_N)):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(finalOrbAngMom[i],initialOrbAngMom_N[i],3,accuracy):
@@ -422,6 +423,9 @@ def test_SCRotation(show_plots):
 
     rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
+    rotAngMomMag = numpy.zeros(len(rotAngMom_N))
+    for i in range(0,len(rotAngMom_N)):
+        rotAngMomMag[i] = numpy.linalg.norm(numpy.asarray(rotAngMom_N[i,1:4]))
 
     trueSigma = [
                 [5.72693314e-01,   5.10734375e-01,  -3.07377611e-01]
@@ -468,7 +472,7 @@ def test_SCRotation(show_plots):
     timeArray = numpy.zeros(5)
     sigmaArray = numpy.zeros([3,5])
     omegaAnalyticalArray = numpy.zeros([3,5])
-    omegaArray = numpy.zeros([3,5])
+    omegaArray = numpy.zeros([4,5])
     for i in range(0,5):
         timeArray[i] = moduleOutput[stopTime/timeStep*(i+1)/5,0]
         sigmaArray[:,i] = moduleOutput[stopTime/timeStep*(i+1)/5,1:4]
@@ -477,7 +481,7 @@ def test_SCRotation(show_plots):
         sigma1 = sigma[0]
         sigma2 = sigma[1]
         sigma3 = sigma[2]
-        omegaArray[:,i] = omega_BNOutput[stopTime/timeStep*(i+1)/5,1:4]
+        omegaArray[:,i] = omega_BNOutput[stopTime/timeStep*(i+1)/5,:]
         omegaAnalyticalArray[0,i] = -H/(1 + sigmaNorm**2)**2*(8*sigma1*sigma3 - 4*sigma2*(1 - sigmaNorm**2))/scObject.hub.IHubPntBc_B[0][0]
         omegaAnalyticalArray[1,i] = -H/(1 + sigmaNorm**2)**2*(8*sigma2*sigma3 + 4*sigma1*(1 - sigmaNorm**2))/scObject.hub.IHubPntBc_B[1][1]
         omegaAnalyticalArray[2,i] = -H/(1 + sigmaNorm**2)**2*(4*(-sigma1**2 - sigma2**2 + sigma3**2) + (1 - sigmaNorm**2)**2)/scObject.hub.IHubPntBc_B[2][2]
@@ -493,16 +497,20 @@ def test_SCRotation(show_plots):
     unitTestSupport.writeFigureLaTeX("MRPs", "Attitude of Spacecraft in MRPs", plt, "width=0.8\\textwidth", path)
     plt.figure()
     plt.clf()
-    plt.plot(moduleOutput[index - 3: index + 3,0]*1e-9, moduleOutput[index - 3: index + 3,1], moduleOutput[index - 3: index + 3,0]*1e-9, moduleOutput[index - 3: index + 3,2], moduleOutput[index - 3: index + 3,0]*1e-9, moduleOutput[index - 3: index + 3,3])
-    plt.plot(moduleOutput[index,0]*1e-9, moduleOutput[index,1],'bo')
-    plt.plot(moduleOutput[index,0]*1e-9, sigmaGhost[0],'ko',[moduleOutput[index-1,0]*1e-9, moduleOutput[index,0]*1e-9], [moduleOutput[index-1,1], sigmaGhost[0]],'--k')
-    plt.plot(moduleOutput[index-1,0]*1e-9, moduleOutput[index-1,1],'bo')
+    plt.plot(moduleOutput[index - 3: index + 3,0]*1e-9, moduleOutput[index - 3: index + 3,1],"b")
+    plt.plot(moduleOutput[index-1,0]*1e-9, moduleOutput[index-1,1],'bo', label = "Basilisk " + r"$\sigma_{1,t-1}$")
+    plt.plot(moduleOutput[index,0]*1e-9, moduleOutput[index,1],'ro', label = "Basilisk " + r"$\sigma_{1,t}$")
+    plt.plot(moduleOutput[index,0]*1e-9, sigmaGhost[0],'ko', label = "Basilisk " + r"$\sigma_{1,0}$")
+    plt.plot([moduleOutput[index-1,0]*1e-9, moduleOutput[index,0]*1e-9], [moduleOutput[index-1,1], sigmaGhost[0]],'--k')
+    axes = plt.gca()
+    axes.set_ylim([-0.5,0.5])
+    plt.legend(loc ='upper right',numpoints = 1)
     plt.xlabel("Time (s)")
     plt.ylabel("MRPs")
     unitTestSupport.writeFigureLaTeX("MRPSwitching", "MRP Switching", plt, "width=0.8\\textwidth", path)
     plt.figure()
     plt.clf()
-    plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
+    plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMomMag - rotAngMomMag[0])/rotAngMomMag[0])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
     unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentumRotationOnly", "Change in Rotational Angular Momentum Rotation Only", plt, "width=0.8\\textwidth", path)
@@ -514,12 +522,12 @@ def test_SCRotation(show_plots):
     unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergyRotationOnly", "Change in Rotational Energy Rotation Only", plt, "width=0.8\\textwidth", path)
     plt.figure()
     plt.clf()
-    plt.plot(omega_BNOutput[:,0]*1e-9,omega_BNOutput[:,1],label = "omega 1 Basilisk")
-    plt.plot(omega_BNOutput[:,0]*1e-9,omega_BNOutput[:,2],label = "omega 2 Basilisk")
-    plt.plot(omega_BNOutput[:,0]*1e-9,omega_BNOutput[:,3], label = "omega 3 Basilsik")
-    plt.plot(timeArray*1e-9,omegaAnalyticalArray[0,:],'bo', label = "omega 1 BOE")
-    plt.plot(timeArray*1e-9,omegaAnalyticalArray[1,:],'go', label = "omega 2 BOE")
-    plt.plot(timeArray*1e-9,omegaAnalyticalArray[2,:],'ro', label = "omega 3 BOE")
+    plt.plot(omega_BNOutput[:,0]*1e-9,omega_BNOutput[:,1],label = r"$\omega_1$" + " Basilisk")
+    plt.plot(omega_BNOutput[:,0]*1e-9,omega_BNOutput[:,2],label = r"$\omega_2$" + " Basilisk")
+    plt.plot(omega_BNOutput[:,0]*1e-9,omega_BNOutput[:,3], label = r"$\omega_3$" + " Basilisk")
+    plt.plot(timeArray*1e-9,omegaAnalyticalArray[0,:],'bo', label = r"$\omega_1$" + " BOE")
+    plt.plot(timeArray*1e-9,omegaAnalyticalArray[1,:],'go', label = r"$\omega_2$" + " BOE")
+    plt.plot(timeArray*1e-9,omegaAnalyticalArray[2,:],'ro', label = r"$\omega_3$" + " BOE")
     plt.xlabel("Time (s)")
     plt.ylabel("Angular Velocity (rad/s)")
     plt.legend(loc ='lower right',numpoints = 1, prop = {'size': 6.5})
@@ -546,6 +554,14 @@ def test_SCRotation(show_plots):
         if not unitTestSupport.isArrayEqualRelative(finalRotEnergy[i],initialRotEnergy[i],1,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Spacecraft Rotation Integrated test failed rotational energy unit test")
+
+    omegaArray = omegaArray.transpose()
+    omegaAnalyticalArray = omegaAnalyticalArray.transpose()
+    for i in range(0,len(omegaAnalyticalArray)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqualRelative(omegaArray[i],omegaAnalyticalArray[i],3,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: Spacecraft Rotation Integrated test Rotational BOE unit test")
 
     accuracy = 1e-5
     if not unitTestSupport.isArrayEqualRelative(sigmaAfterSwitch,sigmaAfterAnalytical,1,accuracy):
