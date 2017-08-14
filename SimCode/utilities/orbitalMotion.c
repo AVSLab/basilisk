@@ -17,14 +17,14 @@
 
  */
 
-#include "utilities/orbitalMotion.h"
+#include "orbitalMotion.h"
 
 #include <math.h>
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "utilities/linearAlgebra.h"
-#include "utilities/astroConstants.h"
+#include "linearAlgebra.h"
+#include "astroConstants.h"
 
 /*
  * Function: E2f
@@ -703,7 +703,7 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
  * Function: atmosphericDensity
  * Purpose: This program computes the atmospheric density based on altitude
  *   supplied by user.  This function uses a curve fit based on
- *   atmospheric data from the Standard Atmoshere 1976 Data. This
+ *   atmospheric data from the Standard Atmosphere 1976 Data. This
  *   function is valid for altitudes ranging from 100km to 1000km.
  *
  *   Note: This code can only be applied to spacecraft orbiting the Earth
@@ -738,7 +738,7 @@ double atmosphericDensity(double alt)
 
 /*
  * Function: debyeLength
- * Purpose: This program computes the debyeLength length for a given
+ * Purpose: This program computes the Debye Length length for a given
  *   altitude and is valid for altitudes ranging
  *   from 200 km to GEO (35000km).  However, all values above
  *   1000 km are HIGHLY speculative at this point.
