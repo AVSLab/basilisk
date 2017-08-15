@@ -36,6 +36,7 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>The CSS modules now use the planetary shadow message information to simulated being in a planet's shadow</li>
     <li>SRP DynEffector modules now simulates the impact of being in a planets shadow</li>
     <li>Included a method to validate all the AVS C-Function libraries like `rigidBodyKinematics`, `linearAlgebra` and `orbitalMotion` when the Basilisk `pytest` command is called.  There is also some documentation on using these libraries in `/SimCode/utilitiesSelfCheck/_Documentation` </li>
+    <li>Updated the RW and gravitational body (i.e. adding Earth, sun, etc. to the simulation) to use new factory classes.  If you did use the older `simIncludeRW.py` or `simIncludeGravity.py` libraries, you'll need to update your python code to work with the new factory classes.</li>
 </ul>
 
 
