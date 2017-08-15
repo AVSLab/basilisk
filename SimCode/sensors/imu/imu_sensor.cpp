@@ -257,24 +257,29 @@ void ImuSensor::computePlatformDR()
 //other IMU functions which add noise, etc.
 {
     
-    double MRP_Bdy2Inrtl_Prev[3];
-    double MRP_BdyPrev2BdyNow[3];
-    double DRBodyFrame[3];
+    double sigma_NB_prev[3];    // MRP from body to inertial frame last time the IMU was called
+    double sigma_NB[3];         // MRP from body to inertial frame now.
+    double sigma_21[3];         // MRP from body frame at time 1 (last time the IMU was called) to time 2 (this time the IMU is being called)
+    double deltaPRV[3];
 
-    v3Scale(-1.0, StatePrevious.sigma_BN, MRP_Bdy2Inrtl_Prev);
+    //Calculated time averaged cumulative rotation
+    v3Scale(-1.0, StatePrevious.sigma_BN, sigma_NB_prev);
     if(StateCurrent.MRPSwitchCount != StatePrevious.MRPSwitchCount)
     {
         for(uint32_t i=0; i<(StateCurrent.MRPSwitchCount -
                              StatePrevious.MRPSwitchCount); i++)
         {
-            double Smag = v3Norm(MRP_Bdy2Inrtl_Prev);
-            v3Scale(-1.0/Smag/Smag, MRP_Bdy2Inrtl_Prev, MRP_Bdy2Inrtl_Prev);
+            double Smag = v3Norm(sigma_NB_prev);
+            v3Scale(-1.0/Smag/Smag, sigma_NB_prev, sigma_NB_prev);
         }
     }
-    addMRP(MRP_Bdy2Inrtl_Prev, StateCurrent.sigma_BN, MRP_BdyPrev2BdyNow);
-    MRP2PRV(MRP_BdyPrev2BdyNow, DRBodyFrame);
-    m33MultV3(this->dcm_PB, DRBodyFrame, this->trueValues.DRFramePlatform);
-    m33MultV3(this->dcm_PB, StateCurrent.omega_BN_B, this->trueValues.AngVelPlatform);
+    v3Scale(-1.0, StateCurrent.sigma_BN, sigma_NB);
+    subMRP(sigma_NB, sigma_NB_prev, sigma_21);
+    MRP2PRV(sigma_21, deltaPRV);
+    m33MultV3(this->dcm_PB, deltaPRV, this->trueValues.DRFramePlatform); //returns cumulative delta-PRV in imu sensor platform frame coordinates
+    
+    //calculate "instantaneous" angular rate
+    m33MultV3(this->dcm_PB, StateCurrent.omega_BN_B, this->trueValues.AngVelPlatform); //returns instantaneous angular rate of imu sensor in imu platform frame coordinates
 }
 
 void ImuSensor::computePlatformDV(uint64_t CurrentTime)
