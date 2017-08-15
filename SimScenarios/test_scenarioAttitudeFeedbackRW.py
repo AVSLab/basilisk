@@ -108,7 +108,7 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 ## Demonstrates how to use RWs to stabilize the tumble of a spacecraft orbiting the
 # Earth.
 #
-# Attitude Detumbling Simulation using RW Effectors {#scenarioAttitudeFeedbackMRP}
+# Attitude Detumbling Simulation using RW Effectors {#scenarioAttitudeFeedbackRW}
 # ====
 #
 # Scenario Description
