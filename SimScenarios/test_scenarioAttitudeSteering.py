@@ -202,7 +202,7 @@ def test_bskAttitudeFeedbackRW(show_plots, simCase):
 #     scSim.AddModelToTask(simTaskName, servoWrap, servoConfig)
 # ~~~~~~~~~~~~~~~~~
 # The mathematical details of this paper are also found at
-# <a target='_blank' href="http://hanspeterschaub.info/Papers/SchaubIAC2017.pdf"><b>conference paper.</b></a>.
+# <a target='_blank' href="http://hanspeterschaub.info/Papers/SchaubIAC2017.pdf"><b>conference paper</b></a>.
 #
 #
 #
@@ -229,7 +229,7 @@ def test_bskAttitudeFeedbackRW(show_plots, simCase):
 # motor torque \f$u_B\f$ are shown.  This illustrates that with this maneuver the RW devices are being
 # saturated, and the attitude still eventually stabilizes.
 #
-# Note that in this simulation setup the integral feedback term is included, and the unknown unexternal toruque
+# Note that in this simulation setup the integral feedback term is included, and the unknown external torque
 # is automatically compensated for to yield exponential convergence.  This convergence is despite having to track
 # a time-varying Hill frame on an elliptic orbit.  This illustrates that all the orbital motion is propoerly
 # feed-forward compensated.
@@ -273,7 +273,7 @@ def test_bskAttitudeFeedbackRW(show_plots, simCase):
 # ![MRP Attitude History](Images/Scenarios/scenarioAttitudeSteeringSigmaBR2.svg "MRP history")
 # ![MRP Attitude History](Images/Scenarios/scenarioAttitudeSteeringomegaBR2.svg "omega history")
 # Here the local motion is now unstable, as predicted in
-# <a target='_blank' href="http://hanspeterschaub.info/Papers/SchaubIAC2017.pdf"><b>conference paper.</b></a>.
+# <a target='_blank' href="http://hanspeterschaub.info/Papers/SchaubIAC2017.pdf"><b>conference paper</b></a>.
 #
 # Setup 4
 # -----
