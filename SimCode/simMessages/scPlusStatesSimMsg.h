@@ -30,7 +30,8 @@ typedef struct {
     double sigma_BN[3];               //!< -- Current MRPs (inertial)
     double omega_BN_B[3];             //!< r/s Current angular velocity
     double omegaDot_BN_B[3];          //!< r/s/s Current angular acceleration
-    double TotalAccumDVBdy[3];        //!< m/s Accumulated DV for simulation
+    double TotalAccumDVBdy[3];        //!< m/s Accumulated DV of center of mass in body frame coordinates
+    double TotalAccumDV_BN_B[3];      //!< m/s Accumulated DV of body frame in body frame coordinates
     double nonConservativeAccelpntB_B[3];//!< m/s/s Current Spacecraft non-conservative body frame accel
     uint64_t MRPSwitchCount;          //!< -- Number of times that MRPs have switched
 }SCPlusStatesSimMsg;
