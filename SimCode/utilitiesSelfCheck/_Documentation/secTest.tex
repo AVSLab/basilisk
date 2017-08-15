@@ -3,7 +3,7 @@
 \section{Test Description and Success Criteria}
 The AVS support libraries undergo a series of unit test within C-functions that are called by the Swig'd interface {\tt avsLibrarySelfCheck}.  The automated unit test is performed via {\tt pytest} through the script:
 \begin{verbatim}
-     SimCode/utilitiesSelfCheck/\_UnitTest/test\_avsLibrarySelfCheck.py
+     SimCode/utilitiesSelfCheck/_UnitTest/test_avsLibrarySelfCheck.py
 \end{verbatim}
 In each unit test the C-code library function output is compared to a externally hand-computed solution.  The success criteria is when the pre-computed solution and the C-code computed solution match to within a certain numerical tolerance.  The success criteria absolute value tolerances are shown in Table~\ref{tbl:tolerance}.
 

@@ -236,16 +236,18 @@ This function computes Earth's zonal harmonics from $J_{2}$ through $J_{6}$.  Fo
 	\bm a_{J_{2}} &=   -\frac{3}{2} J_{2} 
 	\left(\frac{\mu}{r^{2}}\right)
 	\left( \frac{r_{eq}}{r}\right)^{2}
+	\leftexp{N\!\!\!}{
 	\begin{pmatrix}
 		\left(1-5\left(\frac{z}{r}\right)^{2}\right) \frac{x}{r} \\
 		\left(1-5\left(\frac{z}{r}\right)^{2}\right) \frac{y}{r} \\
 		\left(3-5\left(\frac{z}{r}\right)^{2}\right) \frac{z}{r}
-	\end{pmatrix}
+	\end{pmatrix}}
 	\label{eq:gm:aJ2}
 	\\
 	\bm a_{J_{3}} &=  -\frac{1}{2} J_{3} 
 	\left(\frac{\mu}{r^{2}}\right)
 	\left( \frac{r_{eq}}{r}\right)^{3}
+	\leftexp{N\!\!\!}{
 	\begin{pmatrix}
 		5\left(7 \left(\frac{z}{r}\right)^{3} - 3 \left(\frac{z}{r}\right) 
 		\right) \frac{x}{r} \\
@@ -253,12 +255,13 @@ This function computes Earth's zonal harmonics from $J_{2}$ through $J_{6}$.  Fo
 		\right) \frac{y}{r} \\
 		3\left(10\left(\frac{z}{r}\right)^{2} - \frac{35}{3} 
 		\left(\frac{z}{r}\right)^{4} - 1 \right) 
-	\end{pmatrix}
+	\end{pmatrix}}
 	\label{eq:gm:aJ3}
 	\\
 	\bm a_{J_{4}} &=  -\frac{5}{8} J_{4} 
 	\left(\frac{\mu}{r^{2}}\right)
 	\left( \frac{r_{eq}}{r}\right)^{4}
+	\leftexp{N\!\!\!}{
 	\begin{pmatrix}
 		\left(3-42 \left(\frac{z}{r}\right)^{2} +63 \left(\frac{z}{r}\right)^{4} 
 		\right) \frac{x}{r} \\
@@ -266,12 +269,13 @@ This function computes Earth's zonal harmonics from $J_{2}$ through $J_{6}$.  Fo
 		\right) \frac{y}{r} \\
 		-\left(15-70\left(\frac{z}{r}\right)^{2} + 63 
 		\left(\frac{z}{r}\right)^{4}  \right) \frac{z}{r}
-	\end{pmatrix}
+	\end{pmatrix}}
 	\label{eq:gm:aJ4}
 	\\
 	\bm a_{J_{5}} &=  -\frac{J_{5}}{8}  
 	\left(\frac{\mu}{r^{2}}\right)
 	\left( \frac{r_{eq}}{r}\right)^{5}
+	\leftexp{N\!\!\!}{
 	\begin{pmatrix}
 		3\left(35\left(\frac{z}{r}\right) - 210 
 		\left(\frac{z}{r}\right)^{3} +231 \left(\frac{z}{r}\right)^{5}
@@ -282,12 +286,13 @@ This function computes Earth's zonal harmonics from $J_{2}$ through $J_{6}$.  Fo
 		\left(15- 315\left(\frac{z}{r}\right)^{2} \!\!+ 945 
 		\left( \frac{z}{r}\right)^{4}\!\! -693 \left(\frac{z}{r}\right)^{6} 
 		\right) 
-	\end{pmatrix}
+	\end{pmatrix}}
 	\label{eq:gm:aJ5}
 	\\
 	\bm a_{J_{6}} &=  \frac{J_{6}}{16}  
 	\left(\frac{\mu}{r^{2}}\right)\!
 	\left( \frac{r_{eq}}{r}\right)^{6}\!
+	\leftexp{N\!\!\!}{
 	\begin{pmatrix}
 		\left(35 - 945 \left(\frac{z}{r}\right)^{2} \!\!
 		+ 3465 \left(\frac{z}{r}\right)^{4} \!\!
@@ -302,7 +307,7 @@ This function computes Earth's zonal harmonics from $J_{2}$ through $J_{6}$.  Fo
 		+ 2205 \left(\frac{z}{r}\right)^{2}\!\!
 		- 315
 		\right) \frac{z}{r}
-	\end{pmatrix}
+	\end{pmatrix}}
 	\label{eq:gm:aJ6}
 \end{align}
 
