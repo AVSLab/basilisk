@@ -48,7 +48,7 @@ import macros
 
 # import simulation related support
 import spacecraftPlus
-import simIncludeGravity
+import simIncludeGravBody
 
 
 @pytest.mark.parametrize("damping_parameter, timeStep", [
@@ -413,21 +413,16 @@ def run(doUnitTests, show_plots, damping_parameter, timeStep):
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]] # rad
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]] # rad/s
     
-    # clear prior gravitational body and SPICE setup definitions
-    simIncludeGravity.clearSetup()
+    # call for a fresh copy of the gravitational body factory
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    planet = gravFactory.createEarth()
+    planet.isCentralBody = True  # ensure this is the central gravitational body
 
+    planetRadius = planet.radEquator
+    mu = planet.mu
 
-
-    simIncludeGravity.addEarth()
-    simIncludeGravity.gravBodyList[-1].isCentralBody = True 
-
-    planetRadius=simIncludeGravity.gravBodyList[-1].radEquator
-
-    # request the mu parameter for the spacecraft
-    mu = simIncludeGravity.gravBodyList[-1].mu
     # attach gravity to the spacecraft
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
-   
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
     # initialize orbital elements
     oe = orbitalMotion.ClassicElements()

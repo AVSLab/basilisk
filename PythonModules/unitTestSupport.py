@@ -47,6 +47,7 @@ import macros
 # import Viz messaging related modules
 import vis_message_interface
 import vis_clock_synch
+import spice_interface
 
 import tabulate as T
 del(T.LATEX_ESCAPE_RULES[u'$'])
@@ -388,12 +389,25 @@ def pullVectorSetFromData(inpMat):
     outMat = np.array(inpMat).transpose()
     return outMat[1:].transpose()
 
-def enableVisualization(scSim, dynProcess):
+def enableVisualization(scSim, dynProcess, processName, bodyName = 'earth'):
     VizTaskName = "VizTask"
     dynProcess.addTask(scSim.CreateNewTask(VizTaskName, macros.sec2nano(0.5)))
     viz = vis_message_interface.VisMessageInterface()
     scSim.AddModelToTask(VizTaskName, viz)
     clockSynch = vis_clock_synch.VisClockSynch()
     scSim.AddModelToTask(VizTaskName, clockSynch, None, 101)
+
+    ephemData = spice_interface.SpicePlanetStateSimMsg()
+    ephemData.J2000Current = 0.0
+    ephemData.PositionVector = [0.0, 0.0, 0.0]
+    ephemData.VelocityVector = [0.0, 0.0, 0.0]
+    ephemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+    ephemData.PlanetName = bodyName
+    msgName = "central_body_spice"
+    messageSize = ephemData.getStructSize()
+    scSim.TotalSim.CreateNewMessage(processName, msgName, messageSize, 2, "SpicePlanetStateSimMsg")
+    scSim.TotalSim.WriteMessageData(msgName, messageSize, 0, ephemData)
+
     return
 

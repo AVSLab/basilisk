@@ -38,8 +38,10 @@ mu_J = 1.26686534e8
 mu_Saturn = 3.79395000e7
 mu_U = 5.79396566e6
 mu_N = 6.83509920e6
+mu_Moon = 4902.799
 
 # Planets' Radius   [km]
+S_radius = 695508
 J_radius = 71492
 V_radius = 6051.8
 E_radius = 6378.1363
@@ -47,6 +49,7 @@ M_radius = 3396.19
 Saturn_radius = 60268
 U_radius = 25559
 N_radius = 24764
+Moon_radius = 1738.1
 
 # Planetary Heliocentric orbits     [km]
 a_E = 1.0 * AU
