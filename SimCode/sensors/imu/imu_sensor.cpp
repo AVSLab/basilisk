@@ -260,19 +260,14 @@ void ImuSensor::computePlatformDR()
     double sigma_NB_prev[3];    // MRP from body to inertial frame last time the IMU was called
     double sigma_NB[3];         // MRP from body to inertial frame now.
     double sigma_21[3];         // MRP from body frame at time 1 (last time the IMU was called) to time 2 (this time the IMU is being called)
-    double deltaPRV[3];
+    double deltaPRV[3];         // PRV which describes attitude change from time 1 to 2
 
     //Calculated time averaged cumulative rotation
     v3Scale(-1.0, StatePrevious.sigma_BN, sigma_NB_prev);
-    if ((StateCurrent.MRPSwitchCount - StatePrevious.MRPSwitchCount) % 2 != 0) //if the MRP has switched an odd number of times since last IMU call.
-    {
-        double smag = v3Norm(sigma_NB_prev); //magnitude of the previous MRP (previous sigma)
-        v3Scale(-1.0/smag/smag, sigma_NB_prev, sigma_NB_prev); //this converts from MRP to shadow MRP
-    }
     v3Scale(-1.0, StateCurrent.sigma_BN, sigma_NB);
     subMRP(sigma_NB, sigma_NB_prev, sigma_21);
     MRP2PRV(sigma_21, deltaPRV);
-    m33MultV3(this->dcm_PB, deltaPRV, this->trueValues.DRFramePlatform); //returns cumulative delta-PRV in imu sensor platform frame coordinates
+    m33MultV3(this->dcm_PB, deltaPRV, this->trueValues.DRFramePlatform); //returns PRV which describes attitude delta from time 1 to 2 in platform frame coordinates
     
     //calculate "instantaneous" angular rate
     m33MultV3(this->dcm_PB, StateCurrent.omega_BN_B, this->trueValues.AngVelPlatform); //returns instantaneous angular rate of imu sensor in imu platform frame coordinates
