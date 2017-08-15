@@ -100,6 +100,7 @@ void SpacecraftPlus::writeOutputMessages(uint64_t clockTime)
     eigenMatrixXd2CArray(this->hubOmega_BN_B->getState(), stateOut.omega_BN_B);
     eigenMatrixXd2CArray(this->dvAccum_B, stateOut.TotalAccumDVBdy);
     stateOut.MRPSwitchCount = this->hub.MRPSwitchCount;
+    eigenMatrixXd2CArray(this->dvAccum_BN_B, stateOut.TotalAccumDV_BN_B);
     eigenVector3d2CArray(this->nonConservativeAccelpntB_B, stateOut.nonConservativeAccelpntB_B);
     eigenVector3d2CArray(this->omegaDot_BN_B, stateOut.omegaDot_BN_B);
     SystemMessaging::GetInstance()->WriteMessage(this->scStateOutMsgId, clockTime, sizeof(SCPlusStatesSimMsg),
@@ -421,6 +422,9 @@ void SpacecraftPlus::integrateState(double integrateToThisTime)
 
     // - Find accumulated DV of the center of mass in the body frame
     this->dvAccum_B += dcm_BN*dV_N;
+    
+    // - Find the accumulated DV of the body frame in the body frame
+    this->dvAccum_BN_B += dV_B_B;
     
     // - non-conservative acceleration of the body frame in the body frame
     this->nonConservativeAccelpntB_B = dV_B_B/localTimeStep;
