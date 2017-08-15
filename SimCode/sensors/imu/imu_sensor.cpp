@@ -264,14 +264,10 @@ void ImuSensor::computePlatformDR()
 
     //Calculated time averaged cumulative rotation
     v3Scale(-1.0, StatePrevious.sigma_BN, sigma_NB_prev);
-    if(StateCurrent.MRPSwitchCount != StatePrevious.MRPSwitchCount)
+    if ((StateCurrent.MRPSwitchCount - StatePrevious.MRPSwitchCount) % 2 != 0) //if the MRP has switched an odd number of times since last IMU call.
     {
-        for(uint32_t i=0; i<(StateCurrent.MRPSwitchCount -
-                             StatePrevious.MRPSwitchCount); i++)
-        {
-            double Smag = v3Norm(sigma_NB_prev);
-            v3Scale(-1.0/Smag/Smag, sigma_NB_prev, sigma_NB_prev);
-        }
+        double smag = v3Norm(sigma_NB_prev); //magnitude of the previous MRP (previous sigma)
+        v3Scale(-1.0/smag/smag, sigma_NB_prev, sigma_NB_prev); //this converts from MRP to shadow MRP
     }
     v3Scale(-1.0, StateCurrent.sigma_BN, sigma_NB);
     subMRP(sigma_NB, sigma_NB_prev, sigma_21);
