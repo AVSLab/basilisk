@@ -8,11 +8,7 @@ This test is located at {\tt SimCode/sensors/imu\_sensor/\_UnitTest/test\_imu\_s
 	\item \underline{Process Noise} The check verifies that the Gauss-Markov model applies noise of appropriate mean and standard deviation to the attitude coordinate output. This check does not consider bias random walk. Accelerometer and gyro noise standard deviations are set to nonzero values for each axis. Module output is verified by taking the standard deviation of output data and comparing to specified values.
 	\item \underline{Discretization} The check verifies that the module correctly discretizes the gyro/accel data according to the specified least significant bit (LSB). LSB of gyro and accelerometer are set to nonzero values. Output is verifed to round input to nearest multiple of LSB.
 	\item \underline{Saturation} The check verifies that the module saturates the output according to specified values. Gyro and accelerometer maximum output are set to nonzero values. Output is verified to not exceed specified saturation values for both negative and positive cases.
-	\item \underline{Accelerometer Center of Mass Offset} The check validates that the accelerometer will give appropriate output based on an offset in center of mass from accelerometer. Sensed acceleration is given by the equation
-	\begin{equation}
-	\ddot{\bm r}_\mathrm{sensed} = \bm\omega \times (\bm\omega \times \bm r_{\mathrm{SC}}) + \dot{\bm\omega} \times \bm r_{\mathrm{SC}} + \ddot{\bm r}_{B/N}
-	\end{equation}
-	where $\bm\omega$ is the spacecraft angular velocity vector, $\bm r_{\mathrm{SC}}$ is the position vector of the IMU with respect to the spacecraft center of mass, and $ \ddot{\bm r}_{B/N}$ is the actual inertial acceleration of the spacecraft.
+	\item \underline{Accelerometer Center of Mass Offset} The check validates that the accelerometer will give appropriate output based on an offset in center of mass from accelerometer.
 	\item \underline{IMU Misalignment} The check validates measurements taken when the IMU is not correctly aligned (i.e. the IMU measurements are taken in a frame with constant rotational offset from assumed IMU orientation).
 	\item \underline{Bias Random Walk Bounds} The check verifies that the Gauss-Markov model correctly applies bias random walk to the gyro and accelerometer output. Specified walk bounds are validated.
 \end{enumerate} 

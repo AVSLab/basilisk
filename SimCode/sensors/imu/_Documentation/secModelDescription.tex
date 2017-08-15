@@ -16,9 +16,10 @@ Where $P$ is the sensor platform frame, $B$ is the vehicle body frame, and $N$ i
 The IMU also outputs the angular displacement accumulated between IMU calls. In order to avoid complexities having to do with the relative timestep between the dynamics process and the IMU calls, this is not calculated in the same way as an IMU works physically. In this way, also, the dynamics do not have to be run at a fast enough rate for a physical IMU angular accumulation to be simulated. 
 The modified Rodriguez parameter (MRP) is recorded for the last time (1) the IMU was called. It is then differenced with the current (2) MRP:
 \begin{equation}
-	\bm{\sigma}_{2/1} = \bm{\sigma}_{B/N,2} - \bm{\sigma}_{B/N,1}
+	\bm{\sigma}_{2/1} = \bm{\sigma}_{B/N,2}  \circleddash  \bm{\sigma}_{B/N,1}
+	\label{eq:MRPsub}
 \end{equation}
-This is interpreted as the MRP from the body frame at time 1 to the body frame at time 2. $\bm{\sigma}_{2/1}$ is then converted to a principle rotation vector (PRV) in the current body frame and that vector is rotated into the sensor platform frame:
+This is interpreted as the MRP from the body frame at time 1 to the body frame at time 2.$\circleddash$ is the MRP subtraction function.  Eq. \ref{eq:MRPsub} says that the body frame rotation from time 1 to time 2 is equivalent to rotating from $N$ to $B$ at time $2$ and then rotating the reverse of the rotation from $N$ to $B$ at time $1$. $\bm{\sigma}_{2/1}$ is then converted to a principle rotation vector (PRV) in the current body frame and that vector is rotated into the sensor platform frame:
 \begin{equation}
 		^Bq_{i} = \frac{\sigma_{2/1,i}}{|\bm{\sigma}_{2/1}| 4 \mathrm{tan}^{-1}(|\bm{\sigma}_{2/1}|)}
 \end{equation}
@@ -26,9 +27,6 @@ This is interpreted as the MRP from the body frame at time 1 to the body frame a
 	^P\bm{q} = [PB] ^B\bm{q}
 \end{equation}
 Above, $q$ is the PRV and $i$ indicates the $i^{\mathrm{th}}$ component of $\bm{q}$ and $\bm{\sigma}$. $\bm{q}$ is then made of the elements $q_1$, $q_2$, and $q_3$. $q$ is the module output for angular displacement.
-
-Additionally, this method has minor added complexity due to the fact that the spacecraftPlus module sometimes switches between the original MRP set and the shadow MRP set. It does, though, record the number of times that this switch has occurred. The IMU uses this data to calculate whether the MRP has been switched an even or odd number of times since the IMU was last called. If the number is even, no MRP conversion must be done. If it is odd, the MRP must be converted to the shadow set via:
-
 
 \subsubsection{Linear Acceleration}
 The sensor is assumed to have an arbitrary offset from the center of mass of the spacecraft. However, because of the completely coupled nature of the Basilisks dynamics framework, the center of mass does not need to be present explicitly in equations of motion for the sensor. It is implicit in the motion of the body frame. With that in mind, the equation for the acceleration of the sensor is derived below:
