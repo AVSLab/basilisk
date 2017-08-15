@@ -286,30 +286,42 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
 //to account for CoM offset of the platform frame.
 {
     
-    double CmRelPos[3];
-    double AlphaBodyRough[3];  /// -- Approximation but it shouldn't be too bad
-    double omeg_x_omeg_x_r[3];
-    double alpha_x_r[3];
-    double RotForces[3];
-    double InertialAccel[3];
-    double dt;
-    v3Subtract(this->sensorPos_B.data(), MassCurrent.c_B, CmRelPos);
-    dt = (CurrentTime - PreviousTime)*1.0E-9;
-    v3Subtract(StateCurrent.omega_BN_B, StatePrevious.omega_BN_B, AlphaBodyRough);
-    v3Scale(1.0/dt, AlphaBodyRough, AlphaBodyRough);
-    v3Cross(AlphaBodyRough, CmRelPos, alpha_x_r);
-    v3Cross(StateCurrent.omega_BN_B, CmRelPos, omeg_x_omeg_x_r);
-    v3Cross(StateCurrent.omega_BN_B, omeg_x_omeg_x_r, omeg_x_omeg_x_r);
-    v3Add(omeg_x_omeg_x_r, alpha_x_r, RotForces);
-    v3Subtract(StateCurrent.TotalAccumDVBdy, StatePrevious.TotalAccumDVBdy,
-               InertialAccel);
-    v3Copy(InertialAccel, this->trueValues.DVFramePlatform);
-    v3Scale(1.0/dt, InertialAccel, InertialAccel);
-    v3Add(InertialAccel, RotForces, InertialAccel);
-    m33MultV3(dcm_PB, InertialAccel, this->trueValues.AccelPlatform);
-    v3Scale(dt, RotForces, RotForces);
-    v3Add(this->trueValues.DVFramePlatform, RotForces, this->trueValues.DVFramePlatform);
-    m33MultV3(dcm_PB, this->trueValues.DVFramePlatform, this->trueValues.DVFramePlatform);
+    //double CmRelPos[3];
+    double omega[3];            //omega_BN_B from scPlus
+    double omega_x_r[3];        //omega_BN_B x r_SB_B
+    double omega_x_r_prev[3];   //omega_BN_B x r_SB_B last time the IMU was called
+    double omega_x_omega_x_r[3];//omega_BN_B x (omega_BN_B x r_SB_B)
+    double omegaDot_x_r[3];     //(time derivative of omega_BN_B) x r_SB_B
+    double rotationalTerms[3];  //(time derivative of omega_BN_B) x r_SB_B + omega_BN_B x (omega_BN_B x r_SB_B)
+    double rotationalDelta_B[3];//delta in rotationl velocity term of sensor motion in B frame
+    double dcm_BN[3][3];        //dcm from N to B
+    double r_SB_B[3];           //sensor position relative to B frame origin in B frame coordinates
+    double rDotDot_BN_B[3];     //non-conservative acceleration of body frame relative to inertial frame in body frame coordinates
+    double rDotDot_SN_B[3];     //sensor non conservative acceleration relative to inertial frame in body frame coordinates
+    double rDotDot_SN_P[3];     //sensor non conservative acceleration relative to inertial frame in sensor platform frame
+    double drDot_BN_N[3];       //change in velocity of body frame relative to inertial in inertial frame coordinates between IMU calls. This does not include delta-v from conservative accelerations.
+    double drDot_BN_B[3];       //change in velocity of body frame relative to inertial in body frame coordinates between IMU calls. This does not include delta-v from conservative accelerations.
+    double dvSensor_B[3];       //sensor delta v between IMU calls in body frame coordinates
+    
+    //Calculate "instantaneous" linear acceleration
+    v3Copy(StateCurrent.nonConservativeAccelpntB_B, rDotDot_BN_B);
+    v3Copy(sensorPos_B.data(), r_SB_B);
+    v3Copy(StateCurrent.omega_BN_B, omega);
+    v3Cross(StateCurrent.omegaDot_BN_B, r_SB_B, omegaDot_x_r);
+    v3Cross(omega, r_SB_B, omega_x_r);
+    v3Cross(omega, omega_x_r, omega_x_omega_x_r);
+    v3Add(omegaDot_x_r, omega_x_omega_x_r, rotationalTerms);
+    v3Add(rDotDot_BN_B, rotationalTerms, rDotDot_SN_B);
+    m33MultV3(this->dcm_PB, rDotDot_SN_B, rDotDot_SN_P);
+    v3Copy(rDotDot_SN_P, this->trueValues.AccelPlatform); //returns linear non-conservative acceleration of the imu in imu platform frame coordinates
+    
+    //Calculate time-average cumulative delta v
+    v3Subtract(StateCurrent.TotalAccumDV_BN_B, StatePrevious.TotalAccumDV_BN_B, drDot_BN_N);
+    m33MultV3(dcm_BN, drDot_BN_N, drDot_BN_B);
+    v3Cross(StatePrevious.omega_BN_B, r_SB_B, omega_x_r_prev);
+    v3Subtract(omega_x_r, omega_x_r_prev, rotationalDelta_B);
+    v3Add(drDot_BN_B, rotationalDelta_B, dvSensor_B);
+    m33MultV3(this->dcm_PB, dvSensor_B, this->trueValues.DVFramePlatform); //returns the accumulated deltaV experienced by the sensor in imu platform frame coordinates. This does not include delta-v from conservative accelerations.
     
 }
 
