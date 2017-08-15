@@ -27,10 +27,11 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
             <li>Hinged Panel `StateEffector` module</li>            
         </ul>
     </li>
-    <li>New tutorial script on
+    <li>New tutorial scripts on
         <ul>
             <li>using CSS modules</li>
             <li>using fuel tank module and the fuel slosh particle `StateEffector`</li>
+            <li>How to use `MRP_Steering()` along with the rate tracking sub-servo module</li>
         </ul>
     </li>
     <li>The CSS modules now use the planetary shadow message information to simulated being in a planet's shadow</li>
