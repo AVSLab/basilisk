@@ -1,3 +1,5 @@
+%!TEX root = ./Basilisk-SPACECRAFTPLUS-20170808.tex
+
 \section{Test Description and Success Criteria}
 This test is located in \texttt{SimCode/dynamics/spacecraftPlus/\_UnitTest/\newline
 test\_spacecraftPlus.py}. Depending on the scenario, there are different success criteria. These are outlined in the following subsections:
@@ -26,8 +28,8 @@ The MRP switching check needs to be discussed. In Basilisk the MRPs are switched
 \begin{equation}
 \begin{gathered}
 \begin{aligned}
-&\textnormal{\textbf{if}}\quad [s = \vert \bm \sigma(t + dt) \vert ] > 1  \quad \textnormal{\textbf{then}}\\
-&\quad \bm \sigma(t + dt) = - \frac{\bm \sigma(t + dt)}{s^2}\\
+&\textnormal{\textbf{if}}\quad [s = \vert \bm \sigma(t + \D t) \vert ] > 1  \quad \textnormal{\textbf{then}}\\
+&\quad \bm \sigma(t + \D t) = - \frac{\bm \sigma(t + \D t)}{s^2}\\
 &\textnormal{\textbf{end if}}
 \end{aligned}
 \end{gathered}
@@ -146,7 +148,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 	\caption{Initial Conditions of the simulations}
 	\label{tab:initial}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c | c | c } % Column formatting, 
+	\begin{tabular}{ c | p{2.25in} | c | c } % Column formatting, 
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
