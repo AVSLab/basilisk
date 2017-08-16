@@ -23,10 +23,10 @@ More variables needed to be defined for the spacecraftPlus, are the total mass o
 
 \subsection{Equations of Motion}
 
-The main description that is needed for spacecraftPlus are the equations of motion (EOMs). The following equation describes the translational EOM in only translation is enabled.
+The main description that is needed for spacecraftPlus are the equations of motion (EOMs). The following equation describes the translational EOM if only translation is enabled. This is Newton's Second Law on the center of mass of the spacecraft but when translation only is enabled the center of mass of the spacecraft is coincident with point $B$. 
 
 \begin{equation}
-m_{\text{sc}} \ddot{\bm r}_{B/N} = \bm F_{\textnormal{ext}}
+m_{\text{sc}} \ddot{\bm r}_{B/N} = m_{\text{sc}} \ddot{\bm r}_{C/N} =  \bm F_{\textnormal{ext}}
 \label{eq:Rbddot3}
 \end{equation}
 
