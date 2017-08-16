@@ -1061,9 +1061,10 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
 
     # Find energy to find thetaMax2 - the max deflection while the force is not being applied
     massTotal = spacecraft.hub.mass + 2.0*spacecraft.panel1.mass
-    yHubDotOff = X[6,stopTime/2/stepSize]
-    theta1Off = X[3,stopTime/2/stepSize]
-    theta1OffDot = X[8,stopTime/2/stepSize]
+
+    yHubDotOff = X[6, int(stopTime/2/stepSize)]
+    theta1Off = X[3, int(stopTime/2/stepSize)]
+    theta1OffDot = X[8, int(stopTime/2/stepSize)]
     Rsp1DotOff = numpy.array([-spacecraft.panel1.d*theta1OffDot*numpy.sin(theta1Off), yHubDotOff + spacecraft.panel1.d*theta1OffDot*numpy.cos(theta1Off)])
     vYCMOff =  1.0/massTotal*(spacecraft.hub.mass*yHubDotOff + 2*spacecraft.panel1.mass*Rsp1DotOff[1])
     EnergyOff = 0.5*spacecraft.hub.mass*yHubDotOff**2 + 2*(0.5*spacecraft.panel1.mass*numpy.dot(Rsp1DotOff,Rsp1DotOff) + 0.5*spacecraft.panel1.Inertia*theta1OffDot**2 + 0.5*spacecraft.panel1.k*theta1Off**2)
@@ -1116,7 +1117,7 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
         testMessages.append("FAILED: Hinged Rigid Body integrated theta max test failed max 2 comparison ")
 
     if testFailCount == 0:
-        print "PASSED: " + " Hinged Rigid Body Frequency and Amplitude Integrated test"
+        print "PASSED: " + "Hinged Rigid Body Frequency and Amplitude Integrated test"
 
     assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list
