@@ -229,6 +229,12 @@ def run(show_plots, orbitCase, planetCase):
     n = np.sqrt(mu/oe.a/oe.a/oe.a)
     P = 2.*np.pi/n
 
+    #
+    # create simulation messages
+    #
+    gravFactory.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
+
+
     simulationTime = macros.sec2nano(1*P)
 
     #

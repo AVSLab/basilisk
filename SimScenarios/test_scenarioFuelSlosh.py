@@ -455,6 +455,7 @@ def run(doUnitTests, show_plots, damping_parameter, timeStep):
     #
     # create simulation messages
     #    
+    gravFactory.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
     #   cross_init() and reset() routines on each module.

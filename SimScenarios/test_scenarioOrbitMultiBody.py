@@ -327,7 +327,6 @@ def run(doUnitTests, show_plots, scCase):
                                      , 100
                                      )
     # attach gravity model to spaceCraftPlus
-    # scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
     # setup simulation start date/time

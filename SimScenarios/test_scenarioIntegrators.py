@@ -227,6 +227,11 @@ def run(doUnitTests, show_plots, integratorCase):
     simulationTime = macros.sec2nano(0.75*P)
 
     #
+    # create simulation messages
+    #
+    gravFactory.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
+
+    #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100

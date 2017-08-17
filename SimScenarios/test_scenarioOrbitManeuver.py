@@ -261,6 +261,11 @@ def run(doUnitTests, show_plots, maneuverCase):
     simulationTime = macros.sec2nano(0.25 * P)
 
     #
+    # create simulation messages
+    #
+    gravFactory.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
+
+    #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
