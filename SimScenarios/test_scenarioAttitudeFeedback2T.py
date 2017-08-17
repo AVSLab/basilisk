@@ -384,6 +384,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     #
     # create FSW simulation messages
     #
+    gravFactory.addDefaultEphemerisMsg(scSim.TotalSim, dynProcessName)
 
     # create the FSW vehicle configuration message
     vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
