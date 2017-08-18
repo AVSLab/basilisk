@@ -43,6 +43,10 @@ ImuSensor::ImuSensor()
     memset(&this->senTransBias[0], 0x0, 3*sizeof(double));
     memset(&this->sensedValues, 0x0, sizeof(IMUSensorIntMsg));
     memset(&this->trueValues, 0x0, sizeof(IMUSensorIntMsg));
+    this->accelLSB = 0.;
+    this->gyroLSB = 0.;
+    this->senRotMax = 1e6;
+    this->senTransMax = 1e6;
 
     return;
 }
