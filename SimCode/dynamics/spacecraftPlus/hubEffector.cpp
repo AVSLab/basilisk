@@ -215,9 +215,6 @@ void HubEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d
     Eigen::Vector3d omegaLocal_BN_B;
     omegaLocal_BN_B = omegaState->getState();
 
-    // - Call mass props to get current information on states
-    this->updateEffectorMassProps(integTime);
-
     //  - Find rotational angular momentum contribution from hub
     Eigen::Vector3d rDot_BcB_B;
     rDot_BcB_B = omegaLocal_BN_B.cross(r_BcB_B);
