@@ -1,8 +1,61 @@
 \section{Test Description and Success Criteria}
 This test is located at {\tt SimCode/sensors/imu\_sensor/\_UnitTest/test\_imu\_sensor.py}. In order to get good coverage of all the aspects of the module, the test is broken up into several parts: \par
 
+\subsection{Primary Test Method}
+In order to thoroughly test arbitrary outputs from the IMU, The equations of motion for the sensor were formulated as functions of the center of mass of the spacecraft as opposed to the equations seen in the model description which were formulated about the body frame. The truth values for the following test are set up in the following way:
+\begin{equation}
+{\bm{r}}_{S/N} = {\bm{r}}_{C/N} + {\bm{r}}_{S/C}
+\end{equation}
+\begin{equation}
+\dot{{\bm{r}}}_{S/N} = \dot{{\bm{r}}}_{C/N} + {\bm{r}}'_{S/C} + \bm{\omega}_{B/N} \times {\bm{r}}_{S/C}
+\label{eq:firstder}
+\end{equation}
+Knowing that:
+\begin{equation}
+{\bm{r}}'_{S/C} = - \bm{c}'
+\end{equation}
+Eq. \ref{eq:firstder} becomes:
+\begin{equation}
+	\dot{{\bm{r}}}_{S/N} = \dot{{\bm{r}}}_{C/N} + \bm{c}' + \bm{\omega}_{B/N} \times {\bm{r}}_{S/C}
+\end{equation}
+So, again substituting in the center of mass velocity in the $\cal{B}$ frame,
+\begin{equation}
+\ddot{{\bm{r}}}_{S/N} = \ddot{{\bm{r}}}_{C/N} + \bm{c}'' + 2\bm{\omega}_{B/N} \times \bm{c}'  + \dot{\bm{\omega}}_{B/N} \times {\bm{r}}_{S/C}
+\label{eq:SN}
+\end{equation}
+$ \bm{c}''$ and $ \bm{c}'$ can be solved for in terms of $\ddot{\bm{c}}$ and $\dot{\bm{c}}$ using the transport theorem:
+\begin{equation}
+\bm{c}'   = \dot{\bm{c}} - \bm{\omega}_{B/N} \times \bm{c}
+\end{equation}
+\begin{equation}
+\bm{c}''  = \ddot{\bm{c}}  - 2\bm{\omega}_{B/N} \times \bm{c}' - \dot{\bm{\omega}}_{B/N} \times \bm{c}  -\bm{\omega}_{B/N} \times \bm{\omega}_{B/N} \times \bm{c}
+\end{equation}
+Now, given the states at a previous time step, $t_{n-1}$, and the accelerations (linear and angular), new states can be calculated for $t_n$:
+\begin{equation}
+	\Delta t = t_{n} - t_{n-1}
+\end{equation}
+\begin{equation}
+\dot{\bm{r}}_{B/N,n} = \dot{\bm{r}}_{B/N,n-1} + \frac{\ddot{\bm{r}}_{B/N,n-1}+\ddot{\bm{r}}_{B/N,n}}{2} \Delta t
+\end{equation}
+\begin{equation}
+	\bm{r}_{B/N,n} = \bm{r}_{B/N,n-1} + \frac{\dot{\bm{r}}_{B/N,n-1}+\dot{\bm{r}}_{B/N,n}}{2} \Delta t
+\end{equation}
+\begin{equation}
+\bm{\omega}_{B/N,n} = \bm{\omega}_{B/N,n-1} + \frac{\dot{\bm{\omega}}_{B/N,n-1}+\dot{\bm{\omega}}_{B/N,n}}{2} \Delta t
+\end{equation}
+\begin{equation}
+\bm{\omega}_{B/N,n} = \bm{\omega}_{B/N,n-1} + \frac{\dot{\bm{\omega}}_{B/N,n-1}+\dot{\bm{\omega}}_{B/N,n}}{2} \Delta t
+\end{equation}	
+The same can then be done for the position $ {\bm{r}}_{C/N}$ with its derivatives. Also, knowing that:
+\begin{equation}
+\ddot{\bm{c}} = \ddot{\bm{r}}_{C/N} - \ddot{\bm{r}}_{B/N}
+\end{equation}
+the same can be done for $\bm{c}$ and its derivatives. 
+
+At this point, all of the information needed to solve for Eq. \ref{eq:SN} is known. Additionally, the delta-v accumulated between $t_{n-1}$ and $t_{n}$ can be added to the total delta-v
+
 \begin{enumerate}
-	\item \underline{Gyro/Accelerometer I/O} The check verifies basic I/O of body rates and acceleration. Initial attitude MRP, body rates, and Delta V are propagated and corresponding body rates, acceleration, DR, and DV are compared to module output.
+	\item \underline{Gyro/Accelerometer I/O} The check verifies basic I/O of body rates and acceleration. Initial attitude MRP, body rates, and Delta V are propagated and corresponding body rates, acceleration, DR, and DV are compared to module output and checked to be the same
 	\item \underline{MRP Switch} The check validates that the module accounts for attitude MRP switching in calculation of body rates. Initial attitude MRP and body rates are propagated for a sufficient amount of time for the MRP to switch to the shadow set. The test verifies that the module sets the MRP switch flag to TRUE.
 	\item \underline{Static Bias} The check validates static bias in gyro/accel measurements. Gyro and accelerometer static bias are set to nonzero values. Initial MRP, body rates, and DV are propagated. Module output is verified to contain data with static bias.
 	\item \underline{Process Noise} The check verifies that the Gauss-Markov model applies noise of appropriate mean and standard deviation to the attitude coordinate output. This check does not consider bias random walk. Accelerometer and gyro noise standard deviations are set to nonzero values for each axis. Module output is verified by taking the standard deviation of output data and comparing to specified values.
