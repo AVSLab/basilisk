@@ -279,7 +279,7 @@ class Controller:
             if self.simParams.verbose:
                 print "Archiving a copy of this simulation before running it in 'MonteCarlo.data'"
             with gzip.open(self.archiveDir + "MonteCarlo.data", "w") as pickleFile:
-                pickle.dump(self, pickleFile)
+                pickle.dump(self, pickleFile) # dump this controller object into a file.
 
         numSims = self.executionCount
 
@@ -287,7 +287,7 @@ class Controller:
         # instead only generating simulations right before they are needed by a waiting worker
         # This is accomplished using a generator and pool.imap, -- simulations are only built
         # when they are about to be passed to a worker, avoiding memory overhead of first building simulations
-        # There is a system-dependent chunking behavior, something like 10-20 can be generated at a time.
+        # There is a system-dependent chunking behavior, sometimes 10-20 are generated at a time.
         pool = Pool(self.numProcess)
         simGenerator = self.generateSims(range(numSims))
         failed = []  # keep track of the indices of failed simulations
@@ -316,7 +316,7 @@ class Controller:
             print "Unknown exception while running simulations:", e
             pool.terminate()
         finally:
-            failed.extend(range(jobsFinished + 1, numSims)) # fail all jobs after the last finished one
+            failed.extend(range(jobsFinished + 1, numSims)) # fail all potentially running jobs...
             pool.join()
 
         # if there are failures
