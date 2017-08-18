@@ -8,23 +8,24 @@ There is a large variation throughout the industry as to what constitutes and IM
 \subsubsection{Angular Rates}
 The angular rate of the sensor is output as:
 \begin{equation}
-	^P\bm{\omega}_{S/N} = [PB] ^B\bm{\omega}_{B/N}
+	 \leftexp{P}{\bm{\omega}_{S/N}} = [PB] \leftexp{B}{\bm{\omega}_{B/N}}
 \end{equation}
-Where $P$ is the sensor platform frame, $B$ is the vehicle body frame, and $N$ is the inertial frame. $[PB]$ is the direction cosine matrix from $B$ to $P$. This allows for an arbitrary angular offset between $B$ and $P$ but does not allow for that offset to be time-varying.
+
+Where $\cal{P}$ is the sensor platform frame, $\cal{B}$ is the vehicle body frame, and $\cal{N}$ is the inertial frame. [PB] is the direction cosine matrix from $\cal{B}$ to $\cal{P}$. This allows for an arbitrary angular offset between $\cal{B}$ and $\cal{P}$ and allows for that offset to be time-varying. $\leftexp{B}{\bm{\omega}_{B/N}}$ is provided by the spacecraftPlus output message from the most recent dynamics integration.
 
 \subsubsection{Angular Displacement}
 The IMU also outputs the angular displacement accumulated between IMU calls. In order to avoid complexities having to do with the relative timestep between the dynamics process and the IMU calls, this is not calculated in the same way as an IMU works physically. In this way, also, the dynamics do not have to be run at a fast enough rate for a physical IMU angular accumulation to be simulated. 
-The modified Rodriguez parameter (MRP) is recorded for the last time (1) the IMU was called. It is then differenced with the current (2) MRP:
+The modified Rodriguez parameter (MRP) is recorded for the last time (1) the IMU was called. It is then differenced with the current (2) MRP. The current MRP is always provided by the spacecraftPlus message from the most recent dynamics integration.
 \begin{equation}
 	\bm{\sigma}_{2/1} = \bm{\sigma}_{B/N,2}  \circleddash  \bm{\sigma}_{B/N,1}
 	\label{eq:MRPsub}
 \end{equation}
-This is interpreted as the MRP from the body frame at time 1 to the body frame at time 2.$\circleddash$ is the MRP subtraction function.  Eq. \ref{eq:MRPsub} says that the body frame rotation from time 1 to time 2 is equivalent to rotating from $N$ to $B$ at time $2$ and then rotating the reverse of the rotation from $N$ to $B$ at time $1$. $\bm{\sigma}_{2/1}$ is then converted to a principle rotation vector (PRV) in the current body frame and that vector is rotated into the sensor platform frame:
+This is interpreted as the MRP from the body frame at time 1 to the body frame at time 2.$\circleddash$ is the MRP subtraction function.  Eq. \ref{eq:MRPsub} says that the body frame rotation from time 1 to time 2 is equivalent to rotating from $\cal{N}$ to $\cal{B}$ at time $2$ and then rotating the reverse of the rotation from $\cal{N}$ to $\cal{B}$ at time $1$. $\bm{\sigma}_{2/1}$ is then converted to a principle rotation vector (PRV) in the current body frame and that vector is rotated into the sensor platform frame:
 \begin{equation}
-		^Bq_{i} = \frac{\sigma_{2/1,i}}{|\bm{\sigma}_{2/1}| 4 \mathrm{tan}^{-1}(|\bm{\sigma}_{2/1}|)}
+		\leftexp{B} {q_{i}} = \frac{\sigma_{2/1,i}}{|\bm{\sigma}_{2/1}| 4 \mathrm{tan}^{-1}(|\bm{\sigma}_{2/1}|)}
 \end{equation}
 \begin{equation}
-	^P\bm{q} = [PB] ^B\bm{q}
+	\leftexp{P}{ \bm{q}} = [PB] \leftexp{B}{ \bm{q}}
 \end{equation}
 Above, $q$ is the PRV and $i$ indicates the $i^{\mathrm{th}}$ component of $\bm{q}$ and $\bm{\sigma}$. $\bm{q}$ is then made of the elements $q_1$, $q_2$, and $q_3$. $q$ is the module output for angular displacement.
 
@@ -49,9 +50,9 @@ The equation above is indeed the equation for the inertial acceleration of the s
 \begin{equation}
 \ddot{\bm{r}}_{S/N, \textrm{sensed}} = (\ddot{\bm{r}}_{B/N} - \bm{a}_\textrm{g}) + \dot{\bm{\omega}}_{B/N} \times \bm{r}_{S/B} +  \bm{\omega}_{B/N} \times (\bm{\omega}_{B/N} \times \bm{r}_{S/B})
 \end{equation}
-where $\bm{a}_\textrm{g}$ is the instantaneous acceleration due to gravity. Conveniently, $\ddot{\bm{r}}_{B/N}$ is available directly from the spacecraft, but in the body frame. $\bm{r}_{S/B}$ is also available in the body frame. $\dot{\bm{\omega}}_{B/N}$ is given by the spacecraft in body frame coordinates as well. As such, the above equation is first evaluated in the body frame and then converted to the sensor platform frame, giving the acceleration sensed by the IMU in the IMU platform frame coordinates:
+where $\bm{a}_\textrm{g}$ is the instantaneous acceleration due to gravity. Conveniently, $\ddot{\bm{r}}_{B/N}$ is available from the spacecraft, but in the body frame. The acceleration provided, though, is the time-averaged acceleration between the last two dynamics integration calls and not the instantaneous acceleration. $\bm{r}_{S/B}$ is also available in the body frame. $\dot{\bm{\omega}}_{B/N}$ is given by the spacecraft in body frame coordinates as well. Again, this is a time-averaged value output by the spacecraft, rather than an instantaneous value. The above equation is first evaluated in the body frame and then converted to the sensor platform frame, giving the acceleration sensed by the IMU in the IMU platform frame coordinates:
 \begin{equation}
-	^P\ddot{\bm{r}}_{S/N, \textrm{sensed}} = [PB] ^B \ddot{\bm{r}}_{S/N, \textrm{sensed}}
+	\leftexp{P}{\ddot{\bm{r}}_{S/N, \textrm{sensed}}} = [PB] \leftexp{B}{ \ddot{\bm{r}}_{S/N, \textrm{sensed}}}
 \end{equation}
 
 \subsubsection{Change In Velocity}
@@ -64,23 +65,21 @@ Differencing Eq. \ref{eq:rDot} with itself from time 1 to time 2 gives the equat
 \end{equation}
 $\Delta_{2/1} \dot{\bm{r}}_{B/N}$ is calculated as the difference between the total change in velocity accumulated by the spacecraft body frame at time 2 minus the total change in velocity accumulated by the spacecraft body frame at time 1:
 \begin{equation}
-\Delta_{2/1} \dot{\bm{r}}_{B/N} = DV_{\textrm{body\_total},2} - DV_{\textrm{body\_total},1}
+\Delta_{2/1} \dot{\bm{r}}_{B/N} = DV_{\textrm{body\_non-conservative},2} - DV_{\textrm{body\_non-conservative},1}
 \end{equation}
-The above $DV$ values are given by the spacecraft module in body frame coordinates. Then,
+The above $DV$ values are given by the spacecraft module in body frame coordinates. They are computed by accumulating the velocity after each dynamics integration and subtracting out the time-averaged gravitational acceleration multiplied by the dynamics time step. Then,
 \begin{equation}
 	\Delta_{2/1} (\bm{\omega}_{B/N} \times \bm{r}_{S/B}) = \bm{\omega}_{{B/N}_2} \times \bm{r}_{{S/B}_2} - \bm{\omega}_{{B/N}_1} \times \bm{r}_{{S/B}_1}
 \end{equation}
-It is again convenient to evaluate this expression in the body frame because $\bm{\omega}_{{B/N}}$ is given by the spacecraft in body frame coordinates, $\bm{r}_{S/B}$ is given in body frame coordinates, and $\bm{r}_{S/B}$ is time-invariant in the body frame. i.e.:
+$\bm{\omega}_{{B/N}}$ output by the spacecraft is the angular rate from the most recent dynamics integration. It is again convenient to evaluate this expression in the body frame because $\bm{\omega}_{{B/N}}$ is given by the spacecraft in body frame coordinates, $\bm{r}_{S/B}$ is given in body frame coordinates, and $\bm{r}_{S/B}$ is time-invariant in the body frame. i.e.:
 \begin{equation}
 	\bm{r}_{{S/B}_1} = \bm{r}_{{S/B}_2} = \bm{r}_{S/B}
 \end{equation}
-At this point, Eq. \ref{eq:DeltaVelocity} is evaluated in the body frame and converted to the sensor platform frame:
+ At this point, Eq. \ref{eq:DeltaVelocity} is evaluated in the body frame and converted to the sensor platform frame:
 \begin{equation}
-^P \Delta_{2/1} 	\dot{\bm{r}}_{S/N} = [PB] ^B \Delta_{2/1} 	\dot{\bm{r}}_{S/N}
+\leftexp{P} {\Delta_{2/1}} 	\dot{\bm{r}}_{S/N} = [PB] ^{\mathcal{B}} \Delta_{2/1} 	\dot{\bm{r}}_{S/N}
 \end{equation}
 This, the change in velocity sensed by the IMU between IMU calls in platform frame coordinates, is the change in velocity output from the model.
-
-Finally, it should be noted that the values for body frame acceleration and angular acceleration are linear estimates made by the spacecraftPlus module. This is done by dividing the values of change in velocity and change in angular velocity (respectively) by the time step over which spacecraftPlus is integrating. The before and after values of velocity and angular velocity are before and after the most recent spacecraftPlus integration. While not precisely the current spacecraft acceleration (or angular acceleration), this is the most accurate data available without running the dynamics integration an extra time, which would be computationally costly.
 
 \subsubsection{Error Modeling}
 The state which the simulation records for the spacecraft prior to sending that state to the IMU module is considered to be "truth". So, to simulate the errors found in real instrumentation, errors are added to the "truth" values for any measurement, $\mathbf{m}_{\mathrm{truth}}$, that the IMU deals with.
@@ -103,7 +102,7 @@ Where $\lfloor$  $\rfloor$ indicate the \textbf{floor()} function and LSB can be
 Real sensors can also become saturated. This is modeled simply by comparing $\mathbf{m}_{\mathrm{discretized}}$ to the high and low saturation values for the sensor:
 
 \begin{equation}
-\mathbf{m}_{\mathrm{saturated}} = max\Big(\mathbf{m}_{\mathrm{sat,min}},\big(min(\mathbf{m}_{\mathrm{discretized}},\mathbf{m}_{\mathrm{sat,max}})\big)\Big)
+\mathbf{m}_{\mathrm{saturated}} = \mathrm{max}\Big(\mathbf{m}_{\mathrm{sat,min}},\big(\mathrm{min}(\mathbf{m}_{\mathrm{discretized}},\mathbf{m}_{\mathrm{sat,max}})\big)\Big)
 \end{equation}
 
 \noindent Note that this is actually only computed if $\mathbf{m}_{\mathrm{discretized}}$ proves to be outside of its saturation bounds.
