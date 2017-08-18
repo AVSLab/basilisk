@@ -65,7 +65,7 @@ import orbitalMotion
 # import simulation related support
 import spacecraftPlus
 import ExtForceTorque
-import simIncludeGravity
+import simIncludeGravBody
 import simple_nav
 
 # import FSW Algorithm related support
@@ -273,7 +273,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     fswProcess.addTask(scSim.CreateNewTask(fswTaskName, fswTimeStep))
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # unitTestSupport.enableVisualization(scSim, dynProcess)
+    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')  # The Viz only support 'earth', 'mars', or 'sun'
 
 
     #
@@ -297,15 +297,15 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     scSim.AddModelToTask(dynTaskName, scObject)
 
     # clear prior gravitational body and SPICE setup definitions
-    simIncludeGravity.clearSetup()
+    gravFactory = simIncludeGravBody.gravBodyFactory()
 
     # setup Earth Gravity Body
-    simIncludeGravity.addEarth()
-    simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
-    mu = simIncludeGravity.gravBodyList[-1].mu
+    earth = gravFactory.createEarth()
+    earth.isCentralBody = True  # ensure this is the central gravitational body
+    mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
 
     # setup extForceTorque module
@@ -382,13 +382,9 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
 
 
     #
-    # create dynamics simulation messages
-    #
-    simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, dynProcessName)
-
-    #
     # create FSW simulation messages
     #
+    gravFactory.addDefaultEphemerisMsg(scSim.TotalSim, dynProcessName)
 
     # create the FSW vehicle configuration message
     vehicleConfigOut = fswMessages.VehicleConfigFswMsg()

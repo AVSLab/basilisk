@@ -6,9 +6,40 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 ## In Progress Features
 * new Python packaging of the Basilisk modules
 * ability to integrate custom Basilisk modules that are kept outside of the core Basilisk folder
+* new CSS based sun-heading estimation modules
 * more integrated BSK scenarios and tutorials
 * GPU based methods to evaluate solar radiation pressure forces and torques
 * atmospheric drag evaluation using multi-faceted spacecraft model
+* new multi-threaded Monte-Carlo simulation capability that takes advantage of multi-core processors
+
+## Version 0.1.5
+<ul>
+    <li>
+        Lots of new module documentation which includes a discussion of what is being modeled, the validation tests, as well as a user guide to the module.  The new documentation includes:
+        <ul>
+            <li>Thruster `DynEffector` module</li>
+            <li>ephemeris conversion module</li>
+            <li>Coarse Sun Sensor module</li>
+            <li>Updated BSK module template documentation</li>            
+            <li>Updated documentation for IMU Sensor module</li>            
+            <li>Gravity Effector module</li>            
+            <li>SimpleNav Sensor module</li>            
+            <li>Hinged Panel `StateEffector` module</li>            
+        </ul>
+    </li>
+    <li>New tutorial scripts on
+        <ul>
+            <li>using CSS modules</li>
+            <li>using fuel tank module and the fuel slosh particle `StateEffector`</li>
+            <li>How to use `MRP_Steering()` along with the rate tracking sub-servo module</li>
+        </ul>
+    </li>
+    <li>The CSS modules now use the planetary shadow message information to simulated being in a planet's shadow</li>
+    <li>SRP DynEffector modules now simulates the impact of being in a planets shadow</li>
+    <li>Included a method to validate all the AVS C-Function libraries like `rigidBodyKinematics`, `linearAlgebra` and `orbitalMotion` when the Basilisk `pytest` command is called.  There is also some documentation on using these libraries in `/SimCode/utilitiesSelfCheck/_Documentation` </li>
+    <li>Updated the RW and gravitational body (i.e. adding Earth, sun, etc. to the simulation) to use new factory classes.  If you did use the older `simIncludeRW.py` or `simIncludeGravity.py` libraries, you'll need to update your python code to work with the new factory classes.</li>
+</ul>
+
 
 ## Version 0.1.4
 <ul>

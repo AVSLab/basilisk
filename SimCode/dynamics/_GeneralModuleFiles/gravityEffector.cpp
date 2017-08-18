@@ -273,7 +273,7 @@ GravBodyData::GravBodyData()
     this->localPlanet.J2000Current = 0.0;
     v3SetZero(this->localPlanet.PositionVector);
     v3SetZero(this->localPlanet.VelocityVector);
-    m33SetZero(this->localPlanet.J20002Pfix);
+    m33SetIdentity(this->localPlanet.J20002Pfix);
     m33SetZero(this->localPlanet.J20002Pfix_dot);
 }
 

@@ -89,7 +89,7 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
 
 
 
-## \defgroup Tutorials_3_0
+## \defgroup Tutorials_4_0
 ##   @{
 ## Demonstrates how to add a Coarse Sun Sensor (CSS) sensor to a spacecraft.
 #
@@ -346,7 +346,7 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # unitTestSupport.enableVisualization(scSim, dynProcess)
+    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')  # The Viz only support 'earth', 'mars', or 'sun'
 
     #
     #   setup the simulation tasks/objects

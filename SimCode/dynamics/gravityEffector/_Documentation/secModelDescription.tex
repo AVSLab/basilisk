@@ -322,3 +322,10 @@ In order to avoid computing factorials, it is easy to see that
 \end{align}
 
 Using all these expressions, the potential and the gravity field can be computed.
+
+\subsubsection{Simple Gravity}
+"Simple Gravity", or gravitational potential and acceleration without taking spherical harmonics into account, is equivalent to using only the $0\sup{th}$ term of the spherical harmonics equations. This is the equation that is used in basics physics courses and is most often used in Basilisk simulations. It assumes the gravitational body to be a point mass:
+
+\begin{equation}
+U(\mathbf{\bar r}) = G \frac{ m_\text{Q}}{\rho_\text{Q}}
+\end{equation}
