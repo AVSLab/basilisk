@@ -122,7 +122,10 @@ myRetainedData = {
         "inertial_state_output.r_BN_N": range(3),
         "inertial_state_output.v_BN_N": range(3)
     },
-    "variables": {}
+    "variables": [
+        # "messageName1",
+        # "messageName2"
+    ]
 }
 
 

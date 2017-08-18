@@ -75,9 +75,10 @@ class Controller:
                     "messages": {
                         "messageName": [value1,value2,value3]
                     },
-                    "variables": {
-                        "variableName": [value1,value2,value3]
-                    }
+                    "variables": [
+                        "variableName1",
+                        "variableName2"
+                    ]
                 }
         """
         self.simParams.retentionParameters = retentionParameters
@@ -493,8 +494,8 @@ class SimulationExecutor():
 
         if "variables" in retentionParameters:
             data["variables"] = {}
-            for variable, dataType in retentionParameters["variables"].items():
+            for variable in retentionParameters["variables"]:
                 # TODO how to pull variable
-                data["variables"][variable] = simInstance.pullMessageLogData(variable, dataType)
+                data["variables"][variable] = simInstance.GetLogVariableData(variable)
 
         return data
