@@ -169,7 +169,7 @@ class Controller:
             return data
 
     def getRetainedDatas(self, cases):
-        """ Get the data that was retained for a run, or list of runs.
+        """ Get the data that was retained for a list of runs.
         Args:
             cases: int[] The desired cases to get data from.
         Returns:
@@ -298,12 +298,12 @@ class Controller:
         simulationExecutor = SimulationExecutor()
 
         try:
-            for result in pool.imap(simulationExecutor, simGenerator): # yields results *as* the workers finish jobs(ish)
-                #note if job 6 finishes before job 5, wait to yield until job 5 is finished.
-                if result != True:  # workers return True on success
-                    failed.append(jobsFinished) # add failed jobs to the list of failures
-                jobsFinished += 1
+            for result in pool.imap_unordered(simulationExecutor, simGenerator): # yields results *as* the workers finish jobs
+                if result[0] != True:  # workers return True on success
+                    failed.append(result[1]) # add failed jobs to the list of failures
+                    print "Job", result[1], "failed..."
 
+                jobsFinished += 1
                 if self.simParams.verbose:
                     if jobsFinished % max(1, numSims / 20) == 0:  # print percentage after every ~5%
                         print "Finished", jobsFinished, "/", numSims, \
@@ -376,13 +376,16 @@ class SimulationExecutor():
                 The simulation parameters for the simulation to be executed.
         Returns:
             success: bool
-                True if simulation run was successful
+                (True, simParams.index) if simulation run was successful
+                (False, simParams.index) if simulation run was unsuccessful
         '''
-        # must make new random seed on each new thread.
-        np.random.seed(simParams.index * 10)
-        random.seed(simParams.index * 10)
+
         try:
             signal.signal(signal.SIGINT, signal.SIG_IGN) # On ctrl-c ignore the signal... let the parent deal with it.
+
+            # must make new random seed on each new thread.
+            np.random.seed(simParams.index * 10)
+            random.seed(simParams.index * 10)
 
             # create the users sim by calling their supplied creationFunction
             simInstance = simParams.creationFunction()
@@ -431,11 +434,11 @@ class SimulationExecutor():
             if simParams.verbose:
                 print "Thread", os.getpid(), "Job", simParams.index, "finished successfully"
 
-            return True  # this function returns true only if the simulation was successful
+            return (True, simParams.index)  # this function returns true only if the simulation was successful
 
         except Exception as e:
             print "Error in worker thread", e
-            return False  # there was an error
+            return (False, simParams.index)  # there was an error
 
     @staticmethod
     def disperseSeeds(simInstance):
@@ -491,6 +494,7 @@ class SimulationExecutor():
         if "variables" in retentionParameters:
             data["variables"] = {}
             for variable, dataType in retentionParameters["variables"].items():
-                data["variables"][variable] = simInstance.pullMessageLogData("inertial_state_output.v_BN_N", range(3))
+                # TODO how to pull variable
+                data["variables"][variable] = simInstance.pullMessageLogData(variable, dataType)
 
         return data
