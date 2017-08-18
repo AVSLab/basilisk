@@ -203,8 +203,7 @@ class SimBaseClass:
               {"TaskName": TaskName}
 
     def CreateNewProcess(self, procName, priority = -1):
-        proc = simulationArchTypes.ProcessBaseClass(procName)
-        proc.processData.processPriority = priority
+        proc = simulationArchTypes.ProcessBaseClass(procName, priority)
         self.procList.append(proc)
         self.TotalSim.addNewProcess(proc.processData)
         return proc

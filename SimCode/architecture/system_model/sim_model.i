@@ -56,6 +56,8 @@ namespace std {
    %template(modelPriPair) std::vector<ModelPriorityPair>;
    %template(interfaceVector) std::vector<SysInterface*>;
    %template(interfaceSingVector) std::vector<InterfaceDataExchange *>;
+   %template(procSchedList) std::vector<ModelScheduleEntry>;
+   %template(simProcList) std::vector<SysProcess *>;
 }
 
 %inline %{
