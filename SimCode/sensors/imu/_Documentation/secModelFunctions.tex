@@ -7,7 +7,7 @@ The mathematical description of the IMU are implemented in imu\_sensor.cpp. This
 	\item \textbf{Discretization}: The code discretizes the signal to emulate real digital instrumentation. The least significant bit (LSB) can be set by the user.
 	\item \textbf{Saturation}: The code bounds the output signal according to user-specified maximum and minimum saturation values.
 	\item \textbf{Accelerometer Center of Mass Offset}: The code can handle accelerometer placement other than the center of mass of the spacecraft.
-	\item \textbf{IMU Misalignment}: The code can handle IMU placement in a frame with constant rotational offset from assumed IMU orientation.
+%	\item \textbf{IMU Misalignment}: The code can handle IMU placement in a frame with constant angular offset from assumed IMU orientation.
 	\item \textbf{Bias Random Walk Bounds}: The code bounds bias random walk per user-specified bounds.
 	\item \textbf{Interface: Spacecraft States}: The code sends and receives spacecraft state information via the Basilisk messaging system.
 	\item \textbf{Interface: Spacecraft Mass}: The code receives spacecraft mass information via the Basilisk messaging system.
