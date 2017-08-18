@@ -1,0 +1,21 @@
+\section{Model Functions}
+The mathematical description of gravity effects are implemented in gravityEffector.cpp. This code performs the following primary functions
+\begin{itemize}
+	\item \textbf{GravBody Creation}: The code creates gravity bodies which are capable of affecting spacecraft. It does not effect a spacecraft unless that spacecraft explicitly adds the body as a gravity effector.
+	\item \textbf{Orbital Energy}: The code can calculate the total orbital energy as well as orbital kinetic and orbital potential energy of a spacecraft about a gravity body.
+	\item \textbf{Simple Gravity}: The code can compute a gravity acceleration between two bodies according to Newton's law of universal gravitation given $\mu$ and the distance between the bodies.
+	\item \textbf{Spherical Harmonics}: The code can compute gravity acceleration between two bodies using the more-complex method of spherical harmonics. To do this, it must be provided with the same inputs as for calculating simple gravity. In addition, it needs to be provided a "degree" of spherical harmonics to be used and spherical harmonics coefficients useful up to that degree.
+	\item \textbf{Multiple Body Effects}: The code can stack the effects of multiple gravity bodies on top of each other to determine the net effect on a spacecraft. The user must indicate in the spacecraft set-up which gravitational bodies should be taken into account.
+	\item \textbf{Interface: Spacecraft States}: The code sends and receives spacecraft state information via the DynParamManager.
+	\item \textbf{Interface: Energy Contributions}: The code sends spacecraft energy contributions via \\updateEnergyContributions() which is called by the spacecraft.
+	\item \textbf{Interface: GravBody States}: The code outputs GravBody states(ephemeris information) via the Basilisk messaging system.
+	
+\end{itemize}
+
+\section{Model Assumptions and Limitations}
+The limitations of spherical harmonics gravity model are well-known and clearly explained in Schaub and Junkins' book\cite{schaub2014}. The limitations include:
+\begin{itemize}
+	\item \textbf{Coefficient Accuracy}: The coefficients used in the spherical harmonics equations are typically calculated based on gravitational data gathered by satellites. Therefore, the accuracy of the model is determined by the accuracy of the satellite instrumentation and precision of the stored data. Furthermore, for some bodies, there may not be sufficient information available to provide accurate coefficients or higher-degree coefficients.
+	\item \textbf{Maximum Degree}: The spherical harmonics equation is a series expansion. Therefore, any implementation must truncate the equation at some point. The truncated portion of the equation necessarily defines some amount of error in the final calculation. This error is, however, small after the first handful of terms. Additionally, a larger distance between gravity body and spacecraft requires fewer terms of the series to achieve equal accuracy as compared to a case with less distance. This code allows the user to request a maximum number of terms to evaluate rather than a specific accuracy. This could lead to less-than-desirable accuracy with small separation distances and greater-than-necessary run times with large separation distances.
+	\item \textbf{Planetary Ephemeris Data}: This code generally relies on an external package for planetary ephemeris information. Errors included in this package will translate into error in the gravity calculations, but those errors should be small. Because the ephemeris data is tabulated, this code should not be used to try to project the orbits of the celestial bodies in question. This could be done, though, by treating any celestial body as a "spacecraft".
+\end{itemize}

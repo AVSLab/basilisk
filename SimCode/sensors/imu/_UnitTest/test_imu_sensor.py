@@ -406,7 +406,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
          plt.ylabel('Acceleration (m/s)')
          plt.xlim((0,simStopTime))
          plt.ylim(-errorBoundsAccel[0]*1.15, errorBoundsAccel[0]*1.15)
-         unitTestSupport.writeFigureLaTeX('accelWalkBoundPlot', 'Module acceleromeer output for random walk bounds check', plt,
+         unitTestSupport.writeFigureLaTeX('accelWalkBoundPlot', 'Module accelerometer output for random walk bounds check', plt,
                                   'height=0.7\\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()

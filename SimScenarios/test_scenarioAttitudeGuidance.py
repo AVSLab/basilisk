@@ -63,7 +63,7 @@ import RigidBodyKinematics
 # import simulation related support
 import spacecraftPlus
 import ExtForceTorque
-import simIncludeGravity
+import simIncludeGravBody
 import simple_nav
 
 # import FSW Algorithm related support
@@ -144,17 +144,17 @@ def test_bskAttitudeGuidance(show_plots, useAltBodyFrame):
 #     attGuidanceWrap = scSim.setModelDataWrap(attGuidanceConfig)
 #     attGuidanceWrap.ModelTag = "hillPoint"
 #     attGuidanceConfig.inputNavDataName = sNavObject.outputTransName
-#     attGuidanceConfig.inputCelMessName = simIncludeGravity.gravBodyList[-1].bodyInMsgName
+#     attGuidanceConfig.inputCelMessName = earth.bodyInMsgName
 #     attGuidanceConfig.outputDataName = "guidanceOut"
 #     scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
 # ~~~~~~~~~~~~~
 #
-# In contrast to the simple inertial pointing guidance module, this modulel also requires the
-# spacecraft's position and velocity information.  The planet ephemerise message relative to which the Hill pointing
+# In contrast to the simple inertial pointing guidance module, this module also requires the
+# spacecraft's position and velocity information.  The planet ephemeris message relative to which the Hill pointing
 # is being achieved by setting the `inputCelMessName` message.
 # This is useful, for example, if orbiting the sun, and wanting to point the spacecraft back at the
-# Earth which is also orbiting the sun.  In this sceneario, however, the spacecraft is to point at the
-# Earth while already oribting the Earth.  Thus, this planet ephemeris input message is not set, which
+# Earth which is also orbiting the sun.  In this scenario, however, the spacecraft is to point at the
+# Earth while already orbiting the Earth.  Thus, this planet ephemeris input message is not set, which
 # in return zeros the planets position and velocity vector states in the guidance module.
 #
 #
@@ -193,7 +193,7 @@ def test_bskAttitudeGuidance(show_plots, useAltBodyFrame):
 #        )
 # ~~~~~~~~~~~~~
 # Here the control should not align the principal body frame *B* with *R*, but rather an alternate,
-# corrected body framce *Bc*.  For example, consider the Earth observing sensors to be mounted pointing in the
+# corrected body frame *Bc*.  For example, consider the Earth observing sensors to be mounted pointing in the
 # positive \f$\hat b_1\f$ direction. In scenario 1 this sensor platform is actually pointing away from
 # the Earth.  Thus, we define the corrected body frame orientation as a 180 deg rotation about
 # \f$\hat b_2\f$.  This flips the orientation of the final first and third body axis.  This is achieved
@@ -242,7 +242,7 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # unitTestSupport.enableVisualization(scSim, dynProcess)
+    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')  # The Viz only support 'earth', 'mars', or 'sun'
 
     #
     #   setup the simulation tasks/objects
@@ -265,15 +265,15 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     scSim.AddModelToTask(simTaskName, scObject)
 
     # clear prior gravitational body and SPICE setup definitions
-    simIncludeGravity.clearSetup()
+    gravFactory = simIncludeGravBody.gravBodyFactory()
 
     # setup Earth Gravity Body
-    simIncludeGravity.addEarth()
-    simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
-    mu = simIncludeGravity.gravBodyList[-1].mu
+    earth = gravFactory.createEarth()
+    earth.isCentralBody = True  # ensure this is the central gravitational body
+    mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
     #
     #   initialize Spacecraft States with initialization variables
@@ -320,7 +320,7 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     attGuidanceWrap = scSim.setModelDataWrap(attGuidanceConfig)
     attGuidanceWrap.ModelTag = "hillPoint"
     attGuidanceConfig.inputNavDataName = sNavObject.outputTransName
-    attGuidanceConfig.inputCelMessName = simIncludeGravity.gravBodyList[-1].bodyInMsgName
+    attGuidanceConfig.inputCelMessName = earth.bodyInMsgName
     attGuidanceConfig.outputDataName = "guidanceOut"
     scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
 
@@ -366,8 +366,7 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     #
     # create simulation messages
     #
-    simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
-
+    gravFactory.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 
     # create the FSW vehicle configuration message
     vehicleConfigOut = fswMessages.VehicleConfigFswMsg()

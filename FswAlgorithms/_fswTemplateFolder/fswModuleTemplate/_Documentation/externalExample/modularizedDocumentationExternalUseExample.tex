@@ -5,37 +5,62 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[]{BasiliskReportMemo}
+
+\usepackage{cite}
+\usepackage{AVS}
+\usepackage{float} %use [H] to keep tables where you put them
+\usepackage{array} %easy control of text in tables
+\usepackage{import} %allows for importing from multiple sub-directories
+\bibliographystyle{plain}
 
 
-\input{../example/sec_header.tex} %include packages, styles, and new commands in this file.
+\newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
+
+
+\newcommand{\ModuleName}{SphericalHarmonics}
+\newcommand{\subject}{Spherical Harmonics C++ model}
+\newcommand{\status}{Tested}
+\newcommand{\preparer}{S. Carnahan}
+\newcommand{\summary}{The gravity effector module is responsible for calculating the effects of gravity from a body on a spacecraft. A spherical harmonics model and implementation is developed and described. A unit test has been written and run which test basic input/output, single-body gravitational acceleration, and multi-body gravitational acceleration.}
 
 \begin{document}
-
-\makeCover
-
-%\input{../example/sec_revisionTable.tex} %when you update the file, update the revision table.
-\subimport{../example/}{sec_revisionTable.tex}
-
-\newpage
-\setcounter{page}{1}
-\pagestyle{fancy}
-
-\tableofcontents %Autogenerate the table of contents
-~\\ \hrule ~\\ %Makes the line under table of contents
 	
-\subimport{../example/}{sec_modelDescription.tex} %This section includes mathematical models, code description, etc.
+	\makeCover
+	
+	%
+	%	enter the revision documentation here
+	%	to add more lines, copy the table entry and the \hline, and paste after the current entry.
+	%
+	\pagestyle{empty}
+	{\renewcommand{\arraystretch}{2}
+		\noindent
+		\begin{longtable}{|p{0.5in}|p{4.5in}|p{1.14in}|}
+			\hline
+			{\bfseries Rev}: & {\bfseries Change Description} & {\bfseries By} \\
+			\hline
+			1.0 & First version - Mathematical formulation and implementation & M. Diaz Ramos \\
+			\hline
+			1.1 & Added test documentation & S. Carnahan \\
+			\hline
+			
+		\end{longtable}
+	}
+	
+	\newpage
+	\setcounter{page}{1}
+	\pagestyle{fancy}
+	
+	\tableofcontents %Autogenerate the table of contents
+	~\\ \hrule ~\\ %Makes the line under table of contents
+	
+\subimport{../example/}{secModelDescription.tex} %This section includes mathematical models, code description, etc.
 
-\subimport{../example/}{sec_modelFunctions.tex} %This includes a concise list of what the module does.
+\subimport{../example/}{secModelFunctions.tex} %This includes a concise list of what the module does.
 
-\subimport{../example/}{sec_modelAssumptionsLimitations.tex} %This explains the assumptions made to reach the final mathematical implementation of the model and how those assumptions limit the model's usefulness.
+\subimport{../example/}{secTest.tex} %This explains the unit test for the model. I.e. what features are tested and how. It may also include test tolerances, etc.
 
-\subimport{../example/}{sec_testDescription.tex} %This explains the unit test for the model. I.e. what features are tested and how. It may also include test tolerances, etc.
-
-\subimport{../example/}{sec_testParameters.tex}
-
-\subimport{../example/}{sec_testResults.tex} %This displays the test results. This includes both pass/fail statements as well as visual outputs via AutoTeX
-
-\subimport{../example/}{sec_user_guide.tex} %This section is to provide advice to users on necessary/useful inputs and best practices.
+\subimport{../example/}{secUserGuide.tex} %This section is to provide advice to users on necessary/useful inputs and best practices.
 
 \bibliography{../example/bibliography.bib} %This includes references used and mentioned.
 

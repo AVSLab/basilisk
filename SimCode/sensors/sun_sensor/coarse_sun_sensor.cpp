@@ -29,7 +29,6 @@
 CoarseSunSensor::CoarseSunSensor()
 {
     this->CallCounts = 0;
-    this->MessagesLinked = false;
     this->InputSunID = -1;
     this->InputStateID = -1;
     this->sunEclipseInMsgId = -1;
@@ -40,9 +39,7 @@ CoarseSunSensor::CoarseSunSensor()
     this->SenNoiseStd = 0.0;
     
     this->faultState = MAX_CSSFAULT;
-    this->stuckPercent = 0.0;
     v3SetZero(this->nHat_B);
-    v3SetZero(this->horizonPlane);
     this->directValue = 0.0;
     this->albedoValue = 0.0;
     this->scaleFactor = 1.0;
@@ -57,7 +54,7 @@ CoarseSunSensor::CoarseSunSensor()
     this->setUnitDirectionVectorWithPerturbation(0, 0);
     this->OutputBufferCount = 2;
     this->sunVisibilityFactor.shadowFactor = 1.0;
-    
+    m33SetIdentity(this->dcm_PB);    
     return;
 }
 
@@ -227,7 +224,11 @@ void CoarseSunSensor::applySensorErrors()
     //! - Get current error from random number generator
     double CurrentError = rnum(this->rgen);
     //! - Apply the kelly fit to the truth direct value
-    double KellyFit = 1.0 - exp(-this->directValue * this->directValue/this->KellyFactor);
+    double KellyFit = 1.0;
+    if (this->KellyFactor > 0.0000000000001) {
+        KellyFit -= exp(-this->directValue * this->directValue/this->KellyFactor);
+    }
+
     //! - Sensed value is total illuminance with a kelly fit + noise
     this->sensedValue = (this->directValue + this->albedoValue)*KellyFit + CurrentError;
     

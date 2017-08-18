@@ -72,14 +72,12 @@ public:
     std::string OutputDataMsg;                  //!< [-] Message name for CSS output data */
     std::string sunEclipseInMsgName;            //!< [-] Message name for sun eclipse state message
     CSSFaultState_t     faultState;             //!< [-] Specification used if state is set to COMPONENT_FAULT */
-    double              stuckPercent;           //!< [%] percent of full value the CSS will remain stuck at if a fault is triggered
     double              theta;                  //!< [rad] css azimuth angle, measured positive from the body +x axis around the +z axis
     double              phi;                    //!< [rad] css elevation angle, measured positive toward the body +z axis from the x-y plane
     double              B2P321Angles[3];        //!< [-] 321 Euler anhles for body to platform
     double              dcm_PB[3][3];           //!< [-] DCM from platform frame P to body frame B
     double              nHat_B[3];              //!< [-] css unit direction vector in body frame components
     double              sHat_B[3];              //!< [-] unit vector to sun in B
-    double              horizonPlane[3];        //!< [-] unit direction vector defining horizon cut off plane of CSS
     double              directValue;            //!< [-] direct solar irradiance measurement
     double              albedoValue;            //!< [-] albedo irradiance measurement
     double              scaleFactor;            //!< [-] scale factor applied to sensor (common + individual multipliers)
@@ -88,7 +86,6 @@ public:
     double              KellyFactor;            //!< [-] Kelly curve fit for output cosine curve
     double              fov;                    //!< [-] rad, field of view half angle
     double              r_B[3];
-    bool                MessagesLinked;         //!< [-] Indicator for whether inputs bound
     double              SenBias;                //!< [-] Sensor bias value
     double              SenNoiseStd;            //!< [-] Sensor noise value
     uint64_t            OutputBufferCount;      //!< [-] number of output msgs stored

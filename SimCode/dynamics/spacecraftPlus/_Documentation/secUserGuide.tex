@@ -1,0 +1,34 @@
+%!TEX root = ./Basilisk-SPACECRAFTPLUS-20170808.tex
+
+\section{User Guide}
+
+This section is to outline the steps needed to setup a spacecraft in python using Basilisk.
+
+\begin{enumerate}
+	\item Import the spacecraftPlus class: 
+	\begin{verbatim}
+	import spacecraftPlus
+	\end{verbatim}
+	\item Create an instantiation of a spacecraft: 
+	\begin{verbatim}
+		scObject = spacecraftPlus.SpacecraftPlus()
+	\end{verbatim}
+	\item Define all physical parameters for the hub. For example: 
+	\begin{verbatim}
+		scObject.hub.IHubPntBc_B = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+	\end{verbatim}
+	Do this for all of the parameters for a hub: 
+	\begin{verbatim}
+	scObject.hub.mHub, scObject.hub.r_BcB_B, scObject.hub.IHubPntBc_B,
+	\end{verbatim}
+	seen in the spacecraft Parameters Table. If you only have translation, you only need to specify the mass (if you only have conservative forces acting on the spacecraft then you don't even need to specify a mass). If you only have rotation, you only need to specify the inertia, and if you have both, you need to specify the mass, the inertia and if you have a offset between the center of mass of the spacecraft and point $B$.
+	\item Define the initial conditions of the states: 
+	\begin{verbatim}
+		scObject.hub.r_CN_NInit,  scObject.hub.v_CN_NInit, scObject.hub.sigma_BNInit, 
+		scObject.hub.omega_BN_BInit
+		\end{verbatim}
+	\item Finally, add the spacecraft to the task: 
+	\begin{verbatim}
+	unitTestSim.AddModelToTask(unitTaskName, scObject)
+	\end{verbatim}
+\end{enumerate}
