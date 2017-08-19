@@ -504,7 +504,6 @@ def run(doUnitTests, show_plots, simCase):
     #
     # create simulation messages
     #
-    gravFactory.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 
     # create the FSW vehicle configuration message
     vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
