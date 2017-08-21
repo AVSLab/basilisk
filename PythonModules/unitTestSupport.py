@@ -228,6 +228,23 @@ def isDoubleEqual(result, truth, accuracy):
     return 1        # return 1 to indicate the doubles are equal
 
 #
+#   function to check if a double equals a truth value with relative tolerance
+#
+def isDoubleEqualRelative(result, truth, accuracy):
+    if foundNAN(result): return 0
+    if foundNAN(truth): return 0
+    if foundNAN(accuracy): return 0
+    if truth == 0:
+        print "truth is zero, cannot compare"
+        return 0
+
+    # the result array is of dimension dim+1, as the first entry is the time stamp
+    if (math.fabs((truth - result)/truth) > accuracy):
+        return 0    # return 0 to indicate the doubles are not equal
+
+    return 1        # return 1 to indicate the doubles are equal
+
+#
 #   Compare two arrays of doubles for size and values and check absolute accuracy
 #
 def compareDoubleArray(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
