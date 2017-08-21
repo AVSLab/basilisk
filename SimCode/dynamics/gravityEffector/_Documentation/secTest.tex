@@ -10,7 +10,7 @@ This test verifies, via three checks, that the model is appropriately initialize
 		\end{itemize}
 \subsection{Independent Spherical Harmonics Check} This test compares the Basilisk gravity module spherical harmonics acceleration output to an independently formulated python solution. Gravity is measured at an arbitrary point. Note that the independent solution has singularities at the poles that lead to minor divergences in total acceleration.
 \subsection{Single-Body Gravity Calculations} This test compares calculated gravity values around the Earth with ephemeris data from the Hubble telescope. The simulation begins shortly after 0200 UTC May 1, 2012 and carries on for two hours, evaluating the gravitational acceleration at two  second intervals.
-\subsection{Multi-Body Gravity Calculations} This test includes gravity effects from Earth, Mars, Jupiter, and the Sun. Calculations are verified by comparing against ephemeris data from the DAWN mission. The simulation begins at midnight, October 24th, 2008 and carries on for just under 22 minutes, evaluating the gravitational acceleration at two second intervals.
+\subsection{Multi-Body Gravity Calculations} This test checks whether gravity from multiple sources is correctly stacked when applied to a spacecraft. First, a planet is placed in space near a spacecraft. Second, a planet with half the mass of the first is placed the same distance from the spacecraft but in the opposite direction. The gravitational acceleration along that axis is seen to be cut in half for the spacecraft. Finally, a third planet identical to the second is added coincident with the second and the net gravitational acceleration on the spacecraft is seen to be zero. 
 
 \section{Test Parameters}
 
