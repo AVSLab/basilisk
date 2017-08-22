@@ -17,18 +17,20 @@ This test verifies, via three checks, that the model is appropriately initialize
 This section summarizes the  specific error tolerances for each test. Error tolerances are determined based on whether the test results comparison should be exact or approximate due to integration or other reasons. Error tolerances for each test are summarized in table \ref{tab:errortol}. \\
 
 \begin{table}[htbp]
-	\caption{Error tolerance for each test.}
+	\caption{Error tolerance for each test. Note that relative tolerance = $\frac{truth - result}{truth}$}
 	\label{tab:errortol}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c } % Column formatting, 
+	\begin{tabular}{ c |  l } % Column formatting, 
 		\hline
-		\textbf{Test}   							    & \textbf{Tolerated Error} 						  \\ \hline
-		Setup Test                           			 & \input{AutoTex/sphericalHarmonicsAccuracy}		   \\ 
-		Independent Spherical Harmonics Check  & \input{AutoTex/independentCheckAccuracy}		   \\ 
-		Single-Body Gravity						   & \input{AutoTex/singleBodyAccuracy}														   \\ 
-		Multi-Body Gravity 						   & \input{AutoTex/multiBodyAccuracy}	 		       \\ \hline
+		\textbf{Test}   							    & \textbf{Tolerance} 						  \\ \hline
+		Setup Test                           			 & \input{AutoTex/sphericalHarmonicsAccuracy}	(Absolute)	   \\ 
+		Independent Spherical Harmonics Check  & \input{AutoTex/independentCheckAccuracy}	(Relative)	   \\ 
+		Single-Body Gravity						   & \input{AutoTex/singleBodyAccuracy}						(Relative)								   \\ 
+		Multi-Body Gravity 						   & \input{AutoTex/multiBodyAccuracy}	 (Relative for first check, absolute for second)		       \\ \hline
 	\end{tabular}
 \end{table}
+
+The Setup Test has a large tolerance, which is acceptable because it is not trying to test exact values but only reasonableness. The Independent Spherical Harmonics check has tight tolerances because the results should be nearly identical for two different formulations of the same mathematics. Single Body Gravity also has relatively large tolerances because it is just trying to roughly match experimental data, but not all real effects are included in the model. Finally, the Multi-Body Gravity test has tight tolerances because it is set up in such a way that the results should be exact down to machine precision.
 
 \section{Test Results}
 
