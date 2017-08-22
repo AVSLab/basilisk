@@ -162,7 +162,7 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 # scSim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
 # scSim.panel1.d = 1.5
 # scSim.panel1.k = 1000.0
-# scSim.panel1.c = 0.0
+# scSim.panel1.c = 0.0 #c is the rotational damping coefficient for the hinge, which is modeled as a spring.
 # scSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
 # scSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
 # scSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
@@ -176,7 +176,7 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 # scSim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
 # scSim.panel2.d = 1.5
 # scSim.panel2.k = 1000.
-# scSim.panel2.c = 0.0
+# scSim.panel2.c = 0.0 #c is the rotational damping coefficient for the hinge, which is modeled as a spring.
 # scSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
 # scSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 # scSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
@@ -356,7 +356,7 @@ def run(doUnitTests, show_plots):
     scSim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     scSim.panel1.d = 1.5
     scSim.panel1.k = 1000.0
-    scSim.panel1.c = 0.0
+    scSim.panel1.c = 0.0 #c is the rotational damping coefficient for the hinge, which is modeled as a spring.
     scSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
     scSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
     scSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
@@ -370,7 +370,7 @@ def run(doUnitTests, show_plots):
     scSim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     scSim.panel2.d = 1.5
     scSim.panel2.k = 1000.
-    scSim.panel2.c = 0.0
+    scSim.panel2.c = 0.0 #c is the rotational damping coefficient for the hinge, which is modeled as a spring.
     scSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
     scSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     scSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
