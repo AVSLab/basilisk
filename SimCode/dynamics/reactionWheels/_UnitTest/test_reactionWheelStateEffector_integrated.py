@@ -77,9 +77,11 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.0001)  # update process rate update time
+    stepSize = 0.0001
+    testProcessRate = macros.sec2nano(stepSize)  # update process rate update time
     if testCase == 'BOE':
-        testProcessRate = macros.sec2nano(0.1)
+        stepSize = 0.1
+        testProcessRate = macros.sec2nano(stepSize)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -123,10 +125,11 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
                 ,RWModel= varRWModel
                 )
     if testCase == 'BOE':
+        initialWheelSpeed = 100.
         rwFactory.create(
                 'Honeywell_HR16'
                 ,[0,0,1]                # gsHat_B
-                ,Omega = 100.           # RPM
+                ,Omega = initialWheelSpeed           # RPM
                 ,rWB_B = [0.0,0.,0.]    # m
                 ,maxMomentum = varMaxMomentum
                 ,RWModel= varRWModel
@@ -153,8 +156,8 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
                                cmdArray)
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, rwStateEffector)
     unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unitTestSim.AddModelToTask(unitTaskName, rwStateEffector)
 
     if testCase == 'BalancedWheels' or testCase == 'JitterSimple' or testCase == 'JitterFullyCoupled':
         unitTestSim.earthGravBody = gravityEffector.GravBodyData()
@@ -180,8 +183,11 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
         scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     if testCase == 'BOE':
+        wheelSpeedMax = 6000.0*macros.RPM
+        wheelJs = varMaxMomentum/wheelSpeedMax
         scObject.hub.mHub = 5.0
-        scObject.hub.IHubPntBc_B = [[10., 0.0, 0.0], [0.0, 10., 0.0], [0.0, 0.0, 10.]]
+        I1Hub = 2.0
+        scObject.hub.IHubPntBc_B = [[2., 0.0, 0.0], [0.0, 2., 0.0], [0.0, 0.0, I1Hub + wheelJs]]
         scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
         scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.3]]
         scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
@@ -203,7 +209,8 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     if testCase == 'BalancedWheels' or testCase == 'JitterSimple' or testCase == 'JitterFullyCoupled':
         cmdArray.motorTorque = [0.0, 0.0, 0.0] # [Nm]
     if testCase == 'BOE':
-        cmdArray.motorTorque = [10.0]
+        motorTorque = 0.2
+        cmdArray.motorTorque = [motorTorque]
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
                                rwCommandName,
@@ -220,6 +227,25 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     posData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
     sigmaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN',range(3))
     omegaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.omega_BN_B',range(3))
+    if testCase == 'BOE':
+        wheelSpeeds = unitTestSim.pullMessageLogData(rwStateEffector.OutputDataString+".wheelSpeeds", range(2))
+        thetaOut = 4.0*np.arctan(sigmaData[:,3])
+        # Find BOE calculations
+        timeBOE = np.array([2.0, 4.0, 6.0, 8.0, 10.0])
+        timeTorqueOn = 5.1
+        omegaBOE = np.zeros(5)
+        thetaBOE = np.zeros(5)
+        wheelSpeedBOE = np.zeros(5)
+        for i in range(5):
+            if timeBOE[i] > timeTorqueOn:
+                omegaBOE[i] = scObject.hub.omega_BN_BInit[2][0] - motorTorque/I1Hub*(timeBOE[i]-timeTorqueOn)
+                thetaBOE[i] = scObject.hub.omega_BN_BInit[2][0]*(timeBOE[i]-timeTorqueOn) - 0.5*motorTorque/I1Hub*(timeBOE[i]-timeTorqueOn)**2 + scObject.hub.omega_BN_BInit[2][0]*(timeTorqueOn)
+                wheelSpeedBOE[i] = initialWheelSpeed*macros.RPM + (I1Hub + wheelJs)*motorTorque/(I1Hub*wheelJs)*(timeBOE[i]-timeTorqueOn)
+            else:
+                omegaBOE[i] = scObject.hub.omega_BN_BInit[2][0]
+                wheelSpeedBOE[i] = initialWheelSpeed*macros.RPM
+                thetaBOE[i] = scObject.hub.omega_BN_BInit[2][0]*(timeBOE[i])
+
 
     dataPos = posData[-1]
     dataSigma = sigmaData[-1]
@@ -230,7 +256,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
                     ]
 
         trueSigma = [
-                    [1.99853994e-02,   2.45647716e-03,   8.45356279e-06]
+                    [1.99853966e-02,   2.45647541e-03,   8.45766376e-06]
                     ]
 
     elif testCase == 'JitterSimple':
@@ -239,7 +265,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
                     ]
 
         trueSigma = [
-                    [1.98964221e-02,   2.24474932e-03,  -5.66618270e-05]
+                    [1.98964193e-02,   2.24474684e-03,  -5.66583732e-05]
                     ]
 
     elif testCase == 'JitterFullyCoupled':
@@ -248,7 +274,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
                     ]
 
         trueSigma = [
-                    [1.98982396e-02,   2.24454835e-03,  -5.54311143e-05]
+                    [1.98982369e-02,   2.24454620e-03,  -5.54270195e-05]
                     ]
 
     initialOrbAngMom_N = [
@@ -276,7 +302,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
                  ]
 
     initialRotEnergy = [
-                [rotEnergy[int(len(rotEnergy)/2),1]]
+                [rotEnergy[int(len(rotEnergy)/2)+1,1]]
                 ]
 
     finalRotEnergy = [
@@ -305,7 +331,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase, "Change in Rotational Angular Momentum " + testCase, plt, "width=0.8\\textwidth", path)
         plt.figure()
         plt.clf()
-        plt.plot(rotEnergy[int(len(rotEnergy)/2):,0]*1e-9, (rotEnergy[int(len(rotEnergy)/2):,1] - rotEnergy[int(len(rotEnergy)/2),1])/rotEnergy[int(len(rotEnergy)/2),1])
+        plt.plot(rotEnergy[int(len(rotEnergy)/2)+1:,0]*1e-9, (rotEnergy[int(len(rotEnergy)/2)+1:,1] - rotEnergy[int(len(rotEnergy)/2)+1,1])/rotEnergy[int(len(rotEnergy)/2)+1,1])
         plt.xlabel("Time (s)")
         plt.ylabel("Relative Difference")
         unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, "width=0.8\\textwidth", path)
@@ -314,10 +340,30 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     if testCase == 'BOE':
         plt.figure()
         plt.clf()
-        plt.plot(omegaData[:,0]*1e-9, omegaData[:,3])
+        plt.plot(sigmaData[:,0]*1e-9, thetaOut, label = 'Basilisk')
+        plt.plot(timeBOE, thetaBOE, 'ro', label = 'BOE')
+        plt.legend(loc ='upper left',numpoints = 1)
         plt.xlabel("Time (s)")
-        plt.ylabel("Relative Difference")
-        unitTestSupport.writeFigureLaTeX("ReactionWheelBOE", "Reaction Wheel BOE", plt, "width=0.8\\textwidth", path)
+        plt.ylabel("Theta (rad)")
+        unitTestSupport.writeFigureLaTeX("ReactionWheelBOETheta", "Reaction Wheel BOE Theta", plt, "width=0.8\\textwidth", path)
+
+        plt.figure()
+        plt.clf()
+        plt.plot(omegaData[:,0]*1e-9, omegaData[:,3], label = 'Basilisk')
+        plt.plot(timeBOE, omegaBOE, 'ro', label = 'BOE')
+        plt.legend(loc ='upper left',numpoints = 1)
+        plt.xlabel("Time (s)")
+        plt.ylabel("Body Rate (rad/s)")
+        unitTestSupport.writeFigureLaTeX("ReactionWheelBOEBodyRate", "Reaction Wheel BOE Body Rate", plt, "width=0.8\\textwidth", path)
+
+        plt.figure()
+        plt.clf()
+        plt.plot(wheelSpeeds[:,0]*1e-9, wheelSpeeds[:,1], label = 'Basilisk')
+        plt.plot(timeBOE, wheelSpeedBOE, 'ro', label = 'BOE')
+        plt.legend(loc ='upper left',numpoints = 1)
+        plt.xlabel("Time (s)")
+        plt.ylabel("Wheel Speed (rad/s)")
+        unitTestSupport.writeFigureLaTeX("ReactionWheelBOERWRate", "Reaction Wheel BOE RW Rate", plt, "width=0.8\\textwidth", path)
         plt.show(show_plots)
 
     accuracy = 1e-7
@@ -360,6 +406,19 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
                 testFailCount += 1
                 testMessages.append("FAILED: Reaction Wheel Integrated Test failed rotational energy unit test")
 
+    accuracy = 1e-8
+    if testCase == 'BOE':
+        for i in range(5):
+            if abs((omegaBOE[i] - omegaData[int(timeBOE[i]/stepSize),3])/omegaBOE[i]) > accuracy:
+                testFailCount += 1
+                testMessages.append("FAILED: Reaction Wheel Integrated Test failed BOE body rates unit test")
+            if abs((thetaBOE[i] - thetaOut[int(timeBOE[i]/stepSize)])/thetaBOE[i]) > accuracy:
+                testFailCount += 1
+                testMessages.append("FAILED: Reaction Wheel Integrated Test failed BOE theta unit test")
+            if abs((wheelSpeedBOE[i] - wheelSpeeds[int(timeBOE[i]/stepSize),1])/wheelSpeedBOE[i]) > accuracy:
+                testFailCount += 1
+                testMessages.append("FAILED: Reaction Wheel Integrated Test failed BOE wheel speed unit test")
+
     if testFailCount == 0:
         print "PASSED: " + " Reaction Wheel Integrated Sim " + testCase
 
@@ -370,4 +429,4 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    reactionWheelIntegratedTest(True,False,'BOE')
+    reactionWheelIntegratedTest(True,False,'JitterFullyCoupled')
