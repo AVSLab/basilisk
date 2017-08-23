@@ -91,9 +91,9 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 # run and does not prove the functionality of any of the modules used.
 
 
-## \defgroup Tutorials_1_4
+## \defgroup Tutorials_3_1
 ##   @{
-## Illustration how to start and stop the simulation to perform orbit maneuvers within Python.
+## Demonstrates setting up hinged panels on a rigid spacecraft hub
 #
 # A Spacecraft with Hinged Rigid Bodies {#scenarioHingedRigidBody}
 # ====
@@ -101,7 +101,7 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 # Scenario Description
 # -----
 # This script sets up a 8-DOF spacecraft (3 translational, 3 rotational and 2 solar panel DOFs) which is orbiting Earth. It is nearly identical to the spacecraft
-# which is demonstrated in test_scenarioOrbitManeuver.py  The purpose
+# which is demonstrated in [test_scenarioOrbitManeuver.py](@ref scenarioOrbitManeuver).  The purpose
 # is to illustrate the use of the hinged rigid body module and illustrate the effects that a disturbance has on
 # hinged rigid body motion.  Read [test_scenarioOrbitManeuver.py](@ref scenarioOrbitManeuver) to learn how to setup a
 # basic spacecraft with impulsive Delta-v maneuvers. The scenario in this tutorial is similar to the  Hohmann
@@ -117,12 +117,12 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 #
 # The simulation layout is shown in the following illustration.  A single simulation process is created
 # which contains the spacecraft object and two hinged rigid bodies. It should be noted here that "hinged rigid bodies"
-# are rigid, rectangular bodies which are hinged to the spacecraft hub by a single axis and they can rotate only about
+# are rigid bodies which are hinged to the spacecraft hub by a single axis and they can rotate only about
 # that axis and cannot translate. Details and graphics of the hinged rigid body can be found in the hinged rigid body
 # documentation.
 #
 # The BSK simulation is run for a fixed period.  After stopping, the
-# ExtForceTorque module is given a non-zero external force value.
+# ExtForceTorque() module is given a non-zero external force value.
 # When the simulation completes 4 plots are shown.  One plot always shows
 # the inertial position vector components, while the second shows a plot
 # of the orbital radius time history. In addition, there is a plot for the angular
@@ -136,7 +136,7 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 # force.
 #
 # The first change necessary is in the import statements at the beginning of the test scenario. Now,
-# hingedRigidBodyStateEffector and ExtForceTorque must be imported.
+# hingedRigidBodyStateEffector() and ExtForceTorque() must be imported.
 #~~~~~~~~~~~~~~~~~{.py}
 # import hingedRigidBodyStateEffector
 # import ExtForceTorque
