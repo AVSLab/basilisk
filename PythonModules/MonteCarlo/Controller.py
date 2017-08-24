@@ -419,6 +419,8 @@ class SimulationExecutor():
             # apply the dispersions and the random seeds
             for variable, value in modifications.items():
                 disperseStatement = "simInstance." + variable + "=" + value
+                if simParams.verbose:
+                    print "Executing", disperseStatement
                 exec disperseStatement
 
             # execute the simulation, with the user-supplied executionFunction
