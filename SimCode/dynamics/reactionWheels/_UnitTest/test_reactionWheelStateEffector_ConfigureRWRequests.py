@@ -38,15 +38,8 @@ splitPath = path.split('Basilisk')
 sys.path.append(splitPath[0]+'/Basilisk/modules')
 sys.path.append(splitPath[0]+'/Basilisk/PythonModules')
 
-import MessagingAccess
-import SimulationBaseClass
-import unitTestSupport  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 import macros
 import reactionWheelStateEffector
-import sim_model
-import RigidBodyKinematics as rbk
-import spacecraftPlus
 
 # methods
 def listStack(vec,simStopTime,unitProcRate):
