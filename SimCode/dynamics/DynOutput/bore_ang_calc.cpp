@@ -147,10 +147,17 @@ void BoreAngCalc::computeAxisPoint()
 */
 void BoreAngCalc::computeOutputData()
 {
+    // Define epsilon that will avoid atan2 giving a NaN.
+    double eps = 1e-10;
     double baselinePoint[3] = {1.0, 0.0, 0.0};
-    double dotValue = v3Dot(boreVecPoint, baselinePoint);
-    boresightAng.missAngle = fabs(acos(dotValue));
-    boresightAng.azimuth = atan2(boreVecPoint[2], boreVecPoint[1]);
+    double dotValue = v3Dot(this->boreVecPoint, baselinePoint);
+    this->boresightAng.missAngle = fabs(acos(dotValue));
+    if(fabs(this->boreVecPoint[1]) < eps){
+        this->boresightAng.azimuth = 0.0;
+    }
+    else {
+        this->boresightAng.azimuth = atan2(this->boreVecPoint[2], this->boreVecPoint[1]);
+    }
 }
 
 /*! This method is the main carrier for the boresight calculation routine.  If it detects
