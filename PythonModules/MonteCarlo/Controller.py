@@ -279,8 +279,11 @@ class Controller:
             os.mkdir(self.archiveDir)
             if self.simParams.verbose:
                 print "Archiving a copy of this simulation before running it in 'MonteCarlo.data'"
-            with gzip.open(self.archiveDir + "MonteCarlo.data", "w") as pickleFile:
-                pickle.dump(self, pickleFile) # dump this controller object into a file.
+            try:
+                with gzip.open(self.archiveDir + "MonteCarlo.data", "w") as pickleFile:
+                    pickle.dump(self, pickleFile) # dump this controller object into a file.
+            except Exception as e:
+                print "Unknown exception while trying to pickle controller... \ncontinuing...\n\n", e
 
         numSims = self.executionCount
 
