@@ -367,3 +367,6 @@ class InertiaTensorDispersion:
                 val += ','
         val = val[0:] + ']'
         return val
+
+    def getName(self):
+        return self.varName
