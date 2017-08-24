@@ -1,0 +1,23 @@
+\section{Model Description}
+
+
+Spice interfaces with the AVS Basilisk simulation. This is done through spice\_interface.cpp, which loads the proper kernels in External/EphemerisData. Given an epoch, it generates information on universal time (UTC/GPS...) as well as ephemeris information for the bodies of the Solar System. It writes this out in a spice output message for other modules to use.
+
+\subsection{Output message}
+
+This module outputs a message called \texttt{SpicePlanetStateSimMsg}. This message is used throughout the sim and contains:
+
+\begin{itemize}
+    \item[-] J2000Current: the time of validity for the planet state
+    \item[-] PositionVector: the true position of the planet for the time
+    \item[-] VelocityVector: the true velocity of the planet for the time
+    \item[-] J20002Pfix: the orientation matrix of planet-fixed relative to inertial
+    \item[-] J20002Pfix\_dot: the derivative of the orientation matrix of planet-fixed relative to inertial
+    \item[-] computeOrient: the flag indicating whether the reference should be computed
+    \item[-] PlanetName: the name of the planet for the state
+\end{itemize}
+
+\subsection{Citation}
+
+More information on Spice can be read by following the following link:\href{ \underline{https://naif.jpl.nasa.gov/naif/spiceconcept.html}}{The Navigation and Ancillary Information Facility}. 
+

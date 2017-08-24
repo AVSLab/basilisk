@@ -21,12 +21,14 @@ import sys, os, inspect
 import numpy
 import pytest
 import math
+import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('SimCode')
 sys.path.append(splitPath[0] + '/modules')
 sys.path.append(splitPath[0] + '/PythonModules')
+sys.path.append(splitPath[0] + '/SimCode/dynamics/gravityEffector')
 
 import SimulationBaseClass
 import unitTestSupport  # general support file with common unit test functions
@@ -38,21 +40,179 @@ import sim_model
 import ctypes
 import pyswice
 import stateArchitecture
+from gravCoeffOps import loadGravFromFileToList
+
+#script to check spherical harmonics calcs out to 20th degree
+#Uses coefficient from Vallado tables D-1
+
+def computeGravityTo20(positionVector):
+    #This code follows the formulation in Vallado, page 521, second edition and uses data from UTexas CSR for
+    #gravitation harmonics parameters
+    #Written 201780807 by Scott Carnahan
+    #AVS Lab | CU Boulder
+
+    #INPUTS
+    #positionVector - [x,y,z] coordinates list of spacecraft in [m] in earth body frame so that lat, long can be calculated
+
+    def legendres(degree, alpha):
+        P = np.zeros((degree+1,degree+1))
+        P[0,0] = 1
+        P[1,0] = alpha
+        cosPhi = np.sqrt(1-alpha**2)
+        P[1,1] = cosPhi
+
+        for l in range(2,degree+1):
+            for m in range(0,l+1):
+                if m == 0 and l >= 2:
+                    P[l,m] = ((2*l-1)*alpha*P[l-1,0]-(l-1)*P[l-2,0]) / l
+                elif m != 0 and m < l:
+                    P[l, m] = (P[l-2, m]+(2*l-1)*cosPhi*P[l-1,m-1])
+                elif m == l and l != 0:
+                    P[l,m] = (2*l-1)*cosPhi*P[l-1,m-1]
+                else:
+                    print l,", ", m
+        return P
+
+    maxDegree = 20
+    cList = np.zeros(maxDegree+2)
+    sList = np.zeros(maxDegree+2)
+    muEarth = 0.
+    radEarth = 0.
+    [cList, sList, muEarth, radEarth]  = loadGravFromFileToList(path + '/GGM03S.txt', maxDegree+2)
+
+    r = np.linalg.norm(positionVector)
+    rHat = positionVector / r
+    gHat = rHat
+    grav0 = -gHat * muEarth / r**2
+
+    rI = positionVector[0]
+    rJ = positionVector[1]
+    rK = positionVector[2]
+
+    rIJ = np.sqrt(rI**2 + rJ**2)
+    if rIJ != 0.:
+        phi = math.atan(rK / rIJ) #latitude in radians
+    else:
+        phi = math.copysign(np.pi/2., rK)
+    if rI != 0.:
+        lambdaSat = math.atan(rJ / rI) #longitude in radians
+    else:
+        lambdaSat = math.copysign(np.pi/2., rJ)
+
+    P = legendres(maxDegree+1,np.sin(phi))
+
+    dUdr = 0.
+    dUdphi = 0.
+    dUdlambda = 0.
+
+    for l in range(0, maxDegree+1):
+        for m in range(0,l+1):
+            if m == 0:
+                k = 1
+            else:
+                k = 2
+            num = math.factorial(l+m)
+            den = math.factorial(l-m)*k*(2*l+1)
+            PI = np.sqrt(float(num)/float(den))
+            cList[l][m] = cList[l][m] / PI
+            sList[l][m] = sList[l][m] / PI
+
+    for l in range(2,maxDegree+1): #can only do for max degree minus 1
+        for m in range(0,l+1):
+            dUdr = dUdr + (((radEarth/r)**l)*(l+1)*P[l,m]) * (cList[l][m]*np.cos(m*lambdaSat)+sList[l][m]*np.sin(m*lambdaSat))
+            dUdphi = dUdphi + (((radEarth/r)**l)*P[l,m+1] - m*np.tan(phi)*P[l,m]) * (cList[l][m]*np.cos(m*lambdaSat) + sList[l][m]*np.sin(m*lambdaSat))
+            dUdlambda = dUdlambda + (((radEarth/r)**l)*m*P[l,m]) * (sList[l][m]*np.cos(m*lambdaSat) - cList[l][m]*np.sin(m*lambdaSat))
+
+    dUdr = -muEarth * dUdr / r**2
+    dUdphi = muEarth * dUdphi / r
+    dUdlambda = muEarth * dUdlambda / r
+
+
+    if rI != 0. and rJ != 0.:
+        accelerationI = (dUdr/r - rK*dUdphi/(r**2)/((rI**2+rJ**2)**0.5))*rI - (dUdlambda/(rI**2+rJ**2))*rJ + grav0[0]
+        accelerationJ = (dUdr/r - rK*dUdphi/(r**2)/((rI**2+rJ**2)**0.5))*rJ + (dUdlambda/(rI**2+rJ**2))*rI + grav0[1]
+    else:
+        accelerationI = dUdr/r + grav0[0]
+        accelerationJ = dUdr/r + grav0[1]
+    accelerationK = (dUdr/r)*rK + (((rI**2+rJ**2)**0.5)*dUdphi/(r**2)) + grav0[2]
+
+    accelerationVector = [accelerationI, accelerationJ, accelerationK]
+
+    return accelerationVector
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def gravityEffectorAllTest(show_plots):
-    [testResults, testMessage] = test_sphericalHarmonics(show_plots)
+def test_gravityEffectorAllTest(show_plots):
+    [testResults, testMessage] = independentSphericalHarmonics(show_plots)
     assert testResults < 1, testMessage
-    [testResults, testMessage] = test_singleGravityBody(show_plots)
+    [testResults, testMessage] = sphericalHarmonics(show_plots)
     assert testResults < 1, testMessage
-    [testResults, testMessage] = test_multiBodyGravity(show_plots)
+    [testResults, testMessage] = singleGravityBody(show_plots)
+    assert testResults < 1, testMessage
+    [testResults, testMessage] = multiBodyGravity(show_plots)
     assert testResults < 1, testMessage
 
-def test_sphericalHarmonics(show_plots):
+def independentSphericalHarmonics(show_plots):
+    testCase = "independentCheck"
+    # The __tracebackhide__ setting influences pytest showing of tracebacks:
+    # the mrp_steering_tracking() function will not be shown unless the
+    # --fulltrace command line option is specified.
+    __tracebackhide__ = True
+
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
+
+    spherHarm = gravityEffector.SphericalHarmonics()
+
+    gravityEffector.loadGravFromFile(path + '/GGM03S.txt', spherHarm, 20)
+    gravCheck = computeGravityTo20([15000., 10000., 6378.1363E3])
+    spherHarm.initializeParameters()
+    gravOut = spherHarm.computeField([[15000.0], [10000.0], [(6378.1363) * 1.0E3]], 20, True)
+    gravOutMag = np.linalg.norm(gravOut)
+    gravCheckMag = np.linalg.norm(gravCheck)
+
+    accuracy = 1e-12
+    relative = (gravCheckMag-gravOutMag)/gravCheckMag
+    if abs(relative) > accuracy:
+        testFailCount += 1
+        testMessages.append("Failed independent spherical harmonics check")
+    snippetName = testCase + 'Accuracy'
+    snippetContent = '{:1.1e}'.format(accuracy)  # write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent,
+                                    path)  # write formatted LATEX string to file to be used by auto-documentation.
+
+    if testFailCount == 0:
+        passFailText = 'PASSED'
+        print "PASSED: " + testCase
+        colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX.
+        snippetName = testCase + 'FailMsg'
+        snippetContent = ""
+        unitTestSupport.writeTeXSnippet(snippetName, snippetContent,
+                                        path)  # write formatted LATEX string to file to be used by auto-documentation.
+    else:
+        passFailText = 'FAILED'
+        colorText = 'Red'  # color to write auto-documented "FAILED" message in in LATEX
+        snippetName = testCase + 'FailMsg'
+        snippetContent = passFailText
+        for message in testMessages:
+            snippetContent += ". " + message
+        snippetContent += "."
+        unitTestSupport.writeTeXSnippet(snippetName, snippetContent,
+                                        path)  # write formatted LATEX string to file to be used by auto-documentation.
+    snippetName = testCase + 'PassFail'  # name of file to be written for auto-documentation which specifies if this test was passed or failed.
+    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}'  # write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent,
+                                    path)  # write formatted LATEX string to file to be used by auto-documentation.
+
+    # return fail count and join into a single string all messages in the list
+    # testMessage
+    return [testFailCount, ''.join(testMessages)]
+
+def sphericalHarmonics(show_plots):
+    testCase = 'sphericalHarmonics'
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -82,24 +242,47 @@ def test_sphericalHarmonics(show_plots):
     spherHarm.initializeParameters()
     gravOut = spherHarm.computeField([[0.0], [0.0], [(6378.1363)*1.0E3]], 20, True)
     gravMag = numpy.linalg.norm(numpy.array(gravOut))
-    
-    if gravMag > 9.9 or gravMag < 9.7:
+
+    accuracy = 0.1
+    gravExpected = 9.8
+    if gravMag > (gravExpected + accuracy) or gravMag < (gravExpected - accuracy):
         testFailCount += 1
         testMessages.append("Gravity magnitude not within allowable tolerance")
+    snippetName = testCase + 'Accuracy'
+    snippetContent = '{:1.1e}'.format(accuracy)  # write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
 
     gravOutMax = spherHarm.computeField([[0.0], [0.0], [(6378.1363)*1.0E3]], 100, True)
-
     if gravOutMax != gravOut:
         testFailCount += 1
         testMessages.append("Gravity ceiling not enforced correctly")
 
     if testFailCount == 0:
+        passFailText = 'PASSED'
         print "PASSED: " + " Spherical Harmonics"
+        colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX.
+        snippetName = testCase + 'FailMsg'
+        snippetContent = ""
+        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
+    else:
+        passFailText = 'FAILED'
+        colorText = 'Red'  # color to write auto-documented "FAILED" message in in LATEX
+        snippetName = testCase + 'FailMsg'
+        snippetContent = passFailText
+        for message in testMessages:
+            snippetContent += ". " + message
+        snippetContent += "."
+        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
+    snippetName = testCase + 'PassFail'  # name of file to be written for auto-documentation which specifies if this test was passed or failed.
+    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}' #write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
+
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def test_singleGravityBody(show_plots):
+def singleGravityBody(show_plots):
+    testCase = 'singleBody'
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -173,7 +356,6 @@ def test_singleGravityBody(show_plots):
         SpiceObject.J2000Current = etCurr;SpiceObject.UpdateState(0)
         earthGravBody.loadEphemeris(0)
         gravOut = earthGravBody.computeGravityInertial(stateOut[0:3].reshape(3,1).tolist(), 0)
- 
         gravErrNorm.append(numpy.linalg.norm(gravVec*1000.0 - numpy.array(gravOut).reshape(3))/
             numpy.linalg.norm(gravVec*1000.0))
         
@@ -181,14 +363,16 @@ def test_singleGravityBody(show_plots):
         etCurr = pyswice.doubleArray_getitem(et, 0)
         etCurr += dt;
         stringCurrent = pyswice.et2utc_c(etCurr, 'C', 4, 1024, "Yo")
-    
 
-    
+    accuracy = 1.0e-4
     for gravErr in gravErrNorm:
-        if gravErr > 1.0e-4:
+        if gravErr > accuracy:
             testFailCount += 1
             testMessages.append("Gravity numerical error too high for kernel comparison")
             break
+    snippetName = testCase + 'Accuracy'
+    snippetContent = '{:1.1e}'.format(accuracy)  # write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
     
     pyswice.unload_c(splitPath[0] + '/External/EphemerisData/de430.bsp')
     pyswice.unload_c(splitPath[0] + '/External/EphemerisData/naif0011.tls')
@@ -196,14 +380,35 @@ def test_singleGravityBody(show_plots):
     pyswice.unload_c(splitPath[0] + '/External/EphemerisData/pck00010.tpc')
     pyswice.unload_c(path + '/hst_edited.bsp')
 
+
     if testFailCount == 0:
-        print "PASSED: " + " Single body with spherical harmonics"
+        passFailText = 'PASSED'
+        print "PASSED: " + "Single-body with Spherical Harmonics"
+        colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX
+        snippetName = testCase + 'FailMsg'
+        snippetContent = ""
+        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
+    else:
+        passFailText = 'FAILED'
+        colorText = 'Red'  # color to write auto-documented "FAILED" message in in LATEX
+        snippetName = testCase + 'FailMsg'
+        snippetContent = passFailText
+        for message in testMessages:
+            snippetContent += ". " + message
+        snippetContent += "."
+        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
+    snippetName = testCase + 'PassFail'  # name of file to be written for auto-documentation which specifies if this test was passed or failed.
+    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}' #write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
+
+
     # return fail count and join into a single string all messages in the list
     # testMessage
     
     return [testFailCount, ''.join(testMessages)]
 
-def test_multiBodyGravity(show_plots):
+def multiBodyGravity(show_plots):
+    testCase = 'multiBody'
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -310,22 +515,43 @@ def test_multiBodyGravity(show_plots):
         stateNext = pyswice.spkRead('DAWN', stringNext, 'J2000', 'SUN')*1000.0
         gravVec = (stateNext[3:6] - statePrev[3:6])/(etNext - etPrev)
         gravErrVec.append(numpy.linalg.norm(gravVec.reshape(3,1) - numpy.array(TotalSim.newManager.getPropertyReference("g_N"))))
-    
+
+    accuracy = 5.0e-4
+
     for gravMeas in gravErrVec:
-        if gravMeas > 5.0e-4:
-            print gravMeas
+        if gravMeas > accuracy:
             testFailCount += 1
             testMessages.append("Gravity multi-body error too high for kernel comparison")
             break
+    snippetName = testCase + 'Accuracy'
+    snippetContent = '{:1.1e}'.format(accuracy)  # write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
 
-    
     if testFailCount == 0:
-        print "PASSED: " + " Multi gravitational bodies"
+        passFailText = 'PASSED'
+        print "PASSED: " + "Multi-body with Spherical Harmonics"
+        colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX
+        snippetName = testCase + 'FailMsg'
+        snippetContent = ""
+        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
+    else:
+        passFailText = 'FAILED'
+        colorText = 'Red'  # color to write auto-documented "FAILED" message in in LATEX
+        snippetName = testCase + 'FailMsg'
+        snippetContent = passFailText
+        for message in testMessages:
+            snippetContent += ". " + message
+        snippetContent += "."
+        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
+    snippetName = testCase + 'PassFail'  # name of file to be written for auto-documentation which specifies if this test was passed or failed.
+    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}' #write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
+
+
     # return fail count and join into a single string all messages in the list
     # testMessage
-    
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    gravityEffectorAllTest(False)
+    test_gravityEffectorAllTest(False)
     

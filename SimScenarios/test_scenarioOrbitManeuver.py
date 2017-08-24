@@ -47,22 +47,21 @@ splitPath = path.split(bskName)
 bskPath = splitPath[0] + '/' + bskName + '/'
 # if this script is run from a custom folder outside of the Basilisk folder, then uncomment the
 # following line and specify the absolute bath to the Basilisk folder
-#bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
+# bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
 sys.path.append(bskPath + 'modules')
 sys.path.append(bskPath + 'PythonModules')
 # @endcond
 
 # import general simulation support files
 import SimulationBaseClass
-import unitTestSupport                  # general support file with common unit test functions
+import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 import macros
 import orbitalMotion
 
 # import simulation related support
 import spacecraftPlus
-import simIncludeGravity
-
+import simIncludeGravBody
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -75,13 +74,12 @@ import simIncludeGravity
     0
     , 1
 ])
-
 # provide a unique test method name, starting with test_
 def test_scenarioOrbitManeuver(show_plots, maneuverCase):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run( True,
-            show_plots, maneuverCase)
+    [testResults, testMessage] = run(True,
+                                     show_plots, maneuverCase)
     assert testResults < 1, testMessage
 
 
@@ -123,26 +121,26 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
 # gravity module attached.  Note that the rotational motion simulation is turned off to leave
 # pure 3-DOF translation motion simulation.  After running the simulation for 1/4 of a period
 # the simulation is stopped to apply impulsive changes to the inertial velocity vector.
-#~~~~~~~~~~~~~~~~~{.py}
+# ~~~~~~~~~~~~~~~~~{.py}
 #    scSim.ConfigureStopTime(simulationTime)
 #    scSim.ExecuteSimulation()
-#~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~
 # Next, the state manager objects are called to retrieve the latest inerital position and
 # velocity vector components:
-#~~~~~~~~~~~~~~~~~{.py}
+# ~~~~~~~~~~~~~~~~~{.py}
 #    rVt = unitTestSupport.EigenVector3d2np(posRef.getState())
 #    vVt = unitTestSupport.EigenVector3d2np(velRef.getState())
-#~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~
 # After computing the maneuver specific Delta_v's, the state managers velocity is updated through
-#~~~~~~~~~~~~~~~~~{.py}
+# ~~~~~~~~~~~~~~~~~{.py}
 #     velRef.setState(unitTestSupport.np2EigenVector3d(vVt))
-#~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~
 # To start up the simulation again, not that the total simulation time must be provided,
 # not just the next incremental simulation time.
-#~~~~~~~~~~~~~~~~~{.py}
+# ~~~~~~~~~~~~~~~~~{.py}
 #     scSim.ConfigureStopTime(simulationTime+T2)
 #     scSim.ExecuteSimulation()
-#~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~
 # This process is then repeated for the second maneuver.
 #
 #
@@ -191,8 +189,8 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
 ##  @}
 def run(doUnitTests, show_plots, maneuverCase):
     '''Call this routine directly to run the tutorial scenario.'''
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     #
     #  From here on there scenario python code is found.  Above this line the code is to setup a
@@ -217,7 +215,7 @@ def run(doUnitTests, show_plots, maneuverCase):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # unitTestSupport.enableVisualization(scSim, dynProcess)
+    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')  # The Viz only support 'earth', 'mars', or 'sun'
 
     #
     #   setup the simulation tasks/objects
@@ -232,65 +230,54 @@ def run(doUnitTests, show_plots, maneuverCase):
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
-    # clear prior gravitational body and SPICE setup definitions
-    simIncludeGravity.clearSetup()
-
     # setup Gravity Body
-    simIncludeGravity.addEarth()
-    simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
-    mu = simIncludeGravity.gravBodyList[-1].mu
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    earth = gravFactory.createEarth()
+    earth.isCentralBody = True  # ensure this is the central gravitational body
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
     #
     #   setup orbit and simulation time
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    rLEO = 7000.*1000;      # meters
-    rGEO = math.pow(mu/math.pow((2.*np.pi)/(24.*3600.),2),1./3.)
-    oe.a     = rLEO
-    oe.e     = 0.0001
-    oe.i     = 0.0*macros.D2R
-    oe.Omega = 48.2*macros.D2R
-    oe.omega = 347.8*macros.D2R
-    oe.f     = 85.3*macros.D2R
-    rN, vN = orbitalMotion.elem2rv(mu, oe)
+    rLEO = 7000. * 1000  # meters
+    rGEO = math.pow(earth.mu / math.pow((2. * np.pi) / (24. * 3600.), 2), 1. / 3.)
+    oe.a = rLEO
+    oe.e = 0.0001
+    oe.i = 0.0 * macros.D2R
+    oe.Omega = 48.2 * macros.D2R
+    oe.omega = 347.8 * macros.D2R
+    oe.f = 85.3 * macros.D2R
+    rN, vN = orbitalMotion.elem2rv(earth.mu, oe)
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_CN_N
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_CN_N
 
     # set the simulation time
-    n = np.sqrt(mu/oe.a/oe.a/oe.a)
-    P = 2.*np.pi/n
-    simulationTime = macros.sec2nano(0.25*P)
+    n = np.sqrt(earth.mu / oe.a / oe.a / oe.a)
+    P = 2. * np.pi / n
+    simulationTime = macros.sec2nano(0.25 * P)
+
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints-1)
+    samplingTime = simulationTime / (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-
-
-    #
-    # create simulation messages
-    #
-    simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
-
 
     #
     #   initialize Simulation
     #
     scSim.InitializeSimulationAndDiscover()
 
-
     #
     #  get access to dynManager translational states for future access to the states
     #
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
-
 
     #
     #   configure a simulation stop time time and execute the simulation run
@@ -303,30 +290,30 @@ def run(doUnitTests, show_plots, maneuverCase):
     vVt = unitTestSupport.EigenVector3d2np(velRef.getState())
     # compute maneuver Delta_v's
     if maneuverCase == 1:
-        #inclination change
-        Delta_i = 8.0*macros.D2R
-        rHat = rVt/np.linalg.norm(rVt)
-        hHat = np.cross(rVt,vVt)
-        hHat = hHat/np.linalg.norm(hHat)
-        vHat = np.cross(hHat,rHat)
-        v0 = np.dot(vHat,vVt)
-        vVt = vVt - (1.-np.cos(Delta_i))*v0*vHat + np.sin(Delta_i)*v0*hHat
+        # inclination change
+        Delta_i = 8.0 * macros.D2R
+        rHat = rVt / np.linalg.norm(rVt)
+        hHat = np.cross(rVt, vVt)
+        hHat = hHat / np.linalg.norm(hHat)
+        vHat = np.cross(hHat, rHat)
+        v0 = np.dot(vHat, vVt)
+        vVt = vVt - (1. - np.cos(Delta_i)) * v0 * vHat + np.sin(Delta_i) * v0 * hHat
         velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
-        T2 = macros.sec2nano(P*0.25)
+        T2 = macros.sec2nano(P * 0.25)
     else:
         # Hohmann Transfer to GEO
         v0 = np.linalg.norm(vVt)
         r0 = np.linalg.norm(rVt)
-        at = (r0+rGEO)*.5
-        v0p = np.sqrt(mu/at*rGEO/r0)
-        n1 = np.sqrt(mu/at/at/at)
-        T2 = macros.sec2nano((np.pi)/n1)
-        vHat = vVt/v0
-        vVt = vVt + vHat*(v0p-v0)
+        at = (r0 + rGEO) * .5
+        v0p = np.sqrt(earth.mu / at * rGEO / r0)
+        n1 = np.sqrt(earth.mu / at / at / at)
+        T2 = macros.sec2nano((np.pi) / n1)
+        vHat = vVt / v0
+        vVt = vVt + vHat * (v0p - v0)
         velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
 
     # run simulation for 2nd chunk
-    scSim.ConfigureStopTime(simulationTime+T2)
+    scSim.ConfigureStopTime(simulationTime + T2)
     scSim.ExecuteSimulation()
 
     # get the current spacecraft states
@@ -334,42 +321,42 @@ def run(doUnitTests, show_plots, maneuverCase):
     vVt = unitTestSupport.EigenVector3d2np(velRef.getState())
     # compute maneuver Delta_v's
     if maneuverCase == 1:
-        #inclination change
-        Delta_i = 4.0*macros.D2R
-        rHat = rVt/np.linalg.norm(rVt)
-        hHat = np.cross(rVt,vVt)
-        hHat = hHat/np.linalg.norm(hHat)
-        vHat = np.cross(hHat,rHat)
-        v0 = np.dot(vHat,vVt)
-        vVt = vVt - (1.-np.cos(Delta_i))*v0*vHat + np.sin(Delta_i)*v0*hHat
+        # inclination change
+        Delta_i = 4.0 * macros.D2R
+        rHat = rVt / np.linalg.norm(rVt)
+        hHat = np.cross(rVt, vVt)
+        hHat = hHat / np.linalg.norm(hHat)
+        vHat = np.cross(hHat, rHat)
+        v0 = np.dot(vHat, vVt)
+        vVt = vVt - (1. - np.cos(Delta_i)) * v0 * vHat + np.sin(Delta_i) * v0 * hHat
         velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
-        T3 = macros.sec2nano(P*0.25)
+        T3 = macros.sec2nano(P * 0.25)
     else:
         # Hohmann Transfer to GEO
         v1 = np.linalg.norm(vVt)
-        v1p = np.sqrt(mu/rGEO)
-        n1 = np.sqrt(mu/rGEO/rGEO/rGEO)
-        T3 = macros.sec2nano(0.25*(np.pi)/n1)
-        vHat = vVt/v1
-        vVt = vVt + vHat*(v1p-v1)
+        v1p = np.sqrt(earth.mu / rGEO)
+        n1 = np.sqrt(earth.mu / rGEO / rGEO / rGEO)
+        T3 = macros.sec2nano(0.25 * (np.pi) / n1)
+        vHat = vVt / v1
+        vVt = vVt + vHat * (v1p - v1)
         velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
 
     # run simulation for 3rd chunk
-    scSim.ConfigureStopTime(simulationTime+T2+T3)
+    scSim.ConfigureStopTime(simulationTime + T2 + T3)
     scSim.ExecuteSimulation()
 
     #
     #   retrieve the logged data
     #
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N',range(3))
+    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', range(3))
+    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', range(3))
 
     np.set_printoptions(precision=16)
 
     #
     #   plot the results
     #
-    fileNameString = filename[len(path)+6:-3]
+    fileNameString = filename[len(path) + 6:-3]
 
     # draw the inertial position vector components
     plt.close("all")  # clears out plots from earlier test runs
@@ -377,16 +364,16 @@ def run(doUnitTests, show_plots, maneuverCase):
     fig = plt.gcf()
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='plain')
-    for idx in range(1,4):
-        plt.plot(posData[:, 0]*macros.NANO2HOUR, posData[:, idx]/1000.,
-                 color=unitTestSupport.getLineColor(idx,3),
-                 label='$r_{BN,'+str(idx)+'}$')
+    for idx in range(1, 4):
+        plt.plot(posData[:, 0] * macros.NANO2HOUR, posData[:, idx] / 1000.,
+                 color=unitTestSupport.getLineColor(idx, 3),
+                 label='$r_{BN,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [h]')
     plt.ylabel('Inertial Position [km]')
-    if doUnitTests:     # only save off the figure if doing a unit test run
+    if doUnitTests:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString+"1"+str(int(maneuverCase))
+            fileNameString + "1" + str(int(maneuverCase))
             , plt, path)
 
     if maneuverCase == 1:
@@ -397,21 +384,21 @@ def run(doUnitTests, show_plots, maneuverCase):
         ax.ticklabel_format(useOffset=False, style='plain')
         iData = []
         for idx in range(0, len(posData)):
-            oeData = orbitalMotion.rv2elem(mu, posData[idx, 1:4], velData[idx, 1:4])
-            iData.append(oeData.i*macros.R2D)
-        plt.plot(posData[:, 0]*macros.NANO2HOUR, np.ones(len(posData[:, 0]))*8.93845
+            oeData = orbitalMotion.rv2elem(earth.mu, posData[idx, 1:4], velData[idx, 1:4])
+            iData.append(oeData.i * macros.R2D)
+        plt.plot(posData[:, 0] * macros.NANO2HOUR, np.ones(len(posData[:, 0])) * 8.93845
                  , '--'
                  , color='#444444'
                  )
-        plt.plot(posData[:, 0]*macros.NANO2HOUR, iData
+        plt.plot(posData[:, 0] * macros.NANO2HOUR, iData
                  , color='#aa0000'
                  )
-        plt.ylim([-1,10])
+        plt.ylim([-1, 10])
         plt.xlabel('Time [h]')
         plt.ylabel('Inclination [deg]')
         if doUnitTests:  # only save off the figure if doing a unit test run
             unitTestSupport.saveScenarioFigure(
-                fileNameString+"2"+str(int(maneuverCase))
+                fileNameString + "2" + str(int(maneuverCase))
                 , plt, path)
     else:
         # show SMA
@@ -421,18 +408,17 @@ def run(doUnitTests, show_plots, maneuverCase):
         ax.ticklabel_format(useOffset=False, style='plain')
         rData = []
         for idx in range(0, len(posData)):
-            oeData = orbitalMotion.rv2elem_parab(mu, posData[idx, 1:4], velData[idx, 1:4])
-            rData.append(oeData.rmag/1000.)
-        plt.plot(posData[:, 0]*macros.NANO2HOUR, rData
-                 ,color='#aa0000',
+            oeData = orbitalMotion.rv2elem_parab(earth.mu, posData[idx, 1:4], velData[idx, 1:4])
+            rData.append(oeData.rmag / 1000.)
+        plt.plot(posData[:, 0] * macros.NANO2HOUR, rData
+                 , color='#aa0000',
                  )
         plt.xlabel('Time [h]')
         plt.ylabel('Radius [km]')
-        if doUnitTests:     # only save off the figure if doing a unit test run
+        if doUnitTests:  # only save off the figure if doing a unit test run
             unitTestSupport.saveScenarioFigure(
-                fileNameString+"2"+str(int(maneuverCase))
+                fileNameString + "2" + str(int(maneuverCase))
                 , plt, path)
-
 
     if show_plots:
         plt.show()
@@ -451,11 +437,11 @@ def run(doUnitTests, show_plots, maneuverCase):
         # setup truth data for unit test
         if maneuverCase == 0:
             truePos = [
-                  [10298352.587758573, 40947481.244493686, 0.0]
+                [10298352.587758573, 40947481.244493686, 0.0]
             ]
         if maneuverCase == 1:
             truePos = [
-                  [5937590.072546725, 3675220.9560903916, 477503.77340122446]
+                [5937590.072546725, 3675220.9560903916, 477503.77340122446]
             ]
 
         # compare the results to the truth values
@@ -475,13 +461,13 @@ def run(doUnitTests, show_plots, maneuverCase):
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
+
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    run( False,       # do unit tests
-         True,        # show_plots
-         0            # Maneuver Case (0 - Hohmann, 1 - Inclination)
-       )
-
+    run(False,  # do unit tests
+        True,  # show_plots
+        0  # Maneuver Case (0 - Hohmann, 1 - Inclination)
+        )

@@ -29,7 +29,17 @@ namespace std {
 
 %include "sys_model.h"
 %include "coarse_sun_sensor.h"
+%include "../../simMessages/scPlusStatesSimMsg.h"
+%include "../../simMessages/spicePlanetStateSimMsg.h"
 %include "../../simMessages/cssRawDataSimMsg.h"
+%include "../../simMessages/eclipseSimMsg.h"
+%include "../../simFswInterfaceMessages/cssArraySensorIntMsg.h"
+GEN_SIZEOF(CSSRawDataSimMsg);
+GEN_SIZEOF(EclipseSimMsg);
+GEN_SIZEOF(CSSArraySensorIntMsg);
+GEN_SIZEOF(SpicePlanetStateSimMsg);
+GEN_SIZEOF(SCPlusStatesSimMsg);
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

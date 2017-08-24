@@ -1,0 +1,30 @@
+\section{Model Description}
+The Basilisk IMU module imu\_sensor.cpp is responsible for producing sensed body rates and acceleration from simulation truth values. Each check within test\_imu\_sensor.py sets initial attitude MRP, body rates, and accumulated Delta V and validates output for a range of time.
+
+\subsection{Mathematical Model}
+
+\subsubsection{Error Modeling}
+The state which the simulation records for the spacecraft prior to sending that state to the IMU module is considered to be "truth". So, to simulate the errors found in real instrumentation, errors are added to the "truth" values for any measurement, $\mathbf{m}_{\mathrm{truth}}$, that the IMU deals with.
+
+\begin{equation}
+\mathbf{m}_{\mathrm{measured}} = \mathbf{m}_{\mathrm{truth}} + \mathbf{e}_{\mathrm{noise}} + \mathbf{e}_{\mathrm{bias}}
+\end{equation}
+
+
+\subsubsection{Data Discretization}
+Because sensors record data digitally, that data can only be recorded in discrete chunks, rather than the (relatively) continuous values that the computer calculates at each time steps. In order to simulation real IMU behavior in this way, a least significant bit (LSB) value is accepted for both the gyro and the accelerometer. This LSB is applied as follows to any 3-dimensional measurement $\mathbf{m}$:
+
+\begin{equation}
+\mathbf{m}_{\mathrm{discretized}} = (\mathrm{LSB})\Biggl\lfloor\Biggl|\frac{\mathbf{m}_{\mathrm{measured}}}{(\mathrm{LSB})}\Biggr|\Biggr\rfloor
+\end{equation}
+
+Where $\lfloor$  $\rfloor$ indicate the \textbf{floor()} function and LSB can be either the accelerometer or gyro least significant bit.
+
+\subsubsection{Saturation}
+Real sensors can also become saturated. This is modeled simply by comparing $\mathbf{m}_{\mathrm{discretized}}$ to the high and low saturation values for the sensor:
+
+\begin{equation}
+\mathbf{m}_{\mathrm{saturated}} = max\Big(\mathbf{m}_{\mathrm{sat,min}},\big(min(\mathbf{m}_{\mathrm{discretized}},\mathbf{m}_{\mathrm{sat,max}})\big)\Big)
+\end{equation}
+
+\noindent Note that this is actually only computed if $\mathbf{m}_{\mathrm{discretized}}$ proves to be outside of its saturation bounds.

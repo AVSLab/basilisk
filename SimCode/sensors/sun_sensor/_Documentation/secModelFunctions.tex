@@ -1,0 +1,25 @@
+% !TEX root = ./Basilisk-CoarseSunSensor-20170803.tex
+
+\section{Model Functions}
+The coarse sun sensor functions have been mentioned in passing but are described below:
+\begin{itemize}
+	\item \textbf{Cosine Curve}: Given the sensor vector to the sun, a cosine signal is generated and returned.
+	\item \textbf{Field of View}: The module can limit it's outputs to be zero outside of a given half-conic angle field of view.
+	\item \textbf{Kelly Curve}: The module can apply a Kelly Factor to the cosine curve to simulation realistic effects at high incidence angles.
+	\item \textbf{Noise}: The module can apply Gaussian noise to the signal.
+	\item \textbf{Bias}: the module can apply a bias to the signal.
+	\item \textbf{Single Sensor}: The module can set up a signal coarse sun sensor.
+	\item \textbf{CSS Constellation}: The module can set up a constellation of coarse sun sensors.
+	\item \textbf{Interface: Spacecraft State}: The module receives spacecraft state information from the messaging system.
+	\item \textbf{Interface: Sun State}: The module receives sun ephemeris information through the messaging system
+	\item \textbf{Interface: Eclipse}: The module receives optional eclipse information through the messaging system.
+	\item \textbf{Interface: Outputs}: The single CSS modules create individual CSS sensor output messages, while the CSS Constellation creates a single output message with all the CSS sensor signals.
+\end{itemize}
+
+\section{Model Assumptions and Limitations}
+Assumptions made in this coarse sun sensor module and the corresponding limitations are shown below.
+\begin{enumerate}
+	\item \textbf{Conical Symmetry}: The module assumes that sensor readings and bias are the same in every direction from normal. In reality, there may be different biases or errors depending on which direction the sun vector is from the sensor normal vector. This limits the use of this module to sensors that are symmetric or only slightly asymmetric.
+	\item \textbf{Albedo}: Currently, the model is hard-coded to zero-out any albedo input, so it is limited to cases where albedo is not important.
+	\item \textbf{Cosine Behavior}: The model assumes the sensor to have a nominal cosine behavior. This is distorted by the Kelly factor. To improve behavior closer to reality where housing and spacecraft glint might cause slightly non-conical non-cosine behaviors, a look-up table of sensor outputs compared to sun headings could be implemented in future work.
+\end{enumerate}

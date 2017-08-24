@@ -84,43 +84,49 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
 
     # add RW devices
     # The clearRWSetup() is critical if the script is to run multiple times
-    simIncludeRW.clearSetup()
-    simIncludeRW.options.maxMomentum = 100
+    rwFactory = simIncludeRW.rwFactory()
+    varMaxMomentum = 100.            # Nms
 
     if testCase == 'BalancedWheels':
-        simIncludeRW.options.RWModel = 0
+        varRWModel = 0
     elif testCase == 'JitterSimple':
-        simIncludeRW.options.RWModel = 1
+        varRWModel = 1
     elif testCase == 'JitterFullyCoupled':
-        simIncludeRW.options.RWModel = 2
+        varRWModel = 2
 
-    simIncludeRW.create(
-            'Honeywell_HR16',
-            [1,0,0],                # gsHat_B
-            500.,                     # RPM
-            [0.1,0.,0.]
+    rwFactory.create(
+            'Honeywell_HR16'
+            ,[1,0,0]                # gsHat_B
+            ,Omega = 500.           # RPM
+            ,rWB_B = [0.1,0.,0.]    # m
+            ,maxMomentum = varMaxMomentum
+            ,RWModel= varRWModel
             )
-    simIncludeRW.create(
+    rwFactory.create(
             'Honeywell_HR16',
-            [0,1,0],                # gsHat_B
-            200.,                     # RPM
-            [0.,0.1,0.]
+            [0,1,0]                 # gsHat_B
+            ,Omega = 200.          # RPM
+            ,rWB_B = [0.,0.1,0.]     # m
+            ,maxMomentum = varMaxMomentum
+            ,RWModel= varRWModel
             )
-    simIncludeRW.create(
-            'Honeywell_HR16',
-            [0,0,1],                # gsHat_B
-            -150.,                    # RPM
-            [0.,0.,0.1]
+    rwFactory.create(
+            'Honeywell_HR16'
+            ,[0,0,1]                 # gsHat_B
+            ,Omega = -150.           # RPM
+            ,rWB_B = [0.,0.,0.1]     # m
+            ,maxMomentum = varMaxMomentum
+            ,RWModel= varRWModel
             )
 
     # increase HR16 imbalance for test
-    for rw in simIncludeRW.rwList:
+    for key, rw in rwFactory.rwList.iteritems():
         rw.U_d *= 1e4
         rw.U_s *= 1e4
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    simIncludeRW.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
+    rwFactory.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
 
     # set RW torque command
     cmdArray = reactionWheelStateEffector.RWArrayTorqueIntMsg()

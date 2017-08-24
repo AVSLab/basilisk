@@ -17,8 +17,8 @@
 
  */
 
-#include "utilities/gauss_markov.h"
-#include "utilities/linearAlgebra.h"
+#include "gauss_markov.h"
+#include "linearAlgebra.h"
 #include <iostream>
 #include <math.h>
 

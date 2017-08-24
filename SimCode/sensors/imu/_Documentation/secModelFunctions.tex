@@ -1,0 +1,21 @@
+\section{Model Functions}
+The mathematical description of the IMU are implemented in imu\_sensor.cpp. This code performs the following primary functions
+\begin{itemize}
+	\item \textbf{Spacecraft State Measurement}: The code provides measurements of the spacecraft state (angular and linear).
+	\item \textbf{Bias Modeling}: The code adds instrument bias and bias random walk to the signals.
+	\item \textbf{Noise Modeling}: The code calculates noise according to the Gauss Markov model if the user asks for it and provides a perturbation matrix.
+	\item \textbf{Discretization}: The code discretizes the signal to emulate real digital instrumentation. The least significant bit (LSB) can be set by the user.
+	\item \textbf{Saturation}: The code bounds the output signal according to user-specified maximum and minimum saturation values.
+	\item \textbf{Accelerometer Center of Mass Offset}: The code can handle accelerometer placement other than the center of mass of the spacecraft.
+	\item \textbf{IMU Misalignment}: The code can handle IMU placement in a frame with constant rotational offset from assumed IMU orientation.
+	\item \textbf{Bias Random Walk Bounds}: The code bounds bias random walk per user-specified bounds.
+	\item \textbf{Interface: Spacecraft States}: The code sends and receives spacecraft state information via the Basilisk messaging system.
+	\item \textbf{Interface: Spacecraft Mass}: The code receives spacecraft mass information via the Basilisk messaging system.
+\end{itemize}
+
+
+\section{Model Assumptions and Limitations}
+This code makes assumptions which are common to IMU modeling.
+\begin{itemize}
+	\item \textbf{Error Inputs}: Because the error models rely on user inputs, these inputs are the most likely source of error in IMU output. Instrument bias would have to be measured experimentally or an educated guess would have to be made. The Guass-Markov noise model has a well-known assumptions and is generally accepted to be a good model for this application.
+\end{itemize}

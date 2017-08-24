@@ -1,0 +1,22 @@
+\section{Model Description}
+
+\section{Introduction}
+The Thruster model in the AVS Basilisk simulation is used to emulate the effect 
+of a vehicle's thrusters on the overall system.  Its primary use is to generate 
+realistic forces/torques on the vehicle structure and body.  This is 
+accomplished by apply a force at a specified location/direction in the body and 
+using the current vehicle center of mass to calculate the resultant torque.  
+Each individual thruster in a given model has its own ramp-up/ramp-down profile 
+specified as part of its initialization data and it follows those profiles during 
+start-up and shutdown.
+
+The thruster model also contains a mechanism that is used to change the current 
+vehicle mass properties as the thruster fires propellant overboard.  This model 
+uses the thruster ISP (specific impulse, also specified with configuration data) 
+to calculate how much mass is being removed during a given thruster firing and 
+decrements the mass properties included in the thruster linearly as a function 
+of mass.  
+
+\subsection{Output}
+
+This module computes forces and torques, and is called as a Dynamic Effector to integrate the state.

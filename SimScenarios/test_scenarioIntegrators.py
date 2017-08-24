@@ -57,7 +57,7 @@ import macros
 import orbitalMotion
 # import simulation related support
 import spacecraftPlus
-import simIncludeGravity
+import simIncludeGravBody
 import svIntegrators
 
 
@@ -133,7 +133,7 @@ def test_scenarioIntegrators(show_plots, integratorCase):
 # Creating new Integration modules
 # -----
 #
-# New integration modules can readily be created for Basilik.  They are all stored in the folder
+# New integration modules can readily be created for Basilisk.  They are all stored in the folder
 #~~~~~~~~~~~~~~~~~
 #   Basilisk/SimCode/dynamics/Integrators/
 #~~~~~~~~~~~~~~~~~
@@ -169,7 +169,7 @@ def run(doUnitTests, show_plots, integratorCase):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # unitTestSupport.enableVisualization(scSim, dynProcess)
+    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')  # The Viz only support 'earth', 'mars', or 'sun'
 
     #
     #   setup the simulation tasks/objects
@@ -192,14 +192,14 @@ def run(doUnitTests, show_plots, integratorCase):
     scSim.AddModelToTask(simTaskName, scObject)
 
     # clear prior gravitational body and SPICE setup definitions
-    simIncludeGravity.clearSetup()
+    gravFactory = simIncludeGravBody.gravBodyFactory()
 
-    simIncludeGravity.addEarth()
-    simIncludeGravity.gravBodyList[-1].isCentralBody = True  # ensure this is the central gravitational body
-    mu = simIncludeGravity.gravBodyList[-1].mu
+    earth = gravFactory.createEarth()
+    earth.isCentralBody = True  # ensure this is the central gravitational body
+    mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
     #
     #   setup orbit and simulation time
@@ -233,10 +233,6 @@ def run(doUnitTests, show_plots, integratorCase):
     samplingTime = simulationTime / numDataPoints
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
-    #
-    # create simulation messages
-    #
-    simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 
     #
     #   initialize Simulation
@@ -260,7 +256,8 @@ def run(doUnitTests, show_plots, integratorCase):
     #
     np.set_printoptions(precision=16)
     fileNameString = filename[len(path)+6:-3]
-    plt.close("all")        # clears out plots from earlier test runs
+    if integratorCase == "rk4":
+        plt.close("all")        # clears out plots from earlier test runs
 
     # draw orbit in perifocal frame
     b = oe.a*np.sqrt(1-oe.e*oe.e)
@@ -271,7 +268,7 @@ def run(doUnitTests, show_plots, integratorCase):
     fig = plt.gcf()
     ax = fig.gca()
     planetColor= '#008800'
-    planetRadius = simIncludeGravity.gravBodyList[-1].radEquator/1000
+    planetRadius = earth.radEquator/1000
     ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
     # draw the actual orbit
     rData = []
@@ -303,6 +300,10 @@ def run(doUnitTests, show_plots, integratorCase):
         unitTestSupport.saveScenarioFigure(
             fileNameString
             , plt, path)
+        unitTestSupport.saveFigurePDF(
+            fileNameString
+            , plt, path+"/_Documentation/AutoTeX/"
+        )
 
     if show_plots:
         plt.show()
@@ -355,9 +356,25 @@ def run(doUnitTests, show_plots, integratorCase):
         #   print out success message if no error were found
         if testFailCount == 0:
             print "PASSED "
+            passFailText = "PASSED"
+            colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX
+            snippetContent = ""
         else:
             print testFailCount
             print testMessages
+            passFailText = 'FAILED'
+            colorText = 'Red'  # color to write auto-documented "FAILED" message in in LATEX
+            snippetContent = "\\begin{verbatim}"
+            for message in testMessages:
+                snippetContent +=   message
+            snippetContent += "\\end{verbatim}"
+        snippetMsgName = fileNameString + 'Msg-' + integratorCase
+        unitTestSupport.writeTeXSnippet(snippetMsgName, snippetContent,
+                                    path + "/_Documentation/")
+        snippetPassFailName = fileNameString + 'TestMsg-' + integratorCase
+        snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}'
+        unitTestSupport.writeTeXSnippet(snippetPassFailName, snippetContent,
+                                    path+"/_Documentation/")
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

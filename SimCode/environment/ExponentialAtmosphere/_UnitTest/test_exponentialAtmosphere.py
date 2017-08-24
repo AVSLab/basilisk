@@ -58,8 +58,7 @@ import orbitalMotion
 
 # import simulation related support
 import spacecraftPlus
-import gravityEffector
-import simIncludeGravity
+import simIncludeGravBody
 import exponentialAtmosphere
 import dragDynamicEffector
 import unitTestSupport
@@ -153,20 +152,20 @@ def run(show_plots, orbitCase, planetCase):
     scSim.AddModelToTask(simTaskName, scObject)
 
     # clear prior gravitational body and SPICE setup definitions
-    simIncludeGravity.clearSetup()
+    gravFactory = simIncludeGravBody.gravBodyFactory()
     newAtmo.addSpacecraftToModel(scObject.scStateOutMsgName)
     #dragEffector.SetDensityMessage(newAtmo.atmoDensOutMsgNames[-1])
 
     if planetCase == "Earth":
-        simIncludeGravity.addEarth()
+        planet = gravFactory.createEarth()
         newAtmo.setPlanet("earth")
     elif planetCase == "Mars":
-        simIncludeGravity.addMars()
+        planet = gravFactory.createMars()
         newAtmo.setPlanet("mars")
-    simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
-    mu = simIncludeGravity.gravBodyList[-1].mu
+    planet.isCentralBody = True          # ensure this is the central gravitational body
+    mu = planet.mu
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
     #
     #   setup orbit and simulation time
@@ -225,9 +224,6 @@ def run(show_plots, orbitCase, planetCase):
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage('atmo_dens0_data', samplingTime)
     scSim.AddVariableForLogging('ExpAtmo.relativePos', samplingTime, StartIndex=0, StopIndex=2)
-    # create simulation messages
-    #
-    simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 
     #
     #   initialize Spacecraft States with the initialization variables
@@ -301,7 +297,7 @@ def run(show_plots, orbitCase, planetCase):
         ax = fig.gca()
 
         planetColor= '#008800'
-        planetRadius = simIncludeGravity.gravBodyList[0].radEquator/1000
+        planetRadius = planet.radEquator/1000
         ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
         # draw the actual orbit
         rData=[]

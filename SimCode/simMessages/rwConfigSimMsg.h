@@ -59,6 +59,7 @@ typedef struct {
     Eigen::Vector3d rPrimeWcB_B;
     Eigen::Vector3d w2Hat_B;
     Eigen::Vector3d w3Hat_B;
+    char label[10];             //!< [-], label name of the RW device being simulated
 }RWConfigSimMsg;
 
 

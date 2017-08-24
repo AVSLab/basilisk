@@ -1,0 +1,23 @@
+% !TEX root = ./Basilisk-Integrators20170724.tex
+
+\section{Model Functions}
+
+The Basilisk integrator functionality is not a regular BSK module, but rather works in conjunction with the {\tt DynamicalObject} class.    The integration functions and goals are:
+
+
+\begin{itemize}
+	\item \textbf{Default Integrator}: The dynamical object should have a default integrator assigned when created.  This avoids the user having to add an integrator in Python, unless they want to select an alternate integrator.
+	\item \textbf{Works on any equations of motion}: The integrator needs to function on any dynamical system.
+\end{itemize}
+
+
+
+\section{Model Assumptions and Limitations}
+
+\subsection{Assumptions}
+
+The equations of motion class {\tt DynamicalObject} is assumed to respond to the method  {\tt equationsOfMotion}.  The integrator then integrates the system forward in time one BSK time step.  
+
+\subsection{Limitations}
+
+Currently only fixed-time step integrators have been implemented.  However, the architecture allows for variable time-step integrators to be implemented as long as their integration time step does not exceed the BSK time step setup for the dynamic equations of motion solving task. 

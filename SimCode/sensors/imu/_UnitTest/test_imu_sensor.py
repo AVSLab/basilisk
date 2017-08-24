@@ -78,19 +78,20 @@ def setRandomWalk(self,senRotNoiseStd = 0.0,senTransNoiseStd = 0.0,errorBoundsGy
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 
-testNames = ['mrp switch','bias','noise','discretization','saturation','misalignment','CoM offset','walk bounds']
+testNames = ['gyroIO','mrp switch','bias','noise','discretization','saturation','misalignment','CoM offset','walk bounds']
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useFlag, testCase", [
-    (False,'mrp switch'),
-    (False,'bias'),
-    (False,'noise'),
-    (False,'discretization'),
-    (False,'saturation'),
-    (False,'misalignment'),
-    (False,'CoM offset'),
-    (False,'walk bounds'),
+@pytest.mark.parametrize("show_plots, useFlag, testCase", [
+    (False, False,'gyroIO'),
+    (False, False,'mrp switch'),
+    (False, False,'bias'),
+    (False, False,'noise'),
+    (False, False,'discretization'),
+    (False, False,'saturation'),
+    (False, False,'misalignment'),
+    (False, False,'CoM offset'),
+    (False, False,'walk bounds'),
 ])
 
 # provide a unique test method name, starting with test_
@@ -161,7 +162,20 @@ def unitSimIMU(show_plots, useFlag, testCase):
     domega = [0.0,0.0,0.0]
 
     # configure tests
-    if testCase == 'mrp switch':
+    if testCase == 'gyroIO':
+        accuracy = 1e-6
+        simStopTime = 0.25
+        StateCurrent.sigma_BN = np.array([0.9,0,0])
+        omega = myRand(3)*0.1
+        StateCurrent.omega_BN_B = omega
+        accel = myRand(3)*0.1
+        trueVector['AngVelPlatform'] = listStack(omega,simStopTime,unitProcRate)
+        trueVector['AccelPlatform'] = listStack(accel,simStopTime,unitProcRate)
+        trueVector['DRFramePlatform'] = listStack(np.asarray(omega)*unitProcRate_s,simStopTime,unitProcRate)
+        trueVector['DVFramePlatform'] = listStack(np.asarray(accel)*unitProcRate_s,simStopTime,unitProcRate)
+
+
+    elif testCase == 'mrp switch':
         # this test verifies basic input and output and checks the MRP switch
         simStopTime = 1.0 # run the sim long enough for the MRP to switch
         StateCurrent.sigma_BN = np.array([0.9,0,0])
@@ -192,9 +206,14 @@ def unitSimIMU(show_plots, useFlag, testCase):
 
     elif testCase == 'noise':
         # this test checks the standard deviation of sensor noise
-        simStopTime = 1000.0
-        senRotNoiseStd = np.random.rand()
-        senTransNoiseStd = np.random.rand()
+        simStopTime = 2000.
+        accuracy = 1e-2
+        senRotNoiseStd = 0.
+        senTransNoiseStd = 0.
+        while senRotNoiseStd == 0:
+            senRotNoiseStd = np.random.rand()
+        while senTransNoiseStd == 0:
+            senTransNoiseStd = np.random.rand()
         stdCorrectionFactor = 1.5 # this needs to be used because of the Gauss Markov module. need to fix the GM module
         setRandomWalk(ImuSensor,float(senRotNoiseStd*stdCorrectionFactor),float(senTransNoiseStd*stdCorrectionFactor),[1e-13]*3,[1e-13]*3)
         trueVector['AccelPlatform'] = [senTransNoiseStd] * 3
@@ -225,8 +244,8 @@ def unitSimIMU(show_plots, useFlag, testCase):
     elif testCase == 'saturation':
         # this test checks saturation
         simStopTime = 0.1
-        ImuSensor.senRotMax = .2
-        ImuSensor.senTransMax = .3
+        ImuSensor.senRotMax = 0.2
+        ImuSensor.senTransMax = 0.3
         omega = [1.,-1.,0.123]
         StateCurrent.omega_BN_B = omega
         omegaSaturated = [.2,-.2,0.123]
@@ -285,7 +304,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
 
     elif testCase == 'walk bounds':
         # this test checks the walk bounds of random walk
-        simStopTime = 1000.0
+        simStopTime = 2500.
         senRotNoiseStd = 0.1
         senTransNoiseStd = 0.2
         errorBoundsGyro = [10.] * 3
@@ -346,9 +365,6 @@ def unitSimIMU(show_plots, useFlag, testCase):
     moduleOutput = dict()
     for moduleOutputName in fieldNames:
         moduleOutput[moduleOutputName] = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + moduleOutputName, range(3))
-        # print "\n\n" + moduleOutputName
-        # print str(moduleOutput[moduleOutputName]) + "\n"
-        # print str(trueVector[moduleOutputName]) + "\n\n"
 
 
     # trim the truth and module output arrays
@@ -359,25 +375,60 @@ def unitSimIMU(show_plots, useFlag, testCase):
             del moduleOutput[moduleOutputName]
             moduleOutput[moduleOutputName] = newArr
 
-    # for i in range(0,3):
-    #     # plt.figure()
-    #     plt.plot(moduleOutput['AngVelPlatform'][:,0]*macros.NANO2SEC,moduleOutput['AngVelPlatform'][:,i+1])
-    #     plt.xlabel('Time (s)')
-    #     plt.ylabel('Angular velocity (rad/s)')
-    #     plt.xlim((0,1000))
-    # plt.show()
+    #plotting for walk bounds test
+    if (testCase == 'walk bounds'):
+         omegaTime = range(0, int(simStopTime)-1, 1)
+         omegaLinePlus = [errorBoundsGyro[0]] * int(simStopTime-1)
+         omegaLineMinus= [-errorBoundsGyro[0]] * int(simStopTime-1)
+         fig = plt.figure(3, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+         fig.clf()
+         plt.plot(omegaTime, omegaLinePlus, label="upper bound", linewidth=3)
+         plt.plot(omegaTime, omegaLineMinus, label="lower bound", linewidth=3)
+         for i in range(0,3):
+             plt.plot(moduleOutput['AngVelPlatform'][:,0]*macros.NANO2SEC,moduleOutput['AngVelPlatform'][:,i+1])
+         plt.xlabel('Time (s)')
+         plt.ylabel('Angular velocity (rad/s)')
+         plt.xlim((0,simStopTime))
+         plt.ylim(-errorBoundsGyro[0]*1.15, errorBoundsGyro[0]*1.15)
+         unitTestSupport.writeFigureLaTeX('omegaWalkBoundPlot', 'Module gyro output for random walk bounds check', plt,
+                                  'height=0.7\\textwidth, keepaspectratio', path)
+
+         fig = plt.figure(4, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+         fig.clf()
+         accelTime = range(0, int(simStopTime)-1, 1)
+         accelLinePlus = [errorBoundsAccel[0]] * int(simStopTime-1)
+         accelLineMinus= [-errorBoundsAccel[0]] * int(simStopTime-1)
+         plt.plot(accelTime, accelLinePlus, label="upper bound", linewidth=3)
+         plt.plot(accelTime, accelLineMinus, label="lower bound", linewidth=3)
+         for i in range(0,3):
+             plt.plot(moduleOutput['AccelPlatform'][:,0]*macros.NANO2SEC,moduleOutput['AccelPlatform'][:,i+1])
+         plt.xlabel('Time (s)')
+         plt.ylabel('Acceleration (m/s)')
+         plt.xlim((0,simStopTime))
+         plt.ylim(-errorBoundsAccel[0]*1.15, errorBoundsAccel[0]*1.15)
+         unitTestSupport.writeFigureLaTeX('accelWalkBoundPlot', 'Module accelerometer output for random walk bounds check', plt,
+                                  'height=0.7\\textwidth, keepaspectratio', path)
+    if show_plots:
+        plt.show()
+
+    plt.close()
 
 
     # compare the module results to the truth values
     if not 'accuracy' in vars():
         accuracy = 1e-3
 
+    # write test accuracy to LATEX file for AutoTex
+    snippetName = testCase + 'Accuracy'
+    snippetContent = '{:1.1e}'.format(accuracy)#write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
+
     testFail = False
     for moduleOutputName in fieldNames:
         if testCase == 'noise':
             for i in range(0,3):
-                if np.abs(np.mean(moduleOutput[moduleOutputName][:,i+1])) > 0.1 \
-                                or np.abs(np.std(moduleOutput[moduleOutputName][:,i+1]) - trueVector[moduleOutputName][i]) > 0.1 :
+                if np.abs(np.mean(moduleOutput[moduleOutputName][:,i+1])) > accuracy \
+                                or np.abs((np.std(moduleOutput[moduleOutputName][:,i+1]) - trueVector[moduleOutputName][i])/  trueVector[moduleOutputName][i]) > accuracy :
                     testFail = True
 
         elif testCase == 'walk bounds':
@@ -390,6 +441,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
                 if not unitTestSupport.isArrayEqual(moduleOutput[moduleOutputName][i], trueVector[moduleOutputName][i], 3, accuracy):
                     testFail = True
 
+
         # make sure that the MRP switched
         if testCase == 'MRP switch' and StateCurrent.MRPSwitchCount == 0:
             testFail = True
@@ -400,13 +452,29 @@ def unitSimIMU(show_plots, useFlag, testCase):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[moduleOutputName][i,0]*macros.NANO2SEC) +
                                 "sec\n")
+            snippetName = testCase + "FailMsg"
+            snippetContent = "FAILED: " + moduleOutputName
+            unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write note for AutoTEX saying what failure was.
+        else:
+            snippetName = testCase + "FailMsg"
+            snippetContent = ""
+            unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write note for AutoTEX saying what failure was.
 
+    del accuracy #make sure that the default accuracy if-check above doesn't find an old accuracy value.
 
     np.set_printoptions(precision=16)
 
-    # print out success message if no error were found
+    snippetName = testCase + 'PassFail' #name of file to be written for auto-documentation which specifies if this test was passed or failed.
+    # print out success message if no error were found.
     if testFailCount == 0:
-        print   "PASSED "
+        passFailText = " Passed"
+        print testCase, ": ", passFailText #terminal output of pass/fail
+        colorText = 'ForestGreen' #color to write auto-documented "PASSED" message in in LATEX
+    else:
+        passFailText = " Failed"
+        colorText = 'Red'#color to write auto-documented "FAILED" message in in LATEX
+    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}' #write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -417,7 +485,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
 # stand-along python script
 if __name__ == "__main__":
     test_unitSimIMU(
-        False, # show_plots
+        True, # show_plots
         False, # useFlag
-        'CoM offset' # testCase
+        'noise' # testCase
     )

@@ -1,0 +1,23 @@
+\section{Model Functions}
+
+The spice\_interface module contains methods allowing it to perform several tasks:
+
+\begin{itemize}
+	\item \textbf{Load Various Spice Kernels}: Spice interface can load a variety of available kernels.
+	\item \textbf{Get GPS Time}: Computes GPS time from the Spice kernel.
+	\item \textbf{Get Planet Data}: Pulls the desired planet's ephemeris from the Spice kernel.
+	\item \textbf{Get current time string}: Pull the current time string.
+	\item \textbf{Write Spice message}: This module then writes out the spice ephemeris message
+\end{itemize}
+
+
+\section{Model Assumptions and Limitations}
+
+\subsection{Assumptions}
+
+Spice interface reads extremely precise ephemeris data, which we compare with JPL's Horizons data. Depending on the celestial body, the accuracy may vary. 
+There are no direct assumptions made while using this module. A user must simply make sure to be comparing the write data by assuring the the frames, times, and loaded kernels (mars vs mars barycenter) are the same.
+
+\subsection{Limitations}
+
+The limitations come directly from the kernels that are available to be loaded. These will limit the planets that can be tracked.

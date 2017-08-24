@@ -58,8 +58,7 @@ import orbitalMotion
 
 # import simulation related support
 import spacecraftPlus
-import gravityEffector
-import simIncludeGravity
+import simIncludeGravBody
 
 
 
@@ -124,13 +123,15 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # Qt Visualization Option
 # -----
 # If you wish to transmit the simulation data to the Qt Visualization, then uncomment the following
-# line from the python scenario script.  If the Viz is running, and searching for a connection on
+# line (line 360 in the script) from the python scenario script.  If the Viz is running, and searching for a connection on
 # 127.0.0.1 (using Open Connection command from the File menu), the simulation is visualized in
-# realtime
+# realtime.  To enable this, uncomment line 360 in this tutorial script.
 #~~~~~~~~~~~~~~{.py}
-# unitTestSupport.enableVisualization(scSim, dynProcess)
+# unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')  # The Viz only support 'earth', 'mars', or 'sun'
 #~~~~~~~~~~~~~~
-# Note that by default the Viz is running in realtime mode with a 1x speed up factor.  This Viz
+# The current Qt based visualiztion is only able to show orbits about either Earth, Mars or the sun.
+# Be sure to match the celestial object name in the line above with the current simulation.
+# Further, note that by default the Viz is running in realtime mode with a 1x speed up factor.  This Viz
 # speed up factor can be increased in the Qt GUI by calling up the
 #
 #       View/Bottom Playback Controls
@@ -165,28 +166,51 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 #~~~~~~~~~~~~~~~~~{.py}
 #   scSim.AddModelToTask(simTaskName, scObject)
 #~~~~~~~~~~~~~~~~~
-# The first step to adding gravity objects is to clear any prior gravity body
-# settings using
+# The first step to adding gravity objects is to create the gravity body factor class.  Note that
+# this call will create an empty gravitational body list each time this script is called.  Thus, there
+# is not need to clear any prior list of gravitational bodies.
 #~~~~~~~~~~~~~~~~~{.py}
-#   simIncludeGravity.clearSetup()
+#   gravFactory = simIncludeGravBody.gravBodyFactory()
 #~~~~~~~~~~~~~~~~~
 # To attach an Earth gravity model to this spacecraft, the following macro is invoked:
 #~~~~~~~~~~~~~~~~~{.py}
-#     simIncludeGravity.addEarth()
-#     simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
+#     planet = gravFactory.createEarth()
+#     planet.isCentralBody = True          # ensure this is the central gravitational body
 #~~~~~~~~~~~~~~~~~
-# If extra customization is required, see the addEarth() macro to change additional values.
+# The gravFactor() class stores the Earth gravitational object within the class, but it also returns a
+# handler to this gravitational object as a convenience.  The celestial object position and velocity
+# vectors are all defaulted to zero values.  If non-zero values are required, this can be manually
+# overriden.  If multiple bodies are simulated, then their positions can be
+# dynamically updated.  See [test_scenarioOrbitMultiBody.py](@ref scenarioOrbitMultiBody) to learn how this is
+# done via a SPICE object.
+#
+# If extra customization is required, see the createEarth() macro to change additional values.
 # For example, the spherical harmonics are turned off by default.  To engage them, the following code
 # is used
 #~~~~~~~~~~~~~~~~~{.py}
-#     simIncludeGravity.gravBodyList[-1].useSphericalHarmParams = True
-#     gravityEffector.loadGravFromFile(bskPath+'External/LocalGravData/GGM03S-J2-only.txt'
-#                                      , simIncludeGravity.gravBodyList[-1].spherHarm
-#                                      ,3
-#                                      )
+#     planet.useSphericalHarmParams = True
+#     simIncludeGravBody.loadGravFromFile(bskPath+'External/LocalGravData/GGM03S-J2-only.txt'
+#                                         , planet.spherHarm
+#                                         ,2
+#                                         )
 #~~~~~~~~~~~~~~~~~
-# The value 3 indidates that the first three harmonics, including the 0th order harmonic,
-# is included.  This harmonics data file only includes a zeroth order and J2 term.
+# The value 2 indidates that the first two harmonics, excluding the 0th order harmonic,
+# are included.  This harmonics data file only includes a zeroth order and J2 term.
+#
+# Finally, the gravitational body must be connected to the spacecraft object.  This is done with
+#~~~~~~~~~~~~~~~~~{.py}
+#     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+#~~~~~~~~~~~~~~~~~
+# Here the complete list of gravitational bodies is automatically assigned to the spacecraft, regardless if
+# it is only one body like Earth or Mars, or a list of multiple bodies.
+#
+# Note that the default planets position and velocity vectors in the gravitational body are set to zero.  If
+# alternate position or velocity vectors are requried, this can be done by creating the planet ephemerise message
+# that is connected to the gravity effector input message `bodyInMsgName`.
+# If time varying planet ephemeris messages are to be included use the Spice module.  For non-zero messages
+# the planet's default ephemeris would be replaced with the desired custom values.  How to use Spice to setup
+# planet ephemerise is shown in the tutorial
+# [test_scenarioOrbitMultiBody.py](@ref scenarioOrbitMultiBody).
 #
 # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
 #~~~~~~~~~~~~~~~~~{.py}
@@ -204,23 +228,9 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # ~~~~~~~~~~~~~~~~
 # If this vector is not specified, as in this tutorial scenario, then it defaults to zero.  If only a rigid hub
 # is modeled, the Bc (hub center of mass) is the same as C (spacecraft center of mass).  If the spacecrat contains
-# state effectors such as hinged panels, fuel slosh, imbalanced reaction wheels, etc., then the points Bc and C woudl
+# state effectors such as hinged panels, fuel slosh, imbalanced reaction wheels, etc., then the points Bc and C would
 # not be the same.  Thus, in this simple simulation the body fixed point B and spacecraft center of mass are
 # identical.
-#
-# Finally, the planet ephemerise data must be written to a message.  In this simulation the planet is held at
-# a fixed location with zero position and velocity coordinates, so this message is not updated.
-# If the planets move with time, such as with the SPICE
-# functions, then this message can be written dynamically as well.
-#~~~~~~~~~~~~~~~~~{.py}
-#     simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
-#~~~~~~~~~~~~~~~~~
-# Note that this latter default planet ephemeris call should only be used if a single gravitational body
-# is being simulated.  It both writes the required planet simulation ephemeris message, as well as a
-# Visualization message specifying about which celestial object the motion should be shown.
-#  If multiple bodies are simulated, then their positions would need to be
-# dynamically updated.  See [test_scenarioOrbitMultiBody.py](@ref scenarioOrbitMultiBody) to learn how this is
-# done via a SPICE object.
 #
 # Before the simulation is ready to run, it must be initialized.  The following code uses a convenient macro routine
 # which initializes each BSK module (run self init, cross init and reset) and clears the BSK logging stack.
@@ -323,7 +333,11 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 #        )
 # ~~~~~~~~~~~~~
 # This case illustrates a circular Low Mars Orbit or LMO with a non-zero orbit
-# inclination.  In this case the Earth's spherical harmonics are turned on.  The
+# inclination.  If you wish to visualize this simulation, be sure to change the celestial object name in
+#~~~~~~~~~~~~~~{.py}
+# unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'mars')  # The Viz only support 'earth', 'mars', or 'sun'
+#~~~~~~~~~~~~~~
+# from 'earth' to 'mars'.  In this simulation setup the planet's spherical harmonics are turned on.  The
 # resulting position coordinates and semi-major axis time histories are shown below.
 # ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1LEO0Mars.svg "Position history")
 # ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2LEO0Mars.svg "Orbit Illustration")
@@ -357,7 +371,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # unitTestSupport.enableVisualization(scSim, dynProcess)
+    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')  # The Viz only support 'earth', 'mars', or 'sun'
 
 
     #
@@ -373,32 +387,30 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
-    # clear prior gravitational body and SPICE setup definitions
-    simIncludeGravity.clearSetup()
-
     # setup Gravity Body
+    gravFactory = simIncludeGravBody.gravBodyFactory()
     if planetCase is 'Mars':
-        simIncludeGravity.addMars()
-        simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
+        planet = gravFactory.createMarsBarycenter()
+        planet.isCentralBody = True           # ensure this is the central gravitational body
         if useSphericalHarmonics:
-            simIncludeGravity.gravBodyList[-1].useSphericalHarmParams = True
-            gravityEffector.loadGravFromFile(bskPath+'External/LocalGravData/GGM2BData.txt'
-                                             , simIncludeGravity.gravBodyList[-1].spherHarm
-                                             , 2
-                                             )
+            planet.useSphericalHarmParams = True
+            simIncludeGravBody.loadGravFromFile(bskPath + 'External/LocalGravData/GGM2BData.txt'
+                                                , planet.spherHarm
+                                                , 100
+                                                )
     else:                   # Earth
-        simIncludeGravity.addEarth()
-        simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
+        planet = gravFactory.createEarth()
+        planet.isCentralBody = True          # ensure this is the central gravitational body
         if useSphericalHarmonics:
-            simIncludeGravity.gravBodyList[-1].useSphericalHarmParams = True
-            gravityEffector.loadGravFromFile(bskPath+'External/LocalGravData/GGM03S-J2-only.txt'
-                                             , simIncludeGravity.gravBodyList[-1].spherHarm
+            planet.useSphericalHarmParams = True
+            simIncludeGravBody.loadGravFromFile(bskPath+'External/LocalGravData/GGM03S-J2-only.txt'
+                                             , planet.spherHarm
                                              ,2
                                              )
-    mu = simIncludeGravity.gravBodyList[-1].mu
+    mu = planet.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
     #
     #   setup orbit and simulation time
@@ -451,10 +463,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     samplingTime = simulationTime / (numDataPoints-1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
-    #
-    # create simulation messages
-    #
-    simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
+
 
     #
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
@@ -515,7 +524,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
             planetColor = '#884400'
         else:
             planetColor= '#008800'
-        planetRadius = simIncludeGravity.gravBodyList[0].radEquator/1000
+        planetRadius = planet.radEquator/1000
         ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
         # draw the actual orbit
         rData=[]

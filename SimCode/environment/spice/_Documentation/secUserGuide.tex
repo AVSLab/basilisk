@@ -1,0 +1,14 @@
+\section{User Guide}
+
+In order to have the spice\_interface module write out it's ephemeris messages, it must be set up from python. The main steps are listed below:
+
+\begin{itemize}
+ \item[-]   \texttt{SpiceObject = spice\_interface.SpiceInterface()}: Construct a spice\_interface object
+  \item[-]  \texttt{SpiceObject.ModelTag = "SpiceInterfaceData"}: Define a model tag for the object
+ \item[-]  \texttt{SpiceObject.SPICEDataPath = splitPath[0] + '/External/EphemerisData/'}: Give the path to the Spice Kernels
+  \item[-]  \texttt{SpiceObject.OutputBufferCount = 10000}: Define a buffer count
+ \item[-]  \texttt{SpiceObject.PlanetNames = spice\_interface.StringVector(["earth", "mars barycenter", "sun"])}: Give the celestial body names that which to be tracked
+\item[-]  \texttt{SpiceObject.UTCCalInit = "2016 October 20, 00:00:00.0 TDB"}: Give a start date to the object
+\end{itemize}
+
+The default frame is \texttt{J2000}.

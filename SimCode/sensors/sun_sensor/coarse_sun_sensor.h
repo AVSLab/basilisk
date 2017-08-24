@@ -26,6 +26,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/cssRawDataSimMsg.h"
+#include "simMessages/eclipseSimMsg.h"
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
 
 typedef enum {
@@ -55,11 +56,9 @@ public:
     
     void CrossInit(); //!< @brief method for initializing cross dependencies
     void SelfInit();  //!< @brief method for initializing own messages
-    bool LinkMessages(); //!< @brief method to re-init message linkage
     void UpdateState(uint64_t CurrentSimNanos); //!< @brief method to update state for runtime
     void setUnitDirectionVectorWithPerturbation(double cssThetaPerturb, double cssPhiPerturb); //!< @brief utility method to perturb CSS unit vector
     void setBodyToPlatformDCM(double yaw, double pitch, double roll); //!< @brief utility method to configure the platform DCM
-    bool spacecraftIlluminated(); //!< @brief method to determine if the S/C is illuminated
     void readInputMessages(); //!< @brief method to read the input messages
     void computeSunData(); //!< @brief method to get the sun vector information
     void computeTrueOutput(); //!< @brief method to compute the true sun-fraction of CSS
@@ -71,15 +70,14 @@ public:
     std::string InputSunMsg;                    //!< [-] Message name for sun data
     std::string InputStateMsg;                  //!< [-] Message name for spacecraft state */
     std::string OutputDataMsg;                  //!< [-] Message name for CSS output data */
+    std::string sunEclipseInMsgName;            //!< [-] Message name for sun eclipse state message
     CSSFaultState_t     faultState;             //!< [-] Specification used if state is set to COMPONENT_FAULT */
-    double              stuckPercent;           //!< [%] percent of full value the CSS will remain stuck at if a fault is triggered
     double              theta;                  //!< [rad] css azimuth angle, measured positive from the body +x axis around the +z axis
     double              phi;                    //!< [rad] css elevation angle, measured positive toward the body +z axis from the x-y plane
     double              B2P321Angles[3];        //!< [-] 321 Euler anhles for body to platform
     double              dcm_PB[3][3];           //!< [-] DCM from platform frame P to body frame B
     double              nHat_B[3];              //!< [-] css unit direction vector in body frame components
     double              sHat_B[3];              //!< [-] unit vector to sun in B
-    double              horizonPlane[3];        //!< [-] unit direction vector defining horizon cut off plane of CSS
     double              directValue;            //!< [-] direct solar irradiance measurement
     double              albedoValue;            //!< [-] albedo irradiance measurement
     double              scaleFactor;            //!< [-] scale factor applied to sensor (common + individual multipliers)
@@ -87,9 +85,7 @@ public:
     double              trueValue;              //!< [-] total measurement without perturbations
     double              KellyFactor;            //!< [-] Kelly curve fit for output cosine curve
     double              fov;                    //!< [-] rad, field of view half angle
-    double              maxVoltage;             //!< [V] max voltage measurable by CSS, used in discretization
     double              r_B[3];
-    bool                MessagesLinked;         //!< [-] Indicator for whether inputs bound
     double              SenBias;                //!< [-] Sensor bias value
     double              SenNoiseStd;            //!< [-] Sensor noise value
     uint64_t            OutputBufferCount;      //!< [-] number of output msgs stored
@@ -97,8 +93,10 @@ private:
     int64_t InputSunID;                         //!< [-] Connect to input time message
     int64_t InputStateID;                       //!< [-] Connect to input time message
     int64_t OutputDataID;                       //!< [-] Connect to output CSS data
+    int64_t sunEclipseInMsgId;                  //!< [-] Connect to input sun eclipse message
     SpicePlanetStateSimMsg SunData;            //!< [-] Unused for now, but including it for future
     SCPlusStatesSimMsg StateCurrent;           //!< [-] Current SSBI-relative state
+    EclipseSimMsg sunVisibilityFactor;          //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
     std::default_random_engine rgen;            //!< [-] Random number generator for disp
     std::normal_distribution<double> rnum;      //! [-] Random number distribution
 };

@@ -9,3 +9,8 @@ lastfailed
 .idea
 **/AutoTex/
 cmake-build*/*
+*.aux
+*.log
+*.out
+*.gz
+*.toc

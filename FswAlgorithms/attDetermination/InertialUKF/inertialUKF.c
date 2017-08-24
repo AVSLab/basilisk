@@ -55,6 +55,8 @@ void CrossInit_inertialUKF(InertialUKFConfig *ConfigData, uint64_t moduleID)
     /*! Begin method steps */
     /*! - Find the message ID for the coarse sun sensor data message */
     ConfigData->stDataInMsgId = subscribeToMessage(ConfigData->stDataInMsgName, sizeof(STAttFswMsg), moduleID);
+	ConfigData->massPropsInMsgId = subscribeToMessage(ConfigData->massPropsInMsgName, 
+		sizeof(VehicleConfigFswMsg), moduleID);
     /*! - Find the message ID for the vehicle mass properties configuration message */
     ConfigData->rwParamsInMsgID = subscribeToMessage(ConfigData->rwParamsInMsgName,
                                                      sizeof(RWArrayConfigFswMsg), moduleID);
@@ -78,19 +80,14 @@ void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
 {
     
     int32_t i;
-    VehicleConfigFswMsg massPropsInBuffer;
     uint64_t writeTime;
     uint32_t writeSize;
     double tempMatrix[AKF_N_STATES*AKF_N_STATES];
     
     /*! Begin method steps*/
     /*! - Zero the local configuration data structures and outputs */
-    memset(&massPropsInBuffer, 0x0 ,sizeof(VehicleConfigFswMsg));
     memset(&(ConfigData->outputInertial), 0x0, sizeof(NavAttIntMsg));
     
-    /*! - Read in mass properties and coarse sun sensor configuration information.*/
-    ReadMessage(ConfigData->massPropsInMsgId, &writeTime, &writeSize,
-                sizeof(VehicleConfigFswMsg), &massPropsInBuffer, moduleID);
     /*! - Read static RW config data message and store it in module variables */
     ReadMessage(ConfigData->rwParamsInMsgID, &writeTime, &writeSize,
                 sizeof(RWArrayConfigFswMsg), &(ConfigData->rwConfigParams), moduleID);

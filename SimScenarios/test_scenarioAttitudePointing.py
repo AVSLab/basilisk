@@ -199,7 +199,7 @@ def run(doUnitTests, show_plots, useLargeTumble):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # unitTestSupport.enableVisualization(scSim, dynProcess)
+    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')  # The Viz only support 'earth', 'mars', or 'sun'
 
     #
     #   setup the simulation tasks/objects
@@ -293,7 +293,6 @@ def run(doUnitTests, show_plots, useLargeTumble):
     #
     # create simulation messages
     #
-    # simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 
     # create the FSW vehicle configuration message
     vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
@@ -445,6 +444,6 @@ def run(doUnitTests, show_plots, useLargeTumble):
 if __name__ == "__main__":
     run( False,       # do unit tests
          True,        # show_plots
-         True         # useLargeTumble
+         False,         # useLargeTumble
        )
 

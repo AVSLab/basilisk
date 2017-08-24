@@ -1,0 +1,27 @@
+\section{Model Description}
+
+\subsection{Introduction}
+The ephemeris converter module has the purpose of copying the spice sim messages into a flight software interface message. This allow flight software module to access planet ephemeris data.
+
+\subsection{I/O}
+
+The spice message, which is read in by the module, contains the following variables:
+
+\begin{itemize}
+\item J2000Current: the time of validity for the planet state
+\item PositionVector : the true position of the planet for the time
+    \item  VelocityVector[3]: the tue velocity of the planet for the time
+    \item  J20002Pfix: the orientation matrix of planet-fixed relative to inertial
+    \item  J20002Pfix\_dot: the derivative of the orientation matrix of planet-fixed relative to inertial
+    \item  computeOrient: a flag indicating whether the reference should be computed
+    \item  PlanetName
+\end{itemize}
+
+Only a the position and velocity vectors are transferred to the output ephemeris message, which therefore contains:
+\begin{itemize}
+    \item r\_BdyZero\_N[3]: the position of orbital body 
+    \item v\_BdyZero\_N[3]: the velocity of orbital body
+    \item timeTag: the vehicle Time-tag for state
+\end{itemize}
+
+
