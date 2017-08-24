@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "dynamics/DynOutput/orb_elem_convert.h"
+#include "dynamics/DynOutput/orbElemConvert/orb_elem_convert.h"
 #include "architecture/messaging/system_messaging.h"
 #include <cstring>
 #include <iostream>
