@@ -1,0 +1,68 @@
+\section{User Guide}
+When using this model, the user should follow the setup procedure corresponding to his or her desired conversion described below. The procedures outline the required inputs and for each conversion and some recommended parameter values.
+\subsection{Element to Cartesian}
+	\begin{itemize}
+		\item \textit{Elements2Cart} = \textit{True}
+		\item \textit{useEphemFormat}
+		\begin{itemize}
+			\item \textit{True} for planet state data
+			\item \textit{False} for spacecraft state data
+		\end{itemize}
+		\item \textit{inputsGood} = True
+		\item $\mu$ is recommended to be $3.86\text{e+}14$ $\frac{\text{m}^3}{\text{s}^2}$.
+		\item Keplerian orbital elements should abide by the cases layed out in the Model Functions section.
+	\end{itemize}
+\subsection{Cartesian to Element}
+	\begin{itemize}
+		\item \textit{Elements2Cart} = \textit{False}
+		\item \textit{useEphemFormat}
+		\begin{itemize}
+			\item \textit{True} for planet state data
+			\item \textit{False} for spacecraft state data
+		\end{itemize}
+		\item \textit{inputsGood} = \textit{True}
+		\item $\mu$ is recommended to be $3.86\text{e+}14$ $\frac{\text{m}^3}{\text{s}^2}$.
+		\item Recommended Cartesian vectors can be obtained from Figures \ref{fig:2} through \ref{fig:13}, which correspond to the allowed orbit types.
+	\end{itemize}
+
+\subsection{Variable Definition and Code Description}
+The variables in Table \ref{tabular:vars} are available for user input. Variables used by the module but not available to the user are not mentioned here. Variables with default settings do not necessarily need to be changed by the user, but may be.
+\begin{table}[H]
+	\caption{Definition and Explanation of Variables Used.}
+	\label{tab:errortol}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{  m{3cm}| m{3cm} | m{3cm} | m{6cm} } % Column formatting, 
+		\hline
+		\textbf{Variable}   							& \textbf{LaTeX Equivalent} 	&		\textbf{Variable Type} & \textbf{Notes}			  \\ \hline
+		r$_N$	&$\bm{r}$ & double & [km]Default setting: 0.0. Position vector either used as an input to or obtained as an output from the conversions.\\ \hline
+		v$_N$	& $\bm{\dot{r}}$ & double & [km/s]Default setting: 0.0. Velocity vector either used as an input to or obtained as an output from the conversions.\\ 
+		\hline
+		$\mu$	& $\mu$ & double & [m3/s2] Required Input. This is the gravitational parameter of the body. Replaces the product of Earth's gravitational force and mass for this test..\\
+		\hline
+		a & $a$ & double & [km] Required Input. The semimajor axis of the body's orbit.\\ 
+		\hline
+		e & $e$ & double & Required Input. The eccentricity of the body's orbit.\\ 
+		\hline
+		i & $i$ & double & [rad] Required Input. The inclination of the body's orbit\\ 
+		\hline
+		Omega & $\Omega$ & double & [rad] Required Input. The ascending node of the body's orbit. \\ 
+		\hline
+		omega & $\omega$ & double & [rad] Required Input. The argument of periapses of the body's orbit. \\ 
+		\hline
+		f & $f$ & double & [rad] Required Input. The true anomaly of the body's orbit \\
+		\hline
+		Elements2Cart & N/A & bool & Default Setting: False. Identifies the desired conversion. \\ 
+		\hline
+		useEphemFormat & N/A & bool & Default Setting: False. Identifies whether the body is a spacecraft or a planet.\\
+		\hline
+		inputsGood & N/A & bool & Default Setting: False. Indicates whether the code reads valid state data for conversion.\\
+		\hline
+	\end{tabular}
+	\label{tabular:vars}
+\end{table}
+\begin{thebibliography}{1}
+	\bibitem{bib:1}
+	Vallado, D. A., and McClain, W. D., \textit{Fundamentals of Astrodynamics and Applications, 4th ed}. Hawthorne, CA: Published by Microcosm Press, 2013.
+	\bibitem{bib:2}
+	Schaub, H., and Junkins, J. L., \textit{Analytical Mechanics of Space Systems, 3rd ed.}. Reston, VA: American Institute of Aeronautics and Astronautics.
+\end{thebibliography}
