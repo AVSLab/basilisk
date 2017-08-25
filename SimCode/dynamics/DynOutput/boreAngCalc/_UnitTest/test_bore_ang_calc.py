@@ -41,7 +41,6 @@ import SimulationBaseClass
 import numpy
 import bore_ang_calc
 import macros
-import matplotlib.pyplot as plt
 import RigidBodyKinematics
 import spice_interface
 import spacecraftPlus
@@ -113,7 +112,6 @@ def bore_ang_calc_func(show_plots, boresightLoc, eulerLoc):
         stateMessage.sigma_BN = RigidBodyKinematics.euler3212MRP(eulerLoc)
     spiceMessage.PositionVector = sunPosition
     spiceMessage.PlanetName = "sun"
-    print stateMessage.sigma_BN
     # Inertial State output Message
     inputMessageSize = stateMessage.getStructSize()
     TotalSim.TotalSim.CreateNewMessage(unitProcessName,
@@ -163,8 +161,6 @@ def bore_ang_calc_func(show_plots, boresightLoc, eulerLoc):
 
     # Truth values
     dcm_BN = RigidBodyKinematics.MRP2C(stateMessage.sigma_BN)
-    print dcm_BN
-    print stateMessage.sigma_BN
     relPosVector = numpy.subtract(spiceMessage.PositionVector, stateMessage.r_BN_N)
     relVelVector = numpy.subtract(spiceMessage.VelocityVector, stateMessage.v_BN_N)
     magRelVelVec = numpy.sqrt(relVelVector[0] ** 2 + relVelVector[1] ** 2 + relVelVector[2] ** 2)
@@ -227,7 +223,6 @@ def bore_ang_calc_func(show_plots, boresightLoc, eulerLoc):
         print "The miss angle is 0, therefore the miss angle is ill defined!"
     else:
         boresightAzimuth = numpy.arctan2(boreVecPoint_1[2], boreVecPoint_1[1])
-    print boresightAzimuth
 
     # Next Check
     AllowTolerance = 1E-10
@@ -258,5 +253,5 @@ def bore_ang_calc_func(show_plots, boresightLoc, eulerLoc):
 # stand-along python script
 #
 if __name__ == "__main__":
-    bore_ang_calc_func(False  # show_plots
-                       )
+    bore_ang_calc_func(False,  # show_plots
+                       [1.0 / numpy.sqrt(3), 1.0 / numpy.sqrt(3), 1.0 / numpy.sqrt(3)], [0.0, 0.0, 0.0])
