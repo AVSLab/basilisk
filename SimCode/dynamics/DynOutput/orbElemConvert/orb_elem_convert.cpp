@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "dynamics/DynOutput/orbElemConvert/orb_elem_convert.h"
+#include "dynamics/DynOutput/orb_elem_convert.h"
 #include "architecture/messaging/system_messaging.h"
 #include <cstring>
 #include <iostream>
@@ -58,11 +58,11 @@ void OrbElemConvert::SelfInit()
 	stateMsgSize = useEphemFormat ? sizeof(SpicePlanetStateSimMsg) :
 		sizeof(SCPlusStatesSimMsg);
 	std::string stateMsgType = useEphemFormat ? "SpicePlanetStateSimMsg" :
-		"OutputStateData";
+		"SCPlusStatesSimMsg";
     uint64_t OutputSize = Elements2Cart ? stateMsgSize :
     sizeof(classicElements);
-    std::string messageType = Elements2Cart ? "OutputStateData" :
-        "classicElements";
+    std::string messageType = Elements2Cart ? useEphemFormat ? "SpicePlanetStateSimMsg" : "SCPlusStatesSimMsg" : "classicElements";
+    std::cout << messageType;
     
     StateOutMsgID = SystemMessaging::GetInstance()->
         CreateNewMessage( OutputDataString, OutputSize, OutputBufferCount,
@@ -95,10 +95,10 @@ void OrbElemConvert::CrossInit()
 void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
 {
     
-    SCPlusStatesSimMsg LocalState;
-	SpicePlanetStateSimMsg localPlanet;
-	uint8_t *msgPtr = useEphemFormat ? reinterpret_cast<uint8_t *> (&localPlanet) :
-		reinterpret_cast<uint8_t *> (&LocalState);
+    SCPlusStatesSimMsg statesIn;
+	SpicePlanetStateSimMsg planetIn;
+	uint8_t *msgPtr = useEphemFormat ? reinterpret_cast<uint8_t *> (&planetIn) :
+		reinterpret_cast<uint8_t *> (&statesIn);
     //! Begin method steps
     //! - If it is outputting cartesian, create a StateData struct and write out.
     //! - If it is outputting elements, just write the current elements out
@@ -106,15 +106,15 @@ void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
     {
 		if (useEphemFormat)
 		{
-			memset(&localPlanet, 0x0, sizeof(SpicePlanetStateSimMsg));
-			memcpy(localPlanet.PositionVector, r_N, 3 * sizeof(double));
-			memcpy(localPlanet.VelocityVector, v_N, 3 * sizeof(double));
+			memset(&planetIn, 0x0, sizeof(SpicePlanetStateSimMsg));
+			memcpy(planetIn.PositionVector, r_N, 3 * sizeof(double));
+			memcpy(planetIn.VelocityVector, v_N, 3 * sizeof(double));
 		}
 		else
 		{
-			memset(&LocalState, 0x0, sizeof(SCPlusStatesSimMsg));
-			memcpy(LocalState.r_BN_N, r_N, 3 * sizeof(double));
-			memcpy(LocalState.v_BN_N, v_N, 3 * sizeof(double));
+			memset(&statesIn, 0x0, sizeof(SCPlusStatesSimMsg));
+			memcpy(statesIn.r_BN_N, r_N, 3 * sizeof(double));
+			memcpy(statesIn.v_BN_N, v_N, 3 * sizeof(double));
 		}
         SystemMessaging::GetInstance()->WriteMessage(StateOutMsgID, CurrentClock,
                                                      stateMsgSize, msgPtr, moduleID);

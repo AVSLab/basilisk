@@ -24,6 +24,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "utilities/orbitalMotion.h"
+#include "simMessages/spicePlanetStateSimMsg.h"
 
 /*! \addtogroup SimModelGroup
  * @{
@@ -48,6 +49,8 @@ public:
     double v_N[3];                    //!< m/s Current velocity vector (inertial)
     double mu;                        //!< -- Current grav param (inertial)
     classicElements CurrentElem;      //!< -- Current orbital elements
+    SCPlusStatesSimMsg statesIn;
+    SpicePlanetStateSimMsg planetIn;
     std::string StateString;          //!< -- port to use for conversion
     std::string OutputDataString;     //!< -- port to use for output data
     uint64_t OutputBufferCount;       //!< -- Count on number of buffers to output

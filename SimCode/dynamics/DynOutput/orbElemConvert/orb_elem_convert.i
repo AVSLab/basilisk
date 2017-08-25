@@ -26,7 +26,11 @@
 %include "sys_model.h"
 %include "../utilities/orbitalMotion.h"
 %include "orb_elem_convert.h"
-
+%include "../simMessages/scPlusStatesSimMsg.h"
+%include "../simMessages/spicePlanetStateSimMsg.h"
+GEN_SIZEOF(classicElements);
+GEN_SIZEOF(SCPlusStatesSimMsg);
+GEN_SIZEOF(SpicePlanetStateSimMsg);
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
