@@ -64,13 +64,15 @@ void Update_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t m
     uint32_t            writeSize;
     NavTransIntMsg         navData;
     EphemerisIntMsg    primPlanet;
+
+    /* zero the local planet ephemeris message */
+    memset(&primPlanet, 0x0, sizeof(EphemerisIntMsg));
     
     ReadMessage(ConfigData->inputCelID, &writeTime, &writeSize,
                 sizeof(EphemerisIntMsg), &primPlanet, moduleID);
     ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize,
                 sizeof(NavTransIntMsg), &navData, moduleID);
-    
-    
+
     /*! - Compute and store output message */
     computeHillPointingReference(ConfigData,
                                  navData.r_BN_N,

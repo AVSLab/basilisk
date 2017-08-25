@@ -68,7 +68,10 @@ void Update_velocityPoint(velocityPointConfig *ConfigData, uint64_t callTime, ui
     uint32_t            writeSize;
     NavTransIntMsg         navData;
     EphemerisIntMsg    primPlanet;
-    
+
+    /* zero the local planet ephemeris message */
+    memset(&primPlanet, 0x0, sizeof(EphemerisIntMsg));
+
     ReadMessage(ConfigData->inputCelID, &writeTime, &writeSize,
                 sizeof(EphemerisIntMsg), &primPlanet, moduleID);
     ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize,
