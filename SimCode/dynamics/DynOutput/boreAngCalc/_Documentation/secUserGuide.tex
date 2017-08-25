@@ -1,0 +1,33 @@
+\section{User Guide}
+
+In order to use this model there are a few parameters that must be set. These parameters include:
+\begin{itemize}
+\item Model Tag 
+	\begin{itemize}
+	\item "solarArrayBoresight"
+	\end{itemize}
+\item State String
+	\begin{itemize}
+	\item\texttt{"inertial\_state\_output"}
+	\end{itemize}
+\item Celestial Body String 
+	\begin{itemize}
+	\item\texttt{"sun\_planet\_data"
+}	\end{itemize}
+\item Output Data String 
+	\begin{itemize}
+	\item\texttt{"solar\_array\_sun\_bore"}
+	\end{itemize}
+\item Position and velocity of the celestial body and the space craft
+	\begin{itemize}
+	\item Position: 10000.0, 1000.0, 0.0
+    \item Velocity: 36000, 0.0, 0.0, 0.0
+	\end{itemize}
+\item Bore Vector with respect to the body frame
+	\begin{itemize}
+	\item 1.0, 0.0, 0.0
+    	\begin{itemize}
+    	\item{It should be noted that the bore vector doesn't need to be passed to the module as a unit vector because the module normalizes the boresight vector regardless. }
+		\end{itemize}
+    \end{itemize}
+\end{itemize}
