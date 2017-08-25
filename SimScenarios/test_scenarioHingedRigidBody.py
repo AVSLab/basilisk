@@ -108,18 +108,21 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 #  maneuver in the other scenario except that the length of the simulation is shorter and a non-impulsive Delta-v is applied through
 # the external force and torque module. The shortened length of the simulation execution means that the maneuvers
 # don't happen at the same point, so the effects of the maneuver are different than before.
-# This scenario does not have multiple maneuver types, so nothing needs to be changed to run the scenario as it did
+# This scenario does not have multiple maneuver types, so nothing needs to be changed to run the scenario as was necessary
 # in the orbit maneuvers tutorial
 #
-# To run the default scenario 1, call the python script through
+# To run the default scenario, call the python script through
 #
 #       python test_scenarioHingedRigidBody.py
 #
-# The simulation layout is shown in the following illustration.  A single simulation process is created
-# which contains the spacecraft object and two hinged rigid bodies. It should be noted here that "hinged rigid bodies"
+# The simulation layout is shown in the following illustration.
+# ![Simulation Flow Diagram](Images/doc/test_scenarioHingedRigidBody.svg "Illustration")
+# A single simulation process is created
+# which contains the spacecraft object and two hinged rigid bodies (panel1 and panel2). It should be noted here that "hinged rigid bodies"
 # are rigid bodies which are hinged to the spacecraft hub by a single axis and they can rotate only about
 # that axis and cannot translate. Details and graphics of the hinged rigid body can be found in the hinged rigid body
-# documentation.
+# documentation. Additionally, the spacecraft is orbiting earth, so a simIncludeGravity.addEarth() is created and called
+# earth. Finally, and external force is created and added to the spacecraft called extFTObject.
 #
 # The BSK simulation is run for a fixed period.  After stopping, the
 # ExtForceTorque() module is given a non-zero external force value.
@@ -132,7 +135,7 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 # hinged rigid bodies.
 #
 # Rather than focusing only on how this simulation works, it may be more instructive to focus on the differences
-# necessary to make this simulation work when added the hinged rigid bodies to the spacecraft as well as the external
+# necessary to make this simulation work when adding the hinged rigid bodies to the spacecraft as well as the external
 # force.
 #
 # The first change necessary is in the import statements at the beginning of the test scenario. Now,
@@ -243,14 +246,9 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 # impulse Delta-v used before. The code which is removed is not shown here, but can be seen by comparing the orbit
 # change maneuver tutorial to this one. When complete, this section of the code now looks like:
 #~~~~~~~~~~~~~~~~~{.py}
-# if maneuverCase == 1:
-#     # inclination change
-#     extFTObject.extForce_N = [[64.4], [44.9], [1123.]]
-#     T2 = macros.sec2nano(421.) # this is the amount of time to get a deltaV equal to what the other tutorial has
-# else:
-#     # Hohmann transfer
-#     extFTObject.extForce_N = [[-2050.], [-1430.], [-.00076]]
-#     T2 = macros.sec2nano(935.)  # this is the amount of time to get a deltaV equal to what the other tutorial has
+# Hohmann transfer
+# extFTObject.extForce_N = [[-2050.], [-1430.], [-.00076]]
+# T2 = macros.sec2nano(935.)  # this is the amount of time to get a deltaV equal to what the other tutorial has
 #~~~~~~~~~~~~~~~~~
 # Finally, the second and third orbit maneuvers have been removed from this tutorial. The intended demonstration is already complete,
 # and the smaller time steps necessary here make it wasteful to simulate more than is necessary. Aside from these
@@ -559,7 +557,7 @@ def run(doUnitTests, show_plots):
         # compare the results to the truth values
         if abs(spaceCraftMomentum - InstMomentum) > accuracy:
             testFailCount += 1
-            testMessages.append("Failed HingedRigidBody Tutorial test for Maneuver Case. Post-maneuver momentum incorrect.")
+            testMessages.append("Failed HingedRigidBody Tutorial test. Post-maneuver momentum incorrect.")
 
         #   print out success message if no error were found
         if testFailCount == 0:
