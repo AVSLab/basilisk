@@ -18,7 +18,6 @@
 
 '''
 import sys, os, inspect
-import numpy
 import pytest
 import math
 import numpy as np
@@ -32,15 +31,14 @@ sys.path.append(splitPath[0] + '/SimCode/dynamics/gravityEffector')
 
 import SimulationBaseClass
 import unitTestSupport  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 import macros
 import gravityEffector
 import spice_interface
-import sim_model
-import ctypes
 import pyswice
 import stateArchitecture
 from gravCoeffOps import loadGravFromFileToList
+import orbitalMotion as om
+import simMessages
 
 #script to check spherical harmonics calcs out to 20th degree
 #Uses coefficient from Vallado tables D-1
@@ -146,12 +144,12 @@ def computeGravityTo20(positionVector):
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def test_gravityEffectorAllTest(show_plots):
-    [testResults, testMessage] = independentSphericalHarmonics(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = sphericalHarmonics(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = singleGravityBody(show_plots)
-    assert testResults < 1, testMessage
+    # [testResults, testMessage] = independentSphericalHarmonics(show_plots) - SJKC
+    # assert testResults < 1, testMessage
+    # [testResults, testMessage] = sphericalHarmonics(show_plots)
+    # assert testResults < 1, testMessage
+    # [testResults, testMessage] = singleGravityBody(show_plots)
+    # assert testResults < 1, testMessage
     [testResults, testMessage] = multiBodyGravity(show_plots)
     assert testResults < 1, testMessage
 
@@ -241,7 +239,7 @@ def sphericalHarmonics(show_plots):
     gravityEffector.loadGravFromFile(path + '/GGM03S.txt', spherHarm, 20)
     spherHarm.initializeParameters()
     gravOut = spherHarm.computeField([[0.0], [0.0], [(6378.1363)*1.0E3]], 20, True)
-    gravMag = numpy.linalg.norm(numpy.array(gravOut))
+    gravMag = np.linalg.norm(np.array(gravOut))
 
     accuracy = 0.1
     gravExpected = 9.8
@@ -316,12 +314,12 @@ def singleGravityBody(show_plots):
     SpiceObject.UTCCalInit = "1994 JAN 26 00:02:00.184"
     
 
-    earthGravBody = gravityEffector.GravBodyData()
-    earthGravBody.bodyInMsgName = "earth_planet_data"
-    earthGravBody.outputMsgName = "earth_display_frame_data"
-    earthGravBody.isCentralBody = False
-    earthGravBody.useSphericalHarmParams = True
-    gravityEffector.loadGravFromFile(path + '/GGM03S.txt', earthGravBody.spherHarm, 60)
+    gravBody1 = gravityEffector.GravBodyData()
+    gravBody1.bodyInMsgName = "earth_planet_data"
+    gravBody1.outputMsgName = "earth_display_frame_data"
+    gravBody1.isCentralBody = False
+    gravBody1.useSphericalHarmParams = True
+    gravityEffector.loadGravFromFile(path + '/GGM03S.txt', gravBody1.spherHarm, 60)
     
     pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/de430.bsp')
     pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/naif0011.tls')
@@ -339,7 +337,7 @@ def singleGravityBody(show_plots):
     gravErrNorm = []
     SpiceObject.UTCCalInit = stringCurrent
     TotalSim.InitializeSimulation()
-    earthGravBody.initBody(0)
+    gravBody1.initBody(0)
     SpiceObject.UpdateState(0)
     for i in range(2*3600):
         stateOut = pyswice.spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, 'J2000', 'EARTH')
@@ -350,14 +348,14 @@ def singleGravityBody(show_plots):
         stringNext = pyswice.et2utc_c(etNext, 'C', 4, 1024, "Yo")
         stateNext = pyswice.spkRead('HUBBLE SPACE TELESCOPE', stringNext, 'J2000', 'EARTH')
         gravVec = (stateNext[3:6] - statePrev[3:6])/(etNext - etPrev)
-        normVec.append(numpy.linalg.norm(stateOut[0:3]))
+        normVec.append(np.linalg.norm(stateOut[0:3]))
         
         stateOut*=1000.0
         SpiceObject.J2000Current = etCurr;SpiceObject.UpdateState(0)
-        earthGravBody.loadEphemeris(0)
-        gravOut = earthGravBody.computeGravityInertial(stateOut[0:3].reshape(3,1).tolist(), 0)
-        gravErrNorm.append(numpy.linalg.norm(gravVec*1000.0 - numpy.array(gravOut).reshape(3))/
-            numpy.linalg.norm(gravVec*1000.0))
+        gravBody1.loadEphemeris(0)
+        gravOut = gravBody1.computeGravityInertial(stateOut[0:3].reshape(3,1).tolist(), 0)
+        gravErrNorm.append(np.linalg.norm(gravVec*1000.0 - np.array(gravOut).reshape(3))/
+            np.linalg.norm(gravVec*1000.0))
         
         pyswice.str2et_c(stringCurrent, et)
         etCurr = pyswice.doubleArray_getitem(et, 0)
@@ -408,7 +406,7 @@ def singleGravityBody(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def multiBodyGravity(show_plots):
-    testCase = 'multiBody'
+    testCase = 'multiBody' #for AutoTeX stuff
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -416,120 +414,122 @@ def multiBodyGravity(show_plots):
     
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
-    
-    # Create a sim module as an empty container
+    #
+    # # Create a sim module as an empty container
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
-    DateSpice = "2015 February 10, 00:00:00.0 TDB"
+    # DateSpice = "2015 February 10, 00:00:00.0 TDB"
+    #
+    # # Create a sim module as an empty container
+    multiSim = SimulationBaseClass.SimBaseClass()
+    multiSim.TotalSim.terminateSimulation()
+    #
+    DynUnitTestProc = multiSim.CreateNewProcess(unitProcessName)
+    # # create the dynamics task and specify the integration update time
+    DynUnitTestProc.addTask(multiSim.CreateNewTask(unitTaskName, macros.sec2nano(1000.0)))
 
-    # Create a sim module as an empty container
-    TotalSim = SimulationBaseClass.SimBaseClass()
-    TotalSim.TotalSim.terminateSimulation()
-
-    DynUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
-    # create the dynamics task and specify the integration update time
-    DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(1000.0)))
-
-    # Initialize the modules that we are using.
-    SpiceObject = spice_interface.SpiceInterface()
-
-    SpiceObject.ModelTag = "SpiceInterfaceData"
-    SpiceObject.SPICEDataPath = splitPath[0] + '/External/EphemerisData/'
-    SpiceObject.OutputBufferCount = 10000
-    SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun"])
-    SpiceObject.UTCCalInit = DateSpice
-    TotalSim.AddModelToTask(unitTaskName, SpiceObject)
-    SpiceObject.UTCCalInit = "1994 JAN 26 00:02:00.184"
-
-    TotalSim.earthGravBody = gravityEffector.GravBodyData()
-    TotalSim.earthGravBody.bodyInMsgName = "earth_planet_data"
-    TotalSim.earthGravBody.outputMsgName = "earth_display_frame_data"
-    TotalSim.earthGravBody.isCentralBody = False
-    TotalSim.earthGravBody.useSphericalHarmParams = True
-    gravityEffector.loadGravFromFile(path + '/GGM03S.txt', TotalSim.earthGravBody.spherHarm, 60)
-    
-    TotalSim.marsGravBody = gravityEffector.GravBodyData()
-    TotalSim.marsGravBody.bodyInMsgName = "mars barycenter_planet_data"
-    TotalSim.marsGravBody.outputMsgName = "mars_display_frame_data"
-    TotalSim.marsGravBody.mu = 4.305e4*1000*1000*1000 # meters!
-    TotalSim.marsGravBody.isCentralBody = False
-    TotalSim.marsGravBody.useSphericalHarmParams = False
-    
-    TotalSim.jupiterGravBody = gravityEffector.GravBodyData()
-    TotalSim.jupiterGravBody.bodyInMsgName = "jupiter barycenter_planet_data"
-    TotalSim.jupiterGravBody.outputMsgName = "jupiter_display_frame_data"
-    TotalSim.jupiterGravBody.mu = 4.305e4*1000*1000*1000 # meters!
-    TotalSim.jupiterGravBody.isCentralBody = False
-    TotalSim.jupiterGravBody.useSphericalHarmParams = False
-    
-    TotalSim.sunGravBody = gravityEffector.GravBodyData()
-    TotalSim.sunGravBody.bodyInMsgName = "sun_planet_data"
-    TotalSim.sunGravBody.outputMsgName = "sun_display_frame_data"
-    TotalSim.sunGravBody.mu = 1.32712440018E20  # meters!
-    TotalSim.sunGravBody.isCentralBody = True
-    TotalSim.sunGravBody.useSphericalHarmParams = False
-    
-    TotalSim.newManager = stateArchitecture.DynParamManager()
+    #Create dynParamManager to feed fake spacecraft data to so that the gravityEffector can access it.
+    #This places the spacecraft at the coordinate frame origin so that planets can be placed around it.
+    #velocity and attitude are just set to zero.
+    #center of mass and time are set to zero.
+    newManager = stateArchitecture.DynParamManager()
     positionName = "hubPosition"
     stateDim = [3, 1]
-    posState = TotalSim.newManager.registerState(stateDim[0], stateDim[1], positionName)
+    posState = newManager.registerState(stateDim[0], stateDim[1], positionName)
+    posVelSig = [[0.],[0.],[0.]]
+    posState.setState(posVelSig)
     velocityName = "hubVelocity"
-    velState = TotalSim.newManager.registerState(stateDim[0], stateDim[1], velocityName)
+    stateDim = [3, 1]
+    velState = newManager.registerState(stateDim[0], stateDim[1], velocityName)
+    velState.setState(posVelSig)
     sigmaName = "hubSigma"
-    sigmaState = TotalSim.newManager.registerState(stateDim[0], stateDim[1], sigmaName)
+    stateDim = [3, 1]
+    sigmaState = newManager.registerState(stateDim[0], stateDim[1], sigmaName)
+    sigmaState.setState(posVelSig)
     initC_B = [[0.0], [0.0], [0.0]]
-    TotalSim.newManager.createProperty("centerOfMassSC", initC_B)
-    TotalSim.newManager.createProperty("systemTime", [[0], [0.0]])
-    
-    
+    newManager.createProperty("centerOfMassSC", initC_B)
+    newManager.createProperty("systemTime", [[0], [0.0]])
+    #
+
+
+    #Create a message struct to place gravBody1 where it is wanted
+    localPlanetEditor = simMessages.SpicePlanetStateSimMsg()
+    localPlanetEditor.PositionVector = [om.AU/10., 0., 0.]
+    localPlanetEditor.VelocityVector = [0., 0., 0.]
+
+    #Grav Body 1 is twice the size of the other two
+    gravBody1 = gravityEffector.GravBodyData()
+    gravBody1.bodyInMsgName = "gravBody1_planet_data"
+    gravBody1.outputMsgName = "gravBody1_display_frame_data"
+    gravBody1.mu = 1000000.
+    gravBody1.radEquator = 6500.
+    gravBody1.isCentralBody = False
+    gravBody1.useSphericalHarmParams = False
+    gravBody1.localPlanet = localPlanetEditor
+
+    #This is the gravityEffector which will actually compute the gravitational acceleration
     allGrav = gravityEffector.GravityEffector()
-    allGrav.gravBodies = gravityEffector.GravBodyVector([TotalSim.earthGravBody, TotalSim.sunGravBody, TotalSim.marsGravBody, TotalSim.jupiterGravBody])
-    allGrav.linkInStates(TotalSim.newManager)
-    allGrav.registerProperties(TotalSim.newManager)
-    TotalSim.AddModelToTask(unitTaskName, allGrav)
-    
-    
-    pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/de430.bsp')
-    pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/naif0011.tls')
-    pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/de-403-masses.tpc')
-    pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/pck00010.tpc')
-    pyswice.furnsh_c(path + '/dawn_rec_081022_081109_090218_v1.bsp')
-    
-    SpiceObject.UTCCalInit = "2008-10-24T00:00:00"
-    stringCurrent = SpiceObject.UTCCalInit
-    TotalSim.InitializeSimulation()
-    dtVal = 1000.0
-    gravErrVec = []
-    for i in range(1300):
-        stateOut = pyswice.spkRead('DAWN', stringCurrent, 'J2000', 'SUN')*1000.0
-        posState.setState(stateOut[0:3].reshape(3,1).tolist())
-        TotalSim.newManager.setPropertyValue("systemTime", [[i*1000*1e9], [i*1000.0]])
-        TotalSim.ConfigureStopTime(macros.sec2nano(i*1000.0)+10)
-        TotalSim.ExecuteSimulation()
-        allGrav.computeGravityField()
-        etPrev =SpiceObject.J2000Current - 2.0
-        stringPrev = pyswice.et2utc_c(etPrev, 'C', 4, 1024, "Yo")
-        statePrev = pyswice.spkRead('DAWN', stringPrev, 'J2000', 'SUN')*1000.0
-        etNext =SpiceObject.J2000Current + 2.0
-        stringNext = pyswice.et2utc_c(etNext, 'C', 4, 1024, "Yo")
-        stateNext = pyswice.spkRead('DAWN', stringNext, 'J2000', 'SUN')*1000.0
-        gravVec = (stateNext[3:6] - statePrev[3:6])/(etNext - etPrev)
-        gravErrVec.append(numpy.linalg.norm(gravVec.reshape(3,1) - numpy.array(TotalSim.newManager.getPropertyReference("g_N"))))
+    allGrav.gravBodies = gravityEffector.GravBodyVector([gravBody1])
+    allGrav.linkInStates(newManager)
+    allGrav.registerProperties(newManager)
+    multiSim.AddModelToTask(unitTaskName, allGrav)
+    allGrav.computeGravityField() #compute acceleration only considering the first body.
+    step1 = newManager.getPropertyReference("g_N") #retrieve total gravitational acceleration in inertial frame
 
-    accuracy = 5.0e-4
+    #Create a message struct to place gravBody2&3 where they are wanted.
+    localPlanetEditor.PositionVector = [-om.AU/10., 0., 0.]
+    localPlanetEditor.VelocityVector = [0., 0., 0.]
 
-    for gravMeas in gravErrVec:
-        if gravMeas > accuracy:
-            testFailCount += 1
-            testMessages.append("Gravity multi-body error too high for kernel comparison")
-            break
+    #grav Body 2 and 3 are coincident with each other, half the mass of gravBody1 and are in the opposite direction of gravBody1
+    gravBody2 = gravityEffector.GravBodyData()
+    gravBody2.bodyInMsgName = "gravBody2_planet_data"
+    gravBody2.outputMsgName = "gravBody2_display_frame_data"
+    gravBody2.mu = gravBody1.mu/2.
+    gravBody2.radEquator = 6500.
+    gravBody2.isCentralBody = False
+    gravBody2.useSphericalHarmParams = False
+    gravBody2.localPlanet = localPlanetEditor
+
+    #This is the gravityEffector which will actually compute the gravitational acceleration
+    allGrav.gravBodies = gravityEffector.GravBodyVector([gravBody1, gravBody2])
+    allGrav.computeGravityField() #compute acceleration considering the first and second bodies.
+    step2 = newManager.getPropertyReference("g_N") #retrieve total gravitational acceleration in inertial frame
+
+    # grav Body 2 and 3 are coincident with each other, half the mass of gravBody1 and are in the opposite direction of gravBody1
+    gravBody3 = gravityEffector.GravBodyData()
+    gravBody3.bodyInMsgName = "gravBody3_planet_data"
+    gravBody3.outputMsgName = "gravBody3_display_frame_data"
+    gravBody3.mu = gravBody2.mu
+    gravBody3.radEquator = 6500.
+    gravBody3.isCentralBody = False
+    gravBody3.useSphericalHarmParams = False
+    gravBody3.localPlanet = localPlanetEditor
+
+    #This is the gravityEffector which will actually compute the gravitational acceleration
+    allGrav.gravBodies = gravityEffector.GravBodyVector([gravBody1, gravBody2, gravBody3])
+    allGrav.computeGravityField() #comput acceleration considering all three bodies
+    step3 = newManager.getPropertyReference("g_N") #retrieve total gravitational acceleration in inertial frame
+
+    step3 = [0., step3[0][0], step3[1][0], step3[2][0]] #add a first (time) column to use isArrayZero
+
+    #Test results for accuracy
+    accuracy = 1e-12
     snippetName = testCase + 'Accuracy'
     snippetContent = '{:1.1e}'.format(accuracy)  # write formatted LATEX string to file to be used by auto-documentation.
     unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
+    if not unitTestSupport.isDoubleEqualRelative(step2[0][0]/step1[0][0], 0.5, accuracy): #if the second grav body doesn't cancel exactly half of the first body's acceleration.
+        testFailCount += 1
+        passFailText = "Step 2 was not half of step 1"
+        testMessages.append(passFailText)
+    elif not unitTestSupport.isArrayZero(step3, 3, accuracy): #if the net acceleration is not now 0.
+        testFailCount += 1
+        passFailText = "Step 3 did not cause gravity to return to 0"
+        testMessages.append(passFailText)
 
+    #Record test results to LaTeX
     if testFailCount == 0:
         passFailText = 'PASSED'
-        print "PASSED: " + "Multi-body with Spherical Harmonics"
+        print "PASSED: " + " Multi-Body"
         colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX
         snippetName = testCase + 'FailMsg'
         snippetContent = ""
@@ -547,9 +547,6 @@ def multiBodyGravity(show_plots):
     snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}' #write formatted LATEX string to file to be used by auto-documentation.
     unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
 
-
-    # return fail count and join into a single string all messages in the list
-    # testMessage
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
