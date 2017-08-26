@@ -487,6 +487,8 @@ def test_SCRotation(show_plots):
         omegaAnalyticalArray[1,i] = -H/(1 + sigmaNorm**2)**2*(8*sigma2*sigma3 + 4*sigma1*(1 - sigmaNorm**2))/scObject.hub.IHubPntBc_B[1][1]
         omegaAnalyticalArray[2,i] = -H/(1 + sigmaNorm**2)**2*(4*(-sigma1**2 - sigma2**2 + sigma3**2) + (1 - sigmaNorm**2)**2)/scObject.hub.IHubPntBc_B[2][2]
 
+    plt.close("all")    # clear out earlier figures
+
     plt.figure()
     plt.clf()
     plt.plot(moduleOutput[:,0]*1e-9, moduleOutput[:,1], moduleOutput[:,0]*1e-9, moduleOutput[:,2], moduleOutput[:,0]*1e-9, moduleOutput[:,3])
