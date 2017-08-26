@@ -46,7 +46,7 @@ class Controller:
         self.simParams = SimulationParameters(
             creationFunction=None,
             executionFunction=None,
-            retentionParameters=None,
+            retentionPolicies=[],
             shouldArchiveParameters=False,
             shouldDisperseSeeds=False,
             dispersions=[],
@@ -65,23 +65,6 @@ class Controller:
         with gzip.open(filename) as pickledData:
             data = pickle.load(pickledData)
             return data
-
-    def setRetentionParameters(self, retentionParameters):
-        """ Set what messages and variables to retain from a simulation.
-        Args:
-            retentionParameters:
-                Parameters in the form of a dictionary with two sub-dictionaries for messages and variables:
-                {
-                    "messages": {
-                        "messageName": [value1,value2,value3]
-                    },
-                    "variables": [
-                        "variableName1",
-                        "variableName2"
-                    ]
-                }
-        """
-        self.simParams.retentionParameters = retentionParameters
 
     def setExecutionFunction(self, newModule):
         """ Set an execution function that executes a simulation instance.
@@ -125,6 +108,15 @@ class Controller:
                 The dispersion to add to the simulation.
         """
         self.simParams.dispersions.append(disp)
+
+    def addRetentionPolicy(self, policy):
+        """ Add a retention policy to the simulation.
+        Args:
+            disp: RetentionPolicy
+                The retention policy to add to the simulation.
+                This defines variables to be logged and saved
+        """
+        self.simParams.retentionPolicies.append(policy)
 
     def setThreadCount(self, threads):
         """ Set the number of threads to use for the monte carlo simulation
@@ -219,11 +211,14 @@ class Controller:
                 print "ERROR re-running case: " + oldRunFile
                 continue
 
-            # use same simulation parameters
+            # use old simulation parameters, modified slightly.
             simParams = copy.deepcopy(self.simParams)
             simParams.index = caseNumber
             # don't redisperse seeds, we want to use the ones saved in the oldRunFile
             simParams.shouldDisperseSeeds = False
+            # don't retain any data so remove all retention policies
+            simParams.retentionPolicies = []
+
             with open(oldRunFile, "r") as runParameters:
                 simParams.modifications = json.load(runParameters)
 
@@ -283,7 +278,7 @@ class Controller:
                 with gzip.open(self.archiveDir + "MonteCarlo.data", "w") as pickleFile:
                     pickle.dump(self, pickleFile) # dump this controller object into a file.
             except Exception as e:
-                print "Unknown exception while trying to pickle controller... \ncontinuing...\n\n", e
+                print "Unknown exception while trying to pickle monte-carlo-controller... \ncontinuing...\n\n", e
 
         numSims = self.executionCount
 
@@ -346,11 +341,11 @@ class SimulationParameters():
      - whether randomized seeds should be applied to the simulation
      - whether data should be archived
     '''
-    def __init__(self, creationFunction, executionFunction, retentionParameters, dispersions, shouldDisperseSeeds, shouldArchiveParameters, filename, index=None, verbose=False, modifications={}):
+    def __init__(self, creationFunction, executionFunction, retentionPolicies, dispersions, shouldDisperseSeeds, shouldArchiveParameters, filename, index=None, verbose=False, modifications={}):
         self.index = index
         self.creationFunction = creationFunction
         self.executionFunction = executionFunction
-        self.retentionParameters = retentionParameters
+        self.retentionPolicies = retentionPolicies
         self.dispersions = dispersions
         self.shouldDisperseSeeds = shouldDisperseSeeds
         self.shouldArchiveParameters = shouldArchiveParameters
@@ -358,6 +353,103 @@ class SimulationParameters():
         self.verbose = verbose
         self.modifications = modifications
 
+
+class VariableRetentionParameters:
+    """
+    Represents a variable's logging parameters.
+    """
+    def __init__(self, varName, varRate, startIndex=0, stopIndex=0, varType='double'):
+        self.varName = varName
+        self.varRate = varRate
+        self.startIndex = startIndex
+        self.stopIndex = stopIndex
+        self.varType = varType
+
+class MessageRetentionParameters:
+    """
+    Represents a message's logging parameters.
+    Args:
+        messageName: the name of the message to log
+        messageRate: rate to log the message at.
+        dataType: the dataType to pull
+    """
+    def __init__(self, messageName, messageRate, retainedVars):
+        self.messageName = messageName
+        self.messageRate = messageRate
+        self.retainedVars = retainedVars
+
+class RetentionPolicy():
+
+    def __init__(self, rate=int(1E10)):
+        self.logRate = rate
+        self.messageLogList = []
+        self.varLogList = []
+        self.plotGenerationCommand = None
+
+    def addMessageLog(self, messageName, retainedVars, logRate=None):
+        if logRate == None:
+            logRate = self.logRate
+        print messageName, logRate, retainedVars
+        self.messageLogList.append(MessageRetentionParameters(messageName, logRate, retainedVars))
+
+    def addVariableLog(self, variableName, startIndex=0, stopIndex=0, varType='double', logRate=None):
+        if logRate == None:
+            logRate = self.logRate
+        varContainer = VariableRetentionParameters(variableName, logRate, startIndex, stopIndex, varType)
+        self.varLogList.append(varContainer)
+
+    def addLogsToSim(self, simInstance):
+        for message in self.messageLogList:
+            simInstance.TotalSim.logThisMessage(message.messageName, message.messageRate)
+        for variable in self.varLogList:
+            simInstance.AddVariableForLogging(variable.varName, variable.varRate, variable.startIndex, variable.stopIndex, variable.varType)
+
+    @staticmethod
+    def addRetentionPoliciesToSim(simInstance, retentionPolicies):
+        """ Adds logs for variables and messages to a simInstance
+        Args:
+            simInstance: The simulation instance to add logs to.
+            retentionPolicies: RetentionPolicy[] list that defines the data to log.
+        """
+
+        for retentionPolicy in retentionPolicies:
+            retentionPolicy.addLogsToSim(simInstance)
+
+    @staticmethod
+    def getDataForRetention(simInstance, retentionPolicies):
+        """ Returns the data that should be retained given a simInstance and the retentionPolicies
+        Args:
+            simInstance: The simulation instance to retrive data from
+            retentionPolicies: A list of RetentionPolicy objects defining the data to retain
+        Returns:
+            Retained Data: In the form of a dictionary with two sub-dictionaries for messages and variables:
+            {
+                "messages": {
+                    "messageName": [value1,value2,value3]
+                },
+                "variables": {
+                    "variableName": [value1,value2,value3]
+                }
+            }
+        """
+
+        data = {}
+        data["messages"] = {}
+        data["variables"] = {}
+
+        for retentionPolicy in retentionPolicies:
+
+            for message in retentionPolicy.messageLogList:
+                for (param, dataType) in message.retainedVars:
+                    name = message.messageName + "." + param
+                    data["messages"][name] = simInstance.pullMessageLogData(name, dataType)
+
+            for variable in retentionPolicy.varLogList:
+                # TODO how to pull variable
+                data["variables"][variable.varName] = simInstance.GetLogVariableData(variable.varName)
+                #simInstance.AddVariableForLogging(variable.varName, int(rateUse), variable.startIndex, variable.stopIndex, variable.varType)
+
+        return data
 
 class SimulationExecutor():
     '''
@@ -420,19 +512,32 @@ class SimulationExecutor():
             for variable, value in modifications.items():
                 disperseStatement = "simInstance." + variable + "=" + value
                 if simParams.verbose:
-                    print "Executing", disperseStatement
+                    print "Executing parameter modification -> ", disperseStatement
                 exec disperseStatement
 
+            # setup data logging
+            if len(simParams.retentionPolicies) > 0:
+                if simParams.verbose:
+                    print "Adding retained data"
+                RetentionPolicy.addRetentionPoliciesToSim(simInstance, simParams.retentionPolicies)
+
+            if simParams.verbose:
+                print "Executing simulation"
             # execute the simulation, with the user-supplied executionFunction
             simParams.executionFunction(simInstance)
 
-            if simParams.retentionParameters != None:
+            if len(simParams.retentionPolicies) > 0:
                 retentionFile = simParams.filename + ".data"
-                #if simParams.verbose:
-                #    print "Retaining data for run in", retentionFile
+
+                if simParams.verbose:
+                    print "Retaining data for run in", retentionFile
+
                 with gzip.open(retentionFile, "w") as archive:
-                    retainedData = cls.getDataForRetention(simInstance, simParams.retentionParameters)
+                    retainedData = RetentionPolicy.getDataForRetention(simInstance, simParams.retentionPolicies)
                     pickle.dump(retainedData, archive)
+
+            if simParams.verbose:
+                print "Terminating simulation"
 
             # terminate the simulation
             simInstance.terminateSimulation()
@@ -472,35 +577,3 @@ class SimulationExecutor():
                 taskVar = 'TaskList[' + str(i) + '].TaskModels' + '[' + str(j) + '].RNGSeed'
                 randomSeeds[taskVar] = str(random.randint(0, 1 << 32 - 1))
         return randomSeeds
-
-    @staticmethod
-    def getDataForRetention(simInstance, retentionParameters):
-        """ Returns the data that should be retained given a simInstance and the retentionParameters
-        Args:
-            simInstance: The simulation instance to retrive data from
-            retentionParameters: A dictionary that states what data to retrieve from the simInstance
-        Returns:
-            Retained Data: In the form of a dictionary with two sub-dictionaries for messages and variables:
-            {
-                "messages": {
-                    "messageName": [value1,value2,value3]
-                },
-                "variables": {
-                    "variableName": [value1,value2,value3]
-                }
-            }
-        """
-
-        data = {}
-        if "messages" in retentionParameters:
-            data["messages"] = {}
-            for (message, dataType) in retentionParameters["messages"].items():
-                data["messages"][message] = simInstance.pullMessageLogData(message, dataType)
-
-        if "variables" in retentionParameters:
-            data["variables"] = {}
-            for variable in retentionParameters["variables"]:
-                # TODO how to pull variable
-                data["variables"][variable] = simInstance.GetLogVariableData(variable)
-
-        return data

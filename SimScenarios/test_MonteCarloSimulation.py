@@ -10,8 +10,8 @@ bskPath = splitPath[0] + '/' + bskName + '/'
 sys.path.append(bskPath + 'modules')
 sys.path.append(bskPath + 'PythonModules')
 
-from MonteCarlo.controller import Controller
-from MonteCarlo.dispersions import UniformEulerAngleMRPDispersion, UniformDispersion, NormalVectorCartDispersion
+from MonteCarlo.Controller import Controller, RetentionPolicy
+from MonteCarlo.Dispersions import UniformEulerAngleMRPDispersion, UniformDispersion, NormalVectorCartDispersion
 
 # import simulation related support
 import spacecraftPlus
@@ -101,6 +101,7 @@ def myCreationFunction():
     #   Setup data logging before the simulation is initialized
     numDataPoints = 400
     samplingTime = simulationTime / (numDataPoints - 1)
+
     sim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
     # create simulation messages
@@ -116,17 +117,12 @@ def myExecutionFunction(sim):
     sim.InitializeSimulationAndDiscover()
     sim.ExecuteSimulation()
 
-# The data to be retained from a simulation is defined in this format
-myRetainedData = {
-    "messages": {
-        "inertial_state_output.r_BN_N": range(3),
-        "inertial_state_output.v_BN_N": range(3)
-    },
-    "variables": [
-        # "variableName1",
-        # "variableName2"
-    ]
-}
+retainedMessageName = "inertial_state_output"
+retainedRate = 100
+var1 = "v_BN_N"
+var2 = "r_BN_N"
+dataType1 = range(3)
+dataType2 = range(3)
 
 
 @pytest.mark.slowtest
@@ -137,7 +133,6 @@ def test_MonteCarloSimulation():
     monteCarlo.setShouldDisperseSeeds(True)
     monteCarlo.setExecutionFunction(myExecutionFunction)
     monteCarlo.setSimulationFunction(myCreationFunction)
-    monteCarlo.setRetentionParameters(myRetainedData)
     monteCarlo.setExecutionCount(NUMBER_OF_RUNS)
     monteCarlo.setThreadCount(PROCESSES)
     monteCarlo.setVerbose(VERBOSE)
@@ -152,6 +147,12 @@ def test_MonteCarloSimulation():
     monteCarlo.addDispersion(NormalVectorCartDispersion(disp2Name, 0.0, 0.75 / 3.0 * np.pi / 180))
     monteCarlo.addDispersion(UniformDispersion(disp3Name, ([1300.0 - 812.3, 1500.0 - 812.3])))
     monteCarlo.addDispersion(NormalVectorCartDispersion(disp4Name, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
+
+    # add retention policy
+    retentionPolicy = RetentionPolicy()
+    retentionPolicy.addMessageLog(retainedMessageName, [(var1, dataType1), (var2, dataType2)], retainedRate)
+    #retentionPolicy.addMessageLog(retainedMessageName2, retainedDataType2, retainedRate2)
+    monteCarlo.addRetentionPolicy(retentionPolicy)
 
     failures = monteCarlo.executeSimulations()
 
