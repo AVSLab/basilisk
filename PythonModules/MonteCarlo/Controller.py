@@ -182,7 +182,7 @@ class Controller:
             For example:
             {
                 "keyForSim": parameterValue,
-                '.TaskList[0].TaskModels[0].RNGSeed': 1674764759
+                'TaskList[0].TaskModels[0].RNGSeed': 1674764759
             }
         """
         filename = self.archiveDir + "run" + str(caseNumber) + ".json"
@@ -295,6 +295,7 @@ class Controller:
 
         numSims = self.executionCount
 
+
         # Avoid building a full list of all simulations to run in memory,
         # instead only generating simulations right before they are needed by a waiting worker
         # This is accomplished using a generator and pool.imap, -- simulations are only built
@@ -309,21 +310,29 @@ class Controller:
         # It is called within worker threads with each worker's simulation parameters
         simulationExecutor = SimulationExecutor()
 
-        try:
-            for result in pool.imap_unordered(simulationExecutor, simGenerator): # yields results *as* the workers finish jobs
-                if result[0] != True:  # workers return True on success
-                    failed.append(result[1]) # add failed jobs to the list of failures
-                    print "Job", result[1], "failed..."
 
-                jobsFinished += 1
+        try:
+            if self.numProcess == 1: # don't make child thread
                 if self.simParams.verbose:
-                    if jobsFinished % max(1, numSims / 20) == 0:  # print percentage after every ~5%
-                        print "Finished", jobsFinished, "/", numSims, \
-                              "\t-- {}%".format(int(100 * float(jobsFinished) / numSims))
+                    print "Executing sequentially..."
+                for sim in simGenerator:
+                    simulationExecutor(sim)
+            else:
+                for result in pool.imap_unordered(simulationExecutor, simGenerator): # yields results *as* the workers finish jobs
+                    if result[0] != True:  # workers return True on success
+                        failed.append(result[1]) # add failed jobs to the list of failures
+                        print "Job", result[1], "failed..."
+
+                    jobsFinished += 1
+                    if self.simParams.verbose:
+                        if jobsFinished % max(1, numSims / 20) == 0:  # print percentage after every ~5%
+                            print "Finished", jobsFinished, "/", numSims, \
+                                  "\t-- {}%".format(int(100 * float(jobsFinished) / numSims))
             pool.close()
-        except KeyboardInterrupt:
+        except KeyboardInterrupt as e:
             print "Ctrl-C was hit, closing pool"
             pool.terminate()
+            raise e
         except Exception as e:
             print "Unknown exception while running simulations:", e
             pool.terminate()
@@ -598,7 +607,8 @@ class SimulationExecutor():
                 taskVar = 'TaskList[' + str(i) + '].TaskModels' + '[' + str(j) + '].RNGSeed'
                 rand = str(random.randint(0, 1 << 32 - 1))
                 try:
-                    model["RNGSeed"] = rand
+                    execStatement =  "simInstance." + taskVar + "=" + str(rand)
+                    exec execStatement # if this fails don't add to the list of modification
                     randomSeeds[taskVar] = rand
                 except:
                     pass
