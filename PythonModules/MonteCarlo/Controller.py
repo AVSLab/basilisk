@@ -257,6 +257,19 @@ class Controller:
 
             yield simClone
 
+    def executeCallbacks(self, rng=None):
+        """ Execute retention policy callbacks after running a monteCarlo sim.
+
+        """
+
+        if rng == None:
+            rng = range(self.executionCount)
+
+        for simIndex in rng:
+            data = self.getRetainedData(simIndex)
+            for retentionPolicy in self.simParams.retentionPolicies:
+                retentionPolicy.executeCallback(data)
+
     def executeSimulations(self):
         ''' Execute simulations in parallel
         Args: None
@@ -384,12 +397,11 @@ class RetentionPolicy():
         self.logRate = rate
         self.messageLogList = []
         self.varLogList = []
-        self.plotGenerationCommand = None
+        self.dataCallback = None
 
     def addMessageLog(self, messageName, retainedVars, logRate=None):
         if logRate == None:
             logRate = self.logRate
-        print messageName, logRate, retainedVars
         self.messageLogList.append(MessageRetentionParameters(messageName, logRate, retainedVars))
 
     def addVariableLog(self, variableName, startIndex=0, stopIndex=0, varType='double', logRate=None):
@@ -404,6 +416,13 @@ class RetentionPolicy():
         for variable in self.varLogList:
             simInstance.AddVariableForLogging(variable.varName, variable.varRate, variable.startIndex, variable.stopIndex, variable.varType)
 
+    def setDataCallback(self, dataCallback):
+        self.dataCallback = dataCallback
+
+    def executeCallback(self, data):
+        if self.dataCallback != None:
+            self.dataCallback(data, self)
+
     @staticmethod
     def addRetentionPoliciesToSim(simInstance, retentionPolicies):
         """ Adds logs for variables and messages to a simInstance
@@ -414,6 +433,8 @@ class RetentionPolicy():
 
         for retentionPolicy in retentionPolicies:
             retentionPolicy.addLogsToSim(simInstance)
+
+        #TODO handle duplicates somehow?
 
     @staticmethod
     def getDataForRetention(simInstance, retentionPolicies):

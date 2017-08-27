@@ -27,6 +27,8 @@ import unitTestSupport  # general support file with common unit test functions
 from math import fabs
 import shutil
 
+import matplotlib.pyplot as plt
+
 NUMBER_OF_RUNS = 20
 LENGTH_SHRINKAGE_FACTOR = 50 # make the simulations faster by dividing the length of the sim by this.
 VERBOSE = True
@@ -124,6 +126,10 @@ var2 = "r_BN_N"
 dataType1 = range(3)
 dataType2 = range(3)
 
+def myDataCallback(monteCarloData, retentionPolicy):
+    print monteCarloData
+    data = np.array(monteCarloData["messages"]["inertial_state_output.v_BN_N"])
+    plt.plot(data[:,1], data[:,2])
 
 @pytest.mark.slowtest
 def test_MonteCarloSimulation():
@@ -135,7 +141,7 @@ def test_MonteCarloSimulation():
     monteCarlo.setSimulationFunction(myCreationFunction)
     monteCarlo.setExecutionCount(NUMBER_OF_RUNS)
     monteCarlo.setThreadCount(PROCESSES)
-    monteCarlo.setVerbose(VERBOSE)
+    monteCarlo.setVerbose(False)
     monteCarlo.setArchiveDir(dirName)
 
     # add some dispersions
@@ -151,7 +157,8 @@ def test_MonteCarloSimulation():
     # add retention policy
     retentionPolicy = RetentionPolicy()
     retentionPolicy.addMessageLog(retainedMessageName, [(var1, dataType1), (var2, dataType2)], retainedRate)
-    #retentionPolicy.addMessageLog(retainedMessageName2, retainedDataType2, retainedRate2)
+    retentionPolicy.setDataCallback(myDataCallback)
+
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
     failures = monteCarlo.executeSimulations()
@@ -188,6 +195,9 @@ def test_MonteCarloSimulation():
         assert dispName in params1, "dispersion should be applied"
         # assert two different runs had different parameters.
         assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
+
+    monteCarloLoaded.executeCallbacks()
+    plt.show()
 
     shutil.rmtree(dirName)
     assert not os.path.exists(dirName), "No leftover data should exist after the test"
