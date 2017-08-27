@@ -596,5 +596,10 @@ class SimulationExecutor():
         for i, task in enumerate(simInstance.TaskList):
             for j, model in enumerate(task.TaskModels):
                 taskVar = 'TaskList[' + str(i) + '].TaskModels' + '[' + str(j) + '].RNGSeed'
-                randomSeeds[taskVar] = str(random.randint(0, 1 << 32 - 1))
+                rand = str(random.randint(0, 1 << 32 - 1))
+                try:
+                    model["RNGSeed"] = rand
+                    randomSeeds[taskVar] = rand
+                except:
+                    pass
         return randomSeeds
