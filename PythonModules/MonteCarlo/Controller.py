@@ -34,6 +34,8 @@ import signal
 random.seed(0x1badcad1)
 import numpy as np
 
+import pprint
+
 class Controller:
     """
     The MonteCarloController class is used to run a monte carlo simulation.
@@ -301,7 +303,6 @@ class Controller:
         # This is accomplished using a generator and pool.imap, -- simulations are only built
         # when they are about to be passed to a worker, avoiding memory overhead of first building simulations
         # There is a system-dependent chunking behavior, sometimes 10-20 are generated at a time.
-        pool = Pool(self.numProcess)
         simGenerator = self.generateSims(range(numSims))
         failed = []  # keep track of the indices of failed simulations
         jobsFinished = 0  # keep track of what simulations have finished
@@ -311,13 +312,19 @@ class Controller:
         simulationExecutor = SimulationExecutor()
 
 
-        try:
-            if self.numProcess == 1: # don't make child thread
-                if self.simParams.verbose:
-                    print "Executing sequentially..."
-                for sim in simGenerator:
+        if self.numProcess == 1: # don't make child thread
+            if self.simParams.verbose:
+                print "Executing sequentially..."
+            i=0
+            for sim in simGenerator:
+                try:
                     simulationExecutor(sim)
-            else:
+                except:
+                    failed += i
+                i += 1
+        else:
+            pool = Pool(self.numProcess)
+            try:
                 for result in pool.imap_unordered(simulationExecutor, simGenerator): # yields results *as* the workers finish jobs
                     if result[0] != True:  # workers return True on success
                         failed.append(result[1]) # add failed jobs to the list of failures
@@ -328,17 +335,17 @@ class Controller:
                         if jobsFinished % max(1, numSims / 20) == 0:  # print percentage after every ~5%
                             print "Finished", jobsFinished, "/", numSims, \
                                   "\t-- {}%".format(int(100 * float(jobsFinished) / numSims))
-            pool.close()
-        except KeyboardInterrupt as e:
-            print "Ctrl-C was hit, closing pool"
-            pool.terminate()
-            raise e
-        except Exception as e:
-            print "Unknown exception while running simulations:", e
-            pool.terminate()
-        finally:
-            failed.extend(range(jobsFinished + 1, numSims)) # fail all potentially running jobs...
-            pool.join()
+                pool.close()
+            except KeyboardInterrupt as e:
+                print "Ctrl-C was hit, closing pool"
+                pool.terminate()
+                raise e
+            except Exception as e:
+                print "Unknown exception while running simulations:", e
+                pool.terminate()
+            finally:
+                failed.extend(range(jobsFinished + 1, numSims)) # fail all potentially running jobs...
+                pool.join()
 
         # if there are failures
         if len(failed) > 0:
@@ -561,6 +568,7 @@ class SimulationExecutor():
 
                 if simParams.verbose:
                     print "Retaining data for run in", retentionFile
+                    pprint(simParams.retentionPolicies)
 
                 with gzip.open(retentionFile, "w") as archive:
                     retainedData = RetentionPolicy.getDataForRetention(simInstance, simParams.retentionPolicies)
