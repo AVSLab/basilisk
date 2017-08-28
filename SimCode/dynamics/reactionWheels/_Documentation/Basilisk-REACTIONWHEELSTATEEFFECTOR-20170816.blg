@@ -3,44 +3,44 @@ Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: Basilisk-REACTIONWHEELSTATEEFFECTOR-20170816.aux
 The style file: plain.bst
 Database file #1: bibliography.bib
-You've used 1 entry,
+You've used 2 entries,
             2118 wiz_defined-function locations,
-            506 strings with 4314 characters,
-and the built_in function-call counts, 337 in all, are:
-= -- 30
-> -- 18
+            512 strings with 4426 characters,
+and the built_in function-call counts, 591 in all, are:
+= -- 53
+> -- 31
 < -- 0
-+ -- 7
-- -- 6
-* -- 23
-:= -- 64
-add.period$ -- 4
-call.type$ -- 1
-change.case$ -- 6
++ -- 12
+- -- 10
+* -- 38
+:= -- 108
+add.period$ -- 6
+call.type$ -- 2
+change.case$ -- 11
 chr.to.int$ -- 0
-cite$ -- 1
-duplicate$ -- 14
-empty$ -- 27
-format.name$ -- 6
-if$ -- 68
+cite$ -- 2
+duplicate$ -- 26
+empty$ -- 49
+format.name$ -- 10
+if$ -- 122
 int.to.chr$ -- 0
-int.to.str$ -- 1
-missing$ -- 1
-newline$ -- 9
-num.names$ -- 2
-pop$ -- 9
+int.to.str$ -- 2
+missing$ -- 3
+newline$ -- 13
+num.names$ -- 4
+pop$ -- 17
 preamble$ -- 1
-purify$ -- 5
+purify$ -- 9
 quote$ -- 0
-skip$ -- 5
+skip$ -- 12
 stack$ -- 0
-substring$ -- 5
-swap$ -- 1
+substring$ -- 10
+swap$ -- 2
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 4
+type$ -- 6
 warning$ -- 0
-while$ -- 2
-width$ -- 2
-write$ -- 15
+while$ -- 4
+width$ -- 3
+write$ -- 25
