@@ -562,17 +562,17 @@ class SimulationExecutor():
                 with open(simParams.filename + ".json", 'w') as outfile:
                     json.dump(modifications, outfile)
 
+            if simParams.configureFunction != None:
+                if simParams.verbose:
+                    print "Configuring sim"
+                simParams.configureFunction(simInstance)
+
             # apply the dispersions and the random seeds
             for variable, value in modifications.items():
                 disperseStatement = "simInstance." + variable + "=" + value
                 if simParams.verbose:
                     print "Executing parameter modification -> ", disperseStatement
                 exec disperseStatement
-
-            if simParams.configureFunction != None:
-                if simParams.verbose:
-                    print "Configuring sim"
-                simParams.configureFunction(simInstance)
 
             # setup data logging
             if len(simParams.retentionPolicies) > 0:
