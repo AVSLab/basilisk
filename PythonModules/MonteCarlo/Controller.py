@@ -46,6 +46,7 @@ class Controller:
         self.simParams = SimulationParameters(
             creationFunction=None,
             executionFunction=None,
+            configureFunction=None,
             retentionPolicies=[],
             shouldArchiveParameters=False,
             shouldDisperseSeeds=False,
@@ -76,6 +77,17 @@ class Controller:
                 Its return value is not used.
         """
         self.simParams.executionFunction = newModule
+
+    def setConfigureFunction(self, newModule):
+        """ Set an execution function that executes a simulation instance.
+        Args:
+            executionFunction: (sim: SimulationBaseClass) => None
+                A function with one parameter, a simulation instance.
+                The function will be called after the creationFunction and configurationFunction in each simulation run.
+                It must execute the simulation.
+                Its return value is not used.
+        """
+        self.simParams.configureFunction = newModul
 
     def setSimulationFunction(self, newObject):
         """ Set the function that creates the simulation instance.
@@ -370,10 +382,11 @@ class SimulationParameters():
      - whether randomized seeds should be applied to the simulation
      - whether data should be archived
     '''
-    def __init__(self, creationFunction, executionFunction, retentionPolicies, dispersions, shouldDisperseSeeds, shouldArchiveParameters, filename, index=None, verbose=False, modifications={}):
+    def __init__(self, creationFunction, executionFunction, configureFunction, retentionPolicies, dispersions, shouldDisperseSeeds, shouldArchiveParameters, filename, index=None, verbose=False, modifications={}):
         self.index = index
         self.creationFunction = creationFunction
         self.executionFunction = executionFunction
+        self.configureFunction = configureFunction
         self.retentionPolicies = retentionPolicies
         self.dispersions = dispersions
         self.shouldDisperseSeeds = shouldDisperseSeeds
@@ -484,8 +497,6 @@ class RetentionPolicy():
                         msg = simInstance.pullMessageLogData(name)
                     else:
                         msg = simInstance.pullMessageLogData(name, dataType)
-                    if msg == None:
-                        print "Message retained no data?", name
                     data["messages"][name] = msg
 
             for variable in retentionPolicy.varLogList:
@@ -558,6 +569,11 @@ class SimulationExecutor():
                     print "Executing parameter modification -> ", disperseStatement
                 exec disperseStatement
 
+            if simParams.configureFunction != None:
+                if simParams.verbose:
+                    print "Configuring sim"
+                simParams.configureFunction(simInstance)
+
             # setup data logging
             if len(simParams.retentionPolicies) > 0:
                 if simParams.verbose:
@@ -576,7 +592,6 @@ class SimulationExecutor():
                     print "Retaining data for run in", retentionFile
 
                 with gzip.open(retentionFile, "w") as archive:
-		    print "hit"
                     retainedData = RetentionPolicy.getDataForRetention(simInstance, simParams.retentionPolicies)
                     pickle.dump(retainedData, archive)
 
