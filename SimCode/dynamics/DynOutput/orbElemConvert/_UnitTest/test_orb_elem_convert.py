@@ -505,6 +505,9 @@ def orbElem(a, e, i, AN, AP, f, mu, DispPlot):
             testFailCount += 1
 
     # create plot
+
+    plt.close("all")
+
     fig1 = plt.figure(1)
     plt.clf()
     ax1 = fig1.add_subplot(211)
