@@ -87,7 +87,7 @@ class Controller:
                 It must execute the simulation.
                 Its return value is not used.
         """
-        self.simParams.configureFunction = newModul
+        self.simParams.configureFunction = newModule
 
     def setSimulationFunction(self, newObject):
         """ Set the function that creates the simulation instance.
