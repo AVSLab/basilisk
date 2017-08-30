@@ -1,0 +1,57 @@
+\section{Model Functions}
+The main functions in this model include converting from Keplerian orbital elements to Cartesian vectors and converting from Cartesian vectors to Keplerian orbital elements. Orbital elements used for this conversion include the semimajor axis, eccentricity, inclination, ascending node, argument of periapses, and true anomaly. The Cartesian parameters consist of position and velocity vectors. These conversions are able to be performed with a variety of inputs, so listed below are the orbit types available for accurate conversion.
+
+\begin{itemize}
+	\item \textbf{Elliptic Orbit} \boldmath($0<e<1.0$, \quad $a>0$)\unboldmath
+	\begin{itemize}
+		\item Inclined: $i>0$, \quad $\Omega>0$
+		\item Equatorial: $i=0$, \quad $\Omega=0$
+	\end{itemize}
+	\item \textbf{Circular Orbit} \boldmath($e=0$, \quad $a>0$, \quad $\omega=0$)\unboldmath
+	\begin{itemize}
+		\item Inclined: $i>0$, \quad $\Omega>0$
+		\item Equatorial: $i=0$, \quad $\Omega=0$
+	\end{itemize}
+	\item \textbf{Parabolic orbit} \boldmath($e= 1.0$, \quad $a=-r_p$)\unboldmath
+	\begin{itemize}
+		\item Inclined: $i>0$, \quad $\Omega>0$
+		\item Equatorial: $i=0$, \quad $\Omega=0$
+	\end{itemize}
+	\item \textbf{Hyperbolic orbit} \boldmath($e>1.0$, \quad $a<0$)\unboldmath
+	\begin{itemize}
+		\item Inclined: $i>0$, \quad $\Omega>0$
+		\item Equatorial: $i=0$, \quad $\Omega=0$
+	\end{itemize}
+\end{itemize}
+
+\section{Model Assumptions and Limitations}
+\subsection{Assumptions}
+\begin{itemize}
+	\item The origin of the inertial frame is coincident with the geocentric equatorial system.
+	\item The attracting body is specified by the supplied gravity constant $\mu [\frac{km^3}{s^2}]$.
+\end{itemize}
+\subsection{Limitations}
+\begin{itemize}
+	\item \textbf{\boldmath For input $e \geq 1.0$}
+	\begin{itemize}
+		\item Rectilinear orbits are not supported with this module because their angular momentum equals zero. However, Cartesian vectors can be obtained from orbital elements because this only affects the Cartesian to element conversion. Regardless, this case will not be needed when using the orb\_elem\_convert module.
+		\item The semimajor axis input must be negative.
+	\end{itemize}
+	\item \textbf{\boldmath For input $e = 0$}
+	\begin{itemize}
+		\item The argument of periapsis input must be zero.
+	\end{itemize}
+	\item \textbf{\boldmath For input $a = 0$}
+	\begin{itemize}
+		\item The ascending node input must be zero.
+	\end{itemize}
+	\item \textbf{\boldmath For input $a<0$}
+	\begin{itemize}
+		\item The eccentricity must be greater than or equal to 1.0.
+	\end{itemize}
+	\item \textbf{Orbital element angles ($i$, $\Omega$, $\omega$, $f$)}
+	\begin{itemize}
+		\item Must be greater than or equal to zero
+		\item Must be radians
+	\end{itemize} 
+\end{itemize}
