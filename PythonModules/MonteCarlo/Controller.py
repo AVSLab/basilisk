@@ -19,7 +19,7 @@
 '''
 import sys, os, inspect  # Don't worry about this, standard stuff plus file discovery
 import random
-
+import traceback
 import shutil
 
 import copy
@@ -33,8 +33,6 @@ import signal
 
 random.seed(0x1badcad1)
 import numpy as np
-
-import pprint
 
 class Controller:
     """
@@ -320,7 +318,7 @@ class Controller:
                 try:
                     simulationExecutor(sim)
                 except:
-                    failed += i
+                    failed.append(i)
                 i += 1
         else:
             pool = Pool(self.numProcess)
@@ -338,13 +336,15 @@ class Controller:
                 pool.close()
             except KeyboardInterrupt as e:
                 print "Ctrl-C was hit, closing pool"
+                failed.extend(range(jobsFinished, numSims)) # fail all potentially running jobs...
                 pool.terminate()
                 raise e
             except Exception as e:
                 print "Unknown exception while running simulations:", e
+                failed.extend(range(jobsFinished, numSims)) # fail all potentially running jobs...
+		traceback.print_exc()
                 pool.terminate()
             finally:
-                failed.extend(range(jobsFinished + 1, numSims)) # fail all potentially running jobs...
                 pool.join()
 
         # if there are failures
@@ -418,6 +418,7 @@ class RetentionPolicy():
     def addMessageLog(self, messageName, retainedVars, logRate=None):
         if logRate == None:
             logRate = self.logRate
+	print "adding message", messageName, retainedVars
         self.messageLogList.append(MessageRetentionParameters(messageName, logRate, retainedVars))
 
     def addVariableLog(self, variableName, startIndex=0, stopIndex=0, varType='double', logRate=None):
@@ -437,6 +438,7 @@ class RetentionPolicy():
 
     def executeCallback(self, data):
         if self.dataCallback != None:
+            print "Executing Callback", self.dataCallback
             self.dataCallback(data, self)
 
     @staticmethod
@@ -475,17 +477,21 @@ class RetentionPolicy():
         data["variables"] = {}
 
         for retentionPolicy in retentionPolicies:
-
             for message in retentionPolicy.messageLogList:
                 for (param, dataType) in message.retainedVars:
                     name = message.messageName + "." + param
-                    data["messages"][name] = simInstance.pullMessageLogData(name, dataType)
+                    if dataType is None:
+                        msg = simInstance.pullMessageLogData(name)
+                    else:
+                        msg = simInstance.pullMessageLogData(name, dataType)
+                    if msg == None:
+                        print "Message retained no data?", name
+                    data["messages"][name] = msg
 
             for variable in retentionPolicy.varLogList:
                 # TODO how to pull variable
                 data["variables"][variable.varName] = simInstance.GetLogVariableData(variable.varName)
                 #simInstance.AddVariableForLogging(variable.varName, int(rateUse), variable.startIndex, variable.stopIndex, variable.varType)
-
         return data
 
 class SimulationExecutor():
@@ -568,9 +574,9 @@ class SimulationExecutor():
 
                 if simParams.verbose:
                     print "Retaining data for run in", retentionFile
-                    pprint(simParams.retentionPolicies)
 
                 with gzip.open(retentionFile, "w") as archive:
+		    print "hit"
                     retainedData = RetentionPolicy.getDataForRetention(simInstance, simParams.retentionPolicies)
                     pickle.dump(retainedData, archive)
 
@@ -587,6 +593,7 @@ class SimulationExecutor():
 
         except Exception as e:
             print "Error in worker thread", e
+	    traceback.print_exc()
             return (False, simParams.index)  # there was an error
 
     @staticmethod
