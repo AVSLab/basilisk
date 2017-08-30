@@ -269,17 +269,21 @@ class Controller:
 
             yield simClone
 
-    def executeCallbacks(self, rng=None):
+    def executeCallbacks(self, rng=None, retentionPolicies=[]):
         """ Execute retention policy callbacks after running a monteCarlo sim.
-
+        rng: A list of simulations to execute callbacks on
+        retentionPolicies: the retention policies to execute
         """
 
         if rng == None:
             rng = range(self.executionCount)
 
+        if retentionPolicies == []:
+            retentionPolicies = self.simParams.retentionPolicies
+
         for simIndex in rng:
             data = self.getRetainedData(simIndex)
-            for retentionPolicy in self.simParams.retentionPolicies:
+            for retentionPolicy in retentionPolicies:
                 retentionPolicy.executeCallback(data)
 
     def executeSimulations(self):
