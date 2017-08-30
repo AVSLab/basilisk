@@ -412,7 +412,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         plt.plot(wheelSpeeds[:,1], frictionTorque1[:,1], label = 'RW 1 Friction Torque')
         plt.plot(wheelSpeeds[:,2], frictionTorque2[:,1], label = 'RW 2 Friction Torque')
         plt.legend()
-        plt.xlabel("Time (s)")
+        plt.xlabel("Wheel Speed (rad/s)")
         plt.ylabel("Friction Torque (N-m)")
         axes = plt.gca()
         axes.set_ylim([-0.05,0.05])
