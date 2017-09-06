@@ -159,7 +159,7 @@ void ExponentialAtmosphere::CrossInit()
 void ExponentialAtmosphere::WriteOutputMessages(uint64_t CurrentClock)
 {
     atmoPropsSimMsg tmpAtmo;
-    std::vector<uint64_t>::iterator it;
+    std::vector<int64_t>::iterator it;
     std::vector<atmoPropsSimMsg>::iterator atmoIt;
     atmoIt = atmoOutBuffer.begin();
     for(it = atmoDensOutMsgIds.begin(); it!= atmoDensOutMsgIds.end(); it++, atmoIt++){
@@ -190,10 +190,10 @@ bool ExponentialAtmosphere::ReadInputs()
   memset(&this->bodyState, 0x0, sizeof(SpicePlanetStateSimMsg));
   memset(&tmpState, 0x0, sizeof(SCPlusStatesSimMsg));
   scStates.clear();
-  if(scStateInMsgIds[0] >= 0)
+  if(this->scStateInMsgIds[0] >= 0)
   {
     //! Iterate over spacecraft message ids
-    std::vector<uint64_t>::iterator it;
+    std::vector<int64_t>::iterator it;
     for(it = scStateInMsgIds.begin(); it!= scStateInMsgIds.end(); it++){
       SystemMessaging::GetInstance()->ReadMessage(*it, &localHeader,
                                                   sizeof(SCPlusStatesSimMsg),
