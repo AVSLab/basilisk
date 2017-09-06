@@ -29,6 +29,8 @@
 # import pytest
 import sys, os, inspect
 import numpy as np
+import pytest
+import matplotlib.pyplot as plt
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -38,7 +40,6 @@ sys.path.append(splitPath[0]+'/Basilisk/PythonModules')
 
 import SimulationBaseClass
 import unitTestSupport  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 import macros
 import imu_sensor
 import sim_model
@@ -47,6 +48,29 @@ import RigidBodyKinematics as rbk
 np.random.seed(2000000)
 
 # methods
+def m33v3mult(M,v):
+    output = [[0.],[0.],[0.]]
+    np.reshape(v,(3,1))
+    for i in range(0,3):
+        for k in range(0,3):
+            output[i] += M[i][k]*v[k]
+
+    return np.reshape(np.array(output),(1,3))
+
+def v3vTmult(v1,v2):
+    output = [[0,0,0],[0,0,0],[0,0,0]]
+    for i in range(0,3):
+        for j in range(0,3):
+            output[i][j] = v1[i] * v2[j]
+    return output
+
+def skew(vector):
+    vector = np.array(vector)
+    skew_symmetric = np.array([[0, -vector.item(2), vector.item(1)],
+                     [vector.item(2), 0, -vector.item(0)],
+                     [-vector.item(1), vector.item(0), 0]])
+    return skew_symmetric
+
 def listStack(vec,stopTime,unitProcRate):
     # returns a list duplicated the number of times needed to be consistent with module output
     return [vec] * int(stopTime/(float(unitProcRate)/float(macros.sec2nano(1))))
@@ -79,13 +103,13 @@ def setRandomWalk(self,senRotNoiseStd = 0.0,senTransNoiseStd = 0.0,errorBoundsGy
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("show_plots, make_plots, testCase, stopTime, accuracy", [
     (False, False,'gyroIO', 0.25, 1e-6),
-    (False, False,'bias', 0.5, 1e-3),
-    (False, False,'noise', 2000., 1e-2),
-    (False, False,'discretization', 0.5, 1e-5),
-    (False, False,'saturation', 0.1, 1e-3),
-    (False, False,'CoM offset', 0.1, 1e-4),
-    (False, False,'misalignment', 0.5, 1e-5),
-    (False, False,'walk bounds', 2500., 0.0),
+    # (False, False,'bias', 0.5, 1e-3),
+    # (False, False,'noise', 2000., 1e-2),
+    # (False, False,'discretization', 0.5, 1e-5),
+    # (False, False,'saturation', 0.1, 1e-3),
+    # (False, False,'CoM offset', 0.1, 1e-4),
+    # (False, False,'misalignment', 0.5, 1e-5),
+    # (False, False,'walk bounds', 2500., 0.0),
 ])
 
 # provide a unique test method name, starting with test_
@@ -107,36 +131,20 @@ def unitSimIMU(show_plots, make_plots, testCase, stopTime, accuracy):
     unitSim.TotalSim.terminateSimulation()
 
     # create the task and specify the integration update time
-    unitProcRate = macros.sec2nano(0.01)
-    unitProcRate_s = macros.NANO2SEC*unitProcRate
+    unitProcRate_s = 0.0001
+    unitProcRate = macros.sec2nano(unitProcRate_s)
     unitProc = unitSim.CreateNewProcess(unitProcName)
-    unitProc.addTask(unitSim.CreateNewTask(unitTaskName, unitProcRate))
+    unitTask = unitSim.CreateNewTask(unitTaskName, unitProcRate)
+    unitProc.addTask(unitTask)
 
-
-    # configure module
+    # configure IMU
     ImuSensor = imu_sensor.ImuSensor()
     ImuSensor.ModelTag = "imusensor"
     ImuSensor.sensorPos_B = imu_sensor.DoubleVector([0.0, 0.0, 0.0]) #must be set by user - no default.
     setRandomWalk(ImuSensor)
 
-    # configure module input message
-    StateCurrent = imu_sensor.SCPlusStatesSimMsg()
-    StateCurrent.sigma_BN = np.array([0.25, 0.25, 0.25])
-    StateCurrent.omega_BN_B = np.array([np.pi/30.,np.pi/30.,np.pi/30.]) #1 rpm around each axis
-    StateCurrent.nonConservativeAccelpntB_B = np.array([1., 1., 1.])
-    StateCurrent.omegaDot_BN_B = np.array([0., 0., 0.])
-    StateCurrent.TotalAccumDV_BN_B = np.array([0., 0., 0.])
 
-    massStateCurrent = imu_sensor.SCPlusMassPropsSimMsg()
-    massStateCurrent.c_B = [0., 0., 0.]
-    
-    # StateCurrent.r_BN_N = [0,0,0]
-    # StateCurrent.v_BN_N = [0,0,0]
-    # StateCurrent.sigma_BN = np.array([0,0,0])
-    # StateCurrent.omega_BN_B = [0,0,0]
-    # StateCurrent.TotalAccumDVBdy = [0,0,0]
-    # StateCurrent.MRPSwitchCount = 0
-    StatePrevious = imu_sensor.SCPlusStatesSimMsg(StateCurrent) # For time differencing for truth values
+    # StatePrevious = imu_sensor.SCPlusStatesSimMsg(StateCurrent) # For time differencing internal to IMU for truth values
 
     # get module output fields
     ImuSensorOutput = imu_sensor.IMUSensorIntMsg()
@@ -147,145 +155,63 @@ def unitSimIMU(show_plots, make_plots, testCase, stopTime, accuracy):
                 continue
             fieldNames.append(fieldName)
 
-    trueVector = dict()
+    #Set-up the fake kinematics vectors
+    rDotDot_CN = np.resize(np.array([1., 1., 1.]),(stopTime/unitProcRate_s+1,3)) #acceleration of center of mass wrt inertial frame
+    rDot_CN = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) #velocity of center of mass wrt inertial frame
+    rDot_CN[0][:] = [0., 0., 0.] #initial value
+    r_CN = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) #position of center of mass wrt to inertial frame
+    # rDot_CN[0][:] = [1., 1., 1.] #initial value
+    rDotDot_BN = np.resize(np.array([1., 1., 1.]),(stopTime/unitProcRate_s+1,3)) # acceleration of body frame wrt to inertial
+    # rDotDot_BN[0][:] = [1., 1., 1.] #initial value
+    rDot_BN = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) #velocity of body frame wrt to inertial
+    # rdot_BN[0][:] = [1., 1., 1.] #initial value
+    r_BN = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) #position of body frame wrt to inertial
+    # r_BN[0][:] = [1., 1., 1.] #initial value
+    omegaDot = np.resize(np.array([0.1, 0.1, 0.1]),(stopTime/unitProcRate_s+1,3)) #angular acceleration of body frame wrt to inertial
+    # omegaDot[0][:] = [1., 1., 1.] #initila value
+    omega = np.resize(np.array([0.01, 0.01,0.01]),(stopTime/unitProcRate_s+1,3)) # angular rate of body frame wrt to inertial
+    # omega[0][:] = [1., 1., 1.] #initial value
+    sigmaDot = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) #MRP derivative, body wrt to inertial
+    # sigmaDot[0][:] = [1., 1., 1.] #initial value
+    sigma = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) # MRP body wrt to inertial
+    # sigma[0][:] = [1., 1., 1.] #initial value
+    rDotDot_SN = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) #sensor sensed acceleration
+    # rDotDot_SN[0][:] = [1., 1., 1.] #initial value
+    rDot_SN = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) #sensor accumulated DV
+    # rDot_SN[0][:] = [1., 1., 1.] #initial value
+    r_SN = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) #sensor
+    r_SB = np.array([1.,2.,3.]) #constant. sensor position wrt to body frame origin
+    r_SC = np.array([1.,2.,3.]) #variable but untracked sensor position wrt to center of mass
 
-    # accel = [0.0,0.0,0.0]
-    # omega = [0.0,0.0,0.0]
-    # domega = [0.0,0.0,0.0]
+
+    #Set initial conditions for fake kinematics vectors
+    # Center of mass
+    # rDotDot_CN = leaving blank for now to keep at zeros. Should be made to move slowly relative to B or oscillate about B
+    # rDot_CN[0][i] = leaving blank for now to keep at zeros
+    r_CN[0][i] = [10000., 10000., 10000.] # Some arbitrary location in space
+    # Body Frame Origin
+    # rDotDot_BN = leaving blank for now (no acceleration)
+    r_SN[0][:] = r_SC + r_CN[0][:]
+
+
+    # # configure spacecraft dummy message
+    # StateCurrent = imu_sensor.SCPlusStatesSimMsg()
+    # StateCurrent.sigma_BN = np.array([0., 0., 0.])
+    # StateCurrent.omega_BN_B = np.array([0.,0.,0.]) #1 rpm around each axis
+    # StateCurrent.nonConservativeAccelpntB_B = np.array([0., 0., 0.])
+    # StateCurrent.omegaDot_BN_B = np.array([0., 0., 0.])
+    # StateCurrent.TotalAccumDV_BN_B = np.array([0., 0., 0.])
+    # massStateCurrent = imu_sensor.SCPlusMassPropsSimMsg()
+    # massStateCurrent.c_B = [0., 0., 0.]
 
     # configure truth
-    trueVector['AngVelPlatform'] = listStack(omega,stopTime,unitProcRate)
-    trueVector['AccelPlatform'] = listStack(accel,stopTime,unitProcRate)
-    trueVector['DRFramePlatform'] = listStack(np.asarray(omega)*unitProcRate_s,stopTime,unitProcRate)
-    trueVector['DVFramePlatform'] = listStack(np.asarray(accel)*unitProcRate_s,stopTime,unitProcRate)
+    # trueVector = dict()
+    # trueVector['AngVelPlatform'] = listStack(omega,stopTime,unitProcRate)
+    # trueVector['AccelPlatform'] = listStack(accel,stopTime,unitProcRate)
+    # trueVector['DRFramePlatform'] = listStack(np.asarray(omega)*unitProcRate_s,stopTime,unitProcRate)
+    # trueVector['DVFramePlatform'] = listStack(np.asarray(accel)*unitProcRate_s,stopTime,unitProcRate)
 
-    omegaTrue = StateCurrent.omega_BN_B
-
-
-
-    # elif testCase == 'bias':
-    #     # this test verifies static bias
-    #     senRotBias = myRand(3)
-    #     ImuSensor.senRotBias = senRotBias
-    #     omega = myRand(3)
-    #     StateCurrent.omega_BN_B = omega
-    #     omegaOut = np.asarray(omega) + np.asarray(senRotBias) # sensor sees the sum of bias and truth
-    #     accel = myRand(3)
-    #     senTransBias = myRand(3)
-    #     ImuSensor.senTransBias = senTransBias
-    #     accelOut = np.asarray(accel) + np.asarray(senTransBias) # sensor sees the sum of bias and truth
-    #     trueVector['AccelPlatform'] = listStack(accelOut,stopTime,unitProcRate)
-    #     trueVector['AngVelPlatform'] = listStack(omegaOut,stopTime,unitProcRate)
-    #     trueVector['DRFramePlatform'] = listStack(np.asarray(omegaOut)*unitProcRate_s,stopTime,unitProcRate)
-    #     trueVector['DVFramePlatform'] = listStack(np.asarray(accelOut)*unitProcRate_s,stopTime,unitProcRate)
-    #
-    # elif testCase == 'noise':
-    #     # this test checks the standard deviation of sensor noise
-    #     senRotNoiseStd = 0.
-    #     senTransNoiseStd = 0.
-    #     while senRotNoiseStd == 0:
-    #         senRotNoiseStd = np.random.rand()
-    #     while senTransNoiseStd == 0:
-    #         senTransNoiseStd = np.random.rand()
-    #     stdCorrectionFactor = 1.5 # this needs to be used because of the Gauss Markov module. need to fix the GM module
-    #     setRandomWalk(ImuSensor,float(senRotNoiseStd*stdCorrectionFactor),float(senTransNoiseStd*stdCorrectionFactor),[1e-13]*3,[1e-13]*3)
-    #     trueVector['AccelPlatform'] = [senTransNoiseStd] * 3
-    #     trueVector['AngVelPlatform'] = [senRotNoiseStd] * 3
-    #     trueVector['DRFramePlatform'] = np.asarray([senRotNoiseStd] * 3)*unitProcRate_s
-    #     trueVector['DVFramePlatform'] = np.asarray([senTransNoiseStd] * 3)*unitProcRate_s
-    #
-    # elif testCase == 'discretization':
-    #     # this test makes sure the module discretizes the output correctly
-    #     accelLSB = np.random.rand()*1e-4
-    #     gyroLSB = np.random.rand()*1e-4
-    #     ImuSensor.accelLSB = accelLSB # 2.77E-4 * 9.80665
-    #     ImuSensor.gyroLSB = gyroLSB # 8.75E-3 * math.pi / 180.0
-    #     omega = myRand(3)*0.1 # [1.05,1.15,-1.29]
-    #     StateCurrent.omega_BN_B = omega
-    #     accel = myRand(3)*0.1 # [1.05,1.15,-1.29]
-    #     omegaDiscretized = np.fix(np.asarray(omega)/gyroLSB)*gyroLSB
-    #     DR = omegaDiscretized*unitProcRate_s
-    #     accelDiscretized = np.fix(np.asarray(accel)/accelLSB)*accelLSB
-    #     DV = accelDiscretized*unitProcRate_s
-    #     trueVector['AngVelPlatform'] = listStack(omegaDiscretized,stopTime,unitProcRate)
-    #     trueVector['AccelPlatform'] = listStack(accelDiscretized,stopTime,unitProcRate)
-    #     trueVector['DVFramePlatform'] = listStack(DV,stopTime,unitProcRate)
-    #     trueVector['DRFramePlatform'] = listStack(DR,stopTime,unitProcRate)
-    #
-    # elif testCase == 'saturation':
-    #     # this test checks saturation
-    #     ImuSensor.senRotMax = 0.2
-    #     ImuSensor.senTransMax = 0.3
-    #     omega = [1.,-1.,0.123]
-    #     StateCurrent.omega_BN_B = omega
-    #     omegaSaturated = [.2,-.2,0.123]
-    #     accel = [2.,-0.213,-2.]
-    #     accelSaturated = [.3,-0.213,-.3]
-    #     trueVector['AngVelPlatform'] = listStack(omegaSaturated,stopTime,unitProcRate)
-    #     trueVector['AccelPlatform'] = listStack(accelSaturated,stopTime,unitProcRate)
-    #     trueVector['DVFramePlatform'] = listStack(np.asarray(accelSaturated)*unitProcRate_s,stopTime,unitProcRate)
-    #     trueVector['DRFramePlatform'] = listStack(np.asarray(omegaSaturated)*unitProcRate_s,stopTime,unitProcRate)
-    #
-    # elif testCase == 'CoM offset':
-    #     # this test validates the accelerometer reading when it is located apart from the CoM. this test also checks
-    #     # omegadot effects on the accelerometer
-    #     SensorPosStr = myRand(3)
-    #     ImuSensor.sensorPos_B = imu_sensor.DoubleVector(SensorPosStr)
-    #     CoM = myRand(3)
-    #     MassPropsData.c_B = CoM
-    #     omega = myRand(3)*0.1
-    #     StateCurrent.omega_BN_B = omega
-    #     accel = myRand(3)
-    #     domega = myRand(3)*0.1
-    #     r_SC = SensorPosStr - CoM
-    #
-    #     # initialize all trueVectors to zero
-    #     for moduleOutputName in fieldNames:
-    #         trueVector[moduleOutputName] = listStack([0.,0.,0.],stopTime,unitProcRate)
-    #
-    #     # propagate domega to find the trueVectors
-    #     dt = unitProcRate_s
-    #     omega_ = omega + domega*dt
-    #     for i in range(0,int(stopTime/unitProcRate_s)):
-    #         omega_ = omega_ + domega*dt
-    #         accel_ = np.cross(np.asarray(omega_),np.cross(np.asarray(omega_),r_SC)) + accel + np.cross(domega,r_SC)
-    #         trueVector['AngVelPlatform'][i] = omega_
-    #         trueVector['AccelPlatform'][i] = accel_
-    #         trueVector['DVFramePlatform'][i] = accel_ * dt
-    #         trueVector['DRFramePlatform'][i] = omega_ * dt
-    #
-    # elif testCase == 'misalignment':
-    #     # this test checks the structure to platform transformation
-    #     stopTime = 0.5
-    #     euler = myRand(3)*(np.pi/2 - 1e-3)
-    #     ImuSensor.setBodyToPlatformDCM(euler[0], euler[1], euler[2])
-    #     omega = myRand(3)
-    #     StateCurrent.omega_BN_B = omega
-    #     omegaOut = np.dot(rbk.euler3212C(euler),np.asarray(omega))
-    #     accel = myRand(3)
-    #     accelOut = np.dot(rbk.euler3212C(euler),np.asarray(accel))
-    #     trueVector['AngVelPlatform'] = listStack(omegaOut,stopTime,unitProcRate)
-    #     trueVector['AccelPlatform'] = listStack(accelOut,stopTime,unitProcRate)
-    #     trueVector['DVFramePlatform'] = listStack(accelOut*unitProcRate_s,stopTime,unitProcRate)
-    #     trueVector['DRFramePlatform'] = listStack(omegaOut*unitProcRate_s,stopTime,unitProcRate)
-    #
-    # elif testCase == 'walk bounds':
-    #     # this test checks the walk bounds of random walk
-    #     stopTime = 2500.
-    #     senRotNoiseStd = 0.1
-    #     senTransNoiseStd = 0.2
-    #     errorBoundsGyro = [10.] * 3
-    #     errorBoundsAccel = [20.] * 3
-    #     setRandomWalk(ImuSensor,senRotNoiseStd,senTransNoiseStd,errorBoundsGyro,errorBoundsAccel)
-    #     omegaWalkBound = np.asarray(errorBoundsGyro) + senRotNoiseStd*3
-    #     accelWalkBound = np.asarray(errorBoundsAccel) + senTransNoiseStd*3
-    #     trueVector['AngVelPlatform'] = omegaWalkBound
-    #     trueVector['AccelPlatform'] = accelWalkBound
-    #     trueVector['DVFramePlatform'] = accelWalkBound * unitProcRate_s
-    #     trueVector['DRFramePlatform'] = omegaWalkBound * unitProcRate_s
-    #
-    # else:
-    #     raise Exception('invalid test case')
+    # omegaTrue = StateCurrent.omega_BN_B
 
     # add module to the task
     unitSim.AddModelToTask(unitTaskName, ImuSensor)
@@ -298,154 +224,59 @@ def unitSimIMU(show_plots, make_plots, testCase, stopTime, accuracy):
     # unitSim.TotalSim.WriteMessageData(ImuSensor.InputMassMsg, MassPropsData.getStructSize(), 0, MassPropsData)
 
     # configure inertial_state_output message
-    unitSim.TotalSim.CreateNewMessage("TestProcess", "inertial_state_output", 8*3*11, 2)
-    unitSim.TotalSim.WriteMessageData("inertial_state_output", 8*3*11, 0, StateCurrent)
+    # unitSim.TotalSim.CreateNewMessage("TestProcess", "inertial_state_output", 8*3*11, 2)
+    # unitSim.TotalSim.WriteMessageData("inertial_state_output", 8*3*11, 0, StateCurrent)
 
     unitSim.InitializeSimulation()
 
-    # if there is no acceleration or angular velocity involved, execute the sim without looping through ExecuteSimulation()
-    # if np.array_equal(accel,np.asarray([0.0,0.0,0.0])) and np.array_equal(omega,np.asarray([0.0,0.0,0.0])) \
-    #         and np.array_equal(domega,np.asarray([0.0,0.0,0.0])):
-    #     stopTimeStep = stopTime
-    # else:
-    #     stopTimeStep = unitProcRate_s
-
     # loop through ExecuteSimulation() and propagate sigma, omega, DV
-    prevSimNanos = 0.
-    omegaStep = np.asarray(domega)*unitProcRate_s
-    for i in range(0,int(stopTime/stopTimeStep)+1):
-        currSimNanos = unitSim.TotalSim.CurrentNanos
-        dt = (currSimNanos - prevSimNanos) * macros.NANO2SEC
-        prevSimNanos = currSimNanos
-        velStep = np.asarray(accel)*unitProcRate_s
-        StateCurrent.TotalAccumDVBdy = np.asarray(StateCurrent.TotalAccumDVBdy) + np.asarray(velStep)
-        StateCurrent.omega_BN_B = np.asarray(StateCurrent.omega_BN_B) + np.asarray(omegaStep)
-        StateCurrent.sigma_BN = nextMRP(StateCurrent.sigma_BN,StateCurrent.omega_BN_B,dt)
-        StateCurrent.TotalAccumDV_BN_B += accel*dt
-        if np.dot(StateCurrent.sigma_BN,StateCurrent.sigma_BN) > 1.:
-            StateCurrent.sigma_BN = rbk.MRPswitch(np.asarray(StateCurrent.sigma_BN),1.)
-            StateCurrent.MRPSwitchCount += 1
-        unitSim.TotalSim.WriteMessageData("inertial_state_output", 8*3*11, currSimNanos, StateCurrent )
-        unitSim.ConfigureStopTime(macros.sec2nano(stopTimeStep*float(i)))
+    dt = unitProcRate_s
+    for i in range(1,int(stopTime/dt)+1):
+        # Step through the sim
+        unitSim.ConfigureStopTime(macros.sec2nano(unitProcRate_s*float(i)))
         unitSim.ExecuteSimulation()
 
+        # linear kinematcs
+        rDot_CN[i][:] = rDot_CN[i-1][:] + ((rDotDot_CN[i-1][:] + rDotDot_CN[i][:])/2)*dt
+        r_CN[i][:] = r_CN[i-1][:] + ((rDot_CN[i-1][:] + rDot_CN[i][:])/2)*dt
 
-    # pull message log data and assemble into dict
-    moduleOutput = dict()
-    for moduleOutputName in fieldNames:
-        moduleOutput[moduleOutputName] = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + moduleOutputName, range(3))
+        rDot_BN[i][:] = rDot_BN[i-1][:] + ((rDotDot_BN[i-1][:] + rDotDot_BN[i][:])/2)*dt
+        r_BN[i][:] = r_BN[i-1][:] + ((rDot_BN[i-1][:] + rDot_BN[i][:])/2)*dt
 
+        cDotDot = rDotDot_CN[i][:] - rDotDot_BN[i][:]
+        cDot = rDot_CN[i][:] - rDot_BN[i][:]
+        c = r_BN[i][:] - r_CN[i][:]
 
-    # trim the truth and module output arrays
-    if not testCase == 'noise' and not testCase == 'walk bounds':
-        for moduleOutputName in fieldNames:
-            trueVector[moduleOutputName] = np.asarray(trueVector[moduleOutputName][1:])
-            newArr = np.delete(moduleOutput[moduleOutputName],(0),axis=0)
-            del moduleOutput[moduleOutputName]
-            moduleOutput[moduleOutputName] = newArr
+        # attitude kinematics
+        omega[i][:] = omega[i-1][:] + ((omegaDot[i-1][:] + omegaDot[i][:])/2)*dt
 
-    #plotting for walk bounds test
-    # if (testCase == 'walk bounds'):
-    #      omegaTime = range(0, int(stopTime)-1, 1)
-    #      omegaLinePlus = [errorBoundsGyro[0]] * int(stopTime-1)
-    #      omegaLineMinus= [-errorBoundsGyro[0]] * int(stopTime-1)
-    #      fig = plt.figure(3, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-    #      fig.clf()
-    #      plt.plot(omegaTime, omegaLinePlus, label="upper bound", linewidth=3)
-    #      plt.plot(omegaTime, omegaLineMinus, label="lower bound", linewidth=3)
-    #      for i in range(0,3):
-    #          plt.plot(moduleOutput['AngVelPlatform'][:,0]*macros.NANO2SEC,moduleOutput['AngVelPlatform'][:,i+1])
-    #      plt.xlabel('Time (s)')
-    #      plt.ylabel('Angular velocity (rad/s)')
-    #      plt.xlim((0,stopTime))
-    #      plt.ylim(-errorBoundsGyro[0]*1.15, errorBoundsGyro[0]*1.15)
-    #      unitTestSupport.writeFigureLaTeX('omegaWalkBoundPlot', 'Module gyro output for random walk bounds check', plt,
-    #                               'height=0.7\\textwidth, keepaspectratio', path)
-    #
-    #      fig = plt.figure(4, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-    #      fig.clf()
-    #      accelTime = range(0, int(stopTime)-1, 1)
-    #      accelLinePlus = [errorBoundsAccel[0]] * int(stopTime-1)
-    #      accelLineMinus= [-errorBoundsAccel[0]] * int(stopTime-1)
-    #      plt.plot(accelTime, accelLinePlus, label="upper bound", linewidth=3)
-    #      plt.plot(accelTime, accelLineMinus, label="lower bound", linewidth=3)
-    #      for i in range(0,3):
-    #          plt.plot(moduleOutput['AccelPlatform'][:,0]*macros.NANO2SEC,moduleOutput['AccelPlatform'][:,i+1])
-    #      plt.xlabel('Time (s)')
-    #      plt.ylabel('Acceleration (m/s)')
-    #      plt.xlim((0,stopTime))
-    #      plt.ylim(-errorBoundsAccel[0]*1.15, errorBoundsAccel[0]*1.15)
-    #      unitTestSupport.writeFigureLaTeX('accelWalkBoundPlot', 'Module accelerometer output for random walk bounds check', plt,
-    #                               'height=0.7\\textwidth, keepaspectratio', path)
-    # if show_plots:
-    #     plt.show()
-    #
-    # plt.close()
+        # iterate on sigma/sigmaDot
+        sigmaDot[i][:] = sigmaDot[i-1][:]
+        for j in range(0,5):
+            sigma[i][:] = sigma[i-1][:] + ((sigmaDot[i-1][:]+sigmaDot[i][:])/2)*dt
+            sigmaMag = np.linalg.norm(sigma[i][:])
+            B1 = 1-sigmaMag**2
+            BI = np.identity(3)
+            sigmaTilde = skew(sigma[i][:])
+            B2 = np.dot(2,sigmaTilde)
+            B3 = np.dot(2,v3vTmult(sigma[i][:], sigma[i][:]))
+            B = np.dot(B1, BI) + B2 + B3
+            sigmaDot[i][:] = np.dot(0.25, m33v3mult(B,omega[i][:]))
+        sigma[i][:] = sigma[i-1][:] + ((sigmaDot[i-1][:]+sigmaDot[i][:])/2)*dt
 
-    # write test accuracy to LATEX file for AutoTex
-    if accuracy != 0.0:
-        snippetName = testCase + 'Accuracy'
-        snippetContent = '{:1.1e}'.format(accuracy)#write formatted LATEX string to file to be used by auto-documentation.
-        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
-    else:
-        snippetName = testCase + 'Accuracy'
-        snippetContent = 'N/A'#write formatted LATEX string to file to be used by auto-documentation.
-        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
+        # center of mass calculations
+        cPrime = cDot - np.cross(omega[i][:], c)
+        cPrimePrime = cDotDot - np.dot(2,np.cross(omega[i][:], cPrime)) - np.cross(omegaDot[i][:],c)-np.cross(omega[i][:],np.cross(omega[i][:],c))
+        r_SC = r_BN[i][:] + r_SB - r_CN[i][:]
 
-    testFail = False
-    for moduleOutputName in fieldNames:
-        if testCase == 'noise':
-            for i in range(0,3):
-                if np.abs(np.mean(moduleOutput[moduleOutputName][:,i+1])) > accuracy \
-                                or np.abs((np.std(moduleOutput[moduleOutputName][:,i+1]) - trueVector[moduleOutputName][i])/  trueVector[moduleOutputName][i]) > accuracy :
-                    testFail = True
+        # solving for sensor inertial states
+        rDotDot_SN[i][:] = rDotDot_CN[i][:] - cPrimePrime - np.dot(2,np.cross(omega[i][:],cPrime)) + np.cross(omegaDot[i][:],r_SC) +np.cross(omega[i][:],np.cross(omega[i][:],r_SC))
+        rDot_SN[i][:] = rDot_CN[i][:] - cPrime + np.cross(omega[i][:],  r_SC)
+        rDot_SN_check = rDot_SN[i-1][:] + ((rDotDot_SN[i-1][:]+rDotDot_SN[i][:])/2)*dt #This is here to check the output of the "truth" code written here in python
 
-        elif testCase == 'walk bounds':
-            for i in range(0,3):
-                if np.max(np.abs(np.asarray(moduleOutput[moduleOutputName][:,i+1]))) > trueVector[moduleOutputName][i]:
-                    testFail = True
+        r_SN[i][:] = r_SN[i-1][:] + ((rDot_SN[i-1][:] + rDot_SN[i][:])/2)*dt #for a simple check of the "truth" code
+        r_SN_simple = r_SC + r_CN[i][:] #for a simple check of the "truth" code
 
-        else:
-            for i in range(0,len(trueVector[moduleOutputName])):
-                print moduleOutput[moduleOutputName][i], trueVector[moduleOutputName][i], moduleOutputName
-                if not unitTestSupport.isArrayEqual(moduleOutput[moduleOutputName][i], trueVector[moduleOutputName][i], 3, accuracy):
-                    testFail = True
-
-
-        make sure that the MRP switched
-        if testCase == 'MRP switch' and StateCurrent.MRPSwitchCount == 0:
-            testFail = True
-
-        if testFail:
-            testFailCount += 1
-            testMessages.append("FAILED: " + ImuSensor.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[moduleOutputName][i,0]*macros.NANO2SEC) +
-                                "sec\n")
-            snippetName = testCase + "FailMsg"
-            snippetContent = "FAILED: " + moduleOutputName
-            unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write note for AutoTEX saying what failure was.
-        else:
-            snippetName = testCase + "FailMsg"
-            snippetContent = ""
-            unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write note for AutoTEX saying what failure was.
-
-    # np.set_printoptions(precision=16)
-
-    snippetName = testCase + 'PassFail' #name of file to be written for auto-documentation which specifies if this test was passed or failed.
-    # print out success message if no error were found.
-    if testFailCount == 0:
-        passFailText = " Passed"
-        print testCase, ": ", passFailText #terminal output of pass/fail
-        colorText = 'ForestGreen' #color to write auto-documented "PASSED" message in in LATEX
-    else:
-        passFailText = " Failed"
-        colorText = 'Red'#color to write auto-documented "FAILED" message in in LATEX
-    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}' #write formatted LATEX string to file to be used by auto-documentation.
-    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
-
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
 

@@ -16,11 +16,11 @@ Knowing that:
 \end{equation}
 Eq. \ref{eq:firstder} becomes:
 \begin{equation}
-	\dot{{\bm{r}}}_{S/N} = \dot{{\bm{r}}}_{C/N} + \bm{c}' + \bm{\omega}_{B/N} \times {\bm{r}}_{S/C}
+	\dot{{\bm{r}}}_{S/N} = \dot{{\bm{r}}}_{C/N} - \bm{c}' + \bm{\omega}_{B/N} \times {\bm{r}}_{S/C}
 \end{equation}
 So, again substituting in the center of mass velocity in the $\cal{B}$ frame,
 \begin{equation}
-\ddot{{\bm{r}}}_{S/N} = \ddot{{\bm{r}}}_{C/N} + \bm{c}'' + 2\bm{\omega}_{B/N} \times \bm{c}'  + \dot{\bm{\omega}}_{B/N} \times {\bm{r}}_{S/C}
+\ddot{{\bm{r}}}_{S/N} = \ddot{{\bm{r}}}_{C/N} - \bm{c}'' - 2\bm{\omega}_{B/N} \times \bm{c}'  + \dot{\bm{\omega}}_{B/N} \times {\bm{r}}_{S/C}
 \label{eq:SN}
 \end{equation}
 $ \bm{c}''$ and $ \bm{c}'$ can be solved for in terms of $\ddot{\bm{c}}$ and $\dot{\bm{c}}$ using the transport theorem:
@@ -44,8 +44,14 @@ Now, given the states at a previous time step, $t_{n-1}$, and the accelerations 
 \bm{\omega}_{B/N,n} = \bm{\omega}_{B/N,n-1} + \frac{\dot{\bm{\omega}}_{B/N,n-1}+\dot{\bm{\omega}}_{B/N,n}}{2} \Delta t
 \end{equation}
 \begin{equation}
-\bm{\omega}_{B/N,n} = \bm{\omega}_{B/N,n-1} + \frac{\dot{\bm{\omega}}_{B/N,n-1}+\dot{\bm{\omega}}_{B/N,n}}{2} \Delta t
-\end{equation}	
+[\bm{B}] = (1-\sigma^2)[I_{3x3}]+2[\tilde{\bm{\sigma}}] + 2\bm{\sigma}\bm{\sigma}^T
+\end{equation}
+\begin{equation}
+	\bm{\dot{\sigma}} = \frac{1}{4} [\bm{B}] \bm{\omega}
+\end{equation}
+\begin{equation}
+\bm{\sigma}_{B/N,n} = \bm{\sigma}_{B/N,n-1} + \frac{\dot{\bm{\sigma}}_{B/N,n-1}+\dot{\bm{\sigma}}_{B/N,n}}{2} \Delta t
+\end{equation}
 The same can then be done for the position $ {\bm{r}}_{C/N}$ with its derivatives. Also, knowing that:
 \begin{equation}
 \ddot{\bm{c}} = \ddot{\bm{r}}_{C/N} - \ddot{\bm{r}}_{B/N}
