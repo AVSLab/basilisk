@@ -47,6 +47,8 @@ ExponentialAtmosphere::ExponentialAtmosphere()
     this->tmpAtmo.neutralDensity = this->atmosphereProps.baseDensity;
     this->tmpAtmo.localTemp = this->localAtmoTemp;
     this->planetPosInMsgId = -1;
+    memset(&this->bodyState, 0x0, sizeof(SpicePlanetStateSimMsg));
+
     return;
 }
 
