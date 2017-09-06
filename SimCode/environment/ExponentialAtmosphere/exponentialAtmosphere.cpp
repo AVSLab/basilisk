@@ -252,7 +252,7 @@ void ExponentialAtmosphere::updateRelativePos(SpicePlanetStateSimMsg& planetStat
       }
     }
     else{
-      this->relativePos[iter,0] = scState.r_BN_N[iter];
+      this->relativePos(iter,0) = scState.r_BN_N[iter];
     }
     //std::cout<<"Relative Pos: "<<this->relativePos <<std::endl;
     return;
