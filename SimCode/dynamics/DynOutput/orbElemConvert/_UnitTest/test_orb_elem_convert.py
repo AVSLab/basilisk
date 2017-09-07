@@ -37,14 +37,18 @@ sys.path.append(splitPath[0] + '/modules')
 sys.path.append(splitPath[0] + '/PythonModules')
 
 # @cond DOXYGEN_IGNOREimport spice_interface
+import datetime
+import MessagingAccess
 import SimulationBaseClass
 import numpy
 import orb_elem_convert
+import ctypes
 import macros
 import matplotlib.pyplot as plt
 import math
+import orbitalMotion
 import macros as mc
-
+import unitTestSupport
 # @endcond
 
 # Class in order to plot using data accross the different paramatrized scenarios
@@ -55,90 +59,93 @@ class DataStore:
         self.EarthPosErr = []
         self.SunPosErr = []
 
-@pytest.mark.parametrize("a, e, i, AN, AP, f, mu", [
+
+@pytest.mark.parametrize("a, e, i, AN, AP, f, mu, name", [
     # Inclined Elliptical Orbit Varying e
-    (10000000.0, 0.01, 33.3*mc.D2R, 48.2*mc.D2R, 347.8*mc.D2R, 85.3*mc.D2R, 0.3986004415E+15),
-    (10000000.0, 0.10, 33.3*mc.D2R, 48.2*mc.D2R, 347.8*mc.D2R, 85.3*mc.D2R, 0.3986004415E+15),
-    (10000000.0, 0.25, 33.3*mc.D2R, 48.2*mc.D2R, 347.8*mc.D2R, 85.3*mc.D2R, 0.3986004415E+15),
-    (10000000.0, 0.50, 33.3*mc.D2R, 48.2*mc.D2R, 347.8*mc.D2R, 85.3*mc.D2R, 0.3986004415E+15),
-    (10000000.0, 0.75, 33.3*mc.D2R, 48.2*mc.D2R, 347.8*mc.D2R, 85.3*mc.D2R, 0.3986004415E+15),
+    (10000000.0, 0.01, 33.3*mc.D2R, 48.2*mc.D2R, 347.8*mc.D2R, 85.3*mc.D2R, 0.3986004415E+15, 'IncEllip_e_1'),
+    (10000000.0, 0.10, 33.3*mc.D2R, 48.2*mc.D2R, 347.8*mc.D2R, 85.3*mc.D2R, 0.3986004415E+15, 0),
+    (10000000.0, 0.25, 33.3*mc.D2R, 48.2*mc.D2R, 347.8*mc.D2R, 85.3*mc.D2R, 0.3986004415E+15, 0),
+    (10000000.0, 0.50, 33.3*mc.D2R, 48.2*mc.D2R, 347.8*mc.D2R, 85.3*mc.D2R, 0.3986004415E+15, 0),
+    (10000000.0, 0.75, 33.3*mc.D2R, 48.2*mc.D2R, 347.8*mc.D2R, 85.3*mc.D2R, 0.3986004415E+15, 'IncEllip_e_2'),
     # Inclined Elliptical Orbit Varying a
-    (10000000.0, 0.50, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (100000.0, 0.50, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (10000.0, 0.50, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (1000.0, 0.50, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (100.0, 0.50, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (10.0, 0.50, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
+    (10000000.0, 0.50, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 'IncEllip_a_1'),
+    (100000.0, 0.50, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (10000.0, 0.50, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (1000.0, 0.50, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (100.0, 0.50, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (10.0, 0.50, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 'IncEllip_a_2'),
 
     # Equatorial Elliptical Orbit Varying e
-    (10000000.0, 0.01, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (10000000.0, 0.10, 0.0, 0.0, 347.8*mc.D2R, 85.3*mc.D2R, 0.3986004415E+15),
-    (10000000.0, 0.25, 0.0, 0.0, 347.8*mc.D2R, 85.3*mc.D2R, 0.3986004415E+15),
-    (10000000.0, 0.50, 0.0, 0.0, 347.8*mc.D2R, 85.3*mc.D2R, 0.3986004415E+15),
-    (10000000.0, 0.75, 0.0, 0.0, 347.8*mc.D2R, 85.3*mc.D2R, 0.3986004415E+15),
+    (10000000.0, 0.01, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 'EquEllip_e_1'),
+    (10000000.0, 0.10, 0.0, 0.0, 347.8*mc.D2R, 85.3*mc.D2R, 0.3986004415E+15, 0),
+    (10000000.0, 0.25, 0.0, 0.0, 347.8*mc.D2R, 85.3*mc.D2R, 0.3986004415E+15, 0),
+    (10000000.0, 0.50, 0.0, 0.0, 347.8*mc.D2R, 85.3*mc.D2R, 0.3986004415E+15, 0),
+    (10000000.0, 0.75, 0.0, 0.0, 347.8*mc.D2R, 85.3*mc.D2R, 0.3986004415E+15, 'EquEllip_e_2'),
     # Equatorial Elliptical Orbit Varying a
-    (10000000.0, 0.50, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15), # For i=0 => AN=0
-    (100000.0, 0.50, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (10000.0, 0.50, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (1000.0, 0.50, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (100.0, 0.50, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (10.0, 0.50, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
+    (10000000.0, 0.50, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 'EquEllip_a_1'), # For i=0 => AN=0
+    (100000.0, 0.50, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (10000.0, 0.50, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (1000.0, 0.50, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (100.0, 0.50, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (10.0, 0.50, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 'EquEllip_a_2'),
 
     # Inclined Circular Orbit
-    (10000000.0, 0.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 0.0, 85.3 * mc.D2R, 0.3986004415E+15),
-    (1000000.0, 0.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 0.0, 85.3 * mc.D2R, 0.3986004415E+15),
-    (100000.0, 0.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 0.0, 85.3 * mc.D2R, 0.3986004415E+15),
-    (10000.0, 0.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 0.0, 85.3 * mc.D2R, 0.3986004415E+15),
-    (1000.0, 0.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 0.0, 85.3 * mc.D2R, 0.3986004415E+15),
-    (100.0, 0.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 0.0, 85.3 * mc.D2R, 0.3986004415E+15),
-    (10.0, 0.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 0.0, 85.3 * mc.D2R, 0.3986004415E+15),
+    (10000000.0, 0.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 0.0, 85.3 * mc.D2R, 0.3986004415E+15, 'IncCirc_1'),
+    (1000000.0, 0.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 0.0, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (100000.0, 0.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 0.0, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (10000.0, 0.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 0.0, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (1000.0, 0.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 0.0, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (100.0, 0.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 0.0, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (10.0, 0.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 0.0, 85.3 * mc.D2R, 0.3986004415E+15, 'IncCirc_2'),
+
     # Equatorial Circular Orbit
-    (10000000.0, 0.0, 0.0, 0.0, 0.0, 85.3 * mc.D2R, 0.3986004415E+15),
-    (1000000.0, 0.0, 0.0, 0.0, 0.0, 85.3 * mc.D2R, 0.3986004415E+15),
-    (100000.0, 0.0, 0.0, 0.0, 0.0, 85.3 * mc.D2R, 0.3986004415E+15),
-    (10000.0, 0.0, 0.0, 0.0, 0.0, 85.3 * mc.D2R, 0.3986004415E+15),
-    (1000.0, 0.0, 0.0, 0.0, 0.0, 85.3 * mc.D2R, 0.3986004415E+15),
-    (100.0, 0.0, 0.0, 0.0, 0.0, 85.3 * mc.D2R, 0.3986004415E+15),
-    (10.0, 0.0, 0.0, 0.0, 0.0, 85.3 * mc.D2R, 0.3986004415E+15),
+    (10000000.0, 0.0, 0.0, 0.0, 0.0, 85.3 * mc.D2R, 0.3986004415E+15, 'EquCirc_1'),
+    (1000000.0, 0.0, 0.0, 0.0, 0.0, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (100000.0, 0.0, 0.0, 0.0, 0.0, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (10000.0, 0.0, 0.0, 0.0, 0.0, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (1000.0, 0.0, 0.0, 0.0, 0.0, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (100.0, 0.0, 0.0, 0.0, 0.0, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (10.0, 0.0, 0.0, 0.0, 0.0, 85.3 * mc.D2R, 0.3986004415E+15, 'EquCirc_2'),
 
     # Inclined Parabolic Orbit
-    (-10.0, 1.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),   # For input of -a,
-    (-100.0, 1.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),  # must have e= 1.0
-    (-1000.0, 1.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15), # or e >1.0
-    (-10000.0, 1.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (-100000.0, 1.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
+    (-10.0, 1.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 'IncPara_1'),   # For input of -a,
+    (-100.0, 1.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),  # must have e= 1.0
+    (-1000.0, 1.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0), # or e >1.0
+    (-10000.0, 1.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (-100000.0, 1.0, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 'IncPara_2'),
+
     # Equatorial Parabolic Orbit
-    (-10.0, 1.0, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),   # For input of -a,
-    (-100.0, 1.0, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),  # must have e= 1.0
-    (-1000.0, 1.0, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15), # or e >1.0
-    (-10000.0, 1.0, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (-100000.0, 1.0, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
+    (-10.0, 1.0, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 'EquPara_1'),   # For input of -a,
+    (-100.0, 1.0, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),  # must have e= 1.0
+    (-1000.0, 1.0, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0), # or e >1.0
+    (-10000.0, 1.0, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (-100000.0, 1.0, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 'EquPara_2'),
 
     # Inclined Hyperbolic Orbit varying a
-    (-10.0, 1.3, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (-100.0, 1.3, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (-1000.0, 1.3, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (-10000.0, 1.3, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (-100000.0, 1.3, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
+    (-10.0, 1.3, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 'IncHyp_a_1'),
+    (-100.0, 1.3, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (-1000.0, 1.3, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (-10000.0, 1.3, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (-100000.0, 1.3, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 'IncHyp_a_2'),
     # Inclined Hyperbolic Orbit varying e
-    (-100000.0, 1.1, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (-100000.0, 1.2, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (-100000.0, 1.3, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (-100000.0, 1.4, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (-100000.0, 1.5, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
+    (-100000.0, 1.1, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 'IncHyp_e_1'),
+    (-100000.0, 1.2, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (-100000.0, 1.3, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (-100000.0, 1.4, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (-100000.0, 1.5, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 'IncHyp_e_2'),
 
     # Equatorial Hyperbolic Orbit varying a
-    (-10.0, 1.3, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (-100.0, 1.3, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (-1000.0, 1.3, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (-10000.0, 1.3, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (-100000.0, 1.3, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
+    (-10.0, 1.3, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 'EquHyp_a_1'),
+    (-100.0, 1.3, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (-1000.0, 1.3, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (-10000.0, 1.3, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (-100000.0, 1.3, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 'EquHyp_a_2'),
     # Equatorial Hyperbolic Orbit varying e
-    (-100000.0, 1.1, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (-100000.0, 1.2, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (-100000.0, 1.3, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (-100000.0, 1.4, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
-    (-100000.0, 1.5, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
+    (-100000.0, 1.1, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 'EquHyp_e_1'),
+    (-100000.0, 1.2, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (-100000.0, 1.3, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (-100000.0, 1.4, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 0),
+    (-100000.0, 1.5, 0.0, 0.0, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15, 'EquHyp_e_2'),
 
     # # Approaching circular orbit
     # (100000.0, 0.000001, 33.3 * mc.D2R, 48.2 * mc.D2R, 347.8 * mc.D2R, 85.3 * mc.D2R, 0.3986004415E+15),
@@ -149,14 +156,15 @@ class DataStore:
 ])
 
 # provide a unique test method name, starting with test_
-def test_orb_elem_convert(a, e, i, AN, AP, f, mu, DispPlot=False):
+def test_orb_elem_convert(a, e, i, AN, AP, f, mu, name, DispPlot=False):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = orbElem(a, e, i, AN, AP, f, mu, DispPlot)
+    [testResults, testMessage] = orbElem(a, e, i, AN, AP, f, mu, name, DispPlot)
     assert testResults < 1, testMessage
 
 # Run unit test
-def orbElem(a, e, i, AN, AP, f, mu, DispPlot):
-    testFailCount = 0  # zero unit test result counter
+def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
+    # Elem2RV
+    testFailCount1 = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
     # Create a sim module as an empty container
@@ -180,7 +188,7 @@ def orbElem(a, e, i, AN, AP, f, mu, DispPlot):
     TotalSim.AddModelToTask(unitTaskName, orb_elemObject)
 
     # Set element values
-    epsDiff = 0.000001
+    epsDiff = 0.0000001
     orb_elemObject.mu = mu
     orb_elemObject.Elements2Cart = True
     orb_elemObject.inputsGood = True
@@ -234,12 +242,12 @@ def orbElem(a, e, i, AN, AP, f, mu, DispPlot):
         for g in range(3):
             if abs(rMsgPlanetDiff[g]) > 0:
                 testMessages.append(" FAILED: Planet Position Message, column " + str(g))
-                testFailCount += 1
+                testFailCount1 += 1
         vMsgPlanetDiff = numpy.subtract(vSim, vMsgPlanet)
         for g in range(3):
             if abs(vMsgPlanetDiff[g]) > 0:
                 testMessages.append(" FAILED: Planet Velocity Message, column " + str(g))
-                testFailCount += 1
+                testFailCount1 += 1
     else:
         rMsgSC = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + '.r_BN_N', range(3))
         rMsgSC = numpy.delete(rMsgSC[-1], 0, axis=0)
@@ -249,19 +257,19 @@ def orbElem(a, e, i, AN, AP, f, mu, DispPlot):
         for g in range(3):
             if abs(rMsgSCDiff[g]) > 0:
                 testMessages.append(" FAILED: Spacecraft Position Message, column " + str(g))
-                testFailCount += 1
+                testFailCount1 += 1
         vMsgSCDiff = numpy.subtract(vSim, vMsgSC)
         for g in range(3):
             if abs(vMsgSCDiff[g]) > 0:
                 testMessages.append(" FAILED: Spacecraft Velocity Message, column " + str(g))
-                testFailCount += 1
+                testFailCount1 += 1
 
 
     ReinitSelf = TotalSim.GetLogVariableData('OrbElemConvertData.ReinitSelf')
     ReinitSelf = numpy.delete(ReinitSelf[-1], 0, axis=0)
     if ReinitSelf:
         testMessages.append(" FAILED: ReinitSelf")
-        testFailCount += 1
+        testFailCount1 += 1
 
     # Calculation of elem2rv
     if e == 1.0 and a > 0.0:  # rectilinear elliptic orbit case
@@ -308,13 +316,38 @@ def orbElem(a, e, i, AN, AP, f, mu, DispPlot):
     for g in range(3):
         if abs(rDiff[g]) > epsDiff:
             testMessages.append(" FAILED: Position Vector, column " + str(g))
-            testFailCount += 1
+            testFailCount1 += 1
     for g in range(3):
         if abs(vDiff[g]) > epsDiff:
             testMessages.append(" FAILED: Velocity Vector, column " + str(g))
-            testFailCount += 1
+            testFailCount1 += 1
+
+    if name != 0:
+        if testFailCount1 == 0:
+            colorText = 'ForestGreen'
+            passFailMsg = ""  # "Passed: " + name + "."
+            passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        else:
+            colorText = 'Red'
+            passFailMsg = "Failed: " + name + "."
+            testMessages.append(passFailMsg)
+            testMessages.append(" | ")
+            passedText = '\\textcolor{' + colorText + '}{' + "FAILED" + '}'
+
+        # Write some snippets for AutoTex
+        snippetName = name + "PassedText1"
+        snippetContent = passedText
+        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+
+        snippetName = name + "PassFailMsg1"
+        snippetContent = passFailMsg
+        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
 
     ###### RV2ELEM ######
+    # RV2Elem
+    testFailCount2 = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
+
     for g in range(2):
         TotalSim = SimulationBaseClass.SimBaseClass()
         TotalSim.TotalSim.terminateSimulation()
@@ -394,7 +427,7 @@ def orbElem(a, e, i, AN, AP, f, mu, DispPlot):
         for g in range(6):
             if abs(ElemDiff[g]) > epsDiff:
                 testMessages.append(" FAILED: Sim Orbital Element " + str(g))
-                testFailCount += 1
+                testFailCount2 += 1
 
     aMsg = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + ".a", range(1))
     aMsg = numpy.delete(aMsg[-1], 0, axis=0)
@@ -413,10 +446,10 @@ def orbElem(a, e, i, AN, AP, f, mu, DispPlot):
     for g in range(6):
         if abs(ElemMsgDiff[g]) > 0:
             testMessages.append(" FAILED: Orbital Element Message " + str(g))
-            testFailCount += 1
+            testFailCount2 += 1
     ######### Calculate rv2elem #########
     # Calculate the specific angular momentum and its magnitude
-    epsConv = 0.000000000001
+    epsConv = 0.0000000001
     hVec = numpy.cross(rTruth, vTruth)
     h = numpy.linalg.norm(hVec)
     p = h * h / mu
@@ -502,15 +535,15 @@ def orbElem(a, e, i, AN, AP, f, mu, DispPlot):
     for g in range(6):
         if abs(ElemCalcDiff[g]) > epsDiff:
             testMessages.append(" FAILED: Calculated Orbital Element " + str() + str(g))
-            testFailCount += 1
+            testFailCount2 += 1
 
     # create plot
+    # txt = 'e = ' + str(e) + ' and a = ' + str(a) + 'km'
+    fact = (len(str(abs(a)))-3.0)
 
-    plt.close("all")
-
-    fig1 = plt.figure(1)
-    plt.clf()
-    ax1 = fig1.add_subplot(211)
+    plt.figure(1,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+    # fig1.text(.5, .05, txt, ha='center')
+    ax1 = plt.subplot(211)
     index = numpy.arange(3)
     bar_width = 0.35
     opacity = 0.8
@@ -526,12 +559,11 @@ def orbElem(a, e, i, AN, AP, f, mu, DispPlot):
         xtick.set_bbox(dict(facecolor='white', edgecolor='None', alpha=0.5))
     ax1.xaxis.set_ticks_position('bottom')
     ax1.yaxis.set_ticks_position('left')
-    plt.xlabel('Axis')
     plt.ylabel('Position (m)')
     plt.xticks(index + bar_width, ('X', 'Y', 'Z'))
     plt.legend(loc='lower right')
 
-    ax2 = fig1.add_subplot(212)
+    ax2 = plt.subplot(212)
     rects1 = ax2.bar(index, vSim, bar_width, alpha=opacity, color='b', label='Simulated Velocity')
     rects2 = ax2.bar(index + bar_width, vTruth, bar_width, alpha=opacity, color='g', label='Calculated Velocity')
     ax2.spines['left'].set_position('zero')
@@ -544,37 +576,40 @@ def orbElem(a, e, i, AN, AP, f, mu, DispPlot):
         xtick.set_bbox(dict(facecolor='white', edgecolor='None', alpha=0.5))
     ax2.xaxis.set_ticks_position('bottom')
     ax2.yaxis.set_ticks_position('left')
-    plt.xlabel('Axis')
     plt.ylabel('Velocity (m/s)')
     plt.xticks(index + bar_width, ('X', 'Y', 'Z'))
     plt.legend(loc='lower right')
 
-    fact = (len(str(abs(a)))-3.0)
-    fig2, ax = plt.subplots()
-    index = numpy.arange(6)
-    initElem = (a/(10**fact), e, i, AN, AP, f)
-    simElem = (aOut/(10**fact), eOut, iOut, ANOut, APOut, fOut)
-    calcElem = (aO/(10**fact), eO, iO, Omega, omega, fO)
-    rects1 = plt.bar(index, initElem, 0.2, alpha=opacity, color='b', label='Initial Elements')
-    rects2 = plt.bar(index + 0.2, simElem, 0.2, alpha=opacity, color='g', label='Simulated Elements')
-    rects3 = plt.bar(index + 2*0.2, calcElem, 0.2, alpha=opacity, color='c', label='Calculated Elements')
-    ax.spines['left'].set_position('zero')
-    ax.spines['right'].set_color('none')
-    ax.spines['bottom'].set_position('zero')
-    ax.spines['top'].set_color('none')
-    ax.spines['left'].set_smart_bounds(False)
-    ax.spines['bottom'].set_smart_bounds(False)
-    for xtick in ax.get_xticklabels():
-        xtick.set_bbox(dict(facecolor='white', edgecolor='None', alpha=0.5))
-    ax.xaxis.set_ticks_position('bottom')
-    ax.yaxis.set_ticks_position('left')
-    plt.xlabel('Element')
-    plt.ylabel('Magnitude')
-    plt.xticks(index + bar_width, ('a*10^' + str(fact), 'e', 'i', 'AN', 'AP', 'f'))
-    plt.legend(loc='upper left')
+    if name != 0:
+        unitTestSupport.writeFigureLaTeX(name, "$e = " + str(e) + "$ and $a = 10^" + str(int(fact)) + "$km",
+                                         plt, 'height=0.7\\textwidth, keepaspectratio', path)
+        if testFailCount2 == 0:
+            colorText = 'ForestGreen'
+            passFailMsg = ""  # "Passed: " + name + "."
+            passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        else:
+            colorText = 'Red'
+            passFailMsg = "Failed: " + name + "."
+            testMessages.append(passFailMsg)
+            testMessages.append(" | ")
+            passedText = '\\textcolor{' + colorText + '}{' + "FAILED" + '}'
+
+        # Write some snippets for AutoTex
+        snippetName = name + "PassedText2"
+        snippetContent = passedText
+        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+
+        snippetName = name + "PassFailMsg2"
+        snippetContent = passFailMsg
+        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+
+
     plt.show(DispPlot)
+    plt.close()
+    testFailCount = testFailCount1+testFailCount2
 
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_orb_elem_convert(10000000.0, 0.01, 33.3*mc.D2R, 48.2*mc.D2R, 347.8*mc.D2R, 85.3*mc.D2R, 0.3986004415E+15, True)
+    test_orb_elem_convert(10000000.0, 0.01, 33.3*mc.D2R, 48.2*mc.D2R, 347.8*mc.D2R, 85.3*mc.D2R, 0.3986004415E+15, 0
+                          )
