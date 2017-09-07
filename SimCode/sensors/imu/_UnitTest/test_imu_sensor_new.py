@@ -48,13 +48,13 @@ import RigidBodyKinematics as rbk
 np.random.seed(2000000)
 
 # methods
+
 def m33v3mult(M,v):
     output = [[0.],[0.],[0.]]
     np.reshape(v,(3,1))
     for i in range(0,3):
         for k in range(0,3):
             output[i] += M[i][k]*v[k]
-
     return np.reshape(np.array(output),(1,3))
 
 def v3vTmult(v1,v2):
@@ -70,6 +70,17 @@ def skew(vector):
                      [vector.item(2), 0, -vector.item(0)],
                      [-vector.item(1), vector.item(0), 0]])
     return skew_symmetric
+
+def findSigmaDot(sigma, omega):
+    sigmaMag = np.linalg.norm(sigma)
+    B1 = 1 - sigmaMag ** 2
+    BI = np.identity(3)
+    sigmaTilde = skew(sigma)
+    B2 = np.dot(2, sigmaTilde)
+    B3 = np.dot(2, v3vTmult(sigma, sigma))
+    B = np.dot(B1, BI) + B2 + B3
+    sigmaDot = np.dot(0.25, m33v3mult(B, omega))
+    return sigmaDot
 
 def listStack(vec,stopTime,unitProcRate):
     # returns a list duplicated the number of times needed to be consistent with module output
@@ -137,11 +148,6 @@ def unitSimIMU(show_plots, make_plots, testCase, stopTime, accuracy):
     unitTask = unitSim.CreateNewTask(unitTaskName, unitProcRate)
     unitProc.addTask(unitTask)
 
-    # configure IMU
-    ImuSensor = imu_sensor.ImuSensor()
-    ImuSensor.ModelTag = "imusensor"
-    ImuSensor.sensorPos_B = imu_sensor.DoubleVector([0.0, 0.0, 0.0]) #must be set by user - no default.
-    setRandomWalk(ImuSensor)
 
 
     # StatePrevious = imu_sensor.SCPlusStatesSimMsg(StateCurrent) # For time differencing internal to IMU for truth values
@@ -156,76 +162,119 @@ def unitSimIMU(show_plots, make_plots, testCase, stopTime, accuracy):
             fieldNames.append(fieldName)
 
     #Set-up the fake kinematics vectors
-    rDotDot_CN = np.resize(np.array([1., 1., 1.]),(stopTime/unitProcRate_s+1,3)) #acceleration of center of mass wrt inertial frame
+    # as of right now, the accelerations here are non-conservative accelerations. No conservative accelerations are used in this test - SJKC
+    # center of mass
+    rDotDot_CN = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) #acceleration of center of mass wrt inertial frame
+    rDotDot_CB = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) #acceleration of center of mass wrt body frame
     rDot_CN = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) #velocity of center of mass wrt inertial frame
-    rDot_CN[0][:] = [0., 0., 0.] #initial value
     r_CN = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) #position of center of mass wrt to inertial frame
-    # rDot_CN[0][:] = [1., 1., 1.] #initial value
-    rDotDot_BN = np.resize(np.array([1., 1., 1.]),(stopTime/unitProcRate_s+1,3)) # acceleration of body frame wrt to inertial
-    # rDotDot_BN[0][:] = [1., 1., 1.] #initial value
+    # body frame
+    rDotDot_BN = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) # acceleration of body frame wrt to inertial
     rDot_BN = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) #velocity of body frame wrt to inertial
-    # rdot_BN[0][:] = [1., 1., 1.] #initial value
     r_BN = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) #position of body frame wrt to inertial
-    # r_BN[0][:] = [1., 1., 1.] #initial value
-    omegaDot = np.resize(np.array([0.1, 0.1, 0.1]),(stopTime/unitProcRate_s+1,3)) #angular acceleration of body frame wrt to inertial
-    # omegaDot[0][:] = [1., 1., 1.] #initila value
-    omega = np.resize(np.array([0.01, 0.01,0.01]),(stopTime/unitProcRate_s+1,3)) # angular rate of body frame wrt to inertial
-    # omega[0][:] = [1., 1., 1.] #initial value
+    omegaDot = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) #angular acceleration of body frame wrt to inertial
+    omega = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) # angular rate of body frame wrt to inertial
     sigmaDot = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) #MRP derivative, body wrt to inertial
-    # sigmaDot[0][:] = [1., 1., 1.] #initial value
     sigma = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) # MRP body wrt to inertial
-    # sigma[0][:] = [1., 1., 1.] #initial value
+    # sensor
     rDotDot_SN = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) #sensor sensed acceleration
-    # rDotDot_SN[0][:] = [1., 1., 1.] #initial value
     rDot_SN = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) #sensor accumulated DV
-    # rDot_SN[0][:] = [1., 1., 1.] #initial value
-    r_SN = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) #sensor
-    r_SB = np.array([1.,2.,3.]) #constant. sensor position wrt to body frame origin
-    r_SC = np.array([1.,2.,3.]) #variable but untracked sensor position wrt to center of mass
+    rDot_SN_P = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) #sensor accumulated DV in sensor platform frame coordinates
+    r_SN = np.resize(np.array([0., 0., 0.]),(stopTime/unitProcRate_s+1,3)) #sensor position in body frame coordinates
 
 
     #Set initial conditions for fake kinematics vectors
-    # Center of mass
-    # rDotDot_CN = leaving blank for now to keep at zeros. Should be made to move slowly relative to B or oscillate about B
-    # rDot_CN[0][i] = leaving blank for now to keep at zeros
-    r_CN[0][i] = [10000., 10000., 10000.] # Some arbitrary location in space
+    # Acceleration vectors
+    dataRows= np.shape(rDotDot_CN)[0]
+    for i in range(0, dataRows): #loops through acceleration vectors so that each element can be set individually (or, hopefully, as a function)
+        rDotDot_BN[i][0] = 1.
+        rDotDot_BN[i][1] = 1.
+        rDotDot_BN[i][2] = 1.
+        rDotDot_CB[i][0] = 0.
+        rDotDot_CB[i][1] = 0.
+        rDotDot_CB[i][2] = 0.
+        rDotDot_CN[i][0] = rDotDot_BN[i][0] + rDotDot_CB[i][0]
+        rDotDot_CN[i][1] = rDotDot_BN[i][1] + rDotDot_CB[i][1]
+        rDotDot_CN[i][2] = rDotDot_BN[i][2] + rDotDot_CB[i][2]
+    # Center of Mass
+    rDot_CN[0][:] = [0., 0., 0.]
+    r_CN[0][:] = [10000., 10000., 10000.] # Some arbitrary location in space
     # Body Frame Origin
-    # rDotDot_BN = leaving blank for now (no acceleration)
-    r_SN[0][:] = r_SC + r_CN[0][:]
+    rDot_BN[0][:] = [0., 0., 0.]
+    r_BN[0][:] = [10000., 10000., 10000.] # leaves r_CN[0][i] with some offset
+    # Body Rotation
+    omegaDot[0][:] = [0., 0., 0.] #unlabeled omega is omegaDot_BN_B
+    omega[0][:] = [0.1, 0.1, 0.1] #omega_BN_B
+    sigma[0][:] = [0., 0., 0.] # note that unlabeled sigma is sigma_BN
+    sigmaDot[0][:] = findSigmaDot(sigma[0][:], omega[0][:]) # sigmaDot_BN
+    # Sensor linear states (note that these initial conditions must be solved as functions of another initial conditions to maintain consistency
+    r_SB = np.array([0.25, 0.25, 0.5]) #constant. sensor position wrt to body frame origin
+    cDotDot = rDotDot_CN[0][:] - rDotDot_BN[0][:]
+    cDot = rDot_CN[0][:] - rDot_BN[0][:]
+    c = r_BN[0][:] - r_CN[0][:]
+    cPrime = cDot - np.cross(omega[0][:], c)
+    cPrimePrime = cDotDot - np.dot(2, np.cross(omega[0][:], cPrime)) - np.cross(omegaDot[0][:], c) - np.cross(omega[0][:], np.cross(omega[0][:], c))
+    r_SC = r_BN[0][:] + r_SB - r_CN[0][:]
+    rDotDot_SN[0][:] = rDotDot_CN[0][:] - cPrimePrime - np.dot(2, np.cross(omega[0][:], cPrime)) + np.cross(omegaDot[0][:], r_SC) + np.cross(omega[0][:], np.cross(omega[0][:], r_SC))
+    rDot_SN[0][:] = rDot_CN[0][:] - cPrime + np.cross(omega[0][:], r_SC)
+    r_SN[0][:] = r_SB + r_BN[0][:]
 
+    #Sensor Setup
+    ImuSensor = imu_sensor.ImuSensor()
+    ImuSensor.ModelTag = "imusensor"
+    ImuSensor.sensorPos_B = imu_sensor.DoubleVector(r_SB) #must be set by user - no default. check if this works by giving an array - SJKC
+    yaw = 0. #should be given as parameter
+    pitch = 0.
+    roll = 0.
+    ImuSensor.setBodyToPlatformDCM(yaw, pitch, roll)
+    dcm_PB = rbk.euler3212C([yaw,pitch,roll]) #done separately as a check
+    senRotNoiseStd = 0.0
+    senTransNoiseStd = 0.0
+    errorBoundsGyro = [0.0] * 3
+    errorBoundsAccel = [0.0] * 3
+    setRandomWalk(ImuSensor, senRotNoiseStd, senTransNoiseStd, errorBoundsGyro, errorBoundsAccel)
+    ImuSensor.gyroLSB = 0.
+    ImuSensor.accelLSB = 0.
+    ImuSensor.senRotBias = [0.0] * 3
+    ImuSensor.senTransBias = [0.0] * 3
+    ImuSensor.senTransMax = 1000.
+    ImuSensor.senRotMax = 1000.
 
-    # # configure spacecraft dummy message
-    # StateCurrent = imu_sensor.SCPlusStatesSimMsg()
-    # StateCurrent.sigma_BN = np.array([0., 0., 0.])
-    # StateCurrent.omega_BN_B = np.array([0.,0.,0.]) #1 rpm around each axis
-    # StateCurrent.nonConservativeAccelpntB_B = np.array([0., 0., 0.])
-    # StateCurrent.omegaDot_BN_B = np.array([0., 0., 0.])
-    # StateCurrent.TotalAccumDV_BN_B = np.array([0., 0., 0.])
-    # massStateCurrent = imu_sensor.SCPlusMassPropsSimMsg()
-    # massStateCurrent.c_B = [0., 0., 0.]
+    # Set-up the sensor output truth vectors
+    rDotDot_SN_P = np.resize(np.array([0., 0., 0.]), (stopTime / unitProcRate_s + 1, 3))  # sensor sensed acceleration in sensor platform frame coordinates
+    rDotDot_SN_P[0][:] = m33v3mult(dcm_PB, rDotDot_SN[0][:])
+    DVAccum_P = np.resize(np.array([0., 0., 0.]), (stopTime / unitProcRate_s + 1, 3))  # sensor accumulated delta V ouput in the platform frame
+    stepPRV_P = np.resize(np.array([0., 0., 0.]), (stopTime / unitProcRate_s + 1, 3))  # principal rotatation vector from time i-1 to time i in platform frame coordinates
+    omega_P = np.resize(np.array([0., 0., 0.]), (stopTime / unitProcRate_s + 1, 3))  # angular rate omega_BN_P = omega_PN_P
+    omega_P[0][:] = m33v3mult(dcm_PB, omega[0][:])
 
-    # configure truth
-    # trueVector = dict()
-    # trueVector['AngVelPlatform'] = listStack(omega,stopTime,unitProcRate)
-    # trueVector['AccelPlatform'] = listStack(accel,stopTime,unitProcRate)
-    # trueVector['DRFramePlatform'] = listStack(np.asarray(omega)*unitProcRate_s,stopTime,unitProcRate)
-    # trueVector['DVFramePlatform'] = listStack(np.asarray(accel)*unitProcRate_s,stopTime,unitProcRate)
-
-    # omegaTrue = StateCurrent.omega_BN_B
+    # configure spacecraft dummy message
+    StateCurrent = imu_sensor.SCPlusStatesSimMsg()
+    StateCurrent.sigma_BN = sigma[0][:]
+    StateCurrent.omega_BN_B = omega[0][:] #1 rpm around each axis
+    StateCurrent.nonConservativeAccelpntB_B = rDotDot_BN[0][:]
+    StateCurrent.omegaDot_BN_B = omegaDot[0][:]
+    StateCurrent.TotalAccumDV_BN_B = np.array([0., 0., 0.])
 
     # add module to the task
     unitSim.AddModelToTask(unitTaskName, ImuSensor)
 
-    # log module output message
-    unitSim.TotalSim.logThisMessage(ImuSensor.OutputDataMsg, unitProcRate)
+    # configure MassPropsData - should be able to remove and remove mass message from IMU code - SJKC
+    MassPropsData = imu_sensor.SCPlusMassPropsSimMsg()
+    MassPropsData.massSC = -97.9
+    MassPropsData.c_B = [0,0,0]
+    MassPropsData.ISC_PntB_B = [[100.0, 0.0, 0.0], [0.0, 100.0, 0.0], [0.0, 0.0, 100.0]]
 
-    # # configure spacecraft_mass_props message
-    # unitSim.TotalSim.CreateNewMessage("TestProcess", ImuSensor.InputMassMsg, MassPropsData.getStructSize(), 2)
-    # unitSim.TotalSim.WriteMessageData(ImuSensor.InputMassMsg, MassPropsData.getStructSize(), 0, MassPropsData)
+    # configure spacecraft_mass_props message
+    unitSim.TotalSim.CreateNewMessage(unitProcName, ImuSensor.InputMassMsg, MassPropsData.getStructSize(), 2)
+    unitSim.TotalSim.WriteMessageData(ImuSensor.InputMassMsg, MassPropsData.getStructSize(), 0, MassPropsData)
 
     # configure inertial_state_output message
-    # unitSim.TotalSim.CreateNewMessage("TestProcess", "inertial_state_output", 8*3*11, 2)
-    # unitSim.TotalSim.WriteMessageData("inertial_state_output", 8*3*11, 0, StateCurrent)
+    unitSim.TotalSim.CreateNewMessage(unitProcName, "inertial_state_output", 8*3*11, 2)
+    unitSim.TotalSim.WriteMessageData("inertial_state_output", 8*3*11, 0, StateCurrent)
+
+    # log module output message
+    unitSim.TotalSim.logThisMessage(ImuSensor.OutputDataMsg, unitProcRate)
 
     unitSim.InitializeSimulation()
 
@@ -252,16 +301,9 @@ def unitSimIMU(show_plots, make_plots, testCase, stopTime, accuracy):
 
         # iterate on sigma/sigmaDot
         sigmaDot[i][:] = sigmaDot[i-1][:]
-        for j in range(0,5):
+        for j in range(0,5): #Seems to converge after a few iterations
             sigma[i][:] = sigma[i-1][:] + ((sigmaDot[i-1][:]+sigmaDot[i][:])/2)*dt
-            sigmaMag = np.linalg.norm(sigma[i][:])
-            B1 = 1-sigmaMag**2
-            BI = np.identity(3)
-            sigmaTilde = skew(sigma[i][:])
-            B2 = np.dot(2,sigmaTilde)
-            B3 = np.dot(2,v3vTmult(sigma[i][:], sigma[i][:]))
-            B = np.dot(B1, BI) + B2 + B3
-            sigmaDot[i][:] = np.dot(0.25, m33v3mult(B,omega[i][:]))
+            sigmaDot[i][:] = findSigmaDot(sigma[i][:],omega[i][:])
         sigma[i][:] = sigma[i-1][:] + ((sigmaDot[i-1][:]+sigmaDot[i][:])/2)*dt
 
         # center of mass calculations
@@ -272,13 +314,43 @@ def unitSimIMU(show_plots, make_plots, testCase, stopTime, accuracy):
         # solving for sensor inertial states
         rDotDot_SN[i][:] = rDotDot_CN[i][:] - cPrimePrime - np.dot(2,np.cross(omega[i][:],cPrime)) + np.cross(omegaDot[i][:],r_SC) +np.cross(omega[i][:],np.cross(omega[i][:],r_SC))
         rDot_SN[i][:] = rDot_CN[i][:] - cPrime + np.cross(omega[i][:],  r_SC)
-        rDot_SN_check = rDot_SN[i-1][:] + ((rDotDot_SN[i-1][:]+rDotDot_SN[i][:])/2)*dt #This is here to check the output of the "truth" code written here in python
+        # rDot_SN_check = rDot_SN[i-1][:] + ((rDotDot_SN[i-1][:]+rDotDot_SN[i][:])/2)*dt #This is here to check the output of the "truth" code written here in python if desired
 
         r_SN[i][:] = r_SN[i-1][:] + ((rDot_SN[i-1][:] + rDot_SN[i][:])/2)*dt #for a simple check of the "truth" code
-        r_SN_simple = r_SC + r_CN[i][:] #for a simple check of the "truth" code
+        # r_SN_simple = r_SC + r_CN[i][:] #for a simple check of the "truth" code if desired.
+
+        # Now create outputs which are (supposed to be) equivalent to the IMU output
+        # linear acceleration (non-conservative) in platform frame
+        rDotDot_SN_P[i][:] = m33v3mult(dcm_PB, rDotDot_SN[i][:]) #This should match trueValues.AccelPlatform
+        # accumulated delta v (non-conservative) in platform frame
+        DVAccum_P[i][:] = DVAccum_P[i-1][:] + m33v3mult(dcm_PB, rDot_SN[i][:]) - m33v3mult(dcm_PB, rDot_SN[i-1][:])
+        # find PRV between before and now
+        sigma_NB_2 = np.dot(-1, sigma[i][:]) #sigma from B to N in B frame coordinates at time 2
+        sigma_NB_1 = np.dot(-1, sigma[i-1][:])
+        sigma_21 = rbk.subMRP(sigma_NB_2, sigma_NB_1)
+        if np.linalg.norm(sigma_21) != 0.: #MRP2PRV divides by zero and gives a warning if the attitude hasn't changed.
+            stepPRV = rbk.MRP2PRV(sigma_21)
+        else:
+            stepPRV = [0., 0., 0.]
+        stepPRV_P[i][:] = m33v3mult(dcm_PB, stepPRV)
+        # angular rate in platform frame
+        omega_P[i][:] = m33v3mult(dcm_PB, omega[i][:])
+
+        #Now update spacecraft states for the IMU:
+        StateCurrent = imu_sensor.SCPlusStatesSimMsg()
+        StateCurrent.sigma_BN = sigma[i][:]
+        StateCurrent.omega_BN_B = omega[i][:]  # 1 rpm around each axis
+        StateCurrent.nonConservativeAccelpntB_B = rDotDot_BN[i][:]
+        StateCurrent.omegaDot_BN_B = omegaDot[i][:]
+        StateCurrent.TotalAccumDV_BN_B = rDot_BN[i][:] - rDot_BN[0][:]
+        unitSim.TotalSim.WriteMessageData("inertial_state_output", 8 * 3 * 11, unitSim.TotalSim.CurrentNanos, StateCurrent)
+
+    DRout       = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "DRFramePlatform", range(3))
+    omegaOut    = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "AngVelPlatform", range(3))
+    rDotDotOut  = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "AccelPlatform", range(3))
+    DVout       = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "DVFramePlatform", range(3))
 
     return [testFailCount, ''.join(testMessages)]
-
 
 # This statement below ensures that the unit test script can be run as a
 # stand-along python script
