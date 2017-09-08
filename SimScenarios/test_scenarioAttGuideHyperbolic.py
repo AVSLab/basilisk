@@ -192,7 +192,7 @@ def test_bskAttGuide_Hyperbolic(show_plots, useAltBodyFrame):
 # The resulting attitude and control torque histories are shown below.
 # ![MRP Attitude History](Images/Scenarios/scenarioAttGuideHyperbolic11.svg "MRP history")
 # ![Control Torque History](Images/Scenarios/scenarioAttGuideHyperbolic21.svg "Torque history")
-# ![Rate Tracking Error](Images/Scenarios/scenarioAttGuideHyperbolic30.svg "Rate Tracking Error")
+# ![Rate Tracking Error](Images/Scenarios/scenarioAttGuideHyperbolic31.svg "Rate Tracking Error")
 #
 ##  @}
 def run(doUnitTests, show_plots, useAltBodyFrame):
@@ -489,7 +489,6 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     #
     #   the python code below is for the unit testing mode.  If you are studying the scenario
     #   to learn how to run BSK, you can stop reading below this line.
-    # NEED TO UPDATE UNIT TEST DATA
     #
     if doUnitTests:
         numTruthPoints = 5
