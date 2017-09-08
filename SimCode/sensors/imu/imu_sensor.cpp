@@ -294,12 +294,10 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
     double omegaDot_x_r[3];     //(time derivative of omega_BN_B) x r_SB_B
     double rotationalTerms[3];  //(time derivative of omega_BN_B) x r_SB_B + omega_BN_B x (omega_BN_B x r_SB_B)
     double rotationalDelta_B[3];//delta in rotationl velocity term of sensor motion in B frame
-    double dcm_BN[3][3];        //dcm from N to B
     double r_SB_B[3];           //sensor position relative to B frame origin in B frame coordinates
     double rDotDot_BN_B[3];     //non-conservative acceleration of body frame relative to inertial frame in body frame coordinates
     double rDotDot_SN_B[3];     //sensor non conservative acceleration relative to inertial frame in body frame coordinates
     double rDotDot_SN_P[3];     //sensor non conservative acceleration relative to inertial frame in sensor platform frame
-    double drDot_BN_N[3];       //change in velocity of body frame relative to inertial in inertial frame coordinates between IMU calls. This does not include delta-v from conservative accelerations.
     double drDot_BN_B[3];       //change in velocity of body frame relative to inertial in body frame coordinates between IMU calls. This does not include delta-v from conservative accelerations.
     double dvSensor_B[3];       //sensor delta v between IMU calls in body frame coordinates
     
@@ -316,8 +314,7 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
     v3Copy(rDotDot_SN_P, this->trueValues.AccelPlatform); //returns linear non-conservative acceleration of the imu in imu platform frame coordinates
     
     //Calculate time-average cumulative delta v
-    v3Subtract(StateCurrent.TotalAccumDV_BN_B, StatePrevious.TotalAccumDV_BN_B, drDot_BN_N);
-    m33MultV3(dcm_BN, drDot_BN_N, drDot_BN_B);
+    v3Subtract(StateCurrent.TotalAccumDV_BN_B, StatePrevious.TotalAccumDV_BN_B, drDot_BN_B);
     v3Cross(StatePrevious.omega_BN_B, r_SB_B, omega_x_r_prev);
     v3Subtract(omega_x_r, omega_x_r_prev, rotationalDelta_B);
     v3Add(drDot_BN_B, rotationalDelta_B, dvSensor_B);
