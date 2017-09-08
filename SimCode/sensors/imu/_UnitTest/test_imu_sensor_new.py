@@ -31,6 +31,7 @@ import sys, os, inspect
 import numpy as np
 import pytest
 import matplotlib.pyplot as plt
+import math
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -109,6 +110,13 @@ def setRandomWalk(self,senRotNoiseStd = 0.0,senTransNoiseStd = 0.0,errorBoundsGy
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
+
+#The following tests are parameterized and run:
+# clean - a little bit of every motion/displacement but no bias, noise, etc.
+# bias - bias added to the clean signal.
+# discretization - Signal is discretized
+# saturation - signal doesn't move outside max/min
+# walk bounds - random walk over time stays within bounds
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
@@ -190,28 +198,31 @@ def unitSimIMU(show_plots, make_plots, testCase, stopTime, accuracy):
         rDotDot_BN[i][0] = 1.
         rDotDot_BN[i][1] = 1.
         rDotDot_BN[i][2] = 1.
-        rDotDot_CB[i][0] = 0.
-        rDotDot_CB[i][1] = 0.
-        rDotDot_CB[i][2] = 0.
+        rDotDot_CB[i][0] = 0.01*math.sin(2*np.pi/25.)
+        rDotDot_CB[i][1] = 0.01*math.sin(2*np.pi/25.)
+        rDotDot_CB[i][2] = 0.01*math.sin(2*np.pi/25.)
         rDotDot_CN[i][0] = rDotDot_BN[i][0] + rDotDot_CB[i][0]
         rDotDot_CN[i][1] = rDotDot_BN[i][1] + rDotDot_CB[i][1]
         rDotDot_CN[i][2] = rDotDot_BN[i][2] + rDotDot_CB[i][2]
+        omegaDot[i][0] = 0.01
+        omegaDot[i][1] = 0.02
+        omegaDot[i][2] = 0.03
     # Center of Mass
-    rDot_CN[0][:] = [0., 0., 0.]
+    rDot_CN[0][:] = [0.5, 0.4, 0.3]
     r_CN[0][:] = [10000., 10000., 10000.] # Some arbitrary location in space
     # Body Frame Origin
-    rDot_BN[0][:] = [0., 0., 0.]
-    r_BN[0][:] = [10000., 10000., 10000.] # leaves r_CN[0][i] with some offset
+    rDot_BN[0][:] = [0.5, 0.4, 0.3]
+    r_BN[0][:] = [9999.75, 10000., 10000.] # leaves r_CN[0][i] with some offset
     # Body Rotation
-    omegaDot[0][:] = [0., 0., 0.] #unlabeled omega is omegaDot_BN_B
-    omega[0][:] = [0.1, 0.1, 0.1] #omega_BN_B
-    sigma[0][:] = [0., 0., 0.] # note that unlabeled sigma is sigma_BN
+    # omegaDot[0][:] = [0., 0., 0.] #unlabeled omega is omegaDot_BN_B
+    omega[0][:] = [0.1, 0.2, 0.3] #omega_BN_B
+    sigma[0][:] = [0., 0., 0.25] # note that unlabeled sigma is sigma_BN
     sigmaDot[0][:] = findSigmaDot(sigma[0][:], omega[0][:]) # sigmaDot_BN
     # Sensor linear states (note that these initial conditions must be solved as functions of another initial conditions to maintain consistency
-    r_SB = np.array([0.25, 0.25, 0.5]) #constant. sensor position wrt to body frame origin
+    r_SB = np.array([0., 0., 0.5]) #constant. sensor position wrt to body frame origin
     cDotDot = rDotDot_CN[0][:] - rDotDot_BN[0][:]
     cDot = rDot_CN[0][:] - rDot_BN[0][:]
-    c = r_BN[0][:] - r_CN[0][:]
+    c =  r_CN[0][:] - r_BN[0][:]
     cPrime = cDot - np.cross(omega[0][:], c)
     cPrimePrime = cDotDot - np.dot(2, np.cross(omega[0][:], cPrime)) - np.cross(omegaDot[0][:], c) - np.cross(omega[0][:], np.cross(omega[0][:], c))
     r_SC = r_BN[0][:] + r_SB - r_CN[0][:]
@@ -223,11 +234,11 @@ def unitSimIMU(show_plots, make_plots, testCase, stopTime, accuracy):
     ImuSensor = imu_sensor.ImuSensor()
     ImuSensor.ModelTag = "imusensor"
     ImuSensor.sensorPos_B = imu_sensor.DoubleVector(r_SB) #must be set by user - no default. check if this works by giving an array - SJKC
-    yaw = 0. #should be given as parameter
-    pitch = 0.
-    roll = 0.
-    ImuSensor.setBodyToPlatformDCM(yaw, pitch, roll)
+    yaw = 0.61 #should be given as parameter [rad]
+    pitch = 0.33  # [rad]
+    roll = 0.75 # [rad]
     dcm_PB = rbk.euler3212C([yaw,pitch,roll]) #done separately as a check
+    ImuSensor.setBodyToPlatformDCM(yaw, pitch, roll) # done separately as a check
     senRotNoiseStd = 0.0
     senTransNoiseStd = 0.0
     errorBoundsGyro = [0.0] * 3
@@ -294,7 +305,7 @@ def unitSimIMU(show_plots, make_plots, testCase, stopTime, accuracy):
 
         cDotDot = rDotDot_CN[i][:] - rDotDot_BN[i][:]
         cDot = rDot_CN[i][:] - rDot_BN[i][:]
-        c = r_BN[i][:] - r_CN[i][:]
+        c = r_CN[i][:] - r_BN[i][:]
 
         # attitude kinematics
         omega[i][:] = omega[i-1][:] + ((omegaDot[i-1][:] + omegaDot[i][:])/2)*dt
@@ -314,8 +325,7 @@ def unitSimIMU(show_plots, make_plots, testCase, stopTime, accuracy):
         # solving for sensor inertial states
         rDotDot_SN[i][:] = rDotDot_CN[i][:] - cPrimePrime - np.dot(2,np.cross(omega[i][:],cPrime)) + np.cross(omegaDot[i][:],r_SC) +np.cross(omega[i][:],np.cross(omega[i][:],r_SC))
         rDot_SN[i][:] = rDot_CN[i][:] - cPrime + np.cross(omega[i][:],  r_SC)
-        # rDot_SN_check = rDot_SN[i-1][:] + ((rDotDot_SN[i-1][:]+rDotDot_SN[i][:])/2)*dt #This is here to check the output of the "truth" code written here in python if desired
-
+        rDot_SN_check = rDot_SN[i-1][:] + ((rDotDot_SN[i-1][:]+rDotDot_SN[i][:])/2)*dt #This is here to check the output of the "truth" code written here in python if desired
         r_SN[i][:] = r_SN[i-1][:] + ((rDot_SN[i-1][:] + rDot_SN[i][:])/2)*dt #for a simple check of the "truth" code
         # r_SN_simple = r_SC + r_CN[i][:] #for a simple check of the "truth" code if desired.
 
@@ -323,7 +333,7 @@ def unitSimIMU(show_plots, make_plots, testCase, stopTime, accuracy):
         # linear acceleration (non-conservative) in platform frame
         rDotDot_SN_P[i][:] = m33v3mult(dcm_PB, rDotDot_SN[i][:]) #This should match trueValues.AccelPlatform
         # accumulated delta v (non-conservative) in platform frame
-        DVAccum_P[i][:] = DVAccum_P[i-1][:] + m33v3mult(dcm_PB, rDot_SN[i][:]) - m33v3mult(dcm_PB, rDot_SN[i-1][:])
+        DVAccum_P[i][:] = m33v3mult(dcm_PB, rDot_SN[i][:]-rDot_SN[i-1][:])
         # find PRV between before and now
         sigma_NB_2 = np.dot(-1, sigma[i][:]) #sigma from B to N in B frame coordinates at time 2
         sigma_NB_1 = np.dot(-1, sigma[i-1][:])
@@ -332,6 +342,7 @@ def unitSimIMU(show_plots, make_plots, testCase, stopTime, accuracy):
             stepPRV = rbk.MRP2PRV(sigma_21)
         else:
             stepPRV = [0., 0., 0.]
+            print "here"
         stepPRV_P[i][:] = m33v3mult(dcm_PB, stepPRV)
         # angular rate in platform frame
         omega_P[i][:] = m33v3mult(dcm_PB, omega[i][:])
@@ -345,11 +356,36 @@ def unitSimIMU(show_plots, make_plots, testCase, stopTime, accuracy):
         StateCurrent.TotalAccumDV_BN_B = rDot_BN[i][:] - rDot_BN[0][:]
         unitSim.TotalSim.WriteMessageData("inertial_state_output", 8 * 3 * 11, unitSim.TotalSim.CurrentNanos, StateCurrent)
 
+        # DV_BN_B = StateCurrent.TotalAccumDV_BN_B - TotalAccumDV_BN_B_prev
+        # print DV_BN_B
+
     DRout       = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "DRFramePlatform", range(3))
-    omegaOut    = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "AngVelPlatform", range(3))
+    omegaOut    = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "AngVelPlatform", range(3)) #checks
     rDotDotOut  = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "AccelPlatform", range(3))
     DVout       = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "DVFramePlatform", range(3))
 
+    # test outputs
+    for i in range(2,len(stepPRV_P)-1):
+        if not unitTestSupport.isArrayEqualRelative(DRout[i][:], stepPRV_P[i+1][:], 3, 1e-4):
+            print "fail"
+            print stepPRV_P[i+1][:], DRout[i][:], sigma[i][:], sigma[i+1][:]
+        # # else:
+        # #     print "pass"
+        # if not unitTestSupport.isArrayEqualRelative(omegaOut[i][:], omega_P[i+1][:], 3, 1e-4):
+        #     print "fail"
+        # # else:
+        # #     print "pass"
+        # if not unitTestSupport.isArrayEqualRelative(DVout[i][:], DVAccum_P[i + 1][:], 3, 1e-4):
+        #     print "fail"
+        # # else:
+        # #     print "pass"
+        # if not unitTestSupport.isArrayEqualRelative(rDotDotOut[i][:], rDotDot_SN_P[i + 1][:], 3, 1e-4):
+        #     print "fail"
+        # # else:
+        # #     print "pass"
+
+    # print DVout, DVAccum_P
+    # print DVAccum_P, DVout
     return [testFailCount, ''.join(testMessages)]
 
 # This statement below ensures that the unit test script can be run as a
