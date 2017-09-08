@@ -59,7 +59,6 @@ import unitTestSupport                  # general support file with common unit 
 import matplotlib.pyplot as plt
 import macros
 import orbitalMotion
-import RigidBodyKinematics
 
 # import simulation related support
 import spacecraftPlus
@@ -146,7 +145,9 @@ def test_bskAttGuide_Hyperbolic(show_plots, useAltBodyFrame):
 #     attGuidanceConfig.mu = mu
 #     scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
 # ~~~~~~~~~~~~~
-#
+# Note that in contrast to Hill pointing mode used in
+# [test_scenarioAttitudeGuidance.py](@ref scenarioAttitudeGuidance), the orbit velocity frame pointing
+# requires the attacting celestial body gravitational constant mu to be set.
 #
 # Setup 1
 # -----
