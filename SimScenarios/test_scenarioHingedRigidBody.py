@@ -62,7 +62,8 @@ import orbitalMotion
 
 # import simulation related support
 import spacecraftPlus                   #The base of any spacecraft simulation which deals with spacecraft dynamics
-import simIncludeGravity
+# import simIncludeGravity
+import simIncludeGravBody
 import hingedRigidBodyStateEffector
 import ExtForceTorque                   #Allows for forces to act on the spacecraft without adding an effector like a thruster
 
@@ -332,16 +333,26 @@ def run(doUnitTests, show_plots):
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
-    # clear prior gravitational body and SPICE setup definitions
-    simIncludeGravity.clearSetup()
+    # # clear prior gravitational body and SPICE setup definitions
+    # simIncludeGravity.clearSetup()
+    #
+    # # setup Gravity Body
+    # simIncludeGravity.addEarth()
+    # simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
+    # mu = simIncludeGravity.gravBodyList[-1].mu
+    #
+    # # attach gravity model to spaceCraftPlus
+    # scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
 
     # setup Gravity Body
-    simIncludeGravity.addEarth()
-    simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
-    mu = simIncludeGravity.gravBodyList[-1].mu
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    earth = gravFactory.createEarth()
+    earth.isCentralBody = True
+    mu = earth.mu
 
-    # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
+    # Attach gravity model to spacecraftPlus
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+
 
     ##########################################################################################
     ########################Adding the HingedRigidBody State Effector#########################
