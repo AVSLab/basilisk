@@ -39,6 +39,7 @@
 #include "syncClockSimMsg.h"
 #include "thrConfigSimMsg.h"
 #include "thrOutputSimMsg.h"
+#include "hingedRigidBodySimMsg.h"
 %}
 
 %include "swig_conly_data.i"
@@ -85,6 +86,8 @@ GEN_SIZEOF(THROperationSimMsg)
 GEN_SIZEOF(THROutputSimMsg)
 %include "thrTimePairSimMsg.h"
 GEN_SIZEOF(THRTimePairSimMsg)
+%include "hingedRigidBodySimMsg.h"
+GEN_SIZEOF(HingedRigidBodySimMsg)
 
 %pythoncode %{
     import sys

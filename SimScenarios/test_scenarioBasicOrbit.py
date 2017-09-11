@@ -204,12 +204,13 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # Here the complete list of gravitational bodies is automatically assigned to the spacecraft, regardless if
 # it is only one body like Earth or Mars, or a list of multiple bodies.
 #
-# To set the celestial object default ephemeris message (with zero position and velocity vectors), use
-#~~~~~~~~~~~~~~~~~{.py}
-#     gravFactory.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
-#~~~~~~~~~~~~~~~~~
+# Note that the default planets position and velocity vectors in the gravitational body are set to zero.  If
+# alternate position or velocity vectors are requried, this can be done by creating the planet ephemerise message
+# that is connected to the gravity effector input message `bodyInMsgName`.
 # If time varying planet ephemeris messages are to be included use the Spice module.  For non-zero messages
-# the planet's default ephemeris would be replaced with the desired custom values.
+# the planet's default ephemeris would be replaced with the desired custom values.  How to use Spice to setup
+# planet ephemerise is shown in the tutorial
+# [test_scenarioOrbitMultiBody.py](@ref scenarioOrbitMultiBody).
 #
 # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
 #~~~~~~~~~~~~~~~~~{.py}
@@ -410,11 +411,6 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
 
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
-
-    #
-    # create simulation messages
-    #
-    gravFactory.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 
     #
     #   setup orbit and simulation time

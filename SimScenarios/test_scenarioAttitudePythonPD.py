@@ -158,7 +158,7 @@ import fswMessages
 ])
 
 # provide a unique test method name, starting with test_
-def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
+def test_bskAttitudeFeedbackPD(show_plots, useJitterSimple, useRWVoltageIO):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
     [testResults, testMessage] = runRegularTask( True,
@@ -259,7 +259,6 @@ def runRegularTask(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     for idx in range(1,4):
         plt.plot(timeData, dataSigmaBR[:, idx],
                  timeDataBase, dataSigmaBRBase[:,idx], '--')
-    plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Error $\sigma_{B/R}$')
     if doUnitTests:     # only save off the figure if doing a unit test run
@@ -270,7 +269,6 @@ def runRegularTask(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     plt.figure(2)
     for idx in range(1,4):
         plt.plot(timeData, dataSigmaBR[:, idx] - dataSigmaBRBase[:,idx])
-    plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Difference $\sigma_{B/R}$')
 
@@ -499,7 +497,6 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     #
     # create simulation messages
     #
-    gravFactory.addDefaultEphemerisMsg(scSim.TotalSim, scSim.simPreControlProc)
 
     # create the FSW vehicle configuration message
     vehicleConfigOut = fswMessages.VehicleConfigFswMsg()

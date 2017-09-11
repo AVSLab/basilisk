@@ -244,29 +244,6 @@ class gravBodyFactory(object):
             self.spiceObject.unloadSpiceKernel(self.spiceObject.SPICEDataPath, fileName)
         return
 
-    def defaultEphemData(self, name):
-        ephemData = simMessages.SpicePlanetStateSimMsg()
-        ephemData.J2000Current = 0.0
-        ephemData.PositionVector = [0.0, 0.0, 0.0]
-        ephemData.VelocityVector = [0.0, 0.0, 0.0]
-        ephemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-        ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-        ephemData.PlanetName = name
-
-        return ephemData
-
-    def addDefaultEphemerisMsg(self, obj, processName):
-
-        for name, celestialObject in self.gravBodies.iteritems():
-            msgName = celestialObject.bodyInMsgName
-            ephemData = self.defaultEphemData(name)
-            messageSize = ephemData.getStructSize()
-            obj.CreateNewMessage(processName,
-                                 msgName, messageSize, 2, "SpicePlanetStateSimMsg")
-            obj.WriteMessageData(msgName, messageSize, 0,
-                                 ephemData)
-
-        return
 
 
 def loadGravFromFile(fileName, spherHarm, maxDeg=2):
