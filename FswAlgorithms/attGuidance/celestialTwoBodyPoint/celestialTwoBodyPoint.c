@@ -20,7 +20,6 @@
 #include "attGuidance/celestialTwoBodyPoint/celestialTwoBodyPoint.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
-#include "sensorInterfaces/IMUSensorData/imuComm.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include <string.h>
 #include <math.h>
