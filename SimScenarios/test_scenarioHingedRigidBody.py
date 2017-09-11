@@ -62,7 +62,6 @@ import orbitalMotion
 
 # import simulation related support
 import spacecraftPlus                   #The base of any spacecraft simulation which deals with spacecraft dynamics
-# import simIncludeGravity
 import simIncludeGravBody
 import hingedRigidBodyStateEffector
 import ExtForceTorque                   #Allows for forces to act on the spacecraft without adding an effector like a thruster
@@ -122,7 +121,7 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 # which contains the spacecraft object and two hinged rigid bodies (panel1 and panel2). It should be noted here that "hinged rigid bodies"
 # are rigid bodies which are hinged to the spacecraft hub by a single axis and they can rotate only about
 # that axis and cannot translate. Details and graphics of the hinged rigid body can be found in the hinged rigid body
-# documentation. Additionally, the spacecraft is orbiting earth, so a simIncludeGravity.addEarth() is created and called
+# documentation. Additionally, the spacecraft is orbiting earth, so a simIncludeGravBody is created and called
 # earth. Finally, and external force is created and added to the spacecraft called extFTObject.
 #
 # The BSK simulation is run for a fixed period.  After stopping, the
@@ -333,17 +332,6 @@ def run(doUnitTests, show_plots):
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
-    # # clear prior gravitational body and SPICE setup definitions
-    # simIncludeGravity.clearSetup()
-    #
-    # # setup Gravity Body
-    # simIncludeGravity.addEarth()
-    # simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
-    # mu = simIncludeGravity.gravBodyList[-1].mu
-    #
-    # # attach gravity model to spaceCraftPlus
-    # scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
-
     # setup Gravity Body
     gravFactory = simIncludeGravBody.gravBodyFactory()
     earth = gravFactory.createEarth()
@@ -443,12 +431,6 @@ def run(doUnitTests, show_plots):
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(scSim.panel1.HingedRigidBodyOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(scSim.panel2.HingedRigidBodyOutMsgName, samplingTime)
-
-
-    #
-    # create simulation messages
-    #
-    simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 
 
     #
