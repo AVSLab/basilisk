@@ -24,6 +24,7 @@ Is a _UnitTest folder included that:
 * checks the module output for all input and module configuration conditions
 * performs the validation checking against either custom-computed results in other programs (Matlab, Mathematica, hand calculation), live Python computed results, or against expected simulation data (consistency checking)
 * can also be run with the python command instead of pytest (by updating the `__main()__` function at the bottom of the python file)
+* if the module depends on other modules, clear out teh `*.pyc` files in `PythonModules/`
     
 ## Module Documentation
 Is a _Documentation folder included that
