@@ -32,6 +32,6 @@ The variables in Table \ref{tabular:vars} are available for user input. Variable
 	\label{img:codeFlow}
 \end{figure}
 
-The diagram in Fig. \ref{img:codeFlow} demonstrates the basic iterative logic of the gravity effector module. There is extensive additional code that deals with things from the messaging system to transforming the spacecraft position from one frame to another. In general, the inputs shown must be given for each gravity body to be considered. There are, however, convenience functions which add the standard values of these inputs for common celestial bodies. An example is simIncludeGravity.addEarth() in the test\_scenarioOrbitManeuver.py tutorial.
+The diagram in Fig. \ref{img:codeFlow} demonstrates the basic iterative logic of the gravity effector module. There is extensive additional code that deals with things from the messaging system to transforming the spacecraft position from one frame to another. In general, the inputs shown must be given for each gravity body to be considered. There are, however, convenience functions which add the standard values of these inputs for common celestial bodies. An example is simIncludeGravbody.createEarth() in the test\_scenarioOrbitManeuver.py tutorial.
 
 After the inputs are given for each gravity body, the computeGravityInertial() calculates the $0^{\textbf{th}}$ degree gravity term for each body and its effects on the spacecraft. If useSphericalHarmParams is True for a given body, then computeField() is called to calculate higher degree spherical harmonics terms for that body.
