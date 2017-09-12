@@ -316,6 +316,9 @@ def unitSimIMU(show_plots, make_plots, testCase, stopTime, accuracy):
             sigma[i][:] = sigma[i-1][:] + ((sigmaDot[i-1][:]+sigmaDot[i][:])/2)*dt
             sigmaDot[i][:] = findSigmaDot(sigma[i][:],omega[i][:])
         sigma[i][:] = sigma[i-1][:] + ((sigmaDot[i-1][:]+sigmaDot[i][:])/2)*dt
+        # if np.linalg.norm(sigma[i][:])  > 1.:
+        #     print "hey"
+        #     sigma[i][:] = np.dot(np.dot(-1, sigma[i][:]),  1/(sigma[i][0]**2 + sigma[i][1]**2 + sigma[i][2]**2))
 
         # center of mass calculations
         cPrime = cDot - np.cross(omega[i][:], c)
@@ -342,7 +345,6 @@ def unitSimIMU(show_plots, make_plots, testCase, stopTime, accuracy):
             stepPRV = rbk.MRP2PRV(sigma_21)
         else:
             stepPRV = [0., 0., 0.]
-            print "here"
         stepPRV_P[i][:] = m33v3mult(dcm_PB, stepPRV)
         # angular rate in platform frame
         omega_P[i][:] = m33v3mult(dcm_PB, omega[i][:])
@@ -367,7 +369,7 @@ def unitSimIMU(show_plots, make_plots, testCase, stopTime, accuracy):
     # test outputs
     for i in range(2,len(stepPRV_P)-1):
         if not unitTestSupport.isArrayEqualRelative(DRout[i][:], stepPRV_P[i+1][:], 3, 1e-4):
-            print "fail"
+            print "fail", i
             print stepPRV_P[i+1][:], DRout[i][:], sigma[i][:], sigma[i+1][:]
         # # else:
         # #     print "pass"
