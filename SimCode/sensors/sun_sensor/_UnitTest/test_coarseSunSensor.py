@@ -265,7 +265,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
             sensorlabel = "cssP1"+str(i+1)
             plt.plot(constellationP1data[:,0]*macros.NANO2MIN, constellationP1data[:,i+1], label=sensorlabel, linewidth=4-i)
         plt.xlabel('Time [min]')
-        plt.ylabel('P1 Output Values [ul]')
+        plt.ylabel('P1 Output Values [-]')
         plt.legend(loc='upper center')
 
         plt.subplot(2,1,2)
@@ -274,7 +274,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
             sensorlabel = "cssP2"+str(i+1)
             plt.plot(constellationP2data[:,0]*macros.NANO2MIN, constellationP2data[:,i+1], label=sensorlabel, linewidth=4-i)
         plt.xlabel('Time [min]')
-        plt.ylabel('P2 Output Values [ul]')
+        plt.ylabel('P2 Output Values [-]')
         plt.legend(loc='upper center')
         unitTestSupport.writeFigureLaTeX('constellationPlots', 'Plot of first and second constellation outputs for comparision.', plt, 'height=0.7\\textwidth, keepaspectratio', path)
     #
@@ -287,7 +287,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
         plt.plot(cssOutput[:,0]*macros.NANO2MIN, cssOutput[:,1], label=name, zorder=zLevel, linewidth=lineWide)
         plt.legend()
         plt.xlabel('Time [min]')
-        plt.ylabel('Output Value [ul]')
+        plt.ylabel('Output Value [-]')
         if name == "combined":
             unitTestSupport.writeFigureLaTeX('combinedPlot', 'Plot of all cases of individual coarse sun sensor in comparison to each other', plt, 'height=0.7\\textwidth, keepaspectratio', path)
 
