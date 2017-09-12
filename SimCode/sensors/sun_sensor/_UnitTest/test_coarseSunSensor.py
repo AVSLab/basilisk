@@ -20,7 +20,7 @@
 
 
 #
-# Eclipse Condition Unit Test
+# Coarse Sun Sensor Unit Test
 #
 # Purpose:  Test the proper function of the coarse sun sensor (css) module.
 #           For basic functionality, results are compared to simple truth values calculated using np.cos().
@@ -58,17 +58,17 @@ import simMessages
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue, errTol, name, zLevel, lineWide", [
-      (False, 1.0, np.pi/2., 0.0, 1.0, 0.0, 0.0, 0.0, 1e-12, "plain", 0, 5.),
-      (False, 0.5, np.pi/2., 0.0, 1.0, 0.0, 0.0, 0.0, 1e-12, "eclipse", -1, 5.),
-      (False, 1.0, 3*np.pi/8., 0.0, 1.0, 0.0, 0.0, 0.0, 1e-12, "fieldOfView", -2, 5.),
-      (False, 1.0, np.pi/2., 0.15, 1.0, 0.0, 0.0, 0.0, 1e-12, "kellyFactor", 1, 5.),
-      (False, 1.0, np.pi/2., 0.0, 2.0, 0.0, 0.0, 0.0, 1e-12, "scaleFactor", 2, 5.),
-      (False, 1.0, np.pi/2., 0.0, 1.0, 0.5, 0.0, 0.0, 1e-12, "bias", 3, 5.),
-      (False, 1.0, np.pi/2., 0.0, 1.0, 0.0, 0.25, 0.0, 1e-3, "deviation", -5, 1.),   #low tolerance for std deviation comparison
-      (False, 1.0, np.pi/2., 0.0, 1.0, 0.0, 0.0, 0.5, 1e-12, "albedo", -4, 5.),
-      (False, 0.5, 3*np.pi/8., 0.15, 2.0, 0.5, 0.25, 0.5, 1e-3, "combined", -6, 1.),
-      (True,  1.0, np.pi/2., 0.0, 1.0, 0.0, 0.0, 0.0, 1e-12, "constellation", 0, 1.)
+@pytest.mark.parametrize("useConstellation, visibilityFactor, fov,          kelly, scaleFactor, bias, noiseStd, albedoValue,    errTol,     name,               zLevel, lineWide", [
+                          (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.0,            1e-12,      "plain",            0,      5.),
+                          (False,               0.5,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.0,            1e-12,      "eclipse",          -1,     5.),
+                          (False,               1.0,            3*np.pi/8., 0.0,    1.0,        0.0,    0.0,    0.0,            1e-12,      "fieldOfView",      -2,     5.),
+                          (False,               1.0,            np.pi/2.,   0.15,   1.0,        0.0,    0.0,    0.0,            1e-12,      "kellyFactor",      1,      5.),
+                          (False,               1.0,            np.pi/2.,   0.0,    2.0,        0.0,    0.0,    0.0,            1e-12,      "scaleFactor",      2,      5.),
+                          (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.5,    0.0,    0.0,            1e-12,      "bias",             3,      5.),
+                          (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.25,   0.0,            1e-3,       "deviation",        -5,     1.),   #low tolerance for std deviation comparison
+                          (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.5,            1e-12,      "albedo",           -4,     5.),
+                          (False,               0.5,            3*np.pi/8., 0.15,   2.0,        0.5,    0.25,   0.5,            1e-3,       "combined",         -6,     1.),
+                          (True,                1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.0,            1e-12,      "constellation",    0,      1.)
 ])
 
 # provide a unique test method name, starting with test_
@@ -298,14 +298,20 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     #   Compare output and truth vectors
     #
     if useConstellation: #compare constellation P1 to constellation P2
-        for i in range(4):
-            if not unitTestSupport.isVectorEqual(constellationP2data[:,i], constellationP1data[:,i], errTol):
+        for i in range(0,np.shape(constellationP2data)[0]):
+            if not unitTestSupport.isArrayEqualRelative(constellationP2data[i][:], constellationP1data[i][1:],4,errTol):
                 testFailCount += 1
     elif noiseStd == 0.:
-        if not unitTestSupport.isVectorEqual(cssOutput[:,1], truthVector, errTol):
-            testFailCount += 1
+
+        for i in range(0,np.shape(cssOutput)[0]):
+            if cssOutput[i][1] == 0.:
+                if not unitTestSupport.isArrayZero([0., cssOutput[i][1]], 1, errTol):
+                    testFailCount += 1
+            else:
+                if not unitTestSupport.isDoubleEqualRelative(cssOutput[i][1], truthVector[i], errTol):
+                    testFailCount += 1
     else:
-        if not unitTestSupport.isDoubleEqual([0, noiseStd*scaleFactor], outputStd, errTol):
+        if not unitTestSupport.isDoubleEqualRelative(noiseStd*scaleFactor, outputStd, errTol):
             testFailCount += 1
 
     if testFailCount == 0:
