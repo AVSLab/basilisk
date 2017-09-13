@@ -65,10 +65,10 @@ import simMessages
                           (False,               1.0,            np.pi/2.,   0.15,   1.0,        0.0,    0.0,    0.0,            1e-12,      "kellyFactor",      1,      5.),
                           (False,               1.0,            np.pi/2.,   0.0,    2.0,        0.0,    0.0,    0.0,            1e-12,      "scaleFactor",      2,      5.),
                           (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.5,    0.0,    0.0,            1e-12,      "bias",             3,      5.),
-                          (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.25,   0.0,            1e-3,       "deviation",        -5,     1.),   #low tolerance for std deviation comparison
+                          (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.25,   0.0,            1e-2,       "deviation",        -5,     1.),   #low tolerance for std deviation comparison
                           (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.5,            1e-12,      "albedo",           -4,     5.),
-                          (False,               0.5,            3*np.pi/8., 0.15,   2.0,        0.5,    0.25,   0.5,            1e-3,       "combined",         -6,     1.),
-                          (True,                1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.0,            1e-12,      "constellation",    0,      1.)
+                          (False,               0.5,            3*np.pi/8., 0.15,   2.0,        0.5,    0.25,   0.5,            1e-2,       "combined",         -6,     1.),
+                          (True,                1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.0,            1e-10,      "constellation",    0,      1.)
 ])
 
 # provide a unique test method name, starting with test_
@@ -201,7 +201,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     #Create dummy spacecraft message
     satelliteStateMsg = simMessages.SCPlusStatesSimMsg()
     satelliteStateMsg.r_BN_N = [0.0, 0.0, 0.0]
-    angles = np.linspace(0., 2*np.pi, 5900)
+    angles = np.linspace(0., 2*np.pi, 59000)
     sigmas = np.zeros(len(angles))
     truthVector = np.cos(angles) #set truth vector initially, modify below based on inputs
     for i in range(len(sigmas)): #convert rotation angle about 3rd axis to MRP
@@ -311,6 +311,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
                 if not unitTestSupport.isDoubleEqualRelative(cssOutput[i][1], truthVector[i], errTol):
                     testFailCount += 1
     else:
+
         if not unitTestSupport.isDoubleEqualRelative(noiseStd*scaleFactor, outputStd, errTol):
             testFailCount += 1
 
