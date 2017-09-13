@@ -59,14 +59,14 @@ import simMessages
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("useConstellation, visibilityFactor, fov,          kelly, scaleFactor, bias, noiseStd, albedoValue,    errTol,     name,               zLevel, lineWide", [
-                          (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.0,            1e-12,      "plain",            0,      5.),
-                          (False,               0.5,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.0,            1e-12,      "eclipse",          -1,     5.),
-                          (False,               1.0,            3*np.pi/8., 0.0,    1.0,        0.0,    0.0,    0.0,            1e-12,      "fieldOfView",      -2,     5.),
-                          (False,               1.0,            np.pi/2.,   0.15,   1.0,        0.0,    0.0,    0.0,            1e-12,      "kellyFactor",      1,      5.),
-                          (False,               1.0,            np.pi/2.,   0.0,    2.0,        0.0,    0.0,    0.0,            1e-12,      "scaleFactor",      2,      5.),
-                          (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.5,    0.0,    0.0,            1e-12,      "bias",             3,      5.),
+                          (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.0,            1e-10,      "plain",            0,      5.),
+                          (False,               0.5,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.0,            1e-10,      "eclipse",          -1,     5.),
+                          (False,               1.0,            3*np.pi/8., 0.0,    1.0,        0.0,    0.0,    0.0,            1e-10,      "fieldOfView",      -2,     5.),
+                          (False,               1.0,            np.pi/2.,   0.15,   1.0,        0.0,    0.0,    0.0,            1e-10,      "kellyFactor",      1,      5.),
+                          (False,               1.0,            np.pi/2.,   0.0,    2.0,        0.0,    0.0,    0.0,            1e-10,      "scaleFactor",      2,      5.),
+                          (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.5,    0.0,    0.0,            1e-10,      "bias",             3,      5.),
                           (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.25,   0.0,            1e-2,       "deviation",        -5,     1.),   #low tolerance for std deviation comparison
-                          (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.5,            1e-12,      "albedo",           -4,     5.),
+                          (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.5,            1e-10,      "albedo",           -4,     5.),
                           (False,               0.5,            3*np.pi/8., 0.15,   2.0,        0.5,    0.25,   0.5,            1e-2,       "combined",         -6,     1.),
                           (True,                1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.0,            1e-10,      "constellation",    0,      1.)
 ])
