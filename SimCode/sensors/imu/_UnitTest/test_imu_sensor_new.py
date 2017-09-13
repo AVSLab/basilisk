@@ -298,7 +298,6 @@ def unitSimIMU(show_plots, make_plots, testCase, stopTime, accuracy):
         # print i, macros.sec2nano(unitProcRate_s*i)
         unitSim.ExecuteSimulation()
 
-        dt = unitSim.TotalSim.CurrentNanos - previousNanos
         # linear kinematcs
         rDot_CN[i][:] = rDot_CN[i-1][:] + ((rDotDot_CN[i-1][:] + rDotDot_CN[i][:])/2)*dt
         r_CN[i][:] = r_CN[i-1][:] + ((rDot_CN[i-1][:] + rDot_CN[i][:])/2)*dt
