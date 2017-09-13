@@ -30,7 +30,7 @@ The Coarse Sun Sensor Test, test\_coarseSunSensor.py, contains ten tests. The si
 
 Pytest runs the following cases (numbered as above) when it is called for this test:
 	\begin{table}[htbp]
-	\caption{Error tolerance for each test.}
+	\caption{Parameters for each test. Note that relative tolerance is $\frac{truth - output}{truth}$}
 	\label{tab:errortol}
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{ c | c | c | c | c | c | c | c | c | c } % Column formatting, 
@@ -51,6 +51,8 @@ Pytest runs the following cases (numbered as above) when it is called for this t
 		\hline
 	\end{tabular}
 \end{table}
+%
+\\The tolerances above were chosen basically to be machine tolerance which is consistently passable between machines and operating systems. Those tests involving noise have looser tolerances because they are comparing the standard deviation of generated noise with the requested standard deviation. longer runs would make this tolerance tighter, but take large amounts of time for users to run the tests.
 
 \section{Test Results}
 The results of each test are shown in the table below. If a test did not pass, an error message is included.
