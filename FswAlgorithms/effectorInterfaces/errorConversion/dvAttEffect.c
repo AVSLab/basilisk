@@ -20,7 +20,6 @@
 #include "effectorInterfaces/errorConversion/dvAttEffect.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
-#include "sensorInterfaces/IMUSensorData/imuComm.h"
 #include <string.h>
 #include <math.h>
 

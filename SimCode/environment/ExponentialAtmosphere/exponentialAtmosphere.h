@@ -79,8 +79,8 @@ public:
     std::vector<std::string> atmoDensOutMsgNames; //!< Vector of strings containing atmospheric output message names
     std::vector<std::string> scStateInMsgNames;	//!< Vector of the spacecraft position/velocity message names
     std::string planetPosInMsgName;			//!< Message name for the planet's SPICE position message
-    std::vector<uint64_t> atmoDensOutMsgIds;
-    std::vector<uint64_t> scStateInMsgIds;
+    std::vector<int64_t> atmoDensOutMsgIds;
+    std::vector<int64_t> scStateInMsgIds;
     int64_t planetPosInMsgId;
     std::vector<SCPlusStatesSimMsg> scStates;
     SpicePlanetStateSimMsg bodyState;

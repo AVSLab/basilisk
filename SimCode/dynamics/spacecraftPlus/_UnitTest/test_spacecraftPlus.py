@@ -473,18 +473,21 @@ def test_SCRotation(show_plots):
     sigmaArray = numpy.zeros([3,5])
     omegaAnalyticalArray = numpy.zeros([3,5])
     omegaArray = numpy.zeros([4,5])
-    for i in range(0,5):
-        timeArray[i] = moduleOutput[stopTime/timeStep*(i+1)/5,0]
-        sigmaArray[:,i] = moduleOutput[stopTime/timeStep*(i+1)/5,1:4]
-        sigma = sigmaArray[:,i]
+    for i in range(0, 5):
+        idx = int(stopTime/timeStep*(i+1)/5)
+        timeArray[i] = moduleOutput[idx, 0]
+        sigmaArray[:, i] = moduleOutput[idx, 1:4]
+        sigma = sigmaArray[:, i]
         sigmaNorm = numpy.linalg.norm(sigma)
         sigma1 = sigma[0]
         sigma2 = sigma[1]
         sigma3 = sigma[2]
-        omegaArray[:,i] = omega_BNOutput[stopTime/timeStep*(i+1)/5,:]
+        omegaArray[:,i] = omega_BNOutput[idx, :]
         omegaAnalyticalArray[0,i] = -H/(1 + sigmaNorm**2)**2*(8*sigma1*sigma3 - 4*sigma2*(1 - sigmaNorm**2))/scObject.hub.IHubPntBc_B[0][0]
         omegaAnalyticalArray[1,i] = -H/(1 + sigmaNorm**2)**2*(8*sigma2*sigma3 + 4*sigma1*(1 - sigmaNorm**2))/scObject.hub.IHubPntBc_B[1][1]
         omegaAnalyticalArray[2,i] = -H/(1 + sigmaNorm**2)**2*(4*(-sigma1**2 - sigma2**2 + sigma3**2) + (1 - sigmaNorm**2)**2)/scObject.hub.IHubPntBc_B[2][2]
+
+    plt.close("all")    # clear out earlier figures
 
     plt.figure()
     plt.clf()
@@ -671,8 +674,9 @@ def test_SCTransBOE(show_plots):
     # truth and Basilisk
     truthV = [v1, v2, v3]
     truthX = [x1, x2, x3]
-    basiliskV = [v_BN_NOutput[t1/timeStep,1], v_BN_NOutput[t2/timeStep,1], v_BN_NOutput[t3/timeStep,1]]
-    basiliskX = [r_BN_NOutput[t1/timeStep,1], r_BN_NOutput[t2/timeStep,1], r_BN_NOutput[t3/timeStep,1]]
+
+    basiliskV = [v_BN_NOutput[int(t1/timeStep), 1], v_BN_NOutput[int(t2/timeStep), 1], v_BN_NOutput[int(t3/timeStep), 1]]
+    basiliskX = [r_BN_NOutput[int(t1/timeStep), 1], r_BN_NOutput[int(t2/timeStep), 1], r_BN_NOutput[int(t3/timeStep), 1]]
 
     plt.figure()
     plt.clf()

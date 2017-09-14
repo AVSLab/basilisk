@@ -763,8 +763,8 @@ def run(doUnitTests, show_plots, simCase):
 # stand-along python script
 #
 if __name__ == "__main__":
-    run(  True        # do unit tests
-        , False         # show_plots
-        , 3            # simCase
+    run(  False        # do unit tests
+        , True         # show_plots
+        , 0            # simCase
        )
 

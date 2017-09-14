@@ -220,12 +220,14 @@ void CoarseSunSensor::computeTrueOutput()
     to the truth. */
 void CoarseSunSensor::applySensorErrors()
 {
+    // Define epsilon that will avoid dividing by a very small kelly factor, i.e 0.0.
+    double eps = 1e-10;
     //! Begin Method Steps
     //! - Get current error from random number generator
     double CurrentError = rnum(this->rgen);
     //! - Apply the kelly fit to the truth direct value
     double KellyFit = 1.0;
-    if (this->KellyFactor > 0.0000000000001) {
+    if (this->KellyFactor > eps) {
         KellyFit -= exp(-this->directValue * this->directValue/this->KellyFactor);
     }
 

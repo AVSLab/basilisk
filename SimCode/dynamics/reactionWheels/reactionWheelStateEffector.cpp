@@ -302,7 +302,7 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime, 
     {
 		if (RWIt->RWModel == BalancedWheels || RWIt->RWModel == JitterSimple) {
 			rotAngMomPntCContr_B += RWIt->Js*RWIt->gsHat_B*RWIt->Omega;
-			rotEnergyContr += 1.0/2.0*RWIt->Js*RWIt->Omega*RWIt->Omega;
+            rotEnergyContr += 1.0/2.0*RWIt->Js*RWIt->Omega*RWIt->Omega + RWIt->Js*RWIt->Omega*RWIt->gsHat_B.dot(omegaLoc_BN_B);
 		} else if (RWIt->RWModel == JitterFullyCoupled) {
 			Eigen::Vector3d omega_WN_B = omegaLoc_BN_B + RWIt->Omega*RWIt->gsHat_B;
 			Eigen::Vector3d r_WcB_B = RWIt->rWcB_B;

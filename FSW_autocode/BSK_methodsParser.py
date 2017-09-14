@@ -23,6 +23,7 @@ import BSKModuleParse as dataParser
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../PythonModules/')
+sys.path.append(path + '/../modules/')
 import alg_contain
 import sim_model
 import numpy as np
@@ -32,12 +33,35 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
     simTag='TheSim', localPath = os.path.dirname(os.path.abspath(filename))):
     def areTasksInSimTaskList(taskActivityDir, TheSim):
         print 'TASKS BEING PARSED: '
-        taskIdxDir = {}
-        l = len(TheSim.TaskList)
-        for i_task in range(0, l):
-            taskName = TheSim.TaskList[i_task].Name
+        taskIdxDir = []
+        taskOrderedList = []
+        procLength = len(TheSim.TotalSim.processList)
+        for procIdx in range(procLength):
+            locProcList = []
+            for i_task in range(len(TheSim.TotalSim.processList[procIdx].processTasks)):
+                theTask = TheSim.TotalSim.processList[procIdx].processTasks[i_task]
+                taskFound = False
+                for ordIdx in range(len(locProcList)):
+                    locTask = locProcList[ordIdx]
+                    # locTask[0] = taskName
+                    # locTask[1] = taskPriority
+                    if theTask.taskPriority > locTask[1]:
+                        locProcList.insert(ordIdx, 
+                            [theTask.TaskPtr.TaskName, theTask.taskPriority])
+                        taskFound = True
+                        break
+                if taskFound != True:
+                    locProcList.append([theTask.TaskPtr.TaskName, theTask.taskPriority, theTask])
+            taskOrderedList.extend(locProcList)
+                        
+        for i_task in range(0, len(taskOrderedList)):
+            # taskOrderedList[i_task][0] = taskName
+            # taskOrderedList[i_task][1] = taskPriority
+            # taskOrderedList[i_task][2] = theTask
+            taskName = taskOrderedList[i_task][0]
             if taskName in taskActivityDir.keys():
-                taskIdxDir[i_task] = str(taskActivityDir[taskName])
+                idxUse = getTaskIndex(TheSim, taskOrderedList[i_task][2].TaskPtr)
+                taskIdxDir.append(idxUse)
                 print i_task, taskName
         return taskIdxDir
 
@@ -99,6 +123,17 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
         key = 'self.TaskList[' + str(i_task) + '].TaskModels[' + str(i_model) + ']'
         return key
 
+
+    # This function returns the key name of the NameReplace dictionary according to the index of the task
+    # and the index of the model inside the task
+    def getTaskIndex(theSim,taskUse):
+        j=0
+        for taskPy in theSim.TaskList:
+            if taskUse.TaskName == taskPy.Name:
+                return j
+            j+=1
+        return -1
+
     # This function makes sure that each algorithm in a data model is matched with the proper algorithm in
     # the corresponding model wrap. If there's a match, returns the ID of the model. Otherwise, an ugly
     # error is raised and the whole program quits.
@@ -136,9 +171,9 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
         void = 'void ' + algName
         void_header = void + ';\n'
         void_source = void + '\n{\n'
-        for k, v in globalAlgUpdate.items():
-            void_source += '\t' + 'if (data->' + v[0] + '){' + '\n'
-            void_source += '\t\t' + k + '(data, callTime);' + '\n'
+        for updateElem in globalAlgUpdate:
+            void_source += '\t' + 'if (data->' + updateElem[1][0] + '){' + '\n'
+            void_source += '\t\t' + updateElem[0] + '(data, callTime);' + '\n'
             void_source += '\t' + '}' + '\n'
         void_source += '}' + '\n'
         theVoidList.append(void_header)
@@ -148,9 +183,11 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
     def writeTaskActivityVars(globalAlgUpdate, varType):
         theTaskActivity_declareList = []
         theTaskActivity_initList = []
-        for k, v in globalAlgUpdate.items():
-            declare_str = varType + ' ' + v[0] + ';' + '\n'
-            init_str = 'data->' + v[0] + ' = ' + v[1] + ';' + '\n'
+        for updateElem in globalAlgUpdate:
+            # updateElem[0] = algNameUpdate
+            # updateElem[1] = [algNameTaskActivity, boolIsTaskActive]
+            declare_str = varType + ' ' + updateElem[1][0] + ';' + '\n'
+            init_str = 'data->' + updateElem[1][0] + ' = ' + updateElem[1][1] + ';' + '\n'
             theTaskActivity_declareList.append(declare_str)
             theTaskActivity_initList.append(init_str)
         return (theTaskActivity_declareList, theTaskActivity_initList)
@@ -204,7 +241,7 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
     allAlgSelfInit = [] # global list for all models' SelfInit algorithms
     allAlgCrossInit = [] # global list for all models' CrossInit algorithms
     globalAllAlgReset = [] # global list for all models' Reset algorithms
-    globalAlgUpdate = {} #
+    globalAlgUpdate = [] #
     theConfigDataList = []
     theAlgList = [] # global list for all source algorithms
     theVoidList = [] # global list for all header void function definitions.
@@ -216,7 +253,7 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
     taskIdxDir = areTasksInSimTaskList(taskActivityDir, TheSim)
     for i_task in taskIdxDir:
         task = TheSim.TaskList[i_task]
-        taskActivity = taskIdxDir[i_task]
+        isTaskActive = taskActivityDir[task.Name]
         allAlgUpdate = [] # local list for task models' Update algorithms
         allAlgReset = [] # local list for task model's Reset algorithms
         i_model = 0
@@ -243,7 +280,8 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
 
         algNameUpdate = task.Name + '_Update'
         algNameUpdateTaskActivity = task.Name + '_isActive'
-        globalAlgUpdate[algNameUpdate] = (algNameUpdateTaskActivity, taskActivity)
+        #globalAlgUpdate.append([algNameUpdate, (algNameUpdateTaskActivity, str(0))])
+        globalAlgUpdate.append([algNameUpdate, (algNameUpdateTaskActivity,isTaskActive)])
         algNameReset = task.Name + '_Reset'
         writeTaskAlgs(algNameUpdate + ConfigData_callTime, allAlgUpdate, theVoidList, theAlgList)
         if (allAlgReset): # check if there are any reset methods in the task models
@@ -345,36 +383,37 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
 
 # ---------------------------------- MAIN ---------------------------------- #
 
-def defaultAVSSimTasks(taskActivityDir):
-    taskActivityDir["initOnlyTask"] = 1
-    taskActivityDir["sunSafeFSWTask"] = 1
-    taskActivityDir["sunPointTask"] = 1
-    taskActivityDir["earthPointTask"] = 1
-    taskActivityDir["marsPointTask"] = 1
-    taskActivityDir["vehicleAttMnvrFSWTask"] = 1
-    taskActivityDir["vehicleDVPrepFSWTask"] = 1
-    taskActivityDir["vehicleDVMnvrFSWTask"] = 1
-    taskActivityDir["RWADesatTask"] = 1
-    taskActivityDir["thrForceMappingTask"] = 1
-    taskActivityDir["thrFiringSchmittTask"] = 1
-    taskActivityDir["sensorProcessing"] = 1
-    taskActivityDir["inertial3DPointTask"] = 1
-    taskActivityDir["hillPointTask"] = 1
-    taskActivityDir["velocityPointTask"] = 1
-    taskActivityDir["celTwoBodyPointTask"] = 1
-    taskActivityDir["rasterMnvrTask"] = 1
-    taskActivityDir["initOnlyTask"] = 1
-    taskActivityDir["eulerRotationTask"] = 1
-    taskActivityDir["inertial3DSpinTask"] = 1
-    taskActivityDir["attitudeControlMnvrTask"] = 1
-    taskActivityDir["feedbackControlMnvrTask"] = 1
-    taskActivityDir["attitudeControlMnvrTask"] = 1
-    taskActivityDir["simpleRWControlTask"] = 1
+def defaultAVSSimTasks(boolActive):
+    taskActivityDir = {}
+    taskActivityDir["initOnlyTask"] = boolActive
+    taskActivityDir["sunSafeFSWTask"] = boolActive
+    taskActivityDir["sunPointTask"] = boolActive
+    taskActivityDir["earthPointTask"] = boolActive
+    taskActivityDir["marsPointTask"] = boolActive
+    taskActivityDir["vehicleAttMnvrFSWTask"] = boolActive
+    taskActivityDir["vehicleDVPrepFSWTask"] = boolActive
+    taskActivityDir["vehicleDVMnvrFSWTask"] = boolActive
+    taskActivityDir["RWADesatTask"] = boolActive
+    taskActivityDir["thrForceMappingTask"] = boolActive
+    taskActivityDir["thrFiringSchmittTask"] = boolActive
+    taskActivityDir["sensorProcessing"] = boolActive
+    taskActivityDir["inertial3DPointTask"] = boolActive
+    taskActivityDir["hillPointTask"] = boolActive
+    taskActivityDir["velocityPointTask"] = boolActive
+    taskActivityDir["celTwoBodyPointTask"] = boolActive
+    taskActivityDir["rasterMnvrTask"] = boolActive
+    taskActivityDir["initOnlyTask"] = boolActive
+    taskActivityDir["eulerRotationTask"] = boolActive
+    taskActivityDir["inertial3DSpinTask"] = boolActive
+    taskActivityDir["attitudeControlMnvrTask"] = boolActive
+    taskActivityDir["feedbackControlMnvrTask"] = boolActive
+    taskActivityDir["attitudeControlMnvrTask"] = boolActive
+    taskActivityDir["simpleRWControlTask"] = boolActive
     return taskActivityDir
 
 if __name__ == "__main__":
     TheAVSSim = AVSSim.AVSSim()
-    taskActivityDir = defaultAVSSimTasks({})
+    taskActivityDir = defaultAVSSimTasks(str(0))
     outputFileName = 'AVS_FSW_Autocode'
     str_ConfigData = 'AVSConfigData'
     parseSimAlgorithms(TheAVSSim, taskActivityDir, outputFileName, str_ConfigData)

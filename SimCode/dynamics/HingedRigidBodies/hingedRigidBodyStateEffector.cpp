@@ -19,6 +19,8 @@
 
 #include "hingedRigidBodyStateEffector.h"
 #include "utilities/avsEigenSupport.h"
+#include "architecture/messaging/system_messaging.h"
+#include <iostream>
 
 /*! This is the constructor, setting variables to default values */
 HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
@@ -35,14 +37,16 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
     this->d = 1.0;
     this->k = 1.0;
     this->c = 0.0;
-    this->thetaInit = 0.0;
+    this->thetaInit = 0.00;
     this->thetaDotInit = 0.0;
     this->IPntS_S.Identity();
     this->r_HB_B.setZero();
     this->dcm_HB.Identity();
     this->nameOfThetaState = "hingedRigidBodyTheta";
     this->nameOfThetaDotState = "hingedRigidBodyThetaDot";
-
+    this->HingedRigidBodyOutMsgName = "";
+    //this->HingedRigidBodyOutMsgId = -1;
+    
     return;
 }
 
@@ -51,6 +55,51 @@ HingedRigidBodyStateEffector::~HingedRigidBodyStateEffector()
 {
     return;
 }
+
+/*! This method initializes the object. It creates the module's output
+ messages.
+ @return void*/
+void HingedRigidBodyStateEffector::SelfInit()
+{
+    SystemMessaging *messageSys = SystemMessaging::GetInstance();
+    this->HingedRigidBodyOutMsgId =  messageSys->CreateNewMessage(this->HingedRigidBodyOutMsgName, sizeof(HingedRigidBodySimMsg), 2, "HingedRigidBodySimMsg", this->moduleID);
+
+    return;
+}
+
+/*! This method subscribes to messages the HRB needs.
+ @return void*/
+void HingedRigidBodyStateEffector::CrossInit()
+{
+//HRB does not CrossInit() anything.
+    return;
+}
+
+/*! This method reads necessary input messages @return void
+ */
+void HingedRigidBodyStateEffector::readInputMessages()
+{
+//HRB doesn't read any messages
+    return;
+}
+
+
+/*! This method takes the computed theta states and outputs them to the m
+ messaging system.
+ @return void
+ @param CurrentClock The current simulation time (used for time stamping)
+ */
+void HingedRigidBodyStateEffector::WriteOutputMessages(uint64_t CurrentClock)
+{
+    SystemMessaging *messageSys = SystemMessaging::GetInstance();
+    std::vector<int64_t>::iterator it;
+
+    HRBoutputStates.theta = this->theta;
+    HRBoutputStates.thetaDot = this->thetaDot;
+        messageSys->WriteMessage(this->HingedRigidBodyOutMsgId, CurrentClock,
+                             sizeof(HingedRigidBodySimMsg), reinterpret_cast<uint8_t*> (&HRBoutputStates), this->moduleID);
+}
+
 
 /*! This method allows the HRB state effector to have access to the hub states and gravity*/
 void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
@@ -238,4 +287,14 @@ void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime
                                                                               + 1.0/2.0*this->k*this->theta*this->theta;
 
     return;
+}
+/*! This method is used so that the simulation will ask HRB to update messages.
+ @return void
+ @param CurrentSimNanos The current simulation time in nanoseconds
+ */
+void HingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
+{
+    
+    WriteOutputMessages(CurrentSimNanos);
+    
 }
