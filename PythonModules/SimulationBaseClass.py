@@ -35,6 +35,7 @@ import inspect
 import MonteCarloBaseClass
 import sets
 import simulationArchTypes
+import simMessages
 
 
 class LogBaseClass:
@@ -439,7 +440,15 @@ class SimBaseClass:
         headerData = sim_model.MessageHeaderData()
         self.TotalSim.populateMessageHeader(splitName[0], headerData)
         moduleFound = ''
-        for moduleData in self.simModules:
+
+        # Create a new set into which we add the SWIG'd simMessages definitions
+        # and union it with the simulation's modules set. We do this so that
+        # python modules can have message structs resolved
+        allModules = set()
+        allModules.add(simMessages)
+        allModules = allModules | self.simModules
+
+        for moduleData in allModules:
             if moduleFound != '':
                 break
             for name, obj in inspect.getmembers(moduleData):
