@@ -25,7 +25,6 @@
 #include <random>
 #include "utilities/gauss_markov.h"
 #include "simMessages/scPlusStatesSimMsg.h"
-#include "simMessages/scPlusMassPropsSimMsg.h"
 #include "simFswInterfaceMessages/imuSensorIntMsg.h"
 
 
@@ -49,7 +48,6 @@ public:
 
 public:
     std::string InputStateMsg;          /*!< Message name for spacecraft state */
-    std::string InputMassMsg;           /*!< Mass properties message name */
     std::string OutputDataMsg;          /*!< Message name for CSS output data */
     std::vector<double> sensorPos_B;    /// [m] IMU sensor location in body
     double dcm_PB[3][3];                /// -- Transform from body to platform
@@ -76,12 +74,10 @@ public:
     double gyroLSB;                     //! (-) Discretization value for gyro data
 private:
     int64_t InputStateID;               /// -- Connect to input time message
-    int64_t InputMassID;                /// -- Message ID for the mass properties
     int64_t OutputDataID;               /// -- Connect to output CSS data
     uint64_t PreviousTime;              /// -- Timestamp from previous frame
     SCPlusStatesSimMsg StatePrevious;  /// -- Previous state to delta in IMU
     SCPlusStatesSimMsg StateCurrent;   /// -- Current SSBI-relative state
-    SCPlusMassPropsSimMsg MassCurrent; /// -- Current mass props for the vehicle
 	GaussMarkov errorModelAccel;        //!< [-] Gauss-markov error states
 	GaussMarkov errorModelGyro;         //!< [-] Gauss-markov error states
 };

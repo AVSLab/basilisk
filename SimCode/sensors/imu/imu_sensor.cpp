@@ -32,7 +32,6 @@ ImuSensor::ImuSensor()
     this->InputStateID = -1;
     this->InputStateMsg = "inertial_state_output";
     this->OutputDataMsg = "imu_meas_data";
-    this->InputMassMsg = "spacecraft_mass_props";
     this->setBodyToPlatformDCM(0.0, 0.0, 0.0);
     this->OutputBufferCount = 2;
     memset(&this->StatePrevious, 0x0, sizeof(SCPlusStatesSimMsg));
@@ -115,13 +114,10 @@ void ImuSensor::CrossInit()
 {
     InputStateID = SystemMessaging::GetInstance()->subscribeToMessage(InputStateMsg,
         sizeof(SCPlusStatesSimMsg), moduleID);
-    InputMassID = SystemMessaging::GetInstance()->subscribeToMessage(InputMassMsg,
-        sizeof(SCPlusMassPropsSimMsg), moduleID);
-    if(InputStateID < 0 || InputMassID < 0)
+    if(InputStateID < 0 )
     {
         std::cerr << "WARNING: Failed to link an imu input message: ";
         std::cerr << std::endl << "State: "<<InputStateID;
-        std::cerr << std::endl << "Mass: "<<InputMassID;
     }
     return;
 }
@@ -135,12 +131,6 @@ void ImuSensor::readInputMessages()
     {
         SystemMessaging::GetInstance()->ReadMessage(InputStateID, &LocalHeader,
                                                     sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&this->StateCurrent), moduleID);
-    }
-    memset(&this->MassCurrent, 0x0, sizeof(SCPlusMassPropsSimMsg));
-    if(InputMassID >= 0)
-    {
-        SystemMessaging::GetInstance()->ReadMessage(InputMassID, &LocalHeader,
-                                                    sizeof(SCPlusMassPropsSimMsg), reinterpret_cast<uint8_t*> (&this->MassCurrent), moduleID);
     }
 }
 
