@@ -50,7 +50,7 @@
 \newcommand{\subject}{Inertial Measurement Unit C++ model}
 \newcommand{\status}{Tested}
 \newcommand{\preparer}{S. Carnahan}
-\newcommand{\summary}{The Basilisk Inetial Measurement Unit (IMU) module is responsible for producing sensed body rates and acceleration from calculated values.  It also provides a change in velocity and change in attitude value for the time between IMU calls. The IMU module applies Gauss-Markov process noise to the true body rates and acceleration. A unit test has been written which validates MRP switching, static bias, process noise, discretization, saturation, spacecraft center of mass (CoM) offset, sensor misalignment, and bias walk bounds for both the gyroscope and accelerometer.}
+\newcommand{\summary}{The Basilisk Inetial Measurement Unit (IMU) module is responsible for producing sensed body rates and acceleration from calculated values.  It also provides a change in velocity and change in attitude value for the time between IMU calls. The IMU module applies Gauss-Markov process noise to the true body rates and acceleration. A unit test has been written which validates clean run outputs of the IMU (no error application).}
 
 \begin{document}
 
@@ -70,6 +70,8 @@
 		1.0 & First draft & J. Alcorn & 20170713 \\
 		\hline
 		1.1 & Added Math Documentation and User Guide. Implemented AutoTeX & S. Carnahan & 20170713 \\
+		\hline
+		1.2 & Rewrote for new IMU implementation and test & S. Carnahan & 20170914 \\
 		\hline
 		
 	\end{longtable}

@@ -21,7 +21,6 @@ The variables in Table \ref{tabular:vars} are available for user input. Variable
 		\textbf{Variable}   							& \textbf{LaTeX Equivalent} 	&		\textbf{Variable Type} & \textbf{Notes}			  \\ \hline
 		InputStateMsg&N/A		   & string & Default setting: "inertial\_state\_output". This is the message from which the IMU receives spacecraft inertial data.\\ \hline
 		OutputDataMsg & N/A & string & Default setting: "imu\_meas\_data". This message contains the information output by the IMU. \\ \hline
-		InputMassMsg & N/A & string & Default setting: \\&&&"spacecraft\_mass\_props". This is the message from which the IMU received spacecraft mass data. \\ \hline
 		SensorPos\_B & N/A & double [3] & [m] Required input - no default. This is the sensor position in the body frame relative to the body frame.\\ \hline
 		roll, pitch, yaw & N/A  & double, double, double& Default setting: (0,0,0). To set non-zero initial angles between imu and spacecraft body, call setBodyToPlatformDCM(roll, pitch, yaw) \\ \hline
 		dcm\_PB & N/A & double [3][3] & Default setting: Identity. Setting dcm\_PB is equivalent to calling setBodyToPlatformDCM(roll, pitch yaw) above. Use one method or the other. \\ \hline
