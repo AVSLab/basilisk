@@ -193,7 +193,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     #   Creates inputs from sun, spacecraft, and eclipse so that those modules don't have to be included
     #Create dummy sun message
     sunPositionMsg = simMessages.SpicePlanetStateSimMsg()
-    sunPositionMsg.PositionVector = [om.AU, 0.0, 0.0]
+    sunPositionMsg.PositionVector = [om.AU*1000., 0.0, 0.0]
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                testProcessName,
                                singleCss.InputSunMsg,
@@ -214,6 +214,15 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
                                satelliteStateMsg)
     satelliteStateMsgSize = satelliteStateMsg.getStructSize()
 
+    # Calculate sundistance factor
+    r_Sun_Sc = [0., 0., 0.]
+    r_Sun_Sc[0] = sunPositionMsg.PositionVector[0] - satelliteStateMsg.r_BN_N[0]
+    r_Sun_Sc[1] = sunPositionMsg.PositionVector[1] - satelliteStateMsg.r_BN_N[1]
+    r_Sun_Sc[2] = sunPositionMsg.PositionVector[2] - satelliteStateMsg.r_BN_N[2]
+    sunDist = np.linalg.norm(r_Sun_Sc)
+    sunDistanceFactor = ((om.AU*1000.)**2)/(sunDist**2)
+    print sunDistanceFactor
+
     #create dummy eclipse message
     eclipseMsg = simMessages.EclipseSimMsg()
     eclipseMsg.shadowFactor = visibilityFactor
@@ -225,10 +234,10 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     #
     #   Modify Truth Vector Appropriately
     #
-    truthVector = truthVector * visibilityFactor # account for eclipse effects
     for i in range(len(truthVector)):
         if kelly > 0.0000000000001: #only if kelly isn't actually zero
             truthVector[i] = truthVector[i] * (1. - np.e**(-truthVector[i]**2./kelly)) #apply kelly factor, note: no albedo
+        truthVector[i] = truthVector[i] * visibilityFactor * sunDistanceFactor # account for eclipse effects
         truthVector[i] += bias #apply bias
     for i in range(len(angles)):
         if angles[i] > fov and angles[i] < (2*np.pi - fov): #first, trim to fov
@@ -376,15 +385,4 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-     run(
-         True, #show_plots,
-         False, #useConstellation,
-         0.5,    #visibilityFactor,
-         3*np.pi/8.,#fov,
-         0.15,     # kelly
-         5.0,       #scale factor
-         0.5,   #bias,
-         0.25,    #noiseStd,
-         0.5,    # albedoValue
-         1e-4,     #errTol
-        )
+     run(False, False,               1.0,            np.pi/2.,   0.0,    2.0,        0.0,    0.0,    0.0,            1e-10,      "scaleFactor",      2,      5.)

@@ -20,6 +20,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/rigidBodyKinematics.h"
 #include "utilities/linearAlgebra.h"
+#include "utilities/astroConstants.h"
 #include <math.h>
 #include <iostream>
 #include <cstring>
@@ -54,6 +55,7 @@ CoarseSunSensor::CoarseSunSensor()
     this->setUnitDirectionVectorWithPerturbation(0, 0);
     this->OutputBufferCount = 2;
     this->sunVisibilityFactor.shadowFactor = 1.0;
+    this->sunDistanceFactor = 1.0;
     m33SetIdentity(this->dcm_PB);    
     return;
 }
@@ -181,17 +183,24 @@ void CoarseSunSensor::readInputMessages()
 void CoarseSunSensor::computeSunData()
 {
     double Sc2Sun_Inrtl[3];
+    double sHat_N[3];
     double dcm_BN[3][3];
+    double r_Sun_Sc; //position vector from s/c to sun
     
-    //! Begin Method Steps
+    //! Begin Method Steps for sun heading vector
     //! - Get the position from spacecraft to Sun
     v3Scale(-1.0, this->StateCurrent.r_BN_N, Sc2Sun_Inrtl);
     v3Add(Sc2Sun_Inrtl, this->SunData.PositionVector, Sc2Sun_Inrtl);
     //! - Normalize the relative position into a unit vector
-    v3Normalize(Sc2Sun_Inrtl, Sc2Sun_Inrtl);
+    v3Normalize(Sc2Sun_Inrtl, sHat_N);
     //! - Get the inertial to body frame transformation information and convert sHat to body frame
     MRP2C(this->StateCurrent.sigma_BN, dcm_BN);
-    m33MultV3(dcm_BN, Sc2Sun_Inrtl, this->sHat_B);
+    m33MultV3(dcm_BN, sHat_N, this->sHat_B);
+    
+    //! Begin Method Steps for sun distance factor
+    r_Sun_Sc = v3Norm(Sc2Sun_Inrtl);
+    this->sunDistanceFactor = pow(AU*1000., 2.)/pow(r_Sun_Sc, 2.);
+    
 }
 
 /*! This method computes the tru sensed values for the sensor */
@@ -206,13 +215,24 @@ void CoarseSunSensor::computeTrueOutput()
     {
        this->directValue = temp1;
     }
-
-    // apply sun visibility (eclipse) information
-    this->directValue = this->directValue * this->sunVisibilityFactor.shadowFactor;
     
-    //! - Albedo is forced to zero for now.
-    this->albedoValue = 0.0;
-    this->trueValue = this->directValue + this->albedoValue;
+    // Define epsilon that will avoid dividing by a very small kelly factor, i.e 0.0.
+    double eps = 1e-10;
+    //! - Apply the kelly fit to the truth direct value
+    double KellyFit = 1.0;
+    if (this->KellyFactor > eps) {
+        KellyFit -= exp(-this->directValue * this->directValue/this->KellyFactor);
+    }
+    this->directValue = this->directValue*KellyFit;
+    
+    // apply sun distance factor (adjust based on flux at current distance from sun)
+    // Also apply shadow factor. Basically, correct the intensity of the light.
+    this->directValue = this->directValue*this->sunDistanceFactor*this->sunVisibilityFactor.shadowFactor;
+    this->trueValue = this->directValue; //keep for now. not sure what it does, really. -SJKC
+    
+    //! - Albedo is forced to zero for now. Deal with this - SJKC
+    //this->albedoValue = 0.0;
+    //this->trueValue = this->directValue + this->albedoValue;
 }
 
 /*! This method takes the true observed cosine value (directValue) and converts 
@@ -220,19 +240,14 @@ void CoarseSunSensor::computeTrueOutput()
     to the truth. */
 void CoarseSunSensor::applySensorErrors()
 {
-    // Define epsilon that will avoid dividing by a very small kelly factor, i.e 0.0.
-    double eps = 1e-10;
     //! Begin Method Steps
     //! - Get current error from random number generator
     double CurrentError = rnum(this->rgen);
-    //! - Apply the kelly fit to the truth direct value
-    double KellyFit = 1.0;
-    if (this->KellyFactor > eps) {
-        KellyFit -= exp(-this->directValue * this->directValue/this->KellyFactor);
-    }
+    
+    //Apply saturation values here.
 
     //! - Sensed value is total illuminance with a kelly fit + noise
-    this->sensedValue = (this->directValue + this->albedoValue)*KellyFit + CurrentError;
+    this->sensedValue = this->directValue + CurrentError;
     
 }
 

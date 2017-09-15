@@ -36,7 +36,7 @@ The CSS sensor unit normal vector is given by $\leftexp{B}{\hat{\bm n}}$ in body
 where $\phi$ is the CSS sunlight incidence angle.  
 This is the normalized CSS signal where 1 is returned if the sensor is looking straight at the sun.  If the sensor axis $\hat{\bm n}$ is more than the field of view half-angle (set through {\tt fov}) from the sun axis, then a 0 signal is simulated.  This {\tt fov} variable is the angle from $\hat{\bm n}$ beyond which the CSS signal is set to zero.  
 
-Let $p_{s}$ be the local solar shadow parameter.  If the spacecraft is outside of a planet's shadow, this value is 1.  If it is within the shadow, then it is $0\le p_{s} < 1$.  The shadow adjusted CSS signal is thus computed as 
+Let $p_{s}$ be the local solar shadow parameter.  If the spacecraft is outside of a planet's shadow, this value is 1.  If it is within the shadow, then it is $0\le p_{s} < 1$.  The shadow adjusted light intensity is then calculated 
 \begin{equation}
 	\hat{\gamma}_{s} = \hat{\gamma} p_{s}
 \end{equation}

@@ -99,6 +99,7 @@ private:
     EclipseSimMsg sunVisibilityFactor;          //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
     std::default_random_engine rgen;            //!< [-] Random number generator for disp
     std::normal_distribution<double> rnum;      //! [-] Random number distribution
+    double              sunDistanceFactor;      //! [-] Factor to scale cosine curve magnitude based on solar flux at location
 };
 
 //!@brief Constellation of coarse sun sensors for aggregating output information
