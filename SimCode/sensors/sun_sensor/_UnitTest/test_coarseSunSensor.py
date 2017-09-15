@@ -67,6 +67,7 @@ import simMessages
                           (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.5,    0.0,    0.0,            1e-10,      "bias",             3,      5.),
                           (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.25,   0.0,            1e-2,       "deviation",        -5,     1.),   #low tolerance for std deviation comparison
                           (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.5,            1e-10,      "albedo",           -4,     5.),
+                          (False,               0.5,            3*np.pi/8., 0.15,   2.0,        0.5,    0.0,    0.5,            1e-10,      "cleanCombined",    -3,     5.),
                           (False,               0.5,            3*np.pi/8., 0.15,   2.0,        0.5,    0.25,   0.5,            1e-2,       "combined",         -6,     1.),
                           (True,                1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.0,            1e-10,      "constellation",    0,      1.)
 ])
@@ -301,8 +302,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
         for i in range(0,np.shape(constellationP2data)[0]):
             if not unitTestSupport.isArrayEqualRelative(constellationP2data[i][:], constellationP1data[i][1:],4,errTol):
                 testFailCount += 1
-    elif noiseStd == 0.:
-
+    elif noiseStd == 0.: #if a test without noise
         for i in range(0,np.shape(cssOutput)[0]):
             if cssOutput[i][1] == 0.:
                 if not unitTestSupport.isArrayZero([0., cssOutput[i][1]], 1, errTol):
@@ -310,8 +310,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
             else:
                 if not unitTestSupport.isDoubleEqualRelative(cssOutput[i][1], truthVector[i], errTol):
                     testFailCount += 1
-    else:
-
+    else: #if "combined" or "deviation"
         if not unitTestSupport.isDoubleEqualRelative(noiseStd*scaleFactor, outputStd, errTol):
             testFailCount += 1
 
@@ -367,7 +366,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     unitTestSupport.writeTeXSnippet(noiseStdSnippetName, noiseStdSnippetContent, path)
 
     albedoValueSnippetName = name + "AlbedoValue"
-    albedoValueSnippetContent = '{:1.0f}'.format(albedoValue)
+    albedoValueSnippetContent = '{:1.1f}'.format(albedoValue)
     unitTestSupport.writeTeXSnippet(albedoValueSnippetName, albedoValueSnippetContent, path)
 
     errTolSnippetName = name + "ErrTol"
