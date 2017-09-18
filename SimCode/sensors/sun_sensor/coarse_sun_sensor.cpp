@@ -230,14 +230,15 @@ void CoarseSunSensor::computeTrueOutput()
     this->directValue = this->directValue*this->sunDistanceFactor*this->sunVisibilityFactor.shadowFactor;
     this->trueValue = this->directValue; //keep for now. not sure what it does, really. -SJKC
     
-    //! - Albedo is forced to zero for now. Deal with this - SJKC
+    //! - Albedo is forced to zero for now. Note that "albedo value" must be the cosine response due to albedo intensity and direction. It can then be stacked on top of the
+    //! - sun cosine curve
     //this->albedoValue = 0.0;
-    //this->trueValue = this->directValue + this->albedoValue;
+    //this->directValue = this->directValue + this->albedoValue
+    //this->trueValue = this->directValue
 }
 
 /*! This method takes the true observed cosine value (directValue) and converts 
-    it over to an errored value.  It applies a Kelly curve fit and then noise 
-    to the truth. */
+    it over to an errored value.  It applies noise to the truth. */
 void CoarseSunSensor::applySensorErrors()
 {
     //! Begin Method Steps
