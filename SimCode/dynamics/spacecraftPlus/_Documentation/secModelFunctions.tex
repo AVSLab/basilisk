@@ -15,7 +15,7 @@ This module is intended to be used as a model to represent a spacecraft that can
 Below is a summary of the assumptions/limitations:
 
 \begin{itemize}
-	\item Translational only mode cannot have state effectors attached to it
+	\item Translational only mode cannot have state effectors attached to it that change the mass properties of the spacecraft. However, a state effector like a battery could be used since this does not change the mass properties of the spacecraft.
 	\item Rotational only mode can only have state effectors attached to it that do not change the mass properties of the spacecraft, i.e. balanced reaction wheels, and the $\cal{B}$ frame origin must coincident with the center of mass of the spacecraft. 
 	\item State effectors that are changing the mass properties of the spacecraft are considered new bodies that are added to the mass properties of the spacecraft. For example, adding flexing solar panels to the sim would require subtracting the mass and inertia of the solar panels from the total spacecraft which would then represent the rigid body hub, and then when the solar panels are added to the sim, their mass inertia are programatically added back to the spacecraft.
 	\item The limitations of the sim are primarily based on what configuration you have set the spacecraft in (i.e. what state effectors and dynamic effectors you have attached to the spacecraft). Additionally you are limited to the current capability of Basilisk in regards to state effectors and dynamic effectors. 
