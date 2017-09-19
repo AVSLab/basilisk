@@ -680,7 +680,7 @@ def test_SCTransBOE(show_plots):
 
     plt.figure()
     plt.clf()
-    plt.plot(r_BN_NOutput[:,0]*1e-9, r_BN_NOutput[:,1],'-b',label = "Basilsik")
+    plt.plot(r_BN_NOutput[:,0]*1e-9, r_BN_NOutput[:,1],'-b',label = "Basilisk")
     plt.plot([t1, t2, t3], [x1, x2, x3],'ro',markersize = 6.5,label = "BOE")
     plt.xlabel('time (s)')
     plt.ylabel('X (m)')
@@ -692,7 +692,7 @@ def test_SCTransBOE(show_plots):
 
     plt.figure()
     plt.clf()
-    plt.plot(v_BN_NOutput[:,0]*1e-9, v_BN_NOutput[:,1],'-b',label = "Basilsik")
+    plt.plot(v_BN_NOutput[:,0]*1e-9, v_BN_NOutput[:,1],'-b',label = "Basilisk")
     plt.plot([t1, t2, t3], [v1, v2, v3],'ro',markersize = 6.5,label = "BOE")
     plt.xlabel('time (s)')
     plt.ylabel('X velocity (m/s)')
