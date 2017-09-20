@@ -33,14 +33,13 @@ The Coarse Sun Sensor Test, test\_coarseSunSensor.py, contains 11 tests. The sim
 \section{Test Parameters}
 
 Pytest runs the following cases (numbered as above) when it is called for this test:
-	\begin{table}[htbp]
+	\begin{table}[H]
 	\caption{Parameters for each test. Note that relative tolerance is $\frac{truth - output}{truth}$}
 	\label{tab:errortol}
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{ c | c | c | c | c | c | c | c | c | c | c } % Column formatting, 
 		\hline\hline
-		\textbf{}& \textbf{use}& \textbf{visibility}& \textbf{}& \textbf{}& \textbf{scale}& \textbf{}& \textbf{noise}& \textbf{albedo}& \textbf{satur-}&\textbf{}\\ 
-		\textbf{Test}& \textbf{Constellation}& \textbf{Factor}& \textbf{fov}& \textbf{kelly}& \textbf{Factor}& \textbf{bias}& \textbf{Std}& \textbf{Value}& \textbf{ation}&\textbf{errTol}\\ 
+		\rot{\textbf{Test}}& \rot{\textbf{useConstellation}}& \rot{\textbf{visibilityFactor}}& \rot{\textbf{fov}}& \rot{\textbf{kelly}}& \rot{\textbf{scaleFactor}}& \rot{\textbf{bias}}& \rot{\textbf{noiseStd}}& \rot{\textbf{albedoValue}}& \rot{\textbf{saturation}}&\rot{\textbf{errTol}}\\ 
 		\hline\hline
 		1      & \input{AutoTex/plainUseConstellation}&\input{AutoTex/plainVisibilityFactor}&\input{AutoTex/plainFov}&\input{AutoTex/plainKelly}&\input{AutoTex/plainScaleFactor}&\input{AutoTex/plainBias}&\input{AutoTex/plainNoiseStd}&\input{AutoTex/plainAlbedoValue}&\input{AutoTex/plainMaxSaturation},\input{AutoTex/plainMinSaturation}&\input{AutoTex/plainErrTol}	   \\ \hline
 		2	& \input{AutoTex/eclipseUseConstellation}&\input{AutoTex/eclipseVisibilityFactor}&\input{AutoTex/eclipseFov}&\input{AutoTex/eclipseKelly}&\input{AutoTex/eclipseScaleFactor}&\input{AutoTex/eclipseBias}&\input{AutoTex/eclipseNoiseStd}&\input{AutoTex/eclipseAlbedoValue}&\input{AutoTex/eclipseMaxSaturation},\input{AutoTex/eclipseMinSaturation}&\input{AutoTex/eclipseErrTol}	   \\ \hline
@@ -56,8 +55,7 @@ Pytest runs the following cases (numbered as above) when it is called for this t
 		\hline
 	\end{tabular}
 \end{table}
-%
-\\The tolerances above were chosen basically to be machine tolerance which is consistently passable between machines and operating systems. Those tests involving noise have looser tolerances because they are comparing the standard deviation of generated noise with the requested standard deviation. longer runs would make this tolerance tighter, but take large amounts of time for users to run the tests.
+The tolerances above were chosen basically to be machine tolerance which is consistently passable between machines and operating systems. Those tests involving noise have looser tolerances because they are comparing the standard deviation of generated noise with the requested standard deviation. longer runs would make this tolerance tighter, but take large amounts of time for users to run the tests.
 
 \section{Test Results}
 The results of each test are shown in the table below. If a test did not pass, an error message is included.

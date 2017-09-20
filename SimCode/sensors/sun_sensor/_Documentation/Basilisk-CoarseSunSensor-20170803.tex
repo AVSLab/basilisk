@@ -37,8 +37,17 @@
 \usepackage{AVS}
 \usepackage{float} %use [H] to keep tables where you put them
 \usepackage{array} %easy control of text in tables
+\usepackage{adjustbox}
 \usepackage{graphicx}
 \bibliographystyle{plain}
+
+%The below new column type and new command allow for nicely rotated table column headers
+\newcolumntype{R}[2]{%
+	>{\adjustbox{angle=#1,lap=\width-(#2)}\bgroup}%
+	l%
+	<{\egroup}%
+}
+\newcommand*\rot{\multicolumn{1}{R{45}{1em}}}% no optional argument here, please!
 
 
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
