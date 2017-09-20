@@ -12,6 +12,18 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 * atmospheric drag evaluation using multi-faceted spacecraft model
 * new multi-threaded Monte-Carlo simulation capability that takes advantage of multi-core processors
 
+## Version 0.1.6
+<ul>
+    <li>new unit tests to validate the multi-body gravity simulation code in `SimCode/dynamics/gravityEffector/_UnitTest/test_gavityDynEffector.py` </li>
+    <li>new hinged rigid body tutorial script in `SimScenarios/test_scenarioAttGuideHyperbolic.py`</li>
+    <li>new tutorial to do velicity frame pointing on a hyperbolic orbit in `SimScenarios/test_scenarioHingedRigidBody.py` </li>
+    <li>fixed various unit test issues that came up on the non-macOS builds</li>
+    <li>added reaction wheel effector documentation</li>
+    <li>added `orb_elem_convert` documentation</li>
+    <li>added `boreAngCalc` documentation</li>
+    
+</ul>
+
 ## Version 0.1.5
 <ul>
     <li>

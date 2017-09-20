@@ -47,30 +47,30 @@ void CrossInit_dvAccumulation(DVAccumulationData *ConfigData, uint64_t moduleID)
 }
 
 /*////////////////////////////////////////////////////Experimenting QuickSort START////////////////*/
-void swap(AccPktDataFswMsg *p, AccPktDataFswMsg *q){
+void dvAccumulation_swap(AccPktDataFswMsg *p, AccPktDataFswMsg *q){
     AccPktDataFswMsg t;
     t=*p;
     *p=*q;
     *q=t;
 }
-int partition(AccPktDataFswMsg *A, int start, int end){
+int dvAccumulation_partition(AccPktDataFswMsg *A, int start, int end){
     int i;
     uint64_t pivot=A[end].measTime;
     int partitionIndex=start;
     for(i=start; i<end; i++){
         if(A[i].measTime<=pivot){
-            swap(&(A[i]), &(A[partitionIndex]));
+            dvAccumulation_swap(&(A[i]), &(A[partitionIndex]));
             partitionIndex++;
         }
     }
-    swap(&(A[partitionIndex]), &(A[end]));
+    dvAccumulation_swap(&(A[partitionIndex]), &(A[end]));
     return partitionIndex;
 }
-void QuickSort(AccPktDataFswMsg *A, int start, int end){
+void dvAccumulation_QuickSort(AccPktDataFswMsg *A, int start, int end){
     if(start<end){
-        int partitionIndex=partition(A, start, end);
-        QuickSort(A, start, partitionIndex-1);
-        QuickSort(A, partitionIndex+1, end);
+        int partitionIndex=dvAccumulation_partition(A, start, end);
+        dvAccumulation_QuickSort(A, start, partitionIndex-1);
+        dvAccumulation_QuickSort(A, partitionIndex+1, end);
     }
 }
 /*////////////////////////////////////////////////////Experimenting QuickSort END////////////////*/
@@ -97,7 +97,7 @@ void Update_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime, ui
                 sizeof(AccDataFswMsg), &inputAccData, moduleID);
    
     /* stacks data in time order*/
-    QuickSort(&(inputAccData.accPkts[0]), 0, MAX_ACC_BUF_PKT-1); //measTime is the array we want to sort. We're sorting the time calculated for each measurement taken from the accelerometer in order in terms of time.
+    dvAccumulation_QuickSort(&(inputAccData.accPkts[0]), 0, MAX_ACC_BUF_PKT-1); //measTime is the array we want to sort. We're sorting the time calculated for each measurement taken from the accelerometer in order in terms of time.
     
     /*! Ensure that the computed dt doesn't get huge.*/
     if(ConfigData->previousTime == 0)

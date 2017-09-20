@@ -293,7 +293,6 @@ def run(doUnitTests, show_plots, useLargeTumble):
     #
     # create simulation messages
     #
-    # simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 
     # create the FSW vehicle configuration message
     vehicleConfigOut = fswMessages.VehicleConfigFswMsg()

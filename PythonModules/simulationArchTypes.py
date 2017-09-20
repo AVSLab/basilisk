@@ -46,9 +46,10 @@ def WriteMessage(messageID, currentTime, messageStruct, moduleID, msgSize = -1):
     return
 
 class ProcessBaseClass(object):
-    def __init__(self, procName):
+    def __init__(self, procName, procPriority=-1):
         self.Name = procName
         self.processData = sim_model.SysProcess(procName)
+        self.processData.processPriority = procPriority
 
     def addTask(self, newTask, taskPriority=-1):
         self.processData.addNewTask(newTask.TaskData, taskPriority)

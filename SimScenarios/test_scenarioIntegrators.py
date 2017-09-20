@@ -227,11 +227,6 @@ def run(doUnitTests, show_plots, integratorCase):
     simulationTime = macros.sec2nano(0.75*P)
 
     #
-    # create simulation messages
-    #
-    gravFactory.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
-
-    #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
@@ -271,6 +266,7 @@ def run(doUnitTests, show_plots, integratorCase):
     plt.axis(np.array([-oe.rApoap, oe.rPeriap, -b, b])/1000*1.25)
     # draw the planet
     fig = plt.gcf()
+    fig.set_tight_layout(False)
     ax = fig.gca()
     planetColor= '#008800'
     planetRadius = earth.radEquator/1000

@@ -20,7 +20,6 @@
 #include "attGuidance/celestialTwoBodyPoint/celestialTwoBodyPoint.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
-#include "sensorInterfaces/IMUSensorData/imuComm.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include <string.h>
 #include <math.h>
@@ -83,7 +82,11 @@ void parseInputMessages(celestialTwoBodyPointConfig *ConfigData, uint64_t module
     NavTransIntMsg navData;
     EphemerisIntMsg primPlanet;
     EphemerisIntMsg secPlanet;
-    
+
+    /* zero the local planet ephemeris message */
+    memset(&primPlanet, 0x0, sizeof(EphemerisIntMsg));
+
+
     double R_P1_hat[3];             /* Unit vector in the direction of r_P1 */
     double R_P2_hat[3];             /* Unit vector in the direction of r_P2 */
     

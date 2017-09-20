@@ -30,6 +30,9 @@
 %include "../_GeneralModuleFiles/stateEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "hingedRigidBodyStateEffector.h"
+%include "simMessages/hingedRigidBodySimMsg.h"
+
+GEN_SIZEOF(HingedRigidBodySimMsg)
 
 %pythoncode %{
 import sys

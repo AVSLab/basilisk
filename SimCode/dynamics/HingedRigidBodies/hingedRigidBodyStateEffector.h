@@ -25,6 +25,7 @@
 #include "../_GeneralModuleFiles/stateData.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../SimCode/utilities/avsEigenMRP.h"
+#include "simMessages/hingedRigidBodySimMsg.h"
 
 /*! @brief This class is an instantiation of the stateEffector class and is a hinged rigid body effector. This effector
  is a rigid body attached to the hub through a torsional spring and damper that approximates a flexible appendage. See
@@ -44,6 +45,7 @@ public:
     Eigen::Matrix3d IPntS_S;         //!< [kg-m^2] Inertia of hinged rigid body about point S in S frame components
     Eigen::Vector3d r_HB_B;          //!< [m] vector pointing from body frame origin to Hinge location
     Eigen::Matrix3d dcm_HB;          //!< -- DCM from body frame to hinge frame
+    std::string HingedRigidBodyOutMsgName; //!< -- state output message name
 
 private:
     double theta;                    //!< [rad] hinged rigid body angle
@@ -70,10 +72,16 @@ private:
     StateData *hubVelocity;          //!< -- state manager access to the hubs rDotBN_N state
     StateData *thetaState;           //!< -- state manager of theta for hinged rigid body
     StateData *thetaDotState;        //!< -- state manager of thetaDot for hinged rigid body
+    int64_t HingedRigidBodyOutMsgId; //!< -- state output message ID
+    void readInputMessages();         //!< -- method to read input messages
 
 public:
     HingedRigidBodyStateEffector();  //!< -- Contructor
     ~HingedRigidBodyStateEffector();  //!< -- Destructor
+    void SelfInit();
+    void CrossInit();
+    void WriteOutputMessages(uint64_t CurrentClock);
+	void UpdateState(uint64_t CurrentSimNanos);
     void registerStates(DynParamManager& statesIn);  //!< -- Method for registering the HRB states
     void linkInStates(DynParamManager& states);  //!< -- Method for getting access to other states
     void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr,
@@ -83,6 +91,7 @@ public:
     void updateEffectorMassProps(double integTime);  //!< -- Method for giving the s/c the HRB mass props and prop rates
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                       double & rotEnergyContr); //!< -- Computing energy and momentum for HRBs
+    HingedRigidBodySimMsg HRBoutputStates;  //!< instance of messaging system message struct
 };
 
 #endif /* STATE_EFFECTOR_H */

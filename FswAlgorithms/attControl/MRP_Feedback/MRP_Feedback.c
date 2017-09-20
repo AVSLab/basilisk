@@ -24,7 +24,6 @@
 #include "attControl/MRP_Feedback/MRP_Feedback.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
-#include "sensorInterfaces/IMUSensorData/imuComm.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "SimCode/utilities/astroConstants.h"
 #include "fswMessages/rwAvailabilityFswMsg.h"
