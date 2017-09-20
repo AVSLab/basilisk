@@ -67,16 +67,21 @@ This curve has now accounted for light intensity, but not for the magnitude or u
 \end{equation}
 where $\gamma_{\mathrm{clean}}$ is the output of a sensor with no noise.
 
-%Let $p_{a}$ be the CSS normalized contribution due to the planet's albedo value, then the final true CSS signal is 
-%\begin{equation}
-%	\hat\gamma_{\text{true}} = \hat{\gamma}_{s} + p_{a}
-%\end{equation}
 
-Finally, Gaussian noise and sensor can be added to the signal The normalized bias is set through {\tt SenBias}, while the normalized noise is set through {\tt SenNoiseStd}.   Let $ n$ be the normalized sensor noise and $b$ be the normalized sensor bias.  Note that these values are non-dimensional and apply to the unscaled output.  Therefore, they will also be scaled when a scale factor is applied to the output. The final, noisy, and appropriately scaled output of the sensor is:
+Next, Gaussian noise and sensor can be added to the signal The normalized bias is set through {\tt SenBias}, while the normalized noise is set through {\tt SenNoiseStd}.   Let $ n$ be the normalized sensor noise and $b$ be the normalized sensor bias.  Note that these values are non-dimensional and apply to the unscaled output.  Therefore, they will also be scaled when a scale factor is applied to the output. The noisy and appropriately scaled output of the sensor is:
 \begin{equation}
-	\gamma_{\mathrm{out}} = (\gamma_{\textrm{li}} + n + b) f_{\mathrm{scale}} 
+	\gamma_{\mathrm{noise}} = (\gamma_{\textrm{li}} + n + b) f_{\mathrm{scale}} 
 \end{equation}
 This indicates that sensor noise is not a function of light incidence angle or light intensity.
+Now, the noise or bias could have caused the sensor to produce a value less than 0 or higher than is possible for the hardware. To prevent this, saturation values are input as and treated as max/min values:
+\begin{equation}
+	\gamma_{\mathrm{capped}} = \mathrm{min}(\mathrm{maxOutput}, \gamma_{\mathrm{noise}})
+\end{equation}
+\begin{equation}
+	\gamma_{\mathrm{out}} = \gamma_{\mathrm{floored}} = \mathrm{max}(\mathrm{minOutput}, \gamma_{\mathrm{capped}})
+\end{equation}
+This is the final ouput of the sensor module.
+
 
 
 

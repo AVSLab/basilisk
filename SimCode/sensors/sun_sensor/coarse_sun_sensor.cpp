@@ -46,6 +46,8 @@ CoarseSunSensor::CoarseSunSensor()
     this->scaleFactor = 1.0;
     this->KellyFactor = 0.0;
     this->sensedValue = 0.0;
+    this->maxOutput   = 1e6;
+    this->minOutput   = 0. ;
     this->fov           = 1.0471975512;
     this->phi           = 0.785398163397;
     this->theta         = 0.0;
@@ -258,6 +260,11 @@ void CoarseSunSensor::scaleSensorValues()
     this->trueValue = this->trueValue * this->scaleFactor;
 }
 
+void CoarseSunSensor::applySaturation()
+{
+    this->sensedValue = std::min(this->maxOutput, this->sensedValue);
+    this->sensedValue = std::max(this->minOutput, this->sensedValue);
+}
 /*! This method writes the output message.  The output message contains the 
     current output of the CSS converted over to some discrete "counts" to 
     emulate ADC conversion of S/C.
@@ -291,6 +298,8 @@ void CoarseSunSensor::UpdateState(uint64_t CurrentSimNanos)
     this->applySensorErrors();
     //! - Fit kelly curve
     this->scaleSensorValues();
+    //! - Apply Saturation (floor and ceiling values)
+    this->applySaturation();
     //! - Write output data
     this->writeOutputMessages(CurrentSimNanos);
 }
@@ -354,6 +363,7 @@ void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
         it->computeTrueOutput();
         it->applySensorErrors();
         it->scaleSensorValues();
+        it->applySaturation();
         this->outputBuffer.CosValue[it - this->sensorList.begin()] = it->sensedValue;
     }
     SystemMessaging::GetInstance()->WriteMessage(outputConstID, CurrentSimNanos,
