@@ -1,2 +1,0 @@
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc ../../modules/libAlgorithmMessaging.a  CMakeFiles/AlgorithmMessaging.dir/static_messaging.cpp.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib ../../modules/libAlgorithmMessaging.a
