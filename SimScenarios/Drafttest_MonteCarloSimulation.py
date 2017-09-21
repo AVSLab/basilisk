@@ -16,8 +16,7 @@ from MonteCarlo.Dispersions import UniformEulerAngleMRPDispersion, UniformDisper
 # import simulation related support
 import spacecraftPlus
 import orbitalMotion
-import gravityEffector
-import simIncludeGravity
+import simIncludeGravBody
 import macros
 import SimulationBaseClass
 import numpy as np
@@ -62,19 +61,20 @@ def myCreationFunction():
     # add spacecraftPlus object to the simulation process
     sim.AddModelToTask(simTaskName, scObject)
 
-    # clear prior gravitational body and SPICE setup definitions
-    simIncludeGravity.clearSetup()
 
     # Earth
-    simIncludeGravity.addEarth()
-    simIncludeGravity.gravBodyList[-1].isCentralBody = True
-    # useSphericalHarmonics:
-    simIncludeGravity.gravBodyList[-1].useSphericalHarmParams = True
-    gravityEffector.loadGravFromFile(bskPath + 'External/LocalGravData/GGM03S-J2-only.txt', simIncludeGravity.gravBodyList[-1].spherHarm, 2)
-    mu = simIncludeGravity.gravBodyList[-1].mu
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    planet = gravFactory.createEarth()
+    planet.isCentralBody = True
+    planet.useSphericalHarmParams = True
+    simIncludeGravBody.loadGravFromFile(bskPath + 'External/LocalGravData/GGM03S-J2-only.txt'
+                                        , planet.spherHarm
+                                        , 2
+                                        )
+    mu = planet.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
     #   setup orbit and simulation time
     # setup the orbit using classical orbit elements
@@ -105,9 +105,6 @@ def myCreationFunction():
     samplingTime = simulationTime / (numDataPoints - 1)
 
     sim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-
-    # create simulation messages
-    simIncludeGravity.addDefaultEphemerisMsg(sim.TotalSim, simProcessName)
 
     #   configure a simulation stop time time and execute the simulation run
     sim.ConfigureStopTime(simulationTime / LENGTH_SHRINKAGE_FACTOR)
