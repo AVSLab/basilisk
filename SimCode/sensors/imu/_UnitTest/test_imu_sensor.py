@@ -96,21 +96,30 @@ def setRandomWalk(self,senRotNoiseStd = 0.0,senTransNoiseStd = 0.0,errorBoundsGy
 
 #The following tests are parameterized and run:
 # clean - a little bit of every motion/displacement but no bias, noise, etc.
+# discretization - clean plus LSB inputs
+# noise - clean plus some noise - test std dev
+# bias - clean plus a bias
+# saturation max, min
+# error bounds
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("show_plots, testCase, stopTime, accuracy", [
-    (False, 'gyroIO', 1.0, 1e-4),
+@pytest.mark.parametrize("show_plots,   testCase,       stopTime,       gyroLSBIn,      accelLSBIn,     senRotMaxIn,    senTransMaxIn,  senRotNoiseStd,     senTransNoiseStd,   errorBoundsGyroIn,  errorBoundsAccelIn, senRotBiasIn,   senTransBiasIn, accuracy", [
+                        #(False,         'clean',       1.0,            0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                0.0,            0.0,            1e-3),
+                        # (False,         'noise',       5.0,            0.0,            0.0,            1000.,          1000.,          0.0001,             0.0001,             1e6,                1e6,                0.0,            0.0,            1e-3),
+                        #(False,         'bias',        1.0,            0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                1e6,                1e6,                0.5,            0.5,            1e-2),
+                        (False,         'saturation',   1.0,            0.0,            0.0,            0.01,          .95,            0.0,                0.0,                1e6,                1e6,                0.0,            0.0,            1e-2),
+
 ])
 
 # provide a unique test method name, starting with test_
-def test_unitSimIMU(show_plots, testCase, stopTime, accuracy):
+def test_unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accelLSBIn,   senRotMaxIn,    senTransMaxIn,  senRotNoiseStd,     senTransNoiseStd,   errorBoundsGyroIn,  errorBoundsAccelIn, senRotBiasIn,   senTransBiasIn, accuracy):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitSimIMU(show_plots,  testCase, stopTime, accuracy)
+    [testResults, testMessage] = unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accelLSBIn,   senRotMaxIn,    senTransMaxIn,  senRotNoiseStd,     senTransNoiseStd,   errorBoundsGyroIn,  errorBoundsAccelIn, senRotBiasIn,   senTransBiasIn, accuracy)
     assert testResults < 1, testMessage
 
 
-def unitSimIMU(show_plots, testCase, stopTime, accuracy):
+def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accelLSBIn,   senRotMaxIn,    senTransMaxIn,  senRotNoiseStd,     senTransNoiseStd,   errorBoundsGyroIn,  errorBoundsAccelIn, senRotBiasIn,   senTransBiasIn, accuracy):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
@@ -198,17 +207,15 @@ def unitSimIMU(show_plots, testCase, stopTime, accuracy):
     roll = 0.75 # [rad]
     dcm_PB = rbk.euler3212C([yaw,pitch,roll]) #done separately as a check
     ImuSensor.setBodyToPlatformDCM(yaw, pitch, roll) # done separately as a check
-    senRotNoiseStd = 0.0
-    senTransNoiseStd = 0.0
-    errorBoundsGyro = [0.0] * 3
-    errorBoundsAccel = [0.0] * 3
+    errorBoundsGyro = [errorBoundsGyroIn] * 3
+    errorBoundsAccel = [errorBoundsAccelIn] * 3
     setRandomWalk(ImuSensor, senRotNoiseStd, senTransNoiseStd, errorBoundsGyro, errorBoundsAccel)
-    ImuSensor.gyroLSB = 0.
-    ImuSensor.accelLSB = 0.
-    ImuSensor.senRotBias = [0.0] * 3
-    ImuSensor.senTransBias = [0.0] * 3
-    ImuSensor.senTransMax = 1000.
-    ImuSensor.senRotMax = 1000.
+    ImuSensor.gyroLSB = gyroLSBIn
+    ImuSensor.accelLSB = accelLSBIn
+    ImuSensor.senRotBias = [senRotBiasIn] * 3
+    ImuSensor.senTransBias = [senTransBiasIn] * 3
+    ImuSensor.senTransMax = senTransMaxIn
+    ImuSensor.senRotMax = senRotMaxIn
 
     # Set-up the sensor output truth vectors
     rDotDot_SN_P = np.resize(np.array([0., 0., 0.]), (int(stopTime/unitProcRate_s+1), 3))  # sensor sensed acceleration in sensor platform frame coordinates
@@ -240,7 +247,6 @@ def unitSimIMU(show_plots, testCase, stopTime, accuracy):
 
     # loop through ExecuteSimulation() and propagate sigma, omega, DV
     dt = unitProcRate_s
-    previousNanos = 0.
     for i in range(1,int(stopTime/dt)+1):
         # Step through the sim
         unitSim.ConfigureStopTime(macros.sec2nano(unitProcRate_s*i))
@@ -275,15 +281,15 @@ def unitSimIMU(show_plots, testCase, stopTime, accuracy):
         # solving for sensor inertial states
         rDotDot_SN[i][:] = rDotDot_CN[i][:] - cPrimePrime - np.dot(2,np.cross(omega[i][:],cPrime)) + np.cross(omegaDot[i][:],r_SC) +np.cross(omega[i][:],np.cross(omega[i][:],r_SC))
         rDot_SN[i][:] = rDot_CN[i][:] - cPrime + np.cross(omega[i][:],  r_SC)
-        rDot_SN_check = rDot_SN[i-1][:] + ((rDotDot_SN[i-1][:]+rDotDot_SN[i][:])/2)*dt #This is here to check the output of the "truth" code written here in python if desired
+        # rDot_SN_check = rDot_SN[i-1][:] + ((rDotDot_SN[i-1][:]+rDotDot_SN[i][:])/2)*dt #This is here to check the output of the "truth" code written here in python if desired
         r_SN[i][:] = r_SN[i-1][:] + ((rDot_SN[i-1][:] + rDot_SN[i][:])/2)*dt #for a simple check of the "truth" code
         # r_SN_simple = r_SC + r_CN[i][:] #for a simple check of the "truth" code if desired.
 
         # Now create outputs which are (supposed to be) equivalent to the IMU output
         # linear acceleration (non-conservative) in platform frame
-        rDotDot_SN_P[i][:] = m33v3mult(dcm_PB, rDotDot_SN[i][:]) #This should match trueValues.AccelPlatform
+        rDotDot_SN_P[i][:] = m33v3mult(dcm_PB, rDotDot_SN[i][:]) + senTransBiasIn #This should match trueValues.AccelPlatform
         # accumulated delta v (non-conservative) in platform frame
-        DVAccum_P[i][:] = m33v3mult(dcm_PB, rDot_SN[i][:]-rDot_SN[i-1][:])
+        DVAccum_P[i][:] = m33v3mult(dcm_PB, rDot_SN[i][:]-rDot_SN[i-1][:]) + senTransBiasIn*dt
         # find PRV between before and now
         sigma_NB_2 = np.dot(-1, sigma[i][:]) #sigma from B to N in B frame coordinates at time 2
         sigma_NB_1 = np.dot(-1, sigma[i-1][:])
@@ -292,9 +298,23 @@ def unitSimIMU(show_plots, testCase, stopTime, accuracy):
             stepPRV = rbk.MRP2PRV(sigma_21)
         else:
             stepPRV = [0., 0., 0.]
-        stepPRV_P[i][:] = m33v3mult(dcm_PB, stepPRV)
+        stepPRV_P[i][:] = m33v3mult(dcm_PB, stepPRV) + senRotBiasIn*dt
         # angular rate in platform frame
-        omega_P[i][:] = m33v3mult(dcm_PB, omega[i][:])
+        omega_P[i][:] = m33v3mult(dcm_PB, omega[i][:]) + senRotBiasIn
+        for k in [0,1,2]: #saturate values
+            if omega_P[i][k] > senRotMaxIn:
+                omega_P[i][k] = senRotMaxIn
+                stepPRV_P[i][k] = senRotMaxIn*dt
+            elif omega_P[i][k] < -senRotMaxIn:
+                omega_P[i][k] = -senRotMaxIn
+                stepPRV_P[i][k] = -senRotMaxIn*dt
+            if rDotDot_SN_P[i][k] > senTransMaxIn:
+                rDotDot_SN_P[i][k] = senTransMaxIn
+                DVAccum_P[i][k] = senTransMaxIn*dt
+            elif rDotDot_SN_P[i][k] < -senTransMaxIn:
+                rDotDot_SN_P[i][k] = -senTransMaxIn
+                DVAccum_P[i][k] = -senTransMaxIn*dt
+
 
         #Now update spacecraft states for the IMU:
         StateCurrent = imu_sensor.SCPlusStatesSimMsg()
@@ -306,7 +326,7 @@ def unitSimIMU(show_plots, testCase, stopTime, accuracy):
         unitSim.TotalSim.WriteMessageData("inertial_state_output", 8 * 3 * 11, unitSim.TotalSim.CurrentNanos, StateCurrent)
 
     DRout       = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "DRFramePlatform", range(3))
-    omegaOut    = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "AngVelPlatform", range(3)) #checks
+    omegaOut    = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "AngVelPlatform", range(3))
     rDotDotOut  = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "AccelPlatform", range(3))
     DVout       = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "DVFramePlatform", range(3))
 
@@ -374,22 +394,35 @@ def unitSimIMU(show_plots, testCase, stopTime, accuracy):
     unitTestSupport.writeFigureLaTeX("DVcomparison",
                                      'Plot Comparing Time Step DV Truth and Output', plt,
                                      'height=0.7\\textwidth, keepaspectratio', path)
+    show_plots = 1
     if show_plots:
         plt.show()
 
     # test outputs
-    for i in range(2,len(stepPRV_P)-1):
-        if not unitTestSupport.isArrayEqualRelative(DRout[i][:], stepPRV_P[i+1][:], 3, accuracy):
-            testMessages.append("FAILED DR @ i = "+ str(i) + ". \\\\& &")
-            testFailCount += 1
-        if not unitTestSupport.isArrayEqualRelative(omegaOut[i][:], omega_P[i+1][:], 3, accuracy):
-            testMessages.append("FAILED OMEGA @ i = "+ str(i) + ". \\\\& &")
-            testFailCount += 1
-        if not unitTestSupport.isArrayEqualRelative(DVout[i][:], DVAccum_P[i + 1][:], 3, accuracy):
-            testMessages.append("FAILED DV @ i = " + str(i) + ". \\\\& &")
-            testFailCount += 1
-        if not unitTestSupport.isArrayEqualRelative(rDotDotOut[i][:], rDotDot_SN_P[i + 1][:], 3, accuracy):
-            testMessages.append("FAILED ACCEL @ i = " + str(i) + ". \\\\& &")
+    if testCase != 'noise':
+        for i in range(2,len(stepPRV_P)-1):
+            if not unitTestSupport.isArrayEqualRelative(DRout[i][:], stepPRV_P[i+1][:], 3, accuracy):
+                testMessages.append("FAILED DR @ i = "+ str(i) + ". \\\\& &")
+                testFailCount += 1
+            if not unitTestSupport.isArrayEqualRelative(omegaOut[i][:], omega_P[i+1][:], 3, accuracy):
+                testMessages.append("FAILED OMEGA @ i = "+ str(i) + ". \\\\& &")
+                testFailCount += 1
+            if not unitTestSupport.isArrayEqualRelative(DVout[i][:], DVAccum_P[i + 1][:], 3, accuracy):
+                testMessages.append("FAILED DV @ i = " + str(i) + ". \\\\& &")
+                testFailCount += 1
+            if not unitTestSupport.isArrayEqualRelative(rDotDotOut[i][:], rDotDot_SN_P[i + 1][:], 3, accuracy):
+                testMessages.append("FAILED ACCEL @ i = " + str(i) + ". \\\\& &")
+    # else:
+    #     DRoutNoise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1]-1))
+    #     for i in range(2,len(stepPRV_P)-1):
+    #         for j in [0,1,2]:
+    #             DRoutNoise[i][j] = DRout[i][j+1] - stepPRV_P[i+1][j]
+    #     print np.std(DRoutNoise), senRotNoiseStd*dt
+    #     rDotDotOut_Noise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1] - 1))
+    #     for i in range(2, len(stepPRV_P) - 1):
+    #         for j in [0, 1, 2]:
+    #             rDotDotOut_Noise[i][j] = rDotDotOut[i][j + 1] - rDotDot_SN_P[i+1][j]
+    #     print np.std(rDotDotOut_Noise), senTransNoiseStd
 
     #
     # Outputs to AutoTex

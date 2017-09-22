@@ -46,6 +46,7 @@ ImuSensor::ImuSensor()
     this->gyroLSB = 0.;
     this->senRotMax = 1e6;
     this->senTransMax = 1e6;
+    
 
     return;
 }
@@ -151,7 +152,7 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
     double intMeas[3];
     double dt;
     
-    dt = (CurrentTime - PreviousTime)*1.0E-9; //Is this the same as simulation time or something different for the sensor? - SJKC
+    dt = (CurrentTime - PreviousTime)*1.0E-9;
     
     if(accelLSB > 0.0) //If accelLSB has been set. -SJKC
     {
@@ -167,6 +168,7 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
         v3Copy(scaledMeas, sensedValues.AccelPlatform);
         v3Scale(dt, intMeas, intMeas);
         v3Subtract(sensedValues.DVFramePlatform, intMeas, sensedValues.DVFramePlatform);
+        
     }
     if(gyroLSB > 0.0)
     {

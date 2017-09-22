@@ -82,11 +82,22 @@ $\bm{\omega}_{{B/N}}$ output by the spacecraft is the angular rate from the most
 This, the change in velocity sensed by the IMU between IMU calls in platform frame coordinates, is the change in velocity output from the model.
 
 \subsubsection{Error Modeling}
-The state which the simulation records for the spacecraft prior to sending that state to the IMU module is considered to be "truth". So, to simulate the errors found in real instrumentation, errors are added to the "truth" values for any measurement, $\mathbf{m}_{\mathrm{truth}}$, that the IMU deals with.
+The state which the simulation records for the spacecraft prior to sending that state to the IMU module is considered to be "truth". So, to simulate the errors found in real instrumentation, errors are added to the "truth" values for acceleration and angular velocity:
 
 \begin{equation}
-\mathbf{m}_{\mathrm{measured}} = \mathbf{m}_{\mathrm{truth}} + \mathbf{e}_{\mathrm{noise}} + \mathbf{e}_{\mathrm{bias}}
+\mathbf{a}_{\mathrm{measured}} = \mathbf{a}_{\mathrm{truth}} + \mathbf{e}_{\mathrm{a,noise}} + \mathbf{e}_{\mathrm{a, bias}}
 \end{equation}
+\begin{equation}
+\bm{\omega}_{\mathrm{measured}} = \bm{\omega}_{\mathrm{truth}} + \mathbf{e}_{\mathrm{\omega,noise}} + \mathbf{e}_{\mathrm{\omega, bias}}
+\end{equation}
+Then, these error values are "integrated" over the IMU timestep and applied to the $\Delta v$ and $PRV$ values:
+\begin{equation}
+\mathbf{DV}_{\mathrm{measured}} = \mathbf{DV}_{\mathrm{truth}} + (\mathbf{e}_{\mathrm{a,noise}} + \mathbf{e}_{\mathrm{a, bias}})\Delta t
+\end{equation}
+\begin{equation}
+\mathbf{q}_{\mathrm{measured}} = \mathbf{q}_{\mathrm{truth}} + (\mathbf{e}_{\mathrm{\omega,noise}} + \mathbf{e}_{\mathrm{\omega, bias}})\Delta t
+\end{equation}
+Note that this could lead to some errors, which are discussed in the assumptions section of this report.
 
 
 \subsubsection{Data Discretization}
@@ -99,10 +110,23 @@ Because sensors record data digitally, that data can only be recorded in discret
 Where $\lfloor$  $\rfloor$ indicate the \textbf{floor()} function and LSB can be either the accelerometer or gyro least significant bit.
 
 \subsubsection{Saturation}
-Real sensors can also become saturated. This is modeled simply by comparing $\mathbf{m}_{\mathrm{discretized}}$ to the high and low saturation values for the sensor:
+Real sensors can also become saturated. Saturation is the last effect implemented on the IMU:
 
 \begin{equation}
-\mathbf{m}_{\mathrm{saturated}} = \mathrm{max}\Big(\mathbf{m}_{\mathrm{sat,min}},\big(\mathrm{min}(\mathbf{m}_{\mathrm{discretized}},\mathbf{m}_{\mathrm{sat,max}})\big)\Big)
+	\bm{a}_{\mathrm{sat}} = \mathrm{max}\big(a_{\mathrm{min}}, \mathrm{min}\big(    \bm{a}_{\mathrm{discretized}}, a_{\mathrm{max}}    \big)   \big)
 \end{equation}
-
-\noindent Note that this is actually only computed if $\mathbf{m}_{\mathrm{discretized}}$ proves to be outside of its saturation bounds.
+\begin{equation}
+\bm{\omega}_{\mathrm{sat}} = \mathrm{max}\big(\omega_{\mathrm{min}}, \mathrm{min}\big(    \bm{\omega}_{\mathrm{discretized}}, \omega_{\mathrm{max}}    \big)   \big)
+\end{equation}
+The above operations are performed element-wise. This is only computed if the values are found to be outside of the max-min range.
+Because the $\Delta v$ and change in attitude are computed as integrals of the rates above:
+\begin{equation}
+\bm{DV}_{\mathrm{sat}} = \bm{a}_{\mathrm{sat}}  \Delta t
+\end{equation}
+\begin{equation}
+\bm{q}_{\mathrm{sat}} = \bm{\omega}_{\mathrm{sat}}  \Delta t
+\end{equation}
+The above is calculated any time that $\bm{a}$ or $\bm{\omega}$ are found to be outside of their max-min bounds. Note that the equation above is used for $\bm{q}_{\mathrm{sat}}$ even though in general
+\begin{equation}
+	\bm{q} \neq \int \bm{\omega} dt
+\end{equation}
