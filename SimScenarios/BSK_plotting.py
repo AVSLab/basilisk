@@ -21,18 +21,9 @@ import sys, os, inspect
 import numpy as np
 import matplotlib.pyplot as plt
 
-
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
-splitPath = path.split(bskName)
-bskPath = splitPath[0] + '/' + bskName + '/'
-sys.path.append(bskPath + 'modules')
-sys.path.append(bskPath + 'PythonModules')
-
-import RigidBodyKinematics as rbk
-import macros as mc
-import unitTestSupport as sp
+from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.utilities import macros as mc
+from Basilisk.utilities import unitTestSupport as sp
 
 def plotResults(dataLr, dataSigmaBR, dataOmegaBR, dataPos, dataVel, dataSigmaBN):
     # Plot the results

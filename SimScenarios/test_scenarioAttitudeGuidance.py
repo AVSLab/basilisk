@@ -39,40 +39,30 @@ import math
 import csv
 import logging
 
-# @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
-splitPath = path.split(bskName)
-bskPath = splitPath[0] + '/' + bskName + '/'
-# if this script is run from a custom folder outside of the Basilisk folder, then uncomment the
-# following line and specify the absolute bath to the Basilisk folder
-#bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
-sys.path.append(bskPath + 'modules')
-sys.path.append(bskPath + 'PythonModules')
-# @endcond
 
 # import general simulation support files
-import SimulationBaseClass
-import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-import macros
-import orbitalMotion
-import RigidBodyKinematics
+from Basilisk.utilities import macros
+from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import RigidBodyKinematics
 
 # import simulation related support
-import spacecraftPlus
-import ExtForceTorque
-import simIncludeGravBody
-import simple_nav
+from Basilisk.modules import spacecraftPlus
+from Basilisk.modules import ExtForceTorque
+from Basilisk.utilities import simIncludeGravBody
+from Basilisk.modules import simple_nav
 
 # import FSW Algorithm related support
-import MRP_Feedback
-import hillPoint
+from Basilisk.modules import MRP_Feedback
+from Basilisk.modules import hillPoint
 import attTrackingError
 
 # import message declarations
-import fswMessages
+from Basilisk.modules import fswMessages
 
 
 
@@ -541,4 +531,3 @@ if __name__ == "__main__":
          True,        # show_plots
          False        # useAltBodyFrame
        )
-

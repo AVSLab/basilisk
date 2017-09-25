@@ -20,7 +20,7 @@
 import random
 import numpy as np
 import abc
-import RigidBodyKinematics as rbk
+from Basilisk.utilities import RigidBodyKinematics as rbk
 import collections
 
 random.seed(0x1badcad1)

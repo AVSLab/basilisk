@@ -18,7 +18,7 @@
 
 '''
 import csv
-import sim_model
+from Basilisk.modules import sim_model
 
 def loadGravFromFile(fileName, spherHarm, maxDeg=2):
 
@@ -48,7 +48,7 @@ def loadGravFromFile(fileName, spherHarm, maxDeg=2):
                currDeg += 1
            clmRow.append(float(gravRow[2]))
            slmRow.append(float(gravRow[3]))
-    
+
         spherHarm.cBar = sim_model.MultiArray(clmList)
         spherHarm.sBar = sim_model.MultiArray(slmList)
         spherHarm.maxDeg = maxDeg
@@ -83,4 +83,3 @@ def loadGravFromFileToList(fileName, maxDeg=2):
             slmRow.append(float(gravRow[3]))
 
         return [clmList, slmList, mu, radEquator]
-

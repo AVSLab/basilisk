@@ -19,22 +19,14 @@
 '''
 import sys, os, inspect
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
-splitPath = path.split(bskName)
-bskPath = splitPath[0] + '/' + bskName + '/'
-sys.path.append(bskPath + 'modules')
-sys.path.append(bskPath + 'PythonModules')
+from Basilisk.utilities import macros as mc
+from Basilisk.utilities import unitTestSupport as sp
 
-import macros as mc
-import unitTestSupport as sp
-
-import spacecraftPlus
-import gravityEffector
-import ExtForceTorque
-import simple_nav
-import spice_interface
+from Basilisk.modules import spacecraftPlus
+from Basilisk.modules import gravityEffector
+from Basilisk.modules import ExtForceTorque
+from Basilisk.modules import simple_nav
+from Basilisk.modules import spice_interface
 
 
 class DynamicsClass():
@@ -129,4 +121,3 @@ class DynamicsClass():
     # Global call to create every required one-time message
     def WriteInitDynMessages(self, SimBase):
         self.SetSpiceData(SimBase)
-

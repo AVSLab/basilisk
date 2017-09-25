@@ -18,8 +18,8 @@ FOLDER "${DIR_NAME_STRING}")
 target_compile_options(SimUtilities PUBLIC "-fPIC")
 target_include_directories(SimUtilities PUBLIC "${CMAKE_SOURCE_DIR}/SimCode")
 set_target_properties(SimUtilities PROPERTIES
-ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/modules")
+ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Basilisk/modules")
 set_target_properties(SimUtilities PROPERTIES
-ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/modules")
+ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/Basilisk/modules")
 set_target_properties(SimUtilities PROPERTIES
-ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/modules")
+ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/Basilisk/modules")

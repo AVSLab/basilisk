@@ -19,29 +19,11 @@
 '''
 import sys, os, inspect
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
-splitPath = path.split(bskName)
-bskPath = splitPath[0] + '/' + bskName + '/'
-sys.path.append(bskPath + 'modules')
-sys.path.append(bskPath + 'PythonModules')
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros as mc
+from Basilisk.utilities import unitTestSupport as sp
 
-import SimulationBaseClass
-import sim_model
-import macros as mc
-import unitTestSupport as sp
-
-import spacecraftPlus
-import gravityEffector
-import ExtForceTorque
-import simple_nav
-import spice_interface
-
-import vehicleConfigData
-import hillPoint
-import attTrackingError
-import MRP_Feedback
+from Basilisk.modules import sim_model, spacecraftPlus, gravityEffector, ExtForceTorque, simple_nav, spice_interface, vehicleConfigData, hillPoint, attTrackingError, MRP_Feedback
 
 import BSK_FSW
 
@@ -178,7 +160,7 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
     def SetSimpleNavObject(self):
         self.simpleNavObject.ModelTag = "SimpleNavigation"
         return
-    
+
     def SetSpiceData(self):
         # SPICE sim message
         ephemerisMessageName = self.earthGravBody.bodyInMsgName
@@ -233,7 +215,7 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self.TotalSim.CreateNewMessage(self.FSWProcessName, "vehicleData", vehicleMessageSize, 2)
         self.TotalSim.WriteMessageData("vehicleData", vehicleMessageSize, 0, self.vehicleData)
         return
-    
+
 
     # -------------------------------------------GLOBAL INIT CALLS------------------------------------------------ #
     def InitAllDynObjects(self):

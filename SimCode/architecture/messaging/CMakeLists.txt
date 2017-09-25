@@ -17,15 +17,15 @@ set_target_properties(SimMessaging PROPERTIES
 target_compile_options(SimMessaging PUBLIC "-fPIC")
 target_include_directories(SimMessaging PUBLIC "${CMAKE_SOURCE_DIR}/SimCode")
 set_target_properties(SimMessaging PROPERTIES
-LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/modules")
+LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Basilisk/modules")
 set_target_properties(SimMessaging PROPERTIES
-LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/modules")
+LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/Basilisk/modules")
 set_target_properties(SimMessaging PROPERTIES
-LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/modules")
+LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/Basilisk/modules")
 
 #Have to copy this file everywhere if we're on Windows.  Ugly kludge, but... Windows!
 if(WIN32)
-    file(GLOB moduleContentsList  ${CMAKE_SOURCE_DIR}/modules/*)
+    file(GLOB moduleContentsList  ${CMAKE_SOURCE_DIR}/Basilisk/modules/*)
     foreach(direc ${moduleContentsList})
         if(IS_DIRECTORY ${direc})
             add_custom_command(TARGET SimMessaging POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:SimMessaging> "${direc}/")

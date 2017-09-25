@@ -17,7 +17,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-import orbitalMotion
+from Basilisk.utilities import orbitalMotion
 import numpy as np
 e_count = 0
 a_tol = 1e-14 # array tolerance

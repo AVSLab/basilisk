@@ -19,20 +19,12 @@
 '''
 import sys, os, inspect
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
-splitPath = path.split(bskName)
-bskPath = splitPath[0] + '/' + bskName + '/'
-sys.path.append(bskPath + 'modules')
-sys.path.append(bskPath + 'PythonModules')
+from Basilisk.utilities import macros as mc
 
-import macros as mc
-
-import vehicleConfigData
-import hillPoint
-import attTrackingError
-import MRP_Feedback
+from Basilisk.modules import vehicleConfigData
+from Basilisk.modules import hillPoint
+from Basilisk.modules import attTrackingError
+from Basilisk.modules import MRP_Feedback
 
 
 class FSWClass():
@@ -113,6 +105,3 @@ class FSWClass():
         self.SetAttitudeTrackingError(SimBase)
         self.SetMRPFeedback(SimBase)
         self.SetVehicleData(SimBase)
-
-
-

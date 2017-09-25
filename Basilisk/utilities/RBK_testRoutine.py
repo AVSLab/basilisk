@@ -24,7 +24,7 @@ path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../PythonModules/')
 import numpy as np
 import ctypes
-import RigidBodyKinematics as rbk
+from Basilisk.utilities import RigidBodyKinematics as rbk
 
 R2D = 180.0 / np.pi  # [deg]
 D2R = np.pi / 180.0  # [rad]

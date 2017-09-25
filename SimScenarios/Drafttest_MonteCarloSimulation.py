@@ -2,27 +2,19 @@ import sys
 import os
 import inspect  # Don't worry about this, standard stuff plus file discovery
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
-splitPath = path.split(bskName)
-bskPath = splitPath[0] + '/' + bskName + '/'
-sys.path.append(bskPath + 'modules')
-sys.path.append(bskPath + 'PythonModules')
-
-from MonteCarlo.Controller import Controller, RetentionPolicy
-from MonteCarlo.Dispersions import UniformEulerAngleMRPDispersion, UniformDispersion, NormalVectorCartDispersion
+from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
+from Basilisk.utilities.MonteCarlo.Dispersions import UniformEulerAngleMRPDispersion, UniformDispersion, NormalVectorCartDispersion
 
 # import simulation related support
-import spacecraftPlus
-import orbitalMotion
-import simIncludeGravBody
-import macros
-import SimulationBaseClass
+from Basilisk.modules import spacecraftPlus
+from Basilisk.modules import orbitalMotion
+from Basilisk.modules import simIncludeGravBody
+from Basilisk.utilities import macros
+from Basilisk.modules import SimulationBaseClass
 import numpy as np
 
 import pytest
-import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from math import fabs
 import shutil
 

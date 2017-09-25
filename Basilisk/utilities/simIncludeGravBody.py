@@ -18,9 +18,9 @@
 
 '''
 
-import gravityEffector
-import spice_interface
-import simMessages
+from Basilisk.modules import gravityEffector
+from Basilisk.modules import spice_interface
+from Basilisk.modules import simMessages
 
 
 class gravBodyFactory(object):
@@ -267,4 +267,3 @@ def loadGravFromFile(fileName, spherHarm, maxDeg=2):
             Note that this function calls the gravityEffector function loadGravFromFile().
     """
     gravityEffector.loadGravFromFile(fileName, spherHarm, maxDeg)
-

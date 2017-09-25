@@ -53,7 +53,7 @@ sys.path.append(bskPath + 'PythonModules')
 import SimulationBaseClass
 import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-import macros
+from Basilisk.utilities import macros
 import orbitalMotion
 # import simulation related support
 import spacecraftPlus

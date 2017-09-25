@@ -23,18 +23,18 @@ import sys, os, ast
 # Point the path to the module storage area
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/../modules')
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
-import sim_model
-import sys_model_task
-import alg_contain
-import MessagingAccess
+from Basilisk.modules import sim_model
+from Basilisk.modules import sys_model_task
+from Basilisk.modules import alg_contain
+from Basilisk.utilities import MessagingAccess
 import types
 import numpy as np
 import array
 import xml.etree.ElementTree as ET
 import inspect
 import sets
-import simulationArchTypes
-import simMessages
+from Basilisk.utilities import simulationArchTypes
+from Basilisk.modules import simMessages
 
 
 class LogBaseClass:
@@ -449,6 +449,7 @@ class SimBaseClass:
 
         for moduleData in allModules:
             if moduleFound != '':
+                print "found", moduleFound
                 break
             for name, obj in inspect.getmembers(moduleData):
                 if inspect.isclass(obj):
@@ -635,17 +636,25 @@ class SimBaseClass:
         sysMod = sys.modules[module]
         dirList = dir(sysMod)
         algList = parseDirList(dirList)
-        moduleName =  module.split('.')[0]
-        currMod = __import__(moduleName)
+
+        # if the package has different levels we need to access the correct level of the package
+        currMod = __import__(module, globals(), locals(), [], -1)
+
+        moduleString = "currMod."
+        moduleNames = module.split(".")
+        if len(moduleNames) > 1:
+            moduleString += ".".join(moduleNames[1:]) + "."
+
         for alg in algList:
             key = checkMethodType(alg)
             algDict[key] = alg
-        update = eval('currMod.' + algDict[STR_UPDATE])
-        selfInit = eval('currMod.' + algDict[STR_SELFINIT])
-        crossInit = eval('currMod.' + algDict[STR_CROSSINIT])
+
+        update = eval(moduleString + algDict[STR_UPDATE])
+        selfInit = eval(moduleString + algDict[STR_SELFINIT])
+        crossInit = eval(moduleString + algDict[STR_CROSSINIT])
         try:
             resetArg = algDict[STR_RESET]
-            reset = eval('currMod.' + resetArg)
+            reset = eval(moduleString + resetArg)
             modelWrap = alg_contain.AlgContain(modelData, update, selfInit, crossInit, reset)
         except:
             modelWrap = alg_contain.AlgContain(modelData, update, selfInit, crossInit)
