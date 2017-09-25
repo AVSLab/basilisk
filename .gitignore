@@ -1,8 +1,10 @@
+.eggs/
+CMakeFiles/
+CMakeCache.txt
 .DS_Store
-build/*
-modules/*
-html/*
-Images/Scenarios/*
+dist/
+docs/built
+docs/Images/Scenarios/*
 xml/*
 *.swp
 *.pyc
