@@ -18,9 +18,9 @@ target_link_libraries(AlgorithmMessaging ${LIBRARY_BUILD_LIST})
 target_compile_options(AlgorithmMessaging PUBLIC "-fPIC")
 target_include_directories(AlgorithmMessaging PUBLIC ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/FswAlgorithms)
 set_target_properties(AlgorithmMessaging PROPERTIES
-ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/modules")
+ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/package/modules")
 set_target_properties(AlgorithmMessaging PROPERTIES
-ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/modules")
+ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/package/modules")
 set_target_properties(AlgorithmMessaging PROPERTIES
-ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/modules")
+ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/package/modules")
 

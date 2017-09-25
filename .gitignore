@@ -1,6 +1,6 @@
 .DS_Store
 build/*
-modules/*
+package/modules/*
 html/*
 Images/Scenarios/*
 xml/*
