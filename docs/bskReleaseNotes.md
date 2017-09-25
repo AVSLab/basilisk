@@ -1,7 +1,7 @@
 # Basilisk Release Notes {#bskReleaseNotes}
 
 **Note:**
-This software is currently in a limited alpha public-release.  The Basilisk development is still in progress, and some behaviors and setups API's are bound to change.  That said, we are very excited by the great capabilities that this software already has, and plan to be updating this software regularly.  There is some documentation in terms of Doxygen generated HTML documentation, but also documentation within the code, and several Basilisk modules that are math heavy have LaTeX'd documentation folders as well.  Best place to start is to run the integrated tutorial scripts inside the SimScenarios folder.  More documentation and tutorial scripts are in development.
+This software is currently in a limited alpha public-release.  The Basilisk development is still in progress, and some behaviors and setups API's are bound to change.  That said, we are very excited by the great capabilities that this software already has, and plan to be updating this software regularly.  There is some documentation in terms of Doxygen generated HTML documentation, but also documentation within the code, and several Basilisk modules that are math heavy have LaTeX'd documentation folders as well.  Best place to start is to run the integrated tutorial scripts inside the scenarios folder.  More documentation and tutorial scripts are in development.
 
 ## In Progress Features
 * new Python packaging of the Basilisk modules
@@ -14,9 +14,9 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 
 ## Version 0.1.6
 <ul>
-    <li>new unit tests to validate the multi-body gravity simulation code in `SimCode/dynamics/gravityEffector/_UnitTest/test_gavityDynEffector.py` </li>
-    <li>new hinged rigid body tutorial script in `SimScenarios/test_scenarioAttGuideHyperbolic.py`</li>
-    <li>new tutorial to do velicity frame pointing on a hyperbolic orbit in `SimScenarios/test_scenarioHingedRigidBody.py` </li>
+    <li>new unit tests to validate the multi-body gravity simulation code in `simulation/dynamics/gravityEffector/_UnitTest/test_gavityDynEffector.py` </li>
+    <li>new hinged rigid body tutorial script in `scenarios/test_scenarioAttGuideHyperbolic.py`</li>
+    <li>new tutorial to do velicity frame pointing on a hyperbolic orbit in `scenarios/test_scenarioHingedRigidBody.py` </li>
     <li>fixed various unit test issues that came up on the non-macOS builds</li>
     <li>added reaction wheel effector documentation</li>
     <li>added `orb_elem_convert` documentation</li>
@@ -48,7 +48,7 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     </li>
     <li>The CSS modules now use the planetary shadow message information to simulated being in a planet's shadow</li>
     <li>SRP DynEffector modules now simulates the impact of being in a planets shadow</li>
-    <li>Included a method to validate all the AVS C-Function libraries like `rigidBodyKinematics`, `linearAlgebra` and `orbitalMotion` when the Basilisk `pytest` command is called.  There is also some documentation on using these libraries in `/SimCode/utilitiesSelfCheck/_Documentation` </li>
+    <li>Included a method to validate all the AVS C-Function libraries like `rigidBodyKinematics`, `linearAlgebra` and `orbitalMotion` when the Basilisk `pytest` command is called.  There is also some documentation on using these libraries in `/simulation/utilitiesSelfCheck/_Documentation` </li>
     <li>Updated the RW and gravitational body (i.e. adding Earth, sun, etc. to the simulation) to use new factory classes.  If you did use the older `simIncludeRW.py` or `simIncludeGravity.py` libraries, you'll need to update your python code to work with the new factory classes.</li>
 </ul>
 
@@ -64,11 +64,11 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 
 ## Version 0.1.3
 <ul>
-	   <li>There is a new capability to now write BSK modules in Python, and integrated them directly with the C and C++ BSK modules.  Documentation is still in progress, but a sample is found in <code>SimScenarios/test_scenarioAttitudePythonPD.py</code>.</li>
+	   <li>There is a new capability to now write BSK modules in Python, and integrated them directly with the C and C++ BSK modules.  Documentation is still in progress, but a sample is found in <code>scenarios/test_scenarioAttitudePythonPD.py</code>.</li>
 	   <li>A new Variable Speed Control Moment Gyroscope (VSCMG) state effector module has been created.  This module provides a torque-level VSCMG simulation which also includes the gyro frame or wheel being imbalanced.  If the latter modes are engaged, the simulation does slow down noticeably, but you get the full physics.</li>
 	   <li>In the simulation the initial spacecraft position and velocity states are now specified now using the spacecraft center of mass location C, not the body fixed point B.  This greatly simplifies the simulation setup.  Upon initialization, the sim determines what the true center of mass of the spacecraft is using all time varying mass components, and sets the proper B point position and velocity vectors.</li> 
 	   <li>Specifying the initial spacecraft position and velocity states can now be done anywhere before the BSK initialization.  The user sets init versions of the position and velocity vectors.  The setState() method on the state engine thus doesn't have to be used. </li>
-	   <li>There is a new <code>initializeSimulationAndDiscover</code> method to init the BSK simulation that automatically checks if messages are shared across multiple simulation threads.  See the modified <code> SimScenarios/test_scenarioAttitudeFeedback2T.py</code> file for how this simplifies the dual-threaded setup.</li>
+	   <li>There is a new <code>initializeSimulationAndDiscover</code> method to init the BSK simulation that automatically checks if messages are shared across multiple simulation threads.  See the modified <code> scenarios/test_scenarioAttitudeFeedback2T.py</code> file for how this simplifies the dual-threaded setup.</li>
 	   <li>The <code>MRP_Steering</code> and <code>PRV_Steering</code> FSW modules have been broken up into a separate kinematic steering command (commanded desired angular velcocity vector) and an associated angular velocity servo module name <code>rateServoFullNonlinear</code>.  This will break any existing code that used either of these two attitude steering modules.  The Python simulation code must be updated to to account for these new modules as done in the MRP_Steering integrated test <code>test_MRP_steeringInt.py</code>.</li>    
 
 </ul>

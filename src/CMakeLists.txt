@@ -2,6 +2,25 @@ cmake_minimum_required(VERSION 2.8)
 
 project("AVS basilisk")
 
+
+#
+# Create a Swig module
+# Avoids a deprecation error in CMAKE versions less than 3 by calling the correct API depending on version
+# SWIG_ADD_MODULE
+macro(MAKE_SWIG_MODULE name language)
+
+	if("${CMAKE_VERSION}" VERSION_GREATER 3.8)
+		SWIG_ADD_LIBRARY(${name}
+	                   LANGUAGE ${language}
+	                   TYPE MODULE
+	                   SOURCES ${ARGN})
+	else()
+		SWIG_ADD_MODULE(${name} ${language} ${ARGN})
+	endif()
+
+endmacro()
+
+
 #! make_python_package : create python package
 #
 # This function creates a python package directory and adds an __init__.py
@@ -124,17 +143,16 @@ function(findAndCreateSwigModules SubModule)
 	get_property(ALG_LIST GLOBAL PROPERTY ALG_LIB_LIST)
 	get_property(INTER_FILES GLOBAL PROPERTY SYS_INTER_FILES)
 
-	file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/../dist/Basilisk/${SubModule}")
-	file(WRITE "${CMAKE_SOURCE_DIR}/../dist/Basilisk/${SubModule}__init__.py" "#empty init file")
+	file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}")
+	file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}__init__.py" "#empty init file")
 
 	get_property(LIBRARY_BUILD_LIST GLOBAL PROPERTY BUILT_LIB_LIST)
 	get_property(ALG_LIST GLOBAL PROPERTY ALG_LIB_LIST)
 
 	foreach(module ${swig_modules})
-		message("On module ${module}")
 	    get_filename_component(FileBase ${module} NAME_WE)
 	    get_filename_component(FileDir ${module} DIRECTORY)
-		set(CMAKE_SWIG_OUTDIR "${CMAKE_SOURCE_DIR}/../dist/Basilisk/${SubModule}${FileBase}")
+		set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
 		if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/CMakeLists.txt")
 	        continue()
 	    endif()
@@ -146,11 +164,11 @@ function(findAndCreateSwigModules SubModule)
 	    set(gen_files "")
 	    set(swig_dep_files "")
 	    file(GLOB gen_files
-	        "${CMAKE_SOURCE_DIR}/SimCode/_GeneralModuleFiles/*.cpp"
-	        "${CMAKE_SOURCE_DIR}/SimCode/_GeneralModuleFiles/*.h"
-	        "${CMAKE_SOURCE_DIR}/SimCode/_GeneralModuleFiles/*.c")
+	        "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.cpp"
+	        "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.h"
+	        "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.c")
 	    file(GLOB swig_dep_files
-	        "${CMAKE_SOURCE_DIR}/SimCode/_GeneralModuleFiles/*.i")
+	        "${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles/*.i")
 	    string(REPLACE "/" ";" DirList ${FileDir})
 	    list(LENGTH DirList dirLength)
 	    set(currentDir "")
@@ -170,18 +188,18 @@ function(findAndCreateSwigModules SubModule)
 	    endif()
 
 		# Make a python package
-		set(moduleFilePath "${CMAKE_SOURCE_DIR}/../dist/Basilisk/${SubModule}${FileBase}")
+		set(moduleFilePath "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
 		make_python_package(${FileBase} ${FileDir} ${moduleFilePath})
 
 	    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${FileDir})
 	    set_source_files_properties(${module} PROPERTIES CPLUSPLUS ON)
-		set_property(SOURCE ${module} PROPERTY SWIG_FLAGS "-I${CMAKE_SOURCE_DIR}/SimCode/_GeneralModuleFiles" "-I${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/")
+		set_property(SOURCE ${module} PROPERTY SWIG_FLAGS "-I${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles" "-I${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/")
 		# MESSAGE("${SWIG_FLAGS}")
 	    #set_source_files_properties(${module} PROPERTIES SWIG_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/")
 		set_source_files_properties( ${swig_generated_file_fullname}
-	               PROPERTIES COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/SimCode")
+	               PROPERTIES COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/simulation")
 	    set(SWIG_MODULE_${FileBase}_EXTRA_DEPS ${impl_files} ${gen_files} ${swig_dep_files})
-	    SWIG_ADD_MODULE(${FileBase} python ${module} ${impl_files} ${gen_files})
+	    MAKE_SWIG_MODULE(${FileBase} python ${module} ${impl_files} ${gen_files})
 	    SWIG_LINK_LIBRARIES(${FileBase} ${PYTHON_LIBRARIES})
 
 	    foreach(LibFile ${LIBRARY_BUILD_LIST})
@@ -195,14 +213,13 @@ function(findAndCreateSwigModules SubModule)
 	    set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
 			FOLDER "${DIR_NAME_STRING}/${FileDir}")
 		# set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-		#     CMAKE_SWIG_OUTDIR "${CMAKE_SOURCE_DIR}/../dist/Basilisk/${FileBase}")
-		message("${CMAKE_SOURCE_DIR}/../dist/Basilisk/${SubModule}${FileBase}")
+		#     CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/${FileBase}")
 	    set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-	        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/../dist/Basilisk/${SubModule}${FileBase}")
+	        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
 	    set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-	        LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/../dist/Basilisk/${SubModule}${FileBase}")
+	        LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
 	    set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-			LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/../dist/Basilisk/${SubModule}${FileBase}")
+			LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
 	    set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
 		    COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}")
 	endforeach()
@@ -212,7 +229,7 @@ endfunction(findAndCreateSwigModules)
 find_package(PythonInterp 2.7 REQUIRED)
 find_package(PythonLibs 2.7 REQUIRED)
 
-# set(CMAKE_SWIG_OUTDIR ${CMAKE_SOURCE_DIR}/../dist/Basilisk)
+# set(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/Basilisk)
 
 # Add general compiler flags
 set(CMAKE_MACOSX_RPATH 1)
@@ -260,13 +277,13 @@ endif()
 
 foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
     string( TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG )
-    set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_SOURCE_DIR}/../dist/Basilisk)
-    set( CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_SOURCE_DIR}/../dist/Basilisk)
-    set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_SOURCE_DIR}/../dist/Basilisk)
+    set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/Basilisk)
+    set( CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/Basilisk)
+    set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/Basilisk)
 endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 
 # Add include directories
-include_directories(SimCode)
+include_directories(simulation)
 include_directories(../libs)
 
 # Set options used by "FindBoost.cmake".
@@ -350,7 +367,7 @@ elseif(APPLE)
 	SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 
 	# the RPATH to be used when installing
-	SET(CMAKE_INSTALL_RPATH "${CMAKE_SOURCE_DIR}/../dist/Basilisk")
+	SET(CMAKE_INSTALL_RPATH "${CMAKE_BINARY_DIR}/Basilisk")
 
 	# don't add the automatically determined parts of the RPATH
 	# which point to directories outside the build tree to the install RPATH
@@ -371,30 +388,26 @@ set_property(GLOBAL PROPERTY ALG_LIB_LIST "AlgorithmMessaging")
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # make the built package with an empty init file
-file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/../dist/Basilisk")
-file(WRITE "${CMAKE_SOURCE_DIR}/../dist/Basilisk/__init__.py" "#empty init file written by the build")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
+file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/__init__.py" "#empty init file written by the build")
 
 #symlink into the package the current python module code
 file(GLOB pythonModules
-	"${CMAKE_CURRENT_SOURCE_DIR}/PythonModules/*.py"
-	"${CMAKE_CURRENT_SOURCE_DIR}/PythonModules/**")
+	"${CMAKE_SOURCE_DIR}/utilities/*.py"
+	"${CMAKE_SOURCE_DIR}/utilities/**")
 
-create_symlinks("${CMAKE_SOURCE_DIR}/../dist/Basilisk/utilities" ${pythonModules})
+create_symlinks("${CMAKE_BINARY_DIR}/Basilisk/utilities" ${pythonModules})
 
 #symlink into the package the test code
-file(GLOB simTests "${CMAKE_CURRENT_SOURCE_DIR}/tests/*")
-file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/../dist/Basilisk/tests")
-file(WRITE "${CMAKE_SOURCE_DIR}/../dist/Basilisk/tests/__init__.py" "#empty init file written by the build")
-create_symlinks("${CMAKE_SOURCE_DIR}/../dist/Basilisk/tests" ${simTests})
+file(GLOB simTests "${CMAKE_SOURCE_DIR}/tests/*")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/tests")
+file(WRITE "${CMAKE_BINARY_DIR}/Basilisk/tests/__init__.py" "#empty init file written by the build")
+create_symlinks("${CMAKE_BINARY_DIR}/Basilisk/tests" ${simTests})
 
-#symlink setup.py into the dist folder
-file(GLOB setupFile "${CMAKE_CURRENT_SOURCE_DIR}/setup.py")
-create_symlinks("${CMAKE_SOURCE_DIR}/../dist" ${setupFile})
-
-#symlink into package the data files to keep
-file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/../dist/Basilisk/data")
-file(GLOB dataFiles "${CMAKE_CURRENT_SOURCE_DIR}/../data/*")
-create_symlinks("${CMAKE_SOURCE_DIR}/../dist/Basilisk/data" ${dataFiles})
+#symlink into package the supportData files to keep
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/supportData")
+file(GLOB dataFiles "${CMAKE_SOURCE_DIR}/../supportData/*")
+create_symlinks("${CMAKE_BINARY_DIR}/Basilisk/supportData" ${dataFiles})
 
 set(PROGRAM "python")
 set(ARG setup.py develop --user)
@@ -402,13 +415,13 @@ execute_process(COMMAND ${PROGRAM} ${ARG}
 								WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/../
 								RESULT_VARIABLE rv
 								OUTPUT_VARIABLE out)
-message("Added Basilisk module to python with: ${PROGRAM} ${ARG} in ${CMAKE_SOURCE_DIR}/..
+message(STATUS "Adding Basilisk module to python with: ${PROGRAM} ${ARG} in ${CMAKE_SOURCE_DIR}/..
 This resulted in the output:
 ${out}")
 
-add_subdirectory("SimCode")
-add_subdirectory("FswAlgorithms")
-add_subdirectory("Utilities")
+add_subdirectory("simulation")
+add_subdirectory("fswAlgorithms")
+add_subdirectory("topLevelModules")
 
 #find_package(Doxygen)
 #if(DOXYGEN_FOUND)

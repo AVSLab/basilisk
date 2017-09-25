@@ -7,7 +7,7 @@ This documents contains a series of action items that should be checked before a
 * Are 4 spaces used instead of tabs?
 
 ## Module Programming
-* If new message types are declared, are these also Swig'd in `SimCode/simMessages/simMessages.i`, `SimCode/simFswInterfaceMessages/simFswInterfaceMessages.i` or `fswAlgorithms/fswMessages/fswMessages.i`
+* If new message types are declared, are these also Swig'd in `simulation/simMessages/simMessages.i`, `simulation/simFswInterfaceMessages/simFswInterfaceMessages.i` or `fswAlgorithms/fswMessages/fswMessages.i`
 * Are all module input and output messages Swig's in the module `*.i` file
 * Does the code contain appropriate comments
 * Does the code contain Doxygen compatible function descriptions, variable defintions, etc.
@@ -24,12 +24,12 @@ Is a _UnitTest folder included that:
 * checks the module output for all input and module configuration conditions
 * performs the validation checking against either custom-computed results in other programs (Matlab, Mathematica, hand calculation), live Python computed results, or against expected simulation data (consistency checking)
 * can also be run with the python command instead of pytest (by updating the `__main()__` function at the bottom of the python file)
-* if the module depends on other modules, clear out teh `*.pyc` files in `PythonModules/`
+* if the module depends on other modules, clear out teh `*.pyc` files in `utilities/`
     
 ## Module Documentation
 Is a _Documentation folder included that
 
-* uses the BSK module template provided in `/FswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation`
+* uses the BSK module template provided in `/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation`
 * populates the various module description sections including
     * overview of module functionality
     * testing and validation

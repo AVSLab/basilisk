@@ -22,10 +22,9 @@ import BSKModuleParse as dataParser
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-sys.path.append(path + '/../PythonModules/')
-sys.path.append(path + '/../modules/')
-import alg_contain
-import sim_model
+
+from Basilisk.simulation import alg_contain
+from Basilisk.simulation import sim_model
 import numpy as np
 
 
@@ -46,14 +45,14 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
                     # locTask[0] = taskName
                     # locTask[1] = taskPriority
                     if theTask.taskPriority > locTask[1]:
-                        locProcList.insert(ordIdx, 
+                        locProcList.insert(ordIdx,
                             [theTask.TaskPtr.TaskName, theTask.taskPriority])
                         taskFound = True
                         break
                 if taskFound != True:
                     locProcList.append([theTask.TaskPtr.TaskName, theTask.taskPriority, theTask])
             taskOrderedList.extend(locProcList)
-                        
+
         for i_task in range(0, len(taskOrderedList)):
             # taskOrderedList[i_task][0] = taskName
             # taskOrderedList[i_task][1] = taskPriority
@@ -194,7 +193,7 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
 
     # This function looks for the path of the required header files
     def findFilePath(file):
-        ADCSPath = path + '/../FswAlgorithms/'
+        ADCSPath = path + '/../fswAlgorithms/'
         for dirpath, subdirs, files in os.walk(ADCSPath):
             for x in files:
                 if x == file:
@@ -427,6 +426,3 @@ if __name__ == "__main__":
 #outputCFileName = 'AVS_FSW_Autocode'
 #str_ConfigData = 'AVSConfigData'
 #parseSimAlgorithms(TheAVSSim, taskIdxActivityDir, outputCFileName, str_ConfigData)
-
-
-

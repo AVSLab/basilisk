@@ -1,8 +1,9 @@
+.eggs/
 CMakeFiles/
 CMakeCache.txt
 .DS_Store
 dist/
-docs/built
+docs/html
 docs/Images/Scenarios/*
 xml/*
 *.swp
