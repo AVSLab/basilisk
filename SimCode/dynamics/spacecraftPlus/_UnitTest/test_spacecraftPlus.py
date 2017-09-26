@@ -843,6 +843,22 @@ def test_SCPointBVsPointC(show_plots):
                                                   range(3))
     sigma_BNOutput2 = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
                                                   range(3))
+
+    plt.figure()
+    plt.clf()
+    plt.plot(r_CN_NOutput1[:,0]*1e-9, r_CN_NOutput1[:,1], 'g', label = 'Torque About Point C')
+    plt.plot(r_CN_NOutput1[:,0]*1e-9,r_CN_NOutput1[:,2], 'g', r_CN_NOutput1[:,0]*1e-9, r_CN_NOutput1[:,3], 'g')
+    plt.plot(r_CN_NOutput2[:,0]*1e-9, r_CN_NOutput2[:,1], 'b', label = 'Torque About Point B')
+    plt.plot(r_CN_NOutput2[:,0]*1e-9,r_CN_NOutput2[:,2], 'b', r_CN_NOutput2[:,0]*1e-9, r_CN_NOutput1[:,3], 'b')
+    plt.legend(loc ='upper left')
+    plt.figure()
+    plt.clf()
+    plt.plot(sigma_BNOutput1[:,0]*1e-9, sigma_BNOutput1[:,1], 'g', label = 'Torque About Point C')
+    plt.plot(sigma_BNOutput1[:,0]*1e-9, sigma_BNOutput1[:,2], 'g', sigma_BNOutput1[:,0]*1e-9, sigma_BNOutput1[:,3], 'g')
+    plt.plot(sigma_BNOutput2[:,0]*1e-9, sigma_BNOutput2[:,1], 'b', label = 'Torque About Point B')
+    plt.plot(sigma_BNOutput2[:,0]*1e-9, sigma_BNOutput2[:,2], 'b', sigma_BNOutput2[:,0]*1e-9, sigma_BNOutput2[:,3], 'b')
+    plt.legend(loc ='upper right')
+    plt.show(show_plots)
     if not unitTestSupport.isArrayEqualRelative(r_CN_NOutput1[-1,:],r_CN_NOutput2[-1,1:4],3,accuracy):
         testFailCount += 1
         testMessages.append("FAILED: Spacecraft Point B Vs Point C test failed pos unit test")
