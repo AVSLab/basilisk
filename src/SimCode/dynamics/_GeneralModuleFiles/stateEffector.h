@@ -47,6 +47,7 @@ public:
                                      & vecTranscontr, Eigen::Vector3d & vecRotcontr);  //!< -- Back-sub contributions
     virtual void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                               double & rotEnergyContr);  //!< -- Energy and momentum calculations
+    virtual void modifyStates(double integTime); // Modify state values after integration
     virtual void registerStates(DynParamManager& states) = 0;  //!< -- Method for stateEffectors to register states
     virtual void linkInStates(DynParamManager& states) = 0;  //!< -- Method for stateEffectors to get other states
     virtual void computeDerivatives(double integTime)=0;  //!< -- Method for each stateEffector to calculate derivatives
