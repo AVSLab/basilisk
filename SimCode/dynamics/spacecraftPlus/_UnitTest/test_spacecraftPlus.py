@@ -51,6 +51,8 @@ def spacecraftPlusAllTest(show_plots):
     assert testResults < 1, testMessage
     [testResults, testMessage] = test_SCTransBOE(show_plots)
     assert testResults < 1, testMessage
+    [testResults, testMessage] = test_SCPointBVsPointC(show_plots)
+    assert testResults < 1, testMessage
 
 def test_SCTranslation(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -725,5 +727,63 @@ def test_SCTransBOE(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
+def test_SCPointBVsPointC(show_plots):
+    # The __tracebackhide__ setting influences pytest showing of tracebacks:
+    # the mrp_steering_tracking() function will not be shown unless the
+    # --fulltrace command line option is specified.
+    __tracebackhide__ = True
+
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
+
+    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject.ModelTag = "spacecraftBody"
+
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.TotalSim.terminateSimulation()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.01)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+
+    # Define initial conditions of the spacecraft
+    scObject.hub.mHub = 100
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
+    scObject.hub.r_CN_NInit = [[0.0],	[0.0],	[0.0]]
+    scObject.hub.v_CN_NInit = [[0.0],	[0.0],	[0.0]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
+
+    unitTestSim.InitializeSimulation()
+
+    stopTime = 10.0
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    unitTestSim.ExecuteSimulation()
+    if not unitTestSupport.isArrayEqualRelative(r_CN_NOutput1[-1,:],r_CN_NOutput2[-1,1:4],3,accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED: Spacecraft Point B Vs Point C test failed pos unit test")
+
+    if not unitTestSupport.isArrayEqualRelative(sigma_BNOutput1[-1,:],sigma_BNOutput2[-1,1:4],3,accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED: Spacecraft Point B Vs Point C test failed attitude unit test")
+
+    if testFailCount == 0:
+        print "PASSED: " + " Spacecraft Point B Vs Point C Integrated Sim Test"
+
+    assert testFailCount < 1, testMessages
+
+    # return fail count and join into a single string all messages in the list
+    # testMessage
+    return [testFailCount, ''.join(testMessages)]
 if __name__ == "__main__":
     test_SCRotation(True)
