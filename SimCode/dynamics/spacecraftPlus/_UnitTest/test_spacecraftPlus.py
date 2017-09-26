@@ -851,6 +851,11 @@ def test_SCPointBVsPointC(show_plots):
     plt.plot(r_CN_NOutput2[:,0]*1e-9, r_CN_NOutput2[:,1], 'b', label = 'Torque About Point B')
     plt.plot(r_CN_NOutput2[:,0]*1e-9,r_CN_NOutput2[:,2], 'b', r_CN_NOutput2[:,0]*1e-9, r_CN_NOutput1[:,3], 'b')
     plt.legend(loc ='upper left')
+    PlotName = "PointBVsPointCTranslation"
+    PlotTitle = "PointB Vs PointC Translation"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
     plt.figure()
     plt.clf()
     plt.plot(sigma_BNOutput1[:,0]*1e-9, sigma_BNOutput1[:,1], 'g', label = 'Torque About Point C')
@@ -858,7 +863,13 @@ def test_SCPointBVsPointC(show_plots):
     plt.plot(sigma_BNOutput2[:,0]*1e-9, sigma_BNOutput2[:,1], 'b', label = 'Torque About Point B')
     plt.plot(sigma_BNOutput2[:,0]*1e-9, sigma_BNOutput2[:,2], 'b', sigma_BNOutput2[:,0]*1e-9, sigma_BNOutput2[:,3], 'b')
     plt.legend(loc ='upper right')
+    PlotName = "PointBVsPointCAttitude"
+    PlotTitle = "PointB Vs PointC Attitude"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
     plt.show(show_plots)
+
+    accuracy = 1e-8
     if not unitTestSupport.isArrayEqualRelative(r_CN_NOutput1[-1,:],r_CN_NOutput2[-1,1:4],3,accuracy):
         testFailCount += 1
         testMessages.append("FAILED: Spacecraft Point B Vs Point C test failed pos unit test")
@@ -877,4 +888,4 @@ def test_SCPointBVsPointC(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_SCPointBVsPointC(True)
+    test_SCPointBVsPointC(False)
