@@ -788,6 +788,61 @@ def test_SCPointBVsPointC(show_plots):
                                                   range(3))
     sigma_BNOutput1 = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
                                                   range(3))
+
+    ####################
+
+    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject.ModelTag = "spacecraftBody"
+
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.TotalSim.terminateSimulation()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.01)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, scObject)
+
+    # Define location of force
+    rBcB_B = numpy.array([0.4, 0.5, 0.2])
+    rFB_B = rBcB_B + rFBc_B
+    torquePntB_B = numpy.cross(rFB_B,force_B)
+
+    # Add external force and torque
+    extFTObject = ExtForceTorque.ExtForceTorque()
+    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.extTorquePntB_B = [[torquePntB_B[0]], [torquePntB_B[1]], [torquePntB_B[2]]]
+    extFTObject.extForce_B = [[force_B[0]], [force_B[1]], [force_B[2]]]
+    scObject.addDynamicEffector(extFTObject)
+    unitTestSim.AddModelToTask(unitTaskName, extFTObject)
+
+    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+
+    # Define initial conditions of the spacecraft
+    scObject.hub.mHub = 100
+    scObject.hub.r_BcB_B = [[rBcB_B[0]], [rBcB_B[1]], [rBcB_B[2]]]
+    scObject.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
+    scObject.hub.r_CN_NInit = [[0.0],	[0.0],	[0.0]]
+    scObject.hub.v_CN_NInit = [[0.0],	[0.0],	[0.0]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
+
+    unitTestSim.InitializeSimulation()
+
+    stopTime = 10.0
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    unitTestSim.ExecuteSimulation()
+
+    r_CN_NOutput2 = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_CN_N',
+                                                  range(3))
+    sigma_BNOutput2 = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
+                                                  range(3))
     if not unitTestSupport.isArrayEqualRelative(r_CN_NOutput1[-1,:],r_CN_NOutput2[-1,1:4],3,accuracy):
         testFailCount += 1
         testMessages.append("FAILED: Spacecraft Point B Vs Point C test failed pos unit test")
@@ -804,5 +859,6 @@ def test_SCPointBVsPointC(show_plots):
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
+
 if __name__ == "__main__":
-    test_SCRotation(True)
+    test_SCPointBVsPointC(True)
