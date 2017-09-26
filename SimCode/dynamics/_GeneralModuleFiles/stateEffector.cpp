@@ -63,3 +63,9 @@ void StateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector
 {
     return;
 }
+
+/*! This method allows for an individual stateEffector to modify their states after integration*/
+void StateEffector::modifyStates(double integTime)
+{
+    return;
+}

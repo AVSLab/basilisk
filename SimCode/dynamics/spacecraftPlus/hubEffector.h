@@ -33,6 +33,7 @@ public:
     double mHub;                         //!< [kg] mass of the hub
     bool useTranslation;                 //!< -- Whether the s/c has translational states
     bool useRotation;                    //!< -- Whether the s/c has rotational states
+    uint64_t MRPSwitchCount;             //!< -- Count on times we've shadowed
     std::string nameOfHubPosition;       //!< -- Identifier for hub position states
     std::string nameOfHubVelocity;       //!< -- Identifier for hub velocity states
     std::string nameOfHubSigma;          //!< -- Identifier for hub sigmaBN states
@@ -69,6 +70,7 @@ public:
     void computeDerivatives(double integTime);  //!< -- Method for the hub to compute it's derivatives
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d &rotAngMomPntCContr_B,
                                       double & rotEnergyContr); //!< -- Add contributions to energy and momentum
+    void modifyStates(double integTime); //!< -- Method to switch MRPs
 
 private:
 	StateData *posState;                 //!< [-] State data container for hub position
