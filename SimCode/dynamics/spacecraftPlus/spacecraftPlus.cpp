@@ -36,7 +36,6 @@ SpacecraftPlus::SpacecraftPlus()
 	this->currTimeStep = 0.0;
 	this->timePrevious = 0.0;
     this->simTimePrevious = 0;
-    this->MRPSwitchCount = 0;
     this->scStateOutMsgId = -1;
 	this->numOutMsgBuffers = 2;
     this->dvAccum_B.setZero();
@@ -100,7 +99,7 @@ void SpacecraftPlus::writeOutputMessages(uint64_t clockTime)
     eigenMatrixXd2CArray(this->hubSigma->getState(), stateOut.sigma_BN);
     eigenMatrixXd2CArray(this->hubOmega_BN_B->getState(), stateOut.omega_BN_B);
     eigenMatrixXd2CArray(this->dvAccum_B, stateOut.TotalAccumDVBdy);
-    stateOut.MRPSwitchCount = this->MRPSwitchCount;
+    stateOut.MRPSwitchCount = this->hub.MRPSwitchCount;
     SystemMessaging::GetInstance()->WriteMessage(this->scStateOutMsgId, clockTime, sizeof(SCPlusStatesSimMsg),
                                                  reinterpret_cast<uint8_t*> (&stateOut), this->moduleID);
 
@@ -373,14 +372,7 @@ void SpacecraftPlus::integrateState(double integrateToThisTime)
 	this->integrator->integrate(timeBefore, localTimeStep);
 	this->timePrevious = integrateToThisTime;     // - copy the current time into previous time for next integrate state call
     
-    // Lets switch those MRPs!!
-    Eigen::Vector3d sigmaBNLoc;
-    sigmaBNLoc = (Eigen::Vector3d) this->hubSigma->getState();
-    if (sigmaBNLoc.norm() > 1) {
-        sigmaBNLoc = -sigmaBNLoc/(sigmaBNLoc.dot(sigmaBNLoc));
-        this->hubSigma->setState(sigmaBNLoc);
-        this->MRPSwitchCount++;
-    }
+    this->hub.modifyStates(integrateToThisTime);
 
     // - Call mass properties to get current info on the mass props of the spacecraft
     this->updateSCMassProps(integrateToThisTime);
@@ -390,6 +382,8 @@ void SpacecraftPlus::integrateState(double integrateToThisTime)
     Eigen::Vector3d newV_CN_N;  // - V_CN_N after integration
     Eigen::MRPd newSigma_BN;    // - Sigma_BN after integration
     // - Get center of mass, v_BN_N and dcm_NB
+    Eigen::Vector3d sigmaBNLoc;
+    sigmaBNLoc = (Eigen::Vector3d) this->hubSigma->getState();
     newSigma_BN = sigmaBNLoc;
     Eigen::Matrix3d newDcm_NB = newSigma_BN.toRotationMatrix();  // - dcm_NB after integration
     newV_CN_N = newV_BN_N + newDcm_NB*(*this->cDot_B);
