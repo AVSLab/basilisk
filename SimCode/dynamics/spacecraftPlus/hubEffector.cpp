@@ -24,6 +24,7 @@
 HubEffector::HubEffector()
 {
     // - zero certain variables
+    this->MRPSwitchCount = 0;
     this->effProps.mEff = 0.0;
     this->effProps.rEff_CB_B.setZero();
     this->effProps.IEffPntB_B.setZero();
@@ -223,5 +224,19 @@ void HubEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d
     // - Find rotational energy contribution from the hub
     rotEnergyContr = 1.0/2.0*omegaLocal_BN_B.dot(IHubPntBc_B*omegaLocal_BN_B) + 1.0/2.0*mHub*rDot_BcB_B.dot(rDot_BcB_B);
     
+    return;
+}
+
+/*! This method is for switching the MRPs */
+void HubEffector::modifyStates(double integTime)
+{
+    // Lets switch those MRPs!!
+    Eigen::Vector3d sigmaBNLoc;
+    sigmaBNLoc = (Eigen::Vector3d) this->sigmaState->getState();
+    if (sigmaBNLoc.norm() > 1) {
+        sigmaBNLoc = -sigmaBNLoc/(sigmaBNLoc.dot(sigmaBNLoc));
+        this->sigmaState->setState(sigmaBNLoc);
+        this->MRPSwitchCount++;
+    }
     return;
 }
