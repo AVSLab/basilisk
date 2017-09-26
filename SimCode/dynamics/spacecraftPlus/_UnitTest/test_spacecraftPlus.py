@@ -753,6 +753,20 @@ def test_SCPointBVsPointC(show_plots):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
+
+    # Define location of force
+    rFBc_B = numpy.array([0.3, -0.7, 0.4])
+    force_B = numpy.array([0.5, 0.6, -0.2])
+    torquePntC_B = numpy.cross(rFBc_B,force_B)
+
+    # Add external force and torque
+    extFTObject = ExtForceTorque.ExtForceTorque()
+    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.extTorquePntB_B = [[torquePntC_B[0]], [torquePntC_B[1]], [torquePntC_B[2]]]
+    extFTObject.extForce_B = [[force_B[0]], [force_B[1]], [force_B[2]]]
+    scObject.addDynamicEffector(extFTObject)
+    unitTestSim.AddModelToTask(unitTaskName, extFTObject)
+
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
 
     # Define initial conditions of the spacecraft
@@ -769,6 +783,11 @@ def test_SCPointBVsPointC(show_plots):
     stopTime = 10.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
+
+    r_CN_NOutput1 = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_CN_N',
+                                                  range(3))
+    sigma_BNOutput1 = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
+                                                  range(3))
     if not unitTestSupport.isArrayEqualRelative(r_CN_NOutput1[-1,:],r_CN_NOutput2[-1,1:4],3,accuracy):
         testFailCount += 1
         testMessages.append("FAILED: Spacecraft Point B Vs Point C test failed pos unit test")
