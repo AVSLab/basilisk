@@ -120,6 +120,16 @@ The translational BOE calculation can be seen in Figure~\ref{fig:BOETrans}. In t
 
 \clearpage
 
+\subsection{Dynamics Calculated About Point B Test}
+
+The dynamics for the spacecraft have been derived in relation to the body frame origin, point $B$, which is not necessarily coincident with point $C$. Therefore the dynamicEffectors and stateEffectors define their torques about point $B$ as oppose to about point $C$. This allows the simulation to have multi-body dynamics where the center of mass of the spacecraft can move with respect to the body frame. However, in rigid body dynamics it is very common to have the body frame origin coincident with the center of mass of the spacecraft. Therefore, to confirm that the dynamics has been developed correctly to handle this torque mapping a test has been created.
+
+The test runs two simulations: one with the body frame origin defined at the center of mass of the spacecraft, and one with the body frame origin not coincident with the center of mass. An external force and corresponding torque is applied to the spacecraft in both cases: in the first case the torque is being defined about point $B=C$, and in the second case the torque is being defined about point $B$. Both simulations are given identical initial conditions and the expectation is that the simulations should give identical results. The following parameters describe the success criteria.
+\begin{itemize}
+	\item Agreement between both simulations for the translational states
+	\item Agreement between both simulations for the attitude states
+\end{itemize}
+
 \section{Test Parameters}
 
 Since this is an integrated test, the inputs to the test are the physical parameters of the spacecraft along with the initial conditions of the states. These parameters are outlined in Tables~\ref{tab:hub}-~\ref{tab:initial}. Additionally, the error tolerances can be seen in Table~\ref{tab:errortol}.
