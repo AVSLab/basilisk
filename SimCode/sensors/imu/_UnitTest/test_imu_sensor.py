@@ -95,20 +95,17 @@ def setRandomWalk(self,senRotNoiseStd = 0.0,senTransNoiseStd = 0.0,errorBoundsGy
 # uncomment this line if this test has an expected failure, adjust message as needed
 
 #The following tests are parameterized and run:
-# clean - a little bit of every motion/displacement but no bias, noise, etc.
-# discretization - clean plus LSB inputs
 # noise - clean plus some noise - test std dev
-# bias - clean plus a bias
-# saturation max, min
 # error bounds
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("show_plots,   testCase,       stopTime,       gyroLSBIn,      accelLSBIn,     senRotMaxIn,    senTransMaxIn,  senRotNoiseStd,     senTransNoiseStd,   errorBoundsGyroIn,  errorBoundsAccelIn, senRotBiasIn,   senTransBiasIn, accuracy", [
-                        #(False,         'clean',       1.0,            0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                0.0,            0.0,            1e-3),
-                        # (False,         'noise',       5.0,            0.0,            0.0,            1000.,          1000.,          0.0001,             0.0001,             1e6,                1e6,                0.0,            0.0,            1e-3),
-                        #(False,         'bias',        1.0,            0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                1e6,                1e6,                0.5,            0.5,            1e-2),
-                        (False,         'saturation',   1.0,            0.0,            0.0,            0.01,          .95,            0.0,                0.0,                1e6,                1e6,                0.0,            0.0,            1e-2),
+                        (True,         'clean',       1.0,            0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                0.0,            0.0,            1e-3),
+                        #(True,         'noise',         5.0,            0.0,            0.0,            1000.,          1000.,          .00,             .00,             0.00,               0.00,               0.0,            0.0,            1e-3),
+                        #(False,         'bias',          1.0,            0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                1e6,                1e6,                0.5,            0.5,            1e-2),
+                        # (False,         'saturation',   1.0,            0.0,            0.0,            0.01,          .95,            0.0,                0.0,                1e6,                1e6,                2.0,            2.0,            1e-2),
+                        # (True,         'discretization',1.0,            1.0,            1.0,            100.,          100.,            0.0,                0.0,                1e6,                1e6,                2.0,            2.0,            1e-10),
 
 ])
 
@@ -131,14 +128,14 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
     unitSim.TotalSim.terminateSimulation()
 
     # create the task and specify the integration update time
-    unitProcRate_s = 0.001 #does not pass with .0001
+    unitProcRate_s = 0.00001 #does not pass with .0001 due to floating point issues in macros.sec2nano.
     unitProcRate = macros.sec2nano(unitProcRate_s)
     unitProc = unitSim.CreateNewProcess(unitProcName)
     unitTask = unitSim.CreateNewTask(unitTaskName, unitProcRate)
     unitProc.addTask(unitTask)
 
     # Set-up the fake kinematics vectors
-    # as of right now, the accelerations here are non-conservative accelerations. No conservative accelerations are used in this test - SJKC
+    # Note: No conservative accelerations are used in this test
     # center of mass
     rDotDot_CN = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #acceleration of center of mass wrt inertial frame
     rDotDot_CB = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #acceleration of center of mass wrt body frame
@@ -155,9 +152,9 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
     # sensor
     rDotDot_SN = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #sensor sensed acceleration
     rDot_SN = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #sensor accumulated DV
-    rDot_SN_P = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #sensor accumulated DV in sensor platform frame coordinates
+    #rDot_SN_P = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #sensor accumulated DV in sensor platform frame coordinates
     r_SN = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #sensor position in body frame coordinates
-
+    test_vector = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3))
 
     # Set initial conditions for fake kinematics vectors
     # Acceleration vectors
@@ -272,6 +269,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
             sigma[i][:] = sigma[i-1][:] + ((sigmaDot[i-1][:]+sigmaDot[i][:])/2)*dt
             sigmaDot[i][:] = findSigmaDot(sigma[i][:],omega[i][:])
         sigma[i][:] = sigma[i-1][:] + ((sigmaDot[i-1][:]+sigmaDot[i][:])/2)*dt
+        test_vector[i][1] = np.linalg.norm(sigma[i][:])
 
         # center of mass calculations
         cPrime = cDot - np.cross(omega[i][:], c)
@@ -301,25 +299,43 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
         stepPRV_P[i][:] = m33v3mult(dcm_PB, stepPRV) + senRotBiasIn*dt
         # angular rate in platform frame
         omega_P[i][:] = m33v3mult(dcm_PB, omega[i][:]) + senRotBiasIn
-        for k in [0,1,2]: #saturate values
-            if omega_P[i][k] > senRotMaxIn:
-                omega_P[i][k] = senRotMaxIn
-                stepPRV_P[i][k] = senRotMaxIn*dt
-            elif omega_P[i][k] < -senRotMaxIn:
-                omega_P[i][k] = -senRotMaxIn
-                stepPRV_P[i][k] = -senRotMaxIn*dt
-            if rDotDot_SN_P[i][k] > senTransMaxIn:
-                rDotDot_SN_P[i][k] = senTransMaxIn
-                DVAccum_P[i][k] = senTransMaxIn*dt
-            elif rDotDot_SN_P[i][k] < -senTransMaxIn:
-                rDotDot_SN_P[i][k] = -senTransMaxIn
-                DVAccum_P[i][k] = -senTransMaxIn*dt
+        #
+        # #discretization
+        # if accelLSBIn > 0.0:
+        #     for k in [0,1,2]:
+        #         discretized_value = np.floor(np.abs(rDotDot_SN_P[i][k] / accelLSBIn)) * accelLSBIn * np.sign(rDotDot_SN_P[i][k])
+        #         discretization_error = rDotDot_SN_P[i][k] - discretized_value
+        #         rDotDot_SN_P[i][k] = discretized_value
+        #         DVAccum_P[i][k] -= discretization_error*dt
+        #         DVAccum_P[i][k] = np.floor(np.abs(DVAccum_P[i][k] / accelLSBIn)) * accelLSBIn * np.sign(DVAccum_P[i][k])
+        # if gyroLSBIn > 0.0:
+        #     for k in [0,1,2]:
+        #         discretized_value = np.floor(np.abs(omega_P[i][k] / gyroLSBIn)) * gyroLSBIn * np.sign(omega_P[i][k])
+        #         discretization_error = omega_P[i][k] - discretized_value
+        #         omega_P[i][k] = discretized_value
+        #         stepPRV_P[i][k] -= discretization_error*dt
+        #         stepPRV_P[i][k] = np.floor(np.abs(stepPRV_P[i][k] / gyroLSBIn)) * gyroLSBIn * np.sign(stepPRV_P[i][k])
+        #
+        # #saturation
+        # for k in [0,1,2]:
+        #     if omega_P[i][k] > senRotMaxIn:
+        #         omega_P[i][k] = senRotMaxIn
+        #         stepPRV_P[i][k] = senRotMaxIn*dt
+        #     elif omega_P[i][k] < -senRotMaxIn:
+        #         omega_P[i][k] = -senRotMaxIn
+        #         stepPRV_P[i][k] = -senRotMaxIn*dt
+        #     if rDotDot_SN_P[i][k] > senTransMaxIn:
+        #         rDotDot_SN_P[i][k] = senTransMaxIn
+        #         DVAccum_P[i][k] = senTransMaxIn*dt
+        #     elif rDotDot_SN_P[i][k] < -senTransMaxIn:
+        #         rDotDot_SN_P[i][k] = -senTransMaxIn
+        #         DVAccum_P[i][k] = -senTransMaxIn*dt
 
 
         #Now update spacecraft states for the IMU:
         StateCurrent = imu_sensor.SCPlusStatesSimMsg()
         StateCurrent.sigma_BN = sigma[i][:]
-        StateCurrent.omega_BN_B = omega[i][:]  # 1 rpm around each axis
+        StateCurrent.omega_BN_B = omega[i][:]
         StateCurrent.nonConservativeAccelpntB_B = rDotDot_BN[i][:]
         StateCurrent.omegaDot_BN_B = omegaDot[i][:]
         StateCurrent.TotalAccumDV_BN_B = rDot_BN[i][:] - rDot_BN[0][:]
@@ -332,69 +348,85 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
 
     plt.figure(1,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.clf()
-    plt.plot(DRout[1:,0], DRout[1:,1], linewidth = 6, color = 'black', label = "output1")
-    plt.plot(DRout[:,0], stepPRV_P[1:,0], linestyle = '--', color = 'white', label = "truth1")
-    plt.plot(DRout[1:,0], DRout[1:,2], linewidth = 4, color = 'black', label = "output2")
-    plt.plot(DRout[:,0], stepPRV_P[1:,1], linestyle = '--', color = 'white', label = "truth2")
-    plt.plot(DRout[1:,0], DRout[1:,3], linewidth = 2, color = 'black', label = "output3")
-    plt.plot(DRout[:,0], stepPRV_P[1:,2], linestyle = '--', color = 'white', label = "truth3")
-    plt.xlabel("Time[ns]")
-    plt.ylabel("Time Step PRV Component Magnitude [rad]")
-    plt.title("PRV Comparison")
-    myLegend = plt.legend()
-    myLegend.get_frame().set_facecolor('#909090')
-    unitTestSupport.writeFigureLaTeX("PRVcomparison",
-                                     'Plot Comparing Time Step PRV Truth and Output', plt,
-                                     'height=0.7\\textwidth, keepaspectratio', path)
+    plt.plot(DRout[:,0], stepPRV_P[1:,0], linestyle = '--', color = 'blue', label = "truth1")
+    # plt.plot(DRout[1:,0], DRout[1:,1], linewidth = 6, color = 'black', label = "output1")
     plt.figure(2,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.clf()
-    plt.plot(DRout[1:,0], omegaOut[1:,1], linewidth = 6, color = 'black', label = "output1")
-    plt.plot(DRout[:,0], omega_P[1:,0], linestyle = '--', color = 'white', label = "truth1")
-    plt.plot(DRout[1:,0], omegaOut[1:,2], linewidth = 4, color = 'black', label = "output2")
-    plt.plot(DRout[:,0], omega_P[1:,1], linestyle = '--', color = 'white', label = "truth2")
-    plt.plot(DRout[1:,0], omegaOut[1:,3], linewidth = 2, color = 'black', label = "output3")
-    plt.plot(DRout[:,0], omega_P[1:,2], linestyle = '--', color = 'white', label = "truth3")
-    plt.xlabel("Time[ns]")
-    plt.ylabel("Angular Rate Component Magnitudes [rad/s]")
-    plt.title("Angular Rate Comparison")
-    myLegend = plt.legend()
-    myLegend.get_frame().set_facecolor('#909090')
-    unitTestSupport.writeFigureLaTeX("omegaComparison",
-                                     'Plot Comparing Angular Rate Truth and Output', plt,
-                                     'height=0.7\\textwidth, keepaspectratio', path)
+    plt.plot(DRout[:,0], stepPRV_P[1:,1], linestyle = '--', color = 'red', label = "truth2")
+    # plt.plot(DRout[1:,0], DRout[1:,2], linewidth = 4, color = 'black', label = "output2")
     plt.figure(3,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.clf()
-    plt.plot(DRout[1:,0], rDotDotOut[1:,1], linewidth = 6, color = 'black', label = "output1")
-    plt.plot(DRout[:,0], rDotDot_SN_P[1:,0], linestyle = '--', color = 'white', label = "truth1")
-    plt.plot(DRout[1:,0], rDotDotOut[1:,2], linewidth = 4, color = 'black', label = "output2")
-    plt.plot(DRout[:,0], rDotDot_SN_P[1:,1], linestyle = '--', color = 'white', label = "truth2")
-    plt.plot(DRout[1:,0], rDotDotOut[1:,3], linewidth = 2, color = 'black', label = "output3")
-    plt.plot(DRout[:,0], rDotDot_SN_P[1:,2], linestyle = '--', color = 'white', label = "truth3")
-    plt.xlabel("Time[ns]")
-    plt.ylabel("Linear Acceleration Component Magnitudes [m/s/s]")
-    plt.title("Acceleration Comparison")
-    myLegend = plt.legend()
-    myLegend.get_frame().set_facecolor('#909090')
-    unitTestSupport.writeFigureLaTeX("accelComparison",
-                                     'Plot Comparing Sensor Linear Accelertaion Truth and Output', plt,
-                                     'height=0.7\\textwidth, keepaspectratio', path)
-    plt.figure(4,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-    plt.clf()
-    plt.plot(DRout[1:,0], DVout[1:,1], linewidth = 6, color = 'black', label = "output1")
-    plt.plot(DRout[:,0], DVAccum_P[1:,0], linestyle = '--', color = 'white', label = "truth1")
-    plt.plot(DRout[1:,0], DVout[1:,2], linewidth = 4, color = 'black', label = "output2")
-    plt.plot(DRout[:,0], DVAccum_P[1:,1], linestyle = '--', color = 'white', label = "truth2")
-    plt.plot(DRout[1:,0], DVout[1:,3], linewidth = 2, color = 'black', label = "output3")
-    plt.plot(DRout[:,0], DVAccum_P[1:,2], linestyle = '--', color = 'white', label = "truth3")
-    plt.xlabel("Time[ns]")
-    plt.ylabel("Step DV Magnitudes [m/s]")
-    plt.title("DV Comparison")
-    myLegend = plt.legend()
-    myLegend.get_frame().set_facecolor('#909090')
-    unitTestSupport.writeFigureLaTeX("DVcomparison",
-                                     'Plot Comparing Time Step DV Truth and Output', plt,
-                                     'height=0.7\\textwidth, keepaspectratio', path)
-    show_plots = 1
+    plt.plot(DRout[:,0], stepPRV_P[1:,2], linestyle = '--', color = 'green', label = "truth3")
+    # plt.plot(DRout[1:,0], DRout[1:,3], linewidth = 2, color = 'black', label = "output3")
+    # plt.xlabel("Time[ns]")
+    # plt.ylabel("Time Step PRV Component Magnitude [rad]")
+    # plt.title("PRV Comparison")
+    # myLegend = plt.legend()
+    # myLegend.get_frame().set_facecolor('#909090')
+    # unitTestSupport.writeFigureLaTeX("PRVcomparison",
+    #                                  'Plot Comparing Time Step PRV Truth and Output', plt,
+    #                                  'height=0.7\\textwidth, keepaspectratio', path)
+    # plt.figure(4,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+    # plt.clf()
+    # plt.plot(DRout[1:,0], omegaOut[1:,1], linewidth = 6, color = 'black', label = "output1")
+    # plt.plot(DRout[:,0], omega_P[1:,0], linestyle = '--', color = 'blue', label = "truth1")
+    # plt.figure(5,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+    # plt.clf()
+    # plt.plot(DRout[1:,0], omegaOut[1:,2], linewidth = 4, color = 'black', label = "output2")
+    # plt.plot(DRout[:,0], omega_P[1:,1], linestyle = '--', color = 'red', label = "truth2")
+    # plt.figure(6,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+    # plt.clf()
+    # plt.plot(DRout[1:,0], omegaOut[1:,3], linewidth = 2, color = 'black', label = "output3")
+    # plt.plot(DRout[:,0], omega_P[1:,2], linestyle = '--', color = 'green', label = "truth3")
+    # # plt.xlabel("Time[ns]")
+    # # plt.ylabel("Angular Rate Component Magnitudes [rad/s]")
+    # # plt.title("Angular Rate Comparison")
+    # # myLegend = plt.legend()
+    # # myLegend.get_frame().set_facecolor('#909090')
+    # # unitTestSupport.writeFigureLaTeX("omegaComparison",
+    # #                                  'Plot Comparing Angular Rate Truth and Output', plt,
+    # #                                  'height=0.7\\textwidth, keepaspectratio', path)
+    # plt.figure(7,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+    # plt.clf()
+    # plt.plot(DRout[1:,0], rDotDotOut[1:,1], linewidth = 6, color = 'black', label = "output1")
+    # plt.plot(DRout[:,0], rDotDot_SN_P[1:,0], linestyle = '--', color = 'blue', label = "truth1")
+    # plt.figure(8,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+    # plt.clf()
+    # plt.plot(DRout[1:,0], rDotDotOut[1:,2], linewidth = 4, color = 'black', label = "output2")
+    # plt.plot(DRout[:,0], rDotDot_SN_P[1:,1], linestyle = '--', color = 'red', label = "truth2")
+    # plt.figure(9,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+    # plt.clf()
+    # plt.plot(DRout[1:,0], rDotDotOut[1:,3], linewidth = 2, color = 'black', label = "output3")
+    # plt.plot(DRout[:,0], rDotDot_SN_P[1:,2], linestyle = '--', color = 'green', label = "truth3")
+    # # plt.xlabel("Time[ns]")
+    # # plt.ylabel("Linear Acceleration Component Magnitudes [m/s/s]")
+    # # plt.title("Acceleration Comparison")
+    # # myLegend = plt.legend()
+    # # myLegend.get_frame().set_facecolor('#909090')
+    # # unitTestSupport.writeFigureLaTeX("accelComparison",
+    # #                                  'Plot Comparing Sensor Linear Accelertaion Truth and Output', plt,
+    # #                                  'height=0.7\\textwidth, keepaspectratio', path)
+    # plt.figure(10,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+    # plt.clf()
+    # plt.plot(DRout[1:,0], DVout[1:,1], linewidth = 6, color = 'black', label = "output1")
+    # plt.plot(DRout[:,0], DVAccum_P[1:,0], linestyle = '--', color = 'blue', label = "truth1")
+    # plt.figure(11,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+    # plt.clf()
+    # plt.plot(DRout[1:,0], DVout[1:,2], linewidth = 4, color = 'black', label = "output2")
+    # plt.plot(DRout[:,0], DVAccum_P[1:,1], linestyle = '--', color = 'red', label = "truth2")
+    # plt.figure(12,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+    # plt.clf()
+    # plt.plot(DRout[1:,0], DVout[1:,3], linewidth = 2, color = 'black', label = "output3")
+    # plt.plot(DRout[:,0], DVAccum_P[1:,2], linestyle = '--', color = 'green', label = "truth3")
+    # # plt.xlabel("Time[ns]")
+    # # plt.ylabel("Step DV Magnitudes [m/s]")
+    # # plt.title("DV Comparison")
+    # # myLegend = plt.legend()
+    # # myLegend.get_frame().set_facecolor('#909090')
+    # # unitTestSupport.writeFigureLaTeX("DVcomparison",
+    # #                                  'Plot Comparing Time Step DV Truth and Output', plt,
+    # #                                  'height=0.7\\textwidth, keepaspectratio', path)
+
     if show_plots:
         plt.show()
 
@@ -412,17 +444,17 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
                 testFailCount += 1
             if not unitTestSupport.isArrayEqualRelative(rDotDotOut[i][:], rDotDot_SN_P[i + 1][:], 3, accuracy):
                 testMessages.append("FAILED ACCEL @ i = " + str(i) + ". \\\\& &")
-    # else:
-    #     DRoutNoise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1]-1))
-    #     for i in range(2,len(stepPRV_P)-1):
-    #         for j in [0,1,2]:
-    #             DRoutNoise[i][j] = DRout[i][j+1] - stepPRV_P[i+1][j]
-    #     print np.std(DRoutNoise), senRotNoiseStd*dt
-    #     rDotDotOut_Noise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1] - 1))
-    #     for i in range(2, len(stepPRV_P) - 1):
-    #         for j in [0, 1, 2]:
-    #             rDotDotOut_Noise[i][j] = rDotDotOut[i][j + 1] - rDotDot_SN_P[i+1][j]
-    #     print np.std(rDotDotOut_Noise), senTransNoiseStd
+    else:
+        DRoutNoise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1]-1))
+        for i in range(2,len(stepPRV_P)-1):
+            for j in [0,1,2]:
+                DRoutNoise[i][j] = DRout[i][j+1] - stepPRV_P[i+1][j]
+        print np.std(DRoutNoise), senRotNoiseStd*dt
+        rDotDotOut_Noise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1] - 1))
+        for i in range(2, len(stepPRV_P) - 1):
+            for j in [0, 1, 2]:
+                rDotDotOut_Noise[i][j] = rDotDotOut[i][j + 1] - rDotDot_SN_P[i+1][j]
+        print np.std(rDotDotOut_Noise), senTransNoiseStd
 
     #
     # Outputs to AutoTex

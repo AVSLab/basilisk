@@ -154,10 +154,10 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
     
     dt = (CurrentTime - PreviousTime)*1.0E-9;
     
-    if(accelLSB > 0.0) //If accelLSB has been set. -SJKC
+    if(accelLSB > 0.0) //If accelLSB has been set.
     {
         v3Scale(1.0/accelLSB, sensedValues.AccelPlatform, scaledMeas);
-        for(uint32_t i=0; i<3; i++)
+        for(uint32_t i=0; i<3; i++) //Discretize each part of the acceleration
         {
             scaledMeas[i] = fabs(scaledMeas[i]);
             scaledMeas[i] = floor(scaledMeas[i]);
@@ -167,23 +167,41 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
         v3Subtract(sensedValues.AccelPlatform, scaledMeas, intMeas);
         v3Copy(scaledMeas, sensedValues.AccelPlatform);
         v3Scale(dt, intMeas, intMeas);
-        v3Subtract(sensedValues.DVFramePlatform, intMeas, sensedValues.DVFramePlatform);
-        
+        v3Subtract(sensedValues.DVFramePlatform, intMeas, sensedValues.DVFramePlatform); //Account for acceleration discretization in velocity output
+        v3Scale(1.0/accelLSB, sensedValues.DVFramePlatform, scaledMeas);
+        for(uint32_t i=0; i<3; i++) //Then discretize each part of the velocity measurement b/c the work above doesn't guarantee that DV landed on a discretized value.
+        {
+            scaledMeas[i] = fabs(scaledMeas[i]);
+            scaledMeas[i] = floor(scaledMeas[i]);
+            scaledMeas[i] = scaledMeas[i]*accelLSB;
+            scaledMeas[i] = copysign(scaledMeas[i], sensedValues.DVFramePlatform[i]);
+        }
+        v3Copy(scaledMeas, sensedValues.DVFramePlatform);
     }
-    if(gyroLSB > 0.0)
+    
+    if(gyroLSB > 0.0) //If gyroLSB has been set
     {
         v3Scale(1.0/gyroLSB, sensedValues.AngVelPlatform, scaledMeas);
-        for(uint32_t i=0; i<3; i++)
+        for(uint32_t i=0; i<3; i++) //Discretize each part of the angular rate
         {
             scaledMeas[i] = fabs(scaledMeas[i]);
             scaledMeas[i] = floor(scaledMeas[i]);
             scaledMeas[i] = scaledMeas[i]*gyroLSB;
             scaledMeas[i] = copysign(scaledMeas[i], sensedValues.AngVelPlatform[i]);
         }
-        v3Subtract(sensedValues.AngVelPlatform, scaledMeas, intMeas); //intMeas is the discretization error - SJKC
-        v3Copy(scaledMeas, sensedValues.AngVelPlatform); //set sensedValues to discretized values - SJKC
-        v3Scale(dt, intMeas, intMeas); // Multiply error by timestep - SJKC
-        v3Subtract(sensedValues.DRFramePlatform, intMeas, sensedValues.DRFramePlatform); // why? -john //Because DRFramePlatform is integral of AngVelPlatform, so the discretization error needs to be integrated, too. - SJKC
+        v3Subtract(sensedValues.AngVelPlatform, scaledMeas, intMeas);
+        v3Copy(scaledMeas, sensedValues.AngVelPlatform);
+        v3Scale(dt, intMeas, intMeas);
+        v3Subtract(sensedValues.DRFramePlatform, intMeas, sensedValues.DRFramePlatform); //account for angular rate discretization in PRV output.
+        v3Scale(1.0/gyroLSB, sensedValues.DRFramePlatform, scaledMeas);
+        for(uint32_t i=0; i<3; i++) //Discretize each part of the angular rate b/c the work above doesn't guarantee that DR will land on a discretized value
+        {
+            scaledMeas[i] = fabs(scaledMeas[i]);
+            scaledMeas[i] = floor(scaledMeas[i]);
+            scaledMeas[i] = scaledMeas[i]*gyroLSB;
+            scaledMeas[i] = copysign(scaledMeas[i], sensedValues.DRFramePlatform[i]);
+        }
+        v3Copy(scaledMeas, sensedValues.DRFramePlatform);
     }
     
 }
