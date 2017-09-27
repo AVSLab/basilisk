@@ -58,26 +58,27 @@ import simMessages
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useConstellation, visibilityFactor, fov,          kelly, scaleFactor, bias, noiseStd, albedoValue,    minIn,      maxIn,      errTol,     name,               zLevel, lineWide", [
-                          (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.0,            0.0,        10.,        1e-10,      "plain",            0,      5.),
-                          (False,               0.5,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.0,            0.0,        10.,        1e-10,      "eclipse",          -1,     5.),
-                          (False,               1.0,            3*np.pi/8., 0.0,    1.0,        0.0,    0.0,    0.0,            0.0,        10.,        1e-10,      "fieldOfView",      -2,     5.),
-                          (False,               1.0,            np.pi/2.,   0.15,   1.0,        0.0,    0.0,    0.0,            0.0,        10.,        1e-10,      "kellyFactor",      1,      5.),
-                          (False,               1.0,            np.pi/2.,   0.0,    2.0,        0.0,    0.0,    0.0,            0.0,        10.,        1e-10,      "scaleFactor",      2,      5.),
-                          (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.5,    0.0,    0.0,            0.0,        10.,        1e-10,      "bias",             3,      5.),
-                          (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.25,   0.0,            -10.,       10.,        1e-2,       "deviation",        -5,     1.),   #low tolerance for std deviation comparison
-                          (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.5,            0.0,        10.,        1e-10,      "albedo",           -4,     5.),
-                          (False,               1.0,            np.pi / 2., 0.0,    1.0,        0.0,    0.0,    0.0,            0.25,       0.75,       1e-10,      "saturation",       5,      2.),
-                          (False,               0.5,            3*np.pi/8., 0.15,   2.0,        0.5,    0.0,    0.5,            0.0,        10.,        1e-10,      "cleanCombined",    -3,     5.),
-                          (False,               0.5,            3*np.pi/8., 0.15,   2.0,        0.5,    0.25,   0.5,            -10.,       10.,        1e-2,       "combined",         -6,     1.),
-                          (True,                1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.0,            0.0,        10.,        1e-10,      "constellation",    0,      1.)
+@pytest.mark.parametrize("useConstellation, visibilityFactor, fov,          kelly, scaleFactor, bias, noiseStd, albedoValue,    sunDistInput,   minIn,      maxIn,      errTol,     name,               zLevel, lineWide", [
+                          (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.0,            1.0,            0.0,        10.,        1e-10,      "plain",            0,      5.),
+                          (False,               0.5,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.0,            1.0,            0.0,        10.,        1e-10,      "eclipse",          -1,     5.),
+                          (False,               1.0,            3*np.pi/8., 0.0,    1.0,        0.0,    0.0,    0.0,            1.0,            0.0,        10.,        1e-10,      "fieldOfView",      -2,     5.),
+                          (False,               1.0,            np.pi/2.,   0.15,   1.0,        0.0,    0.0,    0.0,            1.0,            0.0,        10.,        1e-10,      "kellyFactor",      1,      5.),
+                          (False,               1.0,            np.pi/2.,   0.0,    2.0,        0.0,    0.0,    0.0,            1.0,            0.0,        10.,        1e-10,      "scaleFactor",      2,      5.),
+                          (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.5,    0.0,    0.0,            1.0,            0.0,        10.,        1e-10,      "bias",             3,      5.),
+                          (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.125,  0.0,            1.0,            -10.,       10.,        1e-2,       "deviation",        -5,     1.),   #low tolerance for std deviation comparison
+                          (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.5,            1.0,            0.0,        10.,        1e-10,      "albedo",           -4,     5.),
+                          (False,               1.0,            np.pi / 2., 0.0,    1.0,        0.0,    0.0,    0.0,            1.0,            0.25,       0.75,       1e-10,      "saturation",       5,      2.),
+                          (False,               1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.0,            2.0,            0.0,        10.0,       1e-10,      "sunDistance",      4,      3.),
+                          (False,               0.5,            3*np.pi/8., 0.15,   2.0,        0.5,    0.0,    0.5,            2.0,            0.0,        10.,        1e-10,      "cleanCombined",    -3,     5.),
+                          (False,               0.5,            3*np.pi/8., 0.15,   2.0,        0.5,    0.125,  0.5,            2.0,            -10.,       10.,        1e-2,       "combined",         -6,     1.),
+                          (True,                1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.0,    0.0,            1.0,            0.0,        10.,        1e-10,      "constellation",    0,      1.)
 ])
 
 # provide a unique test method name, starting with test_
-def test_coarseSunSensor(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue, minIn, maxIn, errTol, name, zLevel, lineWide):
+def test_coarseSunSensor(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue, sunDistInput, minIn, maxIn, errTol, name, zLevel, lineWide):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue, minIn, maxIn, errTol, name, zLevel, lineWide)
+    [testResults, testMessage] = run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue, sunDistInput, minIn, maxIn, errTol, name, zLevel, lineWide)
     assert testResults < 1, testMessage
 
 
@@ -87,7 +88,7 @@ def test_coarseSunSensor(show_plots, useConstellation, visibilityFactor, fov, ke
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
 
-def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue, minIn, maxIn, errTol, name, zLevel, lineWide):
+def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue, sunDistInput, minIn, maxIn, errTol, name, zLevel, lineWide):
 
     #
     #   Sim Setup
@@ -196,7 +197,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     #   Creates inputs from sun, spacecraft, and eclipse so that those modules don't have to be included
     #Create dummy sun message
     sunPositionMsg = simMessages.SpicePlanetStateSimMsg()
-    sunPositionMsg.PositionVector = [om.AU*1000., 0.0, 0.0]
+    sunPositionMsg.PositionVector = [om.AU*1000.*sunDistInput, 0.0, 0.0]
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                testProcessName,
                                singleCss.InputSunMsg,
@@ -224,7 +225,6 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     r_Sun_Sc[2] = sunPositionMsg.PositionVector[2] - satelliteStateMsg.r_BN_N[2]
     sunDist = np.linalg.norm(r_Sun_Sc)
     sunDistanceFactor = ((om.AU*1000.)**2)/(sunDist**2)
-    print sunDistanceFactor
 
     #create dummy eclipse message
     eclipseMsg = simMessages.EclipseSimMsg()
@@ -292,7 +292,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
         plt.xlabel('Time [min]')
         plt.ylabel('P2 Output Values [-]')
         plt.legend(loc='upper center')
-        unitTestSupport.writeFigureLaTeX('constellationPlots', 'Plot of first and second constellation outputs for comparision.', plt, 'height=0.7\\textwidth, keepaspectratio', path)
+        unitTestSupport.writeFigureLaTeX('constellationPlots', 'Plot of first and second constellation outputs for comparision. Note that the constellation starts pointing directly at the sun and linearly rotates in time until it returns to a direct view.', plt, 'height=0.7\\textwidth, keepaspectratio', path)
     #
     #   Single CSS plotting
     #
@@ -305,7 +305,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
         plt.xlabel('Time [min]')
         plt.ylabel('Output Value [-]')
         if name == "combined":
-            unitTestSupport.writeFigureLaTeX('combinedPlot', 'Plot of all cases of individual coarse sun sensor in comparison to each other', plt, 'height=0.7\\textwidth, keepaspectratio', path)
+            unitTestSupport.writeFigureLaTeX('combinedPlot', 'Plot of all cases of individual coarse sun sensor in comparison to each other. Note that the incidence angle starts at direct and linearly rotates in time until it returns to a direct view.', plt, 'height=0.7\\textwidth, keepaspectratio', path)
 
     if name == "constellation" and show_plots: # Don't show plots until last run.
         plt.show()
@@ -377,12 +377,16 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     unitTestSupport.writeTeXSnippet(biasSnippetName, biasSnippetContent, path)
 
     noiseStdSnippetName = name + "NoiseStd"
-    noiseStdSnippetContent = '{:1.2f}'.format(noiseStd)
+    noiseStdSnippetContent = '{:1.3f}'.format(noiseStd)
     unitTestSupport.writeTeXSnippet(noiseStdSnippetName, noiseStdSnippetContent, path)
 
     albedoValueSnippetName = name + "AlbedoValue"
     albedoValueSnippetContent = '{:1.1f}'.format(albedoValue)
     unitTestSupport.writeTeXSnippet(albedoValueSnippetName, albedoValueSnippetContent, path)
+
+    locationSnippetName = name + "Location"
+    locationSnippetContent = '{:1.1f}'.format(sunDistInput)
+    unitTestSupport.writeTeXSnippet(locationSnippetName, locationSnippetContent, path)
 
     saturationMaxSnippetName = name + "MaxSaturation"
     saturationMaxSnippetContent = '{:2.2f}'.format(maxIn)
