@@ -51,6 +51,8 @@ def spacecraftPlusAllTest(show_plots):
     assert testResults < 1, testMessage
     [testResults, testMessage] = test_SCTransBOE(show_plots)
     assert testResults < 1, testMessage
+    [testResults, testMessage] = test_SCPointBVsPointC(show_plots)
+    assert testResults < 1, testMessage
 
 def test_SCTranslation(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -725,5 +727,169 @@ def test_SCTransBOE(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
+def test_SCPointBVsPointC(show_plots):
+    # The __tracebackhide__ setting influences pytest showing of tracebacks:
+    # the mrp_steering_tracking() function will not be shown unless the
+    # --fulltrace command line option is specified.
+    __tracebackhide__ = True
+
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
+
+    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject.ModelTag = "spacecraftBody"
+
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.TotalSim.terminateSimulation()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.01)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, scObject)
+
+    # Define location of force
+    rFBc_B = numpy.array([0.3, -0.7, 0.4])
+    force_B = numpy.array([0.5, 0.6, -0.2])
+    torquePntC_B = numpy.cross(rFBc_B,force_B)
+
+    # Add external force and torque
+    extFTObject = ExtForceTorque.ExtForceTorque()
+    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.extTorquePntB_B = [[torquePntC_B[0]], [torquePntC_B[1]], [torquePntC_B[2]]]
+    extFTObject.extForce_B = [[force_B[0]], [force_B[1]], [force_B[2]]]
+    scObject.addDynamicEffector(extFTObject)
+    unitTestSim.AddModelToTask(unitTaskName, extFTObject)
+
+    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+
+    # Define initial conditions of the spacecraft
+    scObject.hub.mHub = 100
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
+    scObject.hub.r_CN_NInit = [[0.0],	[0.0],	[0.0]]
+    scObject.hub.v_CN_NInit = [[0.0],	[0.0],	[0.0]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
+
+    unitTestSim.InitializeSimulation()
+
+    stopTime = 10.0
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    unitTestSim.ExecuteSimulation()
+
+    r_CN_NOutput1 = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_CN_N',
+                                                  range(3))
+    sigma_BNOutput1 = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
+                                                  range(3))
+
+    ####################
+
+    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject.ModelTag = "spacecraftBody"
+
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.TotalSim.terminateSimulation()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.01)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, scObject)
+
+    # Define location of force
+    rBcB_B = numpy.array([0.4, 0.5, 0.2])
+    rFB_B = rBcB_B + rFBc_B
+    torquePntB_B = numpy.cross(rFB_B,force_B)
+
+    # Add external force and torque
+    extFTObject = ExtForceTorque.ExtForceTorque()
+    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.extTorquePntB_B = [[torquePntB_B[0]], [torquePntB_B[1]], [torquePntB_B[2]]]
+    extFTObject.extForce_B = [[force_B[0]], [force_B[1]], [force_B[2]]]
+    scObject.addDynamicEffector(extFTObject)
+    unitTestSim.AddModelToTask(unitTaskName, extFTObject)
+
+    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+
+    # Define initial conditions of the spacecraft
+    scObject.hub.mHub = 100
+    scObject.hub.r_BcB_B = [[rBcB_B[0]], [rBcB_B[1]], [rBcB_B[2]]]
+    scObject.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
+    scObject.hub.r_CN_NInit = [[0.0],	[0.0],	[0.0]]
+    scObject.hub.v_CN_NInit = [[0.0],	[0.0],	[0.0]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
+
+    unitTestSim.InitializeSimulation()
+
+    stopTime = 10.0
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    unitTestSim.ExecuteSimulation()
+
+    r_CN_NOutput2 = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_CN_N',
+                                                  range(3))
+    sigma_BNOutput2 = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
+                                                  range(3))
+
+    plt.figure()
+    plt.clf()
+    plt.plot(r_CN_NOutput1[:,0]*1e-9, r_CN_NOutput1[:,1], 'k', label = 'Torque About Point C', linewidth=3.0)
+    plt.plot(r_CN_NOutput1[:,0]*1e-9,r_CN_NOutput1[:,2], 'k', r_CN_NOutput1[:,0]*1e-9, r_CN_NOutput1[:,3], 'k', linewidth=3.0)
+    plt.plot(r_CN_NOutput2[:,0]*1e-9, r_CN_NOutput2[:,1], '--c', label = 'Torque About Point B')
+    plt.plot(r_CN_NOutput2[:,0]*1e-9,r_CN_NOutput2[:,2], '--c', r_CN_NOutput2[:,0]*1e-9, r_CN_NOutput1[:,3], '--c')
+    plt.xlabel('Time (s)')
+    plt.ylabel('Inertial Position (m)')
+    plt.legend(loc ='upper left', handlelength=3.5)
+    PlotName = "PointBVsPointCTranslation"
+    PlotTitle = "PointB Vs PointC Translation"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
+    plt.figure()
+    plt.clf()
+    plt.plot(sigma_BNOutput1[:,0]*1e-9, sigma_BNOutput1[:,1], 'k', label = 'Torque About Point C', linewidth=3.0)
+    plt.plot(sigma_BNOutput1[:,0]*1e-9, sigma_BNOutput1[:,2], 'k', sigma_BNOutput1[:,0]*1e-9, sigma_BNOutput1[:,3], 'k', linewidth=3.0)
+    plt.plot(sigma_BNOutput2[:,0]*1e-9, sigma_BNOutput2[:,1], '--c', label = 'Torque About Point B')
+    plt.plot(sigma_BNOutput2[:,0]*1e-9, sigma_BNOutput2[:,2], '--c', sigma_BNOutput2[:,0]*1e-9, sigma_BNOutput2[:,3], '--c')
+    plt.xlabel('Time (s)')
+    plt.ylabel('MRPs')
+    plt.legend(loc ='upper right', handlelength=3.5)
+    PlotName = "PointBVsPointCAttitude"
+    PlotTitle = "PointB Vs PointC Attitude"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    plt.show(show_plots)
+
+    accuracy = 1e-8
+    if not unitTestSupport.isArrayEqualRelative(r_CN_NOutput1[-1,:],r_CN_NOutput2[-1,1:4],3,accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED: Spacecraft Point B Vs Point C test failed pos unit test")
+
+    if not unitTestSupport.isArrayEqualRelative(sigma_BNOutput1[-1,:],sigma_BNOutput2[-1,1:4],3,accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED: Spacecraft Point B Vs Point C test failed attitude unit test")
+
+    if testFailCount == 0:
+        print "PASSED: " + " Spacecraft Point B Vs Point C Integrated Sim Test"
+
+    assert testFailCount < 1, testMessages
+
+    # return fail count and join into a single string all messages in the list
+    # testMessage
+    return [testFailCount, ''.join(testMessages)]
+
 if __name__ == "__main__":
-    test_SCRotation(True)
+    test_SCPointBVsPointC(True)
