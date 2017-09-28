@@ -241,7 +241,6 @@ void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
 {
 	double dt;
     int omegaSat;
-    double sigma_21[3];
     
 	dt = (CurrentTime - PreviousTime)*1.0E-9;
     omegaSat = 0;
@@ -250,12 +249,10 @@ void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
 	{
 		if(this->sensedValues.AngVelPlatform[i] > this->senRotMax) {
 			this->sensedValues.AngVelPlatform[i] = this->senRotMax;
-            omegaSat = 1;
-			//this->sensedValues.DRFramePlatform[i] = this->senRotMax * dt;
+			this->sensedValues.DRFramePlatform[i] = this->senRotMax * dt;
 		} else if (this->sensedValues.AngVelPlatform[i] < -this->senRotMax) {
 			this->sensedValues.AngVelPlatform[i] = -this->senRotMax;
-            omegaSat = 1;
-			//this->sensedValues.DRFramePlatform[i] = -this->senRotMax * dt;
+			this->sensedValues.DRFramePlatform[i] = -this->senRotMax * dt;
 		}
 		if(this->sensedValues.AccelPlatform[i] > this->senTransMax) {
 			this->sensedValues.AccelPlatform[i] = this->senTransMax;
@@ -265,10 +262,6 @@ void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
 			this->sensedValues.DVFramePlatform[i] = -this->senTransMax * dt;
 		}
 	}
-    if (omegaSat) {
-        v3Scale(0.25*dt, sensedValues.AngVelPlatform, sigma_21);
-        MRP2PRV(sigma_21, sensedValues.DRFramePlatform);
-    }
 
 }
 
@@ -280,17 +273,27 @@ void ImuSensor::computePlatformDR()
 //other IMU functions which add noise, etc.
 {
     
-    double sigma_NB_prev[3];    // MRP from body to inertial frame last time the IMU was called
-    double sigma_NB[3];         // MRP from body to inertial frame now.
+    double sigma_BN_2[3];    // MRP from body to inertial frame last time the IMU was called
+    double sigma_BN_1[3];         // MRP from body to inertial frame now.
     double sigma_21[3];         // MRP from body frame at time 1 (last time the IMU was called) to time 2 (this time the IMU is being called)
     double deltaPRV[3];         // PRV which describes attitude change from time 1 to 2
+    double dcm_BN_1[3][3];
+    double dcm_BN_2[3][3];
+    double dcm_PN_1[3][3];
+    double dcm_PN_2[3][3];
+    double dcm_NP_1[3][3];
+    double dcm_P2P1[3][3];
 
     //Calculated time averaged cumulative rotation
-    v3Scale(-1.0, StatePrevious.sigma_BN, sigma_NB_prev);
-    v3Scale(-1.0, StateCurrent.sigma_BN, sigma_NB);
-    subMRP(sigma_NB, sigma_NB_prev, sigma_21);
-    MRP2PRV(sigma_21, deltaPRV);
-    m33MultV3(this->dcm_PB, deltaPRV, this->trueValues.DRFramePlatform); //returns PRV which describes attitude delta from time 1 to 2 in platform frame coordinates 
+    v3Copy(StatePrevious.sigma_BN, sigma_BN_1);
+    v3Copy(StateCurrent.sigma_BN, sigma_BN_2);
+    MRP2C(sigma_BN_1, dcm_BN_1);
+    MRP2C(sigma_BN_2, dcm_BN_2);
+    m33MultM33(dcm_PB, dcm_BN_1, dcm_PN_1);
+    m33MultM33(dcm_PB, dcm_BN_2, dcm_PN_2);
+    m33Transpose(dcm_PN_1, dcm_NP_1);
+    m33MultM33(dcm_PN_2, dcm_NP_1, dcm_P2P1);
+    C2PRV(dcm_P2P1, trueValues.DRFramePlatform);
     
     //calculate "instantaneous" angular rate
     m33MultV3(this->dcm_PB, StateCurrent.omega_BN_B, this->trueValues.AngVelPlatform); //returns instantaneous angular rate of imu sensor in imu platform frame coordinates
