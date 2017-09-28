@@ -23,7 +23,7 @@ In this test, the spacecraft only has rotational equations being evaluated. The 
 The calculations for both the switching of the MRPs and the BOE for rotational dynamics need to be further discussed. The following sections outline these checks.
 
 \subsubsection{MRP switching test} 
-The MRP switching check needs to be discussed. In Basilisk the MRPs are switched to the shadow set after one step of the integration adhering to the following equation\cite{schaub}:
+The MRP switching check needs to be discussed. In Basilisk the MRPs are switched to the shadow set in \textit{hubEffector} after one step of the integration using the method \textit{modifyStates()} which is available to all \textit{stateEffectors} that need to change their states to a different but equivalent form. The MRP switching adheres to the following equation\cite{schaub}:
 
 \begin{equation}
 \begin{gathered}
