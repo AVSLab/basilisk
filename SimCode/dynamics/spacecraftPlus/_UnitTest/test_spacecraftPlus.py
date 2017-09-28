@@ -846,11 +846,13 @@ def test_SCPointBVsPointC(show_plots):
 
     plt.figure()
     plt.clf()
-    plt.plot(r_CN_NOutput1[:,0]*1e-9, r_CN_NOutput1[:,1], 'g', label = 'Torque About Point C')
-    plt.plot(r_CN_NOutput1[:,0]*1e-9,r_CN_NOutput1[:,2], 'g', r_CN_NOutput1[:,0]*1e-9, r_CN_NOutput1[:,3], 'g')
-    plt.plot(r_CN_NOutput2[:,0]*1e-9, r_CN_NOutput2[:,1], 'b', label = 'Torque About Point B')
-    plt.plot(r_CN_NOutput2[:,0]*1e-9,r_CN_NOutput2[:,2], 'b', r_CN_NOutput2[:,0]*1e-9, r_CN_NOutput1[:,3], 'b')
-    plt.legend(loc ='upper left')
+    plt.plot(r_CN_NOutput1[:,0]*1e-9, r_CN_NOutput1[:,1], 'k', label = 'Torque About Point C', linewidth=3.0)
+    plt.plot(r_CN_NOutput1[:,0]*1e-9,r_CN_NOutput1[:,2], 'k', r_CN_NOutput1[:,0]*1e-9, r_CN_NOutput1[:,3], 'k', linewidth=3.0)
+    plt.plot(r_CN_NOutput2[:,0]*1e-9, r_CN_NOutput2[:,1], '--c', label = 'Torque About Point B')
+    plt.plot(r_CN_NOutput2[:,0]*1e-9,r_CN_NOutput2[:,2], '--c', r_CN_NOutput2[:,0]*1e-9, r_CN_NOutput1[:,3], '--c')
+    plt.xlabel('Time (s)')
+    plt.ylabel('Inertial Position (m)')
+    plt.legend(loc ='upper left', handlelength=3.5)
     PlotName = "PointBVsPointCTranslation"
     PlotTitle = "PointB Vs PointC Translation"
     format = "width=0.8\\textwidth"
@@ -858,11 +860,13 @@ def test_SCPointBVsPointC(show_plots):
 
     plt.figure()
     plt.clf()
-    plt.plot(sigma_BNOutput1[:,0]*1e-9, sigma_BNOutput1[:,1], 'g', label = 'Torque About Point C')
-    plt.plot(sigma_BNOutput1[:,0]*1e-9, sigma_BNOutput1[:,2], 'g', sigma_BNOutput1[:,0]*1e-9, sigma_BNOutput1[:,3], 'g')
-    plt.plot(sigma_BNOutput2[:,0]*1e-9, sigma_BNOutput2[:,1], 'b', label = 'Torque About Point B')
-    plt.plot(sigma_BNOutput2[:,0]*1e-9, sigma_BNOutput2[:,2], 'b', sigma_BNOutput2[:,0]*1e-9, sigma_BNOutput2[:,3], 'b')
-    plt.legend(loc ='upper right')
+    plt.plot(sigma_BNOutput1[:,0]*1e-9, sigma_BNOutput1[:,1], 'k', label = 'Torque About Point C', linewidth=3.0)
+    plt.plot(sigma_BNOutput1[:,0]*1e-9, sigma_BNOutput1[:,2], 'k', sigma_BNOutput1[:,0]*1e-9, sigma_BNOutput1[:,3], 'k', linewidth=3.0)
+    plt.plot(sigma_BNOutput2[:,0]*1e-9, sigma_BNOutput2[:,1], '--c', label = 'Torque About Point B')
+    plt.plot(sigma_BNOutput2[:,0]*1e-9, sigma_BNOutput2[:,2], '--c', sigma_BNOutput2[:,0]*1e-9, sigma_BNOutput2[:,3], '--c')
+    plt.xlabel('Time (s)')
+    plt.ylabel('MRPs')
+    plt.legend(loc ='upper right', handlelength=3.5)
     PlotName = "PointBVsPointCAttitude"
     PlotTitle = "PointB Vs PointC Attitude"
     format = "width=0.8\\textwidth"
@@ -888,4 +892,4 @@ def test_SCPointBVsPointC(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_SCPointBVsPointC(False)
+    test_SCPointBVsPointC(True)
