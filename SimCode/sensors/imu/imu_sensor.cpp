@@ -240,17 +240,22 @@ void ImuSensor::computeSensorErrors(uint64_t CurrentTime)
 void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
 {
 	double dt;
-
+    int omegaSat;
+    double sigma_21[3];
+    
 	dt = (CurrentTime - PreviousTime)*1.0E-9;
+    omegaSat = 0;
 
 	for(uint32_t i=0; i<3; i++)
 	{
 		if(this->sensedValues.AngVelPlatform[i] > this->senRotMax) {
 			this->sensedValues.AngVelPlatform[i] = this->senRotMax;
-			this->sensedValues.DRFramePlatform[i] = this->senRotMax * dt;
+            omegaSat = 1;
+			//this->sensedValues.DRFramePlatform[i] = this->senRotMax * dt;
 		} else if (this->sensedValues.AngVelPlatform[i] < -this->senRotMax) {
 			this->sensedValues.AngVelPlatform[i] = -this->senRotMax;
-			this->sensedValues.DRFramePlatform[i] = -this->senRotMax * dt;
+            omegaSat = 1;
+			//this->sensedValues.DRFramePlatform[i] = -this->senRotMax * dt;
 		}
 		if(this->sensedValues.AccelPlatform[i] > this->senTransMax) {
 			this->sensedValues.AccelPlatform[i] = this->senTransMax;
@@ -260,6 +265,10 @@ void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
 			this->sensedValues.DVFramePlatform[i] = -this->senTransMax * dt;
 		}
 	}
+    if (omegaSat) {
+        v3Scale(0.25*dt, sensedValues.AngVelPlatform, sigma_21);
+        MRP2PRV(sigma_21, sensedValues.DRFramePlatform);
+    }
 
 }
 
@@ -281,7 +290,7 @@ void ImuSensor::computePlatformDR()
     v3Scale(-1.0, StateCurrent.sigma_BN, sigma_NB);
     subMRP(sigma_NB, sigma_NB_prev, sigma_21);
     MRP2PRV(sigma_21, deltaPRV);
-    m33MultV3(this->dcm_PB, deltaPRV, this->trueValues.DRFramePlatform); //returns PRV which describes attitude delta from time 1 to 2 in platform frame coordinates
+    m33MultV3(this->dcm_PB, deltaPRV, this->trueValues.DRFramePlatform); //returns PRV which describes attitude delta from time 1 to 2 in platform frame coordinates 
     
     //calculate "instantaneous" angular rate
     m33MultV3(this->dcm_PB, StateCurrent.omega_BN_B, this->trueValues.AngVelPlatform); //returns instantaneous angular rate of imu sensor in imu platform frame coordinates
