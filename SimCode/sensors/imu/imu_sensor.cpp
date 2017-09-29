@@ -275,8 +275,6 @@ void ImuSensor::computePlatformDR()
     
     double sigma_BN_2[3];    // MRP from body to inertial frame last time the IMU was called
     double sigma_BN_1[3];         // MRP from body to inertial frame now.
-    double sigma_21[3];         // MRP from body frame at time 1 (last time the IMU was called) to time 2 (this time the IMU is being called)
-    double deltaPRV[3];         // PRV which describes attitude change from time 1 to 2
     double dcm_BN_1[3][3];
     double dcm_BN_2[3][3];
     double dcm_PN_1[3][3];
@@ -293,7 +291,8 @@ void ImuSensor::computePlatformDR()
     m33MultM33(dcm_PB, dcm_BN_2, dcm_PN_2);
     m33Transpose(dcm_PN_1, dcm_NP_1);
     m33MultM33(dcm_PN_2, dcm_NP_1, dcm_P2P1);
-    C2PRV(dcm_P2P1, trueValues.DRFramePlatform);
+    C2MRP(dcm_P2P1, trueValues.DRFramePlatform);
+    MRP2PRV(trueValues.DRFramePlatform, trueValues.DRFramePlatform);
     
     //calculate "instantaneous" angular rate
     m33MultV3(this->dcm_PB, StateCurrent.omega_BN_B, this->trueValues.AngVelPlatform); //returns instantaneous angular rate of imu sensor in imu platform frame coordinates
