@@ -54,6 +54,13 @@ def m33v3mult(M,v):
             output[i] += M[i][k]*v[k]
     return np.reshape(np.array(output),(1,3))
 
+def m33m33mult(A,B):
+    output = np.zeros(9).reshape((3,3))
+    for i in range(0,3):
+        for j in range(0,3):
+            output[i][j] = np.dot(A[i,:],B[:,j])
+    return output
+
 def v3vTmult(v1,v2):
     output = [[0,0,0],[0,0,0],[0,0,0]]
     for i in range(0,3):
@@ -101,11 +108,11 @@ def setRandomWalk(self,senRotNoiseStd = 0.0,senTransNoiseStd = 0.0,errorBoundsGy
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("show_plots,   testCase,       stopTime,       gyroLSBIn,      accelLSBIn,     senRotMaxIn,    senTransMaxIn,  senRotNoiseStd,     senTransNoiseStd,   errorBoundsGyroIn,  errorBoundsAccelIn, senRotBiasIn,   senTransBiasIn, accuracy", [
-                        (True,          'clean',        1.,           0.0,            0.0,            0.1,          1000.,          0.0,                0.0,                0.0,                0.0,                0.0,            0.0,            1e-10),
-                        #(True,         'noise',         5.0,            0.0,            0.0,            1000.,          1000.,          .00,             .00,             0.00,               0.00,               0.0,            0.0,            1e-3),
-                        #(False,         'bias',          1.0,            0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                1e6,                1e6,                0.5,            0.5,            1e-2),
-                        # (False,         'saturation',   1.0,            0.0,            0.0,            0.01,          .95,            0.0,                0.0,                1e6,                1e6,                2.0,            2.0,            1e-2),
-                        # (True,         'discretization',1.0,            1.0,            1.0,            100.,          100.,            0.0,                0.0,                1e6,                1e6,                2.0,            2.0,            1e-10),
+                        # (False,          'clean',        1.0,             0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                0.,             0.,            1e-6),
+                        # #(True,         'noise',         5.0,            0.0,            0.0,            1000.,          1000.,          .00,             .00,             0.00,               0.00,               0.0,            0.0,            1e-3),
+                        # (False,         'bias',         1.0,            0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                10.,            10.,            1e-6),
+                        # (False,         'saturation',   1.0,            0.0,            0.0,            0.2,           1.1,            0.0,                0.0,                0.0,                0.0,                0.0,            0.0,            1e-6),
+                        (True,         'discretization',1.0,            0.00001,        0.00000,            100.,          100.,            0.0,                0.0,                1e6,                1e6,                0.0,            0.0,            1e-10),
 
 ])
 
@@ -218,7 +225,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
     rDotDot_SN_P = np.resize(np.array([0., 0., 0.]), (int(stopTime/unitProcRate_s+1), 3))  # sensor sensed acceleration in sensor platform frame coordinates
     rDotDot_SN_P[0][:] = m33v3mult(dcm_PB, rDotDot_SN[0][:])
     DVAccum_P = np.resize(np.array([0., 0., 0.]), (int(stopTime/unitProcRate_s+1), 3))  # sensor accumulated delta V ouput in the platform frame
-    stepPRV_P = np.resize(np.array([0., 0., 0.]), (int(stopTime/unitProcRate_s+1), 3))  # principal rotatation vector from time i-1 to time i in platform frame coordinates
+    stepPRV = np.resize(np.array([0., 0., 0.]), (int(stopTime/unitProcRate_s+1), 3))  # principal rotatation vector from time i-1 to time i in platform frame coordinates
     omega_P = np.resize(np.array([0., 0., 0.]), (int(stopTime/unitProcRate_s+1), 3))  # angular rate omega_BN_P = omega_PN_P
     omega_P[0][:] = m33v3mult(dcm_PB, omega[0][:])
 
@@ -289,48 +296,46 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
         # accumulated delta v (non-conservative) in platform frame
         DVAccum_P[i][:] = m33v3mult(dcm_PB, rDot_SN[i][:]-rDot_SN[i-1][:]) + senTransBiasIn*dt
         # find PRV between before and now
-        sigma_NB_2 = np.dot(-1, sigma[i][:]) #sigma from B to N in B frame coordinates at time 2
-        sigma_NB_1 = np.dot(-1, sigma[i-1][:])
-        sigma_21 = rbk.subMRP(sigma_NB_2, sigma_NB_1)
-        if np.linalg.norm(sigma_21) != 0.: #MRP2PRV divides by zero and gives a warning if the attitude hasn't changed.
-            stepPRV = rbk.MRP2PRV(sigma_21)
-        else:
-            stepPRV = [0., 0., 0.]
-        stepPRV_P[i][:] = m33v3mult(dcm_PB, stepPRV) + senRotBiasIn*dt
+        dcm_BN_2 = rbk.MRP2C(sigma[i][:])
+        dcm_BN_1 = rbk.MRP2C(sigma[i-1][:])
+        dcm_PN_2 = m33m33mult(dcm_PB, dcm_BN_2)
+        dcm_PN_1 = m33m33mult(dcm_PB, dcm_BN_1)
+        dcm_NP_1 = np.transpose(dcm_PN_1)
+        dcm_PN_21 = m33m33mult(dcm_PN_2, dcm_NP_1)
+        stepPRV[i][:] = rbk.MRP2PRV(rbk.C2MRP(dcm_PN_21)) + senRotBiasIn*dt
         # angular rate in platform frame
         omega_P[i][:] = m33v3mult(dcm_PB, omega[i][:]) + senRotBiasIn
         #
         # #discretization
-        # if accelLSBIn > 0.0:
-        #     for k in [0,1,2]:
-        #         discretized_value = np.floor(np.abs(rDotDot_SN_P[i][k] / accelLSBIn)) * accelLSBIn * np.sign(rDotDot_SN_P[i][k])
-        #         discretization_error = rDotDot_SN_P[i][k] - discretized_value
-        #         rDotDot_SN_P[i][k] = discretized_value
-        #         DVAccum_P[i][k] -= discretization_error*dt
-        #         DVAccum_P[i][k] = np.floor(np.abs(DVAccum_P[i][k] / accelLSBIn)) * accelLSBIn * np.sign(DVAccum_P[i][k])
-        # if gyroLSBIn > 0.0:
-        #     for k in [0,1,2]:
-        #         discretized_value = np.floor(np.abs(omega_P[i][k] / gyroLSBIn)) * gyroLSBIn * np.sign(omega_P[i][k])
-        #         discretization_error = omega_P[i][k] - discretized_value
-        #         omega_P[i][k] = discretized_value
-        #         stepPRV_P[i][k] -= discretization_error*dt
-        #         stepPRV_P[i][k] = np.floor(np.abs(stepPRV_P[i][k] / gyroLSBIn)) * gyroLSBIn * np.sign(stepPRV_P[i][k])
-        #
+        if accelLSBIn > 0.0:
+            for k in [0,1,2]:
+                discretized_value = np.floor(np.abs(rDotDot_SN_P[i][k] / accelLSBIn)) * accelLSBIn * np.sign(rDotDot_SN_P[i][k])
+                discretization_error = rDotDot_SN_P[i][k] - discretized_value
+                rDotDot_SN_P[i][k] = discretized_value
+                DVAccum_P[i][k] -= discretization_error*dt
+                DVAccum_P[i][k] = np.floor(np.abs(DVAccum_P[i][k] / accelLSBIn)) * accelLSBIn * np.sign(DVAccum_P[i][k])
+        if gyroLSBIn > 0.0:
+            for k in [0,1,2]:
+                discretized_value = np.floor(np.abs(omega_P[i][k] / gyroLSBIn)) * gyroLSBIn * np.sign(omega_P[i][k])
+                discretization_error = omega_P[i][k] - discretized_value
+                omega_P[i][k] = discretized_value
+                stepPRV[i][k] -= discretization_error*dt
+                stepPRV[i][k] = np.floor(np.abs(stepPRV[i][k] / gyroLSBIn)) * gyroLSBIn * np.sign(stepPRV[i][k])
+
         #saturation
         for k in [0,1,2]:
             if omega_P[i][k] > senRotMaxIn:
                 omega_P[i][k] = senRotMaxIn
-                stepPRV_P[i][k] = senRotMaxIn*dt
+                stepPRV[i][k] = senRotMaxIn*dt
             elif omega_P[i][k] < -senRotMaxIn:
                 omega_P[i][k] = -senRotMaxIn
-                stepPRV_P[i][k] = -senRotMaxIn*dt
+                stepPRV[i][k] = -senRotMaxIn*dt
             if rDotDot_SN_P[i][k] > senTransMaxIn:
                 rDotDot_SN_P[i][k] = senTransMaxIn
                 DVAccum_P[i][k] = senTransMaxIn*dt
             elif rDotDot_SN_P[i][k] < -senTransMaxIn:
                 rDotDot_SN_P[i][k] = -senTransMaxIn
                 DVAccum_P[i][k] = -senTransMaxIn*dt
-
 
         #Now update spacecraft states for the IMU:
         StateCurrent = imu_sensor.SCPlusStatesSimMsg()
@@ -349,11 +354,11 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
     plt.figure(1,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.clf()
     plt.plot(DRout[1:,0], DRout[1:,1], linewidth = 6, color = 'black', label = "output1")
-    plt.plot(DRout[:,0], stepPRV_P[1:,0], linestyle = '--', color = 'white', label = "truth1")
+    plt.plot(DRout[:,0], stepPRV[1:,0], linestyle = '--', color = 'white', label = "truth1")
     plt.plot(DRout[1:,0], DRout[1:,2], linewidth = 4, color = 'black', label = "output2")
-    plt.plot(DRout[:,0], stepPRV_P[1:,1], linestyle = '--', color = 'white', label = "truth2")
+    plt.plot(DRout[:,0], stepPRV[1:,1], linestyle = '--', color = 'white', label = "truth2")
     plt.plot(DRout[1:,0], DRout[1:,3], linewidth = 2, color = 'black', label = "output3")
-    plt.plot(DRout[:,0], stepPRV_P[1:,2], linestyle = '--', color = 'white', label = "truth3")
+    plt.plot(DRout[:,0], stepPRV[1:,2], linestyle = '--', color = 'white', label = "truth3")
     plt.xlabel("Time[ns]")
     plt.ylabel("Time Step PRV Component Magnitude [rad]")
     plt.title("PRV Comparison")
@@ -401,7 +406,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
     plt.plot(DRout[1:,0], DVout[1:,2], linewidth = 4, color = 'black', label = "output2")
     plt.plot(DRout[:,0], DVAccum_P[1:,1], linestyle = '--', color = 'white', label = "truth2")
     plt.plot(DRout[1:,0], DVout[1:,3], linewidth = 2, color = 'black', label = "output3")
-    plt.plot(DRout[:,0], DVAccum_P[1:,2], linestyle = '--', color = 'white', label = "truth3")
+    plt.plot(DRout[:,0], DVAccum_P[1:,2], linestyle = '--', color = 'blue', label = "truth3")
     plt.xlabel("Time[ns]")
     plt.ylabel("Step DV Magnitudes [m/s]")
     plt.title("DV Comparison")
@@ -416,8 +421,8 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
 
     # test outputs
     if testCase != 'noise':
-        for i in range(2,len(stepPRV_P)-1):
-            if not unitTestSupport.isArrayEqualRelative(DRout[i][:], stepPRV_P[i][:], 3, accuracy):
+        for i in range(2,len(stepPRV)-1):
+            if not unitTestSupport.isArrayEqualRelative(DRout[i][:], stepPRV[i][:], 3, accuracy):
                 testMessages.append("FAILED DR @ i = "+ str(i) + ". \\\\& &")
                 testFailCount += 1
             if not unitTestSupport.isArrayEqualRelative(omegaOut[i][:], omega_P[i][:], 3, accuracy):
@@ -428,13 +433,14 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
                 testFailCount += 1
             if not unitTestSupport.isArrayEqualRelative(rDotDotOut[i][:], rDotDot_SN_P[i][:], 3, accuracy):
                 testMessages.append("FAILED ACCEL @ i = " + str(i) + ". \\\\& &")
+                testFailCount += 1
     else:
         DRoutNoise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1]-1))
-        for i in range(2,len(stepPRV_P)-1):
+        for i in range(2,len(stepPRV)-1):
             for j in [0,1,2]:
-                DRoutNoise[i][j] = DRout[i][j+1] - stepPRV_P[i+1][j]
+                DRoutNoise[i][j] = DRout[i][j+1] - stepPRV[i+1][j]
         rDotDotOut_Noise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1] - 1))
-        for i in range(2, len(stepPRV_P) - 1):
+        for i in range(2, len(step) - 1):
             for j in [0, 1, 2]:
                 rDotDotOut_Noise[i][j] = rDotDotOut[i][j + 1] - rDotDot_SN_P[i+1][j]
 
