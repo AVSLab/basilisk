@@ -178,8 +178,8 @@ class PythonProcessClass(ProcessBaseClass):
     def scheduleTask(self, newTask):
         for i in range(len(self.executionOrder)):
             tmpTask = self.executionOrder[i]
-            if(newTask.nextTaskStart < tmpTask.nextTaskStart or \
-                newTask.nextTaskStart == tmpTask.nextTaskStart and \
+            if(newTask.nextTaskTime < tmpTask.nextTaskTime or
+                newTask.nextTaskTime == tmpTask.nextTaskTime and \
                 newTask.priority > tmpTask.priority):
                 self.executionOrder.insert(i, newTask)
                 return
