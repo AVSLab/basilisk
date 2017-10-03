@@ -319,7 +319,8 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
     double rDotDot_SN_P[3];     //sensor non conservative acceleration relative to inertial frame in sensor platform frame
     double drDot_BN_B[3];       //change in velocity of body frame relative to inertial in body frame coordinates between IMU calls. This does not include delta-v from conservative accelerations.
     double dvSensor_B[3];       //sensor delta v between IMU calls in body frame coordinates
-    
+    double dt;
+    dt = (CurrentTime - PreviousTime)*1E-9;
     //Calculate "instantaneous" linear acceleration
     v3Copy(StateCurrent.nonConservativeAccelpntB_B, rDotDot_BN_B);
     v3Copy(sensorPos_B.data(), r_SB_B);
@@ -338,6 +339,8 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
     v3Subtract(omega_x_r, omega_x_r_prev, rotationalDelta_B);
     v3Add(drDot_BN_B, rotationalDelta_B, dvSensor_B);
     m33MultV3(this->dcm_PB, dvSensor_B, this->trueValues.DVFramePlatform); //returns the accumulated deltaV experienced by the sensor in imu platform frame coordinates. This does not include delta-v from conservative accelerations.
+    
+    v3Scale(dt, trueValues.AccelPlatform, trueValues.DVFramePlatform);
     
 }
 
