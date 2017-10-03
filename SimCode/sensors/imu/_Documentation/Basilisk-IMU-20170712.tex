@@ -41,6 +41,15 @@
 \usepackage{import} %allows for importing from multiple sub-directories
 \usepackage{bm} %allows bolded math symbols easily
 \bibliographystyle{plain}
+\usepackage{adjustbox}
+%The below new column type and new command allow for nicely rotated table column headers
+\newcolumntype{R}[2]{%
+	>{\adjustbox{angle=#1,lap=\width-(#2)}\bgroup}%
+	l%
+	<{\egroup}%
+}
+\newcommand*\rot{\multicolumn{1}{R{45}{1em}}}% no optional argument here, please!
+
 
 
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}

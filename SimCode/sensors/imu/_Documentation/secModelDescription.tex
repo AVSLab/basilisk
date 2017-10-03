@@ -15,19 +15,23 @@ Where $\cal{P}$ is the sensor platform frame, $\cal{B}$ is the vehicle body fram
 
 \subsubsection{Angular Displacement}
 The IMU also outputs the angular displacement accumulated between IMU calls. In order to avoid complexities having to do with the relative timestep between the dynamics process and the IMU calls, this is not calculated in the same way as an IMU works physically. In this way, also, the dynamics do not have to be run at a fast enough rate for a physical IMU angular accumulation to be simulated. 
-The modified Rodriguez parameter (MRP) is recorded for the last time (1) the IMU was called. It is then differenced with the current (2) MRP. The current MRP is always provided by the spacecraftPlus message from the most recent dynamics integration.
+The modified Rodriguez parameter (MRP) is recorded for the last time (1) the IMU was called. Once the new MRP is received, both are converted to DCMs and the step-PRV is computed as follows The current MRP is always provided by the spacecraftPlus message from the most recent dynamics integration.
 \begin{equation}
-	\bm{\sigma}_{2/1} = \bm{\sigma}_{B/N,2}  \circleddash  \bm{\sigma}_{B/N,1}
-	\label{eq:MRPsub}
-\end{equation}
-This is interpreted as the MRP from the body frame at time 1 to the body frame at time 2.$\circleddash$ is the MRP subtraction function.  Eq. \ref{eq:MRPsub} says that the body frame rotation from time 1 to time 2 is equivalent to rotating from $\cal{N}$ to $\cal{B}$ at time $2$ and then rotating the reverse of the rotation from $\cal{N}$ to $\cal{B}$ at time $1$. $\bm{\sigma}_{2/1}$ is then converted to a principle rotation vector (PRV) in the current body frame and that vector is rotated into the sensor platform frame:
-\begin{equation}
-		\leftexp{B} {q_{i}} = \frac{\sigma_{2/1,i}}{|\bm{\sigma}_{2/1}| 4 \mathrm{tan}^{-1}(|\bm{\sigma}_{2/1}|)}
+	[PN]_2 = [PB][BN]_2
 \end{equation}
 \begin{equation}
-	\leftexp{P}{ \bm{q}} = [PB] \leftexp{B}{ \bm{q}}
+	[PN]_1 = [PB][BN]_1
 \end{equation}
-Above, $q$ is the PRV and $i$ indicates the $i^{\mathrm{th}}$ component of $\bm{q}$ and $\bm{\sigma}$. $\bm{q}$ is then made of the elements $q_1$, $q_2$, and $q_3$. $q$ is the module output for angular displacement.
+\begin{equation}
+	[NP]_1 = [PN]_1^T
+\end{equation}
+\begin{equation}
+	[P_2P_1] = [PN]_2[NP]_1
+\end{equation}
+\begin{equation}
+\bm{q} = \verb|MRP2PRV(C2MRP(|[P_2P_1]\verb|))|
+\end{equation}
+where $\bm{q}$ above is the principal rotation vector for the sensor from timestep 1 to timestep 2. The functions used in conversion from the DCM to PRV are part of the basilisk Rigid Body Kinematics library.
 
 \subsubsection{Linear Acceleration}
 The sensor is assumed to have an arbitrary offset from the center of mass of the spacecraft. However, because of the completely coupled nature of the Basilisks dynamics framework, the center of mass does not need to be present explicitly in equations of motion for the sensor. It is implicit in the motion of the body frame. With that in mind, the equation for the acceleration of the sensor is derived below:
@@ -46,7 +50,7 @@ But $\bm{r}'_{S/B}$ is $0$ because the sensor is assumed to be fixed relative to
 \begin{equation}
 \ddot{\bm{r}}_{S/N} = \ddot{\bm{r}}_{B/N} + \dot{\bm{\omega}}_{B/N} \times \bm{r}_{S/B} +  \bm{\omega}_{B/N} \times (\bm{\omega}_{B/N} \times \bm{r}_{S/B})
 \end{equation}
-The equation above is indeed the equation for the inertial acceleration of the sensor, but the sensor will only measure the non-conservative accelerations. To account for this, the equation is modified to be:
+The equation above is the equation for the inertial acceleration of the sensor, but the sensor will only measure the non-conservative accelerations. To account for this, the equation is modified to be:
 \begin{equation}
 \ddot{\bm{r}}_{S/N, \textrm{sensed}} = (\ddot{\bm{r}}_{B/N} - \bm{a}_\textrm{g}) + \dot{\bm{\omega}}_{B/N} \times \bm{r}_{S/B} +  \bm{\omega}_{B/N} \times (\bm{\omega}_{B/N} \times \bm{r}_{S/B})
 \end{equation}
@@ -97,17 +101,38 @@ Then, these error values are "integrated" over the IMU timestep and applied to t
 \begin{equation}
 \mathbf{q}_{\mathrm{measured}} = \mathbf{q}_{\mathrm{truth}} + (\mathbf{e}_{\mathrm{\omega,noise}} + \mathbf{e}_{\mathrm{\omega, bias}})\Delta t
 \end{equation}
-Note that this could lead to some errors, which are discussed in the assumptions section of this report.
+This convenient approximation that $\bm{q$} = $\bm{\omega}\Delta t$ for a given timestep proves useful through the application of IMU errors.
 
 
 \subsubsection{Data Discretization}
-Because sensors record data digitally, that data can only be recorded in discrete chunks, rather than the (relatively) continuous values that the computer calculates at each time steps. In order to simulation real IMU behavior in this way, a least significant bit (LSB) value is accepted for both the gyro and the accelerometer. This LSB is applied as follows to any 3-dimensional measurement $\mathbf{m}$:
+Because sensors record data digitally, that data can only be recorded in discrete chunks, rather than the (relatively) continuous values that the computer calculates at each time steps. In order to simulate real IMU behavior in this way, a least significant bit (LSB) value is accepted for both the gyro and the accelerometer. This LSB is applied in the following way:
 
 \begin{equation}
-\mathbf{m}_{\mathrm{discretized}} = (\mathrm{LSB})\Biggl\lfloor\Biggl|\frac{\mathbf{m}_{\mathrm{measured}}}{(\mathrm{LSB})}\Biggr|\Biggr\rfloor
+\mathbf{a}_{\mathrm{discretized}} = \verb|sign|(\mathbf{a}_\mathrm{measured})(\mathrm{LSB})\Biggl\lfloor\Biggl|\frac{\mathbf{a}_{\mathrm{measured}}}{(\mathrm{LSB})}\Biggr|\Biggr\rfloor
+\end{equation}
+\begin{equation}
+\mathbf{e}_{\mathrm{d},\mathrm{a}} = \mathbf{a}_{\mathrm{measured}} - \mathbf{a}_{\mathrm{discretized}}
+\end{equation}
+\begin{equation}
+	\mathbf{DV}_{e_{\mathrm{d}}} = \mathbf{DV}_{\mathrm{measured}} - \mathbf{e}_{\mathrm{d},\mathrm{a}}\Delta t
+\end{equation}
+\begin{equation}
+\mathbf{DV}_{\mathrm{discretized}} = \verb|sign|(\mathbf{DV}_{e_{\mathrm{d}}}) (\mathrm{LSB}) \Biggl\lfloor\Biggl|\frac{\mathbf{DV}_{e_{\mathrm{d}}}}{(\mathrm{LSB})}\Biggr|\Biggr\rfloor
 \end{equation}
 
-Where $\lfloor$  $\rfloor$ indicate the \textbf{floor()} function and LSB can be either the accelerometer or gyro least significant bit.
+\begin{equation}
+\bm{\omega}_{\mathrm{discretized}} = \verb|sign|(\bm{\bm{\omega}_\mathrm{measured}})(\mathrm{LSB})\Biggl\lfloor\Biggl|\frac{\bm{\omega}_{\mathrm{measured}}}{(\mathrm{LSB})}\Biggr|\Biggr\rfloor
+\end{equation}
+\begin{equation}
+\mathbf{e}_{\mathrm{d},\omega} =\bm{\omega}_{\mathrm{measured}} - \bm{\omega}_{\mathrm{discretized}}
+\end{equation}
+\begin{equation}
+\mathbf{q}_{e_{\mathrm{d}}} = \mathbf{q}_{\mathrm{measured}} - \mathbf{e}_{\mathrm{d},\mathrm{\omega}}\Delta t
+\end{equation}
+\begin{equation}
+\mathbf{q}_{\mathrm{discretized}} = \verb|sign|(\mathbf{q}_{e_{\mathrm{d}}}) (\mathrm{LSB}) \Biggl\lfloor\Biggl|\frac{\mathbf{q}_{e_{\mathrm{d}}}}{(\mathrm{LSB})}\Biggr|\Biggr\rfloor
+\end{equation}
+Where $\lfloor$  $\rfloor$ indicate the \textbf{floor()} function and LSB can be either the accelerometer or gyro least significant bit as appropriate.
 
 \subsubsection{Saturation}
 Real sensors can also become saturated. Saturation is the last effect implemented on the IMU:
@@ -126,7 +151,4 @@ Because the $\Delta v$ and change in attitude are computed as integrals of the r
 \begin{equation}
 \bm{q}_{\mathrm{sat}} = \bm{\omega}_{\mathrm{sat}}  \Delta t
 \end{equation}
-The above is calculated any time that $\bm{a}$ or $\bm{\omega}$ are found to be outside of their max-min bounds. Note that the equation above is used for $\bm{q}_{\mathrm{sat}}$ even though in general
-\begin{equation}
-	\bm{q} \neq \int \bm{\omega} dt
-\end{equation}
+The above is calculated any time that $\bm{a}$ or $\bm{\omega}$ are found to be outside of their max-min bounds. Note again the use of the approximation of the PRV as the integral of the angular rates.
