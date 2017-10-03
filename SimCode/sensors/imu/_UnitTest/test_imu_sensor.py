@@ -135,7 +135,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
     unitSim.TotalSim.terminateSimulation()
 
     # create the task and specify the integration update time
-    unitProcRate_s = 0.001 #does not pass with .0001 due to floating point issues in macros.sec2nano.
+    unitProcRate_s = 0.001
     unitProcRate = macros.sec2nano(unitProcRate_s)
     unitProc = unitSim.CreateNewProcess(unitProcName)
     unitTask = unitSim.CreateNewTask(unitTaskName, unitProcRate)
@@ -159,9 +159,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
     # sensor
     rDotDot_SN = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #sensor sensed acceleration
     rDot_SN = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #sensor accumulated DV
-    #rDot_SN_P = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #sensor accumulated DV in sensor platform frame coordinates
     r_SN = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #sensor position in body frame coordinates
-    test_vector = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3))
 
     # Set initial conditions for fake kinematics vectors
     # Acceleration vectors
@@ -276,7 +274,6 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
             sigma[i][:] = sigma[i-1][:] + ((sigmaDot[i-1][:]+sigmaDot[i][:])/2)*dt
             sigmaDot[i][:] = findSigmaDot(sigma[i][:],omega[i][:])
         sigma[i][:] = sigma[i-1][:] + ((sigmaDot[i-1][:]+sigmaDot[i][:])/2)*dt
-        test_vector[i][1] = np.linalg.norm(sigma[i][:])
 
         # center of mass calculations
         cPrime = cDot - np.cross(omega[i][:], c)
@@ -285,10 +282,8 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
 
         # solving for sensor inertial states
         rDotDot_SN[i][:] = rDotDot_CN[i][:] - cPrimePrime - np.dot(2,np.cross(omega[i][:],cPrime)) + np.cross(omegaDot[i][:],r_SC) +np.cross(omega[i][:],np.cross(omega[i][:],r_SC))
-        rDot_SN[i][:] = rDot_CN[i][:] - cPrime + np.cross(omega[i][:],  r_SC)
-        # rDot_SN_check = rDot_SN[i-1][:] + ((rDotDot_SN[i-1][:]+rDotDot_SN[i][:])/2)*dt #This is here to check the output of the "truth" code written here in python if desired
+        rDot_SN[i][:] = rDot_SN[i-1][:] + (rDotDot_SN[i][:]+rDotDot_SN[i-1][:])/2*dt
         r_SN[i][:] = r_SN[i-1][:] + ((rDot_SN[i-1][:] + rDot_SN[i][:])/2)*dt #for a simple check of the "truth" code
-        # r_SN_simple = r_SC + r_CN[i][:] #for a simple check of the "truth" code if desired.
 
         # Now create outputs which are (supposed to be) equivalent to the IMU output
         # linear acceleration (non-conservative) in platform frame
