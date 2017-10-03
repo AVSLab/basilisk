@@ -174,7 +174,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
         rDotDot_CN[i][0] = rDotDot_BN[i][0] + rDotDot_CB[i][0]
         rDotDot_CN[i][1] = rDotDot_BN[i][1] + rDotDot_CB[i][1]
         rDotDot_CN[i][2] = rDotDot_BN[i][2] + rDotDot_CB[i][2]
-        omegaDot[i][0] = 0.1
+        omegaDot[i][0] = 1.0
         omegaDot[i][1] = 0.5
         omegaDot[i][2] = 0.25
     # Center of Mass
@@ -184,8 +184,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
     rDot_BN[0][:] = [0.0, 0.0, 0.0]
     r_BN[0][:] = [9999.75, 10000., 10000.] # leaves r_CN[0][i] with some offset
     # Body Rotation
-    # omegaDot[0][:] = [0., 0., 0.] #unlabeled omega is omegaDot_BN_B
-    omega[0][:] = [0.0, 0.0, 0.0] #omega_BN_B
+    omega[0][:] = [0.0, -0.5, 0.0] #omega_BN_B
     sigma[0][:] = [0., 0., 0.25] # note that unlabeled sigma is sigma_BN
     sigmaDot[0][:] = findSigmaDot(sigma[0][:], omega[0][:]) # sigmaDot_BN
     # Sensor linear states (note that these initial conditions must be solved as functions of another initial conditions to maintain consistency
