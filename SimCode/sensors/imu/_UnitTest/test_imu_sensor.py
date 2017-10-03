@@ -340,77 +340,80 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
         StateCurrent.TotalAccumDV_BN_B = rDot_BN[i][:] - rDot_BN[0][:]
         unitSim.TotalSim.WriteMessageData("inertial_state_output", 8 * 3 * 11, unitSim.TotalSim.CurrentNanos, StateCurrent)
 
+    # Pull output time histories from messaging system
     DRout       = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "DRFramePlatform", range(3))
     omegaOut    = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "AngVelPlatform", range(3))
     rDotDotOut  = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "AccelPlatform", range(3))
     DVout       = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "DVFramePlatform", range(3))
 
+
+    # truth/output comparison plots and AutoTex output
     plt.figure(1,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.clf()
-    plt.plot(DRout[1:,0], DRout[1:,1], linewidth = 6, color = 'black', label = "output1")
-    plt.plot(DRout[:,0], stepPRV[1:,0], linestyle = '--', color = 'white', label = "truth1")
-    plt.plot(DRout[1:,0], DRout[1:,2], linewidth = 4, color = 'black', label = "output2")
-    plt.plot(DRout[:,0], stepPRV[1:,1], linestyle = '--', color = 'white', label = "truth2")
-    plt.plot(DRout[1:,0], DRout[1:,3], linewidth = 2, color = 'black', label = "output3")
-    plt.plot(DRout[:,0], stepPRV[1:,2], linestyle = '--', color = 'white', label = "truth3")
-    plt.xlabel("Time[ns]")
+    plt.plot(DRout[1:,0]/1e9, DRout[1:,1], linewidth = 6, color = 'black', label = "output1")
+    plt.plot(DRout[:,0]/1e9, stepPRV[1:,0], linestyle = '--', color = 'white', label = "truth1")
+    plt.plot(DRout[1:,0]/1e9, DRout[1:,2], linewidth = 4, color = 'black', label = "output2")
+    plt.plot(DRout[:,0]/1e9, stepPRV[1:,1], linestyle = '--', color = 'white', label = "truth2")
+    plt.plot(DRout[1:,0]/1e9, DRout[1:,3], linewidth = 2, color = 'black', label = "output3")
+    plt.plot(DRout[:,0]/1e9, stepPRV[1:,2], linestyle = '--', color = 'white', label = "truth3")
+    plt.xlabel("Time[s]")
     plt.ylabel("Time Step PRV Component Magnitude [rad]")
     plt.title("PRV Comparison")
     myLegend = plt.legend()
     myLegend.get_frame().set_facecolor('#909090')
-    unitTestSupport.writeFigureLaTeX("PRVcomparison",
-                                     'Plot Comparing Time Step PRV Truth and Output. Note that 1, 2, and 3 indicate the components of the principal rotation vector.', plt,
+    unitTestSupport.writeFigureLaTeX(testCase + "PRVcomparison",
+                                     'Plot Comparing Time Step PRV Truth and Output for test: ' + testCase +'. Note that 1, 2, and 3 indicate the components of the principal rotation vector.', plt,
                                      'height=0.7\\textwidth, keepaspectratio', path)
     plt.figure(4,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.clf()
-    plt.plot(DRout[1:,0], omegaOut[1:,1], linewidth = 6, color = 'black', label = "output1")
-    plt.plot(DRout[:,0], omega_P[1:,0], linestyle = '--', color = 'white', label = "truth1")
-    plt.plot(DRout[1:,0], omegaOut[1:,2], linewidth = 4, color = 'black', label = "output2")
-    plt.plot(DRout[:,0], omega_P[1:,1], linestyle = '--', color = 'white', label = "truth2")
-    plt.plot(DRout[1:,0], omegaOut[1:,3], linewidth = 2, color = 'black', label = "output3")
-    plt.plot(DRout[:,0], omega_P[1:,2], linestyle = '--', color = 'white', label = "truth3")
-    plt.xlabel("Time[ns]")
+    plt.plot(DRout[1:,0]/1e9, omegaOut[1:,1], linewidth = 6, color = 'black', label = "output1")
+    plt.plot(DRout[:,0]/1e9, omega_P[1:,0], linestyle = '--', color = 'white', label = "truth1")
+    plt.plot(DRout[1:,0]/1e9, omegaOut[1:,2], linewidth = 4, color = 'black', label = "output2")
+    plt.plot(DRout[:,0]/1e9, omega_P[1:,1], linestyle = '--', color = 'white', label = "truth2")
+    plt.plot(DRout[1:,0]/1e9, omegaOut[1:,3], linewidth = 2, color = 'black', label = "output3")
+    plt.plot(DRout[:,0]/1e9, omega_P[1:,2], linestyle = '--', color = 'white', label = "truth3")
+    plt.xlabel("Time[s]")
     plt.ylabel("Angular Rate Component Magnitudes [rad/s]")
     plt.title("Angular Rate Comparison")
     myLegend = plt.legend()
     myLegend.get_frame().set_facecolor('#909090')
-    unitTestSupport.writeFigureLaTeX("omegaComparison",
-                                     'Plot Comparing Angular Rate Truth and Output. Note that 1, 2, and 3 indicate the components of the angular rate.', plt,
+    unitTestSupport.writeFigureLaTeX(testCase + "omegaComparison",
+                                     'Plot Comparing Angular Rate Truth and Output for test: ' + testCase +'. Note that 1, 2, and 3 indicate the components of the angular rate.', plt,
                                      'height=0.7\\textwidth, keepaspectratio', path)
     plt.figure(7,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.clf()
-    plt.plot(DRout[1:,0], rDotDotOut[1:,1], linewidth = 6, color = 'black', label = "output1")
-    plt.plot(DRout[:,0], rDotDot_SN_P[1:,0], linestyle = '--', color = 'white', label = "truth1")
-    plt.plot(DRout[1:,0], rDotDotOut[1:,2], linewidth = 4, color = 'black', label = "output2")
-    plt.plot(DRout[:,0], rDotDot_SN_P[1:,1], linestyle = '--', color = 'white', label = "truth2")
-    plt.plot(DRout[1:,0], rDotDotOut[1:,3], linewidth = 2, color = 'black', label = "output3")
-    plt.plot(DRout[:,0], rDotDot_SN_P[1:,2], linestyle = '--', color = 'white', label = "truth3")
-    plt.xlabel("Time[ns]")
+    plt.plot(DRout[1:,0]/1e9, rDotDotOut[1:,1], linewidth = 6, color = 'black', label = "output1")
+    plt.plot(DRout[:,0]/1e9, rDotDot_SN_P[1:,0], linestyle = '--', color = 'white', label = "truth1")
+    plt.plot(DRout[1:,0]/1e9, rDotDotOut[1:,2], linewidth = 4, color = 'black', label = "output2")
+    plt.plot(DRout[:,0]/1e9, rDotDot_SN_P[1:,1], linestyle = '--', color = 'white', label = "truth2")
+    plt.plot(DRout[1:,0]/1e9, rDotDotOut[1:,3], linewidth = 2, color = 'black', label = "output3")
+    plt.plot(DRout[:,0]/1e9, rDotDot_SN_P[1:,2], linestyle = '--', color = 'white', label = "truth3")
+    plt.xlabel("Time[s]")
     plt.ylabel("Linear Acceleration Component Magnitudes [m/s/s]")
     plt.title("Acceleration Comparison")
     myLegend = plt.legend()
     myLegend.get_frame().set_facecolor('#909090')
-    unitTestSupport.writeFigureLaTeX("accelComparison",
-                                     'Plot Comparing Sensor Linear Accelertaion Truth and Output. Note that 1, 2, and 3 indicate the components of the acceleration.', plt,
+    unitTestSupport.writeFigureLaTeX(testCase + "accelComparison",
+                                     'Plot Comparing Sensor Linear Accelertaion Truth and Output for test: ' + testCase +'. Note that 1, 2, and 3 indicate the components of the acceleration.', plt,
                                      'height=0.7\\textwidth, keepaspectratio', path)
     plt.figure(10,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.clf()
-    plt.plot(DRout[1:,0], DVout[1:,1], linewidth = 6, color = 'black', label = "output1")
-    plt.plot(DRout[:,0], DVAccum_P[1:,0], linestyle = '--', color = 'white', label = "truth1")
-    plt.plot(DRout[1:,0], DVout[1:,2], linewidth = 4, color = 'black', label = "output2")
-    plt.plot(DRout[:,0], DVAccum_P[1:,1], linestyle = '--', color = 'white', label = "truth2")
-    plt.plot(DRout[1:,0], DVout[1:,3], linewidth = 2, color = 'black', label = "output3")
-    plt.plot(DRout[:,0], DVAccum_P[1:,2], linestyle = '--', color = 'blue', label = "truth3")
-    plt.xlabel("Time[ns]")
+    plt.plot(DRout[1:,0]/1e9, DVout[1:,1], linewidth = 6, color = 'black', label = "output1")
+    plt.plot(DRout[:,0]/1e9, DVAccum_P[1:,0], linestyle = '--', color = 'white', label = "truth1")
+    plt.plot(DRout[1:,0]/1e9, DVout[1:,2], linewidth = 4, color = 'black', label = "output2")
+    plt.plot(DRout[:,0]/1e9, DVAccum_P[1:,1], linestyle = '--', color = 'white', label = "truth2")
+    plt.plot(DRout[1:,0]/1e9, DVout[1:,3], linewidth = 2, color = 'black', label = "output3")
+    plt.plot(DRout[:,0]/1e9, DVAccum_P[1:,2], linestyle = '--', color = 'white', label = "truth3")
+    plt.xlabel("Time[s]")
     plt.ylabel("Step DV Magnitudes [m/s]")
     plt.title("DV Comparison")
     myLegend = plt.legend()
     myLegend.get_frame().set_facecolor('#909090')
-    unitTestSupport.writeFigureLaTeX("DVcomparison",
-                                     'Plot Comparing Time Step DV Truth and Output. Note that 1, 2, and 3 indicate the components of the velocity delta.', plt,
+    unitTestSupport.writeFigureLaTeX(testCase + "DVcomparison",
+                                     'Plot Comparing Time Step DV Truth and Output for test: ' + testCase +'. Note that 1, 2, and 3 indicate the components of the velocity delta.', plt,
                                      'height=0.7\\textwidth, keepaspectratio', path)
 
-    if show_plots:
+    if show_plots and testCase != "noise":
         plt.show()
 
     # test outputs
@@ -433,16 +436,104 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
         for i in range(2,len(stepPRV)-1):
             for j in [0,1,2]:
                 DRoutNoise[i][j] = DRout[i][j+1] - stepPRV[i+1][j]
-        rDotDotOut_Noise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1] - 1))
-        for i in range(2, len(step) - 1):
+        rDotDotOutNoise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1] - 1))
+        for i in range(2, len(stepPRV) - 1):
             for j in [0, 1, 2]:
-                rDotDotOut_Noise[i][j] = rDotDotOut[i][j + 1] - rDotDot_SN_P[i+1][j]
+                rDotDotOutNoise[i, j] = rDotDotOut[i, j+1] - rDotDot_SN_P[i+1, j]
+        DVoutNoise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1] - 1))
+        for i in range(2, len(stepPRV) - 1):
+            for j in [0, 1, 2]:
+                DVoutNoise[i, j] = DVout[i, j + 1] - DVAccum_P[i + 1, j]
+        omegaOutNoise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1] - 1))
+        for i in range(2, len(stepPRV) - 1):
+            for j in [0, 1, 2]:
+                omegaOutNoise[i, j] = omegaOut[i, j + 1] - omega_P[i + 1, j]
+        if not unitTestSupport.isDoubleEqualRelative(np.std(DRoutNoise[:,0]),senRotNoiseStd*dt/1.5,accuracy):
+            testMessages.append(("FAILED DRnoise1. \\\\& &"))
+            testFailCount += 1
+        if not unitTestSupport.isDoubleEqualRelative(np.std(DRoutNoise[:,1]),senRotNoiseStd*dt/1.5,accuracy):
+            testMessages.append(("FAILED DRnoise2. \\\\& &"))
+            testFailCount += 1
+        if not unitTestSupport.isDoubleEqualRelative(np.std(DRoutNoise[:,2]),senRotNoiseStd*dt/1.5,accuracy):
+            testMessages.append(("FAILED DRnoise3. \\\\& &"))
+            testFailCount += 1
+        if not unitTestSupport.isDoubleEqualRelative(np.std(DVoutNoise[:,0]),senTransNoiseStd*dt/1.5,accuracy):
+            testMessages.append(("FAILED DVnoise1. \\\\& &"))
+            testFailCount += 1
+        if not unitTestSupport.isDoubleEqualRelative(np.std(DVoutNoise[:,1]),senTransNoiseStd*dt/1.5,accuracy):
+            testMessages.append(("FAILED DVnoise2. \\\\& &"))
+            testFailCount += 1
+        if not unitTestSupport.isDoubleEqualRelative(np.std(DVoutNoise[:,2]),senTransNoiseStd*dt/1.5,accuracy):
+            testMessages.append(("FAILED DVnoise3. \\\\& &"))
+            testFailCount += 1
+        if not unitTestSupport.isDoubleEqualRelative(np.std(rDotDotOutNoise[:,0]),senTransNoiseStd/1.5,accuracy):
+            testMessages.append(("FAILED AccelNoise1. \\\\& &"))
+            testFailCount += 1
+        if not unitTestSupport.isDoubleEqualRelative(np.std(rDotDotOutNoise[:,1]),senTransNoiseStd/1.5,accuracy):
+            testMessages.append(("FAILED AccelNoise2. \\\\& &"))
+            testFailCount += 1
+        if not unitTestSupport.isDoubleEqualRelative(np.std(rDotDotOutNoise[:,2]),senTransNoiseStd/1.5,accuracy):
+            testMessages.append(("FAILED AccelNoise3. \\\\& &"))
+            testFailCount += 1
+        if not unitTestSupport.isDoubleEqualRelative(np.std(omegaOutNoise[:,0]),senRotNoiseStd/1.5,accuracy):
+            testMessages.append(("FAILED omegaNoise1. \\\\& &"))
+            testFailCount += 1
+        if not unitTestSupport.isDoubleEqualRelative(np.std(omegaOutNoise[:,1]),senRotNoiseStd/1.5,accuracy):
+            testMessages.append(("FAILED oemgaNoise2. \\\\& &"))
+            testFailCount += 1
+        if not unitTestSupport.isDoubleEqualRelative(np.std(omegaOutNoise[:,2]),senRotNoiseStd/1.5,accuracy):
+            testMessages.append(("FAILED omegaNoise3. \\\\& &"))
+            testFailCount += 1
+
+        # noise plots
+        plt.figure(1000, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+        plt.clf()
+        plt.plot(DRout[1:, 0]/1e9, DVoutNoise[1:,:])
+        plt.xlabel("Time[s]")
+        plt.ylabel("DV Noise [um/s]")
+        plt.title("DV Noise")
+        unitTestSupport.writeFigureLaTeX("DVnoise",
+                                         'Plot of DeltaV noise along each component for the noise test.',
+                                         plt,
+                                         'height=0.7\\textwidth, keepaspectratio', path)
+        plt.figure(1001, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+        plt.clf()
+        plt.plot(DRout[1:, 0]/1e9, rDotDotOutNoise[1:,:])
+        plt.xlabel("Time[s]")
+        plt.ylabel("Acceleration Noise [m/s/s]")
+        plt.title("Acceleration Noise")
+        unitTestSupport.writeFigureLaTeX("AccelNoise",
+                                         'Plot of acceleration noise along each component for the noise test.',
+                                         plt,
+                                         'height=0.7\\textwidth, keepaspectratio', path)
+        plt.figure(1002, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+        plt.clf()
+        plt.plot(DRout[1:, 0]/1e9, DRoutNoise[1:,:])
+        plt.xlabel("Time[s]")
+        plt.ylabel("DR Noise [rad]")
+        plt.title("DR Noise")
+        unitTestSupport.writeFigureLaTeX("DRnoise",
+                                         'Plot of PRV noise along each component for the noise test.',
+                                         plt,
+                                         'height=0.7\\textwidth, keepaspectratio', path)
+        plt.figure(1003, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+        plt.clf()
+        plt.plot(DRout[1:, 0]/1e9, omegaOutNoise[1:,:])
+        plt.xlabel("Time[s]")
+        plt.ylabel("Angular Rate Noise [rad/s]")
+        plt.title("Angular Rate Noise")
+        unitTestSupport.writeFigureLaTeX("omegaNoise",
+                                         'Plot of Angular Rate noise along each component for the noise test.',
+                                         plt,
+                                         'height=0.7\\textwidth, keepaspectratio', path)
+        if show_plots:
+            plt.show()
 
     #
     # Outputs to AutoTex
     #
-    accuracySnippetName = "accuracy"
-    accuracySnippetContent = '{:1.1e}'.format(accuracy)
+    accuracySnippetName = testCase+"accuracy"
+    accuracySnippetContent = '{:1.0e}'.format(accuracy)
     unitTestSupport.writeTeXSnippet(accuracySnippetName, accuracySnippetContent, path)
 
     if testFailCount == 0:
@@ -452,15 +543,40 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
         colorText = 'Red'
         passedText = '\\textcolor{' + colorText + '}{' + "FAILED" + '}'
 
-    passFailSnippetName = "passFail"
+    passFailSnippetName = testCase+"passFail"
     passFailSnippetContent = passedText
     unitTestSupport.writeTeXSnippet(passFailSnippetName, passFailSnippetContent, path)
 
-    failMsgSnippetName = "failMessage"
+    failMsgSnippetName = testCase+"failMessage"
     failMsgSnippetContent = ""
     for i in range(0,len(testMessages)):
         failMsgSnippetContent += testMessages[i]
     unitTestSupport.writeTeXSnippet(failMsgSnippetName, failMsgSnippetContent, path)
+
+    snippetName = testCase + "gyroLSB"
+    snippetContent = '{:1.0e}'.format(gyroLSBIn)
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+    snippetName = testCase + "accelLSB"
+    snippetContent = '{:1.0e}'.format(accelLSBIn)
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+    snippetName = testCase + "rotMax"
+    snippetContent = '{:1.1e}'.format(senRotMaxIn)
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+    snippetName = testCase + "transMax"
+    snippetContent = '{:1.1e}'.format(senTransMaxIn)
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+    snippetName = testCase + "rotNoise"
+    snippetContent = '{:0.1f}'.format(senRotNoiseStd)
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+    snippetName = testCase + "transNoise"
+    snippetContent = '{:0.1f}'.format(senTransNoiseStd)
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+    snippetName = testCase + "rotBias"
+    snippetContent = '{:1.1e}'.format(senRotBiasIn)
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+    snippetName = testCase + "transBias"
+    snippetContent = '{:1.1e}'.format(senTransBiasIn)
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
 
 
     return [testFailCount, ''.join(testMessages)]
