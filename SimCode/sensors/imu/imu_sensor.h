@@ -44,7 +44,7 @@ public:
     void applySensorErrors(uint64_t CurrentTime);
     void applySensorDiscretization(uint64_t CurrentTime);
 	void applySensorSaturation(uint64_t CurrentTime);
-	void computeSensorErrors(uint64_t CurrentTime);
+	void computeSensorErrors();
 
 public:
     std::string InputStateMsg;          /*!< Message name for spacecraft state */

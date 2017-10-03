@@ -226,7 +226,7 @@ void ImuSensor::applySensorErrors(uint64_t CurrentTime)
     
 }
 
-void ImuSensor::computeSensorErrors(uint64_t CurrentTime)
+void ImuSensor::computeSensorErrors()
 {
 	this->errorModelAccel.setPropMatrix(AMatrixAccel);
 	this->errorModelAccel.computeNextState();
@@ -240,10 +240,8 @@ void ImuSensor::computeSensorErrors(uint64_t CurrentTime)
 void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
 {
 	double dt;
-    int omegaSat;
     
 	dt = (CurrentTime - PreviousTime)*1.0E-9;
-    omegaSat = 0;
 
 	for(uint32_t i=0; i<3; i++)
 	{
@@ -353,7 +351,7 @@ void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
         computePlatformDR();
         computePlatformDV(CurrentSimNanos);
         /* Compute sensed data */
-		computeSensorErrors(CurrentSimNanos);
+		computeSensorErrors();
 		applySensorErrors(CurrentSimNanos);
         applySensorDiscretization(CurrentSimNanos);
 		applySensorSaturation(CurrentSimNanos);
