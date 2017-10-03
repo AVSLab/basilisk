@@ -108,11 +108,11 @@ def setRandomWalk(self,senRotNoiseStd = 0.0,senTransNoiseStd = 0.0,errorBoundsGy
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("show_plots,   testCase,       stopTime,       gyroLSBIn,      accelLSBIn,     senRotMaxIn,    senTransMaxIn,  senRotNoiseStd,     senTransNoiseStd,   errorBoundsGyroIn,  errorBoundsAccelIn, senRotBiasIn,   senTransBiasIn, accuracy", [
-                        # (False,          'clean',        1.0,             0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                0.,             0.,            1e-6),
-                        # #(True,         'noise',         5.0,            0.0,            0.0,            1000.,          1000.,          .00,             .00,             0.00,               0.00,               0.0,            0.0,            1e-3),
-                        # (False,         'bias',         1.0,            0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                10.,            10.,            1e-6),
-                        # (False,         'saturation',   1.0,            0.0,            0.0,            0.2,           1.1,            0.0,                0.0,                0.0,                0.0,                0.0,            0.0,            1e-6),
-                        (True,         'discretization',1.0,            0.00001,        0.00000,            100.,          100.,            0.0,                0.0,                1e6,                1e6,                0.0,            0.0,            1e-10),
+                        (False,          'clean',       1.0,            0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                0.,             0.,             1e-3),
+                        (False,         'noise',        5.0,            0.0,            0.0,            1000.,          1000.,          .1,                 .1,                 0.1,                0.1,                0.0,            0.0,            1e-1),
+                        (False,         'bias',         1.0,            0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                10.,            10.,            1e-3),
+                        (False,         'saturation',   1.0,            0.0,            0.0,            0.2,            1.1,            0.0,                0.0,                0.0,                0.0,                0.0,            0.0,            1e-3),
+                        (False,         'discretization',1.,            0.0001,         0.0001,         100.,           1000.,          0.0,                0.0,                1e6,                1e6,                0.0,            0.0,            1e-3),
 
 ])
 
