@@ -8,9 +8,9 @@ This test is located in {\tt SimCode/environment/spice/\_UnitTest/test\_unitSpic
 \item \underline{Time Increment Check} The check goes through the simulation time advancement check. The steps are verified to be consistent. 
 \item \underline{GPS Time Check} At a specific UTC time, the simulation calculates GPS time. We therefore recalculate the expected GPS time at that date and compare it with the simulation for accuracy. 
 \item \underline{Julian Day Check} Similarly, we independently calculate the Julian date given the epoch of the simulation, and compare it to the simulation's Julian date.
-\item \underline{Mars Position Check} The position for Mars computed by Spice is compared to JPL Horizon's ephemeris for the same epoch and propagation time.
-\item \underline{Earth Position Check} The position for Earth computed by Spice is compared to JPL Horizon's ephemeris for the same epoch and propagation time.
-\item \underline{Sun Position Check} The position for the Sun computed by Spice is compared to JPL Horizon's ephemeris for the same epoch and propagation time.
+\item \underline{Mars Position Check} The position for Mars computed by Spice is compared to JPL Horizons ephemeris for the same epoch and propagation time.
+\item \underline{Earth Position Check} The position for Earth computed by Spice is compared to JPL Horizons ephemeris for the same epoch and propagation time.
+\item \underline{Sun Position Check} The position for the Sun computed by Spice is compared to JPL Horizons ephemeris for the same epoch and propagation time.
 \end{enumerate} 
 
 \subsection{Test Success Criteria}
@@ -23,7 +23,7 @@ In order to create a complete simulation of the different possible situations, t
 
 \underline{Truth Data}:
 
-The truth data was taken from JPL's Horizon's database. It provides highly accurate ephemerides for solar system objects ( 734640 asteroids, 3477 comets, 178 planetary satellites, 8 planets, the Sun, L1, L2, select spacecraft, and system barycenters ). 
+The truth data was taken from JPL's Horizons database. It provides highly accurate ephemerides for solar system objects ( 734640 asteroids, 3477 comets, 178 planetary satellites, 8 planets, the Sun, L1, L2, select spacecraft, and system barycenters ). 
 
 
 \section{Test Parameters}
@@ -93,7 +93,7 @@ When running pytest, we came to notice that the time checks were failing for two
 
 \subsection{Ephemeris precision}
 
-From these tests, we can also plot out the precision of the planet ephemeris. This is done in \ref{fig:EphemMars}. We notice that Mars has the highest error by orders of magnitude. This is expected, and the errors are still bounded by 200m, which is well beyond the precision needed. We can also look more closely are the precision for Earth and the Sun, seen in figures  \ref{fig:EphemEarth} and  \ref{fig:EphemSun} respectively. The Earth and Sun's positions are known very precisely. 
+From these tests, we can also plot out the precision of the planet ephemeris. This is done in figure \ref{fig:EphemMars}. We notice that Mars has the highest error by orders of magnitude. This is expected, and the errors are still bounded by 200m, which is well beyond the precision needed. We can also look more closely are the precision for Earth and the Sun, seen in figures  \ref{fig:EphemEarth} and  \ref{fig:EphemSun} respectively. The Earth and Sun's positions are known very precisely. 
 
 \input{AutoTex/EphemMars}
 \input{AutoTex/EphemEarth}
