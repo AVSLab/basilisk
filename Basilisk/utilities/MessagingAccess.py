@@ -19,7 +19,7 @@
 '''
 import sys
 import copy
-import sim_model
+from Basilisk.modules import sim_model
 import numpy
 import array
 import pdb
@@ -30,7 +30,15 @@ def getMessageContainers(MessageModule, MessageObj):
    LocalObj = __import__(MessageModule, globals(), locals(), [], -1)
    MessageList = []
    ## - Find the structure of the message from python/SWIG
-   LocalContainer = eval('LocalObj.' + MessageObj + '()')
+
+   # if the package has different levels we need to access the correct level of the package
+   moduleString = "LocalObj."
+   module = MessageModule.split(".")
+   if len(module) > 1:
+       moduleString += ".".join(module[1:]) + "."
+   messageModuleExecString = moduleString + MessageObj + "()"
+
+   LocalContainer = eval(messageModuleExecString)
    FirstKeys = dir(LocalContainer)
    FilteredKeys = []
    TotalDict = {"MessageTime": [] } ## - MessageTime is time of write for messag
@@ -44,11 +52,11 @@ def getMessageContainers(MessageModule, MessageObj):
 
 
 def obtainMessageVector(MessageName, MessageModule, MessageObj, MessageCount,
-   SimContainer, VarName, VarType, startIndex, stopIndex, 
+   SimContainer, VarName, VarType, startIndex, stopIndex,
    messageType = sim_model.messageBuffer):
    ## Begin Method steps here
    LocalContainer, TotalDict = getMessageContainers(MessageModule, MessageObj)
-   
+
    ## - For each message, pull the buffer, and update the keys of the dictionary
    LocalCount = 0
    swigObject = eval('LocalContainer.' + VarName)
@@ -64,7 +72,7 @@ def obtainMessageVector(MessageName, MessageModule, MessageObj, MessageCount,
       exec(RefFunctionString)
       functionCall = eval('GetMessage' + messageNoSpace + varNameClean)
    while(LocalCount < MessageCount):
-      WriteTime = SimContainer.GetWriteData(MessageName, 10000, 
+      WriteTime = SimContainer.GetWriteData(MessageName, 10000,
          LocalContainer, messageType, LocalCount)
       currentIndex = stopIndex
       executeLoop = True
@@ -104,4 +112,3 @@ def findMessageMatches(searchString, SimContainer):
            matchList.append(localName)
         i+=1
     return matchList
-

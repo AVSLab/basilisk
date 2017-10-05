@@ -18,12 +18,10 @@
 
 '''
 #
-#   FSW Setup Utilities for Thrusters
+#   FSW Setup Utilities for RW
 #
 
 import sys, os, inspect
-import math
-import numpy
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -31,10 +29,11 @@ splitPath = path.split('Basilisk')
 sys.path.append(splitPath[0] + '/Basilisk/modules')
 sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 
-import fswMessages
+from Basilisk.modules import fswMessages
+import numpy
 
 
-thrList = []
+rwList = []
 
 #
 #   This function is called to setup a FSW RW device in python, and adds it to the of RW
@@ -43,21 +42,28 @@ thrList = []
 #   by the user.
 #
 def create(
-        rThrust_B,
-        tHatThrust_B,
-        Fmax
+        gsHat_B,
+        Js,
+        uMax = numpy.NaN
     ):
-    global thrList
+    global rwList
 
-    # create the blank Thruster object
-    thrPointer = fswMessages.THRConfigFswMsg()
+    # create the blank RW object
+    RW = fswMessages.RWConfigElementFswMsg()
 
-    thrPointer.rThrust_B = rThrust_B
-    thrPointer.tHatThrust_B = tHatThrust_B
-    thrPointer.maxThrust = Fmax
+    norm = numpy.linalg.norm(gsHat_B)
+    if norm > 1e-10:
+        gsHat_B = gsHat_B / norm
+    else:
+        print 'Error: RW gsHat input must be non-zero 3x1 vector'
+        exit(1)
+
+    RW.gsHat_B = gsHat_B
+    RW.uMax = uMax
+    RW.Js = Js
 
     # add RW to the list of RW devices
-    thrList.append(thrPointer)
+    rwList.append(RW)
 
     return
 
@@ -66,37 +72,42 @@ def create(
 #   It creates the C-class container for the array of RW devices, and attaches
 #   this container to the spacecraft object
 #
-def writeConfigMessage(thrConfigMsgName, simObject, processName):
-    global thrList
+def writeConfigMessage(rwConfigMsgName, simObject, processName):
+    global rwList
 
-    thrClass = fswMessages.THRArrayConfigFswMsg()
+    GsMatrix_B = []
+    JsList = []
+    uMaxList = []
+    for rw in rwList:
+        GsMatrix_B.extend(rw.gsHat_B)
+        JsList.extend([rw.Js])
+        uMaxList.extend([rw.uMax])
 
-    i = 0
-    for item in thrList:
-        fswMessages.ThrustConfigArray_setitem(thrClass.thrusters, i, item)
-        i += 1
+    rwConfigParams = fswMessages.RWArrayConfigFswMsg()
+    rwConfigParams.GsMatrix_B = GsMatrix_B
+    rwConfigParams.JsList = JsList
+    rwConfigParams.uMax = uMaxList
+    rwConfigParams.numRW = len(rwList)
 
-    messageSize = thrClass.getStructSize()
-
-    thrClass.numThrusters = len(thrList)
+    messageSize = rwConfigParams.getStructSize()
 
     simObject.CreateNewMessage(processName,
-                               thrConfigMsgName,
+                               rwConfigMsgName,
                                messageSize,
                                2)
-    simObject.WriteMessageData(thrConfigMsgName,
-                               messageSize,
-                               0,
-                               thrClass)
+    simObject.WriteMessageData( rwConfigMsgName,
+                                messageSize,
+                                0,
+                                rwConfigParams)
 
     return
 
 def clearSetup():
-    global thrList
+    global rwList
 
-    thrList = []
+    rwList = []
 
     return
 
 def getNumOfDevices():
-    return len(thrList)
+    return len(rwList)

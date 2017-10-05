@@ -29,6 +29,10 @@
 
 import pytest
 import sys, os, inspect
+
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+
 import matplotlib
 import numpy as np
 import ctypes
@@ -36,30 +40,16 @@ import math
 import csv
 import logging
 
-# @cond DOXYGEN_IGNORE
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
-splitPath = path.split(bskName)
-bskPath = splitPath[0] + '/' + bskName + '/'
-# if this script is run from a custom folder outside of the Basilisk folder, then uncomment the
-# following line and specify the absolute bath to the Basilisk folder
-#bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
-sys.path.append(bskPath + 'modules')
-sys.path.append(bskPath + 'PythonModules')
-# @endcond
-
 # import general simulation support files
-import SimulationBaseClass
-import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-import macros
-import orbitalMotion
+from Basilisk.utilities import macros
+from Basilisk.utilities import orbitalMotion
 
 # import simulation related support
-import spacecraftPlus
-import simIncludeGravBody
-
+from Basilisk.modules import spacecraftPlus
+from Basilisk.utilities import simIncludeGravBody
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -659,4 +649,3 @@ if __name__ == "__main__":
          False,       # useSphericalHarmonics
          'Earth'      # planetCase (Earth, Mars)
        )
-

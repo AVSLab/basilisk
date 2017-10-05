@@ -22,8 +22,7 @@ get_property(ALG_LIST GLOBAL PROPERTY ALG_LIB_LIST)
 foreach(module ${swig_modules})
     get_filename_component(FileBase ${module} NAME_WE)
     get_filename_component(FileDir ${module} DIRECTORY)
-	set(CMAKE_SWIG_OUTDIR "${CMAKE_SOURCE_DIR}/package/modules/${FileBase}")
-
+	set(CMAKE_SWIG_OUTDIR "${CMAKE_SOURCE_DIR}/Basilisk/modules/${FileBase}")
 	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/CMakeLists.txt")
         continue()
     endif()
@@ -59,7 +58,7 @@ foreach(module ${swig_modules})
     endif()
 
 	# Make a python package
-	set(moduleFilePath "${CMAKE_SOURCE_DIR}/package/modules/${FileBase}")
+	set(moduleFilePath "${CMAKE_SOURCE_DIR}/Basilisk/modules/${FileBase}")
 	make_python_package(${FileBase} ${FileDir} ${moduleFilePath})
 
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${FileDir})
@@ -84,13 +83,13 @@ foreach(module ${swig_modules})
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
 		FOLDER "${DIR_NAME_STRING}/${FileDir}")
 	# set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-	#     CMAKE_SWIG_OUTDIR "${CMAKE_SOURCE_DIR}/package/modules/${FileBase}")
+	#     CMAKE_SWIG_OUTDIR "${CMAKE_SOURCE_DIR}/Basilisk/modules/${FileBase}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/package/modules/${FileBase}")
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Basilisk/modules/${FileBase}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/package/modules/${FileBase}")
+        LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/Basilisk/modules/${FileBase}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/package/modules/${FileBase}")
+        LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/Basilisk/modules/${FileBase}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
 	    COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}")
 endforeach()

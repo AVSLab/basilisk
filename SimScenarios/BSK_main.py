@@ -19,19 +19,9 @@
 '''
 import sys, os, inspect
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
-splitPath = path.split(bskName)
-bskPath = splitPath[0] + '/' + bskName + '/'
-sys.path.append(bskPath + 'modules')
-sys.path.append(bskPath + 'PythonModules')
-
-import SimulationBaseClass
-import sim_model
-import message_router
-
-
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.modules import sim_model
+from Basilisk.modules import message_router
 
 import BSK_DKE
 import BSK_FSW

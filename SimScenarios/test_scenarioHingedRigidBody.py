@@ -56,7 +56,7 @@ sys.path.append(bskPath + 'PythonModules')
 # import general simulation support files
 import SimulationBaseClass              #The class which contains the basilisk simuation environment
 import unitTestSupport                  # general support file with common unit test functions
-import macros                           #Some unit conversions
+from Basilisk.utilities import macros                           #Some unit conversions
 import orbitalMotion
 
 

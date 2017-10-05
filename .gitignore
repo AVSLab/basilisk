@@ -1,6 +1,6 @@
 .DS_Store
 build/*
-package/modules/*
+Basilisk/modules/*
 html/*
 Images/Scenarios/*
 xml/*

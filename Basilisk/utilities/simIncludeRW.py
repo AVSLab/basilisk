@@ -31,7 +31,7 @@ sys.path.append(splitPath[0] + '/Basilisk/modules')
 sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 
 import macros
-import simMessages
+from Basilisk.modules import simMessages
 
 
 
@@ -413,4 +413,3 @@ class rwFactory(object):
             exit(1)
 
         return
-

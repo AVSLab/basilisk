@@ -44,7 +44,7 @@ import fuelTank
 import SimulationBaseClass
 import matplotlib.pyplot as plt
 import orbitalMotion
-import macros
+from Basilisk.utilities import macros
 
 # import simulation related support
 import spacecraftPlus
