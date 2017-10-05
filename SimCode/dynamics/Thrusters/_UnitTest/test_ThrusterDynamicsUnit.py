@@ -287,20 +287,12 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
 
 
         expectedpoints=np.zeros([3,np.shape(thrForce)[0]])
-        for i in range(np.shape(thrForce)[0]):
-            if (i<int(round(thrStartTime/testRate)) + 2): # Thrust fires 2 times steps after the pause of sim and restart
-                expectedpoints[0,i] = 0.0
-                expectedpoints[1,i] = 0.0
+        for i in range(np.shape(thrForce)[0]):# Thrust fires 2 times steps after the pause of sim and restart
             if (i>int(round(thrStartTime/ testRate)) + 1 and i<int(round((thrStartTime+thrDurationTime)/ testRate)) + 2):
                 if thrustNumber == 1:
-                    expectedpoints[0,i] = math.cos(anglerad)
-                    expectedpoints[1,i] = math.sin(anglerad)
+                    expectedpoints[0:3,i] = dir1
                 else:
-                    expectedpoints[0, i] = math.cos(anglerad)+math.cos(anglerad+math.pi / 4)
-                    expectedpoints[1, i] = math.sin(anglerad)+math.sin(anglerad+math.pi / 4)
-            else:
-                expectedpoints[0, i] = 0.0
-                expectedpoints[1, i] = 0.0
+                    expectedpoints[0:3, i] = dir1 + dir2
 
         # Modify expected values for comparison and define errorTolerance
         TruthForce = np.transpose(expectedpoints)
@@ -315,27 +307,12 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
 
         #Create expected Torque to test against thrTorque
         expectedpointstor = np.zeros([3, np.shape(thrTorque)[0]])
-        for i in range(np.shape(thrForce)[0]):
-            if (i < int(round(thrStartTime/ testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
-                expectedpointstor[0, i] = 0.0
-                expectedpointstor[1, i] = 0.0
-                expectedpointstor[2, i] = 0.0
+        for i in range(np.shape(thrForce)[0]): # Thrust fires 2 times steps after the pause of sim and restart
             if (i>int(round(thrStartTime/ testRate)) + 1 and i<int(round((thrStartTime+thrDurationTime)/ testRate)) + 2):
                 if thrustNumber == 1:
-                    expectedpointstor[0, i] = -math.sin(anglerad)*thruster1.thrLoc_B[2][0] #Torque about x is arm along z by the force projected upon y
-                    expectedpointstor[1, i] = math.cos(anglerad)*math.sqrt(thruster1.thrLoc_B[2][0]**2+thruster1.thrLoc_B[1][0]**2 +thruster1.thrLoc_B[0][0]**2)*math.sin(math.atan(thruster1.thrLoc_B[2][0]/thruster1.thrLoc_B[0][0])) #Torque about x is arm along z by the force projected upon x
-                    expectedpointstor[2, i] = math.sin(anglerad)*thruster1.thrLoc_B[0][0] #Torque about z is arm along x by the force projected upon y
+                    expectedpointstor[0:3, i] = np.cross(loc1, dir1)
                 else:
-                    expectedpointstor[0, i] = -math.sin(anglerad)*thruster1.thrLoc_B[2][0]\
-                                           - math.sin(anglerad+math.pi/4)*thruster2.thrLoc_B[2][0]
-                    expectedpointstor[1, i] = math.cos(anglerad)*math.sqrt(thruster1.thrLoc_B[2][0]**2+thruster1.thrLoc_B[1][0]**2 +thruster1.thrLoc_B[0][0]**2)*math.sin(math.atan(thruster1.thrLoc_B[2][0]/thruster1.thrLoc_B[0][0])) \
-                                          + math.cos(anglerad+math.pi / 4)*math.sqrt(thruster2.thrLoc_B[2][0]**2+thruster2.thrLoc_B[1][0]**2 +thruster2.thrLoc_B[0][0]**2)*math.sin(math.atan(thruster2.thrLoc_B[2][0]/thruster2.thrLoc_B[0][0]))
-                    expectedpointstor[2, i] = math.sin(anglerad)*thruster1.thrLoc_B[0][0] \
-                                          + math.sin(anglerad+math.pi/4) * thruster2.thrLoc_B[0][0]
-            else:
-                expectedpointstor[0, i] = 0.0
-                expectedpointstor[1, i] = 0.0
-                expectedpointstor[2, i] = 0.0
+                    expectedpointstor[0:3, i] = np.cross(loc1, dir1) + np.cross(loc2, dir2)
 
 
         # Define errorTolerance
@@ -454,17 +431,9 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
                     if (i>0 and RampFunction[i + int(round(thrStartTime/testRate))+1]!=0.):
                         expMDot[i, 0] = thrustNumber / (g * Isp)
 
-
-                for i in range(np.shape(thrForce)[0]):
-                    if (i < int(round(thrStartTime / testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
-                        expectedpoints[0, i] = 0.0
-                        expectedpoints[1, i] = 0.0
+                for i in range(np.shape(thrForce)[0]): # Thrust fires 2 times steps after the pause of sim and restart
                     if (i > int(round(thrStartTime / testRate)) + 1 and i < int(round((thrStartTime + thrDurationTime+ ramplength*1.0/macros.NANO2SEC) / testRate)) + 2):
-                        expectedpoints[0, i] = math.cos(anglerad)*RampFunction[i]
-                        expectedpoints[1, i] = math.sin(anglerad)*RampFunction[i]
-                    else:
-                        expectedpoints[0, i] = 0.0
-                        expectedpoints[1, i] = 0.0
+                        expectedpoints[0:3, i] = dir1*RampFunction[i]
 
                 # Modify expected values for comparison and define errorTolerance
                 TruthForce = np.transpose(expectedpoints)
@@ -480,22 +449,9 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
 
                 # Create expected Torque to test against thrTorque
                 expectedpointstor = np.zeros([3, np.shape(thrTorque)[0]])
-                for i in range(np.shape(thrForce)[0]):
-                    if (i < int(round(thrStartTime / testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
-                        expectedpointstor[0, i] = 0.0
-                        expectedpointstor[1, i] = 0.0
-                        expectedpointstor[2, i] = 0.0
+                for i in range(np.shape(thrForce)[0]):  # Thrust fires 2 times steps after the pause of sim and restart
                     if (i > int(round(thrStartTime / testRate)) + 1 and i < int(round((thrStartTime + thrDurationTime+ ramplength*1.0/macros.NANO2SEC) / testRate)) + 2):
-                            expectedpointstor[0, i] = -math.sin(anglerad) * thruster1.thrLoc_B[2][0]*RampFunction[i]  # Torque about x is arm along z by the force projected upon y
-                            expectedpointstor[1, i] = math.cos(anglerad) * math.sqrt(
-                                thruster1.thrLoc_B[2][0] ** 2 + thruster1.thrLoc_B[1][0] ** 2 +
-                                thruster1.thrLoc_B[0][0] ** 2) * math.sin(math.atan(
-                                thruster1.thrLoc_B[2][0] / thruster1.thrLoc_B[0][0]))*RampFunction[i]  # Torque about x is arm along z by the force projected upon x
-                            expectedpointstor[2, i] = math.sin(anglerad) * thruster1.thrLoc_B[0][0]*RampFunction[i]  # Torque about z is arm along x by the force projected upon y
-                    else:
-                        expectedpointstor[0, i] = 0.0
-                        expectedpointstor[1, i] = 0.0
-                        expectedpointstor[2, i] = 0.0
+                            expectedpointstor[0:3, i] = np.cross(loc1,dir1)*RampFunction[i]
 
                 # Define errorTolerance
                 TruthTorque = np.transpose(expectedpointstor)
@@ -575,16 +531,9 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
                     if (i>0 and RampFunction[i + int(round(thrStartTime/testRate))+1]!=0.):
                         expMDot[i, 0] = thrustNumber / (g * Isp)
 
-                for i in range(np.shape(thrForce)[0]):
-                    if (i < int(round(thrStartTime / testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
-                        expectedpoints[0, i] = 0.0
-                        expectedpoints[1, i] = 0.0
+                for i in range(np.shape(thrForce)[0]):# Thrust fires 2 times steps after the pause of sim and restart
                     if (i > int(round(thrStartTime / testRate)) + 1 and i < int(round((thrStartTime + thrDurationTime+ ramplength*1.0/macros.NANO2SEC) / testRate)) + 2):
-                        expectedpoints[0, i] = math.cos(anglerad)*RampFunction[i]
-                        expectedpoints[1, i] = math.sin(anglerad)*RampFunction[i]
-                    else:
-                        expectedpoints[0, i] = 0.0
-                        expectedpoints[1, i] = 0.0
+                        expectedpoints[0:3, i] = dir1*RampFunction[i]
 
                 # Modify expected values for comparison and define errorTolerance
                 TruthForce = np.transpose(expectedpoints)
@@ -600,22 +549,9 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
 
                 # Create expected Torque to test against thrTorque
                 expectedpointstor = np.zeros([3, np.shape(thrTorque)[0]])
-                for i in range(np.shape(thrForce)[0]):
-                    if (i < int(round(thrStartTime / testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
-                        expectedpointstor[0, i] = 0.0
-                        expectedpointstor[1, i] = 0.0
-                        expectedpointstor[2, i] = 0.0
+                for i in range(np.shape(thrForce)[0]): # Thrust fires 2 times steps after the pause of sim and restart
                     if (i > int(round(thrStartTime / testRate)) + 1 and i < int(round((thrStartTime + thrDurationTime+ ramplength*1.0/macros.NANO2SEC) / testRate)) + 2):
-                            expectedpointstor[0, i] = -math.sin(anglerad) * thruster1.thrLoc_B[2][0]*RampFunction[i]  # Torque about x is arm along z by the force projected upon y
-                            expectedpointstor[1, i] = math.cos(anglerad) * math.sqrt(
-                                thruster1.thrLoc_B[2][0] ** 2 + thruster1.thrLoc_B[1][0] ** 2 +
-                                thruster1.thrLoc_B[0][0] ** 2) * math.sin(math.atan(
-                                thruster1.thrLoc_B[2][0] / thruster1.thrLoc_B[0][0]))*RampFunction[i]  # Torque about x is arm along z by the force projected upon x
-                            expectedpointstor[2, i] = math.sin(anglerad) * thruster1.thrLoc_B[0][0]*RampFunction[i]  # Torque about z is arm along x by the force projected upon y
-                    else:
-                        expectedpointstor[0, i] = 0.0
-                        expectedpointstor[1, i] = 0.0
-                        expectedpointstor[2, i] = 0.0
+                            expectedpointstor[0:3, i] = np.cross(loc1,dir1)*RampFunction[i]
 
                 # Define errorTolerance
                 TruthTorque = np.transpose(expectedpointstor)
@@ -719,18 +655,11 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
                 plt.show()
             plt.close()
 
-            for i in range(np.shape(thrForce)[0]):
-                if (i < int(round(
-                            thrStartTime / testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
-                    expectedpoints[0, i] = 0.0
-                    expectedpoints[1, i] = 0.0
+            for i in range(np.shape(thrForce)[0]): # Thrust fires 2 times steps after the pause of sim and restart
                 if (i > int(round(thrStartTime / testRate)) + 1 and i < int(
                         round((thrStartTime + thrDurationTime + ramplength * 1.0 / macros.NANO2SEC) / testRate)) + 2):
-                    expectedpoints[0, i] = math.cos(anglerad) * RampFunction[i]
-                    expectedpoints[1, i] = math.sin(anglerad) * RampFunction[i]
-                else:
-                    expectedpoints[0, i] = 0.0
-                    expectedpoints[1, i] = 0.0
+                    expectedpoints[0:3, i] = dir1*RampFunction[i]
+
 
             # Modify expected values for comparison and define errorTolerance
             TruthForce = np.transpose(expectedpoints)
@@ -743,32 +672,14 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
                 if not unitTestSupport.isArrayEqual(np.array(mDotData)[i, :], expMDot[i, :], 1, ErrTolerance):
                     testFailCount += 1
                     testMessages.append('M dot failure')
-                    print expMDot
-                    print mDotData
 
             # Create expected Torque to test against thrTorque
             expectedpointstor = np.zeros([3, np.shape(thrTorque)[0]])
-            for i in range(np.shape(thrForce)[0]):
-                if (i < int(round(
-                            thrStartTime / testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
-                    expectedpointstor[0, i] = 0.0
-                    expectedpointstor[1, i] = 0.0
-                    expectedpointstor[2, i] = 0.0
+            for i in range(np.shape(thrForce)[0]): # Thrust fires 2 times steps after the pause of sim and restart
                 if (i > int(round(thrStartTime / testRate)) + 1 and i < int(
                         round((thrStartTime + thrDurationTime + ramplength * 1.0 / macros.NANO2SEC) / testRate)) + 2):
-                    expectedpointstor[0, i] = -math.sin(anglerad) * thruster1.thrLoc_B[2][0] * RampFunction[
-                        i]  # Torque about x is arm along z by the force projected upon y
-                    expectedpointstor[1, i] = math.cos(anglerad) * math.sqrt(
-                        thruster1.thrLoc_B[2][0] ** 2 + thruster1.thrLoc_B[1][0] ** 2 +
-                        thruster1.thrLoc_B[0][0] ** 2) * math.sin(math.atan(
-                        thruster1.thrLoc_B[2][0] / thruster1.thrLoc_B[0][0])) * RampFunction[
-                                                  i]  # Torque about x is arm along z by the force projected upon x
-                    expectedpointstor[2, i] = math.sin(anglerad) * thruster1.thrLoc_B[0][0] * RampFunction[
-                        i]  # Torque about z is arm along x by the force projected upon y
-                else:
-                    expectedpointstor[0, i] = 0.0
-                    expectedpointstor[1, i] = 0.0
-                    expectedpointstor[2, i] = 0.0
+                    expectedpointstor[0:3, i] = np.cross(loc1, dir1)*RampFunction[i]
+
 
             # Define errorTolerance
             TruthTorque = np.transpose(expectedpointstor)
