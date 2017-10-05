@@ -92,6 +92,7 @@ foreach(module ${swig_modules})
         LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/Basilisk/modules/${FileBase}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/Basilisk/modules/${FileBase}")
+
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
 	    COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}")
 endforeach()
