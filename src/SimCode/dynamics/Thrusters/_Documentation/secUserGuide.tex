@@ -53,7 +53,11 @@ If setting up a ramp, the user must also perform this:
  
  \hspace{2cm}\texttt{frampOffList.append(newElement)}
 
- \item[-]      \texttt{thrusterSet.thrusterData[0].ThrusterOnRamp = thrusterDynamicEffector.ThrusterTimeVector(rampOnList)}: Add the on ramp
- \item[-]      \texttt{thrusterSet.thrusterData[0].ThrusterOffRamp = thrusterDynamicEffector.ThrusterTimeVector(rampOffList)}: Add the off ramp
+ \item[-]      \texttt{thrusterSet.thrusterData[0].ThrusterOnRamp =}
+ 
+  \texttt{thrusterDynamicEffector.ThrusterTimeVector(rampOnList)}: Add the on ramp
+ \item[-]      \texttt{thrusterSet.thrusterData[0].ThrusterOffRamp =}
+ 
+ \texttt{thrusterDynamicEffector.ThrusterTimeVector(rampOffList)}: Add the off ramp
             
             \end{itemize}
