@@ -48,35 +48,35 @@ bskPath = splitPath[0] + '/' + bskName + '/'
 # if this script is run from a custom folder outside of the Basilisk folder, then uncomment the
 # following line and specify the absolute bath to the Basilisk folder
 #bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
-sys.path.append(bskPath + 'modules')
-sys.path.append(bskPath + 'PythonModules')
+# sys.path.append(bskPath + 'modules')
+# sys.path.append(bskPath + 'PythonModules')
 # @endcond
 
 # import general simulation support files
-import SimulationBaseClass
-import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
-import orbitalMotion
+from Basilisk.utilities import orbitalMotion
 
 # import simulation related support
-import spacecraftPlus
-import simIncludeGravBody
-import simIncludeRW
-import simple_nav
-import reactionWheelStateEffector
-import rwVoltageInterface
+from Basilisk.modules import spacecraftPlus
+from Basilisk.utilities import simIncludeGravBody
+from Basilisk.utilities import simIncludeRW
+from Basilisk.modules import simple_nav
+from Basilisk.modules import reactionWheelStateEffector
+from Basilisk.modules import rwVoltageInterface
 
 # import FSW Algorithm related support
-import MRP_Feedback
-import inertial3D
-import attTrackingError
-import rwMotorTorque
-import fswSetupRW
-import rwMotorVoltage
+from Basilisk.modules import MRP_Feedback
+from Basilisk.modules import inertial3D
+from Basilisk.modules import attTrackingError
+from Basilisk.modules import rwMotorTorque
+from Basilisk.utilities import fswSetupRW
+from Basilisk.modules import rwMotorVoltage
 
 # import message declarations
-import fswMessages
+from Basilisk.modules import fswMessages
 
 
 

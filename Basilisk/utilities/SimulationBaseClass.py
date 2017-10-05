@@ -21,8 +21,8 @@
 import sys, os, ast
 
 # Point the path to the module storage area
-sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/../modules')
-sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+# sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/../modules')
+# sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 from Basilisk.modules import sim_model
 from Basilisk.modules import sys_model_task
 from Basilisk.modules import alg_contain
@@ -449,7 +449,6 @@ class SimBaseClass:
 
         for moduleData in allModules:
             if moduleFound != '':
-                print "found", moduleFound
                 break
             for name, obj in inspect.getmembers(moduleData):
                 if inspect.isclass(obj):

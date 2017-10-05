@@ -52,14 +52,14 @@ from Basilisk.utilities import RigidBodyKinematics
 
 # import simulation related support
 from Basilisk.modules import spacecraftPlus
-from Basilisk.modules import ExtForceTorque
+from Basilisk.modules.ExtForceTorque import ExtForceTorque
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.modules import simple_nav
 
 # import FSW Algorithm related support
 from Basilisk.modules import MRP_Feedback
 from Basilisk.modules import hillPoint
-import attTrackingError
+from Basilisk.modules import attTrackingError
 
 # import message declarations
 from Basilisk.modules import fswMessages

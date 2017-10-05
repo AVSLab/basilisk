@@ -48,37 +48,37 @@ bskPath = splitPath[0] + '/' + bskName + '/'
 # if this script is run from a custom folder outside of the Basilisk folder, then uncomment the
 # following line and specify the absolute bath to the Basilisk folder
 #bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
-sys.path.append(bskPath + 'modules')
-sys.path.append(bskPath + 'PythonModules')
+# sys.path.append(bskPath + 'modules')
+# sys.path.append(bskPath + 'PythonModules')
 # @endcond
 
 # import general simulation support files
-import SimulationBaseClass
-import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 
 # import simulation related support
-import spacecraftPlus
-import simIncludeRW
-import simple_nav
-import reactionWheelStateEffector
-import ExtForceTorque
-import simIncludeGravBody
-import orbitalMotion as om
-import RigidBodyKinematics as rb
+from Basilisk.modules import spacecraftPlus
+from Basilisk.utilities import simIncludeRW
+from Basilisk.modules import simple_nav
+from Basilisk.modules import reactionWheelStateEffector
+from Basilisk.modules.ExtForceTorque import ExtForceTorque
+from Basilisk.utilities import simIncludeGravBody
+from Basilisk.utilities import orbitalMotion as om
+from Basilisk.utilities import RigidBodyKinematics as rb
 
 
 # import FSW Algorithm related support
-import MRP_Steering
-import rateServoFullNonlinear
-import hillPoint
-import attTrackingError
-import rwMotorTorque
-import fswSetupRW
+from Basilisk.modules import MRP_Steering
+from Basilisk.modules import rateServoFullNonlinear
+from Basilisk.modules import hillPoint
+from Basilisk.modules import attTrackingError
+from Basilisk.modules import rwMotorTorque
+from Basilisk.utilities import fswSetupRW
 
 # import message declarations
-import fswMessages
+from Basilisk.modules import fswMessages
 
 
 

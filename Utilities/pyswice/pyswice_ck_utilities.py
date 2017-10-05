@@ -22,11 +22,11 @@ import sys, os, inspect #Don't worry about this, standard stuff plus file discov
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('Utilities')
-sys.path.append(splitPath[0] + '/modules')
-sys.path.append(splitPath[0] + '/PythonModules')
+#sys.path.append(splitPath[0] + '/modules')
+#sys.path.append(splitPath[0] + '/PythonModules')
 import pyswice
 import numpy
-import RigidBodyKinematics
+from Basilisk.utilities import RigidBodyKinematics
 
 def ckWrite(handle, time, MRPArray, avArray, startSeg, sc = -62, rf = "J2000"):
     '''
@@ -144,7 +144,7 @@ def spkRead(target, time, ref, observer):
     state = pyswice.new_doubleArray(6)
     lt = pyswice.new_doubleArray(1)
 
-    pyswice.spkezr_c(target, pyswice.doubleArray_getitem(et, 0), ref, "NONE", 
+    pyswice.spkezr_c(target, pyswice.doubleArray_getitem(et, 0), ref, "NONE",
         observer, state, lt)
     stateArray = numpy.zeros(6)
     lightTime = pyswice.doubleArray_getitem(lt, 0)

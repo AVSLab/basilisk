@@ -24,7 +24,7 @@ from Basilisk.utilities import unitTestSupport as sp
 
 from Basilisk.modules import spacecraftPlus
 from Basilisk.modules import gravityEffector
-from Basilisk.modules import ExtForceTorque
+from Basilisk.modules.ExtForceTorque import ExtForceTorque
 from Basilisk.modules import simple_nav
 from Basilisk.modules import spice_interface
 

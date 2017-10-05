@@ -26,8 +26,8 @@ import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('Basilisk')
-sys.path.append(splitPath[0] + '/Basilisk/modules')
-sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
+# sys.path.append(splitPath[0] + '/Basilisk/modules')
+# sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 
 from Basilisk.modules import fswMessages
 import numpy

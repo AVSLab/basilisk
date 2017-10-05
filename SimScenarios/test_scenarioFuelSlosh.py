@@ -33,22 +33,22 @@ bskPath = splitPath[0] + '/' + bskName + '/'
 # following line and specify the absolute bath to the Basilisk folder
 #bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
 
-sys.path.append(bskPath + 'modules')
-sys.path.append(bskPath + 'PythonModules')
+# sys.path.append(bskPath + 'modules')
+# sys.path.append(bskPath + 'PythonModules')
 
-import unitTestSupport  # general support file with common unit test functions
-import fuelSloshParticle
-import fuelTank
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.modules import fuelSloshParticle
+from Basilisk.modules import fuelTank
 
 # import general simulation support files
-import SimulationBaseClass
+from Basilisk.utilities import SimulationBaseClass
 import matplotlib.pyplot as plt
-import orbitalMotion
+from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import macros
 
 # import simulation related support
-import spacecraftPlus
-import simIncludeGravBody
+from Basilisk.modules import spacecraftPlus
+from Basilisk.utilities import simIncludeGravBody
 
 
 @pytest.mark.parametrize("damping_parameter, timeStep", [

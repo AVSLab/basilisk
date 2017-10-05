@@ -49,22 +49,22 @@ bskPath = splitPath[0] + '/' + bskName + '/'
 # if this script is run from a custom folder outside of the Basilisk folder, then uncomment the
 # following line and specify the absolute bath to the Basilisk folder
 #bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
-sys.path.append(bskPath + 'modules')
-sys.path.append(bskPath + 'PythonModules')
+# sys.path.append(bskPath + 'modules')
+# sys.path.append(bskPath + 'PythonModules')
 # @endcond
 
 # import general simulation support files
-import SimulationBaseClass              #The class which contains the basilisk simuation environment
-import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import SimulationBaseClass              #The class which contains the basilisk simuation environment
+from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.utilities import macros                           #Some unit conversions
-import orbitalMotion
+from Basilisk.utilities import orbitalMotion
 
 
 # import simulation related support
-import spacecraftPlus                   #The base of any spacecraft simulation which deals with spacecraft dynamics
-import simIncludeGravBody
-import hingedRigidBodyStateEffector
-import ExtForceTorque                   #Allows for forces to act on the spacecraft without adding an effector like a thruster
+from Basilisk.modules import spacecraftPlus                   #The base of any spacecraft simulation which deals with spacecraft dynamics
+from Basilisk.utilities import simIncludeGravBody
+from Basilisk.modules import hingedRigidBodyStateEffector
+from Basilisk.modules.ExtForceTorque import ExtForceTorque                   #Allows for forces to act on the spacecraft without adding an effector like a thruster
 
 #import non-basilisk libraries
 import numpy as np
