@@ -28,7 +28,7 @@
 
 ImuSensor::ImuSensor()
 {
-    CallCounts = 0;
+    this->CallCounts = 0;
     this->InputStateID = -1;
     this->InputStateMsg = "inertial_state_output";
     this->OutputDataMsg = "imu_meas_data";
@@ -46,7 +46,6 @@ ImuSensor::ImuSensor()
     this->gyroLSB = 0.;
     this->senRotMax = 1e6;
     this->senTransMax = 1e6;
-    
 
     return;
 }
@@ -55,6 +54,8 @@ void ImuSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll)
 {
     double q[3] = {yaw, pitch, roll};
     Euler3212C(q, this->dcm_PB);
+
+    return;
 }
 
 ImuSensor::~ImuSensor()
@@ -71,44 +72,45 @@ void ImuSensor::SelfInit()
 
 	uint64_t numStates = 3;
 
-	AMatrixAccel.clear();
-	AMatrixAccel.insert(AMatrixAccel.begin(), numStates*numStates, 0.0);
-	mSetIdentity(AMatrixAccel.data(), numStates, numStates);
+	this->AMatrixAccel.clear();
+	this->AMatrixAccel.insert(this->AMatrixAccel.begin(), numStates*numStates, 0.0);
+	mSetIdentity(this->AMatrixAccel.data(), numStates, numStates);
 	for(uint32_t i=0; i<3; i++)
 	{
-		AMatrixAccel.data()[i * 3 + i] = 1.0;
+		this->AMatrixAccel.data()[i * 3 + i] = 1.0;
 	}
 	//! - Alert the user if the noise matrix was not the right size.  That'd be bad.
-	if(PMatrixAccel.size() != numStates*numStates)
+	if(this->PMatrixAccel.size() != numStates*numStates)
 	{
 		std::cerr << __FILE__ <<": Your process noise matrix (PMatrix) is not 3*3.";
 		std::cerr << "  You should fix that.  Popping zeros onto end"<<std::endl;
-		PMatrixAccel.insert(PMatrixAccel.begin()+PMatrixAccel.size(), numStates*numStates - PMatrixAccel.size(),
+		this->PMatrixAccel.insert(this->PMatrixAccel.begin()+this->PMatrixAccel.size(), numStates*numStates - this->PMatrixAccel.size(),
 					   0.0);
 	}
-	errorModelAccel.setNoiseMatrix(PMatrixAccel);
-	errorModelAccel.setRNGSeed(RNGSeed);
-	errorModelAccel.setUpperBounds(walkBoundsAccel);
+	this->errorModelAccel.setNoiseMatrix(this->PMatrixAccel);
+	this->errorModelAccel.setRNGSeed(RNGSeed);
+	this->errorModelAccel.setUpperBounds(walkBoundsAccel);
 
-	AMatrixGyro.clear();
-	AMatrixGyro.insert(AMatrixGyro.begin(), numStates*numStates, 0.0);
-	mSetIdentity(AMatrixGyro.data(), numStates, numStates);
+	this->AMatrixGyro.clear();
+	this->AMatrixGyro.insert(this->AMatrixGyro.begin(), numStates*numStates, 0.0);
+	mSetIdentity(this->AMatrixGyro.data(), numStates, numStates);
 	for(uint32_t i=0; i<3; i++)
 	{
-		AMatrixGyro.data()[i * 3 + i] = 1.0;
+		this->AMatrixGyro.data()[i * 3 + i] = 1.0;
 	}
 	//! - Alert the user if the noise matrix was not the right size.  That'd be bad.
-	if(PMatrixGyro.size() != numStates*numStates)
+	if(this->PMatrixGyro.size() != numStates*numStates)
 	{
 		std::cerr << __FILE__ <<": Your process noise matrix (PMatrix) is not 3*3.";
 		std::cerr << "  You should fix that.  Popping zeros onto end"<<std::endl;
-		PMatrixGyro.insert(PMatrixGyro.begin()+PMatrixGyro.size(), numStates*numStates - PMatrixGyro.size(),
+		this->PMatrixGyro.insert(this->PMatrixGyro.begin()+this->PMatrixGyro.size(), numStates*numStates - this->PMatrixGyro.size(),
 							0.0);
 	}
-	errorModelGyro.setNoiseMatrix(PMatrixGyro);
-	errorModelGyro.setRNGSeed(RNGSeed);
-	errorModelGyro.setUpperBounds(walkBoundsGyro);
+	this->errorModelGyro.setNoiseMatrix(this->PMatrixGyro);
+	this->errorModelGyro.setRNGSeed(RNGSeed);
+	this->errorModelGyro.setUpperBounds(walkBoundsGyro);
 
+    return;
 }
 
 void ImuSensor::CrossInit()
@@ -120,6 +122,7 @@ void ImuSensor::CrossInit()
         std::cerr << "WARNING: Failed to link an imu input message: ";
         std::cerr << std::endl << "State: "<<InputStateID;
     }
+
     return;
 }
 
@@ -133,6 +136,8 @@ void ImuSensor::readInputMessages()
         SystemMessaging::GetInstance()->ReadMessage(InputStateID, &LocalHeader,
                                                     sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&this->StateCurrent), moduleID);
     }
+
+    return;
 }
 
 void ImuSensor::writeOutputMessages(uint64_t Clock)
@@ -144,6 +149,8 @@ void ImuSensor::writeOutputMessages(uint64_t Clock)
     memcpy(LocalOutput.AngVelPlatform, this->sensedValues.AngVelPlatform, 3*sizeof(double));
     SystemMessaging::GetInstance()->WriteMessage(OutputDataID, Clock,
                                                  sizeof(IMUSensorIntMsg), reinterpret_cast<uint8_t*> (&LocalOutput), moduleID);
+
+    return;
 }
 
 void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
@@ -203,7 +210,8 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
         }
         v3Copy(scaledMeas, sensedValues.DRFramePlatform);
     }
-    
+
+    return;
 }
 
 void ImuSensor::applySensorErrors(uint64_t CurrentTime)
@@ -223,17 +231,20 @@ void ImuSensor::applySensorErrors(uint64_t CurrentTime)
         this->sensedValues.AccelPlatform[i] = this->trueValues.AccelPlatform[i] + AccelErrors[i];
         this->sensedValues.DVFramePlatform[i] = this->trueValues.DVFramePlatform[i] + AccelErrors[i]*dt;
     }
-    
+
+    return;
 }
 
 void ImuSensor::computeSensorErrors()
 {
-	this->errorModelAccel.setPropMatrix(AMatrixAccel);
+	this->errorModelAccel.setPropMatrix(this->AMatrixAccel);
 	this->errorModelAccel.computeNextState();
 	this->navErrorsAccel = this->errorModelAccel.getCurrentState();
-	this->errorModelGyro.setPropMatrix(AMatrixGyro);
+	this->errorModelGyro.setPropMatrix(this->AMatrixGyro);
 	this->errorModelGyro.computeNextState();
 	this->navErrorsGyro = this->errorModelGyro.getCurrentState();
+
+    return;
 }
 
 
@@ -261,18 +272,18 @@ void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
 		}
 	}
 
+    return;
 }
 
+/*This function gathers actual spacecraft attitude from the spacecraftPlus output message.
+ It then differences the state attitude between this time and the last time the IMU was called
+ to get a DR (delta radians or delta rotation) The angular rate is retrieved directly from the
+ spacecraftPlus output message and passed through to theother IMU functions which add noise, etc. */
 void ImuSensor::computePlatformDR()
-//This function gathers actual spacecraft attitude from the spacecraftPlus output message.
-//It then differences the state attitude between this time and the last time the IMU was called
-//to get a DR (delta radians or delta rotation)
-//The angular rate is retrieved directly from the spacecraftPlus output message and passed through to the
-//other IMU functions which add noise, etc.
 {
     
     double sigma_BN_2[3];    // MRP from body to inertial frame last time the IMU was called
-    double sigma_BN_1[3];         // MRP from body to inertial frame now.
+    double sigma_BN_1[3];    // MRP from body to inertial frame now.
     double dcm_BN_1[3][3];
     double dcm_BN_2[3][3];
     double dcm_PN_1[3][3];
@@ -294,15 +305,16 @@ void ImuSensor::computePlatformDR()
     
     //calculate "instantaneous" angular rate
     m33MultV3(this->dcm_PB, StateCurrent.omega_BN_B, this->trueValues.AngVelPlatform); //returns instantaneous angular rate of imu sensor in imu platform frame coordinates
+
+    return;
 }
 
+/*This functions gathers actual spacecraft velocity from the spacecraftPlus output message.
+ It then differences the velocity between this time and the last time the IMU was called to get a
+ DV (delta velocity). The acceleration of the spacecraft in the body frame is gathered directly from the spacecraftPlus
+ output message. Then, it is converted to the platform frame and rotational terms are added to it
+ to account for CoM offset of the platform frame. */
 void ImuSensor::computePlatformDV(uint64_t CurrentTime)
-//This functions gathers actual spacecraft velocity from the spacecraftPlus output message.
-//It then differences the velocity between this time and the last time the IMU was called to get a
-//DV (delta velocity).
-//The acceleration of the spacecraft in the body frame is gathered directly from the spacecraftPlus
-//output message. Then, it is converted to the platform frame and rotational terms are added to it
-//to account for CoM offset of the platform frame.
 {
     
     //double CmRelPos[3];
@@ -342,6 +354,8 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
     
     v3Scale(dt, trueValues.AccelPlatform, trueValues.DVFramePlatform);
     
+
+    return;
 }
 
 void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
@@ -364,4 +378,6 @@ void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
     memcpy(&StatePrevious, &StateCurrent, sizeof(SCPlusStatesSimMsg));
     PreviousTime = CurrentSimNanos;
     NominalReady = true;
+
+    return;
 }
