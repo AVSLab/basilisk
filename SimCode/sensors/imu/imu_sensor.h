@@ -49,13 +49,12 @@ public:
 public:
     std::string InputStateMsg;          /*!< Message name for spacecraft state */
     std::string OutputDataMsg;          /*!< Message name for CSS output data */
-    std::vector<double> sensorPos_B;    /// [m] IMU sensor location in body
+    double sensorPos_B[3];              /*!< [m] IMU sensor location in body */
     double dcm_PB[3][3];                /// -- Transform from body to platform
     double senRotBias[3];               /// [r/s] Rotational Sensor bias value
     double senTransBias[3];             /// [m/s2] Translational acceleration sen bias
 	double senRotMax;					/// [r/s] Gyro saturation value
 	double senTransMax;					/// [m/s2] Accelerometer saturation value
-    double senVelPrev[3];               //!< [m/s] sensor velocity in platform frame calculated last time the IMU was called.
     uint64_t OutputBufferCount;         /// -- number of output msgs stored
     bool NominalReady;                  /// -- Flag indicating that system is in run
 	std::vector<double> PMatrixAccel;   //!< [-] Covariance matrix used to perturb state
@@ -67,8 +66,8 @@ public:
 	std::vector<double> walkBoundsGyro; //!< [-] "3-sigma" errors to permit for states
 	std::vector<double> navErrorsGyro;  //!< [-] Current navigation errors applied to truth
 
-    IMUSensorIntMsg trueValues;        //!< [-] total measurement without perturbations
-    IMUSensorIntMsg sensedValues;      //!< [-] total measurement including perturbations
+    IMUSensorIntMsg trueValues;         //!< [-] total measurement without perturbations
+    IMUSensorIntMsg sensedValues;       //!< [-] total measurement including perturbations
     
     double accelLSB;                    //! (-) Discretization value (least significant bit) for accel data
     double gyroLSB;                     //! (-) Discretization value for gyro data
@@ -76,8 +75,8 @@ private:
     int64_t InputStateID;               /// -- Connect to input time message
     int64_t OutputDataID;               /// -- Connect to output CSS data
     uint64_t PreviousTime;              /// -- Timestamp from previous frame
-    SCPlusStatesSimMsg StatePrevious;  /// -- Previous state to delta in IMU
-    SCPlusStatesSimMsg StateCurrent;   /// -- Current SSBI-relative state
+    SCPlusStatesSimMsg StatePrevious;   /// -- Previous state to delta in IMU
+    SCPlusStatesSimMsg StateCurrent;    /// -- Current SSBI-relative state
 	GaussMarkov errorModelAccel;        //!< [-] Gauss-markov error states
 	GaussMarkov errorModelGyro;         //!< [-] Gauss-markov error states
 };
