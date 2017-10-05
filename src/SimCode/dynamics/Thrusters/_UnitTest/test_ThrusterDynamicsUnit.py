@@ -98,31 +98,31 @@ def executeSimRun(simContainer, thrusterSet, simRate, totalTime):
 # @pytest.mark.xfail(True)
 
 
-@pytest.mark.parametrize("ramp, thrustNumber , duration , angle, location, rate, cutoff, rampDown", [
-    ("OFF", 1 , 5.0 , 30. , [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF"), #Test random thrust config
-    ("OFF", 1 , 0.1, 30., [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF"), # Short fire test
-    ("OFF", 1, 0.1, 30., [[1.125], [0.0], [2.0]], 1E6, "OFF", "OFF"), # Short fire test with higher test rate
-    ("OFF", 1, 5.0, 30., [[1.125], [0.0], [2.0]], 1E7, "OFF", "OFF"),# rate test
-    ("OFF", 1 , 5.0 , 10. , [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF"), # angle test
-    ("OFF", 1 , 5.0 , 30. , [[1.], [0.0], [0.0]], 1E8, "OFF", "OFF"),# Position test
-    ("OFF", 2 , 5.0 , 30. , [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF"), # Number of thrusters test
-    ("ON", 1 , 5.0 , 30. , [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF") , # Basic ramp test
-    ("ON", 1 , 0.5 , 30. , [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF") , # Short ramp test
-    ("ON", 1 , 5.0 , 30. , [[1.125], [0.0], [2.0]], 1E7, "OFF", "OFF"), # rate ramp test
-    ("ON", 1 , 5.0 , 30. , [[1.125], [0.0], [2.0]], 1E8, "ON", "OFF"), # Cuttoff test
-    ("ON", 1, 5.0, 30., [[1.125], [0.0], [2.0]], 1E8, "ON", "ON")  # Rampdown test
+@pytest.mark.parametrize("ramp, thrustNumber , duration , long_angle, lat_angle, location, rate, cutoff, rampDown", [
+    ("OFF", 1 , 5.0 , 30. , 15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF"), #Test random thrust config
+    ("OFF", 1 , 0.1, 30.,  15.,[[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF"), # Short fire test
+    ("OFF", 1, 0.1, 30.,  15.,[[1.125], [0.5], [2.0]], 1E6, "OFF", "OFF"), # Short fire test with higher test rate
+    ("OFF", 1, 5.0, 30.,  15.,[[1.125], [0.5], [2.0]], 1E7, "OFF", "OFF"),# rate test
+    ("OFF", 1 , 5.0 , 10. ,  35.,[[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF"), # angle test
+    ("OFF", 1 , 5.0 , 30. ,  15.,[[1.], [1.5], [0.0]], 1E8, "OFF", "OFF"),# Position test
+    ("OFF", 2 , 5.0 , 30. ,  15.,[[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF"), # Number of thrusters test
+    ("ON", 1 , 5.0 , 30. ,  15.,[[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF") , # Basic ramp test
+    ("ON", 1 , 0.5 , 30. ,  15.,[[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF") , # Short ramp test
+    ("ON", 1 , 5.0 , 30. ,  15.,[[1.125], [0.5], [2.0]], 1E7, "OFF", "OFF"), # rate ramp test
+    ("ON", 1 , 5.0 , 30. ,  15.,[[1.125], [0.5], [2.0]], 1E8, "ON", "OFF"), # Cuttoff test
+    ("ON", 1, 5.0, 30.,  15.,[[1.125], [0.5], [2.0]], 1E8, "ON", "ON")  # Rampdown test
     ])
 
 
 # provide a unique test method name, starting with test_
-def test_unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle , location, rate, cutoff, rampDown):
+def test_unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration ,  long_angle, lat_angle,  location, rate, cutoff, rampDown):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle , location, rate, cutoff, rampDown)
+    [testResults, testMessage] = unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  long_angle, lat_angle , location, rate, cutoff, rampDown)
     assert testResults < 1, testMessage
 
 
 # Run the test
-def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle, location, rate, cutoff, rampDown):
+def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  long_angle, lat_angle, location, rate, cutoff, rampDown):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -149,24 +149,32 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
     thrusterSet.ModelTag = "ACSThrusterDynamics"
 
     #  Create thruster characteristic parameters (position, angle thrust, ISP, time of thrust)
-    angledeg = angle # Parametrized angle of thrust
-    anglerad = angledeg*math.pi/180.0
+    angledeg_long = long_angle # Parametrized angle of thrust
+    angledeg_lat = lat_angle
+    anglerad_long = angledeg_long * math.pi/180.0
+    anglerad_lat = angledeg_lat * math.pi / 180.0
     thruster1 = thrusterDynamicEffector.THRConfigSimMsg()
     thruster1.thrLoc_B =location # Parametrized location for thruster
-    thruster1.thrDir_B = [[math.cos(anglerad)], [math.sin(anglerad)], [0.0]]
+    thruster1.thrDir_B = [[math.cos(anglerad_long)*math.cos(anglerad_lat)], [math.sin(anglerad_long)*math.cos(anglerad_lat)], [math.sin(anglerad_lat)]]
     thruster1.MaxThrust = 1.0
     thruster1.steadyIsp = 226.7
     thruster1.MinOnTime = 0.006
     thrusterSet.addThruster(thruster1)
 
+    loc1 = np.array([thruster1.thrLoc_B[0][0],thruster1.thrLoc_B[1][0],thruster1.thrLoc_B[2][0]])
+    dir1 = np.array([thruster1.thrDir_B[0][0], thruster1.thrDir_B[1][0], thruster1.thrDir_B[2][0]])
+
     if thrustNumber==2:
         thruster2 = thrusterDynamicEffector.THRConfigSimMsg()
-        thruster2.thrLoc_B =[[1.], [0.0], [0.0]]
-        thruster2.thrDir_B = [[math.cos(anglerad+math.pi/4)], [math.sin(anglerad+math.pi/4)], [0.0]]
+        thruster2.thrLoc_B =np.array([[1.], [0.0], [0.0]]).reshape([3,1])
+        thruster2.thrDir_B = np.array([[math.cos(anglerad_long+math.pi/4.)*math.cos(anglerad_lat-math.pi/4.)], [math.sin(anglerad_long+math.pi/4.)*math.cos(anglerad_lat-math.pi/4.)], [math.sin(anglerad_lat-math.pi/4.)]]).reshape([3,1])
         thruster2.MaxThrust = 1.0
         thruster2.steadyIsp = 226.7
         thruster2.MinOnTime = 0.006
         thrusterSet.addThruster(thruster2)
+
+        loc2 = np.array([thruster2.thrLoc_B[0][0],thruster2.thrLoc_B[1][0],thruster2.thrLoc_B[2][0]])
+        dir2 = np.array([thruster2.thrDir_B[0][0], thruster2.thrDir_B[1][0], thruster2.thrDir_B[2][0]])
 
     #  Create a Simulation
     testRate = int(rate) # Parametrized rate of test
