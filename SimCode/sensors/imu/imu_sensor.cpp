@@ -288,7 +288,6 @@ void ImuSensor::computePlatformDR()
     double dcm_BN_2[3][3];
     double dcm_PN_1[3][3];
     double dcm_PN_2[3][3];
-    double dcm_NP_1[3][3];
     double dcm_P2P1[3][3];
 
     //Calculated time averaged cumulative rotation
@@ -296,10 +295,9 @@ void ImuSensor::computePlatformDR()
     v3Copy(StateCurrent.sigma_BN, sigma_BN_2);
     MRP2C(sigma_BN_1, dcm_BN_1);
     MRP2C(sigma_BN_2, dcm_BN_2);
-    m33MultM33(dcm_PB, dcm_BN_1, dcm_PN_1);
-    m33MultM33(dcm_PB, dcm_BN_2, dcm_PN_2);
-    m33Transpose(dcm_PN_1, dcm_NP_1);
-    m33MultM33(dcm_PN_2, dcm_NP_1, dcm_P2P1);
+    m33MultM33(this->dcm_PB, dcm_BN_1, dcm_PN_1);
+    m33MultM33(this->dcm_PB, dcm_BN_2, dcm_PN_2);
+    m33MultM33t(dcm_PN_2, dcm_PN_1, dcm_P2P1);
     C2MRP(dcm_P2P1, trueValues.DRFramePlatform);
     MRP2PRV(trueValues.DRFramePlatform, trueValues.DRFramePlatform);
     
@@ -335,7 +333,7 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
     dt = (CurrentTime - PreviousTime)*1E-9;
     //Calculate "instantaneous" linear acceleration
     v3Copy(StateCurrent.nonConservativeAccelpntB_B, rDotDot_BN_B);
-    v3Copy(sensorPos_B.data(), r_SB_B);
+    v3Copy(this->sensorPos_B, r_SB_B);
     v3Copy(StateCurrent.omega_BN_B, omega);
     v3Cross(StateCurrent.omegaDot_BN_B, r_SB_B, omegaDot_x_r);
     v3Cross(omega, r_SB_B, omega_x_r);
@@ -352,8 +350,7 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
     v3Add(drDot_BN_B, rotationalDelta_B, dvSensor_B);
     m33MultV3(this->dcm_PB, dvSensor_B, this->trueValues.DVFramePlatform); //returns the accumulated deltaV experienced by the sensor in imu platform frame coordinates. This does not include delta-v from conservative accelerations.
     
-    v3Scale(dt, trueValues.AccelPlatform, trueValues.DVFramePlatform);
-    
+    v3Scale(dt, trueValues.AccelPlatform, this->trueValues.DVFramePlatform);
 
     return;
 }
