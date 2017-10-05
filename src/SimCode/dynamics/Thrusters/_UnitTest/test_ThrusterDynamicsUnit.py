@@ -232,35 +232,46 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
         format = "width=0.8\\textwidth"
 
         snippetName = "Snippet" + str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" +\
-                      str(int(angle))+"deg_"+ "Loc"+str(int(location[2][0])) + "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
-        texSnippet = "The thruster is set at " +str(int(angle))+"$^\circ$ off the x-axis, in the position $\\bm r = \left("+\
-                     str(location[0][0])+","+str(location[1][0])+"," +str(location[2][0])+ \
-                     "\\right)$. The test is launched using " + str(thrustNumber) + " thruster, for " + \
-                     str(duration)+ " seconds. The test rate is " + str(int(1./(testRate*macros.NANO2SEC))) + " steps per second"
+                      str(int(long_angle))+"deg_"+ "Loc"+ str(int(loc1[2])) + "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
+        if thrustNumber==1:
+            texSnippet = "The thruster is set at " +str(int(long_angle))+"$^\circ$ off the x-axis " +str(int(lat_angle))+"$^\circ$ off the z-axis, in the position $\\bm r = \left("+\
+                         str(loc1[0])+","+str(loc1[1])+"," +str(loc1[2])+ \
+                         "\\right)$. The test is launched using " + str(thrustNumber) + " thruster, for " + \
+                         str(duration)+ " seconds. The test rate is " + str(int(1./(testRate*macros.NANO2SEC))) + " steps per second"
+        if thrustNumber==2:
+            texSnippet = "The first thruster is set at " + str(int(long_angle)) + "$^\circ$ off the x-axis " + str(
+                int(lat_angle)) + "$^\circ$ off the z-axis, in the position $\\bm r = \left(" + \
+                         str(loc1[0]) + "," + str(loc1[1]) + "," + str(loc1[2]) + \
+                         "\\right)$. The second thruster is set at " + str(int(long_angle+45)) + "$^\circ$ off the x-axis " + str(
+                int(lat_angle+45)) + "$^\circ$ off the z-axis, in the position $\\bm r = \left(" + \
+                         str(loc2[0]) + "," + str(loc2[1]) + "," + str(loc2[2]) + \
+                         "\\right)$. The test uses these " + str(thrustNumber) + " thrusters for " + \
+                         str(duration) + " seconds. The test rate is " + str(
+                int(1. / (testRate * macros.NANO2SEC))) + " steps per second"
         unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
 
-        PlotName = "Force_" +  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" +str(int(angle))+"deg_"+ "Loc"+str(int(location[2][0]))+ "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
-        PlotTitle = "Force on Y with " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " +str(int(angle))+" deg "+ "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
+        PlotName = "Force_" +  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" +str(int(long_angle))+"deg_"+ "Loc"+str(int(location[2][0]))+ "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
+        PlotTitle = "Force on Y with " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " +str(int(long_angle))+" deg "+ "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
 
         plt.figure(1)
         plt.clf()
         plt.plot(thrForce[:,0]*macros.NANO2SEC, thrForce[:,2])
         plt.xlabel('Time(s)')
-        plt.ylabel('Thrust Factor (-)')
+        plt.ylabel('Thrust Factor (N)')
         plt.ylim(-0.2,1)
         unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
         if show_plots==True:
             plt.show()
         plt.close()
 
-        PlotName = "Torque_" +  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" + str(int(angle))+"deg_"+ "Loc"+str(int(location[2][0]))+ "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
-        PlotTitle = "Torque on X with " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " + str(int(angle))+" deg " + "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
+        PlotName = "Torque_" +  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" + str(int(long_angle))+"deg_"+ "Loc"+str(int(location[2][0]))+ "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
+        PlotTitle = "Torque on X with " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " + str(int(long_angle))+" deg " + "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
 
         plt.figure(11)
         plt.clf()
         plt.plot(thrForce[:,0]*macros.NANO2SEC, thrTorque[:,1])
         plt.xlabel('Time(s)')
-        plt.ylabel('Thrust Torque (-)')
+        plt.ylabel('Thrust Torque (Nm)')
         plt.ylim(-1.5, 2)
         unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
         if show_plots==True:
@@ -268,8 +279,8 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
         plt.close()
 
 
-        PlotName =  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" + str(int(angle))+"deg_"+ "Loc"+str(int(location[2][0]))+ "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
-        PlotTitle = "All Forces and Torques " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " + str(int(angle))+" deg "+ "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
+        PlotName =  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" + str(int(long_angle))+"deg_"+ "Loc"+str(int(location[2][0]))+ "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
+        PlotTitle = "All Forces and Torques " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " + str(int(long_angle))+" deg "+ "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
 
         plt.figure(22)
         plt.clf()
@@ -282,6 +293,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
         plt.legend()
         plt.xlabel('Time(s)')
         plt.ylim(-1.5, 2)
+        plt.legend(loc=1)
         unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
         if show_plots==True:
             plt.show()
@@ -376,9 +388,8 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
 
                 snippetName = "Snippet" + "Ramp_" + str(rampsteps) +"steps_" + str(int(duration)) + "s"+  "_Cutoff" + cutoff + "_Rate" + str(
                     int(1. / (testRate * macros.NANO2SEC))) + "_Cutoff" + cutoff
-                texSnippet = "We test the ramped thrust with " + str(rampsteps) + " incremental steps. The single thruster is set at the default " + str(
-                    int(angle)) + "$^\circ$, at $\\bm r = \left(" + \
-                             str(location[0][0]) + "," + str(location[1][0]) + "," + str(location[2][0]) + \
+                texSnippet = "We test the ramped thrust with " + str(rampsteps) + " incremental steps. The single thruster is set at the default " +str(int(long_angle))+"$^\circ$ off the x-axis " +str(int(lat_angle))+"$^\circ$ off the z-axis, at $\\bm r = \left(" + \
+                             str(loc1[0]) + "," + str(loc1[1]) + "," + str(loc1[2]) + \
                              "\\right)$. The thrust is set for " + \
                              str(duration) + " seconds with a test rate of " + str(
                     int(1. / (testRate * macros.NANO2SEC))) + " steps per second. The Cutoff test is " + cutoff
@@ -400,6 +411,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
                 plt.legend()
                 plt.xlabel('Time(s)')
                 plt.ylim(-1.5, 2)
+                plt.legend(loc=2)
                 unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
                 if show_plots == True:
                     plt.show()
@@ -494,9 +506,8 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
 
                 snippetName = "Snippet" + "Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff + "_Rate" + str(
                     int(1. / (testRate * macros.NANO2SEC)))  + "_Cutoff" + cutoff
-                texSnippet = "We test the ramped thrust with " + str(rampsteps) + " incremental steps. The single thruster is set at the default " + str(
-                    int(angle)) + "$^\circ$, at $\\bm r = \left(" + \
-                             str(location[0][0]) + "," + str(location[1][0]) + "," + str(location[2][0]) + \
+                texSnippet = "We test the ramped thrust with " + str(rampsteps) + " incremental steps. The single thruster is set at the default " +str(int(long_angle))+"$^\circ$ off the x-axis " +str(int(lat_angle))+"$^\circ$ off the z-axis, at $\\bm r = \left(" + \
+                             str(loc1[0]) + "," + str(loc1[1]) + "," + str(loc1[2]) + \
                              "\\right)$. The thrust is set for " + \
                              str(duration) + " seconds with a test rate of " + str(
                     int(1. / (testRate * macros.NANO2SEC))) + " steps per second. The Cutoff test is " + cutoff
@@ -513,6 +524,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
                 plt.legend()
                 plt.xlabel('Time(s)')
                 plt.ylim(-1.5, 2)
+                plt.legend(loc=2)
                 unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
                 if show_plots == True:
                     plt.show()
@@ -597,9 +609,8 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
             snippetName = "Snippet" + "Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff + "_Rate" + str(
                 int(1. / (testRate * macros.NANO2SEC)))+ "rampDown" + rampDown
             texSnippet = "We test the ramped thrust with " + str(
-                rampsteps) + " incremental steps. The single thruster is set at the default " + str(
-                int(angle)) + "$^\circ$, at $\\bm r = \left(" + \
-                         str(location[0][0]) + "," + str(location[1][0]) + "," + str(location[2][0]) + \
+                rampsteps) + " incremental steps. The single thruster is set at the default "+str(int(long_angle))+"$^\circ$ off the x-axis " +str(int(lat_angle))+"$^\circ$ off the z-axis, at $\\bm r = \left(" + \
+                         str(loc1[0]) + "," + str(loc1[1]) + "," + str(loc1[2]) + \
                          "\\right)$. The thrust is set for " + \
                          str(RDstart) + " seconds initially with a test rate of " + str(
                 int(1. / (testRate * macros.NANO2SEC))) + " steps per second. The Cutoff test is " + cutoff + \
@@ -617,6 +628,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
             plt.legend()
             plt.xlabel('Time(s)')
             plt.ylim(-1.5, 2)
+            plt.legend(loc=2)
             unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
             if show_plots == True:
                 plt.show()
