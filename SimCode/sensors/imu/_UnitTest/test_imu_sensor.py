@@ -548,12 +548,6 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
     passFailSnippetContent = passedText
     unitTestSupport.writeTeXSnippet(passFailSnippetName, passFailSnippetContent, path)
 
-    failMsgSnippetName = testCase+"failMessage"
-    failMsgSnippetContent = ""
-    for i in range(0,len(testMessages)):
-        failMsgSnippetContent += testMessages[i]
-    unitTestSupport.writeTeXSnippet(failMsgSnippetName, failMsgSnippetContent, path)
-
     snippetName = testCase + "gyroLSB"
     snippetContent = '{:1.0e}'.format(gyroLSBIn)
     unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
