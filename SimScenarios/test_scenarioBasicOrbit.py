@@ -32,6 +32,7 @@ import sys, os, inspect
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
+bskPath = path + '/' + ".." + '/'
 
 import matplotlib
 import numpy as np

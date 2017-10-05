@@ -38,9 +38,7 @@ from datetime import timedelta
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
-splitPath = path.split(bskName)
-bskPath = splitPath[0] + '/' + bskName + '/'
+bskPath = path + '/' + ".." + '/'
 # if this script is run from a custom folder outside of the Basilisk folder, then uncomment the
 # following line and specify the absolute bath to the Basilisk folder
 # bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
