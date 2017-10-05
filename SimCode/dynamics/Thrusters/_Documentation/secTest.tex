@@ -11,9 +11,13 @@ The thruster inputs that were used are:
 
 \begin{itemize}
 \item Earth's gravity on surface : $g=9.80665$ m s$^{-2}$ 
-\item The specific impulse: $I_{sp} = 266.7$s 
+\item The specific impulse: $I_{sp} = 266.7$s. As seen previously, we use the definition of specific impulse defined by:
 
-A thrusters potential to deliver force per mass flow rate. 
+\begin{equation*}
+F_{\mathrm{thrust}} = g_0 \dot{m} I_{sp}
+\end{equation*}
+
+This has the units of seconds, and uses the earths gravitational constant. It represents a thrusters potential to deliver force per mass flow rate. 
 \item The maximum thrust: $F_{\mathrm{max}} = 1.0$ N
 
 The scaling factor yielding the thrust.
@@ -32,9 +36,9 @@ up into several parts, and the mass flow rate is tested at each of these subtest
 \item{\underline{Instantaneous On/Off Factor:} The thrusters are fired with an 
   instantaneous ramp to ensure that the firing is correct. This gives us a base case.}
 \item{\underline{Short Instantaneous Firing:} A "short" firing that still respects the 
-  rules of thumb above is fired to ensure that it is still correct.}
+  rule of thumb above is fired to ensure that it is still correct.}
  \item{\underline{Short Instantaneous Firing with faster test rate:} A "short" firing that still respects the 
-  rules of thumb above but with a faster test rate to see the jump.}
+  rule of thumb above but with a faster test rate to see the jump.}
  \item{\underline{Instantaneous On/Off Factor with faster test rate:} The thrusters are fired with an 
   instantaneous ramp to ensure that the firing is correct given a different test rate. This shouldn't modify the physics.}
  \item{\underline{Thruster Angle Test:} The output forces/torques from the simulation 
@@ -62,14 +66,14 @@ These scenarios create a set of different runs. These are run in the same test u
 
 This thrusters test is considered successful if, for each of the scenarios, the output data matches exactly the truth data that is computed in python. This means that at every time step, the thrust is the one that is expected down to near machine precision ($\epsilon = 10^{-9}$). 
 
-This leave no slack for uncertainty in the thrusters module.
+This leaves no slack for uncertainty in the thrusters module.
 
 
 
 \section{Test Parameters}
 
 
-In order to have a rigorous automated test, we have to predict the forces and torques that will apply on the spacecraft. We use the following equations to compute the thrust at each time step. We call $\alpha$ the angle in which the thruster is pointing, $\bm r = r \hat{\bm e_r}= \left(r_x, r_y, r_z \right)$ it's position vector, 
+In order to have a rigorous automated test, we have to predict the forces and torques that will apply on the spacecraft. We use the following equations to compute the thrust at each time step. We call $\alpha$ the angle in which the thruster is pointing, $\bm r = r \hat{\bm e_r}= \left(r_x, r_y, r_z \right)$ it's position vector in the body frame, 
 
 \begin{enumerate}
 	
@@ -86,18 +90,14 @@ In order to have a rigorous automated test, we have to predict the forces and to
 	\item{\underline{With one thruster}}: The forces are simply the projections of the thrust force on the axes of interest. The torque along $x$ is the arm along $z$ times the projection of the force along $y$, the torque along $z$ is the arm along $x$ times the projection of the force along $y$, the torque along $z$ is the arm along $x$ times the projection of the force along $y$. 
 	
 	\begin{align}
-		F_x =F_{\mathrm{max}} \cos \alpha &\hspace{1cm} T_x = - F_{\mathrm{max}}\sin(\alpha) r_z \\ 
-		F_y = F_{\mathrm{max}} \sin \alpha &\hspace{1cm} T_y = F_{\mathrm{max}} \cos(\alpha) r \sin( \arctan(r_z/r_x)) \\ 
-		F_z = 0 &\hspace{1cm} T_z =  F_{\mathrm{max}} \sin(\alpha) r_x 
+		\leftexp{B}{\bm F} =\leftexp{B}{\begin{pmatrix} F_x, & F_y & F_z \end{pmatrix}}^T&\hspace{1cm} \leftexp{B}{\bm T} =\leftexp{B}{\bm r} \times \leftexp{B}{\bm F}  \\
 	\end{align}
 	
 	
 	\item{\underline{With two thrusters}}: By giving indices $1$ and $2$ for each of the thrusters, we just need to add the Forces and torques defined above to get the total Forces and Torques:
 	
 	\begin{align}
-		F_x = F_{x1} + F_{x2} &\hspace{1cm} T_x = T_{x1} + T_{x2} \\ 
-		F_y =  F_{y1} + F_{y2} &\hspace{1cm} T_y =  T_{y1} + T_{y2}\\ 
-		F_z =  F_{z1} + F_{z2} &\hspace{1cm} T_z =  T_{z1} + T_{z2}
+		\leftexp{B}{\bm F} = \leftexp{B}{\bm F_1}  + \leftexp{B}{\bm F_2} &\hspace{1cm} \leftexp{B}{\bm T} = \leftexp{B}{\bm T_1}  + \leftexp{B}{\bm T_2} \\ 
 	\end{align}
 	
 	\item{\underline{With ramps thruster}}: When the thrusters now ramp up and down, we create a normalized ramp function $\rho$. An example is given in \ref{fig:Ramp_function} in the case of a cutoff fire and renewed fire. \par
@@ -107,9 +107,7 @@ In order to have a rigorous automated test, we have to predict the forces and to
 	We then prolong the force and torque end times as a function of the ramp slope, and multiply the initial functions by this ramping function:
 	
 	\begin{align}
-		\tilde{F_x} = \rho F_{x} &\hspace{1cm} \tilde{T_x} =\rho T_{x}  \\ 
-		\tilde{F_y} =  \rho F_{y}  &\hspace{1cm} \tilde{T_y} =\rho  T_{y} \\ 
-		\tilde{F_z} = \rho F_{z} &\hspace{1cm} \tilde{T_z} =\rho  T_{z} 
+		\tilde{\bm F} = \rho \bm F &\hspace{1cm} \tilde{\bm T} =\rho \bm T  \\ 
 	\end{align}
 	
 \end{enumerate}
@@ -153,7 +151,7 @@ In order to have a rigorous automated test, we have to predict the forces and to
 	\input{AutoTex/1Thrusters_5s_30deg_Loc2_Rate10.tex}
 	
 	As Figure \ref{fig:1Thrusters_5s_30deg_Loc2_Rate10} shows, the desired behavior is captured exactly for each 
-	firing in the test for all of the forces and torques. This is validated by the exact same predicted and simulated thrust arrays.  \textcolor{ForestGreen}{Test successful.}
+	firing in the test for all of the forces and torques. This is validated by the exact same predicted and simulated thrust arrays.  
 	
 	\item{\underline{Short Instantaneous Firing: }}
 	
@@ -165,7 +163,7 @@ In order to have a rigorous automated test, we have to predict the forces and to
 	\input{AutoTex/1Thrusters_0s_30deg_Loc2_Rate10.tex}
 	
 	As Figure \ref{fig:1Thrusters_0s_30deg_Loc2_Rate10} shows, the desired behavior is captured exactly for each 
-	firing in the test for all of the forces and torques. Despite the lower test rate, the forces and torques behave appropriately. This is validated by the exact same predicted and simulated thrust arrays.\textcolor{ForestGreen}{Test successful.}
+	firing in the test for all of the forces and torques. Despite the lower test rate, the forces and torques behave appropriately. This is validated by the exact same predicted and simulated thrust arrays.
 	
 	\item{\underline{Short Instantaneous Firing with faster test rate: }}
 	
@@ -177,7 +175,7 @@ In order to have a rigorous automated test, we have to predict the forces and to
 	\input{AutoTex/1Thrusters_0s_30deg_Loc2_Rate1000.tex}
 	
 	As Figure \ref{fig:1Thrusters_0s_30deg_Loc2_Rate1000} shows, the desired behavior is captured exactly for each 
-	firing in the test for all of the forces and torques. This is validated by the exact same predicted and simulated thrust arrays. \textcolor{ForestGreen}{Test successful.}
+	firing in the test for all of the forces and torques. This is validated by the exact same predicted and simulated thrust arrays. 
 	
 	\item{\underline{Instantaneous On/Off Factor with faster test rate:} }
 	
@@ -188,7 +186,7 @@ In order to have a rigorous automated test, we have to predict the forces and to
 	\input{AutoTex/1Thrusters_5s_30deg_Loc2_Rate100.tex}
 	
 	As Figure \ref{fig:1Thrusters_5s_30deg_Loc2_Rate100} shows, the desired behavior is captured exactly for each 
-	firing in the test for all of the forces and torques. This is validated by the exact same predicted and simulated thrust arrays. \textcolor{ForestGreen}{Test successful.}
+	firing in the test for all of the forces and torques. This is validated by the exact same predicted and simulated thrust arrays. 
 	
 	\item{\underline{Thruster Angle Test:}}
 	
@@ -199,7 +197,7 @@ In order to have a rigorous automated test, we have to predict the forces and to
 	\input{AutoTex/1Thrusters_5s_10deg_Loc2_Rate10.tex}
 	
 	As Figure \ref{fig:1Thrusters_5s_10deg_Loc2_Rate10} shows, the desired behavior is captured exactly for each 
-	firing in the test for all of the forces and torques. This is validated by the exact same predicted and simulated thrust arrays. \textcolor{ForestGreen}{Test successful.}
+	firing in the test for all of the forces and torques. This is validated by the exact same predicted and simulated thrust arrays. 
 	
 	
 	\item{\underline{Thruster Position Test:} }
@@ -211,18 +209,18 @@ In order to have a rigorous automated test, we have to predict the forces and to
 	\input{AutoTex/1Thrusters_5s_30deg_Loc0_Rate10.tex}
 	
 	As Figure \ref{fig:1Thrusters_5s_30deg_Loc0_Rate10} shows, the desired behavior is captured exactly for each 
-	firing in the test for all of the forces and torques. This is validated by the exact same predicted and simulated thrust arrays. \textcolor{ForestGreen}{Test successful.}
+	firing in the test for all of the forces and torques. This is validated by the exact same predicted and simulated thrust arrays. 
 	
 	\item{\underline{Thruster Number Test:} }
 	
 	\input{AutoTex/Snippet2Thrusters_5s_30deg_Loc2_Rate10.tex}
 	
-	This test shows that the thruster model can incorporate several thrusters correctly. We add a second thruster and use the modified truth function for the forces and torques.
+	This test shows that the thruster model can incorporate several thrusters correctly. We add a second thruster and use the modified truth function for the forces and torques. These thrusters are not aligned and not in the same position, giving a general multi-thruster result.  
 	
 	\input{AutoTex/2Thrusters_5s_30deg_Loc2_Rate10.tex}
 	
 	As Figure \ref{fig:2Thrusters_5s_30deg_Loc2_Rate10} shows, the desired behavior is captured exactly for each 
-	firing in the test for all of the forces and torques. This is validated by the exact same predicted and simulated thrust arrays.  \textcolor{ForestGreen}{Test successful.}
+	firing in the test for all of the forces and torques. This is validated by the exact same predicted and simulated thrust arrays.  
 	
 	\item{\underline{Ramp On/Ramp Off Firing:} }
 	
@@ -232,7 +230,7 @@ In order to have a rigorous automated test, we have to predict the forces and to
 	\input{AutoTex/Ramp_10steps_CutoffOFF_5s_testRate10.tex}
 	
 	As Figure \ref{fig:Ramp_10steps_CutoffOFF_5s_testRate10} shows, the desired behavior is captured exactly for each 
-	firing in the test for all of the forces and torques. This is validated by the exact same predicted and simulated thrust arrays. \textcolor{ForestGreen}{Test successful.}
+	firing in the test for all of the forces and torques. This is validated by the exact same predicted and simulated thrust arrays. 
 	
 	
 	\item{\underline{Short ramped firing:} }
@@ -244,7 +242,7 @@ In order to have a rigorous automated test, we have to predict the forces and to
 	\input{AutoTex/Ramp_10steps_CutoffOFF_0s_testRate10.tex}
 	
 	As Figure \ref{fig:Ramp_10steps_CutoffOFF_0s_testRate10} shows, the desired behavior is captured exactly for each 
-	firing in the test for all of the forces and torques. This is validated by the exact same predicted and simulated thrust arrays. \textcolor{ForestGreen}{Test successful.}
+	firing in the test for all of the forces and torques. This is validated by the exact same predicted and simulated thrust arrays. 
 	
 	\item{\underline{Ramp On/Ramp Off Firing with faster test rate:} }
 	
@@ -255,7 +253,7 @@ In order to have a rigorous automated test, we have to predict the forces and to
 	\input{AutoTex/Ramp_10steps_CutoffOFF_5s_testRate100.tex}
 	
 	As Figure \ref{fig:Ramp_10steps_CutoffOFF_5s_testRate100} shows, the desired behavior is captured exactly for each 
-	firing in the test for all of the forces and torques. This is validated by the exact same predicted and simulated thrust arrays. \textcolor{ForestGreen}{Test successful.}
+	firing in the test for all of the forces and torques. This is validated by the exact same predicted and simulated thrust arrays. 
 	
 	\item{\underline{Cutoff firing:}}
 	
@@ -266,7 +264,7 @@ In order to have a rigorous automated test, we have to predict the forces and to
 	\input{AutoTex/Ramp_10steps_CutoffON_5s_testRate10.tex}
 	
 	As Figure \ref{fig:Ramp_10steps_CutoffON_5s_testRate10} shows, the desired behavior is captured exactly for each 
-	firing in the test for all of the forces and torques. This is validated by the exact same predicted and simulated thrust arrays. \textcolor{ForestGreen}{Test successful.}
+	firing in the test for all of the forces and torques. This is validated by the exact same predicted and simulated thrust arrays. 
 	
 	\item{\underline{Ramp down firing:}}
 	
@@ -277,7 +275,7 @@ In order to have a rigorous automated test, we have to predict the forces and to
 	\input{AutoTex/Ramp_10steps_CutoffONrampDownON_testRate10.tex}
 	
 	As Figure \ref{fig:Ramp_10steps_CutoffONrampDownON_testRate10} shows, the desired behavior is captured exactly for each 
-	firing in the test for all of the forces and torques. This is validated by the exact same predicted and simulated thrust arrays.  \textcolor{ForestGreen}{Test successful.}
+	firing in the test for all of the forces and torques. This is validated by the exact same predicted and simulated thrust arrays.  
 	
 \end{enumerate}
 
