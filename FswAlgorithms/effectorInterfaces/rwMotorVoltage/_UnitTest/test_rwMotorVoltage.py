@@ -38,17 +38,17 @@ bskPath = splitPath[0] + '/' + bskName + '/'
 # if this script is run from a custom folder outside of the Basilisk folder, then uncomment the
 # following line and specify the absolute bath to the Basilisk folder
 #bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
-sys.path.append(bskPath + 'modules')
-sys.path.append(bskPath + 'PythonModules')
+#sys.path.append(bskPath + 'modules')
+#sys.path.append(bskPath + 'PythonModules')
 
 # Import all of the modules that we are going to be called in this simulation
-import SimulationBaseClass
-import alg_contain
-import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.modules import alg_contain
+from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-import rwMotorVoltage
-import fswSetupRW
-import macros
+from Basilisk.modules import rwMotorVoltage
+from Basilisk.utilities import fswSetupRW
+from Basilisk.utilities import macros
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)

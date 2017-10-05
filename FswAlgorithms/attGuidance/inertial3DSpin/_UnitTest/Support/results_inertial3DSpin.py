@@ -22,12 +22,12 @@ import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('FswAlgorithms')
-sys.path.append(splitPath[0] + '/modules')
-sys.path.append(splitPath[0] + '/PythonModules')
+#sys.path.append(splitPath[0] + '/modules')
+#sys.path.append(splitPath[0] + '/PythonModules')
 
 import numpy as np
-import RigidBodyKinematics as rbk
-import macros as mc
+from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.utilities import macros as mc
 
 np.set_printoptions(precision=12)
 

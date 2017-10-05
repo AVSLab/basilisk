@@ -28,15 +28,15 @@ import logging
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('FswAlgorithms')
-sys.path.append(splitPath[0] + '/modules')
-sys.path.append(splitPath[0] + '/PythonModules')
+#sys.path.append(splitPath[0] + '/modules')
+#sys.path.append(splitPath[0] + '/PythonModules')
 
 #Import all of the modules that we are going to call in this simulation
-import MessagingAccess
-import SimulationBaseClass
-import sim_model
-import alg_contain
-import cssWlsEst
+from Basilisk.utilities import MessagingAccess
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.modules import sim_model
+from Basilisk.modules import alg_contain
+from Basilisk.modules import cssWlsEst
 
 
 # Function that takes a sun pointing vector and array of CSS normal vectors and 

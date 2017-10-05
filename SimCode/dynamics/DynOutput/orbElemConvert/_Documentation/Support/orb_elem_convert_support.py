@@ -34,14 +34,14 @@ import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('SimCode')
-sys.path.append(splitPath[0] + '/modules')
-sys.path.append(splitPath[0] + '/PythonModules')
+#sys.path.append(splitPath[0] + '/modules')
+#sys.path.append(splitPath[0] + '/PythonModules')
 
 # @cond DOXYGEN_IGNOREimport spice_interface
 import numpy
 import matplotlib.pyplot as plt
 import math
-import macros as mc
+from Basilisk.utilities import macros as mc
 
 
 a = 10000000.0

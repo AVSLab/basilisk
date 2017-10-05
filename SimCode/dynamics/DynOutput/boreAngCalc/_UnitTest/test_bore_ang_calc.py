@@ -33,18 +33,18 @@ import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('SimCode')
-sys.path.append(splitPath[0] + '/modules')
-sys.path.append(splitPath[0] + '/PythonModules')
+#sys.path.append(splitPath[0] + '/modules')
+#sys.path.append(splitPath[0] + '/PythonModules')
 
 # @cond DOXYGEN_IGNOREimport spice_interface
-import SimulationBaseClass
+from Basilisk.utilities import SimulationBaseClass
 import numpy
-import bore_ang_calc
-import macros
-import RigidBodyKinematics
-import spice_interface
-import spacecraftPlus
-import unitTestSupport
+from Basilisk.modules import bore_ang_calc
+from Basilisk.utilities import macros
+from Basilisk.utilities import RigidBodyKinematics
+from Basilisk.modules import spice_interface
+from Basilisk.modules import spacecraftPlus
+from Basilisk.utilities import unitTestSupport
 import pytest
 
 

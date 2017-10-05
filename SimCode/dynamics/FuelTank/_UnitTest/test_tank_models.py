@@ -25,23 +25,23 @@ import math
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('SimCode')
-sys.path.append(splitPath[0] + '/modules')
-sys.path.append(splitPath[0] + '/PythonModules')
+#sys.path.append(splitPath[0] + '/modules')
+#sys.path.append(splitPath[0] + '/PythonModules')
 
-import SimulationBaseClass
-import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-import macros
-import spacecraftPlus
-import sim_model
+from Basilisk.utilities import macros
+from Basilisk.modules import spacecraftPlus
+from Basilisk.modules import sim_model
 import ctypes
-import gravityEffector
-import spice_interface
-import simIncludeThruster
-import thrusterDynamicEffector
-import vehicleConfigData
-import fuelTank
-import fuelSloshParticle
+from Basilisk.modules import gravityEffector
+from Basilisk.modules import spice_interface
+from Basilisk.utilities import simIncludeThruster
+from Basilisk.modules import thrusterDynamicEffector
+from Basilisk.modules import vehicleConfigData
+from Basilisk.modules import fuelTank
+from Basilisk.modules import fuelSloshParticle
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

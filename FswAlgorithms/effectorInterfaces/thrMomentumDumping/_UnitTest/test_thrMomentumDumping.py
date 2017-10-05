@@ -32,18 +32,18 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('FswAlgorithms')
-sys.path.append(splitPath[0] + '/modules')
-sys.path.append(splitPath[0] + '/PythonModules')
+#sys.path.append(splitPath[0] + '/modules')
+#sys.path.append(splitPath[0] + '/PythonModules')
 
 # Import all of the modules that we are going to be called in this simulation
-import SimulationBaseClass
-import alg_contain
-import unitTestSupport                  # general support file with common unit test functions
-import thrMomentumDumping            # import the module that is to be tested
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.modules import alg_contain
+from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.modules import thrMomentumDumping            # import the module that is to be tested
 import matplotlib.pyplot as plt
-import macros
-import fswSetupThrusters
-import vehicleConfigData
+from Basilisk.utilities import macros
+from Basilisk.utilities import fswSetupThrusters
+from Basilisk.modules import vehicleConfigData
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.

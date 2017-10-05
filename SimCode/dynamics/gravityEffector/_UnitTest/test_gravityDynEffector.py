@@ -25,20 +25,20 @@ import numpy as np
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('SimCode')
-sys.path.append(splitPath[0] + '/modules')
-sys.path.append(splitPath[0] + '/PythonModules')
-sys.path.append(splitPath[0] + '/SimCode/dynamics/gravityEffector')
+#sys.path.append(splitPath[0] + '/modules')
+#sys.path.append(splitPath[0] + '/PythonModules')
+#sys.path.append(splitPath[0] + '/SimCode/dynamics/gravityEffector')
 
-import SimulationBaseClass
-import unitTestSupport  # general support file with common unit test functions
-import macros
-import gravityEffector
-import spice_interface
-import pyswice
-import stateArchitecture
-from gravCoeffOps import loadGravFromFileToList
-import orbitalMotion as om
-import simMessages
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import macros
+from Basilisk.modules import gravityEffector
+from Basilisk.modules import spice_interface
+from Basilisk.modules import pyswice
+from Basilisk.modules import stateArchitecture
+from Basilisk.modules.gravityEffector.gravCoeffOps import loadGravFromFileToList
+from Basilisk.utilities import orbitalMotion as om
+from Basilisk.modules import simMessages
 
 #script to check spherical harmonics calcs out to 20th degree
 #Uses coefficient from Vallado tables D-1

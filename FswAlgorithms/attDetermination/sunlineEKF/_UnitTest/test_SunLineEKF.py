@@ -29,16 +29,16 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('FswAlgorithms')
-sys.path.append(splitPath[0] + '/modules')
-sys.path.append(splitPath[0] + '/PythonModules')
+#sys.path.append(splitPath[0] + '/modules')
+#sys.path.append(splitPath[0] + '/PythonModules')
 
-import SimulationBaseClass
-import alg_contain
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.modules import alg_contain
 import SunLineEKF_test_utilities as FilterPlots
-import sunlineEKF  # import the module that is to be tested
-import cssComm
-import vehicleConfigData
-import macros
+from Basilisk.modules import sunlineEKF  # import the module that is to be tested
+from Basilisk.modules import cssComm
+from Basilisk.modules import vehicleConfigData
+from Basilisk.utilities import macros
 
 
 def setupFilterData(filterObject):

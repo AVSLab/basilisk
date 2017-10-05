@@ -35,18 +35,18 @@ import logging
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('Basilisk')
-sys.path.append(splitPath[0]+'/Basilisk/modules')
-sys.path.append(splitPath[0]+'/Basilisk/PythonModules')
+#sys.path.append(splitPath[0]+'/Basilisk/modules')
+#sys.path.append(splitPath[0]+'/Basilisk/PythonModules')
 
-import MessagingAccess
-import SimulationBaseClass
-import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import MessagingAccess
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-import macros
-import VSCMGStateEffector
-import sim_model
-import RigidBodyKinematics as rbk
-import spacecraftPlus
+from Basilisk.utilities import macros
+from Basilisk.modules.VSCMGStateEffector import VSCMGStateEffector
+from Basilisk.modules import sim_model
+from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.modules import spacecraftPlus
 
 # methods
 def listStack(vec,simStopTime,unitProcRate):

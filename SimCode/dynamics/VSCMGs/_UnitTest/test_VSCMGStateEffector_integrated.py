@@ -25,19 +25,19 @@ import math
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('SimCode')
-sys.path.append(splitPath[0] + '/modules')
-sys.path.append(splitPath[0] + '/PythonModules')
+#sys.path.append(splitPath[0] + '/modules')
+#sys.path.append(splitPath[0] + '/PythonModules')
 
-import SimulationBaseClass
-import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import spacecraftPlus
-import sim_model
-import macros
-import gravityEffector
-import spice_interface
-import VSCMGStateEffector
+from Basilisk.modules import spacecraftPlus
+from Basilisk.modules import sim_model
+from Basilisk.utilities import macros
+from Basilisk.modules import gravityEffector
+from Basilisk.modules import spice_interface
+from Basilisk.modules.VSCMGStateEffector import VSCMGStateEffector
 
 mpl.rc("figure", figsize=(5.75,4))
 

@@ -34,23 +34,23 @@ import logging
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('FswAlgorithms')
-sys.path.append(splitPath[0] + '/modules')
-sys.path.append(splitPath[0] + '/PythonModules')
+#sys.path.append(splitPath[0] + '/modules')
+#sys.path.append(splitPath[0] + '/PythonModules')
 
 
 #   Import all of the modules that we are going to call in this simulation
-import SimulationBaseClass
-import alg_contain
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.modules import alg_contain
 # general support files with common unit test functions
-import macros
-import unitTestSupport
+from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport
 import matplotlib.pyplot as plt
 # import the module that is to be tested
-import PRV_Steering
-import rateServoFullNonlinear
+from Basilisk.modules import PRV_Steering
+from Basilisk.modules import rateServoFullNonlinear
 # import module(s) that creates the needed input message declaration
-import fswMessages
-import simFswInterfaceMessages
+from Basilisk.modules import fswMessages
+from Basilisk.modules import simFswInterfaceMessages
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

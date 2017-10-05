@@ -25,18 +25,18 @@ import math
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('FswAlgorithms')
-sys.path.append(splitPath[0] + '/modules')
-sys.path.append(splitPath[0] + '/PythonModules')
+#sys.path.append(splitPath[0] + '/modules')
+#sys.path.append(splitPath[0] + '/PythonModules')
 
-import SimulationBaseClass
-import alg_contain
-import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.modules import alg_contain
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-import sunlineUKF  # import the module that is to be tested
-import cssComm
-import vehicleConfigData
-import macros
-import sim_model
+from Basilisk.modules import sunlineUKF  # import the module that is to be tested
+from Basilisk.modules import cssComm
+from Basilisk.modules import vehicleConfigData
+from Basilisk.utilities import macros
+from Basilisk.modules import sim_model
 import ctypes
 
 

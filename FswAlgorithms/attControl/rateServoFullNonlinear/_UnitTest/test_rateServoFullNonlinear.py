@@ -24,16 +24,16 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('FswAlgorithms')
-sys.path.append(splitPath[0] + '/modules')
-sys.path.append(splitPath[0] + '/PythonModules')
+#sys.path.append(splitPath[0] + '/modules')
+#sys.path.append(splitPath[0] + '/PythonModules')
 
-import SimulationBaseClass
-import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-import rateServoFullNonlinear  # import the module that is to be tested
-import macros
-import fswMessages
-import simFswInterfaceMessages
+from Basilisk.modules import rateServoFullNonlinear  # import the module that is to be tested
+from Basilisk.utilities import macros
+from Basilisk.modules import fswMessages
+from Basilisk.modules import simFswInterfaceMessages
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

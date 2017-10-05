@@ -35,11 +35,11 @@ import logging
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('Basilisk')
-sys.path.append(splitPath[0]+'/Basilisk/modules')
-sys.path.append(splitPath[0]+'/Basilisk/PythonModules')
+#sys.path.append(splitPath[0]+'/Basilisk/modules')
+#sys.path.append(splitPath[0]+'/Basilisk/PythonModules')
 
-import macros
-import reactionWheelStateEffector
+from Basilisk.utilities import macros
+from Basilisk.modules import reactionWheelStateEffector
 
 # methods
 def listStack(vec,simStopTime,unitProcRate):

@@ -37,22 +37,20 @@ import inspect
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
-splitPath = path.split(bskName)
-bskPath = splitPath[0] + bskName + '/'
-sys.path.append(bskPath + 'modules')
-sys.path.append(bskPath + 'PythonModules')
+bskPath = path + '/../../../../'
+#sys.path.append(bskPath + 'modules')
+#sys.path.append(bskPath + 'PythonModules')
 # @endcond
 
-import SimulationBaseClass
-import unitTestSupport
-import spacecraftPlus
-import macros
-import spice_interface
-import eclipse
-import pyswice
-import gravityEffector
-import orbitalMotion
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport
+from Basilisk.modules import spacecraftPlus
+from Basilisk.utilities import macros
+from Basilisk.modules import spice_interface
+from Basilisk.modules import eclipse
+from Basilisk.modules import pyswice
+from Basilisk.modules import gravityEffector
+from Basilisk.utilities import orbitalMotion
 
 
 # uncomment this line if this test has an expected failure, adjust message as needed

@@ -45,22 +45,22 @@ bskPath = splitPath[0] + '/' + bskName + '/'
 # if this script is run from a custom folder outside of the Basilisk folder, then uncomment the
 # following line and specify the absolute bath to the Basilisk folder
 #bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
-sys.path.append(bskPath + 'modules')
-sys.path.append(bskPath + 'PythonModules')
+#sys.path.append(bskPath + 'modules')
+#sys.path.append(bskPath + 'PythonModules')
 # @endcond
 
 # import general simulation support files
-import SimulationBaseClass
-import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-import macros
-import orbitalMotion
+from Basilisk.utilities import macros
+from Basilisk.utilities import orbitalMotion
 
 # import simulation related support
-import spacecraftPlus
-import exponentialAtmosphere
-import dragDynamicEffector
-import unitTestSupport
+from Basilisk.modules import spacecraftPlus
+from Basilisk.modules import exponentialAtmosphere
+from Basilisk.modules import dragDynamicEffector
+from Basilisk.utilities import unitTestSupport
 #print dir(exponentialAtmosphere)
 
 

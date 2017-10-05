@@ -38,18 +38,18 @@ import inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('SimCode')
-sys.path.append(splitPath[0] + '/modules')
-sys.path.append(splitPath[0] + '/PythonModules')
+#sys.path.append(splitPath[0] + '/modules')
+#sys.path.append(splitPath[0] + '/PythonModules')
 # @endcond
 
 #Import all of the modules that we are going to call in this simulation
-import SimulationBaseClass
-import unitTestSupport
-import spacecraftPlus
-import radiation_pressure
-import macros
-import spice_interface
-import orbitalMotion as om
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport
+from Basilisk.modules import spacecraftPlus
+from Basilisk.modules import radiation_pressure
+from Basilisk.utilities import macros
+from Basilisk.modules import spice_interface
+from Basilisk.utilities import orbitalMotion as om
 
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)

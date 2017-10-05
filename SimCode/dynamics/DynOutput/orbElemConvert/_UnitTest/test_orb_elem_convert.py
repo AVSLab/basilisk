@@ -33,22 +33,22 @@ import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('SimCode')
-sys.path.append(splitPath[0] + '/modules')
-sys.path.append(splitPath[0] + '/PythonModules')
+#sys.path.append(splitPath[0] + '/modules')
+#sys.path.append(splitPath[0] + '/PythonModules')
 
 # @cond DOXYGEN_IGNOREimport spice_interface
 import datetime
-import MessagingAccess
-import SimulationBaseClass
+from Basilisk.utilities import MessagingAccess
+from Basilisk.utilities import SimulationBaseClass
 import numpy
-import orb_elem_convert
+from Basilisk.modules import orb_elem_convert
 import ctypes
-import macros
+from Basilisk.utilities import macros
 import matplotlib.pyplot as plt
 import math
-import orbitalMotion
-import macros as mc
-import unitTestSupport
+from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import macros as mc
+from Basilisk.utilities import unitTestSupport
 # @endcond
 
 # Class in order to plot using data accross the different paramatrized scenarios

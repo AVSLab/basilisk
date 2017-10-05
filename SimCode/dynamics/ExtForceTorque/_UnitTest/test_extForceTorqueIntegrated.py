@@ -25,15 +25,15 @@ import math
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('SimCode')
-sys.path.append(splitPath[0] + '/modules')
-sys.path.append(splitPath[0] + '/PythonModules')
+#sys.path.append(splitPath[0] + '/modules')
+#sys.path.append(splitPath[0] + '/PythonModules')
 
-import SimulationBaseClass
-import unitTestSupport  # general support file with common unit test functions
-import spacecraftPlus
-import macros
-import gravityEffector
-import ExtForceTorque
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.modules import spacecraftPlus
+from Basilisk.utilities import macros
+from Basilisk.modules import gravityEffector
+from Basilisk.modules.ExtForceTorque import ExtForceTorque
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

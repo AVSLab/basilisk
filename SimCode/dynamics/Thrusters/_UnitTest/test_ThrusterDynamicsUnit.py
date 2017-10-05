@@ -38,20 +38,20 @@ import inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('SimCode')
-sys.path.append(splitPath[0] + '/modules')
-sys.path.append(splitPath[0] + '/PythonModules')
+#sys.path.append(splitPath[0] + '/modules')
+#sys.path.append(splitPath[0] + '/PythonModules')
 # @endcond
 
 #Import all of the modules that we are going to call in this simulation
-import unitTestSupport
+from Basilisk.utilities import unitTestSupport
 import matplotlib.pyplot as plt
-import MessagingAccess
-import SimulationBaseClass
-import sim_model
-import thrusterDynamicEffector
-import stateArchitecture
-import spacecraftPlus
-import macros
+from Basilisk.utilities import MessagingAccess
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.modules import sim_model
+from Basilisk.modules import thrusterDynamicEffector
+from Basilisk.modules import stateArchitecture
+from Basilisk.modules import spacecraftPlus
+from Basilisk.utilities import macros
 
 
 class ResultsStore:

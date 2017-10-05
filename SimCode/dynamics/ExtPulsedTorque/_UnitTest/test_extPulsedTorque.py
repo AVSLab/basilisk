@@ -36,13 +36,13 @@ import logging
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('Basilisk')
-sys.path.append(splitPath[0] + '/Basilisk/modules')
-sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
+#sys.path.append(splitPath[0] + '/Basilisk/modules')
+#sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 
-import SimulationBaseClass
-import unitTestSupport                  # general support file with common unit test functions
-import macros
-import ExtPulsedTorque
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import macros
+from Basilisk.modules import ExtPulsedTorque
 
 
 

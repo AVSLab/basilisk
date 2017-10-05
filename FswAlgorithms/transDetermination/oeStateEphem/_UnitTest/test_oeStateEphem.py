@@ -25,15 +25,15 @@ import math
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('FswAlgorithms')
-sys.path.append(splitPath[0] + '/modules')
-sys.path.append(splitPath[0] + '/PythonModules')
+#sys.path.append(splitPath[0] + '/modules')
+#sys.path.append(splitPath[0] + '/PythonModules')
 
-import SimulationBaseClass
-import macros
-import oe_state_ephem
-import sim_model
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import macros
+from Basilisk.modules import oe_state_ephem
+from Basilisk.modules import sim_model
 import ctypes
-import pyswice
+from Basilisk.modules import pyswice
 import matplotlib.pyplot as plt
 
 orbitPosAccuracy = 10000.0

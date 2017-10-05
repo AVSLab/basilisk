@@ -35,19 +35,19 @@ import logging
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('Basilisk')
-sys.path.append(splitPath[0]+'/Basilisk/modules')
-sys.path.append(splitPath[0]+'/Basilisk/PythonModules')
-sys.path.append(splitPath[0]+'/Basilisk/ADCSAlgorithms/sensorInterfaces/STSensorData')
+#sys.path.append(splitPath[0]+'/Basilisk/modules')
+#sys.path.append(splitPath[0]+'/Basilisk/PythonModules')
+#sys.path.append(splitPath[0]+'/Basilisk/ADCSAlgorithms/sensorInterfaces/STSensorData')
 
-import MessagingAccess
-import SimulationBaseClass
-import unitTestSupport  # general support file with common unit test functions
+from Basilisk.utilities import MessagingAccess
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-import macros
-import star_tracker
-import sim_model
-import RigidBodyKinematics as rbk
-import spice_interface
+from Basilisk.utilities import macros
+from Basilisk.modules import star_tracker
+from Basilisk.modules import sim_model
+from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.modules import spice_interface
 
 # methods
 def listStack(vec,simStopTime,unitProcRate):
