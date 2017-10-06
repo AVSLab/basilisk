@@ -19,7 +19,7 @@
 '''
 import sys
 import copy
-from Basilisk.modules import sim_model
+from Basilisk.simulation import sim_model
 import numpy
 import array
 import pdb

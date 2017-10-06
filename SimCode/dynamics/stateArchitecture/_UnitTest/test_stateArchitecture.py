@@ -32,8 +32,8 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
-from Basilisk.modules import stateArchitecture
-from Basilisk.modules import sim_model
+from Basilisk.simulation import stateArchitecture
+from Basilisk.simulation import sim_model
 import ctypes
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

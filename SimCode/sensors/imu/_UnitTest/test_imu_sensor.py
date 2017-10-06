@@ -43,8 +43,8 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
-from Basilisk.modules import imu_sensor
-from Basilisk.modules import sim_model
+from Basilisk.simulation import imu_sensor
+from Basilisk.simulation import sim_model
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
 np.random.seed(2000000)

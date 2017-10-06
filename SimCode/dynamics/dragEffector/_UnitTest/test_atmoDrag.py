@@ -57,13 +57,13 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 
 # import simulation related support
-from Basilisk.modules import spacecraftPlus
+from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.modules import exponentialAtmosphere
-from Basilisk.modules import dragDynamicEffector
+from Basilisk.simulation import exponentialAtmosphere
+from Basilisk.simulation import dragDynamicEffector
 from Basilisk.utilities import unitTestSupport
 #print dir(exponentialAtmosphere)
-from Basilisk.modules import dragDynamicEffector
+from Basilisk.simulation import dragDynamicEffector
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

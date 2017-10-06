@@ -30,10 +30,10 @@ splitPath = path.split('FswAlgorithms')
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.modules import cheby_pos_ephem
-from Basilisk.modules import sim_model
+from Basilisk.fswAlgorithms import cheby_pos_ephem
+from Basilisk.simulation import sim_model
 import ctypes
-from Basilisk.modules import pyswice
+from Basilisk import pyswice
 import matplotlib.pyplot as plt
 
 orbitPosAccuracy = 1.0

@@ -20,10 +20,13 @@ get_property(LIBRARY_BUILD_LIST GLOBAL PROPERTY BUILT_LIB_LIST)
 get_property(ALG_LIST GLOBAL PROPERTY ALG_LIB_LIST)
 get_property(INTER_FILES GLOBAL PROPERTY SYS_INTER_FILES)
 
+file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/Basilisk/fswAlgorithms")
+file(WRITE "${CMAKE_SOURCE_DIR}/Basilisk/fswAlgorithms/__init__.py" "#empty init file")
+
 foreach(module ${swig_modules})
     get_filename_component(FileBase ${module} NAME_WE)
     get_filename_component(FileDir ${module} DIRECTORY)
-	set(CMAKE_SWIG_OUTDIR "${CMAKE_SOURCE_DIR}/Basilisk/modules/${FileBase}")
+	set(CMAKE_SWIG_OUTDIR "${CMAKE_SOURCE_DIR}/Basilisk/fswAlgorithms/${FileBase}")
 
     file(GLOB gen_files
         "../SimCode/_GeneralModuleFiles/*.cpp"
@@ -42,7 +45,7 @@ foreach(module ${swig_modules})
 
 	# Make a python package directory and add an __init__.py fiel or
 	# copy an existing custom __init__.py file.
-	set(moduleFilePath "${CMAKE_SOURCE_DIR}/Basilisk/modules/${FileBase}")
+	set(moduleFilePath "${CMAKE_SOURCE_DIR}/Basilisk/fswAlgorithms/${FileBase}")
 	make_python_package(${FileBase} ${FileDir} ${moduleFilePath})
 
 	set_source_files_properties(${module} PROPERTIES CPLUSPLUS OFF)
@@ -63,11 +66,11 @@ foreach(module ${swig_modules})
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
 	FOLDER "${DIR_NAME_STRING}/${FileDir}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Basilisk/modules/${FileBase}")
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Basilisk/fswAlgorithms/${FileBase}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/Basilisk/modules/${FileBase}")
+        LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/Basilisk/fswAlgorithms/${FileBase}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/Basilisk/modules/${FileBase}")
+        LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/Basilisk/fswAlgorithms/${FileBase}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
               COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/FswAlgorithms")
 endforeach()

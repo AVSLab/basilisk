@@ -50,10 +50,10 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion as om
-from Basilisk.modules import coarse_sun_sensor
+from Basilisk.simulation import coarse_sun_sensor
 import numpy as np
 from matplotlib import pyplot as plt
-from Basilisk.modules import simMessages
+from Basilisk.simulation import simMessages
 
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each

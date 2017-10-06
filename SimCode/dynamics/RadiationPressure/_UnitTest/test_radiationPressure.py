@@ -45,10 +45,10 @@ splitPath = path.split('SimCode')
 #Import all of the modules that we are going to call in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
-from Basilisk.modules import spacecraftPlus
-from Basilisk.modules import radiation_pressure
+from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import radiation_pressure
 from Basilisk.utilities import macros
-from Basilisk.modules import spice_interface
+from Basilisk.simulation import spice_interface
 from Basilisk.utilities import orbitalMotion as om
 
 # uncomment this line if this test has an expected failure, adjust message as needed

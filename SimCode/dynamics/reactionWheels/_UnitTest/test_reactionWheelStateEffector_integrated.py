@@ -32,11 +32,11 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from Basilisk.modules import spacecraftPlus
+from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import macros
-from Basilisk.modules import gravityEffector
+from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import simIncludeRW
-from Basilisk.modules import reactionWheelStateEffector
+from Basilisk.simulation import reactionWheelStateEffector
 
 mpl.rc("figure", figsize=(5.75,4))
 

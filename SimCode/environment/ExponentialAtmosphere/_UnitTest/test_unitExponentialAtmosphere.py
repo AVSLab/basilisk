@@ -57,9 +57,9 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 
 # import simulation related support
-from Basilisk.modules import spacecraftPlus
-from Basilisk.modules import exponentialAtmosphere
-from Basilisk.modules import dragDynamicEffector
+from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import exponentialAtmosphere
+from Basilisk.simulation import dragDynamicEffector
 from Basilisk.utilities import unitTestSupport
 #print dir(exponentialAtmosphere)
 

@@ -41,7 +41,7 @@ import datetime
 from Basilisk.utilities import MessagingAccess
 from Basilisk.utilities import SimulationBaseClass
 import numpy
-from Basilisk.modules import orb_elem_convert
+from Basilisk.simulation import orb_elem_convert
 import ctypes
 from Basilisk.utilities import macros
 import matplotlib.pyplot as plt

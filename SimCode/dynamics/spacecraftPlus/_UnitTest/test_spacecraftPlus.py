@@ -31,10 +31,10 @@ splitPath = path.split('SimCode')
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.modules import spacecraftPlus
+from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import macros
-from Basilisk.modules import gravityEffector
-from Basilisk.modules.ExtForceTorque import ExtForceTorque
+from Basilisk.simulation import gravityEffector
+from Basilisk.simulation.ExtForceTorque import ExtForceTorque
 from Basilisk.utilities import RigidBodyKinematics
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

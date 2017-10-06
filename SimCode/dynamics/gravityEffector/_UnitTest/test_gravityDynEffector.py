@@ -32,13 +32,13 @@ splitPath = path.split('SimCode')
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.utilities import macros
-from Basilisk.modules import gravityEffector
-from Basilisk.modules import spice_interface
-from Basilisk.modules import pyswice
-from Basilisk.modules import stateArchitecture
-from Basilisk.modules.gravityEffector.gravCoeffOps import loadGravFromFileToList
+from Basilisk.simulation import gravityEffector
+from Basilisk.simulation import spice_interface
+from Basilisk import pyswice
+from Basilisk.simulation import stateArchitecture
+from Basilisk.simulation.gravityEffector.gravCoeffOps import loadGravFromFileToList
 from Basilisk.utilities import orbitalMotion as om
-from Basilisk.modules import simMessages
+from Basilisk.simulation import simMessages
 
 #script to check spherical harmonics calcs out to 20th degree
 #Uses coefficient from Vallado tables D-1

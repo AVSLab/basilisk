@@ -32,13 +32,13 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
-from Basilisk.modules import gravityEffector
-from Basilisk.modules import spice_interface
-from Basilisk.modules import sim_model
+from Basilisk.simulation import gravityEffector
+from Basilisk.simulation import spice_interface
+from Basilisk.simulation import sim_model
 import ctypes
-from Basilisk.modules import pyswice
-from Basilisk.modules import stateArchitecture
-from Basilisk.modules import spacecraftPlus
+from Basilisk import pyswice
+from Basilisk.simulation import stateArchitecture
+from Basilisk.simulation import spacecraftPlus
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

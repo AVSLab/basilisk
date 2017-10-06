@@ -47,10 +47,10 @@ from Basilisk.utilities import unitTestSupport
 import matplotlib.pyplot as plt
 from Basilisk.utilities import MessagingAccess
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.modules import sim_model
-from Basilisk.modules import thrusterDynamicEffector
-from Basilisk.modules import stateArchitecture
-from Basilisk.modules import spacecraftPlus
+from Basilisk.simulation import sim_model
+from Basilisk.simulation import thrusterDynamicEffector
+from Basilisk.simulation import stateArchitecture
+from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import macros
 
 

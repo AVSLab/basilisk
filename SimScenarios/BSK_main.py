@@ -20,8 +20,8 @@
 import sys, os, inspect
 
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.modules import sim_model
-from Basilisk.modules import message_router
+from Basilisk.simulation import sim_model
+from Basilisk.simulation import message_router
 
 import BSK_DKE
 import BSK_FSW

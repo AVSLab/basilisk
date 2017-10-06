@@ -44,12 +44,12 @@ bskPath = path + '/../../../../'
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
-from Basilisk.modules import spacecraftPlus
+from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import macros
-from Basilisk.modules import spice_interface
-from Basilisk.modules import eclipse
-from Basilisk.modules import pyswice
-from Basilisk.modules import gravityEffector
+from Basilisk.simulation import spice_interface
+from Basilisk.simulation import eclipse
+from Basilisk import pyswice
+from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import orbitalMotion
 
 

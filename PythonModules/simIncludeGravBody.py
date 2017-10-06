@@ -18,9 +18,9 @@
 
 '''
 
-from Basilisk.modules import gravityEffector
-from Basilisk.modules import spice_interface
-from Basilisk.modules import simMessages
+from Basilisk.simulation import gravityEffector
+from Basilisk.simulation import spice_interface
+from Basilisk.simulation import simMessages
 
 
 class gravBodyFactory(object):

@@ -39,11 +39,11 @@ import math
 #sys.path.append(os.environ['SIMULATION_BASE']+'/PythonModules/')
 
 #Import all of the modules that we are going to call in this simulation
-from Basilisk.modules import simple_nav
-from Basilisk.modules import spice_interface
+from Basilisk.simulation import simple_nav
+from Basilisk.simulation import spice_interface
 from Basilisk.utilities import MessagingAccess
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.modules import sim_model
+from Basilisk.simulation import sim_model
 from Basilisk.utilities import unitTestSupport
 
 def listNorm(inputList):
@@ -157,17 +157,17 @@ def unitSimpleNav(show_plots):
     unitTestSim.ConfigureStopTime(int(60*144.0*1E9))
     unitTestSim.ExecuteSimulation()
 
-    posNav = MessagingAccess.obtainMessageVector("simple_trans_nav_output", 'Basilisk.modules.simple_nav',
+    posNav = MessagingAccess.obtainMessageVector("simple_trans_nav_output", 'Basilisk.simulation.simple_nav',
         'NavTransIntMsg', 60*144*10, unitTestSim.TotalSim, 'r_BN_N', 'double', 0, 2, sim_model.logBuffer)
-    velNav = MessagingAccess.obtainMessageVector("simple_trans_nav_output", 'Basilisk.modules.simple_nav',
+    velNav = MessagingAccess.obtainMessageVector("simple_trans_nav_output", 'Basilisk.simulation.simple_nav',
         'NavTransIntMsg', 60*144*10, unitTestSim.TotalSim, 'v_BN_N', 'double', 0, 2, sim_model.logBuffer)
-    attNav = MessagingAccess.obtainMessageVector("simple_att_nav_output", 'Basilisk.modules.simple_nav',
+    attNav = MessagingAccess.obtainMessageVector("simple_att_nav_output", 'Basilisk.simulation.simple_nav',
         'NavAttIntMsg', 60*144*10, unitTestSim.TotalSim, 'sigma_BN', 'double', 0, 2, sim_model.logBuffer)
-    rateNav = MessagingAccess.obtainMessageVector("simple_att_nav_output", 'Basilisk.modules.simple_nav',
+    rateNav = MessagingAccess.obtainMessageVector("simple_att_nav_output", 'Basilisk.simulation.simple_nav',
         'NavAttIntMsg', 60*144*10, unitTestSim.TotalSim, 'omega_BN_B', 'double', 0, 2, sim_model.logBuffer)
-    dvNav = MessagingAccess.obtainMessageVector("simple_trans_nav_output", 'Basilisk.modules.simple_nav',
+    dvNav = MessagingAccess.obtainMessageVector("simple_trans_nav_output", 'Basilisk.simulation.simple_nav',
         'NavTransIntMsg', 60*144*10, unitTestSim.TotalSim, 'vehAccumDV', 'double', 0, 2, sim_model.logBuffer)
-    sunNav = MessagingAccess.obtainMessageVector("simple_att_nav_output", 'Basilisk.modules.simple_nav',
+    sunNav = MessagingAccess.obtainMessageVector("simple_att_nav_output", 'Basilisk.simulation.simple_nav',
         'NavAttIntMsg', 60*144*10, unitTestSim.TotalSim, 'vehSunPntBdy', 'double', 0, 2, sim_model.logBuffer)
 
     sunHatPred = numpy.array(sunPosition)-numpy.array(vehPosition)

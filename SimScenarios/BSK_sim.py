@@ -23,7 +23,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import unitTestSupport as sp
 
-from Basilisk.modules import sim_model, spacecraftPlus, gravityEffector, ExtForceTorque, simple_nav, spice_interface, vehicleConfigData, hillPoint, attTrackingError, MRP_Feedback
+from Basilisk.simulation import sim_model, spacecraftPlus, gravityEffector, ExtForceTorque, simple_nav, spice_interface, vehicleConfigData, hillPoint, attTrackingError, MRP_Feedback
 
 import BSK_FSW
 

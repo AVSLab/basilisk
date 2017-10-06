@@ -30,14 +30,31 @@
 
 
 
-import pytest
-import sys, os, inspect
-import matplotlib
-import numpy as np
-import ctypes
-import math
 import csv
+import ctypes
+import inspect
 import logging
+import math
+import os
+import sys
+
+import numpy as np
+import pytest
+
+import matplotlib
+import matplotlib.pyplot as plt
+# import message declarations
+# import FSW Algorithm related support
+# import simulation related support
+from Basilisk.simulation import (simple_nav, spacecraftPlus, reactionWheelStateEffector,
+                                rwVoltageInterface)
+
+from Basilisk.fswAlgorithms import (MRP_Feedback, attTrackingError, fswMessages, rwMotorTorque,
+                                    rwMotorVoltage, inertial3D)
+
+# import general simulation support files
+from Basilisk.utilities import (unitTestSupport, SimulationBaseClass, fswSetupRW, macros,
+                                orbitalMotion, simIncludeGravBody, simIncludeRW)
 
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -51,33 +68,6 @@ bskPath = splitPath[0] + '/' + bskName + '/'
 # sys.path.append(bskPath + 'modules')
 # sys.path.append(bskPath + 'PythonModules')
 # @endcond
-
-# import general simulation support files
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-import matplotlib.pyplot as plt
-from Basilisk.utilities import macros
-from Basilisk.utilities import orbitalMotion
-
-# import simulation related support
-from Basilisk.modules import spacecraftPlus
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.utilities import simIncludeRW
-from Basilisk.modules import simple_nav
-from Basilisk.modules import reactionWheelStateEffector
-from Basilisk.modules import rwVoltageInterface
-
-# import FSW Algorithm related support
-from Basilisk.modules import MRP_Feedback
-from Basilisk.modules import inertial3D
-from Basilisk.modules import attTrackingError
-from Basilisk.modules import rwMotorTorque
-from Basilisk.utilities import fswSetupRW
-from Basilisk.modules import rwMotorVoltage
-
-# import message declarations
-from Basilisk.modules import fswMessages
-
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -919,4 +909,3 @@ if __name__ == "__main__":
         , False        # useJitterSimple
         , False        # useRWVoltageIO
        )
-

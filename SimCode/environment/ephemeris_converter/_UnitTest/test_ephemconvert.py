@@ -36,9 +36,9 @@ splitPath = path.split('SimCode')
 import datetime
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.modules import spice_interface
+from Basilisk.simulation import spice_interface
 import numpy as np
-from Basilisk.modules import ephemeris_converter
+from Basilisk.simulation import ephemeris_converter
 from Basilisk.utilities import macros
 
 

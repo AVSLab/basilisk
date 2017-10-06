@@ -44,10 +44,10 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
-from Basilisk.modules import star_tracker
-from Basilisk.modules import sim_model
+from Basilisk.simulation import star_tracker
+from Basilisk.simulation import sim_model
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk.modules import spice_interface
+from Basilisk.simulation import spice_interface
 
 # methods
 def listStack(vec,simStopTime,unitProcRate):

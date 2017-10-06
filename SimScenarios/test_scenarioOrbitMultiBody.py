@@ -55,9 +55,9 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import astroFunctions
 
 # import simulation related support
-from Basilisk.modules import spacecraftPlus
+from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.modules import pyswice
+from Basilisk import pyswice
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

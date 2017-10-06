@@ -39,11 +39,11 @@ splitPath = path.split('SimCode')
 # @cond DOXYGEN_IGNOREimport spice_interface
 from Basilisk.utilities import SimulationBaseClass
 import numpy
-from Basilisk.modules import bore_ang_calc
+from Basilisk.simulation import bore_ang_calc
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics
-from Basilisk.modules import spice_interface
-from Basilisk.modules import spacecraftPlus
+from Basilisk.simulation import spice_interface
+from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import unitTestSupport
 import pytest
 

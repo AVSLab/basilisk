@@ -1,6 +1,6 @@
 .DS_Store
 build/*
-Basilisk/modules/*
+Basilisk/
 *.egg-info/
 html/*
 Images/Scenarios/*

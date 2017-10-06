@@ -33,11 +33,11 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
-from Basilisk.modules import spacecraftPlus
-from Basilisk.modules import hingedRigidBodyStateEffector
-from Basilisk.modules import fuelSloshParticle
-from Basilisk.modules import fuelTank
-from Basilisk.modules import sim_model
+from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import hingedRigidBodyStateEffector
+from Basilisk.simulation import fuelSloshParticle
+from Basilisk.simulation import fuelTank
+from Basilisk.simulation import sim_model
 from Basilisk.utilities import macros
 import ctypes
 

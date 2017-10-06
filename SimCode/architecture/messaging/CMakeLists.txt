@@ -17,11 +17,11 @@ set_target_properties(SimMessaging PROPERTIES
 target_compile_options(SimMessaging PUBLIC "-fPIC")
 target_include_directories(SimMessaging PUBLIC "${CMAKE_SOURCE_DIR}/SimCode")
 set_target_properties(SimMessaging PROPERTIES
-LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Basilisk/modules")
+LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Basilisk")
 set_target_properties(SimMessaging PROPERTIES
-LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/Basilisk/modules")
+LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/Basilisk")
 set_target_properties(SimMessaging PROPERTIES
-LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/Basilisk/modules")
+LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/Basilisk")
 
 #Have to copy this file everywhere if we're on Windows.  Ugly kludge, but... Windows!
 if(WIN32)

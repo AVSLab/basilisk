@@ -30,10 +30,10 @@ splitPath = path.split('FswAlgorithms')
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.modules import MRP_Steering  # import the module that is to be tested
-from Basilisk.modules import rateServoFullNonlinear
-from Basilisk.modules import fswMessages
-from Basilisk.modules import simFswInterfaceMessages
+from Basilisk.fswAlgorithms import MRP_Steering  # import the module that is to be tested
+from Basilisk.fswAlgorithms import rateServoFullNonlinear
+from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.simulation import simFswInterfaceMessages
 from Basilisk.utilities import macros
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

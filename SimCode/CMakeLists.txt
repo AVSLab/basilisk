@@ -20,11 +20,13 @@ get_property(LIBRARY_BUILD_LIST GLOBAL PROPERTY BUILT_LIB_LIST)
 get_property(ALG_LIST GLOBAL PROPERTY ALG_LIB_LIST)
 get_property(INTER_FILES GLOBAL PROPERTY SYS_INTER_FILES)
 
+file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/Basilisk/simulation")
+file(WRITE "${CMAKE_SOURCE_DIR}/Basilisk/simulation/__init__.py" "#empty init file")
+
 foreach(module ${swig_modules})
     get_filename_component(FileBase ${module} NAME_WE)
     get_filename_component(FileDir ${module} DIRECTORY)
-	set(CMAKE_SWIG_OUTDIR "${CMAKE_SOURCE_DIR}/Basilisk/modules/${FileBase}")
-
+	set(CMAKE_SWIG_OUTDIR "${CMAKE_SOURCE_DIR}/Basilisk/simulation/${FileBase}")
 	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/CMakeLists.txt")
         continue()
     endif()
@@ -60,7 +62,7 @@ foreach(module ${swig_modules})
     endif()
 
 	# Make a python package
-	set(moduleFilePath "${CMAKE_SOURCE_DIR}/Basilisk/modules/${FileBase}")
+	set(moduleFilePath "${CMAKE_SOURCE_DIR}/Basilisk/simulation/${FileBase}")
 	make_python_package(${FileBase} ${FileDir} ${moduleFilePath})
 
     set_source_files_properties(${module} PROPERTIES CPLUSPLUS ON)
@@ -85,13 +87,13 @@ foreach(module ${swig_modules})
 		FOLDER "${DIR_NAME_STRING}/${FileDir}")
     target_include_directories(${SWIG_MODULE_${FileBase}_REAL_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/${FileDir})
 	# set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-	#     CMAKE_SWIG_OUTDIR "${CMAKE_SOURCE_DIR}/Basilisk/modules/${FileBase}")
+	#     CMAKE_SWIG_OUTDIR "${CMAKE_SOURCE_DIR}/Basilisk/${FileBase}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Basilisk/modules/${FileBase}")
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Basilisk/simulation/${FileBase}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/Basilisk/modules/${FileBase}")
+        LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/Basilisk/simulation/${FileBase}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/Basilisk/modules/${FileBase}")
+        LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/Basilisk/simulation/${FileBase}")
 
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
 	    COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}")

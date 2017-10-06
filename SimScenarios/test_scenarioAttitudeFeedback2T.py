@@ -56,25 +56,25 @@ bskPath = splitPath[0] + '/' + bskName + '/'
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.modules import sim_model
+from Basilisk.simulation import sim_model
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 
 # import simulation related support
-from Basilisk.modules import spacecraftPlus
-from Basilisk.modules.ExtForceTorque import ExtForceTorque
+from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation.ExtForceTorque import ExtForceTorque
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.modules import simple_nav
+from Basilisk.simulation import simple_nav
 
 # import FSW Algorithm related support
-from Basilisk.modules import MRP_Feedback
-from Basilisk.modules import inertial3D
-from Basilisk.modules import attTrackingError
+from Basilisk.fswAlgorithms import MRP_Feedback
+from Basilisk.fswAlgorithms import inertial3D
+from Basilisk.fswAlgorithms import attTrackingError
 
 # import message declarations
-from Basilisk.modules import fswMessages
+from Basilisk.fswAlgorithms import fswMessages
 
 
 

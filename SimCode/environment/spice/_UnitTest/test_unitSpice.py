@@ -41,7 +41,7 @@ import datetime
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import SimulationBaseClass
 import numpy
-from Basilisk.modules import spice_interface
+from Basilisk.simulation import spice_interface
 from Basilisk.utilities import macros
 import matplotlib.pyplot as plt
 # @endcond

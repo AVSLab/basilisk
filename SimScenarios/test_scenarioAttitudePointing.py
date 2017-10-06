@@ -55,17 +55,17 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 
 # import simulation related support
-from Basilisk.modules import spacecraftPlus
-from Basilisk.modules.ExtForceTorque import ExtForceTorque
-from Basilisk.modules import simple_nav
+from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation.ExtForceTorque import ExtForceTorque
+from Basilisk.simulation import simple_nav
 
 # import FSW Algorithm related support
-from Basilisk.modules import MRP_Feedback
-from Basilisk.modules import inertial3D
-from Basilisk.modules import attTrackingError
+from Basilisk.fswAlgorithms import MRP_Feedback
+from Basilisk.fswAlgorithms import inertial3D
+from Basilisk.fswAlgorithms import attTrackingError
 
 # import message declarations
-from Basilisk.modules import fswMessages
+from Basilisk.fswAlgorithms import fswMessages
 
 
 

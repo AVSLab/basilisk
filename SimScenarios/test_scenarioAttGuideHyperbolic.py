@@ -53,18 +53,18 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 
 # import simulation related support
-from Basilisk.modules import spacecraftPlus
-from Basilisk.modules.ExtForceTorque import ExtForceTorque
+from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation.ExtForceTorque import ExtForceTorque
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.modules import simple_nav
+from Basilisk.simulation import simple_nav
 
 # import FSW Algorithm related support
-from Basilisk.modules import MRP_Feedback
-from Basilisk.modules import velocityPoint
-from Basilisk.modules import attTrackingError
+from Basilisk.fswAlgorithms import MRP_Feedback
+from Basilisk.fswAlgorithms import velocityPoint
+from Basilisk.fswAlgorithms import attTrackingError
 
 # import message declarations
-from Basilisk.modules import fswMessages
+from Basilisk.fswAlgorithms import fswMessages
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

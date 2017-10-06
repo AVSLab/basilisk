@@ -59,26 +59,26 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 
 # import simulation related support
-from Basilisk.modules import spacecraftPlus
+from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeRW
-from Basilisk.modules import simple_nav
-from Basilisk.modules import reactionWheelStateEffector
-from Basilisk.modules.ExtForceTorque import ExtForceTorque
+from Basilisk.simulation import simple_nav
+from Basilisk.simulation import reactionWheelStateEffector
+from Basilisk.simulation.ExtForceTorque import ExtForceTorque
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import RigidBodyKinematics as rb
 
 
 # import FSW Algorithm related support
-from Basilisk.modules import MRP_Steering
-from Basilisk.modules import rateServoFullNonlinear
-from Basilisk.modules import hillPoint
-from Basilisk.modules import attTrackingError
-from Basilisk.modules import rwMotorTorque
+from Basilisk.fswAlgorithms import MRP_Steering
+from Basilisk.fswAlgorithms import rateServoFullNonlinear
+from Basilisk.fswAlgorithms import hillPoint
+from Basilisk.fswAlgorithms import attTrackingError
+from Basilisk.fswAlgorithms import rwMotorTorque
 from Basilisk.utilities import fswSetupRW
 
 # import message declarations
-from Basilisk.modules import fswMessages
+from Basilisk.fswAlgorithms import fswMessages
 
 
 

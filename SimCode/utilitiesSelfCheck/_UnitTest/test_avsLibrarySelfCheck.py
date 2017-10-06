@@ -35,7 +35,7 @@ splitPath = path.split('Basilisk')
 #sys.path.append(splitPath[0] + '/Basilisk/modules')
 #sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 
-from Basilisk.modules import avsLibrarySelfCheck
+from Basilisk.simulation import avsLibrarySelfCheck
 from Basilisk.utilities import unitTestSupport
 
 

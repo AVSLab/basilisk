@@ -18,8 +18,8 @@
 
 '''
 
-from Basilisk.modules import sim_model
-from Basilisk.modules import sys_model_task
+from Basilisk.simulation import sim_model
+from Basilisk.simulation import sys_model_task
 
 def CreateNewMessage(messageName, messageType, moduleID):
     messageStructName = messageType.__class__.__name__

@@ -34,9 +34,9 @@ splitPath = path.split('FswAlgorithms')
 #Import all of the modules that we are going to call in this simulation
 from Basilisk.utilities import MessagingAccess
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.modules import sim_model
-from Basilisk.modules import alg_contain
-from Basilisk.modules import cssWlsEst
+from Basilisk.simulation import sim_model
+from Basilisk.simulation import alg_contain
+from Basilisk.fswAlgorithms import cssWlsEst
 
 
 # Function that takes a sun pointing vector and array of CSS normal vectors and 

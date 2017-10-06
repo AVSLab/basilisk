@@ -21,10 +21,10 @@ import sys, os, inspect
 
 from Basilisk.utilities import macros as mc
 
-from Basilisk.modules import vehicleConfigData
-from Basilisk.modules import hillPoint
-from Basilisk.modules import attTrackingError
-from Basilisk.modules import MRP_Feedback
+from Basilisk.fswAlgorithms import vehicleConfigData
+from Basilisk.fswAlgorithms import hillPoint
+from Basilisk.fswAlgorithms import attTrackingError
+from Basilisk.fswAlgorithms import MRP_Feedback
 
 
 class FSWClass():

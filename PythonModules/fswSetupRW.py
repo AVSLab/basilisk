@@ -29,7 +29,7 @@ splitPath = path.split('Basilisk')
 # sys.path.append(splitPath[0] + '/Basilisk/modules')
 # sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 
-from Basilisk.modules import fswMessages
+from Basilisk.fswAlgorithms import fswMessages
 import numpy
 
 

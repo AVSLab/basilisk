@@ -52,13 +52,13 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
-from Basilisk.modules import coarse_sun_sensor
+from Basilisk.simulation import coarse_sun_sensor
 
 # import simulation related support
-from Basilisk.modules import spacecraftPlus
+from Basilisk.simulation import spacecraftPlus
 
 # import message declarations
-from Basilisk.modules import simMessages
+from Basilisk.simulation import simMessages
 
 
 

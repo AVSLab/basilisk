@@ -60,27 +60,27 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
-from Basilisk.modules import sim_model
+from Basilisk.simulation import sim_model
 
 # import simulation related support
-from Basilisk.modules import spacecraftPlus
+from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import simIncludeRW
-from Basilisk.modules import simple_nav
-from Basilisk.modules import reactionWheelStateEffector
-from Basilisk.modules import rwVoltageInterface
+from Basilisk.simulation import simple_nav
+from Basilisk.simulation import reactionWheelStateEffector
+from Basilisk.simulation import rwVoltageInterface
 
 # import FSW Algorithm related support
-from Basilisk.modules import MRP_PD
-from Basilisk.modules import inertial3D
-from Basilisk.modules import attTrackingError
-from Basilisk.modules import rwMotorTorque
+from Basilisk.fswAlgorithms import MRP_PD
+from Basilisk.fswAlgorithms import inertial3D
+from Basilisk.fswAlgorithms import attTrackingError
+from Basilisk.fswAlgorithms import rwMotorTorque
 from Basilisk.utilities import fswSetupRW
-from Basilisk.modules import rwMotorVoltage
+from Basilisk.fswAlgorithms import rwMotorVoltage
 from Basilisk.utilities import simulationArchTypes
 
 # import message declarations
-from Basilisk.modules import fswMessages
+from Basilisk.fswAlgorithms import fswMessages
 
 # -------------------------------------------------------------------------- #
 ## \defgroup Tutorials_2_0_3

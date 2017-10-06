@@ -33,11 +33,11 @@ splitPath = path.split('FswAlgorithms')
 #sys.path.append(splitPath[0] + '/PythonModules')
 
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.modules import alg_contain
+from Basilisk.simulation import alg_contain
 import SunLineEKF_test_utilities as FilterPlots
-from Basilisk.modules import sunlineEKF  # import the module that is to be tested
-from Basilisk.modules import cssComm
-from Basilisk.modules import vehicleConfigData
+from Basilisk.fswAlgorithms import sunlineEKF  # import the module that is to be tested
+from Basilisk.fswAlgorithms import cssComm
+from Basilisk.fswAlgorithms import vehicleConfigData
 from Basilisk.utilities import macros
 
 

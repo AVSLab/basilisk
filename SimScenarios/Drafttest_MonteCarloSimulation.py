@@ -6,7 +6,7 @@ from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
 from Basilisk.utilities.MonteCarlo.Dispersions import UniformEulerAngleMRPDispersion, UniformDispersion, NormalVectorCartDispersion
 
 # import simulation related support
-from Basilisk.modules import spacecraftPlus
+from Basilisk.simulation import spacecraftPlus
 from Basilisk.modules import orbitalMotion
 from Basilisk.modules import simIncludeGravBody
 from Basilisk.utilities import macros
@@ -58,15 +58,10 @@ def myCreationFunction():
     gravFactory = simIncludeGravBody.gravBodyFactory()
     planet = gravFactory.createEarth()
     planet.isCentralBody = True
-    planet.useSphericalHarmParams = True
-    simIncludeGravBody.loadGravFromFile(bskPath + 'External/LocalGravData/GGM03S-J2-only.txt'
-                                        , planet.spherHarm
-                                        , 2
-                                        )
     mu = planet.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    #scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
     #   setup orbit and simulation time
     # setup the orbit using classical orbit elements

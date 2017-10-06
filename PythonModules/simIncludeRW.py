@@ -31,7 +31,7 @@ splitPath = path.split('Basilisk')
 # sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 
 import macros
-from Basilisk.modules import simMessages
+from Basilisk.simulation import simMessages
 
 
 

@@ -29,14 +29,14 @@ splitPath = path.split('FswAlgorithms')
 #sys.path.append(splitPath[0] + '/PythonModules')
 
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.modules import alg_contain
+from Basilisk.simulation import alg_contain
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.modules import sunlineUKF  # import the module that is to be tested
-from Basilisk.modules import cssComm
-from Basilisk.modules import vehicleConfigData
+from Basilisk.fswAlgorithms import sunlineUKF  # import the module that is to be tested
+from Basilisk.fswAlgorithms import cssComm
+from Basilisk.fswAlgorithms import vehicleConfigData
 from Basilisk.utilities import macros
-from Basilisk.modules import sim_model
+from Basilisk.simulation import sim_model
 import ctypes
 
 

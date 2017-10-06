@@ -37,8 +37,8 @@ bskPath = splitPath[0] + '/' + bskName + '/'
 # sys.path.append(bskPath + 'PythonModules')
 
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.modules import fuelSloshParticle
-from Basilisk.modules import fuelTank
+from Basilisk.simulation import fuelSloshParticle
+from Basilisk.simulation import fuelTank
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
@@ -47,7 +47,7 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import macros
 
 # import simulation related support
-from Basilisk.modules import spacecraftPlus
+from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
 
 

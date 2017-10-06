@@ -22,11 +22,11 @@ import sys, os, inspect
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import unitTestSupport as sp
 
-from Basilisk.modules import spacecraftPlus
-from Basilisk.modules import gravityEffector
-from Basilisk.modules.ExtForceTorque import ExtForceTorque
-from Basilisk.modules import simple_nav
-from Basilisk.modules import spice_interface
+from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import gravityEffector
+from Basilisk.simulation.ExtForceTorque import ExtForceTorque
+from Basilisk.simulation import simple_nav
+from Basilisk.simulation import spice_interface
 
 
 class DynamicsClass():

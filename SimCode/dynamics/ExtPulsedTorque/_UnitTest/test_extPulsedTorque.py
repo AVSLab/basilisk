@@ -42,7 +42,7 @@ splitPath = path.split('Basilisk')
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.utilities import macros
-from Basilisk.modules import ExtPulsedTorque
+from Basilisk.simulation import ExtPulsedTorque
 
 
 

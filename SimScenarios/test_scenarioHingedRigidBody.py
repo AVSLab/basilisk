@@ -61,10 +61,10 @@ from Basilisk.utilities import orbitalMotion
 
 
 # import simulation related support
-from Basilisk.modules import spacecraftPlus                   #The base of any spacecraft simulation which deals with spacecraft dynamics
+from Basilisk.simulation import spacecraftPlus                   #The base of any spacecraft simulation which deals with spacecraft dynamics
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.modules import hingedRigidBodyStateEffector
-from Basilisk.modules.ExtForceTorque import ExtForceTorque                   #Allows for forces to act on the spacecraft without adding an effector like a thruster
+from Basilisk.simulation import hingedRigidBodyStateEffector
+from Basilisk.simulation.ExtForceTorque import ExtForceTorque                   #Allows for forces to act on the spacecraft without adding an effector like a thruster
 
 #import non-basilisk libraries
 import numpy as np

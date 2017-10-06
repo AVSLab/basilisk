@@ -39,7 +39,7 @@ splitPath = path.split('Basilisk')
 #sys.path.append(splitPath[0]+'/Basilisk/PythonModules')
 
 from Basilisk.utilities import macros
-from Basilisk.modules import reactionWheelStateEffector
+from Basilisk.simulation import reactionWheelStateEffector
 
 # methods
 def listStack(vec,simStopTime,unitProcRate):

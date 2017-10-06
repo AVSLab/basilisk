@@ -23,9 +23,9 @@ import sys, os, ast
 # Point the path to the module storage area
 # sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/../modules')
 # sys.path.append(os.path.dirname(os.path.realpath(__file__)))
-from Basilisk.modules import sim_model
-from Basilisk.modules import sys_model_task
-from Basilisk.modules import alg_contain
+from Basilisk.simulation import sim_model
+from Basilisk.simulation import sys_model_task
+from Basilisk.simulation import alg_contain
 from Basilisk.utilities import MessagingAccess
 import types
 import numpy as np
@@ -34,7 +34,7 @@ import xml.etree.ElementTree as ET
 import inspect
 import sets
 from Basilisk.utilities import simulationArchTypes
-from Basilisk.modules import simMessages
+from Basilisk.simulation import simMessages
 
 
 class LogBaseClass:

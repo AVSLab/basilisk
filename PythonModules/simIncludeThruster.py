@@ -30,7 +30,7 @@ splitPath = path.split('Basilisk')
 # sys.path.append(splitPath[0] + '/Basilisk/modules')
 # sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 
-from Basilisk.modules import simMessages
+from Basilisk.simulation import simMessages
 
 class thrusterOptions:
     useMinPulseTime = True
