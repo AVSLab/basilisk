@@ -4,6 +4,6 @@ setup(
     name='Basilisk',
     version='0.1dev',
     packages=['Basilisk',],
-    license='',
+    license=open('License/license.txt').read(),
     long_description=open('README.md').read(),
 )
