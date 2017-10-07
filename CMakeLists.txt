@@ -2,15 +2,6 @@ cmake_minimum_required(VERSION 2.8)
 
 project("AVS basilisk")
 
-macro(SWIG_ADD_MODULE name language)
-  message("I WAS HIT!!!!")
-  swig_add_library(${name}
-                   LANGUAGE ${language}
-                   TYPE MODULE
-                   SOURCES ${ARGN})
-endmacro()
-
-
 #! make_python_package : create python package
 #
 # This function creates a python package directory and adds an __init__.py
