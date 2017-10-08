@@ -60,7 +60,11 @@ class ResultsStore:
     def texSnippet(self):
         for i in range(len(self.PassFail)):
             snippetName = 'Result' + str(i)
-            texSnippet =  '\\textcolor{ForestGreen}{'+ self.PassFail[i] + '}'
+            if self.PassFail[i] == 'PASSED':
+                textColor = 'ForestGreen'
+            elif self.PassFail[i] == 'FAILED':
+                textColor = 'Red'
+            texSnippet =  '\\textcolor{' + textColor + '}{'+ self.PassFail[i] + '}'
             unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
 
 @pytest.fixture(scope="module")
@@ -98,31 +102,31 @@ def executeSimRun(simContainer, thrusterSet, simRate, totalTime):
 # @pytest.mark.xfail(True)
 
 
-@pytest.mark.parametrize("ramp, thrustNumber , duration , angle, location, rate, cutoff, rampDown", [
-    ("OFF", 1 , 5.0 , 30. , [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF"), #Test random thrust config
-    ("OFF", 1 , 0.1, 30., [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF"), # Short fire test
-    ("OFF", 1, 0.1, 30., [[1.125], [0.0], [2.0]], 1E6, "OFF", "OFF"), # Short fire test with higher test rate
-    ("OFF", 1, 5.0, 30., [[1.125], [0.0], [2.0]], 1E7, "OFF", "OFF"),# rate test
-    ("OFF", 1 , 5.0 , 10. , [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF"), # angle test
-    ("OFF", 1 , 5.0 , 30. , [[1.], [0.0], [0.0]], 1E8, "OFF", "OFF"),# Position test
-    ("OFF", 2 , 5.0 , 30. , [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF"), # Number of thrusters test
-    ("ON", 1 , 5.0 , 30. , [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF") , # Basic ramp test
-    ("ON", 1 , 0.5 , 30. , [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF") , # Short ramp test
-    ("ON", 1 , 5.0 , 30. , [[1.125], [0.0], [2.0]], 1E7, "OFF", "OFF"), # rate ramp test
-    ("ON", 1 , 5.0 , 30. , [[1.125], [0.0], [2.0]], 1E8, "ON", "OFF"), # Cuttoff test
-    ("ON", 1, 5.0, 30., [[1.125], [0.0], [2.0]], 1E8, "ON", "ON")  # Rampdown test
+@pytest.mark.parametrize("ramp, thrustNumber , duration , long_angle, lat_angle, location, rate, cutoff, rampDown", [
+    ("OFF", 1 , 5.0 , 30. , 15., [[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF"), #Test random thrust config
+    ("OFF", 1 , 0.1, 30.,  15.,[[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF"), # Short fire test
+    ("OFF", 1, 0.1, 30.,  15.,[[1.125], [0.5], [2.0]], 1E6, "OFF", "OFF"), # Short fire test with higher test rate
+    ("OFF", 1, 5.0, 30.,  15.,[[1.125], [0.5], [2.0]], 1E7, "OFF", "OFF"),# rate test
+    ("OFF", 1 , 5.0 , 10. ,  35.,[[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF"), # angle test
+    ("OFF", 1 , 5.0 , 30. ,  15.,[[1.], [1.5], [0.0]], 1E8, "OFF", "OFF"),# Position test
+    ("OFF", 2 , 5.0 , 30. ,  15.,[[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF"), # Number of thrusters test
+    ("ON", 1 , 5.0 , 30. ,  15.,[[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF") , # Basic ramp test
+    ("ON", 1 , 0.5 , 30. ,  15.,[[1.125], [0.5], [2.0]], 1E8, "OFF", "OFF") , # Short ramp test
+    ("ON", 1 , 5.0 , 30. ,  15.,[[1.125], [0.5], [2.0]], 1E7, "OFF", "OFF"), # rate ramp test
+    ("ON", 1 , 5.0 , 30. ,  15.,[[1.125], [0.5], [2.0]], 1E8, "ON", "OFF"), # Cuttoff test
+    ("ON", 1, 5.0, 30.,  15.,[[1.125], [0.5], [2.0]], 1E8, "ON", "ON")  # Rampdown test
     ])
 
 
 # provide a unique test method name, starting with test_
-def test_unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle , location, rate, cutoff, rampDown):
+def test_unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration ,  long_angle, lat_angle,  location, rate, cutoff, rampDown):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle , location, rate, cutoff, rampDown)
+    [testResults, testMessage] = unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  long_angle, lat_angle , location, rate, cutoff, rampDown)
     assert testResults < 1, testMessage
 
 
 # Run the test
-def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle, location, rate, cutoff, rampDown):
+def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  long_angle, lat_angle, location, rate, cutoff, rampDown):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -149,24 +153,32 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
     thrusterSet.ModelTag = "ACSThrusterDynamics"
 
     #  Create thruster characteristic parameters (position, angle thrust, ISP, time of thrust)
-    angledeg = angle # Parametrized angle of thrust
-    anglerad = angledeg*math.pi/180.0
+    angledeg_long = long_angle # Parametrized angle of thrust
+    angledeg_lat = lat_angle
+    anglerad_long = angledeg_long * math.pi/180.0
+    anglerad_lat = angledeg_lat * math.pi / 180.0
     thruster1 = thrusterDynamicEffector.THRConfigSimMsg()
     thruster1.thrLoc_B =location # Parametrized location for thruster
-    thruster1.thrDir_B = [[math.cos(anglerad)], [math.sin(anglerad)], [0.0]]
+    thruster1.thrDir_B = [[math.cos(anglerad_long)*math.cos(anglerad_lat)], [math.sin(anglerad_long)*math.cos(anglerad_lat)], [math.sin(anglerad_lat)]]
     thruster1.MaxThrust = 1.0
     thruster1.steadyIsp = 226.7
     thruster1.MinOnTime = 0.006
     thrusterSet.addThruster(thruster1)
 
+    loc1 = np.array([thruster1.thrLoc_B[0][0],thruster1.thrLoc_B[1][0],thruster1.thrLoc_B[2][0]])
+    dir1 = np.array([thruster1.thrDir_B[0][0], thruster1.thrDir_B[1][0], thruster1.thrDir_B[2][0]])
+
     if thrustNumber==2:
         thruster2 = thrusterDynamicEffector.THRConfigSimMsg()
-        thruster2.thrLoc_B =[[1.], [0.0], [0.0]]
-        thruster2.thrDir_B = [[math.cos(anglerad+math.pi/4)], [math.sin(anglerad+math.pi/4)], [0.0]]
+        thruster2.thrLoc_B =np.array([[1.], [0.0], [0.0]]).reshape([3,1])
+        thruster2.thrDir_B = np.array([[math.cos(anglerad_long+math.pi/4.)*math.cos(anglerad_lat-math.pi/4.)], [math.sin(anglerad_long+math.pi/4.)*math.cos(anglerad_lat-math.pi/4.)], [math.sin(anglerad_lat-math.pi/4.)]]).reshape([3,1])
         thruster2.MaxThrust = 1.0
         thruster2.steadyIsp = 226.7
         thruster2.MinOnTime = 0.006
         thrusterSet.addThruster(thruster2)
+
+        loc2 = np.array([thruster2.thrLoc_B[0][0],thruster2.thrLoc_B[1][0],thruster2.thrLoc_B[2][0]])
+        dir2 = np.array([thruster2.thrDir_B[0][0], thruster2.thrDir_B[1][0], thruster2.thrDir_B[2][0]])
 
     #  Create a Simulation
     testRate = int(rate) # Parametrized rate of test
@@ -224,35 +236,46 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
         format = "width=0.8\\textwidth"
 
         snippetName = "Snippet" + str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" +\
-                      str(int(angle))+"deg_"+ "Loc"+str(int(location[2][0])) + "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
-        texSnippet = "The thruster is set at " +str(int(angle))+"$^\circ$ off the x-axis, in the position $\\bm r = \left("+\
-                     str(location[0][0])+","+str(location[1][0])+"," +str(location[2][0])+ \
-                     "\\right)$. The test is launched using " + str(thrustNumber) + " thruster, for " + \
-                     str(duration)+ " seconds. The test rate is " + str(int(1./(testRate*macros.NANO2SEC))) + " steps per second"
+                      str(int(long_angle))+"deg_"+ "Loc"+ str(int(loc1[2])) + "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
+        if thrustNumber==1:
+            texSnippet = "The thruster is set at " +str(int(long_angle))+"$^\circ$ off the x-axis " +str(int(lat_angle))+"$^\circ$ off the z-axis, in the position $\\bm r = \left("+\
+                         str(loc1[0])+","+str(loc1[1])+"," +str(loc1[2])+ \
+                         "\\right)$. The test is launched using " + str(thrustNumber) + " thruster, for " + \
+                         str(duration)+ " seconds. The test rate is " + str(int(1./(testRate*macros.NANO2SEC))) + " steps per second"
+        if thrustNumber==2:
+            texSnippet = "The first thruster is set at " + str(int(long_angle)) + "$^\circ$ off the x-axis " + str(
+                int(lat_angle)) + "$^\circ$ off the z-axis, in the position $\\bm r = \left(" + \
+                         str(loc1[0]) + "," + str(loc1[1]) + "," + str(loc1[2]) + \
+                         "\\right)$. The second thruster is set at " + str(int(long_angle+45)) + "$^\circ$ off the x-axis " + str(
+                int(lat_angle+45)) + "$^\circ$ off the z-axis, in the position $\\bm r = \left(" + \
+                         str(loc2[0]) + "," + str(loc2[1]) + "," + str(loc2[2]) + \
+                         "\\right)$. The test uses these " + str(thrustNumber) + " thrusters for " + \
+                         str(duration) + " seconds. The test rate is " + str(
+                int(1. / (testRate * macros.NANO2SEC))) + " steps per second"
         unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
 
-        PlotName = "Force_" +  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" +str(int(angle))+"deg_"+ "Loc"+str(int(location[2][0]))+ "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
-        PlotTitle = "Force on Y with " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " +str(int(angle))+" deg "+ "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
+        PlotName = "Force_" +  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" +str(int(long_angle))+"deg_"+ "Loc"+str(int(location[2][0]))+ "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
+        PlotTitle = "Force on Y with " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " +str(int(long_angle))+" deg "+ "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
 
         plt.figure(1)
         plt.clf()
         plt.plot(thrForce[:,0]*macros.NANO2SEC, thrForce[:,2])
         plt.xlabel('Time(s)')
-        plt.ylabel('Thrust Factor (-)')
+        plt.ylabel('Thrust Factor (N)')
         plt.ylim(-0.2,1)
         unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
         if show_plots==True:
             plt.show()
         plt.close()
 
-        PlotName = "Torque_" +  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" + str(int(angle))+"deg_"+ "Loc"+str(int(location[2][0]))+ "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
-        PlotTitle = "Torque on X with " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " + str(int(angle))+" deg " + "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
+        PlotName = "Torque_" +  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" + str(int(long_angle))+"deg_"+ "Loc"+str(int(location[2][0]))+ "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
+        PlotTitle = "Torque on X with " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " + str(int(long_angle))+" deg " + "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
 
         plt.figure(11)
         plt.clf()
         plt.plot(thrForce[:,0]*macros.NANO2SEC, thrTorque[:,1])
         plt.xlabel('Time(s)')
-        plt.ylabel('Thrust Torque (-)')
+        plt.ylabel('Thrust Torque (Nm)')
         plt.ylim(-1.5, 2)
         unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
         if show_plots==True:
@@ -260,8 +283,8 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
         plt.close()
 
 
-        PlotName =  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" + str(int(angle))+"deg_"+ "Loc"+str(int(location[2][0]))+ "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
-        PlotTitle = "All Forces and Torques " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " + str(int(angle))+" deg "+ "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
+        PlotName =  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" + str(int(long_angle))+"deg_"+ "Loc"+str(int(location[2][0]))+ "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
+        PlotTitle = "All Forces and Torques " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " + str(int(long_angle))+" deg "+ "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
 
         plt.figure(22)
         plt.clf()
@@ -274,6 +297,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
         plt.legend()
         plt.xlabel('Time(s)')
         plt.ylim(-1.5, 2)
+        plt.legend(loc=1)
         unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
         if show_plots==True:
             plt.show()
@@ -287,20 +311,12 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
 
 
         expectedpoints=np.zeros([3,np.shape(thrForce)[0]])
-        for i in range(np.shape(thrForce)[0]):
-            if (i<int(round(thrStartTime/testRate)) + 2): # Thrust fires 2 times steps after the pause of sim and restart
-                expectedpoints[0,i] = 0.0
-                expectedpoints[1,i] = 0.0
+        for i in range(np.shape(thrForce)[0]):# Thrust fires 2 times steps after the pause of sim and restart
             if (i>int(round(thrStartTime/ testRate)) + 1 and i<int(round((thrStartTime+thrDurationTime)/ testRate)) + 2):
                 if thrustNumber == 1:
-                    expectedpoints[0,i] = math.cos(anglerad)
-                    expectedpoints[1,i] = math.sin(anglerad)
+                    expectedpoints[0:3,i] = dir1
                 else:
-                    expectedpoints[0, i] = math.cos(anglerad)+math.cos(anglerad+math.pi / 4)
-                    expectedpoints[1, i] = math.sin(anglerad)+math.sin(anglerad+math.pi / 4)
-            else:
-                expectedpoints[0, i] = 0.0
-                expectedpoints[1, i] = 0.0
+                    expectedpoints[0:3, i] = dir1 + dir2
 
         # Modify expected values for comparison and define errorTolerance
         TruthForce = np.transpose(expectedpoints)
@@ -315,27 +331,12 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
 
         #Create expected Torque to test against thrTorque
         expectedpointstor = np.zeros([3, np.shape(thrTorque)[0]])
-        for i in range(np.shape(thrForce)[0]):
-            if (i < int(round(thrStartTime/ testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
-                expectedpointstor[0, i] = 0.0
-                expectedpointstor[1, i] = 0.0
-                expectedpointstor[2, i] = 0.0
+        for i in range(np.shape(thrForce)[0]): # Thrust fires 2 times steps after the pause of sim and restart
             if (i>int(round(thrStartTime/ testRate)) + 1 and i<int(round((thrStartTime+thrDurationTime)/ testRate)) + 2):
                 if thrustNumber == 1:
-                    expectedpointstor[0, i] = -math.sin(anglerad)*thruster1.thrLoc_B[2][0] #Torque about x is arm along z by the force projected upon y
-                    expectedpointstor[1, i] = math.cos(anglerad)*math.sqrt(thruster1.thrLoc_B[2][0]**2+thruster1.thrLoc_B[1][0]**2 +thruster1.thrLoc_B[0][0]**2)*math.sin(math.atan(thruster1.thrLoc_B[2][0]/thruster1.thrLoc_B[0][0])) #Torque about x is arm along z by the force projected upon x
-                    expectedpointstor[2, i] = math.sin(anglerad)*thruster1.thrLoc_B[0][0] #Torque about z is arm along x by the force projected upon y
+                    expectedpointstor[0:3, i] = np.cross(loc1, dir1)
                 else:
-                    expectedpointstor[0, i] = -math.sin(anglerad)*thruster1.thrLoc_B[2][0]\
-                                           - math.sin(anglerad+math.pi/4)*thruster2.thrLoc_B[2][0]
-                    expectedpointstor[1, i] = math.cos(anglerad)*math.sqrt(thruster1.thrLoc_B[2][0]**2+thruster1.thrLoc_B[1][0]**2 +thruster1.thrLoc_B[0][0]**2)*math.sin(math.atan(thruster1.thrLoc_B[2][0]/thruster1.thrLoc_B[0][0])) \
-                                          + math.cos(anglerad+math.pi / 4)*math.sqrt(thruster2.thrLoc_B[2][0]**2+thruster2.thrLoc_B[1][0]**2 +thruster2.thrLoc_B[0][0]**2)*math.sin(math.atan(thruster2.thrLoc_B[2][0]/thruster2.thrLoc_B[0][0]))
-                    expectedpointstor[2, i] = math.sin(anglerad)*thruster1.thrLoc_B[0][0] \
-                                          + math.sin(anglerad+math.pi/4) * thruster2.thrLoc_B[0][0]
-            else:
-                expectedpointstor[0, i] = 0.0
-                expectedpointstor[1, i] = 0.0
-                expectedpointstor[2, i] = 0.0
+                    expectedpointstor[0:3, i] = np.cross(loc1, dir1) + np.cross(loc2, dir2)
 
 
         # Define errorTolerance
@@ -391,9 +392,8 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
 
                 snippetName = "Snippet" + "Ramp_" + str(rampsteps) +"steps_" + str(int(duration)) + "s"+  "_Cutoff" + cutoff + "_Rate" + str(
                     int(1. / (testRate * macros.NANO2SEC))) + "_Cutoff" + cutoff
-                texSnippet = "We test the ramped thrust with " + str(rampsteps) + " incremental steps. The single thruster is set at the default " + str(
-                    int(angle)) + "$^\circ$, at $\\bm r = \left(" + \
-                             str(location[0][0]) + "," + str(location[1][0]) + "," + str(location[2][0]) + \
+                texSnippet = "We test the ramped thrust with " + str(rampsteps) + " incremental steps. The single thruster is set at the default " +str(int(long_angle))+"$^\circ$ off the x-axis " +str(int(lat_angle))+"$^\circ$ off the z-axis, at $\\bm r = \left(" + \
+                             str(loc1[0]) + "," + str(loc1[1]) + "," + str(loc1[2]) + \
                              "\\right)$. The thrust is set for " + \
                              str(duration) + " seconds with a test rate of " + str(
                     int(1. / (testRate * macros.NANO2SEC))) + " steps per second. The Cutoff test is " + cutoff
@@ -415,6 +415,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
                 plt.legend()
                 plt.xlabel('Time(s)')
                 plt.ylim(-1.5, 2)
+                plt.legend(loc=2)
                 unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
                 if show_plots == True:
                     plt.show()
@@ -454,17 +455,9 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
                     if (i>0 and RampFunction[i + int(round(thrStartTime/testRate))+1]!=0.):
                         expMDot[i, 0] = thrustNumber / (g * Isp)
 
-
-                for i in range(np.shape(thrForce)[0]):
-                    if (i < int(round(thrStartTime / testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
-                        expectedpoints[0, i] = 0.0
-                        expectedpoints[1, i] = 0.0
+                for i in range(np.shape(thrForce)[0]): # Thrust fires 2 times steps after the pause of sim and restart
                     if (i > int(round(thrStartTime / testRate)) + 1 and i < int(round((thrStartTime + thrDurationTime+ ramplength*1.0/macros.NANO2SEC) / testRate)) + 2):
-                        expectedpoints[0, i] = math.cos(anglerad)*RampFunction[i]
-                        expectedpoints[1, i] = math.sin(anglerad)*RampFunction[i]
-                    else:
-                        expectedpoints[0, i] = 0.0
-                        expectedpoints[1, i] = 0.0
+                        expectedpoints[0:3, i] = dir1*RampFunction[i]
 
                 # Modify expected values for comparison and define errorTolerance
                 TruthForce = np.transpose(expectedpoints)
@@ -480,22 +473,9 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
 
                 # Create expected Torque to test against thrTorque
                 expectedpointstor = np.zeros([3, np.shape(thrTorque)[0]])
-                for i in range(np.shape(thrForce)[0]):
-                    if (i < int(round(thrStartTime / testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
-                        expectedpointstor[0, i] = 0.0
-                        expectedpointstor[1, i] = 0.0
-                        expectedpointstor[2, i] = 0.0
+                for i in range(np.shape(thrForce)[0]):  # Thrust fires 2 times steps after the pause of sim and restart
                     if (i > int(round(thrStartTime / testRate)) + 1 and i < int(round((thrStartTime + thrDurationTime+ ramplength*1.0/macros.NANO2SEC) / testRate)) + 2):
-                            expectedpointstor[0, i] = -math.sin(anglerad) * thruster1.thrLoc_B[2][0]*RampFunction[i]  # Torque about x is arm along z by the force projected upon y
-                            expectedpointstor[1, i] = math.cos(anglerad) * math.sqrt(
-                                thruster1.thrLoc_B[2][0] ** 2 + thruster1.thrLoc_B[1][0] ** 2 +
-                                thruster1.thrLoc_B[0][0] ** 2) * math.sin(math.atan(
-                                thruster1.thrLoc_B[2][0] / thruster1.thrLoc_B[0][0]))*RampFunction[i]  # Torque about x is arm along z by the force projected upon x
-                            expectedpointstor[2, i] = math.sin(anglerad) * thruster1.thrLoc_B[0][0]*RampFunction[i]  # Torque about z is arm along x by the force projected upon y
-                    else:
-                        expectedpointstor[0, i] = 0.0
-                        expectedpointstor[1, i] = 0.0
-                        expectedpointstor[2, i] = 0.0
+                            expectedpointstor[0:3, i] = np.cross(loc1,dir1)*RampFunction[i]
 
                 # Define errorTolerance
                 TruthTorque = np.transpose(expectedpointstor)
@@ -530,9 +510,8 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
 
                 snippetName = "Snippet" + "Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff + "_Rate" + str(
                     int(1. / (testRate * macros.NANO2SEC)))  + "_Cutoff" + cutoff
-                texSnippet = "We test the ramped thrust with " + str(rampsteps) + " incremental steps. The single thruster is set at the default " + str(
-                    int(angle)) + "$^\circ$, at $\\bm r = \left(" + \
-                             str(location[0][0]) + "," + str(location[1][0]) + "," + str(location[2][0]) + \
+                texSnippet = "We test the ramped thrust with " + str(rampsteps) + " incremental steps. The single thruster is set at the default " +str(int(long_angle))+"$^\circ$ off the x-axis " +str(int(lat_angle))+"$^\circ$ off the z-axis, at $\\bm r = \left(" + \
+                             str(loc1[0]) + "," + str(loc1[1]) + "," + str(loc1[2]) + \
                              "\\right)$. The thrust is set for " + \
                              str(duration) + " seconds with a test rate of " + str(
                     int(1. / (testRate * macros.NANO2SEC))) + " steps per second. The Cutoff test is " + cutoff
@@ -549,6 +528,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
                 plt.legend()
                 plt.xlabel('Time(s)')
                 plt.ylim(-1.5, 2)
+                plt.legend(loc=2)
                 unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
                 if show_plots == True:
                     plt.show()
@@ -575,16 +555,9 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
                     if (i>0 and RampFunction[i + int(round(thrStartTime/testRate))+1]!=0.):
                         expMDot[i, 0] = thrustNumber / (g * Isp)
 
-                for i in range(np.shape(thrForce)[0]):
-                    if (i < int(round(thrStartTime / testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
-                        expectedpoints[0, i] = 0.0
-                        expectedpoints[1, i] = 0.0
+                for i in range(np.shape(thrForce)[0]):# Thrust fires 2 times steps after the pause of sim and restart
                     if (i > int(round(thrStartTime / testRate)) + 1 and i < int(round((thrStartTime + thrDurationTime+ ramplength*1.0/macros.NANO2SEC) / testRate)) + 2):
-                        expectedpoints[0, i] = math.cos(anglerad)*RampFunction[i]
-                        expectedpoints[1, i] = math.sin(anglerad)*RampFunction[i]
-                    else:
-                        expectedpoints[0, i] = 0.0
-                        expectedpoints[1, i] = 0.0
+                        expectedpoints[0:3, i] = dir1*RampFunction[i]
 
                 # Modify expected values for comparison and define errorTolerance
                 TruthForce = np.transpose(expectedpoints)
@@ -600,22 +573,9 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
 
                 # Create expected Torque to test against thrTorque
                 expectedpointstor = np.zeros([3, np.shape(thrTorque)[0]])
-                for i in range(np.shape(thrForce)[0]):
-                    if (i < int(round(thrStartTime / testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
-                        expectedpointstor[0, i] = 0.0
-                        expectedpointstor[1, i] = 0.0
-                        expectedpointstor[2, i] = 0.0
+                for i in range(np.shape(thrForce)[0]): # Thrust fires 2 times steps after the pause of sim and restart
                     if (i > int(round(thrStartTime / testRate)) + 1 and i < int(round((thrStartTime + thrDurationTime+ ramplength*1.0/macros.NANO2SEC) / testRate)) + 2):
-                            expectedpointstor[0, i] = -math.sin(anglerad) * thruster1.thrLoc_B[2][0]*RampFunction[i]  # Torque about x is arm along z by the force projected upon y
-                            expectedpointstor[1, i] = math.cos(anglerad) * math.sqrt(
-                                thruster1.thrLoc_B[2][0] ** 2 + thruster1.thrLoc_B[1][0] ** 2 +
-                                thruster1.thrLoc_B[0][0] ** 2) * math.sin(math.atan(
-                                thruster1.thrLoc_B[2][0] / thruster1.thrLoc_B[0][0]))*RampFunction[i]  # Torque about x is arm along z by the force projected upon x
-                            expectedpointstor[2, i] = math.sin(anglerad) * thruster1.thrLoc_B[0][0]*RampFunction[i]  # Torque about z is arm along x by the force projected upon y
-                    else:
-                        expectedpointstor[0, i] = 0.0
-                        expectedpointstor[1, i] = 0.0
-                        expectedpointstor[2, i] = 0.0
+                            expectedpointstor[0:3, i] = np.cross(loc1,dir1)*RampFunction[i]
 
                 # Define errorTolerance
                 TruthTorque = np.transpose(expectedpointstor)
@@ -653,9 +613,8 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
             snippetName = "Snippet" + "Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff + "_Rate" + str(
                 int(1. / (testRate * macros.NANO2SEC)))+ "rampDown" + rampDown
             texSnippet = "We test the ramped thrust with " + str(
-                rampsteps) + " incremental steps. The single thruster is set at the default " + str(
-                int(angle)) + "$^\circ$, at $\\bm r = \left(" + \
-                         str(location[0][0]) + "," + str(location[1][0]) + "," + str(location[2][0]) + \
+                rampsteps) + " incremental steps. The single thruster is set at the default "+str(int(long_angle))+"$^\circ$ off the x-axis " +str(int(lat_angle))+"$^\circ$ off the z-axis, at $\\bm r = \left(" + \
+                         str(loc1[0]) + "," + str(loc1[1]) + "," + str(loc1[2]) + \
                          "\\right)$. The thrust is set for " + \
                          str(RDstart) + " seconds initially with a test rate of " + str(
                 int(1. / (testRate * macros.NANO2SEC))) + " steps per second. The Cutoff test is " + cutoff + \
@@ -673,6 +632,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
             plt.legend()
             plt.xlabel('Time(s)')
             plt.ylim(-1.5, 2)
+            plt.legend(loc=2)
             unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
             if show_plots == True:
                 plt.show()
@@ -719,18 +679,11 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
                 plt.show()
             plt.close()
 
-            for i in range(np.shape(thrForce)[0]):
-                if (i < int(round(
-                            thrStartTime / testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
-                    expectedpoints[0, i] = 0.0
-                    expectedpoints[1, i] = 0.0
+            for i in range(np.shape(thrForce)[0]): # Thrust fires 2 times steps after the pause of sim and restart
                 if (i > int(round(thrStartTime / testRate)) + 1 and i < int(
                         round((thrStartTime + thrDurationTime + ramplength * 1.0 / macros.NANO2SEC) / testRate)) + 2):
-                    expectedpoints[0, i] = math.cos(anglerad) * RampFunction[i]
-                    expectedpoints[1, i] = math.sin(anglerad) * RampFunction[i]
-                else:
-                    expectedpoints[0, i] = 0.0
-                    expectedpoints[1, i] = 0.0
+                    expectedpoints[0:3, i] = dir1*RampFunction[i]
+
 
             # Modify expected values for comparison and define errorTolerance
             TruthForce = np.transpose(expectedpoints)
@@ -743,32 +696,14 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
                 if not unitTestSupport.isArrayEqual(np.array(mDotData)[i, :], expMDot[i, :], 1, ErrTolerance):
                     testFailCount += 1
                     testMessages.append('M dot failure')
-                    print expMDot
-                    print mDotData
 
             # Create expected Torque to test against thrTorque
             expectedpointstor = np.zeros([3, np.shape(thrTorque)[0]])
-            for i in range(np.shape(thrForce)[0]):
-                if (i < int(round(
-                            thrStartTime / testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
-                    expectedpointstor[0, i] = 0.0
-                    expectedpointstor[1, i] = 0.0
-                    expectedpointstor[2, i] = 0.0
+            for i in range(np.shape(thrForce)[0]): # Thrust fires 2 times steps after the pause of sim and restart
                 if (i > int(round(thrStartTime / testRate)) + 1 and i < int(
                         round((thrStartTime + thrDurationTime + ramplength * 1.0 / macros.NANO2SEC) / testRate)) + 2):
-                    expectedpointstor[0, i] = -math.sin(anglerad) * thruster1.thrLoc_B[2][0] * RampFunction[
-                        i]  # Torque about x is arm along z by the force projected upon y
-                    expectedpointstor[1, i] = math.cos(anglerad) * math.sqrt(
-                        thruster1.thrLoc_B[2][0] ** 2 + thruster1.thrLoc_B[1][0] ** 2 +
-                        thruster1.thrLoc_B[0][0] ** 2) * math.sin(math.atan(
-                        thruster1.thrLoc_B[2][0] / thruster1.thrLoc_B[0][0])) * RampFunction[
-                                                  i]  # Torque about x is arm along z by the force projected upon x
-                    expectedpointstor[2, i] = math.sin(anglerad) * thruster1.thrLoc_B[0][0] * RampFunction[
-                        i]  # Torque about z is arm along x by the force projected upon y
-                else:
-                    expectedpointstor[0, i] = 0.0
-                    expectedpointstor[1, i] = 0.0
-                    expectedpointstor[2, i] = 0.0
+                    expectedpointstor[0:3, i] = np.cross(loc1, dir1)*RampFunction[i]
+
 
             # Define errorTolerance
             TruthTorque = np.transpose(expectedpointstor)
@@ -792,5 +727,5 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    unitThrusters(ResultsStore(), False, "ON", 1 , 5. , 30., [[1.125], [0.0], [2.0]], 10E6, "ON", "ON")
+    unitThrusters(ResultsStore(), False, "ON", 1, 5.0, 30.,  15.,[[1.125], [0.5], [2.0]], 1E8, "ON", "ON")
 

@@ -62,7 +62,6 @@ void OrbElemConvert::SelfInit()
     uint64_t OutputSize = Elements2Cart ? stateMsgSize :
     sizeof(classicElements);
     std::string messageType = Elements2Cart ? useEphemFormat ? "SpicePlanetStateSimMsg" : "SCPlusStatesSimMsg" : "classicElements";
-    std::cout << messageType;
     
     StateOutMsgID = SystemMessaging::GetInstance()->
         CreateNewMessage( OutputDataString, OutputSize, OutputBufferCount,

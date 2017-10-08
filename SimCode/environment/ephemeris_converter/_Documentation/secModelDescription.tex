@@ -17,10 +17,10 @@ The spice message, which is read in by the module, contains the following variab
     \item  PlanetName
 \end{itemize}
 
-Only a the position and velocity vectors are transferred to the output ephemeris message, which therefore contains:
+Only the position and velocity vectors are transferred to the output ephemeris message, which therefore contains:
 \begin{itemize}
-    \item r\_BdyZero\_N[3]: the position of orbital body 
-    \item v\_BdyZero\_N[3]: the velocity of orbital body
+    \item r\_BdyZero\_N[3]: the position of orbital body in the inertial frame
+    \item v\_BdyZero\_N[3]: the velocity of orbital body in the inertial frame
     \item timeTag: the vehicle Time-tag for state
 \end{itemize}
 
