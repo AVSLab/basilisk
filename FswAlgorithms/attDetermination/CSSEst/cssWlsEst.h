@@ -22,6 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include "fswMessages/sunHeadingEstFswMsg.h"
+#include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/cssConfigFswMsg.h"
 #include <stdint.h>
@@ -42,13 +43,15 @@ typedef struct {
     char OutputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char InputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
     char InputPropsName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the mass props message*/
+    char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     uint32_t numActiveCss;   /*!< -- Number of currently active CSS sensors*/
     uint32_t UseWeights;     /*!< -- Flag indicating whether or not to use weights for least squares*/
     double SensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
-    SunHeadingEstFswMsg OutputData; /*!< -- Unit vector to the Sun in the spacecraft body frame*/
+    NavAttIntMsg outputSunline; /*!< -- Nav message*/
     int32_t OutputMsgID;     /*!< -- ID for the outgoing body estimate message*/
     int32_t InputMsgID;      /*!< -- ID for the incoming CSS sensor message*/
     int32_t InputPropsID;    /*!< [-] ID for the incoming mass properties message*/
+    int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
 }CSSWLSConfig;
 
 #ifdef __cplusplus

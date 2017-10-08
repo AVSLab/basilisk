@@ -34,9 +34,12 @@ void SelfInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
     
     /*! Begin method steps */
     /*! - Create output message for module */
-    ConfigData->OutputMsgID = CreateNewMessage(ConfigData->OutputDataName,
-        sizeof(SunHeadingEstFswMsg), "SunHeadingEstFswMsg", moduleID);
+    ConfigData->navStateOutMsgId = CreateNewMessage(ConfigData->navStateOutMsgName, sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
     
+    /*! Set the components that WLSEst does not estimate to zero */
+    ConfigData->outputSunline.timeTag = 0.0;
+    v3SetZero(ConfigData->outputSunline.sigma_BN);
+    v3SetZero(ConfigData->outputSunline.omega_BN_B);
 }
 
 /*! This method performs the second stage of initialization for the CSS sensor
@@ -177,9 +180,9 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
     
     /*! - Get least squares fit for sun pointing vector*/
     status = computeWlsmn(ConfigData->numActiveCss, H, W, y,
-                          ConfigData->OutputData.sHatBdy);
-    v3Normalize(ConfigData->OutputData.sHatBdy, ConfigData->OutputData.sHatBdy);
-    WriteMessage(ConfigData->OutputMsgID, callTime, sizeof(SunHeadingEstFswMsg),
-                 &(ConfigData->OutputData), moduleID);
+                          ConfigData->outputSunline.vehSunPntBdy);
+    v3Normalize(ConfigData->outputSunline.vehSunPntBdy, ConfigData->outputSunline.vehSunPntBdy);
+    WriteMessage(ConfigData->OutputMsgID, callTime, sizeof(NavAttIntMsg),
+                 &(ConfigData->outputSunline), moduleID);
     return;
 }
