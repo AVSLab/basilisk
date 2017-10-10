@@ -542,3 +542,12 @@ void GravityEffector::updateEnergyContributions(double & orbPotEnergyContr)
     return;
 }
 
+void GravityEffector::setGravBodies(std::vector<GravBodyData *> gravBodies)
+{
+    this->gravBodies = gravBodies;
+}
+
+void GravityEffector::addGravBody(GravBodyData* gravBody)
+{
+    this->gravBodies.push_back(gravBody);
+}
