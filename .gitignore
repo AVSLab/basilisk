@@ -1,11 +1,11 @@
 CMakeFiles/
 CMakeCache.txt
 .DS_Store
+dist/
 build/*
-Basilisk/
 *.egg-info/
 html/*
-Images/Scenarios/*
+docs/Images/Scenarios/*
 xml/*
 *.swp
 *.pyc
