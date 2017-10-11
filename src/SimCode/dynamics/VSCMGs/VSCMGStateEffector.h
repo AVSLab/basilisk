@@ -36,7 +36,7 @@
 #include "utilities/avsEigenMRP.h"
 #include "utilities/avsEigenSupport.h"
 
-/*! @brief Abstract class that is used to implement an effector impacting a dynamic body 
+/*! @brief Abstract class that is used to implement an effector impacting a dynamic body
            that does not itself maintain a state or represent a changing component of
            the body (for example: gravity, thrusters, solar radiation pressure, etc.)
  */
@@ -60,7 +60,7 @@ public:
 	void WriteOutputMessages(uint64_t CurrentClock);
 	void ReadInputs();
 	void ConfigureVSCMGRequests(double CurrentTime);
-    
+
 public:
 	std::vector<VSCMGConfigSimMsg> VSCMGData; 	//!< -- VSCMG data structure
     Eigen::MatrixXd *g_N; 						//!< [m/s^2] Gravitational acceleration in N frame components

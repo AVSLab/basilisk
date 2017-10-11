@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module VSCMGStateEffector
+%module vscmgStateEffector
 %{
-   #include "VSCMGStateEffector.h"
+   #include "vscmgStateEffector.h"
 %}
 
 %include "swig_common_model.i"
@@ -29,7 +29,7 @@
 %include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "../_GeneralModuleFiles/dynamicObject.h"
-%include "VSCMGStateEffector.h"
+%include "vscmgStateEffector.h"
 %include "simMessages/vscmgCmdSimMsg.h"
 %include "simMessages/vscmgConfigSimMsg.h"
 %include "simFswInterfaceMessages/vscmgSpeedIntMsg.h"

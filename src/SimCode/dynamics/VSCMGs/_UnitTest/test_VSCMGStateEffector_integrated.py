@@ -37,13 +37,13 @@ from Basilisk.simulation import sim_model
 from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import spice_interface
-from Basilisk.simulation.VSCMGStateEffector import VSCMGStateEffector
+from Basilisk.simulation import vscmgStateEffector
 
 mpl.rc("figure", figsize=(5.75,4))
 
 
 def defaultVSCMG():
-    VSCMG = VSCMGStateEffector.VSCMGConfigSimMsg()
+    VSCMG = vscmgStateEffector.VSCMGConfigSimMsg()
 
     VSCMG.rGB_B = [[0.],[0.],[0.]]
     VSCMG.gsHat0_B = [[0.],[0.],[0.]]
@@ -200,14 +200,14 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     N = len(VSCMGs)
 
     # create RW object container and tie to spacecraft object
-    rwStateEffector = VSCMGStateEffector.VSCMGStateEffector()
+    rwStateEffector = vscmgStateEffector.VSCMGStateEffector()
     rwStateEffector.ModelTag = "VSCMGs"
     for item in VSCMGs:
         rwStateEffector.AddVSCMG(item)
     scObject.addStateEffector(rwStateEffector)
 
     # set RW torque command
-    cmdArray = VSCMGStateEffector.VSCMGArrayTorqueIntMsg()
+    cmdArray = vscmgStateEffector.VSCMGArrayTorqueIntMsg()
     cmdArray.wheelTorque = [0.001, 0.005, -0.009] # [Nm]
     cmdArray.gimbalTorque = [0.008, -0.0015, -0.006] # [Nm]
     unitTestSupport.setMessage(unitTestSim.TotalSim,

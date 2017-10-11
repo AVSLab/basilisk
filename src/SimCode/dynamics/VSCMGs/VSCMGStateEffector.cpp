@@ -18,7 +18,7 @@
  */
 
 
-#include "VSCMGStateEffector.h"
+#include "vscmgStateEffector.h"
 #include "architecture/messaging/system_messaging.h"
 #include <cstring>
 #include <iostream>
@@ -93,7 +93,7 @@ void VSCMGStateEffector::registerStates(DynParamManager& states)
 		gammaDotsForInit(it - this->VSCMGData.begin(), 0) = it->gammaDot;
         this->numVSCMG++;
     }
-    
+
 	this->OmegasState = states.registerState(this->numVSCMG, 1, this->nameOfVSCMGOmegasState);
 	this->gammasState = states.registerState(this->numVSCMG, 1, this->nameOfVSCMGGammasState);
 	this->gammaDotsState = states.registerState(this->numVSCMG, 1, this->nameOfVSCMGGammaDotsState);
@@ -120,7 +120,7 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
     this->effProps.IEffPntB_B.setZero();
     this->effProps.rEffPrime_CB_B.setZero();
     this->effProps.IEffPrimePntB_B.setZero();
-    
+
     int thetaCount = 0;
     std::vector<VSCMGConfigSimMsg>::iterator it;
 	for(it=VSCMGData.begin(); it!=VSCMGData.end(); it++)
@@ -805,4 +805,3 @@ void VSCMGStateEffector::UpdateState(uint64_t CurrentSimNanos)
 	WriteOutputMessages(CurrentSimNanos);
 //
 }
-

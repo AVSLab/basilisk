@@ -43,7 +43,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
-from Basilisk.simulation.VSCMGStateEffector import VSCMGStateEffector
+from Basilisk.simulation import vscmgStateEffector
 from Basilisk.simulation import sim_model
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.simulation import spacecraftPlus
@@ -54,8 +54,8 @@ def listStack(vec,simStopTime,unitProcRate):
     return [vec] * int(simStopTime/(float(unitProcRate)/float(macros.sec2nano(1))))
 
 def writeNewVSCMGCmds(self,u_s_cmd,u_g_cmd,numVSCMG):
-    NewVSCMGCmdsVec = VSCMGStateEffector.VSCMGCmdVector(numVSCMG) # create standard vector from SWIG template (see .i file)
-    cmds = VSCMGStateEffector.VSCMGCmdSimMsg()
+    NewVSCMGCmdsVec = vscmgStateEffector.VSCMGCmdVector(numVSCMG) # create standard vector from SWIG template (see .i file)
+    cmds = vscmgStateEffector.VSCMGCmdSimMsg()
     for i in range(0,numVSCMG):
         cmds.u_s_cmd = u_s_cmd[i]
         cmds.u_g_cmd = u_g_cmd[i]
@@ -63,7 +63,7 @@ def writeNewVSCMGCmds(self,u_s_cmd,u_g_cmd,numVSCMG):
         self.NewVSCMGCmds = NewVSCMGCmdsVec # set in module (should this be indented?)
 
 def defaultVSCMG():
-    VSCMG = VSCMGStateEffector.VSCMGConfigSimMsg()
+    VSCMG = vscmgStateEffector.VSCMGConfigSimMsg()
     VSCMG.rGB_B = [[0.],[0.],[0.]]
     VSCMG.gsHat0_B = [[1.],[0.],[0.]]
     VSCMG.gtHat0_B = [[1.],[0.],[0.]]
@@ -126,7 +126,7 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
     testMessages = []  # create empty array to store test log messages
 
     # configure module
-    VSCMG = VSCMGStateEffector.VSCMGStateEffector()
+    VSCMG = vscmgStateEffector.VSCMGStateEffector()
     VSCMG.ModelTag = "VSCMG"
 
     numVSCMG = 2
