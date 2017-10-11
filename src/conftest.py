@@ -19,7 +19,6 @@
 '''
 import pytest
 
-
 def pytest_addoption(parser):
     parser.addoption("--show_plots", action="store_true",
                      help="test(s) shall display plots")
