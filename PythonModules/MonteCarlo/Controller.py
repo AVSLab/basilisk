@@ -358,7 +358,7 @@ class Controller:
             except Exception as e:
                 print "Unknown exception while running simulations:", e
                 failed.extend(range(jobsFinished, numSims)) # fail all potentially running jobs...
-		traceback.print_exc()
+                traceback.print_exc()
                 pool.terminate()
             finally:
                 pool.join()
@@ -455,7 +455,6 @@ class RetentionPolicy():
 
     def executeCallback(self, data):
         if self.dataCallback != None:
-            print "Executing Callback", self.dataCallback
             self.dataCallback(data, self)
 
     @staticmethod

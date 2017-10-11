@@ -7,10 +7,10 @@ from Basilisk.utilities.MonteCarlo.Dispersions import UniformEulerAngleMRPDisper
 
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
-from Basilisk.modules import orbitalMotion
-from Basilisk.modules import simIncludeGravBody
+from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import macros
-from Basilisk.modules import SimulationBaseClass
+from Basilisk.utilities import SimulationBaseClass
 import numpy as np
 
 import pytest
@@ -53,15 +53,15 @@ def myCreationFunction():
     # add spacecraftPlus object to the simulation process
     sim.AddModelToTask(simTaskName, scObject)
 
-
     # Earth
     gravFactory = simIncludeGravBody.gravBodyFactory()
     planet = gravFactory.createEarth()
     planet.isCentralBody = True
     mu = planet.mu
+    sim.planet = planet # HACK for gravBodyFactory to work
 
     # attach gravity model to spaceCraftPlus
-    #scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
     #   setup orbit and simulation time
     # setup the orbit using classical orbit elements
@@ -91,8 +91,6 @@ def myCreationFunction():
     numDataPoints = 400
     samplingTime = simulationTime / (numDataPoints - 1)
 
-    sim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-
     #   configure a simulation stop time time and execute the simulation run
     sim.ConfigureStopTime(simulationTime / LENGTH_SHRINKAGE_FACTOR)
 
@@ -111,7 +109,6 @@ dataType1 = range(3)
 dataType2 = range(3)
 
 def myDataCallback(monteCarloData, retentionPolicy):
-    print monteCarloData
     data = np.array(monteCarloData["messages"]["inertial_state_output.v_BN_N"])
     plt.plot(data[:,1], data[:,2])
 
@@ -181,6 +178,9 @@ def test_MonteCarloSimulation():
         assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
 
     monteCarloLoaded.executeCallbacks()
+    # or to execute only with runs 4,6,7
+    #monteCarloLoaded.executeCallbacks([4,6,7], [retentionPolicy])
+    
     plt.show()
 
     shutil.rmtree(dirName)
