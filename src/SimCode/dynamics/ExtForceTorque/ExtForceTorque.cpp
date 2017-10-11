@@ -16,7 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "dynamics/ExtForceTorque/ExtForceTorque.h"
+#include "dynamics/extForceTorque/extForceTorque.h"
 #include "architecture/messaging/system_messaging.h"
 #include <iostream>
 #include "utilities/avsEigenSupport.h"
@@ -92,7 +92,7 @@ void ExtForceTorque::linkInStates(DynParamManager& statesIn)
  */
 void ExtForceTorque::writeOutputMessages(uint64_t currentClock)
 {
-    
+
 }
 
 /*! This method is used to read the incoming message and set the
@@ -137,13 +137,13 @@ void ExtForceTorque::readInputMessages()
                                                      sizeof(CmdForceBodyIntMsg),
                                                      reinterpret_cast<uint8_t*> (&(this->incomingCmdForceBodyBuffer)), moduleID);
     }
-    
+
 
 }
 
 /*! This method is used to compute the RHS forces and torques.
     Note:   the module can set any of these three vecors, or a subset.  Regarding the external force, the
-            matrix represnetations in the body (B) and inerial (N) frame components are treated as 2 
+            matrix represnetations in the body (B) and inerial (N) frame components are treated as 2
             separate vectors.  Only set both if you mean to, as both vectors will be included.
  */
 void ExtForceTorque::computeBodyForceTorque(double integTime)
@@ -183,5 +183,3 @@ void ExtForceTorque::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();
 }
-
-

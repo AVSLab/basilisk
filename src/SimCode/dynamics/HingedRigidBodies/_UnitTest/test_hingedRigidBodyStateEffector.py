@@ -35,7 +35,7 @@ from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import hingedRigidBodyStateEffector
 from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
-from Basilisk.simulation.ExtForceTorque import ExtForceTorque
+from Basilisk.simulation import extForceTorque
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -715,7 +715,7 @@ def test_hingedRigidBodyThetaSS(show_plots):
     scObject.addStateEffector(unitTestSim.panel2)
 
     # Add external force and torque
-    extFTObject = ExtForceTorque.ExtForceTorque()
+    extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[0], [0], [0]]
     extFTObject.extForce_B = [[0], [1], [0]]
@@ -904,7 +904,7 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     scObject.addStateEffector(unitTestSim.panel2)
 
     # Add external force and torque
-    extFTObject = ExtForceTorque.ExtForceTorque()
+    extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[0], [0], [0]]
     force = 1
@@ -1191,7 +1191,7 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     torque2_B = numpy.cross(momentArm2_B,force2_B)
 
     # Add external force and torque
-    extFTObject = ExtForceTorque.ExtForceTorque()
+    extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
     extFTObject.extForce_B = [[force1_B[0]], [force1_B[1]], [force1_B[2]]]
     extFTObject.extTorquePntB_B = [[torque1_B[0]], [torque1_B[1]], [torque1_B[2]]]

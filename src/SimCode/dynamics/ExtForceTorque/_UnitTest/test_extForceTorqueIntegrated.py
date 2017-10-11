@@ -33,7 +33,7 @@ from Basilisk.utilities import unitTestSupport  # general support file with comm
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
-from Basilisk.simulation.ExtForceTorque import ExtForceTorque
+from Basilisk.simulation import extForceTorque
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -95,7 +95,7 @@ def test_extForceBodyAndTorque():
 
     unitTestSim.InitializeSimulation()
 
-    extFTObject = ExtForceTorque.ExtForceTorque()
+    extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[-1], [1], [-1]]
     extFTObject.extForce_B = [[1], [2], [3]]
@@ -191,7 +191,7 @@ def test_extForceInertialAndTorque():
 
     unitTestSim.InitializeSimulation()
 
-    extFTObject = ExtForceTorque.ExtForceTorque()
+    extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[-1], [1], [-1]]
     extFTObject.extForce_N = [[-1], [-0.5], [0.5]]

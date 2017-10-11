@@ -63,7 +63,7 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
 
         # -------------------------------------------DKE SIM MODULES------------------------------------------------ #
         self.scObject = spacecraftPlus.SpacecraftPlus()
-        self.extForceTorqueObject = ExtForceTorque.ExtForceTorque()
+        self.extForceTorqueObject = extForceTorque.ExtForceTorque()
         self.simpleNavObject = simple_nav.SimpleNav()
 
         self.InitAllDynObjects()

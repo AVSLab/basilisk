@@ -64,7 +64,7 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.simulation import spacecraftPlus                   #The base of any spacecraft simulation which deals with spacecraft dynamics
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import hingedRigidBodyStateEffector
-from Basilisk.simulation.ExtForceTorque import ExtForceTorque                   #Allows for forces to act on the spacecraft without adding an effector like a thruster
+from Basilisk.simulation import extForceTorque                   #Allows for forces to act on the spacecraft without adding an effector like a thruster
 
 #import non-basilisk libraries
 import numpy as np
@@ -204,7 +204,7 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 # scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 #
 # # setup extForceTorque module
-# extFTObject = ExtForceTorque.ExtForceTorque()
+# extFTObject = extForceTorque.ExtForceTorque()
 # extFTObject.ModelTag = "maneuverThrust"
 # extFTObject.extForce_N = [[0.], [0.], [0.]]
 # scObject.addDynamicEffector(extFTObject)
@@ -392,7 +392,7 @@ def run(doUnitTests, show_plots):
     scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
     # setup extForceTorque module
-    extFTObject = ExtForceTorque.ExtForceTorque()
+    extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "maneuverThrust"
     extFTObject.extForce_N = [[0.],[0.],[0.]]
     scObject.addDynamicEffector(extFTObject)

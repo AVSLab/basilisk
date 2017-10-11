@@ -52,7 +52,7 @@ from Basilisk.utilities import RigidBodyKinematics
 
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
-from Basilisk.simulation.ExtForceTorque import ExtForceTorque
+from Basilisk.simulation import extForceTorque
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import simple_nav
 
@@ -284,7 +284,7 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
 
     # setup extForceTorque module
     # the control torque is read in through the messaging system
-    extFTObject = ExtForceTorque.ExtForceTorque()
+    extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
     # use the input flag to determine which external torque should be applied
     # Note that all variables are initialized to zero.  Thus, not setting this

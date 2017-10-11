@@ -34,7 +34,7 @@ import matplotlib.pyplot as plt
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
-from Basilisk.simulation.ExtForceTorque import ExtForceTorque
+from Basilisk.simulation import extForceTorque
 from Basilisk.utilities import RigidBodyKinematics
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -616,7 +616,7 @@ def test_SCTransBOE(show_plots):
     t3 = 10.
 
     # Add external force and torque
-    extFTObject = ExtForceTorque.ExtForceTorque()
+    extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[0], [0], [0]]
     extFTObject.extForce_B = [[F1], [0], [0]]

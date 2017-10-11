@@ -63,7 +63,7 @@ from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeRW
 from Basilisk.simulation import simple_nav
 from Basilisk.simulation import reactionWheelStateEffector
-from Basilisk.simulation.ExtForceTorque import ExtForceTorque
+from Basilisk.simulation import extForceTorque
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import RigidBodyKinematics as rb
@@ -397,7 +397,7 @@ def run(doUnitTests, show_plots, simCase):
     scSim.AddModelToTask(simTaskName, sNavObject)
 
     if simCase < 2:
-        extFTObject = ExtForceTorque.ExtForceTorque()
+        extFTObject = extForceTorque.ExtForceTorque()
         extFTObject.ModelTag = "externalDisturbance"
         extFTObject.extTorquePntB_B = [[0.01], [-0.01], [0.005]]
         scObject.addDynamicEffector(extFTObject)

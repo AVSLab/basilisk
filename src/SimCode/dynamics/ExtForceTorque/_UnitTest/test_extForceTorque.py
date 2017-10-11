@@ -45,7 +45,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
-from Basilisk.simulation.ExtForceTorque import ExtForceTorque
+from Basilisk.simulation import extForceTorque
 
 
 
@@ -99,14 +99,14 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
     dynProcess.addTask(scSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
 
 
-    extFTObject = ExtForceTorque.ExtForceTorque()
+    extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
 
     if torqueInput==1 or torqueInput==3:
         extFTObject.extTorquePntB_B = [[-1], [1],[ -1]]
     if torqueInput==2 or torqueInput==3:
         msgName = "extTorquePntB_B_cmds"
-        msgData = ExtForceTorque.CmdTorqueBodyIntMsg()
+        msgData = extForceTorque.CmdTorqueBodyIntMsg()
         msgData.torqueRequestBody = [-1.0, 1.0, -1.0]
         unitTestSupport.setMessage(scSim.TotalSim, unitProcessName, msgName, msgData)
 
@@ -114,7 +114,7 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
         extFTObject.extForce_N = [[-10.], [-5.], [5.]]
     if forceNInput==2 or forceNInput==3:
         msgName = "extForce_N_cmds"
-        msgData = ExtForceTorque.CmdForceInertialIntMsg()
+        msgData = extForceTorque.CmdForceInertialIntMsg()
         msgData.forceRequestInertial = [-10.0, -5.0, 5.0]
         unitTestSupport.setMessage(scSim.TotalSim, unitProcessName, msgName, msgData)
 
@@ -122,7 +122,7 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
         extFTObject.extForce_B = [[10.], [20.], [30.]]
     if forceBInput==2 or forceBInput==3:
         msgName = "extForce_B_cmds"
-        msgData = ExtForceTorque.CmdForceBodyIntMsg()
+        msgData = extForceTorque.CmdForceBodyIntMsg()
         msgData.forceRequestBody = [10.0, 20.0, 30.0]
         unitTestSupport.setMessage(scSim.TotalSim, unitProcessName, msgName, msgData)
 
@@ -264,4 +264,3 @@ if __name__ == "__main__":
                            0,           # forceNInput
                            0            # forceBInput
                            )
-

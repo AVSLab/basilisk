@@ -56,7 +56,7 @@ from Basilisk.utilities import macros
 
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
-from Basilisk.simulation.ExtForceTorque import ExtForceTorque
+from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import simple_nav
 
 # import FSW Algorithm related support
@@ -229,7 +229,7 @@ def run(doUnitTests, show_plots, useLargeTumble):
 
     # setup extForceTorque module
     # the control torque is read in through the messaging system
-    extFTObject = ExtForceTorque.ExtForceTorque()
+    extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(simTaskName, extFTObject)

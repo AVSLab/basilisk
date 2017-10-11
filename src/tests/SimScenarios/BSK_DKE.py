@@ -24,7 +24,7 @@ from Basilisk.utilities import unitTestSupport as sp
 
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import gravityEffector
-from Basilisk.simulation.ExtForceTorque import ExtForceTorque
+from Basilisk.simulation import extForceTorque
 from Basilisk.simulation import simple_nav
 from Basilisk.simulation import spice_interface
 
@@ -41,7 +41,7 @@ class DynamicsClass():
 
         # Instantiate Dyn modules as objects
         self.scObject = spacecraftPlus.SpacecraftPlus()
-        self.extForceTorqueObject = ExtForceTorque.ExtForceTorque()
+        self.extForceTorqueObject = extForceTorque.ExtForceTorque()
         self.simpleNavObject = simple_nav.SimpleNav()
 
         # Initialize all modules and write init one-time messages
