@@ -2,7 +2,7 @@ import sys
 import os
 import inspect  # Don't worry about this, standard stuff plus file discovery
 
-from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
+from Basilisk.utilities.MonteCarlo import Controller, RetentionPolicy
 from Basilisk.utilities.MonteCarlo.Dispersions import UniformEulerAngleMRPDispersion, UniformDispersion, NormalVectorCartDispersion
 
 # import simulation related support
@@ -180,7 +180,7 @@ def test_MonteCarloSimulation():
     monteCarloLoaded.executeCallbacks()
     # or to execute only with runs 4,6,7
     #monteCarloLoaded.executeCallbacks([4,6,7], [retentionPolicy])
-    
+
     plt.show()
 
     shutil.rmtree(dirName)

@@ -61,10 +61,11 @@ class Controller:
             The path to the MonteCarlo.data file that contains the archived MonteCarlo run
         """
         filename = os.path.abspath(runDirectory) + "/MonteCarlo.data"
-        print "Loading montecarlo at", filename
 
         with gzip.open(filename) as pickledData:
             data = pickle.load(pickledData)
+            if data.simParams.verbose:
+                print "Loading montecarlo at", filename
             return data
 
     def setExecutionFunction(self, newModule):
@@ -243,6 +244,7 @@ class Controller:
                 failed.append(caseNumber)
 
         if len(failed) > 0:
+            failed.sort()
             print "Failed rerunning cases:", failed
 
         return failed
@@ -365,6 +367,8 @@ class Controller:
 
         # if there are failures
         if len(failed) > 0:
+            failed.sort()
+
             if self.simParams.verbose:
                 print "Failed", failed, "saving to 'failures.txt'"
 
@@ -435,7 +439,6 @@ class RetentionPolicy():
     def addMessageLog(self, messageName, retainedVars, logRate=None):
         if logRate == None:
             logRate = self.logRate
-	print "adding message", messageName, retainedVars
         self.messageLogList.append(MessageRetentionParameters(messageName, logRate, retainedVars))
 
     def addVariableLog(self, variableName, startIndex=0, stopIndex=0, varType='double', logRate=None):
