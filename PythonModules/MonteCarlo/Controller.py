@@ -61,7 +61,6 @@ class Controller:
             The path to the MonteCarlo.data file that contains the archived MonteCarlo run
         """
         filename = os.path.abspath(runDirectory) + "/MonteCarlo.data"
-        print "Loading montecarlo at", filename
 
         with gzip.open(filename) as pickledData:
             data = pickle.load(pickledData)
@@ -435,7 +434,6 @@ class RetentionPolicy():
     def addMessageLog(self, messageName, retainedVars, logRate=None):
         if logRate == None:
             logRate = self.logRate
-	print "adding message", messageName, retainedVars
         self.messageLogList.append(MessageRetentionParameters(messageName, logRate, retainedVars))
 
     def addVariableLog(self, variableName, startIndex=0, stopIndex=0, varType='double', logRate=None):
@@ -455,7 +453,6 @@ class RetentionPolicy():
 
     def executeCallback(self, data):
         if self.dataCallback != None:
-            print "Executing Callback", self.dataCallback
             self.dataCallback(data, self)
 
     @staticmethod
