@@ -92,7 +92,7 @@ splitPath = path.split(bskName)
 bskPath = splitPath[0] + '/' + bskName + '/'
 # @endcond
 
-NUMBER_OF_RUNS = 4
+NUMBER_OF_RUNS = 8
 VERBOSE = False
 
 inertial3DConfigOutputDataName = "guidanceInertial3D"
@@ -186,9 +186,10 @@ def test_MonteCarloSimulation(show_plots):
         # assert two different runs had different parameters.
         assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
 
-    monteCarloLoaded.executeCallbacks()
-    # or to execute only with runs 4,6,7
-    #monteCarloLoaded.executeCallbacks([4,6,7], [retentionPolicy])
+    # plot only runs 4,6,7 overlapped
+    monteCarloLoaded.executeCallbacks([4,6,7])
+    # or to execute all
+    # monteCarloLoaded.executeCallbacks()
 
     shutil.rmtree(dirName)
     assert not os.path.exists(dirName), "No leftover data should exist after the test"
