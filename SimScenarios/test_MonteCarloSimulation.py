@@ -402,13 +402,7 @@ def executeScenario(sim):
     sim.ExecuteSimulation()
 
 
-plotJob = 0
-# TODO when we integrate EMM's retention policy subclass PlotGeneration command
-# we no longer will use the plotJob index  to track the current run being plot
 def plotSim(data, retentionPolicy):
-    global plotJob # just used to keep track of which run we are plotting
-    plotJob = plotJob + 1
-
     #
     #   retrieve the logged data
     #
@@ -430,7 +424,7 @@ def plotSim(data, retentionPolicy):
     plt.figure(1)
     for idx in range(1,4):
         plt.plot(timeData, dataSigmaBR[:, idx],
-                 label='Run ' + str(plotJob) + ' $\sigma_'+str(idx)+'$')
+                 label='Run ' + str(data["index"]) + ' $\sigma_'+str(idx)+'$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Error $\sigma_{B/R}$')
@@ -439,9 +433,9 @@ def plotSim(data, retentionPolicy):
     for idx in range(1,4):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
-                 label='Run ' + str(plotJob) + ' $\hat u_{s,'+str(idx)+'}$')
+                 label='Run ' + str(data["index"]) + ' $\hat u_{s,'+str(idx)+'}$')
         plt.plot(timeData, dataRW[idx-1][:, 1],
-                 label='Run ' + str(plotJob) + ' $u_{s,' + str(idx) + '}$')
+                 label='Run ' + str(data["index"]) + ' $u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Motor Torque (Nm)')
@@ -449,7 +443,7 @@ def plotSim(data, retentionPolicy):
     plt.figure(3)
     for idx in range(1,4):
         plt.plot(timeData, dataOmegaBR[:, idx],
-                 label='Run ' + str(plotJob) + ' $\omega_{BR,'+str(idx)+'}$')
+                 label='Run ' + str(data["index"]) + ' $\omega_{BR,'+str(idx)+'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error (rad/s) ')
@@ -457,7 +451,7 @@ def plotSim(data, retentionPolicy):
     plt.figure(4)
     for idx in range(1,len(rwOutName)+1):
         plt.plot(timeData, dataOmegaRW[:, idx]/macros.RPM,
-                 label='Run ' + str(plotJob) + ' $\Omega_{'+str(idx)+'}$')
+                 label='Run ' + str(data["index"]) + ' $\Omega_{'+str(idx)+'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')

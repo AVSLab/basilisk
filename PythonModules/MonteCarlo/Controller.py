@@ -594,6 +594,7 @@ class SimulationExecutor():
 
                 with gzip.open(retentionFile, "w") as archive:
                     retainedData = RetentionPolicy.getDataForRetention(simInstance, simParams.retentionPolicies)
+                    retainedData["index"] = simParams.index # add run index
                     pickle.dump(retainedData, archive)
 
             if simParams.verbose:
