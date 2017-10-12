@@ -136,21 +136,21 @@ def test_MonteCarloSimulation(show_plots):
     monteCarlo.addDispersion(UniformDispersion(disp3Name, ([1300.0 - 812.3, 1500.0 - 812.3])))
     monteCarlo.addDispersion(NormalVectorCartDispersion(disp4Name, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
 
+    retentionPolicy = RetentionPolicy()
+
+    retentionPolicy.addMessageLog(rwMotorTorqueConfigOutputDataName, [("motorTorque", range(5))], samplingTime)
+    retentionPolicy.addMessageLog(attErrorConfigOutputDataName, [("sigma_BR", range(3)), ("omega_BR_B", range(3))], samplingTime)
+    retentionPolicy.addMessageLog(sNavObjectOutputTransName, [("r_BN_N", range(3))], samplingTime)
+    retentionPolicy.addMessageLog(mrpControlConfigInputRWSpeedsName, [("wheelSpeeds", range(3))], samplingTime)
+    for message in rwOutName:
+        retentionPolicy.addMessageLog(message, [("u_current", range(1))], samplingTime)
 
     if show_plots:
-        # retain data only if we plan to use it for plots later
-        retentionPolicy = RetentionPolicy()
-
-        retentionPolicy.addMessageLog(rwMotorTorqueConfigOutputDataName, [("motorTorque", range(5))], samplingTime)
-        retentionPolicy.addMessageLog(attErrorConfigOutputDataName, [("sigma_BR", range(3)), ("omega_BR_B", range(3))], samplingTime)
-        retentionPolicy.addMessageLog(sNavObjectOutputTransName, [("r_BN_N", range(3))], samplingTime)
-        retentionPolicy.addMessageLog(mrpControlConfigInputRWSpeedsName, [("wheelSpeeds", range(3))], samplingTime)
-        for message in rwOutName:
-            retentionPolicy.addMessageLog(message, [("u_current", range(1))], samplingTime)
+        # plot data only if show_plots is true, otherwise just retain
         retentionPolicy.setDataCallback(plotSim)
 
-        # add retention policy
-        monteCarlo.addRetentionPolicy(retentionPolicy)
+    # add retention policy
+    monteCarlo.addRetentionPolicy(retentionPolicy)
 
     failures = monteCarlo.executeSimulations()
 
