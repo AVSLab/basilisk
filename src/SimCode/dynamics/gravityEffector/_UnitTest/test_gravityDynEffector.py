@@ -25,9 +25,9 @@ import numpy as np
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('SimCode')
-#sys.path.append(splitPath[0] + '/modules')
-#sys.path.append(splitPath[0] + '/PythonModules')
-#sys.path.append(splitPath[0] + '/SimCode/dynamics/gravityEffector')
+
+
+
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions

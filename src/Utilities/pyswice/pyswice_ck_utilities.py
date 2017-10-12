@@ -22,8 +22,8 @@ import sys, os, inspect #Don't worry about this, standard stuff plus file discov
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('Utilities')
-#sys.path.append(splitPath[0] + '/modules')
-#sys.path.append(splitPath[0] + '/PythonModules')
+
+
 import pyswice
 import numpy
 from Basilisk.utilities import RigidBodyKinematics

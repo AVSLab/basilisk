@@ -25,8 +25,8 @@ import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('FswAlgorithms')
-#sys.path.append(splitPath[0] + '/modules')
-#sys.path.append(splitPath[0] + '/PythonModules')
+
+
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import astroFunctions as af
 

@@ -38,8 +38,8 @@ import inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('SimCode')
-#sys.path.append(splitPath[0] + '/modules')
-#sys.path.append(splitPath[0] + '/PythonModules')
+
+
 # @endcond
 
 #Import all of the modules that we are going to call in this simulation

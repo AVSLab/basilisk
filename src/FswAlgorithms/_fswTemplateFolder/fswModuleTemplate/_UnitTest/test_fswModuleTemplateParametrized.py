@@ -33,12 +33,12 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
-bskPath = splitPath[0] + '/' + bskName + '/'
-# if this script is run from a custom folder outside of the Basilisk folder, then uncomment the
-# following line and specify the absolute bath to the Basilisk folder
-#bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
-#sys.path.append(bskPath + 'modules')
-#sys.path.append(bskPath + 'PythonModules')
+
+
+
+
+
+
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
@@ -126,14 +126,14 @@ def fswModuleTestFunction(show_plots, param1, param2):
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
-    
+
     # reset the module to test this functionality
-    moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds) 
+    moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
 
     # run the module again for an additional 1.0 seconds
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
-        
+
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
@@ -141,7 +141,7 @@ def fswModuleTestFunction(show_plots, param1, param2):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.dataOutMsgName + '.' + moduleOutputName,
                                                   range(3))
     variableState = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + "." + variableName)
-    
+
     # set the filtered output truth states
     trueVector=[];
     if param1==1:
@@ -194,7 +194,7 @@ def fswModuleTestFunction(show_plots, param1, param2):
     # Just because we stop and query data does not mean everything has to stop for good
     unitTestSim.ConfigureStopTime(macros.sec2nano(0.6))    # run an additional 0.6 seconds
     unitTestSim.ExecuteSimulation()
- 
+
     # If the argument provided at commandline "--show_plots" evaluates as true,
     # plot all figures
     # plot a sample variable.

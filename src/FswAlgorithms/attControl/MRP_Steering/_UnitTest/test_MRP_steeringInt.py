@@ -24,8 +24,8 @@ import pytest
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('FswAlgorithms')
-#sys.path.append(splitPath[0] + '/modules')
-#sys.path.append(splitPath[0] + '/PythonModules')
+
+
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions

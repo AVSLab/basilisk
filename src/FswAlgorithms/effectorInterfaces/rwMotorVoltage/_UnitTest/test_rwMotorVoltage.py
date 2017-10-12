@@ -34,12 +34,12 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
-bskPath = splitPath[0] + '/' + bskName + '/'
-# if this script is run from a custom folder outside of the Basilisk folder, then uncomment the
-# following line and specify the absolute bath to the Basilisk folder
-#bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
-#sys.path.append(bskPath + 'modules')
-#sys.path.append(bskPath + 'PythonModules')
+
+
+
+ 
+
+
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass

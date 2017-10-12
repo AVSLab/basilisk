@@ -21,8 +21,8 @@
 import sys, os, ast
 
 # Point the path to the module storage area
-# sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/../modules')
-# sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+
+
 from Basilisk.simulation import sim_model
 from Basilisk.simulation import sys_model_task
 from Basilisk.simulation import alg_contain

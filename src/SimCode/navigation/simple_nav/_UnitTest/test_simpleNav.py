@@ -27,16 +27,16 @@ import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('SimCode')
-#sys.path.append(splitPath[0] + '/modules')
-#sys.path.append(splitPath[0] + '/PythonModules')
+
+
 
 import matplotlib.pyplot as plt
 import numpy
 import ctypes
 import math
 
-#sys.path.append(os.environ['SIMULATION_BASE']+'/modules')
-#sys.path.append(os.environ['SIMULATION_BASE']+'/PythonModules/')
+
+
 
 #Import all of the modules that we are going to call in this simulation
 from Basilisk.simulation import simple_nav

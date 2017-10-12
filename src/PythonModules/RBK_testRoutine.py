@@ -21,7 +21,7 @@ import sys, os, inspect
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-# sys.path.append(path + '/../PythonModules/')
+
 import numpy as np
 import ctypes
 from Basilisk.utilities import RigidBodyKinematics as rbk

@@ -41,9 +41,9 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
-bskPath = splitPath[0] + bskName + '/'
-#sys.path.append(bskPath + 'modules')
-#sys.path.append(bskPath + 'PythonModules')
+
+
+
 # @endcond
 
 from Basilisk.utilities import SimulationBaseClass

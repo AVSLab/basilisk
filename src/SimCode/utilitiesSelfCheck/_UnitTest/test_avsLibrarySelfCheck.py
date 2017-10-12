@@ -32,8 +32,8 @@ import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('Basilisk')
-#sys.path.append(splitPath[0] + '/Basilisk/modules')
-#sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
+
+
 
 from Basilisk.simulation import avsLibrarySelfCheck
 from Basilisk.utilities import unitTestSupport

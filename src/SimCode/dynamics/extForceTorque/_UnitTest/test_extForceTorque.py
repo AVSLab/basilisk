@@ -37,8 +37,8 @@ import logging
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('Basilisk')
-#sys.path.append(splitPath[0] + '/Basilisk/modules')
-#sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
+
+
 
 from Basilisk.simulation import sim_model
 from Basilisk.utilities import SimulationBaseClass
