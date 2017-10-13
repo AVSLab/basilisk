@@ -47,12 +47,14 @@ import RigidBodyKinematics as rbk
 # methods
 
 def m33v3mult(M,v):
-    output = [[0.],[0.],[0.]]
-    np.reshape(v,(3,1))
+    output = np.array([[0.], [0.], [0.]])
+    np.reshape(np.array(v),(3,1))
+    np.reshape(np.array(M), (3,3))
     for i in range(0,3):
-        for k in range(0,3):
-            output[i] += M[i][k]*v[k]
-    return np.reshape(np.array(output),(1,3))
+        # for k in range(0,3):
+        #     output[i] += M[i][k]*v[k]
+        output[i] = np.dot(M[i][:], v)
+    return np.reshape(output,(3))
 
 def m33m33mult(A,B):
     output = np.zeros(9).reshape((3,3))
@@ -107,23 +109,23 @@ def setRandomWalk(self,senRotNoiseStd = 0.0,senTransNoiseStd = 0.0,errorBoundsGy
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("show_plots,   testCase,       stopTime,       gyroLSBIn,      accelLSBIn,     senRotMaxIn,    senTransMaxIn,  senRotNoiseStd,     senTransNoiseStd,   errorBoundsGyroIn,  errorBoundsAccelIn, senRotBiasIn,   senTransBiasIn, accuracy", [
-                        (False,          'clean',       1.0,            0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                0.,             0.,             1e-3),
-                        (False,         'noise',        5.0,            0.0,            0.0,            1000.,          1000.,          .1,                 .1,                 0.1,                0.1,                0.0,            0.0,            1e-1),
-                        (False,         'bias',         1.0,            0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                10.,            10.,            1e-3),
-                        (False,         'saturation',   1.0,            0.0,            0.0,            0.2,            1.1,            0.0,                0.0,                0.0,                0.0,                0.0,            0.0,            1e-3),
-                        (False,         'discretization',1.,            0.0001,         0.0001,         100.,           1000.,          0.0,                0.0,                1e6,                1e6,                0.0,            0.0,            1e-3),
+@pytest.mark.parametrize("show_plots,   testCase,       stopTime,       procRate,   gyroLSBIn,      accelLSBIn,     senRotMaxIn,    senTransMaxIn,  senRotNoiseStd,     senTransNoiseStd,   errorBoundsGyroIn,  errorBoundsAccelIn, senRotBiasIn,   senTransBiasIn, accuracy", [
+                        (False,         'clean',        1.0,            0.01,       0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                0.,             0.,             1e-8),
+                        (False,         'noise',        1.0,            0.001,      0.0,            0.0,            1000.,          1000.,          .1,                 .1,                 0.1,                0.1,                0.0,            0.0,            1e-1),
+                        (False,         'bias',         1.0,            0.01,       0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                10.,            10.,            1e-8),
+                        (False,         'saturation',   1.0,            0.01,       0.0,            0.0,            1.0,            5.0,            0.0,                0.0,                0.0,                0.0,                0.0,            0.0,            1e-8),
+                        (False,         'discretization',1.,            0.01,       0.01,           0.1,            100.,           1000.,          0.0,                0.0,                1e6,                1e6,                0.0,            0.0,            1e-8),
 
 ])
 
 # provide a unique test method name, starting with test_
-def test_unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accelLSBIn,   senRotMaxIn,    senTransMaxIn,  senRotNoiseStd,     senTransNoiseStd,   errorBoundsGyroIn,  errorBoundsAccelIn, senRotBiasIn,   senTransBiasIn, accuracy):
+def test_unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn,    accelLSBIn,   senRotMaxIn,    senTransMaxIn,  senRotNoiseStd,     senTransNoiseStd,   errorBoundsGyroIn,  errorBoundsAccelIn, senRotBiasIn,   senTransBiasIn, accuracy):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accelLSBIn,   senRotMaxIn,    senTransMaxIn,  senRotNoiseStd,     senTransNoiseStd,   errorBoundsGyroIn,  errorBoundsAccelIn, senRotBiasIn,   senTransBiasIn, accuracy)
+    [testResults, testMessage] = unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn,    accelLSBIn,   senRotMaxIn,    senTransMaxIn,  senRotNoiseStd,     senTransNoiseStd,   errorBoundsGyroIn,  errorBoundsAccelIn, senRotBiasIn,   senTransBiasIn, accuracy)
     assert testResults < 1, testMessage
 
 
-def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accelLSBIn,   senRotMaxIn,    senTransMaxIn,  senRotNoiseStd,     senTransNoiseStd,   errorBoundsGyroIn,  errorBoundsAccelIn, senRotBiasIn,   senTransBiasIn, accuracy):
+def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn,    accelLSBIn,   senRotMaxIn,    senTransMaxIn,  senRotNoiseStd,     senTransNoiseStd,   errorBoundsGyroIn,  errorBoundsAccelIn, senRotBiasIn,   senTransBiasIn, accuracy):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
@@ -135,7 +137,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
     unitSim.TotalSim.terminateSimulation()
 
     # create the task and specify the integration update time
-    unitProcRate_s = 0.001
+    unitProcRate_s = procRate
     unitProcRate = macros.sec2nano(unitProcRate_s)
     unitProc = unitSim.CreateNewProcess(unitProcName)
     unitTask = unitSim.CreateNewTask(unitTaskName, unitProcRate)
@@ -144,69 +146,73 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
     # Set-up the fake kinematics vectors
     # Note: No conservative accelerations are used in this test
     # center of mass
-    rDotDot_CN = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #acceleration of center of mass wrt inertial frame
-    rDotDot_CB = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #acceleration of center of mass wrt body frame
-    rDot_CN = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #velocity of center of mass wrt inertial frame
-    r_CN = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #position of center of mass wrt to inertial frame
+    rDotDot_CN_N = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #acceleration of center of mass wrt inertial frame
+    rDotDot_CB_N = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #acceleration of center of mass wrt body frame
+    rDot_CN_N = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #velocity of center of mass wrt inertial frame
+    r_CN_N = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #position of center of mass wrt to inertial frame
     # body frame
-    rDotDot_BN = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) # acceleration of body frame wrt to inertial
-    rDot_BN = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #velocity of body frame wrt to inertial
-    r_BN = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #position of body frame wrt to inertial
-    omegaDot = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #angular acceleration of body frame wrt to inertial
-    omega = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) # angular rate of body frame wrt to inertial
-    sigmaDot = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #MRP derivative, body wrt to inertial
-    sigma = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) # MRP body wrt to inertial
+    rDotDot_BN_N = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) # acceleration of body frame wrt to inertial
+    rDot_BN_N = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #velocity of body frame wrt to inertial
+    r_BN_N = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #position of body frame wrt to inertial
+    omegaDot_BN_N = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #angular acceleration of body frame wrt to inertial
+    omega_BN_N = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) # angular rate of body frame wrt to inertial
+    sigmaDot_BN = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #MRP derivative, body wrt to inertial
+    sigma_BN = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) # MRP body wrt to inertial
     # sensor
-    rDotDot_SN = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #sensor sensed acceleration
-    rDot_SN = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #sensor accumulated DV
-    r_SN = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #sensor position in body frame coordinates
+    rDotDot_SN_N = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #sensor sensed acceleration
+    rDot_SN_N = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #sensor accumulated DV
+    r_SN_N = np.resize(np.array([0., 0., 0.]),(int(stopTime/unitProcRate_s+1),3)) #sensor position in body frame coordinates
 
     # Set initial conditions for fake kinematics vectors
     # Acceleration vectors
-    dataRows= np.shape(rDotDot_CN)[0]
+    dataRows= np.shape(rDotDot_CN_N)[0]
     for i in range(0, dataRows): #loops through acceleration vectors so that each element can be set individually (or, hopefully, as a function)
-        rDotDot_BN[i][0] = 1.
-        rDotDot_BN[i][1] = 1.
-        rDotDot_BN[i][2] = 1.
-        rDotDot_CB[i][0] = 0.05
-        rDotDot_CB[i][1] = 0.025
-        rDotDot_CB[i][2] = 0.03
-        rDotDot_CN[i][0] = rDotDot_BN[i][0] + rDotDot_CB[i][0]
-        rDotDot_CN[i][1] = rDotDot_BN[i][1] + rDotDot_CB[i][1]
-        rDotDot_CN[i][2] = rDotDot_BN[i][2] + rDotDot_CB[i][2]
-        omegaDot[i][0] = 1.0
-        omegaDot[i][1] = 0.5
-        omegaDot[i][2] = 0.25
+        rDotDot_BN_N[i][0] = 1.
+        rDotDot_BN_N[i][1] = 1.
+        rDotDot_BN_N[i][2] = 1.
+        rDotDot_CB_N[i][0] = 0.05
+        rDotDot_CB_N[i][1] = 0.07
+        rDotDot_CB_N[i][2] = 0.06
+        rDotDot_CN_N[i][0] = rDotDot_BN_N[i][0] + rDotDot_CB_N[i][0]
+        rDotDot_CN_N[i][1] = rDotDot_BN_N[i][1] + rDotDot_CB_N[i][1]
+        rDotDot_CN_N[i][2] = rDotDot_BN_N[i][2] + rDotDot_CB_N[i][2]
+        omegaDot_BN_N[i][0] = 1.
+        omegaDot_BN_N[i][1] = 1.5
+        omegaDot_BN_N[i][2] = 1.25
     # Center of Mass
-    rDot_CN[0][:] = [0.0, 0.0, 0.0]
-    r_CN[0][:] = [10000., 10000., 10000.] # Some arbitrary location in space
+    rDot_CN_N[0][:] = [0.05, 0.07, 0.08]
+    r_CN_N[0][:] = [10000.5, 10000.7, 10000.5] # Some arbitrary location in space
     # Body Frame Origin
-    rDot_BN[0][:] = [0.0, 0.0, 0.0]
-    r_BN[0][:] = [9999.75, 10000., 10000.] # leaves r_CN[0][i] with some offset
+    rDot_BN_N[0][:] = [0.1, 0.2, -0.1]
+    r_BN_N[0][:] = [10000., 10000., 10000.] # leaves r_CN_N[0][i] with some offset
     # Body Rotation
-    omega[0][:] = [0.0, -0.5, 0.0] #omega_BN_B
-    sigma[0][:] = [0., 0., 0.25] # note that unlabeled sigma is sigma_BN
-    sigmaDot[0][:] = findSigmaDot(sigma[0][:], omega[0][:]) # sigmaDot_BN
+    omega_BN_N[0][:] = [0.0, 0.15, 0.1] #omega_BN_N
+    sigma_BN[0][:] = [0.25, 0.1, 0.03] # note that unlabeled sigma is sigma_BN
     # Sensor linear states (note that these initial conditions must be solved as functions of another initial conditions to maintain consistency
-    r_SB = np.array([0., 0., 0.5]) #constant. sensor position wrt to body frame origin
-    cDotDot = rDotDot_CN[0][:] - rDotDot_BN[0][:]
-    cDot = rDot_CN[0][:] - rDot_BN[0][:]
-    c =  r_CN[0][:] - r_BN[0][:]
-    cPrime = cDot - np.cross(omega[0][:], c)
-    cPrimePrime = cDotDot - np.dot(2, np.cross(omega[0][:], cPrime)) - np.cross(omegaDot[0][:], c) - np.cross(omega[0][:], np.cross(omega[0][:], c))
-    r_SC = r_BN[0][:] + r_SB - r_CN[0][:]
-    rDotDot_SN[0][:] = rDotDot_CN[0][:] - cPrimePrime - np.dot(2, np.cross(omega[0][:], cPrime)) + np.cross(omegaDot[0][:], r_SC) + np.cross(omega[0][:], np.cross(omega[0][:], r_SC))
-    rDot_SN[0][:] = rDot_CN[0][:] - cPrime + np.cross(omega[0][:], r_SC)
-    r_SN[0][:] = r_SB + r_BN[0][:]
+    r_SB_B = np.array([1.0, 1.0, 2.0]) #constant. sensor position wrt to body frame origin
+    cDotDot_N = rDotDot_CN_N[0][:] - rDotDot_BN_N[0][:]
+    cDot_N = rDot_CN_N[0][:] - rDot_BN_N[0][:]
+    c_N =  r_CN_N[0][:] - r_BN_N[0][:]
+    cPrime_N = cDot_N - np.cross(omega_BN_N[0][:], c_N)
+    cPrimePrime_N = cDotDot_N - np.dot(2, np.cross(omega_BN_N[0][:], cPrime_N)) - np.cross(omegaDot_BN_N[0][:], c_N) - np.cross(omega_BN_N[0][:], np.cross(omega_BN_N[0][:], c_N))
+    dcm_BN = rbk.MRP2C(sigma_BN[0][:])
+    dcm_NB = np.transpose(dcm_BN)
+    sigmaDot_BN[0][:] = findSigmaDot(sigma_BN[0][:], m33v3mult(dcm_BN, omega_BN_N[0][:])) # sigmaDot_BN
+    r_SB_N = m33v3mult(dcm_NB, r_SB_B)
+    r_SC_N = r_BN_N[0][:] + r_SB_N - r_CN_N[0][:]
+    rDotDot_SN_N[0][:] = rDotDot_CN_N[0][:] - cPrimePrime_N - np.dot(2, np.cross(omega_BN_N[0][:], cPrime_N)) + np.cross(omegaDot_BN_N[0][:], r_SC_N) + np.cross(omega_BN_N[0][:], np.cross(omega_BN_N[0][:], r_SC_N))
+    rDot_SN_N[0][:] = rDot_CN_N[0][:] - cPrime_N + np.cross(omega_BN_N[0][:], r_SC_N)
+    r_SN_N[0][:] = r_SB_N + r_BN_N[0][:]
 
     #Sensor Setup
     ImuSensor = imu_sensor.ImuSensor()
     ImuSensor.ModelTag = "imusensor"
-    ImuSensor.sensorPos_B = imu_sensor.DoubleVector(r_SB) #must be set by user - no default. check if this works by giving an array - SJKC
-    yaw = 0.61 #should be given as parameter [rad]
-    pitch = 0.33  # [rad]
-    roll = 0.75 # [rad]
+    ImuSensor.sensorPos_B = imu_sensor.DoubleVector(r_SB_B) #must be set by user - no default. check if this works by giving an array - SJKC
+    yaw = 0.7 #should be given as parameter [rad]
+    pitch = 1.0  # [rad]
+    roll = 0.2 # [rad]
     dcm_PB = rbk.euler3212C([yaw,pitch,roll]) #done separately as a check
+    dcm_PN = m33m33mult(dcm_PB, dcm_BN)
     ImuSensor.setBodyToPlatformDCM(yaw, pitch, roll) # done separately as a check
     errorBoundsGyro = [errorBoundsGyroIn] * 3
     errorBoundsAccel = [errorBoundsAccelIn] * 3
@@ -220,18 +226,18 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
 
     # Set-up the sensor output truth vectors
     rDotDot_SN_P = np.resize(np.array([0., 0., 0.]), (int(stopTime/unitProcRate_s+1), 3))  # sensor sensed acceleration in sensor platform frame coordinates
-    rDotDot_SN_P[0][:] = m33v3mult(dcm_PB, rDotDot_SN[0][:])
-    DVAccum_P = np.resize(np.array([0., 0., 0.]), (int(stopTime/unitProcRate_s+1), 3))  # sensor accumulated delta V ouput in the platform frame
-    stepPRV = np.resize(np.array([0., 0., 0.]), (int(stopTime/unitProcRate_s+1), 3))  # principal rotatation vector from time i-1 to time i in platform frame coordinates
-    omega_P = np.resize(np.array([0., 0., 0.]), (int(stopTime/unitProcRate_s+1), 3))  # angular rate omega_BN_P = omega_PN_P
-    omega_P[0][:] = m33v3mult(dcm_PB, omega[0][:])
+    rDotDot_SN_P[0][:] = m33v3mult(dcm_PN, rDotDot_SN_N[0][:])
+    DVAccum_SN_P = np.resize(np.array([0., 0., 0.]), (int(stopTime/unitProcRate_s+1), 3))  # sensor accumulated delta V ouput in the platform frame
+    stepPRV_PN = np.resize(np.array([0., 0., 0.]), (int(stopTime/unitProcRate_s+1), 3))  # principal rotatation vector from time i-1 to time i in platform frame coordinates
+    omega_PN_P = np.resize(np.array([0., 0., 0.]), (int(stopTime/unitProcRate_s+1), 3))  # angular rate omega_BN_P = omega_PN_P
+    omega_PN_P[0][:] = m33v3mult(dcm_PN, omega_BN_N[0][:])
 
-    # configure spacecraft dummy message
+    # configure spacecraft dummy message - Need to convert to B frame here first
     StateCurrent = imu_sensor.SCPlusStatesSimMsg()
-    StateCurrent.sigma_BN = sigma[0][:]
-    StateCurrent.omega_BN_B = omega[0][:] #1 rpm around each axis
-    StateCurrent.nonConservativeAccelpntB_B = rDotDot_BN[0][:]
-    StateCurrent.omegaDot_BN_B = omegaDot[0][:]
+    StateCurrent.sigma_BN = sigma_BN[0][:]
+    StateCurrent.omega_BN_B = m33v3mult(dcm_BN, omega_BN_N[0][:]) #1 rpm around each axis
+    StateCurrent.nonConservativeAccelpntB_B = m33v3mult(dcm_BN, rDotDot_BN_N[0][:])
+    StateCurrent.omegaDot_BN_B = m33v3mult(dcm_BN, omegaDot_BN_N[0][:])
     StateCurrent.TotalAccumDV_BN_B = np.array([0., 0., 0.])
 
     # add module to the task
@@ -253,91 +259,104 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
         unitSim.ConfigureStopTime(macros.sec2nano(unitProcRate_s*i))
         unitSim.ExecuteSimulation()
 
-        # linear kinematcs
-        rDot_CN[i][:] = rDot_CN[i-1][:] + ((rDotDot_CN[i-1][:] + rDotDot_CN[i][:])/2)*dt
-        r_CN[i][:] = r_CN[i-1][:] + ((rDot_CN[i-1][:] + rDot_CN[i][:])/2)*dt
-
-        rDot_BN[i][:] = rDot_BN[i-1][:] + ((rDotDot_BN[i-1][:] + rDotDot_BN[i][:])/2)*dt
-        r_BN[i][:] = r_BN[i-1][:] + ((rDot_BN[i-1][:] + rDot_BN[i][:])/2)*dt
-
-        cDotDot = rDotDot_CN[i][:] - rDotDot_BN[i][:]
-        cDot = rDot_CN[i][:] - rDot_BN[i][:]
-        c = r_CN[i][:] - r_BN[i][:]
-
         # attitude kinematics
-        omega[i][:] = omega[i-1][:] + ((omegaDot[i-1][:] + omegaDot[i][:])/2)*dt
+        omega_BN_N[i][:] = omega_BN_N[i-1][:] + ((omegaDot_BN_N[i-1][:] + omegaDot_BN_N[i][:])/2)*dt
 
         # iterate on sigma/sigmaDot
-        sigmaDot[i][:] = sigmaDot[i-1][:]
-        for j in range(0,5): #Seems to converge after a few iterations
-            sigma[i][:] = sigma[i-1][:] + ((sigmaDot[i-1][:]+sigmaDot[i][:])/2)*dt
-            sigmaDot[i][:] = findSigmaDot(sigma[i][:],omega[i][:])
-        sigma[i][:] = sigma[i-1][:] + ((sigmaDot[i-1][:]+sigmaDot[i][:])/2)*dt
+        sigmaDot_BN[i][:] = sigmaDot_BN[i-1][:]
+        for j in range(0,10): #Seems to converge after a few iterations
+            sigma_BN[i][:] = sigma_BN[i-1][:] + ((sigmaDot_BN[i-1][:]+sigmaDot_BN[i][:])/2)*dt
+            dcm_BN_2 = rbk.MRP2C(sigma_BN[i][:])
+            sigmaDot_BN[i][:] = findSigmaDot(sigma_BN[i][:],m33v3mult(dcm_BN_2, omega_BN_N[i][:]))
+        sigma_BN[i][:] = sigma_BN[i-1][:] + ((sigmaDot_BN[i-1][:]+sigmaDot_BN[i][:])/2)*dt
+        dcm_BN_2 = rbk.MRP2C(sigma_BN[i][:])
+        dcm_NB = np.transpose(dcm_BN_2)
+        r_SB_N = m33v3mult(dcm_NB, r_SB_B)
+
+        # linear kinematcs
+        rDot_CN_N[i][:] = rDot_CN_N[i-1][:] + ((rDotDot_CN_N[i-1][:] + rDotDot_CN_N[i][:])/2)*dt
+        r_CN_N[i][:] = r_CN_N[i-1][:] + ((rDot_CN_N[i-1][:] + rDot_CN_N[i][:])/2)*dt
+
+        rDot_BN_N[i][:] = rDot_BN_N[i-1][:] + ((rDotDot_BN_N[i-1][:] + rDotDot_BN_N[i][:])/2)*dt
+        r_BN_N[i][:] = r_BN_N[i-1][:] + ((rDot_BN_N[i-1][:] + rDot_BN_N[i][:])/2)*dt
+
+        cDotDot_N = rDotDot_CN_N[i][:] - rDotDot_BN_N[i][:]
+        cDot_N = rDot_CN_N[i][:] - rDot_BN_N[i][:]
+        c_N = r_CN_N[i][:] - r_BN_N[i][:]
 
         # center of mass calculations
-        cPrime = cDot - np.cross(omega[i][:], c)
-        cPrimePrime = cDotDot - np.dot(2,np.cross(omega[i][:], cPrime)) - np.cross(omegaDot[i][:],c)-np.cross(omega[i][:],np.cross(omega[i][:],c))
-        r_SC = r_BN[i][:] + r_SB - r_CN[i][:]
+        cPrime_N = cDot_N - np.cross(omega_BN_N[i][:], c_N)
+        cPrimePrime_N = cDotDot_N - np.dot(2,np.cross(omega_BN_N[i][:], cPrime_N)) - np.cross(omegaDot_BN_N[i][:],c_N)-np.cross(omega_BN_N[i][:],np.cross(omega_BN_N[i][:],c_N))
+        r_SC_N = r_BN_N[i][:] + r_SB_N - r_CN_N[i][:]
 
         # solving for sensor inertial states
-        rDotDot_SN[i][:] = rDotDot_CN[i][:] - cPrimePrime - np.dot(2,np.cross(omega[i][:],cPrime)) + np.cross(omegaDot[i][:],r_SC) +np.cross(omega[i][:],np.cross(omega[i][:],r_SC))
-        rDot_SN[i][:] = rDot_SN[i-1][:] + (rDotDot_SN[i][:]+rDotDot_SN[i-1][:])/2*dt
-        r_SN[i][:] = r_SN[i-1][:] + ((rDot_SN[i-1][:] + rDot_SN[i][:])/2)*dt #for a simple check of the "truth" code
+        rDotDot_SN_N[i][:] = rDotDot_CN_N[i][:] - cPrimePrime_N - np.dot(2,np.cross(omega_BN_N[i][:],cPrime_N)) + np.cross(omegaDot_BN_N[i][:],r_SC_N) +np.cross(omega_BN_N[i][:],np.cross(omega_BN_N[i][:],r_SC_N))
+        rDot_SN_N[i][:] = rDot_CN_N[i][:] - cPrime_N + np.cross(omega_BN_N[i][:],r_SC_N)
 
         # Now create outputs which are (supposed to be) equivalent to the IMU output
         # linear acceleration (non-conservative) in platform frame
-        rDotDot_SN_P[i][:] = m33v3mult(dcm_PB, rDotDot_SN[i][:]) + senTransBiasIn #This should match trueValues.AccelPlatform
+        dcm_PN = m33m33mult(dcm_PB,dcm_BN_2)
+        rDotDot_SN_P[i][:] = m33v3mult(dcm_PN, rDotDot_SN_N[i][:]) + senTransBiasIn #This should match trueValues.AccelPlatform
         # accumulated delta v (non-conservative) in platform frame
-        DVAccum_P[i][:] = m33v3mult(dcm_PB, rDot_SN[i][:]-rDot_SN[i-1][:]) + senTransBiasIn*dt
+        DVAccum_SN_P[i][:] = m33v3mult(dcm_PN, rDot_SN_N[i][:]-rDot_SN_N[i-1][:]) + senTransBiasIn*dt
         # find PRV between before and now
-        dcm_BN_2 = rbk.MRP2C(sigma[i][:])
-        dcm_BN_1 = rbk.MRP2C(sigma[i-1][:])
+        dcm_BN_1 = rbk.MRP2C(sigma_BN[i-1][:])
         dcm_PN_2 = m33m33mult(dcm_PB, dcm_BN_2)
         dcm_PN_1 = m33m33mult(dcm_PB, dcm_BN_1)
         dcm_NP_1 = np.transpose(dcm_PN_1)
         dcm_PN_21 = m33m33mult(dcm_PN_2, dcm_NP_1)
-        stepPRV[i][:] = rbk.MRP2PRV(rbk.C2MRP(dcm_PN_21)) + senRotBiasIn*dt
+        stepPRV_PN[i][:] = rbk.MRP2PRV(rbk.C2MRP(dcm_PN_21)) + senRotBiasIn*dt
         # angular rate in platform frame
-        omega_P[i][:] = m33v3mult(dcm_PB, omega[i][:]) + senRotBiasIn
+        omega_PN_P[i][:] = m33v3mult(dcm_PN, omega_BN_N[i][:]) + senRotBiasIn
         #
         # #discretization
+        aDisc = 0
+        a_discretization_error = [0., 0., 0.]
         if accelLSBIn > 0.0:
             for k in [0,1,2]:
                 discretized_value = np.floor(np.abs(rDotDot_SN_P[i][k] / accelLSBIn)) * accelLSBIn * np.sign(rDotDot_SN_P[i][k])
-                discretization_error = rDotDot_SN_P[i][k] - discretized_value
+                a_discretization_error[k] = rDotDot_SN_P[i][k] - discretized_value
                 rDotDot_SN_P[i][k] = discretized_value
-                DVAccum_P[i][k] -= discretization_error*dt
-                DVAccum_P[i][k] = np.floor(np.abs(DVAccum_P[i][k] / accelLSBIn)) * accelLSBIn * np.sign(DVAccum_P[i][k])
+                aDisc = 1
         if gyroLSBIn > 0.0:
             for k in [0,1,2]:
-                discretized_value = np.floor(np.abs(omega_P[i][k] / gyroLSBIn)) * gyroLSBIn * np.sign(omega_P[i][k])
-                discretization_error = omega_P[i][k] - discretized_value
-                omega_P[i][k] = discretized_value
-                stepPRV[i][k] -= discretization_error*dt
-                stepPRV[i][k] = np.floor(np.abs(stepPRV[i][k] / gyroLSBIn)) * gyroLSBIn * np.sign(stepPRV[i][k])
+                discretized_value = np.floor(np.abs(omega_PN_P[i][k] / gyroLSBIn)) * gyroLSBIn * np.sign(omega_PN_P[i][k])
+                discretization_error = omega_PN_P[i][k] - discretized_value
+                omega_PN_P[i][k] = discretized_value
+                stepPRV_PN[i][k] -= discretization_error*dt
+        if aDisc:
+            discretization_error_N = m33v3mult(np.transpose(dcm_PN_2), a_discretization_error)
+            DVAccum_SN_N = m33v3mult(np.transpose(dcm_PN_2), DVAccum_SN_P[i][:])
+            DVAccum_SN_N = DVAccum_SN_N - discretization_error_N*dt
+            DVAccum_SN_P[i][:] = m33v3mult(dcm_PN_2, DVAccum_SN_N)
 
         #saturation
+        aSat = 0.
         for k in [0,1,2]:
-            if omega_P[i][k] > senRotMaxIn:
-                omega_P[i][k] = senRotMaxIn
-                stepPRV[i][k] = senRotMaxIn*dt
-            elif omega_P[i][k] < -senRotMaxIn:
-                omega_P[i][k] = -senRotMaxIn
-                stepPRV[i][k] = -senRotMaxIn*dt
+            if omega_PN_P[i][k] > senRotMaxIn:
+                omega_PN_P[i][k] = senRotMaxIn
+                stepPRV_PN[i][k] = senRotMaxIn*dt
+            elif omega_PN_P[i][k] < -senRotMaxIn:
+                omega_PN_P[i][k] = -senRotMaxIn
+                stepPRV_PN[i][k] = -senRotMaxIn*dt
             if rDotDot_SN_P[i][k] > senTransMaxIn:
                 rDotDot_SN_P[i][k] = senTransMaxIn
-                DVAccum_P[i][k] = senTransMaxIn*dt
+                aSat = 1
             elif rDotDot_SN_P[i][k] < -senTransMaxIn:
                 rDotDot_SN_P[i][k] = -senTransMaxIn
-                DVAccum_P[i][k] = -senTransMaxIn*dt
+                aSat = 1
+        if aSat:
+            rDotDotsat_SN_N = m33v3mult(np.transpose(dcm_PN_2), rDotDot_SN_P[i][:])
+            DVAccum_SN_N = rDotDotsat_SN_N*dt
+            DVAccum_SN_P[i][:] = m33v3mult(dcm_PN_2, DVAccum_SN_N)
 
         #Now update spacecraft states for the IMU:
         StateCurrent = imu_sensor.SCPlusStatesSimMsg()
-        StateCurrent.sigma_BN = sigma[i][:]
-        StateCurrent.omega_BN_B = omega[i][:]
-        StateCurrent.nonConservativeAccelpntB_B = rDotDot_BN[i][:]
-        StateCurrent.omegaDot_BN_B = omegaDot[i][:]
-        StateCurrent.TotalAccumDV_BN_B = rDot_BN[i][:] - rDot_BN[0][:]
+        StateCurrent.sigma_BN = sigma_BN[i][:]
+        StateCurrent.omega_BN_B = m33v3mult(dcm_BN_2, omega_BN_N[i][:])
+        StateCurrent.nonConservativeAccelpntB_B = m33v3mult(dcm_BN_2, rDotDot_BN_N[i][:])
+        StateCurrent.omegaDot_BN_B = m33v3mult(dcm_BN_2, omegaDot_BN_N[i][:])
+        StateCurrent.TotalAccumDV_BN_B = m33v3mult(dcm_BN_2, rDot_BN_N[i][:] - rDot_BN_N[0][:])
         unitSim.TotalSim.WriteMessageData("inertial_state_output", 8 * 3 * 11, unitSim.TotalSim.CurrentNanos, StateCurrent)
 
     # Pull output time histories from messaging system
@@ -351,11 +370,11 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
     plt.figure(1,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.clf()
     plt.plot(DRout[1:,0]/1e9, DRout[1:,1], linewidth = 6, color = 'black', label = "output1")
-    plt.plot(DRout[:,0]/1e9, stepPRV[1:,0], linestyle = '--', color = 'white', label = "truth1")
+    plt.plot(DRout[1:,0]/1e9, stepPRV_PN[1:-1,0], linestyle = '--', color = 'cyan', label = "truth1")
     plt.plot(DRout[1:,0]/1e9, DRout[1:,2], linewidth = 4, color = 'black', label = "output2")
-    plt.plot(DRout[:,0]/1e9, stepPRV[1:,1], linestyle = '--', color = 'white', label = "truth2")
+    plt.plot(DRout[1:,0]/1e9, stepPRV_PN[1:-1,1], linestyle = '--', color = 'cyan', label = "truth2")
     plt.plot(DRout[1:,0]/1e9, DRout[1:,3], linewidth = 2, color = 'black', label = "output3")
-    plt.plot(DRout[:,0]/1e9, stepPRV[1:,2], linestyle = '--', color = 'white', label = "truth3")
+    plt.plot(DRout[1:,0]/1e9, stepPRV_PN[1:-1,2], linestyle = '--', color = 'cyan', label = "truth3")
     plt.xlabel("Time[s]")
     plt.ylabel("Time Step PRV Component Magnitude [rad]")
     plt.title("PRV Comparison")
@@ -367,11 +386,11 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
     plt.figure(4,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.clf()
     plt.plot(DRout[1:,0]/1e9, omegaOut[1:,1], linewidth = 6, color = 'black', label = "output1")
-    plt.plot(DRout[:,0]/1e9, omega_P[1:,0], linestyle = '--', color = 'white', label = "truth1")
+    plt.plot(DRout[1:,0]/1e9, omega_PN_P[1:-1,0], linestyle = '--', color = 'cyan', label = "truth1")
     plt.plot(DRout[1:,0]/1e9, omegaOut[1:,2], linewidth = 4, color = 'black', label = "output2")
-    plt.plot(DRout[:,0]/1e9, omega_P[1:,1], linestyle = '--', color = 'white', label = "truth2")
+    plt.plot(DRout[1:,0]/1e9, omega_PN_P[1:-1,1], linestyle = '--', color = 'cyan', label = "truth2")
     plt.plot(DRout[1:,0]/1e9, omegaOut[1:,3], linewidth = 2, color = 'black', label = "output3")
-    plt.plot(DRout[:,0]/1e9, omega_P[1:,2], linestyle = '--', color = 'white', label = "truth3")
+    plt.plot(DRout[1:,0]/1e9, omega_PN_P[1:-1,2], linestyle = '--', color = 'cyan', label = "truth3")
     plt.xlabel("Time[s]")
     plt.ylabel("Angular Rate Component Magnitudes [rad/s]")
     plt.title("Angular Rate Comparison")
@@ -383,11 +402,11 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
     plt.figure(7,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.clf()
     plt.plot(DRout[1:,0]/1e9, rDotDotOut[1:,1], linewidth = 6, color = 'black', label = "output1")
-    plt.plot(DRout[:,0]/1e9, rDotDot_SN_P[1:,0], linestyle = '--', color = 'white', label = "truth1")
+    plt.plot(DRout[1:,0]/1e9, rDotDot_SN_P[1:-1,0], linestyle = '--', color = 'cyan', label = "truth1")
     plt.plot(DRout[1:,0]/1e9, rDotDotOut[1:,2], linewidth = 4, color = 'black', label = "output2")
-    plt.plot(DRout[:,0]/1e9, rDotDot_SN_P[1:,1], linestyle = '--', color = 'white', label = "truth2")
+    plt.plot(DRout[1:,0]/1e9, rDotDot_SN_P[1:-1,1], linestyle = '--', color = 'cyan', label = "truth2")
     plt.plot(DRout[1:,0]/1e9, rDotDotOut[1:,3], linewidth = 2, color = 'black', label = "output3")
-    plt.plot(DRout[:,0]/1e9, rDotDot_SN_P[1:,2], linestyle = '--', color = 'white', label = "truth3")
+    plt.plot(DRout[1:,0]/1e9, rDotDot_SN_P[1:-1,2], linestyle = '--', color = 'cyan', label = "truth3")
     plt.xlabel("Time[s]")
     plt.ylabel("Linear Acceleration Component Magnitudes [m/s/s]")
     plt.title("Acceleration Comparison")
@@ -396,14 +415,15 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
     unitTestSupport.writeFigureLaTeX(testCase + "accelComparison",
                                      'Plot Comparing Sensor Linear Accelertaion Truth and Output for test: ' + testCase +'. Note that 1, 2, and 3 indicate the components of the acceleration.', plt,
                                      'height=0.7\\textwidth, keepaspectratio', path)
+
     plt.figure(10,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.clf()
     plt.plot(DRout[1:,0]/1e9, DVout[1:,1], linewidth = 6, color = 'black', label = "output1")
-    plt.plot(DRout[:,0]/1e9, DVAccum_P[1:,0], linestyle = '--', color = 'white', label = "truth1")
+    plt.plot(DRout[1:,0]/1e9, DVAccum_SN_P[1:-1,0], linestyle = '--', color = 'cyan', label = "truth1")
     plt.plot(DRout[1:,0]/1e9, DVout[1:,2], linewidth = 4, color = 'black', label = "output2")
-    plt.plot(DRout[:,0]/1e9, DVAccum_P[1:,1], linestyle = '--', color = 'white', label = "truth2")
+    plt.plot(DRout[1:,0]/1e9, DVAccum_SN_P[1:-1,1], linestyle = '--', color = 'cyan', label = "truth2")
     plt.plot(DRout[1:,0]/1e9, DVout[1:,3], linewidth = 2, color = 'black', label = "output3")
-    plt.plot(DRout[:,0]/1e9, DVAccum_P[1:,2], linestyle = '--', color = 'white', label = "truth3")
+    plt.plot(DRout[1:,0]/1e9, DVAccum_SN_P[1:-1,2], linestyle = '--', color = 'cyan', label = "truth3")
     plt.xlabel("Time[s]")
     plt.ylabel("Step DV Magnitudes [m/s]")
     plt.title("DV Comparison")
@@ -418,15 +438,15 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
 
     # test outputs
     if testCase != 'noise':
-        for i in range(2,len(stepPRV)-1):
-            if not unitTestSupport.isArrayEqualRelative(DRout[i][:], stepPRV[i][:], 3, accuracy):
+        for i in range(2,len(stepPRV_PN)-1):
+            if not unitTestSupport.isArrayEqualRelative(DRout[i][:], stepPRV_PN[i][:], 3, accuracy):
                 testMessages.append("FAILED DR @ i = "+ str(i) + ". \\\\& &")
                 testFailCount += 1
-            if not unitTestSupport.isArrayEqualRelative(omegaOut[i][:], omega_P[i][:], 3, accuracy):
+            if not unitTestSupport.isArrayEqualRelative(omegaOut[i][:], omega_PN_P[i][:], 3, accuracy):
                 testMessages.append("FAILED OMEGA @ i = "+ str(i) + ". \\\\& &")
                 testFailCount += 1
             if not (testCase == "discretization" and (i == 572 or i == 934)):
-                if not unitTestSupport.isArrayEqualRelative(DVout[i][:], DVAccum_P[i][:], 3, accuracy):
+                if not unitTestSupport.isArrayEqualRelative(DVout[i][:], DVAccum_SN_P[i][:], 3, accuracy):
                     testMessages.append("FAILED DV @ i = " + str(i) + ". \\\\& &")
                     testFailCount += 1
             if not unitTestSupport.isArrayEqualRelative(rDotDotOut[i][:], rDotDot_SN_P[i][:], 3, accuracy):
@@ -434,21 +454,21 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
                 testFailCount += 1
     else:
         DRoutNoise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1]-1))
-        for i in range(2,len(stepPRV)-1):
+        for i in range(2,len(stepPRV_PN)-1):
             for j in [0,1,2]:
-                DRoutNoise[i][j] = DRout[i][j+1] - stepPRV[i+1][j]
+                DRoutNoise[i][j] = DRout[i][j+1] - stepPRV_PN[i+1][j]
         rDotDotOutNoise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1] - 1))
-        for i in range(2, len(stepPRV) - 1):
+        for i in range(2, len(stepPRV_PN) - 1):
             for j in [0, 1, 2]:
                 rDotDotOutNoise[i, j] = rDotDotOut[i, j+1] - rDotDot_SN_P[i+1, j]
         DVoutNoise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1] - 1))
-        for i in range(2, len(stepPRV) - 1):
+        for i in range(2, len(stepPRV_PN) - 1):
             for j in [0, 1, 2]:
-                DVoutNoise[i, j] = DVout[i, j + 1] - DVAccum_P[i + 1, j]
+                DVoutNoise[i, j] = DVout[i, j + 1] - DVAccum_SN_P[i + 1, j]
         omegaOutNoise = np.zeros((np.shape(DRout)[0], np.shape(DRout)[1] - 1))
-        for i in range(2, len(stepPRV) - 1):
+        for i in range(2, len(stepPRV_PN)-1):
             for j in [0, 1, 2]:
-                omegaOutNoise[i, j] = omegaOut[i, j + 1] - omega_P[i + 1, j]
+                omegaOutNoise[i, j] = omegaOut[i, j + 1] - omega_PN_P[i + 1, j]
         if not unitTestSupport.isDoubleEqualRelative(np.std(DRoutNoise[:,0]),senRotNoiseStd*dt/1.5,accuracy):
             testMessages.append(("FAILED DRnoise1. \\\\& &"))
             testFailCount += 1
@@ -579,4 +599,4 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       gyroLSBIn,    accel
 # This statement below ensures that the unit test script can be run as a
 # stand-along python script
 if __name__ == "__main__":
-    unitSimIMU(True,          'clean',        1.,           0.0,            0.0,            0.1,          1000.,          0.0,                0.0,                0.0,                0.0,                0.0,            0.0,            1e-10)
+    unitSimIMU(True,          'clean',       1.0,            0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                0.,             0.,             1e-3)

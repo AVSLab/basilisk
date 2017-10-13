@@ -48,7 +48,7 @@ Now, given the states at a previous time step, $t_{n-1}$, and the accelerations 
 [\bm{B}] = (1-\sigma^2)[I_{3x3}]+2[\tilde{\bm{\sigma}}] + 2\bm{\sigma}\bm{\sigma}^T
 \end{equation}
 \begin{equation}
-	\bm{\dot{\sigma}} = \frac{1}{4} [\bm{B}] \bm{\omega}
+	\bm{\dot{\sigma}} = \frac{1}{4} [\bm{B}] ^\mathcal{B}\bm{\omega}
 \end{equation}
 \begin{equation}
 \bm{\sigma}_{B/N,n} = \bm{\sigma}_{B/N,n-1} + \frac{\dot{\bm{\sigma}}_{B/N,n-1}+\dot{\bm{\sigma}}_{B/N,n}}{2} \Delta t
@@ -57,11 +57,10 @@ The same can then be done for the position $ {\bm{r}}_{C/N}$ with its derivative
 \begin{equation}
 \ddot{\bm{c}} = \ddot{\bm{r}}_{C/N} - \ddot{\bm{r}}_{B/N}
 \end{equation}
-the same can be done for $\bm{c}$ and its derivatives. 
-
-In the final version of the test, Eq. \ref{eq:rdot} is actually not used. Rather, the velocity is calculated as the trapezoidal integration of the acceleration of the sensor.
+the same can be done for $\bm{c}$ and its derivatives. All of this numerical integration must be done in the inertial frame.
 
 At this point, all of the information needed to solve for Eq. \ref{eq:SN} is known. Additionally, the delta-v accumulated between $t_{n-1}$ and $t_{n}$ can be added to the total delta-v
+
 \subsection{Test Descriptions}
 \begin{enumerate}
 	\item \underline{Clean} The IMU is run with all clean inputs, i.e. nonzero accelerations and angular accelerations of the spacecraft and this is compared to the truth values generated in python. No noise, discretization, saturation, etc. is applied.
