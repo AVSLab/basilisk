@@ -26,8 +26,6 @@
 #
 
 
-import csv
-import ctypes
 import inspect
 import logging
 import math
@@ -39,7 +37,6 @@ import pytest
 
 import shutil
 
-import matplotlib
 import matplotlib.pyplot as plt
 
 # @cond DOXYGEN_IGNORE
@@ -55,7 +52,6 @@ sys.path.append(bskPath + 'PythonModules')
 # import general simulation support files
 import SimulationBaseClass
 import unitTestSupport                  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 import macros
 import orbitalMotion
 
@@ -219,8 +215,8 @@ def test_MonteCarloSimulation(show_plots):
 
 
 ## This function creates the simulation to be executed in parallel.
+# It is copied directly from SimScenarios.
 def createScenarioAttitudeFeedbackRW():
-    '''Call this routine directly to run the tutorial scenario.'''
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -417,10 +413,11 @@ def executeScenario(sim):
     #
     #   configure a simulation stop time time and execute the simulation run
     #
-    sim.ConfigureStopTime(macros.min2nano(10.))
+    sim.ConfigureStopTime(simulationTime)
     sim.ExecuteSimulation()
 
-
+# This method is used to plot the retained data of a simulation.
+# It is called once for each run of the simulation, overlapping the plots
 def plotSim(data, retentionPolicy):
     #
     #   retrieve the logged data
