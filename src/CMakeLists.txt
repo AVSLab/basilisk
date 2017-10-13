@@ -288,6 +288,15 @@ file(GLOB setupFile
 
 create_symlinks("${CMAKE_SOURCE_DIR}/../dist" ${setupFile})
 
+set(PROGRAM "python")
+set(ARG setup.py install --user)
+execute_process(COMMAND ${PROGRAM} ${ARG}
+								WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/../dist
+								RESULT_VARIABLE rv
+								OUTPUT_VARIABLE out)
+message("Added Basilisk module to python with ${PROGRAM} ${ARG} in ${CMAKE_SOURCE_DIR}/../dist/
+				This resulted in: ${rv}
+				and the output: ${out}")
 
 #add_subdirectory("simFswInterfaceMessages")
 #add_subdirectory("SimCode/simMessages")
