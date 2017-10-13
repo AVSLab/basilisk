@@ -19,7 +19,7 @@
 '''
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Basilisk Integrated Test
 #
 # Purpose:  Integrated test of the MonteCarlo module.  Runs multiple
 #           scenarioAttitudeFeedbackRW with dispersed initial parameters
@@ -48,9 +48,6 @@ path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
 bskPath = splitPath[0] + '/' + bskName + '/'
-# if this script is run from a custom folder outside of the Basilisk folder, then uncomment the
-# following line and specify the absolute bath to the Basilisk folder
-#bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
 sys.path.append(bskPath + 'modules')
 sys.path.append(bskPath + 'PythonModules')
 # @endcond
@@ -84,17 +81,11 @@ import fswMessages
 from MonteCarlo.Controller import Controller, RetentionPolicy
 from MonteCarlo.Dispersions import UniformEulerAngleMRPDispersion, UniformDispersion, NormalVectorCartDispersion
 
-# @cond DOXYGEN_IGNORE
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
-splitPath = path.split(bskName)
-bskPath = splitPath[0] + '/' + bskName + '/'
-# @endcond
 
 NUMBER_OF_RUNS = 8
 VERBOSE = False
 
+# Here are the name of some messages that we want to retain or otherwise use
 inertial3DConfigOutputDataName = "guidanceInertial3D"
 attErrorConfigOutputDataName = "attErrorInertial3DMsg"
 mrpControlConfigOutputDataName = "LrRequested"
@@ -103,6 +94,7 @@ mrpControlConfigInputRWSpeedsName = "reactionwheel_output_states"
 sNavObjectOutputTransName = "simple_trans_nav_output"
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
+# We also will need the simulationTime and samplingTimes
 numDataPoints = 100
 simulationTime = macros.min2nano(10.)
 samplingTime = simulationTime / (numDataPoints-1)
@@ -111,22 +103,36 @@ samplingTime = simulationTime / (numDataPoints-1)
 def test_MonteCarloSimulation(show_plots):
     '''This function is called by the py.test environment.'''
 
-    # Here we are going to create a montecarlo simulation
+    # A MonteCarlo simulation can be created using the `MonteCarlo` module.
+    # This module is used to execute monte carlo simulations, and access
+    # retained data from previously executed MonteCarlo runs.
+
+    # First, the `Controller` class is used in order to define the simulation
     monteCarlo = Controller()
-    monteCarlo.setShouldDisperseSeeds(True)
-    monteCarlo.setExecutionFunction(executeScenario)
+
+    # Every MonteCarlo simulation must define a function that creates the `SimulationBaseClass` to execute and returns it. Within this function, the simulation is created and configured
     monteCarlo.setSimulationFunction(createScenarioAttitudeFeedbackRW)
+
+    # Also, every MonteCarlo simulation must define a function which executes the simulation that was created.
+    monteCarlo.setExecutionFunction(executeScenario)
+
+    # A Monte Carlo simulation must define how many simulation runs to execute
     monteCarlo.setExecutionCount(NUMBER_OF_RUNS)
-    monteCarlo.setVerbose(VERBOSE)
+
+    # The simulations can have random seeds of each simulation dispersed randomly
+    monteCarlo.setShouldDisperseSeeds(True)
 
     # Optionally set the number of cores to use
     # monteCarlo.setThreadCount(PROCESSES)
+
+    # Whether to print more verbose information during the run
+    monteCarlo.setVerbose(VERBOSE)
 
     # We set up where to retain the data to.
     dirName = "montecarlo_test"
     monteCarlo.setArchiveDir(dirName)
 
-    # add some dispersions
+    # Statistical dispersions can be applied to initial parameters using the MonteCarlo module.
     disp1Name = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
     disp2Name = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
     disp3Name = 'TaskList[0].TaskModels[0].hub.mHub'
@@ -136,40 +142,46 @@ def test_MonteCarloSimulation(show_plots):
     monteCarlo.addDispersion(UniformDispersion(disp3Name, ([1300.0 - 812.3, 1500.0 - 812.3])))
     monteCarlo.addDispersion(NormalVectorCartDispersion(disp4Name, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
 
+    # A `RetentionPolicy` is used to define what data from the simulation should be retained. A `RetentionPolicy` is a list of messages and variables to log from each simulation run. It also has a callback, used for plotting/processing the retained data.
     retentionPolicy = RetentionPolicy()
-
+    # define the data to retain
     retentionPolicy.addMessageLog(rwMotorTorqueConfigOutputDataName, [("motorTorque", range(5))], samplingTime)
     retentionPolicy.addMessageLog(attErrorConfigOutputDataName, [("sigma_BR", range(3)), ("omega_BR_B", range(3))], samplingTime)
     retentionPolicy.addMessageLog(sNavObjectOutputTransName, [("r_BN_N", range(3))], samplingTime)
     retentionPolicy.addMessageLog(mrpControlConfigInputRWSpeedsName, [("wheelSpeeds", range(3))], samplingTime)
     for message in rwOutName:
         retentionPolicy.addMessageLog(message, [("u_current", range(1))], samplingTime)
-
     if show_plots:
         # plot data only if show_plots is true, otherwise just retain
         retentionPolicy.setDataCallback(plotSim)
-
-    # add retention policy
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
+    # After the monteCarlo run is configured, it is executed.
+    # This method returns the list of jobs that failed.
     failures = monteCarlo.executeSimulations()
 
     assert len(failures) == 0, "No runs should fail"
 
-    # Test loading data from runs from disk
+    # Now in another script (or the current one), the data from this simulation can be easily loaded.
+    # This demonstrates loading it from disk
     monteCarloLoaded = Controller.load(dirName)
 
+    # Then retained data from any run can then be accessed in the form of a dictionary with two sub-dictionaries for messages and variables:
     retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
     assert retainedData is not None, "Retained data should be available after execution"
     assert "messages" in retainedData, "Retained data should retain messages"
     assert "attErrorInertial3DMsg.sigma_BR" in retainedData["messages"], "Retained messages should exist"
 
-    # rerun the case and it should be the same, because we dispersed random seeds
+    # We also can rerun a case using the same parameters and random seeds
+    # If we rerun a properly set-up run, it should output the same data.
+    # Here we test that if we rerun the case the data doesn't change
     oldOutput = retainedData["messages"]["attErrorInertial3DMsg.sigma_BR"]
 
+    # Rerunning the case shouldn't fail
     failed = monteCarloLoaded.reRunCases([NUMBER_OF_RUNS-1])
     assert len(failed) == 0, "Should rerun case successfully"
 
+    # Now access the newly retained data to see if it changed
     retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
     newOutput = retainedData["messages"]["attErrorInertial3DMsg.sigma_BR"]
     for k1, v1 in enumerate(oldOutput):
@@ -177,7 +189,8 @@ def test_MonteCarloSimulation(show_plots):
             assert math.fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < .001, \
             "Outputs shouldn't change on runs if random seeds are same"
 
-    # test the initial parameters were saved from runs, and they differ between runs
+    # We can also access the initial parameters
+    # The random seeds should differ between runs, so we will test that
     params1 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-1)
     params2 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-2)
     assert "TaskList[0].TaskModels[0].RNGSeed" in params1, "random number seed should be applied"
@@ -186,14 +199,18 @@ def test_MonteCarloSimulation(show_plots):
         # assert two different runs had different parameters.
         assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
 
-    # plot only runs 4,6,7 overlapped
+    # Now we execute our callback for the retained data.
+    # For this run, that means executing the plot.
+    # We can plot only runs 4,6,7 overlapped
     monteCarloLoaded.executeCallbacks([4,6,7])
-    # or to execute all
+    # or execute the plot on all runs
     # monteCarloLoaded.executeCallbacks()
 
+    # Now we clean up data from this test
     shutil.rmtree(dirName)
     assert not os.path.exists(dirName), "No leftover data should exist after the test"
 
+    # And possibly show the plots
     if show_plots:
         plt.show()
         # close the plots being saved off to avoid over-writing old and new figures
@@ -388,6 +405,7 @@ def createScenarioAttitudeFeedbackRW():
     # This is a hack because of a bug in Basilisk... leave this line it keeps
     # variables from going out of scope after this function returns
     scSim.additionalReferences = [earth, rwMotorTorqueWrap, mrpControlWrap, attErrorWrap, inertial3DWrap]
+
     return scSim
 
 def executeScenario(sim):
