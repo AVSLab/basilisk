@@ -32,7 +32,8 @@ import sys, os, inspect
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskPath = path + '/' + ".." + '/'
+from Basilisk import __path__
+bskPath = __path__[0]
 
 import matplotlib
 import numpy as np
@@ -180,7 +181,7 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # is used
 #~~~~~~~~~~~~~~~~~{.py}
 #     planet.useSphericalHarmParams = True
-#     simIncludeGravBody.loadGravFromFile(bskPath+'../data/LocalGravData/GGM03S-J2-only.txt'
+#     simIncludeGravBody.loadGravFromFile(bskPath+'/data/LocalGravData/GGM03S-J2-only.txt'
 #                                         , planet.spherHarm
 #                                         ,2
 #                                         )
@@ -385,7 +386,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
         planet.isCentralBody = True           # ensure this is the central gravitational body
         if useSphericalHarmonics:
             planet.useSphericalHarmParams = True
-            simIncludeGravBody.loadGravFromFile(bskPath +'../../data/LocalGravData/GGM2BData.txt'
+            simIncludeGravBody.loadGravFromFile(bskPath +'/data/LocalGravData/GGM2BData.txt'
                                                 , planet.spherHarm
                                                 , 100
                                                 )
@@ -394,7 +395,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
         planet.isCentralBody = True          # ensure this is the central gravitational body
         if useSphericalHarmonics:
             planet.useSphericalHarmParams = True
-            simIncludeGravBody.loadGravFromFile(bskPath+'../../data/LocalGravData/GGM03S-J2-only.txt'
+            simIncludeGravBody.loadGravFromFile(bskPath+'/data/LocalGravData/GGM03S-J2-only.txt'
                                              , planet.spherHarm
                                              ,2
                                              )

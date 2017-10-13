@@ -32,8 +32,8 @@ import sys, os, inspect
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('SimCode')
-
+from Basilisk import __path__
+bskPath = __path__[0]
 
 
 # @cond DOXYGEN_IGNORE
@@ -168,7 +168,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
     # Initialize the spice modules that we are using.
     SpiceObject = spice_interface.SpiceInterface()
     SpiceObject.ModelTag = "SpiceInterfaceData"
-    SpiceObject.SPICEDataPath = splitPath[0] + '/../data/EphemerisData/'
+    SpiceObject.SPICEDataPath = bskPath + '/data/EphemerisData/'
     SpiceObject.OutputBufferCount = 10000
     SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun"])
     SpiceObject.UTCCalInit = DateSpice

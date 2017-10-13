@@ -44,14 +44,6 @@ import logging
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
-splitPath = path.split(bskName)
-
-
-
- 
-
-
 # @endcond
 
 # import general simulation support files
@@ -140,8 +132,8 @@ def test_bskAttitudeFeedback2T(show_plots, useUnmodeledTorque, useIntGain):
 #
 # A key difference to the 1-process setup is that after the processes are created, the
 # dynamics and FSW messages system must be linked to connect messages with the same name.
-# Note that the interface references are added to the process that they are SUPPLYING data 
-# to.  Reversing that setting is hard to detect as the data will still show up, it will just 
+# Note that the interface references are added to the process that they are SUPPLYING data
+# to.  Reversing that setting is hard to detect as the data will still show up, it will just
 # have a single frame of latency.  This is done in the following two-step process:
 #~~~~~~~~~~~~~~{.py}
 #     dyn2FSWInterface = sim_model.SysInterface()
@@ -604,4 +596,3 @@ if __name__ == "__main__":
          False,       # useUnmodeledTorque
          False        # useIntGain
        )
-

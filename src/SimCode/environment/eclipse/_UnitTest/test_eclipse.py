@@ -35,10 +35,8 @@ import os
 import pytest
 import inspect
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-bskPath = path + '/../../../../'
-
+from Basilisk import __path__
+bskPath = __path__[0]
 
 # @endcond
 
@@ -100,7 +98,7 @@ def unitEclipse(show_plots, eclipseCondition):
     spiceObject = spice_interface.SpiceInterface()
     spiceObject.PlanetNames = spice_interface.StringVector(["sun", "venus", "earth", "mars barycenter"])
     spiceObject.ModelTag = "SpiceInterfaceData"
-    spiceObject.SPICEDataPath = bskPath +'../data/EphemerisData/'
+    spiceObject.SPICEDataPath = bskPath +'/data/EphemerisData/'
     spiceObject.OutputBufferCount = 100000
     spiceObject.UTCCalInit = '2021 MAY 04 07:47:49.965 (UTC)'
     # pull in SPICE support libraries

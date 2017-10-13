@@ -59,14 +59,6 @@ from Basilisk.utilities import (unitTestSupport, SimulationBaseClass, fswSetupRW
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
-splitPath = path.split(bskName)
-
-
-
- 
-
-
 # @endcond
 
 

@@ -38,7 +38,8 @@ from datetime import timedelta
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskPath = path + '/' + ".." + '/'
+from Basilisk import __path__
+bskPath = __path__[0]
 # @endcond
 
 # import general simulation support files
@@ -136,7 +137,7 @@ def test_scenarioOrbitMultiBodyCopy(show_plots, scCase):
 #    gravBodies = gravFactory.createBodies(['earth', 'mars barycenter', 'sun', 'moon', "jupiter barycenter"])
 #    gravBodies['earth'].isCentralBody = True
 #    gravBodies['earth'].useSphericalHarmParams = True
-#    imIncludeGravBody.loadGravFromFile(bskPath +'../../data/LocalGravData/GGM03S.txt'
+#    imIncludeGravBody.loadGravFromFile(bskPath +'/data/LocalGravData/GGM03S.txt'
 #                                     , gravBodies['earth'].spherHarm
 #                                     , 100
 #                                     )
@@ -156,7 +157,7 @@ def test_scenarioOrbitMultiBodyCopy(show_plots, scCase):
 # The following is a support macro that creates a `spiceObject` instance, and fills in typical
 # default parameters.
 # ~~~~~~~~~~~~~~~~~{.py}
-#       gravFactory.createSpiceInterface(bskPath +'../../data/EphemerisData/', timeInitString)
+#       gravFactory.createSpiceInterface(bskPath +'/data/EphemerisData/', timeInitString)
 # ~~~~~~~~~~~~~~~~~
 # Next the SPICE module is costumized.  The first step is to specify the zeroBase.  This is the inertial
 # origin relative to which all spacecraft message states are taken.  The simulation defaults to all
@@ -315,7 +316,7 @@ def run(doUnitTests, show_plots, scCase):
     #   earth = gravBodies['earth']
     #   earth = gravFactory.createEarth()
     gravBodies['earth'].useSphericalHarmParams = True
-    simIncludeGravBody.loadGravFromFile(bskPath +'../../data/LocalGravData/GGM03S.txt'
+    simIncludeGravBody.loadGravFromFile(bskPath +'/data/LocalGravData/GGM03S.txt'
                                      , gravBodies['earth'].spherHarm
                                      , 100
                                      )
@@ -328,7 +329,7 @@ def run(doUnitTests, show_plots, scCase):
     timeInit = datetime.strptime(timeInitString, spiceTimeStringFormat)
 
     # setup SPICE module
-    gravFactory.createSpiceInterface(bskPath +'../../data/EphemerisData/', timeInitString)
+    gravFactory.createSpiceInterface(bskPath +'/data/EphemerisData/', timeInitString)
     # by default the SPICE object will use the solar system barycenter as the inertial origin
     # If the spacecraftPlus() output is desired relative to another celestial object, the zeroBase string
     # name of the SPICE object needs to be changed.

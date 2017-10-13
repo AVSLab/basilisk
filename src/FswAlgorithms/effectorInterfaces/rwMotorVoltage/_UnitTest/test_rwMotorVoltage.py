@@ -32,13 +32,6 @@ import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
-splitPath = path.split(bskName)
-
-
-
- 
-
 
 
 # Import all of the modules that we are going to be called in this simulation
@@ -192,12 +185,12 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop):
     unitTestSim.ExecuteSimulation()
 
     # reset the module to test this functionality
-    moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds) 
+    moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
 
     # run the module again for an additional 1.0 seconds
     unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
-        
+
 
     # This pulls the actual data log from the simulation run.
     moduleOutputName = "voltage"

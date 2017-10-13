@@ -38,14 +38,6 @@ import numpy as np
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
-splitPath = path.split(bskName)
-
-
-
- 
-
-
 # @endcond
 
 # import general simulation support files
@@ -446,4 +438,3 @@ if __name__ == "__main__":
          True,        # show_plots
          False,         # useLargeTumble
        )
-

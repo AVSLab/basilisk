@@ -24,9 +24,8 @@ import math
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('FswAlgorithms')
-
-
+from Basilisk import __path__
+bskPath = __path__[0]
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
@@ -65,30 +64,30 @@ def test_sineCosine(show_plots):
     degChebCoeff =21
 
     angleSpace = numpy.linspace(-3*math.pi, 3*math.pi, numCurvePoints)
-    
+
     cosineValues = numpy.cos(angleSpace)*orbitRadius
     sineValues = numpy.sin(angleSpace)*orbitRadius
     oopValues = numpy.sin(angleSpace) + orbitRadius
-    
-    pyswice.furnsh_c(splitPath[0] + '/../data/EphemerisData/naif0011.tls')
+
+    pyswice.furnsh_c(bskPath + '/data/EphemerisData/naif0011.tls')
     et = pyswice.new_doubleArray(1)
 
     timeStringMid = '2019 APR 1 12:12:12.0 (UTC)'
     pyswice.str2et_c(timeStringMid, et)
-    
+
     fitTimes = numpy.linspace(-1, 1, numCurvePoints)
-    
+
     chebCosCoeff = numpy.polynomial.chebyshev.chebfit(fitTimes, cosineValues, degChebCoeff)
     chebSinCoeff = numpy.polynomial.chebyshev.chebfit(fitTimes, sineValues, degChebCoeff)
     cheboopCoeff = numpy.polynomial.chebyshev.chebfit(fitTimes, oopValues, degChebCoeff)
-    
+
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
-    
+
     # Create a sim module as an empty container
     TotalSim = SimulationBaseClass.SimBaseClass()
     TotalSim.TotalSim.terminateSimulation()
-    
+
     FSWUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
     FSWUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(8640.0)))
@@ -97,10 +96,10 @@ def test_sineCosine(show_plots):
     chebyFitModelWrap = TotalSim.setModelDataWrap(chebyFitModel)
     chebyFitModelWrap.ModelTag = "chebyFitModel"
     TotalSim.AddModelToTask(unitTaskName, chebyFitModelWrap, chebyFitModel)
-    
+
     chebyFitModel.posFitOutMsgName = "cheb_pos_est"
     chebyFitModel.clockCorrInMsgName = "vehicle_clock_ephem_corr"
-    
+
     totalList = numpy.array(chebCosCoeff).tolist()
     totalList.extend(numpy.array(chebSinCoeff).tolist())
     totalList.extend(numpy.array(cheboopCoeff).tolist())
@@ -114,7 +113,7 @@ def test_sineCosine(show_plots):
     clockCorrData.vehicleClockTime = 0.0
     clockCorrData.ephemerisTime = chebyFitModel.ephArray[0].ephemTimeMid  - \
         chebyFitModel.ephArray[0].ephemTimeRad
-    
+
     TotalSim.TotalSim.CreateNewMessage(unitProcessName, chebyFitModel.clockCorrInMsgName,
         clockCorrData.getStructSize(), 2, "TDBVehicleClockCorrelationMessage")
     TotalSim.TotalSim.WriteMessageData(chebyFitModel.clockCorrInMsgName,
@@ -131,11 +130,11 @@ def test_sineCosine(show_plots):
         range(3))
 
     angleSpaceFine = numpy.linspace(-3*math.pi, 3*math.pi, numCurvePoints*10-9)
-    
+
     cosineValuesFine = numpy.cos(angleSpaceFine)*orbitRadius
     sineValuesFine = numpy.sin(angleSpaceFine)*orbitRadius
     oopValuesFine = numpy.sin(angleSpaceFine) + orbitRadius
-    
+
     maxErrVec = [max(abs(posChebData[:,1] - cosineValuesFine)),
         max(abs(posChebData[:,2] - sineValuesFine)),
         max(abs(posChebData[:,3] - oopValuesFine))]
@@ -154,73 +153,73 @@ def test_earthOrbitFit(show_plots):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     #__tracebackhide__ = True
-    
+
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
-    
+
     numCurvePoints = 365*3+1
     curveDurationSeconds = 3*5950.0
     degChebCoeff =23
     integFrame = "j2000"
     zeroBase = "Earth"
-    
+
     dateSpice = "2015 February 10, 00:00:00.0 TDB"
-    pyswice.furnsh_c(splitPath[0] + '/../data/EphemerisData/naif0011.tls')
+    pyswice.furnsh_c(bskPath + '/data/EphemerisData/naif0011.tls')
     et = pyswice.new_doubleArray(1)
     pyswice.str2et_c(dateSpice, et)
     etStart = pyswice.doubleArray_getitem(et, 0)
     etEnd = etStart + curveDurationSeconds
-    
-    pyswice.furnsh_c(splitPath[0] + '/../data/EphemerisData/de430.bsp')
-    pyswice.furnsh_c(splitPath[0] + '/../data/EphemerisData/naif0011.tls')
-    pyswice.furnsh_c(splitPath[0] + '/../data/EphemerisData/de-403-masses.tpc')
-    pyswice.furnsh_c(splitPath[0] + '/../data/EphemerisData/pck00010.tpc')
+
+    pyswice.furnsh_c(bskPath + '/data/EphemerisData/de430.bsp')
+    pyswice.furnsh_c(bskPath + '/data/EphemerisData/naif0011.tls')
+    pyswice.furnsh_c(bskPath + '/data/EphemerisData/de-403-masses.tpc')
+    pyswice.furnsh_c(bskPath + '/data/EphemerisData/pck00010.tpc')
     pyswice.furnsh_c(path + '/hst_edited.bsp')
-    
+
     hubblePosList = []
     hubbleVelList = []
     timeHistory = numpy.linspace(etStart, etEnd, numCurvePoints)
-    
+
     for timeVal in timeHistory:
         stringCurrent = pyswice.et2utc_c(timeVal, 'C', 4, 1024, "Yo")
         stateOut = pyswice.spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, integFrame, zeroBase)
         hubblePosList.append(stateOut[0:3].tolist())
         hubbleVelList.append(stateOut[3:6].tolist())
-    
+
     hubblePosList = numpy.array(hubblePosList)
     hubbleVelList = numpy.array(hubbleVelList)
 
     fitTimes = numpy.linspace(-1, 1, numCurvePoints)
     chebCoeff = numpy.polynomial.chebyshev.chebfit(fitTimes, hubblePosList, degChebCoeff)
-    
+
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
-    
+
     # Create a sim module as an empty container
     TotalSim = SimulationBaseClass.SimBaseClass()
     TotalSim.TotalSim.terminateSimulation()
-    
+
     FSWUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
     FSWUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(curveDurationSeconds/(numCurvePoints-1))))
-    
+
     chebyFitModel = cheby_pos_ephem.ChebyPosEphemData()
     chebyFitModelWrap = TotalSim.setModelDataWrap(chebyFitModel)
     chebyFitModelWrap.ModelTag = "chebyFitModel"
     TotalSim.AddModelToTask(unitTaskName, chebyFitModelWrap, chebyFitModel)
-    
+
     chebyFitModel.posFitOutMsgName = "cheb_pos_est"
     chebyFitModel.clockCorrInMsgName = "vehicle_clock_ephem_corr"
-    
+
     totalList = chebCoeff[:,0].tolist()
     totalList.extend(chebCoeff[:,1].tolist())
     totalList.extend(chebCoeff[:,2].tolist())
-    
+
     chebyFitModel.ephArray[0].posChebyCoeff = totalList
     chebyFitModel.ephArray[0].nChebCoeff = degChebCoeff+1
     chebyFitModel.ephArray[0].ephemTimeMid = etStart + curveDurationSeconds/2.0
     chebyFitModel.ephArray[0].ephemTimeRad = curveDurationSeconds/2.0
-    
+
     clockCorrData = cheby_pos_ephem.TDBVehicleClockCorrelationFswMsg()
     clockCorrData.vehicleClockTime = 0.0
     clockCorrData.ephemerisTime = chebyFitModel.ephArray[0].ephemTimeMid  - \
@@ -232,7 +231,7 @@ def test_earthOrbitFit(show_plots):
                                    clockCorrData.getStructSize(), 0, clockCorrData)
 
     TotalSim.TotalSim.logThisMessage(chebyFitModel.posFitOutMsgName)
-    
+
     TotalSim.InitializeSimulation()
     TotalSim.ConfigureStopTime(int(curveDurationSeconds*1.0E9))
     TotalSim.ExecuteSimulation()
@@ -265,4 +264,3 @@ def test_earthOrbitFit(show_plots):
 
 if __name__ == "__main__":
     chebyPosFitAllTest(False)
-    

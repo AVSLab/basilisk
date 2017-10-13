@@ -382,17 +382,19 @@ file(GLOB pythonModules
 create_symlinks("${CMAKE_SOURCE_DIR}/../dist/Basilisk/utilities" ${pythonModules})
 
 #symlink into the package the test code
-file(GLOB simTests
-	"${CMAKE_CURRENT_SOURCE_DIR}/tests/*")
+file(GLOB simTests "${CMAKE_CURRENT_SOURCE_DIR}/tests/*")
 file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/../dist/Basilisk/tests")
 file(WRITE "${CMAKE_SOURCE_DIR}/../dist/Basilisk/tests/__init__.py" "#empty init file written by the build")
 create_symlinks("${CMAKE_SOURCE_DIR}/../dist/Basilisk/tests" ${simTests})
 
 #symlink setup.py into the dist folder
-file(GLOB setupFile
-	"${CMAKE_CURRENT_SOURCE_DIR}/setup.py")
-
+file(GLOB setupFile "${CMAKE_CURRENT_SOURCE_DIR}/setup.py")
 create_symlinks("${CMAKE_SOURCE_DIR}/../dist" ${setupFile})
+
+#symlink into package the data files to keep
+file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/../dist/Basilisk/data")
+file(GLOB dataFiles "${CMAKE_CURRENT_SOURCE_DIR}/../data/*")
+create_symlinks("${CMAKE_SOURCE_DIR}/../dist/Basilisk/data" ${dataFiles})
 
 set(PROGRAM "python")
 set(ARG setup.py develop --user)

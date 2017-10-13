@@ -25,7 +25,8 @@ import math
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('FswAlgorithms')
-
+from Basilisk import __path__
+bskPath = __path__[0]
 
 
 from Basilisk.utilities import SimulationBaseClass
@@ -53,30 +54,30 @@ def test_earthOrbitFit(show_plots):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     #__tracebackhide__ = True
-    
+
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
-    
+
     numCurvePoints = 4*8640+1
     curveDurationSeconds = 4*86400
     degChebCoeff =6
     integFrame = "j2000"
     zeroBase = "Earth"
     centralBodyMu = 3.98574405096E14;
-    
+
     dateSpice = "2015 April 10, 00:00:00.0 TDB"
-    pyswice.furnsh_c(splitPath[0] + '/../data/EphemerisData/naif0011.tls')
+    pyswice.furnsh_c(bskPath + '/data/EphemerisData/naif0011.tls')
     et = pyswice.new_doubleArray(1)
     pyswice.str2et_c(dateSpice, et)
     etStart = pyswice.doubleArray_getitem(et, 0)
     etEnd = etStart + curveDurationSeconds
-    
-    pyswice.furnsh_c(splitPath[0] + '/../data/EphemerisData/de430.bsp')
-    pyswice.furnsh_c(splitPath[0] + '/../data/EphemerisData/naif0011.tls')
-    pyswice.furnsh_c(splitPath[0] + '/../data/EphemerisData/de-403-masses.tpc')
-    pyswice.furnsh_c(splitPath[0] + '/../data/EphemerisData/pck00010.tpc')
+
+    pyswice.furnsh_c(bskPath + '/data/EphemerisData/de430.bsp')
+    pyswice.furnsh_c(bskPath + '/data/EphemerisData/naif0011.tls')
+    pyswice.furnsh_c(bskPath + '/data/EphemerisData/de-403-masses.tpc')
+    pyswice.furnsh_c(bskPath + '/data/EphemerisData/pck00010.tpc')
     pyswice.furnsh_c(path + '/TDRSS.bsp')
-    
+
     tdrssPosList = []
     tdrssVelList = []
     timeHistory = numpy.linspace(etStart, etEnd, numCurvePoints)
@@ -92,7 +93,7 @@ def test_earthOrbitFit(show_plots):
     mArray = []
     mPrev = 0.0
     mCount = 0
-    
+
     for timeVal in timeHistory:
         stringCurrent = pyswice.et2utc_c(timeVal, 'C', 4, 1024, "Yo")
         stateOut = pyswice.spkRead('-221', stringCurrent, integFrame, zeroBase)
@@ -112,7 +113,7 @@ def test_earthOrbitFit(show_plots):
             mCount += 1
         mArray.append(2*math.pi*mCount + currentM)
         mPrev = currentM
-    
+
     tdrssPosList = numpy.array(tdrssPosList)
     tdrssVelList = numpy.array(tdrssVelList)
 
@@ -128,24 +129,24 @@ def test_earthOrbitFit(show_plots):
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
-    
+
     # Create a sim module as an empty container
     TotalSim = SimulationBaseClass.SimBaseClass()
     TotalSim.TotalSim.terminateSimulation()
-    
+
     FSWUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
     FSWUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(curveDurationSeconds/(numCurvePoints-1))))
- 
+
     oeStateModel = oe_state_ephem.OEStateEphemData()
     oeStateModelWrap = TotalSim.setModelDataWrap(oeStateModel)
     oeStateModelWrap.ModelTag = "oeStateModel"
     TotalSim.AddModelToTask(unitTaskName, oeStateModelWrap, oeStateModel)
-    
+
     oeStateModel.stateFitOutMsgName = "veh_state_est"
     oeStateModel.clockCorrInMsgName = "vehicle_clock_ephem_corr"
     oeStateModel.muCentral = centralBodyMu
-    
+
     oeStateModel.ephArray[0].semiMajorCoeff = chebSemCoeff.tolist()
     oeStateModel.ephArray[0].eccCoeff = chebEccCoeff.tolist()
     oeStateModel.ephArray[0].incCoeff = chebIncCoeff.tolist()
@@ -155,7 +156,7 @@ def test_earthOrbitFit(show_plots):
     oeStateModel.ephArray[0].nChebCoeff = degChebCoeff+1
     oeStateModel.ephArray[0].ephemTimeMid = etStart + curveDurationSeconds/2.0
     oeStateModel.ephArray[0].ephemTimeRad = curveDurationSeconds/2.0
-    
+
     clockCorrData = oe_state_ephem.TDBVehicleClockCorrelationFswMsg()
     clockCorrData.vehicleClockTime = 0.0
     clockCorrData.ephemerisTime = oeStateModel.ephArray[0].ephemTimeMid  - \
@@ -167,7 +168,7 @@ def test_earthOrbitFit(show_plots):
                                    clockCorrData.getStructSize(), 0, clockCorrData)
 
     TotalSim.TotalSim.logThisMessage(oeStateModel.stateFitOutMsgName)
-    
+
     TotalSim.InitializeSimulation()
     TotalSim.ConfigureStopTime(int(curveDurationSeconds*1.0E9))
     TotalSim.ExecuteSimulation()
@@ -201,4 +202,3 @@ def test_earthOrbitFit(show_plots):
 
 if __name__ == "__main__":
     chebyPosFitAllTest(False)
-    

@@ -39,11 +39,6 @@ import inspect
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
-splitPath = path.split(bskName)
-
-
-
 # @endcond
 
 from Basilisk.utilities import SimulationBaseClass

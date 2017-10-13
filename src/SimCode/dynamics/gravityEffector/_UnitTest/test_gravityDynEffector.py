@@ -24,8 +24,8 @@ import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('SimCode')
-
+from Basilisk import __path__
+bskPath = __path__[0]
 
 
 
@@ -218,20 +218,20 @@ def sphericalHarmonics(show_plots):
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
-    
+
     spherHarm = gravityEffector.SphericalHarmonics()
-    
+
     testHarm = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    
+
     spherHarm.cBar = gravityEffector.MultiArray(testHarm)
-    
+
     vecCheckSuccess = True
     for i in range(len(spherHarm.cBar)):
         for j in range(len(spherHarm.cBar[i])):
             if spherHarm.cBar[i][j] != testHarm[i][j]:
                 vecCheckSuccess = False
 
-    
+
     if(vecCheckSuccess != True):
         testFailCount += 1
         testMessages.append("2D vector not input appropriately to spherical harmonics")
@@ -285,10 +285,10 @@ def singleGravityBody(show_plots):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
-    
+
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
-    
+
     # Create a sim module as an empty container
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -306,13 +306,13 @@ def singleGravityBody(show_plots):
     SpiceObject = spice_interface.SpiceInterface()
 
     SpiceObject.ModelTag = "SpiceInterfaceData"
-    SpiceObject.SPICEDataPath = splitPath[0] + '/../data/EphemerisData/'
+    SpiceObject.SPICEDataPath = bskPath + '/data/EphemerisData/'
     SpiceObject.OutputBufferCount = 10000
     SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun"])
     SpiceObject.UTCCalInit = DateSpice
     TotalSim.AddModelToTask(unitTaskName, SpiceObject)
     SpiceObject.UTCCalInit = "1994 JAN 26 00:02:00.184"
-    
+
 
     gravBody1 = gravityEffector.GravBodyData()
     gravBody1.bodyInMsgName = "earth_planet_data"
@@ -320,13 +320,13 @@ def singleGravityBody(show_plots):
     gravBody1.isCentralBody = False
     gravBody1.useSphericalHarmParams = True
     gravityEffector.loadGravFromFile(path + '/GGM03S.txt', gravBody1.spherHarm, 60)
-    
-    pyswice.furnsh_c(splitPath[0] + '/../data/EphemerisData/de430.bsp')
-    pyswice.furnsh_c(splitPath[0] + '/../data/EphemerisData/naif0011.tls')
-    pyswice.furnsh_c(splitPath[0] + '/../data/EphemerisData/de-403-masses.tpc')
-    pyswice.furnsh_c(splitPath[0] + '/../data/EphemerisData/pck00010.tpc')
+
+    pyswice.furnsh_c(bskPath + '/data/EphemerisData/de430.bsp')
+    pyswice.furnsh_c(bskPath + '/data/EphemerisData/naif0011.tls')
+    pyswice.furnsh_c(bskPath + '/data/EphemerisData/de-403-masses.tpc')
+    pyswice.furnsh_c(bskPath + '/data/EphemerisData/pck00010.tpc')
     pyswice.furnsh_c(path + '/hst_edited.bsp')
-    
+
     SpiceObject.UTCCalInit = "2012 MAY 1 00:02:00.184"
     stringCurrent = SpiceObject.UTCCalInit
     et = pyswice.new_doubleArray(1)
@@ -349,14 +349,14 @@ def singleGravityBody(show_plots):
         stateNext = pyswice.spkRead('HUBBLE SPACE TELESCOPE', stringNext, 'J2000', 'EARTH')
         gravVec = (stateNext[3:6] - statePrev[3:6])/(etNext - etPrev)
         normVec.append(np.linalg.norm(stateOut[0:3]))
-        
+
         stateOut*=1000.0
         SpiceObject.J2000Current = etCurr;SpiceObject.UpdateState(0)
         gravBody1.loadEphemeris(0)
         gravOut = gravBody1.computeGravityInertial(stateOut[0:3].reshape(3,1).tolist(), 0)
         gravErrNorm.append(np.linalg.norm(gravVec*1000.0 - np.array(gravOut).reshape(3))/
             np.linalg.norm(gravVec*1000.0))
-        
+
         pyswice.str2et_c(stringCurrent, et)
         etCurr = pyswice.doubleArray_getitem(et, 0)
         etCurr += dt;
@@ -371,11 +371,11 @@ def singleGravityBody(show_plots):
     snippetName = testCase + 'Accuracy'
     snippetContent = '{:1.1e}'.format(accuracy)  # write formatted LATEX string to file to be used by auto-documentation.
     unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
-    
-    pyswice.unload_c(splitPath[0] + '/../data/EphemerisData/de430.bsp')
-    pyswice.unload_c(splitPath[0] + '/../data/EphemerisData/naif0011.tls')
-    pyswice.unload_c(splitPath[0] + '/../data/EphemerisData/de-403-masses.tpc')
-    pyswice.unload_c(splitPath[0] + '/../data/EphemerisData/pck00010.tpc')
+
+    pyswice.unload_c(bskPath + '/data/EphemerisData/de430.bsp')
+    pyswice.unload_c(bskPath + '/data/EphemerisData/naif0011.tls')
+    pyswice.unload_c(bskPath + '/data/EphemerisData/de-403-masses.tpc')
+    pyswice.unload_c(bskPath + '/data/EphemerisData/pck00010.tpc')
     pyswice.unload_c(path + '/hst_edited.bsp')
 
 
@@ -402,7 +402,7 @@ def singleGravityBody(show_plots):
 
     # return fail count and join into a single string all messages in the list
     # testMessage
-    
+
     return [testFailCount, ''.join(testMessages)]
 
 def multiBodyGravity(show_plots):
@@ -411,7 +411,7 @@ def multiBodyGravity(show_plots):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
-    
+
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
     #
@@ -551,4 +551,3 @@ def multiBodyGravity(show_plots):
 
 if __name__ == "__main__":
     test_gravityEffectorAllTest(False)
-    
