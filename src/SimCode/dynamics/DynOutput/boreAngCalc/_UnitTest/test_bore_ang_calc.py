@@ -46,8 +46,6 @@ from Basilisk.simulation import spice_interface
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import unitTestSupport
 import pytest
-
-
 # @endcond
 
 
