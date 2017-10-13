@@ -20,9 +20,9 @@
 import numpy as np
 np.set_printoptions(precision=12)
 import sys, os, inspect
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('FswAlgorithms')
+
+
+
 
 
 

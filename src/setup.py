@@ -17,7 +17,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name='Basilisk',

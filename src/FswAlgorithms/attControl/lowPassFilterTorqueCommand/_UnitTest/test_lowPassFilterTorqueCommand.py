@@ -28,13 +28,6 @@ import sys, os, inspect
 import math
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('FswAlgorithms')
-
-
-
-
 #   Import all of the modules that we are going to call in this simulation
 from Basilisk.utilities import MessagingAccess
 from Basilisk.utilities import SimulationBaseClass
@@ -119,8 +112,8 @@ def subModuleTestFunction(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))    # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds) 
-    
+    moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
+
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 

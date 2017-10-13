@@ -31,9 +31,9 @@ import ctypes
 import math
 import logging
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('FswAlgorithms')
+
+
+
 
 
 

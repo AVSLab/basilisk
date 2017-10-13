@@ -24,9 +24,9 @@
 import sys, os, inspect
 import numpy
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('Basilisk')
+
+
+
 
 
 

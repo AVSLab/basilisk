@@ -289,7 +289,7 @@ file(GLOB setupFile
 create_symlinks("${CMAKE_SOURCE_DIR}/../dist" ${setupFile})
 
 set(PROGRAM "python")
-set(ARG setup.py install --user)
+set(ARG setup.py develop --user)
 execute_process(COMMAND ${PROGRAM} ${ARG}
 								WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/../dist
 								RESULT_VARIABLE rv
@@ -312,5 +312,5 @@ add_subdirectory("SimCode/architecture/messaging")
 #find_package(Doxygen)
 #if(DOXYGEN_FOUND)
 #   add_custom_target(ScriptRun ALL
-#                   COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/DoxyData)
+#                   COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/../docs/DoxyData)
 #endif(DOXYGEN_FOUND)

@@ -21,9 +21,9 @@ import sys, os, inspect
 import numpy as np
 import pytest
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('FswAlgorithms')
+
+
+
 
 
 

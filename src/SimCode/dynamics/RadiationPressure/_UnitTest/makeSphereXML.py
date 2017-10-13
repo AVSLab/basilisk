@@ -32,9 +32,9 @@ import sys
 import os
 import pytest
 import inspect
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('SimCode')
+
+
+
 
 
 # @endcond

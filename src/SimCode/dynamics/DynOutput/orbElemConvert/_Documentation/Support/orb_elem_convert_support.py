@@ -31,13 +31,13 @@ import sys, os, inspect
 # Creation Date:  Aug. 25, 2017
 #
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('SimCode')
 
 
 
-# @cond DOXYGEN_IGNOREimport spice_interface
+
+
+
+# @cond DOXYGEN_IGNORE
 import numpy
 import matplotlib.pyplot as plt
 import math

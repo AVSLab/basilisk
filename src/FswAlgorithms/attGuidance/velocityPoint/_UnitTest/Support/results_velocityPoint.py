@@ -22,9 +22,9 @@ from numpy import linalg as la
 from numpy import sin, cos
 np.set_printoptions(precision=12)
 import sys, os, inspect
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('FswAlgorithms')
+
+
+
 
 
 from Basilisk.utilities import RigidBodyKinematics as rbk

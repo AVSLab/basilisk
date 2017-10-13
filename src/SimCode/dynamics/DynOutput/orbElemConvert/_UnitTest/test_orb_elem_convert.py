@@ -36,7 +36,7 @@ splitPath = path.split('SimCode')
 
 
 
-# @cond DOXYGEN_IGNOREimport spice_interface
+# @cond DOXYGEN_IGNORE
 import datetime
 from Basilisk.utilities import MessagingAccess
 from Basilisk.utilities import SimulationBaseClass

@@ -30,13 +30,13 @@ import sys, os, inspect
 # Creation Date:  Jun. 30, 2017
 #
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('SimCode')
 
 
 
-# @cond DOXYGEN_IGNOREimport spice_interface
+
+
+
+# @cond DOXYGEN_IGNORE
 from Basilisk.utilities import SimulationBaseClass
 import numpy
 from Basilisk.simulation import bore_ang_calc

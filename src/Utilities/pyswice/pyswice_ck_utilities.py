@@ -19,9 +19,9 @@
 '''
 
 import sys, os, inspect #Don't worry about this, standard stuff plus file discovery
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('Utilities')
+
+
+
 
 
 import pyswice

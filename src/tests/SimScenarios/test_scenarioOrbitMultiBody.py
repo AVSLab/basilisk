@@ -42,8 +42,8 @@ bskPath = path + '/' + ".." + '/'
 # if this script is run from a custom folder outside of the Basilisk folder, then uncomment the
 # following line and specify the absolute bath to the Basilisk folder
 # bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
-# sys.path.append(bskPath + 'modules')
-# sys.path.append(bskPath + 'PythonModules')
+
+
 # @endcond
 
 # import general simulation support files
