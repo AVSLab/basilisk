@@ -74,3 +74,5 @@ foreach(module ${swig_modules})
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
               COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/FswAlgorithms")
 endforeach()
+
+add_subdirectory("messaging")

@@ -22,7 +22,16 @@ from setuptools import setup
 setup(
     name='Basilisk',
     version='0.1dev',
+    description="Astrodynamic Simulation Library",
     packages=['Basilisk',],
-    license=open('../LICENSE').read(),
-    long_description=open('../README.md').read(),
+    license=open('./LICENSE').read(),
+    long_description=open('./README.md').read(),
+    author_email='basilisk-info@colorado.edu',
+    url='http://hanspeterschaub.info/bskMain.html',
+    package_dir = {'': 'dist'},
+    install_requires=[
+       'matplotlib',
+       'numpy',
+       'pytest'
+    ]
 )
