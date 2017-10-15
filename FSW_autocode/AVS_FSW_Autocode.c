@@ -921,7 +921,7 @@ void DataInit(AVSConfigData *data){
 	data->CSSWlsEst.OutputData.sHatBdy[0] = 0.0;
 	data->CSSWlsEst.OutputData.sHatBdy[1] = 0.0;
 	data->CSSWlsEst.OutputData.sHatBdy[2] = 0.0;
-	strcpy(data->CSSWlsEst.OutputDataName,"css_wls_est");
+	strcpy(data->CSSWlsEst.OutputDataName,"css_nav_sunHeading");
 	data->CSSWlsEst.OutputMsgID = 0;
 	data->CSSWlsEst.SensorUseThresh = 0.1;
 	data->CSSWlsEst.UseWeights = 1;
@@ -941,7 +941,7 @@ void DataInit(AVSConfigData *data){
 	data->sunSafePoint.imuMsgID = 0;
 	strcpy(data->sunSafePoint.inputIMUDataName,"parsed_imu_data");
 	data->sunSafePoint.inputMsgID = 0;
-	strcpy(data->sunSafePoint.inputSunVecName,"css_wls_est");
+	strcpy(data->sunSafePoint.inputSunVecName,"css_nav_sunHeading");
 	data->sunSafePoint.minUnitMag = 0.95;
 	strcpy(data->sunSafePoint.outputDataName,"sun_safe_att_err");
 	data->sunSafePoint.outputMsgID = 0;
