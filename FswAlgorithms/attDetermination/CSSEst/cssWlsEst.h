@@ -21,7 +21,6 @@
 #define _CSS_WLS_EST_H_
 
 #include "messaging/static_messaging.h"
-#include "fswMessages/sunHeadingEstFswMsg.h"
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/cssConfigFswMsg.h"
