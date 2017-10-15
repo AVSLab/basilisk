@@ -29,7 +29,6 @@
 %constant void CrossInit_cssWlsEst(void*, uint64_t);
 %ignore CrossInit_cssWlsEst;
 STRUCTASLIST(CSSConfigFswMsg)
-GEN_SIZEOF(SunHeadingEstFswMsg);
 GEN_SIZEOF(CSSConfigFswMsg);
 GEN_SIZEOF(CSSWLSConfig);
 GEN_SIZEOF(VehicleConfigFswMsg);
