@@ -182,7 +182,7 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
     status = computeWlsmn(ConfigData->numActiveCss, H, W, y,
                           ConfigData->outputSunline.vehSunPntBdy);
     v3Normalize(ConfigData->outputSunline.vehSunPntBdy, ConfigData->outputSunline.vehSunPntBdy);
-    WriteMessage(ConfigData->OutputMsgID, callTime, sizeof(NavAttIntMsg),
+    WriteMessage(ConfigData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
                  &(ConfigData->outputSunline), moduleID);
     return;
 }

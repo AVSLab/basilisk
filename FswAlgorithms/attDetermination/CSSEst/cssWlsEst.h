@@ -39,7 +39,6 @@
  Used to estimate the sun state in the vehicle body frame*/
 typedef struct {
     CSSConfigFswMsg CSSData[MAX_NUM_CSS_SENSORS]; /*!< -- The config data for the estimator*/
-    char OutputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char InputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
     char InputPropsName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the mass props message*/
     char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
@@ -47,7 +46,6 @@ typedef struct {
     uint32_t UseWeights;     /*!< -- Flag indicating whether or not to use weights for least squares*/
     double SensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
     NavAttIntMsg outputSunline; /*!< -- Nav message*/
-    int32_t OutputMsgID;     /*!< -- ID for the outgoing body estimate message*/
     int32_t InputMsgID;      /*!< -- ID for the incoming CSS sensor message*/
     int32_t InputPropsID;    /*!< [-] ID for the incoming mass properties message*/
     int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
