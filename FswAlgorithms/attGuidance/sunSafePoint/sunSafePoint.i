@@ -30,7 +30,7 @@
 %constant void CrossInit_sunSafePoint(void*, uint64_t);
 %ignore CrossInit_sunSafePoint;
 %array_functions(CSSConfigFswMsg, CSSWlsConfigArray);
-%include "../../fswMessages/sunHeadingEstFswMsg.h"
+%include "simFswInterfaceMessages/navAttIntMsg.h"
 %include "../../fswMessages/cssConfigFswMsg.h"
 %include "../../fswMessages/imuSensorBodyFswMsg.h"
 GEN_SIZEOF(sunSafePointConfig);

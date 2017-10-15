@@ -34,7 +34,7 @@ GEN_SIZEOF(CSSConfigFswMsg);
 GEN_SIZEOF(CSSWLSConfig);
 GEN_SIZEOF(VehicleConfigFswMsg);
 %include "cssWlsEst.h"
-%include "../../fswMessages/sunHeadingEstFswMsg.h"
+%include "simFswInterfaceMessages/navAttIntMsg.h"
 %include "../../fswMessages/vehicleConfigFswMsg.h"
 %include "../../fswMessages/cssConfigFswMsg.h"
 
