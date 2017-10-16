@@ -5,8 +5,7 @@ The mathematical description of gravity effects are implemented in gravityEffect
 	\item \textbf{Look-up Method}: The code calculates both the force and torque on a spacecraft due to solar radiation pressure. It uses user-provided tabulated data to do so.
 	\item \textbf{Solar Eclipse}: The code takes solar eclipses into account via a "shadow factor". This shadow factor is output from the Basilisk solar eclipse module and can include the effects of multiple planets. It is applied to the force/torque outputs.
 	\item \textbf{Interface: Spacecraft States}: The code receives spacecraft state information via the DynParamManager.
-	\item \textbf{Interface: Forces and Torques}: The code sends spacecraft force and torque contributions via computeBodyForceTorque() which is called by the spacecraft.	
-	%\item \textbf{Interface: Energy Contributions}: The code sends spacecraft energy contributions via updateEnergyContributions() which is called by the spacecraft.
+	\item \textbf{Interface: Forces and Torques}: The code sends spacecraft force and torque contributions via computeBodyForceTorque() which is called by the spacecraft.	If using the cannonball method, the returned torque values are zero.
 	\item \textbf{Interface: Sun Ephemeris}: The code receives Sun states (ephemeris information) via the Basilisk messaging system.
 	\item \textbf{Interface: Solar Eclipse}: The code receives solar eclipse (shadow factor) information via the Basilisk messaging system.
 	
