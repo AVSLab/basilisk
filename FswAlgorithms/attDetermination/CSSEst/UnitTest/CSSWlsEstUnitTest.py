@@ -121,7 +121,7 @@ TotalSim.AddModelToTask("wlsEstTestTask", CSSWlsWrap, CSSWlsEstFSWConfig)
 
 #Initialize the WLS estimator configuration data
 CSSWlsEstFSWConfig.InputDataName = "css_data_aggregate"
-CSSWlsEstFSWConfig.OutputDataName = "css_wls_est"
+CSSWlsEstFSWConfig.OutputDataName = "css_nav_sunHeading"
 CSSWlsEstFSWConfig.UseWeights = False
 CSSWlsEstFSWConfig.SensorUseThresh = 0.15
 
@@ -164,7 +164,7 @@ angleFailCriteria = 17.5*math.pi/180.0 #Get 95% effective charging in this case
 numActiveFailCriteria = 0.000001 #basically zero
 
 #Log the output message as well as the internal numACtiveCss variables
-TotalSim.TotalSim.logThisMessage("css_wls_est", int(1E8))
+TotalSim.TotalSim.logThisMessage("css_nav_sunHeading", int(1E8))
 TotalSim.AddVariableForLogging("CSSWlsEst.numActiveCss", int(1E8))
 
 #Initia test is all of the principal body axes
@@ -201,8 +201,8 @@ for testVec in TestVectors:
     TotalSim.ExecuteSimulation()
     stepCount += 1
     #Pull logged data out into workspace for analysis
-    sHatEst = MessagingAccess.obtainMessageVector("css_wls_est", 'cssWlsEst',
-       'CSSWlsEstOut', int(stepCount*10), TotalSim.TotalSim, 'sHatBdy', 'double', 0, 2, sim_model.logBuffer)
+    sHatEst = MessagingAccess.obtainMessageVector("css_nav_sunHeading", 'cssWlsEst',
+       'CSSWlsEstOut', int(stepCount*10), TotalSim.TotalSim, 'vehSunPntBdy', 'double', 0, 2, sim_model.logBuffer)
     numActive = TotalSim.GetLogVariableData("CSSWlsEst.numActiveCss")
     sHatEstUse = sHatEst[logLengthPrev:, :] #Only data for this subtest
     numActiveUse = numActive[logLengthPrev+1:, :] #Only data for this subtest
@@ -238,8 +238,8 @@ TotalSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.InputDataName, 8*8, 0,
 TotalSim.ConfigureStopTime(int((stepCount+1)*1E9))
 TotalSim.ExecuteSimulation()
 stepCount += 1
-sHatEst = MessagingAccess.obtainMessageVector("css_wls_est", 'cssWlsEst',
-   'CSSWlsEstOut', int(stepCount*10), TotalSim.TotalSim, 'sHatBdy', 'double', 0, 2, sim_model.logBuffer)
+sHatEst = MessagingAccess.obtainMessageVector("css_nav_sunHeading", 'cssWlsEst',
+   'CSSWlsEstOut', int(stepCount*10), TotalSim.TotalSim, 'vehSunPntBdy', 'double', 0, 2, sim_model.logBuffer)
 numActive = TotalSim.GetLogVariableData("CSSWlsEst.numActiveCss")
 sHatEstUse = sHatEst[logLengthPrev:, :]
 numActiveUse = numActive[logLengthPrev+1:, :]
@@ -266,8 +266,8 @@ TotalSim.ExecuteSimulation()
 stepCount += 1
 numActive = TotalSim.GetLogVariableData("CSSWlsEst.numActiveCss")
 numActiveUse = numActive[logLengthPrev+1:, :]
-sHatEst = MessagingAccess.obtainMessageVector("css_wls_est", 'cssWlsEst',
-   'CSSWlsEstOut', int(stepCount*10), TotalSim.TotalSim, 'sHatBdy', 'double', 0, 2, sim_model.logBuffer)
+sHatEst = MessagingAccess.obtainMessageVector("css_nav_sunHeading", 'cssWlsEst',
+   'CSSWlsEstOut', int(stepCount*10), TotalSim.TotalSim, 'vehSunPntBdy', 'double', 0, 2, sim_model.logBuffer)
 sHatEstUse = sHatEst[logLengthPrev+1:, :]
 logLengthPrev = sHatEst.shape[0]
 testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse, 
@@ -294,8 +294,8 @@ testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse,
 
 #Format data for plotting
 truthData = numpy.array(truthData)
-sHatEst = MessagingAccess.obtainMessageVector("css_wls_est", 'cssWlsEst',
-   'CSSWlsEstOut', int(stepCount*10), TotalSim.TotalSim, 'sHatBdy', 'double', 0, 2, sim_model.logBuffer)
+sHatEst = MessagingAccess.obtainMessageVector("css_nav_sunHeading", 'cssWlsEst',
+   'CSSWlsEstOut', int(stepCount*10), TotalSim.TotalSim, 'vehSunPntBdy', 'double', 0, 2, sim_model.logBuffer)
 numActive = TotalSim.GetLogVariableData("CSSWlsEst.numActiveCss")
 
 plt.figure(1)

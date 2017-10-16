@@ -37,7 +37,6 @@
     #include "../fswMessages/rwConfigElementFswMsg.h"
     #include "../fswMessages/rwConstellationFswMsg.h"
     #include "../fswMessages/stAttFswMsg.h"
-    #include "../fswMessages/sunHeadingEstFswMsg.h"
     #include "../fswMessages/sunlineFilterFswMsg.h"
     #include "../fswMessages/thrArrayCmdForceFswMsg.h"
     #include "../fswMessages/thrArrayConfigFswMsg.h"
@@ -82,8 +81,6 @@ GEN_SIZEOF(RWConfigElementFswMsg);
 GEN_SIZEOF(RWConstellationFswMsg);
 %include "../fswMessages/stAttFswMsg.h"
 GEN_SIZEOF(STAttFswMsg);
-%include "../fswMessages/sunHeadingEstFswMsg.h"
-GEN_SIZEOF(SunHeadingEstFswMsg);
 %include "../fswMessages/sunlineFilterFswMsg.h"
 GEN_SIZEOF(SunlineFilterFswMsg);
 %include "../fswMessages/thrArrayCmdForceFswMsg.h"
