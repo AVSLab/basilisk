@@ -75,11 +75,11 @@ import rwMotorVoltage
 import fswMessages
 
 from MonteCarlo.Controller import Controller, RetentionPolicy
-from MonteCarlo.Dispersions import UniformEulerAngleMRPDispersion, UniformDispersion, NormalVectorCartDispersion
+from MonteCarlo.Dispersions import UniformEulerAngleMRPDispersion, UniformDispersion, NormalVectorCartDispersion, InertiaTensorDispersion
 
 
 NUMBER_OF_RUNS = 8
-VERBOSE = False
+VERBOSE = True
 
 # Here are the name of some messages that we want to retain or otherwise use
 inertial3DConfigOutputDataName = "guidanceInertial3D"
@@ -133,10 +133,16 @@ def test_MonteCarloSimulation(show_plots):
     disp2Name = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
     disp3Name = 'TaskList[0].TaskModels[0].hub.mHub'
     disp4Name = 'TaskList[0].TaskModels[0].hub.r_BcB_B'
+    disp5Name = 'hubref.IHubPntBc_B'
+    # disp6Name = 'RW1.gsHat_B'
     monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(disp1Name))
     monteCarlo.addDispersion(NormalVectorCartDispersion(disp2Name, 0.0, 0.75 / 3.0 * np.pi / 180))
-    monteCarlo.addDispersion(UniformDispersion(disp3Name, ([1300.0 - 812.3, 1500.0 - 812.3])))
+    monteCarlo.addDispersion(UniformDispersion(disp3Name, ([750.0 - 0.05*750, 750.0 + 0.05*750])))
     monteCarlo.addDispersion(NormalVectorCartDispersion(disp4Name, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
+    monteCarlo.addDispersion(InertiaTensorDispersion(disp5Name))
+    # monteCarlo.addDispersion(InertiaTensorDispersion(disp6Name, [0.05, 0.05, 0.05]))
+
+    dispList =[disp1Name, disp2Name, disp3Name, disp4Name, disp5Name]
 
     # A `RetentionPolicy` is used to define what data from the simulation should be retained. A `RetentionPolicy` is a list of messages and variables to log from each simulation run. It also has a callback, used for plotting/processing the retained data.
     retentionPolicy = RetentionPolicy()
@@ -190,7 +196,7 @@ def test_MonteCarloSimulation(show_plots):
     params1 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-1)
     params2 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-2)
     assert "TaskList[0].TaskModels[0].RNGSeed" in params1, "random number seed should be applied"
-    for dispName in [disp1Name, disp2Name, disp3Name, disp4Name]:
+    for dispName in dispList:
         assert dispName in params1, "dispersion should be applied"
         # assert two different runs had different parameters.
         assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
@@ -198,9 +204,9 @@ def test_MonteCarloSimulation(show_plots):
     # Now we execute our callback for the retained data.
     # For this run, that means executing the plot.
     # We can plot only runs 4,6,7 overlapped
-    monteCarloLoaded.executeCallbacks([4,6,7])
+    # monteCarloLoaded.executeCallbacks([4,6,7])
     # or execute the plot on all runs
-    # monteCarloLoaded.executeCallbacks()
+    monteCarloLoaded.executeCallbacks()
 
     # Now we clean up data from this test
     shutil.rmtree(dirName)
@@ -251,6 +257,8 @@ def createScenarioAttitudeFeedbackRW():
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scObject.hub.useTranslation = True
     scObject.hub.useRotation = True
+    scSim.hubref = scObject.hub
+
 
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject, None, 1)
@@ -273,6 +281,7 @@ def createScenarioAttitudeFeedbackRW():
 
     # store the RW dynamical model type
     varRWModel = rwFactory.BalancedWheels
+
 
     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
     RW1 = rwFactory.create('Honeywell_HR16'
