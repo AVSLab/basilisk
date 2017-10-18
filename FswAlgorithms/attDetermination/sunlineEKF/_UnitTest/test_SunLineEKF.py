@@ -700,7 +700,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
                                                   inputMessageSize,
                                                   unitTestSim.TotalSim.CurrentNanos,
                                                   inputData)
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i) * 0.5))
+        unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
     covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
@@ -775,7 +775,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
                                                   inputMessageSize,
                                                   unitTestSim.TotalSim.CurrentNanos,
                                                   inputData)
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i + SimHalfLength) * 0.5))
+        unitTestSim.ConfigureStopTime(macros.sec2nano((i + SimHalfLength+1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
     covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
