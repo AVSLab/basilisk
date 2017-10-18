@@ -59,7 +59,7 @@ The same simulation setup is run for each of the integration methods:
 The resulting data points are illustrated in Figure~\ref{fig:intResults}.  The large 120 second time step causes all the integration methods to significantly deviate from the truth locations (shown in black).  The integrated validation test ensures that the BSK integrations yield the same integration corruptions to validate the mathematical implementation.  
 
 \subsection{Test success criteria}
-The integrated position states are checked at 5 even data points along the simulation time again pre-computed truth answers.  These truth answers were generated in Mathematica implementing the same initial conditions, and replicating the integration math.    The accuracy threshold is set to 1 meter, a small value compared to the 7,000,000 meter near-circular orbit radius.  
+The integrated position states are checked at 5 even data points along the simulation time against pre-computed truth answers.  These truth answers were generated in Mathematica implementing the same initial conditions, and replicating the integration math.    The accuracy threshold is set to 1 meter, a small value compared to the 7,000,000 meter near-circular orbit radius.  
 
 
 

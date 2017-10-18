@@ -7,7 +7,7 @@
 The AVS lab has released a set of astrodynamics C-functions\footnote{\url{http://hanspeterschaub.info/AVS-Code.html}} that facilitate common orbital or rotational dynamics evaluations.  The functions are openly available, and are included with the AIAA Education Series textbook \emph{Analytical Mechanics of Space Systems}\cite{schaub} since the first release in 2003.  The most up to date public versions are found on the AVS web page.
 
 \subsection{{\tt linearAlgebra} Library}
-The linear algebra library provides numerous C-based functions to perform basic matrix math operations.  For a complete list of functions supported, consult the {\tt linearAlgebra.h} file.   The library provides common matrix and vector manipulations tools such as performing a matrix product, including the transpose operators, as well as doing the matrix inverse operations.  The vector library supports doing dot and cross product operations, as well as taking a norms.  Helper functions are provided to initial zero or identity matrices, as well as check if the matrix elements are zero
+The linear algebra library provides numerous C-based functions to perform basic matrix math operations.  For a complete list of functions supported, consult the {\tt linearAlgebra.h} file.   The library provides common matrix and vector manipulation tools such as performing a matrix product, including the transpose operators, as well as doing the matrix inverse operations.  The vector library supports doing dot and cross product operations, as well as taking a norm of a vector.  Helper functions are provided to initial zero or identity matrices, as well as check if the matrix elements are zero
 
 
 
@@ -27,7 +27,7 @@ The classcial orbit elements are given by
 $$
 	(a, e, i, \Omega, \omega, f)
 $$
-where $a$ is the semi-major axis or SMA, $e$ is the eccentricity, $(\Omega, i, \omega)$ are the 3-1-3 Euler angle orbit plan orientation angles called the ascending node $\Omega$, the inclination angle $i$ and the argument of periapses $\omega$ which are illustrated in Figure~\ref{fig:orbit313}.   The semi-latus rectum $p$ is defined as
+where $a$ is the semi-major axis or SMA, $e$ is the eccentricity, $(\Omega, i, \omega)$ are the 3-1-3 Euler angle orbit plane orientation angles called the ascending node $\Omega$, the inclination angle $i$ and the argument of periapses $\omega$ which are illustrated in Figure~\ref{fig:orbit313}.   The semi-latus rectum $p$ is defined as
 \begin{equation}
 	p = a (1-e^{2})
 \end{equation}
@@ -58,7 +58,7 @@ The mean anomaly angle $M$ relates to the eccentric anomaly angle $E$ through\ci
 
 The classical orbit elements for a hyperbolic scenario are shown in Figure~\ref{fig:orbitHyperbolic}.  Note that the convention is used where the SMA is a negative value for a hyperbolic orbit, and thus $a < 0$ in this case.  The true anomaly angle $f$ definition is universal for all orbit types, while the hyperbolic anomaly $H$ relates to $f$ through
 \begin{equation}
-	\tanh\left( \frac{f}{2} \right) = \sqrt{ \frac{e+1}{e-1}} \tanh\left( \frac{h}{2} \right) 
+	\tanh\left( \frac{f}{2} \right) = \sqrt{ \frac{e+1}{e-1}} \tanh\left( \frac{H}{2} \right) 
 \end{equation}
 The hyperbolic mean anomaly is defined in terms of the hyperbolic anomaly through
 \begin{equation}
@@ -66,7 +66,7 @@ The hyperbolic mean anomaly is defined in terms of the hyperbolic anomaly throug
 \end{equation}
 
 
-While mapping from to mean anomalies is analytical, the inverse is not.  The sub-routines use Newton's method to numerically solve from mean anomalies to the corresponding eccentric or hyperbolic anomalies.  This is called solving Kepler's equation.  The iterations continue until a change tolerance of $10^{-13}$ radians is achieved, or a maximum of 200 iterations are performed.  Note that solving this Kepler's equation for most cases converges very quickly within 3-5 iterations.  
+While mapping from eccentric or hyperbolic anomalies to mean anomalies is analytical, the inverse is not.  The sub-routines use Newton's method to numerically solve from mean anomalies to the corresponding eccentric or hyperbolic anomalies.  This is called solving Kepler's equation.  The iterations continue until a change tolerance of $10^{-13}$ radians is achieved, or a maximum of 200 iterations are performed.  Note that solving this Kepler's equation for most cases converges very quickly within 3-5 iterations.  
 
 
 
@@ -225,7 +225,7 @@ This program computes the Debye Length length for a given  altitude and is valid
 \paragraph{Atmospheric Drag Acceleration}
 This program computes the atmospheric drag acceleration   vector $\leftexp{N}{\bm a}_{d}$ acting on a spacecraft.   Note the acceleration vector output is inertial, and is   only valid for altitudes up to 1000 km.   Afterwards the drag force is zero. Only valid for Earth.  The disturbance acceleration is defined as
 \begin{equation}
-	\bm a_{d} = -\frac{\rho}{2} C_{d} \frac{A v^{2}}{m}
+	\bm a_{d} = -\frac{\rho}{2} C_{d} \frac{A v^{2}}{m} \cdot \frac{\dot{\bm r}}{|\bm r|}
 \end{equation}
 where $\rho$ is the local atmospheric density, $C_{d}$ is the drag coefficient, $A$ is the projected area into the flight direction, and $m$ is the spacecraft mass.
 
@@ -316,7 +316,7 @@ A simple solar disturbance acceleration $\bm a_{d}$ function is implemented wher
 \begin{equation}
 	\bm a_{d} = - \frac{C_{r} A \Pi}{m c s^{3}} \bm s
 \end{equation}
-where $C_{r} = 1.3$ is the radiation pressure coefficient,  $c = 299792458$m is the speed of light, $\Pi = 1372.5398$ W/m$^{2}$ is the solar radiation flux and $\bm s$ is the sun position vector relative to the spacecraft in units of AU.  
+where $C_{r} = 1.3$ is the radiation pressure coefficient,  $c = 299792458$m/s is the speed of light, $\Pi = 1372.5398$ W/m$^{2}$ is the solar radiation flux and $\bm s$ is the sun position vector relative to the spacecraft in units of AU.  The area $A$ is the projected area towards the sun.
 
 
 
