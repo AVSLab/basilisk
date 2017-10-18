@@ -100,6 +100,9 @@ void SpacecraftPlus::writeOutputMessages(uint64_t clockTime)
     eigenMatrixXd2CArray(this->hubOmega_BN_B->getState(), stateOut.omega_BN_B);
     eigenMatrixXd2CArray(this->dvAccum_B, stateOut.TotalAccumDVBdy);
     stateOut.MRPSwitchCount = this->hub.MRPSwitchCount;
+    eigenMatrixXd2CArray(this->dvAccum_BN_B, stateOut.TotalAccumDV_BN_B);
+    eigenVector3d2CArray(this->nonConservativeAccelpntB_B, stateOut.nonConservativeAccelpntB_B);
+    eigenVector3d2CArray(this->omegaDot_BN_B, stateOut.omegaDot_BN_B);
     SystemMessaging::GetInstance()->WriteMessage(this->scStateOutMsgId, clockTime, sizeof(SCPlusStatesSimMsg),
                                                  reinterpret_cast<uint8_t*> (&stateOut), this->moduleID);
 
@@ -360,12 +363,16 @@ void SpacecraftPlus::integrateState(double integrateToThisTime)
     Eigen::Vector3d oldV_BN_N = this->hubV_N->getState();  // - V_BN_N before integration
     Eigen::Vector3d oldV_CN_N;  // - V_CN_N before integration
     Eigen::Vector3d oldC_B;     // - Center of mass offset before integration
+    Eigen::Vector3d oldOmega_BN_B;  // - angular rate of B wrt N in the Body frame
     Eigen::MRPd oldSigma_BN;    // - Sigma_BN before integration
+    // - Get the angular rate, oldOmega_BN_B from the dyn manager
+    oldOmega_BN_B = this->hubOmega_BN_B->getStateDeriv();
     // - Get center of mass, v_BN_N and dcm_NB from the dyn manager
     oldSigma_BN = (Eigen::Vector3d) this->hubSigma->getState();
     // - Finally find v_CN_N
     Eigen::Matrix3d oldDcm_NB = oldSigma_BN.toRotationMatrix(); // - dcm_NB before integration
     oldV_CN_N = oldV_BN_N + oldDcm_NB*(*this->cDot_B);
+    
 
     // - Integrate the state from the last time (timeBefore) to the integrateToThisTime
     double timeBefore = integrateToThisTime - localTimeStep;
@@ -398,17 +405,32 @@ void SpacecraftPlus::integrateState(double integrateToThisTime)
     newV_CN_N = newV_BN_N + newDcm_NB*(*this->cDot_B);
 
     // - Find change in velocity
-    Eigen::Vector3d dV_N;
+    Eigen::Vector3d dV_N; // dV of the center of mass in the intertial frame
+    Eigen::Vector3d dV_B_N; //dV of the body frame in the inertial frame
+    Eigen::Vector3d dV_B_B; //dV of the body frame in the body frame
     dV_N = newV_CN_N - oldV_CN_N;
+    dV_B_N = newV_BN_N - oldV_BN_N;
     // - Subtract out gravity
     Eigen::Vector3d g_N;
     g_N = *(this->hub.g_N);
     dV_N -= g_N*localTimeStep;
+    dV_B_N -= g_N*localTimeStep;
+    dV_B_B = newDcm_NB.transpose()*dV_B_N;
 
-    // - Find accumulated DV in the body frame
-    Eigen::Matrix3d dcm_BN;
-    dcm_BN = newDcm_NB.transpose();
-    this->dvAccum_B += dcm_BN*dV_N;
+    // - Find accumulated DV of the center of mass in the body frame
+    this->dvAccum_B += newDcm_NB.transpose()*dV_N;
+    
+    // - Find the accumulated DV of the body frame in the body frame
+    this->dvAccum_BN_B += dV_B_B;
+    
+    // - non-conservative acceleration of the body frame in the body frame
+    this->nonConservativeAccelpntB_B = dV_B_B/localTimeStep;
+    
+    // - angular acceleration in the body frame
+    Eigen::Vector3d newOmega_BN_B;
+    Eigen::Vector3d omegaDot_BN_B;
+    newOmega_BN_B = this->hubOmega_BN_B->getStateDeriv();
+    omegaDot_BN_B = (newOmega_BN_B - oldOmega_BN_B)/localTimeStep; //angular acceleration of B wrt N in the Body fram
 
     // - Compute Energy and Momentum
     this->computeEnergyMomentum(integrateToThisTime);
