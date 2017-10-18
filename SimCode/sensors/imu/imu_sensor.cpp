@@ -180,9 +180,6 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
         }
         v3Subtract(this->sensedValues.AccelPlatform, scaledMeas, accelError);
         v3Copy(scaledMeas, this->sensedValues.AccelPlatform);
-
-//        v3Scale(dt, intMeas, intMeas);
-//        v3Subtract(this->sensedValues.DVFramePlatform, intMeas, this->sensedValues.DVFramePlatform); //Account for acceleration discretization in velocity output
         v3Copy(this->StateCurrent.sigma_BN, sigma_BN);
         MRP2C(sigma_BN, dcm_BN);
         m33MultM33(this->dcm_PB, dcm_BN, dcm_PN);
@@ -335,11 +332,11 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
 {
     double omega_BN_N_1[3];     //omega_BN_N before
     double omega_BN_N_2[3];     //omega_BN_N now
-    double omega_x_r[3];        //omega_BN_B x r_SB_B
+    double omega_x_r_B[3];      //omega_BN_B x r_SB_B in body frame components
     double omega_x_r_N[3];      //above in inertial frame for numerical differencing derivative.
     double omega_x_r_prev_N[3]; //above in the inertial from for numerical differencing derivative.
-    double omega_x_omega_x_r[3];//omega_BN_B x (omega_BN_B x r_SB_B)
-    double omegaDot_x_r[3];     //(time derivative of omega_BN_B) x r_SB_B
+    double omega_x_omega_x_r_B[3];//omega_BN_B x (omega_BN_B x r_SB_B) in body frame components
+    double omegaDot_x_r_B[3];   //(time derivative of omega_BN_B) x r_SB_B in body frame components
     double rotationalTerms[3];  //(time derivative of omega_BN_B) x r_SB_B + omega_BN_B x (omega_BN_B x r_SB_B)
     double rotationalDelta_N[3];//delta in rotationl velocity term of sensor motion in N frame
     
@@ -356,9 +353,7 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
     double accumDV_BN_N_2[3];   // Inertial DV accumulated since t=0 by the body in the inertial frame due to non-conservative forces at time 1
     
     double dcm_BN_1[3][3];      // direction cosine matrix from N to B at time 1
-    double dcm_NB_1[3][3];      // direction cosine matrix from B to N at time 1
     double dcm_BN_2[3][3];      // direction cosine matrix from N to B at time 2
-    double dcm_NB_2[3][3];      // direction cosine matrix from B to N at time 2
     
     double dt;                  // timestep [s]
 
@@ -367,25 +362,23 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
     //Calculate "instantaneous" linear acceleration
     v3Copy(this->StateCurrent.nonConservativeAccelpntB_B, rDotDot_BN_B);
     v3Copy(this->sensorPos_B, r_SB_B);
-    v3Cross(this->StateCurrent.omegaDot_BN_B, r_SB_B, omegaDot_x_r);
-    v3Cross(this->StateCurrent.omega_BN_B, r_SB_B, omega_x_r);
-    v3Cross(this->StateCurrent.omega_BN_B, omega_x_r, omega_x_omega_x_r);
-    v3Add(omegaDot_x_r, omega_x_omega_x_r, rotationalTerms);
+    v3Cross(this->StateCurrent.omegaDot_BN_B, r_SB_B, omegaDot_x_r_B);
+    v3Cross(this->StateCurrent.omega_BN_B, r_SB_B, omega_x_r_B);
+    v3Cross(this->StateCurrent.omega_BN_B, omega_x_r_B, omega_x_omega_x_r_B);
+    v3Add(omegaDot_x_r_B, omega_x_omega_x_r_B, rotationalTerms);
     v3Add(rDotDot_BN_B, rotationalTerms, rDotDot_SN_B);
     m33MultV3(this->dcm_PB, rDotDot_SN_B, this->trueValues.AccelPlatform);
     
     //Calculate time-average cumulative delta v
     MRP2C(this->StatePrevious.sigma_BN, dcm_BN_1);
-    m33Transpose(dcm_BN_1, dcm_NB_1);
     MRP2C(this->StateCurrent.sigma_BN, dcm_BN_2);
-    m33Transpose(dcm_BN_2, dcm_NB_2);
-    m33MultV3(dcm_NB_1, this->StatePrevious.TotalAccumDV_BN_B, accumDV_BN_N_1);
-    m33MultV3(dcm_NB_2, this->StateCurrent.TotalAccumDV_BN_B, accumDV_BN_N_2);
+    m33tMultV3(dcm_BN_1, this->StatePrevious.TotalAccumDV_BN_B, accumDV_BN_N_1);
+    m33tMultV3(dcm_BN_2, this->StateCurrent.TotalAccumDV_BN_B, accumDV_BN_N_2);
     v3Subtract(accumDV_BN_N_2, accumDV_BN_N_1, drDot_BN_N);
-    m33MultV3(dcm_NB_1, r_SB_B, r_SB_N_1);
-    m33MultV3(dcm_NB_2, r_SB_B, r_SB_N_2);
-    m33MultV3(dcm_NB_1, this->StatePrevious.omega_BN_B, omega_BN_N_1);
-    m33MultV3(dcm_NB_2, this->StateCurrent.omega_BN_B, omega_BN_N_2);
+    m33tMultV3(dcm_BN_1, r_SB_B, r_SB_N_1);
+    m33tMultV3(dcm_BN_2, r_SB_B, r_SB_N_2);
+    m33tMultV3(dcm_BN_1, this->StatePrevious.omega_BN_B, omega_BN_N_1);
+    m33tMultV3(dcm_BN_2, this->StateCurrent.omega_BN_B, omega_BN_N_2);
     v3Cross(omega_BN_N_1, r_SB_N_1, omega_x_r_prev_N);
     v3Cross(omega_BN_N_2, r_SB_N_2, omega_x_r_N);
     v3Subtract(omega_x_r_N, omega_x_r_prev_N, rotationalDelta_N);
