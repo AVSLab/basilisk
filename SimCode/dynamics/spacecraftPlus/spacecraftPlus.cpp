@@ -414,14 +414,11 @@ void SpacecraftPlus::integrateState(double integrateToThisTime)
     Eigen::Vector3d g_N;
     g_N = *(this->hub.g_N);
     dV_N -= g_N*localTimeStep;
-    Eigen::Matrix3d dcm_BN;
-    dcm_BN = newDcm_NB.transpose();
     dV_B_N -= g_N*localTimeStep;
-    dV_B_B = dcm_BN*dV_B_N;
-    
+    dV_B_B = newDcm_NB.transpose()*dV_B_N;
 
     // - Find accumulated DV of the center of mass in the body frame
-    this->dvAccum_B += dcm_BN*dV_N;
+    this->dvAccum_B += newDcm_NB.transpose()*dV_N;
     
     // - Find the accumulated DV of the body frame in the body frame
     this->dvAccum_BN_B += dV_B_B;
@@ -432,11 +429,8 @@ void SpacecraftPlus::integrateState(double integrateToThisTime)
     // - angular acceleration in the body frame
     Eigen::Vector3d newOmega_BN_B;
     Eigen::Vector3d omegaDot_BN_B;
-    Eigen::Vector3d deltaOmega_BN_B;
     newOmega_BN_B = this->hubOmega_BN_B->getStateDeriv();
-    deltaOmega_BN_B = newOmega_BN_B - oldOmega_BN_B;
-    omegaDot_BN_B = deltaOmega_BN_B/localTimeStep; //angular acceleration of B wrt N in the Body frame
-    
+    omegaDot_BN_B = (newOmega_BN_B - oldOmega_BN_B)/localTimeStep; //angular acceleration of B wrt N in the Body fram
 
     // - Compute Energy and Momentum
     this->computeEnergyMomentum(integrateToThisTime);
