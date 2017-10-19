@@ -139,7 +139,7 @@ def test_MonteCarloSimulation(show_plots):
     monteCarlo.addDispersion(NormalVectorCartDispersion(disp2Name, 0.0, 0.75 / 3.0 * np.pi / 180))
     monteCarlo.addDispersion(UniformDispersion(disp3Name, ([750.0 - 0.05*750, 750.0 + 0.05*750])))
     monteCarlo.addDispersion(NormalVectorCartDispersion(disp4Name, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
-    monteCarlo.addDispersion(InertiaTensorDispersion(disp5Name))
+    monteCarlo.addDispersion(InertiaTensorDispersion(disp5Name, stdAngle=0.1))
     # monteCarlo.addDispersion(InertiaTensorDispersion(disp6Name, [0.05, 0.05, 0.05]))
 
     dispList =[disp1Name, disp2Name, disp3Name, disp4Name, disp5Name]
