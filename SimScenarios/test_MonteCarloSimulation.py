@@ -78,7 +78,7 @@ from MonteCarlo.Controller import Controller, RetentionPolicy
 from MonteCarlo.Dispersions import UniformEulerAngleMRPDispersion, UniformDispersion, NormalVectorCartDispersion, InertiaTensorDispersion
 
 
-NUMBER_OF_RUNS = 8
+NUMBER_OF_RUNS = 10
 VERBOSE = True
 
 # Here are the name of some messages that we want to retain or otherwise use
@@ -131,21 +131,31 @@ def test_MonteCarloSimulation(show_plots):
     monteCarlo.setArchiveDir(dirName)
 
     # Statistical dispersions can be applied to initial parameters using the MonteCarlo module.
-    disp1Name = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
-    disp2Name = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
-    disp3Name = 'TaskList[0].TaskModels[0].hub.mHub'
-    disp4Name = 'TaskList[0].TaskModels[0].hub.r_BcB_B'
-    disp5Name = 'hubref.IHubPntBc_B'
-    # disp6Name = 'RW1.gsHat_B'
-    monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(disp1Name))
-    monteCarlo.addDispersion(NormalVectorCartDispersion(disp2Name, 0.0, 0.75 / 3.0 * np.pi / 180))
-    monteCarlo.addDispersion(UniformDispersion(disp3Name, ([750.0 - 0.05*750, 750.0 + 0.05*750])))
-    monteCarlo.addDispersion(NormalVectorCartDispersion(disp4Name, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
-    monteCarlo.addDispersion(InertiaTensorDispersion(disp5Name, stdAngle=0.1))
-    # monteCarlo.addDispersion(InertiaTensorDispersion(disp6Name, [0.05, 0.05, 0.05]))
-
-    dispList =[disp1Name, disp2Name, disp3Name, disp4Name, disp5Name]
-
+    dispMRPInit = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
+    dispOmegaInit = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
+    dispMass = 'TaskList[0].TaskModels[0].hub.mHub'
+    dispCoMOff = 'TaskList[0].TaskModels[0].hub.r_BcB_B'
+    dispInertia = 'hubref.IHubPntBc_B'
+    dispRW1Axis = 'RW1.gsHat_B'
+    dispRW2Axis = 'RW2.gsHat_B'
+    dispRW3Axis = 'RW3.gsHat_B'
+    dispRW1Omega = 'RW1.Omega'
+    dispRW2Omega = 'RW2.Omega'
+    dispRW3Omega = 'RW3.Omega'
+    dispVoltageIO = 'rwVoltageIO.voltage2TorqueGain'
+    dispList = [dispMRPInit, dispOmegaInit, dispMass, dispCoMOff, dispInertia]
+    monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(dispMRPInit))
+    monteCarlo.addDispersion(NormalVectorCartDispersion(dispOmegaInit, 0.0, 0.75 / 3.0 * np.pi / 180))
+    monteCarlo.addDispersion(UniformDispersion(dispMass, ([750.0 - 0.05*750, 750.0 + 0.05*750])))
+    monteCarlo.addDispersion(NormalVectorCartDispersion(dispCoMOff, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
+    monteCarlo.addDispersion(InertiaTensorDispersion(dispInertia, stdAngle=0.1))
+    monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW1Axis, [1.0, 0.0, 0.0], [0.01 / 3.0, 0.005 / 3.0, 0.005 / 3.0]))
+    monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW2Axis, [0.0, 1.0, 0.0], [0.005 / 3.0, 0.01 / 3.0, 0.005 / 3.0]))
+    monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW3Axis, [0.0, 0.0, 1.0], [0.005 / 3.0, 0.005 / 3.0, 0.01 / 3.0]))
+    monteCarlo.addDispersion(UniformDispersion(dispRW1Omega, ([100.0 - 0.05*100, 100.0 + 0.05*100])))
+    monteCarlo.addDispersion(UniformDispersion(dispRW2Omega, ([200.0 - 0.05*200, 200.0 + 0.05*200])))
+    monteCarlo.addDispersion(UniformDispersion(dispRW3Omega, ([300.0 - 0.05*300, 300.0 + 0.05*300])))
+    monteCarlo.addDispersion(UniformDispersion(dispVoltageIO, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
     # A `RetentionPolicy` is used to define what data from the simulation should be retained. A `RetentionPolicy` is a list of messages and variables to log from each simulation run. It also has a callback, used for plotting/processing the retained data.
     retentionPolicy = RetentionPolicy()
     # define the data to retain
@@ -273,6 +283,8 @@ def createScenarioAttitudeFeedbackRW():
     # set module parameters(s)
     rwVoltageIO.voltage2TorqueGain = 0.2/10.  # [Nm/V] conversion gain
 
+    #Add RW Voltage to sim for dispersion
+    scSim.rwVoltageIO = rwVoltageIO
     # Add test module to runtime call list
     scSim.AddModelToTask(simTaskName, rwVoltageIO)
 
@@ -320,7 +332,11 @@ def createScenarioAttitudeFeedbackRW():
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
     rwFactory.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
+
+    #Add RWs to sim for dispersion
     scSim.RW1 = RW1
+    scSim.RW2 = RW2
+    scSim.RW3 = RW3
     # add RW object array to the simulation process
     scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
 
