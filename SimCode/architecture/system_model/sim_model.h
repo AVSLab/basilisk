@@ -24,7 +24,7 @@
 #include <set>
 #include "architecture/system_model/sys_process.h"
 #include "architecture/messaging/system_messaging.h"
-#include "architecture/system_model/message_logger.h"
+#include "utilities/message_logger.h"
 
 /*! \addtogroup SimArchGroup
  *  This architecture group contains the source used to drive/schedule/interface

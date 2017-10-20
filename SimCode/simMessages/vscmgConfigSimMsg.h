@@ -20,6 +20,9 @@
 #ifndef SIM_VSCMG_CONFIG_MESSAGE_H
 #define SIM_VSCMG_CONFIG_MESSAGE_H
 
+#include <Eigen/Dense>
+#include <vector>
+
 /*! @brief enumeration definiting the types of VSCMG modes */ 
 enum VSCMGModels { vscmgBalancedWheels, vscmgJitterSimple, vscmgJitterFullyCoupled };
 

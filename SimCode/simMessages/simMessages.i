@@ -19,8 +19,6 @@
 
 %module simMessages
 %{
-#include <Eigen/Dense>
-#include <vector>
 #include "boreAngleSimMsg.h"
 #include "cssRawDataSimMsg.h"
 #include "eclipseSimMsg.h"
@@ -92,7 +90,9 @@ GEN_SIZEOF(HingedRigidBodySimMsg)
 %include "pyBatteryOutMsg.h"
 GEN_SIZEOF(PyBatteryOutMsg)
 
+#ifndef CSHARP_ROX
 %pythoncode %{
     import sys
     protectAllClasses(sys.modules[__name__])
     %}
+#endif

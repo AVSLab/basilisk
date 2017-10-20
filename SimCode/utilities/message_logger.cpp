@@ -17,10 +17,11 @@
 
  */
 
-#include "architecture/system_model/message_logger.h"
+#include "utilities/message_logger.h"
 #include <cstring>
 #include <iostream>
 #include <map>
+#include <fstream>
 
 /*! This constructor is used to initialize the message logging data.  It clears
  out the message log list and resets the logger to a clean state.
@@ -222,4 +223,69 @@ void messageLogger::clearLogs()
         addMessageLog(mapIt->first, mapIt->second);
     }
     
+}
+
+void messageLogger::archiveLogsToDisk(std::string outFileName)
+{
+	uint32_t totalMessageCount, messageNameLength;
+	char zero = 0x0;
+	std::fstream ofile;
+	std::vector<messageLogContainer>::iterator it;
+	ofile.open(outFileName, std::ios::out | std::ios::trunc | std::ios::binary);
+	totalMessageCount = logData.size();
+	ofile.write(reinterpret_cast<const char*>(&totalMessageCount), sizeof(totalMessageCount));
+	for (it = logData.begin(); it != logData.end(); it++)
+	{
+		messageNameLength = it->messageName.size()+1;
+		ofile.write(reinterpret_cast<const char*>(&messageNameLength), sizeof(messageNameLength));
+		ofile.write(it->messageName.c_str(), messageNameLength - 1);
+		ofile.write(&zero, 1);
+		ofile.write(reinterpret_cast<const char*>(&(it->messageID)), sizeof(it->messageID));
+		ofile.write(reinterpret_cast<const char*>(&(it->logInstanceCount)), sizeof(it->logInstanceCount));
+		ofile.write(reinterpret_cast<const char*>(&(it->bufferOffset)), sizeof(it->bufferOffset));
+		ofile.write(reinterpret_cast<const char*>(it->messageBuffer.StorageBuffer), it->bufferOffset);
+	}
+	ofile.close();
+}
+
+void messageLogger::loadArchiveFromDisk(std::string inFileName)
+{
+	std::ifstream iFile;
+	uint32_t totalMessageCount, messageNameLength;
+	uint64_t dataBufferSize;
+
+	logData.clear();
+	iFile.open(inFileName, std::ios::in | std::ios::binary);
+	iFile.read(reinterpret_cast<char*> (&totalMessageCount), sizeof(totalMessageCount));
+	for (int i = 0; i < totalMessageCount; i++)
+	{
+		messageLogContainer newContainer;
+		iFile.read(reinterpret_cast<char*> (&messageNameLength), sizeof(messageNameLength));
+		char *msgName = new char[messageNameLength];
+		iFile.read(msgName, messageNameLength);
+		newContainer.messageName = msgName;
+		iFile.read(reinterpret_cast<char*> (&newContainer.messageID), 
+			sizeof(newContainer.messageID));
+		iFile.read(reinterpret_cast<char*> (&newContainer.logInstanceCount), 
+			sizeof(newContainer.logInstanceCount));
+		iFile.read(reinterpret_cast<char*> (&dataBufferSize), sizeof(dataBufferSize));
+		newContainer.messageBuffer.ClearStorage();
+		newContainer.messageBuffer.IncreaseStorage(dataBufferSize);
+		iFile.read(reinterpret_cast<char*> (newContainer.messageBuffer.StorageBuffer), dataBufferSize);
+		newContainer.storOff.clear();
+		SingleMessageHeader *headPtr;
+		uint64_t bytesRead = 0;
+		uint8_t *dataPtr; 
+		while (bytesRead < dataBufferSize)
+		{
+			dataPtr = &(newContainer.messageBuffer.StorageBuffer[bytesRead]);
+			headPtr = reinterpret_cast<SingleMessageHeader*> (dataPtr);
+			newContainer.storOff.push_back(bytesRead);
+			bytesRead += sizeof(SingleMessageHeader);
+			bytesRead += headPtr->WriteSize;
+		}
+		logData.push_back(newContainer);
+	}
+
+	iFile.close();
 }

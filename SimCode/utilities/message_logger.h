@@ -41,6 +41,16 @@ typedef struct {
     std::vector<uint64_t> storOff; //!< -- Vector of storage buffer offset offsets for access
 }messageLogContainer;
 
+//Note that when archiving, this is the file format:
+/* uint32_t uniqueMessageCount
+   for each message:
+	   uint32_t messageNameLength
+	   char * messageName of length messageNameLength
+	   int32_t messageID
+	   uint64_t messageLogCount
+	   uint64_t dataBufferSize
+	   uint8_t *dataBuffer of length dataBufferSize*/
+
 //! The top-level container for an entire simulation
 class messageLogger
 {
@@ -55,6 +65,8 @@ public:
                  uint64_t maxBytes, uint8_t *msgPayload, uint64_t currentOffset=0);
     uint64_t getLogCount(int64_t processID, int64_t messageID);
     void clearLogs();
+	void archiveLogsToDisk(std::string outFileName);
+	void loadArchiveFromDisk(std::string inFileName);
     
 public:
     uint64_t initBufferSize; //!< Default buffer size fo message log storage
