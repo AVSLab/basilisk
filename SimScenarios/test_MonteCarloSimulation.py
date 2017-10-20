@@ -85,9 +85,11 @@ VERBOSE = True
 inertial3DConfigOutputDataName = "guidanceInertial3D"
 attErrorConfigOutputDataName = "attErrorInertial3DMsg"
 mrpControlConfigOutputDataName = "LrRequested"
-rwMotorTorqueConfigOutputDataName = "reactionwheel_cmds"
+rwMotorTorqueConfigOutputDataName = "rw_torque_Lr"
 mrpControlConfigInputRWSpeedsName = "reactionwheel_output_states"
 sNavObjectOutputTransName = "simple_trans_nav_output"
+fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
+
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
 # We also will need the simulationTime and samplingTimes
@@ -151,6 +153,8 @@ def test_MonteCarloSimulation(show_plots):
     retentionPolicy.addMessageLog(attErrorConfigOutputDataName, [("sigma_BR", range(3)), ("omega_BR_B", range(3))], samplingTime)
     retentionPolicy.addMessageLog(sNavObjectOutputTransName, [("r_BN_N", range(3))], samplingTime)
     retentionPolicy.addMessageLog(mrpControlConfigInputRWSpeedsName, [("wheelSpeeds", range(3))], samplingTime)
+    retentionPolicy.addMessageLog(fswRWVoltageConfigVoltageOutMsgName, [("voltage", range(3))], samplingTime)
+
     for message in rwOutName:
         retentionPolicy.addMessageLog(message, [("u_current", range(1))], samplingTime)
     if show_plots:
@@ -214,6 +218,7 @@ def test_MonteCarloSimulation(show_plots):
 
     # And possibly show the plots
     if show_plots:
+        print "Test concluded, showing plots now..."
         plt.show()
         # close the plots being saved off to avoid over-writing old and new figures
         plt.close("all")
@@ -259,9 +264,17 @@ def createScenarioAttitudeFeedbackRW():
     scObject.hub.useRotation = True
     scSim.hubref = scObject.hub
 
-
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject, None, 1)
+
+    rwVoltageIO = rwVoltageInterface.RWVoltageInterface()
+    rwVoltageIO.ModelTag = "rwVoltageInterface"
+
+    # set module parameters(s)
+    rwVoltageIO.voltage2TorqueGain = 0.2/10.  # [Nm/V] conversion gain
+
+    # Add test module to runtime call list
+    scSim.AddModelToTask(simTaskName, rwVoltageIO)
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -307,7 +320,7 @@ def createScenarioAttitudeFeedbackRW():
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
     rwFactory.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
-    scSim.obj = scObject
+    scSim.RW1 = RW1
     # add RW object array to the simulation process
     scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
 
@@ -371,6 +384,22 @@ def createScenarioAttitudeFeedbackRW():
         ]
     rwMotorTorqueConfig.controlAxes_B = controlAxes_B
 
+    fswRWVoltageConfig = rwMotorVoltage.rwMotorVoltageConfig()
+    fswRWVoltageWrap = scSim.setModelDataWrap(fswRWVoltageConfig)
+    fswRWVoltageWrap.ModelTag = "rwMotorVoltage"
+
+    # Add test module to runtime call list
+    scSim.AddModelToTask(simTaskName, fswRWVoltageWrap, fswRWVoltageConfig)
+
+    # Initialize the test module configuration data
+    fswRWVoltageConfig.torqueInMsgName = rwMotorTorqueConfig.outputDataName
+    fswRWVoltageConfig.rwParamsInMsgName = mrpControlConfig.rwParamsInMsgName
+    fswRWVoltageConfig.voltageOutMsgName = rwVoltageIO.rwVoltageInMsgName
+
+    # set module parameters
+    fswRWVoltageConfig.VMin = 0.0  # Volts
+    fswRWVoltageConfig.VMax = 10.0  # Volts
+
     #
     # create simulation messages
     #
@@ -409,7 +438,7 @@ def createScenarioAttitudeFeedbackRW():
 
     # This is a hack because of a bug in Basilisk... leave this line it keeps
     # variables from going out of scope after this function returns
-    scSim.additionalReferences = [earth, rwMotorTorqueWrap, mrpControlWrap, attErrorWrap, inertial3DWrap]
+    scSim.additionalReferences = [rwVoltageIO, fswRWVoltageWrap, scObject, earth, rwMotorTorqueWrap, mrpControlWrap, attErrorWrap, inertial3DWrap]
 
     return scSim
 
@@ -436,6 +465,7 @@ def plotSim(data, retentionPolicy):
     dataOmegaBR = data["messages"][attErrorConfigOutputDataName+".omega_BR_B"]
     dataPos = data["messages"][sNavObjectOutputTransName+".r_BN_N"]
     dataOmegaRW = data["messages"][mrpControlConfigInputRWSpeedsName+".wheelSpeeds"]
+    dataVolt = data["messages"][fswRWVoltageConfigVoltageOutMsgName+".voltage"]
     dataRW = []
     for message in rwOutName:
         dataRW.append(data["messages"][message+".u_current"])
@@ -480,6 +510,14 @@ def plotSim(data, retentionPolicy):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')
+
+    plt.figure(5)
+    for idx in range(1, len(rwOutName) + 1):
+        plt.plot(timeData, dataVolt[:, idx],
+                 label='Run ' + str(data["index"]) + ' $V_{' + str(idx) + '}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('RW Volgate (V) ')
 
 #
 # This statement below ensures that the unit test scrip can be run as a
