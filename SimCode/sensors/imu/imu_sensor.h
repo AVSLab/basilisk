@@ -26,6 +26,8 @@
 #include "utilities/gauss_markov.h"
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simFswInterfaceMessages/imuSensorIntMsg.h"
+#include <Eigen/Dense>
+#include "../SimCode/utilities/avsEigenMRP.h"
 
 
 class ImuSensor: public SysModel {
@@ -49,22 +51,22 @@ public:
 public:
     std::string InputStateMsg;          /*!< Message name for spacecraft state */
     std::string OutputDataMsg;          /*!< Message name for CSS output data */
-    double sensorPos_B[3];              /*!< [m] IMU sensor location in body */
-    double dcm_PB[3][3];                /// -- Transform from body to platform
-    double senRotBias[3];               /// [r/s] Rotational Sensor bias value
-    double senTransBias[3];             /// [m/s2] Translational acceleration sen bias
+    Eigen::Vector3d sensorPos_B;              /*!< [m] IMU sensor location in body */
+    Eigen::Matrix3d dcm_PB;                /// -- Transform from body to platform
+    Eigen::Vector3d senRotBias;               /// [r/s] Rotational Sensor bias value
+    Eigen::Vector3d senTransBias;             /// [m/s2] Translational acceleration sen bias
 	double senRotMax;					/// [r/s] Gyro saturation value
 	double senTransMax;					/// [m/s2] Accelerometer saturation value
     uint64_t OutputBufferCount;         /// -- number of output msgs stored
     bool NominalReady;                  /// -- Flag indicating that system is in run
-	std::vector<double> PMatrixAccel;   //!< [-] Covariance matrix used to perturb state
-	std::vector<double> AMatrixAccel;   //!< [-] AMatrix that we use for error propagation
-	std::vector<double> walkBoundsAccel;//!< [-] "3-sigma" errors to permit for states
-	std::vector<double> navErrorsAccel; //!< [-] Current navigation errors applied to truth
-	std::vector<double> PMatrixGyro;    //!< [-] Covariance matrix used to perturb state
-	std::vector<double> AMatrixGyro;    //!< [-] AMatrix that we use for error propagation
-	std::vector<double> walkBoundsGyro; //!< [-] "3-sigma" errors to permit for states
-	std::vector<double> navErrorsGyro;  //!< [-] Current navigation errors applied to truth
+    Eigen::VectorXd PMatrixAccel;   //!< [-] Covariance matrix used to perturb state
+	Eigen::VectorXd AMatrixAccel;   //!< [-] AMatrix that we use for error propagation
+	Eigen::VectorXd walkBoundsAccel;//!< [-] "3-sigma" errors to permit for states
+	Eigen::VectorXd navErrorsAccel; //!< [-] Current navigation errors applied to truth
+	Eigen::VectorXd PMatrixGyro;    //!< [-] Covariance matrix used to perturb state
+	Eigen::VectorXd AMatrixGyro;    //!< [-] AMatrix that we use for error propagation
+	Eigen::VectorXd walkBoundsGyro; //!< [-] "3-sigma" errors to permit for states
+	Eigen::VectorXd navErrorsGyro;  //!< [-] Current navigation errors applied to truth
 
     IMUSensorIntMsg trueValues;         //!< [-] total measurement without perturbations
     IMUSensorIntMsg sensedValues;       //!< [-] total measurement including perturbations

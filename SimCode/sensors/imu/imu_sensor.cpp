@@ -25,6 +25,9 @@
 #include <cstring>
 #include <random>
 #include "utilities/gauss_markov.h"
+#include "utilities/avsEigenSupport.h"
+#include "utilities/avsEigenMRP.h"
+
 
 ImuSensor::ImuSensor()
 {
@@ -38,8 +41,8 @@ ImuSensor::ImuSensor()
     memset(&this->StateCurrent, 0x0, sizeof(SCPlusStatesSimMsg));
     this->PreviousTime = 0;
     this->NominalReady = false;
-    memset(&this->senRotBias[0], 0x0, 3*sizeof(double));
-    memset(&this->senTransBias[0], 0x0, 3*sizeof(double));
+    this->senRotBias.fill(0.0);
+    this->senTransBias.fill(0.0);
     memset(&this->sensedValues, 0x0, sizeof(IMUSensorIntMsg));
     memset(&this->trueValues, 0x0, sizeof(IMUSensorIntMsg));
     this->accelLSB = 0.;
@@ -52,8 +55,9 @@ ImuSensor::ImuSensor()
 
 void ImuSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll)
 {
-    double q[3] = {yaw, pitch, roll};
-    Euler3212C(q, this->dcm_PB);
+    //Eigen::Vector3d q(yaw, pitch, roll);
+    this->dcm_PB = eigenM1(roll)*eigenM2(pitch)*eigenM3(yaw);
+    //Euler3212C(q, this->dcm_PB);
 
     return;
 }
@@ -72,39 +76,43 @@ void ImuSensor::SelfInit()
 
 	uint64_t numStates = 3;
 
-	this->AMatrixAccel.clear();
-	this->AMatrixAccel.insert(this->AMatrixAccel.begin(), numStates*numStates, 0.0);
-	mSetIdentity(this->AMatrixAccel.data(), numStates, numStates);
-	for(uint32_t i=0; i<3; i++)
-	{
-		this->AMatrixAccel.data()[i * 3 + i] = 1.0;
-	}
+	//this->AMatrixAccel.clear();
+    this->AMatrixAccel.setIdentity(numStates,numStates);
+	//this->AMatrixAccel.insert(this->AMatrixAccel.begin(), numStates*numStates, 0.0);
+	//mSetIdentity(this->AMatrixAccel.data(), numStates, numStates);
+	//for(uint32_t i=0; i<3; i++)
+	//{
+	//	this->AMatrixAccel.data()[i * 3 + i] = 1.0;
+	//}
 	//! - Alert the user if the noise matrix was not the right size.  That'd be bad.
-	if(this->PMatrixAccel.size() != numStates*numStates)
+	if(this->PMatrixAccel.cols() != numStates || this->PMatrixAccel.rows() != numStates)
 	{
 		std::cerr << __FILE__ <<": Your process noise matrix (PMatrix) is not 3*3.";
-		std::cerr << "  You should fix that.  Popping zeros onto end"<<std::endl;
-		this->PMatrixAccel.insert(this->PMatrixAccel.begin()+this->PMatrixAccel.size(), numStates*numStates - this->PMatrixAccel.size(),
-					   0.0);
+		//std::cerr << "  You should fix that.  terminating"<<std::endl;
+        std::cerr << "  You should fix that.  Expect Problems"<<std::endl;
+		//this->PMatrixAccel.insert(this->PMatrixAccel.begin()+this->PMatrixAccel.size(), numStates*numStates - this->PMatrixAccel.size(),
+					   //0.0);
 	}
 	this->errorModelAccel.setNoiseMatrix(this->PMatrixAccel);
 	this->errorModelAccel.setRNGSeed(RNGSeed);
 	this->errorModelAccel.setUpperBounds(walkBoundsAccel);
 
-	this->AMatrixGyro.clear();
-	this->AMatrixGyro.insert(this->AMatrixGyro.begin(), numStates*numStates, 0.0);
-	mSetIdentity(this->AMatrixGyro.data(), numStates, numStates);
-	for(uint32_t i=0; i<3; i++)
-	{
-		this->AMatrixGyro.data()[i * 3 + i] = 1.0;
-	}
+    this->AMatrixGyro.setIdentity(numStates, numStates);
+	//this->AMatrixGyro.clear();
+	//this->AMatrixGyro.insert(this->AMatrixGyro.begin(), numStates*numStates, 0.0);
+	//mSetIdentity(this->AMatrixGyro.data(), numStates, numStates);
+	//for(uint32_t i=0; i<3; i++)
+	//{
+	//	this->AMatrixGyro.data()[i * 3 + i] = 1.0;
+	//}
 	//! - Alert the user if the noise matrix was not the right size.  That'd be bad.
-	if(this->PMatrixGyro.size() != numStates*numStates)
+	if(this->PMatrixGyro.rows() != numStates || this->PMatrixGyro.cols() != numStates)
 	{
 		std::cerr << __FILE__ <<": Your process noise matrix (PMatrix) is not 3*3.";
-		std::cerr << "  You should fix that.  Popping zeros onto end"<<std::endl;
-		this->PMatrixGyro.insert(this->PMatrixGyro.begin()+this->PMatrixGyro.size(), numStates*numStates - this->PMatrixGyro.size(),
-							0.0);
+		//std::cerr << "  You should fix that.  Popping zeros onto end"<<std::endl;
+        std::cerr << "  You should fix that.  Expect Problems"<<std::endl;
+		//this->PMatrixGyro.insert(this->PMatrixGyro.begin()+this->PMatrixGyro.size(), numStates*numStates - this->PMatrixGyro.size(),
+		//					0.0);
 	}
 	this->errorModelGyro.setNoiseMatrix(this->PMatrixGyro);
 	this->errorModelGyro.setRNGSeed(RNGSeed);
@@ -155,22 +163,24 @@ void ImuSensor::writeOutputMessages(uint64_t Clock)
 
 void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
 {
-    double scaledMeas[3];
-    double intMeas[3];
-    double accelError[3];
-    double accelError_N[3];
+    Eigen::Vector3d scaledMeas;
+    Eigen::Vector3d intMeas;
+    Eigen::Vector3d accelError;
+    Eigen::Vector3d accelError_N;
     double dt;
-    double sigma_BN[3];
-    double dcm_BN[3][3];
-    double dcm_PN[3][3];
-    double accel_SN_N[3];
-    double DV_SN_N[3];
+    Eigen::MRPd sigma_BN;
+    Eigen::Matrix3d dcm_BN;
+    Eigen::Matrix3d dcm_PN;
+    Eigen::Vector3d accel_SN_N;
+    Eigen::Vector3d DV_SN_N;
+    Eigen::Vector3d DV_SN_P;
     
     dt = (CurrentTime - PreviousTime)*1.0E-9;
     
     if(this->accelLSB > 0.0) //If accelLSB has been set.
     {
-        v3Scale(1.0/this->accelLSB, this->sensedValues.AccelPlatform, scaledMeas);
+        scaledMeas =  cArray2EigenVector3d(this->sensedValues.AccelPlatform) / this->accelLSB;
+        //v3Scale(1.0/this->accelLSB, this->sensedValues.AccelPlatform, scaledMeas);
         for(uint32_t i=0; i<3; i++) //Discretize each part of the acceleration
         {
             scaledMeas[i] = fabs(scaledMeas[i]);
@@ -178,18 +188,30 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
             scaledMeas[i] = scaledMeas[i]*this->accelLSB;
             scaledMeas[i] = copysign(scaledMeas[i], this->sensedValues.AccelPlatform[i]);
         }
-        v3Subtract(this->sensedValues.AccelPlatform, scaledMeas, accelError);
-        v3Copy(scaledMeas, this->sensedValues.AccelPlatform);
-        v3Copy(this->StateCurrent.sigma_BN, sigma_BN);
-        MRP2C(sigma_BN, dcm_BN);
-        m33MultM33(this->dcm_PB, dcm_BN, dcm_PN);
-        m33tMultV3(dcm_PN, this->sensedValues.AccelPlatform, accel_SN_N);
-        m33tMultV3(dcm_PN, this->sensedValues.DVFramePlatform, DV_SN_N);
-        m33tMultV3(dcm_PN, accelError, accelError_N);
-        for(uint32_t i=0; i<3; i++){
-            DV_SN_N[i] -= accelError_N[i]*dt;
-        }
-        m33MultV3(dcm_PN, DV_SN_N, this->sensedValues.DVFramePlatform);
+        accelError = cArray2EigenVector3d(this->sensedValues.AccelPlatform) - scaledMeas;
+        eigenVector3d2CArray(scaledMeas, this->sensedValues.AccelPlatform);
+        sigma_BN = cArray2EigenVector3d(this->StateCurrent.sigma_BN);
+        dcm_BN =  sigma_BN.toRotationMatrix();
+        dcm_PN = this->dcm_PB * dcm_BN;
+        accel_SN_N = dcm_PN * cArray2EigenVector3d(this->sensedValues.AccelPlatform);
+        DV_SN_N = dcm_PN * cArray2EigenVector3d(this->sensedValues.DVFramePlatform);
+        accelError_N = dcm_PN * accelError;
+        DV_SN_N = accelError_N * dt;
+        DV_SN_P = dcm_PN * DV_SN_N;
+        eigenVector3d2CArray(DV_SN_P, this->sensedValues.DVFramePlatform);
+        
+        //v3Subtract(this->sensedValues.AccelPlatform, scaledMeas, accelError);
+        //v3Copy(scaledMeas, this->sensedValues.AccelPlatform);
+        //v3Copy(this->StateCurrent.sigma_BN, sigma_BN);
+        //MRP2C(sigma_BN, dcm_BN);
+        //m33MultM33(this->dcm_PB, dcm_BN, dcm_PN);
+        //m33tMultV3(dcm_PN, this->sensedValues.AccelPlatform, accel_SN_N);
+        //m33tMultV3(dcm_PN, this->sensedValues.DVFramePlatform, DV_SN_N);
+        //m33tMultV3(dcm_PN, accelError, accelError_N);
+        //for(uint32_t i=0; i<3; i++){
+        //    DV_SN_N[i] -= accelError_N[i]*dt;
+        //}
+        //m33MultV3(dcm_PN, DV_SN_N, this->sensedValues.DVFramePlatform);
     }
     
     if(gyroLSB > 0.0) //If gyroLSB has been set
