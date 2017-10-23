@@ -92,7 +92,7 @@ def test_scenarioFuelSlosh(show_plots, damping_parameter, timeStep):
 # one line must be edited in the scenario script to provide the absolute path to the root Basilisk
 # directory.  For example, in `test_scenarioFuelSlosh.py` the line
 #~~~~~~~~~~~~~~{.py}
- 
+# bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
 #~~~~~~~~~~~~~~
 # must be uncommented and edited for the particular user's Basilisk directory path.
 #
