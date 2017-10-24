@@ -61,12 +61,12 @@ public:
     bool NominalReady;                  /// -- Flag indicating that system is in run
     Eigen::VectorXd PMatrixAccel;   //!< [-] Covariance matrix used to perturb state
 	Eigen::VectorXd AMatrixAccel;   //!< [-] AMatrix that we use for error propagation
-	Eigen::VectorXd walkBoundsAccel;//!< [-] "3-sigma" errors to permit for states
-	Eigen::VectorXd navErrorsAccel; //!< [-] Current navigation errors applied to truth
+	Eigen::Vector3d walkBoundsAccel;//!< [-] "3-sigma" errors to permit for states
+	Eigen::Vector3d navErrorsAccel; //!< [-] Current navigation errors applied to truth
 	Eigen::VectorXd PMatrixGyro;    //!< [-] Covariance matrix used to perturb state
 	Eigen::VectorXd AMatrixGyro;    //!< [-] AMatrix that we use for error propagation
-	Eigen::VectorXd walkBoundsGyro; //!< [-] "3-sigma" errors to permit for states
-	Eigen::VectorXd navErrorsGyro;  //!< [-] Current navigation errors applied to truth
+	Eigen::Vector3d walkBoundsGyro; //!< [-] "3-sigma" errors to permit for states
+	Eigen::Vector3d navErrorsGyro;  //!< [-] Current navigation errors applied to truth
 
     IMUSensorIntMsg trueValues;         //!< [-] total measurement without perturbations
     IMUSensorIntMsg sensedValues;       //!< [-] total measurement including perturbations

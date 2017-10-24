@@ -27,6 +27,7 @@
 #include "utilities/gauss_markov.h"
 #include "utilities/avsEigenSupport.h"
 #include "utilities/avsEigenMRP.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
 
 
 ImuSensor::ImuSensor()
@@ -55,9 +56,7 @@ ImuSensor::ImuSensor()
 
 void ImuSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll)
 {
-    //Eigen::Vector3d q(yaw, pitch, roll);
     this->dcm_PB = eigenM1(roll)*eigenM2(pitch)*eigenM3(yaw);
-    //Euler3212C(q, this->dcm_PB);
 
     return;
 }
@@ -76,43 +75,25 @@ void ImuSensor::SelfInit()
 
 	uint64_t numStates = 3;
 
-	//this->AMatrixAccel.clear();
     this->AMatrixAccel.setIdentity(numStates,numStates);
-	//this->AMatrixAccel.insert(this->AMatrixAccel.begin(), numStates*numStates, 0.0);
-	//mSetIdentity(this->AMatrixAccel.data(), numStates, numStates);
-	//for(uint32_t i=0; i<3; i++)
-	//{
-	//	this->AMatrixAccel.data()[i * 3 + i] = 1.0;
-	//}
+
 	//! - Alert the user if the noise matrix was not the right size.  That'd be bad.
 	if(this->PMatrixAccel.cols() != numStates || this->PMatrixAccel.rows() != numStates)
 	{
 		std::cerr << __FILE__ <<": Your process noise matrix (PMatrix) is not 3*3.";
-		//std::cerr << "  You should fix that.  terminating"<<std::endl;
         std::cerr << "  You should fix that.  Expect Problems"<<std::endl;
-		//this->PMatrixAccel.insert(this->PMatrixAccel.begin()+this->PMatrixAccel.size(), numStates*numStates - this->PMatrixAccel.size(),
-					   //0.0);
 	}
 	this->errorModelAccel.setNoiseMatrix(this->PMatrixAccel);
 	this->errorModelAccel.setRNGSeed(RNGSeed);
 	this->errorModelAccel.setUpperBounds(walkBoundsAccel);
 
     this->AMatrixGyro.setIdentity(numStates, numStates);
-	//this->AMatrixGyro.clear();
-	//this->AMatrixGyro.insert(this->AMatrixGyro.begin(), numStates*numStates, 0.0);
-	//mSetIdentity(this->AMatrixGyro.data(), numStates, numStates);
-	//for(uint32_t i=0; i<3; i++)
-	//{
-	//	this->AMatrixGyro.data()[i * 3 + i] = 1.0;
-	//}
+
 	//! - Alert the user if the noise matrix was not the right size.  That'd be bad.
 	if(this->PMatrixGyro.rows() != numStates || this->PMatrixGyro.cols() != numStates)
 	{
 		std::cerr << __FILE__ <<": Your process noise matrix (PMatrix) is not 3*3.";
-		//std::cerr << "  You should fix that.  Popping zeros onto end"<<std::endl;
         std::cerr << "  You should fix that.  Expect Problems"<<std::endl;
-		//this->PMatrixGyro.insert(this->PMatrixGyro.begin()+this->PMatrixGyro.size(), numStates*numStates - this->PMatrixGyro.size(),
-		//					0.0);
 	}
 	this->errorModelGyro.setNoiseMatrix(this->PMatrixGyro);
 	this->errorModelGyro.setRNGSeed(RNGSeed);
@@ -163,24 +144,25 @@ void ImuSensor::writeOutputMessages(uint64_t Clock)
 
 void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
 {
-    Eigen::Vector3d scaledMeas;
-    Eigen::Vector3d intMeas;
-    Eigen::Vector3d accelError;
-    Eigen::Vector3d accelError_N;
-    double dt;
-    Eigen::MRPd sigma_BN;
-    Eigen::Matrix3d dcm_BN;
-    Eigen::Matrix3d dcm_PN;
-    Eigen::Vector3d accel_SN_N;
-    Eigen::Vector3d DV_SN_N;
-    Eigen::Vector3d DV_SN_P;
+    Eigen::Vector3d scaledMeas; //measurement that is scaled due to discretization
+    Eigen::Vector3d intMeas; //error due to discretization in angular rate
+    Eigen::Vector3d accelError; //error in acceleration in the P Frame
+    Eigen::Vector3d accelError_N; //error vector converted to N frame
+    double dt; //time step
+    Eigen::MRPd sigma_BN; //MRP B wrt N
+    Eigen::Matrix3d dcm_BN; //dcm B wrt N
+    Eigen::Matrix3d dcm_PN; // dcm P wrt N
+    Eigen::Vector3d accel_SN_N; //inertial acceration of sensor in inertial frame
+    Eigen::Vector3d DV_SN_N; //accumulated DV of sensor wrt inertial in inertial coordinates
+    Eigen::Vector3d DV_SN_P; //accumulated DV of sensor wrt inertial in platform(sensor) frame
+    Eigen::Vector3d angVel; //eigen version of this->sensedValues.AngVelPlatform
+    Eigen::Vector3d DRFrame; //eigen version of this->sensedValues.DRFramePlatform
     
     dt = (CurrentTime - PreviousTime)*1.0E-9;
     
     if(this->accelLSB > 0.0) //If accelLSB has been set.
     {
         scaledMeas =  cArray2EigenVector3d(this->sensedValues.AccelPlatform) / this->accelLSB;
-        //v3Scale(1.0/this->accelLSB, this->sensedValues.AccelPlatform, scaledMeas);
         for(uint32_t i=0; i<3; i++) //Discretize each part of the acceleration
         {
             scaledMeas[i] = fabs(scaledMeas[i]);
@@ -199,24 +181,12 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
         DV_SN_N = accelError_N * dt;
         DV_SN_P = dcm_PN * DV_SN_N;
         eigenVector3d2CArray(DV_SN_P, this->sensedValues.DVFramePlatform);
-        
-        //v3Subtract(this->sensedValues.AccelPlatform, scaledMeas, accelError);
-        //v3Copy(scaledMeas, this->sensedValues.AccelPlatform);
-        //v3Copy(this->StateCurrent.sigma_BN, sigma_BN);
-        //MRP2C(sigma_BN, dcm_BN);
-        //m33MultM33(this->dcm_PB, dcm_BN, dcm_PN);
-        //m33tMultV3(dcm_PN, this->sensedValues.AccelPlatform, accel_SN_N);
-        //m33tMultV3(dcm_PN, this->sensedValues.DVFramePlatform, DV_SN_N);
-        //m33tMultV3(dcm_PN, accelError, accelError_N);
-        //for(uint32_t i=0; i<3; i++){
-        //    DV_SN_N[i] -= accelError_N[i]*dt;
-        //}
-        //m33MultV3(dcm_PN, DV_SN_N, this->sensedValues.DVFramePlatform);
     }
     
     if(gyroLSB > 0.0) //If gyroLSB has been set
     {
-        v3Scale(1.0/this->gyroLSB, this->sensedValues.AngVelPlatform, scaledMeas);
+        angVel = cArray2EigenVector3d(this->sensedValues.AngVelPlatform);
+        scaledMeas = angVel / this->gyroLSB;
         for(uint32_t i=0; i<3; i++) //Discretize each part of the angular rate
         {
             scaledMeas[i] = fabs(scaledMeas[i]);
@@ -224,10 +194,12 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
             scaledMeas[i] = scaledMeas[i]*this->gyroLSB;
             scaledMeas[i] = copysign(scaledMeas[i], this->sensedValues.AngVelPlatform[i]);
         }
-        v3Subtract(this->sensedValues.AngVelPlatform, scaledMeas, intMeas);
-        v3Copy(scaledMeas, this->sensedValues.AngVelPlatform);
-        v3Scale(dt, intMeas, intMeas);
-        v3Subtract(this->sensedValues.DRFramePlatform, intMeas, this->sensedValues.DRFramePlatform); //account for angular rate discretization in PRV output.
+        
+        intMeas = angVel - scaledMeas;
+        eigenVector3d2CArray(scaledMeas, this->sensedValues.AngVelPlatform); //return discretized angular velocity
+        intMeas *= dt;
+        DRFrame = cArray2EigenVector3d(this->sensedValues.DRFramePlatform) - intMeas;
+        eigenVector3d2CArray(DRFrame, this->sensedValues.DRFramePlatform);
     }
 
     return;
@@ -235,21 +207,33 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
 
 void ImuSensor::applySensorErrors(uint64_t CurrentTime)
 {
-    double OmegaErrors[3] = {0, 0, 0};
-    double AccelErrors[3]= {0, 0, 0};
-    double dt;
+    Eigen::Vector3d OmegaErrors; //angular noise plus bias
+    Eigen::Vector3d AccelErrors; //linear noise plus bias
+    Eigen::Vector3d angVel; //eigen version of AngVelPlatform. It starts as trueValue.AngVelPlatform and becomes sensedValues.AngVelPlatform when noise is added. The same goes for DR, accel, and DV below.
+    Eigen::Vector3d DR; //eigen version of DRFramePlatform
+    Eigen::Vector3d accel; //eigen version of AccelPlatform
+    Eigen::Vector3d DV; //eigen version of DVFrame Platform
+    double dt; //time step
+    
+    angVel = cArray2EigenVector3d(this->trueValues.AngVelPlatform);
+    DR = cArray2EigenVector3d(this->trueValues.DRFramePlatform);
+    accel = cArray2EigenVector3d(this->trueValues.AccelPlatform);
+    DV = cArray2EigenVector3d(this->trueValues.DVFramePlatform);
     
     dt = (CurrentTime - PreviousTime)*1.0E-9;
     
-    for(uint32_t i=0; i<3; i++)
-    {
-		OmegaErrors[i] = navErrorsGyro[i] + senRotBias[i];
-        this->sensedValues.AngVelPlatform[i] =  this->trueValues.AngVelPlatform[i] + OmegaErrors[i];
-        this->sensedValues.DRFramePlatform[i] = this->trueValues.DRFramePlatform[i] +  OmegaErrors[i]*dt;
-		AccelErrors[i] = navErrorsAccel[i] + senTransBias[i];
-        this->sensedValues.AccelPlatform[i] = this->trueValues.AccelPlatform[i] + AccelErrors[i];
-        this->sensedValues.DVFramePlatform[i] = this->trueValues.DVFramePlatform[i] + AccelErrors[i]*dt;
-    }
+    OmegaErrors = navErrorsGyro + senRotBias;
+    angVel += OmegaErrors;
+    DR += OmegaErrors * dt;
+    
+    AccelErrors = navErrorsAccel + senTransBias;
+    accel += AccelErrors;
+    DV += AccelErrors * dt;
+    
+    eigenVector3d2CArray(angVel, this->sensedValues.AngVelPlatform);
+    eigenVector3d2CArray(DR, this->sensedValues.AngVelPlatform);
+    eigenVector3d2CArray(accel, this->sensedValues.AccelPlatform);
+    eigenVector3d2CArray(DV, this->sensedValues.DVFramePlatform);
 
     return;
 }
@@ -271,43 +255,52 @@ void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
 {
 	double  dt;
     int     aSat;
-    double  sigma_BN[3];
-    double  dcm_BN[3][3];
-    double  dcm_PN[3][3];
-    double  accel_SN_N[3];
-    double  DV_SN_N[3];
+    Eigen::MRPd  sigma_BN;
+    Eigen::Matrix3d  dcm_BN;
+    Eigen::Matrix3d  dcm_PN;
+    Eigen::Vector3d  accel_SN_N;
+    Eigen::Vector3d  DV_SN_N;
+    Eigen::Vector3d  DV_SN_P;
+    
+    Eigen::Vector3d angVel; //eigen version of sensedValues.AngVelPlatform
+    Eigen::Vector3d DR; //eigen version of sensedValues.DRFramePlatform
+    Eigen::Vector3d accel; //eigen version of sensedValues.AccelPlatform
+    Eigen::Vector3d DV; //eigen version of sensedValues.DVFramePlatform
     
 	dt = (CurrentTime - PreviousTime)*1.0E-9;
+    
+    angVel = cArray2EigenVector3d(this->sensedValues.AngVelPlatform);
+    DR = cArray2EigenVector3d(this->sensedValues.DRFramePlatform);
+    accel = cArray2EigenVector3d(this->sensedValues.AccelPlatform);
+    DV = cArray2EigenVector3d(this->sensedValues.DVFramePlatform);
 
     aSat = 0;
 	for(uint32_t i=0; i<3; i++)
 	{
-		if(this->sensedValues.AngVelPlatform[i] > this->senRotMax) {
-			this->sensedValues.AngVelPlatform[i] = this->senRotMax;
-			this->sensedValues.DRFramePlatform[i] = this->senRotMax * dt;
-		} else if (this->sensedValues.AngVelPlatform[i] < -this->senRotMax) {
-			this->sensedValues.AngVelPlatform[i] = -this->senRotMax;
-			this->sensedValues.DRFramePlatform[i] = -this->senRotMax * dt;
+		if(angVel[i] > this->senRotMax) {
+			angVel[i] = this->senRotMax;
+			DR[i] = this->senRotMax * dt;
+		} else if (angVel[i] < -this->senRotMax) {
+			angVel[i] = -this->senRotMax;
+			DR[i] = -this->senRotMax * dt;
 		}
-		if(this->sensedValues.AccelPlatform[i] > this->senTransMax) {
-			this->sensedValues.AccelPlatform[i] = this->senTransMax;
+		if(accel[i] > this->senTransMax) {
+			accel[i] = this->senTransMax;
             aSat = 1;
-		} else if (this->sensedValues.AccelPlatform[i] < -this->senTransMax) {
-			this->sensedValues.AccelPlatform[i] = -this->senTransMax;
+		} else if (accel[i] < -this->senTransMax) {
+			accel[i] = -this->senTransMax;
             aSat = 1;
 		}
 	}
 
     if (aSat){
-        v3Copy(this->StateCurrent.sigma_BN, sigma_BN);
-        MRP2C(sigma_BN, dcm_BN);
-        m33MultM33(this->dcm_PB, dcm_BN, dcm_PN);
-        m33tMultV3(dcm_PN, this->sensedValues.AccelPlatform, accel_SN_N);
-        for(uint32_t i=0; i<3; i++)
-        {
-            DV_SN_N[i] = accel_SN_N[i]*dt;
-        }
-        m33MultV3(dcm_PN, DV_SN_N, this->sensedValues.DVFramePlatform);
+        sigma_BN = cArray2EigenVector3d(this->StateCurrent.sigma_BN);
+        dcm_BN = sigma_BN.toRotationMatrix();
+        dcm_PN = this->dcm_PB * dcm_BN;
+        accel_SN_N = dcm_PN * accel;
+        DV_SN_N = accel_SN_N * dt;
+        DV_SN_P = dcm_PN * DV_SN_N;
+        eigenVector3d2CArray(DV_SN_P, this->sensedValues.DVFramePlatform);
     }
         
 
@@ -320,27 +313,34 @@ void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
  spacecraftPlus output message and passed through to theother IMU functions which add noise, etc. */
 void ImuSensor::computePlatformDR()
 {
-    
-    double sigma_BN_2[3];    // MRP from body to inertial frame last time the IMU was called
-    double sigma_BN_1[3];    // MRP from body to inertial frame now.
-    double dcm_BN_1[3][3];  // direction cosine matrix from N to B at time 1
-    double dcm_BN_2[3][3];  // direction cosine matrix from N to B at time 2
-    double dcm_PN_1[3][3];  // direction cosine matrix from N to P at time 1
-    double dcm_PN_2[3][3];  // direction cosine matrix from N to P at time 2
-    double dcm_P2P1[3][3];  // direction cosine matrix from P at time 1 to P at time 2
+    Eigen::MRPd sigma_BN_2;    // MRP from body to inertial frame last time the IMU was called
+    Eigen::MRPd sigma_BN_1;    // MRP from body to inertial frame now.
+    Eigen::Matrix3d dcm_BN_1;  // direction cosine matrix from N to B at time 1
+    Eigen::Matrix3d dcm_BN_2;  // direction cosine matrix from N to B at time 2
+    Eigen::Matrix3d dcm_PN_1;  // direction cosine matrix from N to P at time 1
+    Eigen::Matrix3d dcm_PN_2;  // direction cosine matrix from N to P at time 2
+    Eigen::Matrix3d dcm_P2P1;  // direction cosine matrix from P at time 1 to P at time 2
+    double dcm_P2P1_cArray[9]; //dcm_P2P1 as cArray for C2PRV conversion
+    Eigen::Vector3d omega_BN_B_eigen; //eigen version of statecurrent.omega_BN_B
+    Eigen::Vector3d angVel; // eigen version of this->trueValues.AngVelPlatform
 
+    
     //Calculated time averaged cumulative rotation
-    v3Copy(StatePrevious.sigma_BN, sigma_BN_1);
-    v3Copy(StateCurrent.sigma_BN, sigma_BN_2);
-    MRP2C(sigma_BN_1, dcm_BN_1);
-    MRP2C(sigma_BN_2, dcm_BN_2);
-    m33MultM33(this->dcm_PB, dcm_BN_1, dcm_PN_1);
-    m33MultM33(this->dcm_PB, dcm_BN_2, dcm_PN_2);
-    m33MultM33t(dcm_PN_2, dcm_PN_1, dcm_P2P1);
-    C2PRV(dcm_P2P1, this->trueValues.DRFramePlatform);
+    sigma_BN_1 = cArray2EigenVector3d(this->StatePrevious.sigma_BN);
+    sigma_BN_2 = cArray2EigenVector3d(this->StateCurrent.sigma_BN);
+    dcm_BN_1 = sigma_BN_1.toRotationMatrix();
+    dcm_BN_2 = sigma_BN_2.toRotationMatrix();
+    dcm_PN_1 = this->dcm_PB * dcm_BN_1;
+    dcm_PN_2 = this->dcm_PB * dcm_BN_2;
+    dcm_P2P1 = dcm_PN_2 * dcm_PN_1.transpose();
+    eigenMatrix3d2CArray(dcm_P2P1, dcm_P2P1_cArray);
+    
+    C2PRV(RECAST3X3 dcm_P2P1_cArray, this->trueValues.DRFramePlatform);
     
     //calculate "instantaneous" angular rate
-    m33MultV3(this->dcm_PB, this->StateCurrent.omega_BN_B, this->trueValues.AngVelPlatform); //returns instantaneous angular rate of imu sensor in imu platform frame coordinates
+    omega_BN_B_eigen = cArray2EigenVector3d(this->StateCurrent.omega_BN_B);
+    angVel = this->dcm_PB * omega_BN_B_eigen;
+    eigenVector3d2CArray(angVel, this->trueValues.AngVelPlatform); //returns instantaneous angular rate of imu sensor in imu platform frame coordinates
 
     return;
 }
@@ -352,61 +352,81 @@ void ImuSensor::computePlatformDR()
  to account for CoM offset of the platform frame. */
 void ImuSensor::computePlatformDV(uint64_t CurrentTime)
 {
-    double omega_BN_N_1[3];     //omega_BN_N before
-    double omega_BN_N_2[3];     //omega_BN_N now
-    double omega_x_r_B[3];      //omega_BN_B x r_SB_B in body frame components
-    double omega_x_r_N[3];      //above in inertial frame for numerical differencing derivative.
-    double omega_x_r_prev_N[3]; //above in the inertial from for numerical differencing derivative.
-    double omega_x_omega_x_r_B[3];//omega_BN_B x (omega_BN_B x r_SB_B) in body frame components
-    double omegaDot_x_r_B[3];   //(time derivative of omega_BN_B) x r_SB_B in body frame components
-    double rotationalTerms[3];  //(time derivative of omega_BN_B) x r_SB_B + omega_BN_B x (omega_BN_B x r_SB_B)
-    double rotationalDelta_N[3];//delta in rotationl velocity term of sensor motion in N frame
+    Eigen::Vector3d omega_BN_N_1;     //omega_BN_N before
+    Eigen::Vector3d omega_BN_N_2;     //omega_BN_N now
+    Eigen::Vector3d omegaDot_BN_B_2;  //this->StateCurrent.omegaDot_BN_B as eigen
+    Eigen::Vector3d omega_BN_B_1;     //this->StatePrevious.omega_BN_B as eigen
+    Eigen::Vector3d omega_BN_B_2;     //this->StateCurrent.omega_BN_B as eigen
+    Eigen::Vector3d omega_x_r_B;      //omega_BN_B x r_SB_B in body frame components
+    Eigen::Vector3d omega_x_r_N;      //above in inertial frame for numerical differencing derivative.
+    Eigen::Vector3d omega_x_r_prev_N; //above in the inertial from for numerical differencing derivative.
+    Eigen::Vector3d omega_x_omega_x_r_B;//omega_BN_B x (omega_BN_B x r_SB_B) in body frame components
+    Eigen::Vector3d omegaDot_x_r_B;   //(time derivative of omega_BN_B) x r_SB_B in body frame components
+    Eigen::Vector3d rotationalTerms;  //(time derivative of omega_BN_B) x r_SB_B + omega_BN_B x (omega_BN_B x r_SB_B)
+    Eigen::Vector3d rotationalDelta_N;//delta in rotationl velocity term of sensor motion in N frame
     
-    double r_SB_B[3];           //sensor position relative to B frame origin in B frame coordinates
-    double r_SB_N_1[3];         //sensor positino relative to B frame origin in N frame coordinates previously
-    double r_SB_N_2[3];         //sensor positino relative to B frame origin in N frame coordinates now
+    Eigen::Vector3d r_SB_B;           //sensor position relative to B frame origin in B frame coordinates
+    Eigen::Vector3d r_SB_N_1;         //sensor positino relative to B frame origin in N frame coordinates previously
+    Eigen::Vector3d r_SB_N_2;         //sensor positino relative to B frame origin in N frame coordinates now
     
-    double rDotDot_BN_B[3];     //non-conservative acceleration of body frame relative to inertial frame in body frame coordinates
-    double rDotDot_SN_B[3];     //sensor non conservative acceleration relative to inertial frame in body frame coordinates
-    double drDot_BN_N[3];       //change in velocity of body frame relative to inertial in body frame coordinates between IMU calls. This does not include delta-v from conservative accelerations.
-    double dvSensor_B[3];       //sensor delta v between IMU calls in body frame coordinates
-    double dvSensor_N[3];       //above but in the inertial frame.
-    double accumDV_BN_N_1[3];   // Inertial DV accumulated since t=0 by the body in the inertial frame due to non-conservative forces at time 1
-    double accumDV_BN_N_2[3];   // Inertial DV accumulated since t=0 by the body in the inertial frame due to non-conservative forces at time 1
+    Eigen::Vector3d rDotDot_BN_B;     //non-conservative acceleration of body frame relative to inertial frame in body frame coordinates
+    Eigen::Vector3d rDotDot_SN_B;     //sensor non conservative acceleration relative to inertial frame in body frame coordinates
+    Eigen::Vector3d rDotDot_SN_P;     //vector above converted to P-frame coordinates
+    Eigen::Vector3d drDot_BN_N;       //change in velocity of body frame relative to inertial in body frame coordinates between IMU calls. This does not include delta-v from conservative accelerations.
+    Eigen::Vector3d dvSensor_B;       //sensor delta v between IMU calls in body frame coordinates
+    Eigen::Vector3d dvSensor_N;       //above but in the inertial frame.
+    Eigen::Vector3d dvSensor_P;       //above but in the platform frame.
+    Eigen::Vector3d accumDV_BN_N_1;   // Inertial DV accumulated since t=0 by the body in the inertial frame due to non-conservative forces at time 1
+    Eigen::Vector3d accumDV_BN_N_2;   // Inertial DV accumulated since t=0 by the body in the inertial frame due to non-conservative forces at time 1
     
-    double dcm_BN_1[3][3];      // direction cosine matrix from N to B at time 1
-    double dcm_BN_2[3][3];      // direction cosine matrix from N to B at time 2
+    Eigen::Matrix3d dcm_BN_1;      // direction cosine matrix from N to B at time 1
+    Eigen::Matrix3d dcm_BN_2;      // direction cosine matrix from N to B at time 2
+    
+    Eigen::MRPd sigma_BN_1;
+    Eigen::MRPd sigma_BN_2;
+    
+    Eigen::Vector3d accumDV_BN_B_1;
+    Eigen::Vector3d accumDV_BN_B_2;
     
     double dt;                  // timestep [s]
 
     dt = (CurrentTime - PreviousTime)*1E-9;
     
     //Calculate "instantaneous" linear acceleration
-    v3Copy(this->StateCurrent.nonConservativeAccelpntB_B, rDotDot_BN_B);
-    v3Copy(this->sensorPos_B, r_SB_B);
-    v3Cross(this->StateCurrent.omegaDot_BN_B, r_SB_B, omegaDot_x_r_B);
-    v3Cross(this->StateCurrent.omega_BN_B, r_SB_B, omega_x_r_B);
-    v3Cross(this->StateCurrent.omega_BN_B, omega_x_r_B, omega_x_omega_x_r_B);
-    v3Add(omegaDot_x_r_B, omega_x_omega_x_r_B, rotationalTerms);
-    v3Add(rDotDot_BN_B, rotationalTerms, rDotDot_SN_B);
-    m33MultV3(this->dcm_PB, rDotDot_SN_B, this->trueValues.AccelPlatform);
+    rDotDot_BN_B = cArray2EigenVector3d(this->StateCurrent.nonConservativeAccelpntB_B);
+    r_SB_B = this->sensorPos_B;
+    omegaDot_BN_B_2 = cArray2EigenVector3d(this->StateCurrent.omegaDot_BN_B);
+    omegaDot_x_r_B = omegaDot_BN_B_2.cross(r_SB_B);
+    omega_BN_B_2 = cArray2EigenVector3d(this->StateCurrent.omega_BN_B);
+    omega_x_r_B = omega_BN_B_2.cross(r_SB_B);
+    omega_x_omega_x_r_B = omega_BN_B_2.cross(omega_x_r_B);
+    rotationalTerms = omegaDot_x_r_B + omega_x_omega_x_r_B;
+    rDotDot_SN_B = rDotDot_BN_B + rotationalTerms;
+    rDotDot_SN_P = this->dcm_PB * rDotDot_SN_B;
+    eigenVector3d2CArray(rDotDot_SN_P, this->trueValues.AccelPlatform);
     
     //Calculate time-average cumulative delta v
-    MRP2C(this->StatePrevious.sigma_BN, dcm_BN_1);
-    MRP2C(this->StateCurrent.sigma_BN, dcm_BN_2);
-    m33tMultV3(dcm_BN_1, this->StatePrevious.TotalAccumDV_BN_B, accumDV_BN_N_1);
-    m33tMultV3(dcm_BN_2, this->StateCurrent.TotalAccumDV_BN_B, accumDV_BN_N_2);
-    v3Subtract(accumDV_BN_N_2, accumDV_BN_N_1, drDot_BN_N);
-    m33tMultV3(dcm_BN_1, r_SB_B, r_SB_N_1);
-    m33tMultV3(dcm_BN_2, r_SB_B, r_SB_N_2);
-    m33tMultV3(dcm_BN_1, this->StatePrevious.omega_BN_B, omega_BN_N_1);
-    m33tMultV3(dcm_BN_2, this->StateCurrent.omega_BN_B, omega_BN_N_2);
-    v3Cross(omega_BN_N_1, r_SB_N_1, omega_x_r_prev_N);
-    v3Cross(omega_BN_N_2, r_SB_N_2, omega_x_r_N);
-    v3Subtract(omega_x_r_N, omega_x_r_prev_N, rotationalDelta_N);
-    v3Add(drDot_BN_N, rotationalDelta_N, dvSensor_N);
-    m33MultV3(dcm_BN_2, dvSensor_N, dvSensor_B);
-    m33MultV3(this->dcm_PB, dvSensor_B, this->trueValues.DVFramePlatform);
+    sigma_BN_1 = cArray2EigenVector3d(this->StatePrevious.sigma_BN);
+    sigma_BN_2 = cArray2EigenVector3d(this->StateCurrent.sigma_BN);
+    dcm_BN_1 = sigma_BN_1.toRotationMatrix();
+    dcm_BN_2 = sigma_BN_2.toRotationMatrix();
+    accumDV_BN_B_1 = cArray2EigenVector3d(this->StatePrevious.TotalAccumDV_BN_B);
+    accumDV_BN_B_2 = cArray2EigenVector3d(this->StateCurrent.TotalAccumDV_BN_B);
+    accumDV_BN_N_1 = dcm_BN_1 * accumDV_BN_B_1;
+    accumDV_BN_N_2 = dcm_BN_2 * accumDV_BN_B_2;
+    drDot_BN_N = accumDV_BN_N_2 - accumDV_BN_N_1;
+    r_SB_N_1 = dcm_BN_1 * r_SB_B;
+    r_SB_N_2 = dcm_BN_2 * r_SB_B;
+    omega_BN_B_1 = cArray2EigenVector3d(this->StatePrevious.omega_BN_B);
+    omega_BN_N_1 = dcm_BN_1 * omega_BN_B_1;
+    omega_BN_N_2 = dcm_BN_2 * omega_BN_B_2;
+    omega_x_r_prev_N = omega_BN_N_1.cross(r_SB_N_1);
+    omega_x_r_N = omega_BN_N_2.cross(r_SB_N_2);
+    rotationalDelta_N = omega_x_r_N - omega_x_r_prev_N;
+    dvSensor_N = drDot_BN_N + rotationalDelta_N;
+    dvSensor_B = dcm_BN_2 * dvSensor_N;
+    dvSensor_P = this->dcm_PB * dvSensor_B;
+    eigenVector3d2CArray(dvSensor_P, this->trueValues.DVFramePlatform);
     
     return;
 }
