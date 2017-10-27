@@ -72,14 +72,10 @@ def findSigmaDot(sigma, omega):
 
 def setRandomWalk(self,senRotNoiseStd = 0.0,senTransNoiseStd = 0.0,errorBoundsGyro = [1e6] * 3,errorBoundsAccel = [1e6] * 3):
     # sets the random walk for IRU module
-    PMatrixGyro = [0.0] * 3 * 3
-    PMatrixGyro[0*3+0] = PMatrixGyro[1*3+1] = PMatrixGyro[2*3+2] = senRotNoiseStd
-    PMatrixAccel = [0.0] * 3 * 3
-    PMatrixAccel[0*3+0] = PMatrixAccel[1*3+1] = PMatrixAccel[2*3+2] = senTransNoiseStd
-    self.PMatrixAccel = sim_model.DoubleVector(PMatrixAccel)
-    self.walkBoundsAccel = sim_model.DoubleVector(errorBoundsAccel)
-    self.PMatrixGyro = sim_model.DoubleVector(PMatrixGyro)
-    self.walkBoundsGyro = sim_model.DoubleVector(errorBoundsGyro)
+    self.PMatrixAccel = np.eye(3) * senRotNoiseStd
+    self.walkBoundsAccel = np.array(errorBoundsAccel)
+    self.PMatrixGyro = np.eye(3) * senTransNoiseStd
+    self.walkBoundsGyro = np.array(errorBoundsGyro)
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -189,20 +185,20 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     #Sensor Setup
     ImuSensor = imu_sensor.ImuSensor()
     ImuSensor.ModelTag = "imusensor"
-    ImuSensor.sensorPos_B = imu_sensor.DoubleVector(r_SB_B) #must be set by user - no default. check if this works by giving an array - SJKC
-    yaw = 0.7 #should be given as parameter [rad]
+    ImuSensor.sensorPos_B = np.array(r_SB_B) #must be set by user - no default. check if this works by giving an array - SJKC
+    yaw = 0.7854 #should be given as parameter [rad]
     pitch = 1.0  # [rad]
-    roll = 0.2 # [rad]
-    dcm_PB = rbk.euler3212C([yaw,pitch,roll]) #done separately as a check
-    dcm_PN = m33m33mult(dcm_PB, dcm_BN)
+    roll = 0.1 # [rad]
+    dcm_PB = rbk.euler3212C([yaw,pitch,roll]) #done separately as a
+    dcm_PN = np.dot(dcm_PB, dcm_BN)
     ImuSensor.setBodyToPlatformDCM(yaw, pitch, roll) # done separately as a check
     errorBoundsGyro = [errorBoundsGyroIn] * 3
     errorBoundsAccel = [errorBoundsAccelIn] * 3
     setRandomWalk(ImuSensor, senRotNoiseStd, senTransNoiseStd, errorBoundsGyro, errorBoundsAccel)
     ImuSensor.gyroLSB = gyroLSBIn
     ImuSensor.accelLSB = accelLSBIn
-    ImuSensor.senRotBias = [senRotBiasIn] * 3
-    ImuSensor.senTransBias = [senTransBiasIn] * 3
+    ImuSensor.senRotBias = np.array([senRotBiasIn] * 3)
+    ImuSensor.senTransBias = np.array([senTransBiasIn] * 3)
     ImuSensor.senTransMax = senTransMaxIn
     ImuSensor.senRotMax = senRotMaxIn
 
