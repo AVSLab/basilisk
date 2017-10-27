@@ -59,12 +59,12 @@ public:
 	double senTransMax;					/// [m/s2] Accelerometer saturation value
     uint64_t OutputBufferCount;         /// -- number of output msgs stored
     bool NominalReady;                  /// -- Flag indicating that system is in run
-    Eigen::VectorXd PMatrixAccel;   //!< [-] Covariance matrix used to perturb state
-	Eigen::VectorXd AMatrixAccel;   //!< [-] AMatrix that we use for error propagation
+    Eigen::Matrix3d PMatrixAccel;   //!< [-] Covariance matrix used to perturb state
+	Eigen::Matrix3d AMatrixAccel;   //!< [-] AMatrix that we use for error propagation
 	Eigen::Vector3d walkBoundsAccel;//!< [-] "3-sigma" errors to permit for states
 	Eigen::Vector3d navErrorsAccel; //!< [-] Current navigation errors applied to truth
-	Eigen::VectorXd PMatrixGyro;    //!< [-] Covariance matrix used to perturb state
-	Eigen::VectorXd AMatrixGyro;    //!< [-] AMatrix that we use for error propagation
+	Eigen::Matrix3d PMatrixGyro;    //!< [-] Covariance matrix used to perturb state
+	Eigen::Matrix3d AMatrixGyro;    //!< [-] AMatrix that we use for error propagation
 	Eigen::Vector3d walkBoundsGyro; //!< [-] "3-sigma" errors to permit for states
 	Eigen::Vector3d navErrorsGyro;  //!< [-] Current navigation errors applied to truth
 
@@ -81,6 +81,20 @@ private:
     SCPlusStatesSimMsg StateCurrent;    /// -- Current SSBI-relative state
 	GaussMarkov errorModelAccel;        //!< [-] Gauss-markov error states
 	GaussMarkov errorModelGyro;         //!< [-] Gauss-markov error states
+    
+    Eigen::MRPd previous_sigma_BN;  /// -- sigma_BN from the previous spacecraft message
+    Eigen::MRPd current_sigma_BN;   /// -- sigma_BN from the most recent spacecraft message
+    Eigen::Vector3d previous_omega_BN_B; /// -- omega_BN_B from the previous spacecraft message
+    Eigen::Vector3d current_omega_BN_B;  /// -- omega_BN_B from the current spacecraft message
+    Eigen::Vector3d current_nonConservativeAccelpntB_B; /// -- nonConservativeAccelpntB_B from the current message
+    Eigen::Vector3d current_omegaDot_BN_B; /// -- omegaDot_BN_B from the curret spacecraft message
+    Eigen::Vector3d previous_TotalAccumDV_BN_B; /// -- TotalAccumDV_BN_B from the previous spacecraft message
+    Eigen::Vector3d current_TotalAccumDV_BN_B; /// -- TotalAccumDV_BN_B from the current spacecraft message
+    
+    Eigen::Vector3d accel_SN_P_out; /// -- rDotDot_SN_P for either next method or output messages
+    Eigen::Vector3d DV_SN_P_out; /// -- time step deltaV for either next method or output messages
+    Eigen::Vector3d omega_PN_P_out; /// -- omega_PN_P for either next method or output messages
+    Eigen::Vector3d prv_PN_out;    /// -- time step PRV_PN for either next method or output messages
 };
 
 #endif
