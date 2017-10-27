@@ -59,18 +59,18 @@ public:
     /*!@brief Set the noiseMatrix that is used to define error sigmas
        @param noise The new value to use for the noiseMatrix variable (error sigmas)
        @return void*/
-    void setNoiseMatrix(Eigen::VectorXd noise){noiseMatrix = noise;}
+    void setNoiseMatrix(Eigen::MatrixXd noise){noiseMatrix = noise;}
     /*!@brief Set the propagation matrix that is used to propagate the state.
        @param prop The new value for the state propagation matrix
        @return void*/
-    void setPropMatrix(Eigen::VectorXd prop){propMatrix = prop;}
+    void setPropMatrix(Eigen::MatrixXd prop){propMatrix = prop;}
+    Eigen::VectorXd stateBounds;  //!< -- Upper bounds to use for markov
+    Eigen::VectorXd currentState;  //!< -- State of the markov model
+    Eigen::MatrixXd propMatrix;    //!< -- Matrix to propagate error state with
+    Eigen::MatrixXd noiseMatrix;   //!< -- covariance matrix to apply errors with
     
 private:
     uint64_t RNGSeed;                 //!< -- Seed for random number generator
-    Eigen::VectorXd stateBounds;  //!< -- Upper bounds to use for markov
-    Eigen::VectorXd currentState;  //!< -- State of the markov model
-    Eigen::VectorXd propMatrix;    //!< -- Matrix to propagate error state with
-    Eigen::VectorXd noiseMatrix;   //!< -- covariance matrix to apply errors with
     std::minstd_rand rGen; //!< -- Random number generator for model
     std::normal_distribution<double> rNum;  //!< -- Random number distribution for model
 };
