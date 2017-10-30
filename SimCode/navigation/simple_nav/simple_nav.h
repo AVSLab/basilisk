@@ -27,6 +27,7 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "simFswInterfaceMessages/navTransIntMsg.h"
+#include <Eigen/Dense>
 
 /*! \addtogroup SimModelGroup
  * @{
@@ -53,9 +54,9 @@ public:
     
 public:
     uint64_t outputBufferCount;        //!< -- Number of output state buffers in msg
-    std::vector<double> PMatrix;       //!< -- Covariance matrix used to perturb state
-    std::vector<double> walkBounds;    //!< -- "3-sigma" errors to permit for states
-    std::vector<double> navErrors;     //!< -- Current navigation errors applied to truth
+    Eigen::MatrixXd PMatrix;       //!< -- Covariance matrix used to perturb state
+    Eigen::VectorXd walkBounds;    //!< -- "3-sigma" errors to permit for states
+    Eigen::VectorXd navErrors;     //!< -- Current navigation errors applied to truth
     std::string inputStateName;        //!< -- Message that contains s/c state
     std::string outputAttName;         //!< -- Message that we output state to
     std::string outputTransName;       //!< -- Message that we output state to
@@ -73,7 +74,7 @@ private:
     int64_t outputAttID;               //!< -- Message ID associated with att-nav state
     int64_t outputTransID;             //!< -- Message ID associated with trans-nav state
     int64_t inputSunID;                //!< -- Message ID associated with the sun position
-    std::vector<double> AMatrix;       //!< -- The matrix used to propagate the state
+    Eigen::MatrixXd AMatrix;       //!< -- The matrix used to propagate the state
     GaussMarkov errorModel;            //!< -- Gauss-markov error states
     uint64_t prevTime;                 //!< -- Previous simulation time observed
 };

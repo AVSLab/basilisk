@@ -22,6 +22,7 @@
 #include "utilities/rigidBodyKinematics.h"
 #include <iostream>
 #include <cstring>
+#include "utilities/avsEigenSupport.h"
 
 /*! This is the constructor for the simple nav model.  It sets default variable 
     values and initializes the various parts of the model */
@@ -38,8 +39,6 @@ SimpleNav::SimpleNav()
     this->inputSunID = -1;
     this->outputAttID = -1;
     this->outputTransID = -1;
-    this->AMatrix.clear();
-    this->PMatrix.clear();
     this->prevTime = 0;
     memset(&estAttState, 0x0, sizeof(NavAttIntMsg));
     memset(&trueAttState, 0x0, sizeof(NavAttIntMsg));
@@ -70,7 +69,6 @@ void SimpleNav::SelfInit()
 {
     //! Begin method steps
     uint64_t numStates = 18;
-    std::vector<double>::iterator it;
     //! - Create a new message for the output simple nav state data
     outputAttID = SystemMessaging::GetInstance()->
         CreateNewMessage(outputAttName, sizeof(NavAttIntMsg), outputBufferCount,
@@ -80,35 +78,31 @@ void SimpleNav::SelfInit()
                      "NavTransIntMsg", moduleID);
 
     //! - Initialize the propagation matrix to default values for use in update
-    AMatrix.clear();
-    AMatrix.insert(AMatrix.begin(), numStates*numStates, 0.0);
-    mSetIdentity(AMatrix.data(), numStates, numStates);
-    it = AMatrix.begin();
-    //! - Depending on whether we cross-prop position/attitude, set off-diagonal terms
-    for(uint32_t i=0; i<3 && (crossTrans || crossAtt); i++)
-    {
-        it += i + 3;  // Velocity propagation location
-        *it = crossTrans ? 1.0 : 0.0; // Scale this by dt in the UpdateState method
-        it += 6;
-        *it = crossAtt ? 0.25 : 0.0; // MRPs propagate as 1/4 omega when near zero (SAA for errors)
-        it += 9 - i;
-    }
+    AMatrix.setIdentity(numStates, numStates);
+    AMatrix(0,3) = AMatrix(1,4) = AMatrix(2,5) = crossTrans ? 1.0 : 0.0;
+    AMatrix(6,9) = AMatrix(7,10) = AMatrix(8, 11) = crossAtt ? 1.0 : 0.0;
+    
     //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
     if (PMatrix.size() == 0) {
-        PMatrix.insert(PMatrix.begin(), numStates*numStates, 0.0);
+        PMatrix.resize(numStates, numStates);
+        PMatrix.fill(0.0);
     }
     else if(PMatrix.size() != numStates*numStates)
     {
         std::cerr << "Your process noise matrix (PMatrix) is not 18*18.";
         std::cerr << "  You should fix that.  Popping zeros onto end"<<std::endl;
-        PMatrix.insert(PMatrix.begin()+PMatrix.size(), numStates*numStates - PMatrix.size(),
-                       0.0);
+        Eigen::MatrixXd tempInitializedMatrix;
+        tempInitializedMatrix.resize(numStates, numStates);
+        tempInitializedMatrix.fill(0.0);
+        tempInitializedMatrix.block(0, 0, PMatrix.rows(), PMatrix.cols()) = PMatrix;
+        PMatrix = tempInitializedMatrix;
     }
     //! - Set the matrices of the lower level error propagation (GaussMarkov)
     errorModel.setNoiseMatrix(PMatrix);
     errorModel.setRNGSeed(RNGSeed);
     if (this->walkBounds.size() == 0) {
-        walkBounds.insert(walkBounds.begin(), numStates, 0.0);
+        walkBounds.resize(numStates);
+        walkBounds.fill(0.0);
     }
     errorModel.setUpperBounds(walkBounds);
 }
@@ -225,20 +219,17 @@ void SimpleNav::computeTrueOutput(uint64_t Clock)
 void SimpleNav::computeErrors(uint64_t CurrentSimNanos)
 {
     double timeStep;
-    std::vector<double>::iterator it;
-    std::vector<double> localProp = AMatrix;
+    Eigen::MatrixXd localProp = AMatrix;
     //! - Compute timestep since the last call
     timeStep = (CurrentSimNanos - this->prevTime)*1.0E-9;
-    it = localProp.begin();
-    //! - Apply that time step to the pos/vel att/rate cross correlation terms
-    for(uint32_t i=0; i<3; i++)
-    {
-        it += i+3;
-        *it *= timeStep;
-        it += 6;
-        *it *= timeStep;
-        it += 9-i;
-    }
+
+    localProp(0,3) *= timeStep; //postion/velocity cross correlation terms
+    localProp(1,4) *= timeStep; //postion/velocity cross correlation terms
+    localProp(2,5) *= timeStep; //postion/velocity cross correlation terms
+    localProp(6,9) *= timeStep; //attitude/attitude rate cross correlation terms
+    localProp(7,10) *= timeStep; //attitude/attitude rate cross correlation terms
+    localProp(8,11) *= timeStep; //attitude/attitude rate cross correlation terms
+    
     //! - Set the GaussMarkov propagation matrix and compute errors
     errorModel.setPropMatrix(localProp);
     errorModel.computeNextState();
