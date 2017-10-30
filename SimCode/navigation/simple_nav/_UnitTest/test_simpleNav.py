@@ -117,12 +117,12 @@ def unitSimpleNav(show_plots):
                                           spiceMessage)
 
     sNavObject.ModelTag = "SimpleNavigation"
-    posBound = [1000.0]*3
-    velBound = [1.0]*3
-    attBound = [5E-3]*3
-    rateBound = [0.02]*3
-    sunBound = [5.0*math.pi/180.0]*3
-    dvBound = [0.053]*3
+    posBound = numpy.array([1000.0]*3)
+    velBound = numpy.array([1.0]*3)
+    attBound = numpy.array([5E-3]*3)
+    rateBound = numpy.array([0.02]*3)
+    sunBound = numpy.array([5.0*math.pi/180.0]*3)
+    dvBound = numpy.array([0.053]*3)
 
     posSigma = 5.0
     velSigma = 0.035
@@ -131,23 +131,25 @@ def unitSimpleNav(show_plots):
     sunSigma = math.pi/180.0
     dvSigma = 0.1*math.pi/180.0
 
-    pMatrix = [0.0]*18*18
-    pMatrix[0*18+0] = pMatrix[1*18+1] = pMatrix[2*18+2] = posSigma
-    pMatrix[3*18+3] = pMatrix[4*18+4] = pMatrix[5*18+5] = velSigma
-    pMatrix[6*18+6] = pMatrix[7*18+7] = pMatrix[8*18+8] = attSigma
-    pMatrix[9*18+9] = pMatrix[10*18+10] = pMatrix[11*18+11] = rateSigma
-    pMatrix[12*18+12] = pMatrix[13*18+13] = pMatrix[14*18+14] = sunSigma
-    pMatrix[15*18+15] = pMatrix[16*18+16] = pMatrix[17*18+17] = dvSigma
-    errorBounds = []
-    errorBounds.extend(posBound)
-    errorBounds.extend(velBound)
-    errorBounds.extend(attBound)
-    errorBounds.extend(rateBound)
-    errorBounds.extend(sunBound)
-    errorBounds.extend(dvBound)
+    pMatrix = numpy.eye(18)
+    pMatrix[0,0] = pMatrix[1,1] = pMatrix[2,2] = posSigma
+    pMatrix[3,3] = pMatrix[4,4] = pMatrix[5,5] = velSigma
+    pMatrix[6,6] = pMatrix[7,7] = pMatrix[8,8] = attSigma
+    pMatrix[9,9] = pMatrix[10,10] = pMatrix[11,11] = rateSigma
+    pMatrix[12,12] = pMatrix[13,13] = pMatrix[14,14] = sunSigma
+    pMatrix[15,15] = pMatrix[16,16] = pMatrix[17,17] = dvSigma
 
-    sNavObject.walkBounds = sim_model.DoubleVector(errorBounds)
-    sNavObject.PMatrix = sim_model.DoubleVector(pMatrix)
+    errorBounds = [[1000., 1000., 1000., 1., 1., 1., 0.005, 0.005, 0.005, 0.02, 0.02, 0.02, 5.0*math.pi/180.0, 5.0*math.pi/180.0, 5.0*math.pi/180.0, 0.053, 0.053, 0.053 ]]
+    # errorBounds = numpy.array([0.0]*18)
+    # errorBounds[0:3] = posBound
+    # errorBounds[3:6] = velBound
+    # errorBounds[6:9] = attBound
+    # errorBounds[9:12] = rateBound
+    # errorBounds[12:15] = sunBound
+    # errorBounds[15:18] = dvBound
+
+    sNavObject.walkBounds = errorBounds
+    sNavObject.PMatrix = pMatrix
     sNavObject.crossTrans = True
     sNavObject.crossAtt = False
 
