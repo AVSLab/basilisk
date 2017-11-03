@@ -23,10 +23,12 @@
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include <iostream>
 #include <cstring>
+#include "utilities/avsEigenSupport.h"
+#include "utilities/gauss_markov.h"
 
 StarTracker::StarTracker()
 {
-    CallCounts = 0;
+    this->CallCounts = 0;
     this->messagesLinked = false;
     this->inputStateID = -1;
     this->inputStateMessage = "inertial_state_output";
@@ -34,6 +36,10 @@ StarTracker::StarTracker()
     this->OutputBufferCount = 2;
     this->sensorTimeTag = 0;
     m33SetIdentity(RECAST3X3 this->dcm_CB);
+    this->errorModel = new GaussMarkov(3);
+    this->PMatrix.fill(0.0);
+    this->AMatrix.fill(0.0);
+    this->walkBounds.fill(0.0);
     return;
 }
 
@@ -44,8 +50,8 @@ StarTracker::~StarTracker()
 
 bool StarTracker::LinkMessages()
 {
-    inputStateID = SystemMessaging::GetInstance()->subscribeToMessage(
-        inputStateMessage, sizeof(SCPlusStatesSimMsg), moduleID);
+    this->inputStateID = SystemMessaging::GetInstance()->subscribeToMessage(
+        this->inputStateMessage, sizeof(SCPlusStatesSimMsg), this->moduleID);
     
     
     return(inputStateID >= 0);
@@ -55,33 +61,32 @@ void StarTracker::SelfInit()
 {
     //! Begin method steps
     uint64_t numStates = 3;
-    outputStateID = SystemMessaging::GetInstance()->
-        CreateNewMessage(outputStateMessage, sizeof(STSensorIntMsg),
-        OutputBufferCount, "STSensorIntMsg", moduleID);
+    this->outputStateID = SystemMessaging::GetInstance()->
+        CreateNewMessage(this->outputStateMessage, sizeof(STSensorIntMsg),
+        OutputBufferCount, "STSensorIntMsg", this->moduleID);
     
-    AMatrix.clear();
-    AMatrix.insert(AMatrix.begin(), numStates*numStates, 0.0);
-    mSetIdentity(AMatrix.data(), numStates, numStates);
-    for(uint32_t i=0; i<3; i++)
-    {
-		AMatrix.data()[i * 3 + i] = 1.0;
-    }
+    this->AMatrix.setIdentity(numStates, numStates);
+
     //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
-    if(PMatrix.size() != numStates*numStates)
+    if(this->PMatrix.size() != numStates*numStates)
     {
         std::cerr << __FILE__ <<": Your process noise matrix (PMatrix) is not 3*3.";
-        std::cerr << "  You should fix that.  Popping zeros onto end"<<std::endl;
-        PMatrix.insert(PMatrix.begin()+PMatrix.size(), numStates*numStates - PMatrix.size(),
-                       0.0);
+        std::cerr << "  Quitting."<<std::endl;
+        return;
     }
-    errorModel.setNoiseMatrix(PMatrix);
-    errorModel.setRNGSeed(RNGSeed);
-    errorModel.setUpperBounds(walkBounds);
+    if(this->walkBounds.size() != numStates){
+        std::cerr << __FILE__ <<": Your walkbounds is not size 3.";
+        std::cerr << "  Quitting."<<std::endl;
+        return;
+    }
+    this->errorModel->setNoiseMatrix(this->PMatrix);
+    this->errorModel->setRNGSeed(this->RNGSeed);
+    this->errorModel->setUpperBounds(this->walkBounds);
 }
 
 void StarTracker::CrossInit()
 {
-    messagesLinked = LinkMessages();
+    messagesLinked = this->LinkMessages();
 }
 
 void StarTracker::readInputMessages()
@@ -94,27 +99,27 @@ void StarTracker::readInputMessages()
     }
     
     memset(&this->scState, 0x0, sizeof(SCPlusStatesSimMsg));
-    if(inputStateID >= 0)
+    if(this->inputStateID >= 0)
     {
-        SystemMessaging::GetInstance()->ReadMessage(inputStateID, &localHeader,
-                                                    sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*>(&scState), moduleID);
+        SystemMessaging::GetInstance()->ReadMessage(this->inputStateID, &localHeader,
+                                                    sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*>(&scState), this->moduleID);
         this->sensorTimeTag = localHeader.WriteClockNanos;
     }
 }
 
 void StarTracker::computeSensorErrors()
 {
-    this->errorModel.setPropMatrix(AMatrix);
-    this->errorModel.computeNextState();
-    this->navErrors = this->errorModel.getCurrentState();
+    this->errorModel->setPropMatrix(this->AMatrix);
+    this->errorModel->computeNextState();
+    this->navErrors = this->errorModel->getCurrentState();
 }
 
 void StarTracker::applySensorErrors()
 {
     double sigmaSensed[3];
-    PRV2MRP(&(navErrors.data()[0]), this->mrpErrors);
-    addMRP(scState.sigma_BN, this->mrpErrors, sigmaSensed);
-    computeQuaternion(sigmaSensed, &this->sensedValues);
+    PRV2MRP(&(this->navErrors.data()[0]), this->mrpErrors);
+    addMRP(this->scState.sigma_BN, this->mrpErrors, sigmaSensed);
+    this->computeQuaternion(sigmaSensed, &this->sensedValues);
     this->sensedValues.timeTag = this->sensorTimeTag;
 }
 
@@ -130,21 +135,21 @@ void StarTracker::computeQuaternion(double *sigma, STSensorIntMsg *sensorValues)
 void StarTracker::computeTrueOutput()
 {
     this->trueValues.timeTag = this->sensorTimeTag;
-    computeQuaternion(this->scState.sigma_BN, &this->trueValues);
+    this->computeQuaternion(this->scState.sigma_BN, &this->trueValues);
 }
 
 
 void StarTracker::writeOutputMessages(uint64_t CurrentSimNanos)
 {
-    SystemMessaging::GetInstance()->WriteMessage(outputStateID, CurrentSimNanos,
-                                                 sizeof(STSensorIntMsg), reinterpret_cast<uint8_t *>(&this->sensedValues), moduleID);
+    SystemMessaging::GetInstance()->WriteMessage(this->outputStateID, CurrentSimNanos,
+                                                 sizeof(STSensorIntMsg), reinterpret_cast<uint8_t *>(&this->sensedValues), this->moduleID);
 }
 
 void StarTracker::UpdateState(uint64_t CurrentSimNanos)
 {
-    readInputMessages();
-    computeSensorErrors();
-    computeTrueOutput();
-    applySensorErrors();
-    writeOutputMessages(CurrentSimNanos);
+    this->readInputMessages();
+    this->computeSensorErrors();
+    this->computeTrueOutput();
+    this->applySensorErrors();
+    this->writeOutputMessages(CurrentSimNanos);
 }
