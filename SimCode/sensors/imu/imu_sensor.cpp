@@ -73,6 +73,9 @@ ImuSensor::ImuSensor()
     this->DV_SN_P_out.fill(0.0);
     this->omega_PN_P_out.fill(0.0);
     this->prv_PN_out.fill(0.0);
+    this->accelErrorDisc_P.fill(0.0);
+    this->omegaErrorDisc_P.fill(0.0);
+    this->carryOverDiscretizationError = 1;
     
     return;
 }
@@ -195,7 +198,9 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
     
     if(this->accelLSB > 0.0) //If accelLSB has been set.
     {
-        
+        if(carryOverDiscretizationError){
+            this->accel_SN_P_out += this->accelErrorDisc_P;
+        }
         for(uint32_t i=0; i<3; i++) //Discretize each part of the acceleration
         {
             accel_SN_P_disc[i] = this->accel_SN_P_out[i] / this->accelLSB;
@@ -206,19 +211,25 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
         }
         
         //integrate the acceleration discretization error into DV
-        accelError = this->accel_SN_P_out - accel_SN_P_disc;
+        this->accelErrorDisc_P = this->accel_SN_P_out - accel_SN_P_disc;
         dcm_BN =  this->current_sigma_BN.toRotationMatrix().transpose();
         dcm_PN = this->dcm_PB * dcm_BN;
-        accelError_N = dcm_PN.transpose() * accelError;
+        accelError_N = dcm_PN.transpose() * this->accelErrorDisc_P;
         DV_SN_N = dcm_PN.transpose() * this->DV_SN_P_out;
-        DV_SN_N_disc = DV_SN_N - accelError_N * dt;
+        if(carryOverDiscretizationError){
+            DV_SN_N +=this->DVErrorDisc_N;
+        }
+        this->DVErrorDisc_N = accelError_N * dt;
+        DV_SN_N_disc = DV_SN_N - this->DVErrorDisc_N;
         this->DV_SN_P_out = dcm_PN * DV_SN_N_disc;
         this->accel_SN_P_out = accel_SN_P_disc;
     }
     
     if(this->gyroLSB > 0.0) //If gyroLSB has been set
     {
-        
+        if(carryOverDiscretizationError){
+            this->omega_PN_P_out += this->omegaErrorDisc_P;
+        }
         for(uint32_t i=0; i<3; i++) //Discretize each part of the angular rate
         {
             omega_PN_P_disc[i] = this->omega_PN_P_out[i] / this->gyroLSB;
@@ -228,8 +239,12 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
             omega_PN_P_disc[i] = copysign(omega_PN_P_disc[i], this->omega_PN_P_out[i]);
         }
         //integrate error through omega
-        omega_error_P = this->omega_PN_P_out - omega_PN_P_disc;
-        this->prv_PN_out -= omega_error_P * dt;
+        this->omegaErrorDisc_P = this->omega_PN_P_out - omega_PN_P_disc;
+        if(carryOverDiscretizationError){
+            this->prv_PN_out += this->PRVErrorDisc_P;
+        }
+        this->PRVErrorDisc_P = this->omegaErrorDisc_P * dt;
+        this->prv_PN_out -= this->PRVErrorDisc_P;
         this->omega_PN_P_out = omega_PN_P_disc;
     }
 
@@ -415,9 +430,9 @@ void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
         this->computePlatformDV(CurrentSimNanos);
         /* Compute sensed data */
 		this->computeSensorErrors();
-		this->applySensorErrors(CurrentSimNanos);
+        this->applySensorErrors(CurrentSimNanos);
+        this->applySensorSaturation(CurrentSimNanos);
         this->applySensorDiscretization(CurrentSimNanos);
-		this->applySensorSaturation(CurrentSimNanos);
         /* Output sensed data */
         this->writeOutputMessages(CurrentSimNanos);
     }
