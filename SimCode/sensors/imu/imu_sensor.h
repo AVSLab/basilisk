@@ -77,6 +77,7 @@ private:
     int64_t InputStateID;               /// -- Connect to input time message
     int64_t OutputDataID;               /// -- Connect to output CSS data
     uint64_t PreviousTime;              /// -- Timestamp from previous frame
+    uint64_t numStates;                 /// -- Number of States for Gauss Markov Models
     SCPlusStatesSimMsg StatePrevious;   /// -- Previous state to delta in IMU
     SCPlusStatesSimMsg StateCurrent;    /// -- Current SSBI-relative state
     GaussMarkov *errorModelAccel;        //!< [-] Gauss-markov error states

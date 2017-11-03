@@ -36,13 +36,14 @@ ImuSensor::ImuSensor()
     this->InputStateID = -1;
     this->InputStateMsg = "inertial_state_output";
     this->OutputDataMsg = "imu_meas_data";
+    this->numStates = 3;
     this->setBodyToPlatformDCM(0.0, 0.0, 0.0);
     this->OutputBufferCount = 2;
     memset(&this->StatePrevious, 0x0, sizeof(SCPlusStatesSimMsg));
     memset(&this->StateCurrent, 0x0, sizeof(SCPlusStatesSimMsg));
     
-    this->errorModelGyro =  new GaussMarkov(3);
-    this->errorModelAccel = new GaussMarkov(3);
+    this->errorModelGyro =  new GaussMarkov(this->numStates);
+    this->errorModelAccel = new GaussMarkov(this->numStates);
     
     this->PreviousTime = 0;
     this->NominalReady = false;
@@ -95,12 +96,10 @@ void ImuSensor::SelfInit()
         CreateNewMessage( this->OutputDataMsg, sizeof(IMUSensorIntMsg),
         this->OutputBufferCount, "IMUSensorIntMsg", this->moduleID);
 
-	uint64_t numStates = 3;
-
-    this->AMatrixAccel.setIdentity(numStates,numStates);
+    this->AMatrixAccel.setIdentity(this->numStates,this->numStates);
 
 	//! - Alert the user if the noise matrix was not the right size.  That'd be bad.
-	if(this->PMatrixAccel.cols() != numStates || this->PMatrixAccel.rows() != numStates)
+	if(this->PMatrixAccel.cols() != this->numStates || this->PMatrixAccel.rows() != this->numStates)
 	{
 		std::cerr << __FILE__ <<": Your process noise matrix (PMatrixAccel) is not 3*3.";
         std::cerr << "  Quitting."<<std::endl;
@@ -110,10 +109,10 @@ void ImuSensor::SelfInit()
 	this->errorModelAccel->setRNGSeed(this->RNGSeed);
 	this->errorModelAccel->setUpperBounds(this->walkBoundsAccel);
 
-    this->AMatrixGyro.setIdentity(numStates, numStates);
+    this->AMatrixGyro.setIdentity(this->numStates, this->numStates);
 
 	//! - Alert the user if the noise matrix was not the right size.  That'd be bad.
-	if(this->PMatrixGyro.rows() != numStates || this->PMatrixGyro.cols() != numStates)
+	if(this->PMatrixGyro.rows() != this->numStates || this->PMatrixGyro.cols() != this->numStates)
 	{
 		std::cerr << __FILE__ <<": Your process noise matrix (PMatrixGyro) is not 3*3.";
         std::cerr << "  Quitting."<<std::endl;
