@@ -40,6 +40,10 @@ ImuSensor::ImuSensor()
     this->OutputBufferCount = 2;
     memset(&this->StatePrevious, 0x0, sizeof(SCPlusStatesSimMsg));
     memset(&this->StateCurrent, 0x0, sizeof(SCPlusStatesSimMsg));
+    
+    this->errorModelGyro =  new GaussMarkov(3);
+    this->errorModelAccel = new GaussMarkov(3);
+    
     this->PreviousTime = 0;
     this->NominalReady = false;
     this->senRotBias.fill(0.0);
@@ -58,22 +62,6 @@ ImuSensor::ImuSensor()
     this->walkBoundsAccel.fill(0.0);
     this->navErrorsGyro.fill(0.0);
     this->navErrorsAccel.fill(0.0);
-    this->errorModelAccel.currentState.resize(3);
-    this->errorModelAccel.currentState.fill(0.0);
-    this->errorModelAccel.noiseMatrix.resize(3, 3);
-    this->errorModelAccel.noiseMatrix.fill(0.0);
-    this->errorModelAccel.propMatrix.resize(3, 3);
-    this->errorModelAccel.propMatrix.fill(0.0);
-    this->errorModelAccel.stateBounds.resize(3);
-    this->errorModelAccel.stateBounds.fill(0.0);
-    this->errorModelGyro.currentState.resize(3);
-    this->errorModelGyro.currentState.fill(0.0);
-    this->errorModelGyro.noiseMatrix.resize(3, 3);
-    this->errorModelGyro.noiseMatrix.fill(0.0);
-    this->errorModelGyro.propMatrix.resize(3, 3);
-    this->errorModelGyro.propMatrix.fill(0.0);
-    this->errorModelGyro.stateBounds.resize(3);
-    this->errorModelGyro.stateBounds.fill(0.0);
     this->previous_omega_BN_B.fill(0.0);
     this->current_omega_BN_B.fill(0.0);
     this->current_nonConservativeAccelpntB_B.fill(0.0);
@@ -117,9 +105,9 @@ void ImuSensor::SelfInit()
 		std::cerr << __FILE__ <<": Your process noise matrix (PMatrix) is not 3*3.";
         std::cerr << "  You should fix that.  Expect Problems"<<std::endl;
 	}
-	this->errorModelAccel.setNoiseMatrix(this->PMatrixAccel);
-	this->errorModelAccel.setRNGSeed(RNGSeed);
-	this->errorModelAccel.setUpperBounds(walkBoundsAccel);
+	(*this->errorModelAccel).setNoiseMatrix(this->PMatrixAccel);
+	(*this->errorModelAccel).setRNGSeed(RNGSeed);
+	(*this->errorModelAccel).setUpperBounds(walkBoundsAccel);
 
     this->AMatrixGyro.setIdentity(numStates, numStates);
 
@@ -129,9 +117,9 @@ void ImuSensor::SelfInit()
 		std::cerr << __FILE__ <<": Your process noise matrix (PMatrix) is not 3*3.";
         std::cerr << "  You should fix that.  Expect Problems"<<std::endl;
 	}
-	this->errorModelGyro.setNoiseMatrix(this->PMatrixGyro);
-	this->errorModelGyro.setRNGSeed(RNGSeed);
-	this->errorModelGyro.setUpperBounds(walkBoundsGyro);
+	(*this->errorModelGyro).setNoiseMatrix(this->PMatrixGyro);
+	(*this->errorModelGyro).setRNGSeed(RNGSeed);
+	(*this->errorModelGyro).setUpperBounds(walkBoundsGyro);
 
     return;
 }
@@ -268,12 +256,12 @@ void ImuSensor::applySensorErrors(uint64_t CurrentTime)
 
 void ImuSensor::computeSensorErrors()
 {
-	this->errorModelAccel.setPropMatrix(this->AMatrixAccel);
-	this->errorModelAccel.computeNextState();
-	this->navErrorsAccel = this->errorModelAccel.getCurrentState();
-	this->errorModelGyro.setPropMatrix(this->AMatrixGyro);
-	this->errorModelGyro.computeNextState();
-	this->navErrorsGyro = this->errorModelGyro.getCurrentState();
+	(*this->errorModelAccel).setPropMatrix(this->AMatrixAccel);
+	(*this->errorModelAccel).computeNextState();
+	this->navErrorsAccel = (*this->errorModelAccel).getCurrentState();
+	(*this->errorModelGyro).setPropMatrix(this->AMatrixGyro);
+	(*this->errorModelGyro).computeNextState();
+	this->navErrorsGyro = (*this->errorModelGyro).getCurrentState();
 
     return;
 }

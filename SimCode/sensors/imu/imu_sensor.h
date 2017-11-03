@@ -79,8 +79,8 @@ private:
     uint64_t PreviousTime;              /// -- Timestamp from previous frame
     SCPlusStatesSimMsg StatePrevious;   /// -- Previous state to delta in IMU
     SCPlusStatesSimMsg StateCurrent;    /// -- Current SSBI-relative state
-	GaussMarkov errorModelAccel;        //!< [-] Gauss-markov error states
-	GaussMarkov errorModelGyro;         //!< [-] Gauss-markov error states
+    GaussMarkov *errorModelAccel;        //!< [-] Gauss-markov error states
+    GaussMarkov *errorModelGyro;         //!< [-] Gauss-markov error states
     
     Eigen::MRPd previous_sigma_BN;  /// -- sigma_BN from the previous spacecraft message
     Eigen::MRPd current_sigma_BN;   /// -- sigma_BN from the most recent spacecraft message
