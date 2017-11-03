@@ -75,7 +75,7 @@ private:
     int64_t outputTransID;             //!< -- Message ID associated with trans-nav state
     int64_t inputSunID;                //!< -- Message ID associated with the sun position
     Eigen::MatrixXd AMatrix;       //!< -- The matrix used to propagate the state
-    GaussMarkov errorModel;            //!< -- Gauss-markov error states
+    GaussMarkov *errorModel;            //!< -- Gauss-markov error states
     uint64_t prevTime;                 //!< -- Previous simulation time observed
 };
 
