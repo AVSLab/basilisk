@@ -43,7 +43,7 @@ class GaussMarkov
     
 public:
     GaussMarkov();
-    GaussMarkov(int size);
+    GaussMarkov(uint64_t size);
     ~GaussMarkov();
     void computeNextState();
     /*!@brief Method does just what it says, seeds the random number generator
@@ -74,6 +74,7 @@ private:
     uint64_t RNGSeed;                 //!< -- Seed for random number generator
     std::minstd_rand rGen; //!< -- Random number generator for model
     std::normal_distribution<double> rNum;  //!< -- Random number distribution for model
+    uint64_t numStates;             //!< -- Number of states to generate noise for
 };
 
 /*! @} */

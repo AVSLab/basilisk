@@ -30,7 +30,7 @@ GaussMarkov::GaussMarkov()
     this->rGen.seed((unsigned int)this->RNGSeed);
     this->rNum.param(UpdatePair);
 }
-GaussMarkov::GaussMarkov(int size) : GaussMarkov() {
+GaussMarkov::GaussMarkov(uint64_t size) : GaussMarkov() {
     this->propMatrix.resize(size,size);
     this->propMatrix.fill(0.0);
     this->currentState.resize(size);
@@ -39,6 +39,7 @@ GaussMarkov::GaussMarkov(int size) : GaussMarkov() {
     this->noiseMatrix.fill(0.0);
     this->stateBounds.resize(size);
     this->stateBounds.fill(0.0);
+    this->numStates = size;
 }
 /*! The destructor is a placeholder for one that might do something*/
 GaussMarkov::~GaussMarkov()
@@ -60,18 +61,20 @@ void GaussMarkov::computeNextState()
     //! Begin method steps
     //! - Check for consistent sizes on all of the user-settable matrices.  Quit if they don't match.
     if((this->propMatrix.size() != this->noiseMatrix.size()) ||
-       this->propMatrix.size() != this->stateBounds.size()*this->stateBounds.size())
+       (this->propMatrix.size() != this->numStates*this->numStates))
     {
         std::cerr << "For the Gauss Markov model, you HAVE, and I mean HAVE, ";
         std::cerr << "to have your propagate and noise matrices be same size";
+        std::cerr << "and that size is your number of states squared";
         std::cerr << std::endl << "I quit.";
         return;
     }
-    //! - Get the number of states to walk on and pad the currentState if necessary.
-    uint64_t numStates = this->stateBounds.size();
-    if(this->currentState.size() < numStates)
+    if(this->stateBounds.size() != this->numStates)
     {
-        this->currentState.resize(numStates);
+        std::cerr << "For the Gauss Markov model, you HAVE, and I mean HAVE, ";
+        std::cerr << "to have your walk bounds length equal to your number of states.";
+        std::cerr << std::endl << "I quit.";
+        return;
     }
 
     //! - Propagate the state forward in time using the propMatrix and the currentState
@@ -79,11 +82,11 @@ void GaussMarkov::computeNextState()
     this->currentState = this->propMatrix * errorVector;
     
     //! - Compute the random numbers used for each state.  Note that the same generator is used for all
-    ranNums.resize(numStates);
+    ranNums.resize(this->numStates);
 
-    for(i = 0; i<numStates; i++)
+    for(i = 0; i<this->numStates; i++)
     {
-        ranNums[i] = rNum(rGen);
+        ranNums[i] = this->rNum(rGen);
         if (this->stateBounds[i] > 0.0){
             double stateCalc = fabs(this->currentState[i]) > this->stateBounds[i]*1E-10 ? fabs(this->currentState[i]) : this->stateBounds[i];
             double boundCheck = (this->stateBounds[i]*2.0 - stateCalc)/stateCalc;
