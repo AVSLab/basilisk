@@ -75,41 +75,32 @@ void SimpleNav::SelfInit()
     //! Begin method steps
     uint64_t numStates = 18;
     //! - Create a new message for the output simple nav state data
-    outputAttID = SystemMessaging::GetInstance()->
-        CreateNewMessage(outputAttName, sizeof(NavAttIntMsg), outputBufferCount,
+    this->outputAttID = SystemMessaging::GetInstance()->
+        CreateNewMessage(this->outputAttName, sizeof(NavAttIntMsg), this->outputBufferCount,
         "NavAttIntMsg", moduleID);
-    outputTransID = SystemMessaging::GetInstance()->
-    CreateNewMessage(outputTransName, sizeof(NavTransIntMsg), outputBufferCount,
-                     "NavTransIntMsg", moduleID);
+    this->outputTransID = SystemMessaging::GetInstance()->
+    CreateNewMessage(this->outputTransName, sizeof(NavTransIntMsg), this->outputBufferCount,
+                     "NavTransIntMsg", this->moduleID);
 
     //! - Initialize the propagation matrix to default values for use in update
-    AMatrix.setIdentity(numStates, numStates);
-    AMatrix(0,3) = AMatrix(1,4) = AMatrix(2,5) = crossTrans ? 1.0 : 0.0;
-    AMatrix(6,9) = AMatrix(7,10) = AMatrix(8, 11) = crossAtt ? 1.0 : 0.0;
+    this->AMatrix.setIdentity(numStates, numStates);
+    this->AMatrix(0,3) = this->AMatrix(1,4) = this->AMatrix(2,5) = this->crossTrans ? 1.0 : 0.0;
+    this->AMatrix(6,9) = this->AMatrix(7,10) = this->AMatrix(8, 11) = this->crossAtt ? 1.0 : 0.0;
     
-    //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
-    if (PMatrix.size() == 0) {
-        PMatrix.resize(numStates, numStates);
-        PMatrix.fill(0.0);
-    }
-    else if(PMatrix.size() != numStates*numStates)
-    {
+    //! - Alert the user and stop if the noise matrix is the wrong size.  That'd be bad.
+    if (this->PMatrix.size() != numStates*numStates) {
         std::cerr << "Your process noise matrix (PMatrix) is not 18*18.";
-        std::cerr << "  You should fix that.  Popping zeros onto end"<<std::endl;
-        Eigen::MatrixXd tempInitializedMatrix;
-        tempInitializedMatrix.resize(numStates, numStates);
-        tempInitializedMatrix.fill(0.0);
-        tempInitializedMatrix.block(0, 0, PMatrix.rows(), PMatrix.cols()) = PMatrix;
-        PMatrix = tempInitializedMatrix;
+        std::cerr << "  Quitting"<<std::endl;
+        return;
     }
     //! - Set the matrices of the lower level error propagation (GaussMarkov)
-    errorModel.setNoiseMatrix(PMatrix);
-    errorModel.setRNGSeed(RNGSeed);
-    if (this->walkBounds.size() == 0) {
-        walkBounds.resize(numStates);
-        walkBounds.fill(0.0);
+    this->errorModel->setNoiseMatrix(this->PMatrix);
+    this->errorModel->setRNGSeed(this->RNGSeed);
+    if (this->walkBounds.size() != numStates) {
+        std::cerr << "Your walkbounds vector  is not 18 elements.";
+        std::cerr << "  Quitting"<<std::endl;
     }
-    errorModel.setUpperBounds(walkBounds);
+    this->errorModel->setUpperBounds(this->walkBounds);
 }
 
 /*! This method pulls the input message IDs from the messaging system.  It will
@@ -120,20 +111,20 @@ void SimpleNav::CrossInit()
 {
     //! Begin method steps
     //! - Obtain the ID associated with the input state name and alert if not found.
-    inputStateID = SystemMessaging::GetInstance()->
+    this->inputStateID = SystemMessaging::GetInstance()->
     SystemMessaging::GetInstance()->
-       subscribeToMessage(inputStateName, sizeof(SCPlusStatesSimMsg), moduleID);
-    if(inputStateID < 0)
+       subscribeToMessage(this->inputStateName, sizeof(SCPlusStatesSimMsg), this->moduleID);
+    if(this->inputStateID < 0)
     {
-        std::cerr << "Warning: input state message name: " << inputStateName;
+        std::cerr << "Warning: input state message name: " << this->inputStateName;
         std::cerr << " could not be isolated, message disabled" << std::endl;
     }
     //! - Obtain the ID associated with the input Sun name and alert if not found.
-    inputSunID =SystemMessaging::GetInstance()->
-    subscribeToMessage(inputSunName, sizeof(SpicePlanetStateSimMsg), moduleID);
-    if(inputSunID < 0)
+    this->inputSunID =SystemMessaging::GetInstance()->
+    subscribeToMessage(this->inputSunName, sizeof(SpicePlanetStateSimMsg), this->moduleID);
+    if(this->inputSunID < 0)
     {
-        std::cerr << "Warning: input Sun message name: " << inputSunName;
+        std::cerr << "Warning: input Sun message name: " << this->inputSunName;
         std::cerr << " could not be isolated, message disabled" << std::endl;
     }
 }
@@ -147,15 +138,15 @@ void SimpleNav::readInputMessages()
     SingleMessageHeader localHeader;
     memset(&this->sunState, 0x0, sizeof(SpicePlanetStateSimMsg));
     memset(&this->inertialState, 0x0, sizeof(SCPlusStatesSimMsg));
-    if(inputStateID >= 0)
+    if(this->inputStateID >= 0)
     {
-        SystemMessaging::GetInstance()->ReadMessage(inputStateID, &localHeader,
-                                                    sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*>(&this->inertialState), moduleID);
+        SystemMessaging::GetInstance()->ReadMessage(this->inputStateID, &localHeader,
+                                                    sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*>(&this->inertialState), this->moduleID);
     }
-    if(inputSunID >= 0)
+    if(this->inputSunID >= 0)
     {
-        SystemMessaging::GetInstance()->ReadMessage(inputSunID, &localHeader,
-                                                    sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&this->sunState), moduleID);
+        SystemMessaging::GetInstance()->ReadMessage(this->inputSunID, &localHeader,
+                                                    sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&this->sunState), this->moduleID);
     }
 }
 
@@ -167,26 +158,26 @@ void SimpleNav::writeOutputMessages(uint64_t Clock)
 {
     //! Begin method steps
     SystemMessaging::GetInstance()->
-    WriteMessage(outputAttID, Clock, sizeof(NavAttIntMsg),
-                 reinterpret_cast<uint8_t*> (&estAttState), moduleID);
+    WriteMessage(this->outputAttID, Clock, sizeof(NavAttIntMsg),
+                 reinterpret_cast<uint8_t*> (&estAttState), this->moduleID);
     SystemMessaging::GetInstance()->
-    WriteMessage(outputTransID, Clock, sizeof(NavTransIntMsg),
-                 reinterpret_cast<uint8_t*> (&estTransState), moduleID);
+    WriteMessage(this->outputTransID, Clock, sizeof(NavTransIntMsg),
+                 reinterpret_cast<uint8_t*> (&estTransState), this->moduleID);
 }
 
 void SimpleNav::applyErrors()
 {
     //! - Add errors to the simple cases (everything except sun-pointing)
-    v3Add(trueTransState.r_BN_N, &(navErrors.data()[0]), estTransState.r_BN_N);
-    v3Add(trueTransState.v_BN_N, &(navErrors.data()[3]), estTransState.v_BN_N);
-    addMRP(trueAttState.sigma_BN, &(navErrors.data()[6]), estAttState.sigma_BN);
-    v3Add(trueAttState.omega_BN_B, &(navErrors.data()[9]), estAttState.omega_BN_B);
-    v3Add(trueTransState.vehAccumDV, &(navErrors.data()[15]), estTransState.vehAccumDV);
+    v3Add(this->trueTransState.r_BN_N, &(this->navErrors.data()[0]), this->estTransState.r_BN_N);
+    v3Add(this->trueTransState.v_BN_N, &(this->navErrors.data()[3]), this->estTransState.v_BN_N);
+    addMRP(this->trueAttState.sigma_BN, &(this->navErrors.data()[6]), this->estAttState.sigma_BN);
+    v3Add(this->trueAttState.omega_BN_B, &(this->navErrors.data()[9]), this->estAttState.omega_BN_B);
+    v3Add(this->trueTransState.vehAccumDV, &(this->navErrors.data()[15]), this->estTransState.vehAccumDV);
     //! - Add errors to  sun-pointing
     if(inputSunID >= 0) {
         double dcm_OT[3][3];       /* dcm, body T to body O */
-        MRP2C(&(navErrors.data()[12]), dcm_OT);
-        m33MultV3(dcm_OT, trueAttState.vehSunPntBdy, estAttState.vehSunPntBdy);
+        MRP2C(&(this->navErrors.data()[12]), dcm_OT);
+        m33MultV3(dcm_OT, this->trueAttState.vehSunPntBdy, this->estAttState.vehSunPntBdy);
     }
 }
 
@@ -199,20 +190,20 @@ void SimpleNav::applyErrors()
 void SimpleNav::computeTrueOutput(uint64_t Clock)
 {
     //! - Set output state to truth data
-    v3Copy(inertialState.r_BN_N, trueTransState.r_BN_N);
-    v3Copy(inertialState.v_BN_N, trueTransState.v_BN_N);
-    v3Copy(inertialState.sigma_BN, trueAttState.sigma_BN);
-    v3Copy(inertialState.omega_BN_B, trueAttState.omega_BN_B);
-    v3Copy(inertialState.TotalAccumDVBdy, trueTransState.vehAccumDV);
+    v3Copy(this->inertialState.r_BN_N, this->trueTransState.r_BN_N);
+    v3Copy(this->inertialState.v_BN_N, this->trueTransState.v_BN_N);
+    v3Copy(this->inertialState.sigma_BN, this->trueAttState.sigma_BN);
+    v3Copy(this->inertialState.omega_BN_B, this->trueAttState.omega_BN_B);
+    v3Copy(this->inertialState.TotalAccumDVBdy, this->trueTransState.vehAccumDV);
 
     //! - For the sun pointing output, compute the spacecraft to sun vector, normalize, and trans 2 body.
     if(inputSunID >= 0) {
         double sc2SunInrtl[3];
         double dcm_BN[3][3];        /* dcm, inertial to body */
-        v3Subtract(sunState.PositionVector, inertialState.r_BN_N, sc2SunInrtl);
+        v3Subtract(this->sunState.PositionVector, this->inertialState.r_BN_N, sc2SunInrtl);
         v3Normalize(sc2SunInrtl, sc2SunInrtl);
-        MRP2C(inertialState.sigma_BN, dcm_BN);
-        m33MultV3(dcm_BN, sc2SunInrtl, trueAttState.vehSunPntBdy);
+        MRP2C(this->inertialState.sigma_BN, dcm_BN);
+        m33MultV3(dcm_BN, sc2SunInrtl, this->trueAttState.vehSunPntBdy);
     }
 }
 
@@ -224,7 +215,7 @@ void SimpleNav::computeTrueOutput(uint64_t Clock)
 void SimpleNav::computeErrors(uint64_t CurrentSimNanos)
 {
     double timeStep;
-    Eigen::MatrixXd localProp = AMatrix;
+    Eigen::MatrixXd localProp = this->AMatrix;
     //! - Compute timestep since the last call
     timeStep = (CurrentSimNanos - this->prevTime)*1.0E-9;
 
@@ -236,9 +227,9 @@ void SimpleNav::computeErrors(uint64_t CurrentSimNanos)
     localProp(8,11) *= timeStep; //attitude/attitude rate cross correlation terms
     
     //! - Set the GaussMarkov propagation matrix and compute errors
-    errorModel.setPropMatrix(localProp);
-    errorModel.computeNextState();
-    navErrors = errorModel.getCurrentState();
+    this->errorModel->setPropMatrix(localProp);
+    this->errorModel->computeNextState();
+    this->navErrors = this->errorModel->getCurrentState();
 }
 
 /*! This method calls all of the run-time operations for the simple nav model.
@@ -247,10 +238,10 @@ void SimpleNav::computeErrors(uint64_t CurrentSimNanos)
 */
 void SimpleNav::UpdateState(uint64_t CurrentSimNanos)
 {
-    readInputMessages();
-    computeTrueOutput(CurrentSimNanos);
-    computeErrors(CurrentSimNanos);
-    applyErrors();
-    writeOutputMessages(CurrentSimNanos);
+    this->readInputMessages();
+    this->computeTrueOutput(CurrentSimNanos);
+    this->computeErrors(CurrentSimNanos);
+    this->applyErrors();
+    this->writeOutputMessages(CurrentSimNanos);
     this->prevTime = CurrentSimNanos;
 }
