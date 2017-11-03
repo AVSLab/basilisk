@@ -91,9 +91,9 @@ ImuSensor::~ImuSensor()
 void ImuSensor::SelfInit()
 {
 
-    OutputDataID = SystemMessaging::GetInstance()->
-        CreateNewMessage( OutputDataMsg, sizeof(IMUSensorIntMsg),
-        OutputBufferCount, "IMUSensorIntMsg", moduleID);
+    this->OutputDataID = SystemMessaging::GetInstance()->
+        CreateNewMessage( this->OutputDataMsg, sizeof(IMUSensorIntMsg),
+        this->OutputBufferCount, "IMUSensorIntMsg", this->moduleID);
 
 	uint64_t numStates = 3;
 
@@ -105,9 +105,9 @@ void ImuSensor::SelfInit()
 		std::cerr << __FILE__ <<": Your process noise matrix (PMatrix) is not 3*3.";
         std::cerr << "  You should fix that.  Expect Problems"<<std::endl;
 	}
-	(*this->errorModelAccel).setNoiseMatrix(this->PMatrixAccel);
-	(*this->errorModelAccel).setRNGSeed(RNGSeed);
-	(*this->errorModelAccel).setUpperBounds(walkBoundsAccel);
+	this->errorModelAccel->setNoiseMatrix(this->PMatrixAccel);
+	this->errorModelAccel->setRNGSeed(this->RNGSeed);
+	this->errorModelAccel->setUpperBounds(this->walkBoundsAccel);
 
     this->AMatrixGyro.setIdentity(numStates, numStates);
 
@@ -117,21 +117,21 @@ void ImuSensor::SelfInit()
 		std::cerr << __FILE__ <<": Your process noise matrix (PMatrix) is not 3*3.";
         std::cerr << "  You should fix that.  Expect Problems"<<std::endl;
 	}
-	(*this->errorModelGyro).setNoiseMatrix(this->PMatrixGyro);
-	(*this->errorModelGyro).setRNGSeed(RNGSeed);
-	(*this->errorModelGyro).setUpperBounds(walkBoundsGyro);
+	this->errorModelGyro->setNoiseMatrix(this->PMatrixGyro);
+	this->errorModelGyro->setRNGSeed(this->RNGSeed);
+	this->errorModelGyro->setUpperBounds(this->walkBoundsGyro);
 
     return;
 }
 
 void ImuSensor::CrossInit()
 {
-    InputStateID = SystemMessaging::GetInstance()->subscribeToMessage(InputStateMsg,
-        sizeof(SCPlusStatesSimMsg), moduleID);
-    if(InputStateID < 0 )
+    this->InputStateID = SystemMessaging::GetInstance()->subscribeToMessage(this->InputStateMsg,
+        sizeof(SCPlusStatesSimMsg), this->moduleID);
+    if(this->InputStateID < 0 )
     {
         std::cerr << "WARNING: Failed to link an imu input message: ";
-        std::cerr << std::endl << "State: "<<InputStateID;
+        std::cerr << std::endl << "State: "<<this->InputStateID;
     }
 
     return;
@@ -188,7 +188,7 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
     Eigen::Vector3d omega_PN_P_disc; //discretized of the above
     Eigen::Vector3d omega_error_P; //error due to discretization in angular rate
     
-    dt = (CurrentTime - PreviousTime)*1.0E-9;
+    dt = (CurrentTime - this->PreviousTime)*1.0E-9;
     
     
     
@@ -227,7 +227,7 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
             omega_PN_P_disc[i] = copysign(omega_PN_P_disc[i], this->omega_PN_P_out[i]);
         }
         //integrate error through omega
-        omega_error_P = omega_PN_P_out - omega_PN_P_disc;
+        omega_error_P = this->omega_PN_P_out - omega_PN_P_disc;
         this->prv_PN_out -= omega_error_P * dt;
         this->omega_PN_P_out = omega_PN_P_disc;
     }
@@ -241,13 +241,13 @@ void ImuSensor::applySensorErrors(uint64_t CurrentTime)
     Eigen::Vector3d AccelErrors; //linear noise plus bias
     double dt; //time step
 
-    dt = (CurrentTime - PreviousTime)*1.0E-9;
+    dt = (CurrentTime - this->PreviousTime)*1.0E-9;
     
-    OmegaErrors = navErrorsGyro + senRotBias;
+    OmegaErrors = this->navErrorsGyro + this->senRotBias;
     this->omega_PN_P_out += OmegaErrors;
     this->prv_PN_out += OmegaErrors * dt;
     
-    AccelErrors = navErrorsAccel + senTransBias;
+    AccelErrors = this->navErrorsAccel + this->senTransBias;
     this->accel_SN_P_out += AccelErrors;
     this->DV_SN_P_out += AccelErrors * dt;
 
@@ -256,12 +256,12 @@ void ImuSensor::applySensorErrors(uint64_t CurrentTime)
 
 void ImuSensor::computeSensorErrors()
 {
-	(*this->errorModelAccel).setPropMatrix(this->AMatrixAccel);
-	(*this->errorModelAccel).computeNextState();
-	this->navErrorsAccel = (*this->errorModelAccel).getCurrentState();
-	(*this->errorModelGyro).setPropMatrix(this->AMatrixGyro);
-	(*this->errorModelGyro).computeNextState();
-	this->navErrorsGyro = (*this->errorModelGyro).getCurrentState();
+	this->errorModelAccel->setPropMatrix(this->AMatrixAccel);
+	this->errorModelAccel->computeNextState();
+	this->navErrorsAccel = this->errorModelAccel->getCurrentState();
+	this->errorModelGyro->setPropMatrix(this->AMatrixGyro);
+	this->errorModelGyro->computeNextState();
+	this->navErrorsGyro = this->errorModelGyro->getCurrentState();
 
     return;
 }
@@ -407,27 +407,27 @@ void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();
 
-    if(NominalReady)
+    if(this->NominalReady)
     {
         /* Compute true data */
-        computePlatformDR();
-        computePlatformDV(CurrentSimNanos);
+        this->computePlatformDR();
+        this->computePlatformDV(CurrentSimNanos);
         /* Compute sensed data */
-		computeSensorErrors();
-		applySensorErrors(CurrentSimNanos);
-        applySensorDiscretization(CurrentSimNanos);
-		applySensorSaturation(CurrentSimNanos);
+		this->computeSensorErrors();
+		this->applySensorErrors(CurrentSimNanos);
+        this->applySensorDiscretization(CurrentSimNanos);
+		this->applySensorSaturation(CurrentSimNanos);
         /* Output sensed data */
-        writeOutputMessages(CurrentSimNanos);
+        this->writeOutputMessages(CurrentSimNanos);
     }
     
     //record data from the current spacecraft message which is needed for the next IMU call
     this->previous_sigma_BN = this->current_sigma_BN;
     this->previous_omega_BN_B = this->current_omega_BN_B;
     this->previous_TotalAccumDV_BN_B = this->current_TotalAccumDV_BN_B;
-    PreviousTime = CurrentSimNanos;
+    this->PreviousTime = CurrentSimNanos;
     
-    NominalReady = true;
+    this->NominalReady = true;
 
     return;
 }
