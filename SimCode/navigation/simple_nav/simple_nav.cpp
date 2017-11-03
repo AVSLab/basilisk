@@ -44,6 +44,11 @@ SimpleNav::SimpleNav()
     memset(&trueAttState, 0x0, sizeof(NavAttIntMsg));
     memset(&estTransState, 0x0, sizeof(NavTransIntMsg));
     memset(&trueTransState, 0x0, sizeof(NavTransIntMsg));
+    this->PMatrix.resize(18,18);
+    this->PMatrix.fill(0.0);
+    this->walkBounds.resize(18);
+    this->walkBounds.fill(0.0);
+    this->errorModel =  new GaussMarkov(18);
     return;
 }
 
