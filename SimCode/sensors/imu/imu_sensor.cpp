@@ -102,8 +102,9 @@ void ImuSensor::SelfInit()
 	//! - Alert the user if the noise matrix was not the right size.  That'd be bad.
 	if(this->PMatrixAccel.cols() != numStates || this->PMatrixAccel.rows() != numStates)
 	{
-		std::cerr << __FILE__ <<": Your process noise matrix (PMatrix) is not 3*3.";
-        std::cerr << "  You should fix that.  Expect Problems"<<std::endl;
+		std::cerr << __FILE__ <<": Your process noise matrix (PMatrixAccel) is not 3*3.";
+        std::cerr << "  Quitting."<<std::endl;
+        return;
 	}
 	this->errorModelAccel->setNoiseMatrix(this->PMatrixAccel);
 	this->errorModelAccel->setRNGSeed(this->RNGSeed);
@@ -114,8 +115,9 @@ void ImuSensor::SelfInit()
 	//! - Alert the user if the noise matrix was not the right size.  That'd be bad.
 	if(this->PMatrixGyro.rows() != numStates || this->PMatrixGyro.cols() != numStates)
 	{
-		std::cerr << __FILE__ <<": Your process noise matrix (PMatrix) is not 3*3.";
-        std::cerr << "  You should fix that.  Expect Problems"<<std::endl;
+		std::cerr << __FILE__ <<": Your process noise matrix (PMatrixGyro) is not 3*3.";
+        std::cerr << "  Quitting."<<std::endl;
+        return;
 	}
 	this->errorModelGyro->setNoiseMatrix(this->PMatrixGyro);
 	this->errorModelGyro->setRNGSeed(this->RNGSeed);
