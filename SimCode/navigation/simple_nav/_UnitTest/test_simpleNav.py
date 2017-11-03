@@ -131,22 +131,26 @@ def unitSimpleNav(show_plots):
     sunSigma = math.pi/180.0
     dvSigma = 0.1*math.pi/180.0
 
-    pMatrix = numpy.eye(18)
-    pMatrix[0,0] = pMatrix[1,1] = pMatrix[2,2] = posSigma
-    pMatrix[3,3] = pMatrix[4,4] = pMatrix[5,5] = velSigma
-    pMatrix[6,6] = pMatrix[7,7] = pMatrix[8,8] = attSigma
-    pMatrix[9,9] = pMatrix[10,10] = pMatrix[11,11] = rateSigma
-    pMatrix[12,12] = pMatrix[13,13] = pMatrix[14,14] = sunSigma
-    pMatrix[15,15] = pMatrix[16,16] = pMatrix[17,17] = dvSigma
-
-    errorBounds = [[1000., 1000., 1000., 1., 1., 1., 0.005, 0.005, 0.005, 0.02, 0.02, 0.02, 5.0*math.pi/180.0, 5.0*math.pi/180.0, 5.0*math.pi/180.0, 0.053, 0.053, 0.053 ]]
-    # errorBounds = numpy.array([0.0]*18)
-    # errorBounds[0:3] = posBound
-    # errorBounds[3:6] = velBound
-    # errorBounds[6:9] = attBound
-    # errorBounds[9:12] = rateBound
-    # errorBounds[12:15] = sunBound
-    # errorBounds[15:18] = dvBound
+    pMatrix = [[posSigma, 0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.],
+               [0., posSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., posSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., velSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., velSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., velSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., attSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., attSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., attSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., rateSigma, 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rateSigma, 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rateSigma, 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sunSigma, 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sunSigma, 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sunSigma, 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dvSigma, 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dvSigma, 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dvSigma],
+               ]
+    errorBounds = [[1000.], [1000.], [1000.], [1.], [1.], [1.], [0.005], [0.005], [0.005], [0.02], [0.02], [0.02], [5.0*math.pi/180.0], [5.0*math.pi/180.0], [5.0*math.pi/180.0], [0.053], [0.053], [0.053] ]
 
     sNavObject.walkBounds = errorBounds
     sNavObject.PMatrix = pMatrix
@@ -287,10 +291,22 @@ def unitSimpleNav(show_plots):
     plt.close()
 
     # Corner case usage
-    pMatrixBad = [0.0]*12*12
-    stateBoundsBad = [0.0]*12
-    sNavObject.walkBounds = sim_model.DoubleVector(stateBoundsBad)
-    sNavObject.PMatrix = sim_model.DoubleVector(pMatrixBad)
+    pMatrixBad = [[0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]]
+    # stateBoundsBad = [[0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.]]
+    stateBoundsBad = [[0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.]]
+    sNavObject.walkBounds = stateBoundsBad
+    sNavObject.PMatrix = pMatrixBad
     sNavObject.inputStateName = "random_name"
     sNavObject.inputSunName = "weirdly_not_the_sun"
     unitTestSim.InitializeSimulation()
