@@ -30,7 +30,16 @@ GaussMarkov::GaussMarkov()
     this->rGen.seed((unsigned int)this->RNGSeed);
     this->rNum.param(UpdatePair);
 }
-
+GaussMarkov::GaussMarkov(int size) : GaussMarkov() {
+    this->propMatrix.resize(size,size);
+    this->propMatrix.fill(0.0);
+    this->currentState.resize(size);
+    this->currentState.fill(0.0);
+    this->noiseMatrix.resize(size, size);
+    this->noiseMatrix.fill(0.0);
+    this->stateBounds.resize(size);
+    this->stateBounds.fill(0.0);
+}
 /*! The destructor is a placeholder for one that might do something*/
 GaussMarkov::~GaussMarkov()
 {

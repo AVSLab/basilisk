@@ -43,6 +43,7 @@ class GaussMarkov
     
 public:
     GaussMarkov();
+    GaussMarkov(int size);
     ~GaussMarkov();
     void computeNextState();
     /*!@brief Method does just what it says, seeds the random number generator
