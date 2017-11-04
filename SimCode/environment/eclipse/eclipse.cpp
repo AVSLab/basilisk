@@ -19,7 +19,6 @@
 
 #include "eclipse.h"
 #include <iostream>
-#include <boost/lexical_cast.hpp>
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/astroConstants.h"
 
