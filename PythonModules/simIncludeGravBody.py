@@ -83,6 +83,7 @@ class gravBodyFactory(object):
         sun.isCentralBody = False
         sun.useSphericalHarmParams = False
         self.gravBodies['sun'] = sun
+        sun.this.disown()
         return sun
 
     def createMercury(self):
@@ -94,6 +95,7 @@ class gravBodyFactory(object):
         mercury.isCentralBody = False
         mercury.useSphericalHarmParams = False
         self.gravBodies['mercury'] = mercury
+        mercury.this.disown()
         return mercury
 
     def createVenus(self):
@@ -105,6 +107,7 @@ class gravBodyFactory(object):
         venus.isCentralBody = False
         venus.useSphericalHarmParams = False
         self.gravBodies['venus'] = venus
+        venus.this.disown()
         return venus
 
     def createEarth(self):
@@ -116,6 +119,7 @@ class gravBodyFactory(object):
         earth.isCentralBody = False
         earth.useSphericalHarmParams = False
         self.gravBodies['earth'] = earth
+        earth.this.disown()
         return earth
 
     def createMoon(self):
@@ -127,6 +131,7 @@ class gravBodyFactory(object):
         moon.isCentralBody = False
         moon.useSphericalHarmParams = False
         self.gravBodies['moon'] = moon
+        moon.this.disown()
         return moon
 
     def createMars(self):
@@ -138,6 +143,7 @@ class gravBodyFactory(object):
         mars.isCentralBody = False
         mars.useSphericalHarmParams = False
         self.gravBodies['mars'] = mars
+        mars.this.disown()
         return mars
 
     def createMarsBarycenter(self):
@@ -149,6 +155,7 @@ class gravBodyFactory(object):
         mars_barycenter.isCentralBody = False
         mars_barycenter.useSphericalHarmParams = False
         self.gravBodies['mars barycenter'] = mars_barycenter
+        mars_barycenter.this.disown()
         return mars_barycenter
 
     def createJupiter(self):
@@ -160,6 +167,7 @@ class gravBodyFactory(object):
         jupiter.isCentralBody = False
         jupiter.useSphericalHarmParams = False
         self.gravBodies['jupiter barycenter'] = jupiter
+        jupiter.this.disown()
         return jupiter
 
     def createSaturn(self):
@@ -171,6 +179,7 @@ class gravBodyFactory(object):
         saturn.isCentralBody = False
         saturn.useSphericalHarmParams = False
         self.gravBodies['saturn'] = saturn
+        saturn.this.disown()
         return saturn
 
     def createUranus(self):
@@ -182,6 +191,7 @@ class gravBodyFactory(object):
         uranus.isCentralBody = False
         uranus.useSphericalHarmParams = False
         self.gravBodies['uranus'] = uranus
+        uranus.this.disown()
         return uranus
 
     def createNeptune(self):
@@ -193,6 +203,7 @@ class gravBodyFactory(object):
         neptune.isCentralBody = False
         neptune.useSphericalHarmParams = False
         self.gravBodies['neptune'] = neptune
+        neptune.this.disown()
         return neptune
 
     def createSpiceInterface(self, path, time, **kwargs):
