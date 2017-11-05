@@ -122,7 +122,7 @@ def myDataCallback(monteCarloData, retentionPolicy):
 @pytest.mark.slowtest
 def test_MonteCarloSimulation(show_plots):
     # Test a montecarlo simulation
-    dirName = "/Users/patrick/Documents/SoftwareDevelopment/Basilisk/SimScenarios/tmp_montecarlo_test"
+    dirName = os.path.abspath(os.path.dirname(__file__)) + "/tmp_montecarlo_test"
     monteCarlo = Controller()
     monteCarlo.setShouldDisperseSeeds(True)
     monteCarlo.setExecutionFunction(myExecutionFunction)
@@ -194,4 +194,3 @@ def test_MonteCarloSimulation(show_plots):
 
 if __name__ == "__main__":
     test_MonteCarloSimulation(show_plots=True)
-    # myCreationFunction()
