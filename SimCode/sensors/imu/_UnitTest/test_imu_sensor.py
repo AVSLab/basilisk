@@ -201,7 +201,6 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     ImuSensor.senTransBias = np.array([senTransBiasIn] * 3)
     ImuSensor.senTransMax = senTransMaxIn
     ImuSensor.senRotMax = senRotMaxIn
-    ImuSensor.carryOverDiscretizationError = 0
 
     # Set-up the sensor output truth vectors
     rDotDot_SN_P = np.resize(np.array([0., 0., 0.]), (int(stopTime/unitProcRate_s+1), 3))  # sensor sensed acceleration in sensor platform frame coordinates

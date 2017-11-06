@@ -73,7 +73,6 @@ public:
     
     double accelLSB;                    //! (-) Discretization value (least significant bit) for accel data
     double gyroLSB;                     //! (-) Discretization value for gyro data
-    uint8_t carryOverDiscretizationError;     /// --- 1 if it is desired to carry over the discretization error, 0 if not
 private:
     int64_t InputStateID;               /// -- Connect to input time message
     int64_t OutputDataID;               /// -- Connect to output CSS data
@@ -97,10 +96,6 @@ private:
     Eigen::Vector3d DV_SN_P_out; /// -- time step deltaV for either next method or output messages
     Eigen::Vector3d omega_PN_P_out; /// -- omega_PN_P for either next method or output messages
     Eigen::Vector3d prv_PN_out;    /// -- time step PRV_PN for either next method or output messages
-    Eigen::Vector3d accelErrorDisc_P;         /// --- the leftovers from discretization
-    Eigen::Vector3d omegaErrorDisc_P;         /// --- the leftovers from discretization
-    Eigen::Vector3d DVErrorDisc_N;            /// --- the leftovers from discretization
-    Eigen::Vector3d PRVErrorDisc_P;           /// --- the leftovers from discretization
 };
 
 #endif
