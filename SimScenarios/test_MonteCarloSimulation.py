@@ -97,6 +97,208 @@ numDataPoints = 100
 simulationTime = macros.min2nano(10.)
 samplingTime = simulationTime / (numDataPoints-1)
 
+
+## \defgroup Tutorials_5_0
+##   @{
+## Demonstrates how to run Monte-Carlo (MC) simulations. This is done by running the AttitudeFeedbackRW scenario. In this scenario
+# Reaction Wheels are used to stabilize the tumble of a spacecraft orbiting the
+# Earth.
+#
+# MC Simulation of an Attitude Detumbling Simulation using RW Effectors {#MonteCarloSimulation}
+# ====
+#
+# Scenario Description
+# -----
+# This script sets up a 6-DOF spacecraft which is orbiting the Earth using a multi threaded Monte-Carlo
+# setup. Reaction Wheel (RW) state effector are added to the rigid spacecraftPlus() hub, and what flight
+# algorithm module is used to control these RWs. The scenario is run in a single configuartion:
+# by not using the Jitter model and by using the RW Voltage IO. Given this scenario we can add dispersions
+# to the variables in between each MC run.
+#
+#
+# To run the MC simulation, call the python script from a Terminal window through
+#
+#       python test_MonteCarloSimulation.py
+#
+# For more information on the Attitude Feedback Simulation with RW, please see the documentation
+# on the test_scenarioAttitudeFeedbackRW.py file.
+#
+#
+# ### Setup Changes for Monte-Carlo Runs
+#
+# In order to set up the multi-threaded MC simulation, the user must first instatiate the Controller class.
+# The function that is being simulated is the set in this class (in this case, it's defined in the same file as the
+# MC scenario). The user can then set other variables such as the number of runs, the dispersion seeds, and number of
+# cores.
+# The specific code required is:
+# ~~~~~~~~~~~~~{.py}
+#   #First, the `Controller` class is used in order to define the simulation
+#   monteCarlo = Controller()
+#
+#   # Every MonteCarlo simulation must define a function that creates the `SimulationBaseClass` to execute and returns it. Within this function, the simulation is created and configured
+#   monteCarlo.setSimulationFunction(createScenarioAttitudeFeedbackRW)
+#
+#   # Also, every MonteCarlo simulation must define a function which executes the simulation that was created.
+#   monteCarlo.setExecutionFunction(executeScenario)
+#
+#   # A Monte Carlo simulation must define how many simulation runs to execute
+#   monteCarlo.setExecutionCount(NUMBER_OF_RUNS)
+#
+#   # The simulations can have random seeds of each simulation dispersed randomly
+#   monteCarlo.setShouldDisperseSeeds(True)
+#
+#   # Optionally set the number of cores to use
+#   # monteCarlo.setThreadCount(PROCESSES)
+#
+#   # Whether to print more verbose information during the run
+#   monteCarlo.setVerbose(VERBOSE)
+#
+#   # We set up where to retain the data to.
+#   dirName = "montecarlo_test"
+#   monteCarlo.setArchiveDir(dirName)
+# ~~~~~~~~~~~~~
+# The next important step to setting up the MC runs is to disperse the necessary variables.
+# The dispersions that are set are listed in the following table:
+#
+# Input      | Description of Element    | Distribution
+# ------------- | ---------|-----------------
+# Inertial attitude       |Using Modified Rodrigues Parameters | Uniform for all 3 rotations betweenr [0, 2 pi]
+# Inertial rotation rate         | Using omega vector      | Normal dispersions for each of the rotation components, each of mean 0 and standard deviation 0.25 deg/s
+# Mass of the hub   | Total Mass of the spacecraft | Uniform around +/-5% of expected values. Bounds are [712.5, 787.5]
+# Center of Mass Offset |Position vector offset on the actual center of mass, and it’s theoretical position | Normally around a mean [0, 0, 1], with standard deviations of [0.05/3, 0.05/3, 0.1/3]
+# Inertia Tensor  |3x3 inertia tensor. Dispersed by 3 rotations | Normally about mean value of diag(900, 800, 600). Each of the 3 rotations are normally distributed with angles of mean 0 and standard deviation 0.1 deg.
+# RW axes  |The rotation axis for each of the 3 wheels | Normally around a respective means [1,0,0], [0,1,0], and [0,0,1] with respective standard deviations [0.01/3, 0.005/3, 0.005/3], [0.005/3, 0.01/3, 0.005/3], and [0.005/3, 0.005/3, 0.01/3]
+# RW speeds | The rotation speed for each of the 3 wheels |Uniform around  +/-5% of expected values. Bounds are [95, 105], [190, 210], and [285, 315]
+# Voltage to Torque Gain         |The gain between the commanded torque and the actual voltage | Uniform around  +/-5% of expected values. Bounds are [0.019, 0.021]
+#
+# The python commands to add these dispersions are shown below:
+#
+# ~~~~~~~~~~~~~~~~~{.py}
+#     # Statistical dispersions can be applied to initial parameters using the MonteCarlo module
+#     dispMRPInit = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
+#     dispOmegaInit = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
+#     dispMass = 'TaskList[0].TaskModels[0].hub.mHub'
+#     dispCoMOff = 'TaskList[0].TaskModels[0].hub.r_BcB_B'
+#     dispInertia = 'hubref.IHubPntBc_B'
+#     dispRW1Axis = 'RW1.gsHat_B'
+#     dispRW2Axis = 'RW2.gsHat_B'
+#     dispRW3Axis = 'RW3.gsHat_B'
+#     dispRW1Omega = 'RW1.Omega'
+#     dispRW2Omega = 'RW2.Omega'
+#     dispRW3Omega = 'RW3.Omega'
+#     dispVoltageIO = 'rwVoltageIO.voltage2TorqueGain'
+#     dispList = [dispMRPInit, dispOmegaInit, dispMass, dispCoMOff, dispInertia]
+#
+#     # Add dispersions with their dispersion type
+#     monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(dispMRPInit))
+#     monteCarlo.addDispersion(NormalVectorCartDispersion(dispOmegaInit, 0.0, 0.75 / 3.0 * np.pi / 180))
+#     monteCarlo.addDispersion(UniformDispersion(dispMass, ([750.0 - 0.05*750, 750.0 + 0.05*750])))
+#     monteCarlo.addDispersion(NormalVectorCartDispersion(dispCoMOff, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
+#     monteCarlo.addDispersion(InertiaTensorDispersion(dispInertia, stdAngle=0.1))
+#     monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW1Axis, [1.0, 0.0, 0.0], [0.01 / 3.0, 0.005 / 3.0, 0.005 / 3.0]))
+#     monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW2Axis, [0.0, 1.0, 0.0], [0.005 / 3.0, 0.01 / 3.0, 0.005 / 3.0]))
+#     monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW3Axis, [0.0, 0.0, 1.0], [0.005 / 3.0, 0.005 / 3.0, 0.01 / 3.0]))
+#     monteCarlo.addDispersion(UniformDispersion(dispRW1Omega, ([100.0 - 0.05*100, 100.0 + 0.05*100])))
+#     monteCarlo.addDispersion(UniformDispersion(dispRW2Omega, ([200.0 - 0.05*200, 200.0 + 0.05*200])))
+#     monteCarlo.addDispersion(UniformDispersion(dispRW3Omega, ([300.0 - 0.05*300, 300.0 + 0.05*300])))
+#     monteCarlo.addDispersion(UniformDispersion(dispVoltageIO, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
+# ~~~~~~~~~~~~~~~~~
+#
+# A retention policy is used to log the desired data. This is shown in the following code:
+#
+# ~~~~~~~~~~~~~{.py}
+#     # A `RetentionPolicy` is used to define what data from the simulation should be retained. A `RetentionPolicy` is a list of messages and variables to log from each simulation run. It also has a callback, used for plotting/processing the retained data.
+#     retentionPolicy = RetentionPolicy()
+#     # define the data to retain
+#     retentionPolicy.addMessageLog(rwMotorTorqueConfigOutputDataName, [("motorTorque", range(5))], samplingTime)
+#     retentionPolicy.addMessageLog(attErrorConfigOutputDataName, [("sigma_BR", range(3)), ("omega_BR_B", range(3))], samplingTime)
+#     retentionPolicy.addMessageLog(sNavObjectOutputTransName, [("r_BN_N", range(3))], samplingTime)
+#     retentionPolicy.addMessageLog(mrpControlConfigInputRWSpeedsName, [("wheelSpeeds", range(3))], samplingTime)
+#     retentionPolicy.addMessageLog(fswRWVoltageConfigVoltageOutMsgName, [("voltage", range(3))], samplingTime)
+# ~~~~~~~~~~~~~
+#
+# The simulation can now be run. It returns the failed jobs, which should not occur.
+# The data can then be loaded:
+#
+# ~~~~~~~~~~~~~{.py}
+# After the monteCarlo run is configured, it is executed.
+# This method returns the list of jobs that failed.
+# failures = monteCarlo.executeSimulations()
+#
+# assert len(failures) == 0, "No runs should fail"
+#
+# # Now in another script (or the current one), the data from this simulation can be easily loaded.
+# # This demonstrates loading it from disk
+# monteCarloLoaded = Controller.load(dirName)
+# ~~~~~~~~~~~~~
+#
+# ### Accessing Data
+#
+# Now that the MC have been executed, the data can be accessed and tested in different ways
+# This is explained in the following python code and comments
+#
+# ~~~~~~~~~~~~~~~{.py}
+#        # Then retained data from any run can then be accessed in the form of a dictionary with two sub-dictionaries for messages and variables:
+#     retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
+#     assert retainedData is not None, "Retained data should be available after execution"
+#     assert "messages" in retainedData, "Retained data should retain messages"
+#     assert "attErrorInertial3DMsg.sigma_BR" in retainedData["messages"], "Retained messages should exist"
+#
+#     # We also can rerun a case using the same parameters and random seeds
+#     # If we rerun a properly set-up run, it should output the same data.
+#     # Here we test that if we rerun the case the data doesn't change
+#     oldOutput = retainedData["messages"]["attErrorInertial3DMsg.sigma_BR"]
+#
+#     # Rerunning the case shouldn't fail
+#     failed = monteCarloLoaded.reRunCases([NUMBER_OF_RUNS-1])
+#     assert len(failed) == 0, "Should rerun case successfully"
+#
+#     # Now access the newly retained data to see if it changed
+#     retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
+#     newOutput = retainedData["messages"]["attErrorInertial3DMsg.sigma_BR"]
+#     for k1, v1 in enumerate(oldOutput):
+#         for k2, v2 in enumerate(v1):
+#             assert math.fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < .001, \
+#             "Outputs shouldn't change on runs if random seeds are same"
+#
+#     # We can also access the initial parameters
+#     # The random seeds should differ between runs, so we will test that
+#     params1 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-1)
+#     params2 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-2)
+#     assert "TaskList[0].TaskModels[0].RNGSeed" in params1, "random number seed should be applied"
+#     for dispName in dispList:
+#         assert dispName in params1, "dispersion should be applied"
+#         # assert two different runs had different parameters.
+#         assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
+#
+# ~~~~~~~~~~~~~~~
+#  Finally the data can be plotted as desired:
+#
+#
+# ~~~~~~~~~~~~~~~{.py}
+# # Now we execute our callback for the retained data.
+# # For this run, that means executing the plot.
+# # We can plot only runs 4,6,7 overlapped
+# monteCarloLoaded.executeCallbacks([4, 6, 7])
+# # or execute the plot on all runs
+# # monteCarloLoaded.executeCallbacks()
+#
+# # Now we clean up data from this test
+# shutil.rmtree(dirName)
+# assert not os.path.exists(dirName), "No leftover data should exist after the test"
+#
+# # And possibly show the plots
+# if show_plots:
+#     print "Test concluded, showing plots now..."
+#     plt.show()
+#     # close the plots being saved off to avoid over-writing old and new figures
+#     plt.close("all")
+#
+# ~~~~~~~~~~~~~~~
+#
+##  @}
+
+
 @pytest.mark.slowtest()
 def test_MonteCarloSimulation(show_plots):
     '''This function is called by the py.test environment.'''
@@ -130,7 +332,7 @@ def test_MonteCarloSimulation(show_plots):
     dirName = "montecarlo_test"
     monteCarlo.setArchiveDir(dirName)
 
-    # Statistical dispersions can be applied to initial parameters using the MonteCarlo module.
+    # Statistical dispersions can be applied to initial parameters using the MonteCarlo module
     dispMRPInit = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
     dispOmegaInit = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
     dispMass = 'TaskList[0].TaskModels[0].hub.mHub'
@@ -144,6 +346,8 @@ def test_MonteCarloSimulation(show_plots):
     dispRW3Omega = 'RW3.Omega'
     dispVoltageIO = 'rwVoltageIO.voltage2TorqueGain'
     dispList = [dispMRPInit, dispOmegaInit, dispMass, dispCoMOff, dispInertia]
+
+    # Add dispersions with their dispersion type
     monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(dispMRPInit))
     monteCarlo.addDispersion(NormalVectorCartDispersion(dispOmegaInit, 0.0, 0.75 / 3.0 * np.pi / 180))
     monteCarlo.addDispersion(UniformDispersion(dispMass, ([750.0 - 0.05*750, 750.0 + 0.05*750])))
@@ -156,6 +360,7 @@ def test_MonteCarloSimulation(show_plots):
     monteCarlo.addDispersion(UniformDispersion(dispRW2Omega, ([200.0 - 0.05*200, 200.0 + 0.05*200])))
     monteCarlo.addDispersion(UniformDispersion(dispRW3Omega, ([300.0 - 0.05*300, 300.0 + 0.05*300])))
     monteCarlo.addDispersion(UniformDispersion(dispVoltageIO, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
+
     # A `RetentionPolicy` is used to define what data from the simulation should be retained. A `RetentionPolicy` is a list of messages and variables to log from each simulation run. It also has a callback, used for plotting/processing the retained data.
     retentionPolicy = RetentionPolicy()
     # define the data to retain
