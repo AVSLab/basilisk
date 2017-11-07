@@ -230,8 +230,8 @@ class gravBodyFactory(object):
         self.spiceObject = spice_interface.SpiceInterface()
         self.spiceObject.ModelTag = "SpiceInterfaceData"
         self.spiceObject.SPICEDataPath = path
-        self.spiceObject.OutputBufferCount = 10000
-        self.spiceObject.PlanetNames = spice_interface.StringVector(self.gravBodies.keys())
+        self.spiceObject.outputBufferCount = 10000
+        self.spiceObject.planetNames = spice_interface.StringVector(self.gravBodies.keys())
         self.spiceObject.UTCCalInit = time
 
         for fileName in self.spiceKernelFileNames:

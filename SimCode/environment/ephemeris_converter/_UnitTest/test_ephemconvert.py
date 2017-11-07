@@ -75,8 +75,8 @@ def unitephemeris_converter(show_plots):
     SpiceObject = spice_interface.SpiceInterface()
     SpiceObject.ModelTag = "SpiceInterfaceData"
     SpiceObject.SPICEDataPath = splitPath[0] + '/External/EphemerisData/'
-    SpiceObject.OutputBufferCount = 10000
-    SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun"])
+    SpiceObject.outputBufferCount = 10000
+    SpiceObject.planetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun"])
     SpiceObject.UTCCalInit = "2015 February 10, 00:00:00.0 TDB"
     TotalSim.AddModelToTask(unitTaskName, SpiceObject)
 

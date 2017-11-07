@@ -100,10 +100,10 @@ def unitEclipse(show_plots, eclipseCondition):
     scObject_0.gravField.gravBodies = spacecraftPlus.GravBodyVector([earth])
 
     spiceObject = spice_interface.SpiceInterface()
-    spiceObject.PlanetNames = spice_interface.StringVector(["sun", "venus", "earth", "mars barycenter"])
+    spiceObject.planetNames = spice_interface.StringVector(["sun", "venus", "earth", "mars barycenter"])
     spiceObject.ModelTag = "SpiceInterfaceData"
     spiceObject.SPICEDataPath = bskPath + 'External/EphemerisData/'
-    spiceObject.OutputBufferCount = 100000
+    spiceObject.outputBufferCount = 100000
     spiceObject.UTCCalInit = '2021 MAY 04 07:47:49.965 (UTC)'
     # pull in SPICE support libraries
     pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
