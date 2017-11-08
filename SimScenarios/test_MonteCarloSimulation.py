@@ -165,7 +165,7 @@ samplingTime = simulationTime / (numDataPoints-1)
 # Inertial attitude       |Using Modified Rodrigues Parameters | Uniform for all 3 rotations betweenr [0, 2 pi]
 # Inertial rotation rate         | Using omega vector      | Normal dispersions for each of the rotation components, each of mean 0 and standard deviation 0.25 deg/s
 # Mass of the hub   | Total Mass of the spacecraft | Uniform around +/-5% of expected values. Bounds are [712.5, 787.5]
-# Center of Mass Offset |Position vector offset on the actual center of mass, and it’s theoretical position | Normally around a mean [0, 0, 1], with standard deviations of [0.05/3, 0.05/3, 0.1/3]
+# Center of Mass Offset | Position vector offset on the actual center of mass, and its theoretical position | Normally around a mean [0, 0, 1], with standard deviations of [0.05/3, 0.05/3, 0.1/3]
 # Inertia Tensor  |3x3 inertia tensor. Dispersed by 3 rotations | Normally about mean value of diag(900, 800, 600). Each of the 3 rotations are normally distributed with angles of mean 0 and standard deviation 0.1 deg.
 # RW axes  |The rotation axis for each of the 3 wheels | Normally around a respective means [1,0,0], [0,1,0], and [0,0,1] with respective standard deviations [0.01/3, 0.005/3, 0.005/3], [0.005/3, 0.01/3, 0.005/3], and [0.005/3, 0.005/3, 0.01/3]
 # RW speeds | The rotation speed for each of the 3 wheels |Uniform around  +/-5% of expected values. Bounds are [95, 105], [190, 210], and [285, 315]
