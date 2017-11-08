@@ -56,7 +56,7 @@ foreach(module ${swig_modules})
     file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${FileDir})
 	set_property(SOURCE ${module} PROPERTY SWIG_FLAGS "-I${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles" "-I${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/")
 	set(SWIG_MODULE_${FileBase}_EXTRA_DEPS ${impl_files} ${gen_files} ${INTER_FILES})
-    SWIG_ADD_MODULE(${FileBase} python ${module} ${impl_files} ${gen_files})
+    MAKE_SWIG_MODULE(${FileBase} python ${module} ${impl_files} ${gen_files})
     SWIG_LINK_LIBRARIES(${FileBase} ${PYTHON_LIBRARIES})
 
 	foreach(LibFile ${ALG_LIST})

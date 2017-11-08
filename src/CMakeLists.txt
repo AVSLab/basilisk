@@ -2,6 +2,25 @@ cmake_minimum_required(VERSION 2.8)
 
 project("AVS basilisk")
 
+
+#
+# Create a Swig module
+# Avoids a deprecation error in CMAKE versions less than 3 by calling the correct API depending on version
+# SWIG_ADD_MODULE
+macro(MAKE_SWIG_MODULE name language)
+
+	if("${CMAKE_VERSION}" VERSION_GREATER 2)
+		SWIG_ADD_LIBRARY(${name}
+	                   LANGUAGE ${language}
+	                   TYPE MODULE
+	                   SOURCES ${ARGN})
+	else()
+		SWIG_ADD_MODULE(${name} ${language})
+	endif()
+
+endmacro()
+
+
 #! make_python_package : create python package
 #
 # This function creates a python package directory and adds an __init__.py
@@ -131,7 +150,6 @@ function(findAndCreateSwigModules SubModule)
 	get_property(ALG_LIST GLOBAL PROPERTY ALG_LIB_LIST)
 
 	foreach(module ${swig_modules})
-		message("On module ${module}")
 	    get_filename_component(FileBase ${module} NAME_WE)
 	    get_filename_component(FileDir ${module} DIRECTORY)
 		set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
@@ -181,7 +199,7 @@ function(findAndCreateSwigModules SubModule)
 		set_source_files_properties( ${swig_generated_file_fullname}
 	               PROPERTIES COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/simulation")
 	    set(SWIG_MODULE_${FileBase}_EXTRA_DEPS ${impl_files} ${gen_files} ${swig_dep_files})
-	    SWIG_ADD_MODULE(${FileBase} python ${module} ${impl_files} ${gen_files})
+	    MAKE_SWIG_MODULE(${FileBase} python ${module} ${impl_files} ${gen_files})
 	    SWIG_LINK_LIBRARIES(${FileBase} ${PYTHON_LIBRARIES})
 
 	    foreach(LibFile ${LIBRARY_BUILD_LIST})
@@ -196,7 +214,6 @@ function(findAndCreateSwigModules SubModule)
 			FOLDER "${DIR_NAME_STRING}/${FileDir}")
 		# set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
 		#     CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/${FileBase}")
-		message("${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
 	    set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
 	        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
 	    set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
@@ -398,7 +415,7 @@ execute_process(COMMAND ${PROGRAM} ${ARG}
 								WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/../
 								RESULT_VARIABLE rv
 								OUTPUT_VARIABLE out)
-message("Added Basilisk module to python with: ${PROGRAM} ${ARG} in ${CMAKE_SOURCE_DIR}/..
+message(STATUS "Adding Basilisk module to python with: ${PROGRAM} ${ARG} in ${CMAKE_SOURCE_DIR}/..
 This resulted in the output:
 ${out}")
 
