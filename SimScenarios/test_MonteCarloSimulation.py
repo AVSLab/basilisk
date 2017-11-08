@@ -100,18 +100,18 @@ samplingTime = simulationTime / (numDataPoints-1)
 
 ## \defgroup Tutorials_5_0
 ##   @{
-## Demonstrates how to run Monte-Carlo (MC) simulations. This is done by running the AttitudeFeedbackRW scenario. In this scenario
-# Reaction Wheels are used to stabilize the tumble of a spacecraft orbiting the
-# Earth.
+## Demonstrates how to run basic Monte-Carlo (MC) RW-based attitude simulations.
 #
 # MC Simulation of an Attitude Detumbling Simulation using RW Effectors {#MonteCarloSimulation}
 # ====
 #
 # Scenario Description
 # -----
-# This script sets up a 6-DOF spacecraft which is orbiting the Earth using a multi threaded Monte-Carlo
-# setup. Reaction Wheel (RW) state effector are added to the rigid spacecraftPlus() hub, and what flight
-# algorithm module is used to control these RWs. The scenario is run in a single configuartion:
+# This script duplicates the scenario in [test_scenarioAttitudeFeedbackRW.py](@ref scenarioAttitudeFeedbackRW) where a
+# 6-DOF spacecraft  is orbiting the Earth.  Here some simulation parameters are dispersed randomly
+# using a multi threaded Monte-Carlo setup. Reaction Wheel (RW) state effector are added
+# to the rigid spacecraftPlus() hub, and what flight
+# algorithm module is used to control these RWs. The scenario is run in a single configuration:
 # by not using the Jitter model and by using the RW Voltage IO. Given this scenario we can add dispersions
 # to the variables in between each MC run.
 #
@@ -121,7 +121,7 @@ samplingTime = simulationTime / (numDataPoints-1)
 #       python test_MonteCarloSimulation.py
 #
 # For more information on the Attitude Feedback Simulation with RW, please see the documentation
-# on the test_scenarioAttitudeFeedbackRW.py file.
+# on the [test_scenarioAttitudeFeedbackRW.py](@ref scenarioAttitudeFeedbackRW) file.
 #
 #
 # ### Setup Changes for Monte-Carlo Runs
