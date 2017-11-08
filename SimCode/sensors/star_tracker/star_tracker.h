@@ -26,6 +26,8 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/spiceTimeSimMsg.h"
 #include "simFswInterfaceMessages/stSensorIntMsg.h"
+#include <Eigen/Dense>
+#include "../SimCode/utilities/avsEigenMRP.h"
 
 class StarTracker: public SysModel {
 public:
@@ -49,11 +51,11 @@ public:
     std::string inputStateMessage;    //!< [-] String for the input state message
     std::string outputStateMessage;   //!< [-] String for the output state message
     bool messagesLinked;              //!< [-] Indicator for whether inputs bound
-    std::vector<double> PMatrix;      //!< [-] Covariance matrix used to perturb state
-    std::vector<double> walkBounds;   //!< [-] "3-sigma" errors to permit for states
-    std::vector<double> navErrors;    //!< [-] Current navigation errors applied to truth
+    Eigen::Matrix3d PMatrix;      //!< [-] Covariance matrix used to perturb state
+    Eigen::Vector3d walkBounds;   //!< [-] "3-sigma" errors to permit for states
+    Eigen::Vector3d navErrors;    //!< [-] Current navigation errors applied to truth
     uint64_t OutputBufferCount;       //!< [-] Count on the number of output message buffers
-    double dcm_CB[9];                 //!< [-] Transformation matrix from body to case
+    double dcm_CB[3][3];                 //!< [-] Transformation matrix from body to case
     STSensorIntMsg trueValues;  //!< [-] total measurement without perturbations
     STSensorIntMsg sensedValues;//!< [-] total measurement including perturbations
     double mrpErrors[3];              //!< [-] Errors to be applied to the input MRP set indicating whether
@@ -63,10 +65,10 @@ public:
     
     
 private:
-    std::vector<double> AMatrix;      //!< [-] AMatrix that we use for error propagation
+    Eigen::Matrix3d AMatrix;      //!< [-] AMatrix that we use for error propagation
     int64_t inputStateID;             //!< [-] Connection to input state message
     int64_t outputStateID;            //!< [-] Connection to outgoing state message
-    GaussMarkov errorModel;           //!< [-] Gauss-markov error states
+    GaussMarkov *errorModel;           //!< [-] Gauss-markov error states
 };
 
 #endif
