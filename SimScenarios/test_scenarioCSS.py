@@ -53,6 +53,7 @@ import unitTestSupport                  # general support file with common unit 
 import matplotlib.pyplot as plt
 import macros
 import coarse_sun_sensor
+import orbitalMotion as om
 
 # import simulation related support
 import spacecraftPlus
@@ -128,7 +129,7 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
 # vector is required when computing the relative heading between the sun and the spacecraft locations.  The
 # spacecraft position is held fixed, while the orientation rotates constantly about the 3rd body axis.
 # ~~~~~~~~~~~~~~~~{.py}
-#     scObject.hub.r_CN_NInit = [[1000.0], [0.0], [0.0]]              # m   - r_CN_N
+#     scObject.hub.r_CN_NInit = [[-om.AU*1000.], [0.0], [0.0]]        # m   - r_CN_N
 #     scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]                 # m/s - v_CN_N
 #     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]               # sigma_BN_B
 #     scObject.hub.omega_BN_BInit = [[0.0], [0.0], [1.*macros.D2R]]   # rad/s - omega_BN_B
@@ -368,7 +369,7 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
     #
     # set initial spacecraft states
     #
-    scObject.hub.r_CN_NInit = [[1000.0], [0.0], [0.0]]              # m   - r_CN_N
+    scObject.hub.r_CN_NInit = [[-om.AU*1000.], [0.0], [0.0]]              # m   - r_CN_N
     scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]                 # m/s - v_CN_N
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]               # sigma_BN_B
     scObject.hub.omega_BN_BInit = [[0.0], [0.0], [1.*macros.D2R]]   # rad/s - omega_BN_B
@@ -431,7 +432,7 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
     # create simulation messages
     #
     sunPositionMsg = simMessages.SpicePlanetStateSimMsg()
-    sunPositionMsg.PositionVector = [2000.0, 0.0, 0.0]
+    sunPositionMsg.PositionVector = [0.0, 0.0, 0.0]
     unitTestSupport.setMessage( scSim.TotalSim,
                                 simProcessName,
                                 CSS1.InputSunMsg,
@@ -607,9 +608,9 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
 # stand-along python script
 #
 if __name__ == "__main__":
-    run( False,       # do unit tests
-         True,        # show_plots
-         False,       # useCSSConstellation
+    run( True,       # do unit tests
+         False,        # show_plots
+         True,       # useCSSConstellation
          False,       # usePlatform
          False,       # useEclipse
          False        # useKelly

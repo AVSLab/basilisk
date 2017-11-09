@@ -67,12 +67,20 @@ $$
 $$
 is set to a non-zero value.  This is the standard deviation of normalized gaussian noise.  Note that this noise magnitude is in terms of normalized units as it is added to the 0-1 nominal signal.  
 
-Lastly, to simulate a signal bias, the variable
+Next, to simulate a signal bias, the variable
 $$
 	{\tt SenBias}
 $$
 is set to a non-zero value.   This constant bias of the normalized gaussian noise.  
 
+Finally, to set saturation values, the variables
+$$
+	\mathrm{maxOutput}
+	$$
+	$$
+	\mathrm{minOutput}
+$$
+are used. minOutput is  0 by default and maxOutput is 1,000,000 by default.
 
 \subsection{Connecting Messages}
 Of the three possible input messages to the CSS module, the following message inputs are required for the module to properly operate:

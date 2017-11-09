@@ -64,6 +64,7 @@ public:
     void computeTrueOutput(); //!< @brief method to compute the true sun-fraction of CSS
     void applySensorErrors(); //!< @brief method to set the actual output of the sensor with scaling/kelly
     void scaleSensorValues();
+    void applySaturation();     //!< apply saturation effects to sensed output (floor and ceiling)
     void writeOutputMessages(uint64_t Clock); //!< @brief method to write the output message to the system
     
 public:
@@ -89,6 +90,8 @@ public:
     double              SenBias;                //!< [-] Sensor bias value
     double              SenNoiseStd;            //!< [-] Sensor noise value
     uint64_t            OutputBufferCount;      //!< [-] number of output msgs stored
+    double              maxOutput;              //!< [-] maximum output (ceiling) for saturation application
+    double              minOutput;              //!< [-] minimum output (floor) for saturation application
 private:
     int64_t InputSunID;                         //!< [-] Connect to input time message
     int64_t InputStateID;                       //!< [-] Connect to input time message
@@ -99,6 +102,7 @@ private:
     EclipseSimMsg sunVisibilityFactor;          //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
     std::default_random_engine rgen;            //!< [-] Random number generator for disp
     std::normal_distribution<double> rnum;      //! [-] Random number distribution
+    double              sunDistanceFactor;      //! [-] Factor to scale cosine curve magnitude based on solar flux at location
 };
 
 //!@brief Constellation of coarse sun sensors for aggregating output information
