@@ -41,6 +41,7 @@ import matplotlib.pyplot as plt
 
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
+fileNameString = os.path.split(os.path.splitext(filename)[0])[-1]
 path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
@@ -296,6 +297,14 @@ samplingTime = simulationTime / (numDataPoints-1)
 #
 # ~~~~~~~~~~~~~~~
 #
+# The resulting simulation illustrations are shown below.
+# ![MRP Attitude Error History](Images/Scenarios/BSK_MonteCarloScenario_AttitudeError.svg "Attitude Error history")
+# ![Rate Tracking Error History](Images/Scenarios/BSK_MonteCarloScenario_RateTrackingError.svg "Rate Tracking Error history")
+# ![RW Motor Torque History](Images/Scenarios/BSK_MonteCarloScenario_RWMotorTorque.svg "RW Motor Torque history")
+# ![RW Speeds History](Images/Scenarios/BSK_MonteCarloScenario_RWSpeed.svg "RW Speeds history")
+# ![RW Voltage History](Images/Scenarios/BSK_MonteCarloScenario_RWVoltage.svg "RW Voltage history")
+#
+# These are the same plots output by the AttitudeFeedbackRW scenario. Please refer to this document for me details on the plots.
 ##  @}
 
 
@@ -695,17 +704,23 @@ def plotSim(data, retentionPolicy):
     #
     #   plot the results
     #
-    fileNameString = filename[len(path)+6:-3]
+
     timeData = dataUsReq[:, 0] * macros.NANO2MIN
+
     plt.figure(1)
+    pltName = 'AttitudeError'
     for idx in range(1,4):
         plt.plot(timeData, dataSigmaBR[:, idx],
                  label='Run ' + str(data["index"]) + ' $\sigma_'+str(idx)+'$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Error $\sigma_{B/R}$')
+    unitTestSupport.saveScenarioFigure(
+        fileNameString + "_" + pltName
+        , plt, path)
 
     plt.figure(2)
+    pltName = 'RWMotorTorque'
     for idx in range(1,4):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
@@ -715,34 +730,49 @@ def plotSim(data, retentionPolicy):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Motor Torque (Nm)')
+    unitTestSupport.saveScenarioFigure(
+        fileNameString + "_" + pltName
+        , plt, path)
 
     plt.figure(3)
+    pltName = 'RateTrackingError'
     for idx in range(1,4):
         plt.plot(timeData, dataOmegaBR[:, idx],
                  label='Run ' + str(data["index"]) + ' $\omega_{BR,'+str(idx)+'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error (rad/s) ')
+    unitTestSupport.saveScenarioFigure(
+        fileNameString + "_" + pltName
+        , plt, path)
 
     plt.figure(4)
+    pltName = 'RWSpeed'
     for idx in range(1,len(rwOutName)+1):
         plt.plot(timeData, dataOmegaRW[:, idx]/macros.RPM,
                  label='Run ' + str(data["index"]) + ' $\Omega_{'+str(idx)+'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')
+    unitTestSupport.saveScenarioFigure(
+        fileNameString + "_" + pltName
+        , plt, path)
 
     plt.figure(5)
+    pltName = 'RWVoltage'
     for idx in range(1, len(rwOutName) + 1):
         plt.plot(timeData, dataVolt[:, idx],
                  label='Run ' + str(data["index"]) + ' $V_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
-    plt.ylabel('RW Volgate (V) ')
+    plt.ylabel('RW Voltage (V) ')
+    unitTestSupport.saveScenarioFigure(
+        fileNameString + "_" + pltName
+        , plt, path)
 
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_MonteCarloSimulation(True)
+    test_MonteCarloSimulation(False)
