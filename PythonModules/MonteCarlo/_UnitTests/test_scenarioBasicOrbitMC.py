@@ -12,7 +12,6 @@ sys.path.append(bskPath + 'PythonModules')
 
 from MonteCarlo.Controller import Controller, RetentionPolicy
 from MonteCarlo.Dispersions import UniformEulerAngleMRPDispersion, UniformDispersion, NormalVectorCartDispersion
-
 # import simulation related support
 import spacecraftPlus
 import orbitalMotion
@@ -20,18 +19,14 @@ import simIncludeGravBody
 import macros
 import SimulationBaseClass
 import numpy as np
-
 import pytest
-import unitTestSupport  # general support file with common unit test functions
-from math import fabs
+import unitTestSupport
 import shutil
-
 import matplotlib.pyplot as plt
 
-NUMBER_OF_RUNS = 20
-LENGTH_SHRINKAGE_FACTOR = 50 # make the simulations faster by dividing the length of the sim by this.
+NUMBER_OF_RUNS = 4
 VERBOSE = True
-PROCESSES=8
+PROCESSES = 2
 
 
 def myCreationFunction():
@@ -44,25 +39,23 @@ def myCreationFunction():
     simTaskName = "simTask"
     simProcessName = "simProcess"
 
-    #  create the simulation process
+    # Create the simulation process
     dynProcess = sim.CreateNewProcess(simProcessName)
 
-    # create the dynamics task and specify the integration update time
+    # Create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(10.)
     dynProcess.addTask(sim.CreateNewTask(simTaskName, simulationTimeStep))
 
-    #   setup the simulation tasks/objects
-    # initialize spacecraftPlus object and set properties
+    # Setup the simulation modules
+    # Initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
     scObject.hub.useTranslation = True
     scObject.hub.useRotation = False
-
-    # add spacecraftPlus object to the simulation process
+    # Add spacecraftPlus object to the simulation process
     sim.AddModelToTask(simTaskName, scObject)
 
-
-    # Earth
+    # Setup Earth gravity body and attach gravity model to spaceCraftPlus
     gravFactory = simIncludeGravBody.gravBodyFactory()
     planet = gravFactory.createEarth()
     planet.isCentralBody = True
@@ -71,77 +64,68 @@ def myCreationFunction():
                                         , planet.spherHarm
                                         , 2
                                         )
-    mu = planet.mu
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([planet])
 
-    # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
-
-    #   setup orbit and simulation time
-    # setup the orbit using classical orbit elements
-    # orbitCase is 'GEO':
+    # Setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    rLEO = 7000. * 1000      # meters
-    rGEO = 42000. * 1000     # meters
+    rGEO = 42000. * 1000  # meters
     oe.a = rGEO
     oe.e = 0.00001
     oe.i = 0.0 * macros.D2R
     oe.Omega = 48.2 * macros.D2R
     oe.omega = 347.8 * macros.D2R
     oe.f = 85.3 * macros.D2R
-    rN, vN = orbitalMotion.elem2rv(mu, oe) # this stores consistent initial orbit elements
-    oe = orbitalMotion.rv2elem(mu, rN, vN) # with circular or equatorial orbit, some angles are arbitrary
+    rN, vN = orbitalMotion.elem2rv(planet.mu, oe)  # this stores consistent initial orbit elements
+    oe = orbitalMotion.rv2elem(planet.mu, rN, vN)  # with circular or equatorial orbit, some angles are arbitrary
+
     #   initialize Spacecraft States with the initialization variables
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_BN_N
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_BN_N
 
     # set the simulation time
-    n = np.sqrt(mu / oe.a / oe.a / oe.a)
-    P = 2. * np.pi / n
-    # useSphericalHarmonics:
-    simulationTime = macros.sec2nano(3. * P)
-
-    #   Setup data logging before the simulation is initialized
-    numDataPoints = 400
-    samplingTime = simulationTime / (numDataPoints - 1)
-
-    sim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
+    mean_motion = np.sqrt(planet.mu / oe.a / oe.a / oe.a)
+    period = 2. * np.pi / mean_motion
+    simulationTime = macros.sec2nano(period / 4)
 
     #   configure a simulation stop time time and execute the simulation run
-    sim.ConfigureStopTime(simulationTime / LENGTH_SHRINKAGE_FACTOR)
+    sim.ConfigureStopTime(simulationTime)
 
     return sim
+
 
 def myExecutionFunction(sim):
     ''' function that executes a simulation '''
     sim.InitializeSimulationAndDiscover()
     sim.ExecuteSimulation()
 
+
 retainedMessageName = "inertial_state_output"
-retainedRate = 100
+retainedRate = macros.sec2nano(10)
 var1 = "v_BN_N"
 var2 = "r_BN_N"
 dataType1 = range(3)
 dataType2 = range(3)
 
+
 def myDataCallback(monteCarloData, retentionPolicy):
-    print monteCarloData
     data = np.array(monteCarloData["messages"]["inertial_state_output.v_BN_N"])
-    plt.plot(data[:,1], data[:,2])
+    plt.plot(data[:, 1], data[:, 2])
+
 
 @pytest.mark.slowtest
-def test_MonteCarloSimulation():
-    # test a montecarlo simulation
-    dirName = "tmp_montecarlo_test"
+def test_MonteCarloSimulation(show_plots):
+    # Test a montecarlo simulation
+    dirName = os.path.abspath(os.path.dirname(__file__)) + "/tmp_montecarlo_test"
     monteCarlo = Controller()
     monteCarlo.setShouldDisperseSeeds(True)
     monteCarlo.setExecutionFunction(myExecutionFunction)
     monteCarlo.setSimulationFunction(myCreationFunction)
     monteCarlo.setExecutionCount(NUMBER_OF_RUNS)
     monteCarlo.setThreadCount(PROCESSES)
-    monteCarlo.setVerbose(False)
+    monteCarlo.setVerbose(True)
     monteCarlo.setArchiveDir(dirName)
 
-    # add some dispersions
+    # Add some dispersions
     disp1Name = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
     disp2Name = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
     disp3Name = 'TaskList[0].TaskModels[0].hub.mHub'
@@ -149,13 +133,13 @@ def test_MonteCarloSimulation():
     monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(disp1Name))
     monteCarlo.addDispersion(NormalVectorCartDispersion(disp2Name, 0.0, 0.75 / 3.0 * np.pi / 180))
     monteCarlo.addDispersion(UniformDispersion(disp3Name, ([1300.0 - 812.3, 1500.0 - 812.3])))
-    monteCarlo.addDispersion(NormalVectorCartDispersion(disp4Name, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
+    monteCarlo.addDispersion(
+        NormalVectorCartDispersion(disp4Name, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
 
-    # add retention policy
+    # Add retention policy
     retentionPolicy = RetentionPolicy()
     retentionPolicy.addMessageLog(retainedMessageName, [(var1, dataType1), (var2, dataType2)], retainedRate)
     retentionPolicy.setDataCallback(myDataCallback)
-
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
     failures = monteCarlo.executeSimulations()
@@ -165,7 +149,7 @@ def test_MonteCarloSimulation():
     # Test loading data from runs from disk
     monteCarloLoaded = Controller.load(dirName)
 
-    retainedData = monteCarloLoaded.getRetainedData(19)
+    retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
     assert retainedData is not None, "Retained data should be available after execution"
     assert "messages" in retainedData, "Retained data should retain messages"
     assert "inertial_state_output.r_BN_N" in retainedData["messages"], "Retained messages should exist"
@@ -181,7 +165,7 @@ def test_MonteCarloSimulation():
     newOutput = retainedData["messages"]["inertial_state_output.r_BN_N"]
     for k1, v1 in enumerate(oldOutput):
         for k2, v2 in enumerate(v1):
-            assert fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < .001, \
+            assert np.fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < .001, \
             "Outputs shouldn't change on runs if random seeds are same"
 
     # test the initial parameters were saved from runs, and they differ between runs
@@ -194,10 +178,12 @@ def test_MonteCarloSimulation():
         assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
 
     monteCarloLoaded.executeCallbacks()
-    plt.show()
+    if show_plots:
+        plt.show()
 
     shutil.rmtree(dirName)
     assert not os.path.exists(dirName), "No leftover data should exist after the test"
 
+
 if __name__ == "__main__":
-    test_MonteCarloSimulation()
+    test_MonteCarloSimulation(show_plots=True)
