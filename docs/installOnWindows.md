@@ -1,6 +1,6 @@
 # Installing On Windows {#installWindows}
 
-The following was developed using Windows 7, Python 2.7.12 release candidate 1, Visual Studio Community 2015 and Boost C++ libraries 1.61. 
+The following was developed using Windows 7, Python 2.7.12 release candidate 1, Visual Studio Community 2015 and Boost C++ libraries 1.61.
 
 ## Software setup
 
@@ -10,12 +10,12 @@ In order to run Basilisk, the following software will be necessary:
 * [Python 2.7 (numpy, matplotlib, pytest)](https://www.python.org/downloads/mac-osx/)
 
 
-## Configuration ##
-Decide wether target deployment is 32 (win32) or 64 (x64) bit. Which ever chosen you will need the matching python and most builds software for that architecture.
+## Configuration
+Decide whether target deployment is 32 (win32) or 64 (x64) bit. Which ever chosen you will need the matching python and software for that architecture.
 
 ### Configuring Python
 
-Python is installed using the Windows installer found on the Python website. Make sure to choose the correct installer for your architecture. The additional The Additional required Python packages (found in the [readme](@ref README)) are installed using the Python package manager called pip (`pip.exe`) which now comes default with the Windows Python installer. To install additional Python packages with pip the following command is executed at command line.
+Python is installed using the Windows installer found on the Python website. Make sure to choose the correct installer for your architecture. The Additional required Python packages (found in the [readme](@ref README)) are installed using the Python package manager pip (`pip.exe`) which comes default with the Windows Python installer. To install additional Python packages with pip the following command is executed at command line.
 
 ```
 C:\Users\patrick> pip --trusted-host=pypi.python.org install <package name>
@@ -34,8 +34,8 @@ C:\Users\patrick\Downloads\boost_1_61_0\boost_1_61_0> b2 address-model=64 runtim
 
 ### How to run tests
 
-Tests are run and managed by Pytest. To execute all tests the py.test command can be executed from the command line in the project's top level directory.
+Tests are run and managed by Pytest. To execute all tests the py.test command can be executed on the `src` directory from the command line.
 
 ```
-C:\Users\patrick\Documents\basilisk> py.test
+C:\Users\patrick\Documents\basilisk> py.test src/
 ```

@@ -1,4 +1,3 @@
-''' '''
 '''
  ISC License
 
@@ -15,7 +14,6 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
 '''
 
 #
@@ -29,20 +27,10 @@
 #
 
 
-
 import pytest
-import sys, os, inspect
-import matplotlib
+import os
+import inspect
 import numpy as np
-import ctypes
-import math
-import csv
-import logging
-
-# @cond DOXYGEN_IGNORE
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-# @endcond
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
@@ -72,7 +60,10 @@ from Basilisk.utilities import fswSetupRW
 # import message declarations
 from Basilisk.fswAlgorithms import fswMessages
 
-
+# @cond DOXYGEN_IGNORE
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+# @endcond
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -82,20 +73,17 @@ from Basilisk.fswAlgorithms import fswMessages
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("simCase", [
-      (0)
-    , (1)
-    , (2)
-    , (3)
+    (0),
+    (1),
+    (2),
+    (3)
 ])
-
-# provide a unique test method name, starting with test_
 def test_bskAttitudeFeedbackRW(show_plots, simCase):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run( True,
-            show_plots, simCase)
+    # provide a unique test method name, starting with test_
+    [testResults, testMessage] = run(True, show_plots, simCase)
     assert testResults < 1, testMessage
-
 
 
 ## \defgroup Tutorials_2_3
@@ -110,8 +98,7 @@ def test_bskAttitudeFeedbackRW(show_plots, simCase):
 # This script sets up a spacecraft with 3 RWs which is orbiting the Earth.  The goal is to
 # illustrate how to use the `MRP_Steering()` module with a rate sub-servo system to control
 # the attitude.
-#  The scenario is
-# setup to be run in multiple configurations:
+#  The scenario is setup to be run in multiple configurations:
 # Case  | Description
 # ----- | ------------------
 # 1     | Detumble with balanced gains (for inner- and outer-loop separation principle), including integral feedback
@@ -239,8 +226,7 @@ def test_bskAttitudeFeedbackRW(show_plots, simCase):
 #        )
 # ~~~~~~~~~~~~~
 # This setup is the same as the first setup, but the integral feedback term is turned off.
-# The
-# resulting simulation illustrations are shown below.
+# The resulting simulation illustrations are shown below.
 # ![MRP Attitude History](Images/Scenarios/scenarioAttitudeSteeringSigmaBR1.svg "MRP history")
 # ![MRP Attitude History](Images/Scenarios/scenarioAttitudeSteeringomegaBR1.svg "omega history")
 # In this case the response, as expected, is only bounded or Lagrange stable, and does not longer converge
@@ -318,7 +304,8 @@ def run(doUnitTests, show_plots, simCase):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')  # The Viz only support 'earth', 'mars', or 'sun'
+    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')
+    # The Viz only support 'earth', 'mars', or 'sun'
 
     #
     #   setup the simulation tasks/objects
@@ -331,8 +318,8 @@ def run(doUnitTests, show_plots, simCase):
     I = [500., 0., 0.,
          0., 300., 0.,
          0., 0., 200.]
-    scObject.hub.mHub = 750.0                   # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]] # m - position vector of body-fixed point B relative to CM
+    scObject.hub.mHub = 750.0                     # kg - spacecraft mass
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scObject.hub.useTranslation = True
     scObject.hub.useRotation = True
@@ -471,12 +458,11 @@ def run(doUnitTests, show_plots, simCase):
     rwMotorTorqueConfig.rwParamsInMsgName = servoConfig.rwParamsInMsgName
     # Make the RW control all three body axes
     controlAxes_B = [
-        1, 0, 0
-        , 0, 1, 0
-        , 0, 0, 1
+        1, 0, 0,
+        0, 1, 0,
+        0, 0, 1
     ]
     rwMotorTorqueConfig.controlAxes_B = controlAxes_B
-
 
     #
     #   Setup data logging before the simulation is initialized
@@ -492,7 +478,6 @@ def run(doUnitTests, show_plots, simCase):
     for item in rwOutName:
         scSim.TotalSim.logThisMessage(item, samplingTime)
 
-
     #
     # create simulation messages
     #
@@ -504,8 +489,6 @@ def run(doUnitTests, show_plots, simCase):
                                simProcessName,
                                servoConfig.vehConfigInMsgName,
                                vehicleConfigOut)
-
-
 
     # FSW RW configuration message
     # use the same RW states in the FSW algorithm as in the simulation
@@ -527,7 +510,7 @@ def run(doUnitTests, show_plots, simCase):
     rN, vN = om.elem2rv(mu, oe)
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
-    if simCase<2:
+    if simCase < 2:
         scObject.hub.sigma_BNInit = [[0.5], [0.6], [-0.3]]              # sigma_CN_B
         scObject.hub.omega_BN_BInit = [[0.01], [-0.01], [-0.01]]        # rad/s - omega_CN_B
     else:
@@ -538,8 +521,7 @@ def run(doUnitTests, show_plots, simCase):
         sBN = rb.C2MRP(BH)
         scObject.hub.sigma_BNInit = [[sBN[0]], [sBN[1]], [sBN[2]]]      # sigma_CN_B
         n = np.sqrt(mu/(oe.a*oe.a*oe.a))
-        scObject.hub.omega_BN_BInit = [[n*HN[2,0]], [n*HN[2,1]], [n*HN[2,2]]]             # rad/s - omega_CN_B
-
+        scObject.hub.omega_BN_BInit = [[n*HN[2, 0]], [n*HN[2, 1]], [n*HN[2, 2]]]             # rad/s - omega_CN_B
 
     #
     #   initialize Simulation
@@ -562,11 +544,9 @@ def run(doUnitTests, show_plots, simCase):
     dataOmegaRW = scSim.pullMessageLogData(rwStateEffector.OutputDataString+".wheelSpeeds", range(numRW))
     dataPos = scSim.pullMessageLogData(sNavObject.outputTransName+".r_BN_N", range(3))
     dataRW = []
-    for i in range(0,numRW):
+    for i in range(0, numRW):
         dataRW.append(scSim.pullMessageLogData(rwOutName[i]+".u_current", range(1)))
     np.set_printoptions(precision=16)
-
-
 
     #
     #   plot the results
@@ -601,9 +581,9 @@ def run(doUnitTests, show_plots, simCase):
             , plt, path)
 
     plt.figure(3)
-    for idx in range(1,4):
+    for idx in range(1, 4):
         plt.semilogy(timeData, np.abs(dataOmegaBR[:, idx])/macros.D2R,
-                 color=unitTestSupport.getLineColor(idx,3),
+                 color=unitTestSupport.getLineColor(idx, 3),
                  label='$|\omega_{BR,'+str(idx)+'}|$')
     for idx in range(1, 4):
         plt.semilogy(timeData, np.abs(dataOmegaBRAst[:, idx])/macros.D2R,
@@ -621,9 +601,9 @@ def run(doUnitTests, show_plots, simCase):
 
 
     plt.figure(4)
-    for idx in range(1,numRW+1):
+    for idx in range(1, numRW+1):
         plt.plot(timeData, dataOmegaRW[:, idx]/macros.RPM,
-                 color=unitTestSupport.getLineColor(idx,numRW),
+                 color=unitTestSupport.getLineColor(idx, numRW),
                  label='$\Omega_{'+str(idx)+'}$')
     plt.legend(loc='upper right')
     plt.xlabel('Time [min]')
@@ -650,7 +630,6 @@ def run(doUnitTests, show_plots, simCase):
         dataUsRed = dataUsReq[::skipValue]
         dataSigmaBRRed = dataSigmaBR[::skipValue]
         dataPosRed = dataPos[::skipValue]
-
 
         # setup truth data for unit test
         truePos = [
@@ -750,12 +729,14 @@ def run(doUnitTests, show_plots, simCase):
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
+
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    run(  False        # do unit tests
-        , True         # show_plots
-        , 0            # simCase
+    run(
+        False,        # do unit tests
+        True,         # show_plots
+        0            # simCase
        )

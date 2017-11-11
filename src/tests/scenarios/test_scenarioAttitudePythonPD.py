@@ -1,4 +1,3 @@
-''' '''
 '''
  ISC License
 
@@ -15,7 +14,6 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
 '''
 
 #
@@ -30,29 +28,10 @@
 # Creation Date:  Jun. 28, 2017
 #
 
-
-
 import pytest
-import sys, os, inspect
-import matplotlib
+import os
+import inspect
 import numpy as np
-import ctypes
-import math
-import csv
-import logging
-
-# @cond DOXYGEN_IGNORE
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
-splitPath = path.split(bskName)
-
-
-
- 
-
-
-# @endcond
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
@@ -82,7 +61,11 @@ from Basilisk.utilities import simulationArchTypes
 # import message declarations
 from Basilisk.fswAlgorithms import fswMessages
 
-# -------------------------------------------------------------------------- #
+# @cond DOXYGEN_IGNORE
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+# @endcond
+
 ## \defgroup Tutorials_2_0_3
 ##   @{
 ## Demonstrates how to stabilize the tumble of a spacecraft orbiting the
@@ -146,7 +129,9 @@ from Basilisk.fswAlgorithms import fswMessages
 # the same prioritization procedures are used for the python tasks as are used for the standard tasks.
 #
 ##  @}
-    # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
+
+
+# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
@@ -156,14 +141,14 @@ from Basilisk.fswAlgorithms import fswMessages
 @pytest.mark.parametrize("useJitterSimple, useRWVoltageIO", [
       (False, False)
 ])
-
-# provide a unique test method name, starting with test_
 def test_bskAttitudeFeedbackPD(show_plots, useJitterSimple, useRWVoltageIO):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = runRegularTask( True,
-            show_plots, useJitterSimple, useRWVoltageIO)
+    # provide a unique test method name, starting with test_
+
+    [testResults, testMessage] = runRegularTask(True, show_plots, useJitterSimple, useRWVoltageIO)
     assert testResults < 1, testMessage
+
 
 def runRegularTask(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     '''Call this routine directly to run the tutorial scenario.'''
@@ -195,24 +180,24 @@ def runRegularTask(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     scSim.dynProcessThird = scSim.CreateNewProcess(scSim.simPostControlProc, 1)
 
     scSim.dynProcessSecond.addTask(scSim.CreateNewTask(scSim.simTaskControlName, simulationTimeStep))
-    
+
     # setup the MRP Feedback control module
     mrpControlConfig = MRP_PD.MRP_PDConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
     mrpControlWrap.ModelTag = "MRP_PD"
     scSim.AddModelToTask(scSim.simTaskControlName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.inputGuidName  = "attErrorInertial3DMsg"
-    mrpControlConfig.inputVehicleConfigDataName  = "vehicleConfigName"
+    mrpControlConfig.inputGuidName = "attErrorInertial3DMsg"
+    mrpControlConfig.inputVehicleConfigDataName = "vehicleConfigName"
     mrpControlConfig.outputDataName = "LrRequested"
-    mrpControlConfig.K  =   3.5
-    mrpControlConfig.P  = 30.0
+    mrpControlConfig.K = 3.5
+    mrpControlConfig.P = 30.0
 
     dataUsReqBase, dataSigmaBRBase, dataOmegaBRBase, dataPosBase, dataOmegaRWBase, dataRWBase = \
         executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO)
 
     scSimPy = SimulationBaseClass.SimBaseClass()
     scSimPy.TotalSim.terminateSimulation()
-    
+
     # Create simulation variable names
     ## For the python process, the name used includes Py at the end for this tutorial.
     # However there is no magic to that, they can be named arbitrarily like any other process
@@ -223,25 +208,23 @@ def runRegularTask(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     scSimPy.simPreControlProc = "simPreControl"
     scSimPy.simControlProc = "simControlProcPy"
     scSimPy.simPostControlProc = "simPostControlProc"
-    
+
     scSimPy.dynProcessFirst = scSimPy.CreateNewProcess(scSimPy.simPreControlProc, 3)
     scSimPy.dynProcessSecond = scSimPy.CreateNewPythonProcess(scSimPy.simControlProc, 2)
     scSimPy.dynProcessThird = scSimPy.CreateNewProcess(scSimPy.simPostControlProc, 1)
-    
+
     scSimPy.dynProcessSecond.createPythonTask(scSimPy.simTaskControlName, simulationTimeStep, True, -1)
-    
+
     scSimPy.pyMRPPD = PythonMRPPD("pyMRP_PD", True, 100)
     scSimPy.pyMRPPD.inputGuidName = mrpControlConfig.inputGuidName
     scSimPy.pyMRPPD.inputVehicleConfigDataName = mrpControlConfig.inputVehicleConfigDataName
     scSimPy.pyMRPPD.outputDataName = mrpControlConfig.outputDataName
     scSimPy.pyMRPPD.K = mrpControlConfig.K
     scSimPy.pyMRPPD.P = mrpControlConfig.P
-    
-    
+
     scSimPy.dynProcessSecond.addModelToTask(scSimPy.simTaskControlName, scSimPy.pyMRPPD)
-    
+
     dataUsReq, dataSigmaBR, dataOmegaBR, dataPos, dataOmegaRW, dataRW = executeMainSimRun(scSimPy, show_plots, useJitterSimple, useRWVoltageIO)
-    
 
     #
     #   retrieve the logged data
@@ -256,29 +239,29 @@ def runRegularTask(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     timeDataBase = dataUsReqBase[:, 0] * macros.NANO2SEC
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
-    for idx in range(1,4):
+    for idx in range(1, 4):
         plt.plot(timeData, dataSigmaBR[:, idx],
-                 timeDataBase, dataSigmaBRBase[:,idx], '--')
+                 timeDataBase, dataSigmaBRBase[:, idx], '--')
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Error $\sigma_{B/R}$')
     if doUnitTests:     # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString+"1"+str(int(useJitterSimple))+str(int(useRWVoltageIO))
+            fileNameString+"1" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
             , plt, path)
 
     plt.figure(2)
-    for idx in range(1,4):
-        plt.plot(timeData, dataSigmaBR[:, idx] - dataSigmaBRBase[:,idx])
+    for idx in range(1, 4):
+        plt.plot(timeData, dataSigmaBR[:, idx] - dataSigmaBRBase[:, idx])
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Difference $\sigma_{B/R}$')
 
     plt.figure(3)
-    for idx in range(1,4):
-        plt.plot(timeData, dataUsReq[:, idx] - dataUsReqBase[:,idx])
+    for idx in range(1, 4):
+        plt.plot(timeData, dataUsReq[:, idx] - dataUsReqBase[:, idx])
     plt.xlabel('Time [min]')
     plt.ylabel('RW tau diff [Nm] ')
 
-    dataSigDiff = dataSigmaBR[:,1:4] - dataSigmaBRBase[:,1:4]
+    dataSigDiff = dataSigmaBR[:, 1:4] - dataSigmaBRBase[:, 1:4]
     if(np.linalg.norm(dataSigDiff) > 1.0E-10):
         testFailCount += 1
         testMessages.append("Failed to get accurate agreement between attitude variables")
@@ -302,7 +285,8 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
 
     # set the simulation time variable used later on
     simulationTime = macros.min2nano(10.)
-    #simulationTime = macros.min2nano(0.1/60)
+    # simulationTime = macros.min2nano(0.1/60)
+
     scSim.pre2ContInterface = sim_model.SysInterface()
     scSim.cont2PostInterface = sim_model.SysInterface()
     scSim.post2PreInterface = sim_model.SysInterface()
@@ -329,8 +313,8 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     I = [900., 0., 0.,
          0., 800., 0.,
          0., 0., 600.]
-    scObject.hub.mHub = 750.0                   # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]] # m - position vector of body-fixed point B relative to CM
+    scObject.hub.mHub = 750.0                     # kg - spacecraft mass
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scObject.hub.useTranslation = True
     scObject.hub.useRotation = True
@@ -377,7 +361,7 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     RW3 = rwFactory.create('Honeywell_HR16'
                            , [0, 0, 1]
                            , maxMomentum=50.
-                           , Omega=300.  # RPM
+                           , Omega=300.             # RPM
                            , rWB_B=[0.5, 0.5, 0.5]  # meters
                            , RWModel=varRWModel
                            )
@@ -401,14 +385,11 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
         # Add test module to runtime call list
         scSim.AddModelToTask(scSim.simTaskPreControlName, rwVoltageIO)
 
-
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simple_nav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(scSim.simTaskPreControlName, sNavObject)
-
-
 
     #
     #   setup the FSW algorithm tasks
@@ -430,16 +411,16 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     attErrorConfig.outputDataName = "attErrorInertial3DMsg"
     attErrorConfig.inputRefName = inertial3DConfig.outputDataName
     attErrorConfig.inputNavName = sNavObject.outputAttName
-    
+
     # setup the MRP Feedback control module (left for variable connectivity.  Note that it isn't added to task...)
     mrpControlConfig = MRP_PD.MRP_PDConfig()
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
     mrpControlWrap.ModelTag = "MRP_PD"
-    mrpControlConfig.inputGuidName  = attErrorConfig.outputDataName
-    mrpControlConfig.inputVehicleConfigDataName  = "vehicleConfigName"
+    mrpControlConfig.inputGuidName = attErrorConfig.outputDataName
+    mrpControlConfig.inputVehicleConfigDataName = "vehicleConfigName"
     mrpControlConfig.outputDataName = "LrRequested"
-    mrpControlConfig.K  =   3.5
-    mrpControlConfig.P  = 30.0
+    mrpControlConfig.K = 3.5
+    mrpControlConfig.P = 30.0
 
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueConfig = rwMotorTorque.rwMotorTorqueConfig()
@@ -455,9 +436,9 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     rwMotorTorqueConfig.rwParamsInMsgName = "rwa_config_data_parsed"
     # Make the RW control all three body axes
     controlAxes_B = [
-             1,0,0
-            ,0,1,0
-            ,0,0,1
+             1, 0, 0,
+             0, 1, 0,
+             0, 0, 1
         ]
     rwMotorTorqueConfig.controlAxes_B = controlAxes_B
 
@@ -477,7 +458,6 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
         # set module parameters
         fswRWVoltageConfig.VMin = 0.0  # Volts
         fswRWVoltageConfig.VMax = 10.0  # Volts
-
 
     #
     #   Setup data logging before the simulation is initialized
@@ -529,12 +509,12 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a     = 10000000.0           # meters
-    oe.e     = 0.01
-    oe.i     = 33.3*macros.D2R
+    oe.a = 10000000.0           # meters
+    oe.e = 0.01
+    oe.i = 33.3*macros.D2R
     oe.Omega = 48.2*macros.D2R
     oe.omega = 347.8*macros.D2R
-    oe.f     = 85.3*macros.D2R
+    oe.f = 85.3*macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
 
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m  - r_CN_N
@@ -559,7 +539,7 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     dataPos = scSim.pullMessageLogData(sNavObject.outputTransName+".r_BN_N", range(3))
     dataOmegaRW = scSim.pullMessageLogData(rwStateEffector.OutputDataString+".wheelSpeeds", range(numRW))
     dataRW = []
-    for i in range(0,numRW):
+    for i in range(0, numRW):
         dataRW.append(scSim.pullMessageLogData(rwOutName[i]+".u_current", range(1)))
     if useRWVoltageIO:
         dataVolt = scSim.pullMessageLogData(fswRWVoltageConfig.voltageOutMsgName+".voltage", range(numRW))
@@ -599,33 +579,33 @@ class PythonMRPPD(simulationArchTypes.PythonModelClass):
     def __init__(self, modelName, modelActive=True, modelPriority=-1):
         super(PythonMRPPD, self).__init__(modelName, modelActive, modelPriority)
 
-        ## Proportional gain term used in control
+        # Proportional gain term used in control
         self.K = 0
-        ## Derivative gain term used in control
+        # Derivative gain term used in control
         self.P = 0
-        ## Input guidance structure message name
+        # Input guidance structure message name
         self.inputGuidName = ""
-        ## Input vehicle configuration structure message name
+        # Input vehicle configuration structure message name
         self.inputVehicleConfigDataName = ""
-        ## Output body torque message name
+        # Output body torque message name
         self.outputDataName = ""
-        ## Input message ID (initialized to -1 to break messaging if unset)
+        # Input message ID (initialized to -1 to break messaging if unset)
         self.inputGuidID = -1
-        ## Input message ID (initialized to -1 to break messaging if unset)
+        # Input message ID (initialized to -1 to break messaging if unset)
         self.inputVehConfigID = -1
-        ## Output message ID (initialized to -1 to break messaging if unset)
+        # Output message ID (initialized to -1 to break messaging if unset)
         self.outputDataID = -1
-        ## Output Lr torque structure instantiation.  Note that this creates the whole class for interation
+        # Output Lr torque structure instantiation.  Note that this creates the whole class for interation
         # with the messaging system
         self.outputMessageData = MRP_PD.CmdTorqueBodyIntMsg()
-        ## Input guidance error structure instantiation.  Note that this creates the whole class for interation
+        # Input guidance error structure instantiation.  Note that this creates the whole class for interation
         # with the messaging system
         self.inputGuidMsg = MRP_PD.AttGuidFswMsg()
-        ## Input vehicle configuration structure instantiation.  Note that this creates the whole class for interation
+        # Input vehicle configuration structure instantiation.  Note that this creates the whole class for interation
         # with the messaging system
         self.inputConfigMsg = MRP_PD.VehicleConfigFswMsg()
 
-    ## The selfInit method is used to initialze all of the output messages of a class.
+    # The selfInit method is used to initialze all of the output messages of a class.
     # It is important that ALL outputs are initialized here so that other models can
     # subscribe to these messages in their crossInit method.
     def selfInit(self):
@@ -633,7 +613,7 @@ class PythonMRPPD(simulationArchTypes.PythonModelClass):
                                                                  self.moduleID)
         return
 
-    ## The crossInit method is used to initialize all of the input messages of a class.
+    # The crossInit method is used to initialize all of the input messages of a class.
     #  This subscription assumes that all of the other models present in a given simulation
     #  instance have initialized their messages during the selfInit step.
     def crossInit(self):
@@ -642,13 +622,13 @@ class PythonMRPPD(simulationArchTypes.PythonModelClass):
                                                                        self.inputConfigMsg, self.moduleID)
         return
 
-    ## The reset method is used to clear out any persistent variables that need to get changed
+    # The reset method is used to clear out any persistent variables that need to get changed
     #  when a task is restarted.  This method is typically only called once after selfInit/crossInit,
     #  but it should be written to allow the user to call it multiple times if necessary.
     def reset(self, currentTime):
         return
 
-    ## The updateState method is the cyclical worker method for a given Basilisk class.  It
+    # The updateState method is the cyclical worker method for a given Basilisk class.  It
     # will get called periodically at the rate specified in the Python task that the model is
     # attached to.  It persists and anything can be done inside of it.  If you have realtime
     # requirements though, be careful about how much processing you put into a Python updateState
@@ -667,15 +647,16 @@ class PythonMRPPD(simulationArchTypes.PythonModelClass):
 
         return
 
+
 ##  @}
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    runRegularTask(  False        # do unit tests
-        , True         # show_plots
-        , False        # useJitterSimple
-        , False        # useRWVoltageIO
+    runRegularTask(
+        False,        # do unit tests
+        True,         # show_plots
+        False,        # useJitterSimple
+        False        # useRWVoltageIO
        )
-

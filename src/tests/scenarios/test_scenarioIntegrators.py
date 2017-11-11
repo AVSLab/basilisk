@@ -1,4 +1,3 @@
-''' '''
 '''
  ISC License
 
@@ -15,7 +14,6 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
 '''
 
 #
@@ -28,18 +26,9 @@
 #
 
 import pytest
-import sys, os, inspect
-import matplotlib
+import os
+import inspect
 import numpy as np
-import ctypes
-import math
-import csv
-import logging
-
-# @cond DOXYGEN_IGNORE
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-# @endcond
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
@@ -52,7 +41,10 @@ from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import svIntegrators
 
-
+# @cond DOXYGEN_IGNORE
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+# @endcond
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

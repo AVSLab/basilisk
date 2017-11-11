@@ -1,4 +1,3 @@
-''' '''
 '''
  ISC License
 
@@ -15,7 +14,6 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
 '''
 
 #
@@ -27,18 +25,10 @@
 # Creation Date:  Nov. 19, 2016
 #
 
-
-
 import pytest
-import sys, os, inspect
-import matplotlib
+import os
+import inspect
 import numpy as np
-
-
-# @cond DOXYGEN_IGNORE
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-# @endcond
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
@@ -59,30 +49,30 @@ from Basilisk.fswAlgorithms import attTrackingError
 # import message declarations
 from Basilisk.fswAlgorithms import fswMessages
 
-
-
-
+# @cond DOXYGEN_IGNORE
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+# @endcond
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
 
+
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("useLargeTumble", [
-      (False)
-    , (True)
+    (False),
+    (True)
 ])
-
-# provide a unique test method name, starting with test_
 def test_bskAttitudePointing(show_plots, useLargeTumble):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run( True,
-            show_plots, useLargeTumble)
-    assert testResults < 1, testMessage
 
+    # provide a unique test method name, starting with test_
+    [testResults, testMessage] = run(True, show_plots, useLargeTumble)
+    assert testResults < 1, testMessage
 
 
 ## \defgroup Tutorials_2_0_1
@@ -157,8 +147,6 @@ def test_bskAttitudePointing(show_plots, useLargeTumble):
 # torque effort is also much larger in this case.
 # ![MRP Attitude History](Images/Scenarios/scenarioAttitudePointing11.svg "MRP history")
 # ![Control Torque History](Images/Scenarios/scenarioAttitudePointing21.svg "Torque history")
-#
-#
 ##  @}
 def run(doUnitTests, show_plots, useLargeTumble):
     '''Call this routine directly to run the tutorial scenario.'''
@@ -166,7 +154,7 @@ def run(doUnitTests, show_plots, useLargeTumble):
     testMessages = []                       # create empty array to store test log messages
 
     #
-    #  From here on there scenario python code is found.  Above this line the code is to setup a
+    #  From here on scenario python code is found.  Above this line the code is to setup a
     #  unitTest environment.  The above code is not critical if learning how to code BSK.
     #
 
@@ -191,7 +179,8 @@ def run(doUnitTests, show_plots, useLargeTumble):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')  # The Viz only support 'earth', 'mars', or 'sun'
+    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')
+    # The Viz only support 'earth', 'mars', or 'sun'
 
     #
     #   setup the simulation tasks/objects
@@ -204,8 +193,8 @@ def run(doUnitTests, show_plots, useLargeTumble):
     I = [900., 0., 0.,
          0., 800., 0.,
          0., 0., 600.]
-    scObject.hub.mHub = 750.0                   # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]] # m - position vector of body-fixed point B relative to CM
+    scObject.hub.mHub = 750.0                     # kg - spacecraft mass
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scObject.hub.useTranslation = False
     scObject.hub.useRotation = True
@@ -218,7 +207,6 @@ def run(doUnitTests, show_plots, useLargeTumble):
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
-
     # setup extForceTorque module
     # the control torque is read in through the messaging system
     extFTObject = extForceTorque.ExtForceTorque()
@@ -226,14 +214,11 @@ def run(doUnitTests, show_plots, useLargeTumble):
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(simTaskName, extFTObject)
 
-
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simple_nav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
-
-
 
     #
     #   setup the FSW algorithm tasks
@@ -261,16 +246,14 @@ def run(doUnitTests, show_plots, useLargeTumble):
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
     mrpControlWrap.ModelTag = "MRP_Feedback"
     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.inputGuidName  = attErrorConfig.outputDataName
-    mrpControlConfig.vehConfigInMsgName  = "vehicleConfigName"
+    mrpControlConfig.inputGuidName = attErrorConfig.outputDataName
+    mrpControlConfig.vehConfigInMsgName = "vehicleConfigName"
     mrpControlConfig.outputDataName = extFTObject.cmdTorqueInMsgName
-    mrpControlConfig.K  =   3.5
-    mrpControlConfig.Ki =   -1          # make value negative to turn off integral feedback
-    mrpControlConfig.P  = 30.0
+    mrpControlConfig.K = 3.5
+    mrpControlConfig.Ki = -1          # make value negative to turn off integral feedback
+    mrpControlConfig.P = 30.0
     mrpControlConfig.integralLimit = 2./mrpControlConfig.Ki * 0.1
     mrpControlConfig.domega0 = [0.0, 0.0, 0.0]
-
-
 
     #
     #   Setup data logging before the simulation is initialized
@@ -279,8 +262,6 @@ def run(doUnitTests, show_plots, useLargeTumble):
     samplingTime = simulationTime / (numDataPoints-1)
     scSim.TotalSim.logThisMessage(mrpControlConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
-
-
 
     #
     # create simulation messages
@@ -299,8 +280,6 @@ def run(doUnitTests, show_plots, useLargeTumble):
     #
     scSim.InitializeSimulationAndDiscover()
 
-
-
     #
     #   configure a simulation stop time time and execute the simulation run
     #
@@ -315,16 +294,15 @@ def run(doUnitTests, show_plots, useLargeTumble):
     dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName+".omega_BR_B", range(3))
     np.set_printoptions(precision=16)
 
-
     #
     #   plot the results
     #
     fileNameString = filename[len(path)+6:-3]
     plt.close("all")        # clears out plots from earlier test runs
     plt.figure(1)
-    for idx in range(1,4):
+    for idx in range(1, 4):
         plt.plot(dataSigmaBR[:, 0]*macros.NANO2MIN, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx,3),
+                 color=unitTestSupport.getLineColor(idx, 3),
                  label='$\sigma_'+str(idx)+'$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -335,9 +313,9 @@ def run(doUnitTests, show_plots, useLargeTumble):
             , plt, path)
 
     plt.figure(2)
-    for idx in range(1,4):
+    for idx in range(1, 4):
         plt.plot(dataLr[:, 0]*macros.NANO2MIN, dataLr[:, idx],
-                 color=unitTestSupport.getLineColor(idx,3),
+                 color=unitTestSupport.getLineColor(idx, 3),
                  label='$L_{r,'+str(idx)+'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -348,9 +326,9 @@ def run(doUnitTests, show_plots, useLargeTumble):
             , plt, path)
 
     plt.figure(3)
-    for idx in range(1,4):
+    for idx in range(1, 4):
         plt.plot(dataOmegaBR[:, 0]*macros.NANO2MIN, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx,3),
+                 color=unitTestSupport.getLineColor(idx, 3),
                  label='$\omega_{BR,'+str(idx)+'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -361,7 +339,6 @@ def run(doUnitTests, show_plots, useLargeTumble):
 
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
-
 
     #
     #   the python code below is for the unit testing mode.  If you are studying the scenario
@@ -375,28 +352,28 @@ def run(doUnitTests, show_plots, useLargeTumble):
 
         trueLr = trueSigmaBR = []
 
-        if useLargeTumble == True:
+        if useLargeTumble is True:
             trueLr = [
-                  [-2.4350000000000001e+01, 1.7300000000000001e+01,-1.3949999999999999e+01]
-                , [-1.8261025223247096e-01,-1.9802131477666673e-01,-2.2905552303763882e-01]
-                , [-2.2703347936179175e-02, 2.8322384043503845e-02,-7.5383083954013580e-03]
-                , [ 3.9685083651031109e-03,-4.6726997381575461e-03, 9.1702648415809018e-04]
-                , [-6.5254418265915193e-04, 6.1478222187531318e-04,-6.2014699070663979e-05]
+                  [-2.4350000000000001e+01, 1.7300000000000001e+01,-1.3949999999999999e+01],
+                  [-1.8261025223247096e-01,-1.9802131477666673e-01,-2.2905552303763882e-01],
+                  [-2.2703347936179175e-02, 2.8322384043503845e-02,-7.5383083954013580e-03],
+                  [ 3.9685083651031109e-03,-4.6726997381575461e-03, 9.1702648415809018e-04],
+                  [-6.5254418265915193e-04, 6.1478222187531318e-04,-6.2014699070663979e-05]
             ]
             trueSigmaBR = [
-                  [ 1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01]
-                , [ 1.5260971061679154e-01,-2.6346123607709682e-01, 1.9116787137307839e-01]
-                , [-1.8707224538059040e-02, 1.9073543274306739e-02,-9.2763187341566734e-03]
-                , [ 2.1576458281319776e-03,-1.5090989414394025e-03, 3.2041623116321299e-04]
-                , [-2.4360871626616175e-04, 1.0266828769375566e-04,-7.5369979791638928e-06]
+                  [ 1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01],
+                  [ 1.5260971061679154e-01,-2.6346123607709682e-01, 1.9116787137307839e-01],
+                  [-1.8707224538059040e-02, 1.9073543274306739e-02,-9.2763187341566734e-03],
+                  [ 2.1576458281319776e-03,-1.5090989414394025e-03, 3.2041623116321299e-04],
+                  [-2.4360871626616175e-04, 1.0266828769375566e-04,-7.5369979791638928e-06]
             ]
-        if useLargeTumble == False:
+        if useLargeTumble is False:
             trueLr = [
-                  [-3.8000000000000000e-01,-4.0000000000000008e-01, 1.5000000000000013e-01]
-                , [ 4.3304295406265583e-02, 7.7970819853086931e-03, 1.2148680350980004e-02]
-                , [-4.8427756513968068e-03, 2.6583725254198179e-04,-1.4133980386514184e-03]
-                , [ 5.2386812124888282e-04,-1.3752464748227947e-04, 8.9786880165438401e-05]
-                , [-5.3815258259032201e-05, 2.3975789622333814e-05,-4.5666337024320216e-06]
+                  [-3.8000000000000000e-01,-4.0000000000000008e-01, 1.5000000000000013e-01],
+                  [ 4.3304295406265583e-02, 7.7970819853086931e-03, 1.2148680350980004e-02],
+                  [-4.8427756513968068e-03, 2.6583725254198179e-04,-1.4133980386514184e-03],
+                  [ 5.2386812124888282e-04,-1.3752464748227947e-04, 8.9786880165438401e-05],
+                  [-5.3815258259032201e-05, 2.3975789622333814e-05,-4.5666337024320216e-06]
             ]
             trueSigmaBR = [
                   [ 1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01]
@@ -406,13 +383,12 @@ def run(doUnitTests, show_plots, useLargeTumble):
                 , [ 3.9002194932293482e-05, 9.3813814117398300e-06, 1.5011853130355206e-07]
             ]
 
-      # compare the results to the truth values
+        # compare the results to the truth values
         accuracy = 1e-6
 
         testFailCount, testMessages = unitTestSupport.compareArray(
             trueLr, dataLrRed, accuracy, "Lr Vector",
             testFailCount, testMessages)
-
 
         testFailCount, testMessages = unitTestSupport.compareArray(
             trueSigmaBR, dataSigmaBRRed, accuracy, "sigma_BR Set",
@@ -429,12 +405,14 @@ def run(doUnitTests, show_plots, useLargeTumble):
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
+
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    run( False,       # do unit tests
+    run(
+         False,       # do unit tests
          True,        # show_plots
          False,         # useLargeTumble
        )

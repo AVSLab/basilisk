@@ -1,4 +1,3 @@
-''' '''
 '''
  ISC License
 
@@ -15,7 +14,6 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
 '''
 
 #
@@ -28,19 +26,12 @@
 #
 
 
-
 import pytest
-import sys, os, inspect
+import os
+import inspect
 import numpy as np
 from datetime import datetime
 from datetime import timedelta
-
-# @cond DOXYGEN_IGNORE
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-from Basilisk import __path__
-bskPath = __path__[0]
-# @endcond
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
@@ -56,6 +47,13 @@ from Basilisk.utilities import simIncludeGravBody
 from Basilisk import pyswice
 
 
+# @cond DOXYGEN_IGNORE
+from Basilisk import __path__
+bskPath = __path__[0]
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+# @endcond
+
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
@@ -64,10 +62,10 @@ from Basilisk import pyswice
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("scCase", ['Hubble', 'NewHorizons'])
-# provide a unique test method name, starting with test_
 def test_scenarioOrbitMultiBodyCopy(show_plots, scCase):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
+    # provide a unique test method name, starting with test_
     [testResults, testMessage] = run(True, show_plots, scCase)
     assert testResults < 1, testMessage
 
@@ -570,7 +568,8 @@ def run(doUnitTests, show_plots, scCase):
 # stand-along python script
 #
 if __name__ == "__main__":
-    run(False,  # do unit tests
+    run(
+        False,  # do unit tests
         True,  # show_plots
         'Hubble'  # 'Hubble' or 'NewHorizons'
-        )
+    )

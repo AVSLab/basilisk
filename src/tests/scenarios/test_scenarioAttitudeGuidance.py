@@ -1,4 +1,3 @@
-''' '''
 '''
  ISC License
 
@@ -15,7 +14,6 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
 '''
 
 #
@@ -29,18 +27,10 @@
 #
 
 
-
 import pytest
-import sys, os, inspect
-import matplotlib
+import os
+import inspect
 import numpy as np
-import ctypes
-import math
-import csv
-import logging
-
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
@@ -65,7 +55,8 @@ from Basilisk.fswAlgorithms import attTrackingError
 from Basilisk.fswAlgorithms import fswMessages
 
 
-
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -76,16 +67,15 @@ from Basilisk.fswAlgorithms import fswMessages
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("useAltBodyFrame", [
-      (False)
-    , (True)
+    (False),
+    (True)
 ])
-
-# provide a unique test method name, starting with test_
 def test_bskAttitudeGuidance(show_plots, useAltBodyFrame):
     '''This function is called by the py.test environment.'''
+
+    # provide a unique test method name, starting with test_
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run( True,
-            show_plots, useAltBodyFrame)
+    [testResults, testMessage] = run(True, show_plots, useAltBodyFrame)
     assert testResults < 1, testMessage
 
 
@@ -232,7 +222,8 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')  # The Viz only support 'earth', 'mars', or 'sun'
+    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')
+    # The Viz only support 'earth', 'mars', or 'sun'
 
     #
     #   setup the simulation tasks/objects
@@ -245,8 +236,8 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     I = [900., 0., 0.,
          0., 800., 0.,
          0., 0., 600.]
-    scObject.hub.mHub = 750.0                   # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]] # m - position vector of body-fixed point B relative to CM
+    scObject.hub.mHub = 750.0                     # kg - spacecraft mass
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scObject.hub.useTranslation = True
     scObject.hub.useRotation = True
@@ -270,12 +261,12 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a     = 10000000.0           # meters
-    oe.e     = 0.1
-    oe.i     = 33.3*macros.D2R
+    oe.a = 10000000.0           # meters
+    oe.e = 0.1
+    oe.i = 33.3*macros.D2R
     oe.Omega = 48.2*macros.D2R
     oe.omega = 347.8*macros.D2R
-    oe.f     = 85.3*macros.D2R
+    oe.f = 85.3*macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
@@ -292,14 +283,11 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(simTaskName, extFTObject)
 
-
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simple_nav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
-
-
 
     #
     #   setup the FSW algorithm tasks
@@ -321,7 +309,7 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
     attErrorConfig.outputDataName = "attErrorMsg"
     if useAltBodyFrame:
-        attErrorConfig.sigma_R0R = [0,1,0]
+        attErrorConfig.sigma_R0R = [0, 1, 0]
     attErrorConfig.inputRefName = attGuidanceConfig.outputDataName
     attErrorConfig.inputNavName = sNavObject.outputAttName
 
@@ -330,16 +318,14 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
     mrpControlWrap.ModelTag = "MRP_Feedback"
     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.inputGuidName  = attErrorConfig.outputDataName
-    mrpControlConfig.vehConfigInMsgName  = "vehicleConfigName"
+    mrpControlConfig.inputGuidName = attErrorConfig.outputDataName
+    mrpControlConfig.vehConfigInMsgName = "vehicleConfigName"
     mrpControlConfig.outputDataName = extFTObject.cmdTorqueInMsgName
-    mrpControlConfig.K  =  3.5
+    mrpControlConfig.K = 3.5
     mrpControlConfig.Ki = -1.0      # make value negative to turn off integral feedback
-    mrpControlConfig.P  = 30.0
+    mrpControlConfig.P = 30.0
     mrpControlConfig.integralLimit = 2./mrpControlConfig.Ki * 0.1
     mrpControlConfig.domega0 = [0.0, 0.0, 0.0]
-
-
 
     #
     #   Setup data logging before the simulation is initialized
@@ -350,8 +336,6 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
     scSim.TotalSim.logThisMessage(sNavObject.outputAttName, samplingTime)
-
-
 
     #
     # create simulation messages
@@ -370,7 +354,6 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     #
     scSim.InitializeSimulationAndDiscover()
 
-
     #
     #   configure a simulation stop time time and execute the simulation run
     #
@@ -388,7 +371,6 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     dataSigmaBN = scSim.pullMessageLogData(sNavObject.outputAttName + ".sigma_BN", range(3))
     np.set_printoptions(precision=16)
 
-
     #
     #   plot the results
     #
@@ -401,7 +383,7 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     vectorData = unitTestSupport.pullVectorSetFromData(dataSigmaBR)
     sNorm = np.array([np.linalg.norm(v) for v in vectorData])
     plt.plot(timeLineSet, sNorm,
-             color=unitTestSupport.getLineColor(1,3),
+             color=unitTestSupport.getLineColor(1, 3),
              )
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Error Norm $|\sigma_{B/R}|$')
@@ -412,9 +394,9 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
             , plt, path)
 
     plt.figure(2)
-    for idx in range(1,4):
+    for idx in range(1, 4):
         plt.plot(timeLineSet, dataLr[:, idx],
-                 color=unitTestSupport.getLineColor(idx,3),
+                 color=unitTestSupport.getLineColor(idx, 3),
                  label='$L_{r,'+str(idx)+'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -425,9 +407,9 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
             , plt, path)
 
     plt.figure(3)
-    for idx in range(1,4):
+    for idx in range(1, 4):
         plt.plot(timeLineSet, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx,3),
+                 color=unitTestSupport.getLineColor(idx, 3),
                  label='$\omega_{BR,'+str(idx)+'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -436,28 +418,28 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     vectorPosData = unitTestSupport.pullVectorSetFromData(dataPos)
     vectorVelData = unitTestSupport.pullVectorSetFromData(dataVel)
     vectorMRPData = unitTestSupport.pullVectorSetFromData(dataSigmaBN)
-    data = np.empty([len(vectorPosData),3])
-    for idx in range(0,len(vectorPosData)):
+    data = np.empty([len(vectorPosData), 3])
+    for idx in range(0, len(vectorPosData)):
         ir = vectorPosData[idx] / np.linalg.norm(vectorPosData[idx])
         hv = np.cross(vectorPosData[idx], vectorVelData[idx])
         ih = hv / np.linalg.norm(hv)
-        itheta = np.cross(ih,ir)
+        itheta = np.cross(ih, ir)
         dcmBN = RigidBodyKinematics.MRP2C(vectorMRPData[idx])
         data[idx] = [np.dot(ir, dcmBN[0]), np.dot(itheta, dcmBN[1]), np.dot(ih, dcmBN[2])]
     plt.figure(4)
     labelStrings = (r'$\hat\imath_r\cdot \hat b_1$'
                     , r'${\hat\imath}_{\theta}\cdot \hat b_2$'
                     , r'$\hat\imath_h\cdot \hat b_3$')
-    for idx in range(0,3):
+    for idx in range(0, 3):
         plt.plot(timeLineSet, data[:, idx],
-                 color=unitTestSupport.getLineColor(idx+1,3),
+                 color=unitTestSupport.getLineColor(idx+1, 3),
                  label=labelStrings[idx])
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Orientation Illustration')
     if doUnitTests:     # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString+"4"+str(int(useAltBodyFrame))
+            fileNameString + "4" + str(int(useAltBodyFrame))
             , plt, path)
 
     if show_plots:
@@ -465,7 +447,6 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
 
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
-
 
     #
     #   the python code below is for the unit testing mode.  If you are studying the scenario
@@ -477,31 +458,30 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
         dataSigmaBNRed = dataSigmaBN[::skipValue]
         dataPosRed = dataPos[::skipValue]
 
-
         # setup truth data for unit test
         truePos = [
-                      [-3.9514176198221971e+06, 7.3621552027224889e+06, 5.1583270902798297e+06]
-                    , [-4.6086027653051550e+06, 6.9672123694011206e+06, 5.3072237697180342e+06]
-                    , [-5.2376104604200358e+06, 6.5296380777946832e+06, 5.4236570091631645e+06]
-                    , [-5.8353304991197446e+06, 6.0530297355945092e+06, 5.5076788366235951e+06]
-                    , [-6.3989830900466563e+06, 5.5410585900721485e+06, 5.5595354088057131e+06]
+                      [-3.9514176198221971e+06, 7.3621552027224889e+06, 5.1583270902798297e+06],
+                      [-4.6086027653051550e+06, 6.9672123694011206e+06, 5.3072237697180342e+06],
+                      [-5.2376104604200358e+06, 6.5296380777946832e+06, 5.4236570091631645e+06],
+                      [-5.8353304991197446e+06, 6.0530297355945092e+06, 5.5076788366235951e+06],
+                      [-6.3989830900466563e+06, 5.5410585900721485e+06, 5.5595354088057131e+06]
                 ]
         trueLr = trueSigmaBR = []
-        if useAltBodyFrame == True:
+        if useAltBodyFrame is True:
             trueSigmaBN = [
-                      [ 1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01]
-                    , [-6.4143845119742271e-01, 3.7549202067008880e-01, 1.6228422035818663e-01]
-                    , [-8.2514275559858030e-01, 3.7431052486815464e-01, 2.6641953651279665e-01]
-                    , [-8.0514621677426934e-01, 3.3744944030160068e-01, 2.4586406789433021e-01]
-                    , [-8.1316266101544810e-01, 3.0421565940809858e-01, 2.4203891375413897e-01]
+                      [ 1.0000000000000001e-01, 2.0000000000000001e-01, -2.9999999999999999e-01],
+                      [-6.4143845119742271e-01, 3.7549202067008880e-01,  1.6228422035818663e-01],
+                      [-8.2514275559858030e-01, 3.7431052486815464e-01,  2.6641953651279665e-01],
+                      [-8.0514621677426934e-01, 3.3744944030160068e-01,  2.4586406789433021e-01],
+                      [-8.1316266101544810e-01, 3.0421565940809858e-01,  2.4203891375413897e-01]
             ]
-        if useAltBodyFrame == False:
+        if useAltBodyFrame is False:
             trueSigmaBN = [
-                      [ 1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01]
-                    , [ 1.9757381842655744e-01,-1.8325113332909412e-02, 5.3116118128700796e-01]
-                    , [ 1.9401404616468543e-01,-6.2047093744322206e-02, 6.2244720069697612e-01]
-                    , [ 1.9788907419526672e-01,-6.8298668119320893e-02, 6.4548524709461186e-01]
-                    , [ 1.9984147378665409e-01,-7.7874650384175126e-02, 6.7169950976963932e-01]
+                      [1.0000000000000001e-01,  2.0000000000000001e-01, -2.9999999999999999e-01],
+                      [1.9757381842655744e-01, -1.8325113332909412e-02,  5.3116118128700796e-01],
+                      [1.9401404616468543e-01, -6.2047093744322206e-02,  6.2244720069697612e-01],
+                      [1.9788907419526672e-01, -6.8298668119320893e-02,  6.4548524709461186e-01],
+                      [1.9984147378665409e-01, -7.7874650384175126e-02,  6.7169950976963932e-01]
             ]
         # compare the results to the truth values
         accuracy = 1e-6
@@ -522,12 +502,14 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
+
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    run( False,       # do unit tests
-         True,        # show_plots
-         False        # useAltBodyFrame
+    run(
+        False,       # do unit tests
+        True,        # show_plots
+        False        # useAltBodyFrame
        )

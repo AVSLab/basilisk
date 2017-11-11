@@ -1,4 +1,3 @@
-''' '''
 '''
  ISC License
 
@@ -15,7 +14,6 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
 '''
 
 #
@@ -30,45 +28,33 @@
 #
 
 
-
 import pytest
-import sys, os, inspect
-import matplotlib
+import os
+import inspect
 import numpy as np
-import ctypes
-import math
-import csv
-import logging
+
+# import general simulation support files
+from Basilisk.utilities import SimulationBaseClass  # The class which contains the basilisk simuation environment
+from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import macros  # Some unit conversions
+from Basilisk.utilities import orbitalMotion
+
+# import simulation related support
+from Basilisk.simulation import spacecraftPlus  # The base of any spacecraft simulation which deals with spacecraft dynamics
+from Basilisk.utilities import simIncludeGravBody
+from Basilisk.simulation import hingedRigidBodyStateEffector
+# Allows for forces to act on the spacecraft without adding an effector like a thruster
+from Basilisk.simulation import extForceTorque
+
+# import non-basilisk libraries
+import matplotlib.pyplot as plt
 
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
-
-
-
- 
-
-
 # @endcond
-
-# import general simulation support files
-from Basilisk.utilities import SimulationBaseClass              #The class which contains the basilisk simuation environment
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.utilities import macros                           #Some unit conversions
-from Basilisk.utilities import orbitalMotion
-
-
-# import simulation related support
-from Basilisk.simulation import spacecraftPlus                   #The base of any spacecraft simulation which deals with spacecraft dynamics
-from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import hingedRigidBodyStateEffector
-from Basilisk.simulation import extForceTorque                   #Allows for forces to act on the spacecraft without adding an effector like a thruster
-
-#import non-basilisk libraries
-import numpy as np
-import matplotlib.pyplot as plt
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -78,22 +64,21 @@ import matplotlib.pyplot as plt
 # The following 'parametrize' function decorator provides the parameters for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("doUnitTests, show_plots,", [(1, 0)])
-
-# provide a unique test method name, starting with test_
 def test_scenarioOrbitManeuver(doUnitTests, show_plots):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run( True, show_plots)
+    # provide a unique test method name, starting with test_
+    [testResults, testMessage] = run(True, show_plots)
     assert testResults < 1, testMessage
 
-#NOTE: The unit test in this tutorial essentially only checks if the results are a very specific value. It will not
+# NOTE: The unit test in this tutorial essentially only checks if the results are a very specific value. It will not
 # work with other input conditions. It serves only to make sure that this specific tutorial is working when pytest is
 # run and does not prove the functionality of any of the modules used.
 
 
-## \defgroup Tutorials_3_1
-##   @{
-## Demonstrates setting up hinged panels on a rigid spacecraft hub
+# \defgroup Tutorials_3_1
+# @{
+# Demonstrates setting up hinged panels on a rigid spacecraft hub
 #
 # A Spacecraft with Hinged Rigid Bodies {#scenarioHingedRigidBody}
 # ====
@@ -287,7 +272,7 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 # ![Panel 2 Displacement](Images/Scenarios/scenarioHingedRigidBodypanel2theta0.svg "Panel 2 Theta Illustration")
 #
 #
-##  @}
+# @}
 
 def run(doUnitTests, show_plots):
     '''Call this routine directly to run the tutorial scenario.'''
@@ -341,7 +326,6 @@ def run(doUnitTests, show_plots):
     # Attach gravity model to spacecraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
-
     ##########################################################################################
     ########################Adding the HingedRigidBody State Effector#########################
     ##########################################################################################
@@ -353,12 +337,12 @@ def run(doUnitTests, show_plots):
     scSim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     scSim.panel1.d = 1.5
     scSim.panel1.k = 1000.0
-    scSim.panel1.c = 0.0 #c is the rotational damping coefficient for the hinge, which is modeled as a spring.
+    scSim.panel1.c = 0.0  # c is the rotational damping coefficient for the hinge, which is modeled as a spring.
     scSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
     scSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
     scSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
     scSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
-    scSim.panel1.thetaInit = 5*np.pi/180.0
+    scSim.panel1.thetaInit = 5 * np.pi / 180.0
     scSim.panel1.thetaDotInit = 0.0
     scSim.panel1.HingedRigidBodyOutMsgName = "panel1Msg"
 
@@ -367,21 +351,21 @@ def run(doUnitTests, show_plots):
     scSim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     scSim.panel2.d = 1.5
     scSim.panel2.k = 1000.
-    scSim.panel2.c = 0.0 #c is the rotational damping coefficient for the hinge, which is modeled as a spring.
+    scSim.panel2.c = 0.0  # c is the rotational damping coefficient for the hinge, which is modeled as a spring.
     scSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
     scSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     scSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
     scSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
-    scSim.panel2.thetaInit = 5*np.pi/180.0
+    scSim.panel2.thetaInit = 5 * np.pi / 180.0
     scSim.panel2.thetaDotInit = 0.0
     scSim.panel2.HingedRigidBodyOutMsgName = "panel2Msg"
 
     # Add panels to spaceCraft
-    scObject.addStateEffector(scSim.panel1) #in order to affect dynamics
-    scObject.addStateEffector(scSim.panel2) #in order to affect dynamics
+    scObject.addStateEffector(scSim.panel1)  # in order to affect dynamics
+    scObject.addStateEffector(scSim.panel2)  # in order to affect dynamics
 
-    scSim.AddModelToTask(simTaskName, scSim.panel1) #in order to track messages
-    scSim.AddModelToTask(simTaskName, scSim.panel2) #in order to track messages
+    scSim.AddModelToTask(simTaskName, scSim.panel1)  # in order to track messages
+    scSim.AddModelToTask(simTaskName, scSim.panel2)  # in order to track messages
 
     # Define mass properties of the rigid part of the spacecraft
     scObject.hub.mHub = 800.0
@@ -394,7 +378,7 @@ def run(doUnitTests, show_plots):
     # setup extForceTorque module
     extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "maneuverThrust"
-    extFTObject.extForce_N = [[0.],[0.],[0.]]
+    extFTObject.extForce_N = [[0.], [0.], [0.]]
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(simTaskName, extFTObject)
     ##########################################################################################
@@ -406,32 +390,31 @@ def run(doUnitTests, show_plots):
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    rLEO = 7000.*1000      # meters
-    oe.a     = rLEO
-    oe.e     = 0.0001
-    oe.i     = 0.0*macros.D2R
-    oe.Omega = 48.2*macros.D2R
-    oe.omega = 347.8*macros.D2R
-    oe.f     = 85.3*macros.D2R
+    rLEO = 7000. * 1000      # meters
+    oe.a = rLEO
+    oe.e = 0.0001
+    oe.i = 0.0 * macros.D2R
+    oe.Omega = 48.2 * macros.D2R
+    oe.omega = 347.8 * macros.D2R
+    oe.f = 85.3 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_CN_N
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_CN_N
 
     # set the simulation time
-    n = np.sqrt(mu/oe.a/oe.a/oe.a)
-    P = 2.*np.pi/n
+    n = np.sqrt(mu / oe.a / oe.a / oe.a)
+    P = 2. * np.pi / n
     simulationTimeFactor = 0.01
-    simulationTime = macros.sec2nano(simulationTimeFactor*P)
+    simulationTime = macros.sec2nano(simulationTimeFactor * P)
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints-1)
+    samplingTime = simulationTime / (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(scSim.panel1.HingedRigidBodyOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(scSim.panel2.HingedRigidBodyOutMsgName, samplingTime)
-
 
     #
     #   initialize Simulation
@@ -446,25 +429,25 @@ def run(doUnitTests, show_plots):
 
     # compute maneuver Delta_v's
     extFTObject.extForce_N = [[-2050.], [-1430.], [-.00076]]
-    T2 = macros.sec2nano(935.) #this is the amount of time to get a deltaV equal to what the other tutorial has.
+    T2 = macros.sec2nano(935.)  # this is the amount of time to get a deltaV equal to what the other tutorial has.
 
     # run simulation for 2nd chunk
-    scSim.ConfigureStopTime(simulationTime+T2)
+    scSim.ConfigureStopTime(simulationTime + T2)
     scSim.ExecuteSimulation()
 
     #
     #   retrieve the logged data
     #
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N',range(3))
-    panel1thetaLog = scSim.pullMessageLogData(scSim.panel1.HingedRigidBodyOutMsgName+'.theta',range(1))
-    panel2thetaLog = scSim.pullMessageLogData(scSim.panel2.HingedRigidBodyOutMsgName+'.theta',range(1))
+    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', range(3))
+    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', range(3))
+    panel1thetaLog = scSim.pullMessageLogData(scSim.panel1.HingedRigidBodyOutMsgName + '.theta', range(1))
+    panel2thetaLog = scSim.pullMessageLogData(scSim.panel2.HingedRigidBodyOutMsgName + '.theta', range(1))
     np.set_printoptions(precision=16)
 
     #
     #   plot the results
     #
-    fileNameString = filename[len(path)+6:-3]
+    fileNameString = filename[len(path) + 6:-3]
 
     # draw the inertial position vector components
     plt.close("all")  # clears out plots from earlier test runs
@@ -472,18 +455,16 @@ def run(doUnitTests, show_plots):
     fig = plt.gcf()
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='plain')
-    for idx in range(1,4):
-        plt.plot(posData[:, 0]*macros.NANO2HOUR, posData[:, idx]/1000.,
-                 color=unitTestSupport.getLineColor(idx,3),
-                 label='$r_{BN,'+str(idx)+'}$')
+    for idx in range(1, 4):
+        plt.plot(posData[:, 0] * macros.NANO2HOUR, posData[:, idx] / 1000.,
+                 color=unitTestSupport.getLineColor(idx, 3),
+                 label='$r_{BN,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [h]')
     plt.ylabel('Inertial Position [km]')
     if doUnitTests:     # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString+"1"+str(int(0.))
-            , plt, path)
-
+            fileNameString + "1" + str(int(0.)), plt, path)
 
     # show SMA
     plt.figure(2)
@@ -493,41 +474,36 @@ def run(doUnitTests, show_plots):
     rData = []
     for idx in range(0, len(posData)):
         oeData = orbitalMotion.rv2elem_parab(mu, posData[idx, 1:4], velData[idx, 1:4])
-        rData.append(oeData.rmag/1000.)
-    plt.plot(posData[:, 0]*macros.NANO2MIN, rData
-             ,color='#aa0000',
+        rData.append(oeData.rmag / 1000.)
+    plt.plot(posData[:, 0] * macros.NANO2MIN, rData, color='#aa0000',
              )
     plt.xlabel('Time [min]')
     plt.ylabel('Radius [km]')
     if doUnitTests:     # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString+"2"+str(int(0.))
-            , plt, path)
+            fileNameString + "2" + str(int(0.)), plt, path)
 
     plt.figure(3)
     fig = plt.gcf()
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='plain')
-    plt.plot(panel1thetaLog[:,0]*macros.NANO2MIN, panel1thetaLog[:,1])
+    plt.plot(panel1thetaLog[:, 0] * macros.NANO2MIN, panel1thetaLog[:, 1])
     plt.xlabel('Time [min]')
     plt.ylabel('Panel 1 Angular Displacement [r]')
     if doUnitTests:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString + "panel1theta" + str(int(0.))
-            , plt, path)
+            fileNameString + "panel1theta" + str(int(0.)), plt, path)
 
     plt.figure(4)
     fig = plt.gcf()
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='plain')
-    plt.plot(panel2thetaLog[:,0]*macros.NANO2MIN, panel2thetaLog[:,1])
+    plt.plot(panel2thetaLog[:, 0] * macros.NANO2MIN, panel2thetaLog[:, 1])
     plt.xlabel('Time [min]')
     plt.ylabel('Panel 2 Angular Displacement [r]')
     if doUnitTests:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString + "panel2theta" + str(int(0.))
-            , plt, path)
-
+            fileNameString + "panel2theta" + str(int(0.)), plt, path)
 
     if show_plots:
         plt.show()
@@ -542,7 +518,7 @@ def run(doUnitTests, show_plots):
     #   the spacecraft mass is unchanging.
     #
     if doUnitTests:
-        spaceCraftMomentum = np.sqrt(velData[-1,1]**2 + velData[-1,2]**2 + velData[-1,3]**2)
+        spaceCraftMomentum = np.sqrt(velData[-1, 1]**2 + velData[-1, 2]**2 + velData[-1, 3]**2)
 
         # setup truth data for unit test
         InstMomentum = 8470.84340921
@@ -564,12 +540,13 @@ def run(doUnitTests, show_plots):
 
     return [testFailCount, ''.join(testMessages)]
 
+
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    run( False,       # do unit tests
-         True         # show_plots
-       )
-
+    run(
+        False,       # do unit tests
+        True         # show_plots
+    )

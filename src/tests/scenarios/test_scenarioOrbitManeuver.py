@@ -1,4 +1,3 @@
-''' '''
 '''
  ISC License
 
@@ -15,7 +14,6 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
 '''
 
 #
@@ -28,21 +26,11 @@
 # Creation Date:  Nov. 26, 2016
 #
 
-
-
 import pytest
-import sys, os, inspect
-import matplotlib
+import os
+import inspect
 import numpy as np
-import ctypes
 import math
-import csv
-import logging
-
-# @cond DOXYGEN_IGNORE
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-# @endcond
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
@@ -55,6 +43,10 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
 
+# @cond DOXYGEN_IGNORE
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+# @endcond
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -62,9 +54,10 @@ from Basilisk.utilities import simIncludeGravBody
 # @pytest.mark.xfail(True)
 # The following 'parametrize' function decorator provides the parameters for each
 #   of the multiple test runs for this test.
+
+
 @pytest.mark.parametrize("maneuverCase", [
-    0
-    , 1
+    0, 1
 ])
 # provide a unique test method name, starting with test_
 def test_scenarioOrbitManeuver(show_plots, maneuverCase):
@@ -75,9 +68,9 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
     assert testResults < 1, testMessage
 
 
-## \defgroup Tutorials_1_2
-##   @{
-## Illustration how to start and stop the simulation to perform orbit maneuvers within Python.
+# \defgroup Tutorials_1_2
+# @{
+# Illustration how to start and stop the simulation to perform orbit maneuvers within Python.
 #
 # Orbit Maneuvers using Simulation Starting/Stopping in Python {#scenarioOrbitManeuver}
 # ====
@@ -178,7 +171,7 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
 # ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitManeuver11.svg "Position history")
 # ![Inclination Angle Time History](Images/Scenarios/scenarioOrbitManeuver21.svg "Inclination Illustration")
 #
-##  @}
+# @}
 def run(doUnitTests, show_plots, maneuverCase):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0  # zero unit test result counter
@@ -251,7 +244,6 @@ def run(doUnitTests, show_plots, maneuverCase):
     n = np.sqrt(earth.mu / oe.a / oe.a / oe.a)
     P = 2. * np.pi / n
     simulationTime = macros.sec2nano(0.25 * P)
-
 
     #
     #   Setup data logging before the simulation is initialized
@@ -365,8 +357,7 @@ def run(doUnitTests, show_plots, maneuverCase):
     plt.ylabel('Inertial Position [km]')
     if doUnitTests:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString + "1" + str(int(maneuverCase))
-            , plt, path)
+            fileNameString + "1" + str(int(maneuverCase)), plt, path)
 
     if maneuverCase == 1:
         # show inclination angle
@@ -378,20 +369,16 @@ def run(doUnitTests, show_plots, maneuverCase):
         for idx in range(0, len(posData)):
             oeData = orbitalMotion.rv2elem(earth.mu, posData[idx, 1:4], velData[idx, 1:4])
             iData.append(oeData.i * macros.R2D)
-        plt.plot(posData[:, 0] * macros.NANO2HOUR, np.ones(len(posData[:, 0])) * 8.93845
-                 , '--'
-                 , color='#444444'
+        plt.plot(posData[:, 0] * macros.NANO2HOUR, np.ones(len(posData[:, 0])) * 8.93845, '--', color='#444444'
                  )
-        plt.plot(posData[:, 0] * macros.NANO2HOUR, iData
-                 , color='#aa0000'
+        plt.plot(posData[:, 0] * macros.NANO2HOUR, iData, color='#aa0000'
                  )
         plt.ylim([-1, 10])
         plt.xlabel('Time [h]')
         plt.ylabel('Inclination [deg]')
         if doUnitTests:  # only save off the figure if doing a unit test run
             unitTestSupport.saveScenarioFigure(
-                fileNameString + "2" + str(int(maneuverCase))
-                , plt, path)
+                fileNameString + "2" + str(int(maneuverCase)), plt, path)
     else:
         # show SMA
         plt.figure(2)
@@ -402,15 +389,13 @@ def run(doUnitTests, show_plots, maneuverCase):
         for idx in range(0, len(posData)):
             oeData = orbitalMotion.rv2elem_parab(earth.mu, posData[idx, 1:4], velData[idx, 1:4])
             rData.append(oeData.rmag / 1000.)
-        plt.plot(posData[:, 0] * macros.NANO2HOUR, rData
-                 , color='#aa0000',
+        plt.plot(posData[:, 0] * macros.NANO2HOUR, rData, color='#aa0000',
                  )
         plt.xlabel('Time [h]')
         plt.ylabel('Radius [km]')
         if doUnitTests:  # only save off the figure if doing a unit test run
             unitTestSupport.saveScenarioFigure(
-                fileNameString + "2" + str(int(maneuverCase))
-                , plt, path)
+                fileNameString + "2" + str(int(maneuverCase)), plt, path)
 
     if show_plots:
         plt.show()
@@ -459,7 +444,8 @@ def run(doUnitTests, show_plots, maneuverCase):
 # stand-along python script
 #
 if __name__ == "__main__":
-    run(False,  # do unit tests
+    run(
+        False,  # do unit tests
         True,  # show_plots
         0  # Maneuver Case (0 - Hohmann, 1 - Inclination)
-        )
+    )

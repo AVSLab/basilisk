@@ -1,4 +1,3 @@
-''' '''
 '''
  ISC License
 
@@ -15,7 +14,6 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
 '''
 
 #
@@ -29,32 +27,20 @@
 #
 
 
-
-import csv
-import ctypes
 import inspect
-import logging
-import math
 import os
-import sys
 
 import numpy as np
 import pytest
 
-import matplotlib
 import matplotlib.pyplot as plt
-# import message declarations
-# import FSW Algorithm related support
-# import simulation related support
-from Basilisk.simulation import (simple_nav, spacecraftPlus, reactionWheelStateEffector,
-                                rwVoltageInterface)
+from Basilisk.fswAlgorithms import (MRP_Feedback, attTrackingError, fswMessages,
+                                    inertial3D, rwMotorTorque, rwMotorVoltage)
+from Basilisk.simulation import reactionWheelStateEffector, rwVoltageInterface, simple_nav, spacecraftPlus
 
-from Basilisk.fswAlgorithms import (MRP_Feedback, attTrackingError, fswMessages, rwMotorTorque,
-                                    rwMotorVoltage, inertial3D)
-
-# import general simulation support files
-from Basilisk.utilities import (unitTestSupport, SimulationBaseClass, fswSetupRW, macros,
-                                orbitalMotion, simIncludeGravBody, simIncludeRW)
+from Basilisk.utilities import (SimulationBaseClass, fswSetupRW, macros,
+                                orbitalMotion, simIncludeGravBody,
+                                simIncludeRW, unitTestSupport)
 
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -70,24 +56,20 @@ path = os.path.dirname(os.path.abspath(filename))
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("useJitterSimple, useRWVoltageIO", [
-      (False, False)
-    , (True, False)
-    , (False, True)
+    (False, False), (True, False), (False, True)
 ])
-
 # provide a unique test method name, starting with test_
 def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run( True,
-            show_plots, useJitterSimple, useRWVoltageIO)
+    [testResults, testMessage] = run(True,
+                                     show_plots, useJitterSimple, useRWVoltageIO)
     assert testResults < 1, testMessage
 
 
-
-## \defgroup Tutorials_2_2
-##   @{
-## Demonstrates how to use RWs to stabilize the tumble of a spacecraft orbiting the
+# \defgroup Tutorials_2_2
+# @{
+# Demonstrates how to use RWs to stabilize the tumble of a spacecraft orbiting the
 # Earth.
 #
 # Attitude Detumbling Simulation using RW Effectors {#scenarioAttitudeFeedbackRW}
@@ -178,7 +160,7 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 #     # add RW object array to the simulation process
 #     scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
 # ~~~~~~~~~~~~~
-# The first task is to create a fresh instance of the RW factory class `rwFactor()`.  This factory is able
+# The first task is to create a fresh instance of the RW factory class `rwFactorY()`.  This factory is able
 # to create a list of RW devices, and return copies that can easily be manipulated and custumized if needed.
 # The next step in this code is to store the correct `RWModel` state.  This can be either a balanced wheel,
 # a wheel with a simple jitter model, or a wheel with a fully coupled model.
@@ -433,7 +415,7 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 # for more info.  By connecting the RW availability message it is possible turn
 # off the voltage command for particular wheels.  Also, by specifying the RW speed message input
 # name it is possible to turn on a torque tracking feedback loop in this module.
-##  @}
+# @}
 def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0                       # zero unit test result counter
@@ -465,7 +447,8 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')  # The Viz only support 'earth', 'mars', or 'sun'
+    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')
+    # The Viz only support 'earth', 'mars', or 'sun'
 
     #
     #   setup the simulation tasks/objects
@@ -479,7 +462,7 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
          0., 800., 0.,
          0., 0., 600.]
     scObject.hub.mHub = 750.0                   # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]] # m - position vector of body-fixed point B relative to CM
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scObject.hub.useTranslation = True
     scObject.hub.useRotation = True
@@ -510,24 +493,15 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
         varRWModel = rwFactory.JitterSimple
 
     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
-    RW1 = rwFactory.create('Honeywell_HR16'
-                           , [1, 0, 0]
-                           , maxMomentum=50.
-                           , Omega=100.                 # RPM
-                           , RWModel= varRWModel
+    RW1 = rwFactory.create('Honeywell_HR16', [1, 0, 0], maxMomentum=50., Omega=100.  # RPM
+                           , RWModel=varRWModel
                            )
-    RW2 = rwFactory.create('Honeywell_HR16'
-                           , [0, 1, 0]
-                           , maxMomentum=50.
-                           , Omega=200.                 # RPM
-                           , RWModel= varRWModel
+    RW2 = rwFactory.create('Honeywell_HR16', [0, 1, 0], maxMomentum=50., Omega=200.  # RPM
+                           , RWModel=varRWModel
                            )
-    RW3 = rwFactory.create('Honeywell_HR16'
-                           , [0, 0, 1]
-                           , maxMomentum=50.
-                           , Omega=300.                 # RPM
-                           , rWB_B = [0.5, 0.5, 0.5]    # meters
-                           , RWModel= varRWModel
+    RW3 = rwFactory.create('Honeywell_HR16', [0, 0, 1], maxMomentum=50., Omega=300.  # RPM
+                           , rWB_B=[0.5, 0.5, 0.5]  # meters
+                           , RWModel=varRWModel
                            )
 
     numRW = rwFactory.getNumOfDevices()
@@ -544,19 +518,16 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
         rwVoltageIO.ModelTag = "rwVoltageInterface"
 
         # set module parameters(s)
-        rwVoltageIO.voltage2TorqueGain = 0.2/10.  # [Nm/V] conversion gain
+        rwVoltageIO.voltage2TorqueGain = 0.2 / 10.  # [Nm/V] conversion gain
 
         # Add test module to runtime call list
         scSim.AddModelToTask(simTaskName, rwVoltageIO)
-
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simple_nav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
-
-
 
     #
     #   setup the FSW algorithm tasks
@@ -584,15 +555,15 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
     mrpControlWrap.ModelTag = "MRP_Feedback"
     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.inputGuidName  = attErrorConfig.outputDataName
-    mrpControlConfig.vehConfigInMsgName  = "vehicleConfigName"
+    mrpControlConfig.inputGuidName = attErrorConfig.outputDataName
+    mrpControlConfig.vehConfigInMsgName = "vehicleConfigName"
     mrpControlConfig.outputDataName = "LrRequested"
     mrpControlConfig.rwParamsInMsgName = "rwa_config_data_parsed"
     mrpControlConfig.inputRWSpeedsName = rwStateEffector.OutputDataString
-    mrpControlConfig.K  =   3.5
-    mrpControlConfig.Ki =   -1          # make value negative to turn off integral feedback
-    mrpControlConfig.P  = 30.0
-    mrpControlConfig.integralLimit = 2./mrpControlConfig.Ki * 0.1
+    mrpControlConfig.K = 3.5
+    mrpControlConfig.Ki = -1          # make value negative to turn off integral feedback
+    mrpControlConfig.P = 30.0
+    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
     mrpControlConfig.domega0 = [0.0, 0.0, 0.0]
 
     # add module that maps the Lr control torque into the RW motor torques
@@ -609,10 +580,8 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     rwMotorTorqueConfig.rwParamsInMsgName = mrpControlConfig.rwParamsInMsgName
     # Make the RW control all three body axes
     controlAxes_B = [
-             1,0,0
-            ,0,1,0
-            ,0,0,1
-        ]
+        1, 0, 0, 0, 1, 0, 0, 0, 1
+    ]
     rwMotorTorqueConfig.controlAxes_B = controlAxes_B
 
     if useRWVoltageIO:
@@ -632,12 +601,11 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
         fswRWVoltageConfig.VMin = 0.0  # Volts
         fswRWVoltageConfig.VMax = 10.0  # Volts
 
-
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints-1)
+    samplingTime = simulationTime / (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(rwMotorTorqueConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
@@ -672,12 +640,12 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a     = 10000000.0                                           # meters
-    oe.e     = 0.01
-    oe.i     = 33.3*macros.D2R
-    oe.Omega = 48.2*macros.D2R
-    oe.omega = 347.8*macros.D2R
-    oe.f     = 85.3*macros.D2R
+    oe.a = 10000000.0                                           # meters
+    oe.e = 0.01
+    oe.i = 33.3 * macros.D2R
+    oe.Omega = 48.2 * macros.D2R
+    oe.omega = 347.8 * macros.D2R
+    oe.f = 85.3 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
@@ -698,44 +666,43 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     #
     #   retrieve the logged data
     #
-    dataUsReq = scSim.pullMessageLogData(rwMotorTorqueConfig.outputDataName+".motorTorque", range(numRW))
-    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName+".sigma_BR", range(3))
-    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName+".omega_BR_B", range(3))
-    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName+".r_BN_N", range(3))
-    dataOmegaRW = scSim.pullMessageLogData(mrpControlConfig.inputRWSpeedsName+".wheelSpeeds", range(numRW))
+    dataUsReq = scSim.pullMessageLogData(rwMotorTorqueConfig.outputDataName + ".motorTorque", range(numRW))
+    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", range(3))
+    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", range(3))
+    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", range(3))
+    dataOmegaRW = scSim.pullMessageLogData(mrpControlConfig.inputRWSpeedsName + ".wheelSpeeds", range(numRW))
     dataRW = []
-    for i in range(0,numRW):
-        dataRW.append(scSim.pullMessageLogData(rwOutName[i]+".u_current", range(1)))
+    for i in range(0, numRW):
+        dataRW.append(scSim.pullMessageLogData(rwOutName[i] + ".u_current", range(1)))
     if useRWVoltageIO:
-        dataVolt = scSim.pullMessageLogData(fswRWVoltageConfig.voltageOutMsgName+".voltage", range(numRW))
+        dataVolt = scSim.pullMessageLogData(fswRWVoltageConfig.voltageOutMsgName + ".voltage", range(numRW))
     np.set_printoptions(precision=16)
 
     #
     #   plot the results
     #
-    fileNameString = filename[len(path)+6:-3]
+    fileNameString = filename[len(path) + 6:-3]
     timeData = dataUsReq[:, 0] * macros.NANO2MIN
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
-    for idx in range(1,4):
+    for idx in range(1, 4):
         plt.plot(timeData, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx,3),
-                 label='$\sigma_'+str(idx)+'$')
+                 color=unitTestSupport.getLineColor(idx, 3),
+                 label='$\sigma_' + str(idx) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Error $\sigma_{B/R}$')
     if doUnitTests:     # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString+"1"+str(int(useJitterSimple))+str(int(useRWVoltageIO))
-            , plt, path)
+            fileNameString + "1" + str(int(useJitterSimple)) + str(int(useRWVoltageIO)), plt, path)
 
     plt.figure(2)
-    for idx in range(1,4):
+    for idx in range(1, 4):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
                  color=unitTestSupport.getLineColor(idx, numRW),
-                 label='$\hat u_{s,'+str(idx)+'}$')
-        plt.plot(timeData, dataRW[idx-1][:, 1],
+                 label='$\hat u_{s,' + str(idx) + '}$')
+        plt.plot(timeData, dataRW[idx - 1][:, 1],
                  color=unitTestSupport.getLineColor(idx, numRW),
                  label='$u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
@@ -743,35 +710,33 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     plt.ylabel('RW Motor Torque (Nm)')
     if doUnitTests:     # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString+"2"+str(int(useJitterSimple))+str(int(useRWVoltageIO))
-            , plt, path)
+            fileNameString + "2" + str(int(useJitterSimple)) + str(int(useRWVoltageIO)), plt, path)
 
     plt.figure(3)
-    for idx in range(1,4):
+    for idx in range(1, 4):
         plt.plot(timeData, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx,3),
-                 label='$\omega_{BR,'+str(idx)+'}$')
+                 color=unitTestSupport.getLineColor(idx, 3),
+                 label='$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error (rad/s) ')
 
     plt.figure(4)
-    for idx in range(1,numRW+1):
-        plt.plot(timeData, dataOmegaRW[:, idx]/macros.RPM,
-                 color=unitTestSupport.getLineColor(idx,numRW),
-                 label='$\Omega_{'+str(idx)+'}$')
+    for idx in range(1, numRW + 1):
+        plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
+                 color=unitTestSupport.getLineColor(idx, numRW),
+                 label='$\Omega_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')
     if doUnitTests:     # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString+"3"+str(int(useJitterSimple))+str(int(useRWVoltageIO))
-            , plt, path)
+            fileNameString + "3" + str(int(useJitterSimple)) + str(int(useRWVoltageIO)), plt, path)
 
     if useRWVoltageIO:
         plt.figure(5)
         for idx in range(1, numRW + 1):
-            plt.plot(timeData, dataVolt[:, idx] ,
+            plt.plot(timeData, dataVolt[:, idx],
                      color=unitTestSupport.getLineColor(idx, numRW),
                      label='$V_{' + str(idx) + '}$')
         plt.legend(loc='lower right')
@@ -779,14 +744,12 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
         plt.ylabel('RW Volgate (V) ')
         if doUnitTests:  # only save off the figure if doing a unit test run
             unitTestSupport.saveScenarioFigure(
-                fileNameString + "4" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
-                , plt, path)
+                fileNameString + "4" + str(int(useJitterSimple)) + str(int(useRWVoltageIO)), plt, path)
     if show_plots:
         plt.show()
 
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
-
 
     #
     #   the python code below is for the unit testing mode.  If you are studying the scenario
@@ -794,75 +757,74 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     #
     if doUnitTests:
         numTruthPoints = 5
-        skipValue = int(numDataPoints/numTruthPoints)
+        skipValue = int(numDataPoints / numTruthPoints)
         dataUsRed = dataUsReq[::skipValue]
         dataSigmaBRRed = dataSigmaBR[::skipValue]
         dataPosRed = dataPos[::skipValue]
 
-
         # setup truth data for unit test
         truePos = [
-                      [-4.0203386903966456e+06, 7.4905667418525163e+06, 5.2482992115893615e+06]
-                    , [-4.6421397265661405e+06, 7.0494536040548589e+06, 5.3596540365520352e+06]
-                    , [-5.2364026851194846e+06, 6.5665185661712112e+06, 5.4392129624019405e+06]
-                    , [-5.7996735881523984e+06, 6.0447162866713591e+06, 5.4865782619213760e+06]
-                    , [-6.3286970190056376e+06, 5.4872170491069853e+06, 5.5015438477240102e+06]
-                ]
+            [-4.0203386903966456e+06, 7.4905667418525163e+06, 5.2482992115893615e+06],
+            [-4.6421397265661405e+06, 7.0494536040548589e+06, 5.3596540365520352e+06],
+            [-5.2364026851194846e+06, 6.5665185661712112e+06, 5.4392129624019405e+06],
+            [-5.7996735881523984e+06, 6.0447162866713591e+06, 5.4865782619213760e+06],
+            [-6.3286970190056376e+06, 5.4872170491069853e+06, 5.5015438477240102e+06]
+        ]
         trueUs = trueSigmaBR = []
 
-        if useJitterSimple == False and useRWVoltageIO == False:
+        if useJitterSimple is False and useRWVoltageIO is False:
             trueUs = [
-                  [ 3.8000000000000000e-01, 4.0000000000000008e-01,-1.5000000000000013e-01]
-                , [ 1.0886536396638849e-02,-5.1081088867427316e-01,-4.9465001721576522e-02]
-                , [-5.3356020546124400e-02, 7.3280121862582176e-02, 2.3622678489553288e-02]
-                , [ 2.4053273555142078e-02,-2.7877284619006338e-03, 1.0490688667807481e-04]
-                , [-4.4666896866933491e-03,-3.0806563642653785e-03,-3.2335993502972866e-03]
+                [3.8000000000000000e-01, 4.0000000000000008e-01, -1.5000000000000013e-01],
+                [1.0886536396638849e-02, -5.1081088867427316e-01, -4.9465001721576522e-02],
+                [-5.3356020546124400e-02, 7.3280121862582176e-02, 2.3622678489553288e-02],
+                [2.4053273555142078e-02, -2.7877284619006338e-03, 1.0490688667807481e-04],
+                [-4.4666896866933491e-03, -3.0806563642653785e-03, -3.2335993502972866e-03]
             ]
             trueSigmaBR = [
-                  [ 1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01]
-                , [ 1.3881610052729310e-02,-1.5485878435765174e-01,-1.7589430807049264e-02]
-                , [-2.7923740563112063e-02, 1.1269976169106372e-02, 4.7871422910631181e-04]
-                , [ 6.1959342447429396e-03, 2.4918559180853771e-03, 3.7300409079442311e-03]
-                , [ 1.5260133637049377e-05,-1.2491549414001010e-03,-1.4158582039329860e-03]
+                [1.0000000000000001e-01, 2.0000000000000001e-01, -2.9999999999999999e-01],
+                [1.3881610052729310e-02, -1.5485878435765174e-01, -1.7589430807049264e-02],
+                [-2.7923740563112063e-02, 1.1269976169106372e-02, 4.7871422910631181e-04],
+                [6.1959342447429396e-03, 2.4918559180853771e-03, 3.7300409079442311e-03],
+                [1.5260133637049377e-05, -1.2491549414001010e-03, -1.4158582039329860e-03]
             ]
 
-        if useJitterSimple == True and useRWVoltageIO == False:
+        if useJitterSimple is True and useRWVoltageIO is False:
             trueUs = [
-                  [ 3.8000000000000000e-01, 4.0000000000000008e-01,-1.5000000000000013e-01]
-                , [ 1.1065138334427127e-02,-5.1268877119457312e-01,-5.0197674196675285e-02]
-                , [-5.0848148107366119e-02, 7.4099100493587991e-02, 2.2771409384433863e-02]
-                , [ 2.4176151141330489e-02,-2.8562626784347737e-03,-1.1764370510636973e-04]
-                , [-4.4366215100514186e-03,-3.0640074660972742e-03,-3.2900068347372418e-03]
+                [3.8000000000000000e-01, 4.0000000000000008e-01, -1.5000000000000013e-01],
+                [1.1065138334427127e-02, -5.1268877119457312e-01, -5.0197674196675285e-02],
+                [-5.0848148107366119e-02, 7.4099100493587991e-02, 2.2771409384433863e-02],
+                [2.4176151141330489e-02, -2.8562626784347737e-03, -1.1764370510636973e-04],
+                [-4.4366215100514186e-03, -3.0640074660972742e-03, -3.2900068347372418e-03]
             ]
             trueSigmaBR = [
-                  [ 1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01]
-                , [ 1.4000649100987304e-02,-1.5524376685777014e-01,-1.7672779218442999e-02]
-                , [-2.7813457642929151e-02, 1.0946112552094834e-02, 4.4875764271143668e-04]
-                , [ 6.2095289346616083e-03, 2.4867062677496696e-03, 3.6922501700617210e-03]
-                , [ 1.6904290117009812e-05,-1.2461998354027675e-03,-1.4336939003900724e-03]
+                [1.0000000000000001e-01, 2.0000000000000001e-01, -2.9999999999999999e-01],
+                [1.4000649100987304e-02, -1.5524376685777014e-01, -1.7672779218442999e-02],
+                [-2.7813457642929151e-02, 1.0946112552094834e-02, 4.4875764271143668e-04],
+                [6.2095289346616083e-03, 2.4867062677496696e-03, 3.6922501700617210e-03],
+                [1.6904290117009812e-05, -1.2461998354027675e-03, -1.4336939003900724e-03]
             ]
             truePos = [
-                  [-4.0203386903966456e+06, 7.4905667418525163e+06, 5.2482992115893615e+06]
-                , [-4.6421397299586143e+06, 7.0494535906981705e+06, 5.3596540487686256e+06]
-                , [-5.2364027267925823e+06, 6.5665184975009989e+06, 5.4392130114279613e+06]
-                , [-5.7996736190037578e+06, 6.0447161564746955e+06, 5.4865783260474391e+06]
-                , [-6.3286970385898352e+06, 5.4872168578844322e+06, 5.5015439263280211e+06]
+                [-4.0203386903966456e+06, 7.4905667418525163e+06, 5.2482992115893615e+06],
+                [-4.6421397299586143e+06, 7.0494535906981705e+06, 5.3596540487686256e+06],
+                [-5.2364027267925823e+06, 6.5665184975009989e+06, 5.4392130114279613e+06],
+                [-5.7996736190037578e+06, 6.0447161564746955e+06, 5.4865783260474391e+06],
+                [-6.3286970385898352e+06, 5.4872168578844322e+06, 5.5015439263280211e+06]
             ]
 
-        if useJitterSimple == False and useRWVoltageIO == True:
+        if useJitterSimple is False and useRWVoltageIO is True:
             trueUs = [
-                  [ 3.8000000000000000e-01, 4.0000000000000008e-01,-1.5000000000000013e-01]
-                , [ 1.1231402312140600e-02,-5.1291709034434607e-01,-4.9996296037748973e-02]
-                , [-5.3576899204811061e-02, 7.3722479933297697e-02, 2.3880144351365474e-02]
-                , [ 2.4193559082756406e-02,-2.8516319358299399e-03, 2.6158801499764212e-06]
-                , [-4.5358804715397794e-03,-3.0828353818758043e-03,-3.2251584952585279e-03]
+                [3.8000000000000000e-01, 4.0000000000000008e-01, -1.5000000000000013e-01],
+                [1.1231402312140600e-02, -5.1291709034434607e-01, -4.9996296037748973e-02],
+                [-5.3576899204811061e-02, 7.3722479933297697e-02, 2.3880144351365474e-02],
+                [2.4193559082756406e-02, -2.8516319358299399e-03, 2.6158801499764212e-06],
+                [-4.5358804715397794e-03, -3.0828353818758043e-03, -3.2251584952585279e-03]
             ]
             trueSigmaBR = [
-                  [ 1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01]
-                , [ 1.4061613716759683e-02,-1.5537401133724818e-01,-1.7736020110557197e-02]
-                , [-2.8072554033139227e-02, 1.1328152717859538e-02, 4.8023651815938773e-04]
-                , [ 6.2505180487499833e-03, 2.4908595924511283e-03, 3.7332111196198281e-03]
-                , [-1.2999627747526236e-06,-1.2575327981617813e-03,-1.4238011880860959e-03]
+                [1.0000000000000001e-01, 2.0000000000000001e-01, -2.9999999999999999e-01],
+                [1.4061613716759683e-02, -1.5537401133724818e-01, -1.7736020110557197e-02],
+                [-2.8072554033139227e-02, 1.1328152717859538e-02, 4.8023651815938773e-04],
+                [6.2505180487499833e-03, 2.4908595924511283e-03, 3.7332111196198281e-03],
+                [-1.2999627747526236e-06, -1.2575327981617813e-03, -1.4238011880860959e-03]
             ]
 
         # compare the results to the truth values
@@ -891,13 +853,15 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
+
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    run(  False        # do unit tests
-        , True         # show_plots
-        , False        # useJitterSimple
-        , False        # useRWVoltageIO
-       )
+    run(
+        False,          # do unit tests
+        True,           # show_plots
+        False,          # useJitterSimple
+        False           # useRWVoltageIO
+        )

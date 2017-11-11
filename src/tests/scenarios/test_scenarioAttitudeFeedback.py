@@ -1,4 +1,3 @@
-''' '''
 '''
  ISC License
 
@@ -15,7 +14,6 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
 '''
 
 #
@@ -28,8 +26,8 @@
 #
 
 import pytest
-import sys, os, inspect
-import matplotlib
+import os
+import inspect
 import numpy as np
 
 # import general simulation support files
@@ -61,6 +59,7 @@ path = os.path.dirname(os.path.abspath(filename))
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
 
+
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("useUnmodeledTorque, useIntGain, useKnownTorque", [
@@ -69,20 +68,18 @@ path = os.path.dirname(os.path.abspath(filename))
     , (True, True, False)
     , (True, False, True)
 ])
-
-# provide a unique test method name, starting with test_
 def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     '''This function is called by the py.test environment.'''
+    # provide a unique test method name, starting with test_
+
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run( True,
-            show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
+    [testResults, testMessage] = run(True, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
     assert testResults < 1, testMessage
 
 
-
-## \defgroup Tutorials_2_0
-##   @{
-## Demonstrates how to stabilize the tumble of a spacecraft orbiting the
+# \defgroup Tutorials_2_0
+#   @{
+# Demonstrates how to stabilize the tumble of a spacecraft orbiting the
 # Earth that is initially tumbling.
 #
 # Attitude Detumbling Simulation in a Single Simulation Process {#scenarioAttitudeFeedback}
@@ -117,7 +114,7 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain, useKnow
 # freedom of the spacecraft hub are turned on here to get a 6-DOF simulation.  For more
 # information on how to setup orbit, see [test_scenarioBasicOrbit.py](@ref scenarioBasicOrbit)
 #
-# The control torque is simulated using the ExtForceTorque() module.  This module can
+# The control torque is simulated using the extForceTorque() module.  This module can
 # accept a torque in body frame components either through an input message, or through
 # a module internal torque vector which can be set in python.  In this simulation, the
 # flight software is providing the attitude control torque message which is connected to
@@ -293,7 +290,7 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain, useKnow
 # ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback1101.svg "MRP history")
 # ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2101.svg "Torque history")
 #
-##  @}
+#  @}
 def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0                       # zero unit test result counter
@@ -325,7 +322,8 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')  # The Viz only support 'earth', 'mars', or 'sun'
+    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')
+    # The Viz only support 'earth', 'mars', or 'sun'
 
     #
     #   setup the simulation tasks/objects
@@ -338,8 +336,8 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
     I = [900., 0., 0.,
          0., 800., 0.,
          0., 0., 600.]
-    scObject.hub.mHub = 750.0                   # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]] # m - position vector of body-fixed point B relative to CM
+    scObject.hub.mHub = 750.0                     # kg - spacecraft mass
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scObject.hub.useTranslation = True
     scObject.hub.useRotation = True
@@ -358,7 +356,6 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
-
     # setup extForceTorque module
     # the control torque is read in through the messaging system
     extFTObject = extForceTorque.ExtForceTorque()
@@ -371,14 +368,11 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(simTaskName, extFTObject)
 
-
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simple_nav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
-
-
 
     #
     #   setup the FSW algorithm tasks
@@ -406,21 +400,19 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
     mrpControlWrap.ModelTag = "MRP_Feedback"
     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.inputGuidName  = attErrorConfig.outputDataName
-    mrpControlConfig.vehConfigInMsgName  = "vehicleConfigName"
+    mrpControlConfig.inputGuidName = attErrorConfig.outputDataName
+    mrpControlConfig.vehConfigInMsgName = "vehicleConfigName"
     mrpControlConfig.outputDataName = extFTObject.cmdTorqueInMsgName
-    mrpControlConfig.K  =   3.5
+    mrpControlConfig.K = 3.5
     if useIntGain:
-        mrpControlConfig.Ki =   0.0002      # make value negative to turn off integral feedback
+        mrpControlConfig.Ki = 0.0002      # make value negative to turn off integral feedback
     else:
-        mrpControlConfig.Ki =   -1          # make value negative to turn off integral feedback
-    mrpControlConfig.P  = 30.0
+        mrpControlConfig.Ki = -1          # make value negative to turn off integral feedback
+    mrpControlConfig.P = 30.0
     mrpControlConfig.integralLimit = 2./mrpControlConfig.Ki * 0.1
     mrpControlConfig.domega0 = [0.0, 0.0, 0.0]
     if useKnownTorque:
-        mrpControlConfig.knownTorquePntB_B = [0.25,-0.25,0.1]
-
-
+        mrpControlConfig.knownTorquePntB_B = [0.25, -0.25, 0.1]
 
     #
     #   Setup data logging before the simulation is initialized
@@ -430,8 +422,6 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
     scSim.TotalSim.logThisMessage(mrpControlConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
-
-
 
     #
     # create simulation messages
@@ -450,12 +440,12 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a     = 10000000.0                                           # meters
-    oe.e     = 0.01
-    oe.i     = 33.3*macros.D2R
+    oe.a = 10000000.0                                           # meters
+    oe.e = 0.01
+    oe.i = 33.3*macros.D2R
     oe.Omega = 48.2*macros.D2R
     oe.omega = 347.8*macros.D2R
-    oe.f     = 85.3*macros.D2R
+    oe.f = 85.3*macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
@@ -466,7 +456,6 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
     #   initialize Simulation
     #
     scSim.InitializeSimulationAndDiscover()
-
 
     #
     #   configure a simulation stop time time and execute the simulation run
@@ -483,16 +472,15 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
     dataPos = scSim.pullMessageLogData(sNavObject.outputTransName+".r_BN_N", range(3))
     np.set_printoptions(precision=16)
 
-
     #
     #   plot the results
     #
     fileNameString = filename[len(path)+6:-3]
     plt.close("all")        # clears out plots from earlier test runs
     plt.figure(1)
-    for idx in range(1,4):
+    for idx in range(1, 4):
         plt.plot(dataSigmaBR[:, 0]*macros.NANO2MIN, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx,3),
+                 color=unitTestSupport.getLineColor(idx, 3),
                  label='$\sigma_'+str(idx)+'$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -500,13 +488,13 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
     if doUnitTests:     # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
             fileNameString+"1"+str(int(useUnmodeledTorque))+str(int(useIntGain))
-            +str(int(useKnownTorque))
+            + str(int(useKnownTorque))
             , plt, path)
 
     plt.figure(2)
-    for idx in range(1,4):
+    for idx in range(1, 4):
         plt.plot(dataLr[:, 0]*macros.NANO2MIN, dataLr[:, idx],
-                 color=unitTestSupport.getLineColor(idx,3),
+                 color=unitTestSupport.getLineColor(idx, 3),
                  label='$L_{r,'+str(idx)+'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -514,13 +502,13 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
     if doUnitTests:     # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
             fileNameString+"2"+str(int(useUnmodeledTorque))+str(int(useIntGain))
-            +str(int(useKnownTorque))
+            + str(int(useKnownTorque))
             , plt, path)
 
     plt.figure(3)
-    for idx in range(1,4):
+    for idx in range(1, 4):
         plt.plot(dataOmegaBR[:, 0]*macros.NANO2MIN, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx,3),
+                 color=unitTestSupport.getLineColor(idx, 3),
                  label='$\omega_{BR,'+str(idx)+'}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
@@ -531,7 +519,6 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
 
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
-
 
     #
     #   the python code below is for the unit testing mode.  If you are studying the scenario
@@ -640,12 +627,14 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
+
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    run( False,       # do unit tests
+    run(
+         False,       # do unit tests
          True,        # show_plots
          False,        # useUnmodeledTorque
          False,       # useIntGain

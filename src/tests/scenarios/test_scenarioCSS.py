@@ -33,12 +33,6 @@ import sys, os, inspect
 import matplotlib
 import numpy as np
 
-
-# @cond DOXYGEN_IGNORE
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-# @endcond
-
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
@@ -52,33 +46,32 @@ from Basilisk.simulation import spacecraftPlus
 # import message declarations
 from Basilisk.simulation import simMessages
 
-
-
-
+# @cond DOXYGEN_IGNORE
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+# @endcond
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
 
+
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("useCSSConstellation, usePlatform, useEclipse, useKelly", [
-      (False, False, False, False)
-    , (False, True, False, False)
-    , (False, False, True, False)
-    , (False, False, False, True)
-    , (True, False, False, False)
+      (False, False, False, False),
+      (False, True, False, False),
+      (False, False, True, False),
+      (False, False, False, True),
+      (True, False, False, False)
 ])
-
-# provide a unique test method name, starting with test_
 def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run( True,
-            show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly)
+    # provide a unique test method name, starting with test_
+    [testResults, testMessage] = run(True, show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly)
     assert testResults < 1, testMessage
-
 
 
 ## \defgroup Tutorials_4_0
@@ -305,7 +298,6 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
 # The resulting simulation results are shown below to be identical to setup 1 as expected.
 # ![CSS Sensor History](Images/Scenarios/scenarioCSS1000.svg "CSS history")
 #
-
 ##  @}
 def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     '''Call this routine directly to run the tutorial scenario.'''
@@ -338,7 +330,8 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')  # The Viz only support 'earth', 'mars', or 'sun'
+    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')
+    # The Viz only support 'earth', 'mars', or 'sun'
 
     #
     #   setup the simulation tasks/objects
@@ -351,8 +344,8 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
     I = [900., 0., 0.,
          0., 800., 0.,
          0., 0., 600.]
-    scObject.hub.mHub = 750.0                   # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]] # m - position vector of body-fixed point B relative to CM
+    scObject.hub.mHub = 750.0                     # kg - spacecraft mass
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scObject.hub.useTranslation = True
     scObject.hub.useRotation = True
@@ -364,7 +357,6 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
     scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]                 # m/s - v_CN_N
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]               # sigma_BN_B
     scObject.hub.omega_BN_BInit = [[0.0], [0.0], [1.*macros.D2R]]   # rad/s - omega_BN_B
-
 
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -417,17 +409,15 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
         scSim.TotalSim.logThisMessage(CSS1.OutputDataMsg, simulationTimeStep)
         scSim.TotalSim.logThisMessage(CSS2.OutputDataMsg, simulationTimeStep)
 
-
-
     #
     # create simulation messages
     #
     sunPositionMsg = simMessages.SpicePlanetStateSimMsg()
     sunPositionMsg.PositionVector = [2000.0, 0.0, 0.0]
-    unitTestSupport.setMessage( scSim.TotalSim,
-                                simProcessName,
-                                CSS1.InputSunMsg,
-                                sunPositionMsg)
+    unitTestSupport.setMessage(scSim.TotalSim,
+                               simProcessName,
+                               CSS1.InputSunMsg,
+                               sunPositionMsg)
 
     if useEclipse:
         eclipseMsg = simMessages.EclipseSimMsg()
@@ -440,7 +430,6 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
     #   initialize Simulation
     #
     scSim.InitializeSimulationAndDiscover()
-
 
     #
     #   configure a simulation stop time time and execute the simulation run
@@ -457,7 +446,6 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
         dataCSS1 = scSim.pullMessageLogData(CSS1.OutputDataMsg+".OutputData", range(1))
         dataCSS2 = scSim.pullMessageLogData(CSS2.OutputDataMsg+".OutputData", range(1))
     np.set_printoptions(precision=16)
-
 
     #
     #   plot the results
@@ -492,7 +480,6 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
 
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
-
 
     #
     #   the python code below is for the unit testing mode.  If you are studying the scenario
@@ -594,12 +581,14 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
+
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    run( False,       # do unit tests
+    run(
+         False,       # do unit tests
          True,        # show_plots
          False,       # useCSSConstellation
          False,       # usePlatform
