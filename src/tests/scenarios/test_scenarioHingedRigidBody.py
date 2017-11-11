@@ -76,9 +76,9 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 # run and does not prove the functionality of any of the modules used.
 
 
-# \defgroup Tutorials_3_1
-# @{
-# Demonstrates setting up hinged panels on a rigid spacecraft hub
+## \defgroup Tutorials_3_1
+## @{
+## Demonstrates setting up hinged panels on a rigid spacecraft hub
 #
 # A Spacecraft with Hinged Rigid Bodies {#scenarioHingedRigidBody}
 # ====
@@ -272,7 +272,7 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 # ![Panel 2 Displacement](Images/Scenarios/scenarioHingedRigidBodypanel2theta0.svg "Panel 2 Theta Illustration")
 #
 #
-# @}
+## @}
 
 def run(doUnitTests, show_plots):
     '''Call this routine directly to run the tutorial scenario.'''

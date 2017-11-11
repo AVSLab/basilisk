@@ -366,7 +366,11 @@ class Controller:
                 raise e
             except Exception as e:
                 print "Unknown exception while running simulations:", e
+<<<<<<< HEAD:src/utilities/MonteCarlo/Controller.py
                 failed.extend(range(jobsFinished, numSims))  # fail all potentially running jobs...
+=======
+                failed.extend(range(jobsFinished, numSims)) # fail all potentially running jobs...
+>>>>>>> 89a5d04782d5cb210a8f89f5ae505e286b7122a8:src/utilities/MonteCarlo/Controller.py
                 traceback.print_exc()
                 pool.terminate()
             finally:
@@ -472,7 +476,11 @@ class RetentionPolicy():
         self.dataCallback = dataCallback
 
     def executeCallback(self, data):
+<<<<<<< HEAD:src/utilities/MonteCarlo/Controller.py
         if self.dataCallback is not None:
+=======
+        if self.dataCallback != None:
+>>>>>>> 89a5d04782d5cb210a8f89f5ae505e286b7122a8:src/utilities/MonteCarlo/Controller.py
             self.dataCallback(data, self)
 
     @staticmethod

@@ -77,8 +77,8 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain, useKnow
     assert testResults < 1, testMessage
 
 
-# \defgroup Tutorials_2_0
-#   @{
+## \defgroup Tutorials_2_0
+##   @{
 # Demonstrates how to stabilize the tumble of a spacecraft orbiting the
 # Earth that is initially tumbling.
 #
@@ -290,7 +290,7 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain, useKnow
 # ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback1101.svg "MRP history")
 # ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2101.svg "Torque history")
 #
-#  @}
+##  @}
 def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0                       # zero unit test result counter

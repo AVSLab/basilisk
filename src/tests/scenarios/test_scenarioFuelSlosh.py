@@ -51,9 +51,9 @@ def test_scenarioFuelSlosh(show_plots, damping_parameter, timeStep):
     [testResults, testMessage] = run(True, show_plots, damping_parameter, timeStep)
     assert testResults < 1, testMessage
 
-# \defgroup Tutorials_3_0
-# @{
-# Demonstration of basic 6-DOF orbit and fuel slosh simulation setup.
+## \defgroup Tutorials_3_0
+## @{
+## Demonstration of basic 6-DOF orbit and fuel slosh simulation setup.
 #
 # Orbit Setup and Fuel Slosh Simulation
 # ====
@@ -299,9 +299,7 @@ def test_scenarioFuelSlosh(show_plots, damping_parameter, timeStep):
 # ![Changes in Rotational Energy](Images/Scenarios/scenarioFuelSloshRE3.svg "Changes in Rotational Energy")
 # ![Fuel Slosh Particle Motion](Images/Scenarios/scenarioFuelSloshParticleMotion.svg "Fuel Slosh Particle Motion")
 #
-# @}
-
-
+## @}
 def run(doUnitTests, show_plots, damping_parameter, timeStep):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0                       # zero unit test result counter

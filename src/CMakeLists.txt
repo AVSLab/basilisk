@@ -409,9 +409,8 @@ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/supportData")
 file(GLOB dataFiles "${CMAKE_SOURCE_DIR}/../supportData/*")
 create_symlinks("${CMAKE_BINARY_DIR}/Basilisk/supportData" ${dataFiles})
 
-set(PROGRAM "python")
 set(ARG setup.py develop --user)
-execute_process(COMMAND ${PROGRAM} ${ARG}
+execute_process(COMMAND ${PYTHON_EXECUTABLE} ${ARG}
 								WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/../
 								RESULT_VARIABLE rv
 								OUTPUT_VARIABLE out)

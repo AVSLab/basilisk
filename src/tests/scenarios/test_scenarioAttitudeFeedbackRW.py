@@ -67,8 +67,8 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
     assert testResults < 1, testMessage
 
 
-# \defgroup Tutorials_2_2
-# @{
+## \defgroup Tutorials_2_2
+## @{
 # Demonstrates how to use RWs to stabilize the tumble of a spacecraft orbiting the
 # Earth.
 #
@@ -415,7 +415,7 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 # for more info.  By connecting the RW availability message it is possible turn
 # off the voltage command for particular wheels.  Also, by specifying the RW speed message input
 # name it is possible to turn on a torque tracking feedback loop in this module.
-# @}
+## @}
 def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0                       # zero unit test result counter

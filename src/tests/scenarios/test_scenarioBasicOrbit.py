@@ -73,9 +73,9 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
     assert testResults < 1, testMessage
 
 
-# \defgroup Tutorials_1_0
-# @{
-# Demonstration of setup basic 3-DOF orbit simulation setup.
+## \defgroup Tutorials_1_0
+## @{
+## Demonstration of setup basic 3-DOF orbit simulation setup.
 #
 # Basic Orbit Setup and Translational Motion Simulation {#scenarioBasicOrbit}
 # ====
@@ -337,7 +337,7 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1LEO0Mars.svg "Position history")
 # ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2LEO0Mars.svg "Orbit Illustration")
 #
-# @}
+## @}
 def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0                       # zero unit test result counter

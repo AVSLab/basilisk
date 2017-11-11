@@ -65,8 +65,8 @@ def test_bskAttGuide_Hyperbolic(show_plots, useAltBodyFrame):
     assert testResults < 1, testMessage
 
 
-# \defgroup Tutorials_2_1_1
-# @{
+## \defgroup Tutorials_2_1_1
+## @{
 # How to use guidance modules to align the spacecraft frame to the velocity-pointing frame.
 #
 # Attitude Alignment for a Spacecraft on a Hyperbolic Trajectory {#scenarioAttGuideHyperbolic}
@@ -165,7 +165,7 @@ def test_bskAttGuide_Hyperbolic(show_plots, useAltBodyFrame):
 # ![Control Torque History](Images/Scenarios/scenarioAttGuideHyperbolic21.svg "Torque history")
 # ![Rate Tracking Error](Images/Scenarios/scenarioAttGuideHyperbolic31.svg "Rate Tracking Error")
 #
-# @}
+## @}
 def run(doUnitTests, show_plots, useAltBodyFrame):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0                       # zero unit test result counter
