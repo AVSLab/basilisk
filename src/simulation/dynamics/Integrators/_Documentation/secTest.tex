@@ -2,7 +2,7 @@
 
 \section{Test Description and Success Criteria}
 
-As the integrator functionality is not a regular BSK module with specified input/output behavior, the integration can only be tested in an integrated test.  
+As the integrator functionality is not a regular BSK module with specified input/output behavior, the integration can only be tested in an integrated test.
 The integrated test employed is located in:\\
 
 {\tt scenarios/test\_scenarioIntegrators.py}
@@ -13,18 +13,18 @@ Each simulation uses the point-mass spacecraft equations of motion
 \begin{equation}
 	\ddot{\bm r} = - \frac{\mu}{r^{3}}{\bm r}
 \end{equation}
-with the initial orbit elements shown in Table~\ref{tbl:oeInitial}.  The only gravitational body considered is Earth.  The simulation time for each case is 3/4 of an orbit period.  Each implemented Integrator method is tested using the above initial conditions and a large time step of 120 seconds.  This large time step makes the integrator errors more easily visible between the integration methods.  
+with the initial orbit elements shown in Table~\ref{tbl:oeInitial}.  The only gravitational body considered is Earth.  The simulation time for each case is 3/4 of an orbit period.  Each implemented Integrator method is tested using the above initial conditions and a large time step of 120 seconds.  This large time step makes the integrator errors more easily visible between the integration methods.
 
 
 \begin{table}[htbp]
 	\caption{Initial Spacecraft Ephemeris}
 	\label{tbl:oeInitial}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{c | r | r } % Column formatting, 
-		\hline 
-		\hline 
+	\begin{tabular}{c | r | r } % Column formatting,
+		\hline
+		\hline
 		Element    & Description & Value \\
-		\hline 
+		\hline
 		$a$      & Semi-Major Axis & 7000km \\
 		$e$ & Eccentricity     &  0.0001 \\
 		$i$       & Inclination Angle  & 33.3\dg \\
@@ -41,11 +41,11 @@ with the initial orbit elements shown in Table~\ref{tbl:oeInitial}.  The only gr
 \subsection{Test sections}
 The same simulation setup is run for each of the integration methods:
 \begin{enumerate}
-\item The first test uses the default RK4 integration method.  Here the simulation script does not specify the integration method, testing both that the RK4 integrator is the default integration method, and that that the integrator is implemented correctly.  
+\item The first test uses the default RK4 integration method.  Here the simulation script does not specify the integration method, testing both that the RK4 integrator is the default integration method, and that that the integrator is implemented correctly.
 
 \item The 2nd test uses the Euler's integration method.
 
-\item the 3rd test uses Heun's integration method.  
+\item the 3rd test uses Heun's integration method.
 
 \end{enumerate}
 
@@ -56,26 +56,26 @@ The same simulation setup is run for each of the integration methods:
 	\caption{Illustration of the true orbit position samples (Black) versus the RK4 (Blue), RK2 (Green) and RK1 (Red) integration results.}
 	\label{fig:intResults}
 \end{figure}
-The resulting data points are illustrated in Figure~\ref{fig:intResults}.  The large 120 second time step causes all the integration methods to significantly deviate from the truth locations (shown in black).  The integrated validation test ensures that the BSK integrations yield the same integration corruptions to validate the mathematical implementation.  
+The resulting data points are illustrated in Figure~\ref{fig:intResults}.  The large 120 second time step causes all the integration methods to significantly deviate from the truth locations (shown in black).  The integrated validation test ensures that the BSK integrations yield the same integration corruptions to validate the mathematical implementation.
 
 \subsection{Test success criteria}
-The integrated position states are checked at 5 even data points along the simulation time again pre-computed truth answers.  These truth answers were generated in Mathematica implementing the same initial conditions, and replicating the integration math.    The accuracy threshold is set to 1 meter, a small value compared to the 7,000,000 meter near-circular orbit radius.  
+The integrated position states are checked at 5 even data points along the simulation time again pre-computed truth answers.  These truth answers were generated in Mathematica implementing the same initial conditions, and replicating the integration math.    The accuracy threshold is set to 1 meter, a small value compared to the 7,000,000 meter near-circular orbit radius.
 
 
 
 \section{Test Parameters}
-Three tests are run controlled through a single test parameter called {\tt integratorCase}.  The possible values are shown in Table~\ref{tbl:intCases}.  
+Three tests are run controlled through a single test parameter called {\tt integratorCase}.  The possible values are shown in Table~\ref{tbl:intCases}.
 
 \begin{table}[htbp]
 	\caption{Error tolerance for each test.}
 	\label{tbl:intCases}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c } % Column formatting, 
+	\begin{tabular}{ c | c } % Column formatting,
 		\hline\hline
 		\textbf{Test}   	      	               & \textbf{Tolerated Error} 						           \\ \hline
-		``rk4"                           & 1 meter	  \\ 
-		``euler"                           & 1 meter	  \\ 
-		``rk2"                           & 1 meter	  \\ 
+		``rk4"                           & 1 meter	  \\
+		``euler"                           & 1 meter	  \\
+		``rk2"                           & 1 meter	  \\
 		\hline\hline
 	\end{tabular}
 \end{table}
@@ -85,7 +85,7 @@ All integration checks within the integrated test {\tt scenarios/test\_scenarioI
 
 \begin{figure}[t]
 	\centerline{
-		\includegraphics[]{../../../../scenarios/_Documentation/AutoTex/scenarioIntegrators}
+		\includegraphics[]{../../../../tests/scenarios/_Documentation/AutoTex/scenarioIntegrators}
 	}
 	\caption{Illustration of the BSK integrated trajectories.}
 	\label{fig:intResultsPython}
@@ -95,24 +95,23 @@ All integration checks within the integrated test {\tt scenarios/test\_scenarioI
 	\caption{Integration test results.}
 	\label{tbl:intResults}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{c | c | p{4in} } % Column formatting, 
+	\begin{tabular}{c | c | p{4in} } % Column formatting,
 		\hline\hline
-		\textbf{Test} 			& \textbf{Pass/Fail} 	 & \textbf{BSK Error Notes} 									        
+		\textbf{Test} 			& \textbf{Pass/Fail} 	 & \textbf{BSK Error Notes}
 		\\ \hline
-		``rk4"		  	& 
-		\input{../../../../scenarios/_Documentation/AutoTex/scenarioIntegratorsTestMsg-rk4}      	  &
-		\input{../../../../scenarios/_Documentation/AutoTex/scenarioIntegratorsMsg-rk4}
+		``rk4"		  	&
+		\input{../../../../tests/scenarios/_Documentation/AutoTex/scenarioIntegratorsTestMsg-rk4}      	  &
+		\input{../../../../tests/scenarios/_Documentation/AutoTex/scenarioIntegratorsMsg-rk4}
 		\\ \hline
 		``euler''	   	           	&
-		\input{../../../../scenarios/_Documentation/AutoTex/scenarioIntegratorsTestMsg-euler}           		&      
-		\input{../../../../scenarios/_Documentation/AutoTex/scenarioIntegratorsMsg-euler}  
+		\input{../../../../tests/scenarios/_Documentation/AutoTex/scenarioIntegratorsTestMsg-euler}           		&
+		\input{../../../../tests/scenarios/_Documentation/AutoTex/scenarioIntegratorsMsg-euler}
 		\\ \hline
 		``rk2''      	&
-		\input{../../../../scenarios/_Documentation/AutoTex/scenarioIntegratorsTestMsg-rk2}
-		&  
-		\input{../../../../scenarios/_Documentation/AutoTex/scenarioIntegratorsMsg-rk2}
-		\\ 
+		\input{../../../../tests/scenarios/_Documentation/AutoTex/scenarioIntegratorsTestMsg-rk2}
+		&
+		\input{../../../../tests/scenarios/_Documentation/AutoTex/scenarioIntegratorsMsg-rk2}
+		\\
 		\hline\hline
 	\end{tabular}
 \end{table}
-
