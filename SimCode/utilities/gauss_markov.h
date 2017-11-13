@@ -24,6 +24,8 @@
 #include <stdint.h>
 #include <vector>
 #include <random>
+#include <Eigen/Dense>
+
 /*! \addtogroup Sim Utility Group
  *  This group contains the simulation utilities that are used globally on the 
  *  simulation side of the software.  Note that FSW should not generally use  
@@ -41,6 +43,7 @@ class GaussMarkov
     
 public:
     GaussMarkov();
+    GaussMarkov(uint64_t size);
     ~GaussMarkov();
     void computeNextState();
     /*!@brief Method does just what it says, seeds the random number generator
@@ -49,28 +52,29 @@ public:
     void setRNGSeed(uint64_t newSeed) {rGen.seed((unsigned int)newSeed); RNGSeed = newSeed;}
     /*!@brief Method returns the current random walk state from model
        @return The private currentState which is the vector of random walk values*/
-    std::vector<double> getCurrentState() {return(currentState);}
+    Eigen::VectorXd getCurrentState() {return(currentState);}
     /*!@brief Set the upper bounds on the random walk to newBounds
        @param newBounds the bounds to put on the random walk states
        @return void*/
-    void setUpperBounds(std::vector<double> newBounds){stateBounds = newBounds;}
+    void setUpperBounds(Eigen::VectorXd newBounds){stateBounds = newBounds;}
     /*!@brief Set the noiseMatrix that is used to define error sigmas
        @param noise The new value to use for the noiseMatrix variable (error sigmas)
        @return void*/
-    void setNoiseMatrix(std::vector<double> noise){noiseMatrix = noise;}
+    void setNoiseMatrix(Eigen::MatrixXd noise){noiseMatrix = noise;}
     /*!@brief Set the propagation matrix that is used to propagate the state.
        @param prop The new value for the state propagation matrix
        @return void*/
-    void setPropMatrix(std::vector<double> prop){propMatrix = prop;}
+    void setPropMatrix(Eigen::MatrixXd prop){propMatrix = prop;}
+    Eigen::VectorXd stateBounds;  //!< -- Upper bounds to use for markov
+    Eigen::VectorXd currentState;  //!< -- State of the markov model
+    Eigen::MatrixXd propMatrix;    //!< -- Matrix to propagate error state with
+    Eigen::MatrixXd noiseMatrix;   //!< -- covariance matrix to apply errors with
     
 private:
     uint64_t RNGSeed;                 //!< -- Seed for random number generator
-    std::vector<double> stateBounds;  //!< -- Upper bounds to use for markov
-    std::vector<double> currentState;  //!< -- State of the markov model
-    std::vector<double> propMatrix;    //!< -- Matrix to propagate error state with
-    std::vector<double> noiseMatrix;   //!< -- covariance matrix to apply errors with
     std::minstd_rand rGen; //!< -- Random number generator for model
     std::normal_distribution<double> rNum;  //!< -- Random number distribution for model
+    uint64_t numStates;             //!< -- Number of states to generate noise for
 };
 
 /*! @} */

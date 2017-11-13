@@ -64,8 +64,9 @@ GEN_SIZEOF(STSensorIntMsg)
 %include "thrArrayOnTimeCmdIntMsg.h"
 GEN_SIZEOF(THRArrayOnTimeCmdIntMsg)
 
-
+#ifndef CSHARP_ROX
 %pythoncode %{
     import sys
     protectAllClasses(sys.modules[__name__])
     %}
+#endif

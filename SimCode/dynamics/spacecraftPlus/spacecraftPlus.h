@@ -43,7 +43,6 @@ class SpacecraftPlus : public DynamicObject{
 public:
     uint64_t simTimePrevious;            //!< -- Previous simulation time
     uint64_t numOutMsgBuffers;           //!< -- Number of output message buffers for I/O
-    uint64_t MRPSwitchCount;             //!< -- Count on times we've shadowed
     std::string sysTimePropertyName;     //!< -- Name of the system time property
     std::string scStateOutMsgName;       //!< -- Name of the state output message
     std::string scMassStateOutMsgName;   //!< -- Name of the state output message
@@ -67,7 +66,10 @@ public:
     Eigen::MatrixXd *cDot_B;             //!< [m/s] Inertial time derivative of c_B
     Eigen::MatrixXd *ISCPntBPrime_B;     //!< [kg m^2/s] Body time derivative of ISCPntB_B
     Eigen::MatrixXd *sysTime;            //!< [s] System time
-    Eigen::Vector3d dvAccum_B;           //!< [m/s] Accumulated delta-v in body frame
+    Eigen::Vector3d dvAccum_B;           //!< [m/s] Accumulated delta-v of center of mass relative to inertial frame in body frame coordinates
+    Eigen::Vector3d dvAccum_BN_B;        //!< [m/s] accumulated delta-v of body frame relative to inertial frame in body frame coordinates
+    Eigen::Vector3d nonConservativeAccelpntB_B;//!< [m/s/s] Current spacecraft body acceleration in the B frame
+    Eigen::Vector3d omegaDot_BN_B;       //!< [rad/s/s] angular acceleration of body wrt to N in body frame
     Eigen::Vector3d totOrbAngMomPntN_N;  //!< [kg m^2/s] Total orbital angular momentum about N in N frame compenents
     Eigen::Vector3d totRotAngMomPntC_N;  //!< [kg m^2/s] Total rotational angular momentum about C in N frame compenents
     Eigen::Vector3d rotAngMomPntCContr_B;  //!< [kg m^2/s] Contribution of stateEffector to total rotational angular mom.

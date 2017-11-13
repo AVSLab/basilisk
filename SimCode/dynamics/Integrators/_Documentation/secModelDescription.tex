@@ -13,7 +13,7 @@
 \section{Model Description}
 
 \subsection{Overview}
-The Basilisk integration capability is implemented in a modular manner such that different integrators can be assigned to the equations of motion that must be solved.  Figure~\ref{fig:intDiag} illustrates how the integrator functions relative to a dynamical systems model, here the {\tt SpacecraftPlus()} object.  The ODE's are provided by a sub-class of {\tt DynamicObject} which must be able to respond to the {\tt equationsOfMotion()} method.  How to integrated the state vector forward one time step is then handled by the {\tt integrate} method of the integrator class.  By default the {\tt DynamicObject} is integrated using a fixed time step 4th order Runge-Kutta method.  
+The Basilisk integration capability is implemented in a modular manner such that different integrators can be assigned to the equations of motion that must be solved.  Figure~\ref{fig:intDiag} illustrates how the integrator functions relative to a dynamical systems model, here the {\tt SpacecraftPlus()} object.  The ODE's are provided by a sub-class of {\tt DynamicObject} which must be able to respond to the {\tt equationsOfMotion()} method.  Integration of the state vector forward one time step is then handled by the {\tt integrate} method of the integrator class.  By default the {\tt DynamicObject} is integrated using a fixed time step 4th order Runge-Kutta method.  
 
 Assume the dynamical system is given by
 \begin{equation}

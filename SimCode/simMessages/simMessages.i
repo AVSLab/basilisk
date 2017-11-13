@@ -19,8 +19,6 @@
 
 %module simMessages
 %{
-#include <Eigen/Dense>
-#include <vector>
 #include "boreAngleSimMsg.h"
 #include "cssRawDataSimMsg.h"
 #include "eclipseSimMsg.h"
@@ -40,6 +38,7 @@
 #include "thrConfigSimMsg.h"
 #include "thrOutputSimMsg.h"
 #include "hingedRigidBodySimMsg.h"
+#include "pyBatteryOutMsg.h"
 %}
 
 %include "swig_conly_data.i"
@@ -88,8 +87,12 @@ GEN_SIZEOF(THROutputSimMsg)
 GEN_SIZEOF(THRTimePairSimMsg)
 %include "hingedRigidBodySimMsg.h"
 GEN_SIZEOF(HingedRigidBodySimMsg)
+%include "pyBatteryOutMsg.h"
+GEN_SIZEOF(PyBatteryOutMsg)
 
+#ifndef CSHARP_ROX
 %pythoncode %{
     import sys
     protectAllClasses(sys.modules[__name__])
     %}
+#endif

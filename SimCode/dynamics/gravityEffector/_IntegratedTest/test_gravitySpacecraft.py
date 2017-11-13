@@ -80,8 +80,8 @@ def test_singleGravityBody(show_plots):
 
     unitTestSim.SpiceObject.ModelTag = "SpiceInterfaceData"
     unitTestSim.SpiceObject.SPICEDataPath = splitPath[0] + '/External/EphemerisData/'
-    unitTestSim.SpiceObject.OutputBufferCount = 10000
-    unitTestSim.SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun", "moon", "jupiter barycenter"])
+    unitTestSim.SpiceObject.outputBufferCount = 10000
+    unitTestSim.SpiceObject.planetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun", "moon", "jupiter barycenter"])
     unitTestSim.SpiceObject.zeroBase = 'Earth'
     
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
@@ -226,8 +226,8 @@ def test_multiBodyGravity(show_plots):
 
     unitTestSim.SpiceObject.ModelTag = "SpiceInterfaceData"
     unitTestSim.SpiceObject.SPICEDataPath = splitPath[0] + '/External/EphemerisData/'
-    unitTestSim.SpiceObject.OutputBufferCount = 10000
-    unitTestSim.SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun", "moon", "jupiter barycenter"])
+    unitTestSim.SpiceObject.outputBufferCount = 10000
+    unitTestSim.SpiceObject.planetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun", "moon", "jupiter barycenter"])
     
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
     unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"

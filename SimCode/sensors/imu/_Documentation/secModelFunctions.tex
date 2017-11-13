@@ -7,7 +7,7 @@ The mathematical description of the IMU are implemented in imu\_sensor.cpp. This
 	\item \textbf{Discretization}: The code discretizes the signal to emulate real digital instrumentation. The least significant bit (LSB) can be set by the user.
 	\item \textbf{Saturation}: The code bounds the output signal according to user-specified maximum and minimum saturation values.
 	\item \textbf{Accelerometer Center of Mass Offset}: The code can handle accelerometer placement other than the center of mass of the spacecraft.
-	\item \textbf{IMU Misalignment}: The code can handle IMU placement in a frame with constant rotational offset from assumed IMU orientation.
+%	\item \textbf{IMU Misalignment}: The code can handle IMU placement in a frame with constant angular offset from assumed IMU orientation.
 	\item \textbf{Bias Random Walk Bounds}: The code bounds bias random walk per user-specified bounds.
 	\item \textbf{Interface: Spacecraft States}: The code sends and receives spacecraft state information via the Basilisk messaging system.
 	\item \textbf{Interface: Spacecraft Mass}: The code receives spacecraft mass information via the Basilisk messaging system.
@@ -17,5 +17,8 @@ The mathematical description of the IMU are implemented in imu\_sensor.cpp. This
 \section{Model Assumptions and Limitations}
 This code makes assumptions which are common to IMU modeling.
 \begin{itemize}
-	\item \textbf{Error Inputs}: Because the error models rely on user inputs, these inputs are the most likely source of error in IMU output. Instrument bias would have to be measured experimentally or an educated guess would have to be made. The Guass-Markov noise model has a well-known assumptions and is generally accepted to be a good model for this application.
+	\item \textbf{Error Inputs}: Because the error models rely on user inputs, these inputs are the most likely source of error in IMU output. Instrument bias would have to be measured experimentally or an educated guess would have to be made. The Guass-Markov noise model has well-known assumptions and is generally accepted to be a good model for this application.
+	\item \textbf{Error Integration}: Errors for integrated values (DV and PRV) are calculated as acceleration and angular velocity errors multiplied by the IMU time step.  If the IMU timestep matches the dynamics process rate, this is possibly a good assumption. However, if the IMU is run slower than the dynamics process, then the velocity errors may not be related to the instantaneous acceleration errors at the sampling time.
+	Additionally, the PRV is not really the integral of the angular velocity, so the errors should not be the integral of the angular velocity errors. This is a modeling simplification that should be recognized if error integration is important to the user.
+	\item \textbf{Integral Saturation}: Because the DV and PRV output values are calculated only at the IMU time step and not actually by integrating rates multiple times between calls, their saturation values are taken as the time integral of the rate saturation values. This misses some possibilities with varying accelerations between IMU time steps. Furthermore, the PRV is taken to be the integral of the angular rate over the time step. This should be a good approximation if the attitude of the spacecraft doesn't change "too much" over a relevant time step.
 \end{itemize}

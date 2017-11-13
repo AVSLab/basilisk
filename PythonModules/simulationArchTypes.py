@@ -178,8 +178,8 @@ class PythonProcessClass(ProcessBaseClass):
     def scheduleTask(self, newTask):
         for i in range(len(self.executionOrder)):
             tmpTask = self.executionOrder[i]
-            if(newTask.nextTaskStart < tmpTask.nextTaskStart or \
-                newTask.nextTaskStart == tmpTask.nextTaskStart and \
+            if(newTask.nextTaskTime < tmpTask.nextTaskTime or
+                newTask.nextTaskTime == tmpTask.nextTaskTime and \
                 newTask.priority > tmpTask.priority):
                 self.executionOrder.insert(i, newTask)
                 return
@@ -201,7 +201,6 @@ class PythonProcessClass(ProcessBaseClass):
         for task in self.taskList:
             task.selfInitTask()
         self.nextTaskTime = 0
-        self.scheduleTask(self.taskList[-1])
     def crossInitProcess(self):
         self.processData.selectProcess()
         for task in self.taskList:
@@ -213,6 +212,8 @@ class PythonProcessClass(ProcessBaseClass):
             task.resetTask(currentTime)
             self.scheduleTask(task)
     def executeTaskList(self, currentTime):
+        if(len(self.executionOrder) == 0):
+            return
         taskNext = self.executionOrder[0]
         for intCurr in self.intRefs:
             intCurr.routeInputs(self.processData.messageBuffer)

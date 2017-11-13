@@ -108,7 +108,9 @@ public:
     void computeGravityField();
     void updateInertialPosAndVel();
     void updateEnergyContributions(double & orbPotEnergyContr);  //!< -- Orbital Potential Energy Contributions
-
+    void setGravBodies(std::vector<GravBodyData *> gravBodies);
+    void addGravBody(GravBodyData* gravBody);
+    
 private:
     Eigen::Vector3d getEulerSteppedGravBodyPosition(GravBodyData *bodyData);
     void writeOutputMessages(uint64_t currentSimNanos);

@@ -123,7 +123,7 @@ void ClockSynch::UpdateState(uint64_t CurrentSimNanos)
 		diffNanos = std::chrono::duration_cast<std::chrono::nanoseconds>
 			(currentTime - startTime);
 		sleepAmount = (nanosDelta/accelFactor - diffNanos.count()) / (2);
-		//std::this_thread::sleep_for(std::chrono::nanoseconds(sleepAmount));
+		std::this_thread::sleep_for(std::chrono::nanoseconds(sleepAmount));
 	}
     
     //! - Save off the output message information for analysis
