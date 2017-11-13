@@ -10,7 +10,16 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 * more integrated BSK scenarios and tutorials
 * GPU based methods to evaluate solar radiation pressure forces and torques
 * atmospheric drag evaluation using multi-faceted spacecraft model
-* new multi-threaded Monte-Carlo simulation capability that takes advantage of multi-core processors
+
+## Version 0.1.7
+<ul>
+    <li>New Monte-Carlo capability that uses multiple cores and hyperthreading to accelerate the MC evaluations.  Data is retained and stored for each MC run for robustness.  See `test_scenarioMonteCarloAttRW.py` for an example.</li>
+    <li>Coarse Sun Sensor (CSS) modules can now scale the sensor output with the distance from the sun.</li>
+    <li>CSS now have updated documentation that includes validation results.</li>
+    <li>CSS, IMU have updated means to apply sensor corruptions.</li>
+    <li>IMU, simple_nav and star tracker modules have been updated to use now internally Eigen vectors rather than C-Arrays.  <b>NOTE: if you have simulation scripts that use these modules you may have to update the script to set sensor states as Eigen vectors from python.</b></li>
+    <li>All the dynamics, thruster and sensor simulation modules have expanded documentation and valdiation unit and integrated tests.  The validation results are automatically included in the module TeX documentation.</li>
+</ul>
 
 ## Version 0.1.6
 <ul>
