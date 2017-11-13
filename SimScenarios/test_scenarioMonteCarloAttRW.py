@@ -41,7 +41,7 @@ import matplotlib.pyplot as plt
 
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
-fileNameString = os.path.split(os.path.splitext(filename)[0])[-1]
+fileNameString = (os.path.split(os.path.splitext(filename)[0])[-1])[5:]
 path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
@@ -119,7 +119,7 @@ samplingTime = simulationTime / (numDataPoints-1)
 #
 # To run the MC simulation, call the python script from a Terminal window through
 #
-#       python test_MonteCarloSimulation.py
+#       python test_scenarioMonteCarloAttRW.py
 #
 # For more information on the Attitude Feedback Simulation with RW, please see the documentation
 # on the [test_scenarioAttitudeFeedbackRW.py](@ref scenarioAttitudeFeedbackRW) file.
@@ -298,18 +298,24 @@ samplingTime = simulationTime / (numDataPoints-1)
 # ~~~~~~~~~~~~~~~
 #
 # The resulting simulation illustrations are shown below.
-# ![MRP Attitude Error History](Images/Scenarios/BSK_MonteCarloScenario_AttitudeError.svg "Attitude Error history")
-# ![Rate Tracking Error History](Images/Scenarios/BSK_MonteCarloScenario_RateTrackingError.svg "Rate Tracking Error history")
-# ![RW Motor Torque History](Images/Scenarios/BSK_MonteCarloScenario_RWMotorTorque.svg "RW Motor Torque history")
-# ![RW Speeds History](Images/Scenarios/BSK_MonteCarloScenario_RWSpeed.svg "RW Speeds history")
-# ![RW Voltage History](Images/Scenarios/BSK_MonteCarloScenario_RWVoltage.svg "RW Voltage history")
+# ![MRP Attitude Error History](Images/Scenarios/scenarioMonteCarloAttRW_AttitudeError.svg "Attitude Error history")
+# ![Rate Tracking Error History](Images/Scenarios/scenarioMonteCarloAttRW_RateTrackingError.svg "Rate Tracking Error history")
+# ![RW Motor Torque History](Images/Scenarios/scenarioMonteCarloAttRW_RWMotorTorque.svg "RW Motor Torque history")
+# ![RW Speeds History](Images/Scenarios/scenarioMonteCarloAttRW_RWSpeed.svg "RW Speeds history")
+# ![RW Voltage History](Images/Scenarios/scenarioMonteCarloAttRW_RWVoltage.svg "RW Voltage history")
 #
-# These are the same plots output by the AttitudeFeedbackRW scenario. Please refer to this document for me details on the plots.
+# These are the same plots output by the [test_scenarioAttitudeFeedbackRW.py](@ref scenarioAttitudeFeedbackRW) scenario. Please refer to this document for me details on the plots.
 ##  @}
 
 
 @pytest.mark.slowtest()
 def test_MonteCarloSimulation(show_plots):
+    '''This function is called by the py.test environment.'''
+    # each test method requires a single assert method to be called
+    run(True, show_plots)
+
+
+def run(doUnitTests, show_plots):
     '''This function is called by the py.test environment.'''
 
     # A MonteCarlo simulation can be created using the `MonteCarlo` module.
@@ -381,7 +387,7 @@ def test_MonteCarloSimulation(show_plots):
 
     for message in rwOutName:
         retentionPolicy.addMessageLog(message, [("u_current", range(1))], samplingTime)
-    if show_plots:
+    if show_plots or doUnitTests:
         # plot data only if show_plots is true, otherwise just retain
         retentionPolicy.setDataCallback(plotSim)
     monteCarlo.addRetentionPolicy(retentionPolicy)
@@ -775,4 +781,6 @@ def plotSim(data, retentionPolicy):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_MonteCarloSimulation(False)
+    run(  False        # do unit tests
+        , True         # show_plots
+       )
