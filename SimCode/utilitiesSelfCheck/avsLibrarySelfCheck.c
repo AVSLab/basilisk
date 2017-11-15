@@ -2352,6 +2352,22 @@ int testRigidBodyKinematics(double accuracy)
         printf("C2PRV failed\n");
         errorCount++;
     }
+    m33SetIdentity(C);
+    C2PRV(C, v3_1);
+    v3Set(0.0, 0.0, 0.0, v3_2);
+    if(!v3IsEqual(v3_1, v3_2, accuracy)) {
+        printf("C2PRV failed\n");
+        errorCount++;
+    }
+    m33SetIdentity(C);
+    C[0][0] = -1.0;
+    C[1][1] = -1.0;
+    C2PRV(C, v3_1);
+    v3Set(0.0, 0.0, M_PI, v3_2);
+    if(!v3IsEqual(v3_1, v3_2, accuracy)) {
+        printf("C2PRV failed\n");
+        errorCount++;
+    }
 
     v4Set(0.2526773896521122, 0.4276078901804977, -0.4859180570232927, 0.7191587243944733, v3_1);
     v3Set(0.2, 0.1, -0.5, om);
@@ -2563,6 +2579,30 @@ int testRigidBodyKinematics(double accuracy)
         printf("EP2PRV failed\n");
         errorCount++;
     }
+
+    v4Set(1.0, 0.0, 0.0, 0.0, v3_1);
+    EP2PRV(v3_1, v3_2);
+    v3Set(0.0, 0.0, 0.0, v3);
+    if(!v3IsEqual(v3_2, v3, accuracy)) {
+        printf("EP2PRV failed\n");
+        errorCount++;
+    }
+    v4Set(-1.0, 0.0, 0.0, 0.0, v3_1);
+    EP2PRV(v3_1, v3_2);
+    v3Set(0.0, 0.0, 0.0, v3);
+    if(!v3IsEqual(v3_2, v3, accuracy)) {
+        printf("EP2PRV failed\n");
+        errorCount++;
+    }
+    v4Set(0.0, 1.0, 0.0, 0.0, v3_1);
+    EP2PRV(v3_1, v3_2);
+    v3Set(M_PI, 0.0, 0.0, v3);
+    if(!v3IsEqual(v3_2, v3, accuracy)) {
+        printf("EP2PRV failed\n");
+        errorCount++;
+    }
+
+
 
     Euler1(1.3, C);
     v3Set(1, 0, 0, C2[0]);
@@ -3096,6 +3136,13 @@ int testRigidBodyKinematics(double accuracy)
         printf("Gibbs2PRV failed\n");
         errorCount++;
     }
+    v3Set(0.0, 0.0, 0.0, v3_1);
+    Gibbs2PRV(v3_1, v3_2);
+    v3Set(0.0, 0.0, 0.0, v3);
+    if(!v3IsEqual(v3_2, v3, accuracy)) {
+        printf("Gibbs2PRV failed\n");
+        errorCount++;
+    }
 
     v3Set(0.2, -0.25, 0.3, v3_1);
     MRP2C(v3_1, C);
@@ -3209,6 +3256,14 @@ int testRigidBodyKinematics(double accuracy)
         printf("MRP2PRV failed\n");
         errorCount++;
     }
+    v3Set(0.0 ,0.0, 0.0, v3_1);
+    MRP2PRV(v3_1, v3_2);
+    v3Set(0.0, 0.0, 0.0, v3);
+    if(!v3IsEqual(v3_2, v3, accuracy)) {
+        printf("MRP2PRV failed\n");
+        errorCount++;
+    }
+
 
     if(!isEqual(wrapToPi(1.2), 1.2, accuracy)) {
         printf("wrapToPi(1.2) failed\n");

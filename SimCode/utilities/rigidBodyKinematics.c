@@ -23,6 +23,8 @@
 #include "astroConstants.h"
 #include <string.h>
 
+#define nearZero 0.0000000000001
+
 /*
  * Q = addEP(B1,B2) provides the Euler parameter vector
  * which corresponds to performing to successive
@@ -1558,16 +1560,10 @@ void C2MRP(double C[3][3], double *q)
  */
 void C2PRV(double C[3][3], double *q)
 {
-    double cp;
-    double p;
-    double sp;
+    double beta[4];
 
-    cp = (C[0][0] + C[1][1] + C[2][2] - 1) / 2;
-    p = acos(cp);
-    sp = p / 2. / sin(p);
-    q[0] = (C[1][2] - C[2][1]) * sp;
-    q[1] = (C[2][0] - C[0][2]) * sp;
-    q[2] = (C[0][1] - C[1][0]) * sp;
+    C2EP(C,beta);
+    EP2PRV(beta,q);
 }
 
 /*
@@ -2131,6 +2127,12 @@ void EP2PRV(double *q1, double *q)
 
     p = 2 * acos(q1[0]);
     sp = sin(p / 2);
+    if (fabs(sp) < nearZero) {
+        q[0] = 0.0;
+        q[1] = 0.0;
+        q[2] = 0.0;
+        return;
+    }
     q[0] = q1[1] / sp * p;
     q[1] = q1[2] / sp * p;
     q[2] = q1[3] / sp * p;
@@ -3474,6 +3476,12 @@ void Gibbs2PRV(double *q1, double *q)
 
     tp = sqrt(v3Dot(q1, q1));
     p = 2 * atan(tp);
+    if (tp < nearZero) {
+        q[0] = 0.0;
+        q[1] = 0.0;
+        q[2] = 0.0;
+        return;
+    }
     q[0] = q1[0] / tp * p;
     q[1] = q1[1] / tp * p;
     q[2] = q1[2] / tp * p;
@@ -3689,7 +3697,7 @@ void MRP2PRV(double *q1, double *q)
     double p;
 
     tp = sqrt(v3Dot(q1, q1));
-    if(tp == 0.0)
+    if(tp < nearZero)
     {
         memset(q, 0x0, 3*sizeof(double));
         return;
