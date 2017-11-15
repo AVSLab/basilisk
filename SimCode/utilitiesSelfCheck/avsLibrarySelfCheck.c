@@ -3263,6 +3263,13 @@ int testRigidBodyKinematics(double accuracy)
         printf("MRP2PRV failed\n");
         errorCount++;
     }
+    v3Set(1.0 ,0.0, 0.0, v3_1);
+    MRP2PRV(v3_1, v3_2);
+    v3Set(M_PI, 0.0, 0.0, v3);
+    if(!v3IsEqual(v3_2, v3, accuracy)) {
+        printf("MRP2PRV failed\n");
+        errorCount++;
+    }
 
 
     if(!isEqual(wrapToPi(1.2), 1.2, accuracy)) {
