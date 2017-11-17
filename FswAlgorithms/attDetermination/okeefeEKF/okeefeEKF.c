@@ -76,20 +76,16 @@ void Reset_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t callTime,
 {
     
     int32_t i;
-    VehicleConfigFswMsg massPropsInBuffer;
     CSSConstConfig cssConfigInBuffer;
     uint64_t writeTime;
     uint32_t writeSize;
     
     /*! Begin method steps*/
     /*! - Zero the local configuration data structures and outputs */
-    memset(&massPropsInBuffer, 0x0 ,sizeof(VehicleConfigFswMsg));
     memset(&cssConfigInBuffer, 0x0, sizeof(CSSConstConfig));
     memset(&(ConfigData->outputSunline), 0x0, sizeof(NavAttIntMsg));
     
-    /*! - Read in mass properties and coarse sun sensor configuration information.*/
-    ReadMessage(ConfigData->massPropsInMsgId, &writeTime, &writeSize,
-                sizeof(VehicleConfigFswMsg), &massPropsInBuffer, moduleID);
+    /*! - Read in coarse sun sensor configuration information.*/
     ReadMessage(ConfigData->cssConfInMsgId, &writeTime, &writeSize,
                 sizeof(CSSConstConfig), &cssConfigInBuffer, moduleID);
     
