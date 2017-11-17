@@ -1,6 +1,6 @@
 # MonteCarlo: Brief Guide
 
-*If you plan to use this I highly recommend reading the documentation in the `MonteCarlo/Controller.py` source file and the example usage in `scenarios/test_MonteCarloSimulation.py`. This guide offers only a brief overview of features*
+*If you plan to use this it is highly recommended to read the documentation in the `MonteCarlo/Controller.py` source file and the example usage in `src/tests/scenarios/test_MonteCarloSimulation.py`. This guide offers only a brief overview of features*
 
 A MonteCarlo simulation can be created using the `MonteCarlo` module. This module is used to execute monte carlo simulations, and access retained data from previously executed MonteCarlo runs.
 
