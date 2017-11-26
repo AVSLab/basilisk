@@ -592,9 +592,7 @@ def run(doUnitTests, show_plots, simCase):
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')
     if doUnitTests:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileNameString + "Omega" + str(int(simCase))
-            , plt, path)
+        unitTestSupport.saveScenarioFigure(fileName + "Omega" + str(int(simCase)), plt, path)
 
     if show_plots:
         plt.show()

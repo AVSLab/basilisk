@@ -134,7 +134,7 @@ from Basilisk.fswAlgorithms import fswMessages
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useJitterSimple, useRWVoltageIO", [False, False])
+@pytest.mark.parametrize("useJitterSimple, useRWVoltageIO", [(False, False)])
 def test_bskAttitudeFeedbackPD(show_plots, useJitterSimple, useRWVoltageIO):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
