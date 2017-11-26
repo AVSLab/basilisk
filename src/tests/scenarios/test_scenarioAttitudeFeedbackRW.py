@@ -29,6 +29,7 @@
 
 import numpy as np
 import pytest
+import os
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import (MRP_Feedback, attTrackingError, fswMessages,
                                     inertial3D, rwMotorTorque, rwMotorVoltage)

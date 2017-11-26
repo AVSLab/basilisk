@@ -25,78 +25,53 @@
 #
 
 import pytest
-import sys, os, inspect
-
-
-
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('Basilisk')
-
-
-
+import os, inspect
 from Basilisk.simulation import avsLibrarySelfCheck
 from Basilisk.utilities import unitTestSupport
 
 
-
-
-
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail(True)
-
-@pytest.mark.parametrize("testRigidBodyKinematics, testOrbitalElements, testOrbitalAnomalies, testLinearAlgebra, testEnvironment", [
-      (True, False, False, False, False)
-    , (False, True, False, False, False)
-    , (False, False, True, False, False)
-    , (False, False, False, True, False)
-    , (False, False, False, False, True)
-])
-
-
+@pytest.mark.parametrize("testName"
+    , ["testRigidBodyKinematics"
+    , "testOrbitalElements"
+    , "testOrbitalAnomalies"
+    , "testLinearAlgebra"
+    , "testEnvironment"])
 # provide a unique test method name, starting with test_
-def test_unitDynamicsModes(testRigidBodyKinematics, testOrbitalElements, testOrbitalAnomalies, testLinearAlgebra, testEnvironment):
+def test_unitDynamicsModes(testName):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitAVSLibrarySelfCheck(
-            testRigidBodyKinematics, testOrbitalElements, testOrbitalAnomalies, testLinearAlgebra, testEnvironment)
+    [testResults, testMessage] = unitAVSLibrarySelfCheck(testName)
     assert testResults < 1, testMessage
 
 
+def unitAVSLibrarySelfCheck(testName):
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
-def unitAVSLibrarySelfCheck(testRigidBodyKinematics, testOrbitalElements, testOrbitalAnomalies, testLinearAlgebra, testEnvironment):
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
-
-    if testRigidBodyKinematics:
+    if testName == "testRigidBodyKinematics":
         errorCount = avsLibrarySelfCheck.testRigidBodyKinematics(1e-10)
         if errorCount:
             testFailCount += errorCount
             testMessages.append("ERROR: Rigid Body Kinematics Library Failed Self Test.\n")
-    if testOrbitalElements:
+    if testName == "testOrbitalElements":
         errorCount = avsLibrarySelfCheck.testOrbitalAnomalies(1e-10)
         if errorCount:
             testFailCount += errorCount
             testMessages.append("ERROR: Orbital Anomalies Library Failed Self Test.\n")
-    if testOrbitalAnomalies:
+    if testName == "testOrbitalAnomalies":
         errorCount = avsLibrarySelfCheck.testOrbitalElements(1e-10)
         if errorCount:
             testFailCount += errorCount
             testMessages.append("ERROR: Orbital Elements Library Failed Self Test.\n")
-    if testLinearAlgebra:
+    if testName == "testLinearAlgebra":
         errorCount = avsLibrarySelfCheck.testLinearAlgebra(1e-10)
         if errorCount:
             testFailCount += errorCount
             testMessages.append("ERROR: Linear Algebra Library Failed Self Test.\n")
-    if testEnvironment:
+    if testName == "testEnvironment":
         errorCount = avsLibrarySelfCheck.testOrbitalEnvironment(1e-10)
         if errorCount:
             testFailCount += errorCount
             testMessages.append("ERROR: Space Environment Library Failed Self Test.\n")
-
-
-
 
     if testFailCount == 0:
         print "PASSED "
@@ -111,22 +86,21 @@ def unitAVSLibrarySelfCheck(testRigidBodyKinematics, testOrbitalElements, testOr
         snippetContent = ""
         for message in testMessages:
             snippetContent += message
-    fileNameString = filename[len(path) + 6:-3]
-    print path
-    snippetMsgName = fileNameString + 'Msg-' + str(testRigidBodyKinematics) + str(testOrbitalElements) \
-                     + str(testOrbitalAnomalies) + str(testLinearAlgebra) + str(testEnvironment)
-    unitTestSupport.writeTeXSnippet(snippetMsgName, snippetContent,
-                                    path + "/../_Documentation/")
-    snippetPassFailName = fileNameString + 'TestMsg-' + str(testRigidBodyKinematics) + str(testOrbitalElements) \
-                          + str(testOrbitalAnomalies) + str(testLinearAlgebra) + str(testEnvironment)
-    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}'
-    unitTestSupport.writeTeXSnippet(snippetPassFailName, snippetContent,
-                                    path + "/../_Documentation/")
 
+    fileName = os.path.basename(os.path.splitext(__file__)[0])
+    path = os.path.dirname(os.path.abspath(__file__))
+
+    snippetMsgName = fileName + 'Msg-' + testName
+    unitTestSupport.writeTeXSnippet(snippetMsgName, snippetContent, path + "/../_Documentation/")
+
+    snippetPassFailName = fileName + 'TestMsg-' + testName
+    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}'
+    unitTestSupport.writeTeXSnippet(snippetPassFailName, snippetContent, path + "/../_Documentation/")
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
+
 
 #
 # This statement below ensures that the unit test scrip can be run as a
@@ -134,9 +108,8 @@ def unitAVSLibrarySelfCheck(testRigidBodyKinematics, testOrbitalElements, testOr
 #
 if __name__ == "__main__":
     unitAVSLibrarySelfCheck(
-                           True,           # rigidBodyKinematics
-                           False,           # orbitalMotion
-                           False,           # linearAlgebra
-                           False            # environment
-                           )
-
+        True,  # rigidBodyKinematics
+        False,  # orbitalMotion
+        False,  # linearAlgebra
+        False  # environment
+    )
