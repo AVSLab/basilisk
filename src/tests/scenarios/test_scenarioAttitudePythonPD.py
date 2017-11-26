@@ -552,8 +552,8 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
 # -----
 #
 # This class inherits from the PythonModelClass available in the simulationArchTypes module.
-# The PythonModelClass is the polymorphic base class that is used to attach models to a
-# PythonTask that has been implemented in your simulation.  The base class uses the following
+# The PythonModelClass is the parent class which your Python BSK modules must inherit.
+# The class uses the following
 # virtual functions:
 # -# selfInit: The method that creates all of the messages that will be written by the
 #    python model that is implemented in your class.
@@ -561,7 +561,7 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
 #    needs in order to perform its function.
 # -# reset: The method that will initialize any persistent data in your model to a common
 #    "ready to run" state (e.g. filter states, integral control sums, etc).
-# -# updateState: The method that will be run cyclically in your model at the rate specified
+# -# updateState: The method that will be called at the rate specified
 #    in the PythonTask that was created in the input file.
 #
 # Additionally, your class should ensure that in the __init__ method, your call the super
@@ -570,9 +570,9 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
 # ~~~~~~~~~~~~~~{.py}
 #       super(PythonMRPPD, self).__init__(modelName, modelActive, modelPriority)
 # ~~~~~~~~~~~~~~
-# Once you have made your class consistent with these polymorphic constraints, it is
-# essentially free-form.  The only limit is your imagination.  Numpy, matplotlib, vision processing,
-# AI, whatever.  Go nuts.  Don't do anything I wouldn't do though.
+# You class must implement the above four functions. Beyond these four funcitons you class
+# can complete any other computations you need (Numpy, matplotlib, vision processing
+# AI, whatever).
 class PythonMRPPD(simulationArchTypes.PythonModelClass):
     def __init__(self, modelName, modelActive=True, modelPriority=-1):
         super(PythonMRPPD, self).__init__(modelName, modelActive, modelPriority)
