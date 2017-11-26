@@ -26,9 +26,22 @@ Of the following requirements Python is the only one for which prebuilt librarie
 
 
 ### Getting Started
-To get started with Basilisk (BSK), several tutorial python files are found in the SimScenario folder.  Within this web page documentation site, they are listed and discussed in the <a href="modules.html">Modules</a> tab.  To play with the tutorials, it is suggested the user makes a copy of the `test_scenarioXXX.py` file they are testing to learn, test and experiment.  The documentation lists the scenarios in an order that facilitates learning basic BSK features. For example, a good start would be to run `test_scenarioBasicOrbit.py`.
+To get started with Basilisk (BSK), several tutorial python files are provided in the installed package.  Within this web page documentation site, they are listed and discussed in the <a href="modules.html">Modules</a> tab.  The documentation lists the scenarios in an order that facilitates learning basic BSK features. A good start would be to run `test_scenarioBasicOrbit.py`.
 
-Note that to run this pythons simulation script from outside the Basilisk directory, which is recommended, the local path to the Basilisk installation must be edited through the `bskPath` variable.
+To play with the tutorials, it is suggested the user makes a copy of these tutorial files, and use the copies in order to learn, test and experiment. To copy them, first find the location of the Basilisk installation. After installing, you can find the installed location of Basilisk by opening a python interpreter and running:
+
+```
+import Basilisk
+basiliskPath = Basilisk.__path__[0]
+print basiliskPath
+```
+
+Now copy the folder `{basiliskPath}/tests` into a new folder, and change to that directory. 
+
+To run the default scenario 1 of scenarioBasicOrbit, in the directory of the copied tutorials, call the python script: `python test_scenarioBasicOrbit.py`
+
+
+Now, when you want to use a tutorial, navigate inside that folder, and edit and execute the *copied* integrated tests.
 
 <!--Any new BSK module development should not occur within the BSK folder as this will be updated rapidly.  Rather, new FSW algorithm or simulation coce modules should be created in a custom folder outside of the BSK directory.  A sample folder is provided named `BasiliskCustom` wich contains sample FSW and Simulation modules.-->
 

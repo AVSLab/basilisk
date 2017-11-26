@@ -1,0 +1,39 @@
+% !TEX root = ./Basilisk-Integrators20170724.tex
+
+\section{User Guide}
+
+\subsection{Not Specifying an Integration Method}
+If a Python BSK simulation is setup without specifying an integration method, then the default behavior is to load the fixed time step 4th order Runge-Kutta (RK4) method.  No additional code is required by the user.
+
+
+\subsection{Selecting Alternate Integration Methods}
+Assume the {\tt DynamicObject} class is the {\tt SpacecraftPlus()} object, declared through
+\begin{verbatim}
+	scObject = spacecraftPlus.SpacecraftPlus()
+\end{verbatim}
+To invoke the Euler's  integration scheme, the corresponding integration module is created using
+\begin{verbatim}
+	integratorObject = svIntegrators.svIntegratorEuler(scObject)
+\end{verbatim}
+If the 2nd order Heun's integration method is desired, use instead
+\begin{verbatim}
+	integratorObject = svIntegrators.svIntegratorRK2(scObject)
+\end{verbatim}
+To force the default RK4 method, use
+\begin{verbatim}
+	integratorObject = svIntegrators.svIntegratorRK4(scObject)
+\end{verbatim}
+
+Next, to connect this integrator module to the {\tt DynamicObject} instance (i.e. {\tt SpacecraftPlus()} called {\tt scObject}, use the following code
+\begin{verbatim}
+	scObject.setIntegrator(integratorObject)
+\end{verbatim}
+That is it, the Basilisk simulation is now setup to use the desired numerical  integration method.
+
+
+\subsection{Creating New Integration Methods}
+New integration modules can readily be created for Basilisk. They are all stored in the folder
+\begin{verbatim}
+Basilisk/simulation/dynamics/Integrators/
+\end{verbatim}
+The integrators must be created to function on a general state vector and be independent of the particular dynamics being integrated. Note that the default integrator is placed inside the {\tt\_GeneralModulesFiles} folder within the dynamics folder.
