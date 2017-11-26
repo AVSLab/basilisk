@@ -212,13 +212,17 @@ function(findAndCreateSwigModules SubModule)
 
 	    set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
 			FOLDER "${DIR_NAME_STRING}/${FileDir}")
-		# set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-		#     CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/${FileBase}")
+		#set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
+		#     CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
 	    set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
 	        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
 	    set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
 	        LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
-	    set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
+		# set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
+	        # ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
+	    # set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
+	        # RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
+		set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
 			LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
 	    set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
 		    COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}")
@@ -245,6 +249,7 @@ if(MSVC)
     add_definitions(/D BOOST_ALL_NO_LIB)
     add_definitions(/W3)
     add_definitions(/wd"4913")
+	add_definitions(/wd"4251")
     # Make sure we are using Multi-Threaded run time library
     foreach(flag
         CMAKE_C_FLAGS
@@ -275,12 +280,12 @@ else()
     set(Boost_USE_STATIC_RUNTIME OFF)
 endif()
 
-foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
-    string( TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG )
-    set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/Basilisk)
-    set( CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/Basilisk)
-    set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/Basilisk)
-endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
+# foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
+    # string( TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG )
+    # set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/Basilisk)
+    # set( CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/Basilisk)
+    # set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/Basilisk)
+# endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 
 # Add include directories
 include_directories(simulation)

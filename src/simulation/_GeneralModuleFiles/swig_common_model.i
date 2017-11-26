@@ -45,23 +45,23 @@ namespace std {
         return NULL;
     }
 
-    int rowLength = 0;
+    Py_ssize_t rowLength = 0;
     Eigen::MatrixXd matrixAssemble;
     PyObject *obj = PySequence_GetItem($input, 0);
     if(!PySequence_Check(obj)) {
         rowLength = PySequence_Length($input);
         matrixAssemble.resize(PySequence_Length($input), 1);
-        for(int j=0; j<rowLength; j++)
+        for(Py_ssize_t j=0; j<rowLength; j++)
         {
             matrixAssemble(j, 0) = PyFloat_AsDouble(PySequence_GetItem($input, j));
         }
     }
     else
     {
-        for(int i=0; i<PySequence_Length($input); i++){
+        for(Py_ssize_t i=0; i<PySequence_Length($input); i++){
             obj = PySequence_GetItem($input, i);
             if(!PySequence_Check(obj)) {
-                printf("Row bad in matrix: %d\n", i);
+                printf("Row bad in matrix: %zd\n", i);
                 PyErr_SetString(PyExc_ValueError,"Need a list for each row");
             }
             if(!rowLength)
@@ -72,10 +72,10 @@ namespace std {
             }
             if(!rowLength || rowLength != PySequence_Length(obj))
             {
-                printf("Row bad in matrix: %d\n", i);
+                printf("Row bad in matrix: %zd\n", i);
                 PyErr_SetString(PyExc_ValueError,"All rows must be the same length!");
             }
-            for(int j=0; j<rowLength; j++)
+            for(Py_ssize_t j=0; j<rowLength; j++)
             {
                 matrixAssemble(i, j) = PyFloat_AsDouble(PySequence_GetItem(obj, j));
             }
@@ -91,12 +91,12 @@ namespace std {
         PyErr_SetString(PyExc_ValueError,"Expected a list of lists!  Does not appear to be that.");
         return NULL;
     }
-    int rowLength = 0;
+    Py_ssize_t rowLength = 0;
     Eigen::MatrixXd matrixAssemble;
-    for(int i=0; i<PySequence_Length($input); i++){
+    for(Py_ssize_t i=0; i<PySequence_Length($input); i++){
         PyObject *obj = PySequence_GetItem($input, i);
         if(!PySequence_Check($input)) {
-            printf("Row bad in matrix: %d\n", i);
+            printf("Row bad in matrix: %zd\n", i);
             PyErr_SetString(PyExc_ValueError,"Need a list for each row");
         }
         if(!rowLength)
@@ -107,10 +107,10 @@ namespace std {
         }
         if(!rowLength || rowLength != PySequence_Length(obj))
         {
-            printf("Row bad in matrix: %d\n", i);
+            printf("Row bad in matrix: %zd\n", i);
             PyErr_SetString(PyExc_ValueError,"All rows must be the same length!");
         }
-        for(int j=0; j<rowLength; j++)
+        for(Py_ssize_t j=0; j<rowLength; j++)
         {
             matrixAssemble(i, j) = PyFloat_AsDouble(PySequence_GetItem(obj, j));
         }

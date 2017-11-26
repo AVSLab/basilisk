@@ -15,7 +15,9 @@ STRING(SUBSTRING ${CMAKE_CURRENT_SOURCE_DIR} ${DIR_NAME_START} -1 DIR_NAME_STRIN
 set_target_properties(SimUtilities PROPERTIES
 FOLDER "${DIR_NAME_STRING}")
 
-target_compile_options(SimUtilities PUBLIC "-fPIC")
+if(NOT WIN32)
+	target_compile_options(SimUtilities PUBLIC "-fPIC")
+endif()
 target_include_directories(SimUtilities PUBLIC "${CMAKE_SOURCE_DIR}/simulation")
 set_target_properties(SimUtilities PROPERTIES
 ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
