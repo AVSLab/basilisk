@@ -24,6 +24,7 @@
 #include <math.h>
 #include <iostream>
 #include <cstring>
+#include <algorithm>
 #include <random>
 
 //! Initialize a bunch of defaults in the constructor.  Is this the right thing to do?
