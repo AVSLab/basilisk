@@ -27,25 +27,15 @@
 #
 
 
-import inspect
-import os
-
 import numpy as np
 import pytest
-
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import (MRP_Feedback, attTrackingError, fswMessages,
                                     inertial3D, rwMotorTorque, rwMotorVoltage)
 from Basilisk.simulation import reactionWheelStateEffector, rwVoltageInterface, simple_nav, spacecraftPlus
-
 from Basilisk.utilities import (SimulationBaseClass, fswSetupRW, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport)
-
-# @cond DOXYGEN_IGNORE
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-# @endcond
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -55,9 +45,7 @@ path = os.path.dirname(os.path.abspath(filename))
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useJitterSimple, useRWVoltageIO", [
-    (False, False), (True, False), (False, True)
-])
+@pytest.mark.parametrize("useJitterSimple, useRWVoltageIO", [(False, False), (True, False), (False, True)])
 # provide a unique test method name, starting with test_
 def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
     '''This function is called by the py.test environment.'''
@@ -333,9 +321,9 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 # The first 2 arguments can be left as is.  The last arguments control the
 # simulation scenario flags to turn on or off certain simulation conditions.  Here the simple RW jitter
 # model is engaged for each of the RWs.  To turn this on, the command
-#~~~~~~~~~~~~~~{.py}
+# ~~~~~~~~~~~~~~{.py}
 #     simIncludeRW.options.RWModel = simIncludeRW.JitterSimple
-#~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~
 # Change this option before the RW is created.  As this is set before any of the RW created in this
 # scenario, all the RWs have jitter engaged if this 'useJitterSimple' flag is set. The
 # resulting simulation illustrations are shown below.
@@ -418,8 +406,8 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 ## @}
 def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     '''Call this routine directly to run the tutorial scenario.'''
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     #
     #  From here on there scenario python code is found.  Above this line the code is to setup a
@@ -461,7 +449,7 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     I = [900., 0., 0.,
          0., 800., 0.,
          0., 0., 600.]
-    scObject.hub.mHub = 750.0                   # kg - spacecraft mass
+    scObject.hub.mHub = 750.0  # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scObject.hub.useTranslation = True
@@ -538,7 +526,7 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     inertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)
     inertial3DWrap.ModelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
-    inertial3DConfig.sigma_R0N = [0., 0., 0.]       # set the desired inertial orientation
+    inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
     inertial3DConfig.outputDataName = "guidanceInertial3D"
 
     # setup the attitude tracking error evaluation module
@@ -561,7 +549,7 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     mrpControlConfig.rwParamsInMsgName = "rwa_config_data_parsed"
     mrpControlConfig.inputRWSpeedsName = rwStateEffector.OutputDataString
     mrpControlConfig.K = 3.5
-    mrpControlConfig.Ki = -1          # make value negative to turn off integral feedback
+    mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
     mrpControlConfig.P = 30.0
     mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
     mrpControlConfig.domega0 = [0.0, 0.0, 0.0]
@@ -640,7 +628,7 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a = 10000000.0                                           # meters
+    oe.a = 10000000.0  # meters
     oe.e = 0.01
     oe.i = 33.3 * macros.D2R
     oe.Omega = 48.2 * macros.D2R
@@ -649,8 +637,8 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     rN, vN = orbitalMotion.elem2rv(mu, oe)
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
-    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]              # sigma_CN_B
-    scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]        # rad/s - omega_CN_B
+    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_CN_B
+    scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_CN_B
 
     #
     #   initialize Simulation
@@ -681,7 +669,9 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     #
     #   plot the results
     #
-    fileNameString = filename[len(path) + 6:-3]
+    fileName = os.path.basename(os.path.splitext(__file__)[0])
+    path = os.path.dirname(os.path.abspath(__file__))
+
     timeData = dataUsReq[:, 0] * macros.NANO2MIN
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
@@ -692,9 +682,10 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Error $\sigma_{B/R}$')
-    if doUnitTests:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileNameString + "1" + str(int(useJitterSimple)) + str(int(useRWVoltageIO)), plt, path)
+    if doUnitTests:  # only save off the figure if doing a unit test run
+        unitTestSupport.saveScenarioFigure(fileName + "1" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
+                                           , plt
+                                           , path)
 
     plt.figure(2)
     for idx in range(1, 4):
@@ -708,9 +699,10 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Motor Torque (Nm)')
-    if doUnitTests:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileNameString + "2" + str(int(useJitterSimple)) + str(int(useRWVoltageIO)), plt, path)
+    if doUnitTests:  # only save off the figure if doing a unit test run
+        unitTestSupport.saveScenarioFigure(fileName + "2" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
+                                           , plt
+                                           , path)
 
     plt.figure(3)
     for idx in range(1, 4):
@@ -729,9 +721,10 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')
-    if doUnitTests:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileNameString + "3" + str(int(useJitterSimple)) + str(int(useRWVoltageIO)), plt, path)
+    if doUnitTests:  # only save off the figure if doing a unit test run
+        unitTestSupport.saveScenarioFigure(fileName + "3" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
+                                           , plt
+                                           , path)
 
     if useRWVoltageIO:
         plt.figure(5)
@@ -743,8 +736,9 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
         plt.xlabel('Time [min]')
         plt.ylabel('RW Volgate (V) ')
         if doUnitTests:  # only save off the figure if doing a unit test run
-            unitTestSupport.saveScenarioFigure(
-                fileNameString + "4" + str(int(useJitterSimple)) + str(int(useRWVoltageIO)), plt, path)
+            unitTestSupport.saveScenarioFigure(fileName + "4" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
+                                               , plt
+                                               , path)
     if show_plots:
         plt.show()
 
@@ -860,8 +854,8 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
 #
 if __name__ == "__main__":
     run(
-        False,          # do unit tests
-        True,           # show_plots
-        False,          # useJitterSimple
-        False           # useRWVoltageIO
-        )
+        False,  # do unit tests
+        True,  # show_plots
+        False,  # useJitterSimple
+        False  # useRWVoltageIO
+    )

@@ -30,31 +30,21 @@
 
 import pytest
 import os
-import inspect
 import numpy as np
-
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass  # The class which contains the basilisk simuation environment
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.utilities import macros  # Some unit conversions
 from Basilisk.utilities import orbitalMotion
-
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus  # The base of any spacecraft simulation which deals with spacecraft dynamics
+from Basilisk.simulation import \
+    spacecraftPlus  # The base of any spacecraft simulation which deals with spacecraft dynamics
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import hingedRigidBodyStateEffector
 # Allows for forces to act on the spacecraft without adding an effector like a thruster
 from Basilisk.simulation import extForceTorque
-
 # import non-basilisk libraries
 import matplotlib.pyplot as plt
-
-# @cond DOXYGEN_IGNORE
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
-splitPath = path.split(bskName)
-# @endcond
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -70,6 +60,7 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
     # provide a unique test method name, starting with test_
     [testResults, testMessage] = run(True, show_plots)
     assert testResults < 1, testMessage
+
 
 # NOTE: The unit test in this tutorial essentially only checks if the results are a very specific value. It will not
 # work with other input conditions. It serves only to make sure that this specific tutorial is working when pytest is
@@ -125,23 +116,23 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 #
 # The first change necessary is in the import statements at the beginning of the test scenario. Now,
 # hingedRigidBodyStateEffector() and ExtForceTorque() must be imported.
-#~~~~~~~~~~~~~~~~~{.py}
+# ~~~~~~~~~~~~~~~~~{.py}
 # import hingedRigidBodyStateEffector
 # import ExtForceTorque
-#~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~
 #
 # Next, the simulation time step should be reduced. Previously, the time step was easily set to 10 seconds because
 # only orbital dynamics were being modelled. As will be seen in the plots from this tutorial, though, the panels will
 # "flap" at relatively high frequency. Large time steps would not allow for this motion to be solved for correctly. In
 # fact, with the 10 second time step, the simulation will not even run. This is a good reminder to check the time step
 # size when trouble-shooting Basilisk simulations.
-#~~~~~~~~~~~~~~~~~{.py}
+# ~~~~~~~~~~~~~~~~~{.py}
 # simulationTimeStep = macros.sec2nano(0.1)
-#~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~
 #
 # Importantly, the hinged rigid body and external force are added next. This entire section is clearly marked in the
 # code, but is repeated here for clarity:
-#~~~~~~~~~~~~~~~~~{.py}
+# ~~~~~~~~~~~~~~~~~{.py}
 # scSim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
 # scSim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
 #
@@ -194,27 +185,27 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 # extFTObject.extForce_N = [[0.], [0.], [0.]]
 # scObject.addDynamicEffector(extFTObject)
 # scSim.AddModelToTask(simTaskName, extFTObject)
-#~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~
 # Above, it is important to understand that just creating the hinged rigid body is not enough to have it affect the
 # simulation. In order for it to affect spacecraft dynamics, it must also be added to the spacecraft:
-#~~~~~~~~~~~~~~~~~{.py}
+# ~~~~~~~~~~~~~~~~~{.py}
 # scObject.addStateEffector(scSim.panel1)  # in order to affect dynamics
 # scObject.addStateEffector(scSim.panel2)  # in order to affect dynamics
-#~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~
 # Additionally, plotting the panel states (theta) at the end of the simulation requires use of the messaging system.
 # In order for the messages to be logged, the panels must be added to the simulation dynamics task:
-#~~~~~~~~~~~~~~~~~{.py}
+# ~~~~~~~~~~~~~~~~~{.py}
 # scSim.AddModelToTask(simTaskName, scSim.panel1)  # in order to track messages
 # scSim.AddModelToTask(simTaskName, scSim.panel2)  # in order to track messages
-#~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~
 # The same goes for the external force:
-#~~~~~~~~~~~~~~~~~{.py}
+# ~~~~~~~~~~~~~~~~~{.py}
 # scObject.addDynamicEffector(extFTObject)
 # scSim.AddModelToTask(simTaskName, extFTObject)
-#~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~
 # There are additional lines that must be added in order to retrieve and plot the data from the panel messages. These
 # lines are split before and after the simulation executes:
-#~~~~~~~~~~~~~~~~~{.py}
+# ~~~~~~~~~~~~~~~~~{.py}
 # scSim.TotalSim.logThisMessage(scSim.panel1.HingedRigidBodyOutMsgName, samplingTime)
 # scSim.TotalSim.logThisMessage(scSim.panel2.HingedRigidBodyOutMsgName, samplingTime)
 # ...
@@ -222,7 +213,7 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 # ...
 # panel1thetaLog = scSim.pullMessageLogData(scSim.panel1.HingedRigidBodyOutMsgName+'.theta',range(1))
 # panel2thetaLog = scSim.pullMessageLogData(scSim.panel2.HingedRigidBodyOutMsgName+'.theta',range(1))
-#~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~
 # The panel theta logs are queried with "range(1)" rather than "range(3)" because theta is a scalar rather than a 3-D
 # vector like the position and velocities which are retrieved in the lines just before the panel theta logs. The
 # Hinged Rigid Body module is also set up with a message for "thetaDot" which can be retrieved by replacing ".theta"
@@ -230,11 +221,11 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 # Moving on, the orbit maneuver code must be changed to  implement the finite thrusting maneuver rather than the
 # impulse Delta-v used before. The code which is removed is not shown here, but can be seen by comparing the orbit
 # change maneuver tutorial to this one. When complete, this section of the code now looks like:
-#~~~~~~~~~~~~~~~~~{.py}
+# ~~~~~~~~~~~~~~~~~{.py}
 # Hohmann transfer
 # extFTObject.extForce_N = [[-2050.], [-1430.], [-.00076]]
 # T2 = macros.sec2nano(935.)  # this is the amount of time to get a deltaV equal to what the other tutorial has
-#~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~
 # Finally, the second and third orbit maneuvers have been removed from this tutorial. The intended demonstration is already complete,
 # and the smaller time steps necessary here make it wasteful to simulate more than is necessary. Aside from these
 # changes, other variables used in instantaneous Delta-V calculations have been removed.
@@ -276,8 +267,8 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 
 def run(doUnitTests, show_plots):
     '''Call this routine directly to run the tutorial scenario.'''
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     #
     #  From here on there scenario python code is found.  Above this line the code is to setup a
@@ -326,9 +317,7 @@ def run(doUnitTests, show_plots):
     # Attach gravity model to spacecraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
-    ##########################################################################################
-    ########################Adding the HingedRigidBody State Effector#########################
-    ##########################################################################################
+    # Adding the HingedRigidBody State Effector
     scSim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
     scSim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
 
@@ -381,16 +370,14 @@ def run(doUnitTests, show_plots):
     extFTObject.extForce_N = [[0.], [0.], [0.]]
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(simTaskName, extFTObject)
-    ##########################################################################################
-    ########################Ending the HingedRigidBody State Effector#########################
-    ##########################################################################################
+    # Ending the HingedRigidBody State Effector
 
     #
     #   setup orbit and simulation time
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    rLEO = 7000. * 1000      # meters
+    rLEO = 7000. * 1000  # meters
     oe.a = rLEO
     oe.e = 0.0001
     oe.i = 0.0 * macros.D2R
@@ -447,7 +434,8 @@ def run(doUnitTests, show_plots):
     #
     #   plot the results
     #
-    fileNameString = filename[len(path) + 6:-3]
+    fileName = os.path.basename(os.path.splitext(__file__)[0])
+    path = os.path.dirname(os.path.abspath(__file__))
 
     # draw the inertial position vector components
     plt.close("all")  # clears out plots from earlier test runs
@@ -462,9 +450,8 @@ def run(doUnitTests, show_plots):
     plt.legend(loc='lower right')
     plt.xlabel('Time [h]')
     plt.ylabel('Inertial Position [km]')
-    if doUnitTests:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileNameString + "1" + str(int(0.)), plt, path)
+    if doUnitTests:  # only save off the figure if doing a unit test run
+        unitTestSupport.saveScenarioFigure(fileName + "1" + str(int(0.)), plt, path)
 
     # show SMA
     plt.figure(2)
@@ -479,9 +466,8 @@ def run(doUnitTests, show_plots):
              )
     plt.xlabel('Time [min]')
     plt.ylabel('Radius [km]')
-    if doUnitTests:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileNameString + "2" + str(int(0.)), plt, path)
+    if doUnitTests:  # only save off the figure if doing a unit test run
+        unitTestSupport.saveScenarioFigure(fileName + "2" + str(int(0.)), plt, path)
 
     plt.figure(3)
     fig = plt.gcf()
@@ -491,8 +477,7 @@ def run(doUnitTests, show_plots):
     plt.xlabel('Time [min]')
     plt.ylabel('Panel 1 Angular Displacement [r]')
     if doUnitTests:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileNameString + "panel1theta" + str(int(0.)), plt, path)
+        unitTestSupport.saveScenarioFigure(fileName + "panel1theta" + str(int(0.)), plt, path)
 
     plt.figure(4)
     fig = plt.gcf()
@@ -502,8 +487,7 @@ def run(doUnitTests, show_plots):
     plt.xlabel('Time [min]')
     plt.ylabel('Panel 2 Angular Displacement [r]')
     if doUnitTests:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileNameString + "panel2theta" + str(int(0.)), plt, path)
+        unitTestSupport.saveScenarioFigure(fileName + "panel2theta" + str(int(0.)), plt, path)
 
     if show_plots:
         plt.show()
@@ -518,7 +502,7 @@ def run(doUnitTests, show_plots):
     #   the spacecraft mass is unchanging.
     #
     if doUnitTests:
-        spaceCraftMomentum = np.sqrt(velData[-1, 1]**2 + velData[-1, 2]**2 + velData[-1, 3]**2)
+        spaceCraftMomentum = np.sqrt(velData[-1, 1] ** 2 + velData[-1, 2] ** 2 + velData[-1, 3] ** 2)
 
         # setup truth data for unit test
         InstMomentum = 8470.84340921
@@ -528,7 +512,7 @@ def run(doUnitTests, show_plots):
             testFailCount += 1
             testMessages.append("Failed HingedRigidBody Tutorial test. Post-maneuver momentum incorrect.")
 
-        #   print out success message if no error were found
+        # print out success message if no error were found
         if testFailCount == 0:
             print "PASSED "
         else:
@@ -547,6 +531,6 @@ def run(doUnitTests, show_plots):
 #
 if __name__ == "__main__":
     run(
-        False,       # do unit tests
-        True         # show_plots
+        False,  # do unit tests
+        True  # show_plots
     )

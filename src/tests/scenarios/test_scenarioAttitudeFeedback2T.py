@@ -37,7 +37,7 @@ import numpy as np
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import sim_model
-from Basilisk.utilities import unitTestSupport # general support file with common unit test functions
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
@@ -56,10 +56,6 @@ from Basilisk.fswAlgorithms import attTrackingError
 # import message declarations
 from Basilisk.fswAlgorithms import fswMessages
 
-# @cond DOXYGEN_IGNORE
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-# @endcond
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -68,18 +64,13 @@ path = os.path.dirname(os.path.abspath(filename))
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useUnmodeledTorque, useIntGain", [
-      (False, False)
-    , (True, False)
-    , (True, True)
-])
-
+@pytest.mark.parametrize("useUnmodeledTorque, useIntGain", [(False, False), (True, False), (True, True)])
 # provide a unique test method name, starting with test_
 def test_bskAttitudeFeedback2T(show_plots, useUnmodeledTorque, useIntGain):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run( True,
-            show_plots, useUnmodeledTorque, useIntGain)
+    [testResults, testMessage] = run(True,
+                                     show_plots, useUnmodeledTorque, useIntGain)
     assert testResults < 1, testMessage
 
 
@@ -125,7 +116,7 @@ def test_bskAttitudeFeedback2T(show_plots, useUnmodeledTorque, useIntGain):
 # Note that the interface references are added to the process that they are SUPPLYING data
 # to.  Reversing that setting is hard to detect as the data will still show up, it will just
 # have a single frame of latency.  This is done in the following two-step process:
-#~~~~~~~~~~~~~~{.py}
+# ~~~~~~~~~~~~~~{.py}
 #     dyn2FSWInterface = sim_model.SysInterface()
 #     fsw2DynInterface = sim_model.SysInterface()
 #
@@ -134,13 +125,13 @@ def test_bskAttitudeFeedback2T(show_plots, useUnmodeledTorque, useIntGain):
 #
 #     dynProcess.addInterfaceRef(fsw2DynInterface)
 #     fswProcess.addInterfaceRef(dyn2FSWInterface)
-#~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~
 # Next, after the simulation has been initialized and the modules messages are created
 # a discover process must be called that links messages that have the same name.  This is
 # achieved through the combined initialization and message discovery macro.
-#~~~~~~~~~~~~~~{.py}
+# ~~~~~~~~~~~~~~{.py}
 #     scSim.InitializeSimulationAndDiscover()
-#~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~
 #
 #
 # Setup 1
@@ -207,8 +198,8 @@ def test_bskAttitudeFeedback2T(show_plots, useUnmodeledTorque, useIntGain):
 ##  @}
 def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     '''Call this routine directly to run the tutorial scenario.'''
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     #
     #  From here on there scenario python code is found.  Above this line the code is to setup a
@@ -247,7 +238,6 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     fswProcess.addInterfaceRef(dyn2FSWInterface)
     dynProcess.addInterfaceRef(fsw2DynInterface)
 
-
     # create the dynamics task and specify the integration update time
     simTimeStep = macros.sec2nano(0.1)
     dynProcess.addTask(scSim.CreateNewTask(dynTaskName, simTimeStep))
@@ -256,7 +246,6 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')  # The Viz only support 'earth', 'mars', or 'sun'
-
 
     #
     #   setup the simulation tasks/objects
@@ -269,8 +258,8 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     I = [900., 0., 0.,
          0., 800., 0.,
          0., 0., 600.]
-    scObject.hub.mHub = 750.0                   # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]] # m - position vector of body-fixed point B relative to CM
+    scObject.hub.mHub = 750.0  # kg - spacecraft mass
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scObject.hub.useTranslation = True
     scObject.hub.useRotation = True
@@ -289,7 +278,6 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
-
     # setup extForceTorque module
     # the control torque is read in through the messaging system
     extFTObject = extForceTorque.ExtForceTorque()
@@ -298,18 +286,15 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     # Note that all variables are initialized to zero.  Thus, not setting this
     # vector would leave it's components all zero for the simulation.
     if useUnmodeledTorque:
-        extFTObject.extTorquePntB_B = [[0.25],[-0.25],[0.1]]
+        extFTObject.extTorquePntB_B = [[0.25], [-0.25], [0.1]]
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(dynTaskName, extFTObject)
-
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
     sNavObject = simple_nav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(dynTaskName, sNavObject)
-
-
 
     #
     #   setup the FSW algorithm tasks
@@ -320,7 +305,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     inertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)
     inertial3DWrap.ModelTag = "inertial3D"
     scSim.AddModelToTask(fswTaskName, inertial3DWrap, inertial3DConfig)
-    inertial3DConfig.sigma_R0N = [0., 0., 0.]       # set the desired inertial orientation
+    inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
     inertial3DConfig.outputDataName = "guidanceInertial3D"
 
     # setup the attitude tracking error evaluation module
@@ -337,31 +322,26 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
     mrpControlWrap.ModelTag = "MRP_Feedback"
     scSim.AddModelToTask(fswTaskName, mrpControlWrap, mrpControlConfig)
-    mrpControlConfig.inputGuidName  = attErrorConfig.outputDataName
-    mrpControlConfig.vehConfigInMsgName  = "vehicleConfigName"
+    mrpControlConfig.inputGuidName = attErrorConfig.outputDataName
+    mrpControlConfig.vehConfigInMsgName = "vehicleConfigName"
     mrpControlConfig.outputDataName = extFTObject.cmdTorqueInMsgName
-    mrpControlConfig.K  =   3.5
+    mrpControlConfig.K = 3.5
     if useIntGain:
-        mrpControlConfig.Ki =   0.0002      # make value negative to turn off integral feedback
+        mrpControlConfig.Ki = 0.0002  # make value negative to turn off integral feedback
     else:
-        mrpControlConfig.Ki =   -1          # make value negative to turn off integral feedback
-    mrpControlConfig.P  = 30.0
-    mrpControlConfig.integralLimit = 2./mrpControlConfig.Ki * 0.1
-
-
-
+        mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
+    mrpControlConfig.P = 30.0
+    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints-1)
+    samplingTime = simulationTime / (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(mrpControlConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
     scSim.TotalSim.logThisMessage(sNavObject.outputAttName, samplingTime)
-
-
 
     #
     # create FSW simulation messages
@@ -369,7 +349,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
 
     # create the FSW vehicle configuration message
     vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
-    vehicleConfigOut.ISCPntB_B = I      # use the same inertia in the FSW algorithm as in the simulation
+    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
     unitTestSupport.setMessage(scSim.TotalSim,
                                fswProcessName,
                                mrpControlConfig.vehConfigInMsgName,
@@ -380,17 +360,17 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a     = 10000000.0                                           # meters
-    oe.e     = 0.01
-    oe.i     = 33.3*macros.D2R
-    oe.Omega = 48.2*macros.D2R
-    oe.omega = 347.8*macros.D2R
-    oe.f     = 85.3*macros.D2R
+    oe.a = 10000000.0  # meters
+    oe.e = 0.01
+    oe.i = 33.3 * macros.D2R
+    oe.Omega = 48.2 * macros.D2R
+    oe.omega = 347.8 * macros.D2R
+    oe.f = 85.3 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
-    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]              # sigma_BN_B
-    scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]        # rad/s - omega_BN_B
+    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
+    scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
     #
     #   initialize Simulation
@@ -404,7 +384,6 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     # dyn2FSWInterface.discoverAllMessages()
     # fsw2DynInterface.discoverAllMessages()
 
-
     #
     #   configure a simulation stop time time and execute the simulation run
     #
@@ -414,69 +393,72 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     #
     #   retrieve the logged data
     #
-    dataLr = scSim.pullMessageLogData(mrpControlConfig.outputDataName+".torqueRequestBody", range(3))
-    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName+".sigma_BR", range(3))
-    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName+".omega_BR_B", range(3))
-    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName+".r_BN_N", range(3))
-    dataSigmaBN = scSim.pullMessageLogData(sNavObject.outputAttName+".sigma_BN", range(3))
+    dataLr = scSim.pullMessageLogData(mrpControlConfig.outputDataName + ".torqueRequestBody", range(3))
+    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", range(3))
+    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", range(3))
+    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", range(3))
+    dataSigmaBN = scSim.pullMessageLogData(sNavObject.outputAttName + ".sigma_BN", range(3))
     np.set_printoptions(precision=16)
 
     #
     #   plot the results
     #
-    fileNameString = filename[len(path)+6:-3]
+    fileName = os.path.basename(os.path.splitext(__file__)[0])
+    path = os.path.dirname(os.path.abspath(__file__))
+
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
-    for idx in range(1,4):
-        plt.plot(dataSigmaBR[:, 0]*macros.NANO2MIN, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx,3),
-                 label='$\sigma_'+str(idx)+'$')
+    for idx in range(1, 4):
+        plt.plot(dataSigmaBR[:, 0] * macros.NANO2MIN, dataSigmaBR[:, idx],
+                 color=unitTestSupport.getLineColor(idx, 3),
+                 label='$\sigma_' + str(idx) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Error $\sigma_{B/R}$')
-    if doUnitTests:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileNameString+"1"+str(int(useUnmodeledTorque))+str(int(useIntGain)), plt, path)
+    if doUnitTests:  # only save off the figure if doing a unit test run
+        unitTestSupport.saveScenarioFigure(fileName + "1" + str(int(useUnmodeledTorque)) + str(int(useIntGain))
+                                           , plt
+                                           , path)
 
     plt.figure(2)
-    for idx in range(1,4):
-        plt.plot(dataLr[:, 0]*macros.NANO2MIN, dataLr[:, idx],
-                 color=unitTestSupport.getLineColor(idx,3),
-                 label='$L_{r,'+str(idx)+'}$')
+    for idx in range(1, 4):
+        plt.plot(dataLr[:, 0] * macros.NANO2MIN, dataLr[:, idx],
+                 color=unitTestSupport.getLineColor(idx, 3),
+                 label='$L_{r,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Control Torque $L_r$ [Nm]')
-    if doUnitTests:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileNameString+"2"+str(int(useUnmodeledTorque))+str(int(useIntGain)), plt, path)
+    if doUnitTests:  # only save off the figure if doing a unit test run
+        unitTestSupport.saveScenarioFigure(fileName + "2" + str(int(useUnmodeledTorque)) + str(int(useIntGain))
+                                           , plt
+                                           , path)
 
     plt.figure(3)
-    for idx in range(1,4):
-        plt.plot(dataOmegaBR[:, 0]*macros.NANO2MIN, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx,3),
-                 label='$\omega_{BR,'+str(idx)+'}$')
+    for idx in range(1, 4):
+        plt.plot(dataOmegaBR[:, 0] * macros.NANO2MIN, dataOmegaBR[:, idx],
+                 color=unitTestSupport.getLineColor(idx, 3),
+                 label='$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error [rad/s] ')
 
     plt.figure(4)
-    for idx in range(1,4):
-        plt.plot(dataPos[:, 0]*macros.NANO2MIN, dataPos[:, idx]/1000,
-                 color=unitTestSupport.getLineColor(idx,3),
-                 label='$r_{BN,'+str(idx)+'}$')
+    for idx in range(1, 4):
+        plt.plot(dataPos[:, 0] * macros.NANO2MIN, dataPos[:, idx] / 1000,
+                 color=unitTestSupport.getLineColor(idx, 3),
+                 label='$r_{BN,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Inertial Position [km] ')
 
     plt.figure(5)
-    for idx in range(1,4):
-        plt.plot(dataSigmaBN[:, 0]*macros.NANO2MIN, dataSigmaBN[:, idx],
-                 color=unitTestSupport.getLineColor(idx,3),
-                 label='$\sigma_{BN,'+str(idx)+'}$')
+    for idx in range(1, 4):
+        plt.plot(dataSigmaBN[:, 0] * macros.NANO2MIN, dataSigmaBN[:, idx],
+                 color=unitTestSupport.getLineColor(idx, 3),
+                 label='$\sigma_{BN,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Inertial MRP Attitude ')
-
 
     if show_plots:
         plt.show()
@@ -484,71 +466,70 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-
     #
     #   the python code below is for the unit testing mode.  If you are studying the scenario
     #   to learn how to run BSK, you can stop reading below this line.
     #
     if doUnitTests:
         numTruthPoints = 5
-        skipValue = int(numDataPoints/numTruthPoints)
+        skipValue = int(numDataPoints / numTruthPoints)
         dataLrRed = dataLr[::skipValue]
         dataSigmaBRRed = dataSigmaBR[::skipValue]
         dataPosRed = dataPos[::skipValue]
 
         # setup truth data for unit test
         truePos = [
-                      [-4.0203386903966456e+06, 7.4905667418525163e+06, 5.2482992115893615e+06]
-                    , [-4.6421397265661405e+06, 7.0494536040548589e+06, 5.3596540365520352e+06]
-                    , [-5.2364026851194846e+06, 6.5665185661712112e+06, 5.4392129624019405e+06]
-                    , [-5.7996735881523984e+06, 6.0447162866713591e+06, 5.4865782619213760e+06]
-                    , [-6.3286970190056376e+06, 5.4872170491069853e+06, 5.5015438477240102e+06]
-                ]
+            [-4.0203386903966456e+06, 7.4905667418525163e+06, 5.2482992115893615e+06]
+            , [-4.6421397265661405e+06, 7.0494536040548589e+06, 5.3596540365520352e+06]
+            , [-5.2364026851194846e+06, 6.5665185661712112e+06, 5.4392129624019405e+06]
+            , [-5.7996735881523984e+06, 6.0447162866713591e+06, 5.4865782619213760e+06]
+            , [-6.3286970190056376e+06, 5.4872170491069853e+06, 5.5015438477240102e+06]
+        ]
         trueLr = trueSigmaBR = []
         if useUnmodeledTorque == True and useIntGain == True:
             trueLr = [
-                  [-3.8540000000000002e-01,-3.5200000000000009e-01, 4.2000000000000121e-02]
-                , [-2.4832413594005637e-01, 2.7423420741984977e-01,-1.2547995906140999e-01]
-                , [-2.4963855704325660e-01, 2.4180503459076927e-01,-9.0824655654560021e-02]
-                , [-2.4705814926163225e-01, 2.4984933912594240e-01,-9.9789581766606752e-02]
-                , [-2.4992663484004582e-01, 2.4915540593910049e-01,-9.9730854856601880e-02]
+                [-3.8540000000000002e-01, -3.5200000000000009e-01, 4.2000000000000121e-02]
+                , [-2.4832413594005637e-01, 2.7423420741984977e-01, -1.2547995906140999e-01]
+                , [-2.4963855704325660e-01, 2.4180503459076927e-01, -9.0824655654560021e-02]
+                , [-2.4705814926163225e-01, 2.4984933912594240e-01, -9.9789581766606752e-02]
+                , [-2.4992663484004582e-01, 2.4915540593910049e-01, -9.9730854856601880e-02]
             ]
             trueSigmaBR = [
-                  [ 1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01]
-                , [ 2.4124788077353267e-02,-8.8078468077718686e-02, 6.7556236560029792e-02]
-                , [ 2.0013848145133590e-02,-1.5036479216989354e-02, 1.6743292993630865e-02]
-                , [ 4.3556855886602566e-03,-8.2916392106937194e-03, 4.8022149157636237e-03]
-                , [ 1.7102077355609178e-03,-2.5229471654219780e-03, 2.0963057897404771e-03]
+                [1.0000000000000001e-01, 2.0000000000000001e-01, -2.9999999999999999e-01]
+                , [2.4124788077353267e-02, -8.8078468077718686e-02, 6.7556236560029792e-02]
+                , [2.0013848145133590e-02, -1.5036479216989354e-02, 1.6743292993630865e-02]
+                , [4.3556855886602566e-03, -8.2916392106937194e-03, 4.8022149157636237e-03]
+                , [1.7102077355609178e-03, -2.5229471654219780e-03, 2.0963057897404771e-03]
             ]
         if useUnmodeledTorque == True and useIntGain == False:
             trueLr = [
-                  [-3.8000000000000000e-01,-4.0000000000000008e-01, 1.5000000000000013e-01]
-                , [-2.6967258574434960e-01, 2.3852492578210521e-01,-9.9303066167128723e-02]
-                , [-2.4553483719840241e-01, 2.5582895110635612e-01,-9.9783874073020584e-02]
-                , [-2.5082575869743895e-01, 2.4917049711833658e-01,-9.9921820727609134e-02]
-                , [-2.4986476881781602e-01, 2.5008633794967206e-01,-1.0003104112824485e-01]
+                [-3.8000000000000000e-01, -4.0000000000000008e-01, 1.5000000000000013e-01]
+                , [-2.6967258574434960e-01, 2.3852492578210521e-01, -9.9303066167128723e-02]
+                , [-2.4553483719840241e-01, 2.5582895110635612e-01, -9.9783874073020584e-02]
+                , [-2.5082575869743895e-01, 2.4917049711833658e-01, -9.9921820727609134e-02]
+                , [-2.4986476881781602e-01, 2.5008633794967206e-01, -1.0003104112824485e-01]
             ]
             trueSigmaBR = [
-                  [ 1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01]
-                , [ 6.3945338706459742e-02,-8.7562909724589022e-02, 4.4198807712487694e-02]
-                , [ 7.1960157856111040e-02,-7.0992542477623266e-02, 2.7112368217686023e-02]
-                , [ 7.1431247623012131e-02,-7.1324233641929718e-02, 2.8746725391756406e-02]
-                , [ 7.1414708584927961e-02,-7.1455518150866384e-02, 2.8552586824521019e-02]
+                [1.0000000000000001e-01, 2.0000000000000001e-01, -2.9999999999999999e-01]
+                , [6.3945338706459742e-02, -8.7562909724589022e-02, 4.4198807712487694e-02]
+                , [7.1960157856111040e-02, -7.0992542477623266e-02, 2.7112368217686023e-02]
+                , [7.1431247623012131e-02, -7.1324233641929718e-02, 2.8746725391756406e-02]
+                , [7.1414708584927961e-02, -7.1455518150866384e-02, 2.8552586824521019e-02]
             ]
         if useUnmodeledTorque == False and useIntGain == False:
             trueLr = [
-                  [-3.8000000000000000e-01,-4.0000000000000008e-01, 1.5000000000000013e-01]
-                , [ 2.9018622651951317e-02,-2.3731740129077500e-03, 1.8500888075394767e-02]
-                , [-1.4212083106812448e-03, 1.7754834987403689e-03,-1.3760887721230200e-03]
-                , [-6.8638983386268455e-05,-2.6617199062440423e-04, 5.5312276312328556e-05]
-                , [ 3.3478249139870173e-05, 2.8598845181088252e-05, -1.3792582437169445e-06]
+                [-3.8000000000000000e-01, -4.0000000000000008e-01, 1.5000000000000013e-01]
+                , [2.9018622651951317e-02, -2.3731740129077500e-03, 1.8500888075394767e-02]
+                , [-1.4212083106812448e-03, 1.7754834987403689e-03, -1.3760887721230200e-03]
+                , [-6.8638983386268455e-05, -2.6617199062440423e-04, 5.5312276312328556e-05]
+                , [3.3478249139870173e-05, 2.8598845181088252e-05, -1.3792582437169445e-06]
             ]
             trueSigmaBR = [
-                  [ 1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01]
-                , [-1.6310559825609434e-02,-1.1632615581332386e-02, 9.0311147891659286e-03]
-                , [ 1.8165879114118769e-03, 7.4688330133023404e-04,-1.2070602115782872e-04]
-                , [-1.8335140530225598e-04,-2.9214999036672645e-05,-5.7216976124152215e-06]
-                , [ 1.6181183222292735e-05,-1.0129144274203115e-06, 5.1639058023290004e-07]
+                [1.0000000000000001e-01, 2.0000000000000001e-01, -2.9999999999999999e-01]
+                , [-1.6310559825609434e-02, -1.1632615581332386e-02, 9.0311147891659286e-03]
+                , [1.8165879114118769e-03, 7.4688330133023404e-04, -1.2070602115782872e-04]
+                , [-1.8335140530225598e-04, -2.9214999036672645e-05, -5.7216976124152215e-06]
+                , [1.6181183222292735e-05, -1.0129144274203115e-06, 5.1639058023290004e-07]
             ]
         # compare the results to the truth values
         accuracy = 1e-6
@@ -576,13 +557,14 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
+
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    run( False,       # do unit tests
-         True,       # show_plots
-         False,       # useUnmodeledTorque
-         False        # useIntGain
-       )
+    run(False,  # do unit tests
+        True,  # show_plots
+        False,  # useUnmodeledTorque
+        False  # useIntGain
+        )

@@ -51,7 +51,7 @@ void CrossInit_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Loop over the number of sensors and find IDs for each one */
     ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputSunVecName,
-        sizeof(SunHeadingEstFswMsg), moduleID);
+        sizeof(NavAttIntMsg), moduleID);
     ConfigData->imuMsgID = subscribeToMessage(ConfigData->inputIMUDataName,
         sizeof(IMUSensorBodyFswMsg), moduleID);
     
@@ -66,7 +66,7 @@ void CrossInit_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t moduleID)
 void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
-    SunHeadingEstFswMsg sunVecEst;
+    NavAttIntMsg navMsg;
     uint64_t clockTime;
     uint32_t readSize;
     double ctSNormalized;
@@ -76,18 +76,18 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
     /*! Begin method steps*/
     /*! - Read the current sun body vector estimate*/
     ReadMessage(ConfigData->inputMsgID, &clockTime, &readSize,
-                sizeof(SunHeadingEstFswMsg), (void*) &(sunVecEst), moduleID);
+                sizeof(NavAttIntMsg), (void*) &(navMsg), moduleID);
     ReadMessage(ConfigData->imuMsgID, &clockTime, &readSize,
                 sizeof(IMUSensorBodyFswMsg), (void*) &(LocalIMUData), moduleID);
     
     /*! - Compute the current error vector if it is valid*/
-    if(v3Norm(sunVecEst.sHatBdy) > ConfigData->minUnitMag)
+    if(v3Norm(navMsg.vehSunPntBdy) > ConfigData->minUnitMag)
     {
-        ctSNormalized = v3Dot(ConfigData->sHatBdyCmd, sunVecEst.sHatBdy);
+        ctSNormalized = v3Dot(ConfigData->sHatBdyCmd, navMsg.vehSunPntBdy);
         ctSNormalized = fabs(ctSNormalized) > 1.0 ?
         ctSNormalized/fabs(ctSNormalized) : ctSNormalized;
         ConfigData->sunAngleErr = acos(ctSNormalized);
-        v3Cross(sunVecEst.sHatBdy, ConfigData->sHatBdyCmd, e_hat);
+        v3Cross(navMsg.vehSunPntBdy, ConfigData->sHatBdyCmd, e_hat);
         v3Normalize(e_hat, ConfigData->sunMnvrVec);
         v3Scale(tan(ConfigData->sunAngleErr*0.25), ConfigData->sunMnvrVec,
                 sigma_BR);

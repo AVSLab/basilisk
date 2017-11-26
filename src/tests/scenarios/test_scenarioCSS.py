@@ -26,8 +26,6 @@
 # Creation Date:  July 21, 2017
 #
 
-
-
 import pytest
 import sys, os, inspect
 import matplotlib
@@ -39,22 +37,13 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.simulation import coarse_sun_sensor
+from Basilisk.utilities import orbitalMotion as om
 
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
 
 # import message declarations
 from Basilisk.simulation import simMessages
-
-# @cond DOXYGEN_IGNORE
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-# @endcond
-
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail(True)
 
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
@@ -113,7 +102,7 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
 # vector is required when computing the relative heading between the sun and the spacecraft locations.  The
 # spacecraft position is held fixed, while the orientation rotates constantly about the 3rd body axis.
 # ~~~~~~~~~~~~~~~~{.py}
-#     scObject.hub.r_CN_NInit = [[1000.0], [0.0], [0.0]]              # m   - r_CN_N
+#     scObject.hub.r_CN_NInit = [[-om.AU*1000.0], [0.0], [0.0]]              # m   - r_CN_N
 #     scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]                 # m/s - v_CN_N
 #     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]               # sigma_BN_B
 #     scObject.hub.omega_BN_BInit = [[0.0], [0.0], [1.*macros.D2R]]   # rad/s - omega_BN_B
@@ -300,6 +289,7 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
 #
 ##  @}
 def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
+    path = os.path.dirname(os.path.abspath(__file__))
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -353,7 +343,7 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
     #
     # set initial spacecraft states
     #
-    scObject.hub.r_CN_NInit = [[1000.0], [0.0], [0.0]]              # m   - r_CN_N
+    scObject.hub.r_CN_NInit = [[-om.AU*1000.0], [0.0], [0.0]]              # m   - r_CN_N
     scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]                 # m/s - v_CN_N
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]               # sigma_BN_B
     scObject.hub.omega_BN_BInit = [[0.0], [0.0], [1.*macros.D2R]]   # rad/s - omega_BN_B
@@ -413,7 +403,7 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
     # create simulation messages
     #
     sunPositionMsg = simMessages.SpicePlanetStateSimMsg()
-    sunPositionMsg.PositionVector = [2000.0, 0.0, 0.0]
+    sunPositionMsg.PositionVector = [0.0, 0.0, 0.0]
     unitTestSupport.setMessage(scSim.TotalSim,
                                simProcessName,
                                CSS1.InputSunMsg,
@@ -450,8 +440,7 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
     #
     #   plot the results
     #
-    fileNameString = filename[len(path)+6:-3]
-    print fileNameString
+    fileNameString = os.path.basename(os.path.splitext(__file__)[0])
     plt.close("all")        # clears out plots from earlier test runs
     plt.figure(1)
     if useCSSConstellation:

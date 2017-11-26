@@ -16,98 +16,90 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 '''
 
-import sys
-import copy
 from Basilisk.simulation import sim_model
 import numpy
 import array
-import pdb
-
-def getMessageContainers(MessageModule, MessageObj):
-   ## Begin Method steps here
-   ## - Import the module in question to get access to structures
-   LocalObj = __import__(MessageModule, globals(), locals(), [], -1)
-   MessageList = []
-   ## - Find the structure of the message from python/SWIG
-
-   # if the package has different levels we need to access the correct level of the package
-   moduleString = "LocalObj."
-   module = MessageModule.split(".")
-   if len(module) > 1:
-       moduleString += ".".join(module[1:]) + "."
-   messageModuleExecString = moduleString + MessageObj + "()"
-
-   LocalContainer = eval(messageModuleExecString)
-   FirstKeys = dir(LocalContainer)
-   FilteredKeys = []
-   TotalDict = {"MessageTime": [] } ## - MessageTime is time of write for messag
-   for LocalKey in FirstKeys:
-      ## - Filter out private and the this pointer because we don't need them
-      if LocalKey[0] != '_' and LocalKey != 'this':
-         FilteredKeys.append(LocalKey)
-         TotalDict.update({LocalKey: []})
-
-   return LocalContainer, TotalDict
+import importlib
 
 
-def obtainMessageVector(MessageName, MessageModule, MessageObj, MessageCount,
-   SimContainer, VarName, VarType, startIndex, stopIndex,
-   messageType = sim_model.messageBuffer):
-   ## Begin Method steps here
-   LocalContainer, TotalDict = getMessageContainers(MessageModule, MessageObj)
+def getMessageContainers(messageModule, messageObj):
+    # Import the module in question to get access to structures
+    localObj = importlib.import_module(messageModule)
+    moduleString = "localObj."
+    messageModuleExecString = moduleString + messageObj + "()"
 
-   ## - For each message, pull the buffer, and update the keys of the dictionary
-   LocalCount = 0
-   swigObject = eval('LocalContainer.' + VarName)
-   swigObjectGood = type(swigObject).__name__ == 'SwigPyObject'
-   TimeValues = array.array('d')
-   messageNoSpace = MessageName.translate(None, "[]'() .")
-   varNameClean = VarName.translate(None, "[]'() .")
-   if swigObjectGood:
-      functionCall = eval('sim_model.' + VarType + 'Array_getitem')
-   else: #So this is weird, but weirdly we need to punch a duck now
-      RefFunctionString = 'def GetMessage' + messageNoSpace + varNameClean + '(self):\n'
-      RefFunctionString += '   return self.' + VarName
-      exec(RefFunctionString)
-      functionCall = eval('GetMessage' + messageNoSpace + varNameClean)
-   while(LocalCount < MessageCount):
-      WriteTime = SimContainer.GetWriteData(MessageName, 10000,
-         LocalContainer, messageType, LocalCount)
-      currentIndex = stopIndex
-      executeLoop = True
-      dataOut = 0
-      if not swigObjectGood:
-          dataOut = functionCall(LocalContainer)
-          try:
-              dataOut = [y for x in dataOut for y in x]
-          except TypeError:
-              placeHold = 1
-      while executeLoop:
-         if swigObjectGood:
-            TimeValues.append(functionCall(swigObject, currentIndex))
-         elif startIndex != stopIndex:
-            TimeValues.append(dataOut[currentIndex])
-         else:
-            TimeValues.append(dataOut)
-         currentIndex -= 1
-         if currentIndex < startIndex:
-            executeLoop = False
-      TimeValues.append(WriteTime)
+    localContainer = eval(messageModuleExecString)
+    firstKeys = dir(localContainer)
+    filteredKeys = []
+    totalDict = {"MessageTime": []}  # MessageTime is time of write for message
+    for localKey in firstKeys:
+        # Filter out private and the this pointer because we don't need them
+        if localKey[0] != '_' and localKey != 'this':
+            filteredKeys.append(localKey)
+            totalDict.update({localKey: []})
 
-      LocalCount += 1
-   TimeValues.reverse()
-   TheArray = numpy.array(TimeValues)
-   ArrayDim = MessageCount
-   if ArrayDim > 0:
-      TheArray = numpy.reshape(TheArray, (ArrayDim, TheArray.shape[0]/ArrayDim))
-   return TheArray
+    return localContainer, totalDict
 
-def findMessageMatches(searchString, SimContainer):
-    i=0
+
+def obtainMessageVector(messageName, messageModule, messageObj, messageCount,
+                        simContainer, varName, varType, startIndex, stopIndex,
+                        messageType=sim_model.messageBuffer):
+    localContainer, totalDict = getMessageContainers(messageModule, messageObj)
+
+    # For each message, pull the buffer, and update the keys of the dictionary
+    count = 0
+    swigObject = eval('localContainer.' + varName)
+    swigObjectGood = type(swigObject).__name__ == 'SwigPyObject'
+    timeValues = array.array('d')
+    messageNoSpace = messageName.translate(None, "[]'() .")
+    varNameClean = varName.translate(None, "[]'() .")
+
+    if swigObjectGood:
+        functionCall = eval('sim_model.' + varType + 'Array_getitem')
+    else:  # So this is weird, but weirdly we need to punch a duck now
+        refFunctionString = 'def GetMessage' + messageNoSpace + varNameClean + '(self):\n'
+        refFunctionString += '   return self.' + varName
+        exec refFunctionString
+        functionCall = eval('GetMessage' + messageNoSpace + varNameClean)
+
+    while count < messageCount:
+        writeTime = simContainer.GetWriteData(messageName, 10000, localContainer, messageType, count)
+        currentIndex = stopIndex
+        executeLoop = True
+        dataOut = 0
+        if not swigObjectGood:
+            dataOut = functionCall(localContainer)
+            try:
+                dataOut = [y for x in dataOut for y in x]
+            except TypeError:
+                placeHold = 1
+        while executeLoop:
+            if swigObjectGood:
+                timeValues.append(functionCall(swigObject, currentIndex))
+            elif startIndex != stopIndex:
+                timeValues.append(dataOut[currentIndex])
+            else:
+                timeValues.append(dataOut)
+            currentIndex -= 1
+            if currentIndex < startIndex:
+                executeLoop = False
+        timeValues.append(writeTime)
+        count += 1
+
+    timeValues.reverse()
+    resultArray = numpy.array(timeValues)
+    arrayDim = messageCount
+    if arrayDim > 0:
+        resultArray = numpy.reshape(resultArray, (arrayDim, resultArray.shape[0] / arrayDim))
+    return resultArray
+
+
+def findMessageMatches(searchString, simContainer):
+    i = 0
     matchList = []
-    totalList = SimContainer.getUniqueMessageNames()
+    totalList = simContainer.getUniqueMessageNames()
     for localName in totalList:
-        if(localName.find(searchString) >= 0):
-           matchList.append(localName)
-        i+=1
+        if localName.find(searchString) >= 0:
+            matchList.append(localName)
+        i += 1
     return matchList

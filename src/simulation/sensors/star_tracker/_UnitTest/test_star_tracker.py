@@ -32,13 +32,6 @@ import math
 import csv
 import logging
 
-
-
-
-
-
-
-
 from Basilisk.utilities import MessagingAccess
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
@@ -54,12 +47,11 @@ def listStack(vec,simStopTime,unitProcRate):
     # returns a list duplicated the number of times needed to be consistent with module output
     return [vec] * int(simStopTime/(float(unitProcRate)/float(macros.sec2nano(1))))
 
-def setRandomWalk(self, senNoiseStd = 0.0, errorBounds = [1e6] * 3):
+def setRandomWalk(self, senNoiseStd = 0.0, errorBounds = [[1e6],[1e6],[1e6]]):
     # sets the module random walk variables
-    PMatrix = [0.0] * 3 * 3
-    PMatrix[0*3+0] = PMatrix[1*3+1] = PMatrix[2*3+2] = senNoiseStd
-    self.PMatrix = sim_model.DoubleVector(PMatrix)
-    self.walkBounds = sim_model.DoubleVector(errorBounds)
+    PMatrix = [[senNoiseStd, 0., 0.], [0., senNoiseStd, 0.], [0., 0., senNoiseStd]]
+    self.PMatrix = PMatrix
+    self.walkBounds = errorBounds
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -148,7 +140,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
         simStopTime = 1000.
         noiseStd = 0.1
         stdCorrectionFactor = 1.5 # this needs to be used because of the Gauss Markov module. need to fix the GM module
-        setRandomWalk(StarTracker, noiseStd*stdCorrectionFactor, [1.0e-13] * 3)
+        setRandomWalk(StarTracker, noiseStd*stdCorrectionFactor, [[1.0e-13],[1.0e-13],[1.0e-13]])
         sigma = np.array([0,0,0])
         OutputStateData.sigma_BN = sigma
         trueVector['qInrtl2Case'] = [noiseStd] * 3
@@ -160,7 +152,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
         noiseStd = 0.01
         stdCorrectionFactor = 1.5 # this needs to be used because of the Gauss Markov module. need to fix the GM module
         walkBound = 0.1
-        setRandomWalk(StarTracker, noiseStd*stdCorrectionFactor, [walkBound] * 3)
+        setRandomWalk(StarTracker, noiseStd*stdCorrectionFactor, [[walkBound],[walkBound],[walkBound]])
         sigma = np.array([0,0,0])
         OutputStateData.sigma_BN = sigma
         trueVector['qInrtl2Case'] = [walkBound + noiseStd*3] * 3

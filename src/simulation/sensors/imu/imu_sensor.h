@@ -27,7 +27,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simFswInterfaceMessages/imuSensorIntMsg.h"
 #include <Eigen/Dense>
-#include "../SimCode/utilities/avsEigenMRP.h"
+#include "../simulation/utilities/avsEigenMRP.h"
 
 
 class ImuSensor: public SysModel {

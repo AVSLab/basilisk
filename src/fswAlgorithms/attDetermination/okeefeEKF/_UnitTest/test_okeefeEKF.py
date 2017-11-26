@@ -20,7 +20,6 @@
 import sys, os, inspect
 import numpy as np
 import pytest
-import math
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -28,13 +27,14 @@ splitPath = path.split('FswAlgorithms')
 sys.path.append(splitPath[0] + '/modules')
 sys.path.append(splitPath[0] + '/PythonModules')
 
-import SimulationBaseClass
-import alg_contain
 import SunLineOEKF_test_utilities as FilterPlots
-import okeefeEKF  # import the module that is to be tested
-import cssComm
-import vehicleConfigData
-import macros
+from Basilisk.fswAlgorithms import okeefeEKF
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.simulation import alg_contain
+from Basilisk.fswAlgorithms import vehicleConfigData
+from Basilisk.fswAlgorithms import cssComm
+from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 
 
 def setupFilterData(filterObject):

@@ -32,7 +32,7 @@ import numpy as np
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 
@@ -49,10 +49,6 @@ from Basilisk.fswAlgorithms import attTrackingError
 # import message declarations
 from Basilisk.fswAlgorithms import fswMessages
 
-# @cond DOXYGEN_IGNORE
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-# @endcond
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -62,10 +58,7 @@ path = os.path.dirname(os.path.abspath(filename))
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useLargeTumble", [
-    (False),
-    (True)
-])
+@pytest.mark.parametrize("useLargeTumble", [False, True])
 def test_bskAttitudePointing(show_plots, useLargeTumble):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
@@ -150,8 +143,8 @@ def test_bskAttitudePointing(show_plots, useLargeTumble):
 ##  @}
 def run(doUnitTests, show_plots, useLargeTumble):
     '''Call this routine directly to run the tutorial scenario.'''
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     #
     #  From here on scenario python code is found.  Above this line the code is to setup a
@@ -193,16 +186,16 @@ def run(doUnitTests, show_plots, useLargeTumble):
     I = [900., 0., 0.,
          0., 800., 0.,
          0., 0., 600.]
-    scObject.hub.mHub = 750.0                     # kg - spacecraft mass
+    scObject.hub.mHub = 750.0  # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scObject.hub.useTranslation = False
     scObject.hub.useRotation = True
-    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]       # sigma_BN_B
+    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
     if useLargeTumble:
         scObject.hub.omega_BN_BInit = [[0.8], [-0.6], [0.5]]  # rad/s - omega_BN_B
     else:
-        scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]   # rad/s - omega_BN_B
+        scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -229,7 +222,7 @@ def run(doUnitTests, show_plots, useLargeTumble):
     inertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)
     inertial3DWrap.ModelTag = "inertial3D"
     scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
-    inertial3DConfig.sigma_R0N = [0., 0., 0.]       # set the desired inertial orientation
+    inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
     inertial3DConfig.outputDataName = "guidanceInertial3D"
 
     # setup the attitude tracking error evaluation module
@@ -250,16 +243,16 @@ def run(doUnitTests, show_plots, useLargeTumble):
     mrpControlConfig.vehConfigInMsgName = "vehicleConfigName"
     mrpControlConfig.outputDataName = extFTObject.cmdTorqueInMsgName
     mrpControlConfig.K = 3.5
-    mrpControlConfig.Ki = -1          # make value negative to turn off integral feedback
+    mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
     mrpControlConfig.P = 30.0
-    mrpControlConfig.integralLimit = 2./mrpControlConfig.Ki * 0.1
+    mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
     mrpControlConfig.domega0 = [0.0, 0.0, 0.0]
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 50
-    samplingTime = simulationTime / (numDataPoints-1)
+    samplingTime = simulationTime / (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(mrpControlConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
 
@@ -269,7 +262,7 @@ def run(doUnitTests, show_plots, useLargeTumble):
 
     # create the FSW vehicle configuration message
     vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
-    vehicleConfigOut.ISCPntB_B = I      # use the same inertia in the FSW algorithm as in the simulation
+    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
     unitTestSupport.setMessage(scSim.TotalSim,
                                simProcessName,
                                mrpControlConfig.vehConfigInMsgName,
@@ -289,47 +282,49 @@ def run(doUnitTests, show_plots, useLargeTumble):
     #
     #   retrieve the logged data
     #
-    dataLr = scSim.pullMessageLogData(mrpControlConfig.outputDataName+".torqueRequestBody", range(3))
-    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName+".sigma_BR", range(3))
-    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName+".omega_BR_B", range(3))
+    dataLr = scSim.pullMessageLogData(mrpControlConfig.outputDataName + ".torqueRequestBody", range(3))
+    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", range(3))
+    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", range(3))
     np.set_printoptions(precision=16)
 
     #
     #   plot the results
     #
-    fileNameString = filename[len(path)+6:-3]
-    plt.close("all")        # clears out plots from earlier test runs
+    fileName = os.path.basename(os.path.splitext(__file__)[0])
+    path = os.path.dirname(os.path.abspath(__file__))
+
+    plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
     for idx in range(1, 4):
-        plt.plot(dataSigmaBR[:, 0]*macros.NANO2MIN, dataSigmaBR[:, idx],
+        plt.plot(dataSigmaBR[:, 0] * macros.NANO2MIN, dataSigmaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label='$\sigma_'+str(idx)+'$')
+                 label='$\sigma_' + str(idx) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Error $\sigma_{B/R}$')
-    if doUnitTests:     # only save off the figure if doing a unit test run
+    if doUnitTests:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString+"1"+str(int(useLargeTumble))
+            fileName + "1" + str(int(useLargeTumble))
             , plt, path)
 
     plt.figure(2)
     for idx in range(1, 4):
-        plt.plot(dataLr[:, 0]*macros.NANO2MIN, dataLr[:, idx],
+        plt.plot(dataLr[:, 0] * macros.NANO2MIN, dataLr[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label='$L_{r,'+str(idx)+'}$')
+                 label='$L_{r,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Control Torque $L_r$ [Nm]')
-    if doUnitTests:     # only save off the figure if doing a unit test run
+    if doUnitTests:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString+"2"+str(int(useLargeTumble))
+            fileName + "2" + str(int(useLargeTumble))
             , plt, path)
 
     plt.figure(3)
     for idx in range(1, 4):
-        plt.plot(dataOmegaBR[:, 0]*macros.NANO2MIN, dataOmegaBR[:, idx],
+        plt.plot(dataOmegaBR[:, 0] * macros.NANO2MIN, dataOmegaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label='$\omega_{BR,'+str(idx)+'}$')
+                 label='$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error [rad/s] ')
@@ -346,7 +341,7 @@ def run(doUnitTests, show_plots, useLargeTumble):
     #
     if doUnitTests:
         numTruthPoints = 5
-        skipValue = int(numDataPoints/numTruthPoints)
+        skipValue = int(numDataPoints / numTruthPoints)
         dataLrRed = dataLr[::skipValue]
         dataSigmaBRRed = dataSigmaBR[::skipValue]
 
@@ -354,33 +349,33 @@ def run(doUnitTests, show_plots, useLargeTumble):
 
         if useLargeTumble is True:
             trueLr = [
-                  [-2.4350000000000001e+01, 1.7300000000000001e+01,-1.3949999999999999e+01],
-                  [-1.8261025223247096e-01,-1.9802131477666673e-01,-2.2905552303763882e-01],
-                  [-2.2703347936179175e-02, 2.8322384043503845e-02,-7.5383083954013580e-03],
-                  [ 3.9685083651031109e-03,-4.6726997381575461e-03, 9.1702648415809018e-04],
-                  [-6.5254418265915193e-04, 6.1478222187531318e-04,-6.2014699070663979e-05]
+                [-2.4350000000000001e+01, 1.7300000000000001e+01, -1.3949999999999999e+01],
+                [-1.8261025223247096e-01, -1.9802131477666673e-01, -2.2905552303763882e-01],
+                [-2.2703347936179175e-02, 2.8322384043503845e-02, -7.5383083954013580e-03],
+                [3.9685083651031109e-03, -4.6726997381575461e-03, 9.1702648415809018e-04],
+                [-6.5254418265915193e-04, 6.1478222187531318e-04, -6.2014699070663979e-05]
             ]
             trueSigmaBR = [
-                  [ 1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01],
-                  [ 1.5260971061679154e-01,-2.6346123607709682e-01, 1.9116787137307839e-01],
-                  [-1.8707224538059040e-02, 1.9073543274306739e-02,-9.2763187341566734e-03],
-                  [ 2.1576458281319776e-03,-1.5090989414394025e-03, 3.2041623116321299e-04],
-                  [-2.4360871626616175e-04, 1.0266828769375566e-04,-7.5369979791638928e-06]
+                [1.0000000000000001e-01, 2.0000000000000001e-01, -2.9999999999999999e-01],
+                [1.5260971061679154e-01, -2.6346123607709682e-01, 1.9116787137307839e-01],
+                [-1.8707224538059040e-02, 1.9073543274306739e-02, -9.2763187341566734e-03],
+                [2.1576458281319776e-03, -1.5090989414394025e-03, 3.2041623116321299e-04],
+                [-2.4360871626616175e-04, 1.0266828769375566e-04, -7.5369979791638928e-06]
             ]
         if useLargeTumble is False:
             trueLr = [
-                  [-3.8000000000000000e-01,-4.0000000000000008e-01, 1.5000000000000013e-01],
-                  [ 4.3304295406265583e-02, 7.7970819853086931e-03, 1.2148680350980004e-02],
-                  [-4.8427756513968068e-03, 2.6583725254198179e-04,-1.4133980386514184e-03],
-                  [ 5.2386812124888282e-04,-1.3752464748227947e-04, 8.9786880165438401e-05],
-                  [-5.3815258259032201e-05, 2.3975789622333814e-05,-4.5666337024320216e-06]
+                [-3.8000000000000000e-01, -4.0000000000000008e-01, 1.5000000000000013e-01],
+                [4.3304295406265583e-02, 7.7970819853086931e-03, 1.2148680350980004e-02],
+                [-4.8427756513968068e-03, 2.6583725254198179e-04, -1.4133980386514184e-03],
+                [5.2386812124888282e-04, -1.3752464748227947e-04, 8.9786880165438401e-05],
+                [-5.3815258259032201e-05, 2.3975789622333814e-05, -4.5666337024320216e-06]
             ]
             trueSigmaBR = [
-                  [ 1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01]
-                , [-1.7700318439403492e-02,-1.4154347776578310e-02, 1.2434108941675513e-02]
-                , [ 2.3210853655701645e-03, 1.3316275028241674e-03,-4.1569615433473430e-04]
-                , [-3.0275893560215703e-04,-1.1614876733451711e-04, 8.6068784583440090e-06]
-                , [ 3.9002194932293482e-05, 9.3813814117398300e-06, 1.5011853130355206e-07]
+                [1.0000000000000001e-01, 2.0000000000000001e-01, -2.9999999999999999e-01]
+                , [-1.7700318439403492e-02, -1.4154347776578310e-02, 1.2434108941675513e-02]
+                , [2.3210853655701645e-03, 1.3316275028241674e-03, -4.1569615433473430e-04]
+                , [-3.0275893560215703e-04, -1.1614876733451711e-04, 8.6068784583440090e-06]
+                , [3.9002194932293482e-05, 9.3813814117398300e-06, 1.5011853130355206e-07]
             ]
 
         # compare the results to the truth values
@@ -412,7 +407,7 @@ def run(doUnitTests, show_plots, useLargeTumble):
 #
 if __name__ == "__main__":
     run(
-         False,       # do unit tests
-         True,        # show_plots
-         False,         # useLargeTumble
-       )
+        False,  # do unit tests
+        True,  # show_plots
+        False,  # useLargeTumble
+    )

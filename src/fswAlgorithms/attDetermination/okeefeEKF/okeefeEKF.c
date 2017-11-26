@@ -18,8 +18,8 @@
  */
 
 #include "attDetermination/okeefeEKF/okeefeEKF.h"
-#include "SimCode/utilities/linearAlgebra.h"
-#include "SimCode/utilities/rigidBodyKinematics.h"
+#include "simulation/utilities/linearAlgebra.h"
+#include "simulation/utilities/rigidBodyKinematics.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "vehicleConfigData/vehicleConfigData.h"
 #include <string.h>

@@ -1,28 +1,30 @@
-import sys
 import os
 import inspect  # Don't worry about this, standard stuff plus file discovery
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
-splitPath = path.split(bskName)
-bskPath = splitPath[0] + '/' + bskName + '/'
-sys.path.append(bskPath + 'modules')
-sys.path.append(bskPath + 'PythonModules')
+# bskName = 'Basilisk'
+# splitPath = path.split(bskName)
+# bskPath = splitPath[0] + '/' + bskName + '/'
+# sys.path.append(bskPath + 'modules')
+# sys.path.append(bskPath + 'PythonModules')
 
-from MonteCarlo.Controller import Controller, RetentionPolicy
-from MonteCarlo.Dispersions import UniformEulerAngleMRPDispersion, UniformDispersion, NormalVectorCartDispersion
+from Basilisk import __path__
+bskPath = __path__[0]
+
+from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
+from Basilisk.utilities.MonteCarlo.Dispersions import UniformEulerAngleMRPDispersion, UniformDispersion, NormalVectorCartDispersion
 # import simulation related support
-import spacecraftPlus
-import orbitalMotion
-import simIncludeGravBody
-import macros
-import SimulationBaseClass
-import numpy as np
-import pytest
-import unitTestSupport
+from Basilisk.simulation import spacecraftPlus
+from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import simIncludeGravBody
+from Basilisk.utilities import macros
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport
 import shutil
 import matplotlib.pyplot as plt
+import numpy as np
+import pytest
 
 NUMBER_OF_RUNS = 4
 VERBOSE = True
@@ -60,7 +62,7 @@ def myCreationFunction():
     planet = gravFactory.createEarth()
     planet.isCentralBody = True
     planet.useSphericalHarmParams = True
-    simIncludeGravBody.loadGravFromFile(bskPath + 'External/LocalGravData/GGM03S-J2-only.txt'
+    simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt'
                                         , planet.spherHarm
                                         , 2
                                         )

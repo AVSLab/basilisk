@@ -28,7 +28,6 @@
 
 import pytest
 import os
-import inspect
 import numpy as np
 import math
 
@@ -43,10 +42,6 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
 
-# @cond DOXYGEN_IGNORE
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-# @endcond
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -56,9 +51,7 @@ path = os.path.dirname(os.path.abspath(filename))
 #   of the multiple test runs for this test.
 
 
-@pytest.mark.parametrize("maneuverCase", [
-    0, 1
-])
+@pytest.mark.parametrize("maneuverCase", [0, 1])
 # provide a unique test method name, starting with test_
 def test_scenarioOrbitManeuver(show_plots, maneuverCase):
     '''This function is called by the py.test environment.'''
@@ -340,7 +333,8 @@ def run(doUnitTests, show_plots, maneuverCase):
     #
     #   plot the results
     #
-    fileNameString = filename[len(path) + 6:-3]
+    fileName = os.path.basename(os.path.splitext(__file__)[0])
+    path = os.path.dirname(os.path.abspath(__file__))
 
     # draw the inertial position vector components
     plt.close("all")  # clears out plots from earlier test runs
@@ -357,7 +351,7 @@ def run(doUnitTests, show_plots, maneuverCase):
     plt.ylabel('Inertial Position [km]')
     if doUnitTests:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString + "1" + str(int(maneuverCase)), plt, path)
+            fileName + "1" + str(int(maneuverCase)), plt, path)
 
     if maneuverCase == 1:
         # show inclination angle
@@ -378,7 +372,7 @@ def run(doUnitTests, show_plots, maneuverCase):
         plt.ylabel('Inclination [deg]')
         if doUnitTests:  # only save off the figure if doing a unit test run
             unitTestSupport.saveScenarioFigure(
-                fileNameString + "2" + str(int(maneuverCase)), plt, path)
+                fileName + "2" + str(int(maneuverCase)), plt, path)
     else:
         # show SMA
         plt.figure(2)
@@ -395,7 +389,7 @@ def run(doUnitTests, show_plots, maneuverCase):
         plt.ylabel('Radius [km]')
         if doUnitTests:  # only save off the figure if doing a unit test run
             unitTestSupport.saveScenarioFigure(
-                fileNameString + "2" + str(int(maneuverCase)), plt, path)
+                fileName + "2" + str(int(maneuverCase)), plt, path)
 
     if show_plots:
         plt.show()

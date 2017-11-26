@@ -27,7 +27,6 @@
 
 import inspect
 import os
-
 import numpy as np
 import pytest
 
@@ -35,19 +34,13 @@ import matplotlib.pyplot as plt
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
+bskPath = __path__[0]
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
 # general support file with common unit test functions
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport)
-
-bskPath = __path__[0]
-
-# @cond DOXYGEN_IGNORE
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-# @endcond
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -478,7 +471,8 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     #
     #   plot the results
     #
-    fileNameString = filename[len(path) + 6:-3]
+    fileName = os.path.basename(os.path.splitext(__file__)[0])
+    path = os.path.dirname(os.path.abspath(__file__))
 
     # draw the inertial position vector components
     plt.close("all")  # clears out plots from earlier test runs
@@ -495,7 +489,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     plt.ylabel('Inertial Position [km]')
     if doUnitTests:     # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString + "1" + orbitCase + str(int(useSphericalHarmonics))
+            fileName + "1" + orbitCase + str(int(useSphericalHarmonics))
             + planetCase, plt, path)
 
     if useSphericalHarmonics is False:
@@ -534,7 +528,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
         plt.grid()
         if doUnitTests:     # only save off the figure if doing a unit test run
             unitTestSupport.saveScenarioFigure(
-                fileNameString + "2" + orbitCase + str(int(useSphericalHarmonics))
+                fileName + "2" + orbitCase + str(int(useSphericalHarmonics))
                 + planetCase, plt, path)
     else:
         plt.figure(2)
@@ -551,7 +545,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
         plt.ylabel('SMA [km]')
         if doUnitTests:     # only save off the figure if doing a unit test run
             unitTestSupport.saveScenarioFigure(
-                fileNameString + "2" + orbitCase + str(int(useSphericalHarmonics))
+                fileName + "2" + orbitCase + str(int(useSphericalHarmonics))
                 + planetCase, plt, path)
 
     if show_plots:

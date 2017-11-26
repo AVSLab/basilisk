@@ -17,16 +17,8 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-import sys, os, inspect
 import numpy
-import pytest
 import math
-
-
-
-
-
-
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import alg_contain
@@ -35,7 +27,6 @@ import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import inertialUKF  # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.simulation import sim_model
-import ctypes
 
 
 def setupFilterData(filterObject):

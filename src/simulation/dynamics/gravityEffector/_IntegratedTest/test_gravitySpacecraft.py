@@ -17,10 +17,8 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-import sys, os, inspect
+import os, inspect
 import numpy
-import pytest
-import math
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -35,7 +33,6 @@ from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import spice_interface
 from Basilisk.simulation import sim_model
-import ctypes
 from Basilisk import pyswice
 from Basilisk.simulation import stateArchitecture
 from Basilisk.simulation import spacecraftPlus
@@ -80,8 +77,8 @@ def test_singleGravityBody(show_plots):
 
     unitTestSim.SpiceObject.ModelTag = "SpiceInterfaceData"
     unitTestSim.SpiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
-    unitTestSim.SpiceObject.OutputBufferCount = 10000
-    unitTestSim.SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun", "moon", "jupiter barycenter"])
+    unitTestSim.SpiceObject.outputBufferCount = 10000
+    unitTestSim.SpiceObject.planetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun", "moon", "jupiter barycenter"])
     unitTestSim.SpiceObject.zeroBase = 'Earth'
 
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
@@ -226,8 +223,8 @@ def test_multiBodyGravity(show_plots):
 
     unitTestSim.SpiceObject.ModelTag = "SpiceInterfaceData"
     unitTestSim.SpiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
-    unitTestSim.SpiceObject.OutputBufferCount = 10000
-    unitTestSim.SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun", "moon", "jupiter barycenter"])
+    unitTestSim.SpiceObject.outputBufferCount = 10000
+    unitTestSim.SpiceObject.planetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun", "moon", "jupiter barycenter"])
 
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
     unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"

@@ -27,7 +27,7 @@
 #include "simMessages/spiceTimeSimMsg.h"
 #include "simFswInterfaceMessages/stSensorIntMsg.h"
 #include <Eigen/Dense>
-#include "../SimCode/utilities/avsEigenMRP.h"
+#include "../simulation/utilities/avsEigenMRP.h"
 
 class StarTracker: public SysModel {
 public:

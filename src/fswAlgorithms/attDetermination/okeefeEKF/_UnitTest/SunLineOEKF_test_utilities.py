@@ -17,19 +17,14 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-import sys, os, inspect
+import os, inspect
 import numpy as np
-import unitTestSupport
-import math
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+import matplotlib.pyplot as plt
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('FswAlgorithms')
-sys.path.append(splitPath[0] + '/modules')
-sys.path.append(splitPath[0] + '/PythonModules')
 
-
-import matplotlib.pyplot as plt
 
 def StatesPlot(x, Pflat, show_plots):
 

@@ -17,9 +17,6 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-import pytest
-import sys, os, inspect
-
 #
 # Ephemeris Converter Unit Test
 #
@@ -27,19 +24,13 @@ import sys, os, inspect
 # Author:   Thibaud Teil
 #
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-from Basilisk import __path__
-bskPath = __path__[0]
-
-
-import datetime
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import spice_interface
-import numpy as np
 from Basilisk.simulation import ephemeris_converter
 from Basilisk.utilities import macros
+from Basilisk import __path__
+bskPath = __path__[0]
 
 
 # provide a unique test method name, starting with test_
@@ -48,7 +39,7 @@ def test_ephemConvert(show_plots):
     [testResults, testMessage] = unitephemeris_converter(show_plots)
     assert testResults < 1, testMessage
 
-# Run unit test
+
 def unitephemeris_converter(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
@@ -58,63 +49,63 @@ def unitephemeris_converter(show_plots):
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
-    TotalSim = SimulationBaseClass.SimBaseClass()
-    TotalSim.TotalSim.terminateSimulation()
+    sim = SimulationBaseClass.SimBaseClass()
+    sim.TotalSim.terminateSimulation()
 
     simulationTime = macros.sec2nano(30.)
     numDataPoints = 600
     samplingTime = simulationTime / (numDataPoints-1)
-    DynUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
+    DynUnitTestProc = sim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
-    DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, samplingTime))
+    DynUnitTestProc.addTask(sim.CreateNewTask(unitTaskName, samplingTime))
 
     # List of planets tested
     planets = ['sun', 'earth', 'mars barycenter']
 
     # Initialize the spice module
-    SpiceObject = spice_interface.SpiceInterface()
-    SpiceObject.ModelTag = "SpiceInterfaceData"
-    SpiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
-    SpiceObject.OutputBufferCount = 10000
-    SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun"])
-    SpiceObject.UTCCalInit = "2015 February 10, 00:00:00.0 TDB"
-    TotalSim.AddModelToTask(unitTaskName, SpiceObject)
+    spiceObject = spice_interface.SpiceInterface()
+    spiceObject.ModelTag = "SpiceInterfaceData"
+    spiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
+    spiceObject.outputBufferCount = 10000
+    spiceObject.planetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun"])
+    spiceObject.UTCCalInit = "2015 February 10, 00:00:00.0 TDB"
+    sim.AddModelToTask(unitTaskName, spiceObject)
 
     # Initialize the ephermis module
-    EphemObject = ephemeris_converter.EphemerisConverter()
-    EphemObject.ModelTag = 'EphemData'
+    ephemObject = ephemeris_converter.EphemerisConverter()
+    ephemObject.ModelTag = 'EphemData'
     messageMap = {}
     for planet in planets:
         messageMap[planet + '_planet_data'] = planet + '_ephemeris_data'
-    EphemObject.messageNameMap = ephemeris_converter.map_string_string(messageMap)
-    TotalSim.AddModelToTask(unitTaskName, EphemObject)
+    ephemObject.messageNameMap = ephemeris_converter.map_string_string(messageMap)
+    sim.AddModelToTask(unitTaskName, ephemObject)
 
     # Configure simulation
-    TotalSim.ConfigureStopTime(int(simulationTime))
-    TotalSim.AddVariableForLogging('EphemData.messagesLinked')
-    TotalSim.AddVariableForLogging('EphemData.numOutputBuffers')
+    sim.ConfigureStopTime(int(simulationTime))
+    sim.AddVariableForLogging('EphemData.messagesLinked')
+    sim.AddVariableForLogging('EphemData.numOutputBuffers')
     for planet in planets:
-        TotalSim.TotalSim.logThisMessage(planet + '_planet_data', 5*samplingTime)
-        TotalSim.TotalSim.logThisMessage(planet + '_ephemeris_data', 5*samplingTime)
+        sim.TotalSim.logThisMessage(planet + '_planet_data', 5*samplingTime)
+        sim.TotalSim.logThisMessage(planet + '_ephemeris_data', 5*samplingTime)
 
     # Execute simulation
-    TotalSim.InitializeSimulation()
-    TotalSim.ExecuteSimulation()
+    sim.InitializeSimulation()
+    sim.ExecuteSimulation()
 
     # Get the link confirmation
-    LinkMessagesCheck = TotalSim.GetLogVariableData('EphemData.messagesLinked')
-    for i in range(len(LinkMessagesCheck[:,0])):
-        if LinkMessagesCheck[i,1] - 1.0 > 1E-12:
+    linkMessagesCheck = sim.GetLogVariableData('EphemData.messagesLinked')
+    for i in range(len(linkMessagesCheck[:,0])):
+        if linkMessagesCheck[i,1] - 1.0 > 1E-12:
             testFailCount += 1
             testMessages.append("FAILED: Messages not linked succesfully")
 
     # Get the position, velocities and time for the message before and after the copy
     accuracy = 1e-12
     for planet in planets:
-        ephemPlanetPosData = TotalSim.pullMessageLogData(planet + '_ephemeris_data' + '.r_BdyZero_N', range(3))
-        spicePlanetPosData = TotalSim.pullMessageLogData(planet + '_planet_data' + '.PositionVector', range(3))
-        ephemPlanetVelData = TotalSim.pullMessageLogData(planet + '_ephemeris_data' + '.v_BdyZero_N', range(3))
-        spicePlanetVelData = TotalSim.pullMessageLogData(planet + '_planet_data' + '.VelocityVector', range(3))
+        ephemPlanetPosData = sim.pullMessageLogData(planet + '_ephemeris_data' + '.r_BdyZero_N', range(3))
+        spicePlanetPosData = sim.pullMessageLogData(planet + '_planet_data' + '.PositionVector', range(3))
+        ephemPlanetVelData = sim.pullMessageLogData(planet + '_ephemeris_data' + '.v_BdyZero_N', range(3))
+        spicePlanetVelData = sim.pullMessageLogData(planet + '_planet_data' + '.VelocityVector', range(3))
         testFailCount, testMessages = unitTestSupport.compareArrayRelative(spicePlanetPosData[:,1:4], ephemPlanetPosData, accuracy, "Position", testFailCount, testMessages)
         testFailCount, testMessages = unitTestSupport.compareArrayRelative(spicePlanetVelData[:,1:4], ephemPlanetVelData, accuracy, "Velocity", testFailCount, testMessages)
 
@@ -131,5 +122,4 @@ def unitephemeris_converter(show_plots):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_ephemConvert(False  # show_plots
-                   )
+    test_ephemConvert(False)

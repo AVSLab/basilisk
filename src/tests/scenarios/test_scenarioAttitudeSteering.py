@@ -34,7 +34,7 @@ import numpy as np
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 
@@ -48,7 +48,6 @@ from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import RigidBodyKinematics as rb
 
-
 # import FSW Algorithm related support
 from Basilisk.fswAlgorithms import MRP_Steering
 from Basilisk.fswAlgorithms import rateServoFullNonlinear
@@ -60,10 +59,6 @@ from Basilisk.utilities import fswSetupRW
 # import message declarations
 from Basilisk.fswAlgorithms import fswMessages
 
-# @cond DOXYGEN_IGNORE
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-# @endcond
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -72,12 +67,7 @@ path = os.path.dirname(os.path.abspath(filename))
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("simCase", [
-    (0),
-    (1),
-    (2),
-    (3)
-])
+@pytest.mark.parametrize("simCase", [0, 1, 2, 3])
 def test_bskAttitudeFeedbackRW(show_plots, simCase):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
@@ -275,8 +265,8 @@ def test_bskAttitudeFeedbackRW(show_plots, simCase):
 ##  @}
 def run(doUnitTests, show_plots, simCase):
     '''Call this routine directly to run the tutorial scenario.'''
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     #
     #  From here on there scenario python code is found.  Above this line the code is to setup a
@@ -318,7 +308,7 @@ def run(doUnitTests, show_plots, simCase):
     I = [500., 0., 0.,
          0., 300., 0.,
          0., 0., 200.]
-    scObject.hub.mHub = 750.0                     # kg - spacecraft mass
+    scObject.hub.mHub = 750.0  # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scObject.hub.useTranslation = True
@@ -367,7 +357,6 @@ def run(doUnitTests, show_plots, simCase):
 
     # add RW object array to the simulation process
     scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
-
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
@@ -468,7 +457,7 @@ def run(doUnitTests, show_plots, simCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 200
-    samplingTime = simulationTime / (numDataPoints-1)
+    samplingTime = simulationTime / (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(rwMotorTorqueConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
@@ -511,17 +500,17 @@ def run(doUnitTests, show_plots, simCase):
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
     if simCase < 2:
-        scObject.hub.sigma_BNInit = [[0.5], [0.6], [-0.3]]              # sigma_CN_B
-        scObject.hub.omega_BN_BInit = [[0.01], [-0.01], [-0.01]]        # rad/s - omega_CN_B
+        scObject.hub.sigma_BNInit = [[0.5], [0.6], [-0.3]]  # sigma_CN_B
+        scObject.hub.omega_BN_BInit = [[0.01], [-0.01], [-0.01]]  # rad/s - omega_CN_B
     else:
         HN = rb.euler3132C([oe.Omega, oe.i, oe.omega + oe.f])
         sBR = [0.001, 0.002, -0.003]
         BN = rb.MRP2C([0.001, 0.002, -0.003])
-        BH = BN*HN
+        BH = BN * HN
         sBN = rb.C2MRP(BH)
-        scObject.hub.sigma_BNInit = [[sBN[0]], [sBN[1]], [sBN[2]]]      # sigma_CN_B
-        n = np.sqrt(mu/(oe.a*oe.a*oe.a))
-        scObject.hub.omega_BN_BInit = [[n*HN[2, 0]], [n*HN[2, 1]], [n*HN[2, 2]]]             # rad/s - omega_CN_B
+        scObject.hub.sigma_BNInit = [[sBN[0]], [sBN[1]], [sBN[2]]]  # sigma_CN_B
+        n = np.sqrt(mu / (oe.a * oe.a * oe.a))
+        scObject.hub.omega_BN_BInit = [[n * HN[2, 0]], [n * HN[2, 1]], [n * HN[2, 2]]]  # rad/s - omega_CN_B
 
     #
     #   initialize Simulation
@@ -537,21 +526,23 @@ def run(doUnitTests, show_plots, simCase):
     #
     #   retrieve the logged data
     #
-    dataUsReq = scSim.pullMessageLogData(rwMotorTorqueConfig.outputDataName+".motorTorque", range(numRW))
-    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName+".sigma_BR", range(3))
-    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName+".omega_BR_B", range(3))
-    dataOmegaBRAst = scSim.pullMessageLogData(mrpControlConfig.outputDataName+".omega_BastR_B", range(3))
-    dataOmegaRW = scSim.pullMessageLogData(rwStateEffector.OutputDataString+".wheelSpeeds", range(numRW))
-    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName+".r_BN_N", range(3))
+    dataUsReq = scSim.pullMessageLogData(rwMotorTorqueConfig.outputDataName + ".motorTorque", range(numRW))
+    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", range(3))
+    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", range(3))
+    dataOmegaBRAst = scSim.pullMessageLogData(mrpControlConfig.outputDataName + ".omega_BastR_B", range(3))
+    dataOmegaRW = scSim.pullMessageLogData(rwStateEffector.OutputDataString + ".wheelSpeeds", range(numRW))
+    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", range(3))
     dataRW = []
     for i in range(0, numRW):
-        dataRW.append(scSim.pullMessageLogData(rwOutName[i]+".u_current", range(1)))
+        dataRW.append(scSim.pullMessageLogData(rwOutName[i] + ".u_current", range(1)))
     np.set_printoptions(precision=16)
 
     #
     #   plot the results
     #
-    fileNameString = filename[len(path)+6:-3]
+    fileName = os.path.basename(os.path.splitext(__file__)[0])
+    path = os.path.dirname(os.path.abspath(__file__))
+
     timeData = dataUsReq[:, 0] * macros.NANO2MIN
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
@@ -562,55 +553,47 @@ def run(doUnitTests, show_plots, simCase):
     plt.legend(loc='upper right')
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Error $\sigma_{B/R}$')
-    if doUnitTests:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileNameString+"SigmaBR"+str(int(simCase))
-            , plt, path)
+    if doUnitTests:  # only save off the figure if doing a unit test run
+        unitTestSupport.saveScenarioFigure(fileName + "SigmaBR" + str(int(simCase)), plt, path)
 
     plt.figure(2)
     for idx in range(1, 4):
-        plt.semilogy(timeData, np.abs(dataRW[idx-1][:, 1]),
-             color=unitTestSupport.getLineColor(idx, numRW),
-             label='$|u_{s,' + str(idx) + '}|$')
+        plt.semilogy(timeData, np.abs(dataRW[idx - 1][:, 1]),
+                     color=unitTestSupport.getLineColor(idx, numRW),
+                     label='$|u_{s,' + str(idx) + '}|$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Motor Torque (Nm)')
-    if doUnitTests:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileNameString+"rwUs"+str(int(simCase))
-            , plt, path)
+    if doUnitTests:  # only save off the figure if doing a unit test run
+        unitTestSupport.saveScenarioFigure(fileName + "rwUs" + str(int(simCase)), plt, path)
 
     plt.figure(3)
     for idx in range(1, 4):
-        plt.semilogy(timeData, np.abs(dataOmegaBR[:, idx])/macros.D2R,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$|\omega_{BR,'+str(idx)+'}|$')
+        plt.semilogy(timeData, np.abs(dataOmegaBR[:, idx]) / macros.D2R,
+                     color=unitTestSupport.getLineColor(idx, 3),
+                     label='$|\omega_{BR,' + str(idx) + '}|$')
     for idx in range(1, 4):
-        plt.semilogy(timeData, np.abs(dataOmegaBRAst[:, idx])/macros.D2R,
-                 '--',
-                 color=unitTestSupport.getLineColor(idx, 3)
-                 )
+        plt.semilogy(timeData, np.abs(dataOmegaBRAst[:, idx]) / macros.D2R,
+                     '--',
+                     color=unitTestSupport.getLineColor(idx, 3)
+                     )
     plt.legend(loc='upper right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error (deg/s) ')
-    if doUnitTests:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileNameString+"omegaBR"+str(int(simCase))
-            , plt, path)
-
-
+    if doUnitTests:  # only save off the figure if doing a unit test run
+        unitTestSupport.saveScenarioFigure(fileName + "omegaBR" + str(int(simCase)), plt, path)
 
     plt.figure(4)
-    for idx in range(1, numRW+1):
-        plt.plot(timeData, dataOmegaRW[:, idx]/macros.RPM,
+    for idx in range(1, numRW + 1):
+        plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
                  color=unitTestSupport.getLineColor(idx, numRW),
-                 label='$\Omega_{'+str(idx)+'}$')
+                 label='$\Omega_{' + str(idx) + '}$')
     plt.legend(loc='upper right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')
-    if doUnitTests:     # only save off the figure if doing a unit test run
+    if doUnitTests:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString+"Omega"+str(int(simCase))
+            fileNameString + "Omega" + str(int(simCase))
             , plt, path)
 
     if show_plots:
@@ -619,38 +602,37 @@ def run(doUnitTests, show_plots, simCase):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-
     #
     #   the python code below is for the unit testing mode.  If you are studying the scenario
     #   to learn how to run BSK, you can stop reading below this line.
     #
     if doUnitTests:
         numTruthPoints = 5
-        skipValue = int(numDataPoints/numTruthPoints)
+        skipValue = int(numDataPoints / numTruthPoints)
         dataUsRed = dataUsReq[::skipValue]
         dataSigmaBRRed = dataSigmaBR[::skipValue]
         dataPosRed = dataPos[::skipValue]
 
         # setup truth data for unit test
         truePos = [
-                      [-4.0203386903966456e+06, 7.4905667418525163e+06, 5.2482992115893615e+06]
-                    , [-4.6521134526484497e+06, 7.0418660564864147e+06, 5.3612159766829805e+06]
-                    , [-5.2553803148656003e+06, 6.5500098234596634e+06, 5.4412780230905702e+06]
-                    , [-5.8265176097709052e+06, 6.0181061406054925e+06, 5.4880726887781229e+06]
-                    , [-6.3621161952049593e+06, 5.4494925133885061e+06, 5.5013918238723921e+06]
-                ]
+            [-4.0203386903966456e+06, 7.4905667418525163e+06, 5.2482992115893615e+06]
+            , [-4.6521134526484497e+06, 7.0418660564864147e+06, 5.3612159766829805e+06]
+            , [-5.2553803148656003e+06, 6.5500098234596634e+06, 5.4412780230905702e+06]
+            , [-5.8265176097709052e+06, 6.0181061406054925e+06, 5.4880726887781229e+06]
+            , [-6.3621161952049593e+06, 5.4494925133885061e+06, 5.5013918238723921e+06]
+        ]
         trueUs = trueSigmaBR = []
 
         if simCase == 0:
             trueUs = [
-                  [-9.3735248485571654e-01, 3.1657897125315637e-01, 9.4810829234824123e-01]
-                , [ 4.7191187864907794e-02,-3.0070771545280692e-02,-2.9518238485616782e-02]
-                , [ 1.7016920405413215e-02,-1.5817057493123454e-02, 1.7041006711987533e-03]
-                , [ 1.0462152119029601e-02,-1.3835672310362663e-02, 4.7069307938441447e-03]
-                , [ 7.9429100667987116e-03,-1.4225803320727568e-02, 5.0252369827272388e-03]
+                [-9.3735248485571654e-01, 3.1657897125315637e-01, 9.4810829234824123e-01]
+                , [4.7191187864907794e-02, -3.0070771545280692e-02, -2.9518238485616782e-02]
+                , [1.7016920405413215e-02, -1.5817057493123454e-02, 1.7041006711987533e-03]
+                , [1.0462152119029601e-02, -1.3835672310362663e-02, 4.7069307938441447e-03]
+                , [7.9429100667987116e-03, -1.4225803320727568e-02, 5.0252369827272388e-03]
             ]
             trueSigmaBR = [
-                  [-7.2833461132468502e-01, 2.2697297495054194e-01, 5.0137002864322056e-01]
+                [-7.2833461132468502e-01, 2.2697297495054194e-01, 5.0137002864322056e-01]
                 , [-1.3375995332049051e-01, 2.5646319783854472e-02, 9.9894348609658193e-02]
                 , [-2.6596473923292778e-02, 5.4185997488293940e-03, 2.0187273917517602e-02]
                 , [-5.6260975047995720e-03, 1.1494179543533006e-03, 4.2750978169215689e-03]
@@ -658,50 +640,49 @@ def run(doUnitTests, show_plots, simCase):
             ]
         if simCase == 1:
             trueUs = [
-                  [-9.3735248485571654e-01, 3.1657897125315637e-01, 9.4810829234824123e-01]
-                , [ 4.7579565156181863e-02,-3.0349425236291302e-02,-3.0758207114084640e-02]
-                , [ 1.7238526778602402e-02,-1.5954311821205262e-02, 1.6062184747321928e-03]
-                , [ 1.0527976809083944e-02,-1.3845191318712704e-02, 4.7101442446694820e-03]
-                , [ 7.9728496722686545e-03,-1.4219676900387224e-02, 5.0553065828725912e-03]
+                [-9.3735248485571654e-01, 3.1657897125315637e-01, 9.4810829234824123e-01]
+                , [4.7579565156181863e-02, -3.0349425236291302e-02, -3.0758207114084640e-02]
+                , [1.7238526778602402e-02, -1.5954311821205262e-02, 1.6062184747321928e-03]
+                , [1.0527976809083944e-02, -1.3845191318712704e-02, 4.7101442446694820e-03]
+                , [7.9728496722686545e-03, -1.4219676900387224e-02, 5.0553065828725912e-03]
             ]
             trueSigmaBR = [
-                  [-7.2833461132468502e-01, 2.2697297495054194e-01, 5.0137002864322056e-01]
+                [-7.2833461132468502e-01, 2.2697297495054194e-01, 5.0137002864322056e-01]
                 , [-1.3680399695426440e-01, 2.4494146008974305e-02, 1.0332411551330754e-01]
                 , [-2.6056558162020488e-02, 4.2029826932260149e-03, 2.1432334589966056e-02]
-                , [-4.4366133145544101e-03,-2.0513208877515532e-04, 5.0642220585757807e-03]
-                , [ 1.1719472835041103e-04,-1.1640729624930607e-03, 1.5886821146121159e-03]
+                , [-4.4366133145544101e-03, -2.0513208877515532e-04, 5.0642220585757807e-03]
+                , [1.1719472835041103e-04, -1.1640729624930607e-03, 1.5886821146121159e-03]
             ]
         if simCase == 2:
             trueUs = [
-                  [ 5.3427982784745387e-01, 2.4950294126525017e+00, 2.5650481888590777e+00]
-                , [ 5.4358272666288343e-04,-8.5844271924247484e-03, 1.1402708588315012e-03]
-                , [ 2.5450020484230063e-03, 9.9162427490413693e-03,-1.4057457475478573e-03]
+                [5.3427982784745387e-01, 2.4950294126525017e+00, 2.5650481888590777e+00]
+                , [5.4358272666288343e-04, -8.5844271924247484e-03, 1.1402708588315012e-03]
+                , [2.5450020484230063e-03, 9.9162427490413693e-03, -1.4057457475478573e-03]
                 , [-4.5294788639083094e-04, 2.0546056360929266e-02, 1.9900162652881723e-03]
-                , [ 3.1307504052369151e-03,-5.2522043216498004e-02,-1.6091392647118244e-03]
+                , [3.1307504052369151e-03, -5.2522043216498004e-02, -1.6091392647118244e-03]
             ]
             trueSigmaBR = [
-                  [ 5.9238063851049559e-03, 1.5059956700233917e-01, 1.6414145977723277e-01]
-                , [-3.6813728373729475e-03,-1.2652171375839346e-03,-4.4560965458308630e-05]
-                , [-3.7277213568358554e-03, 1.1091516017274978e-04,-4.6671624098081926e-06]
+                [5.9238063851049559e-03, 1.5059956700233917e-01, 1.6414145977723277e-01]
+                , [-3.6813728373729475e-03, -1.2652171375839346e-03, -4.4560965458308630e-05]
+                , [-3.7277213568358554e-03, 1.1091516017274978e-04, -4.6671624098081926e-06]
                 , [-3.7353840579002540e-03, 1.1378091633261421e-03, 4.2064324048174655e-05]
-                , [-3.6762687214375281e-03,-1.8796889549439252e-03,-6.9433492742490023e-05]
+                , [-3.6762687214375281e-03, -1.8796889549439252e-03, -6.9433492742490023e-05]
             ]
         if simCase == 3:
             trueUs = [
-                  [ 1.5463342442514050e+00, 2.4989188277446774e+00, 2.5666604392831682e+00]
-                , [ 8.7400016892695467e-03,-2.2389585500966587e+00,-2.0172110694939094e-03]
-                , [ 1.2942263063120260e-03,-9.0623022045545419e-04, 1.4725090860529959e-06]
-                , [ 1.2175561336695026e-03,-9.9918509941947773e-04, 1.5678601387200759e-06]
-                , [ 1.1342525280809703e-03,-1.0892870415896393e-03, 1.5413853915482904e-06]
+                [1.5463342442514050e+00, 2.4989188277446774e+00, 2.5666604392831682e+00]
+                , [8.7400016892695467e-03, -2.2389585500966587e+00, -2.0172110694939094e-03]
+                , [1.2942263063120260e-03, -9.0623022045545419e-04, 1.4725090860529959e-06]
+                , [1.2175561336695026e-03, -9.9918509941947773e-04, 1.5678601387200759e-06]
+                , [1.1342525280809703e-03, -1.0892870415896393e-03, 1.5413853915482904e-06]
             ]
             trueSigmaBR = [
-                  [ 5.9238063851049559e-03, 1.5059956700233917e-01, 1.6414145977723277e-01]
-                , [ 1.0802870404159959e-04,-9.9707506726354513e-03,-9.5795774144360256e-05]
-                , [ 6.3385780276990460e-08, 2.7851495444539080e-06,-4.9151262511072661e-07]
-                , [ 3.9812854928119984e-09, 4.5312268214171323e-08,-9.7417287710713351e-09]
-                , [ 1.0932992615194772e-10, 7.3941898989080499e-10,-1.8758847429304412e-10]
+                [5.9238063851049559e-03, 1.5059956700233917e-01, 1.6414145977723277e-01]
+                , [1.0802870404159959e-04, -9.9707506726354513e-03, -9.5795774144360256e-05]
+                , [6.3385780276990460e-08, 2.7851495444539080e-06, -4.9151262511072661e-07]
+                , [3.9812854928119984e-09, 4.5312268214171323e-08, -9.7417287710713351e-09]
+                , [1.0932992615194772e-10, 7.3941898989080499e-10, -1.8758847429304412e-10]
             ]
-
 
         # compare the results to the truth values
         accuracy = 1e-7
@@ -736,7 +717,7 @@ def run(doUnitTests, show_plots, simCase):
 #
 if __name__ == "__main__":
     run(
-        False,        # do unit tests
-        True,         # show_plots
-        0            # simCase
-       )
+        False,  # do unit tests
+        True,  # show_plots
+        0  # simCase
+    )

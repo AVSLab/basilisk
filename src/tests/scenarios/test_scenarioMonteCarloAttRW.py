@@ -27,56 +27,56 @@
 
 
 import inspect
-import logging
 import math
 import os
 import sys
-
 import numpy as np
 import pytest
-
 import shutil
-
 import matplotlib.pyplot as plt
 
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 fileNameString = (os.path.split(os.path.splitext(filename)[0])[-1])[5:]
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
-splitPath = path.split(bskName)
-bskPath = splitPath[0] + '/' + bskName + '/'
-sys.path.append(bskPath + 'modules')
-sys.path.append(bskPath + 'PythonModules')
+# bskName = 'Basilisk'
+# splitPath = path.split(bskName)
+# bskPath = splitPath[0] + '/' + bskName + '/'
+# sys.path.append(bskPath + 'modules')
+# sys.path.append(bskPath + 'PythonModules')
 # @endcond
 
+from Basilisk import __path__
+bskPath = __path__[0]
+
 # import general simulation support files
-import SimulationBaseClass
-import unitTestSupport                  # general support file with common unit test functions
-import macros
-import orbitalMotion
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import macros
+from Basilisk.utilities import orbitalMotion
 
 # import simulation related support
-import spacecraftPlus
-import simIncludeGravBody
-import simIncludeRW
-import simple_nav
-import reactionWheelStateEffector
-import rwVoltageInterface
+from Basilisk.simulation import spacecraftPlus
+from Basilisk.utilities import simIncludeGravBody
+from Basilisk.utilities import simIncludeRW
+from Basilisk.simulation import simple_nav
+from Basilisk.simulation import reactionWheelStateEffector
+from Basilisk.simulation import rwVoltageInterface
 
 # import FSW Algorithm related support
-import MRP_Feedback
-import inertial3D
-import attTrackingError
-import rwMotorTorque
-import fswSetupRW
-import rwMotorVoltage
+from Basilisk.fswAlgorithms import MRP_Feedback
+from Basilisk.fswAlgorithms import inertial3D
+from Basilisk.fswAlgorithms import attTrackingError
+from Basilisk.fswAlgorithms import rwMotorTorque
+from Basilisk.utilities import fswSetupRW
+from Basilisk.fswAlgorithms import rwMotorVoltage
 
 # import message declarations
-import fswMessages
+from Basilisk.fswAlgorithms import fswMessages
 
-from MonteCarlo.Controller import Controller, RetentionPolicy
-from MonteCarlo.Dispersions import UniformEulerAngleMRPDispersion, UniformDispersion, NormalVectorCartDispersion, InertiaTensorDispersion
+from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
+from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispersion, UniformDispersion,
+                                                       NormalVectorCartDispersion, InertiaTensorDispersion)
 
 
 NUMBER_OF_RUNS = 10

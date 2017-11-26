@@ -1,3 +1,4 @@
+''' '''
 '''
  ISC License
 
@@ -14,6 +15,7 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
 '''
 #
 #   script with various macros
@@ -23,19 +25,19 @@ import math
 
 #   function to convert seconds to an integer nanoseconds value
 def sec2nano(time):
-    return int(time*1E9)
+    return int(time*1E9+0.5)
 
 #   function to convert minutes to an integer nanoseconds value
 def min2nano(time):
-    return int(time*1E9*60)
+    return int((time*1E9+0.5)*60)
 
 #   function to convert hours to an integer nanoseconds value
 def hour2nano(time):
-    return int(time*1E9*60*60)
+    return int((time*1E9+0.5)*60*60)
 
 #   function to convert days to an integer nanoseconds value
 def day2nano(time):
-    return int(time*1E9*60*60*24)
+    return int((time*1E9+0.5)*60*60*24)
 
 #   variable to convert nano-seconds to seconds
 NANO2SEC = 1E-9
@@ -53,3 +55,4 @@ RPM = (2.*math.pi/60.)
 
 #   variable to convert RPM to radians per second
 rpm2radsec = 2.0 * math.pi/60.
+

@@ -22,23 +22,16 @@
 #   scenarios on both individual functions and the full module.
 #   Author: Thibaud Teil
 
-import sys, os, inspect
 import numpy as np
 import pytest
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('fswAlgorithms')
-
-
-
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import alg_contain
-import SunLineEKF_test_utilities as FilterPlots
-from Basilisk.fswAlgorithms import sunlineEKF  # import the module that is to be tested
+from Basilisk.fswAlgorithms import sunlineEKF
 from Basilisk.fswAlgorithms import cssComm
 from Basilisk.fswAlgorithms import vehicleConfigData
 from Basilisk.utilities import macros
+import SunLineEKF_test_utilities as FilterPlots
 
 
 def setupFilterData(filterObject):
@@ -751,7 +744,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
             testFailCount += 1
             testMessages.append("Covariance update failure")
-        if (abs(stateLog[-1, i + 1] - stateTarget1[i]) > 1.0E-3):
+        if (abs(stateLog[-1, i + 1] - stateTarget1[i]) > 1.0E-2):
             testFailCount += 1
             testMessages.append("State update failure")
 
@@ -826,7 +819,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
             testFailCount += 1
             testMessages.append("Covariance update failure")
-        if (abs(stateLog[-1, i + 1] - stateTarget2[i]) > 1.0E-3):
+        if (abs(stateLog[-1, i + 1] - stateTarget2[i]) > 1.0E-2):
             testFailCount += 1
             testMessages.append("State update failure")
 

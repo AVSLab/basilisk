@@ -177,3 +177,5 @@ namespace std {
 EIGEN_MAT_WRAP(Eigen::MatrixXd)
 EIGEN_MAT_WRAP(Eigen::Matrix3d)
 EIGEN_MAT_WRAP(Eigen::Vector3d)
+EIGEN_MAT_WRAP(Eigen::VectorXd)
+

@@ -17,34 +17,19 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-#Very simple simulation.  Just sets up and calls the SPICE interface.  Could 
-#be the basis for a unit test of SPICE
-
-import pytest
-import sys, os, inspect
-
-
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('simulation')
-
 
 
 import matplotlib.pyplot as plt
 import numpy
-import ctypes
 import math
-
-
-
-
-#Import all of the modules that we are going to call in this simulation
+import os
 from Basilisk.simulation import simple_nav
 from Basilisk.simulation import spice_interface
 from Basilisk.utilities import MessagingAccess
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import sim_model
 from Basilisk.utilities import unitTestSupport
+
 
 def listNorm(inputList):
    normValue = 0.0
@@ -66,7 +51,9 @@ def test_unitSimpleNav(show_plots):
     [testResults, testMessage] = unitSimpleNav(show_plots)
     assert testResults < 1, testMessage
 
+
 def unitSimpleNav(show_plots):
+    path = os.path.dirname(os.path.abspath(__file__))
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
     # Create a sim module as an empty container
@@ -117,58 +104,75 @@ def unitSimpleNav(show_plots):
                                           spiceMessage)
 
     sNavObject.ModelTag = "SimpleNavigation"
-    posBound = [1000.0]*3
-    velBound = [1.0]*3
-    attBound = [5E-3]*3
-    rateBound = [0.02]*3
-    sunBound = [5.0*math.pi/180.0]*3
-    dvBound = [0.053]*3
+    posBound = numpy.array([1000.0] * 3)
+    velBound = numpy.array([1.0] * 3)
+    attBound = numpy.array([5E-3] * 3)
+    rateBound = numpy.array([0.02] * 3)
+    sunBound = numpy.array([5.0 * math.pi / 180.0] * 3)
+    dvBound = numpy.array([0.053] * 3)
 
     posSigma = 5.0
     velSigma = 0.035
-    attSigma = 1.0/360.0*math.pi/180.0
-    rateSigma = 0.05*math.pi/180.0
-    sunSigma = math.pi/180.0
-    dvSigma = 0.1*math.pi/180.0
+    attSigma = 1.0 / 360.0 * math.pi / 180.0
+    rateSigma = 0.05 * math.pi / 180.0
+    sunSigma = math.pi / 180.0
+    dvSigma = 0.1 * math.pi / 180.0
 
-    pMatrix = [0.0]*18*18
-    pMatrix[0*18+0] = pMatrix[1*18+1] = pMatrix[2*18+2] = posSigma
-    pMatrix[3*18+3] = pMatrix[4*18+4] = pMatrix[5*18+5] = velSigma
-    pMatrix[6*18+6] = pMatrix[7*18+7] = pMatrix[8*18+8] = attSigma
-    pMatrix[9*18+9] = pMatrix[10*18+10] = pMatrix[11*18+11] = rateSigma
-    pMatrix[12*18+12] = pMatrix[13*18+13] = pMatrix[14*18+14] = sunSigma
-    pMatrix[15*18+15] = pMatrix[16*18+16] = pMatrix[17*18+17] = dvSigma
-    errorBounds = []
-    errorBounds.extend(posBound)
-    errorBounds.extend(velBound)
-    errorBounds.extend(attBound)
-    errorBounds.extend(rateBound)
-    errorBounds.extend(sunBound)
-    errorBounds.extend(dvBound)
+    pMatrix = [[posSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., posSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., posSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., velSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., velSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., velSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., attSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., attSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., attSigma, 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., rateSigma, 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rateSigma, 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., rateSigma, 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sunSigma, 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sunSigma, 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., sunSigma, 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dvSigma, 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dvSigma, 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., dvSigma],
+               ]
+    errorBounds = [[1000.], [1000.], [1000.], [1.], [1.], [1.], [0.005], [0.005], [0.005], [0.02], [0.02], [0.02],
+                   [5.0 * math.pi / 180.0], [5.0 * math.pi / 180.0], [5.0 * math.pi / 180.0], [0.053], [0.053], [0.053]]
 
-    sNavObject.walkBounds = sim_model.DoubleVector(errorBounds)
-    sNavObject.PMatrix = sim_model.DoubleVector(pMatrix)
+    sNavObject.walkBounds = errorBounds
+    sNavObject.PMatrix = pMatrix
     sNavObject.crossTrans = True
     sNavObject.crossAtt = False
 
     unitTestSim.TotalSim.logThisMessage("simple_att_nav_output", int(1E8))
     unitTestSim.TotalSim.logThisMessage("simple_trans_nav_output", int(1E8))
     unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(int(60*144.0*1E9))
+    unitTestSim.ConfigureStopTime(int(60 * 144.0 * 1E9))
     unitTestSim.ExecuteSimulation()
 
-    posNav = MessagingAccess.obtainMessageVector("simple_trans_nav_output", 'Basilisk.simulation.simple_nav',
-        'NavTransIntMsg', 60*144*10, unitTestSim.TotalSim, 'r_BN_N', 'double', 0, 2, sim_model.logBuffer)
-    velNav = MessagingAccess.obtainMessageVector("simple_trans_nav_output", 'Basilisk.simulation.simple_nav',
-        'NavTransIntMsg', 60*144*10, unitTestSim.TotalSim, 'v_BN_N', 'double', 0, 2, sim_model.logBuffer)
-    attNav = MessagingAccess.obtainMessageVector("simple_att_nav_output", 'Basilisk.simulation.simple_nav',
-        'NavAttIntMsg', 60*144*10, unitTestSim.TotalSim, 'sigma_BN', 'double', 0, 2, sim_model.logBuffer)
-    rateNav = MessagingAccess.obtainMessageVector("simple_att_nav_output", 'Basilisk.simulation.simple_nav',
-        'NavAttIntMsg', 60*144*10, unitTestSim.TotalSim, 'omega_BN_B', 'double', 0, 2, sim_model.logBuffer)
-    dvNav = MessagingAccess.obtainMessageVector("simple_trans_nav_output", 'Basilisk.simulation.simple_nav',
-        'NavTransIntMsg', 60*144*10, unitTestSim.TotalSim, 'vehAccumDV', 'double', 0, 2, sim_model.logBuffer)
-    sunNav = MessagingAccess.obtainMessageVector("simple_att_nav_output", 'Basilisk.simulation.simple_nav',
-        'NavAttIntMsg', 60*144*10, unitTestSim.TotalSim, 'vehSunPntBdy', 'double', 0, 2, sim_model.logBuffer)
+    # def obtainMessageVector(MessageName, MessageModule, MessageObj, MessageCount,
+    #                         SimContainer, VarName, VarType, startIndex, stopIndex,
+    #                         messageType=sim_model.messageBuffer):
+    moduleName = 'Basilisk.simulation.simple_nav'
+    posNav = MessagingAccess.obtainMessageVector("simple_trans_nav_output", moduleName,
+                                                 'NavTransIntMsg', 60 * 144 * 10, unitTestSim.TotalSim, 'r_BN_N',
+                                                 'double', 0, 2, sim_model.logBuffer)
+    velNav = MessagingAccess.obtainMessageVector("simple_trans_nav_output", moduleName,
+                                                 'NavTransIntMsg', 60 * 144 * 10, unitTestSim.TotalSim, 'v_BN_N',
+                                                 'double', 0, 2, sim_model.logBuffer)
+    attNav = MessagingAccess.obtainMessageVector("simple_att_nav_output", moduleName,
+                                                 'NavAttIntMsg', 60 * 144 * 10, unitTestSim.TotalSim, 'sigma_BN',
+                                                 'double', 0, 2, sim_model.logBuffer)
+    rateNav = MessagingAccess.obtainMessageVector("simple_att_nav_output", moduleName,
+                                                  'NavAttIntMsg', 60 * 144 * 10, unitTestSim.TotalSim, 'omega_BN_B',
+                                                  'double', 0, 2, sim_model.logBuffer)
+    dvNav = MessagingAccess.obtainMessageVector("simple_trans_nav_output", moduleName,
+                                                'NavTransIntMsg', 60 * 144 * 10, unitTestSim.TotalSim, 'vehAccumDV',
+                                                'double', 0, 2, sim_model.logBuffer)
+    sunNav = MessagingAccess.obtainMessageVector("simple_att_nav_output", moduleName,
+                                                 'NavAttIntMsg', 60 * 144 * 10, unitTestSim.TotalSim, 'vehSunPntBdy',
+                                                 'double', 0, 2, sim_model.logBuffer)
 
     sunHatPred = numpy.array(sunPosition)-numpy.array(vehPosition)
     listNorm(sunHatPred)
@@ -285,10 +289,23 @@ def unitSimpleNav(show_plots):
     plt.close()
 
     # Corner case usage
-    pMatrixBad = [0.0]*12*12
-    stateBoundsBad = [0.0]*12
-    sNavObject.walkBounds = sim_model.DoubleVector(stateBoundsBad)
-    sNavObject.PMatrix = sim_model.DoubleVector(pMatrixBad)
+    pMatrixBad = [[0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+                  [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]]
+    # stateBoundsBad = [[0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.]]
+    stateBoundsBad = [[0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.], [0.]]
+    sNavObject.walkBounds = stateBoundsBad
+    sNavObject.PMatrix = pMatrixBad
+
     sNavObject.inputStateName = "random_name"
     sNavObject.inputSunName = "weirdly_not_the_sun"
     unitTestSim.InitializeSimulation()

@@ -169,8 +169,8 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
     SpiceObject = spice_interface.SpiceInterface()
     SpiceObject.ModelTag = "SpiceInterfaceData"
     SpiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
-    SpiceObject.OutputBufferCount = 10000
-    SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun"])
+    SpiceObject.outputBufferCount = 10000
+    SpiceObject.planetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun"])
     SpiceObject.UTCCalInit = DateSpice
     TotalSim.AddModelToTask(unitTaskName, SpiceObject)
 
@@ -178,7 +178,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
     TotalSim.ConfigureStopTime(int(60.0 * 1E9))
     TotalSim.AddVariableForLogging('SpiceInterfaceData.GPSSeconds')
     TotalSim.AddVariableForLogging('SpiceInterfaceData.J2000Current')
-    TotalSim.AddVariableForLogging('SpiceInterfaceData.JulianDateCurrent')
+    TotalSim.AddVariableForLogging('SpiceInterfaceData.julianDateCurrent')
     TotalSim.AddVariableForLogging('SpiceInterfaceData.GPSWeek')
 
     # Execute simulation
@@ -187,7 +187,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
 
     # Get the logged variables (GPS seconds, Julian Date)
     DataGPSSec = TotalSim.GetLogVariableData('SpiceInterfaceData.GPSSeconds')
-    DataJD = TotalSim.GetLogVariableData('SpiceInterfaceData.JulianDateCurrent')
+    DataJD = TotalSim.GetLogVariableData('SpiceInterfaceData.julianDateCurrent')
 
     #Get parametrized date from DatePlot
     year = "".join(("20",DatePlot[6:8]))
@@ -345,7 +345,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
         # Test overly long planet name
         SpiceObject.SPICEDataPath = ""
         SpiceObject.SPICELoaded = False
-        SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars", "sun",
+        SpiceObject.planetNames = spice_interface.StringVector(["earth", "mars", "sun",
                                                             "thisisaplanetthatisntreallyanythingbutIneedthenametobesolongthatIhitaninvalidconditioninmycode"])
 
         #TotalSim.ConfigureStopTime(int(1E9)) #Uncomment these 3 lines to test false planet names

@@ -35,7 +35,7 @@ import numpy as np
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
@@ -61,10 +61,6 @@ from Basilisk.utilities import simulationArchTypes
 # import message declarations
 from Basilisk.fswAlgorithms import fswMessages
 
-# @cond DOXYGEN_IGNORE
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-# @endcond
 
 ## \defgroup Tutorials_2_0_3
 ##   @{
@@ -113,13 +109,13 @@ path = os.path.dirname(os.path.abspath(filename))
 #
 # For the python processes, the creation step is almost identical to the creation step for standard
 # C/C++ processes.  Instead of:
-#~~~~~~~~~~~~~~{.py}
+# ~~~~~~~~~~~~~~{.py}
 #       scSim.dynProcessSecond = scSim.CreateNewProcess(scSim.simControlProc, 2)
-#~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~
 # We use:
-#~~~~~~~~~~~~~~{.py}
+# ~~~~~~~~~~~~~~{.py}
 #       scSimPy.dynProcessSecond = scSimPy.CreateNewPythonProcess(scSimPy.simControlProc, 2)
-#~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~
 # With this process, we've embedded Py in most of the naming, but that is an arbitrary user
 # choice, the only thing that matters is the CreateNewPythonProcess instead of CreateNewProcess.
 # Note that the prioritization is the same procedure as is used for standard tasks.
@@ -138,9 +134,7 @@ path = os.path.dirname(os.path.abspath(filename))
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useJitterSimple, useRWVoltageIO", [
-      (False, False)
-])
+@pytest.mark.parametrize("useJitterSimple, useRWVoltageIO", [False, False])
 def test_bskAttitudeFeedbackPD(show_plots, useJitterSimple, useRWVoltageIO):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
@@ -152,8 +146,8 @@ def test_bskAttitudeFeedbackPD(show_plots, useJitterSimple, useRWVoltageIO):
 
 def runRegularTask(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     '''Call this routine directly to run the tutorial scenario.'''
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
 
     #
     #  From here on there scenario python code is found.  Above this line the code is to setup a
@@ -224,7 +218,9 @@ def runRegularTask(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
 
     scSimPy.dynProcessSecond.addModelToTask(scSimPy.simTaskControlName, scSimPy.pyMRPPD)
 
-    dataUsReq, dataSigmaBR, dataOmegaBR, dataPos, dataOmegaRW, dataRW = executeMainSimRun(scSimPy, show_plots, useJitterSimple, useRWVoltageIO)
+    dataUsReq, dataSigmaBR, dataOmegaBR, dataPos, dataOmegaRW, dataRW = executeMainSimRun(scSimPy, show_plots,
+                                                                                          useJitterSimple,
+                                                                                          useRWVoltageIO)
 
     #
     #   retrieve the logged data
@@ -234,7 +230,9 @@ def runRegularTask(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     #
     #   plot the results
     #
-    fileNameString = filename[len(path)+6:-3]
+    fileName = os.path.basename(os.path.splitext(__file__)[0])
+    path = os.path.dirname(os.path.abspath(__file__))
+
     timeData = dataUsReq[:, 0] * macros.NANO2SEC
     timeDataBase = dataUsReqBase[:, 0] * macros.NANO2SEC
     plt.close("all")  # clears out plots from earlier test runs
@@ -244,10 +242,9 @@ def runRegularTask(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
                  timeDataBase, dataSigmaBRBase[:, idx], '--')
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Error $\sigma_{B/R}$')
-    if doUnitTests:     # only save off the figure if doing a unit test run
+    if doUnitTests:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString+"1" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
-            , plt, path)
+            fileName + "1" + str(int(useJitterSimple)) + str(int(useRWVoltageIO)), plt, path)
 
     plt.figure(2)
     for idx in range(1, 4):
@@ -262,12 +259,12 @@ def runRegularTask(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     plt.ylabel('RW tau diff [Nm] ')
 
     dataSigDiff = dataSigmaBR[:, 1:4] - dataSigmaBRBase[:, 1:4]
-    if(np.linalg.norm(dataSigDiff) > 1.0E-10):
+    if np.linalg.norm(dataSigDiff) > 1.0E-10:
         testFailCount += 1
         testMessages.append("Failed to get accurate agreement between attitude variables")
 
     dataUsDiff = dataUsReq[:, 1:4] - dataUsReqBase[:, 1:4]
-    if (np.linalg.norm(dataUsDiff) > 1.0E-10):
+    if np.linalg.norm(dataUsDiff) > 1.0E-10:
         testFailCount += 1
         testMessages.append("Failed to get accurate agreement between torque command variables")
 
@@ -281,8 +278,8 @@ def runRegularTask(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
-def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
 
+def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     # set the simulation time variable used later on
     simulationTime = macros.min2nano(10.)
     # simulationTime = macros.min2nano(0.1/60)
@@ -313,7 +310,7 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     I = [900., 0., 0.,
          0., 800., 0.,
          0., 0., 600.]
-    scObject.hub.mHub = 750.0                     # kg - spacecraft mass
+    scObject.hub.mHub = 750.0  # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scObject.hub.useTranslation = True
@@ -361,7 +358,7 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     RW3 = rwFactory.create('Honeywell_HR16'
                            , [0, 0, 1]
                            , maxMomentum=50.
-                           , Omega=300.             # RPM
+                           , Omega=300.  # RPM
                            , rWB_B=[0.5, 0.5, 0.5]  # meters
                            , RWModel=varRWModel
                            )
@@ -380,7 +377,7 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
         rwVoltageIO.ModelTag = "rwVoltageInterface"
 
         # set module parameters(s)
-        rwVoltageIO.voltage2TorqueGain = 0.2/10.  # [Nm/V] conversion gain
+        rwVoltageIO.voltage2TorqueGain = 0.2 / 10.  # [Nm/V] conversion gain
 
         # Add test module to runtime call list
         scSim.AddModelToTask(scSim.simTaskPreControlName, rwVoltageIO)
@@ -400,7 +397,7 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     inertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)
     inertial3DWrap.ModelTag = "inertial3D"
     scSim.AddModelToTask(scSim.simTaskPreControlName, inertial3DWrap, inertial3DConfig)
-    inertial3DConfig.sigma_R0N = [0., 0., 0.]       # set the desired inertial orientation
+    inertial3DConfig.sigma_R0N = [0., 0., 0.]  # set the desired inertial orientation
     inertial3DConfig.outputDataName = "guidanceInertial3D"
 
     # setup the attitude tracking error evaluation module
@@ -436,10 +433,10 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     rwMotorTorqueConfig.rwParamsInMsgName = "rwa_config_data_parsed"
     # Make the RW control all three body axes
     controlAxes_B = [
-             1, 0, 0,
-             0, 1, 0,
-             0, 0, 1
-        ]
+        1, 0, 0,
+        0, 1, 0,
+        0, 0, 1
+    ]
     rwMotorTorqueConfig.controlAxes_B = controlAxes_B
 
     if useRWVoltageIO:
@@ -463,7 +460,7 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 10000
-    samplingTime = simulationTime / (numDataPoints-1)
+    samplingTime = simulationTime / (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(rwMotorTorqueConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
@@ -509,18 +506,18 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a = 10000000.0           # meters
+    oe.a = 10000000.0  # meters
     oe.e = 0.01
-    oe.i = 33.3*macros.D2R
-    oe.Omega = 48.2*macros.D2R
-    oe.omega = 347.8*macros.D2R
-    oe.f = 85.3*macros.D2R
+    oe.i = 33.3 * macros.D2R
+    oe.Omega = 48.2 * macros.D2R
+    oe.omega = 347.8 * macros.D2R
+    oe.f = 85.3 * macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
 
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m  - r_CN_N
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
-    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]       # sigma_BN_B
-    scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]   # rad/s - omega_BN_B
+    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
+    scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
     #
     #   initialize Simulation
@@ -533,18 +530,19 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 
-    dataUsReq = scSim.pullMessageLogData(rwMotorTorqueConfig.outputDataName+".motorTorque", range(numRW))
-    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName+".sigma_BR", range(3))
-    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName+".omega_BR_B", range(3))
-    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName+".r_BN_N", range(3))
-    dataOmegaRW = scSim.pullMessageLogData(rwStateEffector.OutputDataString+".wheelSpeeds", range(numRW))
+    dataUsReq = scSim.pullMessageLogData(rwMotorTorqueConfig.outputDataName + ".motorTorque", range(numRW))
+    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", range(3))
+    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", range(3))
+    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", range(3))
+    dataOmegaRW = scSim.pullMessageLogData(rwStateEffector.OutputDataString + ".wheelSpeeds", range(numRW))
     dataRW = []
     for i in range(0, numRW):
-        dataRW.append(scSim.pullMessageLogData(rwOutName[i]+".u_current", range(1)))
+        dataRW.append(scSim.pullMessageLogData(rwOutName[i] + ".u_current", range(1)))
     if useRWVoltageIO:
-        dataVolt = scSim.pullMessageLogData(fswRWVoltageConfig.voltageOutMsgName+".voltage", range(numRW))
+        dataVolt = scSim.pullMessageLogData(fswRWVoltageConfig.voltageOutMsgName + ".voltage", range(numRW))
 
     return dataUsReq, dataSigmaBR, dataOmegaBR, dataPos, dataOmegaRW, dataRW
+
 
 ## \addtogroup Tutorials_2_0_3
 ##   @{
@@ -569,9 +567,9 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
 # Additionally, your class should ensure that in the __init__ method, your call the super
 # __init__ method for the class so that the base class' constructor also gets called to
 # initialize the model-name, activity, moduleID, and other important class members:
-#~~~~~~~~~~~~~~{.py}
+# ~~~~~~~~~~~~~~{.py}
 #       super(PythonMRPPD, self).__init__(modelName, modelActive, modelPriority)
-#~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~
 # Once you have made your class consistent with these polymorphic constraints, it is
 # essentially free-form.  The only limit is your imagination.  Numpy, matplotlib, vision processing,
 # AI, whatever.  Go nuts.  Don't do anything I wouldn't do though.
@@ -655,8 +653,8 @@ class PythonMRPPD(simulationArchTypes.PythonModelClass):
 #
 if __name__ == "__main__":
     runRegularTask(
-        False,        # do unit tests
-        True,         # show_plots
-        False,        # useJitterSimple
-        False        # useRWVoltageIO
-       )
+        False,  # do unit tests
+        True,  # show_plots
+        False,  # useJitterSimple
+        False  # useRWVoltageIO
+    )

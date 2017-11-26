@@ -45,14 +45,8 @@ from Basilisk.utilities import astroFunctions
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk import pyswice
-
-
-# @cond DOXYGEN_IGNORE
 from Basilisk import __path__
 bskPath = __path__[0]
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-# @endcond
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -399,7 +393,8 @@ def run(doUnitTests, show_plots, scCase):
     #
     #   plot the results
     #
-    fileNameString = filename[len(path) + 6:-3]
+    fileName = os.path.basename(os.path.splitext(__file__)[0])
+    path = os.path.dirname(os.path.abspath(__file__))
 
     # draw the inertial position vector components
     plt.close("all")  # clears out plots from earlier test runs
@@ -425,9 +420,7 @@ def run(doUnitTests, show_plots, scCase):
     plt.xlabel('Time ' + timeLabel)
     plt.ylabel('Inertial Position ' + axesLabel)
     if doUnitTests:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileNameString + "1" + scCase
-            , plt, path)
+        unitTestSupport.saveScenarioFigure(fileName + "1" + scCase, plt, path)
 
     rBSK = posData[-1, 1:4]  # store the last position to compare to the SPICE position
     if scCase is 'Hubble':
@@ -489,7 +482,7 @@ def run(doUnitTests, show_plots, scCase):
         plt.ylabel('$i_p$ Cord. [km]')
         plt.grid()
         if doUnitTests:  # only save off the figure if doing a unit test run
-            unitTestSupport.saveScenarioFigure(fileNameString + "2" + scCase, plt, path)
+            unitTestSupport.saveScenarioFigure(fileName + "2" + scCase, plt, path)
     else:
         time = gravFactory.spiceObject.getCurrentTimeString()
         scState = 1000.0 * pyswice.spkRead(scSpiceName,
@@ -520,9 +513,7 @@ def run(doUnitTests, show_plots, scCase):
     plt.xlabel('Time [min]')
     plt.ylabel('Inertial Position Differences [m]')
     if doUnitTests:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileNameString + "3" + scCase,
-                                           plt,
-                                           path)
+        unitTestSupport.saveScenarioFigure(fileName + "3" + scCase, plt, path)
 
     if show_plots:
         plt.show()
@@ -548,8 +539,7 @@ def run(doUnitTests, show_plots, scCase):
         # compare the results to the truth values
         accuracy = 300.0  # meters
         testFailCount, testMessages = unitTestSupport.compareVector(
-            rTrue, rBSK, accuracy, "|r_BN_N| error",
-            testFailCount, testMessages)
+            rTrue, rBSK, accuracy, "|r_BN_N| error", testFailCount, testMessages)
 
         #   print out success message if no error were found
         if testFailCount == 0:
