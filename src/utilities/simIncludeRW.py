@@ -109,14 +109,6 @@ class rwFactory(object):
             varMaxMomentum = 0.0              # default value
         self.maxMomentum = varMaxMomentum
 
-        if kwargs.has_key('linearFrictionRatio'):
-            varLinearFrictionRatio =  kwargs['linearFrictionRatio']
-            if not isinstance(varLinearFrictionRatio, (float)):
-                print 'ERROR: linearFrictionRatio must be a FLOAT argument'
-                exit(1)
-        else:
-            varLinearFrictionRatio = -1.0       # default value
-
         # set device label name
         if kwargs.has_key('label'):
             varLabel = kwargs['label']
@@ -172,12 +164,11 @@ class rwFactory(object):
         # enforce some RW options
         RW.RWModel = varRWModel
         if not varUseRWfriction:
-            RW.u_f = 0.0
+            RW.fCoulomb = 0.0
         if not varUseMaxTorque:
             RW.u_max = -1  # a negative value turns off RW torque saturation
         if not varUseMinTorque:
             RW.u_min = 0.0
-        RW.linearFrictionRatio = varLinearFrictionRatio
 
         # add RW to the list of RW devices
         self.rwList[varLabel] = RW
@@ -270,7 +261,7 @@ class rwFactory(object):
         # minimum RW torque [Nm]
         RW.u_min = 0.00001
         # static friction torque [Nm]
-        RW.u_f = 0.0005
+        RW.fCoulomb = 0.0005
         # RW rotor mass [kg]
         # Note: the rotor mass here is set equal to the RW mass of the above spec sheet.
         # static RW imbalance [kg*m]
@@ -321,7 +312,7 @@ class rwFactory(object):
         # minimum RW torque [Nm]
         RW.u_min = 0.00001
         # static friction torque [Nm]
-        RW.u_f = 0.0005
+        RW.fCoulomb = 0.0005
         # RW rotor mass [kg]
         # Note: the rotor mass here is set equal to the RW mass of the above spec sheet.
         # static RW imbalance [kg*m]
@@ -372,7 +363,7 @@ class rwFactory(object):
         # minimum RW torque [Nm]
         RW.u_min = 0.00001
         # static friction torque [Nm]
-        RW.u_f = 0.0005
+        RW.fCoulomb = 0.0005
         # RW rotor mass [kg]
         # Note: the rotor mass here is set equal to the RW mass of the above spec sheet.
         # static RW imbalance [kg*m]
