@@ -32,13 +32,11 @@ import math
 import csv
 import logging
 
-
-
-
-
-
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
 
 from Basilisk.utilities import macros
+from Basilisk.utilities import unitTestSupport
 from Basilisk.simulation import reactionWheelStateEffector
 
 # methods
