@@ -83,7 +83,6 @@ typedef struct {
     int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
     int32_t cssDataInMsgId;      /*!< -- ID for the incoming CSS sensor message*/
-    int32_t massPropsInMsgId;    /*!< [-] ID for the incoming mass properties message*/
     int32_t cssConfInMsgId;   /*!< [-] ID associated with the CSS configuration data*/
 }SunlineUKFConfig;
 
