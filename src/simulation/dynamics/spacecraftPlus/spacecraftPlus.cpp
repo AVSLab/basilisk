@@ -84,7 +84,7 @@ void SpacecraftPlus::CrossInit()
 }
 
 /*! This is the method where the messages of the state of vehicle are written */
-void SpacecraftPlus::writeOutputMessages(uint64_t clockTime)
+void SpacecraftPlus::writeOutputStateMessages(uint64_t clockTime)
 {
     // - Populate state output message
     SCPlusStatesSimMsg stateOut;
@@ -132,7 +132,14 @@ void SpacecraftPlus::UpdateState(uint64_t CurrentSimNanos)
     this->gravField.updateInertialPosAndVel();
 
     // - Write the state of the vehicle into messages
-    this->writeOutputMessages(CurrentSimNanos);
+    this->writeOutputStateMessages(CurrentSimNanos);
+    // - Loop over stateEffectors to call writeOutputStateMessages
+    std::vector<StateEffector*>::iterator it;
+    for(it = this->states.begin(); it != this->states.end(); it++)
+    {
+        // - Call writeOutputStateMessages for stateEffectors
+        (*it)->writeOutputStateMessages(CurrentSimNanos);
+    }
     this->simTimePrevious = CurrentSimNanos;
 
     return;

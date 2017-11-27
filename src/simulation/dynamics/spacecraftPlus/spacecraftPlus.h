@@ -92,7 +92,7 @@ public:
     void calcForceTorqueFromStateEFfectors(double time);  //!< -- This method computes the force and torque from the stateEffectors
     void SelfInit();                     //!< -- Lets spacecraft plus create its own msgs
     void CrossInit();                    //!< -- Hook to tie s/c plus back into provided msgs
-    void writeOutputMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
+	void writeOutputStateMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
     void UpdateState(uint64_t CurrentSimNanos);  //!< -- Runtime hook back into Basilisk arch
     void linkInStates(DynParamManager& statesIn);  //!< Method to get access to the hub's states
     void equationsOfMotion(double integTimeSeconds);    //!< -- This method computes the equations of motion for the whole system
