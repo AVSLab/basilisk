@@ -1233,6 +1233,8 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
 

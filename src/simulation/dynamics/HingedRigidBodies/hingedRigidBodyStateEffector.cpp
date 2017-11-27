@@ -44,7 +44,7 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
     this->dcm_HB.Identity();
     this->nameOfThetaState = "hingedRigidBodyTheta";
     this->nameOfThetaDotState = "hingedRigidBodyThetaDot";
-    this->HingedRigidBodyOutMsgName = "";
+    this->HingedRigidBodyOutMsgName = "hingedRigidBody_OutputStates";
     
     return;
 }
@@ -61,7 +61,8 @@ HingedRigidBodyStateEffector::~HingedRigidBodyStateEffector()
 void HingedRigidBodyStateEffector::SelfInit()
 {
     SystemMessaging *messageSys = SystemMessaging::GetInstance();
-    this->HingedRigidBodyOutMsgId =  messageSys->CreateNewMessage(this->HingedRigidBodyOutMsgName, sizeof(HingedRigidBodySimMsg), 2, "HingedRigidBodySimMsg", this->moduleID);
+    this->HingedRigidBodyOutMsgId =  messageSys->CreateNewMessage(this->HingedRigidBodyOutMsgName,
+                                             sizeof(HingedRigidBodySimMsg), 2, "HingedRigidBodySimMsg", this->moduleID);
 
     return;
 }
@@ -80,7 +81,7 @@ void HingedRigidBodyStateEffector::CrossInit()
  @return void
  @param CurrentClock The current simulation time (used for time stamping)
  */
-void HingedRigidBodyStateEffector::WriteOutputMessages(uint64_t CurrentClock)
+void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentClock)
 {
     SystemMessaging *messageSys = SystemMessaging::GetInstance();
     std::vector<int64_t>::iterator it;
@@ -88,7 +89,8 @@ void HingedRigidBodyStateEffector::WriteOutputMessages(uint64_t CurrentClock)
     HRBoutputStates.theta = this->theta;
     HRBoutputStates.thetaDot = this->thetaDot;
         messageSys->WriteMessage(this->HingedRigidBodyOutMsgId, CurrentClock,
-                             sizeof(HingedRigidBodySimMsg), reinterpret_cast<uint8_t*> (&HRBoutputStates), this->moduleID);
+                             sizeof(HingedRigidBodySimMsg), reinterpret_cast<uint8_t*> (&HRBoutputStates),
+                                 this->moduleID);
 }
 
 
@@ -287,8 +289,6 @@ void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime
  */
 void HingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
-    WriteOutputMessages(CurrentSimNanos);
-
     return;
 }
 
