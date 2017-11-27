@@ -32,26 +32,32 @@ typedef struct {
     Eigen::Vector3d gsHat_B;    //!< [-] spin axis unit vector in body frame
     Eigen::Vector3d w2Hat0_B;   //!< [-] initial torque axis unit vector in body frame
     Eigen::Vector3d w3Hat0_B;   //!< [-] initial gimbal axis unit vector in body frame
-    double mass;                //!< [kg], reaction wheel rotor mass
-    double theta;               //!< [rad], wheel angle
-    double Omega;               //!< [rad/s], wheel speed
-    double Js;                  //!< [kg-m^2], spin axis gsHat rotor moment of inertia
-    double Jt;                  //!< [kg-m^2], gtHat axis rotor moment of inertia
-    double Jg;                  //!< [kg-m^2], ggHat axis rotor moment of inertia
-    double U_s;                 //!< [kg-m], static imbalance
-    double U_d;                 //!< [kg-m^2], dynamic imbalance
-    double d;                	//!< [m], wheel center of mass offset from wheel frame origin
-    double J13;                	//!< [kg-m^2], x-z inertia of wheel about wheel center in wheel frame (imbalance)
-    double u_current;           //!< [N-m], current motor torque
-    double u_max;               //!< [N-m], Max torque
-    double u_min;               //!< [N-m], Min torque
-    double u_f;                 //!< [N-m], Coulomb friction torque magnitude
-    double Omega_max;           //!< [rad/s], max wheel speed
-    double linearFrictionRatio; //!< [%] ratio relative to max speed value up to which the friction behaves linearly
-    RWModels RWModel;           //!< [-], Type of imbalance model to use
+    double mass = 1.0;          //!< [kg], reaction wheel rotor mass
+    double theta = 0.0;         //!< [rad], wheel angle
+    double Omega = 0.0;         //!< [rad/s], wheel speed
+    double Js = 1.0;            //!< [kg-m^2], spin axis gsHat rotor moment of inertia
+    double Jt = 1.0;            //!< [kg-m^2], gtHat axis rotor moment of inertia
+    double Jg = 1.0;            //!< [kg-m^2], ggHat axis rotor moment of inertia
+    double U_s = 0.0;           //!< [kg-m], static imbalance
+    double U_d = 0.0;           //!< [kg-m^2], dynamic imbalance
+    double d = 0.0;             //!< [m], wheel center of mass offset from wheel frame origin
+    double J13 = 0.0;           //!< [kg-m^2], x-z inertia of wheel about wheel center in wheel frame (imbalance)
+    double u_current = 0.0;     //!< [N-m], current motor torque
+    double u_max = 1000000000;  //!< [N-m], Max torque
+    double u_min = 0.0;         //!< [N-m], Min torque
+    double fCoulomb = 0.0;      //!< [N-m], Coulomb friction torque magnitude
+    double fStatic = 0.0;       //!< [N-m], Static friction torque magnitude
+    double betaStatic = 0.0;    //!< Stribeck friction coefficient
+    double cViscous = 0.0;      //!< [N-m-s/rad] Viscous fricion coefficient
+    double omegaLimitCycle = 0.0001; //!< [rad/s], wheel speed that avoids limit cycle with friction
+    double frictionTorque = 0.0; //!< [N-m] friction torque
+    double omegaBefore = 0.0;   //!< [rad/s], wheel speed one time step before
+    bool frictionStribeck = 0;  //!< [-] Boolenian to determine if stribeck friction model is used or not, 0 is non-stribeck, 1 is stribeck
+    double Omega_max = 1000000000.0; //!< [rad/s], max wheel speed
+    RWModels RWModel = BalancedWheels;       //!< [-], Type of imbalance model to use
     Eigen::Vector3d aOmega;     //!< [-], parameter used in coupled jitter back substitution
     Eigen::Vector3d bOmega;     //!< [-], parameter used in coupled jitter back substitution
-    double cOmega;              //!< [-], parameter used in coupled jitter back substitution
+    double cOmega = 0.0;        //!< [-], parameter used in coupled jitter back substitution
     Eigen::Matrix3d IRWPntWc_B;
     Eigen::Matrix3d IPrimeRWPntWc_B;
     Eigen::Vector3d rWcB_B;

@@ -41,6 +41,7 @@ typedef struct {
     double d;                   //!< [m], wheel center of mass offset from wheel frame origin
     double J13;                	//!< [kg-m^2], x-z inertia of wheel about wheel center in wheel frame (imbalance)
     double u_current;           //!< [N-m], current motor torque
+    double frictionTorqueMsg;   //!< [N-m], friction Torque
     double u_max;               //!< [N-m], Max torque
     double u_min;               //!< [N-m], Min torque
     double u_f;                 //!< [N-m], Coulomb friction torque magnitude
