@@ -238,10 +238,8 @@ def run(doUnitTests, show_plots, integratorCase):
     #
     #   plot the results
     #
-    fileName = os.path.basename(os.path.splitext(__file__)[0])
-    path = os.path.dirname(os.path.abspath(__file__))
     np.set_printoptions(precision=16)
-
+    fileNameString = filename[len(path)+6:-3]
     if integratorCase == "rk4":
         plt.close("all")        # clears out plots from earlier test runs
 
@@ -284,8 +282,13 @@ def run(doUnitTests, show_plots, integratorCase):
     plt.legend(loc='lower right')
     plt.grid()
     if doUnitTests:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName, plt, path)
-        unitTestSupport.saveFigurePDF(fileName, plt, path+"/_Documentation/AutoTeX/")
+        unitTestSupport.saveScenarioFigure(
+            fileNameString
+            , plt, path)
+        unitTestSupport.saveFigurePDF(
+            fileNameString
+            , plt, path+"/_Documentation/AutoTeX/"
+        )
 
     if show_plots:
         plt.show()
@@ -348,13 +351,15 @@ def run(doUnitTests, show_plots, integratorCase):
             colorText = 'Red'  # color to write auto-documented "FAILED" message in in LATEX
             snippetContent = "\\begin{verbatim}"
             for message in testMessages:
-                snippetContent += message
+                snippetContent +=   message
             snippetContent += "\\end{verbatim}"
-        snippetMsgName = fileName + 'Msg-' + integratorCase
-        unitTestSupport.writeTeXSnippet(snippetMsgName, snippetContent, path + "/_Documentation/")
-        snippetPassFailName = fileName + 'TestMsg-' + integratorCase
+        snippetMsgName = fileNameString + 'Msg-' + integratorCase
+        unitTestSupport.writeTeXSnippet(snippetMsgName, snippetContent,
+                                    path + "/_Documentation/")
+        snippetPassFailName = fileNameString + 'TestMsg-' + integratorCase
         snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}'
-        unitTestSupport.writeTeXSnippet(snippetPassFailName, snippetContent, path+"/_Documentation/")
+        unitTestSupport.writeTeXSnippet(snippetPassFailName, snippetContent,
+                                    path+"/_Documentation/")
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
