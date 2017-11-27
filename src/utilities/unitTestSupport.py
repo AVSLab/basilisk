@@ -408,6 +408,18 @@ def pullVectorSetFromData(inpMat):
     outMat = np.array(inpMat).transpose()
     return outMat[1:].transpose()
 
+def v3Tilde(vector):
+    x1 = vector[0]
+    x2 = vector[1]
+    x3 = vector[2]
+
+    xTilde = [[0, -x3, x2]
+        ,[x3, 0, -x1]
+        ,[-x2, x1, 0]
+              ]
+
+    return xTilde
+
 def enableVisualization(scSim, dynProcess, processName, bodyName = 'earth'):
     VizTaskName = "VizTask"
     dynProcess.addTask(scSim.CreateNewTask(VizTaskName, macros.sec2nano(0.5)))
