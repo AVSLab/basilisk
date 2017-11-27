@@ -25,6 +25,7 @@
 /*! @brief Structure used to define the output definition for reaction wheel speeds*/
 typedef struct {
     double wheelSpeeds[MAX_EFF_CNT];                //!< r/s The current angular velocities of the RW wheel
+    double wheelThetas[MAX_EFF_CNT];                //!< r/s The current angle of the RW if jitter is enabled
 }RWSpeedIntMsg;
 
 #endif
