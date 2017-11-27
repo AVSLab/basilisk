@@ -52,6 +52,7 @@ public:
                                               double & rotEnergyContr);  //!< -- Energy and momentum calculations
     virtual void modifyStates(double integTime); //!< -- Modify state values after integration
     virtual void calcForceTorqueOnBody(double integTime);  //!< -- Force and torque on s/c due to stateEffector
+    virtual void writeOutputStateMessages(uint64_t integTimeNanos); //!< -- Write State Messages after integration
     virtual void registerStates(DynParamManager& states) = 0;  //!< -- Method for stateEffectors to register states
     virtual void linkInStates(DynParamManager& states) = 0;  //!< -- Method for stateEffectors to get other states
     virtual void computeDerivatives(double integTime)=0;  //!< -- Method for each stateEffector to calculate derivatives
