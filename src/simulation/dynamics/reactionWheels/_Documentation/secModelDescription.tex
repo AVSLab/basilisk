@@ -237,3 +237,30 @@ Now we have two equations containing $\ddot{\bm{r}}_{B/N}$ and $\dot{\bm\omega}_
 \end{multline}
 
 This concludes the equations that are necessary to define the three different modes of the reaction wheel. Reference\cite{Alcorn:2016yq} explains in further detail the EOMs for the simple-jitter and fully-coupled modes. Reference\cite{schaub} gives more details on the derivation for balanced reaction wheels.
+
+\subsection{Friction Model}
+\label{sec:Friction}
+
+\begin{figure}[htbp]
+	\centerline{
+		\includegraphics[width=0.5\textwidth]{Figures/Stribeck}}
+	\caption{Friction Torque Model - Reference~\cite{OLSSON1998176}}
+	\label{fig:Stribeck}
+\end{figure}
+
+The friction model used for reaction wheels uses a combination of static, Coulomb, and viscous friction and can be seen in Fig.~\ref{fig:Stribeck}. To incorporate all of these effects, the friction was adopted using the Stribeck friction model seen in Reference~\cite{OLSSON1998176}. The following equation describes the calculation of the friction torque on the reaction wheels.
+
+\begin{equation}
+\tau_{f} = - \sqrt{2 e} (\tau_{\text{st}}-\tau_c) e^{\Big[-\big(\frac{\Omega}{\beta_{\text{st}}}\big)^2\Big]} - \tau_c \tanh \Big[\frac{10 \Omega}{\beta_{\text{st}}}\Big] - c_v \Omega
+\label{eq:friction}
+\end{equation}
+
+In Eq.~\eqref{eq:friction}, $\tau_{f}$ is the friction torque, $\tau_{\text{st}}$ is the static friction magnitude, $\tau_c$ is the coulomb friction magnitude, $\beta_{\text{st}}$ is the Stribeck coefficient which modifies the peakedness of the Stribeck curve, and $c_v$ is the viscous damping coefficient. These variables can also be seen in the variable descriptions in Fig.~\ref{fig:Stribeck}. 
+
+The Stribeck function is only applicable when the reaction wheel is starting from rest. In contrast, when the reaction wheel starts from a non-zero speed, or has already broken free of static friction term, then the following equation is implemented:
+
+\begin{equation}
+\tau_{f} = - \tau_c \text{sgn} (\Omega) - c_v \Omega
+\label{eq:friction2}
+\end{equation}
+This logic and math is implemented in the reaction wheel dynamics module. 

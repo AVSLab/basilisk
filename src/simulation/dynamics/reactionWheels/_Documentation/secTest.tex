@@ -44,16 +44,17 @@ The BOE for this scenario can be seen in Figure~\ref{fig:BOE}. This involves a r
 
 \clearpage
 
-\subsection{Friction Scenario - Integrated Test}
+\subsection{Friction - Integrated Tests}
 
-In this test the goal is to validate that the friction model is matching the desired coulomb and linear friction model. This is done by setting a spacecraft with two identical reaction wheels with identical spin axes. The spacecraft is set to have no initial rotation. The wheel speeds are equal in magnitude but opposite in direction. The expected results are that the spacecraft will not rotate and the wheel speeds will spin down to zero, and the friction forces will match the desired coulomb and linear friction model seen in Figure~\ref{fig:FrictionTorque}.
+In this test the goal is to validate that the friction model is matching the desired static, Coulomb and linear friction model. This is done by setting a spacecraft with two identical reaction wheels with identical spin axes. There are two scenarios being tested: one when the reaction wheels start with a non-zero angular velocity and are spinning down to rest, and the other scenario is when both reaction wheels are starting from rest and applying torque to them to break away from the static friction. These two different friction models for spinning up and spinning down reaction wheels can be seen in Section~\ref{sec:Friction}.
 
-\begin{figure}[htbp]
-	\centerline{
-		\includegraphics[width=0.8\textwidth]{Figures/FrictionTorque}}
-	\caption{Friction Torque Model}
-	\label{fig:FrictionTorque}
-\end{figure}
+\subsubsection{Spin Down Friction Test}
+
+In this test, the spacecraft is set to have no initial rotation. The wheel speeds are equal in magnitude but opposite in direction. The expected results are that the spacecraft will not rotate and the wheel speeds will spin down to zero while matching the function seen in Eq.~\eqref{eq:friction2}. The test verifies that the math in Eq.~\eqref{eq:friction2} is being computed properly by calculating this in python and ensuring that the results match the Basilisk output.
+
+\subsubsection{Spin Up Friction Test}
+
+In this test, the spacecraft and wheel speeds are all have zero angular velocities. The reaction wheels are given equal but opposite applied torques that are greater in magnitude than the static friction torque. The expected results are that the spacecraft will not rotate and the wheel speeds will spin up while matching the function seen in Eq.~\eqref{eq:friction} and Figure~\ref{fig:Stribeck}. The test verifies that the math in Eq.~\eqref{eq:friction} is being computed properly by calculating this in python and ensuring that the results match the Basilisk output.
 
 \subsection{Saturation - Unit Test}
 
@@ -93,9 +94,26 @@ This test is ensuring that when a commanded torque requests a torque below the m
 
 The test gives two commanded torques, one above $u_{\textnormal{min}}$ and one below, and ensures that the correct values are being set for $u_s$.
 
+\subsection{Speed Saturation - Unit Test}
+
+This test is ensuring that when the current reaction wheel speed is greater than or equal to the maximum allowable wheel speed, the applied torque is set to zero. The logic can be seen in the following equation:
+
+\begin{equation}
+\begin{gathered}
+\begin{aligned}
+&\textnormal{\textbf{if}}\quad \vert \Omega \vert >= \Omega_{\text{max}}  \quad \textnormal{\textbf{then}}\\
+&\quad u_s = 0.0 \\
+&\textnormal{\textbf{end if}}\\
+\end{aligned}
+\end{gathered}
+\label{eq:ballin3}
+\end{equation}
+
+The test requests a non-zero commanded torque $u_{\textnormal{cmd}}$, gives two possibilities for $\Omega$, one above $\Omega_{\textnormal{max}}$ and one below, and ensures that the correct values are being set for $u_s$.
+
 \section{Test Parameters}
 
-Since this is an integrated test, the inputs to the test are the physical parameters of the spacecraft along with the initial conditions of the states. These parameters are outlined in Tables~\ref{tab:hub}-~\ref{tab:initial}. Additionally, the error tolerances can be seen in Table~\ref{tab:errortol}.
+Since this is an integrated test, the inputs to the test are the physical parameters of the spacecraft along with the initial conditions of the states. These parameters are outlined in Tables~\ref{tab:hub}-~\ref{tab:initial}. Additionally, the error tolerances can be seen in Table~\ref{tab:errortol}. The error tolerances are different depending on the test. The energy-momentum conservation values will normally have an agreement down to 1e-14, but to ensure cross-platform agreement the tolerance was chose to be 1e-10. The position and attitude checks have a tolerance set to 1e-7 and is because 8 significant digits were chosen as the values being compared to. The BOE tests depend on the integration time step but as the time step gets smaller the accuracy gets better. So 1e-8 tolerance was chosen so that a larger time step could be used but still show agreement. The Friction tests give the same numerical outputs down to ~1e-15 between python and Basilisk, but 1e-10 was chosen to ensure cross platform agreement. Finally, the saturation and minimum torque tests have 1e-10 to ensure cross-platform success, but these values will typically agree to machine precision. 
 
 \begin{table}[htbp]
 	\caption{Spacecraft Hub Parameters for Energy Momentum Conservation Scenarios}
@@ -218,9 +236,9 @@ Since this is an integrated test, the inputs to the test are the physical parame
 		\hline
 		BOE & 1e-8 \\
 		\hline
-		Friction & 1e-8 \\
+		Friction Tests & 1e-10 \\
 		\hline
-		Saturation & 1e-10 \\
+		Saturation Tests & 1e-10 \\
 		\hline
 		Minimum Torque & 1e-10 \\
 		\hline	
@@ -257,11 +275,19 @@ Since this is an integrated test, the inputs to the test are the physical parame
 
 \clearpage
 
-\subsection{Friction Scenario - Integrated Test Results}
+\subsection{Friction Spin Down Integrated Test Results}
 
-\input{AutoTex/ReactionWheelFrictionTestBodyRates}
-\input{AutoTex/ReactionWheelFrictionTestFrictionTorque}
-\input{AutoTex/ReactionWheelFrictionTestWheelSpeed}
+\input{AutoTex/ReactionWheelFrictionSpinDownTestBodyRates}
+\input{AutoTex/ReactionWheelFrictionSpinDownTestFrictionTorque}
+\input{AutoTex/ReactionWheelFrictionSpinDownTestWheelSpeed}
+
+\clearpage
+
+\subsection{Friction Spin Up Integrated Test Results}
+
+\input{AutoTex/ReactionWheelFrictionSpinUpTestBodyRates}
+\input{AutoTex/ReactionWheelFrictionSpinUpTestFrictionTorque}
+\input{AutoTex/ReactionWheelFrictionSpinUpTestWheelSpeed}
 
 \clearpage
 
@@ -274,9 +300,9 @@ Since this is an integrated test, the inputs to the test are the physical parame
 	\begin{tabular}{c | c } % Column formatting, 
 		\hline
 		\textbf{Test} 				    & \textbf{Pass/Fail}  \\ \hline
-		Simple Jitter  & \textcolor{ForestGreen}{PASSED}\\
-		Saturation  & \textcolor{ForestGreen}{PASSED}   \\ 
-		Minimum Torque  &\textcolor{ForestGreen}{PASSED}  \\ \hline
+		Simple Jitter  & \input{AutoTeX/JitterSimplePassFail} \\
+		Saturation  & \input{AutoTeX/saturationPassFail}   \\ 
+		Minimum Torque  & \input{AutoTeX/minimumPassFail}  \\ \hline
 	\end{tabular}
 \end{table}
 

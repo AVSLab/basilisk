@@ -59,6 +59,7 @@ public:
 	void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr);
     void computeDerivatives(double integTime);
     void updateEffectorMassProps(double integTime);
+    void writeOutputStateMessages(uint64_t integTimeNanos);
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr);
 	void SelfInit();
 	void CrossInit();

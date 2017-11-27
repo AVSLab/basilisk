@@ -60,20 +60,6 @@ def defaultReactionWheel():
     RW.gsHat_B = [[1.],[0.],[0.]]
     RW.w2Hat0_B = [[0.],[1.],[0.]]
     RW.w3Hat0_B = [[0.],[0.],[1.]]
-    RW.theta = 0.
-    RW.u_current = 0.
-    RW.u_max = 0.
-    RW.u_min = 0.
-    RW.u_f = 0.
-    RW.Omega = 0.
-    RW.Omega_max = 0.
-    RW.Js = 0.
-    RW.Jt = 0.
-    RW.Jg = 0.
-    RW.U_s = 0.
-    RW.U_d = 0.
-    RW.mass = 0.
-    RW.linearFrictionRatio = 0.
     RW.RWModel = 0
     return RW
 
@@ -92,7 +78,7 @@ def asEigen(v):
 @pytest.mark.parametrize("useFlag, testCase", [
     (False,'saturation'),
     (False,'minimum'),
-    (False,'friction')
+    (False,'speedSaturation')
 ])
 
 # provide a unique test method name, starting with test_
@@ -140,20 +126,15 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
 
         expOut['u_current'] = [0.,0.0001]
 
-    elif testCase is 'friction':
-        u_f = [0.1,0.]
-        Omega = [-20.,0.]
-        Omega_max = [100.,0.]
-        linearFrictionRatio = [0.1,0.]
-        for i in range(0,numRW):
-            RWs[i].u_f = u_f[i]
-            RWs[i].Omega = Omega[i]
-            RWs[i].Omega_max = Omega_max[i]
-            RWs[i].linearFrictionRatio = linearFrictionRatio[i]
-        u_cmd = [-1.,0.]
+    elif testCase is 'speedSaturation':
+        RWs[0].Omega_max = 50.
+        RWs[1].Omega_max = 50.
+        RWs[0].Omega = 49.
+        RWs[1].Omega = 51.
+        u_cmd = [1.5,1.5]
         writeNewRWCmds(ReactionWheel,u_cmd,len(RWs))
 
-        expOut['u_current'] = np.asarray(u_cmd) + np.asarray(u_f)
+        expOut['u_current'] = [1.5,0.0]
 
     else:
         raise Exception('invalid test case')
@@ -190,6 +171,15 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
     # print out success message if no errors were found
     if testFailCount == 0:
         print   "PASSED "
+        colorText = 'ForestGreen'
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        passedText = '\\textcolor{' + colorText + '}{' + "FAILED" + '}'
+
+    # Write some snippets for AutoTex
+    snippetName = testCase + 'PassFail'
+    unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -202,5 +192,5 @@ if __name__ == "__main__":
     test_unitSimReactionWheel(
         False, # show_plots
         False, # useFlag
-        'friction' # testCase
+        'speedSaturation' # testCase
     )

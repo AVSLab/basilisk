@@ -205,9 +205,41 @@ void ReactionWheelStateEffector::updateContributions(double integTime, Eigen::Ma
 	{
 		OmegaSquared = RWIt->Omega * RWIt->Omega;
 
+        // Determine which friction model to use (if starting from zero include stribeck)
+        if (fabs(RWIt->Omega) < 0.10*RWIt->omegaLimitCycle) {
+            RWIt->frictionStribeck = 1;
+        }
+        double signOfOmega = ((RWIt->Omega > 0) - (RWIt->Omega < 0));
+        double omegaDot = RWIt->Omega - RWIt->omegaBefore;
+        double signOfOmegaDot = ((omegaDot > 0) - (omegaDot < 0));
+        if (RWIt->frictionStribeck == 1 && abs(signOfOmega - signOfOmegaDot) < 2) {
+            RWIt->frictionStribeck = 1;
+        } else {
+            RWIt->frictionStribeck = 0;
+        }
+
+        double frictionForce;
+        double frictionForceAtLimitCycle;
+        // Friction model which uses static, stribeck, coulomb, and viscous friction models
+        if (RWIt->frictionStribeck == 1) {
+            frictionForce = sqrt(2.0*exp(1.0))*(RWIt->fStatic - RWIt->fCoulomb)*exp(-(RWIt->Omega/RWIt->betaStatic)*(RWIt->Omega/RWIt->betaStatic)/2.0)*RWIt->Omega/(RWIt->betaStatic*sqrt(2.0)) + RWIt->fCoulomb*tanh(RWIt->Omega*10.0/RWIt->betaStatic) + RWIt->cViscous*RWIt->Omega;
+            frictionForceAtLimitCycle = sqrt(2.0*exp(1.0))*(RWIt->fStatic - RWIt->fCoulomb)*exp(-(RWIt->omegaLimitCycle/RWIt->betaStatic)*(RWIt->omegaLimitCycle/RWIt->betaStatic)/2.0)*RWIt->omegaLimitCycle/(RWIt->betaStatic*sqrt(2.0)) + RWIt->fCoulomb*tanh(RWIt->omegaLimitCycle*10.0/RWIt->betaStatic) + RWIt->cViscous*RWIt->omegaLimitCycle;
+        } else {
+            frictionForce = signOfOmega*RWIt->fCoulomb + RWIt->cViscous*RWIt->Omega;
+            frictionForceAtLimitCycle = RWIt->fCoulomb + RWIt->cViscous*RWIt->omegaLimitCycle;
+        }
+
+        // This line avoids the limit cycle that can occur with friction
+        if (fabs(RWIt->Omega) < RWIt->omegaLimitCycle) {
+            frictionForce = frictionForceAtLimitCycle/RWIt->omegaLimitCycle*RWIt->Omega;
+        }
+
+        // Set friction force
+        RWIt->frictionTorque = -frictionForce;
+
 		if (RWIt->RWModel == BalancedWheels || RWIt->RWModel == JitterSimple) {
 			matrixDcontr -= RWIt->Js * RWIt->gsHat_B * RWIt->gsHat_B.transpose();
-			vecRotcontr -= RWIt->gsHat_B * RWIt->u_current + RWIt->Js*RWIt->Omega*omegaLoc_BN_B.cross(RWIt->gsHat_B);
+			vecRotcontr -= RWIt->gsHat_B * (RWIt->u_current + RWIt->frictionTorque) + RWIt->Js*RWIt->Omega*omegaLoc_BN_B.cross(RWIt->gsHat_B);
 
 			//! imbalance torque (simplified external)
 			if (RWIt->RWModel == JitterSimple) {
@@ -232,7 +264,7 @@ void ReactionWheelStateEffector::updateContributions(double integTime, Eigen::Ma
 
 			RWIt->aOmega = -RWIt->mass*RWIt->d/(RWIt->Js + RWIt->mass*dSquared) * RWIt->w3Hat_B;
 			RWIt->bOmega = -1.0/(RWIt->Js + RWIt->mass*dSquared)*((RWIt->Js+RWIt->mass*dSquared)*RWIt->gsHat_B + RWIt->J13*RWIt->w3Hat_B + RWIt->mass*RWIt->d*RWIt->rWB_B.cross(RWIt->w3Hat_B));
-			RWIt->cOmega = 1.0/(RWIt->Js + RWIt->mass*dSquared)*(omegaw2*omegaw3*(-RWIt->mass*dSquared)-RWIt->J13*omegaw2*omegas-RWIt->mass*RWIt->d*RWIt->w3Hat_B.transpose()*omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(RWIt->rWB_B))+RWIt->u_current + RWIt->gsHat_B.dot(gravityTorquePntW_B));
+			RWIt->cOmega = 1.0/(RWIt->Js + RWIt->mass*dSquared)*(omegaw2*omegaw3*(-RWIt->mass*dSquared)-RWIt->J13*omegaw2*omegas-RWIt->mass*RWIt->d*RWIt->w3Hat_B.transpose()*omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(RWIt->rWB_B))+(RWIt->u_current + RWIt->frictionTorque) + RWIt->gsHat_B.dot(gravityTorquePntW_B));
 
 			matrixAcontr += RWIt->mass * RWIt->d * RWIt->w3Hat_B * RWIt->aOmega.transpose();
 			matrixBcontr += RWIt->mass * RWIt->d * RWIt->w3Hat_B * RWIt->bOmega.transpose();
@@ -276,7 +308,7 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime)
             thetaCount++;
         }
 		if (RWIt->RWModel == BalancedWheels || RWIt->RWModel == JitterSimple) {
-			OmegasDot(RWi,0) = RWIt->u_current/RWIt->Js - RWIt->gsHat_B.transpose()*omegaDotBNLoc_B;
+			OmegasDot(RWi,0) = (RWIt->u_current + RWIt->frictionTorque)/RWIt->Js - RWIt->gsHat_B.transpose()*omegaDotBNLoc_B;
         } else if(RWIt->RWModel == JitterFullyCoupled) {
 			OmegasDot(RWi,0) = RWIt->aOmega.dot(rDDotBNLoc_B) + RWIt->bOmega.dot(omegaDotBNLoc_B) + RWIt->cOmega;
 		}
@@ -394,18 +426,16 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
 	{
         if (numRWJitter > 0) {
-            double thetaCurrent = this->thetasState->getState()(it - ReactionWheelData.begin(), 0);
-            it->theta = thetaCurrent;
+            it->theta = this->thetasState->getState()(it - ReactionWheelData.begin(), 0);
         }
-        double omegaCurrent = this->OmegasState->getState()(it - ReactionWheelData.begin(), 0);
-        it->Omega = omegaCurrent;
-		outputStates.wheelSpeeds[it - ReactionWheelData.begin()] = it->Omega;
+        it->Omega = this->OmegasState->getState()(it - ReactionWheelData.begin(), 0);
 
 		tmpRW.theta = it->theta;
 		tmpRW.u_current = it->u_current;
+        tmpRW.frictionTorqueMsg = it->frictionTorque;
 		tmpRW.u_max = it->u_max;
 		tmpRW.u_min = it->u_min;
-		tmpRW.u_f = it->u_f;
+		tmpRW.u_f = it->fCoulomb;
 		tmpRW.Omega = it->Omega;
 		tmpRW.Omega_max = it->Omega_max;
 		tmpRW.Js = it->Js;
@@ -420,9 +450,31 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 								 moduleID);
 	}
 
-	// Write this message once for all reaction wheels
-	messageSys->WriteMessage(StateOutMsgID, CurrentClock,
-							 sizeof(RWSpeedIntMsg), reinterpret_cast<uint8_t*> (&outputStates), moduleID);
+    return;
+}
+
+/*! This method is here to write the output message structure into the specified
+ message.
+ @param CurrentClock The current time used for time-stamping the message
+ @return void
+ */
+void ReactionWheelStateEffector::writeOutputStateMessages(uint64_t integTimeNanos)
+{
+    SystemMessaging *messageSys = SystemMessaging::GetInstance();
+    std::vector<RWConfigSimMsg>::iterator it;
+    for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
+    {
+        if (numRWJitter > 0) {
+            it->theta = this->thetasState->getState()(it - ReactionWheelData.begin(), 0);
+            outputStates.wheelThetas[it - ReactionWheelData.begin()] = it->theta;
+        }
+        it->Omega = this->OmegasState->getState()(it - ReactionWheelData.begin(), 0);
+        outputStates.wheelSpeeds[it - ReactionWheelData.begin()] = it->Omega;
+    }
+
+    // Write this message once for all reaction wheels
+    messageSys->WriteMessage(StateOutMsgID, integTimeNanos,
+                             sizeof(RWSpeedIntMsg), reinterpret_cast<uint8_t*> (&outputStates), moduleID);
 }
 
 /*! This method is used to read the incoming command message and set the
@@ -475,13 +527,11 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
 	//! Begin method steps
 	std::vector<RWCmdSimMsg>::iterator CmdIt;
 	int RWIter = 0;
-	double u_s;
-	double omegaCritical;
 
 	// loop through commands
 	for(CmdIt=NewRWCmds.begin(); CmdIt!=NewRWCmds.end(); CmdIt++)
 	{
-		// saturation
+		// Torque saturation
 		if (this->ReactionWheelData[RWIter].u_max > 0) {
 			if(CmdIt->u_cmd > this->ReactionWheelData[RWIter].u_max) {
 				CmdIt->u_cmd = this->ReactionWheelData[RWIter].u_max;
@@ -495,27 +545,17 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
 			CmdIt->u_cmd = 0.0;
 		}
 
-		// Coulomb friction
-		if (this->ReactionWheelData[RWIter].linearFrictionRatio > 0.0) {
-			omegaCritical = this->ReactionWheelData[RWIter].Omega_max * this->ReactionWheelData[RWIter].linearFrictionRatio;
-		} else {
-			omegaCritical = 0.0;
-		}
-		if(this->ReactionWheelData[RWIter].Omega > omegaCritical) {
-			u_s = CmdIt->u_cmd - this->ReactionWheelData[RWIter].u_f;
-		} else if(this->ReactionWheelData[RWIter].Omega < -omegaCritical) {
-			u_s = CmdIt->u_cmd + this->ReactionWheelData[RWIter].u_f;
-		} else {
-			if (this->ReactionWheelData[RWIter].linearFrictionRatio > 0) {
-				u_s = CmdIt->u_cmd - this->ReactionWheelData[RWIter].u_f*this->ReactionWheelData[RWIter].Omega/omegaCritical;
-			} else {
-				u_s = CmdIt->u_cmd;
-			}
-		}
+        // Speed saturation
+        if (this->ReactionWheelData[RWIter].Omega >= this->ReactionWheelData[RWIter].Omega_max) {
+            CmdIt->u_cmd = 0.0;
+        }
 
-        
-        
+		this->ReactionWheelData[RWIter].u_current = CmdIt->u_cmd; // save actual torque for reaction wheel motor
+
 		this->ReactionWheelData[RWIter].u_current = u_s; // save actual torque for reaction wheel motor
+
+        // Save the previous omega for next time
+        this->ReactionWheelData[RWIter].omegaBefore = this->ReactionWheelData[RWIter].Omega;
 
 		RWIter++;
 

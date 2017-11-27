@@ -7,7 +7,7 @@ This model is used to approximate the behavior of a reaction wheel. Below is a l
 	\item Provides matrix contributions for the back substitution method
 	\item Compute it's derivatives for $\theta$ and $\Omega$
 	\item Adds energy and momentum contributions to the spacecraft
-	\item Convert commanded torque to applied torque. This takes into account friction, and minimum and maximum torque.
+	\item Convert commanded torque to applied torque. This takes into account friction, and minimum and maximum torque, and speed saturation
 	\item Write output messages for states like $\Omega$ and applied torque
 \end{itemize}
 
@@ -18,11 +18,10 @@ Below is a summary of the assumptions/limitations:
 	\item The reaction wheel is considered a rigid body
 	\item The spin axis is body fixed, therefore does not take into account bearing flexing
 	\item There is no error placed on the torque when converting from the commanded torque to the applied torque
-	\item When the wheels are given a command, the dynamics will not ingest this information until a time step later
 	\item For balanced wheels and simple jitter mode the mass properties of the reaction wheels are assumed to be included in the mass and inertia of the rigid body hub, therefore there is zero contributions to the mass properties from the reaction wheels in the dynamics call. 
 	\item For fully-coupled imbalanced wheels mode the mass properties of the reaction wheels are assumed to not be included in the mass and inertia of the rigid body hub. 
-	\item For balanced wheels and simple jitter mode the inertia matrix is assumed to be diagonal with one of it's principle inertia axis equal to the spin axis, and the center of mass of the spacecraft is coincident with the spin axis. 
+	\item For balanced wheels and simple jitter mode the inertia matrix is assumed to be diagonal with one of it's principle inertia axis equal to the spin axis, and the center of mass of the reaction wheel is coincident with the spin axis. 
 	\item For simple jitter, the parameters that define the static and dynamic imbalances are $U_s$ and $U_d$.
-	\item For fully-coupled imbalanced wheels, $J_{12}$ and $J_{23}$ are equal to zero and the $J_{13}$ is found through the setting the dynamic imbalance parameter $U_d$: $J_{13} = U_d$. The center of mass offset is found using the static imbalance parameter $U_s$: $d = \frac{U_s}{m_{\text{rw}}}$
-	\item The friction model can either be coulomb friction only, or a combination of coulomb friction and viscous friction when the wheel speeds are small (to avoid numerical problems). 
+	\item For fully-coupled imbalanced wheels the inertia off-diagonal terms, $J_{12}$ and $J_{23}$ are equal to zero and the remaining inertia off-diagonal term $J_{13}$ is found through the setting the dynamic imbalance parameter $U_d$: $J_{13} = U_d$. The center of mass offset, $d$, is found using the static imbalance parameter $U_s$: $d = \frac{U_s}{m_{\text{rw}}}$
+	\item The friction model is modeling static, Coulomb, and viscous friction. Other higher order effects of friction are not included. 
 \end{itemize}
