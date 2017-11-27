@@ -24,10 +24,11 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include <random>
 #include "utilities/gauss_markov.h"
+#include "utilities/discretize.h"
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simFswInterfaceMessages/imuSensorIntMsg.h"
 #include <Eigen/Dense>
-#include "../simulation/utilities/avsEigenMRP.h"
+#include "utilities/avsEigenMRP.h"
 
 
 class ImuSensor: public SysModel {
@@ -47,6 +48,10 @@ public:
     void applySensorDiscretization(uint64_t CurrentTime);
 	void applySensorSaturation(uint64_t CurrentTime);
 	void computeSensorErrors();
+    void scaleTruth();
+    void setLSBs(double LSBa, double LSBo);
+    void setCarryError(bool aCarry, bool oCarry);
+    void setRoundDirection(roundDirection_t aRound, roundDirection_t oRound);
 
 public:
     std::string InputStateMsg;          /*!< Message name for spacecraft state */
@@ -71,8 +76,12 @@ public:
     IMUSensorIntMsg trueValues;         //!< [-] total measurement without perturbations
     IMUSensorIntMsg sensedValues;       //!< [-] total measurement including perturbations
     
-    double accelLSB;                    //! (-) Discretization value (least significant bit) for accel data
-    double gyroLSB;                     //! (-) Discretization value for gyro data
+    Eigen::Vector3d accelScale;         //! (-) scale factor for acceleration axes
+    Eigen::Vector3d gyroScale;          //! (-) scale factors for acceleration axes
+    
+    Discretize *aDisc;                  //!  (-) instance of discretization utility for linear acceleration
+    Discretize *oDisc;                  //!  (-) isntance of idscretization utility for angular rate
+    
 private:
     int64_t InputStateID;               /// -- Connect to input time message
     int64_t OutputDataID;               /// -- Connect to output CSS data
@@ -80,22 +89,22 @@ private:
     uint64_t numStates;                 /// -- Number of States for Gauss Markov Models
     SCPlusStatesSimMsg StatePrevious;   /// -- Previous state to delta in IMU
     SCPlusStatesSimMsg StateCurrent;    /// -- Current SSBI-relative state
-    GaussMarkov *errorModelAccel;        //!< [-] Gauss-markov error states
-    GaussMarkov *errorModelGyro;         //!< [-] Gauss-markov error states
+    GaussMarkov *errorModelAccel;       ///!< [-] Gauss-markov error states
+    GaussMarkov *errorModelGyro;        ///!< [-] Gauss-markov error states
     
-    Eigen::MRPd previous_sigma_BN;  /// -- sigma_BN from the previous spacecraft message
-    Eigen::MRPd current_sigma_BN;   /// -- sigma_BN from the most recent spacecraft message
-    Eigen::Vector3d previous_omega_BN_B; /// -- omega_BN_B from the previous spacecraft message
-    Eigen::Vector3d current_omega_BN_B;  /// -- omega_BN_B from the current spacecraft message
+    Eigen::MRPd previous_sigma_BN;              /// -- sigma_BN from the previous spacecraft message
+    Eigen::MRPd current_sigma_BN;               /// -- sigma_BN from the most recent spacecraft message
+    Eigen::Vector3d previous_omega_BN_B;        /// -- omega_BN_B from the previous spacecraft message
+    Eigen::Vector3d current_omega_BN_B;         /// -- omega_BN_B from the current spacecraft message
     Eigen::Vector3d current_nonConservativeAccelpntB_B; /// -- nonConservativeAccelpntB_B from the current message
-    Eigen::Vector3d current_omegaDot_BN_B; /// -- omegaDot_BN_B from the curret spacecraft message
+    Eigen::Vector3d current_omegaDot_BN_B;      /// -- omegaDot_BN_B from the curret spacecraft message
     Eigen::Vector3d previous_TotalAccumDV_BN_B; /// -- TotalAccumDV_BN_B from the previous spacecraft message
     Eigen::Vector3d current_TotalAccumDV_BN_B; /// -- TotalAccumDV_BN_B from the current spacecraft message
     
-    Eigen::Vector3d accel_SN_P_out; /// -- rDotDot_SN_P for either next method or output messages
-    Eigen::Vector3d DV_SN_P_out; /// -- time step deltaV for either next method or output messages
-    Eigen::Vector3d omega_PN_P_out; /// -- omega_PN_P for either next method or output messages
-    Eigen::Vector3d prv_PN_out;    /// -- time step PRV_PN for either next method or output messages
+    Eigen::Vector3d accel_SN_P_out;             /// -- rDotDot_SN_P for either next method or output messages
+    Eigen::Vector3d DV_SN_P_out;                /// -- time step deltaV for either next method or output messages
+    Eigen::Vector3d omega_PN_P_out;             /// -- omega_PN_P for either next method or output messages
+    Eigen::Vector3d prv_PN_out;                 /// -- time step PRV_PN for either next method or output messages
 };
 
 #endif

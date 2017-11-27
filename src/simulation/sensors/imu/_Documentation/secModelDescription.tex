@@ -4,11 +4,15 @@ The Basilisk IMU module imu\_sensor.cpp is responsible for producing sensed body
 There is a large variation throughout the industry as to what constitutes and IMU.  Some manufacturers offer IMUs which output only acceleration and angular rate while others include accumulated change in velocity in attitude. For Basilisk, the IMU is defined as a device which outputs all four values.
 
 \subsection{Mathematical Model}
+\subsubsection{Platform Frame and Sensor Labels}
+It will be helpful to note for the following descriptions that the sensor is labeled with a capital S while the sensor platform frame is labeled with a capital P. To be more explicit, There is a coordinate frame, P, the platform frame, in which is the IMU is defined. In all cases so far, the IMU sits at the platform frame origin and its axes are aligned with the platform frame axes. So, any position or velocity vector describing the sensor also describes the platform frame origin. With that in mind, in this report, it has been attempted to track the kinematics of the sensor, while reporting values in the platform frame, rather than tracking the kinematics of the platform form.
 
+\subsubsection{Frame Depedent Derivatives}
+Inertial time derivatives are marked with a dot (i.e. $\frac{\mathcal{N}d}{dt}x = \dot{x}$). Body frame time derivatives are marked with a prime (i.e. $\frac{\mathcal{B}d}{dt}x = x^\prime$)
 \subsubsection{Angular Rates}
-The angular rate of the sensor is output as:
+The angular rate of the sensor in platform frame coordinates is output as:
 \begin{equation}
-	 \leftexp{P}{\bm{\omega}_{S/N}} = [PB] \leftexp{B}{\bm{\omega}_{B/N}}
+	 \leftexp{P}{\bm{\omega}_{S/N}} =  \leftexp{P}{\bm{\omega}_{P/N}} =[PB] \leftexp{B}{\bm{\omega}_{B/N}}
 \end{equation}
 
 Where $\cal{P}$ is the sensor platform frame, $\cal{B}$ is the vehicle body frame, and $\cal{N}$ is the inertial frame. [PB] is the direction cosine matrix from $\cal{B}$ to $\cal{P}$. This allows for an arbitrary angular offset between $\cal{B}$ and $\cal{P}$ and allows for that offset to be time-varying. $\leftexp{B}{\bm{\omega}_{B/N}}$ is provided by the spacecraftPlus output message from the most recent dynamics integration.
@@ -29,7 +33,7 @@ The modified Rodriguez parameter (MRP) is recorded for the last time (1) the IMU
 	[P_2P_1] = [PN]_2[NP]_1
 \end{equation}
 \begin{equation}
-\bm{q} = \verb|C2PRV(|[P_2P_1]\verb|))|
+\bm{q} = \verb|C2PRV(|[P_2P_1]\verb|)|
 \end{equation}
 where $\bm{q}$ above is the principal rotation vector for the sensor from timestep 1 to timestep 2. The functions used in conversion from the DCM to PRV are part of the Basilisk Rigid Body Kinematics library. The double conversion is used to avoid singularities.
 
@@ -107,19 +111,10 @@ Because sensors record data digitally, that data can only be recorded in discret
 \mathbf{a}_{\mathrm{discretized}} = \verb|sign|(\mathbf{a}_\mathrm{measured})(\mathrm{LSB})\Biggl\lfloor\Biggl|\frac{\mathbf{a}_{\mathrm{measured}}}{(\mathrm{LSB})}\Biggr|\Biggr\rfloor
 \end{equation}
 \begin{equation}
-^\mathcal{P}\mathbf{e}_{\mathrm{d},\mathrm{a}} = \mathbf{a}_{\mathrm{measured}} - \mathbf{a}_{\mathrm{discretized}}
+\mathbf{e}_{\mathrm{d},\mathrm{a}} = \mathbf{a}_{\mathrm{measured}} - \mathbf{a}_{\mathrm{discretized}}
 \end{equation}
 \begin{equation}
-^\mathcal{N}\mathbf{e}_{\mathrm{d},\mathrm{a}} = [NP] ^\mathcal{P}\mathbf{e}_{\mathrm{d},\mathrm{a}}
-\end{equation}
-\begin{equation}
-^\mathcal{N}\mathbf{DV}_{\mathrm{measured}} = [NP] ^\mathcal{P}\mathbf{DV}_{\mathrm{measured}}
-\end{equation}
-\begin{equation}
-^\mathcal{N}\mathbf{DV}_{\mathrm{discretized}} =  ^\mathcal{N}\mathbf{DV}_{\mathrm{measured}} -^\mathcal{N}\mathbf{e}_{\mathrm{d},\mathrm{a}} \Delta t
-\end{equation}
-\begin{equation}
-	^\mathcal{P}\mathbf{DV}_{\mathrm{discretized}} = [PN]^\mathcal{N}\mathbf{DV}_{\mathrm{discretized}}
+\mathbf{DV}_{\mathrm{discretized}} = \mathbf{DV}_{\mathrm{measured}} -\mathbf{e}_{\mathrm{d},\mathrm{a}} \Delta t
 \end{equation}
 
 \begin{equation}
@@ -134,26 +129,20 @@ Because sensors record data digitally, that data can only be recorded in discret
 Where $\lfloor$  $\rfloor$ indicate the \textbf{floor()} function and LSB can be either the accelerometer or gyro least significant bit as appropriate.
 
 \subsubsection{Saturation}
-Real sensors can also become saturated. Saturation is the last effect implemented on the IMU in an elementwise manner:
+Real sensors can also become saturated. Saturation is the last effect implemented on the IMU, \textit{in an elementwise manner}:
 
 \begin{equation}
-	^\mathcal{P}\bm{a}_{\mathrm{sat}} = \mathrm{max}\big(a_{\mathrm{min}}, \mathrm{min}\big(    \bm{a}_{\mathrm{discretized}}, a_{\mathrm{max}}    \big)   \big)
+	\bm{a}_{\mathrm{sat}} = \mathrm{max}\big(a_{\mathrm{min}}, \mathrm{min}\big(    \bm{a}_{\mathrm{discretized}}, a_{\mathrm{max}}    \big)   \big)
 \end{equation}
 \begin{equation}
 \bm{\omega}_{\mathrm{sat}} = \mathrm{max}\big(\omega_{\mathrm{min}}, \mathrm{min}\big(    \bm{\omega}_{\mathrm{discretized}}, \omega_{\mathrm{max}}    \big)   \big)
 \end{equation}
-The above operations are performed element-wise. This is only computed if the values are found to be outside of the max-min range. $DV$ cannot be found by $a\Delta t$ in this situation because that would yield that platform frame integral of acceleration. Rather:
+The above operations are performed element-wise. This is only computed if the values are found to be outside of the max-min range. Now, along each axis that was saturated:
 
 \begin{equation}
-	^\mathcal{N}\bm{a}_{\mathrm{sat}} = [NP] 	^\mathcal{P}\bm{a}_{\mathrm{sat}}
+	DV_{\mathrm{sat},i} = a_{\mathrm{sat},i} \Delta t
 \end{equation}
 \begin{equation}
-	^\mathcal{N}\bm{DV}_{\mathrm{sat}} = ^\mathcal{N}\bm{a}_{\mathrm{sat}} \Delta t
+q_{\mathrm{sat},i} = \omega_{\mathrm{sat},i}  \Delta t
 \end{equation}
-\begin{equation}
-\bm{DV}_{\mathrm{sat}} = ^\mathcal{P}\bm{DV}_{\mathrm{sat}} = [PN]^\mathcal{N}\bm{DV}_{\mathrm{sat}} 
-\end{equation}
-\begin{equation}
-\bm{q}_{\mathrm{sat}} = \bm{\omega}_{\mathrm{sat}}  \Delta t
-\end{equation}
-The above is calculated any time that $\bm{a}$ or $\bm{\omega}$ are found to be outside of their max-min bounds. Note again the use of the approximation of the PRV as the integral of the angular rates.
+The above is calculated any time that $a_i$ or $\omega_i$ are found to be outside of their max-min bounds. Note again the use of the approximation of the PRV as the integral of the angular rates.

@@ -65,7 +65,7 @@ At this point, all of the information needed to solve for Eq. \ref{eq:SN} is kno
 \begin{enumerate}
 	\item \underline{Clean} The IMU is run with all clean inputs, i.e. nonzero accelerations and angular accelerations of the spacecraft and this is compared to the truth values generated in python. No noise, discretization, saturation, etc. is applied.
 	\subitem \textbf{Success Criteria}: The outputs match to acceptable tolerance and are visually confirmed.
-	\item \underline{Noise} The IMU is run with all clean inputs, i.e. nonzero accelerations and angular accelerations of the spacecraft and this is compared to the truth values generated in python. Gaussian noise and random walk are applied.
+	\item \underline{Noise} The IMU is run with inputs as in the clean test, i.e. nonzero accelerations and angular accelerations of the spacecraft and this is compared to the truth values generated in python. Gaussian noise and random walk are applied.
 	\subitem \textbf{Success Criteria}: The output standard deviations match the inputs to acceptable tolerance.
 	\item \underline{Bias} The IMU is run with all clean inputs, i.e. nonzero accelerations and angular accelerations of the spacecraft and this is compared to the truth values generated in python. Bias is then added.
 	\subitem \textbf{Success Criteria}: The outputs match to acceptable tolerance and are visually confirmed to include bias.
@@ -94,6 +94,8 @@ This section summarizes the specific error tolerances for each test. Error toler
 		Disc.												& \input{AutoTex/discretizationaccuracy}	& \input{AutoTex/discretizationgyroLSB}& \input{AutoTex/discretizationaccelLSB}& \input{AutoTex/discretizationrotMax}& \input{AutoTex/discretizationtransMax}& \input{AutoTex/discretizationrotNoise}& \input{AutoTex/discretizationtransNoise}& \input{AutoTex/discretizationrotBias}& \input{AutoTex/discretizationTransBias} \\ \hline
 	\end{tabular}
 \end{table}
+
+For all tests, the gyro has a scale factor of 1 applied to each axis while the accelerometer has a scale factor of two. This functionality is easily verified in the Noise test, which has 2x the standard deviation that was given only for the linear outputs.
 
 
 \section{Test Results}

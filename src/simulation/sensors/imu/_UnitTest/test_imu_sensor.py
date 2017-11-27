@@ -24,19 +24,27 @@
 #   Creation Date:  September 14, 2017
 #
 
-import os
+# import pytest
+import sys, os, inspect
 import numpy as np
 import pytest
 import matplotlib.pyplot as plt
+import math
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.utilities import macros
-from Basilisk.simulation import imu_sensor
-from Basilisk.utilities import RigidBodyKinematics as rbk
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+splitPath = path.split('Basilisk')
+sys.path.append(splitPath[0]+'/Basilisk/modules')
+sys.path.append(splitPath[0]+'/Basilisk/PythonModules')
 
+import SimulationBaseClass
+import unitTestSupport  # general support file with common unit test functions
+import macros
+import imu_sensor
+import sim_model
+import RigidBodyKinematics as rbk
 
-
+# methods
 def v3vTmult(v1,v2):
     output = [[0,0,0],[0,0,0],[0,0,0]]
     for i in range(0,3):
@@ -84,7 +92,7 @@ def setRandomWalk(self,senRotNoiseStd = 0.0,senTransNoiseStd = 0.0,errorBoundsGy
                         (False,         'noise',        1.0,            0.001,      0.0,            0.0,            1000.,          1000.,          .1,                 .1,                 0.1,                0.1,                0.0,            0.0,            1e-1),
                         (False,         'bias',         1.0,            0.01,       0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                10.,            10.,            1e-8),
                         (False,         'saturation',   1.0,            0.01,       0.0,            0.0,            1.0,            5.0,            0.0,                0.0,                0.0,                0.0,                0.0,            0.0,            1e-8),
-                        (False,        'discretization',1.,             0.01,       0.01,           0.1,            100.,           1000.,          0.0,                0.0,                1e6,                1e6,                0.0,            0.0,            1e-8),
+                        (False,        'discretization',1.,             0.01,       0.05,           0.5,            100.,           1000.,          0.0,                0.0,                1e6,                1e6,                0.0,            0.0,            1e-8),
 
 ])
 
@@ -96,8 +104,6 @@ def test_unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyro
 
 
 def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn,    accelLSBIn,   senRotMaxIn,    senTransMaxIn,  senRotNoiseStd,     senTransNoiseStd,   errorBoundsGyroIn,  errorBoundsAccelIn, senRotBiasIn,   senTransBiasIn, accuracy):
-    path = os.path.dirname(os.path.abspath(__file__))
-
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
@@ -189,12 +195,19 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
     errorBoundsGyro = [errorBoundsGyroIn] * 3
     errorBoundsAccel = [errorBoundsAccelIn] * 3
     setRandomWalk(ImuSensor, senRotNoiseStd, senTransNoiseStd, errorBoundsGyro, errorBoundsAccel)
-    ImuSensor.gyroLSB = gyroLSBIn
-    ImuSensor.accelLSB = accelLSBIn
+    ImuSensor.setLSBs(accelLSBIn, gyroLSBIn)
     ImuSensor.senRotBias = np.array([senRotBiasIn] * 3)
     ImuSensor.senTransBias = np.array([senTransBiasIn] * 3)
     ImuSensor.senTransMax = senTransMaxIn
     ImuSensor.senRotMax = senRotMaxIn
+    accelScale = [2.,2.,2.]
+    gyroScale = [1.,1.,1.]
+    ImuSensor.accelScale = np.array(accelScale)
+    ImuSensor.gyroScale = np.array(gyroScale)
+
+    accel_SN_P_disc = np.array([0., 0., 0.])
+    omega_SN_P_disc = np.array([0., 0., 0.])
+
 
     # Set-up the sensor output truth vectors
     rDotDot_SN_P = np.resize(np.array([0., 0., 0.]), (int(stopTime/unitProcRate_s+1), 3))  # sensor sensed acceleration in sensor platform frame coordinates
@@ -267,45 +280,37 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
 
         # Now create outputs which are (supposed to be) equivalent to the IMU output
         # linear acceleration (non-conservative) in platform frame
-        dcm_PN = np.dot(dcm_PB,dcm_BN_2)
-        rDotDot_SN_P[i][:] = np.dot(dcm_PN, rDotDot_SN_N[i][:]) + senTransBiasIn #This should match trueValues.AccelPlatform
-        # accumulated delta v (non-conservative) in platform frame
-        DVAccum_SN_P[i][:] = np.dot(dcm_PN, rDot_SN_N[i][:]-rDot_SN_N[i-1][:]) + senTransBiasIn*dt
-
-
-        # find PRV between before and now
         dcm_BN_1 = rbk.MRP2C(sigma_BN[i-1][:])
         dcm_PN_2 = np.dot(dcm_PB, dcm_BN_2)
         dcm_PN_1 = np.dot(dcm_PB, dcm_BN_1)
         dcm_NP_1 = np.transpose(dcm_PN_1)
         dcm_PN_21 = np.dot(dcm_PN_2, dcm_NP_1)
-        stepPRV_PN[i][:] = rbk.MRP2PRV(rbk.C2MRP(dcm_PN_21)) + senRotBiasIn*dt
+        rDotDot_SN_P[i][:] = np.multiply(np.dot(dcm_PN_2, rDotDot_SN_N[i][:]) + senTransBiasIn, accelScale) #This should match trueValues.AccelPlatform
+        # accumulated delta v (non-conservative) in platform frame
+        DVAccum_SN_P[i][:] = np.multiply(np.dot(dcm_PN_2, rDot_SN_N[i][:] - rDot_SN_N[i-1][:]) + senTransBiasIn*dt, accelScale)
+
+        # find PRV between before and now
+
+        stepPRV_PN[i][:] = np.multiply(rbk.MRP2PRV(rbk.C2MRP(dcm_PN_21)) + senRotBiasIn*dt, gyroScale)
+
         # angular rate in platform frame
-        omega_PN_P[i][:] = np.dot(dcm_PN, omega_BN_N[i][:]) + senRotBiasIn
+        omega_PN_P[i][:] = np.multiply(np.dot(dcm_PN_2, omega_BN_N[i][:]) + senRotBiasIn, gyroScale)
         #
         # #discretization
-        aDisc = 0
-        a_discretization_error = [0., 0., 0.]
         if accelLSBIn > 0.0:
             for k in [0,1,2]:
-                discretized_value = np.floor(np.abs(rDotDot_SN_P[i][k] / accelLSBIn)) * accelLSBIn * np.sign(rDotDot_SN_P[i][k])
-                a_discretization_error[k] = rDotDot_SN_P[i][k] - discretized_value
-                rDotDot_SN_P[i][k] = discretized_value
-                aDisc = 1
+                accel_SN_P_disc[k] = np.floor(np.abs(rDotDot_SN_P[i][k] / accelLSBIn)) * accelLSBIn * np.sign(rDotDot_SN_P[i][k])
+            accelDiscError = rDotDot_SN_P[i][:] - accel_SN_P_disc
+            rDotDot_SN_P[i][:] = accel_SN_P_disc
+            DVAccum_SN_P[i][:] -= accelDiscError * dt
         if gyroLSBIn > 0.0:
             for k in [0,1,2]:
-                discretized_value = np.floor(np.abs(omega_PN_P[i][k] / gyroLSBIn)) * gyroLSBIn * np.sign(omega_PN_P[i][k])
-                discretization_error = omega_PN_P[i][k] - discretized_value
-                omega_PN_P[i][k] = discretized_value
-                stepPRV_PN[i][k] -= discretization_error*dt
-        if aDisc:
-            discretization_error_N = np.dot(np.transpose(dcm_PN_2), a_discretization_error)
-            DVAccum_SN_N = np.dot(np.transpose(dcm_PN_2), DVAccum_SN_P[i][:])
-            DVAccum_SN_N = DVAccum_SN_N - discretization_error_N*dt
-            DVAccum_SN_P[i][:] = np.dot(dcm_PN_2, DVAccum_SN_N)
+                omega_SN_P_disc[k] = np.floor(np.abs(omega_PN_P[i][k] / gyroLSBIn)) * gyroLSBIn * np.sign(omega_PN_P[i][k])
+            omegaDiscError = omega_PN_P[i][:] - omega_SN_P_disc
+            omega_PN_P[i][:] = omega_SN_P_disc
+            stepPRV_PN[i][:] -= omegaDiscError * dt
 
         #saturation
-        aSat = 0.
         for k in [0,1,2]:
             if omega_PN_P[i][k] > senRotMaxIn:
                 omega_PN_P[i][k] = senRotMaxIn
@@ -315,14 +320,10 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
                 stepPRV_PN[i][k] = -senRotMaxIn*dt
             if rDotDot_SN_P[i][k] > senTransMaxIn:
                 rDotDot_SN_P[i][k] = senTransMaxIn
-                aSat = 1
+                DVAccum_SN_P[i][k] = rDotDot_SN_P[i][k] * dt
             elif rDotDot_SN_P[i][k] < -senTransMaxIn:
                 rDotDot_SN_P[i][k] = -senTransMaxIn
-                aSat = 1
-        if aSat:
-            rDotDotsat_SN_N = np.dot(np.transpose(dcm_PN_2), rDotDot_SN_P[i][:])
-            DVAccum_SN_N = rDotDotsat_SN_N*dt
-            DVAccum_SN_P[i][:] = np.dot(dcm_PN_2, DVAccum_SN_N)
+                DVAccum_SN_P[i][k] = rDotDot_SN_P[i][k] * dt
 
         #Now update spacecraft states for the IMU:
         StateCurrent = imu_sensor.SCPlusStatesSimMsg()
@@ -451,22 +452,22 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
         if not unitTestSupport.isDoubleEqualRelative(np.std(DRoutNoise[:,2]),senRotNoiseStd*dt/1.5,accuracy):
             testMessages.append(("FAILED DRnoise3. \\\\& &"))
             testFailCount += 1
-        if not unitTestSupport.isDoubleEqualRelative(np.std(DVoutNoise[:,0]),senTransNoiseStd*dt/1.5,accuracy):
+        if not unitTestSupport.isDoubleEqualRelative(np.std(DVoutNoise[:,0]),senTransNoiseStd*dt/1.5 * accelScale[0],accuracy):
             testMessages.append(("FAILED DVnoise1. \\\\& &"))
             testFailCount += 1
-        if not unitTestSupport.isDoubleEqualRelative(np.std(DVoutNoise[:,1]),senTransNoiseStd*dt/1.5,accuracy):
+        if not unitTestSupport.isDoubleEqualRelative(np.std(DVoutNoise[:,1]),senTransNoiseStd*dt/1.5 * accelScale[1],accuracy):
             testMessages.append(("FAILED DVnoise2. \\\\& &"))
             testFailCount += 1
-        if not unitTestSupport.isDoubleEqualRelative(np.std(DVoutNoise[:,2]),senTransNoiseStd*dt/1.5,accuracy):
+        if not unitTestSupport.isDoubleEqualRelative(np.std(DVoutNoise[:,2]),senTransNoiseStd*dt/1.5 * accelScale[2],accuracy):
             testMessages.append(("FAILED DVnoise3. \\\\& &"))
             testFailCount += 1
-        if not unitTestSupport.isDoubleEqualRelative(np.std(rDotDotOutNoise[:,0]),senTransNoiseStd/1.5,accuracy):
+        if not unitTestSupport.isDoubleEqualRelative(np.std(rDotDotOutNoise[:,0]),senTransNoiseStd/1.5 * accelScale[0],accuracy):
             testMessages.append(("FAILED AccelNoise1. \\\\& &"))
             testFailCount += 1
-        if not unitTestSupport.isDoubleEqualRelative(np.std(rDotDotOutNoise[:,1]),senTransNoiseStd/1.5,accuracy):
+        if not unitTestSupport.isDoubleEqualRelative(np.std(rDotDotOutNoise[:,1]),senTransNoiseStd/1.5 * accelScale[1],accuracy):
             testMessages.append(("FAILED AccelNoise2. \\\\& &"))
             testFailCount += 1
-        if not unitTestSupport.isDoubleEqualRelative(np.std(rDotDotOutNoise[:,2]),senTransNoiseStd/1.5,accuracy):
+        if not unitTestSupport.isDoubleEqualRelative(np.std(rDotDotOutNoise[:,2]),senTransNoiseStd/1.5 * accelScale[2],accuracy):
             testMessages.append(("FAILED AccelNoise3. \\\\& &"))
             testFailCount += 1
         if not unitTestSupport.isDoubleEqualRelative(np.std(omegaOutNoise[:,0]),senRotNoiseStd/1.5,accuracy):
@@ -572,4 +573,4 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
 # This statement below ensures that the unit test script can be run as a
 # stand-along python script
 if __name__ == "__main__":
-    unitSimIMU(False,         'clean',        1.0,            0.01,       0.0,            0.0,            1000.,          1000.,          0.0,                0.0,                0.0,                0.0,                0.,             0.,             1e-8)
+    unitSimIMU(True,        'discretization',1.,             0.01,       0.05,           0.5,            100.,           1000.,          0.0,                0.0,                1e6,                1e6,                0.0,            0.0,            1e-8)
