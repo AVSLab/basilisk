@@ -57,6 +57,15 @@ import SunLineEKF_test_utilities as Fplot
     , (True, False)
 ])
 
+# provide a unique test method name, starting with test_
+def test_Filters(show_plots, runEKF, runUKF):
+    '''This function is called by the py.test environment.'''
+    # each test method requires a single assert method to be called
+    [testResults, testMessage] = run( True,
+            show_plots, runEKF, runUKF)
+    assert testResults < 1, testMessage
+
+
 def setupUKFData(filterObject):
     filterObject.navStateOutMsgName = "sunline_state_estimate"
     filterObject.filtDataOutMsgName = "sunline_filter_data"
@@ -99,14 +108,6 @@ def setupEKFData(filterObject):
     filterObject.qProcVal = 0.1**2
     filterObject.qObsVal = 0.017 ** 2
     filterObject.eKFSwitch = 3. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
-
-# provide a unique test method name, starting with test_
-def test_bskAttitudeFeedback(show_plots, runEKF, runUKF):
-    '''This function is called by the py.test environment.'''
-    # each test method requires a single assert method to be called
-    [testResults, testMessage] = run( True,
-            show_plots, runEKF, runUKF)
-    assert testResults < 1, testMessage
 
 
 
