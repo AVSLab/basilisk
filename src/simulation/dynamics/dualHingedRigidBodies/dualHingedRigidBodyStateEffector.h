@@ -25,8 +25,8 @@
 #include "../_GeneralModuleFiles/stateData.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include <Eigen/Dense>
-#include "../SimCode/utilities/avsEigenMRP.h"
-#include "../SimCode/utilities/avsEigenSupport.h"
+#include "../simulation/utilities/avsEigenMRP.h"
+#include "../simulation/utilities/avsEigenSupport.h"
 
 /*! @brief Class to represent a solar array of two panels. The first panel is hinged on a single axis to the spacecraft body.
             The second panel is hinged to the first panel by a parallel axis on the opposite end of the first panel from the spacecraft body.)
