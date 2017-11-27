@@ -565,7 +565,7 @@ def StatePropVariable(show_plots):
         expectedCovar[i,0] =  dt*i*1E9
         expectedCovar[i,1:37] = (np.dot(expectedSTM[i,:,:], np.dot(np.reshape(expectedCovar[i-1,1:37],[6,6]), np.transpose(expectedSTM[i,:,:])))+ ProcNoiseCovar).flatten()
 
-    FilterPlots.StatesVsExpected(stateLog, expectedStateArray, show_plots)
+    FilterPlots.StatesVsExpected(stateLog, covarLog, expectedStateArray, show_plots)
     FilterPlots.StatesPlotCompare(stateErrorLog, expectedXBar, covarLog, expectedCovar, show_plots)
 
     for j in range(1,2001):
@@ -660,7 +660,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 
     inputMessageSize = inputData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage("TestProcess", "css_config_data",
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, "css_config_data",
                                           msgSize, 2, "CSSConstellation")
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.cssDataInMsgName,
@@ -825,7 +825,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
     target1 = np.array(testVector1)
     target2 = np.array(testVector2+[0.,0.,0.])
-    FilterPlots.StatesPlot(stateErrorLog, covarLog, show_plots)
+    FilterPlots.StateErrorCovarPlot(stateErrorLog, covarLog, show_plots)
     FilterPlots.StatesVsTargets(target1, target2, stateLog, show_plots)
     FilterPlots.PostFitResiduals(PostFitRes, moduleConfig.qObsVal, show_plots)
 
