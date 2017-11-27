@@ -456,7 +456,7 @@ def run(doUnitTests, show_plots):
 
 
 ## This function creates the simulation to be executed in parallel.
-# It is copied directly from SimScenarios.
+# It is copied directly from src/tests/scenarios.
 def createScenarioAttitudeFeedbackRW():
 
     # Create simulation variable names

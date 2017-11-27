@@ -1,7 +1,7 @@
 # Basilisk Release Notes {#bskReleaseNotes}
 
 **Note:**
-This software is currently in a limited alpha public-release.  The Basilisk development is still in progress, and some behaviors and setups API's are bound to change.  That said, we are very excited by the great capabilities that this software already has, and plan to be updating this software regularly.  There is some documentation in terms of Doxygen generated HTML documentation, but also documentation within the code, and several Basilisk modules that are math heavy have LaTeX'd documentation folders as well.  Best place to start is to run the integrated tutorial scripts inside the SimScenarios folder.  More documentation and tutorial scripts are in development.
+This software is currently in a limited alpha public-release.  The Basilisk development is still in progress, and some behaviors and setups API's are bound to change.  That said, we are very excited by the great capabilities that this software already has, and plan to be updating this software regularly.  There is some documentation in terms of Doxygen generated HTML documentation, but also documentation within the code, and several Basilisk modules that are math heavy have LaTeX'd documentation folders as well.  Best place to start is to run the integrated tutorial scripts inside the `src/tests/scenarios` folder.  More documentation and tutorial scripts are in development.
 
 ## In Progress Features
 * new Python packaging of the Basilisk modules
