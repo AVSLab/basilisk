@@ -25,24 +25,19 @@
 #
 
 # import pytest
-import sys, os, inspect
+import os, inspect
 import numpy as np
 import pytest
 import matplotlib.pyplot as plt
-import math
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('Basilisk')
-sys.path.append(splitPath[0]+'/Basilisk/modules')
-sys.path.append(splitPath[0]+'/Basilisk/PythonModules')
 
-import SimulationBaseClass
-import unitTestSupport  # general support file with common unit test functions
-import macros
-import imu_sensor
-import sim_model
-import RigidBodyKinematics as rbk
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import macros
+from Basilisk.simulation import imu_sensor
+from Basilisk.utilities import RigidBodyKinematics as rbk
 
 # methods
 def v3vTmult(v1,v2):
