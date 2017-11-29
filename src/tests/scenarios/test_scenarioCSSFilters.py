@@ -21,7 +21,7 @@
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Demonstrates how to setup sun heading filters
+# Purpose:  Demonstrates how to setup and use sun heading filters
 # Author:   Thibaud Teil
 # Creation Date:  November 20, 2017
 #
@@ -108,7 +108,7 @@ def setupEKFData(filterObject):
                           0.0, 0.0, 0.0, 0.0, 0.002, 0.0,
                           0.0, 0.0, 0.0, 0.0, 0.0, 0.002]
 
-    filterObject.qProcVal = 0.1**2
+    filterObject.qProcVal = 0.001**2
     filterObject.qObsVal = 0.017 ** 2
     filterObject.eKFSwitch = 3. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 
@@ -395,9 +395,6 @@ def run(show_plots, FilterType, simTime):
     #
     #   setup the simulation tasks/objects
     #
-
-    # Add the Sun
-
     spiceObject = spice_interface.SpiceInterface()
     spiceObject.planetNames = spice_interface.StringVector(["sun"])
     spiceObject.ModelTag = "SpiceInterfaceData"
@@ -531,16 +528,16 @@ def run(show_plots, FilterType, simTime):
     #   configure a simulation stop time time and execute the simulation run
     #
     scSim.ConfigureStopTime(simulationTime)
+
+    # Time the runs for performance comparisons
     timeStart = time.time()
     scSim.ExecuteSimulation()
     timeEnd = time.time()
 
-    print 'Run time = ', timeEnd-timeStart
 
     #
     #   retrieve the logged data
     #
-    # dataCSSArray = scSim.pullMessageLogData(cssArray.outputConstellationMessage+".CosValue", range(len(cssList)))
     covarLog = scSim.GetLogVariableData(covarString)
     stateLog = scSim.GetLogVariableData(statesString)
 
