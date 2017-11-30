@@ -131,7 +131,7 @@ def setupOEKFData(filterObject):
     filterObject.eKFSwitch = 3. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 
 
-## \defgroup Tutorials_2_4
+## \defgroup Tutorials_4_0_1
 ##   @{
 ## Demonstrates how Estimate spacecraft attitude using Coarse Sun Sensors Filters.
 #
@@ -183,7 +183,7 @@ def setupOEKFData(filterObject):
 #
 # The constellation characteristics are summarized in the following table.
 #
-# CSS   | nomral vector          |
+# CSS   | normal vector          |
 # ----- | ---------------------- |
 # 1     | [sqrt(2)/2, -0.5, 0.5] |
 # 2     | [sqrt(2)/2, -0.5, -0.5]|
