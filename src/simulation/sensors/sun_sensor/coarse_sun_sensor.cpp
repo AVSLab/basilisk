@@ -38,19 +38,10 @@ CoarseSunSensor::CoarseSunSensor()
     this->InputSunMsg = "sun_planet_data";
     this->OutputDataMsg = "";
     this->SenBias = 0.0;
+    
     this->SenNoiseStd = 0.0;
     this->walkBounds = 1E-15; //don't allow random walk by default
-    
     this->noiseModel= new GaussMarkov(1);
-    this->noiseModel->setRNGSeed(this->RNGSeed);
-    Eigen::VectorXd bounds;
-    bounds.resize(1, 1);
-    bounds(0,0) = this->walkBounds;
-    this->noiseModel->setUpperBounds(bounds);
-    Eigen::VectorXd pMatrix;
-    pMatrix.resize(1, 1);
-    pMatrix(0,0) = 1.;
-    this->noiseModel->setPropMatrix(pMatrix);
     
     this->faultState = MAX_CSSFAULT;
     v3SetZero(this->nHat_B);
@@ -59,8 +50,11 @@ CoarseSunSensor::CoarseSunSensor()
     this->scaleFactor = 1.0;
     this->KellyFactor = 0.0;
     this->sensedValue = 0.0;
+    
     this->maxOutput   = 1e6;
     this->minOutput   = 0. ;
+    this->saturateUtility = new Saturate(1);
+    
     this->fov           = 1.0471975512;
     this->phi           = 0.785398163397;
     this->theta         = 0.0;
@@ -125,16 +119,27 @@ CoarseSunSensor::~CoarseSunSensor()
 void CoarseSunSensor::SelfInit()
 {
     //! Begin Method Steps
-    if(this->SenNoiseStd > 0.0){
-        Eigen::VectorXd nMatrix;
-        nMatrix.resize(1,1);
-        nMatrix(0,0) = this->SenNoiseStd*1.5;
-        this->noiseModel->setNoiseMatrix(nMatrix);
-        Eigen::VectorXd bounds;
-        bounds.resize(1,1);
-        bounds(0,0) = this->walkBounds;
-        this->noiseModel->setUpperBounds(bounds);
-    }
+    Eigen::VectorXd nMatrix;
+    nMatrix.resize(1,1);
+    nMatrix(0,0) = this->SenNoiseStd*1.5;
+    this->noiseModel->setNoiseMatrix(nMatrix);
+    Eigen::VectorXd bounds;
+    bounds.resize(1,1);
+    bounds(0,0) = this->walkBounds;
+    this->noiseModel->setUpperBounds(bounds);
+    this->noiseModel->setRNGSeed(this->RNGSeed);
+    Eigen::VectorXd pMatrix;
+    pMatrix.resize(1, 1);
+    pMatrix(0,0) = 1.;
+    this->noiseModel->setPropMatrix(pMatrix);
+    
+    Eigen::MatrixXd satBounds;
+    satBounds.resize(1, 2);
+    satBounds(0,0) = this->minOutput;
+    satBounds(0,1) = this->maxOutput;
+    this->saturateUtility->setBounds(satBounds);
+    
+    
     //! - Create the output message sized to the output message size if the name is valid
     if(OutputDataMsg != "")
     {
@@ -285,8 +290,10 @@ void CoarseSunSensor::scaleSensorValues()
 
 void CoarseSunSensor::applySaturation()
 {
-    this->sensedValue = std::min(this->maxOutput, this->sensedValue);
-    this->sensedValue = std::max(this->minOutput, this->sensedValue);
+    Eigen::VectorXd sensedEigen;
+    sensedEigen = cArray2EigenMatrixXd(&this->sensedValue, 1, 1);
+    sensedEigen = this->saturateUtility->saturate(sensedEigen);
+    eigenMatrixXd2CArray(sensedEigen, &this->sensedValue);
 }
 /*! This method writes the output message.  The output message contains the 
     current output of the CSS converted over to some discrete "counts" to 

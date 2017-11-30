@@ -28,6 +28,7 @@
 #include "simMessages/eclipseSimMsg.h"
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
 #include "utilities/gauss_markov.h"
+#include "utilities/saturate.h"
 
 typedef enum {
     CSSFAULT_OFF,           /*!< CSS measurement is set to 0 for all future time
@@ -103,6 +104,7 @@ private:
     EclipseSimMsg sunVisibilityFactor;          //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
     double              sunDistanceFactor;      //! [-] Factor to scale cosine curve magnitude based on solar flux at location
     GaussMarkov *noiseModel;                    //! [-] Gauss Markov noise generation model
+    Saturate *saturateUtility;                  //! [-] Saturation utility
 };
 
 //!@brief Constellation of coarse sun sensors for aggregating output information
