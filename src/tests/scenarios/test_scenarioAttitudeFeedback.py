@@ -223,8 +223,8 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain, useKnow
 # simulation scenario flags to turn on or off certain simulation conditions.  The
 # default scenario has both the unmodeled torque and integral feedback turned off.  The
 # resulting attitude and control torque histories are shown below.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback1000.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2000.svg "Torque history")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeFeedback1000.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/test_scenarioAttitudeFeedback2000.svg "Torque history")
 #
 # Setup 2
 # ------
@@ -243,8 +243,8 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain, useKnow
 # the orientation error doesn't settle to zero, but rather converges to a non-zero offset
 # proportional to the unmodeled torque being simulated.  Also, the control torques settle on
 # non-zero steady-state values.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback1100.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2100.svg "Torque history")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeFeedback1100.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/test_scenarioAttitudeFeedback2100.svg "Torque history")
 #
 # Setup 3
 # ------
@@ -263,8 +263,8 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain, useKnow
 # The resulting attitude and control torques are shown below.  In this case
 # the orientation error does settle to zero.  The integral term changes the control torque
 # to settle on a value that matches the unmodeled external torque.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback1110.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2110.svg "Torque history")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeFeedback1110.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/test_scenarioAttitudeFeedback2110.svg "Torque history")
 #
 # Setup 4
 # ------
@@ -285,8 +285,8 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain, useKnow
 # the orientation error does settle to zero as the feedforward term compensates for
 # the external torque.  The control torque is now caused
 # to settle on a value that matches the unmodeled external torque.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback1101.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2101.svg "Torque history")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeFeedback1101.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/test_scenarioAttitudeFeedback2101.svg "Torque history")
 #
 ##  @}
 def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):

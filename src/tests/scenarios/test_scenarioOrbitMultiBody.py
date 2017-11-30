@@ -235,9 +235,9 @@ def test_scenarioOrbitMultiBodyCopy(show_plots, scCase):
 # scenario simulates the Hubble Space Telescope (HST) spacecraft about the Earth in a LEO orbit.
 # The resulting position coordinates and orbit illustration are shown below.  A 2000 second simulation is
 # performed, and the Basilisk and SPICE generated orbits match up very well.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitMultiBody1Hubble.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioOrbitMultiBody2Hubble.svg "Orbit Illustration")
-# ![Trajectory Differences](Images/Scenarios/scenarioOrbitMultiBody3Hubble.svg "Trajectory Differences")
+# ![Inertial Position Coordinates History](Images/Scenarios/test_scenarioOrbitMultiBody1Hubble.svg "Position history")
+# ![Perifocal Orbit Illustration](Images/Scenarios/test_scenarioOrbitMultiBody2Hubble.svg "Orbit Illustration")
+# ![Trajectory Differences](Images/Scenarios/test_scenarioOrbitMultiBody3Hubble.svg "Trajectory Differences")
 #
 # Setup 2
 # -----
@@ -253,8 +253,8 @@ def test_scenarioOrbitMultiBodyCopy(show_plots, scCase):
 # This case illustrates a simulation of the New Horizons spacecraft.  Here the craft is already a very
 # large distance from the sun.  The
 # resulting position coordinates and trajectorie differences are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitMultiBody1NewHorizons.svg "Position history")
-# ![Trajectory Difference](Images/Scenarios/scenarioOrbitMultiBody3NewHorizons.svg "Trajectory Difference")
+# ![Inertial Position Coordinates History](Images/Scenarios/test_scenarioOrbitMultiBody1NewHorizons.svg "Position history")
+# ![Trajectory Difference](Images/Scenarios/test_scenarioOrbitMultiBody3NewHorizons.svg "Trajectory Difference")
 #
 ## @}
 def run(doUnitTests, show_plots, scCase):

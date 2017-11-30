@@ -299,9 +299,9 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 # simulation scenario flags to turn on or off certain simulation conditions.  The
 # default scenario has the RW jitter turned off.  The
 # resulting simulation illustrations are shown below.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedbackRW100.svg "MRP history")
-# ![RW Motor Torque History](Images/Scenarios/scenarioAttitudeFeedbackRW200.svg "RW motor torque history")
-# ![RW Spin History](Images/Scenarios/scenarioAttitudeFeedbackRW300.svg "RW Omega history")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeFeedbackRW100.svg "MRP history")
+# ![RW Motor Torque History](Images/Scenarios/test_scenarioAttitudeFeedbackRW200.svg "RW motor torque history")
+# ![RW Spin History](Images/Scenarios/test_scenarioAttitudeFeedbackRW300.svg "RW Omega history")
 # Note that in the RW motor torque plot both the required control torque \f$\hat u_B\f$ and the true
 # motor torque \f$u_B\f$ are shown.  This illustrates that with this maneuver the RW devices are being
 # saturated, and the attitude still eventually stabilizes.
@@ -328,9 +328,9 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 # Change this option before the RW is created.  As this is set before any of the RW created in this
 # scenario, all the RWs have jitter engaged if this 'useJitterSimple' flag is set. The
 # resulting simulation illustrations are shown below.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedbackRW110.svg "MRP history")
-# ![RW Motor Torque History](Images/Scenarios/scenarioAttitudeFeedbackRW210.svg "RW motor torque history")
-# ![RW Spin History](Images/Scenarios/scenarioAttitudeFeedbackRW310.svg "RW Omega history")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeFeedbackRW110.svg "MRP history")
+# ![RW Motor Torque History](Images/Scenarios/test_scenarioAttitudeFeedbackRW210.svg "RW motor torque history")
+# ![RW Spin History](Images/Scenarios/test_scenarioAttitudeFeedbackRW310.svg "RW Omega history")
 # The impact of the RW jitter is very small, naturally.  The plots for this case look very similar to
 # the balanced RW case.  But there is a distinct numerical difference.
 #
@@ -395,10 +395,10 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 #        )
 # ~~~~~~~~~~~~~
 # The resulting simulation illustrations are shown below.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedbackRW101.svg "MRP history")
-# ![RW Motor Torque History](Images/Scenarios/scenarioAttitudeFeedbackRW201.svg "RW motor torque history")
-# ![RW Spin History](Images/Scenarios/scenarioAttitudeFeedbackRW301.svg "RW Omega history")
-# ![RW Voltage History](Images/Scenarios/scenarioAttitudeFeedbackRW401.svg "RW Voltage history")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeFeedbackRW101.svg "MRP history")
+# ![RW Motor Torque History](Images/Scenarios/test_scenarioAttitudeFeedbackRW201.svg "RW motor torque history")
+# ![RW Spin History](Images/Scenarios/test_scenarioAttitudeFeedbackRW301.svg "RW Omega history")
+# ![RW Voltage History](Images/Scenarios/test_scenarioAttitudeFeedbackRW401.svg "RW Voltage history")
 # Note that the rwMotorVoltage() module is run here in a simple open-loop manner.  See the
 # [rwMotorVoltage documentation](../fswAlgorithms/effectorInterfaces/rwMotorVoltage/_Documentation/Basilisk-rwMotorVoltage-20170113.pdf "PDF Doc")
 # for more info.  By connecting the RW availability message it is possible turn

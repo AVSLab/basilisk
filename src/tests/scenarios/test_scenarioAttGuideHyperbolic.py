@@ -124,10 +124,10 @@ def test_bskAttGuide_Hyperbolic(show_plots, useAltBodyFrame):
 # simulation scenario flags to turn on or off certain simulation conditions.  The
 # default scenario shown has the `useAltBodyFrame` flag turned off.  This means that we seek
 # to align the body frame *B* with the velocity vector *V*.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttGuideHyperbolic10.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttGuideHyperbolic20.svg "Torque history")
-# ![Rate Tracking Error](Images/Scenarios/scenarioAttGuideHyperbolic30.svg "Rate Tracking Error")
-# ![Hyperbolic Orbit Illustration](Images/Scenarios/scenarioAttGuideHyperbolic40.svg "Hyperbolic Orbit Illustration")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttGuideHyperbolic10.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/test_scenarioAttGuideHyperbolic20.svg "Torque history")
+# ![Rate Tracking Error](Images/Scenarios/test_scenarioAttGuideHyperbolic30.svg "Rate Tracking Error")
+# ![Hyperbolic Orbit Illustration](Images/Scenarios/test_scenarioAttGuideHyperbolic40.svg "Hyperbolic Orbit Illustration")
 #
 #
 # Setup 2
@@ -151,9 +151,9 @@ def test_bskAttGuide_Hyperbolic(show_plots, useAltBodyFrame):
 # to point the correct face of the spacecraft along the negative V-bar.
 #
 # The resulting attitude and control torque histories are shown below.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttGuideHyperbolic11.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttGuideHyperbolic21.svg "Torque history")
-# ![Rate Tracking Error](Images/Scenarios/scenarioAttGuideHyperbolic31.svg "Rate Tracking Error")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttGuideHyperbolic11.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/test_scenarioAttGuideHyperbolic21.svg "Torque history")
+# ![Rate Tracking Error](Images/Scenarios/test_scenarioAttGuideHyperbolic31.svg "Rate Tracking Error")
 #
 ## @}
 def run(doUnitTests, show_plots, useAltBodyFrame):

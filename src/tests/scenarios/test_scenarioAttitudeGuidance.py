@@ -149,9 +149,9 @@ def test_bskAttitudeGuidance(show_plots, useAltBodyFrame):
 # resulting attitude and control torque histories are shown below.  Note that the projections
 # of the body frame axes onto the Hill frame axes all converge to +1, indidcating that B becomes
 # asympotically aligned with R as desired.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeGuidance10.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeGuidance20.svg "Torque history")
-# ![Body/Hill Frame Axis Projections](Images/Scenarios/scenarioAttitudeGuidance40.svg "Axes Projection")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeGuidance10.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/test_scenarioAttitudeGuidance20.svg "Torque history")
+# ![Body/Hill Frame Axis Projections](Images/Scenarios/test_scenarioAttitudeGuidance40.svg "Axes Projection")
 #
 #
 # Setup 2
@@ -179,9 +179,9 @@ def test_bskAttitudeGuidance(show_plots, useAltBodyFrame):
 # of the 2nd body frame axis onto the 2nd Hill frame axes converges to +1, while the other
 # projections converge to -1.  This indicates that the desired asymptotic Earth observing attitude
 # is achieved.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeGuidance11.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeGuidance21.svg "Torque history")
-# ![Body/Hill Frame Axis Projections](Images/Scenarios/scenarioAttitudeGuidance41.svg "Axes Projection")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeGuidance11.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/test_scenarioAttitudeGuidance21.svg "Torque history")
+# ![Body/Hill Frame Axis Projections](Images/Scenarios/test_scenarioAttitudeGuidance41.svg "Axes Projection")
 #
 ##  @}
 def run(doUnitTests, show_plots, useAltBodyFrame):

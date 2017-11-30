@@ -251,16 +251,16 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 # can be found in textbooks such as *Analytical Mechanics of Space Systems*
 # (<http://arc.aiaa.org/doi/book/10.2514/4.102400>).
 # The resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioHingedRigidBody10.svg "Position history")
-# ![Orbit Radius Illustration](Images/Scenarios/scenarioHingedRigidBody20.svg "Radius Illustration")
+# ![Inertial Position Coordinates History](Images/Scenarios/test_scenarioHingedRigidBody10.svg "Position history")
+# ![Orbit Radius Illustration](Images/Scenarios/test_scenarioHingedRigidBody20.svg "Radius Illustration")
 #
 # The hinged rigid bodies were given an initial angular displacement. Then, the externally applied force caused
 # greater displacement. As discussed above, the reaction is asymmetric between the panels due to panel orientation.
 # Another interesting result is that, during the thrusting maneuver, the hinged bodies oscillate about a non-zero point.
 # This is because they are under a constant, non-zero acceleration, similar to a weight hanging from a spring on Earth.
 # The springs know no difference between a gravity field and acceleration.
-# ![Panel 1 Displacement](Images/Scenarios/scenarioHingedRigidBodypanel1theta0.svg "Panel 1 Theta Illustration")
-# ![Panel 2 Displacement](Images/Scenarios/scenarioHingedRigidBodypanel2theta0.svg "Panel 2 Theta Illustration")
+# ![Panel 1 Displacement](Images/Scenarios/test_scenarioHingedRigidBodypanel1theta0.svg "Panel 1 Theta Illustration")
+# ![Panel 2 Displacement](Images/Scenarios/test_scenarioHingedRigidBodypanel2theta0.svg "Panel 2 Theta Illustration")
 #
 #
 ## @}

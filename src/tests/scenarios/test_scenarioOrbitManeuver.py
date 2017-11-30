@@ -139,8 +139,8 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
 # in textbooks such as *Analytical Mechanics of Space Systems*
 # (<http://arc.aiaa.org/doi/book/10.2514/4.102400>).
 # The resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitManeuver10.svg "Position history")
-# ![Orbit Radius Illustration](Images/Scenarios/scenarioOrbitManeuver20.svg "Radius Illustration")
+# ![Inertial Position Coordinates History](Images/Scenarios/test_scenarioOrbitManeuver10.svg "Position history")
+# ![Orbit Radius Illustration](Images/Scenarios/test_scenarioOrbitManeuver20.svg "Radius Illustration")
 #
 # Setup 2
 # -----
@@ -161,8 +161,8 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
 # (<http://arc.aiaa.org/doi/book/10.2514/4.102400>).  The final orbit inclination angle is 8.94 degrees
 # which is indicated as a dashed line below.
 # The resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitManeuver11.svg "Position history")
-# ![Inclination Angle Time History](Images/Scenarios/scenarioOrbitManeuver21.svg "Inclination Illustration")
+# ![Inertial Position Coordinates History](Images/Scenarios/test_scenarioOrbitManeuver11.svg "Position history")
+# ![Inclination Angle Time History](Images/Scenarios/test_scenarioOrbitManeuver21.svg "Inclination Illustration")
 #
 ## @}
 def run(doUnitTests, show_plots, maneuverCase):

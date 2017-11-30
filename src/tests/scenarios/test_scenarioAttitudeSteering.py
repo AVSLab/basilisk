@@ -190,10 +190,10 @@ def test_bskAttitudeFeedbackRW(show_plots, simCase):
 # simulation scenario flags determines which simulation case is run.  Here an unknown external torque
 # is applied, but the integral feedback term is included as well.    The
 # resulting simulation illustrations are shown below.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeSteeringSigmaBR0.svg "MRP history")
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeSteeringomegaBR0.svg "omega history")
-# ![RW Motor Torque History](Images/Scenarios/scenarioAttitudeSteeringrwUs0.svg "RW motor torque history")
-# ![RW Spin History](Images/Scenarios/scenarioAttitudeSteeringOmega0.svg "RW Omega history")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeSteeringSigmaBR0.svg "MRP history")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeSteeringomegaBR0.svg "omega history")
+# ![RW Motor Torque History](Images/Scenarios/test_scenarioAttitudeSteeringrwUs0.svg "RW motor torque history")
+# ![RW Spin History](Images/Scenarios/test_scenarioAttitudeSteeringOmega0.svg "RW Omega history")
 # Note that in the RW motor torque plot both the required control torque \f$\hat u_B\f$ and the true
 # motor torque \f$u_B\f$ are shown.  This illustrates that with this maneuver the RW devices are being
 # saturated, and the attitude still eventually stabilizes.
@@ -217,8 +217,8 @@ def test_bskAttitudeFeedbackRW(show_plots, simCase):
 # ~~~~~~~~~~~~~
 # This setup is the same as the first setup, but the integral feedback term is turned off.
 # The resulting simulation illustrations are shown below.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeSteeringSigmaBR1.svg "MRP history")
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeSteeringomegaBR1.svg "omega history")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeSteeringSigmaBR1.svg "MRP history")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeSteeringomegaBR1.svg "omega history")
 # In this case the response, as expected, is only bounded or Lagrange stable, and does not longer converge
 # due to the unmodeled external torque.
 #
@@ -238,8 +238,8 @@ def test_bskAttitudeFeedbackRW(show_plots, simCase):
 # it violates the sub-servo loop separation principle.
 # The
 # resulting simulation illustrations are shown below.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeSteeringSigmaBR2.svg "MRP history")
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeSteeringomegaBR2.svg "omega history")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeSteeringSigmaBR2.svg "MRP history")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeSteeringomegaBR2.svg "omega history")
 # Here the local motion is now unstable, as predicted in
 # <a target='_blank' href="http://hanspeterschaub.info/Papers/SchaubIAC2017.pdf"><b>conference paper</b></a>.
 #
@@ -259,8 +259,8 @@ def test_bskAttitudeFeedbackRW(show_plots, simCase):
 # similar in performance to a standard proportional-derivative or PD feedback control.
 # The
 # resulting simulation illustrations are shown below.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeSteeringSigmaBR3.svg "MRP history")
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeSteeringomegaBR3.svg "omega history")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeSteeringSigmaBR3.svg "MRP history")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeSteeringomegaBR3.svg "omega history")
 #
 ##  @}
 def run(doUnitTests, show_plots, simCase):

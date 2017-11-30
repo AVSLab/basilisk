@@ -246,8 +246,8 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # scenario places the spacecraft about the Earth in a LEO orbit and without considering
 # gravitational spherical harmonics.  The
 # resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1LEO0Earth.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2LEO0Earth.svg "Orbit Illustration")
+# ![Inertial Position Coordinates History](Images/Scenarios/test_scenarioBasicOrbit1LEO0Earth.svg "Position history")
+# ![Perifocal Orbit Illustration](Images/Scenarios/test_scenarioBasicOrbit2LEO0Earth.svg "Orbit Illustration")
 #
 # Setup 2
 # -----
@@ -265,8 +265,8 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # This case illustrates an elliptical Geosynchronous Transfer Orbit (GTO) with zero orbit
 # inclination.  The
 # resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1GTO0Earth.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2GTO0Earth.svg "Orbit Illustration")
+# ![Inertial Position Coordinates History](Images/Scenarios/test_scenarioBasicOrbit1GTO0Earth.svg "Position history")
+# ![Perifocal Orbit Illustration](Images/Scenarios/test_scenarioBasicOrbit2GTO0Earth.svg "Orbit Illustration")
 #
 # Setup 3
 # -----
@@ -284,8 +284,8 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # This case illustrates a circular Geosynchronous Orbit (GEO) with zero orbit
 # inclination.  The
 # resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1GEO0Earth.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2GEO0Earth.svg "Orbit Illustration")
+# ![Inertial Position Coordinates History](Images/Scenarios/test_scenarioBasicOrbit1GEO0Earth.svg "Position history")
+# ![Perifocal Orbit Illustration](Images/Scenarios/test_scenarioBasicOrbit2GEO0Earth.svg "Orbit Illustration")
 #
 #  Setup 4
 # -----
@@ -303,8 +303,8 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # This case illustrates a circular LEO with a non-zero orbit
 # inclination.  In this case the Earth's spherical harmonics are turned on.  The
 # resulting position coordinates and semi-major axis time histories are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1LEO1Earth.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2LEO1Earth.svg "Orbit Illustration")
+# ![Inertial Position Coordinates History](Images/Scenarios/test_scenarioBasicOrbit1LEO1Earth.svg "Position history")
+# ![Perifocal Orbit Illustration](Images/Scenarios/test_scenarioBasicOrbit2LEO1Earth.svg "Orbit Illustration")
 #
 # Setup 5
 # -------
@@ -327,8 +327,8 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 #~~~~~~~~~~~~~~
 # from 'earth' to 'mars'.  In this simulation setup the planet's spherical harmonics are turned on.  The
 # resulting position coordinates and semi-major axis time histories are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1LEO0Mars.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2LEO0Mars.svg "Orbit Illustration")
+# ![Inertial Position Coordinates History](Images/Scenarios/test_scenarioBasicOrbit1LEO0Mars.svg "Position history")
+# ![Perifocal Orbit Illustration](Images/Scenarios/test_scenarioBasicOrbit2LEO0Mars.svg "Orbit Illustration")
 #
 ## @}
 def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):

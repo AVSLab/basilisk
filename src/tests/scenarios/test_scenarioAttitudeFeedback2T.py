@@ -150,8 +150,8 @@ def test_bskAttitudeFeedback2T(show_plots, useUnmodeledTorque, useIntGain):
 # simulation scenario flags to turn on or off certain simulation conditions.  The
 # default scenario has both the unmodeled torque and integral feedback turned off.  The
 # resulting attitude and control torque histories are shown below.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback2T100.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2T200.svg "Torque history")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeFeedback2T100.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/test_scenarioAttitudeFeedback2T200.svg "Torque history")
 # Note that now the FSW algorithms are called in a separate process, in the first time step the
 # navigation message has not been copied over, and the initial FSW values for the tracking
 # errors are zero.  This is why there is a slight difference in the resulting closed loop
@@ -173,8 +173,8 @@ def test_bskAttitudeFeedback2T(show_plots, useUnmodeledTorque, useIntGain):
 # the orientation error doesn't settle to zero, but rather converges to a non-zero offset
 # proportional to the unmodeled torque being simulated.  Also, the control torques settle on
 # non-zero steady-state values.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback2T110.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2T210.svg "Torque history")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeFeedback2T110.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/test_scenarioAttitudeFeedback2T210.svg "Torque history")
 #
 # Setup 3
 # ------
@@ -192,8 +192,8 @@ def test_bskAttitudeFeedback2T(show_plots, useUnmodeledTorque, useIntGain):
 # The resulting attitude and control torques are shown below.  In this case
 # the orientation error does settle to zero.  The integral term changes the control torque
 # to settle on a value that matches the unmodeled external torque.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback2T111.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2T211.svg "Torque history")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeFeedback2T111.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/test_scenarioAttitudeFeedback2T211.svg "Torque history")
 #
 ##  @}
 def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):

@@ -121,8 +121,8 @@ def test_bskAttitudePointing(show_plots, useLargeTumble):
 # Here a small initial tumble is simulated.  The
 # resulting attitude and control torque histories are shown below.  The spacecraft quickly
 # regains a stable orientation without tumbling past 180 degrees.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudePointing10.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudePointing20.svg "Torque history")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudePointing10.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/test_scenarioAttitudePointing20.svg "Torque history")
 #
 # Setup 2
 # ------
@@ -138,8 +138,8 @@ def test_bskAttitudePointing(show_plots, useLargeTumble):
 # The resulting attitude and control torques are shown below.  Note that, as expected,
 # the orientation error tumbles past 180 degrees before stabilizing to zero.  The control
 # torque effort is also much larger in this case.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudePointing11.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudePointing21.svg "Torque history")
+# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudePointing11.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/test_scenarioAttitudePointing21.svg "Torque history")
 ##  @}
 def run(doUnitTests, show_plots, useLargeTumble):
     '''Call this routine directly to run the tutorial scenario.'''

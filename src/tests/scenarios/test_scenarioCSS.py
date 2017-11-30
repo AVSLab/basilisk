@@ -210,7 +210,7 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
 # simulates the CSS units being setup individually without any corruption.  The sensor unit normal
 # axes are directly set, and no eclipse is modeled.  The
 # resulting CSS sensor histories are shown below.
-# ![CSS Sensor History](Images/Scenarios/scenarioCSS0000.svg "CSS history")
+# ![CSS Sensor History](Images/Scenarios/test_scenarioCSS0000.svg "CSS history")
 # The signals of the two CSS units range from a maximum of 2 if the CSS axis is pointing at the sun to zero.
 # The limited field of view of 80 degrees causes the sensor signal to be clipped when the sun light incidence
 # angle gets too small.
@@ -232,7 +232,7 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
 # The resulting CSS sensor signals should be identical to the first scenario as the chosen
 # platform orientation and CSS azimuth and elevation angles are chosen to yield the same
 # senor normal unit axes.
-# ![CSS Sensor History](Images/Scenarios/scenarioCSS0100.svg "CSS history")
+# ![CSS Sensor History](Images/Scenarios/test_scenarioCSS0100.svg "CSS history")
 #
 # Setup 3
 # ------
@@ -249,7 +249,7 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
 #        )
 # ~~~~~~~~~~~~~
 # The resulting CSS signals are scaled by a factor of 0.5 and are shown below.
-# ![CSS Sensor History](Images/Scenarios/scenarioCSS0010.svg "CSS history")
+# ![CSS Sensor History](Images/Scenarios/test_scenarioCSS0010.svg "CSS history")
 #
 # Setup 4
 # ------
@@ -267,7 +267,7 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
 # ~~~~~~~~~~~~~
 # This causes the CSS signals to become slightly warped, and depart from the nominal cosine
 # behavior.  The resulting simulation results are shown below.
-# ![CSS Sensor History](Images/Scenarios/scenarioCSS0001.svg "CSS history")
+# ![CSS Sensor History](Images/Scenarios/test_scenarioCSS0001.svg "CSS history")
 #
 # Setup 5
 # ------
@@ -285,7 +285,7 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
 #        )
 # ~~~~~~~~~~~~~
 # The resulting simulation results are shown below to be identical to setup 1 as expected.
-# ![CSS Sensor History](Images/Scenarios/scenarioCSS1000.svg "CSS history")
+# ![CSS Sensor History](Images/Scenarios/test_scenarioCSS1000.svg "CSS history")
 #
 ##  @}
 def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
