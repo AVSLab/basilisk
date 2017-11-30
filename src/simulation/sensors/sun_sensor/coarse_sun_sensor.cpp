@@ -25,7 +25,7 @@
 #include <iostream>
 #include <cstring>
 #include <algorithm>
-#include <random>
+#include "utilities/avsEigenSupport.h"
 
 //! Initialize a bunch of defaults in the constructor.  Is this the right thing to do?
 CoarseSunSensor::CoarseSunSensor()
@@ -39,6 +39,18 @@ CoarseSunSensor::CoarseSunSensor()
     this->OutputDataMsg = "";
     this->SenBias = 0.0;
     this->SenNoiseStd = 0.0;
+    this->walkBounds = 1E-15; //don't allow random walk by default
+    
+    this->noiseModel= new GaussMarkov(1);
+    this->noiseModel->setRNGSeed(this->RNGSeed);
+    Eigen::VectorXd bounds;
+    bounds.resize(1, 1);
+    bounds(0,0) = this->walkBounds;
+    this->noiseModel->setUpperBounds(bounds);
+    Eigen::VectorXd pMatrix;
+    pMatrix.resize(1, 1);
+    pMatrix(0,0) = 1.;
+    this->noiseModel->setPropMatrix(pMatrix);
     
     this->faultState = MAX_CSSFAULT;
     v3SetZero(this->nHat_B);
@@ -113,11 +125,16 @@ CoarseSunSensor::~CoarseSunSensor()
 void CoarseSunSensor::SelfInit()
 {
     //! Begin Method Steps
-    std::normal_distribution<double>::param_type
-    UpdatePair(this->SenBias, this->SenNoiseStd);
-    //! - Configure the random number generator
-    rgen.seed(RNGSeed);
-    rnum.param(UpdatePair);
+    if(this->SenNoiseStd > 0.0){
+        Eigen::VectorXd nMatrix;
+        nMatrix.resize(1,1);
+        nMatrix(0,0) = this->SenNoiseStd*1.5;
+        this->noiseModel->setNoiseMatrix(nMatrix);
+        Eigen::VectorXd bounds;
+        bounds.resize(1,1);
+        bounds(0,0) = this->walkBounds;
+        this->noiseModel->setUpperBounds(bounds);
+    }
     //! - Create the output message sized to the output message size if the name is valid
     if(OutputDataMsg != "")
     {
@@ -244,15 +261,20 @@ void CoarseSunSensor::computeTrueOutput()
     it over to an errored value.  It applies noise to the truth. */
 void CoarseSunSensor::applySensorErrors()
 {
+    if(this->SenNoiseStd <= 0.0){
+        this->sensedValue = this->directValue + this->SenBias;
+        return;
+    }
     //! Begin Method Steps
     //! - Get current error from random number generator
-    double CurrentError = rnum(this->rgen);
+    this->noiseModel->computeNextState();
+    Eigen::VectorXd CurrentErrorEigen =  this->noiseModel->getCurrentState();
+    double CurrentError = CurrentErrorEigen.coeff(0,0);
     
     //Apply saturation values here.
 
     //! - Sensed value is total illuminance with a kelly fit + noise
-    this->sensedValue = this->directValue + CurrentError;
-    
+    this->sensedValue = this->directValue + CurrentError + this->SenBias;
 }
 
 void CoarseSunSensor::scaleSensorValues()

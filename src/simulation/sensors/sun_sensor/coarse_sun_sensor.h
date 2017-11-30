@@ -22,12 +22,12 @@
 
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
-#include <random>
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/cssRawDataSimMsg.h"
 #include "simMessages/eclipseSimMsg.h"
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
+#include "utilities/gauss_markov.h"
 
 typedef enum {
     CSSFAULT_OFF,           /*!< CSS measurement is set to 0 for all future time
@@ -92,6 +92,7 @@ public:
     uint64_t            OutputBufferCount;      //!< [-] number of output msgs stored
     double              maxOutput;              //!< [-] maximum output (ceiling) for saturation application
     double              minOutput;              //!< [-] minimum output (floor) for saturation application
+    double              walkBounds;             //!< [-] Gauss Markov walk bounds
 private:
     int64_t InputSunID;                         //!< [-] Connect to input time message
     int64_t InputStateID;                       //!< [-] Connect to input time message
@@ -100,9 +101,8 @@ private:
     SpicePlanetStateSimMsg SunData;            //!< [-] Unused for now, but including it for future
     SCPlusStatesSimMsg StateCurrent;           //!< [-] Current SSBI-relative state
     EclipseSimMsg sunVisibilityFactor;          //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
-    std::default_random_engine rgen;            //!< [-] Random number generator for disp
-    std::normal_distribution<double> rnum;      //! [-] Random number distribution
     double              sunDistanceFactor;      //! [-] Factor to scale cosine curve magnitude based on solar flux at location
+    GaussMarkov *noiseModel;                    //! [-] Gauss Markov noise generation model
 };
 
 //!@brief Constellation of coarse sun sensors for aggregating output information
