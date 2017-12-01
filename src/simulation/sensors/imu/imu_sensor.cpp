@@ -320,49 +320,18 @@ void ImuSensor::computePlatformDR()
  to account for CoM offset of the platform frame. */
 void ImuSensor::computePlatformDV(uint64_t CurrentTime)
 {
-    Eigen::Vector3d rDotDot_BN_B;     //non-conservative acceleration of body frame relative to inertial frame in body frame coordinates
-    Eigen::Vector3d rDotDot_SN_B;     //sensor non conservative acceleration relative to inertial frame in body frame coordinates
-    Eigen::Vector3d omega_x_r_B;      //omega_BN_B x r_SB_B in body frame components
-    Eigen::Vector3d omega_x_omega_x_r_B;//omega_BN_B x (omega_BN_B x r_SB_B) in body frame components
-    Eigen::Vector3d omegaDot_x_r_B;   //(time derivative of omega_BN_B) x r_SB_B in body frame components
-    Eigen::Vector3d rotationalTerms;  //(time derivative of omega_BN_B) x r_SB_B + omega_BN_B x (omega_BN_B x r_SB_B)
-    Eigen::Vector3d r_SB_B;           //sensor position relative to B frame origin in B frame coordinates
-    
-    Eigen::Vector3d omega_BN_N_1;     //omega_BN_N before
-    Eigen::Vector3d omega_BN_N_2;     //omega_BN_N now
-    Eigen::Vector3d r_SB_N_1;         //sensor positino relative to B frame origin in N frame coordinates previously
-    Eigen::Vector3d r_SB_N_2;         //sensor positino relative to B frame origin in N frame coordinates now
-    Eigen::Vector3d dvSensor_B;       //sensor delta v between IMU calls in body frame coordinates
-    Eigen::Vector3d accumDV_BN_N_1;   // Inertial DV accumulated since t=0 by the body in the inertial frame due to non-conservative forces at time 1
-    Eigen::Vector3d accumDV_BN_N_2;   // Inertial DV accumulated since t=0 by the body in the inertial frame due to non-conservative forces at time 1
-    Eigen::Matrix3d dcm_NB_1;      // direction cosine matrix from N to B at time 1
-    Eigen::Matrix3d dcm_NB_2;      // direction cosine matrix from N to B at time 2
-    
-    double dt;                  // timestep [s]
-
-    dt = (CurrentTime - PreviousTime)*1E-9;
-    
     //Calculate "instantaneous" linear acceleration
-    rDotDot_BN_B = this->current_nonConservativeAccelpntB_B;
-    r_SB_B = this->sensorPos_B;
-    omegaDot_x_r_B = this->current_omegaDot_BN_B.cross(r_SB_B);
-    omega_x_r_B = this->current_omega_BN_B.cross(r_SB_B);
-    omega_x_omega_x_r_B = this->current_omega_BN_B.cross(omega_x_r_B);
-    rotationalTerms = omegaDot_x_r_B + omega_x_omega_x_r_B;
-    rDotDot_SN_B = rDotDot_BN_B + rotationalTerms;
+    Eigen::Vector3d rDotDot_SN_B;     //sensor non conservative acceleration relative to inertial frame in body frame coordinates
+    rDotDot_SN_B = this->current_nonConservativeAccelpntB_B + this->current_omegaDot_BN_B.cross(this->sensorPos_B) + this->current_omega_BN_B.cross(this->current_omega_BN_B.cross(this->sensorPos_B));
     this->accel_SN_P_out = this->dcm_PB * rDotDot_SN_B;
     
     //Calculate time-average cumulative delta v
+    Eigen::Matrix3d dcm_NB_1;      // direction cosine matrix from N to B at time 1
     dcm_NB_1 = this->previous_sigma_BN.toRotationMatrix();
+    Eigen::Matrix3d dcm_NB_2;      // direction cosine matrix from N to B at time 2
     dcm_NB_2 = this->current_sigma_BN.toRotationMatrix();
-    accumDV_BN_N_1 = dcm_NB_1 * this->previous_TotalAccumDV_BN_B;
-    accumDV_BN_N_2 = dcm_NB_2 * this->current_TotalAccumDV_BN_B;
-    r_SB_N_1 = dcm_NB_1 * r_SB_B;
-    r_SB_N_2 = dcm_NB_2 * r_SB_B;
-    omega_BN_N_1 = dcm_NB_1 * this->previous_omega_BN_B;
-    omega_BN_N_2 = dcm_NB_2 * this->current_omega_BN_B;
     
-    this->DV_SN_P_out =this->dcm_PB * dcm_NB_2.transpose() * ((accumDV_BN_N_2 - accumDV_BN_N_1) + (omega_BN_N_2.cross(r_SB_N_2) - omega_BN_N_1.cross(r_SB_N_1)));
+    this->DV_SN_P_out =this->dcm_PB * dcm_NB_2.transpose() * ((dcm_NB_2 * this->current_TotalAccumDV_BN_B - dcm_NB_1 * this->previous_TotalAccumDV_BN_B) + ((dcm_NB_2 * this->current_omega_BN_B).cross(dcm_NB_2 * this->sensorPos_B) - (dcm_NB_1 * this->previous_omega_BN_B).cross(dcm_NB_1 * this->sensorPos_B)));
     
     return;
 }
