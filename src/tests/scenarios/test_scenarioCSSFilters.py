@@ -51,7 +51,7 @@ from Basilisk.fswAlgorithms import vehicleConfigData
 from Basilisk.fswAlgorithms import sunlineUKF
 from Basilisk.fswAlgorithms import sunlineEKF
 from Basilisk.fswAlgorithms import okeefeEKF
-import SunLineEKF_test_utilities as Fplot
+import SunLineKF_test_utilities as Fplot
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
@@ -155,6 +155,19 @@ def setupOEKFData(filterObject):
 #       python test_scenarioCSSFilters.py
 #
 # When the simulation completes several plots are written summarizing the filter performances.
+#
+# The simulation reads the Sun's poistion from SpiceInterface(). By creating this spice object and adding it to the
+# task, the spice object automatically writes out the ephemeris messages.
+# The date used is of no importance for this scenario.
+# ~~~~~~~~~~~~~~~~{.py}
+#     spiceObject = spice_interface.SpiceInterface()
+#     spiceObject.planetNames = spice_interface.StringVector(["sun"])
+#     spiceObject.ModelTag = "SpiceInterfaceData"
+#     spiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
+#     spiceObject.outputBufferCount = 100000
+#     spiceObject.UTCCalInit = '2021 MAY 04 07:47:49.965 (UTC)'
+#     scSim.AddModelToTask(simTaskName, spiceObject)
+# ~~~~~~~~~~~~~~~~
 #
 # The dynamics simulation is setup using a SpacecraftPlus() module where a specific spacecraft location
 # is specified.  Note that both the rotational and translational degrees of
