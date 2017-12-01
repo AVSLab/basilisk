@@ -29,6 +29,7 @@
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
 #include "utilities/gauss_markov.h"
 #include "utilities/saturate.h"
+#include <Eigen/Dense>
 
 typedef enum {
     CSSFAULT_OFF,           /*!< CSS measurement is set to 0 for all future time
@@ -77,9 +78,9 @@ public:
     double              theta;                  //!< [rad] css azimuth angle, measured positive from the body +x axis around the +z axis
     double              phi;                    //!< [rad] css elevation angle, measured positive toward the body +z axis from the x-y plane
     double              B2P321Angles[3];        //!< [-] 321 Euler anhles for body to platform
-    double              dcm_PB[3][3];           //!< [-] DCM from platform frame P to body frame B
-    double              nHat_B[3];              //!< [-] css unit direction vector in body frame components
-    double              sHat_B[3];              //!< [-] unit vector to sun in B
+    Eigen::Matrix3d     dcm_PB;           //!< [-] DCM from platform frame P to body frame B
+    Eigen::Vector3d     nHat_B;              //!< [-] css unit direction vector in body frame components
+    Eigen::Vector3d     sHat_B;              //!< [-] unit vector to sun in B
     double              directValue;            //!< [-] direct solar irradiance measurement
     double              albedoValue;            //!< [-] albedo irradiance measurement
     double              scaleFactor;            //!< [-] scale factor applied to sensor (common + individual multipliers)
@@ -87,7 +88,7 @@ public:
     double              trueValue;              //!< [-] total measurement without perturbations
     double              KellyFactor;            //!< [-] Kelly curve fit for output cosine curve
     double              fov;                    //!< [-] rad, field of view half angle
-    double              r_B[3];
+    Eigen::Vector3d     r_B;
     double              SenBias;                //!< [-] Sensor bias value
     double              SenNoiseStd;            //!< [-] Sensor noise value
     uint64_t            OutputBufferCount;      //!< [-] number of output msgs stored

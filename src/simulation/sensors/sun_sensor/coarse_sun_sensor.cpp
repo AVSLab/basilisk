@@ -26,6 +26,8 @@
 #include <cstring>
 #include <algorithm>
 #include "utilities/avsEigenSupport.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/avsEigenMRP.h"
 
 //! Initialize a bunch of defaults in the constructor.  Is this the right thing to do?
 CoarseSunSensor::CoarseSunSensor()
@@ -44,7 +46,7 @@ CoarseSunSensor::CoarseSunSensor()
     this->noiseModel= new GaussMarkov(1);
     
     this->faultState = MAX_CSSFAULT;
-    v3SetZero(this->nHat_B);
+    this->nHat_B.fill(0.0);
     this->directValue = 0.0;
     this->albedoValue = 0.0;
     this->scaleFactor = 1.0;
@@ -59,13 +61,13 @@ CoarseSunSensor::CoarseSunSensor()
     this->phi           = 0.785398163397;
     this->theta         = 0.0;
     v3SetZero(this->B2P321Angles);
-    v3SetZero(this->r_B);
+    this->r_B.fill(0.0);
     this->setBodyToPlatformDCM(B2P321Angles[0], B2P321Angles[1], B2P321Angles[2]);
     this->setUnitDirectionVectorWithPerturbation(0, 0);
     this->OutputBufferCount = 2;
     this->sunVisibilityFactor.shadowFactor = 1.0;
     this->sunDistanceFactor = 1.0;
-    m33SetIdentity(this->dcm_PB);    
+    this->dcm_PB.setIdentity(3,3);
     return;
 }
 
@@ -82,7 +84,8 @@ void CoarseSunSensor::setUnitDirectionVectorWithPerturbation(double cssThetaPert
     double tempTheta = this->theta + cssThetaPerturb;
 
     //! - Rotation from individual photo diode sensor frame (S) to css platform frame (P)
-    double sensorV3_P[3] = {0,0,0}; // sensor diode normal in platform frame
+    Eigen::Vector3d sensorV3_P; // sensor diode normal in platform frame
+    sensorV3_P.fill(0.0);
     
     /*! azimuth and elevation rotations of vec transpose(1,0,0) where vec is the unit normal
         of the photo diode*/
@@ -91,7 +94,7 @@ void CoarseSunSensor::setUnitDirectionVectorWithPerturbation(double cssThetaPert
     sensorV3_P[2] = sin(tempPhi);
     
     //! Rotation from P frame to body frame (B)
-    m33tMultV3(this->dcm_PB, sensorV3_P, this->nHat_B);
+    this->nHat_B = this->dcm_PB * sensorV3_P;
 }
 
 /*!
@@ -104,7 +107,10 @@ void CoarseSunSensor::setUnitDirectionVectorWithPerturbation(double cssThetaPert
 void CoarseSunSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll)
 {
     double q[3] = {yaw, pitch, roll};
-    Euler3212C(q, this->dcm_PB);
+    double dcm_PBcArray[9];
+    eigenMatrix3d2CArray(this->dcm_PB, dcm_PBcArray);
+    Euler3212C(q, RECAST3X3 dcm_PBcArray);
+    this->dcm_PB = cArray2EigenMatrix3d(dcm_PBcArray);
 }
 
 //! There is nothing to do in the default destructor
@@ -207,23 +213,33 @@ void CoarseSunSensor::readInputMessages()
     body frame.*/
 void CoarseSunSensor::computeSunData()
 {
-    double Sc2Sun_Inrtl[3];
-    double sHat_N[3];
-    double dcm_BN[3][3];
-    double r_Sun_Sc; //position vector from s/c to sun
+    Eigen::Vector3d Sc2Sun_Inrtl;
+    Eigen::Vector3d sHat_N;
+    Eigen::Matrix3d dcm_BN;
+    
+    Eigen::Vector3d r_BN_N_eigen;
+    Eigen::Vector3d sunPos;
+    Eigen::MRPd sigma_BN_eigen;
     
     //! Begin Method Steps for sun heading vector
     //! - Get the position from spacecraft to Sun
-    v3Scale(-1.0, this->StateCurrent.r_BN_N, Sc2Sun_Inrtl);
-    v3Add(Sc2Sun_Inrtl, this->SunData.PositionVector, Sc2Sun_Inrtl);
-    //! - Normalize the relative position into a unit vector
-    v3Normalize(Sc2Sun_Inrtl, sHat_N);
+    
+    //Read Message data to eigen
+    r_BN_N_eigen = cArray2EigenVector3d(this->StateCurrent.r_BN_N);
+    sunPos = cArray2EigenVector3d(this->SunData.PositionVector);
+    sigma_BN_eigen = cArray2EigenVector3d(this->StateCurrent.sigma_BN);
+    
+    
+    //! - Find sun heading unit vector
+    Sc2Sun_Inrtl = sunPos -  r_BN_N_eigen;
+    sHat_N = Sc2Sun_Inrtl / Sc2Sun_Inrtl.norm();
+    
     //! - Get the inertial to body frame transformation information and convert sHat to body frame
-    MRP2C(this->StateCurrent.sigma_BN, dcm_BN);
-    m33MultV3(dcm_BN, sHat_N, this->sHat_B);
+    dcm_BN = sigma_BN_eigen.toRotationMatrix().transpose();
+    this->sHat_B = dcm_BN * sHat_N;
     
     //! Begin Method Steps for sun distance factor
-    r_Sun_Sc = v3Norm(Sc2Sun_Inrtl);
+    double r_Sun_Sc = Sc2Sun_Inrtl.norm();
     this->sunDistanceFactor = pow(AU*1000., 2.)/pow(r_Sun_Sc, 2.);
     
 }
@@ -232,28 +248,23 @@ void CoarseSunSensor::computeSunData()
 void CoarseSunSensor::computeTrueOutput()
 {
     //! Begin Method Steps
-    double temp1 = v3Dot(this->nHat_B, this->sHat_B);
-    //! - Get dot product of the CSS normal and the sun vector
-    this->directValue = 0.0;
-    //! - If the dot product is within the simulated field of view, set direct value to it
-    if(temp1 >= cos(this->fov))
-    {
-       this->directValue = temp1;
-    }
-    
+
+    this->directValue = this->nHat_B.dot(this->sHat_B) >= cos(this->fov) ? this->nHat_B.dot(this->sHat_B) : 0.0;
+    double dotProd = this->nHat_B.dot(this->sHat_B);
+    double cosf = cos(fov);
     // Define epsilon that will avoid dividing by a very small kelly factor, i.e 0.0.
     double eps = 1e-10;
     //! - Apply the kelly fit to the truth direct value
     double KellyFit = 1.0;
     if (this->KellyFactor > eps) {
-        KellyFit -= exp(-this->directValue * this->directValue/this->KellyFactor);
+        KellyFit -= exp(-this->directValue * this->directValue / this->KellyFactor);
     }
     this->directValue = this->directValue*KellyFit;
     
     // apply sun distance factor (adjust based on flux at current distance from sun)
     // Also apply shadow factor. Basically, correct the intensity of the light.
     this->directValue = this->directValue*this->sunDistanceFactor*this->sunVisibilityFactor.shadowFactor;
-    this->trueValue = this->directValue; //keep for now. not sure what it does, really. -SJKC
+    this->trueValue = this->directValue;
     
     //! - Albedo is forced to zero for now. Note that "albedo value" must be the cosine response due to albedo intensity and direction. It can then be stacked on top of the
     //! - sun cosine curve

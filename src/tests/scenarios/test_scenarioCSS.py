@@ -145,8 +145,8 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
 # vector (in body frame components).  The first method is to set \f$\hat{\mathbf n}\f$ or nHat_B directly.  This is
 # done with:
 # ~~~~~~~~~~~~~~~~{.py}
-#   CSS1.nHat_B = [1.0, 0.0, 0.0]
-#   CSS2.nHat_B = [0.0, -1.0, 0.0]
+#   CSS1.nHat_B = np.array([1.0, 0.0, 0.0])
+#   CSS2.nHat_B = np.array([0.0, -1.0, 0.0])
 # ~~~~~~~~~~~~~~~~
 # Another option is to use a frame associated relative to a common CSS platform \f$\cal P\f$.  The bundled CSS units are
 # often symmetrically arranged on a platform such as in a pyramid configuration.  The the platform frame is
@@ -368,7 +368,7 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
         CSS1.phi = 0*macros.D2R
         CSS1.setUnitDirectionVectorWithPerturbation(0., 0.)
     else:
-        CSS1.nHat_B = [1.0, 0.0, 0.0]
+        CSS1.nHat_B = np.array([1.0, 0.0, 0.0])
 
     CSS2 = coarse_sun_sensor.CoarseSunSensor(CSS1)      # make copy of first CSS unit
     CSS2.ModelTag = "CSS2_sensor"
@@ -377,7 +377,7 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
         CSS2.theta = 180.*macros.D2R
         CSS2.setUnitDirectionVectorWithPerturbation(0., 0.)
     else:
-        CSS2.nHat_B = [0.0, -1.0, 0.0]
+        CSS2.nHat_B = np.array([0.0, -1.0, 0.0])
 
     if useCSSConstellation:
         cssList = [CSS1, CSS2]
@@ -577,8 +577,8 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
 #
 if __name__ == "__main__":
     run(
-         False,       # do unit tests
-         True,        # show_plots
+         True,       # do unit tests
+         False,        # show_plots
          False,       # useCSSConstellation
          False,       # usePlatform
          False,       # useEclipse

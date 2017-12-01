@@ -120,7 +120,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     singleCss.minOutput = minIn
     singleCss.maxOutput = maxIn
     singleCss.OutputDataMsg = "singleCssOut"
-    singleCss.nHat_B = [1., 0., 0.]
+    singleCss.nHat_B = np.array([1., 0., 0.])
     singleCss.sunEclipseInMsgName = "eclipseMsg"
     singleCss.InputSunMsg = "sunMsg"
     singleCss.InputStateMsg = "satelliteState"
