@@ -297,21 +297,12 @@ void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
  spacecraftPlus output message and passed through to theother IMU functions which add noise, etc. */
 void ImuSensor::computePlatformDR()
 {
-    Eigen::Matrix3d dcm_BN_1;  // direction cosine matrix from N to B at time 1
-    Eigen::Matrix3d dcm_BN_2;  // direction cosine matrix from N to B at time 2
-    Eigen::Matrix3d dcm_PN_1;  // direction cosine matrix from N to P at time 1
-    Eigen::Matrix3d dcm_PN_2;  // direction cosine matrix from N to P at time 2
-    Eigen::Matrix3d dcm_P2P1;  // direction cosine matrix from P at time 1 to P at time 2
     double dcm_P2P1_cArray[9]; //dcm_P2P1 as cArray for C2PRV conversion
     double prv_PN_cArray[3]; //cArray of PRV
 
-    
     //Calculated time averaged cumulative rotation
-    dcm_BN_1 = this->previous_sigma_BN.toRotationMatrix().transpose();
-    dcm_BN_2 = this->current_sigma_BN.toRotationMatrix().transpose();
-    dcm_PN_1 = this->dcm_PB * dcm_BN_1;
-    dcm_PN_2 = this->dcm_PB * dcm_BN_2;
-    dcm_P2P1 = dcm_PN_2 * dcm_PN_1.transpose();
+    Eigen::Matrix3d dcm_P2P1;  // direction cosine matrix from P at time 1 to P at time 2
+    dcm_P2P1 = this->dcm_PB * this->current_sigma_BN.toRotationMatrix().transpose() * (this->dcm_PB * this->previous_sigma_BN.toRotationMatrix().transpose()).transpose();
     eigenMatrix3d2CArray(dcm_P2P1, dcm_P2P1_cArray); //makes a 9x1
     C2PRV(RECAST3X3 dcm_P2P1_cArray, prv_PN_cArray); //makes it back into a 3x3
     this->prv_PN_out = cArray2EigenVector3d(prv_PN_cArray);//writes it back to the variable to be passed along.
