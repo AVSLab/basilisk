@@ -63,7 +63,6 @@ void CrossInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID)
     ConfigData->cssConfInMsgId = subscribeToMessage(ConfigData->cssConfInMsgName,
                                                    sizeof(CSSConstConfig), moduleID);
     
-    
 }
 
 /*! This method resets the sunline attitude filter to an initial state and
@@ -77,7 +76,6 @@ void Reset_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
 {
     
     int32_t i;
-    VehicleConfigFswMsg massPropsInBuffer;
     CSSConstConfig cssConfigInBuffer;
     uint64_t writeTime;
     uint32_t writeSize;
@@ -85,7 +83,6 @@ void Reset_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     
     /*! Begin method steps*/
     /*! - Zero the local configuration data structures and outputs */
-    memset(&massPropsInBuffer, 0x0 ,sizeof(VehicleConfigFswMsg));
     memset(&cssConfigInBuffer, 0x0, sizeof(CSSConstConfig));
     memset(&(ConfigData->outputSunline), 0x0, sizeof(NavAttIntMsg));
     

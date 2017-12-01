@@ -61,8 +61,7 @@ void CrossInit_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t moduleID)
     /*! - Find the message ID for the coarse sun sensor configuration message */
     ConfigData->cssConfInMsgId = subscribeToMessage(ConfigData->cssConfInMsgName,
                                                    sizeof(CSSConstConfig), moduleID);
-    
-    
+
 }
 
 /*! This method resets the sunline attitude filter to an initial state and
@@ -80,6 +79,7 @@ void Reset_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     CSSConstConfig cssConfigInBuffer;
     uint64_t writeTime;
     uint32_t writeSize;
+    int32_t ReadTest;
     
     /*! Begin method steps*/
     /*! - Zero the local configuration data structures and outputs */
@@ -88,9 +88,7 @@ void Reset_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     memset(&(ConfigData->outputSunline), 0x0, sizeof(NavAttIntMsg));
     
     /*! - Read in mass properties and coarse sun sensor configuration information.*/
-    ReadMessage(ConfigData->massPropsInMsgId, &writeTime, &writeSize,
-                sizeof(VehicleConfigFswMsg), &massPropsInBuffer, moduleID);
-    ReadMessage(ConfigData->cssConfInMsgId, &writeTime, &writeSize,
+    ReadTest = ReadMessage(ConfigData->cssConfInMsgId, &writeTime, &writeSize,
                 sizeof(CSSConstConfig), &cssConfigInBuffer, moduleID);
     
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/
@@ -138,6 +136,7 @@ void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     double newTimeTag;
     uint64_t ClockTime;
     uint32_t ReadSize;
+    int32_t ReadTest;
     SunlineFilterFswMsg sunlineDataOutBuffer;
     
     /*! Begin method steps*/
@@ -145,13 +144,13 @@ void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     ClockTime = 0;
     ReadSize = 0;
     memset(&(ConfigData->cssSensorInBuffer), 0x0, sizeof(CSSArraySensorIntMsg));
-    ReadMessage(ConfigData->cssDataInMsgId, &ClockTime, &ReadSize,
+    ReadTest = ReadMessage(ConfigData->cssDataInMsgId, &ClockTime, &ReadSize,
         sizeof(CSSArraySensorIntMsg), (void*) (&(ConfigData->cssSensorInBuffer)), moduleID);
     
     /*! - If the time tag from the measured data is new compared to previous step, 
           propagate and update the filter*/
     newTimeTag = ClockTime * NANO2SEC;
-    if(newTimeTag >= ConfigData->timeTag && ReadSize > 0)
+    if(newTimeTag >= ConfigData->timeTag && ReadTest > 0)
     {
         sunlineTimeUpdate(ConfigData, newTimeTag);
         sunlineMeasUpdate(ConfigData, newTimeTag);
