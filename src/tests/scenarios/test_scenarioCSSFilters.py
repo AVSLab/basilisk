@@ -169,8 +169,10 @@ def setupOEKFData(filterObject):
 # ~~~~~~~~~~~~~~~~
 #
 # The CSS modules must first be individual created and configured.
-# In this simulation each case uses two CSS sensors.  The minimum variables that must be set for each CSS
-# includes:
+# This simulation uses 8 sun sensors, in 2 pyramids of 4 units. The code that sets up a constellation displays another
+# method than used in [test_scenarioCSS.py](@ref scenarioCSS).
+# In this case instead of creating a list of CSS and adding the list to the constellation, the "appendCSS" command is used.
+#
 # ~~~~~~~~~~~~~~~~{.py}
 # cssConstelation = coarse_sun_sensor.CSSConstellation()
 # for CSSHat in CSSOrientationList:
@@ -181,21 +183,26 @@ def setupOEKFData(filterObject):
 # scSim.AddModelToTask(simTaskName, cssConstelation)
 # ~~~~~~~~~~~~~~~~
 #
-# The constellation characteristics are summarized in the following table.
+# The constellation characteristics are summarized in the following table. This table shows the individual unit vectors
+# for each sensor, named nHat_B in the code.
 #
 # CSS   | normal vector          |
 # ----- | ---------------------- |
 # 1     | [sqrt(2)/2, -0.5, 0.5] |
 # 2     | [sqrt(2)/2, -0.5, -0.5]|
 # 3     | [sqrt(2)/2, 0.5, -0.5] |
-# 4     | [sqrt(2)/2,  0.5, 0.5] |
+# 4     | [sqrt(2)/2,  0.5, 0.5]     |
 # 5     | [-sqrt(2)/2, 0, sqrt(2)/2] |
 # 6     | [-sqrt(2)/2, sqrt(2)/2, 0] |
 # 7     | [-sqrt(2)/2, 0, -sqrt(2)/2] |
 # 8     | [-sqrt(2)/2, -sqrt(2)/2, 0] |
 #
 #
-# An additional message must be written for the configuration of the CSS. This is done with vehicleConfigData
+# An additional message must be written for the configuration of the CSS for the Flight Software modules. This is done with vehicleConfigData,
+# a message that is read once at the start of a simulation. This message also allows the user to set different values between the
+# simulation and the flight software parameters, which could corrupt the simulation, and reproduce an imperfect spacecraft
+# construction process.
+#
 # ~~~~~~~~~~~~~~~~{.py}
 # cssConstVehicle = vehicleConfigData.CSSConstConfig()
 #
@@ -208,18 +215,9 @@ def setupOEKFData(filterObject):
 # cssConstVehicle.cssVals = totalCSSList
 #
 # ~~~~~~~~~~~~~~~~
-# This allows us to write the messages as follows:
+# This allows us to write the CSS config message, using the unitTestSupport function "setMessage"
 # ~~~~~~~~~~~~~~~~{.py}
-#
-# msgSize = cssConstVehicle.getStructSize()
-# inputData = cssComm.CSSArraySensorIntMsg()
-#
-# inputMessageSize = inputData.getStructSize()
-# scSim.TotalSim.CreateNewMessage(simProcessName, "css_config_data",
-#                                 msgSize, 2, "CSSConstConfig")
-# scSim.TotalSim.CreateNewMessage(simProcessName, moduleConfig.cssDataInMsgName, inputMessageSize,
-#                                 2)  # number of buffers (leave at 2 as default, don't make zero)
-# scSim.TotalSim.WriteMessageData("css_config_data", msgSize, 0, cssConstVehicle)
+#unitTestSupport.setMessage(scSim.TotalSim, simProcessName, "css_config_data", cssConstVehicle)
 # ~~~~~~~~~~~~~~~~
 #
 # This sets up the spacecraft, it's sun sensors, and the sun direction. The filters can now be initialized.
@@ -257,7 +255,10 @@ def setupOEKFData(filterObject):
 # noise on heading measurements             |       0.0017 ** 2 |
 #
 #
-# This is all initialized in the following code
+# This is all initialized in the following code. Alpha, Beta, and Kappa are varaibles specific to uKF propagation.
+# The state vector and the covariance are named "state" and "covar" respectively, while the measurement noise
+# is given by the qNoiseIn , matrix. The standard deviation of the measurement noise is of 0.017**2 on the sun heading
+# components, and 0.0017**2 and the sun heading rate. The qObsVal is used in the filter to create noise matrices.
 #  ~~~~~~~~~~~~~{.py}
 # filterObject.navStateOutMsgName = "sunline_state_estimate"
 # filterObject.filtDataOutMsgName = "sunline_filter_data"
@@ -283,13 +284,14 @@ def setupOEKFData(filterObject):
 # ~~~~~~~~~~~~~
 #
 # The resulting plots of the states, their covariance envelopes, as compared to the true state
-# are plotted. Further documentation can be found in the _Documentation folder in the module directory.
+# are plotted. Further documentation can be found in the _Documentation folder in the module directory, the paper
+# of interested found in '/src/fswAlgorithms/attDetermination/sunlineUKF/_Documentation/sunlineUKF_DesignDescription.pdf'.
 # ![uKF Performance](Images/Scenarios/scenario_Filters_StatesExpecteduKF.svg "States vs Truth")
 #
 # Setup 2 - EKF
 # ------
 #
-# The following filter tested is an Extended Kalman filter. This filter uses all the same values for intialization
+# The following filter tested is an Extended Kalman filter. This filter uses all the same values for initialization
 #  as the uKF (aside from the uKF specific alpha, beta, kappa variables). A couple variables are added:
 #
 # Name          | Value        |
@@ -303,7 +305,7 @@ def setupOEKFData(filterObject):
 # The CKF switch is the number of measurements that are processed using a classical, linear Kalman filter when the
 # filter is first run. This allows for the covariance to shrink before employing the EKF, increasing the robustness.
 #
-# These variables are setup as follows:
+# These variables are setup as previously, with the addition of the state error vector, called 'x'.
 # ~~~~~~~~~~~~~{.py}
 # filterObject.navStateOutMsgName = "sunline_state_estimate"
 # filterObject.filtDataOutMsgName = "sunline_filter_data"
@@ -325,7 +327,8 @@ def setupOEKFData(filterObject):
 # filterObject.eKFSwitch = 3.  # If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 # ~~~~~~~~~~~~~
 # The states vs expected states are plotted, as well as the state error plots along with the covariance
-# envelopes. Further documentation can be found in the _Documentation folder in the module directory.
+# envelopes. Further documentation can be found in the _Documentation folder in the module directory:
+#'/src/fswAlgorithms/attDetermination/sunlineEKF/_Documentation/'.
 # ![EKF State Errors](Images/Scenarios/scenario_Filters_StatesPlotEKF.svg "State Error and Covariances")
 # ![EKF Filter performance](Images/Scenarios/scenario_Filters_StatesExpectedEKF.svg "States vs Truth")
 #
@@ -336,7 +339,8 @@ def setupOEKFData(filterObject):
 # as it only estimates the sunheading. In order to propagate it, it estimates the omega vector from the two last
 # measurements.
 #
-# Further documentation can be found in the _Documentation folder in the module directory. The set up is done as follows:
+# The set up is nearly identical to the EKF, with the exception of the size of the vectors and matrices (only 3 states
+# are estimated now). Furthermore, the rotation rate of the spacecraft, omega, is initialized.
 #
 # ~~~~~~~~~~~~~{.py}
 # filterObject.navStateOutMsgName = "sunline_state_estimate"
@@ -356,6 +360,7 @@ def setupOEKFData(filterObject):
 # filterObject.qObsVal = 0.017 ** 2
 # filterObject.eKFSwitch = 3.  # If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 # ~~~~~~~~~~~~~
+# More in-depth documentation on the filter specifics are found in '/src/fswAlgorithms/attDetermination/okeefeEKF/_Documentation/'.
 # The results from this filter are plotted:
 # ![OEKF State Errors](Images/Scenarios/scenario_Filters_StatesPlotOEKF.svg "State Error and Covariances")
 # ![OEKF Filter performance](Images/Scenarios/scenario_Filters_StatesExpectedOEKF.svg "States vs Truth")
@@ -503,14 +508,15 @@ def run(show_plots, FilterType, simTime):
         statesString = 'SunlineUKF.state'
         covarString = 'SunlineUKF.covar'
 
-    msgSize = cssConstVehicle.getStructSize()
-    inputData = cssComm.CSSArraySensorIntMsg()
+    # msgSize = cssConstVehicle.getStructSize()
+    # inputData = cssComm.CSSArraySensorIntMsg()
+    #
+    # inputMessageSize = inputData.getStructSize()
+    # scSim.TotalSim.CreateNewMessage(simProcessName, "css_config_data",
+    #                                       msgSize, 2, "CSSConstConfig")
+    # scSim.TotalSim.WriteMessageData("css_config_data", msgSize, 0, cssConstVehicle)
 
-    inputMessageSize = inputData.getStructSize()
-    scSim.TotalSim.CreateNewMessage(simProcessName, "css_config_data",
-                                          msgSize, 2, "CSSConstConfig")
-    scSim.TotalSim.CreateNewMessage(simProcessName, moduleConfig.cssDataInMsgName, inputMessageSize, 2)  # number of buffers (leave at 2 as default, don't make zero)
-    scSim.TotalSim.WriteMessageData("css_config_data", msgSize, 0, cssConstVehicle)
+    unitTestSupport.setMessage(scSim.TotalSim, simProcessName, "css_config_data", cssConstVehicle)
 
     if FilterType == 'uKF' or FilterType == 'EKF':
         scSim.AddVariableForLogging(covarString, simulationTimeStep , 0, 35)
