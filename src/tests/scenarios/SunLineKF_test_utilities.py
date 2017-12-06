@@ -236,6 +236,19 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2, FilterType, show_plots):
         plt.show()
     plt.close()
 
+def numMeasurements(numObs, FilterType, show_plots):
+    plt.plot(111)
+    plt.plot(numObs[:,0]*(1E-9) , numObs[:, 1], "b")
+    plt.ylim([0,8])
+    plt.xlabel('t(s)')
+    plt.title('Number of Activated CSS')
+
+    unitTestSupport.saveScenarioFigure('scenario_Filters_Obs'+ FilterType, plt,  path)
+
+    if show_plots:
+        plt.show()
+    plt.close()
+
 def PostFitResiduals(Res, noise, FilterType, show_plots):
 
     MeasNoise = np.zeros(len(Res[:,0]))
