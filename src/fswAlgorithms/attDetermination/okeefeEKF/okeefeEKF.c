@@ -133,6 +133,7 @@ void Update_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
     double newTimeTag;
+    double Hx[MAX_N_CSS_MEAS];
     uint64_t ClockTime;
     uint32_t ReadSize;
     SunlineFilterFswMsg sunlineDataOutBuffer;
@@ -164,6 +165,10 @@ void Update_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t callTime,
         mCopy(ConfigData->covarBar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, ConfigData->covar);
     }
     
+    /* Compute post fit residuals once that data has been processed */
+    mMultM(ConfigData->measMat, ConfigData->numObs, SKF_N_STATES, ConfigData->x, SKF_N_STATES, 1, Hx);
+    mSubtract(ConfigData->yMeas, ConfigData->numObs, 1, Hx, ConfigData->postFits);
+    
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
 	v3Copy(ConfigData->states, ConfigData->outputSunline.vehSunPntBdy);
     v3Normalize(ConfigData->outputSunline.vehSunPntBdy,
@@ -177,7 +182,9 @@ void Update_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t callTime,
     sunlineDataOutBuffer.numObs = ConfigData->numObs;
     memmove(sunlineDataOutBuffer.covar, ConfigData->covar,
             SKF_N_STATES_HALF*SKF_N_STATES_HALF*sizeof(double));
-    memmove(sunlineDataOutBuffer.state, ConfigData->states, SKF_N_STATES_HALF*sizeof(double));
+    memmove(sunlineDataOutBuffer.state, ConfigData->states, SKF_N_STATES*sizeof(double));
+    memmove(sunlineDataOutBuffer.stateError, ConfigData->x, SKF_N_STATES*sizeof(double));
+    memmove(sunlineDataOutBuffer.postFitRes, ConfigData->postFits, MAX_N_CSS_MEAS*sizeof(double));
     WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(SunlineFilterFswMsg),
                  &sunlineDataOutBuffer, moduleID);
     

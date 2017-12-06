@@ -159,6 +159,9 @@ void Update_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
     double newTimeTag;
+    double yBar[MAX_N_CSS_MEAS];
+    double tempYVec[MAX_N_CSS_MEAS];
+    int i;
     uint64_t ClockTime;
     uint32_t ReadSize;
     SunlineFilterFswMsg sunlineDataOutBuffer;
@@ -188,6 +191,22 @@ void Update_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
         sunlineUKFTimeUpdate(ConfigData, newTimeTag);
     }
     
+    /*! - Compute Post Fit Residuals, first get Y (eq 22) using the states post fit*/
+    sunlineUKFMeasModel(ConfigData);
+    
+    /*! - Compute the value for the yBar parameter (equation 23)*/
+    vSetZero(yBar, ConfigData->numObs);
+    for(i=0; i<ConfigData->countHalfSPs*2+1; i++)
+    {
+        vCopy(&(ConfigData->yMeas[i*ConfigData->numObs]), ConfigData->numObs,
+              tempYVec);
+        vScale(ConfigData->wM[i], tempYVec, ConfigData->numObs, tempYVec);
+        vAdd(yBar, ConfigData->numObs, tempYVec, yBar);
+    }
+    
+    /*! - The post fits are y- ybar*/
+    mSubtract(ConfigData->obs, MAX_N_CSS_MEAS, 1, yBar, ConfigData->postFits);
+    
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
 	v3Copy(ConfigData->state, ConfigData->outputSunline.vehSunPntBdy);
     v3Normalize(ConfigData->outputSunline.vehSunPntBdy,
@@ -202,6 +221,7 @@ void Update_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     memmove(sunlineDataOutBuffer.covar, ConfigData->covar,
             SKF_N_STATES*SKF_N_STATES*sizeof(double));
     memmove(sunlineDataOutBuffer.state, ConfigData->state, SKF_N_STATES*sizeof(double));
+    memmove(sunlineDataOutBuffer.postFitRes, ConfigData->postFits, MAX_N_CSS_MEAS*sizeof(double));
     WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(SunlineFilterFswMsg),
                  &sunlineDataOutBuffer, moduleID);
     
