@@ -35,22 +35,14 @@ import time
 from Basilisk import __path__
 bskPath = __path__[0]
 
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 import matplotlib.pyplot as plt
-from Basilisk.utilities import macros
-from Basilisk.simulation import coarse_sun_sensor
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
-from Basilisk.fswAlgorithms import cssComm
+from Basilisk.simulation import spacecraftPlus, spice_interface, coarse_sun_sensor
+from Basilisk.fswAlgorithms import sunlineUKF, sunlineEKF, okeefeEKF, vehicleConfigData
 
-from Basilisk.simulation import spacecraftPlus
-from Basilisk.simulation import spice_interface
-from Basilisk.fswAlgorithms import vehicleConfigData
-from Basilisk.fswAlgorithms import sunlineUKF
-from Basilisk.fswAlgorithms import sunlineEKF
-from Basilisk.fswAlgorithms import okeefeEKF
 import SunLineKF_test_utilities as Fplot
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
@@ -91,6 +83,7 @@ def setupUKFData(filterObject):
     qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6]*0.0017*0.0017
     filterObject.qNoise = qNoiseIn.reshape(36).tolist()
     filterObject.qObsVal = 0.017*0.017
+
 
 def setupEKFData(filterObject):
     filterObject.navStateOutMsgName = "sunline_state_estimate"
@@ -442,8 +435,8 @@ def run(show_plots, FilterType, simTime):
     #
     scObject.hub.r_CN_NInit = [[-om.AU*1000.], [0.0], [0.0]]              # m   - r_CN_N
     scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]                 # m/s - v_CN_N
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]               # sigma_BN_B
-    scObject.hub.omega_BN_BInit = [[0.5*macros.D2R], [-1.*macros.D2R], [1.*macros.D2R]]   # rad/s - omega_BN_B
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.]]               # sigma_BN_B
+    scObject.hub.omega_BN_BInit = [[-0.5*macros.D2R], [1.*macros.D2R], [1.*macros.D2R]]   # rad/s - omega_BN_B
 
     scSim.TotalSim.logThisMessage('inertial_state_output', simulationTimeStep)
     # add spacecraftPlus object to the simulation process
@@ -483,6 +476,8 @@ def run(show_plots, FilterType, simTime):
     #
     # Setup filter
     #
+
+    numStates = 6
     if FilterType == 'EKF':
         moduleConfig = sunlineEKF.sunlineEKFConfig()
         moduleWrap = scSim.setModelDataWrap(moduleConfig)
@@ -492,11 +487,9 @@ def run(show_plots, FilterType, simTime):
         # Add test module to runtime call list
         scSim.AddModelToTask(simTaskName, moduleWrap, moduleConfig)
 
-        statesString = 'SunlineEKF.states'
-        covarString = 'SunlineEKF.covar'
-        scSim.AddVariableForLogging('SunlineEKF.x', simulationTimeStep, 0, 5)
-
     if FilterType == 'OEKF':
+        numStates = 3
+
         moduleConfig = okeefeEKF.okeefeEKFConfig()
         moduleWrap = scSim.setModelDataWrap(moduleConfig)
         moduleWrap.ModelTag = "okeefeEKF"
@@ -505,9 +498,6 @@ def run(show_plots, FilterType, simTime):
         # Add test module to runtime call list
         scSim.AddModelToTask(simTaskName, moduleWrap, moduleConfig)
 
-        statesString = 'okeefeEKF.states'
-        covarString = 'okeefeEKF.covar'
-        scSim.AddVariableForLogging('okeefeEKF.x', simulationTimeStep, 0, 2)
 
     if FilterType == 'uKF':
         moduleConfig = sunlineUKF.SunlineUKFConfig()
@@ -518,25 +508,11 @@ def run(show_plots, FilterType, simTime):
         # Add test module to runtime call list
         scSim.AddModelToTask(simTaskName, moduleWrap, moduleConfig)
 
-        statesString = 'SunlineUKF.state'
-        covarString = 'SunlineUKF.covar'
 
-    # msgSize = cssConstVehicle.getStructSize()
-    # inputData = cssComm.CSSArraySensorIntMsg()
-    #
-    # inputMessageSize = inputData.getStructSize()
-    # scSim.TotalSim.CreateNewMessage(simProcessName, "css_config_data",
-    #                                       msgSize, 2, "CSSConstConfig")
-    # scSim.TotalSim.WriteMessageData("css_config_data", msgSize, 0, cssConstVehicle)
+    scSim.TotalSim.logThisMessage('sunline_state_estimate', simulationTimeStep)
+    scSim.TotalSim.logThisMessage('sunline_filter_data', simulationTimeStep)
 
     unitTestSupport.setMessage(scSim.TotalSim, simProcessName, "css_config_data", cssConstVehicle)
-
-    if FilterType == 'uKF' or FilterType == 'EKF':
-        scSim.AddVariableForLogging(covarString, simulationTimeStep , 0, 35)
-        scSim.AddVariableForLogging(statesString, simulationTimeStep , 0, 5)
-    if FilterType == 'OEKF':
-        scSim.AddVariableForLogging(covarString, simulationTimeStep, 0, 8)
-        scSim.AddVariableForLogging(statesString, simulationTimeStep, 0, 2)
 
     #
     #   initialize Simulation
@@ -557,20 +533,20 @@ def run(show_plots, FilterType, simTime):
     #
     #   retrieve the logged data
     #
-    covarLog = scSim.GetLogVariableData(covarString)
-    stateLog = scSim.GetLogVariableData(statesString)
-
-    if FilterType == 'EKF':
-        stateErrorLog = scSim.GetLogVariableData('SunlineEKF.x')
-    if FilterType == 'OEKF':
-        stateErrorLog = scSim.GetLogVariableData('okeefeEKF.x')
-    np.set_printoptions(precision=16)
 
     # Get messages that will make true data
     OutSunPos = scSim.pullMessageLogData('sun_planet_data' + ".PositionVector", range(3))
     Outr_BN_N = scSim.pullMessageLogData('inertial_state_output' + ".r_BN_N", range(3))
     OutSigma_BN = scSim.pullMessageLogData('inertial_state_output' + ".sigma_BN", range(3))
     Outomega_BN = scSim.pullMessageLogData('inertial_state_output' + ".omega_BN_B", range(3))
+
+    # Get the filter outputs through the messages
+    sunPnt_B = scSim.pullMessageLogData('sunline_state_estimate' + ".vehSunPntBdy", range(3))
+    stateErrorLog = scSim.pullMessageLogData('sunline_filter_data' + ".stateError", range(numStates))
+    stateLog = scSim.pullMessageLogData('sunline_filter_data' + ".state", range(numStates))
+    postFitLog = scSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", range(len(CSSOrientationList)))
+    covarLog = scSim.pullMessageLogData('sunline_filter_data' + ".covar", range(numStates*numStates))
+    obsLog = scSim.pullMessageLogData('sunline_filter_data' + ".numObs", range(1))
 
     sHat_B = np.zeros(np.shape(OutSunPos))
     sHatDot_B = np.zeros(np.shape(OutSunPos))
@@ -589,9 +565,14 @@ def run(show_plots, FilterType, simTime):
     #
     #   plot the results
     #
+    errorVsTruth = np.copy(stateLog)
+    errorVsTruth[:,1:] -= expected[:,1:]
     if FilterType == 'EKF' or FilterType == 'OEKF':
         Fplot.StateErrorCovarPlot(stateErrorLog, covarLog, FilterType, show_plots)
+    Fplot.StateErrorCovarPlot(errorVsTruth, covarLog, FilterType, show_plots)
     Fplot.StatesVsExpected(stateLog, covarLog, expected, FilterType, show_plots)
+    Fplot.PostFitResiduals(postFitLog, moduleConfig.qObsVal, FilterType, show_plots)
+    Fplot.numMeasurements(obsLog, FilterType, show_plots)
 
     if show_plots:
         plt.show()
@@ -610,7 +591,7 @@ def run(show_plots, FilterType, simTime):
 #
 if __name__ == "__main__":
     run( True,      # show_plots
-        'EKF',
+        'uKF',
          200
        )
 
