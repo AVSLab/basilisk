@@ -101,7 +101,7 @@ def setupEKFData(filterObject):
                           0.0, 0.0, 0.0, 0.0, 0.002, 0.0,
                           0.0, 0.0, 0.0, 0.0, 0.0, 0.002]
 
-    filterObject.qProcVal = 0.001**2
+    filterObject.qProcVal = 0.01**2
     filterObject.qObsVal = 0.017 ** 2
     filterObject.eKFSwitch = 3. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 
@@ -436,7 +436,8 @@ def run(show_plots, FilterType, simTime):
     scObject.hub.r_CN_NInit = [[-om.AU*1000.], [0.0], [0.0]]              # m   - r_CN_N
     scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]                 # m/s - v_CN_N
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.]]               # sigma_BN_B
-    scObject.hub.omega_BN_BInit = [[-0.5*macros.D2R], [1.*macros.D2R], [1.*macros.D2R]]   # rad/s - omega_BN_B
+    scObject.hub.omega_BN_BInit = [[-0.5*macros.D2R], [10.*macros.D2R], [10.*macros.D2R]]   # rad/s - omega_BN_B
+    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.]]
 
     scSim.TotalSim.logThisMessage('inertial_state_output', simulationTimeStep)
     # add spacecraftPlus object to the simulation process
@@ -456,6 +457,8 @@ def run(show_plots, FilterType, simTime):
     ]
     for CSSHat in CSSOrientationList:
         newCSS = coarse_sun_sensor.CoarseSunSensor()
+        newCSS.minOutput = 0.017*3
+        newCSS.SenNoiseStd = 0.017
         newCSS.nHat_B = CSSHat
         cssConstelation.appendCSS(newCSS)
     cssConstelation.outputConstellationMessage = 'css_sensors_data'
