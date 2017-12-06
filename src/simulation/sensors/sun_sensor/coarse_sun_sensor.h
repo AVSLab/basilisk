@@ -22,12 +22,14 @@
 
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
-#include <random>
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/cssRawDataSimMsg.h"
 #include "simMessages/eclipseSimMsg.h"
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
+#include "utilities/gauss_markov.h"
+#include "utilities/saturate.h"
+#include <Eigen/Dense>
 
 typedef enum {
     CSSFAULT_OFF,           /*!< CSS measurement is set to 0 for all future time
@@ -76,9 +78,9 @@ public:
     double              theta;                  //!< [rad] css azimuth angle, measured positive from the body +x axis around the +z axis
     double              phi;                    //!< [rad] css elevation angle, measured positive toward the body +z axis from the x-y plane
     double              B2P321Angles[3];        //!< [-] 321 Euler anhles for body to platform
-    double              dcm_PB[3][3];           //!< [-] DCM from platform frame P to body frame B
-    double              nHat_B[3];              //!< [-] css unit direction vector in body frame components
-    double              sHat_B[3];              //!< [-] unit vector to sun in B
+    Eigen::Matrix3d     dcm_PB;           //!< [-] DCM from platform frame P to body frame B
+    Eigen::Vector3d     nHat_B;              //!< [-] css unit direction vector in body frame components
+    Eigen::Vector3d     sHat_B;              //!< [-] unit vector to sun in B
     double              directValue;            //!< [-] direct solar irradiance measurement
     double              albedoValue;            //!< [-] albedo irradiance measurement
     double              scaleFactor;            //!< [-] scale factor applied to sensor (common + individual multipliers)
@@ -86,12 +88,13 @@ public:
     double              trueValue;              //!< [-] total measurement without perturbations
     double              KellyFactor;            //!< [-] Kelly curve fit for output cosine curve
     double              fov;                    //!< [-] rad, field of view half angle
-    double              r_B[3];
+    Eigen::Vector3d     r_B;
     double              SenBias;                //!< [-] Sensor bias value
     double              SenNoiseStd;            //!< [-] Sensor noise value
     uint64_t            OutputBufferCount;      //!< [-] number of output msgs stored
     double              maxOutput;              //!< [-] maximum output (ceiling) for saturation application
     double              minOutput;              //!< [-] minimum output (floor) for saturation application
+    double              walkBounds;             //!< [-] Gauss Markov walk bounds
 private:
     int64_t InputSunID;                         //!< [-] Connect to input time message
     int64_t InputStateID;                       //!< [-] Connect to input time message
@@ -100,9 +103,9 @@ private:
     SpicePlanetStateSimMsg SunData;            //!< [-] Unused for now, but including it for future
     SCPlusStatesSimMsg StateCurrent;           //!< [-] Current SSBI-relative state
     EclipseSimMsg sunVisibilityFactor;          //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
-    std::default_random_engine rgen;            //!< [-] Random number generator for disp
-    std::normal_distribution<double> rnum;      //! [-] Random number distribution
     double              sunDistanceFactor;      //! [-] Factor to scale cosine curve magnitude based on solar flux at location
+    GaussMarkov *noiseModel;                    //! [-] Gauss Markov noise generation model
+    Saturate *saturateUtility;                  //! [-] Saturation utility
 };
 
 //!@brief Constellation of coarse sun sensors for aggregating output information

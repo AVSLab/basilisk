@@ -120,7 +120,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     singleCss.minOutput = minIn
     singleCss.maxOutput = maxIn
     singleCss.OutputDataMsg = "singleCssOut"
-    singleCss.nHat_B = [1., 0., 0.]
+    singleCss.nHat_B = np.array([1., 0., 0.])
     singleCss.sunEclipseInMsgName = "eclipseMsg"
     singleCss.InputSunMsg = "sunMsg"
     singleCss.InputStateMsg = "satelliteState"
@@ -168,7 +168,6 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
         cssP23.theta = np.pi
         cssP24.phi = np.pi/6. #remember, the cssP24 frame is the B frame. This angle is cancelled by a perturbation.
         cssP24.theta = -np.pi/8. #This angle is also provided with a perturbation to test to perturbation functionality.
-
 
         cssP21.setUnitDirectionVectorWithPerturbation(0., 0.)
         cssP22.setUnitDirectionVectorWithPerturbation(0., 0.)
@@ -405,4 +404,4 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-     run(False, False,               1.0,            np.pi/2.,   0.0,    2.0,        0.0,    0.0,    0.0,            1e-10,      "scaleFactor",      2,      5.)
+     run (True, False,               1.0,            np.pi/2.,   0.0,    1.0,        0.0,    0.125,  0.0,            1.0,            -10.,       10.,        1e-2,       "deviation",        -5,     1.)
