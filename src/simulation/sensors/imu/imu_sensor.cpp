@@ -91,6 +91,10 @@ void ImuSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll)
 
 ImuSensor::~ImuSensor()
 {
+    delete this->errorModelGyro;
+    delete this->errorModelAccel;
+    delete this->aDisc;
+    delete this->oDisc;
     return;
 }
 
