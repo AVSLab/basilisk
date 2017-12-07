@@ -239,7 +239,7 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2, FilterType, show_plots):
 def numMeasurements(numObs, FilterType, show_plots):
     plt.plot(111)
     plt.plot(numObs[:,0]*(1E-9) , numObs[:, 1], "b")
-    plt.ylim([0,8])
+    plt.ylim([0,9])
     plt.xlabel('t(s)')
     plt.title('Number of Activated CSS')
 

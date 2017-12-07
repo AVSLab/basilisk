@@ -82,7 +82,7 @@ def setupUKFData(filterObject):
     qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.017*0.017
     qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6]*0.0017*0.0017
     filterObject.qNoise = qNoiseIn.reshape(36).tolist()
-    filterObject.qObsVal = 0.017*0.017
+    filterObject.qObsVal = 0.017**2
 
 
 def setupEKFData(filterObject):
@@ -93,17 +93,17 @@ def setupEKFData(filterObject):
 
     filterObject.sensorUseThresh = 0.
     filterObject.states = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    filterObject.x = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    filterObject.covar = [0.2, 0.0, 0.0, 0.0, 0.0, 0.0,
-                          0.0, 0.2, 0.0, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.2, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.002, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.002, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.0, 0.002]
+    filterObject.x = [0.0, 0.1, 0.0, 0.0, 0.01, 0.0]
+    filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0, 0.0,
+                          0.0, 1., 0.0, 0.0, 0.0, 0.0,
+                          0.0, 0.0, 1., 0.0, 0.0, 0.0,
+                          0.0, 0.0, 0.0, 0.02, 0.0, 0.0,
+                          0.0, 0.0, 0.0, 0.0, 0.02, 0.0,
+                          0.0, 0.0, 0.0, 0.0, 0.0, 0.02]
 
-    filterObject.qProcVal = 0.01**2
-    filterObject.qObsVal = 0.017 ** 2
-    filterObject.eKFSwitch = 3. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
+    filterObject.qProcVal = 0.001**2
+    filterObject.qObsVal = 0.017**2
+    filterObject.eKFSwitch = 5. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 
 def setupOEKFData(filterObject):
     filterObject.navStateOutMsgName = "sunline_state_estimate"
@@ -400,7 +400,7 @@ def run(show_plots, FilterType, simTime):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(1.)
+    simulationTimeStep = macros.sec2nano(0.5)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #
@@ -436,8 +436,8 @@ def run(show_plots, FilterType, simTime):
     scObject.hub.r_CN_NInit = [[-om.AU*1000.], [0.0], [0.0]]              # m   - r_CN_N
     scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]                 # m/s - v_CN_N
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.]]               # sigma_BN_B
-    scObject.hub.omega_BN_BInit = [[-0.5*macros.D2R], [10.*macros.D2R], [10.*macros.D2R]]   # rad/s - omega_BN_B
-    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.]]
+    scObject.hub.omega_BN_BInit = [[-0.1*macros.D2R], [0.5*macros.D2R], [0.5*macros.D2R]]   # rad/s - omega_BN_B
+    # scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.]]
 
     scSim.TotalSim.logThisMessage('inertial_state_output', simulationTimeStep)
     # add spacecraftPlus object to the simulation process
@@ -453,11 +453,11 @@ def run(show_plots, FilterType, simTime):
         [-0.70710678118654746, 0, 0.70710678118654757],
         [-0.70710678118654746, 0.70710678118654757, 0.0],
         [-0.70710678118654746, 0, -0.70710678118654757],
-        [-0.70710678118654746, -0.70710678118654757, 0.0],
+        [-0.70710678118654746, -0.70710678118654757, 0.0]
     ]
     for CSSHat in CSSOrientationList:
         newCSS = coarse_sun_sensor.CoarseSunSensor()
-        newCSS.minOutput = 0.017*3
+        newCSS.minOutput = 0.17
         newCSS.SenNoiseStd = 0.017
         newCSS.nHat_B = CSSHat
         cssConstelation.appendCSS(newCSS)
@@ -547,7 +547,7 @@ def run(show_plots, FilterType, simTime):
     sunPnt_B = scSim.pullMessageLogData('sunline_state_estimate' + ".vehSunPntBdy", range(3))
     stateErrorLog = scSim.pullMessageLogData('sunline_filter_data' + ".stateError", range(numStates))
     stateLog = scSim.pullMessageLogData('sunline_filter_data' + ".state", range(numStates))
-    postFitLog = scSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", range(len(CSSOrientationList)))
+    postFitLog = scSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", range(8))
     covarLog = scSim.pullMessageLogData('sunline_filter_data' + ".covar", range(numStates*numStates))
     obsLog = scSim.pullMessageLogData('sunline_filter_data' + ".numObs", range(1))
 
@@ -594,7 +594,7 @@ def run(show_plots, FilterType, simTime):
 #
 if __name__ == "__main__":
     run( True,      # show_plots
-        'uKF',
+        'EKF',
          200
        )
 
