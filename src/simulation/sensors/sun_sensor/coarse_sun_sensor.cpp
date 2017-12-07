@@ -252,8 +252,6 @@ void CoarseSunSensor::computeTrueOutput()
     //! Begin Method Steps
 
     this->directValue = this->nHat_B.dot(this->sHat_B) >= cos(this->fov) ? this->nHat_B.dot(this->sHat_B) : 0.0;
-    double dotProd = this->nHat_B.dot(this->sHat_B);
-    double cosf = cos(fov);
     // Define epsilon that will avoid dividing by a very small kelly factor, i.e 0.0.
     double eps = 1e-10;
     //! - Apply the kelly fit to the truth direct value

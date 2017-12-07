@@ -55,6 +55,7 @@ SimpleNav::SimpleNav()
 /*! Destructor.  Nothing here. */
 SimpleNav::~SimpleNav()
 {
+    delete this->errorModel;
     return;
 }
 

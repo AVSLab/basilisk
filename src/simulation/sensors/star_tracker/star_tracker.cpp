@@ -45,6 +45,7 @@ StarTracker::StarTracker()
 
 StarTracker::~StarTracker()
 {
+    delete this->errorModel;
     return;
 }
 
