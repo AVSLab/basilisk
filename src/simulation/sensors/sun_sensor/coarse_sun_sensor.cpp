@@ -116,6 +116,8 @@ void CoarseSunSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll
 //! There is nothing to do in the default destructor
 CoarseSunSensor::~CoarseSunSensor()
 {
+    delete this->noiseModel;
+    delete this->saturateUtility;
     return;
 }
 
