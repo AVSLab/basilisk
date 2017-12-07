@@ -83,6 +83,7 @@ def setupUKFData(filterObject):
     qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6]*0.0017*0.0017
     filterObject.qNoise = qNoiseIn.reshape(36).tolist()
     filterObject.qObsVal = 0.017**2
+    filterObject.sensorUseThresh = np.sqrt(filterObject.qObsVal)*5
 
 
 def setupEKFData(filterObject):
@@ -91,7 +92,6 @@ def setupEKFData(filterObject):
     filterObject.cssDataInMsgName = "css_sensors_data"
     filterObject.cssConfInMsgName = "css_config_data"
 
-    filterObject.sensorUseThresh = 0.
     filterObject.states = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     filterObject.x = [0.0, 0.1, 0.0, 0.0, 0.01, 0.0]
     filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0, 0.0,
@@ -103,6 +103,8 @@ def setupEKFData(filterObject):
 
     filterObject.qProcVal = 0.001**2
     filterObject.qObsVal = 0.017**2
+    filterObject.sensorUseThresh = np.sqrt(filterObject.qObsVal)*5
+
     filterObject.eKFSwitch = 5. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 
 def setupOEKFData(filterObject):
@@ -111,7 +113,6 @@ def setupOEKFData(filterObject):
     filterObject.cssDataInMsgName = "css_sensors_data"
     filterObject.cssConfInMsgName = "css_config_data"
 
-    filterObject.sensorUseThresh = 0.
     filterObject.omega = [0., 0., 0.]
     filterObject.states = [1.0, 0.0, 0.0]
     filterObject.x = [0.0, 0.0, 0.0]
@@ -121,6 +122,8 @@ def setupOEKFData(filterObject):
 
     filterObject.qProcVal = 0.1**2
     filterObject.qObsVal = 0.017 ** 2
+    filterObject.sensorUseThresh = np.sqrt(filterObject.qObsVal)*5
+
     filterObject.eKFSwitch = 3. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 
 
@@ -457,7 +460,7 @@ def run(show_plots, FilterType, simTime):
     ]
     for CSSHat in CSSOrientationList:
         newCSS = coarse_sun_sensor.CoarseSunSensor()
-        newCSS.minOutput = 0.17
+        newCSS.minOutput = 0.
         newCSS.SenNoiseStd = 0.017
         newCSS.nHat_B = CSSHat
         cssConstelation.appendCSS(newCSS)
@@ -574,7 +577,7 @@ def run(show_plots, FilterType, simTime):
         Fplot.StateErrorCovarPlot(stateErrorLog, covarLog, FilterType, show_plots)
     Fplot.StateErrorCovarPlot(errorVsTruth, covarLog, FilterType, show_plots)
     Fplot.StatesVsExpected(stateLog, covarLog, expected, FilterType, show_plots)
-    Fplot.PostFitResiduals(postFitLog, moduleConfig.qObsVal, FilterType, show_plots)
+    Fplot.PostFitResiduals(postFitLog, np.sqrt(moduleConfig.qObsVal), FilterType, show_plots)
     Fplot.numMeasurements(obsLog, FilterType, show_plots)
 
     if show_plots:
@@ -595,6 +598,6 @@ def run(show_plots, FilterType, simTime):
 if __name__ == "__main__":
     run( True,      # show_plots
         'EKF',
-         200
+         400
        )
 
