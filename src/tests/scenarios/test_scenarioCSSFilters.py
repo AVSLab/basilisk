@@ -302,6 +302,7 @@ def setupOEKFData(filterObject):
 # The resulting plots of the states, their covariance envelopes, as compared to the true state
 # are plotted. Further documentation can be found in the _Documentation folder in the module directory, the paper
 # of interested found in '/src/fswAlgorithms/attDetermination/sunlineUKF/_Documentation/sunlineUKF_DesignDescription.pdf'.
+# ![uKF State Errors](Images/Scenarios/scenario_Filters_StatesPlotuKF.svg "State Error and Covariances")
 # ![uKF Performance](Images/Scenarios/scenario_Filters_StatesExpecteduKF.svg "States vs Truth")
 #
 # These plots show good state estimation throughout the simulation. The mean stays close to the truth, the states do
