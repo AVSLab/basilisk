@@ -92,8 +92,8 @@ def setupEKFData(filterObject):
     filterObject.cssDataInMsgName = "css_sensors_data"
     filterObject.cssConfInMsgName = "css_config_data"
 
-    filterObject.states = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    filterObject.x = [0.0, 0.1, 0.0, 0.0, 0.01, 0.0]
+    filterObject.states = [1.0, 0.1, 0.0, 0.0, 0.01, 0.0]
+    filterObject.x = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0, 0.0,
                           0.0, 1., 0.0, 0.0, 0.0, 0.0,
                           0.0, 0.0, 1., 0.0, 0.0, 0.0,
@@ -114,8 +114,8 @@ def setupOEKFData(filterObject):
     filterObject.cssConfInMsgName = "css_config_data"
 
     filterObject.omega = [0., 0., 0.]
-    filterObject.states = [1.0, 0.0, 0.0]
-    filterObject.x = [0.0, 0.1, 0.0]
+    filterObject.states = [1.0, 0.1, 0.0]
+    filterObject.x = [0.0, 0.0, 0.0]
     filterObject.covar = [1., 0.0, 0.0,
                           0.0, 1., 0.0,
                           0.0, 0.0, 1.]
@@ -124,7 +124,7 @@ def setupOEKFData(filterObject):
     filterObject.qObsVal = 0.017 ** 2
     filterObject.sensorUseThresh = np.sqrt(filterObject.qObsVal)*5
 
-    filterObject.eKFSwitch = 3. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
+    filterObject.eKFSwitch = 5. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 
 
 ## \defgroup Tutorials_4_0_1
@@ -231,12 +231,19 @@ def setupOEKFData(filterObject):
 #
 # This sets up the spacecraft, it's sun sensors, and the sun direction. The filters can now be initialized.
 # These are configured very similarly, but the nature of the filters lead to slight differences.
+# All of the filters output a Navigation message which outputs the sun heading for other modules to use,
+# but they also output a filtering message (sunlineFilterFswMsg.h), containing observations, post-fit residuals,
+# covariances, and full states.
+# This allows users to check in on filter performances efficiently, and is used in this tutorial. This first allows us
+# to see when observations occur throughout the scenario over which we are comparing performance:
+#
+# ![CSS Observations](Images/Scenarios/scenario_Filters_ObsOEKF.svg "Number of CSS measurements")
 #
 #
 # Setup 1 - ukF
 # -----
 #
-# In the first run, we use an unscented Kalman Filter. This filter has the following states:
+# In the first run, we use an square root unscented Kalman Filter. This filter has the following states:
 #
 # States         |     notation |
 # -------------- | ------------ |
@@ -278,10 +285,10 @@ def setupOEKFData(filterObject):
 # filterObject.beta = 2.0
 # filterObject.kappa = 0.0
 #
-# filterObject.state = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-# filterObject.covar = [0.2, 0.0, 0.0, 0.0, 0.0, 0.0,
-#                       0.0, 0.2, 0.0, 0.0, 0.0, 0.0,
-#                       0.0, 0.0, 0.2, 0.0, 0.0, 0.0,
+# filterObject.state = [1.0, 0.1, 0.0, 0.0, 0.01, 0.0]
+# filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0, 0.0,
+#                       0.0, 1., 0.0, 0.0, 0.0, 0.0,
+#                       0.0, 0.0, 1., 0.0, 0.0, 0.0,
 #                       0.0, 0.0, 0.0, 0.02, 0.0, 0.0,
 #                       0.0, 0.0, 0.0, 0.0, 0.02, 0.0,
 #                       0.0, 0.0, 0.0, 0.0, 0.0, 0.02]
@@ -297,6 +304,12 @@ def setupOEKFData(filterObject):
 # of interested found in '/src/fswAlgorithms/attDetermination/sunlineUKF/_Documentation/sunlineUKF_DesignDescription.pdf'.
 # ![uKF Performance](Images/Scenarios/scenario_Filters_StatesExpecteduKF.svg "States vs Truth")
 #
+# These plots show good state estimation throughout the simulation. The mean stays close to the truth, the states do
+# appear slightly noisy at times.
+#
+# The post fit residuals, show a fully functional filter, with no issues of observabilty:
+# ![uKF Post Fit](Images/Scenarios/scenario_Filters_PostFituKF.svg "Post Fit Residuals")
+#
 # Setup 2 - EKF
 # ------
 #
@@ -305,8 +318,8 @@ def setupOEKFData(filterObject):
 #
 # Name          | Value        |
 # -----------   | ------------ |
-# Process noise |    0.1**2    |
-# CKF switch    |      3       |
+# Process noise |    0.001**2  |
+# CKF switch    |      5       |
 #
 # The process noise is the noise added on the dynamics. This allows to account for dynamical uncertainties, and
 # avoid filter saturation.
@@ -322,24 +335,30 @@ def setupOEKFData(filterObject):
 # filterObject.cssConfInMsgName = "css_config_data"
 #
 # filterObject.sensorUseThresh = 0.
-# filterObject.states = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+# filterObject.states = [1.0, 0.1, 0.0, 0.0, 0.01, 0.0]
 # filterObject.x = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-# filterObject.covar = [0.2, 0.0, 0.0, 0.0, 0.0, 0.0,
-#                       0.0, 0.2, 0.0, 0.0, 0.0, 0.0,
-#                       0.0, 0.0, 0.2, 0.0, 0.0, 0.0,
-#                       0.0, 0.0, 0.0, 0.002, 0.0, 0.0,
-#                       0.0, 0.0, 0.0, 0.0, 0.002, 0.0,
-#                       0.0, 0.0, 0.0, 0.0, 0.0, 0.002]
+# filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0, 0.0,
+#                       0.0, 1., 0.0, 0.0, 0.0, 0.0,
+#                       0.0, 0.0, 1., 0.0, 0.0, 0.0,
+#                       0.0, 0.0, 0.0, 0.02, 0.0, 0.0,
+#                       0.0, 0.0, 0.0, 0.0, 0.02, 0.0,
+#                       0.0, 0.0, 0.0, 0.0, 0.0, 0.02]
 #
-# filterObject.qProcVal = 0.1 ** 2
+# filterObject.qProcVal = 0.001 ** 2
 # filterObject.qObsVal = 0.017 ** 2
-# filterObject.eKFSwitch = 3.  # If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
+# filterObject.eKFSwitch = 5.  # If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 # ~~~~~~~~~~~~~
 # The states vs expected states are plotted, as well as the state error plots along with the covariance
 # envelopes. Further documentation can be found in the _Documentation folder in the module directory:
 #'/src/fswAlgorithms/attDetermination/sunlineEKF/_Documentation/'.
 # ![EKF State Errors](Images/Scenarios/scenario_Filters_StatesPlotEKF.svg "State Error and Covariances")
 # ![EKF Filter performance](Images/Scenarios/scenario_Filters_StatesExpectedEKF.svg "States vs Truth")
+#
+# These plots show good state estimation throughout the simulation and despite the patches of time with
+# fewer measurements. The covariance stays close to the mean, without exesive noise.
+#
+# The post fit residuals, give further confirmation of a working filter:
+# ![EKF Post Fit](Images/Scenarios/scenario_Filters_PostFitEKF.svg "Post Fit Residuals")
 #
 # Setup 3 -OEKF
 # ------
@@ -359,22 +378,28 @@ def setupOEKFData(filterObject):
 #
 # filterObject.sensorUseThresh = 0.
 # filterObject.omega = [0., 0., 0.]
-# filterObject.states = [1.0, 0.0, 0.0]
+# filterObject.states = [1.0, 0.1, 0.0]
 # filterObject.x = [0.0, 0.0, 0.0]
-# filterObject.covar = [0.2, 0.0, 0.0,
-#                       0.0, 0.2, 0.0,
-#                       0.0, 0.0, 0.2]
+# filterObject.covar = [1., 0.0, 0.0,
+#                       0.0, 1., 0.0,
+#                       0.0, 0.0, 1.]
 #
 # filterObject.qProcVal = 0.1 ** 2
 # filterObject.qObsVal = 0.017 ** 2
-# filterObject.eKFSwitch = 3.  # If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
+# filterObject.eKFSwitch = 5.  # If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 # ~~~~~~~~~~~~~
 # More in-depth documentation on the filter specifics are found in '/src/fswAlgorithms/attDetermination/okeefeEKF/_Documentation/'.
 # The results from this filter are plotted:
 # ![OEKF State Errors](Images/Scenarios/scenario_Filters_StatesPlotOEKF.svg "State Error and Covariances")
 # ![OEKF Filter performance](Images/Scenarios/scenario_Filters_StatesExpectedOEKF.svg "States vs Truth")
 #
-
+# These plots show poorer state estimation throughout the simulation. As measurements stop, the filter doesn't
+# propagate the states sufficiently well. This is due to the absence of rate in the states, and the compensation
+# with the computation of omega can lead to noisy estimates.
+#
+# The post fit residuals, do show that the filter is working, just with difficulties when measurements become sparse:
+# ![OEKF Post Fit](Images/Scenarios/scenario_Filters_PostFitOEKF.svg "Post Fit Residuals")
+#
 ##  @}
 def run(show_plots, FilterType, simTime):
     '''Call this routine directly to run the tutorial scenario.'''
@@ -440,7 +465,6 @@ def run(show_plots, FilterType, simTime):
     scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]                 # m/s - v_CN_N
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.]]               # sigma_BN_B
     scObject.hub.omega_BN_BInit = [[-0.1*macros.D2R], [0.5*macros.D2R], [0.5*macros.D2R]]   # rad/s - omega_BN_B
-    # scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.]]
 
     scSim.TotalSim.logThisMessage('inertial_state_output', simulationTimeStep)
     # add spacecraftPlus object to the simulation process
