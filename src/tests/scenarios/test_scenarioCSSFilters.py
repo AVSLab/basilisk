@@ -71,10 +71,10 @@ def setupUKFData(filterObject):
     filterObject.beta = 2.0
     filterObject.kappa = 0.0
 
-    filterObject.state = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    filterObject.covar = [0.2, 0.0, 0.0, 0.0, 0.0, 0.0,
-                          0.0, 0.2, 0.0, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.2, 0.0, 0.0, 0.0,
+    filterObject.state = [1.0, 0.1, 0.0, 0.0, 0.01, 0.0]
+    filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0, 0.0,
+                          0.0, 1., 0.0, 0.0, 0.0, 0.0,
+                          0.0, 0.0, 1., 0.0, 0.0, 0.0,
                           0.0, 0.0, 0.0, 0.02, 0.0, 0.0,
                           0.0, 0.0, 0.0, 0.0, 0.02, 0.0,
                           0.0, 0.0, 0.0, 0.0, 0.0, 0.02]
@@ -115,10 +115,10 @@ def setupOEKFData(filterObject):
 
     filterObject.omega = [0., 0., 0.]
     filterObject.states = [1.0, 0.0, 0.0]
-    filterObject.x = [0.0, 0.0, 0.0]
-    filterObject.covar = [0.2, 0.0, 0.0,
-                          0.0, 0.2, 0.0,
-                          0.0, 0.0, 0.2]
+    filterObject.x = [0.0, 0.1, 0.0]
+    filterObject.covar = [1., 0.0, 0.0,
+                          0.0, 1., 0.0,
+                          0.0, 0.0, 1.]
 
     filterObject.qProcVal = 0.1**2
     filterObject.qObsVal = 0.017 ** 2
@@ -565,6 +565,7 @@ def run(show_plots, FilterType, simTime):
 
     expected = np.zeros(np.shape(stateLog))
     expected[:,0:4] = sHat_B
+    # The OEKF has fewer states
     if FilterType != 'OEKF':
         expected[:, 4:] = sHatDot_B[:,1:]
 
@@ -573,8 +574,7 @@ def run(show_plots, FilterType, simTime):
     #
     errorVsTruth = np.copy(stateLog)
     errorVsTruth[:,1:] -= expected[:,1:]
-    if FilterType == 'EKF' or FilterType == 'OEKF':
-        Fplot.StateErrorCovarPlot(stateErrorLog, covarLog, FilterType, show_plots)
+
     Fplot.StateErrorCovarPlot(errorVsTruth, covarLog, FilterType, show_plots)
     Fplot.StatesVsExpected(stateLog, covarLog, expected, FilterType, show_plots)
     Fplot.PostFitResiduals(postFitLog, np.sqrt(moduleConfig.qObsVal), FilterType, show_plots)
@@ -597,7 +597,7 @@ def run(show_plots, FilterType, simTime):
 #
 if __name__ == "__main__":
     run( True,      # show_plots
-        'EKF',
+        'uKF',
          400
        )
 
