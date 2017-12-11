@@ -201,7 +201,7 @@ void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
 void sunlineTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 {
     double stmT[SKF_N_STATES*SKF_N_STATES], covPhiT[SKF_N_STATES*SKF_N_STATES];
-    double qGammaT[SKF_N_STATES/2*SKF_N_STATES], gammaQGammaT[SKF_N_STATES*SKF_N_STATES];
+    double qGammaT[SKF_N_STATES_HALF*SKF_N_STATES], gammaQGammaT[SKF_N_STATES*SKF_N_STATES];
     
 	/*! Begin method steps*/
 	ConfigData->dt = updateTime - ConfigData->timeTag;
@@ -222,8 +222,8 @@ void sunlineTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
     /*Compute Gamma and add gammaQGamma^T to Pbar. This is the process noise addition*/
     double Gamma[6][3]={{ConfigData->dt*ConfigData->dt/2,0,0},{0,ConfigData->dt*ConfigData->dt/2,0},{0,0,ConfigData->dt*ConfigData->dt/2},{ConfigData->dt,0,0},{0,ConfigData->dt,0},{0,0,ConfigData->dt}};
     
-    mMultMt(ConfigData->procNoise, SKF_N_STATES/2, SKF_N_STATES/2, Gamma, SKF_N_STATES, SKF_N_STATES/2, qGammaT);
-    mMultM(Gamma, SKF_N_STATES, SKF_N_STATES/2, qGammaT, SKF_N_STATES/2, SKF_N_STATES, gammaQGammaT);
+    mMultMt(ConfigData->procNoise, SKF_N_STATES_HALF, SKF_N_STATES_HALF, Gamma, SKF_N_STATES, SKF_N_STATES_HALF, qGammaT);
+    mMultM(Gamma, SKF_N_STATES, SKF_N_STATES_HALF, qGammaT, SKF_N_STATES_HALF, SKF_N_STATES, gammaQGammaT);
     mAdd(ConfigData->covarBar, SKF_N_STATES, SKF_N_STATES, gammaQGammaT, ConfigData->covarBar);
     
 	ConfigData->timeTag = updateTime;
@@ -239,16 +239,16 @@ void sunlineTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 void sunlineStateSTMProp(double dynMat[SKF_N_STATES*SKF_N_STATES], double dt, double *stateInOut, double *stateTransition)
 {
     
-    double propagatedVel[SKF_N_STATES/2];
-    double pointUnit[SKF_N_STATES/2];
+    double propagatedVel[SKF_N_STATES_HALF];
+    double pointUnit[SKF_N_STATES_HALF];
     double unitComp;
     double deltatASTM[SKF_N_STATES*SKF_N_STATES];
     
     /* Set local variables to zero*/
     mSetZero(deltatASTM, SKF_N_STATES, SKF_N_STATES);
     unitComp=0.0;
-    vSetZero(pointUnit, SKF_N_STATES/2);
-    vSetZero(propagatedVel, SKF_N_STATES/2);
+    vSetZero(pointUnit, SKF_N_STATES_HALF);
+    vSetZero(propagatedVel, SKF_N_STATES_HALF);
     
     /*! Begin state update steps */
     /*! - Unitize the current estimate to find direction to restrict motion*/
