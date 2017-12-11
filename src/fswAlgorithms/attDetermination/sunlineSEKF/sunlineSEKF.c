@@ -104,7 +104,7 @@ void Reset_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
     /*! - Initialize filter parameters to max values */
     ConfigData->timeTag = callTime*NANO2SEC;
     ConfigData->dt = 0.0;
-    ConfigData->numStates = SKF_N_STATES;
+    ConfigData->numStates = SKF_N_STATES_SWITCH;
     ConfigData->numObs = MAX_N_CSS_MEAS;
     
     /*! - Ensure that all internal filter matrices are zeroed*/
@@ -163,8 +163,8 @@ void Update_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
     if(newTimeTag > ConfigData->timeTag)
     {
         sunlineTimeUpdate(ConfigData, newTimeTag);
-        vCopy(ConfigData->xBar, SKF_N_STATES, ConfigData->x);
-        mCopy(ConfigData->covarBar, SKF_N_STATES, SKF_N_STATES, ConfigData->covar);
+        vCopy(ConfigData->xBar, SKF_N_STATES_SWITCH, ConfigData->x);
+        mCopy(ConfigData->covarBar, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, ConfigData->covar);
     }
     
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
@@ -179,8 +179,8 @@ void Update_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
     sunlineDataOutBuffer.timeTag = ConfigData->timeTag;
     sunlineDataOutBuffer.numObs = ConfigData->numObs;
     memmove(sunlineDataOutBuffer.covar, ConfigData->covar,
-            SKF_N_STATES*SKF_N_STATES*sizeof(double));
-    memmove(sunlineDataOutBuffer.state, ConfigData->states, SKF_N_STATES*sizeof(double));
+            SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH*sizeof(double));
+    memmove(sunlineDataOutBuffer.state, ConfigData->states, SKF_N_STATES_SWITCH*sizeof(double));
     WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(SunlineFilterFswMsg),
                  &sunlineDataOutBuffer, moduleID);
     
@@ -196,8 +196,8 @@ void Update_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
 */
 void sunlineTimeUpdate(sunlineSEKFConfig *ConfigData, double updateTime)
 {
-    double stmT[SKF_N_STATES*SKF_N_STATES], covPhiT[SKF_N_STATES*SKF_N_STATES];
-    double qGammaT[SKF_N_STATES/2*SKF_N_STATES], gammaQGammaT[SKF_N_STATES*SKF_N_STATES];
+    double stmT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], covPhiT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
+    double qGammaT[(SKF_N_STATES_SWITCH-3)*SKF_N_STATES_SWITCH], gammaQGammaT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
     
 	/*! Begin method steps*/
 	ConfigData->dt = updateTime - ConfigData->timeTag;
@@ -232,19 +232,19 @@ void sunlineTimeUpdate(sunlineSEKFConfig *ConfigData, double updateTime)
 	@return void
 	@param stateInOut,
  */
-void sunlineStateSTMProp(double dynMat[SKF_N_STATES*SKF_N_STATES], double dt, double *stateInOut, double *stateTransition)
+void sunlineStateSTMProp(double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double dt, double *stateInOut, double *stateTransition)
 {
     
-    double propagatedVel[SKF_N_STATES/2];
-    double pointUnit[SKF_N_STATES/2];
+    double propagatedVel[SKF_N_STATES_SWITCH/2];
+    double pointUnit[SKF_N_STATES_SWITCH/2];
     double unitComp;
-    double deltatASTM[SKF_N_STATES*SKF_N_STATES];
+    double deltatASTM[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
     
     /* Set local variables to zero*/
-    mSetZero(deltatASTM, SKF_N_STATES, SKF_N_STATES);
+    mSetZero(deltatASTM, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
     unitComp=0.0;
-    vSetZero(pointUnit, SKF_N_STATES/2);
-    vSetZero(propagatedVel, SKF_N_STATES/2);
+    vSetZero(pointUnit, SKF_N_STATES_SWITCH/2);
+    vSetZero(propagatedVel, SKF_N_STATES_SWITCH/2);
     
     /*! Begin state update steps */
     /*! - Unitize the current estimate to find direction to restrict motion*/
@@ -258,9 +258,9 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES*SKF_N_STATES], double dt, do
     v3Add(stateInOut, propagatedVel, stateInOut);
     
     /*! Begin STM propagation step */
-    mSetIdentity(stateTransition, SKF_N_STATES, SKF_N_STATES);
-    mScale(dt, dynMat, SKF_N_STATES, SKF_N_STATES, deltatASTM);
-    mAdd(stateTransition, SKF_N_STATES, SKF_N_STATES, deltatASTM, stateTransition);
+    mSetIdentity(stateTransition, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
+    mScale(dt, dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, deltatASTM);
+    mAdd(stateTransition, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, deltatASTM, stateTransition);
     
     return;
 }
@@ -274,7 +274,7 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES*SKF_N_STATES], double dt, do
  @param dynMat Pointer to the Dynamic Matrix
  */
 
-void sunlineDynMatrix(double states[SKF_N_STATES], double dt, double *dynMat)
+void sunlineDynMatrix(double states[SKF_N_STATES_SWITCH], double dt, double *dynMat)
 {
     double dddot, ddtnorm2[3][3];
     double I3[3][3], d2I3[3][3];
@@ -303,27 +303,27 @@ void sunlineDynMatrix(double states[SKF_N_STATES], double dt, double *dynMat)
     m33Scale(-1.0, dFdd, dFdd);
     
     /* Populate the first 3x3 matrix of the dynamics matrix*/
-    mSetSubMatrix(dFdd, 3, 3, dynMat, SKF_N_STATES, SKF_N_STATES, 0, 0);
+    mSetSubMatrix(dFdd, 3, 3, dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 0, 0);
     
     /* dF1dddot */
     m33Scale(-1.0/normd2, douterd, ddtnorm2);
     m33Add(I3, ddtnorm2, dFdddot);
     
     /* Populate the second 3x3 matrix */
-    mSetSubMatrix(dFdddot, 3, 3, dynMat, SKF_N_STATES, SKF_N_STATES, 0, 3);
+    mSetSubMatrix(dFdddot, 3, 3, dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 0, 3);
     
     /* Only propagate d_dot if dt is greater than zero, if not leave dynMat zeroed*/
     if (dt>1E-10){
         /* dF2dd */
         m33Scale(1.0/dt, dFdd, dFdd);
         /* Populate the third 3x3 matrix of the dynamics matrix*/
-        mSetSubMatrix(dFdd, 3, 3, dynMat, SKF_N_STATES, SKF_N_STATES, 3, 0);
+        mSetSubMatrix(dFdd, 3, 3, dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 3, 0);
     
         /* dF2dddot */
         m33Subtract(dFdddot, I3, dFdddot);
         m33Scale(1.0/dt, dFdddot, dFdddot);
         /* Populate the fourth 3x3 matrix */
-        mSetSubMatrix(dFdddot, 3, 3, dynMat, SKF_N_STATES, SKF_N_STATES, 3, 3);
+        mSetSubMatrix(dFdddot, 3, 3, dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 3, 3);
     }
     return;
 }
@@ -348,7 +348,7 @@ void sunlineMeasUpdate(sunlineSEKFConfig *ConfigData, double updateTime)
     
     /* Logic to switch from EKF to CKF. If the covariance is too large, switching references through an EKF could lead to filter divergence in extreme cases. In order to remedy this, past a certain infinite norm of the covariance, we update with a CKF in order to bring down the covariance. */
     
-    if (vMaxAbs(ConfigData->covar, SKF_N_STATES*SKF_N_STATES) > ConfigData->eKFSwitch){
+    if (vMaxAbs(ConfigData->covar, SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH) > ConfigData->eKFSwitch){
     /*! - Compute the update with a CKF */
     sunlineCKFUpdate(ConfigData->xBar, ConfigData->kalmanGain, ConfigData->covarBar, ConfigData->qObsVal, ConfigData->numObs, ConfigData->yMeas, ConfigData->measMat, ConfigData->x,ConfigData->covar);
     }
@@ -371,49 +371,49 @@ void sunlineMeasUpdate(sunlineSEKFConfig *ConfigData, double updateTime)
  @param covar Pointer to the covariance after update
  */
 
-void sunlineCKFUpdate(double xBar[SKF_N_STATES], double kalmanGain[SKF_N_STATES*MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES*SKF_N_STATES], double qObsVal, int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES], double *x, double *covar)
+void sunlineCKFUpdate(double xBar[SKF_N_STATES_SWITCH], double kalmanGain[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double qObsVal, int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES_SWITCH], double *x, double *covar)
 {
-    double measMatx[MAX_N_CSS_MEAS], innov[MAX_N_CSS_MEAS], kInnov[SKF_N_STATES];
-    double eye[SKF_N_STATES*SKF_N_STATES], kH[SKF_N_STATES*SKF_N_STATES];
-    double eyeKalH[SKF_N_STATES*SKF_N_STATES], eyeKalHT[SKF_N_STATES*SKF_N_STATES];
-    double eyeKalHCovarBar[SKF_N_STATES*SKF_N_STATES], kalR[SKF_N_STATES*MAX_N_CSS_MEAS];
-    double kalT[MAX_N_CSS_MEAS*SKF_N_STATES], kalRKalT[SKF_N_STATES*SKF_N_STATES];
+    double measMatx[MAX_N_CSS_MEAS], innov[MAX_N_CSS_MEAS], kInnov[SKF_N_STATES_SWITCH];
+    double eye[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], kH[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
+    double eyeKalH[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], eyeKalHT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
+    double eyeKalHCovarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], kalR[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS];
+    double kalT[MAX_N_CSS_MEAS*SKF_N_STATES_SWITCH], kalRKalT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
     double noiseMat[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
     
     /* Set variables to zero */
-    mSetZero(kH, SKF_N_STATES, SKF_N_STATES);
-    mSetZero(eyeKalH, SKF_N_STATES, SKF_N_STATES);
-    mSetZero(eyeKalHT, SKF_N_STATES, SKF_N_STATES);
+    mSetZero(kH, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
+    mSetZero(eyeKalH, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
+    mSetZero(eyeKalHT, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
     mSetZero(noiseMat, MAX_N_CSS_MEAS, MAX_N_CSS_MEAS);
-    mSetZero(eye, SKF_N_STATES, SKF_N_STATES);
-    mSetZero(kalRKalT, SKF_N_STATES, SKF_N_STATES);
-    mSetZero(kalT, MAX_N_CSS_MEAS, SKF_N_STATES);
-    mSetZero(kalR, SKF_N_STATES, MAX_N_CSS_MEAS);
-    mSetZero(eyeKalHCovarBar, SKF_N_STATES, SKF_N_STATES);
+    mSetZero(eye, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
+    mSetZero(kalRKalT, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
+    mSetZero(kalT, MAX_N_CSS_MEAS, SKF_N_STATES_SWITCH);
+    mSetZero(kalR, SKF_N_STATES_SWITCH, MAX_N_CSS_MEAS);
+    mSetZero(eyeKalHCovarBar, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
     
     /* Set noise matrix given number of observations */
     mSetIdentity(noiseMat, numObs, numObs);
     mScale(qObsVal, noiseMat, numObs, numObs, noiseMat);
     
     /*! - Compute innovation, multiply it my Kalman Gain, and add it to xBar*/
-    mMultM(hObs, numObs, SKF_N_STATES, xBar, SKF_N_STATES, 1, measMatx);
+    mMultM(hObs, numObs, SKF_N_STATES_SWITCH, xBar, SKF_N_STATES_SWITCH, 1, measMatx);
     vSubtract(yObs, numObs, measMatx, innov);
-    mMultM(kalmanGain, SKF_N_STATES, numObs, innov, numObs, 1, kInnov);
-    vAdd(xBar, SKF_N_STATES, kInnov, x);
+    mMultM(kalmanGain, SKF_N_STATES_SWITCH, numObs, innov, numObs, 1, kInnov);
+    vAdd(xBar, SKF_N_STATES_SWITCH, kInnov, x);
     
     /*! - Compute new covariance with Joseph's method*/
-    mMultM(kalmanGain, SKF_N_STATES, numObs, hObs, numObs, SKF_N_STATES, kH);
-    mSetIdentity(eye, SKF_N_STATES, SKF_N_STATES);
-    mSubtract(eye, SKF_N_STATES, SKF_N_STATES, kH, eyeKalH);
-    mTranspose(eyeKalH, SKF_N_STATES, SKF_N_STATES, eyeKalHT);
-    mMultM(eyeKalH, SKF_N_STATES, SKF_N_STATES, covarBar, SKF_N_STATES, SKF_N_STATES, eyeKalHCovarBar);
-    mMultM(eyeKalHCovarBar, SKF_N_STATES, SKF_N_STATES, eyeKalHT, SKF_N_STATES, SKF_N_STATES, covar);
+    mMultM(kalmanGain, SKF_N_STATES_SWITCH, numObs, hObs, numObs, SKF_N_STATES_SWITCH, kH);
+    mSetIdentity(eye, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
+    mSubtract(eye, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, kH, eyeKalH);
+    mTranspose(eyeKalH, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, eyeKalHT);
+    mMultM(eyeKalH, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, covarBar, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, eyeKalHCovarBar);
+    mMultM(eyeKalHCovarBar, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, eyeKalHT, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, covar);
     
     /* Add noise to the covariance*/
-    mMultM(kalmanGain, SKF_N_STATES, numObs, noiseMat, numObs, numObs, kalR);
-    mTranspose(kalmanGain, SKF_N_STATES, numObs, kalT);
-    mMultM(kalR, SKF_N_STATES, numObs, kalT, numObs, SKF_N_STATES, kalRKalT);
-    mAdd(covar, SKF_N_STATES, SKF_N_STATES, kalRKalT, covar);
+    mMultM(kalmanGain, SKF_N_STATES_SWITCH, numObs, noiseMat, numObs, numObs, kalR);
+    mTranspose(kalmanGain, SKF_N_STATES_SWITCH, numObs, kalT);
+    mMultM(kalR, SKF_N_STATES_SWITCH, numObs, kalT, numObs, SKF_N_STATES_SWITCH, kalRKalT);
+    mAdd(covar, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, kalRKalT, covar);
     
     
 }
@@ -430,49 +430,49 @@ void sunlineCKFUpdate(double xBar[SKF_N_STATES], double kalmanGain[SKF_N_STATES*
  @param x Pointer to the state error for modification
  @param covar Pointer to the covariance after update
  */
-void sunlineSEKFUpdate(double kalmanGain[SKF_N_STATES*MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES*SKF_N_STATES], double qObsVal, int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES], double *states, double *x, double *covar)
+void sunlineSEKFUpdate(double kalmanGain[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double qObsVal, int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES_SWITCH], double *states, double *x, double *covar)
 {
 
-    double eye[SKF_N_STATES*SKF_N_STATES], kH[SKF_N_STATES*SKF_N_STATES];
-    double eyeKalH[SKF_N_STATES*SKF_N_STATES], eyeKalHT[SKF_N_STATES*SKF_N_STATES];
-    double eyeKalHCovarBar[SKF_N_STATES*SKF_N_STATES], kalR[SKF_N_STATES*MAX_N_CSS_MEAS];
-    double kalT[MAX_N_CSS_MEAS*SKF_N_STATES], kalRKalT[SKF_N_STATES*SKF_N_STATES];
+    double eye[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], kH[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
+    double eyeKalH[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], eyeKalHT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
+    double eyeKalHCovarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], kalR[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS];
+    double kalT[MAX_N_CSS_MEAS*SKF_N_STATES_SWITCH], kalRKalT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
     double noiseMat[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
     
     /* Set variables to zero */
-    mSetZero(kH, SKF_N_STATES, SKF_N_STATES);
-    mSetZero(eyeKalH, SKF_N_STATES, SKF_N_STATES);
-    mSetZero(eyeKalHT, SKF_N_STATES, SKF_N_STATES);
+    mSetZero(kH, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
+    mSetZero(eyeKalH, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
+    mSetZero(eyeKalHT, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
     mSetZero(noiseMat, MAX_N_CSS_MEAS, MAX_N_CSS_MEAS);
-    mSetZero(eye, SKF_N_STATES, SKF_N_STATES);
-    mSetZero(kalRKalT, SKF_N_STATES, SKF_N_STATES);
-    mSetZero(kalT, MAX_N_CSS_MEAS, SKF_N_STATES);
-    mSetZero(kalR, SKF_N_STATES, MAX_N_CSS_MEAS);
-    mSetZero(eyeKalHCovarBar, SKF_N_STATES, SKF_N_STATES);
+    mSetZero(eye, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
+    mSetZero(kalRKalT, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
+    mSetZero(kalT, MAX_N_CSS_MEAS, SKF_N_STATES_SWITCH);
+    mSetZero(kalR, SKF_N_STATES_SWITCH, MAX_N_CSS_MEAS);
+    mSetZero(eyeKalHCovarBar, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
     
     /* Set noise matrix given number of observations */
     mSetIdentity(noiseMat, numObs, numObs);
     mScale(qObsVal, noiseMat, numObs, numObs, noiseMat);
     
     /*! - Update the state error*/
-    mMultV(kalmanGain, SKF_N_STATES, numObs, yObs, x);
+    mMultV(kalmanGain, SKF_N_STATES_SWITCH, numObs, yObs, x);
 
     /*! - Change the reference state*/
-    vAdd(states, SKF_N_STATES, x, states);
+    vAdd(states, SKF_N_STATES_SWITCH, x, states);
     
     /*! - Compute new covariance with Joseph's method*/
-    mMultM(kalmanGain, SKF_N_STATES, numObs, hObs, numObs, SKF_N_STATES, kH);
-    mSetIdentity(eye, SKF_N_STATES, SKF_N_STATES);
-    mSubtract(eye, SKF_N_STATES, SKF_N_STATES, kH, eyeKalH);
-    mTranspose(eyeKalH, SKF_N_STATES, SKF_N_STATES, eyeKalHT);
-    mMultM(eyeKalH, SKF_N_STATES, SKF_N_STATES, covarBar, SKF_N_STATES, SKF_N_STATES, eyeKalHCovarBar);
-    mMultM(eyeKalHCovarBar, SKF_N_STATES, SKF_N_STATES, eyeKalHT, SKF_N_STATES, SKF_N_STATES, covar);
+    mMultM(kalmanGain, SKF_N_STATES_SWITCH, numObs, hObs, numObs, SKF_N_STATES_SWITCH, kH);
+    mSetIdentity(eye, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
+    mSubtract(eye, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, kH, eyeKalH);
+    mTranspose(eyeKalH, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, eyeKalHT);
+    mMultM(eyeKalH, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, covarBar, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, eyeKalHCovarBar);
+    mMultM(eyeKalHCovarBar, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, eyeKalHT, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, covar);
     
     /* Add noise to the covariance*/
-    mMultM(kalmanGain, SKF_N_STATES, numObs, noiseMat, numObs, numObs, kalR);
-    mTranspose(kalmanGain, SKF_N_STATES, numObs, kalT);
-    mMultM(kalR, SKF_N_STATES, numObs, kalT, numObs, SKF_N_STATES, kalRKalT);
-    mAdd(covar, SKF_N_STATES, SKF_N_STATES, kalRKalT, covar);
+    mMultM(kalmanGain, SKF_N_STATES_SWITCH, numObs, noiseMat, numObs, numObs, kalR);
+    mTranspose(kalmanGain, SKF_N_STATES_SWITCH, numObs, kalT);
+    mMultM(kalR, SKF_N_STATES_SWITCH, numObs, kalT, numObs, SKF_N_STATES_SWITCH, kalRKalT);
+    mAdd(covar, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, kalRKalT, covar);
     
 }
 
@@ -491,7 +491,7 @@ void sunlineSEKFUpdate(double kalmanGain[SKF_N_STATES*MAX_N_CSS_MEAS], double co
  @param measMat Point to the H measurement matrix
  */
 
-void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS*3], double *obs, double *yMeas, int *numObs, double *measMat)
+void sunlineHMatrixYMeas(double states[SKF_N_STATES_SWITCH], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS*3], double *obs, double *yMeas, int *numObs, double *measMat)
 {
     uint32_t i, obsCounter;
     double sensorNormal[3];
@@ -510,7 +510,7 @@ void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSens
             
             *(obs+obsCounter) = cssSensorCos[i];
             *(yMeas+obsCounter) = cssSensorCos[i] - v3Dot(&(states[0]), sensorNormal);
-            mSetSubMatrix(&(cssNHat_B[i*3]), 1, 3, measMat, MAX_NUM_CSS_SENSORS, SKF_N_STATES, obsCounter, 0);
+            mSetSubMatrix(&(cssNHat_B[i*3]), 1, 3, measMat, MAX_NUM_CSS_SENSORS, SKF_N_STATES_SWITCH, obsCounter, 0);
             obsCounter++;
         }
     }
@@ -529,26 +529,26 @@ void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSens
  @param kalmanGain Pointer to the Kalman Gain
  */
 
-void sunlineKalmanGain(double covarBar[SKF_N_STATES*SKF_N_STATES], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES], double qObsVal, int numObs, double *kalmanGain)
+void sunlineKalmanGain(double covarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES_SWITCH], double qObsVal, int numObs, double *kalmanGain)
 {
-    double hObsT[SKF_N_STATES*MAX_N_CSS_MEAS];
-    double covHT[SKF_N_STATES*MAX_N_CSS_MEAS];
-    double hCovar[MAX_N_CSS_MEAS*SKF_N_STATES], hCovarHT[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
+    double hObsT[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS];
+    double covHT[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS];
+    double hCovar[MAX_N_CSS_MEAS*SKF_N_STATES_SWITCH], hCovarHT[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
     double rMat[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
     
     /* Setting all local variables to zero */
-    mSetZero(hObsT, SKF_N_STATES, MAX_N_CSS_MEAS);
-    mSetZero(covHT, SKF_N_STATES, MAX_N_CSS_MEAS);
-    mSetZero(hCovar, MAX_N_CSS_MEAS, SKF_N_STATES);
+    mSetZero(hObsT, SKF_N_STATES_SWITCH, MAX_N_CSS_MEAS);
+    mSetZero(covHT, SKF_N_STATES_SWITCH, MAX_N_CSS_MEAS);
+    mSetZero(hCovar, MAX_N_CSS_MEAS, SKF_N_STATES_SWITCH);
     mSetZero(hCovarHT, MAX_N_CSS_MEAS, MAX_N_CSS_MEAS);
     mSetZero(rMat, MAX_N_CSS_MEAS, MAX_N_CSS_MEAS);
     
     /* Begin method steps */
-    mTranspose(hObs, numObs, SKF_N_STATES, hObsT);
+    mTranspose(hObs, numObs, SKF_N_STATES_SWITCH, hObsT);
     
-    mMultM(covarBar, SKF_N_STATES, SKF_N_STATES, hObsT, SKF_N_STATES, numObs, covHT);
-    mMultM(hObs, numObs, SKF_N_STATES, covarBar, SKF_N_STATES, SKF_N_STATES, hCovar);
-    mMultM(hCovar, numObs, SKF_N_STATES, hObsT, SKF_N_STATES, numObs, hCovarHT);
+    mMultM(covarBar, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, hObsT, SKF_N_STATES_SWITCH, numObs, covHT);
+    mMultM(hObs, numObs, SKF_N_STATES_SWITCH, covarBar, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, hCovar);
+    mMultM(hCovar, numObs, SKF_N_STATES_SWITCH, hObsT, SKF_N_STATES_SWITCH, numObs, hCovarHT);
     
     mSetIdentity(rMat, numObs, numObs);
     mScale(qObsVal, rMat, numObs, numObs, rMat);
@@ -560,7 +560,7 @@ void sunlineKalmanGain(double covarBar[SKF_N_STATES*SKF_N_STATES], double hObs[M
     mInverse(hCovarHT, numObs, hCovarHT);
     
     /*! - Compute the Kalman Gain */
-    mMultM(covHT, SKF_N_STATES, numObs, hCovarHT, numObs, numObs, kalmanGain);
+    mMultM(covHT, SKF_N_STATES_SWITCH, numObs, hCovarHT, numObs, numObs, kalmanGain);
     
 }
 
