@@ -216,9 +216,16 @@ void sunlineTimeUpdate(sunlineSEKFConfig *ConfigData, double updateTime)
     mMultM(ConfigData->stateTransition, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, covPhiT, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, ConfigData->covarBar);
     
     /*Compute Gamma and add gammaQGamma^T to Pbar. This is the process noise addition*/
-    double Gamma[SKF_N_STATES_SWITCH][(SKF_N_STATES_SWITCH-3)]={{ConfigData->dt*ConfigData->dt/2,ConfigData->dt*ConfigData->dt/2},{0,ConfigData->dt*ConfigData->dt/2},{ConfigData->dt*ConfigData->dt/2, 0},{ConfigData->dt,0},{0,ConfigData->dt}};
+    double Gamma[SKF_N_STATES_SWITCH][(SKF_N_STATES_SWITCH-3)]=
+    {
+        {-ConfigData->states[2]*ConfigData->dt*ConfigData->dt/2,ConfigData->states[1]*ConfigData->dt*ConfigData->dt/2},
+        {0,-ConfigData->states[0]*ConfigData->dt*ConfigData->dt/2},
+        {ConfigData->dt*ConfigData->dt/2, 0},
+        {ConfigData->dt,0},
+        {0,ConfigData->dt}
+    };
     
-    mMultMt(ConfigData->procNoise, (SKF_N_STATES_SWITCH-3), (SKF_N_STATES_SWITCH-3), Gamma, SKF_N_STATES_SWITCH, S(SKF_N_STATES_SWITCH-3), qGammaT);
+    mMultMt(ConfigData->procNoise, (SKF_N_STATES_SWITCH-3), (SKF_N_STATES_SWITCH-3), Gamma, SKF_N_STATES_SWITCH, (SKF_N_STATES_SWITCH-3), qGammaT);
     mMultM(Gamma, SKF_N_STATES_SWITCH,(SKF_N_STATES_SWITCH-3), qGammaT, (SKF_N_STATES_SWITCH-3), SKF_N_STATES_SWITCH, gammaQGammaT);
     mAdd(ConfigData->covarBar, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, gammaQGammaT, ConfigData->covarBar);
     
