@@ -48,6 +48,9 @@ typedef struct {
 	double dt;                     /*!< [s] seconds since last data epoch */
 	double timeTag;                /*!< [s]  Time tag for statecovar/etc */
 
+    double s2[SKF_N_STATES];       /*!< [-]  second component of frame */
+    double switchTresh;             /*!< [-]  Threshold for switching frames */
+
 	double states[SKF_N_STATES_SWITCH];        /*!< [-] State estimate for time TimeTag*/
     double x[SKF_N_STATES_SWITCH];             /*! State errors */
     double xBar[SKF_N_STATES_SWITCH];            /*! [-] Current mean state estimate*/
@@ -105,6 +108,8 @@ extern "C" {
     void sunlineCKFUpdate(double xBar[SKF_N_STATES_SWITCH], double kalmanGain[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double qObsVal, int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES_SWITCH], double *x, double *covar);
     
     void sunlineSEKFUpdate(double kalmanGain[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double qObsVal, int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES_SWITCH], double *states, double *x, double *covar);
+    
+    void sunlineSEKFSwitch(double *s2, double *states, double *covar);
     
 #ifdef __cplusplus
 }

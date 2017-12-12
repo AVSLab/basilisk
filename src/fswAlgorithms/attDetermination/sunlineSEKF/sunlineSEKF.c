@@ -107,6 +107,10 @@ void Reset_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
     ConfigData->numStates = SKF_N_STATES_SWITCH;
     ConfigData->numObs = MAX_N_CSS_MEAS;
     
+    /*! Initalize the filter to use b_1 of the body frame to make frame*/
+    v3Set(1, 0, 0, ConfigData->s2);
+    ConfigData->switchTresh = 0.5;
+    
     /*! - Ensure that all internal filter matrices are zeroed*/
     vSetZero(ConfigData->obs, ConfigData->numObs);
     vSetZero(ConfigData->yMeas, ConfigData->numObs);
@@ -147,6 +151,12 @@ void Update_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
     memset(&(ConfigData->cssSensorInBuffer), 0x0, sizeof(CSSArraySensorIntMsg));
     ReadMessage(ConfigData->cssDataInMsgId, &ClockTime, &ReadSize,
         sizeof(CSSArraySensorIntMsg), (void*) (&(ConfigData->cssSensorInBuffer)), moduleID);
+    
+    /*! - Check for switching frames */
+    if (v3Dot(ConfigData->s2, ConfigData->states) > ConfigData->switchTresh)
+    {
+        sunlineSEKFSwitch(ConfigData->s2, ConfigData->states, ConfigData->covar);
+    }
     
     /*! - If the time tag from the measured data is new compared to previous step, 
           propagate and update the filter*/
@@ -531,4 +541,20 @@ void sunlineKalmanGain(double covarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH],
     
 }
 
+
+/*! This method computes the Kalman gain given the measurements.
+ @return void
+ @param covarBar The time updated covariance
+ @param hObs The H matrix filled with the observations
+ @param qObsVal The observation noise
+ @param states Pointer to the states
+ @param numObs The number of observations
+ @param kalmanGain Pointer to the Kalman Gain
+ */
+
+void sunlineSEKFSwitch(double *s2_B, double *states, double *covar)
+{
+
+    return;
+}
 
