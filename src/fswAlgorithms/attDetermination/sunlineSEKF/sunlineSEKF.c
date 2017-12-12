@@ -542,19 +542,74 @@ void sunlineKalmanGain(double covarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH],
 }
 
 
-/*! This method computes the Kalman gain given the measurements.
+/*! This method computes the dcms necessary for the switch between the two frames.
+ It the switches the states and the covariance, and sets s2 to be the new, different vector of the body frame.
  @return void
  @param covarBar The time updated covariance
  @param hObs The H matrix filled with the observations
- @param qObsVal The observation noise
+ @param s2_B Pointer to the second frame vector
  @param states Pointer to the states
- @param numObs The number of observations
- @param kalmanGain Pointer to the Kalman Gain
+ @param covar Pointer to the covariance
  */
 
-void sunlineSEKFSwitch(double *s2_B, double *states, double *covar)
+void sunlineSEKFSwitch(double *bVec_B, double *states, double *covar)
 {
+    double dcm_BSold[SKF_N_STATES][SKF_N_STATES];
+    double dcm_BSnew_T[SKF_N_STATES][SKF_N_STATES];
+    double dcm_SnewSold[SKF_N_STATES][SKF_N_STATES];
+    double switchMatP[SKF_N_STATES][SKF_N_STATES];
+    double switchMat[SKF_N_STATES_SWITCH][SKF_N_STATES_SWITCH];
 
+    double s2_B[SKF_N_STATES];
+    double s3_B_old[SKF_N_STATES];
+    double s3_B_new[SKF_N_STATES];
+    double b1[SKF_N_STATES];
+    double b2[SKF_N_STATES];
+    
+    /*!  Set the body frame vectors*/
+    v3Set(1, 0, 0, b1);
+    v3Set(0, 1, 0, b2);
+    
+    /* Compute the second vector of the S frame */
+    v3Cross(&(states[0]), bVec_B, s2_B);
+    v3Normalize(s2_B, s2_B);
+    
+    /*! Populate the dcm_BS with the "old" S-frame*/
+    mSetSubMatrix(&(states[0]), 1, SKF_N_STATES, dcm_BSold, SKF_N_STATES, SKF_N_STATES, 1, 1);
+    mSetSubMatrix(&(s2_B), 1, SKF_N_STATES, dcm_BSold, SKF_N_STATES, SKF_N_STATES, 2, 1);
+    v3Cross(&(states[0]), s2_B, s3_B_old);
+    v3Normalize(s3_B_old, s3_B_old);
+    mSetSubMatrix(&(s3_B_old), 1, SKF_N_STATES, dcm_BSold, SKF_N_STATES, SKF_N_STATES, 3, 1);
+    mTranspose(dcm_BSold, SKF_N_STATES, SKF_N_STATES, dcm_BSold);
+    
+    if (v3IsEqual(bVec_B, b1, 1e-10))
+    {
+        /*! Populate the dcm_BS with the "new" S-frame*/
+        mSetSubMatrix(&(states[0]), 1, SKF_N_STATES, dcm_BSnew_T, SKF_N_STATES, SKF_N_STATES, 1, 1);
+        mSetSubMatrix(&(b2), 1, SKF_N_STATES, dcm_BSnew_T, SKF_N_STATES, SKF_N_STATES, 2, 1);
+        v3Cross(&(states[0]), b2, s3_B_new);
+        v3Normalize(s3_B_new, s3_B_new);
+        mSetSubMatrix(&(s3_B_new), 1, SKF_N_STATES, dcm_BSnew_T, SKF_N_STATES, SKF_N_STATES, 3, 1);
+    }
+    else
+    {
+        /*! Populate the dcm_BS with the "new" S-frame*/
+        mSetSubMatrix(&(states[0]), 1, SKF_N_STATES, dcm_BSnew_T, SKF_N_STATES, SKF_N_STATES, 1, 1);
+        mSetSubMatrix(&(b1), 1, SKF_N_STATES, dcm_BSnew_T, SKF_N_STATES, SKF_N_STATES, 2, 1);
+        v3Cross(&(states[0]), b1, s3_B_new);
+        v3Normalize(s3_B_new, s3_B_new);
+        mSetSubMatrix(&(s3_B_new), 1, SKF_N_STATES, dcm_BSnew_T, SKF_N_STATES, SKF_N_STATES, 3, 1);
+    }
+    
+    mMultM(dcm_BSnew_T, 3, 3, dcm_BSold, 3, 3, dcm_SnewSold);
+    
+    mSetIdentity(switchMat, 5, 5);
+    mSetSubMatrix(&dcm_SnewSold[1][1], 2, 2, &switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 4, 4);
+    
+    mMultV(switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, states, states);
+    mMultM(switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, covar, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, switchMatP);
+    mTranspose(switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, switchMat);
+    mMultM(switchMatP, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, covar);
     return;
 }
 
