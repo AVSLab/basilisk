@@ -278,55 +278,20 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH],
 
 void sunlineDynMatrix(double states[SKF_N_STATES_SWITCH], double dt, double *dynMat)
 {
-    double dddot, ddtnorm2[3][3];
-    double I3[3][3], d2I3[3][3];
-    double douterddot[3][3], douterd[3][3], neg2dd[3][3];
-    double secondterm[3][3], firstterm[3][3];
-    double normd2;
-    double dFdd[3][3], dFdddot[3][3];
+    double skewOmega[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double negskewOmega[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double omega[SKF_N_STATES_HALF] = {0, states[3], states[4]};
+    double dFdomega[SKF_N_STATES_HALF][SKF_N_STATES_SWITCH-3] = {{states[2], -states[1]},{0, states[0]},{-states[0], 0}};
+    v3Tilde(omega, skewOmega);
+    m33Scale(-1, skewOmega, negskewOmega);
+    mCopy(negskewOmega, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dynMat);
     
-    /* dF1dd */
-    mSetIdentity(I3, 3, 3);
-    dddot = v3Dot(&(states[0]), &(states[3]));
-    normd2 = v3Norm(&(states[0]))*v3Norm(&(states[0]));
-    
-    mScale(normd2, I3, 3, 3, d2I3);
-    
-    v3OuterProduct(&(states[0]), &(states[3]), douterddot);
-    v3OuterProduct(&(states[0]), &(states[0]), douterd);
-    
-    m33Scale(-2.0, douterd, neg2dd);
-    m33Add(d2I3, neg2dd, secondterm);
-    m33Scale(dddot/(normd2*normd2), secondterm, secondterm);
-    
-    m33Scale(1.0/normd2, douterddot, firstterm);
-    
-    m33Add(firstterm, secondterm, dFdd);
-    m33Scale(-1.0, dFdd, dFdd);
+    /* - omega_tilde in dynamics */
+    mSetSubMatrix(negskewOmega, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 0, 0);
     
     /* Populate the first 3x3 matrix of the dynamics matrix*/
-    mSetSubMatrix(dFdd, 3, 3, dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 0, 0);
+    mSetSubMatrix(dFdomega, 3, 3, dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 0, 3);
     
-    /* dF1dddot */
-    m33Scale(-1.0/normd2, douterd, ddtnorm2);
-    m33Add(I3, ddtnorm2, dFdddot);
-    
-    /* Populate the second 3x3 matrix */
-    mSetSubMatrix(dFdddot, 3, 3, dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 0, 3);
-    
-    /* Only propagate d_dot if dt is greater than zero, if not leave dynMat zeroed*/
-    if (dt>1E-10){
-        /* dF2dd */
-        m33Scale(1.0/dt, dFdd, dFdd);
-        /* Populate the third 3x3 matrix of the dynamics matrix*/
-        mSetSubMatrix(dFdd, 3, 3, dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 3, 0);
-    
-        /* dF2dddot */
-        m33Subtract(dFdddot, I3, dFdddot);
-        m33Scale(1.0/dt, dFdddot, dFdddot);
-        /* Populate the fourth 3x3 matrix */
-        mSetSubMatrix(dFdddot, 3, 3, dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 3, 3);
-    }
     return;
 }
 
