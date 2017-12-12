@@ -242,26 +242,21 @@ void sunlineTimeUpdate(sunlineSEKFConfig *ConfigData, double updateTime)
 void sunlineStateSTMProp(double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double dt, double *stateInOut, double *stateTransition)
 {
     
-    double propagatedVel[SKF_N_STATES_SWITCH/2];
-    double pointUnit[SKF_N_STATES_SWITCH/2];
-    double unitComp;
+    double propagatedVel[SKF_N_STATES_HALF];
     double deltatASTM[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
+    double omegaCrossd[SKF_N_STATES_HALF];
+    double omega[SKF_N_STATES_HALF] = {0, stateInOut[3], stateInOut[4]};
     
     /* Set local variables to zero*/
-    mSetZero(deltatASTM, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
-    unitComp=0.0;
-    vSetZero(pointUnit, SKF_N_STATES_SWITCH/2);
-    vSetZero(propagatedVel, SKF_N_STATES_SWITCH/2);
+    mSetZero(deltatASTM, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
+    vSetZero(propagatedVel, SKF_N_STATES_HALF);
     
     /*! Begin state update steps */
-    /*! - Unitize the current estimate to find direction to restrict motion*/
-    v3Normalize(stateInOut, pointUnit);
-    unitComp = v3Dot(&(stateInOut[3]), pointUnit);
-    v3Scale(unitComp, pointUnit, pointUnit);
-    /*! - Subtract out rotation in the sunline axis because that is not observable
-     for coarse sun sensors*/
-    v3Subtract(&(stateInOut[3]), pointUnit, &(stateInOut[3]));
-    v3Scale(dt, &(stateInOut[3]), propagatedVel);
+    /*! Take omega cross d*/
+    v3Cross(omega, stateInOut, omegaCrossd);
+    
+    /*! - Multiply omega cross d by -dt and add to state to propagate */
+    v3Scale(-dt, omegaCrossd, propagatedVel);
     v3Add(stateInOut, propagatedVel, stateInOut);
     
     /*! Begin STM propagation step */
