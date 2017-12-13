@@ -48,9 +48,9 @@ import SunLineKF_test_utilities as Fplot
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("FilterType, simTime", [
-      ('uKF', 200)
-    , ('EKF', 200)
-    , ('OEKF', 200)
+      ('uKF', 400)
+    , ('EKF', 400)
+    , ('OEKF', 400)
 ])
 
 # provide a unique test method name, starting with test_
@@ -486,7 +486,7 @@ def run(show_plots, FilterType, simTime):
     for CSSHat in CSSOrientationList:
         newCSS = coarse_sun_sensor.CoarseSunSensor()
         newCSS.minOutput = 0.
-        newCSS.SenNoiseStd = 0.017
+        newCSS.senNoiseStd = 0.017
         newCSS.nHat_B = CSSHat
         cssConstelation.appendCSS(newCSS)
     cssConstelation.outputConstellationMessage = 'css_sensors_data'
@@ -622,7 +622,7 @@ def run(show_plots, FilterType, simTime):
 #
 if __name__ == "__main__":
     run( True,      # show_plots
-        'uKF',
+        'EKF',
          400
        )
 

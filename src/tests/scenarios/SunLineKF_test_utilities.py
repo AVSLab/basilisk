@@ -239,7 +239,7 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2, FilterType, show_plots):
 def numMeasurements(numObs, FilterType, show_plots):
     plt.plot(111)
     plt.plot(numObs[:,0]*(1E-9) , numObs[:, 1], "b")
-    plt.ylim([0,9])
+    plt.ylim([0,5])
     plt.xlabel('t(s)')
     plt.title('Number of Activated CSS')
 
@@ -253,13 +253,17 @@ def PostFitResiduals(Res, noise, FilterType, show_plots):
 
     MeasNoise = np.zeros(len(Res[:,0]))
     t= np.zeros(len(Res[:,0]))
+    constantVal = np.array([np.nan]*4)
     for i in range(len(Res[:,0])):
         t[i] = Res[i, 0]*1E-9
         MeasNoise[i] = 3*noise
         # Don't plot constant values, they mean no measurement is taken
-        for j in range(len(Res[0,:])-1):
-            if np.abs(Res[i,j+1]-Res[i,j]) < 1E-10:
-                Res[i, j+1] = np.nan
+        if i>0:
+            for j in range(1,5):
+                constantRes = np.abs(Res[i,j]-Res[i-1,j])
+                if constantRes < 1E-10 or np.abs(constantVal[j-1]- Res[i,j])<1E-10:
+                    constantVal[j-1] = Res[i, j]
+                    Res[i, j] = np.nan
 
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
     plt.subplot(411)
