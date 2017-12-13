@@ -17,19 +17,19 @@
 
  */
 
-#include "gauss_markov.h"
-#include "linearAlgebra.h"
 #include <iostream>
 #include <math.h>
+#include "gauss_markov.h"
+#include "linearAlgebra.h"
 
 /*! The constructor initialies the random number generator used for the walks*/
 GaussMarkov::GaussMarkov()
 {
-    std::normal_distribution<double>::param_type
-    UpdatePair(0.0, 1.0/3.0);
+    std::normal_distribution<double>::param_type updatePair(0.0, 1.0/3.0);
     this->rGen.seed((unsigned int)this->RNGSeed);
-    this->rNum.param(UpdatePair);
+    this->rNum.param(updatePair);
 }
+
 GaussMarkov::GaussMarkov(uint64_t size) : GaussMarkov() {
     this->propMatrix.resize(size,size);
     this->propMatrix.fill(0.0);
@@ -41,6 +41,7 @@ GaussMarkov::GaussMarkov(uint64_t size) : GaussMarkov() {
     this->stateBounds.fill(0.0);
     this->numStates = size;
 }
+
 /*! The destructor is a placeholder for one that might do something*/
 GaussMarkov::~GaussMarkov()
 {

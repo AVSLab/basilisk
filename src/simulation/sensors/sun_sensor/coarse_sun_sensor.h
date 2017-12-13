@@ -70,9 +70,9 @@ public:
     void writeOutputMessages(uint64_t Clock); //!< @brief method to write the output message to the system
     
 public:
-    std::string InputSunMsg;                    //!< [-] Message name for sun data
-    std::string InputStateMsg;                  //!< [-] Message name for spacecraft state */
-    std::string OutputDataMsg;                  //!< [-] Message name for CSS output data */
+    std::string sunInMsgName;                    //!< [-] Message name for sun data
+    std::string stateInMsgName;                  //!< [-] Message name for spacecraft state */
+    std::string cssDataOutMsgName;                  //!< [-] Message name for CSS output data */
     std::string sunEclipseInMsgName;            //!< [-] Message name for sun eclipse state message
     CSSFaultState_t     faultState;             //!< [-] Specification used if state is set to COMPONENT_FAULT */
     double              theta;                  //!< [rad] css azimuth angle, measured positive from the body +x axis around the +z axis
@@ -86,26 +86,27 @@ public:
     double              scaleFactor;            //!< [-] scale factor applied to sensor (common + individual multipliers)
     double              sensedValue;            //!< [-] total measurement including perturbations
     double              trueValue;              //!< [-] total measurement without perturbations
-    double              KellyFactor;            //!< [-] Kelly curve fit for output cosine curve
+    double              kellyFactor;            //!< [-] Kelly curve fit for output cosine curve
     double              fov;                    //!< [-] rad, field of view half angle
     Eigen::Vector3d     r_B;
-    double              SenBias;                //!< [-] Sensor bias value
-    double              SenNoiseStd;            //!< [-] Sensor noise value
-    uint64_t            OutputBufferCount;      //!< [-] number of output msgs stored
+    double              senBias;                //!< [-] Sensor bias value
+    double              senNoiseStd;            //!< [-] Sensor noise value
+    uint64_t            outputBufferCount;      //!< [-] number of output msgs stored
     double              maxOutput;              //!< [-] maximum output (ceiling) for saturation application
     double              minOutput;              //!< [-] minimum output (floor) for saturation application
     double              walkBounds;             //!< [-] Gauss Markov walk bounds
+
 private:
-    int64_t InputSunID;                         //!< [-] Connect to input time message
-    int64_t InputStateID;                       //!< [-] Connect to input time message
-    int64_t OutputDataID;                       //!< [-] Connect to output CSS data
+    int64_t sunInMsgID;                         //!< [-] Connect to input time message
+    int64_t stateInMsgID;                       //!< [-] Connect to input time message
+    int64_t cssDataOutMsgID;                       //!< [-] Connect to output CSS data
     int64_t sunEclipseInMsgId;                  //!< [-] Connect to input sun eclipse message
-    SpicePlanetStateSimMsg SunData;            //!< [-] Unused for now, but including it for future
-    SCPlusStatesSimMsg StateCurrent;           //!< [-] Current SSBI-relative state
+    SpicePlanetStateSimMsg sunData;            //!< [-] Unused for now, but including it for future
+    SCPlusStatesSimMsg stateCurrent;           //!< [-] Current SSBI-relative state
     EclipseSimMsg sunVisibilityFactor;          //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
     double              sunDistanceFactor;      //! [-] Factor to scale cosine curve magnitude based on solar flux at location
-    GaussMarkov *noiseModel;                    //! [-] Gauss Markov noise generation model
-    Saturate *saturateUtility;                  //! [-] Saturation utility
+    GaussMarkov noiseModel;                    //! [-] Gauss Markov noise generation model
+    Saturate saturateUtility;                  //! [-] Saturation utility
 };
 
 //!@brief Constellation of coarse sun sensors for aggregating output information
@@ -119,8 +120,7 @@ class CSSConstellation: public SysModel {
     void CrossInit();                           //!< @brief [-] Method for initializing cross dependencies
     void SelfInit();                            //!< @brief [-] Method for initializing own messages
     void UpdateState(uint64_t CurrentSimNanos); //!< @brief [-] Main update method for CSS constellation
-    void appendCSS(CoarseSunSensor newSensor) {sensorList.push_back(newSensor);}
-    //!< @brief [-] Method for adding sensor to list
+    void appendCSS(CoarseSunSensor newSensor); //!< @brief [-] Method for adding sensor to list
     
  public:
     uint64_t outputBufferCount;                  //!< [-] Number of messages archived in output data

@@ -356,10 +356,10 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
     CSS1.ModelTag = "CSS1_sensor"
     CSS1.fov = 80.*macros.D2R
     CSS1.scaleFactor = 2.0
-    CSS1.OutputDataMsg = "CSS1_output"
-    CSS1.InputSunMsg = "sun_message"
+    CSS1.cssDataOutMsgName = "CSS1_output"
+    CSS1.sunInMsgName = "sun_message"
     if useKelly:
-        CSS1.KellyFactor = 0.2
+        CSS1.kellyFactor = 0.2
     if useEclipse:
         CSS1.sunEclipseInMsgName = "eclipse_message"
     if usePlatform:
@@ -372,7 +372,7 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
 
     CSS2 = coarse_sun_sensor.CoarseSunSensor(CSS1)      # make copy of first CSS unit
     CSS2.ModelTag = "CSS2_sensor"
-    CSS2.OutputDataMsg = "CSS2_output"
+    CSS2.cssDataOutMsgName = "CSS2_output"
     if usePlatform:
         CSS2.theta = 180.*macros.D2R
         CSS2.setUnitDirectionVectorWithPerturbation(0., 0.)
@@ -396,8 +396,8 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
     if useCSSConstellation:
         scSim.TotalSim.logThisMessage(cssArray.outputConstellationMessage, simulationTimeStep)
     else:
-        scSim.TotalSim.logThisMessage(CSS1.OutputDataMsg, simulationTimeStep)
-        scSim.TotalSim.logThisMessage(CSS2.OutputDataMsg, simulationTimeStep)
+        scSim.TotalSim.logThisMessage(CSS1.cssDataOutMsgName, simulationTimeStep)
+        scSim.TotalSim.logThisMessage(CSS2.cssDataOutMsgName, simulationTimeStep)
 
     #
     # create simulation messages
@@ -406,7 +406,7 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
     sunPositionMsg.PositionVector = [0.0, 0.0, 0.0]
     unitTestSupport.setMessage(scSim.TotalSim,
                                simProcessName,
-                               CSS1.InputSunMsg,
+                               CSS1.sunInMsgName,
                                sunPositionMsg)
 
     if useEclipse:
@@ -433,8 +433,8 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
     if useCSSConstellation:
         dataCSSArray = scSim.pullMessageLogData(cssArray.outputConstellationMessage+".CosValue", range(len(cssList)))
     else:
-        dataCSS1 = scSim.pullMessageLogData(CSS1.OutputDataMsg+".OutputData", range(1))
-        dataCSS2 = scSim.pullMessageLogData(CSS2.OutputDataMsg+".OutputData", range(1))
+        dataCSS1 = scSim.pullMessageLogData(CSS1.cssDataOutMsgName+".OutputData", range(1))
+        dataCSS2 = scSim.pullMessageLogData(CSS2.cssDataOutMsgName+".OutputData", range(1))
     np.set_printoptions(precision=16)
 
     #
