@@ -124,8 +124,8 @@ void Reset_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
     mSetZero(ConfigData->kalmanGain, ConfigData->numStates, ConfigData->numObs);
     
     mSetZero(ConfigData->measNoise, ConfigData->numObs, ConfigData->numObs);
-    mSetIdentity(ConfigData->procNoise,  ConfigData->numStates/2, ConfigData->numStates/2);
-    mScale(ConfigData->qProcVal, ConfigData->procNoise, ConfigData->numStates/2, ConfigData->numStates/2, ConfigData->procNoise);
+    mSetIdentity(ConfigData->procNoise,  ConfigData->numStates-3, ConfigData->numStates-3);
+    mScale(ConfigData->qProcVal, ConfigData->procNoise, ConfigData->numStates-3, ConfigData->numStates-3, ConfigData->procNoise);
     
     return;
 }
@@ -289,19 +289,23 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH],
 void sunlineDynMatrix(double states[SKF_N_STATES_SWITCH], double dt, double *dynMat)
 {
     double skewOmega[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double skewStates[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double negskewOmega[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double omega[SKF_N_STATES_HALF] = {0, states[3], states[4]};
-    double dFdomega[SKF_N_STATES_HALF][SKF_N_STATES_SWITCH-3] = {{states[2], -states[1]},{0, states[0]},{-states[0], 0}};
+    
     v3Tilde(omega, skewOmega);
+    v3Tilde(states, skewStates);
     m33Scale(-1, skewOmega, negskewOmega);
-    mCopy(negskewOmega, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dynMat);
     
     /* - omega_tilde in dynamics */
     mSetSubMatrix(negskewOmega, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 0, 0);
     
     /* Populate the first 3x3 matrix of the dynamics matrix*/
-    mSetSubMatrix(dFdomega, 3, 3, dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 0, 3);
+    mTranspose(dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, dynMat);
+    mTranspose(skewStates, SKF_N_STATES_HALF, SKF_N_STATES_HALF, skewStates);
+    mSetSubMatrix(&(skewStates[1][0]), 2, 3, dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 3, 0);
     
+    mTranspose(dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, dynMat);
     return;
 }
 
@@ -554,17 +558,17 @@ void sunlineKalmanGain(double covarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH],
 
 void sunlineSEKFSwitch(double *bVec_B, double *states, double *covar)
 {
-    double dcm_BSold[SKF_N_STATES][SKF_N_STATES];
-    double dcm_BSnew_T[SKF_N_STATES][SKF_N_STATES];
-    double dcm_SnewSold[SKF_N_STATES][SKF_N_STATES];
-    double switchMatP[SKF_N_STATES][SKF_N_STATES];
+    double dcm_BSold[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double dcm_BSnew_T[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double dcm_SnewSold[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double switchMatP[SKF_N_STATES_SWITCH][SKF_N_STATES_SWITCH];
     double switchMat[SKF_N_STATES_SWITCH][SKF_N_STATES_SWITCH];
 
-    double s2_B[SKF_N_STATES];
-    double s3_B_old[SKF_N_STATES];
-    double s3_B_new[SKF_N_STATES];
-    double b1[SKF_N_STATES];
-    double b2[SKF_N_STATES];
+    double s2_B[SKF_N_STATES_HALF];
+    double s3_B_old[SKF_N_STATES_HALF];
+    double s3_B_new[SKF_N_STATES_HALF];
+    double b1[SKF_N_STATES_HALF];
+    double b2[SKF_N_STATES_HALF];
     
     /*!  Set the body frame vectors*/
     v3Set(1, 0, 0, b1);
@@ -575,35 +579,35 @@ void sunlineSEKFSwitch(double *bVec_B, double *states, double *covar)
     v3Normalize(s2_B, s2_B);
     
     /*! Populate the dcm_BS with the "old" S-frame*/
-    mSetSubMatrix(&(states[0]), 1, SKF_N_STATES, dcm_BSold, SKF_N_STATES, SKF_N_STATES, 1, 1);
-    mSetSubMatrix(&(s2_B), 1, SKF_N_STATES, dcm_BSold, SKF_N_STATES, SKF_N_STATES, 2, 1);
+    mSetSubMatrix(&(states[0]), 1, SKF_N_STATES_HALF, dcm_BSold, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 1, 1);
+    mSetSubMatrix(&(s2_B), 1, SKF_N_STATES_HALF, dcm_BSold, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 2, 1);
     v3Cross(&(states[0]), s2_B, s3_B_old);
     v3Normalize(s3_B_old, s3_B_old);
-    mSetSubMatrix(&(s3_B_old), 1, SKF_N_STATES, dcm_BSold, SKF_N_STATES, SKF_N_STATES, 3, 1);
-    mTranspose(dcm_BSold, SKF_N_STATES, SKF_N_STATES, dcm_BSold);
+    mSetSubMatrix(&(s3_B_old), 1, SKF_N_STATES_HALF, dcm_BSold, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 3, 1);
+    mTranspose(dcm_BSold, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm_BSold);
     
     if (v3IsEqual(bVec_B, b1, 1e-10))
     {
         /*! Populate the dcm_BS with the "new" S-frame*/
-        mSetSubMatrix(&(states[0]), 1, SKF_N_STATES, dcm_BSnew_T, SKF_N_STATES, SKF_N_STATES, 1, 1);
-        mSetSubMatrix(&(b2), 1, SKF_N_STATES, dcm_BSnew_T, SKF_N_STATES, SKF_N_STATES, 2, 1);
+        mSetSubMatrix(&(states[0]), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 1, 1);
+        mSetSubMatrix(&(b2), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 2, 1);
         v3Cross(&(states[0]), b2, s3_B_new);
         v3Normalize(s3_B_new, s3_B_new);
-        mSetSubMatrix(&(s3_B_new), 1, SKF_N_STATES, dcm_BSnew_T, SKF_N_STATES, SKF_N_STATES, 3, 1);
+        mSetSubMatrix(&(s3_B_new), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 3, 1);
     }
     else
     {
         /*! Populate the dcm_BS with the "new" S-frame*/
-        mSetSubMatrix(&(states[0]), 1, SKF_N_STATES, dcm_BSnew_T, SKF_N_STATES, SKF_N_STATES, 1, 1);
-        mSetSubMatrix(&(b1), 1, SKF_N_STATES, dcm_BSnew_T, SKF_N_STATES, SKF_N_STATES, 2, 1);
+        mSetSubMatrix(&(states[0]), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 1, 1);
+        mSetSubMatrix(&(b1), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 2, 1);
         v3Cross(&(states[0]), b1, s3_B_new);
         v3Normalize(s3_B_new, s3_B_new);
-        mSetSubMatrix(&(s3_B_new), 1, SKF_N_STATES, dcm_BSnew_T, SKF_N_STATES, SKF_N_STATES, 3, 1);
+        mSetSubMatrix(&(s3_B_new), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 3, 1);
     }
     
     mMultM(dcm_BSnew_T, 3, 3, dcm_BSold, 3, 3, dcm_SnewSold);
     
-    mSetIdentity(switchMat, 5, 5);
+    mSetIdentity(switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
     mSetSubMatrix(&dcm_SnewSold[1][1], 2, 2, &switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 4, 4);
     
     mMultV(switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, states, states);

@@ -48,7 +48,7 @@ typedef struct {
 	double dt;                     /*!< [s] seconds since last data epoch */
 	double timeTag;                /*!< [s]  Time tag for statecovar/etc */
 
-    double s2[SKF_N_STATES];       /*!< [-]  second component of frame */
+    double s2[SKF_N_STATES_HALF];       /*!< [-]  second component of frame */
     double switchTresh;             /*!< [-]  Threshold for switching frames */
 
 	double states[SKF_N_STATES_SWITCH];        /*!< [-] State estimate for time TimeTag*/
