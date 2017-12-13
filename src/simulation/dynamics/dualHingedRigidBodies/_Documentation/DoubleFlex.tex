@@ -1252,42 +1252,210 @@ m_{\text{sp}_{i1}} d_{i1}  [\tilde{{\bm r}}_{S_{c,i1}/B}] \bm{\hat{s}}_{i1,3} +I
 
 Which is the same from developing the equations using Newtonian/Eulerian mechanics.
 
-\subsection{Flexing Equations}
-Following the similar pattern for translational and rotational equations the generalized active forces are defined:
+\subsection{Panel 1 Flexing Equation}
+Following the similar pattern for translational and rotational equations the generalized active forces are defined for the first interconnected panel:
 
 \begin{equation}
-F_{7} = \bm \omega_{\textit{r}}^{\cal{S}_\textit{i}} \cdot (-k_i \theta_i \bm{\hat{s}}_{i,2} - c_i \dot{\theta}_i \bm{\hat{s}}_{i,2}) = \bm{\hat{s}}_{i,2} \cdot (-k_i \theta_i \bm{\hat{s}}_{i,2} - c_i \dot{\theta}_i \bm{\hat{s}}_{i,2}) = -k_i \theta_i - c_i \dot{\theta}_i
+F_{7} = \bm \omega_{7}^{\mathcal{S}_{i1}} \cdot \Big[ (-k_{i1} \theta_{i1} - c_{i1} \dot{\theta}_{i1})\bm{\hat{s}}_{i1,2} + (k_{i2} \theta_{i2} + c_{i2} \dot{\theta}_{i2})\bm{\hat{s}}_{i2,2} + \bm \tau_{\text{ext}_{i1},H_{i1}} \Big] + \bm v^{H_{i2}}_{7} \cdot \bm F_{1/2i}
 \end{equation}
+
+Need to define this velocity
+
+\begin{equation}
+\dot{\bm{r}}_{H_{{i2}}/B} = \dot{\bm r}_{B/N} + l_{i1} \dot{\theta}_{i1} \bm{\hat{s}}_{i1,3}  - [\tilde{\bm{r}}_{H_{{i2}}/B}] \bm \omega_{\cal{B/N}}
+\end{equation}
+
+Therefore:
+
+\begin{equation}
+\bm v^{H_{i2}}_{7} = l_{i1} \bm{\hat{s}}_{i1,3}
+\end{equation}
+
+This needs to be defined:
+
+\begin{equation}
+\bm F_{1/2i} = \bm F_{\text{ext}_{i2}}  - m_{sp_{i2}} \ddot{\bm{r}}_{S_{c,i2}/N} 
+\end{equation}
+
+Plugging this in results in:
+
+\begin{equation}
+F_{7} = \bm{\hat{s}}_{i1,2} \cdot \Big[ (-k_{i1} \theta_{i1} - c_{i1} \dot{\theta}_{i1})\bm{\hat{s}}_{i1,2} + (k_{i2} \theta_{i2} + c_{i2} \dot{\theta}_{i2})\bm{\hat{s}}_{i2,2} + \bm \tau_{\text{ext}_{i1},H_{i1}} \Big] + l_{i1} \bm{\hat{s}}_{i1,3} \cdot \Big[\bm F_{\text{ext}_{i2}}  - m_{sp_{i2}} \ddot{\bm{r}}_{S_{c,i2}/N} \Big]
+\end{equation}
+
+Simplifying:
+
+\begin{equation}
+F_{7} =  -k_{i1} \theta_{i1} - c_{i1} \dot{\theta}_{i1} + k_{i2} \theta_{i2} + c_{i2} \dot{\theta}_{i2} + \bm{\hat{s}}_{i1,2} \cdot \bm \tau_{\text{ext}_{i1},H_{i1}}  + l_{i1} \bm{\hat{s}}_{i1,3} \cdot \bm F_{\text{ext}_{i2}}  - m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3} \cdot \ddot{\bm{r}}_{S_{c,i2}/N} 
+\end{equation}
+
 The generalized inertia forces are defined as: 
 
-\begin{equation}
-F^*_{7} = \bm \omega_{\textit{r}}^{\cal{S}_\textit{i}} \cdot \bm T^*_{\text{sp}_i}  + \bm v^{S_i}_{r} \cdot (-m_{\text{sp}_i} \ddot{\bm r}_{S_{i}/N}) = \bm \omega_{\textit{r}}^{\cal{S}_\textit{i}} \cdot \Big[-[I_{\text{sp}_i,S_i}] \dot{\bm\omega}_{\cal S_{\textit{i}/N}}  -[\bm{\tilde{\omega}}_{\cal S_{\textit{i}/N}}] [I_{\text{sp}_i,S_i}] \bm\omega_{\cal S_{\textit{i}/N}} \Big] + \bm v^{S_i}_{r} \cdot (-m_{\text{sp}_i} \ddot{\bm r}_{S_{i}/N})
-\end{equation}
-Using Kane's equation the following equations of motion are defined:
-
-\begin{equation}
--k_i \theta_i - c_i \dot{\theta}_i + \bm{\hat{s}}_{i,2} \cdot \Big[-[I_{\text{sp}_i,S_i}] \dot{\bm\omega}_{\cal S_{\textit{i}/N}}  -[\bm{\tilde{\omega}}_{\cal S_{\textit{i}/N}}] [I_{\text{sp}_i,S_i}] \bm\omega_{\cal S_{\textit{i}/N}} \Big] + d_i \bm{\hat{s}}_{i,3} \cdot (-m_{\text{sp}_i} \ddot{\bm r}_{S_{i}/N}) = 0
-\end{equation}
-
-\begin{equation}
--k_i \theta_i - c_i \dot{\theta}_i - I_{s_i,2} \bm{\hat{s}}_{i,2}^T \dot{\bm\omega}_{\cal B/N} - I_{s_i,2} \ddot{\theta}_i - \left( I_{s_{i,1}} - I_{s_{i,3}}\right) \omega_{s_{i,3}} \omega_{s_{i,1}} - m_{\text{sp}_i} d_i \bm{\hat{s}}_{i,3} \cdot (\ddot{\bm r}_{B/N} + \ddot{\bm r}_{S_{i}/B}) = 0
-\end{equation}
-
 \begin{multline}
-- m_{\text{sp}_i} d_i \bm{\hat{s}}_{i,3} \cdot \ddot{\bm r}_{B/N} - \Big[I_{s_i,2} \bm{\hat{s}}_{i,2}^T - m_{\text{sp}_i} d_i \bm{\hat{s}}_{i,3}^T [\tilde{\bm{r}}_{S_i/B}] \Big] \dot{\bm\omega}_{\cal B/N} - \Big[I_{s_i,2} + m_{\text{sp}_i} d_i^2 \Big] \ddot{\theta}_i \\
--k_i \theta_i - c_i \dot{\theta}_i - \left( I_{s_{i,1}} - I_{s_{i,3}}\right) \omega_{s_{i,3}} \omega_{s_{i,1}} - m_{\text{sp}_i} d_i \bm{\hat{s}}_{i,3} \cdot \Big[ 
-2 \bm\omega_{\cal B/N} \times \bm{r}'_{S_i/B}
-+ \bm\omega_{\cal B/N} \times (\bm\omega_{\cal B/N} \times \bm{r}_{S_i/B})\Big] = 0
+F^*_{7} = \bm \omega_{\textit{7}}^{\mathcal{S}_{i1}} \cdot \bm T^*_{\text{sp}_{i1}}  + \bm v^{S_{c,i1}}_{7} \cdot (-m_{\text{sp}_{i1}} \ddot{\bm{r}}_{S_{c,i1}/N}) \\
+= \bm{\hat{s}}_{i1,2} \cdot \Big[-[I_{\text{sp}_{i1},S_{c,i1}}] \dot{\bm\omega}_{\mathcal{S}_{i1}/\mathcal{N}}  -[\tilde{\bm \omega}_{\mathcal{S}_{i1}/\mathcal{N}}] [I_{\text{sp}_{i1},S_{c,i1}}] \bm \omega_{\mathcal{S}_{i1}/\mathcal{N}} \Big] + d_{i1} \bm{\hat{s}}_{i1,3} \cdot (-m_{\text{sp}_{i1}} \ddot{\bm{r}}_{S_{c,i1}/N})
 \end{multline}
 
-Further simplification
+Using Kane's equation the EOM is defined as:
 
 \begin{multline}
-m_{\text{sp}_i} d_i \bm{\hat{s}}_{i,3}^T \ddot{\bm r}_{B/N} + \Big[I_{s_i,2} \bm{\hat{s}}_{i,2}^T - m_{\text{sp}_i} d_i \bm{\hat{s}}_{i,3}^T [\tilde{\bm{r}}_{S_i/B}] \Big] \dot{\bm\omega}_{\cal B/N} + \Big[I_{s_i,2} + m_{\text{sp}_i} d_i^2 \Big] \ddot{\theta}_i \\
-= -k_i \theta_i - c_i \dot{\theta}_i + \left(I_{s_{i,3}} - I_{s_{i,1}} \right) \omega_{s_{i,3}} \omega_{s_{i,1}} - m_{\text{sp}_i} d_i \hat{\bm s}_{i,3}^{T} [\tilde{\bm\omega}_{\cal B/N}][\tilde{\bm\omega}_{\cal B/N}] \bm r_{S_i/B}  = 0
+-k_{i1} \theta_{i1} - c_{i1} \dot{\theta}_{i1} + k_{i2} \theta_{i2} + c_{i2} \dot{\theta}_{i2} + \bm{\hat{s}}_{i1,2} \cdot \bm \tau_{\text{ext}_{i1},H_{i1}}  + l_{i1} \bm{\hat{s}}_{i1,3} \cdot \bm F_{\text{ext}_{i2}}  - m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3} \cdot \ddot{\bm{r}}_{S_{c,i2}/N} \\
++ \bm{\hat{s}}_{i1,2} \cdot \Big[-[I_{\text{sp}_{i1},S_{c,i1}}] \dot{\bm\omega}_{\mathcal{S}_{i1}/\mathcal{N}}  -[\tilde{\bm \omega}_{\mathcal{S}_{i1}/\mathcal{N}}] [I_{\text{sp}_{i1},S_{c,i1}}] \bm \omega_{\mathcal{S}_{i1}/\mathcal{N}} \Big] -m_{\text{sp}_{i1}} d_{i1} \bm{\hat{s}}_{i1,3} \cdot \ddot{\bm{r}}_{S_{c,i1}/N} = 0
 \end{multline}
 
-They are the EXACT same just slightly different form! Kane's actually gives a more compact form.
+Expanding:
+
+\begin{multline}
+-k_{i1} \theta_{i1} - c_{i1} \dot{\theta}_{i1} + k_{i2} \theta_{i2} + c_{i2} \dot{\theta}_{i2} + \bm{\hat{s}}_{i1,2} \cdot \bm \tau_{\text{ext}_{i1},H_{i1}}  + l_{i1} \bm{\hat{s}}_{i1,3} \cdot \bm F_{\text{ext}_{i2}}  - m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3} \cdot \ddot{\bm{r}}_{S_{c,i2}/N} \\
++ \bm{\hat{s}}_{i1,2} \cdot \bigg(-[I_{\text{sp}_{i1},S_{c,i1}}] \Big[\dot{\bm \omega}_{\cal{B/N}} + \ddot{\theta}_{i1} \hat{\bm s}_{i1,2} + \dot{\theta}_{i1} \bm \omega_{\cal{B/N}} \times \hat{\bm s}_{i1,2}\Big] 
+-[\tilde{\bm \omega}_{\cal{B/N}}] [I_{\text{sp}_{i1},S_{c,i1}}] \bm \omega_{\cal{B/N}}\\
+ -\bm \omega_{\cal{B/N}} \times [I_{\text{sp}_{i1},S_{c,i1}}] \dot{\theta}_{i1} \hat{\bm s}_{i1,2} -\dot{\theta}_{i1} \hat{\bm s}_{i1,2} \times [I_{\text{sp}_{i1},S_{c,i1}}] \bm \omega_{\cal{B/N}}\bigg) -m_{\text{sp}_{i1}} d_{i1} \bm{\hat{s}}_{i1,3} \cdot \ddot{\bm{r}}_{S_{c,i1}/N} = 0
+\end{multline}
+
+Simplifying:
+
+\begin{multline}
+	-k_{i1} \theta_{i1} - c_{i1} \dot{\theta}_{i1} + k_{i2} \theta_{i2} + c_{i2} \dot{\theta}_{i2} + \bm{\hat{s}}_{i1,2} \cdot \bm \tau_{\text{ext}_{i1},H_{i1}}  + l_{i1} \bm{\hat{s}}_{i1,3} \cdot \bm F_{\text{ext}_{i2}}  - m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3} \cdot \ddot{\bm{r}}_{S_{c,i2}/N} \\
+	+ \bm{\hat{s}}_{i1,2} \cdot \bigg(-[I_{\text{sp}_{i1},S_{c,i1}}] \Big[\dot{\bm \omega}_{\cal{B/N}} + \ddot{\theta}_{i1} \hat{\bm s}_{i1,2}\Big]  
+	-[\tilde{\bm \omega}_{\cal{B/N}}] [I_{\text{sp}_{i1},S_{c,i1}}] \bm \omega_{\cal{B/N}} \bigg) -m_{\text{sp}_{i1}} d_{i1} \bm{\hat{s}}_{i1,3} \cdot \ddot{\bm{r}}_{S_{c,i1}/N} = 0
+\end{multline}
+
+More stuff:
+
+\begin{multline}
+	-k_{i1} \theta_{i1} - c_{i1} \dot{\theta}_{i1} + k_{i2} \theta_{i2} + c_{i2} \dot{\theta}_{i2} + \bm{\hat{s}}_{i1,2} \cdot \bm \tau_{\text{ext}_{i1},H_{i1}}  + l_{i1} \bm{\hat{s}}_{i1,3} \cdot \bm F_{\text{ext}_{i2}}  - m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3} \cdot \ddot{\bm{r}}_{S_{c,i2}/N} \\
+	- I_{s_{i1,2}} \bm{\hat{s}}_{i1,2}^T \dot{\bm \omega}_{\cal{B/N}} - I_{s_{i1,2}} \ddot{\theta}_{i1} - (I_{s_{i1,1}} - I_{s_{i1,3}}) \omega_{s_{i1,3}} \omega_{s_{i1,1}} -m_{\text{sp}_{i1}} d_{i1} \bm{\hat{s}}_{i1,3} \cdot \ddot{\bm{r}}_{S_{c,i1}/N} = 0
+\end{multline}
+
+Moving second order variables to the left hand side:
+
+\begin{multline}
+I_{s_{i1,2}} \bm{\hat{s}}_{i1,2}^T \dot{\bm \omega}_{\cal{B/N}} + I_{s_{i1,2}} \ddot{\theta}_{i1} + m_{\text{sp}_{i1}} d_{i1} \bm{\hat{s}}_{i1,3}^T \Big[\ddot{\bm{r}}_{B/N} + \bm{r}''_{S_{c,i1}/B} + 2 \bm\omega_{\cal B/N} \times \bm{r}'_{S_{c,i1}/B} +  \dot{\bm\omega}_{\cal B/N} \times \bm{r}_{S_{c,i1}/B} \\
++ \bm\omega_{\cal B/N} \times (\bm\omega_{\cal B/N} \times \bm{r}_{S_{c,i1}/B})\Big] + m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3}^T \Big[\ddot{\bm{r}}_{B/N} + \bm{r}''_{S_{c,i2}/B} + 2 \bm\omega_{\cal B/N} \times \bm{r}'_{S_{c,i2}/B} +  \dot{\bm\omega}_{\cal B/N} \times \bm{r}_{S_{c,i2}/B} \\
++ \bm\omega_{\cal B/N} \times (\bm\omega_{\cal B/N} \times \bm{r}_{S_{c,i2}/B})\Big]
+= -k_{i1} \theta_{i1} - c_{i1} \dot{\theta}_{i1} + k_{i2} \theta_{i2} + c_{i2} \dot{\theta}_{i2} - (I_{s_{i1,1}} - I_{s_{i1,3}}) \omega_{s_{i1,3}} \omega_{s_{i1,1}} \\
++ \bm{\hat{s}}_{i1,2} \cdot \bm \tau_{\text{ext}_{i1},H_{i1}}
++ l_{i1} \bm{\hat{s}}_{i1,3} \cdot \bm F_{\text{ext}_{i2}} 
+\end{multline}
+
+Moving stuff around:
+
+\begin{multline}
+\Big[m_{\text{sp}_{i1}} d_{i1} \bm{\hat{s}}_{i1,3}^T + m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3}^T \Big] \ddot{\bm{r}}_{B/N} + \Big[I_{s_{i1,2}} \bm{\hat{s}}_{i1,2}^T - m_{\text{sp}_{i1}} d_{i1} \bm{\hat{s}}_{i1,3}^T [\tilde{\bm{r}}_{S_{c,i1}/B}] - m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3}^T [\tilde{\bm{r}}_{S_{c,i2}/B}] \Big] \dot{\bm \omega}_{\cal{B/N}} \\
++ I_{s_{i1,2}} \ddot{\theta}_{i1} + m_{\text{sp}_{i1}} d_{i1} \bm{\hat{s}}_{i1,3}^T \Big[ \bm{r}''_{S_{c,i1}/B} 
+\Big] + m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3}^T \Big[ \bm{r}''_{S_{c,i2}/B}\Big]
+= -k_{i1} \theta_{i1} - c_{i1} \dot{\theta}_{i1} + k_{i2} \theta_{i2} + c_{i2} \dot{\theta}_{i2} \\
+- (I_{s_{i1,1}} - I_{s_{i1,3}}) \omega_{s_{i1,3}} \omega_{s_{i1,1}} 
+- 2 m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3}^T [\tilde{\bm\omega}_{\cal B/N}] \bm{r}'_{S_{c,i2}/B}
+- m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm{r}_{S_{c,i2}/B}\\ 
+- m_{\text{sp}_{i1}} d_{i1} \bm{\hat{s}}_{i1,3}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm{r}_{S_{c,i1}/B}
++ \bm{\hat{s}}_{i1,2} \cdot \bm \tau_{\text{ext}_{i1},H_{i1}}
++ l_{i1} \bm{\hat{s}}_{i1,3} \cdot \bm F_{\text{ext}_{i2}} 
+\end{multline}
+
+Plugging in the rPrimePrime terms:
+
+\begin{multline}
+\Big[m_{\text{sp}_{i1}} d_{i1} \bm{\hat{s}}_{i1,3}^T + m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3}^T \Big] \ddot{\bm{r}}_{B/N} + \Big[I_{s_{i1,2}} \bm{\hat{s}}_{i1,2}^T - m_{\text{sp}_{i1}} d_{i1} \bm{\hat{s}}_{i1,3}^T [\tilde{\bm{r}}_{S_{c,i1}/B}] - m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3}^T [\tilde{\bm{r}}_{S_{c,i2}/B}] \Big] \dot{\bm \omega}_{\cal{B/N}} \\
++ \Big[I_{s_{i1,2}} + m_{\text{sp}_{i1}} d_{i1}^2 + m_{sp_{i2}} l_{i1}^2 + m_{sp_{i2}} l_{i1} d_{i2} \bm{\hat{s}}_{i1,3}^T \bm{\hat{s}}_{i2,3} \Big] \ddot{\theta}_{i1} + \Big[m_{sp_{i2}} l_{i1} d_{i2} \bm{\hat{s}}_{i1,3}^T \bm{\hat{s}}_{i2,3} \Big]\ddot{\theta}_{i2}
+= - (I_{s_{i1,1}} - I_{s_{i1,3}}) \omega_{s_{i1,3}} \omega_{s_{i1,1}}\\ -k_{i1} \theta_{i1} - c_{i1} \dot{\theta}_{i1} 
++ k_{i2} \theta_{i2} + c_{i2} \dot{\theta}_{i2} + \bm{\hat{s}}_{i1,2}^T \bm \tau_{\text{ext}_{i1},H_{i1}}
++ l_{i1} \bm{\hat{s}}_{i1,3}^T \bm F_{\text{ext}_{i2}} 
+- m_{\text{sp}_{i1}} d_{i1} \bm{\hat{s}}_{i1,3}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm{r}_{S_{c,i1}/B}\\
+ - m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3}^T\Big[ 2 [\tilde{\bm\omega}_{\cal B/N}] \bm{r}'_{S_{c,i2}/B} + [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm{r}_{S_{c,i2}/B} + d_{i2} \big(\dot{\theta}_{i1} + \dot{\theta}_{i2}\big)^2 \bm{\hat{s}}_{i2,1}\Big]
+\end{multline}
+
+They are the EXACT same just found a few other terms to cancel.
+
+\subsection{Panel 2 Flexing Equation}
+Following the similar pattern for translational and rotational equations the generalized active forces are defined for the first interconnected panel:
+
+\begin{equation}
+F_{8} = \bm \omega_{8}^{\mathcal{S}_{i2}} \cdot \Big[  (-k_{i2} \theta_{i2} - c_{i2} \dot{\theta}_{i2})\bm{\hat{s}}_{i2,2} + \bm \tau_{\text{ext}_{i2},H_{i2}} \Big]
+\end{equation}
+
+Simplifying:
+
+\begin{equation}
+F_{8} = \bm{\hat{s}}_{i2,2} \cdot \Big[  (-k_{i2} \theta_{i2} - c_{i2} \dot{\theta}_{i2})\bm{\hat{s}}_{i2,2} + \bm \tau_{\text{ext}_{i2},H_{i2}} \Big] = -k_{i2} \theta_{i2} - c_{i2} \dot{\theta}_{i2} + \bm{\hat{s}}_{i2,2} \cdot \bm \tau_{\text{ext}_{i2},H_{i2}}
+\end{equation}
+
+The generalized inertia forces are defined as: 
+
+\begin{multline}
+F^*_{8} = \bm \omega_{\textit{8}}^{\mathcal{S}_{i2}} \cdot \bm T^*_{\text{sp}_{i2}}  + \bm v^{S_{c,i2}}_{8} \cdot (-m_{\text{sp}_{i2}} \ddot{\bm{r}}_{S_{c,i2}/N}) \\
+= \bm{\hat{s}}_{i2,2} \cdot \Big[-[I_{\text{sp}_{i2},S_{c,i2}}] \dot{\bm\omega}_{\mathcal{S}_{i2}/\mathcal{N}}  -[\tilde{\bm \omega}_{\mathcal{S}_{i2}/\mathcal{N}}] [I_{\text{sp}_{i2},S_{c,i2}}] \bm \omega_{\mathcal{S}_{i2}/\mathcal{N}} \Big] + d_{i2}\bm{\hat{s}}_{i2,3} \cdot (-m_{\text{sp}_{i2}} \ddot{\bm{r}}_{S_{c,i2}/N})
+\end{multline}
+
+Using Kane's equation the EOM is defined as:
+
+\begin{multline}
+-k_{i2} \theta_{i2} - c_{i2} \dot{\theta}_{i2} + \bm{\hat{s}}_{i2,2} \cdot \bm \tau_{\text{ext}_{i2},H_{i2}} + \bm{\hat{s}}_{i2,2} \cdot \Big[-[I_{\text{sp}_{i2},S_{c,i2}}] \dot{\bm\omega}_{\mathcal{S}_{i2}/\mathcal{N}}  -[\tilde{\bm \omega}_{\mathcal{S}_{i2}/\mathcal{N}}] [I_{\text{sp}_{i2},S_{c,i2}}] \bm \omega_{\mathcal{S}_{i2}/\mathcal{N}} \Big] \\
+- m_{\text{sp}_{i2}} d_{i2}\bm{\hat{s}}_{i2,3}^T \ddot{\bm{r}}_{S_{c,i2}/N}) = 0
+\end{multline}
+
+Expanding:
+
+\begin{multline}
+-k_{i2} \theta_{i2} - c_{i2} \dot{\theta}_{i2} + \bm{\hat{s}}_{i2,2} \cdot \bm \tau_{\text{ext}_{i2},H_{i2}} + \bm{\hat{s}}_{i2,2} \cdot \bigg(-[I_{\text{sp}_{i2},S_{c,i2}}] \Big[\dot{\bm \omega}_{\cal{B/N}} + (\ddot{\theta}_{i1}  + \ddot{\theta}_{i2})\hat{\bm s}_{i2,2}\Big]  \\
+-[\tilde{\bm \omega}_{\cal{B/N}}] [I_{\text{sp}_{i2},S_{c,i2}}] \bm \omega_{\cal{B/N}} \bigg)
+- m_{\text{sp}_{i2}} d_{i2}\bm{\hat{s}}_{i2,3}^T \ddot{\bm{r}}_{S_{c,i2}/N}) = 0
+\end{multline}
+
+Simplifying:
+
+\begin{multline}
+-k_{i1} \theta_{i1} - c_{i1} \dot{\theta}_{i1} + k_{i2} \theta_{i2} + c_{i2} \dot{\theta}_{i2} + \bm{\hat{s}}_{i1,2} \cdot \bm \tau_{\text{ext}_{i1},H_{i1}}  + l_{i1} \bm{\hat{s}}_{i1,3} \cdot \bm F_{\text{ext}_{i2}}  - m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3} \cdot \ddot{\bm{r}}_{S_{c,i2}/N} \\
++ \bm{\hat{s}}_{i1,2} \cdot \bigg(-[I_{\text{sp}_{i1},S_{c,i1}}] \Big[\dot{\bm \omega}_{\cal{B/N}} + \ddot{\theta}_{i1} \hat{\bm s}_{i1,2}\Big]  
+-[\tilde{\bm \omega}_{\cal{B/N}}] [I_{\text{sp}_{i1},S_{c,i1}}] \bm \omega_{\cal{B/N}} \bigg) -m_{\text{sp}_{i1}} d_{i1} \bm{\hat{s}}_{i1,3} \cdot \ddot{\bm{r}}_{S_{c,i1}/N} = 0
+\end{multline}
+
+More stuff:
+
+\begin{multline}
+-k_{i1} \theta_{i1} - c_{i1} \dot{\theta}_{i1} + k_{i2} \theta_{i2} + c_{i2} \dot{\theta}_{i2} + \bm{\hat{s}}_{i1,2} \cdot \bm \tau_{\text{ext}_{i1},H_{i1}}  + l_{i1} \bm{\hat{s}}_{i1,3} \cdot \bm F_{\text{ext}_{i2}}  - m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3} \cdot \ddot{\bm{r}}_{S_{c,i2}/N} \\
+- I_{s_{i1,2}} \bm{\hat{s}}_{i1,2}^T \dot{\bm \omega}_{\cal{B/N}} - I_{s_{i1,2}} \ddot{\theta}_{i1} - (I_{s_{i1,1}} - I_{s_{i1,3}}) \omega_{s_{i1,3}} \omega_{s_{i1,1}} -m_{\text{sp}_{i1}} d_{i1} \bm{\hat{s}}_{i1,3} \cdot \ddot{\bm{r}}_{S_{c,i1}/N} = 0
+\end{multline}
+
+Moving second order variables to the left hand side:
+
+\begin{multline}
+I_{s_{i1,2}} \bm{\hat{s}}_{i1,2}^T \dot{\bm \omega}_{\cal{B/N}} + I_{s_{i1,2}} \ddot{\theta}_{i1} + m_{\text{sp}_{i1}} d_{i1} \bm{\hat{s}}_{i1,3}^T \Big[\ddot{\bm{r}}_{B/N} + \bm{r}''_{S_{c,i1}/B} + 2 \bm\omega_{\cal B/N} \times \bm{r}'_{S_{c,i1}/B} +  \dot{\bm\omega}_{\cal B/N} \times \bm{r}_{S_{c,i1}/B} \\
++ \bm\omega_{\cal B/N} \times (\bm\omega_{\cal B/N} \times \bm{r}_{S_{c,i1}/B})\Big] + m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3}^T \Big[\ddot{\bm{r}}_{B/N} + \bm{r}''_{S_{c,i2}/B} + 2 \bm\omega_{\cal B/N} \times \bm{r}'_{S_{c,i2}/B} +  \dot{\bm\omega}_{\cal B/N} \times \bm{r}_{S_{c,i2}/B} \\
++ \bm\omega_{\cal B/N} \times (\bm\omega_{\cal B/N} \times \bm{r}_{S_{c,i2}/B})\Big]
+= -k_{i1} \theta_{i1} - c_{i1} \dot{\theta}_{i1} + k_{i2} \theta_{i2} + c_{i2} \dot{\theta}_{i2} - (I_{s_{i1,1}} - I_{s_{i1,3}}) \omega_{s_{i1,3}} \omega_{s_{i1,1}} \\
++ \bm{\hat{s}}_{i1,2} \cdot \bm \tau_{\text{ext}_{i1},H_{i1}}
++ l_{i1} \bm{\hat{s}}_{i1,3} \cdot \bm F_{\text{ext}_{i2}} 
+\end{multline}
+
+Moving stuff around:
+
+\begin{multline}
+\Big[m_{\text{sp}_{i1}} d_{i1} \bm{\hat{s}}_{i1,3}^T + m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3}^T \Big] \ddot{\bm{r}}_{B/N} + \Big[I_{s_{i1,2}} \bm{\hat{s}}_{i1,2}^T - m_{\text{sp}_{i1}} d_{i1} \bm{\hat{s}}_{i1,3}^T [\tilde{\bm{r}}_{S_{c,i1}/B}] - m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3}^T [\tilde{\bm{r}}_{S_{c,i2}/B}] \Big] \dot{\bm \omega}_{\cal{B/N}} \\
++ I_{s_{i1,2}} \ddot{\theta}_{i1} + m_{\text{sp}_{i1}} d_{i1} \bm{\hat{s}}_{i1,3}^T \Big[ \bm{r}''_{S_{c,i1}/B} 
+\Big] + m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3}^T \Big[ \bm{r}''_{S_{c,i2}/B}\Big]
+= -k_{i1} \theta_{i1} - c_{i1} \dot{\theta}_{i1} + k_{i2} \theta_{i2} + c_{i2} \dot{\theta}_{i2} \\
+- (I_{s_{i1,1}} - I_{s_{i1,3}}) \omega_{s_{i1,3}} \omega_{s_{i1,1}} 
+- 2 m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3}^T [\tilde{\bm\omega}_{\cal B/N}] \bm{r}'_{S_{c,i2}/B}
+- m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm{r}_{S_{c,i2}/B}\\ 
+- m_{\text{sp}_{i1}} d_{i1} \bm{\hat{s}}_{i1,3}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm{r}_{S_{c,i1}/B}
++ \bm{\hat{s}}_{i1,2} \cdot \bm \tau_{\text{ext}_{i1},H_{i1}}
++ l_{i1} \bm{\hat{s}}_{i1,3} \cdot \bm F_{\text{ext}_{i2}} 
+\end{multline}
+
+Plugging in the rPrimePrime terms:
+
+\begin{multline}
+\Big[m_{\text{sp}_{i1}} d_{i1} \bm{\hat{s}}_{i1,3}^T + m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3}^T \Big] \ddot{\bm{r}}_{B/N} + \Big[I_{s_{i1,2}} \bm{\hat{s}}_{i1,2}^T - m_{\text{sp}_{i1}} d_{i1} \bm{\hat{s}}_{i1,3}^T [\tilde{\bm{r}}_{S_{c,i1}/B}] - m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3}^T [\tilde{\bm{r}}_{S_{c,i2}/B}] \Big] \dot{\bm \omega}_{\cal{B/N}} \\
++ \Big[I_{s_{i1,2}} + m_{\text{sp}_{i1}} d_{i1}^2 + m_{sp_{i2}} l_{i1}^2 + m_{sp_{i2}} l_{i1} d_{i2} \bm{\hat{s}}_{i1,3}^T \bm{\hat{s}}_{i2,3} \Big] \ddot{\theta}_{i1} + \Big[m_{sp_{i2}} l_{i1} d_{i2} \bm{\hat{s}}_{i1,3}^T \bm{\hat{s}}_{i2,3} \Big]\ddot{\theta}_{i2}
+= - (I_{s_{i1,1}} - I_{s_{i1,3}}) \omega_{s_{i1,3}} \omega_{s_{i1,1}}\\ -k_{i1} \theta_{i1} - c_{i1} \dot{\theta}_{i1} 
++ k_{i2} \theta_{i2} + c_{i2} \dot{\theta}_{i2} + \bm{\hat{s}}_{i1,2}^T \bm \tau_{\text{ext}_{i1},H_{i1}}
++ l_{i1} \bm{\hat{s}}_{i1,3}^T \bm F_{\text{ext}_{i2}} 
+- m_{\text{sp}_{i1}} d_{i1} \bm{\hat{s}}_{i1,3}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm{r}_{S_{c,i1}/B}\\
+- m_{sp_{i2}} l_{i1} \bm{\hat{s}}_{i1,3}^T\Big[ 2 [\tilde{\bm\omega}_{\cal B/N}] \bm{r}'_{S_{c,i2}/B} + [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm{r}_{S_{c,i2}/B} + d_{i2} \big(\dot{\theta}_{i1} + \dot{\theta}_{i2}\big)^2 \bm{\hat{s}}_{i2,1}\Big]
+\end{multline}
+
+They are the EXACT same just found a few other terms to cancel.
 
 	\section{Back Substitution Method}
 	The dynamical coupling of this complex system can be visualized in the following equation:
