@@ -64,6 +64,7 @@ typedef struct {
     
 	double obs[MAX_N_CSS_MEAS];          /*!< [-] Observation vector for frame*/
 	double yMeas[MAX_N_CSS_MEAS];        /*!< [-] Measurement model data */
+    double postFits[MAX_N_CSS_MEAS];  /*!< [-] PostFit residuals */
 
 	double procNoise[(SKF_N_STATES_SWITCH-3)*(SKF_N_STATES_SWITCH-3)];       /*!< [-] process noise matrix */
 	double measNoise[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];  /*!< [-] Maximally sized obs noise matrix*/

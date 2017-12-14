@@ -140,6 +140,7 @@ void Update_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
     double newTimeTag;
+    double Hx[MAX_N_CSS_MEAS];
     double sunheading_hat[SKF_N_STATES_HALF];
     uint64_t ClockTime;
     uint32_t ReadSize;
@@ -179,6 +180,10 @@ void Update_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
         mCopy(ConfigData->covarBar, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, ConfigData->covar);
     }
     
+    /* Compute post fit residuals once that data has been processed */
+    mMultM(ConfigData->measMat, ConfigData->numObs, SKF_N_STATES, ConfigData->x, SKF_N_STATES, 1, Hx);
+    mSubtract(ConfigData->yMeas, ConfigData->numObs, 1, Hx, ConfigData->postFits);
+    
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
 	v3Copy(ConfigData->states, ConfigData->outputSunline.vehSunPntBdy);
     v3Normalize(ConfigData->outputSunline.vehSunPntBdy,
@@ -193,6 +198,8 @@ void Update_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
     memmove(sunlineDataOutBuffer.covar, ConfigData->covar,
             SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH*sizeof(double));
     memmove(sunlineDataOutBuffer.state, ConfigData->states, SKF_N_STATES_SWITCH*sizeof(double));
+    memmove(sunlineDataOutBuffer.stateError, ConfigData->x, SKF_N_STATES*sizeof(double));
+    memmove(sunlineDataOutBuffer.postFitRes, ConfigData->postFits, MAX_N_CSS_MEAS*sizeof(double));
     WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(SunlineFilterFswMsg),
                  &sunlineDataOutBuffer, moduleID);
     
