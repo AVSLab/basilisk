@@ -40,8 +40,7 @@ from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
 from Basilisk.simulation import spacecraftPlus, spice_interface, coarse_sun_sensor
-from Basilisk.fswAlgorithms import sunlineUKF, sunlineEKF, okeefeEKF, vehicleConfigData
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.fswAlgorithms import sunlineUKF, sunlineEKF, okeefeEKF, sunlineSEKF, vehicleConfigData
 
 import SunLineKF_test_utilities as Fplot
 
@@ -111,6 +110,25 @@ def setupOEKFData(filterObject):
 
     filterObject.eKFSwitch = 5. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 
+def setupSEKFData(filterObject):
+    filterObject.navStateOutMsgName = "sunline_state_estimate"
+    filterObject.filtDataOutMsgName = "sunline_filter_data"
+    filterObject.cssDataInMsgName = "css_sensors_data"
+    filterObject.cssConfInMsgName = "css_config_data"
+
+    filterObject.states = [1.0, 0.1, 0., 0., 0.]
+    filterObject.x = [0.0, 0.0, 0.0, 0.0, 0.0]
+    filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0,
+                          0.0, 1., 0.0, 0.0, 0.0,
+                          0.0, 0.0, 1., 0.0, 0.0,
+                          0.0, 0.0, 0.0, 0.01, 0.0,
+                          0.0, 0.0, 0.0, 0.0, 0.01]
+
+    filterObject.qProcVal = 0.001**2
+    filterObject.qObsVal = 0.017 ** 2
+    filterObject.sensorUseThresh = np.sqrt(filterObject.qObsVal)*5
+
+    filterObject.eKFSwitch = 5. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 
 ## \defgroup Tutorials_4_0_1
 ##   @{
@@ -487,7 +505,6 @@ def run(saveFigures, show_plots, FilterType, simTime):
     # Setup filter
     #
 
-    numStates = 6
     if FilterType == 'EKF':
         moduleConfig = sunlineEKF.sunlineEKFConfig()
         moduleWrap = scSim.setModelDataWrap(moduleConfig)
@@ -498,7 +515,6 @@ def run(saveFigures, show_plots, FilterType, simTime):
         scSim.AddModelToTask(simTaskName, moduleWrap, moduleConfig)
 
     if FilterType == 'OEKF':
-        numStates = 3
 
         moduleConfig = okeefeEKF.okeefeEKFConfig()
         moduleWrap = scSim.setModelDataWrap(moduleConfig)
@@ -518,7 +534,16 @@ def run(saveFigures, show_plots, FilterType, simTime):
         # Add test module to runtime call list
         scSim.AddModelToTask(simTaskName, moduleWrap, moduleConfig)
 
+    if FilterType == 'SEKF':
+        moduleConfig = sunlineSEKF.sunlineSEKFConfig()
+        moduleWrap = scSim.setModelDataWrap(moduleConfig)
+        moduleWrap.ModelTag = "SunlineSEKF"
+        setupSEKFData(moduleConfig)
 
+        # Add test module to runtime call list
+        scSim.AddModelToTask(simTaskName, moduleWrap, moduleConfig)
+
+    numStates = len(moduleConfig.x)
     scSim.TotalSim.logThisMessage('sunline_state_estimate', simulationTimeStep)
     scSim.TotalSim.logThisMessage('sunline_filter_data', simulationTimeStep)
 
@@ -568,9 +593,10 @@ def run(saveFigures, show_plots, FilterType, simTime):
     expected = np.zeros(np.shape(stateLog))
     expected[:,0:4] = sHat_B
     # The OEKF has fewer states
-    if FilterType != 'OEKF':
+    if FilterType != 'OEKF' and FilterType != 'SEKF':
         expected[:, 4:] = sHatDot_B[:,1:]
-
+    if FilterType == 'SEKF':
+        expected[:, 4:] = np.zeros([len(stateLog[:,0]),2])
     #
     #   plot the results
     #
