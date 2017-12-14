@@ -66,7 +66,8 @@ typedef struct {
 
 	double procNoise[SKF_N_STATES_HALF*SKF_N_STATES_HALF];       /*!< [-] process noise matrix */
 	double measNoise[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];  /*!< [-] Maximally sized obs noise matrix*/
-    
+    double postFits[MAX_N_CSS_MEAS];  /*!< [-] PostFit residuals */
+
     double cssNHat_B[MAX_NUM_CSS_SENSORS*3];     /*!< [-] CSS normal vectors converted over to body*/
 
     uint32_t numStates;                /*!< [-] Number of states for this filter*/

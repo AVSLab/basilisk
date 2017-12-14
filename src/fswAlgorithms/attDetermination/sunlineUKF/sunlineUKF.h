@@ -65,8 +65,9 @@ typedef struct {
 
 	double obs[MAX_N_CSS_MEAS];          /*!< [-] Observation vector for frame*/
 	double yMeas[MAX_N_CSS_MEAS*(2*SKF_N_STATES+1)];        /*!< [-] Measurement model data */
-
-	double SP[(2*SKF_N_STATES+1)*SKF_N_STATES];          /*!< [-]    sigma point matrix */
+    double postFits[MAX_N_CSS_MEAS];  /*!< [-] PostFit residuals */
+    
+	double SP[(2*SKF_N_STATES+1)*SKF_N_STATES];     /*!< [-]    sigma point matrix */
 
 	double qNoise[SKF_N_STATES*SKF_N_STATES];       /*!< [-] process noise matrix */
 	double sQnoise[SKF_N_STATES*SKF_N_STATES];      /*!< [-] cholesky of Qnoise */

@@ -134,6 +134,7 @@ void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
     double newTimeTag;
+    double Hx[MAX_N_CSS_MEAS];
     uint64_t ClockTime;
     uint32_t ReadSize;
     int32_t ReadTest;
@@ -166,6 +167,10 @@ void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
         mCopy(ConfigData->covarBar, SKF_N_STATES, SKF_N_STATES, ConfigData->covar);
     }
     
+    /* Compute post fit residuals once that data has been processed */
+    mMultM(ConfigData->measMat, ConfigData->numObs, SKF_N_STATES, ConfigData->x, SKF_N_STATES, 1, Hx);
+    mSubtract(ConfigData->yMeas, ConfigData->numObs, 1, Hx, ConfigData->postFits);
+    
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
 	v3Copy(ConfigData->states, ConfigData->outputSunline.vehSunPntBdy);
     v3Normalize(ConfigData->outputSunline.vehSunPntBdy,
@@ -180,6 +185,8 @@ void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     memmove(sunlineDataOutBuffer.covar, ConfigData->covar,
             SKF_N_STATES*SKF_N_STATES*sizeof(double));
     memmove(sunlineDataOutBuffer.state, ConfigData->states, SKF_N_STATES*sizeof(double));
+    memmove(sunlineDataOutBuffer.stateError, ConfigData->x, SKF_N_STATES*sizeof(double));
+    memmove(sunlineDataOutBuffer.postFitRes, ConfigData->postFits, MAX_N_CSS_MEAS*sizeof(double));
     WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(SunlineFilterFswMsg),
                  &sunlineDataOutBuffer, moduleID);
     
@@ -337,7 +344,6 @@ void sunlineDynMatrix(double states[SKF_N_STATES], double dt, double *dynMat)
  */
 void sunlineMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 {
-
     /*! Begin method steps*/
     /*! - Compute the valid observations and the measurement model for all observations*/
     sunlineHMatrixYMeas(ConfigData->states, ConfigData->numCSSTotal, ConfigData->cssSensorInBuffer.CosValue, ConfigData->sensorUseThresh, ConfigData->cssNHat_B, ConfigData->obs, ConfigData->yMeas, &(ConfigData->numObs), ConfigData->measMat);
@@ -355,6 +361,7 @@ void sunlineMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 //    /*! - Compute the update with a EKF, notice the reference state is added as an argument because it is changed by the filter update */
     sunlineEKFUpdate(ConfigData->kalmanGain, ConfigData->covarBar, ConfigData->qObsVal, ConfigData->numObs, ConfigData->yMeas, ConfigData->measMat, ConfigData->states, ConfigData->x, ConfigData->covar);
     }
+    
 }
 
 /*! This method computes the updated with a Classical Kalman Filter

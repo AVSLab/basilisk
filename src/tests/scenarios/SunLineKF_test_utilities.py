@@ -47,6 +47,7 @@ def StateErrorCovarPlot(x, Pflat, FilterType, show_plots):
         plt.plot(t , 3 * np.sqrt(P[:, 0, 0]), 'r--',  label='Covar Filter')
         plt.plot(t , -3 * np.sqrt(P[:, 0, 0]), 'r--')
         plt.legend(loc='best')
+        plt.ylabel('$d_x$(m)')
         plt.title('First LOS component')
         plt.grid()
 
@@ -54,6 +55,7 @@ def StateErrorCovarPlot(x, Pflat, FilterType, show_plots):
         plt.plot(t , x[:, 4], "b")
         plt.plot(t , 3 * np.sqrt(P[:, 3, 3]), 'r--')
         plt.plot(t , -3 * np.sqrt(P[:, 3, 3]), 'r--')
+        plt.ylabel('$\dot{d}_x$(m)')
         plt.title('First rate component')
         plt.grid()
 
@@ -61,6 +63,7 @@ def StateErrorCovarPlot(x, Pflat, FilterType, show_plots):
         plt.plot(t , x[:, 2], "b")
         plt.plot(t , 3 * np.sqrt(P[:, 1, 1]), 'r--')
         plt.plot(t , -3 * np.sqrt(P[:, 1, 1]), 'r--')
+        plt.ylabel('$d_y$(m)')
         plt.title('Second LOS component')
         plt.grid()
 
@@ -68,6 +71,7 @@ def StateErrorCovarPlot(x, Pflat, FilterType, show_plots):
         plt.plot(t , x[:, 5], "b")
         plt.plot(t , 3 * np.sqrt(P[:, 4, 4]), 'r--')
         plt.plot(t , -3 * np.sqrt(P[:, 4, 4]), 'r--')
+        plt.ylabel('$\dot{d}_y$(m)')
         plt.title('Second rate component')
         plt.grid()
 
@@ -75,6 +79,7 @@ def StateErrorCovarPlot(x, Pflat, FilterType, show_plots):
         plt.plot(t , x[:, 3], "b")
         plt.plot(t , 3 * np.sqrt(P[:, 2, 2]), 'r--')
         plt.plot(t , -3 * np.sqrt(P[:, 2, 2]), 'r--')
+        plt.ylabel('$d_z$(m)')
         plt.xlabel('t(s)')
         plt.title('Third LOS component')
         plt.grid()
@@ -83,6 +88,7 @@ def StateErrorCovarPlot(x, Pflat, FilterType, show_plots):
         plt.plot(t , x[:, 6], "b")
         plt.plot(t , 3 * np.sqrt(P[:, 5, 5]), 'r--')
         plt.plot(t , -3 * np.sqrt(P[:, 5, 5]), 'r--')
+        plt.ylabel('$\dot{d}_z$(m)')
         plt.xlabel('t(s)')
         plt.title('Third rate component')
         plt.grid()
@@ -94,6 +100,7 @@ def StateErrorCovarPlot(x, Pflat, FilterType, show_plots):
         plt.plot(t, 3 * np.sqrt(P[:, 0, 0]), 'r--', label='Covar Filter')
         plt.plot(t, -3 * np.sqrt(P[:, 0, 0]), 'r--')
         plt.legend(loc='best')
+        plt.ylabel('$d_x$(m)')
         plt.title('First LOS component')
         plt.grid()
 
@@ -101,6 +108,7 @@ def StateErrorCovarPlot(x, Pflat, FilterType, show_plots):
         plt.plot(t, x[:, 2], "b")
         plt.plot(t, 3 * np.sqrt(P[:, 1, 1]), 'r--')
         plt.plot(t, -3 * np.sqrt(P[:, 1, 1]), 'r--')
+        plt.ylabel('$d_y$(m)')
         plt.title('Second LOST component')
         plt.grid()
 
@@ -108,6 +116,7 @@ def StateErrorCovarPlot(x, Pflat, FilterType, show_plots):
         plt.plot(t, x[:, 3], "b")
         plt.plot(t, 3 * np.sqrt(P[:, 2, 2]), 'r--')
         plt.plot(t, -3 * np.sqrt(P[:, 2, 2]), 'r--')
+        plt.ylabel('$d_z$(m)')
         plt.title('Third LOS component')
         plt.grid()
 
@@ -141,6 +150,7 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2, FilterType, show_plots):
         plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 0, 0]), 'c--', label='Covar Expected')
         plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 0, 0]), 'c--')
         plt.legend(loc='best')
+        plt.ylabel('$d_x$(m)')
         plt.title('First LOS component')
         plt.grid()
 
@@ -151,6 +161,7 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2, FilterType, show_plots):
         plt.plot(t[0:30] , x2[0:30, 4], "g")
         plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 3, 3]), 'c--')
         plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 3, 3]), 'c--')
+        plt.ylabel('$\dot{d}_x$(m)')
         plt.title('First rate component')
         plt.grid()
 
@@ -161,6 +172,7 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2, FilterType, show_plots):
         plt.plot(t[0:30] , x2[0:30, 2], "g")
         plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 1, 1]), 'c--')
         plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 1, 1]), 'c--')
+        plt.ylabel('$d_y$(m)')
         plt.title('Second LOS component')
         plt.grid()
 
@@ -171,6 +183,7 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2, FilterType, show_plots):
         plt.plot(t[0:30] , x2[0:30, 5], "g")
         plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 4, 4]), 'c--')
         plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 4, 4]), 'c--')
+        plt.ylabel('$\dot{d}_y$(m)')
         plt.title('Second rate component')
         plt.grid()
 
@@ -181,6 +194,7 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2, FilterType, show_plots):
         plt.plot(t[0:30] , x2[0:30, 3], "g")
         plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 2, 2]), 'c--')
         plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 2, 2]), 'c--')
+        plt.ylabel('$d_z$(m)')
         plt.xlabel('t(s)')
         plt.title('Third LOS component')
         plt.grid()
@@ -192,6 +206,7 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2, FilterType, show_plots):
         plt.plot(t[0:30] , x2[0:30, 6], "g")
         plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 5, 5]), 'c--')
         plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 5, 5]), 'c--')
+        plt.ylabel('$\dot{d}_z$(m)')
         plt.xlabel('t(s)')
         plt.title('Third rate component')
         plt.grid()
@@ -205,6 +220,7 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2, FilterType, show_plots):
         plt.plot(t[0:30], x2[0:30, 1], "g", label='Error Expected')
         plt.plot(t[0:30], 3 * np.sqrt(P2[0:30, 0, 0]), 'c--', label='Covar Expected')
         plt.plot(t[0:30], -3 * np.sqrt(P2[0:30, 0, 0]), 'c--')
+        plt.ylabel('$d_x$(m)')
         plt.legend(loc='best')
         plt.title('First LOS component')
         plt.grid()
@@ -216,6 +232,7 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2, FilterType, show_plots):
         plt.plot(t[0:30], x2[0:30, 2], "g")
         plt.plot(t[0:30], 3 * np.sqrt(P2[0:30, 1, 1]), 'c--')
         plt.plot(t[0:30], -3 * np.sqrt(P2[0:30, 1, 1]), 'c--')
+        plt.ylabel('$d_y$(m)')
         plt.title('Second LOS component')
         plt.grid()
 
@@ -226,6 +243,7 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2, FilterType, show_plots):
         plt.plot(t[0:30], x2[0:30, 3], "g")
         plt.plot(t[0:30], 3 * np.sqrt(P2[0:30, 2, 2]), 'c--')
         plt.plot(t[0:30], -3 * np.sqrt(P2[0:30, 2, 2]), 'c--')
+        plt.ylabel('$d_z$(m)')
         plt.title('Third LOS component')
         plt.grid()
 
@@ -236,85 +254,70 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2, FilterType, show_plots):
         plt.show()
     plt.close()
 
+def numMeasurements(numObs, FilterType, show_plots):
+    plt.plot(111)
+    plt.plot(numObs[:,0]*(1E-9) , numObs[:, 1], "b")
+    plt.ylim([0,5])
+    plt.xlabel('t(s)')
+    plt.title('Number of Activated CSS')
+
+    unitTestSupport.saveScenarioFigure('scenario_Filters_Obs'+ FilterType, plt,  path)
+
+    if show_plots:
+        plt.show()
+    plt.close()
+
 def PostFitResiduals(Res, noise, FilterType, show_plots):
 
     MeasNoise = np.zeros(len(Res[:,0]))
     t= np.zeros(len(Res[:,0]))
+    constantVal = np.array([np.nan]*4)
     for i in range(len(Res[:,0])):
         t[i] = Res[i, 0]*1E-9
         MeasNoise[i] = 3*noise
-        # Don't plot zero values, since they mean that no measurement is taken
-        for j in range(len(Res[0,:])-1):
-            if -1E-10 < Res[i,j+1] < 1E-10:
-                Res[i, j+1] = np.nan
+        # Don't plot constant values, they mean no measurement is taken
+        if i>0:
+            for j in range(1,5):
+                constantRes = np.abs(Res[i,j]-Res[i-1,j])
+                if constantRes < 1E-10 or np.abs(constantVal[j-1]- Res[i,j])<1E-10:
+                    constantVal[j-1] = Res[i, j]
+                    Res[i, j] = np.nan
 
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
-    plt.subplot(421)
+    plt.subplot(411)
     plt.plot(t , Res[:, 1], "b.", label='Residual')
     plt.plot(t , MeasNoise, 'r--', label='Covar')
     plt.plot(t , -MeasNoise, 'r--')
     plt.legend(loc='best')
-    plt.ylim([-10*noise, 10*noise])
+    plt.ylabel('$r_1$(m)')
+    plt.ylim([-5*noise, 5*noise])
     plt.title('First CSS')
-    plt.grid()
 
-    plt.subplot(422)
-    plt.plot(t , Res[:, 5], "b.")
-    plt.plot(t , MeasNoise, 'r--')
-    plt.plot(t , -MeasNoise, 'r--')
-    plt.ylim([-10*noise, 10*noise])
-    plt.title('Fifth CSS')
-    plt.grid()
 
-    plt.subplot(423)
+    plt.subplot(412)
     plt.plot(t , Res[:, 2], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
-    plt.ylim([-10*noise, 10*noise])
+    plt.ylabel('$r_2$(m)')
+    plt.ylim([-5*noise, 5*noise])
     plt.title('Second CSS')
-    plt.grid()
 
-    plt.subplot(424)
-    plt.plot(t , Res[:, 6], "b.")
-    plt.plot(t , MeasNoise, 'r--')
-    plt.plot(t , -MeasNoise, 'r--')
-    plt.ylim([-10*noise, 10*noise])
-    plt.title('Sixth CSS')
-    plt.grid()
-
-    plt.subplot(425)
+    plt.subplot(413)
     plt.plot(t , Res[:, 3], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
-    plt.ylim([-10*noise, 10*noise])
+    plt.ylabel('$r_3$(m)')
+    plt.ylim([-5*noise, 5*noise])
     plt.title('Third CSS')
-    plt.grid()
 
-    plt.subplot(426)
-    plt.plot(t , Res[:, 7], "b.")
-    plt.plot(t , MeasNoise, 'r--')
-    plt.plot(t , -MeasNoise, 'r--')
-    plt.ylim([-10*noise, 10*noise])
-    plt.title('Seventh CSS')
-    plt.grid()
-
-    plt.subplot(427)
+    plt.subplot(414)
     plt.plot(t , Res[:, 4], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
-    plt.ylim([-10*noise, 10*noise])
+    plt.ylim([-5*noise, 5*noise])
+    plt.ylabel('$r_4$(m)')
     plt.xlabel('t(s)')
     plt.title('Fourth CSS')
-    plt.grid()
-
-    plt.subplot(428)
-    plt.plot(t , Res[:, 8], "b.")
-    plt.plot(t , MeasNoise, 'r--')
-    plt.plot(t , -MeasNoise, 'r--')
-    plt.ylim([-10*noise, 10*noise])
-    plt.xlabel('t(s)')
-    plt.title('Eight CSS')
-    plt.grid()
 
     unitTestSupport.saveScenarioFigure('scenario_Filters_PostFit'+ FilterType, plt,  path)
 
@@ -340,6 +343,7 @@ def StatesVsExpected(stateLog, Pflat, expectedStateArray, FilterType, show_plots
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  1] + P[:,0,0], 'r--')
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  1] - P[:,0,0], 'r--', label='Covar')
         plt.legend(loc='best')
+        plt.ylabel('$d_x$(m)')
         plt.title('First LOS component')
         plt.grid()
 
@@ -348,6 +352,7 @@ def StatesVsExpected(stateLog, Pflat, expectedStateArray, FilterType, show_plots
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  4], 'b')
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  4] + P[:,3,3], 'r--')
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  4] - P[:,3,3], 'r--', label='Covar')
+        plt.ylabel('$\dot{d}_x$(m)')
         plt.title('First rate component')
         plt.grid()
 
@@ -356,6 +361,7 @@ def StatesVsExpected(stateLog, Pflat, expectedStateArray, FilterType, show_plots
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  2], 'b')
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  2] + P[:,1,1], 'r--')
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  2] - P[:,1,1], 'r--', label='Covar')
+        plt.ylabel('$d_y$(m)')
         plt.title('Second LOS component')
         plt.grid()
 
@@ -364,6 +370,7 @@ def StatesVsExpected(stateLog, Pflat, expectedStateArray, FilterType, show_plots
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  5], 'b')
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  5] + P[:,4,4], 'r--')
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  5] - P[:,4,4], 'r--', label='Covar')
+        plt.ylabel('$\dot{d}_y$(m)')
         plt.title('Second rate component')
         plt.grid()
 
@@ -372,6 +379,7 @@ def StatesVsExpected(stateLog, Pflat, expectedStateArray, FilterType, show_plots
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  3], 'b')
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  3] + P[:,2,2], 'r--')
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  3] - P[:,2,2], 'r--', label='Covar')
+        plt.ylabel('$d_z$(m)')
         plt.xlabel('t(s)')
         plt.title('Third LOS component')
         plt.grid()
@@ -381,6 +389,7 @@ def StatesVsExpected(stateLog, Pflat, expectedStateArray, FilterType, show_plots
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  6], 'b')
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  6] + P[:,5,5], 'r--')
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  6] - P[:,5,5], 'r--', label='Covar')
+        plt.ylabel('$\dot{d}_z$(m)')
         plt.xlabel('t(s)')
         plt.title('Third rate component')
         plt.grid()
@@ -392,6 +401,7 @@ def StatesVsExpected(stateLog, Pflat, expectedStateArray, FilterType, show_plots
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 1], 'b', label='Filter')
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 1] + P[:, 0, 0], 'r--')
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 1] - P[:, 0, 0], 'r--', label='Covar')
+        plt.ylabel('$d_x$(m)')
         plt.legend(loc='best')
         plt.title('First LOS component')
         plt.grid()
@@ -401,6 +411,7 @@ def StatesVsExpected(stateLog, Pflat, expectedStateArray, FilterType, show_plots
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 2], 'b')
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 2] + P[:, 1, 1], 'r--')
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 2] - P[:, 1, 1], 'r--', label='Covar')
+        plt.ylabel('$d_y$(m)')
         plt.title('Second LOS component')
         plt.grid()
 
@@ -409,6 +420,8 @@ def StatesVsExpected(stateLog, Pflat, expectedStateArray, FilterType, show_plots
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 3], 'b')
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 3] + P[:, 2, 2], 'r--')
         plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 3] - P[:, 2, 2], 'r--', label='Covar')
+        plt.ylabel('$d_z$(m)')
+        plt.xlabel('t(s)')
         plt.title('Third LOS component')
         plt.grid()
 
