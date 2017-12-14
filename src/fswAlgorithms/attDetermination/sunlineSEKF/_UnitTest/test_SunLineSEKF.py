@@ -49,7 +49,7 @@ def setupFilterData(filterObject):
                           0.0, 0.0, 0.0, 0.004, 0.0,
                           0.0, 0.0, 0.0, 0.0, 0.004]
 
-    filterObject.qProcVal = 0.01**2
+    filterObject.qProcVal = 0.1**2
     filterObject.qObsVal = 0.017 ** 2
     filterObject.eKFSwitch = 5. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 
@@ -69,11 +69,11 @@ def test_all_functions_sekf(show_plots):
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("SimHalfLength, AddMeasNoise , testVector1 , testVector2, stateGuess", [
-    (300, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
+    (200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
     (2000, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
-    (300, False ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
-    (300, False ,[0., 0.4, -0.4] ,[0., 0.7, 0.2], [0.3, 0.0, 0.6, 0.0, 0.0]),
-    (300, True ,[0., 0.4, -0.4] ,[0.4, 0.5, 0.], [0.7, 0.7, 0.0, 0.0, 0.0])
+    (200, False ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
+    (200, False ,[0., 0.4, -0.4] ,[0., 0.7, 0.2], [0.3, 0.0, 0.6, 0.0, 0.0]),
+    (200, True ,[0., 0.4, -0.4] ,[0.4, 0.5, 0.], [0.7, 0.7, 0.0, 0.0, 0.0])
 ])
 
 
@@ -898,10 +898,10 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     for i in range(numStates):
         if (abs(covarLog[-1, i * numStates + 1 + i] - covarLog[0, i * numStates + 1 + i] / 100.) > 1E-2):
             testFailCount += 1
-            testMessages.append("Covariance update failure")
+            testMessages.append("Covariance update failure at end")
         if (abs(stateLog[-1, i + 1] - stateTarget2[i]) > 1.0E-2):
             testFailCount += 1
-            testMessages.append("State update failure")
+            testMessages.append("State update failure at end")
 
     target1 = np.array(testVector1)
     target2 = np.array(testVector2+[0.,0.])
@@ -926,4 +926,4 @@ if __name__ == "__main__":
     # (200, False ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
     # (200, False ,[0., 0.4, -0.4] ,[0., 0.7, 0.2], [0.3, 0.0, 0.6, 0.0, 0.0]),
     # (200, True ,[0., 0.4, -0.4] ,[0.4, 0.5, 0.], [0.7, 0.7, 0.0, 0.0, 0.0])
-    test_all_sunline_sekf(True, 300, False ,[0., 0.4, -0.4] ,[0., 0.7, 0.2], [0.3, 0.0, 0.6, 0.0, 0.0])
+    test_all_sunline_sekf(True, 200,  True ,[0., 0.4, -0.4] ,[0.4, 0.5, 0.], [0.7, 0.7, 0.0, 0.0, 0.0])
