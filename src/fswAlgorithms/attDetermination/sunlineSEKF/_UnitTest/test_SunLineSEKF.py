@@ -53,7 +53,7 @@ def setupFilterData(filterObject):
     filterObject.qObsVal = 0.017 ** 2
     filterObject.eKFSwitch = 5. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 
-def test_all_functions_ekf(show_plots):
+def test_all_functions_sekf(show_plots):
     [testResults, testMessage] = sunline_individual_test()
     assert testResults < 1, testMessage
     [testResults, testMessage] = StatePropStatic()
@@ -69,12 +69,11 @@ def test_all_functions_ekf(show_plots):
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("SimHalfLength, AddMeasNoise , testVector1 , testVector2, stateGuess", [
-    (200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
+    (300, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
     (2000, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
-    (200, False ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
-    (200, False ,[0., 0.4, -0.4] ,[0., 0.7, 0.2], [0.3, 0.0, 0.6, 0.0, 0.0]),
-    (200, True ,[0., 0.4, -0.4] ,[0.4, 0.5, 0.], [0.7, 0.7, 0.0, 0.0, 0.0]),
-    (200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0])
+    (300, False ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
+    (300, False ,[0., 0.4, -0.4] ,[0., 0.7, 0.2], [0.3, 0.0, 0.6, 0.0, 0.0]),
+    (300, True ,[0., 0.4, -0.4] ,[0.4, 0.5, 0.], [0.7, 0.7, 0.0, 0.0, 0.0])
 ])
 
 
@@ -83,11 +82,8 @@ def test_all_functions_ekf(show_plots):
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def test_all_sunline_ekf(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess):
-    # sunline_individual_test()
-    # StatePropStatic()
-    # StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess)
-    [testResults, testMessage] = sunline_individual_test()
+def test_all_sunline_sekf(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess):
+    [testResults, testMessage] = StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess)
     assert testResults < 1, testMessage
 
 
@@ -532,7 +528,7 @@ def StatePropStatic():
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + "EKF static state propagation"
+        print "PASSED: " + "SEKF static state propagation"
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -554,6 +550,8 @@ def StatePropVariable(show_plots):
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
+    numStates = 5
+    numObs = 3
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
     unitTestSim.TotalSim.terminateSimulation()
@@ -601,63 +599,70 @@ def StatePropVariable(show_plots):
 
 
     dt = 0.5
-    expectedStateArray = np.zeros([2001,7])
-    expectedStateArray[0,1:7] = np.array(InitialState)
+    expectedStateArray = np.zeros([2001,numStates+1])
+    expectedStateArray[0,1:numStates+1] = np.array(InitialState)
 
     for i in range(1,2001):
         expectedStateArray[i,0] = dt*i*1E9
-        expectedStateArray[i,1:4] = expectedStateArray[i-1,1:4] + dt*(expectedStateArray[i-1,4:6] - (np.dot(expectedStateArray[i-1,4:6],expectedStateArray[i-1,1:4]))*expectedStateArray[i-1,1:4]/np.linalg.norm(expectedStateArray[i-1,1:4])**2.)
-        ## Equations when removing the unobservable states from d_dot
-        expectedStateArray[i, 4:6] = expectedStateArray[i-1,4:6] - (np.dot(expectedStateArray[i-1,4:6],expectedStateArray[i-1,1:4]))*expectedStateArray[i-1,1:4]/np.linalg.norm(expectedStateArray[i-1,1:4])**2.
+        expectedStateArray[i,1:4] = expectedStateArray[i-1,1:4] - dt * np.cross(expectedStateArray[i-1,4:6],
+                                                                                expectedStateArray[i - 1, 1:4])
+        expectedStateArray[4:6] = expectedStateArray[4:6]
 
     expDynMat = np.zeros([2001,numStates,numStates])
     for i in range(0,2001):
-        expDynMat[i, 0:3, 0:3] = -(np.outer(expectedStateArray[i,1:4],expectedStateArray[i,4:7])/np.linalg.norm(expectedStateArray[i,1:4])**2. +
-                             np.dot(expectedStateArray[i,4:7], expectedStateArray[i,1:4])*(np.linalg.norm(expectedStateArray[i,1:4])**2.*np.eye(3)- 2*np.outer(expectedStateArray[i,1:4],expectedStateArray[i,1:4]))/np.linalg.norm(expectedStateArray[i,1:4])**4.)
-        expDynMat[i, 0:3, 3:6] = np.eye(3) - np.outer(expectedStateArray[i,1:4],expectedStateArray[i,1:4])/np.linalg.norm(expectedStateArray[i,1:4])**2
+        expDynMat[i,0:3, 0:3] = - np.array([[0., -expectedStateArray[i,5], expectedStateArray[i,4]],
+                                          [expectedStateArray[i,5], 0.,0.],
+                                          [-expectedStateArray[i,4], 0., 0.]])
 
+        s_skew = np.array([[0., -expectedStateArray[i,3], expectedStateArray[i,2]],
+                           [expectedStateArray[i,3], 0., -expectedStateArray[i,1]],
+                           [-expectedStateArray[i,2], expectedStateArray[i,1], 0.]])
+
+        expDynMat[i,0:3, 3:numStates] = s_skew[:, 1:3]
 
     expectedSTM = np.zeros([2001,numStates,numStates])
     expectedSTM[0,:,:] = np.eye(numStates)
     for i in range(1,2001):
         expectedSTM[i,:,:] = dt * np.dot(expDynMat[i-1,:,:], np.eye(numStates)) + np.eye(numStates)
 
-    expectedXBar = np.zeros([2001,numStates])
-    expectedXBar[0,1:7] = np.array(Initialx)
+    expectedXBar = np.zeros([2001,numStates+1])
+    expectedXBar[0,1:6] = np.array(Initialx)
     for i in range(1,2001):
         expectedXBar[i,0] = dt*i*1E9
         expectedXBar[i, 1:6] = np.dot(expectedSTM[i, :, :], expectedXBar[i - 1, 1:6])
 
     expectedCovar = np.zeros([2001,26])
     expectedCovar[0,1:26] = np.array(InitialCovar)
-    Gamma = np.zeros([6, 3])
-    Gamma[0:2, 0:2] = dt ** 2. / 2. * np.eye(3)
-    Gamma[3:numStates, 0:2] = dt * np.eye(2)
-    ProcNoiseCovar = np.dot(Gamma, np.dot(moduleConfig.qProcVal*np.eye(3),Gamma.T))
+    Gamma = np.zeros([2001,numStates, 2])
+    ProcNoiseCovar = np.zeros([2001,numStates,numStates])
+    for i in range(0,2001):
+        s_skew = np.array([[0., -expectedStateArray[i,3], expectedStateArray[i,2]],
+                           [expectedStateArray[i,3], 0., -expectedStateArray[i,1]],
+                           [-expectedStateArray[i,2], expectedStateArray[i,1], 0.]])
+        Gamma[i, 0:3, 0:2] = dt ** 2. / 2. * s_skew[:,1:3]
+        Gamma[i,3:numStates, 0:2] = dt * np.eye(2)
+        ProcNoiseCovar[i,:,:] = np.dot(Gamma[i,:,:], np.dot(moduleConfig.qProcVal*np.eye(2),Gamma[i,:,:].T))
     for i in range(1,2001):
         expectedCovar[i,0] =  dt*i*1E9
-        expectedCovar[i,1:26] = (np.dot(expectedSTM[i,:,:], np.dot(np.reshape(expectedCovar[i-1,1:26],[numStates,numStates]), np.transpose(expectedSTM[i,:,:])))+ ProcNoiseCovar).flatten()
-
+        expectedCovar[i,1:26] = (np.dot(expectedSTM[i,:,:], np.dot(np.reshape(expectedCovar[i-1,1:26],[numStates,numStates]), np.transpose(expectedSTM[i,:,:])))+ ProcNoiseCovar[i,:,:]).flatten()
+        test = np.dot(np.reshape(expectedCovar[i-1,1:26],[numStates,numStates]), np.transpose(expectedSTM[i,:,:]))
     FilterPlots.StatesVsExpected(stateLog, expectedStateArray, show_plots)
     FilterPlots.StatesPlotCompare(stateErrorLog, expectedXBar, covarLog, expectedCovar, show_plots)
 
     for j in range(1,2001):
-        for i in range(numStates):
-            if (abs(stateLog[j, i + 1] - expectedStateArray[j, i + 1]) > 1.0E-4):
-                testFailCount += 1
-                testMessages.append("General state propagation failure: State Prop \n")
-            if (abs(stateErrorLog[j, i + 1] - expectedXBar[j, i + 1]) > 1.0E-4):
-                testFailCount += 1
-                testMessages.append("General state propagation failure: State Error Prop \n")
+        if (np.linalg.norm(np.array(stateLog)[j, 1:] - expectedStateArray[j, 1:]) > 1.0E-4):
+            testFailCount += 1
+            testMessages.append("General state propagation failure: State Prop \n")
+        if (np.linalg.norm(np.array(stateErrorLog)[j, 1:] - expectedXBar[j,1:]) > 1.0E-4):
+            testFailCount += 1
+            testMessages.append("General state propagation failure: State Error Prop \n")
 
-        for i in range(numStates*numStates):
-            if (abs(covarLog[j, i + 1] - expectedCovar[j, i + 1]) > 1.0E-4):
-                abs(covarLog[j, i + 1] - expectedCovar[j, i + 1])
-                testFailCount += 1
-                testMessages.append("General state propagation failure: Covariance Prop \n")
-            if (abs(stmLog[j, i + 1] - expectedSTM[j,:].flatten()[i]) > 1.0E-4):
-                testFailCount += 1
-                testMessages.append("General state propagation failure: STM Prop \n")
+        if (np.linalg.norm(np.array(covarLog)[j, 1:] - expectedCovar[j, 1:]) > 1.0E-4):
+            testFailCount += 1
+            testMessages.append("General state propagation failure: Covariance Prop \n")
+        if (np.linalg.norm(np.array(stmLog)[j, 1:] - expectedSTM[j,:].flatten()[:]) > 1.0E-4):
+            testFailCount += 1
+            testMessages.append("General state propagation failure: STM Prop \n")
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -680,6 +685,8 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
+    numStates = 5
+    numObs = 3
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
@@ -823,7 +830,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 
     stateTarget2 = testVector2
-    stateTarget2 = stateTarget2+[0.,0.,0.]
+    stateTarget2 = stateTarget2+[0.,0.]
 
     inputData = cssComm.CSSArraySensorIntMsg()
     for i in range(SimHalfLength):
@@ -869,7 +876,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         sunlineSEKF.doubleArray_setitem(yMeas, i, 0.0)
 
     ytest = np.zeros([SimHalfLength+1, 9])
-    Htest = np.zeros([SimHalfLength+1, 41])
+    Htest = np.zeros([SimHalfLength+1, (8*numStates+1)])
 
     for i in range(SimHalfLength,2*SimHalfLength):
         ytest[i-SimHalfLength,0] = stateLog[i,0]
@@ -885,11 +892,11 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
             yMeasOut.append(sunlineSEKF.doubleArray_getitem(yMeas, j))
 
         ytest[i-SimHalfLength,1:9] = np.array(yMeasOut)
-        Htest[i-SimHalfLength,1:41] = np.array(HOut)
-        PostFitRes[i,1:9] = ytest[i-SimHalfLength,1:9] - np.dot(Htest[i-SimHalfLength,1:41].reshape([8,numStates]), stateErrorLog[i,1:6])
+        Htest[i-SimHalfLength,1:(8*numStates+1)] = np.array(HOut)
+        PostFitRes[i,1:9] = ytest[i-SimHalfLength,1:9] - np.dot(Htest[i-SimHalfLength,1:(8*numStates+1)].reshape([8,numStates]), stateErrorLog[i,1:6])
 
-    for i in range(6):
-        if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
+    for i in range(numStates):
+        if (abs(covarLog[-1, i * numStates + 1 + i] - covarLog[0, i * numStates + 1 + i] / 100.) > 1E-2):
             testFailCount += 1
             testMessages.append("Covariance update failure")
         if (abs(stateLog[-1, i + 1] - stateTarget2[i]) > 1.0E-2):
@@ -897,14 +904,14 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
             testMessages.append("State update failure")
 
     target1 = np.array(testVector1)
-    target2 = np.array(testVector2+[0.,0.,0.])
+    target2 = np.array(testVector2+[0.,0.])
     FilterPlots.StatesPlot(stateErrorLog, covarLog, show_plots)
     FilterPlots.StatesVsTargets(target1, target2, stateLog, show_plots)
     FilterPlots.PostFitResiduals(PostFitRes, moduleConfig.qObsVal, show_plots)
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + "EKF full test"
+        print "PASSED: " + "SEKF full test"
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -913,4 +920,10 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 
 if __name__ == "__main__":
-    test_all_sunline_ekf(False, 200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0])
+    #test_all_functions_sekf(True)
+    # (200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
+    # (2000, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
+    # (200, False ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
+    # (200, False ,[0., 0.4, -0.4] ,[0., 0.7, 0.2], [0.3, 0.0, 0.6, 0.0, 0.0]),
+    # (200, True ,[0., 0.4, -0.4] ,[0.4, 0.5, 0.], [0.7, 0.7, 0.0, 0.0, 0.0])
+    test_all_sunline_sekf(True, 300, False ,[0., 0.4, -0.4] ,[0., 0.7, 0.2], [0.3, 0.0, 0.6, 0.0, 0.0])

@@ -33,12 +33,13 @@ import matplotlib.pyplot as plt
 
 def StatesPlot(x, Pflat, show_plots):
 
+    numStates = len(x[0,:])-1
 
-    P = np.zeros([len(Pflat[:,0]),6,6])
+    P = np.zeros([len(Pflat[:,0]),numStates,numStates])
     t= np.zeros(len(Pflat[:,0]))
     for i in range(len(Pflat[:,0])):
         t[i] = x[i, 0]*1E-9
-        P[i,:,:] = Pflat[i,1:37].reshape([6,6])
+        P[i,:,:] = Pflat[i,1:(numStates*numStates+1)].reshape([numStates,numStates])
 
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
     plt.subplot(321)
@@ -49,12 +50,6 @@ def StatesPlot(x, Pflat, show_plots):
     plt.title('First LOS component')
     plt.grid()
 
-    plt.subplot(322)
-    plt.plot(t , x[:, 4], "b")
-    plt.plot(t , 3 * np.sqrt(P[:, 3, 3]), 'r--')
-    plt.plot(t , -3 * np.sqrt(P[:, 3, 3]), 'r--')
-    plt.title('First rate component')
-    plt.grid()
 
     plt.subplot(323)
     plt.plot(t , x[:, 2], "b")
@@ -64,9 +59,9 @@ def StatesPlot(x, Pflat, show_plots):
     plt.grid()
 
     plt.subplot(324)
-    plt.plot(t , x[:, 5], "b")
-    plt.plot(t , 3 * np.sqrt(P[:, 4, 4]), 'r--')
-    plt.plot(t , -3 * np.sqrt(P[:, 4, 4]), 'r--')
+    plt.plot(t , x[:, 4], "b")
+    plt.plot(t , 3 * np.sqrt(P[:, 3, 3]), 'r--')
+    plt.plot(t , -3 * np.sqrt(P[:, 3, 3]), 'r--')
     plt.title('Second rate component')
     plt.grid()
 
@@ -79,9 +74,9 @@ def StatesPlot(x, Pflat, show_plots):
     plt.grid()
 
     plt.subplot(326)
-    plt.plot(t , x[:, 6], "b")
-    plt.plot(t , 3 * np.sqrt(P[:, 5, 5]), 'r--')
-    plt.plot(t , -3 * np.sqrt(P[:, 5, 5]), 'r--')
+    plt.plot(t , x[:, 5], "b")
+    plt.plot(t , 3 * np.sqrt(P[:, 4, 4]), 'r--')
+    plt.plot(t , -3 * np.sqrt(P[:, 4, 4]), 'r--')
     plt.xlabel('t(s)')
     plt.title('Third rate component')
     plt.grid()
@@ -94,14 +89,15 @@ def StatesPlot(x, Pflat, show_plots):
 
 def StatesPlotCompare(x, x2, Pflat, Pflat2, show_plots):
 
+    numStates = len(x[0,:])-1
 
-    P = np.zeros([len(Pflat[:,0]),6,6])
-    P2 = np.zeros([len(Pflat[:,0]),6,6])
+    P = np.zeros([len(Pflat[:,0]),numStates,numStates])
+    P2 = np.zeros([len(Pflat[:,0]),numStates,numStates])
     t= np.zeros(len(Pflat[:,0]))
     for i in range(len(Pflat[:,0])):
         t[i] = x[i, 0]*1E-9
-        P[i,:,:] = Pflat[i,1:37].reshape([6,6])
-        P2[i, :, :] = Pflat2[i, 1:37].reshape([6, 6])
+        P[i,:,:] = Pflat[i,1:(numStates*numStates+1)].reshape([numStates,numStates])
+        P2[i, :, :] = Pflat2[i, 1:(numStates*numStates+1)].reshape([numStates, numStates])
 
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
     plt.subplot(321)
@@ -115,16 +111,6 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2, show_plots):
     plt.title('First LOS component')
     plt.grid()
 
-    plt.subplot(322)
-    plt.plot(t[0:30] , x[0:30, 4], "b")
-    plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 3, 3]), 'r--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P[0:30, 3, 3]), 'r--')
-    plt.plot(t[0:30] , x2[0:30, 4], "g")
-    plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 3, 3]), 'c--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 3, 3]), 'c--')
-    plt.title('First rate component')
-    plt.grid()
-
     plt.subplot(323)
     plt.plot(t[0:30] , x[0:30, 2], "b")
     plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 1, 1]), 'r--')
@@ -136,12 +122,12 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2, show_plots):
     plt.grid()
 
     plt.subplot(324)
-    plt.plot(t[0:30] , x[0:30, 5], "b")
-    plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 4, 4]), 'r--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P[0:30, 4, 4]), 'r--')
-    plt.plot(t[0:30] , x2[0:30, 5], "g")
-    plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 4, 4]), 'c--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 4, 4]), 'c--')
+    plt.plot(t[0:30] , x[0:30, 4], "b")
+    plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 3, 3]), 'r--')
+    plt.plot(t[0:30] , -3 * np.sqrt(P[0:30, 3, 3]), 'r--')
+    plt.plot(t[0:30] , x2[0:30, 4], "g")
+    plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 3, 3]), 'c--')
+    plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 3, 3]), 'c--')
     plt.title('Second rate component')
     plt.grid()
 
@@ -157,12 +143,12 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2, show_plots):
     plt.grid()
 
     plt.subplot(326)
-    plt.plot(t[0:30] , x[0:30, 6], "b")
-    plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 5, 5]), 'r--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P[0:30, 5, 5]), 'r--')
-    plt.plot(t[0:30] , x2[0:30, 6], "g")
-    plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 5, 5]), 'c--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 5, 5]), 'c--')
+    plt.plot(t[0:30] , x[0:30, 5], "b")
+    plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 4, 4]), 'r--')
+    plt.plot(t[0:30] , -3 * np.sqrt(P[0:30, 4, 4]), 'r--')
+    plt.plot(t[0:30] , x2[0:30, 5], "g")
+    plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 4, 4]), 'c--')
+    plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 4, 4]), 'c--')
     plt.xlabel('t(s)')
     plt.title('Third rate component')
     plt.grid()
@@ -268,12 +254,6 @@ def StatesVsExpected(stateLog, expectedStateArray, show_plots):
     plt.title('First LOS component')
     plt.grid()
 
-    plt.subplot(322)
-    plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  4], 'b--')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  4], 'r')
-    plt.title('First rate component')
-    plt.grid()
-
     plt.subplot(323)
     plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  2], 'b--')
     plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  2], 'r')
@@ -281,8 +261,8 @@ def StatesVsExpected(stateLog, expectedStateArray, show_plots):
     plt.grid()
 
     plt.subplot(324)
-    plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  5], 'b--')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  5], 'r')
+    plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  4], 'b--')
+    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  4], 'r')
     plt.title('Second rate component')
     plt.grid()
 
@@ -294,8 +274,8 @@ def StatesVsExpected(stateLog, expectedStateArray, show_plots):
     plt.grid()
 
     plt.subplot(326)
-    plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  6], 'b--')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  6], 'r')
+    plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  5], 'b--')
+    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  5], 'r')
     plt.xlabel('t(s)')
     plt.title('Third rate component')
     plt.grid()
@@ -309,8 +289,9 @@ def StatesVsExpected(stateLog, expectedStateArray, show_plots):
 
 def StatesVsTargets(target1, target2, stateLog, show_plots):
 
+    numStates = len(stateLog[0,:])-1
 
-    target = np.ones([len(stateLog[:, 0]),6])
+    target = np.ones([len(stateLog[:, 0]),5])
     for i in range((len(stateLog[:, 0])-1)/2):
         target[i, :] = target1
         target[i+(len(stateLog[:, 0]) - 1) / 2,:] = target2
@@ -323,12 +304,6 @@ def StatesVsTargets(target1, target2, stateLog, show_plots):
     plt.title('First LOS component')
     plt.grid()
 
-    plt.subplot(322)
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 4], 'b')
-    plt.plot(stateLog[:, 0] * 1.0E-9, target[:, 3], 'r--')
-    plt.title('First rate component')
-    plt.grid()
-
     plt.subplot(323)
     plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 2], 'b')
     plt.plot(stateLog[:, 0] * 1.0E-9, target[:, 1], 'r--')
@@ -336,8 +311,8 @@ def StatesVsTargets(target1, target2, stateLog, show_plots):
     plt.grid()
 
     plt.subplot(324)
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 5], 'b')
-    plt.plot(stateLog[:, 0] * 1.0E-9, target[:, 4], 'r--')
+    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 4], 'b')
+    plt.plot(stateLog[:, 0] * 1.0E-9, target[:, 3], 'r--')
     plt.title('Second rate component')
     plt.grid()
 
@@ -349,8 +324,8 @@ def StatesVsTargets(target1, target2, stateLog, show_plots):
     plt.grid()
 
     plt.subplot(326)
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 6], 'b')
-    plt.plot(stateLog[:, 0] * 1.0E-9, target[:, 5], 'r--')
+    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 5], 'b')
+    plt.plot(stateLog[:, 0] * 1.0E-9, target[:, 4], 'r--')
     plt.xlabel('t(s)')
     plt.title('Third rate component')
     plt.grid()

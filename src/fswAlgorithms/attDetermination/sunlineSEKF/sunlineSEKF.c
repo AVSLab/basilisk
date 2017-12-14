@@ -109,7 +109,7 @@ void Reset_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
     
     /*! Initalize the filter to use b_1 of the body frame to make frame*/
     v3Set(1, 0, 0, ConfigData->s2);
-    ConfigData->switchTresh = 0.5;
+    ConfigData->switchTresh = 0.866;
     
     /*! - Ensure that all internal filter matrices are zeroed*/
     vSetZero(ConfigData->obs, ConfigData->numObs);
@@ -140,6 +140,7 @@ void Update_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
     double newTimeTag;
+    double sunheading_hat[SKF_N_STATES_HALF];
     uint64_t ClockTime;
     uint32_t ReadSize;
     SunlineFilterFswMsg sunlineDataOutBuffer;
@@ -152,8 +153,9 @@ void Update_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
     ReadMessage(ConfigData->cssDataInMsgId, &ClockTime, &ReadSize,
         sizeof(CSSArraySensorIntMsg), (void*) (&(ConfigData->cssSensorInBuffer)), moduleID);
     
+    v3Normalize(&ConfigData->states[0], sunheading_hat);
     /*! - Check for switching frames */
-    if (v3Dot(ConfigData->s2, ConfigData->states) > ConfigData->switchTresh)
+    if (v3Dot(ConfigData->s2, sunheading_hat) > ConfigData->switchTresh)
     {
         sunlineSEKFSwitch(ConfigData->s2, ConfigData->states, ConfigData->covar);
     }
