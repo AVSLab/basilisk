@@ -596,7 +596,8 @@ def run(saveFigures, show_plots, FilterType, simTime):
     if FilterType != 'OEKF' and FilterType != 'SEKF':
         expected[:, 4:] = sHatDot_B[:,1:]
     if FilterType == 'SEKF':
-        expected[:, 4:] = np.zeros([len(stateLog[:,0]),2])
+        expected[:, 4] = np.ones([len(stateLog[:,0])])*scObject.hub.omega_BN_BInit[1]
+        expected[:, 5] = np.ones([len(stateLog[:, 0])]) * scObject.hub.omega_BN_BInit[2]
     #
     #   plot the results
     #
