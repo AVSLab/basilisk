@@ -690,7 +690,7 @@ I_{s_{i2,2}} ( \dot\omega_{s_{i2,2}} + \ddot\theta_{i1} + \ddot\theta_{i2}) = - 
 Moving the second order state variables to the left hand side of the equation yields:
 
 \begin{multline}
-\Big[m_{\text{sp}_{i2}} d_{i2} \hat{\bm s}_{i2,3}^T\Big] \ddot{\bm{r}}_{B/N} + \Big[I_{s_{i2,2}} \hat{\bm s}_{i2,2}^T + m_{\text{sp}_{i2}} d_{i2} \hat{\bm s}_{i2,3}^T [\tilde{\bm{r}}_{S_{c,i2}/B}]\Big] \dot{\bm\omega}_{\cal B/N} + \Big[I_{s_{i2,2}}\Big] \ddot\theta_{i1} + \Big[I_{s_{i2,2}}\Big] \ddot\theta_{i2} \\
+\Big[m_{\text{sp}_{i2}} d_{i2} \hat{\bm s}_{i2,3}^T\Big] \ddot{\bm{r}}_{B/N} + \Big[I_{s_{i2,2}} \hat{\bm s}_{i2,2}^T - m_{\text{sp}_{i2}} d_{i2} \hat{\bm s}_{i2,3}^T [\tilde{\bm{r}}_{S_{c,i2}/B}]\Big] \dot{\bm\omega}_{\cal B/N} + \Big[I_{s_{i2,2}}\Big] \ddot\theta_{i1} + \Big[I_{s_{i2,2}}\Big] \ddot\theta_{i2} \\
 + m_{\text{sp}_{i2}} d_{i2} \hat{\bm s}_{i2,3}^T  \bm{r}''_{S_{c,i2}/B} = - (I_{s_{i2,1}} - I_{s_{i2,3}}) \omega_{s_{i2,3}} \omega_{s_{i2,1}} - k_{i2} \theta_{i2} - c_{i2} \dot{\theta}_{i2} + \hat{\bm s}_{i2,2}^T \bm \tau_{\text{ext}_{i2},H_{i2}}  \\
 -  m_{\text{sp}_{i2}} d_{i2} \hat{\bm s}_{i2,3}^T \Big[ 2 \bm\omega_{\cal B/N} \times \bm{r}'_{S_{c,i2}/B} + \bm\omega_{\cal B/N} \times (\bm\omega_{\cal B/N} \times \bm{r}_{S_{c,i2}/B})\Big]
 \end{multline}
@@ -698,7 +698,7 @@ Moving the second order state variables to the left hand side of the equation yi
 Expanding $\bm{r}''_{S_{c,i2}/B}$, isolating second order state variables to the left hand side and introducing the skew symmetric matrix:
 
 \begin{multline}
-\Big[m_{\text{sp}_{i2}} d_{i2} \hat{\bm s}_{i2,3}^T\Big] \ddot{\bm{r}}_{B/N} + \Big[I_{s_{i2,2}} \hat{\bm s}_{i2,2}^T + m_{\text{sp}_{i2}} d_{i2} \hat{\bm s}_{i2,3}^T [\tilde{\bm{r}}_{S_{c,i2}/B}]\Big] \dot{\bm\omega}_{\cal B/N} + \Big[I_{s_{i2,2}} + m_{\text{sp}_{i2}} d_{i2}^2 + m_{\text{sp}_{i2}} l_{i1} d_{i2} \hat{\bm s}_{i2,3}^T \bm{\hat{s}}_{i1,3} \Big] \ddot\theta_{i1} \\
+\Big[m_{\text{sp}_{i2}} d_{i2} \hat{\bm s}_{i2,3}^T\Big] \ddot{\bm{r}}_{B/N} + \Big[I_{s_{i2,2}} \hat{\bm s}_{i2,2}^T - m_{\text{sp}_{i2}} d_{i2} \hat{\bm s}_{i2,3}^T [\tilde{\bm{r}}_{S_{c,i2}/B}]\Big] \dot{\bm\omega}_{\cal B/N} + \Big[I_{s_{i2,2}} + m_{\text{sp}_{i2}} d_{i2}^2 + m_{\text{sp}_{i2}} l_{i1} d_{i2} \hat{\bm s}_{i2,3}^T \bm{\hat{s}}_{i1,3} \Big] \ddot\theta_{i1} \\
 + \Big[I_{s_{i2,2}} + m_{\text{sp}_{i2}} d_{i2}^2 \Big] \ddot\theta_{i2} 
 = - (I_{s_{i2,1}} - I_{s_{i2,3}}) \omega_{s_{i2,3}} \omega_{s_{i2,1}} - k_{i2} \theta_{i2} - c_{i2} \dot{\theta}_{i2} + \hat{\bm s}_{i2,2}^T \bm \tau_{\text{ext}_{i2},H_{i2}}  \\
 -  m_{\text{sp}_{i2}} d_{i2} \hat{\bm s}_{i2,3}^T \Big[ 2 [\tilde{\bm\omega}_{\cal B/N}] \bm{r}'_{S_{c,i2}/B} + [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm{r}_{S_{c,i2}/B} + l_{i1} \dot{\theta}_{i1}^2 \bm{\hat{s}}_{i1,1} \Big]
@@ -1533,7 +1533,7 @@ With a $2\times 3$ matrix $[G_i]$ which has row elements defined as:
 \begin{subequations}
 	\begin{align}
 	\bm g_{i1} &= - \Big[I_{s_{i1,2}} \hat{\bm s}_{i1,2}^T - m_{\text{sp}_{i1}} d_{i1} \hat{\bm s}_{i1,3}^T [\tilde{\bm{r}}_{S_{c,i1}/B}] - m_{sp_{i2}} l_{i1} \hat{\bm s}_{i1,3}^T [\tilde{\bm{r}}_{S_{c,i2}/B}] \Big]^T\\
-	\bm g_{i2} &= -  \Big[I_{s_{i2,2}} \hat{\bm s}_{i2,2}^T + m_{\text{sp}_{i2}} d_{i2} \hat{\bm s}_{i2,3}^T [\tilde{\bm{r}}_{S_{c,i2}/B}]\Big]^T
+	\bm g_{i2} &= -  \Big[I_{s_{i2,2}} \hat{\bm s}_{i2,2}^T - m_{\text{sp}_{i2}} d_{i2} \hat{\bm s}_{i2,3}^T [\tilde{\bm{r}}_{S_{c,i2}/B}]\Big]^T
 	\end{align}
 \end{subequations}
 Also defining the vector $\bm v_i$ as  as $2\times1$ with the following components:
@@ -1744,8 +1744,6 @@ Solving the system-of-equations by
 \end{equation}
 	
 	Now Eq.~\eqref{eq:omegaDot} and ~\eqref{eq:rBNDDot} can be used to solve for $\dot{\bm\omega}_{\cal B/N}$ and $\ddot{\bm r}_{B/N}$. Once these second order state variables are solved for, Eqs.~\eqref{eq:thetadot4} and ~\eqref{eq:thetadot5} can be used to directly solve for $\ddot \theta_{i1}$ and $\ddot \theta_{i2}$. This shows that the back substitution method can work seamlessly for interconnected bodies. For this problem the number of interconnected bodies was fixed to be 2, and resulted in an additional $2\times 2$ matrix inversion for each solar panel pair. This shows that for general interconnected bodies, this method would result in needing to invert a matrix based on the number of interconnected bodies. 
-	
-	In addition, this problem retains the ability for modularity in software architecture design while not sacrificing any accuracy. The dual-linked hinged rigid bodies were implemented in Basilisk and fit into the architecture quite easily. The code (the .cpp and .h files for the modules) is attached to the end of this document. It shows how smoothly this approach can integrate into the modular dynamics architecture. The code is on a branch and is currently being verified for energy and momentum validation. However, I know that I have a bug somewhere either in the code or in the derivation because the simulation is blowing up. 
 		
 	\section{Conclusion}
 	
