@@ -87,7 +87,7 @@ def test_all_sunline_ekf(show_plots, SimHalfLength, AddMeasNoise, testVector1, t
     # sunline_individual_test()
     # StatePropStatic()
     # StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess)
-    [testResults, testMessage] = StatePropStatic()
+    [testResults, testMessage] = sunline_individual_test()
     assert testResults < 1, testMessage
 
 
@@ -401,9 +401,76 @@ def sunline_individual_test():
     ## Test the Switching method
     ###################################################################################
 
+    inputStates = [2,1,0.75,0.1,0.4]
+    bvec1 = [0.,1.,0.]
+    covar = [1., 0., 0., 1., 0.,
+             0., 1., 0., 0., 1.,
+             0., 0., 1., 0., 0.,
+             1., 0., 0., 1., 0.,
+             0., 1., 0., 0., 1.]
+    noise =0.01
+
+    b1 = np.array(bvec1)
+    bvec = sunlineSEKF.new_doubleArray(3)
+    states = sunlineSEKF.new_doubleArray(numStates)
+    covarMat = sunlineSEKF.new_doubleArray(numStates * numStates)
+
+    for i in range(3):
+        sunlineSEKF.doubleArray_setitem(bvec, i, bvec1[i])
+    for i in range(numStates):
+        sunlineSEKF.doubleArray_setitem(states, i, inputStates[i])
+    for j in range(numStates*numStates):
+            sunlineSEKF.doubleArray_setitem(covarMat, j, covar[j])
+
+    sunlineSEKF.sunlineSEKFSwitch(bvec, states, covarMat)
+
+    covarOut = []
+    stateOut = []
+    bvecOut = []
+    for i in range(3):
+        bvecOut.append(sunlineSEKF.doubleArray_getitem(bvec, i))
+    for i in range(numStates):
+        stateOut.append(sunlineSEKF.doubleArray_getitem(states, i))
+    for j in range(numStates*numStates):
+        covarOut.append(sunlineSEKF.doubleArray_getitem(covarMat, j))
+
+    # Fill in expected values for test
+
+    DCM_BSold = np.zeros([3,3])
+    DCM_BSnew = np.zeros([3,3])
+    DCM_newOld = np.zeros([3,3])
+    Switch = np.zeros([numStates,numStates])
+
+    DCM_BSold[:,0] = np.array(inputStates[0:3])/(np.linalg.norm(np.array(inputStates[0:3])))
+    DCM_BSold[:,1] = np.cross(DCM_BSold[:,0], b1)/np.linalg.norm(np.array(np.cross(DCM_BSold[:,0], b1)))
+    DCM_BSold[:,2] = np.cross(DCM_BSold[:,0], DCM_BSold[:,1])/np.linalg.norm(np.cross(DCM_BSold[:,0], DCM_BSold[:,1]))
+
+    b2 = np.array([1.,0.,0.])
+    DCM_BSnew[:,0] = np.array(inputStates[0:3])/(np.linalg.norm(np.array(inputStates[0:3])))
+    DCM_BSnew[:,1] = np.cross(DCM_BSnew[:,0], b2)/np.linalg.norm(np.array(np.cross(DCM_BSnew[:,0], b2)))
+    DCM_BSnew[:,2] = np.cross(DCM_BSnew[:,0], DCM_BSnew[:,1])/np.linalg.norm(np.cross(DCM_BSnew[:,0], DCM_BSnew[:,1]))
+
+    DCM_newOld = np.dot(DCM_BSnew.T, DCM_BSold)
+    Switch[0:3,0:3] = np.eye(3)
+    Switch[3:5, 3:5] = DCM_newOld[1:3,1:3]
+
+    expectedState = np.dot(Switch, np.array(inputStates))
+    Pk = np.array(covar).reshape([numStates, numStates])
+    expectedP = np.dot(Switch, np.dot(Pk, Switch.T))
+
+    errorNorm = np.zeros(2)
+    errorNorm[0] = np.linalg.norm(np.array(stateOut) - expectedState)
+    errorNorm[1] = np.linalg.norm(expectedP - np.array(covarOut).reshape([numStates, numStates]))
+
+    for i in range(2):
+        if (errorNorm[i] > 1.0E-10):
+            testFailCount += 1
+            testMessages.append("Frame switch failure \n")
+
+
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + " EKF individual tests"
+        print "PASSED: " + " SEKF individual tests"
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -417,6 +484,8 @@ def StatePropStatic():
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
+    numStates = 5
+    numObs = 3
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages

@@ -564,6 +564,7 @@ void sunlineSEKFSwitch(double *bVec_B, double *states, double *covar)
     double switchMatP[SKF_N_STATES_SWITCH][SKF_N_STATES_SWITCH];
     double switchMat[SKF_N_STATES_SWITCH][SKF_N_STATES_SWITCH];
 
+    double sun_heading_norm[SKF_N_STATES_HALF];
     double s2_B[SKF_N_STATES_HALF];
     double s3_B_old[SKF_N_STATES_HALF];
     double s3_B_new[SKF_N_STATES_HALF];
@@ -573,42 +574,52 @@ void sunlineSEKFSwitch(double *bVec_B, double *states, double *covar)
     /*!  Set the body frame vectors*/
     v3Set(1, 0, 0, b1);
     v3Set(0, 1, 0, b2);
+    v3Normalize(&(states[0]), sun_heading_norm);
     
     /* Compute the second vector of the S frame */
-    v3Cross(&(states[0]), bVec_B, s2_B);
+    v3Cross(sun_heading_norm, bVec_B, s2_B);
     v3Normalize(s2_B, s2_B);
     
     /*! Populate the dcm_BS with the "old" S-frame*/
-    mSetSubMatrix(&(states[0]), 1, SKF_N_STATES_HALF, dcm_BSold, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 1, 1);
-    mSetSubMatrix(&(s2_B), 1, SKF_N_STATES_HALF, dcm_BSold, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 2, 1);
-    v3Cross(&(states[0]), s2_B, s3_B_old);
+    mSetSubMatrix(sun_heading_norm, 1, SKF_N_STATES_HALF, dcm_BSold, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
+    mSetSubMatrix(&(s2_B), 1, SKF_N_STATES_HALF, dcm_BSold, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 1, 0);
+    v3Cross(sun_heading_norm, s2_B, s3_B_old);
     v3Normalize(s3_B_old, s3_B_old);
-    mSetSubMatrix(&(s3_B_old), 1, SKF_N_STATES_HALF, dcm_BSold, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 3, 1);
+    mSetSubMatrix(&(s3_B_old), 1, SKF_N_STATES_HALF, dcm_BSold, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 2, 0);
     mTranspose(dcm_BSold, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm_BSold);
     
     if (v3IsEqual(bVec_B, b1, 1e-10))
     {
+        v3Cross(sun_heading_norm, b2, s2_B);
+        v3Normalize(s2_B, s2_B);
         /*! Populate the dcm_BS with the "new" S-frame*/
-        mSetSubMatrix(&(states[0]), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 1, 1);
-        mSetSubMatrix(&(b2), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 2, 1);
-        v3Cross(&(states[0]), b2, s3_B_new);
+        mSetSubMatrix(sun_heading_norm, 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
+        mSetSubMatrix(&(s2_B), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 1, 0);
+        v3Cross(sun_heading_norm, s2_B, s3_B_new);
         v3Normalize(s3_B_new, s3_B_new);
-        mSetSubMatrix(&(s3_B_new), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 3, 1);
+        mSetSubMatrix(&(s3_B_new), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 2, 0);
+        
+        v3Copy(b2, bVec_B);
     }
     else
     {
+        v3Cross(sun_heading_norm, b1, s2_B);
+        v3Normalize(s2_B, s2_B);
         /*! Populate the dcm_BS with the "new" S-frame*/
-        mSetSubMatrix(&(states[0]), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 1, 1);
-        mSetSubMatrix(&(b1), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 2, 1);
-        v3Cross(&(states[0]), b1, s3_B_new);
+        mSetSubMatrix(sun_heading_norm, 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
+        mSetSubMatrix(&(s2_B), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 1, 0);
+        v3Cross(sun_heading_norm, s2_B, s3_B_new);
         v3Normalize(s3_B_new, s3_B_new);
-        mSetSubMatrix(&(s3_B_new), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 3, 1);
+        mSetSubMatrix(&(s3_B_new), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 2, 0);
+        
+        v3Copy(b1, bVec_B);
     }
     
     mMultM(dcm_BSnew_T, 3, 3, dcm_BSold, 3, 3, dcm_SnewSold);
     
     mSetIdentity(switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
-    mSetSubMatrix(&dcm_SnewSold[1][1], 2, 2, &switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 4, 4);
+    mSetSubMatrix(&dcm_SnewSold[1][1], 1, 2, &switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 3, 3);
+    mSetSubMatrix(&dcm_SnewSold[2][1], 1, 2, &switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 4, 3);
     
     mMultV(switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, states, states);
     mMultM(switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, covar, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, switchMatP);
