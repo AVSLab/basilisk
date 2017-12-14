@@ -192,7 +192,7 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Eig
     this->matrixFDHRB.row(1) = -this->mass2*this->d2*this->sHat23_B.transpose();
 
     this->matrixGDHRB.row(0) = -(this->IPntS1_S1(1,1)*this->sHat12_B.transpose() - this->mass1*this->d1*this->sHat13_B.transpose()*this->rTildeS1B_B - this->mass2*this->l1*this->sHat13_B.transpose()*this->rTildeS2B_B);
-    this->matrixGDHRB.row(1) = -(this->IPntS2_S2(1,1)*this->sHat22_B.transpose() + this->mass2*this->d2*this->sHat23_B.transpose()*this->rTildeS2B_B);
+    this->matrixGDHRB.row(1) = -(this->IPntS2_S2(1,1)*this->sHat22_B.transpose() - this->mass2*this->d2*this->sHat23_B.transpose()*this->rTildeS2B_B);
 
     this->vectorVDHRB(0) =  -(this->IPntS1_S1(0,0) - this->IPntS1_S1(2,2))*this->omegaBN_S1(2)*this->omegaBN_S1(0) - this->k1*this->theta1 - this->c1*this->theta1Dot + this->k2*this->theta2 + this->c2*this->theta2Dot
                             - this->mass1*this->d1*this->sHat13_B.transpose()*(2*this->omegaTildeBNLoc_B*this->rPrimeS1B_B + this->omegaTildeBNLoc_B*this->omegaTildeBNLoc_B*this->rS1B_B)
