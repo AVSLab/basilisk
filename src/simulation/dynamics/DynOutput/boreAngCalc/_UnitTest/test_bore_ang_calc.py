@@ -17,8 +17,6 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-# import pytest
-import sys, os, inspect
 
 #
 # Bore Angle Calculation Test
@@ -30,15 +28,8 @@ import sys, os, inspect
 # Creation Date:  Jun. 30, 2017
 #
 
-
-
-
-
-
-
 # @cond DOXYGEN_IGNORE
 from Basilisk.utilities import SimulationBaseClass
-import numpy
 from Basilisk.simulation import bore_ang_calc
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics
@@ -46,8 +37,30 @@ from Basilisk.simulation import spice_interface
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import unitTestSupport
 import pytest
+import numpy
+import os
 # @endcond
 
+path = os.path.dirname(os.path.abspath(__file__))
+
+class ResultsStore:
+    def __init__(self):
+        self.PassFail = []
+    def texSnippet(self):
+        for i in range(len(self.PassFail)):
+            snippetName = 'Result' + str(i)
+            if self.PassFail[i] == 'PASSED':
+                textColor = 'ForestGreen'
+            elif self.PassFail[i] == 'FAILED':
+                textColor = 'Red'
+            texSnippet =  '\\textcolor{' + textColor + '}{'+ self.PassFail[i] + '}'
+            unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
+
+@pytest.fixture(scope="module")
+def testFixture():
+    listRes = ResultsStore()
+    yield listRes
+    listRes.texSnippet()
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -74,14 +87,13 @@ import pytest
                           ([0.0, 0.0, 1.0], [-numpy.pi / 4, -numpy.pi / 4, 0.0]),
                           ([1.0, 0.0, 0.0], [0.0, 0.0, 0.0])])
 # # provide a unique test method name, starting with test_
-def test_bore_ang_calc(show_plots, boresightLoc, eulerLoc):
+def test_bore_ang_calc(testFixture, show_plots, boresightLoc, eulerLoc):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = bore_ang_calc_func(show_plots, boresightLoc, eulerLoc)
+    [testResults, testMessage] = bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc)
     assert testResults < 1, testMessage
 
-
 # Run unit test
-def bore_ang_calc_func(show_plots, boresightLoc, eulerLoc):
+def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
@@ -240,16 +252,18 @@ def bore_ang_calc_func(show_plots, boresightLoc, eulerLoc):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print   " \n PASSED "
+        print "PASSED"
+        testFixture.PassFail.append("PASSED")
+    else:
+        testFixture.PassFail.append("FAILED")
 
     # each test method requires a single assert method to be called
     #   this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
-
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    bore_ang_calc_func(False,  # show_plots
+    bore_ang_calc_func(ResultsStore(), False,  # show_plots
                        [1.0 / numpy.sqrt(3), 1.0 / numpy.sqrt(3), 1.0 / numpy.sqrt(3)], [0.0, 0.0, 0.0])

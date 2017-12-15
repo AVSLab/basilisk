@@ -43,39 +43,33 @@
 
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
 
-
-\newcommand{\ModuleName}{Bore Angle Calc}
-\newcommand{\subject}{Bore Angle Calc}
-\newcommand{\status}{Reviewed}
-\newcommand{\preparer}{R. Mamich}
-\newcommand{\summary}{This unit test calculates the miss angle and the azimuth angle of a given boresight and celestial body. The unit test goes through all of the calculations made in the module in order to confirm the correctness of the functions used, as well as separate calculations in the inertial reference frame for comparison.}
+\newcommand{\ModuleName}{eclipse}
+\newcommand{\subject}{eclipse C++ model}
+\newcommand{\status}{Tested}
+\newcommand{\preparer}{G. Chapel}
+\newcommand{\summary}{The eclipse module is responsible for determining whether or not a spacecraft is experiencing a solar eclipse and how much of it is occulted. A unit test has been written and performed, comparing simulated and calculated shadow factors during full eclipse, partial eclipse, and no eclipse scenarios.}
 
 \begin{document}
-	
-	\makeCover
-	
-	%
-	%	enter the revision documentation here
-	%	to add more lines, copy the table entry and the \hline, and paste after the current entry.
-	%
+
+\makeCover
+
+%
+%	enter the revision documentation here
+%	to add more lines, copy the table entry and the \hline, and paste after the current entry.
+%
 \pagestyle{empty}
 {\renewcommand{\arraystretch}{2}
 	\noindent
-	\begin{longtable}{|p{0.5in}|p{3.5in}|p{1.0in}|p{1.0in}|}
+	\begin{longtable}{|p{0.5in}|p{3.5in}|p{1.07in}|p{0.9in}|}
 		\hline
-		{\bfseries Rev}: & {\bfseries Change Description} & {\bfseries By}  & {\bfseries Date}\\
+		{\bfseries Rev}: & {\bfseries Change Description} & {\bfseries By} & {\bfseries Date} \\
 		\hline
-		1.0 & First Draft & R. Mamich & 20170817\\
+		1.0 & First version - Mathematical formulation and implementation & G. Chapel & 09/07/17\\
 		\hline
-		1.1 & Validated & R. Mamich & 20170822\\
-		\hline
-        1.2 & Review Comments Incorporated & R. Mamich & 20171018\\
-\hline
 		
 	\end{longtable}
 }
-	
-	
+		
 	
 	\newpage
 	\setcounter{page}{1}
@@ -101,5 +95,13 @@
 	\input{secTest.tex} % This includes test description, test parameters, and test results
 	
 	\input{secUserGuide.tex} % Contains a discussion of how to setup and configure  the BSK module
+	
+	
+	
+	
+	
+	
+	
+	\bibliography{bibliography} %This includes references used and mentioned.
 	
 \end{document}

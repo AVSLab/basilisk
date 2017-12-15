@@ -30,6 +30,7 @@
 #
 
 import pytest
+import os
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 from Basilisk.simulation import spacecraftPlus
@@ -42,16 +43,20 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk import __path__
 bskPath = __path__[0]
 
+path = os.path.dirname(os.path.abspath(__file__))
 
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
-@pytest.mark.parametrize("eclipseCondition", ["partial", "full", "none"])
-def test_unitEclipse(show_plots, eclipseCondition):
-    [testResults, testMessage] = unitEclipse(show_plots, eclipseCondition)
+@pytest.mark.parametrize("eclipseCondition, planet", [
+("partial", "earth"), ("full", "earth"), ("none", "earth"), ("annular", "earth"),
+("partial", "mars"), ("full", "mars"), ("none", "mars"), ("annular", "mars")])
+
+def test_unitEclipse(show_plots, eclipseCondition, planet):
+    [testResults, testMessage] = unitEclipse(show_plots, eclipseCondition, planet)
     assert testResults < 1, testMessage
 
 
-def unitEclipse(show_plots, eclipseCondition):
+def unitEclipse(show_plots, eclipseCondition, planet):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -76,16 +81,26 @@ def unitEclipse(show_plots, eclipseCondition):
     unitTestSim.AddModelToTask(testTaskName, scObject_0)
 
     # setup SPICE ephemeris support
-    earth = gravityEffector.GravBodyData()
-    earth.bodyInMsgName = "earth_planet_data"
-    earth.outputMsgName = "earth_display_frame_data"
-    earth.mu = 0.3986004415E+15  # meters^3/s^2
-    earth.radEquator = 6378136.6  # meters
-    earth.isCentralBody = True
-    earth.useSphericalHarmParams = False
-
-    # attach gravity model to spaceCraftPlus
-    scObject_0.gravField.gravBodies = spacecraftPlus.GravBodyVector([earth])
+    if planet == "earth":
+        earth = gravityEffector.GravBodyData()
+        earth.bodyInMsgName = "earth_planet_data"
+        earth.outputMsgName = "earth_display_frame_data"
+        earth.mu = 0.3986004415E+15  # meters^3/s^2
+        earth.radEquator = 6378136.6  # meters
+        earth.isCentralBody = True
+        earth.useSphericalHarmParams = False
+        # attach gravity model to spaceCraftPlus
+        scObject_0.gravField.gravBodies = spacecraftPlus.GravBodyVector([earth])
+    elif planet == "mars":
+        mars = gravityEffector.GravBodyData()
+        mars.bodyInMsgName = "mars_planet_data"
+        mars.outputMsgName = "mars_display_frame_data"
+        mars.mu = 0.42828375214E+14  # meters^3/s^2
+        mars.radEquator = 3396190  # meters
+        mars.isCentralBody = True
+        mars.useSphericalHarmParams = False
+        # attach gravity model to spaceCraftPlus
+        scObject_0.gravField.gravBodies = spacecraftPlus.GravBodyVector([mars])
 
     spiceObject = spice_interface.SpiceInterface()
     spiceObject.planetNames = spice_interface.StringVector(["sun", "venus", "earth", "mars barycenter"])
@@ -99,46 +114,74 @@ def unitEclipse(show_plots, eclipseCondition):
     pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
     pyswice.furnsh_c(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
 
-    if eclipseCondition == "full":
-        spiceObject.zeroBase = "earth"
-        # set up spacecraft 0 position and velocity for full eclipse
-        oe = orbitalMotion.ClassicElements()
-        r_0 = (500 + orbitalMotion.REQ_EARTH)  # km
-        oe.a = r_0
-        oe.e = 0.00001
-        oe.i = 5.0 * macros.D2R
-        oe.Omega = 48.2 * macros.D2R
-        oe.omega = 0 * macros.D2R
-        oe.f = 173 * macros.D2R
-        r_N_0, v_N_0 = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH, oe)
-        scObject_0.hub.r_CN_NInit = r_N_0 * 1000  # convert to meters
-        scObject_0.hub.v_CN_NInit = v_N_0 * 1000  # convert to meters
-    elif eclipseCondition == "partial":
-        spiceObject.zeroBase = "earth"
-        # set up spacecraft 0 position and velocity for full eclipse
-        oe = orbitalMotion.ClassicElements()
-        r_0 = (500 + orbitalMotion.REQ_EARTH)  # km
-        oe.a = r_0
-        oe.e = 0.00001
-        oe.i = 5.0 * macros.D2R
-        oe.Omega = 48.2 * macros.D2R
-        oe.omega = 0 * macros.D2R
-        oe.f = 107.5 * macros.D2R
-        r_N_0, v_N_0 = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH, oe)
-        scObject_0.hub.r_CN_NInit = r_N_0 * 1000  # convert to meters
-        scObject_0.hub.v_CN_NInit = v_N_0 * 1000  # convert to meters
-    elif eclipseCondition == "none":
-        oe = orbitalMotion.ClassicElements()
-        r_0 = 9959991.68982  # km
-        oe.a = r_0
-        oe.e = 0.00001
-        oe.i = 5.0 * macros.D2R
-        oe.Omega = 48.2 * macros.D2R
-        oe.omega = 0 * macros.D2R
-        oe.f = 107.5 * macros.D2R
-        r_N_0, v_N_0 = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH, oe)
-        scObject_0.hub.r_CN_NInit = r_N_0 * 1000  # convert to meters
-        scObject_0.hub.v_CN_NInit = v_N_0 * 1000  # convert to meters
+    if planet == "earth":
+        if eclipseCondition == "full":
+            spiceObject.zeroBase = "earth"
+            # set up spacecraft 0 position and velocity for full eclipse
+            oe = orbitalMotion.ClassicElements()
+            r_0 = (500 + orbitalMotion.REQ_EARTH)  # km
+            oe.a = r_0
+            oe.e = 0.00001
+            oe.i = 5.0 * macros.D2R
+            oe.Omega = 48.2 * macros.D2R
+            oe.omega = 0 * macros.D2R
+            oe.f = 173 * macros.D2R
+            r_N_0, v_N_0 = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH, oe)
+            scObject_0.hub.r_CN_NInit = r_N_0 * 1000  # convert to meters
+            scObject_0.hub.v_CN_NInit = v_N_0 * 1000  # convert to meters
+        elif eclipseCondition == "partial":
+            spiceObject.zeroBase = "earth"
+            # set up spacecraft 0 position and velocity for full eclipse
+            oe = orbitalMotion.ClassicElements()
+            r_0 = (500 + orbitalMotion.REQ_EARTH)  # km
+            oe.a = r_0
+            oe.e = 0.00001
+            oe.i = 5.0 * macros.D2R
+            oe.Omega = 48.2 * macros.D2R
+            oe.omega = 0 * macros.D2R
+            oe.f = 107.5 * macros.D2R
+            r_N_0, v_N_0 = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH, oe)
+            scObject_0.hub.r_CN_NInit = r_N_0 * 1000  # convert to meters
+            scObject_0.hub.v_CN_NInit = v_N_0 * 1000  # convert to meters
+        elif eclipseCondition == "none":
+            oe = orbitalMotion.ClassicElements()
+            r_0 = 9959991.68982  # km
+            oe.a = r_0
+            oe.e = 0.00001
+            oe.i = 5.0 * macros.D2R
+            oe.Omega = 48.2 * macros.D2R
+            oe.omega = 0 * macros.D2R
+            oe.f = 107.5 * macros.D2R
+            r_N_0, v_N_0 = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH, oe)
+            scObject_0.hub.r_CN_NInit = r_N_0 * 1000  # convert to meters
+            scObject_0.hub.v_CN_NInit = v_N_0 * 1000  # convert to meters
+        elif eclipseCondition == "annular":
+            spiceObject.zeroBase = "earth"
+            scObject_0.hub.r_CN_NInit = [-326716535628.942, -287302983139.247, -124542549301.050]
+
+    elif planet == "mars":
+        if eclipseCondition == "full":
+            spiceObject.zeroBase = "mars barycenter"
+            scObject_0.hub.r_CN_NInit = [-2930233.55919119, 2567609.100747609, 41384.23366372246] # meters
+        elif eclipseCondition == "partial":
+            print "partial mars"
+            spiceObject.zeroBase = "mars barycenter"
+            scObject_0.hub.r_CN_NInit = [-6050166.454829555, 2813822.447404055, 571725.5651779658] # meters
+        elif eclipseCondition == "none":
+            oe = orbitalMotion.ClassicElements()
+            r_0 = 9959991.68982  # km
+            oe.a = r_0
+            oe.e = 0.00001
+            oe.i = 5.0 * macros.D2R
+            oe.Omega = 48.2 * macros.D2R
+            oe.omega = 0 * macros.D2R
+            oe.f = 107.5 * macros.D2R
+            r_N_0, v_N_0 = orbitalMotion.elem2rv(orbitalMotion.MU_MARS, oe)
+            scObject_0.hub.r_CN_NInit = r_N_0 * 1000  # convert to meters
+            scObject_0.hub.v_CN_NInit = v_N_0 * 1000  # convert to meters
+        elif eclipseCondition == "annular":
+            spiceObject.zeroBase = "mars barycenter"
+            scObject_0.hub.r_CN_NInit = [-427424601171.464, 541312532797.400, 259820030623.064]  # meters
 
     unitTestSim.AddModelToTask(testTaskName, spiceObject)
     eclipseObject = eclipse.Eclipse()
@@ -148,6 +191,9 @@ def unitEclipse(show_plots, eclipseCondition):
     eclipseObject.addPlanetName('venus')
     unitTestSim.AddModelToTask(testTaskName, eclipseObject)
     unitTestSim.TotalSim.logThisMessage("eclipse_data_0")
+    unitTestSim.TotalSim.logThisMessage("mars barycenter_planet_data")
+    unitTestSim.TotalSim.logThisMessage("sun_planet_data")
+    unitTestSim.TotalSim.logThisMessage("earth_planet_data")
 
     unitTestSim.InitializeSimulation()
 
@@ -155,32 +201,84 @@ def unitEclipse(show_plots, eclipseCondition):
     unitTestSim.TotalSim.SingleStepProcesses()
 
     eclipseData_0 = unitTestSim.pullMessageLogData("eclipse_data_0.shadowFactor")
+    # Obtain body position vectors to check with MATLAB
 
     errTol = 1E-12
-    if eclipseCondition is "partial":
-        truthShadowFactor = 0.62310760206735027
-        if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
-            testFailCount += 1
-            testMessages.append("Shadow Factor failed for partial eclipse condition")
+    if planet is "earth":
+        if eclipseCondition is "partial":
+            truthShadowFactor = 0.62310760206735027
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
+                testFailCount += 1
+                testMessages.append("Shadow Factor failed for Earth partial eclipse condition")
 
-    elif eclipseCondition is "full":
-        truthShadowFactor = 0.0
-        if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
-            testFailCount += 1
-            testMessages.append("Shadow Factor failed for full eclipse condition")
+        elif eclipseCondition is "full":
+            truthShadowFactor = 0.0
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
+                testFailCount += 1
+                testMessages.append("Shadow Factor failed for Earth full eclipse condition")
 
-    elif eclipseCondition is "none":
-        truthShadowFactor = 1.0
-        if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
-            testFailCount += 1
-            testMessages.append("Shadow Factor failed for none eclipse condition")
+        elif eclipseCondition is "none":
+            truthShadowFactor = 1.0
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
+                testFailCount += 1
+                testMessages.append("Shadow Factor failed for Earth none eclipse condition")
+        elif eclipseCondition is "annular":
+            truthShadowFactor = 1.497253388113018e-04
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
+                testFailCount += 1
+                testMessages.append("Shadow Factor failed for Earth annular eclipse condition")
+
+    elif planet is "mars":
+        if eclipseCondition is "partial":
+            truthShadowFactor = 0.18745025055615416
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
+                testFailCount += 1
+                testMessages.append("Shadow Factor failed for Mars partial eclipse condition")
+        elif eclipseCondition is "full":
+            truthShadowFactor = 0.0
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
+                testFailCount += 1
+                testMessages.append("Shadow Factor failed for Mars full eclipse condition")
+        elif eclipseCondition is "none":
+            truthShadowFactor = 1.0
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
+                testFailCount += 1
+                testMessages.append("Shadow Factor failed for Mars none eclipse condition")
+        elif eclipseCondition is "annular":
+            truthShadowFactor = 4.245137380531894e-05
+            if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
+                testFailCount += 1
+                testMessages.append("Shadow Factor failed for Mars annular eclipse condition")
+
 
     if testFailCount == 0:
-        print "PASSED: " + eclipseCondition
-    # return fail count and join into a single string all messages in the list
-    # testMessage
+        print "PASSED: " + planet + "-" + eclipseCondition
+        # return fail count and join into a single string all messages in the list
+        # testMessage
+    if testFailCount == 0:
+        colorText = 'ForestGreen'
+        passFailMsg = ""  # "Passed: " + name + "."
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        passFailMsg = "Failed: " + eclipseCondition + "."
+        testMessages.append(passFailMsg)
+        testMessages.append(" | ")
+        passedText = '\\textcolor{' + colorText + '}{' + "FAILED" + '}'
 
+    # Write some snippets for AutoTex
+    snippetName = planet+eclipseCondition + "PassedText"
+    snippetContent = passedText
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+
+    snippetName = planet+eclipseCondition + "PassFailMsg"
+    snippetContent = passFailMsg
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+
+    snippetName = eclipseCondition + "error"
+    snippetContent = str(errTol)
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    unitEclipse(False, "full")
+    unitEclipse(False, "annular", "earth")
