@@ -19,29 +19,34 @@
 from Basilisk.simulation import sim_model
 from Basilisk.simulation import sys_model_task
 
+
 def CreateNewMessage(messageName, messageType, moduleID):
     messageStructName = messageType.__class__.__name__
     messageID = sim_model.SystemMessaging_GetInstance().CreateNewMessage(
         messageName, messageType.getStructSize(), 2, messageStructName, moduleID)
     return messageID
 
+
 def SubscribeToMessage(messageName, messageType, moduleID):
     messageID = sim_model.SystemMessaging_GetInstance().subscribeToMessage(
         messageName, messageType.getStructSize(), moduleID)
     return messageID
 
+
 def ReadMessage(messageID, messageType, moduleID):
     localHeader = sim_model.SingleMessageHeader()
     sim_model.SystemMessaging_GetInstance().ReadMessage(
-          messageID, localHeader, messageType.getStructSize(), messageType, moduleID)
+        messageID, localHeader, messageType.getStructSize(), messageType, moduleID)
     return localHeader
 
-def WriteMessage(messageID, currentTime, messageStruct, moduleID, msgSize = -1):
+
+def WriteMessage(messageID, currentTime, messageStruct, moduleID, msgSize=-1):
     if msgSize <= 0:
         msgSize = messageStruct.getStructSize()
     sim_model.SystemMessaging_GetInstance().WriteMessage(
         messageID, currentTime, msgSize, messageStruct, moduleID)
     return
+
 
 class ProcessBaseClass(object):
     def __init__(self, procName, procPriority=-1):
@@ -70,6 +75,7 @@ class ProcessBaseClass(object):
     def updateTaskPeriod(self, TaskName, newPeriod):
         self.processData.changeTaskPeriod(TaskName, newPeriod)
 
+
 class TaskBaseClass(object):
     def __init__(self, TaskName, TaskRate, InputDelay=0, FirstStart=0):
         self.Name = TaskName
@@ -87,8 +93,9 @@ class TaskBaseClass(object):
     def resetTask(self, callTime):
         self.TaskData.ResetTaskList(callTime)
 
+
 class PythonModelClass(object):
-    def __init__(self, modelName, modelActive = True, modelPriority = -1):
+    def __init__(self, modelName, modelActive=True, modelPriority=-1):
         ## The modelName is a unique identifier (unique to simulation) passed
         # in to a class.
         self.modelName = modelName
@@ -128,40 +135,46 @@ class PythonModelClass(object):
     def updateState(self, currentTime):
         return
 
+
 class PythonTaskClass(object):
-    def __init__(self, taskName, taskRate, taskActive = True, taskPriority=-1):
+    def __init__(self, taskName, taskRate, taskActive=True, taskPriority=-1):
         self.name = taskName
         self.rate = taskRate
         self.priority = taskPriority
         self.modelList = []
         self.nextTaskTime = 0
         self.taskActive = taskActive
+
     def selfInitTask(self):
         for model in self.modelList:
             model.selfInit()
+
     def crossInitTask(self):
         for model in self.modelList:
             model.crossInit()
+
     def resetTask(self, currentTime):
         for model in self.modelList:
             model.reset(currentTime)
+
     def addModelToTask(self, newModel, priority=None):
         if priority is not None:
             newModel.modelPriority = priority
-        i=0
+        i = 0
         for model in self.modelList:
-            if(newModel.modelPriority > model.modelPriority):
+            if (newModel.modelPriority > model.modelPriority):
                 self.modelList.insert(i, newModel)
                 return
-            i+=1
+            i += 1
         self.modelList.append(newModel)
 
     def executeModelList(self, currentTime):
         self.nextTaskTime = currentTime + self.rate
-        if(self.taskActive != True):
+        if (self.taskActive != True):
             return
         for model in self.modelList:
             model.updateState(currentTime)
+
 
 class PythonProcessClass(ProcessBaseClass):
     def __init__(self, procName, priority=-1):
@@ -171,57 +184,70 @@ class PythonProcessClass(ProcessBaseClass):
         self.nextTaskTime = 0
         self.pyProcPriority = priority
         self.intRefs = []
+
     def nextCallTime(self):
         return self.nextTaskTime
+
     def scheduleTask(self, newTask):
         for i in range(len(self.executionOrder)):
             tmpTask = self.executionOrder[i]
-            if(newTask.nextTaskTime < tmpTask.nextTaskTime or
-                newTask.nextTaskTime == tmpTask.nextTaskTime and \
-                newTask.priority > tmpTask.priority):
+            if (newTask.nextTaskTime < tmpTask.nextTaskTime or
+                    newTask.nextTaskTime == tmpTask.nextTaskTime and \
+                    newTask.priority > tmpTask.priority):
                 self.executionOrder.insert(i, newTask)
                 return
         self.executionOrder.append(newTask)
 
-    def createPythonTask(self, newTaskName, taskRate, taskActive = True, taskPriority=-1):
+    def createPythonTask(self, newTaskName, taskRate, taskActive=True, taskPriority=-1):
         self.taskList.append(PythonTaskClass(newTaskName, taskRate, taskActive, taskPriority))
+
     def addPythonTask(self, newPyTask):
         self.taskList.append(newPyTask)
+
     def addModelToTask(self, taskName, newModel, priority=None):
         for task in self.taskList:
-            if(task.name == taskName):
+            if (task.name == taskName):
                 task.addModelToTask(newModel, priority)
                 return
         print "Attempted to add model: " + newModel.modelName
         print "to non-existent task: " + taskName
+
     def selfInitProcess(self):
         self.processData.selectProcess()
+
+        if not self.taskList:
+            return
+
         for task in self.taskList:
             task.selfInitTask()
         self.nextTaskTime = 0
         self.scheduleTask(self.taskList[-1])
+
     def crossInitProcess(self):
         self.processData.selectProcess()
         for task in self.taskList:
             task.crossInitTask()
+
     def resetProcess(self, currentTime):
         self.executionOrder = []
         self.processData.selectProcess()
         for task in self.taskList:
             task.resetTask(currentTime)
             self.scheduleTask(task)
+
     def executeTaskList(self, currentTime):
-        if(len(self.executionOrder) == 0):
+        if (len(self.executionOrder) == 0):
             return
         taskNext = self.executionOrder[0]
         for intCurr in self.intRefs:
             intCurr.routeInputs(self.processData.messageBuffer)
         self.processData.selectProcess()
-        while(taskNext.nextTaskTime <= currentTime):
+        while (taskNext.nextTaskTime <= currentTime):
             taskNext.executeModelList(currentTime)
             self.executionOrder.pop(0)
             self.scheduleTask(taskNext)
             taskNext = self.executionOrder[0]
         self.nextTaskTime = taskNext.nextTaskTime
+
     def addInterfaceRef(self, newInt):
         self.intRefs.append(newInt)

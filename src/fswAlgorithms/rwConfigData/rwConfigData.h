@@ -47,16 +47,16 @@ typedef struct {
     char vehConfigInMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the vehicle config data input message*/
     int32_t vehConfigInMsgID;                            /*!< [-] ID for the vehicle config data incoming message */
 
-}rwConfigData;
+}rwConfigData_Config;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     
-    void SelfInit_rwConfigData(rwConfigData*ConfigData, uint64_t moduleID);
-    void CrossInit_rwConfigData(rwConfigData *ConfigData, uint64_t moduleID);
-    void Update_rwConfigData(rwConfigData *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_rwConfigData(rwConfigData *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_rwConfigData(rwConfigData_Config*ConfigData, uint64_t moduleID);
+    void CrossInit_rwConfigData(rwConfigData_Config *ConfigData, uint64_t moduleID);
+    void Update_rwConfigData(rwConfigData_Config *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void Reset_rwConfigData(rwConfigData_Config *ConfigData, uint64_t callTime, uint64_t moduleID);
     
 #ifdef __cplusplus
 }
