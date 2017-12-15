@@ -17,8 +17,6 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-# import pytest
-import sys, os, inspect
 
 #
 # Bore Angle Calculation Test
@@ -30,15 +28,8 @@ import sys, os, inspect
 # Creation Date:  Jun. 30, 2017
 #
 
-
-
-
-
-
-
 # @cond DOXYGEN_IGNORE
 from Basilisk.utilities import SimulationBaseClass
-import numpy
 from Basilisk.simulation import bore_ang_calc
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics
@@ -46,11 +37,11 @@ from Basilisk.simulation import spice_interface
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import unitTestSupport
 import pytest
+import numpy
+import os
 # @endcond
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('simulation')
+path = os.path.dirname(os.path.abspath(__file__))
 
 class ResultsStore:
     def __init__(self):
@@ -70,7 +61,6 @@ def testFixture():
     listRes = ResultsStore()
     yield listRes
     listRes.texSnippet()
-
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -101,7 +91,6 @@ def test_bore_ang_calc(testFixture, show_plots, boresightLoc, eulerLoc):
     # each test method requires a single assert method to be called
     [testResults, testMessage] = bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc)
     assert testResults < 1, testMessage
-
 
 # Run unit test
 def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
@@ -271,7 +260,6 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
     # each test method requires a single assert method to be called
     #   this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
-
 
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script

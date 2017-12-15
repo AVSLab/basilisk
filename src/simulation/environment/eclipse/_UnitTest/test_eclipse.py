@@ -30,9 +30,7 @@
 #
 
 import pytest
-import numpy
 import os
-import inspect
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 from Basilisk.simulation import spacecraftPlus
@@ -45,9 +43,7 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk import __path__
 bskPath = __path__[0]
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-
+path = os.path.dirname(os.path.abspath(__file__))
 
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
