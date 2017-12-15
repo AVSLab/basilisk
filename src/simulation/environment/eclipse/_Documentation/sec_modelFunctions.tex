@@ -1,0 +1,37 @@
+\section{Model Functions}
+This module contains several functions in order to obtain state data and describe eclipse characteristics. These functions are explained below.
+
+\begin{itemize}
+	\item \textbf{Interface: Planet States}
+	The code receives planet state data through Spice when a time and planet name are input as Spice objects through the Basilisk messaging system.
+	\item \textbf{Interface: Sun States}
+	Like the previous function, the code receives sun state data through Spice when given a time, input as a Spice object through the Basilisk messaging system.
+	\item \textbf{Interface: Spacecraft States}
+	The code receives spacecraft state data through Basilisk's spacecraftPlus messaging system.
+	\item \textbf{Find Closest Planet}
+	If given multiple planets, the code iterates through the planet list and determines which is the closest to the spacecraft.
+	\item \textbf{Planet Radius}
+	The code specifies the equatorial radius of a planet when a planet name is input as a Spice object.
+	\item \textbf{Eclipse Type}
+	The code uses calculations from Montenbruck and Gill's \textit{Satellite Orbits Models, Methods and Applications} text \cite{bib:1}. to define shadow cone dimensions. This provides the means of determining the type of eclipse.
+	\item \textbf{Percent Shadow}
+	The code calculates and outputs the shadow factor of the eclipse, where 0.0 indicates a total eclipse and 1.0 represents no eclipse.
+	
+\end{itemize}
+
+\section{Model Assumptions and Limitations}
+\begin{itemize}
+	\item \textbf{Occultation Model:} Since the apparent radius of the sun is relatively small, the occultation can be modeled as overlapping disks.
+	\item \textbf{No Eclipse:} If the spacecraft is closer to the sun than the planet, an eclipse is not possible.
+	\item \textbf{Planets:} The allowed planets for use as occulting bodies are Mercury, Venus, Earth, and Mars.
+	\item \textbf{Sun and Planet States:} The data defining the sun and planet states is obtained through an external Spice package. Errors may be derived from this package but will be small.
+	\item \textbf{Spacecraft States:} Spacecraft states must be input as Cartesian vectors. In the test, a conversion from orbital elements is performed.
+	\item \textbf{Apparent Radii:}
+	When determining the type of eclipse, assume that the apparent separation $c \geq 0$.
+	\begin{itemize}
+		\item \underline{Total Eclipse ($c<b-a$)}:
+		Assume the apparent radius of the planet is greater than that of the sun ($b>a$).
+		\item \underline{Annular Eclipse ($c<a-b$)}:
+		Assume the apparent radius of the sun is greater than that of the planet ($a>b$).
+	\end{itemize}
+\end{itemize}

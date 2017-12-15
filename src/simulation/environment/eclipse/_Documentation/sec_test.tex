@@ -1,0 +1,87 @@
+\section{Test Description and Success Criteria}
+The unit test, test\_eclipse.py,  validates the internal aspects of the Basilisk eclipse module by comparing simulated output with expected output. It validates the computation of a shadow factor for total eclipse, partial eclipse,annular eclipse, and no eclipse scenarios. The test is designed to analyze one type at a time for both Earth and Mars and is then repeated for all three.
+\subsection{Sun States}
+This test begins by specifying a UTC time through the use of a Spice object. This, along with the implementation of Spice kernels, allows the states of the sun and any desired planets to be determined. One time is provided, fixing the sun and planet states so the spacecraft states may be varied. After specifying these, the spacecraft states are set and the three eclipse types are considered.
+\subsection{Spacecraft States}
+Earth is set as the zero base for all eclipse types to test it as the occulting body. For full, partial, and no eclipse cases, orbital elements describing the spacecraft states are then converted to Cartesian vectors. These orbital elements vary for each eclipse type since the Sun and planet states are fixed. The conversion is made using the orbitalMotion \textit{elem2rv} function, where the inputs are six orbital elements (a, e, i, $\Omega$, $\omega$, f) and the outputs are Cartesian position and velocity vectors. For the annular eclipse case, the conversion is avoided and a Cartesian position vector is initially provided instead. The vectors are then passed into spacecraftPlus and, subsequently, the eclipse module through the Basilisk messaging system. 
+
+Testing the no eclipse case with Mars as the occulting body is the same as the Earth no eclipse test, except Mars is set as the zero base. The Mars full, partial, and annular eclipse cases, however, are like the Earth annular case where Cartesian vectors are, instead, the initial inputs. Since the test is performed as a single step process, the velocity is not necessarily needed as an input, so only a position vector is provided for these cases. These inputs are more clearly illustrated in the Test Parameters section.
+\subsection{Planet States}
+Once the spacecraft states are defined, the planet names are provided as Spice objects. Since the module determines the closest planet to the spacecraft, multiple names may be input and the chosen one depends purely on the position of the spacecraft. For this test, only Earth and Mars were used as occulting bodies, since no appreciable difference in the algorithm presents itself when testing various planets.
+\subsection{Comparison}
+The shadow factor obtained through the module is compared to the expected result, which is either trivial or calculated, depending on the eclipse type. Full eclipse and no eclipse shadow factors are compared without the need for computation, since they are just 0.0 and 1.0, respectively. The partial and annular eclipse shadow factors, however, vary between 0.0 and 1.0, based on the cone dimensions, and are calculated using MATLAB and Spice data.
+
+\section{Test Parameters}
+The previous description only briefly mentions the input parameters required to perform the tests on this module, so this section further details the parameters set by the user and built into the unit test.
+\begin{enumerate}
+	\item \underline{Eclipse Condition Input}:\\
+	One of the two user-defined inputs is the eclipse identifier, appropriately named \textit{eclipseCondition}. This specifies the eclipse type and can be set, via string inputs, to either \textit{full}, \textit{partial}, \textit{annular}, or \textit{none} for the full, partial, annular, and no eclipse cases. This input changes the spacecraft state parameters to position the spacecraft in the desired eclipse.
+	\item \underline{Planet Input}:\\
+	The second user input is \textit{planet}, which allows the user to test either Earth or Mars as the occulting body. Only these two planets are tested since there is no appreciable difference in the eclipse algorithm when varying the planet. This input changes the zero base to reference the chosen planet and the spacecraft state parameters to position the spacecraft in the desired eclipse.
+	\item \underline{Zero Base}:\\
+	The zero base references either Earth or Mars depending on the planet input.
+	\item \underline{Orbital Elements}:\\
+	Orbital elements describe the characteristics of the orbit plane and are used in this module to define the states of the spacecraft. They consist of the semimajor axis $a$ in units of kilometers, eccentricity $e$, inclination $i$, ascending node $\Omega$, argument of pariapses $\omega$, and the true anomaly $f$. The Euler angles and true anomaly are all in units of degrees but are converted to radians in the test. Using orbitalMotion, all of the elements are converted to Cartesian position and velocity vectors that are then translated from kilometers to meters. The table below shows the values used when testing full, partial, and no eclipse cases for Earth as well as the no eclipse case for Mars.
+	\begin{table}[H]
+		\caption{Orbital Element Values for Each Eclipse Condition}\label{tab:OrbElem}
+		\centering \fontsize{10}{10}\selectfont
+		\begin{tabular}{c|c|c|c}
+			\hline \textbf{Element} & \textbf{Full Eclipse} & \textbf{Partial Eclipse} & \textbf{No Eclipse}\\ \hline $a$ & $6878.1366$ km & $6878.1366$ km & $9959991.68982$ km\\ $e$ & $0.00001$ & $0.00001$ & $0.00001$\\
+			$i$ & $5^\circ$& $5^\circ$& $5^\circ$\\
+			$\Omega$ & $48.2^\circ$& $48.2^\circ$& $48.2^\circ$\\
+			$\omega$ & 0 & 0 & 0\\
+			$f$ & $173^\circ$& $107.5^\circ$ & $107.5^\circ$\\
+			\hline
+		\end{tabular}
+	\end{table}
+	The orbital elements remain the same when testing the no eclipse case for Earth and Mars, but the zero base is changed to reference the appropriate planet. The parameters used when testing full, partial, and annular eclipse cases for Mars as well as the annular case for Earth are shown under Cartesian Vectors.
+	\item \underline{Cartesian Vectors}:\\
+	Cartesian position vectors are used as inputs when testing the full, partial, and annular eclipse cases for Mars as well as the annular case for Earth. Velocity vectors are not needed since this test is performed as a single step process and eclipses at a single point in time depend only on the position of the celestial bodies at that time. The vectors are shown in the Table \ref{tab:CartVec} below. The parameters for the no eclipse case were given previously under Orbital Elements.
+	\begin{table}[H]
+		\caption{Position Vectors for Each Eclipse Condition}\label{tab:CartVec}
+		\centering \fontsize{10}{10}\selectfont
+		\begin{tabular}{c|c|c|c}
+			\hline \textbf{Eclipse Type} & \textbf{X} & \textbf{Y} & \textbf{Z}\\ \hline Full Eclipse & $-2930233.559$ m & $2567609.100$ m & $41384.233$ m\\ Partial Eclipse & $-6050166.455$ m & $2813822.447$ m& $571725.565$ m\\ Annular Eclipse (Mars) & $-427424601.171$ km & $541312532.797$ km & $259820030.623$ km\\ Annular Eclipse (Earth) & $-326716535.629$ km & $-287302983.139$ km & $-124542549.301$ km\\
+			\hline
+		\end{tabular}
+	\end{table}
+	\item \underline{Standard Gravitational Parameter}:\\
+	The gravitational parameter $\mu$ is necessary for converting between orbital elements and Cartesian vectors. It is the product of a body's gravitational constant and mass, specifying the attracting body in units of $\frac{km^3}{s^2}$. This test only uses the conversion when considering Earth as the occulting body, so only Earth's gravitational parameter is given below. The value is obtained through orbitalMotion.
+	\begin{equation}
+		\mu_{Earth} = GM_{Earth}=398600.436\quad \frac{km^3}{s^2}
+	\end{equation}
+	\item \underline{Planet Names}\\
+	The eclipse module accepts and will analyze multiple planets at a time, so to indicate which planets are of interest, the names must be input. These are input as Spice objects of type string and can either be \textit{venus}, \textit{earth}, or \textit{mars barycenter}. Spice uses this information and the time input to provide state data, which is then used to determine the closest planet. The closest planet is the only one further evaluated for potential eclipse conditions.
+	\item \underline{Time}:\\
+	In order to specify the states of the planets and sun, time is a neccessary input. Only one time is used for every test, fixing the sun and planet states and varying the states of the spacecraft. For this test, the input \textit{2021 MAY 04 07:47:49.965 (UTC)} is used, where the time is represented in UTC form.
+	\item \underline{Spice Kernels}\\
+	Spice information is gathered from a collection of kernels, specfically SPK, LSK, and PCK files. The binary SPK used is \textit{de430.bsp}, which provides ephemeris data. The LSK file is \textit{naif0011.tls}, which offers leapsecond information. For reference frame orientation, two PCK files are given. These are \textit{de-403-masses.tpc} and \textit{pck00010.tpc}.
+\end{enumerate}	
+\begin{table}[H]
+	\caption{Error Tolerance of Shadow Factor Comparison-Note: Absolute Tolerance is abs(truth-value)}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{c|c}
+		\hline \textbf{Test} & \textbf{Tolerated Error}\\ \hline Full Eclipse & \input{AutoTex/fullerror}\\ Partial Eclipse & \input{AutoTex/partialerror}\\
+		Annular Eclipse & \input{AutoTex/annularerror}\\
+		No Eclipse& \input{AutoTex/noneerror}\\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{Test Results}
+
+All checks within test\_eclipse.py passed as expected. Table \ref{tab:TestResults} shows the results below.
+\begin{table}[H]
+	\caption{Test Results}
+	\label{tab:TestResults}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{c|c|c|c}
+		\hline \textbf{Test} & \textbf{Earth Results} & \textbf{Mars Results} & Notes\\
+		\hline 
+		Full Eclipse & \input{AutoTex/earthfullPassedText} &\input{AutoTex/marsfullPassedText}    	   &\input{AutoTex/earthfullPassFailMsg} \input{AutoTex/marsfullPassFailMsg}\\
+		Partial Eclipse & \input{AutoTex/earthpartialPassedText} &\input{AutoTex/marspartialPassedText} &\input{AutoTex/earthpartialPassFailMsg} \input{AutoTex/marspartialPassFailMsg}\\
+		Annular Eclipse & \input{AutoTex/earthannularPassedText} & \input{AutoTex/marsannularPassedText} & \input{AutoTex/earthannularPassFailMsg} \input{AutoTex/marsannularPassFailMsg}\\	
+		No Eclipse & \input{AutoTex/earthnonePassedText} &\input{AutoTex/marsnonePassedText}  	   &\input{AutoTex/earthnonePassFailMsg} \input{AutoTex/marsnonePassFailMsg}\\
+		\hline
+	\end{tabular}
+\end{table}
