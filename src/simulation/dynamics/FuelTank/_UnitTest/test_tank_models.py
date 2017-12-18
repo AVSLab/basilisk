@@ -62,7 +62,7 @@ def test_tankModelConstantVolume(show_plots):
     testMessages = []  # create empty list to store test log messages
     
     model = fuelTank.cvar.FuelTankModelConstantVolume
-    model.propMassInit = 10;
+    model.propMassInit = 10
     model.r_TcT_TInit = [[1],[1],[1]]
     model.radiusTankInit = 5
     
