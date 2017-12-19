@@ -79,8 +79,8 @@ public:
     Eigen::Vector3d accelScale;         //! (-) scale factor for acceleration axes
     Eigen::Vector3d gyroScale;          //! (-) scale factors for acceleration axes
     
-    Discretize *aDisc;                  //!  (-) instance of discretization utility for linear acceleration
-    Discretize *oDisc;                  //!  (-) isntance of idscretization utility for angular rate
+    Discretize aDisc;                  //!  (-) instance of discretization utility for linear acceleration
+    Discretize oDisc;                  //!  (-) isntance of idscretization utility for angular rate
     
 private:
     int64_t InputStateID;               /// -- Connect to input time message
@@ -89,8 +89,8 @@ private:
     uint64_t numStates;                 /// -- Number of States for Gauss Markov Models
     SCPlusStatesSimMsg StatePrevious;   /// -- Previous state to delta in IMU
     SCPlusStatesSimMsg StateCurrent;    /// -- Current SSBI-relative state
-    GaussMarkov *errorModelAccel;       ///!< [-] Gauss-markov error states
-    GaussMarkov *errorModelGyro;        ///!< [-] Gauss-markov error states
+    GaussMarkov errorModelAccel;       ///!< [-] Gauss-markov error states
+    GaussMarkov errorModelGyro;        ///!< [-] Gauss-markov error states
     
     Eigen::MRPd previous_sigma_BN;              /// -- sigma_BN from the previous spacecraft message
     Eigen::MRPd current_sigma_BN;               /// -- sigma_BN from the most recent spacecraft message
