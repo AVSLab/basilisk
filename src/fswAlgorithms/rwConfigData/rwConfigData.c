@@ -38,7 +38,7 @@
  @return void
  @param ConfigData The configuration data associated with this module
  */
-void SelfInit_rwConfigData(rwConfigData *ConfigData, uint64_t moduleID)
+void SelfInit_rwConfigData(rwConfigData_Config *ConfigData, uint64_t moduleID)
 {
     
     /*! Begin method steps */
@@ -53,7 +53,7 @@ void SelfInit_rwConfigData(rwConfigData *ConfigData, uint64_t moduleID)
  @return void
  @param ConfigData The configuration data associated with this module
  */
-void CrossInit_rwConfigData(rwConfigData *ConfigData, uint64_t moduleID)
+void CrossInit_rwConfigData(rwConfigData_Config *ConfigData, uint64_t moduleID)
 {
     /*! - Read vehicle config data, convert RW info from S to B and write it in the output mesage */
     /*! - NOTE: it is important that this initialization takes place in CrossInit and not Reset.
@@ -95,7 +95,7 @@ void CrossInit_rwConfigData(rwConfigData *ConfigData, uint64_t moduleID)
  @return void
  @param ConfigData The configuration data associated with the module
  */
-void Reset_rwConfigData(rwConfigData *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Reset_rwConfigData(rwConfigData_Config *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     
 }
@@ -105,7 +105,7 @@ void Reset_rwConfigData(rwConfigData *ConfigData, uint64_t callTime, uint64_t mo
  @param ConfigData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_rwConfigData(rwConfigData *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Update_rwConfigData(rwConfigData_Config *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     /*! Nothing done in this method.  Make sure this is still true!*/
     return;

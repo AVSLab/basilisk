@@ -42,11 +42,11 @@ ImuSensor::ImuSensor()
     memset(&this->StatePrevious, 0x0, sizeof(SCPlusStatesSimMsg));
     memset(&this->StateCurrent, 0x0, sizeof(SCPlusStatesSimMsg));
     
-    this->errorModelGyro =  new GaussMarkov(this->numStates);
-    this->errorModelAccel = new GaussMarkov(this->numStates);
+    this->errorModelGyro =  GaussMarkov(this->numStates);
+    this->errorModelAccel = GaussMarkov(this->numStates);
     
-    this->aDisc = new Discretize(this->numStates);
-    this->oDisc = new Discretize(this->numStates);
+    this->aDisc = Discretize(this->numStates);
+    this->oDisc = Discretize(this->numStates);
     
     
     
@@ -91,10 +91,6 @@ void ImuSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll)
 
 ImuSensor::~ImuSensor()
 {
-    delete this->errorModelGyro;
-    delete this->errorModelAccel;
-    delete this->aDisc;
-    delete this->oDisc;
     return;
 }
 
@@ -114,9 +110,9 @@ void ImuSensor::SelfInit()
         std::cerr << "  Quitting."<<std::endl;
         return;
 	}
-	this->errorModelAccel->setNoiseMatrix(this->PMatrixAccel);
-	this->errorModelAccel->setRNGSeed(this->RNGSeed);
-	this->errorModelAccel->setUpperBounds(this->walkBoundsAccel);
+	this->errorModelAccel.setNoiseMatrix(this->PMatrixAccel);
+	this->errorModelAccel.setRNGSeed(this->RNGSeed);
+	this->errorModelAccel.setUpperBounds(this->walkBoundsAccel);
 
     this->AMatrixGyro.setIdentity(this->numStates, this->numStates);
 
@@ -127,9 +123,9 @@ void ImuSensor::SelfInit()
         std::cerr << "  Quitting."<<std::endl;
         return;
 	}
-	this->errorModelGyro->setNoiseMatrix(this->PMatrixGyro);
-	this->errorModelGyro->setRNGSeed(this->RNGSeed);
-	this->errorModelGyro->setUpperBounds(this->walkBoundsGyro);
+	this->errorModelGyro.setNoiseMatrix(this->PMatrixGyro);
+	this->errorModelGyro.setRNGSeed(this->RNGSeed);
+	this->errorModelGyro.setUpperBounds(this->walkBoundsGyro);
 
     return;
 }
@@ -183,22 +179,22 @@ void ImuSensor::writeOutputMessages(uint64_t Clock)
 
 void ImuSensor::setLSBs(double LSBa, double LSBo)
 {
-    this->aDisc->setLSB(Eigen::Vector3d(LSBa, LSBa, LSBa));
-    this->oDisc->setLSB(Eigen::Vector3d(LSBo, LSBo, LSBo));
+    this->aDisc.setLSB(Eigen::Vector3d(LSBa, LSBa, LSBa));
+    this->oDisc.setLSB(Eigen::Vector3d(LSBo, LSBo, LSBo));
     return;
     
 }
 
 void ImuSensor::setCarryError(bool aCarry, bool oCarry)
 {
-    this->aDisc->setCarryError(aCarry);
-    this->oDisc->setCarryError(oCarry);
+    this->aDisc.setCarryError(aCarry);
+    this->oDisc.setCarryError(oCarry);
     return;
 }
 void ImuSensor::setRoundDirection(roundDirection_t aRound, roundDirection_t oRound){
     
-    this->aDisc->setRoundDirection(aRound);
-    this->oDisc->setRoundDirection(oRound);
+    this->aDisc.setRoundDirection(aRound);
+    this->oDisc.setRoundDirection(oRound);
     
     return;
 }
@@ -208,16 +204,16 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
 
     double dt = (CurrentTime - this->PreviousTime)*1.0E-9;
     
-    if(this->aDisc->LSB.any() > 0.0) //If aLSB has been set.
+    if(this->aDisc.LSB.any() > 0.0) //If aLSB has been set.
     {
-        this->accel_SN_P_out = this->aDisc->discretize(this->accel_SN_P_out);
-        this->DV_SN_P_out -= this->aDisc->getDiscretizationErrors() * dt;
+        this->accel_SN_P_out = this->aDisc.discretize(this->accel_SN_P_out);
+        this->DV_SN_P_out -= this->aDisc.getDiscretizationErrors() * dt;
     }
 
-    if(this->oDisc->LSB.any() > 0.0) // If oLSB has been set.
+    if(this->oDisc.LSB.any() > 0.0) // If oLSB has been set.
     {
-        this->omega_PN_P_out = this->oDisc->discretize(this->omega_PN_P_out);
-        this->prv_PN_out -= this->oDisc->getDiscretizationErrors() * dt;
+        this->omega_PN_P_out = this->oDisc.discretize(this->omega_PN_P_out);
+        this->prv_PN_out -= this->oDisc.getDiscretizationErrors() * dt;
     }
     
     return;
@@ -253,12 +249,12 @@ void ImuSensor::applySensorErrors(uint64_t CurrentTime)
 
 void ImuSensor::computeSensorErrors()
 {
-	this->errorModelAccel->setPropMatrix(this->AMatrixAccel);
-	this->errorModelAccel->computeNextState();
-	this->navErrorsAccel = this->errorModelAccel->getCurrentState();
-	this->errorModelGyro->setPropMatrix(this->AMatrixGyro);
-	this->errorModelGyro->computeNextState();
-	this->navErrorsGyro = this->errorModelGyro->getCurrentState();
+	this->errorModelAccel.setPropMatrix(this->AMatrixAccel);
+	this->errorModelAccel.computeNextState();
+	this->navErrorsAccel = this->errorModelAccel.getCurrentState();
+	this->errorModelGyro.setPropMatrix(this->AMatrixGyro);
+	this->errorModelGyro.computeNextState();
+	this->navErrorsGyro = this->errorModelGyro.getCurrentState();
 
     return;
 }

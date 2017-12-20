@@ -31,7 +31,7 @@
 %constant void Reset_rwConfigData(void*, uint64_t, uint64_t);
 %ignore Reset_rwConfigData;
 GEN_SIZEOF(RWArrayConfigFswMsg);
-GEN_SIZEOF(rwConfigData);
+GEN_SIZEOF(rwConfigData_Config);
 GEN_SIZEOF(VehicleConfigFswMsg);
 %include "rwConfigData.h"
 %include "../fswMessages/vehicleConfigFswMsg.h"
