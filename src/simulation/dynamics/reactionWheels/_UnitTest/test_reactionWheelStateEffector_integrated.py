@@ -144,11 +144,13 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
             rwCopy1.cViscous = 0.001
             rwCopy1.omegaLimitCycle = 0.001
             rwCopy1.Omega = 15.
+            rwCopy1.gsHat_B = [[np.sqrt(3)/3], [np.sqrt(3)/3], [np.sqrt(3)/3]]
+            rwCopy1.rWB_B = [[0.5],[-0.5],[0.5]]
             rwCopy2 = rwFactory.create(
                 'Honeywell_HR16'
-                ,[0,0,1]                # gsHat_B
+                ,[np.sqrt(3)/3,np.sqrt(3)/3,np.sqrt(3)/3]               # gsHat_B
                 ,Omega = -initialWheelSpeed           # RPM
-                ,rWB_B = [0.0,0.,0.]    # m
+                ,rWB_B = [-0.5,0.5,-0.5]    # m
                 ,maxMomentum = varMaxMomentum
                 ,RWModel= varRWModel
                 )

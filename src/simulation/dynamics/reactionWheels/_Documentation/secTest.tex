@@ -148,7 +148,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 		U\_s & Static Imbalance & 4.8E-6 & kg-m \\
 		U\_d & Dynamic Imbalance & 15.4E-7 & kg-m$^2$ \\
 		gsHat\_B & Spin Axis in $\cal{B}$ frame & $\begin{bmatrix}
-		1.0 & 0.0 & 0.0 \end{bmatrix}^T$ & 1 \\
+		1.0 & 0.0 & 0.0 \end{bmatrix}^T$ & - \\
 		rWB\_B & Location of Wheel in $\cal{B}$ frame & $\begin{bmatrix}
 		0.1 & 0.0 & 0.0 \end{bmatrix}^T$ & m \\
 		\hline
@@ -168,7 +168,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 		U\_s & Static Imbalance & 4.8E-6 & kg-m \\
 		U\_d & Dynamic Imbalance & 15.4E-7 & kg-m$^2$ \\
 		gsHat\_B & Spin Axis in $\cal{B}$ frame & $\begin{bmatrix}
-		0.0 & 1.0 & 0.0 \end{bmatrix}^T$ & 1 \\
+		0.0 & 1.0 & 0.0 \end{bmatrix}^T$ & - \\
 		rWB\_B & Location of Wheel in $\cal{B}$ frame & $\begin{bmatrix}
 		0.0 & 0.1 & 0.0 \end{bmatrix}^T$ & m \\
 		\hline
@@ -188,9 +188,45 @@ Since this is an integrated test, the inputs to the test are the physical parame
 		U\_s & Static Imbalance & 4.8E-6 & kg-m \\
 		U\_d & Dynamic Imbalance & 15.4E-7 & kg-m$^2$ \\
 		gsHat\_B & Spin Axis in $\cal{B}$ frame & $\begin{bmatrix}
-		0.0 & 0.0 & 1.0 \end{bmatrix}^T$ & 1 \\
+		0.0 & 0.0 & 1.0 \end{bmatrix}^T$ & - \\
 		rWB\_B & Location of Wheel in $\cal{B}$ frame & $\begin{bmatrix}
 		0.0 & 0.0 & 0.1 \end{bmatrix}^T$ & m \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+	\caption{Reaction wheel 1 parameters for friction tests}
+	\label{tab:rwFriction}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c | c | c } % Column formatting, 
+		\hline
+		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
+		\hline
+		Js  & Spin Axis Inertia & 0.159 & kg-m$^2$ \\
+		mass & mass & 12.0 & kg \\
+		gsHat\_B & Spin Axis in $\cal{B}$ frame & $\begin{bmatrix}
+		\frac{\sqrt{3}}{3} & \frac{\sqrt{3}}{3} & \frac{\sqrt{3}}{3} \end{bmatrix}^T$ & - \\
+		rWB\_B & Location of Wheel in $\cal{B}$ frame & $\begin{bmatrix}
+		0.5 & -0.5 & 0.5 \end{bmatrix}^T$ & m \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+	\caption{Reaction wheel 2 parameters for friction tests}
+	\label{tab:rwFriction2}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c | c | c } % Column formatting, 
+		\hline
+		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
+		\hline
+		Js  & Spin Axis Inertia & 0.159 & kg-m$^2$ \\
+		mass & mass & 12.0 & kg \\
+		gsHat\_B & Spin Axis in $\cal{B}$ frame & $\begin{bmatrix}
+		\frac{\sqrt{3}}{3} & \frac{\sqrt{3}}{3} & \frac{\sqrt{3}}{3} \end{bmatrix}^T$ & - \\
+		rWB\_B & Location of Wheel in $\cal{B}$ frame & $\begin{bmatrix}
+		-0.5 & 0.5 & -0.5 \end{bmatrix}^T$ & m \\
 		\hline
 	\end{tabular}
 \end{table}
