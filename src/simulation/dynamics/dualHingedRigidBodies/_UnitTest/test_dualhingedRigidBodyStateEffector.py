@@ -32,18 +32,24 @@ splitPath = path.split('simulation')
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import dualHingedRigidBodyStateEffector
+from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import macros
+
+@pytest.mark.parametrize("useFlag, testCase", [
+    (False,'NoGravity'),
+    (False,'Gravity')
+])
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def spacecraftPlusAllTest(show_plots):
-    [testResults, testMessage] = test_hubPropagate(show_plots)
+def test_dualHingedRigidBody(show_plots,useFlag,testCase):
+    [testResults, testMessage] = dualHingedRigidBodyTest(show_plots,useFlag,testCase)
     assert testResults < 1, testMessage
 
-def test_hubPropagate(show_plots):
+def dualHingedRigidBodyTest(show_plots,useFlag,testCase):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -136,6 +142,16 @@ def test_hubPropagate(show_plots):
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
 
+    if testCase == 'Gravity':
+        unitTestSim.earthGravBody = gravityEffector.GravBodyData()
+        unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
+        unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
+        unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
+        unitTestSim.earthGravBody.isCentralBody = True
+        unitTestSim.earthGravBody.useSphericalHarmParams = False
+
+        scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
+
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
     
     unitTestSim.InitializeSimulation()
@@ -205,4 +221,4 @@ def test_hubPropagate(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    spacecraftPlusAllTest(True)
+    dualHingedRigidBodyTest(True,False,'NoGravity')
