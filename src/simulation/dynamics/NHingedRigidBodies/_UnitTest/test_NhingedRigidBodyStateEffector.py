@@ -19,8 +19,7 @@
 '''
 import sys, os, inspect
 import numpy
-import pytest
-import math
+import matplotlib.pyplot as plt
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -28,12 +27,11 @@ splitPath = path.split('SimCode')
 sys.path.append(splitPath[0] + '/modules')
 sys.path.append(splitPath[0] + '/PythonModules')
 
-import SimulationBaseClass
-import unitTestSupport  # general support file with common unit test functions
-import matplotlib.pyplot as plt
-import spacecraftPlus
-import NhingedRigidBodyStateEffector
-import macros
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport
+from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import nHingedRigidBodyStateEffector
+from Basilisk.utilities import macros
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -69,10 +67,10 @@ def test_hingedRigidBodyNoGravity(show_plots):
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-    unitTestSim.effector1 = NhingedRigidBodyStateEffector.N_HingedRigidBodyStateEffector()
-    unitTestSim.effector2 = NhingedRigidBodyStateEffector.N_HingedRigidBodyStateEffector()
-    unitTestSim.panel1 = NhingedRigidBodyStateEffector.HingedPanel()
-    unitTestSim.panel2 = NhingedRigidBodyStateEffector.HingedPanel()
+    unitTestSim.effector1 = nHingedRigidBodyStateEffector.NHingedRigidBodyStateEffector()
+    unitTestSim.effector2 = nHingedRigidBodyStateEffector.NHingedRigidBodyStateEffector()
+    unitTestSim.panel1 = nHingedRigidBodyStateEffector.HingedPanel()
+    unitTestSim.panel2 = nHingedRigidBodyStateEffector.HingedPanel()
 
     unitTestSim.effector1.r_HB_B = [[0.5], [0.0], [1.0]]
     unitTestSim.effector1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
@@ -214,24 +212,6 @@ def test_hingedRigidBodyNoGravity(show_plots):
     PlotTitle = "Change In Rotational Energy No Gravity"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
-    plt.figure()
-    plt.clf()
-    plt.plot(vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,1], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,2], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,3])
-    plt.xlabel('time (s)')
-    plt.ylabel('m/s')
-    PlotName = "VelocityOfCenterOfMassNoGravity"
-    PlotTitle = "Velocity Of Center Of Mass No Gravity"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
-
-    plt.figure()
-    plt.clf()
-    plt.plot(vOut_CN_N[:,0]*1e-9, (vOut_CN_N[:,1] - vOut_CN_N[0,1])/vOut_CN_N[0,1], vOut_CN_N[:,0]*1e-9, (vOut_CN_N[:,2] - vOut_CN_N[0,2])/vOut_CN_N[0,2], vOut_CN_N[:,0]*1e-9, (vOut_CN_N[:,3] - vOut_CN_N[0,3])/vOut_CN_N[0,3])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-    PlotName = "ChangeInVelocityOfCenterOfMassNoGravity"
-    PlotTitle = "Change In Velocity Of Center Of Mass No Gravity"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
-
     plt.show(show_plots)
     plt.close("all")
 
@@ -241,29 +221,29 @@ def test_hingedRigidBodyNoGravity(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(finalOrbAngMom[i], initialOrbAngMom_N[i], 3, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test failed orbital angular momentum unit test")
+            testMessages.append("FAILED: N Hinged Rigid Body integrated test failed orbital angular momentum unit test")
 
     for i in range(0, len(initialRotAngMom_N)):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(finalRotAngMom[i], initialRotAngMom_N[i], 3, accuracy):
             testFailCount += 1
             testMessages.append(
-                "FAILED: Hinged Rigid Body integrated test failed rotational angular momentum unit test")
+                "FAILED: N Hinged Rigid Body integrated test failed rotational angular momentum unit test")
 
     for i in range(0, len(initialRotEnergy)):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(finalRotEnergy[i], initialRotEnergy[i], 1, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test failed rotational energy unit test")
+            testMessages.append("FAILED: N Hinged Rigid Body integrated test failed rotational energy unit test")
 
     for i in range(0, len(initialOrbEnergy)):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(finalOrbEnergy[i], initialOrbEnergy[i], 1, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Hinged Rigid Body integrated test failed orbital energy unit test")
+            testMessages.append("FAILED: N Hinged Rigid Body integrated test failed orbital energy unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Hinged Rigid Body integrated test"
+        print "PASSED: " + " N Hinged Rigid Body integrated test"
 
     assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list
