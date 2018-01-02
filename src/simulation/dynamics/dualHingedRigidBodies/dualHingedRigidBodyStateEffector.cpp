@@ -22,7 +22,7 @@
 
 DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
 {
-    //! - zero the mass props and mass prop rates contributions
+    // - zero the mass props and mass prop rates contributions
     this->effProps.mEff = 0.0;
     this->effProps.mEffDot = 0.0;
     this->effProps.rEff_CB_B.setZero();
@@ -32,7 +32,7 @@ DualHingedRigidBodyStateEffector::DualHingedRigidBodyStateEffector()
     this->matrixFDHRB.resize(2, 3);
     this->matrixGDHRB.resize(2, 3);
 
-    //! - Initialize the variables to working values
+    // - Initialize the variables to working values
     this->mass1 = 0.0;
     this->d1 = 1.0;
     this->k1 = 1.0;
@@ -66,7 +66,7 @@ DualHingedRigidBodyStateEffector::~DualHingedRigidBodyStateEffector()
 
 void DualHingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 {
-    //! - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling
+    // - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling
     this->hubVelocity = statesIn.getStateObject("hubVelocity");
     this->hubSigma = statesIn.getStateObject("hubSigma");
     this->hubOmega = statesIn.getStateObject("hubOmega");
@@ -77,13 +77,13 @@ void DualHingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 
 void DualHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
 {
-    //! - Register the states associated with hinged rigid bodies - theta and thetaDot
+    // - Register the states associated with hinged rigid bodies - theta and thetaDot
     this->theta1State = states.registerState(1, 1, this->nameOfTheta1State);
     this->theta1DotState = states.registerState(1, 1, this->nameOfTheta1DotState);
     this->theta2State = states.registerState(1, 1, this->nameOfTheta2State);
     this->theta2DotState = states.registerState(1, 1, this->nameOfTheta2DotState);
 
-    //! - Add this code to allow for non-zero initial conditions, as well hingedRigidBody
+    // - Add this code to allow for non-zero initial conditions, as well hingedRigidBody
     Eigen::MatrixXd theta1InitMatrix(1,1);
     theta1InitMatrix(0,0) = this->theta1Init;
     this->theta1State->setState(theta1InitMatrix);
@@ -102,16 +102,16 @@ void DualHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
 
 void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 {
-    //! - Give the mass of the hinged rigid body to the effProps mass
+    // - Give the mass of the hinged rigid body to the effProps mass
     this->effProps.mEff = this->mass1 + this->mass2;
 
-    //! - find hinged rigid bodies' position with respect to point B
-    //! - First need to grab current states
+    // - find hinged rigid bodies' position with respect to point B
+    // - First need to grab current states
     this->theta1 = this->theta1State->getState()(0, 0);
     this->theta1Dot = this->theta1DotState->getState()(0, 0);
     this->theta2 = this->theta2State->getState()(0, 0);
     this->theta2Dot = this->theta2DotState->getState()(0, 0);
-    //! - Next find the sHat unit vectors
+    // - Next find the sHat unit vectors
     Eigen::Matrix3d dcmS1H1;
     dcmS1H1 = eigenM2(this->theta1);
     this->dcmS1B = dcmS1H1*this->dcmH1B;
@@ -132,25 +132,25 @@ void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
     this->rS2B_B = this->rH1B_B - this->l1*this->sHat11_B - this->d2*this->sHat21_B;
     this->effProps.rEff_CB_B = 1.0/this->effProps.mEff*(this->mass1*this->rS1B_B + this->mass2*this->rS2B_B);
 
-    //! - Find the inertia of the hinged rigid body about point B
-    //! - Define rTildeSB_B
+    // - Find the inertia of the hinged rigid body about point B
+    // - Define rTildeSB_B
     this->rTildeS1B_B = eigenTilde(this->rS1B_B);
     this->rTildeS2B_B = eigenTilde(this->rS2B_B);
     this->effProps.IEffPntB_B = this->dcmS1B.transpose()*this->IPntS1_S1*this->dcmS1B + this->mass1*this->rTildeS1B_B*this->rTildeS1B_B.transpose() + this->dcmS2B.transpose()*this->IPntS2_S2*this->dcmS2B + this->mass2*this->rTildeS2B_B*this->rTildeS2B_B.transpose();
 
-    //! First, find the rPrimeSB_B
+    // First, find the rPrimeSB_B
     this->rPrimeS1B_B = this->d1*this->theta1Dot*this->sHat13_B;
     this->rPrimeS2B_B = this->l1*this->theta1Dot*this->sHat13_B + this->d2*(this->theta1Dot + this->theta2Dot)*this->sHat23_B;
     this->effProps.rEffPrime_CB_B = 1.0/this->effProps.mEff*(this->mass1*this->rPrimeS1B_B + this->mass2*this->rPrimeS2B_B);
 
-    //! - Next find the body time derivative of the inertia about point B
-    //! - Define tilde matrix of rPrimeSB_B
+    // - Next find the body time derivative of the inertia about point B
+    // - Define tilde matrix of rPrimeSB_B
     this->rPrimeTildeS1B_B = eigenTilde(this->rPrimeS1B_B);
     this->rPrimeTildeS2B_B = eigenTilde(this->rPrimeS2B_B);
-    //! - Find body time derivative of IPntS_B
+    // - Find body time derivative of IPntS_B
     this->IS1PrimePntS1_B = this->theta1Dot*(this->IPntS1_S1(2,2) - this->IPntS1_S1(0,0))*(this->sHat11_B*this->sHat13_B.transpose() + this->sHat13_B*this->sHat11_B.transpose());
     this->IS2PrimePntS2_B = (this->theta1Dot+this->theta2Dot)*(this->IPntS2_S2(2,2) - this->IPntS2_S2(0,0))*(this->sHat21_B*this->sHat23_B.transpose() + this->sHat23_B*this->sHat21_B.transpose());
-    //! - Find body time derivative of IPntB_B
+    // - Find body time derivative of IPntB_B
     this->effProps.IEffPrimePntB_B = this->IS1PrimePntS1_B - this->mass1*(this->rPrimeTildeS1B_B*this->rTildeS1B_B + this->rTildeS1B_B*this->rPrimeTildeS1B_B) + this->IS2PrimePntS2_B - this->mass2*(this->rPrimeTildeS2B_B*this->rTildeS2B_B + this->rTildeS2B_B*this->rPrimeTildeS2B_B);
 
     return;
@@ -167,25 +167,25 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Eig
     Eigen::Vector3d g_B;                          /* gravitational acceleration in B frame */
     gLocal_N = *this->g_N;
 
-    //! - Find dcmBN
+    // - Find dcmBN
     sigmaBNLocal = (Eigen::Vector3d )this->hubSigma->getState();
     dcmNB = sigmaBNLocal.toRotationMatrix();
     dcmBN = dcmNB.transpose();
-    //! - Map gravity to body frame
+    // - Map gravity to body frame
     g_B = dcmBN*gLocal_N;
 
-    //! - Define gravity terms
+    // - Define gravity terms
     Eigen::Vector3d gravTorquePan1PntH1 = -this->d1*this->sHat11_B.cross(this->mass1*g_B);
     Eigen::Vector3d gravForcePan2 = this->mass2*g_B;
     Eigen::Vector3d gravTorquePan2PntH2 = -this->d2*this->sHat21_B.cross(this->mass2*g_B);
 
-    //! - Define omegaBN_S
+    // - Define omegaBN_S
     this->omegaBNLoc_B = this->hubOmega->getState();
     this->omegaBN_S1 = this->dcmS1B*this->omegaBNLoc_B;
     this->omegaBN_S2 = this->dcmS2B*this->omegaBNLoc_B;
-    //! - Define omegaTildeBNLoc_B
+    // - Define omegaTildeBNLoc_B
     this->omegaTildeBNLoc_B = eigenTilde(this->omegaBNLoc_B);
-    //! - Define matrices needed for back substitution
+    // - Define matrices needed for back substitution
     //gravityTorquePntH1_B = -this->d1*this->sHat11_B.cross(this->mass1*g_B); //Need to review these equations and implement them - SJKC
     //gravityTorquePntH2_B = -this->d2*this->sHat21_B.cross(this->mass2*g_B); //Need to review these equations and implement them - SJKC
     this->matrixADHRB(0,0) = this->IPntS1_S1(1,1) + this->mass1*this->d1*this->d1 + this->mass2*this->l1*this->l1 + this->mass2*this->l1*this->d2*this->sHat13_B.transpose()*(this->sHat23_B);
@@ -206,14 +206,14 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Eig
     this->vectorVDHRB(1) =  -(this->IPntS2_S2(0,0) - this->IPntS2_S2(2,2))*this->omegaBN_S2(2)*this->omegaBN_S2(0)
                             - this->k2*this->theta2 - this->c2*this->theta2Dot + this->sHat22_B.dot(gravTorquePan2PntH2) - this->mass2*this->d2*this->sHat23_B.transpose()*(2*this->omegaTildeBNLoc_B*this->rPrimeS2B_B + this->omegaTildeBNLoc_B*this->omegaTildeBNLoc_B*this->rS2B_B + this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_B); // still missing torque term. - SJKC
 
-    //! - Start defining them good old contributions - start with translation
-    //! - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper
+    // - Start defining them good old contributions - start with translation
+    // - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper
     matrixAcontr = (this->mass1*this->d1*this->sHat13_B + this->mass2*this->l1*this->sHat13_B + this->mass2*this->d2*this->sHat23_B)*matrixEDHRB.row(0)*this->matrixFDHRB + this->mass2*this->d2*this->sHat23_B*this->matrixEDHRB.row(1)*this->matrixFDHRB;
     matrixBcontr = (this->mass1*this->d1*this->sHat13_B + this->mass2*this->l1*this->sHat13_B + this->mass2*this->d2*this->sHat23_B)*this->matrixEDHRB.row(0)*(matrixGDHRB) + this->mass2*this->d2*this->sHat23_B*this->matrixEDHRB.row(1)*(matrixGDHRB);
     vecTranscontr = -(this->mass1*this->d1*this->theta1Dot*this->theta1Dot*this->sHat11_B + this->mass2*(this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_B + this->d2*(this->theta1Dot+this->theta2Dot)*(this->theta1Dot+this->theta2Dot)*this->sHat21_B)
                     + (this->mass1*this->d1*this->sHat13_B + this->mass2*this->l1*this->sHat13_B + this->mass2*this->d2*this->sHat23_B)*this->matrixEDHRB.row(0)*this->vectorVDHRB + this->mass2*this->d2*this->sHat23_B*this->matrixEDHRB.row(1)*this->vectorVDHRB);
 
-    //! - Define rotational matrice contributions (Eq 96 in paper)
+    // - Define rotational matrice contributions (Eq 96 in paper)
     
     matrixCcontr = (this->IPntS1_S1(1,1)*this->sHat12_B + this->mass1*this->d1*this->rTildeS1B_B*this->sHat13_B + this->IPntS2_S2(1,1)*this->sHat22_B + this->mass2*this->l1*this->rTildeS2B_B*this->sHat13_B + this->mass2*this->d2*this->rTildeS2B_B*this->sHat23_B)*this->matrixEDHRB.row(0)*this->matrixFDHRB
                     + (this->IPntS2_S2(1,1)*this->sHat22_B + this->mass2*this->d2*this->rTildeS2B_B*this->sHat23_B)*this->matrixEDHRB.row(1)*this->matrixFDHRB;
@@ -231,17 +231,17 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Eig
 
 void DualHingedRigidBodyStateEffector::computeDerivatives(double integTime)
 {
-    //! - Define necessarry variables
+    // - Define necessarry variables
     Eigen::MRPd sigmaBNLocal;
     Eigen::Matrix3d dcmBN;                        /* direction cosine matrix from N to B */
     Eigen::Matrix3d dcmNB;                        /* direction cosine matrix from B to N */
-    Eigen::MatrixXd theta1DDot(1,1);               /* thetaDDot variable to send to state manager */
-    Eigen::MatrixXd theta2DDot(1,1);               /* thetaDDot variable to send to state manager */
+    Eigen::MatrixXd theta1DDot(1,1);              /* thetaDDot variable to send to state manager */
+    Eigen::MatrixXd theta2DDot(1,1);              /* thetaDDot variable to send to state manager */
     Eigen::Vector3d rDDotBNLoc_N;                 /* second time derivative of rBN in N frame */
     Eigen::Vector3d rDDotBNLoc_B;                 /* second time derivative of rBN in B frame */
     Eigen::Vector3d omegaDotBNLoc_B;              /* time derivative of omegaBN in B frame */
 
-    //! Grab necessarry values from manager (these have been previously computed in hubEffector)
+    // Grab necessarry values from manager (these have been previously computed in hubEffector)
     rDDotBNLoc_N = this->hubVelocity->getStateDeriv();
     sigmaBNLocal = (Eigen::Vector3d )this->hubSigma->getState();
     omegaDotBNLoc_B = this->hubOmega->getStateDeriv();
@@ -249,10 +249,10 @@ void DualHingedRigidBodyStateEffector::computeDerivatives(double integTime)
     dcmBN = dcmNB.transpose();
     rDDotBNLoc_B = dcmBN*rDDotBNLoc_N;
 
-    //! - Compute Derivatives
-    //! - First is trivial
+    // - Compute Derivatives
+    // - First is trivial
     this->theta1State->setDerivative(theta1DotState->getState());
-    //! - Second, a little more involved - see Allard, Diaz, Schaub flex/slosh paper
+    // - Second, a little more involved - see Allard, Diaz, Schaub flex/slosh paper
     theta1DDot(0,0) = this->matrixEDHRB.row(0).dot(this->matrixFDHRB*rDDotBNLoc_B) + this->matrixEDHRB.row(0)*this->matrixGDHRB*omegaDotBNLoc_B + this->matrixEDHRB.row(0)*this->vectorVDHRB;
     this->theta1DotState->setDerivative(theta1DDot);
     this->theta2State->setDerivative(theta2DotState->getState());
