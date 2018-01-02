@@ -19,7 +19,6 @@
 '''
 import sys, os, inspect
 import matplotlib
-matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy
 import pytest
