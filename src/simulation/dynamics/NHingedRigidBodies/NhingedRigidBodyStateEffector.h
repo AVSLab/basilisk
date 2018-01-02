@@ -28,16 +28,16 @@
 
 /*! Struct containing all the panel variables. All members are public by default so they can be changed by methods of the N_hingedRigidBodyStateEffector class. */
 struct HingedPanel {
-    double mass;                     //!< [kg] mass of hinged panel
-    double d;                        //!< [m] distance from hinge point to hinged rigid body center of mass
-    double k;                        //!< [N-m/rad] torsional spring constant of hinge
-    double c;                        //!< [N-m-s/rad] rotational damping coefficient of hinge
-    double thetaInit;                //!< [rad] Initial hinged rigid body angle
-    double thetaDotInit;             //!< [rad/s] Initial hinged rigid body angle rate
+    double mass = 1.0;                     //!< [kg] mass of hinged panel
+    double d = 1.0;                        //!< [m] distance from hinge point to hinged rigid body center of mass
+    double k = 1.0;                        //!< [N-m/rad] torsional spring constant of hinge
+    double c = 0.0;                        //!< [N-m-s/rad] rotational damping coefficient of hinge
+    double thetaInit = 0.0;                //!< [rad] Initial hinged rigid body angle
+    double thetaDotInit = 0.0;             //!< [rad/s] Initial hinged rigid body angle rate
     Eigen::Matrix3d IPntS_S;         //!< [kg-m^2] Inertia of hinged rigid body about point S in S frame components
-    double theta;                    //!< [rad] hinged rigid body angle
-    double theta_0;                  //!< [rad] hinged rigid body rest angle
-    double thetaDot;                 //!< [rad/s] hinged rigid body angle rate
+    double theta = 0.0;                    //!< [rad] hinged rigid body angle
+    double theta_0 = 0.0;                  //!< [rad] hinged rigid body rest angle
+    double thetaDot = 0.0;                 //!< [rad/s] hinged rigid body angle rate
     Eigen::Matrix3d dcm_SS_prev;     //!< -- DCM from previous S frame to current S frame
     Eigen::Matrix3d dcm_SB;          //!< -- DCM from body to S frame
     Eigen::Vector3d omega_BN_S;      //!< [rad/s] omega_BN in S frame components

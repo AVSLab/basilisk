@@ -31,20 +31,6 @@ NHingedRigidBodyStateEffector::NHingedRigidBodyStateEffector()
     this->effProps.IEffPntB_B.fill(0.0);
     this->effProps.rEffPrime_CB_B.fill(0.0);
     this->effProps.IEffPrimePntB_B.fill(0.0);
-
-    // - Initialize variables to working values
-    //this->PanelVec.resize(this->PanelVec.size());
-    std::vector<HingedPanel>::iterator PanelIt;
-    for(PanelIt=this->PanelVec.begin(); PanelIt!=this->PanelVec.end(); PanelIt++){
-        PanelIt->mass = 0.0;
-        PanelIt->d = 1.0;
-        PanelIt->k = 1.0;
-        PanelIt->c = 0.0;
-        PanelIt->thetaInit = 0.00;
-        PanelIt->theta_0 = 0.0;
-        PanelIt->thetaDotInit = 0.0;
-        PanelIt->IPntS_S.Identity();
-    }
     this->r_HB_B.setZero();
     this->dcm_HB.Identity();
     this->nameOfThetaState ="hingedRigidBodyTheta";
