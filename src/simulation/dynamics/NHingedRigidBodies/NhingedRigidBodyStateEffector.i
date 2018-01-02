@@ -18,9 +18,9 @@
  */
 
 
-%module NhingedRigidBodyStateEffector
+%module nHingedRigidBodyStateEffector
 %{
-   #include "NhingedRigidBodyStateEffector.h"
+   #include "nHingedRigidBodyStateEffector.h"
 %}
 
 %include "swig_common_model.i"
@@ -29,10 +29,7 @@
 %include "../_GeneralModuleFiles/stateData.h"
 %include "../_GeneralModuleFiles/stateEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
-%include "NhingedRigidBodyStateEffector.h"
-%include "simMessages/n_hingedRigidBodySimMsg.h"
-
-GEN_SIZEOF(N_HingedRigidBodySimMsg)
+%include "nHingedRigidBodyStateEffector.h"
 
 %pythoncode %{
 import sys

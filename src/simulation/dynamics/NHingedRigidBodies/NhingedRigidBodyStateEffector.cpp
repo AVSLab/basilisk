@@ -17,13 +17,13 @@
 
  */
 
-#include "NhingedRigidBodyStateEffector.h"
+#include "nHingedRigidBodyStateEffector.h"
 #include "utilities/avsEigenSupport.h"
 #include "architecture/messaging/system_messaging.h"
 #include <iostream>
 
 /*! This is the constructor, setting variables to default values */
-N_HingedRigidBodyStateEffector::N_HingedRigidBodyStateEffector()
+NHingedRigidBodyStateEffector::NHingedRigidBodyStateEffector()
 {
     // - zero the mass props and mass prop rates contributions
     this->effProps.mEff = 0.0;
@@ -49,13 +49,11 @@ N_HingedRigidBodyStateEffector::N_HingedRigidBodyStateEffector()
     this->dcm_HB.Identity();
     this->nameOfThetaState ="hingedRigidBodyTheta";
     this->nameOfThetaDotState = "hingedRigidBodyThetaDot";
-    this->N_HingedRigidBodyOutMsgName = "";
-    //this->HingedRigidBodyOutMsgId = -1;
     return;
 }
 
 /*! This is the destructor, nothing to report here */
-N_HingedRigidBodyStateEffector::~N_HingedRigidBodyStateEffector()
+NHingedRigidBodyStateEffector::~NHingedRigidBodyStateEffector()
 {
     return;
 }
@@ -63,17 +61,14 @@ N_HingedRigidBodyStateEffector::~N_HingedRigidBodyStateEffector()
 /*! This method initializes the object. It creates the module's output
  messages.
  @return void*/
-void N_HingedRigidBodyStateEffector::SelfInit()
+void NHingedRigidBodyStateEffector::SelfInit()
 {
-    SystemMessaging *messageSys = SystemMessaging::GetInstance();
-    this->N_HingedRigidBodyOutMsgId =  messageSys->CreateNewMessage(this->N_HingedRigidBodyOutMsgName, sizeof(N_HingedRigidBodySimMsg), 2, "HingedRigidBodySimMsg", this->moduleID);
-
     return;
 }
 
 /*! This method subscribes to messages the HRB needs.
  @return void*/
-void N_HingedRigidBodyStateEffector::CrossInit()
+void NHingedRigidBodyStateEffector::CrossInit()
 {
 //HRB does not CrossInit() anything.
     return;
@@ -81,7 +76,7 @@ void N_HingedRigidBodyStateEffector::CrossInit()
 
 /*! This method reads necessary input messages @return void
  */
-void N_HingedRigidBodyStateEffector::readInputMessages()
+void NHingedRigidBodyStateEffector::readInputMessages()
 {
 //HRB doesn't read any messages
     return;
@@ -93,23 +88,15 @@ void N_HingedRigidBodyStateEffector::readInputMessages()
  @return void
  @param CurrentClock The current simulation time (used for time stamping)
  */
-void N_HingedRigidBodyStateEffector::WriteOutputMessages(uint64_t CurrentClock)
+void NHingedRigidBodyStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
-    SystemMessaging *messageSys = SystemMessaging::GetInstance();
-    std::vector<int64_t>::iterator it;
-    std::vector<HingedPanel>::iterator PanelIt;
-    for(PanelIt=this->PanelVec.begin(); PanelIt!=this->PanelVec.end(); PanelIt++){
-        N_HRBoutputStates.theta = PanelIt->theta;
-        N_HRBoutputStates.thetaDot = PanelIt->thetaDot;
-        messageSys->WriteMessage(this->N_HingedRigidBodyOutMsgId, CurrentClock,
-                                 sizeof(N_HingedRigidBodySimMsg), reinterpret_cast<uint8_t*> (&N_HRBoutputStates), this->moduleID);
-    }
+    return;
 }
     
 
 
 /*! This method allows the HRB state effector to have access to the hub states and gravity*/
-void N_HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
+void NHingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 {
     // - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling and gravity
     this->hubVelocity = statesIn.getStateObject("hubVelocity");
@@ -121,7 +108,7 @@ void N_HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 }
 
 /*! This method allows the HRB state effector to register its states: theta and thetaDot with the dyn param manager */
-void N_HingedRigidBodyStateEffector::registerStates(DynParamManager& states)
+void NHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
 {
     
     // - Register the states associated with hinged rigid bodies - theta and thetaDot
@@ -143,7 +130,7 @@ void N_HingedRigidBodyStateEffector::registerStates(DynParamManager& states)
 
 /*! This method allows the HRB state effector to provide its contributions to the mass props and mass prop rates of the
  spacecraft */
-void N_HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
+void NHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 {
     // - Define summation variables
     double sum_Theta = 0;
@@ -235,7 +222,7 @@ void N_HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
     return;
 }
 
-double N_HingedRigidBodyStateEffector::HeaviFunc(double cond)
+double NHingedRigidBodyStateEffector::HeaviFunc(double cond)
 {
     double ans;
     if (cond < 0.0) ans = 0.0;
@@ -245,7 +232,7 @@ double N_HingedRigidBodyStateEffector::HeaviFunc(double cond)
 
 /*! This method allows the HRB state effector to give its contributions to the matrices needed for the back-sub 
  method */
-void N_HingedRigidBodyStateEffector::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr,
+void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr,
                                                        Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr,
                                                        Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr,
                                                        Eigen::Vector3d & vecRotcontr)
@@ -466,7 +453,7 @@ void N_HingedRigidBodyStateEffector::updateContributions(double integTime, Eigen
 }
 
 /*! This method is used to find the derivatives for the HRB stateEffector: thetaDDot and the kinematic derivative */
-void N_HingedRigidBodyStateEffector::computeDerivatives(double integTime)
+void NHingedRigidBodyStateEffector::computeDerivatives(double integTime)
 {
     // - Grab necessarry values from manager (these have been previously computed in hubEffector)
     Eigen::Vector3d rDDotLoc_BN_N;
@@ -499,7 +486,7 @@ void N_HingedRigidBodyStateEffector::computeDerivatives(double integTime)
 }
 
 /*! This method is for calculating the contributions of the HRB state effector to the energy and momentum of the s/c */
-void N_HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d &
+void NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d &
                                                                 rotAngMomPntCContr_B, double & rotEnergyContr)
 {
     // - Get the current omega state
@@ -534,7 +521,7 @@ void N_HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTi
  @return void
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void N_HingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
+void NHingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     
     WriteOutputMessages(CurrentSimNanos);

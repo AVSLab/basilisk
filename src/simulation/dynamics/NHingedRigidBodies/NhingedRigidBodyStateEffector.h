@@ -24,8 +24,7 @@
 #include "../_GeneralModuleFiles/stateEffector.h"
 #include "../_GeneralModuleFiles/stateData.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "../SimCode/utilities/avsEigenMRP.h"
-#include "simMessages/n_hingedRigidBodySimMsg.h"
+#include "../simulation/utilities/avsEigenMRP.h"
 
 /*! Struct containing all the panel variables. All members are public by default so they can be changed by methods of the N_hingedRigidBodyStateEffector class. */
 struct HingedPanel {
@@ -58,9 +57,9 @@ struct HingedPanel {
  is a rigid body attached to the hub through a torsional spring and damper that approximates a flexible appendage. See
  Allard, Schaub, and Piggott paper: "General Hinged Solar Panel Dynamics Approximating First-Order Spacecraft Flexing"
  for a detailed description of this model. A hinged rigid body has 2 states: theta and thetaDot */
-class N_HingedRigidBodyStateEffector : public StateEffector, public SysModel {
+class NHingedRigidBodyStateEffector : public StateEffector, public SysModel {
 public:
-    std::string N_HingedRigidBodyOutMsgName; //!< -- state output message name
+    std::string NHingedRigidBodyOutMsgName; //!< -- state output message name
     Eigen::MatrixXd *g_N;            //!< [m/s^2] Gravitational acceleration in N frame components
     std::string nameOfThetaState;    //!< -- Identifier for the theta state data container
     std::string nameOfThetaDotState; //!< -- Identifier for the thetaDot state data container
@@ -89,12 +88,11 @@ private:
     StateData *hubSigma;             //!< -- state manager access to the hubs MRP state
     StateData *hubOmega;             //!< -- state manager access to the hubs omegaBN_B state
     StateData *hubVelocity;          //!< -- state manager access to the hubs rDotBN_N state
-    int64_t N_HingedRigidBodyOutMsgId; //!< -- state output message ID
     void readInputMessages();         //!< -- method to read input messages
 
 public:
-    N_HingedRigidBodyStateEffector();  //!< -- Contructor
-    ~N_HingedRigidBodyStateEffector();  //!< -- Destructor
+    NHingedRigidBodyStateEffector();  //!< -- Contructor
+    ~NHingedRigidBodyStateEffector();  //!< -- Destructor
     double HeaviFunc(double cond); //!< -- Heaviside function used for matrix contributions
     void SelfInit();
     void CrossInit();
@@ -109,7 +107,6 @@ public:
     void updateEffectorMassProps(double integTime);  //!< -- Method for giving the s/c the HRB mass props and prop rates
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                       double & rotEnergyContr); //!< -- Computing energy and momentum for HRBs
-    N_HingedRigidBodySimMsg N_HRBoutputStates;  //!< instance of messaging system message struct
 };
 
-#endif /* STATE_EFFECTOR_H */
+#endif /* N_HINGED_RIGID_BODY_STATE_EFFECTOR_H */
