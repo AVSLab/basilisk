@@ -30,6 +30,7 @@ path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
 from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import dualHingedRigidBodyStateEffector
 from Basilisk.simulation import gravityEffector
@@ -172,51 +173,93 @@ def dualHingedRigidBodyTest(show_plots,useFlag,testCase):
     rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
 
-    sigmaOut = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN',range(3))
-    rOut_BN_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
-    vOut_CN_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_CN_N',range(3))
+    initialOrbAngMom_N = [
+                [orbAngMom_N[0,1], orbAngMom_N[0,2], orbAngMom_N[0,3]]
+                ]
+
+    finalOrbAngMom = [
+                [orbAngMom_N[-1,0], orbAngMom_N[-1,1], orbAngMom_N[-1,2], orbAngMom_N[-1,3]]
+                 ]
+
+    initialRotAngMom_N = [
+                [rotAngMom_N[0,1], rotAngMom_N[0,2], rotAngMom_N[0,3]]
+                ]
+
+    finalRotAngMom = [
+                [rotAngMom_N[-1,0], rotAngMom_N[-1,1], rotAngMom_N[-1,2], rotAngMom_N[-1,3]]
+                 ]
+
+    initialOrbEnergy = [
+                [orbEnergy[0,1]]
+                ]
+
+    finalOrbEnergy = [
+                [orbEnergy[-1,0], orbEnergy[-1,1]]
+                 ]
+
+    initialRotEnergy = [
+                [rotEnergy[int(len(rotEnergy)/2)+1,1]]
+                ]
+
+    finalRotEnergy = [
+                [rotEnergy[-1,0], rotEnergy[-1,1]]
+                 ]
 
     plt.figure()
     plt.clf()
     plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-
+    plt.xlabel("Time (s)")
+    plt.ylabel("Relative Difference")
+    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCase, "Change in Orbital Angular Momentum " + testCase, plt, "width=0.8\\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-
+    plt.xlabel("Time (s)")
+    plt.ylabel("Relative Difference")
+    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCase, "Change in Orbital Energy " + testCase, plt, "width=0.8\\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-
+    plt.xlabel("Time (s)")
+    plt.ylabel("Relative Difference")
+    unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase, "Change in Rotational Angular Momentum " + testCase, plt, "width=0.8\\textwidth", path)
     plt.figure()
     plt.clf()
-    plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
-
-    plt.figure()
-    plt.clf()
-    plt.plot(vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,1], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,2], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,3])
-    plt.xlabel('time (s)')
-    plt.ylabel('m/s')
-
-    plt.figure()
-    plt.clf()
-    plt.plot(vOut_CN_N[:,0]*1e-9, (vOut_CN_N[:,1] - vOut_CN_N[0,1])/vOut_CN_N[0,1], vOut_CN_N[:,0]*1e-9, (vOut_CN_N[:,2] - vOut_CN_N[0,2])/vOut_CN_N[0,2], vOut_CN_N[:,0]*1e-9, (vOut_CN_N[:,3] - vOut_CN_N[0,3])/vOut_CN_N[0,3])
-    plt.xlabel('time (s)')
-    plt.ylabel('Relative Difference')
+    plt.plot(rotEnergy[int(len(rotEnergy)/2)+1:,0]*1e-9, (rotEnergy[int(len(rotEnergy)/2)+1:,1] - rotEnergy[int(len(rotEnergy)/2)+1,1])/rotEnergy[int(len(rotEnergy)/2)+1,1])
+    plt.xlabel("Time (s)")
+    plt.ylabel("Relative Difference")
+    unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, "width=0.8\\textwidth", path)
 
     plt.show(show_plots)
     plt.close("all")
 
+    accuracy = 1e-10
+    for i in range(0,len(initialOrbAngMom_N)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqualRelative(finalOrbAngMom[i],initialOrbAngMom_N[i],3,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: Dual Hinged Rigid Body Integrated Test failed orbital angular momentum unit test")
+
+    for i in range(0,len(initialRotAngMom_N)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqualRelative(finalRotAngMom[i],initialRotAngMom_N[i],3,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: Dual Hinged Rigid Body Integrated Test failed rotational angular momentum unit test")
+
+    for i in range(0,len(initialOrbEnergy)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqualRelative(finalOrbEnergy[i],initialOrbEnergy[i],1,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: Dual Hinged Rigid Body Integrated Test failed orbital energy unit test")
+
+    for i in range(0,len(initialRotEnergy)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqualRelative(finalRotEnergy[i],initialRotEnergy[i],1,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: Dual Hinged Rigid Body Integrated Test failed rotational energy unit test")
+
     if testFailCount == 0:
-        print "PASSED: " + " Hub Propagate"
+        print "PASSED: " + " Dual Hinged Rigid Body Test"
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
