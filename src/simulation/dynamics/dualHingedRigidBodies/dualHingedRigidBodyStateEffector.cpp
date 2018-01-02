@@ -174,6 +174,13 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Eig
     //! - Map gravity to body frame
     g_B = dcmBN*gLocal_N;
 
+    //! - Define gravity terms
+    Eigen::Vector3d rS1H1_B = -this->d1*this->sHat11_B;
+    Eigen::Vector3d gravTorquePan1PntH1 = rS1H1_B.cross(this->mass1*g_B);
+    Eigen::Vector3d gravForcePan2 = this->mass2*g_B;
+    Eigen::Vector3d rS2H2_B = -this->d2*this->sHat21_B;
+    Eigen::Vector3d gravTorquePan2PntH2 = rS2H2_B.cross(this->mass2*g_B);
+
     //! - Define omegaBN_S
     this->omegaBNLoc_B = this->hubOmega->getState();
     this->omegaBN_S1 = this->dcmS1B*this->omegaBNLoc_B;
@@ -194,7 +201,7 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Eig
     this->matrixGDHRB.row(0) = -(this->IPntS1_S1(1,1)*this->sHat12_B.transpose() - this->mass1*this->d1*this->sHat13_B.transpose()*this->rTildeS1B_B - this->mass2*this->l1*this->sHat13_B.transpose()*this->rTildeS2B_B);
     this->matrixGDHRB.row(1) = -(this->IPntS2_S2(1,1)*this->sHat22_B.transpose() - this->mass2*this->d2*this->sHat23_B.transpose()*this->rTildeS2B_B);
 
-    this->vectorVDHRB(0) =  -(this->IPntS1_S1(0,0) - this->IPntS1_S1(2,2))*this->omegaBN_S1(2)*this->omegaBN_S1(0) - this->k1*this->theta1 - this->c1*this->theta1Dot + this->k2*this->theta2 + this->c2*this->theta2Dot
+    this->vectorVDHRB(0) =  -(this->IPntS1_S1(0,0) - this->IPntS1_S1(2,2))*this->omegaBN_S1(2)*this->omegaBN_S1(0) - this->k1*this->theta1 - this->c1*this->theta1Dot + this->k2*this->theta2 + this->c2*this->theta2Dot + this->sHat12_B.dot(gravTorquePan1PntH1) + this->l1*this->sHat13_B.dot(gravForcePan2)
                             - this->mass1*this->d1*this->sHat13_B.transpose()*(2*this->omegaTildeBNLoc_B*this->rPrimeS1B_B + this->omegaTildeBNLoc_B*this->omegaTildeBNLoc_B*this->rS1B_B)
                             - this->mass2*this->l1*this->sHat13_B.transpose()*(2*this->omegaTildeBNLoc_B*this->rPrimeS2B_B + this->omegaTildeBNLoc_B*this->omegaTildeBNLoc_B*this->rS2B_B + this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_B + this->d2*(this->theta1Dot + this->theta2Dot)*(this->theta1Dot + this->theta2Dot)*this->sHat21_B); //still missing torque and force terms - SJKC
 

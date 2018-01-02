@@ -221,4 +221,4 @@ def dualHingedRigidBodyTest(show_plots,useFlag,testCase):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    dualHingedRigidBodyTest(True,False,'NoGravity')
+    dualHingedRigidBodyTest(True,False,'Gravity')
