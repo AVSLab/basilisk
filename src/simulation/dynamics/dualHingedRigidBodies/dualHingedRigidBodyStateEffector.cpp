@@ -175,11 +175,9 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Eig
     g_B = dcmBN*gLocal_N;
 
     //! - Define gravity terms
-    Eigen::Vector3d rS1H1_B = -this->d1*this->sHat11_B;
-    Eigen::Vector3d gravTorquePan1PntH1 = rS1H1_B.cross(this->mass1*g_B);
+    Eigen::Vector3d gravTorquePan1PntH1 = -this->d1*this->sHat11_B.cross(this->mass1*g_B);
     Eigen::Vector3d gravForcePan2 = this->mass2*g_B;
-    Eigen::Vector3d rS2H2_B = -this->d2*this->sHat21_B;
-    Eigen::Vector3d gravTorquePan2PntH2 = rS2H2_B.cross(this->mass2*g_B);
+    Eigen::Vector3d gravTorquePan2PntH2 = -this->d2*this->sHat21_B.cross(this->mass2*g_B);
 
     //! - Define omegaBN_S
     this->omegaBNLoc_B = this->hubOmega->getState();
@@ -206,7 +204,7 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Eig
                             - this->mass2*this->l1*this->sHat13_B.transpose()*(2*this->omegaTildeBNLoc_B*this->rPrimeS2B_B + this->omegaTildeBNLoc_B*this->omegaTildeBNLoc_B*this->rS2B_B + this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_B + this->d2*(this->theta1Dot + this->theta2Dot)*(this->theta1Dot + this->theta2Dot)*this->sHat21_B); //still missing torque and force terms - SJKC
 
     this->vectorVDHRB(1) =  -(this->IPntS2_S2(0,0) - this->IPntS2_S2(2,2))*this->omegaBN_S2(2)*this->omegaBN_S2(0)
-                            - this->k2*this->theta2 - this->c2*this->theta2Dot - this->mass2*this->d2*this->sHat23_B.transpose()*(2*this->omegaTildeBNLoc_B*this->rPrimeS2B_B + this->omegaTildeBNLoc_B*this->omegaTildeBNLoc_B*this->rS2B_B + this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_B); // still missing torque term. - SJKC
+                            - this->k2*this->theta2 - this->c2*this->theta2Dot + this->sHat22_B.dot(gravTorquePan2PntH2) - this->mass2*this->d2*this->sHat23_B.transpose()*(2*this->omegaTildeBNLoc_B*this->rPrimeS2B_B + this->omegaTildeBNLoc_B*this->omegaTildeBNLoc_B*this->rS2B_B + this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_B); // still missing torque term. - SJKC
 
     //! - Start defining them good old contributions - start with translation
     //! - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper
