@@ -193,6 +193,6 @@ def run(show_plots, offCount):
 #
 if __name__ == "__main__":
     test_module(False,       # show_plots
-                1,           # case
+                0            # offCount
                )
 
