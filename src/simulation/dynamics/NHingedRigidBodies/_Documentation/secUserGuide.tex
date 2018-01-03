@@ -1,0 +1,18 @@
+\section{User Guide}
+
+This section is to outline the steps needed to setup a N Hinged Rigid Body State Effector in python using Basilisk.
+
+\begin{enumerate}
+	\item Import the nHingedRigidBodyStateEffector class: \newline \textit{from Basilisk.simulation import nHingedRigidBodyStateEffector}
+	\item Create an instantiation of a N Hinged Rigid body: \newline \textit{effector1 = nHingedRigidBodyStateEffector.NHingedRigidBodyStateEffector()}
+	\item Create an instantiation of the panel struct: \newline \textit{panel = nHingedRigidBodyStateEffector.HingedPanel()}
+	\item Define all physical parameters for a panel. For example: \newline
+	\textit{IPntS\_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]}
+	Do this for all of the parameters for the panel struct seen in the public variables in the .h file.
+	\item Define the initial conditions of the states:\newline
+	\textit{panel.thetaInit = 5*numpy.pi/180.0 \quad panel.thetaDotInit = 0.0}
+	\item Define a unique name for the states:\newline
+	\textit{panel.nameOfThetaState = "nHingedRigidBodyThetas" \quad panel.nameOfThetaDotState = "nHingedRigidBodyThetaDots"}
+	\item Finally, add the effector to your spacecraftPlus:\newline
+	\textit{scObject.addStateEffector(unitTestSim.effector1)}. See spacecraftPlus documentation on how to set up a spacecraftPlus object. 
+\end{enumerate}

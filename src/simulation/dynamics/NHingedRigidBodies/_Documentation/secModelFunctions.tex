@@ -1,0 +1,23 @@
+\section{Model Functions}
+
+This module is intended to be used an approximation to a flexing body attached to the spacecraft. Examples include solar arrays, antennas, and other appended bodies that would exhibit flexing behavior. Below is a list of functions that this model performs:
+
+\begin{itemize}
+	\item Compute it's contributions to the mass properties of the spacecraft
+	\item Provides matrix contributions for the back substitution method
+	\item Compute it's derivatives for $\theta$ and $\dot{\theta}$
+	\item Adds energy and momentum contributions to the spacecraft
+\end{itemize}
+
+\section{Model Assumptions and Limitations}
+Below is a summary of the assumptions/limitations:
+
+\begin{itemize}
+	\item Is an approximation to a flexing body
+	\item Is developed in such a way that does not require constraints to be met
+	\item The hinged rigid bodies must have a diagonal inertia tensor with respect the $\mathcal{S}_i$ frame as seen in Figure~\ref{fig:flexNPanel}.
+	\item Only linear spring and damping terms
+	\item The N hinged rigid body will always stay attached to the hub (the hinge does not have torque limits)
+	\item The hinge does not have travel limits, therefore if the spring is not stiff enough it will unrealistically travel through bounds such as running into the spacecraft hub
+	\item The EOMs are nonlinear equations of motion, therefore there can be inaccuracies (and divergence) that result from integration. Having a time step of $<= 0.10\ \text{sec}$ is recommended, but this also depends on the natural frequency of the system
+\end{itemize}
