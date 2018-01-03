@@ -48,7 +48,8 @@ ImuSensor::ImuSensor()
     this->aDisc = Discretize(this->numStates);
     this->oDisc = Discretize(this->numStates);
     
-    
+    this->aSat = Saturate(this->numStates);
+    this->oSat = Saturate(this->numStates);
     
     this->PreviousTime = 0;
     this->NominalReady = false;
@@ -126,6 +127,24 @@ void ImuSensor::SelfInit()
 	this->errorModelGyro.setNoiseMatrix(this->PMatrixGyro);
 	this->errorModelGyro.setRNGSeed(this->RNGSeed);
 	this->errorModelGyro.setUpperBounds(this->walkBoundsGyro);
+    
+    Eigen::MatrixXd oSatBounds;
+    oSatBounds.resize(this->numStates, 2);
+    oSatBounds(0,0) = this->senRotMax;
+    oSatBounds(0,1) = -this->senRotMax;
+    oSatBounds(1,0) = this->senRotMax;
+    oSatBounds(1,1) = -this->senRotMax;
+    oSatBounds(2,0) = this->senRotMax;
+    oSatBounds(2,1) = -this->senRotMax;
+    
+    Eigen::MatrixXd aSatBounds;
+    aSatBounds.resize(this->numStates, 2);
+    aSatBounds(0,0) = this->senTransMax;
+    aSatBounds(0,1) = -this->senTransMax;
+    aSatBounds(1,0) = this->senTransMax;
+    aSatBounds(1,1) = -this->senTransMax;
+    aSatBounds(2,0) = this->senTransMax;
+    aSatBounds(2,1) = -this->senTransMax;
 
     return;
 }
@@ -219,6 +238,14 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
     return;
 }
 
+void ImuSensor::set_oSatBounds(Eigen::MatrixXd oSatBounds){
+    this->oSat.setBounds(oSatBounds);
+}
+
+void ImuSensor::set_aSatBounds(Eigen::MatrixXd aSatBounds){
+    this->aSat.setBounds(aSatBounds);
+}
+
 void ImuSensor::scaleTruth()
 {
     this->omega_PN_P_out = this->omega_PN_P_out.cwiseProduct(this->gyroScale);
@@ -262,31 +289,13 @@ void ImuSensor::computeSensorErrors()
 
 void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
 {
-	double  dt;
-    Eigen::Vector3d  accel_SN_N; //above in the N frame
-    Eigen::Matrix3d  dcm_BN;
-    Eigen::Matrix3d  dcm_PN;
-    Eigen::Vector3d  DV_SN_N;
-    
-	dt = (CurrentTime - PreviousTime)*1.0E-9;
+	double  dt = (CurrentTime - PreviousTime)*1.0E-9;
 
-	for(uint32_t i=0; i<3; i++)
-	{
-		if(this->omega_PN_P_out[i] > this->senRotMax) {
-			this->omega_PN_P_out[i] = this->senRotMax;
-			this->prv_PN_out[i] = this->senRotMax * dt;
-		} else if (this->omega_PN_P_out[i] < -this->senRotMax) {
-			this->omega_PN_P_out[i] = -this->senRotMax;
-			this->prv_PN_out[i] = -this->senRotMax * dt;
-		}
-		if(this->accel_SN_P_out[i] > this->senTransMax) {
-			this->accel_SN_P_out[i] = this->senTransMax;
-            this->DV_SN_P_out[i] = this->accel_SN_P_out[i] * dt;
-		} else if (this->accel_SN_P_out[i] < -this->senTransMax) {
-			this->accel_SN_P_out[i] = -this->senTransMax;
-            this->DV_SN_P_out[i] = this->accel_SN_P_out[i] * dt;
-		}
-	}
+    this->omega_PN_P_out = this->oSat.saturate(this->omega_PN_P_out);
+    this->prv_PN_out = this->omega_PN_P_out * dt;
+    
+    this->accel_SN_P_out = this->aSat.saturate(this->accel_SN_P_out);
+    this->DV_SN_P_out = this->accel_SN_P_out * dt;
 
     return;
 }

@@ -25,6 +25,7 @@
 #include <random>
 #include "utilities/gauss_markov.h"
 #include "utilities/discretize.h"
+#include "utilities/saturate.h"
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simFswInterfaceMessages/imuSensorIntMsg.h"
 #include <Eigen/Dense>
@@ -52,6 +53,8 @@ public:
     void setLSBs(double LSBa, double LSBo);
     void setCarryError(bool aCarry, bool oCarry);
     void setRoundDirection(roundDirection_t aRound, roundDirection_t oRound);
+    void set_oSatBounds(Eigen::MatrixXd oSatBounds);
+    void set_aSatBounds(Eigen::MatrixXd aSatBounds);
 
 public:
     std::string InputStateMsg;          /*!< Message name for spacecraft state */
@@ -80,7 +83,9 @@ public:
     Eigen::Vector3d gyroScale;          //! (-) scale factors for acceleration axes
     
     Discretize aDisc;                  //!  (-) instance of discretization utility for linear acceleration
-    Discretize oDisc;                  //!  (-) isntance of idscretization utility for angular rate
+    Discretize oDisc;                  //!  (-) instance of idscretization utility for angular rate
+    Saturate aSat;                     //!  (-) instance of saturate utility for linear acceleration
+    Saturate oSat;                     //!  (-) instance of saturate utility for angular rate
     
 private:
     int64_t InputStateID;               /// -- Connect to input time message
