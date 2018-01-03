@@ -33,8 +33,9 @@ NHingedRigidBodyStateEffector::NHingedRigidBodyStateEffector()
     this->effProps.IEffPrimePntB_B.fill(0.0);
     this->r_HB_B.setZero();
     this->dcm_HB.Identity();
-    this->nameOfThetaState ="hingedRigidBodyTheta";
-    this->nameOfThetaDotState = "hingedRigidBodyThetaDot";
+    this->nameOfThetaState ="nHingedRigidBodyTheta";
+    this->nameOfThetaDotState = "nHingedRigidBodyThetaDot";
+
     return;
 }
 
@@ -44,8 +45,7 @@ NHingedRigidBodyStateEffector::~NHingedRigidBodyStateEffector()
     return;
 }
 
-/*! This method initializes the object. It creates the module's output
- messages.
+/*! This method initializes the object. It creates the module's output messages.
  @return void*/
 void NHingedRigidBodyStateEffector::SelfInit()
 {
@@ -56,21 +56,17 @@ void NHingedRigidBodyStateEffector::SelfInit()
  @return void*/
 void NHingedRigidBodyStateEffector::CrossInit()
 {
-//HRB does not CrossInit() anything.
     return;
 }
 
-/*! This method reads necessary input messages @return void
- */
+/*! This method reads necessary input messages
+ @return void */
 void NHingedRigidBodyStateEffector::readInputMessages()
 {
-//HRB doesn't read any messages
     return;
 }
 
-
-/*! This method takes the computed theta states and outputs them to the m
- messaging system.
+/*! This method takes the computed theta states and outputs them to the messaging system.
  @return void
  @param CurrentClock The current simulation time (used for time stamping)
  */
@@ -78,8 +74,6 @@ void NHingedRigidBodyStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
     return;
 }
-    
-
 
 /*! This method allows the HRB state effector to have access to the hub states and gravity*/
 void NHingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
@@ -114,6 +108,7 @@ void NHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
     this->thetaState->setState(thetaInitMatrix);
     this->thetaDotState = states.registerState(this->PanelVec.size(), 1, this->nameOfThetaDotState);
     this->thetaDotState->setState(thetaDotInitMatrix);
+
     return;
 }
 
@@ -172,8 +167,8 @@ void NHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
         PanelIt->rPrimeTilde_SB_B = eigenTilde(PanelIt->rPrime_SB_B);
         
         // - Find body time derivative of IPntS_B
-        PanelIt->ISPrimePntS_B = sum_ThetaDot*(PanelIt->IPntS_S(2,2)
-                  - PanelIt->IPntS_S(0,0))*(PanelIt->sHat1_B*PanelIt->sHat3_B.transpose() + PanelIt->sHat3_B*PanelIt->sHat1_B.transpose());
+        PanelIt->ISPrimePntS_B = sum_ThetaDot*(PanelIt->IPntS_S(2,2) - PanelIt->IPntS_S(0,0))
+                       *(PanelIt->sHat1_B*PanelIt->sHat3_B.transpose() + PanelIt->sHat3_B*PanelIt->sHat1_B.transpose());
         
         // - Mass summation
         sum_mass += PanelIt->mass;
@@ -188,8 +183,8 @@ void NHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
         sum_COMprime += PanelIt->mass*PanelIt->rPrime_SB_B;
         
         // - Inertia Prime of the effector summation terms
-        sum_EffInertia += PanelIt->ISPrimePntS_B
-            - PanelIt->mass*(PanelIt->rPrimeTilde_SB_B*PanelIt->rTilde_SB_B + PanelIt->rTilde_SB_B*PanelIt->rPrimeTilde_SB_B);
+        sum_EffInertia += PanelIt->ISPrimePntS_B - PanelIt->mass*(PanelIt->rPrimeTilde_SB_B*PanelIt->rTilde_SB_B
+                                                                  + PanelIt->rTilde_SB_B*PanelIt->rPrimeTilde_SB_B);
         
         it += 1;
     }
@@ -211,6 +206,7 @@ void NHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
     return;
 }
 
+//!* Method for defining the Heaviside function for the EOMs */
 double NHingedRigidBodyStateEffector::HeaviFunc(double cond)
 {
     double ans;
@@ -262,10 +258,12 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen:
             sumTerm1.setZero();
             PanelIt3 = PanelIt2;
             for(int k = i; k<=this->PanelVec.size();k++){
-                sumTerm1 += 2*PanelIt3->sHat3_B+4*PanelIt3->sHat3_B*(this->PanelVec.size() - j)-HeaviFunc(k-j)*4*PanelIt3->sHat3_B*(k-j);
+                sumTerm1 += 2*PanelIt3->sHat3_B+4*PanelIt3->sHat3_B*(this->PanelVec.size() - j)
+                -HeaviFunc(k-j)*4*PanelIt3->sHat3_B*(k-j);
                 std::advance(PanelIt3, 1);
             }
-            this->matrixADHRB(j-1,i-1) =  PanelIt->IPntS_S(1,1)*HeaviFunc(j-i) + PanelIt->mass*pow(PanelIt->d,2)*PanelIt->sHat3_B.transpose()*(sumTerm1-HeaviFunc(j-i)*PanelIt->sHat3_B);
+            this->matrixADHRB(j-1,i-1) =  PanelIt->IPntS_S(1,1)*HeaviFunc(j-i) + PanelIt->mass*pow(PanelIt->d,2)
+            *PanelIt->sHat3_B.transpose()*(sumTerm1-HeaviFunc(j-i)*PanelIt->sHat3_B);
             i += 1;
         }
         j += 1;
@@ -309,7 +307,8 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen:
                 std::advance(PanelIt2, 1);
             }
         }
-        sumTerm1 = -(PanelIt->IPntS_S(1,1)*PanelIt->sHat2_B.transpose()-PanelIt->mass*PanelIt->d*PanelIt->sHat3_B.transpose()*PanelIt->rTilde_SB_B - sumTerm2.transpose());
+        sumTerm1 = -(PanelIt->IPntS_S(1,1)*PanelIt->sHat2_B.transpose()-PanelIt->mass*PanelIt->d
+                     *PanelIt->sHat3_B.transpose()*PanelIt->rTilde_SB_B - sumTerm2.transpose());
         this->matrixGDHRB(j-1,0) = sumTerm1[0];
         this->matrixGDHRB(j-1,1) = sumTerm1[1];
         this->matrixGDHRB(j-1,2) = sumTerm1[2];
@@ -333,7 +332,8 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen:
         PanelIt2 = PanelIt;
         if(j+1 <= this->PanelVec.size()){
             std::advance(PanelIt2, 1);
-            springTerm = -PanelIt->k*(PanelIt->theta-PanelIt->theta_0)-PanelIt->c*PanelIt->thetaDot + PanelIt2->k*(PanelIt2->theta - PanelIt2->theta_0) + PanelIt2->c*PanelIt2->thetaDot;
+            springTerm = -PanelIt->k*(PanelIt->theta-PanelIt->theta_0)-PanelIt->c*PanelIt->thetaDot
+            + PanelIt2->k*(PanelIt2->theta - PanelIt2->theta_0) + PanelIt2->c*PanelIt2->thetaDot;
         } else {
             springTerm = -PanelIt->k*(PanelIt->theta-PanelIt->theta_0)-PanelIt->c*PanelIt->thetaDot;
         }
@@ -341,7 +341,8 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen:
             PanelIt3 = PanelIt;
             std::advance(PanelIt3, 1);
             for(int i = j+1; i <= this->PanelVec.size(); i++){
-                sumTerm2 += 4*this->omegaTildeLoc_BN_B*PanelIt3->rPrime_SB_B+2*this->omegaTildeLoc_BN_B*this->omegaTildeLoc_BN_B*PanelIt3->r_SB_B;
+                sumTerm2 += 4*this->omegaTildeLoc_BN_B*PanelIt3->rPrime_SB_B
+                +2*this->omegaTildeLoc_BN_B*this->omegaTildeLoc_BN_B*PanelIt3->r_SB_B;
                 std::advance(PanelIt3, 1);
             }
         }
@@ -349,7 +350,8 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen:
         int i = 1;
         for(PanelIt2=this->PanelVec.begin(); PanelIt2!=this->PanelVec.end(); PanelIt2++){
             sumThetaDot += PanelIt2->thetaDot;
-            sumTerm3 += pow(sumThetaDot,2)*PanelIt2->d*(2*PanelIt2->sHat1_B+4*PanelIt2->sHat1_B*(this->PanelVec.size() - j)-HeaviFunc(i-j)*4*PanelIt2->sHat1_B*(i-j));
+            sumTerm3 += pow(sumThetaDot,2)*PanelIt2->d*(2*PanelIt2->sHat1_B+4*PanelIt2->sHat1_B*(this->PanelVec.size()
+                                                                         - j)-HeaviFunc(i-j)*4*PanelIt2->sHat1_B*(i-j));
             i += 1;
         }
         sumThetaDot = 0;
@@ -359,7 +361,9 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen:
             std::advance(PanelIt2, 1);
         }
         sumTerm3 -= pow(sumThetaDot, 2)*PanelIt->d*PanelIt->sHat1_B;
-        sumTerm1 = springTerm -(PanelIt->IPntS_S(0,0) - PanelIt->IPntS_S(2,2))*PanelIt->omega_BN_S(2)*PanelIt->omega_BN_S(0) - PanelIt->mass*PanelIt->d*PanelIt->sHat3_B.transpose()*(2*this->omegaTildeLoc_BN_B*PanelIt->rPrime_SB_B+this->omegaTildeLoc_BN_B*this->omegaTildeLoc_BN_B*PanelIt->r_SB_B+sumTerm2+sumTerm3);
+        sumTerm1 = springTerm -(PanelIt->IPntS_S(0,0) - PanelIt->IPntS_S(2,2))*PanelIt->omega_BN_S(2)
+        *PanelIt->omega_BN_S(0) - PanelIt->mass*PanelIt->d*PanelIt->sHat3_B.transpose()*(2*this->omegaTildeLoc_BN_B
+             *PanelIt->rPrime_SB_B+this->omegaTildeLoc_BN_B*this->omegaTildeLoc_BN_B*PanelIt->r_SB_B+sumTerm2+sumTerm3);
         // Add gravity torque to this sumTerm
         Eigen::Vector3d gravTorqueCurPanel;
         gravTorqueCurPanel = -PanelIt->d*PanelIt->sHat1_B.cross(PanelIt->mass*g_B);
@@ -367,7 +371,8 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen:
         double remainingMass;
         remainingMass = this->totalMass - massOfCurrentPanelAndBefore;
         gravForceRestOfPanels = remainingMass*g_B;
-        this->vectorVDHRB(j-1) = sumTerm1 + PanelIt->sHat2_B.dot(gravTorqueCurPanel) + 2.0*PanelIt->d*PanelIt->sHat3_B.dot(gravForceRestOfPanels);
+        this->vectorVDHRB(j-1) = sumTerm1 + PanelIt->sHat2_B.dot(gravTorqueCurPanel)
+        + 2.0*PanelIt->d*PanelIt->sHat3_B.dot(gravForceRestOfPanels);
         j += 1;
     }
 
@@ -427,7 +432,8 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen:
                     std::advance(PanelIt3, 1);
                 }
             }
-            sumTerm1 += PanelIt2->IPntS_S(1,1)*PanelIt2->sHat2_B+(PanelIt2->rTilde_SB_B+sumTerm3)*PanelIt2->mass*PanelIt2->d*PanelIt2->sHat3_B;
+            sumTerm1 += PanelIt2->IPntS_S(1,1)*PanelIt2->sHat2_B
+            +(PanelIt2->rTilde_SB_B+sumTerm3)*PanelIt2->mass*PanelIt2->d*PanelIt2->sHat3_B;
             std::advance(PanelIt2, 1);
         }
         sumTerm3.setZero();
@@ -439,7 +445,9 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen:
                 std::advance(PanelIt3, 1);
             }
         }
-        sumTerm2 = PanelIt->mass*this->omegaTildeLoc_BN_B*PanelIt->rTilde_SB_B*PanelIt->rPrime_SB_B + pow(sumThetaDot,2)*(PanelIt->rTilde_SB_B+sumTerm3)*PanelIt->mass*PanelIt->d*PanelIt->sHat1_B + PanelIt->IPntS_S(1,1)*sumThetaDot*this->omegaTildeLoc_BN_B*PanelIt->sHat2_B;
+        sumTerm2 = PanelIt->mass*this->omegaTildeLoc_BN_B*PanelIt->rTilde_SB_B*PanelIt->rPrime_SB_B
+        + pow(sumThetaDot,2)*(PanelIt->rTilde_SB_B+sumTerm3)*PanelIt->mass*PanelIt->d*PanelIt->sHat1_B
+        + PanelIt->IPntS_S(1,1)*sumThetaDot*this->omegaTildeLoc_BN_B*PanelIt->sHat2_B;
         matrixCcontr += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixFDHRB;
         matrixDcontr += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixGDHRB;
         vecRotcontr += -sumTerm2 - sumTerm1*this->matrixEDHRB.row(j-1)*this->vectorVDHRB;
@@ -472,7 +480,8 @@ void NHingedRigidBodyStateEffector::computeDerivatives(double integTime)
     Eigen::MatrixXd thetaDDot(this->PanelVec.size(),1);
     int i = 0;
     for(PanelIt=this->PanelVec.begin(); PanelIt!=this->PanelVec.end(); PanelIt++){
-        thetaDDot(i,0) = this->matrixEDHRB.row(i).dot(this->matrixFDHRB*rDDotLoc_BN_B) + this->matrixEDHRB.row(i)*this->matrixGDHRB*omegaDotLoc_BN_B + this->matrixEDHRB.row(i)*this->vectorVDHRB;
+        thetaDDot(i,0) = this->matrixEDHRB.row(i).dot(this->matrixFDHRB*rDDotLoc_BN_B)
+        + this->matrixEDHRB.row(i)*this->matrixGDHRB*omegaDotLoc_BN_B + this->matrixEDHRB.row(i)*this->vectorVDHRB;
         i += 1;
     }
     // - First is trivial
@@ -503,7 +512,7 @@ void NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTim
         IPntS_B = PanelIt->dcm_SB.transpose()*PanelIt->IPntS_S*PanelIt->dcm_SB;
         rDot_SB_B = PanelIt->rPrime_SB_B + omegaLocal_BN_B.cross(PanelIt->r_SB_B);
         rotAngMomPntCContr_B_Sum += IPntS_B*omega_SN_B + PanelIt->mass*PanelIt->r_SB_B.cross(rDot_SB_B);
-        rotEnergyContr_Sum += 1.0/2.0*omega_SN_B.dot(IPntS_B*omega_SN_B) + 1.0/2.0*PanelIt->mass*rDot_SB_B.dot(rDot_SB_B)
+        rotEnergyContr_Sum += 0.5*omega_SN_B.dot(IPntS_B*omega_SN_B) + 1.0/2.0*PanelIt->mass*rDot_SB_B.dot(rDot_SB_B)
         + 1.0/2.0*PanelIt->k*(PanelIt->theta-PanelIt->theta_0)*(PanelIt->theta-PanelIt->theta_0);
     }
     

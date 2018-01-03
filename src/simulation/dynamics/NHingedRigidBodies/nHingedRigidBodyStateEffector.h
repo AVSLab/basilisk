@@ -26,18 +26,19 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
 
-/*! Struct containing all the panel variables. All members are public by default so they can be changed by methods of the N_hingedRigidBodyStateEffector class. */
+/*! Struct containing all the panel variables. All members are public by default so they can be changed by methods of
+ the N_hingedRigidBodyStateEffector class. */
 struct HingedPanel {
-    double mass = 1.0;                     //!< [kg] mass of hinged panel
-    double d = 1.0;                        //!< [m] distance from hinge point to hinged rigid body center of mass
-    double k = 1.0;                        //!< [N-m/rad] torsional spring constant of hinge
-    double c = 0.0;                        //!< [N-m-s/rad] rotational damping coefficient of hinge
-    double thetaInit = 0.0;                //!< [rad] Initial hinged rigid body angle
-    double thetaDotInit = 0.0;             //!< [rad/s] Initial hinged rigid body angle rate
+    double mass = 1.0;               //!< [kg] mass of hinged panel
+    double d = 1.0;                  //!< [m] distance from hinge point to hinged rigid body center of mass
+    double k = 1.0;                  //!< [N-m/rad] torsional spring constant of hinge
+    double c = 0.0;                  //!< [N-m-s/rad] rotational damping coefficient of hinge
+    double thetaInit = 0.0;          //!< [rad] Initial hinged rigid body angle
+    double thetaDotInit = 0.0;       //!< [rad/s] Initial hinged rigid body angle rate
     Eigen::Matrix3d IPntS_S;         //!< [kg-m^2] Inertia of hinged rigid body about point S in S frame components
-    double theta = 0.0;                    //!< [rad] hinged rigid body angle
-    double theta_0 = 0.0;                  //!< [rad] hinged rigid body rest angle
-    double thetaDot = 0.0;                 //!< [rad/s] hinged rigid body angle rate
+    double theta = 0.0;              //!< [rad] hinged rigid body angle
+    double theta_0 = 0.0;            //!< [rad] hinged rigid body rest angle
+    double thetaDot = 0.0;           //!< [rad/s] hinged rigid body angle rate
     Eigen::Matrix3d dcm_SS_prev;     //!< -- DCM from previous S frame to current S frame
     Eigen::Matrix3d dcm_SB;          //!< -- DCM from body to S frame
     Eigen::Vector3d omega_BN_S;      //!< [rad/s] omega_BN in S frame components
@@ -51,7 +52,6 @@ struct HingedPanel {
     Eigen::Matrix3d rPrimeTilde_SB_B;//!< -- Tilde matrix of rPrime_SB_B
     Eigen::Matrix3d ISPrimePntS_B;   //!< [kg-m^2/s] time body derivative IPntS in body frame components
 };
-
 
 /*! @brief This class is an instantiation of the stateEffector class and is a hinged rigid body effector. This effector
  is a rigid body attached to the hub through a torsional spring and damper that approximates a flexible appendage. See
@@ -75,21 +75,20 @@ private:
     std::vector<HingedPanel> PanelVec; //!< -- vector containing all the info on the different panels
     Eigen::MatrixXd matrixADHRB;    //!< [-] term needed for back substitution
     Eigen::MatrixXd matrixEDHRB;    //!< [-] term needed for back substitution
-    Eigen::MatrixXd matrixFDHRB;
-    Eigen::MatrixXd matrixGDHRB;
-    Eigen::MatrixXd matrixHDHRB;
-    Eigen::MatrixXd matrixKDHRB;
-    Eigen::MatrixXd matrixLDHRB;
-    Eigen::MatrixXd matrixMDHRB;
-    Eigen::VectorXd vectorVDHRB;
+    Eigen::MatrixXd matrixFDHRB;    //!< [-] term needed for back substitution
+    Eigen::MatrixXd matrixGDHRB;    //!< [-] term needed for back substitution
+    Eigen::MatrixXd matrixHDHRB;    //!< [-] term needed for back substitution
+    Eigen::MatrixXd matrixKDHRB;    //!< [-] term needed for back substitution
+    Eigen::MatrixXd matrixLDHRB;    //!< [-] term needed for back substitution
+    Eigen::MatrixXd matrixMDHRB;    //!< [-] term needed for back substitution
+    Eigen::VectorXd vectorVDHRB;    //!< [-] term needed for back substitution
     Eigen::Vector3d aTheta;         //!< -- term needed for back substitution
     Eigen::Vector3d bTheta;         //!< -- term needed for back substitution
     Eigen::Vector3d omegaLoc_BN_B;  //!< [rad/s] local copy of omegaBN
     Eigen::Matrix3d omegaTildeLoc_BN_B; //!< -- tilde matrix of omegaBN
-    StateData *hubSigma;             //!< -- state manager access to the hubs MRP state
-    StateData *hubOmega;             //!< -- state manager access to the hubs omegaBN_B state
-    StateData *hubVelocity;          //!< -- state manager access to the hubs rDotBN_N state
-    void readInputMessages();         //!< -- method to read input messages
+    StateData *hubSigma;            //!< -- state manager access to the hubs MRP state
+    StateData *hubOmega;            //!< -- state manager access to the hubs omegaBN_B state
+    StateData *hubVelocity;         //!< -- state manager access to the hubs rDotBN_N state
 
 public:
     NHingedRigidBodyStateEffector();  //!< -- Contructor
@@ -108,6 +107,7 @@ public:
     void updateEffectorMassProps(double integTime);  //!< -- Method for giving the s/c the HRB mass props and prop rates
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                       double & rotEnergyContr); //!< -- Computing energy and momentum for HRBs
+    void readInputMessages();       //!< -- method to read input messages
 };
 
 #endif /* N_HINGED_RIGID_BODY_STATE_EFFECTOR_H */
