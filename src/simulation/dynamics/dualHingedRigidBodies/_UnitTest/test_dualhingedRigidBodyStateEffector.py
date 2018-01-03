@@ -222,7 +222,7 @@ def dualHingedRigidBodyTest(show_plots,useFlag,testCase):
     unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase, "Change in Rotational Angular Momentum " + testCase, plt, "width=0.8\\textwidth", path)
     plt.figure()
     plt.clf()
-    plt.plot(rotEnergy[int(len(rotEnergy)/2)+1:,0]*1e-9, (rotEnergy[int(len(rotEnergy)/2)+1:,1] - rotEnergy[int(len(rotEnergy)/2)+1,1])/rotEnergy[int(len(rotEnergy)/2)+1,1])
+    plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
     unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, "width=0.8\\textwidth", path)
