@@ -69,48 +69,37 @@ def nHingedRigidBodyNoGravity(show_plots):
 
     unitTestSim.effector1 = nHingedRigidBodyStateEffector.NHingedRigidBodyStateEffector()
     unitTestSim.effector2 = nHingedRigidBodyStateEffector.NHingedRigidBodyStateEffector()
-    unitTestSim.panel1 = nHingedRigidBodyStateEffector.HingedPanel()
-    unitTestSim.panel2 = nHingedRigidBodyStateEffector.HingedPanel()
+    unitTestSim.panel = nHingedRigidBodyStateEffector.HingedPanel()
 
     unitTestSim.effector1.r_HB_B = [[0.5], [0.0], [1.0]]
     unitTestSim.effector1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.effector1.nameOfThetaState = "hingedRigidBody1Theta"
-    unitTestSim.effector1.nameOfThetaDotState = "hingedRigidBody1ThetaDot"
+    unitTestSim.effector1.nameOfThetaState = "nHingedRigidBody1Theta"
+    unitTestSim.effector1.nameOfThetaDotState = "nHingedRigidBody1ThetaDot"
 
     unitTestSim.effector2.r_HB_B = [[-0.5], [0.0], [1.0]]
     unitTestSim.effector2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    unitTestSim.effector2.nameOfThetaState = "hingedRigidBody2Theta"
-    unitTestSim.effector2.nameOfThetaDotState = "hingedRigidBody2ThetaDot"
+    unitTestSim.effector2.nameOfThetaState = "nHingedRigidBody2Theta"
+    unitTestSim.effector2.nameOfThetaDotState = "nHingedRigidBody2ThetaDot"
 
-    # Define Variable for panel 1
-    unitTestSim.panel1.mass = 50.0
-    unitTestSim.panel1.IPntS_S = [[50.0, 0.0, 0.0], [0.0, 25.0, 0.0], [0.0, 0.0, 25.0]]
-    unitTestSim.panel1.d = 0.75
-    unitTestSim.panel1.k = 100.0
-    unitTestSim.panel1.c = 0.0
-    unitTestSim.panel1.thetaInit = 5*numpy.pi/180.0
-    unitTestSim.panel1.thetaDotInit = 0.0
-    unitTestSim.panel1.theta_0 = 0.0
+    # Define Variable for a panel
+    unitTestSim.panel.mass = 50.0
+    unitTestSim.panel.IPntS_S = [[50.0, 0.0, 0.0], [0.0, 25.0, 0.0], [0.0, 0.0, 25.0]]
+    unitTestSim.panel.d = 0.75
+    unitTestSim.panel.k = 100.0
+    unitTestSim.panel.c = 0.0
+    unitTestSim.panel.thetaInit = 5*numpy.pi/180.0
+    unitTestSim.panel.thetaDotInit = 0.0
+    unitTestSim.panel.theta_0 = 0.0
 
-    # Define Variables for panel 2
-    unitTestSim.panel2.mass = 50.0
-    unitTestSim.panel2.IPntS_S = [[50.0, 0.0, 0.0], [0.0, 25.0, 0.0], [0.0, 0.0, 25.0]]
-    unitTestSim.panel2.d = 0.75
-    unitTestSim.panel2.k = 100.0
-    unitTestSim.panel2.c = 0.0
-    unitTestSim.panel2.thetaInit = 0.0
-    unitTestSim.panel2.thetaDotInit = 0.0
-    unitTestSim.panel2.theta_0 = 0.0
-
-    # Add panels to effector
-    unitTestSim.effector1.addHingedPanel(unitTestSim.panel1)
-    unitTestSim.effector1.addHingedPanel(unitTestSim.panel2)
-    unitTestSim.effector1.addHingedPanel(unitTestSim.panel2)
-    unitTestSim.effector1.addHingedPanel(unitTestSim.panel1)
-    unitTestSim.effector2.addHingedPanel(unitTestSim.panel1)
-    unitTestSim.effector2.addHingedPanel(unitTestSim.panel2)
-    unitTestSim.effector2.addHingedPanel(unitTestSim.panel2)
-    unitTestSim.effector2.addHingedPanel(unitTestSim.panel1)
+    # Add panels to effector 4 to one 3 to the other
+    unitTestSim.effector1.addHingedPanel(unitTestSim.panel)
+    unitTestSim.effector1.addHingedPanel(unitTestSim.panel)
+    unitTestSim.effector1.addHingedPanel(unitTestSim.panel)
+    unitTestSim.effector1.addHingedPanel(unitTestSim.panel)
+    # 3 on effector 2
+    unitTestSim.effector2.addHingedPanel(unitTestSim.panel)
+    unitTestSim.effector2.addHingedPanel(unitTestSim.panel)
+    unitTestSim.effector2.addHingedPanel(unitTestSim.panel)
     
     # Add effector to spaceCraft
     scObject.addStateEffector(unitTestSim.effector1)
@@ -150,14 +139,6 @@ def nHingedRigidBodyNoGravity(show_plots):
     orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
     rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
-
-    # Get the last sigma and position
-    dataSigma = [sigmaOut[-1]]
-    dataPos = [rOut_BN_N[-1]]
-
-    truePos = [[-0.15832794740648992, 1.122481716747217, -0.37975995949382907]]
-
-    trueSigma = [[0.06170318243240492, -0.07089090074412899, 0.06409500412692531]]
 
     initialOrbAngMom_N = [[orbAngMom_N[0, 1], orbAngMom_N[0, 2], orbAngMom_N[0, 3]]]
 

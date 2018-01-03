@@ -18,11 +18,9 @@
 
 '''
 import sys, os, inspect
-import matplotlib
 import matplotlib.pyplot as plt
 import numpy
 import pytest
-import math
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
