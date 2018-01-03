@@ -119,7 +119,6 @@ void Reset_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
     mSetZero(ConfigData->covarBar, ConfigData->numStates, ConfigData->numStates);
     
     mSetIdentity(ConfigData->stateTransition, ConfigData->numStates, ConfigData->numStates);
-    mSetIdentity(ConfigData->dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
     mSetIdentity(ConfigData->W_BS, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
 
     mSetZero(ConfigData->dynMat, ConfigData->numStates, ConfigData->numStates);
@@ -160,14 +159,11 @@ void Update_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
     
     v3Normalize(&ConfigData->states[0], sunheading_hat);
     
-    /*! - Compute the W_BS matrix to be able to switch between body and current S frame */
-    computeW_BS(&ConfigData->bVec_B[0], &ConfigData->states[0], ConfigData->W_BS, ConfigData->dcm_BS);
     
     /*! - Check for switching frames */
     if (v3Dot(ConfigData->bVec_B, sunheading_hat) > ConfigData->switchTresh)
     {
-        sunlineSEKFSwitch(ConfigData->dcm_BS, ConfigData->bVec_B, ConfigData->states, ConfigData->covar);
-        computeW_BS(&ConfigData->bVec_B[0], &ConfigData->states[0], ConfigData->W_BS, ConfigData->dcm_BS);
+        sunlineSEKFSwitch(ConfigData->bVec_B, ConfigData->states, ConfigData->covar);
     }
     
     /*! - If the time tag from the measured data is new compared to previous step, 
@@ -567,44 +563,6 @@ void sunlineKalmanGain(double covarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH],
     
 }
 
-/*! This method computes the rotation matrix between the current S frame into the B frame. This is used to rotated the states and covariance.
- @return void
- @param covarBar The time updated covariance
- */
-
-void computeW_BS(double bVec_B[SKF_N_STATES_HALF], double states[SKF_N_STATES_SWITCH], double *W_BS, double *dcm_BS)
-{
-    double sun_heading_norm[SKF_N_STATES_HALF];
-    double dcmL_BS[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
-    double b1[SKF_N_STATES_HALF];
-    double b2[SKF_N_STATES_HALF];
-    double s2_B[SKF_N_STATES_HALF];
-    double s3_B[SKF_N_STATES_HALF];
-    
-    /*!  Set the body frame vectors*/
-    v3Set(1, 0, 0, b1);
-    v3Set(0, 1, 0, b2);
-    v3Normalize(&states[0], sun_heading_norm);
-    
-    /* Compute the second vector of the S frame */
-    v3Cross(sun_heading_norm, bVec_B, s2_B);
-    v3Normalize(s2_B, s2_B);
-    
-    /*! Populate the dcm_BS with the "old" S-frame*/
-    mSetSubMatrix(sun_heading_norm, 1, SKF_N_STATES_HALF, dcmL_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
-    mSetSubMatrix(&(s2_B), 1, SKF_N_STATES_HALF, dcmL_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 1, 0);
-    v3Cross(sun_heading_norm, s2_B, s3_B);
-    v3Normalize(s3_B, s3_B);
-    mSetSubMatrix(&(s3_B), 1, SKF_N_STATES_HALF, dcmL_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 2, 0);
-    mTranspose(dcmL_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcmL_BS);
-    mCopy(dcmL_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm_BS);
-    
-    /* Populate the switch matrix W */
-    mSetIdentity(W_BS, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
-    mSetSubMatrix(&dcmL_BS[1][1], 1, 2, W_BS, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 3, 3);
-    mSetSubMatrix(&dcmL_BS[2][1], 1, 2, W_BS, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 4, 3);
-    
-}
 
 /*! This method computes the dcms necessary for the switch between the two frames.
  It the switches the states and the covariance, and sets s2 to be the new, different vector of the body frame.
@@ -616,16 +574,17 @@ void computeW_BS(double bVec_B[SKF_N_STATES_HALF], double states[SKF_N_STATES_SW
  @param covar Pointer to the covariance
  */
 
-void sunlineSEKFSwitch(double dcm_BS[SKF_N_STATES_HALF*SKF_N_STATES_HALF], double *bVec_B, double *states, double *covar)
+void sunlineSEKFSwitch(double *bVec_B, double *states, double *covar)
 {
+    double dcm_BSold[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double dcm_BSnew_T[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
-    double dcm_BSnew[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double dcm_SnewSold[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double switchMatP[SKF_N_STATES_SWITCH][SKF_N_STATES_SWITCH];
     double switchMat[SKF_N_STATES_SWITCH][SKF_N_STATES_SWITCH];
 
     double sun_heading_norm[SKF_N_STATES_HALF];
     double s2_B[SKF_N_STATES_HALF];
+    double s3_B_old[SKF_N_STATES_HALF];
     double s3_B_new[SKF_N_STATES_HALF];
     double b1[SKF_N_STATES_HALF];
     double b2[SKF_N_STATES_HALF];
@@ -635,6 +594,17 @@ void sunlineSEKFSwitch(double dcm_BS[SKF_N_STATES_HALF*SKF_N_STATES_HALF], doubl
     v3Set(0, 1, 0, b2);
     v3Normalize(&(states[0]), sun_heading_norm);
     
+    /* Compute the second vector of the S frame */
+    v3Cross(sun_heading_norm, bVec_B, s2_B);
+    v3Normalize(s2_B, s2_B);
+    
+    /*! Populate the dcm_BS with the "old" S-frame*/
+    mSetSubMatrix(sun_heading_norm, 1, SKF_N_STATES_HALF, dcm_BSold, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
+    mSetSubMatrix(&(s2_B), 1, SKF_N_STATES_HALF, dcm_BSold, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 1, 0);
+    v3Cross(sun_heading_norm, s2_B, s3_B_old);
+    v3Normalize(s3_B_old, s3_B_old);
+    mSetSubMatrix(&(s3_B_old), 1, SKF_N_STATES_HALF, dcm_BSold, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 2, 0);
+    mTranspose(dcm_BSold, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm_BSold);
     
     if (v3IsEqual(bVec_B, b1, 1e-10))
     {
@@ -663,13 +633,11 @@ void sunlineSEKFSwitch(double dcm_BS[SKF_N_STATES_HALF*SKF_N_STATES_HALF], doubl
         v3Copy(b1, bVec_B);
     }
     
-    mMultM(dcm_BSnew_T, 3, 3, dcm_BS, 3, 3, dcm_SnewSold);
-    mTranspose(dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm_BSnew);
+    mMultM(dcm_BSnew_T, 3, 3, dcm_BSold, 3, 3, dcm_SnewSold);
     
-    mSetIdentity(&switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
+    mSetIdentity(switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
     mSetSubMatrix(&dcm_SnewSold[1][1], 1, 2, &switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 3, 3);
     mSetSubMatrix(&dcm_SnewSold[2][1], 1, 2, &switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 4, 3);
-    
     
     mMultV(switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, states, states);
     mMultM(switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, covar, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, switchMatP);

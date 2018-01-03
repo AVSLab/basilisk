@@ -62,7 +62,6 @@ typedef struct {
     double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];        /*!< [-] Dynamics Matrix */
     double measMat[MAX_N_CSS_MEAS*SKF_N_STATES_SWITCH];        /*!< [-] Measurement Matrix H*/
     double W_BS[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];        /*!< [-] Switch Matrix between the body frame and the current switch frame*/
-    double dcm_BS[SKF_N_STATES_HALF*SKF_N_STATES_HALF];        /*!< [-] DCM between body frame and current S frame*/
     
 	double obs[MAX_N_CSS_MEAS];          /*!< [-] Observation vector for frame*/
 	double yMeas[MAX_N_CSS_MEAS];        /*!< [-] Measurement model data */
@@ -112,9 +111,7 @@ extern "C" {
     
     void sunlineSEKFUpdate(double kalmanGain[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double qObsVal, int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES_SWITCH], double *states, double *x, double *covar);
     
-    void computeW_BS(double bVec_B[SKF_N_STATES_HALF], double states[SKF_N_STATES_SWITCH], double *W_BS, double *dcm_BS);
-    
-    void sunlineSEKFSwitch( double dcm_BS[SKF_N_STATES_HALF*SKF_N_STATES_HALF], double *bVec, double *states, double *covar);
+    void sunlineSEKFSwitch(double *bVec_B, double *states, double *covar);
     
 #ifdef __cplusplus
 }
