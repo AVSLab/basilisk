@@ -39,11 +39,11 @@ from Basilisk.utilities import macros
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 
-def hingedRigidBodyAllTest(show_plots):
-    [testResults, testMessage] = test_hingedRigidBodyNoGravity(show_plots)
+def test_nHingedRigidBodyAllTest(show_plots):
+    [testResults, testMessage] = nHingedRigidBodyNoGravity(show_plots)
     assert testResults < 1, testMessage
 
-def test_hingedRigidBodyNoGravity(show_plots):
+def nHingedRigidBodyNoGravity(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -251,4 +251,4 @@ def test_hingedRigidBodyNoGravity(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_hingedRigidBodyNoGravity(True)
+    nHingedRigidBodyNoGravity(True)
