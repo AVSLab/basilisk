@@ -371,7 +371,6 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen:
         j += 1;
     }
 
-
     // - Start defining them good old contributions - start with translation
     // - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper
     
