@@ -69,6 +69,7 @@ public:
     void addHingedPanel(HingedPanel NewPanel) {PanelVec.push_back(NewPanel);}
     
 private:
+    double totalMass;                //!< [kg] Total mass of effector
     StateData *thetaState;           //!< -- state manager of theta for hinged rigid body
     StateData *thetaDotState;        //!< -- state manager of thetaDot for hinged rigid body
     std::vector<HingedPanel> PanelVec; //!< -- vector containing all the info on the different panels

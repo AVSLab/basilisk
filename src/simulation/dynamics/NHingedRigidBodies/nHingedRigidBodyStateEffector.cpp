@@ -102,9 +102,12 @@ void NHingedRigidBodyStateEffector::registerStates(DynParamManager& states)
     Eigen::MatrixXd thetaDotInitMatrix(this->PanelVec.size(),1);
     std::vector<HingedPanel>::iterator PanelIt;
     int it = 0;
+    this->totalMass = 0;
     for(PanelIt=this->PanelVec.begin(); PanelIt!=this->PanelVec.end(); PanelIt++){
         thetaInitMatrix(it,0) = PanelIt->thetaInit;
         thetaDotInitMatrix(it,0) = PanelIt->thetaDotInit;
+        // - Looping over hinged rigid bodies to find total mass
+        this->totalMass += PanelIt->mass;
         it += 1;
     }
     this->thetaState = states.registerState(this->PanelVec.size(), 1, this->nameOfThetaState);
