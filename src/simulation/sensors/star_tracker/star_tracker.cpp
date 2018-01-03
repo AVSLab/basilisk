@@ -36,7 +36,7 @@ StarTracker::StarTracker()
     this->OutputBufferCount = 2;
     this->sensorTimeTag = 0;
     m33SetIdentity(RECAST3X3 this->dcm_CB);
-    this->errorModel = new GaussMarkov(3);
+    this->errorModel = GaussMarkov(3);
     this->PMatrix.fill(0.0);
     this->AMatrix.fill(0.0);
     this->walkBounds.fill(0.0);
@@ -45,7 +45,6 @@ StarTracker::StarTracker()
 
 StarTracker::~StarTracker()
 {
-    delete this->errorModel;
     return;
 }
 
@@ -80,9 +79,9 @@ void StarTracker::SelfInit()
         std::cerr << "  Quitting."<<std::endl;
         return;
     }
-    this->errorModel->setNoiseMatrix(this->PMatrix);
-    this->errorModel->setRNGSeed(this->RNGSeed);
-    this->errorModel->setUpperBounds(this->walkBounds);
+    this->errorModel.setNoiseMatrix(this->PMatrix);
+    this->errorModel.setRNGSeed(this->RNGSeed);
+    this->errorModel.setUpperBounds(this->walkBounds);
 }
 
 void StarTracker::CrossInit()
@@ -110,9 +109,9 @@ void StarTracker::readInputMessages()
 
 void StarTracker::computeSensorErrors()
 {
-    this->errorModel->setPropMatrix(this->AMatrix);
-    this->errorModel->computeNextState();
-    this->navErrors = this->errorModel->getCurrentState();
+    this->errorModel.setPropMatrix(this->AMatrix);
+    this->errorModel.computeNextState();
+    this->navErrors = this->errorModel.getCurrentState();
 }
 
 void StarTracker::applySensorErrors()

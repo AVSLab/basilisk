@@ -68,7 +68,7 @@ private:
     Eigen::Matrix3d AMatrix;      //!< [-] AMatrix that we use for error propagation
     int64_t inputStateID;             //!< [-] Connection to input state message
     int64_t outputStateID;            //!< [-] Connection to outgoing state message
-    GaussMarkov *errorModel;           //!< [-] Gauss-markov error states
+    GaussMarkov errorModel;           //!< [-] Gauss-markov error states
 };
 
 #endif

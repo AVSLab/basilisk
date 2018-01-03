@@ -48,14 +48,13 @@ SimpleNav::SimpleNav()
     this->PMatrix.fill(0.0);
     this->walkBounds.resize(18);
     this->walkBounds.fill(0.0);
-    this->errorModel =  new GaussMarkov(18);
+    this->errorModel =  GaussMarkov(18);
     return;
 }
 
 /*! Destructor.  Nothing here. */
 SimpleNav::~SimpleNav()
 {
-    delete this->errorModel;
     return;
 }
 
@@ -95,13 +94,13 @@ void SimpleNav::SelfInit()
         return;
     }
     //! - Set the matrices of the lower level error propagation (GaussMarkov)
-    this->errorModel->setNoiseMatrix(this->PMatrix);
-    this->errorModel->setRNGSeed(this->RNGSeed);
+    this->errorModel.setNoiseMatrix(this->PMatrix);
+    this->errorModel.setRNGSeed(this->RNGSeed);
     if (this->walkBounds.size() != numStates) {
         std::cerr << "Your walkbounds vector  is not 18 elements.";
         std::cerr << "  Quitting"<<std::endl;
     }
-    this->errorModel->setUpperBounds(this->walkBounds);
+    this->errorModel.setUpperBounds(this->walkBounds);
 }
 
 /*! This method pulls the input message IDs from the messaging system.  It will
@@ -228,9 +227,9 @@ void SimpleNav::computeErrors(uint64_t CurrentSimNanos)
     localProp(8,11) *= timeStep; //attitude/attitude rate cross correlation terms
     
     //! - Set the GaussMarkov propagation matrix and compute errors
-    this->errorModel->setPropMatrix(localProp);
-    this->errorModel->computeNextState();
-    this->navErrors = this->errorModel->getCurrentState();
+    this->errorModel.setPropMatrix(localProp);
+    this->errorModel.computeNextState();
+    this->navErrors = this->errorModel.getCurrentState();
 }
 
 /*! This method calls all of the run-time operations for the simple nav model.
