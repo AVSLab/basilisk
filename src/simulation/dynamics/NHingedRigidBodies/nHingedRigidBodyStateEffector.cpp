@@ -319,8 +319,11 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen:
     // - Define v vector for the panel equations
     this->vectorVDHRB.resize(this->PanelVec.size());
     this->vectorVDHRB.setZero();
+    double massOfCurrentPanelAndBefore = 0; // Summation of all of prior panels masses and the current panels mass
     j = 1;
     for(PanelIt=this->PanelVec.begin(); PanelIt!=this->PanelVec.end(); PanelIt++){
+        // Add current panel to mass
+        massOfCurrentPanelAndBefore += PanelIt->mass;
         double sumTerm1;
         Eigen::Vector3d sumTerm2;
         sumTerm2.setZero();
@@ -357,7 +360,14 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen:
         }
         sumTerm3 -= pow(sumThetaDot, 2)*PanelIt->d*PanelIt->sHat1_B;
         sumTerm1 = springTerm -(PanelIt->IPntS_S(0,0) - PanelIt->IPntS_S(2,2))*PanelIt->omega_BN_S(2)*PanelIt->omega_BN_S(0) - PanelIt->mass*PanelIt->d*PanelIt->sHat3_B.transpose()*(2*this->omegaTildeLoc_BN_B*PanelIt->rPrime_SB_B+this->omegaTildeLoc_BN_B*this->omegaTildeLoc_BN_B*PanelIt->r_SB_B+sumTerm2+sumTerm3);
-        this->vectorVDHRB(j-1) = sumTerm1;
+        // Add gravity torque to this sumTerm
+        Eigen::Vector3d gravTorqueCurPanel;
+        gravTorqueCurPanel = -PanelIt->d*PanelIt->sHat1_B.cross(PanelIt->mass*g_B);
+        Eigen::Vector3d gravForceRestOfPanels;
+        double remainingMass;
+        remainingMass = this->totalMass - massOfCurrentPanelAndBefore;
+        gravForceRestOfPanels = remainingMass*g_B;
+        this->vectorVDHRB(j-1) = sumTerm1 + PanelIt->sHat2_B.dot(gravTorqueCurPanel) + 2.0*PanelIt->d*PanelIt->sHat3_B.dot(gravForceRestOfPanels);
         j += 1;
     }
 
