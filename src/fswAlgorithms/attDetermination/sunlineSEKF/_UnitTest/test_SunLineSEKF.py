@@ -187,6 +187,8 @@ def sunline_individual_test():
     cssCos = [np.cos(np.deg2rad(10.)), np.cos(np.deg2rad(25.)), np.cos(np.deg2rad(5.)), np.cos(np.deg2rad(90.))]
     sensorTresh = np.cos(np.deg2rad(50.))
     cssNormals = [1.,0.,0.,0.,1.,0., 0.,0.,1., 1./np.sqrt(2), 1./np.sqrt(2),0.]
+    dcmArray_BS = RigidBodyKinematics.MRP2C([0.1,-0.15,0.2])
+    dcm_BS = (dcmArray_BS.flatten()).tolist()
 
     measMat = sunlineSEKF.new_doubleArray(8*numStates)
     obs = sunlineSEKF.new_doubleArray(8)
@@ -199,7 +201,7 @@ def sunline_individual_test():
         sunlineSEKF.doubleArray_setitem(obs, i, 0.0)
         sunlineSEKF.doubleArray_setitem(yMeas, i, 0.0)
 
-    sunlineSEKF.sunlineHMatrixYMeas(inputStates, numCSS, cssCos, sensorTresh, cssNormals, obs, yMeas, numObs, measMat)
+    sunlineSEKF.sunlineHMatrixYMeas(inputStates, numCSS, cssCos, sensorTresh, cssNormals, dcm_BS, obs, yMeas, numObs, measMat)
 
     obsOut = []
     yMeasOut = []
@@ -216,8 +218,8 @@ def sunline_individual_test():
     expectedH = np.zeros([8,numStates])
     expectedY = np.zeros(8)
     for j in range(3):
-        expectedH[j,0:3] = np.eye(3)[j,:]
-        expectedY[j] =np.array(cssCos[j]) - np.dot(np.array(inputStates)[0:3], np.array(cssNormals)[j*3:(j+1)*3])
+        expectedH[j,0:3] = np.dot(np.eye(3)[j,:], dcmArray_BS)
+        expectedY[j] =np.array(cssCos[j]) - np.dot(np.dot(dcmArray_BS, np.array(inputStates)[0:3]), np.array(cssNormals)[j*3:(j+1)*3])
     expectedObs = np.array([np.cos(np.deg2rad(10.)), np.cos(np.deg2rad(25.)), np.cos(np.deg2rad(5.)),0.,0.,0.,0.,0.])
     expectedNumObs = 3
 
@@ -394,11 +396,66 @@ def sunline_individual_test():
             testMessages.append("CKF update failure \n")
 
     ###################################################################################
+    ## Test the compute_W_BS method
+    ###################################################################################
+
+    inputStates = [2, 1, 0.75, 0.1, 0.4]
+    bvec1 = [0., 1., 0.]
+    b1 = np.array(bvec1)
+    w_bs = [1., 0., 0., 0., 0.,
+             0., 1., 0., 0., 0.,
+             0., 0., 1., 0., 0.,
+             0., 0., 0., 1., 0.,
+             0., 0., 0., 0., 1.]
+    dcm_BS = [1., 0., 0.,
+             0., 1., 0.,
+             0., 0., 1.]
+
+    # Fill in expected values for test
+
+    DCM_exp = np.zeros([3,3])
+    W_exp = np.eye(numStates)
+
+    DCM_exp[:, 0] = np.array(inputStates[0:3]) / (np.linalg.norm(np.array(inputStates[0:3])))
+    DCM_exp[:, 1] = np.cross(DCM_exp[:, 0], b1) / np.linalg.norm(np.array(np.cross(DCM_exp[:, 0], b1)))
+    DCM_exp[:, 2] = np.cross(DCM_exp[:, 0], DCM_exp[:, 1]) / np.linalg.norm(
+        np.cross(DCM_exp[:, 0], DCM_exp[:, 1]))
+    W_exp[3:5, 3:5] = DCM_exp[1:3, 1:3]
+
+    # Fill in the variables for the test
+    dcm = sunlineSEKF.new_doubleArray(numStates * numStates)
+    switchBS = sunlineSEKF.new_doubleArray(numStates * numStates)
+
+    for j in range(9):
+        sunlineSEKF.doubleArray_setitem(dcm, j, w_bs[j])
+    for j in range(numStates * numStates):
+        sunlineSEKF.doubleArray_setitem(switchBS, j, w_bs[j])
+
+    sunlineSEKF.computeW_BS(bvec1, inputStates, switchBS, dcm)
+
+    switchBSout = []
+    dcmOut = []
+    for j in range(9):
+        dcmOut.append(sunlineSEKF.doubleArray_getitem(dcm, j))
+    for j in range(numStates * numStates):
+        switchBSout.append(sunlineSEKF.doubleArray_getitem(switchBS, j))
+
+    errorNorm = np.zeros(2)
+    errorNorm[0] = np.linalg.norm(DCM_exp - np.array(dcmOut).reshape([3, 3]))
+    errorNorm[1] = np.linalg.norm(W_exp - np.array(switchBSout).reshape([numStates, numStates]))
+
+    for i in range(len(errorNorm)):
+        if (errorNorm[i] > 1.0E-10):
+            testFailCount += 1
+            testMessages.append("Frame switch failure \n")
+
+    ###################################################################################
     ## Test the Switching method
     ###################################################################################
 
     inputStates = [2,1,0.75,0.1,0.4]
     bvec1 = [0.,1.,0.]
+    b1 = np.array(bvec1)
     covar = [1., 0., 0., 1., 0.,
              0., 1., 0., 0., 1.,
              0., 0., 1., 0., 0.,
@@ -406,20 +463,47 @@ def sunline_individual_test():
              0., 1., 0., 0., 1.]
     noise =0.01
 
-    b1 = np.array(bvec1)
+    # Fill in expected values for test
+
+    DCM_BSold = np.zeros([3,3])
+    DCM_BSnew = np.zeros([3,3])
+    DCM_newOld = np.zeros([3,3])
+    Switch = np.eye(numStates)
+    SwitchBSold = np.eye(numStates)
+    SwitchBSnew = np.eye(numStates)
+
+    DCM_BSold[:,0] = np.array(inputStates[0:3])/(np.linalg.norm(np.array(inputStates[0:3])))
+    DCM_BSold[:,1] = np.cross(DCM_BSold[:,0], b1)/np.linalg.norm(np.array(np.cross(DCM_BSold[:,0], b1)))
+    DCM_BSold[:,2] = np.cross(DCM_BSold[:,0], DCM_BSold[:,1])/np.linalg.norm(np.cross(DCM_BSold[:,0], DCM_BSold[:,1]))
+    SwitchBSold[3:5, 3:5] = DCM_BSold[1:3, 1:3]
+    switchInput = SwitchBSold.flatten().tolist()
+
+    b2 = np.array([1.,0.,0.])
+    DCM_BSnew[:,0] = np.array(inputStates[0:3])/(np.linalg.norm(np.array(inputStates[0:3])))
+    DCM_BSnew[:,1] = np.cross(DCM_BSnew[:,0], b2)/np.linalg.norm(np.array(np.cross(DCM_BSnew[:,0], b2)))
+    DCM_BSnew[:,2] = np.cross(DCM_BSnew[:,0], DCM_BSnew[:,1])/np.linalg.norm(np.cross(DCM_BSnew[:,0], DCM_BSnew[:,1]))
+    SwitchBSnew[3:5, 3:5] = DCM_BSnew[1:3, 1:3]
+
+    DCM_newOld = np.dot(DCM_BSnew.T, DCM_BSold)
+    Switch[3:5, 3:5] = DCM_newOld[1:3,1:3]
+
+    # Fill in the variables for the test
     bvec = sunlineSEKF.new_doubleArray(3)
     states = sunlineSEKF.new_doubleArray(numStates)
     covarMat = sunlineSEKF.new_doubleArray(numStates * numStates)
+    switchBS = sunlineSEKF.new_doubleArray(numStates * numStates)
 
     for i in range(3):
         sunlineSEKF.doubleArray_setitem(bvec, i, bvec1[i])
     for i in range(numStates):
         sunlineSEKF.doubleArray_setitem(states, i, inputStates[i])
     for j in range(numStates*numStates):
-            sunlineSEKF.doubleArray_setitem(covarMat, j, covar[j])
+        sunlineSEKF.doubleArray_setitem(covarMat, j, covar[j])
+        sunlineSEKF.doubleArray_setitem(switchBS, j, switchInput[j])
 
-    sunlineSEKF.sunlineSEKFSwitch(bvec, states, covarMat)
+    sunlineSEKF.sunlineSEKFSwitch(switchBS, bvec, states, covarMat)
 
+    switchBSout = []
     covarOut = []
     stateOut = []
     bvecOut = []
@@ -429,36 +513,20 @@ def sunline_individual_test():
         stateOut.append(sunlineSEKF.doubleArray_getitem(states, i))
     for j in range(numStates*numStates):
         covarOut.append(sunlineSEKF.doubleArray_getitem(covarMat, j))
+        switchBSout.append(sunlineSEKF.doubleArray_getitem(switchBS, j))
 
-    # Fill in expected values for test
-
-    DCM_BSold = np.zeros([3,3])
-    DCM_BSnew = np.zeros([3,3])
-    DCM_newOld = np.zeros([3,3])
-    Switch = np.zeros([numStates,numStates])
-
-    DCM_BSold[:,0] = np.array(inputStates[0:3])/(np.linalg.norm(np.array(inputStates[0:3])))
-    DCM_BSold[:,1] = np.cross(DCM_BSold[:,0], b1)/np.linalg.norm(np.array(np.cross(DCM_BSold[:,0], b1)))
-    DCM_BSold[:,2] = np.cross(DCM_BSold[:,0], DCM_BSold[:,1])/np.linalg.norm(np.cross(DCM_BSold[:,0], DCM_BSold[:,1]))
-
-    b2 = np.array([1.,0.,0.])
-    DCM_BSnew[:,0] = np.array(inputStates[0:3])/(np.linalg.norm(np.array(inputStates[0:3])))
-    DCM_BSnew[:,1] = np.cross(DCM_BSnew[:,0], b2)/np.linalg.norm(np.array(np.cross(DCM_BSnew[:,0], b2)))
-    DCM_BSnew[:,2] = np.cross(DCM_BSnew[:,0], DCM_BSnew[:,1])/np.linalg.norm(np.cross(DCM_BSnew[:,0], DCM_BSnew[:,1]))
-
-    DCM_newOld = np.dot(DCM_BSnew.T, DCM_BSold)
-    Switch[0:3,0:3] = np.eye(3)
-    Switch[3:5, 3:5] = DCM_newOld[1:3,1:3]
 
     expectedState = np.dot(Switch, np.array(inputStates))
     Pk = np.array(covar).reshape([numStates, numStates])
     expectedP = np.dot(Switch, np.dot(Pk, Switch.T))
 
-    errorNorm = np.zeros(2)
+    errorNorm = np.zeros(4)
     errorNorm[0] = np.linalg.norm(np.array(stateOut) - expectedState)
     errorNorm[1] = np.linalg.norm(expectedP - np.array(covarOut).reshape([numStates, numStates]))
+    errorNorm[2] = np.linalg.norm(np.array(bvecOut) - b2)
+    errorNorm[3] = np.linalg.norm(SwitchBSnew - np.array(switchBSout).reshape([numStates, numStates]))
 
-    for i in range(2):
+    for i in range(len(errorNorm)):
         if (errorNorm[i] > 1.0E-10):
             testFailCount += 1
             testMessages.append("Frame switch failure \n")
@@ -921,10 +989,11 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 
 if __name__ == "__main__":
+    sunline_individual_test()
     #test_all_functions_sekf(True)
     # (200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
     # (2000, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
     # (200, False ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
     # (200, False ,[0., 1., 0.] ,[1., 0., 0.], [0.3, 0.0, 0.6, 0.0, 0.0]),
     # (200, True ,[0., 1., 0.] ,[1., 0., 0.], [0.7, 0.7, 0.0, 0.0, 0.0])
-    test_all_sunline_sekf(True, 200,  False ,[0., 1., 0.] ,[1., 0., 0.], [0.3, 0.0, 0.6, 0.0, 0.0])
+    #(True, 200,  True ,[0., 1., 0.] ,[1., 0., 0.], [0.3, 0.0, 0.6, 0.0, 0.0])

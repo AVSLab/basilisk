@@ -48,7 +48,7 @@ typedef struct {
 	double dt;                     /*!< [s] seconds since last data epoch */
 	double timeTag;                /*!< [s]  Time tag for statecovar/etc */
 
-    double s2[SKF_N_STATES_HALF];       /*!< [-]  second component of frame */
+    double bVec_B[SKF_N_STATES_HALF];       /*!< [-] current vector of the b frame used to make frame */
     double switchTresh;             /*!< [-]  Threshold for switching frames */
 
 	double states[SKF_N_STATES_SWITCH];        /*!< [-] State estimate for time TimeTag*/
@@ -61,6 +61,8 @@ typedef struct {
 
     double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];        /*!< [-] Dynamics Matrix */
     double measMat[MAX_N_CSS_MEAS*SKF_N_STATES_SWITCH];        /*!< [-] Measurement Matrix H*/
+    double W_BS[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];        /*!< [-] Switch Matrix between the body frame and the current switch frame*/
+    double dcm_BS[SKF_N_STATES_HALF*SKF_N_STATES_HALF];        /*!< [-] DCM between body frame and current S frame*/
     
 	double obs[MAX_N_CSS_MEAS];          /*!< [-] Observation vector for frame*/
 	double yMeas[MAX_N_CSS_MEAS];        /*!< [-] Measurement model data */
@@ -110,7 +112,9 @@ extern "C" {
     
     void sunlineSEKFUpdate(double kalmanGain[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double qObsVal, int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES_SWITCH], double *states, double *x, double *covar);
     
-    void sunlineSEKFSwitch(double *s2, double *states, double *covar);
+    void computeW_BS(double bVec_B[SKF_N_STATES_HALF], double states[SKF_N_STATES_SWITCH], double *W_BS, double *dcm_BS);
+    
+    void sunlineSEKFSwitch( double dcm_BS[SKF_N_STATES_HALF*SKF_N_STATES_HALF], double *bVec, double *states, double *covar);
     
 #ifdef __cplusplus
 }
