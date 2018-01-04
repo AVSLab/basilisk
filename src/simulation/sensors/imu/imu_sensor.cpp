@@ -130,21 +130,23 @@ void ImuSensor::SelfInit()
     
     Eigen::MatrixXd oSatBounds;
     oSatBounds.resize(this->numStates, 2);
-    oSatBounds(0,0) = this->senRotMax;
-    oSatBounds(0,1) = -this->senRotMax;
-    oSatBounds(1,0) = this->senRotMax;
-    oSatBounds(1,1) = -this->senRotMax;
-    oSatBounds(2,0) = this->senRotMax;
-    oSatBounds(2,1) = -this->senRotMax;
+    oSatBounds(0,0) = -this->senRotMax;
+    oSatBounds(0,1) = this->senRotMax;
+    oSatBounds(1,0) = -this->senRotMax;
+    oSatBounds(1,1) = this->senRotMax;
+    oSatBounds(2,0) = -this->senRotMax;
+    oSatBounds(2,1) = this->senRotMax;
+    this->oSat.setBounds(oSatBounds);
     
     Eigen::MatrixXd aSatBounds;
     aSatBounds.resize(this->numStates, 2);
-    aSatBounds(0,0) = this->senTransMax;
-    aSatBounds(0,1) = -this->senTransMax;
-    aSatBounds(1,0) = this->senTransMax;
-    aSatBounds(1,1) = -this->senTransMax;
-    aSatBounds(2,0) = this->senTransMax;
-    aSatBounds(2,1) = -this->senTransMax;
+    aSatBounds(0,0) = -this->senTransMax;
+    aSatBounds(0,1) = this->senTransMax;
+    aSatBounds(1,0) = -this->senTransMax;
+    aSatBounds(1,1) = this->senTransMax;
+    aSatBounds(2,0) = -this->senTransMax;
+    aSatBounds(2,1) = this->senTransMax;
+    this->aSat.setBounds(aSatBounds);
 
     return;
 }
