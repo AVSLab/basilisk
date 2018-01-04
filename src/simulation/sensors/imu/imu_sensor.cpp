@@ -292,13 +292,22 @@ void ImuSensor::computeSensorErrors()
 void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
 {
 	double  dt = (CurrentTime - PreviousTime)*1.0E-9;
-
-    this->omega_PN_P_out = this->oSat.saturate(this->omega_PN_P_out);
-    this->prv_PN_out = this->omega_PN_P_out * dt;
     
-    this->accel_SN_P_out = this->aSat.saturate(this->accel_SN_P_out);
-    this->DV_SN_P_out = this->accel_SN_P_out * dt;
-
+    Eigen::Vector3d omega_PN_P_in = this->omega_PN_P_out;
+    this->omega_PN_P_out = this->oSat.saturate(omega_PN_P_in);
+    for (uint64_t i = 0; i < this->numStates; i++){
+        if (this->omega_PN_P_out(i) != omega_PN_P_in(i)){
+            this->prv_PN_out(i) = this->omega_PN_P_out(i) * dt;
+        }
+    }
+    
+    Eigen::Vector3d accel_SN_P_in = this->accel_SN_P_out;
+    this->accel_SN_P_out = this->aSat.saturate(accel_SN_P_in);
+    for (uint64_t i = 0; i < this->numStates; i++){
+        if (this->accel_SN_P_out(i) != accel_SN_P_in(i)){
+            this->DV_SN_P_out(i) = this->accel_SN_P_out(i) * dt;
+        }
+    }
     return;
 }
 
