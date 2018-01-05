@@ -1,9 +1,3 @@
-\newcommand{\fakesubsection}[1]{%
-	\par\refstepcounter{subsection}% Increase section counter
-	\subsectionmark{#1}% Add section mark (header)
-	\addcontentsline{toc}{subsection}{\protect\numberline{\thesubsection}#1}% Add section to ToC
-	% Add more content here, if needed.
-}
 
 \section{Model Description}
 
@@ -369,9 +363,240 @@ Finally the rotational EOM is written as:
 \end{multline}
 This concludes the derivation of the EOMs needed to describe the translational and rotational motion of a spacecraft with depleting mass due to thrusters. The following section describes the models used for the fuel tanks.
 
-\fakesubsection{Tank Models}
+\subsection{Tank models}
+Different tank models could be developed to perfectly suit the needs of the spacecraft's fuel chain configuration. In the present paper five reservoir models will be considered as examples and their properties, such as inertia variation and barycenter motion, will be gathered.\newline
+The models and their main hypothesis are presented below:
 
-\includepdf[pages={1, 2, 3, 4, 5, 6,7}, pagecommand={}]{Support/TankModels.pdf}
+\begin{itemize}
+	\item The constant tank's volume model where a spherical reservoir maintains a fixed geometry, i.e. a constant radius, and a fixed barycenter.
+	\item The constant fuel's density model where a spherical tank keeps its geometrical shape but gradually change its volume, so its radius, to maintain constant the density of the fuel and it has a fixed center of mass. 
+	\item The emptying tank model where the fuel leaks out from an outlet in the spherical reservoir and the quantity of fuel decrease perpendicularly to the output direction modifying the barycenter position and the body's inertia accordingly to the mass distribution inside the tank.
+	\item The uniform burn cylinder model where a cylindrical tank does not change its geometrical shape and volume but the gas gradually decrease its density. As a consequence, the fuel barycenter remains fixed and the inertia varies accordingly to the mass variation.
+	\item The centrifugal burn cylinder model where a cylindrical tank is considered and the fuel burns radially from the center until the walls without breaking the tank's symmetry. The inertia tensor derivative is computed from these hypothesis and the barycenter remains in its initial position because the symmetry is conserved.
+\end{itemize}
+
+\subsubsection{The constant tank's volume model}
+This model takes into account the variation of the fuel inside considering no variation of the volume off the tank. By looking at Figure \ref{fig:CostTankVol}:
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width = 0.33\textwidth]{./Figures/ConstVolTank.eps}
+	\caption{Geometrical properties of the constant density sphere.}
+	\label{fig:CostTankVol}
+\end{figure}
+
+\begin{equation}
+	V_{\text{tank}}= cost \quad \Rightarrow \quad R_{\text{tank}} = cost
+\end{equation}
+\begin{equation}
+	\left[I_{\text{fuel, }Tc}\right] = \frac{2}{5}\,m_{\text{fuel}} \,R_{\text{tank}}^2\, \left[I_{3\times3}\right]
+\end{equation} 
+\begin{equation}
+	\left[I_{\text{fuel, }Tc}\right]' = \frac{2}{5}\,\dot{m}_{\text{fuel}} \,R_{\text{tank}}^2\, \left[I_{3\times3}\right]
+\end{equation}
+
+Moreover the position of the center of mass of the tank does not change, so:
+
+\begin{equation}
+	\bm{r}'_{Tc/B} = 0 \qquad\qquad \bm{r}''_{Tc/B}=0
+\end{equation}
+\subsubsection{The constant fuel's density model}
+The second model considers a shape-changing tank adapting itself to keep the fuel's density constant. Thus,according to Figure \ref{fig:ConstDensTank}:
+\begin{figure}[hb!]
+	\centering
+	\includegraphics[width = 0.33\textwidth]{./Figures/ConstDensTank.eps}
+	\caption{Geometrical properties of the constant density sphere.}
+	\label{fig:ConstDensTank}
+\end{figure}
+\begin{equation}
+	\begin{cases}
+		\dot{V}_{\text{tank}} = \frac{\dot{m}_{\text{fuel}}}{\rho_{\text{fuel}}} \vspace{3pt}\\
+		\dot{V}_{\text{tank}} = 4\,\pi\,R_{\text{tank}}^2\,\dot{R}_{\text{tank}}
+	\end{cases}
+	\quad \Rightarrow \quad \dot{R}_{\text{tank}} = \frac{\dot{m}_{\text{fuel}}}{4\pi\,R_{\text{tank}}^2\,\rho_{\text{fuel}}}
+\end{equation}
+
+As a consequence:
+
+\begin{equation}
+	\left[I_{\text{fuel, }Tc}\right]= \frac{2}{5}\,m_{\text{fuel}} \,R_{\text{tank}}^2\, \left[I_{3\times3}\right]
+\end{equation}
+\begin{multline}
+	\left[I_{\text{fuel, }Tc}\right]' =  \frac{2}{5}\left(R^2_{\text{tank}}+\frac{m_{\text{fuel}}}{2\pi\,R_{\text{tank}}\,\rho_{\text{fuel}}}\right)\dot{m}_{\text{fuel}}\,\left[I_{3\times3} \right] =\\
+	= \frac{2}{5}\left(R^2_{\text{tank}} + \frac{2}{3}\,R^2_{\text{tank}}\right)\dot{m}_{\text{fuel}}\left[I_{3\times3}\right] = \frac{2}{3}\dot{m}_{\text{fuel}}R^2_{\text{tank}}\left[I_{3\times3}\right]
+\end{multline}
+
+As in the previous model:
+
+\begin{equation}
+	\bm{r}'_{Tc/B} = 0 \qquad\qquad \bm{r}''_{Tc/B}=0
+\end{equation}
+
+\subsubsection{The emptying tank model}
+In this case the mass variation stats from the opposite point to the outlet, that will be called from now on the pole, perpendicularly to the vector connecting the pole and the outlet.\newline
+The following notation will be used: $\theta \in (0\,, \pi)$ will be the latitude angle counted from the pole till the outlet,  $\phi \in (0\,,2\,\pi)$ will note the longitude angle, the radius will be $r \in (0,\,R_{\text{tank}})$. Moreover the $\theta^*$ will denote the angle between the pole and the circumference of the fuel's free surface. The volume $\mathcal{V}$ and the center of mass of the tank can be computed using notations in figure \ref{fig:EmpTank}:
+
+\begin{figure}[hb!]
+	\centering
+	\includegraphics[width = 0.8\textwidth]{./Figures/EmpTank.eps}
+	\caption{Geometrical properties of the emptying tank model.}
+	\label{fig:EmpTank}
+\end{figure}
+
+
+\begin{multline}
+	\mathcal{V}(\theta^*)=\int_{0}^{2\,\pi}\int_{0}^{\theta^*}\int_{0}^{R_{\text{tank}}\frac{\cos{\theta^*}}{\cos{\theta}}}r^2\,\sin{\theta\,\text{d}\theta}\,\text{d}\phi\,\text{d}r\;+\\
+	+\int_{0}^{2\,\pi}\int_{\theta^*}^{\pi}\int_{0}^{R_{\text{tank}}}r^2\,\sin{\theta\,\text{d}\theta}\,\text{d}\phi\,\text{d}r= \frac{2\,\pi\,R_{\text{tank}}^3}{3}\left[1+\frac{3}{2}\cos{\theta^*}-\frac{1}{2}\cos^3{\theta^*}\right]
+\end{multline}
+\vspace{3pt}
+\begin{multline}
+	\bm{r}_{Tc/B}\cdot\bm{\hat{k}}_3 = \bm{r}_{Tc'/B}\cdot\bm{\hat{k}}_3 +  \frac{1}{\mathcal{V}(\theta^*)}\left(\int_{0}^{2\,\pi}\int_{0}^{\theta^*}\int_{0}^{R_{\text{tank}}\frac{\cos{\theta^*}}{\cos{\theta}}}r^3\,\sin{\theta}\cos{\theta}\,\text{d}\theta\,\text{d}\phi\,\text{d}r\;+\right.\\\left.+\int_{0}^{2\,\pi}\int_{\theta^*}^{\pi}\int_{0}^{R_{\text{tank}}}r^3\,\sin{\theta}\cos{\theta}\,\text{d}\theta\,\text{d}\phi\,\text{d}r\right)
+	= \frac{\pi\,R_{\text{tank}}^4}
+	{4\,\mathcal{V}(\theta^*)}\left[2\,\cos^2{\theta^*} - \cos^4{\theta^*}-1\right]
+\end{multline}
+\noindent
+where $\bm{\hat{k}}_3$ is the outlet-to-pole axis of the reference frame of the sphere and $\bm{r}_{Tc'/B}$ the constant vector from $B$ to the center of the sphere.\newline
+Considering that $m_{\text{fuel}}=\rho_{\text{fuel}}\mathcal{V}\,$, the derivatives in the $\mathcal{B}$ reference frame can be performed:
+
+\begin{multline}
+	\bm{r}'_{Tc/B}\cdot\bm{\hat{k}}_3 =- \frac{\pi\,R_{\text{tank}}^4\,\rho_{\text{fuel}}}{4\,m^2_{\text{fuel}}}\left[4\,m_{\text{fuel}}\dot{\theta^*}\,\sin^3{\theta^*}\cos{\theta^*} +\right.\\
+	\left.+ \dot{m}_{\text{fuel}}\left(2\,\cos^2{\theta^*} - \cos^4{\theta^*}-1\right)\right]
+\end{multline}
+\begin{multline}
+	\bm{r}''_{Tc/B}\cdot\bm{\hat{k}}_3 =- \frac{\pi\,R_{\text{tank}}^4\,\rho_{\text{fuel}}}{2\,m^3_{\text{fuel}}}\left[4\,m_{\text{fuel}}\sin^3{\theta^*}\cos{\theta^*} \left(\ddot{\theta^*}\,m_{\text{fuel}} - 2\,\dot{\theta^*}\,\dot{m}_{\text{fuel}}\right)+\right.\\
+	\left.-4\,m^2_{\text{fuel}}\,\dot{\theta^*}^2\sin^2{\theta^*}\left(3\,\cos^2{\theta^*} -\sin^2{\theta^*}\right)+\right.\\
+	+\left. \left(2\,\cos^2{\theta^*} - \cos^4{\theta^*}-1\right)\left(m_{\text{fuel}}\ddot{m}_{\text{fuel}} - 2\,\dot{m}^2_{\text{fuel}}\right)\right]
+\end{multline}
+
+The relation among $\dot{m}_{\text{fuel}}\,$, $\ddot{m}_{\text{fuel}}\, $, $\dot{\theta^*} $ and $\ddot{\theta^*} $ is deduced from the derivation of the relation between the volume $\mathcal{V}$ and $m_{\text{fuel}}$:
+
+\begin{equation*}
+	m_{\text{fuel}}=\rho_{\text{fuel}}\mathcal{V}(\theta^*) \quad \Rightarrow \quad \dot{m}_{\text{fuel}}=\rho_{\text{fuel}}\dot{\mathcal{V}}(\theta^*)
+\end{equation*}
+\begin{equation}
+	\dot{m}_{\text{fuel}} = -\pi\,\rho_{\text{fuel}} R_{\text{tank}}^3 \sin^3{\theta^*}\;\dot{\theta}^*
+\end{equation}
+
+\begin{equation}
+	\ddot{m}_{\text{fuel}} = -\pi\,\rho_{\text{fuel}} R_{\text{tank}}^3 \sin^2{\theta^*}\left( \ddot{\theta^*}\sin{\theta^*} + 3\, \dot{\theta^*}^2\cos{\theta^*}\right)
+\end{equation}
+
+Finally $\theta^*$ can be found:
+\begin{equation}
+	m_{\text{fuel}}=\rho_{\text{fuel}}\mathcal{V}(\theta^*) \; \Rightarrow \; m_{\text{fuel}} = \frac{2}{3}\pi\, \rho_{\text{fuel}}\,R_{\text{tank}}^3\left[1+\frac{3}{2}\cos{\theta^*}- \frac{1}{2}\cos^3{\theta^*}\right]
+\end{equation}
+
+As far as the inertia concerns:
+
+\begin{multline}
+	I_{3\,3} = \rho_{\text{fuel}} \left(\int_{0}^{2\,\pi}\int_{0}^{\theta^*}\int_{0}^{R_{\text{tank}}\frac{\cos{\theta^*}}{\cos{\theta}}} r^4\,\sin^3{\theta}\,\text{d}\theta\,\text{d}\phi\,\text{d}r  \vspace{3pt}\right.+\\
+	\left.+ \int_{0}^{2\,\pi}\int_{\theta^*}^{\pi}\int_{0}^{R_{\text{tank}}} r^4\,\sin^3{\theta}\,\text{d}\theta\,\text{d}\phi\,\text{d}r\right)  =\\
+	= \frac{2}{5}\pi\,\rho_{\text{fuel}}R^5_{\text{tank}}\left[\frac{2}{5}  + \frac{1}{4}\cos{\theta^*}\sin^4{\theta^*} -\frac{1}{12}\left(\cos{3\theta^*} - 9\cos{\theta^*}\right)\right]
+\end{multline}
+
+\begin{multline}
+	I_{2\,2} =\rho_{\text{fuel}} \left(\int_{0}^{2\,\pi}\int_{0}^{\theta^*}\int_{0}^{R_{\text{tank}}\frac{\cos{\theta^*}}{\cos{\theta}}} r^4\,\left(\sin{\theta}-\sin^3{\theta}\sin^2{\phi}\right)\,\text{d}\theta\,\text{d}\phi\,\text{d}r + \vspace{3pt}\right.\\
+	\left.+ \int_{0}^{2\,\pi}\int_{\theta^*}^{\pi}\int_{0}^{R_{\text{tank}}} r^4\,\left(\sin{\theta}-\sin^3{\theta}\sin^2{\phi}\right)\,\text{d}\theta\,\text{d}\phi\,\text{d}r\right) =
+	\frac{2}{5}\pi\,\rho_{\text{fuel}}R^5_{\text{tank}}\left[\frac{2}{3} +\right.\\
+	\left.- \frac{1}{4}\cos^5{\theta^*}  +\frac{1}{24}\left(\cos{3\theta^*} -9\cos{\theta^*}\right)  +\frac{5}{4}\cos{\theta^*} +\frac{1}{8} \cos{\theta^*}\sin^4{\theta^*}\right]
+\end{multline}
+
+\begin{multline}
+	I_{1\,1} =\rho_{\text{fuel}} \left(\int_{0}^{2\,\pi}\int_{0}^{\theta^*}\int_{0}^{R_{\text{tank}}\frac{\cos{\theta^*}}{\cos{\theta}}} r^4\,\left(\sin{\theta}-\sin^3{\theta}\cos^2{\phi}\right)\,\text{d}\theta\,\text{d}\phi\,\text{d}r+\right.\\
+	\left.+ \int_{0}^{2\,\pi}\int_{\theta^*}^{\pi}\int_{0}^{R_{\text{tank}}} r^4\,\left(\sin{\theta}-\sin^3{\theta}\cos^2{\phi}\right)\,\text{d}\theta\,\text{d}\phi\,\text{d}r\right) = I_{2\,2}
+\end{multline}
+\vspace{3pt}
+\begin{multline}
+	I_{1\,2} = \rho_{\text{fuel}} \left(\int_{0}^{2\,\pi}\int_{0}^{\theta^*}\int_{0}^{R_{\text{tank}}\frac{\cos{\theta^*}}{\cos{\theta}}} r^4\,\sin^3{\theta}\cos{\phi}\sin{\phi}\,\text{d}\theta\,\text{d}\phi\,\text{d}r \right.+\\
+	\left.+\int_{0}^{2\,\pi}\int_{\theta^*}^{\pi}\int_{0}^{R_{\text{tank}}} r^4\,\sin^3{\theta}\cos{\phi}\sin{\phi}\,\text{d}\theta\,\text{d}\phi\,\text{d}r\right)= 0
+\end{multline}
+\vspace{3pt}
+\begin{multline}
+	I_{1\,3} = \rho_{\text{fuel}} \left(\int_{0}^{2\,\pi}\int_{0}^{\theta^*}\int_{0}^{R_{\text{tank}}\frac{\cos{\theta^*}}{\cos{\theta}}} r^4\,\sin^2{\theta}\cos{\theta}\cos{\phi}\,\text{d}\theta\,\text{d}\phi\,\text{d}r\right.+\\
+	+\int_{0}^{2\,\pi}\int_{\theta^*}^{\pi}\int_{0}^{R_{\text{tank}}} r^4\,\sin^2{\theta}\cos{\theta}\cos{\phi}\,\text{d}\theta\,\text{d}\phi\,\text{d}r\left.\right) = 0
+\end{multline}
+\vspace{3pt}
+\begin{multline}
+	I_{2\,3} = \rho_{\text{fuel}} \int_{0}^{2\,\pi}\int_{0}^{\theta^*}\int_{0}^{R_{\text{tank}}\frac{\cos{\theta^*}}{\cos{\theta}}} r^4\,\sin^2{\theta}\cos{\theta}\sin{\phi}\,\text{d}\theta\,\text{d}\phi\,\text{d}r = 0 \vspace{5pt}
+\end{multline}
+\noindent
+because $\int_{0}^{2\,\pi}\cos{\phi}\sin{\phi} =\int_{0}^{2\,\pi}\sin{\phi} = \int_{0}^{2\,\pi}\cos{\phi}=0 $.\newline
+From those calculations the derivatives, in the tank reference frame, can be computed:
+
+\begin{multline}
+	I'_{3\,3}	= \frac{2}{5}\pi\,\rho_{\text{fuel}}R^5_{\text{tank}} \, \dot{\theta^*}\left[ \cos^2{\theta^*}\sin^3{\theta^*} -\frac{1}{4}\sin^5{\theta^*} +\frac{1}{4}\sin{3\theta^*} -\frac{3}{4}\sin{\theta^*} \right]
+\end{multline}
+\begin{multline}
+	I'_{2\,2}	= I'_{1\,1}= \frac{2}{5}\pi\,\rho_{\text{fuel}}R^5_{\text{tank}} \, \dot{\theta^*}\left[ \frac{5}{4}\sin{\theta^*}\cos{\theta^*} -\frac{5}{4}\sin{\theta^*} -\frac{1}{8}\sin{3\theta^*} +\right.\\
+	\left. + \frac{3}{8} \sin{\theta^*} + \frac{1}{2}\cos^2{\theta^*}\sin^3{\theta^*} -\frac{1}{8} \sin^5{\theta^*} \right]
+\end{multline}
+
+\subsubsection{Uniform burn cylinder}
+This model consider a cylindrical tank whose geometry remains constant while fuel density changes.
+\begin{figure}[htb!]
+	\centering
+	\includegraphics[width = 0.7\textwidth]{./Figures/UnifCyl.eps}
+	\caption{Geometrical properties of the uniform burn cylinder}
+	\label{fig:UnfBurnCyl}
+\end{figure}
+From these considerations and by looking at Figure \ref{fig:UnfBurnCyl}, the inertia tensor and its derivative could be evaluated:
+
+\begin{equation}
+	I_{1\,1}=I_{2\,2} = m_{\text{fuel}} \left[\frac{R^2}{4} + \frac{h^2}{3}\right]\qquad I_{3\,3} = m_{\text{fuel}}\,\frac{R^2}{2}
+\end{equation}
+\begin{equation}
+	I'_{1\,1}=I_{2\,2} = \dot{m}_{\text{fuel}} \left[\frac{R^2}{4} + \frac{h^2}{3}\right]\qquad I'_{3\,3} = \dot{m}_{\text{fuel}}\,\frac{R^2}{2}
+\end{equation}
+\noindent
+where $R$ is the cylinder radius and $h$ its half-height.\newline
+Moreover, as the position of the center of mass of the tank does not change:
+
+\begin{equation}
+	\bm{r}'_{Tc/B} = 0 \qquad\qquad \bm{r}''_{Tc/B}=0
+\end{equation}
+
+\subsubsection{Centrifugal burn cylinder}
+The present model consider a cylinder filled with propellant burning radially from the center to the edge. The geometry properties and their nomenclature can be seen in Figure \ref{fig:CentrCyl}.
+
+\begin{figure}[htb!]
+	\centering
+	\includegraphics[width = 0.7\textwidth]{./Figures/CentrCyl.eps}
+	\caption{Geometrical properties of the centrifugal burn cylinder}
+	\label{fig:CentrCyl}
+\end{figure}
+By denoting $r$ the distance of the fuel surface from the axis of the cylinder, this quantity can be easily computed from the amount of mass in the tank:
+
+\begin{equation}
+	r =\sqrt{R^2 - \frac{m_\text{fuel}}{2\,\pi\,\rho\,h}}
+\end{equation}
+\noindent
+where $R$ is the cylinder radius, $h$ its half-height and $\rho$ the fuel density.\newline
+As in the previous models, the time derivative of $r$ can be gathered from volume-mass relation:
+
+\begin{equation}
+	\dot{m}_\text{fuel} = - 4\pi\rho\,h\,r\,\dot{r}
+\end{equation}
+
+As a consequence:
+\begin{equation}
+	I_{1\,1} = I_{2\,2} = m_\text{fuel}\left[\frac{R^2+ r^2}{4} +\frac{h^2}{3}\right]
+\end{equation}
+\begin{equation}
+	I_{3\,3} = m_\text{fuel}\left[\frac{R^2+ r^2}{2} \right]
+\end{equation}
+
+Moreover, their time derivatives in the tank's reference frame can be computed:
+\begin{equation}
+	I'_{1\,1} = I'_{2\,2} = \dot{m}_\text{fuel}\left[\frac{r^2}{2}+\frac{h^2}{3}\right]
+\end{equation}
+\begin{equation}
+	I'_{3\,3}  = \dot{m}_\text{fuel}\,r^2
+\end{equation}
+
+Finally, the tank's center of mass does not move as the mass variation is symmetric. Thus:
+\begin{equation}
+	\bm{r}'_{Tc/B} = 0 \qquad\qquad \bm{r}''_{Tc/B}=0
+\end{equation}
 
 \subsection{Update-Only Equations}
 
