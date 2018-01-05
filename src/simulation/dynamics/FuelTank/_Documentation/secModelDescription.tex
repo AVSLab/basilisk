@@ -381,12 +381,12 @@ This model takes into account the variation of the fuel inside considering no va
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width = 0.33\textwidth]{./Figures/ConstVolTank.eps}
-	\caption{Geometrical properties of the constant density sphere.}
+	\caption{Geometrical properties of the constant volume sphere.}
 	\label{fig:CostTankVol}
 \end{figure}
 
 \begin{equation}
-	V_{\text{tank}}= cost \quad \Rightarrow \quad R_{\text{tank}} = cost
+	V_{\text{tank}}= const \quad \Rightarrow \quad R_{\text{tank}} = const
 \end{equation}
 \begin{equation}
 	\left[I_{\text{fuel, }Tc}\right] = \frac{2}{5}\,m_{\text{fuel}} \,R_{\text{tank}}^2\, \left[I_{3\times3}\right]
@@ -603,8 +603,7 @@ Finally, the tank's center of mass does not move as the mass variation is symmet
 Eqs.\eqref{eq:eq30} and \eqref{eq:eq55} are the translational and rotational EOMs for the fully coupled dynamics of mass depletion. However, it is common to use an "update-only" method for mass depletion which does not consider mass depletion as a dynamical effect. In contrast to the fully coupled model it simply updates the mass properties of the spacecraft. The equations for the "update-only" can be simplified to:
 
 \begin{equation}\label{eq:eq31}
-m_{\text{sc}} \ddot{\bm{r}}_{B/N} - m_{\text{sc}} \left[\tilde{\bm{c}}\right]\dot{\bm{\omega}}_{\cal{B}/\cal{N}} =  \bm{F}_{\text{thr}} - m_{\text{sc}} \bm{c}''-2 m_{\text{sc}} \,\left[\tilde{\bm{\omega}}_{\cal{B}/\cal{N}}\right]
-\bm{c}' - m_{\text{sc}} \left[\tilde{\bm{\omega}}_{\cal{B}/\cal{N}}\right] \left[\tilde{\bm{\omega}}_{\cal{B}/\cal{N}}\right] \bm{c} 
+m_{\text{sc}} \ddot{\bm{r}}_{B/N} - m_{\text{sc}} \left[\tilde{\bm{c}}\right]\dot{\bm{\omega}}_{\cal{B}/\cal{N}} =  \bm{F}_{\text{thr}} - m_{\text{sc}} \left[\tilde{\bm{\omega}}_{\cal{B}/\cal{N}}\right] \left[\tilde{\bm{\omega}}_{\cal{B}/\cal{N}}\right] \bm{c} 
 \end{equation}
 
 \begin{equation}\label{eq:eq55}
