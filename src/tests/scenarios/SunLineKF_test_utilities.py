@@ -278,10 +278,11 @@ def PostFitResiduals(Res, noise, FilterType, show_plots):
         # Don't plot constant values, they mean no measurement is taken
         if i>0:
             for j in range(1,5):
-                constantRes = np.abs(Res[i,j]-Res[i-1,j])
-                if constantRes < 1E-10 or np.abs(constantVal[j-1]- Res[i,j])<1E-10:
-                    constantVal[j-1] = Res[i, j]
-                    Res[i, j] = np.nan
+                with np.errstate(invalid='ignore'):
+                    constantRes = np.abs(Res[i,j]-Res[i-1,j])
+                    if constantRes < 1E-10 or np.abs(constantVal[j-1] - Res[i,j])<1E-10:
+                        constantVal[j-1] = Res[i, j]
+                        Res[i, j] = np.nan
 
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
     plt.subplot(411)
