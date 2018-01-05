@@ -1,4 +1,4 @@
-# Doxyfile 1.8.12
+# Doxyfile 1.8.13
 
 # This file describes the settings to be used by the documentation system
 # doxygen (www.doxygen.org) for a project.
@@ -1205,7 +1205,41 @@ HTML_EXTRA_STYLESHEET  = bsk.css
 # files will be copied as-is; there are no commands or markers available.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_FILES       = 
+HTML_EXTRA_FILES       = ../src/simulation/dynamics/extForceTorque/_Documentation/Basilisk-extForceTorque-20161103.pdf \
+                         ../src/simulation/dynamics/dualHingedRigidBodies/_Documentation/Basilisk-DUALHINGEDRIGIDBODYSTATEEFFECTOR-20180102.pdf \
+                         ../src/simulation/dynamics/DynOutput/boreAngCalc/_Documentation/Basilisk-BOREANGLECALC-20170722.pdf \
+                         ../src/simulation/dynamics/DynOutput/orbElemConvert/_Documentation/Basilisk-ORBELEMCONVERT-20170703.pdf \
+                         ../src/simulation/dynamics/ExtPulsedTorque/_Documentation/Basilisk-extPulsedTorque-20170324.pdf \
+                         ../src/simulation/dynamics/gravityEffector/_Documentation/Basilisk-GravityEffector-20170712.pdf \
+                         ../src/simulation/dynamics/HingedRigidBodies/_Documentation/Basilisk-HINGEDRIGIDBODYSTATEEFFECTOR-20170703.pdf \
+                         ../src/simulation/dynamics/Integrators/_Documentation/Basilisk-Integrators20170724.pdf \
+                         ../src/simulation/dynamics/NHingedRigidBodies/_Documentation/Basilisk-NHINGEDRIGIDBODYSTATEEFFECTOR-20180103.pdf \
+                         ../src/simulation/dynamics/RadiationPressure/_Documentation/Basilisk-RadiationPressure-20170712.pdf \
+                         ../src/simulation/dynamics/reactionWheels/_Documentation/Basilisk-REACTIONWHEELSTATEEFFECTOR-20170816.pdf \
+                         ../src/simulation/dynamics/spacecraftPlus/_Documentation/Basilisk-SPACECRAFTPLUS-20170808.pdf \
+                         ../src/simulation/dynamics/Thrusters/_Documentation/Basilisk-THRUSTERS20170712.pdf \
+                         ../src/simulation/environment/eclipse/_Documentation/Basilisk-eclipse-20171101.pdf \
+                         ../src/simulation/environment/ephemeris_converter/_Documentation/Basilisk-EPHEMERIS_CONVERTER20170712.pdf \
+                         ../src/simulation/environment/spice/_Documentation/Basilisk-SPICE_INTERFACE20170712.pdf \
+                         ../src/simulation/navigation/simple_nav/_Documentation/Basilisk-SIMPLE_NAV20170712.pdf \
+                         ../src/simulation/sensors/imu/_Documentation/Basilisk-IMU-20170712.pdf \
+                         ../src/simulation/sensors/imu/_Documentation/BasiliskCorruptions.pdf \
+                         ../src/fswAlgorithms/attControl/lowPassFilterTorqueCommand/_Documentation/AVS-Sim-LowPassFilterControlTorque-20160108.pdf \
+                         ../src/fswAlgorithms/attControl/MRP_Feedback/_Documentation/AVS-Sim-MRP_Feedback-2016-0108.pdf \
+                         ../src/fswAlgorithms/attControl/MRP_Steering/_Documentation/AVS-Sim-MRP_Steering-2016-0108.pdf \
+                         ../src/fswAlgorithms/attControl/PRV_Steering/_Documentation/AVS-Sim-PRV_Steering-2016-0108.pdf \
+                         ../src/fswAlgorithms/attControl/thrMomentumManagement/_Documentation/Basilisk-thrMomentumManagement-20160817.pdf \
+                         ../src/fswAlgorithms/attDetermination/okeefeEKF/_Documentation/Okeefe_EKF.pdf \
+                         ../src/fswAlgorithms/attDetermination/sunlineEKF/_Documentation/Sunline_EKF.pdf \
+                         ../src/fswAlgorithms/attGuidance/attTrackingError/_Documentation/AVS-Sim-attTrackingError-2016-01-15.pdf \
+                         ../src/fswAlgorithms/attGuidance/celestialTwoBodyPoint/_Documentation/celestialTwoBodyPoint.pdf \
+                         ../src/fswAlgorithms/attGuidance/hillPoint/_Documentation/hillPoint.pdf \
+                         ../src/fswAlgorithms/attGuidance/inertial3D/_Documentation/AVS-Sim-Inertial3D-2016-01-15.pdf \
+                         ../src/fswAlgorithms/attGuidance/inertial3DSpin/_Documentation/AVS-Sim-Inertial3DSpin-2015-12-22.pdf \
+                         ../src/fswAlgorithms/attGuidance/velocityPoint/_Documentation/velocityPoint.pdf \
+                         ../src/fswAlgorithms/effectorInterfaces/rwMotorVoltage/_Documentation/Basilisk-rwMotorVoltage-20170113.pdf \
+                         "../src/fswAlgorithms/effectorInterfaces/thrForceMapping/_Documentation/Basilisk-ThrusterForces-20160627.pdf" \
+                         ../src/fswAlgorithms/effectorInterfaces/thrMomentumDumping/_Documentation/Basilisk-thrMomentumDumping-20160820.pdf
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen
 # will adjust the colors in the style sheet and background images according to
@@ -2423,6 +2457,11 @@ DIAFILE_DIRS           =
 # will not generate output for the diagram.
 
 PLANTUML_JAR_PATH      = 
+
+# When using plantuml, the PLANTUML_CFG_FILE tag can be used to specify a
+# configuration file for plantuml.
+
+PLANTUML_CFG_FILE      = 
 
 # When using plantuml, the specified paths are searched for files specified by
 # the !include statement in a plantuml block.

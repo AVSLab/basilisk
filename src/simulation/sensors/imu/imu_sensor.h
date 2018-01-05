@@ -31,7 +31,15 @@
 #include <Eigen/Dense>
 #include "utilities/avsEigenMRP.h"
 
-
+//!@brief Sensor model to simulate an IMU.
+/*!
+ The module
+ [PDF Description](Basilisk-IMU-20170712.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+ The corruption types are outlined in this
+ [PDF document](BasiliskCorruptions.pdf).
+ */
 class ImuSensor: public SysModel {
 public:
     ImuSensor();

@@ -35,7 +35,7 @@
  * @{
  */
 
-//! @brief Container for basic drag parameters - the spacecraft's atmosphere-relative velocity, its projected area, and its drag coefficient.*/
+//! @brief Container for basic drag parameters - the spacecraft's atmosphere-relative velocity, its projected area, and its drag coefficient.
 typedef struct {
     double velocityMag;                 //!< m/s Magnitude of the atmosphere-relative velocity
     double projectedArea;                    //!< m^2   Area of spacecraft projected in velocity direction

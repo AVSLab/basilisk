@@ -31,7 +31,14 @@
  * @{
  */
 
-/*! @brief Top level structure for the sub-module routines. */
+/*!@brief Data structure for module to compute the attitude tracking error.
+
+ The module
+ [PDF Description](AVS-Sim-attTrackingError-2016-01-15.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+ */
+
 typedef struct {
     /* declare module private variables */
     double sigma_R0R[3];                            /*!< MRP from corrected reference frame to original reference frame R0

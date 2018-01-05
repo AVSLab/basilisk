@@ -33,7 +33,14 @@
  * @{
  */
 
-/*! @brief Top level structure for the sub-module routines. */
+/*!@brief Data structure for module to compute the RW motor voltage from the command torque.
+
+ The module
+ [PDF Description](Basilisk-rwMotorVoltage-20170113.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+ */
+
 typedef struct {
     /* declare module private variables */
     double VMin;                                    /*!< [V]    minimum voltage below which the torque is zero */

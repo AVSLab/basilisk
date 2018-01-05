@@ -26,6 +26,12 @@
 
 /*!
  @brief RK4 integrator. It only implements the method integrate() to advance one time step.
+
+ The module
+ [PDF Description](Basilisk-Integrators20170724.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+
  */
 class svIntegratorRK4 : public StateVecIntegrator
 {

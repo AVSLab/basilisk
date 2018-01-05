@@ -31,7 +31,15 @@
  * @{
  */
 
-/*! @brief Top level structure for the sub-module routines. */
+
+/*!@brief Data structure for module to implement RW momentum dumping.
+
+ The module
+ [PDF Description](Basilisk-thrMomentumDumping-20160820.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+ */
+
 typedef struct {
     /* declare module private variables */
     int32_t     thrDumpingCounter;                      /*!<        counter to specify after how many contro period a thruster

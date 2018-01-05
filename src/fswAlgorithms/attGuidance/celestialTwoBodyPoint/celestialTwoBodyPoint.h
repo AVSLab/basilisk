@@ -30,7 +30,14 @@
  * @{
  */
 
-/*! @brief Top level structure for the nominal delta-V guidance*/
+/*!@brief Data structure for module to compute the two-body celestial pointing navigation solution.
+
+ The module
+ [PDF Description](celestialTwoBodyPoint.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+ */
+
 typedef struct {
     /* Declare module private variables */
     double singularityThresh;                       /*!< (r) Threshold for when to fix constraint axis*/

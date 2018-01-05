@@ -56,7 +56,14 @@ struct HingedPanel {
 /*! @brief This class is an instantiation of the stateEffector class and is a hinged rigid body effector. This effector
  is a rigid body attached to the hub through a torsional spring and damper that approximates a flexible appendage. See
  Allard, Schaub, and Piggott paper: "General Hinged Solar Panel Dynamics Approximating First-Order Spacecraft Flexing"
- for a detailed description of this model. A hinged rigid body has 2 states: theta and thetaDot */
+ for a detailed description of this model. A hinged rigid body has 2 states: theta and thetaDot
+
+ The module
+ [PDF Description](Basilisk-NHINGEDRIGIDBODYSTATEEFFECTOR-20180103.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+
+ */
 class NHingedRigidBodyStateEffector : public StateEffector, public SysModel {
 public:
     std::string NHingedRigidBodyOutMsgName; //!< -- state output message name
