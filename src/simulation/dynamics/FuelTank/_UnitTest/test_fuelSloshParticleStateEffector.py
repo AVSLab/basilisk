@@ -17,40 +17,36 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-
 import sys, os, inspect
-import numpy
 import pytest
-import math
+import matplotlib.pyplot as plt
 
-
-
-
-
-
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-import matplotlib.pyplot as plt
-from Basilisk.utilities import macros
 from Basilisk.simulation import spacecraftPlus
-from Basilisk.simulation import hingedRigidBodyStateEffector
 from Basilisk.simulation import fuelSloshParticle
 from Basilisk.simulation import fuelTank
-from Basilisk.simulation import sim_model
+from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import macros
-import ctypes
+
+@pytest.mark.parametrize("useFlag, testCase", [
+    (False,'NoGravity'),
+    (False,'Gravity')
+])
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def spacecraftPlusAllTest(show_plots):
-    [testResults, testMessage] = test_hubPropagate(show_plots)
+def test_fuelSloshAllTest(show_plots,useFlag,testCase):
+    [testResults, testMessage] = fuelSloshTest(show_plots,useFlag,testCase)
     assert testResults < 1, testMessage
 
-def test_hubPropagate(show_plots):
+def fuelSloshTest(show_plots,useFlag,testCase):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -143,6 +139,19 @@ def test_hubPropagate(show_plots):
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
+    if testCase == 'Gravity':
+        unitTestSim.earthGravBody = gravityEffector.GravBodyData()
+        unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
+        unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
+        unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
+        unitTestSim.earthGravBody.isCentralBody = True
+        unitTestSim.earthGravBody.useSphericalHarmParams = False
+        scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
+        scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
+        scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
+
+    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+
     unitTestSim.InitializeSimulation()
 
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
@@ -206,34 +215,48 @@ def test_hubPropagate(show_plots):
                 [rotEnergy[-1,0], rotEnergy[-1,1]]
                  ]
 
-    plt.figure(1)
-    plt.plot(orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,1] - orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,2] - orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,3] - orbAngMom_N[0,3])
-    plt.title("Change in Orbital Angular Momentum")
-    plt.figure(2)
-    plt.plot(rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,1] - rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,2] - rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,3] - rotAngMom_N[0,3])
-    plt.title("Change in Rotational Angular Momentum")
-    plt.figure(3)
-    plt.plot(orbEnergy[:,0]*1e-9, orbEnergy[:,1] - orbEnergy[0,1])
-    plt.title("Change in Orbital Energy")
-    plt.figure(4)
-    plt.plot(rotEnergy[:,0]*1e-9, rotEnergy[:,1] - rotEnergy[0,1])
-    plt.title("Change in Rotational Energy")
-    if show_plots == True:
-        plt.show()
+    plt.figure()
+    plt.clf()
+    plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
+    plt.xlabel("Time (s)")
+    plt.ylabel("Relative Difference")
+    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCase, "Change in Orbital Angular Momentum " + testCase, plt, "width=0.8\\textwidth", path)
+    plt.figure()
+    plt.clf()
+    plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
+    plt.xlabel("Time (s)")
+    plt.ylabel("Relative Difference")
+    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCase, "Change in Orbital Energy " + testCase, plt, "width=0.8\\textwidth", path)
+    plt.figure()
+    plt.clf()
+    plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
+    plt.xlabel("Time (s)")
+    plt.ylabel("Relative Difference")
+    unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase, "Change in Rotational Angular Momentum " + testCase, plt, "width=0.8\\textwidth", path)
+    plt.figure()
+    plt.clf()
+    plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
+    plt.xlabel("Time (s)")
+    plt.ylabel("Relative Difference")
+    unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, "width=0.8\\textwidth", path)
 
-    accuracy = 1e-8
-    for i in range(0,len(truePos)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED:  Fuel Slosh failed pos unit test")
+    plt.show(show_plots)
 
-    for i in range(0,len(trueSigma)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED:  Fuel Slosh failed attitude unit test")
+    if testCase == 'NoGravity':
+        accuracy = 1e-8
+        for i in range(0,len(truePos)):
+            # check a vector values
+            if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
+                testFailCount += 1
+                testMessages.append("FAILED:  Fuel Slosh failed pos unit test")
 
+        for i in range(0,len(trueSigma)):
+            # check a vector values
+            if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
+                testFailCount += 1
+                testMessages.append("FAILED:  Fuel Slosh failed attitude unit test")
+
+    accuracy = 1e-10
     for i in range(0,len(initialOrbAngMom_N)):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(finalOrbAngMom[i],initialOrbAngMom_N[i],3,accuracy):
@@ -267,4 +290,4 @@ def test_hubPropagate(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    spacecraftPlusAllTest(True)
+    fuelSloshTest(True,False,'Gravity')
