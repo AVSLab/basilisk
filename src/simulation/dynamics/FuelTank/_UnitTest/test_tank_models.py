@@ -43,16 +43,27 @@ from Basilisk.fswAlgorithms import vehicleConfigData
 from Basilisk.simulation import fuelTank
 from Basilisk.simulation import fuelSloshParticle
 
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def tankModelTest(show_plots):
-    [testResults, testMessage] = test_tankModelConstantVolume(show_plots)
+def test_tankModelTest(show_plots):
+    [testResults, testMessage] = tankModelConstantVolume(show_plots)
+    assert testResults < 1, testMessage
+    [testResults, testMessage] = tankModelConstantDensity(show_plots)
+    assert testResults < 1, testMessage
+    [testResults, testMessage] = tankModelEmptying(show_plots)
+    assert testResults < 1, testMessage
+    [testResults, testMessage] = tankModelUniformBurn(show_plots)
+    assert testResults < 1, testMessage
+    [testResults, testMessage] = tankModelCentrifugalBurn(show_plots)
     assert testResults < 1, testMessage
 
-def test_tankModelConstantVolume(show_plots):
+def tankModelConstantVolume(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -62,7 +73,7 @@ def test_tankModelConstantVolume(show_plots):
     testMessages = []  # create empty list to store test log messages
     
     model = fuelTank.cvar.FuelTankModelConstantVolume
-    model.propMassInit = 10;
+    model.propMassInit = 10
     model.r_TcT_TInit = [[1],[1],[1]]
     model.radiusTankInit = 5
     
@@ -130,13 +141,16 @@ def test_tankModelConstantVolume(show_plots):
     if testFailCount == 0:
         print "PASSED: " + " Fuel Tank constant volume unit test"
 
+    snippetName = 'ConstVolPassFail'
+    passFail(testFailCount, snippetName)
+
     assert testFailCount < 1, testMessages
 
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def test_tankModelConstantDensity(show_plots):
+def tankModelConstantDensity(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -215,13 +229,16 @@ def test_tankModelConstantDensity(show_plots):
     if testFailCount == 0:
         print "PASSED: " + " Fuel Tank constant volume unit test"
 
+    snippetName = 'ConstDensPassFail'
+    passFail(testFailCount, snippetName)
+
     assert testFailCount < 1, testMessages
 
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def test_tankModelEmptying(show_plots):
+def tankModelEmptying(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -299,13 +316,16 @@ def test_tankModelEmptying(show_plots):
     if testFailCount == 0:
         print "PASSED: " + " Fuel Tank constant volume unit test"
 
+    snippetName = 'EmptyingPassFail'
+    passFail(testFailCount, snippetName)
+
     assert testFailCount < 1, testMessages
 
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def test_tankModelUniformBurn(show_plots):
+def tankModelUniformBurn(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -384,6 +404,9 @@ def test_tankModelUniformBurn(show_plots):
     if testFailCount == 0:
         print "PASSED: " + " Fuel Tank constant volume unit test"
 
+    snippetName = 'UniformBurnPassFail'
+    passFail(testFailCount, snippetName)
+
     assert testFailCount < 1, testMessages
 
     # return fail count and join into a single string all messages in the list
@@ -391,7 +414,7 @@ def test_tankModelUniformBurn(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 
-def test_tankModelCentrifugalBurn(show_plots):
+def tankModelCentrifugalBurn(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -470,11 +493,26 @@ def test_tankModelCentrifugalBurn(show_plots):
     if testFailCount == 0:
         print "PASSED: " + " Fuel Tank constant volume unit test"
 
+    snippetName = 'CentrifugalPassFail'
+    passFail(testFailCount, snippetName)
+
     assert testFailCount < 1, testMessages
 
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
+def passFail(testFailCountInput, snippetName):
+    if testFailCountInput < 1:
+        textMsg = 'PASSED'
+        textColor = 'ForestGreen'
+    else:
+        textMsg = 'FAILED'
+        textColor = 'Red'
+
+    texSnippet =  '\\textcolor{' + textColor + '}{'+ textMsg + '}'
+    unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
+
+
 if __name__ == "__main__":
-    test_tankModelEmptying(False)
+    tankModelEmptying(False)

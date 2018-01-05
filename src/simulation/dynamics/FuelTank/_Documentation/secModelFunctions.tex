@@ -1,0 +1,23 @@
+\section{Model Functions}
+
+This module is considered a fuel tank effector attached to a rigid body hub and has the following functions:
+
+\begin{itemize}
+	\item Compute tank properties depending on the tank model being used
+	\item Provides its contributions to the mass properties of the spacecraft 
+	\item Provides its contributions to the back-substitution matrices
+	\item Computes its derivative for its mass flow rate using the vector of attached thrusters
+	\item Provides its contributions to energy and momentum of the spacecraft
+\end{itemize}
+
+\section{Model Assumptions and Limitations}
+Below is a summary of the assumptions/limitations:
+
+\begin{itemize}
+	\item There can be no relative rotational motion between the fuel in the tank and rigid body hub 
+	\item The thrusters can be vectored but rather need to be fixed with respect to the rigid body hub
+	\item There is no relative rotational motion between the mass leaving the spacecraft through the thrusters and the rigid body hub
+	\item The movement of the mass between tanks and thrusters is not considered as a dynamical effect (i.e. the motion of the mass through piping in the spacecraft)
+	\item Fuel slosh is not being considered by this module alone, however fuel slosh can be attached to the spacecraft by using the \textit{fuelSloshParticle} effector
+	\item The mass and inertia of the fuel tank is not included in the rigid body mass when setting up a simulation, but rather the fuel tank mass properties is added to the spacecraft dynamically during the simulation
+\end{itemize}
