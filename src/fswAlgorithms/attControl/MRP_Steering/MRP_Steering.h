@@ -29,7 +29,14 @@
  * @{
  */
 
-/*! @brief Top level structure for the MRP Steering attitude control routine. */
+/*!@brief Data structure for the MRP steering attitude control routine.
+
+ The module
+ [PDF Description](AVS-Sim-MRP_Steering-2016-0108.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+ */
+
 typedef struct {
     /* declare module private variables */
     double K1;                          /*!< [rad/sec] Proportional gain applied to MRP errors */

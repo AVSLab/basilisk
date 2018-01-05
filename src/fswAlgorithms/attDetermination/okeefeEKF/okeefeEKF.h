@@ -33,9 +33,14 @@
  * @{
  */
 
+/*!@brief Data structure for the O'Keefe CSS Extended kalman filter estimator.
 
-/*! @brief Top level structure for the CSS unscented kalman filter estimator.
- Used to estimate the sun state in the vehicle body frame*/
+ The module
+ [PDF Description](Okeefe_EKF.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+ */
+
 typedef struct {
     char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output filter data message*/

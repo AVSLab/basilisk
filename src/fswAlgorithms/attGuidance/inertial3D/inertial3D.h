@@ -28,7 +28,16 @@
  * @{
  */
 
-/*! @brief Top level structure for the sub-module routines. */
+
+/*!@brief Data structure for module to compute the Inertial-3D pointing navigation solution.
+
+ The module
+ [PDF Description](AVS-Sim-Inertial3D-2016-01-15.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+ */
+
+
 typedef struct {
     /* declare module private variables */
     double sigma_R0N[3];                             /*!<        MRP from inertial frame N to corrected reference frame R */

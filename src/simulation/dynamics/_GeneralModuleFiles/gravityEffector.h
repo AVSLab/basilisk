@@ -59,6 +59,11 @@ public:
 /*! This class is designed to hold all of the information for a gravity
  body.  The nominal use-case has it initialized at the python level and
  attached to dynamics using the AddGravityBody method.
+
+ The module
+ [PDF Description](Basilisk-GravityEffector-20170712.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
  */
 class GravBodyData
 {

@@ -30,7 +30,14 @@
  * @{
  */
 
-//! An orbital element/cartesian position and velocity converter
+/*! @brief An orbital element/cartesian position and velocity converter
+ The module
+ [PDF Description](Basilisk-ORBELEMCONVERT-20170703.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+ */
+
+
 class OrbElemConvert: public SysModel {
 public:
     OrbElemConvert();

@@ -32,7 +32,14 @@
  * @{
  */
 
-/*! @brief Top level structure for the sub-module routines. */
+/*!@brief Data structure for module to map a command torque onto thruster forces.
+
+ The module
+ [PDF Description](Basilisk-ThrusterForces-20160627.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+ */
+
 typedef struct {
     /* declare module private variables */
     double   controlAxes_B[3*3];                    /*!< []      array of the control unit axes */

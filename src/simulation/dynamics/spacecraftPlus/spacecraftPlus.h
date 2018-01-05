@@ -38,7 +38,14 @@
  rotation. stateEffectors such as RWs, flexible solar panel, fuel slosh etc can be added to the spacecraft by attaching 
  stateEffectors. dynamicEffectors such as thrusters, external force and torque, SRP etc can be added to the spacecraft 
  by attaching dynamicEffectors. This class performs all of this interaction between stateEffectors, dynamicEffectors and
-  the hub. */
+  the hub.
+
+ The module
+ [PDF Description](Basilisk-SPACECRAFTPLUS-20170808.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+
+ */
 class SpacecraftPlus : public DynamicObject{
 public:
     uint64_t simTimePrevious;            //!< -- Previous simulation time

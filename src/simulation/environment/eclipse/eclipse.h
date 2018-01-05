@@ -36,8 +36,15 @@
  * @{
  */
 
-//! The eclipse class gets generates sun illumination state at a
-// particular inertial position
+//! @brief The eclipse class gets generates sun illumination state at a particular inertial position
+/*!
+ The module
+ [PDF Description](Basilisk-eclipse-20171101.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+
+ */
+
 class Eclipse: public SysModel {
 public:
     Eclipse();

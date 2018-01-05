@@ -34,7 +34,11 @@
  * @{
  */
 
-/*! @brief Top level structure for the MRP Steering attitude control routine. */
+/*!@brief Data structure for the module that uses the attiude steering message and
+ determine the ADCS control torque vector.
+
+ */
+
 typedef struct {
     /* declare module private variables */
     double K1;                          /*!< [rad/sec] Proportional gain applied to MRP errors */

@@ -31,6 +31,12 @@
         and convert it over to a FSW representation so that the ephemeris from 
         SPICE can be patched into the FSW directly instead of generating data 
         from an ephemeris model.
+
+ The module
+ [PDF Description](Basilisk-EPHEMERIS_CONVERTER20170712.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+
 */
 class EphemerisConverter: public SysModel {
 public:

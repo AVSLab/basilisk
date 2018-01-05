@@ -32,8 +32,13 @@
  * @{
  */
 
-/*! @brief Top level structure for the sub-module routines. */
+/*!@brief Data structure for module to compute the Hill-frame pointing navigation solution.
 
+ The module
+ [PDF Description](hillPoint.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+ */
 
 
 typedef struct {

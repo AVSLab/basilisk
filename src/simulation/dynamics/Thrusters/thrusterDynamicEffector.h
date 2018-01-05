@@ -51,7 +51,14 @@
  or torque into the messaging system.  The nominal interface to dynamics are the
  dynEffectorForce and dynEffectorTorque arrays that are provided by the DynEffector base class.
  There is technically double inheritance here, but both the DynEffector and
- SysModel classes are abstract base classes so there is no risk of diamond.*/
+ SysModel classes are abstract base classes so there is no risk of diamond.
+
+ The module
+ [PDF Description](Basilisk-THRUSTERS20170712.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+
+ */
 class ThrusterDynamicEffector: public SysModel, public DynamicEffector {
 public:
     ThrusterDynamicEffector();
