@@ -34,3 +34,5 @@ Is a _Documentation folder included that
     * overview of module functionality
     * testing and validation
     * user guide on how to use the module
+* Does the module *.h file include a dOxygen statement near top that links in the module `_Documentation` file. 
+* Is the `docs/DoxyData` file updated in the `HTML_EXTRA_FILES` tag to include the modules PDF documentation file?  This step copies this PDF into the `docs/html` folder when running dOxygen.
