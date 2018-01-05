@@ -197,7 +197,7 @@ def test_massDepletionTest(show_plots):
     moduleOutputSigma = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
                                                   range(3))
 
-    accuracy = 1e-8
+    accuracy = 1e-7
     for i in range(0,len(truePos)):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
@@ -207,7 +207,6 @@ def test_massDepletionTest(show_plots):
     snippetName = 'PositionPassFail'
     passFail(testFailCount, snippetName)
 
-    accuracy = 1e-7
     for i in range(0,len(trueSigma)):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):

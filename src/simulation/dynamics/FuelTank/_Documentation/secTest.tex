@@ -22,9 +22,7 @@ The tank model unit tests computes the tank properties in python and compares th
 		\hline
 		Test   & Relative Tolerance \\
 		\hline
-		Update-Only Position Test  & 1e-7 \\
-		\hline
-		Update-Only Attitude Test  & 1e-7 \\
+		Update-Only Position/Attitude Tests  & 1e-7 \\
 		\hline
 		Tank Model Tests & 1e-10 \\
 		\hline	
@@ -42,8 +40,8 @@ The following table shows the results from the tests.
 	\begin{tabular}{c | c } % Column formatting, 
 		\hline
 		\textbf{Test} 				    & \textbf{Pass/Fail}  \\ \hline
-		Update-Only Position Test  & \textcolor{ForestGreen}{PASSED}\\
-		Update-Only Attitude Test  & \textcolor{ForestGreen}{PASSED}   \\ 
+		Update-Only Position Test  & \input{AutoTex/PositionPassFail} \\
+		Update-Only Attitude Test  & \input{AutoTex/AttitudePassFail}   \\ 
 		Constant Volume Tank Test  & \input{AutoTex/ConstVolPassFail}  \\ 
 		Constant Density Tank Test & \input{AutoTex/ConstDensPassFail}  \\ 
 		Emptying Tank Test & \input{AutoTex/EmptyingPassFail}  \\ 
