@@ -43,6 +43,9 @@ from Basilisk.fswAlgorithms import vehicleConfigData
 from Basilisk.simulation import fuelTank
 from Basilisk.simulation import fuelSloshParticle
 
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
@@ -201,12 +204,18 @@ def test_massDepletionTest(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: Thruster Integrated Test failed pos unit test")
 
+    snippetName = 'PositionPassFail'
+    passFail(testFailCount, snippetName)
+
     accuracy = 1e-7
     for i in range(0,len(trueSigma)):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Thruster Integrated Test failed attitude unit test")
+
+    snippetName = 'AttitudePassFail'
+    passFail(testFailCount, snippetName)
 
     if testFailCount == 0:
         print "PASSED: " + " Thruster Integrated Sim Test"
@@ -337,6 +346,17 @@ def test_axisChange(show_plots):
     
     dataPos1, dataSigma1 = axisChangeHelper([[0.0], [0.0], [0.0]])
     dataPos2, dataSigma2 = axisChangeHelper([[0.5], [0.0], [0.0]])
+
+def passFail(testFailCountInput, snippetName):
+    if testFailCountInput < 1:
+        textMsg = 'PASSED'
+        textColor = 'ForestGreen'
+    else:
+        textMsg = 'FAILED'
+        textColor = 'Red'
+
+    texSnippet =  '\\textcolor{' + textColor + '}{'+ textMsg + '}'
+    unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
 
 if __name__ == "__main__":
     test_axisChange(False)
