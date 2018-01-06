@@ -51,7 +51,7 @@ def setupFilterData(filterObject):
 
     filterObject.qProcVal = 0.1**2
     filterObject.qObsVal = 0.017 ** 2
-    filterObject.eKFSwitch = 5. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
+    filterObject.eKFSwitch = (4./3)**2 #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 
 def test_all_functions_sekf(show_plots):
     [testResults, testMessage] = sunline_individual_test()
