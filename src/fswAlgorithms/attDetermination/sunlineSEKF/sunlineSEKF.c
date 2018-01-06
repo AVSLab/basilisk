@@ -114,7 +114,6 @@ void Reset_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
     /*! - Ensure that all internal filter matrices are zeroed*/
     vSetZero(ConfigData->obs, ConfigData->numObs);
     vSetZero(ConfigData->yMeas, ConfigData->numObs);
-    vSetZero(ConfigData->x, ConfigData->numStates);
     vSetZero(ConfigData->xBar, ConfigData->numStates);
     mSetZero(ConfigData->covarBar, ConfigData->numStates, ConfigData->numStates);
     

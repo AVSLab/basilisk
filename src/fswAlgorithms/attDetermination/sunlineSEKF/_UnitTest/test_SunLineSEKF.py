@@ -107,7 +107,7 @@ def sunline_individual_test():
     dt =0.5
 
     expDynMat = np.zeros([numStates,numStates])
-    expDynMat[0:3, 0:3] = - np.array([[0., -inputOmega[2], inputOmega[1]],
+    expDynMat[0:3, 0:3] =  np.array([[0., -inputOmega[2], inputOmega[1]],
                             [inputOmega[2], 0., -inputOmega[0]],
                             [ -inputOmega[1], inputOmega[0], 0.]])
 
@@ -115,7 +115,7 @@ def sunline_individual_test():
                             [inputStates[2], 0., -inputStates[0]],
                             [ -inputStates[1], inputStates[0], 0.]])
 
-    expDynMat[0:3, 3:numStates] = s_skew[:, 1:3]
+    expDynMat[0:3, 3:numStates] = - s_skew[:, 1:3]
 
     dynMat = sunlineSEKF.new_doubleArray(numStates*numStates)
     for i in range(numStates*numStates):
@@ -167,7 +167,7 @@ def sunline_individual_test():
     inputStatesArray = np.array(inputStates)
     ## Equations when removing the unobservable states from d_dot
     expectedStates[3:numStates] = np.array(inputOmega)[1:3]
-    expectedStates[0:3] = np.array(inputStates)[0:3]-dt*np.cross(np.array(inputOmega), np.array(inputStates)[0:3])
+    expectedStates[0:3] = np.array(inputStates)[0:3]+dt*np.cross(np.array(inputOmega), np.array(inputStates)[0:3])
     errorNormSTM = np.linalg.norm(expectedSTM - STMout)
     errorNormStates = np.linalg.norm(expectedStates - StatesOut)
 
@@ -201,7 +201,7 @@ def sunline_individual_test():
         sunlineSEKF.doubleArray_setitem(obs, i, 0.0)
         sunlineSEKF.doubleArray_setitem(yMeas, i, 0.0)
 
-    sunlineSEKF.sunlineHMatrixYMeas(inputStates, numCSS, cssCos, sensorTresh, cssNormals, dcm_BS, obs, yMeas, numObs, measMat)
+    sunlineSEKF.sunlineHMatrixYMeas(inputStates, numCSS, cssCos, sensorTresh, cssNormals, obs, yMeas, numObs, measMat)
 
     obsOut = []
     yMeasOut = []
@@ -218,8 +218,8 @@ def sunline_individual_test():
     expectedH = np.zeros([8,numStates])
     expectedY = np.zeros(8)
     for j in range(3):
-        expectedH[j,0:3] = np.dot(np.eye(3)[j,:], dcmArray_BS)
-        expectedY[j] =np.array(cssCos[j]) - np.dot(np.dot(dcmArray_BS, np.array(inputStates)[0:3]), np.array(cssNormals)[j*3:(j+1)*3])
+        expectedH[j,0:3] = np.eye(3)[j,:]
+        expectedY[j] =np.array(cssCos[j]) - np.dot( np.array(inputStates)[0:3], np.array(cssNormals)[j*3:(j+1)*3])
     expectedObs = np.array([np.cos(np.deg2rad(10.)), np.cos(np.deg2rad(25.)), np.cos(np.deg2rad(5.)),0.,0.,0.,0.,0.])
     expectedNumObs = 3
 
@@ -398,56 +398,56 @@ def sunline_individual_test():
     ###################################################################################
     ## Test the compute_W_BS method
     ###################################################################################
-
-    inputStates = [2, 1, 0.75, 0.1, 0.4]
-    bvec1 = [0., 1., 0.]
-    b1 = np.array(bvec1)
-    w_bs = [1., 0., 0., 0., 0.,
-             0., 1., 0., 0., 0.,
-             0., 0., 1., 0., 0.,
-             0., 0., 0., 1., 0.,
-             0., 0., 0., 0., 1.]
-    dcm_BS = [1., 0., 0.,
-             0., 1., 0.,
-             0., 0., 1.]
-
-    # Fill in expected values for test
-
-    DCM_exp = np.zeros([3,3])
-    W_exp = np.eye(numStates)
-
-    DCM_exp[:, 0] = np.array(inputStates[0:3]) / (np.linalg.norm(np.array(inputStates[0:3])))
-    DCM_exp[:, 1] = np.cross(DCM_exp[:, 0], b1) / np.linalg.norm(np.array(np.cross(DCM_exp[:, 0], b1)))
-    DCM_exp[:, 2] = np.cross(DCM_exp[:, 0], DCM_exp[:, 1]) / np.linalg.norm(
-        np.cross(DCM_exp[:, 0], DCM_exp[:, 1]))
-    W_exp[3:5, 3:5] = DCM_exp[1:3, 1:3]
-
-    # Fill in the variables for the test
-    dcm = sunlineSEKF.new_doubleArray(numStates * numStates)
-    switchBS = sunlineSEKF.new_doubleArray(numStates * numStates)
-
-    for j in range(9):
-        sunlineSEKF.doubleArray_setitem(dcm, j, w_bs[j])
-    for j in range(numStates * numStates):
-        sunlineSEKF.doubleArray_setitem(switchBS, j, w_bs[j])
-
-    sunlineSEKF.computeW_BS(bvec1, inputStates, switchBS, dcm)
-
-    switchBSout = []
-    dcmOut = []
-    for j in range(9):
-        dcmOut.append(sunlineSEKF.doubleArray_getitem(dcm, j))
-    for j in range(numStates * numStates):
-        switchBSout.append(sunlineSEKF.doubleArray_getitem(switchBS, j))
-
-    errorNorm = np.zeros(2)
-    errorNorm[0] = np.linalg.norm(DCM_exp - np.array(dcmOut).reshape([3, 3]))
-    errorNorm[1] = np.linalg.norm(W_exp - np.array(switchBSout).reshape([numStates, numStates]))
-
-    for i in range(len(errorNorm)):
-        if (errorNorm[i] > 1.0E-10):
-            testFailCount += 1
-            testMessages.append("Frame switch failure \n")
+    #
+    # inputStates = [2, 1, 0.75, 0.1, 0.4]
+    # bvec1 = [0., 1., 0.]
+    # b1 = np.array(bvec1)
+    # w_bs = [1., 0., 0., 0., 0.,
+    #          0., 1., 0., 0., 0.,
+    #          0., 0., 1., 0., 0.,
+    #          0., 0., 0., 1., 0.,
+    #          0., 0., 0., 0., 1.]
+    # dcm_BS = [1., 0., 0.,
+    #          0., 1., 0.,
+    #          0., 0., 1.]
+    #
+    # # Fill in expected values for test
+    #
+    # DCM_exp = np.zeros([3,3])
+    # W_exp = np.eye(numStates)
+    #
+    # DCM_exp[:, 0] = np.array(inputStates[0:3]) / (np.linalg.norm(np.array(inputStates[0:3])))
+    # DCM_exp[:, 1] = np.cross(DCM_exp[:, 0], b1) / np.linalg.norm(np.array(np.cross(DCM_exp[:, 0], b1)))
+    # DCM_exp[:, 2] = np.cross(DCM_exp[:, 0], DCM_exp[:, 1]) / np.linalg.norm(
+    #     np.cross(DCM_exp[:, 0], DCM_exp[:, 1]))
+    # W_exp[3:5, 3:5] = DCM_exp[1:3, 1:3]
+    #
+    # # Fill in the variables for the test
+    # dcm = sunlineSEKF.new_doubleArray(numStates * numStates)
+    # switchBS = sunlineSEKF.new_doubleArray(numStates * numStates)
+    #
+    # for j in range(9):
+    #     sunlineSEKF.doubleArray_setitem(dcm, j, w_bs[j])
+    # for j in range(numStates * numStates):
+    #     sunlineSEKF.doubleArray_setitem(switchBS, j, w_bs[j])
+    #
+    # sunlineSEKF.computeW_BS(bvec1, inputStates, switchBS, dcm)
+    #
+    # switchBSout = []
+    # dcmOut = []
+    # for j in range(9):
+    #     dcmOut.append(sunlineSEKF.doubleArray_getitem(dcm, j))
+    # for j in range(numStates * numStates):
+    #     switchBSout.append(sunlineSEKF.doubleArray_getitem(switchBS, j))
+    #
+    # errorNorm = np.zeros(2)
+    # errorNorm[0] = np.linalg.norm(DCM_exp - np.array(dcmOut).reshape([3, 3]))
+    # errorNorm[1] = np.linalg.norm(W_exp - np.array(switchBSout).reshape([numStates, numStates]))
+    #
+    # for i in range(len(errorNorm)):
+    #     if (errorNorm[i] > 1.0E-10):
+    #         testFailCount += 1
+    #         testMessages.append("Frame switch failure \n")
 
     ###################################################################################
     ## Test the Switching method
@@ -491,7 +491,7 @@ def sunline_individual_test():
     bvec = sunlineSEKF.new_doubleArray(3)
     states = sunlineSEKF.new_doubleArray(numStates)
     covarMat = sunlineSEKF.new_doubleArray(numStates * numStates)
-    switchBS = sunlineSEKF.new_doubleArray(numStates * numStates)
+    # switchBS = sunlineSEKF.new_doubleArray(numStates * numStates)
 
     for i in range(3):
         sunlineSEKF.doubleArray_setitem(bvec, i, bvec1[i])
@@ -499,9 +499,9 @@ def sunline_individual_test():
         sunlineSEKF.doubleArray_setitem(states, i, inputStates[i])
     for j in range(numStates*numStates):
         sunlineSEKF.doubleArray_setitem(covarMat, j, covar[j])
-        sunlineSEKF.doubleArray_setitem(switchBS, j, switchInput[j])
+        # sunlineSEKF.doubleArray_setitem(switchBS, j, switchInput[j])
 
-    sunlineSEKF.sunlineSEKFSwitch(switchBS, bvec, states, covarMat)
+    sunlineSEKF.sunlineSEKFSwitch(bvec, states, covarMat)
 
     switchBSout = []
     covarOut = []
@@ -513,18 +513,17 @@ def sunline_individual_test():
         stateOut.append(sunlineSEKF.doubleArray_getitem(states, i))
     for j in range(numStates*numStates):
         covarOut.append(sunlineSEKF.doubleArray_getitem(covarMat, j))
-        switchBSout.append(sunlineSEKF.doubleArray_getitem(switchBS, j))
 
 
     expectedState = np.dot(Switch, np.array(inputStates))
     Pk = np.array(covar).reshape([numStates, numStates])
     expectedP = np.dot(Switch, np.dot(Pk, Switch.T))
 
-    errorNorm = np.zeros(4)
+    errorNorm = np.zeros(3)
     errorNorm[0] = np.linalg.norm(np.array(stateOut) - expectedState)
     errorNorm[1] = np.linalg.norm(expectedP - np.array(covarOut).reshape([numStates, numStates]))
     errorNorm[2] = np.linalg.norm(np.array(bvecOut) - b2)
-    errorNorm[3] = np.linalg.norm(SwitchBSnew - np.array(switchBSout).reshape([numStates, numStates]))
+    # errorNorm[3] = np.linalg.norm(SwitchBSnew - np.array(switchBSout).reshape([numStates, numStates]))
 
     for i in range(len(errorNorm)):
         if (errorNorm[i] > 1.0E-10):
@@ -672,13 +671,13 @@ def StatePropVariable(show_plots):
 
     for i in range(1,2001):
         expectedStateArray[i,0] = dt*i*1E9
-        expectedStateArray[i,1:4] = expectedStateArray[i-1,1:4] - dt * np.cross(expectedStateArray[i-1,4:6],
+        expectedStateArray[i,1:4] = expectedStateArray[i-1,1:4] + dt * np.cross(expectedStateArray[i-1,4:6],
                                                                                 expectedStateArray[i - 1, 1:4])
         expectedStateArray[4:6] = expectedStateArray[4:6]
 
     expDynMat = np.zeros([2001,numStates,numStates])
     for i in range(0,2001):
-        expDynMat[i,0:3, 0:3] = - np.array([[0., -expectedStateArray[i,5], expectedStateArray[i,4]],
+        expDynMat[i,0:3, 0:3] =  np.array([[0., -expectedStateArray[i,5], expectedStateArray[i,4]],
                                           [expectedStateArray[i,5], 0.,0.],
                                           [-expectedStateArray[i,4], 0., 0.]])
 
@@ -686,7 +685,7 @@ def StatePropVariable(show_plots):
                            [expectedStateArray[i,3], 0., -expectedStateArray[i,1]],
                            [-expectedStateArray[i,2], expectedStateArray[i,1], 0.]])
 
-        expDynMat[i,0:3, 3:numStates] = s_skew[:, 1:3]
+        expDynMat[i,0:3, 3:numStates] = - s_skew[:, 1:3]
 
     expectedSTM = np.zeros([2001,numStates,numStates])
     expectedSTM[0,:,:] = np.eye(numStates)
@@ -989,8 +988,8 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 
 if __name__ == "__main__":
-    sunline_individual_test()
-    #test_all_functions_sekf(True)
+    # sunline_individual_test()
+    test_all_functions_sekf(True)
     # (200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
     # (2000, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
     # (200, False ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
