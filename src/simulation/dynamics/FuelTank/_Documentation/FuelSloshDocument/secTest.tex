@@ -1,8 +1,8 @@
 \section{Test Description and Success Criteria}
-This test is located in \texttt{simulation/dynamics/dualHingedRigidBodies/UnitTest/\newline
-test\_dualHingedRigidBodyStateEffector.py}. In this integrated test there are two dual hinged rigid bodies connected to the spacecraft hub.  Depending on the scenario, there are different success criteria. These are outlined in the following subsections:
+This test is located in \texttt{simulation/dynamics/FuelTank/UnitTest/\newline
+test\_fuelSloshParticleStateEffector.py}. In this integrated test there are three fuel slosh particles connected to the spacecraft hub.  Depending on the scenario, there are different success criteria. These are outlined in the following subsections:
 \subsection{Gravity integrated test}
-In this test the simulation is placed into orbit around Earth with point gravity and has no damping in the hinged rigid bodies. The following parameters are being tested. 
+In this test the simulation is placed into orbit around Earth with point gravity and has no damping in the fuel slosh particles. The following parameters are being tested. 
 \begin{itemize}
 	\item Conservation of orbital angular momentum
 	\item Conservation of orbital energy
@@ -11,7 +11,7 @@ In this test the simulation is placed into orbit around Earth with point gravity
 \end{itemize}
 
 \subsection{No gravity integrated test}
-In this test, the spacecraft is placed in free space (no gravity) and has no damping in the hinged rigid bodies. The following parameters describe the success criteria.
+In this test, the spacecraft is placed in free space (no gravity) and has no damping in the fuel slosh particles. The following parameters describe the success criteria.
 \begin{itemize}
 \item Conservation of orbital angular momentum
 \item Conservation of orbital energy
@@ -21,7 +21,145 @@ In this test, the spacecraft is placed in free space (no gravity) and has no dam
 
 \section{Test Parameters}
 
-Since this is an integrated test, the inputs to the test are the physical parameters of the spacecraft along with the initial conditions of the states. These parameters can be seen in the test file. Additionally, the error tolerances can be seen in Table~\ref{tab:errortol}.
+Since this is an integrated test, the inputs to the test are the physical parameters of the spacecraft along with the initial conditions of the states. These parameters are outlined in Tables~\ref{tab:hub}-~\ref{tab:initial}. Additionally, the error tolerances can be seen in Table~\ref{tab:errortol}. The error tolerance for the energy and momentum tests is 1e-10 and that was chosen to ensure cross platform success of the test, however it is expected to get conservation of energy and momentum down to 1e-14 or lower. 
+
+\begin{table}[htbp]
+	\caption{Spacecraft Hub Parameters}
+	\label{tab:hub}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{| c | c | c | c |} % Column formatting, 
+		\hline
+		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
+		\hline
+		mHub  & mass & 750.0 & kg \\
+		\hline
+		IHubPntBc\_B & Inertia in $\cal{B}$ frame & $\begin{bmatrix}
+		900.0 & 0.0 & 0.0\\
+		0.0 & 600.0 & 0.0\\
+		0.0 & 0.0 & 600.0
+		\end{bmatrix}$ & kg-m$^2$ \\
+		\hline
+		r\_BcB\_B & CoM Location in $\cal{B}$ frame & $\begin{bmatrix}
+		0.0 & 0.0 & 0.0 \end{bmatrix}^T$ & m \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+	\caption{Fuel Slosh Particle 1 Parameters}
+	\label{tab:slosh1}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{| c | c | c | c |} % Column formatting, 
+		\hline
+		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
+		\hline
+		mass  & mass & 10.0 & kg \\
+		\hline
+		k & Spring Constant & 100.0 & N-m/rad \\
+		\hline
+		c & Damping Term & 0.0 & N-m-s/rad \\
+		\hline
+		r\_PB\_B & Slosh Equilibrium Location in $\cal{B}$ frame & $\begin{bmatrix}
+		0.1 & 0.0 & -0.1 \end{bmatrix}^T$ & m \\
+		\hline
+		pHat\_B & Slosh direction in $\cal{B}$ frame & $\begin{bmatrix}
+		1.0 & 0.0 & 0.0 \end{bmatrix}^T$ & 1 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+	\caption{Fuel Slosh Particle 2 Parameters}
+	\label{tab:slosh2}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{| c | c | c | c |} % Column formatting, 
+		\hline
+		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
+		\hline
+		mass  & mass & 10.0 & kg \\
+		\hline
+		k & Spring Constant & 100.0 & N-m/rad \\
+		\hline
+		c & Damping Term & 0.0 & N-m-s/rad \\
+		\hline
+		r\_PB\_B & Slosh Equilibrium Location in $\cal{B}$ frame & $\begin{bmatrix}
+		0.0 & 0.0 & 0.1 \end{bmatrix}^T$ & m \\
+		\hline
+		pHat\_B & Slosh direction in $\cal{B}$ frame & $\begin{bmatrix}
+		0.0 & 1.0 & 0.0 \end{bmatrix}^T$ & 1 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+	\caption{Fuel Slosh Particle 3 Parameters}
+	\label{tab:slosh3}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{| c | c | c | c |} % Column formatting, 
+		\hline
+		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
+		\hline
+		mass  & mass & 10.0 & kg \\
+		\hline
+		k & Spring Constant & 100.0 & N-m/rad \\
+		\hline
+		c & Damping Term & 0.0 & N-m-s/rad \\
+		\hline
+		r\_PB\_B & Slosh Equilibrium Location in $\cal{B}$ frame & $\begin{bmatrix}
+		-0.1 & 0.0 & 0.1 \end{bmatrix}^T$ & m \\
+		\hline
+		pHat\_B & Slosh direction in $\cal{B}$ frame & $\begin{bmatrix}
+		0.0 & 0.0 & 1.0 \end{bmatrix}^T$ & 1 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+	\caption{Initial Conditions}
+	\label{tab:initial}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{| c | c | c | c |} % Column formatting, 
+		\hline
+		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
+		\hline
+		(Particle 1) rhoInit  & (Particle 1) Initial $\rho$ & 0.05 & m \\
+		\hline
+		(Particle 1) rhoDotInit  & (Particle 1) Initial $\dot{\rho}$ & 0.0 & m/s \\
+		\hline
+		(Particle 2) rhoInit  & (Particle 1) Initial $\rho$ & -0.025 & m \\
+		\hline
+		(Particle 2) rhoDotInit  & (Particle 1) Initial $\dot{\rho}$ & 0.0 & m/s \\
+		\hline
+		(Particle 3) rhoInit  & (Particle 1) Initial $\rho$ & -0.015 & m \\
+		\hline
+		(Particle 3) rhoDotInit  & (Particle 1) Initial $\dot{\rho}$ & 0.0 & m/s \\
+		\hline
+		r\_CN\_NInit & Initial Position of S/C (gravity scenarios) & $\begin{bmatrix}
+		-4020339 &	7490567 & 5248299 
+		\end{bmatrix}^T$ & m \\
+		\hline
+		v\_CN\_NInit & Initial Velocity of S/C (gravity scenarios) & $\begin{bmatrix}
+		-5199.78 & -3436.68 & 1041.58
+		\end{bmatrix}^T$ & m/s \\
+		\hline
+		r\_CN\_NInit & Initial Position of S/C (no gravity) & $\begin{bmatrix}
+		0.5 & 0.4 & -0.7 
+		\end{bmatrix}^T$ & m \\
+		\hline
+		v\_CN\_NInit & Initial Velocity of S/C (no gravity) & $\begin{bmatrix}
+		0.1 & -0.5 & 0.3
+		\end{bmatrix}^T$ & m/s \\
+		\hline
+		sigma\_BNInit & Initial MRP of $\cal{B}$ frame & $\begin{bmatrix}
+		0.0 & 0.0 & 0.0
+		\end{bmatrix}^T$ & 1 \\
+		\hline
+		omega\_BN\_BInit & Initial Angular Velocity of $\cal{B}$ frame & $\begin{bmatrix}
+		0.1 & -0.1 & 0.1
+		\end{bmatrix}^T$ & rad/s \\
+		\hline
+	\end{tabular}
+\end{table}
 
 \begin{table}[htbp]
 	\caption{Error Tolerance - Note: Relative Tolerance is $\textnormal{abs}(\frac{\textnormal{truth} - \textnormal{value}}{\textnormal{truth}}$)}
@@ -32,9 +170,11 @@ Since this is an integrated test, the inputs to the test are the physical parame
 		Test   & Relative Tolerance \\
 		\hline
 		Energy and Momentum Conservation & 1e-10 \\
-		\hline
+		\hline	
 	\end{tabular}
 \end{table}
+
+\clearpage
 
 \section{Test Results}
 
