@@ -25,6 +25,11 @@
 #include "utilities/orbitalMotion.h"
 #include "utilities/rigidBodyKinematics.h"
 #include "avsLibrarySelfCheck.h"
+#include "utilities/saturate.h"
+#include "utilities/discretize.h"
+#include "utilities/gauss_markov.h"
+#include <Eigen/Dense>
+#include "utilities/avsEigenSupport.h"
 
 
 int isEqual(double a, double b, double accuracy)
@@ -3584,6 +3589,13 @@ int testRigidBodyKinematics(double accuracy)
         printf("Mi(30 deg, 1, C) failed\n");
         errorCount++;
     }
+    
+    //Begin Saturate() test
+    Eigen::MatrixXd(-100., -1.; 1., 100.; 0.,0.) checkBounds;
+    
+    
+    
+    
 
     return errorCount;
 }
