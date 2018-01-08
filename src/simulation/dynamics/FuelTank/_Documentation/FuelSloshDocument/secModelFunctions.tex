@@ -5,7 +5,7 @@ This module is intended to be used an approximation to a flexing body attached t
 \begin{itemize}
 	\item Compute it's contributions to the mass properties of the spacecraft
 	\item Provides matrix contributions for the back substitution method
-	\item Compute it's derivatives for $\theta$ and $\dot{\theta}$
+	\item Compute it's derivatives for $\rho$, $\dot{\rho}$, and $\dot{m}$
 	\item Adds energy and momentum contributions to the spacecraft
 \end{itemize}
 
@@ -13,11 +13,11 @@ This module is intended to be used an approximation to a flexing body attached t
 Below is a summary of the assumptions/limitations:
 
 \begin{itemize}
-	\item Is an approximation to a flexing body
+	\item Is an approximation to sloshing fuel
 	\item Is developed in such a way that does not require constraints to be met
-	\item The hinged rigid bodies must have a diagonal inertia tensor with respect the $\mathcal{S}_i$ frame as seen in Figure~\ref{fig:Flex_Slosh_Figure}
-	\item Only linear spring and damping terms
-	\item The dual hinged rigid body will always stay attached to the hub (the hinge does not have torque limits)
-	\item The hinge does not have travel limits, therefore if the spring is not stiff enough it will unrealistically travel through bounds such as running into the spacecraft hub
-	\item The EOMs are nonlinear equations of motion, therefore there can be inaccuracies (and divergence) that result from integration. Having a time step of $<= 0.10\ \text{sec}$ is recommended, but this also depends on the natural frequency of the system
+	\item A single fuel slosh particle can only move along one direction, $\hat{\bm p}_j$, as seen in Figure~\ref{fig:Flex_Slosh_Figure}
+	\item Only constant linear spring and damping terms
+	\item The mass, spring and damping coefficients can be attenuated to approximate frequencies expected by the fuel slosh
+	\item There are no travel limits for the fuel slosh therefore the particles could travel past the limits of the fuel tank boundary (this can be avoided by varying the mass and/or spring constant while considering the expected accelerations of the s/c to stay within the tank)
+	\item This model could be used with other fuel slosh models like a pendulum based fuel slosh model
 \end{itemize}
