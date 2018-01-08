@@ -28,7 +28,7 @@ class DynamicObject;
  */
 class StateVecIntegrator
 {
-	
+
 public:
     StateVecIntegrator(DynamicObject* dynIn);
     virtual ~StateVecIntegrator(void);

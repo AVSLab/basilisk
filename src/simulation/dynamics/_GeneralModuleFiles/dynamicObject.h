@@ -33,7 +33,7 @@
 class DynamicObject : public SysModel {
 public:
     DynParamManager dynManager;                       //!< -- Dynamics parameter manager for all effectors
-	StateVecIntegrator *integrator;                   //!< -- Integrator used to propagate state forward
+    StateVecIntegrator *integrator;                   //!< -- Integrator used to propagate state forward
     std::vector<StateEffector*> states;               //!< -- Vector of state effectors attached to dynObject
     std::vector<DynamicEffector*> dynEffectors;       //!< -- Vector of dynamic effectors attached to dynObject
     

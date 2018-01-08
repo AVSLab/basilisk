@@ -49,8 +49,8 @@ public:
     void enable() {stateEnabled = true;}
     void scaleState(double scaleFactor);
 
-	StateData operator+ (const StateData & operand);
-	StateData operator* (double scaleFactor);
+    StateData operator+ (const StateData & operand);
+    StateData operator* (double scaleFactor);
     
 };
 
