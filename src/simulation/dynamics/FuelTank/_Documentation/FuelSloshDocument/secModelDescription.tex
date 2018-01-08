@@ -198,7 +198,7 @@ The choice of generalized coordinates and their respective generalized speeds ar
 The necessary velocities needed to be defined are as follows
 
 \begin{equation}
-	\dot{\bm r}_{B/N} = \dot{\bm r}_{B/N}\\
+\dot{\bm r}_{B_c/N} = \dot{\bm r}_{B/N} + \bm \omega_{\cal{B/N}} \times {\bm r}_{B_c/B} = \dot{\bm r}_{B/N}  - [\tilde{{\bm r}}_{B_c/B}] \bm \omega_{\cal{B/N}} \\
 \end{equation}
 
 \begin{equation}
@@ -222,10 +222,10 @@ Now the following partial velocity table can be created:
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{ c | c | c | c } % Column formatting, 
 		\hline
-		$r$  & $\bm v^B_{r}$  & $\bm \omega_{\textit{r}}^{\cal{B}}$ & $\bm v^{P_c}_{r}$ \\
+		$r$  & $\bm v^{B_c}_{r}$  & $\bm \omega_{\textit{r}}^{\cal{B}}$ & $\bm v^{P_c}_{r}$ \\
 		\hline
 		$1-3$  & $[I_{3\times 3}]$ & $[0_{3\times 3}]$ & $[I_{3\times 3}]$ \\
-		$4-6$ & $[0_{3\times 3}]$ & $[I_{3\times 3}]$ & $- [\tilde{{\bm r}}_{P_{c,j}/B}]$ \\
+		$4-6$ & $- [\tilde{{\bm r}}_{B_c/B}]$ & $[I_{3\times 3}]$ & $- [\tilde{{\bm r}}_{P_{c,j}/B}]$ \\
 		$7-{N_P}$ &$[0_{3\times 1}]$ & $[0_{3\times 1}]$ & $\hat{\bm p}_j$ \\
 		\hline
 	\end{tabular}
@@ -261,7 +261,7 @@ Using the definition of generalized inertia forces,
 the inertia forces for the hub translational motion are defined as
 
 \begin{equation}
-	\bm F^*_{1-3} = [\bm v^B_{1-3}]^T (-m_{\text{hub}} \ddot{\bm r}_{B/N}) + \sum\limits_{j}^{N_P}[\bm v^{P_c}_{1-3}]^T (-m_j \ddot{\bm r}_{P_{c,j}/N}) = -m_{\text{hub}} \ddot{\bm r}_{B/N} + \sum\limits_{j}^{N_P} -m_j \ddot{\bm r}_{P_{c,j}/N}
+	\bm F^*_{1-3} = [\bm v^B_{1-3}]^T (-m_{\text{hub}} \ddot{\bm r}_{B_c/N}) + \sum\limits_{j}^{N_P}[\bm v^{P_c}_{1-3}]^T (-m_j \ddot{\bm r}_{P_{c,j}/N}) = -m_{\text{hub}} \ddot{\bm r}_{B_c/N} + \sum\limits_{j}^{N_P} -m_j \ddot{\bm r}_{P_{c,j}/N}
 \end{equation}
 
 Finally, Kane's equation is:
@@ -272,16 +272,16 @@ Finally, Kane's equation is:
 \end{equation}
 therefore
 \begin{equation}
-	\bm F_{\text{ext}} -m_{\text{hub}} \ddot{\bm r}_{B/N} + \sum\limits_{j}^{N_P} -m_j \ddot{\bm r}_{P_{c,j}/N} = 0
+	\bm F_{\text{ext}} -m_{\text{hub}} \ddot{\bm r}_{B_c/N} + \sum\limits_{j}^{N_P} -m_j \ddot{\bm r}_{P_{c,j}/N} = 0
 \end{equation}
 Expanding and rearranging results in
 \begin{equation}
-	m_{\text{hub}} \ddot{\bm r}_{B/N} + \sum\limits_{j}^{N_P} m_j (\ddot{\bm r}_{B/N} + \ddot{\bm r}_{P_{c,j}/B}) = \bm F_{\text{ext}}
+	m_{\text{hub}} \ddot{\bm r}_{B_c/N} + \sum\limits_{j}^{N_P} m_j (\ddot{\bm r}_{B/N} + \ddot{\bm r}_{P_{c,j}/B}) = \bm F_{\text{ext}}
 	\label{eq:KanesTrans}
 \end{equation}
 Plugging Eq.~\eqref{eq:rpddot} into Eq.~\eqref{eq:KanesTrans} results in
 \begin{multline}
-	m_{\text{hub}} \ddot{\bm r}_{B/N} + \sum\limits_{j}^{N_P} m_j \Big[\ddot{\bm r}_{B/N} + \ddot{\rho}_j \hat{\bm p}_j  +2 \bm\omega_{\cal B/N} \times \bm{r}'_{P_{c,j}/B} + \dot{\bm\omega}_{\cal B/N} \times \bm{r}_{P_{c,j}/B}  \\
+	m_{\text{hub}} (\ddot{\bm r}_{B_c/N} + \ddot{\bm r}_{B_c/B}) + \sum\limits_{j}^{N_P} m_j \Big[\ddot{\bm r}_{B/N} + \ddot{\rho}_j \hat{\bm p}_j  +2 \bm\omega_{\cal B/N} \times \bm{r}'_{P_{c,j}/B} + \dot{\bm\omega}_{\cal B/N} \times \bm{r}_{P_{c,j}/B}  \\
 	+\bm\omega_{\cal B/N} \times (\bm\omega_{\cal B/N} \times \bm{r}_{P_{c,j}/B})\Big] = \bm F_{\text{ext}}
 \end{multline}
 Combining like terms and rearranging results in
@@ -306,18 +306,18 @@ To define the generalized inertia forces, using Eq.~\eqref{eq:genInert} the defi
 \end{equation}
 
 \begin{multline}
-	\bm F^*_{4-6} = [\bm \omega_{4-6}^{\cal{B}}]^T \bm T^* + \sum\limits_{j}^{N_P}[\bm v^{P_c}_{4-6}]^T (-m_j \ddot{\bm r}_{P_{c,j}/N}) \\
-	= -[I_{\text{hub},B}] \dot{\bm\omega}_{\cal B/N}  -[\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{hub},B}] \bm\omega_{\cal B/N} + \sum\limits_{j}^{N_P}- [\tilde{{\bm r}}_{P_{c,j}/B}]^T (-m_j \ddot{\bm r}_{P_{c,j}/N})
+	\bm F^*_{4-6} = [\bm \omega_{4-6}^{\cal{B}}]^T \bm T^* + [\bm v^{B_c}_{4-6}]^T (-m_{\text{hub}} \ddot{\bm r}_{B_c/N}) + \sum\limits_{j}^{N_P}[\bm v^{P_c}_{4-6}]^T (-m_j \ddot{\bm r}_{P_{c,j}/N}) \\
+	= -[I_{\text{hub},B}] \dot{\bm\omega}_{\cal B/N}  -[\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{hub},B}] \bm\omega_{\cal B/N} - m_{\text{hub}} [\tilde{{\bm r}}_{B_c/B}] \ddot{\bm r}_{B_c/N}  + \sum\limits_{j}^{N_P}- [\tilde{{\bm r}}_{P_{c,j}/B}]^T (-m_j \ddot{\bm r}_{P_{c,j}/N})
 \end{multline}
 
 Using Kane's equation, Eq.~\eqref{eq:KanesEq}, the following equations of motion for the rotational dynamics are defined:
 
 \begin{equation}
-	\bm L_B + -[I_{\text{hub},B}] \dot{\bm\omega}_{\cal B/N}  -[\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{hub},B}] \bm\omega_{\cal B/N} + \sum\limits_{j}^{N_P}- [\tilde{{\bm r}}_{P_{c,j}/B}] (m_j \ddot{\bm r}_{P_{c,j}/N}) = 0
+	\bm L_B  -[I_{\text{hub},B}] \dot{\bm\omega}_{\cal B/N}  -[\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{hub},B}] \bm\omega_{\cal B/N} -  m_{\text{hub}} [\tilde{{\bm r}}_{B_c/B}] \ddot{\bm r}_{B_c/N}  + \sum\limits_{j}^{N_P}- [\tilde{{\bm r}}_{P_{c,j}/B}] (m_j \ddot{\bm r}_{P_{c,j}/N}) = 0
 \end{equation}
 Plugging in some definitions
 \begin{multline}
-	[I_{\text{hub},B}] \dot{\bm\omega}_{\cal B/N}  + \sum\limits_{j}^{N_P} m_j [\tilde{{\bm r}}_{P_{c,j}/B}] \Big[\ddot{\bm r}_{B/N} + \ddot{\rho}_j \hat{\bm p}_j  +2 \bm\omega_{\cal B/N} \times \bm{r}'_{P_{c,j}/B} + \dot{\bm\omega}_{\cal B/N} \times \bm{r}_{P_{c,j}/B}  \\
+	[I_{\text{hub},B}] \dot{\bm\omega}_{\cal B/N}  + m_{\text{hub}} [\tilde{{\bm r}}_{B_c/B}] \ddot{\bm r}_{B_c/N}  + \sum\limits_{j}^{N_P} m_j [\tilde{{\bm r}}_{P_{c,j}/B}] \Big[\ddot{\bm r}_{B/N} + \ddot{\rho}_j \hat{\bm p}_j  +2 \bm\omega_{\cal B/N} \times \bm{r}'_{P_{c,j}/B} + \dot{\bm\omega}_{\cal B/N} \times \bm{r}_{P_{c,j}/B}  \\
 	+\bm\omega_{\cal B/N} \times (\bm\omega_{\cal B/N} \times \bm{r}_{P_{c,j}/B})\Big] = -[\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{hub},B}] \bm\omega_{\cal B/N} + \bm L_B
 \end{multline}
 Combining like terms results in the same equation seen in Eq.~\eqref{eq:Final6} found using Newtonian mechanics.
