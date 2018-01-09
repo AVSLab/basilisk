@@ -28,6 +28,7 @@ import os
 import random
 import traceback
 import shutil
+import matplotlib.pyplot as plt
 
 import copy
 
@@ -295,6 +296,9 @@ class Controller:
             data = self.getRetainedData(simIndex)
             for retentionPolicy in retentionPolicies:
                 retentionPolicy.executeCallback(data)
+
+        # Putting this here because we typically plot stuff
+        plt.show()
 
     def executeSimulations(self):
         ''' Execute simulations in parallel
