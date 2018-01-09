@@ -32,12 +32,14 @@
 %include "stdint.i"
 %include "carrays.i"
 %include "exception.i"
+%include "cdata.i"
 
 %array_functions(double, doubleArray);
 %array_functions(long, longArray);
 %array_functions(int, intArray);
 %array_functions(short, shortArray);
 %array_functions(bool, boolArray);
+%array_functions(uint8_t, cByteArray);
 
 // Instantiate templates used by example
 namespace std {
