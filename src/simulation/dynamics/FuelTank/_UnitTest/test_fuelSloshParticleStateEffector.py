@@ -35,7 +35,8 @@ from Basilisk.utilities import macros
 
 @pytest.mark.parametrize("useFlag, testCase", [
     (False,'NoGravity'),
-    (False,'Gravity')
+    (False,'Gravity'),
+    (False,'Damping')
 ])
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -111,6 +112,11 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     unitTestSim.particle3.rhoDotInit = 0.0
     unitTestSim.particle3.massInit = 15.0
 
+    if testCase == 'Damping':
+        unitTestSim.particle1.c = 15.0
+        unitTestSim.particle2.c = 17.0
+        unitTestSim.particle3.c = 11.0
+
     #define the fuel tank
     unitTestSim.tank1 = fuelTank.FuelTank()
     unitTestSim.tank1.setTankModel(fuelTank.TANK_MODEL_CONSTANT_VOLUME)
@@ -172,18 +178,6 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
 
-    dataPos = posRef.getState()
-    dataPos = [[stopTime, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
-    dataSigma =  sigmaRef.getState()
-    dataSigma = [[stopTime, dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
-
-    truePos = [
-                [0.7519212118786878, -12.09769903910499, 0.04428656188863823]
-                ]
-    trueSigma = [
-                  [0.06115213876020642, -0.06561968675506792, 0.061244392141876255]
-                  ]
-
     initialOrbAngMom_N = [
                 [orbAngMom_N[0,1], orbAngMom_N[0,2], orbAngMom_N[0,3]]
                 ]
@@ -234,12 +228,13 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
     unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase, "Change in Rotational Angular Momentum " + testCase, plt, "width=0.8\\textwidth", path)
-    plt.figure()
-    plt.clf()
-    plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
-    plt.xlabel("Time (s)")
-    plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, "width=0.8\\textwidth", path)
+    if testCase == 'Gravity' or testCase == 'NoGravity':
+        plt.figure()
+        plt.clf()
+        plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
+        plt.xlabel("Time (s)")
+        plt.ylabel("Relative Difference")
+        unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, "width=0.8\\textwidth", path)
 
     plt.show(show_plots)
 
@@ -256,11 +251,12 @@ def fuelSloshTest(show_plots,useFlag,testCase):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Slosh unit test failed rotational angular momentum unit test")
 
-    for i in range(0,len(initialRotEnergy)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalRotEnergy[i],initialRotEnergy[i],1,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Slosh unit test failed rotational energy unit test")
+    if testCase == 'Gravity' or testCase == 'NoGravity':
+        for i in range(0,len(initialRotEnergy)):
+            # check a vector values
+            if not unitTestSupport.isArrayEqualRelative(finalRotEnergy[i],initialRotEnergy[i],1,accuracy):
+                testFailCount += 1
+                testMessages.append("FAILED: Fuel Slosh unit test failed rotational energy unit test")
 
     for i in range(0,len(initialOrbEnergy)):
         # check a vector values
@@ -277,4 +273,4 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    fuelSloshTest(True,False,'Gravity')
+    fuelSloshTest(True,False,'Damping')
