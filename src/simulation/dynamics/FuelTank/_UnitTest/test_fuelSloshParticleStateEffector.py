@@ -20,6 +20,7 @@
 import sys, os, inspect
 import pytest
 import matplotlib.pyplot as plt
+import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -78,7 +79,7 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     unitTestSim.particle1.k = 100.0
     unitTestSim.particle1.c = 0.0
     unitTestSim.particle1.r_PB_B = [[0.1], [0], [-0.1]]
-    unitTestSim.particle1.pHat_B = [[1], [0], [0]]
+    unitTestSim.particle1.pHat_B = [[np.sqrt(3)/3], [np.sqrt(3)/3], [np.sqrt(3)/3]]
     unitTestSim.particle1.nameOfRhoState = "fuelSloshParticleRho1"
     unitTestSim.particle1.nameOfRhoDotState = "fuelSloshParticleRhoDot1"
     unitTestSim.particle1.nameOfMassState = "fuelSloshParticleMass1"
@@ -90,7 +91,7 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     unitTestSim.particle2.k = 100.0
     unitTestSim.particle2.c = 0.0
     unitTestSim.particle2.r_PB_B = [[0], [0], [0.1]]
-    unitTestSim.particle2.pHat_B = [[0], [1], [0]]
+    unitTestSim.particle2.pHat_B = [[np.sqrt(3)/3], [-np.sqrt(3)/3], [-np.sqrt(3)/3]]
     unitTestSim.particle2.nameOfRhoState = "fuelSloshParticleRho2"
     unitTestSim.particle2.nameOfRhoDotState = "fuelSloshParticleRhoDot2"
     unitTestSim.particle2.nameOfMassState = "fuelSloshParticleMass2"
@@ -102,7 +103,7 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     unitTestSim.particle3.k = 100.0
     unitTestSim.particle3.c = 0.0
     unitTestSim.particle3.r_PB_B = [[-0.1], [0], [0.1]]
-    unitTestSim.particle3.pHat_B = [[0], [0], [1]]
+    unitTestSim.particle3.pHat_B = [[-np.sqrt(3)/3], [-np.sqrt(3)/3], [np.sqrt(3)/3]]
     unitTestSim.particle3.nameOfRhoState = "fuelSloshParticleRho3"
     unitTestSim.particle3.nameOfRhoDotState = "fuelSloshParticleRhoDot3"
     unitTestSim.particle3.nameOfMassState = "fuelSloshParticleMass3"
@@ -241,20 +242,6 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, "width=0.8\\textwidth", path)
 
     plt.show(show_plots)
-
-    if testCase == 'NoGravity':
-        accuracy = 1e-8
-        for i in range(0,len(truePos)):
-            # check a vector values
-            if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
-                testFailCount += 1
-                testMessages.append("FAILED:  Fuel Slosh failed pos unit test")
-
-        for i in range(0,len(trueSigma)):
-            # check a vector values
-            if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
-                testFailCount += 1
-                testMessages.append("FAILED:  Fuel Slosh failed attitude unit test")
 
     accuracy = 1e-10
     for i in range(0,len(initialOrbAngMom_N)):
