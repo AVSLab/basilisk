@@ -145,7 +145,7 @@ Rearranging Eq.~\eqref{eq:Final5} to be in the same form as the previous section
 \subsubsection{Fuel Slosh Motion}
 Figure~\ref{fig:Flex_Slosh_Figure} shows that a single fuel slosh particle is free to move along its corresponding $\hat{\bm p}_j$ direction and this formulation is generalized to include $N_P$ number of fuel slosh particles. The derivation begins with Newton's law for each fuel slosh particle:
 \begin{equation}
-	m_j \ddot{\bm{r}}_{P_{c,j}/N} = \bm F_C- k_j \rho_j \hat{\bm p}_j - c_j \dot{\rho_j} \hat{\bm p}_j
+	m_j \ddot{\bm{r}}_{P_{c,j}/N} = \bm F_G + \bm F_C- k_j \rho_j \hat{\bm p}_j - c_j \dot{\rho_j} \hat{\bm p}_j
 	\label{eq:sloshaccel}
 \end{equation}
 Where $\bm F_C$ is the constraint force that maintains the fuel slosh mass to travel along the direction $\hat{\bm p}_j$. The forces due to the spring and damper are explicitly included in Eq.~\eqref{eq:sloshaccel} and result in a restoring force and damping force. $\ddot{\bm{r}}_{P_{c,j}/N}$ is defined in the following equation.
@@ -155,20 +155,20 @@ Where $\bm F_C$ is the constraint force that maintains the fuel slosh mass to tr
 The inertial acceleration vector $\ddot{\bm{r}}_{P_{c,j}/B}$ is defined in Eq.~\eqref{eq:rpddot}. Plugging this definition into Eq.~\eqref{eq:sloshaccel} results in
 \begin{multline}
 	m_j \Big[\ddot{\bm{r}}_{B/N} + \ddot{\rho}_j \hat{\bm p}_j  +2 \bm\omega_{\cal B/N} \times \bm{r}'_{P_{c,j}/B} + \dot{\bm\omega}_{\cal B/N} \times \bm{r}_{P_{c,j}/B}  +\bm\omega_{\cal B/N} \times (\bm\omega_{\cal B/N} \times \bm{r}_{P_{c,j}/B})\Big]\\
-	=  \bm F_C - k_j \rho_j \hat{\bm p}_j - c_j \dot{\rho_j} \hat{\bm p}_j
+	=  \bm F_G + \bm F_C - k_j \rho_j \hat{\bm p}_j - c_j \dot{\rho_j} \hat{\bm p}_j
 	\label{eq:sloshaccel3}
 \end{multline}	
 
 Equation~\eqref{eq:sloshaccel3} is the dynamical equation for a fuel slosh particle, however, the constraint force, $\bm F_C$, is undefined. Since the fuel slosh particle is free to move in the $\hat{\bm p_j}$ direction, the component of $\bm F_C$ along the $\hat{\bm p_j}$ direction is zero. Leveraging this insight, Eq.~\eqref{eq:sloshaccel3} is projected into the $\hat{\bm p_j}$ direction by multiplying both sides of the equation by $\hat{\bm p_j}^T$.
 \begin{multline}
 	m_j \Bigl(\hat{\bm p_j}^T \ddot{\bm{r}}_{B/N} + \ddot{\rho}_j  +2 \hat{\bm p_j}^T  \bm\omega_{\cal B/N} \times \bm{r}'_{P_{c,j}/B} + \hat{\bm p_j}^T \dot{\bm\omega}_{\cal B/N} \times \bm{r}_{P_{c,j}/B}  + \hat{\bm p_j}^T \bm\omega_{\cal B/N} \times (\bm\omega_{\cal B/N} \times \bm{r}_{P_{c,j}/B})\Bigr)\\
-	= - k_j \rho_j - c_j \dot{\rho_j}
+	= \hat{\bm p_j}^T \bm F_G - k_j \rho_j - c_j \dot{\rho_j}
 	\label{eq:sloshaccel4}
 \end{multline}	
 Moving the second order terms to the left hand side and introducing the tilde matrix notation yields the final equation needed to describe the motion of the spacecraft.
 \begin{multline}
 	m_j \hat{\bm p_j}^T \ddot{\bm{r}}_{B/N} - m_j \hat{\bm p_j}^T [\tilde{\bm{r}}_{P_{c,j}/B}] \dot{\bm\omega}_{\cal B/N} + m_j \ddot{\rho}_j  \\
-	= - k_j \rho_j - c_j \dot{\rho_j} - 2 m_j \hat{\bm p_j}^T  [\tilde{\bm\omega}_{\cal B/N}] \bm{r}'_{P_{c,j}/B}  - m_j \hat{\bm p_j}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm{r}_{P_{c,j}/B} 
+	= \hat{\bm p_j}^T \bm F_G - k_j \rho_j - c_j \dot{\rho_j} - 2 m_j \hat{\bm p_j}^T  [\tilde{\bm\omega}_{\cal B/N}] \bm{r}'_{P_{c,j}/B}  - m_j \hat{\bm p_j}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm{r}_{P_{c,j}/B} 
 	\label{eq:sloshaccel5}
 \end{multline}	
 
@@ -332,7 +332,7 @@ Combining like terms results in the same equation seen in Eq.~\eqref{eq:Final6} 
 Following the similar pattern for translational and rotational equations the generalized active forces are defined:
 
 \begin{equation}
-	\bm F_{7} = \bm v^{P_c}_{r} \cdot (-k\rho_j \hat{\bm p}_j - c \dot{\rho} \hat{\bm p}_j) = -k\rho_j - c \dot{\rho}
+	\bm F_{7} = \bm v^{P_c}_{r} \cdot (\bm F_G + \bm F_C -k\rho_j \hat{\bm p}_j - c \dot{\rho} \hat{\bm p}_j) = \hat{\bm p_j}^T \bm F_G -k\rho_j - c \dot{\rho}
 \end{equation}
 The generalized inertia forces are defined as: 
 
@@ -342,14 +342,14 @@ The generalized inertia forces are defined as:
 Using Kane's equation the following equations of motion are defined:
 
 \begin{multline}
-	-k\rho_j - c \dot{\rho} - m_j \hat{\bm p}_j^T \Big[\ddot{\bm r}_{B/N} + \ddot{\rho}_j \hat{\bm p}_j  +2 \bm\omega_{\cal B/N} \times \bm{r}'_{P_{c,j}/B} + \dot{\bm\omega}_{\cal B/N} \times \bm{r}_{P_{c,j}/B}  \\
+	\hat{\bm p_j}^T \bm F_G -k\rho_j - c \dot{\rho} - m_j \hat{\bm p}_j^T \Big[\ddot{\bm r}_{B/N} + \ddot{\rho}_j \hat{\bm p}_j  +2 \bm\omega_{\cal B/N} \times \bm{r}'_{P_{c,j}/B} + \dot{\bm\omega}_{\cal B/N} \times \bm{r}_{P_{c,j}/B}  \\
 	+\bm\omega_{\cal B/N} \times (\bm\omega_{\cal B/N} \times \bm{r}_{P_{c,j}/B})\Big] = 0 
 \end{multline}
 Rearranging and combining like terms results in:
 
 \begin{multline}
 	m_j \hat{\bm p_j}^T \ddot{\bm{r}}_{B/N} - m_j \hat{\bm p_j}^T [\tilde{\bm{r}}_{P_{c,j}/B}] \dot{\bm\omega}_{\cal B/N} + m_j \ddot{\rho}_j  \\
-	= - k_j \rho_j - c_j \dot{\rho_j} - 2 m_j \hat{\bm p_j}^T  [\tilde{\bm\omega}_{\cal B/N}] \bm{r}'_{P_{c,j}/B}  - m_j \hat{\bm p_j}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm{r}_{P_{c,j}/B} 
+	= \hat{\bm p_j}^T \bm F_G - k_j \rho_j - c_j \dot{\rho_j} - 2 m_j \hat{\bm p_j}^T  [\tilde{\bm\omega}_{\cal B/N}] \bm{r}'_{P_{c,j}/B}  - m_j \hat{\bm p_j}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm{r}_{P_{c,j}/B} 
 	\label{eq:sloshaccel6}
 \end{multline}	
 Which is identical to Eq.~\eqref{eq:sloshaccel5}!
