@@ -121,8 +121,8 @@ private:
     void writeOutputMessages(uint64_t currentSimNanos);
     
 public:
-	std::string vehicleGravityPropName;            //! [-] Name of the vehicle mass state
-	std::string vehiclePositionStateName;          //! [-] Name of the vehicle position state
+    std::string vehicleGravityPropName;            //! [-] Name of the vehicle mass state
+    std::string vehiclePositionStateName;          //! [-] Name of the vehicle position state
     std::string vehicleVelocityStateName;          //! [-] Name of the vehicle position state
     std::string systemTimeCorrPropName;            //! [-] Name of the correlation between times
     std::vector<GravBodyData*> gravBodies;         //! [-] Vector of bodies we feel gravity from
@@ -134,7 +134,7 @@ public:
 private:
     StateData *posState;                            //! [-] Position state of the vehicle
     StateData *velState;                            //! [-] Position state of the vehicle
-	StateData *hubSigma;                            //! [-] sigmaBN for the hub
+    StateData *hubSigma;                            //! [-] sigmaBN for the hub
     Eigen::MatrixXd *gravProperty;                  //! [-] g_N property for output
     Eigen::MatrixXd *timeCorr;                      //! [-] Time correlation property
     int64_t centralBodyOutMsgId;                //! [-] Id for the central body spice data output message

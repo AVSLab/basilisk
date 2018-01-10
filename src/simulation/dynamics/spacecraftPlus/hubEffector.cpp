@@ -67,8 +67,8 @@ HubEffector::~HubEffector()
 void HubEffector::linkInStates(DynParamManager& statesIn)
 {
     // - Get reference to mass props
-	this->m_SC = statesIn.getPropertyReference("m_SC");
-	this->mDot_SC = statesIn.getPropertyReference("mDot_SC");
+    this->m_SC = statesIn.getPropertyReference("m_SC");
+    this->mDot_SC = statesIn.getPropertyReference("mDot_SC");
     this->c_B = statesIn.getPropertyReference("centerOfMassSC");
     this->ISCPntB_B = statesIn.getPropertyReference("inertiaSC");
     this->cPrime_B = statesIn.getPropertyReference("centerOfMassPrimeSC");
@@ -142,9 +142,9 @@ void HubEffector::computeDerivatives(double integTime)
     this->matrixB += -(*this->m_SC)(0,0)*intermediateMatrix;
     this->matrixC += (*this->m_SC)(0,0)*intermediateMatrix;
     this->matrixD += *ISCPntB_B;
-	this->vecTrans += -2.0*(*this->m_SC)(0, 0)*omegaLocal_BN_B.cross(cPrimeLocal_B)
-		- (*this->m_SC)(0, 0)*omegaLocal_BN_B.cross(omegaLocal_BN_B.cross(cLocal_B));
-											- 2.0*(*mDot_SC)(0,0)*(cPrimeLocal_B+omegaLocal_BN_B.cross(cLocal_B));
+    this->vecTrans += -2.0*(*this->m_SC)(0, 0)*omegaLocal_BN_B.cross(cPrimeLocal_B)
+    - (*this->m_SC)(0, 0)*omegaLocal_BN_B.cross(omegaLocal_BN_B.cross(cLocal_B))
+    - 2.0*(*mDot_SC)(0,0)*(cPrimeLocal_B+omegaLocal_BN_B.cross(cLocal_B));
     intermediateVector = *ISCPntB_B*omegaLocal_BN_B;
     this->vecRot += -omegaLocal_BN_B.cross(intermediateVector) - *ISCPntBPrime_B*omegaLocal_BN_B;
 
@@ -203,7 +203,7 @@ void HubEffector::computeDerivatives(double integTime)
             // - Find rDDot_BN_N
             velocityState->setDerivative(matrixA.inverse()*(vecTrans));
         }
-	}
+    }
 
     return;
 }

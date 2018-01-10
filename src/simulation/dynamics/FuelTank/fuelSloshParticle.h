@@ -26,7 +26,14 @@
 #include "../simulation/utilities/avsEigenMRP.h"
 
 /*! @brief This class in an instantiation of the state effector class and implements an effector representing a sloshing
- particle */
+ particle
+
+ The module
+ [PDF Description](Basilisk-FUELSLOSHSTATEEFFECTOR-20180102.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+ 
+ */
 class FuelSloshParticle :
 	public StateEffector, public SysModel
 {

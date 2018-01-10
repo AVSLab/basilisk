@@ -31,8 +31,8 @@ class StateVector {
 public:
     std::map<std::string, StateData> stateMap;
 public:
-	StateVector operator+(const StateVector& operand);
-	StateVector operator*(double scaleFactor);
+    StateVector operator+(const StateVector& operand);
+    StateVector operator*(double scaleFactor);
 };
 
 /*! Manager of states for Basilisk dynamical systems.  Allows the state-
@@ -49,7 +49,7 @@ public:
     StateData* getStateObject(std::string stateName);
     StateVector getStateVector();
     void updateStateVector(const StateVector & newState);
-	void propagateStateVector(double dt);
+    void propagateStateVector(double dt);
     Eigen::MatrixXd* createProperty(std::string propName,
                                     const Eigen::MatrixXd & propValue);
     Eigen::MatrixXd* getPropertyReference(std::string propName);

@@ -66,7 +66,7 @@ public:
     Eigen::Vector3d vecTransContr;       //!< -- The contribution of each stateEffetor to vecTrans
     Eigen::Vector3d vecRotContr;         //!< -- The contribution of each stateEffetor to vecRot
     Eigen::MatrixXd *m_SC;               //!< [kg] spacecrafts total mass
-	Eigen::MatrixXd *mDot_SC;            //!< [kg/s] Time derivative of spacecrafts total mass
+    Eigen::MatrixXd *mDot_SC;            //!< [kg/s] Time derivative of spacecrafts total mass
     Eigen::MatrixXd *ISCPntB_B;          //!< [kg m^2] Inertia of s/c about point B in B frame components
     Eigen::MatrixXd *c_B;                //!< [m] Vector from point B to CoM of s/c in B frame components
     Eigen::MatrixXd *cPrime_B;           //!< [m/s] Body time derivative of c_B
@@ -91,21 +91,21 @@ public:
     void updateSCMassProps(double time);  //!< -- This method computes the total mass properties of the s/c
     void SelfInit();                     //!< -- Lets spacecraft plus create its own msgs
     void CrossInit();                    //!< -- Hook to tie s/c plus back into provided msgs
-	void writeOutputMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
+    void writeOutputMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
     void UpdateState(uint64_t CurrentSimNanos);  //!< -- Runtime hook back into Basilisk arch
     void linkInStates(DynParamManager& statesIn);  //!< Method to get access to the hub's states
     void equationsOfMotion(double integTimeSeconds);    //!< -- This method computes the equations of motion for the whole system
     void integrateState(double time);       //!< -- This method steps the state forward one step in time
 
 private:
-	StateData *hubR_N;                          //!< -- State data accesss to inertial position for the hub
-	StateData *hubV_N;                          //!< -- State data access to inertial velocity for the hub
-	StateData *hubOmega_BN_B;                   //!< -- State data access to the attitude rate of the hub
-	StateData *hubSigma;                        //!< -- State data access to sigmaBN for the hub
+    StateData *hubR_N;                          //!< -- State data accesss to inertial position for the hub
+    StateData *hubV_N;                          //!< -- State data access to inertial velocity for the hub
+    StateData *hubOmega_BN_B;                   //!< -- State data access to the attitude rate of the hub
+    StateData *hubSigma;                        //!< -- State data access to sigmaBN for the hub
     Eigen::MatrixXd *inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd *inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
-	int64_t scStateOutMsgId;                    //!< -- Message ID for the outgoing spacecraft state
-	int64_t scMassStateOutMsgId;                //!< -- Message ID for the outgoing spacecraft mass state
+    int64_t scStateOutMsgId;                    //!< -- Message ID for the outgoing spacecraft state
+    int64_t scMassStateOutMsgId;                //!< -- Message ID for the outgoing spacecraft mass state
 };
 
 #endif /* SPACECRAFT_PLUS_H */

@@ -33,11 +33,11 @@ SpacecraftPlus::SpacecraftPlus()
     this->scMassStateOutMsgName = "mass_state_output";
 
     // - Set values to either zero or default values
-	this->currTimeStep = 0.0;
-	this->timePrevious = 0.0;
+    this->currTimeStep = 0.0;
+    this->timePrevious = 0.0;
     this->simTimePrevious = 0;
     this->scStateOutMsgId = -1;
-	this->numOutMsgBuffers = 2;
+    this->numOutMsgBuffers = 2;
     this->dvAccum_B.setZero();
 
     // - Set integrator as RK4 by default
@@ -142,10 +142,10 @@ void SpacecraftPlus::UpdateState(uint64_t CurrentSimNanos)
 void SpacecraftPlus::linkInStates(DynParamManager& statesIn)
 {
     // - Get access to all hub states
-	this->hubR_N = statesIn.getStateObject("hubPosition");
-	this->hubV_N = statesIn.getStateObject("hubVelocity");
+    this->hubR_N = statesIn.getStateObject("hubPosition");
+    this->hubV_N = statesIn.getStateObject("hubVelocity");
     this->hubSigma = statesIn.getStateObject("hubSigma");   /* Need sigmaBN for MRP switching */
-	this->hubOmega_BN_B = statesIn.getStateObject("hubOmega");
+    this->hubOmega_BN_B = statesIn.getStateObject("hubOmega");
 
     // - Get access to the hubs position and velocity in the property manager
     this->inertialPositionProperty = statesIn.getPropertyReference("r_BN_N");
@@ -161,7 +161,7 @@ void SpacecraftPlus::initializeDynamics()
 {
     // - SpacecraftPlus initiates all of the spaceCraft mass properties
     Eigen::MatrixXd initM_SC(1,1);
-	Eigen::MatrixXd initMDot_SC(1,1);
+    Eigen::MatrixXd initMDot_SC(1,1);
     Eigen::MatrixXd initC_B(3,1);
     Eigen::MatrixXd initISCPntB_B(3,3);
     Eigen::MatrixXd initCPrime_B(3,1);
@@ -171,7 +171,7 @@ void SpacecraftPlus::initializeDynamics()
     systemTime.setZero();
     // - Create the properties
     this->m_SC = this->dynManager.createProperty("m_SC", initM_SC);
-	this->mDot_SC = this->dynManager.createProperty("mDot_SC", initMDot_SC);
+    this->mDot_SC = this->dynManager.createProperty("mDot_SC", initMDot_SC);
     this->c_B = this->dynManager.createProperty("centerOfMassSC", initC_B);
     this->ISCPntB_B = this->dynManager.createProperty("inertiaSC", initISCPntB_B);
     this->ISCPntBPrime_B = this->dynManager.createProperty("inertiaPrimeSC", initISCPntBPrime_B);
@@ -229,7 +229,7 @@ void SpacecraftPlus::initializeDynamics()
     }
 
     // - Call equations of motion at time zero
-	this->equationsOfMotion(0.0);
+    this->equationsOfMotion(0.0);
     
     return;
 }
@@ -259,7 +259,7 @@ void SpacecraftPlus::updateSCMassProps(double time)
         (*it)->updateEffectorMassProps(time);
         // - Add in effectors mass props into mass props of spacecraft
         (*this->m_SC)(0,0) += (*it)->effProps.mEff;
-		(*this->mDot_SC)(0,0) += (*it)->effProps.mEffDot;
+        (*this->mDot_SC)(0,0) += (*it)->effProps.mEffDot;
         (*this->ISCPntB_B) += (*it)->effProps.IEffPntB_B;
         (*this->c_B) += (*it)->effProps.mEff*(*it)->effProps.rEff_CB_B;
         (*this->ISCPntBPrime_B) += (*it)->effProps.IEffPrimePntB_B;
@@ -376,8 +376,8 @@ void SpacecraftPlus::integrateState(double integrateToThisTime)
 
     // - Integrate the state from the last time (timeBefore) to the integrateToThisTime
     double timeBefore = integrateToThisTime - localTimeStep;
-	this->integrator->integrate(timeBefore, localTimeStep);
-	this->timePrevious = integrateToThisTime;     // - copy the current time into previous time for next integrate state call
+    this->integrator->integrate(timeBefore, localTimeStep);
+    this->timePrevious = integrateToThisTime;     // - copy the current time into previous time for next integrate state call
 
     // - Call hubs modify states to allow for switching of MRPs
     this->hub.modifyStates(integrateToThisTime);

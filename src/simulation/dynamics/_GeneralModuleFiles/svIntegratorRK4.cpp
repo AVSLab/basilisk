@@ -35,45 +35,47 @@ svIntegratorRK4::~svIntegratorRK4()
 
 void svIntegratorRK4::integrate(double currentTime, double timeStep)
 {
-	StateVector stateOut;
-	StateVector stateInit;
-	std::map<std::string, StateData>::iterator it;
-	std::map<std::string, StateData>::iterator itOut;
-	std::map<std::string, StateData>::iterator itInit;
-	stateOut = dynPtr->dynManager.getStateVector();
-	stateInit = dynPtr->dynManager.getStateVector();
-	dynPtr->equationsOfMotion(currentTime);
-	for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = stateOut.stateMap.begin(), itInit = stateInit.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++, itInit++)
-	{
-		itOut->second.setDerivative(it->second.getStateDeriv());
-		itOut->second.propagateState(timeStep / 6.0);
-		it->second.state = itInit->second.state + 0.5*timeStep*it->second.stateDeriv;
-	}
+    StateVector stateOut;
+    StateVector stateInit;
+    std::map<std::string, StateData>::iterator it;
+    std::map<std::string, StateData>::iterator itOut;
+    std::map<std::string, StateData>::iterator itInit;
+    stateOut = dynPtr->dynManager.getStateVector();
+    stateInit = dynPtr->dynManager.getStateVector();
+    dynPtr->equationsOfMotion(currentTime);
+    for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = stateOut.stateMap.begin(), itInit = stateInit.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++, itInit++)
+    {
+        itOut->second.setDerivative(it->second.getStateDeriv());
+        itOut->second.propagateState(timeStep / 6.0);
+        it->second.state = itInit->second.state + 0.5*timeStep*it->second.stateDeriv;
+    }
 
-	dynPtr->equationsOfMotion(currentTime + timeStep * 0.5);
-	for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = stateOut.stateMap.begin(), itInit = stateInit.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++, itInit++)
-	{
-		itOut->second.setDerivative(it->second.getStateDeriv());
-		itOut->second.propagateState(2.0*timeStep / 6.0);
-		it->second.state = itInit->second.state + 0.5*timeStep*it->second.stateDeriv;
-	}
+    dynPtr->equationsOfMotion(currentTime + timeStep * 0.5);
+    for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = stateOut.stateMap.begin(), itInit = stateInit.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++, itInit++)
+    {
+        itOut->second.setDerivative(it->second.getStateDeriv());
+        itOut->second.propagateState(2.0*timeStep / 6.0);
+        it->second.state = itInit->second.state + 0.5*timeStep*it->second.stateDeriv;
+    }
 
-	dynPtr->equationsOfMotion(currentTime + timeStep * 0.5);
-	for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = stateOut.stateMap.begin(), itInit = stateInit.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++, itInit++)
-	{
-		itOut->second.setDerivative(it->second.getStateDeriv());
-		itOut->second.propagateState(2.0*timeStep / 6.0);
-		it->second.state = itInit->second.state + timeStep*it->second.stateDeriv;
-	}
+    dynPtr->equationsOfMotion(currentTime + timeStep * 0.5);
+    for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = stateOut.stateMap.begin(), itInit = stateInit.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++, itInit++)
+    {
+        itOut->second.setDerivative(it->second.getStateDeriv());
+        itOut->second.propagateState(2.0*timeStep / 6.0);
+        it->second.state = itInit->second.state + timeStep*it->second.stateDeriv;
 
-	dynPtr->equationsOfMotion(currentTime + timeStep);
-	for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = stateOut.stateMap.begin(), itInit = stateInit.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++, itInit++)
-	{
-		itOut->second.setDerivative(it->second.getStateDeriv());
-		itOut->second.propagateState(timeStep / 6.0);
-	}
+    }
 
-	dynPtr->dynManager.updateStateVector(stateOut);	
+    dynPtr->equationsOfMotion(currentTime + timeStep);
+    for (it = dynPtr->dynManager.stateContainer.stateMap.begin(), itOut = stateOut.stateMap.begin(), itInit = stateInit.stateMap.begin(); it != dynPtr->dynManager.stateContainer.stateMap.end(); it++, itOut++, itInit++)
+    {
+        itOut->second.setDerivative(it->second.getStateDeriv());
+        itOut->second.propagateState(timeStep / 6.0);
+
+    }
+
+    dynPtr->dynManager.updateStateVector(stateOut);	
 
     return;
 }
