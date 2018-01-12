@@ -1,0 +1,53 @@
+\section{Test Description and Success Criteria}
+This test is located at {\tt simulation/dynamics/RadiationPressure/\_UnitTest/test\_radiationPressure.py} In order to get good coverage of all the aspects of the module, the test is broken up into three sub-tests. In each sub-test, a spacecraft is placed in the solar system and acted upon by the Sun. \par
+
+\subsection{``Cannonball" Method} This test utilizes the ``cannonball" method to calculate the effects of radiation pressure on spacecraft dynamics. The cannonball method approximates the spacecraft as a sphere. External forces in the inertial and body frame, as well as external torques in the body frame, are checked against known values.
+\subsection{Table Look-up Method} This test uses a stored table of known effects of radiation pressure. It looks up values and compares them to the expected result to validate radiation pressure table look-up capabilities.
+\subsection{Table Look-up with Eclipse} This test is the same as the Table Look-up Method except that the spacecraft experiences a partial eclipse during the test. The experiences forces and torques are expected to be exactly half of what they are without the eclipse.
+\subsection{Table Look-up Compared to Cannonball} This test compares the output of the table look-up method to the outputs of the cannonball method. This time, the look-up tables have been generated assuming a spherical spacecraft so that no torques are calculated. The tables also indicate that the spacecraft has a radius which works with the solar radiation pressure to generate a 1 $N$ away from the sun. Furthermore, the cannonball method is given a very specific area input to generate the appropriate force. This test validates that the look-up method is generating reasonable results.
+
+\section{Test Parameters}
+
+This section summarizes the error tolerances for each test. Error tolerances are determined based on whether the test results comparison should be exact or approximate due to integration or other reasons. Error tolerances for each test are summarized in table \ref{tab:errortol}. 
+
+\begin{table}[htbp]
+	\caption{Error tolerance for each test.}
+	\label{tab:errortol}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c } % Column formatting, 
+		\hline
+		\textbf{Test}   	      	               & \textbf{Tolerated Error} 						           \\ \hline
+		``Cannonball"                           &\input{AutoTex/cannonballAccuracy}	 			  \\ \hline
+		Look-up						                & \input{AutoTex/lookupAccuracy}		   				\\ \hline
+		Look-up With Eclipse	             & \input{AutoTex/lookupWithEclipseAccuracy}    \\ \hline
+		Look-up	(torque)			               & \input{AutoTex/lookupTorqueAccuracy}		   				\\ \hline
+		Look-up With Eclipse (torque)	& \input{AutoTex/lookupWithEclipseTorqueAccuracy}    \\ \hline
+		``Cannonball'' Look-up				&\input{AutoTex/cannonballLookupAccuracy} \\ \hline
+		``Cannonball'' Look-up (torque)&\input{AutoTex/cannonballLookupTorqueAccuracy} \\ \hline
+	\end{tabular}
+\end{table}
+
+\noindent Note that the lookup model tests utilize more stringent tolerances for torques. This is because the torque values are too small to use the same tolerances as the force calculations.
+
+
+
+\section{Test Results}
+
+All checks within test\_radiationPressure.py passed as expected. Table \ref{tab:results} shows the test results.
+
+\begin{table}[H]
+	\caption{Test results.}
+	\label{tab:results}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{c | c | c  } % Column formatting, 
+		\hline
+		\textbf{Test} 				      			& \textbf{Pass/Fail} 						   		   		 				& \textbf{Notes} 									        \\ \hline
+		``Cannonball"	   			  			&\input{AutoTex/cannonballPassFail}      	  					&\input{AutoTex/cannonballFailMsg} 	        \\ \hline
+		Look-up	   	                     				&\input{AutoTex/lookupPassFail}              				  &\input{AutoTex/lookupFailMsg}            		\\ \hline
+		Look-up	(torque)			               & \input{AutoTex/lookupPassFail}				  			     &\input{AutoTex/lookupFailMsg}					\\ \hline   	
+		Look-up With Eclipse      				&\input{AutoTex/lookupWithEclipsePassFail}  			&\input{AutoTex/lookupWithEclipseFailMsg}\\ \hline		
+		Look-up With Eclipse (torque)	& \input{AutoTex/lookupWithEclipsePassFail}                &\input{AutoTex/lookupWithEclipseFailMsg}\\ \hline
+		``Cannonball'' Look-up				&\input{AutoTex/cannonballLookupPassFail}				&\input{AutoTex/cannonballLookupFailMsg}\\ \hline
+		``Cannonball'' Look-up (torque)&\input{AutoTex/cannonballLookupPassFail}               &\input{AutoTex/cannonballLookupFailMsg}\\ \hline
+	\end{tabular}
+\end{table}

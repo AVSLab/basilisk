@@ -1,0 +1,51 @@
+
+
+\section{Test Description and Success Criteria}
+The two tests are located in \texttt{simulation/dynamics/FuelTank/\_UnitTest/\newline
+test\_tank\_models.py} and \texttt{simulation/dynamics/FuelTank/\_UnitTest/\newline
+test\_mass\_depletion.py}. Depending on the scenario, there are different success criteria. These are outlined in the following subsections:
+\subsection{Update Only Integrated Test}
+
+The update only integrated test is confirming that identical results are achieved compared to the old architecture's position and attitude outputs. The tests are successful the position and attitude values agree to with a specified tolerance.
+
+\subsection{Tank Model Unit Tests}
+
+The tank model unit tests computes the tank properties in python and compares those values that are outputted in Basilisk. The success criteria is confirming that $\left[I'_{\text{fuel}_i,\,B}\right]$ and $\bm r'_{T_c/B}$ for both python and Basilisk agree within a specified tolerance.
+
+\section{Test Parameters}
+
+\begin{table}[htbp]
+	\caption{Error Tolerance - Note: Relative Tolerance is $\textnormal{abs}(\frac{\textnormal{truth} - \textnormal{value}}{\textnormal{truth}}$)}
+	\label{tab:errortol}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{| c | c |} % Column formatting, 
+		\hline
+		Test   & Relative Tolerance \\
+		\hline
+		Update-Only Position/Attitude Tests  & 1e-7 \\
+		\hline
+		Tank Model Tests & 1e-10 \\
+		\hline	
+	\end{tabular}
+\end{table}
+
+\section{Test Results}
+
+The following table shows the results from the tests.
+
+\begin{table}[H]
+	\caption{Test results.}
+	\label{tab:results}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{c | c } % Column formatting, 
+		\hline
+		\textbf{Test} 				    & \textbf{Pass/Fail}  \\ \hline
+		Update-Only Position Test  & \input{../AutoTex/PositionPassFail} \\
+		Update-Only Attitude Test  & \input{../AutoTex/AttitudePassFail}   \\ 
+		Constant Volume Tank Test  & \input{../AutoTex/ConstVolPassFail}  \\ 
+		Constant Density Tank Test & \input{../AutoTex/ConstDensPassFail}  \\ 
+		Emptying Tank Test & \input{../AutoTex/EmptyingPassFail}  \\ 
+		Uniform Burn Tank Test  & \input{../AutoTex/UniformBurnPassFail}  \\ 
+		Centrifugal Burn Test & \input{../AutoTex/CentrifugalPassFail}  \\ \hline
+	\end{tabular}
+\end{table}

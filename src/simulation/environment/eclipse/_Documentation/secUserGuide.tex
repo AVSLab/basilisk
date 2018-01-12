@@ -1,0 +1,57 @@
+\section{User Guide}
+When using this model, the user should follow the setup procedure corresponding to his or her desired conversion described below. The procedures outline the required inputs and some recommended parameter values.	\begin{itemize}
+	\item \textit{eclipseCondition}
+	\begin{itemize}
+		\item \textit{full} for full eclipse
+		\item \textit{partial} for partial eclipse
+		\item \textit{annular} for annular eclipse
+		\item \textit{none} for no eclipse
+	\end{itemize}
+	\item $\mu$ is recommended to be $3.86\text{e+}14$ $\frac{\text{m}^3}{\text{s}^2}$ for Earth.
+	\item \textit{UTCCalInit} is used in this test as \textit{2021 MAY 04 07:47:49.965 (UTC)} but can be any UTC time.
+	\item Keplerian orbital elements are given in Table \ref{tab:OrbElem} previously. These are just suggested values that are used for the test and can be varied. The module only accepts Cartesian vectors.
+	\begin{itemize}
+		\item To convert from orbital elements to Cartesian vectors, use the \textit{elem2rv} method from orbitalMotion
+	\end{itemize}
+	\item Planet Names
+	\begin{itemize}
+		\item \textit{venus}
+		\item \textit{earth}
+		\item \textit{mars barycenter}
+	\end{itemize}
+\end{itemize}
+\subsection{Variable Definition and Code Description}
+The variables in Table \ref{tabular:vars} are available for user input. Variables used by the module but not available to the user are not mentioned here. Variables with default settings do not necessarily need to be changed by the user, but may be.
+\begin{table}[H]
+	\caption{Definition and Explanation of Variables Used.}
+	\label{tab:errortol}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{|  m{3.4cm}| m{3cm} | m{2.5cm} | m{6cm}|} % Column formatting, 
+		\hline
+		\textbf{Variable}   							& \textbf{LaTeX Equivalent} 	&		\textbf{Variable Type} & \textbf{Notes}			  \\ \hline
+		r$_BN_N$	&$\bm{r}$ & double & [m]Default setting: 0.0. Spacecract position vector used as an input.\\ \hline
+		$\mu$	& $\mu$ & double & [m3/s2] Required Input. This is the gravitational parameter of the body. Replaces the product of Earth's gravitational force and mass for this test..\\
+		\hline
+		a & $a$ & double & [km] Required Input. The semimajor axis of the body's orbit.\\ 
+		\hline
+		e & $e$ & double & Required Input. The eccentricity of the body's orbit.\\ 
+		\hline
+		i & $i$ & double & [rad] Required Input. The inclination of the body's orbit\\ 
+		\hline
+		Omega & $\Omega$ & double & [rad] Required Input. The ascending node of the body's orbit. \\ 
+		\hline
+		omega & $\omega$ & double & [rad] Required Input. The argument of periapses of the body's orbit. \\ 
+		\hline
+		f & $f$ & double & [rad] Required Input. The true anomaly of the body's orbit \\
+		\hline
+		spiceObject.UTCCalInit & \textit{UTCCalInit} & str & Required Input. A UTC time that provides the means of obtaining planet and sun state data. \\ 
+		\hline
+		Planet Names & N/A & str & Required Input. Identifies the planets desired to be evaluated.\\
+		\hline
+	\end{tabular}
+	\label{tabular:vars}
+\end{table}
+\begin{thebibliography}{1}
+	\bibitem{bib:1}
+	Montenbruck, O., and Gill, E., \textit{Satellite Orbits Models, Methods and Applications}, 1st ed. Berlin: Springer Berlin, 2000
+\end{thebibliography}

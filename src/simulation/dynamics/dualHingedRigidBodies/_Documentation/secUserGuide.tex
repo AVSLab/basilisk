@@ -1,0 +1,17 @@
+\section{User Guide}
+
+This section is to outline the steps needed to setup a Dual Hinged Rigid Body State Effector in python using Basilisk.
+
+\begin{enumerate}
+	\item Import the dualHingedRigidBodyStateEffector class: \newline \textit{from Basilisk.simulation import dualHingedRigidBodyStateEffector}
+	\item Create an instantiation of a Dual Hinged Rigid body: \newline \textit{panel1 = dualHingedRigidBodyStateEffector.DualHingedRigidBodyStateEffector()}
+	\item Define all physical parameters for a Dual Hinged Rigid Body. For example: \newline
+	\textit{IPntS1\_S1 = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]}
+	Do this for all of the parameters for a Dual Hinged Rigid Body seen in the public variables in the .h file.
+	\item Define the initial conditions of the states:\newline
+	\textit{panel1.theta1Init = 5*numpy.pi/180.0 \quad panel1.theta1DotInit = 0.0 \newline panel1.theta2Init = 5*numpy.pi/180.0 \quad panel1.theta2DotInit = 0.0}
+	\item Define a unique name for each state:\newline
+	\textit{panel1.nameOfTheta1State = "dualHingedRigidBodyTheta1" \quad panel1.nameOfTheta1DotState = "dualHingedRigidBodyThetaDot1" \newline panel1.nameOfTheta2State = "dualHingedRigidBodyTheta2" \quad panel1.nameOfTheta2DotState = "dualHingedRigidBodyThetaDot2"}
+	\item Finally, add the panel to your spacecraftPlus:\newline
+	\textit{scObject.addStateEffector(unitTestSim.panel1)}. See spacecraftPlus documentation on how to set up a spacecraftPlus object. 
+\end{enumerate}

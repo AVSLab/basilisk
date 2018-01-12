@@ -1,0 +1,76 @@
+\section{Test Description and Success Criteria}
+In order to test the model, the boresight vector on the spacecraft, and the orientation of the spacecraft were varied to be in each quadrant of the body frame. There were a total of 16 different tests performed in this manner. Eight different boresight vector placements (holding the spacecraft orientation constant), and eight different spacecraft orientations (holding the boresight vector constant). There was a 17th test performed in order to check the azimuth angle when the miss angle is zero. For every combination of parameters, the pointing reference frame was calculated and compared to the simulated pointing frame, and using that, the miss angle and azimuth angle were calculated.
+
+The boresight vector was calculated in the same manner that it was calculated in the model using numpy libraries to do so. It was then compared to the model's boresight vector. The test was deemed a success if the boresight vector was withing 1E-10 of the model's boresight vector using the unitTestSupport script. It should be noted that the boresight vector that the user passes to the model doesn't need to be a unit vector because the model will normalize the vector.  
+
+The miss angle was calculated in two separate ways. The first method mirrored the module's method. Just as in the module, a direction cosine martix was created to represent the pointing frame from the inertial frame. Then the boresight vector was projected into this frame, and the miss angle was calculated using standard trigonometry. The key difference in the first method of validation is that the validation used the python numpy library primarily rather than the RigidBodyKinematics.py file.  
+
+The second method used the existing inertial reference frame in order to calculate the miss angle of the boresight. In this method, the baseline vector was projected into the inertial frame. Then just as the first, the miss angle was calculated using standard trigonometry.
+
+The second method relied on the direction cosine matrices created in the first method. That being said, the first operation in the second method was to calculate the position vector of the spacecraft in the inertial reference frame. Then the baseline vector was projected into the inertial frame using the direction cosine matrix from the inertial frame to the pointing frame. Then the position vector in the inertial frame was dotted with the baseline projection. Just as in the first method, the product of the two vectors was passed through the arccosine function in order to calculate the miss angle of the boresight. 
+
+Once the miss angle calculations were complete, the calculated miss angles were compared to the miss angle pulled from the mission simulation. If the calculated miss angles were withing 1E-10 of the simulation miss angle, the test passed.
+
+Then the azimuth angle was calculated using the same method as in the model. Again, it should be noted that the standard python numpy library was used in the validation calculation. The test passed when the calculated azimuth angle was within 1E-10 of the simulation azimuth angle.  
+
+\begin{table}[htbp]
+	\caption{Tolerance Table (Absolute)}
+	\label{tab:label}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c } % Column formatting, 
+		\hline 
+		Parameter & Tolerance\\
+		\hline 
+		Boresight Vector & 1E-10 \\
+		Miss Angle & 1E-10 \\
+		Azimuth Angle & 1E-10 \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{Test Parameters}
+
+\begin{table}[htbp]
+	\caption{Table of test parameters}
+	\label{tab:label}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c | c | c | c | c } % Column formatting, 
+		\hline 
+		Test    & Boresight Vector &  $\sigma_{B/N}$  & Test    & Boresight Vector &  $\sigma_{B/N}$ \\
+		\hline 
+		1 & $\frac{\sqrt[]{3}}{3}$, $\frac{\sqrt[]{3}}{3}$, $\frac{\sqrt[]{3}}{3}$ & 0.0, 0.0, 0.0  & 9 & 0.0, 0.0, 1.0 & -0.079, 0.191, 0.191  \\
+		2 & -$\frac{\sqrt[]{3}}{3}$, $\frac{\sqrt[]{3}}{3}$, $\frac{\sqrt[]{3}}{3}$ & 0.0, 0.0, 0.0  & 10 & 0.0, 0.0, 1.0 & -0.261, 0.108, 0.631 \\
+		3 & $\frac{\sqrt[]{3}}{3}$, -$\frac{\sqrt[]{3}}{3}$, $\frac{\sqrt[]{3}}{3}$ & 0.0, 0.0, 0.0  & 11 & 0.0, 0.0, 1.0 & 0.261, 0.108, -0.631  \\
+		4 & -$\frac{\sqrt[]{3}}{3}$, -$\frac{\sqrt[]{3}}{3}$, $\frac{\sqrt[]{3}}{3}$ & 0.0, 0.0, 0.0  & 12 & 0.0, 0.0, 1.0 & 0.079, 0.191, -0.191  \\
+		5 & $\frac{\sqrt[]{3}}{3}$, $\frac{\sqrt[]{3}}{3}$, -$\frac{\sqrt[]{3}}{3}$ & 0.0, 0.0, 0.0 & 13 & 0.0, 0.0, 1.0 & 0.079, -0.191, 0.191 \\
+		6 & -$\frac{\sqrt[]{3}}{3}$, $\frac{\sqrt[]{3}}{3}$, -$\frac{\sqrt[]{3}}{3}$ & 0.0, 0.0, 0.0 & 14 & 0.0, 0.0, 1.0 & 0.261, -0.108, 0.631 \\
+		7 & $\frac{\sqrt[]{3}}{3}$, -$\frac{\sqrt[]{3}}{3}$, -$\frac{\sqrt[]{3}}{3}$ & 0.0, 0.0, 0.0  & 15 & 0.0, 0.0, 1.0 & -0.261, -0.108, -0.631  \\
+		8 & -$\frac{\sqrt[]{3}}{3}$, -$\frac{\sqrt[]{3}}{3}$, -$\frac{\sqrt[]{3}}{3}$ & 0.0, 0.0, 0.0  & 16 & 0.0, 0.0, 1.0 & -0.079, -0.191, -0.191  \\
+		&  &  & 17 & 1.0, 0.0, 0.0 & 0.0, 0.0, 0.0\\
+		\hline
+	\end{tabular}
+\end{table}
+It should be noted that the boresight vector passed to the model does not need to be a unit vector because the model will normalize the vector. 
+
+\section{Test Results}
+
+\begin{table}[H]
+	\caption{Pass or Fail Table}
+	\label{tab:label}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c | c | c } % Column formatting, 
+		\hline 
+		Test & Pass/Fail & Test    & Pass/Fail\\
+		\hline 
+		1 & \input{AutoTex/Result0} & 9  & \input{AutoTex/Result8} \\
+		2 & \input{AutoTex/Result1} & 10 & \input{AutoTex/Result9} \\
+		3 & \input{AutoTex/Result2} & 11 & \input{AutoTex/Result10} \\
+		4 & \input{AutoTex/Result3} & 12 & \input{AutoTex/Result11} \\
+		5 & \input{AutoTex/Result4} & 13 & \input{AutoTex/Result12} \\
+		6 & \input{AutoTex/Result5} & 14 & \input{AutoTex/Result13} \\
+		7 & \input{AutoTex/Result6} & 15 & \input{AutoTex/Result14} \\
+		8 & \input{AutoTex/Result7} & 16 & \input{AutoTex/Result15} \\
+		&                         & 17 & \input{AutoTex/Result16} \\
+		\hline
+	\end{tabular}
+\end{table}
