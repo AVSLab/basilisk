@@ -21,6 +21,7 @@
 #include <sstream>
 #include "../External/cspice/include/SpiceUsr.h"
 #include "architecture/messaging/system_messaging.h"
+#include <string.h>
 
 /*! This constructor initializes the variables that spice uses.  Most of them are
  not intended to be changed, but a couple are user configurable.

@@ -196,6 +196,8 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     {
         memcpy(&(ConfigData->rwSpeedPrev), &(ConfigData->rwSpeeds), sizeof(RWSpeedIntMsg));
         ConfigData->timeWheelPrev = ClockTime;
+        ConfigData->timeTag = ConfigData->stSensorIn.timeTag > ClockTime ? 
+            ConfigData->stSensorIn.timeTag*1.0E-9 : ClockTime*1.0E-9;
 
         ConfigData->firstPassComplete = 1;
     }
