@@ -25,7 +25,7 @@
 #include "utilities/gauss_markov.h"
 
 
-uint64_t testGaussMarkov(double accuracy)
+uint64_t testGaussMarkov()
 {
     uint64_t failures = 0;
     uint64_t seedIn = 1000;
@@ -56,23 +56,34 @@ uint64_t testGaussMarkov(double accuracy)
     Eigen::Vector2d stdsIn;
     stdsIn(0) = covar(0,0) / 1.5;
     stdsIn(1) = covar(1,1) / 1.5;
-    failures += (stdsIn(0) - stds(0))/(stdsIn(0)) > .01 ? 1 : 0;
-    failures += (stdsIn(1) - stds(1))/(stdsIn(1)) > .01 ? 1 : 0;
+    failures += (stdsIn(0) - stds(0))/(stdsIn(0)) > 0.01 ? 1 : 0;
+    failures += (stdsIn(1) - stds(1))/(stdsIn(1)) > 0.01 ? 1 : 0;
     
     //Test if the mean is zero
     Eigen::Vector2d means = noiseOut.rowwise().mean();
     Eigen::Vector2d meansIn;
     meansIn << 0, 0;
-    failures += (meansIn(0) - means(0))/(meansIn(0)) > .01 ? 1 : 0;
-    failures += (meansIn(1) - means(1))/(meansIn(1)) > .01 ? 1 : 0;
+    failures += fabs(meansIn(0) - means(0)) > 5 ? 1 : 0;
+    failures += fabs(meansIn(1) - means(1)) > .005 ? 1 : 0;
     
-    bounds << 1700., 1.7;
+    seedIn = 1500;
+    propIn << 1,0,0,1;
+    covar << 1.5,0,0,0.015;
+    bounds << 10., 0.1; //small but non-zero required for "white" noise
+    errorModel = GaussMarkov(2);
+    errorModel.setRNGSeed(seedIn);
+    errorModel.setPropMatrix(propIn);
+    errorModel.setNoiseMatrix(covar);
     errorModel.setUpperBounds(bounds);
     
     Eigen::Vector2d maxOut;
     maxOut.fill(0.0);
     Eigen::Vector2d minOut;
     minOut.fill(0.0);
+    
+    numPts = 1e6;
+    
+    noiseOut.resize(2,numPts);
     
     for(uint64_t i = 0; i < numPts; i++){
         errorModel.computeNextState();
@@ -91,9 +102,12 @@ uint64_t testGaussMarkov(double accuracy)
         }
     }
     
-    
-    
-    
+    //Test the bounds
+    failures += fabs(12.481655180914322 - maxOut(0)) / 12.481655180914322 > 1e-12 ? 1 : 0;
+    failures += fabs(0.12052269089286843 - maxOut(1)) / 0.12052269089286843 > 1e-12 ? 1 : 0;
+    failures += fabs(-12.230618182796439 - minOut(0)) / -12.230618182796439 > 1e-12 ? 1 : 0;
+    failures += fabs(-0.12055787311661936 - minOut(1)) / -0.12055787311661936 > 1e-12 ? 1 : 0;
+
     return failures;
     
 }

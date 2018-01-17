@@ -22,6 +22,6 @@
 
 #include <Eigen/Dense>
 
-uint64_t testGaussMarkov(double accuracy);
+uint64_t testGaussMarkov();
 Eigen::Vector2d calculateSD(Eigen::MatrixXd, uint64_t numPts);
 #endif

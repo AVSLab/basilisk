@@ -21,8 +21,8 @@
 #   Unit Test for Gauss Markov
 #   Purpose:  Self-check on Gauss Markov
 #   Author:  Scott Carnahan
-#   Creation Date:  August 11, 2017
-#
+#   Creation Date:  Jan 18, 2018
+#   Note that all of this test is really in c++. This script is just a pytest access to those tests.
 
 import pytest
 import os
@@ -43,7 +43,7 @@ def unitGausMarkovSelfCheck(testName):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
-    testFailCount = gaussMarkovCheck.testGaussMarkov(1e-10)
+    testFailCount = gaussMarkovCheck.testGaussMarkov()
     if testFailCount > 0:
         testMessages.append("ERROR: GaussMarkov Test.\n")
 
@@ -64,13 +64,10 @@ def unitGausMarkovSelfCheck(testName):
     fileName = os.path.basename(os.path.splitext(__file__)[0])
     path = os.path.dirname(os.path.abspath(__file__))
 
-    snippetMsgName = fileName + 'Msg-' + testName
-    unitTestSupport.writeTeXSnippet(snippetMsgName, snippetContent, path + "/../_Documentation/AutoTex/")
-
-    snippetPassFailName = fileName + 'TestMsg-' + testName
+    snippetPassFailName = "markovPass"
     snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}'
-    unitTestSupport.writeTeXSnippet(snippetPassFailName, snippetContent, path + "/../_Documentation/AutoTex/")
-
+    unitTestSupport.writeTeXSnippet(snippetPassFailName, snippetContent, path + "/../_Documentation/gaussMarkov/AutoTex/")
+    print path
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]

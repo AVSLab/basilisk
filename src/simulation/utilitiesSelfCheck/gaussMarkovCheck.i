@@ -25,7 +25,7 @@
 %include "swig_conly_data.i"
 
 %pythoncallback;
-int testGaussMarkov(double);
+int testGaussMarkov();
 %nopythoncallback;
 
 %ignore testGaussMarkov;
