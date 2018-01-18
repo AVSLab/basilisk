@@ -48,6 +48,8 @@ public:
     std::string rwVoltageInMsgName;     //!< --     Message that contains RW voltage input states
     std::string rwMotorTorqueOutMsgName;//!< --     Output Message for RW motor torques
     double voltage2TorqueGain;          //!< Nm/V   gain to convert voltage to motor torque
+    double scaleFactor;                 //!<        scale the output - like a constant gain error
+    double bias;                        //!< Nm     A bias to add to the torque output
     double rwTorque[MAX_EFF_CNT];       //!< Nm     RW motor torque array
 private:
     int64_t rwVoltageInMsgID;           //!< -- Message ID associated with RW voltage input state
