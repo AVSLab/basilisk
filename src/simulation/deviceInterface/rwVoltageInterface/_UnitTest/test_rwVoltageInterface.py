@@ -93,6 +93,8 @@ def run(show_plots, voltage):
 
     # set module parameters(s)
     testModule.voltage2TorqueGain = 1.32        # [Nm/V] conversion gain
+    testModule.scaleFactor = 1.01               # [ul] error scale factor
+    testModule.bias = 0.01                      # [Nm] Torque bias from converter output
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, testModule)
@@ -133,9 +135,9 @@ def run(show_plots, voltage):
     voltageTrue = np.array([1.0, 1.0, 1.0])*voltage + np.array([0.0, 1.0, 1.5])
 
     trueVector = [
-         voltageTrue*testModule.voltage2TorqueGain
-        , voltageTrue * testModule.voltage2TorqueGain
-        , voltageTrue * testModule.voltage2TorqueGain
+         voltageTrue*testModule.voltage2TorqueGain*testModule.scaleFactor + testModule.bias
+        , voltageTrue * testModule.voltage2TorqueGain*testModule.scaleFactor + testModule.bias
+        , voltageTrue * testModule.voltage2TorqueGain*testModule.scaleFactor + testModule.bias
     ]
 
     # compare the module results to the truth values

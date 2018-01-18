@@ -31,6 +31,8 @@ RWVoltageInterface::RWVoltageInterface()
     this->rwVoltageInMsgID = -1;
     this->rwMotorTorqueOutMsgID = -1;
     this->prevTime = 0;
+    this->bias = 0.;
+    this->scaleFactor = 1.;
     return;
 }
 
@@ -104,7 +106,7 @@ void RWVoltageInterface::computeRWMotorTorque()
     int i;
     memset(&(this->rwTorque), 0x0, sizeof(RWArrayTorqueIntMsg));
     for (i=0;i<MAX_EFF_CNT;i++) {
-        this->rwTorque[i] = this->inputVoltageBuffer.voltage[i] * this->voltage2TorqueGain;
+        this->rwTorque[i] = this->inputVoltageBuffer.voltage[i] * this->voltage2TorqueGain * this->scaleFactor + this->bias;
     }
 
     return;
