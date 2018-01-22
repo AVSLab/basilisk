@@ -2,7 +2,7 @@
 '''
  ISC License
 
- Copyright (c) 2016-2017, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -24,7 +24,7 @@
 import os
 
 # add the list of directories to be excluded
-excludedir = ["../../dist","../../libs","../../supportData","../../.git"]
+excludedir = ["../../dist","../../libs","../../supportData","../../.git","../../src/utilities/tabulate.py"]
 
 def update_source(filename, oldcopyright, copyright):
     utfstr = chr(0xef)+chr(0xbb)+chr(0xbf)
