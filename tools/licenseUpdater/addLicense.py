@@ -24,7 +24,7 @@
 import os
 
 # add the list of directories to be excluded
-excludedir = ["../../dist","../../libs","../../data","../../.git"]
+excludedir = ["../../dist","../../libs","../../supportData","../../.git"]
 
 def update_source(filename, oldcopyright, copyright):
     utfstr = chr(0xef)+chr(0xbb)+chr(0xbf)
