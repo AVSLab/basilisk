@@ -4,13 +4,31 @@
 This software is currently in a limited alpha public-release.  The Basilisk development is still in progress, and some behaviors and setups API's are bound to change.  That said, we are very excited by the great capabilities that this software already has, and plan to be updating this software regularly.  There is some documentation in terms of Doxygen generated HTML documentation, but also documentation within the code, and several Basilisk modules that are math heavy have LaTeX'd documentation folders as well.  Best place to start is to run the integrated tutorial scripts inside the `src/tests/scenarios` folder.  More documentation and tutorial scripts are in development.
 
 ## In Progress Features
-* new Python packaging of the Basilisk modules
 * ability to integrate custom Basilisk modules that are kept outside of the core Basilisk folder
-* new CSS based sun-heading estimation modules
 * more integrated BSK scenarios and tutorials
 * GPU based methods to evaluate solar radiation pressure forces and torques
 * atmospheric drag evaluation using multi-faceted spacecraft model
 
+## Version 0.2.0 (First public beta)
+<ul>
+    <li>First open beta release of Basilisk</li>
+    <li>Moved to a new file architecture.  This means older BSK python scripts need to be updated as the method to import BSK has changed.</li>
+    <li>The source an now be forked from Bitbucket</li>
+    <li>Percompiled binaries are provided through a python pip install wheel file.</li>
+    <li>The Doxygen documentation now pulls in the BSK module description PDF file and makes it available via the class defintion html page.</li>
+    <li>The tutorial python scripts are now moved to `src/test/scenarios`</li>
+    <li>The `pytest` comman should now be run within the `src` sub-directory</li>
+    <li>Updated fuel slosh model documentation</li>
+    <li>Updated fuel tank documentation</li>
+    <li>Adding noise and corruptions using a new utility to the BSK modules (in progress)</li>
+    <li>New N-panel hinged rigid body module</li>
+    <li>New 2-panel hinged rigid body module</li>
+    <li>Added CSS sun-heading estimation tutorial script</li>
+    <li>Added O'Keefe CSS sun-heading estimation module</li>
+    </ul>
+    
+    
+    
 ## Version 0.1.7
 <ul>
     <li>New Monte-Carlo capability that uses multiple cores and hyperthreading to accelerate the MC evaluations.  Data is retained and stored for each MC run for robustness.  See `test_scenarioMonteCarloAttRW.py` for an example.</li>
