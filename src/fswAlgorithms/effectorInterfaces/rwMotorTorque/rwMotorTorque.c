@@ -33,7 +33,7 @@
  Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
  */
 #include "simulation/utilities/linearAlgebra.h"
-
+#include "simulation/utilities/bsk_Print.h"
 
 /*! This method initializes the ConfigData for this module.
  It checks to ensure that the inputs are sane and then creates the
@@ -81,7 +81,7 @@ void CrossInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
         }
     }
     if (ConfigData->numControlAxes == 0) {
-        printf("WARNING: rwMotorTorque() is not setup to control any axes!\n");
+        BSK_PRINT(MSG_WARNING,"rwMotorTorque() is not setup to control any axes!\n");
     }
 
 }
