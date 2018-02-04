@@ -1,0 +1,25 @@
+\section{Model Functions}
+
+This module is intended to be used an approximation of fuel slosh attached to the spacecraft. It is intended to have multiple fuel slosh particles attached to the spacecraft. Also it is recommended to attach at least 3 fuel slosh particles with different sloshing directions to get motion across all axes. Below is a list of functions that this model performs:
+
+\begin{itemize}
+	\item Compute it's contributions to the mass properties of the spacecraft
+	\item Provides matrix contributions for the back substitution method
+	\item Compute it's derivatives for $\rho$, $\dot{\rho}$, and $\dot{m}$
+	\item Adds energy and momentum contributions to the spacecraft
+\end{itemize}
+
+\section{Model Assumptions and Limitations}
+Below is a summary of the assumptions/limitations:
+
+\begin{itemize}
+	\item Is an approximation to sloshing fuel
+	\item Is derived in such a manner that does not require constraints to be met
+	\item A single fuel slosh particle can only move along one direction, $\hat{\bm p}_j$, as seen in Figure~\ref{fig:Flex_Slosh_Figure}
+	\item Multiple fuel slosh particles are not interconnected, each fuel slosh particle is attached the rigid body hub independently
+	\item Only constant linear spring and damping terms
+	\item The mass, spring and damping coefficients can be attenuated to approximate frequencies expected by the fuel slosh
+	\item There are no travel limits for the fuel slosh therefore the particles could travel past the limits of the fuel tank boundary (this can be avoided by varying the mass and/or spring constant while considering the expected accelerations of the s/c to stay within the tank)
+	\item The mass of the fuel slosh particles add to the total mass of the fuel tank
+	\item This model could be used with other fuel slosh models like a pendulum based fuel slosh model
+\end{itemize}
