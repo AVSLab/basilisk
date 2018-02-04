@@ -256,7 +256,6 @@ double N2H(double N, double e)
     return H1;
 }
 
-#if 1
 /*
  * Function: elem2rv
  * Purpose: Translates the orbit elements
@@ -352,220 +351,8 @@ void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
         vVec[2] = -mu / h * (-(cos(theta) + e * cos(AP)) * sin(i));
     }
 }
-#else
-/*
- * Function: elem2rv
- * Purpose: Translates the orbit elements
- *           a   - semi-major axis           (km)
- *           e   - eccentricity
- *           i   - inclination               (rad)
- *           AN  - ascending node            (rad)
- *           AP  - argument of periapses     (rad)
- *           f   - true anomaly angle        (rad)
- *   to the inertial Cartesian position and velocity vectors.
- *   The attracting body is specified through the supplied
- *   gravitational constant mu (units of km^3/s^2).
- * Inputs:
- *   mu = gravitational parameter
- *   elements = orbital elements
- * Outputs:
- *   rVec = position vector
- *   vVec = velocity vector
- */
-void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
-{
-    double p;
-    double r;
-    double theta;
-    double rp;
-    double h;
 
-    if(1.0 + elements->e * cos(elements->f) < 1e-15) {
-        printf("WARNING: Radius is near infinite in elem2rv conversion.\n");
-    }
 
-    /* Calculate the semilatus rectum and the radius */
-    p = elements->a * (1.0 - elements->e * elements->e);
-    r = p / (1 + elements->e * cos(elements->f));
-    theta = elements->omega + elements->f;
-    rVec[0] = r * (cos(theta) * cos(elements->Omega) - cos(elements->i) * sin(theta) * sin(elements->Omega));
-    rVec[1] = r * (cos(theta) * sin(elements->Omega) + cos(elements->i) * sin(theta) * cos(elements->Omega));
-    rVec[2] = r * (sin(theta) * sin(elements->i));
-
-    if(fabs(p) < 1e-15) {
-        if(fabs(1.0 - elements->e) < 1e-15) {
-            /* Rectilinear orbit */
-            printf("elem2rv does not support rectilinear orbits\n");
-            return;
-        }
-        /* Parabola */
-        rp = -elements->a;
-        p = 2 * rp;
-    }
-
-    h = sqrt(mu * p);
-    vVec[0] = -mu / h * (cos(elements->Omega) * (elements->e * sin(elements->omega) + sin(theta))
-                         + cos(elements->i) * (elements->e * cos(elements->omega) + cos(theta)) * sin(elements->Omega));
-    vVec[1] = -mu / h * (sin(elements->Omega) * (elements->e * sin(elements->omega) + sin(theta))
-                         - cos(elements->i) * (elements->e * cos(elements->omega) + cos(theta)) * cos(elements->Omega));
-    vVec[2] = mu / h * (elements->e * cos(elements->omega) + cos(theta)) * sin(elements->i);
-}
-#endif
-#if 0
-/*
- * Function: rv2elem
- * Purpose: Translates the orbit elements inertial Cartesian position
- *   vector rVec and velocity vector vVec into the corresponding
- *   classical orbit elements where
- *           a   - semi-major axis           (km)
- *           e   - eccentricity
- *           i   - inclination               (rad)
- *           AN  - ascending node            (rad)
- *           AP  - argument of periapses     (rad)
- *           f   - true anomaly angle        (rad)
- *                 if the orbit is rectilinear, then this will be the
- *                 eccentric or hyperbolic anomaly
- *   The attracting body is specified through the supplied
- *   gravitational constant mu (units of km^3/s^2).
- *
- *   The code can handle the following cases:
- *      circular:       e = 0           a > 0
- *      elliptical-2D:  0 < e < 1       a > 0
- *      elliptical-1D:  e = 1           a > 0
- *      parabolic:      e = 1           a = -rp
- *      hyperbolic:     e > 1           a < 0
- *
- *   For the parabolic case the semi-major axis is not defined.
- *   In this case -rp (radius at periapses) is returned instead
- *   of a.  For the circular case, the AN and AP are ill-defined,
- *   along with the associated ie and ip unit direction vectors
- *   of the perifocal frame. In this circular orbit case, the
- *   unit vector ie is set equal to the normalized inertial
- *   position vector ir.
- * Inputs:
- *   mu = gravitational parameter
- *   rVec = position vector
- *   vVec = velocity vector
- * Outputs:
- *   elements = orbital elements
- */
-/* TODO: (SAO) Modify this code to return true longitude of periapsis
- *  (non-circular, equatorial), argument of latitude (circular, inclined),
- *  and true longitude (circular, equatorial) when appropriate instead of
- *  simply zeroing out omega and Omega */
-void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
-{
-    double r;
-    double h;
-    double eps;
-    double p;
-    double rp;
-    double Ecc;
-    double H;
-    double ir[3];
-    double hVec[3];
-    double cVec[3];
-    double dum[3];
-    double ih[3];
-    double ie[3];
-    double ip[3];
-    double dum2[3];
-
-    /* define a small number */
-    eps = 0.000000000001;
-
-    /* compute orbit radius */
-    r = v3Norm(rVec);
-    elements->rmag = r;
-    v3Normalize(rVec, ir);
-
-    /* compute the angular momentum vector */
-    v3Cross(rVec, vVec, hVec);
-    h = v3Norm(hVec);
-
-    /* compute the eccentricity vector */
-    v3Cross(vVec, hVec, cVec);
-    v3Scale(-mu / r, rVec, dum);
-    v3Add(cVec, dum, cVec);
-    elements->e = v3Norm(cVec) / mu;
-
-    /* compute semi-major axis */
-    elements->alpha = 2.0 / r - v3Dot(vVec, vVec) / mu;
-    if(fabs(elements->alpha) > eps) {
-        /* elliptic or hyperbolic case */
-        elements->a = 1.0 / elements->alpha;
-        elements->rPeriap = elements->a*(1-elements->e);
-        elements->rApoap  = elements->a*(1+elements->e);
-    } else {
-        /* parabolic case */
-        elements->alpha = 0.;
-        p = h * h / mu;
-        rp = p / 2;
-        elements->a = -rp;   /* a is not defined for parabola, so -rp is returned instead */
-        elements->e = 1.0;
-        elements->rPeriap = rp;
-        elements->rApoap  = -rp; /* periapses radius doesn't exist, returning -rp instead */
-    }
-
-    if(h < eps) {   /* rectilinear motion case */
-        v3Copy(ir, ie);
-        /* ip and ih are arbitrary */
-        v3Set(0.0, 0.0, 1.0, dum);
-        v3Set(0.0, 1.0, 0.0, dum2);
-        v3Cross(ie, dum,  ih);
-        v3Cross(ie, dum2, ip);
-        if(v3Norm(ih) > v3Norm(ip)) {
-            v3Normalize(ih, ih);
-        } else {
-            v3Normalize(ip, ih);
-        }
-        v3Cross(ih, ie, ip);
-
-    } else {
-        /* compute perifocal frame unit direction vectors */
-        v3Normalize(hVec, ih);
-        if(fabs(elements->e) > eps) {
-            /* non-circular case */
-            v3Scale(1. / mu / elements->e, cVec, ie);
-        } else {
-            /* circular orbit case.  Here ie, ip are arbitrary, as long as they
-            are perpenticular to the ih vector.  */
-            v3Copy(ir, ie);
-        }
-        v3Cross(ih, ie, ip);
-    }
-
-    /* compute the 3-1-3 orbit plane orientation angles */
-    elements->i = acos(ih[2]);
-    if (elements->i > eps && elements->i < M_PI - eps) {
-        elements->Omega = atan2(ih[0], -ih[1]);
-        elements->omega = atan2(ie[2], ip[2]);
-    } else {
-        elements->Omega = 0.;
-        elements->omega = atan2(ie[1], ie[0]);
-    }
-
-    if(h < eps) {                       /* rectilinear motion case */
-        if(elements->alpha > 0) {                    /* elliptic case */
-            Ecc = acos(1 - r * elements->alpha);
-            if(v3Dot(rVec, vVec) > 0) {
-                Ecc = 2 * M_PI - Ecc;
-            }
-            elements->f = Ecc;          /* for this mode the eccentric anomaly is returned */
-        } else {                        /* hyperbolic case */
-            H = acosh(r * elements->alpha + 1);
-            if(v3Dot(rVec, vVec) < 0) {
-                H = 2 * M_PI - H;
-            }
-            elements->f = H;            /* for this mode the hyperbolic anomaly is returned */
-        }
-    } else {
-        /* compute true anomaly */
-        v3Cross(ie, ir, dum);
-        elements->f = atan2(v3Dot(dum, ih), v3Dot(ie, ir));
-    }
-}
-#else
 /*
  * Function: rv2elem
  * Purpose: Translates the orbit elements inertial Cartesian position
@@ -698,7 +485,7 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
         elements->f -= twopiSigned;
     }
 }
-#endif
+
 /*
  * Function: atmosphericDensity
  * Purpose: This program computes the atmospheric density based on altitude
