@@ -50,21 +50,21 @@ from Basilisk.utilities import macros
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useLargeVoltage, useAvailability, useTorqueLoop", [
-       (False, False, False)
-     , (True, False, False)
-     , (False, True, False)
-     , (False, False, True)
+@pytest.mark.parametrize("useLargeVoltage, useAvailability, useTorqueLoop, testName", [
+       (False, False, False, "One")
+     , (True, False, False, "Two")
+     , (False, True, False, "Three")
+     , (False, False, True, "Four")
 ])
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, useLargeVoltage, useAvailability, useTorqueLoop):
+def test_module(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop)
+    [testResults, testMessage] = run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName)
     assert testResults < 1, testMessage
 
 
-def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop):
+def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -197,7 +197,6 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.voltageOutMsgName + '.' + moduleOutputName,
                                                   range(numRW))
 
-    print moduleOutput
 
     # set the filtered output truth states
     trueVector=[];
@@ -265,8 +264,15 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop):
         plt.show()
 
     #   print out success message if no error were found
+    snippentName = "passFail" + testName
     if testFailCount == 0:
+        colorText = 'ForestGreen'
         print "PASSED: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     # write TeX Tables for documentation
     resultTable = moduleOutput

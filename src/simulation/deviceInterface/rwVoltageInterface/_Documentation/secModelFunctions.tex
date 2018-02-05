@@ -1,0 +1,14 @@
+\section{Model Functions}
+The functions of the voltage to torque model are:
+\begin{itemize}
+	\item \textbf{Voltage to Torque}: Converts given voltage to a torque command.
+\end{itemize}
+
+
+\section{Model Assumptions and Limitations}
+This code makes assumptions which are common to IMU modeling.
+\begin{itemize}
+	\item \textbf{No noise}: There is no random noise input when making the voltage to torque conversion.
+	\item \textbf{All wheels the same}: All reaction wheels utilize the same gain, scale factor, and bias. No wheel can be singled out to have higher scale factor or bias, etc.
+
+\end{itemize}
