@@ -134,8 +134,9 @@ def run(show_plots, voltage):
     # set truth states
     voltageTrue = np.array([1.0, 1.0, 1.0])*voltage + np.array([0.0, 1.0, 1.5])
 
+
     trueVector = [
-         voltageTrue*testModule.voltage2TorqueGain*testModule.scaleFactor + testModule.bias
+          voltageTrue * testModule.voltage2TorqueGain*testModule.scaleFactor + testModule.bias
         , voltageTrue * testModule.voltage2TorqueGain*testModule.scaleFactor + testModule.bias
         , voltageTrue * testModule.voltage2TorqueGain*testModule.scaleFactor + testModule.bias
     ]
@@ -177,8 +178,16 @@ def run(show_plots, voltage):
 
 
     #   print out success message if no error were found
+    snippetName = "passFail" + '{:1.1f}'.format(voltage)
     if testFailCount == 0:
+        colorText = "ForestGreen"
         print "PASSED: " + testModule.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = "Red"
+        passedText = '\\textcolor{' + colorText + '}{' + "FAILED" + '}'
+    unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
+
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
