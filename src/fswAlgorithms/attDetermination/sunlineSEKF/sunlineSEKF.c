@@ -247,7 +247,7 @@ void sunlineTimeUpdate(sunlineSEKFConfig *ConfigData, double updateTime)
     {
         {-ConfigData->states[2]*ConfigData->dt*ConfigData->dt/2,ConfigData->states[1]*ConfigData->dt*ConfigData->dt/2},
         {0,-ConfigData->states[0]*ConfigData->dt*ConfigData->dt/2},
-        {ConfigData->dt*ConfigData->dt/2, 0},
+        {ConfigData->states[0]*ConfigData->dt*ConfigData->dt/2, 0},
         {ConfigData->dt,0},
         {0,ConfigData->dt}
     };
