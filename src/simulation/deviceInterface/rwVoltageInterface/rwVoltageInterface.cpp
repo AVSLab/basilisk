@@ -33,6 +33,7 @@ RWVoltageInterface::RWVoltageInterface()
     this->prevTime = 0;
     this->bias = 0.;
     this->scaleFactor = 1.;
+    this->voltage2TorqueGain = 1;
     return;
 }
 
