@@ -34,6 +34,7 @@
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
+#include "simulation/utilities/bsk_Print.h"
 
 
 
@@ -83,7 +84,7 @@ void Update_rasterManager(rasterManagerConfig *ConfigData, uint64_t callTime, ui
     } else {
         ConfigData->mnvrActive = 0.0;
         ConfigData->scanSelector += 1;
-        printf("Raster: %i. AngleSet = [%f, %f, %f], RateSet = [%f, %f, %f] \n", ConfigData->scanSelector,
+        BSK_PRINT(MSG_INFORMATION,"Raster: %i. AngleSet = [%f, %f, %f], RateSet = [%f, %f, %f] \n", ConfigData->scanSelector,
                ConfigData->outputAngleSet.set[0],
                ConfigData->outputAngleSet.set[1],
                ConfigData->outputAngleSet.set[2],

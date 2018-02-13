@@ -34,7 +34,7 @@
  Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
  */
 #include "simFswInterfaceMessages/macroDefinitions.h"
-
+#include "simulation/utilities/bsk_Print.h"
 
 
 /*! This method initializes the ConfigData for this module.
@@ -104,7 +104,7 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t cal
     memset(&(ConfigData->thrOnTimeOut), 0x0, sizeof(THRArrayOnTimeCmdIntMsg));
 
     if (ConfigData->maxCounterValue < 1) {
-        printf("WARNING: the maxCounterValue flag must be set to a positive value.\n");
+        BSK_PRINT(MSG_WARNING,"The maxCounterValue flag must be set to a positive value.\n");
     }
 
 }

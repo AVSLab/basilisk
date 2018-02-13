@@ -33,6 +33,7 @@
  Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
  */
 #include "simulation/utilities/linearAlgebra.h"
+#include "simulation/utilities/bsk_Print.h"
 
 
 /*! This method initializes the ConfigData for this module.
@@ -98,10 +99,10 @@ void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime,
         }
     }
     if (ConfigData->numOfAxesToBeControlled==0) {
-        printf("WARNING: thrForceMapping() is not setup to control any axes!\n");
+        BSK_PRINT(MSG_WARNING,"thrForceMapping() is not setup to control any axes!\n");
     }
     if (ConfigData->thrForceSign ==0) {
-        printf("WARNING: thrForceMapping() must have posThrustFlag set to either +1 or -1\n");
+        BSK_PRINT(MSG_WARNING,"thrForceMapping() must have posThrustFlag set to either +1 or -1\n");
     }
 
 
