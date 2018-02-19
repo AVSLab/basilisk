@@ -123,9 +123,7 @@ if __name__ == "__main__":
     TheScenario.configure_initial_conditions()
 
     # Initialize simulation
-    TheBSKSim.InitializeSimulation()
-    TheBSKSim.dyn2FSWInterface.discoverAllMessages()
-    TheBSKSim.fsw2DynInterface.discoverAllMessages()
+    TheBSKSim.InitializeSimulationAndDiscover()
 
     # Configure run time and execute simulation
     simulationTime = macros.min2nano(10.)
