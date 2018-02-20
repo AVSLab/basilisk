@@ -30,11 +30,12 @@ path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/..')
 from BSK_masters import BSKSim, BSKScenario
 
-# Import plotting file for your scenario
+# Import plotting files for your scenario
 sys.path.append(path + '/../plotting')
-
 import BSK_Plotting as BSK_plt
-import test_scenarioPlotting as scene_plt
+
+sys.path.append(path + '/../../src/tests/scenarios')
+import test_scenarioAttitudeGuidance as scene_plt
 
 
 # Create your own scenario child class
@@ -118,9 +119,9 @@ if __name__ == "__main__":
     # Configure run time and execute simulation
     simulationTime = macros.min2nano(10.)
     TheBSKSim.ConfigureStopTime(simulationTime)
-    print 'Starting Execution'
+    print 'BSKSim: Starting Execution'
     TheBSKSim.ExecuteSimulation()
-    print 'Finished Execution. Post-processing results'
+    print 'BSKSim: Finished Execution. Post-processing results'
 
     # Pull the results of the base simulation running the chosen scenario
     TheScenario.pull_outputs()
