@@ -31,6 +31,7 @@ class BSKFswModels():
         # Create tasks
         SimBase.fswProc.addTask(SimBase.CreateNewTask("initializationTask", int(1E10)), 1)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("inertial3DPointTask", self.processTasksTimeStep), 20)
+        SimBase.fswProc.addTask(SimBase.CreateNewTask("hillPointTask", self.processTasksTimeStep), 20)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackTask", self.processTasksTimeStep), 10)
 
         # Create module data and module wraps
@@ -41,6 +42,10 @@ class BSKFswModels():
         self.inertial3DData = inertial3D.inertial3DConfig()
         self.inertial3DWrap = SimBase.setModelDataWrap(self.inertial3DData)
         self.inertial3DWrap.ModelTag = "inertial3D"
+
+        self.hillPointData = hillPoint.hillPointConfig()
+        self.hillPointWrap = SimBase.setModelDataWrap(self.hillPointData)
+        self.hillPointWrap.ModelTag = "hillPoint"
 
         self.trackingErrorData = attTrackingError.attTrackingErrorConfig()
         self.trackingErrorWrap = SimBase.setModelDataWrap(self.trackingErrorData)
@@ -58,6 +63,8 @@ class BSKFswModels():
         SimBase.AddModelToTask("initializationTask", self.vehicleWrap, self.vehicleData, 10)
         SimBase.AddModelToTask("inertial3DPointTask", self.inertial3DWrap, self.inertial3DData, 10)
         SimBase.AddModelToTask("inertial3DPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
+        SimBase.AddModelToTask("hillPointTask", self.hillPointWrap, self.hillPointData, 10)
+        SimBase.AddModelToTask("hillPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
         SimBase.AddModelToTask("mrpFeedbackTask", self.mrpFeedbackWrap, self.mrpFeedbackData, 10)
 
         # Create events to be called for triggering GN&C maneuvers
@@ -68,11 +75,22 @@ class BSKFswModels():
                                 "self.enableTask('inertial3DPointTask')",
                                 "self.enableTask('mrpFeedbackTask')"])
 
+        SimBase.createNewEvent("initiateHillPoint", self.processTasksTimeStep, True,
+                               ["self.modeRequest == 'hillPoint'"],
+                               ["self.fswProc.disableAllTasks()",
+                                "self.enableTask('hillPointTask')",
+                                "self.enableTask('mrpFeedbackTask')"])
+
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
     def SetInertial3DPointGuidance(self):
         self.inertial3DData.sigma_R0N = [0.2, 0.4, 0.6]
         self.inertial3DData.outputDataName = "referenceOut"
+
+    def SetHillPointGuidance(self, SimBase):
+        self.hillPointData.outputDataName = "referenceOut"
+        self.hillPointData.inputNavDataName = SimBase.DynModels.simpleNavObject.outputTransName
+        self.hillPointData.inputCelMessName = SimBase.DynModels.earthGravBody.bodyInMsgName[:-12]
 
     def SetAttitudeTrackingError(self, SimBase):
         # self.trackingErrorData.inputNavName = SimBase.DynClass.simpleNavObject.outputAttName
@@ -99,6 +117,10 @@ class BSKFswModels():
     # Global call to initialize every module
     def InitAllFSWObjects(self, SimBase):
         self.SetInertial3DPointGuidance()
+        self.SetHillPointGuidance(SimBase)
         self.SetAttitudeTrackingError(SimBase)
         self.SetMRPFeedback(SimBase)
         self.SetVehicleConfiguration(SimBase)
+
+
+#BSKFswModels()
