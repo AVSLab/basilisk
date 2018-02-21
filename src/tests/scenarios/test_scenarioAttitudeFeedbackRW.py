@@ -41,6 +41,72 @@ from Basilisk.utilities import (SimulationBaseClass, fswSetupRW, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport)
 
+# Plotting functions
+def plot_attitude_error(timeData, dataSigmaBR):
+    plt.figure(1)
+    for idx in range(1, 4):
+        plt.plot(timeData, dataSigmaBR[:, idx],
+                 color=unitTestSupport.getLineColor(idx, 3),
+                 label='$\sigma_' + str(idx) + '$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('Attitude Error $\sigma_{B/R}$')
+
+def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
+    plt.figure(2)
+    for idx in range(1, 4):
+        plt.plot(timeData, dataUsReq[:, idx],
+                 '--',
+                 color=unitTestSupport.getLineColor(idx, numRW),
+                 label='$\hat u_{s,' + str(idx) + '}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('RW Motor Torque (Nm)')
+
+def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW):
+    plt.figure(2)
+    for idx in range(1, 4):
+        plt.plot(timeData, dataUsReq[:, idx],
+                 '--',
+                 color=unitTestSupport.getLineColor(idx, numRW),
+                 label='$\hat u_{s,' + str(idx) + '}$')
+        plt.plot(timeData, dataRW[idx - 1][:, 1],
+                 color=unitTestSupport.getLineColor(idx, numRW),
+                 label='$u_{s,' + str(idx) + '}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('RW Motor Torque (Nm)')
+
+def plot_rate_error(timeData, dataOmegaBR):
+    plt.figure(3)
+    for idx in range(1, 4):
+        plt.plot(timeData, dataOmegaBR[:, idx],
+                 color=unitTestSupport.getLineColor(idx, 3),
+                 label='$\omega_{BR,' + str(idx) + '}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('Rate Tracking Error (rad/s) ')
+
+def plot_rw_speeds(timeData, dataOmegaRW, numRW):
+    plt.figure(4)
+    for idx in range(1, numRW + 1):
+        plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
+                 color=unitTestSupport.getLineColor(idx, numRW),
+                 label='$\Omega_{' + str(idx) + '}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('RW Speed (RPM) ')
+
+
+def plot_rw_voltages(timeData, dataVolt, numRW):
+    plt.figure(5)
+    for idx in range(1, numRW + 1):
+        plt.plot(timeData, dataVolt[:, idx],
+                 color=unitTestSupport.getLineColor(idx, numRW),
+                 label='$V_{' + str(idx) + '}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('RW Voltage (V)')
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -678,67 +744,28 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
 
     timeData = dataUsReq[:, 0] * macros.NANO2MIN
     plt.close("all")  # clears out plots from earlier test runs
-    plt.figure(1)
-    for idx in range(1, 4):
-        plt.plot(timeData, dataSigmaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$\sigma_' + str(idx) + '$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Attitude Error $\sigma_{B/R}$')
+
+    plot_attitude_error(timeData, dataSigmaBR)
     if doUnitTests:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(fileName + "1" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
                                            , plt
                                            , path)
 
-    plt.figure(2)
-    for idx in range(1, 4):
-        plt.plot(timeData, dataUsReq[:, idx],
-                 '--',
-                 color=unitTestSupport.getLineColor(idx, numRW),
-                 label='$\hat u_{s,' + str(idx) + '}$')
-        plt.plot(timeData, dataRW[idx - 1][:, 1],
-                 color=unitTestSupport.getLineColor(idx, numRW),
-                 label='$u_{s,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Motor Torque (Nm)')
+    plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW)
     if doUnitTests:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(fileName + "2" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
                                            , plt
                                            , path)
 
-    plt.figure(3)
-    for idx in range(1, 4):
-        plt.plot(timeData, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$\omega_{BR,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Rate Tracking Error (rad/s) ')
-
-    plt.figure(4)
-    for idx in range(1, numRW + 1):
-        plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
-                 color=unitTestSupport.getLineColor(idx, numRW),
-                 label='$\Omega_{' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Speed (RPM) ')
+    plot_rate_error(timeData, dataOmegaBR)
+    plot_rw_speeds(timeData, dataOmegaRW, numRW)
     if doUnitTests:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(fileName + "3" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
                                            , plt
                                            , path)
 
     if useRWVoltageIO:
-        plt.figure(5)
-        for idx in range(1, numRW + 1):
-            plt.plot(timeData, dataVolt[:, idx],
-                     color=unitTestSupport.getLineColor(idx, numRW),
-                     label='$V_{' + str(idx) + '}$')
-        plt.legend(loc='lower right')
-        plt.xlabel('Time [min]')
-        plt.ylabel('RW Volgate (V) ')
+        plot_rw_voltages(timeData, dataVolt, numRW)
         if doUnitTests:  # only save off the figure if doing a unit test run
             unitTestSupport.saveScenarioFigure(fileName + "4" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
                                                , plt

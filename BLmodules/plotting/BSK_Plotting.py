@@ -87,12 +87,12 @@ def plot_controlTorque(Lr):
 
 def plot_trackingError(sigma_BR, omega_BR_B):
     plt.figure()
-    # plt.subplot(211)
+    plt.subplot(211)
     plot_sigma(sigma_BR)
     plt.title('Att Error: $\sigma_{BR}$')
 
-    # plt.subplot(212)
-    plt.figure()
+    plt.subplot(212)
+    #plt.figure()
     plot_omega(omega_BR_B)
     plt.title('Rate Error: $^B{\omega_{BR}}$')
     return
@@ -100,13 +100,13 @@ def plot_trackingError(sigma_BR, omega_BR_B):
 
 def plot_attitudeGuidance(sigma_RN, omega_RN_N):
     plt.figure()
-    # plt.subplot(211)
+    plt.subplot(211)
     plot_sigma(sigma_RN)
     plt.ylim([-1.0, 1.0])
     plt.title('Ref Att: $\sigma_{RN}$')
 
-    # plt.subplot(212)
-    plt.figure()
+    plt.subplot(212)
+    #plt.figure()
     plot_omega(omega_RN_N)
     plt.title('Ref Rate: $^N{\omega_{RN}}$')
     return
@@ -114,12 +114,12 @@ def plot_attitudeGuidance(sigma_RN, omega_RN_N):
 
 def plot_rotationalNav(sigma_BN, omega_BN_B):
     plt.figure()
-    #plt.subplot(211)
+    plt.subplot(211)
     plot_sigma(sigma_BN)
     plt.title('Sc Att: $\sigma_{BN}$')
 
-    #plt.subplot(212)
-    plt.figure()
+    plt.subplot(212)
+    #plt.figure()
     plot_omega(omega_BN_B)
     plt.title('Sc Rate: $^B{\omega_{BN}}$')
     return

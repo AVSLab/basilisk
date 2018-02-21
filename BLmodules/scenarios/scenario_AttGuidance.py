@@ -70,15 +70,14 @@ class scenario_HillPointing(BSKScenario):
         print '%s: log_outputs' % self.name
         # Dynamics process outputs
         samplingTime = self.masterSim.DynModels.processTasksTimeStep
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.DynModels.scObject.scStateOutMsgName, samplingTime)
         self.masterSim.TotalSim.logThisMessage(self.masterSim.DynModels.simpleNavObject.outputAttName, samplingTime)
         self.masterSim.TotalSim.logThisMessage(self.masterSim.DynModels.simpleNavObject.outputTransName, samplingTime)
 
         # FSW process outputs
         samplingTime = self.masterSim.FSWModels.processTasksTimeStep
-        #self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.hillPointData.outputDataName, samplingTime)
+        self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.hillPointData.outputDataName, samplingTime)
         self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.trackingErrorData.outputDataName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.mrpFeedbackData.outputDataName, samplingTime)
+        self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.mrpFeedbackControlData.outputDataName, samplingTime)
 
     def pull_outputs(self):
         print '%s: pull_outputs' % self.name
@@ -88,11 +87,11 @@ class scenario_HillPointing(BSKScenario):
         v_BN_N = self.masterSim.pullMessageLogData(self.masterSim.DynModels.simpleNavObject.outputTransName + ".v_BN_N", range(3))
 
         # FSW process outputs
-        #sigma_RN = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.trackingErrorData.inputRefName + ".sigma_RN", range(3))
-        #omega_RN_N = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.trackingErrorData.inputRefName + ".omega_RN_N", range(3))
+        sigma_RN = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.trackingErrorData.inputRefName + ".sigma_RN", range(3))
+        omega_RN_N = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.trackingErrorData.inputRefName + ".omega_RN_N", range(3))
         sigma_BR = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.trackingErrorData.outputDataName + ".sigma_BR", range(3))
         omega_BR_B = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.trackingErrorData.outputDataName + ".omega_BR_B", range(3))
-        Lr = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.mrpFeedbackData.outputDataName + ".torqueRequestBody", range(3))
+        Lr = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.mrpFeedbackControlData.outputDataName + ".torqueRequestBody", range(3))
 
         # Plot results
         timeLineSet = sigma_BR[:, 0] * macros.NANO2MIN
@@ -100,7 +99,7 @@ class scenario_HillPointing(BSKScenario):
         scene_plt.plot_control_torque(timeLineSet, Lr)
         scene_plt.plot_rate_error(timeLineSet, omega_BR_B)
         scene_plt.plot_orientation(timeLineSet, r_BN_N, v_BN_N, sigma_BN)
-        #BSK_plt.plot_attitudeGuidance(sigma_RN, omega_RN_N)
+        BSK_plt.plot_attitudeGuidance(sigma_RN, omega_RN_N)
         BSK_plt.show_all_plots()
 
 
