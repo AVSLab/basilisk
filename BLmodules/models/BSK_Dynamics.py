@@ -105,21 +105,21 @@ class BSKDynamicModels():
         rwStaticFrictionTorque = 0.0005  # arbitrary
         rwStaticImbalance = 8.5E-6  # kg-m, Honeywell HR-16 100 Nms standard balance option EOL
         rwDynamicImbalance = 28.3E-7  # kg-m^2, Honeywell HR-16 100 Nms standard balance option EOL
-        rwJs = 50.0 / (6000.0 / 60.0 * math.pi * 2.0) #  spinning axis inertia
+        rwJs = 1.0 / (6000.0 * math.pi * 2.0) #  spinning axis inertia
         # Define orthogonal RW pyramid
         # -- Pointing directions
-        rwElAngle = 42.5 * math.pi / 180.0
+        rwElAngle = 40.0 * math.pi / 180.0
         rwClockAngle = 45.0 * math.pi / 180.0
         RWGsList = []
         RWGsList.append([math.sin(rwElAngle) * math.sin(rwClockAngle), math.sin(rwElAngle) * math.cos(rwClockAngle),
                          -math.cos(rwElAngle)])
-        rwClockAngle += 90.0 * math.pi / 180.0
+        rwClockAngle += 180.0 * math.pi / 180.0
         RWGsList.append([math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
                          math.cos(rwElAngle)])
-        rwClockAngle += 180.0 * math.pi / 180.0
+        rwClockAngle += 90.0 * math.pi / 180.0
         RWGsList.append([math.sin(rwElAngle) * math.sin(rwClockAngle), math.sin(rwElAngle) * math.cos(rwClockAngle),
                          -math.cos(rwElAngle)])
-        rwClockAngle -= 90.0 * math.pi / 180.0
+        rwClockAngle -= 1800.0 * math.pi / 180.0
         RWGsList.append([math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
                          math.cos(rwElAngle)])
         # -- Wheel locations

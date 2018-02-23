@@ -163,23 +163,23 @@ class BSKFswModels():
         # Configure RW pyramid exactly as it is in the Dynamics (i.e. FSW with perfect knowledge)
         self.RWAGsMatrix = []
         self.RWAJsList = []
-        rwElAngle = 42.5 * math.pi / 180.0
+        rwElAngle = 40.0 * math.pi / 180.0
         rwClockAngle = 45.0 * math.pi / 180.0
-        wheelJs = 50.0 / (6000.0 / 60.0 * math.pi * 2.0)
+        wheelJs = 1.0 / (6000.0 * math.pi * 2.0)
         # -- RW 1
         self.RWAGsMatrix.extend([math.sin(rwElAngle) * math.sin(rwClockAngle),
                                  math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)])
-        rwClockAngle += 90.0 * math.pi / 180.0
+        rwClockAngle += 180.0 * math.pi / 180.0
         self.RWAJsList.extend([wheelJs])
         # -- RW 2
         self.RWAGsMatrix.extend([math.sin(rwElAngle) * math.sin(rwClockAngle),
                                  -math.sin(rwElAngle) * math.cos(rwClockAngle), math.cos(rwElAngle)])
-        rwClockAngle += 180.0 * math.pi / 180.0
+        rwClockAngle += 90.0 * math.pi / 180.0
         self.RWAJsList.extend([wheelJs])
         # -- RW 3
         self.RWAGsMatrix.extend([math.sin(rwElAngle) * math.sin(rwClockAngle),
                                  math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)])
-        rwClockAngle -= 90.0 * math.pi / 180.0
+        rwClockAngle -= 1800.0 * math.pi / 180.0
         self.RWAJsList.extend([wheelJs])
         # -- RW 4
         self.RWAGsMatrix.extend([math.sin(rwElAngle) * math.sin(rwClockAngle),
