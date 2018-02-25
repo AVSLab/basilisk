@@ -20,7 +20,8 @@
 import math
 from Basilisk.utilities import macros as mc
 from Basilisk.fswAlgorithms import (vehicleConfigData, hillPoint, inertial3D, attTrackingError, MRP_Feedback,
-                                    rwConfigData, rwMotorTorque, fswMessages)
+                                    rwConfigData, rwMotorTorque, fswMessages,
+                                    velocityPoint)
 
 
 class BSKFswModels():
@@ -41,6 +42,10 @@ class BSKFswModels():
         self.hillPointData = hillPoint.hillPointConfig()
         self.hillPointWrap = SimBase.setModelDataWrap(self.hillPointData)
         self.hillPointWrap.ModelTag = "hillPoint"
+
+        self.velocityPointData = velocityPoint.velocityPointConfig()
+        self.velocityPointWrap = SimBase.setModelDataWrap(self.velocityPointData)
+        self.velocityPointWrap.ModelTag  = "velocityPoint"
 
         self.trackingErrorData = attTrackingError.attTrackingErrorConfig()
         self.trackingErrorWrap = SimBase.setModelDataWrap(self.trackingErrorData)
@@ -70,6 +75,7 @@ class BSKFswModels():
         SimBase.fswProc.addTask(SimBase.CreateNewTask("initOnlyTask", int(1E10)), 1)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("inertial3DPointTask", self.processTasksTimeStep), 20)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("hillPointTask", self.processTasksTimeStep), 20)
+        SimBase.fswProc.addTask(SimBase.CreateNewTask("velocityPointTask", self.processTasksTimeStep), 20)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackTask", self.processTasksTimeStep), 10)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("RWAEffectorSet", self.processTasksTimeStep), 102)
 
@@ -82,6 +88,9 @@ class BSKFswModels():
 
         SimBase.AddModelToTask("hillPointTask", self.hillPointWrap, self.hillPointData, 10)
         SimBase.AddModelToTask("hillPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
+
+        SimBase.AddModelToTask("velocityPointTask", self.velocityPointWrap, self.velocityPointData, 10)
+        SimBase.AddModelToTask("velocityPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
 
         SimBase.AddModelToTask("mrpFeedbackTask", self.mrpFeedbackControlWrap, self.mrpFeedbackControlData, 10)
 
@@ -103,6 +112,12 @@ class BSKFswModels():
                                 "self.enableTask('hillPointTask')",
                                 "self.enableTask('mrpFeedbackTask')"])
 
+        SimBase.createNewEvent("initiateVelocityPoint", self.processTasksTimeStep, True,
+                               ["self.modeRequest == 'velocityPoint'"],
+                               ["self.fswProc.disableAllTasks()",
+                                "self.enableTask('velocityPointTask')",
+                                "self.enableTask('mrpFeedbackTask')"])
+
         SimBase.createNewEvent("initiateFeedbackRW", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'feedbackRW'"],
                                ["self.fswProc.disableAllTasks()",
@@ -119,6 +134,13 @@ class BSKFswModels():
         self.hillPointData.outputDataName = "referenceOut"
         self.hillPointData.inputNavDataName = SimBase.DynModels.simpleNavObject.outputTransName
         self.hillPointData.inputCelMessName = SimBase.DynModels.earthGravBody.bodyInMsgName[:-12]
+
+
+    def SetVelocityPointGuidance(self, SimBase):
+        self.velocityPointData.outputDataName = "referenceOut"
+        self.velocityPointData.inputNavDataName = SimBase.DynModels.simpleNavObject.outputTransName
+        self.velocityPointData.inputCelMessName = SimBase.DynModels.earthGravBody.bodyInMsgName[:-12]
+        self.velocityPointData.mu = SimBase.DynModels.earthGravBody.mu
 
     def SetAttitudeTrackingError(self, SimBase):
         self.trackingErrorData.inputNavName = SimBase.DynModels.simpleNavObject.outputAttName
@@ -220,6 +242,7 @@ class BSKFswModels():
     def InitAllFSWObjects(self, SimBase):
         self.SetInertial3DPointGuidance()
         self.SetHillPointGuidance(SimBase)
+        self.SetVelocityPointGuidance(SimBase)
         self.SetAttitudeTrackingError(SimBase)
         self.SetMRPFeedbackControl(SimBase)
         self.SetVehicleConfiguration(SimBase)
