@@ -63,6 +63,65 @@ from Basilisk.utilities import fswSetupRW
 from Basilisk.fswAlgorithms import fswMessages
 
 
+def plot_attitude_error(timeData, dataSigmaBR):
+    plt.figure(1)
+    for idx in range(1, 4):
+        plt.semilogy(timeData, np.abs(dataSigmaBR[:, idx]),
+                     color=unitTestSupport.getLineColor(idx, 3),
+                     label='$|\sigma_' + str(idx) + '|$')
+    plt.legend(loc='upper right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('Attitude Error $\sigma_{B/R}$')
+
+def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
+    plt.figure(2)
+    for idx in range(1, 4):
+        plt.plot(timeData, dataUsReq[:, idx],
+                 '--',
+                 color=unitTestSupport.getLineColor(idx, numRW),
+                 label='$\hat u_{s,' + str(idx) + '}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('RW Motor Torque (Nm)')
+
+def plot_rw_motor_torque(timeData, dataRW, numRW):
+    plt.figure(2)
+    for idx in range(1, 4):
+        plt.semilogy(timeData, np.abs(dataRW[idx - 1][:, 1]),
+                     color=unitTestSupport.getLineColor(idx, numRW),
+                     label='$|u_{s,' + str(idx) + '}|$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('RW Motor Torque (Nm)')
+
+def plot_rate_error(timeData, dataOmegaBR, dataOmegaBRAst):
+    plt.figure(3)
+    for idx in range(1, 4):
+        plt.semilogy(timeData, np.abs(dataOmegaBR[:, idx]) / macros.D2R,
+                     color=unitTestSupport.getLineColor(idx, 3),
+                     label='$|\omega_{BR,' + str(idx) + '}|$')
+    for idx in range(1, 4):
+        plt.semilogy(timeData, np.abs(dataOmegaBRAst[:, idx]) / macros.D2R,
+                     '--',
+                     color=unitTestSupport.getLineColor(idx, 3)
+                     )
+    plt.legend(loc='upper right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('Rate Tracking Error (deg/s) ')
+
+
+def plot_rw_speeds(timeData, dataOmegaRW, numRW):
+    plt.figure(4)
+    for idx in range(1, numRW + 1):
+        plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
+                 color=unitTestSupport.getLineColor(idx, numRW),
+                 label='$\Omega_{' + str(idx) + '}$')
+    plt.legend(loc='upper right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('RW Speed (RPM) ')
+
+
+
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
@@ -548,52 +607,20 @@ def run(doUnitTests, show_plots, simCase):
 
     timeData = dataUsReq[:, 0] * macros.NANO2MIN
     plt.close("all")  # clears out plots from earlier test runs
-    plt.figure(1)
-    for idx in range(1, 4):
-        plt.semilogy(timeData, np.abs(dataSigmaBR[:, idx]),
-                     color=unitTestSupport.getLineColor(idx, 3),
-                     label='$|\sigma_' + str(idx) + '|$')
-    plt.legend(loc='upper right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Attitude Error $\sigma_{B/R}$')
+
+    plot_attitude_error(timeData, dataSigmaBR)
     if doUnitTests:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(fileName + "SigmaBR" + str(int(simCase)), plt, path)
 
-    plt.figure(2)
-    for idx in range(1, 4):
-        plt.semilogy(timeData, np.abs(dataRW[idx - 1][:, 1]),
-                     color=unitTestSupport.getLineColor(idx, numRW),
-                     label='$|u_{s,' + str(idx) + '}|$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Motor Torque (Nm)')
+    plot_rw_motor_torque(timeData, dataRW, numRW)
     if doUnitTests:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(fileName + "rwUs" + str(int(simCase)), plt, path)
 
-    plt.figure(3)
-    for idx in range(1, 4):
-        plt.semilogy(timeData, np.abs(dataOmegaBR[:, idx]) / macros.D2R,
-                     color=unitTestSupport.getLineColor(idx, 3),
-                     label='$|\omega_{BR,' + str(idx) + '}|$')
-    for idx in range(1, 4):
-        plt.semilogy(timeData, np.abs(dataOmegaBRAst[:, idx]) / macros.D2R,
-                     '--',
-                     color=unitTestSupport.getLineColor(idx, 3)
-                     )
-    plt.legend(loc='upper right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Rate Tracking Error (deg/s) ')
+    plot_rate_error(timeData, dataOmegaBR, dataOmegaBRAst)
     if doUnitTests:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(fileName + "omegaBR" + str(int(simCase)), plt, path)
 
-    plt.figure(4)
-    for idx in range(1, numRW + 1):
-        plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
-                 color=unitTestSupport.getLineColor(idx, numRW),
-                 label='$\Omega_{' + str(idx) + '}$')
-    plt.legend(loc='upper right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Speed (RPM) ')
+    plot_rw_speeds(timeData, dataOmegaRW, numRW)
     if doUnitTests:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(fileName + "Omega" + str(int(simCase)), plt, path)
 

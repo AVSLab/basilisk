@@ -21,7 +21,7 @@ import math
 from Basilisk.utilities import macros as mc
 from Basilisk.fswAlgorithms import (vehicleConfigData, hillPoint, inertial3D, attTrackingError, MRP_Feedback,
                                     rwConfigData, rwMotorTorque, fswMessages,
-                                    velocityPoint)
+                                    velocityPoint, MRP_Steering, rateServoFullNonlinear)
 
 
 class BSKFswModels():
@@ -55,10 +55,17 @@ class BSKFswModels():
         self.mrpFeedbackControlWrap = SimBase.setModelDataWrap(self.mrpFeedbackControlData)
         self.mrpFeedbackControlWrap.ModelTag = "mrpFeedbackControl"
 
-
         self.mrpFeedbackRWsData = MRP_Feedback.MRP_FeedbackConfig()
         self.mrpFeedbackRWsWrap = SimBase.setModelDataWrap(self.mrpFeedbackRWsData)
         self.mrpFeedbackRWsWrap.ModelTag = "mrpFeedbackRWs"
+
+        self.mrpSteeringData = MRP_Steering.MRP_SteeringConfig()
+        self.mrpSteeringWrap = SimBase.setModelDataWrap(self.mrpSteeringData)
+        self.mrpSteeringWrap.ModelTag = "MRP_Steering"
+
+        self.rateServoData = rateServoFullNonlinear.rateServoFullNonlinearConfig()
+        self.rateServoWrap = SimBase.setModelDataWrap(self.rateServoData)
+        self.rateServoWrap.ModelTag = "rate_servo"
 
         self.rwConfigData = rwConfigData.rwConfigData_Config()
         self.rwConfigWrap = SimBase.setModelDataWrap(self.rwConfigData)
@@ -77,7 +84,8 @@ class BSKFswModels():
         SimBase.fswProc.addTask(SimBase.CreateNewTask("hillPointTask", self.processTasksTimeStep), 20)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("velocityPointTask", self.processTasksTimeStep), 20)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackTask", self.processTasksTimeStep), 10)
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("RWAEffectorSet", self.processTasksTimeStep), 102)
+        SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpSteeringRWsTask", self.processTasksTimeStep), 10)
+        SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackRWsTask", self.processTasksTimeStep), 10)
 
         # Assign initialized modules to tasks
         SimBase.AddModelToTask("initOnlyTask", self.vehicleWrap, self.vehicleData, 2)
@@ -94,9 +102,13 @@ class BSKFswModels():
 
         SimBase.AddModelToTask("mrpFeedbackTask", self.mrpFeedbackControlWrap, self.mrpFeedbackControlData, 10)
 
-        SimBase.AddModelToTask("RWAEffectorSet", self.mrpFeedbackRWsWrap, self.mrpFeedbackRWsData, 9)
-        SimBase.AddModelToTask("RWAEffectorSet", self.rwMotorTorqueWrap, self.rwMotorTorqueData, 8)
-        #masterSim.AddModelToTask("RWAEffectorSet", self.RWANullSpaceDataWrap,self.RWANullSpaceData, 7)
+        SimBase.AddModelToTask("mrpSteeringRWsTask", self.mrpSteeringWrap, self.mrpSteeringData, 10)
+        SimBase.AddModelToTask("mrpSteeringRWsTask", self.rateServoWrap, self.rateServoData, 9)
+        SimBase.AddModelToTask("mrpSteeringRWsTask", self.rwMotorTorqueWrap, self.rwMotorTorqueData, 8)
+
+        SimBase.AddModelToTask("mrpFeedbackRWsTask", self.mrpFeedbackRWsWrap, self.mrpFeedbackRWsData, 9)
+        SimBase.AddModelToTask("mrpFeedbackRWsTask", self.rwMotorTorqueWrap, self.rwMotorTorqueData, 8)
+        #masterSim.AddModelToTask("mrpFeedbackRWsTask", self.RWANullSpaceDataWrap,self.RWANullSpaceData, 7)
 
         # Create events to be called for triggering GN&C maneuvers
         SimBase.fswProc.disableAllTasks()
@@ -122,7 +134,13 @@ class BSKFswModels():
                                ["self.modeRequest == 'feedbackRW'"],
                                ["self.fswProc.disableAllTasks()",
                                 "self.enableTask('inertial3DPointTask')",
-                                "self.enableTask('RWAEffectorSet')"])
+                                "self.enableTask('mrpFeedbackRWsTask')"])
+
+        SimBase.createNewEvent("initiateSteeringRW", self.processTasksTimeStep, True,
+                               ["self.modeRequest == 'steeringRW'"],
+                               ["self.fswProc.disableAllTasks()",
+                                "self.enableTask('hillPointTask')",
+                                "self.enableTask('mrpSteeringRWsTask')"])
 
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
@@ -173,6 +191,26 @@ class BSKFswModels():
         self.mrpFeedbackRWsData.rwParamsInMsgName = "rwa_config_data_parsed"
         self.mrpFeedbackRWsData.inputGuidName = "guidanceOut"
         self.mrpFeedbackRWsData.outputDataName = "controlTorqueRaw"
+
+    def SetMRPSteering(self):
+        self.mrpSteeringData.K1 = 0.05
+        self.mrpSteeringData.ignoreOuterLoopFeedforward = False
+        self.mrpSteeringData.K3 = 0.75
+        self.mrpSteeringData.omega_max = 1.0 * mc.D2R
+        self.mrpSteeringData.inputGuidName = "guidanceOut"
+        self.mrpSteeringData.outputDataName = "rate_steering"
+
+    def SetRateServo(self):
+        self.rateServoData.inputGuidName = "guidanceOut"
+        self.rateServoData.vehConfigInMsgName = "adcs_config_data"
+        self.rateServoData.rwParamsInMsgName = "rwa_config_data_parsed"
+        self.rateServoData.inputRWSpeedsName = "reactionwheel_output_states"  # DynModels.rwStateEffector.OutputDataString
+        self.rateServoData.inputRateSteeringName = "rate_steering"
+        self.rateServoData.outputDataName = "controlTorqueRaw"
+        self.rateServoData.Ki = 5.0
+        self.rateServoData.P = 150.0
+        self.rateServoData.integralLimit = 2. / self.rateServoData.Ki * 0.1
+        self.rateServoData.knownTorquePntB_B = [0., 0., 0.]
 
 
     def SetVehicleConfiguration(self, SimBase):
@@ -250,6 +288,8 @@ class BSKFswModels():
         self.SetMRPFeedbackRWA()
         self.SetRWConfigDataFSW()
         self.SetRWMotorTorque()
+        self.SetMRPSteering()
+        self.SetRateServo()
 
 
 #BSKFswModels()
