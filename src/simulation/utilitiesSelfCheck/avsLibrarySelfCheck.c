@@ -24,7 +24,7 @@
 #include "utilities/linearAlgebra.h"
 #include "utilities/orbitalMotion.h"
 #include "utilities/rigidBodyKinematics.h"
-#include "avsLibrarySelfCheck.h"
+#include "avsLibrarySelfCheck.h" 
 
 
 int isEqual(double a, double b, double accuracy)
@@ -3584,6 +3584,7 @@ int testRigidBodyKinematics(double accuracy)
         printf("Mi(30 deg, 1, C) failed\n");
         errorCount++;
     }
+    
 
     return errorCount;
 }
