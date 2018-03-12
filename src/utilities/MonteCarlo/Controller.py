@@ -470,6 +470,7 @@ class RetentionPolicy():
         self.messageLogList = []
         self.varLogList = []
         self.dataCallback = None
+        self.retentionFunctions = []
 
     def addMessageLog(self, messageName, retainedVars, logRate=None):
         if logRate is None:
@@ -488,6 +489,9 @@ class RetentionPolicy():
         for variable in self.varLogList:
             simInstance.AddVariableForLogging(variable.varName, variable.varRate,
                                               variable.startIndex, variable.stopIndex, variable.varType)
+
+    def addRetentionFunction(self, function):
+        self.retentionFunctions.append(function)
 
     def setDataCallback(self, dataCallback):
         self.dataCallback = dataCallback
@@ -530,6 +534,7 @@ class RetentionPolicy():
         data = {}
         data["messages"] = {}
         data["variables"] = {}
+        data["custom"] = {}
 
         for retentionPolicy in retentionPolicies:
             for message in retentionPolicy.messageLogList:
@@ -543,6 +548,11 @@ class RetentionPolicy():
 
             for variable in retentionPolicy.varLogList:
                 data["variables"][variable.varName] = simInstance.GetLogVariableData(variable.varName)
+
+            for func in retentionPolicy.retentionFunctions:
+                tmpModuleData = func(simInstance)
+                for (key, value) in tmpModuleData.iteritems():
+                    data["custom"][key] = value
 
         return data
 
