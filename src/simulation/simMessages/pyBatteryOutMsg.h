@@ -35,7 +35,7 @@ typedef struct {
     double batteryEMF;                          //!< [V] Electro-motive force of battery at this current form look-up table
     double batteryESR;                          //!< [Ohms] Equivalent Series Resistance of battery from look-up table
     double batteryVoltage;                      //!< [V] total voltage across battery
-    std::string errorMessages;                  //!< [N/A] Error messaes from battery module
+    char errorMessages[25];                     //!< [N/A] Error messages from battery module
 }PyBatteryOutMsg;
 
 
