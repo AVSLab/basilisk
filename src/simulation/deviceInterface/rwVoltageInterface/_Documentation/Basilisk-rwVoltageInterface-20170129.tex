@@ -55,11 +55,11 @@
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
 
 
-\newcommand{\ModuleName}{imu}
-\newcommand{\subject}{Inertial Measurement Unit C++ model}
+\newcommand{\ModuleName}{rwVoltageInterface}
+\newcommand{\subject}{Reaction Wheel Voltage to Torque Converter}
 \newcommand{\status}{Tested}
 \newcommand{\preparer}{S. Carnahan}
-\newcommand{\summary}{The Basilisk Inertial Measurement Unit (IMU) module is responsible for producing sensed body rates and acceleration from calculated values.  It also provides a change in velocity and change in attitude value for the time between IMU calls. The IMU module applies Gauss-Markov process noise to the true body rates and acceleration. A unit test has been written which validates  outputs of the IMU.}
+\newcommand{\summary}{The RW Voltage Interface converts commanded voltages to generated reaction wheel torques via a gain factor (perfect conversion), a scale factor (error in conversion), and bias.}
 
 \begin{document}
 
@@ -76,11 +76,7 @@
 		\hline
 		{\bfseries Rev} & {\bfseries Change Description} & {\bfseries By}& {\bfseries Date} \\
 		\hline
-		1.0 & First draft & J. Alcorn & 20170713 \\
-		\hline
-		1.1 & Added Math Documentation and User Guide. Implemented AutoTeX & S. Carnahan & 20170713 \\
-		\hline
-		1.2 & Rewrote for new IMU implementation and test & S. Carnahan & 20170914 \\
+		1.0 & First draft & S. Carnahan & 20180316 \\
 		\hline
 		
 	\end{longtable}
