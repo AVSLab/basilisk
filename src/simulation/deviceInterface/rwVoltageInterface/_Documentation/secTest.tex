@@ -9,9 +9,9 @@ Three base voltages $V_{0}$  are tested where $V_{0} \in (5.0, -7.5, 0.0)$.    T
 \end{equation} 
 Other inputs to the module are:
 \begin{verbatim}
-testModule.voltage2TorqueGain = 1.32        # [Nm/V] conversion gain 
-testModule.scaleFactor = 1.01 #[unitless] scale factor
-testModule.bias = 0.05	# [Nm] bias
+testModule.voltage2TorqueGain =[ 1.32, 0.99, 1.31]        # [Nm/V] conversion gain 
+testModule.scaleFactor =[ 1.01, 1.00, 1.02] #[unitless] scale factor
+testModule.bias =[0.01, 0.02, 0.04]	# [Nm] bias
 \end{verbatim}
 
 \section{Test Results}
