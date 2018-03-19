@@ -45,3 +45,6 @@ Finally, the closed loop motor torque value is computed with a proportional feed
 u_{s,CL} = u_{s} - K (u_{n} - u_{s})
 \end{equation}
 where $K>0$ is a positive feedback gain value.  Finally, this $u_{s,CL}$ is fed to the voltage conversion process in Eq.~\eqref{eq:rwMV:1}.  
+
+\subsection{Saturation and Dead Band}
+If the calculated voltage is outside of $\pm V_{\mathrm{max}}$, then the voltage is saturated at the $\pm V_{\mathrm{max}}$ value. Note, this corresponds to the reaction wheel torques being saturated. Similarly, if the calculated voltage is inside $\pm V_{\mathrm{min}}$, then the voltage is set to $\pm V_{\mathrm{min}}$. This simulates the dead band. If the $V_{\mathrm{min}} = 0$, then there is no dead band.
