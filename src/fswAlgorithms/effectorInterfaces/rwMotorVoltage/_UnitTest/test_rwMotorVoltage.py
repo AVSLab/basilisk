@@ -281,7 +281,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     resultTable = np.insert(resultTable, range(2, 2 + len(diff.transpose())), diff, axis=1)
 
     tableName = "test" + str(useLargeVoltage) + str(useAvailability) + str(useTorqueLoop)
-    tableHeaders = ["time [s]", "$u_{s,1}$", "Error", "$u_{s,2}$", "Error", "$u_{s,3}$", "Error", "$u_{s,4}$", "Error"]
+    tableHeaders = ["time [s]", "$V_{s,1}$", "Error", "$V_{s,2}$", "Error", "$V_{s,3}$", "Error", "$V_{s,4}$", "Error"]
     caption = 'RW voltage output for case {\\tt useLargeVoltage = ' + str(useLargeVoltage) \
               + ', useAvailability = ' + str(useAvailability) \
               + ', useTorqueLoop = ' + str(useTorqueLoop) + '}.'
