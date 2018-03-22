@@ -14,7 +14,7 @@ This module is often called similar to:\\
 \verb|cmd2volt.rwParamsInMsgName = "reactionWheelParameters"|\\
 \verb|cmd2volt.inputRWSpeedsInMsgName = "reactionWheelSpeeds"|\\
 
-where sim is the simulation you are running. The wrap is used because this is a .c file rather than a .c++, so it helps Basilisk to interface with the module routines. The only thing important about the InMsgNames is that they match the output message of the appropriate modules that create the messages.
+where sim is the simulation you are running. The wrap is used because this is a .c file rather than a .c++, so it helps Basilisk to interface with the module routines. The only thing important about the InMsgNames is that they match the output message of the appropriate modules that create the messages. NOTE: if a speed message is provided, closed loop control is used. Otherwise, closed loop control is not used.
 
 
 |
