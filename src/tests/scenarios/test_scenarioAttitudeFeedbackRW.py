@@ -576,7 +576,7 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
         rwVoltageIO.ModelTag = "rwVoltageInterface"
 
         # set module parameters(s)
-        rwVoltageIO.voltage2TorqueGain = 0.2 / 10.  # [Nm/V] conversion gain
+        rwVoltageIO.setGains(np.array([0.2 / 10.] * 3)) # [Nm/V] conversion gain
 
         # Add test module to runtime call list
         scSim.AddModelToTask(simTaskName, rwVoltageIO)
