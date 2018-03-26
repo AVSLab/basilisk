@@ -140,7 +140,6 @@ def run(show_plots, voltage):
           voltageTrue[2] * testModule.voltage2TorqueGain[2][0]*testModule.scaleFactor[2][0] + testModule.bias[2][0]
     ]
     trueVector = np.array([trueVector, trueVector, trueVector])
-    print trueVector
     # compare the module results to the truth values
     accuracy = 1e-12
     testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
