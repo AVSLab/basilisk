@@ -1,0 +1,36 @@
+\section{Test Description and Success Criteria}
+A series of unit tests are performed to check the validity of this module's operation.  The expected outcome is calculated independently in python and the results are seen to be correct to machine error.
+
+\section{Test Parameters}
+Three base voltages $V_{0}$  are tested where $V_{0} \in (5.0, -7.5, 0.0)$.    The input voltages are then setup as 
+\begin{equation}
+\bm V = V_{0} \begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix}
++ \begin{bmatrix} 0.0 \\ 1.0 \\ 1.5 \end{bmatrix}
+\end{equation} 
+Other inputs to the module are:
+\begin{verbatim}
+testModule.voltage2TorqueGain =[ 1.32, 0.99, 1.31]        # [Nm/V] conversion gain 
+testModule.scaleFactor =[ 1.01, 1.00, 1.02] #[unitless] scale factor
+testModule.bias =[0.01, 0.02, 0.04]	# [Nm] bias
+\end{verbatim}
+
+\section{Test Results}
+The unit test results are in the following Tables.  
+
+\input{AutoTeX/baseVoltage5.0.tex}
+\input{AutoTeX/baseVoltage-7.5.tex}
+\input{AutoTeX/baseVoltage0.0.tex}
+
+All tests pass:
+\begin{table}[H]
+	\caption{Test results}
+	\label{tab:results}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{c | c  } % Column formatting, 
+		\hline
+		\textbf{Voltage Test} 						  		&\textbf{Pass/Fail} \\ \hline
+		5.0	   			& \input{AutoTex/passFail5.0} \\ \hline
+		-7.5	   			& \input{AutoTex/passFail-7.5} \\ \hline
+		0.0	   			& \input{AutoTex/passFail0.0} \\ \hline
+	\end{tabular}
+\end{table}

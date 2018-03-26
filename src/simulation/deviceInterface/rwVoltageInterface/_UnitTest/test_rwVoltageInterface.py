@@ -92,7 +92,9 @@ def run(show_plots, voltage):
     testModule.ModelTag = "rwVoltageInterface"
 
     # set module parameters(s)
-    testModule.voltage2TorqueGain = 1.32        # [Nm/V] conversion gain
+    testModule.setGains(np.array([1.32, 0.99, 1.31]))      # [Nm/V] conversion gain
+    testModule.setScaleFactors(np.array([1.01, 1.00, 1.02]))               # [ul] error scale factor
+    testModule.setBiases(np.array([0.01, 0.02, 0.04]))                      # [Nm] Torque bias from converter output
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, testModule)
@@ -130,14 +132,14 @@ def run(show_plots, voltage):
                                                   range(3))
 
     # set truth states
+
     voltageTrue = np.array([1.0, 1.0, 1.0])*voltage + np.array([0.0, 1.0, 1.5])
-
     trueVector = [
-         voltageTrue*testModule.voltage2TorqueGain
-        , voltageTrue * testModule.voltage2TorqueGain
-        , voltageTrue * testModule.voltage2TorqueGain
+          voltageTrue[0] * testModule.voltage2TorqueGain[0][0]*testModule.scaleFactor[0][0] + testModule.bias[0][0],
+          voltageTrue[1] * testModule.voltage2TorqueGain[1][0]*testModule.scaleFactor[1][0] + testModule.bias[1][0],
+          voltageTrue[2] * testModule.voltage2TorqueGain[2][0]*testModule.scaleFactor[2][0] + testModule.bias[2][0]
     ]
-
+    trueVector = np.array([trueVector, trueVector, trueVector])
     # compare the module results to the truth values
     accuracy = 1e-12
     testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
@@ -175,8 +177,16 @@ def run(show_plots, voltage):
 
 
     #   print out success message if no error were found
+    snippetName = "passFail" + '{:1.1f}'.format(voltage)
     if testFailCount == 0:
+        colorText = "ForestGreen"
         print "PASSED: " + testModule.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = "Red"
+        passedText = '\\textcolor{' + colorText + '}{' + "FAILED" + '}'
+    unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
+
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
