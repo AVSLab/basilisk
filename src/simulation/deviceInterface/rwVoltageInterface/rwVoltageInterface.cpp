@@ -20,7 +20,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include <iostream>
 #include <cstring>
-#include <Eigen/Dense>
+
 
 /*! This is the constructor for the RW voltgage interface.  It sets default variable
     values and initializes the various parts of the model */
@@ -63,7 +63,7 @@ void RWVoltageInterface::SelfInit()
 }
 
 /*! This method pulls the input message IDs from the messaging system.  It will
-    alert the user if either of them are not found in the messaging database
+    alert the user if either of them are not found in the messaging database.
     @return void
 */
 void RWVoltageInterface::CrossInit()
@@ -162,10 +162,9 @@ void RWVoltageInterface::setBiases(Eigen::VectorXd biases)
     return;
 }
 
-
 /*! This method writes the RW Motor torque output state message.
  @return void
- @param Clock The clock time associated with the model call
+ @param CurrentClock The clock time associated with the model call
  */
 void RWVoltageInterface::writeOutputMessages(uint64_t CurrentClock)
 {
@@ -178,7 +177,6 @@ void RWVoltageInterface::writeOutputMessages(uint64_t CurrentClock)
                                                  moduleID);
     return;
 }
-
 
 /*! This method calls all of the run-time operations for the RW voltage interface module.
     @return void
