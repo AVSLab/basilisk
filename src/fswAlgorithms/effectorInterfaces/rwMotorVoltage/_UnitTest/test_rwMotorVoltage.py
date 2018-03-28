@@ -309,5 +309,6 @@ if __name__ == "__main__":
                   False
                  ,False       # useLargeVoltage
                  ,False       # useAvailability
-                 ,True       # useTorqueLoop
+                 ,True        # useTorqueLoop
+                 ,"Four"      # testName
                )
