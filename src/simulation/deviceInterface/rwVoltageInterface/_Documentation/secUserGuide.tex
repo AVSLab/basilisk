@@ -1,0 +1,15 @@
+\section{User Guide}
+This section contains conceptual overviews of the code and clear examples for the prospective user. 
+
+\subsection{Module Setup}
+The interface module is created in python using:
+\begin{verbatim}
+testModule = rwVoltageInterface.RWVoltageInterface()
+testModule.ModelTag = "rwVoltageInterface"
+\end{verbatim}
+The only parameter that must be set is the voltage to torque conversion gain $\gamma$.  This is done using
+\begin{verbatim}
+testModule.voltage2TorqueGain =[ 1.32, 0.99, 1.31]        # [Nm/V] conversion gain 
+testModule.scaleFactor =[ 1.01, 1.00, 1.02] #[unitless] scale factor
+testModule.bias =[0.01, 0.02, 0.04]	# [Nm] bias
+\end{verbatim}

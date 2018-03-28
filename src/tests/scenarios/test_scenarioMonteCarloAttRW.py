@@ -359,7 +359,9 @@ def run(doUnitTests, show_plots):
     dispRW1Omega = 'RW1.Omega'
     dispRW2Omega = 'RW2.Omega'
     dispRW3Omega = 'RW3.Omega'
-    dispVoltageIO = 'rwVoltageIO.voltage2TorqueGain'
+    dispVoltageIO_0 = 'rwVoltageIO.voltage2TorqueGain[0]'
+    dispVoltageIO_1 = 'rwVoltageIO.voltage2TorqueGain[1]'
+    dispVoltageIO_2 = 'rwVoltageIO.voltage2TorqueGain[2]'
     dispList = [dispMRPInit, dispOmegaInit, dispMass, dispCoMOff, dispInertia]
 
     # Add dispersions with their dispersion type
@@ -374,7 +376,9 @@ def run(doUnitTests, show_plots):
     monteCarlo.addDispersion(UniformDispersion(dispRW1Omega, ([100.0 - 0.05*100, 100.0 + 0.05*100])))
     monteCarlo.addDispersion(UniformDispersion(dispRW2Omega, ([200.0 - 0.05*200, 200.0 + 0.05*200])))
     monteCarlo.addDispersion(UniformDispersion(dispRW3Omega, ([300.0 - 0.05*300, 300.0 + 0.05*300])))
-    monteCarlo.addDispersion(UniformDispersion(dispVoltageIO, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
+    monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_0, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
+    monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_1, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
+    monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_2, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
 
     # A `RetentionPolicy` is used to define what data from the simulation should be retained. A `RetentionPolicy` is a list of messages and variables to log from each simulation run. It also has a callback, used for plotting/processing the retained data.
     retentionPolicy = RetentionPolicy()
@@ -501,7 +505,7 @@ def createScenarioAttitudeFeedbackRW():
     rwVoltageIO.ModelTag = "rwVoltageInterface"
 
     # set module parameters(s)
-    rwVoltageIO.voltage2TorqueGain = 0.2/10.  # [Nm/V] conversion gain
+    rwVoltageIO.setGains(np.array([0.2/10.]*3))  # [Nm/V] conversion gain
 
     #Add RW Voltage to sim for dispersion
     scSim.rwVoltageIO = rwVoltageIO

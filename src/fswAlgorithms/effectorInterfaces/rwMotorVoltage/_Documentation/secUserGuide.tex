@@ -1,0 +1,24 @@
+\section{User Guide}
+This section contains conceptual overviews of the code and clear examples for the prospective user. 
+
+This module is often called similar to:\\
+\verb|from Basilisk.fswAlgorithms import rwMotorVoltage|\\
+\verb|cmd2volt = rwMotorVoltage.rwMotorVoltageConfig()|\\
+\verb|cmd2voltWrap = sim.setModelDataWrap(cmd2volt)|\\
+\verb|cmd2voltWrap.ModelTag = "commandToVoltageConverter"|\\
+\verb|cmd2volt.VMin = -100.|\\
+\verb|cmd2volt = 100.|\\
+\verb|cmd2volt.K = 5.|\\
+\verb|cmd2volt.voltageOutMsgName = "voltageCommands"|\\
+\verb|cmd2volt.torqueInMsgName = "torquesToBeConverted"|\\
+\verb|cmd2volt.rwParamsInMsgName = "reactionWheelParameters"|\\
+\verb|cmd2volt.inputRWSpeedsInMsgName = "reactionWheelSpeeds"|\\
+
+<<<<<<< HEAD
+where sim is the simulation you are running. The wrap is used because this is a .c file rather than a .c++, so it helps Basilisk to interface with the module routines. The only thing important about the InMsgNames is that they match the output message of the appropriate modules that create the messages. NOTE: if a speed message is provided, closed loop control is used. Otherwise, closed loop control is not used.
+=======
+where sim is the simulation you are running. The wrap is used because this is a .c file rather than a .c++, so it helps Basilisk to interface with the module routines. The only thing important about the InMsgNames is that they match the output message of the appropriate modules that create the messages.
+>>>>>>> 8f65dfbf4642978b5d1789770c4485b02e2da616
+
+
+|

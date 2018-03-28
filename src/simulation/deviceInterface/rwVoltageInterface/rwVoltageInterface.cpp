@@ -21,6 +21,7 @@
 #include <iostream>
 #include <cstring>
 
+
 /*! This is the constructor for the RW voltgage interface.  It sets default variable
     values and initializes the various parts of the model */
 RWVoltageInterface::RWVoltageInterface()
@@ -31,6 +32,12 @@ RWVoltageInterface::RWVoltageInterface()
     this->rwVoltageInMsgID = -1;
     this->rwMotorTorqueOutMsgID = -1;
     this->prevTime = 0;
+    this->bias.resize(MAX_EFF_CNT);
+    this->bias.fill(0.0);
+    this->scaleFactor.resize(MAX_EFF_CNT);
+    this->scaleFactor.fill(1.0);
+    this->voltage2TorqueGain.resize(MAX_EFF_CNT);
+    this->voltage2TorqueGain.fill(1.0);
     return;
 }
 
@@ -56,7 +63,7 @@ void RWVoltageInterface::SelfInit()
 }
 
 /*! This method pulls the input message IDs from the messaging system.  It will
-    alert the user if either of them are not found in the messaging database
+    alert the user if either of them are not found in the messaging database.
     @return void
 */
 void RWVoltageInterface::CrossInit()
@@ -101,25 +108,67 @@ void RWVoltageInterface::readInputMessages()
  */
 void RWVoltageInterface::computeRWMotorTorque()
 {
-    int i;
     memset(&(this->rwTorque), 0x0, sizeof(RWArrayTorqueIntMsg));
-    for (i=0;i<MAX_EFF_CNT;i++) {
-        this->rwTorque[i] = this->inputVoltageBuffer.voltage[i] * this->voltage2TorqueGain;
+    for (uint64_t i=0; i < MAX_EFF_CNT; i++) {
+        this->rwTorque[i] = this->inputVoltageBuffer.voltage[i] * this->voltage2TorqueGain(i) * this->scaleFactor(i) + this->bias(i);
     }
-
     return;
 }
 
+/*! This method sets (per motor) voltage to torque scale factors (linear proportional error)
+ @return void
+ */
+void RWVoltageInterface::setScaleFactors(Eigen::VectorXd scaleFactors){
+    for (uint64_t i = 0; i < this->scaleFactor.rows(); i++)
+    {
+        if (i < scaleFactors.rows()){
+            this->scaleFactor(i) = scaleFactors(i);
+        } else {
+            this->scaleFactor(i) = 1.0;
+        }
+    }
+    return;
+}
+
+/*! This method sets the list of motor voltage to torque gains.
+ @return void
+ */
+void RWVoltageInterface::setGains(Eigen::VectorXd gains)
+{
+    for (uint64_t i = 0; i < this->voltage2TorqueGain.rows(); i++)
+    {
+        if (i < gains.rows()){
+            this->voltage2TorqueGain(i) = gains(i);
+        } else {
+            this->voltage2TorqueGain(i) = 1.0;
+        }
+    }
+    return;
+}
+
+/*! This method sets the list of voltage to torque biases (per rw)
+ @return void
+ */
+void RWVoltageInterface::setBiases(Eigen::VectorXd biases)
+{
+    for (uint64_t i = 0; i < this->bias.rows(); i++)
+    {
+        if (i < biases.rows()){
+            this->bias(i) = biases(i);
+        } else {
+            this->bias(i) = 0.0;
+        }
+    }
+    return;
+}
 
 /*! This method writes the RW Motor torque output state message.
  @return void
- @param Clock The clock time associated with the model call
+ @param CurrentClock The clock time associated with the model call
  */
 void RWVoltageInterface::writeOutputMessages(uint64_t CurrentClock)
 {
-    int i;
-
-    for (i=0;i<MAX_EFF_CNT;i++) {
+    for (uint64_t i=0; i<MAX_EFF_CNT; i++) {
         this->outputRWTorqueBuffer.motorTorque[i] = this->rwTorque[i];
     }
     SystemMessaging::GetInstance()->WriteMessage(this->rwMotorTorqueOutMsgID, CurrentClock,
@@ -128,7 +177,6 @@ void RWVoltageInterface::writeOutputMessages(uint64_t CurrentClock)
                                                  moduleID);
     return;
 }
-
 
 /*! This method calls all of the run-time operations for the RW voltage interface module.
     @return void
@@ -144,3 +192,5 @@ void RWVoltageInterface::UpdateState(uint64_t CurrentSimNanos)
 
     return;
 }
+
+

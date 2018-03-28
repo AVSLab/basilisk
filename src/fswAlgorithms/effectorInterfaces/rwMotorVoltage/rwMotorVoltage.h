@@ -45,10 +45,9 @@ typedef struct {
     /* declare module private variables */
     double VMin;                                    /*!< [V]    minimum voltage below which the torque is zero */
     double VMax;                                    /*!< [V]    maximum output voltage */
-    double K;                                       /*!< [V/Nm] torque tracking gain for closed loop control.  If 
-                                                                negative, this loop is turn off */
+    double K;                                       /*!< [V/Nm] torque tracking gain for closed loop control.  If negative, this loop is turn off */
     double rwSpeedOld[MAX_EFF_CNT];                 /*!< [r/s]  the RW spin rates from the prior control step */
-    uint64_t priorTime;                             /*!< [ns]   Last time the attitude control is called */
+    uint64_t priorTime;                             /*!< [ns]   Last time the module control was called */
     int    resetFlag;                               /*!< []     Flag indicating that a module reset occured */
 
     /* declare module IO interfaces */
