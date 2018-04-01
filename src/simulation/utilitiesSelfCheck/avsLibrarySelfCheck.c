@@ -86,16 +86,8 @@ int testLinearAlgebra(double accuracy)
     printf("--testLinearAlgebra, accuracy = %g\n", accuracy);
 
     /*-----------------------------------------------------------------------*/
-    /* vector checks */
+    /* generally sized vector checks */
 
-    v3_0[0] = 1;
-    v3_0[1] = 2;
-    v3_0[2] = 3;
-    v3Set(1, 2, 3, v3_1);
-    if(!vIsEqual(v3_0, 3, v3_1, accuracy)) {
-        printf("vIsEqual failed\n");
-        errorCount++;
-    }
 
     v3Set(4, 5, 16, v3_0);
     vCopy(v3_0, 3, v3_1);
@@ -257,7 +249,7 @@ int testLinearAlgebra(double accuracy)
     v3_0[2] = 3;
     v3Set(1, 2, 3, v3_1);
     if(!v3IsEqual(v3_0, v3_1, accuracy)) {
-        printf("v3IsEqual failed\n");
+        printf("v3Set failed\n");
         errorCount++;
     }
 
