@@ -244,7 +244,7 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
             /*! - Propagate the attitude quaternion with the aggregate rotation*/
             addMRP(ConfigData->sigma_BNOut, ConfigData->aggSigma_b2b1,
                     sigma_BNSum);
-            /*! - Swith the MRPs if necessary*/
+            /*! - Switch the MRPs if necessary*/
             if (v3Norm(sigma_BNSum) > ConfigData->switchMag) //Little extra margin
             {
                 MRPswitch(sigma_BNSum, ConfigData->switchMag, sigma_BNSum);
