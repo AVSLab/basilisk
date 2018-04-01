@@ -25,10 +25,11 @@
 #define ALLOW_DYNAMIC_MEMORY 1
 
 /* General vectors */
-#if ALLOW_DYNAMIC_MEMORY
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#if ALLOW_DYNAMIC_MEMORY
     void    vCopy(void *v, size_t dim, void *result);
     void    vSetZero(void *v, size_t dim);
     void    vAdd(void *v1, size_t dim, void *v2, void *result);
