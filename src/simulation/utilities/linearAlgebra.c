@@ -331,6 +331,15 @@ void v2Set(double v0, double v1,
     result[1] = v1;
 }
 
+void v2SetZero(double v[2])
+{
+    size_t dim = 2;
+    size_t i;
+    for(i = 0; i < dim; i++) {
+        v[i] = 0.0;
+    }
+}
+
 void v2Copy(double v[2],
             double result[2])
 {
@@ -379,6 +388,29 @@ int v2IsZero(double v[2],
     }
     return 1;
 }
+
+void v2Add(double v1[2],
+           double v2[2],
+           double result[2])
+{
+    size_t dim = 2;
+    size_t i;
+    for(i = 0; i < dim; i++) {
+        result[i] = v1[i] + v2[i];
+    }
+}
+
+void v2Subtract(double v1[2],
+                double v2[2],
+                double result[2])
+{
+    size_t dim = 2;
+    size_t i;
+    for(i = 0; i < dim; i++) {
+        result[i] = v1[i] - v2[i];
+    }
+}
+
 
 void v3Set(double v0, double v1, double v2,
            double result[3])

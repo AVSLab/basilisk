@@ -42,6 +42,7 @@ int testLinearAlgebra(double accuracy)
 
     double v2_0[2];
     double v2_1[2];
+    double v2_2[2];
 
     double v3_0[3];
     double v3_1[3];
@@ -215,6 +216,13 @@ int testLinearAlgebra(double accuracy)
         errorCount++;
     }
 
+    v2Set(0, 0, v2_0);
+    v2SetZero(v2_1);
+    if(!v2IsEqual(v2_0, v2_1, accuracy)) {
+        printf("v2SetZero failed\n");
+        errorCount++;
+    }
+
     v2Set(1, 2, v2_0);
     v2Set(4, 5, v2_1);
     a = v2Dot(v2_0, v2_1);
@@ -222,6 +230,25 @@ int testLinearAlgebra(double accuracy)
         printf("v2Dot failed\n");
         errorCount++;
     }
+
+    v2Set(1, 2, v2_0);
+    v2Set(4, 5, v2_1);
+    v2Set(5, 7, v2_2);
+    v2Add(v2_0, v2_1, v2_0);
+    if(!v2IsEqual(v2_0, v2_2, accuracy)) {
+        printf("v2Add failed\n");
+        errorCount++;
+    }
+
+    v2Set(4, 6, v2_0);
+    v2Set(1, 2, v2_1);
+    v2Set(3, 4, v2_2);
+    v2Subtract(v2_0, v2_1, v2_0);
+    if(!v2IsEqual(v2_0, v2_2, accuracy)) {
+        printf("v2Subtract failed\n");
+        errorCount++;
+    }
+
 
     //---------
 

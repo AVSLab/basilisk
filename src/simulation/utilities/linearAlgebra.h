@@ -52,10 +52,13 @@ extern "C" {
     /* 2 element vectors */
     void    v2Set(double v0, double v1, double result[2]);
     void    v2Copy(double v[2], double result[2]);
+    void    v2SetZero(double v[2]);
     double  v2Dot(double v1[2], double v2[2]);
     int     v2IsEqual(double v1[2], double v2[2], double accuracy);
     int     v2IsZero(double v[2], double accuracy);
-    
+    void    v2Add(double v1[2], double v2[2], double result[2]);
+    void    v2Subtract(double v1[2], double v2[2], double result[2]);
+
     /* 3 element vectors */
     void    v3Set(double v0, double v1, double v2, double result[3]);
     void    v3Copy(double v[3], double result[3]);
