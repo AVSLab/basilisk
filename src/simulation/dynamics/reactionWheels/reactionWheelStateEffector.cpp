@@ -552,8 +552,6 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
 
 		this->ReactionWheelData[RWIter].u_current = CmdIt->u_cmd; // save actual torque for reaction wheel motor
 
-		this->ReactionWheelData[RWIter].u_current = u_s; // save actual torque for reaction wheel motor
-
         // Save the previous omega for next time
         this->ReactionWheelData[RWIter].omegaBefore = this->ReactionWheelData[RWIter].Omega;
 
