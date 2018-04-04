@@ -27,7 +27,6 @@
 /* Divide by zero epsilon value */
 #define DB0_EPS 1e-30
 
-#if ALLOW_DYNAMIC_MEMORY
 
 #define MXINDEX(dim2, row, col) ((row)*(dim2) + (col))
 #define ALLOC_DOUBLE(dim) ((double*)calloc(dim, sizeof(double)))
@@ -322,7 +321,6 @@ void vSort(double *Input, double *Output, size_t dim)
     }
 }
 
-#endif
 
 void v2Set(double v0, double v1,
            double result[2])
@@ -792,7 +790,6 @@ int v6IsEqual(double v1[6],
     return 1;
 }
 
-#if ALLOW_DYNAMIC_MEMORY
 
 void mCopy(void *mx, size_t dim1, size_t dim2,
            void *result)
@@ -1332,7 +1329,6 @@ void mSetSubMatrix(void *mx, size_t dim1, size_t dim2,
     }
 }
 
-#endif
 
 void m22Set(double m00, double m01,
             double m10, double m11,

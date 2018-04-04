@@ -22,14 +22,13 @@
 
 #include <stdio.h>
 
-#define ALLOW_DYNAMIC_MEMORY 1
 
 /* General vectors */
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#if ALLOW_DYNAMIC_MEMORY
+    /* N element vectors */
     void    vCopy(void *v, size_t dim, void *result);
     void    vSetZero(void *v, size_t dim);
     void    vAdd(void *v1, size_t dim, void *v2, void *result);
@@ -47,8 +46,7 @@ extern "C" {
     int     vIsZero(void *v, size_t dim, double accuracy);
     void    vPrint(FILE *pFile, const char *name, void *v, size_t dim);
     void    vSort(double *Input, double *Output, size_t dim);
-#endif
-    
+
     /* 2 element vectors */
     void    v2Set(double v0, double v1, double result[2]);
     void    v2Copy(double v[2], double result[2]);
@@ -97,8 +95,7 @@ extern "C" {
     void    v6OuterProduct(double v1[6], double v2[6], double result[6][6]);
     int     v6IsEqual(double v1[6], double v2[6], double accuracy);
     
-#if ALLOW_DYNAMIC_MEMORY
-    /* General matrices */
+    /* NxM matrices */
     void    mCopy(void *mx, size_t dim1, size_t dim2, void *result);
     void    mSetZero(void *result, size_t dim1, size_t dim2);
     void    mSetIdentity(void *result, size_t dim1, size_t dim2);
@@ -138,8 +135,7 @@ extern "C" {
     void    mSetSubMatrix(void *mx, size_t dim1, size_t dim2,
                           void *result, size_t dim1Result, size_t dim2Result,
                           size_t dim1Start, size_t dim2Start);
-#endif
-    
+
     /* 2x2 matrices */
     void    m22Set(double m00, double m01,
                    double m10, double m11,
