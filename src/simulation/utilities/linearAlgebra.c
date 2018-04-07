@@ -882,7 +882,7 @@ void mMultM(void *mx1, size_t dim11, size_t dim12,
     size_t j;
     size_t k;
     if(dim12 != dim21) {
-        fprintf(stderr, "Error in %s: dimensions don't match.\n", __FUNCTION__);
+        BSK_PRINT(MSG_ERROR, "Error: mMultM dimensions don't match.\n");
         return;
     }
     for(i = 0; i < dim11; i++) {
@@ -911,7 +911,7 @@ void mtMultM(void *mx1, size_t dim11, size_t dim12,
     size_t j;
     size_t k;
     if(dim11 != dim21) {
-        fprintf(stderr, "Error in %s: dimensions don't match.\n", __FUNCTION__);
+        BSK_PRINT(MSG_ERROR, "Error: mtMultM dimensions don't match.\n");
         return;
     }
     for(i = 0; i < dim12; i++) {
@@ -940,7 +940,7 @@ void mMultMt(void *mx1, size_t dim11, size_t dim12,
     size_t j;
     size_t k;
     if(dim12 != dim22) {
-        fprintf(stderr, "Error in %s: dimensions don't match.\n", __FUNCTION__);
+        BSK_PRINT(MSG_ERROR, "Error: mMultMt dimensions don't match.\n");
         return;
     }
     for(i = 0; i < dim11; i++) {
@@ -969,7 +969,7 @@ void mtMultMt(void *mx1, size_t dim11, size_t dim12,
     size_t j;
     size_t k;
     if(dim11 != dim22) {
-        fprintf(stderr, "Error in %s: dimensions don't match.\n", __FUNCTION__);
+        BSK_PRINT(MSG_ERROR, "Error: mtMultMt dimensions don't match.\n");
         return;
     }
     for(i = 0; i < dim12; i++) {
@@ -1160,7 +1160,7 @@ int mInverse(void *mx, size_t dim, void *result)
         /* Find inverse */
         mScale(1.0 / det, m_adjoint, dim, dim, m_result);
     } else {
-        fprintf(stderr, "Error: cannot invert singular matrix\n");
+        BSK_PRINT(MSG_ERROR, "Error: cannot invert singular matrix\n");
         for(i = 0; i < dim; i++) {
             for(j = 0; j < dim; j++) {
                 m_result[MXINDEX(dim, i, j)] = NAN;
@@ -1594,7 +1594,7 @@ int m22Inverse(double mx[2][2], double result[2][2])
         m_result[1][0] = -mx[1][0] * detInv;
         m_result[1][1] =  mx[0][0] * detInv;
     } else {
-        fprintf(stderr, "Error: singular 2x2 matrix inverse\n");
+        BSK_PRINT(MSG_ERROR, "Error: singular 2x2 matrix inverse\n");
         m22Set(NAN, NAN,
                NAN, NAN,
                m_result);
@@ -1938,7 +1938,7 @@ int m33Inverse(double mx[3][3], double result[3][3])
         m_result[2][1] = -(mx[0][0] * mx[2][1] - mx[0][1] * mx[2][0]) * detInv;
         m_result[2][2] = (mx[0][0] * mx[1][1] - mx[0][1] * mx[1][0]) * detInv;
     } else {
-        fprintf(stderr, "Error: singular 3x3 matrix inverse\n");
+        BSK_PRINT(MSG_ERROR, "Error: singular 3x3 matrix inverse\n");
         m33Set(NAN, NAN, NAN,
                NAN, NAN, NAN,
                NAN, NAN, NAN,
@@ -2159,7 +2159,7 @@ int m44Inverse(double mx[4][4], double result[4][4])
         m_result[3][2] = (mx[0][2] * mx[1][1] * mx[3][0] - mx[0][1] * mx[1][2] * mx[3][0] - mx[0][2] * mx[1][0] * mx[3][1] + mx[0][0] * mx[1][2] * mx[3][1] + mx[0][1] * mx[1][0] * mx[3][2] - mx[0][0] * mx[1][1] * mx[3][2]) * detInv;
         m_result[3][3] = (mx[0][1] * mx[1][2] * mx[2][0] - mx[0][2] * mx[1][1] * mx[2][0] + mx[0][2] * mx[1][0] * mx[2][1] - mx[0][0] * mx[1][2] * mx[2][1] - mx[0][1] * mx[1][0] * mx[2][2] + mx[0][0] * mx[1][1] * mx[2][2]) * detInv;
     } else {
-        fprintf(stderr, "Error: singular 4x4 matrix inverse\n");
+        BSK_PRINT(MSG_ERROR, "Error: singular 4x4 matrix inverse\n");
         m44Set(NAN, NAN, NAN, NAN,
                NAN, NAN, NAN, NAN,
                NAN, NAN, NAN, NAN,
