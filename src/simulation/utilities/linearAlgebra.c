@@ -23,141 +23,108 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include "bsk_Print.h"
 
 /* Divide by zero epsilon value */
 #define DB0_EPS 1e-30
 
+/* define a maximum array size for the functions that need
+ to allocate memory within their routine */
+#define LINEAR_ALGEBRA_MAX_ARRAY_SIZE (128*128)
+
 
 #define MXINDEX(dim2, row, col) ((row)*(dim2) + (col))
-#define ALLOC_DOUBLE(dim) ((double*)calloc(dim, sizeof(double)))
-#define FREE_DOUBLE(arr) (free(arr))
 #define MOVE_DOUBLE(source, dim, destination) (memmove((void*)(destination), (void*)(source), sizeof(double)*(dim)))
 
 
-void vCopy(void *v, size_t dim,
-           void *result)
+void vCopy(double *v, size_t dim,
+           double *result)
 {
-    double *m_v = (double *)v;
-    double *m_result = ALLOC_DOUBLE(dim);
-
     size_t i;
     for(i = 0; i < dim; i++) {
-        m_result[i] = m_v[i];
+        result[i] = v[i];
     }
-
-    MOVE_DOUBLE(m_result, dim, result);
-    FREE_DOUBLE(m_result);
 }
 
-void vSetZero(void *v,
+void vSetZero(double *v,
               size_t dim)
 {
-    double *m_v = (double *)v;
-
     size_t i;
     for(i = 0; i < dim; i++) {
-        m_v[i] = 0.0;
+        v[i] = 0.0;
     }
-
-    MOVE_DOUBLE(m_v, dim, v);
 }
 
-void vAdd(void *v1, size_t dim,
-          void *v2,
-          void *result)
+void vAdd(double *v1, size_t dim,
+          double *v2,
+          double *result)
 {
-    double *m_v1 = (double *)v1;
-    double *m_v2 = (double *)v2;
-    double *m_result = ALLOC_DOUBLE(dim);
-
     size_t i;
     for(i = 0; i < dim; i++) {
-        m_result[i] = m_v1[i] + m_v2[i];
+        result[i] = v1[i] + v2[i];
     }
-
-    MOVE_DOUBLE(m_result, dim, result);
-    FREE_DOUBLE(m_result);
 }
 
-void vSubtract(void *v1, size_t dim,
-               void *v2,
-               void *result)
+void vSubtract(double *v1, size_t dim,
+               double *v2,
+               double *result)
 {
-    double *m_v1 = (double *)v1;
-    double *m_v2 = (double *)v2;
-    double *m_result = ALLOC_DOUBLE(dim);
-
     size_t i;
     for(i = 0; i < dim; i++) {
-        m_result[i] = m_v1[i] - m_v2[i];
+        result[i] = v1[i] - v2[i];
     }
-
-    MOVE_DOUBLE(m_result, dim, result);
-    FREE_DOUBLE(m_result);
 }
 
-void vScale(double scaleFactor, void *v,
+void vScale(double scaleFactor, double *v,
             size_t dim,
-            void *result)
+            double *result)
 {
-    double *m_v = (double *)v;
-    double *m_result = ALLOC_DOUBLE(dim);
-
     size_t i;
     for(i = 0; i < dim; i++) {
-        m_result[i] = m_v[i] * scaleFactor;
+        result[i] = v[i] * scaleFactor;
     }
-
-    MOVE_DOUBLE(m_result, dim, result);
-    FREE_DOUBLE(m_result);
 }
 
-double vDot(void *v1, size_t dim,
-            void *v2)
+double vDot(double *v1, size_t dim,
+            double *v2)
 {
-    double *m_v1 = (double *)v1;
-    double *m_v2 = (double *)v2;
-
     size_t i;
     double result = 0.0;
     for(i = 0; i < dim; i++) {
-        result += m_v1[i] * m_v2[i];
+        result += v1[i] * v2[i];
     }
 
     return result;
 }
 
-void vOuterProduct(void *v1, size_t dim1,
-                   void *v2, size_t dim2,
+void vOuterProduct(double *v1, size_t dim1,
+                   double *v2, size_t dim2,
                    void *result)
 {
-    double *m_v1 = (double *)v1;
-    double *m_v2 = (double *)v2;
-    double *m_result = ALLOC_DOUBLE(dim1 * dim2);
+    double *m_result = (double *)result;
 
     size_t i;
     size_t j;
     for(i = 0; i < dim1; i++) {
         for(j = 0; j < dim2; j++) {
-            m_result[MXINDEX(dim2, i, j)] = m_v1[i] * m_v2[j];
+            m_result[MXINDEX(dim2, i, j)] = v1[i] * v2[j];
         }
     }
 
-    MOVE_DOUBLE(m_result, dim1 * dim2, result);
-    FREE_DOUBLE(m_result);
 }
 
-void vtMultM(void *v,
+void vtMultM(double *v,
              void *mx, size_t dim1, size_t dim2,
              void *result)
 {
     size_t dim11 = 1;
     size_t dim12 = dim1;
-//    size_t dim21 = dim1;
     size_t dim22 = dim2;
     double *m_mx1 = (double *)v;
     double *m_mx2 = (double *)mx;
-    double *m_result = ALLOC_DOUBLE(dim11 * dim22);
+    double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    if (dim11*dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.\n");
 
     size_t i;
     size_t j;
@@ -172,20 +139,20 @@ void vtMultM(void *v,
     }
 
     MOVE_DOUBLE(m_result, dim11 * dim22, result);
-    FREE_DOUBLE(m_result);
 }
 
-void vtMultMt(void *v,
+void vtMultMt(double *v,
               void *mx, size_t dim1, size_t dim2,
               void *result)
 {
     size_t dim11 = 1;
     size_t dim12 = dim2;
-//    size_t dim21 = dim2;
     size_t dim22 = dim1;
     double *m_mx1 = (double *)v;
     double *m_mx2 = (double *)mx;
-    double *m_result = ALLOC_DOUBLE(dim11 * dim22);
+    double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    if (dim11*dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.\n");
 
     size_t i;
     size_t j;
@@ -200,85 +167,73 @@ void vtMultMt(void *v,
     }
 
     MOVE_DOUBLE(m_result, dim11 * dim22, result);
-    FREE_DOUBLE(m_result);
 }
 
-double vNorm(void *v, size_t dim)
+double vNorm(double *v, size_t dim)
 {
     return sqrt(vDot(v, dim, v));
 }
 
-double vMax(void *array, size_t dim)
+double vMax(double *array, size_t dim)
 {
     size_t i;
     double result;
-    double *m_array = (double *)array;
-    
-    result = m_array[0];
+
+    result = array[0];
     for(i=1; i<dim; i++){
-        if (m_array[i]>result){
-            result = m_array[i];
+        if (array[i]>result){
+            result = array[i];
         }
     }
     return result;
 }
 
 
-double vMaxAbs(void *array, size_t dim)
+double vMaxAbs(double *array, size_t dim)
 {
     size_t i;
     double result;
-    double *m_array = (double *)array;
-    
-    result = fabs(m_array[0]);
+
+    result = fabs(array[0]);
     for(i=1; i<dim; i++){
-        if (fabs(m_array[i])>result){
-            result = fabs(m_array[i]);
+        if (fabs(array[i])>result){
+            result = fabs(array[i]);
         }
     }
     return result;
 }
 
 
-void vNormalize(void *v, size_t dim, void *result)
+void vNormalize(double *v, size_t dim, double *result)
 {
-    double *m_result = ALLOC_DOUBLE(dim);
     double norm = vNorm(v, dim);
 
     if(norm > DB0_EPS) {
-        vScale(1.0 / norm, v, dim, m_result);
+        vScale(1.0 / norm, v, dim, result);
     } else {
-        vSetZero(m_result, dim);
+        vSetZero(result, dim);
     }
-
-    MOVE_DOUBLE(m_result, dim, result);
-    FREE_DOUBLE(m_result);
 }
 
-int vIsEqual(void *v1, size_t dim,
-             void *v2,
+int vIsEqual(double *v1, size_t dim,
+             double *v2,
              double accuracy)
 {
-    double *m_v1 = (double *)v1;
-    double *m_v2 = (double *)v2;
-
     size_t i;
     for(i = 0; i < dim; i++) {
-        if(fabs(m_v1[i] - m_v2[i]) > accuracy) {
+        if(fabs(v1[i] - v2[i]) > accuracy) {
             return 0;
         }
     }
     return 1;
 }
 
-int vIsZero(void *v, size_t dim, double accuracy)
+int vIsZero(double *v, size_t dim, double accuracy)
 {
-    double *m_v = (double *)v;
-
     size_t i;
     int result = 1;
     for(i = 0; i < dim; i++) {
-        if(fabs(m_v[i]) > accuracy) {
+        if(fabs(v[i]) > accuracy) {
             result = 0;
             break;
         }
@@ -287,14 +242,12 @@ int vIsZero(void *v, size_t dim, double accuracy)
     return result;
 }
 
-void vPrint(FILE *pFile, const char *name, void *v, size_t dim)
+void vPrint(FILE *pFile, const char *name, double *v, size_t dim)
 {
-    double *m_v = (double *)v;
-
     size_t i;
     fprintf(pFile, "%s = [", name);
     for(i = 0; i < dim; i++) {
-        fprintf(pFile, "%20.15g", m_v[i]);
+        fprintf(pFile, "%20.15g", v[i]);
         if(i != dim - 1) {
             fprintf(pFile, ", ");
         }
@@ -795,7 +748,7 @@ void mCopy(void *mx, size_t dim1, size_t dim2,
            void *result)
 {
     double *m_mx = (double *)mx;
-    double *m_result = ALLOC_DOUBLE(dim1 * dim2);
+    double *m_result = (double *)result;
 
     size_t i;
     size_t j;
@@ -804,14 +757,11 @@ void mCopy(void *mx, size_t dim1, size_t dim2,
             m_result[MXINDEX(dim2, i, j)] = m_mx[MXINDEX(dim2, i, j)];
         }
     }
-
-    MOVE_DOUBLE(m_result, dim1 * dim2, result);
-    FREE_DOUBLE(m_result);
 }
 
 void mSetZero(void *result, size_t dim1, size_t dim2)
 {
-    double *m_result = ALLOC_DOUBLE(dim1 * dim2);
+    double *m_result = (double *)result;
 
     size_t i;
     size_t j;
@@ -820,14 +770,11 @@ void mSetZero(void *result, size_t dim1, size_t dim2)
             m_result[MXINDEX(dim2, i, j)] = 0.0;
         }
     }
-
-    MOVE_DOUBLE(m_result, dim1 * dim2, result);
-    FREE_DOUBLE(m_result);
 }
 
 void mSetIdentity(void *result, size_t dim1, size_t dim2)
 {
-    double *m_result = ALLOC_DOUBLE(dim1 * dim2);
+    double *m_result = (double *)result;
 
     size_t i;
     size_t j;
@@ -836,15 +783,12 @@ void mSetIdentity(void *result, size_t dim1, size_t dim2)
             m_result[MXINDEX(dim2, i, j)] = (i == j) ? 1.0 : 0.0;
         }
     }
-
-    MOVE_DOUBLE(m_result, dim1 * dim2, result);
-    FREE_DOUBLE(m_result);
 }
 
 void mDiag(void *v, size_t dim, void *result)
 {
     double *m_v = (double *)v;
-    double *m_result = ALLOC_DOUBLE(dim * dim);
+    double *m_result = (double *)result;
 
     size_t i;
     size_t j;
@@ -853,16 +797,15 @@ void mDiag(void *v, size_t dim, void *result)
             m_result[MXINDEX(dim, i, j)] = (i == j) ? m_v[i] : 0.0;
         }
     }
-
-    MOVE_DOUBLE(m_result, dim * dim, result);
-    FREE_DOUBLE(m_result);
 }
 
 void mTranspose(void *mx, size_t dim1, size_t dim2,
                 void *result)
 {
     double *m_mx = (double *)mx;
-    double *m_result = ALLOC_DOUBLE(dim2 * dim1);
+    double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    if (dim1*dim2 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.\n");
 
     size_t i;
     size_t j;
@@ -873,7 +816,6 @@ void mTranspose(void *mx, size_t dim1, size_t dim2,
     }
 
     MOVE_DOUBLE(m_result, dim2 * dim1, result);
-    FREE_DOUBLE(m_result);
 }
 
 void mAdd(void *mx1, size_t dim1, size_t dim2,
@@ -882,7 +824,7 @@ void mAdd(void *mx1, size_t dim1, size_t dim2,
 {
     double *m_mx1 = (double *)mx1;
     double *m_mx2 = (double *)mx2;
-    double *m_result = ALLOC_DOUBLE(dim1 * dim2);
+    double *m_result = (double *)result;
 
     size_t i;
     size_t j;
@@ -891,9 +833,6 @@ void mAdd(void *mx1, size_t dim1, size_t dim2,
             m_result[MXINDEX(dim2, i, j)] = m_mx1[MXINDEX(dim2, i, j)] + m_mx2[MXINDEX(dim2, i, j)];
         }
     }
-
-    MOVE_DOUBLE(m_result, dim1 * dim2, result);
-    FREE_DOUBLE(m_result);
 }
 
 void mSubtract(void *mx1, size_t dim1, size_t dim2,
@@ -902,7 +841,7 @@ void mSubtract(void *mx1, size_t dim1, size_t dim2,
 {
     double *m_mx1 = (double *)mx1;
     double *m_mx2 = (double *)mx2;
-    double *m_result = ALLOC_DOUBLE(dim1 * dim2);
+    double *m_result = (double *)result;
 
     size_t i;
     size_t j;
@@ -911,9 +850,6 @@ void mSubtract(void *mx1, size_t dim1, size_t dim2,
             m_result[MXINDEX(dim2, i, j)] = m_mx1[MXINDEX(dim2, i, j)] - m_mx2[MXINDEX(dim2, i, j)];
         }
     }
-
-    MOVE_DOUBLE(m_result, dim1 * dim2, result);
-    FREE_DOUBLE(m_result);
 }
 
 void mScale(double scaleFactor,
@@ -921,7 +857,7 @@ void mScale(double scaleFactor,
             void *result)
 {
     double *m_mx = (double *)mx;
-    double *m_result = ALLOC_DOUBLE(dim1 * dim2);
+    double *m_result = (double *)result;
 
     size_t i;
     size_t j;
@@ -930,9 +866,6 @@ void mScale(double scaleFactor,
             m_result[MXINDEX(dim2, i, j)] = scaleFactor * m_mx[MXINDEX(dim2, i, j)];
         }
     }
-
-    MOVE_DOUBLE(m_result, dim1 * dim2, result);
-    FREE_DOUBLE(m_result);
 }
 
 void mMultM(void *mx1, size_t dim11, size_t dim12,
@@ -941,14 +874,15 @@ void mMultM(void *mx1, size_t dim11, size_t dim12,
 {
     double *m_mx1 = (double *)mx1;
     double *m_mx2 = (double *)mx2;
-    double *m_result = ALLOC_DOUBLE(dim11 * dim22);
+    double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    if (dim11*dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.\n");
 
     size_t i;
     size_t j;
     size_t k;
     if(dim12 != dim21) {
         fprintf(stderr, "Error in %s: dimensions don't match.\n", __FUNCTION__);
-        FREE_DOUBLE(m_result);
         return;
     }
     for(i = 0; i < dim11; i++) {
@@ -961,7 +895,6 @@ void mMultM(void *mx1, size_t dim11, size_t dim12,
     }
 
     MOVE_DOUBLE(m_result, dim11 * dim22, result);
-    FREE_DOUBLE(m_result);
 }
 
 void mtMultM(void *mx1, size_t dim11, size_t dim12,
@@ -970,14 +903,15 @@ void mtMultM(void *mx1, size_t dim11, size_t dim12,
 {
     double *m_mx1 = (double *)mx1;
     double *m_mx2 = (double *)mx2;
-    double *m_result = ALLOC_DOUBLE(dim12 * dim22);
+    double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    if (dim12*dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.\n");
 
     size_t i;
     size_t j;
     size_t k;
     if(dim11 != dim21) {
         fprintf(stderr, "Error in %s: dimensions don't match.\n", __FUNCTION__);
-        FREE_DOUBLE(m_result);
         return;
     }
     for(i = 0; i < dim12; i++) {
@@ -990,7 +924,6 @@ void mtMultM(void *mx1, size_t dim11, size_t dim12,
     }
 
     MOVE_DOUBLE(m_result, dim12 * dim22, result);
-    FREE_DOUBLE(m_result);
 }
 
 void mMultMt(void *mx1, size_t dim11, size_t dim12,
@@ -999,14 +932,15 @@ void mMultMt(void *mx1, size_t dim11, size_t dim12,
 {
     double *m_mx1 = (double *)mx1;
     double *m_mx2 = (double *)mx2;
-    double *m_result = ALLOC_DOUBLE(dim11 * dim21);
+    double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    if (dim11*dim21 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.\n");
 
     size_t i;
     size_t j;
     size_t k;
     if(dim12 != dim22) {
         fprintf(stderr, "Error in %s: dimensions don't match.\n", __FUNCTION__);
-        FREE_DOUBLE(m_result);
         return;
     }
     for(i = 0; i < dim11; i++) {
@@ -1019,7 +953,6 @@ void mMultMt(void *mx1, size_t dim11, size_t dim12,
     }
 
     MOVE_DOUBLE(m_result, dim11 * dim21, result);
-    FREE_DOUBLE(m_result);
 }
 
 void mtMultMt(void *mx1, size_t dim11, size_t dim12,
@@ -1028,14 +961,15 @@ void mtMultMt(void *mx1, size_t dim11, size_t dim12,
 {
     double *m_mx1 = (double *)mx1;
     double *m_mx2 = (double *)mx2;
-    double *m_result = ALLOC_DOUBLE(dim12 * dim21);
+    double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    if (dim12*dim21 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.\n");
 
     size_t i;
     size_t j;
     size_t k;
     if(dim11 != dim22) {
         fprintf(stderr, "Error in %s: dimensions don't match.\n", __FUNCTION__);
-        FREE_DOUBLE(m_result);
         return;
     }
     for(i = 0; i < dim12; i++) {
@@ -1048,7 +982,6 @@ void mtMultMt(void *mx1, size_t dim11, size_t dim12,
     }
 
     MOVE_DOUBLE(m_result, dim12 * dim21, result);
-    FREE_DOUBLE(m_result);
 }
 
 void mMultV(void *mx, size_t dim1, size_t dim2,
@@ -1057,11 +990,12 @@ void mMultV(void *mx, size_t dim1, size_t dim2,
 {
     size_t dim11 = dim1;
     size_t dim12 = dim2;
-//    size_t dim21 = dim2;
     size_t dim22 = 1;
     double *m_mx1 = (double *)mx;
     double *m_mx2 = (double *)v;
-    double *m_result = ALLOC_DOUBLE(dim11 * dim22);
+    double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    if (dim11*dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.\n");
 
     size_t i;
     size_t j;
@@ -1076,7 +1010,6 @@ void mMultV(void *mx, size_t dim1, size_t dim2,
     }
 
     MOVE_DOUBLE(m_result, dim11 * dim22, result);
-    FREE_DOUBLE(m_result);
 }
 
 void mtMultV(void *mx, size_t dim1, size_t dim2,
@@ -1085,11 +1018,12 @@ void mtMultV(void *mx, size_t dim1, size_t dim2,
 {
     size_t dim11 = dim1;
     size_t dim12 = dim2;
-//    size_t dim21 = dim1;
     size_t dim22 = 1;
     double *m_mx1 = (double *)mx;
     double *m_mx2 = (double *)v;
-    double *m_result = ALLOC_DOUBLE(dim12 * dim22);
+    double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    if (dim12*dim22 > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.\n");
 
     size_t i;
     size_t j;
@@ -1104,7 +1038,6 @@ void mtMultV(void *mx, size_t dim1, size_t dim2,
     }
 
     MOVE_DOUBLE(m_result, dim12 * dim22, result);
-    FREE_DOUBLE(m_result);
 }
 
 double mTrace(void *mx, size_t dim)
@@ -1129,7 +1062,9 @@ double mDeterminant(void *mx, size_t dim)
     size_t k;
     size_t ii;
     double result = 0;
-    double *mxTemp = NULL;
+    double mxTemp[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    if ((dim-1)*(dim-1) > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.\n");
 
     if(dim < 1) {
         return 0;
@@ -1141,7 +1076,6 @@ double mDeterminant(void *mx, size_t dim)
     } else {
         result = 0;
         for(k = 0; k < dim; k++) {
-            mxTemp = ALLOC_DOUBLE((dim - 1) * (dim - 1));
             for(i = 1; i < dim; i++) {
                 ii = 0;
                 for(j = 0; j < dim; j++) {
@@ -1153,7 +1087,6 @@ double mDeterminant(void *mx, size_t dim)
                 }
             }
             result += pow(-1.0, 1.0 + k + 1.0) * m_mx[MXINDEX(dim, 0, k)] * mDeterminant(mxTemp, dim - 1);
-            FREE_DOUBLE(mxTemp);
         }
     }
     return(result);
@@ -1170,9 +1103,11 @@ void mCofactor(void *mx, size_t dim, void *result)
     size_t  j0;
     size_t  j1;
     double *m_mx = (double *)mx;
-    double *m_mxij = ALLOC_DOUBLE((dim - 1) * (dim - 1));
-    double *m_result = ALLOC_DOUBLE(dim * dim);
+    double m_mxij[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    double m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
     double  det;
+    if (dim*dim > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.\n");
 
     for(i = 0; i < dim; i++) {
         for(j = 0; j < dim; j++) {
@@ -1202,8 +1137,6 @@ void mCofactor(void *mx, size_t dim, void *result)
     }
 
     MOVE_DOUBLE(m_result, dim * dim, result);
-    FREE_DOUBLE(m_result);
-    FREE_DOUBLE(m_mxij);
 }
 
 int mInverse(void *mx, size_t dim, void *result)
@@ -1213,18 +1146,19 @@ int mInverse(void *mx, size_t dim, void *result)
 
     size_t  i;
     size_t  j;
-    double  det = mDeterminant(mx, dim);
-    double *m_result = ALLOC_DOUBLE(dim * dim);
     int     status = 0;
+    double  det = mDeterminant(mx, dim);
+    double  m_result[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
+    if (dim*dim > LINEAR_ALGEBRA_MAX_ARRAY_SIZE)
+        BSK_PRINT(MSG_ERROR,"Linear Algegra library array dimension input is too large.\n");
 
     if(fabs(det) > DB0_EPS) {
         /* Find adjoint matrix */
-        double *m_adjoint = ALLOC_DOUBLE(dim * dim);
+        double m_adjoint[LINEAR_ALGEBRA_MAX_ARRAY_SIZE];
         mCofactor(mx, dim, m_adjoint);
         mTranspose(m_adjoint, dim, dim, m_adjoint);
         /* Find inverse */
         mScale(1.0 / det, m_adjoint, dim, dim, m_result);
-        FREE_DOUBLE(m_adjoint);
     } else {
         fprintf(stderr, "Error: cannot invert singular matrix\n");
         for(i = 0; i < dim; i++) {
@@ -1236,7 +1170,6 @@ int mInverse(void *mx, size_t dim, void *result)
     }
 
     MOVE_DOUBLE(m_result, dim * dim, result);
-    FREE_DOUBLE(m_result);
     return status;
 }
 

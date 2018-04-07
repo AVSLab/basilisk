@@ -29,22 +29,22 @@ extern "C" {
 #endif
 
     /* N element vectors */
-    void    vCopy(void *v, size_t dim, void *result);
-    void    vSetZero(void *v, size_t dim);
-    void    vAdd(void *v1, size_t dim, void *v2, void *result);
-    void    vSubtract(void *v1, size_t dim, void *v2, void *result);
-    void    vScale(double scaleFactor, void *v, size_t dim, void *result);
-    double  vDot(void *v1, size_t dim, void *v2);
-    void    vOuterProduct(void *v1, size_t dim1, void *v2, size_t dim2, void *result);
-    void    vtMultM(void *v, void *mx, size_t dim1, size_t dim2, void *result);
-    void    vtMultMt(void *v, void *mx, size_t dim1, size_t dim2, void *result);
-    double  vNorm(void *v, size_t dim);
-    double  vMax(void *v, size_t dim); /* Non-sorted, non-optimized algorithm for finding the max of a small 1-D array*/
-    double  vMaxAbs(void *v, size_t dim); /* Non-sorted, non-optimized algorithm for finding the max of the absolute values of the elements of a small 1-D array*/
-    void    vNormalize(void *v, size_t dim, void *result);
-    int     vIsEqual(void *v1, size_t dim, void *v2, double accuracy);
-    int     vIsZero(void *v, size_t dim, double accuracy);
-    void    vPrint(FILE *pFile, const char *name, void *v, size_t dim);
+    void    vCopy(double *v, size_t dim, double *result);
+    void    vSetZero(double *v, size_t dim);
+    void    vAdd(double *v1, size_t dim, double *v2, double *result);
+    void    vSubtract(double *v1, size_t dim, double *v2, double *result);
+    void    vScale(double scaleFactor, double *v, size_t dim, double *result);
+    double  vDot(double *v1, size_t dim, double *v2);
+    void    vOuterProduct(double *v1, size_t dim1, double *v2, size_t dim2, void *result);
+    void    vtMultM(double *v, void *mx, size_t dim1, size_t dim2, void *result);
+    void    vtMultMt(double *v, void *mx, size_t dim1, size_t dim2, void *result);
+    double  vNorm(double *v, size_t dim);
+    double  vMax(double *v, size_t dim); /* Non-sorted, non-optimized algorithm for finding the max of a small 1-D array*/
+    double  vMaxAbs(double *v, size_t dim); /* Non-sorted, non-optimized algorithm for finding the max of the absolute values of the elements of a small 1-D array*/
+    void    vNormalize(double *v, size_t dim, double *result);
+    int     vIsEqual(double *v1, size_t dim, double *v2, double accuracy);
+    int     vIsZero(double *v, size_t dim, double accuracy);
+    void    vPrint(FILE *pFile, const char *name, double *v, size_t dim);
     void    vSort(double *Input, double *Output, size_t dim);
 
     /* 2 element vectors */
