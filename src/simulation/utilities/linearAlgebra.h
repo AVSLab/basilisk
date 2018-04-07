@@ -128,6 +128,7 @@ extern "C" {
     int     mInverse(void *mx, size_t dim, void *result);
     int     mIsEqual(void *mx1, size_t dim1, size_t dim2, void *mx2, double accuracy);
     int     mIsZero(void *mx, size_t dim1, size_t dim2, double accuracy);
+    void mPrintScreen(const char *name, void *mx, size_t dim1, size_t dim2);
     void    mPrint(FILE *pFile, const char *name, void *mx, size_t dim1, size_t dim2);
     void    mGetSubMatrix(void *mx, size_t dim1, size_t dim2,
                           size_t dim1Start, size_t dim2Start,

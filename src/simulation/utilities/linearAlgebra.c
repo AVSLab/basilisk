@@ -1276,6 +1276,28 @@ int mIsZero(void *mx, size_t dim1, size_t dim2,
     return 1;
 }
 
+void mPrintScreen(const char *name, void *mx, size_t dim1, size_t dim2)
+{
+    double *m_mx = (double *)mx;
+
+    size_t i;
+    size_t j;
+    printf("%s = [", name);
+    for(i = 0; i < dim1; i++) {
+        for(j = 0; j < dim2; j++) {
+            printf("%20.15g", m_mx[MXINDEX(dim2, i, j)]);
+            if(j != dim2 - 1) {
+                printf(", ");
+            }
+        }
+        if(i != dim1 - 1) {
+            printf(";\n");
+        }
+    }
+    printf("];\n");
+}
+
+
 void mPrint(FILE *pFile, const char *name, void *mx, size_t dim1, size_t dim2)
 {
     double *m_mx = (double *)mx;
