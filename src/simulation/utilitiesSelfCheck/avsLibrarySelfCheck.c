@@ -573,7 +573,7 @@ int testLinearAlgebra(double accuracy)
     m33Set(84, 90, 96, 201, 216, 231, 318, 342, 366, m33_2);
     mMultM(m33_0, 3, 3, m33_1, 3, 3, m33_0);
     if(!mIsEqual(m33_0, 3, 3, m33_2, accuracy)) {
-        printf("mMult failed\n");
+        printf("mMultM failed\n");
         errorCount++;
     }
 
@@ -607,7 +607,7 @@ int testLinearAlgebra(double accuracy)
     m23_0[1][2] = 278;
     mMultM(m24_0, 2, 4, m43_0, 4, 3, m23_1);
     if(!mIsEqual(m23_1, 2, 3, m23_0, accuracy)) {
-        printf("mMult failed\n");
+        printf("mMultM failed\n");
         errorCount++;
     }
 
@@ -616,7 +616,7 @@ int testLinearAlgebra(double accuracy)
     m33Set(174, 186, 198, 213, 228, 243, 252, 270, 288, m33_2);
     mtMultM(m33_0, 3, 3, m33_1, 3, 3, m33_0);
     if(!mIsEqual(m33_0, 3, 3, m33_2, accuracy)) {
-        printf("mtMult failed\n");
+        printf("mtMultM failed\n");
         errorCount++;
     }
 
