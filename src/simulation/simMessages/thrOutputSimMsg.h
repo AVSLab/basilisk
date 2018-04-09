@@ -30,8 +30,8 @@ typedef struct {
     Eigen::Vector3d thrusterDirection;   //!< -- Unit vector of thruster pointing
     double maxThrust;                    //!< N  Steady state thrust of thruster
     double thrustFactor;                 //!< -- Current Thrust Percentage
-    double thrustForce_B[3];             //!< N  Thrust force vector in body frame components
-    double thrustTorquePntB_B[3];        //!< N-m Thrust torque about point B in body frame components
+    double thrustForce_B[3] = {0};             //!< N  Thrust force vector in body frame components
+    double thrustTorquePntB_B[3] = {0};        //!< N-m Thrust torque about point B in body frame components
 }THROutputSimMsg;
 
 
