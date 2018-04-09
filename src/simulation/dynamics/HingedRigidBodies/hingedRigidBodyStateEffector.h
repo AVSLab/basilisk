@@ -52,6 +52,7 @@ public:
     Eigen::Vector3d r_HB_B;          //!< [m] vector pointing from body frame origin to Hinge location
     Eigen::Matrix3d dcm_HB;          //!< -- DCM from body frame to hinge frame
     std::string HingedRigidBodyOutMsgName; //!< -- state output message name
+    HingedRigidBodySimMsg HRBoutputStates;  //!< instance of messaging system message struct
 
 private:
     double theta;                    //!< [rad] hinged rigid body angle
@@ -79,7 +80,6 @@ private:
     StateData *thetaState;           //!< -- state manager of theta for hinged rigid body
     StateData *thetaDotState;        //!< -- state manager of thetaDot for hinged rigid body
     int64_t HingedRigidBodyOutMsgId; //!< -- state output message ID
-    void readInputMessages();         //!< -- method to read input messages
 
 public:
     HingedRigidBodyStateEffector();  //!< -- Contructor
@@ -97,7 +97,6 @@ public:
     void updateEffectorMassProps(double integTime);  //!< -- Method for giving the s/c the HRB mass props and prop rates
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                       double & rotEnergyContr); //!< -- Computing energy and momentum for HRBs
-    HingedRigidBodySimMsg HRBoutputStates;  //!< instance of messaging system message struct
 };
 
 #endif /* STATE_EFFECTOR_H */
