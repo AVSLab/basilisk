@@ -26,10 +26,12 @@
 /*! This structure is used in the messaging system to communicate what the
  state of the vehicle is currently.*/
 typedef struct {
-    Eigen::Vector3d thrusterLocation;               //!< m  Current position vector (inertial)
-    Eigen::Vector3d thrusterDirection;              //!< -- Unit vector of thruster pointing
-    double maxThrust;                               //!< N  Steady state thrust of thruster
-    double thrustFactor;                            //!< -- Current Thrust Percentage
+    Eigen::Vector3d thrusterLocation;    //!< m  Current position vector (inertial)
+    Eigen::Vector3d thrusterDirection;   //!< -- Unit vector of thruster pointing
+    double maxThrust;                    //!< N  Steady state thrust of thruster
+    double thrustFactor;                 //!< -- Current Thrust Percentage
+    double thrustForce_B[3];             //!< N  Thrust force vector in body frame components
+    double thrustTorquePntB_B[3];        //!< N-m Thrust torque about point B in body frame components
 }THROutputSimMsg;
 
 
