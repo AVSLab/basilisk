@@ -26,6 +26,7 @@
  It defines where in the cycle the thruster is and how much longer it should be
  on for.  It is intended to have the previous firing remain resident for logging*/
 typedef struct {
+    uint64_t fireCounter;                //!< (-) Number of times thruster fired
     double ThrustFactor;                 //!< -- Current Thrust Percentage
     double IspFactor;                    //!< -- Current fractional ISP
     double ThrustOnRampTime;             //!< s  Time thruster has been on for
@@ -35,7 +36,8 @@ typedef struct {
     double ThrustOnCmd;                  //!< s  Time Thruster was requested
     double PreviousIterTime;             //!< s  Previous thruster int time
     double totalOnTime;                  //!< s  Total amount of time thruster has fired
-    uint64_t fireCounter;                //!< (-) Number of times thruster fired
+    double thrustForce_B[3];             //!< N  Thrust force vector in body frame components
+    double thrustTorquePntB_B[3];        //!< N-m Thrust torque about point B in body frame components
 }THROperationSimMsg;
 
 
