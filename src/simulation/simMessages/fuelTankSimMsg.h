@@ -17,14 +17,13 @@
 
  */
 
-#ifndef hingedRigidBodySimMsg_h
-#define hingedRigidBodySimMsg_h
+#ifndef fuelTankSimMsg_h
+#define fuelTankSimMsg_h
 
-//!@brief hingedRigidBody stheta message definition.
-/*! @brief Structure used to define the individual HRB data message*/
+/*! @brief Structure used to define the individual fuel tank mass property message*/
 typedef struct {
-    double theta;                   //!< [rad], panel angular displacement
-    double thetaDot;                //!< [rad/s], panel angular displacement rate
-}HingedRigidBodySimMsg;
+    double fuelMass;                   //!< [kg], current fuel mass
+    double fuelMassDot;                //!< [kg/s], current rate of change of fuel mass
+}FuelTankSimMsg;
 
-#endif /* hingedRigidBodySimMsg_h */
+#endif /* fuelTankSimMsg_h */
