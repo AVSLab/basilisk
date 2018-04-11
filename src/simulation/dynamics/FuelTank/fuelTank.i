@@ -29,6 +29,9 @@
 %include "../_GeneralModuleFiles/stateEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "fuelTank.h"
+%include "simMessages/fuelTankSimMsg.h"
+
+GEN_SIZEOF(FuelTankSimMsg)
 
 %pythoncode %{
 import sys
