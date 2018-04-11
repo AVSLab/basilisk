@@ -252,7 +252,7 @@ public:
 	Eigen::Vector3d r_TB_B;							   //!< [m] position of tank in B frame
 	bool updateOnly;								   //!< -- Sets whether to use update only mass depletion
     std::string FuelTankOutMsgName;                    //!< -- fuel tank output message name
-    FuelTankSimMsg fuelTankMassPropMsg;                //!< instance of messaging system message struct
+    FuelTankSimMsg FuelTankMassPropMsg;                //!< instance of messaging system message struct
 
 private:
 	StateData *omegaState;                             //!< -- state data for omega_BN of the hub
@@ -267,6 +267,10 @@ private:
 public:
 	FuelTank();                                        //!< -- Contructor
 	~FuelTank();                                       //!< -- Destructor
+    void SelfInit();
+    void CrossInit();
+    void WriteOutputMessages(uint64_t CurrentClock);
+    void UpdateState(uint64_t CurrentSimNanos);
 	void setTankModel(FuelTankModelTypes model);
 	void pushFuelSloshParticle(FuelSloshParticle particle);  //!< -- Method to attach fuel slosh particle
 	void registerStates(DynParamManager& states);  //!< -- Method to register mass state with state manager

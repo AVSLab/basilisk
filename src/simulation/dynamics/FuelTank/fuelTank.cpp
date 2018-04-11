@@ -18,6 +18,7 @@
  */
 
 #include "fuelTank.h"
+#include "architecture/messaging/system_messaging.h"
 #include <iostream>
 
 /*Able to be accesses from python, used to set up fuel tank model*/
@@ -50,6 +51,7 @@ FuelTank::FuelTank()
 
 	// - Initialize the variables to working values
 	this->nameOfMassState = "fuelTankMass";
+    this->FuelTankOutMsgName = "";
 
     return;
 }
@@ -60,8 +62,29 @@ FuelTank::~FuelTank()
     return;
 }
 
+/*! This method initializes the object. It creates the module's output
+ messages.
+ @return void*/
+void FuelTank::SelfInit()
+{
+    SystemMessaging *messageSys = SystemMessaging::GetInstance();
+    this->FuelTankOutMsgId =  messageSys->CreateNewMessage(this->FuelTankOutMsgName, sizeof(FuelTankSimMsg), 2, "FuelTankSimMsg", this->moduleID);
+
+    return;
+}
+
+/*! This method allows for cross initialization between different modules
+ @return void*/
+void FuelTank::CrossInit()
+{
+    //Fuel does not need to cross init with anything
+    return;
+}
+
 void FuelTank::setTankModel(FuelTankModelTypes model){
 	fuelTankModel = FuelTankModels[model];
+
+    return;
 }
 
 /*! This is a method to attach a fuel slosh particle to the tank */
@@ -253,4 +276,30 @@ void FuelTank::updateEnergyMomContributions(double integTime, Eigen::Vector3d & 
                                                                              rDot_TcB_B.dot(rDot_TcB_B);
 
 	 return;
+}
+
+/*! This method takes the computed fuel tank mass properties and outputs them to the messaging system.
+ @return void
+ @param CurrentClock The current simulation time (used for time stamping)
+ */
+void FuelTank::WriteOutputMessages(uint64_t CurrentClock)
+{
+    SystemMessaging *messageSys = SystemMessaging::GetInstance();
+
+    FuelTankMassPropMsg.fuelMass = this->effProps.mEff;
+    FuelTankMassPropMsg.fuelMassDot = this->effProps.mEffDot;
+    messageSys->WriteMessage(this->FuelTankOutMsgId, CurrentClock,
+                             sizeof(FuelTankSimMsg), reinterpret_cast<uint8_t*> (&FuelTankMassPropMsg), this->moduleID);
+}
+
+/*! This method allows the fuel tank to write out its messages to the messaging system
+ @return void
+ @param CurrentSimNanos The current simulation time in nanoseconds
+ */
+void FuelTank::UpdateState(uint64_t CurrentSimNanos)
+{
+    // Writing the fuel tank mass property message out to the messaging system
+    WriteOutputMessages(CurrentSimNanos);
+
+    return;
 }
