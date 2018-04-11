@@ -51,7 +51,7 @@ FuelTank::FuelTank()
 
 	// - Initialize the variables to working values
 	this->nameOfMassState = "fuelTankMass";
-    this->FuelTankOutMsgName = "";
+    this->FuelTankOutMsgName = "fuelTankMessage";
 
     return;
 }
