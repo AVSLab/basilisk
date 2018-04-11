@@ -140,6 +140,17 @@ void FuelTank::updateEffectorMassProps(double integTime)
     // - This does not incorportate mEffDot into cPrime for high fidelity mass depletion
 	this->effProps.rEffPrime_CB_B /= effProps.mEff;
 
+    //! - Mass depletion (call thrusters attached to this tank to get their mDot, and contributions)
+    this->fuelConsumption = 0.0;
+    std::vector<DynamicEffector*>::iterator dynIt;
+    for (dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
+    {
+        (*dynIt)->computeStateContribution(integTime);
+        fuelConsumption += (*dynIt)->stateDerivContribution(0);
+    }
+
+    this->effProps.mEffDot = -this->fuelConsumption;
+
     return;
 }
 
@@ -157,14 +168,7 @@ void FuelTank::updateContributions(double integTime, Eigen::Matrix3d & matrixAco
     matrixAcontr = matrixBcontr = matrixCcontr = matrixDcontr = Eigen::Matrix3d::Zero();
     vecTranscontr = vecRotcontr = Eigen::Vector3d::Zero();
 
-	//! - Mass depletion (call thrusters attached to this tank to get their mDot, and contributions)
-	fuelConsumption = 0.0;
-	std::vector<DynamicEffector*>::iterator dynIt;
-	for (dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
-	{
-		(*dynIt)->computeStateContribution(integTime);
-		fuelConsumption += (*dynIt)->stateDerivContribution(0);
-	}
+    // Calculate the fuel consumption properties for the tank
 	tankFuelConsumption = fuelConsumption*massState->getState()(0, 0) / effProps.mEff;
 	fuelTankModel->computeTankPropDerivs(massState->getState()(0, 0), -tankFuelConsumption);
 	r_TB_BLocal = fuelTankModel->r_TcT_T;
