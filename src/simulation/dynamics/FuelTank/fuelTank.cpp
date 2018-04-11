@@ -137,6 +137,7 @@ void FuelTank::updateEffectorMassProps(double integTime)
 
     // - Scale the center of mass location by 1/m_tot
 	this->effProps.rEff_CB_B /= effProps.mEff;
+    // - This does not incorportate mEffDot into cPrime for high fidelity mass depletion
 	this->effProps.rEffPrime_CB_B /= effProps.mEff;
 
     return;
