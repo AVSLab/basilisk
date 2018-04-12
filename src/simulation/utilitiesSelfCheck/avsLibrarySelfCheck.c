@@ -42,6 +42,7 @@ int testLinearAlgebra(double accuracy)
 
     double v2_0[2];
     double v2_1[2];
+    double v2_2[2];
 
     double v3_0[3];
     double v3_1[3];
@@ -85,16 +86,8 @@ int testLinearAlgebra(double accuracy)
     printf("--testLinearAlgebra, accuracy = %g\n", accuracy);
 
     /*-----------------------------------------------------------------------*/
-    /* vector checks */
+    /* generally sized vector checks */
 
-    v3_0[0] = 1;
-    v3_0[1] = 2;
-    v3_0[2] = 3;
-    v3Set(1, 2, 3, v3_1);
-    if(!vIsEqual(v3_0, 3, v3_1, accuracy)) {
-        printf("vIsEqual failed\n");
-        errorCount++;
-    }
 
     v3Set(4, 5, 16, v3_0);
     vCopy(v3_0, 3, v3_1);
@@ -215,6 +208,13 @@ int testLinearAlgebra(double accuracy)
         errorCount++;
     }
 
+    v2Set(0, 0, v2_0);
+    v2SetZero(v2_1);
+    if(!v2IsEqual(v2_0, v2_1, accuracy)) {
+        printf("v2SetZero failed\n");
+        errorCount++;
+    }
+
     v2Set(1, 2, v2_0);
     v2Set(4, 5, v2_1);
     a = v2Dot(v2_0, v2_1);
@@ -223,6 +223,25 @@ int testLinearAlgebra(double accuracy)
         errorCount++;
     }
 
+    v2Set(1, 2, v2_0);
+    v2Set(4, 5, v2_1);
+    v2Set(5, 7, v2_2);
+    v2Add(v2_0, v2_1, v2_0);
+    if(!v2IsEqual(v2_0, v2_2, accuracy)) {
+        printf("v2Add failed\n");
+        errorCount++;
+    }
+
+    v2Set(4, 6, v2_0);
+    v2Set(1, 2, v2_1);
+    v2Set(3, 4, v2_2);
+    v2Subtract(v2_0, v2_1, v2_0);
+    if(!v2IsEqual(v2_0, v2_2, accuracy)) {
+        printf("v2Subtract failed\n");
+        errorCount++;
+    }
+
+
     //---------
 
     v3_0[0] = 1;
@@ -230,7 +249,7 @@ int testLinearAlgebra(double accuracy)
     v3_0[2] = 3;
     v3Set(1, 2, 3, v3_1);
     if(!v3IsEqual(v3_0, v3_1, accuracy)) {
-        printf("v3IsEqual failed\n");
+        printf("v3Set failed\n");
         errorCount++;
     }
 
@@ -554,7 +573,7 @@ int testLinearAlgebra(double accuracy)
     m33Set(84, 90, 96, 201, 216, 231, 318, 342, 366, m33_2);
     mMultM(m33_0, 3, 3, m33_1, 3, 3, m33_0);
     if(!mIsEqual(m33_0, 3, 3, m33_2, accuracy)) {
-        printf("mMult failed\n");
+        printf("mMultM failed\n");
         errorCount++;
     }
 
@@ -588,7 +607,7 @@ int testLinearAlgebra(double accuracy)
     m23_0[1][2] = 278;
     mMultM(m24_0, 2, 4, m43_0, 4, 3, m23_1);
     if(!mIsEqual(m23_1, 2, 3, m23_0, accuracy)) {
-        printf("mMult failed\n");
+        printf("mMultM failed\n");
         errorCount++;
     }
 
@@ -597,7 +616,7 @@ int testLinearAlgebra(double accuracy)
     m33Set(174, 186, 198, 213, 228, 243, 252, 270, 288, m33_2);
     mtMultM(m33_0, 3, 3, m33_1, 3, 3, m33_0);
     if(!mIsEqual(m33_0, 3, 3, m33_2, accuracy)) {
-        printf("mtMult failed\n");
+        printf("mtMultM failed\n");
         errorCount++;
     }
 
