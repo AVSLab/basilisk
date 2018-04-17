@@ -255,16 +255,16 @@ void VisMessageInterface::mapMessagesToScSim(uint64_t currentSimNanos)
     
     for (i = 0; i < this->acsThrusters.size(); i++)
     {
-        eigenVector3d2CArray(this->acsThrusters[i].thrusterLocation, this->scSim->acsThrusters[i].r_B);
-        eigenVector3d2CArray(this->acsThrusters[i].thrusterDirection, this->scSim->acsThrusters[i].gt_B);
+        v3Copy(this->acsThrusters[i].thrusterLocation, this->scSim->acsThrusters[i].r_B);
+        v3Copy(this->acsThrusters[i].thrusterDirection, this->scSim->acsThrusters[i].gt_B);
         this->scSim->acsThrusters[i].maxThrust = this->acsThrusters[i].maxThrust;
         this->scSim->acsThrusters[i].level = this->acsThrusters[i].thrustFactor;
     }
     
     for (i = 0; i < this->dvThrusters.size(); i++)
     {
-        eigenVector3d2CArray(this->dvThrusters[i].thrusterLocation, this->scSim->dvThrusters[i].r_B);
-        eigenVector3d2CArray(this->dvThrusters[i].thrusterDirection, this->scSim->dvThrusters[i].gt_B);
+        v3Copy(this->dvThrusters[i].thrusterLocation, this->scSim->dvThrusters[i].r_B);
+        v3Copy(this->dvThrusters[i].thrusterDirection, this->scSim->dvThrusters[i].gt_B);
         this->scSim->dvThrusters[i].maxThrust = this->dvThrusters[i].maxThrust;
         this->scSim->dvThrusters[i].level = this->dvThrusters[i].thrustFactor;
     }

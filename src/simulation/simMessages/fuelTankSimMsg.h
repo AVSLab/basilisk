@@ -17,23 +17,13 @@
 
  */
 
-#ifndef SIM_THRUSTER_OUTPUT_H
-#define SIM_THRUSTER_OUTPUT_H
+#ifndef fuelTankSimMsg_h
+#define fuelTankSimMsg_h
 
-#include <Eigen/Dense>
-
-
-/*! This structure is used in the messaging system to communicate what the
- state of the vehicle is currently.*/
+/*! @brief Structure used to define the individual fuel tank mass property message*/
 typedef struct {
-    double maxThrust;                    //!< N  Steady state thrust of thruster
-    double thrustFactor;                 //!< -- Current Thrust Percentage
-    double thrustForce = 0;              //!< N Thrust force magnitude
-    double thrustForce_B[3] = {0};       //!< N  Thrust force vector in body frame components
-    double thrustTorquePntB_B[3] = {0};  //!< N-m Thrust torque about point B in body frame components
-    double thrusterLocation[3] = {0};    //!< m  Current position vector (inertial)
-    double thrusterDirection[3] = {0};   //!< -- Unit vector of thruster pointing
-}THROutputSimMsg;
+    double fuelMass;                   //!< [kg], current fuel mass
+    double fuelMassDot;                //!< [kg/s], current rate of change of fuel mass
+}FuelTankSimMsg;
 
-
-#endif
+#endif /* fuelTankSimMsg_h */

@@ -45,7 +45,6 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
     this->nameOfThetaState = "hingedRigidBodyTheta";
     this->nameOfThetaDotState = "hingedRigidBodyThetaDot";
     this->HingedRigidBodyOutMsgName = "";
-    //this->HingedRigidBodyOutMsgId = -1;
     
     return;
 }
@@ -72,14 +71,6 @@ void HingedRigidBodyStateEffector::SelfInit()
 void HingedRigidBodyStateEffector::CrossInit()
 {
 //HRB does not CrossInit() anything.
-    return;
-}
-
-/*! This method reads necessary input messages @return void
- */
-void HingedRigidBodyStateEffector::readInputMessages()
-{
-//HRB doesn't read any messages
     return;
 }
 

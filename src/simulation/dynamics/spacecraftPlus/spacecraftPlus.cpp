@@ -264,8 +264,8 @@ void SpacecraftPlus::updateSCMassProps(double time)
         (*this->ISCPntB_B) += (*it)->effProps.IEffPntB_B;
         (*this->c_B) += (*it)->effProps.mEff*(*it)->effProps.rEff_CB_B;
         (*this->ISCPntBPrime_B) += (*it)->effProps.IEffPrimePntB_B;
-        (*this->cPrime_B) += (*it)->effProps.mEff*(*it)->effProps.rEffPrime_CB_B
-                                                                    + (*it)->effProps.mEffDot*(*it)->effProps.rEff_CB_B;
+        (*this->cPrime_B) += (*it)->effProps.mEff*(*it)->effProps.rEffPrime_CB_B;
+        // For high fidelity mass depletion, this is left out: += (*it)->effProps.mEffDot*(*it)->effProps.rEff_CB_B
     }
 
     // Divide c_B and cPrime_B by the total mass of the spaceCraft to finalize c_B and cPrime_B

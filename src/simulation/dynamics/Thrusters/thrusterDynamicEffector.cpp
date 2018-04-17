@@ -118,10 +118,13 @@ void ThrusterDynamicEffector::writeOutputMessages(uint64_t CurrentClock)
     THROutputSimMsg tmpThruster;
     for (it = this->thrusterData.begin(); it != this->thrusterData.end(); ++it)
     {
-        tmpThruster.thrusterLocation = it->thrLoc_B;
-        tmpThruster.thrusterDirection = it->thrDir_B;
+        eigenVector3d2CArray(it->thrLoc_B, tmpThruster.thrusterLocation);
+        eigenVector3d2CArray(it->thrDir_B, tmpThruster.thrusterDirection);
         tmpThruster.maxThrust = it->MaxThrust;
         tmpThruster.thrustFactor = it->ThrustOps.ThrustFactor;
+        tmpThruster.thrustForce = v3Norm(it->ThrustOps.opThrustForce_B);
+        v3Copy(it->ThrustOps.opThrustForce_B, tmpThruster.thrustForce_B);
+        v3Copy(it->ThrustOps.opThrustTorquePntB_B, tmpThruster.thrustTorquePntB_B);
         
         SystemMessaging::GetInstance()->WriteMessage(this->thrusterOutMsgIds.at(idx),
                                                      CurrentClock,
@@ -274,7 +277,7 @@ void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
         SingleThrusterForce = it->thrDir_B*tmpThrustMag;
         this->forceExternal_B = SingleThrusterForce + forceExternal_B;
         
-        //! - Compute the center-of-mass relative torque and aggregate into the composite body torque
+        //! - Compute the point B relative torque and aggregate into the composite body torque
         SingleThrusterTorque = it->thrLoc_B.cross(SingleThrusterForce);
         this->torqueExternalPntB_B = SingleThrusterTorque + torqueExternalPntB_B;
 
@@ -299,6 +302,9 @@ void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
 				+ it->areaNozzle / (4 * M_PI) * BMj*axesWeightMatrix*BMj.transpose())*omegaLocal_BN_B;
 
 		}
+        // - Save force and torque values for messages
+        eigenVector3d2CArray(this->forceExternal_B, it->ThrustOps.opThrustForce_B);
+        eigenVector3d2CArray(this->torqueExternalPntB_B, it->ThrustOps.opThrustTorquePntB_B);
     }
     //! - Once all thrusters have been checked, update time-related variables for next evaluation
     prevFireTime = integTime;
