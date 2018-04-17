@@ -122,6 +122,7 @@ void ThrusterDynamicEffector::writeOutputMessages(uint64_t CurrentClock)
         tmpThruster.thrusterDirection = it->thrDir_B;
         tmpThruster.maxThrust = it->MaxThrust;
         tmpThruster.thrustFactor = it->ThrustOps.ThrustFactor;
+        tmpThruster.thrustForce = v3Norm(it->ThrustOps.opThrustForce_B);
         v3Copy(it->ThrustOps.opThrustForce_B, tmpThruster.thrustForce_B);
         v3Copy(it->ThrustOps.opThrustTorquePntB_B, tmpThruster.thrustTorquePntB_B);
         
