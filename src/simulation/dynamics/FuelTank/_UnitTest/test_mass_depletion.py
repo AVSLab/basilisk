@@ -124,7 +124,6 @@ def test_massDepletionTest(show_plots):
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
 
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
-    print unitTestSim.fuelTankStateEffector.FuelTankOutMsgName
     unitTestSim.TotalSim.logThisMessage(unitTestSim.fuelTankStateEffector.FuelTankOutMsgName, testProcessRate)
 
     msgSize = earthEphemData.getStructSize()
@@ -141,7 +140,6 @@ def test_massDepletionTest(show_plots):
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]
 
     unitTestSim.InitializeSimulation()
-    print thrustersDynamicEffector.thrusterOutMsgNames[0]
     unitTestSim.TotalSim.logThisMessage(thrustersDynamicEffector.thrusterOutMsgNames[0], testProcessRate)
 
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
