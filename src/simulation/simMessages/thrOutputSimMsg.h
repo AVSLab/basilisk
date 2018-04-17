@@ -31,8 +31,8 @@ typedef struct {
     double thrustForce = 0;              //!< N Thrust force magnitude
     double thrustForce_B[3] = {0};       //!< N  Thrust force vector in body frame components
     double thrustTorquePntB_B[3] = {0};  //!< N-m Thrust torque about point B in body frame components
-    double thrusterLocation = {0};       //!< m  Current position vector (inertial)
-    double thrusterDirection = {0};      //!< -- Unit vector of thruster pointing
+    double thrusterLocation[3] = {0};    //!< m  Current position vector (inertial)
+    double thrusterDirection[3] = {0};   //!< -- Unit vector of thruster pointing
 }THROutputSimMsg;
 
 
