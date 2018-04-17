@@ -118,8 +118,8 @@ void ThrusterDynamicEffector::writeOutputMessages(uint64_t CurrentClock)
     THROutputSimMsg tmpThruster;
     for (it = this->thrusterData.begin(); it != this->thrusterData.end(); ++it)
     {
-        tmpThruster.thrusterLocation = it->thrLoc_B;
-        tmpThruster.thrusterDirection = it->thrDir_B;
+        eigenVector3d2CArray(it->thrLoc_B, tmpThruster.thrusterLocation);
+        eigenVector3d2CArray(it->thrDir_B, tmpThruster.thrusterDirection)
         tmpThruster.maxThrust = it->MaxThrust;
         tmpThruster.thrustFactor = it->ThrustOps.ThrustFactor;
         tmpThruster.thrustForce = v3Norm(it->ThrustOps.opThrustForce_B);
