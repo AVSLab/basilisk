@@ -9,6 +9,17 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 * GPU based methods to evaluate solar radiation pressure forces and torques
 * atmospheric drag evaluation using multi-faceted spacecraft model
 
+## Version 0.2.1
+<ul>
+    <li>Added messages for current fuel tank mass, fuel tank mDot, and thruster force and torque</li>
+    <li>Changed the linearAlgebra.c/h support library to avoid using any dynamic memory allocation.</li>
+    <li>Added some new function to linearAlgebra.c/h while making the library use the new BSK_PRINT() function.</li>
+    <li>Added ability to simulate noise to the RW devices.</li>
+    <li>Created a more complete spacecraft python simulation class called BSKsim, and recreated some BSK tutorial scripts to use BSKsim instead of the more manual spacecraft setup in the earlier scripts.</li>
+    <li>Developed general functions to add saturation, discretization and Gauss Markov processes to signals.</li>
+    <li>Created a new BSK_PRINT() function.  Here the coder can tag a message as an ERROR, WARNING, DEBUG or INFORMATION status.  The printout can be set to selectively show these print statements. </li>
+</ul>
+
 ## Version 0.2.0 (First public beta)
 <ul>
     <li>First open beta release of Basilisk</li>

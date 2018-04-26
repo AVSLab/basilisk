@@ -45,10 +45,9 @@ typedef struct {
     /* declare module private variables */
     double VMin;                                    /*!< [V]    minimum voltage below which the torque is zero */
     double VMax;                                    /*!< [V]    maximum output voltage */
-    double K;                                       /*!< [V/Nm] torque tracking gain for closed loop control.  If 
-                                                                negative, this loop is turn off */
+    double K;                                       /*!< [V/Nm] torque tracking gain for closed loop control.*/
     double rwSpeedOld[MAX_EFF_CNT];                 /*!< [r/s]  the RW spin rates from the prior control step */
-    uint64_t priorTime;                             /*!< [ns]   Last time the attitude control is called */
+    uint64_t priorTime;                             /*!< [ns]   Last time the module control was called */
     int    resetFlag;                               /*!< []     Flag indicating that a module reset occured */
 
     /* declare module IO interfaces */
@@ -59,8 +58,8 @@ typedef struct {
     int32_t torqueInMsgID;                          /*!< ID for the incoming torque message */
     char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];     /*!< The name of the RWArrayConfigFswMsg input message*/
     int32_t rwParamsInMsgID;                         /*!< [-] ID for the RWArrayConfigFswMsg ingoing message */
-    char inputRWSpeedsInMsgName[MAX_STAT_MSG_LENGTH];/*!< [] The name for the reaction wheel speeds message */
-    int32_t inputRWSpeedsInMsgID;                    /*!< [] The ID for the reaction wheel speeds message*/
+    char inputRWSpeedsInMsgName[MAX_STAT_MSG_LENGTH];/*!< [] The name for the reaction wheel speeds message. Must be provided to enable speed tracking loop */
+    int32_t inputRWSpeedsInMsgID;                    /*!< [] The ID for the reaction wheel speeds message. If negative, no speed tracking*/
     char rwAvailInMsgName[MAX_STAT_MSG_LENGTH];      /*!< [-] The name of the RWs availability message*/
     int32_t rwAvailInMsgID;                          /*!< [-] ID for the incoming  RWs availability data*/
 

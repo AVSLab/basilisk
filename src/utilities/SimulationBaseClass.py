@@ -213,7 +213,7 @@ class SimBaseClass:
         proc = simulationArchTypes.PythonProcessClass(procName, priority)
         i=0;
         for procLoc in self.pyProcList:
-            if priority > procLoc.procPriority:
+            if priority > procLoc.pyProcPriority:
                 self.pyProcList.insert(i, proc)
                 return proc
             i+=1

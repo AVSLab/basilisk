@@ -1,0 +1,6 @@
+\section{Model Description}
+This module is a simulation environment module which simulates the analog voltage interface of a RW cluster.  The input is an array of voltages $V_{i}$.  The Reaction Wheel (RW) motor torque $u_{s_{i}}$ is evaluated using a linear mapping
+\begin{equation}
+u_{s_{i}} = V_{i} \gamma_{i} SF_{i} + b_{i}
+\end{equation}
+where $\gamma$ is constant value gain. SF is the scale factor error (i.e. a constant 1\% gain error SF = 1.01). $b$ is the bias term (i.e. a constant 1 Nm error on torque b = 1.)  The output of the module is an array of RW motor torques.  The deadband and saturation behavior of the RW speed is modeled inside the RW dynamics model.  

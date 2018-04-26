@@ -42,6 +42,78 @@ from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIn
 from Basilisk.utilities import unitTestSupport
 
 
+def plot_track_error_norm(timeLineSet, dataSigmaBR):
+    plt.figure(1)
+    fig = plt.gcf()
+    ax = fig.gca()
+    vectorData = unitTestSupport.pullVectorSetFromData(dataSigmaBR)
+    sNorm = np.array([np.linalg.norm(v) for v in vectorData])
+    plt.plot(timeLineSet, sNorm,
+             color=unitTestSupport.getLineColor(1, 3),
+             )
+    plt.xlabel('Time [min]')
+    plt.ylabel('Attitude Error Norm $|\sigma_{B/R}|$')
+    ax.set_yscale('log')
+
+def plot_control_torque(timeLineSet, dataLr):
+    plt.figure(2)
+    for idx in range(1, 4):
+        plt.plot(timeLineSet, dataLr[:, idx],
+                 color=unitTestSupport.getLineColor(idx, 3),
+                 label='$L_{r,' + str(idx) + '}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('Control Torque $L_r$ [Nm]')
+
+def plot_rate_error(timeLineSet, dataOmegaBR):
+    plt.figure(3)
+    for idx in range(1, 4):
+        plt.plot(timeLineSet, dataOmegaBR[:, idx],
+                 color=unitTestSupport.getLineColor(idx, 3),
+                 label='$\omega_{BR,' + str(idx) + '}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('Rate Tracking Error [rad/s] ')
+
+
+def plot_orbit(oe, mu, planet_radius, dataPos, dataVel):
+    # draw orbit in perifocal frame
+    p = oe.a * (1 - oe.e * oe.e)
+    plt.figure(4, figsize=np.array((1.0, 1.)) * 4.75, dpi=100)
+    # draw the planet
+    fig = plt.gcf()
+    ax = fig.gca()
+    planetColor = '#008800'
+    # planet = gravFactory.createEarth()
+    planetRadius = planet_radius / 1000
+    ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
+    # draw the actual orbit
+    rData = []
+    fData = []
+    for idx in range(0, len(dataPos)):
+        oeData = orbitalMotion.rv2elem(mu, dataPos[idx, 1:4], dataVel[idx, 1:4])
+        rData.append(oeData.rmag)
+        fData.append(oeData.f + oeData.omega - oe.omega)
+    plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000,
+             color='#aa0000', linewidth=3.0, label='Simulated Flight')
+
+    plt.axis(np.array([-1, 1, -1, 1]) * 1.25 * np.amax(rData) / 1000)
+
+    # draw the full osculating orbit from the initial conditions
+    tempAngle = (1. / 2.) * (np.pi - 2 * np.arcsin(1 / oe.e)) * 1.01
+    fData = np.linspace(np.pi - tempAngle, -np.pi + tempAngle, 100)
+    rData = []
+    for idx in range(0, len(fData)):
+        rData.append(p / (1 + oe.e * np.cos(fData[idx])))
+    plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000, '--', color='#555555', label='Orbit Track')
+    plt.xlabel('$i_e$ Cord. [km]')
+    plt.ylabel('$i_p$ Cord. [km]')
+    plt.legend(loc='lower left')
+    plt.grid()
+
+
+
+
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
@@ -348,77 +420,20 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
 
     timeLineSet = dataSigmaBR[:, 0] * macros.NANO2MIN
     plt.close("all")  # clears out plots from earlier test runs
-    plt.figure(1)
-    fig = plt.gcf()
-    ax = fig.gca()
-    vectorData = unitTestSupport.pullVectorSetFromData(dataSigmaBR)
-    sNorm = np.array([np.linalg.norm(v) for v in vectorData])
-    plt.plot(timeLineSet, sNorm,
-             color=unitTestSupport.getLineColor(1, 3),
-             )
-    plt.xlabel('Time [min]')
-    plt.ylabel('Attitude Error Norm $|\sigma_{B/R}|$')
-    ax.set_yscale('log')
+
+    plot_track_error_norm(timeLineSet, dataSigmaBR)
     if doUnitTests:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(fileName + "1" + str(int(useAltBodyFrame)), plt, path)
 
-    plt.figure(2)
-    for idx in range(1, 4):
-        plt.plot(timeLineSet, dataLr[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$L_{r,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Control Torque $L_r$ [Nm]')
+    plot_control_torque(timeLineSet, dataLr)
     if doUnitTests:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(fileName + "2" + str(int(useAltBodyFrame)), plt, path)
 
-    plt.figure(3)
-    for idx in range(1, 4):
-        plt.plot(timeLineSet, dataOmegaBR[:, idx],
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$\omega_{BR,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Rate Tracking Error [rad/s] ')
+    plot_rate_error(timeLineSet, dataOmegaBR)
     if doUnitTests:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(fileName + "3" + str(int(useAltBodyFrame)), plt, path)
 
-    # draw orbit in perifocal frame
-    p = oe.a * (1 - oe.e * oe.e)
-    plt.figure(4, figsize=np.array((1.0, 1.)) * 4.75, dpi=100)
-    # draw the planet
-    fig = plt.gcf()
-    ax = fig.gca()
-    planetColor = '#008800'
-    planet = gravFactory.createEarth()
-    planetRadius = planet.radEquator / 1000
-    ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
-    # draw the actual orbit
-    rData = []
-    fData = []
-    for idx in range(0, len(dataPos)):
-        oeData = orbitalMotion.rv2elem(mu, dataPos[idx, 1:4], dataVel[idx, 1:4])
-        rData.append(oeData.rmag)
-        fData.append(oeData.f + oeData.omega - oe.omega)
-    plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000,
-             color='#aa0000', linewidth=3.0, label='Simulated Flight')
-
-    plt.axis(np.array([-1, 1, -1, 1]) * 1.25 * np.amax(rData) / 1000)
-
-    # draw the full osculating orbit from the initial conditions
-    tempAngle = (1. / 2.) * (np.pi - 2 * np.arcsin(1 / oe.e)) * 1.01
-    fData = np.linspace(np.pi - tempAngle, -np.pi + tempAngle, 100)
-    rData = []
-    for idx in range(0, len(fData)):
-        rData.append(p / (1 + oe.e * np.cos(fData[idx])))
-    plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000, '--', color='#555555', label='Orbit Track')
-
-    plt.xlabel('$i_e$ Cord. [km]')
-    plt.ylabel('$i_p$ Cord. [km]')
-    plt.legend(loc='lower left')
-    plt.grid()
-
+    plot_orbit(oe, earth.mu, earth.radEquator, dataPos, dataVel)
     if doUnitTests:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(fileName + "4" + str(int(useAltBodyFrame)), plt, path)
 

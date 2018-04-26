@@ -22,39 +22,41 @@
 
 #include <stdio.h>
 
-#define ALLOW_DYNAMIC_MEMORY 1
 
 /* General vectors */
-#if ALLOW_DYNAMIC_MEMORY
 #ifdef __cplusplus
 extern "C" {
 #endif
-    void    vCopy(void *v, size_t dim, void *result);
-    void    vSetZero(void *v, size_t dim);
-    void    vAdd(void *v1, size_t dim, void *v2, void *result);
-    void    vSubtract(void *v1, size_t dim, void *v2, void *result);
-    void    vScale(double scaleFactor, void *v, size_t dim, void *result);
-    double  vDot(void *v1, size_t dim, void *v2);
-    void    vOuterProduct(void *v1, size_t dim1, void *v2, size_t dim2, void *result);
-    void    vtMultM(void *v, void *mx, size_t dim1, size_t dim2, void *result);
-    void    vtMultMt(void *v, void *mx, size_t dim1, size_t dim2, void *result);
-    double  vNorm(void *v, size_t dim);
-    double  vMax(void *v, size_t dim); /* Non-sorted, non-optimized algorithm for finding the max of a small 1-D array*/
-    double  vMaxAbs(void *v, size_t dim); /* Non-sorted, non-optimized algorithm for finding the max of the absolute values of the elements of a small 1-D array*/
-    void    vNormalize(void *v, size_t dim, void *result);
-    int     vIsEqual(void *v1, size_t dim, void *v2, double accuracy);
-    int     vIsZero(void *v, size_t dim, double accuracy);
-    void    vPrint(FILE *pFile, const char *name, void *v, size_t dim);
+
+    /* N element vectors */
+    void    vCopy(double *v, size_t dim, double *result);
+    void    vSetZero(double *v, size_t dim);
+    void    vAdd(double *v1, size_t dim, double *v2, double *result);
+    void    vSubtract(double *v1, size_t dim, double *v2, double *result);
+    void    vScale(double scaleFactor, double *v, size_t dim, double *result);
+    double  vDot(double *v1, size_t dim, double *v2);
+    void    vOuterProduct(double *v1, size_t dim1, double *v2, size_t dim2, void *result);
+    void    vtMultM(double *v, void *mx, size_t dim1, size_t dim2, void *result);
+    void    vtMultMt(double *v, void *mx, size_t dim1, size_t dim2, void *result);
+    double  vNorm(double *v, size_t dim);
+    double  vMax(double *v, size_t dim); /* Non-sorted, non-optimized algorithm for finding the max of a small 1-D array*/
+    double  vMaxAbs(double *v, size_t dim); /* Non-sorted, non-optimized algorithm for finding the max of the absolute values of the elements of a small 1-D array*/
+    void    vNormalize(double *v, size_t dim, double *result);
+    int     vIsEqual(double *v1, size_t dim, double *v2, double accuracy);
+    int     vIsZero(double *v, size_t dim, double accuracy);
+    void    vPrint(FILE *pFile, const char *name, double *v, size_t dim);
     void    vSort(double *Input, double *Output, size_t dim);
-#endif
-    
+
     /* 2 element vectors */
     void    v2Set(double v0, double v1, double result[2]);
     void    v2Copy(double v[2], double result[2]);
+    void    v2SetZero(double v[2]);
     double  v2Dot(double v1[2], double v2[2]);
     int     v2IsEqual(double v1[2], double v2[2], double accuracy);
     int     v2IsZero(double v[2], double accuracy);
-    
+    void    v2Add(double v1[2], double v2[2], double result[2]);
+    void    v2Subtract(double v1[2], double v2[2], double result[2]);
+
     /* 3 element vectors */
     void    v3Set(double v0, double v1, double v2, double result[3]);
     void    v3Copy(double v[3], double result[3]);
@@ -93,8 +95,7 @@ extern "C" {
     void    v6OuterProduct(double v1[6], double v2[6], double result[6][6]);
     int     v6IsEqual(double v1[6], double v2[6], double accuracy);
     
-#if ALLOW_DYNAMIC_MEMORY
-    /* General matrices */
+    /* NxM matrices */
     void    mCopy(void *mx, size_t dim1, size_t dim2, void *result);
     void    mSetZero(void *result, size_t dim1, size_t dim2);
     void    mSetIdentity(void *result, size_t dim1, size_t dim2);
@@ -127,6 +128,7 @@ extern "C" {
     int     mInverse(void *mx, size_t dim, void *result);
     int     mIsEqual(void *mx1, size_t dim1, size_t dim2, void *mx2, double accuracy);
     int     mIsZero(void *mx, size_t dim1, size_t dim2, double accuracy);
+    void mPrintScreen(const char *name, void *mx, size_t dim1, size_t dim2);
     void    mPrint(FILE *pFile, const char *name, void *mx, size_t dim1, size_t dim2);
     void    mGetSubMatrix(void *mx, size_t dim1, size_t dim2,
                           size_t dim1Start, size_t dim2Start,
@@ -134,8 +136,7 @@ extern "C" {
     void    mSetSubMatrix(void *mx, size_t dim1, size_t dim2,
                           void *result, size_t dim1Result, size_t dim2Result,
                           size_t dim1Start, size_t dim2Start);
-#endif
-    
+
     /* 2x2 matrices */
     void    m22Set(double m00, double m01,
                    double m10, double m11,

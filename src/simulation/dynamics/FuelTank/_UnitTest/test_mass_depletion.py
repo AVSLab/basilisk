@@ -18,30 +18,17 @@
 
 '''
 import sys, os, inspect
-import numpy
-import pytest
-import math
-
-
-
-
-
-
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.simulation import spacecraftPlus
-from Basilisk.simulation import sim_model
-import ctypes
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import spice_interface
 from Basilisk.utilities import simIncludeThruster
 from Basilisk.simulation import thrusterDynamicEffector
-from Basilisk.fswAlgorithms import vehicleConfigData
 from Basilisk.simulation import fuelTank
-from Basilisk.simulation import fuelSloshParticle
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -115,6 +102,7 @@ def test_massDepletionTest(show_plots):
     unitTestSim.TotalSim.WriteMessageData(thrusterCommandName, msgSize, 0, ThrustMessage)
 
     # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.fuelTankStateEffector)
     unitTestSim.AddModelToTask(unitTaskName, thrustersDynamicEffector)
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     
@@ -136,6 +124,7 @@ def test_massDepletionTest(show_plots):
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
 
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(unitTestSim.fuelTankStateEffector.FuelTankOutMsgName, testProcessRate)
 
     msgSize = earthEphemData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
@@ -151,6 +140,7 @@ def test_massDepletionTest(show_plots):
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]
 
     unitTestSim.InitializeSimulation()
+    unitTestSim.TotalSim.logThisMessage(thrustersDynamicEffector.thrusterOutMsgNames[0], testProcessRate)
 
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
@@ -166,6 +156,17 @@ def test_massDepletionTest(show_plots):
     rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
 
+    thrust = unitTestSim.pullMessageLogData(thrustersDynamicEffector.thrusterOutMsgNames[0] + '.thrustForce_B',
+                                                  range(3))
+    thrustPercentage = unitTestSim.pullMessageLogData(thrustersDynamicEffector.thrusterOutMsgNames[0] + '.thrustFactor',
+                                                  range(1))
+
+    fuelMass = unitTestSim.pullMessageLogData(unitTestSim.fuelTankStateEffector.FuelTankOutMsgName + '.fuelMass',
+                                                  range(1))
+    fuelMassDot = unitTestSim.pullMessageLogData(unitTestSim.fuelTankStateEffector.FuelTankOutMsgName + '.fuelMassDot',
+                                                  range(1))
+
+
 
     plt.figure(1)
     plt.plot(orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,1] - orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,2] - orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,3] - orbAngMom_N[0,3])
@@ -176,6 +177,25 @@ def test_massDepletionTest(show_plots):
     plt.figure(3)
     plt.plot(rotEnergy[:,0]*1e-9, rotEnergy[:,1] - rotEnergy[0,1])
     plt.title("Change in Rotational Energy")
+    plt.figure(4)
+    plt.plot(thrust[:,0]*1e-9, thrust[:,1], thrust[:,0]*1e-9, thrust[:,2], thrust[:,0]*1e-9, thrust[:,3])
+    plt.xlim([0,20])
+    plt.ylim([0,1])
+    plt.title("Thrust")
+    plt.figure(5)
+    plt.plot(thrustPercentage[:,0]*1e-9, thrustPercentage[:,1])
+    plt.xlim([0,20])
+    plt.ylim([0,1.1])
+    plt.title("Thrust Percentage")
+    plt.figure(6)
+    plt.plot(fuelMass[:,0]*1e-9, fuelMass[:,1])
+    plt.xlim([0,20])
+    plt.title("Fuel Mass")
+    plt.figure(7)
+    plt.plot(fuelMassDot[:,0]*1e-9, fuelMassDot[:,1])
+    plt.xlim([0,20])
+    plt.title("Fuel Mass Dot")
+
     if show_plots == True:
         plt.show()
 
@@ -358,4 +378,4 @@ def passFail(testFailCountInput, snippetName):
     unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
 
 if __name__ == "__main__":
-    test_axisChange(False)
+    test_massDepletionTest(True)

@@ -513,6 +513,8 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
 			}
 		}
 
+        
+        
 		this->ReactionWheelData[RWIter].u_current = u_s; // save actual torque for reaction wheel motor
 
 		RWIter++;

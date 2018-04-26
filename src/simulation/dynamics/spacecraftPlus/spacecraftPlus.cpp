@@ -39,6 +39,7 @@ SpacecraftPlus::SpacecraftPlus()
     this->scStateOutMsgId = -1;
     this->numOutMsgBuffers = 2;
     this->dvAccum_B.setZero();
+    this->dvAccum_BN_B.setZero();
 
     // - Set integrator as RK4 by default
     this->integrator = new svIntegratorRK4(this);
@@ -263,8 +264,8 @@ void SpacecraftPlus::updateSCMassProps(double time)
         (*this->ISCPntB_B) += (*it)->effProps.IEffPntB_B;
         (*this->c_B) += (*it)->effProps.mEff*(*it)->effProps.rEff_CB_B;
         (*this->ISCPntBPrime_B) += (*it)->effProps.IEffPrimePntB_B;
-        (*this->cPrime_B) += (*it)->effProps.mEff*(*it)->effProps.rEffPrime_CB_B
-                                                                    + (*it)->effProps.mEffDot*(*it)->effProps.rEff_CB_B;
+        (*this->cPrime_B) += (*it)->effProps.mEff*(*it)->effProps.rEffPrime_CB_B;
+        // For high fidelity mass depletion, this is left out: += (*it)->effProps.mEffDot*(*it)->effProps.rEff_CB_B
     }
 
     // Divide c_B and cPrime_B by the total mass of the spaceCraft to finalize c_B and cPrime_B
@@ -366,7 +367,7 @@ void SpacecraftPlus::integrateState(double integrateToThisTime)
     Eigen::Vector3d oldOmega_BN_B;  // - angular rate of B wrt N in the Body frame
     Eigen::MRPd oldSigma_BN;    // - Sigma_BN before integration
     // - Get the angular rate, oldOmega_BN_B from the dyn manager
-    oldOmega_BN_B = this->hubOmega_BN_B->getStateDeriv();
+    oldOmega_BN_B = this->hubOmega_BN_B->getState();
     // - Get center of mass, v_BN_N and dcm_NB from the dyn manager
     oldSigma_BN = (Eigen::Vector3d) this->hubSigma->getState();
     // - Finally find v_CN_N
@@ -428,9 +429,8 @@ void SpacecraftPlus::integrateState(double integrateToThisTime)
     
     // - angular acceleration in the body frame
     Eigen::Vector3d newOmega_BN_B;
-    Eigen::Vector3d omegaDot_BN_B;
-    newOmega_BN_B = this->hubOmega_BN_B->getStateDeriv();
-    omegaDot_BN_B = (newOmega_BN_B - oldOmega_BN_B)/localTimeStep; //angular acceleration of B wrt N in the Body fram
+    newOmega_BN_B = this->hubOmega_BN_B->getState();
+    this->omegaDot_BN_B = (newOmega_BN_B - oldOmega_BN_B)/localTimeStep; //angular acceleration of B wrt N in the Body frame
 
     // - Compute Energy and Momentum
     this->computeEnergyMomentum(integrateToThisTime);

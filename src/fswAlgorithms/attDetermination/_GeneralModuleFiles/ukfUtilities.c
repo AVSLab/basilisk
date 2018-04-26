@@ -18,7 +18,8 @@
  */
 
 #include "attDetermination/_GeneralModuleFiles/ukfUtilities.h"
-#include "../simulation/utilities/linearAlgebra.h"
+#include "simulation/utilities/linearAlgebra.h"
+#include "simulation/utilities/bsk_Print.h"
 #include <math.h>
 
 void ukfQRDJustR(
@@ -77,7 +78,7 @@ void ukfLInv(
 	mSetZero(destMat, nRow, nCol);
 	if (nRow != nCol)
 	{
-		printf("Can't get a lower-triangular inverse of non-square matrix.\n");
+		BSK_PRINT(MSG_WARNING,"Can't get a lower-triangular inverse of non-square matrix.\n");
 		return;
 	}
 	mat_dim = nRow;
@@ -108,7 +109,7 @@ void ukfUInv(
 	mSetZero(destMat, nRow, nCol);
 	if (nRow != nCol)
 	{
-		printf("Can't get a lower-triangular inverse of non-square matrix.\n");
+		BSK_PRINT(MSG_WARNING,"Can't get a lower-triangular inverse of non-square matrix.\n");
 		return;
 	}
 	mat_dim = nRow;
@@ -140,7 +141,7 @@ int32_t ukfLUD(double *sourceMat, int32_t nRow, int32_t nCol,
 	mSetZero(destMat, nRow, nCol);
 	if (nRow != nCol)
 	{
-		printf("Can't get a lower-triangular inverse of non-square matrix.\n");
+		BSK_PRINT(MSG_WARNING,"Can't get a lower-triangular inverse of non-square matrix.\n");
 		return -1;
 	}
 	mCopy(sourceMat, nRow, nCol, destMat);
@@ -156,7 +157,7 @@ int32_t ukfLUD(double *sourceMat, int32_t nRow, int32_t nCol,
 		}
 		if (big < TINY)
 		{
-			printf("Singlular matrix encountered in LU decomposition.\n");
+			BSK_PRINT(MSG_WARNING,"Singlular matrix encountered in LU decomposition.\n");
 			return -1;
 		}
 		vv[i] = 1.0 / big;
@@ -226,7 +227,7 @@ void ukfLUBckSlv(double *sourceMat, int32_t nRow, int32_t nCol,
 	vSetZero(destMat, nRow);
 	if (nRow != nCol)
 	{
-		printf("Can't get a linear solution of non-square matrix.\n");
+		BSK_PRINT(MSG_WARNING,"Can't get a linear solution of non-square matrix.\n");
 		return;
 	}
 	vCopy(bmat, nRow, destMat);
@@ -272,7 +273,7 @@ void ukfMatInv(double *sourceMat, int32_t nRow, int32_t nCol,
 	mSetZero(destMat, nRow, nCol);
 	if (nRow != nCol)
 	{
-		printf("Can't invert a non-square matrix.\n");
+		BSK_PRINT(MSG_WARNING,"Can't invert a non-square matrix.\n");
 		return;
 	}
 	ukfLUD(sourceMat, nRow, nCol, LUMatrix, indx);
@@ -297,7 +298,7 @@ void ukfCholDecomp(double *sourceMat, int32_t nRow, int32_t nCol,
 	mSetZero(destMat, nRow, nCol);
 	if (nRow != nCol)
 	{
-		printf("Can't get a lower-triangular inverse of non-square matrix.\n");
+		BSK_PRINT(MSG_WARNING,"Can't get a lower-triangular inverse of non-square matrix.\n");
 		return;
 	}
 	

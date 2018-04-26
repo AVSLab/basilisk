@@ -26,6 +26,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
 #include "../simulation/utilities/avsEigenSupport.h"
+#include "simMessages/fuelTankSimMsg.h"
 #include "fuelSloshParticle.h"
 
 //Fuel tank models
@@ -250,6 +251,8 @@ public:
 	Eigen::Matrix3d dcm_TB;							   //!< -- DCM from body frame to tank frame
 	Eigen::Vector3d r_TB_B;							   //!< [m] position of tank in B frame
 	bool updateOnly;								   //!< -- Sets whether to use update only mass depletion
+    std::string FuelTankOutMsgName;                    //!< -- fuel tank output message name
+    FuelTankSimMsg FuelTankMassPropMsg;                //!< instance of messaging system message struct
 
 private:
 	StateData *omegaState;                             //!< -- state data for omega_BN of the hub
@@ -259,10 +262,15 @@ private:
 	FuelTankModel* fuelTankModel;					   //!< -- style of tank to simulate
 	Eigen::Matrix3d ITankPntT_B;					   
 	Eigen::Vector3d r_TcB_B;
+    int64_t FuelTankOutMsgId;                          //!< -- state output message ID
 
 public:
 	FuelTank();                                        //!< -- Contructor
 	~FuelTank();                                       //!< -- Destructor
+    void SelfInit();
+    void CrossInit();
+    void WriteOutputMessages(uint64_t CurrentClock);
+    void UpdateState(uint64_t CurrentSimNanos);
 	void setTankModel(FuelTankModelTypes model);
 	void pushFuelSloshParticle(FuelSloshParticle particle);  //!< -- Method to attach fuel slosh particle
 	void registerStates(DynParamManager& states);  //!< -- Method to register mass state with state manager
