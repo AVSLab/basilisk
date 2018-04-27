@@ -23,7 +23,6 @@
 #include "messaging/static_messaging.h"
 #include "fswMessages/attGuidFswMsg.h"
 #include "simFswInterfaceMessages/navAttIntMsg.h"
-#include "fswMessages/cssConfigFswMsg.h"
 #include "fswMessages/imuSensorBodyFswMsg.h"
 #include <stdint.h>
 
