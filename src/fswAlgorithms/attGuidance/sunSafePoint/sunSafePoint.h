@@ -38,6 +38,8 @@ typedef struct {
     char inputIMUDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the incoming IMU message*/
     double minUnitMag;       /*!< -- The minimally acceptable norm of sun body vector*/
     double sunAngleErr;      /*!< rad The current error between cmd and obs sun angle*/
+    double smallAngle;       /*!< rad An angle value that specifies what is near 0 or 180 degrees */
+    double eHat180_B[3];     /*!< -- Eigen axis to use if commanded axis is 180 from sun axis */
     double sunMnvrVec[3];    /*!< -- The eigen axis that we want to rotate on to get sun*/
     double sHatBdyCmd[3];    /*!< -- Desired body vector to point at the sun*/
     double omega_RN_B[3];    /*!< -- Desired body rate vector if no sun direction is available */

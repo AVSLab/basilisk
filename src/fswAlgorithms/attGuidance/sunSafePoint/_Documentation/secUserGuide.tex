@@ -13,6 +13,9 @@ The module has the following parameter that can be configured:
 	
 	\item {\tt minUnitMag} -- This double contains the minimum norm value of $\bm s$ such that a tracking error attitude solution $\bm\sigma_{B/R}$ is still computed.  If the norm is less than this, then $\bm\sigma_{B/R}$ is set to zero.    The default {\tt minUnitMag} value is zero. 
 	
-	\item {tt omega\_RN\_B} -- This vectors specifies the body-fixed search rate to rotate and search for the sun if no good sun direction vector is visible.  Default value is a zero vector.  
+	\item {\tt omega\_RN\_B} -- This vectors specifies the body-fixed search rate to rotate and search for the sun if no good sun direction vector is visible.  Default value is a zero vector.  
+
+	\item {\tt smallAngle} -- This double specifies what is considered close for $\bm s$ and $\hat{\bm s}_{c}$ to be collinear.  Default value is zero.  
+	
 \end{itemize}
 

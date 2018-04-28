@@ -33,7 +33,7 @@ Note that the sun direction vector $\bm s$ does not have to be a normalized inpu
 The principal rotation angle between the two vectors is given through
 \begin{equation}
 	\label{eq:ssp:2}
-	\Phi = \arccos ( \bm s \cdot \hat{\bm s}_{c})
+	\Phi = \arccos \left( \frac{\bm s  \cdot \hat{\bm s}_{c} }{|\bm s|} \right)
 \end{equation}
 
 Next, this rotation from $\cal R$ to $\cal B$ is written as a set of MRPs through
@@ -67,8 +67,23 @@ Finally, the attitude guidance message must specify the inertial reference frame
  and the output message reference rate is set equal to the prescribed $\bm\omega_{R/N}$
 
  
+ \subsubsection{Collinear Commanded and Sun Heading Vectors}
+First consider the case where $\bm s \approx \hat{\bm s}_{c}$.  In this case the cross product in Eq.~\eqref{eq:ssp:1} is not well defined.  Let $\epsilon$ be a pre-determined small angle.  Then, if $\Phi < \epsilon$ then 
+$$
+	\bm\sigma_{B/R} = \bm 0
+$$
  
  
- 
+However, if $\bm s \approx -\hat{\bm s}_{c}$, then an eigen-axis $\hat{\bm e}$ that is orthogonal to $\hat{\bm s}_{c}$ must be determined.  Let the body frame be defined through \frameDefinition{B}.  The eigen-axis is determined first by taking a cross product with $\hat{\bm b}_{1}$:
+ \begin{equation}
+	\label{eq:ssp:7}
+	\hat{\bm e}_{180} = \frac{ \hat{\bm s}_{c} \times \hat{\bm b}_{1}}{| \hat{\bm s}_{c} \times \hat{\bm b}_{1}|}
+\end{equation}
+If $\hat{\bm s}_{c} \approx \hat{\bm b}_{1}$, then this $\hat{\bm e}$ vector will have a small norm.  In this ill-determined case, the $\hat{\bm e}$ vector is determined using
+ \begin{equation}
+	\label{eq:ssp:8}
+	\hat{\bm e}_{180} = \frac{ \hat{\bm s}_{c} \times \hat{\bm b}_{2}}{| \hat{\bm s}_{c} \times \hat{\bm b}_{2}|}
+\end{equation}
+As $ \hat{\bm s}_{c}$ cannot both be aligned with $\hat{\bm b}_{1}$ and $\hat{\bm b}_{2}$, this algorithm determines a unique eigen axis $\hat{\bm e}_{180}$ for the case that the principal rotation angle is close to 180 degrees, or $\pi - \Phi < \epsilon$.  This special case eigen axis is only computed once in the module reset routine.
  
  

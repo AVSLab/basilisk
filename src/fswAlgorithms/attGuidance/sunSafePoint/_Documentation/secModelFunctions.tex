@@ -7,6 +7,8 @@
 	\item \textbf{Bring spacecraft to rest}: The reference frame is assumed to be at rest and non-accelerating.  
 	
 	\item \textbf{Robust to no sun heading information}: If the sun heading vector is not available, then the attitude feedback is turned off by zeroing $\bm\sigma_{B/R}$.  Instead of driving the body rates to zero, the body rates are driven to a prescribed $\bm\omega_{R/N}$ vector.  This allow the spacecraft to search for the sun and covers the case if some sun sensors are offline.  
+	
+	\item \textbf{Robust to collinear observation vector}:  The module must handle the cases where the commanded body relative vector and the sun direction vectors are nearly collinear. 
 \end{itemize}
 
 \section{Module Assumptions and Limitations}

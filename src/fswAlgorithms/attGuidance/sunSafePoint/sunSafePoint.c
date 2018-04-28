@@ -20,6 +20,7 @@
 #include "attGuidance/sunSafePoint/sunSafePoint.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
+#include "simulation/utilities/bsk_Print.h"
 #include <string.h>
 #include <math.h>
 
@@ -64,6 +65,22 @@ void CrossInit_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t moduleID)
  */
 void Reset_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
+    double v1[3];
+
+    /* compute an Eigen axis orthogonal to sHatBdyCmd */
+    if (v3Norm(ConfigData->sHatBdyCmd)  < 0.1) {
+        BSK_PRINT(MSG_ERROR,"The module vector sHatBdyCmd is not setup as a unit vector [%f, %f %f]",
+                  ConfigData->sHatBdyCmd[0], ConfigData->sHatBdyCmd[1], ConfigData->sHatBdyCmd[2]);
+    } else {
+        v3Set(1., 0., 0., v1);
+        v3Normalize(ConfigData->sHatBdyCmd, ConfigData->sHatBdyCmd);    /* ensure that this vector is a unit vector */
+        v3Cross(ConfigData->sHatBdyCmd, v1, ConfigData->eHat180_B);
+        if (v3Norm(ConfigData->eHat180_B) < 0.1) {
+            v3Set(0., 1., 0., v1);
+            v3Cross(ConfigData->sHatBdyCmd, v1, ConfigData->eHat180_B);
+        }
+        v3Normalize(ConfigData->eHat180_B, ConfigData->eHat180_B);
+    }
 
     return;
 }
@@ -81,9 +98,9 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
     uint64_t clockTime;
     uint32_t readSize;
     double ctSNormalized;
-    double e_hat[3];
-    double sigma_BR[3];
-    double omega_BN_B[3];
+    double sNorm;                   /*!< --- Norm of measured direction vector */
+    double e_hat[3];                /*!< --- Eigen Axis */
+    double omega_BN_B[3];           /*!< r/s inertial body angular velocity vector in B frame components */
     IMUSensorBodyFswMsg LocalIMUData;
     /*! Begin method steps*/
     /*! - Read the current sun body vector estimate*/
@@ -94,19 +111,34 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
     v3Copy(LocalIMUData.AngVelBody, omega_BN_B);
 
     /*! - Compute the current error vector if it is valid*/
-    if(v3Norm(navMsg.vehSunPntBdy) > ConfigData->minUnitMag)
+    sNorm = v3Norm(navMsg.vehSunPntBdy);
+    if(sNorm > ConfigData->minUnitMag)
     {
         /* a good sun direction vector is available */
-        ctSNormalized = v3Dot(ConfigData->sHatBdyCmd, navMsg.vehSunPntBdy);
+        ctSNormalized = v3Dot(ConfigData->sHatBdyCmd, navMsg.vehSunPntBdy)/sNorm;
         ctSNormalized = fabs(ctSNormalized) > 1.0 ?
         ctSNormalized/fabs(ctSNormalized) : ctSNormalized;
         ConfigData->sunAngleErr = acos(ctSNormalized);
-        v3Cross(navMsg.vehSunPntBdy, ConfigData->sHatBdyCmd, e_hat);
-        v3Normalize(e_hat, ConfigData->sunMnvrVec);
-        v3Scale(tan(ConfigData->sunAngleErr*0.25), ConfigData->sunMnvrVec,
-                sigma_BR);
-        v3Copy(sigma_BR, ConfigData->attOut.sigma_BR);
-        MRPswitch(ConfigData->attOut.sigma_BR, 1.0, ConfigData->attOut.sigma_BR);
+
+        /*
+            Compute the heading error relative to the sun direction vector 
+         */
+        if (ConfigData->sunAngleErr < ConfigData->smallAngle) {
+            /* sun heading and desired body axis are essentially aligned.  Set attitude error to zero. */
+             v3SetZero(ConfigData->attOut.sigma_BR);
+        } else {
+            if (M_PI - ConfigData->sunAngleErr < ConfigData->smallAngle) {
+                /* the commanded body vector nearly is opposite the sun heading */
+                v3Copy(ConfigData->eHat180_B, e_hat);
+            } else {
+                /* normal case where sun and commanded body vectors are not aligned */
+                v3Cross(navMsg.vehSunPntBdy, ConfigData->sHatBdyCmd, e_hat);
+            }
+            v3Normalize(e_hat, ConfigData->sunMnvrVec);
+            v3Scale(tan(ConfigData->sunAngleErr*0.25), ConfigData->sunMnvrVec,
+                    ConfigData->attOut.sigma_BR);
+            MRPswitch(ConfigData->attOut.sigma_BR, 1.0, ConfigData->attOut.sigma_BR);
+        }
 
         /* rate tracking error are the body rates to bring spacecraft to rest */
         v3Copy(omega_BN_B, ConfigData->attOut.omega_BR_B);
@@ -115,6 +147,7 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
         /* no proper sun direction vector is available */
         v3SetZero(ConfigData->attOut.sigma_BR);
 
+        /* specify a body-fixed constant search rotation rate */
         v3Subtract(omega_BN_B, ConfigData->omega_RN_B, ConfigData->attOut.omega_BR_B);
         v3Copy(ConfigData->omega_RN_B, ConfigData->attOut.omega_RN_B);
     }

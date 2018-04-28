@@ -58,6 +58,9 @@ from Basilisk.utilities import macros as mc
 @pytest.mark.parametrize("case", [
      (1)        # sun is visible, vectors are not aligned
     ,(2)        # sun is not visible, vectors are not aligned
+    ,(3)        # sun is visible, vectors are aligned
+    ,(4)        # sun is visible, vectors are oppositely aligned
+    ,(5)        # sun is visible, vectors are oppositely aligned, and command sc is b1
 ])
 
 def test_module(show_plots, case):
@@ -97,18 +100,25 @@ def sunSafePointTestFunction(show_plots, case):
     moduleConfig.outputDataName = "outputName"
     moduleConfig.inputSunVecName = "inputSunVecName"
     moduleConfig.inputIMUDataName = "inputIMUDataName"
-    sHat_Cmd_B = [0,0,1]
+    sHat_Cmd_B = np.array([0.0, 0.0 ,1.0])
+    if (case == 5):
+        sHat_Cmd_B = np.array([1.0, 0.0, 0.0])
     moduleConfig.sHatBdyCmd = sHat_Cmd_B
     moduleConfig.minUnitMag = 0.1
-    moduleConfig.omega_RN_B = [0.0, 0.0, 0.1]
+    omega_RN_B_Search = np.array([0.0, 0.0, 0.1])
+    moduleConfig.omega_RN_B = omega_RN_B_Search
+    moduleConfig.smallAngle = 0.01*mc.D2R
 
     # Create input messages
     #
     inputSunVecData = simFswInterfaceMessages.NavAttIntMsg()  # Create a structure for the input message
-    sunVec_B = [1.0, 0.0, 0.0]
+    sunVec_B = np.array([1.0, 1.0, 0.0])
     if (case == 2): # no sun visible, providing a near zero norm direction vector */
         sunVec_B = [0.0, moduleConfig.minUnitMag/2, 0.0]
-
+    if (case == 3):
+        sunVec_B = sHat_Cmd_B
+    if (case == 4 or case == 5):
+        sunVec_B = -sHat_Cmd_B
     inputSunVecData.vehSunPntBdy = sunVec_B
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
@@ -116,7 +126,7 @@ def sunSafePointTestFunction(show_plots, case):
                                inputSunVecData)
 
     inputIMUData = fswMessages.IMUSensorBodyFswMsg()  # Create a structure for the input message
-    omega_BN_B = [0.01, 0.50, -0.2]
+    omega_BN_B = np.array([0.01, 0.50, -0.2])
     inputIMUData.AngVelBody = omega_BN_B
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
@@ -152,21 +162,41 @@ def sunSafePointTestFunction(show_plots, case):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
     # set the filtered output truth states
-    if (case == 1): # sun visible, vectors not aligned
+    if (case == 1):
         eHat = np.cross(sunVec_B,sHat_Cmd_B)
         eHat = eHat / np.linalg.norm(eHat)
-        Phi = np.arccos(np.dot(sunVec_B,sHat_Cmd_B))
+        Phi = np.arccos(np.dot(sunVec_B/np.linalg.norm(sunVec_B),sHat_Cmd_B))
         sigmaTrue = eHat * np.tan(Phi/4.0)
         trueVector = [
                     sigmaTrue.tolist(),
                     sigmaTrue.tolist(),
                     sigmaTrue.tolist()
                    ]
-    if (case == 2):  # sun not visible
+    if (case == 2 or case == 3):
         trueVector = [
             [0, 0, 0],
             [0, 0, 0],
             [0, 0, 0]
+        ]
+    if (case == 4):
+        eHat = np.cross(sHat_Cmd_B,np.array([1,0,0]))
+        eHat = eHat / np.linalg.norm(eHat)
+        Phi = np.arccos(np.dot(sunVec_B/np.linalg.norm(sunVec_B),sHat_Cmd_B))
+        sigmaTrue = eHat * np.tan(Phi/4.0)
+        trueVector = [
+                    sigmaTrue.tolist(),
+                    sigmaTrue.tolist(),
+                    sigmaTrue.tolist()
+               ]
+    if (case == 5):
+        eHat = np.cross(sHat_Cmd_B, np.array([0, 1, 0]))
+        eHat = eHat / np.linalg.norm(eHat)
+        Phi = np.arccos(np.dot(sunVec_B/np.linalg.norm(sunVec_B), sHat_Cmd_B))
+        sigmaTrue = eHat * np.tan(Phi / 4.0)
+        trueVector = [
+            sigmaTrue.tolist(),
+            sigmaTrue.tolist(),
+            sigmaTrue.tolist()
         ]
 
     # compare the module results to the truth values
@@ -189,17 +219,17 @@ def sunSafePointTestFunction(show_plots, case):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
     # set the filtered output truth states
-    if (case == 1):
+    if (case == 1 or case == 3 or case == 4 or case == 5):
         trueVector = [
-            omega_BN_B,
-            omega_BN_B,
-            omega_BN_B
+            omega_BN_B.tolist(),
+            omega_BN_B.tolist(),
+            omega_BN_B.tolist()
         ]
     if (case == 2):
         trueVector = [
-            (np.array(omega_BN_B) - moduleConfig.omega_RN_B).tolist(),
-            (np.array(omega_BN_B) - moduleConfig.omega_RN_B).tolist(),
-            (np.array(omega_BN_B) - moduleConfig.omega_RN_B).tolist()
+            (omega_BN_B - omega_RN_B_Search).tolist(),
+            (omega_BN_B - omega_RN_B_Search).tolist(),
+            (omega_BN_B - omega_RN_B_Search).tolist()
         ]
     # compare the module results to the truth values
     for i in range(0,len(trueVector)):
@@ -219,7 +249,7 @@ def sunSafePointTestFunction(show_plots, case):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
     # set the filtered output truth states
-    if (case == 1):
+    if (case == 1 or case == 3 or case == 4 or case == 5):
         trueVector = [
             [0.0, 0.0, 0.0],
             [0.0, 0.0, 0.0],
@@ -301,4 +331,4 @@ def sunSafePointTestFunction(show_plots, case):
 # stand-along python script
 #
 if __name__ == "__main__":
-    sunSafePointTestFunction(False, 1)
+    sunSafePointTestFunction(False, 5)
