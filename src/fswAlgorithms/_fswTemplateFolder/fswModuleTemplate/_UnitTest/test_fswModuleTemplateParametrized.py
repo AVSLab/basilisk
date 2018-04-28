@@ -246,6 +246,7 @@ def fswModuleTestFunction(show_plots, param1, param2):
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
+        print "Failed: " + moduleWrap.ModelTag
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
