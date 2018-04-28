@@ -29,6 +29,8 @@ import sys, os, inspect
 import numpy as np
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
 
 
 
@@ -54,8 +56,7 @@ from Basilisk.utilities import macros as mc
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("case", [
-     ("SUN_VISIBLE")
-    ,("SUN_HIDDEN")
+     (0)        # sun visible, vectors not aligned
 ])
 
 def test_module(show_plots, case):
@@ -155,6 +156,8 @@ def sunSafePointTestFunction(show_plots, case):
 
     # compare the module results to the truth values
     accuracy = 1e-12
+    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+
     for i in range(0,len(trueVector)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
@@ -223,6 +226,20 @@ def sunSafePointTestFunction(show_plots, case):
 #        plt.xlabel('Time [s]')
 #        plt.ylabel('Variable Description [unit]')
 #        plt.show()
+
+
+    #   print out success message if no error were found
+    snippentName = "passFail" + str(case)
+    if testFailCount == 0:
+        colorText = 'ForestGreen'
+        print "PASSED: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+
+
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

@@ -1,0 +1,11 @@
+% !TEX root = ./Basilisk-sunSafePoint-20180427.tex
+
+
+\section{Module Functions}
+\begin{itemize}
+	\item \textbf{Compute the attitude tracking error}: Determines the shortest rotation to align $\bm s$ and $\hat{\bm s}_{c}$, and computes the corresponding three-dimensional attitude difference
+	\item \textbf{Bring spacecraft to rest}: The reference frame is assumed to be at rest and non-accelerating.  
+\end{itemize}
+
+\section{Module Assumptions and Limitations}
+The module input vector $\bm s$ can be a vector of any length except for a zero-length vector.  The commanded body-relative unit direction vector ${\bm s}_{c}$ is assumed to be fixed relative to the body.  

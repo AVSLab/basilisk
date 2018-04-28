@@ -1,0 +1,15 @@
+% !TEX root = ./Basilisk-sunSafePoint-20180427.tex
+
+\section{User Guide}
+The module has 2 required input messages:
+\begin{itemize}
+	\item {\tt inputSunVecName} -- This message, of type {\tt NavAttIntMsg}, received the sun heading vector $\bm s$
+	\item {\tt inputIMUDataName} -- This message, of type {\tt IMUSensorBodyFswMsg}, received the inertial angular body rates $\bm \omega_{B/N}$
+\end{itemize}
+
+The module has the following parameter that can be configured:
+\begin{itemize}
+	\item {\tt sHatBdyCmd} -- [REQUIRED] This 3x1 array contains the commanded body-relative vector $\hat{\bm s}_{c}$ that is to be aligned with the sun heading $\bm s$
+	\item {\tt minUnitMag} -- This double contains the minimum norm value of $\bm s$ such that a tracking error attitude solution $\bm\sigma_{B/R}$ is still computed.  Default value is zero. 
+\end{itemize}
+
