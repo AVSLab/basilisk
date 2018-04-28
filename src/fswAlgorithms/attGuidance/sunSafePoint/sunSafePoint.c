@@ -57,6 +57,17 @@ void CrossInit_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t moduleID)
     
 }
 
+/*! This method performs a complete reset of the module.  Local module variables that retain
+ time varying states between function calls are reset to their default values.
+ @return void
+ @param ConfigData The configuration data associated with the guidance module
+ */
+void Reset_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+{
+
+    return;
+}
+
 /*! This method takes the estimated body-observed sun vector and computes the
  current attitude/attitude rate errors to pass on to control.
  @return void

@@ -135,7 +135,10 @@ def sunSafePointTestFunction(show_plots, case):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(mc.sec2nano(1.))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(mc.sec2nano(1.))  # seconds to stop simulation
+
+    # run the Reset() routine
+    moduleWrap.Reset(0)     # this module reset function needs a time input (in NanoSeconds)
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()

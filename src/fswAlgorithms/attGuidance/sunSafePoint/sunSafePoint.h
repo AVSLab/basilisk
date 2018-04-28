@@ -55,7 +55,8 @@ extern "C" {
     void CrossInit_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t moduleID);
     void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
         uint64_t moduleID);
-    
+    void Reset_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+
 #ifdef __cplusplus
 }
 #endif
