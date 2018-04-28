@@ -22,6 +22,7 @@ Note that this module does not establish a unique sun-pointing reference frame. 
 
 
 \subsection{Equations}
+\subsubsection{Good Sun Direction Vector Case}
 In the following mathematical developments all vectors are assumed to be taken with respect to a body-fixed frame $\cal B$.  The attitude of the body $\cal B$ relative to the reference frame $\cal R$ is written as a principal rotation from $\cal R$ to $\cal B$.  Thus, the associated principal rotation vector $\hat{\bm e}$ is
 \begin{equation}
 	\label{eq:ssp:1}
@@ -54,4 +55,8 @@ Finally, the attitude guidance message must specify the inertial reference frame
 	\bm\omega_{R/N} &= \bm 0 \\
 	\dot{\bm \omega}_{R/N} &= \bm 0
 \end{align}
+
+\subsubsection{No Sun Direction Vector Case}
+ If $\Phi$ is less then then module parameter {\tt minUnitMag}, then it is assumed that no good sun heading vector is available and the attitude tracking error $\bm\sigma_{B/R}$ is set to zero.  
+
  

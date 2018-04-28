@@ -83,6 +83,7 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
     /*! - Compute the current error vector if it is valid*/
     if(v3Norm(navMsg.vehSunPntBdy) > ConfigData->minUnitMag)
     {
+        /* a good sun direction vector is available */
         ctSNormalized = v3Dot(ConfigData->sHatBdyCmd, navMsg.vehSunPntBdy);
         ctSNormalized = fabs(ctSNormalized) > 1.0 ?
         ctSNormalized/fabs(ctSNormalized) : ctSNormalized;
@@ -93,6 +94,9 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
                 sigma_BR);
         v3Copy(sigma_BR, ConfigData->attOut.sigma_BR);
         MRPswitch(ConfigData->attOut.sigma_BR, 1.0, ConfigData->attOut.sigma_BR);
+    } else {
+        /* no proper sun direction vector is available */
+        v3SetZero(ConfigData->attOut.sigma_BR);
     }
     v3Copy(LocalIMUData.AngVelBody, ConfigData->attOut.omega_BR_B);
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttGuidFswMsg),

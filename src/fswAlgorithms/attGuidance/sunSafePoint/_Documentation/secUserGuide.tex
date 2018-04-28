@@ -10,6 +10,6 @@ The module has 2 required input messages:
 The module has the following parameter that can be configured:
 \begin{itemize}
 	\item {\tt sHatBdyCmd} -- [REQUIRED] This 3x1 array contains the commanded body-relative vector $\hat{\bm s}_{c}$ that is to be aligned with the sun heading $\bm s$
-	\item {\tt minUnitMag} -- This double contains the minimum norm value of $\bm s$ such that a tracking error attitude solution $\bm\sigma_{B/R}$ is still computed.  Default value is zero. 
+	\item {\tt minUnitMag} -- This double contains the minimum norm value of $\bm s$ such that a tracking error attitude solution $\bm\sigma_{B/R}$ is still computed.  If the norm is less than this, then $\bm\sigma_{B/R}$ is set to zero.    The default {\tt minUnitMag} value is zero. 
 \end{itemize}
 

@@ -56,7 +56,8 @@ from Basilisk.utilities import macros as mc
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("case", [
-     (0)        # sun visible, vectors not aligned
+     (1)        # sun visible, vectors not aligned
+    ,(2)        # sun is not visible, vectors not aligned
 ])
 
 def test_module(show_plots, case):
@@ -104,6 +105,9 @@ def sunSafePointTestFunction(show_plots, case):
     #
     inputSunVecData = simFswInterfaceMessages.NavAttIntMsg()  # Create a structure for the input message
     sunVec_B = [1.0, 0.0, 0.0]
+    if (case == 2): # no sun visible, providing a near zero norm direction vector */
+        sunVec_B = [0.0, moduleConfig.minUnitMag/2, 0.0]
+
     inputSunVecData.vehSunPntBdy = sunVec_B
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
@@ -144,15 +148,22 @@ def sunSafePointTestFunction(show_plots, case):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
     # set the filtered output truth states
-    eHat = np.cross(sunVec_B,sHat_Cmd_B)
-    eHat = eHat / np.linalg.norm(eHat)
-    Phi = np.arccos(np.dot(sunVec_B,sHat_Cmd_B))
-    sigmaTrue = eHat * np.tan(Phi/4.0)
-    trueVector = [
-                sigmaTrue.tolist(),
-                sigmaTrue.tolist(),
-                sigmaTrue.tolist()
-               ]
+    if (case == 1): # sun visible, vectors not aligned
+        eHat = np.cross(sunVec_B,sHat_Cmd_B)
+        eHat = eHat / np.linalg.norm(eHat)
+        Phi = np.arccos(np.dot(sunVec_B,sHat_Cmd_B))
+        sigmaTrue = eHat * np.tan(Phi/4.0)
+        trueVector = [
+                    sigmaTrue.tolist(),
+                    sigmaTrue.tolist(),
+                    sigmaTrue.tolist()
+                   ]
+    if (case == 2):  # sun not visible
+        trueVector = [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]
+        ]
 
     # compare the module results to the truth values
     accuracy = 1e-12
@@ -181,7 +192,6 @@ def sunSafePointTestFunction(show_plots, case):
         [0.0, 0.0, 0.0]
     ]
     # compare the module results to the truth values
-    accuracy = 1e-12
     for i in range(0,len(trueVector)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
@@ -205,7 +215,6 @@ def sunSafePointTestFunction(show_plots, case):
                ]
 
     # compare the module results to the truth values
-    accuracy = 1e-12
     for i in range(0,len(trueVector)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
@@ -251,4 +260,4 @@ def sunSafePointTestFunction(show_plots, case):
 # stand-along python script
 #
 if __name__ == "__main__":
-    sunSafePointTestFunction(False, "SUN_VISIBLE")
+    sunSafePointTestFunction(False, 1)
