@@ -56,8 +56,8 @@ from Basilisk.utilities import macros as mc
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("case", [
-     (1)        # sun visible, vectors not aligned
-    ,(2)        # sun is not visible, vectors not aligned
+     (1)        # sun is visible, vectors are not aligned
+    ,(2)        # sun is not visible, vectors are not aligned
 ])
 
 def test_module(show_plots, case):
@@ -100,6 +100,7 @@ def sunSafePointTestFunction(show_plots, case):
     sHat_Cmd_B = [0,0,1]
     moduleConfig.sHatBdyCmd = sHat_Cmd_B
     moduleConfig.minUnitMag = 0.1
+    moduleConfig.omega_RN_B = [0.0, 0.0, 0.1]
 
     # Create input messages
     #
@@ -178,6 +179,35 @@ def sunSafePointTestFunction(show_plots, case):
                                 str(moduleOutput[i,0] * mc.NANO2SEC) +
                                 "sec\n")
 
+    #
+    # check omega_BR_B
+    #
+    moduleOutputName = "omega_BR_B"
+    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
+                                                  range(3))
+    # set the filtered output truth states
+    if (case == 1):
+        trueVector = [
+            omega_BN_B,
+            omega_BN_B,
+            omega_BN_B
+        ]
+    if (case == 2):
+        trueVector = [
+            (np.array(omega_BN_B) - moduleConfig.omega_RN_B).tolist(),
+            (np.array(omega_BN_B) - moduleConfig.omega_RN_B).tolist(),
+            (np.array(omega_BN_B) - moduleConfig.omega_RN_B).tolist()
+        ]
+    # compare the module results to the truth values
+    for i in range(0,len(trueVector)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
+                                moduleOutputName + " unit test at t=" +
+                                str(moduleOutput[i,0] * mc.NANO2SEC) +
+                                "sec\n")
+
 
     #
     # check omega_RN_B
@@ -186,11 +216,18 @@ def sunSafePointTestFunction(show_plots, case):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
     # set the filtered output truth states
-    trueVector = [
-        [0.0, 0.0, 0.0],
-        [0.0, 0.0, 0.0],
-        [0.0, 0.0, 0.0]
-    ]
+    if (case == 1):
+        trueVector = [
+            [0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0]
+        ]
+    if (case == 2):
+        trueVector = [
+            moduleConfig.omega_RN_B,
+            moduleConfig.omega_RN_B,
+            moduleConfig.omega_RN_B
+        ]
     # compare the module results to the truth values
     for i in range(0,len(trueVector)):
         # check a vector values
@@ -245,6 +282,7 @@ def sunSafePointTestFunction(show_plots, case):
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
+        print "FAILED: " + moduleWrap.ModelTag
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

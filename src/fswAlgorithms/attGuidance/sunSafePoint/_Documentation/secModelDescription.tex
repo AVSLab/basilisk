@@ -57,6 +57,18 @@ Finally, the attitude guidance message must specify the inertial reference frame
 \end{align}
 
 \subsubsection{No Sun Direction Vector Case}
- If $\Phi$ is less then then module parameter {\tt minUnitMag}, then it is assumed that no good sun heading vector is available and the attitude tracking error $\bm\sigma_{B/R}$ is set to zero.  
+ If $\Phi$ is less then then module parameter {\tt minUnitMag}, then it is assumed that no good sun heading vector is available and the attitude tracking error $\bm\sigma_{B/R}$ is set to zero.   
+ 
+ Further, if the sun is not visible, the module allows for a non-zero body rate to be prescribed.  This allows the spacecraft to engage in a constant rate tumble specified through the module configuration vector {\tt omega\_RN\_B}.  In this case the tracking error rate is evaluate through
+ \begin{equation}
+ 	\label{eq:ssp:6}
+	\bm\omega_{B/R} = \bm\omega_{B/N} - \bm\omega_{R/N}
+ \end{equation}
+ and the output message reference rate is set equal to the prescribed $\bm\omega_{R/N}$
 
+ 
+ 
+ 
+ 
+ 
  

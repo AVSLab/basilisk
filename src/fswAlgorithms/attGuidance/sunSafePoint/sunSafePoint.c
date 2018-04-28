@@ -72,6 +72,7 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
     double ctSNormalized;
     double e_hat[3];
     double sigma_BR[3];
+    double omega_BN_B[3];
     IMUSensorBodyFswMsg LocalIMUData;
     /*! Begin method steps*/
     /*! - Read the current sun body vector estimate*/
@@ -79,7 +80,8 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
                 sizeof(NavAttIntMsg), (void*) &(navMsg), moduleID);
     ReadMessage(ConfigData->imuMsgID, &clockTime, &readSize,
                 sizeof(IMUSensorBodyFswMsg), (void*) &(LocalIMUData), moduleID);
-    
+    v3Copy(LocalIMUData.AngVelBody, omega_BN_B);
+
     /*! - Compute the current error vector if it is valid*/
     if(v3Norm(navMsg.vehSunPntBdy) > ConfigData->minUnitMag)
     {
@@ -94,11 +96,19 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
                 sigma_BR);
         v3Copy(sigma_BR, ConfigData->attOut.sigma_BR);
         MRPswitch(ConfigData->attOut.sigma_BR, 1.0, ConfigData->attOut.sigma_BR);
+
+        /* rate tracking error are the body rates to bring spacecraft to rest */
+        v3Copy(omega_BN_B, ConfigData->attOut.omega_BR_B);
+        v3SetZero(ConfigData->attOut.omega_RN_B);
     } else {
         /* no proper sun direction vector is available */
         v3SetZero(ConfigData->attOut.sigma_BR);
+
+        v3Subtract(omega_BN_B, ConfigData->omega_RN_B, ConfigData->attOut.omega_BR_B);
+        v3Copy(ConfigData->omega_RN_B, ConfigData->attOut.omega_RN_B);
     }
-    v3Copy(LocalIMUData.AngVelBody, ConfigData->attOut.omega_BR_B);
+
+    /* write the Guidance output message */
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttGuidFswMsg),
                  (void*) &(ConfigData->attOut), moduleID);
     
