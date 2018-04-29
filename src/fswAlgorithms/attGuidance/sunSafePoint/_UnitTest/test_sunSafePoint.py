@@ -97,9 +97,9 @@ def sunSafePointTestFunction(show_plots, case):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.outputDataName = "outputName"
-    moduleConfig.inputSunVecName = "inputSunVecName"
-    moduleConfig.inputIMUDataName = "inputIMUDataName"
+    moduleConfig.attGuidanceOutMsgName = "outputName"
+    moduleConfig.sunDirectionInMsgName = "inputSunVecName"
+    moduleConfig.imuInMsgName = "inputIMUDataName"
     sHat_Cmd_B = np.array([0.0, 0.0 ,1.0])
     if (case == 5):
         sHat_Cmd_B = np.array([1.0, 0.0, 0.0])
@@ -122,7 +122,7 @@ def sunSafePointTestFunction(show_plots, case):
     inputSunVecData.vehSunPntBdy = sunVec_B
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
-                               moduleConfig.inputSunVecName,
+                               moduleConfig.sunDirectionInMsgName,
                                inputSunVecData)
 
     inputIMUData = fswMessages.IMUSensorBodyFswMsg()  # Create a structure for the input message
@@ -130,13 +130,13 @@ def sunSafePointTestFunction(show_plots, case):
     inputIMUData.AngVelBody = omega_BN_B
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
-                               moduleConfig.inputIMUDataName,
+                               moduleConfig.imuInMsgName,
                                inputIMUData)
 
 
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.attGuidanceOutMsgName, testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -159,7 +159,7 @@ def sunSafePointTestFunction(show_plots, case):
     # check sigma_BR
     #
     moduleOutputName = "sigma_BR"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
+    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attGuidanceOutMsgName + '.' + moduleOutputName,
                                                   range(3))
     # set the filtered output truth states
     if (case == 1):
@@ -216,7 +216,7 @@ def sunSafePointTestFunction(show_plots, case):
     # check omega_BR_B
     #
     moduleOutputName = "omega_BR_B"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
+    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attGuidanceOutMsgName + '.' + moduleOutputName,
                                                   range(3))
     # set the filtered output truth states
     if (case == 1 or case == 3 or case == 4 or case == 5):
@@ -246,7 +246,7 @@ def sunSafePointTestFunction(show_plots, case):
     # check omega_RN_B
     #
     moduleOutputName = "omega_RN_B"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
+    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attGuidanceOutMsgName + '.' + moduleOutputName,
                                                   range(3))
     # set the filtered output truth states
     if (case == 1 or case == 3 or case == 4 or case == 5):
@@ -275,7 +275,7 @@ def sunSafePointTestFunction(show_plots, case):
     # check domega_RN_B
     #
     moduleOutputName = "domega_RN_B"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
+    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attGuidanceOutMsgName + '.' + moduleOutputName,
                                                   range(3))
     # set the filtered output truth states
     trueVector = [

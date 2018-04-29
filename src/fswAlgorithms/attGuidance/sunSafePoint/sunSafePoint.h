@@ -33,9 +33,9 @@
 /*! @brief Top level structure for the sun-safe attitude guidance routine.
  This algorithm is intended to be incredibly simple and robust*/
 typedef struct {
-    char outputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
-    char inputSunVecName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
-    char inputIMUDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the incoming IMU message*/
+    char attGuidanceOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
+    char sunDirectionInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
+    char imuInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the incoming IMU message*/
     double minUnitMag;       /*!< -- The minimally acceptable norm of sun body vector*/
     double sunAngleErr;      /*!< rad The current error between cmd and obs sun angle*/
     double smallAngle;       /*!< rad An angle value that specifies what is near 0 or 180 degrees */
@@ -43,10 +43,10 @@ typedef struct {
     double sunMnvrVec[3];    /*!< -- The eigen axis that we want to rotate on to get sun*/
     double sHatBdyCmd[3];    /*!< -- Desired body vector to point at the sun*/
     double omega_RN_B[3];    /*!< -- Desired body rate vector if no sun direction is available */
-    int32_t outputMsgID;     /*!< -- ID for the outgoing body estimate message*/
-    int32_t inputMsgID;      /*!< -- ID for the incoming CSS sensor message*/
-    int32_t imuMsgID;        /*!< -- ID for the incoming CSS sensor message*/
-    AttGuidFswMsg attOut;   /*!< -- The output data that we compute*/
+    int32_t attGuidanceOutMsgID;/*!< -- ID for the outgoing body estimate message*/
+    int32_t sunDirectionInMsgID;/*!< -- ID for the incoming CSS sensor message*/
+    int32_t imuInMsgID;        /*!< -- ID for the incoming IMU sensor message*/
+    AttGuidFswMsg attGuidanceOutBuffer;   /*!< -- The output data that we compute*/
 }sunSafePointConfig;
 
 #ifdef __cplusplus
