@@ -150,10 +150,10 @@ def cssWlsEstTestFunction(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, CSSWlsWrap, CSSWlsEstFSWConfig)
 
     # Initialize the WLS estimator configuration data
-    CSSWlsEstFSWConfig.InputDataName = "css_data_aggregate"
+    CSSWlsEstFSWConfig.cssSensorInMsgName = "css_data_aggregate"
     CSSWlsEstFSWConfig.navStateOutMsgName = "css_nav_sunHeading"
-    CSSWlsEstFSWConfig.UseWeights = False
-    CSSWlsEstFSWConfig.SensorUseThresh = 0.15
+    CSSWlsEstFSWConfig.useWeights = False
+    CSSWlsEstFSWConfig.sensorUseThresh = 0.15
 
     CSSOrientationList = [
         [0.70710678118654746, -0.5, 0.5],
@@ -180,7 +180,7 @@ def cssWlsEstTestFunction(show_plots):
     cssDataMsg = simFswInterfaceMessages.CSSArraySensorIntMsg()
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
-                               CSSWlsEstFSWConfig.InputDataName,
+                               CSSWlsEstFSWConfig.cssSensorInMsgName,
                                cssDataMsg)
 
     angleFailCriteria = 17.5 * math.pi / 180.0  # Get 95% effective charging in this case
@@ -208,13 +208,13 @@ def cssWlsEstTestFunction(show_plots):
     truthData = []
     for testVec in TestVectors:
         if (stepCount > 1):  # Doing this to test permutations and get code coverage
-            CSSWlsEstFSWConfig.UseWeights = True
+            CSSWlsEstFSWConfig.useWeights = True
 
         # Get observation data based on sun pointing and CSS orientation data
         cssDataMsg.CosValue = createCosList(testVec, CSSOrientationList)
 
         # Write in the observation data to the input message
-        unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.InputDataName,
+        unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.cssSensorInMsgName,
                                               cssDataMsg.getStructSize(),
                                               0,
                                               cssDataMsg)
@@ -237,7 +237,7 @@ def cssWlsEstTestFunction(show_plots):
         testFailCount += checksHatAccuracy(testVec, sHatEstUse, angleFailCriteria,
                                            unitTestSim)
         testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse,
-                                                numActiveFailCriteria, CSSWlsEstFSWConfig.SensorUseThresh)
+                                                numActiveFailCriteria, CSSWlsEstFSWConfig.sensorUseThresh)
 
         # Pop truth state onto end of array for plotting purposes
         currentRow = [sHatEstUse[0, 0]]
@@ -256,12 +256,10 @@ def cssWlsEstTestFunction(show_plots):
     cssDataMsg.CosValue = createCosList(doubleTestVec, CSSOrientationList)
 
     # Write in double coverage conditions and ensure that we get correct outputs
-    unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.InputDataName,
+    unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.cssSensorInMsgName,
                                           cssDataMsg.getStructSize(),
                                           0,
                                           cssDataMsg)
-    # unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.InputDataName, 8*8, 0,
-    #    cssDataMsg);
     unitTestSim.ConfigureStopTime(int((stepCount + 1) * 1E9))
     unitTestSim.ExecuteSimulation()
     stepCount += 1
@@ -282,11 +280,11 @@ def cssWlsEstTestFunction(show_plots):
     testFailCount += checksHatAccuracy(doubleTestVec, sHatEstUse, angleFailCriteria,
                                        unitTestSim)
     testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse,
-                                            numActiveFailCriteria, CSSWlsEstFSWConfig.SensorUseThresh)
+                                            numActiveFailCriteria, CSSWlsEstFSWConfig.sensorUseThresh)
 
     # Same test as above, but zero first element to get to a single coverage case
     cssDataMsg.CosValue[0] = 0.0
-    unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.InputDataName,
+    unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.cssSensorInMsgName,
                                           cssDataMsg.getStructSize(),
                                           0,
                                           cssDataMsg)
@@ -300,7 +298,7 @@ def cssWlsEstTestFunction(show_plots):
     sHatEstUse = sHatEst[logLengthPrev + 1:, :]
     logLengthPrev = sHatEst.shape[0]
     testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse,
-                                            numActiveFailCriteria, CSSWlsEstFSWConfig.SensorUseThresh)
+                                            numActiveFailCriteria, CSSWlsEstFSWConfig.sensorUseThresh)
     currentRow = [sHatEstUse[0, 0]]
     currentRow.extend(doubleTestVec)
     truthData.append(currentRow)
@@ -311,7 +309,7 @@ def cssWlsEstTestFunction(show_plots):
     # Same test as above, but zero first and fourth elements to get to zero coverage
     cssDataMsg.CosValue[0] = 0.0
     cssDataMsg.CosValue[3] = 0.0
-    unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.InputDataName,
+    unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.cssSensorInMsgName,
                                           cssDataMsg.getStructSize(),
                                           0,
                                           cssDataMsg)
@@ -321,7 +319,7 @@ def cssWlsEstTestFunction(show_plots):
     numActiveUse = numActive[logLengthPrev:, :]
     logLengthPrev = numActive.shape[0]
     testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse,
-                                            numActiveFailCriteria, CSSWlsEstFSWConfig.SensorUseThresh)
+                                            numActiveFailCriteria, CSSWlsEstFSWConfig.sensorUseThresh)
 
     # Format data for plotting
     truthData = numpy.array(truthData)
@@ -334,7 +332,7 @@ def cssWlsEstTestFunction(show_plots):
     # test the case where all CSS signals are zero
     #
     cssDataMsg.CosValue = numpy.zeros(len(CSSOrientationList))
-    unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.InputDataName,
+    unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.cssSensorInMsgName,
                                           cssDataMsg.getStructSize(),
                                           0,
                                           cssDataMsg)
