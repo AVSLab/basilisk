@@ -55,6 +55,16 @@ void CrossInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
         sizeof(CSSArraySensorIntMsg), moduleID);
 }
 
+/*! This method performs a complete reset of the module.  Local module variables that retain
+ time varying states between function calls are reset to their default values.
+ @return void
+ @param ConfigData The configuration data associated with the guidance module
+ */
+void Reset_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+{
+    return;
+}
+
 /*! This method computes a least squares fit with the given parameters.  It
  treats the inputs as though they were double dimensioned arrays but they
  are all singly dimensioned for ease of use

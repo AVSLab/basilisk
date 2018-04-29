@@ -200,6 +200,7 @@ def cssWlsEstTestFunction(show_plots):
 
     # Initialize test and then step through all of the test vectors in a loop
     unitTestSim.InitializeSimulation()
+    CSSWlsWrap.Reset(0)     # this module reset function needs a time input (in NanoSeconds)
 
     stepCount = 0
     logLengthPrev = 0
