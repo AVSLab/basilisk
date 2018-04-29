@@ -37,6 +37,9 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import sim_model
 from Basilisk.simulation import alg_contain
 from Basilisk.fswAlgorithms import cssWlsEst
+from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 
 
 # Function that takes a sun pointing vector and array of CSS normal vectors and 
@@ -55,12 +58,12 @@ def checkNumActiveAccuracy(measVec, numActiveUse, numActiveFailCriteria, thresh)
     testFailCount = 0
     #Iterate through measVec and find all valid signals
     for i in range(0,32):
-        obsVal = sim_model.doubleArray_getitem(measVec, i)
+        obsVal = measVec.CosValue[i]
         if(obsVal > thresh):
             numActivePred += 1
 
     #Iterate through the numActive array and sum up all numActive estimates
-    numActiveTotal = numpy.array([0])
+    numActiveTotal = numpy.array([0.])
     j=0
     while j < numActiveUse.shape[0]:
         numActiveTotal += numActiveUse[j, 1:]
@@ -102,12 +105,13 @@ def checksHatAccuracy(testVec, sHatEstUse, angleFailCriteria, TotalSim) :
     return testFailCount
 
 TestResults = {}
-
+unitProcessName = "TestProcess"  # arbitrary name (don't change)
+unitTaskName = "wlsEstTestTask"
 #Create a sim module as an empty container
-TotalSim = SimulationBaseClass.SimBaseClass() 
+unitTestSim = SimulationBaseClass.SimBaseClass()
 #Create test thread
-testProc = TotalSim.CreateNewProcess("TestProcess")
-testProc.addTask(TotalSim.CreateNewTask("wlsEstTestTask", int(1E8)))
+testProc = unitTestSim.CreateNewProcess(unitProcessName)
+testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, int(1E8)))
 
 #Construct algorithm and associated C++ container
 CSSWlsEstFSWConfig = cssWlsEst.CSSWLSConfig()
@@ -117,17 +121,14 @@ CSSWlsWrap = alg_contain.AlgContain(CSSWlsEstFSWConfig,
 CSSWlsWrap.ModelTag = "CSSWlsEst"
 
 #Add module to runtime call list
-TotalSim.AddModelToTask("wlsEstTestTask", CSSWlsWrap, CSSWlsEstFSWConfig)
+unitTestSim.AddModelToTask(unitTaskName, CSSWlsWrap, CSSWlsEstFSWConfig)
 
 #Initialize the WLS estimator configuration data
 CSSWlsEstFSWConfig.InputDataName = "css_data_aggregate"
-CSSWlsEstFSWConfig.OutputDataName = "css_nav_sunHeading"
+CSSWlsEstFSWConfig.navStateOutMsgName = "css_nav_sunHeading"
 CSSWlsEstFSWConfig.UseWeights = False
 CSSWlsEstFSWConfig.SensorUseThresh = 0.15
 
-CSSConfigElement = cssWlsEst.SingleCSSConfig()
-CSSConfigElement.CBias = 1.0
-CSSConfigElement.cssNoiseStd = 0.2
 CSSOrientationList = [
    [0.70710678118654746, -0.5, 0.5],
    [0.70710678118654746, -0.5, -0.5],
@@ -138,34 +139,30 @@ CSSOrientationList = [
    [-0.70710678118654746, 0, -0.70710678118654757],
    [-0.70710678118654746, -0.70710678118654757, 0.0],
 ]
-i=0
-#Initializing a 2D double array is hard with SWIG.  That's why there is this 
-#layer between the above list and the actual C variables.
+
+# set the CSS unit vectors
+totalCSSList = []
 for CSSHat in CSSOrientationList:
-   # SimulationBaseClass.SetCArray(CSSHat, 'double', CSSConfigElement.nHatBdy)
-   CSSConfigElement.nHatBdy = CSSHat
-   # cssWlsEst.CSSWlsConfigArray_setitem( CSSWlsEstFSWConfig.CSSData, i,
-   #    CSSConfigElement)
-   CSSWlsEstFSWConfig.CSSData[i] = CSSConfigElement
-   i += 1
+    CSSConfigElement = fswMessages.CSSConfigFswMsg()
+    CSSConfigElement.CBias = 1.0
+    CSSConfigElement.cssNoiseStd = 0.2
+    CSSConfigElement.nHatBdy = CSSHat
+    totalCSSList.append(CSSConfigElement)
+CSSWlsEstFSWConfig.CSSData = totalCSSList
 
-#Create input message and size it because the regular creator of that message 
-#is not part of the test.
-TotalSim.TotalSim.CreateNewMessage("TestProcess", CSSWlsEstFSWConfig.InputDataName, 8*8, 2)
-
-#Initialize input data for above message
-cssDataMsg = sim_model.new_doubleArray(32)
-i=0
-while(i<32):
-   sim_model.doubleArray_setitem(cssDataMsg, i, 0.0)   
-   i += 1
+#Initialize input message
+cssDataMsg = simFswInterfaceMessages.CSSArraySensorIntMsg()
+unitTestSupport.setMessage(unitTestSim.TotalSim,
+                           unitProcessName,
+                           CSSWlsEstFSWConfig.InputDataName,
+                           cssDataMsg)
 
 angleFailCriteria = 17.5*math.pi/180.0 #Get 95% effective charging in this case
 numActiveFailCriteria = 0.000001 #basically zero
 
 #Log the output message as well as the internal numACtiveCss variables
-TotalSim.TotalSim.logThisMessage("css_nav_sunHeading", int(1E8))
-TotalSim.AddVariableForLogging("CSSWlsEst.numActiveCss", int(1E8))
+unitTestSim.TotalSim.logThisMessage(CSSWlsEstFSWConfig.navStateOutMsgName, int(1E8))
+unitTestSim.AddVariableForLogging("CSSWlsEst.numActiveCss", int(1E8))
 
 #Initia test is all of the principal body axes
 TestVectors = [[-1.0, 0.0, 0.0],
@@ -176,7 +173,8 @@ TestVectors = [[-1.0, 0.0, 0.0],
                [0.0, 0.0, 1.0]]
 
 #Initialize test and then step through all of the test vectors in a loop
-TotalSim.InitializeSimulation()
+unitTestSim.InitializeSimulation()
+
 stepCount = 0
 logLengthPrev = 0
 testFailCount = 0
@@ -186,32 +184,36 @@ for testVec in TestVectors:
         CSSWlsEstFSWConfig.UseWeights = True
     nextRows = []
     #Get observation data based on sun pointing and CSS orientation data
-    cssDataList = createCosList(testVec, CSSOrientationList)
-    i=0
-    #Updating C-arrays is handled like this.  Kind of clunky, but so is C.
-    while(i < len(cssDataList)):
-       sim_model.doubleArray_setitem(cssDataMsg, i, cssDataList[i])
-       i += 1
+    cssDataMsg.CosValue = createCosList(testVec, CSSOrientationList)
+
+
     #Write in the observation data to the input message
-    TotalSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.InputDataName, 8*8, 0,
-       cssDataMsg)
+    unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.InputDataName,
+                               cssDataMsg.getStructSize(),
+                               0,
+                               cssDataMsg)
+
+
     #Increment the stop time to new termination value
-    TotalSim.ConfigureStopTime(int((stepCount+1)*1E9))
+    unitTestSim.ConfigureStopTime(int((stepCount+1)*1E9))
     #Execute simulation to current stop time
-    TotalSim.ExecuteSimulation()
+    unitTestSim.ExecuteSimulation()
     stepCount += 1
+
     #Pull logged data out into workspace for analysis
-    sHatEst = MessagingAccess.obtainMessageVector("css_nav_sunHeading", 'cssWlsEst',
-       'CSSWlsEstOut', int(stepCount*10), TotalSim.TotalSim, 'vehSunPntBdy', 'double', 0, 2, sim_model.logBuffer)
-    numActive = TotalSim.GetLogVariableData("CSSWlsEst.numActiveCss")
+    sHatEst = unitTestSim.pullMessageLogData(CSSWlsEstFSWConfig.navStateOutMsgName + '.vehSunPntBdy',
+                                                  range(3))
+
+    numActive = unitTestSim.GetLogVariableData("CSSWlsEst.numActiveCss")
     sHatEstUse = sHatEst[logLengthPrev:, :] #Only data for this subtest
     numActiveUse = numActive[logLengthPrev+1:, :] #Only data for this subtest
 
     #Check failure criteria and add test failures
-    testFailCount += checksHatAccuracy(testVec, sHatEstUse, angleFailCriteria, 
-       TotalSim)
+    testFailCount += checksHatAccuracy(testVec, sHatEstUse, angleFailCriteria,
+                                       unitTestSim)
     testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse, 
        numActiveFailCriteria, CSSWlsEstFSWConfig.SensorUseThresh)
+
     #Pop truth state onto end of array for plotting purposes
     currentRow = [sHatEstUse[0, 0]]
     currentRow.extend(testVec)
@@ -226,21 +228,21 @@ LonVal = 0.0
 LatVal = 40.68*math.pi/180.0
 doubleTestVec = [math.sin(LatVal), math.cos(LatVal)*math.sin(LonVal), 
    math.cos(LatVal)*math.cos(LonVal)]
-cssDataList = createCosList(doubleTestVec, CSSOrientationList)
-i=0
-while(i < len(cssDataList)):
-   sim_model.doubleArray_setitem(cssDataMsg, i, cssDataList[i])
-   i += 1
+cssDataMsg.CosValue = createCosList(doubleTestVec, CSSOrientationList)
 
 #Write in double coverage conditions and ensure that we get correct outputs
-TotalSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.InputDataName, 8*8, 0,
-   cssDataMsg);
-TotalSim.ConfigureStopTime(int((stepCount+1)*1E9))
-TotalSim.ExecuteSimulation()
+unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.InputDataName,
+                               cssDataMsg.getStructSize(),
+                               0,
+                               cssDataMsg)
+# unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.InputDataName, 8*8, 0,
+#    cssDataMsg);
+unitTestSim.ConfigureStopTime(int((stepCount+1)*1E9))
+unitTestSim.ExecuteSimulation()
 stepCount += 1
-sHatEst = MessagingAccess.obtainMessageVector("css_nav_sunHeading", 'cssWlsEst',
-   'CSSWlsEstOut', int(stepCount*10), TotalSim.TotalSim, 'vehSunPntBdy', 'double', 0, 2, sim_model.logBuffer)
-numActive = TotalSim.GetLogVariableData("CSSWlsEst.numActiveCss")
+sHatEst = unitTestSim.pullMessageLogData(CSSWlsEstFSWConfig.navStateOutMsgName + '.vehSunPntBdy',
+                                         range(3))
+numActive = unitTestSim.GetLogVariableData("CSSWlsEst.numActiveCss")
 sHatEstUse = sHatEst[logLengthPrev:, :]
 numActiveUse = numActive[logLengthPrev+1:, :]
 logLengthPrev = sHatEst.shape[0]
@@ -253,21 +255,23 @@ truthData.append(currentRow)
 
 #Check test criteria again
 testFailCount += checksHatAccuracy(doubleTestVec, sHatEstUse, angleFailCriteria,
-    TotalSim)
+                                   unitTestSim)
 testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse, 
    numActiveFailCriteria, CSSWlsEstFSWConfig.SensorUseThresh)
 
 #Same test as above, but zero first element to get to a single coverage case
-sim_model.doubleArray_setitem(cssDataMsg, 0, 0.0)
-TotalSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.InputDataName, 8*8, 0,
-   cssDataMsg)
-TotalSim.ConfigureStopTime(int((stepCount+1)*1E9))
-TotalSim.ExecuteSimulation()
+cssDataMsg.CosValue[0] = 0.0
+unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.InputDataName,
+                               cssDataMsg.getStructSize(),
+                               0,
+                               cssDataMsg)
+unitTestSim.ConfigureStopTime(int((stepCount+1)*1E9))
+unitTestSim.ExecuteSimulation()
 stepCount += 1
-numActive = TotalSim.GetLogVariableData("CSSWlsEst.numActiveCss")
+numActive = unitTestSim.GetLogVariableData("CSSWlsEst.numActiveCss")
 numActiveUse = numActive[logLengthPrev+1:, :]
-sHatEst = MessagingAccess.obtainMessageVector("css_nav_sunHeading", 'cssWlsEst',
-   'CSSWlsEstOut', int(stepCount*10), TotalSim.TotalSim, 'vehSunPntBdy', 'double', 0, 2, sim_model.logBuffer)
+sHatEst = unitTestSim.pullMessageLogData(CSSWlsEstFSWConfig.navStateOutMsgName + '.vehSunPntBdy',
+                                         range(3))
 sHatEstUse = sHatEst[logLengthPrev+1:, :]
 logLengthPrev = sHatEst.shape[0]
 testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse, 
@@ -280,13 +284,15 @@ currentRow.extend(doubleTestVec)
 truthData.append(currentRow)
 
 #Same test as above, but zero first and fourth elements to get to zero coverage
-sim_model.doubleArray_setitem(cssDataMsg, 0, 0.0)
-sim_model.doubleArray_setitem(cssDataMsg, 3, 0.0)
-TotalSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.InputDataName, 8*8, 0,
-   cssDataMsg);
-TotalSim.ConfigureStopTime(int((stepCount+1)*1E9))
-TotalSim.ExecuteSimulation()
-numActive = TotalSim.GetLogVariableData("CSSWlsEst.numActiveCss")
+cssDataMsg.CosValue[0] = 0.0
+cssDataMsg.CosValue[3] = 0.0
+unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.InputDataName,
+                               cssDataMsg.getStructSize(),
+                               0,
+                               cssDataMsg)
+unitTestSim.ConfigureStopTime(int((stepCount+1)*1E9))
+unitTestSim.ExecuteSimulation()
+numActive = unitTestSim.GetLogVariableData("CSSWlsEst.numActiveCss")
 numActiveUse = numActive[logLengthPrev:, :]
 logLengthPrev = sHatEst.shape[0]
 testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse, 
@@ -294,9 +300,9 @@ testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse,
 
 #Format data for plotting
 truthData = numpy.array(truthData)
-sHatEst = MessagingAccess.obtainMessageVector("css_nav_sunHeading", 'cssWlsEst',
-   'CSSWlsEstOut', int(stepCount*10), TotalSim.TotalSim, 'vehSunPntBdy', 'double', 0, 2, sim_model.logBuffer)
-numActive = TotalSim.GetLogVariableData("CSSWlsEst.numActiveCss")
+sHatEst = unitTestSim.pullMessageLogData(CSSWlsEstFSWConfig.navStateOutMsgName + '.vehSunPntBdy',
+                                         range(3))
+numActive = unitTestSim.GetLogVariableData("CSSWlsEst.numActiveCss")
 
 plt.figure(1)
 plt.plot(sHatEst[:,0]*1.0E-9, sHatEst[:,1], label='x-Sun')
