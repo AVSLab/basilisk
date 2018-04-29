@@ -157,23 +157,27 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
     
     if(ConfigData->numActiveCss == 0) /*! - If there is no sun, just quit*/
     {
-        return;
+        /* no CSS got a strong enough signal.  sun estimatin is not possible.  Return the zero vector instead */
+        v3SetZero(ConfigData->outputSunline.vehSunPntBdy);
+    } else {
+        /* at least one CSS got a strong enough signal.  Proceed with the sun heading estimation */
+        /*! - Configuration option to weight the measurements, otherwise set
+         weighting matrix to identity*/
+        if(ConfigData->UseWeights > 0)
+        {
+            mDiag(y, ConfigData->numActiveCss, W);
+        }
+        else
+        {
+            mSetIdentity(W, ConfigData->numActiveCss, ConfigData->numActiveCss);
+        }
+
+        /*! - Get least squares fit for sun pointing vector*/
+        status = computeWlsmn(ConfigData->numActiveCss, H, W, y,
+                              ConfigData->outputSunline.vehSunPntBdy);
+        v3Normalize(ConfigData->outputSunline.vehSunPntBdy, ConfigData->outputSunline.vehSunPntBdy);
     }
-    /*! - Configuration option to weight the measurements, otherwise set
-     weighting matrix to identity*/
-    if(ConfigData->UseWeights > 0)
-    {
-        mDiag(y, ConfigData->numActiveCss, W);
-    }
-    else
-    {
-        mSetIdentity(W, ConfigData->numActiveCss, ConfigData->numActiveCss);
-    }
-    
-    /*! - Get least squares fit for sun pointing vector*/
-    status = computeWlsmn(ConfigData->numActiveCss, H, W, y,
-                          ConfigData->outputSunline.vehSunPntBdy);
-    v3Normalize(ConfigData->outputSunline.vehSunPntBdy, ConfigData->outputSunline.vehSunPntBdy);
+
     WriteMessage(ConfigData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
                  &(ConfigData->outputSunline), moduleID);
     return;

@@ -208,7 +208,7 @@ def cssWlsEstTestFunction(show_plots):
     for testVec in TestVectors:
         if (stepCount > 1):  # Doing this to test permutations and get code coverage
             CSSWlsEstFSWConfig.UseWeights = True
-        nextRows = []
+
         # Get observation data based on sun pointing and CSS orientation data
         cssDataMsg.CosValue = createCosList(testVec, CSSOrientationList)
 
@@ -318,7 +318,7 @@ def cssWlsEstTestFunction(show_plots):
     unitTestSim.ExecuteSimulation()
     numActive = unitTestSim.GetLogVariableData("CSSWlsEst.numActiveCss")
     numActiveUse = numActive[logLengthPrev:, :]
-    logLengthPrev = sHatEst.shape[0]
+    logLengthPrev = numActive.shape[0]
     testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse,
                                             numActiveFailCriteria, CSSWlsEstFSWConfig.SensorUseThresh)
 
@@ -327,6 +327,33 @@ def cssWlsEstTestFunction(show_plots):
     sHatEst = unitTestSim.pullMessageLogData(CSSWlsEstFSWConfig.navStateOutMsgName + '.vehSunPntBdy',
                                              range(3))
     numActive = unitTestSim.GetLogVariableData("CSSWlsEst.numActiveCss")
+
+
+    #
+    # test the case where all CSS signals are zero
+    #
+    cssDataMsg.CosValue = numpy.zeros(len(CSSOrientationList))
+    unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.InputDataName,
+                                          cssDataMsg.getStructSize(),
+                                          0,
+                                          cssDataMsg)
+    unitTestSim.ConfigureStopTime(int((stepCount + 2) * 1E9))
+    unitTestSim.ExecuteSimulation()
+    sHatEstZero = unitTestSim.pullMessageLogData(CSSWlsEstFSWConfig.navStateOutMsgName + '.vehSunPntBdy',
+                                             range(3))
+    sHatEstZeroUse = sHatEstZero[logLengthPrev + 1:, :]
+
+    trueVector = [[0.0, 0.0, 0.0]]*len(sHatEstZeroUse)
+    for i in range(0,len(trueVector)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqual(sHatEstZeroUse[i],trueVector[i],3,1e-12):
+            testFailCount += 1
+            testMessages.append("FAILED: " + CSSWlsWrap.ModelTag + " Module failed " +
+                                CSSWlsEstFSWConfig.navStateOutMsgName + " unit test at t=" +
+                                str(sHatEstZeroUse[i,0] * macros.NANO2SEC) +
+                                "sec\n")
+
+
 
     if show_plots:
         plt.figure(1)
