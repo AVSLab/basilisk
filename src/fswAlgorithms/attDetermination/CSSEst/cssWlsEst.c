@@ -50,17 +50,9 @@ void SelfInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
  */
 void CrossInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
 {
-    VehicleConfigFswMsg localConfigData;
-    uint64_t writeTime;
-    uint32_t writeSize;
     /*! - Loop over the number of sensors and find IDs for each one */
     ConfigData->InputMsgID = subscribeToMessage(ConfigData->InputDataName,
         sizeof(CSSArraySensorIntMsg), moduleID);
-    ConfigData->InputPropsID = subscribeToMessage(ConfigData->InputPropsName,
-        sizeof(VehicleConfigFswMsg), moduleID);
-    ReadMessage(ConfigData->InputPropsID, &writeTime, &writeSize,
-                sizeof(VehicleConfigFswMsg), &localConfigData, moduleID);
-    
 }
 
 /*! This method computes a least squares fit with the given parameters.  It
