@@ -1,24 +1,59 @@
-\documentclass[]{LASPreport}
+% README file for moduleDocumentationTemplate TeX template.
+% This template should be used to document all Basilisk modules.
+% Updated 20170711 - S. Carnahan
+%
+%-Copy the contents of this folder to your own _Documentation folder
+%
+%-Rename the Basilisk-moduleDocumentationTemplate.tex appropriately
+%
+% All edits should be made in one of:
+% sec_modelAssumptionsLimitations.tex
+% sec_modelDescription.tex
+% sec_modelFunctions.tex
+% sec_revisionTable.tex
+% sec_testDescription.tex
+% sec_testParameters.tex
+% sec_testResults.tex
+% sec_user_guide.tex
+%
+%-Some rules about referencing within the document:
+%1. If writing the suer guide, assume the module description is present
+%2. If writing the validation section, assume the module features section is present
+%3. Make no other assumptions about any sections being present. This allow for sections of the document to be used elsewhere without breaking.
 
-\usepackage[usenames,dvipsnames]{xcolor}
-\usepackage{hyperref}
+%In order to import some of these sections into a document in a different directory:
+%\usepackage{import}
+%Then, the sections are called with \subimport{relative path}{file} in order to \input{file} using the right relative path.
+%\import{full path}{file} can also be used if absolute paths are preferred over relative paths.
 
-\newcommand{\SubSystem}{ADCS}
-\newcommand{\SERnumber}{ADCS Coarse Sun Sensor Sun Point Estimation Unit Test}
-\newcommand{\AgileRevisionNumber}{N/A}
-\newcommand{\subject}{Unit Test Results for CSS Sun Point Estimation}
-\newcommand{\status}{Initial Test Results}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\documentclass[]{BasiliskReportMemo}
+
+\usepackage{cite}
+\usepackage{AVS}
+\usepackage{float} %use [H] to keep tables where you put them
+\usepackage{array} %easy control of text in tables
+\usepackage{graphicx}
+\bibliographystyle{plain}
+
+
+\newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
+
+
+\newcommand{\ModuleName}{CSSWlsEst}
+\newcommand{\subject}{Weight Least-Squares Minimum-Norm Coarse Sun Heading Estimator}
+\newcommand{\status}{Released}
 \newcommand{\preparer}{S. Piggott}
-\newcommand{\summary}{
-   This is a report documenting the results of the unit test performed for the 
-   coarse sun sensor sun point vector estimmation algorithm.}
-
+\newcommand{\summary}{This is a report documenting the results of the unit test performed for the 
+   coarse sun sensor sun point vector estimation algorithm.}
 
 \begin{document}
 
-
 \makeCover
-
 
 %
 %	enter the revision documentation here
@@ -27,22 +62,29 @@
 \pagestyle{empty}
 {\renewcommand{\arraystretch}{2}
 \noindent
-\begin{longtable}{|p{0.5in}|p{4.5in}|p{1.14in}|}
+\begin{longtable}{|p{0.5in}|p{3.5in}|p{1.07in}|p{0.9in}|}
 \hline
-{\bfseries Rev}: & {\bfseries Change Description} & {\bfseries By} \\
+{\bfseries Rev} & {\bfseries Change Description} & {\bfseries By}& {\bfseries Date} \\
 \hline
-Draft & Initial Revision & S. Piggott \\
+1.0 & Initial Documentation & S. Piggott & 2016-10-01\\
+\hline
+1.1 & Modified Format to BSK documentation & H. Schaub & 2018-04-28\\
 \hline
 
 \end{longtable}
 }
 
+
+
 \newpage
 \setcounter{page}{1}
 \pagestyle{fancy}
 
-\tableofcontents
-~\\ \hrule ~\\
+\tableofcontents %Autogenerate the table of contents
+~\\ \hrule ~\\ %Makes the line under table of contents
+
+
+
 
 \section{Introduction}
 When in safe mode, the spacecraft uses its coarse sun sensors in order to 
@@ -74,7 +116,7 @@ rate needed by the system.
 The unit test for the cssWlsEst module is located in:\\
 
 \noindent
-{\tt fswAlgorithms/attDetermination/CSSEst/UnitTest/CSSWlsEstUnitTest.py} \\
+{\tt fswAlgorithms/attDetermination/CSSEst/\_UnitTest/CSSWlsEstUnitTest.py} \\
 \\
 
 Please see the python script for information on test setup and initial 
@@ -196,5 +238,30 @@ for statement coverage, and it successfully meets its test criteria for all
 cases.  The only area where there might be a question is the desired behavior 
 for zero-coverage cases.  We may wish to change the outputs to something more 
 obviously in-error instead of just having the algorithm go silent.
+
+
+
+
+
+
+
+
+
+
+%	
+%\input{secModuleDescription.tex} %This section includes mathematical models, code description, etc.
+%
+%\input{secModuleFunctions.tex} %This includes a concise list of what the module does. It also includes model assumptions and limitations
+%
+%\input{secTest.tex} % This includes test description, test parameters, and test results
+%
+%\input{secUserGuide.tex} % Contains a discussion of how to setup and configure  the BSK module
+%
+
+
+
+
+
+\bibliography{bibliography} %This includes references used and mentioned.
 
 \end{document}
