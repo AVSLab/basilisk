@@ -42,6 +42,7 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 
 from Basilisk.simulation import spacecraftPlus, spice_interface, coarse_sun_sensor
 from Basilisk.fswAlgorithms import sunlineUKF, sunlineEKF, okeefeEKF, vehicleConfigData
+from Basilisk.fswAlgorithms import fswMessages
 
 import SunLineKF_test_utilities as Fplot
 
@@ -65,7 +66,7 @@ def setupUKFData(filterObject):
     filterObject.navStateOutMsgName = "sunline_state_estimate"
     filterObject.filtDataOutMsgName = "sunline_filter_data"
     filterObject.cssDataInMsgName = "css_sensors_data"
-    filterObject.cssConfInMsgName = "css_config_data"
+    filterObject.cssConfigInMsgName = "css_config_data"
 
     filterObject.alpha = 0.02
     filterObject.beta = 2.0
@@ -90,7 +91,7 @@ def setupEKFData(filterObject):
     filterObject.navStateOutMsgName = "sunline_state_estimate"
     filterObject.filtDataOutMsgName = "sunline_filter_data"
     filterObject.cssDataInMsgName = "css_sensors_data"
-    filterObject.cssConfInMsgName = "css_config_data"
+    filterObject.cssConfigInMsgName = "css_config_data"
 
     filterObject.states = [1.0, 0.1, 0.0, 0.0, 0.01, 0.0]
     filterObject.x = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -111,7 +112,7 @@ def setupOEKFData(filterObject):
     filterObject.navStateOutMsgName = "sunline_state_estimate"
     filterObject.filtDataOutMsgName = "sunline_filter_data"
     filterObject.cssDataInMsgName = "css_sensors_data"
-    filterObject.cssConfInMsgName = "css_config_data"
+    filterObject.cssConfigInMsgName = "css_config_data"
 
     filterObject.omega = [0., 0., 0.]
     filterObject.states = [1.0, 0.1, 0.0]
@@ -213,11 +214,12 @@ def setupOEKFData(filterObject):
 # construction process.
 #
 # ~~~~~~~~~~~~~~~~{.py}
-# cssConstVehicle = vehicleConfigData.CSSConstConfig()
+# cssConstVehicle = fswMessages.CSSConfigFswMsg()
 #
 # totalCSSList = []
 # for CSSHat in CSSOrientationList:
-#     newCSS = vehicleConfigData.CSSConfigurationElement()
+#     newCSS = fswMessages.CSSUnitConfigFswMsg()
+#     newCSS.CBias = 1.0
 #     newCSS.nHat_B = CSSHat
 #     totalCSSList.append(newCSS)
 # cssConstVehicle.nCSS = len(CSSOrientationList)
@@ -279,7 +281,7 @@ def setupOEKFData(filterObject):
 # filterObject.navStateOutMsgName = "sunline_state_estimate"
 # filterObject.filtDataOutMsgName = "sunline_filter_data"
 # filterObject.cssDataInMsgName = "css_sensors_data"
-# filterObject.cssConfInMsgName = "css_config_data"
+# filterObject.cssConfigInMsgName = "css_config_data"
 #
 # filterObject.alpha = 0.02
 # filterObject.beta = 2.0
@@ -333,7 +335,7 @@ def setupOEKFData(filterObject):
 # filterObject.navStateOutMsgName = "sunline_state_estimate"
 # filterObject.filtDataOutMsgName = "sunline_filter_data"
 # filterObject.cssDataInMsgName = "css_sensors_data"
-# filterObject.cssConfInMsgName = "css_config_data"
+# filterObject.cssConfigInMsgName = "css_config_data"
 #
 # filterObject.sensorUseThresh = 0.
 # filterObject.states = [1.0, 0.1, 0.0, 0.0, 0.01, 0.0]
@@ -375,7 +377,7 @@ def setupOEKFData(filterObject):
 # filterObject.navStateOutMsgName = "sunline_state_estimate"
 # filterObject.filtDataOutMsgName = "sunline_filter_data"
 # filterObject.cssDataInMsgName = "css_sensors_data"
-# filterObject.cssConfInMsgName = "css_config_data"
+# filterObject.cssConfigInMsgName = "css_config_data"
 #
 # filterObject.sensorUseThresh = 0.
 # filterObject.omega = [0., 0., 0.]
@@ -495,12 +497,13 @@ def run(show_plots, FilterType, simTime):
     #
     #   Add the normals to the vehicle Config data struct
     #
-    cssConstVehicle = vehicleConfigData.CSSConstConfig()
+    cssConstVehicle = fswMessages.CSSConfigFswMsg()
 
     totalCSSList = []
     for CSSHat in CSSOrientationList:
-        newCSS = vehicleConfigData.CSSConfigurationElement()
+        newCSS = fswMessages.CSSUnitConfigFswMsg()
         newCSS.nHat_B = CSSHat
+        newCSS.CBias = 1.0
         totalCSSList.append(newCSS)
     cssConstVehicle.nCSS = len(CSSOrientationList)
     cssConstVehicle.cssVals = totalCSSList

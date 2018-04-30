@@ -31,17 +31,17 @@ import SunLineOEKF_test_utilities as FilterPlots
 from Basilisk.fswAlgorithms import okeefeEKF
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import alg_contain
-from Basilisk.fswAlgorithms import vehicleConfigData
 from Basilisk.fswAlgorithms import cssComm
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.fswAlgorithms import fswMessages
 
 
 def setupFilterData(filterObject):
     filterObject.navStateOutMsgName = "sunline_state_estimate"
     filterObject.filtDataOutMsgName = "sunline_filter_data"
     filterObject.cssDataInMsgName = "css_sensors_data"
-    filterObject.cssConfInMsgName = "css_config_data"
+    filterObject.cssConfigInMsgName = "css_config_data"
 
     filterObject.sensorUseThresh = 0.
     filterObject.states = [1.0, 1.0, 1.0]
@@ -681,7 +681,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
     # Set up some test parameters
 
-    cssConstelation = vehicleConfigData.CSSConstConfig()
+    cssConstelation = fswMessages.CSSConfigFswMsg()
 
     CSSOrientationList = [
         [0.70710678118654746, -0.5, 0.5],
@@ -694,10 +694,9 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         [-0.70710678118654746, -0.70710678118654757, 0.0],
     ]
     totalCSSList = []
-    # Initializing a 2D double array is hard with SWIG.  That's why there is this
-    # layer between the above list and the actual C variables.
     for CSSHat in CSSOrientationList:
-        newCSS = vehicleConfigData.CSSConfigurationElement()
+        newCSS = fswMessages.CSSUnitConfigFswMsg()
+        newCSS.CBias = 1.0
         newCSS.nHat_B = CSSHat
         totalCSSList.append(newCSS)
     cssConstelation.nCSS = len(CSSOrientationList)

@@ -29,16 +29,16 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import alg_contain
 from Basilisk.fswAlgorithms import sunlineEKF
 from Basilisk.fswAlgorithms import cssComm
-from Basilisk.fswAlgorithms import vehicleConfigData
 from Basilisk.utilities import macros
 import SunLineEKF_test_utilities as FilterPlots
+from Basilisk.fswAlgorithms import fswMessages
 
 
 def setupFilterData(filterObject):
     filterObject.navStateOutMsgName = "sunline_state_estimate"
     filterObject.filtDataOutMsgName = "sunline_filter_data"
     filterObject.cssDataInMsgName = "css_sensors_data"
-    filterObject.cssConfInMsgName = "css_config_data"
+    filterObject.cssConfigInMsgName = "css_config_data"
 
     filterObject.sensorUseThresh = 0.
     filterObject.states = [1.0, 1.0, 1.0, 0.0, 0.0, 0.0]
@@ -621,11 +621,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
     # Construct algorithm and associated C++ container
     moduleConfig = sunlineEKF.sunlineEKFConfig()
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        sunlineEKF.Update_sunlineEKF,
-                                        sunlineEKF.SelfInit_sunlineEKF,
-                                        sunlineEKF.CrossInit_sunlineEKF,
-                                        sunlineEKF.Reset_sunlineEKF)
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "SunlineEKF"
 
     # Add test module to runtime call list
@@ -634,7 +630,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
     # Set up some test parameters
 
-    cssConstelation = vehicleConfigData.CSSConstConfig()
+    cssConstelation = fswMessages.CSSConfigFswMsg()
 
     CSSOrientationList = [
         [0.70710678118654746, -0.5, 0.5],
@@ -650,7 +646,8 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     # Initializing a 2D double array is hard with SWIG.  That's why there is this
     # layer between the above list and the actual C variables.
     for CSSHat in CSSOrientationList:
-        newCSS = vehicleConfigData.CSSConfigurationElement()
+        newCSS = fswMessages.CSSUnitConfigFswMsg()
+        newCSS.CBias = 1.0
         newCSS.nHat_B = CSSHat
         totalCSSList.append(newCSS)
     cssConstelation.nCSS = len(CSSOrientationList)
@@ -660,13 +657,13 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 
     inputMessageSize = inputData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, "css_config_data",
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.cssConfigInMsgName,
                                           msgSize, 2, "CSSConstellation")
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.cssDataInMsgName,
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
-    unitTestSim.TotalSim.WriteMessageData("css_config_data", msgSize, 0, cssConstelation)
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssConfigInMsgName, msgSize, 0, cssConstelation)
 
     stateTarget1 = testVector1
     stateTarget1 += [0.0, 0.0, 0.0]

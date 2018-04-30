@@ -28,14 +28,17 @@
 %ignore SelfInit_cssWlsEst;
 %constant void CrossInit_cssWlsEst(void*, uint64_t);
 %ignore CrossInit_cssWlsEst;
-STRUCTASLIST(CSSConfigFswMsg)
+%constant void Reset_cssWlsEst(void*, uint64_t, uint64_t);
+%ignore Reset_cssWlsEst;
+
+STRUCTASLIST(CSSUnitConfigFswMsg)
 GEN_SIZEOF(CSSConfigFswMsg);
+GEN_SIZEOF(CSSUnitConfigFswMsg);
 GEN_SIZEOF(CSSWLSConfig);
-GEN_SIZEOF(VehicleConfigFswMsg);
 %include "cssWlsEst.h"
 %include "simFswInterfaceMessages/navAttIntMsg.h"
-%include "../../fswMessages/vehicleConfigFswMsg.h"
 %include "../../fswMessages/cssConfigFswMsg.h"
+%include "../../fswMessages/cssUnitConfigFswMsg.h"
 
 %pythoncode %{
 import sys

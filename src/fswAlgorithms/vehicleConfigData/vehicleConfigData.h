@@ -24,9 +24,6 @@
 #include "messaging/static_messaging.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "fswMessages/vehicleConfigFswMsg.h"
-#include "fswMessages/rwConstellationFswMsg.h"
-#include "fswMessages/thrArrayConfigFswMsg.h"
-#include "fswMessages/thrConfigFswMsg.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{
@@ -47,14 +44,6 @@ typedef struct {
     int32_t outputPropsID;       /*!< [-] Message ID associated with the output properties message*/
 }VehConfigInputData;
 
-typedef struct {
-    double nHat_B[3];          /*! [-] CSS unit normal expressed in structure */
-}CSSConfigurationElement;
-
-typedef struct {
-    uint32_t nCSS;             /*! [-] Number of coarse sun sensors in cluster*/
-    CSSConfigurationElement cssVals[MAX_NUM_CSS_SENSORS]; /*! [-] constellation of CSS elements */
-}CSSConstConfig;
 
 void Update_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t callTime, uint64_t moduleID);
 void SelfInit_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t moduleID);

@@ -20,12 +20,14 @@
 #ifndef CSS_CONFIG_MESSAGE_H
 #define CSS_CONFIG_MESSAGE_H
 
+#include "fswMessages/cssUnitConfigFswMsg.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
+
 /*! @brief Structure used to contain the configuration information for
  each sun sensor*/
 typedef struct {
-    double nHatBdy[3];      /*!< -- Normal unit vector for sensor in body frame*/
-    double CBias;           /*!< W  Calibration coefficient bias for CSS */
-    double cssNoiseStd;     /*!< -- Measurement noise uncertainty*/
+    uint32_t nCSS;             /*! [-] Number of coarse sun sensors in cluster*/
+    CSSUnitConfigFswMsg cssVals[MAX_NUM_CSS_SENSORS]; /*! [-] constellation of CSS elements */
 }CSSConfigFswMsg;
 
 #endif

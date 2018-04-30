@@ -20,6 +20,7 @@
 #include "attGuidance/sunSafePoint/sunSafePoint.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
+#include "simulation/utilities/bsk_Print.h"
 #include <string.h>
 #include <math.h>
 
@@ -34,10 +35,10 @@ void SelfInit_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t moduleID)
     
     /*! Begin method steps */
     /*! - Create output message for module */
-    ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
+    ConfigData->attGuidanceOutMsgID = CreateNewMessage(ConfigData->attGuidanceOutMsgName,
         sizeof(AttGuidFswMsg), "AttGuidFswMsg", moduleID);
-    memset(ConfigData->attOut.omega_RN_B, 0x0, 3*sizeof(double));
-    memset(ConfigData->attOut.domega_RN_B, 0x0, 3*sizeof(double));
+    memset(ConfigData->attGuidanceOutBuffer.omega_RN_B, 0x0, 3*sizeof(double));
+    memset(ConfigData->attGuidanceOutBuffer.domega_RN_B, 0x0, 3*sizeof(double));
     
 }
 
@@ -50,11 +51,38 @@ void SelfInit_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t moduleID)
 void CrossInit_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Loop over the number of sensors and find IDs for each one */
-    ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputSunVecName,
+    ConfigData->sunDirectionInMsgID = subscribeToMessage(ConfigData->sunDirectionInMsgName,
         sizeof(NavAttIntMsg), moduleID);
-    ConfigData->imuMsgID = subscribeToMessage(ConfigData->inputIMUDataName,
+    ConfigData->imuInMsgID = subscribeToMessage(ConfigData->imuInMsgName,
         sizeof(IMUSensorBodyFswMsg), moduleID);
     
+}
+
+/*! This method performs a complete reset of the module.  Local module variables that retain
+ time varying states between function calls are reset to their default values.
+ @return void
+ @param ConfigData The configuration data associated with the guidance module
+ */
+void Reset_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+{
+    double v1[3];
+
+    /* compute an Eigen axis orthogonal to sHatBdyCmd */
+    if (v3Norm(ConfigData->sHatBdyCmd)  < 0.1) {
+        BSK_PRINT(MSG_ERROR,"The module vector sHatBdyCmd is not setup as a unit vector [%f, %f %f]",
+                  ConfigData->sHatBdyCmd[0], ConfigData->sHatBdyCmd[1], ConfigData->sHatBdyCmd[2]);
+    } else {
+        v3Set(1., 0., 0., v1);
+        v3Normalize(ConfigData->sHatBdyCmd, ConfigData->sHatBdyCmd);    /* ensure that this vector is a unit vector */
+        v3Cross(ConfigData->sHatBdyCmd, v1, ConfigData->eHat180_B);
+        if (v3Norm(ConfigData->eHat180_B) < 0.1) {
+            v3Set(0., 1., 0., v1);
+            v3Cross(ConfigData->sHatBdyCmd, v1, ConfigData->eHat180_B);
+        }
+        v3Normalize(ConfigData->eHat180_B, ConfigData->eHat180_B);
+    }
+
+    return;
 }
 
 /*! This method takes the estimated body-observed sun vector and computes the
@@ -70,33 +98,66 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
     uint64_t clockTime;
     uint32_t readSize;
     double ctSNormalized;
-    double e_hat[3];
-    double sigma_BR[3];
-    IMUSensorBodyFswMsg LocalIMUData;
+    double sNorm;                   /*!< --- Norm of measured direction vector */
+    double e_hat[3];                /*!< --- Eigen Axis */
+    double omega_BN_B[3];           /*!< r/s inertial body angular velocity vector in B frame components */
+    IMUSensorBodyFswMsg localImuDataInBuffer;
     /*! Begin method steps*/
+    /* zero the input message containers */
+    memset(&(navMsg), 0x0, sizeof(NavAttIntMsg));
+    memset(&(localImuDataInBuffer), 0x0, sizeof(IMUSensorBodyFswMsg));
     /*! - Read the current sun body vector estimate*/
-    ReadMessage(ConfigData->inputMsgID, &clockTime, &readSize,
+    ReadMessage(ConfigData->sunDirectionInMsgID, &clockTime, &readSize,
                 sizeof(NavAttIntMsg), (void*) &(navMsg), moduleID);
-    ReadMessage(ConfigData->imuMsgID, &clockTime, &readSize,
-                sizeof(IMUSensorBodyFswMsg), (void*) &(LocalIMUData), moduleID);
-    
+    ReadMessage(ConfigData->imuInMsgID, &clockTime, &readSize,
+                sizeof(IMUSensorBodyFswMsg), (void*) &(localImuDataInBuffer), moduleID);
+    v3Copy(localImuDataInBuffer.AngVelBody, omega_BN_B);
+
     /*! - Compute the current error vector if it is valid*/
-    if(v3Norm(navMsg.vehSunPntBdy) > ConfigData->minUnitMag)
+    sNorm = v3Norm(navMsg.vehSunPntBdy);
+    if(sNorm > ConfigData->minUnitMag)
     {
-        ctSNormalized = v3Dot(ConfigData->sHatBdyCmd, navMsg.vehSunPntBdy);
+        /* a good sun direction vector is available */
+        ctSNormalized = v3Dot(ConfigData->sHatBdyCmd, navMsg.vehSunPntBdy)/sNorm;
         ctSNormalized = fabs(ctSNormalized) > 1.0 ?
         ctSNormalized/fabs(ctSNormalized) : ctSNormalized;
         ConfigData->sunAngleErr = acos(ctSNormalized);
-        v3Cross(navMsg.vehSunPntBdy, ConfigData->sHatBdyCmd, e_hat);
-        v3Normalize(e_hat, ConfigData->sunMnvrVec);
-        v3Scale(tan(ConfigData->sunAngleErr*0.25), ConfigData->sunMnvrVec,
-                sigma_BR);
-        v3Copy(sigma_BR, ConfigData->attOut.sigma_BR);
-        MRPswitch(ConfigData->attOut.sigma_BR, 1.0, ConfigData->attOut.sigma_BR);
+
+        /*
+            Compute the heading error relative to the sun direction vector 
+         */
+        if (ConfigData->sunAngleErr < ConfigData->smallAngle) {
+            /* sun heading and desired body axis are essentially aligned.  Set attitude error to zero. */
+             v3SetZero(ConfigData->attGuidanceOutBuffer.sigma_BR);
+        } else {
+            if (M_PI - ConfigData->sunAngleErr < ConfigData->smallAngle) {
+                /* the commanded body vector nearly is opposite the sun heading */
+                v3Copy(ConfigData->eHat180_B, e_hat);
+            } else {
+                /* normal case where sun and commanded body vectors are not aligned */
+                v3Cross(navMsg.vehSunPntBdy, ConfigData->sHatBdyCmd, e_hat);
+            }
+            v3Normalize(e_hat, ConfigData->sunMnvrVec);
+            v3Scale(tan(ConfigData->sunAngleErr*0.25), ConfigData->sunMnvrVec,
+                    ConfigData->attGuidanceOutBuffer.sigma_BR);
+            MRPswitch(ConfigData->attGuidanceOutBuffer.sigma_BR, 1.0, ConfigData->attGuidanceOutBuffer.sigma_BR);
+        }
+
+        /* rate tracking error are the body rates to bring spacecraft to rest */
+        v3Copy(omega_BN_B, ConfigData->attGuidanceOutBuffer.omega_BR_B);
+        v3SetZero(ConfigData->attGuidanceOutBuffer.omega_RN_B);
+    } else {
+        /* no proper sun direction vector is available */
+        v3SetZero(ConfigData->attGuidanceOutBuffer.sigma_BR);
+
+        /* specify a body-fixed constant search rotation rate */
+        v3Subtract(omega_BN_B, ConfigData->omega_RN_B, ConfigData->attGuidanceOutBuffer.omega_BR_B);
+        v3Copy(ConfigData->omega_RN_B, ConfigData->attGuidanceOutBuffer.omega_RN_B);
     }
-    v3Copy(LocalIMUData.AngVelBody, ConfigData->attOut.omega_BR_B);
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttGuidFswMsg),
-                 (void*) &(ConfigData->attOut), moduleID);
+
+    /* write the Guidance output message */
+    WriteMessage(ConfigData->attGuidanceOutMsgID, callTime, sizeof(AttGuidFswMsg),
+                 (void*) &(ConfigData->attGuidanceOutBuffer), moduleID);
     
     return;
 }

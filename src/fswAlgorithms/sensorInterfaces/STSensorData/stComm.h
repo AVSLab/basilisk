@@ -21,7 +21,7 @@
 #define _ST_COMM_H_
 
 #include "messaging/static_messaging.h"
-#include "vehicleConfigData/vehicleConfigData.h"
+
 #include "simFswInterfaceMessages/stSensorIntMsg.h"
 #include "fswMessages/stAttFswMsg.h"
 #include "fswMessages/vehicleConfigFswMsg.h"

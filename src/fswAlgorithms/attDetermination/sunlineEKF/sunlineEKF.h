@@ -24,9 +24,8 @@
 #include <stdint.h>
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
-#include "fswMessages/vehicleConfigFswMsg.h"
-#include "fswMessages/cssConfigFswMsg.h"
 #include "fswMessages/sunlineFilterFswMsg.h"
+#include "fswMessages/cssConfigFswMsg.h"
 
 
 /*! \addtogroup ADCSAlgGroup
@@ -46,7 +45,7 @@ typedef struct {
     char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output filter data message*/
     char cssDataInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
-    char cssConfInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the CSS configuration message*/
+    char cssConfigInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the CSS configuration message*/
     
     double qObsVal;               /*!< [-] CSS instrument noise parameter*/
     double qProcVal;               /*!< [-] Process noise parameter*/
@@ -85,7 +84,7 @@ typedef struct {
     int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
     int32_t cssDataInMsgId;      /*!< -- ID for the incoming CSS sensor message*/
-    int32_t cssConfInMsgId;   /*!< [-] ID associated with the CSS configuration data*/
+    int32_t cssConfigInMsgId;   /*!< [-] ID associated with the CSS configuration data*/
 }sunlineEKFConfig;
 
 #ifdef __cplusplus

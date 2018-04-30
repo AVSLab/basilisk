@@ -34,8 +34,8 @@ from Basilisk.utilities import unitTestSupport  # general support file with comm
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import sunlineUKF  # import the module that is to be tested
 from Basilisk.fswAlgorithms import cssComm
-from Basilisk.fswAlgorithms import vehicleConfigData
 from Basilisk.utilities import macros
+from Basilisk.fswAlgorithms import fswMessages
 from Basilisk.simulation import sim_model
 import ctypes
 
@@ -44,7 +44,7 @@ def setupFilterData(filterObject):
     filterObject.navStateOutMsgName = "sunline_state_estimate"
     filterObject.filtDataOutMsgName = "sunline_filter_data"
     filterObject.cssDataInMsgName = "css_sensors_data"
-    filterObject.cssConfInMsgName = "css_config_data"
+    filterObject.cssConfigInMsgName = "css_config_data"
 
     filterObject.alpha = 0.02
     filterObject.beta = 2.0
@@ -362,11 +362,7 @@ def testStateUpdateSunLine(show_plots):
 
     # Construct algorithm and associated C++ container
     moduleConfig = sunlineUKF.SunlineUKFConfig()
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        sunlineUKF.Update_sunlineUKF,
-                                        sunlineUKF.SelfInit_sunlineUKF,
-                                        sunlineUKF.CrossInit_sunlineUKF,
-                                        sunlineUKF.Reset_sunlineUKF)
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "SunlineUKF"
 
     # Add test module to runtime call list
@@ -374,7 +370,7 @@ def testStateUpdateSunLine(show_plots):
     
     setupFilterData(moduleConfig)
     
-    cssConstelation = vehicleConfigData.CSSConstConfig()
+    cssConstelation = fswMessages.CSSConfigFswMsg()
     
     CSSOrientationList = [
        [0.70710678118654746, -0.5, 0.5],
@@ -387,19 +383,17 @@ def testStateUpdateSunLine(show_plots):
        [-0.70710678118654746, -0.70710678118654757, 0.0],
     ]
     totalCSSList = []
-    i=0
-    #Initializing a 2D double array is hard with SWIG.  That's why there is this
-    #layer between the above list and the actual C variables.
     for CSSHat in CSSOrientationList:
-        newCSS = vehicleConfigData.CSSConfigurationElement()
+        newCSS = fswMessages.CSSUnitConfigFswMsg()
+        newCSS.CBias = 1.0
         newCSS.nHat_B = CSSHat
         totalCSSList.append(newCSS)
     cssConstelation.nCSS = len(CSSOrientationList)
     cssConstelation.cssVals = totalCSSList
-    msgSize = cssConstelation.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage("TestProcess", "css_config_data",
-                                          msgSize, 2, "CSSConstellation")
-    unitTestSim.TotalSim.WriteMessageData("css_config_data", msgSize, 0, cssConstelation)
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               moduleConfig.cssConfigInMsgName,
+                               cssConstelation)
 
 
     testVector = numpy.array([-0.7, 0.7, 0.0])
@@ -515,11 +509,7 @@ def testStatePropSunLine(show_plots):
 
     # Construct algorithm and associated C++ container
     moduleConfig = sunlineUKF.SunlineUKFConfig()
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        sunlineUKF.Update_sunlineUKF,
-                                        sunlineUKF.SelfInit_sunlineUKF,
-                                        sunlineUKF.CrossInit_sunlineUKF,
-                                        sunlineUKF.Reset_sunlineUKF)
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "SunlineUKF"
 
     # Add test module to runtime call list

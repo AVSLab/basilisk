@@ -43,7 +43,6 @@ from Basilisk.fswAlgorithms import thrMomentumDumping            # import the mo
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
-from Basilisk.fswAlgorithms import vehicleConfigData
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.

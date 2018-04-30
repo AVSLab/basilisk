@@ -1,0 +1,271 @@
+% README file for moduleDocumentationTemplate TeX template.
+% This template should be used to document all Basilisk modules.
+% Updated 20170711 - S. Carnahan
+%
+%-Copy the contents of this folder to your own _Documentation folder
+%
+%-Rename the Basilisk-moduleDocumentationTemplate.tex appropriately
+%
+% All edits should be made in one of:
+% sec_modelAssumptionsLimitations.tex
+% sec_modelDescription.tex
+% sec_modelFunctions.tex
+% sec_revisionTable.tex
+% sec_testDescription.tex
+% sec_testParameters.tex
+% sec_testResults.tex
+% sec_user_guide.tex
+%
+%-Some rules about referencing within the document:
+%1. If writing the suer guide, assume the module description is present
+%2. If writing the validation section, assume the module features section is present
+%3. Make no other assumptions about any sections being present. This allow for sections of the document to be used elsewhere without breaking.
+
+%In order to import some of these sections into a document in a different directory:
+%\usepackage{import}
+%Then, the sections are called with \subimport{relative path}{file} in order to \input{file} using the right relative path.
+%\import{full path}{file} can also be used if absolute paths are preferred over relative paths.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\documentclass[]{BasiliskReportMemo}
+
+\usepackage{cite}
+\usepackage{AVS}
+\usepackage{float} %use [H] to keep tables where you put them
+\usepackage{array} %easy control of text in tables
+\usepackage{graphicx}
+\bibliographystyle{plain}
+
+
+\newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
+
+
+\newcommand{\ModuleName}{CSSWlsEst}
+\newcommand{\subject}{Weight Least-Squares Minimum-Norm Coarse Sun Heading Estimator}
+\newcommand{\status}{Released}
+\newcommand{\preparer}{S. Piggott}
+\newcommand{\summary}{This is a report documenting the results of the unit test performed for the 
+   coarse sun sensor sun point vector estimation algorithm.}
+
+\begin{document}
+
+\makeCover
+
+%
+%	enter the revision documentation here
+%	to add more lines, copy the table entry and the \hline, and paste after the current entry.
+%
+\pagestyle{empty}
+{\renewcommand{\arraystretch}{2}
+\noindent
+\begin{longtable}{|p{0.5in}|p{3.5in}|p{1.07in}|p{0.9in}|}
+\hline
+{\bfseries Rev} & {\bfseries Change Description} & {\bfseries By}& {\bfseries Date} \\
+\hline
+1.0 & Initial Documentation & S. Piggott & 2016-10-01\\
+\hline
+1.1 & Modified Format to BSK documentation & H. Schaub & 2018-04-29\\
+\hline
+1.2 & Added User Guide Section & H. Schaub & 2018-04-29\\
+\hline
+
+\end{longtable}
+}
+
+
+
+\newpage
+\setcounter{page}{1}
+\pagestyle{fancy}
+
+\tableofcontents %Autogenerate the table of contents
+~\\ \hrule ~\\ %Makes the line under table of contents
+
+
+
+
+\section{Introduction}
+When in safe mode, the spacecraft uses its coarse sun sensors in order to 
+point the vehicle's solar arrays at the Sun.  This is done in order to ensure 
+that the vehicle gets to a power-positive state with a minimum set of sensors 
+in order to recover from whatever event triggered the transition to safe mode.  
+The vehicle notionally has 8 coarse sun sensor (CSS) sensors available to it 
+which allows it to resolve the exact sun direction in almost all body axes as 
+long as all sensors are functional. 
+
+Since there are so many CSSs available, the algorithm needs to be able to obtain 
+the sun pointing vector that best fits the current outputs from all of the CSSs.  
+This is done by a least squares estimation process that provides the sun vector 
+that best fits from a weighted least squares perspective.  The weights are 
+simply set based on the current output of each sensor which ensures that the 
+sensors that have the best measurements are trusted the most.  The details of 
+this algorithm are available in Steve O'Keefe's PhD dissertation. 
+\footnote{\href{http://gradworks.umi.com/3704787.pdf}
+   {O'Keefe Public Dissertation Link}}
+
+The algorithm stores its internal variables in the CSSWLSConfig data structure 
+with the input message coming from the "css\_data\_aggregate" message and the 
+output sun pointing vector going to the "css\_wls\_est" message.  This 
+algorithm does not use any information stored from previous frames so it is a 
+fresh computation every time it is called.  It can therefore be called at any 
+rate needed by the system.
+
+\section{Test Design}
+The unit test for the cssWlsEst module is located in:\\
+
+\noindent
+{\tt fswAlgorithms/attDetermination/CSSEst/\_UnitTest/CSSWlsEstUnitTest.py} \\
+\\
+
+Please see the python script for information on test setup and initial 
+conditions.  \\
+
+\noindent This unit test is designed to functionally test the algorithm 
+outputs as well as get complete code path coverage.  The test design is broken 
+up into four main parts:\\
+\begin{enumerate}
+\item{Main Body Axis Estimates: The principal body axes (b1, b2, b3) are tested 
+   with both positive and negative values to ensure that all axes are correctly 
+   estimated.}
+\item{Double Coverage Test: There are small regions of pointing where only two 
+   sun sensors provide "good" values, which results in a case where only the 
+   minimum norm solution can be used instead of a full least squares solution.  
+   One of these regions is tested here.}
+\item{Single Coverage Test: One of the sensors used for the double coverage test 
+   is zeroed in order to simulate a sensor failure and hit the single coverage 
+   code.  The accuracy of this estimate is severely compromised.}
+\item{Zero Coverage Case: The case where no sensors provide an above-threshold 
+   value is tested here.}
+\end{enumerate}
+
+
+\section{Test Results}
+
+The values obtained in the test over time are best visualized in 
+Figure~\ref{fig:point_fig}.  That shows a comparison between the Sun pointing 
+vector input to the test and the estimate provided by the algorithm.
+\begin{figure}[htb]
+        \centerline{
+        \includegraphics[scale=0.5]{Figures/sunEstAccuracy}
+        }
+        \caption{Truth and Estimated Sun Pointing Vector}
+        \label{fig:point_fig}
+\end{figure}
+
+As this plot shows, the algorithm is very accurate up until we hit 6.0 seconds, 
+so both directions of the three primary body axes are estimated precisely.  
+Then the double coverage case is reasonably accurate, but no longer precise as 
+there isn't sufficient information available to get a good pointing direction.  
+The single coverage test is not accurate at all (~45 degrees of error), but that 
+is simply the best that the algorithm can do with that limited information.
+
+Figure ~\ref{fig:num_fig} shows the number of CSSs used by the algorithm to 
+estimate the sun pointing vector over the duration of the test.  It continues 
+for longer than Figure~\ref{fig:point_fig} because the algorithm stops setting 
+its output message once it gets to the zero valid sensors case as there is no 
+good information to provide.
+\begin{figure}[htb]
+        \centerline{
+        \includegraphics[scale=0.5]{Figures/numGoodCSS}
+        }
+        \caption{Number of CSSs Used in Estimate}
+        \label{fig:num_fig}
+\end{figure}
+
+
+\begin{enumerate}
+\item{Main Body Axis Estimates: The sun pointing estimation algorithm is not 
+   required to provide a precise estimate of the Sun direction.  This algorithm 
+   is only intended to be used in safe mode where the arrays only need to be 
+   approximately pointed at the Sun.  For this reason, a pointing vector 
+   was flagged as successful when it provided the Sun direction within 17.5 
+   degrees which corresponds to a cosine loss of approximately 5\%.  All body 
+   axes met this criteria with large margins.  A check was also performed that 
+   verified that the predicted number of CSSs matched up with what the 
+   algorithm used and this check was also 100\% successful.  The UseWeights flag 
+   was initially set to False, and then was changed to True after two cases to 
+   ensure that the algorithm works correctly in both cases. 
+    \textcolor{ForestGreen}{Test successful.}}
+\item{Double Coverage Test: The same accuracy criteria was used for this test.  
+   This is mostly a function of CSS geometry and it is also the main driving 
+   case for the success criteria used.  It was correct to within 14 degrees. 
+   The predicted number of CSSs used (2) also matched the algorithm's selection. 
+    \textcolor{ForestGreen}{Test successful.}}
+\item{Single Coverage Test: The single coverage case did not have its accuracy 
+   tested as there are no accuracy requirements for this case.  It simply must 
+   provide an estimate and exit.  The predicted number of CSSs used (1) did  
+   match the algorithm's selection.  \textcolor{ForestGreen}{Test successful.}}
+\item{Zero Coverage Test: The zero coverage test is only provided here to 
+   demonstrate that the algorithm passivates its outputs without hitting any 
+   unacceptable event.  It does correctly flag that no valid CSSs were found 
+   during the test. \textcolor{ForestGreen}{Test successful.}}
+\end{enumerate}
+
+\section{Test Coverage}
+The method coverage for all of the methods included in the cssWlsEst 
+module are tabulated in Table~\ref{tab:cov_met}
+
+\begin{table}[htbp]
+    \caption{ADCS Coarse Sun Sensor Estimation Coverage Results}
+   \label{tab:cov_met}
+        \centering \fontsize{10}{10}\selectfont
+   \begin{tabular}{c | r | r | r} % Column formatting, 
+      \hline
+      Method Name    & Unit Test Coverage (\%) & Runtime Self (\%) & Runtime Children (\%) \\
+      \hline
+      SelfInit\_cssWlsEst& 100.0 & 0.0 & 0.0 \\
+      CrossInit\_cssWlsEst & 100.0 & 0.0 & 0.0 \\
+      computeWlsmn & 100.0 & 0.01 & 0.64 \\
+      Update\_cssWlsEst & 100.0 & 0.04 & 0.88 \\
+      \hline
+   \end{tabular}
+\end{table}
+
+For all of the code this test was designed for, the coverage percentage is 
+100\%.  For Safe Mode, we do expect this algorithm to be the highest usage 
+element from an ADCS perspective, so the CPU usage is almost certainly fine as 
+is.  The main penalty comes from the use of matrix multiply in the computeWlsmn 
+function.  The only issue of note here is that the matrix multiply algorithm(s) 
+use in the FSW should be optimized as much as possible as they are major sources 
+of CPU spin.
+
+\section{Conclusions}
+The safe mode sun vector estimator described in this document is functionally 
+ready from a PDR perspective.  It has no noted failure cases, all code is tested 
+for statement coverage, and it successfully meets its test criteria for all 
+cases.  The only area where there might be a question is the desired behavior 
+for zero-coverage cases.  We may wish to change the outputs to something more 
+obviously in-error instead of just having the algorithm go silent.
+
+
+
+
+
+
+
+
+
+
+%	
+%\input{secModuleDescription.tex} %This section includes mathematical models, code description, etc.
+%
+%\input{secModuleFunctions.tex} %This includes a concise list of what the module does. It also includes model assumptions and limitations
+%
+%\input{secTest.tex} % This includes test description, test parameters, and test results
+%
+
+
+\input{secUserGuide.tex} % Contains a discussion of how to setup and configure  the BSK module
+
+
+
+
+
+
+\bibliography{bibliography} %This includes references used and mentioned.
+
+\end{document}
