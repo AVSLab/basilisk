@@ -34,7 +34,7 @@ from BSK_masters import BSKSim, BSKScenario
 sys.path.append(path + '/../plotting')
 import BSK_Plotting as BSK_plt
 
-sys.path.append(path + '/../../src/tests/scenarios')
+sys.path.append(path + '/../../scenarios')
 import test_scenarioAttitudeSteering as scene_plt
 
 
