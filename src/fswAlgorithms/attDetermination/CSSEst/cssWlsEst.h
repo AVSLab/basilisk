@@ -38,7 +38,7 @@
 /*! @brief Top level structure for the CSS weighted least squares estimator.
  Used to estimate the sun state in the vehicle body frame*/
 typedef struct {
-    char cssSensorInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the css sensor input message*/
+    char cssDataInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the css sensor input message*/
     char cssConfigInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the css configuration input message*/
     char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the navigation output message*/
     uint32_t numActiveCss;   /*!< -- Number of currently active CSS sensors*/
@@ -46,7 +46,7 @@ typedef struct {
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
     CSSConfigFswMsg cssConfigInBuffer; /*!< -- CSS constellation configuration message buffer */
     NavAttIntMsg sunlineOutBuffer; /*!< -- Nav message*/
-    int32_t cssSensorInMsgID;      /*!< -- ID for the incoming CSS sensor message*/
+    int32_t cssDataInMsgID;      /*!< -- ID for the incoming CSS sensor message*/
     int32_t cssConfigInMsgID;      /*!< -- ID for the incoming CSS configuration message*/
     int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
 }CSSWLSConfig;

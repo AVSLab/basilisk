@@ -50,7 +50,7 @@ void SelfInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
 void CrossInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Loop over the number of sensors and find IDs for each one */
-    ConfigData->cssSensorInMsgID = subscribeToMessage(ConfigData->cssSensorInMsgName,
+    ConfigData->cssDataInMsgID = subscribeToMessage(ConfigData->cssDataInMsgName,
         sizeof(CSSArraySensorIntMsg), moduleID);
     ConfigData->cssConfigInMsgID = subscribeToMessage(ConfigData->cssConfigInMsgName,
                                                       sizeof(CSSConfigFswMsg), moduleID);
@@ -69,7 +69,7 @@ void Reset_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime, uint64_t modul
     memset(&(ConfigData->cssConfigInBuffer), 0x0, sizeof(CSSConfigFswMsg));
     ReadMessage(ConfigData->cssConfigInMsgID, &ClockTime, &ReadSize,
                 sizeof(CSSConfigFswMsg),
-                (void*) (&(ConfigData->cssConfigInBuffer)), moduleID);
+                &(ConfigData->cssConfigInBuffer), moduleID);
 
     return;
 }
@@ -147,7 +147,7 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
     /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
     memset(&InputBuffer, 0x0, sizeof(CSSArraySensorIntMsg));
-    ReadMessage(ConfigData->cssSensorInMsgID, &ClockTime, &ReadSize,
+    ReadMessage(ConfigData->cssDataInMsgID, &ClockTime, &ReadSize,
                 sizeof(CSSArraySensorIntMsg),
                 (void*) (&InputBuffer), moduleID);
     

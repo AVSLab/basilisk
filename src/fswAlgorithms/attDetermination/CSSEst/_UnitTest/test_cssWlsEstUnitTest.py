@@ -148,7 +148,7 @@ def cssWlsEstTestFunction(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, CSSWlsWrap, CSSWlsEstFSWConfig)
 
     # Initialize the WLS estimator configuration data
-    CSSWlsEstFSWConfig.cssSensorInMsgName = "css_data_aggregate"
+    CSSWlsEstFSWConfig.cssDataInMsgName = "css_data_aggregate"
     CSSWlsEstFSWConfig.cssConfigInMsgName = "css_config_data"
     CSSWlsEstFSWConfig.navStateOutMsgName = "css_nav_sunHeading"
     CSSWlsEstFSWConfig.useWeights = False
@@ -185,7 +185,7 @@ def cssWlsEstTestFunction(show_plots):
     cssDataMsg = simFswInterfaceMessages.CSSArraySensorIntMsg()
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
-                               CSSWlsEstFSWConfig.cssSensorInMsgName,
+                               CSSWlsEstFSWConfig.cssDataInMsgName,
                                cssDataMsg)
 
     angleFailCriteria = 17.5 * math.pi / 180.0  # Get 95% effective charging in this case
@@ -219,7 +219,7 @@ def cssWlsEstTestFunction(show_plots):
         cssDataMsg.CosValue = createCosList(testVec, CSSOrientationList)
 
         # Write in the observation data to the input message
-        unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.cssSensorInMsgName,
+        unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.cssDataInMsgName,
                                               cssDataMsg.getStructSize(),
                                               0,
                                               cssDataMsg)
@@ -261,7 +261,7 @@ def cssWlsEstTestFunction(show_plots):
     cssDataMsg.CosValue = createCosList(doubleTestVec, CSSOrientationList)
 
     # Write in double coverage conditions and ensure that we get correct outputs
-    unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.cssSensorInMsgName,
+    unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.cssDataInMsgName,
                                           cssDataMsg.getStructSize(),
                                           0,
                                           cssDataMsg)
@@ -289,7 +289,7 @@ def cssWlsEstTestFunction(show_plots):
 
     # Same test as above, but zero first element to get to a single coverage case
     cssDataMsg.CosValue[0] = 0.0
-    unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.cssSensorInMsgName,
+    unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.cssDataInMsgName,
                                           cssDataMsg.getStructSize(),
                                           0,
                                           cssDataMsg)
@@ -314,7 +314,7 @@ def cssWlsEstTestFunction(show_plots):
     # Same test as above, but zero first and fourth elements to get to zero coverage
     cssDataMsg.CosValue[0] = 0.0
     cssDataMsg.CosValue[3] = 0.0
-    unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.cssSensorInMsgName,
+    unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.cssDataInMsgName,
                                           cssDataMsg.getStructSize(),
                                           0,
                                           cssDataMsg)
@@ -337,7 +337,7 @@ def cssWlsEstTestFunction(show_plots):
     # test the case where all CSS signals are zero
     #
     cssDataMsg.CosValue = numpy.zeros(len(CSSOrientationList))
-    unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.cssSensorInMsgName,
+    unitTestSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.cssDataInMsgName,
                                           cssDataMsg.getStructSize(),
                                           0,
                                           cssDataMsg)
