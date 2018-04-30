@@ -103,6 +103,9 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
     double omega_BN_B[3];           /*!< r/s inertial body angular velocity vector in B frame components */
     IMUSensorBodyFswMsg localImuDataInBuffer;
     /*! Begin method steps*/
+    /* zero the input message containers */
+    memset(&(navMsg), 0x0, sizeof(NavAttIntMsg));
+    memset(&(localImuDataInBuffer), 0x0, sizeof(IMUSensorBodyFswMsg));
     /*! - Read the current sun body vector estimate*/
     ReadMessage(ConfigData->sunDirectionInMsgID, &clockTime, &readSize,
                 sizeof(NavAttIntMsg), (void*) &(navMsg), moduleID);
