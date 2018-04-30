@@ -16,32 +16,16 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module cssWlsEst
-%{
-   #include "cssWlsEst.h"
-%}
 
-%include "swig_conly_data.i"
-%constant void Update_cssWlsEst(void*, uint64_t, uint64_t);
-%ignore Update_cssWlsEst;
-%constant void SelfInit_cssWlsEst(void*, uint64_t);
-%ignore SelfInit_cssWlsEst;
-%constant void CrossInit_cssWlsEst(void*, uint64_t);
-%ignore CrossInit_cssWlsEst;
-%constant void Reset_cssWlsEst(void*, uint64_t, uint64_t);
-%ignore Reset_cssWlsEst;
+#ifndef CSS_UNIT_MESSAGE_H
+#define CSS_UNIT_MESSAGE_H
 
-STRUCTASLIST(CSSUnitConfigFswMsg)
-GEN_SIZEOF(CSSConfigFswMsg);
-GEN_SIZEOF(CSSUnitConfigFswMsg);
-GEN_SIZEOF(CSSWLSConfig);
-%include "cssWlsEst.h"
-%include "simFswInterfaceMessages/navAttIntMsg.h"
-%include "../../fswMessages/cssConfigFswMsg.h"
-%include "../../fswMessages/cssUnitConfigFswMsg.h"
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+/*! @brief Structure used to contain the configuration information for
+ each sun sensor*/
+typedef struct {
+    double nHat_B[3];          /*! [-] CSS unit normal expressed in structure */
+    double CBias;              /*!< W  Calibration coefficient bias for CSS */
+}CSSUnitConfigFswMsg;
 
+#endif

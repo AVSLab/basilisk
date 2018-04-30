@@ -141,9 +141,7 @@ def cssWlsEstTestFunction(show_plots):
 
     # Construct algorithm and associated C++ container
     CSSWlsEstFSWConfig = cssWlsEst.CSSWLSConfig()
-    CSSWlsWrap = alg_contain.AlgContain(CSSWlsEstFSWConfig,
-                                        cssWlsEst.Update_cssWlsEst, cssWlsEst.SelfInit_cssWlsEst,
-                                        cssWlsEst.CrossInit_cssWlsEst)
+    CSSWlsWrap = unitTestSim.setModelDataWrap(CSSWlsEstFSWConfig)
     CSSWlsWrap.ModelTag = "CSSWlsEst"
 
     # Add module to runtime call list
@@ -151,6 +149,7 @@ def cssWlsEstTestFunction(show_plots):
 
     # Initialize the WLS estimator configuration data
     CSSWlsEstFSWConfig.cssSensorInMsgName = "css_data_aggregate"
+    CSSWlsEstFSWConfig.cssConfigInMsgName = "css_config_data"
     CSSWlsEstFSWConfig.navStateOutMsgName = "css_nav_sunHeading"
     CSSWlsEstFSWConfig.useWeights = False
     CSSWlsEstFSWConfig.sensorUseThresh = 0.15
@@ -165,16 +164,22 @@ def cssWlsEstTestFunction(show_plots):
         [-0.70710678118654746, 0, -0.70710678118654757],
         [-0.70710678118654746, -0.70710678118654757, 0.0],
     ]
+    numCSS = len(CSSOrientationList)
 
     # set the CSS unit vectors
+    cssConfigData = fswMessages.CSSConfigFswMsg()
     totalCSSList = []
     for CSSHat in CSSOrientationList:
-        CSSConfigElement = fswMessages.CSSConfigFswMsg()
+        CSSConfigElement = fswMessages.CSSUnitConfigFswMsg()
         CSSConfigElement.CBias = 1.0
-        CSSConfigElement.cssNoiseStd = 0.2
-        CSSConfigElement.nHatBdy = CSSHat
+        CSSConfigElement.nHat_B = CSSHat
         totalCSSList.append(CSSConfigElement)
-    CSSWlsEstFSWConfig.CSSData = totalCSSList
+    cssConfigData.nCSS = numCSS
+    cssConfigData.cssVals = totalCSSList
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               CSSWlsEstFSWConfig.cssConfigInMsgName,
+                               cssConfigData)
 
     # Initialize input message
     cssDataMsg = simFswInterfaceMessages.CSSArraySensorIntMsg()

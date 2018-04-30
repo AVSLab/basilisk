@@ -20,7 +20,6 @@
 #include "attDetermination/CSSEst/cssWlsEst.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
-#include "vehicleConfigData/vehicleConfigData.h"
 #include <string.h>
 
 /*! This method initializes the ConfigData for theCSS WLS estimator.
@@ -53,6 +52,8 @@ void CrossInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
     /*! - Loop over the number of sensors and find IDs for each one */
     ConfigData->cssSensorInMsgID = subscribeToMessage(ConfigData->cssSensorInMsgName,
         sizeof(CSSArraySensorIntMsg), moduleID);
+    ConfigData->cssConfigInMsgID = subscribeToMessage(ConfigData->cssConfigInMsgName,
+                                                      sizeof(CSSConfigFswMsg), moduleID);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -62,6 +63,14 @@ void CrossInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
  */
 void Reset_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
+    uint64_t ClockTime;
+    uint32_t ReadSize;
+
+    memset(&(ConfigData->cssConfigInBuffer), 0x0, sizeof(CSSConfigFswMsg));
+    ReadMessage(ConfigData->cssConfigInMsgID, &ClockTime, &ReadSize,
+                sizeof(CSSConfigFswMsg),
+                (void*) (&(ConfigData->cssConfigInBuffer)), moduleID);
+
     return;
 }
 
@@ -157,8 +166,8 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
     {
         if(InputBuffer.CosValue[i] > ConfigData->sensorUseThresh)
         {
-            v3Scale(ConfigData->CSSData[i].CBias,
-                ConfigData->CSSData[i].nHatBdy, &H[ConfigData->numActiveCss*3]);
+            v3Scale(ConfigData->cssConfigInBuffer.cssVals[i].CBias,
+                ConfigData->cssConfigInBuffer.cssVals[i].nHat_B, &H[ConfigData->numActiveCss*3]);
             y[ConfigData->numActiveCss] = InputBuffer.CosValue[i];
             ConfigData->numActiveCss = ConfigData->numActiveCss + 1;
             
