@@ -248,13 +248,13 @@ class BSKFswModels():
 
         # Create the messages necessary to make FSW aware of the pyramid configuration
         i = 0
-        rwClass = vehicleConfigData.RWConstellationFswMsg()
-        rwPointer = vehicleConfigData.RWConfigElementFswMsg()
+        rwClass = fswMessages.RWConstellationFswMsg()
+        rwPointer = fswMessages.RWConfigElementFswMsg()
         rwClass.numRW = 4
         while (i < 4):
             rwPointer.gsHat_B = self.RWAGsMatrix[i * 3:i * 3 + 3]
             rwPointer.Js = self.RWAJsList[i]
-            vehicleConfigData.RWConfigArray_setitem(rwClass.reactionWheels, i, rwPointer)
+            fswMessages.RWConfigArray_setitem(rwClass.reactionWheels, i, rwPointer)
             i += 1
         SimBase.TotalSim.CreateNewMessage("FSWProcess", "rwa_config_data",
                                             fswMessages.MAX_EFF_CNT * 4 * 8 + 8, 2, "RWConstellation")
