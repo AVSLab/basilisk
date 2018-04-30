@@ -22,7 +22,6 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "vehicleConfigData/vehicleConfigData.h"
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
