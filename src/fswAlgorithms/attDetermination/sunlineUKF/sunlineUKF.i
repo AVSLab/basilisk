@@ -32,12 +32,12 @@
 %constant void Reset_sunlineUKF(void*, uint64_t, uint64_t);
 %ignore Reset_sunlineUKF;
 GEN_SIZEOF(SunlineFilterFswMsg);
+GEN_SIZEOF(CSSConfigFswMsg);
 GEN_SIZEOF(SunlineUKFConfig);
-GEN_SIZEOF(VehicleConfigFswMsg);
 %include "sunlineUKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
-%include "../../fswMessages/vehicleConfigFswMsg.h"
 %include "../../fswMessages/sunlineFilterFswMsg.h"
+%include "../../fswMessages/cssConfigFswMsg.h"
 
 %pythoncode %{
 import sys
