@@ -108,6 +108,16 @@ typedef struct {
     int32_t gyrBuffInMsgID;         /*!< [-] ID of the input message buffer*/
 }InertialUKFConfig;
 
+
+typedef struct {
+    uint64_t time;                    /*!< [ns] */
+    double   omegaLatest_BN_B[3];    /*!< [r/s] Latest angular velocity measurement*/
+    double   sigma_BN[4];          /*!< [-] Quaternion in Basilisk representation*/
+    double   omega_BN[3];          /*!< [-] rotation rate n*/
+    char    sTInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] Input message buffer from MIRU*/
+    int32_t sTInMsgID;                /*!< [-] Input message ID from MIRU*/
+}STMessages;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
