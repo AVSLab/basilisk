@@ -93,6 +93,7 @@ void Reset_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     for(i=0; i<cssConfigInBuffer.nCSS; i = i+1)
     {
         v3Copy(cssConfigInBuffer.cssVals[i].nHat_B, &(ConfigData->cssNHat_B[i*3]));
+        ConfigData->CBias[i] = cssConfigInBuffer.cssVals[i].CBias;
     }
     /*! - Save the count of sun sensors for later use */
     ConfigData->numCSSTotal = cssConfigInBuffer.nCSS;
@@ -371,7 +372,7 @@ void sunlineUKFMeasModel(SunlineUKFConfig *ConfigData)
         {
             /*! - For each valid measurement, copy observation value and compute expected obs value 
                   on a per sigma-point basis.*/
-            v3Copy(&(ConfigData->cssNHat_B[i*3]), sensorNormal);
+            v3Scale(ConfigData->CBias[i], &(ConfigData->cssNHat_B[i*3]), sensorNormal);
             ConfigData->obs[obsCounter] = ConfigData->cssSensorInBuffer.CosValue[i];
             for(j=0; j<ConfigData->countHalfSPs*2+1; j++)
             {

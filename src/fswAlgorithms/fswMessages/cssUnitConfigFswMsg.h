@@ -25,7 +25,10 @@
  each sun sensor*/
 typedef struct {
     double nHat_B[3];          /*! [-] CSS unit normal expressed in structure */
-    double CBias;              /*!< W  Calibration coefficient bias for CSS */
+    double CBias;              /*!< W  Individual calibration coefficient bias for CSS.  If
+                                       all CSS have the same gain, then this is set to 1.0.
+                                       If one CSS has a 10% stronger response for the same input,
+                                       then the value would be 1.10 */
 }CSSUnitConfigFswMsg;
 
 #endif

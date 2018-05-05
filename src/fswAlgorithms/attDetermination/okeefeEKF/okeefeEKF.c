@@ -92,6 +92,7 @@ void Reset_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t callTime,
     for(i=0; i<cssConfigInBuffer.nCSS; i++)
     {
         v3Copy(cssConfigInBuffer.cssVals[i].nHat_B, &(ConfigData->cssNHat_B[i*3]));
+        ConfigData->CBias[i] = cssConfigInBuffer.cssVals[i].CBias;
     }
     /*! - Save the count of sun sensors for later use */
     ConfigData->numCSSTotal = cssConfigInBuffer.nCSS;
@@ -355,7 +356,8 @@ void sunlineMeasUpdate(okeefeEKFConfig *ConfigData, double updateTime)
 
     /*! Begin method steps*/
     /*! - Compute the valid observations and the measurement model for all observations*/
-    sunlineHMatrixYMeas(ConfigData->states, ConfigData->numCSSTotal, ConfigData->cssSensorInBuffer.CosValue, ConfigData->sensorUseThresh, ConfigData->cssNHat_B, ConfigData->obs, ConfigData->yMeas, &(ConfigData->numObs), ConfigData->measMat);
+    sunlineHMatrixYMeas(ConfigData->states, ConfigData->numCSSTotal, ConfigData->cssSensorInBuffer.CosValue, ConfigData->sensorUseThresh, ConfigData->cssNHat_B,
+                        ConfigData->CBias, ConfigData->obs, ConfigData->yMeas, &(ConfigData->numObs), ConfigData->measMat);
     
     /*! - Compute the Kalman Gain. */
     sunlineKalmanGain(ConfigData->covarBar, ConfigData->measMat, ConfigData->qObsVal, ConfigData->numObs, ConfigData->kalmanGain);
@@ -505,7 +507,7 @@ void okeefeEKFUpdate(double kalmanGain[SKF_N_STATES_HALF*MAX_N_CSS_MEAS], double
  @param measMat Point to the H measurement matrix
  */
 
-void sunlineHMatrixYMeas(double states[SKF_N_STATES_HALF], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS*3], double *obs, double *yMeas, int *numObs, double *measMat)
+void sunlineHMatrixYMeas(double states[SKF_N_STATES_HALF], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS*3], double CBias[MAX_NUM_CSS_SENSORS], double *obs, double *yMeas, int *numObs, double *measMat)
 {
     uint32_t i, obsCounter;
     double sensorNormal[3];
@@ -520,11 +522,11 @@ void sunlineHMatrixYMeas(double states[SKF_N_STATES_HALF], int numCSS, double cs
         if(cssSensorCos[i] > sensorUseThresh)
         {
             /*! - For each valid measurement, copy observation value and compute expected obs value and fill out H matrix.*/
-            v3Copy(&(cssNHat_B[i*3]), sensorNormal);
+            v3Scale(CBias[i], &(cssNHat_B[i*3]), sensorNormal); /* scaled sensor normal */
             
             *(obs+obsCounter) = cssSensorCos[i];
             *(yMeas+obsCounter) = cssSensorCos[i] - v3Dot(&(states[0]), sensorNormal);
-            mSetSubMatrix(&(cssNHat_B[i*3]), 1, 3, measMat, MAX_NUM_CSS_SENSORS, SKF_N_STATES_HALF, obsCounter, 0);
+            mSetSubMatrix(sensorNormal, 1, 3, measMat, MAX_NUM_CSS_SENSORS, SKF_N_STATES_HALF, obsCounter, 0);
             obsCounter++;
         }
     }
