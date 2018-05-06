@@ -28,10 +28,8 @@
 # Creation Date:  Nov. 26, 2016
 #
 
-import inspect
 import os
 import numpy as np
-import pytest
 
 import matplotlib.pyplot as plt
 # The path to the location of Basilisk
@@ -45,28 +43,6 @@ from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport)
 
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail(True, reason="Previously set sim parameters are not consistent with new formulation\n")
-
-
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
-@pytest.mark.parametrize("orbitCase, useSphericalHarmonics, planetCase", [
-    ('LEO', False, 'Earth'),
-    ('GTO', False, 'Earth'),
-    ('GEO', False, 'Earth'),
-    ('LEO', True, 'Earth'),
-    ('LEO', False, 'Mars')
-])
-def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planetCase):
-    '''This function is called by the py.test environment.'''
-    # each test method requires a single assert method to be called
-    # provide a unique test method name, starting with test_
-    [testResults, testMessage] = run(True, show_plots, orbitCase, useSphericalHarmonics, planetCase)
-    assert testResults < 1, testMessage
 
 
 ## \defgroup Tutorials_1_0
@@ -92,7 +68,7 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 #
 # To run the default scenario 1 from the Basilisk/scenarios folder, call the python script through
 #
-#       python test_scenarioBasicOrbit.py
+#       python scenarioBasicOrbit.py
 #
 # *However*, to play with any scenario scripts as tutorials, you should make a copy of them into a custom folder
 # outside of the Basilisk directory.
@@ -171,7 +147,7 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # handler to this gravitational object as a convenience.  The celestial object position and velocity
 # vectors are all defaulted to zero values.  If non-zero values are required, this can be manually
 # overriden.  If multiple bodies are simulated, then their positions can be
-# dynamically updated.  See [test_scenarioOrbitMultiBody.py](@ref scenarioOrbitMultiBody) to learn how this is
+# dynamically updated.  See [scenarioOrbitMultiBody.py](@ref scenarioOrbitMultiBody) to learn how this is
 # done via a SPICE object.
 #
 # If extra customization is required, see the createEarth() macro to change additional values.
@@ -200,7 +176,7 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # If time varying planet ephemeris messages are to be included use the Spice module.  For non-zero messages
 # the planet's default ephemeris would be replaced with the desired custom values.  How to use Spice to setup
 # planet ephemerise is shown in the tutorial
-# [test_scenarioOrbitMultiBody.py](@ref scenarioOrbitMultiBody).
+# [scenarioOrbitMultiBody.py](@ref scenarioOrbitMultiBody).
 #
 # To set the spacecraft initial conditions, the following initial position and velocity variables are set:
 #~~~~~~~~~~~~~~~~~{.py}
@@ -228,7 +204,7 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 #     scSim.InitializeSimulationAndDiscover()
 #~~~~~~~~~~~~~~~~~
 # If there are messages that are shared across multiple BSK threads, as shown in
-# [test_scenarioAttitudeFeedback2T.py](@ref scenarioAttitudeFeedback2T), then this routine also
+# [scenarioAttitudeFeedback2T.py](@ref scenarioAttitudeFeedback2T), then this routine also
 # auto-discovers these shared messages.
 #
 # Setup 1
@@ -237,7 +213,7 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # do unit tests
+#     run( False,       # safe figures to file
 #          True,        # show_plots
 #          'LEO',       # orbit Case
 #          False,       # useSphericalHarmonics
@@ -249,8 +225,8 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # scenario places the spacecraft about the Earth in a LEO orbit and without considering
 # gravitational spherical harmonics.  The
 # resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/test_scenarioBasicOrbit1LEO0Earth.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/test_scenarioBasicOrbit2LEO0Earth.svg "Orbit Illustration")
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1LEO0Earth.svg "Position history")
+# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2LEO0Earth.svg "Orbit Illustration")
 #
 # Setup 2
 # -----
@@ -258,7 +234,7 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # The next scenario is run by changing the bottom of the file in the scenario code to read
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # do unit tests
+#     run( False,       # safe figures to file
 #          True,        # show_plots
 #          'GTO',       # orbit Case
 #          False,       # useSphericalHarmonics
@@ -268,8 +244,8 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # This case illustrates an elliptical Geosynchronous Transfer Orbit (GTO) with zero orbit
 # inclination.  The
 # resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/test_scenarioBasicOrbit1GTO0Earth.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/test_scenarioBasicOrbit2GTO0Earth.svg "Orbit Illustration")
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1GTO0Earth.svg "Position history")
+# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2GTO0Earth.svg "Orbit Illustration")
 #
 # Setup 3
 # -----
@@ -277,7 +253,7 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # The next scenario is run by changing the bottom of the file in the scenario code to read
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # do unit tests
+#     run( False,       # safe figures to file
 #          True,        # show_plots
 #          'GEO',       # orbit Case
 #          False,       # useSphericalHarmonics
@@ -287,8 +263,8 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # This case illustrates a circular Geosynchronous Orbit (GEO) with zero orbit
 # inclination.  The
 # resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/test_scenarioBasicOrbit1GEO0Earth.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/test_scenarioBasicOrbit2GEO0Earth.svg "Orbit Illustration")
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1GEO0Earth.svg "Position history")
+# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2GEO0Earth.svg "Orbit Illustration")
 #
 #  Setup 4
 # -----
@@ -296,7 +272,7 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # The next scenario is run by changing the bottom of the file in the scenario code to read
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # do unit tests
+#     run( False,       # safe figures to file
 #          True,        # show_plots
 #          'LEO,        # orbit Case
 #          True,        # useSphericalHarmonics
@@ -306,8 +282,8 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # This case illustrates a circular LEO with a non-zero orbit
 # inclination.  In this case the Earth's spherical harmonics are turned on.  The
 # resulting position coordinates and semi-major axis time histories are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/test_scenarioBasicOrbit1LEO1Earth.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/test_scenarioBasicOrbit2LEO1Earth.svg "Orbit Illustration")
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1LEO1Earth.svg "Position history")
+# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2LEO1Earth.svg "Orbit Illustration")
 #
 # Setup 5
 # -------
@@ -315,7 +291,7 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # The next scenario is run by changing the bottom of the file in the scenario code to read
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # do unit tests
+#     run( False,       # safe figures to file
 #          True,        # show_plots
 #          'LEO',       # orbit Case
 #          True,        # useSphericalHarmonics
@@ -330,14 +306,12 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 #~~~~~~~~~~~~~~
 # from 'earth' to 'mars'.  In this simulation setup the planet's spherical harmonics are turned on.  The
 # resulting position coordinates and semi-major axis time histories are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/test_scenarioBasicOrbit1LEO0Mars.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/test_scenarioBasicOrbit2LEO0Mars.svg "Orbit Illustration")
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1LEO0Mars.svg "Position history")
+# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2LEO0Mars.svg "Orbit Illustration")
 #
 ## @}
-def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
+def run(safeFigures, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     '''Call this routine directly to run the tutorial scenario.'''
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
 
     #
     #  From here on there scenario python code is found.  Above this line the code is to setup a
@@ -490,7 +464,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     plt.legend(loc='lower right')
     plt.xlabel('Time [orbits]')
     plt.ylabel('Inertial Position [km]')
-    if doUnitTests:     # only save off the figure if doing a unit test run
+    if safeFigures:     # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
             fileName + "1" + orbitCase + str(int(useSphericalHarmonics))
             + planetCase, plt, path)
@@ -529,7 +503,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
         plt.xlabel('$i_e$ Cord. [km]')
         plt.ylabel('$i_p$ Cord. [km]')
         plt.grid()
-        if doUnitTests:     # only save off the figure if doing a unit test run
+        if safeFigures:     # only save off the figure if doing a unit test run
             unitTestSupport.saveScenarioFigure(
                 fileName + "2" + orbitCase + str(int(useSphericalHarmonics))
                 + planetCase, plt, path)
@@ -546,7 +520,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
                  )
         plt.xlabel('Time [orbits]')
         plt.ylabel('SMA [km]')
-        if doUnitTests:     # only save off the figure if doing a unit test run
+        if safeFigures:     # only save off the figure if doing a unit test run
             unitTestSupport.saveScenarioFigure(
                 fileName + "2" + orbitCase + str(int(useSphericalHarmonics))
                 + planetCase, plt, path)
@@ -557,72 +531,8 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    #
-    #   the python code below is for the unit testing mode.  If you are studying the scenario
-    #   to learn how to run BSK, you can stop reading below this line.
-    #
-    if doUnitTests:
-        numTruthPoints = 5
-        skipValue = int(len(posData) / (numTruthPoints - 1))
-        dataPosRed = posData[::skipValue]
+    return posData
 
-    # setup truth data for unit test
-    if orbitCase is 'LEO' and useSphericalHarmonics is False and planetCase is 'Earth':
-        truePos = [
-            [-2.8168016010234966e6, 5.248174846916143e6, 3.6771572646772987e6],
-            [-6.3710310400031125e6, -1.6053384413404597e6, 2.4169406797143915e6],
-            [-1.970125344005881e6, -6.454584898598424e6, -1.8612676901068345e6],
-            [4.890526131271289e6, -3.2440700705588777e6, -3.815174368497354e6]
-        ]
-    if orbitCase is 'GTO' and useSphericalHarmonics is False and planetCase is 'Earth':
-        truePos = [
-            [-5.889529848066479e6, 9.686574890007671e6, 0.],
-            [-3.2026565710377645e7, -4.305001879844011e6, 0.],
-            [-3.624269187139845e7, -1.8990291195663467e7, 0.],
-            [-2.9802077401931673e7, -2.831957848900475e7, 0.],
-            [-1.4932981196798025e7, -2.939523308237971e7, 0.]
-        ]
-    if orbitCase is 'GEO' and useSphericalHarmonics is False and planetCase is 'Earth':
-        truePos = [
-            [-2.1819784817951165e7, 3.588724145651873e7, 0.],
-            [-4.16996933506621e7, -5.016611324503355e6, 0.],
-            [-1.2686252555573342e7, -4.0038573722578734e7, 0.],
-            [3.1201815137542922e7, -2.8114754297243357e7, 0.],
-            [3.850428014786283e7, 1.677456292503084e7, 0.]
-        ]
-    if orbitCase is 'LEO' and useSphericalHarmonics is True and planetCase is 'Earth':
-        truePos = [
-            [-2.8168016010234915e6, 5.248174846916147e6, 3.677157264677297e6],
-            [5.787240887314784e6, 3.7547029876434486e6, -1.1653623184693705e6],
-            [2.5908823579481775e6, -5.38042751586389e6, -3.6401355110844015e6],
-            [-5.905673984221732e6, -3.5332208726054016e6, 1.2748483822117285e6],
-            [-2.3741237403798397e6, 5.508156976353034e6, 3.6085612280591857e6]
-        ]
-    if orbitCase is 'LEO' and useSphericalHarmonics is False and planetCase is 'Mars':
-        truePos = [
-            [-2.8168016010234966e6, 5.248174846916143e6, 3.6771572646772987e6],
-            [-6.370345938284969e6, -1.6147054668864955e6, 2.412504030081398e6],
-            [-1.9520854768447054e6, -6.457181115789631e6, -1.8712382659451987e6],
-            [4.90876381054031e6, -3.2188851633259663e6, -3.8130784005532693e6]
-        ]
-
-        # compare the results to the truth values
-        accuracy = 1.0  # meters
-
-        testFailCount, testMessages = unitTestSupport.compareArray(
-            truePos, dataPosRed, accuracy, "r_BN_N Vector",
-            testFailCount, testMessages)
-
-        #   print out success message if no error were found
-        if testFailCount == 0:
-            print "PASSED "
-        else:
-            print testFailCount
-            print testMessages
-
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
 
 
 #
@@ -631,7 +541,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
 #
 if __name__ == "__main__":
     run(
-        False,       # do unit tests
+        False,       # safe figures to file
         True,        # show_plots
         'LEO',       # orbit Case (LEO, GTO, GEO)
         False,       # useSphericalHarmonics
