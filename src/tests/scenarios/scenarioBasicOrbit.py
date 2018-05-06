@@ -213,7 +213,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # safe figures to file
+#     run( False,       # save figures to file
 #          True,        # show_plots
 #          'LEO',       # orbit Case
 #          False,       # useSphericalHarmonics
@@ -234,7 +234,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 # The next scenario is run by changing the bottom of the file in the scenario code to read
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # safe figures to file
+#     run( False,       # save figures to file
 #          True,        # show_plots
 #          'GTO',       # orbit Case
 #          False,       # useSphericalHarmonics
@@ -253,7 +253,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 # The next scenario is run by changing the bottom of the file in the scenario code to read
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # safe figures to file
+#     run( False,       # save figures to file
 #          True,        # show_plots
 #          'GEO',       # orbit Case
 #          False,       # useSphericalHarmonics
@@ -272,7 +272,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 # The next scenario is run by changing the bottom of the file in the scenario code to read
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # safe figures to file
+#     run( False,       # save figures to file
 #          True,        # show_plots
 #          'LEO,        # orbit Case
 #          True,        # useSphericalHarmonics
@@ -291,7 +291,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 # The next scenario is run by changing the bottom of the file in the scenario code to read
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # safe figures to file
+#     run( False,       # save figures to file
 #          True,        # show_plots
 #          'LEO',       # orbit Case
 #          True,        # useSphericalHarmonics
@@ -310,7 +310,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 # ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2LEO0Mars.svg "Orbit Illustration")
 #
 ## @}
-def run(safeFigures, show_plots, orbitCase, useSphericalHarmonics, planetCase):
+def run(saveFigures, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     '''Call this routine directly to run the tutorial scenario.'''
 
 
@@ -460,7 +460,7 @@ def run(safeFigures, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     plt.legend(loc='lower right')
     plt.xlabel('Time [orbits]')
     plt.ylabel('Inertial Position [km]')
-    if safeFigures:     # only save off the figure if doing a unit test run
+    if saveFigures:     # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
             fileName + "1" + orbitCase + str(int(useSphericalHarmonics))
             + planetCase, plt, path)
@@ -499,7 +499,7 @@ def run(safeFigures, show_plots, orbitCase, useSphericalHarmonics, planetCase):
         plt.xlabel('$i_e$ Cord. [km]')
         plt.ylabel('$i_p$ Cord. [km]')
         plt.grid()
-        if safeFigures:     # only save off the figure if doing a unit test run
+        if saveFigures:     # only save off the figure if doing a unit test run
             unitTestSupport.saveScenarioFigure(
                 fileName + "2" + orbitCase + str(int(useSphericalHarmonics))
                 + planetCase, plt, path)
@@ -516,7 +516,7 @@ def run(safeFigures, show_plots, orbitCase, useSphericalHarmonics, planetCase):
                  )
         plt.xlabel('Time [orbits]')
         plt.ylabel('SMA [km]')
-        if safeFigures:     # only save off the figure if doing a unit test run
+        if saveFigures:     # only save off the figure if doing a unit test run
             unitTestSupport.saveScenarioFigure(
                 fileName + "2" + orbitCase + str(int(useSphericalHarmonics))
                 + planetCase, plt, path)
@@ -537,7 +537,7 @@ def run(safeFigures, show_plots, orbitCase, useSphericalHarmonics, planetCase):
 #
 if __name__ == "__main__":
     run(
-        False,       # safe figures to file
+        False,       # save figures to file
         True,        # show_plots
         'LEO',       # orbit Case (LEO, GTO, GEO)
         False,       # useSphericalHarmonics

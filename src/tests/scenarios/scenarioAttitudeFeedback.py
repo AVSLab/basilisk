@@ -267,7 +267,7 @@ from Basilisk.fswAlgorithms import fswMessages
 # ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2101.svg "Torque history")
 #
 ##  @}
-def run(safeFigures, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
+def run(saveFigures, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     '''Call this routine directly to run the tutorial scenario.'''
 
 
@@ -457,7 +457,7 @@ def run(safeFigures, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Error $\sigma_{B/R}$')
-    if safeFigures:  # only save off the figure if doing a unit test run
+    if saveFigures:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
             fileName + "1" + str(int(useUnmodeledTorque)) + str(int(useIntGain))
             + str(int(useKnownTorque))
@@ -471,7 +471,7 @@ def run(safeFigures, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Control Torque $L_r$ [Nm]')
-    if safeFigures:  # only save off the figure if doing a unit test run
+    if saveFigures:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
             fileName + "2" + str(int(useUnmodeledTorque)) + str(int(useIntGain))
             + str(int(useKnownTorque))
