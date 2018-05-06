@@ -32,7 +32,6 @@
 
 import pytest
 import os
-import inspect
 import numpy as np
 
 # import general simulation support files
@@ -116,22 +115,6 @@ def plot_orientation(timeLineSet, dataPos, dataVel, dataSigmaBN):
     plt.xlabel('Time [min]')
     plt.ylabel('Orientation Illustration')
 
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail(True)
-
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
-@pytest.mark.parametrize("useAltBodyFrame", [False, True])
-def test_bskAttitudeGuidance(show_plots, useAltBodyFrame):
-    '''This function is called by the py.test environment.'''
-
-    # provide a unique test method name, starting with test_
-    # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(True, show_plots, useAltBodyFrame)
-    assert testResults < 1, testMessage
-
 
 ## \defgroup Tutorials_2_1
 ##   @{
@@ -151,7 +134,7 @@ def test_bskAttitudeGuidance(show_plots, useAltBodyFrame):
 #
 # To run the default scenario 1., call the python script through
 #
-#       python test_scenarioAttitudeGuidance.py
+#       python scenarioAttitudeGuidance.py
 #
 # The simulation layout is shown in the following illustration.  A single simulation process is created
 # which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
@@ -165,11 +148,11 @@ def test_bskAttitudeGuidance(show_plots, useAltBodyFrame):
 # is being aligned with respect to this Hill frame.
 #
 # The basic simulation setup is the same as the one used in
-# [test_scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback).
+# [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback).
 # The dynamics simulation is setup using a SpacecraftPlus() module to which a gravity
 # effector is attached.  Note that both the rotational and translational degrees of
 # freedom of the spacecraft hub are turned on here to get a 6-DOF simulation.  For more
-# information on how to setup orbit, see [test_scenarioBasicOrbit.py](@ref scenarioBasicOrbit)
+# information on how to setup orbit, see [scenarioBasicOrbit.py](@ref scenarioBasicOrbit)
 #
 # However, instead of doing an inertial pointing maneuver, here the hillFrame() attitude guidance module
 # is used:
@@ -198,7 +181,7 @@ def test_bskAttitudeGuidance(show_plots, useAltBodyFrame):
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # do unit tests
+#     run( False,       # save figures to file
 #          True,        # show_plots
 #          False        # useAltBodyFrame
 #        )
@@ -210,9 +193,9 @@ def test_bskAttitudeGuidance(show_plots, useAltBodyFrame):
 # resulting attitude and control torque histories are shown below.  Note that the projections
 # of the body frame axes onto the Hill frame axes all converge to +1, indidcating that B becomes
 # asympotically aligned with R as desired.
-# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeGuidance10.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/test_scenarioAttitudeGuidance20.svg "Torque history")
-# ![Body/Hill Frame Axis Projections](Images/Scenarios/test_scenarioAttitudeGuidance40.svg "Axes Projection")
+# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeGuidance10.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/scenarioAttitudeGuidance20.svg "Torque history")
+# ![Body/Hill Frame Axis Projections](Images/Scenarios/scenarioAttitudeGuidance40.svg "Axes Projection")
 #
 #
 # Setup 2
@@ -221,7 +204,7 @@ def test_bskAttitudeGuidance(show_plots, useAltBodyFrame):
 # To run the second scenario, change the main routine at the bottom of the file to read:
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # do unit tests
+#     run( False,       # save figures to file
 #          True,        # show_plots
 #          True         # useAltBodyFrame
 #        )
@@ -240,22 +223,16 @@ def test_bskAttitudeGuidance(show_plots, useAltBodyFrame):
 # of the 2nd body frame axis onto the 2nd Hill frame axes converges to +1, while the other
 # projections converge to -1.  This indicates that the desired asymptotic Earth observing attitude
 # is achieved.
-# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeGuidance11.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/test_scenarioAttitudeGuidance21.svg "Torque history")
-# ![Body/Hill Frame Axis Projections](Images/Scenarios/test_scenarioAttitudeGuidance41.svg "Axes Projection")
+# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeGuidance11.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/scenarioAttitudeGuidance21.svg "Torque history")
+# ![Body/Hill Frame Axis Projections](Images/Scenarios/scenarioAttitudeGuidance41.svg "Axes Projection")
 #
 ##  @}
 
 
-def run(doUnitTests, show_plots, useAltBodyFrame):
+def run(saveFigures, show_plots, useAltBodyFrame):
     '''Call this routine directly to run the tutorial scenario.'''
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty array to store test log messages
 
-    #
-    #  From here on there scenario python code is found.  Above this line the code is to setup a
-    #  unitTest environment.  The above code is not critical if learning how to code BSK.
-    #
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -437,17 +414,17 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     plt.close("all")  # clears out plots from earlier test runs
 
     plot_attitude_error(timeLineSet, dataSigmaBR)
-    if doUnitTests:  # only save off the figure if doing a unit test run
+    if saveFigures:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(fileName + "1" + str(int(useAltBodyFrame)), plt, path)
 
     plot_control_torque(timeLineSet, dataLr)
-    if doUnitTests:  # only save off the figure if doing a unit test run
+    if saveFigures:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(fileName + "2" + str(int(useAltBodyFrame)), plt, path)
 
     plot_rate_error(timeLineSet, dataOmegaBR)
 
     plot_orientation(timeLineSet, dataPos, dataVel, dataSigmaBN)
-    if doUnitTests:  # only save off the figure if doing a unit test run
+    if saveFigures:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(fileName + "4" + str(int(useAltBodyFrame)), plt, path)
 
     if show_plots:
@@ -456,59 +433,7 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    #
-    #   the python code below is for the unit testing mode.  If you are studying the scenario
-    #   to learn how to run BSK, you can stop reading below this line.
-    #
-    if doUnitTests:
-        numTruthPoints = 5
-        skipValue = int(numDataPoints / numTruthPoints)
-        dataSigmaBNRed = dataSigmaBN[::skipValue]
-        dataPosRed = dataPos[::skipValue]
-
-        # setup truth data for unit test
-        truePos = [
-            [-3.9514176198221971e+06, 7.3621552027224889e+06, 5.1583270902798297e+06],
-            [-4.6086027653051550e+06, 6.9672123694011206e+06, 5.3072237697180342e+06],
-            [-5.2376104604200358e+06, 6.5296380777946832e+06, 5.4236570091631645e+06],
-            [-5.8353304991197446e+06, 6.0530297355945092e+06, 5.5076788366235951e+06],
-            [-6.3989830900466563e+06, 5.5410585900721485e+06, 5.5595354088057131e+06]
-        ]
-        trueLr = trueSigmaBR = []
-        if useAltBodyFrame is True:
-            trueSigmaBN = [
-                [1.0000000000000001e-01, 2.0000000000000001e-01, -2.9999999999999999e-01],
-                [-6.4143845119742271e-01, 3.7549202067008880e-01, 1.6228422035818663e-01],
-                [-8.2514275559858030e-01, 3.7431052486815464e-01, 2.6641953651279665e-01],
-                [-8.0514621677426934e-01, 3.3744944030160068e-01, 2.4586406789433021e-01],
-                [-8.1316266101544810e-01, 3.0421565940809858e-01, 2.4203891375413897e-01]
-            ]
-        if useAltBodyFrame is False:
-            trueSigmaBN = [
-                [1.0000000000000001e-01, 2.0000000000000001e-01, -2.9999999999999999e-01],
-                [1.9757381842655744e-01, -1.8325113332909412e-02, 5.3116118128700796e-01],
-                [1.9401404616468543e-01, -6.2047093744322206e-02, 6.2244720069697612e-01],
-                [1.9788907419526672e-01, -6.8298668119320893e-02, 6.4548524709461186e-01],
-                [1.9984147378665409e-01, -7.7874650384175126e-02, 6.7169950976963932e-01]
-            ]
-        # compare the results to the truth values
-        accuracy = 1e-6
-
-        testFailCount, testMessages = unitTestSupport.compareArray(
-            truePos, dataPosRed, accuracy, "r_BN_N Vector",
-            testFailCount, testMessages)
-
-        testFailCount, testMessages = unitTestSupport.compareArray(
-            trueSigmaBN, dataSigmaBNRed, accuracy, "sigma_BN Set",
-            testFailCount, testMessages)
-
-        #   print out success message if no error were found
-        if testFailCount == 0:
-            print "PASSED "
-
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return dataPos, dataSigmaBN, numDataPoints
 
 
 #
@@ -517,7 +442,7 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
 #
 if __name__ == "__main__":
     run(
-        False,  # do unit tests
+        False,  # save figures to file
         True,  # show_plots
         False  # useAltBodyFrame
     )
