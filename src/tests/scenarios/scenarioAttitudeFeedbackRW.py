@@ -31,7 +31,6 @@
 
 
 import numpy as np
-import pytest
 import os
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import (MRP_Feedback, attTrackingError, fswMessages,
@@ -108,22 +107,6 @@ def plot_rw_voltages(timeData, dataVolt, numRW):
     plt.xlabel('Time [min]')
     plt.ylabel('RW Voltage (V)')
 
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail(True)
-
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
-@pytest.mark.parametrize("useJitterSimple, useRWVoltageIO", [(False, False), (True, False), (False, True)])
-# provide a unique test method name, starting with test_
-def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
-    '''This function is called by the py.test environment.'''
-    # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(True,
-                                     show_plots, useJitterSimple, useRWVoltageIO)
-    assert testResults < 1, testMessage
-
 
 ## \defgroup Tutorials_2_2
 ## @{
@@ -152,7 +135,7 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 #
 # To run the default scenario 1., call the python script from a Terminal window through
 #
-#       python test_scenarioAttitudeFeedbackRW.py
+#       python scenarioAttitudeFeedbackRW.py
 #
 # The simulation layout is shown in the following illustration.  A single simulation process is created
 # which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
@@ -166,12 +149,12 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 # ### Setup Changes to Simulate RW Dynamic Effectors
 #
 # The fundamental simulation setup is the same as the one used in
-# [test_scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback).
+# [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback).
 # The dynamics simulation is setup using a SpacecraftPlus() module to which an Earth gravity
 # effector is attached.  The simple navigation module is still used to output the inertial attitude
 # , angular rate, as well as position and velocity message. The simulation is setup to run in a single
 # process again.  If the flight algorithms and simulation tasks are to run at different rates, then see
-# [test_scenarioAttitudeFeedback2T.py](@ref scenarioAttitudeFeedback2T) on how to setup a 2 thread simulation.
+# [scenarioAttitudeFeedback2T.py](@ref scenarioAttitudeFeedback2T) on how to setup a 2 thread simulation.
 #
 # For the spacecraft simulation side of this script, the new element is adding RW effectors to the
 # the rigid spacecraft hub.  The support macro `simIncludeRW.py` provides several convenient tools to facilitate
@@ -358,7 +341,7 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # do unit tests
+#     run( False,       # save figures to file
 #        , True,        # show_plots
 #        , False        # useJitterSimple
 #        , False        # useRWVoltageIO
@@ -368,9 +351,9 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 # simulation scenario flags to turn on or off certain simulation conditions.  The
 # default scenario has the RW jitter turned off.  The
 # resulting simulation illustrations are shown below.
-# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeFeedbackRW100.svg "MRP history")
-# ![RW Motor Torque History](Images/Scenarios/test_scenarioAttitudeFeedbackRW200.svg "RW motor torque history")
-# ![RW Spin History](Images/Scenarios/test_scenarioAttitudeFeedbackRW300.svg "RW Omega history")
+# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedbackRW100.svg "MRP history")
+# ![RW Motor Torque History](Images/Scenarios/scenarioAttitudeFeedbackRW200.svg "RW motor torque history")
+# ![RW Spin History](Images/Scenarios/scenarioAttitudeFeedbackRW300.svg "RW Omega history")
 # Note that in the RW motor torque plot both the required control torque \f$\hat u_B\f$ and the true
 # motor torque \f$u_B\f$ are shown.  This illustrates that with this maneuver the RW devices are being
 # saturated, and the attitude still eventually stabilizes.
@@ -382,7 +365,7 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # do unit tests
+#     run( False,       # save figures to file
 #        , True,        # show_plots
 #        , True         # useJitterSimple
 #        , False        # useRWVoltageIO
@@ -397,9 +380,9 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 # Change this option before the RW is created.  As this is set before any of the RW created in this
 # scenario, all the RWs have jitter engaged if this 'useJitterSimple' flag is set. The
 # resulting simulation illustrations are shown below.
-# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeFeedbackRW110.svg "MRP history")
-# ![RW Motor Torque History](Images/Scenarios/test_scenarioAttitudeFeedbackRW210.svg "RW motor torque history")
-# ![RW Spin History](Images/Scenarios/test_scenarioAttitudeFeedbackRW310.svg "RW Omega history")
+# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedbackRW110.svg "MRP history")
+# ![RW Motor Torque History](Images/Scenarios/scenarioAttitudeFeedbackRW210.svg "RW motor torque history")
+# ![RW Spin History](Images/Scenarios/scenarioAttitudeFeedbackRW310.svg "RW Omega history")
 # The impact of the RW jitter is very small, naturally.  The plots for this case look very similar to
 # the balanced RW case.  But there is a distinct numerical difference.
 #
@@ -457,24 +440,24 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 # To run this scenario, modify the bottom of the script to read:
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # do unit tests
+#     run( False,       # save figures to file
 #        , True,        # show_plots
 #        , False        # useJitterSimple
 #        , True        # useRWVoltageIO
 #        )
 # ~~~~~~~~~~~~~
 # The resulting simulation illustrations are shown below.
-# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudeFeedbackRW101.svg "MRP history")
-# ![RW Motor Torque History](Images/Scenarios/test_scenarioAttitudeFeedbackRW201.svg "RW motor torque history")
-# ![RW Spin History](Images/Scenarios/test_scenarioAttitudeFeedbackRW301.svg "RW Omega history")
-# ![RW Voltage History](Images/Scenarios/test_scenarioAttitudeFeedbackRW401.svg "RW Voltage history")
+# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedbackRW101.svg "MRP history")
+# ![RW Motor Torque History](Images/Scenarios/scenarioAttitudeFeedbackRW201.svg "RW motor torque history")
+# ![RW Spin History](Images/Scenarios/scenarioAttitudeFeedbackRW301.svg "RW Omega history")
+# ![RW Voltage History](Images/Scenarios/scenarioAttitudeFeedbackRW401.svg "RW Voltage history")
 # Note that the rwMotorVoltage() module is run here in a simple open-loop manner.  See the
 # [rwMotorVoltage documentation](../fswAlgorithms/effectorInterfaces/rwMotorVoltage/_Documentation/Basilisk-rwMotorVoltage-20170113.pdf "PDF Doc")
 # for more info.  By connecting the RW availability message it is possible turn
 # off the voltage command for particular wheels.  Also, by specifying the RW speed message input
 # name it is possible to turn on a torque tracking feedback loop in this module.
 ## @}
-def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
+def run(saveFigures, show_plots, useJitterSimple, useRWVoltageIO):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
@@ -746,27 +729,27 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     plt.close("all")  # clears out plots from earlier test runs
 
     plot_attitude_error(timeData, dataSigmaBR)
-    if doUnitTests:  # only save off the figure if doing a unit test run
+    if saveFigures:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(fileName + "1" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
                                            , plt
                                            , path)
 
     plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW)
-    if doUnitTests:  # only save off the figure if doing a unit test run
+    if saveFigures:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(fileName + "2" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
                                            , plt
                                            , path)
 
     plot_rate_error(timeData, dataOmegaBR)
     plot_rw_speeds(timeData, dataOmegaRW, numRW)
-    if doUnitTests:  # only save off the figure if doing a unit test run
+    if saveFigures:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(fileName + "3" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
                                            , plt
                                            , path)
 
     if useRWVoltageIO:
         plot_rw_voltages(timeData, dataVolt, numRW)
-        if doUnitTests:  # only save off the figure if doing a unit test run
+        if saveFigures:  # only save off the figure if doing a unit test run
             unitTestSupport.saveScenarioFigure(fileName + "4" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
                                                , plt
                                                , path)
@@ -776,107 +759,7 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    #
-    #   the python code below is for the unit testing mode.  If you are studying the scenario
-    #   to learn how to run BSK, you can stop reading below this line.
-    #
-    if doUnitTests:
-        numTruthPoints = 5
-        skipValue = int(numDataPoints / numTruthPoints)
-        dataUsRed = dataUsReq[::skipValue]
-        dataSigmaBRRed = dataSigmaBR[::skipValue]
-        dataPosRed = dataPos[::skipValue]
-
-        # setup truth data for unit test
-        truePos = [
-            [-4.0203386903966456e+06, 7.4905667418525163e+06, 5.2482992115893615e+06],
-            [-4.6421397265661405e+06, 7.0494536040548589e+06, 5.3596540365520352e+06],
-            [-5.2364026851194846e+06, 6.5665185661712112e+06, 5.4392129624019405e+06],
-            [-5.7996735881523984e+06, 6.0447162866713591e+06, 5.4865782619213760e+06],
-            [-6.3286970190056376e+06, 5.4872170491069853e+06, 5.5015438477240102e+06]
-        ]
-        trueUs = trueSigmaBR = []
-
-        if useJitterSimple is False and useRWVoltageIO is False:
-            trueUs = [
-                [3.8000000000000000e-01, 4.0000000000000008e-01, -1.5000000000000013e-01],
-                [1.0886536396638849e-02, -5.1081088867427316e-01, -4.9465001721576522e-02],
-                [-5.3356020546124400e-02, 7.3280121862582176e-02, 2.3622678489553288e-02],
-                [2.4053273555142078e-02, -2.7877284619006338e-03, 1.0490688667807481e-04],
-                [-4.4666896866933491e-03, -3.0806563642653785e-03, -3.2335993502972866e-03]
-            ]
-            trueSigmaBR = [
-                [1.0000000000000001e-01, 2.0000000000000001e-01, -2.9999999999999999e-01],
-                [1.3881610052729310e-02, -1.5485878435765174e-01, -1.7589430807049264e-02],
-                [-2.7923740563112063e-02, 1.1269976169106372e-02, 4.7871422910631181e-04],
-                [6.1959342447429396e-03, 2.4918559180853771e-03, 3.7300409079442311e-03],
-                [1.5260133637049377e-05, -1.2491549414001010e-03, -1.4158582039329860e-03]
-            ]
-
-        if useJitterSimple is True and useRWVoltageIO is False:
-            trueUs = [
-                [3.8000000000000000e-01, 4.0000000000000008e-01, -1.5000000000000013e-01],
-                [1.1065138334427127e-02, -5.1268877119457312e-01, -5.0197674196675285e-02],
-                [-5.0848148107366119e-02, 7.4099100493587991e-02, 2.2771409384433863e-02],
-                [2.4176151141330489e-02, -2.8562626784347737e-03, -1.1764370510636973e-04],
-                [-4.4366215100514186e-03, -3.0640074660972742e-03, -3.2900068347372418e-03]
-            ]
-            trueSigmaBR = [
-                [1.0000000000000001e-01, 2.0000000000000001e-01, -2.9999999999999999e-01],
-                [1.4000649100987304e-02, -1.5524376685777014e-01, -1.7672779218442999e-02],
-                [-2.7813457642929151e-02, 1.0946112552094834e-02, 4.4875764271143668e-04],
-                [6.2095289346616083e-03, 2.4867062677496696e-03, 3.6922501700617210e-03],
-                [1.6904290117009812e-05, -1.2461998354027675e-03, -1.4336939003900724e-03]
-            ]
-            truePos = [
-                [-4.0203386903966456e+06, 7.4905667418525163e+06, 5.2482992115893615e+06],
-                [-4.6421397299586143e+06, 7.0494535906981705e+06, 5.3596540487686256e+06],
-                [-5.2364027267925823e+06, 6.5665184975009989e+06, 5.4392130114279613e+06],
-                [-5.7996736190037578e+06, 6.0447161564746955e+06, 5.4865783260474391e+06],
-                [-6.3286970385898352e+06, 5.4872168578844322e+06, 5.5015439263280211e+06]
-            ]
-
-        if useJitterSimple is False and useRWVoltageIO is True:
-            trueUs = [
-                [3.8000000000000000e-01, 4.0000000000000008e-01, -1.5000000000000013e-01],
-                [1.1231402312140600e-02, -5.1291709034434607e-01, -4.9996296037748973e-02],
-                [-5.3576899204811061e-02, 7.3722479933297697e-02, 2.3880144351365474e-02],
-                [2.4193559082756406e-02, -2.8516319358299399e-03, 2.6158801499764212e-06],
-                [-4.5358804715397794e-03, -3.0828353818758043e-03, -3.2251584952585279e-03]
-            ]
-            trueSigmaBR = [
-                [1.0000000000000001e-01, 2.0000000000000001e-01, -2.9999999999999999e-01],
-                [1.4061613716759683e-02, -1.5537401133724818e-01, -1.7736020110557197e-02],
-                [-2.8072554033139227e-02, 1.1328152717859538e-02, 4.8023651815938773e-04],
-                [6.2505180487499833e-03, 2.4908595924511283e-03, 3.7332111196198281e-03],
-                [-1.2999627747526236e-06, -1.2575327981617813e-03, -1.4238011880860959e-03]
-            ]
-
-        # compare the results to the truth values
-        accuracy = 1e-6
-
-        testFailCount, testMessages = unitTestSupport.compareArray(
-            trueUs, dataUsRed, accuracy, "Lr Vector",
-            testFailCount, testMessages)
-
-        testFailCount, testMessages = unitTestSupport.compareArray(
-            truePos, dataPosRed, accuracy, "r_BN_N Vector",
-            testFailCount, testMessages)
-
-        testFailCount, testMessages = unitTestSupport.compareArray(
-            trueSigmaBR, dataSigmaBRRed, accuracy, "sigma_BR Set",
-            testFailCount, testMessages)
-
-        #   print out success message if no error were found
-        if testFailCount == 0:
-            print "PASSED "
-        else:
-            print testFailCount
-            print testMessages
-
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return dataPos, dataSigmaBR, dataUsReq, numDataPoints
 
 
 #
@@ -885,7 +768,7 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
 #
 if __name__ == "__main__":
     run(
-        False,  # do unit tests
+        False,  # save figures to file
         True,  # show_plots
         False,  # useJitterSimple
         False  # useRWVoltageIO
