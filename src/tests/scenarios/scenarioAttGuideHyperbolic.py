@@ -33,7 +33,7 @@
 import inspect
 import os
 import numpy as np
-import pytest
+
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import MRP_Feedback, attTrackingError, fswMessages, velocityPoint
 from Basilisk.simulation import extForceTorque, simple_nav, spacecraftPlus
@@ -114,21 +114,6 @@ def plot_orbit(oe, mu, planet_radius, dataPos, dataVel):
 
 
 
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail(True)
-
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
-@pytest.mark.parametrize("useAltBodyFrame", [False, True])
-# provide a unique test method name, starting with test_
-def test_bskAttGuide_Hyperbolic(show_plots, useAltBodyFrame):
-    '''This function is called by the py.test environment.'''
-    # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(True, show_plots, useAltBodyFrame)
-    assert testResults < 1, testMessage
-
 
 ## \defgroup Tutorials_2_1_1
 ## @{
@@ -149,7 +134,7 @@ def test_bskAttGuide_Hyperbolic(show_plots, useAltBodyFrame):
 #
 # To run the default scenario 1., call the python script through
 #
-#       python test_scenarioAttGuideHyperbolic.py
+#       python scenarioAttGuideHyperbolic.py
 #
 # The simulation layout is shown in the following illustration.  A single simulation process is created
 # which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
@@ -161,11 +146,11 @@ def test_bskAttGuide_Hyperbolic(show_plots, useAltBodyFrame):
 # and the segment of that trajectory flown during the simulation.
 #
 # The basic simulation setup is the same as the one used in
-# [test_scenarioAttitudeGuidance.py](@ref scenarioAttitudeGuidance).
+# [scenarioAttitudeGuidance.py](@ref scenarioAttitudeGuidance).
 # The dynamics simulation is setup using a SpacecraftPlus() module to which a gravity
 # effector is attached.  Note that both the rotational and translational degrees of
 # freedom of the spacecraft hub are turned on here to get a 6-DOF simulation.  For more
-# information on how to setup an orbit, see [test_scenarioBasicOrbit.py](@ref scenarioBasicOrbit)
+# information on how to setup an orbit, see [scenarioBasicOrbit.py](@ref scenarioBasicOrbit)
 #
 # Where the Attitude Guidance Tutorial pointed the spacecraft relative to the Hill frame, this tutorial
 # points it relative to the velocity vector.
@@ -181,7 +166,7 @@ def test_bskAttGuide_Hyperbolic(show_plots, useAltBodyFrame):
 #     scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
 # ~~~~~~~~~~~~~
 # Note that in contrast to Hill pointing mode used in
-# [test_scenarioAttitudeGuidance.py](@ref scenarioAttitudeGuidance), the orbit velocity frame pointing
+# [scenarioAttitudeGuidance.py](@ref scenarioAttitudeGuidance), the orbit velocity frame pointing
 # requires the attacting celestial body gravitational constant mu to be set.
 #
 # Setup 1
@@ -199,10 +184,10 @@ def test_bskAttGuide_Hyperbolic(show_plots, useAltBodyFrame):
 # simulation scenario flags to turn on or off certain simulation conditions.  The
 # default scenario shown has the `useAltBodyFrame` flag turned off.  This means that we seek
 # to align the body frame *B* with the velocity vector *V*.
-# ![MRP Attitude History](Images/Scenarios/test_scenarioAttGuideHyperbolic10.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/test_scenarioAttGuideHyperbolic20.svg "Torque history")
-# ![Rate Tracking Error](Images/Scenarios/test_scenarioAttGuideHyperbolic30.svg "Rate Tracking Error")
-# ![Hyperbolic Orbit Illustration](Images/Scenarios/test_scenarioAttGuideHyperbolic40.svg "Hyperbolic Orbit Illustration")
+# ![MRP Attitude History](Images/Scenarios/scenarioAttGuideHyperbolic10.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/scenarioAttGuideHyperbolic20.svg "Torque history")
+# ![Rate Tracking Error](Images/Scenarios/scenarioAttGuideHyperbolic30.svg "Rate Tracking Error")
+# ![Hyperbolic Orbit Illustration](Images/Scenarios/scenarioAttGuideHyperbolic40.svg "Hyperbolic Orbit Illustration")
 #
 #
 # Setup 2
@@ -226,15 +211,13 @@ def test_bskAttGuide_Hyperbolic(show_plots, useAltBodyFrame):
 # to point the correct face of the spacecraft along the negative V-bar.
 #
 # The resulting attitude and control torque histories are shown below.
-# ![MRP Attitude History](Images/Scenarios/test_scenarioAttGuideHyperbolic11.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/test_scenarioAttGuideHyperbolic21.svg "Torque history")
-# ![Rate Tracking Error](Images/Scenarios/test_scenarioAttGuideHyperbolic31.svg "Rate Tracking Error")
+# ![MRP Attitude History](Images/Scenarios/scenarioAttGuideHyperbolic11.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/scenarioAttGuideHyperbolic21.svg "Torque history")
+# ![Rate Tracking Error](Images/Scenarios/scenarioAttGuideHyperbolic31.svg "Rate Tracking Error")
 #
 ## @}
-def run(doUnitTests, show_plots, useAltBodyFrame):
+def run(safeFigures, show_plots, useAltBodyFrame):
     '''Call this routine directly to run the tutorial scenario.'''
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty array to store test log messages
 
     #
     #  From here on there scenario python code is found.  Above this line the code is to setup a
@@ -422,19 +405,19 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     plt.close("all")  # clears out plots from earlier test runs
 
     plot_track_error_norm(timeLineSet, dataSigmaBR)
-    if doUnitTests:  # only save off the figure if doing a unit test run
+    if safeFigures:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(fileName + "1" + str(int(useAltBodyFrame)), plt, path)
 
     plot_control_torque(timeLineSet, dataLr)
-    if doUnitTests:  # only save off the figure if doing a unit test run
+    if safeFigures:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(fileName + "2" + str(int(useAltBodyFrame)), plt, path)
 
     plot_rate_error(timeLineSet, dataOmegaBR)
-    if doUnitTests:  # only save off the figure if doing a unit test run
+    if safeFigures:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(fileName + "3" + str(int(useAltBodyFrame)), plt, path)
 
     plot_orbit(oe, earth.mu, earth.radEquator, dataPos, dataVel)
-    if doUnitTests:  # only save off the figure if doing a unit test run
+    if safeFigures:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(fileName + "4" + str(int(useAltBodyFrame)), plt, path)
 
     if show_plots:
@@ -443,60 +426,7 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    #
-    #   the python code below is for the unit testing mode.  If you are studying the scenario
-    #   to learn how to run BSK, you can stop reading below this line.
-    #
-    if doUnitTests:
-        numTruthPoints = 5
-        skipValue = int(numDataPoints / numTruthPoints)
-        dataSigmaBNRed = dataSigmaBN[::skipValue]
-        dataPosRed = dataPos[::skipValue]
-
-        # setup truth data for unit test
-        truePos = [
-            [3.6223376821150966e+07, 7.1776505575846523e+07, 1.3687819378018096e+07],
-            [3.5873290076594226e+07, 7.2092075260881290e+07, 1.3997417901516432e+07],
-            [3.5522532862572916e+07, 7.2406297570323750e+07, 1.4306754823209373e+07],
-            [3.5171116051793166e+07, 7.2719175431216419e+07, 1.4615826100429773e+07],
-            [3.4819050453380756e+07, 7.3030711891436249e+07, 1.4924627774549646e+07]
-        ]
-
-        trueLr = trueSigmaBR = []
-        if useAltBodyFrame is True:
-            trueSigmaBN = [
-                [1.0000000000000001e-01, 2.0000000000000001e-01, -2.9999999999999999e-01],
-                [-9.2494162977495867e-02, 1.9471395865807911e-01, -6.3717384535805643e-01],
-                [-8.4160284482831221e-02, 1.8751522022305400e-01, -6.2862018070118753e-01],
-                [-8.3717220192117484e-02, 1.8793830908990347e-01, -6.2761281563466287e-01],
-                [-8.3427503754355453e-02, 1.8790862092331320e-01, -6.2675005457853550e-01]
-            ]
-        if useAltBodyFrame is False:
-            trueSigmaBN = [
-                [1.0000000000000001e-01, 2.0000000000000001e-01, -2.9999999999999999e-01],
-                [1.3870159058177514e-01, 6.5242458655457275e-02, 2.1071408452248369e-01],
-                [1.3927887967605357e-01, 6.2240967986042707e-02, 2.0898043796751192e-01],
-                [1.3967975559519039e-01, 6.2219318146119917e-02, 2.0946440039329009e-01],
-                [1.3978125300497049e-01, 6.2060435748053963e-02, 2.1011602986235331e-01]
-            ]
-        # compare the results to the truth values
-        accuracy = 1e-6
-
-        testFailCount, testMessages = unitTestSupport.compareArray(
-            truePos, dataPosRed, accuracy, "r_BN_N Vector",
-            testFailCount, testMessages)
-
-        testFailCount, testMessages = unitTestSupport.compareArray(
-            trueSigmaBN, dataSigmaBNRed, accuracy, "sigma_BN Set",
-            testFailCount, testMessages)
-
-        #   print out success message if no error were found
-        if testFailCount == 0:
-            print "PASSED "
-
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return dataPos, dataSigmaBN, numDataPoints
 
 
 #
@@ -504,7 +434,7 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
 # stand-along python script
 #
 if __name__ == "__main__":
-    run(False,  # do unit tests
+    run(False,  # save figures to file
         True,  # show_plots
         False  # useAltBodyFrame
         )
