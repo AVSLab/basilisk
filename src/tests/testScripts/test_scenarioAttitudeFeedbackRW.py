@@ -161,15 +161,3 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
     # this check below just makes sure no sub-test failures were found
     assert testFailCount < 1, testMessages
 
-
-#
-# This statement below ensures that the unit test scrip can be run as a
-# stand-along python script
-#
-if __name__ == "__main__":
-    run(
-        False,  # do unit tests
-        True,  # show_plots
-        False,  # useJitterSimple
-        False  # useRWVoltageIO
-    )
