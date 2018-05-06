@@ -29,7 +29,6 @@
 #
 
 import sys, os, inspect
-import numpy as np
 import pytest
 from Basilisk.utilities import unitTestSupport
 
