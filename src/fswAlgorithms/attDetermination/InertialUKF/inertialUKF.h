@@ -110,13 +110,16 @@ typedef struct {
 
 
 typedef struct {
-    uint64_t time;                    /*!< [ns] */
-    double   omegaLatest_BN_B[3];    /*!< [r/s] Latest angular velocity measurement*/
-    double   sigma_BN[4];          /*!< [-] Quaternion in Basilisk representation*/
-    double   omega_BN[3];          /*!< [-] rotation rate n*/
-    char    sTInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] Input message buffer from MIRU*/
-    int32_t sTInMsgID;                /*!< [-] Input message ID from MIRU*/
-}STMessages;
+    uint64_t time;                                 /*!< [ns] */
+    char chuFusOutMsgName[MAX_STAT_MSG_LENGTH];    /*!< [-] Input message buffer from MIRU*/
+    int32_t chuFusOutMsgID;                        /*!< [-] Input message ID from MIRU*/
+    
+}STMessage;
+
+/*! Structure to gather the ST messages and content */
+typedef struct {
+    STMessage STMessages[MAX_ST_VEH_COUNT];     /*!< [-] Decoded MIRU data for both camera heads*/
+}STDataParsing;
 
 #ifdef __cplusplus
 extern "C" {
