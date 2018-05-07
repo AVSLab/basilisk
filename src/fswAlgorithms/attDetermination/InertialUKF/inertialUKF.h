@@ -36,7 +36,18 @@
  * @{
  */
 
+typedef struct {
+    char chuFusOutMsgName[MAX_STAT_MSG_LENGTH];    /*!< [-] Input message buffer from MIRU*/
+    int32_t chuFusOutMsgID;                        /*!< [-] Input message ID from MIRU*/
+    double ep_BST[4];                              /*!< [-] Quaternion body to Star Tracker frame */
+    double noise[3];                               /*!< [-] Per axis noise on the ST*/
+}STMessage;
 
+/*! Structure to gather the ST messages and content */
+typedef struct {
+    int numST;                                  /* Number of Star Trackers */
+    STMessage STMessages[MAX_ST_VEH_COUNT];     /*!< [-] Decoded MIRU data for both camera heads*/
+}STDataParsing;
 
 /*! @brief Top level structure for the CSS unscented kalman filter estimator.
  Used to estimate the sun state in the vehicle body frame.  Please see the 
@@ -106,20 +117,10 @@ typedef struct {
     int32_t rwParamsInMsgID;     /*!< [-] ID for the RWArrayConfigFswMsg ingoing message */
     int32_t rwSpeedsInMsgID;      /*!< [-] ID for the incoming RW speeds*/
     int32_t gyrBuffInMsgID;         /*!< [-] ID of the input message buffer*/
+    
+    STDataParsing STDatasStruct;      /*!< [-] ID of the input message buffer*/
 }InertialUKFConfig;
 
-
-typedef struct {
-    char chuFusOutMsgName[MAX_STAT_MSG_LENGTH];    /*!< [-] Input message buffer from MIRU*/
-    int32_t chuFusOutMsgID;                        /*!< [-] Input message ID from MIRU*/
-    double ep_BST[4];                              /*!< [-] Quaternion body to Star Tracker frame */
-    double noise[3];                               /*!< [-] Per axis noise on the ST*/
-}STMessage;
-
-/*! Structure to gather the ST messages and content */
-typedef struct {
-    STMessage STMessages[MAX_ST_VEH_COUNT];     /*!< [-] Decoded MIRU data for both camera heads*/
-}STDataParsing;
 
 #ifdef __cplusplus
 extern "C" {
@@ -127,6 +128,8 @@ extern "C" {
     
     void SelfInit_inertialUKF(InertialUKFConfig *ConfigData, uint64_t moduleID);
     void CrossInit_inertialUKF(InertialUKFConfig *ConfigData, uint64_t moduleID);
+    void Read_STMessages(InertialUKFConfig *ConfigData, uint64_t callTime,
+                         uint64_t moduleID);
     void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
         uint64_t moduleID);
 	void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,

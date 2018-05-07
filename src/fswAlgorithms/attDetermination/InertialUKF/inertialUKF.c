@@ -152,6 +152,34 @@ void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     return;
 }
 
+/*! This method reads in the messages from all availabel star trackers and orders them
+ @return void
+ @param ConfigData The configuration data associated with the CSS estimator
+ @param callTime The clock time at which the function was called (nanoseconds)
+ */
+void Read_STMessages(InertialUKFConfig *ConfigData, uint64_t callTime,
+                        uint64_t moduleID)
+{
+    double newTimeTag;  /* [s] Local Time-tag variable*/
+    uint64_t ClockTime; /* [ns] Read time for the message*/
+    uint32_t ReadSize;  /* [-] Non-zero size indicates we received ST msg*/
+    int i;
+    
+    for (i = 0; i < ConfigData->STDatasStruct.numST; i++)
+    {
+        
+    }
+    /*! Begin method steps*/
+    /*! - Read the input parsed CSS sensor data message*/
+    ClockTime = 0;
+    ReadSize = 0;
+    memset(&(ConfigData->stSensorIn), 0x0, sizeof(STAttFswMsg));
+    ReadMessage(ConfigData->stDataInMsgId, &ClockTime, &ReadSize,
+                sizeof(STAttFswMsg), (void*) (&(ConfigData->stSensorIn)), moduleID);
+    /*! - If the time tag from the measured data is new compared to previous step,
+     propagate and update the filter*/
+    newTimeTag = ConfigData->stSensorIn.timeTag * NANO2SEC;
+}
 /*! This method takes the parsed CSS sensor data and outputs an estimate of the
  sun vector in the ADCS body frame
  @return void
