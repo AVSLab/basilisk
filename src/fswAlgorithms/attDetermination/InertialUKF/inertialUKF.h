@@ -110,10 +110,10 @@ typedef struct {
 
 
 typedef struct {
-    uint64_t time;                                 /*!< [ns] */
     char chuFusOutMsgName[MAX_STAT_MSG_LENGTH];    /*!< [-] Input message buffer from MIRU*/
     int32_t chuFusOutMsgID;                        /*!< [-] Input message ID from MIRU*/
-    
+    double ep_BST[4];                              /*!< [-] Quaternion body to Star Tracker frame */
+    double noise[3];                               /*!< [-] Per axis noise on the ST*/
 }STMessage;
 
 /*! Structure to gather the ST messages and content */
