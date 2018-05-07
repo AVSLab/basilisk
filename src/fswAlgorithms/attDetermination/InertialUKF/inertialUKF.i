@@ -47,7 +47,8 @@ GEN_SIZEOF(STAttFswMsg);
 GEN_SIZEOF(RWArrayConfigFswMsg);
 GEN_SIZEOF(RWSpeedIntMsg);
 GEN_SIZEOF(VehicleConfigFswMsg);
-GEN_SIZEOF(AccDataFswMsg)
+GEN_SIZEOF(AccDataFswMsg);
+STRUCTASLIST(STDataParsing);
 
 %pythoncode %{
 import sys
