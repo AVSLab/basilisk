@@ -54,7 +54,11 @@ void CrossInit_inertialUKF(InertialUKFConfig *ConfigData, uint64_t moduleID)
 {
     /*! Begin method steps */
     /*! - Find the message ID for the coarse sun sensor data message */
-    ConfigData->stDataInMsgId = subscribeToMessage(ConfigData->stDataInMsgName, sizeof(STAttFswMsg), moduleID);
+    int i;
+    for (i = 0; i < ConfigData->STDatasStruct.numST; i++)
+    {
+        ConfigData->STDatasStruct.STMessages[i].chuFusOutMsgID = subscribeToMessage(ConfigData->STDatasStruct.STMessages[i].chuFusOutMsgName, sizeof(STAttFswMsg), moduleID);
+    }
 	ConfigData->massPropsInMsgId = subscribeToMessage(ConfigData->massPropsInMsgName, 
 		sizeof(VehicleConfigFswMsg), moduleID);
     /*! - Find the message ID for the vehicle mass properties configuration message */
@@ -173,7 +177,7 @@ void Read_STMessages(InertialUKFConfig *ConfigData, uint64_t callTime,
         ClockTime = 0;
         ReadSize = 0;
         memset(&(ConfigData->stSensorIn[i]), 0x0, sizeof(STAttFswMsg));
-        ReadMessage(ConfigData->stDataInMsgId, &ClockTime, &ReadSize,
+        ReadMessage(ConfigData->STDatasStruct.STMessages[i].chuFusOutMsgID, &ClockTime, &ReadSize,
                     sizeof(STAttFswMsg), (void*) (&(ConfigData->stSensorIn[i])), moduleID);
         /*! - If the time tag from the measured data is new compared to previous step,
          propagate and update the filter*/
@@ -237,7 +241,7 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
         memcpy(&(ConfigData->rwSpeedPrev), &(ConfigData->rwSpeeds), sizeof(RWSpeedIntMsg));
         ConfigData->timeWheelPrev = ClockTime;
         ConfigData->timeTag = ConfigData->stSensorIn.timeTag > ClockTime ? 
-            ConfigData->stSensorIn.timeTag*1.0E-9 : ClockTime*1.0E-9;
+            ConfigData->stSensorIn.timeTag*NANO2SEC : ClockTime*NANO2SEC;
 
         ConfigData->firstPassComplete = 1;
     }
