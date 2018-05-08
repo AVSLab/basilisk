@@ -160,25 +160,37 @@ void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
 void Read_STMessages(InertialUKFConfig *ConfigData, uint64_t callTime,
                         uint64_t moduleID)
 {
-    double newTimeTag;  /* [s] Local Time-tag variable*/
     uint64_t ClockTime; /* [ns] Read time for the message*/
     uint32_t ReadSize;  /* [-] Non-zero size indicates we received ST msg*/
+    STAttFswMsg bufferSTMessage; /* Local ST message to copy and organize  */
     int i;
+    int j;
     
     for (i = 0; i < ConfigData->STDatasStruct.numST; i++)
     {
+        /*! Begin method steps*/
+        /*! - Read the input parsed CSS sensor data message*/
+        ClockTime = 0;
+        ReadSize = 0;
+        memset(&(ConfigData->stSensorIn[i]), 0x0, sizeof(STAttFswMsg));
+        ReadMessage(ConfigData->stDataInMsgId, &ClockTime, &ReadSize,
+                    sizeof(STAttFswMsg), (void*) (&(ConfigData->stSensorIn[i])), moduleID);
+        /*! - If the time tag from the measured data is new compared to previous step,
+         propagate and update the filter*/
         
+
+        for (j=0; j<i; j++)
+            {
+                if (ConfigData->stSensorIn[i].timeTag < ConfigData->stSensorIn[j].timeTag )
+                {
+                    bufferSTMessage = ConfigData->stSensorIn[j];
+                    ConfigData->stSensorIn[j] =  ConfigData->stSensorIn[i];
+                    ConfigData->stSensorIn[i] = bufferSTMessage;
+                }
+            }
     }
-    /*! Begin method steps*/
-    /*! - Read the input parsed CSS sensor data message*/
-    ClockTime = 0;
-    ReadSize = 0;
-    memset(&(ConfigData->stSensorIn), 0x0, sizeof(STAttFswMsg));
-    ReadMessage(ConfigData->stDataInMsgId, &ClockTime, &ReadSize,
-                sizeof(STAttFswMsg), (void*) (&(ConfigData->stSensorIn)), moduleID);
-    /*! - If the time tag from the measured data is new compared to previous step,
-     propagate and update the filter*/
-    newTimeTag = ConfigData->stSensorIn.timeTag * NANO2SEC;
+    
+
 }
 /*! This method takes the parsed CSS sensor data and outputs an estimate of the
  sun vector in the ADCS body frame

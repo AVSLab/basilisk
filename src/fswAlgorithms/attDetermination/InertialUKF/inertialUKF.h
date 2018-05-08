@@ -102,7 +102,8 @@ typedef struct {
     double omega_BN_BOut[3]; /*!< [r/s] Body rate output data*/
     double timeTagOut;       /*!< [s] Output time-tag information*/
 	NavAttIntMsg outputInertial;        /*!< -- Output inertial estimate data */
-    STAttFswMsg stSensorIn;             /*!< [-] ST sensor data read in from message bus*/
+    uint32_t newTimeTag[MAX_ST_VEH_COUNT];    /*!< [-] Time tags of the new messages*/
+    STAttFswMsg stSensorIn[MAX_ST_VEH_COUNT]; /*!< [-] ST sensor data read in from message bus*/
     RWArrayConfigFswMsg rwConfigParams;       /*!< [-] struct to store message containing RW config parameters in body B frame */
     RWSpeedIntMsg rwSpeeds;             /*! [-] Local reaction wheel speeds */
     RWSpeedIntMsg rwSpeedPrev;          /*! [-] Local reaction wheel speeds */
