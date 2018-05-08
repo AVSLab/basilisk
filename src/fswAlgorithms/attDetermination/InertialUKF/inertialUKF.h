@@ -103,6 +103,8 @@ typedef struct {
     double timeTagOut;       /*!< [s] Output time-tag information*/
 	NavAttIntMsg outputInertial;        /*!< -- Output inertial estimate data */
     STAttFswMsg stSensorIn[MAX_ST_VEH_COUNT]; /*!< [-] ST sensor data read in from message bus*/
+    int ClockTimeST[MAX_ST_VEH_COUNT];  /*!< [-] All of the ClockTimes for the STs*/
+    int ReadSizeST[MAX_ST_VEH_COUNT];  /*!< [-] All of the ReadSizes for the STs*/
     RWArrayConfigFswMsg rwConfigParams;       /*!< [-] struct to store message containing RW config parameters in body B frame */
     RWSpeedIntMsg rwSpeeds;             /*! [-] Local reaction wheel speeds */
     RWSpeedIntMsg rwSpeedPrev;          /*! [-] Local reaction wheel speeds */
@@ -128,8 +130,7 @@ extern "C" {
     
     void SelfInit_inertialUKF(InertialUKFConfig *ConfigData, uint64_t moduleID);
     void CrossInit_inertialUKF(InertialUKFConfig *ConfigData, uint64_t moduleID);
-    void Read_STMessages(InertialUKFConfig *ConfigData, uint64_t callTime,
-                         uint64_t moduleID);
+    void Read_STMessages(InertialUKFConfig *ConfigData, uint64_t moduleID);
     void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
         uint64_t moduleID);
 	void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
@@ -137,9 +138,9 @@ extern "C" {
     void inertialUKFAggGyrData(InertialUKFConfig *ConfigData, double prevTime,
                           double propTime, AccDataFswMsg *gyrData);
 	void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime);
-    void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime);
+    void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int currentST);
 	void inertialStateProp(InertialUKFConfig *ConfigData, double *stateInOut, double dt);
-    void inertialUKFMeasModel(InertialUKFConfig *ConfigData);
+    void inertialUKFMeasModel(InertialUKFConfig *ConfigData, int currentST);
     
 #ifdef __cplusplus
 }
