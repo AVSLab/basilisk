@@ -35,7 +35,7 @@ sys.path.append(path + '/../plotting')
 import BSK_Plotting as BSK_plt
 
 sys.path.append(path + '/../../scenarios')
-import test_scenarioAttitudeSteering as scene_plt
+import scenarioAttitudeSteering as scene_plt
 
 
 # Create your own scenario child class
