@@ -464,6 +464,8 @@ def run(saveFigures, show_plots, damping_parameter, timeStep):
             "spacecraftBody.dynManager.getStateObject('fuelSloshParticleRho3').getState()")
 
     if saveFigures:
+        fileName = os.path.basename(os.path.splitext(__file__)[0])
+        path = os.path.dirname(os.path.abspath(__file__))
         if damping_parameter == 0.0 and timeStep == 0.75:
             setupNo = 1
         elif damping_parameter == 0.0 and timeStep == 0.3:
@@ -473,7 +475,6 @@ def run(saveFigures, show_plots, damping_parameter, timeStep):
         else:
             print("No standard setup parameters")
 
-    fileNameString = filename[len(path) + 6:-3]
 
     plt.close("all")  # clears out plots from earlier test runs
     fig = plt.figure(1, figsize=(5, 5))
@@ -502,7 +503,7 @@ def run(saveFigures, show_plots, damping_parameter, timeStep):
     plt.ylabel('Y (km)')
 
     if saveFigures:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileNameString + "Orbit", plt, path)
+        unitTestSupport.saveScenarioFigure(fileName + "Orbit", plt, path)
 
     plt.figure(2, figsize=(5, 4))
     plt.plot(orbAngMom_N[:, 0] * 1e-9, (orbAngMom_N[:, 1] - orbAngMom_N[0, 1]) / orbAngMom_N[0, 1],
@@ -513,7 +514,7 @@ def run(saveFigures, show_plots, damping_parameter, timeStep):
     plt.ylabel('Relative Orbital Angular Momentum Variation')
 
     if saveFigures:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileNameString + "OAM" + str(setupNo), plt, path)
+        unitTestSupport.saveScenarioFigure(fileName + "OAM" + str(setupNo), plt, path)
 
     plt.figure(3, figsize=(5, 4))
     plt.plot(orbEnergy[:, 0] * 1e-9, (orbEnergy[:, 1] - orbEnergy[0, 1]) / orbEnergy[0, 1])
@@ -521,7 +522,7 @@ def run(saveFigures, show_plots, damping_parameter, timeStep):
     plt.ylabel('Relative Orbital Energy Variation')
 
     if saveFigures:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileNameString + "OE" + str(setupNo), plt, path)
+        unitTestSupport.saveScenarioFigure(fileName + "OE" + str(setupNo), plt, path)
 
     plt.figure(4, figsize=(5, 4))
     plt.plot(rotAngMom_N[:, 0] * 1e-9,
@@ -532,7 +533,7 @@ def run(saveFigures, show_plots, damping_parameter, timeStep):
     plt.ylabel('Relative Rotational Angular Momentum Variation')
 
     if saveFigures:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileNameString + "RAM" + str(setupNo), plt, path)
+        unitTestSupport.saveScenarioFigure(fileName + "RAM" + str(setupNo), plt, path)
 
     plt.figure(5, figsize=(5, 4))
     plt.plot(rotEnergy[:, 0] * 1e-9, (rotEnergy[:, 1] - rotEnergy[0, 1]) / rotEnergy[0, 1])
@@ -540,7 +541,7 @@ def run(saveFigures, show_plots, damping_parameter, timeStep):
     plt.ylabel('Relative Rotational Energy Variation')
 
     if saveFigures:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileNameString + "RE" + str(setupNo), plt, path)
+        unitTestSupport.saveScenarioFigure(fileName + "RE" + str(setupNo), plt, path)
 
     if damping_parameter != 0.0:
         plt.figure(6, figsize=(5, 4))
@@ -551,7 +552,7 @@ def run(saveFigures, show_plots, damping_parameter, timeStep):
         plt.ylabel('Displacement (m)')
 
         if saveFigures:     # only save off the figure if doing a unit test run
-            unitTestSupport.saveScenarioFigure(fileNameString + "ParticleMotion", plt, path)
+            unitTestSupport.saveScenarioFigure(fileName + "ParticleMotion", plt, path)
 
     if show_plots:
         plt.show()
