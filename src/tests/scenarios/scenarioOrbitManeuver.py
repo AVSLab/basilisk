@@ -29,7 +29,6 @@
 # Creation Date:  Nov. 26, 2016
 #
 
-import pytest
 import os
 import numpy as np
 import math
@@ -46,23 +45,6 @@ from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
 
 
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail(True)
-# The following 'parametrize' function decorator provides the parameters for each
-#   of the multiple test runs for this test.
-
-
-@pytest.mark.parametrize("maneuverCase", [0, 1])
-# provide a unique test method name, starting with test_
-def test_scenarioOrbitManeuver(show_plots, maneuverCase):
-    '''This function is called by the py.test environment.'''
-    # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(True,
-                                     show_plots, maneuverCase)
-    assert testResults < 1, testMessage
-
 
 ## \defgroup Tutorials_1_2
 ## @{
@@ -76,7 +58,7 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
 # This script sets up a 3-DOF spacecraft which is orbiting Earth.  The purpose
 # is to illustrate how to start and stop the Basilisk simulation to apply
 # some Delta_v's for simple orbit maneuvers.  Read
-# [test_scenarioBasicOrbit.py](@ref scenarioBasicOrbit) to learn how to setup an
+# [scenarioBasicOrbit.py](@ref scenarioBasicOrbit) to learn how to setup an
 # orbit simulation. The scenarios can be run with the followings setups
 # parameters:
 # Setup | maneuverCase
@@ -86,7 +68,7 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
 #
 # To run the default scenario 1., call the python script through
 #
-#       python test_scenarioOrbitManeuver.py
+#       python scenarioOrbitManeuver.py
 #
 # The simulation layout is shown in the following illustration.  A single simulation process is created
 # which contains the spacecraft object.  The BSK simulation is run for a fixed period.  After stopping, the
@@ -131,7 +113,7 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # do unit tests
+#     run( False,       # save figures to file
 #          True,        # show_plots
 #          0            # Maneuver Case (0 - Hohmann, 1 - Inclination)
 #        )
@@ -142,8 +124,8 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
 # in textbooks such as *Analytical Mechanics of Space Systems*
 # (<http://arc.aiaa.org/doi/book/10.2514/4.102400>).
 # The resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/test_scenarioOrbitManeuver10.svg "Position history")
-# ![Orbit Radius Illustration](Images/Scenarios/test_scenarioOrbitManeuver20.svg "Radius Illustration")
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitManeuver10.svg "Position history")
+# ![Orbit Radius Illustration](Images/Scenarios/scenarioOrbitManeuver20.svg "Radius Illustration")
 #
 # Setup 2
 # -----
@@ -151,7 +133,7 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # do unit tests
+#     run( False,       # save figures to file
 #          True,        # show_plots
 #          1            # Maneuver Case (0 - Hohmann, 1 - Inclination)
 #        )
@@ -164,19 +146,12 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
 # (<http://arc.aiaa.org/doi/book/10.2514/4.102400>).  The final orbit inclination angle is 8.94 degrees
 # which is indicated as a dashed line below.
 # The resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/test_scenarioOrbitManeuver11.svg "Position history")
-# ![Inclination Angle Time History](Images/Scenarios/test_scenarioOrbitManeuver21.svg "Inclination Illustration")
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitManeuver11.svg "Position history")
+# ![Inclination Angle Time History](Images/Scenarios/scenarioOrbitManeuver21.svg "Inclination Illustration")
 #
 ## @}
-def run(doUnitTests, show_plots, maneuverCase):
+def run(saveFigures, show_plots, maneuverCase):
     '''Call this routine directly to run the tutorial scenario.'''
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty array to store test log messages
-
-    #
-    #  From here on there scenario python code is found.  Above this line the code is to setup a
-    #  unitTest environment.  The above code is not critical if learning how to code BSK.
-    #
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -352,7 +327,7 @@ def run(doUnitTests, show_plots, maneuverCase):
     plt.legend(loc='lower right')
     plt.xlabel('Time [h]')
     plt.ylabel('Inertial Position [km]')
-    if doUnitTests:  # only save off the figure if doing a unit test run
+    if saveFigures:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
             fileName + "1" + str(int(maneuverCase)), plt, path)
 
@@ -373,7 +348,7 @@ def run(doUnitTests, show_plots, maneuverCase):
         plt.ylim([-1, 10])
         plt.xlabel('Time [h]')
         plt.ylabel('Inclination [deg]')
-        if doUnitTests:  # only save off the figure if doing a unit test run
+        if saveFigures:  # only save off the figure if doing a unit test run
             unitTestSupport.saveScenarioFigure(
                 fileName + "2" + str(int(maneuverCase)), plt, path)
     else:
@@ -390,7 +365,7 @@ def run(doUnitTests, show_plots, maneuverCase):
                  )
         plt.xlabel('Time [h]')
         plt.ylabel('Radius [km]')
-        if doUnitTests:  # only save off the figure if doing a unit test run
+        if saveFigures:  # only save off the figure if doing a unit test run
             unitTestSupport.saveScenarioFigure(
                 fileName + "2" + str(int(maneuverCase)), plt, path)
 
@@ -400,40 +375,12 @@ def run(doUnitTests, show_plots, maneuverCase):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    #
-    #   the python code below is for the unit testing mode.  If you are studying the scenario
-    #   to learn how to run BSK, you can stop reading below this line.
-    #
-    if doUnitTests:
-        dataPos = posRef.getState()
-        dataPos = [[0.0, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
-
-        # setup truth data for unit test
-        if maneuverCase == 0:
-            truePos = [
-                [10298352.587758573, 40947481.244493686, 0.0]
-            ]
-        if maneuverCase == 1:
-            truePos = [
-                [5937590.072546725, 3675220.9560903916, 477503.77340122446]
-            ]
-
-        # compare the results to the truth values
-        accuracy = 1e-6
-        testFailCount, testMessages = unitTestSupport.compareArray(
-            truePos, dataPos, accuracy, "r_BN_N Vector",
-            testFailCount, testMessages)
-
-        #   print out success message if no error were found
-        if testFailCount == 0:
-            print "PASSED "
-        else:
-            print "testFailCount: " + str(testFailCount)
-            print testMessages
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    dataPos = posRef.getState()
+    dataPos = [[0.0, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
+    return dataPos
 
 
 #
@@ -442,7 +389,7 @@ def run(doUnitTests, show_plots, maneuverCase):
 #
 if __name__ == "__main__":
     run(
-        False,  # do unit tests
+        False,  # save figures to file
         True,  # show_plots
         0  # Maneuver Case (0 - Hohmann, 1 - Inclination)
     )
