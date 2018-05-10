@@ -289,6 +289,6 @@ def run(saveFigures, show_plots, integratorCase):
 # stand-along python script
 #
 if __name__ == "__main__":
-    run(False,       # do unit tests
+    run(False,       # save figures to file
         True,        # show_plots
         'rk4')       # integrator case(0 - RK4, 1 - Euler, 2 - RK2)

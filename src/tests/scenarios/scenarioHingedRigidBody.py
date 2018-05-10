@@ -484,6 +484,6 @@ def run(saveFigures, show_plots):
 #
 if __name__ == "__main__":
     run(
-        False,  # do unit tests
+        False,  # safe figures to file
         True  # show_plots
     )
