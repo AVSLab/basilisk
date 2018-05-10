@@ -29,9 +29,7 @@
 #
 
 
-import pytest
 import os
-import inspect
 import numpy as np
 from datetime import datetime
 from datetime import timedelta
@@ -51,20 +49,6 @@ from Basilisk import pyswice
 from Basilisk import __path__
 bskPath = __path__[0]
 
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail(True, reason="Scott's brain no-worky\n")
-
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
-@pytest.mark.parametrize("scCase", ['Hubble', 'NewHorizons'])
-def test_scenarioOrbitMultiBodyCopy(show_plots, scCase):
-    '''This function is called by the py.test environment.'''
-    # each test method requires a single assert method to be called
-    # provide a unique test method name, starting with test_
-    [testResults, testMessage] = run(True, show_plots, scCase)
-    assert testResults < 1, testMessage
 
 
 ## \defgroup Tutorials_1_3
@@ -87,12 +71,12 @@ def test_scenarioOrbitMultiBodyCopy(show_plots, scCase):
 #
 # To run the default scenario 1, call the python script through
 #
-#       python test_scenarioOrbitMultiBody.py
+#       python scenarioOrbitMultiBody.py
 #
 # When the simulation completes 2-3 plots are shown for each case.  One plot always shows
 # the inertial position vector components, while the third plot shows the inertial differences
 # between the Basilisk simulation trajectory and the SPICE spacecraft trajectory.  Read
-# [test_scenarioBasicOrbit.py](@ref scenarioBasicOrbit) to learn how to setup an
+# [scenarioBasicOrbit.py](@ref scenarioBasicOrbit) to learn how to setup an
 # orbit simulation.
 #
 # The simulation layout is shown in the following illustration.  The SPICE interface object keeps track of
@@ -228,7 +212,7 @@ def test_scenarioOrbitMultiBodyCopy(show_plots, scCase):
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # do unit tests
+#     run( False,       # save figures to file
 #          True,        # show_plots
 #          'Hubble'
 #        )
@@ -238,9 +222,9 @@ def test_scenarioOrbitMultiBodyCopy(show_plots, scCase):
 # scenario simulates the Hubble Space Telescope (HST) spacecraft about the Earth in a LEO orbit.
 # The resulting position coordinates and orbit illustration are shown below.  A 2000 second simulation is
 # performed, and the Basilisk and SPICE generated orbits match up very well.
-# ![Inertial Position Coordinates History](Images/Scenarios/test_scenarioOrbitMultiBody1Hubble.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/test_scenarioOrbitMultiBody2Hubble.svg "Orbit Illustration")
-# ![Trajectory Differences](Images/Scenarios/test_scenarioOrbitMultiBody3Hubble.svg "Trajectory Differences")
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitMultiBody1Hubble.svg "Position history")
+# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioOrbitMultiBody2Hubble.svg "Orbit Illustration")
+# ![Trajectory Differences](Images/Scenarios/scenarioOrbitMultiBody3Hubble.svg "Trajectory Differences")
 #
 # Setup 2
 # -----
@@ -248,7 +232,7 @@ def test_scenarioOrbitMultiBodyCopy(show_plots, scCase):
 # The next scenario is run by changing the bottom of the file in the scenario code to read
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # do unit tests
+#     run( False,       # save figures to file
 #          True,        # show_plots
 #          'NewHorizons'
 #        )
@@ -256,19 +240,12 @@ def test_scenarioOrbitMultiBodyCopy(show_plots, scCase):
 # This case illustrates a simulation of the New Horizons spacecraft.  Here the craft is already a very
 # large distance from the sun.  The
 # resulting position coordinates and trajectorie differences are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/test_scenarioOrbitMultiBody1NewHorizons.svg "Position history")
-# ![Trajectory Difference](Images/Scenarios/test_scenarioOrbitMultiBody3NewHorizons.svg "Trajectory Difference")
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitMultiBody1NewHorizons.svg "Position history")
+# ![Trajectory Difference](Images/Scenarios/scenarioOrbitMultiBody3NewHorizons.svg "Trajectory Difference")
 #
 ## @}
-def run(doUnitTests, show_plots, scCase):
+def run(saveFigures, show_plots, scCase):
     '''Call this routine directly to run the tutorial scenario.'''
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty array to store test log messages
-
-    #
-    #  From here on there scenario python code is found.  Above this line the code is to setup a
-    #  unitTest environment.  The above code is not critical if learning how to code BSK.
-    #
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -422,7 +399,7 @@ def run(doUnitTests, show_plots, scCase):
     plt.legend(loc='lower right')
     plt.xlabel('Time ' + timeLabel)
     plt.ylabel('Inertial Position ' + axesLabel)
-    if doUnitTests:  # only save off the figure if doing a unit test run
+    if saveFigures:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(fileName + "1" + scCase, plt, path)
 
     rBSK = posData[-1, 1:4]  # store the last position to compare to the SPICE position
@@ -484,7 +461,7 @@ def run(doUnitTests, show_plots, scCase):
         plt.xlabel('$i_e$ Cord. [km]')
         plt.ylabel('$i_p$ Cord. [km]')
         plt.grid()
-        if doUnitTests:  # only save off the figure if doing a unit test run
+        if saveFigures:  # only save off the figure if doing a unit test run
             unitTestSupport.saveScenarioFigure(fileName + "2" + scCase, plt, path)
     else:
         time = gravFactory.spiceObject.getCurrentTimeString()
@@ -515,7 +492,7 @@ def run(doUnitTests, show_plots, scCase):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Inertial Position Differences [m]')
-    if doUnitTests:  # only save off the figure if doing a unit test run
+    if saveFigures:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(fileName + "3" + scCase, plt, path)
 
     if show_plots:
@@ -534,26 +511,9 @@ def run(doUnitTests, show_plots, scCase):
     pyswice.unload_c(gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
     pyswice.unload_c(gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
 
-    #
-    #   the python code below is for the unit testing mode.  If you are studying the scenario
-    #   to learn how to run BSK, you can stop reading below this line.
-    #
-    if doUnitTests:
-        # compare the results to the truth values
-        accuracy = 300.0  # meters
-        testFailCount, testMessages = unitTestSupport.compareVector(
-            rTrue, rBSK, accuracy, "|r_BN_N| error", testFailCount, testMessages)
-
-        #   print out success message if no error were found
-        if testFailCount == 0:
-            print "PASSED "
-        else:
-            print testFailCount
-            print testMessages
-
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return rBSK, rTrue
 
 
 #
@@ -562,7 +522,7 @@ def run(doUnitTests, show_plots, scCase):
 #
 if __name__ == "__main__":
     run(
-        False,  # do unit tests
+        False,  # save figures to file
         True,  # show_plots
         'Hubble'  # 'Hubble' or 'NewHorizons'
     )
