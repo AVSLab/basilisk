@@ -29,21 +29,15 @@
 import inspect
 import math
 import os
-import sys
 import numpy as np
-import pytest
 import shutil
 import matplotlib.pyplot as plt
 
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 fileNameString = (os.path.split(os.path.splitext(filename)[0])[-1])[5:]
+fileNameString = os.path.basename(os.path.splitext(__file__)[0])
 path = os.path.dirname(os.path.abspath(filename))
-# bskName = 'Basilisk'
-# splitPath = path.split(bskName)
-# bskPath = splitPath[0] + '/' + bskName + '/'
-# sys.path.append(bskPath + 'modules')
-# sys.path.append(bskPath + 'PythonModules')
 # @endcond
 
 from Basilisk import __path__
@@ -108,7 +102,7 @@ samplingTime = simulationTime / (numDataPoints-1)
 #
 # Scenario Description
 # -----
-# This script duplicates the scenario in [test_scenarioAttitudeFeedbackRW.py](@ref scenarioAttitudeFeedbackRW) where a
+# This script duplicates the scenario in [scenarioAttitudeFeedbackRW.py](@ref scenarioAttitudeFeedbackRW) where a
 # 6-DOF spacecraft  is orbiting the Earth.  Here some simulation parameters are dispersed randomly
 # using a multi threaded Monte-Carlo setup. Reaction Wheel (RW) state effector are added
 # to the rigid spacecraftPlus() hub, and what flight
@@ -119,10 +113,10 @@ samplingTime = simulationTime / (numDataPoints-1)
 #
 # To run the MC simulation, call the python script from a Terminal window through
 #
-#       python test_scenarioMonteCarloAttRW.py
+#       python scenarioMonteCarloAttRW.py
 #
 # For more information on the Attitude Feedback Simulation with RW, please see the documentation
-# on the [test_scenarioAttitudeFeedbackRW.py](@ref scenarioAttitudeFeedbackRW) file.
+# on the [scenarioAttitudeFeedbackRW.py](@ref scenarioAttitudeFeedbackRW) file.
 #
 #
 # ### Setup Changes for Monte-Carlo Runs
@@ -304,18 +298,11 @@ samplingTime = simulationTime / (numDataPoints-1)
 # ![RW Speeds History](Images/Scenarios/scenarioMonteCarloAttRW_RWSpeed.svg "RW Speeds history")
 # ![RW Voltage History](Images/Scenarios/scenarioMonteCarloAttRW_RWVoltage.svg "RW Voltage history")
 #
-# These are the same plots output by the [test_scenarioAttitudeFeedbackRW.py](@ref scenarioAttitudeFeedbackRW) scenario. Please refer to this document for me details on the plots.
+# These are the same plots output by the [scenarioAttitudeFeedbackRW.py](@ref scenarioAttitudeFeedbackRW) scenario. Please refer to this document for me details on the plots.
 ##  @}
 
 
-@pytest.mark.slowtest()
-def test_MonteCarloSimulation(show_plots):
-    '''This function is called by the py.test environment.'''
-    # each test method requires a single assert method to be called
-    run(True, show_plots)
-
-
-def run(doUnitTests, show_plots):
+def run(saveFigures, show_plots):
     '''This function is called by the py.test environment.'''
 
     # A MonteCarlo simulation can be created using the `MonteCarlo` module.
@@ -380,7 +367,9 @@ def run(doUnitTests, show_plots):
     monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_1, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
     monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_2, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
 
-    # A `RetentionPolicy` is used to define what data from the simulation should be retained. A `RetentionPolicy` is a list of messages and variables to log from each simulation run. It also has a callback, used for plotting/processing the retained data.
+    # A `RetentionPolicy` is used to define what data from the simulation should be retained. A `RetentionPolicy`
+    # is a list of messages and variables to log from each simulation run. It also has a callback,
+    # used for plotting/processing the retained data.
     retentionPolicy = RetentionPolicy()
     # define the data to retain
     retentionPolicy.addMessageLog(rwMotorTorqueConfigOutputDataName, [("motorTorque", range(5))], samplingTime)
@@ -391,9 +380,12 @@ def run(doUnitTests, show_plots):
 
     for message in rwOutName:
         retentionPolicy.addMessageLog(message, [("u_current", range(1))], samplingTime)
-    if show_plots or doUnitTests:
+    if show_plots:
         # plot data only if show_plots is true, otherwise just retain
         retentionPolicy.setDataCallback(plotSim)
+    if saveFigures:
+        # plot data only if show_plots is true, otherwise just retain
+        retentionPolicy.setDataCallback(plotSimAndSave)
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
     # After the monteCarlo run is configured, it is executed.
@@ -717,6 +709,7 @@ def plotSim(data, retentionPolicy):
 
     timeData = dataUsReq[:, 0] * macros.NANO2MIN
 
+    figureList = {}
     plt.figure(1)
     pltName = 'AttitudeError'
     for idx in range(1,4):
@@ -725,9 +718,7 @@ def plotSim(data, retentionPolicy):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Error $\sigma_{B/R}$')
-    unitTestSupport.saveScenarioFigure(
-        fileNameString + "_" + pltName
-        , plt, path)
+    figureList[pltName] = plt.figure(1)
 
     plt.figure(2)
     pltName = 'RWMotorTorque'
@@ -740,9 +731,7 @@ def plotSim(data, retentionPolicy):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Motor Torque (Nm)')
-    unitTestSupport.saveScenarioFigure(
-        fileNameString + "_" + pltName
-        , plt, path)
+    figureList[pltName] = plt.figure(2)
 
     plt.figure(3)
     pltName = 'RateTrackingError'
@@ -752,9 +741,7 @@ def plotSim(data, retentionPolicy):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error (rad/s) ')
-    unitTestSupport.saveScenarioFigure(
-        fileNameString + "_" + pltName
-        , plt, path)
+    figureList[pltName] = plt.figure(3)
 
     plt.figure(4)
     pltName = 'RWSpeed'
@@ -764,9 +751,7 @@ def plotSim(data, retentionPolicy):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')
-    unitTestSupport.saveScenarioFigure(
-        fileNameString + "_" + pltName
-        , plt, path)
+    figureList[pltName] = plt.figure(4)
 
     plt.figure(5)
     pltName = 'RWVoltage'
@@ -776,15 +761,26 @@ def plotSim(data, retentionPolicy):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Voltage (V) ')
-    unitTestSupport.saveScenarioFigure(
-        fileNameString + "_" + pltName
-        , plt, path)
+    figureList[pltName] = plt.figure(5)
+
+    return figureList
+
+def plotSimAndSave(data, retentionPolicy):
+
+    figureList = plotSim(data, retentionPolicy)
+
+    for pltName, plt in figureList.items():
+        unitTestSupport.saveScenarioFigure(
+            fileNameString + "_" + pltName
+            , plt, path)
+
+    return
 
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    run(  False        # do unit tests
+    run(  False        # safe figures to file
         , True         # show_plots
        )
