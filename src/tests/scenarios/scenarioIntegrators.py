@@ -28,7 +28,6 @@
 # Creation Date:  Dec. 14, 2016
 #
 
-import pytest
 import os
 import numpy as np
 
@@ -47,19 +46,6 @@ from Basilisk.simulation import svIntegrators
 path = os.path.dirname(os.path.abspath(__file__))
 # @endcond
 
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail(True, reason="Scott's brain no-worky\n")
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
-@pytest.mark.parametrize("integratorCase", ["rk4", "euler", "rk2"])
-def test_scenarioIntegrators(show_plots, integratorCase):
-    '''This function is called by the py.test environment.'''
-    # each test method requires a single assert method to be called
-    [testResults, testMessage] = run( True,
-            show_plots, integratorCase)
-    assert testResults < 1, testMessage
 
 
 ## \defgroup Tutorials_1_1
@@ -82,7 +68,7 @@ def test_scenarioIntegrators(show_plots, integratorCase):
 #
 # To run the default scenario 1., call the python script through
 #
-#       python test_scenarioIntegrators.py
+#       python scenarioIntegrators.py
 #
 # When the simulation completes a plot is shown for illustrating both the true and the numerically
 # evaluated orbit.
@@ -104,7 +90,7 @@ def test_scenarioIntegrators(show_plots, integratorCase):
 # The first line invokes an instance of the desired state vector integration module, and provides
 # the dynamics module (spacecraftPlus() in this case) as the input.  This specifies to the integrator
 # module which other module will provide the equationOfMotion() function to evaluate the derivatives of
-# the state vector.  The send line ties the integration moduel to the dynamics module.  After that we are
+# the state vector.  The send line ties the integration module to the dynamics module.  After that we are
 # done.
 #
 # The integrator scenario script is setup to evaluate the default integration method (RK4), a first order
@@ -127,15 +113,9 @@ def test_scenarioIntegrators(show_plots, integratorCase):
 # folder within the `dynamics` folder.
 #
 ##  @}
-def run(doUnitTests, show_plots, integratorCase):
+def run(saveFigures, show_plots, integratorCase):
     '''Call this routine directly to run the tutorial scenario.'''
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
 
-    #
-    #  From here on there scenario python code is found.  Above this line the code is to setup a
-    #  unitTest environment.  The above code is not critical if learning how to code BSK.
-    #
     # Create simulation variable names
     simTaskName = "simTask"
     simProcessName = "simProcess"
@@ -240,7 +220,8 @@ def run(doUnitTests, show_plots, integratorCase):
     #   plot the results
     #
     np.set_printoptions(precision=16)
-    fileNameString = os.path.splitext(os.path.basename(__file__))[0]
+    fileName = os.path.basename(os.path.splitext(__file__)[0])
+    path = os.path.dirname(os.path.abspath(__file__))
     if integratorCase == "rk4":
         plt.close("all")        # clears out plots from earlier test runs
 
@@ -282,14 +263,12 @@ def run(doUnitTests, show_plots, integratorCase):
     plt.ylabel('$i_p$ Cord. [km]')
     plt.legend(loc='lower right')
     plt.grid()
-    if doUnitTests:     # only save off the figure if doing a unit test run
+    if saveFigures:     # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString
+            fileName
             , plt, path)
-        unitTestSupport.saveFigurePDF(
-            fileNameString
-            , plt, path+"/_Documentation/AutoTeX/"
-        )
+
+
 
     if show_plots:
         plt.show()
@@ -297,74 +276,13 @@ def run(doUnitTests, show_plots, integratorCase):
     # # close the plots being saved off to avoid over-writing old and new figures
     # plt.close("all")
 
-    #
-    #   the python code below is for the unit testing mode.  If you are studying the scenario
-    #   to learn how to run BSK, you can stop reading below this line.
-    #
-    if doUnitTests:
-        numTruthPoints = 5
-        skipValue = int(len(posData)/(numTruthPoints-1))
-        dataPosRed = posData[::skipValue]
-
-        # setup truth data for unit test
-        if integratorCase is "rk4":
-            truePos = [
-                  [-2.8168016010234915e6, 5.248174846916147e6, 3.677157264677297e6]
-                , [-6.379381726549218e6, -1.4688565370540658e6, 2.4807857675497606e6]
-                , [-2.230094305694789e6, -6.410420020364709e6, -1.7146277675541767e6]
-                , [4.614900659014343e6, -3.60224207689023e6, -3.837022825958977e6]
-                , [5.879095186201691e6, 3.561495655367985e6, -1.3195821703218794e6]
-            ]
-        if integratorCase is "euler":
-            truePos = [
-                  [-2.8168016010234915e6, 5.248174846916147e6, 3.677157264677297e6]
-                , [-7.061548530211288e6, -1.4488790844105487e6, 2.823580168201031e6]
-                , [-4.831279689590867e6, -8.015202650472983e6, -1.1434851461593418e6]
-                , [719606.5825106134, -1.0537603309084207e7, -4.966060248346598e6]
-                , [6.431097055190775e6, -9.795566286964862e6, -7.438012269629238e6]
-            ]
-        if integratorCase is "rk2":
-            truePos = [
-                  [-2.8168016010234915e6, 5.248174846916147e6, 3.677157264677297e6]
-                , [-6.425636528569288e6, -1.466693214251768e6, 2.50438327358707e6]
-                , [-2.466642497083674e6, -6.509473992136429e6, -1.6421621818735446e6]
-                , [4.342561337924192e6, -4.1593822658140697e6, -3.947594705237753e6]
-                , [6.279757158711852e6, 2.8527385905952943e6, -1.8260959147806289e6]
-            ]
-
-        # compare the results to the truth values
-        accuracy = 1.0  # meters
-
-        testFailCount, testMessages = unitTestSupport.compareArray(
-            truePos, dataPosRed, accuracy, "r_BN_N Vector",
-            testFailCount, testMessages)
-
-        #   print out success message if no error were found
-        if testFailCount == 0:
-            print "PASSED "
-            passFailText = "PASSED"
-            colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX
-            snippetContent = ""
-        else:
-            print testFailCount
-            print testMessages
-            passFailText = 'FAILED'
-            colorText = 'Red'  # color to write auto-documented "FAILED" message in in LATEX
-            snippetContent = "\\begin{verbatim}"
-            for message in testMessages:
-                snippetContent +=   message
-            snippetContent += "\\end{verbatim}"
-        snippetMsgName = fileNameString + 'Msg-' + integratorCase
-        unitTestSupport.writeTeXSnippet(snippetMsgName, snippetContent,
-                                    path + "/_Documentation/")
-        snippetPassFailName = fileNameString + 'TestMsg-' + integratorCase
-        snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}'
-        unitTestSupport.writeTeXSnippet(snippetPassFailName, snippetContent,
-                                    path+"/_Documentation/")
+    if integratorCase == "rk2":
+        plt.close("all")
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return posData
+
 
 #
 # This statement below ensures that the unit test scrip can be run as a
