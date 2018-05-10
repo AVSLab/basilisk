@@ -37,6 +37,7 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
     def __init__(self):
         # Create a sim module as an empty container
         SimulationBaseClass.SimBaseClass.__init__(self)
+        self.TotalSim.terminateSimulation()
 
         # Create simulation process names
         self.DynamicsProcessName = "DynamicsProcess"
