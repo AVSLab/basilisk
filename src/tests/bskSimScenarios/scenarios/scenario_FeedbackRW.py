@@ -105,7 +105,7 @@ class scenario_AttitudeFeedbackRW(BSKScenario):
 
 
 
-if __name__ == "__main__":
+def run(showPlots):
     # Instantiate base simulation
     TheBSKSim = BSKSim()
 
@@ -125,4 +125,9 @@ if __name__ == "__main__":
     print 'Finished Execution. Post-processing results'
 
     # Pull the results of the base simulation running the chosen scenario
-    TheScenario.pull_outputs()
+    if showPlots:
+        TheScenario.pull_outputs()
+
+
+if __name__ == "__main__":
+    run(True)
