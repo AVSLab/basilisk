@@ -22,33 +22,31 @@
 
 #include <stdio.h>
 
-
-
 typedef enum {
-    MSG_ERROR,           /*!< CSS measurement is set to 0 for all future time */
-    MSG_WARNING, /*!< CSS measurement is set to current value for all future time */
-    MSG_DEBUG,     /*!< CSS measurement is set to maximum value for all future time */
-    MSG_INFORMATION,    /*!< CSS measurement is set to randomly selected value for all future time */
+    MSG_ERROR,          
+    MSG_WARNING, 
+    MSG_DEBUG,     
+    MSG_INFORMATION
 } msgLevel_t;
 
-
-
 #define MSG_LEVEL MSG_INFORMATION
+#define EXPAND(x) x
 
+#define BSK_MESSAGE(...) { printf(__VA_ARGS__); }
 
-#define BSK_MESSAGE(...) fprintf(stderr, __VA_ARGS__)
+#ifdef _WIN32
+//#define BSK_PRINT(X, _fmt, ...) if (EXPAND(X) <= MSG_LEVEL) {BSK_MESSAGE(EXPAND(_fmt) , EXPAND(__VA_ARGS__))}
+#define BSK_PRINT(X, _fmt, ...) if (EXPAND(X) <= MSG_LEVEL) {printf(_fmt, __VA_ARGS__);}
 
-#ifdef __WIN32__
-#define BSK_PRINT(X, _fmt, ...) if(X <= MSG_LEVEL) \
-                                   BSK_MESSAGE(_fmt, ##__VA_ARGS__)
+//#define BSK_PRINT(X, _fmt, ...) if(X <= MSG_LEVEL) \
+									BSK_MESSAGE(_fmt ,##__VA_ARGS__)
 
 #else       /* macOS and Linux */
 
 #define WHERESTR "[FILE : %s, FUNC : %s, LINE : %d]:\n"
 #define WHEREARG __FILE__,__func__,__LINE__
 #define BSK_PRINT(X, _fmt, ...) if(X <= MSG_LEVEL) \
-                                   BSK_MESSAGE(WHERESTR _fmt, WHEREARG,## __VA_ARGS__)
+                                   BSK_MESSAGE(WHERESTR _fmt, WHEREARG,##__VA_ARGS__)
 #endif
-
 
 #endif /* _BSK_PRINT_ */

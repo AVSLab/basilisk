@@ -243,13 +243,14 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_STATIC_RUNTIME ON)
 if(MSVC)
+    add_definitions(/MP)
     add_definitions(/D _CRT_SECURE_NO_WARNINGS)
     add_definitions(/D _WINSOCK_DEPRECATED_NO_WARNINGS)
     add_definitions(/D _WIN32_WINNT=0x0501) # Targets Windows xp
     add_definitions(/D BOOST_ALL_NO_LIB)
     add_definitions(/W3)
     add_definitions(/wd"4913")
-	add_definitions(/wd"4251")
+    add_definitions(/wd"4251")
     # Make sure we are using Multi-Threaded run time library
     foreach(flag
         CMAKE_C_FLAGS

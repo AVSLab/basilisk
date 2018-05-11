@@ -29,7 +29,6 @@
 #
 
 # @cond DOXYGEN_IGNORE
-import sys
 import os
 import numpy as np
 import math
@@ -38,7 +37,6 @@ import inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
-
 
 # @endcond
 

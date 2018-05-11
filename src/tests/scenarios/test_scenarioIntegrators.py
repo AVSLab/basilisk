@@ -30,12 +30,11 @@
 
 import pytest
 import os
-import inspect
 import numpy as np
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import unitTestSupport # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
@@ -45,8 +44,7 @@ from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import svIntegrators
 
 # @cond DOXYGEN_IGNORE
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
+path = os.path.dirname(os.path.abspath(__file__))
 # @endcond
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -242,7 +240,7 @@ def run(doUnitTests, show_plots, integratorCase):
     #   plot the results
     #
     np.set_printoptions(precision=16)
-    fileNameString = filename[len(path)+6:-3]
+    fileNameString = os.path.splitext(os.path.basename(__file__))[0]
     if integratorCase == "rk4":
         plt.close("all")        # clears out plots from earlier test runs
 

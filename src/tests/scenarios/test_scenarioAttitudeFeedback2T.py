@@ -34,7 +34,6 @@
 
 import pytest
 import os
-import inspect
 import numpy as np
 
 # import general simulation support files
