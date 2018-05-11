@@ -35,7 +35,6 @@ import matplotlib.pyplot as plt
 
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
-fileNameString = (os.path.split(os.path.splitext(filename)[0])[-1])[5:]
 fileNameString = os.path.basename(os.path.splitext(__file__)[0])
 path = os.path.dirname(os.path.abspath(filename))
 # @endcond
