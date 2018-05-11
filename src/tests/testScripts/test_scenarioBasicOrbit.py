@@ -64,7 +64,7 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
-    posData = scenarioBasicOrbit.run(True, show_plots, orbitCase, useSphericalHarmonics, planetCase)
+    posData, figureList = scenarioBasicOrbit.run(show_plots, orbitCase, useSphericalHarmonics, planetCase)
 
     numTruthPoints = 5
     skipValue = int(len(posData) / (numTruthPoints - 1))
@@ -117,6 +117,10 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
     testFailCount, testMessages = unitTestSupport.compareArray(
         truePos, dataPosRed, accuracy, "r_BN_N Vector",
         testFailCount, testMessages)
+
+    # save the figures to the Doxygen scenario images folder
+    for pltName, plt in figureList.items():
+        unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
     #   print out success message if no error were found
     if testFailCount == 0:

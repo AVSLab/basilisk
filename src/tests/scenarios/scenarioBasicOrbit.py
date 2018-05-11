@@ -310,7 +310,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 # ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2LEO0Mars.svg "Orbit Illustration")
 #
 ## @}
-def run(saveFigures, show_plots, orbitCase, useSphericalHarmonics, planetCase):
+def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     '''Call this routine directly to run the tutorial scenario.'''
 
 
@@ -460,10 +460,9 @@ def run(saveFigures, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     plt.legend(loc='lower right')
     plt.xlabel('Time [orbits]')
     plt.ylabel('Inertial Position [km]')
-    if saveFigures:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileName + "1" + orbitCase + str(int(useSphericalHarmonics))
-            + planetCase, plt, path)
+    figureList = {}
+    pltName = fileName + "1" + orbitCase + str(int(useSphericalHarmonics))+ planetCase
+    figureList[pltName] = plt.figure(1)
 
     if useSphericalHarmonics is False:
         # draw orbit in perifocal frame
@@ -499,10 +498,7 @@ def run(saveFigures, show_plots, orbitCase, useSphericalHarmonics, planetCase):
         plt.xlabel('$i_e$ Cord. [km]')
         plt.ylabel('$i_p$ Cord. [km]')
         plt.grid()
-        if saveFigures:     # only save off the figure if doing a unit test run
-            unitTestSupport.saveScenarioFigure(
-                fileName + "2" + orbitCase + str(int(useSphericalHarmonics))
-                + planetCase, plt, path)
+
     else:
         plt.figure(2)
         fig = plt.gcf()
@@ -516,10 +512,9 @@ def run(saveFigures, show_plots, orbitCase, useSphericalHarmonics, planetCase):
                  )
         plt.xlabel('Time [orbits]')
         plt.ylabel('SMA [km]')
-        if saveFigures:     # only save off the figure if doing a unit test run
-            unitTestSupport.saveScenarioFigure(
-                fileName + "2" + orbitCase + str(int(useSphericalHarmonics))
-                + planetCase, plt, path)
+
+    pltName = fileName + "2" + orbitCase + str(int(useSphericalHarmonics)) + planetCase
+    figureList[pltName] = plt.figure(2)
 
     if show_plots:
         plt.show()
@@ -527,7 +522,7 @@ def run(saveFigures, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    return posData
+    return posData, figureList
 
 
 
@@ -537,7 +532,6 @@ def run(saveFigures, show_plots, orbitCase, useSphericalHarmonics, planetCase):
 #
 if __name__ == "__main__":
     run(
-        False,       # save figures to file
         True,        # show_plots
         'LEO',       # orbit Case (LEO, GTO, GEO)
         False,       # useSphericalHarmonics
