@@ -60,7 +60,8 @@ def test_bskAttitudePointing(show_plots, useLargeTumble):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
-    dataLr, dataSigmaBR, numDataPoints = scenarioAttitudePointing.run(True, show_plots, useLargeTumble)
+    dataLr, dataSigmaBR, numDataPoints, figureList = \
+        scenarioAttitudePointing.run(show_plots, useLargeTumble)
 
 
     numTruthPoints = 5
@@ -111,6 +112,10 @@ def test_bskAttitudePointing(show_plots, useLargeTumble):
     testFailCount, testMessages = unitTestSupport.compareArray(
         trueSigmaBR, dataSigmaBRRed, accuracy, "sigma_BR Set",
         testFailCount, testMessages)
+
+    # save the figures to the Doxygen scenario images folder
+    for pltName, plt in figureList.items():
+        unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
     #   print out success message if no error were found
     if testFailCount == 0:

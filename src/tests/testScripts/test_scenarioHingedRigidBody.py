@@ -34,6 +34,7 @@
 import sys, os, inspect
 import pytest
 import numpy as np
+from Basilisk.utilities import unitTestSupport
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -57,7 +58,7 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
-    velData = scenarioHingedRigidBody.run(True, show_plots)
+    velData, figureList = scenarioHingedRigidBody.run(show_plots)
 
     spaceCraftMomentum = np.sqrt(velData[-1, 1] ** 2 + velData[-1, 2] ** 2 + velData[-1, 3] ** 2)
 
@@ -68,6 +69,10 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
     if abs(spaceCraftMomentum - InstMomentum) > accuracy:
         testFailCount += 1
         testMessages.append("Failed HingedRigidBody Tutorial test. Post-maneuver momentum incorrect.")
+
+    # save the figures to the Doxygen scenario images folder
+    for pltName, plt in figureList.items():
+        unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
     # print out success message if no error were found
     if testFailCount == 0:

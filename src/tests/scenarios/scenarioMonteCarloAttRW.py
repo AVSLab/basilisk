@@ -120,7 +120,7 @@ samplingTime = simulationTime / (numDataPoints-1)
 #
 # ### Setup Changes for Monte-Carlo Runs
 #
-# In order to set up the multi-threaded MC simulation, the user must first instatiate the Controller class.
+# In order to set up the multi-threaded MC simulation, the user must first instantiate the Controller class.
 # The function that is being simulated is the set in this class (in this case, it's defined in the same file as the
 # MC scenario). The user can then set other variables such as the number of runs, the dispersion seeds, and number of
 # cores.

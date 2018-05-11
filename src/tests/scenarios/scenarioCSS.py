@@ -179,7 +179,7 @@ from Basilisk.simulation import simMessages
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
+#     run(
 #          True,        # show_plots
 #          False,       # useCSSConstellation
 #          False,       # usePlatform
@@ -203,7 +203,7 @@ from Basilisk.simulation import simMessages
 # Here the python main function is changed to read:
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
+#     run(
 #          True,        # show_plots
 #          False,       # useCSSConstellation
 #          True,        # usePlatform
@@ -222,7 +222,7 @@ from Basilisk.simulation import simMessages
 # The 3rd scenario connects a solar eclipse message to the CSS units through:
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
+#     run(
 #          True,        # show_plots
 #          False,       # useCSSConstellation
 #          False,       # usePlatform
@@ -239,7 +239,7 @@ from Basilisk.simulation import simMessages
 # The 4th scenario turns on Kelly corruption factor of the CSS units.
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
+#     run(
 #          True,        # show_plots
 #          False,       # useCSSConstellation
 #          False,       # usePlatform
@@ -258,7 +258,7 @@ from Basilisk.simulation import simMessages
 # CSSConstellation() class.
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
+#     run(
 #          True,        # show_plots
 #          True,        # useCSSConstellation
 #          False,       # usePlatform
@@ -270,7 +270,7 @@ from Basilisk.simulation import simMessages
 # ![CSS Sensor History](Images/Scenarios/scenarioCSS1000.svg "CSS history")
 #
 ##  @}
-def run(saveFigures, show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
+def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     path = os.path.dirname(os.path.abspath(__file__))
     '''Call this routine directly to run the tutorial scenario.'''
 
@@ -437,11 +437,10 @@ def run(saveFigures, show_plots, useCSSConstellation, usePlatform, useEclipse, u
     plt.legend(loc='lower right')
     plt.xlabel('Time [sec]')
     plt.ylabel('CSS Signals ')
-    if saveFigures:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileNameString+str(int(useCSSConstellation))+str(int(usePlatform))
-            +str(int(useEclipse))+str(int(useKelly))
-            , plt, path)
+    figureList = {}
+    pltName = fileNameString+str(int(useCSSConstellation))+str(int(usePlatform))+str(int(useEclipse))+str(int(useKelly))
+    figureList[pltName] = plt.figure(1)
+
 
     if show_plots:
         plt.show()
@@ -449,7 +448,7 @@ def run(saveFigures, show_plots, useCSSConstellation, usePlatform, useEclipse, u
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    return dataCSSArray, dataCSS1, dataCSS2, simulationTime
+    return dataCSSArray, dataCSS1, dataCSS2, simulationTime, figureList
 
 
 #
@@ -458,7 +457,6 @@ def run(saveFigures, show_plots, useCSSConstellation, usePlatform, useEclipse, u
 #
 if __name__ == "__main__":
     run(
-         False,       # save figures to file
          True,        # show_plots
          False,       # useCSSConstellation
          False,       # usePlatform

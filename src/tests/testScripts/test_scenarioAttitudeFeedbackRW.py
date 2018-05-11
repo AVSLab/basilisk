@@ -59,8 +59,8 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
-    dataPos, dataSigmaBR, dataUsReq, numDataPoints = scenarioAttitudeFeedbackRW.run(True,
-                                     show_plots, useJitterSimple, useRWVoltageIO)
+    dataPos, dataSigmaBR, dataUsReq, numDataPoints, figureList = \
+        scenarioAttitudeFeedbackRW.run(show_plots, useJitterSimple, useRWVoltageIO)
 
 
 
@@ -149,6 +149,10 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
     testFailCount, testMessages = unitTestSupport.compareArray(
         trueSigmaBR, dataSigmaBRRed, accuracy, "sigma_BR Set",
         testFailCount, testMessages)
+
+    # save the figures to the Doxygen scenario images folder
+    for pltName, plt in figureList.items():
+        unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
     #   print out success message if no error were found
     if testFailCount == 0:

@@ -113,7 +113,7 @@ path = os.path.dirname(os.path.abspath(__file__))
 # folder within the `dynamics` folder.
 #
 ##  @}
-def run(saveFigures, show_plots, integratorCase):
+def run(show_plots, integratorCase):
     '''Call this routine directly to run the tutorial scenario.'''
 
     # Create simulation variable names
@@ -263,11 +263,9 @@ def run(saveFigures, show_plots, integratorCase):
     plt.ylabel('$i_p$ Cord. [km]')
     plt.legend(loc='lower right')
     plt.grid()
-    if saveFigures:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileName
-            , plt, path)
-
+    figureList = {}
+    pltName = fileName
+    figureList[pltName] = plt.figure(1)
 
 
     if show_plots:
@@ -281,7 +279,7 @@ def run(saveFigures, show_plots, integratorCase):
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return posData
+    return posData, figureList
 
 
 #
@@ -289,6 +287,6 @@ def run(saveFigures, show_plots, integratorCase):
 # stand-along python script
 #
 if __name__ == "__main__":
-    run(False,       # save figures to file
+    run(
         True,        # show_plots
         'rk4')       # integrator case(0 - RK4, 1 - Euler, 2 - RK2)

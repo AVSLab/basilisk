@@ -56,8 +56,8 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
-    dataCSSArray, dataCSS1, dataCSS2, simulationTime \
-        = scenarioCSS.run(True, show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly)
+    dataCSSArray, dataCSS1, dataCSS2, simulationTime, figureList \
+        = scenarioCSS.run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly)
 
 
 
@@ -144,6 +144,10 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
         testFailCount, testMessages = unitTestSupport.compareDoubleArray(
             trueCSS2, dataCSS2red, accuracy, "CSS2",
             testFailCount, testMessages)
+
+    # save the figures to the Doxygen scenario images folder
+    for pltName, plt in figureList.items():
+        unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
     #   print out success message if no error were found
     if testFailCount == 0:

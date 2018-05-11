@@ -62,8 +62,8 @@ def test_bskAttitudeFeedback2T(show_plots, useUnmodeledTorque, useIntGain):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
-    dataPos, dataSigmaBR, dataLr, numDataPoints = scenarioAttitudeFeedback2T.run(True,
-                                     show_plots, useUnmodeledTorque, useIntGain)
+    dataPos, dataSigmaBR, dataLr, numDataPoints, figureList = \
+        scenarioAttitudeFeedback2T.run(show_plots, useUnmodeledTorque, useIntGain)
 
 
     numTruthPoints = 5
@@ -140,6 +140,10 @@ def test_bskAttitudeFeedback2T(show_plots, useUnmodeledTorque, useIntGain):
     testFailCount, testMessages = unitTestSupport.compareArray(
         trueSigmaBR, dataSigmaBRRed, accuracy, "sigma_BR Set",
         testFailCount, testMessages)
+
+    # save the figures to the Doxygen scenario images folder
+    for pltName, plt in figureList.items():
+        unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
     #   print out success message if no error were found
     if testFailCount == 0:

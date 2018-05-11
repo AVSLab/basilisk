@@ -113,7 +113,7 @@ from Basilisk.utilities import simIncludeGravBody
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
+#     run(
 #          True,        # show_plots
 #          0            # Maneuver Case (0 - Hohmann, 1 - Inclination)
 #        )
@@ -133,7 +133,7 @@ from Basilisk.utilities import simIncludeGravBody
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
+#     run(
 #          True,        # show_plots
 #          1            # Maneuver Case (0 - Hohmann, 1 - Inclination)
 #        )
@@ -150,7 +150,7 @@ from Basilisk.utilities import simIncludeGravBody
 # ![Inclination Angle Time History](Images/Scenarios/scenarioOrbitManeuver21.svg "Inclination Illustration")
 #
 ## @}
-def run(saveFigures, show_plots, maneuverCase):
+def run(show_plots, maneuverCase):
     '''Call this routine directly to run the tutorial scenario.'''
 
     # Create simulation variable names
@@ -327,9 +327,9 @@ def run(saveFigures, show_plots, maneuverCase):
     plt.legend(loc='lower right')
     plt.xlabel('Time [h]')
     plt.ylabel('Inertial Position [km]')
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileName + "1" + str(int(maneuverCase)), plt, path)
+    figureList = {}
+    pltName = fileName + "1" + str(int(maneuverCase))
+    figureList[pltName] = plt.figure(1)
 
     if maneuverCase == 1:
         # show inclination angle
@@ -348,9 +348,7 @@ def run(saveFigures, show_plots, maneuverCase):
         plt.ylim([-1, 10])
         plt.xlabel('Time [h]')
         plt.ylabel('Inclination [deg]')
-        if saveFigures:  # only save off the figure if doing a unit test run
-            unitTestSupport.saveScenarioFigure(
-                fileName + "2" + str(int(maneuverCase)), plt, path)
+
     else:
         # show SMA
         plt.figure(2)
@@ -365,9 +363,8 @@ def run(saveFigures, show_plots, maneuverCase):
                  )
         plt.xlabel('Time [h]')
         plt.ylabel('Radius [km]')
-        if saveFigures:  # only save off the figure if doing a unit test run
-            unitTestSupport.saveScenarioFigure(
-                fileName + "2" + str(int(maneuverCase)), plt, path)
+    pltName = fileName + "2" + str(int(maneuverCase))
+    figureList[pltName] = plt.figure(2)
 
     if show_plots:
         plt.show()
@@ -380,7 +377,7 @@ def run(saveFigures, show_plots, maneuverCase):
     # this check below just makes sure no sub-test failures were found
     dataPos = posRef.getState()
     dataPos = [[0.0, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
-    return dataPos
+    return dataPos, figureList
 
 
 #
@@ -389,7 +386,6 @@ def run(saveFigures, show_plots, maneuverCase):
 #
 if __name__ == "__main__":
     run(
-        False,  # save figures to file
         True,  # show_plots
         0  # Maneuver Case (0 - Hohmann, 1 - Inclination)
     )

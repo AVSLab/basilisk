@@ -129,8 +129,8 @@ path = os.path.dirname(os.path.abspath(filename))
 # rhoInit and rhoDotInit are the initial particle position and velocity, expressed in m and m/s respectively. massInit is
 # fuel mass that is moving in the selected direction.
 #
-# ![Spacecraft Model](Images/doc/scenarioFuelSloshSpacecraft.svg "Spacecraft Model")
-# ![Fuel Slosh Particle Model](Images/doc/scenarioFuelSloshParticle.svg "Fuel Slosh Particle Model")
+# ![Spacecraft Model](Images/doc/test_scenarioFuelSloshSpacecraft.svg "Spacecraft Model")
+# ![Fuel Slosh Particle Model](Images/doc/test_scenarioFuelSloshParticle.svg "Fuel Slosh Particle Model")
 #
 # For further information on the model implemented you can consult this
 # <a target='_blank' href="http://hanspeterschaub.info/Papers/Allard2016a.pdf"><b>conference paper.</b></a>
@@ -219,7 +219,7 @@ path = os.path.dirname(os.path.abspath(filename))
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,         # save Figures to file
+#     run(
 #          True,          # show_plots
 #          0.0            # damping_parameter
 #          0.75,          # timeStep
@@ -247,7 +247,7 @@ path = os.path.dirname(os.path.abspath(filename))
 # The next scenario is run by changing the bottom of the file in the scenario code to read
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,          # save Figures to file
+#     run(
 #          True,           # show_plots
 #          0.0             # damping_parameter
 #          0.3,            # timeStep
@@ -269,7 +269,7 @@ path = os.path.dirname(os.path.abspath(filename))
 # The next scenario is run by changing the bottom of the file in the scenario code to read
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,         # save Figures to file
+#     run(
 #          True,          # show_plots
 #          15.0           # damping_parameter
 #          0.75,          # timeStep
@@ -290,7 +290,7 @@ path = os.path.dirname(os.path.abspath(filename))
 # ![Fuel Slosh Particle Motion](Images/Scenarios/scenarioFuelSloshParticleMotion.svg "Fuel Slosh Particle Motion")
 #
 ## @}
-def run(saveFigures, show_plots, damping_parameter, timeStep):
+def run(show_plots, damping_parameter, timeStep):
     '''Call this routine directly to run the tutorial scenario.'''
 
     simTaskName = "simTask"
@@ -463,18 +463,15 @@ def run(saveFigures, show_plots, damping_parameter, timeStep):
         rhoj3Out = scSim.GetLogVariableData(
             "spacecraftBody.dynManager.getStateObject('fuelSloshParticleRho3').getState()")
 
-    if saveFigures:
-        fileName = os.path.basename(os.path.splitext(__file__)[0])
-        path = os.path.dirname(os.path.abspath(__file__))
-        if damping_parameter == 0.0 and timeStep == 0.75:
-            setupNo = 1
-        elif damping_parameter == 0.0 and timeStep == 0.3:
-            setupNo = 2
-        elif damping_parameter != 0.0 and timeStep == 0.75:
-            setupNo = 3
-        else:
-            print("No standard setup parameters")
-
+    fileName = os.path.basename(os.path.splitext(__file__)[0])
+    if damping_parameter == 0.0 and timeStep == 0.75:
+        setupNo = 1
+    elif damping_parameter == 0.0 and timeStep == 0.3:
+        setupNo = 2
+    elif damping_parameter != 0.0 and timeStep == 0.75:
+        setupNo = 3
+    else:
+        print("No standard setup parameters")
 
     plt.close("all")  # clears out plots from earlier test runs
     fig = plt.figure(1, figsize=(5, 5))
@@ -502,8 +499,9 @@ def run(saveFigures, show_plots, damping_parameter, timeStep):
     plt.xlabel('X (km)')
     plt.ylabel('Y (km)')
 
-    if saveFigures:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "Orbit", plt, path)
+    figureList = {}
+    pltName = fileName + "Orbit" + str(setupNo)
+    figureList[pltName] = plt.figure(1)
 
     plt.figure(2, figsize=(5, 4))
     plt.plot(orbAngMom_N[:, 0] * 1e-9, (orbAngMom_N[:, 1] - orbAngMom_N[0, 1]) / orbAngMom_N[0, 1],
@@ -512,17 +510,15 @@ def run(saveFigures, show_plots, damping_parameter, timeStep):
              orbAngMom_N[:, 0] * 1e-9, (orbAngMom_N[:, 3] - orbAngMom_N[0, 3]) / orbAngMom_N[0, 3])
     plt.xlabel('Time (s)')
     plt.ylabel('Relative Orbital Angular Momentum Variation')
-
-    if saveFigures:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "OAM" + str(setupNo), plt, path)
+    pltName = fileName + "OAM" + str(setupNo)
+    figureList[pltName] = plt.figure(2)
 
     plt.figure(3, figsize=(5, 4))
     plt.plot(orbEnergy[:, 0] * 1e-9, (orbEnergy[:, 1] - orbEnergy[0, 1]) / orbEnergy[0, 1])
     plt.xlabel('Time (s)')
     plt.ylabel('Relative Orbital Energy Variation')
-
-    if saveFigures:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "OE" + str(setupNo), plt, path)
+    pltName = fileName + "OE" + str(setupNo)
+    figureList[pltName] = plt.figure(3)
 
     plt.figure(4, figsize=(5, 4))
     plt.plot(rotAngMom_N[:, 0] * 1e-9,
@@ -531,17 +527,15 @@ def run(saveFigures, show_plots, damping_parameter, timeStep):
              rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 3] - rotAngMom_N[0, 3]) / rotAngMom_N[0, 3])
     plt.xlabel('Time (s)')
     plt.ylabel('Relative Rotational Angular Momentum Variation')
-
-    if saveFigures:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "RAM" + str(setupNo), plt, path)
+    pltName = fileName + "RAM" + str(setupNo)
+    figureList[pltName] = plt.figure(4)
 
     plt.figure(5, figsize=(5, 4))
     plt.plot(rotEnergy[:, 0] * 1e-9, (rotEnergy[:, 1] - rotEnergy[0, 1]) / rotEnergy[0, 1])
     plt.xlabel('Time (s)')
     plt.ylabel('Relative Rotational Energy Variation')
-
-    if saveFigures:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "RE" + str(setupNo), plt, path)
+    pltName = fileName + "RE" + str(setupNo)
+    figureList[pltName] = plt.figure(5)
 
     if damping_parameter != 0.0:
         plt.figure(6, figsize=(5, 4))
@@ -550,9 +544,8 @@ def run(saveFigures, show_plots, damping_parameter, timeStep):
         plt.legend(['Particle 1', 'Particle 2', 'Particle 3'])
         plt.xlabel('Time (s)')
         plt.ylabel('Displacement (m)')
-
-        if saveFigures:     # only save off the figure if doing a unit test run
-            unitTestSupport.saveScenarioFigure(fileName + "ParticleMotion", plt, path)
+        pltName = fileName + "ParticleMotion"
+        figureList[pltName] = plt.figure(6)
 
     if show_plots:
         plt.show()
@@ -561,12 +554,11 @@ def run(saveFigures, show_plots, damping_parameter, timeStep):
     plt.close("all")
 
 
-    return rhoj1Out, rhoj2Out, rhoj3Out
+    return rhoj1Out, rhoj2Out, rhoj3Out, figureList
 
 
 if __name__ == "__main__":
     run(
-        False,              # save Figures to file
         True,               # show_plots
         0.0,				 # damping_parameter
         0.75,				 # timeStep

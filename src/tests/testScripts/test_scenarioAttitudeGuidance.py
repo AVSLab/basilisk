@@ -61,7 +61,8 @@ def test_bskAttitudeGuidance(show_plots, useAltBodyFrame):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
-    dataPos, dataSigmaBN, numDataPoints = scenarioAttitudeGuidance.run(True, show_plots, useAltBodyFrame)
+    dataPos, dataSigmaBN, numDataPoints, figureList = \
+        scenarioAttitudeGuidance.run(show_plots, useAltBodyFrame)
 
 
     numTruthPoints = 5
@@ -104,6 +105,10 @@ def test_bskAttitudeGuidance(show_plots, useAltBodyFrame):
     testFailCount, testMessages = unitTestSupport.compareArray(
         trueSigmaBN, dataSigmaBNRed, accuracy, "sigma_BN Set",
         testFailCount, testMessages)
+
+    # save the figures to the Doxygen scenario images folder
+    for pltName, plt in figureList.items():
+        unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
     #   print out success message if no error were found
     if testFailCount == 0:

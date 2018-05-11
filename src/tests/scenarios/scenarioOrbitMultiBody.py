@@ -212,7 +212,7 @@ bskPath = __path__[0]
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
+#     run(
 #          True,        # show_plots
 #          'Hubble'
 #        )
@@ -232,7 +232,7 @@ bskPath = __path__[0]
 # The next scenario is run by changing the bottom of the file in the scenario code to read
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
+#     run(
 #          True,        # show_plots
 #          'NewHorizons'
 #        )
@@ -244,7 +244,7 @@ bskPath = __path__[0]
 # ![Trajectory Difference](Images/Scenarios/scenarioOrbitMultiBody3NewHorizons.svg "Trajectory Difference")
 #
 ## @}
-def run(saveFigures, show_plots, scCase):
+def run(show_plots, scCase):
     '''Call this routine directly to run the tutorial scenario.'''
 
     # Create simulation variable names
@@ -399,8 +399,9 @@ def run(saveFigures, show_plots, scCase):
     plt.legend(loc='lower right')
     plt.xlabel('Time ' + timeLabel)
     plt.ylabel('Inertial Position ' + axesLabel)
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "1" + scCase, plt, path)
+    figureList = {}
+    pltName = fileName + "1" + scCase
+    figureList[pltName] = plt.figure(1)
 
     rBSK = posData[-1, 1:4]  # store the last position to compare to the SPICE position
     if scCase is 'Hubble':
@@ -461,8 +462,9 @@ def run(saveFigures, show_plots, scCase):
         plt.xlabel('$i_e$ Cord. [km]')
         plt.ylabel('$i_p$ Cord. [km]')
         plt.grid()
-        if saveFigures:  # only save off the figure if doing a unit test run
-            unitTestSupport.saveScenarioFigure(fileName + "2" + scCase, plt, path)
+        pltName = fileName + "2" + scCase
+        figureList[pltName] = plt.figure(2)
+
     else:
         time = gravFactory.spiceObject.getCurrentTimeString()
         scState = 1000.0 * pyswice.spkRead(scSpiceName,
@@ -492,8 +494,8 @@ def run(saveFigures, show_plots, scCase):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Inertial Position Differences [m]')
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "3" + scCase, plt, path)
+    pltName = fileName + "3" + scCase
+    figureList[pltName] = plt.figure(3)
 
     if show_plots:
         plt.show()
@@ -513,7 +515,7 @@ def run(saveFigures, show_plots, scCase):
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return rBSK, rTrue
+    return rBSK, rTrue, figureList
 
 
 #
@@ -522,7 +524,6 @@ def run(saveFigures, show_plots, scCase):
 #
 if __name__ == "__main__":
     run(
-        False,  # save figures to file
         True,  # show_plots
         'Hubble'  # 'Hubble' or 'NewHorizons'
     )

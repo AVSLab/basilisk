@@ -341,10 +341,10 @@ def plot_rw_voltages(timeData, dataVolt, numRW):
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
-#        , True,        # show_plots
-#        , False        # useJitterSimple
-#        , False        # useRWVoltageIO
+#     run(
+#        True,        # show_plots
+#        False,       # useJitterSimple
+#        False        # useRWVoltageIO
 #        )
 # ~~~~~~~~~~~~~
 # The first 2 arguments can be left as is.  The last arguments control the
@@ -365,10 +365,10 @@ def plot_rw_voltages(timeData, dataVolt, numRW):
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
-#        , True,        # show_plots
-#        , True         # useJitterSimple
-#        , False        # useRWVoltageIO
+#     run(
+#        True,        # show_plots
+#        True,        # useJitterSimple
+#        False        # useRWVoltageIO
 #        )
 # ~~~~~~~~~~~~~
 # The first 2 arguments can be left as is.  The last arguments control the
@@ -440,10 +440,10 @@ def plot_rw_voltages(timeData, dataVolt, numRW):
 # To run this scenario, modify the bottom of the script to read:
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
-#        , True,        # show_plots
-#        , False        # useJitterSimple
-#        , True        # useRWVoltageIO
+#     run(
+#        True,        # show_plots
+#        False,       # useJitterSimple
+#        True         # useRWVoltageIO
 #        )
 # ~~~~~~~~~~~~~
 # The resulting simulation illustrations are shown below.
@@ -457,7 +457,7 @@ def plot_rw_voltages(timeData, dataVolt, numRW):
 # off the voltage command for particular wheels.  Also, by specifying the RW speed message input
 # name it is possible to turn on a torque tracking feedback loop in this module.
 ## @}
-def run(saveFigures, show_plots, useJitterSimple, useRWVoltageIO):
+def run(show_plots, useJitterSimple, useRWVoltageIO):
     '''Call this routine directly to run the tutorial scenario.'''
 
     # Create simulation variable names
@@ -722,37 +722,31 @@ def run(saveFigures, show_plots, useJitterSimple, useRWVoltageIO):
     plt.close("all")  # clears out plots from earlier test runs
 
     plot_attitude_error(timeData, dataSigmaBR)
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "1" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
-                                           , plt
-                                           , path)
+    figureList = {}
+    pltName = fileName + "1" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
+    figureList[pltName] = plt.figure(1)
 
     plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW)
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "2" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
-                                           , plt
-                                           , path)
+    pltName = fileName + "2" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
+    figureList[pltName] = plt.figure(2)
 
     plot_rate_error(timeData, dataOmegaBR)
     plot_rw_speeds(timeData, dataOmegaRW, numRW)
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "3" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
-                                           , plt
-                                           , path)
+    pltName = fileName + "3" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
+    figureList[pltName] = plt.figure(4)
 
     if useRWVoltageIO:
         plot_rw_voltages(timeData, dataVolt, numRW)
-        if saveFigures:  # only save off the figure if doing a unit test run
-            unitTestSupport.saveScenarioFigure(fileName + "4" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
-                                               , plt
-                                               , path)
+        pltName = fileName + "4" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
+        figureList[pltName] = plt.figure(5)
+
     if show_plots:
         plt.show()
 
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    return dataPos, dataSigmaBR, dataUsReq, numDataPoints
+    return dataPos, dataSigmaBR, dataUsReq, numDataPoints, figureList
 
 
 #
@@ -761,7 +755,6 @@ def run(saveFigures, show_plots, useJitterSimple, useRWVoltageIO):
 #
 if __name__ == "__main__":
     run(
-        False,  # save figures to file
         True,  # show_plots
         False,  # useJitterSimple
         False  # useRWVoltageIO

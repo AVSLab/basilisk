@@ -175,7 +175,7 @@ def plot_orbit(oe, mu, planet_radius, dataPos, dataVel):
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
+#     run(
 #          True,        # show_plots
 #          False        # useAltBodyFrame
 #        )
@@ -196,7 +196,7 @@ def plot_orbit(oe, mu, planet_radius, dataPos, dataVel):
 # To run the second scenario, change the main routine at the bottom of the file to read:
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
+#     run(
 #          True,        # show_plots
 #          True         # useAltBodyFrame
 #        )
@@ -216,7 +216,7 @@ def plot_orbit(oe, mu, planet_radius, dataPos, dataVel):
 # ![Rate Tracking Error](Images/Scenarios/scenarioAttGuideHyperbolic31.svg "Rate Tracking Error")
 #
 ## @}
-def run(saveFigures, show_plots, useAltBodyFrame):
+def run(show_plots, useAltBodyFrame):
     '''Call this routine directly to run the tutorial scenario.'''
 
     # Create simulation variable names
@@ -399,29 +399,30 @@ def run(saveFigures, show_plots, useAltBodyFrame):
     timeLineSet = dataSigmaBR[:, 0] * macros.NANO2MIN
     plt.close("all")  # clears out plots from earlier test runs
 
+    figureList = {}
     plot_track_error_norm(timeLineSet, dataSigmaBR)
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "1" + str(int(useAltBodyFrame)), plt, path)
+    pltName = fileName + "1" + str(int(useAltBodyFrame))
+    figureList[pltName] = plt.figure(1)
 
     plot_control_torque(timeLineSet, dataLr)
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "2" + str(int(useAltBodyFrame)), plt, path)
+    pltName = fileName + "2" + str(int(useAltBodyFrame))
+    figureList[pltName] = plt.figure(2)
 
     plot_rate_error(timeLineSet, dataOmegaBR)
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "3" + str(int(useAltBodyFrame)), plt, path)
+    pltName = fileName + "3" + str(int(useAltBodyFrame))
+    figureList[pltName] = plt.figure(3)
 
     plot_orbit(oe, earth.mu, earth.radEquator, dataPos, dataVel)
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "4" + str(int(useAltBodyFrame)), plt, path)
+    pltName = fileName + "4" + str(int(useAltBodyFrame))
+    figureList[pltName] = plt.figure(4)
 
     if show_plots:
         plt.show()
 
-    # close the plots being saved off to avoid over-writing old and new figures
+    # close the plots to avoid over-writing old and new figures
     plt.close("all")
 
-    return dataPos, dataSigmaBN, numDataPoints
+    return dataPos, dataSigmaBN, numDataPoints, figureList
 
 
 #
@@ -429,7 +430,7 @@ def run(saveFigures, show_plots, useAltBodyFrame):
 # stand-along python script
 #
 if __name__ == "__main__":
-    run(False,  # save figures to file
+    run(
         True,  # show_plots
         False  # useAltBodyFrame
         )

@@ -22,6 +22,7 @@
 import sys, os, inspect
 import pytest
 import numpy as np
+from Basilisk.utilities import unitTestSupport
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -43,7 +44,8 @@ def test_scenarioFuelSlosh(show_plots, damping_parameter, timeStep):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
-    rhoj1Out, rhoj2Out, rhoj3Out = scenarioFuelSlosh.run(True, show_plots, damping_parameter, timeStep)
+    rhoj1Out, rhoj2Out, rhoj3Out, figureList = \
+        scenarioFuelSlosh.run(show_plots, damping_parameter, timeStep)
 
     if damping_parameter != 0:
 
@@ -73,10 +75,14 @@ def test_scenarioFuelSlosh(show_plots, damping_parameter, timeStep):
             testFailCount = testFailCount + 1
             testMessages = [testMessages, "Particle 1 settling time does not match second order systems theories"]
 
-        if testFailCount == 0:
-            print "PASSED "
-        else:
-            print testFailCount
-            print testMessages
+    # save the figures to the Doxygen scenario images folder
+    for pltName, plt in figureList.items():
+        unitTestSupport.saveScenarioFigure(pltName, plt, path)
+
+    if testFailCount == 0:
+        print "PASSED "
+    else:
+        print testFailCount
+        print testMessages
 
     return [testFailCount, ''.join(testMessages)]

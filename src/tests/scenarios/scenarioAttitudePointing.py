@@ -97,7 +97,7 @@ from Basilisk.fswAlgorithms import fswMessages
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
+#     run(
 #          True,        # show_plots
 #          False        # useLargeTumble
 #        )
@@ -114,7 +114,7 @@ from Basilisk.fswAlgorithms import fswMessages
 # Here the python main function is changed to read:
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
+#     run(
 #          True,        # show_plots
 #          True         # useLargeTumble
 #        )
@@ -125,7 +125,7 @@ from Basilisk.fswAlgorithms import fswMessages
 # ![MRP Attitude History](Images/Scenarios/scenarioAttitudePointing11.svg "MRP history")
 # ![Control Torque History](Images/Scenarios/scenarioAttitudePointing21.svg "Torque history")
 ##  @}
-def run(saveFigures, show_plots, useLargeTumble):
+def run(show_plots, useLargeTumble):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
@@ -286,10 +286,9 @@ def run(saveFigures, show_plots, useLargeTumble):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Error $\sigma_{B/R}$')
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileName + "1" + str(int(useLargeTumble))
-            , plt, path)
+    figureList = {}
+    pltName = fileName + "1" + str(int(useLargeTumble))
+    figureList[pltName] = plt.figure(1)
 
     plt.figure(2)
     for idx in range(1, 4):
@@ -299,10 +298,8 @@ def run(saveFigures, show_plots, useLargeTumble):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Control Torque $L_r$ [Nm]')
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileName + "2" + str(int(useLargeTumble))
-            , plt, path)
+    pltName = fileName + "2" + str(int(useLargeTumble))
+    figureList[pltName] = plt.figure(2)
 
     plt.figure(3)
     for idx in range(1, 4):
@@ -320,7 +317,7 @@ def run(saveFigures, show_plots, useLargeTumble):
     plt.close("all")
 
 
-    return dataLr, dataSigmaBR, numDataPoints
+    return dataLr, dataSigmaBR, numDataPoints, figureList
 
 
 #
@@ -329,7 +326,6 @@ def run(saveFigures, show_plots, useLargeTumble):
 #
 if __name__ == "__main__":
     run(
-        False,  # save figures to file
         True,  # show_plots
         False,  # useLargeTumble
     )

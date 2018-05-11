@@ -126,7 +126,7 @@ from Basilisk.fswAlgorithms import fswMessages
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
+#     run(
 #          True,       # show_plots
 #          False,       # useUnmodeledTorque
 #          False        # useIntGain
@@ -149,7 +149,7 @@ from Basilisk.fswAlgorithms import fswMessages
 # Here the python main function is changed to read:
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
+#     run(
 #          True,       # show_plots
 #          True,       # useUnmodeledTorque
 #          False        # useIntGain
@@ -169,7 +169,7 @@ from Basilisk.fswAlgorithms import fswMessages
 # feedback term:
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
+#     run(
 #          True,       # show_plots
 #          True,       # useUnmodeledTorque
 #          True        # useIntGain
@@ -182,7 +182,7 @@ from Basilisk.fswAlgorithms import fswMessages
 # ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2T211.svg "Torque history")
 #
 ##  @}
-def run(saveFigures, show_plots, useUnmodeledTorque, useIntGain):
+def run(show_plots, useUnmodeledTorque, useIntGain):
     '''Call this routine directly to run the tutorial scenario.'''
 
     # Create simulation variable names
@@ -394,10 +394,9 @@ def run(saveFigures, show_plots, useUnmodeledTorque, useIntGain):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Error $\sigma_{B/R}$')
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "1" + str(int(useUnmodeledTorque)) + str(int(useIntGain))
-                                           , plt
-                                           , path)
+    figureList = {}
+    pltName = fileName + "1" + str(int(useUnmodeledTorque)) + str(int(useIntGain))
+    figureList[pltName] = plt.figure(1)
 
     plt.figure(2)
     for idx in range(1, 4):
@@ -407,10 +406,8 @@ def run(saveFigures, show_plots, useUnmodeledTorque, useIntGain):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Control Torque $L_r$ [Nm]')
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "2" + str(int(useUnmodeledTorque)) + str(int(useIntGain))
-                                           , plt
-                                           , path)
+    pltName = fileName + "2" + str(int(useUnmodeledTorque)) + str(int(useIntGain))
+    figureList[pltName] = plt.figure(2)
 
     plt.figure(3)
     for idx in range(1, 4):
@@ -445,7 +442,7 @@ def run(saveFigures, show_plots, useUnmodeledTorque, useIntGain):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    return dataPos, dataSigmaBR, dataLr, numDataPoints
+    return dataPos, dataSigmaBR, dataLr, numDataPoints, figureList
 
 
 #
@@ -453,7 +450,7 @@ def run(saveFigures, show_plots, useUnmodeledTorque, useIntGain):
 # stand-along python script
 #
 if __name__ == "__main__":
-    run(False,  # save figures to file
+    run(
         True,  # show_plots
         False,  # useUnmodeledTorque
         False  # useIntGain

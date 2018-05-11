@@ -55,8 +55,7 @@ def test_scenarioIntegrators(show_plots, integratorCase):
     testMessages = []                       # create empty array to store test log messages
 
     # each test method requires a single assert method to be called
-    posData = scenarioIntegrators.run( True,
-            show_plots, integratorCase)
+    posData, figureList = scenarioIntegrators.run(show_plots, integratorCase)
 
 
     numTruthPoints = 5
@@ -95,6 +94,10 @@ def test_scenarioIntegrators(show_plots, integratorCase):
     testFailCount, testMessages = unitTestSupport.compareArray(
         truePos, dataPosRed, accuracy, "r_BN_N Vector",
         testFailCount, testMessages)
+
+    # save the figures to the Doxygen scenario images folder
+    for pltName, plt in figureList.items():
+        unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
     #   print out success message if no error were found
     if testFailCount == 0:

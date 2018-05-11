@@ -181,7 +181,7 @@ def plot_orientation(timeLineSet, dataPos, dataVel, dataSigmaBN):
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
+#     run(
 #          True,        # show_plots
 #          False        # useAltBodyFrame
 #        )
@@ -204,7 +204,7 @@ def plot_orientation(timeLineSet, dataPos, dataVel, dataSigmaBN):
 # To run the second scenario, change the main routine at the bottom of the file to read:
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
+#     run(
 #          True,        # show_plots
 #          True         # useAltBodyFrame
 #        )
@@ -230,7 +230,7 @@ def plot_orientation(timeLineSet, dataPos, dataVel, dataSigmaBN):
 ##  @}
 
 
-def run(saveFigures, show_plots, useAltBodyFrame):
+def run(show_plots, useAltBodyFrame):
     '''Call this routine directly to run the tutorial scenario.'''
 
 
@@ -414,18 +414,19 @@ def run(saveFigures, show_plots, useAltBodyFrame):
     plt.close("all")  # clears out plots from earlier test runs
 
     plot_attitude_error(timeLineSet, dataSigmaBR)
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "1" + str(int(useAltBodyFrame)), plt, path)
+    figureList = {}
+    pltName = fileName + "1" + str(int(useAltBodyFrame))
+    figureList[pltName] = plt.figure(1)
 
     plot_control_torque(timeLineSet, dataLr)
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "2" + str(int(useAltBodyFrame)), plt, path)
+    pltName = fileName + "2" + str(int(useAltBodyFrame))
+    figureList[pltName] = plt.figure(2)
 
     plot_rate_error(timeLineSet, dataOmegaBR)
 
     plot_orientation(timeLineSet, dataPos, dataVel, dataSigmaBN)
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "4" + str(int(useAltBodyFrame)), plt, path)
+    pltName = fileName + "4" + str(int(useAltBodyFrame))
+    figureList[pltName] = plt.figure(4)
 
     if show_plots:
         plt.show()
@@ -433,7 +434,7 @@ def run(saveFigures, show_plots, useAltBodyFrame):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    return dataPos, dataSigmaBN, numDataPoints
+    return dataPos, dataSigmaBN, numDataPoints, figureList
 
 
 #
@@ -442,7 +443,6 @@ def run(saveFigures, show_plots, useAltBodyFrame):
 #
 if __name__ == "__main__":
     run(
-        False,  # save figures to file
         True,  # show_plots
         False  # useAltBodyFrame
     )

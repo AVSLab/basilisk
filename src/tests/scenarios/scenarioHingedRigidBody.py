@@ -228,7 +228,7 @@ import matplotlib.pyplot as plt
 # The main call for this script is the run() command.  Just calling the script with python invokes this call:
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
+#     run(
 #          True,        # show_plots
 #        )
 # ~~~~~~~~~~~~~
@@ -251,7 +251,7 @@ import matplotlib.pyplot as plt
 #
 ## @}
 
-def run(saveFigures, show_plots):
+def run(show_plots):
     '''Call this routine directly to run the tutorial scenario.'''
 
 
@@ -430,8 +430,9 @@ def run(saveFigures, show_plots):
     plt.legend(loc='lower right')
     plt.xlabel('Time [h]')
     plt.ylabel('Inertial Position [km]')
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "1" + str(int(0.)), plt, path)
+    figureList = {}
+    pltName = fileName + "1" + str(int(0.))
+    figureList[pltName] = plt.figure(1)
 
     # show SMA
     plt.figure(2)
@@ -446,8 +447,8 @@ def run(saveFigures, show_plots):
              )
     plt.xlabel('Time [min]')
     plt.ylabel('Radius [km]')
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "2" + str(int(0.)), plt, path)
+    pltName = fileName + "2" + str(int(0.))
+    figureList[pltName] = plt.figure(2)
 
     plt.figure(3)
     fig = plt.gcf()
@@ -456,8 +457,8 @@ def run(saveFigures, show_plots):
     plt.plot(panel1thetaLog[:, 0] * macros.NANO2MIN, panel1thetaLog[:, 1])
     plt.xlabel('Time [min]')
     plt.ylabel('Panel 1 Angular Displacement [r]')
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "panel1theta" + str(int(0.)), plt, path)
+    pltName = fileName + "panel1theta" + str(int(0.))
+    figureList[pltName] = plt.figure(3)
 
     plt.figure(4)
     fig = plt.gcf()
@@ -466,8 +467,8 @@ def run(saveFigures, show_plots):
     plt.plot(panel2thetaLog[:, 0] * macros.NANO2MIN, panel2thetaLog[:, 1])
     plt.xlabel('Time [min]')
     plt.ylabel('Panel 2 Angular Displacement [r]')
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "panel2theta" + str(int(0.)), plt, path)
+    pltName = fileName + "panel2theta" + str(int(0.))
+    figureList[pltName] = plt.figure(4)
 
     if show_plots:
         plt.show()
@@ -475,7 +476,7 @@ def run(saveFigures, show_plots):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    return velData
+    return velData, figureList
 
 
 #
@@ -484,6 +485,5 @@ def run(saveFigures, show_plots):
 #
 if __name__ == "__main__":
     run(
-        False,  # safe figures to file
         True  # show_plots
     )

@@ -62,8 +62,8 @@ def test_bskAttitudeFeedbackPD(show_plots, useJitterSimple, useRWVoltageIO):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
-    dataSigmaBR, dataUsReq, dataSigmaBRBase, dataUsReqBase = \
-        scenarioAttitudePythonPD.runRegularTask(True, show_plots, useJitterSimple, useRWVoltageIO)
+    dataSigmaBR, dataUsReq, dataSigmaBRBase, dataUsReqBase, figureList = \
+        scenarioAttitudePythonPD.runRegularTask(show_plots, useJitterSimple, useRWVoltageIO)
 
 
 
@@ -77,7 +77,9 @@ def test_bskAttitudeFeedbackPD(show_plots, useJitterSimple, useRWVoltageIO):
         testFailCount += 1
         testMessages.append("Failed to get accurate agreement between torque command variables")
 
-
+    # save the figures to the Doxygen scenario images folder
+    for pltName, plt in figureList.items():
+        unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

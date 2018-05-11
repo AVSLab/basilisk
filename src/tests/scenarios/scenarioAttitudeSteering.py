@@ -225,9 +225,9 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
-#        , True,        # show_plots
-#        , 0            # simCase
+#     run(
+#        True,        # show_plots
+#        0            # simCase
 #        )
 # ~~~~~~~~~~~~~
 # The first 2 arguments can be left as is.  The last arguments control the
@@ -254,9 +254,9 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
-#        , True,        # show_plots
-#        , 1            # simCase
+#     run(
+#        True,        # show_plots
+#        1            # simCase
 #        )
 # ~~~~~~~~~~~~~
 # This setup is the same as the first setup, but the integral feedback term is turned off.
@@ -272,9 +272,9 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
-#        , True,        # show_plots
-#        , 2            # simCase
+#     run(
+#        True,        # show_plots
+#        2            # simCase
 #        )
 # ~~~~~~~~~~~~~
 # This setup investigates the small depature motion stability about the Hill frame.  Here only small initial
@@ -293,9 +293,9 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
-#        , True,        # show_plots
-#        , 3            # simCase
+#     run(
+#        True,        # show_plots
+#        3            # simCase
 #        )
 # ~~~~~~~~~~~~~
 # This setup also investigates the small depature motion stability about the Hill frame.  However, in this case
@@ -306,7 +306,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
 # ![MRP Attitude History](Images/Scenarios/scenarioAttitudeSteeringSigmaBR3.svg "MRP history")
 #
 ##  @}
-def run(saveFigures, show_plots, simCase):
+def run(show_plots, simCase):
     '''Call this routine directly to run the tutorial scenario.'''
 
     # Create simulation variable names
@@ -583,20 +583,23 @@ def run(saveFigures, show_plots, simCase):
     plt.close("all")  # clears out plots from earlier test runs
 
     plot_attitude_error(timeData, dataSigmaBR)
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "SigmaBR" + str(int(simCase)), plt, path)
+    figureList = {}
+    pltName = fileName + "SigmaBR" + str(int(simCase))
+    figureList[pltName] = plt.figure(1)
 
     plot_rw_motor_torque(timeData, dataRW, numRW)
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "rwUs" + str(int(simCase)), plt, path)
+    pltName = fileName + "rwUs" + str(int(simCase))
+    figureList[pltName] = plt.figure(2)
 
     plot_rate_error(timeData, dataOmegaBR, dataOmegaBRAst)
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "omegaBR" + str(int(simCase)), plt, path)
+    plot_rw_motor_torque(timeData, dataRW, numRW)
+    pltName = fileName + "omegaBR" + str(int(simCase))
+    figureList[pltName] = plt.figure(3)
 
     plot_rw_speeds(timeData, dataOmegaRW, numRW)
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "Omega" + str(int(simCase)), plt, path)
+    plot_rw_motor_torque(timeData, dataRW, numRW)
+    pltName = fileName + "Omega" + str(int(simCase))
+    figureList[pltName] = plt.figure(4)
 
     if show_plots:
         plt.show()
@@ -606,7 +609,7 @@ def run(saveFigures, show_plots, simCase):
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return dataPos, dataUsReq, dataSigmaBR, numDataPoints
+    return dataPos, dataUsReq, dataSigmaBR, numDataPoints, figureList
 
 
 #
@@ -615,7 +618,6 @@ def run(saveFigures, show_plots, simCase):
 #
 if __name__ == "__main__":
     run(
-        False,  # save figures to file
         True,  # show_plots
         0  # simCase
     )

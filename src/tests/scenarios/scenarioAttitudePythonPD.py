@@ -131,7 +131,7 @@ from Basilisk.fswAlgorithms import fswMessages
 
 
 
-def runRegularTask(saveFigures, show_plots, useJitterSimple, useRWVoltageIO):
+def runRegularTask(show_plots, useJitterSimple, useRWVoltageIO):
     '''Call this routine directly to run the tutorial scenario.'''
 
     simulationTimeStep = macros.sec2nano(.1)
@@ -223,9 +223,9 @@ def runRegularTask(saveFigures, show_plots, useJitterSimple, useRWVoltageIO):
                  timeDataBase, dataSigmaBRBase[:, idx], '--')
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Error $\sigma_{B/R}$')
-    if saveFigures:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileName + "1" + str(int(useJitterSimple)) + str(int(useRWVoltageIO)), plt, path)
+    figureList = {}
+    pltName = fileName + "1" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
+    figureList[pltName] = plt.figure(1)
 
     plt.figure(2)
     for idx in range(1, 4):
@@ -246,7 +246,7 @@ def runRegularTask(saveFigures, show_plots, useJitterSimple, useRWVoltageIO):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    return dataSigmaBR, dataUsReq, dataSigmaBRBase, dataUsReqBase
+    return dataSigmaBR, dataUsReq, dataSigmaBRBase, dataUsReqBase, figureList
 
 
 def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
@@ -623,7 +623,6 @@ class PythonMRPPD(simulationArchTypes.PythonModelClass):
 #
 if __name__ == "__main__":
     runRegularTask(
-        False,  # save figures to file
         True,  # show_plots
         False,  # useJitterSimple
         False  # useRWVoltageIO

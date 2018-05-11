@@ -56,13 +56,17 @@ def test_scenarioOrbitMultiBodyCopy(show_plots, scCase):
     testMessages = []                       # create empty array to store test log messages
 
     # provide a unique test method name, starting with test_
-    rBSK, rTrue = scenarioOrbitMultiBody.run(True, show_plots, scCase)
+    rBSK, rTrue, figureList = scenarioOrbitMultiBody.run(show_plots, scCase)
 
 
     # compare the results to the truth values
     accuracy = 300.0  # meters
     testFailCount, testMessages = unitTestSupport.compareVector(
         rTrue, rBSK, accuracy, "|r_BN_N| error", testFailCount, testMessages)
+
+    # save the figures to the Doxygen scenario images folder
+    for pltName, plt in figureList.items():
+        unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
     #   print out success message if no error were found
     if testFailCount == 0:
