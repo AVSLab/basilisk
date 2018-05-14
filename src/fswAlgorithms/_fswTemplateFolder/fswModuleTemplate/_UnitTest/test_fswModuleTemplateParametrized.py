@@ -180,6 +180,8 @@ def fswModuleTestFunction(show_plots, param1, param2):
 
     # compare the module results to the truth values
     accuracy = 1e-12
+    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+
     dummyTrue = [1.0, 2.0, 3.0, 1.0, 2.0]
 
     testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
@@ -214,7 +216,7 @@ def fswModuleTestFunction(show_plots, param1, param2):
 
     # export a plot to be included in the documentation
     unitTestSupport.writeFigureLaTeX(
-        "testPlot",
+        "testPlot"+str(param1)+str(param2),
         "Illustration of Sample Plot",
         plt,
         "width=0.5\\textwidth",
@@ -235,6 +237,19 @@ def fswModuleTestFunction(show_plots, param1, param2):
         caption,
         resultTable,
         path)
+
+    #   print out success message if no error were found
+    snippentName = "passFail" + str(param1) + str(param2)
+    if testFailCount == 0:
+        colorText = 'ForestGreen'
+        print "PASSED: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        print "Failed: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

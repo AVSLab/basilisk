@@ -34,8 +34,8 @@ from BSK_masters import BSKSim, BSKScenario
 sys.path.append(path + '/../plotting')
 import BSK_Plotting as BSK_plt
 
-sys.path.append(path + '/../../src/tests/scenarios')
-import test_scenarioAttitudeSteering as scene_plt
+sys.path.append(path + '/../../scenarios')
+import scenarioAttitudeSteering as scene_plt
 
 
 # Create your own scenario child class
@@ -104,8 +104,7 @@ class scenario_AttitudeSteeringRW(BSKScenario):
         BSK_plt.show_all_plots()
 
 
-
-if __name__ == "__main__":
+def run(showPlots):
     # Instantiate base simulation
     TheBSKSim = BSKSim()
 
@@ -125,4 +124,9 @@ if __name__ == "__main__":
     print 'Finished Execution. Post-processing results'
 
     # Pull the results of the base simulation running the chosen scenario
-    TheScenario.pull_outputs()
+    if showPlots:
+        TheScenario.pull_outputs()
+
+
+if __name__ == "__main__":
+    run(True)

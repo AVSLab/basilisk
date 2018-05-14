@@ -29,16 +29,16 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import alg_contain
 from Basilisk.fswAlgorithms import sunlineEKF
 from Basilisk.fswAlgorithms import cssComm
-from Basilisk.fswAlgorithms import vehicleConfigData
 from Basilisk.utilities import macros
 import SunLineEKF_test_utilities as FilterPlots
+from Basilisk.fswAlgorithms import fswMessages
 
 
 def setupFilterData(filterObject):
     filterObject.navStateOutMsgName = "sunline_state_estimate"
     filterObject.filtDataOutMsgName = "sunline_filter_data"
     filterObject.cssDataInMsgName = "css_sensors_data"
-    filterObject.cssConfInMsgName = "css_config_data"
+    filterObject.cssConfigInMsgName = "css_config_data"
 
     filterObject.sensorUseThresh = 0.
     filterObject.states = [1.0, 1.0, 1.0, 0.0, 0.0, 0.0]
@@ -184,6 +184,7 @@ def sunline_individual_test():
     cssCos = [np.cos(np.deg2rad(10.)), np.cos(np.deg2rad(25.)), np.cos(np.deg2rad(5.)), np.cos(np.deg2rad(90.))]
     sensorTresh = np.cos(np.deg2rad(50.))
     cssNormals = [1.,0.,0.,0.,1.,0., 0.,0.,1., 1./np.sqrt(2), 1./np.sqrt(2),0.]
+    cssBias = [1.0 for i in range(numCSS)]
 
     measMat = sunlineEKF.new_doubleArray(8*6)
     obs = sunlineEKF.new_doubleArray(8)
@@ -196,7 +197,7 @@ def sunline_individual_test():
         sunlineEKF.doubleArray_setitem(obs, i, 0.0)
         sunlineEKF.doubleArray_setitem(yMeas, i, 0.0)
 
-    sunlineEKF.sunlineHMatrixYMeas(inputStates, numCSS, cssCos, sensorTresh, cssNormals, obs, yMeas, numObs, measMat)
+    sunlineEKF.sunlineHMatrixYMeas(inputStates, numCSS, cssCos, sensorTresh, cssNormals, cssBias, obs, yMeas, numObs, measMat)
 
     obsOut = []
     yMeasOut = []
@@ -621,11 +622,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
     # Construct algorithm and associated C++ container
     moduleConfig = sunlineEKF.sunlineEKFConfig()
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        sunlineEKF.Update_sunlineEKF,
-                                        sunlineEKF.SelfInit_sunlineEKF,
-                                        sunlineEKF.CrossInit_sunlineEKF,
-                                        sunlineEKF.Reset_sunlineEKF)
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "SunlineEKF"
 
     # Add test module to runtime call list
@@ -634,7 +631,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
     # Set up some test parameters
 
-    cssConstelation = vehicleConfigData.CSSConstConfig()
+    cssConstelation = fswMessages.CSSConfigFswMsg()
 
     CSSOrientationList = [
         [0.70710678118654746, -0.5, 0.5],
@@ -646,13 +643,18 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         [-0.70710678118654746, 0, -0.70710678118654757],
         [-0.70710678118654746, -0.70710678118654757, 0.0],
     ]
+    CSSBias = [1 for i in range(len(CSSOrientationList))]
+
     totalCSSList = []
     # Initializing a 2D double array is hard with SWIG.  That's why there is this
     # layer between the above list and the actual C variables.
+    i = 0
     for CSSHat in CSSOrientationList:
-        newCSS = vehicleConfigData.CSSConfigurationElement()
+        newCSS = fswMessages.CSSUnitConfigFswMsg()
+        newCSS.CBias = CSSBias[i]
         newCSS.nHat_B = CSSHat
         totalCSSList.append(newCSS)
+        i = i+1
     cssConstelation.nCSS = len(CSSOrientationList)
     cssConstelation.cssVals = totalCSSList
     msgSize = cssConstelation.getStructSize()
@@ -660,13 +662,13 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 
     inputMessageSize = inputData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, "css_config_data",
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.cssConfigInMsgName,
                                           msgSize, 2, "CSSConstellation")
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.cssDataInMsgName,
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
-    unitTestSim.TotalSim.WriteMessageData("css_config_data", msgSize, 0, cssConstelation)
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssConfigInMsgName, msgSize, 0, cssConstelation)
 
     stateTarget1 = testVector1
     stateTarget1 += [0.0, 0.0, 0.0]
@@ -728,7 +730,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         Htest[i,0] = stateLog[i,0]
         PostFitRes[i, 0] = stateLog[i, 0]
 
-        sunlineEKF.sunlineHMatrixYMeas(stateLog[i-1,1:7].tolist(), 8, dotList, threshold, CSSnormals, obs, yMeas, numObs, measMat)
+        sunlineEKF.sunlineHMatrixYMeas(stateLog[i-1,1:7].tolist(), 8, dotList, threshold, CSSnormals, CSSBias, obs, yMeas, numObs, measMat)
         yMeasOut = []
         HOut = []
         for j in range(8*6):
@@ -803,7 +805,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         Htest[i-SimHalfLength,0] = stateLog[i,0]
         PostFitRes[i, 0] = stateLog[i, 0]
 
-        sunlineEKF.sunlineHMatrixYMeas(stateLog[i-1,1:7].tolist(), 8, dotList, threshold, CSSnormals, obs, yMeas, numObs, measMat)
+        sunlineEKF.sunlineHMatrixYMeas(stateLog[i-1,1:7].tolist(), 8, dotList, threshold, CSSnormals, CSSBias, obs, yMeas, numObs, measMat)
         yMeasOut = []
         HOut = []
         for j in range(8*6):

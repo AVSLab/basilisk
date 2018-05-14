@@ -21,7 +21,7 @@
 #define _RW_NULL_SPACE_H_
 
 #include "messaging/static_messaging.h"
-#include "vehicleConfigData/vehicleConfigData.h"
+#include "fswMessages/vehicleConfigFswMsg.h"
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "simFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 #include "fswMessages/rwAvailabilityFswMsg.h"

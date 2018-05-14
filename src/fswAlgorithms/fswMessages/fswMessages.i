@@ -28,6 +28,7 @@
     #include "../fswMessages/attGuidFswMsg.h"
     #include "../fswMessages/attRefFswMsg.h"
     #include "../fswMessages/cssConfigFswMsg.h"
+    #include "../fswMessages/cssUnitConfigFswMsg.h"
     #include "../fswMessages/dvBurnCmdFswMsg.h"
     #include "../fswMessages/eulerAngleFswMsg.h"
     #include "../fswMessages/imuSensorBodyFswMsg.h"
@@ -49,6 +50,7 @@
 
 %array_functions(RWConfigElementFswMsg, RWConfigArray);
 %array_functions(THRConfigFswMsg, ThrustConfigArray);
+STRUCTASLIST(CSSUnitConfigFswMsg)
 
 %include "../simFswInterfaceMessages/macroDefinitions.h"
 %include "../fswMessages/AccDataFswMsg.h"
@@ -63,6 +65,8 @@ GEN_SIZEOF(AttGuidFswMsg)
 GEN_SIZEOF(AttRefFswMsg);
 %include "../fswMessages/cssConfigFswMsg.h"
 GEN_SIZEOF(CSSConfigFswMsg)
+%include "../fswMessages/cssUnitConfigFswMsg.h"
+GEN_SIZEOF(CSSUnitConfigFswMsg)
 %include "../fswMessages/dvBurnCmdFswMsg.h"
 GEN_SIZEOF(DvBurnCmdFswMsg)
 %include "../fswMessages/eulerAngleFswMsg.h"

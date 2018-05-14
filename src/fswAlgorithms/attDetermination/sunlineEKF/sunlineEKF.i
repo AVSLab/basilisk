@@ -31,15 +31,12 @@
 %ignore CrossInit_sunlineEKF;
 %constant void Reset_sunlineEKF(void*, uint64_t, uint64_t);
 %ignore Reset_sunlineEKF;
-STRUCTASLIST(CSSConfigFswMsg)
-GEN_SIZEOF(CSSConfigFswMsg)
 GEN_SIZEOF(SunlineFilterFswMsg);
+GEN_SIZEOF(CSSConfigFswMsg);
 GEN_SIZEOF(sunlineEKFConfig);
-GEN_SIZEOF(VehicleConfigFswMsg);
 %include "../_GeneralModuleFiles/ukfUtilities.h"
-%include "../../fswMessages/cssConfigFswMsg.h"
-%include "../../fswMessages/vehicleConfigFswMsg.h"
 %include "../../fswMessages/sunlineFilterFswMsg.h"
+%include "../../fswMessages/cssConfigFswMsg.h"
 %include "sunlineEKF.h"
 
 %pythoncode %{

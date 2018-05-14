@@ -20,7 +20,6 @@
 #include "attDetermination/CSSEst/cssWlsEst.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
-#include "vehicleConfigData/vehicleConfigData.h"
 #include <string.h>
 
 /*! This method initializes the ConfigData for theCSS WLS estimator.
@@ -37,9 +36,9 @@ void SelfInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
     ConfigData->navStateOutMsgId = CreateNewMessage(ConfigData->navStateOutMsgName, sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
     
     /*! Set the components that WLSEst does not estimate to zero */
-    ConfigData->outputSunline.timeTag = 0.0;
-    v3SetZero(ConfigData->outputSunline.sigma_BN);
-    v3SetZero(ConfigData->outputSunline.omega_BN_B);
+    ConfigData->sunlineOutBuffer.timeTag = 0.0;
+    v3SetZero(ConfigData->sunlineOutBuffer.sigma_BN);
+    v3SetZero(ConfigData->sunlineOutBuffer.omega_BN_B);
 }
 
 /*! This method performs the second stage of initialization for the CSS sensor
@@ -50,17 +49,29 @@ void SelfInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
  */
 void CrossInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
 {
-    VehicleConfigFswMsg localConfigData;
-    uint64_t writeTime;
-    uint32_t writeSize;
     /*! - Loop over the number of sensors and find IDs for each one */
-    ConfigData->InputMsgID = subscribeToMessage(ConfigData->InputDataName,
+    ConfigData->cssDataInMsgID = subscribeToMessage(ConfigData->cssDataInMsgName,
         sizeof(CSSArraySensorIntMsg), moduleID);
-    ConfigData->InputPropsID = subscribeToMessage(ConfigData->InputPropsName,
-        sizeof(VehicleConfigFswMsg), moduleID);
-    ReadMessage(ConfigData->InputPropsID, &writeTime, &writeSize,
-                sizeof(VehicleConfigFswMsg), &localConfigData, moduleID);
-    
+    ConfigData->cssConfigInMsgID = subscribeToMessage(ConfigData->cssConfigInMsgName,
+                                                      sizeof(CSSConfigFswMsg), moduleID);
+}
+
+/*! This method performs a complete reset of the module.  Local module variables that retain
+ time varying states between function calls are reset to their default values.
+ @return void
+ @param ConfigData The configuration data associated with the guidance module
+ */
+void Reset_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+{
+    uint64_t ClockTime;
+    uint32_t ReadSize;
+
+    memset(&(ConfigData->cssConfigInBuffer), 0x0, sizeof(CSSConfigFswMsg));
+    ReadMessage(ConfigData->cssConfigInMsgID, &ClockTime, &ReadSize,
+                sizeof(CSSConfigFswMsg),
+                &(ConfigData->cssConfigInBuffer), moduleID);
+
+    return;
 }
 
 /*! This method computes a least squares fit with the given parameters.  It
@@ -136,7 +147,7 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
     /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
     memset(&InputBuffer, 0x0, sizeof(CSSArraySensorIntMsg));
-    ReadMessage(ConfigData->InputMsgID, &ClockTime, &ReadSize,
+    ReadMessage(ConfigData->cssDataInMsgID, &ClockTime, &ReadSize,
                 sizeof(CSSArraySensorIntMsg),
                 (void*) (&InputBuffer), moduleID);
     
@@ -153,10 +164,10 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
      */
     for(i=0; i<MAX_NUM_CSS_SENSORS; i = i+1)
     {
-        if(InputBuffer.CosValue[i] > ConfigData->SensorUseThresh)
+        if(InputBuffer.CosValue[i] > ConfigData->sensorUseThresh)
         {
-            v3Scale(ConfigData->CSSData[i].CBias,
-                ConfigData->CSSData[i].nHatBdy, &H[ConfigData->numActiveCss*3]);
+            v3Scale(ConfigData->cssConfigInBuffer.cssVals[i].CBias,
+                ConfigData->cssConfigInBuffer.cssVals[i].nHat_B, &H[ConfigData->numActiveCss*3]);
             y[ConfigData->numActiveCss] = InputBuffer.CosValue[i];
             ConfigData->numActiveCss = ConfigData->numActiveCss + 1;
             
@@ -165,24 +176,28 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
     
     if(ConfigData->numActiveCss == 0) /*! - If there is no sun, just quit*/
     {
-        return;
+        /* no CSS got a strong enough signal.  sun estimatin is not possible.  Return the zero vector instead */
+        v3SetZero(ConfigData->sunlineOutBuffer.vehSunPntBdy);
+    } else {
+        /* at least one CSS got a strong enough signal.  Proceed with the sun heading estimation */
+        /*! - Configuration option to weight the measurements, otherwise set
+         weighting matrix to identity*/
+        if(ConfigData->useWeights > 0)
+        {
+            mDiag(y, ConfigData->numActiveCss, W);
+        }
+        else
+        {
+            mSetIdentity(W, ConfigData->numActiveCss, ConfigData->numActiveCss);
+        }
+
+        /*! - Get least squares fit for sun pointing vector*/
+        status = computeWlsmn(ConfigData->numActiveCss, H, W, y,
+                              ConfigData->sunlineOutBuffer.vehSunPntBdy);
+        v3Normalize(ConfigData->sunlineOutBuffer.vehSunPntBdy, ConfigData->sunlineOutBuffer.vehSunPntBdy);
     }
-    /*! - Configuration option to weight the measurements, otherwise set
-     weighting matrix to identity*/
-    if(ConfigData->UseWeights > 0)
-    {
-        mDiag(y, ConfigData->numActiveCss, W);
-    }
-    else
-    {
-        mSetIdentity(W, ConfigData->numActiveCss, ConfigData->numActiveCss);
-    }
-    
-    /*! - Get least squares fit for sun pointing vector*/
-    status = computeWlsmn(ConfigData->numActiveCss, H, W, y,
-                          ConfigData->outputSunline.vehSunPntBdy);
-    v3Normalize(ConfigData->outputSunline.vehSunPntBdy, ConfigData->outputSunline.vehSunPntBdy);
+
     WriteMessage(ConfigData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
-                 &(ConfigData->outputSunline), moduleID);
+                 &(ConfigData->sunlineOutBuffer), moduleID);
     return;
 }

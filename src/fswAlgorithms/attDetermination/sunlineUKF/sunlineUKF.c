@@ -22,7 +22,6 @@
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
-#include "vehicleConfigData/vehicleConfigData.h"
 #include <string.h>
 #include <math.h>
 
@@ -60,8 +59,8 @@ void CrossInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID)
     ConfigData->cssDataInMsgId = subscribeToMessage(ConfigData->cssDataInMsgName,
         sizeof(CSSArraySensorIntMsg), moduleID);
     /*! - Find the message ID for the coarse sun sensor configuration message */
-    ConfigData->cssConfInMsgId = subscribeToMessage(ConfigData->cssConfInMsgName,
-                                                   sizeof(CSSConstConfig), moduleID);
+    ConfigData->cssConfigInMsgId = subscribeToMessage(ConfigData->cssConfigInMsgName,
+                                                   sizeof(CSSConfigFswMsg), moduleID);
     
 }
 
@@ -76,24 +75,25 @@ void Reset_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
 {
     
     int32_t i;
-    CSSConstConfig cssConfigInBuffer;
+    CSSConfigFswMsg cssConfigInBuffer;
     uint64_t writeTime;
     uint32_t writeSize;
     double tempMatrix[SKF_N_STATES*SKF_N_STATES];
     
     /*! Begin method steps*/
     /*! - Zero the local configuration data structures and outputs */
-    memset(&cssConfigInBuffer, 0x0, sizeof(CSSConstConfig));
+    memset(&cssConfigInBuffer, 0x0, sizeof(CSSConfigFswMsg));
     memset(&(ConfigData->outputSunline), 0x0, sizeof(NavAttIntMsg));
     
     /*! - Read in mass properties and coarse sun sensor configuration information.*/
-    ReadMessage(ConfigData->cssConfInMsgId, &writeTime, &writeSize,
-                sizeof(CSSConstConfig), &cssConfigInBuffer, moduleID);
+    ReadMessage(ConfigData->cssConfigInMsgId, &writeTime, &writeSize,
+                sizeof(CSSConfigFswMsg  ), &cssConfigInBuffer, moduleID);
     
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/
     for(i=0; i<cssConfigInBuffer.nCSS; i = i+1)
     {
         v3Copy(cssConfigInBuffer.cssVals[i].nHat_B, &(ConfigData->cssNHat_B[i*3]));
+        ConfigData->CBias[i] = cssConfigInBuffer.cssVals[i].CBias;
     }
     /*! - Save the count of sun sensors for later use */
     ConfigData->numCSSTotal = cssConfigInBuffer.nCSS;
@@ -372,7 +372,7 @@ void sunlineUKFMeasModel(SunlineUKFConfig *ConfigData)
         {
             /*! - For each valid measurement, copy observation value and compute expected obs value 
                   on a per sigma-point basis.*/
-            v3Copy(&(ConfigData->cssNHat_B[i*3]), sensorNormal);
+            v3Scale(ConfigData->CBias[i], &(ConfigData->cssNHat_B[i*3]), sensorNormal);
             ConfigData->obs[obsCounter] = ConfigData->cssSensorInBuffer.CosValue[i];
             for(j=0; j<ConfigData->countHalfSPs*2+1; j++)
             {

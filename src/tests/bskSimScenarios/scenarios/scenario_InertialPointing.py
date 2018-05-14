@@ -116,7 +116,7 @@ class scenario_InertialPointing(BSKScenario):
         BSK_plt.show_all_plots()
 
 
-if __name__ == "__main__":
+def run(showPlots):
     # Instantiate base simulation
     TheBSKSim = BSKSim()
 
@@ -131,9 +131,12 @@ if __name__ == "__main__":
     # Configure run time and execute simulation
     simulationTime = macros.min2nano(10.)
     TheBSKSim.ConfigureStopTime(simulationTime)
-    print 'Starting Execution'
     TheBSKSim.ExecuteSimulation()
-    print 'Finished Execution. Post-processing results'
+
 
     # Pull the results of the base simulation running the chosen scenario
-    TheScenario.pull_outputs()
+    if showPlots:
+        TheScenario.pull_outputs()
+
+if __name__ == "__main__":
+    run(True)
