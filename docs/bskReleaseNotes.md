@@ -9,6 +9,16 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 * GPU based methods to evaluate solar radiation pressure forces and torques
 * atmospheric drag evaluation using multi-faceted spacecraft model
 
+## Version 0.2.2
+<ul>
+    <li>Fixed a build issues on the Windows platform is Visual Studio 2017 or later is used.</li>
+    <li>Unified the Coarse Sun Sensor (CSS) sun heading filtering modules to use the same I/O messages.  All used messages are now in the fswMessage folder.</li>
+    <li>Made the CSS sun heading filter messages consistently use the CBias value.  This allows particular sensors to have an indiviual (known) scaling coorection factor.  For example, if the return of one sensor is 10% stronger then that of the other sensors, then CBias is set to 1.10.  Default value is 1.0 assuming all CSS units have the same gain.</li>
+    <li>The `src\tests\bskSimScenarios` folder now functions properly with the `bskSim` spacecraft class.</li>
+    <li>The tutorial scripts in `src\tests\scenarios` are now simplified to pull out the unit testing functionality.  The unit testing is now down with the `test_XXX.py` scripts inside the `src\tests\testScripts` folder.</li>
+    <li>The `bskSim` tutorial files are now tested through pytest as well.  The file `testScripts\bskTestScript.py` calls all the `bskSim` tutorial fails and ensures they run without error.</li>
+</ul>
+
 ## Version 0.2.1
 <ul>
     <li>Added messages for current fuel tank mass, fuel tank mDot, and thruster force and torque</li>
