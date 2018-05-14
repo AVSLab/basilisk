@@ -20,21 +20,21 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Basilisk Unit Test
 #
-# Purpose:  Demonstration of how to setup and use different integrators in
-#           Basilisk.  The simulation performs a 3-DOF orbit scenario.
+# Purpose:  Unit test of the dynamics integrator function
 # Author:   Hanspeter Schaub
 # Creation Date:  Dec. 14, 2016
 #
 
 import pytest
 import os
+import inspect
 import numpy as np
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport # general support file with common unit test functions
+from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
@@ -44,7 +44,8 @@ from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import svIntegrators
 
 # @cond DOXYGEN_IGNORE
-path = os.path.dirname(os.path.abspath(__file__))
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
 # @endcond
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -62,80 +63,12 @@ def test_scenarioIntegrators(show_plots, integratorCase):
     assert testResults < 1, testMessage
 
 
-## \defgroup Tutorials_1_1
-##   @{
-## How to setup different integration methods for a basic 3-DOF orbit scenario.
-#
-# Specifying a Dynamics Integrator Module {#scenarioIntegrators}
-# ====
-#
-# Scenario Description
-# -----
-# This script sets up a 3-DOF spacecraft which is orbiting a Earth.  The purpose
-# is to illustrate how to specify a particular integrator to be used.
-# The scenarios can be run with the followings setups parameters:
-# Setup | integratorCase
-# ----- | -------------------
-# 1     | "rk4" (RK4 - default)
-# 2     | "euler" (Euler)
-# 3     | "rk2" (RK2)
-#
-# To run the default scenario 1., call the python script through
-#
-#       python test_scenarioIntegrators.py
-#
-# When the simulation completes a plot is shown for illustrating both the true and the numerically
-# evaluated orbit.
-#
-# The simulation layout is shown in the following illustration.  A single simulation process is created
-# which contains the spacecraft object.  Gravity effectors are attached to the spacecraft dynamics to
-# simulate the gravitational accelerations.  The spacecraft object provides the states that the integration
-# module needs to perform the time integration.
-# ![Simulation Flow Diagram](Images/doc/test_scenarioIntegrators.svg "Illustration")
-#
-# If spacecraftPlus(), or any other dynamics module, is created without specifying a particular
-# integration type, the fixed time step 4th order Runge-Kutta method is used by default.  To invoke a
-# different integration scheme, the following code is used before the dynamics module is added to the
-# python task list:
-#~~~~~~~~~~~~~~~~~{.py}
-#   integratorObject = svIntegrators.svIntegratorEuler(scObject)
-#   scObject.setIntegrator(integratorObject)
-#~~~~~~~~~~~~~~~~~
-# The first line invokes an instance of the desired state vector integration module, and provides
-# the dynamics module (spacecraftPlus() in this case) as the input.  This specifies to the integrator
-# module which other module will provide the equationOfMotion() function to evaluate the derivatives of
-# the state vector.  The send line ties the integration moduel to the dynamics module.  After that we are
-# done.
-#
-# The integrator scenario script is setup to evaluate the default integration method (RK4), a first order
-# Euler integration method, as well as a second order RK2 method.  The following figure illustrates the resulting
-# trajectories relative to the true trajectory using a very coarse integration time step of 120 seconds.
-# ![Orbit Illustration](Images/Scenarios/scenarioIntegrators.svg "orbit comparison")
-# The RK4 method still approximates the true orbit well, while the RK2 method is starting to show some visible
-# errors. The first order Euler method provides a horrible estimate of the resulting trajectory, illustrating
-# that much smaller time steps must be used with this method in this scenario.
-#
-# Creating new Integration modules
-# -----
-#
-# New integration modules can readily be created for Basilisk.  They are all stored in the folder
-#~~~~~~~~~~~~~~~~~
-#   Basilisk/simulation/dynamics/Integrators/
-#~~~~~~~~~~~~~~~~~
-# The integrators must be created to function on a general state vector and be independent of the particular
-# dynamics being integrated.  Note that the default integrator is placed inside the `_GeneralModulesFiles`
-# folder within the `dynamics` folder.
-#
-##  @}
+
 def run(doUnitTests, show_plots, integratorCase):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
-    #
-    #  From here on there scenario python code is found.  Above this line the code is to setup a
-    #  unitTest environment.  The above code is not critical if learning how to code BSK.
-    #
     # Create simulation variable names
     simTaskName = "simTask"
     simProcessName = "simProcess"
@@ -240,7 +173,7 @@ def run(doUnitTests, show_plots, integratorCase):
     #   plot the results
     #
     np.set_printoptions(precision=16)
-    fileNameString = os.path.splitext(os.path.basename(__file__))[0]
+    fileNameString = filename[len(path)+6:-3]
     if integratorCase == "rk4":
         plt.close("all")        # clears out plots from earlier test runs
 
@@ -283,13 +216,19 @@ def run(doUnitTests, show_plots, integratorCase):
     plt.legend(loc='lower right')
     plt.grid()
     if doUnitTests:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileNameString
-            , plt, path)
-        unitTestSupport.saveFigurePDF(
-            fileNameString
-            , plt, path+"/_Documentation/AutoTeX/"
-        )
+        # unitTestSupport.saveScenarioFigure(
+        #     fileNameString
+        #     , plt, path)
+        # unitTestSupport.saveFigurePDF(
+        #     fileNameString
+        #     , plt, path
+        # )
+        unitTestSupport.writeFigureLaTeX(
+            "scenarioIntegrators",
+            "Illustration of the BSK integrated trajectories",
+            plt,
+            "",
+            path)
 
     if show_plots:
         plt.show()
@@ -356,11 +295,11 @@ def run(doUnitTests, show_plots, integratorCase):
             snippetContent += "\\end{verbatim}"
         snippetMsgName = fileNameString + 'Msg-' + integratorCase
         unitTestSupport.writeTeXSnippet(snippetMsgName, snippetContent,
-                                    path + "/_Documentation/")
+                                    path)
         snippetPassFailName = fileNameString + 'TestMsg-' + integratorCase
         snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}'
         unitTestSupport.writeTeXSnippet(snippetPassFailName, snippetContent,
-                                    path+"/_Documentation/")
+                                    path)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -371,6 +310,6 @@ def run(doUnitTests, show_plots, integratorCase):
 # stand-along python script
 #
 if __name__ == "__main__":
-    run(False,       # do unit tests
+    run(True,       # do unit tests
         True,        # show_plots
         'rk4')       # integrator case(0 - RK4, 1 - Euler, 2 - RK2)

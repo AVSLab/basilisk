@@ -35,7 +35,7 @@ sys.path.append(path + '/../plotting')
 import BSK_Plotting as BSK_plt
 
 sys.path.append(path + '/../../scenarios')
-import test_scenarioAttGuideHyperbolic as scene_plt
+import scenarioAttGuideHyperbolic as scene_plt
 
 
 # Create your own scenario child class
@@ -109,8 +109,8 @@ class scenario_VelocityPointing(BSKScenario):
         #BSK_plt.plot_rotationalNav(sigma_BN, omega_BN_B)
         BSK_plt.show_all_plots()
 
+def run(showPlots):
 
-if __name__ == "__main__":
     # Instantiate base simulation
     TheBSKSim = BSKSim()
 
@@ -130,4 +130,8 @@ if __name__ == "__main__":
     print 'BSKSim: Finished Execution. Post-processing results'
 
     # Pull the results of the base simulation running the chosen scenario
-    TheScenario.pull_outputs()
+    if showPlots:
+        TheScenario.pull_outputs()
+
+if __name__ == "__main__":
+    run(True)

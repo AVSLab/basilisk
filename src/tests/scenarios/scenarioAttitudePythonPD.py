@@ -33,7 +33,6 @@
 
 import pytest
 import os
-import inspect
 import numpy as np
 
 # import general simulation support files
@@ -76,7 +75,7 @@ from Basilisk.fswAlgorithms import fswMessages
 # Scenario Description
 # -----
 # This script sets up a 6-DOF spacecraft which is orbiting the Earth. This setup
-# is similar to the [test_scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback),
+# is similar to the [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback),
 # but here the dynamics
 # simulation and the Flight Software (FSW) algorithms are run at different time steps.
 # The scenario runs two different cases.  The first is with the nominal MRP_PD (c-code), the
@@ -85,7 +84,7 @@ from Basilisk.fswAlgorithms import fswMessages
 #
 # To run the default scenario 1., call the python script through
 #
-#       python test_scenarioAttitudePythonPD.py
+#       python scenarioAttitudePythonPD.py
 #
 # When the simulation completes 3 plots are shown for the MRP attitude history, the differences
 # between the attitude history, and the differences between the RWA commands.  The attitude history
@@ -130,32 +129,11 @@ from Basilisk.fswAlgorithms import fswMessages
 ##  @}
 
 
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail(True)
-
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
-@pytest.mark.parametrize("useJitterSimple, useRWVoltageIO", [(False, False)])
-def test_bskAttitudeFeedbackPD(show_plots, useJitterSimple, useRWVoltageIO):
-    '''This function is called by the py.test environment.'''
-    # each test method requires a single assert method to be called
-    # provide a unique test method name, starting with test_
-
-    [testResults, testMessage] = runRegularTask(True, show_plots, useJitterSimple, useRWVoltageIO)
-    assert testResults < 1, testMessage
 
 
-def runRegularTask(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
+def runRegularTask(show_plots, useJitterSimple, useRWVoltageIO):
     '''Call this routine directly to run the tutorial scenario.'''
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty array to store test log messages
 
-    #
-    #  From here on there scenario python code is found.  Above this line the code is to setup a
-    #  unitTest environment.  The above code is not critical if learning how to code BSK.
-    #
     simulationTimeStep = macros.sec2nano(.1)
     #  Create a sim module as an empty container
     scSim = SimulationBaseClass.SimBaseClass()
@@ -234,7 +212,6 @@ def runRegularTask(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     #   plot the results
     #
     fileName = os.path.basename(os.path.splitext(__file__)[0])
-    path = os.path.dirname(os.path.abspath(__file__))
 
     timeData = dataUsReq[:, 0] * macros.NANO2SEC
     timeDataBase = dataUsReqBase[:, 0] * macros.NANO2SEC
@@ -245,9 +222,9 @@ def runRegularTask(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
                  timeDataBase, dataSigmaBRBase[:, idx], '--')
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Error $\sigma_{B/R}$')
-    if doUnitTests:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileName + "1" + str(int(useJitterSimple)) + str(int(useRWVoltageIO)), plt, path)
+    figureList = {}
+    pltName = fileName + "1" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
+    figureList[pltName] = plt.figure(1)
 
     plt.figure(2)
     for idx in range(1, 4):
@@ -261,15 +238,6 @@ def runRegularTask(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     plt.xlabel('Time [min]')
     plt.ylabel('RW tau diff [Nm] ')
 
-    dataSigDiff = dataSigmaBR[:, 1:4] - dataSigmaBRBase[:, 1:4]
-    if np.linalg.norm(dataSigDiff) > 1.0E-10:
-        testFailCount += 1
-        testMessages.append("Failed to get accurate agreement between attitude variables")
-
-    dataUsDiff = dataUsReq[:, 1:4] - dataUsReqBase[:, 1:4]
-    if np.linalg.norm(dataUsDiff) > 1.0E-10:
-        testFailCount += 1
-        testMessages.append("Failed to get accurate agreement between torque command variables")
 
     if show_plots:
         plt.show()
@@ -277,9 +245,7 @@ def runRegularTask(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return dataSigmaBR, dataUsReq, dataSigmaBRBase, dataUsReqBase, figureList
 
 
 def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
@@ -656,7 +622,6 @@ class PythonMRPPD(simulationArchTypes.PythonModelClass):
 #
 if __name__ == "__main__":
     runRegularTask(
-        False,  # do unit tests
         True,  # show_plots
         False,  # useJitterSimple
         False  # useRWVoltageIO

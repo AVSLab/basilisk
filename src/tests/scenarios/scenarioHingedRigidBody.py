@@ -23,7 +23,7 @@
 # Basilisk Scenario Script and Integrated Test
 #
 # Purpose:  Integrated tutorial of the spacecraftPlus(), gravity, and hinged rigid body modules illustrating
-#           how Delta_v maneuver from test_scenarioOrbitManeuver.py affects the motion of the hinged rigid bodies.
+#           how Delta_v maneuver from scenarioOrbitManeuver.py affects the motion of the hinged rigid bodies.
 #           Rotational motion is allowed on the spacecraft to simulate the full interaction of the hinged rigid
 #           bodies and the spacecraft.
 # Author:   Scott Carnahan
@@ -31,7 +31,6 @@
 #
 
 
-import pytest
 import os
 import numpy as np
 # import general simulation support files
@@ -50,20 +49,6 @@ from Basilisk.simulation import extForceTorque
 import matplotlib.pyplot as plt
 
 
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail(True)
-# The following 'parametrize' function decorator provides the parameters for each
-#   of the multiple test runs for this test.
-@pytest.mark.parametrize("doUnitTests, show_plots,", [(1, 0)])
-def test_scenarioOrbitManeuver(doUnitTests, show_plots):
-    '''This function is called by the py.test environment.'''
-    # each test method requires a single assert method to be called
-    # provide a unique test method name, starting with test_
-    [testResults, testMessage] = run(True, show_plots)
-    assert testResults < 1, testMessage
-
 
 # NOTE: The unit test in this tutorial essentially only checks if the results are a very specific value. It will not
 # work with other input conditions. It serves only to make sure that this specific tutorial is working when pytest is
@@ -80,9 +65,9 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 # Scenario Description
 # -----
 # This script sets up a 8-DOF spacecraft (3 translational, 3 rotational and 2 solar panel DOFs) which is orbiting Earth. It is nearly identical to the spacecraft
-# which is demonstrated in [test_scenarioOrbitManeuver.py](@ref scenarioOrbitManeuver).  The purpose
+# which is demonstrated in [scenarioOrbitManeuver.py](@ref scenarioOrbitManeuver).  The purpose
 # is to illustrate the use of the hinged rigid body module and illustrate the effects that a disturbance has on
-# hinged rigid body motion.  Read [test_scenarioOrbitManeuver.py](@ref scenarioOrbitManeuver) to learn how to setup a
+# hinged rigid body motion.  Read [scenarioOrbitManeuver.py](@ref scenarioOrbitManeuver) to learn how to setup a
 # basic spacecraft with impulsive Delta-v maneuvers. The scenario in this tutorial is similar to the  Hohmann
 #  maneuver in the other scenario except that the length of the simulation is shorter and a non-impulsive Delta-v is applied through
 # the external force and torque module. The shortened length of the simulation execution means that the maneuvers
@@ -92,7 +77,7 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 #
 # To run the default scenario, call the python script through
 #
-#       python test_scenarioHingedRigidBody.py
+#       python scenarioHingedRigidBody.py
 #
 # The simulation layout is shown in the following illustration.
 # ![Simulation Flow Diagram](Images/doc/test_scenarioHingedRigidBody.svg "Illustration")
@@ -234,18 +219,16 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 # changes, other variables used in instantaneous Delta-V calculations have been removed.
 #
 # If a user has time, it would be a good exercise to attempt to model the same orbits and maneuvers as
-# test_scenarioOrbitManeuver.py but with non-impulsive Delta-v and to examine the differences in the after-
+# scenarioOrbitManeuver.py but with non-impulsive Delta-v and to examine the differences in the after-
 # maneuver orbits. Be aware that those simulations will require a long time (tens of minutes) to run.
 #
 # Setup
 # -----
 #
-# Whether or not unit tests are done or plots are shown is controlled at the bottom of the script. Generally, these can
-# be left as is. However, if a user wants to play more freely and be able to run the code without pytest errors,
-# doUnitTests can be set to 0. In this way, incorrect output values won't trip a test failure.
+# The main call for this script is the run() command.  Just calling the script with python invokes this call:
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # do unit tests
+#     run(
 #          True,        # show_plots
 #        )
 # ~~~~~~~~~~~~~
@@ -254,29 +237,23 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
 # can be found in textbooks such as *Analytical Mechanics of Space Systems*
 # (<http://arc.aiaa.org/doi/book/10.2514/4.102400>).
 # The resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/test_scenarioHingedRigidBody10.svg "Position history")
-# ![Orbit Radius Illustration](Images/Scenarios/test_scenarioHingedRigidBody20.svg "Radius Illustration")
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioHingedRigidBody10.svg "Position history")
+# ![Orbit Radius Illustration](Images/Scenarios/scenarioHingedRigidBody20.svg "Radius Illustration")
 #
 # The hinged rigid bodies were given an initial angular displacement. Then, the externally applied force caused
 # greater displacement. As discussed above, the reaction is asymmetric between the panels due to panel orientation.
 # Another interesting result is that, during the thrusting maneuver, the hinged bodies oscillate about a non-zero point.
 # This is because they are under a constant, non-zero acceleration, similar to a weight hanging from a spring on Earth.
 # The springs know no difference between a gravity field and acceleration.
-# ![Panel 1 Displacement](Images/Scenarios/test_scenarioHingedRigidBodypanel1theta0.svg "Panel 1 Theta Illustration")
-# ![Panel 2 Displacement](Images/Scenarios/test_scenarioHingedRigidBodypanel2theta0.svg "Panel 2 Theta Illustration")
+# ![Panel 1 Displacement](Images/Scenarios/scenarioHingedRigidBodypanel1theta0.svg "Panel 1 Theta Illustration")
+# ![Panel 2 Displacement](Images/Scenarios/scenarioHingedRigidBodypanel2theta0.svg "Panel 2 Theta Illustration")
 #
 #
 ## @}
 
-def run(doUnitTests, show_plots):
+def run(show_plots):
     '''Call this routine directly to run the tutorial scenario.'''
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty array to store test log messages
 
-    #
-    #  From here on there scenario python code is found.  Above this line the code is to setup a
-    #  unitTest environment.  The above code is not critical if learning how to code BSK.
-    #
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -438,7 +415,6 @@ def run(doUnitTests, show_plots):
     #   plot the results
     #
     fileName = os.path.basename(os.path.splitext(__file__)[0])
-    path = os.path.dirname(os.path.abspath(__file__))
 
     # draw the inertial position vector components
     plt.close("all")  # clears out plots from earlier test runs
@@ -453,8 +429,9 @@ def run(doUnitTests, show_plots):
     plt.legend(loc='lower right')
     plt.xlabel('Time [h]')
     plt.ylabel('Inertial Position [km]')
-    if doUnitTests:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "1" + str(int(0.)), plt, path)
+    figureList = {}
+    pltName = fileName + "1" + str(int(0.))
+    figureList[pltName] = plt.figure(1)
 
     # show SMA
     plt.figure(2)
@@ -469,8 +446,8 @@ def run(doUnitTests, show_plots):
              )
     plt.xlabel('Time [min]')
     plt.ylabel('Radius [km]')
-    if doUnitTests:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "2" + str(int(0.)), plt, path)
+    pltName = fileName + "2" + str(int(0.))
+    figureList[pltName] = plt.figure(2)
 
     plt.figure(3)
     fig = plt.gcf()
@@ -479,8 +456,8 @@ def run(doUnitTests, show_plots):
     plt.plot(panel1thetaLog[:, 0] * macros.NANO2MIN, panel1thetaLog[:, 1])
     plt.xlabel('Time [min]')
     plt.ylabel('Panel 1 Angular Displacement [r]')
-    if doUnitTests:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "panel1theta" + str(int(0.)), plt, path)
+    pltName = fileName + "panel1theta" + str(int(0.))
+    figureList[pltName] = plt.figure(3)
 
     plt.figure(4)
     fig = plt.gcf()
@@ -489,43 +466,16 @@ def run(doUnitTests, show_plots):
     plt.plot(panel2thetaLog[:, 0] * macros.NANO2MIN, panel2thetaLog[:, 1])
     plt.xlabel('Time [min]')
     plt.ylabel('Panel 2 Angular Displacement [r]')
-    if doUnitTests:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileName + "panel2theta" + str(int(0.)), plt, path)
+    pltName = fileName + "panel2theta" + str(int(0.))
+    figureList[pltName] = plt.figure(4)
 
     if show_plots:
         plt.show()
 
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
-    #
-    #   the python code below is for the unit testing mode.  If you are studying the scenario
-    #   to learn how to run BSK, you can stop reading below this line.
-    #   The test is comparing spacecraft body momentum magnitude output to the expected value from
-    #   the maneuver test scenario. It does this by comparing body velocity magnitude because
-    #   the spacecraft mass is unchanging.
-    #
-    if doUnitTests:
-        spaceCraftMomentum = np.sqrt(velData[-1, 1] ** 2 + velData[-1, 2] ** 2 + velData[-1, 3] ** 2)
 
-        # setup truth data for unit test
-        InstMomentum = 8470.84340921
-        accuracy = 345.1819
-        # compare the results to the truth values
-        if abs(spaceCraftMomentum - InstMomentum) > accuracy:
-            testFailCount += 1
-            testMessages.append("Failed HingedRigidBody Tutorial test. Post-maneuver momentum incorrect.")
-
-        # print out success message if no error were found
-        if testFailCount == 0:
-            print "PASSED "
-        else:
-            print "testFailCount: " + str(testFailCount)
-            print testMessages
-
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-
-    return [testFailCount, ''.join(testMessages)]
+    return velData, figureList
 
 
 #
@@ -534,6 +484,5 @@ def run(doUnitTests, show_plots):
 #
 if __name__ == "__main__":
     run(
-        False,  # do unit tests
         True  # show_plots
     )

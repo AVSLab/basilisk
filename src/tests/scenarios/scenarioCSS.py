@@ -26,9 +26,7 @@
 # Creation Date:  July 21, 2017
 #
 
-import pytest
-import sys, os, inspect
-import matplotlib
+import os
 import numpy as np
 
 # import general simulation support files
@@ -45,22 +43,6 @@ from Basilisk.simulation import spacecraftPlus
 # import message declarations
 from Basilisk.simulation import simMessages
 
-
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
-@pytest.mark.parametrize("useCSSConstellation, usePlatform, useEclipse, useKelly", [
-      (False, False, False, False),
-      (False, True, False, False),
-      (False, False, True, False),
-      (False, False, False, True),
-      (True, False, False, False)
-])
-def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
-    '''This function is called by the py.test environment.'''
-    # each test method requires a single assert method to be called
-    # provide a unique test method name, starting with test_
-    [testResults, testMessage] = run(True, show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly)
-    assert testResults < 1, testMessage
 
 
 ## \defgroup Tutorials_4_0
@@ -85,7 +67,7 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
 #
 # To run the default scenario 1., call the python script through
 #
-#       python test_scenarioCSS.py
+#       python scenarioCSS.py
 #
 # When the simulation completes a plot is shown for the CSS sensor signal history.
 #
@@ -197,7 +179,7 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # do unit tests
+#     run(
 #          True,        # show_plots
 #          False,       # useCSSConstellation
 #          False,       # usePlatform
@@ -210,7 +192,7 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
 # simulates the CSS units being setup individually without any corruption.  The sensor unit normal
 # axes are directly set, and no eclipse is modeled.  The
 # resulting CSS sensor histories are shown below.
-# ![CSS Sensor History](Images/Scenarios/test_scenarioCSS0000.svg "CSS history")
+# ![CSS Sensor History](Images/Scenarios/scenarioCSS0000.svg "CSS history")
 # The signals of the two CSS units range from a maximum of 2 if the CSS axis is pointing at the sun to zero.
 # The limited field of view of 80 degrees causes the sensor signal to be clipped when the sun light incidence
 # angle gets too small.
@@ -221,7 +203,7 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
 # Here the python main function is changed to read:
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # do unit tests
+#     run(
 #          True,        # show_plots
 #          False,       # useCSSConstellation
 #          True,        # usePlatform
@@ -232,7 +214,7 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
 # The resulting CSS sensor signals should be identical to the first scenario as the chosen
 # platform orientation and CSS azimuth and elevation angles are chosen to yield the same
 # senor normal unit axes.
-# ![CSS Sensor History](Images/Scenarios/test_scenarioCSS0100.svg "CSS history")
+# ![CSS Sensor History](Images/Scenarios/scenarioCSS0100.svg "CSS history")
 #
 # Setup 3
 # ------
@@ -240,7 +222,7 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
 # The 3rd scenario connects a solar eclipse message to the CSS units through:
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # do unit tests
+#     run(
 #          True,        # show_plots
 #          False,       # useCSSConstellation
 #          False,       # usePlatform
@@ -249,7 +231,7 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
 #        )
 # ~~~~~~~~~~~~~
 # The resulting CSS signals are scaled by a factor of 0.5 and are shown below.
-# ![CSS Sensor History](Images/Scenarios/test_scenarioCSS0010.svg "CSS history")
+# ![CSS Sensor History](Images/Scenarios/scenarioCSS0010.svg "CSS history")
 #
 # Setup 4
 # ------
@@ -257,7 +239,7 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
 # The 4th scenario turns on Kelly corruption factor of the CSS units.
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # do unit tests
+#     run(
 #          True,        # show_plots
 #          False,       # useCSSConstellation
 #          False,       # usePlatform
@@ -267,7 +249,7 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
 # ~~~~~~~~~~~~~
 # This causes the CSS signals to become slightly warped, and depart from the nominal cosine
 # behavior.  The resulting simulation results are shown below.
-# ![CSS Sensor History](Images/Scenarios/test_scenarioCSS0001.svg "CSS history")
+# ![CSS Sensor History](Images/Scenarios/scenarioCSS0001.svg "CSS history")
 #
 # Setup 5
 # ------
@@ -276,7 +258,7 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
 # CSSConstellation() class.
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # do unit tests
+#     run(
 #          True,        # show_plots
 #          True,        # useCSSConstellation
 #          False,       # usePlatform
@@ -285,19 +267,12 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
 #        )
 # ~~~~~~~~~~~~~
 # The resulting simulation results are shown below to be identical to setup 1 as expected.
-# ![CSS Sensor History](Images/Scenarios/test_scenarioCSS1000.svg "CSS history")
+# ![CSS Sensor History](Images/Scenarios/scenarioCSS1000.svg "CSS history")
 #
 ##  @}
-def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
-    path = os.path.dirname(os.path.abspath(__file__))
+def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     '''Call this routine directly to run the tutorial scenario.'''
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
 
-    #
-    #  From here on there scenario python code is found.  Above this line the code is to setup a
-    #  unitTest environment.  The above code is not critical if learning how to code BSK.
-    #
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -430,6 +405,9 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
     #
     #   retrieve the logged data
     #
+    dataCSSArray = []
+    dataCSS1 = []
+    dataCSS2 = []
     if useCSSConstellation:
         dataCSSArray = scSim.pullMessageLogData(cssArray.outputConstellationMessage+".CosValue", range(len(cssList)))
     else:
@@ -458,11 +436,10 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
     plt.legend(loc='lower right')
     plt.xlabel('Time [sec]')
     plt.ylabel('CSS Signals ')
-    if doUnitTests:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileNameString+str(int(useCSSConstellation))+str(int(usePlatform))
-            +str(int(useEclipse))+str(int(useKelly))
-            , plt, path)
+    figureList = {}
+    pltName = fileNameString+str(int(useCSSConstellation))+str(int(usePlatform))+str(int(useEclipse))+str(int(useKelly))
+    figureList[pltName] = plt.figure(1)
+
 
     if show_plots:
         plt.show()
@@ -470,105 +447,7 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    #
-    #   the python code below is for the unit testing mode.  If you are studying the scenario
-    #   to learn how to run BSK, you can stop reading below this line.
-    #
-    if doUnitTests:
-        numTruthPoints = 5
-        skipValue = int(simulationTime*macros.NANO2SEC/numTruthPoints)
-        if useCSSConstellation:
-            dataCSSArrayRed = dataCSSArray[::skipValue]
-            trueCSS = [
-                  [ 2.0000000000000000e+00, 0.0000000000000000e+00]
-                , [ 1.8270909152861943e+00, 8.1347328614937120e-01]
-                , [ 1.3382612127209323e+00, 1.4862896509518926e+00]
-                , [ 6.1803398875474258e-01, 1.9021130325887317e+00]
-                , [ 0.0000000000000000e+00, 1.9890437907369840e+00]
-                , [ 0.0000000000000000e+00, 1.7320508075693963e+00]
-            ]
-
-        else:
-            dataCSS1red = dataCSS1[::skipValue]
-            dataCSS2red = dataCSS2[::skipValue]
-
-            # setup truth data for unit test
-            if useEclipse == False and useKelly==False:
-                trueCSS1 = [
-                      [ 2.0000000000000000e+00]
-                    , [ 1.8270909152861943e+00]
-                    , [ 1.3382612127209323e+00]
-                    , [ 6.1803398875474258e-01]
-                    , [ 0.0000000000000000e+00]
-                    , [ 0.0000000000000000e+00]
-                ]
-                trueCSS2 = [
-                      [ 0.0000000000000000e+00]
-                    , [ 8.1347328614937120e-01]
-                    , [ 1.4862896509518926e+00]
-                    , [ 1.9021130325887317e+00]
-                    , [ 1.9890437907369840e+00]
-                    , [ 1.7320508075693963e+00]
-                ]
-            if usePlatform == False and useEclipse == True and useKelly==False:
-                trueCSS1 = [
-                      [ 1.0000000000000000e+00]
-                    , [ 9.1354545764309714e-01]
-                    , [ 6.6913060636046617e-01]
-                    , [ 3.0901699437737129e-01]
-                    , [ 0.0000000000000000e+00]
-                    , [ 0.0000000000000000e+00]
-                ]
-                trueCSS2 = [
-                      [ 0.0000000000000000e+00]
-                    , [ 4.0673664307468560e-01]
-                    , [ 7.4314482547594629e-01]
-                    , [ 9.5105651629436583e-01]
-                    , [ 9.9452189536849200e-01]
-                    , [ 8.6602540378469817e-01]
-                ]
-            if usePlatform == False and useEclipse == False and useKelly==True:
-                trueCSS1 = [
-                      [ 1.9865241060018290e+00]
-                    , [ 1.7989379186517085e+00]
-                    , [ 1.1956035766929121e+00]
-                    , [ 2.3463126305909773e-01]
-                    , [ 0.0000000000000000e+00]
-                    , [ 0.0000000000000000e+00]
-                ]
-                trueCSS2 = [
-                      [ 0.0000000000000000e+00]
-                    , [ 4.5775481598362727e-01]
-                    , [ 1.3923439498033288e+00]
-                    , [ 1.8814534722288898e+00]
-                    , [ 1.9748891817681278e+00]
-                    , [ 1.6913168768673754e+00]
-                ]
-        # compare the results to the truth values
-        accuracy = 1e-6
-
-        if useCSSConstellation:
-            testFailCount, testMessages = unitTestSupport.compareArrayND(
-                trueCSS, dataCSSArrayRed, accuracy, "CSSarray", 2,
-                testFailCount, testMessages)
-        else:
-            testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-                trueCSS1, dataCSS1red, accuracy, "CSS1",
-                testFailCount, testMessages)
-            testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-                trueCSS2, dataCSS2red, accuracy, "CSS2",
-                testFailCount, testMessages)
-
-        #   print out success message if no error were found
-        if testFailCount == 0:
-            print "PASSED "
-        else:
-            print testFailCount
-            print testMessages
-
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return dataCSSArray, dataCSS1, dataCSS2, simulationTime, figureList
 
 
 #
@@ -577,8 +456,7 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
 #
 if __name__ == "__main__":
     run(
-         True,       # do unit tests
-         False,        # show_plots
+         True,        # show_plots
          False,       # useCSSConstellation
          False,       # usePlatform
          False,       # useEclipse

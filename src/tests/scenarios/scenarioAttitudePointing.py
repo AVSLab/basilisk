@@ -28,9 +28,7 @@
 # Creation Date:  Nov. 19, 2016
 #
 
-import pytest
 import os
-import inspect
 import numpy as np
 
 # import general simulation support files
@@ -53,23 +51,6 @@ from Basilisk.fswAlgorithms import attTrackingError
 from Basilisk.fswAlgorithms import fswMessages
 
 
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail(True)
-
-
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
-@pytest.mark.parametrize("useLargeTumble", [False, True])
-def test_bskAttitudePointing(show_plots, useLargeTumble):
-    '''This function is called by the py.test environment.'''
-    # each test method requires a single assert method to be called
-
-    # provide a unique test method name, starting with test_
-    [testResults, testMessage] = run(True, show_plots, useLargeTumble)
-    assert testResults < 1, testMessage
-
 
 ## \defgroup Tutorials_2_0_1
 ##   @{
@@ -82,7 +63,7 @@ def test_bskAttitudePointing(show_plots, useLargeTumble):
 # -----
 # This script sets up a 6-DOF spacecraft, but without specifying any orbital motion.  Thus,
 # this scenario simulates the spacecraft translating in deep space.  The scenario is a simplified
-# version of [test_scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback) with the orbital setup
+# version of [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback) with the orbital setup
 # removed.  The scenario is
 # setup to be run in 2 different setups:
 # Setup | useLargeTumble
@@ -92,9 +73,9 @@ def test_bskAttitudePointing(show_plots, useLargeTumble):
 #
 # To run the default scenario 1., call the python script through
 #
-#       python test_scenarioAttitudePointing.py
+#       python scenarioAttitudePointing.py
 #
-# As with [test_scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback), when
+# As with [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback), when
 # the simulation completes 3 plots are shown for the MRP attitude history, the rate
 # tracking errors, as well as the control torque vector.
 #
@@ -116,7 +97,7 @@ def test_bskAttitudePointing(show_plots, useLargeTumble):
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # do unit tests
+#     run(
 #          True,        # show_plots
 #          False        # useLargeTumble
 #        )
@@ -124,8 +105,8 @@ def test_bskAttitudePointing(show_plots, useLargeTumble):
 # Here a small initial tumble is simulated.  The
 # resulting attitude and control torque histories are shown below.  The spacecraft quickly
 # regains a stable orientation without tumbling past 180 degrees.
-# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudePointing10.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/test_scenarioAttitudePointing20.svg "Torque history")
+# ![MRP Attitude History](Images/Scenarios/scenarioAttitudePointing10.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/scenarioAttitudePointing20.svg "Torque history")
 #
 # Setup 2
 # ------
@@ -133,7 +114,7 @@ def test_bskAttitudePointing(show_plots, useLargeTumble):
 # Here the python main function is changed to read:
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # do unit tests
+#     run(
 #          True,        # show_plots
 #          True         # useLargeTumble
 #        )
@@ -141,10 +122,10 @@ def test_bskAttitudePointing(show_plots, useLargeTumble):
 # The resulting attitude and control torques are shown below.  Note that, as expected,
 # the orientation error tumbles past 180 degrees before stabilizing to zero.  The control
 # torque effort is also much larger in this case.
-# ![MRP Attitude History](Images/Scenarios/test_scenarioAttitudePointing11.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/test_scenarioAttitudePointing21.svg "Torque history")
+# ![MRP Attitude History](Images/Scenarios/scenarioAttitudePointing11.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/scenarioAttitudePointing21.svg "Torque history")
 ##  @}
-def run(doUnitTests, show_plots, useLargeTumble):
+def run(show_plots, useLargeTumble):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
@@ -294,7 +275,6 @@ def run(doUnitTests, show_plots, useLargeTumble):
     #   plot the results
     #
     fileName = os.path.basename(os.path.splitext(__file__)[0])
-    path = os.path.dirname(os.path.abspath(__file__))
 
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
@@ -305,10 +285,9 @@ def run(doUnitTests, show_plots, useLargeTumble):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Error $\sigma_{B/R}$')
-    if doUnitTests:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileName + "1" + str(int(useLargeTumble))
-            , plt, path)
+    figureList = {}
+    pltName = fileName + "1" + str(int(useLargeTumble))
+    figureList[pltName] = plt.figure(1)
 
     plt.figure(2)
     for idx in range(1, 4):
@@ -318,10 +297,8 @@ def run(doUnitTests, show_plots, useLargeTumble):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Control Torque $L_r$ [Nm]')
-    if doUnitTests:  # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(
-            fileName + "2" + str(int(useLargeTumble))
-            , plt, path)
+    pltName = fileName + "2" + str(int(useLargeTumble))
+    figureList[pltName] = plt.figure(2)
 
     plt.figure(3)
     for idx in range(1, 4):
@@ -338,70 +315,8 @@ def run(doUnitTests, show_plots, useLargeTumble):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    #
-    #   the python code below is for the unit testing mode.  If you are studying the scenario
-    #   to learn how to run BSK, you can stop reading below this line.
-    #
-    if doUnitTests:
-        numTruthPoints = 5
-        skipValue = int(numDataPoints / numTruthPoints)
-        dataLrRed = dataLr[::skipValue]
-        dataSigmaBRRed = dataSigmaBR[::skipValue]
 
-        trueLr = trueSigmaBR = []
-
-        if useLargeTumble is True:
-            trueLr = [
-                [-2.4350000000000001e+01, 1.7300000000000001e+01, -1.3949999999999999e+01],
-                [-1.8261025223247096e-01, -1.9802131477666673e-01, -2.2905552303763882e-01],
-                [-2.2703347936179175e-02, 2.8322384043503845e-02, -7.5383083954013580e-03],
-                [3.9685083651031109e-03, -4.6726997381575461e-03, 9.1702648415809018e-04],
-                [-6.5254418265915193e-04, 6.1478222187531318e-04, -6.2014699070663979e-05]
-            ]
-            trueSigmaBR = [
-                [1.0000000000000001e-01, 2.0000000000000001e-01, -2.9999999999999999e-01],
-                [1.5260971061679154e-01, -2.6346123607709682e-01, 1.9116787137307839e-01],
-                [-1.8707224538059040e-02, 1.9073543274306739e-02, -9.2763187341566734e-03],
-                [2.1576458281319776e-03, -1.5090989414394025e-03, 3.2041623116321299e-04],
-                [-2.4360871626616175e-04, 1.0266828769375566e-04, -7.5369979791638928e-06]
-            ]
-        if useLargeTumble is False:
-            trueLr = [
-                [-3.8000000000000000e-01, -4.0000000000000008e-01, 1.5000000000000013e-01],
-                [4.3304295406265583e-02, 7.7970819853086931e-03, 1.2148680350980004e-02],
-                [-4.8427756513968068e-03, 2.6583725254198179e-04, -1.4133980386514184e-03],
-                [5.2386812124888282e-04, -1.3752464748227947e-04, 8.9786880165438401e-05],
-                [-5.3815258259032201e-05, 2.3975789622333814e-05, -4.5666337024320216e-06]
-            ]
-            trueSigmaBR = [
-                [1.0000000000000001e-01, 2.0000000000000001e-01, -2.9999999999999999e-01]
-                , [-1.7700318439403492e-02, -1.4154347776578310e-02, 1.2434108941675513e-02]
-                , [2.3210853655701645e-03, 1.3316275028241674e-03, -4.1569615433473430e-04]
-                , [-3.0275893560215703e-04, -1.1614876733451711e-04, 8.6068784583440090e-06]
-                , [3.9002194932293482e-05, 9.3813814117398300e-06, 1.5011853130355206e-07]
-            ]
-
-        # compare the results to the truth values
-        accuracy = 1e-6
-
-        testFailCount, testMessages = unitTestSupport.compareArray(
-            trueLr, dataLrRed, accuracy, "Lr Vector",
-            testFailCount, testMessages)
-
-        testFailCount, testMessages = unitTestSupport.compareArray(
-            trueSigmaBR, dataSigmaBRRed, accuracy, "sigma_BR Set",
-            testFailCount, testMessages)
-
-        #   print out success message if no error were found
-        if testFailCount == 0:
-            print "PASSED "
-        else:
-            print testFailCount
-            print testMessages
-
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return dataLr, dataSigmaBR, numDataPoints, figureList
 
 
 #
@@ -410,7 +325,6 @@ def run(doUnitTests, show_plots, useLargeTumble):
 #
 if __name__ == "__main__":
     run(
-        False,  # do unit tests
         True,  # show_plots
         False,  # useLargeTumble
     )

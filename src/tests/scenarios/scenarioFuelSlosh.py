@@ -22,7 +22,6 @@
 import os
 import inspect
 import numpy as np
-import pytest
 
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.simulation import fuelSloshParticle
@@ -41,18 +40,6 @@ from Basilisk.utilities import simIncludeGravBody
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
-
-@pytest.mark.parametrize("damping_parameter, timeStep", [
-    (0.0, 0.75),
-    (0.0, 0.3),
-    (15.0, 0.75),
-])
-def test_scenarioFuelSlosh(show_plots, damping_parameter, timeStep):
-    '''This function is called by the py.test environment.'''
-    # each test method requires a single assert method to be called
-    # provide a unique test method name, starting with test_
-    [testResults, testMessage] = run(True, show_plots, damping_parameter, timeStep)
-    assert testResults < 1, testMessage
 
 ## \defgroup Tutorials_3_0
 ## @{
@@ -75,12 +62,12 @@ def test_scenarioFuelSlosh(show_plots, damping_parameter, timeStep):
 #
 # To run the default scenario 1 from the Basilisk/scenarios folder, call the python script through
 #
-#       python test_scenarioFuelSlosh.py
+#       python scenarioFuelSlosh.py
 #
 # However, to play with any scenario scripts as tutorials, you should make a copy of this
-# `test_scenarioXXX.py` file into a custom folder outside of the Basilisk directory.  Next,
+# `scenarioXXX.py` file into a custom folder outside of the Basilisk directory.  Next,
 # one line must be edited in the scenario script to provide the absolute path to the root Basilisk
-# directory.  For example, in `test_scenarioFuelSlosh.py` the line
+# directory.  For example, in `scenarioFuelSlosh.py` the line
 #~~~~~~~~~~~~~~{.py}
 # bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
 #~~~~~~~~~~~~~~
@@ -177,7 +164,7 @@ def test_scenarioFuelSlosh(show_plots, damping_parameter, timeStep):
 #~~~~~~~~~~~~~~~~~
 #
 # Here, it is reported how we can define hub properties, as we have already done in
-# [test_scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback).
+# [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback).
 #
 #~~~~~~~~~~~~~~~~~{.py}
 #    scObject.hub.mHub = 1500 # kg
@@ -187,7 +174,7 @@ def test_scenarioFuelSlosh(show_plots, damping_parameter, timeStep):
 #    scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]] # rad/s
 #~~~~~~~~~~~~~~~~~
 #
-# The steps to add gravity objects are the same shown in the [test_scenarioBasicOrbit.py](@ref scenarioBasicOrbit).
+# The steps to add gravity objects are the same shown in the [scenarioBasicOrbit.py](@ref scenarioBasicOrbit).
 #
 # Simulation Run
 # -----
@@ -232,7 +219,7 @@ def test_scenarioFuelSlosh(show_plots, damping_parameter, timeStep):
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,         # doUnitTests
+#     run(
 #          True,          # show_plots
 #          0.0            # damping_parameter
 #          0.75,          # timeStep
@@ -260,7 +247,7 @@ def test_scenarioFuelSlosh(show_plots, damping_parameter, timeStep):
 # The next scenario is run by changing the bottom of the file in the scenario code to read
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,          # doUnitTests
+#     run(
 #          True,           # show_plots
 #          0.0             # damping_parameter
 #          0.3,            # timeStep
@@ -282,7 +269,7 @@ def test_scenarioFuelSlosh(show_plots, damping_parameter, timeStep):
 # The next scenario is run by changing the bottom of the file in the scenario code to read
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,         # doUnitTests
+#     run(
 #          True,          # show_plots
 #          15.0           # damping_parameter
 #          0.75,          # timeStep
@@ -303,10 +290,8 @@ def test_scenarioFuelSlosh(show_plots, damping_parameter, timeStep):
 # ![Fuel Slosh Particle Motion](Images/Scenarios/scenarioFuelSloshParticleMotion.svg "Fuel Slosh Particle Motion")
 #
 ## @}
-def run(doUnitTests, show_plots, damping_parameter, timeStep):
+def run(show_plots, damping_parameter, timeStep):
     '''Call this routine directly to run the tutorial scenario.'''
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
 
     simTaskName = "simTask"
     simProcessName = "simProcess"
@@ -469,6 +454,7 @@ def run(doUnitTests, show_plots, damping_parameter, timeStep):
     rotAngMom_N = scSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
     rotEnergy = scSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
 
+    rhoj1Out = rhoj2Out = rhoj3Out = []
     if damping_parameter != 0.0:
         rhoj1Out = scSim.GetLogVariableData(
             "spacecraftBody.dynManager.getStateObject('fuelSloshParticleRho1').getState()")
@@ -477,17 +463,15 @@ def run(doUnitTests, show_plots, damping_parameter, timeStep):
         rhoj3Out = scSim.GetLogVariableData(
             "spacecraftBody.dynManager.getStateObject('fuelSloshParticleRho3').getState()")
 
-    if doUnitTests:
-        if damping_parameter == 0.0 and timeStep == 0.75:
-            setupNo = 1
-        elif damping_parameter == 0.0 and timeStep == 0.3:
-            setupNo = 2
-        elif damping_parameter != 0.0 and timeStep == 0.75:
-            setupNo = 3
-        else:
-            print("No standard setup parameters")
-
-    fileNameString = filename[len(path) + 6:-3]
+    fileName = os.path.basename(os.path.splitext(__file__)[0])
+    if damping_parameter == 0.0 and timeStep == 0.75:
+        setupNo = 1
+    elif damping_parameter == 0.0 and timeStep == 0.3:
+        setupNo = 2
+    elif damping_parameter != 0.0 and timeStep == 0.75:
+        setupNo = 3
+    else:
+        print("No standard setup parameters")
 
     plt.close("all")  # clears out plots from earlier test runs
     fig = plt.figure(1, figsize=(5, 5))
@@ -515,8 +499,9 @@ def run(doUnitTests, show_plots, damping_parameter, timeStep):
     plt.xlabel('X (km)')
     plt.ylabel('Y (km)')
 
-    if doUnitTests:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileNameString + "Orbit", plt, path)
+    figureList = {}
+    pltName = fileName + "Orbit" + str(setupNo)
+    figureList[pltName] = plt.figure(1)
 
     plt.figure(2, figsize=(5, 4))
     plt.plot(orbAngMom_N[:, 0] * 1e-9, (orbAngMom_N[:, 1] - orbAngMom_N[0, 1]) / orbAngMom_N[0, 1],
@@ -525,17 +510,15 @@ def run(doUnitTests, show_plots, damping_parameter, timeStep):
              orbAngMom_N[:, 0] * 1e-9, (orbAngMom_N[:, 3] - orbAngMom_N[0, 3]) / orbAngMom_N[0, 3])
     plt.xlabel('Time (s)')
     plt.ylabel('Relative Orbital Angular Momentum Variation')
-
-    if doUnitTests:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileNameString + "OAM" + str(setupNo), plt, path)
+    pltName = fileName + "OAM" + str(setupNo)
+    figureList[pltName] = plt.figure(2)
 
     plt.figure(3, figsize=(5, 4))
     plt.plot(orbEnergy[:, 0] * 1e-9, (orbEnergy[:, 1] - orbEnergy[0, 1]) / orbEnergy[0, 1])
     plt.xlabel('Time (s)')
     plt.ylabel('Relative Orbital Energy Variation')
-
-    if doUnitTests:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileNameString + "OE" + str(setupNo), plt, path)
+    pltName = fileName + "OE" + str(setupNo)
+    figureList[pltName] = plt.figure(3)
 
     plt.figure(4, figsize=(5, 4))
     plt.plot(rotAngMom_N[:, 0] * 1e-9,
@@ -544,17 +527,15 @@ def run(doUnitTests, show_plots, damping_parameter, timeStep):
              rotAngMom_N[:, 0] * 1e-9, (rotAngMom_N[:, 3] - rotAngMom_N[0, 3]) / rotAngMom_N[0, 3])
     plt.xlabel('Time (s)')
     plt.ylabel('Relative Rotational Angular Momentum Variation')
-
-    if doUnitTests:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileNameString + "RAM" + str(setupNo), plt, path)
+    pltName = fileName + "RAM" + str(setupNo)
+    figureList[pltName] = plt.figure(4)
 
     plt.figure(5, figsize=(5, 4))
     plt.plot(rotEnergy[:, 0] * 1e-9, (rotEnergy[:, 1] - rotEnergy[0, 1]) / rotEnergy[0, 1])
     plt.xlabel('Time (s)')
     plt.ylabel('Relative Rotational Energy Variation')
-
-    if doUnitTests:     # only save off the figure if doing a unit test run
-        unitTestSupport.saveScenarioFigure(fileNameString + "RE" + str(setupNo), plt, path)
+    pltName = fileName + "RE" + str(setupNo)
+    figureList[pltName] = plt.figure(5)
 
     if damping_parameter != 0.0:
         plt.figure(6, figsize=(5, 4))
@@ -563,9 +544,8 @@ def run(doUnitTests, show_plots, damping_parameter, timeStep):
         plt.legend(['Particle 1', 'Particle 2', 'Particle 3'])
         plt.xlabel('Time (s)')
         plt.ylabel('Displacement (m)')
-
-        if doUnitTests:     # only save off the figure if doing a unit test run
-            unitTestSupport.saveScenarioFigure(fileNameString + "ParticleMotion", plt, path)
+        pltName = fileName + "ParticleMotion"
+        figureList[pltName] = plt.figure(6)
 
     if show_plots:
         plt.show()
@@ -573,47 +553,12 @@ def run(doUnitTests, show_plots, damping_parameter, timeStep):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    if damping_parameter != 0:
-        if doUnitTests:
 
-            zita1 = damping_parameter / (2 * np.sqrt(1500.0 * 1.0))
-            omegan1 = np.sqrt(1.0 / 1500.0)
-            settling_time1 = -1.0 / (zita1 * omegan1) * np.log(0.05 * np.sqrt(1 - zita1**2))
-            index_settling_time1 = np.argmax(rhoj1Out[:, 0] * 1e-9 > settling_time1)
-
-            zita2 = damping_parameter / (2 * np.sqrt(1400.0 * 1.0))
-            omegan2 = np.sqrt(1.0 / 1400.0)
-            settling_time2 = -1.0 / (zita2 * omegan2) * np.log(0.05 * np.sqrt(1 - zita2**2))
-            index_settling_time2 = np.argmax(rhoj2Out[:, 0] * 1e-9 > settling_time2)
-
-            zita3 = damping_parameter / (2 * np.sqrt(1300.0 * 1.0))
-            omegan3 = np.sqrt(1.0 / 1300.0)
-            settling_time3 = -1.0 / (zita3 * omegan3) * np.log(0.05 * np.sqrt(1 - zita3**2))
-            index_settling_time3 = np.argmax(rhoj3Out[:, 0] * 1e-9 > settling_time3)
-
-            accuracy = 0.05
-            if abs(rhoj1Out[index_settling_time1, 1] - rhoj1Out[-1, 1]) > accuracy:
-                testFailCount = testFailCount + 1
-                testMessages = [testMessages, "Particle 1 settling time does not match second order systems theories"]
-            if abs(rhoj2Out[index_settling_time2, 1] - rhoj2Out[-1, 1]) > accuracy:
-                testFailCount = testFailCount + 1
-                testMessages = [testMessages, "Particle 1 settling time does not match second order systems theories"]
-            if abs(rhoj3Out[index_settling_time3, 1] - rhoj3Out[-1, 1]) > accuracy:
-                testFailCount = testFailCount + 1
-                testMessages = [testMessages, "Particle 1 settling time does not match second order systems theories"]
-
-            if testFailCount == 0:
-                print "PASSED "
-            else:
-                print testFailCount
-                print testMessages
-
-    return [testFailCount, ''.join(testMessages)]
+    return rhoj1Out, rhoj2Out, rhoj3Out, figureList
 
 
 if __name__ == "__main__":
     run(
-        False,              # doUnitTests
         True,               # show_plots
         0.0,				 # damping_parameter
         0.75,				 # timeStep

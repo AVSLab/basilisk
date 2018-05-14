@@ -20,7 +20,6 @@
 import sys, os, inspect
 import numpy as np
 from Basilisk.utilities import unitTestSupport
-import math
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(__file__))
@@ -28,7 +27,7 @@ path = os.path.dirname(os.path.abspath(__file__))
 import matplotlib.pyplot as plt
 
 
-def StateErrorCovarPlot(x, Pflat, FilterType, show_plots):
+def StateErrorCovarPlot(x, Pflat, FilterType, show_plots, saveFigures):
 
     nstates = int(np.sqrt(len(Pflat[0,:])-1))
 
@@ -120,14 +119,14 @@ def StateErrorCovarPlot(x, Pflat, FilterType, show_plots):
         plt.title('Third LOS component')
         plt.grid()
 
-
-    unitTestSupport.saveScenarioFigure('scenario_Filters_StatesPlot'+FilterType,  plt,  path)
+    if saveFigures:
+        unitTestSupport.saveScenarioFigure('scenario_Filters_StatesPlot'+FilterType,  plt,  path)
     if show_plots:
         plt.show()
     plt.close()
 
 
-def StatesPlotCompare(x, x2, Pflat, Pflat2, FilterType, show_plots):
+def StatesPlotCompare(x, x2, Pflat, Pflat2, FilterType, show_plots, saveFigures):
 
     nstates = int(np.sqrt(len(Pflat[0,:])-1))
 
@@ -247,27 +246,28 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2, FilterType, show_plots):
         plt.title('Third LOS component')
         plt.grid()
 
-
-    unitTestSupport.saveScenarioFigure('scenario_Filters_StatesCompare'+FilterType, plt, path)
+    if saveFigures:
+        unitTestSupport.saveScenarioFigure('scenario_Filters_StatesCompare'+FilterType, plt, path)
 
     if show_plots:
         plt.show()
     plt.close()
 
-def numMeasurements(numObs, FilterType, show_plots):
+def numMeasurements(numObs, FilterType, show_plots, saveFigures):
     plt.plot(111)
     plt.plot(numObs[:,0]*(1E-9) , numObs[:, 1], "b")
     plt.ylim([0,5])
     plt.xlabel('t(s)')
     plt.title('Number of Activated CSS')
 
-    unitTestSupport.saveScenarioFigure('scenario_Filters_Obs'+ FilterType, plt,  path)
+    if saveFigures:
+        unitTestSupport.saveScenarioFigure('scenario_Filters_Obs'+ FilterType, plt,  path)
 
     if show_plots:
         plt.show()
     plt.close()
 
-def PostFitResiduals(Res, noise, FilterType, show_plots):
+def PostFitResiduals(Res, noise, FilterType, show_plots, saveFigures):
 
     MeasNoise = np.zeros(len(Res[:,0]))
     t= np.zeros(len(Res[:,0]))
@@ -320,13 +320,14 @@ def PostFitResiduals(Res, noise, FilterType, show_plots):
     plt.xlabel('t(s)')
     plt.title('Fourth CSS')
 
-    unitTestSupport.saveScenarioFigure('scenario_Filters_PostFit'+ FilterType, plt,  path)
+    if saveFigures:
+        unitTestSupport.saveScenarioFigure('scenario_Filters_PostFit'+ FilterType, plt,  path)
 
     if show_plots:
         plt.show()
     plt.close()
 
-def StatesVsExpected(stateLog, Pflat, expectedStateArray, FilterType, show_plots):
+def StatesVsExpected(stateLog, Pflat, expectedStateArray, FilterType, show_plots, saveFigures):
 
     nstates = int(np.sqrt(len(Pflat[0,:])-1))
 
@@ -427,14 +428,15 @@ def StatesVsExpected(stateLog, Pflat, expectedStateArray, FilterType, show_plots
         plt.grid()
 
 
-    unitTestSupport.saveScenarioFigure('scenario_Filters_StatesExpected' + FilterType , plt, path)
+    if saveFigures:
+        unitTestSupport.saveScenarioFigure('scenario_Filters_StatesExpected' + FilterType , plt, path)
 
     if show_plots:
         plt.show()
     plt.close()
 
 
-def StatesVsTargets(target1, target2, stateLog, FilterType, show_plots):
+def StatesVsTargets(target1, target2, stateLog, FilterType, show_plots, saveFigures):
 
     nstates = int(stateLog[0,:])
 
@@ -505,8 +507,8 @@ def StatesVsTargets(target1, target2, stateLog, FilterType, show_plots):
         plt.title('Third LOS component')
         plt.grid()
 
-
-    unitTestSupport.saveScenarioFigure('scenario_Filters_StatesTarget' + FilterType,  plt,  path)
+    if saveFigures:
+        unitTestSupport.saveScenarioFigure('scenario_Filters_StatesTarget' + FilterType,  plt,  path)
 
     if show_plots:
         plt.show()

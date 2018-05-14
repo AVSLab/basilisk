@@ -28,7 +28,6 @@
 
 
 
-import pytest
 import numpy as np
 import time
 
@@ -45,21 +44,6 @@ from Basilisk.fswAlgorithms import sunlineUKF, sunlineEKF, okeefeEKF, vehicleCon
 from Basilisk.fswAlgorithms import fswMessages
 
 import SunLineKF_test_utilities as Fplot
-
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
-@pytest.mark.parametrize("FilterType, simTime", [
-      ('uKF', 400)
-    , ('EKF', 400)
-    , ('OEKF', 400)
-])
-
-# provide a unique test method name, starting with test_
-def test_Filters(show_plots, FilterType, simTime):
-    '''This function is called by the py.test environment.'''
-    # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(show_plots, FilterType, simTime)
-    assert testResults < 1, testMessage
 
 
 def setupUKFData(filterObject):
@@ -149,7 +133,7 @@ def setupOEKFData(filterObject):
 #
 # To run the default scenario, call the python script through
 #
-#       python test_scenarioCSSFilters.py
+#       python scenarioCSSFilters.py
 #
 # When the simulation completes several plots are written summarizing the filter performances.
 #
@@ -180,7 +164,7 @@ def setupOEKFData(filterObject):
 #
 # The CSS modules must first be individual created and configured.
 # This simulation uses 8 sun sensors, in 2 pyramids of 4 units. The code that sets up a constellation displays another
-# method than used in [test_scenarioCSS.py](@ref scenarioCSS).
+# method than used in [scenarioCSS.py](@ref scenarioCSS).
 # In this case instead of creating a list of CSS and adding the list to the constellation, the "appendCSS" command is used.
 #
 # ~~~~~~~~~~~~~~~~{.py}
@@ -404,15 +388,9 @@ def setupOEKFData(filterObject):
 # ![OEKF Post Fit](Images/Scenarios/scenario_Filters_PostFitOEKF.svg "Post Fit Residuals")
 #
 ##  @}
-def run(show_plots, FilterType, simTime):
+def run(saveFigures, show_plots, FilterType, simTime):
     '''Call this routine directly to run the tutorial scenario.'''
-    testFailCount = 0                       # zero unit test result counter
-    testMessages = []                       # create empty array to store test log messages
 
-    #
-    #  From here on there scenario python code is found.  Above this line the code is to setup a
-    #  unitTest environment.  The above code is not critical if learning how to code BSK.
-    #
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -575,8 +553,6 @@ def run(show_plots, FilterType, simTime):
     Outomega_BN = scSim.pullMessageLogData('inertial_state_output' + ".omega_BN_B", range(3))
 
     # Get the filter outputs through the messages
-    sunPnt_B = scSim.pullMessageLogData('sunline_state_estimate' + ".vehSunPntBdy", range(3))
-    stateErrorLog = scSim.pullMessageLogData('sunline_filter_data' + ".stateError", range(numStates))
     stateLog = scSim.pullMessageLogData('sunline_filter_data' + ".state", range(numStates))
     postFitLog = scSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", range(8))
     covarLog = scSim.pullMessageLogData('sunline_filter_data' + ".covar", range(numStates*numStates))
@@ -603,10 +579,10 @@ def run(show_plots, FilterType, simTime):
     errorVsTruth = np.copy(stateLog)
     errorVsTruth[:,1:] -= expected[:,1:]
 
-    Fplot.StateErrorCovarPlot(errorVsTruth, covarLog, FilterType, show_plots)
-    Fplot.StatesVsExpected(stateLog, covarLog, expected, FilterType, show_plots)
-    Fplot.PostFitResiduals(postFitLog, np.sqrt(moduleConfig.qObsVal), FilterType, show_plots)
-    Fplot.numMeasurements(obsLog, FilterType, show_plots)
+    Fplot.StateErrorCovarPlot(errorVsTruth, covarLog, FilterType, show_plots, saveFigures)
+    Fplot.StatesVsExpected(stateLog, covarLog, expected, FilterType, show_plots, saveFigures)
+    Fplot.PostFitResiduals(postFitLog, np.sqrt(moduleConfig.qObsVal), FilterType, show_plots, saveFigures)
+    Fplot.numMeasurements(obsLog, FilterType, show_plots, saveFigures)
 
     if show_plots:
         plt.show()
@@ -617,14 +593,15 @@ def run(show_plots, FilterType, simTime):
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
-    return [testFailCount, ''.join(testMessages)]
+    return
 
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    run( True,      # show_plots
+    run(False,       # save figures to file
+        True,      # show_plots
         'EKF',
          400
        )
