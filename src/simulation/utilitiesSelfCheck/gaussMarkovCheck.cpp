@@ -23,6 +23,7 @@
 #include <Eigen/Dense>
 #include "utilities/avsEigenSupport.h"
 #include "utilities/gauss_markov.h"
+#include <iostream>
 
 
 uint64_t testGaussMarkov()
@@ -56,8 +57,8 @@ uint64_t testGaussMarkov()
     Eigen::Vector2d stdsIn;
     stdsIn(0) = covar(0,0) / 1.5;
     stdsIn(1) = covar(1,1) / 1.5;
-    failures += (stdsIn(0) - stds(0))/(stdsIn(0)) > 0.01 ? 1 : 0;
-    failures += (stdsIn(1) - stds(1))/(stdsIn(1)) > 0.01 ? 1 : 0;
+    failures += (stdsIn(0) - stds(0))/(stdsIn(0)) > 0.1 ? 1 : 0;
+    failures += (stdsIn(1) - stds(1))/(stdsIn(1)) > 0.1 ? 1 : 0;
     
     //Test if the mean is zero
     Eigen::Vector2d means = noiseOut.rowwise().mean();
@@ -65,7 +66,6 @@ uint64_t testGaussMarkov()
     meansIn << 0, 0;
     failures += fabs(meansIn(0) - means(0)) > 5 ? 1 : 0;
     failures += fabs(meansIn(1) - means(1)) > .005 ? 1 : 0;
-    
     seedIn = 1500;
     propIn << 1,0,0,1;
     covar << 1.5,0,0,0.015;
