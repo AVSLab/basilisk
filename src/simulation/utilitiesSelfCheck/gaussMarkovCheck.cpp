@@ -65,7 +65,7 @@ uint64_t testGaussMarkov()
     Eigen::Vector2d meansIn;
     meansIn << 0, 0;
     failures += fabs(meansIn(0) - means(0)) > 5 ? 1 : 0;
-    failures += fabs(meansIn(1) - means(1)) > .1 ? 1 : 0;
+    failures += fabs(meansIn(1) - means(1)) > .05 ? 1 : 0;
     seedIn = 1500;
     propIn << 1,0,0,1;
     covar << 1.5,0,0,0.015;
