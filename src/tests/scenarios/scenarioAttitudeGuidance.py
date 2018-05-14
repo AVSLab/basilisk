@@ -408,7 +408,6 @@ def run(show_plots, useAltBodyFrame):
     #   plot the results
     #
     fileName = os.path.basename(os.path.splitext(__file__)[0])
-    path = os.path.dirname(os.path.abspath(__file__))
 
     timeLineSet = dataSigmaBR[:, 0] * macros.NANO2MIN
     plt.close("all")  # clears out plots from earlier test runs

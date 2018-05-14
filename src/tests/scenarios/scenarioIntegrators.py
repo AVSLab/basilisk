@@ -42,9 +42,6 @@ from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import svIntegrators
 
-# @cond DOXYGEN_IGNORE
-path = os.path.dirname(os.path.abspath(__file__))
-# @endcond
 
 
 
@@ -221,7 +218,6 @@ def run(show_plots, integratorCase):
     #
     np.set_printoptions(precision=16)
     fileName = os.path.basename(os.path.splitext(__file__)[0])
-    path = os.path.dirname(os.path.abspath(__file__))
     if integratorCase == "rk4":
         plt.close("all")        # clears out plots from earlier test runs
 

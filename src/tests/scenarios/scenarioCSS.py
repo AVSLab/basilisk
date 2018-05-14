@@ -271,7 +271,6 @@ from Basilisk.simulation import simMessages
 #
 ##  @}
 def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
-    path = os.path.dirname(os.path.abspath(__file__))
     '''Call this routine directly to run the tutorial scenario.'''
 
 

@@ -275,7 +275,6 @@ def run(show_plots, useLargeTumble):
     #   plot the results
     #
     fileName = os.path.basename(os.path.splitext(__file__)[0])
-    path = os.path.dirname(os.path.abspath(__file__))
 
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
