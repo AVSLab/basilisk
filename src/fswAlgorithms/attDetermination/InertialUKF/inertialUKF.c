@@ -194,9 +194,9 @@ void Read_STMessages(InertialUKFConfig *ConfigData, uint64_t moduleID)
                     ConfigData->ClockTimeST[j] = ConfigData->ClockTimeST[i];
                     ConfigData->ClockTimeST[i] = ClockTime;
                     
-                    ClockTime = ConfigData->ClockTimeST[j];
-                    ConfigData->ClockTimeST[j] = ConfigData->ClockTimeST[i];
-                    ConfigData->ClockTimeST[i] = ClockTime;
+                    ReadSize = ConfigData->ReadSizeST[j];
+                    ConfigData->ReadSizeST[j] = ConfigData->ReadSizeST[i];
+                    ConfigData->ReadSizeST[i] = ReadSize;
                 }
             }
     }
@@ -234,28 +234,29 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     ReadMessage(ConfigData->rwSpeedsInMsgID, &ClockTime, &otherSize,
                 sizeof(RWSpeedIntMsg), &(ConfigData->rwSpeeds), moduleID);
     Read_STMessages(ConfigData, moduleID);
-
+    
+    if(ConfigData->firstPassComplete == 0)
+    {
+        memcpy(&(ConfigData->rwSpeedPrev), &(ConfigData->rwSpeeds), sizeof(RWSpeedIntMsg));
+        ConfigData->timeWheelPrev = ClockTime;
+        ConfigData->timeTag = ConfigData->stSensorIn[0].timeTag > ClockTime ?
+        ConfigData->stSensorIn[0].timeTag*NANO2SEC : ClockTime*NANO2SEC;
+        
+        ConfigData->firstPassComplete = 1;
+    }
+    
+    ReadMessage(ConfigData->massPropsInMsgId, &ClockTime, &otherSize,
+                sizeof(VehicleConfigFswMsg), &(ConfigData->localConfigData), moduleID);
+    m33Inverse(RECAST3X3 ConfigData->localConfigData.ISCPntB_B, ConfigData->IInv);
+    
     for (i = 0; i < ConfigData->STDatasStruct.numST; i++)
     {
         newTimeTag = ConfigData->stSensorIn[i].timeTag * NANO2SEC;
         ClockTime = ConfigData->ClockTimeST[i];
         ReadSize =  ConfigData->ReadSizeST[i];
-        
-        if(ConfigData->firstPassComplete == 0)
-        {
-            memcpy(&(ConfigData->rwSpeedPrev), &(ConfigData->rwSpeeds), sizeof(RWSpeedIntMsg));
-            ConfigData->timeWheelPrev = ClockTime;
-            ConfigData->timeTag = ConfigData->stSensorIn[i].timeTag > ClockTime ?
-                ConfigData->stSensorIn[i].timeTag*NANO2SEC : ClockTime*NANO2SEC;
 
-            ConfigData->firstPassComplete = 1;
-        }
         ConfigData->speedDt = (ClockTime - ConfigData->timeWheelPrev)*NANO2SEC;
         ConfigData->timeWheelPrev = ClockTime;
-        
-        ReadMessage(ConfigData->massPropsInMsgId, &ClockTime, &otherSize,
-                    sizeof(VehicleConfigFswMsg), &(ConfigData->localConfigData), moduleID);
-        m33Inverse(RECAST3X3 ConfigData->localConfigData.ISCPntB_B, ConfigData->IInv);
 
         /*! - If the star tracker has provided a new message compared to last time,
               update the filter to the new measurement*/
@@ -267,58 +268,59 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
             trackerValid = 1;
         }
         
-        /*! - If current clock time is further ahead than the measured time, then
-              propagate to this current time-step*/
-        newTimeTag = callTime*NANO2SEC;
-        if(newTimeTag > ConfigData->timeTag)
+    }
+    
+    /*! - If current clock time is further ahead than the measured time, then
+     propagate to this current time-step*/
+    newTimeTag = callTime*NANO2SEC;
+    if(newTimeTag > ConfigData->timeTag)
+    {
+        /*! - If we have gotten  a masurement this frame, propagate to caller time.
+         This will extrapolate the state blindy, which is not ideal so the
+         latency between the ST meas and the current time is hopefully small.*/
+        if(trackerValid)
         {
-            /*! - If we have gotten  a masurement this frame, propagate to caller time.
-                 This will extrapolate the state blindy, which is not ideal so the
-                 latency between the ST meas and the current time is hopefully small.*/
-            if(trackerValid)
-            {
-                inertialUKFTimeUpdate(ConfigData, newTimeTag);
-                v3Copy(ConfigData->state, ConfigData->sigma_BNOut);
-                v3Copy(&(ConfigData->state[3]), ConfigData->omega_BN_BOut);
-                ConfigData->timeTagOut = ConfigData->timeTag;
-            }
-            /*! - If no star tracker measurement was available, propagate the state
-                  on the gyro measurements received since the last ST update.  Note
-                  that the rate estimate is just smoothed gyro data in this case*/
-            else
-            {
-                /*! - Assemble the aggregrate rotation from the gyro buffer*/
-                inertialUKFAggGyrData(ConfigData, ConfigData->timeTagOut,
-                                      newTimeTag, &gyrBuffer);
-                /*! - Propagate the attitude quaternion with the aggregate rotation*/
-                addMRP(ConfigData->sigma_BNOut, ConfigData->aggSigma_b2b1,
-                        sigma_BNSum);
-                /*! - Switch the MRPs if necessary*/
-                if (v3Norm(sigma_BNSum) > ConfigData->switchMag) //Little extra margin
-                {
-                    MRPswitch(sigma_BNSum, ConfigData->switchMag, sigma_BNSum);
-                }
-                v3Copy(sigma_BNSum, ConfigData->sigma_BNOut);
-                /*! - Rate estimate in this case is simply the low-pass filtered
-                      gyro data.  This is likely much noisier than the time-update
-                      solution*/
-                for(i=0; i<3; i++)
-                {
-                    ConfigData->omega_BN_BOut[i] =
-                        ConfigData->gyroFilt[i].currentState;
-                }
-                ConfigData->timeTagOut = newTimeTag;
-
-            }
-        }
-        else
-        {
-            /*! - If we are already at callTime just copy the states over without
-                  change*/
+            inertialUKFTimeUpdate(ConfigData, newTimeTag);
             v3Copy(ConfigData->state, ConfigData->sigma_BNOut);
             v3Copy(&(ConfigData->state[3]), ConfigData->omega_BN_BOut);
             ConfigData->timeTagOut = ConfigData->timeTag;
         }
+        /*! - If no star tracker measurement was available, propagate the state
+         on the gyro measurements received since the last ST update.  Note
+         that the rate estimate is just smoothed gyro data in this case*/
+        else
+        {
+            /*! - Assemble the aggregrate rotation from the gyro buffer*/
+            inertialUKFAggGyrData(ConfigData, ConfigData->timeTagOut,
+                                  newTimeTag, &gyrBuffer);
+            /*! - Propagate the attitude quaternion with the aggregate rotation*/
+            addMRP(ConfigData->sigma_BNOut, ConfigData->aggSigma_b2b1,
+                   sigma_BNSum);
+            /*! - Switch the MRPs if necessary*/
+            if (v3Norm(sigma_BNSum) > ConfigData->switchMag) //Little extra margin
+            {
+                MRPswitch(sigma_BNSum, ConfigData->switchMag, sigma_BNSum);
+            }
+            v3Copy(sigma_BNSum, ConfigData->sigma_BNOut);
+            /*! - Rate estimate in this case is simply the low-pass filtered
+             gyro data.  This is likely much noisier than the time-update
+             solution*/
+            for(i=0; i<3; i++)
+            {
+                ConfigData->omega_BN_BOut[i] =
+                ConfigData->gyroFilt[i].currentState;
+            }
+            ConfigData->timeTagOut = newTimeTag;
+            
+        }
+    }
+    else
+    {
+        /*! - If we are already at callTime just copy the states over without
+         change*/
+        v3Copy(ConfigData->state, ConfigData->sigma_BNOut);
+        v3Copy(&(ConfigData->state[3]), ConfigData->omega_BN_BOut);
+        ConfigData->timeTagOut = ConfigData->timeTag;
     }
     
     /*! - Write the inertial estimate into the copy of the navigation message structure*/
