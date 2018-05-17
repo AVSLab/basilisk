@@ -18,9 +18,9 @@
  */
 
 
-%module fuelSloshParticle
+%module linearSpringMassDamper
 %{
-	#include "fuelSloshParticle.h"
+	#include "linearSpringMassDamper.h"
 %}
 
 
@@ -30,7 +30,7 @@
 %include "../_GeneralModuleFiles/stateData.h"
 %include "../_GeneralModuleFiles/stateEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
-%include "fuelSloshParticle.h"
+%include "linearSpringMassDamper.h"
 
 %pythoncode %{
 import sys

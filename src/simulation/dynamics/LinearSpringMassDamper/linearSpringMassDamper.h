@@ -18,43 +18,42 @@
  */
 
 
-#ifndef FUEL_SLOSH_PARTICLE_H
-#define FUEL_SLOSH_PARTICLE_H
+#ifndef LINEAR_SPRING_MASS_DAMPER_H
+#define LINEAR_SPRING_MASS_DAMPER_H
 
 #include "../_GeneralModuleFiles/stateEffector.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
 
-/*! @brief This class in an instantiation of the state effector class and implements an effector representing a sloshing
- particle
+/*! @brief This class in an instantiation of the state effector class and implements an effector representing a oscillating particle
 
  The module
- [PDF Description](Basilisk-FUELSLOSHSTATEEFFECTOR-20180102.pdf)
+ [PDF Description](Basilisk-LINEARSPRINGMASSDAMPER-20180102.pdf)
  contains further information on this module's function,
  how to run it, as well as testing.
  
  */
-class FuelSloshParticle :
+class LinearSpringMassDamper :
 	public StateEffector, public SysModel
 {
 public:
-    double k;                      //!< [N/m] linear spring constant for fuel slosh
-    double c;                      //!< [N-s/m] linear damping term for fuel slosh
-    double rhoInit;                //!< [m] Initial value for fuel slosh particle offset
-    double rhoDotInit;             //!< [m/s] Initial value for fuel slosh particle offset derivative
-    double massInit;               //!< [m] Initial value for fuel slosh particle mass
+    double k;                      //!< [N/m] linear spring constant for spring mass damper
+    double c;                      //!< [N-s/m] linear damping term for spring mass damper
+    double rhoInit;                //!< [m] Initial value for spring mass damper particle offset
+    double rhoDotInit;             //!< [m/s] Initial value for spring mass damper particle offset derivative
+    double massInit;               //!< [m] Initial value for spring mass damper particle mass
     std::string nameOfRhoState;    //!< [-] Identifier for the rho state data container
     std::string nameOfRhoDotState; //!< [-] Identifier for the rhoDot state data container
 	std::string nameOfMassState;      //!< [-] Identifier for the mass state data container
-	Eigen::Vector3d r_PB_B;        //!< [m] position vector from B point to slosh equilibrium, P, in body frame
-	Eigen::Vector3d pHat_B;        //!< [-] slosh direction unit vector, in body frame
+	Eigen::Vector3d r_PB_B;        //!< [m] position vector from B point to particle equilibrium, P, in body frame
+	Eigen::Vector3d pHat_B;        //!< [-] particle direction unit vector, in body frame
 	StateData *massState;		   //!< -- state data for the particles mass 
 
 private:
     double cRho;                   //!< -- Term needed for back-sub method
-    double rho;                    //!< [m] fuel slosh displacement from equilibrium
+    double rho;                    //!< [m] spring mass damper displacement from equilibrium
     double rhoDot;                 //!< [m/s] time derivative of displacement from equilibrium
-	double massFSP;                //!< [kg] mass of fuel slosh particle
+	double massFSP;                //!< [kg] mass of spring mass damper particle
     Eigen::Vector3d r_PcB_B;       //!< [m] position vector form B to center of mass location of particle
     Eigen::Matrix3d rTilde_PcB_B;  //!< [m] tilde matrix of r_Pc_B
 	Eigen::Vector3d rPrime_PcB_B;  //!< [m/s] Body time derivative of r_Pc_B
@@ -62,15 +61,15 @@ private:
     Eigen::Vector3d aRho;          //!< -- Term needed for back-sub method
     Eigen::Vector3d bRho;          //!< -- Term needed for back-sub method
     Eigen::MatrixXd *g_N;          //!< [m/s^2] Gravitational acceleration in N frame components
-	StateData *rhoState;		   //!< -- state data for fuel slosh displacement from equilibrium
+	StateData *rhoState;		   //!< -- state data for spring mass damper displacement from equilibrium
 	StateData *rhoDotState;		   //!< -- state data for time derivative of rho;
 	StateData *omegaState;         //!< -- state data for the hubs omega_BN_B
 	StateData *sigmaState;         //!< -- state data for the hubs sigma_BN
 	StateData *velocityState;      //!< -- state data for the hubs rDot_BN_N
 
 public:
-	FuelSloshParticle();           //!< -- Contructor
-	~FuelSloshParticle();          //!< -- Destructor
+	LinearSpringMassDamper();           //!< -- Contructor
+	~LinearSpringMassDamper();          //!< -- Destructor
 	void registerStates(DynParamManager& states);  //!< -- Method for FSP to register its states
 	void linkInStates(DynParamManager& states);  //!< -- Method for FSP to get access of other states
 	void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr,
@@ -82,5 +81,5 @@ public:
                                       double & rotEnergyContr);  //!< -- Method for FSP to add contr. to energy and mom.
 };
 
-#endif /* FUEL_SLOSH_PARTICLE_H */
+#endif /* LINEAR_SPRING_MASS_DAMPER_H */
 

@@ -17,11 +17,11 @@
 
  */
 
-#include "fuelSloshParticle.h"
+#include "linearSpringMassDamper.h"
 #include "utilities/avsEigenSupport.h"
 
 /*! This is the constructor, setting variables to default values */
-FuelSloshParticle::FuelSloshParticle()
+LinearSpringMassDamper::LinearSpringMassDamper()
 {
 	// - zero the contributions for mass props and mass rates
 	this->effProps.mEff = 0.0;
@@ -39,21 +39,21 @@ FuelSloshParticle::FuelSloshParticle()
     this->rhoInit = 0.0;
     this->rhoDotInit = 0.0;
     this->massInit = 0.0;
-	this->nameOfRhoState = "fuelSloshParticleRho";
-	this->nameOfRhoDotState = "fuelSloshParticleRhoDot";
-	this->nameOfMassState = "fuelSloshParticleMass";
+	this->nameOfRhoState = "linearSpringMassDamperRho";
+	this->nameOfRhoDotState = "linearSpringMassDamperRhoDot";
+	this->nameOfMassState = "linearSpringMassDamperMass";
 
 	return;
 }
 
 /*! This is the destructor, nothing to report here */
-FuelSloshParticle::~FuelSloshParticle()
+LinearSpringMassDamper::~LinearSpringMassDamper()
 {
 	return;
 }
 
-/*! Method for fuel slosh particle to access the states that it needs. It needs gravity and the hub states */
-void FuelSloshParticle::linkInStates(DynParamManager& statesIn)
+/*! Method for spring mass damper particle to access the states that it needs. It needs gravity and the hub states */
+void LinearSpringMassDamper::linkInStates(DynParamManager& statesIn)
 {
     // - Grab access to the hub states
 	this->omegaState = statesIn.getStateObject("hubOmega");
@@ -66,8 +66,8 @@ void FuelSloshParticle::linkInStates(DynParamManager& statesIn)
     return;
 }
 
-/*! This is the method for the fuel slosh particle to register its states: rho and rhoDot */
-void FuelSloshParticle::registerStates(DynParamManager& states)
+/*! This is the method for the spring mass damper particle to register its states: rho and rhoDot */
+void LinearSpringMassDamper::registerStates(DynParamManager& states)
 {
     // - Register rho and rhoDot
 	this->rhoState = states.registerState(1, 1, nameOfRhoState);
@@ -89,7 +89,7 @@ void FuelSloshParticle::registerStates(DynParamManager& states)
 }
 
 /*! This is the method for the FSP to add its contributions to the mass props and mass prop rates of the vehicle */
-void FuelSloshParticle::updateEffectorMassProps(double integTime)
+void LinearSpringMassDamper::updateEffectorMassProps(double integTime)
 {
 	// - Grab rho from state manager and define r_PcB_B
 	this->rho = this->rhoState->getState()(0,0);
@@ -118,7 +118,7 @@ void FuelSloshParticle::updateEffectorMassProps(double integTime)
 }
 
 /*! This method is for the FSP to add its contributions to the back-sub method */
-void FuelSloshParticle::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr,
+void LinearSpringMassDamper::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr,
                                             Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr,
                                             Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr,
                                             Eigen::Vector3d & vecRotcontr)
@@ -164,7 +164,7 @@ void FuelSloshParticle::updateContributions(double integTime, Eigen::Matrix3d & 
 
 /*! This method is used to define the derivatives of the FSP. One is the trivial kinematic derivative and the other is 
  derived using the back-sub method */
-void FuelSloshParticle::computeDerivatives(double integTime)
+void LinearSpringMassDamper::computeDerivatives(double integTime)
 {
 	
 	// - Find DCM
@@ -188,7 +188,7 @@ void FuelSloshParticle::computeDerivatives(double integTime)
 }
 
 /*! This method is for the FSP to add its contributions to energy and momentum */
-void FuelSloshParticle::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr)
+void LinearSpringMassDamper::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr)
 {
     //  - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
