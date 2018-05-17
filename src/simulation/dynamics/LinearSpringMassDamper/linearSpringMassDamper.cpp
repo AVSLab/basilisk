@@ -31,7 +31,7 @@ LinearSpringMassDamper::LinearSpringMassDamper()
 	this->effProps.IEffPrimePntB_B.setZero();
 
 	// - Initialize the variables to working values
-	this->massFSP = 0.0;
+	this->massSMD = 0.0;
 	this->r_PB_B.setZero();
 	this->pHat_B.setIdentity();
 	this->k = 1.0;
@@ -79,7 +79,7 @@ void LinearSpringMassDamper::registerStates(DynParamManager& states)
     rhoDotInitMatrix(0,0) = this->rhoDotInit;
     this->rhoDotState->setState(rhoDotInitMatrix);
 
-	// - Register m
+	// - Register mass
 	this->massState = states.registerState(1, 1, nameOfMassState);
     Eigen::MatrixXd massInitMatrix(1,1);
     massInitMatrix(0,0) = this->massInit;
@@ -88,21 +88,21 @@ void LinearSpringMassDamper::registerStates(DynParamManager& states)
 	return;
 }
 
-/*! This is the method for the FSP to add its contributions to the mass props and mass prop rates of the vehicle */
+/*! This is the method for the SMD to add its contributions to the mass props and mass prop rates of the vehicle */
 void LinearSpringMassDamper::updateEffectorMassProps(double integTime)
 {
 	// - Grab rho from state manager and define r_PcB_B
 	this->rho = this->rhoState->getState()(0,0);
 	this->r_PcB_B = this->rho * this->pHat_B + this->r_PB_B;
-	this->massFSP = this->massState->getState()(0, 0);
+	this->massSMD = this->massState->getState()(0, 0);
 
 	// - Update the effectors mass
-	this->effProps.mEff = this->massFSP;
+	this->effProps.mEff = this->massSMD;
 	// - Update the position of CoM
 	this->effProps.rEff_CB_B = this->r_PcB_B;
 	// - Update the inertia about B
 	this->rTilde_PcB_B = eigenTilde(this->r_PcB_B);
-	this->effProps.IEffPntB_B = this->massFSP * this->rTilde_PcB_B * this->rTilde_PcB_B.transpose();
+	this->effProps.IEffPntB_B = this->massSMD * this->rTilde_PcB_B * this->rTilde_PcB_B.transpose();
 
 	// - Grab rhoDot from the stateManager and define rPrime_PcB_B
 	this->rhoDot = this->rhoDotState->getState()(0, 0);
@@ -111,13 +111,13 @@ void LinearSpringMassDamper::updateEffectorMassProps(double integTime)
 
 	// - Update the body time derivative of inertia about B
 	this->rPrimeTilde_PcB_B = eigenTilde(this->rPrime_PcB_B);
-	this->effProps.IEffPrimePntB_B = -this->massFSP*(this->rPrimeTilde_PcB_B*this->rTilde_PcB_B
+	this->effProps.IEffPrimePntB_B = -this->massSMD*(this->rPrimeTilde_PcB_B*this->rTilde_PcB_B
                                                                           + this->rTilde_PcB_B*this->rPrimeTilde_PcB_B);
 
     return;
 }
 
-/*! This method is for the FSP to add its contributions to the back-sub method */
+/*! This method is for the SMD to add its contributions to the back-sub method */
 void LinearSpringMassDamper::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr,
                                             Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr,
                                             Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr,
@@ -147,22 +147,22 @@ void LinearSpringMassDamper::updateContributions(double integTime, Eigen::Matrix
     Eigen::Vector3d omega_BN_B_local = this->omegaState->getState();
     Eigen::Matrix3d omegaTilde_BN_B_local;
     omegaTilde_BN_B_local = eigenTilde(omega_BN_B_local);
-	cRho = 1.0/(this->massFSP)*(this->pHat_B.dot(this->massFSP * g_B) - this->k*this->rho - this->c*this->rhoDot
-		         - 2 * this->massFSP*this->pHat_B.dot(omegaTilde_BN_B_local * this->rPrime_PcB_B)
-		                   - this->massFSP*this->pHat_B.dot(omegaTilde_BN_B_local*omegaTilde_BN_B_local*this->r_PcB_B));
+	cRho = 1.0/(this->massSMD)*(this->pHat_B.dot(this->massSMD * g_B) - this->k*this->rho - this->c*this->rhoDot
+		         - 2 * this->massSMD*this->pHat_B.dot(omegaTilde_BN_B_local * this->rPrime_PcB_B)
+		                   - this->massSMD*this->pHat_B.dot(omegaTilde_BN_B_local*omegaTilde_BN_B_local*this->r_PcB_B));
 	
 	// - Compute matrix/vector contributions
-	matrixAcontr = this->massFSP*this->pHat_B*this->aRho.transpose();
-    matrixBcontr = this->massFSP*this->pHat_B*this->bRho.transpose();
-    matrixCcontr = this->massFSP*this->rTilde_PcB_B*this->pHat_B*this->aRho.transpose();
-	matrixDcontr = this->massFSP*this->rTilde_PcB_B*this->pHat_B*this->bRho.transpose();
-	vecTranscontr = -this->massFSP*this->cRho*this->pHat_B;
-	vecRotcontr = -this->massFSP*omegaTilde_BN_B_local * this->rTilde_PcB_B *this->rPrime_PcB_B -
-                                                             this->massFSP*this->cRho*this->rTilde_PcB_B * this->pHat_B;
+	matrixAcontr = this->massSMD*this->pHat_B*this->aRho.transpose();
+    matrixBcontr = this->massSMD*this->pHat_B*this->bRho.transpose();
+    matrixCcontr = this->massSMD*this->rTilde_PcB_B*this->pHat_B*this->aRho.transpose();
+	matrixDcontr = this->massSMD*this->rTilde_PcB_B*this->pHat_B*this->bRho.transpose();
+	vecTranscontr = -this->massSMD*this->cRho*this->pHat_B;
+	vecRotcontr = -this->massSMD*omegaTilde_BN_B_local * this->rTilde_PcB_B *this->rPrime_PcB_B -
+                                                             this->massSMD*this->cRho*this->rTilde_PcB_B * this->pHat_B;
     return;
 }
 
-/*! This method is used to define the derivatives of the FSP. One is the trivial kinematic derivative and the other is 
+/*! This method is used to define the derivatives of the SMD. One is the trivial kinematic derivative and the other is 
  derived using the back-sub method */
 void LinearSpringMassDamper::computeDerivatives(double integTime)
 {
@@ -187,7 +187,7 @@ void LinearSpringMassDamper::computeDerivatives(double integTime)
     return;
 }
 
-/*! This method is for the FSP to add its contributions to energy and momentum */
+/*! This method is for the SMD to add its contributions to energy and momentum */
 void LinearSpringMassDamper::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr)
 {
     //  - Get variables needed for energy momentum calcs
@@ -197,10 +197,10 @@ void LinearSpringMassDamper::updateEnergyMomContributions(double integTime, Eige
 
     // - Find rotational angular momentum contribution from hub
     rDotPcB_B = this->rPrime_PcB_B + omegaLocal_BN_B.cross(this->r_PcB_B);
-    rotAngMomPntCContr_B = this->massFSP*this->r_PcB_B.cross(rDotPcB_B);
+    rotAngMomPntCContr_B = this->massSMD*this->r_PcB_B.cross(rDotPcB_B);
 
     // - Find rotational energy contribution from the hub
-    rotEnergyContr = 1.0/2.0*this->massFSP*rDotPcB_B.dot(rDotPcB_B) + 1.0/2.0*this->k*this->rho*this->rho;
+    rotEnergyContr = 1.0/2.0*this->massSMD*rDotPcB_B.dot(rDotPcB_B) + 1.0/2.0*this->k*this->rho*this->rho;
 
     return;
 }

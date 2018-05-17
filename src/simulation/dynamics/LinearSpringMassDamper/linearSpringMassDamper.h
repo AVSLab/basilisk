@@ -53,7 +53,7 @@ private:
     double cRho;                   //!< -- Term needed for back-sub method
     double rho;                    //!< [m] spring mass damper displacement from equilibrium
     double rhoDot;                 //!< [m/s] time derivative of displacement from equilibrium
-	double massFSP;                //!< [kg] mass of spring mass damper particle
+	double massSMD;                //!< [kg] mass of spring mass damper particle
     Eigen::Vector3d r_PcB_B;       //!< [m] position vector form B to center of mass location of particle
     Eigen::Matrix3d rTilde_PcB_B;  //!< [m] tilde matrix of r_Pc_B
 	Eigen::Vector3d rPrime_PcB_B;  //!< [m/s] Body time derivative of r_Pc_B
@@ -70,15 +70,15 @@ private:
 public:
 	LinearSpringMassDamper();           //!< -- Contructor
 	~LinearSpringMassDamper();          //!< -- Destructor
-	void registerStates(DynParamManager& states);  //!< -- Method for FSP to register its states
-	void linkInStates(DynParamManager& states);  //!< -- Method for FSP to get access of other states
+	void registerStates(DynParamManager& states);  //!< -- Method for SMD to register its states
+	void linkInStates(DynParamManager& states);  //!< -- Method for SMD to get access of other states
 	void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr,
 		Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr,
-		Eigen::Vector3d & vecRotcontr);  //!< -- Method for FSP to add contributions to the back-sub method
-	void computeDerivatives(double integTime);  //!< -- Method for FSP to compute its derivatives
-	void updateEffectorMassProps(double integTime);  //!< -- Method for FSP to add its contributions to mass props
+		Eigen::Vector3d & vecRotcontr);  //!< -- Method for SMD to add contributions to the back-sub method
+	void computeDerivatives(double integTime);  //!< -- Method for SMD to compute its derivatives
+	void updateEffectorMassProps(double integTime);  //!< -- Method for SMD to add its contributions to mass props
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
-                                      double & rotEnergyContr);  //!< -- Method for FSP to add contr. to energy and mom.
+                                      double & rotEnergyContr);  //!< -- Method for SMD to add contr. to energy and mom.
 };
 
 #endif /* LINEAR_SPRING_MASS_DAMPER_H */
