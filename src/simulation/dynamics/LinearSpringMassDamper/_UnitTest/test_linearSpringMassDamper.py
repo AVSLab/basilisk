@@ -29,7 +29,6 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import linearSpringMassDamper
-from Basilisk.simulation import fuelTank
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import macros
 
@@ -116,24 +115,6 @@ def fuelSloshTest(show_plots,useFlag,testCase):
         unitTestSim.particle1.c = 15.0
         unitTestSim.particle2.c = 17.0
         unitTestSim.particle3.c = 11.0
-
-    #define the fuel tank
-    unitTestSim.tank1 = fuelTank.FuelTank()
-    unitTestSim.tank1.setTankModel(fuelTank.TANK_MODEL_CONSTANT_VOLUME)
-    tankModel = fuelTank.cvar.FuelTankModelConstantVolume
-    tankModel.propMassInit = 30.0
-    tankModel.r_TcT_TInit = [[0.0],[0.0],[0.0]]
-    tankModel.radiusTankInit = 0.5
-    unitTestSim.tank1.r_TB_B = [[0],[0],[0.1]]
-    unitTestSim.tank1.nameOfMassState = "fuelTankMass1"
-    unitTestSim.tank1.pushFuelSloshParticle(unitTestSim.particle1)
-    unitTestSim.tank1.pushFuelSloshParticle(unitTestSim.particle2)
-    unitTestSim.tank1.pushFuelSloshParticle(unitTestSim.particle3)
-    unitTestSim.tank1.updateOnly = True
-
-    # Add panels to spaceCraft
-    # this next line is not working
-    scObject.addStateEffector(unitTestSim.tank1)
     
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
