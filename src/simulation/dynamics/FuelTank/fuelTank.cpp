@@ -40,7 +40,7 @@ FuelTankModel* FuelTankModels[TANK_MODEL_LAST_MODEL - TANK_MODEL_FIRST_MODEL] = 
 /*! This is the constructor, setting variables to default values */
 FuelTank::FuelTank()
 {
-    this->updateOnly = True;
+    this->updateOnly = true;
 	// - zero the contributions for mass props and mass rates'
 	this->effProps.mEff = 0.0;
 	this->effProps.IEffPntB_B.setZero();
