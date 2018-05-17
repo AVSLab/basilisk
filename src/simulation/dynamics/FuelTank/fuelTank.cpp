@@ -19,6 +19,7 @@
 
 #include "fuelTank.h"
 #include "architecture/messaging/system_messaging.h"
+#include "fuelSlosh.h"
 #include <iostream>
 
 /*Able to be accesses from python, used to set up fuel tank model*/
@@ -37,10 +38,10 @@ FuelTankModel* FuelTankModels[TANK_MODEL_LAST_MODEL - TANK_MODEL_FIRST_MODEL] = 
 };
 
 /*! This is the constructor, setting variables to default values */
-FuelTank::FuelTank() 
-	:fuelSloshParticles(), updateOnly(true)
+FuelTank::FuelTank()
 {
-	// - zero the contributions for mass props and mass rates
+    this->updateOnly = True;
+	// - zero the contributions for mass props and mass rates'
 	this->effProps.mEff = 0.0;
 	this->effProps.IEffPntB_B.setZero();
 	this->effProps.rEff_CB_B.setZero();
@@ -88,7 +89,7 @@ void FuelTank::setTankModel(FuelTankModelTypes model){
 }
 
 /*! This is a method to attach a fuel slosh particle to the tank */
-void FuelTank::pushFuelSloshParticle(FuelSloshParticle particle)
+void FuelTank::pushFuelSloshParticle(FuelSlosh particle)
 {
     // - Add a fuel slosh particle to the vector of fuel slosh particles
 	this->fuelSloshParticles.push_back(particle);
@@ -96,14 +97,9 @@ void FuelTank::pushFuelSloshParticle(FuelSloshParticle particle)
     return;
 }
 
-/*! Method for fuel tank to access the states that it needs, needs omega and fuel slosh particles */
+/*! Method for fuel tank to access the states that it needs, needs omega */
 void FuelTank::linkInStates(DynParamManager& statesIn)
 {
-    // - Grab access to fuel slosh particle states
-	std::vector<FuelSloshParticle>::iterator intFSP;
-	for (intFSP = this->fuelSloshParticles.begin(); intFSP < this->fuelSloshParticles.end(); intFSP++)
-		intFSP->linkInStates(statesIn);
-
     // - Grab access to the hubs omega_BN_N
 	this->omegaState = statesIn.getStateObject("hubOmega");
 
@@ -114,11 +110,6 @@ void FuelTank::linkInStates(DynParamManager& statesIn)
  responsibility to call register states for the fuel slosh particles */
 void FuelTank::registerStates(DynParamManager& statesIn)
 {
-    // - Register the fuel slosh particle states
-	std::vector<FuelSloshParticle>::iterator intFSP;
-	for (intFSP = fuelSloshParticles.begin(); intFSP < fuelSloshParticles.end(); intFSP++)
-		intFSP->registerStates(statesIn);
-
     // - Register the mass state associated with the tank
     Eigen::MatrixXd massMatrix(1,1);
 	this->massState = statesIn.registerState(1, 1, this->nameOfMassState);
@@ -128,25 +119,13 @@ void FuelTank::registerStates(DynParamManager& statesIn)
     return;
 }
 
-/*! This method gives the fuel tank the ability to add its contributions the mass of the vehicle. It also has the
- responsibilty to add in the mass props of the fuel slosh particle(s) into the mass of the vehicle */
+/*! This method gives the fuel tank the ability to add its contributions the mass of the vehicle. */
 void FuelTank::updateEffectorMassProps(double integTime)
 {
     // - Initialize certain variables to zero
     this->effProps.mEff = 0.0;
 	this->effProps.IEffPntB_B = this->effProps.IEffPrimePntB_B = Eigen::Matrix3d::Zero();
 	this->effProps.rEff_CB_B = effProps.rEffPrime_CB_B = Eigen::Vector3d::Zero();
-
-	// - Incorporate the effects of all of the particles
-    std::vector<FuelSloshParticle>::iterator intFSP;
-	for (intFSP = this->fuelSloshParticles.begin(); intFSP < this->fuelSloshParticles.end(); intFSP++) {
-		intFSP->updateEffectorMassProps(integTime);
-		this->effProps.mEff += intFSP->effProps.mEff;
-		this->effProps.IEffPntB_B += intFSP->effProps.IEffPntB_B;
-		this->effProps.IEffPrimePntB_B += intFSP->effProps.IEffPrimePntB_B;
-		this->effProps.rEff_CB_B += intFSP->effProps.mEff * intFSP->effProps.rEff_CB_B;
-		this->effProps.rEffPrime_CB_B += intFSP->effProps.mEff * intFSP->effProps.rEffPrime_CB_B;
-	}
 
 	// - Add contributions of the mass of the tank
 	double massLocal = this->massState->getState()(0, 0);
@@ -177,8 +156,7 @@ void FuelTank::updateEffectorMassProps(double integTime)
     return;
 }
 
-/*! This method allows the fuel tank to add its contributions to the matrices for the back-sub method. In addition the
- fuel tank has the responsibility to add the contributions from the fuel slosh particles to the back-sub method */
+/*! This method allows the fuel tank to add its contributions to the matrices for the back-sub method. */
 void FuelTank::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr,
 	Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr,
 	Eigen::Vector3d & vecRotcontr) {
@@ -204,63 +182,32 @@ void FuelTank::updateContributions(double integTime, Eigen::Matrix3d & matrixAco
 			- massState->getStateDeriv()(0, 0)*r_TB_BLocal.cross(rPrime_TB_BLocal);
 		vecRotcontr -= fuelTankModel->IPrimeTankPntT_T * omega_BN_BLocal;
 	}
-    // - Get the contributions from the fuel slosh particles
-    std::vector<FuelSloshParticle>::iterator intFSP;
-	for (intFSP = fuelSloshParticles.begin(); intFSP < fuelSloshParticles.end(); intFSP++) {
-		Eigen::Matrix3d Acontr, Bcontr, Ccontr, Dcontr;
-		Eigen::Vector3d Transcontr, Rotcontr;
-		intFSP->updateContributions(integTime, Acontr, Bcontr, Ccontr, Dcontr, Transcontr, Rotcontr);
-		matrixAcontr += Acontr;
-		matrixBcontr += Bcontr;
-		matrixCcontr += Ccontr;
-		matrixDcontr += Dcontr;
-		vecTranscontr += Transcontr;
-		vecRotcontr += Rotcontr;
-	}
+
+    return;
 }
 
-/*! This method allows the fuel tank to compute its derivative and also calls computeDeravites for the fuel slosh */
+/*! This method allows the fuel tank to compute its derivative */
 void FuelTank::computeDerivatives(double integTime)
 {
-	std::vector<FuelSloshParticle>::iterator intFSP;
+	std::vector<FuelSlosh>::iterator intFSP;
 
 	//! - Mass depletion (finding total mass in tank)
 	double totalMass = this->massState->getState()(0,0);
 	for (intFSP = fuelSloshParticles.begin(); intFSP < fuelSloshParticles.end(); intFSP++) {
-		totalMass += intFSP->massState->getState()(0, 0);
+		totalMass += intFSP->sloshMass;
 	}
 
-	// - Call compute derivatives for all fuel slosh particles, and set mDot
-	for (intFSP = fuelSloshParticles.begin(); intFSP < fuelSloshParticles.end(); intFSP++) {
-		intFSP->computeDerivatives(integTime);
-		double mDot = intFSP->massState->getState()(0, 0) / totalMass * fuelConsumption;
-		Eigen::MatrixXd conv(1, 1);
-		conv(0, 0) = -mDot;
-		intFSP->massState->setDerivative(conv);
-	}
+	// - Call compute derivatives
 	Eigen::MatrixXd conv(1, 1);
 	conv(0, 0) = -tankFuelConsumption;
 	this->massState->setDerivative(conv);
     return;
 }
 
-/*! This method allows the fuel tank to contribute to the energy and momentum calculations and has the responsibiltiy of
- calling updateEnergyMomContributions for the fuel slosh particles */
+/*! This method allows the fuel tank to contribute to the energy and momentum calculations */
 void FuelTank::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                             double & rotEnergyContr)
 {
-    // - Get all of the fuel slosh particles contributions to energy and momentum
-    std::vector<FuelSloshParticle>::iterator intFSP;
-    for (intFSP = fuelSloshParticles.begin(); intFSP < fuelSloshParticles.end(); intFSP++)
-    {
-        Eigen::Vector3d rotAngMomPntCContrFSP_B;
-        double rotEnergyContrFSP = 0.0;
-        rotAngMomPntCContrFSP_B.setZero();
-        intFSP->updateEnergyMomContributions(integTime, rotAngMomPntCContrFSP_B, rotEnergyContrFSP);
-        rotAngMomPntCContr_B += rotAngMomPntCContrFSP_B;
-        rotEnergyContr += rotEnergyContrFSP; 
-	}
-
     // - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
     omegaLocal_BN_B = omegaState->getState();

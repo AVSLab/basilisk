@@ -27,7 +27,7 @@
 #include "../simulation/utilities/avsEigenMRP.h"
 #include "../simulation/utilities/avsEigenSupport.h"
 #include "simMessages/fuelTankSimMsg.h"
-#include "fuelSloshParticle.h"
+#include "fuelSlosh.h"
 
 //Fuel tank models
 /*! @brief This class is an abstract class that has the minimum interfaces for a tank model */
@@ -230,8 +230,6 @@ extern FuelTankModelCentrifugalBurn_t FuelTankModelCentrifugalBurn;
 
 extern FuelTankModel* FuelTankModels[TANK_MODEL_LAST_MODEL - TANK_MODEL_FIRST_MODEL];
 
-
-
 /*! @brief This class is an instantiation of the stateEffector abstract class and implements an effector representing a 
  fuel tank. This fuel tank has one state associated with it and is the mass of the fuel inside the tank
 
@@ -246,7 +244,7 @@ class FuelTank :
 {
 public:
 	std::string nameOfMassState;                       //!< -- name of mass state
-    std::vector<FuelSloshParticle> fuelSloshParticles; //!< -- vector of fuel slosh particles
+    std::vector<FuelSlosh> fuelSloshParticles;         //!< -- vector of fuel slosh particles
     std::vector<DynamicEffector*> dynEffectors;        //!< -- Vector of dynamic effectors for thrusters
 	Eigen::Matrix3d dcm_TB;							   //!< -- DCM from body frame to tank frame
 	Eigen::Vector3d r_TB_B;							   //!< [m] position of tank in B frame
@@ -272,7 +270,7 @@ public:
     void WriteOutputMessages(uint64_t CurrentClock);
     void UpdateState(uint64_t CurrentSimNanos);
 	void setTankModel(FuelTankModelTypes model);
-	void pushFuelSloshParticle(FuelSloshParticle particle);  //!< -- Method to attach fuel slosh particle
+	void pushFuelSloshParticle(FuelSlosh particle);  //!< -- Method to attach fuel slosh particle
 	void registerStates(DynParamManager& states);  //!< -- Method to register mass state with state manager
 	void linkInStates(DynParamManager& states);  //!< -- Method to give the tank access to other states
 	void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr,
