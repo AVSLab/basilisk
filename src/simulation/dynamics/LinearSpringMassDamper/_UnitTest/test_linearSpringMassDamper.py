@@ -111,6 +111,11 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     unitTestSim.particle3.rhoDotInit = 0.0
     unitTestSim.particle3.massInit = 15.0
 
+    # Add particles to spacecraft
+    scObject.addStateEffector(unitTestSim.particle1)
+    scObject.addStateEffector(unitTestSim.particle2)
+    scObject.addStateEffector(unitTestSim.particle3)
+
     if testCase == 'Damping':
         unitTestSim.particle1.c = 15.0
         unitTestSim.particle2.c = 17.0
@@ -254,4 +259,4 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    fuelSloshTest(True,False,'Damping')
+    fuelSloshTest(True,False,'Gravity')
