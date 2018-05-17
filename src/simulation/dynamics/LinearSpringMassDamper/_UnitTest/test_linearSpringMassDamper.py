@@ -28,7 +28,7 @@ path = os.path.dirname(os.path.abspath(filename))
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.simulation import spacecraftPlus
-from Basilisk.simulation import fuelSloshParticle
+from Basilisk.simulation import linearSpringMassDamper
 from Basilisk.simulation import fuelTank
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import macros
@@ -72,18 +72,18 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-    unitTestSim.particle1 = fuelSloshParticle.FuelSloshParticle()
-    unitTestSim.particle2 = fuelSloshParticle.FuelSloshParticle()
-    unitTestSim.particle3 = fuelSloshParticle.FuelSloshParticle()
+    unitTestSim.particle1 = linearSpringMassDamper.LinearSpringMassDamper()
+    unitTestSim.particle2 = linearSpringMassDamper.LinearSpringMassDamper()
+    unitTestSim.particle3 = linearSpringMassDamper.LinearSpringMassDamper()
 
     # Define Variables for particle 1
     unitTestSim.particle1.k = 100.0
     unitTestSim.particle1.c = 0.0
     unitTestSim.particle1.r_PB_B = [[0.1], [0], [-0.1]]
     unitTestSim.particle1.pHat_B = [[np.sqrt(3)/3], [np.sqrt(3)/3], [np.sqrt(3)/3]]
-    unitTestSim.particle1.nameOfRhoState = "fuelSloshParticleRho1"
-    unitTestSim.particle1.nameOfRhoDotState = "fuelSloshParticleRhoDot1"
-    unitTestSim.particle1.nameOfMassState = "fuelSloshParticleMass1"
+    unitTestSim.particle1.nameOfRhoState = "linearSpringMassDamperRho1"
+    unitTestSim.particle1.nameOfRhoDotState = "linearSpringMassDamperRhoDot1"
+    unitTestSim.particle1.nameOfMassState = "linearSpringMassDamperMass1"
     unitTestSim.particle1.rhoInit = 0.05
     unitTestSim.particle1.rhoDotInit = 0.0
     unitTestSim.particle1.massInit = 10.0
@@ -93,9 +93,9 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     unitTestSim.particle2.c = 0.0
     unitTestSim.particle2.r_PB_B = [[0], [0], [0.1]]
     unitTestSim.particle2.pHat_B = [[np.sqrt(3)/3], [-np.sqrt(3)/3], [-np.sqrt(3)/3]]
-    unitTestSim.particle2.nameOfRhoState = "fuelSloshParticleRho2"
-    unitTestSim.particle2.nameOfRhoDotState = "fuelSloshParticleRhoDot2"
-    unitTestSim.particle2.nameOfMassState = "fuelSloshParticleMass2"
+    unitTestSim.particle2.nameOfRhoState = "linearSpringMassDamperRho2"
+    unitTestSim.particle2.nameOfRhoDotState = "linearSpringMassDamperRhoDot2"
+    unitTestSim.particle2.nameOfMassState = "linearSpringMassDamperMass2"
     unitTestSim.particle2.rhoInit = -0.025
     unitTestSim.particle2.rhoDotInit = 0.0
     unitTestSim.particle2.massInit = 20.0
@@ -105,9 +105,9 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     unitTestSim.particle3.c = 0.0
     unitTestSim.particle3.r_PB_B = [[-0.1], [0], [0.1]]
     unitTestSim.particle3.pHat_B = [[-np.sqrt(3)/3], [-np.sqrt(3)/3], [np.sqrt(3)/3]]
-    unitTestSim.particle3.nameOfRhoState = "fuelSloshParticleRho3"
-    unitTestSim.particle3.nameOfRhoDotState = "fuelSloshParticleRhoDot3"
-    unitTestSim.particle3.nameOfMassState = "fuelSloshParticleMass3"
+    unitTestSim.particle3.nameOfRhoState = "linearSpringMassDamperRho3"
+    unitTestSim.particle3.nameOfRhoDotState = "linearSpringMassDamperRhoDot3"
+    unitTestSim.particle3.nameOfMassState = "linearSpringMassDamperMass3"
     unitTestSim.particle3.rhoInit = -0.015
     unitTestSim.particle3.rhoDotInit = 0.0
     unitTestSim.particle3.massInit = 15.0
