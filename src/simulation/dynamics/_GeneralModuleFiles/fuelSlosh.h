@@ -24,8 +24,8 @@
 /*! @brief This class is a class that has the defines a generic fuel slosh paricle*/
 class FuelSlosh {
 public:
-    FuelSlosh();
-    virtual ~FuelSlosh();
+    FuelSlosh(){return;};
+    virtual ~FuelSlosh(){return;};
     virtual void retrieveMassValue(double integTime){return;};
     virtual void setMassDotValue(double integTime){return;};
 

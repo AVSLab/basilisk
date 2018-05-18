@@ -80,8 +80,8 @@ public:
 	void updateEffectorMassProps(double integTime);  //!< -- Method for SMD to add its contributions to mass props
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                       double & rotEnergyContr);  //!< -- Method for SMD to add contr. to energy and mom.
-    void retrieveMassValue(double integTime);
-    void setMassDotValue(double integTime);
+    void retrieveMassValue(double integTime){return;};
+    void setMassDotValue(double integTime){return;};
 };
 
 #endif /* LINEAR_SPRING_MASS_DAMPER_H */

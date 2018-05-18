@@ -27,7 +27,7 @@
 %include "swig_common_model.i"
 
 %include "sys_model.h"
-
+%include "../_GeneralModuleFiles/fuelSlosh.h"
 %include "../_GeneralModuleFiles/stateData.h"
 %include "../_GeneralModuleFiles/stateEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"

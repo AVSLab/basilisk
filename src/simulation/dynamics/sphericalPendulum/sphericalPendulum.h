@@ -96,8 +96,8 @@ public:
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                       double & rotEnergyContr);  //!< -- Method for FSP to add contr. to energy and mom.
     void modifyStates(double integTime); //!<-- Method to force states modification during integration
-    void retrieveMassValue(double integTime);
-    void setMassDotValue(double integTime);
+    void retrieveMassValue(double integTime){return;};
+    void setMassDotValue(double integTime){return;};
 };
 
 #endif /* SPHERICAL_PENDULUM_H */
