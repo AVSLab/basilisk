@@ -23,7 +23,7 @@
 
 #include "../_GeneralModuleFiles/stateEffector.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "../SimCode/utilities/avsEigenMRP.h"
+#include "../simulation/utilities/avsEigenMRP.h"
 
 /*! @brief This class in an instantiation of the state effector class and implements an effector representing spherical
 pendulum */
