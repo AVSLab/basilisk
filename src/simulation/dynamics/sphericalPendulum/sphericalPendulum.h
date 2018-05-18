@@ -24,11 +24,12 @@
 #include "../_GeneralModuleFiles/stateEffector.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
+#include "../_GeneralModuleFiles/fuelSlosh.h"
 
 /*! @brief This class in an instantiation of the state effector class and implements an effector representing spherical
 pendulum */
 class SphericalPendulum :
-	public StateEffector, public SysModel
+	public StateEffector, public SysModel, public FuelSlosh
 {
 public:
 	double pendulumRadius;             //!< [m] distance between the center of the tank and the spherical pendulum mass
@@ -94,7 +95,9 @@ public:
 	void updateEffectorMassProps(double integTime);  //!< -- Method for FSP to add its contributions to mass props
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                       double & rotEnergyContr);  //!< -- Method for FSP to add contr. to energy and mom.
-    void modifyStates(double integTime); //!<-- Method to force states modification during integration 
+    void modifyStates(double integTime); //!<-- Method to force states modification during integration
+    void retrieveMassValue(double integTime);
+    void setMassDotValue(double integTime);
 };
 
 #endif /* SPHERICAL_PENDULUM_H */

@@ -19,7 +19,7 @@
 
 #include "fuelTank.h"
 #include "architecture/messaging/system_messaging.h"
-#include "fuelSlosh.h"
+#include "../_GeneralModuleFiles/fuelSlosh.h"
 #include <iostream>
 
 /*Able to be accesses from python, used to set up fuel tank model*/
@@ -194,7 +194,7 @@ void FuelTank::computeDerivatives(double integTime)
 	//! - Mass depletion (finding total mass in tank)
 	double totalMass = this->massState->getState()(0,0);
 	for (intFSP = fuelSloshParticles.begin(); intFSP < fuelSloshParticles.end(); intFSP++) {
-		totalMass += intFSP->sloshMass;
+		totalMass += intFSP->fuelMass;
 	}
 
 	// - Call compute derivatives

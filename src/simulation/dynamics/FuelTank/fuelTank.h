@@ -27,7 +27,7 @@
 #include "../simulation/utilities/avsEigenMRP.h"
 #include "../simulation/utilities/avsEigenSupport.h"
 #include "simMessages/fuelTankSimMsg.h"
-#include "fuelSlosh.h"
+#include "../_GeneralModuleFiles/fuelSlosh.h"
 
 //Fuel tank models
 /*! @brief This class is an abstract class that has the minimum interfaces for a tank model */

@@ -24,6 +24,7 @@
 #include "../_GeneralModuleFiles/stateEffector.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
+#include "../_GeneralModuleFiles/fuelSlosh.h"
 
 /*! @brief This class in an instantiation of the state effector class and implements an effector representing a oscillating particle
 
@@ -34,7 +35,7 @@
  
  */
 class LinearSpringMassDamper :
-	public StateEffector, public SysModel
+	public StateEffector, public SysModel, public FuelSlosh
 {
 public:
     double k;                      //!< [N/m] linear spring constant for spring mass damper
@@ -79,6 +80,8 @@ public:
 	void updateEffectorMassProps(double integTime);  //!< -- Method for SMD to add its contributions to mass props
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                       double & rotEnergyContr);  //!< -- Method for SMD to add contr. to energy and mom.
+    void retrieveMassValue(double integTime);
+    void setMassDotValue(double integTime);
 };
 
 #endif /* LINEAR_SPRING_MASS_DAMPER_H */
