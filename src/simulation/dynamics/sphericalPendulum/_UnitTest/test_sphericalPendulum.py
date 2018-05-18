@@ -19,36 +19,21 @@
 '''
 
 import sys, os, inspect
-import numpy as np
 import pytest
-import math
+import matplotlib.pyplot as plt
+import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
-splitPath = path.split(bskName)
-bskPath = splitPath[0] + '/' + bskName + '/'
 
-# if this script is run from a custom folder outside of the Basilisk folder, then uncomment the
-# following line and specify the absolute bath to the Basilisk folder
-#bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
-
-sys.path.append(bskPath + 'modules')
-sys.path.append(bskPath + 'PythonModules')
-
-import unitTestSupport  # general support file with common unit test functions
-import sphericalPendulum
-import fuelTankPendulum
-
-# import general simulation support files
-import SimulationBaseClass
-import matplotlib.pyplot as plt
-import orbitalMotion
-import macros
-
-# import simulation related support
-import spacecraftPlus
-import simIncludeGravBody
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
+from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import sphericalPendulum
+from Basilisk.simulation import gravityEffector
+from Basilisk.utilities import simIncludeGravBody
+from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import macros
 
 @pytest.mark.parametrize("useFlag, timeStep", [
      (False, 0.01),
@@ -119,22 +104,6 @@ def sphericalPendulumTest(show_plots, useFlag,timeStep):
     scSim.pendulum2.thetaDotInit = 0.5 # rad/s
     scSim.pendulum2.massInit =40.0 # kg
     # Pendulum frame same as Body frame
-    
-    #define the fuel tank
-    scSim.tank1 = fuelTankPendulum.FuelTankPendulum()
-    scSim.tank1.setTankModel(fuelTankPendulum.TANK_MODEL_CONSTANT_VOLUME)
-    tankModel = fuelTankPendulum.cvar.FuelTankModelConstantVolume
-    tankModel.propMassInit = 100.0 # kg
-    tankModel.r_TcT_TInit = [[0.],[0.0],[0.0]] # m 
-    tankModel.radiusTankInit = 0.5 # m
-    scSim.tank1.r_TB_B = [[0.1],[0.1],[0.1]] # m
-    scSim.tank1.nameOfMassState = "fuelTankMass1"
-    scSim.tank1.pushSphericalPendulum(scSim.pendulum1)
-    scSim.tank1.pushSphericalPendulum(scSim.pendulum2)
-    scSim.tank1.updateOnly = True
-
-    # ACTIVATE FUEL SLOSH
-    scObject.addStateEffector(scSim.tank1)
 
     # define hub properties
     scObject.hub.mHub = 1500 # kg
@@ -142,6 +111,10 @@ def sphericalPendulumTest(show_plots, useFlag,timeStep):
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]] # kg*m^2
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]] # rad
     scObject.hub.omega_BN_BInit = [[1.0], [0.5], [0.1]] # rad/s
+
+    # Add fuel slosh to spacecraft
+    scObject.addStateEffector(scSim.pendulum1)
+    scObject.addStateEffector(scSim.pendulum2)
 
     # call for a fresh copy of the gravitational body factory
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -199,8 +172,8 @@ def sphericalPendulumTest(show_plots, useFlag,timeStep):
     #
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
-    
-	# request energy and momentum    
+
+    # request energy and momentum
     orbEnergy = scSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
     orbAngMom_N = scSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
     rotAngMom_N = scSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
@@ -236,34 +209,34 @@ def sphericalPendulumTest(show_plots, useFlag,timeStep):
     plt.close("all")
 
     if timeStep==0.01:
-    	accuracy = 10**(-10)
+        accuracy = 10**(-10)
     elif timeStep==0.001:
-    	accuracy=10**(-13)
+        accuracy=10**(-13)
     for k in range(len((rotAngMom_N[:,1]))):
-    	if abs((rotAngMom_N[k,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1])>accuracy:
-    		testFailCount += 1
-    		testMessages.append("FAILED: SphericalPendulum does not conserve Rotational Angular Momentum around x axes (timeStep={}s)".format(timeStep))
-    	if abs((rotAngMom_N[k,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2])>accuracy:
-    		testFailCount += 1
-    		testMessages.append("FAILED: SphericalPendulum does not conserve Rotational Angular Momentum around y axes (timeStep={}s)".format(timeStep))
-    	if abs((rotAngMom_N[k,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])>accuracy:
-    		testFailCount += 1
-    		testMessages.append("FAILED: SphericalPendulum does not conserve Rotational Angular Momentum around z axes (timeStep={}s)".format(timeStep))
-    	if abs((orbAngMom_N[k,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1])>accuracy:
-    		testFailCount += 1
-    		testMessages.append("FAILED: SphericalPendulum does not conserve Orbital Angular Momentum around x axes (timeStep={}s)".format(timeStep))
-    	if abs((orbAngMom_N[k,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2])>accuracy:
-  			testFailCount += 1
-  			testMessages.append("FAILED: SphericalPendulum does not conserve Orbital Angular Momentum around y axes (timeStep={}s)".format(timeStep))
-    	if abs((orbAngMom_N[k,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])>accuracy:
- 			testFailCount += 1
- 			testMessages.append("FAILED: SphericalPendulum does not conserve Orbital Angular Momentum around z axes (timeStep={}s)".format(timeStep))
-    	if abs((rotEnergy[k,1] - rotEnergy[0,1])/rotEnergy[0,1])>accuracy:
-    		testFailCount += 1
-    		testMessages.append("FAILED: SphericalPendulum does not conserve Rotational Energy (timeStep={}s)".format(timeStep))
-    	if abs((orbEnergy[k,1] - orbEnergy[0,1])/orbEnergy[0,1])>accuracy:
-    		testFailCount += 1
-    		testMessages.append("FAILED: SphericalPendulum does not conserve Orbital Energy (timeStep={}s)".format(timeStep))
+        if abs((rotAngMom_N[k,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1])>accuracy:
+            testFailCount += 1
+            testMessages.append("FAILED: SphericalPendulum does not conserve Rotational Angular Momentum around x axes (timeStep={}s)".format(timeStep))
+        if abs((rotAngMom_N[k,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2])>accuracy:
+            testFailCount += 1
+            testMessages.append("FAILED: SphericalPendulum does not conserve Rotational Angular Momentum around y axes (timeStep={}s)".format(timeStep))
+        if abs((rotAngMom_N[k,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])>accuracy:
+            testFailCount += 1
+            testMessages.append("FAILED: SphericalPendulum does not conserve Rotational Angular Momentum around z axes (timeStep={}s)".format(timeStep))
+        if abs((orbAngMom_N[k,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1])>accuracy:
+            testFailCount += 1
+            testMessages.append("FAILED: SphericalPendulum does not conserve Orbital Angular Momentum around x axes (timeStep={}s)".format(timeStep))
+        if abs((orbAngMom_N[k,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2])>accuracy:
+            testFailCount += 1
+            testMessages.append("FAILED: SphericalPendulum does not conserve Orbital Angular Momentum around y axes (timeStep={}s)".format(timeStep))
+        if abs((orbAngMom_N[k,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])>accuracy:
+            testFailCount += 1
+            testMessages.append("FAILED: SphericalPendulum does not conserve Orbital Angular Momentum around z axes (timeStep={}s)".format(timeStep))
+        if abs((rotEnergy[k,1] - rotEnergy[0,1])/rotEnergy[0,1])>accuracy:
+            testFailCount += 1
+            testMessages.append("FAILED: SphericalPendulum does not conserve Rotational Energy (timeStep={}s)".format(timeStep))
+        if abs((orbEnergy[k,1] - orbEnergy[0,1])/orbEnergy[0,1])>accuracy:
+            testFailCount += 1
+            testMessages.append("FAILED: SphericalPendulum does not conserve Orbital Energy (timeStep={}s)".format(timeStep))
 
     if testFailCount == 0:
         print "PASSED "
@@ -274,7 +247,7 @@ def sphericalPendulumTest(show_plots, useFlag,timeStep):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    sphericalPendulumTest( True,              # showplots
+    sphericalPendulumTest(True,              # showplots
          False,               # useFlag
          0.001,				 # timeStep
        )
