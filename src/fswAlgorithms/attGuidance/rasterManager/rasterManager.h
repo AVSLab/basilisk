@@ -17,12 +17,12 @@
 
  */
 
-#ifndef _EULER_ROTATION_
-#define _EULER_ROTATION_
+#ifndef _RASTER_MANAGER_
+#define _RASTER_MANAGER_
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "fswMessages/eulerAngleFswMsg.h"
+#include "fswMessages/attStateFswMsg.h"
 
 
 /*! \addtogroup ADCSAlgGroup
@@ -46,13 +46,11 @@ typedef struct {
     //uint64_t currentMnvrTime;
     uint64_t mnvrStartTime;
     /* Declare module IO interfaces */
-    char        outputEulerSetName[MAX_STAT_MSG_LENGTH];        /*!< The name of the output message containing the Reference */
-    int32_t     outputEulerSetID;                           /*!< [-] ID for the outgoing Euler Angle Set message */
-    char        outputEulerRatesName[MAX_STAT_MSG_LENGTH];        /*!< The name of the output message containing the Reference */
-    int32_t     outputEulerRatesID;                         /*!< [-] ID for the outgoing Euler Angle rates message */
+    char        AttStateOutMsgName[MAX_STAT_MSG_LENGTH];    /*!< The name of the output message containing the
+                                                                 commanded attitude references states  */
+    int32_t     AttStateOutMsgID;                           /*!< [-] ID for the outgoing attitude state message */
     /* Output attitude reference data to send */
-    EulerAngleFswMsg outputAngleSet;
-    EulerAngleFswMsg outputAngleRates;
+    AttStateFswMsg attOutSet;
 }rasterManagerConfig;
 
 #ifdef __cplusplus
