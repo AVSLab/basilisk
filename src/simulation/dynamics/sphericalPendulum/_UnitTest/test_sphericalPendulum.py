@@ -179,32 +179,38 @@ def sphericalPendulumTest(show_plots, useFlag,timeStep):
     rotAngMom_N = scSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
     rotEnergy = scSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
 
+    if timeStep == 0.01:
+        testCase = "OneHundredth"
+    if timeStep == 0.001:
+        testCase = "OneThousandth"
+
+
     plt.close("all")  # clears out plots from earlier test runs
 
     plt.figure(1,figsize=(5,4))
     plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
     plt.xlabel('Time (s)')
     plt.ylabel('Relative Orbital Angular Momentum Variation')
-    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + str(timeStep), "Change in Orbital Angular Momentum " + str(timeStep), plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCase, "Change in Orbital Angular Momentum " + testCase, plt, "width=0.8\\textwidth", path)
 
     plt.figure(2,figsize=(5,4))
     plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
     plt.xlabel('Time (s)')
     plt.ylabel('Relative Orbital Energy Variation')
-    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergy" + str(timeStep), "Change in Orbital Energy " + str(timeStep), plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCase, "Change in Orbital Energy " + testCase, plt, "width=0.8\\textwidth", path)
 
     
     plt.figure(3,figsize=(5,4))
     plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
     plt.xlabel('Time (s)')
     plt.ylabel('Relative Rotational Angular Momentum Variation')
-    unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + str(timeStep), "Change in Rotational Angular Momentum " + str(timeStep), plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase, "Change in Rotational Angular Momentum " + testCase, plt, "width=0.8\\textwidth", path)
 
     plt.figure(4,figsize=(5,4))
     plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
     plt.xlabel('Time (s)')
     plt.ylabel('Relative Rotational Energy Variation')
-    unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + str(timeStep), "Change in Rotational Energy " + str(timeStep), plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, "width=0.8\\textwidth", path)
  
     if show_plots:
         plt.show()#
