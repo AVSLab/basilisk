@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "fswMessages/eulerAngleFswMsg.h"
+#include "fswMessages/attStateFswMsg.h"
 #include "fswMessages/attRefFswMsg.h"
 
 
@@ -44,25 +44,20 @@ typedef struct {
     //AttRefFswMsg inputRef;
     
     /* Declare module IO interfaces */
-    char        outputDataName[MAX_STAT_MSG_LENGTH];        /*!< The name of the output message containing the Reference */
-    int32_t     outputMsgID;                                /*!< [-] ID for the outgoing Reference message */
-    char        outputEulerSetName[MAX_STAT_MSG_LENGTH];    /*!< The name of the output message containing the current Euler Angle set */
-    int32_t     outputEulerSetID;                           /*!< [-] ID for the outgoing Euler Angle Set message */
-    char        outputEulerRatesName[MAX_STAT_MSG_LENGTH];  /*!< The name of the output message containing the current Euler Angle set */
-    int32_t     outputEulerRatesID;                              /*!< [-] ID for the outgoing Euler Angle Set message */
-    char        inputRefName[MAX_STAT_MSG_LENGTH];          /*!< The name of the guidance reference Input message */
-    int32_t     inputRefID;                                 /*!< [-] ID for the incoming guidance reference message */
+    char        attRefOutMsgName[MAX_STAT_MSG_LENGTH];      /*!< The name of the output message containing the Reference */
+    int32_t     attRefOutMsgID;                             /*!< [-] ID for the outgoing Reference message */
+    char        attitudeOutMsgName[MAX_STAT_MSG_LENGTH];    /*!< The name of the output message containing the current Euler Angle and rate set */
+    int32_t     attitudeOutMsgID;                           /*!< [-] ID for the outgoing Eulr angles and rates Set message */
+    char        attRefInMsgName[MAX_STAT_MSG_LENGTH];       /*!< The name of the guidance reference Input message */
+    int32_t     attRefInMsgID;                              /*!< [-] ID for the incoming guidance reference message */
     
-    char        inputEulerSetName[MAX_STAT_MSG_LENGTH];     /*!< The name of the incoming message containing the desired EA set */
-    int32_t     inputEulerSetID;                            /*!< [-] ID for the incoming EA set message */
-    char        inputEulerRatesName[MAX_STAT_MSG_LENGTH];   /*!< The name of the incoming message containing the desired EA rates */
-    int32_t     inputEulerRatesID;                          /*!< [-] ID for the incoming EA rates message */
-    
+    char        desiredAttInMsgName[MAX_STAT_MSG_LENGTH];   /*!< The name of the incoming message containing the desired EA set */
+    int32_t     desiredAttInMsgID;                          /*!< [-] ID for the incoming EA set message */
+
     
     /* Output attitude reference data to send */
-    AttRefFswMsg attRefOut;                                /*!< [-] structure for the Reference output data */
-    EulerAngleFswMsg      eulerSetOut;                     /*!< [-] structure for the Euler Set output data */
-    EulerAngleFswMsg      eulerRatesOut;                   /*!< [-] structure for the Euler Set output data */
+    AttRefFswMsg   attRefOut;                               /*!< [-] structure for the Reference output data */
+    AttStateFswMsg attStateOut;                             /*!< [-] structure for the attitude reference output data */
 }eulerRotationConfig;
 
 #ifdef __cplusplus

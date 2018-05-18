@@ -89,10 +89,8 @@ def eulerRotationTestFunction(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.inputRefName = "inputRefName"
-    moduleConfig.outputDataName = "outputName"
-    moduleConfig.outputEulerSetName = "outputEulerSetName"
-    moduleConfig.outputEulerRatesName = "outputEulerRatesName"
+    moduleConfig.attRefInMsgName = "inputRefName"
+    moduleConfig.attRefOutMsgName = "outputName"
     angleSet = np.array([0.0, 90.0, 0.0]) * mc.D2R
     moduleConfig.angleSet = angleSet
     angleRates = np.array([0.1, 0.0, 0.0]) * mc.D2R
@@ -107,7 +105,7 @@ def eulerRotationTestFunction(show_plots):
     RefStateOutData = eulerRotation.AttRefFswMsg()  # Create a structure for the input message
     inputMessageSize = RefStateOutData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputRefName,
+                                          moduleConfig.attRefInMsgName,
                                           inputMessageSize,
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
 
@@ -117,13 +115,13 @@ def eulerRotationTestFunction(show_plots):
     RefStateOutData.omega_RN_N = omega_R0N_N
     domega_R0N_N = np.array([0.0, 0.0, 0.0])
     RefStateOutData.domega_RN_N = domega_R0N_N
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRefName,
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.attRefInMsgName,
                                           inputMessageSize,
                                           0,
                                           RefStateOutData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.attRefOutMsgName, testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -143,7 +141,7 @@ def eulerRotationTestFunction(show_plots):
     # check sigma_RN
     #
     moduleOutputName = "sigma_RN"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
+    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
@@ -168,7 +166,7 @@ def eulerRotationTestFunction(show_plots):
     # check omega_RN_N
     #
     moduleOutputName = "omega_RN_N"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
+    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
@@ -192,7 +190,7 @@ def eulerRotationTestFunction(show_plots):
     # check domega_RN_N
     #
     moduleOutputName = "domega_RN_N"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
+    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
