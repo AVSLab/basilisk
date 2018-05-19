@@ -19,7 +19,6 @@
 
 #include "fuelTank.h"
 #include "architecture/messaging/system_messaging.h"
-#include "../_GeneralModuleFiles/fuelSlosh.h"
 #include <iostream>
 
 /*Able to be accesses from python, used to set up fuel tank model*/
@@ -89,7 +88,7 @@ void FuelTank::setTankModel(FuelTankModelTypes model){
 }
 
 /*! This is a method to attach a fuel slosh particle to the tank */
-void FuelTank::pushFuelSloshParticle(FuelSlosh particle)
+void FuelTank::pushFuelSloshParticle(FuelSlosh *particle)
 {
     // - Add a fuel slosh particle to the vector of fuel slosh particles
 	this->fuelSloshParticles.push_back(particle);
@@ -141,7 +140,7 @@ void FuelTank::updateEffectorMassProps(double integTime)
     for (dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
     {
         (*dynIt)->computeStateContribution(integTime);
-        fuelConsumption += (*dynIt)->stateDerivContribution(0);
+        this->fuelConsumption += (*dynIt)->stateDerivContribution(0);
     }
 
     this->effProps.mEffDot = -this->fuelConsumption;
@@ -182,12 +181,12 @@ void FuelTank::updateContributions(double integTime, Eigen::Matrix3d & matrixAco
 /*! This method allows the fuel tank to compute its derivative */
 void FuelTank::computeDerivatives(double integTime)
 {
-	std::vector<FuelSlosh>::iterator intFSP;
+	std::vector<FuelSlosh*>::iterator intFSP;
 
 	//! - Mass depletion (finding total mass in tank)
 	double totalMass = this->massState->getState()(0,0);
-	for (intFSP = fuelSloshParticles.begin(); intFSP < fuelSloshParticles.end(); intFSP++) {
-		totalMass += intFSP->fuelMass;
+	for (intFSP = this->fuelSloshParticles.begin(); intFSP < this->fuelSloshParticles.end(); intFSP++) {
+        totalMass += (*intFSP)->fuelMass;
 	}
 
 	// - Call compute derivatives

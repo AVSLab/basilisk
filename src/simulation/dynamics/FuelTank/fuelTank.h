@@ -244,7 +244,7 @@ class FuelTank :
 {
 public:
 	std::string nameOfMassState;                       //!< -- name of mass state
-    std::vector<FuelSlosh> fuelSloshParticles;         //!< -- vector of fuel slosh particles
+    std::vector<FuelSlosh*> fuelSloshParticles;         //!< -- vector of fuel slosh particles
     std::vector<DynamicEffector*> dynEffectors;        //!< -- Vector of dynamic effectors for thrusters
 	Eigen::Matrix3d dcm_TB;							   //!< -- DCM from body frame to tank frame
 	Eigen::Vector3d r_TB_B;							   //!< [m] position of tank in B frame
@@ -270,7 +270,7 @@ public:
     void WriteOutputMessages(uint64_t CurrentClock);
     void UpdateState(uint64_t CurrentSimNanos);
 	void setTankModel(FuelTankModelTypes model);
-	void pushFuelSloshParticle(FuelSlosh particle);  //!< -- Method to attach fuel slosh particle
+	void pushFuelSloshParticle(FuelSlosh *particle);  //!< -- Method to attach fuel slosh particle
 	void registerStates(DynParamManager& states);  //!< -- Method to register mass state with state manager
 	void linkInStates(DynParamManager& states);  //!< -- Method to give the tank access to other states
 	void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr,
