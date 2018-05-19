@@ -80,7 +80,7 @@ public:
 	void updateEffectorMassProps(double integTime);  //!< -- Method for SMD to add its contributions to mass props
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                       double & rotEnergyContr);  //!< -- Method for SMD to add contr. to energy and mom.
-    void retrieveMassValue(double integTime){return;};
+    void retrieveMassValue(double integTime);
     void setMassDotValue(double integTime){return;};
 };
 

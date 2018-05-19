@@ -31,7 +31,7 @@ LinearSpringMassDamper::LinearSpringMassDamper()
 	this->effProps.IEffPrimePntB_B.setZero();
 
 	// - Initialize the variables to working values
-	this->massSMD = 0.0;
+	this->massSMD = 1.0;
 	this->r_PB_B.setZero();
 	this->pHat_B.setIdentity();
 	this->k = 1.0;
@@ -114,6 +114,15 @@ void LinearSpringMassDamper::updateEffectorMassProps(double integTime)
 	this->effProps.IEffPrimePntB_B = -this->massSMD*(this->rPrimeTilde_PcB_B*this->rTilde_PcB_B
                                                                           + this->rTilde_PcB_B*this->rPrimeTilde_PcB_B);
 
+    return;
+}
+
+/*! This is method is used to pass mass properties information to the fuelTank */
+void LinearSpringMassDamper::retrieveMassValue(double integTime)
+{
+    // Save mass value into the fuelSlosh class variable
+    this->fuelMass = this->massSMD;
+    
     return;
 }
 
