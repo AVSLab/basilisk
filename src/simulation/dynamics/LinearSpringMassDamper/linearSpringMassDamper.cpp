@@ -193,6 +193,10 @@ void LinearSpringMassDamper::computeDerivatives(double integTime)
     conv(0, 0) = this->aRho.dot(rDDot_BN_B_local) + this->bRho.dot(omegaDot_BN_B_local) + this->cRho;
 	this->rhoDotState->setDerivative(conv);
 
+    // - Set the massDot already computed from fuelTank to the stateDerivative of mass
+    conv(0,0) = this->fuelMassDot;
+    this->massState->setDerivative(conv);
+
     return;
 }
 

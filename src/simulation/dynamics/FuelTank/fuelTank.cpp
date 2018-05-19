@@ -143,6 +143,26 @@ void FuelTank::updateEffectorMassProps(double integTime)
         this->fuelConsumption += (*dynIt)->stateDerivContribution(0);
     }
 
+    std::vector<FuelSlosh*>::iterator fuelSloshInt;
+    // - Mass depletion (finding total mass in tank)
+    double totalMass = massLocal;
+    for (fuelSloshInt = this->fuelSloshParticles.begin(); fuelSloshInt < this->fuelSloshParticles.end(); fuelSloshInt++) {
+        // - Retrieve current mass value of fuelSlosh particle
+        (*fuelSloshInt)->retrieveMassValue(integTime);
+        // - Add fuelSlosh mass to total mass of tank
+        totalMass += (*fuelSloshInt)->fuelMass;
+    }
+    // - Set mass depletion rate of fuelSloshParticles
+    for (fuelSloshInt = this->fuelSloshParticles.begin(); fuelSloshInt < this->fuelSloshParticles.end(); fuelSloshInt++) {
+        // - Find fuelSlosh particle mass to fuel tank mass ratio
+        (*fuelSloshInt)->massToTotalTankMassRatio = (*fuelSloshInt)->fuelMass/totalMass;
+        // - Scale total fuelConsumption by mass ratio to find fuelSloshParticle mass depletion rate
+        (*fuelSloshInt)->fuelMassDot = (*fuelSloshInt)->massToTotalTankMassRatio*(-this->fuelConsumption);
+    }
+
+    // - Set fuel consumption rate of fuelTank (not negative because the negative sign is in the computeDerivatives call
+    this->tankFuelConsumption = massLocal/totalMass*(this->fuelConsumption);
+
     this->effProps.mEffDot = -this->fuelConsumption;
 
     return;
@@ -181,17 +201,9 @@ void FuelTank::updateContributions(double integTime, Eigen::Matrix3d & matrixAco
 /*! This method allows the fuel tank to compute its derivative */
 void FuelTank::computeDerivatives(double integTime)
 {
-	std::vector<FuelSlosh*>::iterator intFSP;
-
-	//! - Mass depletion (finding total mass in tank)
-	double totalMass = this->massState->getState()(0,0);
-	for (intFSP = this->fuelSloshParticles.begin(); intFSP < this->fuelSloshParticles.end(); intFSP++) {
-        totalMass += (*intFSP)->fuelMass;
-	}
-
 	// - Call compute derivatives
 	Eigen::MatrixXd conv(1, 1);
-	conv(0, 0) = -tankFuelConsumption;
+	conv(0, 0) = -this->tankFuelConsumption;
 	this->massState->setDerivative(conv);
     return;
 }
