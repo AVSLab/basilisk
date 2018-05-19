@@ -122,12 +122,7 @@ void FuelTank::registerStates(DynParamManager& statesIn)
 /*! This method gives the fuel tank the ability to add its contributions the mass of the vehicle. */
 void FuelTank::updateEffectorMassProps(double integTime)
 {
-    // - Initialize certain variables to zero
-    this->effProps.mEff = 0.0;
-	this->effProps.IEffPntB_B = this->effProps.IEffPrimePntB_B = Eigen::Matrix3d::Zero();
-	this->effProps.rEff_CB_B = effProps.rEffPrime_CB_B = Eigen::Vector3d::Zero();
-
-	// - Add contributions of the mass of the tank
+    // - Add contributions of the mass of the tank
 	double massLocal = this->massState->getState()(0, 0);
 	this->fuelTankModel->computeTankProps(massLocal);
 	this->r_TcB_B = r_TB_B +this->dcm_TB.transpose()*this->fuelTankModel->r_TcT_T;
@@ -135,12 +130,10 @@ void FuelTank::updateEffectorMassProps(double integTime)
 	this->ITankPntT_B = this->dcm_TB.transpose()*fuelTankModel->ITankPntT_T*this->dcm_TB;
 	this->effProps.IEffPntB_B = ITankPntT_B+massLocal * (r_TcB_B.dot(r_TcB_B)*Eigen::Matrix3d::Identity()
                                                                                          - r_TcB_B * r_TcB_B.transpose());
-	this->effProps.rEff_CB_B += massLocal * r_TcB_B;
+	this->effProps.rEff_CB_B = this->r_TcB_B;
 
-    // - Scale the center of mass location by 1/m_tot
-	this->effProps.rEff_CB_B /= effProps.mEff;
     // - This does not incorportate mEffDot into cPrime for high fidelity mass depletion
-	this->effProps.rEffPrime_CB_B /= effProps.mEff;
+	this->effProps.rEffPrime_CB_B = Eigen::Vector3d::Zero();
 
     //! - Mass depletion (call thrusters attached to this tank to get their mDot, and contributions)
     this->fuelConsumption = 0.0;
