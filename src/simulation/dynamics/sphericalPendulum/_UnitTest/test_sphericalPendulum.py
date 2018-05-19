@@ -291,8 +291,8 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
         plt.plot(mass2Out[:,0]*1e-9, mass2Out[:,1])
         plt.title("Fuel Particle 2 Mass")
         mDotFuel = -0.19392039093
-        mDotParicle1True = mDotFuel*(10./100.)
-        mDotParicle2True = mDotFuel*(20./100.)
+        mDotParicle1True = mDotFuel*(20./100.)
+        mDotParicle2True = mDotFuel*(40./100.)
         mDotParicle1Data = [0,(mass1Out[2,1] - mass1Out[1,1])/((mass1Out[2,0] - mass1Out[1,0])*1e-9)]
         mDotParicle2Data = [0,(mass2Out[2,1] - mass2Out[1,1])/((mass2Out[2,0] - mass2Out[1,0])*1e-9)]
  
