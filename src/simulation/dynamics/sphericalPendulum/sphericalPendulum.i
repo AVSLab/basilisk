@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016-2017, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -18,19 +18,21 @@
  */
 
 
-%module fuelSloshParticle
+%module sphericalPendulum
 %{
-	#include "fuelSloshParticle.h"
+	#include "sphericalPendulum.h"
 %}
 
 
 %include "swig_common_model.i"
 
 %include "sys_model.h"
+%include "../_GeneralModuleFiles/fuelSlosh.h"
 %include "../_GeneralModuleFiles/stateData.h"
 %include "../_GeneralModuleFiles/stateEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
-%include "fuelSloshParticle.h"
+
+%include "sphericalPendulum.h"
 
 %pythoncode %{
 import sys

@@ -1,0 +1,17 @@
+\section{User Guide}
+
+This section is to outline the steps needed to setup a Fuel Slosh State Effector in python using Basilisk.
+
+\begin{enumerate}
+	\item Import the linearSpringMassDamper class: \newline \textit{from Basilisk.simulation import linearSpringMassDamper}
+	\item Create an instantiation of a linear spring mass damper particle: \newline \textit{particle1 = linearSpringMassDamper.LinearSpringMassDamper()}
+	\item Define all physical parameters for a linear spring mass damper particle. For example: \newline
+	\textit{particle1.r\_PB\_B = [[0.1], [0], [-0.1]]}
+	Do this for all of the parameters for a linear spring mass damper particle seen in the public variables in the .h file.
+	\item Define the initial conditions of the states:\newline
+	\textit{particle1.rhoInit = 0.05 \quad particle1.rhoDotInit = 0.0}
+	\item Define a unique name for each state:\newline
+	\textit{particle1.nameOfRhoState = "linearSpringMassDamperRho" \quad particle1.nameOfRhoDotState = "linearSpringMassDamperRhoDot"}
+	\item Finally, add the particle to your spacecraftPlus:\newline
+	\textit{scObject.addStateEffector(particle1)}. See spacecraftPlus documentation on how to set up a spacecraftPlus object. 
+\end{enumerate}
