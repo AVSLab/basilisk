@@ -47,7 +47,7 @@ SphericalPendulum::SphericalPendulum()
     this->phiDotInit=0.0;
     this->thetaInit=0.0;
     this->thetaDotInit=0.0;   
-    this->massInit = 0.0;
+    this->massInit = 1.0;
 	this->nameOfPhiState = "sphericalPendulumPhi";
 	this->nameOfPhiDotState = "sphericalPendulumPhiDot";
 	this->nameOfThetaState = "sphericalPendulumTheta";
@@ -189,6 +189,15 @@ void SphericalPendulum::updateEffectorMassProps(double integTime)
     return;
 }
 
+/*! This is method is used to pass mass properties information to the fuelTank */
+void SphericalPendulum::retrieveMassValue(double integTime)
+{
+    // Save mass value into the fuelSlosh class variable
+    this->fuelMass = this->massFSP;
+
+    return;
+}
+
 /*! This method is for the FSP to add its contributions to the back-sub method */
 void SphericalPendulum::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr,
                                             Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr,
@@ -313,6 +322,11 @@ void SphericalPendulum::computeDerivatives(double integTime)
 	this->phiDotState->setDerivative(phi_conv);
 	theta_conv(0, 0) = this->aTheta.dot(rDDot_BN_B_local) + this->bTheta.dot(omegaDot_BN_B_local) + this->cTheta;
 	this->thetaDotState->setDerivative(theta_conv);
+
+    // - Set the massDot already computed from fuelTank to the stateDerivative of mass
+    Eigen::MatrixXd conv(1,1);
+    conv(0,0) = this->fuelMassDot;
+    this->massState->setDerivative(conv);
 
     return;
 }
