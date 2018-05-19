@@ -27,7 +27,14 @@
 #include "../_GeneralModuleFiles/fuelSlosh.h"
 
 /*! @brief This class in an instantiation of the state effector class and implements an effector representing spherical
-pendulum */
+pendulum
+
+ The module
+ [PDF Description](Basilisk-SPHERICALPENDULUM-20180518.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+
+ */
 class SphericalPendulum :
 	public StateEffector, public SysModel, public FuelSlosh
 {
