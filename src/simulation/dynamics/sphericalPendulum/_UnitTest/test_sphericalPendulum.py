@@ -34,22 +34,31 @@ from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import macros
+from Basilisk.simulation import fuelTank
+from Basilisk.simulation import thrusterDynamicEffector
+from Basilisk.utilities import simIncludeThruster
 
-@pytest.mark.parametrize("useFlag, timeStep", [
-     (False, 0.01),
-     (False, 0.001),
+@pytest.mark.parametrize("useFlag, testCase", [
+     (False, 1),
+     (False, 2),
+    (False,3)
 ])
 # provide a unique test method name, starting with test_
-def test_scenarioSphericalPendulum(show_plots, useFlag, timeStep):
+def test_scenarioSphericalPendulum(show_plots, useFlag, testCase):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = sphericalPendulumTest(show_plots, useFlag, timeStep)
+    [testResults, testMessage] = sphericalPendulumTest(show_plots, useFlag, testCase)
     assert testResults < 1, testMessage
 
-def sphericalPendulumTest(show_plots, useFlag,timeStep):
+def sphericalPendulumTest(show_plots, useFlag,testCase):
     '''Call this routine directly to run the test scenario.'''
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
+
+    if testCase == 1 or testCase ==  3:
+        timeStep = 0.01
+    if testCase == 2:
+        timeStep = 0.001
 
     simTaskName = "simTask"
     simProcessName = "simProcess"
@@ -104,6 +113,49 @@ def sphericalPendulumTest(show_plots, useFlag,timeStep):
     scSim.pendulum2.thetaDotInit = 0.5 # rad/s
     scSim.pendulum2.massInit =40.0 # kg
     # Pendulum frame same as Body frame
+    
+    if testCase == 3:
+        thrusterCommandName = "acs_thruster_cmds"
+        # add thruster devices
+        # The clearThrusterSetup() is critical if the script is to run multiple times
+        simIncludeThruster.clearSetup()
+        simIncludeThruster.create('MOOG_Monarc_445',
+                                  [1,0,0],                # location in S frame
+                                  [0,1,0]                 # direction in S frame
+                                  )
+
+        # create thruster object container and tie to spacecraft object
+        thrustersDynamicEffector = thrusterDynamicEffector.ThrusterDynamicEffector()
+
+        scSim.fuelTankStateEffector = fuelTank.FuelTank()
+        scSim.fuelTankStateEffector.setTankModel(fuelTank.TANK_MODEL_CONSTANT_VOLUME)
+        tankModel = fuelTank.cvar.FuelTankModelConstantVolume
+        tankModel.propMassInit = 40.0
+        tankModel.r_TcT_TInit = [[0.0],[0.0],[0.0]]
+        scSim.fuelTankStateEffector.r_TB_B = [[0.0],[0.0],[0.0]]
+        tankModel.radiusTankInit = 46.0 / 2.0 / 3.2808399 / 12.0
+
+        # Add tank and thruster
+        scObject.addStateEffector(scSim.fuelTankStateEffector)
+        simIncludeThruster.addToSpacecraft(  "Thrusters",
+                                         thrustersDynamicEffector,
+                                         scObject, scSim.fuelTankStateEffector)
+
+        # set thruster commands
+        ThrustMessage = thrusterDynamicEffector.THRArrayOnTimeCmdIntMsg()
+        msgSize = ThrustMessage.getStructSize()
+        ThrustMessage.OnTimeRequest = [5.0]
+        scSim.TotalSim.CreateNewMessage(simProcessName, thrusterCommandName, msgSize, 2)
+        scSim.TotalSim.WriteMessageData(thrusterCommandName, msgSize, 0, ThrustMessage)
+
+        # Add test module to runtime call list
+        scSim.AddModelToTask(simTaskName, scSim.fuelTankStateEffector)
+        scSim.AddModelToTask(simTaskName, thrustersDynamicEffector)
+        scSim.TotalSim.logThisMessage(scSim.fuelTankStateEffector.FuelTankOutMsgName, simulationTimeStep)
+
+        # Add particles to tank to activate mass depletion
+        scSim.fuelTankStateEffector.pushFuelSloshParticle(scSim.pendulum1)
+        scSim.fuelTankStateEffector.pushFuelSloshParticle(scSim.pendulum2)
 
     # define hub properties
     scObject.hub.mHub = 1500 # kg
@@ -166,12 +218,27 @@ def sphericalPendulumTest(show_plots, useFlag,timeStep):
     scSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('sphericalPendulumTheta1').getState()", simulationTimeStep, 0, 0, 'double')
     scSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('sphericalPendulumThetaDot1').getState()", simulationTimeStep, 0, 0, 'double')
     scSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('sphericalPendulumPhiDot1').getState()", simulationTimeStep, 0, 0, 'double')
+    if testCase == 3:
+        scSim.AddVariableForLogging(
+            "spacecraftBody.dynManager.getStateObject('sphericalPendulumMass1').getState()", simulationTimeStep, 0, 0, 'double')
+        scSim.AddVariableForLogging(
+            "spacecraftBody.dynManager.getStateObject('sphericalPendulumMass2').getState()", simulationTimeStep, 0, 0, 'double')
 
     #
     #   configure a simulation stop time time and execute the simulation run
     #
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
+    
+    if testCase == 3:
+        fuelMass = scSim.pullMessageLogData(scSim.fuelTankStateEffector.FuelTankOutMsgName + '.fuelMass',
+                                                  range(1))
+        fuelMassDot = scSim.pullMessageLogData(scSim.fuelTankStateEffector.FuelTankOutMsgName + '.fuelMassDot',
+                                                  range(1))
+        mass1Out = scSim.GetLogVariableData(
+            "spacecraftBody.dynManager.getStateObject('sphericalPendulumMass1').getState()")
+        mass2Out = scSim.GetLogVariableData(
+            "spacecraftBody.dynManager.getStateObject('sphericalPendulumMass2').getState()")
 
     # request energy and momentum
     orbEnergy = scSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
@@ -180,37 +247,54 @@ def sphericalPendulumTest(show_plots, useFlag,timeStep):
     rotEnergy = scSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
 
     if timeStep == 0.01:
-        testCase = "OneHundredth"
+        testCaseName = "OneHundredth"
     if timeStep == 0.001:
-        testCase = "OneThousandth"
-
+        testCaseName = "OneThousandth"
 
     plt.close("all")  # clears out plots from earlier test runs
 
-    plt.figure(1,figsize=(5,4))
-    plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
-    plt.xlabel('Time (s)')
-    plt.ylabel('Relative Orbital Angular Momentum Variation')
-    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCase, "Change in Orbital Angular Momentum " + testCase, plt, "width=0.8\\textwidth", path)
+    if testCase != 3:
+        plt.figure(1,figsize=(5,4))
+        plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
+        plt.xlabel('Time (s)')
+        plt.ylabel('Relative Orbital Angular Momentum Variation')
+        unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCaseName, "Change in Orbital Angular Momentum " + testCaseName, plt, "width=0.8\\textwidth", path)
 
-    plt.figure(2,figsize=(5,4))
-    plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
-    plt.xlabel('Time (s)')
-    plt.ylabel('Relative Orbital Energy Variation')
-    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCase, "Change in Orbital Energy " + testCase, plt, "width=0.8\\textwidth", path)
+        plt.figure(2,figsize=(5,4))
+        plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
+        plt.xlabel('Time (s)')
+        plt.ylabel('Relative Orbital Energy Variation')
+        unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCaseName, "Change in Orbital Energy " + testCaseName, plt, "width=0.8\\textwidth", path)
 
-    
-    plt.figure(3,figsize=(5,4))
-    plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
-    plt.xlabel('Time (s)')
-    plt.ylabel('Relative Rotational Angular Momentum Variation')
-    unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase, "Change in Rotational Angular Momentum " + testCase, plt, "width=0.8\\textwidth", path)
+        plt.figure(3,figsize=(5,4))
+        plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
+        plt.xlabel('Time (s)')
+        plt.ylabel('Relative Rotational Angular Momentum Variation')
+        unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCaseName, "Change in Rotational Angular Momentum " + testCaseName, plt, "width=0.8\\textwidth", path)
 
-    plt.figure(4,figsize=(5,4))
-    plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
-    plt.xlabel('Time (s)')
-    plt.ylabel('Relative Rotational Energy Variation')
-    unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, "width=0.8\\textwidth", path)
+        plt.figure(4,figsize=(5,4))
+        plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
+        plt.xlabel('Time (s)')
+        plt.ylabel('Relative Rotational Energy Variation')
+        unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCaseName, "Change in Rotational Energy " + testCaseName, plt, "width=0.8\\textwidth", path)
+    if testCase == 3:
+        plt.figure()
+        plt.plot(fuelMass[:,0]*1e-9, fuelMass[:,1])
+        plt.title("Tank Fuel Mass")
+        plt.figure()
+        plt.plot(fuelMassDot[:,0]*1e-9, fuelMassDot[:,1])
+        plt.title("Tank Fuel Mass Dot")
+        plt.figure()
+        plt.plot(mass1Out[:,0]*1e-9, mass1Out[:,1])
+        plt.title("Fuel Particle 1 Mass")
+        plt.figure()
+        plt.plot(mass2Out[:,0]*1e-9, mass2Out[:,1])
+        plt.title("Fuel Particle 2 Mass")
+        mDotFuel = -0.19392039093
+        mDotParicle1True = mDotFuel*(10./100.)
+        mDotParicle2True = mDotFuel*(20./100.)
+        mDotParicle1Data = [0,(mass1Out[2,1] - mass1Out[1,1])/((mass1Out[2,0] - mass1Out[1,0])*1e-9)]
+        mDotParicle2Data = [0,(mass2Out[2,1] - mass2Out[1,1])/((mass2Out[2,0] - mass2Out[1,0])*1e-9)]
  
     if show_plots:
         plt.show()#
@@ -218,32 +302,41 @@ def sphericalPendulumTest(show_plots, useFlag,timeStep):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    accuracy = 1e-8
-    for k in range(len((rotAngMom_N[:,1]))):
-        if abs((rotAngMom_N[k,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1])>accuracy:
+    if testCase != 3:
+        accuracy = 1e-8
+        for k in range(len((rotAngMom_N[:,1]))):
+            if abs((rotAngMom_N[k,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1])>accuracy:
+                testFailCount += 1
+                testMessages.append("FAILED: SphericalPendulum does not conserve Rotational Angular Momentum around x axes (timeStep={}s)".format(timeStep))
+            if abs((rotAngMom_N[k,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2])>accuracy:
+                testFailCount += 1
+                testMessages.append("FAILED: SphericalPendulum does not conserve Rotational Angular Momentum around y axes (timeStep={}s)".format(timeStep))
+            if abs((rotAngMom_N[k,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])>accuracy:
+                testFailCount += 1
+                testMessages.append("FAILED: SphericalPendulum does not conserve Rotational Angular Momentum around z axes (timeStep={}s)".format(timeStep))
+            if abs((orbAngMom_N[k,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1])>accuracy:
+                testFailCount += 1
+                testMessages.append("FAILED: SphericalPendulum does not conserve Orbital Angular Momentum around x axes (timeStep={}s)".format(timeStep))
+            if abs((orbAngMom_N[k,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2])>accuracy:
+                testFailCount += 1
+                testMessages.append("FAILED: SphericalPendulum does not conserve Orbital Angular Momentum around y axes (timeStep={}s)".format(timeStep))
+            if abs((orbAngMom_N[k,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])>accuracy:
+                testFailCount += 1
+                testMessages.append("FAILED: SphericalPendulum does not conserve Orbital Angular Momentum around z axes (timeStep={}s)".format(timeStep))
+            if abs((rotEnergy[k,1] - rotEnergy[0,1])/rotEnergy[0,1])>accuracy:
+                testFailCount += 1
+                testMessages.append("FAILED: SphericalPendulum does not conserve Rotational Energy (timeStep={}s)".format(timeStep))
+            if abs((orbEnergy[k,1] - orbEnergy[0,1])/orbEnergy[0,1])>accuracy:
+                testFailCount += 1
+                testMessages.append("FAILED: SphericalPendulum does not conserve Orbital Energy (timeStep={}s)".format(timeStep))
+    if testCase == 3:
+        accuracy = 1e-4
+        if not unitTestSupport.isDoubleEqual(mDotParicle1Data,mDotParicle1True,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: SphericalPendulum does not conserve Rotational Angular Momentum around x axes (timeStep={}s)".format(timeStep))
-        if abs((rotAngMom_N[k,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2])>accuracy:
+            testMessages.append("FAILED: Linear Spring Mass Damper unit test failed mass 1 dot test")
+        if not unitTestSupport.isDoubleEqual(mDotParicle2Data,mDotParicle2True,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: SphericalPendulum does not conserve Rotational Angular Momentum around y axes (timeStep={}s)".format(timeStep))
-        if abs((rotAngMom_N[k,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])>accuracy:
-            testFailCount += 1
-            testMessages.append("FAILED: SphericalPendulum does not conserve Rotational Angular Momentum around z axes (timeStep={}s)".format(timeStep))
-        if abs((orbAngMom_N[k,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1])>accuracy:
-            testFailCount += 1
-            testMessages.append("FAILED: SphericalPendulum does not conserve Orbital Angular Momentum around x axes (timeStep={}s)".format(timeStep))
-        if abs((orbAngMom_N[k,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2])>accuracy:
-            testFailCount += 1
-            testMessages.append("FAILED: SphericalPendulum does not conserve Orbital Angular Momentum around y axes (timeStep={}s)".format(timeStep))
-        if abs((orbAngMom_N[k,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])>accuracy:
-            testFailCount += 1
-            testMessages.append("FAILED: SphericalPendulum does not conserve Orbital Angular Momentum around z axes (timeStep={}s)".format(timeStep))
-        if abs((rotEnergy[k,1] - rotEnergy[0,1])/rotEnergy[0,1])>accuracy:
-            testFailCount += 1
-            testMessages.append("FAILED: SphericalPendulum does not conserve Rotational Energy (timeStep={}s)".format(timeStep))
-        if abs((orbEnergy[k,1] - orbEnergy[0,1])/orbEnergy[0,1])>accuracy:
-            testFailCount += 1
-            testMessages.append("FAILED: SphericalPendulum does not conserve Orbital Energy (timeStep={}s)".format(timeStep))
+            testMessages.append("FAILED: Linear Spring Mass Damper unit test failed mass 2 dot test")
 
     if testFailCount == 0:
         print "PASSED "
@@ -256,5 +349,5 @@ def sphericalPendulumTest(show_plots, useFlag,timeStep):
 if __name__ == "__main__":
     sphericalPendulumTest(True,              # showplots
          False,               # useFlag
-         0.001,				 # timeStep
+         3,				 # testCase
        )
