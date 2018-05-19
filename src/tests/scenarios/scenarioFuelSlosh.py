@@ -24,7 +24,7 @@ import inspect
 import numpy as np
 
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.simulation import fuelSloshParticle
+from Basilisk.simulation import linearSpringMassDamper
 from Basilisk.simulation import fuelTank
 
 # import general simulation support files
@@ -104,20 +104,20 @@ path = os.path.dirname(os.path.abspath(filename))
 # State Effectors Setup
 # -------
 # The model used to simulate the fuel slosh is a classic mass spring damper system coupled with the rest of the spacecraft.
-# The fuel slosh particle is added to the simulation using the FuelSloshParticle() module.
+# The fuel slosh particle is added to the simulation using the LinearSpringMassDamper() module.
 # The particle characteristics are set as follows:
 #~~~~~~~~~~~~~~~~~{.py}
 #     # Particle 1
-#     scSim.particle1 = fuelSloshParticle.FuelSloshParticle()
+#     scSim.particle1 = linearSpringMassDamper.LinearSpringMassDamper()
 #
 #     # Define Variables for particle 1
 #     scSim.particle1.k = 1.0  # kg/s^2 (N/m)
 #     scSim.particle1.c = damping_parameter # kg/s
 #     scSim.particle1.r_PB_B = [[0.1], [0], [-0.1]]0], [-0.1]] # m
 #     scSim.particle1.pHat_B = [[1], [0], [0]], [0]]
-#     scSim.particle1.nameOfRhoState = "fuelSloshParticleRho1"fuelSloshParticleRho1"
-#     scSim.particle1.nameOfRhoDotState = "fuelSloshParticleRhoDot1"
-#     scSim.particle1.nameOfMassState = "fuelSloshParticleMass1"
+#     scSim.particle1.nameOfRhoState = "linearSpringMassDamperRho1"linearSpringMassDamperRho1"
+#     scSim.particle1.nameOfRhoDotState = "linearSpringMassDamperRhoDot1"
+#     scSim.particle1.nameOfMassState = "linearSpringMassDamperMass1"
 #     scSim.particle1.rhoInit = 0.05 # m
 #     scSim.particle1.rhoDotInit = 0.0 # m/s
 #     scSim.particle1.massInit = 1500.0 # kg
@@ -130,7 +130,7 @@ path = os.path.dirname(os.path.abspath(filename))
 # fuel mass that is moving in the selected direction.
 #
 # ![Spacecraft Model](Images/doc/test_scenarioFuelSloshSpacecraft.svg "Spacecraft Model")
-# ![Fuel Slosh Particle Model](Images/doc/test_scenarioFuelSloshParticle.svg "Fuel Slosh Particle Model")
+# ![Fuel Slosh Particle Model](Images/doc/test_scenarioLinearSpringMassDamper.svg "Fuel Slosh Particle Model")
 #
 # For further information on the model implemented you can consult this
 # <a target='_blank' href="http://hanspeterschaub.info/Papers/Allard2016a.pdf"><b>conference paper.</b></a>
@@ -148,9 +148,9 @@ path = os.path.dirname(os.path.abspath(filename))
 #       tankModel.radiusTankInit = 0.5 # m
 #       scSim.tank1.r_TB_B = [[0],[0],[0.1]] # m
 #       scSim.tank1.nameOfMassState = "fuelTankMass1"
-#       scSim.tank1.pushFuelSloshParticle(scSim.particle1)
-#       scSim.tank1.pushFuelSloshParticle(scSim.particle2)
-#       scSim.tank1.pushFuelSloshParticle(scSim.particle3)
+#       scSim.tank1.pushfuelSloshParticle(scSim.particle1)
+#       scSim.tank1.pushfuelSloshParticle(scSim.particle2)
+#       scSim.tank1.pushfuelSloshParticle(scSim.particle3)
 #       scSim.tank1.updateOnly = True
 #~~~~~~~~~~~~~~~~~
 # The fuel tank is represented by a constant volume sphere. The radius is set to 0.5 m using the radiusTankInit variable.
@@ -192,7 +192,7 @@ path = os.path.dirname(os.path.abspath(filename))
 # In the third setup, it is added also the fuel slosh particle state. This line shows how to do that for particle1.
 #
 #~~~~~~~~~~~~~~~~~{.py}
-#    scSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('fuelSloshParticleRho1').getState()", simulationTimeStep, 0, 0, 'double')
+#    scSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('linearSpringMassDamperRho1').getState()", simulationTimeStep, 0, 0, 'double')
 #~~~~~~~~~~~~~~~~~
 #
 # Now the simulation is ready to run and we can obtain the outputs using the following code:
@@ -210,7 +210,7 @@ path = os.path.dirname(os.path.abspath(filename))
 # The setup 3 requires the particle displacement in order to plot it, so we need to get it as output. It has been done
 # with the following code:
 #~~~~~~~~~~~~~~~~~{.py}
-# rhoj1Out = scSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('fuelSloshParticleRho1').getState()")
+# rhoj1Out = scSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('linearSpringMassDamperRho1').getState()")
 #~~~~~~~~~~~~~~~~~
 #
 # Setup 1
@@ -287,7 +287,7 @@ path = os.path.dirname(os.path.abspath(filename))
 # ![Changes in Orbital Energy](Images/Scenarios/scenarioFuelSloshOE3.svg "Changes in Orbital Energy")
 # ![Changes in Rotational Angular Momentum](Images/Scenarios/scenarioFuelSloshRAM3.svg "Changes in Rotational Angular Momentum")
 # ![Changes in Rotational Energy](Images/Scenarios/scenarioFuelSloshRE3.svg "Changes in Rotational Energy")
-# ![Fuel Slosh Particle Motion](Images/Scenarios/scenarioFuelSloshParticleMotion.svg "Fuel Slosh Particle Motion")
+# ![Fuel Slosh Particle Motion](Images/Scenarios/scenarioLinearSpringMassDamperMotion.svg "Fuel Slosh Particle Motion")
 #
 ## @}
 def run(show_plots, damping_parameter, timeStep):
@@ -314,46 +314,46 @@ def run(show_plots, damping_parameter, timeStep):
     scSim.AddModelToTask(simTaskName, scObject)
 
     # Particle 1
-    scSim.particle1 = fuelSloshParticle.FuelSloshParticle()
+    scSim.particle1 = linearSpringMassDamper.LinearSpringMassDamper()
 
     # Define Variables for particle 1
     scSim.particle1.k = 1.0  # kg/s^2 (N/m)
     scSim.particle1.c = damping_parameter  # kg/s
     scSim.particle1.r_PB_B = [[0.1], [0], [-0.1]]  # m
     scSim.particle1.pHat_B = [[1], [0], [0]]
-    scSim.particle1.nameOfRhoState = "fuelSloshParticleRho1"
-    scSim.particle1.nameOfRhoDotState = "fuelSloshParticleRhoDot1"
-    scSim.particle1.nameOfMassState = "fuelSloshParticleMass1"
+    scSim.particle1.nameOfRhoState = "linearSpringMassDamperRho1"
+    scSim.particle1.nameOfRhoDotState = "linearSpringMassDamperRhoDot1"
+    scSim.particle1.nameOfMassState = "linearSpringMassDamperMass1"
     scSim.particle1.rhoInit = 0.05  # m
     scSim.particle1.rhoDotInit = 0.0  # m/s
     scSim.particle1.massInit = 1500.0  # kg
 
     # Particle 2
-    scSim.particle2 = fuelSloshParticle.FuelSloshParticle()
+    scSim.particle2 = linearSpringMassDamper.LinearSpringMassDamper()
 
     # Define Variables for particle 2
     scSim.particle2.k = 1.0  # kg/s^2 (N/m)
     scSim.particle2.c = damping_parameter  # kg/s
     scSim.particle2.r_PB_B = [[0], [0], [0.1]]  # m
     scSim.particle2.pHat_B = [[0], [1], [0]]
-    scSim.particle2.nameOfRhoState = "fuelSloshParticleRho2"
-    scSim.particle2.nameOfRhoDotState = "fuelSloshParticleRhoDot2"
-    scSim.particle2.nameOfMassState = "fuelSloshParticleMass2"
+    scSim.particle2.nameOfRhoState = "linearSpringMassDamperRho2"
+    scSim.particle2.nameOfRhoDotState = "linearSpringMassDamperRhoDot2"
+    scSim.particle2.nameOfMassState = "linearSpringMassDamperMass2"
     scSim.particle2.rhoInit = -0.025  # m
     scSim.particle2.rhoDotInit = 0.0  # m/s
     scSim.particle2.massInit = 1400.0  # kg
 
     # Particle 3
-    scSim.particle3 = fuelSloshParticle.FuelSloshParticle()
+    scSim.particle3 = linearSpringMassDamper.LinearSpringMassDamper()
 
     # Define Variables for particle 3
     scSim.particle3.k = 1.0  # kg/s^2 (N/m)
     scSim.particle3.c = damping_parameter  # kg/s
     scSim.particle3.r_PB_B = [[-0.1], [0], [0.1]]  # m
     scSim.particle3.pHat_B = [[0], [0], [1]]
-    scSim.particle3.nameOfRhoState = "fuelSloshParticleRho3"
-    scSim.particle3.nameOfRhoDotState = "fuelSloshParticleRhoDot3"
-    scSim.particle3.nameOfMassState = "fuelSloshParticleMass3"
+    scSim.particle3.nameOfRhoState = "linearSpringMassDamperRho3"
+    scSim.particle3.nameOfRhoDotState = "linearSpringMassDamperRhoDot3"
+    scSim.particle3.nameOfMassState = "linearSpringMassDamperMass3"
     scSim.particle3.rhoInit = -0.015  # m
     scSim.particle3.rhoDotInit = 0.0  # m/s
     scSim.particle3.massInit = 1300.0  # kg
@@ -374,6 +374,9 @@ def run(show_plots, damping_parameter, timeStep):
 
     # ACTIVATE FUEL SLOSH
     scObject.addStateEffector(scSim.tank1)
+    scObject.addStateEffector(scSim.particle1)
+    scObject.addStateEffector(scSim.particle2)
+    scObject.addStateEffector(scSim.particle3)
 
     # define hub properties
     scObject.hub.mHub = 1500  # kg
@@ -433,11 +436,11 @@ def run(show_plots, damping_parameter, timeStep):
     scSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", simulationTimeStep, 0, 0, 'double')
     if damping_parameter != 0.0:
         scSim.AddVariableForLogging(
-            "spacecraftBody.dynManager.getStateObject('fuelSloshParticleRho1').getState()", simulationTimeStep, 0, 0, 'double')
+            "spacecraftBody.dynManager.getStateObject('linearSpringMassDamperRho1').getState()", simulationTimeStep, 0, 0, 'double')
         scSim.AddVariableForLogging(
-            "spacecraftBody.dynManager.getStateObject('fuelSloshParticleRho2').getState()", simulationTimeStep, 0, 0, 'double')
+            "spacecraftBody.dynManager.getStateObject('linearSpringMassDamperRho2').getState()", simulationTimeStep, 0, 0, 'double')
         scSim.AddVariableForLogging(
-            "spacecraftBody.dynManager.getStateObject('fuelSloshParticleRho3').getState()", simulationTimeStep, 0, 0, 'double')
+            "spacecraftBody.dynManager.getStateObject('linearSpringMassDamperRho3').getState()", simulationTimeStep, 0, 0, 'double')
 
     #
     #   configure a simulation stop time time and execute the simulation run
@@ -457,11 +460,11 @@ def run(show_plots, damping_parameter, timeStep):
     rhoj1Out = rhoj2Out = rhoj3Out = []
     if damping_parameter != 0.0:
         rhoj1Out = scSim.GetLogVariableData(
-            "spacecraftBody.dynManager.getStateObject('fuelSloshParticleRho1').getState()")
+            "spacecraftBody.dynManager.getStateObject('linearSpringMassDamperRho1').getState()")
         rhoj2Out = scSim.GetLogVariableData(
-            "spacecraftBody.dynManager.getStateObject('fuelSloshParticleRho2').getState()")
+            "spacecraftBody.dynManager.getStateObject('linearSpringMassDamperRho2').getState()")
         rhoj3Out = scSim.GetLogVariableData(
-            "spacecraftBody.dynManager.getStateObject('fuelSloshParticleRho3').getState()")
+            "spacecraftBody.dynManager.getStateObject('linearSpringMassDamperRho3').getState()")
 
     fileName = os.path.basename(os.path.splitext(__file__)[0])
     if damping_parameter == 0.0 and timeStep == 0.75:
