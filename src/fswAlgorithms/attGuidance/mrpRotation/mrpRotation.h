@@ -33,15 +33,14 @@
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* Declare module private variables */
-    double angleSet[3];                              /*!< [-] current euler angle 321 set with respect to the input reference */
-    double angleRates[3];                            /*!< [rad/s] euler angle 321 rates */
-    double cmdSet[3];
-    double cmdRates[3];
-    double priorCmdSet[3];
-    double priorCmdRates[3];
-    uint64_t priorTime;                              /*!< [ns] last time the guidance module is called */
-    double dt;                                       /*!< [s] integration time-step */
-    //AttRefFswMsg inputRef;
+    double mrpSet[3];                           /*!< [-] current MRP attitude coordinate set with respect to the input reference */
+    double omega_RR0_R[3];                      /*!< [rad/s] angular velocity vector relative to input reference */
+    double cmdSet[3];                           /*!< [] commanded initial MRP set with respect to input reference */
+    double cmdRates[3];                         /*!< [rad/s] commanded constant angular velocity vector */
+    double priorCmdSet[3];                      /*!< [] prior commanded MRP set */
+    double priorCmdRates[3];                    /*!< [rad/s] prior commanded angular velocity vector */
+    uint64_t priorTime;                         /*!< [ns] last time the guidance module is called */
+    double dt;                                  /*!< [s] integration time-step */
     
     /* Declare module IO interfaces */
     char        attRefOutMsgName[MAX_STAT_MSG_LENGTH];      /*!< The name of the output message containing the Reference */
@@ -72,7 +71,6 @@ extern "C" {
     void writeOutputMessages(mrpRotationConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     void checkRasterCommands(mrpRotationConfig *ConfigData);
     void computeTimeStep(mrpRotationConfig *ConfigData, uint64_t callTime);
-    void computeEuler321_Binv_derivative(double angleSet[3], double angleRates[3], double B_inv_deriv[3][3]);
     void computeMRPRotationReference(mrpRotationConfig *ConfigData,
                                        double sigma_R0N[3],
                                        double omega_R0N_N[3],
