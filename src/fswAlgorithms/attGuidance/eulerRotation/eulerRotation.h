@@ -33,15 +33,14 @@
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* Declare module private variables */
-    double angleSet[3];                              /*!< [-] current euler angle 321 set with respect to the input reference */
-    double angleRates[3];                            /*!< [rad/s] euler angle 321 rates */
-    double cmdSet[3];
-    double cmdRates[3];
-    double priorCmdSet[3];
-    double priorCmdRates[3];
-    uint64_t priorTime;                              /*!< [ns] last time the guidance module is called */
-    double dt;                                       /*!< [s] integration time-step */
-    //AttRefFswMsg inputRef;
+    double angleSet[3];                         /*!< [-] current euler angle 321 set with respect to the input reference */
+    double angleRates[3];                       /*!< [rad/s] euler angle 321 rates */
+    double cmdSet[3];                           /*!< [] commanded initial Euler angle 321 set with respect to input reference */
+    double cmdRates[3];                         /*!< [rad/s] commanded constant 321 Euler angle rates */
+    double priorCmdSet[3];                      /*!< [] prior commanded 321 Euler angle set */
+    double priorCmdRates[3];                    /*!< [rad/s] prior commanded 321 Euler angle rates */
+    uint64_t priorTime;                         /*!< [ns] last time the guidance module is called */
+    double dt;                                  /*!< [s] integration time-step */
     
     /* Declare module IO interfaces */
     char        attRefOutMsgName[MAX_STAT_MSG_LENGTH];      /*!< The name of the output message containing the Reference */
