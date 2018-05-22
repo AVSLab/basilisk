@@ -49,24 +49,28 @@ import truth_mrpRotation as truth
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(conditionstring)
 
-@pytest.mark.parametrize("cmdStateFlag", [
-      ("False")
-     ,("False")
+@pytest.mark.parametrize("cmdStateFlag, stateOutputFlag, testReset", [
+      ("False", "False", "False")
+     ,("True", "False", "False")
+    , ("False", "True", "False")
+    , ("False", "False", "True")
+    , ("True", "False", "True")
 ])
 
 
 # provide a unique test method name, starting with test_
-def test_mrpRotation(show_plots, cmdStateFlag):
+def test_mrpRotation(show_plots, cmdStateFlag, stateOutputFlag, testReset):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(show_plots, cmdStateFlag)
+    [testResults, testMessage] = run(show_plots, cmdStateFlag, stateOutputFlag, testReset)
     assert testResults < 1, testMessage
 
 
-def run(show_plots, cmdStateFlag):
+def run(show_plots, cmdStateFlag, stateOutputFlag, testReset):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
+
 
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
@@ -96,10 +100,25 @@ def run(show_plots, cmdStateFlag):
     # Initialize the test module configuration data
     moduleConfig.attRefInMsgName = "inputRefName"
     moduleConfig.attRefOutMsgName = "outputName"
-    angleSet = np.array([0.0, 90.0, 0.0]) * mc.D2R
-    moduleConfig.mrpSet = angleSet
-    angleRates = np.array([0.1, 0.0, 0.0]) * mc.D2R
-    moduleConfig.omega_RR0_R = angleRates
+    sigma_RR0 = np.array([0.3, .5, 0.0])
+    moduleConfig.mrpSet = sigma_RR0
+    omega_RR0_R = np.array([0.1, 0.0, 0.0]) * mc.D2R
+    moduleConfig.omega_RR0_R = omega_RR0_R
+
+    if cmdStateFlag:
+        moduleConfig.desiredAttInMsgName = "desiredAttName"
+        desiredAtt = fswMessages.AttStateFswMsg()
+        sigma_RR0 = np.array([0.1, 0.0, -0.2])
+        desiredAtt.state = sigma_RR0
+        omega_RR0_R = np.array([0.1, 1.0, 0.5]) * mc.D2R
+        desiredAtt.rate = omega_RR0_R
+        unitTestSupport.setMessage(unitTestSim.TotalSim,
+                                   unitProcessName,
+                                   moduleConfig.desiredAttInMsgName,
+                                   desiredAtt)
+    if stateOutputFlag:
+        moduleConfig.attitudeOutMsgName = "optAttOut"
+
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
@@ -122,6 +141,8 @@ def run(show_plots, cmdStateFlag):
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.attRefOutMsgName, testProcessRate)
+    if stateOutputFlag:
+        unitTestSim.TotalSim.logThisMessage(moduleConfig.attitudeOutMsgName, testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -135,12 +156,17 @@ def run(show_plots, cmdStateFlag):
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
+    if testReset:
+        moduleWrap.Reset(1)
+        unitTestSim.ConfigureStopTime(2*mc.sec2nano(totalTestSimTime))        # seconds to stop simulation
+        unitTestSim.ExecuteSimulation()
+
+
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     accuracy = 1e-12
-    trueSigma, trueOmega, truedOmega = truth.results(angleSet,
-                              angleRates,
-                              RefStateInData, updateTime)
+    trueSigma, trueOmega, truedOmega, trueOptSigma, trueOptOmega \
+        = truth.results(sigma_RR0,omega_RR0_R,RefStateInData,updateTime, cmdStateFlag, testReset)
 
     #
     # check sigma_RN
@@ -151,6 +177,8 @@ def run(show_plots, cmdStateFlag):
     testFailCount, testMessages = unitTestSupport.compareArray(trueSigma, moduleOutput,
                                                                accuracy, "sigma_RN Set",
                                                                testFailCount, testMessages)
+    print moduleOutput
+
     #
     # check omega_RN_N
     #
@@ -170,6 +198,27 @@ def run(show_plots, cmdStateFlag):
     testFailCount, testMessages = unitTestSupport.compareArray(truedOmega, moduleOutput,
                                                                accuracy, "domega_RN_N Vector",
                                                                testFailCount, testMessages)
+
+    if stateOutputFlag:
+        #
+        # check sigma_RR0
+        #
+        moduleOutputName = "state"
+        moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attitudeOutMsgName + '.' + moduleOutputName,
+                                                      range(3))
+        testFailCount, testMessages = unitTestSupport.compareArray(trueOptSigma, moduleOutput,
+                                                                   accuracy, "sigma_RR0 Set",
+                                                                   testFailCount, testMessages)
+
+        #
+        # check omega_RR0_R
+        #
+        moduleOutputName = "rate"
+        moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attitudeOutMsgName + '.' + moduleOutputName,
+                                                      range(3))
+        testFailCount, testMessages = unitTestSupport.compareArray(trueOptOmega, moduleOutput,
+                                                                   accuracy, "omega_RR0_R Set",
+                                                                   testFailCount, testMessages)
 
 
     # If the argument provided at commandline "--show_plots" evaluates as true,
@@ -196,4 +245,6 @@ if __name__ == "__main__":
     run(
         False           # show plots
         , False         # cmdStateFlag
+        , False         # stateOutputFlag
+        , False         # testReset
     )
