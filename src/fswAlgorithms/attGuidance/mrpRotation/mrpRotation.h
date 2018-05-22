@@ -45,8 +45,8 @@ typedef struct {
     /* Declare module IO interfaces */
     char        attRefOutMsgName[MAX_STAT_MSG_LENGTH];      /*!< The name of the output message containing the Reference */
     int32_t     attRefOutMsgID;                             /*!< [-] ID for the outgoing Reference message */
-    char        attitudeOutMsgName[MAX_STAT_MSG_LENGTH];    /*!< The name of the output message containing the current Euler Angle and rate set */
-    int32_t     attitudeOutMsgID;                           /*!< [-] ID for the outgoing Eulr angles and rates Set message */
+    char        attitudeOutMsgName[MAX_STAT_MSG_LENGTH];    /*!< The name of the output message containing the current MRP and rate set */
+    int32_t     attitudeOutMsgID;                           /*!< [-] ID for the outgoing MRP angles and rates Set message */
     char        attRefInMsgName[MAX_STAT_MSG_LENGTH];       /*!< The name of the guidance reference Input message */
     int32_t     attRefInMsgID;                              /*!< [-] ID for the incoming guidance reference message */
     
