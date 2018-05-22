@@ -28,9 +28,7 @@ import numpy as np
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import eulerRotation                    # import the module that is to be tested
 from Basilisk.utilities import macros as mc
 from Basilisk.fswAlgorithms import fswMessages
