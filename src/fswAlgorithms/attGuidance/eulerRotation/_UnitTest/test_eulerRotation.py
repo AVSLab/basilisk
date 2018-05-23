@@ -59,7 +59,7 @@ def run(show_plots):
 
     # Test times
     updateTime = 0.5     # update process rate update time
-    totalTestSimTime = 1.
+    totalTestSimTime = 1.5
 
     # Create test thread
     testProcessRate = mc.sec2nano(updateTime)
@@ -128,6 +128,7 @@ def run(show_plots):
     # set the filtered output truth states
     trueVector = [
         [-0.193031238249, 0.608048400483, 0.386062476497],
+        [-0.193031238249, 0.608048400483, 0.386062476497],
         [-0.193144351314,  0.607931107381,  0.386360300559],
         [-0.193257454832,  0.607813704445,  0.386658117585]
     ]
@@ -145,6 +146,7 @@ def run(show_plots):
     trueVector = [
         [0.101246280045,  0.000182644489,  0.001208139578],
         [0.101246280045,  0.000182644489,  0.001208139578],
+        [0.101246280045,  0.000182644489,  0.001208139578],
         [0.101246280045,  0.000182644489,  0.001208139578]
     ]
     testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
@@ -159,6 +161,7 @@ def run(show_plots):
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
+        [0.000000000000e+00,  -1.208139577635e-04,   1.826444892823e-05],
         [0.000000000000e+00,  -1.208139577635e-04,   1.826444892823e-05],
         [0.000000000000e+00,  -1.208139577635e-04,   1.826444892823e-05],
         [0.000000000000e+00,  -1.208139577635e-04,   1.826444892823e-05]
