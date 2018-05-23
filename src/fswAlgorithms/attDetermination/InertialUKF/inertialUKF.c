@@ -165,7 +165,7 @@ void Read_STMessages(InertialUKFConfig *ConfigData, uint64_t moduleID)
 {
     uint64_t ClockTime; /* [ns] Read time for the message*/
     uint32_t ReadSize;  /* [-] Non-zero size indicates we received ST msg*/
-    STAttFswMsg bufferSTMessage; /* Local ST message to copy and organize  */
+    int bufferSTIndice; /* Local ST message to copy and organize  */
     int i;
     int j;
     
@@ -176,27 +176,22 @@ void Read_STMessages(InertialUKFConfig *ConfigData, uint64_t moduleID)
         ClockTime = 0;
         ReadSize = 0;
         memset(&(ConfigData->stSensorIn[i]), 0x0, sizeof(STAttFswMsg));
-        ReadMessage(ConfigData->STDatasStruct.STMessages[i].chuFusOutMsgID, ConfigData->ClockTimeST[i], ConfigData->ReadSizeST[i],
+        ReadMessage(ConfigData->STDatasStruct.STMessages[i].chuFusOutMsgID, &ClockTime, &ReadSize,
                     sizeof(STAttFswMsg), (void*) (&(ConfigData->stSensorIn[i])), moduleID);
+        
+        ConfigData->ClockTimeST[i] = ClockTime;
+        ConfigData->ReadSizeST[i] = ReadSize;
+        
         /*! - If the time tag from the measured data is new compared to previous step,
          propagate and update the filter*/
         
-
         for (j=0; j<i; j++)
             {
                 if (ConfigData->stSensorIn[i].timeTag < ConfigData->stSensorIn[j].timeTag )
                 {
-                    bufferSTMessage = ConfigData->stSensorIn[j];
-                    ConfigData->stSensorIn[j] =  ConfigData->stSensorIn[i];
-                    ConfigData->stSensorIn[i] = bufferSTMessage;
-                    
-                    ClockTime = ConfigData->ClockTimeST[j];
-                    ConfigData->ClockTimeST[j] = ConfigData->ClockTimeST[i];
-                    ConfigData->ClockTimeST[i] = ClockTime;
-                    
-                    ReadSize = ConfigData->ReadSizeST[j];
-                    ConfigData->ReadSizeST[j] = ConfigData->ReadSizeST[i];
-                    ConfigData->ReadSizeST[i] = ReadSize;
+                    bufferSTIndice = j;
+                    ConfigData->stSensorOrder[j] =  ConfigData->stSensorOrder[i];
+                    ConfigData->stSensorOrder[i] = bufferSTIndice;
                 }
             }
     }
@@ -251,9 +246,9 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     
     for (i = 0; i < ConfigData->STDatasStruct.numST; i++)
     {
-        newTimeTag = ConfigData->stSensorIn[i].timeTag * NANO2SEC;
-        ClockTime = ConfigData->ClockTimeST[i];
-        ReadSize =  ConfigData->ReadSizeST[i];
+        newTimeTag = ConfigData->stSensorIn[ConfigData->stSensorOrder[i]].timeTag * NANO2SEC;
+        ClockTime = ConfigData->ClockTimeST[ConfigData->stSensorOrder[i]];
+        ReadSize =  ConfigData->ReadSizeST[ConfigData->stSensorOrder[i]];
 
         ConfigData->speedDt = (ClockTime - ConfigData->timeWheelPrev)*NANO2SEC;
         ConfigData->timeWheelPrev = ClockTime;
@@ -264,7 +259,7 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
         if(newTimeTag > ConfigData->timeTag && ReadSize > 0)
         {
             inertialUKFTimeUpdate(ConfigData, newTimeTag);
-            inertialUKFMeasUpdate(ConfigData, newTimeTag, i);
+            inertialUKFMeasUpdate(ConfigData, newTimeTag, ConfigData->stSensorOrder[i]);
             trackerValid = 1;
         }
         
@@ -663,7 +658,7 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int
     /*! - This is the square-root of the Rk matrix which we treat as the Cholesky
         decomposition of the observation variance matrix constructed for our number 
         of observations*/
-    ukfCholDecomp(ConfigData->qObs, ConfigData->numObs, ConfigData->numObs, qChol);
+    ukfCholDecomp(ConfigData->STDatasStruct.STMessages[currentST].noise, ConfigData->numObs, ConfigData->numObs, qChol);
     memcpy(&(AT[2*ConfigData->countHalfSPs*ConfigData->numObs]),
            qChol, ConfigData->numObs*ConfigData->numObs*sizeof(double));
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the 

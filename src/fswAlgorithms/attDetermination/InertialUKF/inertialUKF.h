@@ -39,7 +39,7 @@
 typedef struct {
     char chuFusOutMsgName[MAX_STAT_MSG_LENGTH];    /*!< [-] Input message buffer from MIRU*/
     int32_t chuFusOutMsgID;                        /*!< [-] Input message ID from MIRU*/
-    double noise[3][3];                               /*!< [-] Per axis noise on the ST*/
+    double noise[3*3];       /*!< [-] Per axis noise on the ST*/
 }STMessage;
 
 /*! Structure to gather the ST messages and content */
@@ -89,10 +89,9 @@ typedef struct {
 
 	double SP[(2*AKF_N_STATES+1)*AKF_N_STATES];          /*!< [-]    sigma point matrix */
 
-	double qNoise[AKF_N_STATES*AKF_N_STATES];       /*!< [-] process noise matrix */
-	double sQnoise[AKF_N_STATES*AKF_N_STATES];      /*!< [-] cholesky of Qnoise */
+	double qNoise[MAX_ST_VEH_COUNT*AKF_N_STATES*AKF_N_STATES];       /*!< [-] process noise matrix */
+	double sQnoise[MAX_ST_VEH_COUNT*AKF_N_STATES*AKF_N_STATES];      /*!< [-] cholesky of Qnoise */
 
-	double qObs[3*3];  /*!< [-] Maximally sized obs noise matrix*/
     double IInv[3][3];
 
     uint32_t numUsedGyros;   /*!< -- Number of currently active CSS sensors*/
@@ -102,6 +101,7 @@ typedef struct {
     double timeTagOut;       /*!< [s] Output time-tag information*/
 	NavAttIntMsg outputInertial;        /*!< -- Output inertial estimate data */
     STAttFswMsg stSensorIn[MAX_ST_VEH_COUNT]; /*!< [-] ST sensor data read in from message bus*/
+    int stSensorOrder[MAX_ST_VEH_COUNT]; /*!< [-] ST sensor data read in from message bus*/
     int ClockTimeST[MAX_ST_VEH_COUNT];  /*!< [-] All of the ClockTimes for the STs*/
     int ReadSizeST[MAX_ST_VEH_COUNT];  /*!< [-] All of the ReadSizes for the STs*/
     RWArrayConfigFswMsg rwConfigParams;       /*!< [-] struct to store message containing RW config parameters in body B frame */
