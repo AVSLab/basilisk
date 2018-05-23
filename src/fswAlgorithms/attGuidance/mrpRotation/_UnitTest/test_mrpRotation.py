@@ -104,6 +104,9 @@ def run(show_plots, cmdStateFlag, stateOutputFlag, testReset):
     moduleConfig.mrpSet = sigma_RR0
     omega_RR0_R = np.array([0.1, 0.0, 0.0]) * mc.D2R
     moduleConfig.omega_RR0_R = omega_RR0_R
+    unitTestSupport.writeTeXSnippet("sigma_RR0", str(sigma_RR0), path)
+    unitTestSupport.writeTeXSnippet("omega_RR0_R", str(omega_RR0_R*mc.R2D) + "deg/sec", path)
+
 
     if cmdStateFlag:
         moduleConfig.desiredAttInMsgName = "desiredAttName"
@@ -116,6 +119,9 @@ def run(show_plots, cmdStateFlag, stateOutputFlag, testReset):
                                    unitProcessName,
                                    moduleConfig.desiredAttInMsgName,
                                    desiredAtt)
+        unitTestSupport.writeTeXSnippet("sigma_RR0Cmd", str(sigma_RR0), path)
+        unitTestSupport.writeTeXSnippet("omega_RR0_RCmd", str(omega_RR0_R * mc.R2D) + "deg/sec", path)
+
     if stateOutputFlag:
         moduleConfig.attitudeOutMsgName = "optAttOut"
 
@@ -165,6 +171,7 @@ def run(show_plots, cmdStateFlag, stateOutputFlag, testReset):
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     accuracy = 1e-12
+    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
     trueSigma, trueOmega, truedOmega, trueOptSigma, trueOptOmega \
         = truth.results(sigma_RR0,omega_RR0_R,RefStateInData,updateTime, cmdStateFlag, testReset)
 
@@ -219,6 +226,16 @@ def run(show_plots, cmdStateFlag, stateOutputFlag, testReset):
                                                                    accuracy, "omega_RR0_R Set",
                                                                    testFailCount, testMessages)
 
+    snippentName = "passFail" + str(cmdStateFlag) + str(stateOutputFlag) + str(testReset)
+    if testFailCount == 0:
+        colorText = 'ForestGreen'
+        print "PASSED: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        print "Failed: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     # If the argument provided at commandline "--show_plots" evaluates as true,
     # plot all figures
