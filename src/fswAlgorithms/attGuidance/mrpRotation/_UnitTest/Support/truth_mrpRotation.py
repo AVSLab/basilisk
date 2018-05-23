@@ -56,6 +56,11 @@ def results(sigma_RR0, omega_RR0_R, RefStateInData, dt, cmdStateFlag, testReset)
     ansdOmega_RN_N.append(domega_RN_N.tolist())
     ansOptSigma.append(np.array(sigma_RR0).tolist())
     ansOptOmega.append(np.array(omega_RR0_R).tolist())
+    ansSigma.append(s1.tolist())
+    ansOmega_RN_N.append(omega_RN_N.tolist())
+    ansdOmega_RN_N.append(domega_RN_N.tolist())
+    ansOptSigma.append(np.array(sigma_RR0).tolist())
+    ansOptOmega.append(np.array(omega_RR0_R).tolist())
 
     # compute 1st time step
     B =  rbk.BmatMRP(sigma_RR0)

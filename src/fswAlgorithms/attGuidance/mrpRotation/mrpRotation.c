@@ -53,7 +53,7 @@ void SelfInit_mrpRotation(mrpRotationConfig *ConfigData, uint64_t moduleID)
                                                         moduleID);
     }
 
-    ConfigData->priorTime = -1;
+    ConfigData->priorTime = 0;
     v3SetZero(ConfigData->priorCmdSet);
     v3SetZero(ConfigData->priorCmdRates);
 }
@@ -76,7 +76,7 @@ void CrossInit_mrpRotation(mrpRotationConfig *ConfigData, uint64_t moduleID)
 
 void Reset_mrpRotation(mrpRotationConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    ConfigData->priorTime = -1;
+    ConfigData->priorTime = 0;
     v3SetZero(ConfigData->priorCmdSet);
     v3SetZero(ConfigData->priorCmdRates);
 }
@@ -171,7 +171,7 @@ void checkRasterCommands(mrpRotationConfig *ConfigData)
  */
 void computeTimeStep(mrpRotationConfig *ConfigData, uint64_t callTime)
 {
-    if (ConfigData->priorTime == -1)
+    if (ConfigData->priorTime == 0)
     {
         ConfigData->dt = 0.0;
     } else {

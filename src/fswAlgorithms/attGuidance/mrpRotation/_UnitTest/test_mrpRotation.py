@@ -81,7 +81,7 @@ def run(show_plots, cmdStateFlag, stateOutputFlag, testReset):
 
     # Test times
     updateTime = 0.5     # update process rate update time
-    totalTestSimTime = 1.
+    totalTestSimTime = 1.5
 
     # Create test thread
     testProcessRate = mc.sec2nano(updateTime)
@@ -158,7 +158,7 @@ def run(show_plots, cmdStateFlag, stateOutputFlag, testReset):
 
     if testReset:
         moduleWrap.Reset(1)
-        unitTestSim.ConfigureStopTime(2*mc.sec2nano(totalTestSimTime))        # seconds to stop simulation
+        unitTestSim.ConfigureStopTime(mc.sec2nano(totalTestSimTime+1.0))        # seconds to stop simulation
         unitTestSim.ExecuteSimulation()
 
 
@@ -177,7 +177,6 @@ def run(show_plots, cmdStateFlag, stateOutputFlag, testReset):
     testFailCount, testMessages = unitTestSupport.compareArray(trueSigma, moduleOutput,
                                                                accuracy, "sigma_RN Set",
                                                                testFailCount, testMessages)
-    print moduleOutput
 
     #
     # check omega_RN_N
