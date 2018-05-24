@@ -9,6 +9,15 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 * GPU based methods to evaluate solar radiation pressure forces and torques
 * atmospheric drag evaluation using multi-faceted spacecraft model
 
+## Version 0.X.X (latest develop)
+<ul>
+    <li>Improved how the fuelSloshSpringMassDamper effector class works.  It is now renamed to linearSpringMassDamper.  It can be used to simulate both fuel sloshing, but also structural modes.  If the linearSprintMassDamper is connected to a fuel tank, then it's mass depends on the amount of fuel left. The associated unit test illustrated how to setup this last capability.  The module also contains documentation on the associated math.
+    </li>
+    <li>
+    A new sphericalPendulum effector class has been added.  For rotations a spherical pendulum is a better approximation rotational fuel slosh.  This effector can model rotational fuel slosh if connected to a tank (see unit test again), or it can model a torsional structural mode if not connected to a tank. Associated math documentation is included with the class.
+    </li>
+</ul>
+
 ## Version 0.2.2
 <ul>
     <li>Fixed a build issues on the Windows platform is Visual Studio 2017 or later is used.</li>
