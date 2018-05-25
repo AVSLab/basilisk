@@ -152,58 +152,37 @@ void HubEffector::computeDerivatives(double integTime)
     Eigen::Vector3d gravityForce_N;
     gravityForce_N = (*this->m_SC)(0,0)*gLocal_N;
 
-    if (this->useRotation == true) {
-        // - Set kinematic derivative
-        sigmaState->setDerivative(1.0/4.0*sigmaLocal_BN.Bmat()*omegaLocal_BN_B);
+    // - Set kinematic derivative
+    sigmaState->setDerivative(1.0/4.0*sigmaLocal_BN.Bmat()*omegaLocal_BN_B);
 
-        if (this->useTranslation == true) {
-            // - Define dcm's
-            Eigen::Matrix3d dcm_NB;
-            Eigen::Matrix3d dcm_BN;
-            dcm_NB = sigmaLocal_BN.toRotationMatrix();
-            dcm_BN = dcm_NB.transpose();
+    // - Define dcm's
+    Eigen::Matrix3d dcm_NB;
+    Eigen::Matrix3d dcm_BN;
+    dcm_NB = sigmaLocal_BN.toRotationMatrix();
+    dcm_BN = dcm_NB.transpose();
 
-            // - Map external force_N to the body frame
-            Eigen::Vector3d sumForceExternalMappedToB;
-            sumForceExternalMappedToB = dcm_BN*this->sumForceExternal_N;
+    // - Map external force_N to the body frame
+    Eigen::Vector3d sumForceExternalMappedToB;
+    sumForceExternalMappedToB = dcm_BN*this->sumForceExternal_N;
 
-            // - Edit both v_trans and v_rot with gravity and external force and torque
-            Eigen::Vector3d gravityForce_B;
-            gravityForce_B = dcm_BN*gravityForce_N;
-            this->vecTrans += gravityForce_B + sumForceExternalMappedToB + this->sumForceExternal_B;
-            this->vecRot += cLocal_B.cross(gravityForce_B) + this->sumTorquePntB_B;
+    // - Edit both v_trans and v_rot with gravity and external force and torque
+    Eigen::Vector3d gravityForce_B;
+    gravityForce_B = dcm_BN*gravityForce_N;
+    this->vecTrans += gravityForce_B + sumForceExternalMappedToB + this->sumForceExternal_B;
+    this->vecRot += cLocal_B.cross(gravityForce_B) + this->sumTorquePntB_B;
 
-            // - Solve for omegaDot_BN_B
-            Eigen::Vector3d omegaDot_BN_B;
-            intermediateVector = this->vecRot - this->matrixC*this->matrixA.inverse()*this->vecTrans;
-            intermediateMatrix = matrixD - matrixC*matrixA.inverse()*matrixB;
-            omegaDot_BN_B = intermediateMatrix.inverse()*intermediateVector;
-            omegaState->setDerivative(omegaDot_BN_B);
+    // - Solve for omegaDot_BN_B
+    Eigen::Vector3d omegaDot_BN_B;
+    intermediateVector = this->vecRot - this->matrixC*this->matrixA.inverse()*this->vecTrans;
+    intermediateMatrix = matrixD - matrixC*matrixA.inverse()*matrixB;
+    omegaDot_BN_B = intermediateMatrix.inverse()*intermediateVector;
+    omegaState->setDerivative(omegaDot_BN_B);
 
-            // - Solve for rDDot_BN_N
-            velocityState->setDerivative(dcm_NB*matrixA.inverse()*(vecTrans - matrixB*omegaDot_BN_B));
-        } else {
-            // - Only add in sumTorques to vecRot;
-            vecRot += this->sumTorquePntB_B;
+    // - Solve for rDDot_BN_N
+    velocityState->setDerivative(dcm_NB*matrixA.inverse()*(vecTrans - matrixB*omegaDot_BN_B));
 
-            // - Solve for omegaDot_BN_B
-            omegaState->setDerivative(this->matrixD.inverse()*vecRot);
-        }
-    }
-
-    if (this->useTranslation==true) {
-        // - Set kinematic derivative
-        posState->setDerivative(rDotLocal_BN_N);
-
-        if (this->useRotation==false) {
-            // - If it is just translating, only compute translational terms
-            // - Add in gravity
-            vecTrans += gravityForce_N + this->sumForceExternal_N;
-
-            // - Find rDDot_BN_N
-            velocityState->setDerivative(matrixA.inverse()*(vecTrans));
-        }
-    }
+    // - Set kinematic derivative
+    posState->setDerivative(rDotLocal_BN_N);
 
     return;
 }
