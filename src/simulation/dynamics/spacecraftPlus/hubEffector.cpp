@@ -49,10 +49,6 @@ HubEffector::HubEffector()
     this->IHubPntBc_B.setIdentity();
     this->r_BcB_B.fill(0.0);
 
-    // - Default simulation to useTranslation and useRotation as true for now
-    this->useTranslation = true;
-    this->useRotation = true;
-
     return;
 }
 
