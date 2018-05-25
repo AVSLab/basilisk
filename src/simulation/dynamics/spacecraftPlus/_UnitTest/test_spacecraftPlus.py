@@ -93,8 +93,6 @@ def test_SCTranslation(show_plots):
     scObject.hub.mHub = 100
     scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
     scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
-    scObject.hub.useTranslation = True
-    scObject.hub.useRotation = False
 
     unitTestSim.InitializeSimulation()
 
@@ -407,9 +405,6 @@ def test_SCRotation(show_plots):
     h3_Ncheck = numpy.dot(dcm_BN.transpose(),h3_B)
     sigmaCalc = RigidBodyKinematics.C2MRP(dcm_BN)
     scObject.hub.sigma_BNInit = [[sigmaCalc[0]], [sigmaCalc[1]], [sigmaCalc[2]]]
-
-    scObject.hub.useTranslation = False
-    scObject.hub.useRotation = True
 
     unitTestSim.InitializeSimulation()
 

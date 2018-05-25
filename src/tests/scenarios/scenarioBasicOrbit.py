@@ -120,13 +120,10 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 # orbit view relative to the perfocal frame (no spherical harmonics), or the
 # semi-major axis time history plot (with spherical harmonics turned on).
 #
-# The dynamics simulation is setup using a SpacecraftPlus() module.  Note that the rotational motion simulation is turned off to leave
-# pure 3-DOF translation motion simulation.
+# The dynamics simulation is setup using a SpacecraftPlus() module.
 #~~~~~~~~~~~~~~~~~{.py}
 #     scObject = spacecraftPlus.SpacecraftPlus()
 #     scObject.ModelTag = "spacecraftBody"
-#     scObject.hub.useTranslation = True
-#     scObject.hub.useRotation = False
 #~~~~~~~~~~~~~~~~~
 # Next, this module is attached to the simulation process
 #~~~~~~~~~~~~~~~~~{.py}
@@ -342,8 +339,6 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
-    scObject.hub.useTranslation = True
-    scObject.hub.useRotation = False
 
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
