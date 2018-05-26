@@ -52,7 +52,7 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     void linkInStates(DynParamManager& statesIn);
     void readInputMessages();
-    void computeBodyForceTorque(double integTime);
+    void computeForceTorque(double integTime);
     void setUseCannonballModel(bool use);
     void addForceLookupBEntry(Eigen::Vector3d vec);
     void addTorqueLookupBEntry(Eigen::Vector3d vec);
