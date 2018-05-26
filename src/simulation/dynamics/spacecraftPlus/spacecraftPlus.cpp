@@ -311,7 +311,7 @@ void SpacecraftPlus::equationsOfMotion(double integTimeSeconds)
     for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
     {
         // - Compute the force and torque contributions from the dynamicEffectors
-        (*dynIt)->computeBodyForceTorque(integTimeSeconds);
+        (*dynIt)->computeForceTorque(integTimeSeconds);
         this->hub.sumForceExternal_N += (*dynIt)->forceExternal_N;
         this->hub.sumForceExternal_B += (*dynIt)->forceExternal_B;
         this->hub.sumTorquePntB_B += (*dynIt)->torqueExternalPntB_B;
