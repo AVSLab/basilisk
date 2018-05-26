@@ -125,6 +125,13 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 #     scObject = spacecraftPlus.SpacecraftPlus()
 #     scObject.ModelTag = "spacecraftBody"
 #~~~~~~~~~~~~~~~~~
+# Note that this module simulates both the translational and rotational motion of the spacecraft.
+# In this scenario only the translational (i.e. orbital) motion is tracked.  This means the rotational motion
+# remains at a default inertial frame orientation in this scenario.  There is no appreciable speed hit to
+# simulate both the orbital and rotational motion for a single rigid body.  In the later scenarios
+# the rotational motion is engaged by specifying rotational initial conditions, as well as rotation
+# related effectors.  In this simple scenario only translational motion is setup and tracked.
+#
 # Next, this module is attached to the simulation process
 #~~~~~~~~~~~~~~~~~{.py}
 #   scSim.AddModelToTask(simTaskName, scObject)
