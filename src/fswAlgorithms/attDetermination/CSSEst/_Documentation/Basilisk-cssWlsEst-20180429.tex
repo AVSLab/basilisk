@@ -224,6 +224,9 @@ good information to provide.
    demonstrate that the algorithm passivates its outputs without hitting any 
    unacceptable event.  It does correctly flag that no valid CSSs were found 
    during the test. \textcolor{ForestGreen}{Test successful.}}
+   
+   \item{Angular Velocity Test:  The same 8 unit CSS configuration is used as in the earlier tests, but the true sun heading is set equal to $\hat{\bm b}_{1}$.  A BSK sample time of 0.5 seconds is setup, and the simulation is run 3 times to reach a simulation time of 1.0 seconds.  It takes 2 steps for the module to evaluate the update rate $\D t$, thus the expected rate estimate is a zero vector for these steps.  As the sun heading is being evaluated in the 2nd step, with the 3rd step there is a non-zero $\D t$ value, but the old and new sun-heading vectors are the same.  The expected rate output is again a zero vector.  Next the true sun heading is changed to be $\hat{\bm b}_{2}$, corresponding to a 90$\deg$ heading change about $\hat{\bm b}_{3}$.  The simulation is run for two more steps. The expected inertial body rate with step 4 would be $-\pi$ rad/sec about $\hat{\bm b}_{3}$.  The 5th step must yield again a zero rate vector as the sun heading has not changed.  Next, a reset function is called and a single simulation step is called.  The expected output is the zero rate vector again.  Finally, the true sun heading vector is changed back to $\hat{\bm b}_{1}$ and another simulation step is performed to show a $+\pi$ rad/sec rotation about $\hat{\bm b}_{3}$.  
+   The test results status is: \input{AutoTeX/passFailRate.tex}}
 \end{enumerate}
 
 \section{Test Coverage}
