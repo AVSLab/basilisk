@@ -19,6 +19,8 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <ul>
     <li>FIX: Remove any instances of useTranslation or useRotation defined in the hubEffector class. 
     </ul>
+    <li>Changed name of the method computeBodyForceTorque to computeForceTorque in the dynamicEffector abstract class and any inheriting classes. This avoids the confusion of thinking that only body frame relative forces can be defined, but in reality this class gives the ability to define both external forces defined in the body frame and the inertial frame.
+    </li>
 </ul>
 
 ## Version 0.2.2
