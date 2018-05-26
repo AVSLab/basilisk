@@ -230,10 +230,10 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
             if (temp < -1.0) temp = -1.0;
             v3Scale(acos(temp)/dt, ConfigData->sunlineOutBuffer.omega_BN_B, ConfigData->sunlineOutBuffer.omega_BN_B);
         } else {
-            /* store the sun heading estimate */
-            v3Copy(ConfigData->sunlineOutBuffer.vehSunPntBdy, ConfigData->dOld);
             ConfigData->priorSignalAvailable = 1;
         }
+        /* store the sun heading estimate */
+        v3Copy(ConfigData->sunlineOutBuffer.vehSunPntBdy, ConfigData->dOld);
     }
 
     WriteMessage(ConfigData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
