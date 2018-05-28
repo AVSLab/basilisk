@@ -83,6 +83,22 @@ void SpacecraftPlus::CrossInit()
     return;
 }
 
+/*! This method attaches a stateEffector to the dynamicObject */
+void SpacecraftPlus::addStateEffector(StateEffector *newStateEffector)
+{
+    this->states.push_back(newStateEffector);
+
+    return;
+}
+
+/*! This method attaches a dynamicEffector to the dynamicObject */
+void SpacecraftPlus::addDynamicEffector(DynamicEffector *newDynamicEffector)
+{
+    this->dynEffectors.push_back(newDynamicEffector);
+
+    return;
+}
+
 /*! This is the method where the messages of the state of vehicle are written */
 void SpacecraftPlus::writeOutputStateMessages(uint64_t clockTime)
 {

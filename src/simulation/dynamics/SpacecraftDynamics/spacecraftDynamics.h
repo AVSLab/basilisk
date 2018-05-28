@@ -23,10 +23,14 @@
 #include <vector>
 #include <stdint.h>
 #include "../_GeneralModuleFiles/dynParamManager.h"
+#include "../_GeneralModuleFiles/stateEffector.h"
+#include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../_GeneralModuleFiles/gravityEffector.h"
 #include "../_GeneralModuleFiles/dynamicObject.h"
 #include "../_GeneralModuleFiles/stateVecIntegrator.h"
 #include "../_GeneralModuleFiles/sys_model.h"
+#include "hubEffector.h"
+#include "spacecraftPlus.h"
 
 /*! @brief This is an instantiation of the dynamicObject abstract class that is a spacecraft with stateEffectors and
  dynamicEffectors attached to it. The spacecraftDynamics allows for just translation, just rotation, or both translation and
@@ -50,7 +54,9 @@ public:
     double timePrevious;                 //!< [s] Time before integration, used for dvAccum calculation
     Eigen::MatrixXd *sysTime;            //!< [s] System time
     GravityEffector gravField;           //!< -- Gravity effector for gravitational field experienced by spacecraft
-    
+    SpacecraftPlus primaryCentralSpacecraft;   //!< -- Primary spacecraft in which other spacraft can attach/detach to/from
+    SpacecraftPlus secondaryCentralSpacecraft; //!< -- Secondary spaceraft in which other spacecraft can attach/detach to/from
+
 public:
     SpacecraftDynamics();                    //!< -- Constructor
     ~SpacecraftDynamics();                   //!< -- Destructor

@@ -34,50 +34,12 @@ DynamicObject::~DynamicObject()
 /*! This method initializes the stateEffectors and dynamicEffectors and links the necessarry components together */
 void DynamicObject::initializeDynamics()
 {
-    // - Specify iterators for both stateEffectors and dynamicEffectors
-    std::vector<StateEffector*>::iterator it;
-    std::vector<DynamicEffector*>::iterator dynIt;
-
-    // - Loop over stateEffectors and register their states with the dynamic Manager
-    for(it = states.begin(); it != states.end(); it++)
-    {
-        (*it)->registerStates(dynManager);
-    }
-
-    // - Loop over stateEffectors to allow the state effectors to have access to the requested states
-    for(it = states.begin(); it != states.end(); it++)
-    {
-        (*it)->linkInStates(dynManager);
-    }
-
-    // - Loop over stateEffectors to allow the state effectors to have access to the requested states
-    for(dynIt = dynEffectors.begin(); dynIt != dynEffectors.end(); dynIt++)
-    {
-        (*dynIt)->linkInStates(dynManager);
-    }
-
     return;
 }
 
 /*! This method allows a dynamicObject to compute energy and momentum. Great for sim validation purposes */
 void DynamicObject::computeEnergyMomentum(double t)
 {
-    return;
-}
-
-/*! This method attaches a stateEffector to the dynamicObject */
-void DynamicObject::addStateEffector(StateEffector *newStateEffector)
-{
-    this->states.push_back(newStateEffector);
-
-    return;
-}
-
-/*! This method attaches a dynamicEffector to the dynamicObject */
-void DynamicObject::addDynamicEffector(DynamicEffector *newDynamicEffector)
-{
-    this->dynEffectors.push_back(newDynamicEffector);
-
     return;
 }
 

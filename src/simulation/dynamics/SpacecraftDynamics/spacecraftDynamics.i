@@ -19,7 +19,8 @@
 
 %module spacecraftDynamics
 %{
-   #include "spacecraftDynamics.h"
+    #include "spacecraftDynamics.h"
+    #include "spacecraftPlus.h"
 %}
 
 %include "swig_common_model.i"
@@ -33,7 +34,10 @@ namespace std {
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "../_GeneralModuleFiles/dynamicObject.h"
 %include "../_GeneralModuleFiles/gravityEffector.h"
+%include "../_GeneralModuleFiles/stateEffector.h"
+%include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "spacecraftDynamics.h"
+%include "spacecraftPlus.h"
 
 %pythoncode %{
 import sys
