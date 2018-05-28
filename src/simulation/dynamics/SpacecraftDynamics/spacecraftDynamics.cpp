@@ -29,8 +29,6 @@ SpacecraftDynamics::SpacecraftDynamics()
 {
     // - Set default names
     this->sysTimePropertyName = "systemTime";
-    this->scStateOutMsgName = "inertial_state_output";
-    this->scMassStateOutMsgName = "mass_state_output";
 
     // - Set values to either zero or default values
     this->currTimeStep = 0.0;
@@ -126,7 +124,7 @@ void SpacecraftDynamics::initializeDynamics()
     this->gravField.linkInStates(this->dynManager);
 
     // - Update the mass properties of the spacecraft to retrieve c_B and cDot_B to update r_BN_N and v_BN_N
-    this->updateSCMassProps(0.0);
+    this->updateSystemMassProps(0.0);
 
     // - Edit r_BN_N and v_BN_N to take into account that point B and point C are not coincident
     // - Pulling the state from the hub at this time gives us r_CN_N
@@ -142,7 +140,7 @@ void SpacecraftDynamics::initializeDynamics()
 }
 
 /*! This method is used to update the mass properties of the entire spacecraft using contributions from stateEffectors */
-void SpacecraftDynamics::updateSCMassProps(double time)
+void SpacecraftDynamics::updateSystemMassProps(double time)
 {
     // - Zero the properties which will get populated in this method
 
@@ -168,7 +166,7 @@ void SpacecraftDynamics::equationsOfMotion(double integTimeSeconds)
     // - Zero all Matrices and vectors for back-sub and the dynamics
 
     // - Update the mass properties of the spacecraft
-    this->updateSCMassProps(integTimeSeconds);
+    this->updateSystemMassProps(integTimeSeconds);
 
     // - This is where gravity is computed (gravity needs to know c_B to calculated gravity about r_CN_N)
     this->gravField.computeGravityField();
@@ -201,7 +199,7 @@ void SpacecraftDynamics::integrateState(double integrateToThisTime)
     // - Loop over stateEffectors to call modifyStates
 
     // - Call mass properties to get current info on the mass props of the spacecraft
-    this->updateSCMassProps(integrateToThisTime);
+    this->updateSystemMassProps(integrateToThisTime);
 
     // - Find v_CN_N after the integration for accumulated DV
 
