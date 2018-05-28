@@ -20,7 +20,6 @@
 %module spacecraftDynamics
 %{
    #include "spacecraftDynamics.h"
-   #include "hubEffector.h"
 %}
 
 %include "swig_common_model.i"
@@ -31,17 +30,10 @@ namespace std {
 
 %include "sys_model.h"
 %include "../_GeneralModuleFiles/stateData.h"
-%include "../_GeneralModuleFiles/stateEffector.h"
-%include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "../_GeneralModuleFiles/dynamicObject.h"
 %include "../_GeneralModuleFiles/gravityEffector.h"
 %include "spacecraftDynamics.h"
-%include "simMessages/scPlusStatesSimMsg.h"
-%include "simMessages/scPlusMassPropsSimMsg.h"
-%include "hubEffector.h"
-GEN_SIZEOF(SCPlusStatesSimMsg)
-GEN_SIZEOF(SCPlusMassPropsSimMsg)
 
 %pythoncode %{
 import sys
