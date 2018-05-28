@@ -67,6 +67,30 @@ void SpacecraftDynamics::CrossInit()
     return;
 }
 
+/*! This method attaches a stateEffector to the dynamicObject */
+void SpacecraftDynamics::addSpacecraftUndocked(SpacecraftPlus *newSpacecraft)
+{
+    this->unDockedSpacecraft.push_back(newSpacecraft);
+
+    return;
+}
+
+/*! This method attaches a stateEffector to the dynamicObject */
+void SpacecraftDynamics::attachSpacecraftToPrimary(SpacecraftPlus *newSpacecraft)
+{
+    this->spacecraftDockedToPrimary.push_back(newSpacecraft);
+
+    return;
+}
+
+/*! This method attaches a stateEffector to the dynamicObject */
+void SpacecraftDynamics::attachSpacecraftToSecondary(SpacecraftPlus *newSpacecraft)
+{
+    this->spacecraftDockedToSecondary.push_back(newSpacecraft);
+
+    return;
+}
+
 /*! This is the method where the messages of the state of vehicle are written */
 void SpacecraftDynamics::writeOutputMessages(uint64_t clockTime)
 {

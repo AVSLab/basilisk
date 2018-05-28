@@ -55,7 +55,10 @@ public:
     Eigen::MatrixXd *sysTime;            //!< [s] System time
     GravityEffector gravField;           //!< -- Gravity effector for gravitational field experienced by spacecraft
     SpacecraftPlus primaryCentralSpacecraft;   //!< -- Primary spacecraft in which other spacraft can attach/detach to/from
+    std::vector<SpacecraftPlus*> spacecraftDockedToPrimary; //!< -- vector of spacecraft currently docked with primary spacecraft
     SpacecraftPlus secondaryCentralSpacecraft; //!< -- Secondary spaceraft in which other spacecraft can attach/detach to/from
+    std::vector<SpacecraftPlus*> spacecraftDockedToSecondary; //!< -- vector of spacecraft currently docked with secondary spacecraft
+    std::vector<SpacecraftPlus*> unDockedSpacecraft; //!< -- vector of spacecraft currently detached from all other spacecraft
 
 public:
     SpacecraftDynamics();                    //!< -- Constructor
@@ -70,6 +73,9 @@ public:
     void linkInStates(DynParamManager& statesIn);  //!< Method to get access to the hub's states
     void equationsOfMotion(double integTimeSeconds);    //!< -- This method computes the equations of motion for the whole system
     void integrateState(double time);       //!< -- This method steps the state forward one step in time
+    void attachSpacecraftToPrimary(SpacecraftPlus *newSpacecraft);  //!< -- Attaches a spacecraft to the primary spacecraft chain
+    void attachSpacecraftToSecondary(SpacecraftPlus *newSpacecraft);  //!< -- Attaches a spacecraft to the secondar spacecraft chain
+    void addSpacecraftUndocked(SpacecraftPlus *newSpacecraft);  //!< -- Attaches a spacecraft to the primary spacecraft chain
 
 private:
     
