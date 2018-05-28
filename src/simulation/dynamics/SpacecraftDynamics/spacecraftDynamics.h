@@ -17,8 +17,8 @@
 
  */
 
-#ifndef SPACECRAFT_PLUS_H
-#define SPACECRAFT_PLUS_H
+#ifndef SPACECRAFT_DYNAMICS_H
+#define SPACECRAFT_DYNAMICS_H
 
 #include <vector>
 #include <stdint.h>
@@ -34,7 +34,7 @@
 #include "hubEffector.h"
 
 /*! @brief This is an instantiation of the dynamicObject abstract class that is a spacecraft with stateEffectors and
- dynamicEffectors attached to it. The spacecraftPlus allows for just translation, just rotation, or both translation and
+ dynamicEffectors attached to it. The spacecraftDynamics allows for just translation, just rotation, or both translation and
  rotation. stateEffectors such as RWs, flexible solar panel, fuel slosh etc can be added to the spacecraft by attaching 
  stateEffectors. dynamicEffectors such as thrusters, external force and torque, SRP etc can be added to the spacecraft 
  by attaching dynamicEffectors. This class performs all of this interaction between stateEffectors, dynamicEffectors and
@@ -46,7 +46,7 @@
  how to run it, as well as testing.
 
  */
-class SpacecraftPlus : public DynamicObject{
+class SpacecraftDynamics : public DynamicObject{
 public:
     uint64_t simTimePrevious;            //!< -- Previous simulation time
     uint64_t numOutMsgBuffers;           //!< -- Number of output message buffers for I/O
@@ -84,8 +84,8 @@ public:
     GravityEffector gravField;           //!< -- Gravity effector for gravitational field experienced by spacecraft
     
 public:
-    SpacecraftPlus();                    //!< -- Constructor
-    ~SpacecraftPlus();                   //!< -- Destructor
+    SpacecraftDynamics();                    //!< -- Constructor
+    ~SpacecraftDynamics();                   //!< -- Destructor
     void initializeDynamics();           //!< -- This method initializes all of the dynamics and variables for the s/c
     void computeEnergyMomentum(double time);  //!< -- This method computes the total energy and momentum of the s/c
     void updateSCMassProps(double time);  //!< -- This method computes the total mass properties of the s/c
@@ -108,4 +108,4 @@ private:
     int64_t scMassStateOutMsgId;                //!< -- Message ID for the outgoing spacecraft mass state
 };
 
-#endif /* SPACECRAFT_PLUS_H */
+#endif /* SPACECRAFT_DYNAMICS_H */
