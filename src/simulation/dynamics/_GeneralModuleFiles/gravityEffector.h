@@ -110,9 +110,9 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     void linkInStates(DynParamManager& statesIn);
     void registerProperties(DynParamManager& statesIn);
-    void computeGravityField();
-    void updateInertialPosAndVel();
-    void updateEnergyContributions(double & orbPotEnergyContr);  //!< -- Orbital Potential Energy Contributions
+    void computeGravityField(Eigen::Vector3d r_CN_N, Eigen::Vector3d rDot_CN_N);
+    void updateInertialPosAndVel(Eigen::Vector3d r_BN_N, Eigen::Vector3d rDot_BN_N);
+    void updateEnergyContributions(Eigen::Vector3d r_CN_N, double & orbPotEnergyContr);  //!< -- Orbital Potential Energy Contributions
     void setGravBodies(std::vector<GravBodyData *> gravBodies);
     void addGravBody(GravBodyData* gravBody);
     
@@ -122,19 +122,13 @@ private:
     
 public:
     std::string vehicleGravityPropName;            //! [-] Name of the vehicle mass state
-    std::string vehiclePositionStateName;          //! [-] Name of the vehicle position state
-    std::string vehicleVelocityStateName;          //! [-] Name of the vehicle position state
     std::string systemTimeCorrPropName;            //! [-] Name of the correlation between times
     std::vector<GravBodyData*> gravBodies;         //! [-] Vector of bodies we feel gravity from
     GravBodyData* centralBody;         //!<  Central body
     std::string inertialPositionPropName;           //! [-] Name of the inertial position property
     std::string inertialVelocityPropName;           //! [-] Name of the inertial velocity property
-    Eigen::MatrixXd *c_B;                           //!< [m] Vector from point B to CoM of s/c in B frame components
     
 private:
-    StateData *posState;                            //! [-] Position state of the vehicle
-    StateData *velState;                            //! [-] Position state of the vehicle
-    StateData *hubSigma;                            //! [-] sigmaBN for the hub
     Eigen::MatrixXd *gravProperty;                  //! [-] g_N property for output
     Eigen::MatrixXd *timeCorr;                      //! [-] Time correlation property
     int64_t centralBodyOutMsgId;                //! [-] Id for the central body spice data output message

@@ -347,8 +347,6 @@ void GravBodyData::loadEphemeris(uint64_t moduleID)
 GravityEffector::GravityEffector()
 {
     this->centralBody = nullptr;
-    this->vehiclePositionStateName = "hubPosition";
-    this->vehicleVelocityStateName = "hubVelocity";
     this->systemTimeCorrPropName = "systemTime";
     this->vehicleGravityPropName = "g_N";
     this->centralBodyOutMsgName = "central_body_spice";
@@ -417,14 +415,10 @@ void GravityEffector::registerProperties(DynParamManager& statesIn)
 
 void GravityEffector::linkInStates(DynParamManager& statesIn)
 {
-    this->posState = statesIn.getStateObject(this->vehiclePositionStateName);
-    this->velState = statesIn.getStateObject(this->vehicleVelocityStateName);
-    this->hubSigma = statesIn.getStateObject("hubSigma");
     this->timeCorr = statesIn.getPropertyReference(this->systemTimeCorrPropName);
-    this->c_B = statesIn.getPropertyReference("centerOfMassSC");
 }
 
-void GravityEffector::computeGravityField()
+void GravityEffector::computeGravityField(Eigen::Vector3d r_CN_N, Eigen::Vector3d rDot_CN_N)
 {
     std::vector<GravBodyData *>::iterator it;
     uint64_t systemClock = this->timeCorr->data()[0];
@@ -437,15 +431,11 @@ void GravityEffector::computeGravityField()
     Eigen::Vector3d cLocal_N;
     Eigen::MRPd sigmaBNLoc;
     Eigen::Matrix3d dcm_NB;
-
-    sigmaBNLoc = (Eigen::Vector3d) this->hubSigma->getState();
-    dcm_NB = sigmaBNLoc.toRotationMatrix();
-    cLocal_N = dcm_NB*(*this->c_B);
     
     for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
     {
         Eigen::Vector3d posRelBody_N;
-        posRelBody_N = this->posState->getState();
+        posRelBody_N = r_CN_N;
         posRelBody_N += cLocal_N;
         Eigen::Vector3d mappedPos = getEulerSteppedGravBodyPosition(*it);
         posRelBody_N -= mappedPos;
@@ -466,11 +456,11 @@ void GravityEffector::computeGravityField()
             systemClock);
         gravOut += bodyGrav;
     }
-    this->updateInertialPosAndVel();
+    this->updateInertialPosAndVel(r_CN_N, rDot_CN_N);
     *this->gravProperty = gravOut;
 }
 
-void GravityEffector::updateInertialPosAndVel()
+void GravityEffector::updateInertialPosAndVel(Eigen::Vector3d r_BN_N, Eigen::Vector3d rDot_BN_N)
 {
     // Here we explicitly update the system inertial spacecraft position
     // in the spice reference frame if we are computing dynamics
@@ -479,11 +469,11 @@ void GravityEffector::updateInertialPosAndVel()
     if(this->centralBody)
     {
         Eigen::Vector3d centralPos = getEulerSteppedGravBodyPosition(this->centralBody);
-        *this->inertialPositionProperty = centralPos + this->posState->getState();
-        *this->inertialVelocityProperty = Eigen::Map<Eigen::MatrixXd>(&(this->centralBody->localPlanet.VelocityVector[0]), 3, 1) + this->velState->getState();
+        *this->inertialPositionProperty = centralPos + r_BN_N;
+        *this->inertialVelocityProperty = Eigen::Map<Eigen::MatrixXd>(&(this->centralBody->localPlanet.VelocityVector[0]), 3, 1) + rDot_BN_N;
     } else {
-        *this->inertialPositionProperty = this->posState->getState();
-        *this->inertialVelocityProperty = this->velState->getState();
+        *this->inertialPositionProperty = r_BN_N;
+        *this->inertialVelocityProperty = rDot_BN_N;
     }
 }
 
@@ -500,7 +490,7 @@ Eigen::Vector3d GravityEffector::getEulerSteppedGravBodyPosition(GravBodyData *b
     return mappedPos;
 }
 
-void GravityEffector::updateEnergyContributions(double & orbPotEnergyContr)
+void GravityEffector::updateEnergyContributions(Eigen::Vector3d r_CN_N, double & orbPotEnergyContr)
 {
     Eigen::Vector3d centralPos;
     Eigen::Vector3d centralVel;
@@ -510,16 +500,11 @@ void GravityEffector::updateEnergyContributions(double & orbPotEnergyContr)
     Eigen::MRPd sigmaBNLoc;
     Eigen::Matrix3d dcm_NB;
 
-    sigmaBNLoc = (Eigen::Vector3d) this->hubSigma->getState();
-    dcm_NB = sigmaBNLoc.toRotationMatrix();
-    cLocal_N = dcm_NB*(*this->c_B);
-
     std::vector<GravBodyData *>::iterator it;
     for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
     {
         Eigen::Vector3d posRelBody_N;
-        posRelBody_N = this->posState->getState();
-        posRelBody_N += cLocal_N;
+        posRelBody_N = r_CN_N;
         Eigen::Vector3d mappedPos = getEulerSteppedGravBodyPosition(*it);
         posRelBody_N -= mappedPos;
 
