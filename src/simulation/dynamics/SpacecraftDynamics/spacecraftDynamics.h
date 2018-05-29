@@ -30,7 +30,6 @@
 #include "../_GeneralModuleFiles/stateVecIntegrator.h"
 #include "../_GeneralModuleFiles/sys_model.h"
 #include "hubEffector.h"
-#include "spacecraftPlus.h"
 
 /*! @brief This is an instantiation of the dynamicObject abstract class that is a spacecraft with stateEffectors and
  dynamicEffectors attached to it. The spacecraftDynamics allows for just translation, just rotation, or both translation and
@@ -45,6 +44,68 @@
  how to run it, as well as testing.
 
  */
+
+class Spacecraft {
+public:
+    std::string scStateOutMsgName;       //!< -- Name of the state output message
+    std::string scMassStateOutMsgName;   //!< -- Name of the state output message
+    
+    double totOrbEnergy;                 //!< [J] Total orbital kinetic energy
+    double totRotEnergy;                 //!< [J] Total rotational energy
+
+    double rotEnergyContr;               //!< [J] Contribution of stateEffector to total rotational energy
+    double orbPotentialEnergyContr;      //!< [J] Contribution of stateEffector to total rotational energy
+    Eigen::Vector3d totOrbAngMomPntN_N;  //!< [kg m^2/s] Total orbital angular momentum about N in N frame compenents
+    Eigen::Vector3d totRotAngMomPntC_N;  //!< [kg m^2/s] Total rotational angular momentum about C in N frame compenents
+    Eigen::Vector3d rotAngMomPntCContr_B;  //!< [kg m^2/s] Contribution of stateEffector to total rotational angular mom.
+
+    Eigen::Matrix3d matrixAContr;        //!< -- The contribution of each stateEffetor to matrix A
+    Eigen::Matrix3d matrixBContr;        //!< -- The contribution of each stateEffetor to matrix B
+    Eigen::Matrix3d matrixCContr;        //!< -- The contribution of each stateEffetor to matrix C
+    Eigen::Matrix3d matrixDContr;        //!< -- The contribution of each stateEffetor to matrix D
+    Eigen::Vector3d vecTransContr;       //!< -- The contribution of each stateEffetor to vecTrans
+    Eigen::Vector3d vecRotContr;         //!< -- The contribution of each stateEffetor to vecRot
+
+    Eigen::Vector3d dvAccum_B;           //!< [m/s] Accumulated delta-v of center of mass relative to inertial frame in body frame coordinates
+    Eigen::Vector3d dvAccum_BN_B;        //!< [m/s] accumulated delta-v of body frame relative to inertial frame in body frame coordinates
+    Eigen::Vector3d nonConservativeAccelpntB_B;//!< [m/s/s] Current spacecraft body acceleration in the B frame
+    Eigen::Vector3d omegaDot_BN_B;       //!< [rad/s/s] angular acceleration of body wrt to N in body frame
+
+    Eigen::MatrixXd *m_SC;               //!< [kg] spacecrafts total mass
+    Eigen::MatrixXd *mDot_SC;            //!< [kg/s] Time derivative of spacecrafts total mass
+    Eigen::MatrixXd *ISCPntB_B;          //!< [kg m^2] Inertia of s/c about point B in B frame components
+    Eigen::MatrixXd *c_B;                //!< [m] Vector from point B to CoM of s/c in B frame components
+    Eigen::MatrixXd *cPrime_B;           //!< [m/s] Body time derivative of c_B
+    Eigen::MatrixXd *cDot_B;             //!< [m/s] Inertial time derivative of c_B
+    Eigen::MatrixXd *ISCPntBPrime_B;     //!< [kg m^2/s] Body time derivative of ISCPntB_B
+
+    HubEffector hub;
+    GravityEffector gravField;           //!< -- Gravity effector for gravitational field experienced by spacecraft
+    std::vector<StateEffector*> states;               //!< -- Vector of state effectors attached to dynObject
+    std::vector<DynamicEffector*> dynEffectors;       //!< -- Vector of dynamic effectors attached to dynObject
+
+public:
+    Spacecraft();
+    ~Spacecraft();
+
+    void addStateEffector(StateEffector *newSateEffector);  //!< -- Attaches a stateEffector to the system
+    void addDynamicEffector(DynamicEffector *newDynamicEffector);  //!< -- Attaches a dynamicEffector
+    
+    void writeOutputMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
+    void linkInStates(DynParamManager& statesIn);  //!< Method to get access to the hub's states
+
+private:
+    int64_t scStateOutMsgId;                    //!< -- Message ID for the outgoing spacecraft state
+    int64_t scMassStateOutMsgId;                //!< -- Message ID for the outgoing spacecraft mass state
+    
+    StateData *hubR_N;                          //!< -- State data accesss to inertial position for the hub
+    StateData *hubV_N;                          //!< -- State data access to inertial velocity for the hub
+    StateData *hubOmega_BN_B;                   //!< -- State data access to the attitude rate of the hub
+    StateData *hubSigma;                        //!< -- State data access to sigmaBN for the hub
+    Eigen::MatrixXd *inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
+    Eigen::MatrixXd *inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
+};
+
 class SpacecraftDynamics : public DynamicObject{
 public:
     uint64_t simTimePrevious;            //!< -- Previous simulation time
@@ -53,12 +114,11 @@ public:
     double currTimeStep;                 //!< [s] Time after integration, used for dvAccum calculation
     double timePrevious;                 //!< [s] Time before integration, used for dvAccum calculation
     Eigen::MatrixXd *sysTime;            //!< [s] System time
-    GravityEffector gravField;           //!< -- Gravity effector for gravitational field experienced by spacecraft
-    SpacecraftPlus primaryCentralSpacecraft;   //!< -- Primary spacecraft in which other spacraft can attach/detach to/from
-    std::vector<SpacecraftPlus*> spacecraftDockedToPrimary; //!< -- vector of spacecraft currently docked with primary spacecraft
-    SpacecraftPlus secondaryCentralSpacecraft; //!< -- Secondary spaceraft in which other spacecraft can attach/detach to/from
-    std::vector<SpacecraftPlus*> spacecraftDockedToSecondary; //!< -- vector of spacecraft currently docked with secondary spacecraft
-    std::vector<SpacecraftPlus*> unDockedSpacecraft; //!< -- vector of spacecraft currently detached from all other spacecraft
+    Spacecraft primaryCentralSpacecraft;   //!< -- Primary spacecraft in which other spacraft can attach/detach to/from
+    std::vector<Spacecraft*> spacecraftDockedToPrimary; //!< -- vector of spacecraft currently docked with primary spacecraft
+    Spacecraft secondaryCentralSpacecraft; //!< -- Secondary spaceraft in which other spacecraft can attach/detach to/from
+    std::vector<Spacecraft*> spacecraftDockedToSecondary; //!< -- vector of spacecraft currently docked with secondary spacecraft
+    std::vector<Spacecraft*> unDockedSpacecraft; //!< -- vector of spacecraft currently detached from all other spacecraft
 
 public:
     SpacecraftDynamics();                    //!< -- Constructor
@@ -73,9 +133,9 @@ public:
     void linkInStates(DynParamManager& statesIn);  //!< Method to get access to the hub's states
     void equationsOfMotion(double integTimeSeconds);    //!< -- This method computes the equations of motion for the whole system
     void integrateState(double time);       //!< -- This method steps the state forward one step in time
-    void attachSpacecraftToPrimary(SpacecraftPlus *newSpacecraft);  //!< -- Attaches a spacecraft to the primary spacecraft chain
-    void attachSpacecraftToSecondary(SpacecraftPlus *newSpacecraft);  //!< -- Attaches a spacecraft to the secondar spacecraft chain
-    void addSpacecraftUndocked(SpacecraftPlus *newSpacecraft);  //!< -- Attaches a spacecraft to the primary spacecraft chain
+    void attachSpacecraftToPrimary(Spacecraft *newSpacecraft);  //!< -- Attaches a spacecraft to the primary spacecraft chain
+    void attachSpacecraftToSecondary(Spacecraft *newSpacecraft);  //!< -- Attaches a spacecraft to the secondar spacecraft chain
+    void addSpacecraftUndocked(Spacecraft *newSpacecraft);  //!< -- Attaches a spacecraft to the primary spacecraft chain
 
 private:
     

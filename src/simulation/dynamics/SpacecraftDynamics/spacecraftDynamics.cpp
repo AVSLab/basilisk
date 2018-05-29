@@ -24,6 +24,35 @@
 #include "utilities/avsEigenMRP.h"
 #include <iostream>
 
+Spacecraft::Spacecraft()
+{
+    return;
+}
+
+Spacecraft::~Spacecraft()
+{
+    return;
+}
+
+void Spacecraft::addStateEffector(StateEffector *newSateEffector)
+{
+    return;
+}
+
+void Spacecraft::addDynamicEffector(DynamicEffector *newDynamicEffector)
+{
+    return;
+}
+
+void Spacecraft::writeOutputMessages(uint64_t clockTime)
+{
+    return;
+}
+void Spacecraft::linkInStates(DynParamManager& statesIn)
+{
+    return;
+}
+
 /*! This is the constructor, setting variables to default values */
 SpacecraftDynamics::SpacecraftDynamics()
 {
@@ -51,7 +80,6 @@ SpacecraftDynamics::~SpacecraftDynamics()
 void SpacecraftDynamics::SelfInit()
 {
     // - Call the gravity fields selfInit method
-    this->gravField.SelfInit();
 
     return;
 }
@@ -60,7 +88,6 @@ void SpacecraftDynamics::SelfInit()
 void SpacecraftDynamics::CrossInit()
 {
     // - Call gravity field cross initialization
-    this->gravField.CrossInit();
     // - Call method for initializing the dynamics of spacecraftDynamics
     this->initializeDynamics();
 
@@ -68,7 +95,7 @@ void SpacecraftDynamics::CrossInit()
 }
 
 /*! This method attaches a stateEffector to the dynamicObject */
-void SpacecraftDynamics::addSpacecraftUndocked(SpacecraftPlus *newSpacecraft)
+void SpacecraftDynamics::addSpacecraftUndocked(Spacecraft *newSpacecraft)
 {
     this->unDockedSpacecraft.push_back(newSpacecraft);
 
@@ -76,7 +103,7 @@ void SpacecraftDynamics::addSpacecraftUndocked(SpacecraftPlus *newSpacecraft)
 }
 
 /*! This method attaches a stateEffector to the dynamicObject */
-void SpacecraftDynamics::attachSpacecraftToPrimary(SpacecraftPlus *newSpacecraft)
+void SpacecraftDynamics::attachSpacecraftToPrimary(Spacecraft *newSpacecraft)
 {
     this->spacecraftDockedToPrimary.push_back(newSpacecraft);
 
@@ -84,7 +111,7 @@ void SpacecraftDynamics::attachSpacecraftToPrimary(SpacecraftPlus *newSpacecraft
 }
 
 /*! This method attaches a stateEffector to the dynamicObject */
-void SpacecraftDynamics::attachSpacecraftToSecondary(SpacecraftPlus *newSpacecraft)
+void SpacecraftDynamics::attachSpacecraftToSecondary(Spacecraft *newSpacecraft)
 {
     this->spacecraftDockedToSecondary.push_back(newSpacecraft);
 
@@ -104,11 +131,11 @@ void SpacecraftDynamics::UpdateState(uint64_t CurrentSimNanos)
     double newTime = CurrentSimNanos*NANO2SEC;
 
     // - Get access to the spice bodies
-    this->gravField.UpdateState(CurrentSimNanos);
+//    this->gravField.UpdateState(CurrentSimNanos);
 
     // - Integrate the state forward in time
     this->integrateState(newTime);
-    this->gravField.updateInertialPosAndVel();
+//    this->gravField.updateInertialPosAndVel();
 
     // - Write the state of the vehicle into messages
     this->writeOutputMessages(CurrentSimNanos);
@@ -137,15 +164,15 @@ void SpacecraftDynamics::initializeDynamics()
     this->sysTime = this->dynManager.createProperty(this->sysTimePropertyName, systemTime);
     
     // - Register the gravity properties with the dynManager, 'erbody wants g_N!
-    this->gravField.registerProperties(this->dynManager);
-    
+//    this->gravField.registerProperties(this->dynManager);
+
     // - Register the hub states
     
     // - Loop through stateEffectors to register their states
     
     // - Link in states for the spacecraftDynamis, gravity and the hub
     this->linkInStates(this->dynManager);
-    this->gravField.linkInStates(this->dynManager);
+//    this->gravField.linkInStates(this->dynManager);
 
     // - Update the mass properties of the spacecraft to retrieve c_B and cDot_B to update r_BN_N and v_BN_N
     this->updateSystemMassProps(0.0);
@@ -193,7 +220,7 @@ void SpacecraftDynamics::equationsOfMotion(double integTimeSeconds)
     this->updateSystemMassProps(integTimeSeconds);
 
     // - This is where gravity is computed (gravity needs to know c_B to calculated gravity about r_CN_N)
-    this->gravField.computeGravityField();
+//    this->gravField.computeGravityField();
 
     // - Loop through dynEffectors to compute force and torque on the s/c
 

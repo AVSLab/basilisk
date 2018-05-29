@@ -20,7 +20,7 @@
 %module spacecraftDynamics
 %{
     #include "spacecraftDynamics.h"
-    #include "spacecraftPlus.h"
+    #include "hubEffector.h"
 %}
 
 %include "swig_common_model.i"
@@ -37,7 +37,7 @@ namespace std {
 %include "../_GeneralModuleFiles/stateEffector.h"
 %include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "spacecraftDynamics.h"
-%include "spacecraftPlus.h"
+%include "hubEffector.h"
 
 %pythoncode %{
 import sys
