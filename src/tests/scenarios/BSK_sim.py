@@ -129,8 +129,6 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self.scObject.hub.mHub = 750.0  # kg - spacecraft mass
         self.scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
         self.scObject.hub.IHubPntBc_B = sp.np2EigenMatrix3d(I)
-        self.scObject.hub.useTranslation = True
-        self.scObject.hub.useRotation = True
         return
 
     def SetGravityBodies(self):

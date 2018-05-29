@@ -64,7 +64,7 @@ public:
     ThrusterDynamicEffector();
     ~ThrusterDynamicEffector();
     void linkInStates(DynParamManager& states);
-    void computeBodyForceTorque(double integTime);
+    void computeForceTorque(double integTime);
     void computeStateContribution(double integTime);
     void SelfInit();
     void CrossInit();

@@ -91,8 +91,6 @@ path = os.path.dirname(os.path.abspath(filename))
 #~~~~~~~~~~~~~~~~~{.py}
 #     scObject = spacecraftPlus.SpacecraftPlus()
 #     scObject.ModelTag = "spacecraftBody"
-#     scObject.hub.useTranslation = True
-#     scObject.hub.useRotation = True
 #
 #~~~~~~~~~~~~~~~~~
 #
@@ -308,8 +306,6 @@ def run(show_plots, damping_parameter, timeStep):
     #  create spacecraft object
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
-    scObject.hub.useTranslation = True
-    scObject.hub.useRotation = True
 
     scSim.AddModelToTask(simTaskName, scObject)
 

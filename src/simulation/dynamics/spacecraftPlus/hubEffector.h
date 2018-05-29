@@ -31,8 +31,6 @@
 class HubEffector : public StateEffector {
 public:
     double mHub;                         //!< [kg] mass of the hub
-    bool useTranslation;                 //!< -- Whether the s/c has translational states
-    bool useRotation;                    //!< -- Whether the s/c has rotational states
     uint64_t MRPSwitchCount;             //!< -- Count on times we've shadowed
     std::string nameOfHubPosition;       //!< -- Identifier for hub position states
     std::string nameOfHubVelocity;       //!< -- Identifier for hub velocity states

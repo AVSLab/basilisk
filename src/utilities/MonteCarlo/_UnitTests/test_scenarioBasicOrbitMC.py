@@ -71,8 +71,6 @@ def myCreationFunction():
     # Initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
-    scObject.hub.useTranslation = True
-    scObject.hub.useRotation = False
     # Add spacecraftPlus object to the simulation process
     sim.AddModelToTask(simTaskName, scObject)
 

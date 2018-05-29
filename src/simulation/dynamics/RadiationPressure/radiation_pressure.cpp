@@ -137,7 +137,7 @@ void RadiationPressure::readInputMessages()
  @return void
  @param integTime Current simulation integration time
  */
-void RadiationPressure::computeBodyForceTorque(double integTime)
+void RadiationPressure::computeForceTorque(double integTime)
 {
     this->forceExternal_N.setZero();
     Eigen::Vector3d s_B(0.0, 0.0, 0.0); // (m)

@@ -75,8 +75,6 @@ def SetDensityMsgTest(dragEffector):
     # create the dynamics task and specify the integration update time
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
-    scObject.hub.useTranslation = True
-    scObject.hub.useRotation = False
 
     scObject.addDynamicEffector(dragEffector)
 

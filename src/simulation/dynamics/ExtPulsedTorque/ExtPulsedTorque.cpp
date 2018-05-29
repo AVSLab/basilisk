@@ -85,7 +85,7 @@ void ExtPulsedTorque::readInputMessages()
             matrix represnetations in the body (B) and inerial (N) frame components are treated as 2 
             separate vectors.  Only set both if you mean to, as both vectors will be included.
  */
-void ExtPulsedTorque::computeBodyForceTorque(double integTime)
+void ExtPulsedTorque::computeForceTorque(double integTime)
 {
     /* zero the output vector */
     this->torqueExternalPntB_B.fill(0.0);

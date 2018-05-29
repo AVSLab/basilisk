@@ -84,11 +84,6 @@ from Basilisk.fswAlgorithms import fswMessages
 # modules.
 # ![Simulation Flow Diagram](Images/doc/test_scenarioAttitudePointing.svg "Illustration")
 #
-# Besides removing any orbit related code, the only difference is to turn of
-# the spacecraftPlus() translational simulation mode.  This is done with:
-# ~~~~~~~~~~~~~~~~{.py}
-#     scObject.hub.useTranslation = False
-#     scObject.hub.useRotation = True
 # ~~~~~~~~~~~~~~~~
 #
 # Setup 1
@@ -173,8 +168,6 @@ def run(show_plots, useLargeTumble):
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
-    scObject.hub.useTranslation = False
-    scObject.hub.useRotation = True
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
     if useLargeTumble:
         scObject.hub.omega_BN_BInit = [[0.8], [-0.6], [0.5]]  # rad/s - omega_BN_B
