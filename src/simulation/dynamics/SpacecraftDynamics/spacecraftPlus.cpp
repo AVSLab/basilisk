@@ -145,7 +145,9 @@ void SpacecraftPlus::UpdateState(uint64_t CurrentSimNanos)
 
     // - Integrate the state forward in time
     this->integrateState(newTime);
-    this->gravField.updateInertialPosAndVel();
+    Eigen::Vector3d rLocal_BN_N = this->hubR_N->getState();
+    Eigen::Vector3d vLocal_BN_N = this->hubV_N->getState();
+    this->gravField.updateInertialPosAndVel(rLocal_BN_N, vLocal_BN_N);
 
     // - Write the state of the vehicle into messages
     this->writeOutputStateMessages(CurrentSimNanos);
@@ -327,7 +329,17 @@ void SpacecraftPlus::equationsOfMotion(double integTimeSeconds)
     this->updateSCMassProps(integTimeSeconds);
 
     // - This is where gravity is computed (gravity needs to know c_B to calculated gravity about r_CN_N)
-    this->gravField.computeGravityField();
+    Eigen::MRPd sigmaBNLoc;
+    Eigen::Matrix3d dcm_NB;
+    Eigen::Vector3d cLocal_N;
+
+    sigmaBNLoc = (Eigen::Vector3d) this->hubSigma->getState();
+    dcm_NB = sigmaBNLoc.toRotationMatrix();
+    cLocal_N = dcm_NB*(*this->c_B);
+    Eigen::Vector3d rLocal_CN_N = this->hubR_N->getState() + dcm_NB*(*this->c_B);
+    Eigen::Vector3d vLocal_CN_N = this->hubV_N->getState() + dcm_NB*(*this->cDot_B);
+
+    this->gravField.computeGravityField(rLocal_CN_N, vLocal_CN_N);
 
     // - Loop through dynEffectors to compute force and torque on the s/c
     std::vector<DynamicEffector*>::iterator dynIt;
@@ -524,7 +536,8 @@ void SpacecraftPlus::computeEnergyMomentum(double time)
 
     // - Call gravity effector and add in its potential contributions to the total orbital energy calculations
     this->orbPotentialEnergyContr = 0.0;
-    gravField.updateEnergyContributions(this->orbPotentialEnergyContr);
+    Eigen::Vector3d rLocal_CN_N = this->hubR_N->getState() + dcmLocal_NB*(*this->c_B);
+    gravField.updateEnergyContributions(rLocal_CN_N, this->orbPotentialEnergyContr);
     this->totOrbEnergy += (*this->m_SC)(0,0)*this->orbPotentialEnergyContr;
 
     // - Find total rotational energy
