@@ -121,8 +121,10 @@ void SpacecraftDynamics::SelfInit()
 /*! This method is used to cross link the messages and to initialize the dynamics */
 void SpacecraftDynamics::CrossInit()
 {
-    // - Call gravity field cross initialization
-    // - Call method for initializing the dynamics of spacecraftDynamics
+    // - Call gravity field cross initialization for all spacecraft
+    this->primaryCentralSpacecraft.gravField.CrossInit();
+    
+    // - Call method for initializing the dynamics of spacecraftPlus
     this->initializeDynamics();
 
     return;
