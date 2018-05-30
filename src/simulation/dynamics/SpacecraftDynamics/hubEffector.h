@@ -63,6 +63,7 @@ public:
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d &rotAngMomPntCContr_B,
                                       double & rotEnergyContr); //!< -- Add contributions to energy and momentum
     void modifyStates(double integTime); //!< -- Method to switch MRPs
+    void prependSpacecraftNameToStates();
 
 private:
     StateData *posState;                 //!< [-] State data container for hub position
