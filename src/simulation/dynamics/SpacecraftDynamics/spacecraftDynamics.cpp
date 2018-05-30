@@ -275,29 +275,56 @@ void SpacecraftDynamics::initializeDynamics()
     
 
     // - Register the gravity properties with the dynManager, 'erbody wants g_N!
-//    this->gravField.registerProperties(this->dynManager);
+    this->primaryCentralSpacecraft.gravField.registerProperties(this->dynManager);
 
     // - Register the hub states
-    
+    this->primaryCentralSpacecraft.hub.registerStates(this->dynManager);
+
     // - Loop through stateEffectors to register their states
+    for(stateIt = this->primaryCentralSpacecraft.states.begin(); stateIt != this->primaryCentralSpacecraft.states.end(); stateIt++)
+    {
+        (*stateIt)->registerStates(this->dynManager);
+    }
     
-    // - Link in states for the spacecraftDynamis, gravity and the hub
+    // - Link in states for the spaceCraftPlus, gravity and the hub
     this->linkInStates(this->dynManager);
-//    this->gravField.linkInStates(this->dynManager);
+    this->primaryCentralSpacecraft.gravField.linkInStates(this->dynManager);
+    this->primaryCentralSpacecraft.hub.linkInStates(this->dynManager);
 
     // - Update the mass properties of the spacecraft to retrieve c_B and cDot_B to update r_BN_N and v_BN_N
     this->updateSystemMassProps(0.0);
 
     // - Edit r_BN_N and v_BN_N to take into account that point B and point C are not coincident
     // - Pulling the state from the hub at this time gives us r_CN_N
+    Eigen::Vector3d rInit_BN_N = this->primaryCentralSpacecraft.hubR_N->getState();
+    Eigen::MRPd sigma_BN;
+    sigma_BN = (Eigen::Vector3d) this->primaryCentralSpacecraft.hubSigma->getState();
+    Eigen::Matrix3d dcm_NB = sigma_BN.toRotationMatrix();
+    // - Substract off the center mass to leave r_BN_N
+    rInit_BN_N -= dcm_NB*(*this->primaryCentralSpacecraft.c_B);
+    // - Subtract off cDot_B to get v_BN_N
+    Eigen::Vector3d vInit_BN_N = this->primaryCentralSpacecraft.hubV_N->getState();
+    vInit_BN_N -= dcm_NB*(*this->primaryCentralSpacecraft.cDot_B);
+    // - Finally set the translational states r_BN_N and v_BN_N with the corrections
+    this->primaryCentralSpacecraft.hubR_N->setState(rInit_BN_N);
+    this->primaryCentralSpacecraft.hubV_N->setState(vInit_BN_N);
 
     // - Loop through the stateEffectros to link in the states needed
-    
+    for(stateIt = this->primaryCentralSpacecraft.states.begin(); stateIt != this->primaryCentralSpacecraft.states.end(); stateIt++)
+    {
+        (*stateIt)->linkInStates(this->dynManager);
+    }
+
     // - Loop through the dynamicEffectors to link in the states needed
+    std::vector<DynamicEffector*>::iterator dynIt;
+    for(dynIt = this->primaryCentralSpacecraft.dynEffectors.begin(); dynIt != this->primaryCentralSpacecraft.dynEffectors.end(); dynIt++)
+    {
+        (*dynIt)->linkInStates(this->dynManager);
+    }
 
     // - Call equations of motion at time zero
     this->equationsOfMotion(0.0);
-    
+
     return;
 }
 
