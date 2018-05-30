@@ -96,7 +96,24 @@ SpacecraftDynamics::~SpacecraftDynamics()
 /*! This method creates the messages for s/c output data and initializes the gravity field*/
 void SpacecraftDynamics::SelfInit()
 {
+    // - Call this for the primary spacecraft
+    // - Create the message for the spacecraft state
+    this->primaryCentralSpacecraft.scStateOutMsgName = this->primaryCentralSpacecraft.spacecraftName + this->primaryCentralSpacecraft.scStateOutMsgName;
+    this->primaryCentralSpacecraft.scMassStateOutMsgName = this->primaryCentralSpacecraft.spacecraftName + this->primaryCentralSpacecraft.scMassStateOutMsgName;
+    this->primaryCentralSpacecraft.scStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->primaryCentralSpacecraft.scStateOutMsgName,
+                                                                             sizeof(SCStatesSimMsg),
+                                                                             this->numOutMsgBuffers,
+                                                                             "SCPlusStatesSimMsg", this->moduleID);
+    // - Create the message for the spacecraft mass state
+    this->primaryCentralSpacecraft.scMassStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->primaryCentralSpacecraft.scMassStateOutMsgName,
+                                                                                 sizeof(SCMassPropsSimMsg),
+                                                                                 this->numOutMsgBuffers,
+                                                                                 "SCPlusMassPropsSimMsg", this->moduleID);
     // - Call the gravity fields selfInit method
+    this->primaryCentralSpacecraft.gravField.SelfInit();
+
+    // - Give name of all spacecraft to attached hubEffector
+    this->primaryCentralSpacecraft.hub.nameOfSpacecraftAttachedTo = this->primaryCentralSpacecraft.spacecraftName;
 
     return;
 }
