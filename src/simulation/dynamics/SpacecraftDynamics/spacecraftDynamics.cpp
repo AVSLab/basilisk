@@ -332,12 +332,42 @@ void SpacecraftDynamics::initializeDynamics()
 void SpacecraftDynamics::updateSystemMassProps(double time)
 {
     // - Zero the properties which will get populated in this method
-    
+    (*this->primaryCentralSpacecraft.m_SC).setZero();
+    (*this->primaryCentralSpacecraft.mDot_SC).setZero();
+    (*this->primaryCentralSpacecraft.c_B).setZero();
+    (*this->primaryCentralSpacecraft.ISCPntB_B).setZero();
+    (*this->primaryCentralSpacecraft.cPrime_B).setZero();
+    (*this->primaryCentralSpacecraft.cDot_B).setZero();
+    (*this->primaryCentralSpacecraft.ISCPntBPrime_B).setZero();
+
     // Add in hubs mass props to the spacecraft mass props
+    this->primaryCentralSpacecraft.hub.updateEffectorMassProps(time);
+    (*this->primaryCentralSpacecraft.m_SC)(0,0) += this->primaryCentralSpacecraft.hub.effProps.mEff;
+    (*this->primaryCentralSpacecraft.ISCPntB_B) += this->primaryCentralSpacecraft.hub.effProps.IEffPntB_B;
+    (*this->primaryCentralSpacecraft.c_B) += this->primaryCentralSpacecraft.hub.effProps.mEff*this->primaryCentralSpacecraft.hub.effProps.rEff_CB_B;
 
     // - Loop through state effectors to get mass props
+    std::vector<StateEffector*>::iterator it;
+    for(it = this->primaryCentralSpacecraft.states.begin(); it != this->primaryCentralSpacecraft.states.end(); it++)
+    {
+        (*it)->updateEffectorMassProps(time);
+        // - Add in effectors mass props into mass props of spacecraft
+        (*this->primaryCentralSpacecraft.m_SC)(0,0) += (*it)->effProps.mEff;
+        (*this->primaryCentralSpacecraft.mDot_SC)(0,0) += (*it)->effProps.mEffDot;
+        (*this->primaryCentralSpacecraft.ISCPntB_B) += (*it)->effProps.IEffPntB_B;
+        (*this->primaryCentralSpacecraft.c_B) += (*it)->effProps.mEff*(*it)->effProps.rEff_CB_B;
+        (*this->primaryCentralSpacecraft.ISCPntBPrime_B) += (*it)->effProps.IEffPrimePntB_B;
+        (*this->primaryCentralSpacecraft.cPrime_B) += (*it)->effProps.mEff*(*it)->effProps.rEffPrime_CB_B;
+        // For high fidelity mass depletion, this is left out: += (*it)->effProps.mEffDot*(*it)->effProps.rEff_CB_B
+    }
 
     // Divide c_B and cPrime_B by the total mass of the spaceCraft to finalize c_B and cPrime_B
+    (*this->primaryCentralSpacecraft.c_B) = (*this->primaryCentralSpacecraft.c_B)/(*this->primaryCentralSpacecraft.m_SC)(0,0);
+    (*this->primaryCentralSpacecraft.cPrime_B) = (*this->primaryCentralSpacecraft.cPrime_B)/(*this->primaryCentralSpacecraft.m_SC)(0,0)
+    - (*this->primaryCentralSpacecraft.mDot_SC)(0,0)*(*this->primaryCentralSpacecraft.c_B)/(*this->primaryCentralSpacecraft.m_SC)(0,0)/(*this->primaryCentralSpacecraft.m_SC)(0,0);
+    Eigen::Vector3d omegaLocal_BN_B = this->primaryCentralSpacecraft.hubOmega_BN_B->getState();
+    Eigen::Vector3d cLocal_B = (*this->primaryCentralSpacecraft.c_B);
+    (*this->primaryCentralSpacecraft.cDot_B) = (*this->primaryCentralSpacecraft.cPrime_B) + omegaLocal_BN_B.cross(cLocal_B);
 
     return;
 }
