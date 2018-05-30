@@ -404,6 +404,15 @@ void GravityEffector::writeOutputMessages(uint64_t currentSimNanos)
     }
 }
 
+void GravityEffector::prependSpacecraftNameToStates()
+{
+    this->inertialPositionPropName = this->nameOfSpacecraftAttachedTo + "_" + this->inertialPositionPropName;
+    this->inertialVelocityPropName = this->nameOfSpacecraftAttachedTo + "_" +this->inertialVelocityPropName;
+    this->vehicleGravityPropName = this->nameOfSpacecraftAttachedTo + "_" + this->vehicleGravityPropName;
+
+    return;
+}
+
 void GravityEffector::registerProperties(DynParamManager& statesIn)
 {
     Eigen::Vector3d gravInit;
@@ -535,13 +544,4 @@ void GravityEffector::setGravBodies(std::vector<GravBodyData *> gravBodies)
 void GravityEffector::addGravBody(GravBodyData* gravBody)
 {
     this->gravBodies.push_back(gravBody);
-}
-
-void GravityEffector::prependSpacecraftNameToStates()
-{
-    this->inertialPositionPropName = this->nameOfSpacecraftAttachedTo + "_" + this->inertialPositionPropName;
-    this->inertialVelocityPropName = this->nameOfSpacecraftAttachedTo + "_" +this->inertialVelocityPropName;
-    this->vehicleGravityPropName = this->nameOfSpacecraftAttachedTo + "_" + this->vehicleGravityPropName;
-    
-    return;
 }
