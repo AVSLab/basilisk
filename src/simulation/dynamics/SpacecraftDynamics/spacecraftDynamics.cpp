@@ -233,11 +233,32 @@ void SpacecraftDynamics::linkInStates(DynParamManager& statesIn)
  for the simulation */
 void SpacecraftDynamics::initializeDynamics()
 {
-    // - SpacecraftDynamics initiates all of the spaceCraft mass properties
+    // - SpacecraftPlus initiates all of the spaceCraft mass properties
+    Eigen::MatrixXd initM_SC(1,1);
+    Eigen::MatrixXd initMDot_SC(1,1);
+    Eigen::MatrixXd initC_B(3,1);
+    Eigen::MatrixXd initISCPntB_B(3,3);
+    Eigen::MatrixXd initCPrime_B(3,1);
+    Eigen::MatrixXd initCDot_B(3,1);
+    Eigen::MatrixXd initISCPntBPrime_B(3,3);
     Eigen::MatrixXd systemTime(2,1);
     systemTime.setZero();
-
     // - Create the properties
+    std::string tmpName;
+    tmpName = this->primaryCentralSpacecraft.spacecraftName + "_" + "m_SC";
+    this->primaryCentralSpacecraft.m_SC = this->dynManager.createProperty(tmpName, initM_SC);
+    tmpName = this->primaryCentralSpacecraft.spacecraftName + "_" + "mDot_SC";
+    this->primaryCentralSpacecraft.mDot_SC = this->dynManager.createProperty(tmpName, initMDot_SC);
+    tmpName = this->primaryCentralSpacecraft.spacecraftName + "_" + "centerOfMassSC";
+    this->primaryCentralSpacecraft.c_B = this->dynManager.createProperty(tmpName, initC_B);
+    tmpName = this->primaryCentralSpacecraft.spacecraftName + "_" + "inertiaSC";
+    this->primaryCentralSpacecraft.ISCPntB_B = this->dynManager.createProperty(tmpName, initISCPntB_B);
+    tmpName = this->primaryCentralSpacecraft.spacecraftName + "_" + "inertiaPrimeSC";
+    this->primaryCentralSpacecraft.ISCPntBPrime_B = this->dynManager.createProperty(tmpName, initISCPntBPrime_B);
+    tmpName = this->primaryCentralSpacecraft.spacecraftName + "_" + "centerOfMassPrimeSC";
+    this->primaryCentralSpacecraft.cPrime_B = this->dynManager.createProperty(tmpName, initCPrime_B);
+    tmpName = this->primaryCentralSpacecraft.spacecraftName + "_" + "centerOfMassDotSC";
+    this->primaryCentralSpacecraft.cDot_B = this->dynManager.createProperty(tmpName, initCDot_B);
     this->sysTime = this->dynManager.createProperty(this->sysTimePropertyName, systemTime);
 
     // - Give name of all spacecraft to attached hubEffector
