@@ -243,6 +243,16 @@ void SpacecraftDynamics::initializeDynamics()
     // - Give name of all spacecraft to attached hubEffector
     this->primaryCentralSpacecraft.hub.nameOfSpacecraftAttachedTo = this->primaryCentralSpacecraft.spacecraftName;
     
+    // - Before er'body registers their properties, we need to prepend their state names with the spacecraft
+    this->primaryCentralSpacecraft.hub.prependSpacecraftNameToStates();
+    this->primaryCentralSpacecraft.gravField.prependSpacecraftNameToStates();
+    std::vector<StateEffector*>::iterator stateIt;
+    for(stateIt = this->primaryCentralSpacecraft.states.begin(); stateIt != this->primaryCentralSpacecraft.states.end(); stateIt++)
+    {
+        (*stateIt)->prependSpacecraftNameToStates();
+    }
+    
+
     // - Register the gravity properties with the dynManager, 'erbody wants g_N!
 //    this->gravField.registerProperties(this->dynManager);
 
@@ -274,7 +284,7 @@ void SpacecraftDynamics::initializeDynamics()
 void SpacecraftDynamics::updateSystemMassProps(double time)
 {
     // - Zero the properties which will get populated in this method
-
+    
     // Add in hubs mass props to the spacecraft mass props
 
     // - Loop through state effectors to get mass props
