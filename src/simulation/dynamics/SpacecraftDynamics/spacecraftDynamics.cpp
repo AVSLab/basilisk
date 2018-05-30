@@ -157,6 +157,36 @@ void SpacecraftDynamics::attachSpacecraftToSecondary(Spacecraft *newSpacecraft)
 /*! This is the method where the messages of the state of vehicle are written */
 void SpacecraftDynamics::writeOutputMessages(uint64_t clockTime)
 {
+    // - Write output messages for each spacecraft
+    // - Populate state output message
+    SCStatesSimMsg stateOut;
+    eigenMatrixXd2CArray(*this->primaryCentralSpacecraft.inertialPositionProperty, stateOut.r_BN_N);
+    eigenMatrixXd2CArray(*this->primaryCentralSpacecraft.inertialVelocityProperty, stateOut.v_BN_N);
+    Eigen::MRPd sigmaLocal_BN;
+    sigmaLocal_BN = (Eigen::Vector3d) this->primaryCentralSpacecraft.hubSigma->getState();
+    Eigen::Matrix3d dcm_NB = sigmaLocal_BN.toRotationMatrix();
+    Eigen::Vector3d rLocal_CN_N = (*this->primaryCentralSpacecraft.inertialPositionProperty) + dcm_NB*(*this->primaryCentralSpacecraft.c_B);
+    Eigen::Vector3d vLocal_CN_N = (*this->primaryCentralSpacecraft.inertialVelocityProperty) + dcm_NB*(*this->primaryCentralSpacecraft.cDot_B);
+    eigenVector3d2CArray(rLocal_CN_N, stateOut.r_CN_N);
+    eigenVector3d2CArray(vLocal_CN_N, stateOut.v_CN_N);
+    eigenMatrixXd2CArray(this->primaryCentralSpacecraft.hubSigma->getState(), stateOut.sigma_BN);
+    eigenMatrixXd2CArray(this->primaryCentralSpacecraft.hubOmega_BN_B->getState(), stateOut.omega_BN_B);
+    eigenMatrixXd2CArray(this->primaryCentralSpacecraft.dvAccum_B, stateOut.TotalAccumDVBdy);
+    stateOut.MRPSwitchCount = this->primaryCentralSpacecraft.hub.MRPSwitchCount;
+    eigenMatrixXd2CArray(this->primaryCentralSpacecraft.dvAccum_BN_B, stateOut.TotalAccumDV_BN_B);
+    eigenVector3d2CArray(this->primaryCentralSpacecraft.nonConservativeAccelpntB_B, stateOut.nonConservativeAccelpntB_B);
+    eigenVector3d2CArray(this->primaryCentralSpacecraft.omegaDot_BN_B, stateOut.omegaDot_BN_B);
+    SystemMessaging::GetInstance()->WriteMessage(this->primaryCentralSpacecraft.scStateOutMsgId, clockTime, sizeof(SCStatesSimMsg),
+                                                 reinterpret_cast<uint8_t*> (&stateOut), this->moduleID);
+
+    // - Populate mass state output message
+    SCMassPropsSimMsg massStateOut;
+    massStateOut.massSC = (*this->primaryCentralSpacecraft.m_SC)(0,0);
+    eigenMatrixXd2CArray(*this->primaryCentralSpacecraft.c_B, massStateOut.c_B);
+    eigenMatrixXd2CArray(*this->primaryCentralSpacecraft.ISCPntB_B, (double *)massStateOut.ISC_PntB_B);
+    SystemMessaging::GetInstance()->WriteMessage(this->primaryCentralSpacecraft.scMassStateOutMsgId, clockTime, sizeof(SCMassPropsSimMsg),
+                                                 reinterpret_cast<uint8_t*> (&massStateOut), this->moduleID);
+
     return;
 }
 
