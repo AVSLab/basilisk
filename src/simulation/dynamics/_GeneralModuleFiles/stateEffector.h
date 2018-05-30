@@ -36,6 +36,7 @@ typedef struct {
 
 class StateEffector {
 public:
+    std::string nameOfSpacecraftAttachedTo;
     EffectorMassProps effProps;            //!< -- stateEffectors instantiation of effector mass props
     Eigen::Vector3d forceOnBody_B;         //!< [N] Force that the state effector applies to the s/c
     Eigen::Vector3d torqueOnBodyPntB_B;    //!< [N] Torque that the state effector applies to the body about point B
@@ -56,6 +57,7 @@ public:
     virtual void registerStates(DynParamManager& states) = 0;  //!< -- Method for stateEffectors to register states
     virtual void linkInStates(DynParamManager& states) = 0;  //!< -- Method for stateEffectors to get other states
     virtual void computeDerivatives(double integTime)=0;  //!< -- Method for each stateEffector to calculate derivatives
+    virtual void prependSpacecraftNameToStates() = 0;
 };
 
 #endif /* STATE_EFFECTOR_H */

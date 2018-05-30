@@ -93,6 +93,13 @@ void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentCloc
                                  this->moduleID);
 }
 
+void HingedRigidBodyStateEffector::prependSpacecraftNameToStates()
+{
+    this->nameOfThetaState = this->nameOfSpacecraftAttachedTo + "_" + this->nameOfThetaState;
+    this->nameOfThetaDotState = this->nameOfSpacecraftAttachedTo + "_" + this->nameOfThetaDotState;
+
+    return;
+}
 
 /*! This method allows the HRB state effector to have access to the hub states and gravity*/
 void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
