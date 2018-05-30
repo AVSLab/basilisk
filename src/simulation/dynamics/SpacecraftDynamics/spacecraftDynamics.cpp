@@ -217,6 +217,17 @@ void SpacecraftDynamics::UpdateState(uint64_t CurrentSimNanos)
  messages, and calculating energy and momentum */
 void SpacecraftDynamics::linkInStates(DynParamManager& statesIn)
 {
+    // - Get access to all spacecraft hub states
+    this->primaryCentralSpacecraft.hubR_N = statesIn.getStateObject(this->primaryCentralSpacecraft.hub.nameOfHubPosition);
+    this->primaryCentralSpacecraft.hubV_N = statesIn.getStateObject(this->primaryCentralSpacecraft.hub.nameOfHubVelocity);
+    this->primaryCentralSpacecraft.hubSigma = statesIn.getStateObject(this->primaryCentralSpacecraft.hub.nameOfHubSigma);   /* Need sigmaBN for MRP switching */
+    this->primaryCentralSpacecraft.hubOmega_BN_B = statesIn.getStateObject(this->primaryCentralSpacecraft.hub.nameOfHubOmega);
+
+    // - Get access to the hubs position and velocity in the property manager
+    this->primaryCentralSpacecraft.inertialPositionProperty = statesIn.getPropertyReference(this->primaryCentralSpacecraft.gravField.inertialPositionPropName);
+    this->primaryCentralSpacecraft.inertialVelocityProperty = statesIn.getPropertyReference(this->primaryCentralSpacecraft.gravField.inertialVelocityPropName);
+    this->primaryCentralSpacecraft.g_N = statesIn.getPropertyReference(this->primaryCentralSpacecraft.gravField.vehicleGravityPropName);
+
     return;
 }
 
