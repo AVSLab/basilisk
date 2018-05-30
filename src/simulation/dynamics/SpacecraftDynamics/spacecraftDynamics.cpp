@@ -26,6 +26,16 @@
 
 Spacecraft::Spacecraft()
 {
+    // - Set default names
+    this->spacecraftName = "spacecraft";
+    this->scStateOutMsgName = "inertial_state_output";
+    this->scMassStateOutMsgName = "mass_state_output";
+
+    // - Set values to either zero or default values
+    this->scStateOutMsgId = -1;
+    this->dvAccum_B.setZero();
+    this->dvAccum_BN_B.setZero();
+
     return;
 }
 
