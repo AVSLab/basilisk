@@ -112,9 +112,6 @@ void SpacecraftDynamics::SelfInit()
     // - Call the gravity fields selfInit method
     this->primaryCentralSpacecraft.gravField.SelfInit();
 
-    // - Give name of all spacecraft to attached hubEffector
-    this->primaryCentralSpacecraft.hub.nameOfSpacecraftAttachedTo = this->primaryCentralSpacecraft.spacecraftName;
-
     return;
 }
 
@@ -242,6 +239,9 @@ void SpacecraftDynamics::initializeDynamics()
 
     // - Create the properties
     this->sysTime = this->dynManager.createProperty(this->sysTimePropertyName, systemTime);
+
+    // - Give name of all spacecraft to attached hubEffector
+    this->primaryCentralSpacecraft.hub.nameOfSpacecraftAttachedTo = this->primaryCentralSpacecraft.spacecraftName;
     
     // - Register the gravity properties with the dynManager, 'erbody wants g_N!
 //    this->gravField.registerProperties(this->dynManager);
