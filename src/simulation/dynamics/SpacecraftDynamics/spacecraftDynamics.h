@@ -30,6 +30,8 @@
 #include "../_GeneralModuleFiles/stateVecIntegrator.h"
 #include "../_GeneralModuleFiles/sys_model.h"
 #include "hubEffector.h"
+#include "simMessages/scStatesSimMsg.h"
+#include "simMessages/scMassPropsSimMsg.h"
 
 /*! @brief This is an instantiation of the dynamicObject abstract class that is a spacecraft with stateEffectors and
  dynamicEffectors attached to it. The spacecraftDynamics allows for just translation, just rotation, or both translation and
@@ -47,6 +49,9 @@
 
 class Spacecraft {
 public:
+    int64_t scStateOutMsgId;                    //!< -- Message ID for the outgoing spacecraft state
+    int64_t scMassStateOutMsgId;                //!< -- Message ID for the outgoing spacecraft mass state
+    std::string spacecraftName;          //!< -- Name of the spacecraft so that multiple spacecraft can be distinguished
     std::string scStateOutMsgName;       //!< -- Name of the state output message
     std::string scMassStateOutMsgName;   //!< -- Name of the state output message
     
@@ -59,12 +64,7 @@ public:
     Eigen::Vector3d totRotAngMomPntC_N;  //!< [kg m^2/s] Total rotational angular momentum about C in N frame compenents
     Eigen::Vector3d rotAngMomPntCContr_B;  //!< [kg m^2/s] Contribution of stateEffector to total rotational angular mom.
 
-    Eigen::Matrix3d matrixAContr;        //!< -- The contribution of each stateEffetor to matrix A
-    Eigen::Matrix3d matrixBContr;        //!< -- The contribution of each stateEffetor to matrix B
-    Eigen::Matrix3d matrixCContr;        //!< -- The contribution of each stateEffetor to matrix C
-    Eigen::Matrix3d matrixDContr;        //!< -- The contribution of each stateEffetor to matrix D
-    Eigen::Vector3d vecTransContr;       //!< -- The contribution of each stateEffetor to vecTrans
-    Eigen::Vector3d vecRotContr;         //!< -- The contribution of each stateEffetor to vecRot
+    BackSubMatrices backSubMatricesContributions;
 
     Eigen::Vector3d dvAccum_B;           //!< [m/s] Accumulated delta-v of center of mass relative to inertial frame in body frame coordinates
     Eigen::Vector3d dvAccum_BN_B;        //!< [m/s] accumulated delta-v of body frame relative to inertial frame in body frame coordinates
@@ -79,31 +79,31 @@ public:
     Eigen::MatrixXd *cDot_B;             //!< [m/s] Inertial time derivative of c_B
     Eigen::MatrixXd *ISCPntBPrime_B;     //!< [kg m^2/s] Body time derivative of ISCPntB_B
 
+    Eigen::MatrixXd *g_N;                //!< [m/s^2] Gravitational acceleration in N frame components
+
     HubEffector hub;
     GravityEffector gravField;           //!< -- Gravity effector for gravitational field experienced by spacecraft
     std::vector<StateEffector*> states;               //!< -- Vector of state effectors attached to dynObject
     std::vector<DynamicEffector*> dynEffectors;       //!< -- Vector of dynamic effectors attached to dynObject
 
-public:
-    Spacecraft();
-    ~Spacecraft();
-
-    void addStateEffector(StateEffector *newSateEffector);  //!< -- Attaches a stateEffector to the system
-    void addDynamicEffector(DynamicEffector *newDynamicEffector);  //!< -- Attaches a dynamicEffector
-    
-    void writeOutputMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
-    void linkInStates(DynParamManager& statesIn);  //!< Method to get access to the hub's states
-
-private:
-    int64_t scStateOutMsgId;                    //!< -- Message ID for the outgoing spacecraft state
-    int64_t scMassStateOutMsgId;                //!< -- Message ID for the outgoing spacecraft mass state
-    
     StateData *hubR_N;                          //!< -- State data accesss to inertial position for the hub
     StateData *hubV_N;                          //!< -- State data access to inertial velocity for the hub
     StateData *hubOmega_BN_B;                   //!< -- State data access to the attitude rate of the hub
     StateData *hubSigma;                        //!< -- State data access to sigmaBN for the hub
     Eigen::MatrixXd *inertialPositionProperty;  //!< [m] r_N inertial position relative to system spice zeroBase/refBase
     Eigen::MatrixXd *inertialVelocityProperty;  //!< [m] v_N inertial velocity relative to system spice zeroBase/refBase
+
+public:
+    Spacecraft();
+    ~Spacecraft();
+
+    void addStateEffector(StateEffector *newStateEffector);  //!< -- Attaches a stateEffector to the system
+    void addDynamicEffector(DynamicEffector *newDynamicEffector);  //!< -- Attaches a dynamicEffector
+    
+    void writeOutputMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
+    void linkInStates(DynParamManager& statesIn);  //!< Method to get access to the hub's states
+
+private:
 };
 
 class SpacecraftDynamics : public DynamicObject{
