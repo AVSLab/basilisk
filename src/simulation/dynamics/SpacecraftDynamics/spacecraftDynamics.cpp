@@ -44,13 +44,20 @@ Spacecraft::~Spacecraft()
     return;
 }
 
-void Spacecraft::addStateEffector(StateEffector *newSateEffector)
+void Spacecraft::addStateEffector(StateEffector *newStateEffector)
 {
+    this->states.push_back(newStateEffector);
+
+    // Give the stateEffector the name of the spacecraft it is attached to
+    newStateEffector->nameOfSpacecraftAttachedTo = this->spacecraftName;
+
     return;
 }
 
 void Spacecraft::addDynamicEffector(DynamicEffector *newDynamicEffector)
 {
+    this->dynEffectors.push_back(newDynamicEffector);
+
     return;
 }
 
