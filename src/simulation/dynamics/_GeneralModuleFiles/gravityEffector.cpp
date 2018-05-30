@@ -536,3 +536,12 @@ void GravityEffector::addGravBody(GravBodyData* gravBody)
 {
     this->gravBodies.push_back(gravBody);
 }
+
+void GravityEffector::prependSpacecraftNameToStates()
+{
+    this->inertialPositionPropName = this->nameOfSpacecraftAttachedTo + "_" + this->inertialPositionPropName;
+    this->inertialVelocityPropName = this->nameOfSpacecraftAttachedTo + "_" +this->inertialVelocityPropName;
+    this->vehicleGravityPropName = this->nameOfSpacecraftAttachedTo + "_" + this->vehicleGravityPropName;
+    
+    return;
+}

@@ -115,6 +115,7 @@ public:
     void updateEnergyContributions(Eigen::Vector3d r_CN_N, double & orbPotEnergyContr);  //!< -- Orbital Potential Energy Contributions
     void setGravBodies(std::vector<GravBodyData *> gravBodies);
     void addGravBody(GravBodyData* gravBody);
+    void prependSpacecraftNameToStates();
     
 private:
     Eigen::Vector3d getEulerSteppedGravBodyPosition(GravBodyData *bodyData);
@@ -127,6 +128,7 @@ public:
     GravBodyData* centralBody;         //!<  Central body
     std::string inertialPositionPropName;           //! [-] Name of the inertial position property
     std::string inertialVelocityPropName;           //! [-] Name of the inertial velocity property
+    std::string nameOfSpacecraftAttachedTo;
     
 private:
     Eigen::MatrixXd *gravProperty;                  //! [-] g_N property for output
