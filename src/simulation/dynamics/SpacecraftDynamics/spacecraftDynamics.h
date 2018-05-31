@@ -66,6 +66,10 @@ public:
 
     BackSubMatrices backSubMatricesContributions;
 
+    Eigen::Vector3d sumForceExternal_N;  //!< [N] Sum of forces given in the inertial frame
+    Eigen::Vector3d sumForceExternal_B;  //!< [N] Sum of forces given in the body frame
+    Eigen::Vector3d sumTorquePntB_B;     //!< [N-m] Total torque about point B in B frame components
+
     Eigen::Vector3d dvAccum_B;           //!< [m/s] Accumulated delta-v of center of mass relative to inertial frame in body frame coordinates
     Eigen::Vector3d dvAccum_BN_B;        //!< [m/s] accumulated delta-v of body frame relative to inertial frame in body frame coordinates
     Eigen::Vector3d nonConservativeAccelpntB_B;//!< [m/s/s] Current spacecraft body acceleration in the B frame
