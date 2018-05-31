@@ -50,6 +50,8 @@ public:
     Eigen::Vector3d forceOnBody_B;         //!< [N] Force that the state effector applies to the s/c
     Eigen::Vector3d torqueOnBodyPntB_B;    //!< [N] Torque that the state effector applies to the body about point B
     Eigen::Vector3d torqueOnBodyPntC_B;    //!< [N] Torque that the state effector applies to the body about point B
+    Eigen::Vector3d r_BP_P;
+    Eigen::Matrix3d dcm_BP;
     
 public:
     StateEffector();                       //!< -- Contructor
@@ -65,6 +67,7 @@ public:
     virtual void linkInStates(DynParamManager& states) = 0;  //!< -- Method for stateEffectors to get other states
     virtual void computeDerivatives(double integTime)=0;  //!< -- Method for each stateEffector to calculate derivatives
     virtual void prependSpacecraftNameToStates() = 0;
+    virtual void receiveMotherSpacecraftData(Eigen::Vector3d rSC_BP_P, Eigen::Matrix3d dcmSC_BP);
 };
 
 #endif /* STATE_EFFECTOR_H */
