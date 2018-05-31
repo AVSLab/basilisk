@@ -51,6 +51,7 @@ class Spacecraft {
 public:
     int64_t scStateOutMsgId;                    //!< -- Message ID for the outgoing spacecraft state
     int64_t scMassStateOutMsgId;                //!< -- Message ID for the outgoing spacecraft mass state
+    uint64_t numOutMsgBuffers;           //!< -- Number of output message buffers for I/O
     std::string spacecraftName;          //!< -- Name of the spacecraft so that multiple spacecraft can be distinguished
     std::string scStateOutMsgName;       //!< -- Name of the state output message
     std::string scMassStateOutMsgName;   //!< -- Name of the state output message

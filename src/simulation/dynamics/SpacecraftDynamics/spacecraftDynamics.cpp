@@ -30,6 +30,7 @@ Spacecraft::Spacecraft()
     this->spacecraftName = "spacecraft";
     this->scStateOutMsgName = "inertial_state_output";
     this->scMassStateOutMsgName = "mass_state_output";
+    this->numOutMsgBuffers = 2;
 
     // - Set values to either zero or default values
     this->scStateOutMsgId = -1;
@@ -80,6 +81,7 @@ SpacecraftDynamics::SpacecraftDynamics()
     this->currTimeStep = 0.0;
     this->timePrevious = 0.0;
     this->simTimePrevious = 0;
+    this->numOutMsgBuffers = 2;
 
     // - Set integrator as RK4 by default
     this->integrator = new svIntegratorRK4(this);
@@ -98,16 +100,16 @@ void SpacecraftDynamics::SelfInit()
 {
     // - Call this for the primary spacecraft
     // - Create the message for the spacecraft state
-    this->primaryCentralSpacecraft.scStateOutMsgName = this->primaryCentralSpacecraft.spacecraftName + this->primaryCentralSpacecraft.scStateOutMsgName;
-    this->primaryCentralSpacecraft.scMassStateOutMsgName = this->primaryCentralSpacecraft.spacecraftName + this->primaryCentralSpacecraft.scMassStateOutMsgName;
+    this->primaryCentralSpacecraft.scStateOutMsgName = this->primaryCentralSpacecraft.spacecraftName + "_" + this->primaryCentralSpacecraft.scStateOutMsgName;
+    this->primaryCentralSpacecraft.scMassStateOutMsgName = this->primaryCentralSpacecraft.spacecraftName + "_" + this->primaryCentralSpacecraft.scMassStateOutMsgName;
     this->primaryCentralSpacecraft.scStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->primaryCentralSpacecraft.scStateOutMsgName,
                                                                              sizeof(SCStatesSimMsg),
-                                                                             this->numOutMsgBuffers,
+                                                                             this->primaryCentralSpacecraft.numOutMsgBuffers,
                                                                              "SCPlusStatesSimMsg", this->moduleID);
     // - Create the message for the spacecraft mass state
     this->primaryCentralSpacecraft.scMassStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->primaryCentralSpacecraft.scMassStateOutMsgName,
                                                                                  sizeof(SCMassPropsSimMsg),
-                                                                                 this->numOutMsgBuffers,
+                                                                                 this->primaryCentralSpacecraft.numOutMsgBuffers,
                                                                                  "SCPlusMassPropsSimMsg", this->moduleID);
     // - Call the gravity fields selfInit method
     this->primaryCentralSpacecraft.gravField.SelfInit();
