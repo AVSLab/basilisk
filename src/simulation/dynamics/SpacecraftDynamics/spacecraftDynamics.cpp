@@ -383,18 +383,113 @@ void SpacecraftDynamics::equationsOfMotion(double integTimeSeconds)
     (*this->sysTime) << integTimeNanos, integTimeSeconds;
 
     // - Zero all Matrices and vectors for back-sub and the dynamics
+    this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixA.setZero();
+    this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixB.setZero();
+    this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixC.setZero();
+    this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixD.setZero();
+    this->primaryCentralSpacecraft.hub.hubBackSubMatrices.vecTrans.setZero();
+    this->primaryCentralSpacecraft.hub.hubBackSubMatrices.vecRot.setZero();
+    this->primaryCentralSpacecraft.sumForceExternal_B.setZero();
+    this->primaryCentralSpacecraft.sumForceExternal_N.setZero();
+    this->primaryCentralSpacecraft.sumTorquePntB_B.setZero();
 
     // - Update the mass properties of the spacecraft
     this->updateSystemMassProps(integTimeSeconds);
 
     // - This is where gravity is computed (gravity needs to know c_B to calculated gravity about r_CN_N)
-//    this->gravField.computeGravityField();
+    Eigen::MRPd sigmaBNLoc;
+    Eigen::Matrix3d dcm_NB;
+    Eigen::Vector3d cLocal_N;
+
+    sigmaBNLoc = (Eigen::Vector3d) this->primaryCentralSpacecraft.hubSigma->getState();
+    dcm_NB = sigmaBNLoc.toRotationMatrix();
+    cLocal_N = dcm_NB*(*this->primaryCentralSpacecraft.c_B);
+    Eigen::Vector3d rLocal_CN_N = this->primaryCentralSpacecraft.hubR_N->getState() + dcm_NB*(*this->primaryCentralSpacecraft.c_B);
+    Eigen::Vector3d vLocal_CN_N = this->primaryCentralSpacecraft.hubV_N->getState() + dcm_NB*(*this->primaryCentralSpacecraft.cDot_B);
+
+    this->primaryCentralSpacecraft.gravField.computeGravityField(rLocal_CN_N, vLocal_CN_N);
 
     // - Loop through dynEffectors to compute force and torque on the s/c
+    std::vector<DynamicEffector*>::iterator dynIt;
+    for(dynIt = this->primaryCentralSpacecraft.dynEffectors.begin(); dynIt != this->primaryCentralSpacecraft.dynEffectors.end(); dynIt++)
+    {
+        // - Compute the force and torque contributions from the dynamicEffectors
+        (*dynIt)->computeForceTorque(integTimeSeconds);
+        this->primaryCentralSpacecraft.sumForceExternal_N += (*dynIt)->forceExternal_N;
+        this->primaryCentralSpacecraft.sumForceExternal_B += (*dynIt)->forceExternal_B;
+        this->primaryCentralSpacecraft.sumTorquePntB_B += (*dynIt)->torqueExternalPntB_B;
+    }
 
     // - Loop through state effectors to get contributions for back-substitution
+    std::vector<StateEffector*>::iterator it;
+    for(it = this->primaryCentralSpacecraft.states.begin(); it != this->primaryCentralSpacecraft.states.end(); it++)
+    {
+        /* - Set the contribution matrices to zero (just in case a stateEffector += on the matrix or the stateEffector
+         doesn't have a contribution for a matrix and doesn't set the matrix to zero */
+        this->primaryCentralSpacecraft.backSubMatricesContributions.matrixA.setZero();
+        this->primaryCentralSpacecraft.backSubMatricesContributions.matrixB.setZero();
+        this->primaryCentralSpacecraft.backSubMatricesContributions.matrixC.setZero();
+        this->primaryCentralSpacecraft.backSubMatricesContributions.matrixD.setZero();
+        this->primaryCentralSpacecraft.backSubMatricesContributions.vecTrans.setZero();
+        this->primaryCentralSpacecraft.backSubMatricesContributions.vecRot.setZero();
+
+        // - Call the update contributions method for the stateEffectors and add in contributions to the hub matrices
+        (*it)->updateContributions(integTimeSeconds, this->primaryCentralSpacecraft.backSubMatricesContributions.matrixA, this->primaryCentralSpacecraft.backSubMatricesContributions.matrixB, this->primaryCentralSpacecraft.backSubMatricesContributions.matrixC, this->primaryCentralSpacecraft.backSubMatricesContributions.matrixD,
+                                   this->primaryCentralSpacecraft.backSubMatricesContributions.vecTrans, this->primaryCentralSpacecraft.backSubMatricesContributions.vecRot);
+        this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixA += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixA;
+        this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixB += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixB;
+        this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixC += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixC;
+        this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixD += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixD;
+        this->primaryCentralSpacecraft.hub.hubBackSubMatrices.vecTrans += this->primaryCentralSpacecraft.backSubMatricesContributions.vecTrans;
+        this->primaryCentralSpacecraft.hub.hubBackSubMatrices.vecRot += this->primaryCentralSpacecraft.backSubMatricesContributions.vecRot;
+    }
+
+    // - Finish the math that is needed
+    Eigen::Vector3d cLocal_B;
+    Eigen::Vector3d cPrimeLocal_B;
+    cLocal_B = *this->primaryCentralSpacecraft.c_B;
+    cPrimeLocal_B = *this->primaryCentralSpacecraft.cPrime_B;
+
+    Eigen::Matrix3d intermediateMatrix;
+    Eigen::Vector3d intermediateVector;
+    Eigen::Vector3d omegaLocalBN_B = this->primaryCentralSpacecraft.hubOmega_BN_B->getState();
+    this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixA += (*this->primaryCentralSpacecraft.m_SC)(0,0)*intermediateMatrix.Identity();
+    intermediateMatrix = eigenTilde((*this->primaryCentralSpacecraft.c_B));  // make c_B skew symmetric matrix
+    this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixB += -(*this->primaryCentralSpacecraft.m_SC)(0,0)*intermediateMatrix;
+    this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixC += (*this->primaryCentralSpacecraft.m_SC)(0,0)*intermediateMatrix;
+    this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixD += *this->primaryCentralSpacecraft.ISCPntB_B;
+    this->primaryCentralSpacecraft.hub.hubBackSubMatrices.vecTrans += -2.0*(*this->primaryCentralSpacecraft.m_SC)(0, 0)*omegaLocalBN_B.cross(cPrimeLocal_B)
+    - (*this->primaryCentralSpacecraft.m_SC)(0, 0)*omegaLocalBN_B.cross(omegaLocalBN_B.cross(cLocal_B))
+    - 2.0*(*this->primaryCentralSpacecraft.mDot_SC)(0,0)*(cPrimeLocal_B+omegaLocalBN_B.cross(cLocal_B));
+    intermediateVector = *this->primaryCentralSpacecraft.ISCPntB_B*omegaLocalBN_B;
+    this->primaryCentralSpacecraft.hub.hubBackSubMatrices.vecRot += -omegaLocalBN_B.cross(intermediateVector) - *this->primaryCentralSpacecraft.ISCPntBPrime_B*omegaLocalBN_B;
+
+    // - Map external force_N to the body frame
+    Eigen::Vector3d sumForceExternalMappedToB;
+    sumForceExternalMappedToB = dcm_NB.transpose()*this->primaryCentralSpacecraft.sumForceExternal_N;
+
+    // - Edit both v_trans and v_rot with gravity and external force and torque
+    Eigen::Vector3d gLocal_N = *this->primaryCentralSpacecraft.g_N;
+
+    // -  Make additional contributions to the matrices from the hub
+
+    // - Need to find force of gravity on the spacecraft
+    Eigen::Vector3d gravityForce_N;
+    gravityForce_N = (*this->primaryCentralSpacecraft.m_SC)(0,0)*gLocal_N;
+
+    Eigen::Vector3d gravityForce_B;
+    gravityForce_B = dcm_NB.transpose()*gravityForce_N;
+    this->primaryCentralSpacecraft.hub.hubBackSubMatrices.vecTrans += gravityForce_B + sumForceExternalMappedToB + this->primaryCentralSpacecraft.sumForceExternal_B;
+    this->primaryCentralSpacecraft.hub.hubBackSubMatrices.vecRot += cLocal_B.cross(gravityForce_B) + this->primaryCentralSpacecraft.sumTorquePntB_B;
 
     // - Compute the derivatives of the hub states before looping through stateEffectors
+    this->primaryCentralSpacecraft.hub.computeDerivatives(integTimeSeconds);
+
+    // - Loop through state effectors for compute derivatives
+    for(it = this->primaryCentralSpacecraft.states.begin(); it != this->primaryCentralSpacecraft.states.end(); it++)
+    {
+        (*it)->computeDerivatives(integTimeSeconds);
+    }
 
     return;
 }
