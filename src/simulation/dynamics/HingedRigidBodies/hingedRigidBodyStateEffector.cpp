@@ -75,7 +75,6 @@ void HingedRigidBodyStateEffector::CrossInit()
     return;
 }
 
-
 /*! This method takes the computed theta states and outputs them to the m
  messaging system.
  @return void
@@ -135,6 +134,11 @@ void HingedRigidBodyStateEffector::registerStates(DynParamManager& states)
     thetaDotInitMatrix(0,0) = this->thetaDotInit;
     this->thetaDotState->setState(thetaDotInitMatrix);
 
+    return;
+}
+
+void HingedRigidBodyStateEffector::provideInformationAboutPointP(Eigen::Vector3d r_DP_P, Eigen::Matrix3d dcm_DP)
+{
     return;
 }
 

@@ -101,6 +101,7 @@ public:
                                       double & rotEnergyContr); //!< -- Computing energy and momentum for HRBs
     void calcForceTorqueOnBody(double integTime);  //!< -- Force and torque on s/c due to HRBs
     void prependSpacecraftNameToStates();
+    void provideInformationAboutPointP(Eigen::Vector3d r_DP_P, Eigen::Matrix3d dcm_DP);
 };
 
 #endif /* STATE_EFFECTOR_H */
