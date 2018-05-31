@@ -499,9 +499,22 @@ void SpacecraftDynamics::equationsOfMotion(double integTimeSeconds)
 void SpacecraftDynamics::integrateState(double integrateToThisTime)
 {
     // - Find the time step
-	double localTimeStep = integrateToThisTime - timePrevious;
+    double localTimeStep = integrateToThisTime - timePrevious;
 
     // - Find v_CN_N before integration for accumulated DV
+    Eigen::Vector3d oldV_BN_N = this->primaryCentralSpacecraft.hubV_N->getState();  // - V_BN_N before integration
+    Eigen::Vector3d oldV_CN_N;  // - V_CN_N before integration
+    Eigen::Vector3d oldC_B;     // - Center of mass offset before integration
+    Eigen::Vector3d oldOmega_BN_B;  // - angular rate of B wrt N in the Body frame
+    Eigen::MRPd oldSigma_BN;    // - Sigma_BN before integration
+    // - Get the angular rate, oldOmega_BN_B from the dyn manager
+    oldOmega_BN_B = this->primaryCentralSpacecraft.hubOmega_BN_B->getState();
+    // - Get center of mass, v_BN_N and dcm_NB from the dyn manager
+    oldSigma_BN = (Eigen::Vector3d) this->primaryCentralSpacecraft.hubSigma->getState();
+    // - Finally find v_CN_N
+    Eigen::Matrix3d oldDcm_NB = oldSigma_BN.toRotationMatrix(); // - dcm_NB before integration
+    oldV_CN_N = oldV_BN_N + oldDcm_NB*(*this->primaryCentralSpacecraft.cDot_B);
+
 
     // - Integrate the state from the last time (timeBefore) to the integrateToThisTime
     double timeBefore = integrateToThisTime - localTimeStep;
@@ -509,23 +522,56 @@ void SpacecraftDynamics::integrateState(double integrateToThisTime)
     this->timePrevious = integrateToThisTime;     // - copy the current time into previous time for next integrate state call
 
     // - Call hubs modify states to allow for switching of MRPs
+    this->primaryCentralSpacecraft.hub.modifyStates(integrateToThisTime);
 
     // - Loop over stateEffectors to call modifyStates
+    std::vector<StateEffector*>::iterator it;
+    for(it = this->primaryCentralSpacecraft.states.begin(); it != this->primaryCentralSpacecraft.states.end(); it++)
+    {
+        // - Call energy and momentum calulations for stateEffectors
+        (*it)->modifyStates(integrateToThisTime);
+    }
 
     // - Call mass properties to get current info on the mass props of the spacecraft
     this->updateSystemMassProps(integrateToThisTime);
 
     // - Find v_CN_N after the integration for accumulated DV
+    Eigen::Vector3d newV_BN_N = this->primaryCentralSpacecraft.hubV_N->getState(); // - V_BN_N after integration
+    Eigen::Vector3d newV_CN_N;  // - V_CN_N after integration
+    Eigen::MRPd newSigma_BN;    // - Sigma_BN after integration
+    // - Get center of mass, v_BN_N and dcm_NB
+    Eigen::Vector3d sigmaBNLoc;
+    sigmaBNLoc = (Eigen::Vector3d) this->primaryCentralSpacecraft.hubSigma->getState();
+    newSigma_BN = sigmaBNLoc;
+    Eigen::Matrix3d newDcm_NB = newSigma_BN.toRotationMatrix();  // - dcm_NB after integration
+    newV_CN_N = newV_BN_N + newDcm_NB*(*this->primaryCentralSpacecraft.cDot_B);
 
     // - Find change in velocity
+    Eigen::Vector3d dV_N; // dV of the center of mass in the intertial frame
+    Eigen::Vector3d dV_B_N; //dV of the body frame in the inertial frame
+    Eigen::Vector3d dV_B_B; //dV of the body frame in the body frame
+    dV_N = newV_CN_N - oldV_CN_N;
+    dV_B_N = newV_BN_N - oldV_BN_N;
+    // - Subtract out gravity
+    Eigen::Vector3d gLocal_N;
+    gLocal_N = *this->primaryCentralSpacecraft.g_N;
+    dV_N -= gLocal_N*localTimeStep;
+    dV_B_N -= gLocal_N*localTimeStep;
+    dV_B_B = newDcm_NB.transpose()*dV_B_N;
 
     // - Find accumulated DV of the center of mass in the body frame
-    
+    this->primaryCentralSpacecraft.dvAccum_B += newDcm_NB.transpose()*dV_N;
+
     // - Find the accumulated DV of the body frame in the body frame
-    
+    this->primaryCentralSpacecraft.dvAccum_BN_B += dV_B_B;
+
     // - non-conservative acceleration of the body frame in the body frame
-    
+    this->primaryCentralSpacecraft.nonConservativeAccelpntB_B = dV_B_B/localTimeStep;
+
     // - angular acceleration in the body frame
+    Eigen::Vector3d newOmega_BN_B;
+    newOmega_BN_B = this->primaryCentralSpacecraft.hubOmega_BN_B->getState();
+    this->primaryCentralSpacecraft.omegaDot_BN_B = (newOmega_BN_B - oldOmega_BN_B)/localTimeStep; //angular acceleration of B wrt N in the Body frame
 
     // - Compute Energy and Momentum
     this->computeEnergyMomentum(integrateToThisTime);
