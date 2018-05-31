@@ -53,9 +53,7 @@ void StateEffector::updateEffectorMassProps(double integTime)
 /*! This method is strictly for the back-substituion method for computing the dynamics of the spacecraft. The back-sub
  method first computes rDDot_BN_N and omegaDot_BN_B for the spacecraft using these contributions from the state 
  effectors. Then computeDerivatives is called to compute the stateEffectors derivatives using rDDot_BN_N omegaDot_BN_B*/
-void StateEffector::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d
-                                        & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr,
-                                        Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr)
+void StateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr)
 {
     return;
 }

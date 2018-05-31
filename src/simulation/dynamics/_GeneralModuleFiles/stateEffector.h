@@ -23,6 +23,15 @@
 #include <Eigen/Dense>
 #include "dynParamManager.h"
 
+struct BackSubMatrices {
+    Eigen::Matrix3d matrixA;             //!< -- Back-Substitution matrix A
+    Eigen::Matrix3d matrixB;             //!< -- Back-Substitution matrix B
+    Eigen::Matrix3d matrixC;             //!< -- Back-Substitution matrix C
+    Eigen::Matrix3d matrixD;             //!< -- Back-Substitution matrix D
+    Eigen::Vector3d vecTrans;            //!< -- Back-Substitution translation vector
+    Eigen::Vector3d vecRot;              //!< -- Back-Substitution rotation vector
+};
+
 /*! @brief Abstract class that is used to implement an effector attached to the dynamicObject that has a state that
  needs to be integrated. For example: reaction wheels, flexing solar panels, fuel slosh etc */
 typedef struct {
@@ -46,9 +55,7 @@ public:
     StateEffector();                       //!< -- Contructor
     virtual ~StateEffector();              //!< -- Destructor
     virtual void updateEffectorMassProps(double integTime);  //!< -- Method for stateEffector to give mass contributions
-    virtual void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr,
-                                     Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d
-                                     & vecTranscontr, Eigen::Vector3d & vecRotcontr);  //!< -- Back-sub contributions
+    virtual void updateContributions(double integTime, BackSubMatrices & backSubContr);  //!< -- Back-sub contributions
     virtual void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                               double & rotEnergyContr);  //!< -- Energy and momentum calculations
     virtual void modifyStates(double integTime); //!< -- Modify state values after integration
