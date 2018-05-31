@@ -90,11 +90,6 @@ void HubEffector::registerStates(DynParamManager& states)
     return;
 }
 
-void HubEffector::provideInformationAboutPointP(Eigen::Vector3d r_DP_P, Eigen::Matrix3d dcm_DP)
-{
-    return;
-}
-
 /*! This method allows the hub to give its mass properties to the spacecraft */
 void HubEffector::updateEffectorMassProps(double integTime)
 {

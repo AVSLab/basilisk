@@ -137,11 +137,6 @@ void HingedRigidBodyStateEffector::registerStates(DynParamManager& states)
     return;
 }
 
-void HingedRigidBodyStateEffector::provideInformationAboutPointP(Eigen::Vector3d r_DP_P, Eigen::Matrix3d dcm_DP)
-{
-    return;
-}
-
 /*! This method allows the HRB state effector to provide its contributions to the mass props and mass prop rates of the
  spacecraft */
 void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)

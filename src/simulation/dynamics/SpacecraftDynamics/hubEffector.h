@@ -64,7 +64,6 @@ public:
                                       double & rotEnergyContr); //!< -- Add contributions to energy and momentum
     void modifyStates(double integTime); //!< -- Method to switch MRPs
     void prependSpacecraftNameToStates();
-    void provideInformationAboutPointP(Eigen::Vector3d r_DP_P, Eigen::Matrix3d dcm_DP);
 
 private:
     StateData *posState;                 //!< [-] State data container for hub position

@@ -58,7 +58,6 @@ public:
     virtual void linkInStates(DynParamManager& states) = 0;  //!< -- Method for stateEffectors to get other states
     virtual void computeDerivatives(double integTime)=0;  //!< -- Method for each stateEffector to calculate derivatives
     virtual void prependSpacecraftNameToStates() = 0;
-    virtual void provideInformationAboutPointP(Eigen::Vector3d r_DP_P, Eigen::Matrix3d dcm_DP) = 0;     //!< -- Multi-spacecraft architecture method to give stateEffectors ability to define contributions about mother spacecraft
 };
 
 #endif /* STATE_EFFECTOR_H */
