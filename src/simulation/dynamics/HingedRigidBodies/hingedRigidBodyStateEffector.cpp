@@ -182,10 +182,7 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 
 /*! This method allows the HRB state effector to give its contributions to the matrices needed for the back-sub 
  method */
-void HingedRigidBodyStateEffector::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr,
-                                                       Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr,
-                                                       Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr,
-                                                       Eigen::Vector3d & vecRotcontr)
+void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr)
 {
     // - Find dcm_BN
     Eigen::MRPd sigmaLocal_BN;
@@ -225,18 +222,18 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, Eigen::
 
     // - Start defining them good old contributions - start with translation
     // - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper
-    matrixAcontr = this->mass*this->d*this->sHat3_B*this->aTheta.transpose();
-    matrixBcontr = this->mass*this->d*this->sHat3_B*this->bTheta.transpose();
-    vecTranscontr = -(this->mass*this->d*this->thetaDot*this->thetaDot*this->sHat1_B
+    backSubContr.matrixA = this->mass*this->d*this->sHat3_B*this->aTheta.transpose();
+    backSubContr.matrixB = this->mass*this->d*this->sHat3_B*this->bTheta.transpose();
+    backSubContr.vecTrans = -(this->mass*this->d*this->thetaDot*this->thetaDot*this->sHat1_B
                                                                        + this->mass*this->d*this->cTheta*this->sHat3_B);
 
     // - Define rotational matrice contributions
-    matrixCcontr = (this->IPntS_S(1,1)*this->sHat2_B + this->mass*this->d*this->rTilde_SB_B*this->sHat3_B)
+    backSubContr.matrixC = (this->IPntS_S(1,1)*this->sHat2_B + this->mass*this->d*this->rTilde_SB_B*this->sHat3_B)
                                                                                               *this->aTheta.transpose();
-    matrixDcontr = (this->IPntS_S(1,1)*this->sHat2_B + this->mass*this->d*this->rTilde_SB_B*this->sHat3_B)
+    backSubContr.matrixD = (this->IPntS_S(1,1)*this->sHat2_B + this->mass*this->d*this->rTilde_SB_B*this->sHat3_B)
                                                                                               *this->bTheta.transpose();
     Eigen::Matrix3d intermediateMatrix;
-    vecRotcontr = -((this->thetaDot*this->omegaTildeLoc_BN_B + this->cTheta*intermediateMatrix.Identity())
+    backSubContr.vecRot = -((this->thetaDot*this->omegaTildeLoc_BN_B + this->cTheta*intermediateMatrix.Identity())
                     *(this->IPntS_S(1,1)*this->sHat2_B + this->mass*this->d*this->rTilde_SB_B*this->sHat3_B)
                                     + this->mass*this->d*this->thetaDot*this->thetaDot*this->rTilde_SB_B*this->sHat1_B);
 

@@ -95,9 +95,7 @@ public:
 	~SphericalPendulum();          //!< -- Destructor
 	void registerStates(DynParamManager& states);  //!< -- Method for FSP to register its states
 	void linkInStates(DynParamManager& states);  //!< -- Method for FSP to get access of other states
-	void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr,
-		Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr,
-		Eigen::Vector3d & vecRotcontr);  //!< -- Method for FSP to add contributions to the back-sub method
+	void updateContributions(double integTime, BackSubMatrices & backSubContr);  //!< -- Method for FSP to add contributions to the back-sub method
 	void computeDerivatives(double integTime);  //!< -- Method for FSP to compute its derivatives
 	void updateEffectorMassProps(double integTime);  //!< -- Method for FSP to add its contributions to mass props
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,

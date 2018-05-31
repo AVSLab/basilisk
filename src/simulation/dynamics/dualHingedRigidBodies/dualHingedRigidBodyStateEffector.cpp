@@ -156,7 +156,7 @@ void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
     return;
 }
 
-void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr)
+void DualHingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr)
 {
     Eigen::MRPd sigmaBNLocal;
     Eigen::Matrix3d dcmBN;                        /* direction cosine matrix from N to B */
@@ -208,20 +208,20 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Eig
 
     // - Start defining them good old contributions - start with translation
     // - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper
-    matrixAcontr = (this->mass1*this->d1*this->sHat13_B + this->mass2*this->l1*this->sHat13_B + this->mass2*this->d2*this->sHat23_B)*matrixEDHRB.row(0)*this->matrixFDHRB + this->mass2*this->d2*this->sHat23_B*this->matrixEDHRB.row(1)*this->matrixFDHRB;
-    matrixBcontr = (this->mass1*this->d1*this->sHat13_B + this->mass2*this->l1*this->sHat13_B + this->mass2*this->d2*this->sHat23_B)*this->matrixEDHRB.row(0)*(matrixGDHRB) + this->mass2*this->d2*this->sHat23_B*this->matrixEDHRB.row(1)*(matrixGDHRB);
-    vecTranscontr = -(this->mass1*this->d1*this->theta1Dot*this->theta1Dot*this->sHat11_B + this->mass2*(this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_B + this->d2*(this->theta1Dot+this->theta2Dot)*(this->theta1Dot+this->theta2Dot)*this->sHat21_B)
+    backSubContr.matrixA = (this->mass1*this->d1*this->sHat13_B + this->mass2*this->l1*this->sHat13_B + this->mass2*this->d2*this->sHat23_B)*matrixEDHRB.row(0)*this->matrixFDHRB + this->mass2*this->d2*this->sHat23_B*this->matrixEDHRB.row(1)*this->matrixFDHRB;
+    backSubContr.matrixB = (this->mass1*this->d1*this->sHat13_B + this->mass2*this->l1*this->sHat13_B + this->mass2*this->d2*this->sHat23_B)*this->matrixEDHRB.row(0)*(matrixGDHRB) + this->mass2*this->d2*this->sHat23_B*this->matrixEDHRB.row(1)*(matrixGDHRB);
+    backSubContr.vecTrans = -(this->mass1*this->d1*this->theta1Dot*this->theta1Dot*this->sHat11_B + this->mass2*(this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_B + this->d2*(this->theta1Dot+this->theta2Dot)*(this->theta1Dot+this->theta2Dot)*this->sHat21_B)
                     + (this->mass1*this->d1*this->sHat13_B + this->mass2*this->l1*this->sHat13_B + this->mass2*this->d2*this->sHat23_B)*this->matrixEDHRB.row(0)*this->vectorVDHRB + this->mass2*this->d2*this->sHat23_B*this->matrixEDHRB.row(1)*this->vectorVDHRB);
 
     // - Define rotational matrice contributions (Eq 96 in paper)
     
-    matrixCcontr = (this->IPntS1_S1(1,1)*this->sHat12_B + this->mass1*this->d1*this->rTildeS1B_B*this->sHat13_B + this->IPntS2_S2(1,1)*this->sHat22_B + this->mass2*this->l1*this->rTildeS2B_B*this->sHat13_B + this->mass2*this->d2*this->rTildeS2B_B*this->sHat23_B)*this->matrixEDHRB.row(0)*this->matrixFDHRB
+    backSubContr.matrixC = (this->IPntS1_S1(1,1)*this->sHat12_B + this->mass1*this->d1*this->rTildeS1B_B*this->sHat13_B + this->IPntS2_S2(1,1)*this->sHat22_B + this->mass2*this->l1*this->rTildeS2B_B*this->sHat13_B + this->mass2*this->d2*this->rTildeS2B_B*this->sHat23_B)*this->matrixEDHRB.row(0)*this->matrixFDHRB
                     + (this->IPntS2_S2(1,1)*this->sHat22_B + this->mass2*this->d2*this->rTildeS2B_B*this->sHat23_B)*this->matrixEDHRB.row(1)*this->matrixFDHRB;
     
-    matrixDcontr = (this->IPntS1_S1(1,1)*this->sHat12_B + this->mass1*this->d1*this->rTildeS1B_B*this->sHat13_B + this->IPntS2_S2(1,1)*this->sHat22_B + this->mass2*this->l1*this->rTildeS2B_B*this->sHat13_B + this->mass2*this->d2*this->rTildeS2B_B*this->sHat23_B)*this->matrixEDHRB.row(0)*this->matrixGDHRB
+    backSubContr.matrixD = (this->IPntS1_S1(1,1)*this->sHat12_B + this->mass1*this->d1*this->rTildeS1B_B*this->sHat13_B + this->IPntS2_S2(1,1)*this->sHat22_B + this->mass2*this->l1*this->rTildeS2B_B*this->sHat13_B + this->mass2*this->d2*this->rTildeS2B_B*this->sHat23_B)*this->matrixEDHRB.row(0)*this->matrixGDHRB
                     +(this->IPntS2_S2(1,1)*this->sHat22_B + this->mass2*this->d2*this->rTildeS2B_B*this->sHat23_B)*this->matrixEDHRB.row(1)*this->matrixGDHRB;
     
-    vecRotcontr = -(this->theta1Dot*this->IPntS1_S1(1,1)*this->omegaTildeBNLoc_B*this->sHat12_B
+    backSubContr.vecRot = -(this->theta1Dot*this->IPntS1_S1(1,1)*this->omegaTildeBNLoc_B*this->sHat12_B
                     + this->mass1*this->omegaTildeBNLoc_B*this->rTildeS1B_B*this->rPrimeS1B_B + this->mass1*this->d1*this->theta1Dot*this->theta1Dot*this->rTildeS1B_B*this->sHat11_B + (this->theta1Dot+this->theta2Dot)*this->IPntS2_S2(1,1)*this->omegaTildeBNLoc_B*this->sHat22_B + this->mass2*this->omegaTildeBNLoc_B*this->rTildeS2B_B*this->rPrimeS2B_B
                     + this->mass2*this->rTildeS2B_B*(this->l1*this->theta1Dot*this->theta1Dot*this->sHat11_B + this->d2*(this->theta1Dot+this->theta2Dot)*(this->theta1Dot+this->theta2Dot)*this->sHat21_B) + (this->IPntS1_S1(1,1)*this->sHat12_B + this->mass1*this->d1*this->rTildeS1B_B*this->sHat13_B + this->IPntS2_S2(1,1)*this->sHat22_B
                     + this->mass2*this->l1*this->rTildeS2B_B*this->sHat13_B + this->mass2*this->d2*this->rTildeS2B_B*this->sHat23_B)*this->matrixEDHRB.row(0)*this->vectorVDHRB + (this->IPntS2_S2(1,1)*this->sHat22_B + this->mass2*this->d2*this->rTildeS2B_B*this->sHat23_B)*this->matrixEDHRB.row(1)*this->vectorVDHRB);

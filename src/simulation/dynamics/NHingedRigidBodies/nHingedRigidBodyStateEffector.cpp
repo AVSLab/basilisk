@@ -217,10 +217,7 @@ double NHingedRigidBodyStateEffector::HeaviFunc(double cond)
 
 /*! This method allows the HRB state effector to give its contributions to the matrices needed for the back-sub 
  method */
-void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr,
-                                                       Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr,
-                                                       Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr,
-                                                       Eigen::Vector3d & vecRotcontr)
+void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr)
 {
     // - Find dcm_BN
     Eigen::MRPd sigmaLocal_BN;
@@ -380,9 +377,9 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen:
     // - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper
     
     // - translational contributions
-    matrixAcontr.setZero();
-    matrixBcontr.setZero();
-    vecTranscontr.setZero();
+    backSubContr.matrixA.setZero();
+    backSubContr.matrixB.setZero();
+    backSubContr.vecTrans.setZero();
     double sumThetaDot = 0;
     Eigen::Vector3d sumTerm2;
     sumTerm2.setZero();
@@ -398,9 +395,9 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen:
         }
         
         sumTerm2 = pow(sumThetaDot,2)*(2*(this->PanelVec.size() - j)+1)*PanelIt->mass*PanelIt->d*PanelIt->sHat1_B;
-        matrixAcontr += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixFDHRB;
-        matrixBcontr += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixGDHRB;
-        vecTranscontr += -sumTerm2 - sumTerm1*this->matrixEDHRB.row(j-1)*this->vectorVDHRB;
+        backSubContr.matrixA += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixFDHRB;
+        backSubContr.matrixB += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixGDHRB;
+        backSubContr.vecTrans += -sumTerm2 - sumTerm1*this->matrixEDHRB.row(j-1)*this->vectorVDHRB;
         j += 1;
     }
     Eigen::Vector3d aTheta;
@@ -410,9 +407,9 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen:
     bTheta = this->matrixEDHRB.row(0)*this->matrixGDHRB;
     
     // - Rotational contributions
-    matrixCcontr.setZero();
-    matrixDcontr.setZero();
-    vecRotcontr.setZero();
+    backSubContr.matrixC.setZero();
+    backSubContr.matrixD.setZero();
+    backSubContr.vecRot.setZero();
     sumThetaDot = 0;
     sumTerm2.setZero();
     Eigen::Matrix3d sumTerm3;
@@ -448,9 +445,9 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen:
         sumTerm2 = PanelIt->mass*this->omegaTildeLoc_BN_B*PanelIt->rTilde_SB_B*PanelIt->rPrime_SB_B
         + pow(sumThetaDot,2)*(PanelIt->rTilde_SB_B+sumTerm3)*PanelIt->mass*PanelIt->d*PanelIt->sHat1_B
         + PanelIt->IPntS_S(1,1)*sumThetaDot*this->omegaTildeLoc_BN_B*PanelIt->sHat2_B;
-        matrixCcontr += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixFDHRB;
-        matrixDcontr += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixGDHRB;
-        vecRotcontr += -sumTerm2 - sumTerm1*this->matrixEDHRB.row(j-1)*this->vectorVDHRB;
+        backSubContr.matrixC += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixFDHRB;
+        backSubContr.matrixD += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixGDHRB;
+        backSubContr.vecRot += -sumTerm2 - sumTerm1*this->matrixEDHRB.row(j-1)*this->vectorVDHRB;
         j += 1;
     }
 
@@ -530,7 +527,7 @@ void NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTim
  */
 void NHingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
-    
     WriteOutputMessages(CurrentSimNanos);
-    
+
+    return;
 }

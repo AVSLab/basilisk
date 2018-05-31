@@ -273,9 +273,7 @@ public:
 	void pushFuelSloshParticle(FuelSlosh *particle);  //!< -- Method to attach fuel slosh particle
 	void registerStates(DynParamManager& states);  //!< -- Method to register mass state with state manager
 	void linkInStates(DynParamManager& states);  //!< -- Method to give the tank access to other states
-	void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr,
-		Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr,
-		Eigen::Vector3d & vecRotcontr);  //!< -- Method to add contributions for back-sub from the tank
+	void updateContributions(double integTime, BackSubMatrices & backSubContr);  //!< -- Method to add contributions for back-sub from the tank
 	void computeDerivatives(double integTime);  //!< -- Method to compute derivatives for the tank
 	void updateEffectorMassProps(double integTime);  //!< -- Method to add contribtution mass props from the tank
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,

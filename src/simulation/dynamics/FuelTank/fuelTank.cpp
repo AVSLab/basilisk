@@ -169,17 +169,15 @@ void FuelTank::updateEffectorMassProps(double integTime)
 }
 
 /*! This method allows the fuel tank to add its contributions to the matrices for the back-sub method. */
-void FuelTank::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr,
-	Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr,
-	Eigen::Vector3d & vecRotcontr) {
+void FuelTank::updateContributions(double integTime, BackSubMatrices & backSubContr) {
 
 	Eigen::Vector3d r_TB_BLocal, rPrime_TB_BLocal, rPPrime_TB_BLocal;
 	Eigen::Vector3d omega_BN_BLocal;
 
 
     // - Zero some matrices
-    matrixAcontr = matrixBcontr = matrixCcontr = matrixDcontr = Eigen::Matrix3d::Zero();
-    vecTranscontr = vecRotcontr = Eigen::Vector3d::Zero();
+    backSubContr.matrixA = backSubContr.matrixB = backSubContr.matrixC = backSubContr.matrixD = Eigen::Matrix3d::Zero();
+    backSubContr.vecTrans = backSubContr.vecRot = Eigen::Vector3d::Zero();
 
     // Calculate the fuel consumption properties for the tank
 	tankFuelConsumption = fuelConsumption*massState->getState()(0, 0) / effProps.mEff;
@@ -189,10 +187,10 @@ void FuelTank::updateContributions(double integTime, Eigen::Matrix3d & matrixAco
 	rPPrime_TB_BLocal = fuelTankModel->rPPrime_TcT_T;
 	omega_BN_BLocal = omegaState->getState();
 	if (!this->updateOnly) {
-		vecRotcontr = -massState->getState()(0, 0) * r_TB_BLocal.cross(rPPrime_TB_BLocal)
+		backSubContr.vecRot = -massState->getState()(0, 0) * r_TB_BLocal.cross(rPPrime_TB_BLocal)
 			- massState->getState()(0, 0)*omega_BN_BLocal.cross(r_TB_BLocal.cross(rPrime_TB_BLocal))
 			- massState->getStateDeriv()(0, 0)*r_TB_BLocal.cross(rPrime_TB_BLocal);
-		vecRotcontr -= fuelTankModel->IPrimeTankPntT_T * omega_BN_BLocal;
+		backSubContr.vecRot -= fuelTankModel->IPrimeTankPntT_T * omega_BN_BLocal;
 	}
 
     return;

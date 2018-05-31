@@ -42,7 +42,7 @@ public:
     ~DualHingedRigidBodyStateEffector();
     void registerStates(DynParamManager& statesIn);
     void linkInStates(DynParamManager& states);
-    void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr);
+    void updateContributions(double integTime, BackSubMatrices & backSubContr);
     void computeDerivatives(double integTime);
     void updateEffectorMassProps(double integTime);
 
