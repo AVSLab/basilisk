@@ -105,12 +105,19 @@ void HingedRigidBodyStateEffector::prependSpacecraftNameToStates()
 void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 {
     // - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling and gravity
-    this->hubVelocity = statesIn.getStateObject("hubVelocity");
-    this->hubSigma = statesIn.getStateObject("hubSigma");
-    this->hubOmega = statesIn.getStateObject("hubOmega");
-    this->g_N = statesIn.getPropertyReference("g_N");
-    this->c_B = statesIn.getPropertyReference("centerOfMassSC");
-    this->cPrime_B = statesIn.getPropertyReference("centerOfMassPrimeSC");
+    std::string tmpMsgName;
+    tmpMsgName = this->nameOfSpacecraftAttachedTo + "_" + "hubVelocity";
+    this->hubVelocity = statesIn.getStateObject(tmpMsgName);
+    tmpMsgName = this->nameOfSpacecraftAttachedTo + "_" + "hubSigma";
+    this->hubSigma = statesIn.getStateObject(tmpMsgName);
+    tmpMsgName = this->nameOfSpacecraftAttachedTo + "_" + "hubOmega";
+    this->hubOmega = statesIn.getStateObject(tmpMsgName);
+    tmpMsgName = this->nameOfSpacecraftAttachedTo + "_" + "g_N";
+    this->g_N = statesIn.getPropertyReference(tmpMsgName);
+    tmpMsgName = this->nameOfSpacecraftAttachedTo + "_" + "centerOfMassSC";
+    this->c_B = statesIn.getPropertyReference(tmpMsgName);
+    tmpMsgName = this->nameOfSpacecraftAttachedTo + "_" + "centerOfMassPrimeSC";
+    this->cPrime_B = statesIn.getPropertyReference(tmpMsgName);
 
     return;
 }
