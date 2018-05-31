@@ -25,6 +25,11 @@
 #include "../_GeneralModuleFiles/stateData.h"
 #include "../simulation/utilities/avsEigenMRP.h"
 
+struct DockingData {
+    Eigen::Vector3d r_DB_B;
+    Eigen::Matrix3d dcm_DB;
+};
+
 /*! @brief This class is an instantiation of the stateEffector abstract class and is for the hub of the s/c. The hub
  has 4 states: r_BN_N, rDot_BN_N, sigma_BN and omega_BN_B. The hub utilizes the back-substitution method for calculating
  its derivatives using contributions from stateEffectors and dynEffectors. */
@@ -43,6 +48,7 @@ public:
     Eigen::Vector3d v_CN_NInit;          //!< [m/s Initial velocity of the spacecraft wrt base
     Eigen::Vector3d sigma_BNInit;        //!< -- Initial attitude of the spacecraft wrt base
     Eigen::Vector3d omega_BN_BInit;      //!< [r/s] Initial attitude rate of the spacecraf wrt base
+    std::vector<DockingData*> dockingPoints;
 
 public:
     HubEffector();                       //!< -- Contructor
@@ -55,6 +61,7 @@ public:
                                       double & rotEnergyContr); //!< -- Add contributions to energy and momentum
     void modifyStates(double integTime); //!< -- Method to switch MRPs
     void prependSpacecraftNameToStates();
+    void addDockingPort(DockingData *newDockingPort);  //!< -- Attaches a dynamicEffector
 
 private:
     StateData *posState;                 //!< [-] State data container for hub position
