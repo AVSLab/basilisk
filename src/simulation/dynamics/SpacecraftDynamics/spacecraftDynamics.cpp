@@ -265,6 +265,8 @@ void SpacecraftDynamics::initializeDynamics()
 
     // - Give name of all spacecraft to attached hubEffector
     this->primaryCentralSpacecraft.hub.nameOfSpacecraftAttachedTo = this->primaryCentralSpacecraft.spacecraftName;
+    // - Give name of all spacecraft to attached hubEffector
+    this->primaryCentralSpacecraft.gravField.nameOfSpacecraftAttachedTo = this->primaryCentralSpacecraft.spacecraftName;
     
     // - Before er'body registers their properties, we need to prepend their state names with the spacecraft
     this->primaryCentralSpacecraft.hub.prependSpacecraftNameToStates();
