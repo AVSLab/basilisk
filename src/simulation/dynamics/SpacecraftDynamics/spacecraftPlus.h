@@ -59,12 +59,7 @@ public:
     double orbPotentialEnergyContr;      //!< [J] Contribution of stateEffector to total rotational energy
     double currTimeStep;                 //!< [s] Time after integration, used for dvAccum calculation
     double timePrevious;                 //!< [s] Time before integration, used for dvAccum calculation
-    Eigen::Matrix3d matrixAContr;        //!< -- The contribution of each stateEffetor to matrix A
-    Eigen::Matrix3d matrixBContr;        //!< -- The contribution of each stateEffetor to matrix B
-    Eigen::Matrix3d matrixCContr;        //!< -- The contribution of each stateEffetor to matrix C
-    Eigen::Matrix3d matrixDContr;        //!< -- The contribution of each stateEffetor to matrix D
-    Eigen::Vector3d vecTransContr;       //!< -- The contribution of each stateEffetor to vecTrans
-    Eigen::Vector3d vecRotContr;         //!< -- The contribution of each stateEffetor to vecRot
+    BackSubMatrices backSubContributions;
     Eigen::Vector3d sumForceExternal_N;  //!< [N] Sum of forces given in the inertial frame
     Eigen::Vector3d sumForceExternal_B;  //!< [N] Sum of forces given in the body frame
     Eigen::Vector3d sumTorquePntB_B;     //!< [N-m] Total torque about point B in B frame components

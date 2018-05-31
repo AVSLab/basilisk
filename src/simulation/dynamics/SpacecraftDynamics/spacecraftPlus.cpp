@@ -359,22 +359,21 @@ void SpacecraftPlus::equationsOfMotion(double integTimeSeconds)
     {
         /* - Set the contribution matrices to zero (just in case a stateEffector += on the matrix or the stateEffector
          doesn't have a contribution for a matrix and doesn't set the matrix to zero */
-        this->matrixAContr.setZero();
-        this->matrixBContr.setZero();
-        this->matrixCContr.setZero();
-        this->matrixDContr.setZero();
-        this->vecTransContr.setZero();
-        this->vecRotContr.setZero();
+        this->backSubContributions.matrixA.setZero();
+        this->backSubContributions.matrixB.setZero();
+        this->backSubContributions.matrixC.setZero();
+        this->backSubContributions.matrixD.setZero();
+        this->backSubContributions.vecTrans.setZero();
+        this->backSubContributions.vecRot.setZero();
 
         // - Call the update contributions method for the stateEffectors and add in contributions to the hub matrices
-        (*it)->updateContributions(integTimeSeconds, this->matrixAContr, this->matrixBContr, this->matrixCContr, this->matrixDContr,
-                                   this->vecTransContr, this->vecRotContr);
-        this->hub.hubBackSubMatrices.matrixA += this->matrixAContr;
-        this->hub.hubBackSubMatrices.matrixB += this->matrixBContr;
-        this->hub.hubBackSubMatrices.matrixC += this->matrixCContr;
-        this->hub.hubBackSubMatrices.matrixD += this->matrixDContr;
-        this->hub.hubBackSubMatrices.vecTrans += this->vecTransContr;
-        this->hub.hubBackSubMatrices.vecRot += this->vecRotContr;
+        (*it)->updateContributions(integTimeSeconds, this->backSubContributions);
+        this->hub.hubBackSubMatrices.matrixA += this->backSubContributions.matrixA;
+        this->hub.hubBackSubMatrices.matrixB += this->backSubContributions.matrixB;
+        this->hub.hubBackSubMatrices.matrixC += this->backSubContributions.matrixC;
+        this->hub.hubBackSubMatrices.matrixD += this->backSubContributions.matrixD;
+        this->hub.hubBackSubMatrices.vecTrans += this->backSubContributions.vecTrans;
+        this->hub.hubBackSubMatrices.vecRot += this->backSubContributions.vecRot;
     }
 
     // - Finish the math that is needed
