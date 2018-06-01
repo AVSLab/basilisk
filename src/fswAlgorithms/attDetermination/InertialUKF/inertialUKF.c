@@ -259,12 +259,14 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
         if(newTimeTag > ConfigData->timeTag && ReadSize > 0)
         {
             inertialUKFTimeUpdate(ConfigData, newTimeTag);
+        }
+        if( ConfigData->timeTag == newTimeTag && ReadSize > 0)
+        {
             inertialUKFMeasUpdate(ConfigData, newTimeTag, ConfigData->stSensorOrder[i]);
             trackerValid = 1;
         }
         
     }
-    
     /*! - If current clock time is further ahead than the measured time, then
      propagate to this current time-step*/
     newTimeTag = callTime*NANO2SEC;
@@ -404,6 +406,10 @@ void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime)
 	double *spPtr;
 	/*! Begin method steps*/
 	ConfigData->dt = updateTime - ConfigData->timeTag;
+    
+    if (ConfigData->dt < 1E-10){
+        return;
+    }
     
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
 	vCopy(ConfigData->state, ConfigData->numStates,
