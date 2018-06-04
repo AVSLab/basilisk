@@ -129,10 +129,9 @@ void SpacecraftDynamics::CrossInit()
     return;
 }
 
-/*! This method attaches a stateEffector to the dynamicObject */
-void SpacecraftDynamics::addSpacecraftUndocked(Spacecraft *newSpacecraft)
+void Spacecraft::addDockingPort(DockingData *newDockingPort)
 {
-    this->unDockedSpacecraft.push_back(newSpacecraft);
+    this->dockingPoints.push_back(newDockingPort);
 
     return;
 }

@@ -47,6 +47,14 @@
 
  */
 
+struct DockingData {
+    Eigen::Vector3d r_DB_B;
+    Eigen::Matrix3d dcm_DB;
+    Eigen::Vector3d r_DP_P;
+    Eigen::Matrix3d dcm_DP;
+    std::string portName;
+};
+
 class Spacecraft {
 public:
     int64_t scStateOutMsgId;                    //!< -- Message ID for the outgoing spacecraft state
@@ -90,6 +98,7 @@ public:
     GravityEffector gravField;           //!< -- Gravity effector for gravitational field experienced by spacecraft
     std::vector<StateEffector*> states;               //!< -- Vector of state effectors attached to dynObject
     std::vector<DynamicEffector*> dynEffectors;       //!< -- Vector of dynamic effectors attached to dynObject
+    std::vector<DockingData*> dockingPoints;
 
     StateData *hubR_N;                          //!< -- State data accesss to inertial position for the hub
     StateData *hubV_N;                          //!< -- State data access to inertial velocity for the hub
@@ -104,6 +113,7 @@ public:
 
     void addStateEffector(StateEffector *newStateEffector);  //!< -- Attaches a stateEffector to the system
     void addDynamicEffector(DynamicEffector *newDynamicEffector);  //!< -- Attaches a dynamicEffector
+    void addDockingPort(DockingData *newDockingPort);  //!< -- Attaches a dynamicEffector
     
     void writeOutputMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
     void linkInStates(DynParamManager& statesIn);  //!< Method to get access to the hub's states
