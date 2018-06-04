@@ -149,26 +149,61 @@ void SpacecraftDynamics::attachSpacecraftToPrimary(Spacecraft *newSpacecraft, st
 {
     // Create chain of docked spacecraft
     std::vector<DockingData*>::iterator dockingItPrimary;
-    bool checkDock;
+    int checkDock = 0;
     for(dockingItPrimary = this->primaryCentralSpacecraft.dockingPoints.begin(); dockingItPrimary != this->primaryCentralSpacecraft.dockingPoints.end(); dockingItPrimary++)
     {
         std::vector<DockingData*>::iterator dockingIt;
         if (dockingToPortName == (*dockingItPrimary)->portName) {
-            for(dockingIt = this->primaryCentralSpacecraft.dockingPoints.begin(); dockingIt != this->primaryCentralSpacecraft.dockingPoints.end(); dockingIt++)
+            for(dockingIt = newSpacecraft->dockingPoints.begin(); dockingIt != newSpacecraft->dockingPoints.end(); dockingIt++)
             {
                 if (dockingPortNameOfNewSpacecraft == (*dockingIt)->portName) {
                     (*dockingIt)->r_DP_P = (*dockingItPrimary)->r_DP_P;
                     (*dockingIt)->dcm_DP = (*dockingItPrimary)->dcm_DP;
                     newSpacecraft->hub.dcm_BP = (*dockingIt)->dcm_DB.transpose()*(*dockingIt)->dcm_DP;
                     newSpacecraft->hub.r_BP_P = (*dockingIt)->r_DP_P - newSpacecraft->hub.dcm_BP.transpose()*(*dockingIt)->r_DB_B;
-                    checkDock = true;
+                    checkDock += 1;
                 } else {
-                    std::cerr << __FILE__ <<": Could not find corresponding port name in primary spacecraft docking points";
+                    std::cerr << __FILE__ <<": Port name given is not the same port name held in the newSpacecraft";
                     std::cerr << "  Quitting."<<std::endl;
                 }
 
             }
         }
+    }
+
+    if (checkDock < 1) {
+        std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+        for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
+        {
+            std::vector<DockingData*>::iterator dockingItConnected;
+            for(dockingItConnected = (*spacecraftConnectedIt)->dockingPoints.begin(); dockingItConnected != (*spacecraftConnectedIt)->dockingPoints.end(); dockingItConnected++)
+            {
+                std::vector<DockingData*>::iterator dockingIt;
+                if (dockingToPortName == (*dockingItConnected)->portName) {
+                    for(dockingIt = newSpacecraft->dockingPoints.begin(); dockingIt != newSpacecraft->dockingPoints.end(); dockingIt++)
+                    {
+                        if (dockingPortNameOfNewSpacecraft == (*dockingIt)->portName) {
+                            (*dockingIt)->r_DP_P = (*dockingItConnected)->r_DP_P;
+                            (*dockingIt)->dcm_DP = (*dockingItConnected)->dcm_DP;
+                            newSpacecraft->hub.dcm_BP = (*dockingIt)->dcm_DB.transpose()*(*dockingIt)->dcm_DP;
+                            newSpacecraft->hub.r_BP_P = (*dockingIt)->r_DP_P - newSpacecraft->hub.dcm_BP.transpose()*(*dockingIt)->r_DB_B;
+                            checkDock += 1;
+                        } else {
+                            std::cerr << __FILE__ <<": Port name given is not the same port name held in the newSpacecraft";
+                            std::cerr << "  Quitting."<<std::endl;
+                        }
+
+                    }
+                }
+
+            }
+
+        }
+    }
+
+    if (checkDock < 1) {
+        std::cerr << __FILE__ <<": The new spacecraft did not get attached due to naming problems with the ports";
+        std::cerr << "  Quitting."<<std::endl;
     }
 
     this->spacecraftDockedToPrimary.push_back(newSpacecraft);
