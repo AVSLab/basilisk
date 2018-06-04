@@ -326,6 +326,19 @@ void SpacecraftDynamics::initializeDynamics()
         (*dynIt)->linkInStates(this->dynManager);
     }
 
+    // - Call all stateEffectors in each spacecraft to give them body frame information
+    std::vector<Spacecraft*>::iterator spacecraftIt;
+    for(spacecraftIt = this->spacecraftDockedToPrimary.begin(); spacecraftIt != this->spacecraftDockedToPrimary.end(); spacecraftIt++)
+    {
+        for(stateIt = (*spacecraftIt)->states.begin(); stateIt != (*spacecraftIt)->states.end(); stateIt++)
+        {
+            // Obviously need to change this
+            Eigen::Vector3d vectorPlaceHolder;
+            Eigen::Matrix3d MatrixPlaceHolder;
+            (*stateIt)->receiveMotherSpacecraftData(vectorPlaceHolder, MatrixPlaceHolder);
+        }
+    }
+
     // - Call equations of motion at time zero
     this->equationsOfMotion(0.0);
 
