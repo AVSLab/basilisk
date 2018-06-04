@@ -53,6 +53,14 @@ struct DockingData {
     Eigen::Vector3d r_DP_P;
     Eigen::Matrix3d dcm_DP;
     std::string portName;
+    DockingData()
+    {
+        this->r_DB_B.setZero();
+        this->r_DP_P.setZero();
+        this->dcm_DB.setIdentity();
+        this->dcm_DP.setIdentity();
+        portName = "";
+    }
 };
 
 class Spacecraft {
