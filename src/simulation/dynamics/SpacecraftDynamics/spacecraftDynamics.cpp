@@ -164,6 +164,9 @@ void SpacecraftDynamics::attachSpacecraftToPrimary(Spacecraft *newSpacecraft, st
                     newSpacecraft->hub.dcm_BP = (*dockingIt)->dcm_DB.transpose()*(*dockingIt)->dcm_DP;
                     newSpacecraft->hub.r_BP_P = (*dockingIt)->r_DP_P - newSpacecraft->hub.dcm_BP.transpose()*(*dockingIt)->r_DB_B;
                     checkDock = true;
+                } else {
+                    std::cerr << __FILE__ <<": Could not find corresponding port name in primary spacecraft docking points";
+                    std::cerr << "  Quitting."<<std::endl;
                 }
 
             }
