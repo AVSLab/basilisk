@@ -150,10 +150,24 @@ void SpacecraftDynamics::attachSpacecraftToPrimary(Spacecraft *newSpacecraft, st
     this->spacecraftDockedToPrimary.push_back(newSpacecraft);
 
     // Create chain of docked spacecraft
-    std::vector<DynamicEffector*>::iterator dynIt;
-    for(dynIt = this->primaryCentralSpacecraft.dynEffectors.begin(); dynIt != this->primaryCentralSpacecraft.dynEffectors.end(); dynIt++)
+    std::vector<DockingData*>::iterator dockingItPrimary;
+    bool checkDock;
+    for(dockingItPrimary = this->primaryCentralSpacecraft.dockingPoints.begin(); dockingItPrimary != this->primaryCentralSpacecraft.dockingPoints.end(); dockingItPrimary++)
     {
-        (*dynIt)->linkInStates(this->dynManager);
+        std::vector<DockingData*>::iterator dockingIt;
+        if (dockingToPortName == (*dockingItPrimary)->portName) {
+            for(dockingIt = this->primaryCentralSpacecraft.dockingPoints.begin(); dockingIt != this->primaryCentralSpacecraft.dockingPoints.end(); dockingIt++)
+            {
+                if (dockingPortNameOfNewSpacecraft == (*dockingIt)->portName) {
+                    (*dockingIt)->r_DP_P = (*dockingItPrimary)->r_DP_P;
+                    (*dockingIt)->dcm_DP = (*dockingItPrimary)->dcm_DP;
+                    newSpacecraft->hub.dcm_BP = (*dockingIt)->dcm_DB.transpose()*(*dockingIt)->dcm_DP;
+                    newSpacecraft->hub.r_BP_P = (*dockingIt)->r_DP_P - newSpacecraft->hub.dcm_BP.transpose()*(*dockingIt)->r_DB_B;
+                    checkDock = true;
+                }
+
+            }
+        }
     }
 
     return;
