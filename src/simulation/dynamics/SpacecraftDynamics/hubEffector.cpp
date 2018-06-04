@@ -55,13 +55,6 @@ HubEffector::~HubEffector()
     return;
 }
 
-void HubEffector::addDockingPort(DockingData *newDockingPort)
-{
-    this->dockingPoints.push_back(newDockingPort);
-
-    return;
-}
-
 /*! This method allows the hub access to gravity and also gets access to the properties in the dyn Manager because uses
  these values in the computeDerivatives method call */
 void HubEffector::linkInStates(DynParamManager& statesIn)
