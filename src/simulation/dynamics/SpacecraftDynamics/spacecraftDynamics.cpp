@@ -147,8 +147,6 @@ void SpacecraftDynamics::addSpacecraftUndocked(Spacecraft *newSpacecraft)
 /*! This method attaches a stateEffector to the dynamicObject */
 void SpacecraftDynamics::attachSpacecraftToPrimary(Spacecraft *newSpacecraft, std::string dockingPortNameOfNewSpacecraft, std::string dockingToPortName)
 {
-    this->spacecraftDockedToPrimary.push_back(newSpacecraft);
-
     // Create chain of docked spacecraft
     std::vector<DockingData*>::iterator dockingItPrimary;
     bool checkDock;
@@ -172,6 +170,8 @@ void SpacecraftDynamics::attachSpacecraftToPrimary(Spacecraft *newSpacecraft, st
             }
         }
     }
+
+    this->spacecraftDockedToPrimary.push_back(newSpacecraft);
 
     return;
 }
