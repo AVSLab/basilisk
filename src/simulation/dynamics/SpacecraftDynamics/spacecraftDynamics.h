@@ -57,6 +57,7 @@ struct DockingData {
 
 class Spacecraft {
 public:
+    bool docked; 
     int64_t scStateOutMsgId;                    //!< -- Message ID for the outgoing spacecraft state
     int64_t scMassStateOutMsgId;                //!< -- Message ID for the outgoing spacecraft mass state
     uint64_t numOutMsgBuffers;           //!< -- Number of output message buffers for I/O
@@ -129,9 +130,11 @@ public:
     double currTimeStep;                 //!< [s] Time after integration, used for dvAccum calculation
     double timePrevious;                 //!< [s] Time before integration, used for dvAccum calculation
     Eigen::MatrixXd *sysTime;            //!< [s] System time
-    Spacecraft primaryCentralSpacecraft;   //!< -- Primary spacecraft in which other spacraft can attach/detach to/from
+    Spacecraft primaryCentralSpacecraft;   //!< -- Primary spacecraft in which other spacecraft can attach/detach to/from
     std::vector<Spacecraft*> spacecraftDockedToPrimary; //!< -- vector of spacecraft currently docked with primary spacecraft
     std::vector<Spacecraft*> unDockedSpacecraft; //!< -- vector of spacecraft currently detached from all other spacecraft
+
+    int numberOfSCAttachedToPrimary;
 
 public:
     SpacecraftDynamics();                    //!< -- Constructor

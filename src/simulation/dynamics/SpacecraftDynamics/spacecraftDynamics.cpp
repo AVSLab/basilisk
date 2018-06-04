@@ -85,6 +85,7 @@ SpacecraftDynamics::SpacecraftDynamics()
 
     // - Set integrator as RK4 by default
     this->integrator = new svIntegratorRK4(this);
+    this->numberOfSCAttachedToPrimary = 0;
 
     return;
 }
@@ -201,9 +202,13 @@ void SpacecraftDynamics::attachSpacecraftToPrimary(Spacecraft *newSpacecraft, st
         }
     }
 
-    if (checkDock < 1) {
+    if (checkDock != 1) {
         std::cerr << __FILE__ <<": The new spacecraft did not get attached due to naming problems with the ports";
         std::cerr << "  Quitting."<<std::endl;
+    } else {
+        this->numberOfSCAttachedToPrimary += 1;
+        newSpacecraft->docked = true;
+        this->primaryCentralSpacecraft.docked = true;
     }
 
     this->spacecraftDockedToPrimary.push_back(newSpacecraft);
