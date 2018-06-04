@@ -131,8 +131,6 @@ public:
     Eigen::MatrixXd *sysTime;            //!< [s] System time
     Spacecraft primaryCentralSpacecraft;   //!< -- Primary spacecraft in which other spacraft can attach/detach to/from
     std::vector<Spacecraft*> spacecraftDockedToPrimary; //!< -- vector of spacecraft currently docked with primary spacecraft
-    Spacecraft secondaryCentralSpacecraft; //!< -- Secondary spaceraft in which other spacecraft can attach/detach to/from
-    std::vector<Spacecraft*> spacecraftDockedToSecondary; //!< -- vector of spacecraft currently docked with secondary spacecraft
     std::vector<Spacecraft*> unDockedSpacecraft; //!< -- vector of spacecraft currently detached from all other spacecraft
 
 public:
@@ -148,8 +146,7 @@ public:
     void linkInStates(DynParamManager& statesIn);  //!< Method to get access to the hub's states
     void equationsOfMotion(double integTimeSeconds);    //!< -- This method computes the equations of motion for the whole system
     void integrateState(double time);       //!< -- This method steps the state forward one step in time
-    void attachSpacecraftToPrimary(Spacecraft *newSpacecraft);  //!< -- Attaches a spacecraft to the primary spacecraft chain
-    void attachSpacecraftToSecondary(Spacecraft *newSpacecraft);  //!< -- Attaches a spacecraft to the secondar spacecraft chain
+    void attachSpacecraftToPrimary(Spacecraft *newSpacecraft, std::string dockingPortNameOfNewSpacecraft, std::string dockingToPortName);  //!< -- Attaches a spacecraft to the primary spacecraft chain
     void addSpacecraftUndocked(Spacecraft *newSpacecraft);  //!< -- Attaches a spacecraft to the primary spacecraft chain
 
 private:

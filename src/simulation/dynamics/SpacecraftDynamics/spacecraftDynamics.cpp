@@ -137,17 +137,24 @@ void Spacecraft::addDockingPort(DockingData *newDockingPort)
 }
 
 /*! This method attaches a stateEffector to the dynamicObject */
-void SpacecraftDynamics::attachSpacecraftToPrimary(Spacecraft *newSpacecraft)
+void SpacecraftDynamics::addSpacecraftUndocked(Spacecraft *newSpacecraft)
 {
-    this->spacecraftDockedToPrimary.push_back(newSpacecraft);
+    this->unDockedSpacecraft.push_back(newSpacecraft);
 
     return;
 }
 
 /*! This method attaches a stateEffector to the dynamicObject */
-void SpacecraftDynamics::attachSpacecraftToSecondary(Spacecraft *newSpacecraft)
+void SpacecraftDynamics::attachSpacecraftToPrimary(Spacecraft *newSpacecraft, std::string dockingPortNameOfNewSpacecraft, std::string dockingToPortName)
 {
-    this->spacecraftDockedToSecondary.push_back(newSpacecraft);
+    this->spacecraftDockedToPrimary.push_back(newSpacecraft);
+
+    // Create chain of docked spacecraft
+    std::vector<DynamicEffector*>::iterator dynIt;
+    for(dynIt = this->primaryCentralSpacecraft.dynEffectors.begin(); dynIt != this->primaryCentralSpacecraft.dynEffectors.end(); dynIt++)
+    {
+        (*dynIt)->linkInStates(this->dynManager);
+    }
 
     return;
 }
