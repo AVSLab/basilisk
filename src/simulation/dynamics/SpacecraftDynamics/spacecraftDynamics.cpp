@@ -1056,14 +1056,9 @@ void SpacecraftDynamics::calculateDeltaVandAcceleration(Spacecraft &spacecraft, 
  for validation purposes. */
 void SpacecraftDynamics::computeEnergyMomentum(double time)
 {
-    this->computeEnergyMomentumSC(time, this->primaryCentralSpacecraft);
+    this->computeEnergyMomentumSystem(time);
 
     // - Call this for all of the connected spacecraft
-    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
-    for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
-    {
-        this->computeEnergyMomentumSC(time, *(*spacecraftConnectedIt));
-    }
 
     return;
 }
@@ -1194,6 +1189,30 @@ void SpacecraftDynamics::computeEnergyMomentumSystem(double time)
         (*it)->updateEnergyMomContributions(time, this->primaryCentralSpacecraft.rotAngMomPntCContr_B, this->primaryCentralSpacecraft.rotEnergyContr);
         totRotAngMomPntC_B += this->primaryCentralSpacecraft.rotAngMomPntCContr_B;
         this->primaryCentralSpacecraft.totRotEnergy += this->primaryCentralSpacecraft.rotEnergyContr;
+    }
+
+    // - Get all of the attached hubs and stateEffectors contributions
+    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+    for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
+    {
+        // - Get the hubs contribution
+        (*spacecraftConnectedIt)->hub.updateEnergyMomContributions(time, this->primaryCentralSpacecraft.rotAngMomPntCContr_B, this->primaryCentralSpacecraft.rotEnergyContr);
+        totRotAngMomPntC_B += this->primaryCentralSpacecraft.rotAngMomPntCContr_B;
+        this->primaryCentralSpacecraft.totRotEnergy += this->primaryCentralSpacecraft.rotEnergyContr;
+
+        // - Loop over stateEffectors to get their contributions to energy and momentum
+        std::vector<StateEffector*>::iterator it;
+        for(it = (*spacecraftConnectedIt)->states.begin(); it != (*spacecraftConnectedIt)->states.end(); it++)
+        {
+            // - Set the matrices to zero
+            this->primaryCentralSpacecraft.rotAngMomPntCContr_B.setZero();
+            this->primaryCentralSpacecraft.rotEnergyContr = 0.0;
+
+            // - Call energy and momentum calulations for stateEffectors
+            (*it)->updateEnergyMomContributions(time, this->primaryCentralSpacecraft.rotAngMomPntCContr_B, this->primaryCentralSpacecraft.rotEnergyContr);
+            totRotAngMomPntC_B += this->primaryCentralSpacecraft.rotAngMomPntCContr_B;
+            this->primaryCentralSpacecraft.totRotEnergy += this->primaryCentralSpacecraft.rotEnergyContr;
+        }
     }
 
     // - Get cDot_B from manager
