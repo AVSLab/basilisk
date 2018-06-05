@@ -62,6 +62,13 @@ void Spacecraft::addDynamicEffector(DynamicEffector *newDynamicEffector)
     return;
 }
 
+void Spacecraft::addDockingPort(DockingData *newDockingPort)
+{
+    this->dockingPoints.push_back(newDockingPort);
+
+    return;
+}
+
 void Spacecraft::SelfInitSC(uint64_t moduleID)
 {
     this->scStateOutMsgName = this->spacecraftName + "_" + this->scStateOutMsgName;
@@ -97,13 +104,6 @@ void Spacecraft::linkInStatesSC(DynParamManager& statesIn)
     return;
 }
 
-void Spacecraft::addDockingPort(DockingData *newDockingPort)
-{
-    this->dockingPoints.push_back(newDockingPort);
-
-    return;
-}
-
 /*! This is the constructor, setting variables to default values */
 SpacecraftDynamics::SpacecraftDynamics()
 {
@@ -129,44 +129,7 @@ SpacecraftDynamics::~SpacecraftDynamics()
     return;
 }
 
-/*! This method creates the messages for s/c output data and initializes the gravity field*/
-void SpacecraftDynamics::SelfInit()
-{
-    // - Call this for the primary spacecraft
-    // - Create the message for the spacecraft state
-    this->primaryCentralSpacecraft.SelfInitSC(this->moduleID);
-
-    // - Call this for all of the connected spacecraft
-    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
-    for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
-    {
-        (*spacecraftConnectedIt)->SelfInitSC(this->moduleID);
-    }
-
-    return;
-}
-
-/*! This method is used to cross link the messages and to initialize the dynamics */
-void SpacecraftDynamics::CrossInit()
-{
-    // - Call gravity field cross initialization for all spacecraft
-    this->primaryCentralSpacecraft.CrossInitSC();
-
-    // - Call this for all of the connected spacecraft
-    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
-    for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
-    {
-        (*spacecraftConnectedIt)->CrossInitSC();
-    }
-
-
-    // - Call method for initializing the dynamics of spacecraftPlus
-    this->initializeDynamics();
-
-    return;
-}
-
-/*! This method attaches a stateEffector to the dynamicObject */
+/*! This method adds a spacecraft to the simulation as a free floating spacecraft */
 void SpacecraftDynamics::addSpacecraftUndocked(Spacecraft *newSpacecraft)
 {
     this->unDockedSpacecraft.push_back(newSpacecraft);
@@ -174,7 +137,7 @@ void SpacecraftDynamics::addSpacecraftUndocked(Spacecraft *newSpacecraft)
     return;
 }
 
-/*! This method attaches a stateEffector to the dynamicObject */
+/*! This method attaches a spacecraft to the chain of spacecraft attached to the primary spacecraft */
 void SpacecraftDynamics::attachSpacecraftToPrimary(Spacecraft *newSpacecraft, std::string dockingPortNameOfNewSpacecraft, std::string dockingToPortName)
 {
     // Create chain of docked spacecraft
@@ -241,6 +204,42 @@ void SpacecraftDynamics::attachSpacecraftToPrimary(Spacecraft *newSpacecraft, st
     }
 
     this->spacecraftDockedToPrimary.push_back(newSpacecraft);
+
+    return;
+}
+
+/*! This method creates the messages for s/c output data and initializes the gravity field*/
+void SpacecraftDynamics::SelfInit()
+{
+    // - Call this for the primary spacecraft
+    // - Create the message for the spacecraft state
+    this->primaryCentralSpacecraft.SelfInitSC(this->moduleID);
+
+    // - Call this for all of the connected spacecraft
+    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+    for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
+    {
+        (*spacecraftConnectedIt)->SelfInitSC(this->moduleID);
+    }
+
+    return;
+}
+
+/*! This method is used to cross link the messages and to initialize the dynamics */
+void SpacecraftDynamics::CrossInit()
+{
+    // - Call gravity field cross initialization for all spacecraft
+    this->primaryCentralSpacecraft.CrossInitSC();
+
+    // - Call this for all of the connected spacecraft
+    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+    for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
+    {
+        (*spacecraftConnectedIt)->CrossInitSC();
+    }
+
+    // - Call method for initializing the dynamics of spacecraftPlus
+    this->initializeDynamics();
 
     return;
 }
