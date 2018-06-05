@@ -62,12 +62,42 @@ void Spacecraft::addDynamicEffector(DynamicEffector *newDynamicEffector)
     return;
 }
 
-void Spacecraft::writeOutputMessages(uint64_t clockTime)
+void Spacecraft::SelfInitSC(uint64_t moduleID)
+{
+    this->scStateOutMsgName = this->spacecraftName + "_" + this->scStateOutMsgName;
+    this->scMassStateOutMsgName = this->spacecraftName + "_" + this->scMassStateOutMsgName;
+    this->scStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->scStateOutMsgName,
+                                                                                                      sizeof(SCStatesSimMsg),
+                                                                                                      this->numOutMsgBuffers,
+                                                                                                      "SCPlusStatesSimMsg", moduleID);
+    // - Create the message for the spacecraft mass state
+    this->scMassStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->scMassStateOutMsgName,
+                                                                                                          sizeof(SCMassPropsSimMsg),
+                                                                                                          this->numOutMsgBuffers,
+                                                                                                          "SCPlusMassPropsSimMsg", moduleID);
+    // - Call the gravity fields selfInit method
+    this->gravField.SelfInit();
+    return;
+}
+
+void Spacecraft::CrossInitSC()
 {
     return;
 }
-void Spacecraft::linkInStates(DynParamManager& statesIn)
+
+void Spacecraft::writeOutputMessagesSC(uint64_t clockTime)
 {
+    return;
+}
+void Spacecraft::linkInStatesSC(DynParamManager& statesIn)
+{
+    return;
+}
+
+void Spacecraft::addDockingPort(DockingData *newDockingPort)
+{
+    this->dockingPoints.push_back(newDockingPort);
+
     return;
 }
 
@@ -101,19 +131,7 @@ void SpacecraftDynamics::SelfInit()
 {
     // - Call this for the primary spacecraft
     // - Create the message for the spacecraft state
-    this->primaryCentralSpacecraft.scStateOutMsgName = this->primaryCentralSpacecraft.spacecraftName + "_" + this->primaryCentralSpacecraft.scStateOutMsgName;
-    this->primaryCentralSpacecraft.scMassStateOutMsgName = this->primaryCentralSpacecraft.spacecraftName + "_" + this->primaryCentralSpacecraft.scMassStateOutMsgName;
-    this->primaryCentralSpacecraft.scStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->primaryCentralSpacecraft.scStateOutMsgName,
-                                                                             sizeof(SCStatesSimMsg),
-                                                                             this->primaryCentralSpacecraft.numOutMsgBuffers,
-                                                                             "SCPlusStatesSimMsg", this->moduleID);
-    // - Create the message for the spacecraft mass state
-    this->primaryCentralSpacecraft.scMassStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->primaryCentralSpacecraft.scMassStateOutMsgName,
-                                                                                 sizeof(SCMassPropsSimMsg),
-                                                                                 this->primaryCentralSpacecraft.numOutMsgBuffers,
-                                                                                 "SCPlusMassPropsSimMsg", this->moduleID);
-    // - Call the gravity fields selfInit method
-    this->primaryCentralSpacecraft.gravField.SelfInit();
+    this->primaryCentralSpacecraft.SelfInitSC(this->moduleID);
 
     return;
 }
@@ -126,13 +144,6 @@ void SpacecraftDynamics::CrossInit()
     
     // - Call method for initializing the dynamics of spacecraftPlus
     this->initializeDynamics();
-
-    return;
-}
-
-void Spacecraft::addDockingPort(DockingData *newDockingPort)
-{
-    this->dockingPoints.push_back(newDockingPort);
 
     return;
 }

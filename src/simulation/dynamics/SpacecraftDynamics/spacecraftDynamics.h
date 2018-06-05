@@ -123,9 +123,12 @@ public:
     void addStateEffector(StateEffector *newStateEffector);  //!< -- Attaches a stateEffector to the system
     void addDynamicEffector(DynamicEffector *newDynamicEffector);  //!< -- Attaches a dynamicEffector
     void addDockingPort(DockingData *newDockingPort);  //!< -- Attaches a dynamicEffector
+
+    void SelfInitSC(uint64_t moduleID);                     //!< -- Lets spacecraft plus create its own msgs
+    void CrossInitSC();                    //!< -- Hook to tie s/c plus back into provided msgs
     
-    void writeOutputMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
-    void linkInStates(DynParamManager& statesIn);  //!< Method to get access to the hub's states
+    void writeOutputMessagesSC(uint64_t clockTime); //!< -- Method to write all of the class output messages
+    void linkInStatesSC(DynParamManager& statesIn);  //!< Method to get access to the hub's states
 
 private:
 };
