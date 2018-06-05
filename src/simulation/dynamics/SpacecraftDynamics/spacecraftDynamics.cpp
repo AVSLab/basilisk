@@ -341,6 +341,13 @@ void SpacecraftDynamics::SelfInit()
         (*spacecraftConnectedIt)->SelfInitSC(this->moduleID);
     }
 
+    // - Call this for all of the unconnected spacecraft
+    std::vector<Spacecraft*>::iterator spacecraftUnConnectedIt;
+    for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
+    {
+        (*spacecraftUnConnectedIt)->SelfInitSC(this->moduleID);
+    }
+
     return;
 }
 
@@ -355,6 +362,13 @@ void SpacecraftDynamics::CrossInit()
     for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
     {
         (*spacecraftConnectedIt)->CrossInitSC();
+    }
+
+    // - Call this for all of the unconnected spacecraft
+    std::vector<Spacecraft*>::iterator spacecraftUnConnectedIt;
+    for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
+    {
+        (*spacecraftUnConnectedIt)->CrossInitSC();
     }
 
     // - Call method for initializing the dynamics of spacecraftPlus
