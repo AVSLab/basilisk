@@ -141,6 +141,10 @@ void HingedRigidBodyStateEffector::registerStates(DynParamManager& states)
  spacecraft */
 void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 {
+    // - Convert intial variables to mother craft frame relative information
+    this->r_HP_P = this->r_BP_P + this->dcm_BP.transpose()*r_HB_B;
+    this->dcm_HP = this->dcm_HB*this->dcm_BP;
+
     // - Give the mass of the hinged rigid body to the effProps mass
     this->effProps.mEff = this->mass;
 
@@ -150,32 +154,32 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
     this->thetaDot = this->thetaDotState->getState()(0, 0);
     // - Next find the sHat unit vectors
     this->dcm_SH = eigenM2(this->theta);
-    this->dcm_SB = this->dcm_SH*this->dcm_HB;
-    this->sHat1_B = this->dcm_SB.row(0);
-    this->sHat2_B = this->dcm_SB.row(1);
-    this->sHat3_B = this->dcm_SB.row(2);
-    this->r_SB_B = this->r_HB_B - this->d*this->sHat1_B;
-    this->effProps.rEff_CB_B = this->r_SB_B;
+    this->dcm_SP = this->dcm_SH*this->dcm_HP;
+    this->sHat1_P = this->dcm_SP.row(0);
+    this->sHat2_P = this->dcm_SP.row(1);
+    this->sHat3_P = this->dcm_SP.row(2);
+    this->r_SP_P = this->r_HP_P - this->d*this->sHat1_P;
+    this->effProps.rEff_CB_B = this->r_SP_P;
 
     // - Find the inertia of the hinged rigid body about point B
     // - Define rTilde_SB_B
-    this->rTilde_SB_B = eigenTilde(this->r_SB_B);
-    this->effProps.IEffPntB_B = this->dcm_SB.transpose()*this->IPntS_S*this->dcm_SB
-                                                           + this->mass*this->rTilde_SB_B*this->rTilde_SB_B.transpose();
+    this->rTilde_SP_P = eigenTilde(this->r_SP_P);
+    this->effProps.IEffPntB_B = this->dcm_SP.transpose()*this->IPntS_S*this->dcm_SP
+                                                           + this->mass*this->rTilde_SP_P*this->rTilde_SP_P.transpose();
 
     // - Find rPrime_SB_B
-    this->rPrime_SB_B = this->d*this->thetaDot*this->sHat3_B;
-    this->effProps.rEffPrime_CB_B = this->rPrime_SB_B;
+    this->rPrime_SP_P = this->d*this->thetaDot*this->sHat3_P;
+    this->effProps.rEffPrime_CB_B = this->rPrime_SP_P;
 
     // - Next find the body time derivative of the inertia about point B
     // - Define tilde matrix of rPrime_SB_B
-    this->rPrimeTilde_SB_B = eigenTilde(this->rPrime_SB_B);
+    this->rPrimeTilde_SP_P = eigenTilde(this->rPrime_SP_P);
     // - Find body time derivative of IPntS_B
-    this->ISPrimePntS_B = this->thetaDot*(this->IPntS_S(2,2)
-              - this->IPntS_S(0,0))*(this->sHat1_B*this->sHat3_B.transpose() + this->sHat3_B*this->sHat1_B.transpose());
+    this->ISPrimePntS_P = this->thetaDot*(this->IPntS_S(2,2)
+              - this->IPntS_S(0,0))*(this->sHat1_P*this->sHat3_P.transpose() + this->sHat3_P*this->sHat1_P.transpose());
     // - Find body time derivative of IPntB_B
-    this->effProps.IEffPrimePntB_B = this->ISPrimePntS_B
-                     - this->mass*(this->rPrimeTilde_SB_B*this->rTilde_SB_B + this->rTilde_SB_B*this->rPrimeTilde_SB_B);
+    this->effProps.IEffPrimePntB_B = this->ISPrimePntS_P
+                     - this->mass*(this->rPrimeTilde_SP_P*this->rTilde_SP_P + this->rTilde_SP_P*this->rPrimeTilde_SP_P);
 
     return;
 }
@@ -208,7 +212,7 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
     this->aTheta = -this->mass*this->d/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*this->sHat3_B;
 
     // - Define bTheta
-    this->rTilde_HB_B = eigenTilde(this->r_HB_B);
+    this->rTilde_HB_B = eigenTilde(this->r_HP_P);
     this->bTheta = -1.0/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*((this->IPntS_S(1,1)
                       + this->mass*this->d*this->d)*this->sHat2_B + this->mass*this->d*this->rTilde_HB_B*this->sHat3_B);
 
@@ -218,7 +222,7 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
     this->cTheta = 1.0/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*(-this->k*this->theta - this->c*this->thetaDot
                     + this->sHat2_B.dot(gravityTorquePntH_B) + (this->IPntS_S(2,2) - this->IPntS_S(0,0)
                      + this->mass*this->d*this->d)*this->omega_BN_S(2)*this->omega_BN_S(0) - this->mass*this->d*
-                              this->sHat3_B.transpose()*this->omegaTildeLoc_BN_B*this->omegaTildeLoc_BN_B*this->r_HB_B);
+                              this->sHat3_B.transpose()*this->omegaTildeLoc_BN_B*this->omegaTildeLoc_BN_B*this->r_HP_P);
 
     // - Start defining them good old contributions - start with translation
     // - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper
