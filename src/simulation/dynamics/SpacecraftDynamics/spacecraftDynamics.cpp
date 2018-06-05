@@ -22,6 +22,7 @@
 #include "../_GeneralModuleFiles/svIntegratorRK4.h"
 #include "utilities/avsEigenSupport.h"
 #include "utilities/avsEigenMRP.h"
+#include "../../utilities/rigidBodyKinematics.h"
 #include <iostream>
 
 Spacecraft::Spacecraft()
@@ -911,6 +912,7 @@ void SpacecraftDynamics::integrateState(double integrateToThisTime)
     this->primaryCentralSpacecraft.hub.modifyStates(integrateToThisTime);
 
     // - Calculate the states of the attached spacecraft from the primary spacecraft
+    this->determineAttachedSCStates();
 
     // - Loop over stateEffectors to call modifyStates
     std::vector<StateEffector*>::iterator it;
@@ -971,6 +973,32 @@ void SpacecraftDynamics::determineAttachedSCStates()
     Eigen::Vector3d r_PNDotLocal_N = this->primaryCentralSpacecraft.hubV_N->getState();
     Eigen::Matrix3d dcm_NP;
     dcm_NP = sigmaPNLoc.toRotationMatrix();
+
+    // Loop over connected spacecraft to edit the hub states
+    // - Call this for all of the connected spacecraft
+    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+    for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
+    {
+        Eigen::Matrix3d dcm_BN = (*spacecraftConnectedIt)->hub.dcm_BP*dcm_NP.transpose();
+        double dcm_BNArray[9];
+        double sigma_BNArray[3];
+        eigenMatrix3d2CArray(dcm_BN, dcm_BNArray);
+        C2MRP(RECAST3X3 dcm_BNArray, sigma_BNArray);
+        Eigen::Vector3d sigmaBNLoc;
+        sigmaBNLoc = cArray2EigenVector3d(sigma_BNArray);
+        // Set the MRP for the hub
+        (*spacecraftConnectedIt)->hubSigma->setState(sigmaBNLoc);
+
+        // Now omega
+        Eigen::Vector3d omegaBNLocal_B = (*spacecraftConnectedIt)->hub.dcm_BP*omegaPNLoc_P;
+        (*spacecraftConnectedIt)->hubOmega_BN_B->setState(omegaBNLocal_B);
+
+        // Now the translation states
+        Eigen::Vector3d r_BNLocal_N = r_PNLocal_N + dcm_NP*(*spacecraftConnectedIt)->hub.r_BP_P;
+        (*spacecraftConnectedIt)->hubR_N->setState(r_BNLocal_N);
+        Eigen::Vector3d r_BNDotLocal_N = r_PNDotLocal_N + dcm_NP*omegaPNLoc_P.cross((*spacecraftConnectedIt)->hub.r_BP_P);
+        (*spacecraftConnectedIt)->hubV_N->setState(r_BNDotLocal_N);
+    }
 
     return;
 }
