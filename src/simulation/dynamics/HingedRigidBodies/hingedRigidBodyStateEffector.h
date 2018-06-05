@@ -60,22 +60,24 @@ private:
     double theta;                    //!< [rad] hinged rigid body angle
     double thetaDot;                 //!< [rad/s] hinged rigid body angle rate
     double cTheta;                  //!< -- term needed for back substitution
+    Eigen::Vector3d r_HP_P;          //!< [m] vector pointing from body frame origin to Hinge location
+    Eigen::Matrix3d dcm_HP;          //!< -- DCM from body frame to hinge frame
     Eigen::Vector3d aTheta;         //!< -- term needed for back substitution
     Eigen::Vector3d bTheta;         //!< -- term needed for back substitution
-    Eigen::Matrix3d rTilde_HB_B;     //!< -- Tilde matrix of rHB_B
+    Eigen::Matrix3d rTilde_HP_P;     //!< -- Tilde matrix of rHB_B
     Eigen::Matrix3d dcm_SH;          //!< -- DCM from hinge to hinged rigid body frame, S
-    Eigen::Matrix3d dcm_SB;          //!< -- DCM from body to S frame
-    Eigen::Vector3d omega_BN_S;       //!< [rad/s] omega_BN in S frame components
-    Eigen::Vector3d sHat1_B;         //!< -- unit direction vector for the first axis of the S frame
-    Eigen::Vector3d sHat2_B;         //!< -- unit direction vector for the second axis of the S frame
-    Eigen::Vector3d sHat3_B;         //!< -- unit direction vector for the third axis of the S frame
-    Eigen::Vector3d r_SB_B;          //!< -- Vector pointing from B to CoM of hinged rigid body in B frame components
-    Eigen::Matrix3d rTilde_SB_B;     //!< -- Tilde matrix of rSB_B
-    Eigen::Vector3d rPrime_SB_B;     //!< [m/s] Body time derivative of rSB_B
-    Eigen::Matrix3d rPrimeTilde_SB_B;  //!< -- Tilde matrix of rPrime_SB_B
-    Eigen::Matrix3d ISPrimePntS_B;  //!< [kg-m^2/s] time body derivative IPntS in body frame components
-    Eigen::Vector3d omegaLoc_BN_B;  //!< [rad/s] local copy of omegaBN
-    Eigen::Matrix3d omegaTildeLoc_BN_B; //!< -- tilde matrix of omegaBN
+    Eigen::Matrix3d dcm_SP;          //!< -- DCM from body to S frame
+    Eigen::Vector3d omega_PN_S;       //!< [rad/s] omega_BN in S frame components
+    Eigen::Vector3d sHat1_P;         //!< -- unit direction vector for the first axis of the S frame
+    Eigen::Vector3d sHat2_P;         //!< -- unit direction vector for the second axis of the S frame
+    Eigen::Vector3d sHat3_P;         //!< -- unit direction vector for the third axis of the S frame
+    Eigen::Vector3d r_SP_P;          //!< -- Vector pointing from B to CoM of hinged rigid body in B frame components
+    Eigen::Matrix3d rTilde_SP_P;     //!< -- Tilde matrix of rSB_B
+    Eigen::Vector3d rPrime_SP_P;     //!< [m/s] Body time derivative of rSB_B
+    Eigen::Matrix3d rPrimeTilde_SP_P;  //!< -- Tilde matrix of rPrime_SB_B
+    Eigen::Matrix3d ISPrimePntS_P;  //!< [kg-m^2/s] time body derivative IPntS in body frame components
+    Eigen::Vector3d omegaLoc_PN_P;  //!< [rad/s] local copy of omegaBN
+    Eigen::Matrix3d omegaTildeLoc_PN_P; //!< -- tilde matrix of omegaBN
     StateData *hubSigma;             //!< -- state manager access to the hubs MRP state
     StateData *hubOmega;             //!< -- state manager access to the hubs omegaBN_B state
     StateData *hubVelocity;          //!< -- state manager access to the hubs rDotBN_N state
