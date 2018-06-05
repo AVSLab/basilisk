@@ -1007,6 +1007,91 @@ void SpacecraftDynamics::calculateDeltaVandAcceleration(Spacecraft &spacecraft, 
  for validation purposes. */
 void SpacecraftDynamics::computeEnergyMomentum(double time)
 {
+    this->computeEnergyMomentumSystem(time);
+    return;
+}
+
+void SpacecraftDynamics::computeEnergyMomentumSC(double time, Spacecraft &spacecraft)
+{
+    // - Grab values from state Manager
+    Eigen::Vector3d rLocal_BN_N = spacecraft.hubR_N->getState();
+    Eigen::Vector3d rDotLocal_BN_N = spacecraft.hubV_N->getState();
+    Eigen::MRPd sigmaLocal_BN;
+    sigmaLocal_BN = (Eigen::Vector3d ) spacecraft.hubSigma->getState();
+
+    // - Find DCM's
+    Eigen::Matrix3d dcmLocal_NB = sigmaLocal_BN.toRotationMatrix();
+    Eigen::Matrix3d dcmLocal_BN = dcmLocal_NB.transpose();
+
+    // - Convert from inertial frame to body frame
+    Eigen::Vector3d rBNLocal_B;
+    Eigen::Vector3d rDotBNLocal_B;
+    rBNLocal_B = dcmLocal_BN*rLocal_BN_N;
+    rDotBNLocal_B = dcmLocal_BN*rDotLocal_BN_N;
+
+    // - zero necessarry variables
+    Eigen::Vector3d totOrbAngMomPntN_B;
+    Eigen::Vector3d totRotAngMomPntC_B;
+    totOrbAngMomPntN_B.setZero();
+    totRotAngMomPntC_B.setZero();
+    spacecraft.totOrbAngMomPntN_N.setZero();
+    spacecraft.totRotAngMomPntC_N.setZero();
+    spacecraft.rotAngMomPntCContr_B.setZero();
+    spacecraft.totOrbEnergy = 0.0;
+    spacecraft.totRotEnergy = 0.0;
+    spacecraft.rotEnergyContr = 0.0;
+
+    // - Get the hubs contribution
+    spacecraft.hub.updateEnergyMomContributions(time, spacecraft.rotAngMomPntCContr_B, spacecraft.rotEnergyContr);
+    totRotAngMomPntC_B += spacecraft.rotAngMomPntCContr_B;
+    spacecraft.totRotEnergy += spacecraft.rotEnergyContr;
+
+    // - Loop over stateEffectors to get their contributions to energy and momentum
+    std::vector<StateEffector*>::iterator it;
+    for(it = spacecraft.states.begin(); it != spacecraft.states.end(); it++)
+    {
+        // - Set the matrices to zero
+        spacecraft.rotAngMomPntCContr_B.setZero();
+        spacecraft.rotEnergyContr = 0.0;
+
+        // - Call energy and momentum calulations for stateEffectors
+        (*it)->updateEnergyMomContributions(time, spacecraft.rotAngMomPntCContr_B, spacecraft.rotEnergyContr);
+        totRotAngMomPntC_B += spacecraft.rotAngMomPntCContr_B;
+        spacecraft.totRotEnergy += spacecraft.rotEnergyContr;
+    }
+
+    // - Get cDot_B from manager
+    Eigen::Vector3d cDotLocal_B = (*spacecraft.cDot_B);
+
+    // - Add in orbital kinetic energy into the total orbital energy calculations
+    spacecraft.totOrbEnergy += 1.0/2.0*(*spacecraft.m_SC)(0,0)*(rDotBNLocal_B.dot(rDotBNLocal_B) + 2.0*rDotBNLocal_B.dot(cDotLocal_B)
+                                                                                                        + cDotLocal_B.dot(cDotLocal_B));
+
+    // - Call gravity effector and add in its potential contributions to the total orbital energy calculations
+    spacecraft.orbPotentialEnergyContr = 0.0;
+    Eigen::Vector3d rLocal_CN_N = spacecraft.hubR_N->getState() + dcmLocal_NB*(*spacecraft.c_B);
+    spacecraft.gravField.updateEnergyContributions(rLocal_CN_N, spacecraft.orbPotentialEnergyContr);
+    spacecraft.totOrbEnergy += (*spacecraft.m_SC)(0,0)*spacecraft.orbPotentialEnergyContr;
+
+    // - Find total rotational energy
+    spacecraft.totRotEnergy += -1.0/2.0*(*spacecraft.m_SC)(0,0)*cDotLocal_B.dot(cDotLocal_B);
+
+    // - Find orbital angular momentum for the spacecraft
+    Eigen::Vector3d rCN_N;
+    Eigen::Vector3d rDotCN_N;
+    rCN_N = rLocal_BN_N + dcmLocal_NB*(*spacecraft.c_B);
+    rDotCN_N = rDotLocal_BN_N + dcmLocal_NB*cDotLocal_B;
+    spacecraft.totOrbAngMomPntN_N = (*spacecraft.m_SC)(0,0)*(rCN_N.cross(rDotCN_N));
+
+    // - Find rotational angular momentum for the spacecraft
+    totRotAngMomPntC_B += -(*spacecraft.m_SC)(0,0)*(Eigen::Vector3d (*spacecraft.c_B)).cross(cDotLocal_B);
+    spacecraft.totRotAngMomPntC_N = dcmLocal_NB*totRotAngMomPntC_B;
+
+    return;
+}
+
+void SpacecraftDynamics::computeEnergyMomentumSystem(double time)
+{
     // - Grab values from state Manager
     Eigen::Vector3d rLocal_BN_N = this->primaryCentralSpacecraft.hubR_N->getState();
     Eigen::Vector3d rDotLocal_BN_N = this->primaryCentralSpacecraft.hubV_N->getState();
@@ -1059,7 +1144,7 @@ void SpacecraftDynamics::computeEnergyMomentum(double time)
 
     // - Add in orbital kinetic energy into the total orbital energy calculations
     this->primaryCentralSpacecraft.totOrbEnergy += 1.0/2.0*(*this->primaryCentralSpacecraft.m_SC)(0,0)*(rDotBNLocal_B.dot(rDotBNLocal_B) + 2.0*rDotBNLocal_B.dot(cDotLocal_B)
-                                                      + cDotLocal_B.dot(cDotLocal_B));
+                                                                                                        + cDotLocal_B.dot(cDotLocal_B));
 
     // - Call gravity effector and add in its potential contributions to the total orbital energy calculations
     this->primaryCentralSpacecraft.orbPotentialEnergyContr = 0.0;
@@ -1080,6 +1165,6 @@ void SpacecraftDynamics::computeEnergyMomentum(double time)
     // - Find rotational angular momentum for the spacecraft
     totRotAngMomPntC_B += -(*this->primaryCentralSpacecraft.m_SC)(0,0)*(Eigen::Vector3d (*this->primaryCentralSpacecraft.c_B)).cross(cDotLocal_B);
     this->primaryCentralSpacecraft.totRotAngMomPntC_N = dcmLocal_NB*totRotAngMomPntC_B;
-
+    
     return;
 }

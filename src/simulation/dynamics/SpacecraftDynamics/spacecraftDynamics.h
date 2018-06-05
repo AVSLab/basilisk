@@ -157,6 +157,8 @@ public:
     ~SpacecraftDynamics();                   //!< -- Destructor
     void initializeDynamics();           //!< -- This method initializes all of the dynamics and variables for the s/c
     void computeEnergyMomentum(double time);  //!< -- This method computes the total energy and momentum of the s/c
+    void computeEnergyMomentumSC(double time, Spacecraft& spacecraft);  //!< -- This method computes the total energy and momentum of the s/c
+    void computeEnergyMomentumSystem(double time);  //!< -- This method computes the total energy and momentum of the s/c
     void updateSpacecraftMassProps(double time, Spacecraft& spacecraft);  //!< -- This method computes the total mass properties of the s/c
     void updateSystemMassProps(double time);  //!< -- This method computes the total mass properties of the s/c
     void initializeSCPosVelocity(Spacecraft& spacecraft);
