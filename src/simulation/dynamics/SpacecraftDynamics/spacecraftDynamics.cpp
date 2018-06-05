@@ -918,6 +918,18 @@ void SpacecraftDynamics::integrateState(double integrateToThisTime)
         (*it)->modifyStates(integrateToThisTime);
     }
 
+    // - Call this for all of the connected spacecraft
+    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+    for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
+    {
+        for(it = (*spacecraftConnectedIt)->states.begin(); it != (*spacecraftConnectedIt)->states.end(); it++)
+        {
+            // - Call energy and momentum calulations for stateEffectors
+            (*it)->modifyStates(integrateToThisTime);
+        }
+
+    }
+
     // - Call mass properties to get current info on the mass props of the spacecraft
     this->updateSystemMassProps(integrateToThisTime);
 
