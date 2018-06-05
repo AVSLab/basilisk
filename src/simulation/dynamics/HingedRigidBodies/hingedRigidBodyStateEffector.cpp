@@ -105,12 +105,6 @@ void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 {
     // - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling and gravity
     std::string tmpMsgName;
-    tmpMsgName = this->nameOfSpacecraftAttachedTo + "_" + "hubVelocity";
-    this->hubVelocity = statesIn.getStateObject(tmpMsgName);
-    tmpMsgName = this->nameOfSpacecraftAttachedTo + "_" + "hubSigma";
-    this->hubSigma = statesIn.getStateObject(tmpMsgName);
-    tmpMsgName = this->nameOfSpacecraftAttachedTo + "_" + "hubOmega";
-    this->hubOmega = statesIn.getStateObject(tmpMsgName);
     tmpMsgName = this->nameOfSpacecraftAttachedTo + "_" + "g_N";
     this->g_N = statesIn.getPropertyReference(tmpMsgName);
     tmpMsgName = this->nameOfSpacecraftAttachedTo + "_" + "centerOfMassSC";
@@ -186,13 +180,12 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 
 /*! This method allows the HRB state effector to give its contributions to the matrices needed for the back-sub 
  method */
-void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr)
+void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B)
 {
     // - Find dcm_BN
-    Eigen::MRPd sigmaLocal_PN;
+    Eigen::MRPd sigmaLocal_PN = sigma_BN;
     Eigen::Matrix3d dcm_PN;
     Eigen::Matrix3d dcm_NP;
-    sigmaLocal_PN = (Eigen::Vector3d )this->hubSigma->getState();
     dcm_NP = sigmaLocal_PN.toRotationMatrix();
     dcm_PN = dcm_NP.transpose();
 
@@ -203,7 +196,7 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
     g_P = dcm_PN*gLocal_N;
 
     // - Define omega_BN_S
-    this->omegaLoc_PN_P = this->hubOmega->getState();
+    this->omegaLoc_PN_P = omega_BN_B;
     this->omega_PN_S = this->dcm_SP*this->omegaLoc_PN_P;
     // - Define omegaTildeLoc_BN_B
     this->omegaTildeLoc_PN_P = eigenTilde(this->omegaLoc_PN_P);
@@ -245,15 +238,14 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
 }
 
 /*! This method is used to find the derivatives for the HRB stateEffector: thetaDDot and the kinematic derivative */
-void HingedRigidBodyStateEffector::computeDerivatives(double integTime)
+void HingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
     // - Grab necessarry values from manager (these have been previously computed in hubEffector)
-    Eigen::Vector3d rDDotLoc_PN_N;
+    Eigen::Vector3d rDDotLoc_PN_N = rDDot_BN_N;
     Eigen::MRPd sigmaLocal_PN;
     Eigen::Vector3d omegaDotLoc_PN_P;
-    rDDotLoc_PN_N = this->hubVelocity->getStateDeriv();
-    sigmaLocal_PN = (Eigen::Vector3d )this->hubSigma->getState();
-    omegaDotLoc_PN_P = this->hubOmega->getStateDeriv();
+    sigmaLocal_PN = sigma_BN;
+    omegaDotLoc_PN_P = omegaDot_BN_B;
 
     // - Find rDDotLoc_BN_B
     Eigen::Matrix3d dcm_PN;
@@ -273,12 +265,12 @@ void HingedRigidBodyStateEffector::computeDerivatives(double integTime)
 }
 
 /*! This method is for calculating the contributions of the HRB state effector to the energy and momentum of the s/c */
-void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d &
-                                                                rotAngMomPntCContr_P, double & rotEnergyContr)
+void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
+                                                                double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
     // - Get the current omega state
     Eigen::Vector3d omegaLocal_PN_P;
-    omegaLocal_PN_P = hubOmega->getState();
+    omegaLocal_PN_P = omega_BN_B;
 
     // - Find rotational angular momentum contribution from hub
     Eigen::Vector3d omega_SP_P;
@@ -289,7 +281,7 @@ void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime
     omega_SN_P = omega_SP_P + omegaLocal_PN_P;
     IPntS_P = this->dcm_SP.transpose()*this->IPntS_S*this->dcm_SP;
     rDot_SP_P = this->rPrime_SP_P + omegaLocal_PN_P.cross(this->r_SP_P);
-    rotAngMomPntCContr_P = IPntS_P*omega_SN_P + this->mass*this->r_SP_P.cross(rDot_SP_P);
+    rotAngMomPntCContr_B = IPntS_P*omega_SN_P + this->mass*this->r_SP_P.cross(rDot_SP_P);
 
     // - Find rotational energy contribution from the hub
     rotEnergyContr = 1.0/2.0*omega_SN_P.dot(IPntS_P*omega_SN_P) + 1.0/2.0*this->mass*rDot_SP_P.dot(rDot_SP_P)

@@ -78,9 +78,6 @@ private:
     Eigen::Matrix3d ISPrimePntS_P;  //!< [kg-m^2/s] time body derivative IPntS in body frame components
     Eigen::Vector3d omegaLoc_PN_P;  //!< [rad/s] local copy of omegaBN
     Eigen::Matrix3d omegaTildeLoc_PN_P; //!< -- tilde matrix of omegaBN
-    StateData *hubSigma;             //!< -- state manager access to the hubs MRP state
-    StateData *hubOmega;             //!< -- state manager access to the hubs omegaBN_B state
-    StateData *hubVelocity;          //!< -- state manager access to the hubs rDotBN_N state
     StateData *thetaState;           //!< -- state manager of theta for hinged rigid body
     StateData *thetaDotState;        //!< -- state manager of thetaDot for hinged rigid body
     int64_t HingedRigidBodyOutMsgId; //!< -- state output message ID
@@ -94,11 +91,10 @@ public:
 	void UpdateState(uint64_t CurrentSimNanos);
     void registerStates(DynParamManager& statesIn);  //!< -- Method for registering the HRB states
     void linkInStates(DynParamManager& states);  //!< -- Method for getting access to other states
-    void updateContributions(double integTime, BackSubMatrices & backSubContr);  //!< -- Method for back-sub contributions
-    void computeDerivatives(double integTime);  //!< -- Method for HRB to compute its derivatives
+    void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B);  //!< -- Method for back-sub contributions
+    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN);  //!< -- Method for HRB to compute its derivatives
     void updateEffectorMassProps(double integTime);  //!< -- Method for giving the s/c the HRB mass props and prop rates
-    void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
-                                      double & rotEnergyContr); //!< -- Computing energy and momentum for HRBs
+    void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr, Eigen::Vector3d omega_BN_B); //!< -- Computing energy and momentum for HRBs
     void calcForceTorqueOnBody(double integTime);  //!< -- Force and torque on s/c due to HRBs
     void prependSpacecraftNameToStates();
 };
