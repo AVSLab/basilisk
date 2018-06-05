@@ -31,6 +31,7 @@ import matplotlib.pyplot as plt
 from Basilisk.simulation import spacecraftDynamics
 from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
+from Basilisk.simulation import hingedRigidBodyStateEffector
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -84,6 +85,23 @@ def test_SCConnected(show_plots):
     dock1SC1.portName = "sc1port1"
     scSystem.primaryCentralSpacecraft.addDockingPort(dock1SC1)
 
+    unitTestSim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+
+    # Define Variable for panel 1
+    unitTestSim.panel1.mass = 100.0
+    unitTestSim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    unitTestSim.panel1.d = 1.5
+    unitTestSim.panel1.k = 100.0
+    unitTestSim.panel1.c = 0.0
+    unitTestSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
+    unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
+    unitTestSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
+    unitTestSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
+    unitTestSim.panel1.thetaInit = 5*numpy.pi/180.0
+    unitTestSim.panel1.thetaDotInit = 0.0
+
+    scSystem.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel1)
+
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
     unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
     unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
@@ -105,6 +123,23 @@ def test_SCConnected(show_plots):
     dock1SC2.dcm_DB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     dock1SC2.portName = "sc2port1"
     sc2.addDockingPort(dock1SC2)
+
+    unitTestSim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+
+    # Define Variables for panel 2
+    unitTestSim.panel2.mass = 100.0
+    unitTestSim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    unitTestSim.panel2.d = 1.5
+    unitTestSim.panel2.k = 100.0
+    unitTestSim.panel2.c = 0.0
+    unitTestSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
+    unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    unitTestSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
+    unitTestSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
+    unitTestSim.panel2.thetaInit = 0.0
+    unitTestSim.panel2.thetaDotInit = 0.0
+
+    sc2.addStateEffector(unitTestSim.panel2)
 
     # Define gravity for sc2
     sc2.gravField.gravBodies = spacecraftDynamics.GravBodyVector([unitTestSim.earthGravBody])
