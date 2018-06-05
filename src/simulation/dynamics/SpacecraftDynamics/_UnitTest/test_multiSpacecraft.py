@@ -124,6 +124,29 @@ def test_SCConnected(show_plots):
     dock1SC2.portName = "sc2port1"
     sc2.addDockingPort(dock1SC2)
 
+    # Define docking information
+    dock2SC2 = spacecraftDynamics.DockingData()
+    dock2SC2.r_DB_B = [[1.0], [0.0], [0.0]]
+    dock2SC2.dcm_DB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    dock2SC2.portName = "sc2port2"
+    sc2.addDockingPort(dock2SC2)
+
+    # Define gravity for sc2
+    sc2.gravField.gravBodies = spacecraftDynamics.GravBodyVector([unitTestSim.earthGravBody])
+
+    sc3 = spacecraftDynamics.Spacecraft()
+    sc3.hub.mHub = 100
+    sc3.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    sc3.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
+    sc3.spacecraftName = "spacecraft3"
+
+    # Define docking information
+    dock1SC3 = spacecraftDynamics.DockingData()
+    dock1SC3.r_DB_B = [[-1.0], [0.0], [0.0]]
+    dock1SC3.dcm_DB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    dock1SC3.portName = "sc3port1"
+    sc3.addDockingPort(dock1SC3)
+
     unitTestSim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
 
     # Define Variables for panel 2
@@ -139,13 +162,16 @@ def test_SCConnected(show_plots):
     unitTestSim.panel2.thetaInit = 0.0
     unitTestSim.panel2.thetaDotInit = 0.0
 
-    sc2.addStateEffector(unitTestSim.panel2)
+    sc3.addStateEffector(unitTestSim.panel2)
 
     # Define gravity for sc2
-    sc2.gravField.gravBodies = spacecraftDynamics.GravBodyVector([unitTestSim.earthGravBody])
+    sc3.gravField.gravBodies = spacecraftDynamics.GravBodyVector([unitTestSim.earthGravBody])
 
     # Attach spacecraft2 to spacecraft
     scSystem.attachSpacecraftToPrimary(sc2, dock1SC2.portName, dock1SC1.portName)
+
+    # Attach spacecraft3 to spacecraft2
+    scSystem.attachSpacecraftToPrimary(sc3, dock1SC3.portName, dock2SC2.portName)
 
     unitTestSim.TotalSim.logThisMessage("spacecraft_inertial_state_output", testProcessRate)
 
