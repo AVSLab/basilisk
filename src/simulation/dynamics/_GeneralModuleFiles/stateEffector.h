@@ -21,6 +21,7 @@
 #define STATE_EFFECTOR_H
 
 #include <Eigen/Dense>
+#include "../../utilities/avsEigenMRP.h"
 #include "dynParamManager.h"
 
 struct BackSubMatrices {
@@ -57,15 +58,15 @@ public:
     StateEffector();                       //!< -- Contructor
     virtual ~StateEffector();              //!< -- Destructor
     virtual void updateEffectorMassProps(double integTime);  //!< -- Method for stateEffector to give mass contributions
-    virtual void updateContributions(double integTime, BackSubMatrices & backSubContr);  //!< -- Back-sub contributions
+    virtual void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B);  //!< -- Back-sub contributions
     virtual void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
-                                              double & rotEnergyContr);  //!< -- Energy and momentum calculations
+                                              double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
     virtual void modifyStates(double integTime); //!< -- Modify state values after integration
     virtual void calcForceTorqueOnBody(double integTime);  //!< -- Force and torque on s/c due to stateEffector
     virtual void writeOutputStateMessages(uint64_t integTimeNanos); //!< -- Write State Messages after integration
     virtual void registerStates(DynParamManager& states) = 0;  //!< -- Method for stateEffectors to register states
     virtual void linkInStates(DynParamManager& states) = 0;  //!< -- Method for stateEffectors to get other states
-    virtual void computeDerivatives(double integTime)=0;  //!< -- Method for each stateEffector to calculate derivatives
+    virtual void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)=0;  //!< -- Method for each stateEffector to calculate derivatives
     virtual void prependSpacecraftNameToStates() = 0;
     virtual void receiveMotherSpacecraftData(Eigen::Vector3d rSC_BP_P, Eigen::Matrix3d dcmSC_BP);
 };
