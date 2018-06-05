@@ -189,57 +189,57 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr)
 {
     // - Find dcm_BN
-    Eigen::MRPd sigmaLocal_BN;
-    Eigen::Matrix3d dcm_BN;
-    Eigen::Matrix3d dcm_NB;
-    sigmaLocal_BN = (Eigen::Vector3d )this->hubSigma->getState();
-    dcm_NB = sigmaLocal_BN.toRotationMatrix();
-    dcm_BN = dcm_NB.transpose();
+    Eigen::MRPd sigmaLocal_PN;
+    Eigen::Matrix3d dcm_PN;
+    Eigen::Matrix3d dcm_NP;
+    sigmaLocal_PN = (Eigen::Vector3d )this->hubSigma->getState();
+    dcm_NP = sigmaLocal_PN.toRotationMatrix();
+    dcm_PN = dcm_NP.transpose();
 
     // - Map gravity to body frame
     Eigen::Vector3d gLocal_N;
-    Eigen::Vector3d g_B;
+    Eigen::Vector3d g_P;
     gLocal_N = *this->g_N;
-    g_B = dcm_BN*gLocal_N;
+    g_P = dcm_PN*gLocal_N;
 
     // - Define omega_BN_S
-    this->omegaLoc_BN_B = this->hubOmega->getState();
-    this->omega_BN_S = this->dcm_SB*this->omegaLoc_BN_B;
+    this->omegaLoc_PN_P = this->hubOmega->getState();
+    this->omega_PN_S = this->dcm_SP*this->omegaLoc_PN_P;
     // - Define omegaTildeLoc_BN_B
-    this->omegaTildeLoc_BN_B = eigenTilde(this->omegaLoc_BN_B);
+    this->omegaTildeLoc_PN_P = eigenTilde(this->omegaLoc_PN_P);
 
     // - Define aTheta
-    this->aTheta = -this->mass*this->d/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*this->sHat3_B;
+    this->aTheta = -this->mass*this->d/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*this->sHat3_P;
 
     // - Define bTheta
-    this->rTilde_HB_B = eigenTilde(this->r_HP_P);
+    this->rTilde_HP_P = eigenTilde(this->r_HP_P);
     this->bTheta = -1.0/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*((this->IPntS_S(1,1)
-                      + this->mass*this->d*this->d)*this->sHat2_B + this->mass*this->d*this->rTilde_HB_B*this->sHat3_B);
+                      + this->mass*this->d*this->d)*this->sHat2_P + this->mass*this->d*this->rTilde_HP_P*this->sHat3_P);
 
     // - Define cTheta
-    Eigen::Vector3d gravityTorquePntH_B;
-    gravityTorquePntH_B = -this->d*this->sHat1_B.cross(this->mass*g_B);
+    Eigen::Vector3d gravityTorquePntH_P;
+    gravityTorquePntH_P = -this->d*this->sHat1_P.cross(this->mass*g_P);
     this->cTheta = 1.0/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*(-this->k*this->theta - this->c*this->thetaDot
-                    + this->sHat2_B.dot(gravityTorquePntH_B) + (this->IPntS_S(2,2) - this->IPntS_S(0,0)
-                     + this->mass*this->d*this->d)*this->omega_BN_S(2)*this->omega_BN_S(0) - this->mass*this->d*
-                              this->sHat3_B.transpose()*this->omegaTildeLoc_BN_B*this->omegaTildeLoc_BN_B*this->r_HP_P);
+                    + this->sHat2_P.dot(gravityTorquePntH_P) + (this->IPntS_S(2,2) - this->IPntS_S(0,0)
+                     + this->mass*this->d*this->d)*this->omega_PN_S(2)*this->omega_PN_S(0) - this->mass*this->d*
+                              this->sHat3_P.transpose()*this->omegaTildeLoc_PN_P*this->omegaTildeLoc_PN_P*this->r_HP_P);
 
     // - Start defining them good old contributions - start with translation
     // - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper
-    backSubContr.matrixA = this->mass*this->d*this->sHat3_B*this->aTheta.transpose();
-    backSubContr.matrixB = this->mass*this->d*this->sHat3_B*this->bTheta.transpose();
-    backSubContr.vecTrans = -(this->mass*this->d*this->thetaDot*this->thetaDot*this->sHat1_B
-                                                                       + this->mass*this->d*this->cTheta*this->sHat3_B);
+    backSubContr.matrixA = this->mass*this->d*this->sHat3_P*this->aTheta.transpose();
+    backSubContr.matrixB = this->mass*this->d*this->sHat3_P*this->bTheta.transpose();
+    backSubContr.vecTrans = -(this->mass*this->d*this->thetaDot*this->thetaDot*this->sHat1_P
+                                                                       + this->mass*this->d*this->cTheta*this->sHat3_P);
 
     // - Define rotational matrice contributions
-    backSubContr.matrixC = (this->IPntS_S(1,1)*this->sHat2_B + this->mass*this->d*this->rTilde_SB_B*this->sHat3_B)
+    backSubContr.matrixC = (this->IPntS_S(1,1)*this->sHat2_P + this->mass*this->d*this->rTilde_SP_P*this->sHat3_P)
                                                                                               *this->aTheta.transpose();
-    backSubContr.matrixD = (this->IPntS_S(1,1)*this->sHat2_B + this->mass*this->d*this->rTilde_SB_B*this->sHat3_B)
+    backSubContr.matrixD = (this->IPntS_S(1,1)*this->sHat2_P + this->mass*this->d*this->rTilde_SP_P*this->sHat3_P)
                                                                                               *this->bTheta.transpose();
     Eigen::Matrix3d intermediateMatrix;
-    backSubContr.vecRot = -((this->thetaDot*this->omegaTildeLoc_BN_B + this->cTheta*intermediateMatrix.Identity())
-                    *(this->IPntS_S(1,1)*this->sHat2_B + this->mass*this->d*this->rTilde_SB_B*this->sHat3_B)
-                                    + this->mass*this->d*this->thetaDot*this->thetaDot*this->rTilde_SB_B*this->sHat1_B);
+    backSubContr.vecRot = -((this->thetaDot*this->omegaTildeLoc_PN_P + this->cTheta*intermediateMatrix.Identity())
+                    *(this->IPntS_S(1,1)*this->sHat2_P + this->mass*this->d*this->rTilde_SP_P*this->sHat3_P)
+                                    + this->mass*this->d*this->thetaDot*this->thetaDot*this->rTilde_SP_P*this->sHat1_P);
 
     return;
 }
@@ -248,25 +248,25 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
 void HingedRigidBodyStateEffector::computeDerivatives(double integTime)
 {
     // - Grab necessarry values from manager (these have been previously computed in hubEffector)
-    Eigen::Vector3d rDDotLoc_BN_N;
-    Eigen::MRPd sigmaLocal_BN;
-    Eigen::Vector3d omegaDotLoc_BN_B;
-    rDDotLoc_BN_N = this->hubVelocity->getStateDeriv();
-    sigmaLocal_BN = (Eigen::Vector3d )this->hubSigma->getState();
-    omegaDotLoc_BN_B = this->hubOmega->getStateDeriv();
+    Eigen::Vector3d rDDotLoc_PN_N;
+    Eigen::MRPd sigmaLocal_PN;
+    Eigen::Vector3d omegaDotLoc_PN_P;
+    rDDotLoc_PN_N = this->hubVelocity->getStateDeriv();
+    sigmaLocal_PN = (Eigen::Vector3d )this->hubSigma->getState();
+    omegaDotLoc_PN_P = this->hubOmega->getStateDeriv();
 
     // - Find rDDotLoc_BN_B
-    Eigen::Matrix3d dcm_BN;
-    Eigen::Vector3d rDDotLoc_BN_B;
-    dcm_BN = (sigmaLocal_BN.toRotationMatrix()).transpose();
-    rDDotLoc_BN_B = dcm_BN*rDDotLoc_BN_N;
+    Eigen::Matrix3d dcm_PN;
+    Eigen::Vector3d rDDotLoc_PN_P;
+    dcm_PN = (sigmaLocal_PN.toRotationMatrix()).transpose();
+    rDDotLoc_PN_P = dcm_PN*rDDotLoc_PN_N;
 
     // - Compute Derivatives
     // - First is trivial
     this->thetaState->setDerivative(thetaDotState->getState());
     // - Second, a little more involved
     Eigen::MatrixXd thetaDDot(1,1);
-    thetaDDot(0,0) = this->aTheta.dot(rDDotLoc_BN_B) + this->bTheta.dot(omegaDotLoc_BN_B) + this->cTheta;
+    thetaDDot(0,0) = this->aTheta.dot(rDDotLoc_PN_P) + this->bTheta.dot(omegaDotLoc_PN_P) + this->cTheta;
     this->thetaDotState->setDerivative(thetaDDot);
 
     return;
@@ -274,25 +274,25 @@ void HingedRigidBodyStateEffector::computeDerivatives(double integTime)
 
 /*! This method is for calculating the contributions of the HRB state effector to the energy and momentum of the s/c */
 void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d &
-                                                                rotAngMomPntCContr_B, double & rotEnergyContr)
+                                                                rotAngMomPntCContr_P, double & rotEnergyContr)
 {
     // - Get the current omega state
-    Eigen::Vector3d omegaLocal_BN_B;
-    omegaLocal_BN_B = hubOmega->getState();
+    Eigen::Vector3d omegaLocal_PN_P;
+    omegaLocal_PN_P = hubOmega->getState();
 
     // - Find rotational angular momentum contribution from hub
-    Eigen::Vector3d omega_SB_B;
-    Eigen::Vector3d omega_SN_B;
-    Eigen::Matrix3d IPntS_B;
-    Eigen::Vector3d rDot_SB_B;
-    omega_SB_B = this->thetaDot*this->sHat2_B;
-    omega_SN_B = omega_SB_B + omegaLocal_BN_B;
-    IPntS_B = this->dcm_SB.transpose()*this->IPntS_S*this->dcm_SB;
-    rDot_SB_B = this->rPrime_SB_B + omegaLocal_BN_B.cross(this->r_SB_B);
-    rotAngMomPntCContr_B = IPntS_B*omega_SN_B + this->mass*this->r_SB_B.cross(rDot_SB_B);
+    Eigen::Vector3d omega_SP_P;
+    Eigen::Vector3d omega_SN_P;
+    Eigen::Matrix3d IPntS_P;
+    Eigen::Vector3d rDot_SP_P;
+    omega_SP_P = this->thetaDot*this->sHat2_P;
+    omega_SN_P = omega_SP_P + omegaLocal_PN_P;
+    IPntS_P = this->dcm_SP.transpose()*this->IPntS_S*this->dcm_SP;
+    rDot_SP_P = this->rPrime_SP_P + omegaLocal_PN_P.cross(this->r_SP_P);
+    rotAngMomPntCContr_P = IPntS_P*omega_SN_P + this->mass*this->r_SP_P.cross(rDot_SP_P);
 
     // - Find rotational energy contribution from the hub
-    rotEnergyContr = 1.0/2.0*omega_SN_B.dot(IPntS_B*omega_SN_B) + 1.0/2.0*this->mass*rDot_SB_B.dot(rDot_SB_B)
+    rotEnergyContr = 1.0/2.0*omega_SN_P.dot(IPntS_P*omega_SN_P) + 1.0/2.0*this->mass*rDot_SP_P.dot(rDot_SP_P)
                                                                               + 1.0/2.0*this->k*this->theta*this->theta;
 
     return;
