@@ -141,7 +141,7 @@ void Spacecraft::linkInStatesSC(DynParamManager& statesIn)
     this->inertialPositionProperty = statesIn.getPropertyReference(this->gravField.inertialPositionPropName);
     this->inertialVelocityProperty = statesIn.getPropertyReference(this->gravField.inertialVelocityPropName);
     this->g_N = statesIn.getPropertyReference(this->gravField.vehicleGravityPropName);
-    
+
     return;
 }
 
@@ -344,6 +344,15 @@ void SpacecraftDynamics::UpdateState(uint64_t CurrentSimNanos)
  messages, and calculating energy and momentum */
 void SpacecraftDynamics::linkInStates(DynParamManager& statesIn)
 {
+    this->primaryCentralSpacecraft.linkInStatesSC(statesIn);
+
+    // - Call this for all of the connected spacecraft
+    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+    for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
+    {
+        (*spacecraftConnectedIt)->linkInStatesSC(statesIn);
+    }
+
     return;
 }
 
