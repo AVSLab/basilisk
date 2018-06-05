@@ -187,7 +187,6 @@ void Spacecraft::initializeDynamicsSC(DynParamManager& statesIn)
         (*stateIt)->prependSpacecraftNameToStates();
     }
 
-
     // - Register the gravity properties with the dynManager, 'erbody wants g_N!
     this->gravField.registerProperties(statesIn);
 
@@ -204,6 +203,21 @@ void Spacecraft::initializeDynamicsSC(DynParamManager& statesIn)
     this->linkInStatesSC(statesIn);
     this->gravField.linkInStates(statesIn);
     this->hub.linkInStates(statesIn);
+
+    // - Loop through the stateEffectors to link in the states needed
+    for(stateIt = this->states.begin(); stateIt != this->states.end(); stateIt++)
+    {
+        (*stateIt)->linkInStates(statesIn);
+    }
+
+    // - Loop through the dynamicEffectors to link in the states needed
+    std::vector<DynamicEffector*>::iterator dynIt;
+    for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
+    {
+        (*dynIt)->linkInStates(statesIn);
+    }
+
+    return;
 }
 
 /*! This is the constructor, setting variables to default values */
@@ -401,8 +415,7 @@ void SpacecraftDynamics::UpdateState(uint64_t CurrentSimNanos)
     return;
 }
 
-/*! This method allows the spacecraftDynamics to have access to the current state of the hub for MRP switching, writing 
- messages, and calculating energy and momentum */
+/*! Don't think this method is needed anymore */
 void SpacecraftDynamics::linkInStates(DynParamManager& statesIn)
 {
     return;
@@ -413,11 +426,18 @@ void SpacecraftDynamics::linkInStates(DynParamManager& statesIn)
  for the simulation */
 void SpacecraftDynamics::initializeDynamics()
 {
-    this->primaryCentralSpacecraft.initializeDynamicsSC(this->dynManager);
-
     Eigen::MatrixXd systemTime(2,1);
     systemTime.setZero();
     this->sysTime = this->dynManager.createProperty(this->sysTimePropertyName, systemTime);
+    
+    this->primaryCentralSpacecraft.initializeDynamicsSC(this->dynManager);
+
+    // - Call this for all of the connected spacecraft
+    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+    for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
+    {
+        (*spacecraftConnectedIt)->initializeDynamicsSC(this->dynManager);
+    }
 
     // - Update the mass properties of the spacecraft to retrieve c_B and cDot_B to update r_BN_N and v_BN_N
     this->updateSystemMassProps(0.0);
@@ -437,23 +457,11 @@ void SpacecraftDynamics::initializeDynamics()
     this->primaryCentralSpacecraft.hubR_N->setState(rInit_BN_N);
     this->primaryCentralSpacecraft.hubV_N->setState(vInit_BN_N);
 
-    // - Loop through the stateEffectros to link in the states needed
-    for(stateIt = this->primaryCentralSpacecraft.states.begin(); stateIt != this->primaryCentralSpacecraft.states.end(); stateIt++)
-    {
-        (*stateIt)->linkInStates(this->dynManager);
-    }
-
-    // - Loop through the dynamicEffectors to link in the states needed
-    std::vector<DynamicEffector*>::iterator dynIt;
-    for(dynIt = this->primaryCentralSpacecraft.dynEffectors.begin(); dynIt != this->primaryCentralSpacecraft.dynEffectors.end(); dynIt++)
-    {
-        (*dynIt)->linkInStates(this->dynManager);
-    }
-
     // - Call all stateEffectors in each spacecraft to give them body frame information
     std::vector<Spacecraft*>::iterator spacecraftIt;
     for(spacecraftIt = this->spacecraftDockedToPrimary.begin(); spacecraftIt != this->spacecraftDockedToPrimary.end(); spacecraftIt++)
     {
+        std::vector<StateEffector*>::iterator stateIt;
         for(stateIt = (*spacecraftIt)->states.begin(); stateIt != (*spacecraftIt)->states.end(); stateIt++)
         {
             // Obviously need to change this
