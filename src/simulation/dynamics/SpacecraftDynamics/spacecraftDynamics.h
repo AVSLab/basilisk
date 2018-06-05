@@ -127,7 +127,7 @@ public:
     void SelfInitSC(uint64_t moduleID);                     //!< -- Lets spacecraft plus create its own msgs
     void CrossInitSC();                    //!< -- Hook to tie s/c plus back into provided msgs
     
-    void writeOutputMessagesSC(uint64_t clockTime); //!< -- Method to write all of the class output messages
+    void writeOutputMessagesSC(uint64_t clockTime, uint64_t moduleID); //!< -- Method to write all of the class output messages
     void linkInStatesSC(DynParamManager& statesIn);  //!< Method to get access to the hub's states
 
 private:
