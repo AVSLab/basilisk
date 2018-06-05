@@ -116,7 +116,7 @@ void HubEffector::updateEffectorMassProps(double integTime)
 
 /*! This method is for computing the derivatives of the hub: rDDot_BN_N and omegaDot_BN_B, along with the kinematic
  derivatives */
-void HubEffector::computeDerivatives(double integTime)
+void HubEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
 {
     // - Get variables from state manager
     Eigen::Vector3d rDotLocal_BN_N;
@@ -139,16 +139,16 @@ void HubEffector::computeDerivatives(double integTime)
     dcm_BN = dcm_NB.transpose();
 
     // - Solve for omegaDot_BN_B
-    Eigen::Vector3d omegaDot_BN_B;
+    Eigen::Vector3d omegaDotLocal_BN_B;
     Eigen::Matrix3d intermediateMatrix;
     Eigen::Vector3d intermediateVector;
     intermediateVector = this->hubBackSubMatrices.vecRot - this->hubBackSubMatrices.matrixC*this->hubBackSubMatrices.matrixA.inverse()*this->hubBackSubMatrices.vecTrans;
     intermediateMatrix = hubBackSubMatrices.matrixD - hubBackSubMatrices.matrixC*hubBackSubMatrices.matrixA.inverse()*hubBackSubMatrices.matrixB;
-    omegaDot_BN_B = intermediateMatrix.inverse()*intermediateVector;
-    omegaState->setDerivative(omegaDot_BN_B);
+    omegaDotLocal_BN_B = intermediateMatrix.inverse()*intermediateVector;
+    omegaState->setDerivative(omegaDotLocal_BN_B);
 
     // - Solve for rDDot_BN_N
-    velocityState->setDerivative(dcm_NB*hubBackSubMatrices.matrixA.inverse()*(hubBackSubMatrices.vecTrans - hubBackSubMatrices.matrixB*omegaDot_BN_B));
+    velocityState->setDerivative(dcm_NB*hubBackSubMatrices.matrixA.inverse()*(hubBackSubMatrices.vecTrans - hubBackSubMatrices.matrixB*omegaDotLocal_BN_B));
 
     // - Set kinematic derivative
     posState->setDerivative(rDotLocal_BN_N);
@@ -158,7 +158,7 @@ void HubEffector::computeDerivatives(double integTime)
 
 /*! This method is for computing the energy and momentum contributions from the hub */
 void HubEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
-                                               double & rotEnergyContr)
+                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
     // - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;

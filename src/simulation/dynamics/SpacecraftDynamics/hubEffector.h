@@ -50,9 +50,9 @@ public:
     void linkInStates(DynParamManager& statesIn);  //!< -- Method to give the hub access to states
     void registerStates(DynParamManager& states);  //!< -- Method for the hub to register some states
     void updateEffectorMassProps(double integTime);  //!< -- Method for the hub to update its mass props for the s/c
-    void computeDerivatives(double integTime);  //!< -- Method for the hub to compute it's derivatives
-    void updateEnergyMomContributions(double integTime, Eigen::Vector3d &rotAngMomPntCContr_B,
-                                      double & rotEnergyContr); //!< -- Add contributions to energy and momentum
+    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN);  //!< -- Method for the hub to compute it's derivatives
+    void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
+                                      double & rotEnergyContr, Eigen::Vector3d omega_BN_B); //!< -- Add contributions to energy and momentum
     void modifyStates(double integTime); //!< -- Method to switch MRPs
     void prependSpacecraftNameToStates();
 
