@@ -50,8 +50,8 @@ def test_SCConnected(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftDynamics.SpacecraftDynamics()
-    scObject.ModelTag = "spacecraftBody"
+    scSystem = spacecraftDynamics.SpacecraftDynamics()
+    scSystem.ModelTag = "spacecraftSystem"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -66,7 +66,23 @@ def test_SCConnected(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unitTestSim.AddModelToTask(unitTaskName, scSystem)
+
+    # Define initial conditions of primary spacecraft
+    scSystem.primaryCentralSpacecraft.hub.mHub = 100
+    scSystem.primaryCentralSpacecraft.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    scSystem.primaryCentralSpacecraft.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
+    scSystem.primaryCentralSpacecraft.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
+    scSystem.primaryCentralSpacecraft.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
+    scSystem.primaryCentralSpacecraft.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scSystem.primaryCentralSpacecraft.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
+
+    # Define docking information
+    dock1SC1 = spacecraftDynamics.DockingData()
+    dock1SC1.r_DB_B = [[1.0], [0.0], [0.0]]
+    dock1SC1.dcm_DB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    dock1SC1.portName = "sc1port1"
+    scSystem.primaryCentralSpacecraft.addDockingPort(dock1SC1)
 
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
     unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
@@ -75,37 +91,47 @@ def test_SCConnected(show_plots):
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
 
-    scObject.gravField.gravBodies = spacecraftDynamics.GravBodyVector([unitTestSim.earthGravBody])
+    scSystem.primaryCentralSpacecraft.gravField.gravBodies = spacecraftDynamics.GravBodyVector([unitTestSim.earthGravBody])
 
-    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+    sc2 = spacecraftDynamics.Spacecraft()
+    sc2.hub.mHub = 100
+    sc2.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    sc2.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
+    sc2.hub.spacecraftName = "spacecraft2"
 
-    # Define initial conditions of the spacecraft
-    scObject.hub.mHub = 100
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
-    scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
-    scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
+    # Define docking information
+    dock1SC2 = spacecraftDynamics.DockingData()
+    dock1SC2.r_DB_B = [[-1.0], [0.0], [0.0]]
+    dock1SC2.dcm_DB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    dock1SC2.portName = "sc2port1"
+    sc2.addDockingPort(dock1SC1)
+
+    # Define gravity for sc2
+    sc2.gravField.gravBodies = spacecraftDynamics.GravBodyVector([unitTestSim.earthGravBody])
+
+    # Attach spacecraft2 to spacecraft
+    scSystem.attachSpacecraftToPrimary(sc2, dock1SC2.portName, dock1SC1.portName)
+
+    unitTestSim.TotalSim.logThisMessage(scSystem.scStateOutMsgName, testProcessRate)
 
     unitTestSim.InitializeSimulation()
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totRotEnergy", testProcessRate, 0, 0, 'double')
 
     stopTime = 10.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
-    orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
-    rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
-    rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
+    orbEnergy = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy")
+    orbAngMom_N = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totOrbAngMomPntN_N")
+    rotAngMom_N = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totRotAngMomPntC_N")
+    rotEnergy = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totRotEnergy")
 
-    r_BN_NOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N',
+    r_BN_NOutput = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output" + '.r_BN_N',
                                                   range(3))
-    sigma_BNOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
+    sigma_BNOutput = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output" + '.sigma_BN',
                                                   range(3))
 
     truePos = [
@@ -153,25 +179,21 @@ def test_SCConnected(show_plots):
     plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentumTranslationAndRotation", "Change in Orbital Angular Momentum Translation And Rotation", plt, "width=0.8\\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergyTranslationAndRotation", "Change in Orbital Energy Translation And Rotation", plt, "width=0.8\\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentumTranslationAndRotation", "Change in Rotational Angular Momentum Translation And Rotation", plt, "width=0.8\\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergyTranslationAndRotation", "Change in Rotational Energy Translation And Rotation", plt, "width=0.8\\textwidth", path)
     plt.show(show_plots)
 
     accuracy = 1e-8
