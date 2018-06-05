@@ -609,6 +609,127 @@ void SpacecraftDynamics::equationsOfMotion(double integTimeSeconds)
     uint64_t integTimeNanos = this->simTimePrevious + (integTimeSeconds-this->timePrevious)/NANO2SEC;
     (*this->sysTime) << integTimeNanos, integTimeSeconds;
 
+    // Call this for all unconnected spacecraft:this->equationsOfMotionSC(integTimeSeconds, this->primaryCentralSpacecraft);
+
+
+    return;
+}
+
+void SpacecraftDynamics::equationsOfMotionSC(double integTimeSeconds, Spacecraft& spacecraft)
+{
+    // - Zero all Matrices and vectors for back-sub and the dynamics
+    spacecraft.hub.hubBackSubMatrices.matrixA.setZero();
+    spacecraft.hub.hubBackSubMatrices.matrixB.setZero();
+    spacecraft.hub.hubBackSubMatrices.matrixC.setZero();
+    spacecraft.hub.hubBackSubMatrices.matrixD.setZero();
+    spacecraft.hub.hubBackSubMatrices.vecTrans.setZero();
+    spacecraft.hub.hubBackSubMatrices.vecRot.setZero();
+    spacecraft.sumForceExternal_B.setZero();
+    spacecraft.sumForceExternal_N.setZero();
+    spacecraft.sumTorquePntB_B.setZero();
+
+    // - Update the mass properties of the spacecraft
+    this->updateSpacecraftMassProps(integTimeSeconds, spacecraft);
+
+    // - This is where gravity is computed (gravity needs to know c_B to calculated gravity about r_CN_N)
+    Eigen::MRPd sigmaBNLoc;
+    Eigen::Matrix3d dcm_NB;
+    Eigen::Vector3d cLocal_N;
+
+    sigmaBNLoc = (Eigen::Vector3d) spacecraft.hubSigma->getState();
+    dcm_NB = sigmaBNLoc.toRotationMatrix();
+    cLocal_N = dcm_NB*(*spacecraft.c_B);
+    Eigen::Vector3d rLocal_CN_N = spacecraft.hubR_N->getState() + dcm_NB*(*spacecraft.c_B);
+    Eigen::Vector3d vLocal_CN_N = spacecraft.hubV_N->getState() + dcm_NB*(*spacecraft.cDot_B);
+
+    spacecraft.gravField.computeGravityField(rLocal_CN_N, vLocal_CN_N);
+
+    // - Loop through dynEffectors to compute force and torque on the s/c
+    std::vector<DynamicEffector*>::iterator dynIt;
+    for(dynIt = spacecraft.dynEffectors.begin(); dynIt != spacecraft.dynEffectors.end(); dynIt++)
+    {
+        // - Compute the force and torque contributions from the dynamicEffectors
+        (*dynIt)->computeForceTorque(integTimeSeconds);
+        spacecraft.sumForceExternal_N += (*dynIt)->forceExternal_N;
+        spacecraft.sumForceExternal_B += (*dynIt)->forceExternal_B;
+        spacecraft.sumTorquePntB_B += (*dynIt)->torqueExternalPntB_B;
+    }
+
+    // - Loop through state effectors to get contributions for back-substitution
+    std::vector<StateEffector*>::iterator it;
+    for(it = spacecraft.states.begin(); it != spacecraft.states.end(); it++)
+    {
+        /* - Set the contribution matrices to zero (just in case a stateEffector += on the matrix or the stateEffector
+         doesn't have a contribution for a matrix and doesn't set the matrix to zero */
+        spacecraft.backSubMatricesContributions.matrixA.setZero();
+        spacecraft.backSubMatricesContributions.matrixB.setZero();
+        spacecraft.backSubMatricesContributions.matrixC.setZero();
+        spacecraft.backSubMatricesContributions.matrixD.setZero();
+        spacecraft.backSubMatricesContributions.vecTrans.setZero();
+        spacecraft.backSubMatricesContributions.vecRot.setZero();
+
+        // - Call the update contributions method for the stateEffectors and add in contributions to the hub matrices
+        (*it)->updateContributions(integTimeSeconds, spacecraft.backSubMatricesContributions);
+        spacecraft.hub.hubBackSubMatrices.matrixA += spacecraft.backSubMatricesContributions.matrixA;
+        spacecraft.hub.hubBackSubMatrices.matrixB += spacecraft.backSubMatricesContributions.matrixB;
+        spacecraft.hub.hubBackSubMatrices.matrixC += spacecraft.backSubMatricesContributions.matrixC;
+        spacecraft.hub.hubBackSubMatrices.matrixD += spacecraft.backSubMatricesContributions.matrixD;
+        spacecraft.hub.hubBackSubMatrices.vecTrans += spacecraft.backSubMatricesContributions.vecTrans;
+        spacecraft.hub.hubBackSubMatrices.vecRot += spacecraft.backSubMatricesContributions.vecRot;
+    }
+
+    // - Finish the math that is needed
+    Eigen::Vector3d cLocal_B;
+    Eigen::Vector3d cPrimeLocal_B;
+    cLocal_B = *spacecraft.c_B;
+    cPrimeLocal_B = *spacecraft.cPrime_B;
+
+    Eigen::Matrix3d intermediateMatrix;
+    Eigen::Vector3d intermediateVector;
+    Eigen::Vector3d omegaLocalBN_B = spacecraft.hubOmega_BN_B->getState();
+    spacecraft.hub.hubBackSubMatrices.matrixA += (*spacecraft.m_SC)(0,0)*intermediateMatrix.Identity();
+    intermediateMatrix = eigenTilde((*spacecraft.c_B));  // make c_B skew symmetric matrix
+    spacecraft.hub.hubBackSubMatrices.matrixB += -(*spacecraft.m_SC)(0,0)*intermediateMatrix;
+    spacecraft.hub.hubBackSubMatrices.matrixC += (*spacecraft.m_SC)(0,0)*intermediateMatrix;
+    spacecraft.hub.hubBackSubMatrices.matrixD += *spacecraft.ISCPntB_B;
+    spacecraft.hub.hubBackSubMatrices.vecTrans += -2.0*(*spacecraft.m_SC)(0, 0)*omegaLocalBN_B.cross(cPrimeLocal_B)
+    - (*spacecraft.m_SC)(0, 0)*omegaLocalBN_B.cross(omegaLocalBN_B.cross(cLocal_B))
+    - 2.0*(*spacecraft.mDot_SC)(0,0)*(cPrimeLocal_B+omegaLocalBN_B.cross(cLocal_B));
+    intermediateVector = *spacecraft.ISCPntB_B*omegaLocalBN_B;
+    spacecraft.hub.hubBackSubMatrices.vecRot += -omegaLocalBN_B.cross(intermediateVector) - *spacecraft.ISCPntBPrime_B*omegaLocalBN_B;
+
+    // - Map external force_N to the body frame
+    Eigen::Vector3d sumForceExternalMappedToB;
+    sumForceExternalMappedToB = dcm_NB.transpose()*spacecraft.sumForceExternal_N;
+
+    // - Edit both v_trans and v_rot with gravity and external force and torque
+    Eigen::Vector3d gLocal_N = *spacecraft.g_N;
+
+    // -  Make additional contributions to the matrices from the hub
+
+    // - Need to find force of gravity on the spacecraft
+    Eigen::Vector3d gravityForce_N;
+    gravityForce_N = (*spacecraft.m_SC)(0,0)*gLocal_N;
+
+    Eigen::Vector3d gravityForce_B;
+    gravityForce_B = dcm_NB.transpose()*gravityForce_N;
+    spacecraft.hub.hubBackSubMatrices.vecTrans += gravityForce_B + sumForceExternalMappedToB + spacecraft.sumForceExternal_B;
+    spacecraft.hub.hubBackSubMatrices.vecRot += cLocal_B.cross(gravityForce_B) + spacecraft.sumTorquePntB_B;
+
+    // - Compute the derivatives of the hub states before looping through stateEffectors
+    spacecraft.hub.computeDerivatives(integTimeSeconds);
+
+    // - Loop through state effectors for compute derivatives
+    for(it = spacecraft.states.begin(); it != spacecraft.states.end(); it++)
+    {
+        (*it)->computeDerivatives(integTimeSeconds);
+    }
+
+    return;
+}
+
+void SpacecraftDynamics::equationsOfMotionSystem(double integTimeSeconds)
+{
     // - Zero all Matrices and vectors for back-sub and the dynamics
     this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixA.setZero();
     this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixB.setZero();
@@ -645,6 +766,21 @@ void SpacecraftDynamics::equationsOfMotion(double integTimeSeconds)
         this->primaryCentralSpacecraft.sumForceExternal_N += (*dynIt)->forceExternal_N;
         this->primaryCentralSpacecraft.sumForceExternal_B += (*dynIt)->forceExternal_B;
         this->primaryCentralSpacecraft.sumTorquePntB_B += (*dynIt)->torqueExternalPntB_B;
+    }
+
+    // - Call this for all of the connected spacecraft
+    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+    for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
+    {
+        // - Loop through dynEffectors to compute force and torque on the s/c
+        for(dynIt = (*spacecraftConnectedIt)->dynEffectors.begin(); dynIt != (*spacecraftConnectedIt)->dynEffectors.end(); dynIt++)
+        {
+            // - Compute the force and torque contributions from the dynamicEffectors
+            (*dynIt)->computeForceTorque(integTimeSeconds);
+            this->primaryCentralSpacecraft.sumForceExternal_N += (*dynIt)->forceExternal_N;
+            this->primaryCentralSpacecraft.sumForceExternal_B += (*dynIt)->forceExternal_B;
+            this->primaryCentralSpacecraft.sumTorquePntB_B += (*dynIt)->torqueExternalPntB_B;
+        }
     }
 
     // - Loop through state effectors to get contributions for back-substitution
@@ -699,7 +835,7 @@ void SpacecraftDynamics::equationsOfMotion(double integTimeSeconds)
 
     // -  Make additional contributions to the matrices from the hub
 
-    // - Need to find force of gravity on the spacecraft
+    // - Need to find force of gravity on the this->primaryCentralSpacecraft
     Eigen::Vector3d gravityForce_N;
     gravityForce_N = (*this->primaryCentralSpacecraft.m_SC)(0,0)*gLocal_N;
 
