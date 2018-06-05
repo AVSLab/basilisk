@@ -1594,4 +1594,4 @@ class boxAndWingParameters:
     d = 0
 
 if __name__ == "__main__":
-    test_hingedRigidBodyNoGravity(True)
+    test_hingedRigidBodyGravity(True)
