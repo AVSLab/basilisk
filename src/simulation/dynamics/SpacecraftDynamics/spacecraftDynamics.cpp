@@ -1007,7 +1007,15 @@ void SpacecraftDynamics::calculateDeltaVandAcceleration(Spacecraft &spacecraft, 
  for validation purposes. */
 void SpacecraftDynamics::computeEnergyMomentum(double time)
 {
-    this->computeEnergyMomentumSystem(time);
+    this->computeEnergyMomentumSC(time, this->primaryCentralSpacecraft);
+
+    // - Call this for all of the connected spacecraft
+    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+    for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
+    {
+        this->computeEnergyMomentumSC(time, *(*spacecraftConnectedIt));
+    }
+
     return;
 }
 
