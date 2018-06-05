@@ -105,8 +105,6 @@ void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 {
     // - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling and gravity
     std::string tmpMsgName;
-    tmpMsgName = this->nameOfSpacecraftAttachedTo + "_" + "g_N";
-    this->g_N = statesIn.getPropertyReference(tmpMsgName);
     tmpMsgName = this->nameOfSpacecraftAttachedTo + "_" + "centerOfMassSC";
     this->c_B = statesIn.getPropertyReference(tmpMsgName);
     tmpMsgName = this->nameOfSpacecraftAttachedTo + "_" + "centerOfMassPrimeSC";
@@ -180,7 +178,7 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 
 /*! This method allows the HRB state effector to give its contributions to the matrices needed for the back-sub 
  method */
-void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B)
+void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
     // - Find dcm_BN
     Eigen::MRPd sigmaLocal_PN;
@@ -193,7 +191,7 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
     // - Map gravity to body frame
     Eigen::Vector3d gLocal_N;
     Eigen::Vector3d g_P;
-    gLocal_N = *this->g_N;
+    gLocal_N = g_N;
     g_P = dcm_PN*gLocal_N;
 
     // - Define omega_BN_S
