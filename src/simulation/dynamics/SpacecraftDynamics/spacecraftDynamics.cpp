@@ -910,6 +910,8 @@ void SpacecraftDynamics::integrateState(double integrateToThisTime)
     // - Call hubs modify states to allow for switching of MRPs
     this->primaryCentralSpacecraft.hub.modifyStates(integrateToThisTime);
 
+    // - Calculate the states of the attached spacecraft from the primary spacecraft
+
     // - Loop over stateEffectors to call modifyStates
     std::vector<StateEffector*>::iterator it;
     for(it = this->primaryCentralSpacecraft.states.begin(); it != this->primaryCentralSpacecraft.states.end(); it++)
@@ -955,6 +957,20 @@ void SpacecraftDynamics::findPriorStateInformation(Spacecraft &spacecraft)
     // - Finally find v_CN_N
     Eigen::Matrix3d oldDcm_NB = oldSigma_BN.toRotationMatrix(); // - dcm_NB before integration
     spacecraft.oldV_CN_N = spacecraft.oldV_BN_N + oldDcm_NB*(*spacecraft.cDot_B);
+
+    return;
+}
+
+void SpacecraftDynamics::determineAttachedSCStates()
+{
+    // Pull out primary spacecraft states
+    Eigen::MRPd sigmaPNLoc;
+    sigmaPNLoc = (Eigen::Vector3d) this->primaryCentralSpacecraft.hubSigma->getState();
+    Eigen::Vector3d omegaPNLoc_P = this->primaryCentralSpacecraft.hubOmega_BN_B->getState();
+    Eigen::Vector3d r_PNLocal_N = this->primaryCentralSpacecraft.hubR_N->getState();
+    Eigen::Vector3d r_PNDotLocal_N = this->primaryCentralSpacecraft.hubV_N->getState();
+    Eigen::Matrix3d dcm_NP;
+    dcm_NP = sigmaPNLoc.toRotationMatrix();
 
     return;
 }

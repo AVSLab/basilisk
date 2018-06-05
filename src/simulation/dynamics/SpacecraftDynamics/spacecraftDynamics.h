@@ -175,6 +175,7 @@ public:
     void integrateState(double time);       //!< -- This method steps the state forward one step in time
     void attachSpacecraftToPrimary(Spacecraft *newSpacecraft, std::string dockingPortNameOfNewSpacecraft, std::string dockingToPortName);  //!< -- Attaches a spacecraft to the primary spacecraft chain
     void addSpacecraftUndocked(Spacecraft *newSpacecraft);  //!< -- Attaches a spacecraft to the primary spacecraft chain
+    void determineAttachedSCStates();
 
 private:
     
