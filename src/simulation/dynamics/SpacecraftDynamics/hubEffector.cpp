@@ -116,7 +116,7 @@ void HubEffector::updateEffectorMassProps(double integTime)
 
 /*! This method is for computing the derivatives of the hub: rDDot_BN_N and omegaDot_BN_B, along with the kinematic
  derivatives */
-void HubEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
+void HubEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
 {
     // - Get variables from state manager
     Eigen::Vector3d rDotLocal_BN_N;
