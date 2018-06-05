@@ -447,18 +447,9 @@ void SpacecraftDynamics::initializeDynamics()
 
     // - Edit r_BN_N and v_BN_N to take into account that point B and point C are not coincident
     // - Pulling the state from the hub at this time gives us r_CN_N
-    Eigen::Vector3d rInit_BN_N = this->primaryCentralSpacecraft.hubR_N->getState();
-    Eigen::MRPd sigma_BN;
-    sigma_BN = (Eigen::Vector3d) this->primaryCentralSpacecraft.hubSigma->getState();
-    Eigen::Matrix3d dcm_NB = sigma_BN.toRotationMatrix();
-    // - Substract off the center mass to leave r_BN_N
-    rInit_BN_N -= dcm_NB*(*this->primaryCentralSpacecraft.c_B);
-    // - Subtract off cDot_B to get v_BN_N
-    Eigen::Vector3d vInit_BN_N = this->primaryCentralSpacecraft.hubV_N->getState();
-    vInit_BN_N -= dcm_NB*(*this->primaryCentralSpacecraft.cDot_B);
-    // - Finally set the translational states r_BN_N and v_BN_N with the corrections
-    this->primaryCentralSpacecraft.hubR_N->setState(rInit_BN_N);
-    this->primaryCentralSpacecraft.hubV_N->setState(vInit_BN_N);
+    this->initializeSCPosVelocity(this->primaryCentralSpacecraft);
+
+    // - Initialize this for all other spacecraft
 
     // - Call all stateEffectors in each spacecraft to give them body frame information
     std::vector<Spacecraft*>::iterator spacecraftIt;
@@ -467,10 +458,7 @@ void SpacecraftDynamics::initializeDynamics()
         std::vector<StateEffector*>::iterator stateIt;
         for(stateIt = (*spacecraftIt)->states.begin(); stateIt != (*spacecraftIt)->states.end(); stateIt++)
         {
-            // Obviously need to change this
-            Eigen::Vector3d vectorPlaceHolder;
-            Eigen::Matrix3d MatrixPlaceHolder;
-            (*stateIt)->receiveMotherSpacecraftData(vectorPlaceHolder, MatrixPlaceHolder);
+            (*stateIt)->receiveMotherSpacecraftData((*spacecraftIt)->hub.r_BP_P, (*spacecraftIt)->hub.dcm_BP);
         }
     }
 
@@ -589,6 +577,24 @@ void SpacecraftDynamics::updateSystemMassProps(double time)
     Eigen::Vector3d omegaLocal_BN_B = this->primaryCentralSpacecraft.hubOmega_BN_B->getState();
     Eigen::Vector3d cLocal_B = (*this->primaryCentralSpacecraft.c_B);
     (*this->primaryCentralSpacecraft.cDot_B) = (*this->primaryCentralSpacecraft.cPrime_B) + omegaLocal_BN_B.cross(cLocal_B);
+
+    return;
+}
+
+void SpacecraftDynamics::initializeSCPosVelocity(Spacecraft &spacecraft)
+{
+    Eigen::Vector3d rInit_BN_N = spacecraft.hubR_N->getState();
+    Eigen::MRPd sigma_BN;
+    sigma_BN = (Eigen::Vector3d) spacecraft.hubSigma->getState();
+    Eigen::Matrix3d dcm_NB = sigma_BN.toRotationMatrix();
+    // - Substract off the center mass to leave r_BN_N
+    rInit_BN_N -= dcm_NB*(*spacecraft.c_B);
+    // - Subtract off cDot_B to get v_BN_N
+    Eigen::Vector3d vInit_BN_N = spacecraft.hubV_N->getState();
+    vInit_BN_N -= dcm_NB*(*spacecraft.cDot_B);
+    // - Finally set the translational states r_BN_N and v_BN_N with the corrections
+    spacecraft.hubR_N->setState(rInit_BN_N);
+    spacecraft.hubV_N->setState(vInit_BN_N);
 
     return;
 }

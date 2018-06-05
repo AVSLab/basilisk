@@ -155,6 +155,7 @@ public:
     void computeEnergyMomentum(double time);  //!< -- This method computes the total energy and momentum of the s/c
     void updateSpacecraftMassProps(double time, Spacecraft& spacecraft);  //!< -- This method computes the total mass properties of the s/c
     void updateSystemMassProps(double time);  //!< -- This method computes the total mass properties of the s/c
+    void initializeSCPosVelocity(Spacecraft& spacecraft);
     void SelfInit();                     //!< -- Lets spacecraft plus create its own msgs
     void CrossInit();                    //!< -- Hook to tie s/c plus back into provided msgs
     void writeOutputMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
