@@ -670,7 +670,7 @@ void SpacecraftDynamics::equationsOfMotionSC(double integTimeSeconds, Spacecraft
         spacecraft.backSubMatricesContributions.vecRot.setZero();
 
         // - Call the update contributions method for the stateEffectors and add in contributions to the hub matrices
-        (*it)->updateContributions(integTimeSeconds, spacecraft.backSubMatricesContributions, spacecraft.hubSigma->getState(), spacecraft.hubOmega_BN_B->getState());
+        (*it)->updateContributions(integTimeSeconds, spacecraft.backSubMatricesContributions, spacecraft.hubSigma->getState(), spacecraft.hubOmega_BN_B->getState(), *spacecraft.g_N);
         spacecraft.hub.hubBackSubMatrices.matrixA += spacecraft.backSubMatricesContributions.matrixA;
         spacecraft.hub.hubBackSubMatrices.matrixB += spacecraft.backSubMatricesContributions.matrixB;
         spacecraft.hub.hubBackSubMatrices.matrixC += spacecraft.backSubMatricesContributions.matrixC;
@@ -798,7 +798,7 @@ void SpacecraftDynamics::equationsOfMotionSystem(double integTimeSeconds)
         this->primaryCentralSpacecraft.backSubMatricesContributions.vecRot.setZero();
 
         // - Call the update contributions method for the stateEffectors and add in contributions to the hub matrices
-        (*it)->updateContributions(integTimeSeconds, this->primaryCentralSpacecraft.backSubMatricesContributions, this->primaryCentralSpacecraft.hubSigma->getState(), this->primaryCentralSpacecraft.hubOmega_BN_B->getState());
+        (*it)->updateContributions(integTimeSeconds, this->primaryCentralSpacecraft.backSubMatricesContributions, this->primaryCentralSpacecraft.hubSigma->getState(), this->primaryCentralSpacecraft.hubOmega_BN_B->getState(), *this->primaryCentralSpacecraft.g_N);
         this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixA += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixA;
         this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixB += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixB;
         this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixC += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixC;
@@ -822,7 +822,7 @@ void SpacecraftDynamics::equationsOfMotionSystem(double integTimeSeconds)
             this->primaryCentralSpacecraft.backSubMatricesContributions.vecRot.setZero();
 
             // - Call the update contributions method for the stateEffectors and add in contributions to the hub matrices
-            (*it)->updateContributions(integTimeSeconds, this->primaryCentralSpacecraft.backSubMatricesContributions, this->primaryCentralSpacecraft.hubSigma->getState(), this->primaryCentralSpacecraft.hubOmega_BN_B->getState());
+            (*it)->updateContributions(integTimeSeconds, this->primaryCentralSpacecraft.backSubMatricesContributions, this->primaryCentralSpacecraft.hubSigma->getState(), this->primaryCentralSpacecraft.hubOmega_BN_B->getState(), *this->primaryCentralSpacecraft.g_N);
             this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixA += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixA;
             this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixB += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixB;
             this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixC += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixC;
