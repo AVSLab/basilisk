@@ -88,6 +88,10 @@ public:
     Eigen::Vector3d sumForceExternal_B;  //!< [N] Sum of forces given in the body frame
     Eigen::Vector3d sumTorquePntB_B;     //!< [N-m] Total torque about point B in B frame components
 
+    Eigen::Vector3d oldV_CN_N;
+    Eigen::Vector3d oldV_BN_N;
+    Eigen::Vector3d oldOmega_BN_B;
+
     Eigen::Vector3d dvAccum_B;           //!< [m/s] Accumulated delta-v of center of mass relative to inertial frame in body frame coordinates
     Eigen::Vector3d dvAccum_BN_B;        //!< [m/s] accumulated delta-v of body frame relative to inertial frame in body frame coordinates
     Eigen::Vector3d nonConservativeAccelpntB_B;//!< [m/s/s] Current spacecraft body acceleration in the B frame
@@ -164,6 +168,8 @@ public:
     void equationsOfMotion(double integTimeSeconds);    //!< -- This method computes the equations of motion for the whole system
     void equationsOfMotionSC(double integTimeSeconds, Spacecraft& spacecraft);    //!< -- This method computes the equations of motion for the whole system
     void equationsOfMotionSystem(double integTimeSeconds);    //!< -- This method computes the equations of motion for the whole system
+    void findPriorStateInformation(Spacecraft& spacecraft);
+    void calculateDeltaVandAcceleration(Spacecraft& spacecraft, double localTimeStep);
     void integrateState(double time);       //!< -- This method steps the state forward one step in time
     void attachSpacecraftToPrimary(Spacecraft *newSpacecraft, std::string dockingPortNameOfNewSpacecraft, std::string dockingToPortName);  //!< -- Attaches a spacecraft to the primary spacecraft chain
     void addSpacecraftUndocked(Spacecraft *newSpacecraft);  //!< -- Attaches a spacecraft to the primary spacecraft chain

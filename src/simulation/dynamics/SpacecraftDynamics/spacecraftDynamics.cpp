@@ -610,7 +610,7 @@ void SpacecraftDynamics::equationsOfMotion(double integTimeSeconds)
     (*this->sysTime) << integTimeNanos, integTimeSeconds;
 
     // Call this for all unconnected spacecraft:this->equationsOfMotionSC(integTimeSeconds, this->primaryCentralSpacecraft);
-
+    this->equationsOfMotionSystem(integTimeSeconds);
 
     return;
 }
@@ -806,6 +806,31 @@ void SpacecraftDynamics::equationsOfMotionSystem(double integTimeSeconds)
         this->primaryCentralSpacecraft.hub.hubBackSubMatrices.vecRot += this->primaryCentralSpacecraft.backSubMatricesContributions.vecRot;
     }
 
+    // - Call this for all of the connected spacecraft
+    for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
+    {
+        for(it = (*spacecraftConnectedIt)->states.begin(); it != (*spacecraftConnectedIt)->states.end(); it++)
+        {
+            /* - Set the contribution matrices to zero (just in case a stateEffector += on the matrix or the stateEffector
+             doesn't have a contribution for a matrix and doesn't set the matrix to zero */
+            this->primaryCentralSpacecraft.backSubMatricesContributions.matrixA.setZero();
+            this->primaryCentralSpacecraft.backSubMatricesContributions.matrixB.setZero();
+            this->primaryCentralSpacecraft.backSubMatricesContributions.matrixC.setZero();
+            this->primaryCentralSpacecraft.backSubMatricesContributions.matrixD.setZero();
+            this->primaryCentralSpacecraft.backSubMatricesContributions.vecTrans.setZero();
+            this->primaryCentralSpacecraft.backSubMatricesContributions.vecRot.setZero();
+
+            // - Call the update contributions method for the stateEffectors and add in contributions to the hub matrices
+            (*it)->updateContributions(integTimeSeconds, this->primaryCentralSpacecraft.backSubMatricesContributions);
+            this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixA += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixA;
+            this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixB += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixB;
+            this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixC += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixC;
+            this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixD += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixD;
+            this->primaryCentralSpacecraft.hub.hubBackSubMatrices.vecTrans += this->primaryCentralSpacecraft.backSubMatricesContributions.vecTrans;
+            this->primaryCentralSpacecraft.hub.hubBackSubMatrices.vecRot += this->primaryCentralSpacecraft.backSubMatricesContributions.vecRot;
+        }
+    }
+
     // - Finish the math that is needed
     Eigen::Vector3d cLocal_B;
     Eigen::Vector3d cPrimeLocal_B;
@@ -847,10 +872,22 @@ void SpacecraftDynamics::equationsOfMotionSystem(double integTimeSeconds)
     // - Compute the derivatives of the hub states before looping through stateEffectors
     this->primaryCentralSpacecraft.hub.computeDerivatives(integTimeSeconds);
 
+    // - Need to figure out how to pass accelerations of rBDDot and omegaDot of the primary hub to the other hubs stateEffectors
+
     // - Loop through state effectors for compute derivatives
     for(it = this->primaryCentralSpacecraft.states.begin(); it != this->primaryCentralSpacecraft.states.end(); it++)
     {
         (*it)->computeDerivatives(integTimeSeconds);
+    }
+
+    // - Call this for all of the connected spacecraft
+    for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
+    {
+        // - Loop through state effectors for compute derivatives
+        for(it = (*spacecraftConnectedIt)->states.begin(); it != (*spacecraftConnectedIt)->states.end(); it++)
+        {
+            (*it)->computeDerivatives(integTimeSeconds);
+        }
     }
 
     return;
@@ -863,20 +900,7 @@ void SpacecraftDynamics::integrateState(double integrateToThisTime)
     // - Find the time step
     double localTimeStep = integrateToThisTime - timePrevious;
 
-    // - Find v_CN_N before integration for accumulated DV
-    Eigen::Vector3d oldV_BN_N = this->primaryCentralSpacecraft.hubV_N->getState();  // - V_BN_N before integration
-    Eigen::Vector3d oldV_CN_N;  // - V_CN_N before integration
-    Eigen::Vector3d oldC_B;     // - Center of mass offset before integration
-    Eigen::Vector3d oldOmega_BN_B;  // - angular rate of B wrt N in the Body frame
-    Eigen::MRPd oldSigma_BN;    // - Sigma_BN before integration
-    // - Get the angular rate, oldOmega_BN_B from the dyn manager
-    oldOmega_BN_B = this->primaryCentralSpacecraft.hubOmega_BN_B->getState();
-    // - Get center of mass, v_BN_N and dcm_NB from the dyn manager
-    oldSigma_BN = (Eigen::Vector3d) this->primaryCentralSpacecraft.hubSigma->getState();
-    // - Finally find v_CN_N
-    Eigen::Matrix3d oldDcm_NB = oldSigma_BN.toRotationMatrix(); // - dcm_NB before integration
-    oldV_CN_N = oldV_BN_N + oldDcm_NB*(*this->primaryCentralSpacecraft.cDot_B);
-
+    this->findPriorStateInformation(this->primaryCentralSpacecraft);
 
     // - Integrate the state from the last time (timeBefore) to the integrateToThisTime
     double timeBefore = integrateToThisTime - localTimeStep;
@@ -897,46 +921,71 @@ void SpacecraftDynamics::integrateState(double integrateToThisTime)
     // - Call mass properties to get current info on the mass props of the spacecraft
     this->updateSystemMassProps(integrateToThisTime);
 
+    this->calculateDeltaVandAcceleration(this->primaryCentralSpacecraft, localTimeStep);
+
+    // - Compute Energy and Momentum
+    this->computeEnergyMomentum(integrateToThisTime);
+
+    return;
+}
+
+void SpacecraftDynamics::findPriorStateInformation(Spacecraft &spacecraft)
+{
+    // - Find v_CN_N before integration for accumulated DV
+    spacecraft.oldV_BN_N = spacecraft.hubV_N->getState();  // - V_BN_N before integration
+    Eigen::Vector3d oldC_B;     // - Center of mass offset before integration
+    Eigen::Vector3d oldOmega_BN_B;  // - angular rate of B wrt N in the Body frame
+    Eigen::MRPd oldSigma_BN;    // - Sigma_BN before integration
+    // - Get the angular rate, oldOmega_BN_B from the dyn manager
+    oldOmega_BN_B = spacecraft.hubOmega_BN_B->getState();
+    // - Get center of mass, v_BN_N and dcm_NB from the dyn manager
+    oldSigma_BN = (Eigen::Vector3d) spacecraft.hubSigma->getState();
+    // - Finally find v_CN_N
+    Eigen::Matrix3d oldDcm_NB = oldSigma_BN.toRotationMatrix(); // - dcm_NB before integration
+    spacecraft.oldV_CN_N = spacecraft.oldV_BN_N + oldDcm_NB*(*spacecraft.cDot_B);
+
+    return;
+}
+
+void SpacecraftDynamics::calculateDeltaVandAcceleration(Spacecraft &spacecraft, double localTimeStep)
+{
     // - Find v_CN_N after the integration for accumulated DV
-    Eigen::Vector3d newV_BN_N = this->primaryCentralSpacecraft.hubV_N->getState(); // - V_BN_N after integration
+    Eigen::Vector3d newV_BN_N = spacecraft.hubV_N->getState(); // - V_BN_N after integration
     Eigen::Vector3d newV_CN_N;  // - V_CN_N after integration
     Eigen::MRPd newSigma_BN;    // - Sigma_BN after integration
     // - Get center of mass, v_BN_N and dcm_NB
     Eigen::Vector3d sigmaBNLoc;
-    sigmaBNLoc = (Eigen::Vector3d) this->primaryCentralSpacecraft.hubSigma->getState();
+    sigmaBNLoc = (Eigen::Vector3d) spacecraft.hubSigma->getState();
     newSigma_BN = sigmaBNLoc;
     Eigen::Matrix3d newDcm_NB = newSigma_BN.toRotationMatrix();  // - dcm_NB after integration
-    newV_CN_N = newV_BN_N + newDcm_NB*(*this->primaryCentralSpacecraft.cDot_B);
+    newV_CN_N = newV_BN_N + newDcm_NB*(*spacecraft.cDot_B);
 
     // - Find change in velocity
     Eigen::Vector3d dV_N; // dV of the center of mass in the intertial frame
     Eigen::Vector3d dV_B_N; //dV of the body frame in the inertial frame
     Eigen::Vector3d dV_B_B; //dV of the body frame in the body frame
-    dV_N = newV_CN_N - oldV_CN_N;
-    dV_B_N = newV_BN_N - oldV_BN_N;
+    dV_N = newV_CN_N - spacecraft.oldV_CN_N;
+    dV_B_N = newV_BN_N - spacecraft.oldV_BN_N;
     // - Subtract out gravity
     Eigen::Vector3d gLocal_N;
-    gLocal_N = *this->primaryCentralSpacecraft.g_N;
+    gLocal_N = *spacecraft.g_N;
     dV_N -= gLocal_N*localTimeStep;
     dV_B_N -= gLocal_N*localTimeStep;
     dV_B_B = newDcm_NB.transpose()*dV_B_N;
 
     // - Find accumulated DV of the center of mass in the body frame
-    this->primaryCentralSpacecraft.dvAccum_B += newDcm_NB.transpose()*dV_N;
+    spacecraft.dvAccum_B += newDcm_NB.transpose()*dV_N;
 
     // - Find the accumulated DV of the body frame in the body frame
-    this->primaryCentralSpacecraft.dvAccum_BN_B += dV_B_B;
+    spacecraft.dvAccum_BN_B += dV_B_B;
 
     // - non-conservative acceleration of the body frame in the body frame
-    this->primaryCentralSpacecraft.nonConservativeAccelpntB_B = dV_B_B/localTimeStep;
+    spacecraft.nonConservativeAccelpntB_B = dV_B_B/localTimeStep;
 
     // - angular acceleration in the body frame
     Eigen::Vector3d newOmega_BN_B;
-    newOmega_BN_B = this->primaryCentralSpacecraft.hubOmega_BN_B->getState();
-    this->primaryCentralSpacecraft.omegaDot_BN_B = (newOmega_BN_B - oldOmega_BN_B)/localTimeStep; //angular acceleration of B wrt N in the Body frame
-
-    // - Compute Energy and Momentum
-    this->computeEnergyMomentum(integrateToThisTime);
+    newOmega_BN_B = spacecraft.hubOmega_BN_B->getState();
+    spacecraft.omegaDot_BN_B = (newOmega_BN_B - spacecraft.oldOmega_BN_B)/localTimeStep; //angular acceleration of B wrt N in the Body frame
 
     return;
 }
