@@ -454,12 +454,6 @@ void SpacecraftDynamics::UpdateState(uint64_t CurrentSimNanos)
     return;
 }
 
-/*! Don't think this method is needed anymore */
-void SpacecraftDynamics::linkInStates(DynParamManager& statesIn)
-{
-    return;
-}
-
 /*! This method is used to initialize the simulation by registering all of the states, linking the dynamicEffectors,
  stateEffectors, and the hub, initialize gravity, and initialize the sim with the initial conditions specified in python
  for the simulation */

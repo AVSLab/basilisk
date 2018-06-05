@@ -166,7 +166,6 @@ public:
     void CrossInit();                    //!< -- Hook to tie s/c plus back into provided msgs
     void writeOutputMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
     void UpdateState(uint64_t CurrentSimNanos);  //!< -- Runtime hook back into Basilisk arch
-    void linkInStates(DynParamManager& statesIn);  //!< Method to get access to the hub's states
     void equationsOfMotion(double integTimeSeconds);    //!< -- This method computes the equations of motion for the whole system
     void equationsOfMotionSC(double integTimeSeconds, Spacecraft& spacecraft);    //!< -- This method computes the equations of motion for the whole system
     void equationsOfMotionSystem(double integTimeSeconds);    //!< -- This method computes the equations of motion for the whole system
