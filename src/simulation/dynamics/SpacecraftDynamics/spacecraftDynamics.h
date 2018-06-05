@@ -153,6 +153,7 @@ public:
     ~SpacecraftDynamics();                   //!< -- Destructor
     void initializeDynamics();           //!< -- This method initializes all of the dynamics and variables for the s/c
     void computeEnergyMomentum(double time);  //!< -- This method computes the total energy and momentum of the s/c
+    void updateSpacecraftMassProps(double time, Spacecraft& spacecraft);  //!< -- This method computes the total mass properties of the s/c
     void updateSystemMassProps(double time);  //!< -- This method computes the total mass properties of the s/c
     void SelfInit();                     //!< -- Lets spacecraft plus create its own msgs
     void CrossInit();                    //!< -- Hook to tie s/c plus back into provided msgs
