@@ -913,6 +913,12 @@ void SpacecraftDynamics::integrateState(double integrateToThisTime)
 
     // - Calculate the states of the attached spacecraft from the primary spacecraft
     this->determineAttachedSCStates();
+    // - Just in case the MRPs of the attached hubs need to be switched
+    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+    for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
+    {
+        (*spacecraftConnectedIt)->hub.modifyStates(integrateToThisTime);
+    }
 
     // - Loop over stateEffectors to call modifyStates
     std::vector<StateEffector*>::iterator it;
@@ -923,7 +929,6 @@ void SpacecraftDynamics::integrateState(double integrateToThisTime)
     }
 
     // - Call this for all of the connected spacecraft
-    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
     for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
     {
         for(it = (*spacecraftConnectedIt)->states.begin(); it != (*spacecraftConnectedIt)->states.end(); it++)
