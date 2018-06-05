@@ -367,7 +367,7 @@ void SpacecraftPlus::equationsOfMotion(double integTimeSeconds)
         this->backSubContributions.vecRot.setZero();
 
         // - Call the update contributions method for the stateEffectors and add in contributions to the hub matrices
-        (*it)->updateContributions(integTimeSeconds, this->backSubContributions);
+        (*it)->updateContributions(integTimeSeconds, this->backSubContributions, this->hubSigma->getState(), this->hubOmega_BN_B->getState());
         this->hub.hubBackSubMatrices.matrixA += this->backSubContributions.matrixA;
         this->hub.hubBackSubMatrices.matrixB += this->backSubContributions.matrixB;
         this->hub.hubBackSubMatrices.matrixC += this->backSubContributions.matrixC;
@@ -415,12 +415,12 @@ void SpacecraftPlus::equationsOfMotion(double integTimeSeconds)
     this->hub.hubBackSubMatrices.vecRot += cLocal_B.cross(gravityForce_B) + this->sumTorquePntB_B;
 
     // - Compute the derivatives of the hub states before looping through stateEffectors
-    this->hub.computeDerivatives(integTimeSeconds);
+    this->hub.computeDerivatives(integTimeSeconds, this->hubV_N->getStateDeriv(), this->hubOmega_BN_B->getStateDeriv(), this->hubSigma->getState());
 
     // - Loop through state effectors for compute derivatives
     for(it = states.begin(); it != states.end(); it++)
     {
-        (*it)->computeDerivatives(integTimeSeconds);
+        (*it)->computeDerivatives(integTimeSeconds, this->hubV_N->getStateDeriv(), this->hubOmega_BN_B->getStateDeriv(), this->hubSigma->getState());
     }
 
     return;
@@ -547,7 +547,7 @@ void SpacecraftPlus::computeEnergyMomentum(double time)
     this->rotEnergyContr = 0.0;
 
     // - Get the hubs contribution
-    this->hub.updateEnergyMomContributions(time, this->rotAngMomPntCContr_B, this->rotEnergyContr);
+    this->hub.updateEnergyMomContributions(time, this->rotAngMomPntCContr_B, this->rotEnergyContr, this->hubOmega_BN_B->getState());
     totRotAngMomPntC_B += this->rotAngMomPntCContr_B;
     this->totRotEnergy += this->rotEnergyContr;
 
@@ -560,7 +560,7 @@ void SpacecraftPlus::computeEnergyMomentum(double time)
         this->rotEnergyContr = 0.0;
 
         // - Call energy and momentum calulations for stateEffectors
-        (*it)->updateEnergyMomContributions(time, this->rotAngMomPntCContr_B, this->rotEnergyContr);
+        (*it)->updateEnergyMomContributions(time, this->rotAngMomPntCContr_B, this->rotEnergyContr, this->hubOmega_BN_B->getState());
         totRotAngMomPntC_B += this->rotAngMomPntCContr_B;
         this->totRotEnergy += this->rotEnergyContr;
     }

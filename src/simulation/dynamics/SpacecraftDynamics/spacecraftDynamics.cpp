@@ -670,7 +670,7 @@ void SpacecraftDynamics::equationsOfMotionSC(double integTimeSeconds, Spacecraft
         spacecraft.backSubMatricesContributions.vecRot.setZero();
 
         // - Call the update contributions method for the stateEffectors and add in contributions to the hub matrices
-        (*it)->updateContributions(integTimeSeconds, spacecraft.backSubMatricesContributions);
+        (*it)->updateContributions(integTimeSeconds, spacecraft.backSubMatricesContributions, spacecraft.hubSigma->getState(), spacecraft.hubOmega_BN_B->getState());
         spacecraft.hub.hubBackSubMatrices.matrixA += spacecraft.backSubMatricesContributions.matrixA;
         spacecraft.hub.hubBackSubMatrices.matrixB += spacecraft.backSubMatricesContributions.matrixB;
         spacecraft.hub.hubBackSubMatrices.matrixC += spacecraft.backSubMatricesContributions.matrixC;
@@ -718,12 +718,12 @@ void SpacecraftDynamics::equationsOfMotionSC(double integTimeSeconds, Spacecraft
     spacecraft.hub.hubBackSubMatrices.vecRot += cLocal_B.cross(gravityForce_B) + spacecraft.sumTorquePntB_B;
 
     // - Compute the derivatives of the hub states before looping through stateEffectors
-    spacecraft.hub.computeDerivatives(integTimeSeconds);
+    spacecraft.hub.computeDerivatives(integTimeSeconds, spacecraft.hubV_N->getStateDeriv(), spacecraft.hubOmega_BN_B->getStateDeriv(), spacecraft.hubSigma->getState());
 
     // - Loop through state effectors for compute derivatives
     for(it = spacecraft.states.begin(); it != spacecraft.states.end(); it++)
     {
-        (*it)->computeDerivatives(integTimeSeconds);
+        (*it)->computeDerivatives(integTimeSeconds, spacecraft.hubV_N->getStateDeriv(), spacecraft.hubOmega_BN_B->getStateDeriv(), spacecraft.hubSigma->getState());
     }
 
     return;
@@ -798,7 +798,7 @@ void SpacecraftDynamics::equationsOfMotionSystem(double integTimeSeconds)
         this->primaryCentralSpacecraft.backSubMatricesContributions.vecRot.setZero();
 
         // - Call the update contributions method for the stateEffectors and add in contributions to the hub matrices
-        (*it)->updateContributions(integTimeSeconds, this->primaryCentralSpacecraft.backSubMatricesContributions);
+        (*it)->updateContributions(integTimeSeconds, this->primaryCentralSpacecraft.backSubMatricesContributions, this->primaryCentralSpacecraft.hubSigma->getState(), this->primaryCentralSpacecraft.hubOmega_BN_B->getState());
         this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixA += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixA;
         this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixB += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixB;
         this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixC += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixC;
@@ -822,7 +822,7 @@ void SpacecraftDynamics::equationsOfMotionSystem(double integTimeSeconds)
             this->primaryCentralSpacecraft.backSubMatricesContributions.vecRot.setZero();
 
             // - Call the update contributions method for the stateEffectors and add in contributions to the hub matrices
-            (*it)->updateContributions(integTimeSeconds, this->primaryCentralSpacecraft.backSubMatricesContributions);
+            (*it)->updateContributions(integTimeSeconds, this->primaryCentralSpacecraft.backSubMatricesContributions, this->primaryCentralSpacecraft.hubSigma->getState(), this->primaryCentralSpacecraft.hubOmega_BN_B->getState());
             this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixA += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixA;
             this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixB += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixB;
             this->primaryCentralSpacecraft.hub.hubBackSubMatrices.matrixC += this->primaryCentralSpacecraft.backSubMatricesContributions.matrixC;
@@ -871,14 +871,14 @@ void SpacecraftDynamics::equationsOfMotionSystem(double integTimeSeconds)
     this->primaryCentralSpacecraft.hub.hubBackSubMatrices.vecRot += cLocal_B.cross(gravityForce_B) + this->primaryCentralSpacecraft.sumTorquePntB_B;
 
     // - Compute the derivatives of the hub states before looping through stateEffectors
-    this->primaryCentralSpacecraft.hub.computeDerivatives(integTimeSeconds);
+    this->primaryCentralSpacecraft.hub.computeDerivatives(integTimeSeconds, this->primaryCentralSpacecraft.hubV_N->getStateDeriv(), this->primaryCentralSpacecraft.hubOmega_BN_B->getStateDeriv(), this->primaryCentralSpacecraft.hubSigma->getState());
 
     // - Need to figure out how to pass accelerations of rBDDot and omegaDot of the primary hub to the other hubs stateEffectors
 
     // - Loop through state effectors for compute derivatives
     for(it = this->primaryCentralSpacecraft.states.begin(); it != this->primaryCentralSpacecraft.states.end(); it++)
     {
-        (*it)->computeDerivatives(integTimeSeconds);
+        (*it)->computeDerivatives(integTimeSeconds, this->primaryCentralSpacecraft.hubV_N->getStateDeriv(), this->primaryCentralSpacecraft.hubOmega_BN_B->getStateDeriv(), this->primaryCentralSpacecraft.hubSigma->getState());
     }
 
     // - Call this for all of the connected spacecraft
@@ -887,7 +887,7 @@ void SpacecraftDynamics::equationsOfMotionSystem(double integTimeSeconds)
         // - Loop through state effectors for compute derivatives
         for(it = (*spacecraftConnectedIt)->states.begin(); it != (*spacecraftConnectedIt)->states.end(); it++)
         {
-            (*it)->computeDerivatives(integTimeSeconds);
+            (*it)->computeDerivatives(integTimeSeconds, this->primaryCentralSpacecraft.hubV_N->getStateDeriv(), this->primaryCentralSpacecraft.hubOmega_BN_B->getStateDeriv(), this->primaryCentralSpacecraft.hubSigma->getState());
         }
     }
 
@@ -1094,7 +1094,7 @@ void SpacecraftDynamics::computeEnergyMomentumSC(double time, Spacecraft &spacec
     spacecraft.rotEnergyContr = 0.0;
 
     // - Get the hubs contribution
-    spacecraft.hub.updateEnergyMomContributions(time, spacecraft.rotAngMomPntCContr_B, spacecraft.rotEnergyContr);
+    spacecraft.hub.updateEnergyMomContributions(time, spacecraft.rotAngMomPntCContr_B, spacecraft.rotEnergyContr, spacecraft.hubOmega_BN_B->getState());
     totRotAngMomPntC_B += spacecraft.rotAngMomPntCContr_B;
     spacecraft.totRotEnergy += spacecraft.rotEnergyContr;
 
@@ -1107,7 +1107,7 @@ void SpacecraftDynamics::computeEnergyMomentumSC(double time, Spacecraft &spacec
         spacecraft.rotEnergyContr = 0.0;
 
         // - Call energy and momentum calulations for stateEffectors
-        (*it)->updateEnergyMomContributions(time, spacecraft.rotAngMomPntCContr_B, spacecraft.rotEnergyContr);
+        (*it)->updateEnergyMomContributions(time, spacecraft.rotAngMomPntCContr_B, spacecraft.rotEnergyContr, spacecraft.hubOmega_BN_B->getState());
         totRotAngMomPntC_B += spacecraft.rotAngMomPntCContr_B;
         spacecraft.totRotEnergy += spacecraft.rotEnergyContr;
     }
@@ -1173,7 +1173,7 @@ void SpacecraftDynamics::computeEnergyMomentumSystem(double time)
     this->primaryCentralSpacecraft.rotEnergyContr = 0.0;
 
     // - Get the hubs contribution
-    this->primaryCentralSpacecraft.hub.updateEnergyMomContributions(time, this->primaryCentralSpacecraft.rotAngMomPntCContr_B, this->primaryCentralSpacecraft.rotEnergyContr);
+    this->primaryCentralSpacecraft.hub.updateEnergyMomContributions(time, this->primaryCentralSpacecraft.rotAngMomPntCContr_B, this->primaryCentralSpacecraft.rotEnergyContr, this->primaryCentralSpacecraft.hubOmega_BN_B->getState());
     totRotAngMomPntC_B += this->primaryCentralSpacecraft.rotAngMomPntCContr_B;
     this->primaryCentralSpacecraft.totRotEnergy += this->primaryCentralSpacecraft.rotEnergyContr;
 
@@ -1186,7 +1186,7 @@ void SpacecraftDynamics::computeEnergyMomentumSystem(double time)
         this->primaryCentralSpacecraft.rotEnergyContr = 0.0;
 
         // - Call energy and momentum calulations for stateEffectors
-        (*it)->updateEnergyMomContributions(time, this->primaryCentralSpacecraft.rotAngMomPntCContr_B, this->primaryCentralSpacecraft.rotEnergyContr);
+        (*it)->updateEnergyMomContributions(time, this->primaryCentralSpacecraft.rotAngMomPntCContr_B, this->primaryCentralSpacecraft.rotEnergyContr, this->primaryCentralSpacecraft.hubOmega_BN_B->getState());
         totRotAngMomPntC_B += this->primaryCentralSpacecraft.rotAngMomPntCContr_B;
         this->primaryCentralSpacecraft.totRotEnergy += this->primaryCentralSpacecraft.rotEnergyContr;
     }
@@ -1196,7 +1196,7 @@ void SpacecraftDynamics::computeEnergyMomentumSystem(double time)
     for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
     {
         // - Get the hubs contribution
-        (*spacecraftConnectedIt)->hub.updateEnergyMomContributions(time, this->primaryCentralSpacecraft.rotAngMomPntCContr_B, this->primaryCentralSpacecraft.rotEnergyContr);
+        (*spacecraftConnectedIt)->hub.updateEnergyMomContributions(time, this->primaryCentralSpacecraft.rotAngMomPntCContr_B, this->primaryCentralSpacecraft.rotEnergyContr, this->primaryCentralSpacecraft.hubOmega_BN_B->getState());
         totRotAngMomPntC_B += this->primaryCentralSpacecraft.rotAngMomPntCContr_B;
         this->primaryCentralSpacecraft.totRotEnergy += this->primaryCentralSpacecraft.rotEnergyContr;
 
@@ -1209,7 +1209,7 @@ void SpacecraftDynamics::computeEnergyMomentumSystem(double time)
             this->primaryCentralSpacecraft.rotEnergyContr = 0.0;
 
             // - Call energy and momentum calulations for stateEffectors
-            (*it)->updateEnergyMomContributions(time, this->primaryCentralSpacecraft.rotAngMomPntCContr_B, this->primaryCentralSpacecraft.rotEnergyContr);
+            (*it)->updateEnergyMomContributions(time, this->primaryCentralSpacecraft.rotAngMomPntCContr_B, this->primaryCentralSpacecraft.rotEnergyContr, this->primaryCentralSpacecraft.hubOmega_BN_B->getState());
             totRotAngMomPntC_B += this->primaryCentralSpacecraft.rotAngMomPntCContr_B;
             this->primaryCentralSpacecraft.totRotEnergy += this->primaryCentralSpacecraft.rotEnergyContr;
         }
