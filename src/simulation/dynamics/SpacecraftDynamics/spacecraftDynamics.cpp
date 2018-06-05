@@ -145,6 +145,67 @@ void Spacecraft::linkInStatesSC(DynParamManager& statesIn)
     return;
 }
 
+void Spacecraft::initializeDynamicsSC(DynParamManager& statesIn)
+{
+    // - SpacecraftPlus initiates all of the spaceCraft mass properties
+    Eigen::MatrixXd initM_SC(1,1);
+    Eigen::MatrixXd initMDot_SC(1,1);
+    Eigen::MatrixXd initC_B(3,1);
+    Eigen::MatrixXd initISCPntB_B(3,3);
+    Eigen::MatrixXd initCPrime_B(3,1);
+    Eigen::MatrixXd initCDot_B(3,1);
+    Eigen::MatrixXd initISCPntBPrime_B(3,3);
+
+    // - Create the properties
+    std::string tmpName;
+    tmpName = this->spacecraftName + "_" + "m_SC";
+    this->m_SC = statesIn.createProperty(tmpName, initM_SC);
+    tmpName = this->spacecraftName + "_" + "mDot_SC";
+    this->mDot_SC = statesIn.createProperty(tmpName, initMDot_SC);
+    tmpName = this->spacecraftName + "_" + "centerOfMassSC";
+    this->c_B = statesIn.createProperty(tmpName, initC_B);
+    tmpName = this->spacecraftName + "_" + "inertiaSC";
+    this->ISCPntB_B = statesIn.createProperty(tmpName, initISCPntB_B);
+    tmpName = this->spacecraftName + "_" + "inertiaPrimeSC";
+    this->ISCPntBPrime_B = statesIn.createProperty(tmpName, initISCPntBPrime_B);
+    tmpName = this->spacecraftName + "_" + "centerOfMassPrimeSC";
+    this->cPrime_B = statesIn.createProperty(tmpName, initCPrime_B);
+    tmpName = this->spacecraftName + "_" + "centerOfMassDotSC";
+    this->cDot_B = statesIn.createProperty(tmpName, initCDot_B);
+
+    // - Give name of all spacecraft to attached hubEffector
+    this->hub.nameOfSpacecraftAttachedTo = this->spacecraftName;
+    // - Give name of all spacecraft to attached hubEffector
+    this->gravField.nameOfSpacecraftAttachedTo = this->spacecraftName;
+
+    // - Before er'body registers their properties, we need to prepend their state names with the spacecraft
+    this->hub.prependSpacecraftNameToStates();
+    this->gravField.prependSpacecraftNameToStates();
+    std::vector<StateEffector*>::iterator stateIt;
+    for(stateIt = this->states.begin(); stateIt != this->states.end(); stateIt++)
+    {
+        (*stateIt)->prependSpacecraftNameToStates();
+    }
+
+
+    // - Register the gravity properties with the dynManager, 'erbody wants g_N!
+    this->gravField.registerProperties(statesIn);
+
+    // - Register the hub states
+    this->hub.registerStates(statesIn);
+
+    // - Loop through stateEffectors to register their states
+    for(stateIt = this->states.begin(); stateIt != this->states.end(); stateIt++)
+    {
+        (*stateIt)->registerStates(statesIn);
+    }
+
+    // - Link in states for the spaceCraftPlus, gravity and the hub
+    this->linkInStatesSC(statesIn);
+    this->gravField.linkInStates(statesIn);
+    this->hub.linkInStates(statesIn);
+}
+
 /*! This is the constructor, setting variables to default values */
 SpacecraftDynamics::SpacecraftDynamics()
 {
@@ -344,15 +405,6 @@ void SpacecraftDynamics::UpdateState(uint64_t CurrentSimNanos)
  messages, and calculating energy and momentum */
 void SpacecraftDynamics::linkInStates(DynParamManager& statesIn)
 {
-    this->primaryCentralSpacecraft.linkInStatesSC(statesIn);
-
-    // - Call this for all of the connected spacecraft
-    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
-    for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
-    {
-        (*spacecraftConnectedIt)->linkInStatesSC(statesIn);
-    }
-
     return;
 }
 
@@ -361,65 +413,11 @@ void SpacecraftDynamics::linkInStates(DynParamManager& statesIn)
  for the simulation */
 void SpacecraftDynamics::initializeDynamics()
 {
-    // - SpacecraftPlus initiates all of the spaceCraft mass properties
-    Eigen::MatrixXd initM_SC(1,1);
-    Eigen::MatrixXd initMDot_SC(1,1);
-    Eigen::MatrixXd initC_B(3,1);
-    Eigen::MatrixXd initISCPntB_B(3,3);
-    Eigen::MatrixXd initCPrime_B(3,1);
-    Eigen::MatrixXd initCDot_B(3,1);
-    Eigen::MatrixXd initISCPntBPrime_B(3,3);
+    this->primaryCentralSpacecraft.initializeDynamicsSC(this->dynManager);
+
     Eigen::MatrixXd systemTime(2,1);
     systemTime.setZero();
-    // - Create the properties
-    std::string tmpName;
-    tmpName = this->primaryCentralSpacecraft.spacecraftName + "_" + "m_SC";
-    this->primaryCentralSpacecraft.m_SC = this->dynManager.createProperty(tmpName, initM_SC);
-    tmpName = this->primaryCentralSpacecraft.spacecraftName + "_" + "mDot_SC";
-    this->primaryCentralSpacecraft.mDot_SC = this->dynManager.createProperty(tmpName, initMDot_SC);
-    tmpName = this->primaryCentralSpacecraft.spacecraftName + "_" + "centerOfMassSC";
-    this->primaryCentralSpacecraft.c_B = this->dynManager.createProperty(tmpName, initC_B);
-    tmpName = this->primaryCentralSpacecraft.spacecraftName + "_" + "inertiaSC";
-    this->primaryCentralSpacecraft.ISCPntB_B = this->dynManager.createProperty(tmpName, initISCPntB_B);
-    tmpName = this->primaryCentralSpacecraft.spacecraftName + "_" + "inertiaPrimeSC";
-    this->primaryCentralSpacecraft.ISCPntBPrime_B = this->dynManager.createProperty(tmpName, initISCPntBPrime_B);
-    tmpName = this->primaryCentralSpacecraft.spacecraftName + "_" + "centerOfMassPrimeSC";
-    this->primaryCentralSpacecraft.cPrime_B = this->dynManager.createProperty(tmpName, initCPrime_B);
-    tmpName = this->primaryCentralSpacecraft.spacecraftName + "_" + "centerOfMassDotSC";
-    this->primaryCentralSpacecraft.cDot_B = this->dynManager.createProperty(tmpName, initCDot_B);
     this->sysTime = this->dynManager.createProperty(this->sysTimePropertyName, systemTime);
-
-    // - Give name of all spacecraft to attached hubEffector
-    this->primaryCentralSpacecraft.hub.nameOfSpacecraftAttachedTo = this->primaryCentralSpacecraft.spacecraftName;
-    // - Give name of all spacecraft to attached hubEffector
-    this->primaryCentralSpacecraft.gravField.nameOfSpacecraftAttachedTo = this->primaryCentralSpacecraft.spacecraftName;
-    
-    // - Before er'body registers their properties, we need to prepend their state names with the spacecraft
-    this->primaryCentralSpacecraft.hub.prependSpacecraftNameToStates();
-    this->primaryCentralSpacecraft.gravField.prependSpacecraftNameToStates();
-    std::vector<StateEffector*>::iterator stateIt;
-    for(stateIt = this->primaryCentralSpacecraft.states.begin(); stateIt != this->primaryCentralSpacecraft.states.end(); stateIt++)
-    {
-        (*stateIt)->prependSpacecraftNameToStates();
-    }
-    
-
-    // - Register the gravity properties with the dynManager, 'erbody wants g_N!
-    this->primaryCentralSpacecraft.gravField.registerProperties(this->dynManager);
-
-    // - Register the hub states
-    this->primaryCentralSpacecraft.hub.registerStates(this->dynManager);
-
-    // - Loop through stateEffectors to register their states
-    for(stateIt = this->primaryCentralSpacecraft.states.begin(); stateIt != this->primaryCentralSpacecraft.states.end(); stateIt++)
-    {
-        (*stateIt)->registerStates(this->dynManager);
-    }
-    
-    // - Link in states for the spaceCraftPlus, gravity and the hub
-    this->linkInStates(this->dynManager);
-    this->primaryCentralSpacecraft.gravField.linkInStates(this->dynManager);
-    this->primaryCentralSpacecraft.hub.linkInStates(this->dynManager);
 
     // - Update the mass properties of the spacecraft to retrieve c_B and cDot_B to update r_BN_N and v_BN_N
     this->updateSystemMassProps(0.0);

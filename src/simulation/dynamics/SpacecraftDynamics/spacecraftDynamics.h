@@ -129,6 +129,7 @@ public:
     
     void writeOutputMessagesSC(uint64_t clockTime, uint64_t moduleID); //!< -- Method to write all of the class output messages
     void linkInStatesSC(DynParamManager& statesIn);  //!< Method to get access to the hub's states
+    void initializeDynamicsSC(DynParamManager& statesIn);
 
 private:
 };
