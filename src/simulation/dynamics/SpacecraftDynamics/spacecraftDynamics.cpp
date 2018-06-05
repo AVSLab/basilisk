@@ -272,6 +272,7 @@ void SpacecraftDynamics::attachSpacecraftToPrimary(Spacecraft *newSpacecraft, st
                     newSpacecraft->hub.dcm_BP = (*dockingIt)->dcm_DB.transpose()*(*dockingIt)->dcm_DP;
                     newSpacecraft->hub.r_BP_P = (*dockingIt)->r_DP_P - newSpacecraft->hub.dcm_BP.transpose()*(*dockingIt)->r_DB_B;
                     checkDock += 1;
+                    break;
                 } else {
                     std::cerr << __FILE__ <<": Port name given is not the same port name held in the newSpacecraft";
                     std::cerr << "  Quitting."<<std::endl;
@@ -298,6 +299,7 @@ void SpacecraftDynamics::attachSpacecraftToPrimary(Spacecraft *newSpacecraft, st
                             newSpacecraft->hub.dcm_BP = (*dockingIt)->dcm_DB.transpose()*(*dockingIt)->dcm_DP;
                             newSpacecraft->hub.r_BP_P = (*dockingIt)->r_DP_P - newSpacecraft->hub.dcm_BP.transpose()*(*dockingIt)->r_DB_B;
                             checkDock += 1;
+                            break;
                         } else {
                             std::cerr << __FILE__ <<": Port name given is not the same port name held in the newSpacecraft";
                             std::cerr << "  Quitting."<<std::endl;
