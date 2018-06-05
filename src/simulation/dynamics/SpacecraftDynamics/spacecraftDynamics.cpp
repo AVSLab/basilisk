@@ -277,6 +277,15 @@ void SpacecraftDynamics::CrossInit()
 /*! This is the method where the messages of the state of vehicle are written */
 void SpacecraftDynamics::writeOutputMessages(uint64_t clockTime)
 {
+    // - Call writeOutputMessages for primary spacecraft
+    this->primaryCentralSpacecraft.writeOutputMessagesSC(clockTime, this->moduleID);
+
+    // - Call this for all of the connected spacecraft
+    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+    for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
+    {
+        (*spacecraftConnectedIt)->writeOutputMessagesSC(clockTime, this->moduleID);
+    }
 
     return;
 }
