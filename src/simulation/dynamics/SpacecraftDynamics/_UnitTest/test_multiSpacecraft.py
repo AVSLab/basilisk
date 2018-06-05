@@ -97,14 +97,14 @@ def test_SCConnected(show_plots):
     sc2.hub.mHub = 100
     sc2.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     sc2.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
-    sc2.hub.spacecraftName = "spacecraft2"
+    sc2.spacecraftName = "spacecraft2"
 
     # Define docking information
     dock1SC2 = spacecraftDynamics.DockingData()
     dock1SC2.r_DB_B = [[-1.0], [0.0], [0.0]]
     dock1SC2.dcm_DB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     dock1SC2.portName = "sc2port1"
-    sc2.addDockingPort(dock1SC1)
+    sc2.addDockingPort(dock1SC2)
 
     # Define gravity for sc2
     sc2.gravField.gravBodies = spacecraftDynamics.GravBodyVector([unitTestSim.earthGravBody])
@@ -112,7 +112,7 @@ def test_SCConnected(show_plots):
     # Attach spacecraft2 to spacecraft
     scSystem.attachSpacecraftToPrimary(sc2, dock1SC2.portName, dock1SC1.portName)
 
-    unitTestSim.TotalSim.logThisMessage(scSystem.scStateOutMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage("spacecraft_inertial_state_output", testProcessRate)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.AddVariableForLogging(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
