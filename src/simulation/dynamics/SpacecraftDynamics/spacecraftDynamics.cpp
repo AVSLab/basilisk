@@ -390,6 +390,13 @@ void SpacecraftDynamics::writeOutputMessages(uint64_t clockTime)
         (*spacecraftConnectedIt)->writeOutputMessagesSC(clockTime, this->moduleID);
     }
 
+    // - Call this for all of the unconnected spacecraft
+    std::vector<Spacecraft*>::iterator spacecraftUnConnectedIt;
+    for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
+    {
+        (*spacecraftUnConnectedIt)->writeOutputMessagesSC(clockTime, this->moduleID);
+    }
+
     return;
 }
 
@@ -409,6 +416,13 @@ void SpacecraftDynamics::UpdateState(uint64_t CurrentSimNanos)
         (*spacecraftConnectedIt)->gravField.UpdateState(CurrentSimNanos);
     }
 
+    // - Call this for all of the unconnected spacecraft
+    std::vector<Spacecraft*>::iterator spacecraftUnConnectedIt;
+    for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
+    {
+        (*spacecraftUnConnectedIt)->gravField.UpdateState(CurrentSimNanos);
+    }
+
     // - Integrate the state forward in time
     this->integrateState(newTime);
 
@@ -423,6 +437,14 @@ void SpacecraftDynamics::UpdateState(uint64_t CurrentSimNanos)
         rLocal_BN_N = (*spacecraftConnectedIt)->hubR_N->getState();
         vLocal_BN_N = (*spacecraftConnectedIt)->hubV_N->getState();
         (*spacecraftConnectedIt)->gravField.updateInertialPosAndVel(rLocal_BN_N, vLocal_BN_N);
+    }
+
+    // - Same thing for all of the connected spacecraft
+    for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
+    {
+        rLocal_BN_N = (*spacecraftUnConnectedIt)->hubR_N->getState();
+        vLocal_BN_N = (*spacecraftUnConnectedIt)->hubV_N->getState();
+        (*spacecraftUnConnectedIt)->gravField.updateInertialPosAndVel(rLocal_BN_N, vLocal_BN_N);
     }
 
     // - Write the state of the vehicle into messages
