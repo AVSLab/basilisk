@@ -82,6 +82,9 @@ void Spacecraft::SelfInitSC(uint64_t moduleID)
 
 void Spacecraft::CrossInitSC()
 {
+    // - Need to crossinit gravity
+    this->gravField.CrossInit();
+
     return;
 }
 
@@ -133,6 +136,13 @@ void SpacecraftDynamics::SelfInit()
     // - Create the message for the spacecraft state
     this->primaryCentralSpacecraft.SelfInitSC(this->moduleID);
 
+    // - Call this for all of the connected spacecraft
+    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+    for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
+    {
+        (*spacecraftConnectedIt)->SelfInitSC(this->moduleID);
+    }
+
     return;
 }
 
@@ -140,8 +150,16 @@ void SpacecraftDynamics::SelfInit()
 void SpacecraftDynamics::CrossInit()
 {
     // - Call gravity field cross initialization for all spacecraft
-    this->primaryCentralSpacecraft.gravField.CrossInit();
-    
+    this->primaryCentralSpacecraft.CrossInitSC();
+
+    // - Call this for all of the connected spacecraft
+    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+    for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
+    {
+        (*spacecraftConnectedIt)->CrossInitSC();
+    }
+
+
     // - Call method for initializing the dynamics of spacecraftPlus
     this->initializeDynamics();
 
