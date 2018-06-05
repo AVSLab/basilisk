@@ -299,12 +299,28 @@ void SpacecraftDynamics::UpdateState(uint64_t CurrentSimNanos)
     // - Get access to the spice bodies
     this->primaryCentralSpacecraft.gravField.UpdateState(CurrentSimNanos);
 
+    // - Call this for all of the connected spacecraft
+    std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
+    for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
+    {
+        (*spacecraftConnectedIt)->gravField.UpdateState(CurrentSimNanos);
+    }
+
     // - Integrate the state forward in time
     this->integrateState(newTime);
+
     // - Update the inertial position of each spacecraft
     Eigen::Vector3d rLocal_BN_N = this->primaryCentralSpacecraft.hubR_N->getState();
     Eigen::Vector3d vLocal_BN_N = this->primaryCentralSpacecraft.hubV_N->getState();
     this->primaryCentralSpacecraft.gravField.updateInertialPosAndVel(rLocal_BN_N, vLocal_BN_N);
+
+    // - Same thing for all of the connected spacecraft
+    for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
+    {
+        rLocal_BN_N = (*spacecraftConnectedIt)->hubR_N->getState();
+        vLocal_BN_N = (*spacecraftConnectedIt)->hubV_N->getState();
+        (*spacecraftConnectedIt)->gravField.updateInertialPosAndVel(rLocal_BN_N, vLocal_BN_N);
+    }
 
     // - Write the state of the vehicle into messages
     this->writeOutputMessages(CurrentSimNanos);
