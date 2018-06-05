@@ -91,8 +91,8 @@ public:
 	void UpdateState(uint64_t CurrentSimNanos);
     void registerStates(DynParamManager& statesIn);  //!< -- Method for registering the HRB states
     void linkInStates(DynParamManager& states);  //!< -- Method for getting access to other states
-    void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B);  //!< -- Method for back-sub contributions
-    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN);  //!< -- Method for HRB to compute its derivatives
+    void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B);  //!< -- Method for back-sub contributions
+    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for HRB to compute its derivatives
     void updateEffectorMassProps(double integTime);  //!< -- Method for giving the s/c the HRB mass props and prop rates
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr, Eigen::Vector3d omega_BN_B); //!< -- Computing energy and momentum for HRBs
     void calcForceTorqueOnBody(double integTime);  //!< -- Force and torque on s/c due to HRBs

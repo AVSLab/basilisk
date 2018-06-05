@@ -180,10 +180,11 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 
 /*! This method allows the HRB state effector to give its contributions to the matrices needed for the back-sub 
  method */
-void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::MRPd sigma_BN, Eigen::Vector3d omega_BN_B)
+void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B)
 {
     // - Find dcm_BN
-    Eigen::MRPd sigmaLocal_PN = sigma_BN;
+    Eigen::MRPd sigmaLocal_PN;
+    sigmaLocal_PN = sigma_BN;
     Eigen::Matrix3d dcm_PN;
     Eigen::Matrix3d dcm_NP;
     dcm_NP = sigmaLocal_PN.toRotationMatrix();
@@ -238,7 +239,7 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, BackSub
 }
 
 /*! This method is used to find the derivatives for the HRB stateEffector: thetaDDot and the kinematic derivative */
-void HingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::MRPd sigma_BN)
+void HingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
 {
     // - Grab necessarry values from manager (these have been previously computed in hubEffector)
     Eigen::Vector3d rDDotLoc_PN_N = rDDot_BN_N;
