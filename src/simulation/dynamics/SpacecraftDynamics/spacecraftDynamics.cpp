@@ -77,15 +77,21 @@ void Spacecraft::SelfInitSC(uint64_t moduleID)
 {
     this->scStateOutMsgName = this->spacecraftName + "_" + this->scStateOutMsgName;
     this->scMassStateOutMsgName = this->spacecraftName + "_" + this->scMassStateOutMsgName;
+    this->scEnergyMomentumOutMsgName = this->spacecraftName + "_" + this->scEnergyMomentumOutMsgName;
     this->scStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->scStateOutMsgName,
                                                                                                       sizeof(SCStatesSimMsg),
                                                                                                       this->numOutMsgBuffers,
-                                                                                                      "SCPlusStatesSimMsg", moduleID);
+                                                                                                      "SCStatesSimMsg", moduleID);
     // - Create the message for the spacecraft mass state
     this->scMassStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->scMassStateOutMsgName,
                                                                                                           sizeof(SCMassPropsSimMsg),
                                                                                                           this->numOutMsgBuffers,
-                                                                                                          "SCPlusMassPropsSimMsg", moduleID);
+                                                                                                          "SCMassPropsSimMsg", moduleID);
+    // - Create the message for the spacecraft energy and momentum
+    this->scEnergyMomentumOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->scEnergyMomentumOutMsgName,
+                                                                                 sizeof(SCEnergyMomentumSimMsg),
+                                                                                 this->numOutMsgBuffers,
+                                                                                 "SCEnergyMomentumSimMsg", moduleID);
     // - Call the gravity fields selfInit method
     this->gravField.SelfInit();
     return;
