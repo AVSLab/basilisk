@@ -137,6 +137,15 @@ void Spacecraft::writeOutputMessagesSC(uint64_t clockTime, uint64_t moduleID)
     SystemMessaging::GetInstance()->WriteMessage(this->scMassStateOutMsgId, clockTime, sizeof(SCMassPropsSimMsg),
                                                  reinterpret_cast<uint8_t*> (&massStateOut), moduleID);
 
+    // - Populate energy momentum output message
+    SCEnergyMomentumSimMsg energyMomentumOut;
+    energyMomentumOut.spacecraftRotEnergy = this->totRotEnergy;
+    energyMomentumOut.spacecraftOrbEnergy = this->totOrbEnergy;
+    eigenVector3d2CArray(this->totRotAngMomPntC_N, energyMomentumOut.spacecraftRotAngMomPntC_N);
+    eigenVector3d2CArray(this->totOrbAngMomPntN_N, energyMomentumOut.spacecraftOrbAngMomPntN_N);
+    SystemMessaging::GetInstance()->WriteMessage(this->scEnergyMomentumOutMsgId, clockTime, sizeof(SCEnergyMomentumSimMsg),
+                                                 reinterpret_cast<uint8_t*> (&energyMomentumOut), moduleID);
+
     return;
 }
 void Spacecraft::linkInStatesSC(DynParamManager& statesIn)
