@@ -1021,7 +1021,19 @@ void SpacecraftDynamics::integrateState(double integrateToThisTime)
     // - Call mass properties to get current info on the mass props of the spacecraft
     this->updateSystemMassProps(integrateToThisTime);
 
+    // - Call mass props for all the rest of the spacecraft
+    for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
+    {
+        this->updateSpacecraftMassProps(integrateToThisTime, (*(*spacecraftUnConnectedIt)));
+    }
+
     this->calculateDeltaVandAcceleration(this->primaryCentralSpacecraft, localTimeStep);
+
+    // - Call for the rest of the spacecraft
+    for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
+    {
+        this->calculateDeltaVandAcceleration((*(*spacecraftUnConnectedIt)), localTimeStep);
+    }
 
     // - Compute Energy and Momentum
     this->computeEnergyMomentum(integrateToThisTime);
@@ -1137,7 +1149,12 @@ void SpacecraftDynamics::computeEnergyMomentum(double time)
 {
     this->computeEnergyMomentumSystem(time);
 
-    // - Call this for all of the connected spacecraft
+    // - Call this for all of the unconnected spacecraft
+    std::vector<Spacecraft*>::iterator spacecraftUnConnectedIt;
+    for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
+    {
+        this->computeEnergyMomentumSC(time, (*(*spacecraftUnConnectedIt)));
+    }
 
     return;
 }
