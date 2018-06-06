@@ -492,8 +492,15 @@ void SpacecraftDynamics::initializeDynamics()
     // - Edit r_BN_N and v_BN_N to take into account that point B and point C are not coincident
     // - Pulling the state from the hub at this time gives us r_CN_N
     this->initializeSCPosVelocity(this->primaryCentralSpacecraft);
+    // - determine the initial hub states for spacecraft connected to the primary spacecraft
+    this->determineAttachedSCStates();
 
     // - Initialize this for all other spacecraft
+    // - Call mass props for all the rest of the spacecraft
+    for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
+    {
+        this->initializeSCPosVelocity((*(*spacecraftUnConnectedIt)));
+    }
 
     // - Call all stateEffectors in each spacecraft to give them body frame information
     std::vector<Spacecraft*>::iterator spacecraftIt;
@@ -653,8 +660,14 @@ void SpacecraftDynamics::equationsOfMotion(double integTimeSeconds)
     uint64_t integTimeNanos = this->simTimePrevious + (integTimeSeconds-this->timePrevious)/NANO2SEC;
     (*this->sysTime) << integTimeNanos, integTimeSeconds;
 
-    // Call this for all unconnected spacecraft:this->equationsOfMotionSC(integTimeSeconds, this->primaryCentralSpacecraft);
     this->equationsOfMotionSystem(integTimeSeconds);
+    // Call this for all unconnected spacecraft:
+    // - Call this for all of the unconnected spacecraft
+    std::vector<Spacecraft*>::iterator spacecraftUnConnectedIt;
+    for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
+    {
+        this->equationsOfMotionSC(integTimeSeconds, (*(*spacecraftUnConnectedIt)));
+    }
 
     return;
 }
