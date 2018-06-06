@@ -32,6 +32,7 @@
 #include "hubEffector.h"
 #include "simMessages/scStatesSimMsg.h"
 #include "simMessages/scMassPropsSimMsg.h"
+#include "../../simMessages/scEnergyMomentumSimMsg.h"
 
 /*! @brief This is an instantiation of the dynamicObject abstract class that is a spacecraft with stateEffectors and
  dynamicEffectors attached to it. The spacecraftDynamics allows for just translation, just rotation, or both translation and
@@ -68,10 +69,12 @@ public:
     bool docked; 
     int64_t scStateOutMsgId;                    //!< -- Message ID for the outgoing spacecraft state
     int64_t scMassStateOutMsgId;                //!< -- Message ID for the outgoing spacecraft mass state
+    int64_t scEnergyMomentumOutMsgId;                //!< -- Message ID for the outgoing spacecraft mass state
     uint64_t numOutMsgBuffers;           //!< -- Number of output message buffers for I/O
     std::string spacecraftName;          //!< -- Name of the spacecraft so that multiple spacecraft can be distinguished
     std::string scStateOutMsgName;       //!< -- Name of the state output message
     std::string scMassStateOutMsgName;   //!< -- Name of the state output message
+    std::string scEnergyMomentumOutMsgName;   //!< -- Name of the state output message
     
     double totOrbEnergy;                 //!< [J] Total orbital kinetic energy
     double totRotEnergy;                 //!< [J] Total rotational energy

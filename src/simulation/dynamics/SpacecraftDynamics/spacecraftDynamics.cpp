@@ -31,10 +31,13 @@ Spacecraft::Spacecraft()
     this->spacecraftName = "spacecraft";
     this->scStateOutMsgName = "inertial_state_output";
     this->scMassStateOutMsgName = "mass_state_output";
+    this->scEnergyMomentumOutMsgName = "energy_momentum_output";
     this->numOutMsgBuffers = 2;
 
     // - Set values to either zero or default values
     this->scStateOutMsgId = -1;
+    this->scMassStateOutMsgId = -1;
+    this->scEnergyMomentumOutMsgId = -1;
     this->dvAccum_B.setZero();
     this->dvAccum_BN_B.setZero();
 
