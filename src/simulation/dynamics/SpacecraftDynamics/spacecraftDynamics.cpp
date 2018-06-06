@@ -473,10 +473,21 @@ void SpacecraftDynamics::initializeDynamics()
         (*spacecraftConnectedIt)->initializeDynamicsSC(this->dynManager);
     }
 
+    // - Call this for all of the unconnected spacecraft
+    std::vector<Spacecraft*>::iterator spacecraftUnConnectedIt;
+    for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
+    {
+        (*spacecraftUnConnectedIt)->initializeDynamicsSC(this->dynManager);
+    }
+
     // - Update the mass properties of the spacecraft to retrieve c_B and cDot_B to update r_BN_N and v_BN_N
     this->updateSystemMassProps(0.0);
 
     // - Call mass props for all the rest of the spacecraft
+    for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
+    {
+        this->updateSpacecraftMassProps(0.0, (*(*spacecraftUnConnectedIt)));
+    }
 
     // - Edit r_BN_N and v_BN_N to take into account that point B and point C are not coincident
     // - Pulling the state from the hub at this time gives us r_CN_N
