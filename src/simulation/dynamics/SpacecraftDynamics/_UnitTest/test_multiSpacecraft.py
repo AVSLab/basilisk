@@ -602,7 +602,6 @@ def test_SCConnectedAndUnconnected(show_plots):
     plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    plt.show(show_plots)
 
     plt.figure()
     plt.clf()
@@ -624,7 +623,6 @@ def test_SCConnectedAndUnconnected(show_plots):
     plt.plot(rotEnergy1[:,0]*1e-9, (rotEnergy1[:,1] - rotEnergy1[0,1])/rotEnergy1[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    plt.show(show_plots)
 
     plt.figure()
     plt.clf()
@@ -696,4 +694,4 @@ def test_SCConnectedAndUnconnected(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_SCConnected(True)
+    test_SCConnectedAndUnconnected(True)
