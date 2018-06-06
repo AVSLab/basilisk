@@ -959,21 +959,35 @@ void SpacecraftDynamics::integrateState(double integrateToThisTime)
 
     this->findPriorStateInformation(this->primaryCentralSpacecraft);
 
+    // - Call this for all of the unconnected spacecraft
+    std::vector<Spacecraft*>::iterator spacecraftUnConnectedIt;
+    for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
+    {
+        this->findPriorStateInformation((*(*spacecraftUnConnectedIt)));
+    }
+
     // - Integrate the state from the last time (timeBefore) to the integrateToThisTime
     double timeBefore = integrateToThisTime - localTimeStep;
     this->integrator->integrate(timeBefore, localTimeStep);
     this->timePrevious = integrateToThisTime;     // - copy the current time into previous time for next integrate state call
 
+    // - Calculate the states of the attached spacecraft from the primary spacecraft
+    this->determineAttachedSCStates();
+
     // - Call hubs modify states to allow for switching of MRPs
     this->primaryCentralSpacecraft.hub.modifyStates(integrateToThisTime);
 
-    // - Calculate the states of the attached spacecraft from the primary spacecraft
-    this->determineAttachedSCStates();
     // - Just in case the MRPs of the attached hubs need to be switched
     std::vector<Spacecraft*>::iterator spacecraftConnectedIt;
     for(spacecraftConnectedIt = this->spacecraftDockedToPrimary.begin(); spacecraftConnectedIt != this->spacecraftDockedToPrimary.end(); spacecraftConnectedIt++)
     {
         (*spacecraftConnectedIt)->hub.modifyStates(integrateToThisTime);
+    }
+
+    // - Just in case the MRPs of the attached hubs need to be switched
+    for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
+    {
+        (*spacecraftUnConnectedIt)->hub.modifyStates(integrateToThisTime);
     }
 
     // - Loop over stateEffectors to call modifyStates
@@ -992,7 +1006,16 @@ void SpacecraftDynamics::integrateState(double integrateToThisTime)
             // - Call energy and momentum calulations for stateEffectors
             (*it)->modifyStates(integrateToThisTime);
         }
+    }
 
+    // - Call this for all of the unconnected spacecraft
+    for(spacecraftUnConnectedIt = this->unDockedSpacecraft.begin(); spacecraftUnConnectedIt != this->unDockedSpacecraft.end(); spacecraftUnConnectedIt++)
+    {
+        for(it = (*spacecraftUnConnectedIt)->states.begin(); it != (*spacecraftUnConnectedIt)->states.end(); it++)
+        {
+            // - Call energy and momentum calulations for stateEffectors
+            (*it)->modifyStates(integrateToThisTime);
+        }
     }
 
     // - Call mass properties to get current info on the mass props of the spacecraft
