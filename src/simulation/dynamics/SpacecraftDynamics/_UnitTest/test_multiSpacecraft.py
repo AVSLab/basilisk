@@ -490,40 +490,15 @@ def test_SCConnectedAndUnconnected(show_plots):
     unitTestSim.TotalSim.logThisMessage("spacecraft4_inertial_state_output", testProcessRate)
     unitTestSim.TotalSim.logThisMessage("spacecraft5_inertial_state_output", testProcessRate)
 
+    unitTestSim.TotalSim.logThisMessage("spacecraft_energy_momentum_output", testProcessRate)
+    unitTestSim.TotalSim.logThisMessage("spacecraft4_energy_momentum_output", testProcessRate)
+    unitTestSim.TotalSim.logThisMessage("spacecraft5_energy_momentum_output", testProcessRate)
+
     unitTestSim.InitializeSimulation()
-    unitTestSim.AddVariableForLogging(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totRotEnergy", testProcessRate, 0, 0, 'double')
-
-    unitTestSim.AddVariableForLogging(scSystem.ModelTag + ".unDockedSpacecraft[0]" + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging(scSystem.ModelTag + ".unDockedSpacecraft[0]" + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scSystem.ModelTag + ".unDockedSpacecraft[0]" + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scSystem.ModelTag + ".unDockedSpacecraft[0]" + ".totRotEnergy", testProcessRate, 0, 0, 'double')
-
-    unitTestSim.AddVariableForLogging(scSystem.ModelTag + ".unDockedSpacecraft[1]" + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging(scSystem.ModelTag + ".unDockedSpacecraft[1]" + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scSystem.ModelTag + ".unDockedSpacecraft[1]" + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scSystem.ModelTag + ".unDockedSpacecraft[1]" + ".totRotEnergy", testProcessRate, 0, 0, 'double')
 
     stopTime = 1.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
-
-    orbEnergy = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy")
-    orbAngMom_N = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totOrbAngMomPntN_N")
-    rotAngMom_N = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totRotAngMomPntC_N")
-    rotEnergy = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totRotEnergy")
-
-    orbEnergy1 = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".unDockedSpacecraft[0]" + ".totOrbEnergy")
-    orbAngMom1_N = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".unDockedSpacecraft[0]" + ".totOrbAngMomPntN_N")
-    rotAngMom1_N = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".unDockedSpacecraft[0]" + ".totRotAngMomPntC_N")
-    rotEnergy1 = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".unDockedSpacecraft[0]" + ".totRotEnergy")
-
-    orbEnergy2 = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".unDockedSpacecraft[1]" + ".totOrbEnergy")
-    orbAngMom2_N = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".unDockedSpacecraft[1]" + ".totOrbAngMomPntN_N")
-    rotAngMom2_N = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".unDockedSpacecraft[1]" + ".totRotAngMomPntC_N")
-    rotEnergy2 = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".unDockedSpacecraft[1]" + ".totRotEnergy")
 
     r_BN_NOutput = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output" + '.r_BN_N',
                                                   range(3))
@@ -538,6 +513,33 @@ def test_SCConnectedAndUnconnected(show_plots):
     r_BN_NOutput2 = unitTestSim.pullMessageLogData("spacecraft5_inertial_state_output" + '.r_BN_N',
                                                   range(3))
     sigma_BNOutput2 = unitTestSim.pullMessageLogData("spacecraft5_inertial_state_output" + '.sigma_BN',
+                                                  range(3))
+
+    rotEnergy = unitTestSim.pullMessageLogData("spacecraft_energy_momentum_output" + '.spacecraftRotEnergy',
+                                                  range(1))
+    orbEnergy = unitTestSim.pullMessageLogData("spacecraft_energy_momentum_output" + '.spacecraftOrbEnergy',
+                                                  range(1))
+    rotAngMom_N = unitTestSim.pullMessageLogData("spacecraft_energy_momentum_output" + '.spacecraftRotAngMomPntC_N',
+                                                  range(3))
+    orbAngMom_N = unitTestSim.pullMessageLogData("spacecraft_energy_momentum_output" + '.spacecraftOrbAngMomPntN_N',
+                                                  range(3))
+
+    rotEnergy1 = unitTestSim.pullMessageLogData("spacecraft4_energy_momentum_output" + '.spacecraftRotEnergy',
+                                                  range(1))
+    orbEnergy1 = unitTestSim.pullMessageLogData("spacecraft4_energy_momentum_output" + '.spacecraftOrbEnergy',
+                                                  range(1))
+    rotAngMom1_N = unitTestSim.pullMessageLogData("spacecraft4_energy_momentum_output" + '.spacecraftRotAngMomPntC_N',
+                                                  range(3))
+    orbAngMom1_N = unitTestSim.pullMessageLogData("spacecraft4_energy_momentum_output" + '.spacecraftOrbAngMomPntN_N',
+                                                  range(3))
+
+    rotEnergy2 = unitTestSim.pullMessageLogData("spacecraft5_energy_momentum_output" + '.spacecraftRotEnergy',
+                                                  range(1))
+    orbEnergy2 = unitTestSim.pullMessageLogData("spacecraft5_energy_momentum_output" + '.spacecraftOrbEnergy',
+                                                  range(1))
+    rotAngMom2_N = unitTestSim.pullMessageLogData("spacecraft5_energy_momentum_output" + '.spacecraftRotAngMomPntC_N',
+                                                  range(3))
+    orbAngMom2_N = unitTestSim.pullMessageLogData("spacecraft5_energy_momentum_output" + '.spacecraftOrbAngMomPntN_N',
                                                   range(3))
 
     truePos = [
@@ -694,4 +696,4 @@ def test_SCConnectedAndUnconnected(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_SCConnectedAndUnconnected(True)
+    test_SCConnected(True)
