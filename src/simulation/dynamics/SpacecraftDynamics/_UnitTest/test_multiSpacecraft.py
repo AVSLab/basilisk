@@ -242,21 +242,37 @@ def test_SCConnected(show_plots):
     plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
+    PlotName = "ChangeInOrbitalAngularMomentumSystem"
+    PlotTitle = "Change in Orbital Angular Momentum with Gravity"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
     plt.figure()
     plt.clf()
     plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
+    PlotName = "ChangeInOrbitalEnergySystem"
+    PlotTitle = "Change in Orbital Energy with Gravity"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
     plt.figure()
     plt.clf()
     plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
+    PlotName = "ChangeInRotationalAngularMomentumSystem"
+    PlotTitle = "Change In Rotational Angular Momentum with Gravity"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
     plt.figure()
     plt.clf()
     plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
+    PlotName = "ChangeInRotationalEnergySystem"
+    PlotTitle = "Change In Rotational Energy with Gravity"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
     plt.show(show_plots)
 
     accuracy = 1e-8
@@ -587,63 +603,113 @@ def test_SCConnectedAndUnconnected(show_plots):
     plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
+    PlotName = "ChangeInOrbitalAngularMomentum"
+    PlotTitle = "Change in Orbital Angular Momentum with Gravity"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
     plt.figure()
     plt.clf()
     plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
+    PlotName = "ChangeInOrbitalEnergy"
+    PlotTitle = "Change in Orbital Energy with Gravity"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
     plt.figure()
     plt.clf()
     plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
+    PlotName = "ChangeInRotationalAngularMomentum"
+    PlotTitle = "Change In Rotational Angular Momentum with Gravity"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
     plt.figure()
     plt.clf()
     plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
+    PlotName = "ChangeInRotationalEnergy"
+    PlotTitle = "Change In Rotational Energy with Gravity"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
 
     plt.figure()
     plt.clf()
     plt.plot(orbAngMom1_N[:,0]*1e-9, (orbAngMom1_N[:,1] - orbAngMom1_N[0,1])/orbAngMom1_N[0,1], orbAngMom1_N[:,0]*1e-9, (orbAngMom1_N[:,2] - orbAngMom1_N[0,2])/orbAngMom1_N[0,2], orbAngMom1_N[:,0]*1e-9, (orbAngMom1_N[:,3] - orbAngMom1_N[0,3])/orbAngMom1_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
+    PlotName = "ChangeInOrbitalAngularMomentum1"
+    PlotTitle = "Change in Orbital Angular Momentum with Gravity"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
     plt.figure()
     plt.clf()
     plt.plot(orbEnergy1[:,0]*1e-9, (orbEnergy1[:,1] - orbEnergy1[0,1])/orbEnergy1[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
+    PlotName = "ChangeInOrbitalEnergy1"
+    PlotTitle = "Change in Orbital Energy with Gravity"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
     plt.figure()
     plt.clf()
     plt.plot(rotAngMom1_N[:,0]*1e-9, (rotAngMom1_N[:,1] - rotAngMom1_N[0,1])/rotAngMom1_N[0,1], rotAngMom1_N[:,0]*1e-9, (rotAngMom1_N[:,2] - rotAngMom1_N[0,2])/rotAngMom1_N[0,2], rotAngMom1_N[:,0]*1e-9, (rotAngMom1_N[:,3] - rotAngMom1_N[0,3])/rotAngMom1_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
+    PlotName = "ChangeInRotationalAngularMomentum1"
+    PlotTitle = "Change In Rotational Angular Momentum with Gravity"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
     plt.figure()
     plt.clf()
     plt.plot(rotEnergy1[:,0]*1e-9, (rotEnergy1[:,1] - rotEnergy1[0,1])/rotEnergy1[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
+    PlotName = "ChangeInRotationalEnergy1"
+    PlotTitle = "Change In Rotational Energy with Gravity"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
 
     plt.figure()
     plt.clf()
     plt.plot(orbAngMom2_N[:,0]*1e-9, (orbAngMom2_N[:,1] - orbAngMom2_N[0,1])/orbAngMom2_N[0,1], orbAngMom2_N[:,0]*1e-9, (orbAngMom2_N[:,2] - orbAngMom2_N[0,2])/orbAngMom2_N[0,2], orbAngMom2_N[:,0]*1e-9, (orbAngMom2_N[:,3] - orbAngMom2_N[0,3])/orbAngMom2_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
+    PlotName = "ChangeInOrbitalAngularMomentum2"
+    PlotTitle = "Change in Orbital Angular Momentum with Gravity"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
     plt.figure()
     plt.clf()
     plt.plot(orbEnergy2[:,0]*1e-9, (orbEnergy2[:,1] - orbEnergy2[0,1])/orbEnergy2[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
+    PlotName = "ChangeInOrbitalEnergy2"
+    PlotTitle = "Change in Orbital Energy with Gravity"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
     plt.figure()
     plt.clf()
     plt.plot(rotAngMom2_N[:,0]*1e-9, (rotAngMom2_N[:,1] - rotAngMom2_N[0,1])/rotAngMom2_N[0,1], rotAngMom2_N[:,0]*1e-9, (rotAngMom2_N[:,2] - rotAngMom2_N[0,2])/rotAngMom2_N[0,2], rotAngMom2_N[:,0]*1e-9, (rotAngMom2_N[:,3] - rotAngMom2_N[0,3])/rotAngMom2_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
+    PlotName = "ChangeInRotationalAngularMomentum2"
+    PlotTitle = "Change In Rotational Angular Momentum with Gravity"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
     plt.figure()
     plt.clf()
     plt.plot(rotEnergy2[:,0]*1e-9, (rotEnergy2[:,1] - rotEnergy2[0,1])/rotEnergy2[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
+    PlotName = "ChangeInRotationalEnergy2"
+    PlotTitle = "Change In Rotational Energy with Gravity"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
     plt.show(show_plots)
 
     accuracy = 1e-8
@@ -694,4 +760,4 @@ def test_SCConnectedAndUnconnected(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_SCConnectedAndUnconnected(True)
+    test_SCConnected(True)
