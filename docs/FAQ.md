@@ -11,7 +11,7 @@ The following Frequency Answer Questions are general and not operating specific.
 
 * Answer: Glad you asked.  While Basilisk is a single threaded simulation, it is possible to run `pytest` in a multi-threaded manner.  
 ```
-pip install
+pip install pytest-xdist
 ```
 After installing this utility you now run the multi-threaded version of `pytest` for 8 threads using
 ```
