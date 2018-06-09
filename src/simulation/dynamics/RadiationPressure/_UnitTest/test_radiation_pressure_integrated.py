@@ -152,7 +152,7 @@ def radiationPressureIntegratedTest(show_plots):
     skipValue = int(len(pos_rel_earth) / (numTruthPoints - 1))
     pos_rel_earth_parse = pos_rel_earth[::skipValue]
 
-    # true position for un perturbed 2 body GEO orbit
+    # true position for un perturbed 2 body GEO orbit with cannonball SRP
     true_pos = np.array([[-21819784.81794739, 35887241.45651245, 0.0],
                          [-3.98343483e+07, 1.33137624e+07, -7.09098053e+01],
                          [-3.90149081e+07, -1.55551455e+07, -2.50040451e+02],
