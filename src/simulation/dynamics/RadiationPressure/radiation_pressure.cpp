@@ -140,24 +140,23 @@ void RadiationPressure::readInputMessages()
 void RadiationPressure::computeForceTorque(double integTime)
 {
     this->forceExternal_N.setZero();
-    Eigen::Vector3d s_B(0.0, 0.0, 0.0); // (m)
+    this->forceExternal_B.setZero();
+    this->torqueExternalPntB_B.setZero();
     Eigen::Vector3d r_N(this->stateInBuffer.r_BN_N);
     Eigen::Vector3d sun_r_N(this->sunEphmInBuffer.PositionVector);
-    Eigen::MRPd sigmaLocal_BN(this->stateInBuffer.sigma_BN);
+    Eigen::Vector3d s_N = sun_r_N - r_N;
     
-    // - Find DCM's
-    // Eigen::Matrix3d dcmLocal_NB = sigmaLocal_BN.toRotationMatrix();
-    Eigen::Matrix3d dcmLocal_BN = sigmaLocal_BN.toRotationMatrix().transpose();
-    
-    s_B = dcmLocal_BN*(sun_r_N - r_N);
     if (this->useCannonballModel) {
-        this->computeCannonballModel(s_B);
+        this->computeCannonballModel(s_N);
+        this->forceExternal_N = this->forceExternal_N * this->sunVisibilityFactor.shadowFactor;
     } else {
+        Eigen::MRPd sigmaLocal_BN(this->stateInBuffer.sigma_BN);
+        Eigen::Matrix3d dcmLocal_BN = sigmaLocal_BN.toRotationMatrix().transpose();
+        Eigen::Vector3d s_B = dcmLocal_BN*(sun_r_N - r_N);
         this->computeLookupModel(s_B);
+        this->forceExternal_B = this->forceExternal_B * this->sunVisibilityFactor.shadowFactor;
+        this->torqueExternalPntB_B = this->torqueExternalPntB_B * this->sunVisibilityFactor.shadowFactor;
     }
-
-    this->forceExternal_B = this->forceExternal_B * this->sunVisibilityFactor.shadowFactor;
-    this->torqueExternalPntB_B = this->torqueExternalPntB_B * this->sunVisibilityFactor.shadowFactor;
 }
 
 /*! Update model state by reading in new message data
@@ -187,18 +186,18 @@ void RadiationPressure::setUseCannonballModel(bool use)
  *   Solar Radiation Equations obtained from
  *   Earth Space and Planets Journal Vol. 51, 1999 pp. 979-986
  @return void
- @param s_B (m) Position vector to the Sun relative to the body frame
+ @param s_N (m) Position vector to the Sun relative to the inertial frame
  */
-void RadiationPressure::computeCannonballModel(Eigen::Vector3d s_B)
+void RadiationPressure::computeCannonballModel(Eigen::Vector3d s_N)
 {
     /* Magnitude of sun vector in the body frame */
-    double sunDist = s_B.norm();
+    double sunDist = s_N.norm();
     /* Computing the force vector [N]*/
     double scaleFactor = (-this->coefficientReflection * this->area * SOLAR_FLUX_EARTH * pow(AU*1000.,2)) / (SPEED_LIGHT * pow(sunDist, 3));
     if (stateRead)
-        this->forceExternal_B = scaleFactor*(s_B);
+        this->forceExternal_N = scaleFactor*(s_N);
     else
-        this->forceExternal_B = {0,0,0};
+        this->forceExternal_N = {0,0,0};
 }
 
 /*! Computes the solar radiation force vector
