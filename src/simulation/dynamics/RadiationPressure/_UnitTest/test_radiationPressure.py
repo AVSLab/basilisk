@@ -176,8 +176,8 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
 
     errTol = 1E-12
     if modelType == "cannonball":
-        truthForceExternal_B = [1.85556867482797E-05, -8.82911772465848E-06, 5.64107588371567E-06]
-        truthForceExternal_N = [0, 0, 0]
+        truthForceExternal_B = [0, 0, 0]
+        truthForceExternal_N = [-2.44694525395e-06, -1.94212316004e-05, -8.42121070088e-06]
         truthTorqueExternalPntB_B = [0, 0, 0]
         testFailCount, testMessages = unitTestSupport.compareVector(truthForceExternal_B,
                                                                     srpDataForce_B[1,1:],
@@ -225,13 +225,13 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
                                                                     testMessages)
     if modelType == "cannonballLookup":
         errTolTorque = errTol/100
-        testFailCount, testMessages = unitTestSupport.compareVector(srp2DataForce_B[1, 1:],
+        testFailCount, testMessages = unitTestSupport.compareVector(srp2DataForce_N[1, 1:],
                                                                     srpDataForce_B[1, 1:],
                                                                     errTol,
                                                                     "Force_B",
                                                                     testFailCount,
                                                                     testMessages)
-        testFailCount, testMessages = unitTestSupport.compareVector(srp2DataForce_N[1, 1:],
+        testFailCount, testMessages = unitTestSupport.compareVector(srp2DataForce_B[1, 1:],
                                                                     srpDataForce_N[1, 1:],
                                                                     errTol,
                                                                     "Force_N",
