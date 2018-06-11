@@ -38,7 +38,10 @@ RadiationPressure::RadiationPressure()
 {
     this->sunEclipseInMsgId = -1;
     this->sunVisibilityFactor.shadowFactor = 1.0;
-
+    this->forceExternal_N.setZero();
+    this->forceExternal_B.setZero();
+    this->torqueExternalPntB_B.setZero();
+    
     CallCounts = 0;
     return;
 }
@@ -197,7 +200,7 @@ void RadiationPressure::computeCannonballModel(Eigen::Vector3d s_N)
     if (stateRead)
         this->forceExternal_N = scaleFactor*(s_N);
     else
-        this->forceExternal_N = {0,0,0};
+        this->forceExternal_N.setZero();
 }
 
 /*! Computes the solar radiation force vector
@@ -219,8 +222,8 @@ void RadiationPressure::computeLookupModel(Eigen::Vector3d s_B)
     Eigen::Vector3d tmpLookupSHat_B(0,0,0);
     
     if (!this->stateRead) {
-        this->forceExternal_B = {0,0,0};
-        this->torqueExternalPntB_B = {0,0,0};
+        this->forceExternal_B.setZero();
+        this->torqueExternalPntB_B.setZero();
         return;
     }
     
