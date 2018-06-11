@@ -24,7 +24,7 @@
 #
 # Purpose:  Test the proper function of the Radiation Pressure Dynamics module.
 #           This is done by comparing expected torques and forces to
-#           what is sumulated
+#           what is simulated
 # Author:   Patrick Kenneally
 # Creation Date:  Feb. 9, 2017
 #
