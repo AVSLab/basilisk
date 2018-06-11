@@ -20,12 +20,12 @@
 
 
 #
-# Basilisk Scenario Script and Integrated Test
+# Basilisk Integrated Test of the Solar Radiation Pressure Evaluation
 #
-# Purpose:  Integrated test of the spacecraftPlus() and gravity modules.  Illustrates
-#           a 3-DOV spacecraft on a range of orbit types.
-# Author:   Hanspeter Schaub
-# Creation Date:  Nov. 26, 2016
+# Purpose:  Integrated test of the spacecraftPlus(), gravity modules and the solar
+#           radiation pressure modeling.  Currently the cannonball model is only tested.
+# Author:   Patrick Kenneally
+# Creation Date:  June 11, 2019
 #
 
 import numpy as np
