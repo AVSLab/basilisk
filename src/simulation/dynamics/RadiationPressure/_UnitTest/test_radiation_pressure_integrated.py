@@ -66,8 +66,6 @@ def radiationPressureIntegratedTest(show_plots):
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
-    scObject.hub.useTranslation = True
-    scObject.hub.useRotation = False
     sim.AddModelToTask(simTaskName, scObject)
 
     srp = radiation_pressure.RadiationPressure()
