@@ -183,7 +183,7 @@ void RadiationPressure::setUseCannonballModel()
     this->srpModel = SRP_CANNONBALL_MODEL;
 }
 
-/*! Sets the model to the cannonball model in computing the solar radiation force
+/*! Sets the model to the faceted table-lookup model, evaluted on the CPU, in computing the solar radiation force
  @return void
  */
 void RadiationPressure::setUseFacetedCPUModel()
