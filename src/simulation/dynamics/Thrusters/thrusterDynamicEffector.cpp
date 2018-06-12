@@ -228,7 +228,7 @@ void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
  @return void
  @param integTime Integration time
  */
-void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
+void ThrusterDynamicEffector::computeForceTorque(double integTime){
     
     std::vector<THRConfigSimMsg>::iterator it;
     THROperationSimMsg *ops;

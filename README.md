@@ -26,7 +26,7 @@ Of the following requirements Python is the only one for which prebuilt librarie
 
 
 ### Getting Started
-To get started with Basilisk (BSK), several tutorial python files are provided in the installed package.  Within this web page documentation site, they are listed and discussed in the <a href="modules.html">Modules</a> tab.  The documentation lists the scenarios in an order that facilitates learning basic BSK features. A good start would be to run `test_scenarioBasicOrbit.py`.
+To get started with Basilisk (BSK), several tutorial python files are provided in the installed package.  Within this web page documentation site, they are listed and discussed in the <a href="modules.html">Modules</a> tab.  The documentation lists the scenarios in an order that facilitates learning basic BSK features. In the source code they are stored under `src\tests\scenarios`. A good start would be to run `scenarioBasicOrbit.py`.
 
 To play with the tutorials, it is suggested the user makes a copy of these tutorial files, and use the copies in order to learn, test and experiment. To copy them, first find the location of the Basilisk installation. After installing, you can find the installed location of Basilisk by opening a python interpreter and running:
 

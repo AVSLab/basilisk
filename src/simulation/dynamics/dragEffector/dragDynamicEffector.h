@@ -52,7 +52,7 @@ public:
     DragDynamicEffector();
     ~DragDynamicEffector();
     void linkInStates(DynParamManager& states);
-    void computeBodyForceTorque(double integTime);
+    void computeForceTorque(double integTime);
     void SelfInit();
     void CrossInit();
     void UpdateState(uint64_t CurrentSimNanos);

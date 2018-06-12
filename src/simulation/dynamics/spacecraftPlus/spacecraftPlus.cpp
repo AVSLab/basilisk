@@ -306,6 +306,17 @@ void SpacecraftPlus::equationsOfMotion(double integTimeSeconds)
     // - This is where gravity is computed (gravity needs to know c_B to calculated gravity about r_CN_N)
     this->gravField.computeGravityField();
 
+    // - Loop through dynEffectors to compute force and torque on the s/c
+    std::vector<DynamicEffector*>::iterator dynIt;
+    for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
+    {
+        // - Compute the force and torque contributions from the dynamicEffectors
+        (*dynIt)->computeForceTorque(integTimeSeconds);
+        this->hub.sumForceExternal_N += (*dynIt)->forceExternal_N;
+        this->hub.sumForceExternal_B += (*dynIt)->forceExternal_B;
+        this->hub.sumTorquePntB_B += (*dynIt)->torqueExternalPntB_B;
+    }
+
     // - Loop through state effectors to get contributions for back-substitution
     std::vector<StateEffector*>::iterator it;
     for(it = this->states.begin(); it != this->states.end(); it++)
@@ -328,17 +339,6 @@ void SpacecraftPlus::equationsOfMotion(double integTimeSeconds)
         this->hub.matrixD += this->matrixDContr;
         this->hub.vecTrans += this->vecTransContr;
         this->hub.vecRot += this->vecRotContr;
-    }
-
-    // - Loop through dynEffectors to compute force and torque on the s/c
-    std::vector<DynamicEffector*>::iterator dynIt;
-    for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
-    {
-        // - Compute the force and torque contributions from the dynamicEffectors
-        (*dynIt)->computeBodyForceTorque(integTimeSeconds);
-        this->hub.sumForceExternal_N += (*dynIt)->forceExternal_N;
-        this->hub.sumForceExternal_B += (*dynIt)->forceExternal_B;
-        this->hub.sumTorquePntB_B += (*dynIt)->torqueExternalPntB_B;
     }
 
     // - Compute the derivatives of the hub states before looping through stateEffectors

@@ -436,8 +436,6 @@ def run(saveFigures, show_plots, FilterType, simTime):
     scObject.hub.mHub = 750.0                   # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]] # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
-    scObject.hub.useTranslation = True
-    scObject.hub.useRotation = True
 
     #
     # set initial spacecraft states

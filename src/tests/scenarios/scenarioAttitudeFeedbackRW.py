@@ -498,8 +498,6 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
-    scObject.hub.useTranslation = True
-    scObject.hub.useRotation = True
 
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject, None, 1)

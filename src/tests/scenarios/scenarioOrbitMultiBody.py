@@ -89,8 +89,6 @@ bskPath = __path__[0]
 #     # initialize spacecraftPlus object and set properties
 #     scObject = spacecraftPlus.SpacecraftPlus()
 #     scObject.ModelTag = "spacecraftBody"
-#     scObject.hub.useTranslation = True
-#     scObject.hub.useRotation = False
 #
 #     # add spacecraftPlus object to the simulation process
 #     scSim.AddModelToTask(simTaskName, scObject, None, 1)
@@ -274,8 +272,6 @@ def run(show_plots, scCase):
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
-    scObject.hub.useTranslation = True
-    scObject.hub.useRotation = False
 
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject, None, 1)

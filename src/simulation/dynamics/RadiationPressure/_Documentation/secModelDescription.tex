@@ -7,7 +7,7 @@ Radiation is modeled by using the solar flux at one astronomical unit and scalin
 SF_{\mathrm{AU}} = 1372.5398    \bigg[\frac{W}{m^2}\bigg]
 \end{equation}
 \subsubsection{Cannonball Method}
-The radiation pressure at 1AU, $p_{SR}$, can be taken as the solar flux divided by the speed of light. 
+The cannonball model assumes the spacecraft is a simple sphere.  It is the default SRP model when the {\tt RadiationPressure} module is invoked.  The radiation pressure at 1AU, $p_{SR}$, can be taken as the solar flux divided by the speed of light. 
 \begin{equation}
 	p_{SR} = \frac{SF_{\mathrm{AU}}}{c} \bigg[\frac{N}{m^2}\bigg]
 \end{equation}
@@ -36,7 +36,7 @@ Then, the corresponding force and torque values are taken from the table and sca
 {\mathbf{F}_{\textrm{radiation,scaled}}} = {\mathbf{F}_{\textrm{radiation}}}{\Big(  \frac{AU}{|\textbf{r}_{\textrm{sun}}|}  \Big)}^{2} [N]
 \end{equation}
 \begin{equation}
-{\mathbf{\tau}_{\textrm{radiation,scaled}}} = {\mathbf{\tau}_{\textrm{radiation}}}{\Big(  \frac{AU}{|\textbf{r}_{\textrm{sun}}|}  \Big)}^{2} [Nm]
+{\bm{\tau}_{\textrm{radiation,scaled}}} = {\bm{\tau}_{\textrm{radiation}}}{\Big(  \frac{AU}{|\textbf{r}_{\textrm{sun}}|}  \Big)}^{2} [Nm]
 \end{equation}\\\\
 Most important to the user of the table look-up method is the required input and format of data. Data must be recorded in XML format. As an example, see ../cube\_lookup.xml (in the radiation pressure folder). Additionally, a utility script called parseSRPLookup.py is provided there to read the XML input into numpy arrays. Experienced users are welcome to store their data in their own format and load it into equivalent numpy arrays as they see fit.\\\\
 An example of using the provided python script to load data is shown in test\_radiationPressure.py. Note that this also requires import of the unitTestSupport library.\\

@@ -82,10 +82,10 @@ def executeSimRun(simContainer, thrusterSet, simRate, totalTime):
         simContainer.ConfigureStopTime(simContainer.TotalSim.CurrentNanos + simRate)
         simContainer.ExecuteSimulation()
 
-        thrusterSet.computeBodyForceTorque(simContainer.TotalSim.CurrentNanos*macros.NANO2SEC)
-        thrusterSet.computeBodyForceTorque(simContainer.TotalSim.CurrentNanos*macros.NANO2SEC + simRate*macros.NANO2SEC/2.0)
-        thrusterSet.computeBodyForceTorque(simContainer.TotalSim.CurrentNanos * macros.NANO2SEC + simRate * macros.NANO2SEC / 2.0)
-        thrusterSet.computeBodyForceTorque(simContainer.TotalSim.CurrentNanos*macros.NANO2SEC + simRate*macros.NANO2SEC)
+        thrusterSet.computeForceTorque(simContainer.TotalSim.CurrentNanos*macros.NANO2SEC)
+        thrusterSet.computeForceTorque(simContainer.TotalSim.CurrentNanos*macros.NANO2SEC + simRate*macros.NANO2SEC/2.0)
+        thrusterSet.computeForceTorque(simContainer.TotalSim.CurrentNanos * macros.NANO2SEC + simRate * macros.NANO2SEC / 2.0)
+        thrusterSet.computeForceTorque(simContainer.TotalSim.CurrentNanos*macros.NANO2SEC + simRate*macros.NANO2SEC)
 
         thrusterSet.computeStateContribution(simContainer.TotalSim.CurrentNanos * macros.NANO2SEC)
         thrusterSet.computeStateContribution(

@@ -38,17 +38,18 @@
 \usepackage{float} %use [H] to keep tables where you put them
 \usepackage{array} %easy control of text in tables
 \usepackage{graphicx}
+\usepackage{leftidx}
 \bibliographystyle{plain}
 
 
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
 
 
-\newcommand{\ModuleName}{fuelSloshStateEffector}
-\newcommand{\subject}{Linear Fuel Slosh Dynamics Model}
-\newcommand{\status}{Initial Draft}
-\newcommand{\preparer}{C. Allard}
-\newcommand{\summary}{The fuel slosh class is an instantiation of the state effector abstract class. The integrated test is validating the interaction between the fuel slosh module and the rigid body hub that it is attached to. The fuel slosh model has a relationship with the fuel tank model because the amount of decreasing mass of the fuel slosh particle is dependent on the remaining mass in the fuel tank, and vice-versa. This fuel slosh model is being approximated as a linear spring mass damper system attached to the spacecraft, however there can be general number of fuel slosh particles attached to the spacecraft and can be oriented in any directions with the respect to the rigid body hub. This document outlines the analytical development of the model and describes the efforts completed to validate/verify the model.}
+\newcommand{\ModuleName}{sphericalPendulum}
+\newcommand{\subject}{Spherical Pendulum Dynamics Model}
+\newcommand{\status}{Tested}
+\newcommand{\preparer}{P. Cappuccio}
+\newcommand{\summary}{The Basilisk sphericalPendulum model module is responsible for simulating an oscillating spherical pendulum in spacecraft tanks. This phenomenon makes the fuel exchange energy and momentum with the spacecraft, thus creates disturbances on attitude and on precise orbit determination. This model together with the linearSpringMassDamper, that is a spring mass damper model, provides an efficient and precise simulation of the real phenomenon.}
 
 \begin{document}
 
@@ -65,9 +66,9 @@
 \hline
 {\bfseries Rev} & {\bfseries Change Description} & {\bfseries By}& {\bfseries Date} \\
 \hline
-1.0 & Initial Draft & C. Allard & 20171221\\
+1.0 & Initial Draft & P. Cappuccio & 20170901\\
 \hline
-1.1 & Added Gravity Test & C. Allard & 20180103\\
+1.1 & Initial Draft & C. Allard & 20180518\\
 \hline
 \end{longtable}
 }

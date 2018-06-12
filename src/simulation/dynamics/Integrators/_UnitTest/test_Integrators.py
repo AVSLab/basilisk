@@ -95,8 +95,6 @@ def run(doUnitTests, show_plots, integratorCase):
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
-    scObject.hub.useTranslation = True
-    scObject.hub.useRotation = False
 
     # default case, RK4 is automatically setup, no extra code is needed
     if integratorCase == "euler":
