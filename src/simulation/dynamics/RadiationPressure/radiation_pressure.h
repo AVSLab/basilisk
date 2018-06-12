@@ -32,14 +32,7 @@
 /*! \addtogroup SimModelGroup
  * @{
  */
-    
-//! @brief Radiation pressure dynamics class used to compute
-/*!
- The module
- [PDF Description](Basilisk-RadiationPressure-20170712.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
-*/
+
 
 typedef enum {
     SRP_CANNONBALL_MODEL,
@@ -47,6 +40,13 @@ typedef enum {
 } srpModel_t;
 
 
+//! @brief Radiation pressure dynamics class used to compute
+/*!
+ The module
+ [PDF Description](Basilisk-RadiationPressure-20170712.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+*/
 //  SRP effects on body
 class RadiationPressure: public SysModel, public DynamicEffector{
 public:
