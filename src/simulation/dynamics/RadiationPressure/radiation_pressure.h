@@ -41,6 +41,12 @@
  how to run it, as well as testing.
 */
 
+typedef enum {
+    SRP_CANNONBALL_MODEL,
+    SRP_FACETED_CPU_MODEL
+} srpModel_t;
+
+
 //  SRP effects on body
 class RadiationPressure: public SysModel, public DynamicEffector{
 public:
@@ -53,7 +59,8 @@ public:
     void linkInStates(DynParamManager& statesIn);
     void readInputMessages();
     void computeForceTorque(double integTime);
-    void setUseCannonballModel(bool use);
+    void setUseCannonballModel();
+    void setUseFacetedCPUModel();
     void addForceLookupBEntry(Eigen::Vector3d vec);
     void addTorqueLookupBEntry(Eigen::Vector3d vec);
     void addSHatLookupBEntry(Eigen::Vector3d vec);
@@ -73,7 +80,7 @@ public:
     std::vector<Eigen::Vector3d> lookupSHat_B;      //!< -- S/C to sun unit vector defined in the body frame.
 
 private:
-    bool    useCannonballModel; //!< -- Use cannnonball or lookup table model
+    srpModel_t  srpModel; //!< -- specifies which SRP model to use
     int64_t sunEphmInMsgId; //!< -- Message ID for incoming sun ephemeris data
     int64_t sunEclipseInMsgId;                  //!< [-] Connect to input sun eclipse message
     SpicePlanetStateSimMsg sunEphmInBuffer; //!< -- Buffer for incoming ephemeris message data

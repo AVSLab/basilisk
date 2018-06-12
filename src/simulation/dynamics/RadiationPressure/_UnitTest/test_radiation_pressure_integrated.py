@@ -68,8 +68,7 @@ def radiationPressureIntegratedTest(show_plots):
     scObject.ModelTag = "spacecraftBody"
     sim.AddModelToTask(simTaskName, scObject)
 
-    srp = radiation_pressure.RadiationPressure()
-    srp.setUseCannonballModel(True)
+    srp = radiation_pressure.RadiationPressure() # default model is the SRP_CANNONBALL_MODEL
     srp.area = 1.0
     srp.coefficientReflection = 1.3
     sim.AddModelToTask(simTaskName, srp, None, -1)

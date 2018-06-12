@@ -93,11 +93,11 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     srpDynEffector2.ModelTag = "RadiationPressure2"
 
     if modelType == "cannonball":
-        srpDynEffector.setUseCannonballModel(True)
+        srpDynEffector.setUseCannonballModel()
         srpDynEffector.area = 4
         srpDynEffector.coefficientReflection = 1.2
     elif modelType == "lookup":
-        srpDynEffector.setUseCannonballModel(False)
+        srpDynEffector.setUseFacetedCPUModel()
         handler = radiation_pressure.SRPLookupTableHandler()
         handler.parseAndLoadXML(os.path.dirname(__file__) + "/cube_lookup.xml")
         for i in xrange(0, len(handler.forceBLookup)):
@@ -105,14 +105,14 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
             srpDynEffector.addTorqueLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.torqueBLookup[i, :]))
             srpDynEffector.addSHatLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.sHatBLookup[i, :]))
     elif modelType == "cannonballLookup":
-        srpDynEffector.setUseCannonballModel(False)
+        srpDynEffector.setUseFacetedCPUModel()
         handler = radiation_pressure.SRPLookupTableHandler()
         handler.parseAndLoadXML(os.path.dirname(__file__) + "/cannonballLookup.xml")
         for i in xrange(0, len(handler.forceBLookup)):
             srpDynEffector.addForceLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.forceBLookup[i, :]))
             srpDynEffector.addTorqueLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.torqueBLookup[i, :]))
             srpDynEffector.addSHatLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.sHatBLookup[i, :]))
-        srpDynEffector2.setUseCannonballModel(True)
+        srpDynEffector2.setUseCannonballModel()
         srpDynEffector2.area = 182018.072141393 #set to give a force of 1N at 1AU to make spherical table generation easy
         srpDynEffector2.coefficientReflection = 1.2
         r_N = [np.sin(np.pi/4.)*np.cos(np.pi/4.)*10.*om.AU*1000., np.sin(np.pi/4.)*np.sin(np.pi/4.)*10.*om.AU*1000., np.cos(np.pi/4.)*10.*om.AU*1000.]  # [m]

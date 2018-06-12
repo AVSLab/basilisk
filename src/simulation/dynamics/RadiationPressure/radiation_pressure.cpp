@@ -23,6 +23,7 @@
 #include "utilities/astroConstants.h"
 #include "utilities/avsEigenSupport.h"
 #include "utilities/avsEigenMRP.h"
+#include "utilities/bsk_Print.h"
 
 /*! This is the constructor.  It sets some default initializers that can be
  overriden by the user.*/
@@ -31,7 +32,7 @@ RadiationPressure::RadiationPressure()
     ,coefficientReflection(1.2)
     ,sunEphmInMsgName("sun_planet_data")
     ,stateInMsgName("inertial_state_output")
-    ,useCannonballModel(true)
+    ,srpModel(SRP_CANNONBALL_MODEL)
     ,sunEphmInMsgId(-1)
     ,stateInMsgId(-1)
     ,stateRead(false)
@@ -149,16 +150,19 @@ void RadiationPressure::computeForceTorque(double integTime)
     Eigen::Vector3d sun_r_N(this->sunEphmInBuffer.PositionVector);
     Eigen::Vector3d s_N = sun_r_N - r_N;
     
-    if (this->useCannonballModel) {
+    if (this->srpModel == SRP_CANNONBALL_MODEL) {
         this->computeCannonballModel(s_N);
         this->forceExternal_N = this->forceExternal_N * this->sunVisibilityFactor.shadowFactor;
-    } else {
+    }
+    else if (this->srpModel == SRP_FACETED_CPU_MODEL) {
         Eigen::MRPd sigmaLocal_BN(this->stateInBuffer.sigma_BN);
         Eigen::Matrix3d dcmLocal_BN = sigmaLocal_BN.toRotationMatrix().transpose();
         Eigen::Vector3d s_B = dcmLocal_BN*(sun_r_N - r_N);
         this->computeLookupModel(s_B);
         this->forceExternal_B = this->forceExternal_B * this->sunVisibilityFactor.shadowFactor;
         this->torqueExternalPntB_B = this->torqueExternalPntB_B * this->sunVisibilityFactor.shadowFactor;
+    } else {
+        BSK_PRINT(MSG_ERROR,"Requested SRF Model not implemented.\n");
     }
 }
 
@@ -171,14 +175,22 @@ void RadiationPressure::UpdateState(uint64_t CurrentSimNanos)
     this->readInputMessages();
 }
 
-/*! Sets the model to use in computing the solar radiation force
+/*! Sets the model to the cannonball model in computing the solar radiation force
  @return void
- @param use True is cannonball model, False to use lookup table model
  */
-void RadiationPressure::setUseCannonballModel(bool use)
+void RadiationPressure::setUseCannonballModel()
 {
-    this->useCannonballModel = use;
+    this->srpModel = SRP_CANNONBALL_MODEL;
 }
+
+/*! Sets the model to the cannonball model in computing the solar radiation force
+ @return void
+ */
+void RadiationPressure::setUseFacetedCPUModel()
+{
+    this->srpModel = SRP_FACETED_CPU_MODEL;
+}
+
 
 /*! Computes the solar radiation force vector
  *   based on cross-sectional Area and mass of the spacecraft
