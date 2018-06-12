@@ -9,7 +9,7 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 * GPU based methods to evaluate solar radiation pressure forces and torques
 * atmospheric drag evaluation using multi-faceted spacecraft model
 
-## Version 0.X.X (latest develop)
+## Version 0.2.3 (June 12, 2018)
 <ul>
     <li>Improved how the `fuelSloshSpringMassDamper` effector class works.  It is now renamed to `LinearSpringMassDamper`.  It can be used to simulate both fuel sloshing, but also structural modes.  If the `LinearSpringMassDamper` is connected to a fuel tank, then it's mass depends on the amount of fuel left. The associated unit test illustrated how to setup this last capability.  The module also contains documentation on the associated math.
     </li>
@@ -29,7 +29,7 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     </li>
 </ul>
 
-## Version 0.2.2
+## Version 0.2.2 (May 14, 2018)
 <ul>
     <li>Fixed a build issues on the Windows platform is Visual Studio 2017 or later is used.</li>
     <li>Unified the Coarse Sun Sensor (CSS) sun heading filtering modules to use the same I/O messages.  All used messages are now in the fswMessage folder.</li>
