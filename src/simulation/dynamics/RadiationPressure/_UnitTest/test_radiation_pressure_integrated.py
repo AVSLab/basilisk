@@ -25,7 +25,7 @@
 # Purpose:  Integrated test of the spacecraftPlus(), gravity modules and the solar
 #           radiation pressure modeling.  Currently the cannonball model is only tested.
 # Author:   Patrick Kenneally
-# Creation Date:  June 11, 2019
+# Creation Date:  June 11, 2018
 #
 
 import numpy as np
