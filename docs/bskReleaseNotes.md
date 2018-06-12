@@ -14,6 +14,9 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>
     Updated cssWlsEst() module to also compute a partial angular velocity vector.
     </li>
+    <li>
+    New FSW Guidance module `mrpRotation()` to perform a constant body rate rotation.  The initial attitude is specified through a MRP set.
+    </li>
 </ul>
 
 ## Version 0.2.3 (June 12, 2018)
