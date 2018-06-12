@@ -11,15 +11,18 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 
 ## Version 0.X.X (latest develop)
 <ul>
-    <li>Improved how the fuelSloshSpringMassDamper effector class works.  It is now renamed to linearSpringMassDamper.  It can be used to simulate both fuel sloshing, but also structural modes.  If the linearSprintMassDamper is connected to a fuel tank, then it's mass depends on the amount of fuel left. The associated unit test illustrated how to setup this last capability.  The module also contains documentation on the associated math.
+    <li>Improved how the `fuelSloshSpringMassDamper` effector class works.  It is now renamed to `LinearSpringMassDamper`.  It can be used to simulate both fuel sloshing, but also structural modes.  If the `LinearSpringMassDamper` is connected to a fuel tank, then it's mass depends on the amount of fuel left. The associated unit test illustrated how to setup this last capability.  The module also contains documentation on the associated math.
     </li>
-    <li>A new sphericalPendulum effector class has been added.  For rotations a spherical pendulum is a better approximation rotational fuel slosh.  This effector can model rotational fuel slosh if connected to a tank (see unit test again), or it can model a torsional structural mode if not connected to a tank. Associated math documentation is included with the class.
+    <li>A new `SphericalPendulum` effector class has been added.  For rotations a spherical pendulum is a better approximation rotational fuel slosh.  This effector can model rotational fuel slosh if connected to a tank (see unit test again), or it can model a torsional structural mode if not connected to a tank. Associated math documentation is included with the class.
     </li>
-    <li>The booleans useTranslation and useRotation have been removed from the hubEffector class. The defaults in hubEffector for mass properties: mHub = 1, IHubPntBc_B = diag(1), and r_BcB_B = zeros(3), enable us to evaluate the same code no matter if the desire is only to have translational states, only rotational states, or both. This allows for less logic in hubEffector and removes possibility of fringe cases that result in unexpected results from a developer standpoint. The fix for if your python script is not working related to this change:
+    <li>The booleans useTranslation and useRotation have been removed from the `HubEffector()` class. The defaults in hubEffector for mass properties: `mHub = 1`, `IHubPntBc_B = diag`(1), and `r_BcB_B = zeros(3)`, enable us to evaluate the same code no matter if the desire is only to have translational states, only rotational states, or both. This allows for less logic in hubEffector and removes possibility of fringe cases that result in unexpected results from a developer standpoint. The fix for if your python script is not working related to this change:
     <ul>
     <li>FIX: Remove any instances of useTranslation or useRotation defined in the hubEffector class. 
     </ul>
-    <li>Changed name of the method computeBodyForceTorque to computeForceTorque in the dynamicEffector abstract class and any inheriting classes. This avoids the confusion of thinking that only body frame relative forces can be defined, but in reality this class gives the ability to define both external forces defined in the body frame and the inertial frame.
+    <li>Changed name of the method `computeBodyForceTorque` to `computeForceTorque` in the `dynamicEffector` abstract class and any inheriting classes. This avoids the confusion of thinking that only body frame relative forces can be defined, but in reality this class gives the ability to define both external forces defined in the body frame and the inertial frame.
+    </li>
+    <li>
+    Fixed an issue in `RadiationPressure` where the cannonball model was not computed in the proper frame.  An integrated test has been added, and the unit test is updated.  Note that the `RadiationPressure` model specification has changes slightly.  The default model is still the cannonball model.  To specify another model, the python methods `setUseCannonballModel()` or `setUseFacetedCPUModel()` are used.  Note that these take no argument anymore.
     </li>
 </ul>
 
