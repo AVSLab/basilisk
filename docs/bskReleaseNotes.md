@@ -40,9 +40,6 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
         <li>FIX: remove the argument from `setUseCannonballModel(true)` and use the methods `setUseCannonballModel()` or `setUseFacetedCPUModel()` without any arguments instead.</li>
     </ul>
     </li>
-    <li>
-    Updated cssWlsEst() module to also compute a partial angular velocity vector.
-    </li>
 </ul>
 
 ## Version 0.2.2 (May 14, 2018)
