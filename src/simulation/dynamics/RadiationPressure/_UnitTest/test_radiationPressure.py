@@ -24,7 +24,7 @@
 #
 # Purpose:  Test the proper function of the Radiation Pressure Dynamics module.
 #           This is done by comparing expected torques and forces to
-#           what is sumulated
+#           what is simulated
 # Author:   Patrick Kenneally
 # Creation Date:  Feb. 9, 2017
 #
@@ -93,11 +93,11 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     srpDynEffector2.ModelTag = "RadiationPressure2"
 
     if modelType == "cannonball":
-        srpDynEffector.setUseCannonballModel(True)
+        srpDynEffector.setUseCannonballModel()
         srpDynEffector.area = 4
         srpDynEffector.coefficientReflection = 1.2
     elif modelType == "lookup":
-        srpDynEffector.setUseCannonballModel(False)
+        srpDynEffector.setUseFacetedCPUModel()
         handler = radiation_pressure.SRPLookupTableHandler()
         handler.parseAndLoadXML(os.path.dirname(__file__) + "/cube_lookup.xml")
         for i in xrange(0, len(handler.forceBLookup)):
@@ -105,14 +105,14 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
             srpDynEffector.addTorqueLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.torqueBLookup[i, :]))
             srpDynEffector.addSHatLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.sHatBLookup[i, :]))
     elif modelType == "cannonballLookup":
-        srpDynEffector.setUseCannonballModel(False)
+        srpDynEffector.setUseFacetedCPUModel()
         handler = radiation_pressure.SRPLookupTableHandler()
         handler.parseAndLoadXML(os.path.dirname(__file__) + "/cannonballLookup.xml")
         for i in xrange(0, len(handler.forceBLookup)):
             srpDynEffector.addForceLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.forceBLookup[i, :]))
             srpDynEffector.addTorqueLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.torqueBLookup[i, :]))
             srpDynEffector.addSHatLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.sHatBLookup[i, :]))
-        srpDynEffector2.setUseCannonballModel(True)
+        srpDynEffector2.setUseCannonballModel()
         srpDynEffector2.area = 182018.072141393 #set to give a force of 1N at 1AU to make spherical table generation easy
         srpDynEffector2.coefficientReflection = 1.2
         r_N = [np.sin(np.pi/4.)*np.cos(np.pi/4.)*10.*om.AU*1000., np.sin(np.pi/4.)*np.sin(np.pi/4.)*10.*om.AU*1000., np.cos(np.pi/4.)*10.*om.AU*1000.]  # [m]
@@ -176,8 +176,8 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
 
     errTol = 1E-12
     if modelType == "cannonball":
-        truthForceExternal_B = [1.85556867482797E-05, -8.82911772465848E-06, 5.64107588371567E-06]
-        truthForceExternal_N = [0, 0, 0]
+        truthForceExternal_B = [0, 0, 0]
+        truthForceExternal_N = [-2.44694525395e-06, -1.94212316004e-05, -8.42121070088e-06]
         truthTorqueExternalPntB_B = [0, 0, 0]
         testFailCount, testMessages = unitTestSupport.compareVector(truthForceExternal_B,
                                                                     srpDataForce_B[1,1:],
@@ -225,13 +225,13 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
                                                                     testMessages)
     if modelType == "cannonballLookup":
         errTolTorque = errTol/100
-        testFailCount, testMessages = unitTestSupport.compareVector(srp2DataForce_B[1, 1:],
+        testFailCount, testMessages = unitTestSupport.compareVector(srp2DataForce_N[1, 1:],
                                                                     srpDataForce_B[1, 1:],
                                                                     errTol,
                                                                     "Force_B",
                                                                     testFailCount,
                                                                     testMessages)
-        testFailCount, testMessages = unitTestSupport.compareVector(srp2DataForce_N[1, 1:],
+        testFailCount, testMessages = unitTestSupport.compareVector(srp2DataForce_B[1, 1:],
                                                                     srpDataForce_N[1, 1:],
                                                                     errTol,
                                                                     "Force_N",
