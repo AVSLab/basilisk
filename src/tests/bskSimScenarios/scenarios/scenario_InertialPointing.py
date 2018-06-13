@@ -120,7 +120,7 @@ def run(showPlots):
     # Instantiate base simulation
     TheBSKSim = BSKSim()
 
-    # Configure an scenario in the base simulation
+    # Configure a scenario in the base simulation
     TheScenario = scenario_InertialPointing(TheBSKSim)
     TheScenario.log_outputs()
     TheScenario.configure_initial_conditions()
