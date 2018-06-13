@@ -184,13 +184,13 @@ void Read_STMessages(InertialUKFConfig *ConfigData, uint64_t moduleID)
         
         /*! - If the time tag from the measured data is new compared to previous step,
          propagate and update the filter*/
-        
         for (j=0; j<i; j++)
             {
+                ConfigData->stSensorOrder[j+1] = i;
                 if (ConfigData->stSensorIn[i].timeTag < ConfigData->stSensorIn[j].timeTag )
                 {
-                    bufferSTIndice = j;
-                    ConfigData->stSensorOrder[j] =  ConfigData->stSensorOrder[i];
+                    bufferSTIndice = j+1;
+                    ConfigData->stSensorOrder[j+1] =  ConfigData->stSensorOrder[i];
                     ConfigData->stSensorOrder[i] = bufferSTIndice;
                 }
             }
@@ -629,6 +629,7 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int
     double rAT[3*3], syT[3*3];
     double sy[3*3];
     double updMat[3*3], pXY[AKF_N_STATES*3];
+    double localSBar[AKF_N_STATES*AKF_N_STATES];
     
     /*! Begin method steps*/
     
@@ -726,12 +727,16 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int
     mTranspose(pXY, ConfigData->numStates, ConfigData->numObs, pXY);
     /*! - For each column in the update matrix, perform a cholesky down-date on it to 
           get the total shifted S matrix (called sBar in internal parameters*/
+    vCopy(ConfigData->sBar, AKF_N_STATES*AKF_N_STATES, localSBar);
     for(i=0; i<ConfigData->numObs; i++)
     {
         vCopy(&(pXY[i*ConfigData->numStates]), ConfigData->numStates, xHat);
-        ukfCholDownDate(ConfigData->sBar, xHat, -1.0, ConfigData->numStates, sBarT);
+        ukfCholDownDate(localSBar, xHat, -1.0, ConfigData->numStates, sBarT);
         mCopy(sBarT, ConfigData->numStates, ConfigData->numStates,
-            ConfigData->sBar);
+            localSBar);
+    }
+    if (currentST == ConfigData->STDatasStruct.numST - 1){
+        vCopy(localSBar, AKF_N_STATES*AKF_N_STATES, ConfigData->sBar);
     }
     /*! - Compute equivalent covariance based on updated sBar matrix*/
     mTranspose(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
