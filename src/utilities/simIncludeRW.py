@@ -110,7 +110,6 @@ class rwFactory(object):
         self.maxMomentum = varMaxMomentum
 
         if kwargs.has_key('linearFrictionRatio'):
-            print "test1"
             varLinearFrictionRatio =  kwargs['linearFrictionRatio']
             if not isinstance(varLinearFrictionRatio, (float)):
                 print 'ERROR: linearFrictionRatio must be a FLOAT argument'
