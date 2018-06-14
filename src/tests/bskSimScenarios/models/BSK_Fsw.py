@@ -76,7 +76,12 @@ class BSKFswModels():
 
         # setup FSW Message names
         self.rwConfigMsgName = "rwa_config_data"
-
+        self.rwCmdMsgName = "reactionwheel_cmds"
+        self.attControlTorqueRaw = "controlTorqueRaw"
+        self.attRateCmdMsgName = "rate_steering"
+        self.inputRWSpeedsName = "reactionwheel_output_states"
+        self.vehConfigMsgName = "adcs_config_data"
+        self.attGuidanceMsgName = "guidanceOut"
 
         # Initialize all modules
         self.InitAllFSWObjects(SimBase)
@@ -166,11 +171,11 @@ class BSKFswModels():
         self.trackingErrorData.inputNavName = SimBase.DynModels.simpleNavObject.outputAttName
         # Note: SimBase.DynModels.simpleNavObject.outputAttName = "simple_att_nav_output"
         self.trackingErrorData.inputRefName = "referenceOut"
-        self.trackingErrorData.outputDataName = "guidanceOut"
+        self.trackingErrorData.outputDataName = self.attGuidanceMsgName
 
     def SetMRPFeedbackControl(self, SimBase):
-        self.mrpFeedbackControlData.inputGuidName = "guidanceOut"
-        self.mrpFeedbackControlData.vehConfigInMsgName = "adcs_config_data"
+        self.mrpFeedbackControlData.inputGuidName = self.attGuidanceMsgName
+        self.mrpFeedbackControlData.vehConfigInMsgName = self.vehConfigMsgName
         self.mrpFeedbackControlData.outputDataName =  SimBase.DynModels.extForceTorqueObject.cmdTorqueInMsgName
         # Note: SimBase.DynModels.extForceTorqueObject.cmdTorqueInMsgName = "extTorquePntB_B_cmds"
 
@@ -188,27 +193,27 @@ class BSKFswModels():
         self.mrpFeedbackRWsData.integralLimit = 2. / self.mrpFeedbackRWsData.Ki * 0.1
         self.mrpFeedbackRWsData.domega0 = [0.0, 0.0, 0.0]
 
-        self.mrpFeedbackRWsData.vehConfigInMsgName = "adcs_config_data"
-        self.mrpFeedbackRWsData.inputRWSpeedsName = "reactionwheel_output_states" # DynModels.rwStateEffector.OutputDataString
+        self.mrpFeedbackRWsData.vehConfigInMsgName = self.vehConfigMsgName
+        self.mrpFeedbackRWsData.inputRWSpeedsName = self.inputRWSpeedsName
         self.mrpFeedbackRWsData.rwParamsInMsgName = self.rwConfigMsgName
-        self.mrpFeedbackRWsData.inputGuidName = "guidanceOut"
-        self.mrpFeedbackRWsData.outputDataName = "controlTorqueRaw"
+        self.mrpFeedbackRWsData.inputGuidName = self.attGuidanceMsgName
+        self.mrpFeedbackRWsData.outputDataName = self.attControlTorqueRaw
 
     def SetMRPSteering(self):
         self.mrpSteeringData.K1 = 0.05
         self.mrpSteeringData.ignoreOuterLoopFeedforward = False
         self.mrpSteeringData.K3 = 0.75
         self.mrpSteeringData.omega_max = 1.0 * mc.D2R
-        self.mrpSteeringData.inputGuidName = "guidanceOut"
-        self.mrpSteeringData.outputDataName = "rate_steering"
+        self.mrpSteeringData.inputGuidName = self.attGuidanceMsgName
+        self.mrpSteeringData.outputDataName = self.attRateCmdMsgName
 
     def SetRateServo(self):
-        self.rateServoData.inputGuidName = "guidanceOut"
-        self.rateServoData.vehConfigInMsgName = "adcs_config_data"
+        self.rateServoData.inputGuidName = self.attGuidanceMsgName
+        self.rateServoData.vehConfigInMsgName = self.vehConfigMsgName
         self.rateServoData.rwParamsInMsgName = self.rwConfigMsgName
-        self.rateServoData.inputRWSpeedsName = "reactionwheel_output_states"  # DynModels.rwStateEffector.OutputDataString
-        self.rateServoData.inputRateSteeringName = "rate_steering"
-        self.rateServoData.outputDataName = "controlTorqueRaw"
+        self.rateServoData.inputRWSpeedsName = self.inputRWSpeedsName
+        self.rateServoData.inputRateSteeringName = self.attRateCmdMsgName
+        self.rateServoData.outputDataName = self.attControlTorqueRaw
         self.rateServoData.Ki = 5.0
         self.rateServoData.P = 150.0
         self.rateServoData.integralLimit = 2. / self.rateServoData.Ki * 0.1
@@ -218,7 +223,7 @@ class BSKFswModels():
     def SetVehicleConfiguration(self, SimBase):
         self.vehicleData.ISCPntB_B = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
         self.vehicleData.CoM_B = [0.0, 0.0, 1.0]
-        self.vehicleData.outputPropsName = "adcs_config_data"
+        self.vehicleData.outputPropsName = self.vehConfigMsgName
 
     def SetRWConfigMsg(self, SimBase):
         # Configure RW pyramid exactly as it is in the Dynamics (i.e. FSW with perfect knowledge)
@@ -244,8 +249,8 @@ class BSKFswModels():
             , 0.0, 0.0, 1.0
         ]
         self.rwMotorTorqueData.controlAxes_B = controlAxes_B
-        self.rwMotorTorqueData.inputVehControlName = "controlTorqueRaw" # message from your control law
-        self.rwMotorTorqueData.outputDataName = "reactionwheel_cmds"#"reactionwheel_cmds_raw"
+        self.rwMotorTorqueData.inputVehControlName = self.attControlTorqueRaw
+        self.rwMotorTorqueData.outputDataName = self.rwCmdMsgName
         self.rwMotorTorqueData.rwParamsInMsgName = self.rwConfigMsgName
 
     # Global call to initialize every module
