@@ -23,6 +23,9 @@ from Basilisk.utilities import macros as mc
 from Basilisk.utilities import unitTestSupport as sp
 from Basilisk.simulation import (spacecraftPlus, gravityEffector, extForceTorque, simple_nav, spice_interface,
                                  reactionWheelStateEffector)
+from Basilisk.utilities import simIncludeRW
+from Basilisk.utilities import RigidBodyKinematics as rbk
+
 
 
 class BSKDynamicModels():
@@ -68,7 +71,6 @@ class BSKDynamicModels():
 
     def SetSpacecraftDynObject(self):
         self.scObject.addDynamicEffector(self.extForceTorqueObject)
-        self.scObject.addStateEffector(self.rwStateEffector)
         self.scObject.scStateOutMsgName = "inertial_state_output"
 
 
@@ -95,61 +97,31 @@ class BSKDynamicModels():
         self.simpleNavObject.ModelTag = "SimpleNavigation"
 
     def SetReactionWheelDynEffector(self):
-        self.rwStateEffector.ModelTag = "RWStateEffector"
-        self.rwStateEffector.InputCmds = "reactionwheel_cmds"
-        # Define common parameters for the wheels if non-zero
-        rwMaxTorque = 0.2
-        rwMinTorque = 0.004  # verbal spec for min-torque from HI
-        rwStaticFrictionTorque = 0.0005  # arbitrary
-        rwStaticImbalance = 8.5E-6  # kg-m, Honeywell HR-16 100 Nms standard balance option EOL
-        rwDynamicImbalance = 28.3E-7  # kg-m^2, Honeywell HR-16 100 Nms standard balance option EOL
-        rwJs = 1.0 / (6000.0 * math.pi * 2.0) #  spinning axis inertia
+        # Make a fresh RW factory instance, this is critical to run multiple times
+        rwFactory = simIncludeRW.rwFactory()
+
+        # specify RW momentum capacity
+        maxRWMomentum = 50. # Nms
+
         # Define orthogonal RW pyramid
         # -- Pointing directions
-        rwElAngle = 40.0 * math.pi / 180.0
-        rwClockAngle = 45.0 * math.pi / 180.0
-        RWGsList = []
-        RWGsList.append([math.sin(rwElAngle) * math.sin(rwClockAngle), math.sin(rwElAngle) * math.cos(rwClockAngle),
-                         -math.cos(rwElAngle)])
-        rwClockAngle += 180.0 * math.pi / 180.0
-        RWGsList.append([math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
-                         math.cos(rwElAngle)])
-        rwClockAngle += 90.0 * math.pi / 180.0
-        RWGsList.append([math.sin(rwElAngle) * math.sin(rwClockAngle), math.sin(rwElAngle) * math.cos(rwClockAngle),
-                         -math.cos(rwElAngle)])
-        rwClockAngle -= 1800.0 * math.pi / 180.0
-        RWGsList.append([math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
-                         math.cos(rwElAngle)])
-        # -- Wheel locations
-        r_BList = [[0.8, 0.8, 1.79070],
-                   [0.8, -0.8, 1.79070],
-                   [-0.8, -0.8, 1.79070],
-                   [-0.8, 0.8, 1.79070]]
-        # Instantiate the RW State Effectors with the parameters defined previously
-        for i in range(len(RWGsList)):
-            RW = reactionWheelStateEffector.RWConfigSimMsg()
-            RW.Js = rwJs
-            RW.Jt = 0.5 * RW.Js
-            RW.Jg = RW.Jt
-            RW.U_s = rwStaticImbalance
-            RW.U_d = rwDynamicImbalance
-            RW.gsHat_B = np.array(RWGsList[i]).reshape(3, 1).tolist()
-            w2Hat0_B = np.cross(RWGsList[i], [1, 0, 0])
-            norm = np.linalg.norm(w2Hat0_B)
-            if norm < 0.01:
-                print "ERROR: Your spin-axis orthogonal vector is no-good!  Please re-do RWA ICs!!!"
-            w2Hat0_B = w2Hat0_B / norm
-            w3Hat0_B = np.cross(RWGsList[i], w2Hat0_B)
-            w3Hat0_B /= np.linalg.norm(w3Hat0_B)
-            RW.w2Hat0_B = w2Hat0_B.reshape(3, 1).tolist()
-            RW.w3Hat0_B = w3Hat0_B.reshape(3, 1).tolist()
-            RW.rWB_B = np.array(r_BList[i]).reshape(3, 1).tolist()
-            RW.Omega = 0.0
-            RW.theta = 0.0
-            RW.u_f = rwStaticFrictionTorque
-            RW.u_max = rwMaxTorque
-            RW.u_min = rwMinTorque
-            self.rwStateEffector.addReactionWheel(RW)
+        rwElAngle = np.array([40.0, 40.0, 40.0, 40.0])*mc.D2R
+        rwAzimuthAngle = np.array([45.0, 135.0, 225.0, 315.0])*mc.D2R
+        rwPosVector = [[0.8, 0.8, 1.79070],
+                       [0.8, -0.8, 1.79070],
+                       [-0.8, -0.8, 1.79070],
+                       [-0.8, 0.8, 1.79070]
+                       ]
+
+        for elAngle, azAngle, posVector in zip(rwElAngle, rwAzimuthAngle, rwPosVector):
+            gsHat = (rbk.Mi(-azAngle,3).dot(rbk.Mi(elAngle,2))).dot(np.array([1,0,0]))
+            rwFactory.create('Honeywell_HR16', gsHat,
+                             maxMomentum=maxRWMomentum, rWB_B=posVector)
+
+
+        self.rwStateEffector.InputCmds = "reactionwheel_cmds"
+        rwFactory.addToSpacecraft("RWStateEffector", self.rwStateEffector, self.scObject)
+
 
     def SetSpiceData(self, SimBase):
         ephemerisMessageName = self.earthGravBody.bodyInMsgName
