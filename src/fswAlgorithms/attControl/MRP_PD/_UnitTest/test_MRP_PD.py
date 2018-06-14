@@ -108,7 +108,7 @@ def mrp_PD_tracking(show_plots):
                                           0,
                                           guidCmdData)
 
-    # vehicleConfigData Message:
+    # vehicleConfig FSW Message:
     vehicleConfigOut = MRP_PD.VehicleConfigFswMsg()
     inputMessageSize = vehicleConfigOut.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
