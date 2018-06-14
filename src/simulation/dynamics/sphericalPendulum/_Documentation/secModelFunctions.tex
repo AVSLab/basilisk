@@ -1,0 +1,19 @@
+\section{Model Functions}
+
+This module is intended to be used as a oscillating spherical pendulum attached to the spacecraft. Below is a list of functions that this model performs:
+
+\begin{itemize}
+	\item Compute it's contributions to the mass properties of the spacecraft
+	\item Provides matrix contributions for the back substitution method
+	\item Compute it's derivatives
+	\item Adds energy and momentum contributions to the spacecraft
+\end{itemize}
+
+\section{Model Assumptions and Limitations}
+Below is a summary of the assumptions/limitations:
+
+\begin{itemize}
+	\item The mass is assumed to be concentrated at the pendulum meaning that the mass is considered a point mass
+	\item The link is considered massless: the link being the length between the rotation point and the mass 
+	\item Is derived in such a manner that does not require constraints to be met
+\end{itemize}

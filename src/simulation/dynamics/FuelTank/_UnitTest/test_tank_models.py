@@ -22,12 +22,6 @@ import numpy
 import pytest
 import math
 
-
-
-
-
-
-
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
@@ -41,7 +35,6 @@ from Basilisk.utilities import simIncludeThruster
 from Basilisk.simulation import thrusterDynamicEffector
 from Basilisk.fswAlgorithms import vehicleConfigData
 from Basilisk.simulation import fuelTank
-from Basilisk.simulation import fuelSloshParticle
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))

@@ -83,13 +83,7 @@ Three tests are run controlled through a single test parameter called {\tt integ
 \section{Test Results}
 All integration checks within the integrated test {\tt scenarios/test\_scenarioIntegrators.py} passed.  Table~\ref{tbl:intResults} shows the test results, while Figure~\ref{fig:intResultsPython} shows the resulting trajectories for each integration test.
 
-\begin{figure}[t]
-	\centerline{
-		\includegraphics[]{../../../../tests/scenarios/_Documentation/AutoTex/scenarioIntegrators}
-	}
-	\caption{Illustration of the BSK integrated trajectories.}
-	\label{fig:intResultsPython}
-\end{figure}
+\input{AutoTeX/scenarioIntegrators.tex}
 
 \begin{table}[h]
 	\caption{Integration test results.}
@@ -100,17 +94,17 @@ All integration checks within the integrated test {\tt scenarios/test\_scenarioI
 		\textbf{Test} 			& \textbf{Pass/Fail} 	 & \textbf{BSK Error Notes}
 		\\ \hline
 		``rk4"		  	&
-		\input{../../../../tests/scenarios/_Documentation/AutoTex/scenarioIntegratorsTestMsg-rk4}      	  &
-		\input{../../../../tests/scenarios/_Documentation/AutoTex/scenarioIntegratorsMsg-rk4}
+		\input{AutoTex/IntegratorsTestMsg-rk4}      	  &
+		\input{AutoTex/IntegratorsMsg-rk4}
 		\\ \hline
 		``euler''	   	           	&
-		\input{../../../../tests/scenarios/_Documentation/AutoTex/scenarioIntegratorsTestMsg-euler}           		&      
-		\input{../../../../tests/scenarios/_Documentation/AutoTex/scenarioIntegratorsMsg-euler}  
+		\input{AutoTex/IntegratorsTestMsg-euler}           		&      
+		\input{AutoTex/IntegratorsMsg-euler}  
 		\\ \hline
 		``rk2''      	&
-		\input{../../../../tests/scenarios/_Documentation/AutoTex/scenarioIntegratorsTestMsg-rk2}
+		\input{AutoTex/IntegratorsTestMsg-rk2}
 		&
-		\input{../../../../tests/scenarios/_Documentation/AutoTex/scenarioIntegratorsMsg-rk2}
+		\input{AutoTex/IntegratorsMsg-rk2}
 		\\
 		\hline\hline
 	\end{tabular}

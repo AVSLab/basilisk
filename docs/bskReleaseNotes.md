@@ -9,6 +9,43 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 * GPU based methods to evaluate solar radiation pressure forces and torques
 * atmospheric drag evaluation using multi-faceted spacecraft model
 
+## Version 0.X.X (upcoming release)
+<uL>
+    <li>
+    Updated cssWlsEst() module to also compute a partial angular velocity vector.
+    </li>
+</ul>
+
+## Version 0.2.3 (June 12, 2018)
+<ul>
+    <li>Improved how the `fuelSloshSpringMassDamper` effector class works.  It is now renamed to `LinearSpringMassDamper`.  It can be used to simulate both fuel sloshing, but also structural modes.  If the `LinearSpringMassDamper` is connected to a fuel tank, then it's mass depends on the amount of fuel left. The associated unit test illustrated how to setup this last capability.  The module also contains documentation on the associated math.
+    </li>
+    <li>A new `SphericalPendulum` effector class has been added.  For rotations a spherical pendulum is a better approximation rotational fuel slosh.  This effector can model rotational fuel slosh if connected to a tank (see unit test again), or it can model a torsional structural mode if not connected to a tank. Associated math documentation is included with the class.
+    </li>
+    <li>The booleans useTranslation and useRotation have been removed from the `HubEffector()` class. The defaults in hubEffector for mass properties: `mHub = 1`, `IHubPntBc_B = diag`(1), and `r_BcB_B = zeros(3)`, enable us to evaluate the same code no matter if the desire is only to have translational states, only rotational states, or both. This allows for less logic in hubEffector and removes possibility of fringe cases that result in unexpected results from a developer standpoint. The fix for if your python script is not working related to this change:
+    <ul>
+    <li>FIX: Remove any instances of useTranslation or useRotation defined in the hubEffector class.</li>
+    </ul>
+    <li>Changed name of the method `computeBodyForceTorque` to `computeForceTorque` in the `dynamicEffector` abstract class and any inheriting classes. This avoids the confusion of thinking that only body frame relative forces can be defined, but in reality this class gives the ability to define both external forces defined in the body frame and the inertial frame.
+    </li>
+    <li>
+    Fixed an issue in `RadiationPressure` where the cannonball model was not computed in the proper frame.  An integrated test has been added, and the unit test is updated.  Note that the `RadiationPressure` model specification has changes slightly.  The default model is still the cannonball model.  To specify another model, the python methods `setUseCannonballModel()` or `setUseFacetedCPUModel()` are used.  Note that these take no argument anymore.
+    <ul>
+        <li>FIX: remove the argument from `setUseCannonballModel(true)` and use the methods `setUseCannonballModel()` or `setUseFacetedCPUModel()` without any arguments instead.</li>
+    </ul>
+    </li>
+</ul>
+
+## Version 0.2.2 (May 14, 2018)
+<ul>
+    <li>Fixed a build issues on the Windows platform is Visual Studio 2017 or later is used.</li>
+    <li>Unified the Coarse Sun Sensor (CSS) sun heading filtering modules to use the same I/O messages.  All used messages are now in the fswMessage folder.</li>
+    <li>Made the CSS sun heading filter messages consistently use the CBias value.  This allows particular sensors to have an indiviual (known) scaling coorection factor.  For example, if the return of one sensor is 10% stronger then that of the other sensors, then CBias is set to 1.10.  Default value is 1.0 assuming all CSS units have the same gain.</li>
+    <li>The `src\tests\bskSimScenarios` folder now functions properly with the `bskSim` spacecraft class.</li>
+    <li>The tutorial scripts in `src\tests\scenarios` are now simplified to pull out the unit testing functionality.  The unit testing is now down with the `test_XXX.py` scripts inside the `src\tests\testScripts` folder.</li>
+    <li>The `bskSim` tutorial files are now tested through pytest as well.  The file `testScripts\bskTestScript.py` calls all the `bskSim` tutorial fails and ensures they run without error.</li>
+</ul>
+
 ## Version 0.2.1
 <ul>
     <li>Added messages for current fuel tank mass, fuel tank mDot, and thruster force and torque</li>

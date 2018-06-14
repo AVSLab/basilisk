@@ -184,6 +184,7 @@ def sunline_individual_test():
     cssCos = [np.cos(np.deg2rad(10.)), np.cos(np.deg2rad(25.)), np.cos(np.deg2rad(5.)), np.cos(np.deg2rad(90.))]
     sensorTresh = np.cos(np.deg2rad(50.))
     cssNormals = [1.,0.,0.,0.,1.,0., 0.,0.,1., 1./np.sqrt(2), 1./np.sqrt(2),0.]
+    cssBias = [1.0 for i in range(numCSS)]
 
     measMat = sunlineEKF.new_doubleArray(8*6)
     obs = sunlineEKF.new_doubleArray(8)
@@ -196,7 +197,7 @@ def sunline_individual_test():
         sunlineEKF.doubleArray_setitem(obs, i, 0.0)
         sunlineEKF.doubleArray_setitem(yMeas, i, 0.0)
 
-    sunlineEKF.sunlineHMatrixYMeas(inputStates, numCSS, cssCos, sensorTresh, cssNormals, obs, yMeas, numObs, measMat)
+    sunlineEKF.sunlineHMatrixYMeas(inputStates, numCSS, cssCos, sensorTresh, cssNormals, cssBias, obs, yMeas, numObs, measMat)
 
     obsOut = []
     yMeasOut = []
@@ -642,14 +643,18 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         [-0.70710678118654746, 0, -0.70710678118654757],
         [-0.70710678118654746, -0.70710678118654757, 0.0],
     ]
+    CSSBias = [1 for i in range(len(CSSOrientationList))]
+
     totalCSSList = []
     # Initializing a 2D double array is hard with SWIG.  That's why there is this
     # layer between the above list and the actual C variables.
+    i = 0
     for CSSHat in CSSOrientationList:
         newCSS = fswMessages.CSSUnitConfigFswMsg()
-        newCSS.CBias = 1.0
+        newCSS.CBias = CSSBias[i]
         newCSS.nHat_B = CSSHat
         totalCSSList.append(newCSS)
+        i = i+1
     cssConstelation.nCSS = len(CSSOrientationList)
     cssConstelation.cssVals = totalCSSList
     msgSize = cssConstelation.getStructSize()
@@ -725,7 +730,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         Htest[i,0] = stateLog[i,0]
         PostFitRes[i, 0] = stateLog[i, 0]
 
-        sunlineEKF.sunlineHMatrixYMeas(stateLog[i-1,1:7].tolist(), 8, dotList, threshold, CSSnormals, obs, yMeas, numObs, measMat)
+        sunlineEKF.sunlineHMatrixYMeas(stateLog[i-1,1:7].tolist(), 8, dotList, threshold, CSSnormals, CSSBias, obs, yMeas, numObs, measMat)
         yMeasOut = []
         HOut = []
         for j in range(8*6):
@@ -800,7 +805,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         Htest[i-SimHalfLength,0] = stateLog[i,0]
         PostFitRes[i, 0] = stateLog[i, 0]
 
-        sunlineEKF.sunlineHMatrixYMeas(stateLog[i-1,1:7].tolist(), 8, dotList, threshold, CSSnormals, obs, yMeas, numObs, measMat)
+        sunlineEKF.sunlineHMatrixYMeas(stateLog[i-1,1:7].tolist(), 8, dotList, threshold, CSSnormals, CSSBias, obs, yMeas, numObs, measMat)
         yMeasOut = []
         HOut = []
         for j in range(8*6):

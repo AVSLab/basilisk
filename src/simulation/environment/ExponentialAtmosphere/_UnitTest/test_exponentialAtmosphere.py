@@ -131,8 +131,6 @@ def run(show_plots, orbitCase, planetCase):
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
-    scObject.hub.useTranslation = True
-    scObject.hub.useRotation = False
     #scObject.addDynamicEffector(dragEffector)
 
     # add spacecraftPlus object to the simulation process

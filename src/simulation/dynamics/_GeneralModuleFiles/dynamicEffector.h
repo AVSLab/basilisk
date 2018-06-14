@@ -31,7 +31,7 @@ public:
     virtual ~DynamicEffector();             //!< -- Destructor
     virtual void computeStateContribution(double integTime); 
     virtual void linkInStates(DynParamManager& states) = 0;  //!< -- Method to get access to other states/stateEffectors
-    virtual void computeBodyForceTorque(double integTime) = 0;  //!< -- Method to computeForce and torque on the body
+    virtual void computeForceTorque(double integTime) = 0;  //!< -- Method to computeForce and torque on the body
     
 public:
     Eigen::VectorXd stateDerivContribution; //!< -- DynamicEffectors contribution to a stateEffector

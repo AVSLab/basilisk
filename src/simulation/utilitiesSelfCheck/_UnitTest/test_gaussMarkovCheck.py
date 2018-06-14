@@ -35,11 +35,11 @@ from Basilisk.utilities import unitTestSupport
 # provide a unique test method name, starting with test_
 def test_unitGausMarkov(testName):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitGausMarkovSelfCheck(testName)
+    [testResults, testMessage] = unitGaussMarkovSelfCheck(testName)
     assert testResults < 1, testMessage
 
 
-def unitGausMarkovSelfCheck(testName):
+def unitGaussMarkovSelfCheck(testName):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
@@ -78,6 +78,6 @@ def unitGausMarkovSelfCheck(testName):
 # stand-along python script
 #
 if __name__ == "__main__":
-    unitGausMarkovSelfCheck(
+    unitGaussMarkovSelfCheck(
         "testGaussMarkov"
     )

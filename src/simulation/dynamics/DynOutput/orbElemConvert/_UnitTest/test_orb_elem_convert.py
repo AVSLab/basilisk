@@ -18,8 +18,11 @@
 
 '''
 import pytest
-import sys, os, inspect
-
+import os
+import inspect
+import matplotlib.pyplot as plt
+import math
+import numpy
 #
 # orb_elem_convert Unit Test
 #
@@ -34,19 +37,10 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('simulation')
 
-
-
 # @cond DOXYGEN_IGNORE
-import datetime
-from Basilisk.utilities import MessagingAccess
 from Basilisk.utilities import SimulationBaseClass
-import numpy
 from Basilisk.simulation import orb_elem_convert
-import ctypes
 from Basilisk.utilities import macros
-import matplotlib.pyplot as plt
-import math
-from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import unitTestSupport
 # @endcond

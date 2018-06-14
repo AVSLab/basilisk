@@ -95,14 +95,9 @@ def AddSpacecraftToModel(atmoModel):
     # create the dynamics task and specify the integration update time
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
-    scObject.hub.useTranslation = True
-    scObject.hub.useRotation = False
 
     scObject2 = spacecraftPlus.SpacecraftPlus()
     scObject2.ModelTag = "spacecraftBody"
-    scObject2.hub.useTranslation = True
-    scObject2.hub.useRotation = False
-
     # add spacecraftPlus object to the simulation process
     atmoModel.addSpacecraftToModel(scObject.scStateOutMsgName)
     atmoModel.addSpacecraftToModel(scObject2.scStateOutMsgName)
