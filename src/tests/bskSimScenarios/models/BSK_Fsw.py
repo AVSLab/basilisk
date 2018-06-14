@@ -74,6 +74,10 @@ class BSKFswModels():
         self.rwMotorTorqueWrap = SimBase.setModelDataWrap(self.rwMotorTorqueData)
         self.rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
 
+        # setup FSW Message names
+        self.rwConfigMsgName = "rwa_config_data"
+
+
         # Initialize all modules
         self.InitAllFSWObjects(SimBase)
 
@@ -186,7 +190,7 @@ class BSKFswModels():
 
         self.mrpFeedbackRWsData.vehConfigInMsgName = "adcs_config_data"
         self.mrpFeedbackRWsData.inputRWSpeedsName = "reactionwheel_output_states" # DynModels.rwStateEffector.OutputDataString
-        self.mrpFeedbackRWsData.rwParamsInMsgName = "rwa_config_data"
+        self.mrpFeedbackRWsData.rwParamsInMsgName = self.rwConfigMsgName
         self.mrpFeedbackRWsData.inputGuidName = "guidanceOut"
         self.mrpFeedbackRWsData.outputDataName = "controlTorqueRaw"
 
@@ -201,7 +205,7 @@ class BSKFswModels():
     def SetRateServo(self):
         self.rateServoData.inputGuidName = "guidanceOut"
         self.rateServoData.vehConfigInMsgName = "adcs_config_data"
-        self.rateServoData.rwParamsInMsgName = "rwa_config_data"
+        self.rateServoData.rwParamsInMsgName = self.rwConfigMsgName
         self.rateServoData.inputRWSpeedsName = "reactionwheel_output_states"  # DynModels.rwStateEffector.OutputDataString
         self.rateServoData.inputRateSteeringName = "rate_steering"
         self.rateServoData.outputDataName = "controlTorqueRaw"
@@ -230,7 +234,6 @@ class BSKFswModels():
                               wheelJs,  # kg*m^2
                               0.2)  # Nm        uMax
 
-        self.rwConfigMsgName = "rwa_config_data"
         fswSetupRW.writeConfigMessage(self.rwConfigMsgName, SimBase.TotalSim, SimBase.FSWProcessName)
 
 
@@ -243,7 +246,7 @@ class BSKFswModels():
         self.rwMotorTorqueData.controlAxes_B = controlAxes_B
         self.rwMotorTorqueData.inputVehControlName = "controlTorqueRaw" # message from your control law
         self.rwMotorTorqueData.outputDataName = "reactionwheel_cmds"#"reactionwheel_cmds_raw"
-        self.rwMotorTorqueData.rwParamsInMsgName = "rwa_config_data"
+        self.rwMotorTorqueData.rwParamsInMsgName = self.rwConfigMsgName
 
     # Global call to initialize every module
     def InitAllFSWObjects(self, SimBase):
