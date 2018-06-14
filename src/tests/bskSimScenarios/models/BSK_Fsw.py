@@ -19,12 +19,13 @@
 '''
 import math
 from Basilisk.utilities import macros as mc
-from Basilisk.fswAlgorithms import (vehicleConfigData, hillPoint, inertial3D, attTrackingError, MRP_Feedback,
+from Basilisk.fswAlgorithms import (hillPoint, inertial3D, attTrackingError, MRP_Feedback,
                                     rwMotorTorque, fswMessages,
                                     velocityPoint, MRP_Steering, rateServoFullNonlinear)
 import numpy as np
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import fswSetupRW
+from Basilisk.utilities import unitTestSupport
 
 
 class BSKFswModels():
@@ -34,10 +35,6 @@ class BSKFswModels():
         self.processTasksTimeStep = mc.sec2nano(0.1)  # 0.5
 
         # Create module data and module wraps
-        self.vehicleData = vehicleConfigData.VehConfigInputData()
-        self.vehicleWrap = SimBase.setModelDataWrap(self.vehicleData)
-        self.vehicleWrap.ModelTag = "vehicleConfiguration"
-
         self.inertial3DData = inertial3D.inertial3DConfig()
         self.inertial3DWrap = SimBase.setModelDataWrap(self.inertial3DData)
         self.inertial3DWrap.ModelTag = "inertial3D"
@@ -87,7 +84,6 @@ class BSKFswModels():
         self.InitAllFSWObjects(SimBase)
 
         # Create tasks
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("initOnlyTask", int(1E10)), 1)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("inertial3DPointTask", self.processTasksTimeStep), 20)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("hillPointTask", self.processTasksTimeStep), 20)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("velocityPointTask", self.processTasksTimeStep), 20)
@@ -96,8 +92,6 @@ class BSKFswModels():
         SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackRWsTask", self.processTasksTimeStep), 10)
 
         # Assign initialized modules to tasks
-        SimBase.AddModelToTask("initOnlyTask", self.vehicleWrap, self.vehicleData, 2)
-
         SimBase.AddModelToTask("inertial3DPointTask", self.inertial3DWrap, self.inertial3DData, 10)
         SimBase.AddModelToTask("inertial3DPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
 
@@ -221,13 +215,16 @@ class BSKFswModels():
 
 
     def SetVehicleConfiguration(self, SimBase):
-        self.vehicleData.ISCPntB_B = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
-        self.vehicleData.CoM_B = [0.0, 0.0, 1.0]
-        self.vehicleData.outputPropsName = self.vehConfigMsgName
+        vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
+        # use the same inertia in the FSW algorithm as in the simulation
+        vehicleConfigOut.ISCPntB_B = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
+        unitTestSupport.setMessage(SimBase.TotalSim,
+                                   SimBase.FSWProcessName,
+                                   self.vehConfigMsgName,
+                                   vehicleConfigOut)
 
     def SetRWConfigMsg(self, SimBase):
         # Configure RW pyramid exactly as it is in the Dynamics (i.e. FSW with perfect knowledge)
-
         rwElAngle = np.array([40.0, 40.0, 40.0, 40.0]) * mc.D2R
         rwAzimuthAngle = np.array([45.0, 135.0, 225.0, 315.0]) * mc.D2R
         wheelJs = 50.0 / (6000.0 * math.pi * 2.0 / 60)
