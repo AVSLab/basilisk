@@ -30,7 +30,7 @@
     #include "../fswMessages/cssConfigFswMsg.h"
     #include "../fswMessages/cssUnitConfigFswMsg.h"
     #include "../fswMessages/dvBurnCmdFswMsg.h"
-    #include "../fswMessages/eulerAngleFswMsg.h"
+    #include "../fswMessages/attStateFswMsg.h"
     #include "../fswMessages/imuSensorBodyFswMsg.h"
     #include "../fswMessages/inertialFilterFswMsg.h"
     #include "../fswMessages/rwArrayConfigFswMsg.h"
@@ -69,8 +69,8 @@ GEN_SIZEOF(CSSConfigFswMsg)
 GEN_SIZEOF(CSSUnitConfigFswMsg)
 %include "../fswMessages/dvBurnCmdFswMsg.h"
 GEN_SIZEOF(DvBurnCmdFswMsg)
-%include "../fswMessages/eulerAngleFswMsg.h"
-GEN_SIZEOF(EulerAngleFswMsg)
+%include "../fswMessages/attStateFswMsg.h"
+GEN_SIZEOF(AttStateFswMsg)
 %include "../fswMessages/imuSensorBodyFswMsg.h"
 GEN_SIZEOF(IMUSensorBodyFswMsg)
 %include "../fswMessages/inertialFilterFswMsg.h"

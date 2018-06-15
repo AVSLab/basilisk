@@ -124,7 +124,7 @@ def subModuleTestFunction(show_plots):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(mc.sec2nano(1.))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(mc.sec2nano(1.5))        # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
@@ -140,6 +140,7 @@ def subModuleTestFunction(show_plots):
     print '\n sigma RN = ', moduleOutput[:, 1:]
     # set the filtered output truth states
     trueVector = [
+               [0.1, 0.2, 0.3],
                [0.1, 0.2, 0.3],
                [0.103643374814, 0.199258235068, 0.299694567381],
                [0.10728593457, 0.198511279747, 0.299381655572]
@@ -168,6 +169,7 @@ def subModuleTestFunction(show_plots):
     trueVector = [
         [0.02142849611, 0.01021197571, -0.011041933756],
         [0.02142849611, 0.01021197571, -0.011041933756],
+        [0.02142849611, 0.01021197571, -0.011041933756],
         [0.021428270863,  0.010212299678, -0.011042071256]
     ]
     # compare the module results to the truth values
@@ -191,6 +193,7 @@ def subModuleTestFunction(show_plots):
 
     # set the filtered output truth states
     trueVector = [
+               [0.0, 0.0, 0.0],
                [0.0, 0.0, 0.0],
                [0.0, 0.0, 0.0],
                [0.0, 0.0, 0.0]

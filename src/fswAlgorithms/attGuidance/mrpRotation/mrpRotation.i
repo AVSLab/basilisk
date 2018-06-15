@@ -16,15 +16,31 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
+%module mrpRotation
+%{
+   #include "mrpRotation.h"
+%}
 
-#ifndef EULER_ANGLE_MESSAGE_H
-#define EULER_ANGLE_MESSAGE_H
+%include "swig_conly_data.i"
 
-/*! @brief Structure used to define the output euler set for attitude reference generation */
-typedef struct {
-    double set[3];          /*!< [rad] or [rad/sec]  Euler angle set values */
-}EulerAngleFswMsg;
+%constant void Update_mrpRotation(void*, uint64_t, uint64_t);
+%ignore Update_mrpRotation;
+%constant void SelfInit_mrpRotation(void*, uint64_t);
+%ignore SelfInit_mrpRotation;
+%constant void CrossInit_mrpRotation(void*, uint64_t);
+%ignore CrossInit_mrpRotation;
+%constant void Reset_mrpRotation(void*, uint64_t, uint64_t);
+%ignore Reset_mrpRotation;
+GEN_SIZEOF(mrpRotationConfig);
+GEN_SIZEOF(AttRefFswMsg);
+GEN_SIZEOF(AttStateFswMsg);
+%include "mrpRotation.h"
 
+// supportfile to be included in this sub-module
+%include "../../fswMessages/attRefFswMsg.h"
+%include "../../fswMessages/attStateFswMsg.h"
 
-
-#endif
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}

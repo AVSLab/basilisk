@@ -42,14 +42,10 @@
 void SelfInit_rasterManager(rasterManagerConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Create output message for module */
-    ConfigData->outputEulerSetID = CreateNewMessage(ConfigData->outputEulerSetName,
-                                                 sizeof(EulerAngleFswMsg),
-                                                 "EulerAngleFswMsg",
+    ConfigData->AttStateOutMsgID = CreateNewMessage(ConfigData->AttStateOutMsgName,
+                                                 sizeof(AttStateFswMsg),
+                                                 "AttStateFswMsg",
                                                  moduleID);
-    ConfigData->outputEulerRatesID = CreateNewMessage(ConfigData->outputEulerRatesName,
-                                                    sizeof(EulerAngleFswMsg),
-                                                    "EulerAngleFswMsg",
-                                                    moduleID);
     ConfigData->mnvrActive = 0;
     ConfigData->scanSelector = 0;
     
@@ -79,25 +75,23 @@ void Update_rasterManager(rasterManagerConfig *ConfigData, uint64_t callTime, ui
     currentMnvrTime = (callTime - ConfigData->mnvrStartTime) * 1E-9;
     if (currentMnvrTime < ConfigData->rasterTimes[ConfigData->scanSelector])
     {
-        v3Copy(&ConfigData->scanningAngles[3 * ConfigData->scanSelector], ConfigData->outputAngleSet.set);
-        v3Copy(&ConfigData->scanningRates[3 * ConfigData->scanSelector], ConfigData->outputAngleRates.set);
+        v3Copy(&ConfigData->scanningAngles[3 * ConfigData->scanSelector], ConfigData->attOutSet.state);
+        v3Copy(&ConfigData->scanningRates[3 * ConfigData->scanSelector], ConfigData->attOutSet.rate);
     } else {
         ConfigData->mnvrActive = 0.0;
         ConfigData->scanSelector += 1;
         BSK_PRINT(MSG_INFORMATION,"Raster: %i. AngleSet = [%f, %f, %f], RateSet = [%f, %f, %f] \n", ConfigData->scanSelector,
-               ConfigData->outputAngleSet.set[0],
-               ConfigData->outputAngleSet.set[1],
-               ConfigData->outputAngleSet.set[2],
-               ConfigData->outputAngleRates.set[0],
-               ConfigData->outputAngleRates.set[1],
-               ConfigData->outputAngleRates.set[2]);
+               ConfigData->attOutSet.state[0],
+               ConfigData->attOutSet.state[1],
+               ConfigData->attOutSet.state[2],
+               ConfigData->attOutSet.rate[0],
+               ConfigData->attOutSet.rate[1],
+               ConfigData->attOutSet.rate[2]);
     }
     
     
-    WriteMessage(ConfigData->outputEulerSetID, callTime, sizeof(EulerAngleFswMsg),
-                 (void*) &(ConfigData->outputAngleSet), moduleID);
-    WriteMessage(ConfigData->outputEulerRatesID, callTime, sizeof(EulerAngleFswMsg),
-                 (void*) &(ConfigData->outputAngleRates), moduleID);
+    WriteMessage(ConfigData->AttStateOutMsgID, callTime, sizeof(AttStateFswMsg),
+                 (void*) &(ConfigData->attOutSet), moduleID);
     return;
 }
 
