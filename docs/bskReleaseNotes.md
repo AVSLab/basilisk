@@ -17,6 +17,9 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>
     New FSW Guidance module `mrpRotation()` to perform a constant body rate rotation.  The initial attitude is specified through a MRP set.
     </li>
+    <li>
+    Enhanced Linux installation instructions
+    </li>
 </ul>
 
 ## Version 0.2.3 (June 12, 2018)
