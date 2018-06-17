@@ -142,10 +142,13 @@ void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
           ConfigData->sBar);
     ConfigData->badUpdate += ukfCholDecomp(ConfigData->sBar, ConfigData->numStates,
                   ConfigData->numStates, tempMatrix);
-    mCopy(tempMatrix, ConfigData->numStates, ConfigData->numStates,
-          ConfigData->sBar);
+    if (ConfigData->badUpdate<0){return;}
     ConfigData->badUpdate += ukfCholDecomp(ConfigData->qNoise, ConfigData->numStates,
                   ConfigData->numStates, ConfigData->sQnoise);
+    if (ConfigData->badUpdate<0){return;}
+
+    mCopy(tempMatrix, ConfigData->numStates, ConfigData->numStates,
+          ConfigData->sBar);
     mTranspose(ConfigData->sQnoise, ConfigData->numStates,
                ConfigData->numStates, ConfigData->sQnoise);
     
@@ -455,7 +458,7 @@ void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime)
              &(ConfigData->SP[(i+1)*ConfigData->numStates]), aRow);
         if (ConfigData->wC[i+1]<0){
             ConfigData->badUpdate += 1;
-            break;
+            return;
         }
         else{
         vScale(sqrt(ConfigData->wC[i+1]), aRow, ConfigData->numStates, aRow);
@@ -475,6 +478,7 @@ void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime)
     /*! - QR decomposition (only R computed!) of the AT matrix provides the new sBar matrix*/
     ConfigData->badUpdate += ukfQRDJustR(AT, 2 * ConfigData->countHalfSPs + ConfigData->numStates,
                 ConfigData->countHalfSPs, rAT);
+    if (ConfigData->badUpdate<0){return;}
     mCopy(rAT, ConfigData->numStates, ConfigData->numStates, sBarT);
     mTranspose(sBarT, ConfigData->numStates, ConfigData->numStates,
         ConfigData->sBar);
@@ -485,6 +489,8 @@ void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime)
     vAdd(xErr, ConfigData->numStates, &ConfigData->SP[0], xErr);
     ConfigData->badUpdate += ukfCholDownDate(ConfigData->sBar, xErr, ConfigData->wC[0],
         ConfigData->numStates, sBarUp);
+    if (ConfigData->badUpdate<0){return;}
+
     
     /*! - Save current sBar matrix, covariance, and state estimate off for further use*/
     mCopy(sBarUp, ConfigData->numStates, ConfigData->numStates, ConfigData->sBar);
@@ -496,6 +502,7 @@ void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime)
     vCopy(&(ConfigData->SP[0]), ConfigData->numStates, ConfigData->state );
 	
 	ConfigData->timeTag = updateTime;
+    
 }
 
 /*! This method computes what the expected measurement vector is for each CSS 
@@ -665,7 +672,10 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int
         vScale(-1.0, yBar, ConfigData->numObs, tempYVec);
         vAdd(tempYVec, ConfigData->numObs,
              &(ConfigData->yMeas[(i+1)*ConfigData->numObs]), tempYVec);
-        if (ConfigData->wC[i+1]<0){ConfigData->badUpdate += 1;}
+        if (ConfigData->wC[i+1]<0){
+            ConfigData->badUpdate += 1;
+            return;
+        }
         vScale(sqrt(ConfigData->wC[i+1]), tempYVec, ConfigData->numObs, tempYVec);
         memcpy(&(AT[i*ConfigData->numObs]), tempYVec,
                ConfigData->numObs*sizeof(double));
@@ -675,12 +685,15 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int
         decomposition of the observation variance matrix constructed for our number 
         of observations*/
     ConfigData->badUpdate += ukfCholDecomp(ConfigData->STDatasStruct.STMessages[currentST].noise, ConfigData->numObs, ConfigData->numObs, qChol);
+    if (ConfigData->badUpdate<0){return;}
     memcpy(&(AT[2*ConfigData->countHalfSPs*ConfigData->numObs]),
            qChol, ConfigData->numObs*ConfigData->numObs*sizeof(double));
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the 
           current Sy matrix*/
     ConfigData->badUpdate += ukfQRDJustR(AT, 2*ConfigData->countHalfSPs+ConfigData->numObs,
                 ConfigData->numObs, rAT);
+    if (ConfigData->badUpdate<0){return;}
+
     mCopy(rAT, ConfigData->numObs, ConfigData->numObs, syT);
     mTranspose(syT, ConfigData->numObs, ConfigData->numObs, sy);
     /*! - Shift the matrix over by the difference between the 0th SP-based measurement 
@@ -689,6 +702,8 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int
     vAdd(tempYVec, ConfigData->numObs, &(ConfigData->yMeas[0]), tempYVec);
     ConfigData->badUpdate += ukfCholDownDate(sy, tempYVec, ConfigData->wC[0],
                     ConfigData->numObs, updMat);
+    if (ConfigData->badUpdate<0){return;}
+
     /*! - Shifted matrix represents the Sy matrix */
     mCopy(updMat, ConfigData->numObs, ConfigData->numObs, sy);
     mTranspose(sy, ConfigData->numObs, ConfigData->numObs, syT);
@@ -741,6 +756,7 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int
     {
         vCopy(&(pXY[i*ConfigData->numStates]), ConfigData->numStates, xHat);
         ConfigData->badUpdate += ukfCholDownDate(ConfigData->sBar, xHat, -1.0, ConfigData->numStates, sBarT);
+        if (ConfigData->badUpdate<0){return;}
         mCopy(sBarT, ConfigData->numStates, ConfigData->numStates,
             ConfigData->sBar);
     }

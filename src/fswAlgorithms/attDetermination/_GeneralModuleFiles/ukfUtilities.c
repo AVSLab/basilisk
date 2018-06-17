@@ -43,7 +43,9 @@ int ukfQRDJustR(
 			dimj = nCol * j;
 			destMat[dimi] += sourceMat[dimj + i] * sourceMat[dimj + i];
 		}
-        if (destMat[dimi]<0){return -1;}
+        if (destMat[dimi]<0){
+            BSK_PRINT(MSG_WARNING,"Invalid SQRT in UKF, skipping value.\n");
+            return -1;}
 		destMat[dimi] = sqrt(destMat[dimi]);
 		for (j = 0; j<nRow; j++)
 		{
@@ -313,7 +315,9 @@ int ukfCholDecomp(double *sourceMat, int32_t nRow, int32_t nCol,
 			}
 			if (i == j)
 			{
-                if (sigma<0){return -1;}
+                if (sigma<0){
+                    BSK_PRINT(MSG_WARNING,"Invalid SQRT in UKF, skipping value.\n");
+                    return -1;}
 				destMat[nRow * i + j] = sqrt(sigma);
 			}
 			else
@@ -322,6 +326,7 @@ int ukfCholDecomp(double *sourceMat, int32_t nRow, int32_t nCol,
 			}
 		}
 	}
+    return 0;
 }
 
 int ukfCholDownDate(double *rMat, double *xVec, double beta, int32_t nStates,
@@ -338,7 +343,9 @@ int ukfCholDownDate(double *rMat, double *xVec, double beta, int32_t nStates,
 	for (i = 0; i < nStates; i++)
 	{
         rEl2 = rMat[i*nStates+i] * rMat[i*nStates+i];
-        if (rEl2 + beta/bParam * wVec[i]*wVec[i]<0){return -1;}
+        if (rEl2 + beta/bParam * wVec[i]*wVec[i]<0){
+            BSK_PRINT(MSG_WARNING,"Invalid SQRT in UKF, skipping value.\n");
+            return -1;}
         rOut[i*nStates + i] = sqrt(rEl2 + beta/bParam * wVec[i]*wVec[i]);
         gamma = rEl2*bParam + beta * wVec[i]*wVec[i];
         for(j=i+1; j<nStates; j++)
