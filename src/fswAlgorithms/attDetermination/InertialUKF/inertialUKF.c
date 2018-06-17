@@ -396,7 +396,7 @@ void inertialStateProp(InertialUKFConfig *ConfigData, double *stateInOut, double
 */
 void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime)
 {
-	int i, Index;
+	int i, Index, k;
 	double sBarT[AKF_N_STATES*AKF_N_STATES];
 	double xComp[AKF_N_STATES], AT[(2 * AKF_N_STATES + AKF_N_STATES)*AKF_N_STATES];
 	double aRow[AKF_N_STATES], rAT[AKF_N_STATES*AKF_N_STATES], xErr[AKF_N_STATES]; 
@@ -463,7 +463,11 @@ void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime)
 			ConfigData->numStates*sizeof(double));
         }
 	}
-
+    /*! - Scale sQNoise matrix depending on the dt*/
+    for (k=0;k<3;k++){
+        procNoise[k*AKF_N_STATES+k] *= ConfigData->dt*ConfigData->dt/2;
+        procNoise[(k+3)*AKF_N_STATES+(k+3)] *= ConfigData->dt;
+    }
     /*! - Pop the sQNoise matrix on to the end of AT prior to getting QR decomposition*/
 	memcpy(&AT[2 * ConfigData->countHalfSPs*ConfigData->numStates],
 		procNoise, ConfigData->numStates*ConfigData->numStates
