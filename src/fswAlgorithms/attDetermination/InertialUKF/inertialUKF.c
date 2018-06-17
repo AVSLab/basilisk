@@ -107,6 +107,7 @@ void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     ConfigData->firstPassComplete = 0;
     ConfigData->speedDt = 0.0;
     ConfigData->timeWheelPrev = 0;
+    ConfigData->badUpdate = 0;
     
     /*! - Ensure that all internal filter matrices are zeroed*/
     vSetZero(ConfigData->obs, ConfigData->numObs);
@@ -139,11 +140,11 @@ void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
           filter at runtime*/
     mCopy(ConfigData->covar, ConfigData->numStates, ConfigData->numStates,
           ConfigData->sBar);
-    ukfCholDecomp(ConfigData->sBar, ConfigData->numStates,
+    ConfigData->badUpdate += ukfCholDecomp(ConfigData->sBar, ConfigData->numStates,
                   ConfigData->numStates, tempMatrix);
     mCopy(tempMatrix, ConfigData->numStates, ConfigData->numStates,
           ConfigData->sBar);
-    ukfCholDecomp(ConfigData->qNoise, ConfigData->numStates,
+    ConfigData->badUpdate += ukfCholDecomp(ConfigData->qNoise, ConfigData->numStates,
                   ConfigData->numStates, ConfigData->sQnoise);
     mTranspose(ConfigData->sQnoise, ConfigData->numStates,
                ConfigData->numStates, ConfigData->sQnoise);
@@ -256,12 +257,9 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
         /*! - If the star tracker has provided a new message compared to last time,
               update the filter to the new measurement*/
         trackerValid = 0;
-        if(newTimeTag > ConfigData->timeTag && ReadSize > 0)
+        if(newTimeTag >= ConfigData->timeTag && ReadSize > 0)
         {
             inertialUKFTimeUpdate(ConfigData, newTimeTag);
-        }
-        if( ConfigData->timeTag == newTimeTag && ReadSize > 0)
-        {
             inertialUKFMeasUpdate(ConfigData, newTimeTag, ConfigData->stSensorOrder[i]);
             trackerValid = 1;
         }
@@ -404,13 +402,12 @@ void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime)
 	double aRow[AKF_N_STATES], rAT[AKF_N_STATES*AKF_N_STATES], xErr[AKF_N_STATES]; 
 	double sBarUp[AKF_N_STATES*AKF_N_STATES];
 	double *spPtr;
+    double procNoise[AKF_N_STATES*AKF_N_STATES];
+    
 	/*! Begin method steps*/
 	ConfigData->dt = updateTime - ConfigData->timeTag;
     
-    if (ConfigData->dt < 1E-10){
-        return;
-    }
-    
+    mCopy(ConfigData->sQnoise, AKF_N_STATES, AKF_N_STATES, procNoise);
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
 	vCopy(ConfigData->state, ConfigData->numStates,
 		&(ConfigData->SP[0 * ConfigData->numStates + 0]));
@@ -456,16 +453,23 @@ void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime)
         vScale(-1.0, ConfigData->xBar, ConfigData->numStates, aRow);
         vAdd(aRow, ConfigData->numStates,
              &(ConfigData->SP[(i+1)*ConfigData->numStates]), aRow);
+        if (ConfigData->wC[i+1]<0){
+            ConfigData->badUpdate += 1;
+            break;
+        }
+        else{
         vScale(sqrt(ConfigData->wC[i+1]), aRow, ConfigData->numStates, aRow);
 		memcpy((void *)&AT[i*ConfigData->numStates], (void *)aRow,
 			ConfigData->numStates*sizeof(double));
+        }
 	}
+
     /*! - Pop the sQNoise matrix on to the end of AT prior to getting QR decomposition*/
 	memcpy(&AT[2 * ConfigData->countHalfSPs*ConfigData->numStates],
-		ConfigData->sQnoise, ConfigData->numStates*ConfigData->numStates
+		procNoise, ConfigData->numStates*ConfigData->numStates
         *sizeof(double));
     /*! - QR decomposition (only R computed!) of the AT matrix provides the new sBar matrix*/
-    ukfQRDJustR(AT, 2 * ConfigData->countHalfSPs + ConfigData->numStates,
+    ConfigData->badUpdate += ukfQRDJustR(AT, 2 * ConfigData->countHalfSPs + ConfigData->numStates,
                 ConfigData->countHalfSPs, rAT);
     mCopy(rAT, ConfigData->numStates, ConfigData->numStates, sBarT);
     mTranspose(sBarT, ConfigData->numStates, ConfigData->numStates,
@@ -475,7 +479,7 @@ void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime)
           like in equation 21 in design document.*/
     vScale(-1.0, ConfigData->xBar, ConfigData->numStates, xErr);
     vAdd(xErr, ConfigData->numStates, &ConfigData->SP[0], xErr);
-    ukfCholDownDate(ConfigData->sBar, xErr, ConfigData->wC[0],
+    ConfigData->badUpdate += ukfCholDownDate(ConfigData->sBar, xErr, ConfigData->wC[0],
         ConfigData->numStates, sBarUp);
     
     /*! - Save current sBar matrix, covariance, and state estimate off for further use*/
@@ -657,6 +661,7 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int
         vScale(-1.0, yBar, ConfigData->numObs, tempYVec);
         vAdd(tempYVec, ConfigData->numObs,
              &(ConfigData->yMeas[(i+1)*ConfigData->numObs]), tempYVec);
+        if (ConfigData->wC[i+1]<0){ConfigData->badUpdate += 1;}
         vScale(sqrt(ConfigData->wC[i+1]), tempYVec, ConfigData->numObs, tempYVec);
         memcpy(&(AT[i*ConfigData->numObs]), tempYVec,
                ConfigData->numObs*sizeof(double));
@@ -665,12 +670,12 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int
     /*! - This is the square-root of the Rk matrix which we treat as the Cholesky
         decomposition of the observation variance matrix constructed for our number 
         of observations*/
-    ukfCholDecomp(ConfigData->STDatasStruct.STMessages[currentST].noise, ConfigData->numObs, ConfigData->numObs, qChol);
+    ConfigData->badUpdate += ukfCholDecomp(ConfigData->STDatasStruct.STMessages[currentST].noise, ConfigData->numObs, ConfigData->numObs, qChol);
     memcpy(&(AT[2*ConfigData->countHalfSPs*ConfigData->numObs]),
            qChol, ConfigData->numObs*ConfigData->numObs*sizeof(double));
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the 
           current Sy matrix*/
-    ukfQRDJustR(AT, 2*ConfigData->countHalfSPs+ConfigData->numObs,
+    ConfigData->badUpdate += ukfQRDJustR(AT, 2*ConfigData->countHalfSPs+ConfigData->numObs,
                 ConfigData->numObs, rAT);
     mCopy(rAT, ConfigData->numObs, ConfigData->numObs, syT);
     mTranspose(syT, ConfigData->numObs, ConfigData->numObs, sy);
@@ -678,7 +683,7 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int
           model and the yBar matrix (cholesky down-date again)*/
     vScale(-1.0, yBar, ConfigData->numObs, tempYVec);
     vAdd(tempYVec, ConfigData->numObs, &(ConfigData->yMeas[0]), tempYVec);
-    ukfCholDownDate(sy, tempYVec, ConfigData->wC[0],
+    ConfigData->badUpdate += ukfCholDownDate(sy, tempYVec, ConfigData->wC[0],
                     ConfigData->numObs, updMat);
     /*! - Shifted matrix represents the Sy matrix */
     mCopy(updMat, ConfigData->numObs, ConfigData->numObs, sy);
@@ -731,13 +736,11 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int
     for(i=0; i<ConfigData->numObs; i++)
     {
         vCopy(&(pXY[i*ConfigData->numStates]), ConfigData->numStates, xHat);
-        ukfCholDownDate(localSBar, xHat, -1.0, ConfigData->numStates, sBarT);
+        ConfigData->badUpdate += ukfCholDownDate(ConfigData->sBar, xHat, -1.0, ConfigData->numStates, sBarT);
         mCopy(sBarT, ConfigData->numStates, ConfigData->numStates,
-            localSBar);
+            ConfigData->sBar);
     }
-    if (currentST == ConfigData->STDatasStruct.numST - 1){
-        vCopy(localSBar, AKF_N_STATES*AKF_N_STATES, ConfigData->sBar);
-    }
+
     /*! - Compute equivalent covariance based on updated sBar matrix*/
     mTranspose(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
                ConfigData->covar);

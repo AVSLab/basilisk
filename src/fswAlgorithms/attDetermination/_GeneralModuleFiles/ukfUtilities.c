@@ -22,7 +22,7 @@
 #include "simulation/utilities/bsk_Print.h"
 #include <math.h>
 
-void ukfQRDJustR(
+int ukfQRDJustR(
 	double *inMat, int32_t nRow, int32_t nCol, double *destMat)
 {
 	int32_t i, j, k, dimi, dimj;
@@ -43,7 +43,7 @@ void ukfQRDJustR(
 			dimj = nCol * j;
 			destMat[dimi] += sourceMat[dimj + i] * sourceMat[dimj + i];
 		}
-
+        if (destMat[dimi]<0){return -1;}
 		destMat[dimi] = sqrt(destMat[dimi]);
 		for (j = 0; j<nRow; j++)
 		{
@@ -67,7 +67,7 @@ void ukfQRDJustR(
 		}
 	}
 
-	return;
+	return 0;
 }
 
 void ukfLInv(
@@ -289,7 +289,7 @@ void ukfMatInv(double *sourceMat, int32_t nRow, int32_t nCol,
 	}
 }
 
-void ukfCholDecomp(double *sourceMat, int32_t nRow, int32_t nCol,
+int ukfCholDecomp(double *sourceMat, int32_t nRow, int32_t nCol,
 	double *destMat)
 {
 	int32_t i, j, k;
@@ -299,7 +299,7 @@ void ukfCholDecomp(double *sourceMat, int32_t nRow, int32_t nCol,
 	if (nRow != nCol)
 	{
 		BSK_PRINT(MSG_WARNING,"Can't get a lower-triangular inverse of non-square matrix.\n");
-		return;
+		return -1;
 	}
 	
 	for (i = 0; i<nRow; i++)
@@ -313,6 +313,7 @@ void ukfCholDecomp(double *sourceMat, int32_t nRow, int32_t nCol,
 			}
 			if (i == j)
 			{
+                if (sigma<0){return -1;}
 				destMat[nRow * i + j] = sqrt(sigma);
 			}
 			else
@@ -323,7 +324,7 @@ void ukfCholDecomp(double *sourceMat, int32_t nRow, int32_t nCol,
 	}
 }
 
-void ukfCholDownDate(double *rMat, double *xVec, double beta, int32_t nStates,
+int ukfCholDownDate(double *rMat, double *xVec, double beta, int32_t nStates,
 	double *rOut)
 {
 	int i, j;
@@ -337,6 +338,7 @@ void ukfCholDownDate(double *rMat, double *xVec, double beta, int32_t nStates,
 	for (i = 0; i < nStates; i++)
 	{
         rEl2 = rMat[i*nStates+i] * rMat[i*nStates+i];
+        if (rEl2 + beta/bParam * wVec[i]*wVec[i]<0){return -1;}
         rOut[i*nStates + i] = sqrt(rEl2 + beta/bParam * wVec[i]*wVec[i]);
         gamma = rEl2*bParam + beta * wVec[i]*wVec[i];
         for(j=i+1; j<nStates; j++)
@@ -350,5 +352,5 @@ void ukfCholDownDate(double *rMat, double *xVec, double beta, int32_t nStates,
 	}
 	
 
-	return;
+	return 0;
 }

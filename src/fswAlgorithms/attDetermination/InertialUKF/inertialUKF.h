@@ -64,6 +64,7 @@ typedef struct {
 	int numStates;                /*!< [-] Number of states for this filter*/
 	int countHalfSPs;             /*!< [-] Number of sigma points over 2 */
 	int numObs;                   /*!< [-] Number of measurements this cycle */
+    int badUpdate;                /*!< [-] Flag to raise if there is a undefined term in the measurement update */
 	double beta;                  /*!< [-] Beta parameter for filter */
 	double alpha;                 /*!< [-] Alpha parameter for filter*/
 	double kappa;                 /*!< [-] Kappa parameter for filter*/
