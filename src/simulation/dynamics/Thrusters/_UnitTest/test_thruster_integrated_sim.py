@@ -76,17 +76,20 @@ def test_thrusterIntegratedTest(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # add thruster devices
-    # The clearThrusterSetup() is critical if the script is to run multiple times
-    simIncludeThruster.clearSetup()
-    simIncludeThruster.create(
+    thFactory = simIncludeThruster.thrusterFactory()
+    TH1 = thFactory.create(
         'MOOG_Monarc_1',
-        [1,0,0],                # location in B frame
-        [0,1,0]                 # direction in B frame
+        [1,0,0],                # location in B-frame
+        [0,1,0]                 # direction in B-frame
     )
 
     # create thruster object container and tie to spacecraft object
     thrustersDynamicEffector = thrusterDynamicEffector.ThrusterDynamicEffector()
+    thFactory.addToSpacecraft("Thrusters",
+                              thrustersDynamicEffector,
+                              scObject)
 
+    # create tank object container
     unitTestSim.fuelTankStateEffector = fuelTank.FuelTank()
     unitTestSim.fuelTankStateEffector.setTankModel(fuelTank.TANK_MODEL_CONSTANT_VOLUME)
     tankModel = fuelTank.cvar.FuelTankModelConstantVolume
@@ -95,11 +98,8 @@ def test_thrusterIntegratedTest(show_plots):
     unitTestSim.fuelTankStateEffector.r_TB_B = [[0.0],[0.0],[0.0]]
     tankModel.radiusTankInit = 46.0 / 2.0 / 3.2808399 / 12.0
 
-    # Add tank and thruster
+    unitTestSim.fuelTankStateEffector.addThrusterSet(thrustersDynamicEffector)
     scObject.addStateEffector(unitTestSim.fuelTankStateEffector)
-    simIncludeThruster.addToSpacecraft("Thrusters",
-                                       thrustersDynamicEffector,
-                                       scObject, unitTestSim.fuelTankStateEffector)
 
     # set thruster commands
     ThrustMessage = thrusterDynamicEffector.THRArrayOnTimeCmdIntMsg()
