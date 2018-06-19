@@ -57,7 +57,7 @@ sys.path.append(path + '/../bskSimScenarios/scenarios')
 ])
 
 
-def test_scenarioBasicOrbit(show_plots, bskSimCase):
+def test_scenarioBskScenarios(show_plots, bskSimCase):
 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages

@@ -18,8 +18,6 @@
 
 '''
 
-import matplotlib
-matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros as mc
 
