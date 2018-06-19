@@ -20,6 +20,12 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>
     Enhanced Linux installation instructions
     </li>
+    <li>
+        updated the simIncludeThruster to use the same factor class as the RW factory class.  This will break old scripts that use the old method of setting up Thrusters with this helper function.
+        <ul>
+    <li>FIX: Update the script to use the new factory class.  Examples are seen in `src/simulation/dynamics/Thrusters/_UnitTest/test_thruster_integrated.py`.</li>
+    </ul>
+    </li>
 </ul>
 
 ## Version 0.2.3 (June 12, 2018)
