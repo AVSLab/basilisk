@@ -68,7 +68,6 @@ class rwFactory(object):
         RW = simMessages.RWConfigSimMsg()
 
         # process optional input arguments
-        varRWModel = self.BalancedWheels
         if kwargs.has_key('RWModel'):
             varRWModel =  kwargs['RWModel']
             if not isinstance(varRWModel, (int)):
