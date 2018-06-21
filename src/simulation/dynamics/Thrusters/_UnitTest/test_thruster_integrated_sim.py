@@ -80,7 +80,7 @@ def test_thrusterIntegratedTest(show_plots):
     TH1 = thFactory.create(
         'MOOG_Monarc_1',
         [1,0,0],                # location in B-frame
-        [0,1,0]                 # direction in B-frame
+        [0,1,0]                 # thruster force direction in B-frame
     )
 
     # create thruster object container and tie to spacecraft object

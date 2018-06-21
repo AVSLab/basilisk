@@ -137,7 +137,7 @@ class thrusterFactory(object):
             varLabel = 'TH' + str(len(self.thrusterList) + 1)  # default device labeling
         TH.label = varLabel
 
-        # set thruster direction axis
+        # set thruster force direction axis
         norm = numpy.linalg.norm(tHat_B)
         if norm > 1e-10:
             tHat_B = tHat_B / norm

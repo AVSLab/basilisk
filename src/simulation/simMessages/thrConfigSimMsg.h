@@ -30,7 +30,7 @@
  a thruster.*/
 typedef struct {
     Eigen::Vector3d thrLoc_B;                       //!< [m] Thruster location expressed in body
-    Eigen::Vector3d thrDir_B;                       //!< [-] Thruster direction unit vector in body
+    Eigen::Vector3d thrDir_B;                       //!< [-] Thruster force direction unit vector in body
     std::vector<THRTimePairSimMsg> ThrusterOnRamp; //!< -- Percentage of max thrust for ramp up
     std::vector<THRTimePairSimMsg> ThrusterOffRamp;//!< -- Percentage of max thrust for ramp down
 	double areaNozzle;								//!< [m^2] Area of nozzle
