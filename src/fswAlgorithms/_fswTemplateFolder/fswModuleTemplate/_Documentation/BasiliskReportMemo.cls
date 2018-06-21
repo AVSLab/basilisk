@@ -1,6 +1,6 @@
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
-\ProvidesClass{IAC}[2015/03/30 v1.0 AVS Lab Software document class]
-\typeout{TYPESETTING in AVS Lab Software  Report...}
+\ProvidesClass{BasiliskReportMemo}[2015/03/30 v1.0 AVS Lab Software document class]
+\typeout{TYPESETTING in BSK Technical  Report...}
 
 \LoadClass[titlepage,11pt]{article}
 
