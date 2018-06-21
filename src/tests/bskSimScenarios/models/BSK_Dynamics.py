@@ -23,6 +23,8 @@ from Basilisk.utilities import macros as mc
 from Basilisk.utilities import unitTestSupport as sp
 from Basilisk.simulation import (spacecraftPlus, gravityEffector, extForceTorque, simple_nav, spice_interface,
                                  reactionWheelStateEffector, coarse_sun_sensor, eclipse, imu_sensor)
+from Basilisk.simulation import thrusterDynamicEffector
+from Basilisk.utilities import simIncludeThruster
 from Basilisk.utilities import simIncludeRW, simIncludeGravBody
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk import pyswice
@@ -54,7 +56,8 @@ class BSKDynamicModels():
         self.CSSConstellationObject = coarse_sun_sensor.CSSConstellation()
         self.imuObject = imu_sensor.ImuSensor()
         self.rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-        
+        self.thrustersDynamicEffector = thrusterDynamicEffector.ThrusterDynamicEffector()
+
         # Initialize all modules and write init one-time messages
         self.InitAllDynObjects()
         self.WriteInitDynMessages(SimBase)
@@ -168,6 +171,42 @@ class BSKDynamicModels():
 
         rwFactory.addToSpacecraft("RWStateEffector", self.rwStateEffector, self.scObject)
 
+    def SetThrusterStateEffector(self):
+        # Make a fresh TH factory instance, this is critical to run multiple times
+        thFactory = simIncludeThruster.thrusterFactory()
+
+        # 8 thrusters are modeled that act in pairs to provide the desired torque
+        thPos = [
+            [825.5/1000.0, 880.3/1000.0, 1765.3/1000.0],
+            [825.5/1000.0, 880.3/1000.0, 260.4/1000.0],
+            [880.3/1000.0, 825.5/1000.0, 1765.3/1000.0],
+            [880.3/1000.0, 825.5/1000.0, 260.4/1000.0],
+            [-825.5/1000.0, -880.3/1000.0, 1765.3/1000.0],
+            [-825.5/1000.0, -880.3/1000.0, 260.4/1000.0],
+            [-880.3/1000.0, -825.5/1000.0, 1765.3/1000.0],
+            [-880.3/1000.0, -825.5/1000.0, 260.4/1000.0]
+                 ]
+        thDir = [
+            [0.0, -1.0, 0.0],
+            [0.0, -1.0, 0.0],
+            [-1.0, 0.0, 0.0],
+            [-1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0]
+        ]
+        for pos_B, dir_B in zip(thPos, thDir):
+            thFactory.create(
+                'MOOG_Monarc_1'
+                , pos_B
+                , dir_B
+            )
+        # create thruster object container and tie to spacecraft object
+        thFactory.addToSpacecraft("Thrusters",
+                                  self.thrustersDynamicEffector,
+                                  self.scObject)
+
 
     def SetSpiceData(self, SimBase):
         '''
@@ -206,6 +245,7 @@ class BSKDynamicModels():
         self.SetImuSensor()
         
         self.SetReactionWheelDynEffector()
+        self.SetThrusterStateEffector()
 
     # Global call to create every required one-time message
     def WriteInitDynMessages(self, SimBase):
