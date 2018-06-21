@@ -26,6 +26,9 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>FIX: Update the script to use the new factory class.  Examples are seen in `src/simulation/dynamics/Thrusters/_UnitTest/test_thruster_integrated.py`.</li>
     </ul>
     </li>
+    <li>
+    updated bskSim to use the RW factory class to setup the simulation RW devices, as well as to use fsw helper functions to setup the RW FSW config messages
+    </li>
 </ul>
 
 ## Version 0.2.3 (June 12, 2018)

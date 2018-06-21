@@ -19,9 +19,13 @@
 '''
 import math
 from Basilisk.utilities import macros as mc
-from Basilisk.fswAlgorithms import (vehicleConfigData, hillPoint, inertial3D, attTrackingError, MRP_Feedback,
-                                    rwConfigData, rwMotorTorque, fswMessages,
+from Basilisk.fswAlgorithms import (hillPoint, inertial3D, attTrackingError, MRP_Feedback,
+                                    rwMotorTorque, fswMessages,
                                     velocityPoint, MRP_Steering, rateServoFullNonlinear)
+import numpy as np
+from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.utilities import fswSetupRW
+from Basilisk.utilities import unitTestSupport
 
 
 class BSKFswModels():
@@ -31,10 +35,6 @@ class BSKFswModels():
         self.processTasksTimeStep = mc.sec2nano(0.1)  # 0.5
 
         # Create module data and module wraps
-        self.vehicleData = vehicleConfigData.VehConfigInputData()
-        self.vehicleWrap = SimBase.setModelDataWrap(self.vehicleData)
-        self.vehicleWrap.ModelTag = "vehicleConfiguration"
-
         self.inertial3DData = inertial3D.inertial3DConfig()
         self.inertial3DWrap = SimBase.setModelDataWrap(self.inertial3DData)
         self.inertial3DWrap.ModelTag = "inertial3D"
@@ -67,10 +67,6 @@ class BSKFswModels():
         self.rateServoWrap = SimBase.setModelDataWrap(self.rateServoData)
         self.rateServoWrap.ModelTag = "rate_servo"
 
-        self.rwConfigData = rwConfigData.rwConfigData_Config()
-        self.rwConfigWrap = SimBase.setModelDataWrap(self.rwConfigData)
-        self.rwConfigWrap.ModelTag = "rwConfigData"
-
         self.rwMotorTorqueData = rwMotorTorque.rwMotorTorqueConfig()
         self.rwMotorTorqueWrap = SimBase.setModelDataWrap(self.rwMotorTorqueData)
         self.rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
@@ -79,7 +75,6 @@ class BSKFswModels():
         self.InitAllFSWObjects(SimBase)
 
         # Create tasks
-        SimBase.fswProc.addTask(SimBase.CreateNewTask("initOnlyTask", int(1E10)), 1)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("inertial3DPointTask", self.processTasksTimeStep), 20)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("hillPointTask", self.processTasksTimeStep), 20)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("velocityPointTask", self.processTasksTimeStep), 20)
@@ -88,9 +83,6 @@ class BSKFswModels():
         SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackRWsTask", self.processTasksTimeStep), 10)
 
         # Assign initialized modules to tasks
-        SimBase.AddModelToTask("initOnlyTask", self.vehicleWrap, self.vehicleData, 2)
-        SimBase.AddModelToTask("initOnlyTask", self.rwConfigWrap, self.rwConfigData, 1)
-
         SimBase.AddModelToTask("inertial3DPointTask", self.inertial3DWrap, self.inertial3DData, 10)
         SimBase.AddModelToTask("inertial3DPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
 
@@ -169,7 +161,7 @@ class BSKFswModels():
     def SetMRPFeedbackControl(self, SimBase):
         self.mrpFeedbackControlData.inputGuidName = "guidanceOut"
         self.mrpFeedbackControlData.vehConfigInMsgName = "adcs_config_data"
-        self.mrpFeedbackControlData.outputDataName =  SimBase.DynModels.extForceTorqueObject.cmdTorqueInMsgName
+        self.mrpFeedbackControlData.outputDataName = SimBase.DynModels.extForceTorqueObject.cmdTorqueInMsgName
         # Note: SimBase.DynModels.extForceTorqueObject.cmdTorqueInMsgName = "extTorquePntB_B_cmds"
 
         self.mrpFeedbackControlData.K = 3.5
@@ -187,8 +179,8 @@ class BSKFswModels():
         self.mrpFeedbackRWsData.domega0 = [0.0, 0.0, 0.0]
 
         self.mrpFeedbackRWsData.vehConfigInMsgName = "adcs_config_data"
-        self.mrpFeedbackRWsData.inputRWSpeedsName = "reactionwheel_output_states" # DynModels.rwStateEffector.OutputDataString
-        self.mrpFeedbackRWsData.rwParamsInMsgName = "rwa_config_data_parsed"
+        self.mrpFeedbackRWsData.inputRWSpeedsName = "reactionwheel_output_states"
+        self.mrpFeedbackRWsData.rwParamsInMsgName = "rwa_config_data"
         self.mrpFeedbackRWsData.inputGuidName = "guidanceOut"
         self.mrpFeedbackRWsData.outputDataName = "controlTorqueRaw"
 
@@ -200,11 +192,11 @@ class BSKFswModels():
         self.mrpSteeringData.inputGuidName = "guidanceOut"
         self.mrpSteeringData.outputDataName = "rate_steering"
 
-    def SetRateServo(self):
+    def SetRateServo(self, SimBase):
         self.rateServoData.inputGuidName = "guidanceOut"
         self.rateServoData.vehConfigInMsgName = "adcs_config_data"
-        self.rateServoData.rwParamsInMsgName = "rwa_config_data_parsed"
-        self.rateServoData.inputRWSpeedsName = "reactionwheel_output_states"  # DynModels.rwStateEffector.OutputDataString
+        self.rateServoData.rwParamsInMsgName = "rwa_config_data"
+        self.rateServoData.inputRWSpeedsName = SimBase.DynModels.rwStateEffector.OutputDataString #"reactionwheel_output_states"
         self.rateServoData.inputRateSteeringName = "rate_steering"
         self.rateServoData.outputDataName = "controlTorqueRaw"
         self.rateServoData.Ki = 5.0
@@ -214,67 +206,40 @@ class BSKFswModels():
 
 
     def SetVehicleConfiguration(self, SimBase):
-        # self.vehicleData.ISCPntB_B = SimBase.DynClass.I_sc
-        self.vehicleData.ISCPntB_B = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
-        self.vehicleData.CoM_B = [0.0, 0.0, 1.0]
-        self.vehicleData.outputPropsName = "adcs_config_data"
+        vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
+        # use the same inertia in the FSW algorithm as in the simulation
+        vehicleConfigOut.ISCPntB_B = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
+        unitTestSupport.setMessage(SimBase.TotalSim,
+                                   SimBase.FSWProcessName,
+                                   "adcs_config_data",
+                                   vehicleConfigOut)
 
-    def SetLocalConfigData(self, SimBase):
+    def SetRWConfigMsg(self, SimBase):
         # Configure RW pyramid exactly as it is in the Dynamics (i.e. FSW with perfect knowledge)
-        self.RWAGsMatrix = []
-        self.RWAJsList = []
-        rwElAngle = 40.0 * math.pi / 180.0
-        rwClockAngle = 45.0 * math.pi / 180.0
-        wheelJs = 1.0 / (6000.0 * math.pi * 2.0)
-        # -- RW 1
-        self.RWAGsMatrix.extend([math.sin(rwElAngle) * math.sin(rwClockAngle),
-                                 math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)])
-        rwClockAngle += 180.0 * math.pi / 180.0
-        self.RWAJsList.extend([wheelJs])
-        # -- RW 2
-        self.RWAGsMatrix.extend([math.sin(rwElAngle) * math.sin(rwClockAngle),
-                                 -math.sin(rwElAngle) * math.cos(rwClockAngle), math.cos(rwElAngle)])
-        rwClockAngle += 90.0 * math.pi / 180.0
-        self.RWAJsList.extend([wheelJs])
-        # -- RW 3
-        self.RWAGsMatrix.extend([math.sin(rwElAngle) * math.sin(rwClockAngle),
-                                 math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)])
-        rwClockAngle -= 1800.0 * math.pi / 180.0
-        self.RWAJsList.extend([wheelJs])
-        # -- RW 4
-        self.RWAGsMatrix.extend([math.sin(rwElAngle) * math.sin(rwClockAngle),
-                                 -math.sin(rwElAngle) * math.cos(rwClockAngle), math.cos(rwElAngle)])
-        self.RWAJsList.extend([wheelJs])
+        rwElAngle = np.array([40.0, 40.0, 40.0, 40.0]) * mc.D2R
+        rwAzimuthAngle = np.array([45.0, 135.0, 225.0, 315.0]) * mc.D2R
+        wheelJs = 50.0 / (6000.0 * math.pi * 2.0 / 60)
 
-        # Create the messages necessary to make FSW aware of the pyramid configuration
-        i = 0
-        rwClass = fswMessages.RWConstellationFswMsg()
-        rwPointer = fswMessages.RWConfigElementFswMsg()
-        rwClass.numRW = 4
-        while (i < 4):
-            rwPointer.gsHat_B = self.RWAGsMatrix[i * 3:i * 3 + 3]
-            rwPointer.Js = self.RWAJsList[i]
-            fswMessages.RWConfigArray_setitem(rwClass.reactionWheels, i, rwPointer)
-            i += 1
-        SimBase.TotalSim.CreateNewMessage("FSWProcess", "rwa_config_data",
-                                            fswMessages.MAX_EFF_CNT * 4 * 8 + 8, 2, "RWConstellation")
-        SimBase.TotalSim.WriteMessageData("rwa_config_data", fswMessages.MAX_EFF_CNT * 4 * 8 + 8, 0, rwClass)
+        fswSetupRW.clearSetup()
+        for elAngle, azAngle in zip(rwElAngle, rwAzimuthAngle):
+            gsHat = (rbk.Mi(-azAngle, 3).dot(rbk.Mi(elAngle, 2))).dot(np.array([1, 0, 0]))
+            fswSetupRW.create(gsHat,  # spin axis
+                              wheelJs,  # kg*m^2
+                              0.2)  # Nm        uMax
 
-    def SetRWConfigDataFSW(self):
-        self.rwConfigData.rwConstellationInMsgName = "rwa_config_data"
-        self.rwConfigData.vehConfigInMsgName = "adcs_config_data"
-        self.rwConfigData.rwParamsOutMsgName = "rwa_config_data_parsed"
+        fswSetupRW.writeConfigMessage("rwa_config_data", SimBase.TotalSim, SimBase.FSWProcessName)
 
-    def SetRWMotorTorque(self):
+
+    def SetRWMotorTorque(self, SimBase):
         controlAxes_B = [
             1.0, 0.0, 0.0
             , 0.0, 1.0, 0.0
             , 0.0, 0.0, 1.0
         ]
         self.rwMotorTorqueData.controlAxes_B = controlAxes_B
-        self.rwMotorTorqueData.inputVehControlName = "controlTorqueRaw" # message from your control law
-        self.rwMotorTorqueData.outputDataName = "reactionwheel_cmds"#"reactionwheel_cmds_raw"
-        self.rwMotorTorqueData.rwParamsInMsgName = "rwa_config_data_parsed"
+        self.rwMotorTorqueData.inputVehControlName = "controlTorqueRaw"
+        self.rwMotorTorqueData.outputDataName = SimBase.DynModels.rwStateEffector.InputCmds  # "reactionwheel_cmds"
+        self.rwMotorTorqueData.rwParamsInMsgName = "rwa_config_data"
 
     # Global call to initialize every module
     def InitAllFSWObjects(self, SimBase):
@@ -284,12 +249,11 @@ class BSKFswModels():
         self.SetAttitudeTrackingError(SimBase)
         self.SetMRPFeedbackControl(SimBase)
         self.SetVehicleConfiguration(SimBase)
-        self.SetLocalConfigData(SimBase)
+        self.SetRWConfigMsg(SimBase)
         self.SetMRPFeedbackRWA()
-        self.SetRWConfigDataFSW()
-        self.SetRWMotorTorque()
+        self.SetRWMotorTorque(SimBase)
         self.SetMRPSteering()
-        self.SetRateServo()
+        self.SetRateServo(SimBase)
 
 
 #BSKFswModels()
