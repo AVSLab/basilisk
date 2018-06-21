@@ -58,6 +58,63 @@ class thrusterFactory(object):
         # create the blank thruster object
         TH = simMessages.THRConfigSimMsg()
 
+        # set default thruster values
+        TH.areaNozzle = 0.1         # [m^2]
+        TH.steadyIsp = 100          # [s]
+        TH.MaxThrust = 0.200        # [N]
+        TH.thrusterMagDisp = 0.0    # [%]
+        TH.MinOnTime = 0.020        # [s]
+
+        # populate the thruster object with the type specific parameters
+        try:
+            eval('self.' + thrusterType + '(TH)')
+        except:
+            print 'ERROR: Thruster type ' + thrusterType + ' is not implemented'
+            exit(1)
+
+        # set device states from the input arguments.  Note that these may override what is set in
+        # the above function call
+        if kwargs.has_key('areaNozzle'):
+            varAreaNozzle = kwargs['areaNozzle']
+            if not isinstance(varAreaNozzle, (float)):
+                print 'ERROR: areaNozzle must be a float argument'
+                exit(1)
+            else:
+                TH.areaNozzle = varAreaNozzle
+
+        if kwargs.has_key('steadyIsp'):
+            varSteadyIsp = kwargs['steadyIsp']
+            if not isinstance(varSteadyIsp, (float)):
+                print 'ERROR: steadyIsp must be a float argument'
+                exit(1)
+            else:
+                TH.steadyIsp = varSteadyIsp
+
+        if kwargs.has_key('MaxThrust'):
+            varMaxThrust = kwargs['MaxThrust']
+            if not isinstance(varMaxThrust, (float)):
+                print 'ERROR: MaxThrust must be a float argument'
+                exit(1)
+            else:
+                TH.MaxThrust = varMaxThrust
+
+        if kwargs.has_key('thrusterMagDisp'):
+            varThrusterMagDisp = kwargs['thrusterMagDisp']
+            if not isinstance(varMaxThrust, (float)):
+                print 'ERROR: varThrusterMagDisp must be a float argument'
+                exit(1)
+            else:
+                TH.thrusterMagDisp = varThrusterMagDisp
+
+        if kwargs.has_key('MinOnTime'):
+            varMinOnTime = kwargs['MinOnTime']
+            if not isinstance(varMinOnTime, (float)):
+                print 'ERROR: MinOnTime must be a float argument'
+                exit(1)
+            else:
+                TH.MinOnTime = varMinOnTime
+
+
         if kwargs.has_key('useMinPulseTime'):
             varUseMinPulseTime = kwargs['useMinPulseTime']
             if not isinstance(varUseMinPulseTime, (bool)):
@@ -65,8 +122,9 @@ class thrusterFactory(object):
                 exit(1)
         else:
             varUseMinPulseTime = False  # default value
+        if not varUseMinPulseTime:
+            TH.MinOnTime = 0.0
 
-        # set device label name
         if kwargs.has_key('label'):
             varLabel = kwargs['label']
             if not isinstance(varLabel, (basestring)):
@@ -79,13 +137,6 @@ class thrusterFactory(object):
             varLabel = 'TH' + str(len(self.thrusterList) + 1)  # default device labeling
         TH.label = varLabel
 
-        # populate the thruster object with the type specific parameters
-        try:
-            eval('self.' + thrusterType + '(TH)')
-        except:
-            print 'ERROR: Thruster type ' + thrusterType + ' is not implemented'
-            exit(1)
-
         # set thruster direction axis
         norm = numpy.linalg.norm(tHat_B)
         if norm > 1e-10:
@@ -97,10 +148,6 @@ class thrusterFactory(object):
 
         # set thruster position vector
         TH.thrLoc_B = [[r_B[0]], [r_B[1]], [r_B[2]]]
-
-        # enforce Thruster options
-        if not varUseMinPulseTime:
-            TH.MinOnTime = 0.0
 
         # add TH to the list of TH devices
         self.thrusterList[varLabel] = TH
