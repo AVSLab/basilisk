@@ -119,7 +119,6 @@ class BSKDynamicModels():
                              maxMomentum=maxRWMomentum, rWB_B=posVector)
 
 
-        self.rwStateEffector.InputCmds = "reactionwheel_cmds"
         rwFactory.addToSpacecraft("RWStateEffector", self.rwStateEffector, self.scObject)
 
 
