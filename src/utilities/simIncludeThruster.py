@@ -193,11 +193,11 @@ class thrusterFactory(object):
     #
     #   Information Source:
     #   http://www.moog.com/literature/Space_Defense/Spacecraft/Propulsion/Monopropellant_Thrusters_Rev_0613.pdf
+    #   http://www.moog.com/content/dam/moog/literature/Space_Defense/Spacecraft/Monopropellant_Thrusters_Rev_0613.pdf
     #
     #   This is a MOOG mono-propellant thruster
     #
     def MOOG_Monarc_1(self,TH):
-        global options
         # maximum thrust [N]
         TH.MaxThrust = 0.9
         # minimum thruster on time [s]
@@ -205,6 +205,7 @@ class thrusterFactory(object):
         # Isp value [s]
         TH.steadyIsp = 227.5
 
+        TH.areaNozzle = 0.000079 # [m^2]
         return
 
     #
@@ -212,17 +213,19 @@ class thrusterFactory(object):
     #
     #   Information Source:
     #   http://www.moog.com/literature/Space_Defense/Spacecraft/Propulsion/Monopropellant_Thrusters_Rev_0613.pdf
+    #   http://www.moog.com/content/dam/moog/literature/Space_Defense/Spacecraft/Monopropellant_Thrusters_Rev_0613.pdf
     #
     #   This is a MOOG mono-propellant thruster
     #
     def MOOG_Monarc_5(self,TH):
-        global options
         # maximum thrust [N]
         TH.MaxThrust = 4.5
         # minimum thruster on time [s]
         TH.MinOnTime = 0.020
         # Isp value [s]
         TH.steadyIsp = 226.1
+
+        TH.areaNozzle = 0.0020 # [m^2]
 
         return
 
@@ -231,17 +234,19 @@ class thrusterFactory(object):
     #
     #   Information Source:
     #   http://www.moog.com/literature/Space_Defense/Spacecraft/Propulsion/Monopropellant_Thrusters_Rev_0613.pdf
+    #   http://www.moog.com/content/dam/moog/literature/Space_Defense/Spacecraft/Monopropellant_Thrusters_Rev_0613.pdf
     #
     #   This is a MOOG mono-propellant thruster
     #
     def MOOG_Monarc_22_6(self,TH):
-        global options
         # maximum thrust [N]
         TH.MaxThrust = 22.0
         # minimum thruster on time [s]
         TH.MinOnTime = 0.020
         # Isp value [s]
         TH.steadyIsp = 229.5
+
+        TH.areaNozzle = 0.0045 # [m^2]
 
         return
 
@@ -250,17 +255,19 @@ class thrusterFactory(object):
     #
     #   Information Source:
     #   http://www.moog.com/literature/Space_Defense/Spacecraft/Propulsion/Monopropellant_Thrusters_Rev_0613.pdf
+    #   http://www.moog.com/content/dam/moog/literature/Space_Defense/Spacecraft/Monopropellant_Thrusters_Rev_0613.pdf
     #
     #   This is a MOOG mono-propellant thruster
     #
     def MOOG_Monarc_22_12(self,TH):
-        global options
         # maximum thrust [N]
         TH.MaxThrust = 22.0
         # minimum thruster on time [s]
         TH.MinOnTime = 0.020
         # Isp value [s]
         TH.steadyIsp = 228.1
+
+        TH.areaNozzle = 0.0088 # [m^2]
 
         return
 
@@ -269,17 +276,19 @@ class thrusterFactory(object):
     #
     #   Information Source:
     #   http://www.moog.com/literature/Space_Defense/Spacecraft/Propulsion/Monopropellant_Thrusters_Rev_0613.pdf
+    #   http://www.moog.com/content/dam/moog/literature/Space_Defense/Spacecraft/Monopropellant_Thrusters_Rev_0613.pdf
     #
     #   This is a MOOG mono-propellant thruster
     #
     def MOOG_Monarc_90LT(self,TH):
-        global options
         # maximum thrust [N]
         TH.MaxThrust = 90.0
         # minimum thruster on time [s]
         TH.MinOnTime = 0.020
         # Isp value [s]
         TH.steadyIsp = 232.1
+
+        TH.areaNozzle = 0.0222 # [m^2]
 
         return
 
@@ -288,17 +297,18 @@ class thrusterFactory(object):
     #
     #   Information Source:
     #   http://www.moog.com/literature/Space_Defense/Spacecraft/Propulsion/Monopropellant_Thrusters_Rev_0613.pdf
-    #
+    #   http://www.moog.com/content/dam/moog/literature/Space_Defense/Spacecraft/Monopropellant_Thrusters_Rev_0613.pdf
     #   This is a MOOG mono-propellant thruster
     #
     def MOOG_Monarc_90HT(self,TH):
-        global options
         # maximum thrust [N]
         TH.MaxThrust = 116.0
         # minimum thruster on time [s]
         TH.MinOnTime = 0.010
         # Isp value [s]
         TH.steadyIsp = 234.0
+
+        TH.areaNozzle = 0.0222 # [m^2]
 
         return
 
@@ -307,11 +317,11 @@ class thrusterFactory(object):
     #
     #   Information Source:
     #   http://www.moog.com/literature/Space_Defense/Spacecraft/Propulsion/Monopropellant_Thrusters_Rev_0613.pdf
+    #   http://www.moog.com/content/dam/moog/literature/Space_Defense/Spacecraft/Monopropellant_Thrusters_Rev_0613.pdf
     #
     #   This is a MOOG mono-propellant thruster
     #
     def MOOG_Monarc_445(self,TH):
-        global options
         # maximum thrust [N]
         TH.MaxThrust = 445.0
         # minimum thruster on time [s]
@@ -319,10 +329,11 @@ class thrusterFactory(object):
         # Isp value [s]
         TH.steadyIsp = 234.0
 
+        TH.areaNozzle = 0.06881 # [m^2]
+
         return
 
     def TEST_Thruster(self,TH):
-        global options
         # maximum thrust [N]
         TH.MaxThrust = 0.9
         # minimum thruster on time [s]
