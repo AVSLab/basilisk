@@ -28,6 +28,7 @@ DragDynamicEffector::DragDynamicEffector()
 	this->coreParams.projectedArea = 0.0;
 	this->coreParams.velocityMag = 0.0;
 	this->coreParams.dragCoeff = 0.0;
+    this->coreParams.comOffset.setZero();
 
 	this->atmoDensInMsgName = "atmo_dens_0_data";
 	this->modelType = "cannonball";
