@@ -286,3 +286,9 @@ class thrusterFactory(object):
         TH.areaNozzle = 0.07
 
         return
+
+    def Blank_Thruster(self,TH):
+        # this method doesn't set any thruster properties.  Rather, it is assumed that all thruster
+        # properties are defined explicitly in the create function, or external to the create function
+
+        return
