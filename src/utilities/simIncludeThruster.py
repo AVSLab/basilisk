@@ -45,12 +45,22 @@ class thrusterFactory(object):
         :param thrusterType : string
                 thruster manufacturing name.:
         :param r_B : list
-                list of thruster locations in B-frame components:
+                vector with thruster location in B-frame components:
         :param tHat_B : list
-                list of thruster direction unit vectors:
+                vector with thruster force direction unit vector:
         :param kwargs:
             useMinPulseTime: BOOL
                 flag if the thruster model should use a minimum impulse time
+            areaNozzle: float
+                thruster nozzle exhaust cone exit area
+            steadyIsp: float
+                thruster fuel efficiency in Isp (seconds)
+            MaxThrust: float
+                maximum thruster force in Newtons
+            thrusterMagDisp: float
+                thruster dispersion percentage
+            MinOnTime: float
+                thruster minimum on time
         :return:
             thrConfigSimMsg : message structure
                 A handle to the thruster configuration message
