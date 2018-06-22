@@ -380,17 +380,6 @@ void SpacecraftPlus::integrateState(double integrateToThisTime)
     this->integrator->integrate(timeBefore, localTimeStep);
     this->timePrevious = integrateToThisTime;     // - copy the current time into previous time for next integrate state call
 
-    // - Call hubs modify states to allow for switching of MRPs
-    this->hub.modifyStates(integrateToThisTime);
-
-    // - Loop over stateEffectors to call modifyStates
-    std::vector<StateEffector*>::iterator it;
-    for(it = this->states.begin(); it != this->states.end(); it++)
-    {
-        // - Call energy and momentum calulations for stateEffectors
-        (*it)->modifyStates(integrateToThisTime);
-    }
-
     // - Call mass properties to get current info on the mass props of the spacecraft
     this->updateSCMassProps(integrateToThisTime);
 
@@ -434,6 +423,17 @@ void SpacecraftPlus::integrateState(double integrateToThisTime)
 
     // - Compute Energy and Momentum
     this->computeEnergyMomentum(integrateToThisTime);
+
+    // - Call hubs modify states to allow for switching of MRPs
+    this->hub.modifyStates(integrateToThisTime);
+
+    // - Loop over stateEffectors to call modifyStates
+    std::vector<StateEffector*>::iterator it;
+    for(it = this->states.begin(); it != this->states.end(); it++)
+    {
+        // - Call energy and momentum calulations for stateEffectors
+        (*it)->modifyStates(integrateToThisTime);
+    }
 
     return;
 }
