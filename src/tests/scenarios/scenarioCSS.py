@@ -98,7 +98,7 @@ from Basilisk.simulation import simMessages
 #     CSS1.ModelTag = "CSS1_sensor"
 #     CSS1.fov = 80.*macros.D2R
 #     CSS1.scaleFactor = 2.0
-#     CSS1.OutputDataMsg = "CSS1_output"
+#     CSS1.cssDataOutMsgName = "CSS1_output"
 #     CSS1.InputSunMsg = "sun_message"
 # ~~~~~~~~~~~~~~~~
 # The Field-Of-View variable fov must be specified.  This is the angle between the sensor bore-sight and
@@ -120,7 +120,7 @@ from Basilisk.simulation import simMessages
 # ~~~~~~~~~~~~~~~~{.py}
 #   CSS2 = coarse_sun_sensor.CoarseSunSensor(CSS1)      # make copy of first CSS unit
 #   CSS2.ModelTag = "CSS2_sensor"
-#   CSS2.OutputDataMsg = "CSS2_output"
+#   CSS2.cssDataOutMsgName = "CSS2_output"
 # ~~~~~~~~~~~~~~~~
 #
 # A key parameter that remains is the CSS sensor unit normal vector.  There are several options to set this
