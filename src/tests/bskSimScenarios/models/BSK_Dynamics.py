@@ -242,13 +242,14 @@ class BSKDynamicModels():
             [0., 0.258819, -0.965926],
             [0.707107, -0.353553, -0.612372]
         ]
+        numCSS = len(nHat_B_List)
 
         # store all
         cssList = []
-        for nHat_B, i in zip(nHat_B_List,range(len(nHat_B_List))):
+        for nHat_B, i in zip(nHat_B_List,range(1,numCSS+1)):
             CSS = coarse_sun_sensor.CoarseSunSensor(CSS_default)
-            CSS.ModelTag = "CSS" + str(i+1) + "_sensor"
-            CSS.cssDataOutMsgName = "CSS" + str(i+1) + "_output"
+            CSS.ModelTag = "CSS" + str(i) + "_sensor"
+            CSS.cssDataOutMsgName = "CSS" + str(i) + "_output"
             CSS.nHat_B = np.array(nHat_B)
             cssList.append(CSS)
 
