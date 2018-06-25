@@ -220,19 +220,43 @@ class BSKDynamicModels():
         ephemerisMessageSize = self.ephemerisSPICEObject.getStructSize()
         SimBase.TotalSim.CreateNewMessage(self.processName, ephemerisMessageName, ephemerisMessageSize, 2)
         SimBase.TotalSim.WriteMessageData(ephemerisMessageName, ephemerisMessageSize, 0, self.ephemerisSPICEObject)
-        
-        ephemerisSunMessageName = "sun_planet_data"
-        self.ephemerisSunSPICEObject.J2000Current = 0.0
-        self.ephemerisSunSPICEObject.PositionVector = [1.0 * om.AU * 1000.0, 0.0, 0.0]
-        self.ephemerisSunSPICEObject.VelocityVector = [0.0, 0.0, 0.0]
-        self.ephemerisSunSPICEObject.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-        self.ephemerisSunSPICEObject.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-        self.ephemerisSunSPICEObject.PlanetName = ephemerisSunMessageName[:-12]
-        ephemerisSunMessageSize = self.ephemerisSunSPICEObject.getStructSize()
-        SimBase.TotalSim.CreateNewMessage(self.processName, ephemerisSunMessageName, ephemerisSunMessageSize, 2)
-        SimBase.TotalSim.WriteMessageData(ephemerisSunMessageName, ephemerisSunMessageSize, 0, self.ephemerisSunSPICEObject)
         '''
     
+    def SetCssConstellation(self):
+        self.cssArray.ModelTag = "css_array"
+        self.cssArray.outputConstellationMessage = "CSS_Array_output"
+
+        # define single CSS element
+        CSS_default = coarse_sun_sensor.CoarseSunSensor()
+        CSS_default.fov = 80. * mc.D2R         # half-angle field of view value
+        CSS_default.scaleFactor = 2.0
+
+        # setup CSS sensor normal vectors in body frame components
+        nHat_B_List = [
+            [0.0, 0.707107, 0.707107],
+            [0.707107, 0., 0.707107],
+            [0.0, -0.707107, 0.707107],
+            [-0.707107, 0., 0.707107],
+            [0.0, -0.965926, -0.258819],
+            [-0.707107, -0.353553, -0.612372],
+            [0., 0.258819, -0.965926],
+            [0.707107, -0.353553, -0.612372]
+        ]
+
+        # store all
+        cssList = []
+        for nHat_B, i in zip(nHat_B_List,range(len(nHat_B_List))):
+            CSS = coarse_sun_sensor.CoarseSunSensor(CSS_default)
+            CSS.ModelTag = "CSS" + str(i+1) + "_sensor"
+            CSS.cssDataOutMsgName = "CSS" + str(i+1) + "_output"
+            CSS.nHat_B = np.array(nHat_B)
+            cssList.append(CSS)
+
+        # assign the list of CSS devices to the CSS array class
+        self.cssArray.sensorList = coarse_sun_sensor.CSSVector(cssList)
+
+
+
     # Global call to initialize every module
     def InitAllDynObjects(self):
         self.SetSpacecraftHub()
