@@ -142,10 +142,14 @@ void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
           ConfigData->sBar);
     ConfigData->badUpdate += ukfCholDecomp(ConfigData->sBar, ConfigData->numStates,
                   ConfigData->numStates, tempMatrix);
-    if (ConfigData->badUpdate<0){return;}
+    if (ConfigData->badUpdate<0){
+        printf("bad update occured in UKF");
+        return;}
     ConfigData->badUpdate += ukfCholDecomp(ConfigData->qNoise, ConfigData->numStates,
                   ConfigData->numStates, ConfigData->sQnoise);
-    if (ConfigData->badUpdate<0){return;}
+    if (ConfigData->badUpdate<0){
+        printf("bad update occured in UKF");
+        return;}
 
     mCopy(tempMatrix, ConfigData->numStates, ConfigData->numStates,
           ConfigData->sBar);
@@ -183,6 +187,7 @@ void Read_STMessages(InertialUKFConfig *ConfigData, uint64_t moduleID)
         ReadMessage(ConfigData->STDatasStruct.STMessages[i].chuFusOutMsgID, &ClockTime, &ReadSize,
                     sizeof(STAttFswMsg), (void*) (&(ConfigData->stSensorIn[i])), moduleID);
         
+        ConfigData->stSensorIn[i].timeTag += i*100;
         ConfigData->ClockTimeST[i] = ClockTime;
         ConfigData->ReadSizeST[i] = ReadSize;
         
@@ -458,6 +463,7 @@ void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime)
              &(ConfigData->SP[(i+1)*ConfigData->numStates]), aRow);
         if (ConfigData->wC[i+1]<0){
             ConfigData->badUpdate += 1;
+            printf("bad update occured in UKF");
             return;
         }
         else{
@@ -478,7 +484,9 @@ void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime)
     /*! - QR decomposition (only R computed!) of the AT matrix provides the new sBar matrix*/
     ConfigData->badUpdate += ukfQRDJustR(AT, 2 * ConfigData->countHalfSPs + ConfigData->numStates,
                 ConfigData->countHalfSPs, rAT);
-    if (ConfigData->badUpdate<0){return;}
+    if (ConfigData->badUpdate<0){
+        printf("bad update occured in UKF");
+        return;}
     mCopy(rAT, ConfigData->numStates, ConfigData->numStates, sBarT);
     mTranspose(sBarT, ConfigData->numStates, ConfigData->numStates,
         ConfigData->sBar);
@@ -489,7 +497,9 @@ void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime)
     vAdd(xErr, ConfigData->numStates, &ConfigData->SP[0], xErr);
     ConfigData->badUpdate += ukfCholDownDate(ConfigData->sBar, xErr, ConfigData->wC[0],
         ConfigData->numStates, sBarUp);
-    if (ConfigData->badUpdate<0){return;}
+    if (ConfigData->badUpdate<0){
+        printf("bad update occured in UKF");
+        return;}
 
     
     /*! - Save current sBar matrix, covariance, and state estimate off for further use*/
@@ -674,6 +684,7 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int
              &(ConfigData->yMeas[(i+1)*ConfigData->numObs]), tempYVec);
         if (ConfigData->wC[i+1]<0){
             ConfigData->badUpdate += 1;
+            printf("bad update occured in UKF");
             return;
         }
         vScale(sqrt(ConfigData->wC[i+1]), tempYVec, ConfigData->numObs, tempYVec);
@@ -685,14 +696,18 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int
         decomposition of the observation variance matrix constructed for our number 
         of observations*/
     ConfigData->badUpdate += ukfCholDecomp(ConfigData->STDatasStruct.STMessages[currentST].noise, ConfigData->numObs, ConfigData->numObs, qChol);
-    if (ConfigData->badUpdate<0){return;}
+    if (ConfigData->badUpdate<0){
+        printf("bad update occured in UKF");
+        return;}
     memcpy(&(AT[2*ConfigData->countHalfSPs*ConfigData->numObs]),
            qChol, ConfigData->numObs*ConfigData->numObs*sizeof(double));
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the 
           current Sy matrix*/
     ConfigData->badUpdate += ukfQRDJustR(AT, 2*ConfigData->countHalfSPs+ConfigData->numObs,
                 ConfigData->numObs, rAT);
-    if (ConfigData->badUpdate<0){return;}
+    if (ConfigData->badUpdate<0){
+        printf("bad update occured in UKF");
+        return;}
 
     mCopy(rAT, ConfigData->numObs, ConfigData->numObs, syT);
     mTranspose(syT, ConfigData->numObs, ConfigData->numObs, sy);
@@ -702,7 +717,9 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int
     vAdd(tempYVec, ConfigData->numObs, &(ConfigData->yMeas[0]), tempYVec);
     ConfigData->badUpdate += ukfCholDownDate(sy, tempYVec, ConfigData->wC[0],
                     ConfigData->numObs, updMat);
-    if (ConfigData->badUpdate<0){return;}
+    if (ConfigData->badUpdate<0){
+        printf("bad update occured in UKF");
+        return;}
 
     /*! - Shifted matrix represents the Sy matrix */
     mCopy(updMat, ConfigData->numObs, ConfigData->numObs, sy);
@@ -756,7 +773,9 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int
     {
         vCopy(&(pXY[i*ConfigData->numStates]), ConfigData->numStates, xHat);
         ConfigData->badUpdate += ukfCholDownDate(ConfigData->sBar, xHat, -1.0, ConfigData->numStates, sBarT);
-        if (ConfigData->badUpdate<0){return;}
+        if (ConfigData->badUpdate<0){
+            printf("bad update occured in UKF");
+            return;}
         mCopy(sBarT, ConfigData->numStates, ConfigData->numStates,
             ConfigData->sBar);
     }
