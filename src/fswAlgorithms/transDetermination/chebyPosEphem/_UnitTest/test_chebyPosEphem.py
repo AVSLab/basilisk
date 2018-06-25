@@ -69,7 +69,7 @@ def test_sineCosine(show_plots):
     sineValues = numpy.sin(angleSpace)*orbitRadius
     oopValues = numpy.sin(angleSpace) + orbitRadius
 
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0011.tls')
+    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
     et = pyswice.new_doubleArray(1)
 
     timeStringMid = '2019 APR 1 12:12:12.0 (UTC)'
@@ -164,14 +164,14 @@ def test_earthOrbitFit(show_plots):
     zeroBase = "Earth"
 
     dateSpice = "2015 February 10, 00:00:00.0 TDB"
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0011.tls')
+    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
     et = pyswice.new_doubleArray(1)
     pyswice.str2et_c(dateSpice, et)
     etStart = pyswice.doubleArray_getitem(et, 0)
     etEnd = etStart + curveDurationSeconds
 
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0011.tls')
+    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
     pyswice.furnsh_c(path + '/hst_edited.bsp')
