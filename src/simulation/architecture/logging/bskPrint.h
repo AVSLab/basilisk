@@ -23,6 +23,7 @@
 #include <stdio.h>
 
 typedef enum {
+    BSK_SILENT,
     BSK_ERROR,
     BSK_WARNING,
     BSK_DEBUG,

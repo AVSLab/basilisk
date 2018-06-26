@@ -26,7 +26,7 @@ bskMsgLevel_t msgOutputLevel = BSK_INFORMATION;
 
 void bskPrint(bskMsgLevel_t msgType, const char *fmt, ...) {
 
-    if (msgType <= msgOutputLevel) {
+    if (msgType <= msgOutputLevel && msgType != BSK_SILENT) {
         va_list vargs;
         va_start(vargs, fmt);
 
@@ -42,6 +42,8 @@ void bskPrint(bskMsgLevel_t msgType, const char *fmt, ...) {
                 break;
             case BSK_WARNING:
                 printf("BSK_WARNING: ");
+                break;
+            default:
                 break;
         }
         vprintf(fmt, vargs);
