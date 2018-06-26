@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <cstring>
+#include "utilities/bsk_Print.h"
 
 /*! This algorithm initializes the messaging storage for the flight system
  @return void
@@ -91,8 +92,7 @@ int32_t subscribeToMessage(char *MessageName, uint64_t messageSize,
         MessageName, messageSize, moduleID);
     if(localMsgID < 0)
     {
-        std::cerr << "Warning, failed to find a message to link for: ";
-        std::cerr << MessageName << std::endl;
+        BSK_PRINT_BRIEF(MSG_WARNING, "failed to find a message to link for: %s", MessageName);
         
     }
     return(localMsgID);

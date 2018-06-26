@@ -20,6 +20,7 @@
 
 #include "dynParamManager.h"
 #include <iostream>
+#include "utilities/bsk_Print.h"
 
 DynParamManager::DynParamManager()
 {
@@ -158,9 +159,7 @@ Eigen::MatrixXd* DynParamManager::createProperty(std::string propName,
                              (propName, propValue));
     }
     else{
-        std::cerr << "WARNING: You created the dynamic property: " << propName;
-        std::cerr << " more than once.  You shouldn't be doing that.";
-        std::cerr << std::endl;
+        BSK_PRINT(MSG_WARNING, "You created the dynamic property: %s more than once.  You shouldn't be doing that.", propName.c_str());
         it->second = propValue;
     }
     return(&(dynProperties.find(propName)->second));
@@ -172,8 +171,7 @@ Eigen::MatrixXd* DynParamManager::getPropertyReference(std::string propName)
     it = dynProperties.find(propName);
     if(it == dynProperties.end())
     {
-        std::cerr << "ERROR: You requested the property: " << propName;
-        std::cerr << " which doesn't exist.  Null returned" << std::endl;
+        BSK_PRINT(MSG_ERROR, "You requested the property: %s which doesn't exist.  Null returned.", propName.c_str());
         return nullptr;
     }
     else
@@ -189,9 +187,7 @@ void DynParamManager::setPropertyValue(const std::string propName,
     it = dynProperties.find(propName);
     if(it == dynProperties.end())
     {
-        std::cerr << "You tried to set the property value for: " << propName;
-        std::cerr << " which has not been created yet. I can't do that.";
-        std::cerr << std::endl;
+        BSK_PRINT(MSG_ERROR, "You tried to set the property value for: %s which has not been created yet. I can't do that.", propName.c_str());
     }
     else
     {

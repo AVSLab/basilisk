@@ -73,16 +73,14 @@ void RadiationPressure::CrossInit()
  
     if(sunEphmInMsgId < 0)
     {
-        std::cerr << "WARNING: Did not find a valid message with name: ";
-        std::cerr << this->sunEphmInMsgName << "  :" << __FILE__ << std::endl;
+        BSK_PRINT(MSG_WARNING, "Did not find a valid sun ephemeris message with name: %s", this->sunEphmInMsgName.c_str());
     }
     
     this->stateInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->stateInMsgName, sizeof(SCPlusStatesSimMsg), this->moduleID);
     
     if(this->stateInMsgId < 0)
     {
-        std::cerr << "WARNING: Did not find a valid message with name: ";
-        std::cerr << this->stateInMsgId << "  :" << __FILE__ << std::endl;
+        BSK_PRINT(MSG_WARNING, "Did not find a valid state input message with name: %lld", this->stateInMsgId);
     }
 
     /* reading in the sun eclipse message is optional.  It only gets used if this message is successfully suscribed.  */

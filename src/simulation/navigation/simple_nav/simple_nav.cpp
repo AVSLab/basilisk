@@ -20,6 +20,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/rigidBodyKinematics.h"
+#include "utilities/bsk_Print.h"
 #include <iostream>
 #include <cstring>
 #include "utilities/avsEigenSupport.h"
@@ -89,16 +90,14 @@ void SimpleNav::SelfInit()
     
     //! - Alert the user and stop if the noise matrix is the wrong size.  That'd be bad.
     if (this->PMatrix.size() != numStates*numStates) {
-        std::cerr << "Your process noise matrix (PMatrix) is not 18*18.";
-        std::cerr << "  Quitting"<<std::endl;
+        BSK_PRINT(MSG_ERROR, "Your process noise matrix (PMatrix) is not 18*18. Quitting");
         return;
     }
     //! - Set the matrices of the lower level error propagation (GaussMarkov)
     this->errorModel.setNoiseMatrix(this->PMatrix);
     this->errorModel.setRNGSeed(this->RNGSeed);
     if (this->walkBounds.size() != numStates) {
-        std::cerr << "Your walkbounds vector  is not 18 elements.";
-        std::cerr << "  Quitting"<<std::endl;
+        BSK_PRINT(MSG_ERROR, "Your walkbounds vector  is not 18 elements. Quitting");
     }
     this->errorModel.setUpperBounds(this->walkBounds);
 }
@@ -116,16 +115,14 @@ void SimpleNav::CrossInit()
        subscribeToMessage(this->inputStateName, sizeof(SCPlusStatesSimMsg), this->moduleID);
     if(this->inputStateID < 0)
     {
-        std::cerr << "Warning: input state message name: " << this->inputStateName;
-        std::cerr << " could not be isolated, message disabled" << std::endl;
+        BSK_PRINT(MSG_WARNING, "input state message name: %s could not be isolated, message disabled.", this->inputStateName.c_str());
     }
     //! - Obtain the ID associated with the input Sun name and alert if not found.
     this->inputSunID =SystemMessaging::GetInstance()->
     subscribeToMessage(this->inputSunName, sizeof(SpicePlanetStateSimMsg), this->moduleID);
     if(this->inputSunID < 0)
     {
-        std::cerr << "Warning: input Sun message name: " << this->inputSunName;
-        std::cerr << " could not be isolated, message disabled" << std::endl;
+        BSK_PRINT(MSG_WARNING, "input Sun message name: %s could not be isolated, message disabled.", this->inputSunName.c_str());
     }
 }
 

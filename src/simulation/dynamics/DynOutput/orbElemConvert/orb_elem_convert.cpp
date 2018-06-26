@@ -21,6 +21,7 @@
 #include <cstring>
 #include <iostream>
 #include "simMessages/spicePlanetStateSimMsg.h"
+#include "utilities/bsk_Print.h"
 
 //! The constructor.  Note that you may want to overwrite the message names.
 OrbElemConvert::OrbElemConvert()
@@ -80,8 +81,7 @@ void OrbElemConvert::CrossInit()
                                                                       StateString, inputSize, moduleID);
     if(StateInMsgID < 0)
     {
-        std::cerr << "WARNING: Did not find a valid message with name: ";
-        std::cerr << StateString << "  :" << __FILE__ << std::endl;
+        BSK_PRINT(MSG_WARNING, "Did not find a valid message with name: %s", StateString.c_str());
     }
 }
 

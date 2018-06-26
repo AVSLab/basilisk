@@ -20,6 +20,7 @@
 #include "architecture/system_model/sim_model.h"
 #include <cstring>
 #include <iostream>
+#include "utilities/bsk_Print.h"
 
 /*! This Constructor is used to initialize the top-level sim model.  It inits a
  couple of variables and then initializes the messaging system.  It only does
@@ -65,8 +66,7 @@ uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize,
     //! - If we got an invalid message ID back, alert the user and quit
     if(!MessageID.itemFound)
     {
-        std::cerr << "You requested a message name: " << MessageName<<std::endl;
-        std::cerr << "That message does not exist."<<std::endl;
+        BSK_PRINT_BRIEF(MSG_ERROR, "You requested a message name: %s that message does not exist.", MessageName.c_str());
         return(0);
     }
     //! - For valid message names, get the data buffer associated with message
@@ -269,8 +269,7 @@ void SimModel::CreateNewMessage(std::string processName, std::string MessageName
     }
     else
     {
-        std::cerr << "You tried to create a message in a process that doesn't exist.";
-        std::cerr << "  No dice."<<std::endl;
+        BSK_PRINT_BRIEF(MSG_ERROR, "You tried to create a message in a process that doesn't exist. No dice.");
         throw std::range_error("Message creation failed.  Please examine output.\n");
     }
         
@@ -296,8 +295,7 @@ void SimModel::WriteMessageData(std::string MessageName, uint64_t MessageSize,
     //! - If we got an invalid message ID back, alert the user and quit
     if(!MessageID.itemFound)
     {
-        std::cerr << "You requested a message name: " << MessageName<<std::endl;
-        std::cerr << "That message does not exist."<<std::endl;
+        BSK_PRINT_BRIEF(MSG_ERROR, "You requested a message name: %s that message does not exist.", MessageName.c_str());
         return;
     }
     SystemMessaging::GetInstance()->selectMessageBuffer(MessageID.processBuffer);
@@ -422,8 +420,7 @@ std::set<std::pair<long int, long int>> SimModel::getMessageExchangeData(std::st
     
     if(!messageFound)
     {
-        std::cerr << "I couldn't find a message with the name: " << messageName;
-        std::cerr << std::endl << "Can't give you exchange pairs for it" << std::endl;
+        BSK_PRINT_BRIEF(MSG_WARNING, "I couldn't find a message with the name: %s Can't give you exchange pairs for it.", messageName.c_str());
     }
     return(returnPairs);
     
