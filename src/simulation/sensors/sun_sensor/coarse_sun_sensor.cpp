@@ -16,24 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-/*
- ISC License
- 
- Copyright (c) 2016-2017, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
- 
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
- 
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- 
- */
+
 #include "sensors/sun_sensor/coarse_sun_sensor.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/rigidBodyKinematics.h"
@@ -46,6 +29,7 @@
 #include "utilities/avsEigenSupport.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "utilities/avsEigenMRP.h"
+#include "architecture/logging/bskPrint.h"
 
 //! Initialize a bunch of defaults in the constructor.  Is this the right thing to do?
 CoarseSunSensor::CoarseSunSensor()
@@ -190,9 +174,10 @@ void CoarseSunSensor::CrossInit()
     
     //! - If either messages is not valid, send a warning message
     if(this->sunInMsgID < 0 || this->stateInMsgID < 0) {
-        std::cerr << "WARNING: Failed to link a sun sensor input message: ";
-        std::cerr << std::endl << "Sun: "<< this->sunInMsgID;
-        std::cerr << std::endl << "Sun: "<< this->stateInMsgID;
+        bskPrint(BSK_WARNING, "Failed to link a sun sensor input message: Sun: %d", this->sunInMsgID);
+//        std::cerr << "WARNING: Failed to link a sun sensor input message: ";
+//        std::cerr << std::endl << "Sun: "<< this->sunInMsgID;
+//        std::cerr << std::endl << "State: "<< this->stateInMsgID;
     }
     return;
 }
