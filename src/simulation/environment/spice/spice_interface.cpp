@@ -90,7 +90,6 @@ void SpiceInterface::SelfInit()
         }
         if(loadSpiceKernel((char *)"pck00010.tpc", this->SPICEDataPath.c_str())) {
             BSK_PRINT(MSG_ERROR, "Unable to load %s", "pck00010.tpc");
-            printf("Unable to load %s", "pck00010.tpc");
         }
         if(loadSpiceKernel((char *)"de-403-masses.tpc", this->SPICEDataPath.c_str())) {
             BSK_PRINT(MSG_ERROR, "Unable to load %s", "de-403-masses.tpc");
