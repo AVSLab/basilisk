@@ -654,7 +654,6 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int
     double rAT[3*3], syT[3*3];
     double sy[3*3];
     double updMat[3*3], pXY[AKF_N_STATES*3];
-    double localSBar[AKF_N_STATES*AKF_N_STATES];
     
     /*! Begin method steps*/
     
@@ -768,7 +767,6 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int
     mTranspose(pXY, ConfigData->numStates, ConfigData->numObs, pXY);
     /*! - For each column in the update matrix, perform a cholesky down-date on it to 
           get the total shifted S matrix (called sBar in internal parameters*/
-    vCopy(ConfigData->sBar, AKF_N_STATES*AKF_N_STATES, localSBar);
     for(i=0; i<ConfigData->numObs; i++)
     {
         vCopy(&(pXY[i*ConfigData->numStates]), ConfigData->numStates, xHat);
