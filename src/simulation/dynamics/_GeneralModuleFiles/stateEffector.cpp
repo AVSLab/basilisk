@@ -23,12 +23,16 @@
 StateEffector::StateEffector()
 {
     // - Set effector mass props to zero
-    effProps.IEffPntB_B.fill(0.0);
-    effProps.IEffPrimePntB_B.fill(0.0);
-    effProps.rEff_CB_B.fill(0.0);
-    effProps.rEffPrime_CB_B.fill(0.0);
-    effProps.mEff = 0.0;
-    effProps.mEffDot = 0.0;
+    this->effProps.mEff = 0.0;
+    this->effProps.mEffDot = 0.0;
+    this->effProps.IEffPntB_B.fill(0.0);
+    this->effProps.IEffPrimePntB_B.fill(0.0);
+    this->effProps.rEff_CB_B.fill(0.0);
+    this->effProps.rEffPrime_CB_B.fill(0.0);
+
+    // - set force and torques equal to zero
+    this->forceOnBody_B = this->torqueOnBodyPntB_B = this->torqueOnBodyPntC_B.setZero();
+
     return;
 }
 
@@ -66,6 +70,12 @@ void StateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector
 
 /*! This method allows for an individual stateEffector to modify their states after integration*/
 void StateEffector::modifyStates(double integTime)
+{
+    return;
+}
+
+/*! This method allows for an individual stateEffector to find the force and torque that the stateEffector is placing on to the body */
+void StateEffector::calcForceTorqueOnBody(double integTime)
 {
     return;
 }
