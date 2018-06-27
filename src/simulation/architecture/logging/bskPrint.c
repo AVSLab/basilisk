@@ -34,14 +34,14 @@ void bskPrint(bskMsgLevel_t msgType, const char *fmt, ...) {
             case BSK_ERROR:
                 printf("BSK_ERROR: ");
                 break;
-            case BSK_DEBUG:
-                printf("BSK_DEBUG: ");
+            case BSK_WARNING:
+                printf("BSK_WARNING: ");
                 break;
             case BSK_INFORMATION:
                 printf("BSK_INFORMATION: ");
                 break;
-            case BSK_WARNING:
-                printf("BSK_WARNING: ");
+            case BSK_DEBUG:
+                printf("BSK_DEBUG: ");
                 break;
             default:
                 break;

@@ -25,11 +25,11 @@
 typedef enum {
     MSG_ERROR,          
     MSG_WARNING, 
-    MSG_DEBUG,     
-    MSG_INFORMATION
+    MSG_INFORMATION,
+    MSG_DEBUG
 } msgLevel_t;
 
-#define MSG_LEVEL MSG_INFORMATION
+#define MSG_LEVEL MSG_DEBUG
 #define EXPAND(x) x
 
 #define BSK_MESSAGE(...) { printf(__VA_ARGS__); }

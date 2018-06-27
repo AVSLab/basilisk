@@ -26,8 +26,8 @@ typedef enum {
     BSK_SILENT,
     BSK_ERROR,
     BSK_WARNING,
-    BSK_DEBUG,
-    BSK_INFORMATION
+    BSK_INFORMATION,
+    BSK_DEBUG
 } bskMsgLevel_t;
 
 #ifdef __cplusplus
