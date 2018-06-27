@@ -82,8 +82,7 @@ uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize,
                                 MaxSize, reinterpret_cast<uint8_t*> (MessageData), LatestOffset);
             break;
         default:
-            std::cout << "I don't know how to access the log type: "<<logType;
-            std::cout << std::endl;
+            BSK_PRINT_BRIEF(MSG_ERROR, "I don't know how to access the log type: %u", logType);
             break;
     }
     return(DataHeader.WriteClockNanos);

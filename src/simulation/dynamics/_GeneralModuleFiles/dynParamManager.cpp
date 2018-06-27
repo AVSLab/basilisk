@@ -39,14 +39,10 @@ StateData* DynParamManager::registerState(uint32_t nRow, uint32_t nCol,
     it = stateContainer.stateMap.find(stateName);
     if(it != stateContainer.stateMap.end())
     {
-        std::cout << "WARNING: You created a state with the name: " <<stateName;
-        std::cout << " more than once.  Go ahead and don't do this.";
-        std::cout << std::endl;
+        BSK_PRINT_BRIEF(MSG_WARNING, "You created a state with the name: %s more than once.  Go ahead and don't do this.", stateName.c_str());
         if(it->second.getRowSize() != nRow || it->second.getColumnSize() != nCol)
         {
-            std::cout << "ERROR: In addition to that, you tried to change the ";
-            std::cout << "size of the state in question.  Come on.  You get null";
-            std::cout << std::endl;
+            BSK_PRINT_BRIEF(MSG_ERROR, "In addition to that, you tried to change the size of the state in question.  Come on.  You get null.");
             return nullptr;
         }
     }
@@ -80,10 +76,7 @@ StateData* DynParamManager::getStateObject(std::string stateName)
             Either the state name was miss-spelled, or the state simply 
             doesn't exit in the current simulaiton setup (i.e. asking for the 
             hub attitude in a translation only simulation setup */
-        std::cout << "WARNING: You requested this non-existent state name: " <<stateName << std::endl;
-        std::cout << "You either miss-typed the stateName, or you asked for ";
-        std::cout << "a state that doesn't exist in your simulation setup.";
-        std::cout << std::endl;
+        BSK_PRINT_BRIEF(MSG_WARNING, "You requested this non-existent state name: %s You either miss-typed the stateName, or you asked for a state that doesn't exist in your simulation setup.", stateName.c_str());
     }
     
     return(statePtr);
