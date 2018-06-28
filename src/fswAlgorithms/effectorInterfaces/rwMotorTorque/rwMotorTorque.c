@@ -17,7 +17,7 @@
 
  */
 /*
-    Simple Thruster Force Evaluation from
+    Mapping required attitude control torque Lr to RW motor torques
 
  */
 
