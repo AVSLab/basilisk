@@ -303,8 +303,8 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime){
 
 		}
         // - Save force and torque values for messages
-        eigenVector3d2CArray(this->forceExternal_B, it->ThrustOps.opThrustForce_B);
-        eigenVector3d2CArray(this->torqueExternalPntB_B, it->ThrustOps.opThrustTorquePntB_B);
+        eigenVector3d2CArray(SingleThrusterForce, it->ThrustOps.opThrustForce_B);
+        eigenVector3d2CArray(SingleThrusterTorque, it->ThrustOps.opThrustTorquePntB_B);
     }
     //! - Once all thrusters have been checked, update time-related variables for next evaluation
     prevFireTime = integTime;
