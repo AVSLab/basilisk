@@ -174,8 +174,7 @@ void CoarseSunSensor::CrossInit()
     
     //! - If either messages is not valid, send a warning message
     if(this->sunInMsgID < 0 || this->stateInMsgID < 0) {
-        //        bskPrint(BSK_WARNING, "Failed to link a sun sensor input message: Sun: %d", this->sunInMsgID);
-                BSK_PRINT(MSG_WARNING, "Failed to link a sun sensor input message: Sun: %lld", this->sunInMsgID);
+        BSK_PRINT(MSG_WARNING, "Failed to link a sun sensor input message: Sun: %lld", this->sunInMsgID);
     }
     return;
 }

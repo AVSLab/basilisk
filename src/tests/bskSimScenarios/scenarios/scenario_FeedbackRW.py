@@ -20,7 +20,6 @@
 
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
-from Basilisk.simulation import bskPrint
 
 
 # Get current file path
@@ -108,7 +107,6 @@ class scenario_AttitudeFeedbackRW(BSKScenario):
 
 
 def run(showPlots):
-    bskPrint.setMsgLevel(bskPrint.BSK_DEBUG)
 
     # Instantiate base simulation
     TheBSKSim = BSKSim()
