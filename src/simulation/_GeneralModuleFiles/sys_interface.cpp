@@ -55,7 +55,7 @@ bool InterfaceDataExchange::linkProcesses()
     findMessageBuffer(processData.messageSource);
     if(processData.source < 0)
     {
-        BSK_PRINT_BRIEF(MSG_ERROR, "Failed to find a messaging buffer with name: %d", processData.messageSource.c_str());
+        BSK_PRINT_BRIEF(MSG_ERROR, "Failed to find a messaging buffer with name: %s", processData.messageSource.c_str());
         buffersFound = false;
     }
     return(buffersFound);
