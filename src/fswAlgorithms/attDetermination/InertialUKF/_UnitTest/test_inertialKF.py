@@ -32,7 +32,6 @@ from Basilisk.simulation import sim_model
 def setupFilterData(filterObject):
     filterObject.navStateOutMsgName = "inertial_state_estimate"
     filterObject.filtDataOutMsgName = "inertial_filter_data"
-    filterObject.stDataInMsgName = "star_tracker_data"
     filterObject.massPropsInMsgName = "adcs_config_data"
     filterObject.rwSpeedsInMsgName = "reactionwheel_output_states"
     filterObject.rwParamsInMsgName = "rwa_config_data_parsed"
@@ -42,6 +41,23 @@ def setupFilterData(filterObject):
     filterObject.beta = 2.0
     filterObject.kappa = 0.0
     filterObject.switchMag = 1.2
+
+    ST1Data = inertialUKF.STMessage()
+    ST1Data.stInMsgName = "star_tracker_1_data"
+
+    ST1Data.noise = [0.00017 * 0.00017, 0.0, 0.0,
+                         0.0, 0.00017 * 0.00017, 0.0,
+                         0.0, 0.0, 0.00017 * 0.00017]
+
+    ST2Data = inertialUKF.STMessage()
+    ST2Data.stInMsgName = "star_tracker_2_data"
+
+    ST2Data.noise = [0.00017 * 0.00017, 0.0, 0.0,
+                         0.0, 0.00017 * 0.00017, 0.0,
+                         0.0, 0.0, 0.00017 * 0.00017]
+    STList = [ST1Data, ST2Data]
+    filterObject.STDatasStruct.STMessages = STList
+    filterObject.STDatasStruct.numST = len(STList)
 
     filterObject.state = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     filterObject.covar = [0.04, 0.0, 0.0, 0.0, 0.0, 0.0,
@@ -54,9 +70,6 @@ def setupFilterData(filterObject):
     qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.0017*0.0017
     qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6]*0.00017*0.00017
     filterObject.qNoise = qNoiseIn.reshape(36).tolist()
-    filterObject.qObs = [0.000017*0.000017, 0.0, 0.0,
-                         0.0, 0.000017*0.000017, 0.0,
-                         0.0, 0.0, 0.000017*0.000017]
 
     lpDataUse = inertialUKF.LowPassFilterData()
     lpDataUse.hStep = 0.5
@@ -127,15 +140,21 @@ def test_StateUpdateInertialAttitude(show_plots):
                                                 0,
                                                 vehicleConfigOut)
                                                 
-    stMessage = inertialUKF.STAttFswMsg()
-    stMessage.MRP_BdyInrtl = [0.3, 0.4, 0.5]
+    stMessage1 = inertialUKF.STAttFswMsg()
+    stMessage1.MRP_BdyInrtl = [0.3, 0.4, 0.5]
 
-    inputMessageSize = stMessage.getStructSize()
+    inputMessageSize = stMessage1.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                      moduleConfig.stDataInMsgName,
+                                          moduleConfig.STDatasStruct.STMessages[0].stInMsgName,
                                       inputMessageSize,
                                       2)  # number of buffers (leave at 2 as default, don't make zero)
 
+    stMessage2 = inertialUKF.STAttFswMsg()
+    stMessage2.MRP_BdyInrtl = [0.3, 0.4, 0.5]
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.STDatasStruct.STMessages[1].stInMsgName,
+                                      inputMessageSize,
+                                      2)
 #    stateTarget = testVector.tolist()
 #    stateTarget.extend([0.0, 0.0, 0.0])
 #    moduleConfig.state = [0.7, 0.7, 0.0]
@@ -146,11 +165,17 @@ def test_StateUpdateInertialAttitude(show_plots):
 
     for i in range(20000):
         if i > 20:
-            stMessage.timeTag = int(i*0.5*1E9)
-            unitTestSim.TotalSim.WriteMessageData(moduleConfig.stDataInMsgName,
+            stMessage1.timeTag = int(i*0.5*1E9)
+            stMessage2.timeTag = int(i*0.5*1E9)
+
+            unitTestSim.TotalSim.WriteMessageData(moduleConfig.STDatasStruct.STMessages[0].stInMsgName,
                                       inputMessageSize,
                                       unitTestSim.TotalSim.CurrentNanos,
-                                      stMessage)
+                                      stMessage1)
+            unitTestSim.TotalSim.WriteMessageData(moduleConfig.STDatasStruct.STMessages[1].stInMsgName,
+                                      inputMessageSize,
+                                      unitTestSim.TotalSim.CurrentNanos,
+                                      stMessage2)
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
         unitTestSim.ExecuteSimulation()
 
@@ -161,21 +186,27 @@ def test_StateUpdateInertialAttitude(show_plots):
         if(covarLog[-1, i*6+1+i] > covarLog[0, i*6+1+i]):
             testFailCount += 1
             testMessages.append("Covariance update failure")
-        if(abs(stateLog[-1, i+1] - stMessage.MRP_BdyInrtl[i]) > 1.0E-5):
-            print abs(stateLog[-1, i+1] - stMessage.MRP_BdyInrtl[i])
+        if(abs(stateLog[-1, i+1] - stMessage1.MRP_BdyInrtl[i]) > 1.0E-5):
+            print abs(stateLog[-1, i+1] - stMessage1.MRP_BdyInrtl[i])
             testFailCount += 1
             testMessages.append("State update failure")
 
-    stMessage.MRP_BdyInrtl = [1.2, 0.0, 0.0]
+    stMessage1.MRP_BdyInrtl = [1.2, 0.0, 0.0]
+    stMessage2.MRP_BdyInrtl = [1.2, 0.0, 0.0]
 
 
     for i in range(20000):
         if i > 20:
-            stMessage.timeTag = int((i+20000)*0.5*1E9)
-            unitTestSim.TotalSim.WriteMessageData(moduleConfig.stDataInMsgName,
+            stMessage1.timeTag = int((i+20000)*0.5*1E9)
+            stMessage2.timeTag = int((i+20000)*0.5*1E9)
+            unitTestSim.TotalSim.WriteMessageData(moduleConfig.STDatasStruct.STMessages[0].stInMsgName,
                                       inputMessageSize,
                                       unitTestSim.TotalSim.CurrentNanos,
-                                      stMessage)
+                                      stMessage1)
+            unitTestSim.TotalSim.WriteMessageData(moduleConfig.STDatasStruct.STMessages[1].stInMsgName,
+                                      inputMessageSize,
+                                      unitTestSim.TotalSim.CurrentNanos,
+                                      stMessage2)
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+20000+1)*0.5))
         unitTestSim.ExecuteSimulation()
 

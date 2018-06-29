@@ -33,6 +33,7 @@
 %ignore Reset_inertialUKF;
 STRUCTASLIST(LowPassFilterData)
 STRUCTASLIST(AccPktDataFswMsg)
+STRUCTASLIST(STMessage)
 %include "inertialUKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
 %include "../../fswMessages/inertialFilterFswMsg.h"
@@ -47,7 +48,8 @@ GEN_SIZEOF(STAttFswMsg);
 GEN_SIZEOF(RWArrayConfigFswMsg);
 GEN_SIZEOF(RWSpeedIntMsg);
 GEN_SIZEOF(VehicleConfigFswMsg);
-GEN_SIZEOF(AccDataFswMsg)
+GEN_SIZEOF(AccDataFswMsg);
+
 
 %pythoncode %{
 import sys

@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-	void ukfQRDJustR(
+	int ukfQRDJustR(
 		double *sourceMat, int32_t nRow, int32_t nCol, double *destMat);
 	void ukfLInv(
 		double *sourceMat, int32_t nRow, int32_t nCol, double *destMat);
@@ -44,9 +44,9 @@ extern "C" {
 		int32_t *indx, double *bmat, double *destMat);
 	void ukfMatInv(double *sourceMat, int32_t nRow, int32_t nCol,
 		double *destMat);
-	void ukfCholDecomp(double *sourceMat, int32_t nRow, int32_t nCol,
+	int ukfCholDecomp(double *sourceMat, int32_t nRow, int32_t nCol,
 		double *destMat);
-    void ukfCholDownDate(double *rMat, double *xVec, double beta, int32_t nStates,
+    int ukfCholDownDate(double *rMat, double *xVec, double beta, int32_t nStates,
                          double *rOut);
 
 #ifdef __cplusplus
