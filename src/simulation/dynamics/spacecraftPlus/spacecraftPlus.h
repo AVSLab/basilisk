@@ -89,6 +89,7 @@ public:
     void initializeDynamics();           //!< -- This method initializes all of the dynamics and variables for the s/c
     void computeEnergyMomentum(double time);  //!< -- This method computes the total energy and momentum of the s/c
     void updateSCMassProps(double time);  //!< -- This method computes the total mass properties of the s/c
+    void calcForceTorqueFromStateEFfectors(double time);  //!< -- This method computes the force and torque from the stateEffectors
     void SelfInit();                     //!< -- Lets spacecraft plus create its own msgs
     void CrossInit();                    //!< -- Hook to tie s/c plus back into provided msgs
     void writeOutputMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
