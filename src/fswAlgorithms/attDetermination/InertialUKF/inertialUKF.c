@@ -187,7 +187,6 @@ void Read_STMessages(InertialUKFConfig *ConfigData, uint64_t moduleID)
         ReadMessage(ConfigData->STDatasStruct.STMessages[i].stInMsgID, &ClockTime, &ReadSize,
                     sizeof(STAttFswMsg), (void*) (&(ConfigData->stSensorIn[i])), moduleID);
         
-//        ConfigData->stSensorIn[i].timeTag += i*100;
         ConfigData->ClockTimeST[i] = ClockTime;
         ConfigData->ReadSizeST[i] = ReadSize;
         
