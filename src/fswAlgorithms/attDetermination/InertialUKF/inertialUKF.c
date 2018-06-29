@@ -187,7 +187,6 @@ void Read_STMessages(InertialUKFConfig *ConfigData, uint64_t moduleID)
         ReadMessage(ConfigData->STDatasStruct.STMessages[i].chuFusOutMsgID, &ClockTime, &ReadSize,
                     sizeof(STAttFswMsg), (void*) (&(ConfigData->stSensorIn[i])), moduleID);
         
-        ConfigData->stSensorIn[i].timeTag += i*100;
         ConfigData->ClockTimeST[i] = ClockTime;
         ConfigData->ReadSizeST[i] = ReadSize;
         
@@ -226,6 +225,8 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     AccDataFswMsg gyrBuffer; /* [-] Buffer of IMU messages for gyro prop*/
     int i;
     
+    // Reset update check to zero
+    ConfigData->badUpdate = 0;
     
     if (v3Norm(ConfigData->state) > ConfigData->switchMag) //Little extra margin
     {
@@ -249,6 +250,9 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
         ConfigData->firstPassComplete = 1;
     }
     
+    ConfigData->speedDt = (ClockTime - ConfigData->timeWheelPrev)*NANO2SEC;
+    ConfigData->timeWheelPrev = ClockTime;
+    
     ReadMessage(ConfigData->massPropsInMsgId, &ClockTime, &otherSize,
                 sizeof(VehicleConfigFswMsg), &(ConfigData->localConfigData), moduleID);
     m33Inverse(RECAST3X3 ConfigData->localConfigData.ISCPntB_B, ConfigData->IInv);
@@ -258,10 +262,7 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
         newTimeTag = ConfigData->stSensorIn[ConfigData->stSensorOrder[i]].timeTag * NANO2SEC;
         ClockTime = ConfigData->ClockTimeST[ConfigData->stSensorOrder[i]];
         ReadSize =  ConfigData->ReadSizeST[ConfigData->stSensorOrder[i]];
-
-        ConfigData->speedDt = (ClockTime - ConfigData->timeWheelPrev)*NANO2SEC;
-        ConfigData->timeWheelPrev = ClockTime;
-
+        
         /*! - If the star tracker has provided a new message compared to last time,
               update the filter to the new measurement*/
         trackerValid = 0;
