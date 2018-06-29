@@ -57,7 +57,7 @@ void CrossInit_inertialUKF(InertialUKFConfig *ConfigData, uint64_t moduleID)
     int i;
     for (i = 0; i < ConfigData->STDatasStruct.numST; i++)
     {
-        ConfigData->STDatasStruct.STMessages[i].chuFusOutMsgID = subscribeToMessage(ConfigData->STDatasStruct.STMessages[i].chuFusOutMsgName, sizeof(STAttFswMsg), moduleID);
+        ConfigData->STDatasStruct.STMessages[i].stInMsgID = subscribeToMessage(ConfigData->STDatasStruct.STMessages[i].stInMsgName, sizeof(STAttFswMsg), moduleID);
     }
 	ConfigData->massPropsInMsgId = subscribeToMessage(ConfigData->massPropsInMsgName, 
 		sizeof(VehicleConfigFswMsg), moduleID);
@@ -184,9 +184,10 @@ void Read_STMessages(InertialUKFConfig *ConfigData, uint64_t moduleID)
         ClockTime = 0;
         ReadSize = 0;
         memset(&(ConfigData->stSensorIn[i]), 0x0, sizeof(STAttFswMsg));
-        ReadMessage(ConfigData->STDatasStruct.STMessages[i].chuFusOutMsgID, &ClockTime, &ReadSize,
+        ReadMessage(ConfigData->STDatasStruct.STMessages[i].stInMsgID, &ClockTime, &ReadSize,
                     sizeof(STAttFswMsg), (void*) (&(ConfigData->stSensorIn[i])), moduleID);
         
+//        ConfigData->stSensorIn[i].timeTag += i*100;
         ConfigData->ClockTimeST[i] = ClockTime;
         ConfigData->ReadSizeST[i] = ReadSize;
         
@@ -473,7 +474,7 @@ void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime)
 			ConfigData->numStates*sizeof(double));
         }
 	}
-    /*! - Scale sQNoise matrix depending on the dt*/
+//    ! - Scale sQNoise matrix depending on the dt
     for (k=0;k<3;k++){
         procNoise[k*AKF_N_STATES+k] *= ConfigData->dt*ConfigData->dt/2;
         procNoise[(k+3)*AKF_N_STATES+(k+3)] *= ConfigData->dt;

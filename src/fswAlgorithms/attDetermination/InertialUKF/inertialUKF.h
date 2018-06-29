@@ -37,8 +37,8 @@
  */
 
 typedef struct {
-    char chuFusOutMsgName[MAX_STAT_MSG_LENGTH];    /*!< [-] Input message buffer from MIRU*/
-    int32_t chuFusOutMsgID;                        /*!< [-] Input message ID from MIRU*/
+    char stInMsgName[MAX_STAT_MSG_LENGTH];    /*!< [-] Input message buffer from MIRU*/
+    int32_t stInMsgID;                        /*!< [-] Input message ID from MIRU*/
     double noise[3*3];       /*!< [-] Per axis noise on the ST*/
 }STMessage;
 
@@ -58,7 +58,6 @@ typedef struct {
 	char massPropsInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the mass props message*/
     char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];  /*!< The name of the RWConfigParams input message*/
     char rwSpeedsInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the input RW speeds message*/
-    char stDataInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
     char gyrBuffInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] Input message buffer from MIRU*/
 
 	int numStates;                /*!< [-] Number of states for this filter*/
@@ -114,7 +113,6 @@ typedef struct {
     LowPassFilterData gyroFilt[3];      /*! [-] Low-pass filters for input gyro data*/
     int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
-    int32_t stDataInMsgId;      /*!< -- ID for the incoming CSS sensor message*/
     int32_t massPropsInMsgId;    /*!< [-] ID for the incoming mass properties message*/
     int32_t rwParamsInMsgID;     /*!< [-] ID for the RWArrayConfigFswMsg ingoing message */
     int32_t rwSpeedsInMsgID;      /*!< [-] ID for the incoming RW speeds*/
