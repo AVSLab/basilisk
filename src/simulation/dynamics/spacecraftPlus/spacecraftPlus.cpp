@@ -435,7 +435,7 @@ void SpacecraftPlus::integrateState(double integrateToThisTime)
         (*it)->modifyStates(integrateToThisTime);
     }
     // - Compute force and torque on the body due to stateEffectors
-    this->calcForceTorqueFromStateEFfectors(time);
+    this->calcForceTorqueFromStateEFfectors(integrateToThisTime);
 
     return;
 }
