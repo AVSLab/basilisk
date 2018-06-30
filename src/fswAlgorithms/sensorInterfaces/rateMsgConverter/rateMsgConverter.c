@@ -29,7 +29,6 @@
 /* modify the path to reflect the new module names */
 #include "rateMsgConverter.h"
 #include "simulation/utilities/linearAlgebra.h"
-#include "fswMessages/imuSensorBodyFswMsg.h"
 #include <string.h>
 
 

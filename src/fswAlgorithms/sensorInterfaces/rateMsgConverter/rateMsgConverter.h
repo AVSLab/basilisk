@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "simFswInterfaceMessages/navAttIntMsg.h"
-
+#include "fswAlgorithms/fswMessages/imuSensorBodyFswMsg.h"
 
 
 /*! \addtogroup ADCSAlgGroup
