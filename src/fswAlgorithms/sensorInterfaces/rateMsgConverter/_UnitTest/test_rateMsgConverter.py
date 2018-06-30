@@ -235,7 +235,7 @@ def rateMsgConvertFunction(show_plots):
     resultTable = np.insert(resultTable,range(2,2+len(diff.transpose())), diff, axis=1)
 
     tableName = "testSunHeading"       # make this a unique name
-    tableHeaders = ["time [s]", "Output 1", "Error", "Output 2", "Error", "Output 3 $\\bm d", "Error"]
+    tableHeaders = ["time [s]", "Output 1", "Error", "Output 2", "Error", "Output 3 $\\bm d$", "Error"]
     caption = 'Unit test output table for sun heading vector.'
     unitTestSupport.writeTableLaTeX(
         tableName,

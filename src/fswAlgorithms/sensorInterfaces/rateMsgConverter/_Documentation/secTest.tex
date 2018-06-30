@@ -1,0 +1,56 @@
+% !TEX root = ./Basilisk-rateMsgConverter-20180630.tex
+
+\section{Test Description and Success Criteria}
+The single check has the rate vector of the input message is set to specific values.  The rate info of the output vector is then compared to truth model.  Further, the MRP and heading vectors should be zero vectors.
+
+
+
+
+\section{Test Parameters}
+
+Test and simulation parameters and inputs go here. Basically, describe your test in the section above, but put any specific numbers or inputs to the tests in this section.
+
+The unit test verify that the module output guidance message vectors match expected values.
+\begin{table}[htbp]
+	\caption{Error tolerance for each test.}
+	\label{tab:errortol}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c } % Column formatting, 
+		\hline\hline
+		\textbf{Output Value Tested}  & \textbf{Tolerated Error}  \\ 
+		\hline
+		{\tt outputVector}        & \input{AutoTeX/toleranceValue}	   \\ 
+		\hline\hline
+	\end{tabular}
+\end{table}
+
+
+
+
+\section{Test Results}
+The following table shows the results of the unit test described above.
+
+\begin{table}[H]
+	\caption{Test results}
+	\label{tab:results}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{c | c  } % Column formatting, 
+		\hline\hline
+		\textbf{Check} 						  		&\textbf{Pass/Fail} \\ 
+		\hline
+	   1	   			& \input{AutoTeX/passFail} \\ 
+	   \hline\hline
+	\end{tabular}
+\end{table}
+
+
+
+The test output are shown in the following tables.
+
+\input{AutoTeX/testMRP.tex}
+\input{AutoTeX/testRate.tex}
+\input{AutoTeX/testSunHeading.tex}
+
+
+
+
