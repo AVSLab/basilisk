@@ -286,12 +286,15 @@ void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
 void HingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
+{
+    WriteOutputMessages(CurrentSimNanos);
+
+    return;
+}
 
 void HingedRigidBodyStateEffector::calcForceTorqueOnBody(double integTime)
 {
-    
-    WriteOutputMessages(CurrentSimNanos);
-    
+
     // - Get the current omega state
     Eigen::Vector3d omegaLocal_BN_B;
     omegaLocal_BN_B = hubOmega->getState();
