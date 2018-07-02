@@ -83,6 +83,7 @@ public:
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                       double & rotEnergyContr);  //!< -- Method for SMD to add contr. to energy and mom.
     void retrieveMassValue(double integTime);
+    void calcForceTorqueOnBody(double integTime);  //!< -- Force and torque on s/c due to linear spring mass damper
 };
 
 #endif /* LINEAR_SPRING_MASS_DAMPER_H */

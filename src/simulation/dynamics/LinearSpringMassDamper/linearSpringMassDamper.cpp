@@ -219,7 +219,10 @@ void LinearSpringMassDamper::updateEnergyMomContributions(double integTime, Eige
     // - Find rotational energy contribution from the hub
     rotEnergyContr = 1.0/2.0*this->massSMD*rDotPcB_B.dot(rDotPcB_B) + 1.0/2.0*this->k*this->rho*this->rho;
 
-void FuelSloshParticle::calcForceTorqueOnBody(double integTime)
+    return;
+}
+
+void LinearSpringMassDamper::calcForceTorqueOnBody(double integTime)
 {
     // - Get the current omega state
     Eigen::Vector3d omegaLocal_BN_B;
@@ -232,11 +235,11 @@ void FuelSloshParticle::calcForceTorqueOnBody(double integTime)
     rhoDDotLocal = rhoDotState->getStateDeriv()(0, 0);
 
     // - Calculate force that the FSP is applying to the spacecraft
-    this->forceOnBody_B = -(this->massFSP*this->pHat_B*rhoDDotLocal + 2*omegaLocalTilde_BN_B*this->massFSP
+    this->forceOnBody_B = -(this->massSMD*this->pHat_B*rhoDDotLocal + 2*omegaLocalTilde_BN_B*this->massSMD
                             *this->rhoDot*this->pHat_B);
 
     // - Calculate torque that the FSP is applying about point B
-    this->torqueOnBodyPntB_B = -(this->massFSP*this->rTilde_PcB_B*this->pHat_B*rhoDDotLocal + this->massFSP*omegaLocalTilde_BN_B*this->rTilde_PcB_B*this->rPrime_PcB_B - this->massFSP*(this->rPrimeTilde_PcB_B*this->rTilde_PcB_B + this->rTilde_PcB_B*this->rPrimeTilde_PcB_B)*omegaLocal_BN_B);
+    this->torqueOnBodyPntB_B = -(this->massSMD*this->rTilde_PcB_B*this->pHat_B*rhoDDotLocal + this->massSMD*omegaLocalTilde_BN_B*this->rTilde_PcB_B*this->rPrime_PcB_B - this->massSMD*(this->rPrimeTilde_PcB_B*this->rTilde_PcB_B + this->rTilde_PcB_B*this->rPrimeTilde_PcB_B)*omegaLocal_BN_B);
 
     // - Define values needed to get the torque about point C
     Eigen::Vector3d cLocal_B = *this->c_B;
@@ -247,8 +250,7 @@ void FuelSloshParticle::calcForceTorqueOnBody(double integTime)
     Eigen::Matrix3d rPrimeTilde_PcC_B = eigenTilde(rPrime_PcC_B);
 
     // - Calculate the torque about point C
-    this->torqueOnBodyPntC_B = -(this->massFSP*rTilde_PcC_B*this->pHat_B*rhoDDotLocal + this->massFSP*omegaLocalTilde_BN_B*rTilde_PcC_B*rPrime_PcC_B - this->massFSP*(rPrimeTilde_PcC_B*rTilde_PcC_B + rTilde_PcC_B*rPrimeTilde_PcC_B)*omegaLocal_BN_B);
+    this->torqueOnBodyPntC_B = -(this->massSMD*rTilde_PcC_B*this->pHat_B*rhoDDotLocal + this->massSMD*omegaLocalTilde_BN_B*rTilde_PcC_B*rPrime_PcC_B - this->massSMD*(rPrimeTilde_PcC_B*rTilde_PcC_B + rTilde_PcC_B*rPrimeTilde_PcC_B)*omegaLocal_BN_B);
     
     return;
 }
-
