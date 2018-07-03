@@ -29,6 +29,9 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>
     updated bskSim to use the RW factory class to setup the simulation RW devices, as well as to use fsw helper functions to setup the RW FSW config messages
     </li>
+    <li>
+    Added a force and torque calculation method in the stateEffector abstract class, and provided the necessary method calls in spacecraftPlus. This allows for stateEffectors to calculate the force and torque that they are imparting on the rigid body hub. The hingedRigidBodyStateEffector and the linearSpringMassDamper classes provide their implementation of these calculations. 
+    </li>
 </ul>
 
 ## Version 0.2.3 (June 12, 2018)
