@@ -199,6 +199,7 @@ class Controller:
                 None, if no archive desired.
         """
         self.icDirectory = os.path.abspath(dirName) + "/"
+        self.simParams.shouldArchiveParameters = dirName is not None
         self.simParams.icfilename = self.icDirectory
 
     def setICRunFlag(self, bool):
