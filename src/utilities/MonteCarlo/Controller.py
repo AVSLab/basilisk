@@ -755,8 +755,12 @@ class SimulationExecutor():
             # if archiving, this run's parameters and random seeds are saved in its own json file
             if simParams.shouldArchiveParameters:
                 # save the dispersions and random seeds for this run
-                with open(simParams.filename + ".json", 'w') as outfile:
-                    json.dump(modifications, outfile)
+                if simParams.icfilename != "":
+                    with open(simParams.icfilename + ".json", 'w') as outfile:
+                        json.dump(modifications, outfile)
+                else:
+                    with open(simParams.filename + ".json", 'w') as outfile:
+                        json.dump(modifications, outfile)
 
             if simParams.configureFunction is not None:
                 if simParams.verbose:
