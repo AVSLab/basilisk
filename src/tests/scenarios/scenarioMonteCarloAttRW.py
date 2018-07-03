@@ -377,17 +377,17 @@ def run(saveFigures, case, show_plots):
     retentionPolicy.addMessageLog(mrpControlConfigInputRWSpeedsName, [("wheelSpeeds", range(3))], samplingTime)
     retentionPolicy.addMessageLog(fswRWVoltageConfigVoltageOutMsgName, [("voltage", range(3))], samplingTime)
 
-    if case ==1:
-        for message in rwOutName:
-            retentionPolicy.addMessageLog(message, [("u_current", range(1))], samplingTime)
-        if show_plots:
-            # plot data only if show_plots is true, otherwise just retain
-            retentionPolicy.setDataCallback(plotSim)
-        if saveFigures:
-            # plot data only if show_plots is true, otherwise just retain
-            retentionPolicy.setDataCallback(plotSimAndSave)
-        monteCarlo.addRetentionPolicy(retentionPolicy)
+    for message in rwOutName:
+        retentionPolicy.addMessageLog(message, [("u_current", range(1))], samplingTime)
+    if show_plots:
+        # plot data only if show_plots is true, otherwise just retain
+        retentionPolicy.setDataCallback(plotSim)
+    if saveFigures:
+        # plot data only if show_plots is true, otherwise just retain
+        retentionPolicy.setDataCallback(plotSimAndSave)
+    monteCarlo.addRetentionPolicy(retentionPolicy)
 
+    if case ==1:
         # After the monteCarlo run is configured, it is executed.
         # This method returns the list of jobs that failed.
         failures = monteCarlo.executeSimulations()
@@ -811,6 +811,6 @@ def plotSimAndSave(data, retentionPolicy):
 #
 if __name__ == "__main__":
     run(  False        # safe figures to file
-        , 2
+        , 2            # Case 1 is normal MC, case 2 is initial conditon run
         , True         # show_plots
        )
