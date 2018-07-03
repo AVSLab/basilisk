@@ -63,6 +63,8 @@ private:
     Eigen::Vector3d bRho;          //!< -- Term needed for back-sub method
     Eigen::MatrixXd *g_N;          //!< [m/s^2] Gravitational acceleration in N frame components
 	StateData *rhoState;		   //!< -- state data for spring mass damper displacement from equilibrium
+    Eigen::MatrixXd *c_B;            //!< [m] Vector from point B to CoM of s/c in B frame components
+    Eigen::MatrixXd *cPrime_B;       //!< [m/s] Body time derivative of vector c_B in B frame components
 	StateData *rhoDotState;		   //!< -- state data for time derivative of rho;
 	StateData *omegaState;         //!< -- state data for the hubs omega_BN_B
 	StateData *sigmaState;         //!< -- state data for the hubs sigma_BN
@@ -81,6 +83,7 @@ public:
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                       double & rotEnergyContr);  //!< -- Method for SMD to add contr. to energy and mom.
     void retrieveMassValue(double integTime);
+    void calcForceTorqueOnBody(double integTime);  //!< -- Force and torque on s/c due to linear spring mass damper
 };
 
 #endif /* LINEAR_SPRING_MASS_DAMPER_H */

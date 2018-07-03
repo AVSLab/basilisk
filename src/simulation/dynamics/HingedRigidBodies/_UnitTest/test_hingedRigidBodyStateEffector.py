@@ -96,6 +96,8 @@ def test_hingedRigidBodyGravity(show_plots):
     unitTestSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
     unitTestSim.panel1.thetaInit = 5*numpy.pi/180.0
     unitTestSim.panel1.thetaDotInit = 0.0
+    unitTestSim.panel1.HingedRigidBodyOutMsgName = "panel1Msg"
+    unitTestSim.panel1.ModelTag = "Panel1"
 
     # Define Variables for panel 2
     unitTestSim.panel2.mass = 100.0
@@ -109,6 +111,8 @@ def test_hingedRigidBodyGravity(show_plots):
     unitTestSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
     unitTestSim.panel2.thetaInit = 0.0
     unitTestSim.panel2.thetaDotInit = 0.0
+    unitTestSim.panel2.HingedRigidBodyOutMsgName = "panel2Msg"
+    unitTestSim.panel2.ModelTag = "Panel2"
 
     # Add panels to spaceCraft
     scObject.addStateEffector(unitTestSim.panel1)
@@ -127,6 +131,8 @@ def test_hingedRigidBodyGravity(show_plots):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
     # Add Earth gravity to the sim
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
@@ -148,6 +154,8 @@ def test_hingedRigidBodyGravity(show_plots):
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging(unitTestSim.panel1.ModelTag + ".forceOnBody_B", testProcessRate, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(unitTestSim.panel2.ModelTag + ".forceOnBody_B", testProcessRate, 0, 2, 'double')
 
     stopTime = 2.5
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
@@ -159,6 +167,8 @@ def test_hingedRigidBodyGravity(show_plots):
     orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
     rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
+    forcePanel1 = unitTestSim.GetLogVariableData(unitTestSim.panel1.ModelTag + ".forceOnBody_B")
+    forcePanel2 = unitTestSim.GetLogVariableData(unitTestSim.panel2.ModelTag + ".forceOnBody_B")
 
     dataSigma = [sigmaOut[-1]]
 
@@ -216,6 +226,18 @@ def test_hingedRigidBodyGravity(show_plots):
     PlotName = "ChangeInRotationalEnergyGravity"
     PlotTitle = "Change In Rotational Energy with Gravity"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
+    plt.figure()
+    plt.clf()
+    plt.plot(forcePanel1[:,0]*1e-9, forcePanel1[:,1], forcePanel1[:,0]*1e-9, forcePanel1[:,2], forcePanel1[:,0]*1e-9, forcePanel1[:,3])
+    plt.xlabel('time (s)')
+    plt.ylabel('Force about Point B')
+
+    plt.figure()
+    plt.clf()
+    plt.plot(forcePanel2[:,0]*1e-9, forcePanel2[:,1], forcePanel2[:,0]*1e-9, forcePanel2[:,2], forcePanel2[:,0]*1e-9, forcePanel2[:,3])
+    plt.xlabel('time (s)')
+    plt.ylabel('Force about Point B')
 
     plt.show(show_plots)
     plt.close("all")
@@ -1561,4 +1583,4 @@ class boxAndWingParameters:
     d = 0
 
 if __name__ == "__main__":
-    test_hingedRigidBodyFrequencyAmp(True)
+    test_hingedRigidBodyGravity(True)

@@ -100,6 +100,8 @@ void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
     this->hubSigma = statesIn.getStateObject("hubSigma");
     this->hubOmega = statesIn.getStateObject("hubOmega");
     this->g_N = statesIn.getPropertyReference("g_N");
+    this->c_B = statesIn.getPropertyReference("centerOfMassSC");
+    this->cPrime_B = statesIn.getPropertyReference("centerOfMassPrimeSC");
 
     return;
 }
@@ -285,7 +287,52 @@ void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime
  */
 void HingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
-    
     WriteOutputMessages(CurrentSimNanos);
-    
+
+    return;
+}
+
+void HingedRigidBodyStateEffector::calcForceTorqueOnBody(double integTime)
+{
+
+    // - Get the current omega state
+    Eigen::Vector3d omegaLocal_BN_B;
+    omegaLocal_BN_B = hubOmega->getState();
+    Eigen::Matrix3d omegaLocalTilde_BN_B;
+    omegaLocalTilde_BN_B = eigenTilde(omegaLoc_BN_B);
+
+    // - Get thetaDDot from last integrator call
+    double thetaDDotLocal;
+    thetaDDotLocal = thetaDotState->getStateDeriv()(0, 0);
+
+    // - Calculate force that the HRB is applying to the spacecraft
+    this->forceOnBody_B = -(this->mass*this->d*this->sHat3_B*thetaDDotLocal + this->mass*this->d*this->thetaDot
+                            *this->thetaDot*this->sHat1_B + 2.0*omegaLocalTilde_BN_B*this->mass*this->d*this->thetaDot
+                            *this->sHat3_B);
+
+    // - Calculate torque that the HRB is applying about point B
+    this->torqueOnBodyPntB_B = -((this->IPntS_S(1,1)*this->sHat2_B + this->mass*this->d*this->rTilde_SB_B*this->sHat3_B)
+                                 *thetaDDotLocal + (this->ISPrimePntS_B - this->mass*(this->rPrimeTilde_SB_B*rTilde_SB_B
+                                 + this->rTilde_SB_B*this->rPrimeTilde_SB_B))*omegaLocal_BN_B + this->thetaDot
+                                 *omegaLocalTilde_BN_B*(this->IPntS_S(1,1)*this->sHat2_B + this->mass*this->d
+                                 *this->rTilde_SB_B*this->sHat3_B) + this->mass*this->d*this->thetaDot*this->thetaDot
+                                 *this->rTilde_SB_B*this->sHat1_B);
+
+    // - Define values needed to get the torque about point C
+    Eigen::Vector3d cLocal_B = *this->c_B;
+    Eigen::Vector3d cPrimeLocal_B = *cPrime_B;
+    Eigen::Vector3d r_SC_B = this->r_SB_B - cLocal_B;
+    Eigen::Vector3d rPrime_SC_B = this->rPrime_SB_B - cPrimeLocal_B;
+    Eigen::Matrix3d rTilde_SC_B = eigenTilde(r_SC_B);
+    Eigen::Matrix3d rPrimeTilde_SC_B = eigenTilde(rPrime_SC_B);
+
+    // - Calculate the torque about point C
+    this->torqueOnBodyPntC_B = -((this->IPntS_S(1,1)*this->sHat2_B + this->mass*this->d*rTilde_SC_B*this->sHat3_B)
+                                 *thetaDDotLocal + (this->ISPrimePntS_B - this->mass*(rPrimeTilde_SC_B*rTilde_SC_B
+                                 + rTilde_SC_B*rPrimeTilde_SC_B))*omegaLocal_BN_B + this->thetaDot
+                                 *omegaLocalTilde_BN_B*(this->IPntS_S(1,1)*this->sHat2_B + this->mass*this->d
+                                 *rTilde_SC_B*this->sHat3_B) + this->mass*this->d*this->thetaDot*this->thetaDot
+                                 *rTilde_SC_B*this->sHat1_B);
+
+    return;
 }

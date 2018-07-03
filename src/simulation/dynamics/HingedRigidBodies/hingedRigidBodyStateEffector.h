@@ -48,6 +48,8 @@ public:
     std::string nameOfThetaState;    //!< -- Identifier for the theta state data container
     std::string nameOfThetaDotState; //!< -- Identifier for the thetaDot state data container
     Eigen::MatrixXd *g_N;            //!< [m/s^2] Gravitational acceleration in N frame components
+    Eigen::MatrixXd *c_B;            //!< [m] Vector from point B to CoM of s/c in B frame components
+    Eigen::MatrixXd *cPrime_B;       //!< [m/s] Body time derivative of vector c_B in B frame components
     Eigen::Matrix3d IPntS_S;         //!< [kg-m^2] Inertia of hinged rigid body about point S in S frame components
     Eigen::Vector3d r_HB_B;          //!< [m] vector pointing from body frame origin to Hinge location
     Eigen::Matrix3d dcm_HB;          //!< -- DCM from body frame to hinge frame
@@ -97,6 +99,7 @@ public:
     void updateEffectorMassProps(double integTime);  //!< -- Method for giving the s/c the HRB mass props and prop rates
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                       double & rotEnergyContr); //!< -- Computing energy and momentum for HRBs
+    void calcForceTorqueOnBody(double integTime);  //!< -- Force and torque on s/c due to HRBs
 };
 
 #endif /* STATE_EFFECTOR_H */

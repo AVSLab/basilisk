@@ -63,6 +63,10 @@ void LinearSpringMassDamper::linkInStates(DynParamManager& statesIn)
     // - Grab access to gravity
     this->g_N = statesIn.getPropertyReference("g_N");
 
+    // - Grab access to c_B and cPrime_B
+    this->c_B = statesIn.getPropertyReference("centerOfMassSC");
+    this->cPrime_B = statesIn.getPropertyReference("centerOfMassPrimeSC");
+
     return;
 }
 
@@ -218,3 +222,35 @@ void LinearSpringMassDamper::updateEnergyMomContributions(double integTime, Eige
     return;
 }
 
+void LinearSpringMassDamper::calcForceTorqueOnBody(double integTime)
+{
+    // - Get the current omega state
+    Eigen::Vector3d omegaLocal_BN_B;
+    omegaLocal_BN_B = this->omegaState->getState();
+    Eigen::Matrix3d omegaLocalTilde_BN_B;
+    omegaLocalTilde_BN_B = eigenTilde(omegaLocal_BN_B);
+
+    // - Get rhoDDot from last integrator call
+    double rhoDDotLocal;
+    rhoDDotLocal = rhoDotState->getStateDeriv()(0, 0);
+
+    // - Calculate force that the FSP is applying to the spacecraft
+    this->forceOnBody_B = -(this->massSMD*this->pHat_B*rhoDDotLocal + 2*omegaLocalTilde_BN_B*this->massSMD
+                            *this->rhoDot*this->pHat_B);
+
+    // - Calculate torque that the FSP is applying about point B
+    this->torqueOnBodyPntB_B = -(this->massSMD*this->rTilde_PcB_B*this->pHat_B*rhoDDotLocal + this->massSMD*omegaLocalTilde_BN_B*this->rTilde_PcB_B*this->rPrime_PcB_B - this->massSMD*(this->rPrimeTilde_PcB_B*this->rTilde_PcB_B + this->rTilde_PcB_B*this->rPrimeTilde_PcB_B)*omegaLocal_BN_B);
+
+    // - Define values needed to get the torque about point C
+    Eigen::Vector3d cLocal_B = *this->c_B;
+    Eigen::Vector3d cPrimeLocal_B = *this->cPrime_B;
+    Eigen::Vector3d r_PcC_B = this->r_PcB_B - cLocal_B;
+    Eigen::Vector3d rPrime_PcC_B = this->rPrime_PcB_B - cPrimeLocal_B;
+    Eigen::Matrix3d rTilde_PcC_B = eigenTilde(r_PcC_B);
+    Eigen::Matrix3d rPrimeTilde_PcC_B = eigenTilde(rPrime_PcC_B);
+
+    // - Calculate the torque about point C
+    this->torqueOnBodyPntC_B = -(this->massSMD*rTilde_PcC_B*this->pHat_B*rhoDDotLocal + this->massSMD*omegaLocalTilde_BN_B*rTilde_PcC_B*rPrime_PcC_B - this->massSMD*(rPrimeTilde_PcC_B*rTilde_PcC_B + rTilde_PcC_B*rPrimeTilde_PcC_B)*omegaLocal_BN_B);
+    
+    return;
+}

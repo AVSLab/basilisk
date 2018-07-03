@@ -37,6 +37,9 @@ typedef struct {
 class StateEffector {
 public:
     EffectorMassProps effProps;            //!< -- stateEffectors instantiation of effector mass props
+    Eigen::Vector3d forceOnBody_B;         //!< [N] Force that the state effector applies to the s/c
+    Eigen::Vector3d torqueOnBodyPntB_B;    //!< [N] Torque that the state effector applies to the body about point B
+    Eigen::Vector3d torqueOnBodyPntC_B;    //!< [N] Torque that the state effector applies to the body about point B
     
 public:
     StateEffector();                       //!< -- Contructor
@@ -48,6 +51,7 @@ public:
     virtual void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                               double & rotEnergyContr);  //!< -- Energy and momentum calculations
     virtual void modifyStates(double integTime); //!< -- Modify state values after integration
+    virtual void calcForceTorqueOnBody(double integTime);  //!< -- Force and torque on s/c due to stateEffector
     virtual void registerStates(DynParamManager& states) = 0;  //!< -- Method for stateEffectors to register states
     virtual void linkInStates(DynParamManager& states) = 0;  //!< -- Method for stateEffectors to get other states
     virtual void computeDerivatives(double integTime)=0;  //!< -- Method for each stateEffector to calculate derivatives
