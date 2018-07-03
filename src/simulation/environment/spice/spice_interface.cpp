@@ -56,10 +56,10 @@ SpiceInterface::SpiceInterface()
 SpiceInterface::~SpiceInterface()
 {
     delete [] this->spiceBuffer;
-    if(this->SPICELoaded)
-    {
-        this->clearKeeper();
-    }
+//    if(this->SPICELoaded)
+//    {
+//        this->clearKeeper();
+//    }
     return;
 }
 
