@@ -451,8 +451,8 @@ def run(saveFigures, case, show_plots):
 
     #########################################################
     if case ==2:
-        # Now run initial conditions
-        icName = "run_IC"
+        # Now run initial cocnditions
+        icName = "tests/testScripts/Support/run_MC_IC"
         monteCarlo.setICDir(icName)
         monteCarlo.setICRunFlag(True)
         numberICs = 3
