@@ -72,7 +72,7 @@ from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispe
                                                        NormalVectorCartDispersion, InertiaTensorDispersion)
 
 
-NUMBER_OF_RUNS = 10
+NUMBER_OF_RUNS = 4
 VERBOSE = True
 
 # Here are the name of some messages that we want to retain or otherwise use
