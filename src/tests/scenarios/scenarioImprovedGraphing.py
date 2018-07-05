@@ -18,307 +18,451 @@
 
 '''
 
-
 #
-# Basilisk Scenario Script and Integrated Test
+# Basilisk Integrated Test
 #
-# Purpose:  Integrated test of the spacecraftPlus() and gravity modules.  Illustrates
-#           a 3-DOV spacecraft on a range of orbit types.
-# Author:   Hanspeter Schaub
-# Creation Date:  Nov. 26, 2016
+# Purpose:  Integrated test of the MonteCarlo module.  Runs multiple
+#           scenarioAttitudeFeedbackRW with dispersed initial parameters
 #
 
+
+import inspect
+import math
 import os
 import numpy as np
-import pandas as pd
+import shutil
 import matplotlib.pyplot as plt
-from bokeh.plotting import figure, output_file, show
 
-# The path to the location of Basilisk
-# Used to get the location of supporting data.
+# @cond DOXYGEN_IGNORE
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+fileNameString = os.path.basename(os.path.splitext(__file__)[0])
+path = os.path.dirname(os.path.abspath(filename))
+# @endcond
+
 from Basilisk import __path__
 bskPath = __path__[0]
+
+# import general simulation support files
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import macros
+from Basilisk.utilities import orbitalMotion
+
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
-# general support file with common unit test functions
-# import general simulation support files
-from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport)
+from Basilisk.utilities import simIncludeGravBody
+from Basilisk.utilities import simIncludeRW
+from Basilisk.simulation import simple_nav
+from Basilisk.simulation import reactionWheelStateEffector
+from Basilisk.simulation import rwVoltageInterface
+
+# import FSW Algorithm related support
+from Basilisk.fswAlgorithms import MRP_Feedback
+from Basilisk.fswAlgorithms import inertial3D
+from Basilisk.fswAlgorithms import attTrackingError
+from Basilisk.fswAlgorithms import rwMotorTorque
+from Basilisk.utilities import fswSetupRW
+from Basilisk.fswAlgorithms import rwMotorVoltage
+
+# import message declarations
+from Basilisk.fswAlgorithms import fswMessages
+
+from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
+from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispersion, UniformDispersion,
+                                                       NormalVectorCartDispersion, InertiaTensorDispersion)
+
+import numpy as np
+import pandas as pd
+from bokeh.plotting import figure, output_file, show
+import datashader as ds
+import datashader.transfer_functions as tf
+from datashader.colors import inferno
+from matplotlib.colors import rgb2hex
+from matplotlib.cm import get_cmap
 
 
+NUMBER_OF_RUNS = 10
+VERBOSE = True
 
-## \defgroup Tutorials_1_0
-## @{
-## Demonstration of setup basic 3-DOF orbit simulation setup.
+# Here are the name of some messages that we want to retain or otherwise use
+inertial3DConfigOutputDataName = "guidanceInertial3D"
+attErrorConfigOutputDataName = "attErrorInertial3DMsg"
+mrpControlConfigOutputDataName = "LrRequested"
+rwMotorTorqueConfigOutputDataName = "rw_torque_Lr"
+mrpControlConfigInputRWSpeedsName = "reactionwheel_output_states"
+sNavObjectOutputTransName = "simple_trans_nav_output"
+fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
+
+rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
+
+# We also will need the simulationTime and samplingTimes
+numDataPoints = 100000
+simulationTime = macros.min2nano(10.)
+samplingTime = simulationTime / (numDataPoints-1)
+
+
+## \defgroup Tutorials_5_0
+##   @{
+## Demonstrates how to run basic Monte-Carlo (MC) RW-based attitude simulations.
 #
-# Basic Orbit Setup and Translational Motion Simulation {#scenarioBasicOrbit}
+# MC Simulation of an Attitude Detumbling Simulation using RW Effectors {#MonteCarloSimulation}
 # ====
 #
 # Scenario Description
 # -----
-# This script sets up a 3-DOF spacecraft which is orbiting a planet.  The purpose
-# is to illustrate how to create a spacecraft, attach a gravity model, and run
-# a basic Basilisk simulation.  The scenarios can be run with the followings setups
-# parameters:
-# Setup | orbitCase           | useSphericalHarmonics | planetCase
-# ----- | ------------------- | --------------------- | -----------
-# 1     | LEO                 | False                 | Earth
-# 2     | GTO                 | False                 | Earth
-# 3     | GEO                 | False                 | Earth
-# 4     | LEO                 | True                  | Earth
-# 5     | LEO                 | False                 | Mars
-#
-# To run the default scenario 1 from the Basilisk/scenarios folder, call the python script through
-#
-#       python scenarioBasicOrbit.py
-#
-# *However*, to play with any scenario scripts as tutorials, you should make a copy of them into a custom folder
-# outside of the Basilisk directory.
-#
-# To copy them, first find the location of the Basilisk installation.
-# After installing, you can find the installed location of Basilisk by opening a python interpreter and
-# running the commands:
-#
-#~~~~~~~~~~~~~~{.py}
-# import Basilisk
-# basiliskPath = Basilisk.__path__[0]
-# print basiliskPath
-#~~~~~~~~~~~~~~
-#
-# Copy the folder `{basiliskPath}/tests` into a new folder in a different directory.
-# Now, when you want to use a tutorial, navigate inside that folder, and edit and execute the *copied* integrated tests.
-#
-# Qt Visualization Option
-# -----
-# If you wish to transmit the simulation data to the Qt Visualization, then uncomment the following
-# line (line 360 in the script) from the python scenario script.  If the Viz is running, and searching for a connection on
-# 127.0.0.1 (using Open Connection command from the File menu), the simulation is visualized in
-# realtime.  To enable this, uncomment line 360 in this tutorial script.
-#~~~~~~~~~~~~~~{.py}
-# unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')  # The Viz only support 'earth', 'mars', or 'sun'
-#~~~~~~~~~~~~~~
-# The current Qt based visualiztion is only able to show orbits about either Earth, Mars or the sun.
-# Be sure to match the celestial object name in the line above with the current simulation.
-# Further, note that by default the Viz is running in realtime mode with a 1x speed up factor.  This Viz
-# speed up factor can be increased in the Qt GUI by calling up the
-#
-#       View/Bottom Playback Controls
-#
-# The speed up factor is adusting in 2x steps up or down using the green arrows in this GUI.
-# This simulation is only updated at the rate of the simulation.  Thus, for this orbit simulation with 10s
-# time steps the Viz will be choppy at 1x.  Speeding up the Viz playback with the green arrows quickly illustrates
-# the orbital motion.
+# This script duplicates the scenario in [scenarioAttitudeFeedbackRW.py](@ref scenarioAttitudeFeedbackRW) where a
+# 6-DOF spacecraft  is orbiting the Earth.  Here some simulation parameters are dispersed randomly
+# using a multi threaded Monte-Carlo setup. Reaction Wheel (RW) state effector are added
+# to the rigid spacecraftPlus() hub, and what flight
+# algorithm module is used to control these RWs. The scenario is run in a single configuration:
+# by not using the Jitter model and by using the RW Voltage IO. Given this scenario we can add dispersions
+# to the variables in between each MC run.
 #
 #
-# Simulation Scenario Setup Details
-# -----
-# The simulation layout is shown in the following illustration.  A single simulation process is created
-# which contains the spacecraft object.  Gravity effectors are attached to the spacecraft dynamics to
-# simulate the gravitational accelerations.
-# ![Simulation Flow Diagram](Images/doc/test_scenarioBasicOrbit.svg "Illustration")
+# To run the MC simulation, call the python script from a Terminal window through
 #
-# When the simulation completes 2 plots are shown for each case.  One plot always shows
-# the inertial position vector components, while the second plot either shows a planar
-# orbit view relative to the perfocal frame (no spherical harmonics), or the
-# semi-major axis time history plot (with spherical harmonics turned on).
+#       python scenarioMonteCarloAttRW.py
 #
-# The dynamics simulation is setup using a SpacecraftPlus() module.
-#~~~~~~~~~~~~~~~~~{.py}
-#     scObject = spacecraftPlus.SpacecraftPlus()
-#     scObject.ModelTag = "spacecraftBody"
-#~~~~~~~~~~~~~~~~~
-# Note that this module simulates both the translational and rotational motion of the spacecraft.
-# In this scenario only the translational (i.e. orbital) motion is tracked.  This means the rotational motion
-# remains at a default inertial frame orientation in this scenario.  There is no appreciable speed hit to
-# simulate both the orbital and rotational motion for a single rigid body.  In the later scenarios
-# the rotational motion is engaged by specifying rotational initial conditions, as well as rotation
-# related effectors.  In this simple scenario only translational motion is setup and tracked.
+# For more information on the Attitude Feedback Simulation with RW, please see the documentation
+# on the [scenarioAttitudeFeedbackRW.py](@ref scenarioAttitudeFeedbackRW) file.
 #
-# Next, this module is attached to the simulation process
-#~~~~~~~~~~~~~~~~~{.py}
-#   scSim.AddModelToTask(simTaskName, scObject)
-#~~~~~~~~~~~~~~~~~
-# The first step to adding gravity objects is to create the gravity body factor class.  Note that
-# this call will create an empty gravitational body list each time this script is called.  Thus, there
-# is not need to clear any prior list of gravitational bodies.
-#~~~~~~~~~~~~~~~~~{.py}
-#   gravFactory = simIncludeGravBody.gravBodyFactory()
-#~~~~~~~~~~~~~~~~~
-# To attach an Earth gravity model to this spacecraft, the following macro is invoked:
-#~~~~~~~~~~~~~~~~~{.py}
-#     planet = gravFactory.createEarth()
-#     planet.isCentralBody = True          # ensure this is the central gravitational body
-#~~~~~~~~~~~~~~~~~
-# The gravFactor() class stores the Earth gravitational object within the class, but it also returns a
-# handler to this gravitational object as a convenience.  The celestial object position and velocity
-# vectors are all defaulted to zero values.  If non-zero values are required, this can be manually
-# overriden.  If multiple bodies are simulated, then their positions can be
-# dynamically updated.  See [scenarioOrbitMultiBody.py](@ref scenarioOrbitMultiBody) to learn how this is
-# done via a SPICE object.
 #
-# If extra customization is required, see the createEarth() macro to change additional values.
-# For example, the spherical harmonics are turned off by default.  To engage them, the following code
-# is used
-#~~~~~~~~~~~~~~~~~{.py}
-#     planet.useSphericalHarmParams = True
-#     simIncludeGravBody.loadGravFromFile(Basilisk.__path__[0]+'/supportData/LocalGravData/GGM03S-J2-only.txt'
-#                                         , planet.spherHarm
-#                                         ,2
-#                                         )
-#~~~~~~~~~~~~~~~~~
-# The value 2 indidates that the first two harmonics, excluding the 0th order harmonic,
-# are included.  This harmonics data file only includes a zeroth order and J2 term.
+# ### Setup Changes for Monte-Carlo Runs
 #
-# Finally, the gravitational body must be connected to the spacecraft object.  This is done with
-#~~~~~~~~~~~~~~~~~{.py}
-#     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
-#~~~~~~~~~~~~~~~~~
-# Here the complete list of gravitational bodies is automatically assigned to the spacecraft, regardless if
-# it is only one body like Earth or Mars, or a list of multiple bodies.
-#
-# Note that the default planets position and velocity vectors in the gravitational body are set to zero.  If
-# alternate position or velocity vectors are requried, this can be done by creating the planet ephemerise message
-# that is connected to the gravity effector input message `bodyInMsgName`.
-# If time varying planet ephemeris messages are to be included use the Spice module.  For non-zero messages
-# the planet's default ephemeris would be replaced with the desired custom values.  How to use Spice to setup
-# planet ephemerise is shown in the tutorial
-# [scenarioOrbitMultiBody.py](@ref scenarioOrbitMultiBody).
-#
-# To set the spacecraft initial conditions, the following initial position and velocity variables are set:
-#~~~~~~~~~~~~~~~~~{.py}
-#    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
-#    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
-#~~~~~~~~~~~~~~~~~
-# These vectors specify the inertial position and velocity vectors relative to the planet of the
-# spacecraft center of mass location.  Note that there are 2 points that can be tracked.  The user always
-# specifies the spacecraft center of mass location with the above code.  If the simulation output should be
-# about another body fixed point B, this can be done as well.  This is useful in particular with more challenging
-# dynamics where the center of mass moves relative to the body.  The following vector would specify the location of
-# the spacecraft hub center of mass (Bc) relative to this body fixed point.
-# ~~~~~~~~~~~~~~~~{.py}
-#    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-# ~~~~~~~~~~~~~~~~
-# If this vector is not specified, as in this tutorial scenario, then it defaults to zero.  If only a rigid hub
-# is modeled, the Bc (hub center of mass) is the same as C (spacecraft center of mass).  If the spacecrat contains
-# state effectors such as hinged panels, fuel slosh, imbalanced reaction wheels, etc., then the points Bc and C would
-# not be the same.  Thus, in this simple simulation the body fixed point B and spacecraft center of mass are
-# identical.
-#
-# Before the simulation is ready to run, it must be initialized.  The following code uses a convenient macro routine
-# which initializes each BSK module (run self init, cross init and reset) and clears the BSK logging stack.
-#~~~~~~~~~~~~~~~~~{.py}
-#     scSim.InitializeSimulationAndDiscover()
-#~~~~~~~~~~~~~~~~~
-# If there are messages that are shared across multiple BSK threads, as shown in
-# [scenarioAttitudeFeedback2T.py](@ref scenarioAttitudeFeedback2T), then this routine also
-# auto-discovers these shared messages.
-#
-# Setup 1
-# -----
-#
-# Which scenario is run is controlled at the bottom of the file in the code
+# In order to set up the multi-threaded MC simulation, the user must first instantiate the Controller class.
+# The function that is being simulated is the set in this class (in this case, it's defined in the same file as the
+# MC scenario). The user can then set other variables such as the number of runs, the dispersion seeds, and number of
+# cores.
+# The specific code required is:
 # ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run( False,       # save figures to file
-#          True,        # show_plots
-#          'LEO',       # orbit Case
-#          False,       # useSphericalHarmonics
-#          'Earth'      # planet Case
-#        )
+#   #First, the `Controller` class is used in order to define the simulation
+#   monteCarlo = Controller()
+#
+#   # Every MonteCarlo simulation must define a function that creates the `SimulationBaseClass` to execute and returns it. Within this function, the simulation is created and configured
+#   monteCarlo.setSimulationFunction(createScenarioAttitudeFeedbackRW)
+#
+#   # Also, every MonteCarlo simulation must define a function which executes the simulation that was created.
+#   monteCarlo.setExecutionFunction(executeScenario)
+#
+#   # A Monte Carlo simulation must define how many simulation runs to execute
+#   monteCarlo.setExecutionCount(NUMBER_OF_RUNS)
+#
+#   # The simulations can have random seeds of each simulation dispersed randomly
+#   monteCarlo.setShouldDisperseSeeds(True)
+#
+#   # Optionally set the number of cores to use
+#   # monteCarlo.setThreadCount(PROCESSES)
+#
+#   # Whether to print more verbose information during the run
+#   monteCarlo.setVerbose(VERBOSE)
+#
+#   # We set up where to retain the data to.
+#   dirName = "montecarlo_test"
+#   monteCarlo.setArchiveDir(dirName)
 # ~~~~~~~~~~~~~
-# The first 2 arguments can be left as is.  The last 2 arguments control the
-# simulation scenario flags to turn on or off certain simulation conditions.  The default
-# scenario places the spacecraft about the Earth in a LEO orbit and without considering
-# gravitational spherical harmonics.  The
-# resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1LEO0Earth.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2LEO0Earth.svg "Orbit Illustration")
+# The next important step to setting up the MC runs is to disperse the necessary variables.
+# The dispersions that are set are listed in the following table:
 #
-# Setup 2
-# -----
+# Input      | Description of Element    | Distribution
+# ------------- | ---------|-----------------
+# Inertial attitude       |Using Modified Rodrigues Parameters | Uniform for all 3 rotations betweenr [0, 2 pi]
+# Inertial rotation rate         | Using omega vector      | Normal dispersions for each of the rotation components, each of mean 0 and standard deviation 0.25 deg/s
+# Mass of the hub   | Total Mass of the spacecraft | Uniform around +/-5% of expected values. Bounds are [712.5, 787.5]
+# Center of Mass Offset | Position vector offset on the actual center of mass, and its theoretical position | Normally around a mean [0, 0, 1], with standard deviations of [0.05/3, 0.05/3, 0.1/3]
+# Inertia Tensor  |3x3 inertia tensor. Dispersed by 3 rotations | Normally about mean value of diag(900, 800, 600). Each of the 3 rotations are normally distributed with angles of mean 0 and standard deviation 0.1 deg.
+# RW axes  |The rotation axis for each of the 3 wheels | Normally around a respective means [1,0,0], [0,1,0], and [0,0,1] with respective standard deviations [0.01/3, 0.005/3, 0.005/3], [0.005/3, 0.01/3, 0.005/3], and [0.005/3, 0.005/3, 0.01/3]
+# RW speeds | The rotation speed for each of the 3 wheels |Uniform around  +/-5% of expected values. Bounds are [95, 105], [190, 210], and [285, 315]
+# Voltage to Torque Gain         |The gain between the commanded torque and the actual voltage | Uniform around  +/-5% of expected values. Bounds are [0.019, 0.021]
 #
-# The next scenario is run by changing the bottom of the file in the scenario code to read
+# The python commands to add these dispersions are shown below:
+#
+# ~~~~~~~~~~~~~~~~~{.py}
+#     # Statistical dispersions can be applied to initial parameters using the MonteCarlo module
+#     dispMRPInit = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
+#     dispOmegaInit = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
+#     dispMass = 'TaskList[0].TaskModels[0].hub.mHub'
+#     dispCoMOff = 'TaskList[0].TaskModels[0].hub.r_BcB_B'
+#     dispInertia = 'hubref.IHubPntBc_B'
+#     dispRW1Axis = 'RW1.gsHat_B'
+#     dispRW2Axis = 'RW2.gsHat_B'
+#     dispRW3Axis = 'RW3.gsHat_B'
+#     dispRW1Omega = 'RW1.Omega'
+#     dispRW2Omega = 'RW2.Omega'
+#     dispRW3Omega = 'RW3.Omega'
+#     dispVoltageIO = 'rwVoltageIO.voltage2TorqueGain'
+#     dispList = [dispMRPInit, dispOmegaInit, dispMass, dispCoMOff, dispInertia]
+#
+#     # Add dispersions with their dispersion type
+#     monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(dispMRPInit))
+#     monteCarlo.addDispersion(NormalVectorCartDispersion(dispOmegaInit, 0.0, 0.75 / 3.0 * np.pi / 180))
+#     monteCarlo.addDispersion(UniformDispersion(dispMass, ([750.0 - 0.05*750, 750.0 + 0.05*750])))
+#     monteCarlo.addDispersion(NormalVectorCartDispersion(dispCoMOff, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
+#     monteCarlo.addDispersion(InertiaTensorDispersion(dispInertia, stdAngle=0.1))
+#     monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW1Axis, [1.0, 0.0, 0.0], [0.01 / 3.0, 0.005 / 3.0, 0.005 / 3.0]))
+#     monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW2Axis, [0.0, 1.0, 0.0], [0.005 / 3.0, 0.01 / 3.0, 0.005 / 3.0]))
+#     monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW3Axis, [0.0, 0.0, 1.0], [0.005 / 3.0, 0.005 / 3.0, 0.01 / 3.0]))
+#     monteCarlo.addDispersion(UniformDispersion(dispRW1Omega, ([100.0 - 0.05*100, 100.0 + 0.05*100])))
+#     monteCarlo.addDispersion(UniformDispersion(dispRW2Omega, ([200.0 - 0.05*200, 200.0 + 0.05*200])))
+#     monteCarlo.addDispersion(UniformDispersion(dispRW3Omega, ([300.0 - 0.05*300, 300.0 + 0.05*300])))
+#     monteCarlo.addDispersion(UniformDispersion(dispVoltageIO, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
+# ~~~~~~~~~~~~~~~~~
+#
+# A retention policy is used to log the desired data. This is shown in the following code:
+#
 # ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run( False,       # save figures to file
-#          True,        # show_plots
-#          'GTO',       # orbit Case
-#          False,       # useSphericalHarmonics
-#          'Earth'      # planet Case
-#        )
+#     # A `RetentionPolicy` is used to define what data from the simulation should be retained. A `RetentionPolicy` is a list of messages and variables to log from each simulation run. It also has a callback, used for plotting/processing the retained data.
+#     retentionPolicy = RetentionPolicy()
+#     # define the data to retain
+#     retentionPolicy.addMessageLog(rwMotorTorqueConfigOutputDataName, [("motorTorque", range(5))], samplingTime)
+#     retentionPolicy.addMessageLog(attErrorConfigOutputDataName, [("sigma_BR", range(3)), ("omega_BR_B", range(3))], samplingTime)
+#     retentionPolicy.addMessageLog(sNavObjectOutputTransName, [("r_BN_N", range(3))], samplingTime)
+#     retentionPolicy.addMessageLog(mrpControlConfigInputRWSpeedsName, [("wheelSpeeds", range(3))], samplingTime)
+#     retentionPolicy.addMessageLog(fswRWVoltageConfigVoltageOutMsgName, [("voltage", range(3))], samplingTime)
 # ~~~~~~~~~~~~~
-# This case illustrates an elliptical Geosynchronous Transfer Orbit (GTO) with zero orbit
-# inclination.  The
-# resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1GTO0Earth.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2GTO0Earth.svg "Orbit Illustration")
 #
-# Setup 3
-# -----
+# The simulation can now be run. It returns the failed jobs, which should not occur.
+# The data can then be loaded:
 #
-# The next scenario is run by changing the bottom of the file in the scenario code to read
 # ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run( False,       # save figures to file
-#          True,        # show_plots
-#          'GEO',       # orbit Case
-#          False,       # useSphericalHarmonics
-#          'Earth'      # planet Case
-#        )
+# After the monteCarlo run is configured, it is executed.
+# This method returns the list of jobs that failed.
+# failures = monteCarlo.executeSimulations()
+#
+# assert len(failures) == 0, "No runs should fail"
+#
+# # Now in another script (or the current one), the data from this simulation can be easily loaded.
+# # This demonstrates loading it from disk
+# monteCarloLoaded = Controller.load(dirName)
 # ~~~~~~~~~~~~~
-# This case illustrates a circular Geosynchronous Orbit (GEO) with zero orbit
-# inclination.  The
-# resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1GEO0Earth.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2GEO0Earth.svg "Orbit Illustration")
 #
-#  Setup 4
-# -----
+# ### Accessing Data
 #
-# The next scenario is run by changing the bottom of the file in the scenario code to read
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run( False,       # save figures to file
-#          True,        # show_plots
-#          'LEO,        # orbit Case
-#          True,        # useSphericalHarmonics
-#          'Earth'      # planet Case
-#        )
-# ~~~~~~~~~~~~~
-# This case illustrates a circular LEO with a non-zero orbit
-# inclination.  In this case the Earth's spherical harmonics are turned on.  The
-# resulting position coordinates and semi-major axis time histories are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1LEO1Earth.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2LEO1Earth.svg "Orbit Illustration")
+# Now that the MC have been executed, the data can be accessed and tested in different ways
+# This is explained in the following python code and comments
 #
-# Setup 5
-# -------
+# ~~~~~~~~~~~~~~~{.py}
+#        # Then retained data from any run can then be accessed in the form of a dictionary with two sub-dictionaries for messages and variables:
+#     retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
+#     assert retainedData is not None, "Retained data should be available after execution"
+#     assert "messages" in retainedData, "Retained data should retain messages"
+#     assert "attErrorInertial3DMsg.sigma_BR" in retainedData["messages"], "Retained messages should exist"
 #
-# The next scenario is run by changing the bottom of the file in the scenario code to read
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run( False,       # save figures to file
-#          True,        # show_plots
-#          'LEO',       # orbit Case
-#          True,        # useSphericalHarmonics
-#          'Mars'       # planet Case
-#        )
-# ~~~~~~~~~~~~~
-# This case illustrates a circular Low Mars Orbit or LMO with a non-zero orbit
-# inclination.  If you wish to visualize this simulation, be sure to change the celestial object name in
-#~~~~~~~~~~~~~~{.py}
-# unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'mars')
-# # The Viz only support 'earth', 'mars', or 'sun'
-#~~~~~~~~~~~~~~
-# from 'earth' to 'mars'.  In this simulation setup the planet's spherical harmonics are turned on.  The
-# resulting position coordinates and semi-major axis time histories are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1LEO0Mars.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2LEO0Mars.svg "Orbit Illustration")
+#     # We also can rerun a case using the same parameters and random seeds
+#     # If we rerun a properly set-up run, it should output the same data.
+#     # Here we test that if we rerun the case the data doesn't change
+#     oldOutput = retainedData["messages"]["attErrorInertial3DMsg.sigma_BR"]
 #
-## @}
-def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
-    '''Call this routine directly to run the tutorial scenario.'''
+#     # Rerunning the case shouldn't fail
+#     failed = monteCarloLoaded.reRunCases([NUMBER_OF_RUNS-1])
+#     assert len(failed) == 0, "Should rerun case successfully"
+#
+#     # Now access the newly retained data to see if it changed
+#     retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
+#     newOutput = retainedData["messages"]["attErrorInertial3DMsg.sigma_BR"]
+#     for k1, v1 in enumerate(oldOutput):
+#         for k2, v2 in enumerate(v1):
+#             assert math.fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < .001, \
+#             "Outputs shouldn't change on runs if random seeds are same"
+#
+#     # We can also access the initial parameters
+#     # The random seeds should differ between runs, so we will test that
+#     params1 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-1)
+#     params2 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-2)
+#     assert "TaskList[0].TaskModels[0].RNGSeed" in params1, "random number seed should be applied"
+#     for dispName in dispList:
+#         assert dispName in params1, "dispersion should be applied"
+#         # assert two different runs had different parameters.
+#         assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
+#
+# ~~~~~~~~~~~~~~~
+#  Finally the data can be plotted as desired:
+#
+#
+# ~~~~~~~~~~~~~~~{.py}
+# # Now we execute our callback for the retained data.
+# # For this run, that means executing the plot.
+# # We can plot only runs 4,6,7 overlapped
+# monteCarloLoaded.executeCallbacks([4, 6, 7])
+# # or execute the plot on all runs
+# # monteCarloLoaded.executeCallbacks()
+#
+# # Now we clean up data from this test
+# shutil.rmtree(dirName)
+# assert not os.path.exists(dirName), "No leftover data should exist after the test"
+#
+# # And possibly show the plots
+# if show_plots:
+#     print "Test concluded, showing plots now..."
+#     plt.show()
+#     # close the plots being saved off to avoid over-writing old and new figures
+#     plt.close("all")
+#
+# ~~~~~~~~~~~~~~~
+#
+# The resulting simulation illustrations are shown below.
+# ![MRP Attitude Error History](Images/Scenarios/scenarioMonteCarloAttRW_AttitudeError.svg "Attitude Error history")
+# ![Rate Tracking Error History](Images/Scenarios/scenarioMonteCarloAttRW_RateTrackingError.svg "Rate Tracking Error history")
+# ![RW Motor Torque History](Images/Scenarios/scenarioMonteCarloAttRW_RWMotorTorque.svg "RW Motor Torque history")
+# ![RW Speeds History](Images/Scenarios/scenarioMonteCarloAttRW_RWSpeed.svg "RW Speeds history")
+# ![RW Voltage History](Images/Scenarios/scenarioMonteCarloAttRW_RWVoltage.svg "RW Voltage history")
+#
+# These are the same plots output by the [scenarioAttitudeFeedbackRW.py](@ref scenarioAttitudeFeedbackRW) scenario. Please refer to this document for me details on the plots.
+##  @}
 
+
+def run(saveFigures, show_plots):
+    '''This function is called by the py.test environment.'''
+    graph()
+    return
+    # A MonteCarlo simulation can be created using the `MonteCarlo` module.
+    # This module is used to execute monte carlo simulations, and access
+    # retained data from previously executed MonteCarlo runs.
+
+    # First, the `Controller` class is used in order to define the simulation
+    monteCarlo = Controller()
+
+    # Every MonteCarlo simulation must define a function that creates the `SimulationBaseClass` to execute and returns it. Within this function, the simulation is created and configured
+    monteCarlo.setSimulationFunction(createScenarioAttitudeFeedbackRW)
+
+    # Also, every MonteCarlo simulation must define a function which executes the simulation that was created.
+    monteCarlo.setExecutionFunction(executeScenario)
+
+    # A Monte Carlo simulation must define how many simulation runs to execute
+    monteCarlo.setExecutionCount(NUMBER_OF_RUNS)
+
+    # The simulations can have random seeds of each simulation dispersed randomly
+    monteCarlo.setShouldDisperseSeeds(True)
+
+    # Optionally set the number of cores to use
+    # monteCarlo.setThreadCount(PROCESSES)
+
+    # Whether to print more verbose information during the run
+    monteCarlo.setVerbose(VERBOSE)
+
+    # We set up where to retain the data to.
+    dirName = "montecarlo_test"
+    monteCarlo.setArchiveDir(dirName)
+
+    # Statistical dispersions can be applied to initial parameters using the MonteCarlo module
+    dispMRPInit = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
+    dispOmegaInit = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
+    dispMass = 'TaskList[0].TaskModels[0].hub.mHub'
+    dispCoMOff = 'TaskList[0].TaskModels[0].hub.r_BcB_B'
+    dispInertia = 'hubref.IHubPntBc_B'
+    dispRW1Axis = 'RW1.gsHat_B'
+    dispRW2Axis = 'RW2.gsHat_B'
+    dispRW3Axis = 'RW3.gsHat_B'
+    dispRW1Omega = 'RW1.Omega'
+    dispRW2Omega = 'RW2.Omega'
+    dispRW3Omega = 'RW3.Omega'
+    dispVoltageIO_0 = 'rwVoltageIO.voltage2TorqueGain[0]'
+    dispVoltageIO_1 = 'rwVoltageIO.voltage2TorqueGain[1]'
+    dispVoltageIO_2 = 'rwVoltageIO.voltage2TorqueGain[2]'
+    dispList = [dispMRPInit, dispOmegaInit, dispMass, dispCoMOff, dispInertia]
+
+    # Add dispersions with their dispersion type
+    monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(dispMRPInit))
+    monteCarlo.addDispersion(NormalVectorCartDispersion(dispOmegaInit, 0.0, 0.75 / 3.0 * np.pi / 180))
+    monteCarlo.addDispersion(UniformDispersion(dispMass, ([750.0 - 0.05*750, 750.0 + 0.05*750])))
+    monteCarlo.addDispersion(NormalVectorCartDispersion(dispCoMOff, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
+    monteCarlo.addDispersion(InertiaTensorDispersion(dispInertia, stdAngle=0.1))
+    monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW1Axis, [1.0, 0.0, 0.0], [0.01 / 3.0, 0.005 / 3.0, 0.005 / 3.0]))
+    monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW2Axis, [0.0, 1.0, 0.0], [0.005 / 3.0, 0.01 / 3.0, 0.005 / 3.0]))
+    monteCarlo.addDispersion(NormalVectorCartDispersion(dispRW3Axis, [0.0, 0.0, 1.0], [0.005 / 3.0, 0.005 / 3.0, 0.01 / 3.0]))
+    monteCarlo.addDispersion(UniformDispersion(dispRW1Omega, ([100.0 - 0.05*100, 100.0 + 0.05*100])))
+    monteCarlo.addDispersion(UniformDispersion(dispRW2Omega, ([200.0 - 0.05*200, 200.0 + 0.05*200])))
+    monteCarlo.addDispersion(UniformDispersion(dispRW3Omega, ([300.0 - 0.05*300, 300.0 + 0.05*300])))
+    monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_0, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
+    monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_1, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
+    monteCarlo.addDispersion(UniformDispersion(dispVoltageIO_2, ([0.2/10. - 0.05 * 0.2/10., 0.2/10. + 0.05 * 0.2/10.])))
+
+    # A `RetentionPolicy` is used to define what data from the simulation should be retained. A `RetentionPolicy`
+    # is a list of messages and variables to log from each simulation run. It also has a callback,
+    # used for plotting/processing the retained data.
+    retentionPolicy = RetentionPolicy()
+    # define the data to retain
+    retentionPolicy.addMessageLog(rwMotorTorqueConfigOutputDataName, [("motorTorque", range(5))], samplingTime)
+    retentionPolicy.addMessageLog(attErrorConfigOutputDataName, [("sigma_BR", range(3)), ("omega_BR_B", range(3))], samplingTime)
+    retentionPolicy.addMessageLog(sNavObjectOutputTransName, [("r_BN_N", range(3))], samplingTime)
+    retentionPolicy.addMessageLog(mrpControlConfigInputRWSpeedsName, [("wheelSpeeds", range(3))], samplingTime)
+    retentionPolicy.addMessageLog(fswRWVoltageConfigVoltageOutMsgName, [("voltage", range(3))], samplingTime)
+
+    for message in rwOutName:
+        retentionPolicy.addMessageLog(message, [("u_current", range(1))], samplingTime)
+    if show_plots:
+        # plot data only if show_plots is true, otherwise just retain
+        retentionPolicy.setDataCallback(plotSim)
+    if saveFigures:
+        # plot data only if show_plots is true, otherwise just retain
+        retentionPolicy.setDataCallback(plotSimAndSave)
+    monteCarlo.addRetentionPolicy(retentionPolicy)
+
+    # After the monteCarlo run is configured, it is executed.
+    # This method returns the list of jobs that failed.
+    failures = monteCarlo.executeSimulations()
+
+    assert len(failures) == 0, "No runs should fail"
+
+    # Now in another script (or the current one), the data from this simulation can be easily loaded.
+    # This demonstrates loading it from disk
+    monteCarloLoaded = Controller.load(dirName)
+
+    # Then retained data from any run can then be accessed in the form of a dictionary with two sub-dictionaries for messages and variables:
+    retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
+    assert retainedData is not None, "Retained data should be available after execution"
+    assert "messages" in retainedData, "Retained data should retain messages"
+    assert "attErrorInertial3DMsg.sigma_BR" in retainedData["messages"], "Retained messages should exist"
+
+    # We also can rerun a case using the same parameters and random seeds
+    # If we rerun a properly set-up run, it should output the same data.
+    # Here we test that if we rerun the case the data doesn't change
+    oldOutput = retainedData["messages"]["attErrorInertial3DMsg.sigma_BR"]
+
+    # Rerunning the case shouldn't fail
+    failed = monteCarloLoaded.reRunCases([NUMBER_OF_RUNS-1])
+    assert len(failed) == 0, "Should rerun case successfully"
+
+    # Now access the newly retained data to see if it changed
+    retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
+    newOutput = retainedData["messages"]["attErrorInertial3DMsg.sigma_BR"]
+    for k1, v1 in enumerate(oldOutput):
+        for k2, v2 in enumerate(v1):
+            assert math.fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < .001, \
+            "Outputs shouldn't change on runs if random seeds are same"
+
+    # We can also access the initial parameters
+    # The random seeds should differ between runs, so we will test that
+    params1 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-1)
+    params2 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-2)
+    assert "TaskList[0].TaskModels[0].RNGSeed" in params1, "random number seed should be applied"
+    for dispName in dispList:
+        assert dispName in params1, "dispersion should be applied"
+        # assert two different runs had different parameters.
+        assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
+
+    # Now we execute our callback for the retained data.
+    # For this run, that means executing the plot.
+    # We can plot only runs 4,6,7 overlapped
+    # monteCarloLoaded.executeCallbacks([4,6,7])
+    # or execute the plot on all runs
+    monteCarloLoaded.executeCallbacks()
+
+    # Now we clean up data from this test
+    shutil.rmtree(dirName)
+    assert not os.path.exists(dirName), "No leftover data should exist after the test"
+
+    # And possibly show the plots
+    if show_plots:
+        print "Test concluded, showing plots now..."
+        plt.show()
+        # close the plots being saved off to avoid over-writing old and new figures
+        plt.close("all")
+
+
+
+## This function creates the simulation to be executed in parallel.
+# It is copied directly from src/tests/scenarios.
+def createScenarioAttitudeFeedbackRW():
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -334,12 +478,8 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(10.)
+    simulationTimeStep = macros.sec2nano(.1)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
-
-    # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')
-    # The Viz only support 'earth', 'mars', or 'sun'
 
     #
     #   setup the simulation tasks/objects
@@ -348,198 +488,322 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
+    # define the simulation inertia
+    I = [900., 0., 0.,
+         0., 800., 0.,
+         0., 0., 600.]
+    scObject.hub.mHub = 750.0                   # kg - spacecraft mass
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]] # m - position vector of body-fixed point B relative to CM
+    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    scSim.hubref = scObject.hub
 
     # add spacecraftPlus object to the simulation process
-    scSim.AddModelToTask(simTaskName, scObject)
+    scSim.AddModelToTask(simTaskName, scObject, None, 1)
 
-    # setup Gravity Body
+    rwVoltageIO = rwVoltageInterface.RWVoltageInterface()
+    rwVoltageIO.ModelTag = "rwVoltageInterface"
+
+    # set module parameters(s)
+    rwVoltageIO.setGains(np.array([0.2/10.]*3))  # [Nm/V] conversion gain
+
+    #Add RW Voltage to sim for dispersion
+    scSim.rwVoltageIO = rwVoltageIO
+    # Add test module to runtime call list
+    scSim.AddModelToTask(simTaskName, rwVoltageIO)
+
+    # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
-    if planetCase is 'Mars':
-        planet = gravFactory.createMarsBarycenter()
-        planet.isCentralBody = True           # ensure this is the central gravitational body
-        if useSphericalHarmonics:
-            planet.useSphericalHarmParams = True
-            simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM2BData.txt',
-                                                planet.spherHarm, 100)
-    else:  # Earth
-        planet = gravFactory.createEarth()
-        planet.isCentralBody = True          # ensure this is the central gravitational body
-        if useSphericalHarmonics:
-            planet.useSphericalHarmParams = True
-            simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt',
-                                                planet.spherHarm, 2)
-    mu = planet.mu
+
+    # setup Earth Gravity Body
+    earth = gravFactory.createEarth()
+    earth.isCentralBody = True  # ensure this is the central gravitational body
+    mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    #
+    # add RW devices
+    #
+    # Make a fresh RW factory instance, this is critical to run multiple times
+    rwFactory = simIncludeRW.rwFactory()
+
+    # store the RW dynamical model type
+    varRWModel = rwFactory.BalancedWheels
+
+
+    # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
+    RW1 = rwFactory.create('Honeywell_HR16'
+                           , [1, 0, 0]
+                           , maxMomentum=50.
+                           , Omega=100.                 # RPM
+                           , RWModel= varRWModel
+                           )
+    RW2 = rwFactory.create('Honeywell_HR16'
+                           , [0, 1, 0]
+                           , maxMomentum=50.
+                           , Omega=200.                 # RPM
+                           , RWModel= varRWModel
+                           )
+    RW3 = rwFactory.create('Honeywell_HR16'
+                           , [0, 0, 1]
+                           , maxMomentum=50.
+                           , Omega=300.                 # RPM
+                           , rWB_B = [0.5, 0.5, 0.5]    # meters
+                           , RWModel= varRWModel
+                           )
+    numRW = rwFactory.getNumOfDevices()
+    # create RW object container and tie to spacecraft object
+    rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
+    rwFactory.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
+
+    #Add RWs to sim for dispersion
+    scSim.RW1 = RW1
+    scSim.RW2 = RW2
+    scSim.RW3 = RW3
+    # add RW object array to the simulation process
+    scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
+
+    # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
+    # velocity navigation message
+    sNavObject = simple_nav.SimpleNav()
+    sNavObject.ModelTag = "SimpleNavigation"
+    scSim.AddModelToTask(simTaskName, sNavObject)
 
     #
-    #   setup orbit and simulation time
+    #   setup the FSW algorithm tasks
+    #
+
+    # setup inertial3D guidance module
+    inertial3DConfig = inertial3D.inertial3DConfig()
+    inertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)
+    inertial3DWrap.ModelTag = "inertial3D"
+    scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
+    inertial3DConfig.sigma_R0N = [0., 0., 0.]       # set the desired inertial orientation
+    inertial3DConfig.outputDataName = inertial3DConfigOutputDataName
+
+    # setup the attitude tracking error evaluation module
+    attErrorConfig = attTrackingError.attTrackingErrorConfig()
+    attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
+    attErrorWrap.ModelTag = "attErrorInertial3D"
+    scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
+    attErrorConfig.outputDataName = attErrorConfigOutputDataName
+    attErrorConfig.inputRefName = inertial3DConfig.outputDataName
+    attErrorConfig.inputNavName = sNavObject.outputAttName
+
+    # setup the MRP Feedback control module
+    mrpControlConfig = MRP_Feedback.MRP_FeedbackConfig()
+    mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
+    mrpControlWrap.ModelTag = "MRP_Feedback"
+    scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
+    mrpControlConfig.inputGuidName  = attErrorConfig.outputDataName
+    mrpControlConfig.vehConfigInMsgName  = "vehicleConfigName"
+    mrpControlConfig.outputDataName = mrpControlConfigOutputDataName
+    mrpControlConfig.rwParamsInMsgName = "rwa_config_data_parsed"
+    mrpControlConfig.inputRWSpeedsName = rwStateEffector.OutputDataString
+    mrpControlConfig.K  =   3.5
+    mrpControlConfig.Ki =   -1          # make value negative to turn off integral feedback
+    mrpControlConfig.P  = 30.0
+    mrpControlConfig.integralLimit = 2./mrpControlConfig.Ki * 0.1
+    mrpControlConfig.domega0 = [0.0, 0.0, 0.0]
+
+    # add module that maps the Lr control torque into the RW motor torques
+    rwMotorTorqueConfig = rwMotorTorque.rwMotorTorqueConfig()
+    rwMotorTorqueWrap = scSim.setModelDataWrap(rwMotorTorqueConfig)
+    rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
+    scSim.AddModelToTask(simTaskName, rwMotorTorqueWrap, rwMotorTorqueConfig)
+    # Initialize the test module msg names
+    rwMotorTorqueConfig.outputDataName = rwMotorTorqueConfigOutputDataName
+    rwMotorTorqueConfig.inputVehControlName = mrpControlConfig.outputDataName
+    rwMotorTorqueConfig.rwParamsInMsgName = mrpControlConfig.rwParamsInMsgName
+    # Make the RW control all three body axes
+    controlAxes_B = [
+             1,0,0
+            ,0,1,0
+            ,0,0,1
+        ]
+    rwMotorTorqueConfig.controlAxes_B = controlAxes_B
+
+    fswRWVoltageConfig = rwMotorVoltage.rwMotorVoltageConfig()
+    fswRWVoltageWrap = scSim.setModelDataWrap(fswRWVoltageConfig)
+    fswRWVoltageWrap.ModelTag = "rwMotorVoltage"
+
+    # Add test module to runtime call list
+    scSim.AddModelToTask(simTaskName, fswRWVoltageWrap, fswRWVoltageConfig)
+
+    # Initialize the test module configuration data
+    fswRWVoltageConfig.torqueInMsgName = rwMotorTorqueConfig.outputDataName
+    fswRWVoltageConfig.rwParamsInMsgName = mrpControlConfig.rwParamsInMsgName
+    fswRWVoltageConfig.voltageOutMsgName = rwVoltageIO.rwVoltageInMsgName
+
+    # set module parameters
+    fswRWVoltageConfig.VMin = 0.0  # Volts
+    fswRWVoltageConfig.VMax = 10.0  # Volts
+
+    #
+    # create simulation messages
+    #
+
+    # create the FSW vehicle configuration message
+    vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
+    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
+    unitTestSupport.setMessage(scSim.TotalSim,
+                               simProcessName,
+                               mrpControlConfig.vehConfigInMsgName,
+                               vehicleConfigOut)
+
+    # FSW RW configuration message
+    # use the same RW states in the FSW algorithm as in the simulation
+    fswSetupRW.clearSetup()
+    for key, rw in rwFactory.rwList.iteritems():
+        fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
+    fswSetupRW.writeConfigMessage(mrpControlConfig.rwParamsInMsgName, scSim.TotalSim, simProcessName)
+
+    #
+    #   set initial Spacecraft States
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    rLEO = 7000. * 1000      # meters
-    rGEO = 42000. * 1000     # meters
-    if orbitCase is 'GEO':
-        oe.a = rGEO
-        oe.e = 0.00001
-        oe.i = 0.0 * macros.D2R
-    elif orbitCase is 'GTO':
-        oe.a = (rLEO + rGEO) / 2.0
-        oe.e = 1.0 - rLEO / oe.a
-        oe.i = 0.0 * macros.D2R
-    else:                   # LEO case, default case 0
-        oe.a = rLEO
-        oe.e = 0.0001
-        oe.i = 33.3 * macros.D2R
-    oe.Omega = 48.2 * macros.D2R
-    oe.omega = 347.8 * macros.D2R
-    oe.f = 85.3 * macros.D2R
+    oe.a     = 10000000.0                                           # meters
+    oe.e     = 0.01
+    oe.i     = 33.3*macros.D2R
+    oe.Omega = 48.2*macros.D2R
+    oe.omega = 347.8*macros.D2R
+    oe.f     = 85.3*macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
-    oe = orbitalMotion.rv2elem(mu, rN, vN)      # this stores consistent initial orbit elements
-    # with circular or equatorial orbit, some angles are arbitrary
+    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
+    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
+    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]              # sigma_CN_B
+    scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]        # rad/s - omega_CN_B
 
-    #
-    #   initialize Spacecraft States with the initialization variables
-    #
-    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_BN_N
-    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_BN_N
+    # This is a hack because of a bug in Basilisk... leave this line it keeps
+    # variables from going out of scope after this function returns
+    scSim.additionalReferences = [rwVoltageIO, fswRWVoltageWrap, scObject, earth, rwMotorTorqueWrap, mrpControlWrap, attErrorWrap, inertial3DWrap]
 
-    # set the simulation time
-    n = np.sqrt(mu / oe.a / oe.a / oe.a)
-    P = 2. * np.pi / n
-    if useSphericalHarmonics:
-        simulationTime = macros.sec2nano(3. * P)
-    else:
-        simulationTime = macros.sec2nano(0.75 * P)
+    return scSim
 
+def executeScenario(sim):
     #
-    #   Setup data logging before the simulation is initialized
+    #   initialize Simulation
     #
-    if useSphericalHarmonics:
-        numDataPoints = 400
-    else:
-        numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-
-    #
-    #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
-    #   cross_init() and reset() routines on each module.
-    #   If the routine InitializeSimulationAndDiscover() is run instead of InitializeSimulation(),
-    #   then the all messages are auto-discovered that are shared across different BSK threads.
-    #
-    scSim.InitializeSimulationAndDiscover()
+    sim.InitializeSimulationAndDiscover()
 
     #
     #   configure a simulation stop time time and execute the simulation run
     #
-    scSim.ConfigureStopTime(simulationTime)
-    scSim.ExecuteSimulation()
+    sim.ConfigureStopTime(simulationTime)
+    sim.ExecuteSimulation()
 
+# This method is used to plot the retained data of a simulation.
+# It is called once for each run of the simulation, overlapping the plots
+def plotSim(data, retentionPolicy):
     #
     #   retrieve the logged data
     #
-    print "Pulling position data"
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', range(3))
-    columns = ['Timestamp', 'x', 'y', 'z']
-    posDf = pd.DataFrame(posData, columns = columns)
-    print posDf
-    print "Pulling velocity data"
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', range(3))
+    dataUsReq = data["messages"][rwMotorTorqueConfigOutputDataName+".motorTorque"]
+    dataSigmaBR = data["messages"][attErrorConfigOutputDataName+".sigma_BR"]
+    dataOmegaBR = data["messages"][attErrorConfigOutputDataName+".omega_BR_B"]
+    dataPos = data["messages"][sNavObjectOutputTransName+".r_BN_N"]
+    dataOmegaRW = data["messages"][mrpControlConfigInputRWSpeedsName+".wheelSpeeds"]
+    dataVolt = data["messages"][fswRWVoltageConfigVoltageOutMsgName+".voltage"]
 
-    velDf = pd.DataFrame(velData, columns = columns)
-    velDf.to_csv('velocityData', encoding='utf-8', index=False)
+    columns = ["Time", "X", "Y", "Z", "a", "b"]
+
+    file_name = "dataRw.csv"
+
+    cwd = os.getcwd()
+    completeName = os.path.join(cwd, "dataRw", file_name)
+
+    # monteCarlo.arrayToCsv(dataUsReq, columns, "dataRw")
+    df = pd.DataFrame(dataUsReq, columns=columns)
+    # path = "graphData/" + file_name
+    # try:
+    #     os.makedirs(completeName)
+    # except OSError:
+    #     if not os.path.isdir(completeName):
+    #         raise
+    df.to_csv(completeName, sep='\t', encoding='utf-8', index=False)
+
+    dataRW = []
+    for message in rwOutName:
+        dataRW.append(data["messages"][message+".u_current"])
     np.set_printoptions(precision=16)
 
     #
     #   plot the results
     #
-    fileName = os.path.basename(os.path.splitext(__file__)[0])
 
-    output_file("test.html")
-    p = figure()
-    p.line(posData[1], velData[1], line_width=2)
-    show(p)
+    timeData = dataUsReq[:, 0] * macros.NANO2MIN
 
-
-    # draw the inertial position vector components
-    plt.close("all")  # clears out plots from earlier test runs
-    plt.figure(1)
-    fig = plt.gcf()
-    ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
-    for idx in range(1, 4):
-        plt.plot(posData[:, 0] * macros.NANO2SEC / P, posData[:, idx] / 1000.,
-                 color=unitTestSupport.getLineColor(idx, 3),
-                 label='$r_{BN,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [orbits]')
-    plt.ylabel('Inertial Position [km]')
     figureList = {}
-    pltName = fileName + "1" + orbitCase + str(int(useSphericalHarmonics))+ planetCase
+    plt.figure(1)
+    pltName = 'AttitudeError'
+    for idx in range(1,4):
+        plt.plot(timeData, dataSigmaBR[:, idx],
+                 label='Run ' + str(data["index"]) + ' $\sigma_'+str(idx)+'$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('Attitude Error $\sigma_{B/R}$')
     figureList[pltName] = plt.figure(1)
 
-    if useSphericalHarmonics is False:
-        # draw orbit in perifocal frame
-        b = oe.a * np.sqrt(1 - oe.e * oe.e)
-        p = oe.a * (1 - oe.e * oe.e)
-        plt.figure(2, figsize=np.array((1.0, b / oe.a)) * 4.75, dpi=100)
-        plt.axis(np.array([-oe.rApoap, oe.rPeriap, -b, b]) / 1000 * 1.25)
-        # draw the planet
-        fig = plt.gcf()
-        ax = fig.gca()
-        if planetCase == 'Mars':
-            planetColor = '#884400'
-        else:
-            planetColor = '#008800'
-        planetRadius = planet.radEquator / 1000
-        ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
-        # draw the actual orbit
-        rData = []
-        fData = []
-        for idx in range(0, len(posData)):
-            oeData = orbitalMotion.rv2elem(mu, posData[idx, 1:4], velData[idx, 1:4])
-            rData.append(oeData.rmag)
-            fData.append(oeData.f + oeData.omega - oe.omega)
-        plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000, color='#aa0000', linewidth=3.0
-                 )
-        # draw the full osculating orbit from the initial conditions
-        fData = np.linspace(0, 2 * np.pi, 100)
-        rData = []
-        for idx in range(0, len(fData)):
-            rData.append(p / (1 + oe.e * np.cos(fData[idx])))
-        plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000, '--', color='#555555'
-                 )
-        plt.xlabel('$i_e$ Cord. [km]')
-        plt.ylabel('$i_p$ Cord. [km]')
-        plt.grid()
-
-    else:
-        plt.figure(2)
-        fig = plt.gcf()
-        ax = fig.gca()
-        ax.ticklabel_format(useOffset=False, style='plain')
-        smaData = []
-        for idx in range(0, len(posData)):
-            oeData = orbitalMotion.rv2elem(mu, posData[idx, 1:4], velData[idx, 1:4])
-            smaData.append(oeData.a / 1000.)
-        plt.plot(posData[:, 0] * macros.NANO2SEC / P, smaData, color='#aa0000',
-                 )
-        plt.xlabel('Time [orbits]')
-        plt.ylabel('SMA [km]')
-
-    pltName = fileName + "2" + orbitCase + str(int(useSphericalHarmonics)) + planetCase
+    plt.figure(2)
+    pltName = 'RWMotorTorque'
+    for idx in range(1,4):
+        plt.plot(timeData, dataUsReq[:, idx],
+                 '--',
+                 label='Run ' + str(data["index"]) + ' $\hat u_{s,'+str(idx)+'}$')
+        plt.plot(timeData, dataRW[idx-1][:, 1],
+                 label='Run ' + str(data["index"]) + ' $u_{s,' + str(idx) + '}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('RW Motor Torque (Nm)')
     figureList[pltName] = plt.figure(2)
 
-    if show_plots:
-        plt.show()
+    plt.figure(3)
+    pltName = 'RateTrackingError'
+    for idx in range(1,4):
+        plt.plot(timeData, dataOmegaBR[:, idx],
+                 label='Run ' + str(data["index"]) + ' $\omega_{BR,'+str(idx)+'}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('Rate Tracking Error (rad/s) ')
+    figureList[pltName] = plt.figure(3)
 
-    # close the plots being saved off to avoid over-writing old and new figures
-    plt.close("all")
+    plt.figure(4)
+    pltName = 'RWSpeed'
+    for idx in range(1,len(rwOutName)+1):
+        plt.plot(timeData, dataOmegaRW[:, idx]/macros.RPM,
+                 label='Run ' + str(data["index"]) + ' $\Omega_{'+str(idx)+'}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('RW Speed (RPM) ')
+    figureList[pltName] = plt.figure(4)
 
-    return posData, figureList
+    plt.figure(5)
+    pltName = 'RWVoltage'
+    for idx in range(1, len(rwOutName) + 1):
+        plt.plot(timeData, dataVolt[:, idx],
+                 label='Run ' + str(data["index"]) + ' $V_{' + str(idx) + '}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('RW Voltage (V) ')
+    figureList[pltName] = plt.figure(5)
 
+    return figureList
+
+def plotSimAndSave(data, retentionPolicy):
+
+    figureList = plotSim(data, retentionPolicy)
+
+    for pltName, plt in figureList.items():
+        unitTestSupport.saveScenarioFigure(
+            fileNameString + "_" + pltName
+            , plt, path)
+
+    return
+
+
+def graph():
+    print "!!!"
 
 
 #
@@ -547,11 +811,6 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
 # stand-along python script
 #
 if __name__ == "__main__":
-
-
-    run(
-        True,        # show_plots
-        'LEO',       # orbit Case (LEO, GTO, GEO)
-        False,       # useSphericalHarmonics
-        'Earth'      # planetCase (Earth, Mars)
-    )
+    run(  False        # safe figures to file
+        , True         # show_plots
+       )
