@@ -312,8 +312,8 @@ samplingTime = simulationTime / (numDataPoints-1)
 
 def run(saveFigures, show_plots):
     '''This function is called by the py.test environment.'''
-    graph()
-    return
+    # graph()
+    # return
     # A MonteCarlo simulation can be created using the `MonteCarlo` module.
     # This module is used to execute monte carlo simulations, and access
     # retained data from previously executed MonteCarlo runs.
@@ -695,7 +695,7 @@ def executeScenario(sim):
 
 # This method is used to plot the retained data of a simulation.
 # It is called once for each run of the simulation, overlapping the plots
-def plotSim(data, retentionPolicy):
+def plotSim(data, retentionPolicy, monteCarlo):
     #
     #   retrieve the logged data
     #
@@ -710,18 +710,21 @@ def plotSim(data, retentionPolicy):
 
     file_name = "dataRw.csv"
 
-    cwd = os.getcwd()
-    completeName = os.path.join(cwd, "dataRw", file_name)
+    path = "data/rw"
+
+    try:
+        os.makedirs(path)
+    except OSError:
+        print "Creating failed"
+    else:
+        print "success"
+
+    path = path + "/" + file_name
 
     # monteCarlo.arrayToCsv(dataUsReq, columns, "dataRw")
     df = pd.DataFrame(dataUsReq, columns=columns)
-    # path = "graphData/" + file_name
-    # try:
-    #     os.makedirs(completeName)
-    # except OSError:
-    #     if not os.path.isdir(completeName):
-    #         raise
-    df.to_csv(completeName, sep='\t', encoding='utf-8', index=False)
+
+    df.to_csv(path, sep='\t', encoding='utf-8', index=False)
 
     dataRW = []
     for message in rwOutName:
@@ -790,9 +793,9 @@ def plotSim(data, retentionPolicy):
 
     return figureList
 
-def plotSimAndSave(data, retentionPolicy):
+def plotSimAndSave(data, retentionPolicy, monteCarlo):
 
-    figureList = plotSim(data, retentionPolicy)
+    figureList = plotSim(data, retentionPolicy, monteCarlo)
 
     for pltName, plt in figureList.items():
         unitTestSupport.saveScenarioFigure(
