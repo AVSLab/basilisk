@@ -81,7 +81,7 @@ from matplotlib.colors import rgb2hex
 from matplotlib.cm import get_cmap
 
 
-NUMBER_OF_RUNS = 10
+NUMBER_OF_RUNS = 2
 VERBOSE = True
 
 # Here are the name of some messages that we want to retain or otherwise use
@@ -96,7 +96,7 @@ fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
 # We also will need the simulationTime and samplingTimes
-numDataPoints = 100000
+numDataPoints = 10
 simulationTime = macros.min2nano(10.)
 samplingTime = simulationTime / (numDataPoints-1)
 
