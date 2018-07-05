@@ -71,6 +71,7 @@ class Controller:
     def __init__(self):
         self.executionCount = 0
         self.ICrunFlag = False
+        self.icDirectory = ""
         self.numProcess = cpu_count()
         self.simParams = SimulationParameters(
             creationFunction=None,
@@ -199,7 +200,7 @@ class Controller:
                 None, if no archive desired.
         """
         self.icDirectory = os.path.abspath(dirName) + "/"
-        self.simParams.shouldArchiveParameters = dirName is not None
+        self.simParams.shouldArchiveParameters = True
         self.simParams.icfilename = self.icDirectory
 
     def setICRunFlag(self, bool):
@@ -315,6 +316,9 @@ class Controller:
         """
         # the list of failures
         failed = []
+
+        assert self.icDirectory is not "", "No initial condition directory was given"
+        assert self.ICrunFlag is not False, "IC run flag was not set"
 
         if self.simParams.verbose:
             print "Beginning simulation with {0} runs on {1} threads".format(self.executionCount, self.numProcess)

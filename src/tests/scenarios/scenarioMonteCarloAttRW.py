@@ -452,7 +452,7 @@ def run(saveFigures, case, show_plots):
     #########################################################
     if case ==2:
         # Now run initial cocnditions
-        icName = "tests/testScripts/Support/run_MC_IC"
+        icName = bskPath + "/tests/testScripts/Support/run_MC_IC"
         monteCarlo.setICDir(icName)
         monteCarlo.setICRunFlag(True)
         numberICs = 3
