@@ -7,10 +7,8 @@ The single check has the rate vector of the input message is set to specific val
 
 
 \section{Test Parameters}
+The unit test checks the value of the angular rate output and compares it to expected value.  It also makes sure that the attitude and sun sun heading sets are returned as zero.
 
-Test and simulation parameters and inputs go here. Basically, describe your test in the section above, but put any specific numbers or inputs to the tests in this section.
-
-The unit test verify that the module output guidance message vectors match expected values.
 \begin{table}[htbp]
 	\caption{Error tolerance for each test.}
 	\label{tab:errortol}
@@ -19,7 +17,9 @@ The unit test verify that the module output guidance message vectors match expec
 		\hline\hline
 		\textbf{Output Value Tested}  & \textbf{Tolerated Error}  \\ 
 		\hline
-		{\tt outputVector}        & \input{AutoTeX/toleranceValue}	   \\ 
+		{\tt sigma\_BN}        & \input{AutoTeX/toleranceValue}	   \\ 
+		{\tt omega\_BN\_B}        & \input{AutoTeX/toleranceValue}	   \\ 
+		{\tt vehSunPntBdy}        & \input{AutoTeX/toleranceValue}	   \\ 
 		\hline\hline
 	\end{tabular}
 \end{table}
