@@ -81,7 +81,7 @@ from matplotlib.colors import rgb2hex
 from matplotlib.cm import get_cmap
 
 
-NUMBER_OF_RUNS = 2
+NUMBER_OF_RUNS = 3
 VERBOSE = True
 
 # Here are the name of some messages that we want to retain or otherwise use
@@ -433,12 +433,14 @@ def run(saveFigures, show_plots):
     # We can also access the initial parameters
     # The random seeds should differ between runs, so we will test that
     params1 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-1)
-    params2 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-2)
-    assert "TaskList[0].TaskModels[0].RNGSeed" in params1, "random number seed should be applied"
-    for dispName in dispList:
-        assert dispName in params1, "dispersion should be applied"
-        # assert two different runs had different parameters.
-        assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
+
+    #TODO CHANGE THIS BACK TO RUNS - 2
+    # params2 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-2)
+    # assert "TaskList[0].TaskModels[0].RNGSeed" in params1, "random number seed should be applied"
+    # for dispName in dispList:
+    #     assert dispName in params1, "dispersion should be applied"
+    #     # assert two different runs had different parameters.
+    #     assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
 
     # Now we execute our callback for the retained data.
     # For this run, that means executing the plot.
@@ -708,6 +710,8 @@ def plotSim(data, retentionPolicy):
 
     columns = ["Time", "X", "Y", "Z", "a", "b"]
 
+
+    #TODO ADAM
     file_name = "dataRw.csv"
     path = "data/rw"
 
@@ -720,16 +724,17 @@ def plotSim(data, retentionPolicy):
     timedf = pd.DataFrame(newTime, columns=["Time"])
     df.to_csv(path, sep='\t', encoding='utf-8', index=False)
 
-    options = dict(line_color='blue', fill_color = 'blue', size = 1, alpha = 0.5)
+    # options = dict(line_color='blue', fill_color = 'blue', size = 1, alpha = 0.5)
     # p = base_plot()
     p = figure(plot_width=400, plot_height=400)
 
-    p.multi_line([timedf['Time'], df['X']], [timedf['Time'], df['Y']],
-                 color=["firebrick", "navy"], alpha=[0.8, 0.3], line_width=4)
+    # p.multi_line([timedf['Time'], df['X']], [timedf['Time'], df['Y']],
+    #              color=["firebrick", "navy"], alpha=[0.8, 0.3], line_width=4)
 
     print df['X']
     print timedf['Time']
-    # p.line(x=timedf['Time'], y=df['Y'], line_width = 2)
+    p.line(x=timedf['Time'], y=df['Y'], line_width = 2)
+    p.line(x=timedf['Time'], y=df['X'], line_width = 3)
 
     show(p)
 
