@@ -1,0 +1,5 @@
+% !TEX root = ./Basilisk-rateMsgConverter-20180630.tex
+
+\section{Model Description}
+
+This module is embarrassingly simple.  The purpose is to read in the body message from one message type {\tt IMUSensorBodyFswMsg}, and store it in an output message of another type {\tt NavAttIntMsg}.  The body rate vector is stored in the variable {\tt AngVelBody} in the incoming message.  The output message of type {\tt NavAttIntMsg} is used as a common attitude input message by the FSW modules.  This output message is first zeroed, and then the rate vector is copied into the variable {\tt omega\_BN\_B}. 
