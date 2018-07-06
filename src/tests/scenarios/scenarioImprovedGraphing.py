@@ -96,7 +96,7 @@ fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
 # We also will need the simulationTime and samplingTimes
-numDataPoints = 10
+numDataPoints = 100
 simulationTime = macros.min2nano(10.)
 samplingTime = simulationTime / (numDataPoints-1)
 
@@ -695,7 +695,7 @@ def executeScenario(sim):
 
 # This method is used to plot the retained data of a simulation.
 # It is called once for each run of the simulation, overlapping the plots
-def plotSim(data, retentionPolicy, monteCarlo):
+def plotSim(data, retentionPolicy):
     #
     #   retrieve the logged data
     #
@@ -709,22 +709,30 @@ def plotSim(data, retentionPolicy, monteCarlo):
     columns = ["Time", "X", "Y", "Z", "a", "b"]
 
     file_name = "dataRw.csv"
-
     path = "data/rw"
 
-    try:
-        os.makedirs(path)
-    except OSError:
-        print "Creating failed"
-    else:
-        print "success"
+    writeDirectories(path, file_name)
 
     path = path + "/" + file_name
-
     # monteCarlo.arrayToCsv(dataUsReq, columns, "dataRw")
     df = pd.DataFrame(dataUsReq, columns=columns)
-
+    newTime = dataUsReq[:, 0] * macros.NANO2MIN
+    timedf = pd.DataFrame(newTime, columns=["Time"])
     df.to_csv(path, sep='\t', encoding='utf-8', index=False)
+
+    options = dict(line_color='blue', fill_color = 'blue', size = 1, alpha = 0.5)
+    # p = base_plot()
+    p = figure(plot_width=400, plot_height=400)
+
+    p.multi_line([timedf['Time'], df['X']], [timedf['Time'], df['Y']],
+                 color=["firebrick", "navy"], alpha=[0.8, 0.3], line_width=4)
+
+    print df['X']
+    print timedf['Time']
+    # p.line(x=timedf['Time'], y=df['Y'], line_width = 2)
+
+    show(p)
+
 
     dataRW = []
     for message in rwOutName:
@@ -793,9 +801,9 @@ def plotSim(data, retentionPolicy, monteCarlo):
 
     return figureList
 
-def plotSimAndSave(data, retentionPolicy, monteCarlo):
+def plotSimAndSave(data, retentionPolicy):
 
-    figureList = plotSim(data, retentionPolicy, monteCarlo)
+    figureList = plotSim(data, retentionPolicy)
 
     for pltName, plt in figureList.items():
         unitTestSupport.saveScenarioFigure(
@@ -803,6 +811,31 @@ def plotSimAndSave(data, retentionPolicy, monteCarlo):
             , plt, path)
 
     return
+def base_plot():
+    p = figure(
+        x_range=(0, .5),
+        y_range=(-1, 3.5),
+        tools='pan,wheel_zoom,box_zoom,reset',
+        plot_width=800,
+        plot_height=500,
+    )
+    p.xgrid.grid_line_color = None
+    p.ygrid.grid_line_color = None
+    p.xaxis.axis_label = "Distance, miles"
+    p.yaxis.axis_label = "Fare, $"
+    p.xaxis.axis_label_text_font_size = '12pt'
+    p.yaxis.axis_label_text_font_size = '12pt'
+    return p
+
+def writeDirectories(path, file_name):
+
+    try:
+        os.makedirs(path)
+    except OSError:
+        print "Creating failed"
+    else:
+        print "success"
+
 
 
 def graph():
