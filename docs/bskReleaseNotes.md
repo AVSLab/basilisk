@@ -32,6 +32,9 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>
     Added a force and torque calculation method in the stateEffector abstract class, and provided the necessary method calls in spacecraftPlus. This allows for stateEffectors to calculate the force and torque that they are imparting on the rigid body hub. The hingedRigidBodyStateEffector and the linearSpringMassDamper classes provide their implementation of these calculations. 
     </li>
+    <li>
+    Fixed an issuew with `extForceTorque` effector where the flag about having a good input message was not being initialized properly.  This caused a rare failure in the unit test.
+    </li>
 </ul>
 
 ## Version 0.2.3 (June 12, 2018)
