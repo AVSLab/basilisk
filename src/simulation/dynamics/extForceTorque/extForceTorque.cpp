@@ -38,6 +38,10 @@ ExtForceTorque::ExtForceTorque()
     this->cmdTorqueInMsgID = -1;
     this->cmdForceInertialInMsgID = -1;
     this->cmdForceBodyInMsgID = -1;
+    this->goodTorqueCmdMsg = false;
+    this->goodForceNCmdMsg = false;
+    this->goodForceBCmdMsg = false;
+
 
     CallCounts = 0;
     return;
@@ -102,11 +106,6 @@ void ExtForceTorque::writeOutputMessages(uint64_t currentClock)
 void ExtForceTorque::readInputMessages()
 {
     SingleMessageHeader LocalHeader;
-
-    /* default the cmdMsg states to false */
-    this->goodTorqueCmdMsg = false;
-    this->goodForceNCmdMsg = false;
-    this->goodForceBCmdMsg = false;
 
     //! - If the input message ID is invalid, return without touching states
     if(this->cmdTorqueInMsgID >= 0)
