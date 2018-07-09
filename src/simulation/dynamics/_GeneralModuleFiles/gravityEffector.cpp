@@ -28,11 +28,12 @@ SphericalHarmonics::SphericalHarmonics()
     this->radEquator = 0.0;
     this->maxDeg = 0;
     this->muBody = 0.0;
+    return;
 }
 
 SphericalHarmonics::~SphericalHarmonics()
 {
-    
+    return;
 }
 
 /*
@@ -94,7 +95,6 @@ bool SphericalHarmonics::initializeParameters()
                 nq1Row[m] = sqrt(double((l-m)*getK(m)*(l+m+1))/getK(m+1));
             }
             nq2Row[m] = sqrt(double((l+m+2)*(l+m+1)*(2*l+1)*getK(m))/((2*l+3)*getK(m+1)));
-
         }
         nQuot1.push_back(nq1Row);
         nQuot2.push_back(nq2Row);
@@ -257,7 +257,7 @@ bool SphericalHarmonics::harmReady()
 // GravBodyData implementation
 
 /*!
- @brief Use this constructor to use the class as the old structure. Should be deprecated soon.
+ @brief Set parameters for a gravity body
  */
 GravBodyData::GravBodyData()
 {
@@ -275,6 +275,7 @@ GravBodyData::GravBodyData()
     v3SetZero(this->localPlanet.VelocityVector);
     m33SetIdentity(this->localPlanet.J20002Pfix);
     m33SetZero(this->localPlanet.J20002Pfix_dot);
+    return;
 }
 
 /*!
@@ -293,7 +294,7 @@ void GravBodyData::initBody(uint64_t moduleID)
                     this->bodyInMsgName, sizeof(SpicePlanetStateSimMsg), moduleID);
     this->mu = spherFound ? this->spherHarm.muBody : this->mu;
     this->radEquator = spherFound ? this->spherHarm.radEquator : this->radEquator;
-    
+    return;
 }
 
 Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
@@ -317,7 +318,6 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
         Eigen::Vector3d gravPert_Pfix = this->spherHarm.computeField(r_Pfix,
             this->spherHarm.maxDeg, false);
         gravOut += dcm_PfixN.transpose() * gravPert_Pfix;
-        
     }
     
     return(gravOut);
@@ -325,23 +325,15 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
 
 double GravBodyData::computePotentialEnergy(Eigen::Vector3d r_I)
 {
-    double gravPotentialEnergyOut = 0.0;
-
-    double rMag = r_I.norm();
-    gravPotentialEnergyOut  = -this->mu/rMag;
-
-    if(this->spherHarm.harmReady() && this->useSphericalHarmParams)
-    {
-
-    }
-    
-    return(gravPotentialEnergyOut);
+    double gravPotentialEnergyOut  = -this->mu/r_I.norm();
+    return gravPotentialEnergyOut;
 }
 
 void GravBodyData::loadEphemeris(uint64_t moduleID)
 {
     SystemMessaging::GetInstance()->ReadMessage(this->bodyMsgID, &this->localHeader,
         sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t *>(&this->localPlanet));
+    return;
 }
 
 GravityEffector::GravityEffector()
@@ -366,18 +358,21 @@ void GravityEffector::SelfInit()
     if (this->centralBody) {
         this->centralBodyOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->centralBodyOutMsgName, sizeof(SpicePlanetStateSimMsg), 2, "SpicePlanetStateSimMsg", this->moduleID);
     }
+    return;
 }
 
 void GravityEffector::CrossInit()
 {
     //! Begin method steps
     //! - For each gravity body in the data vector, find message ID
-    //! - If message ID is not found, alert the user and disable message
     std::vector<GravBodyData *>::iterator it;
     for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
     {
         (*it)->initBody(this->moduleID);
     }
+    return;
+}
+
 void GravityEffector::ChangeCentralBody(std::string newCentralBodyName)
 {
     std::vector<GravBodyData *>::iterator it;
@@ -393,8 +388,7 @@ void GravityEffector::ChangeCentralBody(std::string newCentralBodyName)
 void GravityEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     //! Begin method steps
-    //! - For each gravity body in the data vector, find message ID
-    //! - If message ID is not found, alert the user and disable message
+    //! - Updates the grav body planet ephemerides
     std::vector<GravBodyData *>::iterator it;
     for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
     {
@@ -405,6 +399,7 @@ void GravityEffector::UpdateState(uint64_t CurrentSimNanos)
         }
     }
     this->writeOutputMessages(CurrentSimNanos);
+    return;
 }
 
 void GravityEffector::writeOutputMessages(uint64_t currentSimNanos)
@@ -412,6 +407,7 @@ void GravityEffector::writeOutputMessages(uint64_t currentSimNanos)
     if (this->centralBodyOutMsgId > 0) {
         SystemMessaging::GetInstance()->WriteMessage(this->centralBodyOutMsgId, currentSimNanos, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*> (&this->centralBody->localPlanet), this->moduleID);
     }
+    return;
 }
 
 void GravityEffector::prependSpacecraftNameToStates()
@@ -546,9 +542,11 @@ void GravityEffector::updateEnergyContributions(Eigen::Vector3d r_CN_N, double &
 void GravityEffector::setGravBodies(std::vector<GravBodyData *> gravBodies)
 {
     this->gravBodies = gravBodies;
+    return;
 }
 
 void GravityEffector::addGravBody(GravBodyData* gravBody)
 {
     this->gravBodies.push_back(gravBody);
+    return;
 }
