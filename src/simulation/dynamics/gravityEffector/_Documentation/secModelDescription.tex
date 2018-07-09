@@ -4,6 +4,59 @@ The gravity effector module is responsible for calculating the effects of gravit
 
 \subsection{Mathematical model}
 
+\subsubsection{Relative Gravitational Dynamics Formulation}
+
+The gravity effector module is critical to the propagation of spacecraft orbits in Basilisk. In order to increase the accuracy of spacecraft trajectories, a relative gravitational acceleration formulation can be used. Relative dynamics keep the acceleration, velocity, and distance magnitudes small, allowing more bits of a double variable to be used for accuracy, rather than magnitude. This additional accuracy is compounded via integration. This relative formulation is enforced when a user sets any planet in a multi-planet environment to have \verb|isCentralBody = True|.
+
+If no planets in a simulation are set as the central body, then an absolute formulation of gravitational acceleration is used. In the absolute formulation, acceleration of a spacecraft due to each massive body is summed directly to calculate the resultant acceleration of the spacecraft.
+
+\begin{equation}
+	\ddot{r}_{B/N, grav} = \sum_{i = 1}^{n} \ddot{r}_{B/N, i}
+\end{equation}
+where the accelerations on the right hand side are the acceleration due to the $i^{th}$ planet which is being modeled as a gravity body. In this absolute mode, spacecraft position and velocity are integrated with respect to the inertial origin, typically solar system barycenter.
+
+In the relative formulation, the acceleration of the spacecraft is calculated \textit{relative to} the central body. This is done by calculating the acceleration of the central body and subtracting it from the acceleration of the spacecraft.
+
+\begin{equation}
+	\ddot{r}_{B/C, grav} =\ddot{r}_{B/N, grav} - \ddot{r}_{C/N, grav}
+\end{equation}
+
+where $C$ is the central body. In this case, other accelerations of the central body (due to solar radiation pressure, for instance) are ignored.  For relative dynamics, the Basilisk dynamics integrator uses only \textit{relative} acceleration to calculate \textit{relative} position and velocity. The gravity module then accounts for this and modifies the spacecraft position and velocity by the central body's position and velocity after each timestep.
+
+The above relative formulation leads to some questions regarding the accuracy of the dynamics integration. First, if acceleration due to gravity is being handled in a relative form, but accelerations due to external foces are handled absolutely, does Basilisk always produce the correct absolute position and velocity? Second, if dynamic state effectors such as hinged rigid bodies are using the gravitational acceleration that the spacecraft receives from the gravity module, are their states being integrated correctly?
+
+Absolute accelerations (i.e. due to thrust) being integrated alongside the relative gravitational acceleration is handled easily due to the linearity of integration. In the absolute dynamics formulation there is:
+
+\begin{equation}
+	\ddot{r}_{B/N} = \ddot{r}_{B/N, grav}  + \ddot{r}_{B/N, thrust} + \ddot{r}_{B/N, SRP} + \dots
+	\label{eq:absGrav}
+\end{equation}
+and each term can be integrated separately on the right side so that
+\begin{equation}
+      r_{B/N} = \int \int \ddot{r}_{B/N, grav} dt dt +   \int \int \ddot{r}_{B/N, thrust} dt dt +  \int \int \ddot{r}_{B/N, SRP}dt dt +  \dots
+\end{equation}
+In the derivation that follows, the double integral to position is used, but the logic holds for the first integral to velocity as well. Now, because accelerations also add linearly,
+\begin{equation}
+\ddot{r}_{B/N} = \ddot{r}_{B/C} + \ddot{r}_{C/N} = \ddot{r}_{B/C, grav} +  \ddot{r}_{C/N, grav}  + \ddot{r}_{B/N, thrust} + \ddot{r}_{B/N, SRP} + \dots
+\end{equation}
+which differs from Eq. \ref{eq:absGrav} in the gravitational acceleration of the spacecraft being split at the acceleration of the central body. Applying the integrals:
+\begin{equation}
+r_{B/N} = r_{B/C} + r_{C/N} = \int \int \ddot{r}_{B/C, grav} dt dt + r_{C/N}  +   \int \int \ddot{r}_{B/N, thrust} dt dt +  \int \int \ddot{r}_{B/N, SRP}dt dt +  \dots
+\end{equation}
+where $\ddot{r}_{C/N}$ is deliberately double integrated to $r_{C/N}$ to show that it can be removed from both sides and $r_{B/C}$ can be evaluated using relative gravitation acceleration combined with absolute accelerations due to external forces:
+\begin{equation}
+r_{B/C}= \int \int \ddot{r}_{B/C, grav} dt dt +   \int \int \ddot{r}_{B/N, thrust} dt dt +  \int \int \ddot{r}_{B/N, SRP}dt dt +  \dots
+\end{equation}
+Once that is done, it is clear that the absolute position can be found by simply adding the position of the central body to the relative position just found:
+\begin{equation}
+	r_{B/N} = r_{B/C} + r_{C/N}
+\end{equation}
+This is how absolute position and velocity are found in Basilisk when using a relative dynamics formulation: the relative dynamics are integrated and the position and velocity of the central body are added afterward. The position and velocity of the central body are not integrated by Basilisk, but found from Spice.
+
+Dynamic state effectors connected to the spacecraft hub can use the relative gravitational acceleration in their calculation for much the same reason. Effector positions and velocities are always integrated relative to the spacecraft. In fact, the absolute position and velocity of an effector is rarely, if ever, calculated or used. This is explains why a hinged body experiencing a relative acceleration does not quickly fall behind the spacecraft which is known to be moving along a course experiencing absolute gravitational acceleration. Additionally, because the effector is "pulled along" with the spacecraft when the spacecraft position is modified by the central body position, the effector sees the effect of absolute gravitational acceleration as well.
+
+For intricacies related to using absolute vs relative dynamics, see the user manual at the end of this document.
+
 \subsubsection{Gravity models}
 
 Gravity models are usually based on solutions of the Laplace equation ($\nabla^2 U(\mathbf{\bar r}) = 0$). It is very important to state that this equation only models a gravity potential outside a body. For computing a potential inside a body the Poisson equation is used instead.
