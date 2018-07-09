@@ -355,13 +355,6 @@ GravityEffector::~GravityEffector()
 
 void GravityEffector::SelfInit()
 {
-    std::vector<GravBodyData *>::iterator it;
-    for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
-    {
-        if ((*it)->isCentralBody){
-            this->centralBody = (*it);
-        }
-    }
     if (this->centralBody) {
         this->centralBodyOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->centralBodyOutMsgName, sizeof(SpicePlanetStateSimMsg), 2, "SpicePlanetStateSimMsg", this->moduleID);
     }
@@ -380,18 +373,6 @@ void GravityEffector::CrossInit()
     return;
 }
 
-void GravityEffector::ChangeCentralBody(std::string newCentralBodyName)
-{
-    std::vector<GravBodyData *>::iterator it;
-    for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
-    {
-        if( (*it)->planetEphemName.compare(newCentralBodyName) == 0 ){
-            this->centralBody = (*it);
-        }
-    }
-    return;
-}
-
 void GravityEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     //! Begin method steps
@@ -400,6 +381,9 @@ void GravityEffector::UpdateState(uint64_t CurrentSimNanos)
     for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
     {
         (*it)->loadEphemeris(this->moduleID);
+        if((*it)->isCentralBody){
+            this->centralBody = (*it);
+        }
     }
     this->writeOutputMessages(CurrentSimNanos);
     return;
