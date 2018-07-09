@@ -156,6 +156,58 @@ void SpiceInterface::computeGPSData()
     this->GPSWeek -= this->GPSRollovers*1024;
 }
 
+/*! This method takes plaet name and returns a planet position vector in the inertial frame
+ @return planet position vector
+ @param planetName string with the planet name
+ */
+Eigen::Vector3d SpiceInterface::getPlanetPosition(std::string planetName)
+{
+    this->SelfInit();
+    Eigen::Vector3d pos;
+    std::map<uint32_t, SpicePlanetStateSimMsg>::iterator planIt;
+    for (planIt = this->planetData.begin(); planIt != planetData.end(); planIt++){
+        if (strcmp(planIt->second.PlanetName, planetName.data()) == 0){
+            pos = cArray2EigenVector3d(planIt->second.PositionVector);
+        }
+    }
+    return pos;
+}
+
+/*! This method takes plaet name and returns a planet velocity vector in the inertial frame
+ @return planet velocity vector
+ @param planetName string with the planet name
+ */
+Eigen::Vector3d SpiceInterface::getPlanetVelocity(std::string planetName)
+{
+    this->SelfInit();
+    Eigen::Vector3d vel;
+    std::map<uint32_t, SpicePlanetStateSimMsg>::iterator planIt;
+    for (planIt = this->planetData.begin(); planIt != planetData.end(); planIt++){
+        if (strcmp(planIt->second.PlanetName, planetName.data()) == 0){
+            vel = cArray2EigenVector3d(planIt->second.VelocityVector);
+        }
+    }
+    return vel;
+}
+
+/*! This method takes plaet name and returns a direction cosine matrix between
+the planetframe and he inertial frame
+ @return planet P wrt N
+ @param planetName string with the planet name
+ */
+Eigen::Matrix3d SpiceInterface::getPlanetAttitude(std::string planetName)
+{
+    this->SelfInit();
+    Eigen::Matrix3d DCM;
+    std::map<uint32_t, SpicePlanetStateSimMsg>::iterator planIt;
+    for (planIt = this->planetData.begin(); planIt != planetData.end(); planIt++){
+        if (strcmp(planIt->second.PlanetName, planetName.data()) == 0){
+            DCM = cArray2EigenMatrix3d(*planIt->second.J20002Pfix);
+        }
+    }
+    return DCM;
+}
+
 /*! This method takes the values computed in the model and outputs them.
  It packages up the internal variables into the output structure definitions
  and puts them out on the messaging system
@@ -289,7 +341,7 @@ void SpiceInterface::computePlanetData()
             
             double aux[6][6];
             
-            sxform_c(this->referenceBase.c_str(), planetFrame.c_str(), this->J2000Current, aux);
+            sxform_c(this->referenceBase.c_str(), planetFrame.c_str(), this->J2000Current, aux); //returns attude of planet (i.e. IAU_EARTH) wrt "j2000". note j2000 is actually ICRF in Spice.
             
             m66Get33Matrix(0, 0, aux, planit->second.J20002Pfix);
             

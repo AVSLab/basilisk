@@ -26,6 +26,7 @@
 #include "utilities/linearAlgebra.h"
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/spiceTimeSimMsg.h"
+#include "utilities/avsEigenSupport.h"
 
 /*! \addtogroup SimModelGroup
  *  This group is used to model parts of the vehicle and the surrounding environment
@@ -57,6 +58,9 @@ public:
     void initTimeData();
     void computeGPSData();
     void computePlanetData();
+    Eigen::Vector3d getPlanetPosition(std::string planetName);
+    Eigen::Vector3d getPlanetVelocity(std::string planetName);
+    Eigen::Matrix3d getPlanetAttitude(std::string planetName);
     void writeOutputMessages(uint64_t CurrentClock);
     void clearKeeper();
     
