@@ -142,12 +142,12 @@ def computeGravityTo20(positionVector):
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def test_gravityEffectorAllTest(show_plots):
-    # [testResults, testMessage] = independentSphericalHarmonics(show_plots) - SJKC
-    # assert testResults < 1, testMessage
-    # [testResults, testMessage] = sphericalHarmonics(show_plots)
-    # assert testResults < 1, testMessage
-    # [testResults, testMessage] = singleGravityBody(show_plots)
-    # assert testResults < 1, testMessage
+    [testResults, testMessage] = independentSphericalHarmonics(show_plots)
+    assert testResults < 1, testMessage
+    [testResults, testMessage] = sphericalHarmonics(show_plots)
+    assert testResults < 1, testMessage
+    [testResults, testMessage] = singleGravityBody(show_plots)
+    assert testResults < 1, testMessage
     [testResults, testMessage] = multiBodyGravity(show_plots)
     assert testResults < 1, testMessage
 
@@ -305,8 +305,8 @@ def singleGravityBody(show_plots):
 
     SpiceObject.ModelTag = "SpiceInterfaceData"
     SpiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
-    SpiceObject.OutputBufferCount = 10000
-    SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun"])
+    SpiceObject.outputBufferCount = 10000
+    SpiceObject.planetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun"])
     SpiceObject.UTCCalInit = DateSpice
     TotalSim.AddModelToTask(unitTaskName, SpiceObject)
     SpiceObject.UTCCalInit = "1994 JAN 26 00:02:00.184"
@@ -342,6 +342,7 @@ def singleGravityBody(show_plots):
     TotalSim.InitializeSimulation()
     gravBody1.initBody(0)
     SpiceObject.UpdateState(0)
+
     for i in range(2*3600):
         stateOut = pyswice.spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, 'J2000', 'EARTH')
         etPrev =etCurr - 2.0
