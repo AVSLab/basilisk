@@ -378,6 +378,16 @@ void GravityEffector::CrossInit()
     {
         (*it)->initBody(this->moduleID);
     }
+void GravityEffector::ChangeCentralBody(std::string newCentralBodyName)
+{
+    std::vector<GravBodyData *>::iterator it;
+    for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
+    {
+        if( (*it)->planetEphemName.compare(newCentralBodyName) == 0 ){
+            this->centralBody = (*it);
+        }
+    }
+    return;
 }
 
 void GravityEffector::UpdateState(uint64_t CurrentSimNanos)
