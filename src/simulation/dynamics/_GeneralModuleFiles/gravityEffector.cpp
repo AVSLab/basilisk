@@ -355,6 +355,13 @@ GravityEffector::~GravityEffector()
 
 void GravityEffector::SelfInit()
 {
+    std::vector<GravBodyData *>::iterator it;
+    for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
+    {
+        if ((*it)->isCentralBody){
+            this->centralBody = (*it);
+        }
+    }
     if (this->centralBody) {
         this->centralBodyOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->centralBodyOutMsgName, sizeof(SpicePlanetStateSimMsg), 2, "SpicePlanetStateSimMsg", this->moduleID);
     }
@@ -393,10 +400,6 @@ void GravityEffector::UpdateState(uint64_t CurrentSimNanos)
     for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
     {
         (*it)->loadEphemeris(this->moduleID);
-        if((*it)->isCentralBody)
-        {
-            this->centralBody = (*it);
-        }
     }
     this->writeOutputMessages(CurrentSimNanos);
     return;
