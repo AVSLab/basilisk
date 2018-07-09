@@ -42,7 +42,6 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import sunSafePoint                   # import the module that is to be tested
-from Basilisk.fswAlgorithms import fswMessages
 from Basilisk.simulation import simFswInterfaceMessages
 from Basilisk.utilities import macros as mc
 
@@ -125,9 +124,9 @@ def sunSafePointTestFunction(show_plots, case):
                                moduleConfig.sunDirectionInMsgName,
                                inputSunVecData)
 
-    inputIMUData = fswMessages.IMUSensorBodyFswMsg()  # Create a structure for the input message
+    inputIMUData = simFswInterfaceMessages.NavAttIntMsg()  # Create a structure for the input message
     omega_BN_B = np.array([0.01, 0.50, -0.2])
-    inputIMUData.AngVelBody = omega_BN_B
+    inputIMUData.omega_BN_B = omega_BN_B
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
                                moduleConfig.imuInMsgName,

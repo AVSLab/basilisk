@@ -55,7 +55,7 @@ void CrossInit_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t moduleID)
     ConfigData->sunDirectionInMsgID = subscribeToMessage(ConfigData->sunDirectionInMsgName,
         sizeof(NavAttIntMsg), moduleID);
     ConfigData->imuInMsgID = subscribeToMessage(ConfigData->imuInMsgName,
-        sizeof(IMUSensorBodyFswMsg), moduleID);
+        sizeof(NavAttIntMsg), moduleID);
     
 }
 
@@ -105,17 +105,17 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
     double sNorm;                   /*!< --- Norm of measured direction vector */
     double e_hat[3];                /*!< --- Eigen Axis */
     double omega_BN_B[3];           /*!< r/s inertial body angular velocity vector in B frame components */
-    IMUSensorBodyFswMsg localImuDataInBuffer;
+    NavAttIntMsg localImuDataInBuffer;
     /*! Begin method steps*/
     /* zero the input message containers */
     memset(&(navMsg), 0x0, sizeof(NavAttIntMsg));
-    memset(&(localImuDataInBuffer), 0x0, sizeof(IMUSensorBodyFswMsg));
+    memset(&(localImuDataInBuffer), 0x0, sizeof(NavAttIntMsg));
     /*! - Read the current sun body vector estimate*/
     ReadMessage(ConfigData->sunDirectionInMsgID, &clockTime, &readSize,
                 sizeof(NavAttIntMsg), (void*) &(navMsg), moduleID);
     ReadMessage(ConfigData->imuInMsgID, &clockTime, &readSize,
-                sizeof(IMUSensorBodyFswMsg), (void*) &(localImuDataInBuffer), moduleID);
-    v3Copy(localImuDataInBuffer.AngVelBody, omega_BN_B);
+                sizeof(NavAttIntMsg), (void*) &(localImuDataInBuffer), moduleID);
+    v3Copy(localImuDataInBuffer.omega_BN_B, omega_BN_B);
 
     /*! - Compute the current error vector if it is valid*/
     sNorm = v3Norm(navMsg.vehSunPntBdy);
