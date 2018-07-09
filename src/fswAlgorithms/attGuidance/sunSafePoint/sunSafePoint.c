@@ -83,6 +83,9 @@ void Reset_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime, uint6
         v3Normalize(ConfigData->eHat180_B, ConfigData->eHat180_B);
     }
 
+    memset(ConfigData->attGuidanceOutBuffer.omega_RN_B, 0x0, 3*sizeof(double));
+    memset(ConfigData->attGuidanceOutBuffer.domega_RN_B, 0x0, 3*sizeof(double));
+
     return;
 }
 
