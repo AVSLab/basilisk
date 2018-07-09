@@ -81,7 +81,8 @@ from matplotlib.colors import rgb2hex
 from matplotlib.cm import get_cmap
 
 
-NUMBER_OF_RUNS = 3
+NUMBER_OF_RUNS = 2
+RUN_NUMBER = 0
 VERBOSE = True
 
 # Here are the name of some messages that we want to retain or otherwise use
@@ -96,8 +97,8 @@ fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
 # We also will need the simulationTime and samplingTimes
-numDataPoints = 100
-simulationTime = macros.min2nano(10.)
+numDataPoints = 1000
+simulationTime = macros.min2nano(5.)
 samplingTime = simulationTime / (numDataPoints-1)
 
 
@@ -719,22 +720,24 @@ def plotSim(data, retentionPolicy):
 
     path = path + "/" + file_name
     # monteCarlo.arrayToCsv(dataUsReq, columns, "dataRw")
-    df = pd.DataFrame(dataUsReq, columns=columns)
+    df = pd.DataFrame(dataUsReq, columns=None)
     newTime = dataUsReq[:, 0] * macros.NANO2MIN
-    timedf = pd.DataFrame(newTime, columns=["Time"])
+    timedf = pd.DataFrame(newTime, columns=None)
     df.to_csv(path, sep='\t', encoding='utf-8', index=False)
 
     # options = dict(line_color='blue', fill_color = 'blue', size = 1, alpha = 0.5)
     # p = base_plot()
-    p = figure(plot_width=400, plot_height=400)
+    p = figure(plot_width=400, plot_height=400, title=str(data["index"]))
 
     # p.multi_line([timedf['Time'], df['X']], [timedf['Time'], df['Y']],
     #              color=["firebrick", "navy"], alpha=[0.8, 0.3], line_width=4)
 
-    print df['X']
-    print timedf['Time']
-    p.line(x=timedf['Time'], y=df['Y'], line_width = 2)
-    p.line(x=timedf['Time'], y=df['X'], line_width = 3)
+    # print df[1]
+    # print timedf[0]
+    p.line(x=timedf[0], y=df[1], line_width = 2)
+    p.line(x=timedf[0], y=df[2], line_width = 2)
+    p.circle(x=timedf[0], y=df[2], size = 2, alpha = 0.5)
+
 
     show(p)
 
@@ -816,6 +819,7 @@ def plotSimAndSave(data, retentionPolicy):
             , plt, path)
 
     return
+
 def base_plot():
     p = figure(
         x_range=(0, .5),
