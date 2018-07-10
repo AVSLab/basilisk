@@ -100,8 +100,6 @@ numDataPoints = 1000
 simulationTime = macros.min2nano(5.)
 samplingTime = simulationTime / (numDataPoints-1)
 
-run_number = 0
-
 ## \defgroup Tutorials_5_0
 ##   @{
 ## Demonstrates how to run basic Monte-Carlo (MC) RW-based attitude simulations.
