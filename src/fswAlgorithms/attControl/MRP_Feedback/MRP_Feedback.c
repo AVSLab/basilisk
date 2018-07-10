@@ -144,6 +144,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
 
     /*! Begin method steps*/
     /*! - Read the dynamic input messages */
+    memset(&guidCmd, 0x0, sizeof(AttGuidFswMsg));
     ReadMessage(ConfigData->inputGuidID, &clockTime, &readSize,
                 sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);
     

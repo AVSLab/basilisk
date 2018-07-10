@@ -82,6 +82,7 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
 
     /*! Begin method steps*/
     
+    memset(&guidCmd, 0x0, sizeof(AttGuidFswMsg));
     /*! - Read the dynamic input messages */
     ReadMessage(ConfigData->inputGuidID, &clockTime, &readSize,
                 sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);

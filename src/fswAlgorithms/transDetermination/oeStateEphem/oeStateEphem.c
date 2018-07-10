@@ -85,6 +85,7 @@ void Update_oeStateEphem(OEStateEphemData *ConfigData, uint64_t callTime, uint64
     TDBVehicleClockCorrelationFswMsg localCorr;
     classicElements orbEl;
     
+    memset(&localCorr, 0x0 ,sizeof(TDBVehicleClockCorrelationFswMsg));
     ReadMessage(ConfigData->clockCorrInMsgID, &writeTime, &writeSize,
                 sizeof(TDBVehicleClockCorrelationFswMsg), &localCorr, moduleID);
     

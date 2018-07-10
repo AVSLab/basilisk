@@ -93,6 +93,7 @@ void Update_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime, ui
     AccDataFswMsg inputAccData;
     int i;
     
+    memset(&inputAccData, 0x0, sizeof(AccDataFswMsg));
     ReadMessage(ConfigData->accPktInMsgID, &writeTime, &writeSize,
                 sizeof(AccDataFswMsg), &inputAccData, moduleID);
    
