@@ -110,7 +110,7 @@ def unitEclipse(show_plots, eclipseCondition, planet):
     spiceObject.UTCCalInit = '2021 MAY 04 07:47:49.965 (UTC)'
     # pull in SPICE support libraries
     pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0011.tls')  # leap second file
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
     pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
     pyswice.furnsh_c(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
 

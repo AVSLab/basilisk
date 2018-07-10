@@ -110,7 +110,7 @@ def test_singleGravityBody(show_plots):
     unitTestSim.jupiterGravBody.useSphericalHarmParams = False
 
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0011.tls')
+    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
     pyswice.furnsh_c(path + '/../_UnitTest/hst_edited.bsp')
@@ -174,7 +174,7 @@ def test_singleGravityBody(show_plots):
     posError = numpy.array(posError)
 
     pyswice.unload_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.unload_c(bskPath + '/supportData/EphemerisData/naif0011.tls')
+    pyswice.unload_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
     pyswice.unload_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
     pyswice.unload_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
     pyswice.unload_c(path + '/../_UnitTest/hst_edited.bsp')
@@ -262,7 +262,7 @@ def test_multiBodyGravity(show_plots):
     unitTestSim.jupiterGravBody.useSphericalHarmParams = False
 
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0011.tls')
+    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
     pyswice.furnsh_c(path + '/../_UnitTest/nh_pred_od077.bsp')
@@ -326,7 +326,7 @@ def test_multiBodyGravity(show_plots):
     posInc = numpy.array(posInc)
 
     pyswice.unload_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.unload_c(bskPath + '/supportData/EphemerisData/naif0011.tls')
+    pyswice.unload_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
     pyswice.unload_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
     pyswice.unload_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
     pyswice.unload_c(path + '/../_UnitTest/nh_pred_od077.bsp')

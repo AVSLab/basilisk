@@ -21,13 +21,16 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     Enhanced Linux installation instructions
     </li>
     <li>
-        updated the simIncludeThruster to use the same factor class as the RW factory class.  This will break old scripts that use the old method of setting up Thrusters with this helper function.
+        Updated the simIncludeThruster to use the same factor class as the RW factory class.  This will break old scripts that use the old method of setting up Thrusters with this helper function.
         <ul>
-    <li>FIX: Update the script to use the new factory class.  Examples are seen in `src/simulation/dynamics/Thrusters/_UnitTest/test_thruster_integrated.py`.</li>
+    <li>FIX: Updated the script to use the new factory class.  Examples are seen in `src/simulation/dynamics/Thrusters/_UnitTest/test_thruster_integrated.py`.</li>
     </ul>
     </li>
     <li>
-    updated bskSim to use the RW factory class to setup the simulation RW devices, as well as to use fsw helper functions to setup the RW FSW config messages
+    Updated bskSim to use the RW factory class to setup the simulation RW devices, as well as to use fsw helper functions to setup the RW FSW config messages
+    </li>
+    <li>
+    At supportData/EphermerisData, updated the leap second kernel version to from 0011 to 0012. The 0011 kernel is being kept in the directory if a user would rather use the old version. Updated all references within BSK from the old version to the new version.
     </li>
     <li>
     Added a force and torque calculation method in the stateEffector abstract class, and provided the necessary method calls in spacecraftPlus. This allows for stateEffectors to calculate the force and torque that they are imparting on the rigid body hub. The hingedRigidBodyStateEffector and the linearSpringMassDamper classes provide their implementation of these calculations. 

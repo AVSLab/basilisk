@@ -229,6 +229,7 @@ class gravBodyFactory(object):
             spiceObject : Basilisk spice module
                 A configured Basilisk spice module.
         """
+
         if kwargs.has_key('spiceKernalFileNames'):
             try:
                 for fileName in kwargs['spiceKernalFileNames']:
@@ -236,7 +237,7 @@ class gravBodyFactory(object):
             except(TypeError):
                 raise TypeError('spiceKernalFileNames expects a list')
         else:
-            self.spiceKernelFileNames.extend(['de430.bsp', 'naif0011.tls', 'de-403-masses.tpc', 'pck00010.tpc'])
+            self.spiceKernelFileNames.extend(['de430.bsp', 'naif0012.tls', 'de-403-masses.tpc', 'pck00010.tpc'])
 
         self.spiceObject = spice_interface.SpiceInterface()
         self.spiceObject.ModelTag = "SpiceInterfaceData"

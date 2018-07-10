@@ -320,7 +320,7 @@ def singleGravityBody(show_plots):
     gravityEffector.loadGravFromFile(path + '/GGM03S.txt', gravBody1.spherHarm, 60)
 
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0011.tls')
+    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
     pyswice.furnsh_c(path + '/hst_edited.bsp')
