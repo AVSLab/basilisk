@@ -709,16 +709,19 @@ def plotSim(data, retentionPolicy):
     dataOmegaRW = data["messages"][mrpControlConfigInputRWSpeedsName+".wheelSpeeds"]
     dataVolt = data["messages"][fswRWVoltageConfigVoltageOutMsgName+".voltage"]
 
-    columns = ["Time", "X", "Y", "Z", "a", "b"]
+    columns = ["Time", "X", "Y", "Z", "0", "0"]
 
 
-    #TODO ADAM
+    print rwMotorTorqueConfigOutputDataName
+    monteCarloName = "/mc1/"
     file_name = "dataRw.csv"
-    path = "data/rw"
+    mainDirectoryName = "data/"
+    subDirectoryName = "/rw"
 
-    writeDirectories(path, file_name)
-
+    path = mainDirectoryName + monteCarloName + subDirectoryName
+    writeDirectories(path)
     path = path + "/" + file_name
+
     # monteCarlo.arrayToCsv(dataUsReq, columns, "dataRw")
     df = pd.DataFrame(dataUsReq, columns=None)
     newTime = dataUsReq[:, 0] * macros.NANO2MIN
@@ -727,19 +730,19 @@ def plotSim(data, retentionPolicy):
 
     # options = dict(line_color='blue', fill_color = 'blue', size = 1, alpha = 0.5)
     # p = base_plot()
-    p = figure(plot_width=400, plot_height=400, title=str(data["index"]))
+    # p = figure(plot_width=400, plot_height=400, title=str(data["index"]))
 
     # p.multi_line([timedf['Time'], df['X']], [timedf['Time'], df['Y']],
     #              color=["firebrick", "navy"], alpha=[0.8, 0.3], line_width=4)
 
     # print df[1]
     # print timedf[0]
-    p.line(x=timedf[0], y=df[1], line_width = 2)
-    p.line(x=timedf[0], y=df[2], line_width = 2)
-    p.circle(x=timedf[0], y=df[2], size = 2, alpha = 0.5)
+    # p.line(x=timedf[0], y=df[1], line_width = 2)
+    # p.line(x=timedf[0], y=df[2], line_width = 2)
+    # p.circle(x=timedf[0], y=df[2], size = 2, alpha = 0.5)
 
 
-    show(p)
+    # show(p)
 
 
     dataRW = []
@@ -751,63 +754,63 @@ def plotSim(data, retentionPolicy):
     #   plot the results
     #
 
-    timeData = dataUsReq[:, 0] * macros.NANO2MIN
+    # timeData = dataUsReq[:, 0] * macros.NANO2MIN
+    #
+    # figureList = {}
+    # plt.figure(1)
+    # pltName = 'AttitudeError'
+    # for idx in range(1,4):
+    #     plt.plot(timeData, dataSigmaBR[:, idx],
+    #              label='Run ' + str(data["index"]) + ' $\sigma_'+str(idx)+'$')
+    # plt.legend(loc='lower right')
+    # plt.xlabel('Time [min]')
+    # plt.ylabel('Attitude Error $\sigma_{B/R}$')
+    # figureList[pltName] = plt.figure(1)
+    #
+    # plt.figure(2)
+    # pltName = 'RWMotorTorque'
+    # for idx in range(1,4):
+    #     plt.plot(timeData, dataUsReq[:, idx],
+    #              '--',
+    #              label='Run ' + str(data["index"]) + ' $\hat u_{s,'+str(idx)+'}$')
+    #     plt.plot(timeData, dataRW[idx-1][:, 1],
+    #              label='Run ' + str(data["index"]) + ' $u_{s,' + str(idx) + '}$')
+    # plt.legend(loc='lower right')
+    # plt.xlabel('Time [min]')
+    # plt.ylabel('RW Motor Torque (Nm)')
+    # figureList[pltName] = plt.figure(2)
+    #
+    # plt.figure(3)
+    # pltName = 'RateTrackingError'
+    # for idx in range(1,4):
+    #     plt.plot(timeData, dataOmegaBR[:, idx],
+    #              label='Run ' + str(data["index"]) + ' $\omega_{BR,'+str(idx)+'}$')
+    # plt.legend(loc='lower right')
+    # plt.xlabel('Time [min]')
+    # plt.ylabel('Rate Tracking Error (rad/s) ')
+    # figureList[pltName] = plt.figure(3)
+    #
+    # plt.figure(4)
+    # pltName = 'RWSpeed'
+    # for idx in range(1,len(rwOutName)+1):
+    #     plt.plot(timeData, dataOmegaRW[:, idx]/macros.RPM,
+    #              label='Run ' + str(data["index"]) + ' $\Omega_{'+str(idx)+'}$')
+    # plt.legend(loc='lower right')
+    # plt.xlabel('Time [min]')
+    # plt.ylabel('RW Speed (RPM) ')
+    # figureList[pltName] = plt.figure(4)
+    #
+    # plt.figure(5)
+    # pltName = 'RWVoltage'
+    # for idx in range(1, len(rwOutName) + 1):
+    #     plt.plot(timeData, dataVolt[:, idx],
+    #              label='Run ' + str(data["index"]) + ' $V_{' + str(idx) + '}$')
+    # plt.legend(loc='lower right')
+    # plt.xlabel('Time [min]')
+    # plt.ylabel('RW Voltage (V) ')
+    # figureList[pltName] = plt.figure(5)
 
-    figureList = {}
-    plt.figure(1)
-    pltName = 'AttitudeError'
-    for idx in range(1,4):
-        plt.plot(timeData, dataSigmaBR[:, idx],
-                 label='Run ' + str(data["index"]) + ' $\sigma_'+str(idx)+'$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Attitude Error $\sigma_{B/R}$')
-    figureList[pltName] = plt.figure(1)
-
-    plt.figure(2)
-    pltName = 'RWMotorTorque'
-    for idx in range(1,4):
-        plt.plot(timeData, dataUsReq[:, idx],
-                 '--',
-                 label='Run ' + str(data["index"]) + ' $\hat u_{s,'+str(idx)+'}$')
-        plt.plot(timeData, dataRW[idx-1][:, 1],
-                 label='Run ' + str(data["index"]) + ' $u_{s,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Motor Torque (Nm)')
-    figureList[pltName] = plt.figure(2)
-
-    plt.figure(3)
-    pltName = 'RateTrackingError'
-    for idx in range(1,4):
-        plt.plot(timeData, dataOmegaBR[:, idx],
-                 label='Run ' + str(data["index"]) + ' $\omega_{BR,'+str(idx)+'}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Rate Tracking Error (rad/s) ')
-    figureList[pltName] = plt.figure(3)
-
-    plt.figure(4)
-    pltName = 'RWSpeed'
-    for idx in range(1,len(rwOutName)+1):
-        plt.plot(timeData, dataOmegaRW[:, idx]/macros.RPM,
-                 label='Run ' + str(data["index"]) + ' $\Omega_{'+str(idx)+'}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Speed (RPM) ')
-    figureList[pltName] = plt.figure(4)
-
-    plt.figure(5)
-    pltName = 'RWVoltage'
-    for idx in range(1, len(rwOutName) + 1):
-        plt.plot(timeData, dataVolt[:, idx],
-                 label='Run ' + str(data["index"]) + ' $V_{' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Voltage (V) ')
-    figureList[pltName] = plt.figure(5)
-
-    return figureList
+    # return figureList
 
 def plotSimAndSave(data, retentionPolicy):
 
@@ -836,12 +839,12 @@ def base_plot():
     p.yaxis.axis_label_text_font_size = '12pt'
     return p
 
-def writeDirectories(path, file_name):
+def writeDirectories(path):
 
     try:
         os.makedirs(path)
     except OSError:
-        print "Creating failed"
+        print "Creating failed, may be a directory there already"
     else:
         print "success"
 
