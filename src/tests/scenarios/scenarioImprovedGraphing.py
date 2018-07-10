@@ -81,8 +81,7 @@ from matplotlib.colors import rgb2hex
 from matplotlib.cm import get_cmap
 
 
-NUMBER_OF_RUNS = 2
-RUN_NUMBER = 0
+NUMBER_OF_RUNS = 5
 VERBOSE = True
 
 # Here are the name of some messages that we want to retain or otherwise use
@@ -101,6 +100,7 @@ numDataPoints = 1000
 simulationTime = macros.min2nano(5.)
 samplingTime = simulationTime / (numDataPoints-1)
 
+run_number = 0
 
 ## \defgroup Tutorials_5_0
 ##   @{
@@ -702,12 +702,14 @@ def plotSim(data, retentionPolicy):
     #
     #   retrieve the logged data
     #
+
     rwMotorTorqueConfigOutputDataName_motorTorque = rwMotorTorqueConfigOutputDataName+".motorTorque"
     attErrorConfigOutputDataName_sigma_BR = attErrorConfigOutputDataName+".sigma_BR"
     attErrorConfigOutputDataName_omega_BR_B = attErrorConfigOutputDataName+".omega_BR_B"
     sNavObjectOutputTransName_r_BN_N = sNavObjectOutputTransName+".r_BN_N"
     mrpControlConfigInputRWSpeedsName_wheelSpeeds = mrpControlConfigInputRWSpeedsName+".wheelSpeeds"
     fswRWVoltageConfigVoltageOutMsgName_voltage = fswRWVoltageConfigVoltageOutMsgName+".voltage"
+
 
     dataUsReq = data["messages"][rwMotorTorqueConfigOutputDataName_motorTorque]
     dataSigmaBR = data["messages"][attErrorConfigOutputDataName_sigma_BR]
@@ -716,14 +718,13 @@ def plotSim(data, retentionPolicy):
     dataOmegaRW = data["messages"][mrpControlConfigInputRWSpeedsName_wheelSpeeds]
     dataVolt = data["messages"][fswRWVoltageConfigVoltageOutMsgName_voltage]
 
-
-
-
-    createDirectoriesAndSaveData(dataUsReq, rwMotorTorqueConfigOutputDataName_motorTorque)
-    createDirectoriesAndSaveData(dataSigmaBR, attErrorConfigOutputDataName_sigma_BR)
-    createDirectoriesAndSaveData(dataOmegaBR, attErrorConfigOutputDataName_omega_BR_B)
-    createDirectoriesAndSaveData(dataPos, sNavObjectOutputTransName+".r_BN_N")
-    createDirectoriesAndSaveData(dataOmegaBR, mrpControlConfigInputRWSpeedsName+".wheelSpeeds")
+    run_number = data["index"]
+    createDirectoriesAndSaveData(dataUsReq, rwMotorTorqueConfigOutputDataName_motorTorque, run_number)
+    createDirectoriesAndSaveData(dataSigmaBR, attErrorConfigOutputDataName_sigma_BR, run_number)
+    createDirectoriesAndSaveData(dataOmegaBR, attErrorConfigOutputDataName_omega_BR_B, run_number)
+    createDirectoriesAndSaveData(dataPos, sNavObjectOutputTransName_r_BN_N, run_number)
+    createDirectoriesAndSaveData(dataOmegaRW, mrpControlConfigInputRWSpeedsName_wheelSpeeds, run_number)
+    createDirectoriesAndSaveData(dataVolt, fswRWVoltageConfigVoltageOutMsgName_voltage, run_number)
 
 
 
@@ -847,12 +848,13 @@ def writeDirectories(path):
     else:
         print "success"
 
-def createDirectoriesAndSaveData(data, name):
+def createDirectoriesAndSaveData(data, name, run_number):
     # write data and create folders.
     monteCarloName = "/mc1/"
     mainDirectoryName = "data/"
 
-    file_name = name + ".csv"
+
+    file_name = name + "_run_" + str(run_number) + ".csv"
     subDirectoryName = name
 
     path = mainDirectoryName + monteCarloName + subDirectoryName
