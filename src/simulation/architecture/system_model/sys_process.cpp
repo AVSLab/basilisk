@@ -20,6 +20,7 @@
 #include "architecture/system_model/sys_process.h"
 #include <cstring>
 #include <iostream>
+#include "utilities/bsk_Print.h"
 
 /*! The task constructor.  */
 SysProcess :: SysProcess()
@@ -143,8 +144,7 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
     it = processTasks.begin();
     if(it == processTasks.end())
     {
-        std::cerr << "Received a step command on sim that has no active Tasks.";
-        std::cerr << std::endl;
+        BSK_PRINT_BRIEF(MSG_WARNING, "Received a step command on sim that has no active Tasks.");
         return;
     }
     //! - If the requested time does not meet our next start time, just return
@@ -290,8 +290,7 @@ void SysProcess::changeTaskPeriod(std::string taskName, uint64_t newPeriod)
 			return;
 		}
 	}
-	std::cerr << "You attempted to change the period of task: " << taskName << std::endl;
-	std::cerr << "I couldn't find that in process: " << this->processName << std::endl;
+    BSK_PRINT_BRIEF(MSG_WARNING, "You attempted to change the period of task: %s I couldn't find that in process: %s", taskName.c_str(), this->processName.c_str());
 }
 
 //void SysProcess::getAllMessageDefinitions()

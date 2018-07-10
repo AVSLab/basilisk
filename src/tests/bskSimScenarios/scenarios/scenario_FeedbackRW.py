@@ -21,6 +21,7 @@
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
 
+
 # Get current file path
 import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -106,6 +107,7 @@ class scenario_AttitudeFeedbackRW(BSKScenario):
 
 
 def run(showPlots):
+
     # Instantiate base simulation
     TheBSKSim = BSKSim()
 

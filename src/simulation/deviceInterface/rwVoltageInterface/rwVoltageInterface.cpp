@@ -20,7 +20,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include <iostream>
 #include <cstring>
-
+#include "utilities/bsk_Print.h"
 
 /*! This is the constructor for the RW voltgage interface.  It sets default variable
     values and initializes the various parts of the model */
@@ -76,8 +76,7 @@ void RWVoltageInterface::CrossInit()
                            moduleID);
     if(this->rwVoltageInMsgID < 0)
     {
-        std::cerr << "WARNING: RWVoltageInterface() did not find a valid message with name: ";
-        std::cerr << this->rwVoltageInMsgName << "  :" << std::endl<< __FILE__ << std::endl;
+        BSK_PRINT(MSG_WARNING, "RWVoltageInterface() did not find a valid message with name: %s ", this->rwVoltageInMsgName.c_str());
     }
     return;
 }
@@ -88,7 +87,7 @@ void RWVoltageInterface::readInputMessages()
 {
     if(this->rwVoltageInMsgID < 0)
     {
-        std::cerr << "WARNING: rwVoltageInMsgName message ID not set." << std::endl;
+        BSK_PRINT(MSG_WARNING, "rwVoltageInMsgName message ID not set.");
         return;
     }
 

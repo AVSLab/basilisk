@@ -21,6 +21,8 @@
 #include <iostream>
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/astroConstants.h"
+#include "utilities/bsk_Print.h"
+
 
 
 Eclipse::Eclipse() :
@@ -298,13 +300,7 @@ void Eclipse::addPlanetName(std::string planetName)
         this->planetNames.push_back(planetName);
         this->planetInMsgNames.push_back(planetName + "_planet_data");
     } else {
-        std::cerr << "Eclipse::addPlanetName(std::string planetName)"
-        << "- Planet name \""
-        << planetName
-        << "\" not found. \""
-        << planetName
-        << "\" will not be used to compute eclipse conditions."
-        << std::endl;
+        BSK_PRINT(MSG_WARNING, "Planet name %s not found. %s will not be used to compute eclipse conditions.", planetName.c_str(), planetName.c_str());
     }
     
     return;

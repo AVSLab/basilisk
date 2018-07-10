@@ -21,6 +21,7 @@
 #include <math.h>
 #include "gauss_markov.h"
 #include "linearAlgebra.h"
+#include "utilities/bsk_Print.h"
 
 /*! The constructor initialies the random number generator used for the walks*/
 GaussMarkov::GaussMarkov()
@@ -64,17 +65,12 @@ void GaussMarkov::computeNextState()
     if((this->propMatrix.size() != this->noiseMatrix.size()) ||
        (this->propMatrix.size() != this->numStates*this->numStates))
     {
-        std::cerr << "For the Gauss Markov model, you HAVE, and I mean HAVE, ";
-        std::cerr << "to have your propagate and noise matrices be same size";
-        std::cerr << "and that size is your number of states squared";
-        std::cerr << std::endl << "I quit.";
+        BSK_PRINT(MSG_ERROR, "For the Gauss Markov model, you HAVE, and I mean HAVE, to have your propagate and noise matrices be same size and that size is your number of states squared.  I quit.");
         return;
     }
     if(this->stateBounds.size() != this->numStates)
     {
-        std::cerr << "For the Gauss Markov model, you HAVE, and I mean HAVE, ";
-        std::cerr << "to have your walk bounds length equal to your number of states.";
-        std::cerr << std::endl << "I quit.";
+        BSK_PRINT(MSG_ERROR, "For the Gauss Markov model, you HAVE, and I mean HAVE, to have your walk bounds length equal to your number of states. I quit.");
         return;
     }
 

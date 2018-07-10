@@ -18,10 +18,12 @@
  */
 
 #include "utilities/message_logger.h"
+#include "utilities/bsk_Print.h"
 #include <cstring>
 #include <iostream>
 #include <map>
 #include <fstream>
+
 
 /*! This constructor is used to initialize the message logging data.  It clears
  out the message log list and resets the logger to a clean state.
@@ -98,8 +100,7 @@ void messageLogger::linkMessages()
         //! - Warn the user if linking failed and note that logging won't work for that message
         else
         {
-            std::cout << "Warning, failed to find message: " << it->messageName;
-            std::cout << std::endl << "Disabling logging for it"<<std::endl;
+            BSK_PRINT_BRIEF(MSG_WARNING, "failed to find message: %s Disabling logging for it.", it->messageName.c_str());
         }
     }
 }

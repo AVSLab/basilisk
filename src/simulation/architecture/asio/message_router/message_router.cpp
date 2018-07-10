@@ -18,6 +18,7 @@
  */
 #include "architecture/asio/message_router/message_router.h"
 #include <iostream>
+#include "utilities/bsk_Print.h"
 
 MessageRouter::MessageRouter(BasicIoObject_t<boost::asio::ip::tcp::socket> *inConnection)
 {
@@ -134,8 +135,7 @@ bool MessageRouter::linkProcesses()
         processLinked = true;
         if(processData.destination < 0)
         {
-            std::cerr << "Failed to find a messaging buffer with name: ";
-            std::cerr << processData.messageDest << std::endl;
+            BSK_PRINT_BRIEF(MSG_ERROR, "Failed to find a messaging buffer with name: %s", processData.messageDest.c_str());
             processLinked = false;
         }
     }

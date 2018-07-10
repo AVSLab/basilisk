@@ -22,6 +22,7 @@
 #include "linearAlgebra.h"
 #include "astroConstants.h"
 #include <string.h>
+#include "bsk_Print.h"
 
 #define nearZero 0.0000000000001
 
@@ -4407,6 +4408,6 @@ void Mi(double theta, int a, double C[3][3])
             break;
 
         default:
-            printf("Mi() error: incorrect axis %d selected.\n", a);
+            BSK_PRINT(MSG_ERROR, "Mi() error: incorrect axis %d selected.", a);
     }
 }

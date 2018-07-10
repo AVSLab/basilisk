@@ -21,6 +21,7 @@
 #include <iostream>
 #include <cstring>
 #include <thread>
+#include "utilities/bsk_Print.h"
 
 /*! This is the constructor for the clock synch model.  It sets default variable 
     values and initializes the various parts of the model */
@@ -138,6 +139,6 @@ void ClockSynch::UpdateState(uint64_t CurrentSimNanos)
 
 	if (displayTime)
 	{
-		std::cout << "\rSeconds Elapsed: " << CurrentSimNanos*1.0E-9 << std::flush;
+        BSK_PRINT_BRIEF(MSG_INFORMATION, "Seconds Elapsed: %f", CurrentSimNanos*1.0E-9);
 	}
 }
