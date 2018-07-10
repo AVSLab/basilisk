@@ -702,31 +702,30 @@ def plotSim(data, retentionPolicy):
     #
     #   retrieve the logged data
     #
-    dataUsReq = data["messages"][rwMotorTorqueConfigOutputDataName+".motorTorque"]
-    dataSigmaBR = data["messages"][attErrorConfigOutputDataName+".sigma_BR"]
-    dataOmegaBR = data["messages"][attErrorConfigOutputDataName+".omega_BR_B"]
-    dataPos = data["messages"][sNavObjectOutputTransName+".r_BN_N"]
-    dataOmegaRW = data["messages"][mrpControlConfigInputRWSpeedsName+".wheelSpeeds"]
-    dataVolt = data["messages"][fswRWVoltageConfigVoltageOutMsgName+".voltage"]
+    rwMotorTorqueConfigOutputDataName_motorTorque = rwMotorTorqueConfigOutputDataName+".motorTorque"
+    attErrorConfigOutputDataName_sigma_BR = attErrorConfigOutputDataName+".sigma_BR"
+    attErrorConfigOutputDataName_omega_BR_B = attErrorConfigOutputDataName+".omega_BR_B"
+    sNavObjectOutputTransName_r_BN_N = sNavObjectOutputTransName+".r_BN_N"
+    mrpControlConfigInputRWSpeedsName_wheelSpeeds = mrpControlConfigInputRWSpeedsName+".wheelSpeeds"
+    fswRWVoltageConfigVoltageOutMsgName_voltage = fswRWVoltageConfigVoltageOutMsgName+".voltage"
 
-    columns = ["Time", "X", "Y", "Z", "0", "0"]
+    dataUsReq = data["messages"][rwMotorTorqueConfigOutputDataName_motorTorque]
+    dataSigmaBR = data["messages"][attErrorConfigOutputDataName_sigma_BR]
+    dataOmegaBR = data["messages"][attErrorConfigOutputDataName_omega_BR_B]
+    dataPos = data["messages"][sNavObjectOutputTransName_r_BN_N]
+    dataOmegaRW = data["messages"][mrpControlConfigInputRWSpeedsName_wheelSpeeds]
+    dataVolt = data["messages"][fswRWVoltageConfigVoltageOutMsgName_voltage]
 
 
-    print rwMotorTorqueConfigOutputDataName
-    monteCarloName = "/mc1/"
-    file_name = "dataRw.csv"
-    mainDirectoryName = "data/"
-    subDirectoryName = "/rw"
 
-    path = mainDirectoryName + monteCarloName + subDirectoryName
-    writeDirectories(path)
-    path = path + "/" + file_name
 
-    # monteCarlo.arrayToCsv(dataUsReq, columns, "dataRw")
-    df = pd.DataFrame(dataUsReq, columns=None)
-    newTime = dataUsReq[:, 0] * macros.NANO2MIN
-    timedf = pd.DataFrame(newTime, columns=None)
-    df.to_csv(path, sep='\t', encoding='utf-8', index=False)
+    createDirectoriesAndSaveData(dataUsReq, rwMotorTorqueConfigOutputDataName_motorTorque)
+    createDirectoriesAndSaveData(dataSigmaBR, attErrorConfigOutputDataName_sigma_BR)
+    createDirectoriesAndSaveData(dataOmegaBR, attErrorConfigOutputDataName_omega_BR_B)
+    createDirectoriesAndSaveData(dataPos, sNavObjectOutputTransName+".r_BN_N")
+    createDirectoriesAndSaveData(dataOmegaBR, mrpControlConfigInputRWSpeedsName+".wheelSpeeds")
+
+
 
     # options = dict(line_color='blue', fill_color = 'blue', size = 1, alpha = 0.5)
     # p = base_plot()
@@ -848,7 +847,20 @@ def writeDirectories(path):
     else:
         print "success"
 
+def createDirectoriesAndSaveData(data, name):
+    # write data and create folders.
+    monteCarloName = "/mc1/"
+    mainDirectoryName = "data/"
 
+    file_name = name + ".csv"
+    subDirectoryName = name
+
+    path = mainDirectoryName + monteCarloName + subDirectoryName
+    writeDirectories(path)
+    path = path + "/" + file_name
+
+    df = pd.DataFrame(data, columns=None)
+    df.to_csv(path, sep='\t', encoding='utf-8', index=False)
 
 def graph():
     print "!!!"
