@@ -366,6 +366,7 @@ void ThrusterDynamicEffector::ComputeThrusterFire(THRConfigSimMsg *CurrentThrust
     }
     double LocalOnRamp = (currentTime - ops->PreviousIterTime) +
     ops->ThrustOnRampTime;
+    LocalOnRamp = LocalOnRamp >= 0.0 ? LocalOnRamp : 0.0;
     double prevValidThrFactor = 0.0;
     double prevValidIspFactor = 0.0;
     double prevValidDelta = 0.0;
@@ -426,6 +427,7 @@ void ThrusterDynamicEffector::ComputeThrusterShut(THRConfigSimMsg *CurrentThrust
     }
     double LocalOffRamp = (currentTime - ops->PreviousIterTime) +
     ops->ThrustOffRampTime;
+    LocalOffRamp = LocalOffRamp >= 0.0 ? LocalOffRamp : 0.0;
     double prevValidThrFactor = 1.0;
     double prevValidIspFactor = 1.0;
     double prevValidDelta = 0.0;
