@@ -236,8 +236,8 @@ class gravBodyFactory(object):
                     self.spiceKernelFileNames.append(fileName)
             except(TypeError):
                 raise TypeError('spiceKernalFileNames expects a list')
-        # else:
-        #     self.spiceKernelFileNames.extend(['de430.bsp', 'naif0011.tls', 'de-403-masses.tpc', 'pck00010.tpc'])
+        else:
+            self.spiceKernelFileNames.extend(['de430.bsp', 'naif0012.tls', 'de-403-masses.tpc', 'pck00010.tpc'])
 
         self.spiceObject = spice_interface.SpiceInterface()
         self.spiceObject.ModelTag = "SpiceInterfaceData"
@@ -248,6 +248,7 @@ class gravBodyFactory(object):
 
         for fileName in self.spiceKernelFileNames:
             self.spiceObject.loadSpiceKernel(fileName, path)
+        self.spiceObject.SPICELoaded = True
 
         return self.spiceObject
 
