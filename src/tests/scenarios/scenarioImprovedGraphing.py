@@ -83,7 +83,7 @@ from matplotlib.cm import get_cmap
 
 NUMBER_OF_RUNS = 2
 VERBOSE = True
-ONLY_GRAPH = 0
+ONLY_GRAPH = 1
 
 # Here are the name of some messages that we want to retain or otherwise use
 inertial3DConfigOutputDataName = "guidanceInertial3D"
@@ -861,28 +861,29 @@ def graph():
 
     # df = pd.DataFrame(dataUsReq, columns=columns)
     df = pd.read_csv("data/mc1/"+attErrorConfigOutputDataName_sigma_BR + "/" + attErrorConfigOutputDataName_sigma_BR + "_run_0.csv")
-
-    newTime = df.values[:, 0] * macros.NANO2MIN
-    timedf = pd.DataFrame(newTime, columns=["Time"])
+    timeDF = pd.read_csv("data/mc1/time/time_run_0.csv")
+    # newTime = timeDF.values[:, 0] * macros.NANO2MIN
+    timedf = pd.DataFrame(timeDF, columns=None)
     # df.to_csv(path, sep='\t', encoding='utf-8', index=False)
 
 
     options = dict(line_color='blue', fill_color='blue', size=1, alpha=0.5)
   # options = dict(line_color='blue', fill_color = 'blue', size = 1, alpha = 0.5)
-# p = base_plot()
+    #   p = base_plot()
     p = figure(plot_width=400, plot_height=400)
 
-    p.multi_line([timedf['Time'], df[1]], [timedf['Time'], df[2]], color = ["firebrick", "navy"], alpha = [0.8, 0.3], line_width = 4)
+    p.line(x=timedf[0], y=df[0], line_width=2)
+    show(p)
+    # p.multi_line([timedf['Time'], df[0]], [timedf['Time'], df[1]], color = ["firebrick", "navy"], alpha = [0.8, 0.3], line_width = 4)
   # p.multi_line([timedf['Time'], df['X']], [timedf['Time'], df['Y']],
   # color=["firebrick", "navy"], alpha=[0.8, 0.3], line_width=4)
 
-   #  print df['X']
-   #  print timedf['Time']
-   # # p.line(x=timedf['Time'], y=df['Y'], line_width = 2)
+   #print df['X']
+   #print timedf['Time']
    #  p.line(x=timedf['Time'], y=df['Y'], line_width=2)
    #  p.line(x=timedf['Time'], y=df['X'], line_width=3)
 
-    show(p)
+
 
 
 #
