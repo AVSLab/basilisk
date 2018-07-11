@@ -216,13 +216,14 @@ class gravBodyFactory(object):
                 The absolute path to the Basilisk source directory (default '').
             time : string
                 The time string.
-            kwargs :
 
             Other Parameters
             ----------------
             kwargs :
                 spiceKernalFileNames : array_like
                     A list of spice kernel file names including file extension.
+                spicePlanetNames : array_like
+                    A list of planet names whose Spice data is loaded, overriding the gravBodies list.
 
             Returns
             -------
@@ -239,11 +240,21 @@ class gravBodyFactory(object):
         else:
             self.spiceKernelFileNames.extend(['de430.bsp', 'naif0012.tls', 'de-403-masses.tpc', 'pck00010.tpc'])
 
+        self.spicePlanetNames = []
+        if kwargs.has_key('spicePlanetNames'):
+            try:
+                for planetName in kwargs['spicePlanetNames']:
+                    self.spicePlanetNames.append(planetName)
+            except(TypeError):
+                raise TypeError('spicePlanetNames expects a list')
+        else:
+            self.spicePlanetNames = self.gravBodies.keys()
+
         self.spiceObject = spice_interface.SpiceInterface()
         self.spiceObject.ModelTag = "SpiceInterfaceData"
         self.spiceObject.SPICEDataPath = path
         self.spiceObject.outputBufferCount = 10000
-        self.spiceObject.planetNames = spice_interface.StringVector(self.gravBodies.keys())
+        self.spiceObject.planetNames = spice_interface.StringVector(self.spicePlanetNames)
         self.spiceObject.UTCCalInit = time
 
         for fileName in self.spiceKernelFileNames:
