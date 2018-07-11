@@ -720,12 +720,14 @@ def plotSim(data, retentionPolicy):
     dataVolt = data["messages"][fswRWVoltageConfigVoltageOutMsgName_voltage]
 
     run_number = data["index"]
-    createDirectoriesAndSaveData(dataUsReq[1:], rwMotorTorqueConfigOutputDataName_motorTorque, run_number)
-    createDirectoriesAndSaveData(dataSigmaBR, attErrorConfigOutputDataName_sigma_BR, run_number)
-    createDirectoriesAndSaveData(dataOmegaBR, attErrorConfigOutputDataName_omega_BR_B, run_number)
-    createDirectoriesAndSaveData(dataPos, sNavObjectOutputTransName_r_BN_N, run_number)
-    createDirectoriesAndSaveData(dataOmegaRW, mrpControlConfigInputRWSpeedsName_wheelSpeeds, run_number)
-    createDirectoriesAndSaveData(dataVolt, fswRWVoltageConfigVoltageOutMsgName_voltage, run_number)
+    if run_number == 0:
+        createDirectoriesAndSaveData(dataUsReq[:, [0]], "time", 0)
+    createDirectoriesAndSaveData(dataUsReq[:,1:], rwMotorTorqueConfigOutputDataName_motorTorque, run_number)
+    createDirectoriesAndSaveData(dataSigmaBR[:,1:], attErrorConfigOutputDataName_sigma_BR, run_number)
+    createDirectoriesAndSaveData(dataOmegaBR[:,1:], attErrorConfigOutputDataName_omega_BR_B, run_number)
+    createDirectoriesAndSaveData(dataPos[:,1:], sNavObjectOutputTransName_r_BN_N, run_number)
+    createDirectoriesAndSaveData(dataOmegaRW[:,1:], mrpControlConfigInputRWSpeedsName_wheelSpeeds, run_number)
+    createDirectoriesAndSaveData(dataVolt[:,1:], fswRWVoltageConfigVoltageOutMsgName_voltage, run_number)
 
     dataRW = []
     for message in rwOutName:
