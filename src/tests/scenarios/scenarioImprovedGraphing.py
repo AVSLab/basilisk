@@ -81,8 +81,9 @@ from matplotlib.colors import rgb2hex
 from matplotlib.cm import get_cmap
 
 
-NUMBER_OF_RUNS = 5
+NUMBER_OF_RUNS = 2
 VERBOSE = True
+ONLY_GRAPH = 0
 
 # Here are the name of some messages that we want to retain or otherwise use
 inertial3DConfigOutputDataName = "guidanceInertial3D"
@@ -311,8 +312,10 @@ samplingTime = simulationTime / (numDataPoints-1)
 
 def run(saveFigures, show_plots):
     '''This function is called by the py.test environment.'''
-    # graph()
-    # return
+
+    if ONLY_GRAPH:
+        graph()
+        return
     # A MonteCarlo simulation can be created using the `MonteCarlo` module.
     # This module is used to execute monte carlo simulations, and access
     # retained data from previously executed MonteCarlo runs.
@@ -717,31 +720,12 @@ def plotSim(data, retentionPolicy):
     dataVolt = data["messages"][fswRWVoltageConfigVoltageOutMsgName_voltage]
 
     run_number = data["index"]
-    createDirectoriesAndSaveData(dataUsReq, rwMotorTorqueConfigOutputDataName_motorTorque, run_number)
+    createDirectoriesAndSaveData(dataUsReq[1:], rwMotorTorqueConfigOutputDataName_motorTorque, run_number)
     createDirectoriesAndSaveData(dataSigmaBR, attErrorConfigOutputDataName_sigma_BR, run_number)
     createDirectoriesAndSaveData(dataOmegaBR, attErrorConfigOutputDataName_omega_BR_B, run_number)
     createDirectoriesAndSaveData(dataPos, sNavObjectOutputTransName_r_BN_N, run_number)
     createDirectoriesAndSaveData(dataOmegaRW, mrpControlConfigInputRWSpeedsName_wheelSpeeds, run_number)
     createDirectoriesAndSaveData(dataVolt, fswRWVoltageConfigVoltageOutMsgName_voltage, run_number)
-
-
-
-    # options = dict(line_color='blue', fill_color = 'blue', size = 1, alpha = 0.5)
-    # p = base_plot()
-    # p = figure(plot_width=400, plot_height=400, title=str(data["index"]))
-
-    # p.multi_line([timedf['Time'], df['X']], [timedf['Time'], df['Y']],
-    #              color=["firebrick", "navy"], alpha=[0.8, 0.3], line_width=4)
-
-    # print df[1]
-    # print timedf[0]
-    # p.line(x=timedf[0], y=df[1], line_width = 2)
-    # p.line(x=timedf[0], y=df[2], line_width = 2)
-    # p.circle(x=timedf[0], y=df[2], size = 2, alpha = 0.5)
-
-
-    # show(p)
-
 
     dataRW = []
     for message in rwOutName:
@@ -837,6 +821,7 @@ def base_plot():
     p.yaxis.axis_label_text_font_size = '12pt'
     return p
 
+# TODO - create directories first and save to them later.
 def writeDirectories(path):
 
     try:
@@ -863,7 +848,39 @@ def createDirectoriesAndSaveData(data, name, run_number):
     df.to_csv(path, sep='\t', encoding='utf-8', index=False)
 
 def graph():
-    print "!!!"
+    rwMotorTorqueConfigOutputDataName_motorTorque = rwMotorTorqueConfigOutputDataName+".motorTorque"
+    attErrorConfigOutputDataName_sigma_BR = attErrorConfigOutputDataName+".sigma_BR"
+    attErrorConfigOutputDataName_omega_BR_B = attErrorConfigOutputDataName+".omega_BR_B"
+    sNavObjectOutputTransName_r_BN_N = sNavObjectOutputTransName+".r_BN_N"
+    mrpControlConfigInputRWSpeedsName_wheelSpeeds = mrpControlConfigInputRWSpeedsName+".wheelSpeeds"
+    fswRWVoltageConfigVoltageOutMsgName_voltage = fswRWVoltageConfigVoltageOutMsgName+".voltage"
+
+    columns = ["Time", "X", "Y", "Z", "a", "b"]
+
+    # df = pd.DataFrame(dataUsReq, columns=columns)
+    df = pd.read_csv("data/mc1/"+attErrorConfigOutputDataName_sigma_BR + "/" + attErrorConfigOutputDataName_sigma_BR + "_run_0.csv")
+
+    newTime = df.values[:, 0] * macros.NANO2MIN
+    timedf = pd.DataFrame(newTime, columns=["Time"])
+    # df.to_csv(path, sep='\t', encoding='utf-8', index=False)
+
+
+    options = dict(line_color='blue', fill_color='blue', size=1, alpha=0.5)
+  # options = dict(line_color='blue', fill_color = 'blue', size = 1, alpha = 0.5)
+# p = base_plot()
+    p = figure(plot_width=400, plot_height=400)
+
+    p.multi_line([timedf['Time'], df[1]], [timedf['Time'], df[2]], color = ["firebrick", "navy"], alpha = [0.8, 0.3], line_width = 4)
+  # p.multi_line([timedf['Time'], df['X']], [timedf['Time'], df['Y']],
+  # color=["firebrick", "navy"], alpha=[0.8, 0.3], line_width=4)
+
+   #  print df['X']
+   #  print timedf['Time']
+   # # p.line(x=timedf['Time'], y=df['Y'], line_width = 2)
+   #  p.line(x=timedf['Time'], y=df['Y'], line_width=2)
+   #  p.line(x=timedf['Time'], y=df['X'], line_width=3)
+
+    show(p)
 
 
 #
