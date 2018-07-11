@@ -37,7 +37,6 @@ from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import macros
 from Basilisk.simulation import spice_interface
 from Basilisk.simulation import eclipse
-from Basilisk import pyswice
 from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import orbitalMotion
 from Basilisk import __path__
@@ -108,11 +107,6 @@ def unitEclipse(show_plots, eclipseCondition, planet):
     spiceObject.SPICEDataPath = bskPath +'/supportData/EphemerisData/'
     spiceObject.outputBufferCount = 100000
     spiceObject.UTCCalInit = '2021 MAY 04 07:47:49.965 (UTC)'
-    # pull in SPICE support libraries
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
 
     if planet == "earth":
         if eclipseCondition == "full":
