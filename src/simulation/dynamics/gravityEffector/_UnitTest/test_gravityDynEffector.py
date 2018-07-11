@@ -319,8 +319,13 @@ def singleGravityBody(show_plots):
     gravBody1.useSphericalHarmParams = True
     gravityEffector.loadGravFromFile(path + '/GGM03S.txt', gravBody1.spherHarm, 60)
 
+    # Use the python spice utility to load in spacecraft SPICE ephemeris data
+    # Note: this following SPICE data only lives in the Python environment, and is
+    #       separate from the earlier SPICE setup that was loaded to BSK.  This is why
+    #       all required SPICE libraries must be included when setting up and loading
+    #       SPICE kernals in Python.
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0011.tls')
+    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
     pyswice.furnsh_c(path + '/hst_edited.bsp')
