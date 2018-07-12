@@ -55,9 +55,11 @@ class rwFactory(object):
                 useMinTorque : BOOL to clip any torque below a minimum torque value
                 useMaxTorque : BOOL to clip any torque value above a maximum torque value
                 maxMomentum : maximum RW wheel momentum in Nms.  This is a required variable for some wheels.
-                linearFrictionRatio : has the Coulomb stickage friction as a ratio of maximum wheel speed
                 label : string with the unique device name, must be 5 characters or less
-
+                fCoulomb: double for the Coulomb friction torque model
+                fStatic: double for Static friction torque magnitude
+                betaStatic: double for Stribeck friction coefficient
+                cViscous: double for Viscous fricion coefficient
             Returns
             -------
             RWConfigSimMsg : message structure
@@ -108,6 +110,43 @@ class rwFactory(object):
         else:
             varMaxMomentum = 0.0              # default value
         self.maxMomentum = varMaxMomentum
+
+        if kwargs.has_key('fCoulomb'):
+            varfCoulomb =  kwargs['fCoulomb']
+            if not isinstance(varLinearFrictionRatio, (float)):
+                print 'ERROR: fCoulomb must be a FLOAT argument'
+                exit(1)
+        else:
+            varfCoulomb = 0.0       # default value
+        RW.fCoulomb = varfCoulomb
+
+        if kwargs.has_key('fStatic'):
+            varfStatic =  kwargs['fStatic']
+            if not isinstance(varLinearFrictionRatio, (float)):
+                print 'ERROR: fStatic must be a FLOAT argument'
+                exit(1)
+        else:
+            varfStatic = 0.0       # default value
+        RW.fStatic = varfStatic
+
+        if kwargs.has_key('betaStatic'):
+            varbetaStatic =  kwargs['betaStatic']
+            if not isinstance(varLinearFrictionRatio, (float)):
+                print 'ERROR: betaStatic must be a FLOAT argument'
+                exit(1)
+        else:
+            varbetaStatic = 0.0       # default value
+        RW.betaStatic = varbetaStatic
+
+        if kwargs.has_key('cViscous'):
+            varcViscous =  kwargs['cViscous']
+            if not isinstance(varLinearFrictionRatio, (float)):
+                print 'ERROR: cViscous must be a FLOAT argument'
+                exit(1)
+        else:
+            varcViscous = 0.0       # default value
+        RW.cViscous = varcViscous
+
 
         # set device label name
         if kwargs.has_key('label'):

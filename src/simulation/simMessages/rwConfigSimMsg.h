@@ -50,7 +50,7 @@ typedef struct {
     double betaStatic = 0.0;    //!< Stribeck friction coefficient
     double cViscous = 0.0;      //!< [N-m-s/rad] Viscous fricion coefficient
     double omegaLimitCycle = 0.0001; //!< [rad/s], wheel speed that avoids limit cycle with friction
-    double frictionTorque = 0.0; //!< [N-m] friction torque
+    double frictionTorque = 0.0; //!< [N-m] friction torque, this is a computed value, don't set it directly
     double omegaBefore = 0.0;   //!< [rad/s], wheel speed one time step before
     bool frictionStribeck = 0;  //!< [-] Boolenian to determine if stribeck friction model is used or not, 0 is non-stribeck, 1 is stribeck
     double Omega_max = 1000000000.0; //!< [rad/s], max wheel speed
