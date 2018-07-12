@@ -94,8 +94,8 @@ void HingedRigidBodyStateEffector::writeOutputStateMessages(uint64_t CurrentCloc
 
 void HingedRigidBodyStateEffector::prependSpacecraftNameToStates()
 {
-    this->nameOfThetaState = this->nameOfSpacecraftAttachedTo + "_" + this->nameOfThetaState;
-    this->nameOfThetaDotState = this->nameOfSpacecraftAttachedTo + "_" + this->nameOfThetaDotState;
+    this->nameOfThetaState = this->nameOfSpacecraftAttachedTo + this->nameOfThetaState;
+    this->nameOfThetaDotState = this->nameOfSpacecraftAttachedTo + this->nameOfThetaDotState;
 
     return;
 }
@@ -105,9 +105,9 @@ void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 {
     // - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling and gravity
     std::string tmpMsgName;
-    tmpMsgName = this->nameOfSpacecraftAttachedTo + "_" + "centerOfMassSC";
+    tmpMsgName = this->nameOfSpacecraftAttachedTo + "centerOfMassSC";
     this->c_B = statesIn.getPropertyReference(tmpMsgName);
-    tmpMsgName = this->nameOfSpacecraftAttachedTo + "_" + "centerOfMassPrimeSC";
+    tmpMsgName = this->nameOfSpacecraftAttachedTo + "centerOfMassPrimeSC";
     this->cPrime_B = statesIn.getPropertyReference(tmpMsgName);
 
     return;

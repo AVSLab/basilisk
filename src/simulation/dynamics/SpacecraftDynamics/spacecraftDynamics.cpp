@@ -177,19 +177,19 @@ void Spacecraft::initializeDynamicsSC(DynParamManager& statesIn)
 
     // - Create the properties
     std::string tmpName;
-    tmpName = this->spacecraftName + "_" + "m_SC";
+    tmpName = this->spacecraftName + "m_SC";
     this->m_SC = statesIn.createProperty(tmpName, initM_SC);
-    tmpName = this->spacecraftName + "_" + "mDot_SC";
+    tmpName = this->spacecraftName + "mDot_SC";
     this->mDot_SC = statesIn.createProperty(tmpName, initMDot_SC);
-    tmpName = this->spacecraftName + "_" + "centerOfMassSC";
+    tmpName = this->spacecraftName + "centerOfMassSC";
     this->c_B = statesIn.createProperty(tmpName, initC_B);
-    tmpName = this->spacecraftName + "_" + "inertiaSC";
+    tmpName = this->spacecraftName + "inertiaSC";
     this->ISCPntB_B = statesIn.createProperty(tmpName, initISCPntB_B);
-    tmpName = this->spacecraftName + "_" + "inertiaPrimeSC";
+    tmpName = this->spacecraftName + "inertiaPrimeSC";
     this->ISCPntBPrime_B = statesIn.createProperty(tmpName, initISCPntBPrime_B);
-    tmpName = this->spacecraftName + "_" + "centerOfMassPrimeSC";
+    tmpName = this->spacecraftName + "centerOfMassPrimeSC";
     this->cPrime_B = statesIn.createProperty(tmpName, initCPrime_B);
-    tmpName = this->spacecraftName + "_" + "centerOfMassDotSC";
+    tmpName = this->spacecraftName + "centerOfMassDotSC";
     this->cDot_B = statesIn.createProperty(tmpName, initCDot_B);
 
     // - Give name of all spacecraft to attached hubEffector

@@ -767,15 +767,15 @@ def test_hingedRigidBodyThetaSS(show_plots):
 
     unitTestSim.InitializeSimulation()
 
-    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecraft_hingedRigidBodyTheta1').getState()", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecraft_hingedRigidBodyTheta2').getState()", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState()", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState()", testProcessRate, 0, 0, 'double')
 
     stopTime = 60.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    theta1Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecraft_hingedRigidBodyTheta1').getState()")
-    theta2Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecraft_hingedRigidBodyTheta2').getState()")
+    theta1Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState()")
+    theta2Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState()")
 
     # Developing the lagrangian result
     # Define initial values
@@ -961,8 +961,8 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
 
     unitTestSim.InitializeSimulation()
 
-    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecraft_hingedRigidBodyTheta1').getState()", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecraft_hingedRigidBodyTheta2').getState()", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState()", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState()", testProcessRate, 0, 0, 'double')
 
     stopTime = 58
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime/2))
@@ -978,8 +978,8 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     sigmaOut_BN = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.sigma_BN',range(3))
     thetaOut = 4.0*numpy.arctan(sigmaOut_BN[:,3])
 
-    theta1Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecraft_hingedRigidBodyTheta1').getState()")
-    theta2Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecraft_hingedRigidBodyTheta2').getState()")
+    theta1Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState()")
+    theta2Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState()")
 
     # Developing the lagrangian result
     # Define initial values
@@ -1249,8 +1249,8 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
 
     unitTestSim.InitializeSimulation()
 
-    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecraft_hingedRigidBodyTheta1').getState()", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecraft_hingedRigidBodyTheta2').getState()", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState()", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState()", testProcessRate, 0, 0, 'double')
 
     # Define times that the new forces will be applies
     force1OffTime = 5.0
@@ -1281,8 +1281,8 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    theta1Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecraft_hingedRigidBodyTheta1').getState()")
-    theta2Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecraft_hingedRigidBodyTheta2').getState()")
+    theta1Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState()")
+    theta2Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState()")
 
     rOut_BN_N = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.r_BN_N',range(3))
     sigmaOut_BN = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.sigma_BN',range(3))
