@@ -344,12 +344,9 @@ def run(show_plots, simCase):
     I = [500., 0., 0.,
          0., 300., 0.,
          0., 0., 200.]
-    scObject.hub.mHub = 750.0  # kg - spacecraft mass
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+    scObject.hub.mHub = 750.0                   # kg - spacecraft mass
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]] # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
-
-    # add spacecraftPlus object to the simulation process
-    scSim.AddModelToTask(simTaskName, scObject, None, 1)
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -391,6 +388,8 @@ def run(show_plots, simCase):
 
     # add RW object array to the simulation process
     scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
+    # add spacecraftPlus object to the simulation process
+    scSim.AddModelToTask(simTaskName, scObject, None, 1)
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message

@@ -79,3 +79,9 @@ void StateEffector::calcForceTorqueOnBody(double integTime)
 {
     return;
 }
+
+/*! This method ensures that all dynamics states have their messages written after integation */
+void StateEffector::writeOutputStateMessages(uint64_t integTimeNanos)
+{
+    return;
+}

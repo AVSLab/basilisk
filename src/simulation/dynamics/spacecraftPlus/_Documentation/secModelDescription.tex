@@ -9,9 +9,9 @@ SpacecraftPlus is an instantiation of the dynamicObject abstract class. This abs
 
 SpacecraftPlus is the module where the equations of motion of the spacecraft are computed including the interaction between the hubEffector, stateEffectors and dynamicEffectors. The hubEffector is where the translational and rotational state derivatives are computed, the stateEffectors give contributions to spacecraftPlus and computes their own derivatives and the dynamcEffectors provide force and torque contributions to spacecraftPlus.
 
-To give more description on this complex relationship, Figure~\ref{fig:FlexSloshFigure} shows an example of a spacecraft with a fuel slosh particle and a couple hinged rigid bodies connected to it. From a spacecraftPlus perspective there are some important variables and frame definitions needed to be defined. The body frame, \frameDefinition{B}, is a Cartesian reference frame that is fixed to the hub (the rigid body of the spacecraft) with no constraints on its orientation with respect to the hub. Additionally its origin, $B$, can be placed anywhere on the hub. The inertial frame, \frameDefinition{N}, is the inertial reference frame used in the formulation of the dynamics. The hub has some remaining variables needed to be defined which are the mass of the hub, $m_{\textnormal{hub}}$, center of mass of the hub location, $B_c$, and the inertia of the hub about its center of mass, $[I_{\textnormal{hub},B_c}]$. 
+To give more description on this complex relationship, Figure~\ref{fig:FlexSloshFigure} shows an example of a spacecraft with a fuel slosh particle and two hinged rigid bodies connected to it. From a spacecraftPlus perspective there are some important variables and frame definitions needed to be defined. The body frame, \frameDefinition{B}, is a Cartesian reference frame that is fixed to the hub (the rigid body of the spacecraft) with no constraints on its orientation with respect to the hub. Additionally its origin, $B$, can be placed anywhere on the hub. The inertial frame, \frameDefinition{N}, is the inertial reference frame used in the formulation of the dynamics. The hub has some remaining variables needed to be defined which are the mass of the hub, $m_{\textnormal{hub}}$, center of mass of the hub location, $B_c$, and the inertia of the hub about its center of mass, $[I_{\textnormal{hub},B_c}]$. 
 
-More variables needed to be defined for the spacecraftPlus, are the total mass of the spacecraft, $m_{\textnormal{sc}}$, the total inertia of the spacecraft about point $B$,  $[I_{\textnormal{sc},B}]$ and the center of mass location with respect to point $B$ vector, $\bm c$. Additionally, the state variables for the hub are $\bm r_{B/N}$, $\dot{\bm r}_{B/N}$, $\bm \sigma_{\cal{B}/\cal{N}}$ and $\bm \omega_{\cal{B}/\cal{N}}$, which are the position and velocity of point $B$ with respect to $N$ which describes the translational motion of the spacecraft, the MRP set for the orientation of $\cal{B}$ with respect to $\cal{N}$, and the angular velocity of the $\cal{B}$ with respect to $\cal{N}$ with describes the rotation of the spacecraft, respectively. 
+More variables needed to be defined for the spacecraftPlus, are the total mass of the spacecraft, $m_{\textnormal{sc}}$, the total inertia of the spacecraft about point $B$,  $[I_{\textnormal{sc},B}]$, the center of mass location of the total spacecraft, point $C$, and the vector $\bm c$ which points from point $B$ to point $C$. Additionally, the state variables for the hub are $\bm r_{B/N}$, $\dot{\bm r}_{B/N}$, $\bm \sigma_{\cal{B}/\cal{N}}$ and $\bm \omega_{\cal{B}/\cal{N}}$, which are the position and velocity of point $B$ with respect to $N$ which describes the translational motion of the spacecraft, the MRP set for the orientation of $\cal{B}$ with respect to $\cal{N}$, and the angular velocity of the $\cal{B}$ with respect to $\cal{N}$ with describes the rotation of the spacecraft, respectively. 
 
 
 \begin{figure}[htbp]
@@ -35,7 +35,7 @@ The following equation describes the rotational EOM if only rotational is enable
 \Big[[I_{\text{sc},B}]+\sum\limits_{i=1}^{N} [D_{\textnormal{contr},i}]\Big] \dot{\bm\omega}_{\cal B/N} = - [\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{sc},B}] \bm\omega_{\cal B/N} + \bm{L}_B +\sum\limits_{i=1}^{N} \bm v_{\textnormal{rot,contr},i}
 	\label{eq:Final6}
 \end{equation}
-$[D_{\textnormal{contr},i}]$ and $\bm v_{\textnormal{rot},i}$ will be defined in the next set of equations. 
+$[D_{\textnormal{contr},i}]$ and $\bm v_{\textnormal{rot},i}$ will be defined in the next set of equations. The $[\bm{\tilde{\omega}}_{\cal B/N}]$ matrix is the matrix representation of the cross product operation.
 
 Finally, the two following equations describe the translational and rotational EOMs when the both rotational and translational equations are enabled. 
 
@@ -73,7 +73,7 @@ The equations can now be organized into the following matrix representation:
 \end{equation}
 And are solved using the following equations:
 \begin{equation}
-\dot{\bm\omega}_{\cal B/N} = \Big([D] - [C]][A]^{-1}[B]\Big)^{-1}(\bm v_{\text{rot}} - [C][A]^{-1}\bm v_{\text{trans}})
+\dot{\bm\omega}_{\cal B/N} = \Big([D] - [C][A]^{-1}[B]\Big)^{-1}(\bm v_{\text{rot}} - [C][A]^{-1}\bm v_{\text{trans}})
 \end{equation}
 \begin{equation}
 \ddot{\bm r}_{B/N} = [A]^{-1} (\bm v_{\text{trans}} - [B]\dot{\bm\omega}_{\cal B/N})
@@ -117,7 +117,7 @@ V_{\text{orb}} = \frac{\mu}{\vert \bm r_{C/N} \vert}
 Since the total orbital energy of the spacecraft must be conserved when there are no non-conservative external forces and torques acting on the spacecraft, it convenient to combine the kinetic and potential energies into one term, $E_{\text{orb}}$. This can be seen in the following equation.
 
 \begin{equation}
-E_{\text{orb}} = T_{\text{orb}} - V_{\text{rot}}
+E_{\text{orb}} = T_{\text{orb}} - V_{\text{orb}}
 \end{equation}
 
 \subsubsection{Total Rotational and Deformational Kinetic Energy}

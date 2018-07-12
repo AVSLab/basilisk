@@ -48,7 +48,7 @@
 \newcommand{\subject}{Reaction Wheel Dynamics Model}
 \newcommand{\status}{To Be Reviewed}
 \newcommand{\preparer}{C. Allard}
-\newcommand{\summary}{The reaction wheel class is an instantiation of the state effector abstract class. The integrated test is validating the interaction between the reaction wheel module and the rigid body hub that it is attached to. More specifically, the reaction wheel module models three different cases: balanced wheels, simpled jitter, and fully coupled jitter. The details of each mode is described in detail in this document. This integrated test confirms that all three models are agreeing with physics and the tests use both energy and momentum checks and back of the envelope (BOE) calculations.}
+\newcommand{\summary}{The reaction wheel class is an instantiation of the state effector abstract class. The integrated test is validating the interaction between the reaction wheel module and the rigid body hub that it is attached to. More specifically, the reaction wheel module models three different cases: balanced wheels, simpled jitter, and fully coupled jitter. The details of each mode is described in detail in this document. There are integrated tests that confirm that all three models are agreeing with physics and the tests use both energy and momentum checks and back of the envelope (BOE) calculations. There are also unit tests verifying other functionality of the module}
 
 \begin{document}
 
@@ -66,6 +66,8 @@
 {\bfseries Rev} & {\bfseries Change Description} & {\bfseries By}& {\bfseries Date} \\
 \hline
 1.0 & Initial Draft & C. Allard & 20170816\\
+\hline
+2.0 & Updated with new friction model & C. Allard & 20171120\\
 \hline
 \end{longtable}
 }

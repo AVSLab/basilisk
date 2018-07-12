@@ -351,6 +351,8 @@ def test_hingedRigidBodyNoGravity(show_plots):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
     
@@ -571,6 +573,8 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
 
@@ -757,6 +761,8 @@ def test_hingedRigidBodyThetaSS(show_plots):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
     unitTestSim.InitializeSimulation()
 
@@ -947,6 +953,8 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
 
@@ -1233,6 +1241,8 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
 
