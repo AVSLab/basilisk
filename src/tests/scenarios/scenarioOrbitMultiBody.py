@@ -170,14 +170,14 @@ bskPath = __path__[0]
 #         vizPlanetName = "earth"
 #     pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + scEphemerisFileName)  # Hubble Space Telescope data
 #     pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-#     pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'naif0011.tls')  # leap second file
+#     pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
 #     pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
 #     pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
 # ~~~~~~~~~~~~~~~~~
 # To unload the SPICE kernels loaded into the Python environment, use
 # ~~~~~~~~~~~~~~~~~{.py}
 #     pyswice.unload_c(gravFactory.spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-#     pyswice.unload_c(gravFactory.spiceObject.SPICEDataPath + 'naif0011.tls')  # leap second file
+#     pyswice.unload_c(gravFactory.spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
 #     pyswice.unload_c(gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
 #     pyswice.unload_c(gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
 # ~~~~~~~~~~~~~~~~~
