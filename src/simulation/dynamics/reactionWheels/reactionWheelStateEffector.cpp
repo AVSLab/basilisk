@@ -546,7 +546,7 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
 		}
 
         // Speed saturation
-        if (this->ReactionWheelData[RWIter].Omega >= this->ReactionWheelData[RWIter].Omega_max) {
+        if (std::abs(this->ReactionWheelData[RWIter].Omega) >= this->ReactionWheelData[RWIter].Omega_max) {
             CmdIt->u_cmd = 0.0;
         }
 

@@ -109,12 +109,14 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
         pass
 
     elif testCase is 'saturation':
+        RWs.append(defaultReactionWheel())
         RWs[0].u_max = 1.
         RWs[1].u_max = 2.
-        u_cmd = [-1.2,1.5]
+        RWs[2].u_max = 2.
+        u_cmd = [-1.2,1.5,2.5]
         writeNewRWCmds(ReactionWheel,u_cmd,len(RWs))
 
-        expOut['u_current'] = [-1.,1.5]
+        expOut['u_current'] = [-1.,1.5,2.]
 
     elif testCase is 'minimum':
         RWs[0].u_min = .1
@@ -125,14 +127,17 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
         expOut['u_current'] = [0.,0.0001]
 
     elif testCase is 'speedSaturation':
+        RWs.append(defaultReactionWheel())
         RWs[0].Omega_max = 50.
         RWs[1].Omega_max = 50.
+        RWs[2].Omega_max = 50.
         RWs[0].Omega = 49.
         RWs[1].Omega = 51.
-        u_cmd = [1.5,1.5]
+        RWs[2].Omega = -52.
+        u_cmd = [1.5,1.5,1.5]
         writeNewRWCmds(ReactionWheel,u_cmd,len(RWs))
 
-        expOut['u_current'] = [1.5,0.0]
+        expOut['u_current'] = [1.5,0.0,0.0]
 
     else:
         raise Exception('invalid test case')
@@ -148,7 +153,7 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
         accuracy = 1e-10
 
     for outputName in expOut.keys():
-        for i in range(0,numRW):
+        for i in range(0,len(RWs)):
             if expOut[outputName][i] != getattr(ReactionWheel.ReactionWheelData[i],outputName):
                 print "expected: " + str(expOut[outputName][i])
                 print "got :" + str(getattr(ReactionWheel.ReactionWheelData[i],outputName))
