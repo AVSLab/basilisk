@@ -437,15 +437,12 @@ void GravityEffector::computeGravityField(Eigen::Vector3d r_CN_N, Eigen::Vector3
     centralVel.fill(0.0);
     Eigen::Vector3d gravOut;
     gravOut.fill(0.0);
-    Eigen::Vector3d cLocal_N;
     Eigen::MRPd sigmaBNLoc;
-    Eigen::Matrix3d dcm_NB;
     
     for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
     {
         Eigen::Vector3d posRelBody_N;
         posRelBody_N = r_CN_N;
-        posRelBody_N += cLocal_N;
         Eigen::Vector3d mappedPos = getEulerSteppedGravBodyPosition(*it);
         posRelBody_N -= mappedPos;
         

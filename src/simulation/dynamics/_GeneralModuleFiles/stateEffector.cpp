@@ -84,13 +84,19 @@ void StateEffector::modifyStates(double integTime)
 }
 
 /*! This method allows for an individual stateEffector to find the force and torque that the stateEffector is placing on to the body */
-void StateEffector::calcForceTorqueOnBody(double integTime)
+void StateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B)
 {
     return;
 }
 
 /*! This method ensures that all dynamics states have their messages written after integation */
 void StateEffector::writeOutputStateMessages(uint64_t integTimeNanos)
+{
+    return;
+}
+
+/*! This method ensures that stateEffectors can be implemented using the multi-spacecraft archticture */
+void StateEffector::prependSpacecraftNameToStates()
 {
     return;
 }

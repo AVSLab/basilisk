@@ -95,13 +95,13 @@ public:
 	~SphericalPendulum();          //!< -- Destructor
 	void registerStates(DynParamManager& states);  //!< -- Method for FSP to register its states
 	void linkInStates(DynParamManager& states);  //!< -- Method for FSP to get access of other states
-	void updateContributions(double integTime, BackSubMatrices & backSubContr);  //!< -- Method for FSP to add contributions to the back-sub method
-	void computeDerivatives(double integTime);  //!< -- Method for FSP to compute its derivatives
 	void updateEffectorMassProps(double integTime);  //!< -- Method for FSP to add its contributions to mass props
-    void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
-                                      double & rotEnergyContr);  //!< -- Method for FSP to add contr. to energy and mom.
     void modifyStates(double integTime); //!<-- Method to force states modification during integration
     void retrieveMassValue(double integTime);
+    void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< -- Back-sub contributions
+    void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
+                                              double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
+    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
 };
 
 #endif /* SPHERICAL_PENDULUM_H */

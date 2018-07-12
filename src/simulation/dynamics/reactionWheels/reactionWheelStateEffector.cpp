@@ -174,7 +174,7 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
 	return;
 }
 
-void ReactionWheelStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr)
+void ReactionWheelStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
 	Eigen::Vector3d omegaLoc_BN_B;
 	Eigen::Vector3d tempF;
@@ -277,7 +277,7 @@ void ReactionWheelStateEffector::updateContributions(double integTime, BackSubMa
 	return;
 }
 
-void ReactionWheelStateEffector::computeDerivatives(double integTime)
+void ReactionWheelStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
 {
 	Eigen::MatrixXd OmegasDot(this->numRW,1);
     Eigen::MatrixXd thetasDot(this->numRWJitter,1);
@@ -321,7 +321,8 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime)
     }
 }
 
-void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr)
+void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
+                                                              double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
 	Eigen::MRPd sigmaBNLocal;
 	Eigen::Matrix3d dcm_BN;                        /* direction cosine matrix from N to B */

@@ -270,7 +270,7 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 	return;
 }
 
-void VSCMGStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr)
+void VSCMGStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
 	Eigen::Vector3d omegaLoc_BN_B;
 	Eigen::Vector3d tempF;
@@ -407,7 +407,7 @@ void VSCMGStateEffector::updateContributions(double integTime, BackSubMatrices &
 	return;
 }
 
-void VSCMGStateEffector::computeDerivatives(double integTime)
+void VSCMGStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
 {
 	Eigen::MatrixXd OmegasDot(this->numVSCMG,1);
     Eigen::MatrixXd thetasDot(this->numVSCMGJitter,1);
@@ -467,7 +467,8 @@ void VSCMGStateEffector::computeDerivatives(double integTime)
     }
 }
 
-void VSCMGStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr)
+void VSCMGStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
+                                                      double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
 	Eigen::MRPd sigmaBNLocal;
 	Eigen::Matrix3d dcm_BN;                        /* direction cosine matrix from N to B */

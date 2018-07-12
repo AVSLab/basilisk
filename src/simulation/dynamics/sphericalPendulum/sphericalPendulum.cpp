@@ -199,7 +199,7 @@ void SphericalPendulum::retrieveMassValue(double integTime)
 }
 
 /*! This method is for the FSP to add its contributions to the back-sub method */
-void SphericalPendulum::updateContributions(double integTime, BackSubMatrices & backSubContr)
+void SphericalPendulum::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
 
     // - Find dcm_BN
@@ -296,7 +296,7 @@ void SphericalPendulum::updateContributions(double integTime, BackSubMatrices & 
 
 /*! This method is used to define the derivatives of the FSP. One is the trivial kinematic derivative and the other is 
  derived using the back-sub method */
-void SphericalPendulum::computeDerivatives(double integTime)
+void SphericalPendulum::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
 {
 	
 	// - Find DCM
@@ -329,7 +329,8 @@ void SphericalPendulum::computeDerivatives(double integTime)
 }
 
 /*! This method is for the FSP to add its contributions to energy and momentum */
-void SphericalPendulum::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr)
+void SphericalPendulum::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
+                                                     double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
 	
     //  - Get variables needed for energy momentum calcs

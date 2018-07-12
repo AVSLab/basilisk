@@ -518,4 +518,4 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    reactionWheelIntegratedTest(True,True,'FrictionSpinDown')
+    reactionWheelIntegratedTest(True,True,'BalancedWheels')

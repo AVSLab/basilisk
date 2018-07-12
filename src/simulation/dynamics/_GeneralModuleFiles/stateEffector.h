@@ -62,12 +62,12 @@ public:
     virtual void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
     virtual void modifyStates(double integTime); //!< -- Modify state values after integration
-    virtual void calcForceTorqueOnBody(double integTime);  //!< -- Force and torque on s/c due to stateEffector
+    virtual void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B);  //!< -- Force and torque on s/c due to stateEffector
     virtual void writeOutputStateMessages(uint64_t integTimeNanos); //!< -- Write State Messages after integration
     virtual void registerStates(DynParamManager& states) = 0;  //!< -- Method for stateEffectors to register states
     virtual void linkInStates(DynParamManager& states) = 0;  //!< -- Method for stateEffectors to get other states
     virtual void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)=0;  //!< -- Method for each stateEffector to calculate derivatives
-    virtual void prependSpacecraftNameToStates() = 0;
+    virtual void prependSpacecraftNameToStates();
     virtual void receiveMotherSpacecraftData(Eigen::Vector3d rSC_BP_P, Eigen::Matrix3d dcmSC_BP);
 };
 

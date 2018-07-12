@@ -508,7 +508,7 @@ void SpacecraftPlus::integrateState(double integrateToThisTime)
         (*it)->modifyStates(integrateToThisTime);
     }
     // - Compute force and torque on the body due to stateEffectors
-    this->calcForceTorqueFromStateEFfectors(integrateToThisTime);
+    this->calcForceTorqueFromStateEffectors(integrateToThisTime, newOmega_BN_B);
 
     return;
 }
@@ -598,13 +598,13 @@ void SpacecraftPlus::computeEnergyMomentum(double time)
 /*! This method is used to find the force and torque that each stateEffector is applying to the spacecraft. These values
  are held in the stateEffector class. Additionally, the stateDerivative value is behind the state values because they 
  are calculated in the intergrator calls */
-void SpacecraftPlus::calcForceTorqueFromStateEFfectors(double time)
+void SpacecraftPlus::calcForceTorqueFromStateEffectors(double time, Eigen::Vector3d omega_BN_B)
 {
     // - Loop over stateEffectors to get their contributions to energy and momentum
     std::vector<StateEffector*>::iterator it;
     for(it = this->states.begin(); it != this->states.end(); it++)
     {
-        (*it)->calcForceTorqueOnBody(time);
+        (*it)->calcForceTorqueOnBody(time, omega_BN_B);
     }
 
     return;

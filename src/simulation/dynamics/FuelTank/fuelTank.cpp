@@ -169,7 +169,8 @@ void FuelTank::updateEffectorMassProps(double integTime)
 }
 
 /*! This method allows the fuel tank to add its contributions to the matrices for the back-sub method. */
-void FuelTank::updateContributions(double integTime, BackSubMatrices & backSubContr) {
+void FuelTank::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
+{
 
 	Eigen::Vector3d r_TB_BLocal, rPrime_TB_BLocal, rPPrime_TB_BLocal;
 	Eigen::Vector3d omega_BN_BLocal;
@@ -197,7 +198,7 @@ void FuelTank::updateContributions(double integTime, BackSubMatrices & backSubCo
 }
 
 /*! This method allows the fuel tank to compute its derivative */
-void FuelTank::computeDerivatives(double integTime)
+void FuelTank::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
 {
 	// - Call compute derivatives
 	Eigen::MatrixXd conv(1, 1);
@@ -208,7 +209,7 @@ void FuelTank::computeDerivatives(double integTime)
 
 /*! This method allows the fuel tank to contribute to the energy and momentum calculations */
 void FuelTank::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
-                                            double & rotEnergyContr)
+                                            double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
     // - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;

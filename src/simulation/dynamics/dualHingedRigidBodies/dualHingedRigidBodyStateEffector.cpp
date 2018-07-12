@@ -156,7 +156,7 @@ void DualHingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
     return;
 }
 
-void DualHingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr)
+void DualHingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
     Eigen::MRPd sigmaBNLocal;
     Eigen::Matrix3d dcmBN;                        /* direction cosine matrix from N to B */
@@ -229,7 +229,7 @@ void DualHingedRigidBodyStateEffector::updateContributions(double integTime, Bac
     return;
 }
 
-void DualHingedRigidBodyStateEffector::computeDerivatives(double integTime)
+void DualHingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
 {
     // - Define necessarry variables
     Eigen::MRPd sigmaBNLocal;
@@ -262,8 +262,7 @@ void DualHingedRigidBodyStateEffector::computeDerivatives(double integTime)
     return;
 }
 /*! This method is for calculating the contributions of the DHRB state effector to the energy and momentum of the s/c */
-void DualHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d &
-                                                                rotAngMomPntCContr_B, double & rotEnergyContr)
+void DualHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
     // - Get the current omega state
     Eigen::Vector3d omegaLocal_BN_B;

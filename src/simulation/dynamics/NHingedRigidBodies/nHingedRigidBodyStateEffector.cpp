@@ -217,7 +217,7 @@ double NHingedRigidBodyStateEffector::HeaviFunc(double cond)
 
 /*! This method allows the HRB state effector to give its contributions to the matrices needed for the back-sub 
  method */
-void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr)
+void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
     // - Find dcm_BN
     Eigen::MRPd sigmaLocal_BN;
@@ -456,7 +456,7 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSu
 }
 
 /*! This method is used to find the derivatives for the HRB stateEffector: thetaDDot and the kinematic derivative */
-void NHingedRigidBodyStateEffector::computeDerivatives(double integTime)
+void NHingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
 {
     // - Grab necessarry values from manager (these have been previously computed in hubEffector)
     Eigen::Vector3d rDDotLoc_BN_N;
@@ -490,8 +490,8 @@ void NHingedRigidBodyStateEffector::computeDerivatives(double integTime)
 }
 
 /*! This method is for calculating the contributions of the HRB state effector to the energy and momentum of the s/c */
-void NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d &
-                                                                rotAngMomPntCContr_B, double & rotEnergyContr)
+void NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
+                                                                 double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
     // - Get the current omega state
     Eigen::Vector3d omegaLocal_BN_B;

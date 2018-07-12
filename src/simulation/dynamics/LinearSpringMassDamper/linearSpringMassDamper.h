@@ -75,13 +75,13 @@ public:
 	~LinearSpringMassDamper();          //!< -- Destructor
 	void registerStates(DynParamManager& states);  //!< -- Method for SMD to register its states
 	void linkInStates(DynParamManager& states);  //!< -- Method for SMD to get access of other states
-	void updateContributions(double integTime, BackSubMatrices & backSubContr);  //!< -- Method for SMD to add contributions to the back-sub method
-	void computeDerivatives(double integTime);  //!< -- Method for SMD to compute its derivatives
-	void updateEffectorMassProps(double integTime);  //!< -- Method for SMD to add its contributions to mass props
-    void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
-                                      double & rotEnergyContr);  //!< -- Method for SMD to add contr. to energy and mom.
     void retrieveMassValue(double integTime);
     void calcForceTorqueOnBody(double integTime);  //!< -- Force and torque on s/c due to linear spring mass damper
+    void updateEffectorMassProps(double integTime);  //!< -- Method for stateEffector to give mass contributions
+    void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< -- Back-sub contributions
+    void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
+                                              double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
+    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
 };
 
 #endif /* LINEAR_SPRING_MASS_DAMPER_H */
