@@ -376,7 +376,7 @@ def singleGravityBody(show_plots):
     unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
 
     pyswice.unload_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.unload_c(bskPath + '/supportData/EphemerisData/naif0011.tls')
+    pyswice.unload_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
     pyswice.unload_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
     pyswice.unload_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
     pyswice.unload_c(path + '/hst_edited.bsp')
