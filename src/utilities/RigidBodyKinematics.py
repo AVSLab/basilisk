@@ -4220,3 +4220,15 @@ def Mi(theta, i):
     else:
         print 'Mi() error: incorrect axis', i, 'selected'
     return C
+
+def v3Tilde(vector):
+    x1 = vector[0]
+    x2 = vector[1]
+    x3 = vector[2]
+
+    xTilde = [[0, -x3, x2]
+        ,[x3, 0, -x1]
+        ,[-x2, x1, 0]
+              ]
+
+    return xTilde
