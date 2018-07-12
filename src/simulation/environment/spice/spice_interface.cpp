@@ -85,8 +85,8 @@ void SpiceInterface::SelfInit()
     //!- Load the SPICE kernels if they haven't already been loaded
     if(!this->SPICELoaded)
     {
-        if(loadSpiceKernel((char *)"naif0011.tls", this->SPICEDataPath.c_str())) {
-            BSK_PRINT(MSG_ERROR, "Unable to load %s", "naif0010.tls");
+        if(loadSpiceKernel((char *)"naif0012.tls", this->SPICEDataPath.c_str())) {
+            BSK_PRINT(MSG_ERROR, "Unable to load %s", "naif0012.tls");
         }
         if(loadSpiceKernel((char *)"pck00010.tpc", this->SPICEDataPath.c_str())) {
             BSK_PRINT(MSG_ERROR, "Unable to load %s", "pck00010.tpc");
