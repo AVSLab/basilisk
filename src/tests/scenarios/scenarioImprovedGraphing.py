@@ -74,6 +74,8 @@ from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispe
 import numpy as np
 import pandas as pd
 from bokeh.plotting import figure, output_file, show
+import itertools
+# from bokeh.palettes import d3 as palette
 import datashader as ds
 import datashader.transfer_functions as tf
 from datashader.colors import inferno
@@ -720,8 +722,14 @@ def plotSim(data, retentionPolicy):
     dataVolt = data["messages"][fswRWVoltageConfigVoltageOutMsgName_voltage]
 
     run_number = data["index"]
+
+    # Write the time data to a separate file so there is so redundant data.
     if run_number == 0:
         createDirectoriesAndSaveData(dataUsReq[:, [0]], "time", 0)
+
+    # Write the retained data to a csv file.
+    # Don't include the first column of the data since that is time and uneeded data.
+
     createDirectoriesAndSaveData(dataUsReq[:,1:], rwMotorTorqueConfigOutputDataName_motorTorque, run_number)
     createDirectoriesAndSaveData(dataSigmaBR[:,1:], attErrorConfigOutputDataName_sigma_BR, run_number)
     createDirectoriesAndSaveData(dataOmegaBR[:,1:], attErrorConfigOutputDataName_omega_BR_B, run_number)
@@ -847,7 +855,7 @@ def createDirectoriesAndSaveData(data, name, run_number):
     path = path + "/" + file_name
 
     df = pd.DataFrame(data, columns=None)
-    df.to_csv(path, sep='\t', encoding='utf-8', index=False)
+    df.to_csv(path, encoding='utf-8', index=False)
 
 def graph():
     rwMotorTorqueConfigOutputDataName_motorTorque = rwMotorTorqueConfigOutputDataName+".motorTorque"
@@ -862,28 +870,40 @@ def graph():
     # df = pd.DataFrame(dataUsReq, columns=columns)
     df = pd.read_csv("data/mc1/"+attErrorConfigOutputDataName_sigma_BR + "/" + attErrorConfigOutputDataName_sigma_BR + "_run_0.csv")
     timeDF = pd.read_csv("data/mc1/time/time_run_0.csv")
-    # newTime = timeDF.values[:, 0] * macros.NANO2MIN
-    timedf = pd.DataFrame(timeDF, columns=None)
-    # df.to_csv(path, sep='\t', encoding='utf-8', index=False)
-
+    newTime = timeDF.values[:, 0] * macros.NANO2MIN
+    timeDF = pd.DataFrame(newTime, columns=None)
 
     options = dict(line_color='blue', fill_color='blue', size=1, alpha=0.5)
-  # options = dict(line_color='blue', fill_color = 'blue', size = 1, alpha = 0.5)
+    # options = dict(line_color='blue', fill_color = 'blue', size = 1, alpha = 0.5)
     #   p = base_plot()
-    p = figure(plot_width=400, plot_height=400)
+    # color=["firebrick", "navy"], alpha=[0.8, 0.3], line_width=4)
+    p = figure(plot_width=800, plot_height=250, x_axis_type="datetime")
 
-    p.line(x=timedf[0], y=df[0], line_width=2)
-    show(p)
+    # for column in range(0,2):
+    #     p.line(x=timeDF.iloc[:,0], y=df.iloc[:, column], line_width=2, color = colors, alpha=0.8, legend='Y Position')
+
+    p.line(x=timeDF.iloc[:, 0], y=df.iloc[:, 1], line_width=2, color='green', alpha=0.8, legend='Y Position')
+
+    p.line(x=timeDF.iloc[:,0], y=df.iloc[:, 0], line_width=2, color='indigo', alpha=0.8, legend='X Position')
+    p.line(x=timeDF.iloc[:,0], y=df.iloc[:, 2], line_width=2, color='red', alpha=0.8, legend='Z Position')
+
+
     # p.multi_line([timedf['Time'], df[0]], [timedf['Time'], df[1]], color = ["firebrick", "navy"], alpha = [0.8, 0.3], line_width = 4)
-  # p.multi_line([timedf['Time'], df['X']], [timedf['Time'], df['Y']],
-  # color=["firebrick", "navy"], alpha=[0.8, 0.3], line_width=4)
+    # p.multi_line([timedf['Time'], df['X']], [timedf['Time'], df['Y']],
 
-   #print df['X']
-   #print timedf['Time']
-   #  p.line(x=timedf['Time'], y=df['Y'], line_width=2)
-   #  p.line(x=timedf['Time'], y=df['X'], line_width=3)
+    p.title.text = 'AttError in sigma br'
 
+    # for data, name, color in zip([AAPL, IBM, MSFT, GOOG], ["AAPL", "IBM", "MSFT", "GOOG"], Spectral4):
+    #     df = pd.DataFrame(data)
+    #     df['date'] = pd.to_datetime(df['date'])
+    #     p.line(df['date'], df['close'], line_width=2, color=color, alpha=0.8, legend=name)
 
+    p.legend.location = "top_left"
+    p.legend.click_policy = "hide"
+
+    # output_file("interactive_legend.html", title="interactive_legend.py example")
+
+    show(p)
 
 
 #
