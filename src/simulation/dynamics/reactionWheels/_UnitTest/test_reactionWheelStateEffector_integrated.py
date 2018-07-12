@@ -288,8 +288,8 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         if testCase == 'FrictionSpinDown' or testCase == 'FrictionSpinUp':
             wheelSpeedBeforeInteg1 = unitTestSim.pullMessageLogData("rw_config_0_data.Omega", range(1))
             wheelSpeedBeforeInteg2 = unitTestSim.pullMessageLogData("rw_config_1_data.Omega", range(1))
-            frictionTorque1 = unitTestSim.pullMessageLogData("rw_config_0_data.frictionTorqueMsg", range(1))
-            frictionTorque2 = unitTestSim.pullMessageLogData("rw_config_1_data.frictionTorqueMsg", range(1))
+            frictionTorque1 = unitTestSim.pullMessageLogData("rw_config_0_data.frictionTorque", range(1))
+            frictionTorque2 = unitTestSim.pullMessageLogData("rw_config_1_data.frictionTorque", range(1))
 
 
     dataPos = posData[-1]

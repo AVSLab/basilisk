@@ -432,7 +432,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 
 		tmpRW.theta = it->theta;
 		tmpRW.u_current = it->u_current;
-        tmpRW.frictionTorqueMsg = it->frictionTorque;
+        tmpRW.frictionTorque = it->frictionTorque;
 		tmpRW.u_max = it->u_max;
 		tmpRW.u_min = it->u_min;
 		tmpRW.u_f = it->fCoulomb;
