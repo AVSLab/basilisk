@@ -281,7 +281,7 @@ def loadGravFromFile(fileName, spherHarm, maxDeg=2):
             spherHarm:
                 The spherical harmonics container of the gravity body.
             maxDeg : integer
-                maximum degree of spherical harmonincs to load
+                maximum degree of spherical harmonics to load
 
 
             Notes
