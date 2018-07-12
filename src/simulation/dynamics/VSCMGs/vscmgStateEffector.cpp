@@ -740,6 +740,12 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 			CmdIt->u_g_cmd = 0.0;
 		}
 
+        // Speed saturation
+        if (std::abs(this->VSCMGData[it].Omega)>= this->VSCMGData[it].Omega_max) {
+            CmdIt->u_s_cmd = 0.0;
+            printf("Omega_max = %f\n", this->VSCMGData[it].Omega_max);
+        }
+
 		//! wheel Coulomb friction
 		//! set wheelLinearFrictionRatio to less than zero to disable linear friction
 		//! set u_s_f to zero to disable all friction

@@ -82,7 +82,7 @@ def defaultVSCMG():
     VSCMG.Omega = 0.
     VSCMG.gamma = 0.
     VSCMG.gammaDot = 0.
-    VSCMG.Omega_max = 0.
+    VSCMG.Omega_max = 1000.
     VSCMG.gammaDot_max = -1
     VSCMG.IW1 = 0.
     VSCMG.IW2 = 0.
