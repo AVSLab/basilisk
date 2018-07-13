@@ -34,7 +34,7 @@
 #include "hubEffector.h"
 
 /*! @brief This is an instantiation of the dynamicObject abstract class that is a spacecraft with stateEffectors and
- dynamicEffectors attached to it. The spacecraftPlus allows for just translation, just rotation, or both translation and
+ dynamicEffectors attached to it. The spacecraftPlus allows for both translation and
  rotation. stateEffectors such as RWs, flexible solar panel, fuel slosh etc can be added to the spacecraft by attaching 
  stateEffectors. dynamicEffectors such as thrusters, external force and torque, SRP etc can be added to the spacecraft 
  by attaching dynamicEffectors. This class performs all of this interaction between stateEffectors, dynamicEffectors and
