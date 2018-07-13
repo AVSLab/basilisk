@@ -156,7 +156,7 @@ def run(showPlots):
     TheBSKSim.InitializeSimulationAndDiscover()
 
     # Configure run time and execute simulation
-    simulationTime = macros.min2nano(60.0* 4.0)
+    simulationTime = macros.min2nano(60.0)
     TheBSKSim.ConfigureStopTime(simulationTime)
     print 'Starting Execution'
     TheBSKSim.ExecuteSimulation()
