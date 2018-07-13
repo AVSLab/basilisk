@@ -259,9 +259,9 @@ class BSKFswModels():
         # use the same inertia in the FSW algorithm as in the simulation
         vehicleConfigOut.ISCPntB_B = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
         unitTestSupport.setMessage(SimBase.TotalSim,
-                                       SimBase.FSWProcessName,
-                                       "adcs_config_data",
-                                       vehicleConfigOut)
+                                   SimBase.FSWProcessName,
+                                    "adcs_config_data",
+                                    vehicleConfigOut)
 
     def SetRWConfigMsg(self, SimBase):
         # Configure RW pyramid exactly as it is in the Dynamics (i.e. FSW with perfect knowledge)
@@ -281,10 +281,10 @@ class BSKFswModels():
 
     def SetRWMotorTorque(self, SimBase):
         controlAxes_B = [
-                         1.0, 0.0, 0.0
-                         , 0.0, 1.0, 0.0
-                         , 0.0, 0.0, 1.0
-                         ]
+        1.0, 0.0, 0.0
+        , 0.0, 1.0, 0.0
+        , 0.0, 0.0, 1.0
+        ]
         self.rwMotorTorqueData.controlAxes_B = controlAxes_B
         self.rwMotorTorqueData.inputVehControlName = "controlTorqueRaw"
         self.rwMotorTorqueData.outputDataName = SimBase.DynModels.rwStateEffector.InputCmds  # "reactionwheel_cmds"
