@@ -37,7 +37,7 @@ The variables in Table \ref{tabular:vars} are available for user input. Variable
 
 \subsection{Using Central Bodies and Relative Dynamics}
 \subsubsection{Using Central Bodies}
-In simulations with multiple planetary bodies, using dynamics relative to a central body can improve accuracy. If a user has a gravBody call \verb|earth|, the central body flag should be set to True.
+In simulations with multiple planetary bodies, using dynamics relative to a central body can improve accuracy. Generally, this is the right thing to do rather than using an absolute coordinate set. If a user has a gravBody called \verb|earth|, the central body flag should be set to True.
 \verb|earth.isCentralBody = True|	
 The dynamics will then take care of themselves, but the user needs to be careful to input initial position and velocity values as \textit{relative to} the central body. This can be input from a set of Keplerian orbital elements using \verb|orbitalMotion.elem2rv| as in\\ \verb|Basilisk/tests/scenarios/scenarioBasicOrbit.py|. 
 
@@ -45,7 +45,7 @@ The user should be aware that if spacecraft position and velocity are read back 
 It is critical that the relative position and velocities are given in a frame which is linearly translated but \textbf{not rotated} from the simulation inertial frame. There is no handling of rotated relative frames within the dynamics. The orbital element to position and velocity conversion in the section below can be used for relative dynamics inputs, as well.
 
 \subsubsection{Not Using Central Bodies}
-If no planets are designated as central bodies, an absolute initial position and velocity must be given. Again, \verb|orbitalMotion.elem2rv| can be used if the orbital elements are given in a frame not rotated from the simulation inertial frame. However, now, the initial position and velocity of the central body must be accounted for. These can be retrieved from spice and added to the spacecraft initial position and velocity.\\\\
+If no planets are designated as central bodies, an absolute initial position and velocity must be given. Again, \verb|orbitalMotion.elem2rv| can be used if the orbital elements are given in a frame not rotated from the simulation inertial frame. However, now, the initial position and velocity of the central body must be accounted for. These can be retrieved from spice via the planetStates utility:\\\\
 \verb|oe = om.ClassicElements()|\\
 \verb|oe.a = orbit_a * 1000 #m, orbit semi-major axis|\\
 \verb|oe.e = orbit_e #eccentricity|\\
@@ -60,19 +60,13 @@ If no planets are designated as central bodies, an absolute initial position and
 \verb|ephemerides.outputBufferCount = 2|\\
 \verb|ephemerides.planetNames = spice_interface.StringVector(["earth", "sun"])|\\
 \verb|ephemerides.UTCCalInit = simStart #pick a UTC string|\\
-\verb|earthPos_N = array(ephemerides.getPlanetPosition("earth"))|\\
-\verb|earthVel_N = array(ephemerides.getPlanetVelocity("earth"))|\\
-\verb|dcm_EN = array(ephemerides.getPlanetAttitude("earth"))|\\\\
-\verb|r_sc_N = array(dcm_NE).dot(array(r_sc_E)).flatten() + array(earthPos_N).flatten()|\\
-\verb|v_sc_N = array(dcm_NE).dot(array(v_sc_E)).flatten() + array(earthVel_N).flatten()|\\
+\verb|earthPos_N, earthVel_N = planetStates.planetPositionVelocity('EARTH', simStart)|\\
+\verb|r_sc_N = array(r_sc_E).flatten() + array(earthPos_N).flatten()|\\
+\verb|v_sc_N = array(v_sc_E).flatten() + array(earthVel_N).flatten()|\\
 \verb|scObject.hub.r_CN_NInit = array(r_sc_N)|\\
 \verb|scObject.hub.v_CN_NInit = array(v_sc_N)|\\\\
-Of course, if a user has initial positions and velocities directly, those should be used.\\
+Of course, if a user has initial positions and velocities directly, those should be used. See scenarioCentralBody.py for a working example.\\
 
 \subsubsection{Reference Frames}
-An understanding of spice reference frames will help to explain the code above. The spice inertial frame is the ICRF. The ICRF is coplaner with the Earth's equator. It is referred to within spice as "j2000" for legacy reasons and because the J2000 system is only rotated from the ICRF by a few milliarcseconds.
-
-Additionally, when the direction cosine matrix between the central body system and inertial frame is retrieved it is the rotation \textit{from} the spice "j2000" frame (ICRF) \textit{to} the IAU frame for the body (i.e. planet wrt inertial). For instance, for Earth, it is to the "IAU\_EARTH" frame. The IAU frames are defined with the +X in the direction of the prime meridian, +Z in the direction of the rotational north pole, and +Y completing the right hand system. For the specifics of what direction the north pole is in, you need to reference the 2009 "Report of the IAU Working Group on Cartographic Coordinates..." unless Spice gets an update to a newer version.
-
-Therefore, all Keplerian orbital elements should be input in the script above relative to the "IAU\_EARTH" frame. Only by doing this will you be able input relative or absolute position and velocities that will be integrated correctly.
+An understanding of spice reference frames will help to explain the code above. The spice inertial frame is the ICRF. The ICRF is coplaner with the Earth's equator. Generally, the Earth Centered Inertial system one would give Keplerian elements in is aligned with ICRF. ICRF is referred to within spice as "j2000" for legacy reasons and because the J2000 system is only rotated from the ICRF by a few milliarcseconds.
 

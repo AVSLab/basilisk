@@ -58,9 +58,6 @@ public:
     void initTimeData();
     void computeGPSData();
     void computePlanetData();
-    Eigen::Vector3d getPlanetPosition(std::string planetName);
-    Eigen::Vector3d getPlanetVelocity(std::string planetName);
-    Eigen::Matrix3d getPlanetAttitude(std::string planetName);
     void writeOutputMessages(uint64_t CurrentClock);
     void clearKeeper();
     
