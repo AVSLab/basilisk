@@ -74,6 +74,9 @@ from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispe
 import numpy as np
 import pandas as pd
 from bokeh.plotting import figure, output_file, show
+from bokeh.palettes import Spectral6
+from bokeh.transform import linear_cmap
+
 import itertools
 # from bokeh.palettes import d3 as palette
 import datashader as ds
@@ -95,6 +98,15 @@ rwMotorTorqueConfigOutputDataName = "rw_torque_Lr"
 mrpControlConfigInputRWSpeedsName = "reactionwheel_output_states"
 sNavObjectOutputTransName = "simple_trans_nav_output"
 fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
+
+rwMotorTorqueConfigOutputDataName_motorTorque = rwMotorTorqueConfigOutputDataName + ".motorTorque"
+attErrorConfigOutputDataName_sigma_BR = attErrorConfigOutputDataName + ".sigma_BR"
+attErrorConfigOutputDataName_omega_BR_B = attErrorConfigOutputDataName + ".omega_BR_B"
+sNavObjectOutputTransName_r_BN_N = sNavObjectOutputTransName + ".r_BN_N"
+mrpControlConfigInputRWSpeedsName_wheelSpeeds = mrpControlConfigInputRWSpeedsName + ".wheelSpeeds"
+fswRWVoltageConfigVoltageOutMsgName_voltage = fswRWVoltageConfigVoltageOutMsgName + ".voltage"
+
+retainedDataList = [rwMotorTorqueConfigOutputDataName_motorTorque, attErrorConfigOutputDataName_sigma_BR, attErrorConfigOutputDataName_omega_BR_B, sNavObjectOutputTransName_r_BN_N, mrpControlConfigInputRWSpeedsName_wheelSpeeds, fswRWVoltageConfigVoltageOutMsgName_voltage]
 
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
@@ -706,13 +718,6 @@ def plotSim(data, retentionPolicy):
     #   retrieve the logged data
     #
 
-    rwMotorTorqueConfigOutputDataName_motorTorque = rwMotorTorqueConfigOutputDataName+".motorTorque"
-    attErrorConfigOutputDataName_sigma_BR = attErrorConfigOutputDataName+".sigma_BR"
-    attErrorConfigOutputDataName_omega_BR_B = attErrorConfigOutputDataName+".omega_BR_B"
-    sNavObjectOutputTransName_r_BN_N = sNavObjectOutputTransName+".r_BN_N"
-    mrpControlConfigInputRWSpeedsName_wheelSpeeds = mrpControlConfigInputRWSpeedsName+".wheelSpeeds"
-    fswRWVoltageConfigVoltageOutMsgName_voltage = fswRWVoltageConfigVoltageOutMsgName+".voltage"
-
 
     dataUsReq = data["messages"][rwMotorTorqueConfigOutputDataName_motorTorque]
     dataSigmaBR = data["messages"][attErrorConfigOutputDataName_sigma_BR]
@@ -746,63 +751,63 @@ def plotSim(data, retentionPolicy):
     #   plot the results
     #
 
-    # timeData = dataUsReq[:, 0] * macros.NANO2MIN
-    #
-    # figureList = {}
-    # plt.figure(1)
-    # pltName = 'AttitudeError'
-    # for idx in range(1,4):
-    #     plt.plot(timeData, dataSigmaBR[:, idx],
-    #              label='Run ' + str(data["index"]) + ' $\sigma_'+str(idx)+'$')
-    # plt.legend(loc='lower right')
-    # plt.xlabel('Time [min]')
-    # plt.ylabel('Attitude Error $\sigma_{B/R}$')
-    # figureList[pltName] = plt.figure(1)
-    #
-    # plt.figure(2)
-    # pltName = 'RWMotorTorque'
-    # for idx in range(1,4):
-    #     plt.plot(timeData, dataUsReq[:, idx],
-    #              '--',
-    #              label='Run ' + str(data["index"]) + ' $\hat u_{s,'+str(idx)+'}$')
-    #     plt.plot(timeData, dataRW[idx-1][:, 1],
-    #              label='Run ' + str(data["index"]) + ' $u_{s,' + str(idx) + '}$')
-    # plt.legend(loc='lower right')
-    # plt.xlabel('Time [min]')
-    # plt.ylabel('RW Motor Torque (Nm)')
-    # figureList[pltName] = plt.figure(2)
-    #
-    # plt.figure(3)
-    # pltName = 'RateTrackingError'
-    # for idx in range(1,4):
-    #     plt.plot(timeData, dataOmegaBR[:, idx],
-    #              label='Run ' + str(data["index"]) + ' $\omega_{BR,'+str(idx)+'}$')
-    # plt.legend(loc='lower right')
-    # plt.xlabel('Time [min]')
-    # plt.ylabel('Rate Tracking Error (rad/s) ')
-    # figureList[pltName] = plt.figure(3)
-    #
-    # plt.figure(4)
-    # pltName = 'RWSpeed'
-    # for idx in range(1,len(rwOutName)+1):
-    #     plt.plot(timeData, dataOmegaRW[:, idx]/macros.RPM,
-    #              label='Run ' + str(data["index"]) + ' $\Omega_{'+str(idx)+'}$')
-    # plt.legend(loc='lower right')
-    # plt.xlabel('Time [min]')
-    # plt.ylabel('RW Speed (RPM) ')
-    # figureList[pltName] = plt.figure(4)
-    #
-    # plt.figure(5)
-    # pltName = 'RWVoltage'
-    # for idx in range(1, len(rwOutName) + 1):
-    #     plt.plot(timeData, dataVolt[:, idx],
-    #              label='Run ' + str(data["index"]) + ' $V_{' + str(idx) + '}$')
-    # plt.legend(loc='lower right')
-    # plt.xlabel('Time [min]')
-    # plt.ylabel('RW Voltage (V) ')
-    # figureList[pltName] = plt.figure(5)
+    timeData = dataUsReq[:, 0] * macros.NANO2MIN
 
-    # return figureList
+    figureList = {}
+    plt.figure(1)
+    pltName = 'AttitudeError'
+    for idx in range(1,4):
+        plt.plot(timeData, dataSigmaBR[:, idx],
+                 label='Run ' + str(data["index"]) + ' $\sigma_'+str(idx)+'$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('Attitude Error $\sigma_{B/R}$')
+    figureList[pltName] = plt.figure(1)
+
+    plt.figure(2)
+    pltName = 'RWMotorTorque'
+    for idx in range(1,4):
+        plt.plot(timeData, dataUsReq[:, idx],
+                 '--',
+                 label='Run ' + str(data["index"]) + ' $\hat u_{s,'+str(idx)+'}$')
+        plt.plot(timeData, dataRW[idx-1][:, 1],
+                 label='Run ' + str(data["index"]) + ' $u_{s,' + str(idx) + '}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('RW Motor Torque (Nm)')
+    figureList[pltName] = plt.figure(2)
+
+    plt.figure(3)
+    pltName = 'RateTrackingError'
+    for idx in range(1,4):
+        plt.plot(timeData, dataOmegaBR[:, idx],
+                 label='Run ' + str(data["index"]) + ' $\omega_{BR,'+str(idx)+'}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('Rate Tracking Error (rad/s) ')
+    figureList[pltName] = plt.figure(3)
+
+    plt.figure(4)
+    pltName = 'RWSpeed'
+    for idx in range(1,len(rwOutName)+1):
+        plt.plot(timeData, dataOmegaRW[:, idx]/macros.RPM,
+                 label='Run ' + str(data["index"]) + ' $\Omega_{'+str(idx)+'}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('RW Speed (RPM) ')
+    figureList[pltName] = plt.figure(4)
+
+    plt.figure(5)
+    pltName = 'RWVoltage'
+    for idx in range(1, len(rwOutName) + 1):
+        plt.plot(timeData, dataVolt[:, idx],
+                 label='Run ' + str(data["index"]) + ' $V_{' + str(idx) + '}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]')
+    plt.ylabel('RW Voltage (V) ')
+    figureList[pltName] = plt.figure(5)
+
+    return figureList
 
 def plotSimAndSave(data, retentionPolicy):
 
@@ -815,7 +820,7 @@ def plotSimAndSave(data, retentionPolicy):
 
     return
 
-def base_plot():
+def base_plot(xaxis, yaxis):
     p = figure(
         x_range=(0, .5),
         y_range=(-1, 3.5),
@@ -858,47 +863,28 @@ def createDirectoriesAndSaveData(data, name, run_number):
     df.to_csv(path, encoding='utf-8', index=False)
 
 def graph():
-    rwMotorTorqueConfigOutputDataName_motorTorque = rwMotorTorqueConfigOutputDataName+".motorTorque"
-    attErrorConfigOutputDataName_sigma_BR = attErrorConfigOutputDataName+".sigma_BR"
-    attErrorConfigOutputDataName_omega_BR_B = attErrorConfigOutputDataName+".omega_BR_B"
-    sNavObjectOutputTransName_r_BN_N = sNavObjectOutputTransName+".r_BN_N"
-    mrpControlConfigInputRWSpeedsName_wheelSpeeds = mrpControlConfigInputRWSpeedsName+".wheelSpeeds"
-    fswRWVoltageConfigVoltageOutMsgName_voltage = fswRWVoltageConfigVoltageOutMsgName+".voltage"
+
 
     columns = ["Time", "X", "Y", "Z", "a", "b"]
 
     # df = pd.DataFrame(dataUsReq, columns=columns)
-    df = pd.read_csv("data/mc1/"+attErrorConfigOutputDataName_sigma_BR + "/" + attErrorConfigOutputDataName_sigma_BR + "_run_0.csv")
-    timeDF = pd.read_csv("data/mc1/time/time_run_0.csv")
-    newTime = timeDF.values[:, 0] * macros.NANO2MIN
-    timeDF = pd.DataFrame(newTime, columns=None)
 
-    options = dict(line_color='blue', fill_color='blue', size=1, alpha=0.5)
-    # options = dict(line_color='blue', fill_color = 'blue', size = 1, alpha = 0.5)
-    #   p = base_plot()
-    # color=["firebrick", "navy"], alpha=[0.8, 0.3], line_width=4)
+
+    titles = ["X", "Y", "Z"]
     p = figure(plot_width=800, plot_height=250, x_axis_type="datetime")
 
-    # for column in range(0,2):
-    #     p.line(x=timeDF.iloc[:,0], y=df.iloc[:, column], line_width=2, color = colors, alpha=0.8, legend='Y Position')
-
-    p.line(x=timeDF.iloc[:, 0], y=df.iloc[:, 1], line_width=2, color='green', alpha=0.8, legend='Y Position')
-
-    p.line(x=timeDF.iloc[:,0], y=df.iloc[:, 0], line_width=2, color='indigo', alpha=0.8, legend='X Position')
-    p.line(x=timeDF.iloc[:,0], y=df.iloc[:, 2], line_width=2, color='red', alpha=0.8, legend='Z Position')
-
-
-    # p.multi_line([timedf['Time'], df[0]], [timedf['Time'], df[1]], color = ["firebrick", "navy"], alpha = [0.8, 0.3], line_width = 4)
-    # p.multi_line([timedf['Time'], df['X']], [timedf['Time'], df['Y']],
+    for runNumber, color, title in zip(range(0, NUMBER_OF_RUNS), Spectral6, titles):
+        df = pd.read_csv(
+            "data/mc1/" + attErrorConfigOutputDataName_sigma_BR + "/" + attErrorConfigOutputDataName_sigma_BR + "_run_" + str(runNumber) + ".csv")
+        timeDF = pd.read_csv("data/mc1/time/time_run_0.csv")
+        newTime = timeDF.values[:, 0] * macros.NANO2MIN
+        timeDF = pd.DataFrame(newTime, columns=None)
+        for column, title in zip(range(0,3), titles):
+            p.line(x=timeDF.iloc[:,0], y=df.iloc[:, column], line_width=2, color = color, alpha=0.8, legend="Run " + str(runNumber) + " " + title)
+            next(color, None)
 
     p.title.text = 'AttError in sigma br'
-
-    # for data, name, color in zip([AAPL, IBM, MSFT, GOOG], ["AAPL", "IBM", "MSFT", "GOOG"], Spectral4):
-    #     df = pd.DataFrame(data)
-    #     df['date'] = pd.to_datetime(df['date'])
-    #     p.line(df['date'], df['close'], line_width=2, color=color, alpha=0.8, legend=name)
-
-    p.legend.location = "top_left"
+    p.legend.location = "top_right"
     p.legend.click_policy = "hide"
 
     # output_file("interactive_legend.html", title="interactive_legend.py example")
