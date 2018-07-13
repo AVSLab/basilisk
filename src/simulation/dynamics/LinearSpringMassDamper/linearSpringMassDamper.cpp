@@ -220,7 +220,7 @@ void LinearSpringMassDamper::updateEnergyMomContributions(double integTime, Eige
     return;
 }
 
-void LinearSpringMassDamper::calcForceTorqueOnBody(double integTime)
+void LinearSpringMassDamper::calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B)
 {
     // - Get the current omega state
     Eigen::Vector3d omegaLocal_BN_B;
