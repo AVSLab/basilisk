@@ -34,20 +34,6 @@
 #include "simMessages/scMassPropsSimMsg.h"
 #include "../../simMessages/scEnergyMomentumSimMsg.h"
 
-/*! @brief This is an instantiation of the dynamicObject abstract class that is a spacecraft with stateEffectors and
- dynamicEffectors attached to it. The spacecraftDynamics allows for just translation, just rotation, or both translation and
- rotation. stateEffectors such as RWs, flexible solar panel, fuel slosh etc can be added to the spacecraft by attaching 
- stateEffectors. dynamicEffectors such as thrusters, external force and torque, SRP etc can be added to the spacecraft 
- by attaching dynamicEffectors. This class performs all of this interaction between stateEffectors, dynamicEffectors and
-  the hub.
-
- The module
- [PDF Description](Basilisk-SPACECRAFTPLUS-20170808.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
-
- */
-
 struct DockingData {
     Eigen::Vector3d r_DB_B;
     Eigen::Matrix3d dcm_DB;
@@ -140,6 +126,20 @@ public:
 
 private:
 };
+
+/*! @brief This is an instantiation of the dynamicObject abstract class that is a spacecraft with stateEffectors and
+ dynamicEffectors attached to it. The spacecraftDynamics allows for both translation and
+ rotation. stateEffectors such as RWs, flexible solar panel, fuel slosh etc can be added to the spacecraft by attaching
+ stateEffectors. dynamicEffectors such as thrusters, external force and torque, SRP etc can be added to the spacecraft
+ by attaching dynamicEffectors. This class performs all of this interaction between stateEffectors, dynamicEffectors and
+ the hub.  In contracts to spacecaftPlus, this class allows for several complex spacecraft compoknnets to form a system.  This hubs can be rigidly connected or freeflying.
+
+ The module
+ [PDF Description](Basilisk-SPACECRAFTDYNAMICS-20170808.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+
+ */
 
 class SpacecraftDynamics : public DynamicObject{
 public:
