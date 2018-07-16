@@ -370,19 +370,6 @@ void GravityEffector::CrossInit()
     {
         (*it)->initBody(this->moduleID);
     }
-<<<<<<< HEAD
-=======
-void GravityEffector::ChangeCentralBody(std::string newCentralBodyName)
-{
-    std::vector<GravBodyData *>::iterator it;
-    for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
-    {
-        if( (*it)->planetEphemName.compare(newCentralBodyName) == 0 ){
-            this->centralBody = (*it);
-        }
-    }
->>>>>>> [BSK-1050] removed call to set central body in update state, so added this method to change it if desired.
-    return;
 }
 
 void GravityEffector::UpdateState(uint64_t CurrentSimNanos)
