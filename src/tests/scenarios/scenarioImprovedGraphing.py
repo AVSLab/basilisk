@@ -863,25 +863,24 @@ def createDirectoriesAndSaveData(data, name, run_number):
     df.to_csv(path, encoding='utf-8', index=False)
 
 def graph():
-
-
     columns = ["Time", "X", "Y", "Z", "a", "b"]
+    for data in retainedDataList:
+        configureGraph(data)
 
-    # df = pd.DataFrame(dataUsReq, columns=columns)
 
-
+def configureGraph(data):
     titles = ["X", "Y", "Z"]
     p = figure(plot_width=800, plot_height=250, x_axis_type="datetime")
-
-    for runNumber, color, title in zip(range(0, NUMBER_OF_RUNS), Spectral6, titles):
+    for runNumber, color in zip(range(0, NUMBER_OF_RUNS), Spectral6):
         df = pd.read_csv(
-            "data/mc1/" + attErrorConfigOutputDataName_sigma_BR + "/" + attErrorConfigOutputDataName_sigma_BR + "_run_" + str(runNumber) + ".csv")
+            "data/mc1/" + data + "/" + data + "_run_" + str(
+                runNumber) + ".csv")
         timeDF = pd.read_csv("data/mc1/time/time_run_0.csv")
         newTime = timeDF.values[:, 0] * macros.NANO2MIN
         timeDF = pd.DataFrame(newTime, columns=None)
-        for column, title in zip(range(0,3), titles):
-            p.line(x=timeDF.iloc[:,0], y=df.iloc[:, column], line_width=2, color = color, alpha=0.8, legend="Run " + str(runNumber) + " " + title)
-            next(color, None)
+        for column, title in zip(range(0, 3), titles):
+            p.line(x=timeDF.iloc[:, 0], y=df.iloc[:, column], line_width=2, color=color, alpha=0.8,
+                   legend="Run " + str(runNumber) + " " + title)
 
     p.title.text = 'AttError in sigma br'
     p.legend.location = "top_right"
@@ -890,8 +889,6 @@ def graph():
     # output_file("interactive_legend.html", title="interactive_legend.py example")
 
     show(p)
-
-
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
