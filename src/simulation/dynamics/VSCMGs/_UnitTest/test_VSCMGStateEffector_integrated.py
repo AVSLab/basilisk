@@ -208,8 +208,8 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
 
     # set RW torque command
     cmdArray = vscmgStateEffector.VSCMGArrayTorqueIntMsg()
-    cmdArray.wheelTorque = [0.001, 0.005, -0.009] # [Nm]
-    cmdArray.gimbalTorque = [0.008, -0.0015, -0.006] # [Nm]
+    cmdArray.wheelTorque = [0.0, 0.0, 0.0]#[0.001, 0.005, -0.009] # [Nm]
+    cmdArray.gimbalTorque = [0.0, 0.0, 0.0]#[0.008, -0.0015, -0.006] # [Nm]
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
                                rwCommandName,
@@ -358,13 +358,13 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     plt.plot(rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,1] - rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,2] - rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,3] - rotAngMom_N[0,3])
     plt.title("Change in Rotational Angular Momentum")
 
-    # plt.figure()
-    # plt.plot(orbEnergy[:,0]*1e-9, orbEnergy[:,1] - orbEnergy[0,1])
-    # plt.title("Change in Orbital Energy")
+    plt.figure()
+    plt.plot(orbEnergy[:,0]*1e-9, orbEnergy[:,1] - orbEnergy[0,1])
+    plt.title("Change in Orbital Energy")
 
-    # plt.figure()
-    # plt.plot(rotEnergy[:,0]*1e-9, rotEnergy[:,1] - rotEnergy[0,1])
-    # plt.title("Change in Rotational Energy")
+    plt.figure()
+    plt.plot(rotEnergy[:,0]*1e-9, rotEnergy[:,1] - rotEnergy[0,1])
+    plt.title("Change in Rotational Energy")
 
     # plt.figure()
     # for i in range(1,N+1):
@@ -502,4 +502,4 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    VSCMGIntegratedTest(True,False,'JitterFullyCoupledGravity')
+    VSCMGIntegratedTest(True,False,'JitterFullyCoupled')
