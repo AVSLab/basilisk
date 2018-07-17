@@ -87,7 +87,7 @@ from matplotlib.colors import rgb2hex
 from matplotlib.cm import get_cmap
 
 
-NUMBER_OF_RUNS = 500
+NUMBER_OF_RUNS = 1000
 VERBOSE = True
 ONLY_GRAPH = 0
 
@@ -108,6 +108,8 @@ mrpControlConfigInputRWSpeedsName_wheelSpeeds = mrpControlConfigInputRWSpeedsNam
 fswRWVoltageConfigVoltageOutMsgName_voltage = fswRWVoltageConfigVoltageOutMsgName + ".voltage"
 
 retainedDataList = [rwMotorTorqueConfigOutputDataName_motorTorque, attErrorConfigOutputDataName_sigma_BR, attErrorConfigOutputDataName_omega_BR_B, sNavObjectOutputTransName_r_BN_N, mrpControlConfigInputRWSpeedsName_wheelSpeeds, fswRWVoltageConfigVoltageOutMsgName_voltage]
+
+plotFigures = []
 
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
@@ -473,12 +475,10 @@ def run(saveFigures, show_plots):
 
     # And possibly show the plots
     if show_plots:
-        print "starting bokeh graph"
-        print datetime.datetime.now()
-        graph()
-        print "bokeh finished."
-        print "Test concluded, showing plots now via matplotlib..."
-        print datetime.datetime.now()
+
+        for plot in plotFigures:
+            show(plot)
+        print "Test concluded, showing plots now via matplotlib..." + str(datetime.datetime.now())
 
         plt.show()
 
@@ -740,87 +740,32 @@ def plotSim(data, retentionPolicy):
     run_number = data["index"]
 
     # Write the time data to a separate file so there is so redundant data.
-    if run_number == 0:
-        createDirectoriesAndSaveData(dataUsReq[:, [0]], "time", 0)
+    # if run_number == 0:
+    #     createDirectoriesAndSaveData(dataUsReq[:, [0]], "time", 0)
 
     # Write the retained data to a csv file.
     # Don't include the first column of the data since that is time and uneeded data.
 
-    createDirectoriesAndSaveData(dataUsReq[:,1:], rwMotorTorqueConfigOutputDataName_motorTorque, run_number)
-    createDirectoriesAndSaveData(dataSigmaBR[:,1:], attErrorConfigOutputDataName_sigma_BR, run_number)
-    createDirectoriesAndSaveData(dataOmegaBR[:,1:], attErrorConfigOutputDataName_omega_BR_B, run_number)
-    createDirectoriesAndSaveData(dataPos[:,1:], sNavObjectOutputTransName_r_BN_N, run_number)
-    createDirectoriesAndSaveData(dataOmegaRW[:,1:], mrpControlConfigInputRWSpeedsName_wheelSpeeds, run_number)
-    createDirectoriesAndSaveData(dataVolt[:,1:], fswRWVoltageConfigVoltageOutMsgName_voltage, run_number)
+    # createDirectoriesAndSaveData(dataUsReq[:,1:], rwMotorTorqueConfigOutputDataName_motorTorque, run_number)
+    # createDirectoriesAndSaveData(dataSigmaBR[:,1:], attErrorConfigOutputDataName_sigma_BR, run_number)
+    # createDirectoriesAndSaveData(dataOmegaBR[:,1:], attErrorConfigOutputDataName_omega_BR_B, run_number)
+    # createDirectoriesAndSaveData(dataPos[:,1:], sNavObjectOutputTransName_r_BN_N, run_number)
+    # createDirectoriesAndSaveData(dataOmegaRW[:,1:], mrpControlConfigInputRWSpeedsName_wheelSpeeds, run_number)
+    # createDirectoriesAndSaveData(dataVolt[:,1:], fswRWVoltageConfigVoltageOutMsgName_voltage, run_number)
 
-
-    dataRW = []
-    for message in rwOutName:
-        dataRW.append(data["messages"][message+".u_current"])
-    np.set_printoptions(precision=16)
+    noReadGraphDriver(dataUsReq, rwMotorTorqueConfigOutputDataName_motorTorque, run_number, 0)
+    noReadGraphDriver(dataSigmaBR, attErrorConfigOutputDataName_sigma_BR, run_number, 1)
+    noReadGraphDriver(dataOmegaBR, attErrorConfigOutputDataName_omega_BR_B, run_number, 2)
+    noReadGraphDriver(dataPos, sNavObjectOutputTransName_r_BN_N, run_number, 3)
+    noReadGraphDriver(dataOmegaRW, mrpControlConfigInputRWSpeedsName_wheelSpeeds, run_number, 4)
+    noReadGraphDriver(dataVolt, fswRWVoltageConfigVoltageOutMsgName_voltage, run_number, 5)
 
     #
     #   plot the results
     #
 
-    timeData = dataUsReq[:, 0] * macros.NANO2MIN
+    return
 
-    figureList = {}
-    plt.figure(1)
-    pltName = 'AttitudeError'
-    for idx in range(1,4):
-        plt.plot(timeData, dataSigmaBR[:, idx],
-                 label='Run ' + str(data["index"]) + ' $\sigma_'+str(idx)+'$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Attitude Error $\sigma_{B/R}$')
-    figureList[pltName] = plt.figure(1)
-
-    plt.figure(2)
-    pltName = 'RWMotorTorque'
-    for idx in range(1,4):
-        plt.plot(timeData, dataUsReq[:, idx],
-                 '--',
-                 label='Run ' + str(data["index"]) + ' $\hat u_{s,'+str(idx)+'}$')
-        plt.plot(timeData, dataRW[idx-1][:, 1],
-                 label='Run ' + str(data["index"]) + ' $u_{s,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Motor Torque (Nm)')
-    figureList[pltName] = plt.figure(2)
-
-    plt.figure(3)
-    pltName = 'RateTrackingError'
-    for idx in range(1,4):
-        plt.plot(timeData, dataOmegaBR[:, idx],
-                 label='Run ' + str(data["index"]) + ' $\omega_{BR,'+str(idx)+'}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Rate Tracking Error (rad/s) ')
-    figureList[pltName] = plt.figure(3)
-
-    plt.figure(4)
-    pltName = 'RWSpeed'
-    for idx in range(1,len(rwOutName)+1):
-        plt.plot(timeData, dataOmegaRW[:, idx]/macros.RPM,
-                 label='Run ' + str(data["index"]) + ' $\Omega_{'+str(idx)+'}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Speed (RPM) ')
-    figureList[pltName] = plt.figure(4)
-
-    plt.figure(5)
-    pltName = 'RWVoltage'
-    for idx in range(1, len(rwOutName) + 1):
-        plt.plot(timeData, dataVolt[:, idx],
-                 label='Run ' + str(data["index"]) + ' $V_{' + str(idx) + '}$')
-    plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('RW Voltage (V) ')
-    figureList[pltName] = plt.figure(5)
-
-
-    return figureList
 
 def plotSimAndSave(data, retentionPolicy):
 
@@ -875,6 +820,8 @@ def systemWriteDirectories(path):
     else:
         print "success"
 
+
+# now only saves data not directories
 def createDirectoriesAndSaveData(data, name, run_number):
     # write data and create folders.
     monteCarloName = "/mc1/"
@@ -888,8 +835,41 @@ def createDirectoriesAndSaveData(data, name, run_number):
     # writeDirectories(path)
     path = path + "/" + file_name
 
+
     df = pd.DataFrame(data, columns=None)
     df.to_csv(path, encoding='utf-8', index=False)
+
+
+def noReadGraphDriver(data, name, run_number, index):
+    df = pd.DataFrame(data, columns=None)
+    graphWithoutReading(df, run_number, index)
+
+def graphWithoutReading(df, run_number, index):
+    titles = ["X", "Y", "Z"]
+
+    # TODO dynamically find col num per
+    if len(plotFigures) >= len(retainedDataList):
+        p = plotFigures[index]
+    else:
+        p = figure(plot_width=800, plot_height=250, x_axis_type="datetime")
+        p.title.text = "title"
+        p.legend.location = "top_right"
+        p.legend.click_policy = "hide"
+        p.xaxis.axis_label = "Time [min]"
+        p.yaxis.axis_label = "y label"
+
+    newTime = df.values[:, 0] * macros.NANO2MIN
+    timeDF = pd.DataFrame(newTime, columns=None)
+
+    for column, title in zip(range(1, 4), titles):
+        p.line(x=timeDF.iloc[:, 0], y=df.iloc[:, column], line_width=2, color="green", alpha=0.8,
+               legend="Run " + str(run_number))
+
+
+    if len(plotFigures) < len(retainedDataList):
+        plotFigures.append(p)
+    else:
+        plotFigures[index] = p
 
 def graph():
     yAxisLabels = ["RW Speed (RPM)", "Attitude Error Sigma B/R", "Attitude Error Omega BR", "Y label", "Y Label"]
