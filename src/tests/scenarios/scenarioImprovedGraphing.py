@@ -32,6 +32,7 @@ import os
 import numpy as np
 import shutil
 import matplotlib.pyplot as plt
+import datetime
 
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -86,7 +87,7 @@ from matplotlib.colors import rgb2hex
 from matplotlib.cm import get_cmap
 
 
-NUMBER_OF_RUNS = 5
+NUMBER_OF_RUNS = 500
 VERBOSE = True
 ONLY_GRAPH = 0
 
@@ -111,8 +112,8 @@ retainedDataList = [rwMotorTorqueConfigOutputDataName_motorTorque, attErrorConfi
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
 # We also will need the simulationTime and samplingTimes
-numDataPoints = 100000
-simulationTime = macros.min2nano(10.)
+numDataPoints = 1000
+simulationTime = macros.min2nano(60.)
 samplingTime = simulationTime / (numDataPoints-1)
 
 ## \defgroup Tutorials_5_0
@@ -413,6 +414,7 @@ def run(saveFigures, show_plots):
         retentionPolicy.setDataCallback(plotSimAndSave)
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
+    writeDirectories()
     # After the monteCarlo run is configured, it is executed.
     # This method returns the list of jobs that failed.
     failures = monteCarlo.executeSimulations()
@@ -471,12 +473,16 @@ def run(saveFigures, show_plots):
 
     # And possibly show the plots
     if show_plots:
+        print "starting bokeh graph"
+        print datetime.datetime.now()
         graph()
-
-        print "Test concluded, showing plots now..."
+        print "bokeh finished."
+        print "Test concluded, showing plots now via matplotlib..."
+        print datetime.datetime.now()
 
         plt.show()
 
+        print datetime.datetime.now()
 
         # close the plots being saved off to avoid over-writing old and new figures
         plt.close("all")
@@ -747,6 +753,7 @@ def plotSim(data, retentionPolicy):
     createDirectoriesAndSaveData(dataOmegaRW[:,1:], mrpControlConfigInputRWSpeedsName_wheelSpeeds, run_number)
     createDirectoriesAndSaveData(dataVolt[:,1:], fswRWVoltageConfigVoltageOutMsgName_voltage, run_number)
 
+
     dataRW = []
     for message in rwOutName:
         dataRW.append(data["messages"][message+".u_current"])
@@ -842,8 +849,24 @@ def base_plot(xaxis, yaxis):
     p.yaxis.axis_label_text_font_size = '12pt'
     return p
 
-# TODO - create directories first and save to them later.
-def writeDirectories(path):
+
+
+
+def writeDirectories():
+    monteCarloName = "/mc1/"
+    mainDirectoryName = "data/"
+    # subDirectoryName = name
+    # path = mainDirectoryName + monteCarloName + subDirectoryName
+
+    for data in retainedDataList:
+        path = mainDirectoryName + monteCarloName + data
+        systemWriteDirectories(path)
+
+    # create time directory to store time file
+    path = mainDirectoryName + monteCarloName + "time"
+    systemWriteDirectories(path)
+
+def systemWriteDirectories(path):
 
     try:
         os.makedirs(path)
@@ -862,7 +885,7 @@ def createDirectoriesAndSaveData(data, name, run_number):
     subDirectoryName = name
 
     path = mainDirectoryName + monteCarloName + subDirectoryName
-    writeDirectories(path)
+    # writeDirectories(path)
     path = path + "/" + file_name
 
     df = pd.DataFrame(data, columns=None)
