@@ -79,16 +79,16 @@ from bokeh.transform import linear_cmap
 
 import itertools
 # from bokeh.palettes import d3 as palette
-import datashader as ds
-import datashader.transfer_functions as tf
-from datashader.colors import inferno
+# import datashader as ds
+# import datashader.transfer_functions as tf
+# from datashader.colors import inferno
 from matplotlib.colors import rgb2hex
 from matplotlib.cm import get_cmap
 
 
-NUMBER_OF_RUNS = 2
+NUMBER_OF_RUNS = 5
 VERBOSE = True
-ONLY_GRAPH = 1
+ONLY_GRAPH = 0
 
 # Here are the name of some messages that we want to retain or otherwise use
 inertial3DConfigOutputDataName = "guidanceInertial3D"
@@ -111,8 +111,8 @@ retainedDataList = [rwMotorTorqueConfigOutputDataName_motorTorque, attErrorConfi
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
 # We also will need the simulationTime and samplingTimes
-numDataPoints = 1000
-simulationTime = macros.min2nano(5.)
+numDataPoints = 100000
+simulationTime = macros.min2nano(10.)
 samplingTime = simulationTime / (numDataPoints-1)
 
 ## \defgroup Tutorials_5_0
@@ -471,8 +471,13 @@ def run(saveFigures, show_plots):
 
     # And possibly show the plots
     if show_plots:
+        graph()
+
         print "Test concluded, showing plots now..."
+
         plt.show()
+
+
         # close the plots being saved off to avoid over-writing old and new figures
         plt.close("all")
 
@@ -807,6 +812,7 @@ def plotSim(data, retentionPolicy):
     plt.ylabel('RW Voltage (V) ')
     figureList[pltName] = plt.figure(5)
 
+
     return figureList
 
 def plotSimAndSave(data, retentionPolicy):
@@ -863,13 +869,15 @@ def createDirectoriesAndSaveData(data, name, run_number):
     df.to_csv(path, encoding='utf-8', index=False)
 
 def graph():
-    columns = ["Time", "X", "Y", "Z", "a", "b"]
-    for data in retainedDataList:
-        configureGraph(data)
+    yAxisLabels = ["RW Speed (RPM)", "Attitude Error Sigma B/R", "Attitude Error Omega BR", "Y label", "Y Label"]
+    for data, yAxisLabel in zip(retainedDataList, yAxisLabels):
+        configureGraph(data, yAxisLabel)
 
 
-def configureGraph(data):
+
+def configureGraph(data, yAxisLabel):
     titles = ["X", "Y", "Z"]
+
     p = figure(plot_width=800, plot_height=250, x_axis_type="datetime")
     for runNumber, color in zip(range(0, NUMBER_OF_RUNS), Spectral6):
         df = pd.read_csv(
@@ -878,15 +886,17 @@ def configureGraph(data):
         timeDF = pd.read_csv("data/mc1/time/time_run_0.csv")
         newTime = timeDF.values[:, 0] * macros.NANO2MIN
         timeDF = pd.DataFrame(newTime, columns=None)
+
+        p.title.text = data
+        p.legend.location = "top_right"
+        p.legend.click_policy = "hide"
+        p.xaxis.axis_label = "Time [min]"
+        p.yaxis.axis_label = yAxisLabel
+
+
         for column, title in zip(range(0, 3), titles):
             p.line(x=timeDF.iloc[:, 0], y=df.iloc[:, column], line_width=2, color=color, alpha=0.8,
                    legend="Run " + str(runNumber) + " " + title)
-
-    p.title.text = 'AttError in sigma br'
-    p.legend.location = "top_right"
-    p.legend.click_policy = "hide"
-
-    # output_file("interactive_legend.html", title="interactive_legend.py example")
 
     show(p)
 #
