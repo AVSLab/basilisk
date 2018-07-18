@@ -40,7 +40,7 @@ from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
 from Basilisk.simulation import spacecraftPlus, spice_interface, coarse_sun_sensor
-from Basilisk.fswAlgorithms import sunlineUKF, sunlineEKF, okeefeEKF, sunlineSEKF, vehicleConfigData
+from Basilisk.fswAlgorithms import sunlineUKF, sunlineEKF, okeefeEKF, sunlineSEKF, fswMessages
 
 import SunLineKF_test_utilities as Fplot
 
