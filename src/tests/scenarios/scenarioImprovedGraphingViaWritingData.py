@@ -79,15 +79,15 @@ from bokeh.palettes import Spectral6
 from bokeh.transform import linear_cmap
 
 import itertools
-# from bokeh.palettes import d3 as palette
-# import datashader as ds
-# import datashader.transfer_functions as tf
-# from datashader.colors import inferno
+from bokeh.palettes import d3 as palette
+import datashader as ds
+import datashader.transfer_functions as tf
+from datashader.colors import inferno
 from matplotlib.colors import rgb2hex
 from matplotlib.cm import get_cmap
 
 
-NUMBER_OF_RUNS = 100
+NUMBER_OF_RUNS = 1000
 VERBOSE = True
 ONLY_GRAPH = 0
 
@@ -107,13 +107,23 @@ sNavObjectOutputTransName_r_BN_N = sNavObjectOutputTransName + ".r_BN_N"
 mrpControlConfigInputRWSpeedsName_wheelSpeeds = mrpControlConfigInputRWSpeedsName + ".wheelSpeeds"
 fswRWVoltageConfigVoltageOutMsgName_voltage = fswRWVoltageConfigVoltageOutMsgName + ".voltage"
 
-retainedDataList = [rwMotorTorqueConfigOutputDataName_motorTorque, attErrorConfigOutputDataName_sigma_BR, attErrorConfigOutputDataName_omega_BR_B, sNavObjectOutputTransName_r_BN_N, mrpControlConfigInputRWSpeedsName_wheelSpeeds, fswRWVoltageConfigVoltageOutMsgName_voltage]
+retainedDataList = [rwMotorTorqueConfigOutputDataName_motorTorque, attErrorConfigOutputDataName_sigma_BR,
+                    attErrorConfigOutputDataName_omega_BR_B, sNavObjectOutputTransName_r_BN_N,
+                    mrpControlConfigInputRWSpeedsName_wheelSpeeds, fswRWVoltageConfigVoltageOutMsgName_voltage]
+
+time_dataFrame = pd.DataFrame()
+rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame = pd.DataFrame()
+attErrorConfigOutputDataName_sigma_BR_dataFrame = pd.DataFrame()
+attErrorConfigOutputDataName_omega_BR_B_dataFrame = pd.DataFrame()
+sNavObjectOutputTransName_r_BN_N_dataFrame = pd.DataFrame()
+mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame = pd.DataFrame()
+fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame = pd.DataFrame()
 
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
 # We also will need the simulationTime and samplingTimes
 numDataPoints = 1000
-simulationTime = macros.min2nano(10.)
+simulationTime = macros.min2nano(60.)
 samplingTime = simulationTime / (numDataPoints-1)
 
 ## \defgroup Tutorials_5_0
@@ -739,19 +749,28 @@ def plotSim(data, retentionPolicy):
 
     run_number = data["index"]
 
-    # Write the time data to a separate file so there is so redundant data.
-    if run_number == 0:
-        createDirectoriesAndSaveData(dataUsReq[:, [0]], "time", 0)
 
     # Write the retained data to a csv file.
     # Don't include the first column of the data since that is time and uneeded data.
 
-    createDirectoriesAndSaveData(dataUsReq[:,1:], rwMotorTorqueConfigOutputDataName_motorTorque, run_number)
-    createDirectoriesAndSaveData(dataSigmaBR[:,1:], attErrorConfigOutputDataName_sigma_BR, run_number)
-    createDirectoriesAndSaveData(dataOmegaBR[:,1:], attErrorConfigOutputDataName_omega_BR_B, run_number)
-    createDirectoriesAndSaveData(dataPos[:,1:], sNavObjectOutputTransName_r_BN_N, run_number)
-    createDirectoriesAndSaveData(dataOmegaRW[:,1:], mrpControlConfigInputRWSpeedsName_wheelSpeeds, run_number)
-    createDirectoriesAndSaveData(dataVolt[:,1:], fswRWVoltageConfigVoltageOutMsgName_voltage, run_number)
+    global time_dataFrame
+    global rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame
+    global attErrorConfigOutputDataName_sigma_BR_dataFrame
+    global attErrorConfigOutputDataName_omega_BR_B_dataFrame
+    global sNavObjectOutputTransName_r_BN_N_dataFrame
+    global mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame
+    global fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame
+
+    # Write the time data to a separate file so there is so redundant data.
+    if run_number == 0:
+        time_dataFrame = createDirectoriesAndSaveData(dataUsReq[:, [0]], time_dataFrame)
+
+    rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame = createDirectoriesAndSaveData(dataUsReq[:,1:], rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame)
+    attErrorConfigOutputDataName_sigma_BR_dataFrame = createDirectoriesAndSaveData(dataSigmaBR[:,1:], attErrorConfigOutputDataName_sigma_BR_dataFrame)
+    attErrorConfigOutputDataName_omega_BR_B_dataFrame = createDirectoriesAndSaveData(dataOmegaBR[:,1:], attErrorConfigOutputDataName_omega_BR_B_dataFrame)
+    sNavObjectOutputTransName_r_BN_N_dataFrame = createDirectoriesAndSaveData(dataPos[:,1:], sNavObjectOutputTransName_r_BN_N_dataFrame)
+    mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame = createDirectoriesAndSaveData(dataOmegaRW[:,1:], mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame)
+    fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame = createDirectoriesAndSaveData(dataVolt[:,1:], fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame)
 
 
 def plotSimAndSave(data, retentionPolicy):
@@ -772,13 +791,9 @@ def writeDirectories():
     # subDirectoryName = name
     # path = mainDirectoryName + monteCarloName + subDirectoryName
 
-    for data in retainedDataList:
-        path = mainDirectoryName + monteCarloName + data
-        systemWriteDirectories(path)
-
-    # create time directory to store time file
-    path = mainDirectoryName + monteCarloName + "time"
+    path = mainDirectoryName + monteCarloName
     systemWriteDirectories(path)
+
 
 def systemWriteDirectories(path):
 
@@ -789,28 +804,59 @@ def systemWriteDirectories(path):
     else:
         print "success"
 
-def createDirectoriesAndSaveData(data, name, run_number):
+def createDirectoriesAndSaveData(data, dataframe):
     # write data and create folders.
+    # monteCarloName = "/mc1/"
+    # mainDirectoryName = "data/"
+    #
+    #
+    # file_name = name + "_run_" + str(run_number) + ".csv"
+    # subDirectoryName = name
+    #
+    # path = mainDirectoryName + monteCarloName + subDirectoryName
+    # path = path + "/" + file_name
+
+    df = pd.DataFrame(data, columns=None)
+    result = pd.concat([df, dataframe], axis = 1, sort = False)
+    return result
+
+    # print "dataframe:\n", rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame
+    # df.to_csv(path, encoding='utf-8', index=False)
+
+def graph():
+    # yAxisLabels = ["RW Speed (RPM)", "Attitude Error Sigma B/R", "Attitude Error Omega BR", "Y label", "Y Label"]
+    # for data, yAxisLabel in zip(retainedDataList, yAxisLabels):
+    #     configureGraph(data, yAxisLabel)
+
+    # yAxisLabels = ["Y"]
+
+    print "beginning writing csv..", datetime.datetime.now()
+
     monteCarloName = "/mc1/"
     mainDirectoryName = "data/"
 
+    path = mainDirectoryName + monteCarloName + "/" + rwMotorTorqueConfigOutputDataName + ".csv"
+    rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame.to_csv(path, encoding='utf-8', index=False)
 
-    file_name = name + "_run_" + str(run_number) + ".csv"
-    subDirectoryName = name
+    path = mainDirectoryName + monteCarloName + "/" +  "time.csv"
+    time_dataFrame.to_csv(path, encoding='utf-8', index=False)
 
-    path = mainDirectoryName + monteCarloName + subDirectoryName
-    # writeDirectories(path)
-    path = path + "/" + file_name
+    path = mainDirectoryName + monteCarloName + "/" + attErrorConfigOutputDataName_sigma_BR + ".csv"
+    attErrorConfigOutputDataName_sigma_BR_dataFrame.to_csv(path, encoding='utf-8', index=False)
 
-    df = pd.DataFrame(data, columns=None)
-    df.to_csv(path, encoding='utf-8', index=False)
+    path = mainDirectoryName + monteCarloName + "/" + attErrorConfigOutputDataName_omega_BR_B + ".csv"
+    attErrorConfigOutputDataName_omega_BR_B_dataFrame.to_csv(path, encoding='utf-8', index=False)
 
-def graph():
-    yAxisLabels = ["RW Speed (RPM)", "Attitude Error Sigma B/R", "Attitude Error Omega BR", "Y label", "Y Label"]
-    for data, yAxisLabel in zip(retainedDataList, yAxisLabels):
-        configureGraph(data, yAxisLabel)
+    path = mainDirectoryName + monteCarloName + "/" + sNavObjectOutputTransName + ".csv"
+    sNavObjectOutputTransName_r_BN_N_dataFrame.to_csv(path, encoding='utf-8', index=False)
 
+    path = mainDirectoryName + monteCarloName + "/" + mrpControlConfigInputRWSpeedsName + ".csv"
+    mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame.to_csv(path, encoding='utf-8', index=False)
 
+    path = mainDirectoryName + monteCarloName + "/" + fswRWVoltageConfigVoltageOutMsgName + ".csv"
+    fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame.to_csv(path, encoding='utf-8', index=False)
+
+    print "done writing csv..", datetime.datetime.now()
 
 def configureGraph(data, yAxisLabel):
     titles = ["X", "Y", "Z"]
@@ -828,7 +874,7 @@ def configureGraph(data, yAxisLabel):
         p.legend.location = "top_right"
         p.legend.click_policy = "hide"
         p.xaxis.axis_label = "Time [min]"
-        p.yaxis.axis_label = yAxisLabel
+        p.yaxis.axis_label = "Y"
 
 
         for column, title in zip(range(0, 3), titles):
