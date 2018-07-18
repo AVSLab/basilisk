@@ -45,6 +45,7 @@ import scenarioCSSFilters
       ('uKF', 400)
     , ('EKF', 400)
     , ('OEKF', 400)
+    , ('SEKF', 400)
 ])
 
 # provide a unique test method name, starting with test_

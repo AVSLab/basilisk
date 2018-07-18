@@ -114,7 +114,7 @@ def setupSEKFData(filterObject):
     filterObject.navStateOutMsgName = "sunline_state_estimate"
     filterObject.filtDataOutMsgName = "sunline_filter_data"
     filterObject.cssDataInMsgName = "css_sensors_data"
-    filterObject.cssConfInMsgName = "css_config_data"
+    filterObject.cssConfigInMsgName = "css_config_data"
 
     filterObject.states = [1.0, 0.1, 0., 0., 0.]
     filterObject.x = [0.0, 0.0, 0.0, 0.0, 0.0]
@@ -505,6 +505,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
     # Setup filter
     #
 
+    numStates = 6
     if FilterType == 'EKF':
         moduleConfig = sunlineEKF.sunlineEKFConfig()
         moduleWrap = scSim.setModelDataWrap(moduleConfig)
@@ -515,6 +516,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
         scSim.AddModelToTask(simTaskName, moduleWrap, moduleConfig)
 
     if FilterType == 'OEKF':
+        numStates = 3
 
         moduleConfig = okeefeEKF.okeefeEKFConfig()
         moduleWrap = scSim.setModelDataWrap(moduleConfig)
@@ -535,6 +537,8 @@ def run(saveFigures, show_plots, FilterType, simTime):
         scSim.AddModelToTask(simTaskName, moduleWrap, moduleConfig)
 
     if FilterType == 'SEKF':
+        numStates = 5
+
         moduleConfig = sunlineSEKF.sunlineSEKFConfig()
         moduleWrap = scSim.setModelDataWrap(moduleConfig)
         moduleWrap.ModelTag = "SunlineSEKF"
@@ -543,7 +547,6 @@ def run(saveFigures, show_plots, FilterType, simTime):
         # Add test module to runtime call list
         scSim.AddModelToTask(simTaskName, moduleWrap, moduleConfig)
 
-    numStates = len(moduleConfig.x)
     scSim.TotalSim.logThisMessage('sunline_state_estimate', simulationTimeStep)
     scSim.TotalSim.logThisMessage('sunline_filter_data', simulationTimeStep)
 
