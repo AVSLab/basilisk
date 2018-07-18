@@ -47,7 +47,7 @@ class scenario_AttitudeEclipse(BSKScenario):
     def configure_initial_conditions(self):
         print '%s: configure_initial_conditions' % self.name
         # Configure FSW mode
-        self.masterSim.modeRequest = 'sunSafePoint'#'feedbackRW'
+        self.masterSim.modeRequest = 'sunSafePoint'
 
         # Configure Dynamics initial conditions
 

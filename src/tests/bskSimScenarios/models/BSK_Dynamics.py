@@ -166,7 +166,8 @@ class BSKDynamicModels():
 
 
     def SetSpiceData(self, SimBase):
-        ephemerisMessageName = "earth_planet_data"#self.earthGravBody.bodyInMsgName
+        '''
+        ephemerisMessageName = "earth_planet_data"
         self.ephemerisSPICEObject.J2000Current = 0.0
         self.ephemerisSPICEObject.PositionVector = [0.0, 0.0, 0.0]
         self.ephemerisSPICEObject.VelocityVector = [0.0, 0.0, 0.0]
@@ -187,6 +188,7 @@ class BSKDynamicModels():
         ephemerisSunMessageSize = self.ephemerisSunSPICEObject.getStructSize()
         SimBase.TotalSim.CreateNewMessage(self.processName, ephemerisSunMessageName, ephemerisSunMessageSize, 2)
         SimBase.TotalSim.WriteMessageData(ephemerisSunMessageName, ephemerisSunMessageSize, 0, self.ephemerisSunSPICEObject)
+        '''
     
     # Global call to initialize every module
     def InitAllDynObjects(self):
