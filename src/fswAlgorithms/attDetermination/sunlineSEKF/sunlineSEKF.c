@@ -59,7 +59,7 @@ void CrossInit_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t moduleID)
     ConfigData->cssDataInMsgId = subscribeToMessage(ConfigData->cssDataInMsgName,
         sizeof(CSSArraySensorIntMsg), moduleID);
     /*! - Find the message ID for the coarse sun sensor configuration message */
-    ConfigData->cssConfInMsgId = subscribeToMessage(ConfigData->cssConfInMsgName,
+    ConfigData->cssConfInMsgId = subscribeToMessage(ConfigData->cssConfigInMsgName,
                                                    sizeof(CSSConfigFswMsg), moduleID);
     
     
