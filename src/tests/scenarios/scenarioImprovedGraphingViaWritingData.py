@@ -89,7 +89,7 @@ from matplotlib.cm import get_cmap
 
 NUMBER_OF_RUNS = 1000
 VERBOSE = True
-ONLY_GRAPH = 0
+ONLY_GRAPH = 1
 
 # Here are the name of some messages that we want to retain or otherwise use
 inertial3DConfigOutputDataName = "guidanceInertial3D"
@@ -483,8 +483,9 @@ def run(saveFigures, show_plots):
 
     # And possibly show the plots
     if show_plots:
-        print "starting bokeh graph"
+        print "starting bokeh graphing process"
         print datetime.datetime.now()
+        saveDataframesToFile()
         graph()
         print "bokeh finished."
         print "Test concluded, showing plots now via matplotlib..."
@@ -750,7 +751,7 @@ def plotSim(data, retentionPolicy):
     run_number = data["index"]
 
 
-    # Write the retained data to a csv file.
+    # Update dataframes
     # Don't include the first column of the data since that is time and uneeded data.
 
     global time_dataFrame
@@ -763,14 +764,14 @@ def plotSim(data, retentionPolicy):
 
     # Write the time data to a separate file so there is so redundant data.
     if run_number == 0:
-        time_dataFrame = createDirectoriesAndSaveData(dataUsReq[:, [0]], time_dataFrame)
+        time_dataFrame = updateDataframes(dataUsReq[:, [0]], time_dataFrame)
 
-    rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame = createDirectoriesAndSaveData(dataUsReq[:,1:], rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame)
-    attErrorConfigOutputDataName_sigma_BR_dataFrame = createDirectoriesAndSaveData(dataSigmaBR[:,1:], attErrorConfigOutputDataName_sigma_BR_dataFrame)
-    attErrorConfigOutputDataName_omega_BR_B_dataFrame = createDirectoriesAndSaveData(dataOmegaBR[:,1:], attErrorConfigOutputDataName_omega_BR_B_dataFrame)
-    sNavObjectOutputTransName_r_BN_N_dataFrame = createDirectoriesAndSaveData(dataPos[:,1:], sNavObjectOutputTransName_r_BN_N_dataFrame)
-    mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame = createDirectoriesAndSaveData(dataOmegaRW[:,1:], mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame)
-    fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame = createDirectoriesAndSaveData(dataVolt[:,1:], fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame)
+    rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame = updateDataframes(dataUsReq[:, 1:], rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame)
+    attErrorConfigOutputDataName_sigma_BR_dataFrame = updateDataframes(dataSigmaBR[:, 1:], attErrorConfigOutputDataName_sigma_BR_dataFrame)
+    attErrorConfigOutputDataName_omega_BR_B_dataFrame = updateDataframes(dataOmegaBR[:, 1:], attErrorConfigOutputDataName_omega_BR_B_dataFrame)
+    sNavObjectOutputTransName_r_BN_N_dataFrame = updateDataframes(dataPos[:, 1:], sNavObjectOutputTransName_r_BN_N_dataFrame)
+    mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame = updateDataframes(dataOmegaRW[:, 1:], mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame)
+    fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame = updateDataframes(dataVolt[:, 1:], fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame)
 
 
 def plotSimAndSave(data, retentionPolicy):
@@ -788,15 +789,11 @@ def plotSimAndSave(data, retentionPolicy):
 def writeDirectories():
     monteCarloName = "/mc1/"
     mainDirectoryName = "data/"
-    # subDirectoryName = name
-    # path = mainDirectoryName + monteCarloName + subDirectoryName
-
     path = mainDirectoryName + monteCarloName
     systemWriteDirectories(path)
 
 
 def systemWriteDirectories(path):
-
     try:
         os.makedirs(path)
     except OSError:
@@ -804,26 +801,13 @@ def systemWriteDirectories(path):
     else:
         print "success"
 
-def createDirectoriesAndSaveData(data, dataframe):
-    # write data and create folders.
-    # monteCarloName = "/mc1/"
-    # mainDirectoryName = "data/"
-    #
-    #
-    # file_name = name + "_run_" + str(run_number) + ".csv"
-    # subDirectoryName = name
-    #
-    # path = mainDirectoryName + monteCarloName + subDirectoryName
-    # path = path + "/" + file_name
-
+def updateDataframes(data, dataframe):
     df = pd.DataFrame(data, columns=None)
     result = pd.concat([df, dataframe], axis = 1, sort = False)
     return result
 
-    # print "dataframe:\n", rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame
-    # df.to_csv(path, encoding='utf-8', index=False)
 
-def graph():
+def saveDataframesToFile():
     # yAxisLabels = ["RW Speed (RPM)", "Attitude Error Sigma B/R", "Attitude Error Omega BR", "Y label", "Y Label"]
     # for data, yAxisLabel in zip(retainedDataList, yAxisLabels):
     #     configureGraph(data, yAxisLabel)
@@ -835,7 +819,7 @@ def graph():
     monteCarloName = "/mc1/"
     mainDirectoryName = "data/"
 
-    path = mainDirectoryName + monteCarloName + "/" + rwMotorTorqueConfigOutputDataName + ".csv"
+    path = mainDirectoryName + monteCarloName + "/" + rwMotorTorqueConfigOutputDataName_motorTorque + ".csv"
     rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame.to_csv(path, encoding='utf-8', index=False)
 
     path = mainDirectoryName + monteCarloName + "/" +  "time.csv"
@@ -847,39 +831,54 @@ def graph():
     path = mainDirectoryName + monteCarloName + "/" + attErrorConfigOutputDataName_omega_BR_B + ".csv"
     attErrorConfigOutputDataName_omega_BR_B_dataFrame.to_csv(path, encoding='utf-8', index=False)
 
-    path = mainDirectoryName + monteCarloName + "/" + sNavObjectOutputTransName + ".csv"
+    path = mainDirectoryName + monteCarloName + "/" + sNavObjectOutputTransName_r_BN_N + ".csv"
     sNavObjectOutputTransName_r_BN_N_dataFrame.to_csv(path, encoding='utf-8', index=False)
 
-    path = mainDirectoryName + monteCarloName + "/" + mrpControlConfigInputRWSpeedsName + ".csv"
+    path = mainDirectoryName + monteCarloName + "/" + mrpControlConfigInputRWSpeedsName_wheelSpeeds + ".csv"
     mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame.to_csv(path, encoding='utf-8', index=False)
 
-    path = mainDirectoryName + monteCarloName + "/" + fswRWVoltageConfigVoltageOutMsgName + ".csv"
+    path = mainDirectoryName + monteCarloName + "/" + fswRWVoltageConfigVoltageOutMsgName_voltage + ".csv"
     fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame.to_csv(path, encoding='utf-8', index=False)
 
     print "done writing csv..", datetime.datetime.now()
+
+
+def graph():
+    for data in retainedDataList:
+        configureGraph(data, "")
+
 
 def configureGraph(data, yAxisLabel):
     titles = ["X", "Y", "Z"]
 
     p = figure(plot_width=800, plot_height=250, x_axis_type="datetime")
-    for runNumber, color in zip(range(0, NUMBER_OF_RUNS), Spectral6):
-        df = pd.read_csv(
-            "data/mc1/" + data + "/" + data + "_run_" + str(
-                runNumber) + ".csv")
-        timeDF = pd.read_csv("data/mc1/time/time_run_0.csv")
-        newTime = timeDF.values[:, 0] * macros.NANO2MIN
-        timeDF = pd.DataFrame(newTime, columns=None)
-
-        p.title.text = data
-        p.legend.location = "top_right"
-        p.legend.click_policy = "hide"
-        p.xaxis.axis_label = "Time [min]"
-        p.yaxis.axis_label = "Y"
 
 
-        for column, title in zip(range(0, 3), titles):
-            p.line(x=timeDF.iloc[:, 0], y=df.iloc[:, column], line_width=2, color=color, alpha=0.8,
-                   legend="Run " + str(runNumber) + " " + title)
+    df = pd.read_csv(
+        "data/mc1/" + data + ".csv")
+    timeDF = pd.read_csv("data/mc1/time.csv")
+    newTime = timeDF.values[:, 0] * macros.NANO2MIN
+    timeDF = pd.DataFrame(newTime, columns=None)
+    p.title.text = "title"
+    p.legend.location = "top_right"
+    p.legend.click_policy = "hide"
+    p.xaxis.axis_label = "Time [min]"
+    p.yaxis.axis_label = "Y"
+
+    colsPerRun = len(df.columns) / NUMBER_OF_RUNS
+
+    for column in xrange(0, len(df.columns), colsPerRun):
+        print "col: ", column
+        color = "green"
+        p.line(x=timeDF.iloc[:, 0], y=df.iloc[:, column], line_width=2, color=color, alpha=0.8,
+               legend="Run " + str(column))
+        # p.line(x=timeDF.iloc[:, 0], y=df.iloc[:, column+1], line_width=2, color=color, alpha=0.8,
+        #        legend="Run " + str(column))
+        # # print "col: ", column +1
+        # p.line(x=timeDF.iloc[:, 0], y=df.iloc[:, column+2], line_width=2, color=color, alpha=0.8,
+        #        legend="Run " + str(column))
+        # print "col: ", column+2
+
 
     show(p)
 #
