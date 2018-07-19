@@ -419,108 +419,108 @@ void GravityEffector::linkInStates(DynParamManager& statesIn)
     this->timeCorr = statesIn.getPropertyReference(this->systemTimeCorrPropName);
 }
 
-void GravityEffector::computeGravityField(Eigen::Vector3d r_CN_N, Eigen::Vector3d rDot_CN_N)
+/*!Calculate gravitational acceleration of s/c wrt inertial (no central body) or wrt central body
+@params r_cF_N is position of center of mass of s/c wrt frame it is stored/integrated in in spacecraft
+@params rDot_cF_N is the derivative of above
+*/
+void GravityEffector::computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3d rDot_cF_N)
 {
     std::vector<GravBodyData *>::iterator it;
     uint64_t systemClock = this->timeCorr->data()[0];
-    Eigen::Vector3d centralPos;
-    Eigen::Vector3d centralVel;
-    centralPos.fill(0.0);
-    centralVel.fill(0.0);
-    Eigen::Vector3d gravOut;
-    gravOut.fill(0.0);
-    Eigen::MRPd sigmaBNLoc;
+    Eigen::Vector3d r_cN_N;          //position of s/c CoM wrt N
+    Eigen::Vector3d r_CN_N;          //inertial position of central body if there is one. Big C is central body. Little c is CoM of s/c
+    Eigen::Vector3d r_PN_N;          //position of Planet being queried wrt N
+    Eigen::Vector3d r_cP_N;          //position of s/c CoM wrt planet in N
+    Eigen::Vector3d rDotDot_cF_N;    //acceleration of CoM of s/c wrt Frame in which it is stored/integrated in spacecraft
+    rDotDot_cF_N.fill(0.0);
+    Eigen::Vector3d rDotDot_cN_N_P;  //acceleration of c wrt N in N, due to P
+    
+    if (this->centralBody){   //Evaluates true if there is a central body, false otherwise
+        r_CN_N = getEulerSteppedGravBodyPosition(this->centralBody);
+        r_cN_N = r_cF_N + r_CN_N; //shift s/c to be wrt inertial frame origin if it isn't already
+    }else{
+        r_cN_N = r_cF_N;
+    }
     
     for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
     {
-        Eigen::Vector3d posRelBody_N;
-        posRelBody_N = r_CN_N;
-        Eigen::Vector3d mappedPos = getEulerSteppedGravBodyPosition(*it);
-        posRelBody_N -= mappedPos;
-        
-        if(this->centralBody)
+        r_PN_N = getEulerSteppedGravBodyPosition(*it);
+        r_cP_N = r_cN_N - r_PN_N;
+        if(this->centralBody)   //Evaluates true if there is a central body, false otherwise
         {
-            centralPos = getEulerSteppedGravBodyPosition(this->centralBody);
-            posRelBody_N += centralPos;
             if(this->centralBody != (*it))
             {
-                Eigen::Vector3d frmGrav =
-                    (*it)->computeGravityInertial(mappedPos-centralPos , systemClock);
-                gravOut += frmGrav;
+                rDotDot_cF_N += (*it)->computeGravityInertial(r_PN_N - r_CN_N, systemClock); //subtract accel of central body due to other bodies to get RELATIVE accel of s/c. See Vallado on "Three-body and n-body Equations"
             }
         }
-        
-        Eigen::Vector3d bodyGrav = (*it)->computeGravityInertial(posRelBody_N,
-            systemClock);
-        gravOut += bodyGrav;
+        rDotDot_cN_N_P = (*it)->computeGravityInertial(r_cP_N, systemClock); //acc of s/c wrt N CoM in Frame used for s/c dynamics
+        rDotDot_cF_N += rDotDot_cN_N_P;
     }
-    *this->gravProperty = gravOut;
+    
+    *this->gravProperty = rDotDot_cF_N;
 }
-
-void GravityEffector::updateInertialPosAndVel(Eigen::Vector3d r_BN_N, Eigen::Vector3d rDot_BN_N)
+/*!Calculate gravitational acceleration of s/c wrt inertial (no central body) or wrt central body
+ @params r_BF_N is position of body frame of s/c wrt frame it is stored/integrated in in spacecraft
+ @params rDot_BF_N is the derivative of above
+ */
+void GravityEffector::updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vector3d rDot_BF_N)
 {
-    // Here we explicitly update the system inertial spacecraft position
-    // in the spice reference frame if we are computing dynamics
-    // relative to a central body (!Is the velocity for the central body
-    // correct here?)
-    if(this->centralBody)
+    // Here we add the central body inertial position and velocities to the central-body-relative
+    // position and velicities which are propogated relative to the central body
+    if(this->centralBody)   //Evaluates true if there is a central body, false otherwise
     {
-        Eigen::Vector3d centralPos = getEulerSteppedGravBodyPosition(this->centralBody);
-        *this->inertialPositionProperty = centralPos + r_BN_N;
-        *this->inertialVelocityProperty = Eigen::Map<Eigen::MatrixXd>(&(this->centralBody->localPlanet.VelocityVector[0]), 3, 1) + rDot_BN_N;
+        Eigen::Vector3d r_CN_N = getEulerSteppedGravBodyPosition(this->centralBody);
+        *this->inertialPositionProperty = r_CN_N + r_BF_N;
+        *this->inertialVelocityProperty = Eigen::Map<Eigen::MatrixXd>(&(this->centralBody->localPlanet.VelocityVector[0]), 3, 1) + rDot_BF_N;
     } else {
-        *this->inertialPositionProperty = r_BN_N;
-        *this->inertialVelocityProperty = rDot_BN_N;
+        *this->inertialPositionProperty = r_BF_N;
+        *this->inertialVelocityProperty = rDot_BF_N;
     }
 }
-
+/*!Calculate gravitational acceleration of s/c wrt inertial (no central body) or wrt central body
+ @params r_cF_N is position of center of mass of s/c wrt frame it is stored/integrated in in spacecraft
+ @params rDot_cF_N is the derivative of above
+ */
 Eigen::Vector3d GravityEffector::getEulerSteppedGravBodyPosition(GravBodyData *bodyData)
 {
-    Eigen::Vector3d mappedPos;
-    mappedPos.fill(0.0);
     uint64_t systemClock = this->timeCorr->data()[0];
     double dt = (systemClock - bodyData->localHeader.WriteClockNanos)*NANO2SEC;
-    mappedPos = Eigen::Map<Eigen::MatrixXd>
+    Eigen::Vector3d r_PN_N = Eigen::Map<Eigen::MatrixXd>
     (&(bodyData->localPlanet.PositionVector[0]), 3, 1);
-    mappedPos += Eigen::Map<Eigen::Vector3d>
+    r_PN_N += Eigen::Map<Eigen::Vector3d>
     (&(bodyData->localPlanet.VelocityVector[0]), 3, 1)*dt;
-    return mappedPos;
+    return r_PN_N;
 }
 
-void GravityEffector::updateEnergyContributions(Eigen::Vector3d r_CN_N, double & orbPotEnergyContr)
+void GravityEffector::updateEnergyContributions(Eigen::Vector3d r_cF_N, double & orbPotEnergyContr)
 {
-    Eigen::Vector3d centralPos;
-    Eigen::Vector3d centralVel;
-    centralPos.fill(0.0);
-    centralVel.fill(0.0);
-    Eigen::Vector3d cLocal_N;
-    Eigen::MRPd sigmaBNLoc;
-    Eigen::Matrix3d dcm_NB;
-
+    Eigen::Vector3d r_CN_N;  // C is central body. position of C wrt N in N
+    Eigen::Vector3d r_PN_N;  // P is planet being queried. position of planet wrt N in N
+    Eigen::Vector3d r_cP_N;  // c is s/c CoM. position of c wrt P in N
+    Eigen::Vector3d r_cN_N;  // position c wrt N in N
+    
+    if(this->centralBody){   //Evaluates true if there is a central body, false otherwise
+        r_CN_N = getEulerSteppedGravBodyPosition(this->centralBody);
+        r_cN_N = r_cF_N + r_CN_N; //shift s/c to be wrt inertial frame origin if it isn't already
+    }else{
+        r_cN_N = r_cF_N;
+    }
+    
     std::vector<GravBodyData *>::iterator it;
     for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
     {
-        Eigen::Vector3d posRelBody_N;
-        posRelBody_N = r_CN_N;
-        Eigen::Vector3d mappedPos = getEulerSteppedGravBodyPosition(*it);
-        posRelBody_N -= mappedPos;
-
-        if(this->centralBody)
+        r_PN_N = getEulerSteppedGravBodyPosition(*it);
+        r_cP_N = r_cN_N - r_PN_N;
+        
+        if(this->centralBody)   //Evaluates true if there is a central body, false otherwise
         {
-            centralPos = getEulerSteppedGravBodyPosition(this->centralBody);
-            posRelBody_N += centralPos;
             if(this->centralBody != (*it))
             {
-                double frmPot =
-                (*it)->computePotentialEnergy(mappedPos-centralPos);
-                orbPotEnergyContr += frmPot;
+                orbPotEnergyContr += (*it)->computePotentialEnergy(r_PN_N - r_CN_N); //potential of central body w/in current planet field. leads to relative potential energy solution
             }
         }
-
-        double bodyPot = (*it)->computePotentialEnergy(posRelBody_N);
-        orbPotEnergyContr += bodyPot;
+        orbPotEnergyContr = (*it)->computePotentialEnergy(r_cP_N); //Potential w/in current planet field
     }
-
     return;
 }
 

@@ -11,14 +11,14 @@ The gravity effector module is critical to the propagation of spacecraft orbits 
 If no planets in a simulation are set as the central body, then an absolute formulation of gravitational acceleration is used. In the absolute formulation, acceleration of a spacecraft due to each massive body is summed directly to calculate the resultant acceleration of the spacecraft.
 
 \begin{equation}
-	\ddot{r}_{B/N, grav} = \sum_{i = 1}^{n} \ddot{r}_{B/N, i}
+	\ddot{\bm{r}}_{B/N, \mathrm{grav}} = \sum_{i = 1}^{n} \ddot{\bm{r}}_{B/N, i}
 \end{equation}
-where the accelerations on the right hand side are the acceleration due to the $i^{th}$ planet which is being modeled as a gravity body. In this absolute mode, spacecraft position and velocity are integrated with respect to the inertial origin, typically solar system barycenter.
+where the accelerations on the right hand side are the acceleration due to the $i^{\mathrm{th}}$ planet which is being modeled as a gravity body. In this absolute mode, spacecraft position and velocity are integrated with respect to the inertial origin, typically solar system barycenter.
 
 In the relative formulation, the acceleration of the spacecraft is calculated \textit{relative to} the central body. This is done by calculating the acceleration of the central body and subtracting it from the acceleration of the spacecraft.
 
 \begin{equation}
-	\ddot{r}_{B/C, grav} =\ddot{r}_{B/N, grav} - \ddot{r}_{C/N, grav}
+	\ddot{\bm{r}}_{B/C, \mathrm{grav}} =\ddot{\bm{r}}_{B/N, \mathrm{grav}} - \ddot{\bm{r}}_{C/N, \mathrm{grav}}
 \end{equation}
 
 where $C$ is the central body. In this case, other accelerations of the central body (due to solar radiation pressure, for instance) are ignored.  For relative dynamics, the Basilisk dynamics integrator uses only \textit{relative} acceleration to calculate \textit{relative} position and velocity. The gravity module then accounts for this and modifies the spacecraft position and velocity by the central body's position and velocity after each timestep.
@@ -28,28 +28,28 @@ The above relative formulation leads to some questions regarding the accuracy of
 Absolute accelerations (i.e. due to thrust) being integrated alongside the relative gravitational acceleration is handled easily due to the linearity of integration. In the absolute dynamics formulation there is:
 
 \begin{equation}
-	\ddot{r}_{B/N} = \ddot{r}_{B/N, grav}  + \ddot{r}_{B/N, thrust} + \ddot{r}_{B/N, SRP} + \dots
+	\ddot{\bm{r}}_{B/N} = \ddot{\bm{r}}_{B/N, \mathrm{grav}}  + \ddot{\bm{r}}_{B/N, \mathrm{thrust}} + \ddot{\bm{r}}_{B/N, \mathrm{SRP}} + \dots
 	\label{eq:absGrav}
 \end{equation}
 and each term can be integrated separately on the right side so that
 \begin{equation}
-      r_{B/N} = \int \int \ddot{r}_{B/N, grav} dt dt +   \int \int \ddot{r}_{B/N, thrust} dt dt +  \int \int \ddot{r}_{B/N, SRP}dt dt +  \dots
+      \bm{r}_{B/N} = \int \int \ddot{\bm{r}}_{B/N, \mathrm{grav}} \mathrm{dtdt} +   \int \int \ddot{\bm{r}}_{B/N, \mathrm{thrust}} \mathrm{dtdt} +  \int \int \ddot{\bm{r}}_{B/N, \mathrm{SRP}}\mathrm{dt dt} +  \dots
 \end{equation}
 In the derivation that follows, the double integral to position is used, but the logic holds for the first integral to velocity as well. Now, because accelerations also add linearly,
 \begin{equation}
-\ddot{r}_{B/N} = \ddot{r}_{B/C} + \ddot{r}_{C/N} = \ddot{r}_{B/C, grav} +  \ddot{r}_{C/N, grav}  + \ddot{r}_{B/N, thrust} + \ddot{r}_{B/N, SRP} + \dots
+\ddot{\bm{r}}_{B/N} = \ddot{\bm{r}}_{B/C} + \ddot{\bm{r}}_{C/N} = \ddot{\bm{r}}_{B/C, \mathrm{grav}} +  \ddot{\bm{r}}_{C/N, \mathrm{grav}}  + \ddot{\bm{r}}_{B/N, \mathrm{thrust}} + \ddot{\bm{r}}_{B/N, \mathrm{SRP}} + \dots
 \end{equation}
 which differs from Eq. \ref{eq:absGrav} in the gravitational acceleration of the spacecraft being split at the acceleration of the central body. Applying the integrals:
 \begin{equation}
-r_{B/N} = r_{B/C} + r_{C/N} = \int \int \ddot{r}_{B/C, grav} dt dt + r_{C/N}  +   \int \int \ddot{r}_{B/N, thrust} dt dt +  \int \int \ddot{r}_{B/N, SRP}dt dt +  \dots
+\bm{r}_{B/N} = \bm{r}_{B/C} + \bm{r}_{C/N} = \int \int \ddot{\bm{r}}_{B/C, \mathrm{grav}} \mathrm{dt dt} + \bm{r}_{C/N}  +   \int \int \ddot{\bm{r}}_{B/N, \mathrm{thrust}} \mathrm{dt dt} +  \int \int \ddot{\bm{r}}_{B/N, \mathrm{SRP}}\mathrm{dt dt} +  \dots
 \end{equation}
-where $\ddot{r}_{C/N}$ is deliberately double integrated to $r_{C/N}$ to show that it can be removed from both sides and $r_{B/C}$ can be evaluated using relative gravitation acceleration combined with absolute accelerations due to external forces:
+where $\ddot{\bm{r}}_{C/N}$ is deliberately double integrated to $\bm{r}_{C/N}$ to show that it can be removed from both sides and $\bm{r}_{B/C}$ can be evaluated using relative gravitation acceleration combined with absolute accelerations due to external forces:
 \begin{equation}
-r_{B/C}= \int \int \ddot{r}_{B/C, grav} dt dt +   \int \int \ddot{r}_{B/N, thrust} dt dt +  \int \int \ddot{r}_{B/N, SRP}dt dt +  \dots
+\bm{r}_{B/C}= \int \int \ddot{\bm{r}}_{B/C, \mathrm{grav}} \mathrm{dt dt} +   \int \int \ddot{\bm{r}}_{B/N, \mathrm{thrust}} \mathrm{dt dt} +  \int \int \ddot{\bm{r}}_{B/N, \mathrm{SRP}}\mathrm{dt dt} +  \dots
 \end{equation}
 Once that is done, it is clear that the absolute position can be found by simply adding the position of the central body to the relative position just found:
 \begin{equation}
-	r_{B/N} = r_{B/C} + r_{C/N}
+	\bm{r}_{B/N} = \bm{r}_{B/C} + \bm{r}_{C/N}
 \end{equation}
 This is how absolute position and velocity are found in Basilisk when using a relative dynamics formulation: the relative dynamics are integrated and the position and velocity of the central body are added afterward. The position and velocity of the central body are not integrated by Basilisk, but found from Spice.
 

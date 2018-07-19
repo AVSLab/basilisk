@@ -110,8 +110,8 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     void linkInStates(DynParamManager& statesIn);
     void registerProperties(DynParamManager& statesIn);
-    void computeGravityField(Eigen::Vector3d r_CN_N, Eigen::Vector3d rDot_CN_N);
-    void updateInertialPosAndVel(Eigen::Vector3d r_BN_N, Eigen::Vector3d rDot_BN_N);
+    void computeGravityField(Eigen::Vector3d r_cF_N, Eigen::Vector3d rDot_cF_N);
+    void updateInertialPosAndVel(Eigen::Vector3d r_BF_N, Eigen::Vector3d rDot_BF_N);
     void updateEnergyContributions(Eigen::Vector3d r_CN_N, double & orbPotEnergyContr);  //!< -- Orbital Potential Energy Contributions
     void setGravBodies(std::vector<GravBodyData *> gravBodies);
     void addGravBody(GravBodyData* gravBody);
@@ -128,7 +128,7 @@ public:
     GravBodyData* centralBody;         //!<  Central body
     std::string inertialPositionPropName;           //! [-] Name of the inertial position property
     std::string inertialVelocityPropName;           //! [-] Name of the inertial velocity property
-    std::string nameOfSpacecraftAttachedTo;
+    std::string nameOfSpacecraftAttachedTo;         //! [-] Name of the s/c this gravity model is attached to
     
 private:
     Eigen::MatrixXd *gravProperty;                  //! [-] g_N property for output
