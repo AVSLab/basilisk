@@ -454,7 +454,6 @@ void GravityEffector::computeGravityField(Eigen::Vector3d r_CN_N, Eigen::Vector3
             systemClock);
         gravOut += bodyGrav;
     }
-    this->updateInertialPosAndVel(r_CN_N, rDot_CN_N);
     *this->gravProperty = gravOut;
 }
 
