@@ -17,15 +17,15 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-import math
 import numpy as np
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import unitTestSupport as sp
-from Basilisk.utilities import orbitalMotion as om
 from Basilisk.simulation import (spacecraftPlus, gravityEffector, extForceTorque, simple_nav, spice_interface,
                                  reactionWheelStateEffector, coarse_sun_sensor, eclipse, imu_sensor)
-from Basilisk.utilities import simIncludeRW
+from Basilisk.utilities import simIncludeRW, simIncludeGravBody
 from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk import pyswice
+bskPath = '/Users/johnmartin/Basilisk'
 
 
 
@@ -44,6 +44,7 @@ class BSKDynamicModels():
         self.ephemerisSPICEObject = spice_interface.SpicePlanetStateSimMsg()
         self.ephemerisSunSPICEObject = spice_interface.SpicePlanetStateSimMsg()
         self.earthGravBody = gravityEffector.GravBodyData()
+        self.gravFactory = simIncludeGravBody.gravBodyFactory()
         self.extForceTorqueObject = extForceTorque.ExtForceTorque()
         self.simpleNavObject = simple_nav.SimpleNav()
         self.eclipseObject = eclipse.Eclipse()
@@ -59,12 +60,14 @@ class BSKDynamicModels():
         # Assign initialized modules to tasks
         SimBase.AddModelToTask(self.taskName, self.scObject, None, 201)
         SimBase.AddModelToTask(self.taskName, self.simpleNavObject, None, 109)
+        SimBase.AddModelToTask(self.taskName, self.gravFactory.spiceObject, 200)
         SimBase.AddModelToTask(self.taskName, self.CSSObject, None, 202)
         SimBase.AddModelToTask(self.taskName, self.CSSConstellationObject, None, 203)
         SimBase.AddModelToTask(self.taskName, self.eclipseObject, None, 204)
         SimBase.AddModelToTask(self.taskName, self.imuObject, None, 205)
         SimBase.AddModelToTask(self.taskName, self.rwStateEffector, None, 301)
         SimBase.AddModelToTask(self.taskName, self.extForceTorqueObject, None, 300)
+
     
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
@@ -85,24 +88,23 @@ class BSKDynamicModels():
     
     
     def SetGravityBodies(self):
-        self.gravBodyList = []
-        self.spicePlanetNames = []
-        
-        self.earthGravBody.bodyInMsgName = "earth_planet_data"
-        self.earthGravBody.outputMsgName = "earth_display_frame_data"
-        self.earthGravBody.mu = 0.3986004415E+15  # meters^3/s^2
-        self.earthGravBody.radEquator = 6378136.6  # meters
-        self.earthGravBody.isCentralBody = True
-        self.earthGravBody.useSphericalHarmParams = False
-        
-        self.gravBodyList.append(self.earthGravBody)
-        self.spicePlanetNames.append(self.earthGravBody.bodyInMsgName[:-12])
-        # -- Attach gravity model to spaceCraftPlus
-        self.scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(self.gravBodyList)
-    
+        timeInitString = "2012 MAY 1 00:28:30.0"
+        gravBodies = self.gravFactory.createBodies(['earth', 'sun', 'moon'])
+        gravBodies['earth'].isCentralBody = True
+
+        self.scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(self.gravFactory.gravBodies.values())
+        self.gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/', timeInitString)
+        self.gravFactory.spiceObject.zeroBase = 'Earth'
+
+        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
+        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
+        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
+        pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
+
     def SetEclipseObject(self):
         self.eclipseObject.sunInMsgName = 'sun_planet_data'
         self.eclipseObject.addPlanetName('earth')
+        self.eclipseObject.addPlanetName('moon')
         self.eclipseObject.addPositionMsgName(self.scObject.scStateOutMsgName)
     
     def SetExternalForceTorqueObject(self):
@@ -160,9 +162,12 @@ class BSKDynamicModels():
             
         for elAngle, azAngle, posVector in zip(rwElAngle, rwAzimuthAngle, rwPosVector):
             gsHat = (rbk.Mi(-azAngle,3).dot(rbk.Mi(elAngle,2))).dot(np.array([1,0,0]))
-            rwFactory.create('Honeywell_HR16', gsHat,
-                        maxMomentum=maxRWMomentum, rWB_B=posVector)
-            rwFactory.addToSpacecraft("RWStateEffector", self.rwStateEffector, self.scObject)
+            rwFactory.create('Honeywell_HR16',
+                             gsHat,
+                             maxMomentum=maxRWMomentum,
+                             rWB_B=posVector)
+
+        rwFactory.addToSpacecraft("RWStateEffector", self.rwStateEffector, self.scObject)
 
 
     def SetSpiceData(self, SimBase):

@@ -212,7 +212,7 @@ void ReactionWheelStateEffector::updateContributions(double integTime, BackSubMa
         double signOfOmega = ((RWIt->Omega > 0) - (RWIt->Omega < 0));
         double omegaDot = RWIt->Omega - RWIt->omegaBefore;
         double signOfOmegaDot = ((omegaDot > 0) - (omegaDot < 0));
-        if (RWIt->frictionStribeck == 1 && abs(signOfOmega - signOfOmegaDot) < 2) {
+        if (RWIt->frictionStribeck == 1 && abs(signOfOmega - signOfOmegaDot) < 2 && RWIt->betaStatic != 0) {
             RWIt->frictionStribeck = 1;
         } else {
             RWIt->frictionStribeck = 0;
@@ -228,6 +228,7 @@ void ReactionWheelStateEffector::updateContributions(double integTime, BackSubMa
             frictionForce = signOfOmega*RWIt->fCoulomb + RWIt->cViscous*RWIt->Omega;
             frictionForceAtLimitCycle = RWIt->fCoulomb + RWIt->cViscous*RWIt->omegaLimitCycle;
         }
+
 
         // This line avoids the limit cycle that can occur with friction
         if (fabs(RWIt->Omega) < RWIt->omegaLimitCycle) {
@@ -404,6 +405,10 @@ void ReactionWheelStateEffector::CrossInit()
 	std::vector<RWConfigSimMsg>::iterator it;
 	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
 	{
+        if ((fabs(it->Omega) < 0.10*it->omegaLimitCycle) && (it->betaStatic == 0.0))
+        {
+            BSK_PRINT(MSG_WARNING, "User did not supply Stribeck coefficent when the reaction wheels were starting from rest. The static friction term will not be considered.\n");
+        }
 		//! Define CoM offset d and off-diagonal inertia J13 if using fully coupled model
 		if (it->RWModel == JitterFullyCoupled) {
 			it->d = it->U_s/it->mass; //!< determine CoM offset from static imbalance parameter

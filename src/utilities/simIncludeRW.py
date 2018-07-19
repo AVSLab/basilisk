@@ -113,7 +113,7 @@ class rwFactory(object):
 
         if kwargs.has_key('fCoulomb'):
             varfCoulomb =  kwargs['fCoulomb']
-            if not isinstance(varLinearFrictionRatio, (float)):
+            if not isinstance(varfCoulomb, (float)):
                 print 'ERROR: fCoulomb must be a FLOAT argument'
                 exit(1)
         else:
@@ -122,7 +122,7 @@ class rwFactory(object):
 
         if kwargs.has_key('fStatic'):
             varfStatic =  kwargs['fStatic']
-            if not isinstance(varLinearFrictionRatio, (float)):
+            if not isinstance(varfStatic, (float)):
                 print 'ERROR: fStatic must be a FLOAT argument'
                 exit(1)
         else:
@@ -131,7 +131,7 @@ class rwFactory(object):
 
         if kwargs.has_key('betaStatic'):
             varbetaStatic =  kwargs['betaStatic']
-            if not isinstance(varLinearFrictionRatio, (float)):
+            if not isinstance(varbetaStatic, (float)):
                 print 'ERROR: betaStatic must be a FLOAT argument'
                 exit(1)
         else:
@@ -140,7 +140,7 @@ class rwFactory(object):
 
         if kwargs.has_key('cViscous'):
             varcViscous =  kwargs['cViscous']
-            if not isinstance(varLinearFrictionRatio, (float)):
+            if not isinstance(varcViscous, (float)):
                 print 'ERROR: cViscous must be a FLOAT argument'
                 exit(1)
         else:

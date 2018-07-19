@@ -162,7 +162,7 @@ class BSKFswModels():
     def SetHillPointGuidance(self, SimBase):
         self.hillPointData.outputDataName = "referenceOut"
         self.hillPointData.inputNavDataName = SimBase.DynModels.simpleNavObject.outputTransName
-        self.hillPointData.inputCelMessName = SimBase.DynModels.earthGravBody.bodyInMsgName[:-12]
+        self.hillPointData.inputCelMessName = SimBase.DynModels.gravFactory.gravBodies['earth'].bodyInMsgName[:-12]
 
     def SetSunSafePointGuidance(self, SimBase):
         self.sunSafePointData.attGuidanceOutMsgName = "guidanceOut"
@@ -173,7 +173,7 @@ class BSKFswModels():
     def SetVelocityPointGuidance(self, SimBase):
         self.velocityPointData.outputDataName = "referenceOut"
         self.velocityPointData.inputNavDataName = SimBase.DynModels.simpleNavObject.outputTransName
-        self.velocityPointData.inputCelMessName = SimBase.DynModels.earthGravBody.bodyInMsgName[:-12]
+        self.velocityPointData.inputCelMessName = SimBase.DynModels.gravFactory.gravBodies['earth'].bodyInMsgName[:-12]
         self.velocityPointData.mu = SimBase.DynModels.earthGravBody.mu
 
     def SetAttitudeTrackingError(self, SimBase):
@@ -245,7 +245,7 @@ class BSKFswModels():
         self.rateServoData.inputGuidName = "guidanceOut"
         self.rateServoData.vehConfigInMsgName = "adcs_config_data"
         self.rateServoData.rwParamsInMsgName = "rwa_config_data"
-        self.rateServoData.inputRWSpeedsName = SimBase.DynModels.rwStateEffector.OutputDataString #"reactionwheel_output_states"
+        self.rateServoData.inputRWSpeedsName = SimBase.DynModels.rwStateEffector.OutputDataString
         self.rateServoData.inputRateSteeringName = "rate_steering"
         self.rateServoData.outputDataName = "controlTorqueRaw"
         self.rateServoData.Ki = 5.0
