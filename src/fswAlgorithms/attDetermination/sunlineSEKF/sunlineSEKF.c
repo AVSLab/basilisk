@@ -282,7 +282,7 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH],
     /*! Take omega cross d*/
     v3Cross(omega, stateInOut, omegaCrossd);
     
-    /*! - Multiply omega cross d by -dt and add to state to propagate */
+    /*! - Multiply omega cross d by dt and add to state to propagate */
     v3Scale(dt, omegaCrossd, propagatedVel);
     v3Add(stateInOut, propagatedVel, stateInOut);
     

@@ -78,7 +78,7 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
     CSSConfigFswMsg cssConfigInBuffer;
     uint64_t writeTime;
     uint32_t writeSize;
-    double tempMatrix[SKF_N_STATES*SKF_N_STATES];
+    double tempMatrix[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
     
     /*! Begin method steps*/
     /*! - Zero the local configuration data structures and outputs */
@@ -101,9 +101,13 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
     /*! - Initialize filter parameters to max values */
     ConfigData->timeTag = callTime*NANO2SEC;
     ConfigData->dt = 0.0;
-    ConfigData->numStates = SKF_N_STATES;
-    ConfigData->countHalfSPs = SKF_N_STATES;
+    ConfigData->numStates = SKF_N_STATES_SWITCH;
+    ConfigData->countHalfSPs = SKF_N_STATES_SWITCH;
     ConfigData->numObs = MAX_N_CSS_MEAS;
+    
+    /*! Initalize the filter to use b_1 of the body frame to make frame*/
+    v3Set(1, 0, 0, ConfigData->bVec_B);
+    ConfigData->switchTresh = 0.866;
     
     /*! - Ensure that all internal filter matrices are zeroed*/
     vSetZero(ConfigData->obs, ConfigData->numObs);
@@ -161,6 +165,7 @@ void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
     double newTimeTag;
     double yBar[MAX_N_CSS_MEAS];
     double tempYVec[MAX_N_CSS_MEAS];
+    double sunheading_hat[3];
     int i;
     uint64_t ClockTime;
     uint32_t ReadSize;
@@ -173,6 +178,15 @@ void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
     memset(&(ConfigData->cssSensorInBuffer), 0x0, sizeof(CSSArraySensorIntMsg));
     ReadMessage(ConfigData->cssDataInMsgId, &ClockTime, &ReadSize,
         sizeof(CSSArraySensorIntMsg), (void*) (&(ConfigData->cssSensorInBuffer)), moduleID);
+    
+    v3Normalize(&ConfigData->states[0], sunheading_hat);
+    
+    
+    /*! - Check for switching frames */
+    if (v3Dot(ConfigData->bVec_B, sunheading_hat) > ConfigData->switchTresh)
+    {
+        sunlineSuKFSwitch(ConfigData->bVec_B, ConfigData->states, ConfigData->covar);
+    }
     
     /*! - If the time tag from the measured data is new compared to previous step, 
           propagate and update the filter*/
@@ -208,7 +222,7 @@ void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
     mSubtract(ConfigData->obs, MAX_N_CSS_MEAS, 1, yBar, ConfigData->postFits);
     
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
-	v3Copy(ConfigData->state, ConfigData->outputSunline.vehSunPntBdy);
+	v3Copy(ConfigData->states, ConfigData->outputSunline.vehSunPntBdy);
     v3Normalize(ConfigData->outputSunline.vehSunPntBdy,
         ConfigData->outputSunline.vehSunPntBdy);
     ConfigData->outputSunline.timeTag = ConfigData->timeTag;
@@ -219,8 +233,8 @@ void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
     sunlineDataOutBuffer.timeTag = ConfigData->timeTag;
     sunlineDataOutBuffer.numObs = ConfigData->numObs;
     memmove(sunlineDataOutBuffer.covar, ConfigData->covar,
-            SKF_N_STATES*SKF_N_STATES*sizeof(double));
-    memmove(sunlineDataOutBuffer.state, ConfigData->state, SKF_N_STATES*sizeof(double));
+            SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH*sizeof(double));
+    memmove(sunlineDataOutBuffer.state, ConfigData->states, SKF_N_STATES_SWITCH*sizeof(double));
     memmove(sunlineDataOutBuffer.postFitRes, ConfigData->postFits, MAX_N_CSS_MEAS*sizeof(double));
     WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(SunlineFilterFswMsg),
                  &sunlineDataOutBuffer, moduleID);
@@ -237,20 +251,20 @@ void sunlineStateProp(double *stateInOut, double dt)
 {
 
     double propagatedVel[3];
-    double pointUnit[3];
-    double unitComp;
+    double omegaCrossd[SKF_N_STATES_HALF];
+    double omega[SKF_N_STATES_HALF] = {0, stateInOut[3], stateInOut[4]};
     
-    /*! Begin method steps */
-    /*! - Unitize the current estimate to find direction to restrict motion*/
-    v3Normalize(stateInOut, pointUnit);
-    unitComp = v3Dot(&(stateInOut[3]), pointUnit);
-    v3Scale(unitComp, pointUnit, pointUnit);
-    /*! - Subtract out rotation in the sunline axis because that is not observable 
-          for coarse sun sensors*/
-    v3Subtract(&(stateInOut[3]), pointUnit, &(stateInOut[3]));
-    v3Scale(dt, &(stateInOut[3]), propagatedVel);
+    /* Set local variables to zero*/
+    vSetZero(propagatedVel, SKF_N_STATES_HALF);
+    
+    /*! Begin state update steps */
+    /*! Take omega cross d*/
+    v3Cross(omega, stateInOut, omegaCrossd);
+    
+    /*! - Multiply omega cross d by dt and add to state to propagate */
+    v3Scale(-dt, omegaCrossd, propagatedVel);
     v3Add(stateInOut, propagatedVel, stateInOut);
-
+    
 	return;
 }
 
@@ -264,16 +278,16 @@ void sunlineStateProp(double *stateInOut, double dt)
 void sunlineSuKFTimeUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
 {
 	int i, Index;
-	double sBarT[SKF_N_STATES*SKF_N_STATES];
-	double xComp[SKF_N_STATES], AT[(2 * SKF_N_STATES + SKF_N_STATES)*SKF_N_STATES];
-	double aRow[SKF_N_STATES], rAT[SKF_N_STATES*SKF_N_STATES], xErr[SKF_N_STATES]; 
-	double sBarUp[SKF_N_STATES*SKF_N_STATES];
+	double sBarT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
+	double xComp[SKF_N_STATES_SWITCH], AT[(2 * SKF_N_STATES_SWITCH + SKF_N_STATES_SWITCH)*SKF_N_STATES_SWITCH];
+	double aRow[SKF_N_STATES_SWITCH], rAT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], xErr[SKF_N_STATES_SWITCH]; 
+	double sBarUp[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
 	double *spPtr;
 	/*! Begin method steps*/
 	ConfigData->dt = updateTime - ConfigData->timeTag;
     
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
-	vCopy(ConfigData->state, ConfigData->numStates,
+	vCopy(ConfigData->states, ConfigData->numStates,
 		&(ConfigData->SP[0 * ConfigData->numStates + 0]));
 	sunlineStateProp(&(ConfigData->SP[0 * ConfigData->numStates + 0]),
         ConfigData->dt);
@@ -291,7 +305,7 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
 		spPtr = &(ConfigData->SP[Index*ConfigData->numStates]);
 		vCopy(&sBarT[i*ConfigData->numStates], ConfigData->numStates, spPtr);
 		vScale(ConfigData->gamma, spPtr, ConfigData->numStates, spPtr);
-		vAdd(spPtr, ConfigData->numStates, ConfigData->state, spPtr);
+		vAdd(spPtr, ConfigData->numStates, ConfigData->states, spPtr);
 		sunlineStateProp(spPtr, ConfigData->dt);
 		vScale(ConfigData->wM[Index], spPtr, ConfigData->numStates, xComp);
 		vAdd(xComp, ConfigData->numStates, ConfigData->xBar, ConfigData->xBar);
@@ -300,7 +314,7 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
         spPtr = &(ConfigData->SP[Index*ConfigData->numStates]);
         vCopy(&sBarT[i*ConfigData->numStates], ConfigData->numStates, spPtr);
         vScale(-ConfigData->gamma, spPtr, ConfigData->numStates, spPtr);
-        vAdd(spPtr, ConfigData->numStates, ConfigData->state, spPtr);
+        vAdd(spPtr, ConfigData->numStates, ConfigData->states, spPtr);
         sunlineStateProp(spPtr, ConfigData->dt);
         vScale(ConfigData->wM[Index], spPtr, ConfigData->numStates, xComp);
         vAdd(xComp, ConfigData->numStates, ConfigData->xBar, ConfigData->xBar);
@@ -346,7 +360,7 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
 	mMultM(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
         ConfigData->covar, ConfigData->numStates, ConfigData->numStates,
            ConfigData->covar);
-    vCopy(&(ConfigData->SP[0]), ConfigData->numStates, ConfigData->state );
+    vCopy(&(ConfigData->SP[0]), ConfigData->numStates, ConfigData->states );
 	
 	ConfigData->timeTag = updateTime;
 }
@@ -377,7 +391,7 @@ void sunlineSuKFMeasModel(SunlineSuKFConfig *ConfigData)
             for(j=0; j<ConfigData->countHalfSPs*2+1; j++)
             {
                 ConfigData->yMeas[obsCounter*(ConfigData->countHalfSPs*2+1) + j] =
-                    v3Dot(&(ConfigData->SP[j*SKF_N_STATES]), sensorNormal);
+                    v3Dot(&(ConfigData->SP[j*SKF_N_STATES_SWITCH]), sensorNormal);
             }
             obsCounter++;
         }
@@ -400,12 +414,12 @@ void sunlineSuKFMeasUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
 {
     uint32_t i;
     double yBar[MAX_N_CSS_MEAS], syInv[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
-    double kMat[SKF_N_STATES*MAX_N_CSS_MEAS];
-    double xHat[SKF_N_STATES], sBarT[SKF_N_STATES*SKF_N_STATES], tempYVec[MAX_N_CSS_MEAS];
-    double AT[(2 * SKF_N_STATES + MAX_N_CSS_MEAS)*MAX_N_CSS_MEAS], qChol[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
+    double kMat[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS];
+    double xHat[SKF_N_STATES_SWITCH], sBarT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], tempYVec[MAX_N_CSS_MEAS];
+    double AT[(2 * SKF_N_STATES_SWITCH + MAX_N_CSS_MEAS)*MAX_N_CSS_MEAS], qChol[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
     double rAT[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], syT[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
     double sy[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
-    double updMat[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], pXY[SKF_N_STATES*MAX_N_CSS_MEAS];
+    double updMat[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], pXY[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS];
     
     /*! Begin method steps*/
     
@@ -499,7 +513,7 @@ void sunlineSuKFMeasUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
     vSubtract(ConfigData->obs, ConfigData->numObs, yBar, tempYVec);
     mMultM(kMat, ConfigData->numStates, ConfigData->numObs, tempYVec,
         ConfigData->numObs, 1, xHat);
-    vAdd(ConfigData->state, ConfigData->numStates, xHat, ConfigData->state);
+    vAdd(ConfigData->states, ConfigData->numStates, xHat, ConfigData->states);
     /*! - Compute the updated matrix U from equation 28.  Note that I then transpose it 
          so that I can extract "columns" from adjacent memory*/
     mMultM(kMat, ConfigData->numStates, ConfigData->numObs, sy,
@@ -520,4 +534,87 @@ void sunlineSuKFMeasUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
     mMultM(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
            ConfigData->covar, ConfigData->numStates, ConfigData->numStates,
            ConfigData->covar);
+}
+
+
+/*! This method computes the dcms necessary for the switch between the two frames.
+ It the switches the states and the covariance, and sets s2 to be the new, different vector of the body frame.
+ @return void
+ @param covarBar The time updated covariance
+ @param hObs The H matrix filled with the observations
+ @param s2_B Pointer to the second frame vector
+ @param states Pointer to the states
+ @param covar Pointer to the covariance
+ */
+
+void sunlineSuKFSwitch(double *bVec_B, double *states, double *covar)
+{
+    double dcm_BSold[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double dcm_BSnew_T[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double dcm_SnewSold[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double switchMatP[SKF_N_STATES_SWITCH][SKF_N_STATES_SWITCH];
+    double switchMat[SKF_N_STATES_SWITCH][SKF_N_STATES_SWITCH];
+    
+    double sun_heading_norm[SKF_N_STATES_HALF];
+    double s2_B[SKF_N_STATES_HALF];
+    double s3_B_old[SKF_N_STATES_HALF];
+    double s3_B_new[SKF_N_STATES_HALF];
+    double b1[SKF_N_STATES_HALF];
+    double b2[SKF_N_STATES_HALF];
+    
+    /*!  Set the body frame vectors*/
+    v3Set(1, 0, 0, b1);
+    v3Set(0, 1, 0, b2);
+    v3Normalize(&(states[0]), sun_heading_norm);
+    
+    /* Compute the second vector of the S frame */
+    v3Cross(sun_heading_norm, bVec_B, s2_B);
+    v3Normalize(s2_B, s2_B);
+    
+    /*! Populate the dcm_BS with the "old" S-frame*/
+    mSetSubMatrix(sun_heading_norm, 1, SKF_N_STATES_HALF, dcm_BSold, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
+    mSetSubMatrix(&(s2_B), 1, SKF_N_STATES_HALF, dcm_BSold, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 1, 0);
+    v3Cross(sun_heading_norm, s2_B, s3_B_old);
+    v3Normalize(s3_B_old, s3_B_old);
+    mSetSubMatrix(&(s3_B_old), 1, SKF_N_STATES_HALF, dcm_BSold, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 2, 0);
+    mTranspose(dcm_BSold, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm_BSold);
+    
+    if (v3IsEqual(bVec_B, b1, 1e-10))
+    {
+        v3Cross(sun_heading_norm, b2, s2_B);
+        v3Normalize(s2_B, s2_B);
+        /*! Populate the dcm_BS with the "new" S-frame*/
+        mSetSubMatrix(sun_heading_norm, 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
+        mSetSubMatrix(&(s2_B), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 1, 0);
+        v3Cross(sun_heading_norm, s2_B, s3_B_new);
+        v3Normalize(s3_B_new, s3_B_new);
+        mSetSubMatrix(&(s3_B_new), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 2, 0);
+        
+        v3Copy(b2, bVec_B);
+    }
+    else
+    {
+        v3Cross(sun_heading_norm, b1, s2_B);
+        v3Normalize(s2_B, s2_B);
+        /*! Populate the dcm_BS with the "new" S-frame*/
+        mSetSubMatrix(sun_heading_norm, 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
+        mSetSubMatrix(&(s2_B), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 1, 0);
+        v3Cross(sun_heading_norm, s2_B, s3_B_new);
+        v3Normalize(s3_B_new, s3_B_new);
+        mSetSubMatrix(&(s3_B_new), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 2, 0);
+        
+        v3Copy(b1, bVec_B);
+    }
+    
+    mMultM(dcm_BSnew_T, 3, 3, dcm_BSold, 3, 3, dcm_SnewSold);
+    
+    mSetIdentity(switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
+    mSetSubMatrix(&dcm_SnewSold[1][1], 1, 2, &switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 3, 3);
+    mSetSubMatrix(&dcm_SnewSold[2][1], 1, 2, &switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 4, 3);
+    
+    mMultV(switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, states, states);
+    mMultM(switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, covar, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, switchMatP);
+    mTranspose(switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, switchMat);
+    mMultM(switchMatP, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, covar);
+    return;
 }

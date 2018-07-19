@@ -54,22 +54,26 @@ typedef struct {
 	double dt;                     /*!< [s] seconds since last data epoch */
 	double timeTag;                /*!< [s]  Time tag for statecovar/etc */
 
-	double wM[2 * SKF_N_STATES + 1]; /*!< [-] Weighting vector for sigma points*/
-	double wC[2 * SKF_N_STATES + 1]; /*!< [-] Weighting vector for sigma points*/
+    double bVec_B[SKF_N_STATES_HALF];       /*!< [-] current vector of the b frame used to make frame */
+    double switchTresh;             /*!< [-]  Threshold for switching frames */
+    
+    double states[SKF_N_STATES_SWITCH];        /*!< [-] State estimate for time TimeTag*/
+    
+	double wM[2 * SKF_N_STATES_SWITCH + 1]; /*!< [-] Weighting vector for sigma points*/
+	double wC[2 * SKF_N_STATES_SWITCH + 1]; /*!< [-] Weighting vector for sigma points*/
 
-	double state[SKF_N_STATES];        /*!< [-] State estimate for time TimeTag*/
-	double sBar[SKF_N_STATES*SKF_N_STATES];         /*!< [-] Time updated covariance */
-	double covar[SKF_N_STATES*SKF_N_STATES];        /*!< [-] covariance */
-    double xBar[SKF_N_STATES];            /*! [-] Current mean state estimate*/
+	double sBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];         /*!< [-] Time updated covariance */
+	double covar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];        /*!< [-] covariance */
+    double xBar[SKF_N_STATES_SWITCH];            /*! [-] Current mean state estimate*/
 
 	double obs[MAX_N_CSS_MEAS];          /*!< [-] Observation vector for frame*/
-	double yMeas[MAX_N_CSS_MEAS*(2*SKF_N_STATES+1)];        /*!< [-] Measurement model data */
+	double yMeas[MAX_N_CSS_MEAS*(2*SKF_N_STATES_SWITCH+1)];        /*!< [-] Measurement model data */
     double postFits[MAX_N_CSS_MEAS];  /*!< [-] PostFit residuals */
     
-	double SP[(2*SKF_N_STATES+1)*SKF_N_STATES];     /*!< [-]    sigma point matrix */
+	double SP[(2*SKF_N_STATES_SWITCH+1)*SKF_N_STATES_SWITCH];     /*!< [-]    sigma point matrix */
 
-	double qNoise[SKF_N_STATES*SKF_N_STATES];       /*!< [-] process noise matrix */
-	double sQnoise[SKF_N_STATES*SKF_N_STATES];      /*!< [-] cholesky of Qnoise */
+	double qNoise[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];       /*!< [-] process noise matrix */
+	double sQnoise[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];      /*!< [-] cholesky of Qnoise */
 
 	double qObs[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];  /*!< [-] Maximally sized obs noise matrix*/
     
@@ -101,7 +105,8 @@ extern "C" {
     void sunlineSuKFMeasUpdate(SunlineSuKFConfig *ConfigData, double updateTime);
 	void sunlineStateProp(double *stateInOut, double dt);
     void sunlineSuKFMeasModel(SunlineSuKFConfig *ConfigData);
-    
+    void sunlineSuKFSwitch(double *bVec_B, double *states, double *covar);
+
 #ifdef __cplusplus
 }
 #endif
