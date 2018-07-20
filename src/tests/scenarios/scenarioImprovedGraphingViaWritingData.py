@@ -95,9 +95,9 @@ from functools import partial
 from datashader.utils import export_image
 from datashader.colors import colormap_select, Greys9, Hot, inferno
 
-NUMBER_OF_RUNS = 100
+NUMBER_OF_RUNS = 5000
 VERBOSE = True
-ONLY_GRAPH = 0
+ONLY_GRAPH = 1
 
 # Here are the name of some messages that we want to retain or otherwise use
 inertial3DConfigOutputDataName = "guidanceInertial3D"
@@ -817,7 +817,7 @@ def updateDataframes(data, dataframe):
     nandf = pd.DataFrame([np.nan])
     df = df.append(nandf, ignore_index=True)
     result = df.append(dataframe, ignore_index=True)
-    print result
+    # print result
     return result
 
 
@@ -904,14 +904,13 @@ def configureGraph(data, yAxisLabel):
     # background = "black"
     # export = partial(export_image, export_path="export", background=background)
     # cm = partial(colormap_select, reverse=(background == "black"))
-
+    # print df
 
     cvs = ds.Canvas(plot_height=500, plot_width=800)
 
-    result = pd.concat([df.iloc[:,0], df.iloc[:,1]], axis = 1, sort = False)
-    result.columns = ['x', 'y']
-    print result
-    agg = cvs.line(result, 'x', 'y', agg=ds.any())
+    # result = pd.concat([df.iloc[:,0], df.iloc[:,1]], axis = 1, sort = False)
+    # result.columns = ['x', 'y']
+    agg = cvs.line(df, '0', '1', agg=ds.any())
     img = tf.shade(agg)
 
 
@@ -921,7 +920,7 @@ def configureGraph(data, yAxisLabel):
 
 def create_image(df, w=800, h=500):
     cvs = ds.Canvas(plot_width=w, plot_height=h)
-    agg = cvs.line(df, 'x', 'y', agg=ds.any())
+    agg = cvs.line(df, '0', '1', '2', '3', agg=ds.any())
     img = tf.shade(agg)
     return img
 
