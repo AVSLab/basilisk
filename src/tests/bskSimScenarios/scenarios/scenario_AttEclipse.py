@@ -117,8 +117,8 @@
 # The sun direction vector itself is calculated through the use of a CSS constellation and the CSSWlsEst module. The
 # setup for the CSS constellation can be found in the [scenarioCSS.py](@ref scenarioCSS) scenario. The CSSWlsEst module
 # is a weighted least-squares minimum-norm algorithm used to estimate the body-relative sun heading using a cluster of
-# coarse sun sensors. The algorithm requires a minimum of three CSS to operate correctly. The corresponding I/O is
-# called using:
+# coarse sun sensors. The algorithm requires a minimum of three CSS to operate correctly. The corresponding I/O for the
+# CSS is called using:
 # ~~~~~~~~~~~~~{.py}
 #         cssConfig = fswMessages.CSSConfigFswMsg()
 #         totalCSSList = []
@@ -139,7 +139,9 @@
 #         cssConfigSize = cssConfig.getStructSize()
 #         SimBase.TotalSim.CreateNewMessage("FSWProcess", "css_config_data", cssConfigSize, 2, "CSSConstellation")
 #         SimBase.TotalSim.WriteMessageData("css_config_data", cssConfigSize, 0, cssConfig)
-#
+# ~~~~~~~~~~~~~
+# and the way to interface with the CSSWlsEst algorithm is using:
+# ~~~~~~~~~~~~~{.py}
 #         self.cssWlsEstData.cssDataInMsgName = SimBase.DynModels.CSSConstellationObject.outputConstellationMessage
 #         self.cssWlsEstData.cssConfigInMsgName = "css_config_data"
 #         self.cssWlsEstData.navStateOutMsgName = "sun_point_data"
