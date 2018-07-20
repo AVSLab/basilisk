@@ -30,9 +30,6 @@ HubEffector::HubEffector()
     this->effProps.IEffPntB_B.setZero();
     this->effProps.rEffPrime_CB_B.setZero();
     this->effProps.IEffPrimePntB_B.setZero();
-    this->sumForceExternal_N.setZero();
-    this->sumForceExternal_B.setZero();
-    this->sumTorquePntB_B.setZero();
     this->r_CN_NInit.setZero();
     this->v_CN_NInit.setZero();
     this->sigma_BNInit.setZero();
@@ -62,14 +59,15 @@ HubEffector::~HubEffector()
  these values in the computeDerivatives method call */
 void HubEffector::linkInStates(DynParamManager& statesIn)
 {
-    // - Get reference to mass props
-    this->m_SC = statesIn.getPropertyReference("m_SC");
-    this->mDot_SC = statesIn.getPropertyReference("mDot_SC");
-    this->c_B = statesIn.getPropertyReference("centerOfMassSC");
-    this->ISCPntB_B = statesIn.getPropertyReference("inertiaSC");
-    this->cPrime_B = statesIn.getPropertyReference("centerOfMassPrimeSC");
-    this->ISCPntBPrime_B = statesIn.getPropertyReference("inertiaPrimeSC");
-    this->g_N = statesIn.getPropertyReference("g_N");
+    return;
+}
+
+void HubEffector::prependSpacecraftNameToStates()
+{
+    this->nameOfHubPosition = this->nameOfSpacecraftAttachedTo + "_" + this->nameOfHubPosition;
+    this->nameOfHubVelocity = this->nameOfSpacecraftAttachedTo + "_" + this->nameOfHubVelocity;
+    this->nameOfHubSigma = this->nameOfSpacecraftAttachedTo + "_" + this->nameOfHubSigma;
+    this->nameOfHubOmega = this->nameOfSpacecraftAttachedTo + "_" + this->nameOfHubOmega;
 
     return;
 }
@@ -98,12 +96,16 @@ void HubEffector::updateEffectorMassProps(double integTime)
     // - Give the mass to mass props
     this->effProps.mEff = this->mHub;
 
+    // - Provide information about multi-spacecraft origin if needed
+    this->r_BcP_P = this->r_BP_P + this->dcm_BP.transpose()*(this->r_BcB_B);
+    this->IHubPntBc_P = this->dcm_BP.transpose()*this->IHubPntBc_B*this->dcm_BP;
+
     // - Give inertia of hub about point B to mass props
-    this->effProps.IEffPntB_B = this->IHubPntBc_B
-                                           + this->mHub*eigenTilde(this->r_BcB_B)*eigenTilde(this->r_BcB_B).transpose();
+    this->effProps.IEffPntB_B = this->IHubPntBc_P
+                                           + this->mHub*eigenTilde(this->r_BcP_P)*eigenTilde(this->r_BcP_P).transpose();
 
     // - Give position of center of mass of hub with respect to point B to mass props
-    this->effProps.rEff_CB_B = this->r_BcB_B;
+    this->effProps.rEff_CB_B = this->r_BcP_P;
 
     // - Zero body derivatives for position and inertia;
     this->effProps.rEffPrime_CB_B.setZero();
@@ -114,7 +116,7 @@ void HubEffector::updateEffectorMassProps(double integTime)
 
 /*! This method is for computing the derivatives of the hub: rDDot_BN_N and omegaDot_BN_B, along with the kinematic
  derivatives */
-void HubEffector::computeDerivatives(double integTime)
+void HubEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
 {
     // - Get variables from state manager
     Eigen::Vector3d rDotLocal_BN_N;
@@ -126,27 +128,6 @@ void HubEffector::computeDerivatives(double integTime)
     rDotLocal_BN_N = velocityState->getState();
     sigmaLocal_BN = (Eigen::Vector3d )sigmaState->getState();
     omegaLocal_BN_B = omegaState->getState();
-    cLocal_B = *this->c_B;
-    cPrimeLocal_B = *cPrime_B;
-    gLocal_N = *this->g_N;
-
-    // -  Make additional contributions to the matrices from the hub
-    Eigen::Matrix3d intermediateMatrix;
-    Eigen::Vector3d intermediateVector;
-    this->matrixA += (*this->m_SC)(0,0)*intermediateMatrix.Identity();
-    intermediateMatrix = eigenTilde((*this->c_B));  // make c_B skew symmetric matrix
-    this->matrixB += -(*this->m_SC)(0,0)*intermediateMatrix;
-    this->matrixC += (*this->m_SC)(0,0)*intermediateMatrix;
-    this->matrixD += *ISCPntB_B;
-    this->vecTrans += -2.0*(*this->m_SC)(0, 0)*omegaLocal_BN_B.cross(cPrimeLocal_B)
-    - (*this->m_SC)(0, 0)*omegaLocal_BN_B.cross(omegaLocal_BN_B.cross(cLocal_B))
-    - 2.0*(*mDot_SC)(0,0)*(cPrimeLocal_B+omegaLocal_BN_B.cross(cLocal_B));
-    intermediateVector = *ISCPntB_B*omegaLocal_BN_B;
-    this->vecRot += -omegaLocal_BN_B.cross(intermediateVector) - *ISCPntBPrime_B*omegaLocal_BN_B;
-
-    // - Need to find force of gravity on the spacecraft
-    Eigen::Vector3d gravityForce_N;
-    gravityForce_N = (*this->m_SC)(0,0)*gLocal_N;
 
     // - Set kinematic derivative
     sigmaState->setDerivative(1.0/4.0*sigmaLocal_BN.Bmat()*omegaLocal_BN_B);
@@ -157,25 +138,17 @@ void HubEffector::computeDerivatives(double integTime)
     dcm_NB = sigmaLocal_BN.toRotationMatrix();
     dcm_BN = dcm_NB.transpose();
 
-    // - Map external force_N to the body frame
-    Eigen::Vector3d sumForceExternalMappedToB;
-    sumForceExternalMappedToB = dcm_BN*this->sumForceExternal_N;
-
-    // - Edit both v_trans and v_rot with gravity and external force and torque
-    Eigen::Vector3d gravityForce_B;
-    gravityForce_B = dcm_BN*gravityForce_N;
-    this->vecTrans += gravityForce_B + sumForceExternalMappedToB + this->sumForceExternal_B;
-    this->vecRot += cLocal_B.cross(gravityForce_B) + this->sumTorquePntB_B;
-
     // - Solve for omegaDot_BN_B
-    Eigen::Vector3d omegaDot_BN_B;
-    intermediateVector = this->vecRot - this->matrixC*this->matrixA.inverse()*this->vecTrans;
-    intermediateMatrix = matrixD - matrixC*matrixA.inverse()*matrixB;
-    omegaDot_BN_B = intermediateMatrix.inverse()*intermediateVector;
-    omegaState->setDerivative(omegaDot_BN_B);
+    Eigen::Vector3d omegaDotLocal_BN_B;
+    Eigen::Matrix3d intermediateMatrix;
+    Eigen::Vector3d intermediateVector;
+    intermediateVector = this->hubBackSubMatrices.vecRot - this->hubBackSubMatrices.matrixC*this->hubBackSubMatrices.matrixA.inverse()*this->hubBackSubMatrices.vecTrans;
+    intermediateMatrix = hubBackSubMatrices.matrixD - hubBackSubMatrices.matrixC*hubBackSubMatrices.matrixA.inverse()*hubBackSubMatrices.matrixB;
+    omegaDotLocal_BN_B = intermediateMatrix.inverse()*intermediateVector;
+    omegaState->setDerivative(omegaDotLocal_BN_B);
 
     // - Solve for rDDot_BN_N
-    velocityState->setDerivative(dcm_NB*matrixA.inverse()*(vecTrans - matrixB*omegaDot_BN_B));
+    velocityState->setDerivative(dcm_NB*hubBackSubMatrices.matrixA.inverse()*(hubBackSubMatrices.vecTrans - hubBackSubMatrices.matrixB*omegaDotLocal_BN_B));
 
     // - Set kinematic derivative
     posState->setDerivative(rDotLocal_BN_N);
@@ -185,7 +158,7 @@ void HubEffector::computeDerivatives(double integTime)
 
 /*! This method is for computing the energy and momentum contributions from the hub */
 void HubEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
-                                               double & rotEnergyContr)
+                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
     // - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
@@ -193,11 +166,11 @@ void HubEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d
 
     //  - Find rotational angular momentum contribution from hub
     Eigen::Vector3d rDot_BcB_B;
-    rDot_BcB_B = omegaLocal_BN_B.cross(r_BcB_B);
-    rotAngMomPntCContr_B = IHubPntBc_B*omegaLocal_BN_B + mHub*r_BcB_B.cross(rDot_BcB_B);
+    rDot_BcB_B = omegaLocal_BN_B.cross(r_BcP_P);
+    rotAngMomPntCContr_B = IHubPntBc_P*omegaLocal_BN_B + mHub*r_BcP_P.cross(rDot_BcB_B);
 
     // - Find rotational energy contribution from the hub
-    rotEnergyContr = 1.0/2.0*omegaLocal_BN_B.dot(IHubPntBc_B*omegaLocal_BN_B) + 1.0/2.0*mHub*rDot_BcB_B.dot(rDot_BcB_B);
+    rotEnergyContr = 1.0/2.0*omegaLocal_BN_B.dot(IHubPntBc_P*omegaLocal_BN_B) + 1.0/2.0*mHub*rDot_BcB_B.dot(rDot_BcB_B);
     
     return;
 }

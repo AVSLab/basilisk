@@ -1,0 +1,30 @@
+\begin{thebibliography}{1}
+
+\bibitem{lundberg1988}
+J.~Lundberg and B.~Schutz.
+\newblock Recursion formulas of legendre functions for use with nonsingular
+  geopotential models.
+\newblock {\em Journal of Guidance AIAA}, 11(1):31--38, 1988.
+
+\bibitem{pines1973}
+Samuel Pines.
+\newblock Uniform representation of the gravitational potential and its
+  derivatives.
+\newblock {\em AIAA Journal}, 11(11):1508--1511, 1973.
+
+\bibitem{schaub2014}
+Hanspeter Schaub and John~L. Junkins.
+\newblock {\em Analytical Mechanics of Space Systems}.
+\newblock AIAA Education Series, 3 edition, 2014.
+
+\bibitem{scheeres2012}
+Daniel Scheeres.
+\newblock {\em Orbital Motion in Strongly Perturbed Environments}.
+\newblock Springer, 1 edition, 2012.
+
+\bibitem{vallado2013}
+David Vallado.
+\newblock {\em Fundamentals of Astrodynamics and Applications}.
+\newblock Microcosm press, 4 edition, 2013.
+
+\end{thebibliography}

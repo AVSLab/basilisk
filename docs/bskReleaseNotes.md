@@ -23,7 +23,7 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>
         Updated the simIncludeThruster to use the same factor class as the RW factory class.  This will break old scripts that use the old method of setting up Thrusters with this helper function.
         <ul>
-    <li>FIX: Updated the script to use the new factory class.  Examples are seen in `src/simulation/dynamics/Thrusters/_UnitTest/test_thruster_integrated.py`.</li>
+    <li>FIX: Update the script to use the new factory class.  Examples are seen in `src/simulation/dynamics/Thrusters/_UnitTest/test_thruster_integrated.py`.</li>
     </ul>
     </li>
     <li>
@@ -46,6 +46,12 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     </li>
     <li>
     A new method called writeOutputStateMessages was added to the stateEffector abstract class which allows for stateEffectors to write their states as messages in the system and the states will always be written out to the system after integration. This fixed an issue with reaction wheels where the commanded torque information needs to be tasked before the spacecraft but the reaction wheel state messages need to be written out after integration. 
+    </li>
+    <li>
+    A new dynamics class called `spacecraftDynamics` has been created.  This allow multiple complex spacecraft systems to be either rigidly connected or free-flying.  This allow for example a mother craft to house a daughter craft which has its own RWs, etc, and then release the daughter craft at a specified time.  
+    </li>
+    <li>
+    Cleaned up the gravity effector class variable names, and streamlined the evaluation logic.  The gravity effector documentation has been updated to include information on the the multi-body gravity acceleration is evaluated.
     </li>
     <li>
     Updated the FSW modules `MRP_Feedback`,`MRP_Steering`, `dvAccumulation` and `oeStateEphem` to zero out the output message first in the `Update()` routine.

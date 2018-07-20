@@ -44,16 +44,15 @@
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
 
 
-\newcommand{\ModuleName}{spacecraftPlus}
-\newcommand{\subject}{Spacecraft Equations of Motion Model}
+\newcommand{\ModuleName}{spacecraftDynamics}
+\newcommand{\subject}{Multi-Spacecraft Equations of Motion Model}
 \newcommand{\status}{To be Reviewed}
 \newcommand{\preparer}{C. Allard}
-\newcommand{\summary}{SpacecraftPlus is an instantiation of the dynamicObject abstract class. This abstract class is representing systems that have equations of motion that need to be integrated and therefore the main goal of this dynamic object is finding the state derivatives and interfacing with the integrator to integrate the state forward in time. The spacecraftPlus is specifically geared towards a spacecraft that can have only translational states, only rotational states, or both and has the capability of simulating the system as just a rigid body, or a rigid body with other masses connected to it with their own degrees of freedom. For example the spacecraft could have reaction wheels, solar panels, and fuel slosh as a coupled system. This test is ensuring that all three modes: translational only, rotational only and translation and rotation all operate as expected. Additionally there are back of the envelope calculation checks for both the behavior of translation and rotational motion.}
+\newcommand{\summary}{SpacecraftDynamics is an instantiation of the dynamicObject abstract class. This abstract class is representing systems that have equations of motion that need to be integrated and therefore the main goal of this dynamic object is finding the state derivatives and interfacing with the integrator to integrate the state forward in time. The spacecraftDynamics is specifically geared towards simulating multiple spacecraft at a time that will allow for docking and detaching of spacecraft. If spacecraftPlus is ever removed then this will be the sole dynamicObject that will control the spacecraft dynamics of the system. This current module is IN PROGRESS and burning edge development in its current state.}
 
 \begin{document}
 
 \makeCover
-\clearpage
 
 %
 %	enter the revision documentation here
@@ -66,13 +65,7 @@
 \hline
 {\bfseries Rev} & {\bfseries Change Description} & {\bfseries By}& {\bfseries Date} \\
 \hline
-1.0 & Initial Draft & C. Allard & 20170808\\
-\hline
-1.1 & Added BOE calcs & C. Allard & 20170814\\
-\hline
-1.2 & Fixed typos and added tolerance discussion & C. Allard & 20170919\\
-\hline
-1.3 & Small updates to module description, fixed typos & C. Allard & 20170919\\
+1.0 & Initial Draft (Module is still IN PROGRESS) & C. Allard & 20180613\\
 \hline
 \end{longtable}
 }

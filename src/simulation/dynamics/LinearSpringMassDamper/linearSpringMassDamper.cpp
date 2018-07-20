@@ -131,10 +131,7 @@ void LinearSpringMassDamper::retrieveMassValue(double integTime)
 }
 
 /*! This method is for the SMD to add its contributions to the back-sub method */
-void LinearSpringMassDamper::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr,
-                                            Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr,
-                                            Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr,
-                                            Eigen::Vector3d & vecRotcontr)
+void LinearSpringMassDamper::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
     // - Find dcm_BN
     Eigen::MRPd sigmaLocal_BN;
@@ -165,19 +162,19 @@ void LinearSpringMassDamper::updateContributions(double integTime, Eigen::Matrix
 		                   - this->massSMD*this->pHat_B.dot(omegaTilde_BN_B_local*omegaTilde_BN_B_local*this->r_PcB_B));
 	
 	// - Compute matrix/vector contributions
-	matrixAcontr = this->massSMD*this->pHat_B*this->aRho.transpose();
-    matrixBcontr = this->massSMD*this->pHat_B*this->bRho.transpose();
-    matrixCcontr = this->massSMD*this->rTilde_PcB_B*this->pHat_B*this->aRho.transpose();
-	matrixDcontr = this->massSMD*this->rTilde_PcB_B*this->pHat_B*this->bRho.transpose();
-	vecTranscontr = -this->massSMD*this->cRho*this->pHat_B;
-	vecRotcontr = -this->massSMD*omegaTilde_BN_B_local * this->rTilde_PcB_B *this->rPrime_PcB_B -
+	backSubContr.matrixA = this->massSMD*this->pHat_B*this->aRho.transpose();
+    backSubContr.matrixB = this->massSMD*this->pHat_B*this->bRho.transpose();
+    backSubContr.matrixC = this->massSMD*this->rTilde_PcB_B*this->pHat_B*this->aRho.transpose();
+	backSubContr.matrixD = this->massSMD*this->rTilde_PcB_B*this->pHat_B*this->bRho.transpose();
+	backSubContr.vecTrans = -this->massSMD*this->cRho*this->pHat_B;
+	backSubContr.vecRot = -this->massSMD*omegaTilde_BN_B_local * this->rTilde_PcB_B *this->rPrime_PcB_B -
                                                              this->massSMD*this->cRho*this->rTilde_PcB_B * this->pHat_B;
     return;
 }
 
 /*! This method is used to define the derivatives of the SMD. One is the trivial kinematic derivative and the other is 
  derived using the back-sub method */
-void LinearSpringMassDamper::computeDerivatives(double integTime)
+void LinearSpringMassDamper::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
 {
 	
 	// - Find DCM
@@ -205,7 +202,8 @@ void LinearSpringMassDamper::computeDerivatives(double integTime)
 }
 
 /*! This method is for the SMD to add its contributions to energy and momentum */
-void LinearSpringMassDamper::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr)
+void LinearSpringMassDamper::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
+                                                          double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
     //  - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
@@ -222,7 +220,7 @@ void LinearSpringMassDamper::updateEnergyMomContributions(double integTime, Eige
     return;
 }
 
-void LinearSpringMassDamper::calcForceTorqueOnBody(double integTime)
+void LinearSpringMassDamper::calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B)
 {
     // - Get the current omega state
     Eigen::Vector3d omegaLocal_BN_B;

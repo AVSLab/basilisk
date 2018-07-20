@@ -56,11 +56,12 @@ public:
 	~ReactionWheelStateEffector();
 	void registerStates(DynParamManager& states);
 	void linkInStates(DynParamManager& states);
-	void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr);
-    void computeDerivatives(double integTime);
-    void updateEffectorMassProps(double integTime);
     void writeOutputStateMessages(uint64_t integTimeNanos);
-    void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr);
+    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);
+    void updateEffectorMassProps(double integTime);  //!< -- Method for stateEffector to give mass contributions
+    void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< -- Back-sub contributions
+    void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
+                                              double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
 	void SelfInit();
 	void CrossInit();
 	void addReactionWheel(RWConfigSimMsg *NewRW) {ReactionWheelData.push_back(*NewRW);}

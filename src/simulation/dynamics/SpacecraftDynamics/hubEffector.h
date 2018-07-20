@@ -38,22 +38,7 @@ public:
     std::string nameOfHubOmega;          //!< -- Identifier for hub omegaBN_B states
     Eigen::Vector3d r_BcB_B;             //!< [m] vector from point B to CoM of hub in B frame components
     Eigen::Matrix3d IHubPntBc_B;         //!< [kg m^2] Inertia of hub about point Bc in B frame components
-    Eigen::MatrixXd *m_SC;               //!< [kg] spacecrafts total mass
-    Eigen::MatrixXd *mDot_SC;            //!< [kg] Time derivative of spacecrafts total mass
-    Eigen::MatrixXd *ISCPntB_B;          //!< [kg m^2] Inertia of s/c about point B in B frame components
-    Eigen::MatrixXd *c_B;                //!< [m] Vector from point B to CoM of s/c in B frame components
-    Eigen::MatrixXd *cPrime_B;           //!< [m] Body time derivative of c_B
-    Eigen::MatrixXd *ISCPntBPrime_B;     //!< [m] Body time derivative of ISCPntB_B
-    Eigen::MatrixXd *g_N;                //!< [m/s^2] Gravitational acceleration in N frame components
-    Eigen::Matrix3d matrixA;             //!< -- Back-Substitution matrix A
-    Eigen::Matrix3d matrixB;             //!< -- Back-Substitution matrix B
-    Eigen::Matrix3d matrixC;             //!< -- Back-Substitution matrix C
-    Eigen::Matrix3d matrixD;             //!< -- Back-Substitution matrix D
-    Eigen::Vector3d vecTrans;            //!< -- Back-Substitution translation vector
-    Eigen::Vector3d vecRot;              //!< -- Back-Substitution rotation vector
-    Eigen::Vector3d sumForceExternal_N;  //!< [N] Sum of forces given in the inertial frame
-    Eigen::Vector3d sumForceExternal_B;  //!< [N] Sum of forces given in the body frame
-    Eigen::Vector3d sumTorquePntB_B;     //!< [N-m] Total torque about point B in B frame components
+    BackSubMatrices hubBackSubMatrices;
     Eigen::Vector3d r_CN_NInit;          //!< [m] Initial position of the spacecraft wrt to base
     Eigen::Vector3d v_CN_NInit;          //!< [m/s Initial velocity of the spacecraft wrt base
     Eigen::Vector3d sigma_BNInit;        //!< -- Initial attitude of the spacecraft wrt base
@@ -65,12 +50,15 @@ public:
     void linkInStates(DynParamManager& statesIn);  //!< -- Method to give the hub access to states
     void registerStates(DynParamManager& states);  //!< -- Method for the hub to register some states
     void updateEffectorMassProps(double integTime);  //!< -- Method for the hub to update its mass props for the s/c
-    void computeDerivatives(double integTime);  //!< -- Method for the hub to compute it's derivatives
-    void updateEnergyMomContributions(double integTime, Eigen::Vector3d &rotAngMomPntCContr_B,
-                                      double & rotEnergyContr); //!< -- Add contributions to energy and momentum
+    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for the hub to compute it's derivatives
+    void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
+                                      double & rotEnergyContr, Eigen::Vector3d omega_BN_B); //!< -- Add contributions to energy and momentum
     void modifyStates(double integTime); //!< -- Method to switch MRPs
+    void prependSpacecraftNameToStates();
 
 private:
+    Eigen::Vector3d r_BcP_P;             //!< [m] vector from point B to CoM of hub in B frame components
+    Eigen::Matrix3d IHubPntBc_P;         //!< [kg m^2] Inertia of hub about point Bc in B frame components
     StateData *posState;                 //!< [-] State data container for hub position
     StateData *velocityState;            //!< [-] State data container for hub velocity
     StateData *sigmaState;               //!< [-] State data container for hub sigma_BN

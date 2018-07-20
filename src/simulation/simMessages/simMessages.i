@@ -33,6 +33,9 @@
 #include "rwConfigLogSimMsg.h"
 #include "scPlusMassPropsSimMsg.h"
 #include "scPlusStatesSimMsg.h"
+#include "scMassPropsSimMsg.h"
+#include "scStatesSimMsg.h"
+#include "scEnergyMomentumSimMsg.h"
 #include "spiceTimeSimMsg.h"
 #include "syncClockSimMsg.h"
 #include "thrConfigSimMsg.h"
@@ -71,6 +74,12 @@ GEN_SIZEOF(RWConfigLogSimMsg);
 GEN_SIZEOF(SCPlusMassPropsSimMsg)
 %include "scPlusStatesSimMsg.h"
 GEN_SIZEOF(SCPlusStatesSimMsg)
+%include "scMassPropsSimMsg.h"
+GEN_SIZEOF(SCMassPropsSimMsg)
+%include "scStatesSimMsg.h"
+GEN_SIZEOF(SCStatesSimMsg)
+%include "scEnergyMomentumSimMsg.h"
+GEN_SIZEOF(SCEnergyMomentumSimMsg)
 %include "spicePlanetStateSimMsg.h"
 GEN_SIZEOF(SpicePlanetStateSimMsg)
 %include "spiceTimeSimMsg.h"

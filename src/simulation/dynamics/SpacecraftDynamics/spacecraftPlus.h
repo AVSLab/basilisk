@@ -34,7 +34,7 @@
 #include "hubEffector.h"
 
 /*! @brief This is an instantiation of the dynamicObject abstract class that is a spacecraft with stateEffectors and
- dynamicEffectors attached to it. The spacecraftPlus allows for just translation, just rotation, or both translation and
+ dynamicEffectors attached to it. The spacecraftPlus allows for both translation and
  rotation. stateEffectors such as RWs, flexible solar panel, fuel slosh etc can be added to the spacecraft by attaching 
  stateEffectors. dynamicEffectors such as thrusters, external force and torque, SRP etc can be added to the spacecraft 
  by attaching dynamicEffectors. This class performs all of this interaction between stateEffectors, dynamicEffectors and
@@ -59,12 +59,10 @@ public:
     double orbPotentialEnergyContr;      //!< [J] Contribution of stateEffector to total rotational energy
     double currTimeStep;                 //!< [s] Time after integration, used for dvAccum calculation
     double timePrevious;                 //!< [s] Time before integration, used for dvAccum calculation
-    Eigen::Matrix3d matrixAContr;        //!< -- The contribution of each stateEffetor to matrix A
-    Eigen::Matrix3d matrixBContr;        //!< -- The contribution of each stateEffetor to matrix B
-    Eigen::Matrix3d matrixCContr;        //!< -- The contribution of each stateEffetor to matrix C
-    Eigen::Matrix3d matrixDContr;        //!< -- The contribution of each stateEffetor to matrix D
-    Eigen::Vector3d vecTransContr;       //!< -- The contribution of each stateEffetor to vecTrans
-    Eigen::Vector3d vecRotContr;         //!< -- The contribution of each stateEffetor to vecRot
+    BackSubMatrices backSubContributions;
+    Eigen::Vector3d sumForceExternal_N;  //!< [N] Sum of forces given in the inertial frame
+    Eigen::Vector3d sumForceExternal_B;  //!< [N] Sum of forces given in the body frame
+    Eigen::Vector3d sumTorquePntB_B;     //!< [N-m] Total torque about point B in B frame components
     Eigen::MatrixXd *m_SC;               //!< [kg] spacecrafts total mass
     Eigen::MatrixXd *mDot_SC;            //!< [kg/s] Time derivative of spacecrafts total mass
     Eigen::MatrixXd *ISCPntB_B;          //!< [kg m^2] Inertia of s/c about point B in B frame components
@@ -72,6 +70,7 @@ public:
     Eigen::MatrixXd *cPrime_B;           //!< [m/s] Body time derivative of c_B
     Eigen::MatrixXd *cDot_B;             //!< [m/s] Inertial time derivative of c_B
     Eigen::MatrixXd *ISCPntBPrime_B;     //!< [kg m^2/s] Body time derivative of ISCPntB_B
+    Eigen::MatrixXd *g_N;                //!< [m/s^2] Gravitational acceleration in N frame components
     Eigen::MatrixXd *sysTime;            //!< [s] System time
     Eigen::Vector3d dvAccum_B;           //!< [m/s] Accumulated delta-v of center of mass relative to inertial frame in body frame coordinates
     Eigen::Vector3d dvAccum_BN_B;        //!< [m/s] accumulated delta-v of body frame relative to inertial frame in body frame coordinates
@@ -82,6 +81,8 @@ public:
     Eigen::Vector3d rotAngMomPntCContr_B;  //!< [kg m^2/s] Contribution of stateEffector to total rotational angular mom.
     HubEffector hub;                     //!< -- The spacecraft plus needs access to the spacecraft hub
     GravityEffector gravField;           //!< -- Gravity effector for gravitational field experienced by spacecraft
+    std::vector<StateEffector*> states;               //!< -- Vector of state effectors attached to dynObject
+    std::vector<DynamicEffector*> dynEffectors;       //!< -- Vector of dynamic effectors attached to dynObject
     
 public:
     SpacecraftPlus();                    //!< -- Constructor
@@ -89,7 +90,7 @@ public:
     void initializeDynamics();           //!< -- This method initializes all of the dynamics and variables for the s/c
     void computeEnergyMomentum(double time);  //!< -- This method computes the total energy and momentum of the s/c
     void updateSCMassProps(double time);  //!< -- This method computes the total mass properties of the s/c
-    void calcForceTorqueFromStateEFfectors(double time);  //!< -- This method computes the force and torque from the stateEffectors
+    void calcForceTorqueFromStateEffectors(double time, Eigen::Vector3d omega_BN_B);  //!< -- This method computes the force and torque from the stateEffectors
     void SelfInit();                     //!< -- Lets spacecraft plus create its own msgs
     void CrossInit();                    //!< -- Hook to tie s/c plus back into provided msgs
 	void writeOutputStateMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
@@ -97,6 +98,8 @@ public:
     void linkInStates(DynParamManager& statesIn);  //!< Method to get access to the hub's states
     void equationsOfMotion(double integTimeSeconds);    //!< -- This method computes the equations of motion for the whole system
     void integrateState(double time);       //!< -- This method steps the state forward one step in time
+    void addStateEffector(StateEffector *newSateEffector);  //!< -- Attaches a stateEffector to the system
+    void addDynamicEffector(DynamicEffector *newDynamicEffector);  //!< -- Attaches a dynamicEffector
 
 private:
     StateData *hubR_N;                          //!< -- State data accesss to inertial position for the hub

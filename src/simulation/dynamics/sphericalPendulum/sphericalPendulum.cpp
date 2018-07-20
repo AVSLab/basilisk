@@ -199,10 +199,7 @@ void SphericalPendulum::retrieveMassValue(double integTime)
 }
 
 /*! This method is for the FSP to add its contributions to the back-sub method */
-void SphericalPendulum::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr,
-                                            Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr,
-                                            Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr,
-                                            Eigen::Vector3d & vecRotcontr)
+void SphericalPendulum::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
 
     // - Find dcm_BN
@@ -261,30 +258,30 @@ void SphericalPendulum::updateContributions(double integTime, Eigen::Matrix3d & 
 			-this->massFSP*pHat_02_Prime.transpose().dot(lTilde*(2*omegaTilde_BN_B_local*this->lPrime_B+omegaTilde_BN_B_local*omegaTilde_BN_B_local*this->l_B)));
 	
 	// - Compute matrix/vector contributions
-	matrixAcontr = -this->massFSP*this->pendulumRadius*((sin(this->phi)*cos(this->theta)*this->pHat_01
+	backSubContr.matrixA = -this->massFSP*this->pendulumRadius*((sin(this->phi)*cos(this->theta)*this->pHat_01
 	 - cos(this->phi)*cos(this->theta)*this->pHat_02)*this->aPhi.transpose()+(cos(this->phi)*sin(this->theta)*this->pHat_01
 	 +sin(this->phi)*sin(this->theta)*this->pHat_02+cos(this->theta)*this->pHat_03)*this->aTheta.transpose());
 
-    matrixBcontr = -this->massFSP*this->pendulumRadius*((sin(this->phi)*cos(this->theta)*this->pHat_01
+    backSubContr.matrixB = -this->massFSP*this->pendulumRadius*((sin(this->phi)*cos(this->theta)*this->pHat_01
 	 - cos(this->phi)*cos(this->theta)*this->pHat_02)*this->bPhi.transpose() + (cos(this->phi)*sin(this->theta)*this->pHat_01
 	 +sin(this->phi)*sin(this->theta)*this->pHat_02+cos(this->theta)*this->pHat_03)*this->bTheta.transpose());
 
-    matrixCcontr = -this->massFSP*this->pendulumRadius*this->rTilde_PcB_B*((sin(this->phi)*cos(this->theta)*this->pHat_01
+    backSubContr.matrixC = -this->massFSP*this->pendulumRadius*this->rTilde_PcB_B*((sin(this->phi)*cos(this->theta)*this->pHat_01
 	 - cos(this->phi)*cos(this->theta)*this->pHat_02)*this->aPhi.transpose()+(cos(this->phi)*sin(this->theta)*this->pHat_01
 	 +sin(this->phi)*sin(this->theta)*this->pHat_02+cos(this->theta)*this->pHat_03)*this->aTheta.transpose());
 
-	matrixDcontr = -this->massFSP*this->pendulumRadius*this->rTilde_PcB_B*((sin(this->phi)*cos(this->theta)*this->pHat_01
+	backSubContr.matrixD = -this->massFSP*this->pendulumRadius*this->rTilde_PcB_B*((sin(this->phi)*cos(this->theta)*this->pHat_01
 	 - cos(this->phi)*cos(this->theta)*this->pHat_02)*this->bPhi.transpose()+(cos(this->phi)*sin(this->theta)*this->pHat_01
 	 +sin(this->phi)*sin(this->theta)*this->pHat_02+cos(this->theta)*this->pHat_03)*this->bTheta.transpose());
 
-	vecTranscontr = -this->massFSP*this->pendulumRadius*((-cos(this->phi)*cos(this->theta)*this->pHat_01
+	backSubContr.vecTrans = -this->massFSP*this->pendulumRadius*((-cos(this->phi)*cos(this->theta)*this->pHat_01
 	-sin(this->phi)*cos(this->theta)*this->pHat_02)*this->phiDot*this->phiDot
 	+(-cos(this->phi)*cos(this->theta)*this->pHat_01-sin(this->phi)*cos(this->theta)*this->pHat_02+sin(this->theta)*this->pHat_03)*this->thetaDot*this->thetaDot
 	+(2*sin(this->phi)*sin(this->theta)*this->pHat_01-2*cos(this->phi)*sin(this->theta)*this->pHat_02)*this->phiDot*this->thetaDot
 	-(sin(this->phi)*cos(this->theta)*this->pHat_01-cos(this->phi)*cos(this->theta)*this->pHat_02)*this->cPhi
 	-(cos(this->phi)*sin(this->theta)*this->pHat_01+sin(this->phi)*sin(this->theta)*this->pHat_02+cos(theta)*this->pHat_03)*this->cTheta);
 
-	vecRotcontr = -this->massFSP*(omegaTilde_BN_B_local*this->rTilde_PcB_B*this->rPrime_PcB_B
+	backSubContr.vecRot = -this->massFSP*(omegaTilde_BN_B_local*this->rTilde_PcB_B*this->rPrime_PcB_B
 		+this->pendulumRadius*rTilde_PcB_B*(
 	(-cos(this->phi)*cos(this->theta)*this->pHat_01-sin(this->phi)*cos(this->theta)*this->pHat_02)*this->phiDot*this->phiDot
 	+(-cos(this->phi)*cos(this->theta)*this->pHat_01-sin(this->phi)*cos(this->theta)*this->pHat_02+sin(this->theta)*this->pHat_03)*this->thetaDot*this->thetaDot
@@ -299,7 +296,7 @@ void SphericalPendulum::updateContributions(double integTime, Eigen::Matrix3d & 
 
 /*! This method is used to define the derivatives of the FSP. One is the trivial kinematic derivative and the other is 
  derived using the back-sub method */
-void SphericalPendulum::computeDerivatives(double integTime)
+void SphericalPendulum::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
 {
 	
 	// - Find DCM
@@ -332,7 +329,8 @@ void SphericalPendulum::computeDerivatives(double integTime)
 }
 
 /*! This method is for the FSP to add its contributions to energy and momentum */
-void SphericalPendulum::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr)
+void SphericalPendulum::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
+                                                     double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
 	
     //  - Get variables needed for energy momentum calcs

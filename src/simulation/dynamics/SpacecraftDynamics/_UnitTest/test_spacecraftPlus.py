@@ -105,18 +105,19 @@ def test_SCTranslation(show_plots):
     orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
     orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
 
+    plt.close("all")
     plt.figure()
     plt.clf()
     plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentumTranslationOnly", "Change in Orbital Angular Momentum Translation Only", plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("scPlusChangeInOrbitalAngularMomentumTranslationOnly", "Change in Orbital Angular Momentum Translation Only", plt, "width=0.8\\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergyTranslationOnly", "Change in Orbital Energy Translation Only", plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("scPlusChangeInOrbitalEnergyTranslationOnly", "Change in Orbital Energy Translation Only", plt, "width=0.8\\textwidth", path)
     plt.show(show_plots)
 
     moduleOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N',
@@ -282,25 +283,25 @@ def test_SCTransAndRotation(show_plots):
     plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentumTranslationAndRotation", "Change in Orbital Angular Momentum Translation And Rotation", plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("scPlusChangeInOrbitalAngularMomentumTranslationAndRotation", "Change in Orbital Angular Momentum Translation And Rotation", plt, "width=0.8\\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergyTranslationAndRotation", "Change in Orbital Energy Translation And Rotation", plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("scPlusChangeInOrbitalEnergyTranslationAndRotation", "Change in Orbital Energy Translation And Rotation", plt, "width=0.8\\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentumTranslationAndRotation", "Change in Rotational Angular Momentum Translation And Rotation", plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("scPlusChangeInRotationalAngularMomentumTranslationAndRotation", "Change in Rotational Angular Momentum Translation And Rotation", plt, "width=0.8\\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergyTranslationAndRotation", "Change in Rotational Energy Translation And Rotation", plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("scPlusChangeInRotationalEnergyTranslationAndRotation", "Change in Rotational Energy Translation And Rotation", plt, "width=0.8\\textwidth", path)
     plt.show(show_plots)
 
     accuracy = 1e-8
@@ -491,7 +492,7 @@ def test_SCRotation(show_plots):
     plt.plot(moduleOutput[index-1,0]*1e-9, moduleOutput[index-1,1],'bo')
     plt.xlabel("Time (s)")
     plt.ylabel("MRPs")
-    unitTestSupport.writeFigureLaTeX("MRPs", "Attitude of Spacecraft in MRPs", plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("scPlusMRPs", "Attitude of Spacecraft in MRPs", plt, "width=0.8\\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(moduleOutput[index - 3: index + 3,0]*1e-9, moduleOutput[index - 3: index + 3,1],"b")
@@ -504,19 +505,19 @@ def test_SCRotation(show_plots):
     plt.legend(loc ='upper right',numpoints = 1)
     plt.xlabel("Time (s)")
     plt.ylabel("MRPs")
-    unitTestSupport.writeFigureLaTeX("MRPSwitching", "MRP Switching", plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("scPlusMRPSwitching", "MRP Switching", plt, "width=0.8\\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMomMag - rotAngMomMag[0])/rotAngMomMag[0])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentumRotationOnly", "Change in Rotational Angular Momentum Rotation Only", plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("scPlusChangeInRotationalAngularMomentumRotationOnly", "Change in Rotational Angular Momentum Rotation Only", plt, "width=0.8\\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergyRotationOnly", "Change in Rotational Energy Rotation Only", plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("scPlusChangeInRotationalEnergyRotationOnly", "Change in Rotational Energy Rotation Only", plt, "width=0.8\\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(omega_BNOutput[:,0]*1e-9,omega_BNOutput[:,1],label = r"$\omega_1$" + " Basilisk")
@@ -528,7 +529,7 @@ def test_SCRotation(show_plots):
     plt.xlabel("Time (s)")
     plt.ylabel("Angular Velocity (rad/s)")
     plt.legend(loc ='lower right',numpoints = 1, prop = {'size': 6.5})
-    unitTestSupport.writeFigureLaTeX("BasiliskVsBOECalcForRotation", "Basilisk Vs BOE Calc For Rotation", plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("scPlusBasiliskVsBOECalcForRotation", "Basilisk Vs BOE Calc For Rotation", plt, "width=0.8\\textwidth", path)
     plt.show(show_plots)
     plt.close("all")
 
@@ -679,7 +680,7 @@ def test_SCTransBOE(show_plots):
     plt.xlabel('time (s)')
     plt.ylabel('X (m)')
     plt.legend(loc ='upper left',numpoints = 1)
-    PlotName = "TranslationPositionBOE"
+    PlotName = "scPlusTranslationPositionBOE"
     PlotTitle = "Translation Position BOE"
     format = "width=0.8\\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
@@ -691,7 +692,7 @@ def test_SCTransBOE(show_plots):
     plt.xlabel('time (s)')
     plt.ylabel('X velocity (m/s)')
     plt.legend(loc ='lower left',numpoints = 1)
-    PlotName = "TranslationVelocityBOE"
+    PlotName = "scPlusTranslationVelocityBOE"
     PlotTitle = "Translation Velocity BOE"
     format = "width=0.8\\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
@@ -845,7 +846,7 @@ def test_SCPointBVsPointC(show_plots):
     plt.xlabel('Time (s)')
     plt.ylabel('Inertial Position (m)')
     plt.legend(loc ='upper left', handlelength=3.5)
-    PlotName = "PointBVsPointCTranslation"
+    PlotName = "scPlusPointBVsPointCTranslation"
     PlotTitle = "PointB Vs PointC Translation"
     format = "width=0.8\\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
@@ -859,7 +860,7 @@ def test_SCPointBVsPointC(show_plots):
     plt.xlabel('Time (s)')
     plt.ylabel('MRPs')
     plt.legend(loc ='upper right', handlelength=3.5)
-    PlotName = "PointBVsPointCAttitude"
+    PlotName = "scPlusPointBVsPointCAttitude"
     PlotTitle = "PointB Vs PointC Attitude"
     format = "width=0.8\\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)

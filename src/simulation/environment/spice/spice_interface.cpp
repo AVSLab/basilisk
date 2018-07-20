@@ -289,7 +289,7 @@ void SpiceInterface::computePlanetData()
             
             double aux[6][6];
             
-            sxform_c(this->referenceBase.c_str(), planetFrame.c_str(), this->J2000Current, aux);
+            sxform_c(this->referenceBase.c_str(), planetFrame.c_str(), this->J2000Current, aux); //returns attude of planet (i.e. IAU_EARTH) wrt "j2000". note j2000 is actually ICRF in Spice.
             
             m66Get33Matrix(0, 0, aux, planit->second.J20002Pfix);
             

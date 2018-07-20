@@ -26,6 +26,7 @@
 #include "utilities/linearAlgebra.h"
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/spiceTimeSimMsg.h"
+#include "utilities/avsEigenSupport.h"
 
 /*! \addtogroup SimModelGroup
  *  This group is used to model parts of the vehicle and the surrounding environment

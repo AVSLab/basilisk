@@ -717,7 +717,7 @@ def atmosphericDensity(alt):
      * Function: atmosphericDensity
      * Purpose: This program computes the atmospheric density based on altitude
      *   supplied by user.  This function uses a curve fit based on
-     *   atmospheric data from the Standard Atmoshere 1976 Data. This
+     *   atmospheric data from the Standard Atmosphere 1976 Data. This
      *   function is valid for altitudes ranging from 100km to 1000km.
      *
      *   Note: This code can only be applied to spacecraft orbiting the Earth
