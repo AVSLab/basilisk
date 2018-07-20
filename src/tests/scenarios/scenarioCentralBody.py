@@ -275,15 +275,13 @@ def run(show_plots, useCentral):
         oeData = orbitalMotion.rv2elem(mu, posData[idx, 1:4], velData[idx, 1:4])
         rData.append(oeData.rmag)
         fData.append(oeData.f + oeData.omega - oe.omega)
-    plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000, color='#aa0000', linewidth=3.0
-             )
+    plt.plot(posData[:,1] / 1000, posData[:,2] / 1000, color='#aa0000', linewidth=3.0)
     # draw the full osculating orbit from the initial conditions
     fData = np.linspace(0, 2 * np.pi, 100)
     rData = []
     for idx in range(0, len(fData)):
         rData.append(p / (1 + oe.e * np.cos(fData[idx])))
-    plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000, '--', color='#555555'
-             )
+    plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000, '--', color='#555555')
     plt.xlabel('$i_e$ Cord. [km]')
     plt.ylabel('$i_p$ Cord. [km]')
     plt.grid()
