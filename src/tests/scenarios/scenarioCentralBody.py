@@ -256,9 +256,6 @@ def run(show_plots, useCentral):
     plt.legend(loc='lower right')
     plt.xlabel('Time [orbits]')
     plt.ylabel('Inertial Position [km]')
-    figureList = {}
-    pltName = fileName + "_" + str(useCentral)
-    figureList[pltName] = plt.figure(1)
 
     # draw orbit in perifocal frame
     b = oe.a * np.sqrt(1 - oe.e * oe.e)
@@ -297,7 +294,7 @@ def run(show_plots, useCentral):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    return out_r, out_v, truth_r, truth_v, figureList
+    return out_r, out_v, truth_r, truth_v
 
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script

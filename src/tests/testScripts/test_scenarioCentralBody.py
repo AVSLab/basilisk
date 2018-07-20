@@ -61,7 +61,7 @@ def test_scenarioCentralBody(show_plots, useCentral):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
-    out_r, out_v, truth_r, truth_v, figureList = scenarioCentralBody.run(show_plots, useCentral)
+    out_r, out_v, truth_r, truth_v = scenarioCentralBody.run(show_plots, useCentral)
 
     # compare the results to the truth values
     if unitTestSupport.isDoubleEqualRelative(out_r, truth_r, .01) != 1:
@@ -69,9 +69,6 @@ def test_scenarioCentralBody(show_plots, useCentral):
     if unitTestSupport.isDoubleEqualRelative(out_v, truth_v, .01) != 1:
         testFailCount += 1
 
-    # save the figures to the Doxygen scenario images folder
-    for pltName, plt in figureList.items():
-        unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
     #   print out success message if no error were found
     if testFailCount == 0:
