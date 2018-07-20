@@ -42,7 +42,6 @@ from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport)
 from Basilisk.utilities import planetStates
-from Basilisk.simulation import spice_interface
 from numpy import array
 from numpy.linalg import norm
 
@@ -63,7 +62,7 @@ from numpy.linalg import norm
 # graphs are provided which show the outputs to be the same in each case
 # parameters:
 # Setup | showPlots           | useCentral
-# ----- | ------------------- | ---------------------
+# ----- | ------------------- | ------------
 # 1     | True                | False
 # 2     | True                | True
 #
@@ -106,7 +105,7 @@ from numpy.linalg import norm
 # base, even when a central body is being used. So, to plot planet-relative orbits, the outputs are adjusted by the
 # time history of the earth position and velocity.
 #
-# Plots in this scenario are the same as the basic orbit scenario and are included for visual inspection that the results are
+# Plots found when running this scenario are the same as the basic orbit scenario and are included for visual inspection that the results are
 # roughly the same regardless of the use of a central body.
 
 ## @}
