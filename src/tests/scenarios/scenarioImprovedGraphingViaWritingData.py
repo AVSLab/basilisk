@@ -95,9 +95,9 @@ from functools import partial
 from datashader.utils import export_image
 from datashader.colors import colormap_select, Greys9, Hot, inferno
 
-NUMBER_OF_RUNS = 5000
+NUMBER_OF_RUNS = 100
 VERBOSE = True
-ONLY_GRAPH = 1
+ONLY_GRAPH = 0
 
 # Here are the name of some messages that we want to retain or otherwise use
 inertial3DConfigOutputDataName = "guidanceInertial3D"
@@ -775,12 +775,13 @@ def plotSim(data, retentionPolicy):
     if run_number == 0:
         time_dataFrame = updateDataframes(dataUsReq[:, [0]], time_dataFrame)
 
-    rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame = updateDataframes(dataUsReq[:, 1:], rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame)
-    attErrorConfigOutputDataName_sigma_BR_dataFrame = updateDataframes(dataSigmaBR[:, 1:], attErrorConfigOutputDataName_sigma_BR_dataFrame)
-    attErrorConfigOutputDataName_omega_BR_B_dataFrame = updateDataframes(dataOmegaBR[:, 1:], attErrorConfigOutputDataName_omega_BR_B_dataFrame)
-    sNavObjectOutputTransName_r_BN_N_dataFrame = updateDataframes(dataPos[:, 1:], sNavObjectOutputTransName_r_BN_N_dataFrame)
-    mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame = updateDataframes(dataOmegaRW[:, 1:], mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame)
-    fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame = updateDataframes(dataVolt[:, 1:], fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame)
+
+    rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame = updateDataframes(dataUsReq, rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame)
+    attErrorConfigOutputDataName_sigma_BR_dataFrame = updateDataframes(dataSigmaBR, attErrorConfigOutputDataName_sigma_BR_dataFrame)
+    attErrorConfigOutputDataName_omega_BR_B_dataFrame = updateDataframes(dataOmegaBR, attErrorConfigOutputDataName_omega_BR_B_dataFrame)
+    sNavObjectOutputTransName_r_BN_N_dataFrame = updateDataframes(dataPos, sNavObjectOutputTransName_r_BN_N_dataFrame)
+    mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame = updateDataframes(dataOmegaRW, mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame)
+    fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame = updateDataframes(dataVolt, fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame)
 
 
 def plotSimAndSave(data, retentionPolicy):
@@ -812,7 +813,11 @@ def systemWriteDirectories(path):
 
 def updateDataframes(data, dataframe):
     df = pd.DataFrame(data, columns=None)
-    result = pd.concat([df, dataframe], axis = 1, sort = False)
+    # result = pd.concat([df, dataframe], axis = 1, sort = False)
+    nandf = pd.DataFrame([np.nan])
+    df = df.append(nandf, ignore_index=True)
+    result = df.append(dataframe, ignore_index=True)
+    print result
     return result
 
 
@@ -903,9 +908,9 @@ def configureGraph(data, yAxisLabel):
 
     cvs = ds.Canvas(plot_height=500, plot_width=800)
 
-    result = pd.concat([timeDF, df.iloc[:,1]], axis = 1, sort = False)
+    result = pd.concat([df.iloc[:,0], df.iloc[:,1]], axis = 1, sort = False)
     result.columns = ['x', 'y']
-
+    print result
     agg = cvs.line(result, 'x', 'y', agg=ds.any())
     img = tf.shade(agg)
 
