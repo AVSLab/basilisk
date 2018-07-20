@@ -304,4 +304,3 @@ if __name__ == "__main__":
         True,        # show_plots
         False        # useCentral
     )
-    run(True, True)
