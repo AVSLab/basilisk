@@ -77,6 +77,8 @@ import pandas as pd
 from bokeh.plotting import figure, output_file, show
 from bokeh.palettes import Spectral6
 from bokeh.transform import linear_cmap
+from bokeh.plotting import figure, output_notebook, show
+from bokeh.models import BoxZoomTool
 from bokeh.resources import CDN
 from bokeh.embed import file_html
 import itertools
@@ -88,10 +90,14 @@ from matplotlib.colors import rgb2hex
 from matplotlib.cm import get_cmap
 from bokeh.plotting import figure, output_file, save
 
+from datashader.bokeh_ext import InteractiveImage
+from functools import partial
+from datashader.utils import export_image
+from datashader.colors import colormap_select, Greys9, Hot, inferno
 
 NUMBER_OF_RUNS = 5000
 VERBOSE = True
-ONLY_GRAPH = 0
+ONLY_GRAPH = 1
 
 # Here are the name of some messages that we want to retain or otherwise use
 inertial3DConfigOutputDataName = "guidanceInertial3D"
@@ -854,8 +860,8 @@ def graph():
 def configureGraph(data, yAxisLabel):
     titles = ["X", "Y", "Z"]
 
-    p = figure(plot_width=800, plot_height=250, x_axis_type="datetime")
-
+    # p = figure(plot_width=800, plot_height=250, x_axis_type="datetime")
+    p = base_plot()
 
     df = pd.read_csv(
         "data/mc1/" + data + ".csv")
@@ -872,16 +878,79 @@ def configureGraph(data, yAxisLabel):
 
     print "Starting graph", datetime.datetime.now()
 
-    for column in xrange(0, df.shape[1], colsPerRun):
-        length = len(Spectral6)
-        color = Spectral6[column % length]
-        p.multi_line([timeDF.iloc[:,0], timeDF.iloc[:,0], timeDF.iloc[:,0]], [df.iloc[:,column], df.iloc[:,column + 1], df.iloc[:,column + 2]],
-            color=[color, color, color], alpha=[0.3, 0.3, 0.3], line_width=2)
+    # reformat the data into an appropriate DataFrame
+    # dfs = []
+    # split = pd.DataFrame({'x': [np.nan]})
+    # for i in range(len(data) - 1):
+    #     x = data[0]
+    #     y = data[i + 1]
+    #     df = pd.DataFrame({'x': x, 'y': y})
+    #     dfs.append(df)
+    #     dfs.append(split)
+    # df = pd.concat(dfs, ignore_index=True)
 
-    output_file("data/mc1/"+data+".html")
-    save(p)
-    print "done saving html", datetime.datetime.now()
-#
+
+    # x_range = data[0].min(), data[0].max()
+    # y_range = data[1:].min(), data[1:].max()
+
+    # xyDF = df[]dataframe
+    # plot_width = int(750)
+    # plot_height = int(plot_width // 1.2)
+    # background = "black"
+    # export = partial(export_image, export_path="export", background=background)
+    # cm = partial(colormap_select, reverse=(background == "black"))
+
+
+    cvs = ds.Canvas(plot_height=500, plot_width=800)
+
+    result = pd.concat([timeDF, df.iloc[:,1]], axis = 1, sort = False)
+    result.columns = ['x', 'y']
+
+    agg = cvs.line(result, 'x', 'y', agg=ds.any())
+    img = tf.shade(agg)
+
+
+    export_image(img, data)
+    # InteractiveImage(create_image(result), "title")
+    print "done saving png ", data, datetime.datetime.now()
+
+def create_image(df, w=800, h=500):
+    cvs = ds.Canvas(plot_width=w, plot_height=h)
+    agg = cvs.line(df, 'x', 'y', agg=ds.any())
+    img = tf.shade(agg)
+    return img
+
+
+def base_plot(tools='pan,wheel_zoom,reset', plot_width= int(750), plot_height=int(int(750) // 1.2), **plot_args):
+    p = figure(tools=tools, plot_width=plot_width, plot_height=plot_height,
+               x_range=(0,100000), y_range=(0,10000), outline_line_color=None,
+               min_border=0, min_border_left=0, min_border_right=0,
+               min_border_top=0, min_border_bottom=0, **plot_args)
+
+    p.axis.visible = False
+    p.xgrid.grid_line_color = None
+    p.ygrid.grid_line_color = None
+
+    p.add_tools(BoxZoomTool(match_aspect=True))
+
+    return p
+# def create_image(x_range, y_range, w=plot_width, h=plot_height):
+#     return
+def export_image(img, filename, fmt=".png", _return=True):
+    """Given a datashader Image object, saves it to a disk file in the requested format"""
+
+    from datashader.transfer_functions import set_background
+
+    export_path = "image/"
+    if not os.path.exists(export_path):
+        os.mkdir(export_path)
+
+    # if background:
+    #     img = set_background(img, background)
+
+    img.to_pil().save(os.path.join(export_path, filename + fmt))
+    return img if _return else None
+
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
 #
@@ -889,3 +958,13 @@ if __name__ == "__main__":
     run(  False        # safe figures to file
         , True         # show_plots
        )
+
+
+    # for column in xrange(0, df.shape[1], colsPerRun):
+    #     length = len(Spectral6)
+    #     color = Spectral6[column % length]
+    #     p.multi_line([timeDF.iloc[:,0], timeDF.iloc[:,0], timeDF.iloc[:,0]], [df.iloc[:,column], df.iloc[:,column + 1], df.iloc[:,column + 2]],
+    #         color=[color, color, color], alpha=[0.3, 0.3, 0.3], line_width=2)
+    #
+    # output_file("data/mc1/"+data+".html")
+    # save(p)
