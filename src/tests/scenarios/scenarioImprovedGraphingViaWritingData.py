@@ -760,9 +760,6 @@ def plotSim(data, retentionPolicy):
     run_number = data["index"]
 
 
-    # Update dataframes
-    # Don't include the first column of the data since that is time and uneeded data.
-
     global time_dataFrame
     global rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame
     global attErrorConfigOutputDataName_sigma_BR_dataFrame
@@ -770,11 +767,6 @@ def plotSim(data, retentionPolicy):
     global sNavObjectOutputTransName_r_BN_N_dataFrame
     global mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame
     global fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame
-
-    # Write the time data to a separate file so there is so redundant data.
-    if run_number == 0:
-        time_dataFrame = updateDataframes(dataUsReq[:, [0]], time_dataFrame)
-
 
     rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame = updateDataframes(dataUsReq, rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame)
     attErrorConfigOutputDataName_sigma_BR_dataFrame = updateDataframes(dataSigmaBR, attErrorConfigOutputDataName_sigma_BR_dataFrame)
@@ -822,11 +814,6 @@ def updateDataframes(data, dataframe):
 
 
 def saveDataframesToFile():
-    # yAxisLabels = ["RW Speed (RPM)", "Attitude Error Sigma B/R", "Attitude Error Omega BR", "Y label", "Y Label"]
-    # for data, yAxisLabel in zip(retainedDataList, yAxisLabels):
-    #     configureGraph(data, yAxisLabel)
-
-    # yAxisLabels = ["Y"]
 
     print "beginning writing csv..", datetime.datetime.now()
 
@@ -859,20 +846,16 @@ def saveDataframesToFile():
 
 def graph():
     for data in retainedDataList:
-        configureGraph(data, "")
+        configureGraph(data)
 
 
-def configureGraph(data, yAxisLabel):
-    titles = ["X", "Y", "Z"]
-
-    # p = figure(plot_width=800, plot_height=250, x_axis_type="datetime")
+def configureGraph(data):
     p = base_plot()
 
     df = pd.read_csv(
         "data/mc1/" + data + ".csv")
-    timeDF = pd.read_csv("data/mc1/time.csv")
-    newTime = timeDF.values[:, 0] * macros.NANO2MIN
-    timeDF = pd.DataFrame(newTime, columns=None)
+
+
     p.title.text = "title"
     p.legend.location = "top_right"
     p.legend.click_policy = "hide"
@@ -882,39 +865,23 @@ def configureGraph(data, yAxisLabel):
     colsPerRun = len(df.columns) / NUMBER_OF_RUNS
 
     print "Starting graph", datetime.datetime.now()
-
-    # reformat the data into an appropriate DataFrame
-    # dfs = []
-    # split = pd.DataFrame({'x': [np.nan]})
-    # for i in range(len(data) - 1):
-    #     x = data[0]
-    #     y = data[i + 1]
-    #     df = pd.DataFrame({'x': x, 'y': y})
-    #     dfs.append(df)
-    #     dfs.append(split)
-    # df = pd.concat(dfs, ignore_index=True)
-
-
-    # x_range = data[0].min(), data[0].max()
-    # y_range = data[1:].min(), data[1:].max()
-
-    # xyDF = df[]dataframe
-    # plot_width = int(750)
-    # plot_height = int(plot_width // 1.2)
-    # background = "black"
-    # export = partial(export_image, export_path="export", background=background)
-    # cm = partial(colormap_select, reverse=(background == "black"))
-    # print df
-
+    imgs = []
     cvs = ds.Canvas(plot_height=500, plot_width=800)
 
-    # result = pd.concat([df.iloc[:,0], df.iloc[:,1]], axis = 1, sort = False)
-    # result.columns = ['x', 'y']
     agg = cvs.line(df, '0', '1', agg=ds.any())
     img = tf.shade(agg)
+    imgs.append(img)
 
+    agg = cvs.line(df, '0', '2', agg=ds.any())
+    img = tf.shade(agg)
+    imgs.append(img)
 
-    export_image(img, data)
+    agg = cvs.line(df, '0', '3', agg=ds.any())
+    img = tf.shade(agg)
+    imgs.append(img)
+
+    stacked = tf.stack(*imgs)
+    export_image(stacked, data)
     # InteractiveImage(create_image(result), "title")
     print "done saving png ", data, datetime.datetime.now()
 
@@ -962,13 +929,3 @@ if __name__ == "__main__":
     run(  False        # safe figures to file
         , True         # show_plots
        )
-
-
-    # for column in xrange(0, df.shape[1], colsPerRun):
-    #     length = len(Spectral6)
-    #     color = Spectral6[column % length]
-    #     p.multi_line([timeDF.iloc[:,0], timeDF.iloc[:,0], timeDF.iloc[:,0]], [df.iloc[:,column], df.iloc[:,column + 1], df.iloc[:,column + 2]],
-    #         color=[color, color, color], alpha=[0.3, 0.3, 0.3], line_width=2)
-    #
-    # output_file("data/mc1/"+data+".html")
-    # save(p)
