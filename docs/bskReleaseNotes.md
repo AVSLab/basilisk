@@ -47,6 +47,9 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>
     A new method called writeOutputStateMessages was added to the stateEffector abstract class which allows for stateEffectors to write their states as messages in the system and the states will always be written out to the system after integration. This fixed an issue with reaction wheels where the commanded torque information needs to be tasked before the spacecraft but the reaction wheel state messages need to be written out after integration. 
     </li>
+    <li>
+    Updated the FSW modules `MRP_Feedback`,`MRP_Steering`, `dvAccumulation` and `oeStateEphem` to zero out the output message first in the `Update()` routine.
+    </li>
 </ul>
 
 ## Version 0.2.3 (June 12, 2018)
