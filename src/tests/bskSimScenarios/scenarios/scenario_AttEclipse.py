@@ -224,11 +224,10 @@ class scenario_AttitudeEclipse(BSKScenario):
         timeData = dataUsReq[:, 0] * macros.NANO2MIN
         BSK_plt.plot_attitude_error(timeData, sigma_BR)
         BSK_plt.plot_rw_cmd_torque(timeData, dataUsReq, num_RW)
-        #BSK_plt.plot_rate_error(timeData, omega_BR_B)
+        BSK_plt.plot_rate_error(timeData, omega_BR_B)
         BSK_plt.plot_rw_speeds(timeData, RW_speeds, num_RW)
 
         BSK_plt.plot_shadow_fraction(timeData, shadowFactor)
-        #BSK_plt.plot_orbit(r_BN_N)
         BSK_plt.plot_sun_point(timeData, sunPoint)
 
         figureList = {}
