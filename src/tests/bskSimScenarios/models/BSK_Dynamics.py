@@ -25,7 +25,8 @@ from Basilisk.simulation import (spacecraftPlus, gravityEffector, extForceTorque
 from Basilisk.utilities import simIncludeRW, simIncludeGravBody
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk import pyswice
-bskPath = '/Users/johnmartin/Basilisk'
+from Basilisk import __path__
+bskPath = __path__[0]
 
 
 
