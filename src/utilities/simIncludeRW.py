@@ -58,7 +58,7 @@ class rwFactory(object):
                 label : string with the unique device name, must be 5 characters or less
                 fCoulomb: double for the Coulomb friction torque model
                 fStatic: double for Static friction torque magnitude
-                betaStatic: double for Stribeck friction coefficient
+                betaStatic: double for Stribeck friction coefficient, positive turns Stribeck friction on, negative turns this friction off
                 cViscous: double for Viscous fricion coefficient
             Returns
             -------
@@ -134,8 +134,11 @@ class rwFactory(object):
             if not isinstance(varbetaStatic, (float)):
                 print 'ERROR: betaStatic must be a FLOAT argument'
                 exit(1)
+            if varbetaStatic == 0:
+                print 'ERROR: betaStatic cannot be set to zero.  Positive turns it on, negative turns it off'
+                exit(1)
         else:
-            varbetaStatic = 0.0       # default value
+            varbetaStatic = -1.0       # default value turns off Stribeck friction model
         RW.betaStatic = varbetaStatic
 
         if kwargs.has_key('cViscous'):
