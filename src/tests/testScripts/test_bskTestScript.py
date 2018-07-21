@@ -33,6 +33,7 @@
 import sys, os, inspect
 import pytest
 import importlib
+from Basilisk.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -49,7 +50,8 @@ sys.path.append(path + '/../bskSimScenarios/scenarios')
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("bskSimCase", [
-      ('scenario_AttGuidance')
+    ('scenario_AttEclipse')
+    , ('scenario_AttGuidance')
     , ('scenario_AttGuidHyperbolic')
     , ('scenario_AttSteering')
     , ('scenario_FeedbackRW')
@@ -61,12 +63,18 @@ def test_scenarioBskScenarios(show_plots, bskSimCase):
 
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
-
     # import the bskSim script to be tested
     scene_plt = importlib.import_module(bskSimCase)
 
     try:
-        scene_plt.run(False)
+        figureList = scene_plt.run(False)
+
+        # save the figures to the Doxygen scenario images folder
+
+        if(figureList != {}):
+            for pltName, plt in figureList.items():
+                unitTestSupport.saveScenarioFigure(pltName, plt, path)
+
     except OSError as err:
         testFailCount = testFailCount + 1
         testMessages.append("OS error: {0}".format(err))

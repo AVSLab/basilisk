@@ -58,7 +58,7 @@ class scenario_InertialPointing(BSKScenario):
         oe.omega = 0.0 * macros.D2R
         oe.f = 280.0 * macros.D2R
 
-        mu = self.masterSim.DynModels.earthGravBody.mu
+        mu = self.masterSim.DynModels.gravFactory.gravBodies['earth'].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
         self.masterSim.DynModels.scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
@@ -113,7 +113,10 @@ class scenario_InertialPointing(BSKScenario):
         plot_fsw_outputs(sigma_RN, sigma_BR, Lr)
 
         # Show all plots
+        figureList = {}
         BSK_plt.show_all_plots()
+
+        return figureList
 
 
 def run(showPlots):
@@ -135,8 +138,11 @@ def run(showPlots):
 
 
     # Pull the results of the base simulation running the chosen scenario
+    figureList = {}
     if showPlots:
-        TheScenario.pull_outputs()
+        figureList = TheScenario.pull_outputs()
+
+    return figureList
 
 if __name__ == "__main__":
     run(True)

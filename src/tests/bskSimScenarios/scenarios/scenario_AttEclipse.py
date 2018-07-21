@@ -17,35 +17,33 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-## \defgroup Tutorials_2_2_1
+## \defgroup Tutorials_6_1
 ## @{
-# Demonstrates how to sun safe pointing in conjunction with the Eclipse, RW, CSS Weighted Least Squares Estimator and
-# CSS modules to stabilize the tumble of a spacecraft passing through an eclipse while orbiting the Earth.
+# Demonstrates how to use sun safe pointing in conjunction with the Eclipse, RW, CSS Weighted Least Squares Estimator, and
+# CSS modules to provide attitude guidance as the spacecraft passes through an eclipse while orbiting the Earth.
 #
 # Sun Safe Pointing Attitude Guidance Simulation with Eclipse Module {#scenario_AttitudeEclipse}
 # ====
 #
 # Scenario Description
 # -----
-# This script sets up a 6-DOF spacecraft which is orbiting the Earth.  The goal is to
-# illustrate 1) how Reaction Wheel (RW) state effector be added to the rigid
-# spacecraftPlus() hub, 2) how Coarse Sun Sensor (CSS) constellations and IMU sensors can be added
-# to the rigid body spacecraftPlus() hub, 3) how the eclipse module can be used in conjunction with
-# gravityEffectors to cast shadows over the CSS constellation, and 4) what flight algorithm modules
-# are used to control these RWs in these circumstances.
-#
+# This script sets up a 6-DOF spacecraft which is orbiting the Earth.  The goal of the scenario is to
+# illustrate 1) how IMU sensors can be added to the simulation, 2) how to add the eclipse module
+# to simulate shadows being cast over a CSS constellation, and 3) how to use these added modules to make use of
+# sun safe pointing as a flight software algorithm to control RWs.
 #
 # To run the default scenario, call the python script from a Terminal window through
 #
 #       python scenario_AttitudeEclipse.py
 #
-# The simulation layout is shown in the following illustration.  A single simulation process is created
-# which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
-# modules.
-# ![Simulation Flow Diagram](Images/doc/test_scenarioAttitudeFeedbackRW.svg "Illustration")
+# The simulation layout is shown in the following illustration.  Two simulation processes are created: one
+# which contains dynamics modules, and one that contains the Flight Software (FSW) algorithm
+# modules. Instructions on how to configure seperate processes can be found in
+# [scenarioAttitudeFeedback2T.py](@ref scenarioAttitudeFeedback2T).
+# ![Simulation Flow Diagram](Images/doc/scenario_AttEclipse.svg "Illustration")
 #
-# When the simulation completes several plots are shown for the spacecraft position, MRP attitude history, the sun
-# pointing vector, as well as the eclipse shadow factor.
+# When the simulation completes several plots are shown for the eclipse shadow factor, the sun direction vector,
+# attitude error, RW motor torque, and RW speed.
 #
 #
 # ### Setup Changes for Spacecraft Dynamics
@@ -53,10 +51,10 @@
 # The fundamental simulation setup is a combination of the setups used in
 # [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback) and [scenarioCSS.py](@ref scenarioCSS).
 # The dynamics simulation is setup using a SpacecraftPlus() module to which an Earth gravity
-# effector is attached.
+# effector is attached. In addition a CSS constellation and RW pyramid are attached.
 #
-# For the spacecraft simulation side of this script, the new element is adding the IMU sensor to the spacecraft, and
-# the eclipse module to the simulation environment. The specific code required to build the IMU sensor is:
+# The new element is adding the IMU sensor to the spacecraft, and the eclipse module to the simulation environment.
+# The specific code required to build the IMU sensor is:
 # ~~~~~~~~~~~~~{.py}
 #     imuObject = imu_sensor.ImuSensor()
 #     imuObject.InputStateMsg = self.scObject.scStateOutMsgName
@@ -67,27 +65,24 @@
 #     SimBase.AddModelToTask(self.taskName, self.imuObject, None, 205)
 # ~~~~~~~~~~~~~
 #
-# ### Dynamics Changes to Configure Eclipse Module
-#
-# The scenario also requires the user to establish a eclipse module.
-# This module is used to simulate a shadow casing over the CSS constellation to interfere with the sun direction vector.
-# To establish this module, use the following code:
-#
+# To configure the eclipse module, use the following code:
 # ~~~~~~~~~~~~~{.py}
 #         self.eclipseObject.sunInMsgName = 'sun_planet_data'
 #         self.eclipseObject.addPlanetName('earth')
 #         self.eclipseObject.addPlanetName('moon')
 #         self.eclipseObject.addPositionMsgName(self.scObject.scStateOutMsgName)
 # ~~~~~~~~~~~~~
-#
+# To attach the module to the simulation use:
+# ~~~~~~~~~~~~~{.py}
+#     SimBase.AddModelToTask(self.taskName, self.eclipseObject, None, 204)
+# ~~~~~~~~~~~~~
 # The module requires spice data regarding the location of the sun, the planets to be monitored for shadow-casting
 # effects, and the location of the spacecraft. In combination these inputs can produce an output that is attached to the
 # CSS constellation which simulates a shadow. The eclipse object output is called using:
 #
 #         eclipse_data_0
 #
-# where the number at the end corresponds to order of eclipse objects linked to the simulation.
-#
+# which gets sent to the individual CSS sensors.
 #
 #
 # ### Flight Algorithm Changes to Configure Sun Safe Pointing Guidance
@@ -100,14 +95,11 @@
 # The sunSafePoint() guidance module is used to steer the spacecraft to point towards the sun direction vector.
 # This is used for functionality like safe mode, or a power generation mode. The inputs of the module are the
 # sun direction vector (as provided by the CSSWlsEst module), as well as the body rate information (as provided by the
-#  IMU). The guidance module can be
-# configured using:
-#
+#  IMU). The guidance module can be configured using:
 # ~~~~~~~~~~~~~{.py}
 # self.sunSafePointData = sunSafePoint.sunSafePointConfig()
 # self.sunSafePointWrap = SimBase.setModelDataWrap(self.sunSafePointData)
 # self.sunSafePointWrap.ModelTag = "sunSafePoint"
-# SimBase.fswProc.addTask(SimBase.CreateNewTask("sunSafePointTask", self.processTasksTimeStep), 20)
 # self.sunSafePointData.attGuidanceOutMsgName = "guidanceOut"
 # self.sunSafePointData.imuInMsgName = SimBase.DynModels.imuObject.OutputDataMsg
 # self.sunSafePointData.sunDirectionInMsgName = self.cssWlsEstData.navStateOutMsgName
@@ -117,56 +109,28 @@
 # The sun direction vector itself is calculated through the use of a CSS constellation and the CSSWlsEst module. The
 # setup for the CSS constellation can be found in the [scenarioCSS.py](@ref scenarioCSS) scenario. The CSSWlsEst module
 # is a weighted least-squares minimum-norm algorithm used to estimate the body-relative sun heading using a cluster of
-# coarse sun sensors. The algorithm requires a minimum of three CSS to operate correctly. The corresponding I/O for the
-# CSS is called using:
-# ~~~~~~~~~~~~~{.py}
-#         cssConfig = fswMessages.CSSConfigFswMsg()
-#         totalCSSList = []
-#         nHat_B_vec = [
-#                       [1. / np.sqrt(2.), 0., -1. / np.sqrt(2.)],
-#                       [1. / np.sqrt(2.), 1. / np.sqrt(2.), 0.],
-#                       [1. / np.sqrt(2.), 0., 1. / np.sqrt(2)],
-#                       [1. / np.sqrt(2.), -1. / np.sqrt(2.), 0.]
-#                       ]
-#         for CSSHat in nHat_B_vec:
-#             CSSConfigElement = fswMessages.CSSUnitConfigFswMsg()
-#             CSSConfigElement.CBias = 1.0
-#             CSSConfigElement.nHat_B = CSSHat
-#             totalCSSList.append(CSSConfigElement)
-#             cssConfig.cssVals = totalCSSList
+# coarse sun sensors. The algorithm requires a minimum of three CSS to operate correctly.
 #
-#         cssConfig.nCSS = len(SimBase.DynModels.CSSConstellationObject.sensorList)
-#         cssConfigSize = cssConfig.getStructSize()
-#         SimBase.TotalSim.CreateNewMessage("FSWProcess", "css_config_data", cssConfigSize, 2, "CSSConstellation")
-#         SimBase.TotalSim.WriteMessageData("css_config_data", cssConfigSize, 0, cssConfig)
-# ~~~~~~~~~~~~~
-# and the way to interface with the CSSWlsEst algorithm is using:
+# To use the weighted least-squares estimator use the following code:
 # ~~~~~~~~~~~~~{.py}
 #         self.cssWlsEstData.cssDataInMsgName = SimBase.DynModels.CSSConstellationObject.outputConstellationMessage
 #         self.cssWlsEstData.cssConfigInMsgName = "css_config_data"
 #         self.cssWlsEstData.navStateOutMsgName = "sun_point_data"
 # ~~~~~~~~~~~~~
+# The resulting simulation illustrations are shown below.
+# ![Eclipse Shadow Factor](Images/Scenarios/scenario_AttEclipse_shadowFraction.svg "Eclipse Shadow Factor")
+# This plot illustrates the shadow fraction calculated by the CSS as the spacecraft orbits Earth and passes through
+# the Earth's shadow. 0.0 corresponds with total eclipse and 1.0 corresponds with direct sunlight.
+# ![Sun Direction Vector](Images/Scenarios/scenario_AttEclipse_sunDirectionVector.svg "Sun Direction Vector")
+# The CSSWlsEst module calculates the position of the sun based on input from the CSS. The corresponding vector's three
+# components are plotted. When the spacecraft passes through the eclipse, it sets the sun direction vector to
+#  [0.0,0.0,0.0].
+# ![Attitude Error Norm](Images/Scenarios/scenario_AttEclipse_attitudeErrorNorm.svg "Attitude Error Norm")
+# The spacecraft does not change attitude if no sun direction vector is detected. Once the CSS rediscovers the sun upon
+# exiting the eclipse, the spacecraft corrects and realigns with the sun direction vector.
+# ![RW Motor Torque](Images/Scenarios/scenario_AttEclipse_rwMotorTorque.svg "RW Motor Torque [Nm]")
+# ![RW Speed](Images/Scenarios/scenario_AttEclipse_rwSpeed.svg "RW Speed [RPM]")
 #
-# Setup 1
-# -----
-#
-# Which scenario is run is controlled at the bottom of the file in the code
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#        True,        # show_plots
-#        False,       # useJitterSimple
-#        False        # useRWVoltageIO
-#        )
-# ~~~~~~~~~~~~~
-# The first 2 arguments can be left as is.  The last arguments control the
-# simulation scenario flags to turn on or off certain simulation conditions.  The
-# default scenario has the RW jitter turned off.  The
-# resulting simulation illustrations are shown below.
-# ![RW Spin History](Images/Scenarios/scenarioAttitudeFeedbackRW300.svg "RW Omega history")
-# Note that in the RW motor torque plot both the required control torque \f$\hat u_B\f$ and the true
-# motor torque \f$u_B\f$ are shown.  This illustrates that with this maneuver the RW devices are being
-# saturated, and the attitude still eventually stabilizes.
 #
 ## @}
 
@@ -176,6 +140,8 @@ from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
 
 # Get current file path
 import sys, os, inspect
+import matplotlib as plt
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
@@ -206,9 +172,9 @@ class scenario_AttitudeEclipse(BSKScenario):
         oe = orbitalMotion.ClassicElements()
         oe.a = 7000000.0  # meters
         oe.e = 0.0
-        oe.i = 0.0 #33.3 * macros.D2R
-        oe.Omega = 0.0# 48.2 * macros.D2R
-        oe.omega = 0.0# 347.8 * macros.D2R
+        oe.i = 33.3 * macros.D2R
+        oe.Omega = 48.2 * macros.D2R
+        oe.omega = 347.8 * macros.D2R
         oe.f = 85.3 * macros.D2R
         mu = self.masterSim.DynModels.gravFactory.gravBodies['earth'].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
@@ -234,7 +200,7 @@ class scenario_AttitudeEclipse(BSKScenario):
         self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.sunSafePointData.sunDirectionInMsgName, samplingTime)
         return
 
-    def pull_outputs(self):
+    def pull_outputs(self, showPlots):
         print '%s: pull_outputs' % self.name
         num_RW = 4 # number of wheels used in the scenario
 
@@ -256,27 +222,31 @@ class scenario_AttitudeEclipse(BSKScenario):
 
         # Plot results
         timeData = dataUsReq[:, 0] * macros.NANO2MIN
-        #scene_plt.plot_attitude_error(timeData, sigma_BR)
-        #scene_plt.plot_rw_cmd_torque(timeData, dataUsReq, num_RW)
-        #scene_plt.plot_rate_error(timeData, omega_BR_B)
-        #scene_plt.plot_rw_speeds(timeData, RW_speeds, num_RW)
+        BSK_plt.plot_attitude_error(timeData, sigma_BR)
+        BSK_plt.plot_rw_cmd_torque(timeData, dataUsReq, num_RW)
+        #BSK_plt.plot_rate_error(timeData, omega_BR_B)
+        BSK_plt.plot_rw_speeds(timeData, RW_speeds, num_RW)
 
-        BSK_plt.plot_shadow_factor(timeData, shadowFactor)
-        BSK_plt.plot_orbit(r_BN_N)
+        BSK_plt.plot_shadow_fraction(timeData, shadowFactor)
+        #BSK_plt.plot_orbit(r_BN_N)
         BSK_plt.plot_sun_point(timeData, sunPoint)
-        #BSK_plt.plot3components(r_BN_N)
-        BSK_plt.show_all_plots()
+
+        figureList = {}
+        if showPlots:
+            BSK_plt.show_all_plots()
+        else:
+            fileName = os.path.basename(os.path.splitext(__file__)[0])
+            figureNames = ["attitudeErrorNorm", "rwMotorTorque", "rwSpeed", "shadowFraction", "sunDirectionVector"]
+            figureList = BSK_plt.save_all_plots(fileName, figureNames)
+
+        return figureList
 
 
 
 def run(showPlots):
     # Instantiate base simulation
 
-    '''
-    CURRENT STATE, THE SPICE DATA MODULE DOES WELL BUT HAS NO ECLIPSE FUNCTIONALITY
-
-    THE SPICE OBJECT ALSO RUNS, BUT THERE IS NO SPACECRAFT ORBIT ANY LONGER SO...THAT NEEDS TO BE FIXED
-    '''
+    figureList = {}
     TheBSKSim = BSKSim()
 
     # Configure an scenario in the base simulation
@@ -296,8 +266,15 @@ def run(showPlots):
 
     # Pull the results of the base simulation running the chosen scenario
     if showPlots:
-        TheScenario.pull_outputs()
+        TheScenario.pull_outputs(showPlots)
+    else:
+        figureList = TheScenario.pull_outputs(showPlots)
+
+    return figureList
+
+
+
 
 
 if __name__ == "__main__":
-    run(True)
+    run(False)
