@@ -104,7 +104,6 @@ class BSKDynamicModels():
     def SetEclipseObject(self):
         self.eclipseObject.sunInMsgName = 'sun_planet_data'
         self.eclipseObject.addPlanetName('earth')
-        #self.eclipseObject.addPlanetName('moon')
         self.eclipseObject.addPositionMsgName(self.scObject.scStateOutMsgName)
     
     def SetExternalForceTorqueObject(self):
