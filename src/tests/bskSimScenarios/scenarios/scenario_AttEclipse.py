@@ -246,7 +246,6 @@ class scenario_AttitudeEclipse(BSKScenario):
 def run(showPlots):
     # Instantiate base simulation
 
-    figureList = {}
     TheBSKSim = BSKSim()
 
     # Configure an scenario in the base simulation
@@ -265,10 +264,7 @@ def run(showPlots):
     print 'Finished Execution. Post-processing results'
 
     # Pull the results of the base simulation running the chosen scenario
-    if showPlots:
-        TheScenario.pull_outputs(showPlots)
-    else:
-        figureList = TheScenario.pull_outputs(showPlots)
+    figureList = TheScenario.pull_outputs(showPlots)
 
     return figureList
 
