@@ -206,7 +206,7 @@ void ReactionWheelStateEffector::updateContributions(double integTime, BackSubMa
 		OmegaSquared = RWIt->Omega * RWIt->Omega;
 
         // Determine which friction model to use (if starting from zero include stribeck)
-        if (fabs(RWIt->Omega) < 0.10*RWIt->omegaLimitCycle) {
+        if (fabs(RWIt->Omega) < 0.10*RWIt->omegaLimitCycle && RWIt->betaStatic > 0) {
             RWIt->frictionStribeck = 1;
         }
         double signOfOmega = ((RWIt->Omega > 0) - (RWIt->Omega < 0));
@@ -406,7 +406,7 @@ void ReactionWheelStateEffector::CrossInit()
 	{
         if (it->betaStatic == 0.0)
         {
-            BSK_PRINT(MSG_WARNING, "Stribeck coefficent currently zero and is producing NANs!\n");
+            BSK_PRINT(MSG_WARNING, "Stribeck coefficent currently zero and should be positive to active this friction model, or negative to turn it off!\n");
         }
 		//! Define CoM offset d and off-diagonal inertia J13 if using fully coupled model
 		if (it->RWModel == JitterFullyCoupled) {
