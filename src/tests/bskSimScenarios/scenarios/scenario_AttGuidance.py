@@ -56,7 +56,7 @@ class scenario_HillPointing(BSKScenario):
         oe.i = 33.3 * macros.D2R
         oe.Omega = 48.2 * macros.D2R
         oe.omega = 347.8 * macros.D2R
-        oe.f = oe.f = 85.3 * macros.D2R
+        oe.f = 85.3 * macros.D2R
         mu = self.masterSim.DynModels.gravFactory.gravBodies['earth'].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
