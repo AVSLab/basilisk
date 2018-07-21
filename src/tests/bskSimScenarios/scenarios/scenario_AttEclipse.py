@@ -277,4 +277,4 @@ def run(showPlots):
 
 
 if __name__ == "__main__":
-    run(False)
+    run(True)
