@@ -1,9 +1,9 @@
 \section{Test Description and Success Criteria}
-The tests are located in \texttt{simulation/dynamics/reactionWheels/\_UnitTest/\newline
-test\_reactionWheelStateEffector\_integrated.py} \textbf{and} \texttt{simulation/dynamics/reactionWheels/\newline\_UnitTest/
-test\_reactionWheelStateEffector\_ConfigureRWRequests.py}. Depending on the test, there are different success criteria. These are outlined in the following subsections:
+The tests are located in \texttt{simulation/dynamics/VSCMGs/\_UnitTest/\newline
+test\_VSCMGStateEffector\_integrated.py} \textbf{and} \texttt{simulation/dynamics/VSCMGs/\newline\_UnitTest/
+test\_VSCMGStateEffector\_ConfigureVSCMGRequests.py}. Depending on the test, there are different success criteria. These are outlined in the following subsections:
 \subsection{Balanced Wheels Scenario - Integrated Test}
-In this test the simulation is placed into orbit around Earth with point gravity, has 3 reaction wheels attached to the spacecraft, and the wheels are in ``Balanced" mode. Each wheel is given a commanded torque for half the simulation and the rest of the simulation the torques are set to zero. The following parameters are being tested:
+In this test the simulation is placed into orbit around Earth with point gravity, has 3 VSCMGs attached to the spacecraft, and they are in ``Balanced" mode. Each wheel is given a commanded torque for half the simulation and the rest of the simulation the torques are set to zero. The following parameters are being tested:
 \begin{itemize}
 	\item Conservation of orbital angular momentum
 	\item Conservation of orbital energy
@@ -14,14 +14,14 @@ In this test the simulation is placed into orbit around Earth with point gravity
 \end{itemize}
 
 \subsection{Simple Jitter Scenario - Integrated Test}
-In this test the simulation is placed into orbit around Earth with point gravity, has 3 reaction wheels attached to the spacecraft, and the wheels are in ``Simple Jitter" mode. Each wheel is given a commanded torque for half the simulation and the rest of the simulation the torques are set to zero. The following parameters are being tested:
+In this test the simulation is placed into orbit around Earth with point gravity, has 3 VSCMGs attached to the spacecraft, and they are in ``Simple Jitter" mode. Each wheel is given a commanded torque for half the simulation and the rest of the simulation the torques are set to zero. The following parameters are being tested:
 \begin{itemize}
 \item Achieving the expected final attitude
 \item Achieving the expected final position
 \end{itemize}
 
 \subsection{Fully Coupled Jitter Scenario - Integrated Test}
-In this test the simulation is placed into orbit around Earth with point gravity, has 3 reaction wheels attached to the spacecraft, and the wheels are in ``Fully Coupled Jitter" mode. Each wheel is given a commanded torque for half the simulation and the rest of the simulation the torques are set to zero. The following parameters are being tested:
+In this test the simulation is placed into orbit around Earth with point gravity, has 3 VSCMGs attached to the spacecraft, and they are in ``Fully Coupled Jitter" mode. Each wheel is given a commanded torque for half the simulation and the rest of the simulation the torques are set to zero. The following parameters are being tested:
 \begin{itemize}
 \item Conservation of orbital angular momentum
 \item Conservation of orbital energy
@@ -33,7 +33,7 @@ In this test the simulation is placed into orbit around Earth with point gravity
 
 \subsection{BOE Calculation Scenario - Integrated Test}
 
-The BOE for this scenario can be seen in Figure~\ref{fig:BOE}. This involves a rigid body hub connected to a reaction wheel with the spin axis being aligned with both the hub's center of mass and the reaction wheel's center of mass. This problem assumes the hub and reaction wheel are fixed to rotate about the the spin axis and so it is a two degree of freedom problem. The analytical expressions for the angular velocity of the hub, $\omega_1$, the angle of the hub, $\theta$ and the reaction wheel speed, $\Omega$ are shown in Figure~\ref{fig:BOE}. The test sets up Basilisk so that the initial conditions constrain the spacecraft to rotate about the spin axis. The results confirm that the analytical expressions agree with the Basilisk simulation. 
+The BOE for this scenario can be seen in Figure~\ref{fig:BOE}. This involves a rigid body hub connected to a VSCMG with the spin axis being aligned with both the hub's center of mass and the VSCMG's center of mass. This problem assumes the hub and VSCMG are fixed to rotate about the the spin axis and so it is a two degree of freedom problem. The analytical expressions for the angular velocity of the hub, $\omega_1$, the angle of the hub, $\theta$ and the VSCMG speed, $\Omega$ are shown in Figure~\ref{fig:BOE}. The test sets up Basilisk so that the initial conditions constrain the spacecraft to rotate about the spin axis. The results confirm that the analytical expressions agree with the Basilisk simulation. 
 
 \begin{figure}[htbp]
 	\centerline{
@@ -43,73 +43,6 @@ The BOE for this scenario can be seen in Figure~\ref{fig:BOE}. This involves a r
 \end{figure}
 
 \clearpage
-
-\subsection{Friction - Integrated Tests}
-
-In this test the goal is to validate that the friction model is matching the desired static, Coulomb and linear friction model. This is done by setting a spacecraft with two identical reaction wheels with identical spin axes. There are two scenarios being tested: one when the reaction wheels start with a non-zero angular velocity and are spinning down to rest, and the other scenario is when both reaction wheels are starting from rest and applying torque to them to break away from the static friction. These two different friction models for spinning up and spinning down reaction wheels can be seen in Section~\ref{sec:Friction}.
-
-\subsubsection{Spin Down Friction Test}
-
-In this test, the spacecraft is set to have no initial rotation. The wheel speeds are equal in magnitude but opposite in direction. The expected results are that the spacecraft will not rotate and the wheel speeds will spin down to zero while matching the function seen in Eq.~\eqref{eq:friction2}. The test verifies that the math in Eq.~\eqref{eq:friction2} is being computed properly by calculating this in python and ensuring that the results match the Basilisk output.
-
-\subsubsection{Spin Up Friction Test}
-
-In this test, the spacecraft and wheel speeds are all have zero angular velocities. The reaction wheels are given equal but opposite applied torques that are greater in magnitude than the static friction torque. The expected results are that the spacecraft will not rotate and the wheel speeds will spin up while matching the function seen in Eq.~\eqref{eq:friction} and Figure~\ref{fig:Stribeck}. The test verifies that the math in Eq.~\eqref{eq:friction} is being computed properly by calculating this in python and ensuring that the results match the Basilisk output.
-
-\subsection{Saturation - Unit Test}
-
-This test is ensuring that when a commanded torque requests a torque above the max torque of the wheels, the applied torque is set to the max torque. The logic can be seen in the following equation:
-
-\begin{equation}
-\begin{gathered}
-\begin{aligned}
-&\textnormal{\textbf{if}}\quad u_{\textnormal{cmd}} > u_{\textnormal{max}}  \quad \textnormal{\textbf{then}}\\
-&\quad u_s = u_{\textnormal{max}} \\
-&\textnormal{\textbf{else if}}\quad u_{\textnormal{cmd}} < - u_{\textnormal{max}}  \quad \textnormal{\textbf{then}}\\
-&\quad u_s =  - u_{\textnormal{max}} \\
-&\textnormal{\textbf{else}}\\
-&\quad u_s = u_{\textnormal{cmd}}\\
-&\textnormal{\textbf{end if}}\\
-\end{aligned}
-\end{gathered}
-\label{eq:ballin}
-\end{equation}
-
-The test gives two commanded torques, one above $u_{\textnormal{max}}$ and one below, and ensures that the correct values are being set for $u_s$.
-
-\subsection{Minimum Torque - Unit Test}
-
-This test is ensuring that when a commanded torque requests a torque below the minimum torque of the wheels, the applied torque is set to zero. The logic can be seen in the following equation:
-
-\begin{equation}
-\begin{gathered}
-\begin{aligned}
-&\textnormal{\textbf{if}}\quad \vert u_{\textnormal{cmd}} \vert < u_{\textnormal{min}}  \quad \textnormal{\textbf{then}}\\
-&\quad u_s = 0.0 \\
-&\textnormal{\textbf{end if}}\\
-\end{aligned}
-\end{gathered}
-\label{eq:ballin2}
-\end{equation}
-
-The test gives two commanded torques, one above $u_{\textnormal{min}}$ and one below, and ensures that the correct values are being set for $u_s$.
-
-\subsection{Speed Saturation - Unit Test}
-
-This test is ensuring that when the current reaction wheel speed is greater than or equal to the maximum allowable wheel speed, the applied torque is set to zero. The logic can be seen in the following equation:
-
-\begin{equation}
-\begin{gathered}
-\begin{aligned}
-&\textnormal{\textbf{if}}\quad \vert \Omega \vert >= \Omega_{\text{max}}  \quad \textnormal{\textbf{then}}\\
-&\quad u_s = 0.0 \\
-&\textnormal{\textbf{end if}}\\
-\end{aligned}
-\end{gathered}
-\label{eq:ballin3}
-\end{equation}
-
-The test requests a non-zero commanded torque $u_{\textnormal{cmd}}$, gives two possibilities for $\Omega$, one above $\Omega_{\textnormal{max}}$ and one below, and ensures that the correct values are being set for $u_s$.
 
 \section{Test Parameters}
 
@@ -136,7 +69,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 \end{table}
 
 \begin{table}[htbp]
-	\caption{Reaction Wheel 1 Parameters for Energy Momentum Conservation Scenarios}
+	\caption{VSCMG 1 Parameters for Energy Momentum Conservation Scenarios}
 	\label{tab:rw1}
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{ c | c | c | c } % Column formatting, 
@@ -156,7 +89,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 \end{table}
 
 \begin{table}[htbp]
-	\caption{Reaction Wheel 2 Parameters for Energy Momentum Conservation Scenarios}
+	\caption{VSCMG 2 Parameters for Energy Momentum Conservation Scenarios}
 	\label{tab:rw2}
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{ c | c | c | c } % Column formatting, 
@@ -176,7 +109,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 \end{table}
 
 \begin{table}[htbp]
-	\caption{Reaction Wheel 3 Parameters for Energy Momentum Conservation Scenarios}
+	\caption{VSCMG 3 Parameters for Energy Momentum Conservation Scenarios}
 	\label{tab:rw3}
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{ c | c | c | c } % Column formatting, 
@@ -196,7 +129,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 \end{table}
 
 \begin{table}[htbp]
-	\caption{Reaction wheel 1 parameters for friction tests}
+	\caption{VSCMG 1 parameters for friction tests}
 	\label{tab:rwFriction}
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{ c | c | c | c } % Column formatting, 
@@ -214,7 +147,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 \end{table}
 
 \begin{table}[htbp]
-	\caption{Reaction wheel 2 parameters for friction tests}
+	\caption{VSCMG 2 parameters for friction tests}
 	\label{tab:rwFriction2}
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{ c | c | c | c } % Column formatting, 
@@ -294,6 +227,15 @@ Since this is an integrated test, the inputs to the test are the physical parame
 
 \clearpage
 
+\subsection{Simple Jitter Scenario - Integrated Test Results}
+
+\input{AutoTex/ChangeInOrbitalAngularMomentumJitterSimple}
+\input{AutoTex/ChangeInOrbitalEnergyJitterSimple}
+\input{AutoTex/ChangeInRotationalAngularMomentumJitterSimple}
+\input{AutoTex/ChangeInRotationalEnergyJitterSimple}
+
+\clearpage
+
 \subsection{Fully Coupled Jitter Scenario - Integrated Test Results}
 
 \input{AutoTex/ChangeInOrbitalAngularMomentumJitterFullyCoupled}
@@ -303,31 +245,16 @@ Since this is an integrated test, the inputs to the test are the physical parame
 
 \clearpage
 
-\subsection{BOE Calculation Scenario - Integrated Test Results}
+\subsection{Fully Coupled Jitter with Gravity Scenario - Integrated Test Results}
 
-\input{AutoTex/ReactionWheelBOETheta}
-\input{AutoTex/ReactionWheelBOEBodyRate}
-\input{AutoTex/ReactionWheelBOERWRate}
-
-\clearpage
-
-\subsection{Friction Spin Down Integrated Test Results}
-
-\input{AutoTex/ReactionWheelFrictionSpinDownTestBodyRates}
-\input{AutoTex/ReactionWheelFrictionSpinDownTestFrictionTorque}
-\input{AutoTex/ReactionWheelFrictionSpinDownTestWheelSpeed}
+\input{AutoTex/ChangeInOrbitalAngularMomentumJitterFullyCoupledGravity}
+\input{AutoTex/ChangeInOrbitalEnergyJitterFullyCoupledGravity}
+\input{AutoTex/ChangeInRotationalAngularMomentumJitterFullyCoupledGravity}
+\input{AutoTex/ChangeInRotationalEnergyJitterFullyCoupledGravity}
 
 \clearpage
 
-\subsection{Friction Spin Up Integrated Test Results}
-
-\input{AutoTex/ReactionWheelFrictionSpinUpTestBodyRates}
-\input{AutoTex/ReactionWheelFrictionSpinUpTestFrictionTorque}
-\input{AutoTex/ReactionWheelFrictionSpinUpTestWheelSpeed}
-
-\clearpage
-
-\subsection{Simple Jitter, Saturation and Minimum Torque Tests Results}
+\subsection{Balanced Wheels, Simple Jitter, Fully Coupled Jitter and Fully Coupled Jitter with Gravity Tests Results}
 
 \begin{table}[htbp]
 	\caption{Test results.}
@@ -336,9 +263,10 @@ Since this is an integrated test, the inputs to the test are the physical parame
 	\begin{tabular}{c | c } % Column formatting, 
 		\hline
 		\textbf{Test} 				    & \textbf{Pass/Fail}  \\ \hline
-		Simple Jitter  & \input{AutoTeX/JitterSimplePassFail} \\
-		Saturation  & \input{AutoTeX/saturationPassFail}   \\ 
-		Minimum Torque  & \input{AutoTeX/minimumPassFail}  \\ \hline
+		Balanced Wheels  & \input{AutoTeX/BalancedWheelsPassFail} \\
+		Simple Jitter  & \input{AutoTeX/JitterSimplePassFail}   \\ 
+		Fully Coupled Jitter & \input{AutoTeX/JitterFullyCoupledPassFail}  \\ 
+		Fully Coupled Jitter + Gravity  & \input{AutoTeX/JitterFullyCoupledGravityPassFail}  \\ \hline
 	\end{tabular}
 \end{table}
 

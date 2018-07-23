@@ -21,6 +21,8 @@ import sys, os, inspect
 import numpy as np
 import pytest
 import math
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
 
 
 
@@ -207,7 +209,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
 
     # set RW torque command
     cmdArray = vscmgStateEffector.VSCMGArrayTorqueIntMsg()
-    if testCase == 'BalancedWheels': #or testCase == 'JitterFullyCoupled':
+    if testCase == 'BalancedWheels' or testCase == 'JitterFullyCoupled':
         cmdArray.wheelTorque = [0.0, 0.0, 0.0]  # [Nm]
         cmdArray.gimbalTorque = [0.0, 0.0, 0.0]  # [Nm]
     else:
@@ -363,18 +365,28 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     plt.figure()
     plt.plot(orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,1] - orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,2] - orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,3] - orbAngMom_N[0,3])
     plt.title("Change in Orbital Angular Momentum")
+    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCase,
+                                     "Change in Orbital Angular Momentum " + testCase, plt, "width=0.8\\textwidth",
+                                     path)
 
     plt.figure()
     plt.plot(rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,1] - rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,2] - rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,3] - rotAngMom_N[0,3])
     plt.title("Change in Rotational Angular Momentum")
+    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCase, "Change in Orbital Energy " + testCase, plt,
+                                     "width=0.8\\textwidth", path)
 
     plt.figure()
     plt.plot(orbEnergy[:,0]*1e-9, orbEnergy[:,1] - orbEnergy[0,1])
     plt.title("Change in Orbital Energy")
+    unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase,
+                                     "Change in Rotational Angular Momentum " + testCase, plt, "width=0.8\\textwidth",
+                                     path)
 
     plt.figure()
     plt.plot(rotEnergy[:,0]*1e-9, rotEnergy[:,1] - rotEnergy[0,1])
     plt.title("Change in Rotational Energy")
+    unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase,
+                                     plt, "width=0.8\\textwidth", path)
 
     plt.figure()
     for i in range(1,N+1):
@@ -497,7 +509,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
             # check a vector values
             if not unitTestSupport.isArrayEqualRelative(finalRotEnergy[i], initialRotEnergy[i], 1, accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: VSCMG Integrated Test failed orbital energy unit test")
+                testMessages.append("FAILED: VSCMG Integrated Test failed rot energy unit test")
 
 
     if testCase == 'JitterSimple':
@@ -506,6 +518,22 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
             if not abs(wheelSpeeds_data[i]-wheelSpeeds_true[i])/wheelSpeeds_true[i] < .09:
                 testFailCount += 1
                 testMessages.append("FAILED: VSCMG Integrated Test failed jitter unit test")
+
+
+       # print out success message if no errors were found
+    if  testFailCount == 0:
+        print   "PASSED "
+        colorText = 'ForestGreen'
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        # Write some snippets for AutoTex
+        snippetName = testCase + 'PassFail'
+        unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
+    elif testFailCount > 0:
+        colorText = 'Red'
+        passedText = '\\textcolor{' + colorText + '}{' + "FAILED" + '}'
+        # Write some snippets for AutoTex
+        snippetName = testCase + 'PassFail'
+        unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
 
     if testFailCount == 0:
         print "PASSED: " + " VSCMG Integrated Sim Test"
