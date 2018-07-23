@@ -77,6 +77,10 @@ import pandas as pd
 from bokeh.plotting import figure, output_file, show
 from bokeh.palettes import Spectral6
 from bokeh.transform import linear_cmap
+import holoviews as hv
+import holoviews as hv
+import holoviews.plotting.bokeh
+from holoviews.operation.datashader import datashade
 from bokeh.plotting import figure, output_notebook, show
 from bokeh.models import BoxZoomTool
 from bokeh.resources import CDN
@@ -95,7 +99,7 @@ from functools import partial
 from datashader.utils import export_image
 from datashader.colors import colormap_select, Greys9, Hot, inferno
 
-NUMBER_OF_RUNS = 5000
+NUMBER_OF_RUNS = 1000
 VERBOSE = True
 ONLY_GRAPH = 1
 
@@ -456,28 +460,28 @@ def run(saveFigures, show_plots):
 
     # TODO uncommoent this rerun
     # Rerunning the case shouldn't fail
-    # failed = monteCarloLoaded.reRunCases([NUMBER_OF_RUNS-1])
-    # assert len(failed) == 0, "Should rerun case successfully"
+    failed = monteCarloLoaded.reRunCases([NUMBER_OF_RUNS-1])
+    assert len(failed) == 0, "Should rerun case successfully"
 
     # Now access the newly retained data to see if it changed
-    # retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
-    # newOutput = retainedData["messages"]["attErrorInertial3DMsg.sigma_BR"]
-    # for k1, v1 in enumerate(oldOutput):
-    #     for k2, v2 in enumerate(v1):
-    #         assert math.fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < .001, \
-    #         "Outputs shouldn't change on runs if random seeds are same"
+    retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
+    newOutput = retainedData["messages"]["attErrorInertial3DMsg.sigma_BR"]
+    for k1, v1 in enumerate(oldOutput):
+        for k2, v2 in enumerate(v1):
+            assert math.fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < .001, \
+            "Outputs shouldn't change on runs if random seeds are same"
 
     # We can also access the initial parameters
     # The random seeds should differ between runs, so we will test that
-    # params1 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-1)
+    params1 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-1)
 
     #TODO CHANGE THIS BACK TO RUNS - 2
-    # params2 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-2)
-    # assert "TaskList[0].TaskModels[0].RNGSeed" in params1, "random number seed should be applied"
-    # for dispName in dispList:
-    #     assert dispName in params1, "dispersion should be applied"
-    #     # assert two different runs had different parameters.
-    #     assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
+    params2 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-2)
+    assert "TaskList[0].TaskModels[0].RNGSeed" in params1, "random number seed should be applied"
+    for dispName in dispList:
+        assert dispName in params1, "dispersion should be applied"
+        # assert two different runs had different parameters.
+        assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
 
     # Now we execute our callback for the retained data.
     # For this run, that means executing the plot.
@@ -850,47 +854,94 @@ def graph():
 
 
 def configureGraph(data):
-    p = base_plot()
+    from holoviews.operation.datashader import datashade, shade, dynspread, rasterize
+
+    # p = base_plot()
+    # p = figure(tools='pan,wheel_zoom,box_zoom,reset,save', x_range=(0,5), y_range=(0,20000))
+    p = figure(plot_width=300, plot_height=300, title="Linear Color Map Based on Y")
+
+    print "Starting graph", datetime.datetime.now()
 
     df = pd.read_csv(
         "data/mc1/" + data + ".csv")
 
 
-    p.title.text = "title"
-    p.legend.location = "top_right"
-    p.legend.click_policy = "hide"
-    p.xaxis.axis_label = "Time [min]"
-    p.yaxis.axis_label = "Y"
+    # findOutliers(df)
+    # p.title.text = "title"
+    # p.legend.location = "top_right"
+    # p.legend.click_policy = "hide"
+    # p.xaxis.axis_label = "Time [min]"
+    # p.yaxis.axis_label = "Y"
+    # InteractiveImage(p, image_callback)
+    opts2 = dict(width=1000, height=600, x_sampling=1, y_sampling=1, dynamic=False)
 
-    colsPerRun = len(df.columns) / NUMBER_OF_RUNS
+    hv.extension('bokeh')
+    curvesx = hv.Curve(df[['0','1']])
+    curvesy = hv.Curve(df[['0','2']])
+    curvesz = hv.Curve(df[['0','3']])
 
-    print "Starting graph", datetime.datetime.now()
+
+    layout = curvesx * curvesy * curvesz
+    renderer = hv.renderer('bokeh').instance(fig='html')
+    # renderer.save(datashade(layout, dynamic = False), "image/"+data)
+
+    plot = renderer.get_plot(datashade(layout, dynamic = False)).state
+    plot.plot_width = 600
+    plot.plot_height = 500
+    show(plot)
+
+    imgs = []
+    options = dict(width=800, height = 400, xaxis = None, yaxis = None, bgcolor='white')
+
+    # datashaded = datashade(curves, cmap=["blue"])
+    # doc = hv.renderer('bokeh').server_doc(datashaded)
+    # renderer = hv.renderer('bokeh').instance(fig='html')
+    # renderer.save(doc, "image/"+data)
+    # plot_opts = {'RGB': dict(width=800, height=800)}
+
+    # curves = {i: hv.Curve(df[['0', str(i)]]) for i in range(1, 4)}
+    # curvespread = dynspread(datashade(hv.NdOverlay(curves), aggregator = ds.count()))
+
+    # plot = datashade(curves) + datashade(curvespread)
+
+    # plotting and saving the images.
     imgs = []
     cvs = ds.Canvas(plot_height=500, plot_width=800)
 
-    agg = cvs.line(df, '0', '1', agg=ds.any())
-    img = tf.shade(agg)
-    imgs.append(img)
+    p = figure(width=300, height=300, title='chi-square matching Q{}',
+                              x_axis_label='Rg', y_axis_label='chi-square')
 
-    agg = cvs.line(df, '0', '2', agg=ds.any())
-    img = tf.shade(agg)
-    imgs.append(img)
-
-    agg = cvs.line(df, '0', '3', agg=ds.any())
-    img = tf.shade(agg)
-    imgs.append(img)
+    for column in range(1,4):
+        agg = cvs.line(df, '0', str(column), ds.count())
+        img = tf.shade(agg, how='eq_hist')
+        imgs.append(img)
 
     stacked = tf.stack(*imgs)
     export_image(stacked, data)
-    # InteractiveImage(create_image(result), "title")
     print "done saving png ", data, datetime.datetime.now()
 
-def create_image(df, w=800, h=500):
-    cvs = ds.Canvas(plot_width=w, plot_height=h)
-    agg = cvs.line(df, '0', '1', '2', '3', agg=ds.any())
-    img = tf.shade(agg)
-    return img
 
+
+def image_callback(x_range, y_range, w, h):
+    from datashader.colors import viridis, inferno
+    cvs = ds.Canvas(plot_width=w, plot_height=h, x_range=x_range, y_range=y_range)
+    df = pd.read_csv("data/mc1/" + retainedDataList[1]+".csv")
+    agg = cvs.line(df, '0', '1', ds.count())
+    img = tf.shade(agg)
+    background = "white"
+    cm = partial(colormap_select, reverse=(background != "black"))
+    tf.shade(agg, cmap=cm(viridis), how='eq_hist')
+    return tf.dynspread(img, threshold=1)
+
+def findOutliers(df):
+    from numpy import mean, std
+    from scipy import stats
+    # print df.describe()
+    col = 1
+    print df
+    # outliers = df[df[col] > df[col].mean() + 3 * df[col].std()]
+    # print outliers
+#
 
 def base_plot(tools='pan,wheel_zoom,reset', plot_width= int(750), plot_height=int(int(750) // 1.2), **plot_args):
     p = figure(tools=tools, plot_width=plot_width, plot_height=plot_height,
