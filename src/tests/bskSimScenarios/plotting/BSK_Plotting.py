@@ -37,9 +37,9 @@ def show_all_plots():
 def save_all_plots(fileName, figureNames):
     figureList = {}
     numFigures = len(figureNames)
-    for i in range(1, numFigures+1):
-        pltName = fileName + "_" + figureNames[i-1]
-        figureList[pltName] = plt.figure(i)
+    for i in range(0, numFigures):
+        pltName = fileName + "_" + figureNames[i]
+        figureList[pltName] = plt.figure(i+1)
     return figureList
 
 

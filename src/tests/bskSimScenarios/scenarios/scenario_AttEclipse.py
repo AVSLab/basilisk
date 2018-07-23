@@ -128,6 +128,7 @@
 # ![Attitude Error Norm](Images/Scenarios/scenario_AttEclipse_attitudeErrorNorm.svg "Attitude Error Norm")
 # The spacecraft does not change attitude if no sun direction vector is detected. Once the CSS rediscovers the sun upon
 # exiting the eclipse, the spacecraft corrects and realigns with the sun direction vector.
+# ![Rate Tracking Error](Images/Scenarios/scenario_AttEclipse_rateError.svg "Rate Tracking Error")
 # ![RW Motor Torque](Images/Scenarios/scenario_AttEclipse_rwMotorTorque.svg "RW Motor Torque [Nm]")
 # ![RW Speed](Images/Scenarios/scenario_AttEclipse_rwSpeed.svg "RW Speed [RPM]")
 #
@@ -235,7 +236,7 @@ class scenario_AttitudeEclipse(BSKScenario):
             BSK_plt.show_all_plots()
         else:
             fileName = os.path.basename(os.path.splitext(__file__)[0])
-            figureNames = ["attitudeErrorNorm", "rwMotorTorque", "rwSpeed", "shadowFraction", "sunDirectionVector"]
+            figureNames = ["attitudeErrorNorm", "rwMotorTorque", "rateError", "rwSpeed", "shadowFraction", "sunDirectionVector"]
             figureList = BSK_plt.save_all_plots(fileName, figureNames)
 
         return figureList
