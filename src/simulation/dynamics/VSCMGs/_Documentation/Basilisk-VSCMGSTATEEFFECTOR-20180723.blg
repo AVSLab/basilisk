@@ -1,0 +1,46 @@
+This is BibTeX, Version 0.99d (TeX Live 2014)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: Basilisk-REACTIONWHEELSTATEEFFECTOR-20170816.aux
+The style file: plain.bst
+Database file #1: bibliography.bib
+You've used 3 entries,
+            2118 wiz_defined-function locations,
+            519 strings with 4617 characters,
+and the built_in function-call counts, 1025 in all, are:
+= -- 93
+> -- 59
+< -- 0
++ -- 23
+- -- 20
+* -- 78
+:= -- 182
+add.period$ -- 9
+call.type$ -- 3
+change.case$ -- 19
+chr.to.int$ -- 0
+cite$ -- 3
+duplicate$ -- 37
+empty$ -- 78
+format.name$ -- 20
+if$ -- 209
+int.to.chr$ -- 0
+int.to.str$ -- 3
+missing$ -- 4
+newline$ -- 18
+num.names$ -- 6
+pop$ -- 23
+preamble$ -- 1
+purify$ -- 16
+quote$ -- 0
+skip$ -- 19
+stack$ -- 0
+substring$ -- 42
+swap$ -- 3
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 10
+warning$ -- 0
+while$ -- 7
+width$ -- 4
+write$ -- 36

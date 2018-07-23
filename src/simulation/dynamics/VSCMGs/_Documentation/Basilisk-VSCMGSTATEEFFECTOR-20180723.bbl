@@ -1,0 +1,20 @@
+\begin{thebibliography}{1}
+
+\bibitem{Alcorn:2016yq}
+John Alcorn, Cody Allard, and Hanspeter Schaub.
+\newblock Fully-coupled dynamical modeling of a rigid spacecraft with
+  imbalanced reaction wheels.
+\newblock In {\em AIAA/AAS Astrodynamics Specialist Conference}, Long Beach,
+  CA, Sept. 12--15 2016.
+
+\bibitem{OLSSON1998176}
+H.~Olsson, K.J.~Å ström, C.~Canudas de~Wit, M.~Gäfvert, and P.~Lischinsky.
+\newblock Friction models and friction compensation.
+\newblock {\em European Journal of Control}, 4(3):176 -- 195, 1998.
+
+\bibitem{schaub}
+Hanspeter Schaub and John~L. Junkins.
+\newblock {\em Analytical Mechanics of Space Systems}.
+\newblock {AIAA} Education Series, Reston, VA, 3rd edition, 2014.
+
+\end{thebibliography}

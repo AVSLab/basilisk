@@ -380,7 +380,7 @@ void VSCMGStateEffector::updateContributions(double integTime, BackSubMatrices &
 			it->dOmega = -1.0/it->eOmega*(it->gsHat_B.dot(it->IPrimeWPntWc_B*omega_WN_B)
 										  + it->gsHat_B.transpose()*omegaTilde*it->IWPntWc_B*omega_WN_B
 										  + it->massW*it->d*it->gsHat_B.transpose()*w2HatTilde_B*(2.0*it->rPrimeTildeWcB_B.transpose()*omegaLoc_BN_B+omegaTilde*omegaTilde*it->rWcB_B))
-										  + 1.0/it->eOmega*(it->IW13*sin(it->theta)*it->Omega*it->gammaDot - it->massW*dSquared*gammaDotSquared*cos(it->theta)*sin(it->theta) + it->u_s_current + it->gravityTorqueWheel_s);
+										  + (1.0/it->eOmega)*(it->IW13*sin(it->theta)*it->Omega*it->gammaDot - it->massW*dSquared*gammaDotSquared*cos(it->theta)*sin(it->theta) + it->u_s_current + it->gravityTorqueWheel_s);
 
 			it->p = (it->aOmega+it->cOmega*it->agamma)/(1.0-it->cOmega*it->cgamma);
 			it->q = (it->bOmega+it->cOmega*it->bgamma)/(1.0-it->cOmega*it->cgamma);
