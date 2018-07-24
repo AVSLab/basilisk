@@ -12,6 +12,13 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 ## Version 0.X.X (upcoming release)
 <uL>
     <li>
+    </li>
+</ul>
+
+
+## Version 0.3.0 
+<uL>
+    <li>
     Updated cssWlsEst() module to also compute a partial angular velocity vector.
     </li>
     <li>
