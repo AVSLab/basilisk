@@ -67,37 +67,21 @@ from Basilisk.fswAlgorithms import rwMotorVoltage
 
 # import message declarations
 from Basilisk.fswAlgorithms import fswMessages
-
 from Basilisk.utilities.MonteCarlo.Controller import Controller, RetentionPolicy
 from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispersion, UniformDispersion,
                                                        NormalVectorCartDispersion, InertiaTensorDispersion)
 
 import numpy as np
 import pandas as pd
-from bokeh.plotting import figure, output_file, show
-from bokeh.palettes import Spectral6
-from bokeh.transform import linear_cmap
 import holoviews as hv
-import holoviews as hv
-import holoviews.plotting.bokeh
-from holoviews.operation.datashader import datashade
-from bokeh.plotting import figure, output_notebook, show
-from bokeh.models import BoxZoomTool
-from bokeh.resources import CDN
-from bokeh.embed import file_html
-import itertools
-from bokeh.palettes import d3 as palette
 import datashader as ds
+from bokeh.plotting import show
 import datashader.transfer_functions as tf
-from datashader.colors import inferno
-from matplotlib.colors import rgb2hex
-from matplotlib.cm import get_cmap
-from bokeh.plotting import figure, output_file, save
-
-from datashader.bokeh_ext import InteractiveImage
-from functools import partial
 from datashader.utils import export_image
-from datashader.colors import colormap_select, Greys9, Hot, inferno
+
+# This import is for reaggregating data when zooming if that is ever pursued
+from datashader.bokeh_ext import InteractiveImage
+
 
 NUMBER_OF_RUNS = 1000
 VERBOSE = True
@@ -112,6 +96,7 @@ mrpControlConfigInputRWSpeedsName = "reactionwheel_output_states"
 sNavObjectOutputTransName = "simple_trans_nav_output"
 fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
 
+# Create data retention names based on what data we want to save
 rwMotorTorqueConfigOutputDataName_motorTorque = rwMotorTorqueConfigOutputDataName + ".motorTorque"
 attErrorConfigOutputDataName_sigma_BR = attErrorConfigOutputDataName + ".sigma_BR"
 attErrorConfigOutputDataName_omega_BR_B = attErrorConfigOutputDataName + ".omega_BR_B"
@@ -119,11 +104,12 @@ sNavObjectOutputTransName_r_BN_N = sNavObjectOutputTransName + ".r_BN_N"
 mrpControlConfigInputRWSpeedsName_wheelSpeeds = mrpControlConfigInputRWSpeedsName + ".wheelSpeeds"
 fswRWVoltageConfigVoltageOutMsgName_voltage = fswRWVoltageConfigVoltageOutMsgName + ".voltage"
 
+# Create a list of retained data names to loop through while graphing
 retainedDataList = [rwMotorTorqueConfigOutputDataName_motorTorque, attErrorConfigOutputDataName_sigma_BR,
                     attErrorConfigOutputDataName_omega_BR_B, sNavObjectOutputTransName_r_BN_N,
                     mrpControlConfigInputRWSpeedsName_wheelSpeeds, fswRWVoltageConfigVoltageOutMsgName_voltage]
 
-time_dataFrame = pd.DataFrame()
+# Set global dataframes to populate with data when executing callbacks
 rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame = pd.DataFrame()
 attErrorConfigOutputDataName_sigma_BR_dataFrame = pd.DataFrame()
 attErrorConfigOutputDataName_omega_BR_B_dataFrame = pd.DataFrame()
@@ -922,14 +908,11 @@ def configureGraph(data):
 # method as an argument for the InteractiveImage method that allows the data to be
 # re-aggregated when zooming in.
 def image_callback(x_range, y_range, w, h):
-    from datashader.colors import viridis, inferno
     cvs = ds.Canvas(plot_width=w, plot_height=h, x_range=x_range, y_range=y_range)
     df = pd.read_csv("data/mc1/" + retainedDataList[1]+".csv")
     agg = cvs.line(df, '0', '1', ds.count())
     img = tf.shade(agg)
-    background = "white"
-    cm = partial(colormap_select, reverse=(background != "black"))
-    tf.shade(agg, cmap=cm(viridis), how='eq_hist')
+    tf.shade(agg, how='eq_hist')
     return tf.dynspread(img, threshold=1)
 
 # This method finds the outliers of the dataframe to identify runs with rogue behavior.
