@@ -45,14 +45,10 @@ class BSKDynamicModels():
         
         # Instantiate Dyn modules as objects
         self.scObject = spacecraftPlus.SpacecraftPlus()
-        self.ephemerisSPICEObject = spice_interface.SpicePlanetStateSimMsg()
-        self.ephemerisSunSPICEObject = spice_interface.SpicePlanetStateSimMsg()
-        self.earthGravBody = gravityEffector.GravBodyData()
         self.gravFactory = simIncludeGravBody.gravBodyFactory()
         self.extForceTorqueObject = extForceTorque.ExtForceTorque()
         self.simpleNavObject = simple_nav.SimpleNav()
         self.eclipseObject = eclipse.Eclipse()
-        self.CSSObject = coarse_sun_sensor.CoarseSunSensor()
         self.CSSConstellationObject = coarse_sun_sensor.CSSConstellation()
         self.imuObject = imu_sensor.ImuSensor()
         self.rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
@@ -66,8 +62,7 @@ class BSKDynamicModels():
         SimBase.AddModelToTask(self.taskName, self.scObject, None, 201)
         SimBase.AddModelToTask(self.taskName, self.simpleNavObject, None, 109)
         SimBase.AddModelToTask(self.taskName, self.gravFactory.spiceObject, 200)
-        SimBase.AddModelToTask(self.taskName, self.CSSObject, None, 202)
-        SimBase.AddModelToTask(self.taskName, self.CSSConstellationObject, None, 203)
+        SimBase.AddModelToTask(self.taskName, self.CSSConstellationObject, None, 108)
         SimBase.AddModelToTask(self.taskName, self.eclipseObject, None, 204)
         SimBase.AddModelToTask(self.taskName, self.imuObject, None, 205)
         SimBase.AddModelToTask(self.taskName, self.rwStateEffector, None, 301)
@@ -114,31 +109,6 @@ class BSKDynamicModels():
 
     def SetSimpleNavObject(self):
         self.simpleNavObject.ModelTag = "SimpleNavigation"
-    
-    def SetCSSObject(self):
-        self.CSSObject.cssDataOutMsgName = "singleCssOut"
-        self.CSSObject.nHat_B = np.array([1., 0., 0.])
-        self.CSSObject.sunEclipseInMsgName = "eclipse_data_0"
-        self.CSSObject.sunInMsgName = "sun_planet_data"
-        self.CSSObject.stateInMsgName = self.scObject.scStateOutMsgName
-    
-    def SetCSSConstellation(self):
-        cssP11 = coarse_sun_sensor.CoarseSunSensor(self.CSSObject)
-        cssP12 = coarse_sun_sensor.CoarseSunSensor(self.CSSObject)
-        cssP13 = coarse_sun_sensor.CoarseSunSensor(self.CSSObject)
-        cssP14 = coarse_sun_sensor.CoarseSunSensor(self.CSSObject)
-        cssP11.cssDataOutMsgName = "cssP11Out"
-        cssP12.cssDataOutMsgName = "cssP12Out"
-        cssP13.cssDataOutMsgName = "cssP13Out"
-        cssP14.cssDataOutMsgName = "cssP14Out"
-        cssP11.nHat_B = [1. / np.sqrt(2.), 0., -1. / np.sqrt(2.)]
-        cssP12.nHat_B = [1. / np.sqrt(2.), 1. / np.sqrt(2.), 0.]
-        cssP13.nHat_B = [1. / np.sqrt(2.), 0., 1. / np.sqrt(2)]
-        cssP14.nHat_B = [1. / np.sqrt(2.), -1. / np.sqrt(2.), 0.]
-        constellationList = [cssP11, cssP12, cssP13, cssP14]
-        self.CSSConstellationObject.ModelTag = "cssConstellation"
-        self.CSSConstellationObject.sensorList = coarse_sun_sensor.CSSVector(constellationList)
-        self.CSSConstellationObject.outputConstellationMessage = "CSSConstellation_output"
     
     def SetImuSensor(self):
         self.imuObject.InputStateMsg = self.scObject.scStateOutMsgName
@@ -207,24 +177,9 @@ class BSKDynamicModels():
                                   self.thrustersDynamicEffector,
                                   self.scObject)
 
-
-    def SetSpiceData(self, SimBase):
-        '''
-        ephemerisMessageName = "earth_planet_data"
-        self.ephemerisSPICEObject.J2000Current = 0.0
-        self.ephemerisSPICEObject.PositionVector = [0.0, 0.0, 0.0]
-        self.ephemerisSPICEObject.VelocityVector = [0.0, 0.0, 0.0]
-        self.ephemerisSPICEObject.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-        self.ephemerisSPICEObject.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-        self.ephemerisSPICEObject.PlanetName = ephemerisMessageName[:-12]
-        ephemerisMessageSize = self.ephemerisSPICEObject.getStructSize()
-        SimBase.TotalSim.CreateNewMessage(self.processName, ephemerisMessageName, ephemerisMessageSize, 2)
-        SimBase.TotalSim.WriteMessageData(ephemerisMessageName, ephemerisMessageSize, 0, self.ephemerisSPICEObject)
-        '''
-    
-    def SetCssConstellation(self):
-        self.cssArray.ModelTag = "css_array"
-        self.cssArray.outputConstellationMessage = "CSS_Array_output"
+    def SetCSSConstellation(self):
+        self.CSSConstellationObject.ModelTag = "cssConstellation"
+        self.CSSConstellationObject.outputConstellationMessage = "CSSConstellation_output"
 
         # define single CSS element
         CSS_default = coarse_sun_sensor.CoarseSunSensor()
@@ -251,10 +206,11 @@ class BSKDynamicModels():
             CSS.ModelTag = "CSS" + str(i) + "_sensor"
             CSS.cssDataOutMsgName = "CSS" + str(i) + "_output"
             CSS.nHat_B = np.array(nHat_B)
+            CSS.sunEclipseInMsgName = "eclipse_data_0"
             cssList.append(CSS)
 
         # assign the list of CSS devices to the CSS array class
-        self.cssArray.sensorList = coarse_sun_sensor.CSSVector(cssList)
+        self.CSSConstellationObject.sensorList = coarse_sun_sensor.CSSVector(cssList)
 
 
 
@@ -265,7 +221,6 @@ class BSKDynamicModels():
         self.SetExternalForceTorqueObject()
         self.SetSimpleNavObject()
         self.SetEclipseObject()
-        self.SetCSSObject()
         self.SetCSSConstellation()
         self.SetImuSensor()
         
@@ -274,4 +229,6 @@ class BSKDynamicModels():
 
     # Global call to create every required one-time message
     def WriteInitDynMessages(self, SimBase):
-        self.SetSpiceData(SimBase)
+        return
+
+
