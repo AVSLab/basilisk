@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -42,9 +42,11 @@ public:
     ~DualHingedRigidBodyStateEffector();
     void registerStates(DynParamManager& statesIn);
     void linkInStates(DynParamManager& states);
-    void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr);
-    void computeDerivatives(double integTime);
     void updateEffectorMassProps(double integTime);
+    void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< -- Back-sub contributions
+    void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
+                                              double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
+    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
 
 public:
     double mass1;                     //!< [kg] mass of 1st hinged rigid body
@@ -112,10 +114,7 @@ private:
     StateData *theta1DotState;        //!< [-] state manager of thetaDot for hinged rigid body
     StateData *theta2State;           //!< [-] state manager of theta for hinged rigid body
     StateData *theta2DotState;        //!< [-] state manager of thetaDot for hinged rigid body
-    
-public:
-    void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
-                                      double & rotEnergyContr); //!< -- Computing energy and momentum for DHRBs
+
 };
 
 #endif /* DUAL_STATE_EFFECTOR_H */

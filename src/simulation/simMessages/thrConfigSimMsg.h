@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -41,6 +41,7 @@ typedef struct {
     double thrusterMagDisp;                         //!< -- Percentage of magnitude dispersion
     std::vector<double> thrusterDirectionDisp;      //!< -- Unit vector of dispersed thruster pointing
 	bool updateOnly = true;							//!< -- Use update only calculations
+    char label[10];                                 //!< [-], label name of the RW device being simulated
 }THRConfigSimMsg;
 
 

@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -25,6 +25,7 @@
 /*! @brief Structure used to define the output definition for reaction wheel speeds*/
 typedef struct {
     double wheelSpeeds[MAX_EFF_CNT];                //!< r/s The current angular velocities of the RW wheel
+    double wheelThetas[MAX_EFF_CNT];                //!< rad The current angle of the RW if jitter is enabled
 }RWSpeedIntMsg;
 
 #endif

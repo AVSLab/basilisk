@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -23,6 +23,7 @@
 #include <cstring>
 #include <iostream>
 #include <cmath>
+#include "utilities/bsk_Print.h"
 
 VSCMGStateEffector::VSCMGStateEffector()
 {
@@ -269,7 +270,7 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 	return;
 }
 
-void VSCMGStateEffector::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr)
+void VSCMGStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
 	Eigen::Vector3d omegaLoc_BN_B;
 	Eigen::Vector3d tempF;
@@ -316,15 +317,15 @@ void VSCMGStateEffector::updateContributions(double integTime, Eigen::Matrix3d &
 		omegag = it->ggHat_B.transpose()*omegaLoc_BN_B;
 
 		if (it->VSCMGModel == vscmgBalancedWheels || it->VSCMGModel == vscmgJitterSimple) {
-			matrixDcontr -= it->IV3 * it->ggHat_B * it->ggHat_B.transpose() + it->IW1 * it->gsHat_B * it->gsHat_B.transpose();
-			vecRotcontr -= (it->u_s_current-it->IW1*omegat*it->gammaDot)*it->gsHat_B + it->IW1*it->Omega*it->gammaDot*it->gtHat_B + (it->u_g_current+(it->IV1-it->IV2)*omegas*omegat+it->IW1*it->Omega*omegat)*it->ggHat_B
+			backSubContr.matrixD -= it->IV3 * it->ggHat_B * it->ggHat_B.transpose() + it->IW1 * it->gsHat_B * it->gsHat_B.transpose();
+			backSubContr.vecRot -= (it->u_s_current-it->IW1*omegat*it->gammaDot)*it->gsHat_B + it->IW1*it->Omega*it->gammaDot*it->gtHat_B + (it->u_g_current+(it->IV1-it->IV2)*omegas*omegat+it->IW1*it->Omega*omegat)*it->ggHat_B
 			+ omegaTilde*it->IGPntGc_B*it->gammaDot*it->ggHat_B + omegaTilde*it->IWPntWc_B*omega_WB_B;
 			if (it->VSCMGModel == vscmgJitterSimple) {
 				/* static imbalance force: Fs = Us * Omega^2 */
 				tempF = it->U_s * OmegaSquared * it->w2Hat_B;
-				vecTranscontr += tempF;
+				backSubContr.vecTrans += tempF;
 				/* static imbalance torque: tau_s = cross(r_B,Fs), dynamic imbalance torque: tau_d = Ud * Omega^2 */
-				vecRotcontr += it->rGB_B.cross(tempF) + it->U_d*OmegaSquared*it->w2Hat_B;
+				backSubContr.vecRot += it->rGB_B.cross(tempF) + it->U_d*OmegaSquared*it->w2Hat_B;
 			}
         } else if (it->VSCMGModel == vscmgJitterFullyCoupled) {
 
@@ -395,18 +396,18 @@ void VSCMGStateEffector::updateContributions(double integTime, Eigen::Matrix3d &
 						+ it->IWPntWc_B*it->Omega*it->gammaDot*it->gtHat_B + it->IPrimeWPntWc_B*omega_WB_B + omegaTilde*it->IWPntWc_B*omega_WB_B + it->massW*omegaTilde*it->rTildeWcB_B*it->rPrimeWcB_B
 						+ it->massW*it->rTildeWcB_B*((2.0*it->d*it->gammaDot*it->Omega*sin(it->theta)-it->l*gammaDotSquared)*it->gsHat_B-it->d*gammaDotSquared*cos(it->theta)*it->gtHat_B-it->d*OmegaSquared*it->w2Hat_B);
 
-			matrixAcontr += ur*it->agamma.transpose() + (vr+ur*it->cgamma)*it->p.transpose();
-			matrixBcontr += ur*it->bgamma.transpose() + (vr+ur*it->cgamma)*it->q.transpose();
-			matrixCcontr += uomega*it->agamma.transpose() + (vomega+uomega*it->cgamma)*it->p.transpose();
-			matrixDcontr += uomega*it->bgamma.transpose() + (vomega+uomega*it->cgamma)*it->q.transpose();
-			vecTranscontr -= kr + ur*it->dgamma + (vr+ur*it->cgamma)*it->s;
-			vecRotcontr -= komega + uomega*it->dgamma + (vomega+uomega*it->cgamma)*it->s;
+			backSubContr.matrixA += ur*it->agamma.transpose() + (vr+ur*it->cgamma)*it->p.transpose();
+			backSubContr.matrixB += ur*it->bgamma.transpose() + (vr+ur*it->cgamma)*it->q.transpose();
+			backSubContr.matrixC += uomega*it->agamma.transpose() + (vomega+uomega*it->cgamma)*it->p.transpose();
+			backSubContr.matrixD += uomega*it->bgamma.transpose() + (vomega+uomega*it->cgamma)*it->q.transpose();
+			backSubContr.vecTrans -= kr + ur*it->dgamma + (vr+ur*it->cgamma)*it->s;
+			backSubContr.vecRot -= komega + uomega*it->dgamma + (vomega+uomega*it->cgamma)*it->s;
 		}
 	}
 	return;
 }
 
-void VSCMGStateEffector::computeDerivatives(double integTime)
+void VSCMGStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
 {
 	Eigen::MatrixXd OmegasDot(this->numVSCMG,1);
     Eigen::MatrixXd thetasDot(this->numVSCMGJitter,1);
@@ -466,7 +467,8 @@ void VSCMGStateEffector::computeDerivatives(double integTime)
     }
 }
 
-void VSCMGStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr)
+void VSCMGStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
+                                                      double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
 	Eigen::MRPd sigmaBNLocal;
 	Eigen::Matrix3d dcm_BN;                        /* direction cosine matrix from N to B */
@@ -547,8 +549,7 @@ void VSCMGStateEffector::CrossInit()
 																	 moduleID);
 	if(CmdsInMsgID < 0)
 	{
-		std::cerr << "WARNING: Did not find a valid message with name: ";
-		std::cerr << InputCmds << "  :" << std::endl<< __FILE__ << std::endl;
+        BSK_PRINT(MSG_WARNING, "Did not find a valid message with name: %s", InputCmds.c_str());
 	}
 
 	std::vector<VSCMGConfigSimMsg>::iterator it;
@@ -739,6 +740,12 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 		if( std::abs(CmdIt->u_g_cmd) < this->VSCMGData[it].u_g_min) {
 			CmdIt->u_g_cmd = 0.0;
 		}
+
+        // Speed saturation
+        if (std::abs(this->VSCMGData[it].Omega)>= this->VSCMGData[it].Omega_max) {
+            CmdIt->u_s_cmd = 0.0;
+            printf("Omega_max = %f\n", this->VSCMGData[it].Omega_max);
+        }
 
 		//! wheel Coulomb friction
 		//! set wheelLinearFrictionRatio to less than zero to disable linear friction

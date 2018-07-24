@@ -2,7 +2,7 @@
 '''
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -16,23 +16,6 @@
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-'''
-'''
- ISC License
-
- Copyright (c) 2016-2017, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 '''
 
 #
@@ -70,6 +53,8 @@ class Controller:
 
     def __init__(self):
         self.executionCount = 0
+        self.ICrunFlag = False
+        self.icDirectory = ""
         self.numProcess = cpu_count()
         self.simParams = SimulationParameters(
             creationFunction=None,
@@ -79,7 +64,8 @@ class Controller:
             shouldArchiveParameters=False,
             shouldDisperseSeeds=False,
             dispersions=[],
-            filename=""
+            filename="",
+            icfilename=""
         )
 
     @staticmethod
@@ -189,6 +175,25 @@ class Controller:
         self.simParams.shouldArchiveParameters = dirName is not None
         self.simParams.filename = self.archiveDir
 
+    def setICDir(self, dirName):
+        """ Set-up archives containing IC data
+        Args:
+            dirName: string
+                The name of the directory to archive runs in.
+                None, if no archive desired.
+        """
+        self.icDirectory = os.path.abspath(dirName) + "/"
+        self.simParams.shouldArchiveParameters = True
+        self.simParams.icfilename = self.icDirectory
+
+    def setICRunFlag(self, bool):
+        """ Set the number of threads to use for the monte carlo simulation
+        Args:
+            threads: int
+                Number of threads to execute the montecarlo run on.
+        """
+        self.ICrunFlag = bool
+
     def getRetainedData(self, case):
         """ Get the data that was retained for a run, or list of runs.
         Args:
@@ -196,8 +201,11 @@ class Controller:
         Returns:
             The retained data for that run is returned.
         """
+        if self.ICrunFlag:
+            oldRunDataFile = self.icDirectory + "run" + str(case) + ".data"
+        else:
+            oldRunDataFile = self.archiveDir + "run" + str(case) + ".data"
 
-        oldRunDataFile = self.archiveDir + "run" + str(case) + ".data"
         with gzip.open(oldRunDataFile) as pickledData:
             data = pickle.load(pickledData)
             return data
@@ -226,7 +234,10 @@ class Controller:
                 'TaskList[0].TaskModels[0].RNGSeed': 1674764759
             }
         """
-        filename = self.archiveDir + "run" + str(caseNumber) + ".json"
+        if self.ICrunFlag:
+            filename = self.icDirectory + "run" + str(caseNumber) + ".json"
+        else:
+            filename = self.archiveDir + "run" + str(caseNumber) + ".json"
         with open(filename, "r") as dispersionFile:
             dispersions = json.load(dispersionFile)
             return dispersions
@@ -276,6 +287,126 @@ class Controller:
             print "Failed rerunning cases:", failed
 
         return failed
+
+    def runInitialConditions(self, caseList):
+        """ Run initial conditions given in a file
+        Args:
+            caseList: int[]
+                The list of runs to repeat, a list of numbers.
+        Returns:
+            failures: int[]
+                The list of failed runs.
+        """
+        # the list of failures
+        failed = []
+
+        assert self.icDirectory is not "", "No initial condition directory was given"
+        assert self.ICrunFlag is not False, "IC run flag was not set"
+
+        if self.simParams.verbose:
+            print "Beginning simulation with {0} runs on {1} threads".format(self.executionCount, self.numProcess)
+
+        if self.simParams.shouldArchiveParameters:
+            if not os.path.exists(self.icDirectory):
+                print "Cannot run initial conditions: the directory given does not exist"
+            if self.simParams.verbose:
+                print "Archiving a copy of this simulation before running it in 'MonteCarlo.data'"
+            try:
+                with gzip.open(self.icDirectory + "MonteCarlo.data", "w") as pickleFile:
+                    pickle.dump(self, pickleFile)  # dump this controller object into a file.
+            except Exception as e:
+                print "Unknown exception while trying to pickle monte-carlo-controller... \ncontinuing...\n\n", e
+
+        simGenerator = self.generateICSims(caseList)
+        jobsFinished = 0  # keep track of what simulations have finished
+
+        # The simulation executor is responsible for executing simulation given a simulation's parameters
+        # It is called within worker threads with each worker's simulation parameters
+        simulationExecutor = SimulationExecutor()
+        #
+        if self.numProcess == 1:  # don't make child thread
+            if self.simParams.verbose:
+                print "Executing sequentially..."
+            i = 0
+            for sim in simGenerator:
+                try:
+                    simulationExecutor(sim)
+                except:
+                    failed.append(i)
+                i += 1
+        else:
+            pool = Pool(self.numProcess)
+            try:
+                # yields results *as* the workers finish jobs
+                for result in pool.imap_unordered(simulationExecutor, simGenerator):
+                    if result[0] is not True:  # workers return True on success
+                        failed.append(result[1])  # add failed jobs to the list of failures
+                        print "Job", result[1], "failed..."
+
+                    jobsFinished += 1
+                pool.close()
+            except KeyboardInterrupt as e:
+                print "Ctrl-C was hit, closing pool"
+                # failed.extend(range(jobsFinished, numSims))  # fail all potentially running jobs...
+                pool.terminate()
+                raise e
+            except Exception as e:
+                print "Unknown exception while running simulations:", e
+                # failed.extend(range(jobsFinished, numSims))  # fail all potentially running jobs...
+                traceback.print_exc()
+                pool.terminate()
+            finally:
+                pool.join()
+
+        # if there are failures
+        if len(failed) > 0:
+            failed.sort()
+
+            if self.simParams.verbose:
+                print "Failed", failed, "saving to 'failures.txt'"
+
+            if self.simParams.shouldArchiveParameters:
+                # write a file that contains log of failed runs
+                with open(self.icDirectory + "failures.txt", "w") as failFile:
+                    failFile.write(str(failed))
+
+        return failed
+
+    def generateICSims(self, caseList):
+        ''' Generator function to clone a baseSimulation for IC run
+        Args:
+            baseSimulation: SimulationParams
+                A base simulation to clone.
+            numSims: int[]
+                The desired runs to generate.
+        Returns:
+            generator<SimulationParams>
+                A generator that yields that number of cloned simulations
+        '''
+
+        # make a list of simulations to execute by cloning the base-simulation and
+        # changing each clone's index and filename to make a list of
+        # simulations to execute
+        for caseNumber in caseList:
+            if self.simParams.verbose:
+                print "Running IC ", caseNumber
+
+            oldRunFile = self.icDirectory + "run" + str(caseNumber) + ".json"
+            if not os.path.exists(oldRunFile):
+                print "ERROR running IC case: " + oldRunFile
+                continue
+
+            # use old simulation parameters, modified slightly.
+            simParams = copy.deepcopy(self.simParams)
+            simParams.index = caseNumber
+            # don't redisperse seeds, we want to use the ones saved in the oldRunFile
+            simParams.shouldDisperseSeeds = False
+
+            simParams.icfilename = self.icDirectory + "run" + str(caseNumber)
+            with open(oldRunFile, "r") as runParameters:
+                simParams.modifications = json.load(runParameters)
+
+            yield simParams
 
     def generateSims(self, simNumList):
         ''' Generator function to clone a baseSimulation
@@ -421,7 +552,7 @@ class SimulationParameters():
 
     def __init__(self, creationFunction, executionFunction, configureFunction,
                  retentionPolicies, dispersions, shouldDisperseSeeds,
-                 shouldArchiveParameters, filename, index=None, verbose=False, modifications={}):
+                 shouldArchiveParameters, filename, icfilename, index=None, verbose=False, modifications={}):
         self.index = index
         self.creationFunction = creationFunction
         self.executionFunction = executionFunction
@@ -431,6 +562,7 @@ class SimulationParameters():
         self.shouldDisperseSeeds = shouldDisperseSeeds
         self.shouldArchiveParameters = shouldArchiveParameters
         self.filename = filename
+        self.icfilename = icfilename
         self.verbose = verbose
         self.modifications = modifications
 
@@ -611,8 +743,12 @@ class SimulationExecutor():
             # if archiving, this run's parameters and random seeds are saved in its own json file
             if simParams.shouldArchiveParameters:
                 # save the dispersions and random seeds for this run
-                with open(simParams.filename + ".json", 'w') as outfile:
-                    json.dump(modifications, outfile)
+                if simParams.icfilename != "":
+                    with open(simParams.icfilename + ".json", 'w') as outfile:
+                        json.dump(modifications, outfile)
+                else:
+                    with open(simParams.filename + ".json", 'w') as outfile:
+                        json.dump(modifications, outfile)
 
             if simParams.configureFunction is not None:
                 if simParams.verbose:
@@ -638,7 +774,10 @@ class SimulationExecutor():
             simParams.executionFunction(simInstance)
 
             if len(simParams.retentionPolicies) > 0:
-                retentionFile = simParams.filename + ".data"
+                if simParams.icfilename != "":
+                    retentionFile = simParams.icfilename + ".data"
+                else:
+                    retentionFile = simParams.filename + ".data"
 
                 if simParams.verbose:
                     print "Retaining data for run in", retentionFile

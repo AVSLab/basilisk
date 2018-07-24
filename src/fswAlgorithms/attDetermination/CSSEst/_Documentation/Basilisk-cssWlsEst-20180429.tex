@@ -49,7 +49,7 @@
 \newcommand{\status}{Released}
 \newcommand{\preparer}{S. Piggott}
 \newcommand{\summary}{This is a report documenting the results of the unit test performed for the 
-   coarse sun sensor sun point vector estimation algorithm.}
+   coarse sun sensor sun point vector estimation algorithm.  A weighted least-squares minimum-norm algorithm is used to estimate the body-relative sun heading using a cluster of coarse sun sensors.  Using two successive sun heading evaluation the module also computes the inertial angular velocity vector.  As rotations about the sun-heading vector are not observable, this angular velocity vector only contains body rates orthogonal to this sun heading vector.  }
 
 \begin{document}
 
@@ -72,6 +72,8 @@
 \hline
 1.2 & Added User Guide Section & H. Schaub & 2018-04-29\\
 \hline
+1.3 & Added discussion on the inertial angular velocity vector evaluation & H. Schaub & 2018-05-26\\
+\hline
 
 \end{longtable}
 }
@@ -89,30 +91,49 @@
 
 
 \section{Introduction}
-When in safe mode, the spacecraft uses its coarse sun sensors in order to 
+When in safe mode, the spacecraft uses its coarse sun sensors (CSSs) in order to 
 point the vehicle's solar arrays at the Sun.  This is done in order to ensure 
 that the vehicle gets to a power-positive state with a minimum set of sensors 
 in order to recover from whatever event triggered the transition to safe mode.  
-The vehicle notionally has 8 coarse sun sensor (CSS) sensors available to it 
+The nominal vehicle considered in this report has 8 coarse sun sensor (CSS) sensors available to it 
 which allows it to resolve the exact sun direction in almost all body axes as 
-long as all sensors are functional. 
+long as all sensors are functional.  With these cosine CSS a minimum of 3 sensor must provide a signal to determine a unique answer.
 
-Since there are so many CSSs available, the algorithm needs to be able to obtain 
+\subsection{Sun Heading Evaluation}
+If more than 3 CSS detect a sun signal, the algorithm needs to be able to obtain 
 the sun pointing vector that best fits the current outputs from all of the CSSs.  
 This is done by a least squares estimation process that provides the sun vector 
 that best fits from a weighted least squares perspective.  The weights are 
 simply set based on the current output of each sensor which ensures that the 
-sensors that have the best measurements are trusted the most.  The details of 
+sensors that have the best measurements are trusted the most.  If 3 CCS see the sun, then a unique heading is computed.  If 1-2 CSS see the sun then a minimum norm solution is evaluated.  If no CSS sees the sun then a zero vector is returned.
+The details of 
 this algorithm are available in Steve O'Keefe's PhD dissertation. 
 \footnote{\href{http://gradworks.umi.com/3704787.pdf}
    {O'Keefe Public Dissertation Link}}
 
 The algorithm stores its internal variables in the CSSWLSConfig data structure 
-with the input message coming from the "css\_data\_aggregate" message and the 
-output sun pointing vector going to the "css\_wls\_est" message.  This 
-algorithm does not use any information stored from previous frames so it is a 
+with the input message provides the CSS sensor values.  The output is a {\tt NavAttIntMsg} message that contains the estimated sun-heading vector in body frame components.  This 
+sun-heading estimation algorithm does not use any information stored from previous frames so it is a 
 fresh computation every time it is called.  It can therefore be called at any 
 rate needed by the system.
+
+
+\subsection{Partial Angular Velocity Evaluation}
+Using two successive sun-heading vector evaluations it is possible to evaluate a partial solution of the spacecraft inertial angular velocity vector.  Note that rate about the sun heading vector are not obsdervable, but rates about the other two axes can be obtained.  
+
+Let $\bm d_{n}$ be current sun heading vector from the above sun heading algorithm.  The prior estimate is denoted as $\bm d_{n-1}$, while $\Delta t$ is the time step between the two measurements.  The angular velocity vector is then evaluated using
+\begin{equation}
+	\label{eq:cssEst1}
+	\bm\omega_{B/N} = \frac{\bm d_{n} \times \bm d_{n-1}}{|\bm d_{n} \times \bm d_{n-1}|}
+	\arccos\left(
+		\frac{\bm d_{n} \cdot \bm d_{n-1}}{|\bm d_{n}| |\bm d_{n-1}|} 
+	\right) \frac{1}{\Delta t}
+\end{equation}
+These vector evaluations are performed using $\mathcal{B}$ frame vector components. 
+
+Note that iff both $\bm d_{n}$ and $\bm d_{n-1}$ are nearly collinear a zero body rate vector is returned.  Further, during start-up and reset operations it is possible that $\Delta t$ might be zero for a single evaluation.  In this case also a zero rate vector is returned.  
+ 
+
 
 \section{Test Design}
 The unit test for the cssWlsEst module is located in:\\
@@ -203,6 +224,9 @@ good information to provide.
    demonstrate that the algorithm passivates its outputs without hitting any 
    unacceptable event.  It does correctly flag that no valid CSSs were found 
    during the test. \textcolor{ForestGreen}{Test successful.}}
+   
+   \item{Angular Velocity Test:  The same 8 unit CSS configuration is used as in the earlier tests, but the true sun heading is set equal to $\hat{\bm b}_{1}$.  A BSK sample time of 0.5 seconds is setup, and the simulation is run 3 times to reach a simulation time of 1.0 seconds.  It takes 2 steps for the module to evaluate the update rate $\D t$, thus the expected rate estimate is a zero vector for these steps.  As the sun heading is being evaluated in the 2nd step, with the 3rd step there is a non-zero $\D t$ value, but the old and new sun-heading vectors are the same.  The expected rate output is again a zero vector.  Next the true sun heading is changed to be $\hat{\bm b}_{2}$, corresponding to a 90$\deg$ heading change about $\hat{\bm b}_{3}$.  The simulation is run for two more steps. The expected inertial body rate with step 4 would be $-\pi$ rad/sec about $\hat{\bm b}_{3}$.  The 5th step must yield again a zero rate vector as the sun heading has not changed.  Next, a reset function is called and a single simulation step is called.  The expected output is the zero rate vector again.  Finally, the true sun heading vector is changed back to $\hat{\bm b}_{1}$ and another simulation step is performed to show a $+\pi$ rad/sec rotation about $\hat{\bm b}_{3}$.  
+   The test results status is: \input{AutoTeX/passFailRate.tex}}
 \end{enumerate}
 
 \section{Test Coverage}

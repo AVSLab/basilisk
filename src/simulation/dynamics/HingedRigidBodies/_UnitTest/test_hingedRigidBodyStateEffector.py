@@ -2,7 +2,7 @@
 '''
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -36,6 +36,7 @@ from Basilisk.simulation import hingedRigidBodyStateEffector
 from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import extForceTorque
+from Basilisk.simulation import spacecraftDynamics
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -65,7 +66,7 @@ def test_hingedRigidBodyGravity(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraftDynamics.SpacecraftDynamics()
     scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -96,6 +97,8 @@ def test_hingedRigidBodyGravity(show_plots):
     unitTestSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
     unitTestSim.panel1.thetaInit = 5*numpy.pi/180.0
     unitTestSim.panel1.thetaDotInit = 0.0
+    unitTestSim.panel1.HingedRigidBodyOutMsgName = "panel1Msg"
+    unitTestSim.panel1.ModelTag = "Panel1"
 
     # Define Variables for panel 2
     unitTestSim.panel2.mass = 100.0
@@ -109,24 +112,28 @@ def test_hingedRigidBodyGravity(show_plots):
     unitTestSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
     unitTestSim.panel2.thetaInit = 0.0
     unitTestSim.panel2.thetaDotInit = 0.0
+    unitTestSim.panel2.HingedRigidBodyOutMsgName = "panel2Msg"
+    unitTestSim.panel2.ModelTag = "Panel2"
 
     # Add panels to spaceCraft
-    scObject.addStateEffector(unitTestSim.panel1)
-    scObject.addStateEffector(unitTestSim.panel2)
+    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel1)
+    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel2)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObject.hub.mHub = 750.0
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.primaryCentralSpacecraft.hub.mHub = 750.0
+    scObject.primaryCentralSpacecraft.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    scObject.primaryCentralSpacecraft.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
-    scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
+    scObject.primaryCentralSpacecraft.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
+    scObject.primaryCentralSpacecraft.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
+    scObject.primaryCentralSpacecraft.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.primaryCentralSpacecraft.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
     # Add Earth gravity to the sim
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
@@ -135,30 +142,34 @@ def test_hingedRigidBodyGravity(show_plots):
     unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
+    scObject.primaryCentralSpacecraft.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
 
     # Log the spacecraft state message
-    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage("spacecraft_inertial_state_output", testProcessRate)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
 
     # Add energy and momentum variables to log
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging(unitTestSim.panel1.ModelTag + ".forceOnBody_B", testProcessRate, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(unitTestSim.panel2.ModelTag + ".forceOnBody_B", testProcessRate, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totRotEnergy", testProcessRate, 0, 0, 'double')
 
     stopTime = 2.5
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    sigmaOut = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN',range(3))
+    sigmaOut = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.sigma_BN',range(3))
 
-    orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
-    orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
-    rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
-    rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
+    forcePanel1 = unitTestSim.GetLogVariableData(unitTestSim.panel1.ModelTag + ".forceOnBody_B")
+    forcePanel2 = unitTestSim.GetLogVariableData(unitTestSim.panel2.ModelTag + ".forceOnBody_B")
+    orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy")
+    orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbAngMomPntN_N")
+    rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totRotAngMomPntC_N")
+    rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totRotEnergy")
 
     dataSigma = [sigmaOut[-1]]
 
@@ -217,6 +228,18 @@ def test_hingedRigidBodyGravity(show_plots):
     PlotTitle = "Change In Rotational Energy with Gravity"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
+    plt.figure()
+    plt.clf()
+    plt.plot(forcePanel1[:,0]*1e-9, forcePanel1[:,1], forcePanel1[:,0]*1e-9, forcePanel1[:,2], forcePanel1[:,0]*1e-9, forcePanel1[:,3])
+    plt.xlabel('time (s)')
+    plt.ylabel('Force about Point B')
+
+    plt.figure()
+    plt.clf()
+    plt.plot(forcePanel2[:,0]*1e-9, forcePanel2[:,1], forcePanel2[:,0]*1e-9, forcePanel2[:,2], forcePanel2[:,0]*1e-9, forcePanel2[:,3])
+    plt.xlabel('time (s)')
+    plt.ylabel('Force about Point B')
+
     plt.show(show_plots)
     plt.close("all")
 
@@ -268,7 +291,7 @@ def test_hingedRigidBodyNoGravity(show_plots):
     testFailCount = 0  # zero unit test result counter  
     testMessages = []  # create empty list to store test log messages
     
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraftDynamics.SpacecraftDynamics()
     scObject.ModelTag = "spacecraftBody"
     
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -313,44 +336,46 @@ def test_hingedRigidBodyNoGravity(show_plots):
     unitTestSim.panel2.thetaDotInit = 0.0
 
     # Add panels to spaceCraft
-    scObject.addStateEffector(unitTestSim.panel1)
-    scObject.addStateEffector(unitTestSim.panel2)
+    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel1)
+    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel2)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObject.hub.mHub = 750.0
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.primaryCentralSpacecraft.hub.mHub = 750.0
+    scObject.primaryCentralSpacecraft.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    scObject.primaryCentralSpacecraft.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[0.1], [-0.4], [0.3]]
-    scObject.hub.v_CN_NInit = [[-0.2], [0.5], [0.1]]
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
+    scObject.primaryCentralSpacecraft.hub.r_CN_NInit = [[0.1], [-0.4], [0.3]]
+    scObject.primaryCentralSpacecraft.hub.v_CN_NInit = [[-0.2], [0.5], [0.1]]
+    scObject.primaryCentralSpacecraft.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.primaryCentralSpacecraft.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage("spacecraft_inertial_state_output", testProcessRate)
     
     unitTestSim.InitializeSimulation()
 
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totRotEnergy", testProcessRate, 0, 0, 'double')
 
     stopTime = 2.5
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    sigmaOut = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN',range(3))
-    rOut_BN_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
-    vOut_CN_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_CN_N',range(3))
+    sigmaOut = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.sigma_BN',range(3))
+    rOut_BN_N = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.r_BN_N',range(3))
+    vOut_CN_N = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.v_CN_N',range(3))
 
-    orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
-    orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
-    rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
-    rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
+    orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy")
+    orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbAngMomPntN_N")
+    rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totRotAngMomPntC_N")
+    rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totRotEnergy")
 
     # Get the last sigma and position
     dataSigma = [sigmaOut[-1]]
@@ -488,7 +513,7 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraftDynamics.SpacecraftDynamics()
     scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -533,40 +558,42 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
     unitTestSim.panel2.thetaDotInit = 0.0
 
     # Add panels to spaceCraft
-    scObject.addStateEffector(unitTestSim.panel1)
-    scObject.addStateEffector(unitTestSim.panel2)
+    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel1)
+    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel2)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObject.hub.mHub = 750.0
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.primaryCentralSpacecraft.hub.mHub = 750.0
+    scObject.primaryCentralSpacecraft.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    scObject.primaryCentralSpacecraft.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[0.1], [-0.4], [0.3]]
-    scObject.hub.v_CN_NInit = [[-0.2], [0.5], [0.1]]
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
+    scObject.primaryCentralSpacecraft.hub.r_CN_NInit = [[0.1], [-0.4], [0.3]]
+    scObject.primaryCentralSpacecraft.hub.v_CN_NInit = [[-0.2], [0.5], [0.1]]
+    scObject.primaryCentralSpacecraft.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.primaryCentralSpacecraft.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage("spacecraft_inertial_state_output", testProcessRate)
 
     unitTestSim.InitializeSimulation()
 
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
 
     stopTime = 2.5
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    vOut_CN_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_CN_N',range(3))
+    vOut_CN_N = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.v_CN_N',range(3))
 
-    orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
-    orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
-    rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
+    orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy")
+    orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbAngMomPntN_N")
+    rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totRotAngMomPntC_N")
 
     initialOrbAngMom_N = [[orbAngMom_N[0,1], orbAngMom_N[0,2], orbAngMom_N[0,3]]]
 
@@ -665,7 +692,7 @@ def test_hingedRigidBodyThetaSS(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraftDynamics.SpacecraftDynamics()
     scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -711,48 +738,50 @@ def test_hingedRigidBodyThetaSS(show_plots):
     unitTestSim.panel2.thetaDotInit = 0.0
 
     # Add panels to spaceCraft
-    scObject.addStateEffector(unitTestSim.panel1)
-    scObject.addStateEffector(unitTestSim.panel2)
+    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel1)
+    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel2)
 
     # Add external force and torque
     extFTObject = extForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[0], [0], [0]]
     extFTObject.extForce_B = [[0], [1], [0]]
-    scObject.addDynamicEffector(extFTObject)
+    scObject.primaryCentralSpacecraft.addDynamicEffector(extFTObject)
     unitTestSim.AddModelToTask(unitTaskName, extFTObject)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObject.hub.mHub = 750.0
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.primaryCentralSpacecraft.hub.mHub = 750.0
+    scObject.primaryCentralSpacecraft.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    scObject.primaryCentralSpacecraft.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+    scObject.primaryCentralSpacecraft.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.primaryCentralSpacecraft.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.primaryCentralSpacecraft.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.primaryCentralSpacecraft.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
     unitTestSim.InitializeSimulation()
 
-    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta1').getState()", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta2').getState()", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState()", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState()", testProcessRate, 0, 0, 'double')
 
     stopTime = 60.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    theta1Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta1').getState()")
-    theta2Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta2').getState()")
+    theta1Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState()")
+    theta2Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState()")
 
     # Developing the lagrangian result
     # Define initial values
     spacecraft = spacecraftClass()
-    spacecraft.hub.mass = scObject.hub.mHub
-    spacecraft.hub.Inertia = scObject.hub.IHubPntBc_B[2][2]
+    spacecraft.hub.mass = scObject.primaryCentralSpacecraft.hub.mHub
+    spacecraft.hub.Inertia = scObject.primaryCentralSpacecraft.hub.IHubPntBc_B[2][2]
     # Define variables for panel1
     spacecraft.panel1.mass = unitTestSim.panel1.mass
     spacecraft.panel1.Inertia = unitTestSim.panel1.IPntS_S[1][1]
@@ -854,7 +883,7 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraftDynamics.SpacecraftDynamics()
     scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -900,8 +929,8 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     unitTestSim.panel2.thetaDotInit = 0.0
 
     # Add panels to spaceCraft
-    scObject.addStateEffector(unitTestSim.panel1)
-    scObject.addStateEffector(unitTestSim.panel2)
+    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel1)
+    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel2)
 
     # Add external force and torque
     extFTObject = extForceTorque.ExtForceTorque()
@@ -909,29 +938,31 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     extFTObject.extTorquePntB_B = [[0], [0], [0]]
     force = 1
     extFTObject.extForce_B = [[0], [force], [0]]
-    scObject.addDynamicEffector(extFTObject)
+    scObject.primaryCentralSpacecraft.addDynamicEffector(extFTObject)
     unitTestSim.AddModelToTask(unitTaskName, extFTObject)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObject.hub.mHub = 750.0
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.primaryCentralSpacecraft.hub.mHub = 750.0
+    scObject.primaryCentralSpacecraft.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    scObject.primaryCentralSpacecraft.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+    scObject.primaryCentralSpacecraft.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.primaryCentralSpacecraft.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.primaryCentralSpacecraft.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.primaryCentralSpacecraft.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage("spacecraft_inertial_state_output", testProcessRate)
 
     unitTestSim.InitializeSimulation()
 
-    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta1').getState()", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta2').getState()", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState()", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState()", testProcessRate, 0, 0, 'double')
 
     stopTime = 58
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime/2))
@@ -943,18 +974,18 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    rOut_BN_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
-    sigmaOut_BN = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN',range(3))
+    rOut_BN_N = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.r_BN_N',range(3))
+    sigmaOut_BN = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.sigma_BN',range(3))
     thetaOut = 4.0*numpy.arctan(sigmaOut_BN[:,3])
 
-    theta1Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta1').getState()")
-    theta2Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta2').getState()")
+    theta1Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState()")
+    theta2Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState()")
 
     # Developing the lagrangian result
     # Define initial values
     spacecraft = spacecraftClass()
-    spacecraft.hub.mass = scObject.hub.mHub
-    spacecraft.hub.Inertia = scObject.hub.IHubPntBc_B[2][2]
+    spacecraft.hub.mass = scObject.primaryCentralSpacecraft.hub.mHub
+    spacecraft.hub.Inertia = scObject.primaryCentralSpacecraft.hub.IHubPntBc_B[2][2]
     # Define variables for panel1
     spacecraft.panel1.mass = unitTestSim.panel1.mass
     spacecraft.panel1.Inertia = unitTestSim.panel1.IPntS_S[1][1]
@@ -1133,7 +1164,7 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject = spacecraftDynamics.SpacecraftDynamics()
     scObject.ModelTag = "spacecraftBody"
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -1179,8 +1210,8 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     unitTestSim.panel2.thetaDotInit = 0.0
 
     # Add panels to spaceCraft
-    scObject.addStateEffector(unitTestSim.panel1)
-    scObject.addStateEffector(unitTestSim.panel2)
+    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel1)
+    scObject.primaryCentralSpacecraft.addStateEffector(unitTestSim.panel2)
 
     # Define force and torque
     momentArm1_B = numpy.array([0.05, 0.0, 0.0])
@@ -1195,29 +1226,31 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     extFTObject.ModelTag = "externalDisturbance"
     extFTObject.extForce_B = [[force1_B[0]], [force1_B[1]], [force1_B[2]]]
     extFTObject.extTorquePntB_B = [[torque1_B[0]], [torque1_B[1]], [torque1_B[2]]]
-    scObject.addDynamicEffector(extFTObject)
+    scObject.primaryCentralSpacecraft.addDynamicEffector(extFTObject)
     unitTestSim.AddModelToTask(unitTaskName, extFTObject)
 
     # Define mass properties of the rigid part of the spacecraft
-    scObject.hub.mHub = 750.0
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.primaryCentralSpacecraft.hub.mHub = 750.0
+    scObject.primaryCentralSpacecraft.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    scObject.primaryCentralSpacecraft.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+    scObject.primaryCentralSpacecraft.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.primaryCentralSpacecraft.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.primaryCentralSpacecraft.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.primaryCentralSpacecraft.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel1)
+    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.panel2)
 
-    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage("spacecraft_inertial_state_output", testProcessRate)
 
     unitTestSim.InitializeSimulation()
 
-    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta1').getState()", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta2').getState()", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState()", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState()", testProcessRate, 0, 0, 'double')
 
     # Define times that the new forces will be applies
     force1OffTime = 5.0
@@ -1248,18 +1281,18 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    theta1Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta1').getState()")
-    theta2Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta2').getState()")
+    theta1Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState()")
+    theta2Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState()")
 
-    rOut_BN_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
-    sigmaOut_BN = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN',range(3))
+    rOut_BN_N = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.r_BN_N',range(3))
+    sigmaOut_BN = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.sigma_BN',range(3))
     thetaOut = 4.0*numpy.arctan(sigmaOut_BN[:,3])
 
     # Developing the lagrangian result
     # Define initial values
     spacecraft = spacecraftClass()
-    spacecraft.hub.mass = scObject.hub.mHub
-    spacecraft.hub.Inertia = scObject.hub.IHubPntBc_B[2][2]
+    spacecraft.hub.mass = scObject.primaryCentralSpacecraft.hub.mHub
+    spacecraft.hub.Inertia = scObject.primaryCentralSpacecraft.hub.IHubPntBc_B[2][2]
     # Define variables for panel1
     spacecraft.panel1.mass = unitTestSim.panel1.mass
     spacecraft.panel1.Inertia = unitTestSim.panel1.IPntS_S[1][1]
@@ -1561,4 +1594,4 @@ class boxAndWingParameters:
     d = 0
 
 if __name__ == "__main__":
-    test_hingedRigidBodyFrequencyAmp(True)
+    test_hingedRigidBodyGravity(True)

@@ -2,7 +2,7 @@
 '''
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -82,7 +82,7 @@ def defaultVSCMG():
     VSCMG.Omega = 0.
     VSCMG.gamma = 0.
     VSCMG.gammaDot = 0.
-    VSCMG.Omega_max = 0.
+    VSCMG.Omega_max = 1000.
     VSCMG.gammaDot_max = -1
     VSCMG.IW1 = 0.
     VSCMG.IW2 = 0.

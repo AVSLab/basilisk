@@ -2,7 +2,7 @@
 '''
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -118,15 +118,17 @@ def fuelSloshTest(show_plots,useFlag,testCase):
     if testCase == 'MassDepletion':
         thrusterCommandName = "acs_thruster_cmds"
         # add thruster devices
-        # The clearThrusterSetup() is critical if the script is to run multiple times
-        simIncludeThruster.clearSetup()
-        simIncludeThruster.create('MOOG_Monarc_445',
+        thFactory = simIncludeThruster.thrusterFactory()
+        thFactory.create('MOOG_Monarc_445',
                                   [1,0,0],                # location in S frame
                                   [0,1,0]                 # direction in S frame
                                   )
 
         # create thruster object container and tie to spacecraft object
         thrustersDynamicEffector = thrusterDynamicEffector.ThrusterDynamicEffector()
+        thFactory.addToSpacecraft("Thrusters",
+                                  thrustersDynamicEffector,
+                                  scObject)
 
         unitTestSim.fuelTankStateEffector = fuelTank.FuelTank()
         unitTestSim.fuelTankStateEffector.setTankModel(fuelTank.TANK_MODEL_CONSTANT_VOLUME)
@@ -138,9 +140,7 @@ def fuelSloshTest(show_plots,useFlag,testCase):
 
         # Add tank and thruster
         scObject.addStateEffector(unitTestSim.fuelTankStateEffector)
-        simIncludeThruster.addToSpacecraft(  "Thrusters",
-                                         thrustersDynamicEffector,
-                                         scObject, unitTestSim.fuelTankStateEffector)
+        unitTestSim.fuelTankStateEffector.addThrusterSet(thrustersDynamicEffector)
 
         # set thruster commands
         ThrustMessage = thrusterDynamicEffector.THRArrayOnTimeCmdIntMsg()

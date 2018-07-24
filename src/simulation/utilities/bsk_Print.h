@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -23,30 +23,37 @@
 #include <stdio.h>
 
 typedef enum {
-    MSG_ERROR,          
-    MSG_WARNING, 
-    MSG_DEBUG,     
-    MSG_INFORMATION
+    MSG_DEBUG,
+    MSG_INFORMATION,
+    MSG_WARNING,
+    MSG_ERROR,
+    MSG_SILENT          // the coder should never use this flag when using BSK_PRINT().  It is used to turn off all BSK_PRINT()
 } msgLevel_t;
 
-#define MSG_LEVEL MSG_INFORMATION
+/* specify the BSK printing verbosity level.
+ */
+#define MSG_LEVEL MSG_DEBUG
+
+
 #define EXPAND(x) x
 
 #define BSK_MESSAGE(...) { printf(__VA_ARGS__); }
 
 #ifdef _WIN32
-//#define BSK_PRINT(X, _fmt, ...) if (EXPAND(X) <= MSG_LEVEL) {BSK_MESSAGE(EXPAND(_fmt) , EXPAND(__VA_ARGS__))}
-#define BSK_PRINT(X, _fmt, ...) if (EXPAND(X) <= MSG_LEVEL) {printf(_fmt, __VA_ARGS__);}
 
-//#define BSK_PRINT(X, _fmt, ...) if(X <= MSG_LEVEL) \
-									BSK_MESSAGE(_fmt ,##__VA_ARGS__)
+#define BSK_PRINT(X, _fmt, ...) if (EXPAND(X) >= MSG_LEVEL) {printf(#X ": " _fmt, __VA_ARGS__);}
+#define BSK_PRINT_BRIEF(X, _fmt, ...) if (EXPAND(X) >= MSG_LEVEL) {printf(#X ": " _fmt, __VA_ARGS__);}
+
 
 #else       /* macOS and Linux */
 
 #define WHERESTR "[FILE : %s, FUNC : %s, LINE : %d]:\n"
 #define WHEREARG __FILE__,__func__,__LINE__
-#define BSK_PRINT(X, _fmt, ...) if(X <= MSG_LEVEL) \
-                                   BSK_MESSAGE(WHERESTR _fmt, WHEREARG,##__VA_ARGS__)
+#define BSK_PRINT(X, _fmt, ...) if(X >= MSG_LEVEL) \
+                                BSK_MESSAGE(WHERESTR #X ": " _fmt, WHEREARG, ##__VA_ARGS__)
+#define BSK_PRINT_BRIEF(X, _fmt, ...) if(X >= MSG_LEVEL) \
+                                BSK_MESSAGE(#X ": " _fmt, ##__VA_ARGS__)
+
 #endif
 
 #endif /* _BSK_PRINT_ */

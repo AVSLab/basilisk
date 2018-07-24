@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -33,6 +33,9 @@
 #include "rwConfigLogSimMsg.h"
 #include "scPlusMassPropsSimMsg.h"
 #include "scPlusStatesSimMsg.h"
+#include "scMassPropsSimMsg.h"
+#include "scStatesSimMsg.h"
+#include "scEnergyMomentumSimMsg.h"
 #include "spiceTimeSimMsg.h"
 #include "syncClockSimMsg.h"
 #include "thrConfigSimMsg.h"
@@ -71,6 +74,12 @@ GEN_SIZEOF(RWConfigLogSimMsg);
 GEN_SIZEOF(SCPlusMassPropsSimMsg)
 %include "scPlusStatesSimMsg.h"
 GEN_SIZEOF(SCPlusStatesSimMsg)
+%include "scMassPropsSimMsg.h"
+GEN_SIZEOF(SCMassPropsSimMsg)
+%include "scStatesSimMsg.h"
+GEN_SIZEOF(SCStatesSimMsg)
+%include "scEnergyMomentumSimMsg.h"
+GEN_SIZEOF(SCEnergyMomentumSimMsg)
 %include "spicePlanetStateSimMsg.h"
 GEN_SIZEOF(SpicePlanetStateSimMsg)
 %include "spiceTimeSimMsg.h"

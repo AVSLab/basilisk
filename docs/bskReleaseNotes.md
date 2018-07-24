@@ -9,6 +9,68 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 * GPU based methods to evaluate solar radiation pressure forces and torques
 * atmospheric drag evaluation using multi-faceted spacecraft model
 
+## Version 0.X.X (upcoming release)
+<uL>
+    <li>
+    </li>
+</ul>
+
+
+## Version 0.3.0 
+<uL>
+    <li>
+    Updated cssWlsEst() module to also compute a partial angular velocity vector.
+    </li>
+    <li>
+    New FSW Guidance module `mrpRotation()` to perform a constant body rate rotation.  The initial attitude is specified through a MRP set.
+    </li>
+    <li>
+    Enhanced Linux installation instructions
+    </li>
+    <li>
+        Updated the simIncludeThruster to use the same factor class as the RW factory class.  This will break old scripts that use the old method of setting up Thrusters with this helper function.
+        <ul>
+    <li>FIX: Update the script to use the new factory class.  Examples are seen in `src/simulation/dynamics/Thrusters/_UnitTest/test_thruster_integrated.py`.</li>
+    </ul>
+    </li>
+    <li>
+    Updated bskSim to use the RW factory class to setup the simulation RW devices, as well as to use fsw helper functions to setup the RW FSW config messages
+    </li>
+    <li>
+    At supportData/EphermerisData, updated the leap second kernel version to from 0011 to 0012. 
+    </li>
+    <li>
+    Added a force and torque calculation method in the stateEffector abstract class, and provided the necessary method calls in spacecraftPlus. This allows for stateEffectors to calculate the force and torque that they are imparting on the rigid body hub. The hingedRigidBodyStateEffector and the linearSpringMassDamper classes provide their implementation of these calculations. 
+    </li>
+    <li>
+    Fixed an issue with `extForceTorque` effector where the flag about having a good input message was not being initialized properly.  This caused a rare failure in the unit test.
+    </li>
+    <li>
+    Reaction wheel state effector has an updated friction model that allows the user to implement coulomb, viscous, and static friction.
+    </li>
+    <li>
+    Reaction wheel state effector now has max torque saturation logic in which the wheels can only implement a maximum wheel torque and max wheel speed saturation logic in which if the wheel speed goes over the maximum wheel speed, then the wheel torque is set to zero. 
+    </li>
+    <li>
+    A new method called writeOutputStateMessages was added to the stateEffector abstract class which allows for stateEffectors to write their states as messages in the system and the states will always be written out to the system after integration. This fixed an issue with reaction wheels where the commanded torque information needs to be tasked before the spacecraft but the reaction wheel state messages need to be written out after integration. 
+    </li>
+    <li>
+    A new dynamics class called `spacecraftDynamics` has been created.  This allow multiple complex spacecraft systems to be either rigidly connected or free-flying.  This allow for example a mother craft to house a daughter craft which has its own RWs, etc, and then release the daughter craft at a specified time.  
+    </li>
+    <li>
+    Cleaned up the gravity effector class variable names, and streamlined the evaluation logic.  The gravity effector documentation has been updated to include information on the the multi-body gravity acceleration is evaluated.
+    </li>
+    <li>
+    Updated the FSW modules `MRP_Feedback`,`MRP_Steering`, `dvAccumulation` and `oeStateEphem` to zero out the output message first in the `Update()` routine.
+    </li>
+    <li>
+    Fixed an issue with the RW factory class and the Stribeck friction model not being turned off by default.
+    </li>
+    <li>
+    added a new bskSim based tutorial scenario that illustrates a sun-pointing control while the spacecraft goes through a planets shadow.
+    </li>
+</ul>
+
 ## Version 0.2.3 (June 12, 2018)
 <ul>
     <li>Improved how the `fuelSloshSpringMassDamper` effector class works.  It is now renamed to `LinearSpringMassDamper`.  It can be used to simulate both fuel sloshing, but also structural modes.  If the `LinearSpringMassDamper` is connected to a fuel tank, then it's mass depends on the amount of fuel left. The associated unit test illustrated how to setup this last capability.  The module also contains documentation on the associated math.
@@ -33,7 +95,7 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 <ul>
     <li>Fixed a build issues on the Windows platform is Visual Studio 2017 or later is used.</li>
     <li>Unified the Coarse Sun Sensor (CSS) sun heading filtering modules to use the same I/O messages.  All used messages are now in the fswMessage folder.</li>
-    <li>Made the CSS sun heading filter messages consistently use the CBias value.  This allows particular sensors to have an indiviual (known) scaling coorection factor.  For example, if the return of one sensor is 10% stronger then that of the other sensors, then CBias is set to 1.10.  Default value is 1.0 assuming all CSS units have the same gain.</li>
+    <li>Made the CSS sun heading filter messages consistently use the CBias value.  This allows particular sensors to have an individual (known) scaling correction factor.  For example, if the return of one sensor is 10% stronger then that of the other sensors, then CBias is set to 1.10.  Default value is 1.0 assuming all CSS units have the same gain.</li>
     <li>The `src\tests\bskSimScenarios` folder now functions properly with the `bskSim` spacecraft class.</li>
     <li>The tutorial scripts in `src\tests\scenarios` are now simplified to pull out the unit testing functionality.  The unit testing is now down with the `test_XXX.py` scripts inside the `src\tests\testScripts` folder.</li>
     <li>The `bskSim` tutorial files are now tested through pytest as well.  The file `testScripts\bskTestScript.py` calls all the `bskSim` tutorial fails and ensures they run without error.</li>
@@ -55,10 +117,10 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>First open beta release of Basilisk</li>
     <li>Moved to a new file architecture.  This means older BSK python scripts need to be updated as the method to import BSK has changed.</li>
     <li>The source an now be forked from Bitbucket</li>
-    <li>Percompiled binaries are provided through a python pip install wheel file.</li>
-    <li>The Doxygen documentation now pulls in the BSK module description PDF file and makes it available via the class defintion html page.</li>
+    <li>Precompiled binaries are provided through a python pip install wheel file.</li>
+    <li>The Doxygen documentation now pulls in the BSK module description PDF file and makes it available via the class definition html page.</li>
     <li>The tutorial python scripts are now moved to `src/test/scenarios`</li>
-    <li>The `pytest` comman should now be run within the `src` sub-directory</li>
+    <li>The `pytest` common should now be run within the `src` sub-directory</li>
     <li>Updated fuel slosh model documentation</li>
     <li>Updated fuel tank documentation</li>
     <li>Adding noise and corruptions using a new utility to the BSK modules (in progress)</li>
@@ -137,20 +199,20 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 	   <li>In the simulation the initial spacecraft position and velocity states are now specified now using the spacecraft center of mass location C, not the body fixed point B.  This greatly simplifies the simulation setup.  Upon initialization, the sim determines what the true center of mass of the spacecraft is using all time varying mass components, and sets the proper B point position and velocity vectors.</li> 
 	   <li>Specifying the initial spacecraft position and velocity states can now be done anywhere before the BSK initialization.  The user sets init versions of the position and velocity vectors.  The setState() method on the state engine thus doesn't have to be used. </li>
 	   <li>There is a new <code>initializeSimulationAndDiscover</code> method to init the BSK simulation that automatically checks if messages are shared across multiple simulation threads.  See the modified <code> SimScenarios/test_scenarioAttitudeFeedback2T.py</code> file for how this simplifies the dual-threaded setup.</li>
-	   <li>The <code>MRP_Steering</code> and <code>PRV_Steering</code> FSW modules have been broken up into a separate kinematic steering command (commanded desired angular velcocity vector) and an associated angular velocity servo module name <code>rateServoFullNonlinear</code>.  This will break any existing code that used either of these two attitude steering modules.  The Python simulation code must be updated to to account for these new modules as done in the MRP_Steering integrated test <code>test_MRP_steeringInt.py</code>.</li>    
+	   <li>The <code>MRP_Steering</code> and <code>PRV_Steering</code> FSW modules have been broken up into a separate kinematic steering command (commanded desired angular velocity vector) and an associated angular velocity servo module name <code>rateServoFullNonlinear</code>.  This will break any existing code that used either of these two attitude steering modules.  The Python simulation code must be updated to to account for these new modules as done in the MRP_Steering integrated test <code>test_MRP_steeringInt.py</code>.</li>    
 
 </ul>
 
 ## Version 0.1.2
 <ul>
-	   <li>All unit and integrated tests now pass on Linux.  The root issue was a varaible length string variable in an output message.  These strings have now been removed as they are no longer needed.</li>
+	   <li>All unit and integrated tests now pass on Linux.  The root issue was a variable length string variable in an output message.  These strings have now been removed as they are no longer needed.</li>
 	   <li>The position and velocity of the center of mass of the spacecraft was added to the messaging system, so now the spacecraft’s translational states can be logged by the center of mass of the spacecraft (r_CN_N and v_CN_N) or the origin of the body frame which is fixed to the hub (r_BN_N and v_BN_N). Additionally, the mass properties of the spacecraft was organized into an updateSCMassProps method that incapsulates the calculations of mass property calculations.</li>
 	   <li>Updated UKF FSW module to be able to run on gryo only information when the star tracker is not available.</li> 
 </ul>
 
 ## Version 0.1.1
 <ul>
-	   <li>On Linux, simplified the processing running BSK modules that require boost.  This makes the Viz related communicaiton modules working again.</li>
+	   <li>On Linux, simplified the processing running BSK modules that require boost.  This makes the Viz related communication modules working again.</li>
 	   <ul>
 	       <li>Added boost libs built on Ubunutu against gcc 5.4.0 20160609.</li>
 	       <li>Added RPATH settings to allow for build directory to be placed outside source directory</li>

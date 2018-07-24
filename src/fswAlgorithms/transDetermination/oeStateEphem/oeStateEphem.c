@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -85,6 +85,7 @@ void Update_oeStateEphem(OEStateEphemData *ConfigData, uint64_t callTime, uint64
     TDBVehicleClockCorrelationFswMsg localCorr;
     classicElements orbEl;
     
+    memset(&localCorr, 0x0 ,sizeof(TDBVehicleClockCorrelationFswMsg));
     ReadMessage(ConfigData->clockCorrInMsgID, &writeTime, &writeSize,
                 sizeof(TDBVehicleClockCorrelationFswMsg), &localCorr, moduleID);
     

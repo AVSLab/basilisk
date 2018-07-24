@@ -2,7 +2,7 @@
 '''
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -35,11 +35,9 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import macros
-from Basilisk.simulation import spice_interface
 from Basilisk.simulation import eclipse
-from Basilisk import pyswice
-from Basilisk.simulation import gravityEffector
 from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import simIncludeGravBody
 from Basilisk import __path__
 bskPath = __path__[0]
 
@@ -80,43 +78,28 @@ def unitEclipse(show_plots, eclipseCondition, planet):
     scObject_0.scStateOutMsgName = "inertial_state_output"
     unitTestSim.AddModelToTask(testTaskName, scObject_0)
 
-    # setup SPICE ephemeris support
+    # setup Gravity Bodies
+    gravFactory = simIncludeGravBody.gravBodyFactory()
     if planet == "earth":
-        earth = gravityEffector.GravBodyData()
-        earth.bodyInMsgName = "earth_planet_data"
-        earth.outputMsgName = "earth_display_frame_data"
-        earth.mu = 0.3986004415E+15  # meters^3/s^2
-        earth.radEquator = 6378136.6  # meters
+        earth = gravFactory.createEarth()
         earth.isCentralBody = True
         earth.useSphericalHarmParams = False
-        # attach gravity model to spaceCraftPlus
-        scObject_0.gravField.gravBodies = spacecraftPlus.GravBodyVector([earth])
     elif planet == "mars":
-        mars = gravityEffector.GravBodyData()
-        mars.bodyInMsgName = "mars_planet_data"
-        mars.outputMsgName = "mars_display_frame_data"
-        mars.mu = 0.42828375214E+14  # meters^3/s^2
-        mars.radEquator = 3396190  # meters
+        mars = gravFactory.createMars()
         mars.isCentralBody = True
         mars.useSphericalHarmParams = False
-        # attach gravity model to spaceCraftPlus
-        scObject_0.gravField.gravBodies = spacecraftPlus.GravBodyVector([mars])
+    scObject_0.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
-    spiceObject = spice_interface.SpiceInterface()
-    spiceObject.planetNames = spice_interface.StringVector(["sun", "venus", "earth", "mars barycenter"])
-    spiceObject.ModelTag = "SpiceInterfaceData"
-    spiceObject.SPICEDataPath = bskPath +'/supportData/EphemerisData/'
-    spiceObject.outputBufferCount = 100000
-    spiceObject.UTCCalInit = '2021 MAY 04 07:47:49.965 (UTC)'
-    # pull in SPICE support libraries
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0011.tls')  # leap second file
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
+    # setup Spice interface for some solar system bodies
+    timeInitString = '2021 MAY 04 07:47:49.965 (UTC)'
+    gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/'
+                                     , timeInitString
+                                     , spicePlanetNames = ["sun", "venus", "earth", "mars barycenter"]
+                                     )
 
     if planet == "earth":
         if eclipseCondition == "full":
-            spiceObject.zeroBase = "earth"
+            gravFactory.spiceObject.zeroBase = "earth"
             # set up spacecraft 0 position and velocity for full eclipse
             oe = orbitalMotion.ClassicElements()
             r_0 = (500 + orbitalMotion.REQ_EARTH)  # km
@@ -130,7 +113,7 @@ def unitEclipse(show_plots, eclipseCondition, planet):
             scObject_0.hub.r_CN_NInit = r_N_0 * 1000  # convert to meters
             scObject_0.hub.v_CN_NInit = v_N_0 * 1000  # convert to meters
         elif eclipseCondition == "partial":
-            spiceObject.zeroBase = "earth"
+            gravFactory.spiceObject.zeroBase = "earth"
             # set up spacecraft 0 position and velocity for full eclipse
             oe = orbitalMotion.ClassicElements()
             r_0 = (500 + orbitalMotion.REQ_EARTH)  # km
@@ -156,16 +139,16 @@ def unitEclipse(show_plots, eclipseCondition, planet):
             scObject_0.hub.r_CN_NInit = r_N_0 * 1000  # convert to meters
             scObject_0.hub.v_CN_NInit = v_N_0 * 1000  # convert to meters
         elif eclipseCondition == "annular":
-            spiceObject.zeroBase = "earth"
+            gravFactory.spiceObject.zeroBase = "earth"
             scObject_0.hub.r_CN_NInit = [-326716535628.942, -287302983139.247, -124542549301.050]
 
     elif planet == "mars":
         if eclipseCondition == "full":
-            spiceObject.zeroBase = "mars barycenter"
+            gravFactory.spiceObject.zeroBase = "mars barycenter"
             scObject_0.hub.r_CN_NInit = [-2930233.55919119, 2567609.100747609, 41384.23366372246] # meters
         elif eclipseCondition == "partial":
             print "partial mars"
-            spiceObject.zeroBase = "mars barycenter"
+            gravFactory.spiceObject.zeroBase = "mars barycenter"
             scObject_0.hub.r_CN_NInit = [-6050166.454829555, 2813822.447404055, 571725.5651779658] # meters
         elif eclipseCondition == "none":
             oe = orbitalMotion.ClassicElements()
@@ -180,10 +163,11 @@ def unitEclipse(show_plots, eclipseCondition, planet):
             scObject_0.hub.r_CN_NInit = r_N_0 * 1000  # convert to meters
             scObject_0.hub.v_CN_NInit = v_N_0 * 1000  # convert to meters
         elif eclipseCondition == "annular":
-            spiceObject.zeroBase = "mars barycenter"
+            gravFactory.spiceObject.zeroBase = "mars barycenter"
             scObject_0.hub.r_CN_NInit = [-427424601171.464, 541312532797.400, 259820030623.064]  # meters
 
-    unitTestSim.AddModelToTask(testTaskName, spiceObject)
+    unitTestSim.AddModelToTask(testTaskName, gravFactory.spiceObject, None, -1)
+
     eclipseObject = eclipse.Eclipse()
     eclipseObject.addPositionMsgName(scObject_0.scStateOutMsgName)
     eclipseObject.addPlanetName('earth')
@@ -278,6 +262,12 @@ def unitEclipse(show_plots, eclipseCondition, planet):
     snippetName = eclipseCondition + "error"
     snippetContent = str(errTol)
     unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+
+    #
+    #  unload the SPICE libraries that were loaded by the spiceObject earlier
+    #
+    gravFactory.unloadSpiceKernels()
+
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":

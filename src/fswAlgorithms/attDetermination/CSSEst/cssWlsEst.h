@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -38,17 +38,20 @@
 /*! @brief Top level structure for the CSS weighted least squares estimator.
  Used to estimate the sun state in the vehicle body frame*/
 typedef struct {
-    char cssDataInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the css sensor input message*/
-    char cssConfigInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the css configuration input message*/
-    char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the navigation output message*/
-    uint32_t numActiveCss;   /*!< -- Number of currently active CSS sensors*/
-    uint32_t useWeights;     /*!< -- Flag indicating whether or not to use weights for least squares*/
-    double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
-    CSSConfigFswMsg cssConfigInBuffer; /*!< -- CSS constellation configuration message buffer */
-    NavAttIntMsg sunlineOutBuffer; /*!< -- Nav message*/
-    int32_t cssDataInMsgID;      /*!< -- ID for the incoming CSS sensor message*/
-    int32_t cssConfigInMsgID;      /*!< -- ID for the incoming CSS configuration message*/
-    int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
+    char cssDataInMsgName[MAX_STAT_MSG_LENGTH];         /*!< The name of the css sensor input message*/
+    char cssConfigInMsgName[MAX_STAT_MSG_LENGTH];       /*!< The name of the css configuration input message*/
+    char navStateOutMsgName[MAX_STAT_MSG_LENGTH];       /*!< The name of the navigation output message*/
+    uint32_t numActiveCss;                              /*!< -- Number of currently active CSS sensors*/
+    uint32_t useWeights;                                /*!< -- Flag indicating whether or not to use weights for least squares*/
+    uint32_t priorSignalAvailable;                      /*!< -- Flag indicating if a recent prior heading estimate is available */
+    double dOld[3];                                     /*!< -- prior sun heading estimate */
+    double sensorUseThresh;                             /*!< -- Threshold below which we discount sensors*/
+    uint64_t priorTime;                                 /*!< [ns] Last time the attitude control is called */
+    CSSConfigFswMsg cssConfigInBuffer;                  /*!< -- CSS constellation configuration message buffer */
+    NavAttIntMsg sunlineOutBuffer;                      /*!< -- Nav message*/
+    int32_t cssDataInMsgID;                             /*!< -- ID for the incoming CSS sensor message*/
+    int32_t cssConfigInMsgID;                           /*!< -- ID for the incoming CSS configuration message*/
+    int32_t navStateOutMsgId;                            /*!< -- ID for the outgoing body estimate message*/
 }CSSWLSConfig;
 
 #ifdef __cplusplus

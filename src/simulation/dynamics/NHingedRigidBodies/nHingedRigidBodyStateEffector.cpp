@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -217,10 +217,7 @@ double NHingedRigidBodyStateEffector::HeaviFunc(double cond)
 
 /*! This method allows the HRB state effector to give its contributions to the matrices needed for the back-sub 
  method */
-void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr,
-                                                       Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr,
-                                                       Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr,
-                                                       Eigen::Vector3d & vecRotcontr)
+void NHingedRigidBodyStateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
     // - Find dcm_BN
     Eigen::MRPd sigmaLocal_BN;
@@ -380,9 +377,9 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen:
     // - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper
     
     // - translational contributions
-    matrixAcontr.setZero();
-    matrixBcontr.setZero();
-    vecTranscontr.setZero();
+    backSubContr.matrixA.setZero();
+    backSubContr.matrixB.setZero();
+    backSubContr.vecTrans.setZero();
     double sumThetaDot = 0;
     Eigen::Vector3d sumTerm2;
     sumTerm2.setZero();
@@ -398,9 +395,9 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen:
         }
         
         sumTerm2 = pow(sumThetaDot,2)*(2*(this->PanelVec.size() - j)+1)*PanelIt->mass*PanelIt->d*PanelIt->sHat1_B;
-        matrixAcontr += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixFDHRB;
-        matrixBcontr += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixGDHRB;
-        vecTranscontr += -sumTerm2 - sumTerm1*this->matrixEDHRB.row(j-1)*this->vectorVDHRB;
+        backSubContr.matrixA += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixFDHRB;
+        backSubContr.matrixB += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixGDHRB;
+        backSubContr.vecTrans += -sumTerm2 - sumTerm1*this->matrixEDHRB.row(j-1)*this->vectorVDHRB;
         j += 1;
     }
     Eigen::Vector3d aTheta;
@@ -410,9 +407,9 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen:
     bTheta = this->matrixEDHRB.row(0)*this->matrixGDHRB;
     
     // - Rotational contributions
-    matrixCcontr.setZero();
-    matrixDcontr.setZero();
-    vecRotcontr.setZero();
+    backSubContr.matrixC.setZero();
+    backSubContr.matrixD.setZero();
+    backSubContr.vecRot.setZero();
     sumThetaDot = 0;
     sumTerm2.setZero();
     Eigen::Matrix3d sumTerm3;
@@ -448,9 +445,9 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen:
         sumTerm2 = PanelIt->mass*this->omegaTildeLoc_BN_B*PanelIt->rTilde_SB_B*PanelIt->rPrime_SB_B
         + pow(sumThetaDot,2)*(PanelIt->rTilde_SB_B+sumTerm3)*PanelIt->mass*PanelIt->d*PanelIt->sHat1_B
         + PanelIt->IPntS_S(1,1)*sumThetaDot*this->omegaTildeLoc_BN_B*PanelIt->sHat2_B;
-        matrixCcontr += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixFDHRB;
-        matrixDcontr += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixGDHRB;
-        vecRotcontr += -sumTerm2 - sumTerm1*this->matrixEDHRB.row(j-1)*this->vectorVDHRB;
+        backSubContr.matrixC += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixFDHRB;
+        backSubContr.matrixD += sumTerm1*this->matrixEDHRB.row(j-1)*this->matrixGDHRB;
+        backSubContr.vecRot += -sumTerm2 - sumTerm1*this->matrixEDHRB.row(j-1)*this->vectorVDHRB;
         j += 1;
     }
 
@@ -459,7 +456,7 @@ void NHingedRigidBodyStateEffector::updateContributions(double integTime, Eigen:
 }
 
 /*! This method is used to find the derivatives for the HRB stateEffector: thetaDDot and the kinematic derivative */
-void NHingedRigidBodyStateEffector::computeDerivatives(double integTime)
+void NHingedRigidBodyStateEffector::computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN)
 {
     // - Grab necessarry values from manager (these have been previously computed in hubEffector)
     Eigen::Vector3d rDDotLoc_BN_N;
@@ -493,8 +490,8 @@ void NHingedRigidBodyStateEffector::computeDerivatives(double integTime)
 }
 
 /*! This method is for calculating the contributions of the HRB state effector to the energy and momentum of the s/c */
-void NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d &
-                                                                rotAngMomPntCContr_B, double & rotEnergyContr)
+void NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
+                                                                 double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
     // - Get the current omega state
     Eigen::Vector3d omegaLocal_BN_B;
@@ -530,7 +527,7 @@ void NHingedRigidBodyStateEffector::updateEnergyMomContributions(double integTim
  */
 void NHingedRigidBodyStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
-    
     WriteOutputMessages(CurrentSimNanos);
-    
+
+    return;
 }

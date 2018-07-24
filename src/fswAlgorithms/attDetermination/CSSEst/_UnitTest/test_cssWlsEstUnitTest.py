@@ -2,7 +2,7 @@
 '''
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -33,7 +33,6 @@ import logging
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
@@ -119,12 +118,25 @@ def checksHatAccuracy(testVec, sHatEstUse, angleFailCriteria, TotalSim):
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(conditionstring)
+
+@pytest.mark.parametrize("testSunHeading, testRate", [
+     ("True", "False")
+    ,("False", "True")
+])
+
+
 # provide a unique test method name, starting with test_
-def test_module(show_plots):     # update "module" in this function name to reflect the module name
+def test_module(show_plots, testSunHeading, testRate):     # update "module" in this function name to reflect the module name
     # each test method requires a single assert method to be called
     # pass on the testPlotFixture so that the main test function may set the DataStore attributes
-    [testResults, testMessage] = cssWlsEstTestFunction(show_plots)
-    assert testResults < 1, testMessage
+
+    if testSunHeading:
+        [testResults, testMessage] = cssWlsEstTestFunction(show_plots)
+        assert testResults < 1, testMessage
+
+    if testRate:
+        [testResults, testMessage] = cssRateTestFunction(show_plots)
+        assert testResults < 1, testMessage
 
 
 def cssWlsEstTestFunction(show_plots):
@@ -197,7 +209,7 @@ def cssWlsEstTestFunction(show_plots):
     unitTestSim.TotalSim.logThisMessage(CSSWlsEstFSWConfig.navStateOutMsgName, int(1E8))
     unitTestSim.AddVariableForLogging("CSSWlsEst.numActiveCss", int(1E8))
 
-    # Initia test is all of the principal body axes
+    # Initial test is all of the principal body axes
     TestVectors = [[-1.0, 0.0, 0.0],
                    [0.0, -1.0, 0.0],
                    [1.0, 0.0, 0.0],
@@ -403,11 +415,155 @@ def cssWlsEstTestFunction(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 
+def cssRateTestFunction(show_plots):
+    testFailCount = 0                       # zero unit test result counter
+    testMessages = []                       # create empty array to store test log messages
+    unitTaskName = "unitTask"               # arbitrary name (don't change)
+    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+
+    # Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.TotalSim.terminateSimulation()
+
+    # Create test thread
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Construct algorithm and associated C++ container
+    moduleConfig = cssWlsEst.CSSWLSConfig()
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
+    moduleWrap.ModelTag = "CSSWlsEst"
+
+    # Add module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+
+    # Initialize the WLS estimator configuration data
+    moduleConfig.cssDataInMsgName = "css_data_aggregate"
+    moduleConfig.cssConfigInMsgName = "css_config_data"
+    moduleConfig.navStateOutMsgName = "css_nav_sunHeading"
+    moduleConfig.useWeights = False
+    moduleConfig.sensorUseThresh = 0.15
+
+    CSSOrientationList = [
+        [0.70710678118654746, -0.5, 0.5],
+        [0.70710678118654746, -0.5, -0.5],
+        [0.70710678118654746, 0.5, -0.5],
+        [0.70710678118654746, 0.5, 0.5],
+        [-0.70710678118654746, 0, 0.70710678118654757],
+        [-0.70710678118654746, 0.70710678118654757, 0.0],
+        [-0.70710678118654746, 0, -0.70710678118654757],
+        [-0.70710678118654746, -0.70710678118654757, 0.0],
+    ]
+    numCSS = len(CSSOrientationList)
+
+    # set the CSS unit vectors
+    cssConfigData = fswMessages.CSSConfigFswMsg()
+    totalCSSList = []
+    for CSSHat in CSSOrientationList:
+        CSSConfigElement = fswMessages.CSSUnitConfigFswMsg()
+        CSSConfigElement.CBias = 1.0
+        CSSConfigElement.nHat_B = CSSHat
+        totalCSSList.append(CSSConfigElement)
+    cssConfigData.nCSS = numCSS
+    cssConfigData.cssVals = totalCSSList
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               moduleConfig.cssConfigInMsgName,
+                               cssConfigData)
+
+    # Initialize input message
+    cssDataMsg = simFswInterfaceMessages.CSSArraySensorIntMsg()
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               moduleConfig.cssDataInMsgName,
+                               cssDataMsg)
+
+    # Log the output message as well as the internal numACtiveCss variables
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.navStateOutMsgName, testProcessRate)
+
+    # Get observation data based on sun pointing and CSS orientation data
+    cssDataMsg.CosValue = createCosList([1.0, 0.0, 0.0], CSSOrientationList)
+
+    # Write in the observation data to the input message
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
+                                          cssDataMsg.getStructSize(),
+                                          0,
+                                          cssDataMsg)
+
+    # Initialize test and then step through all of the test vectors in a loop
+    unitTestSim.InitializeSimulation()
+    # Increment the stop time to new termination value
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))
+    # Execute simulation to current stop time
+    unitTestSim.ExecuteSimulation()
+
+    # rotate sun heading by 90 degrees
+    cssDataMsg.CosValue = createCosList([0.0, 1.0, 0.0], CSSOrientationList)
+    # Write in the observation data to the input message
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
+                                          cssDataMsg.getStructSize(),
+                                          0,
+                                          cssDataMsg)
+    unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))
+    unitTestSim.ExecuteSimulation()
+
+    # test the module reset function
+    moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
+    unitTestSim.ConfigureStopTime(macros.sec2nano(2.5))
+    unitTestSim.ExecuteSimulation()
+    cssDataMsg.CosValue = createCosList([1.0, 0.0, 0.0], CSSOrientationList)
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
+                                          cssDataMsg.getStructSize(),
+                                          0,
+                                          cssDataMsg)
+    unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))
+    unitTestSim.ExecuteSimulation()
+
+     # Pull logged data out into workspace for analysis
+    omegaEst = unitTestSim.pullMessageLogData(moduleConfig.navStateOutMsgName + '.omega_BN_B',
+                                             range(3))
+    accuracy = 1e-6
+    trueVector = [
+        [0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0],
+        [0.0, 0.0, -3.14159265],
+        [0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0],
+        [0.0, 0.0, +3.14159265]
+    ]
+    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, omegaEst,
+                                                               accuracy, "CSS Rate Vector",
+                                                               testFailCount, testMessages)
+
+
+    #   print out success message if no error were found
+    snippentName = "passFailRate"
+    if testFailCount == 0:
+        colorText = 'ForestGreen'
+        print "PASSED: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        print "Failed: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+
+
+
+    # each test method requires a single assert method to be called
+    # this check below just makes sure no sub-test failures were found
+    return [testFailCount, ''.join(testMessages)]
+
+
 #
 # This statement below ensures that the unitTestScript can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_module(            # update "subModule" in function name
-               True        # show_plots
+    test_module(
+                False,          # show_plots
+                False,          # testSunHeading Flag
+                True            # testRate Flag
     )

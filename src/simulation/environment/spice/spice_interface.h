@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -26,6 +26,7 @@
 #include "utilities/linearAlgebra.h"
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/spiceTimeSimMsg.h"
+#include "utilities/avsEigenSupport.h"
 
 /*! \addtogroup SimModelGroup
  *  This group is used to model parts of the vehicle and the surrounding environment

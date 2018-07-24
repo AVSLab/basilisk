@@ -2,7 +2,7 @@
 '''
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -597,11 +597,18 @@ def addMRP(q1, q2):
     	rotations Q1 and Q2.
     """
 
-    num = (1 - np.dot(q1, q1)) * q2 + (1 - np.dot(q2, q2)) * q1 + 2 * np.cross(q1, q2)
     den = 1 + np.dot(q1, q1) * np.dot(q2, q2) - 2 * np.dot(q1, q2)
+
     if np.abs(den) < 1e-5:
-        return subMRP(q1, -q2)
+        q2 = -q2/np.dot(q2,q2)
+        den = 1 + np.dot(q1, q1) * np.dot(q2, q2) - 2 * np.dot(q1, q2)
+    num = (1 - np.dot(q1, q1)) * q2 + (1 - np.dot(q2, q2)) * q1 + 2 * np.cross(q1, q2)
+
     q = num / den
+
+    if np.dot(q,q) > 1:
+            q = - q/np.dot(q,q)
+
     return q
 
 
@@ -2762,11 +2769,16 @@ def subMRP(q1, q2):
     q2m = np.linalg.norm(q2)
     q1m = np.linalg.norm(q1)
 
-    num = (1 - q2m * q2m) * q1 - (1 - q1m * q1m) * q2 + 2 * np.cross(q1, q2)
     den = 1 + (q1m * q1m) * (q2m * q2m) + 2 * np.dot(q1, q2)
     if den < 1e-5:
-        return addMRP(q1, -q2)
+        q2 = -q2/np.dot(q2,q2)
+        den = 1 + (q1m * q1m) * (q2m * q2m) + 2 * np.dot(q1, q2)
+    num = (1 - q2m * q2m) * q1 - (1 - q1m * q1m) * q2 + 2 * np.cross(q1, q2)
+
     q = num / den
+    if np.dot(q,q)>1:
+        q = -q/np.dot(q,q)
+
     return q
 
 
@@ -4208,3 +4220,15 @@ def Mi(theta, i):
     else:
         print 'Mi() error: incorrect axis', i, 'selected'
     return C
+
+def v3Tilde(vector):
+    x1 = vector[0]
+    x2 = vector[1]
+    x3 = vector[2]
+
+    xTilde = [[0, -x3, x2]
+        ,[x3, 0, -x1]
+        ,[-x2, x1, 0]
+              ]
+
+    return xTilde

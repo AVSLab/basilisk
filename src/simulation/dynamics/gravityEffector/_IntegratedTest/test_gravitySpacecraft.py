@@ -2,7 +2,7 @@
 '''
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -27,15 +27,13 @@ bskPath = __path__[0]
 
 
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import spice_interface
-from Basilisk.simulation import sim_model
 from Basilisk import pyswice
-from Basilisk.simulation import stateArchitecture
 from Basilisk.simulation import spacecraftPlus
+from Basilisk.utilities import simIncludeGravBody
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -72,56 +70,36 @@ def test_singleGravityBody(show_plots):
     # create the dynamics task and specify the integration update time
     DynUnitTestProc.addTask(unitTestSim.CreateNewTask(unitTaskName, macros.sec2nano(10.0)))
 
-    # Initialize the modules that we are using.
-    unitTestSim.SpiceObject = spice_interface.SpiceInterface()
 
-    unitTestSim.SpiceObject.ModelTag = "SpiceInterfaceData"
-    unitTestSim.SpiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
-    unitTestSim.SpiceObject.outputBufferCount = 10000
-    unitTestSim.SpiceObject.planetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun", "moon", "jupiter barycenter"])
-    unitTestSim.SpiceObject.zeroBase = 'Earth'
+    # setup Gravity Bodies
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    gravBodies = gravFactory.createBodies(['earth', 'sun', 'moon', 'jupiter barycenter'])
+    gravBodies['earth'].isCentralBody = True
+    gravBodies['earth'].useSphericalHarmParams = True
+    simIncludeGravBody.loadGravFromFile(path + '/../_UnitTest/GGM03S.txt'
+                                        , gravBodies['earth'].spherHarm
+                                        , 40
+                                        )
+    stringCurrent = "2016 MAY 1 00:32:30.0"
+    gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/', stringCurrent)
+    gravFactory.spiceObject.zeroBase = 'Earth'
 
-    unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
-    unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
-    unitTestSim.earthGravBody.isCentralBody = True
-    unitTestSim.earthGravBody.useSphericalHarmParams = True
-    gravityEffector.loadGravFromFile(path + '/../_UnitTest/GGM03S.txt', unitTestSim.earthGravBody.spherHarm, 40)
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
-    unitTestSim.sunGravBody = gravityEffector.GravBodyData()
-    unitTestSim.sunGravBody.bodyInMsgName = "sun_planet_data"
-    unitTestSim.sunGravBody.outputMsgName = "sun_display_frame_data"
-    unitTestSim.sunGravBody.mu = 1.32712440018E20  # meters!
-    unitTestSim.sunGravBody.isCentralBody = False
-    unitTestSim.sunGravBody.useSphericalHarmParams = False
+    unitTestSim.AddModelToTask(unitTaskName, gravFactory.spiceObject, None, 10)
 
-    unitTestSim.moonGravBody = gravityEffector.GravBodyData()
-    unitTestSim.moonGravBody.bodyInMsgName = "moon_planet_data"
-    unitTestSim.moonGravBody.outputMsgName = "moon_display_frame_data"
-    unitTestSim.moonGravBody.mu = 4.902799E12  # meters!
-    unitTestSim.moonGravBody.isCentralBody = False
-    unitTestSim.moonGravBody.useSphericalHarmParams = False
-
-    unitTestSim.jupiterGravBody = gravityEffector.GravBodyData()
-    unitTestSim.jupiterGravBody.bodyInMsgName = "jupiter barycenter_planet_data"
-    unitTestSim.jupiterGravBody.outputMsgName = "jupiter_display_frame_data"
-    unitTestSim.jupiterGravBody.mu = 1.266865349093058E17 # meters!
-    unitTestSim.jupiterGravBody.isCentralBody = False
-    unitTestSim.jupiterGravBody.useSphericalHarmParams = False
-
+    # Use the python spice utility to load in spacecraft SPICE ephemeris data
+    # Note: this following SPICE data only lives in the Python environment, and is
+    #       separate from the earlier SPICE setup that was loaded to BSK.  This is why
+    #       all required SPICE libraries must be included when setting up and loading
+    #       SPICE kernals in Python.
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0011.tls')
+    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
     pyswice.furnsh_c(path + '/../_UnitTest/hst_edited.bsp')
 
-    #unitTestSim.SpiceObject.UTCCalInit = "2012 MAY 1 00:28:30.0"
-    unitTestSim.SpiceObject.UTCCalInit = "2016 MAY 1 00:32:30.0"
-    stringCurrent = unitTestSim.SpiceObject.UTCCalInit
 
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody, unitTestSim.sunGravBody, unitTestSim.moonGravBody, unitTestSim.jupiterGravBody])
-
-    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.SpiceObject, None, 10)
     unitTestSim.AddModelToTask(unitTaskName, scObject, None, 9)
 
     stateOut = pyswice.spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, 'J2000', 'EARTH')
@@ -154,7 +132,7 @@ def test_singleGravityBody(show_plots):
     while(currentTime < totalTime):
         unitTestSim.ConfigureStopTime(macros.sec2nano(currentTime + dt))
         unitTestSim.ExecuteSimulation()
-        stateOut = pyswice.spkRead('HUBBLE SPACE TELESCOPE', unitTestSim.SpiceObject.getCurrentTimeString(), 'J2000', 'EARTH')
+        stateOut = pyswice.spkRead('HUBBLE SPACE TELESCOPE', gravFactory.spiceObject.getCurrentTimeString(), 'J2000', 'EARTH')
         posCurr = posRef.getState()
         posCurr = [y for x in posCurr for y in x]
         posArray.append(posCurr)
@@ -169,12 +147,13 @@ def test_singleGravityBody(show_plots):
 
         currentTime += dt
 
-    stateOut = pyswice.spkRead('HUBBLE SPACE TELESCOPE', unitTestSim.SpiceObject.getCurrentTimeString(), 'J2000', 'EARTH')
+    stateOut = pyswice.spkRead('HUBBLE SPACE TELESCOPE', gravFactory.spiceObject.getCurrentTimeString(), 'J2000', 'EARTH')
     posArray = numpy.array(posArray)
     posError = numpy.array(posError)
 
+    gravFactory.unloadSpiceKernels()
     pyswice.unload_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.unload_c(bskPath + '/supportData/EphemerisData/naif0011.tls')
+    pyswice.unload_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
     pyswice.unload_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
     pyswice.unload_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
     pyswice.unload_c(path + '/../_UnitTest/hst_edited.bsp')
@@ -218,61 +197,30 @@ def test_multiBodyGravity(show_plots):
     # create the dynamics task and specify the integration update time
     DynUnitTestProc.addTask(unitTestSim.CreateNewTask(unitTaskName, macros.sec2nano(5.0)))
 
-    # Initialize the modules that we are using.
-    unitTestSim.SpiceObject = spice_interface.SpiceInterface()
+    # setup Gravity Bodies
+    gravFactory = simIncludeGravBody.gravBodyFactory()
+    gravBodies = gravFactory.createBodies(['earth', 'mars barycenter', 'sun', 'moon', 'jupiter barycenter'])
+    gravBodies['sun'].isCentralBody = True
 
-    unitTestSim.SpiceObject.ModelTag = "SpiceInterfaceData"
-    unitTestSim.SpiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
-    unitTestSim.SpiceObject.outputBufferCount = 10000
-    unitTestSim.SpiceObject.planetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun", "moon", "jupiter barycenter"])
+    stringCurrent = "2008 September 19, 04:00:00.0"
+    gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/', stringCurrent)
+    gravFactory.spiceObject.zeroBase = 'Earth'
 
-    unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
-    unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
-    unitTestSim.earthGravBody.isCentralBody = False
-    unitTestSim.earthGravBody.useSphericalHarmParams = False
-    unitTestSim.earthGravBody.mu = 3.986004415E14
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
-    unitTestSim.sunGravBody = gravityEffector.GravBodyData()
-    unitTestSim.sunGravBody.bodyInMsgName = "sun_planet_data"
-    unitTestSim.sunGravBody.outputMsgName = "sun_display_frame_data"
-    unitTestSim.sunGravBody.mu = 1.32712440018E20  # meters!
-    unitTestSim.sunGravBody.isCentralBody = True
-    unitTestSim.sunGravBody.useSphericalHarmParams = False
+    unitTestSim.AddModelToTask(unitTaskName, gravFactory.spiceObject, None, 10)
 
-    unitTestSim.moonGravBody = gravityEffector.GravBodyData()
-    unitTestSim.moonGravBody.bodyInMsgName = "moon_planet_data"
-    unitTestSim.moonGravBody.outputMsgName = "moon_display_frame_data"
-    unitTestSim.moonGravBody.mu = 4.902799E12  # meters!
-    unitTestSim.moonGravBody.isCentralBody = False
-    unitTestSim.moonGravBody.useSphericalHarmParams = False
-
-    unitTestSim.marsGravBody = gravityEffector.GravBodyData()
-    unitTestSim.marsGravBody.bodyInMsgName = "moon_planet_data"
-    unitTestSim.marsGravBody.outputMsgName = "moon_display_frame_data"
-    unitTestSim.marsGravBody.mu = 4.2828371901284001E+13  # meters!
-    unitTestSim.marsGravBody.isCentralBody = False
-    unitTestSim.marsGravBody.useSphericalHarmParams = False
-
-    unitTestSim.jupiterGravBody = gravityEffector.GravBodyData()
-    unitTestSim.jupiterGravBody.bodyInMsgName = "jupiter barycenter_planet_data"
-    unitTestSim.jupiterGravBody.outputMsgName = "jupiter_display_frame_data"
-    unitTestSim.jupiterGravBody.mu = 1.266865349093058E17 # meters!
-    unitTestSim.jupiterGravBody.isCentralBody = False
-    unitTestSim.jupiterGravBody.useSphericalHarmParams = False
-
+    # Use the python spice utility to load in spacecraft SPICE ephemeris data
+    # Note: this following SPICE data only lives in the Python environment, and is
+    #       separate from the earlier SPICE setup that was loaded to BSK.  This is why
+    #       all required SPICE libraries must be included when setting up and loading
+    #       SPICE kernals in Python.
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0011.tls')
+    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
     pyswice.furnsh_c(path + '/../_UnitTest/nh_pred_od077.bsp')
 
-    unitTestSim.SpiceObject.UTCCalInit = "2008 September 19, 04:00:00.0"
-    stringCurrent = unitTestSim.SpiceObject.UTCCalInit
-
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody, unitTestSim.sunGravBody, unitTestSim.marsGravBody, unitTestSim.jupiterGravBody])
-
-    unitTestSim.AddModelToTask(unitTaskName, unitTestSim.SpiceObject, None, 10)
     unitTestSim.AddModelToTask(unitTaskName, scObject, None, 9)
 
     stateOut = pyswice.spkRead('NEW HORIZONS', stringCurrent, 'J2000', 'SUN')
@@ -301,7 +249,7 @@ def test_multiBodyGravity(show_plots):
     while currentTime < totalTime:
         unitTestSim.ConfigureStopTime(macros.sec2nano(currentTime + dt))
         unitTestSim.ExecuteSimulation()
-        timeString = pyswice.et2utc_c(unitTestSim.SpiceObject.J2000Current, 'C', 4, 1024, "Yo")
+        timeString = pyswice.et2utc_c(gravFactory.spiceObject.J2000Current, 'C', 4, 1024, "Yo")
         stateOut = pyswice.spkRead('NEW HORIZONS', timeString, 'J2000', 'SUN')
         posCurr = posRef.getState()
         posCurr = [y for x in posCurr for y in x]
@@ -320,13 +268,14 @@ def test_multiBodyGravity(show_plots):
         posPrevious = stateOut[0:3]*1000.0
         currentTime += dt
 
-    stateOut = pyswice.spkRead('NEW HORIZONS', unitTestSim.SpiceObject.getCurrentTimeString(), 'J2000', 'SUN')
+    stateOut = pyswice.spkRead('NEW HORIZONS', gravFactory.spiceObject.getCurrentTimeString(), 'J2000', 'SUN')
     posArray = numpy.array(posArray)
     posError = numpy.array(posError)
     posInc = numpy.array(posInc)
 
+    gravFactory.unloadSpiceKernels()
     pyswice.unload_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.unload_c(bskPath + '/supportData/EphemerisData/naif0011.tls')
+    pyswice.unload_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
     pyswice.unload_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
     pyswice.unload_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
     pyswice.unload_c(path + '/../_UnitTest/nh_pred_od077.bsp')

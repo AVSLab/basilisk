@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -55,7 +55,7 @@ void SelfInit_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t moduleID
                                                sizeof(AttRefFswMsg),
                                                "AttRefFswMsg",
                                                moduleID);
-    ConfigData->priorTime = -1;
+    ConfigData->priorTime = 0;
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -79,7 +79,7 @@ void CrossInit_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t moduleI
 void Reset_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
 
-    ConfigData->priorTime = -1;              /* reset the prior time flag state.  If set
+    ConfigData->priorTime = 0;              /* reset the prior time flag state.  If set
                                              to zero, the control time step is not evaluated on the
                                              first function call */
 }
@@ -100,7 +100,7 @@ void Update_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, 
     
     /*! - Get input reference and compute integration time step to use downstream */
     double dt; /* integration time step [s] */
-    if (ConfigData->priorTime == -1)
+    if (ConfigData->priorTime == 0)
     {
         dt = 0.0;
         v3Copy(inputRef.sigma_RN, ConfigData->sigma_RN);

@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -82,6 +82,7 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
 
     /*! Begin method steps*/
     
+    memset(&guidCmd, 0x0, sizeof(AttGuidFswMsg));
     /*! - Read the dynamic input messages */
     ReadMessage(ConfigData->inputGuidID, &clockTime, &readSize,
                 sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);

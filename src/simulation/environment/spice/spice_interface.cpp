@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -22,6 +22,7 @@
 #include "../libs/cspice/include/SpiceUsr.h"
 #include "architecture/messaging/system_messaging.h"
 #include <string.h>
+#include "utilities/bsk_Print.h"
 
 /*! This constructor initializes the variables that spice uses.  Most of them are
  not intended to be changed, but a couple are user configurable.
@@ -56,10 +57,10 @@ SpiceInterface::SpiceInterface()
 SpiceInterface::~SpiceInterface()
 {
     delete [] this->spiceBuffer;
-    if(this->SPICELoaded)
-    {
-        this->clearKeeper();
-    }
+//    if(this->SPICELoaded)
+//    {
+//        this->clearKeeper();
+//    }
     return;
 }
 
@@ -78,24 +79,23 @@ void SpiceInterface::SelfInit()
     //! - Bail if the SPICEDataPath is not present
     if(this->SPICEDataPath == "")
     {
-        std::cerr << "Warning, SPICE data path was not set.  No SPICE."<<
-        std::endl;
+        BSK_PRINT(MSG_WARNING, "SPICE data path was not set.  No SPICE.");
         return;
     }
     //!- Load the SPICE kernels if they haven't already been loaded
     if(!this->SPICELoaded)
     {
-        if(loadSpiceKernel((char *)"naif0011.tls", this->SPICEDataPath.c_str())) {
-            printf("Unable to load %s", "naif0010.tls");
+        if(loadSpiceKernel((char *)"naif0012.tls", this->SPICEDataPath.c_str())) {
+            BSK_PRINT(MSG_ERROR, "Unable to load %s", "naif0012.tls");
         }
         if(loadSpiceKernel((char *)"pck00010.tpc", this->SPICEDataPath.c_str())) {
-            printf("Unable to load %s", "pck00010.tpc");
+            BSK_PRINT(MSG_ERROR, "Unable to load %s", "pck00010.tpc");
         }
         if(loadSpiceKernel((char *)"de-403-masses.tpc", this->SPICEDataPath.c_str())) {
-            printf("Unable to load %s", "de-403-masses.tpc");
+            BSK_PRINT(MSG_ERROR, "Unable to load %s", "de-403-masses.tpc");
         }
         if(loadSpiceKernel((char *)"de430.bsp", this->SPICEDataPath.c_str())) {
-            printf("Unable to load %s", "de430.bsp");
+            BSK_PRINT(MSG_ERROR, "Unable to load %s", "de430.tpc");
         }
         this->SPICELoaded = true;
     }
@@ -239,8 +239,7 @@ void SpiceInterface::computePlanetData()
             SpicePlanetStateSimMsg newPlanet;
             if(it->size() >= MAX_BODY_NAME_LENGTH)
             {
-                std::cerr << "Warning, your planet name is too long for me. ";
-                std::cerr << "Ignoring: " << *it <<std::endl;
+                BSK_PRINT(MSG_WARNING, "Warning, your planet name is too long for me.  Ignoring: %s", (*it).c_str());
                 continue;
             }
             //! <pre>       Set the new planet name and zero the other struct elements </pre>
@@ -290,7 +289,7 @@ void SpiceInterface::computePlanetData()
             
             double aux[6][6];
             
-            sxform_c(this->referenceBase.c_str(), planetFrame.c_str(), this->J2000Current, aux);
+            sxform_c(this->referenceBase.c_str(), planetFrame.c_str(), this->J2000Current, aux); //returns attude of planet (i.e. IAU_EARTH) wrt "j2000". note j2000 is actually ICRF in Spice.
             
             m66Get33Matrix(0, 0, aux, planit->second.J20002Pfix);
             
@@ -368,9 +367,7 @@ std::string SpiceInterface::getCurrentTimeString()
 
 	if (allowedOutputLength < 0)
 	{
-		std::cerr << "The output format string is not long enough.  ";
-		std::cerr << "It should be much larger than 5 characters.  It is currently: ";
-		std::cerr << std::endl << this->timeOutPicture << std::endl;
+        BSK_PRINT(MSG_ERROR, "The output format string is not long enough. It should be much larger than 5 characters.  It is currently: %s", this->timeOutPicture.c_str());
 		return("");
 	}
 

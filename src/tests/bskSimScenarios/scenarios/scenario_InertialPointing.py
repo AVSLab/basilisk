@@ -2,7 +2,7 @@
 '''
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -58,7 +58,7 @@ class scenario_InertialPointing(BSKScenario):
         oe.omega = 0.0 * macros.D2R
         oe.f = 280.0 * macros.D2R
 
-        mu = self.masterSim.DynModels.earthGravBody.mu
+        mu = self.masterSim.DynModels.gravFactory.gravBodies['earth'].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
         self.masterSim.DynModels.scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
@@ -113,14 +113,17 @@ class scenario_InertialPointing(BSKScenario):
         plot_fsw_outputs(sigma_RN, sigma_BR, Lr)
 
         # Show all plots
+        figureList = {}
         BSK_plt.show_all_plots()
+
+        return figureList
 
 
 def run(showPlots):
     # Instantiate base simulation
     TheBSKSim = BSKSim()
 
-    # Configure an scenario in the base simulation
+    # Configure a scenario in the base simulation
     TheScenario = scenario_InertialPointing(TheBSKSim)
     TheScenario.log_outputs()
     TheScenario.configure_initial_conditions()
@@ -135,8 +138,11 @@ def run(showPlots):
 
 
     # Pull the results of the base simulation running the chosen scenario
+    figureList = {}
     if showPlots:
-        TheScenario.pull_outputs()
+        figureList = TheScenario.pull_outputs()
+
+    return figureList
 
 if __name__ == "__main__":
     run(True)

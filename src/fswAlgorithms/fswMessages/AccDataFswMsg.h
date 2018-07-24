@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -20,7 +20,7 @@
 #ifndef _ACC_PKT_DATA_MESSAGE_H
 #define _ACC_PKT_DATA_MESSAGE_H
 
-#define MAX_ACC_BUF_PKT 75
+#define MAX_ACC_BUF_PKT 120
 
 #include "fswMessages/AccPktDataFswMsg.h"
 

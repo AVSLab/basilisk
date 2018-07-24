@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -144,6 +144,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
 
     /*! Begin method steps*/
     /*! - Read the dynamic input messages */
+    memset(&guidCmd, 0x0, sizeof(AttGuidFswMsg));
     ReadMessage(ConfigData->inputGuidID, &clockTime, &readSize,
                 sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);
     

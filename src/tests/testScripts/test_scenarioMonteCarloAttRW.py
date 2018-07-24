@@ -2,7 +2,7 @@
 '''
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -36,12 +36,13 @@ path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../scenarios')
 import scenarioMonteCarloAttRW
 
-
+@pytest.mark.parametrize("MCCases", [1, 2]) # Case 1 for normal MC runs, case 2 for running ICs
 @pytest.mark.slowtest()
-def test_MonteCarloSimulation(show_plots):
+def test_MonteCarloSimulation(show_plots, MCCases):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
-    scenarioMonteCarloAttRW.run(True, show_plots)
+    scenarioMonteCarloAttRW.run(True, MCCases , show_plots)
+    scenarioMonteCarloAttRW.run(True, MCCases , show_plots)
 
     return
 

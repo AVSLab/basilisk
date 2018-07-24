@@ -2,7 +2,7 @@
 '''
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -27,13 +27,10 @@
 #
 
 import sys, os, inspect
-import matplotlib
 import numpy as np
-import ctypes
 import math
 import csv
 import logging
-import pytest
 
 
 # import general simulation support files
@@ -47,10 +44,13 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import exponentialAtmosphere
-from Basilisk.simulation import dragDynamicEffector
 from Basilisk.utilities import unitTestSupport
 #print dir(exponentialAtmosphere)
 from Basilisk.simulation import dragDynamicEffector
+
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -138,6 +138,7 @@ def run(show_plots, orbitCase, planetCase):
     dragEffectorTaskName = "drag"
     dragEffector.coreParams.projectedArea = projArea
     dragEffector.coreParams.dragCoeff = dragCoeff
+    dragEffector.coreParams.comOffset =  [1., 0., 0.]
 
     dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
     dynProcess.addTask(scSim.CreateNewTask(dragEffectorTaskName, simulationTimeStep))

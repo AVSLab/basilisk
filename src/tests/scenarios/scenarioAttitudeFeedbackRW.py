@@ -2,7 +2,7 @@
 '''
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -540,6 +540,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
+    rwStateEffector.InputCmds = "reactionwheel_cmds"
     rwFactory.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
 
     # add RW object array to the simulation process

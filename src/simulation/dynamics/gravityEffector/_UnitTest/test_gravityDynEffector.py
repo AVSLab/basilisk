@@ -2,7 +2,7 @@
 '''
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -142,12 +142,12 @@ def computeGravityTo20(positionVector):
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def test_gravityEffectorAllTest(show_plots):
-    # [testResults, testMessage] = independentSphericalHarmonics(show_plots) - SJKC
-    # assert testResults < 1, testMessage
-    # [testResults, testMessage] = sphericalHarmonics(show_plots)
-    # assert testResults < 1, testMessage
-    # [testResults, testMessage] = singleGravityBody(show_plots)
-    # assert testResults < 1, testMessage
+    [testResults, testMessage] = independentSphericalHarmonics(show_plots)
+    assert testResults < 1, testMessage
+    [testResults, testMessage] = sphericalHarmonics(show_plots)
+    assert testResults < 1, testMessage
+    [testResults, testMessage] = singleGravityBody(show_plots)
+    assert testResults < 1, testMessage
     [testResults, testMessage] = multiBodyGravity(show_plots)
     assert testResults < 1, testMessage
 
@@ -305,8 +305,8 @@ def singleGravityBody(show_plots):
 
     SpiceObject.ModelTag = "SpiceInterfaceData"
     SpiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
-    SpiceObject.OutputBufferCount = 10000
-    SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun"])
+    SpiceObject.outputBufferCount = 10000
+    SpiceObject.planetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun"])
     SpiceObject.UTCCalInit = DateSpice
     TotalSim.AddModelToTask(unitTaskName, SpiceObject)
     SpiceObject.UTCCalInit = "1994 JAN 26 00:02:00.184"
@@ -319,8 +319,13 @@ def singleGravityBody(show_plots):
     gravBody1.useSphericalHarmParams = True
     gravityEffector.loadGravFromFile(path + '/GGM03S.txt', gravBody1.spherHarm, 60)
 
+    # Use the python spice utility to load in spacecraft SPICE ephemeris data
+    # Note: this following SPICE data only lives in the Python environment, and is
+    #       separate from the earlier SPICE setup that was loaded to BSK.  This is why
+    #       all required SPICE libraries must be included when setting up and loading
+    #       SPICE kernals in Python.
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0011.tls')
+    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
     pyswice.furnsh_c(path + '/hst_edited.bsp')
@@ -337,6 +342,7 @@ def singleGravityBody(show_plots):
     TotalSim.InitializeSimulation()
     gravBody1.initBody(0)
     SpiceObject.UpdateState(0)
+
     for i in range(2*3600):
         stateOut = pyswice.spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, 'J2000', 'EARTH')
         etPrev =etCurr - 2.0
@@ -371,7 +377,7 @@ def singleGravityBody(show_plots):
     unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
 
     pyswice.unload_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.unload_c(bskPath + '/supportData/EphemerisData/naif0011.tls')
+    pyswice.unload_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
     pyswice.unload_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
     pyswice.unload_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
     pyswice.unload_c(path + '/hst_edited.bsp')
@@ -471,7 +477,7 @@ def multiBodyGravity(show_plots):
     allGrav.linkInStates(newManager)
     allGrav.registerProperties(newManager)
     multiSim.AddModelToTask(unitTaskName, allGrav)
-    allGrav.computeGravityField() #compute acceleration only considering the first body.
+    allGrav.computeGravityField(posVelSig,posVelSig) #compute acceleration only considering the first body.
     step1 = newManager.getPropertyReference("g_N") #retrieve total gravitational acceleration in inertial frame
 
     #Create a message struct to place gravBody2&3 where they are wanted.
@@ -490,7 +496,7 @@ def multiBodyGravity(show_plots):
 
     #This is the gravityEffector which will actually compute the gravitational acceleration
     allGrav.gravBodies = gravityEffector.GravBodyVector([gravBody1, gravBody2])
-    allGrav.computeGravityField() #compute acceleration considering the first and second bodies.
+    allGrav.computeGravityField(posVelSig,posVelSig) #compute acceleration considering the first and second bodies.
     step2 = newManager.getPropertyReference("g_N") #retrieve total gravitational acceleration in inertial frame
 
     # grav Body 2 and 3 are coincident with each other, half the mass of gravBody1 and are in the opposite direction of gravBody1
@@ -505,7 +511,7 @@ def multiBodyGravity(show_plots):
 
     #This is the gravityEffector which will actually compute the gravitational acceleration
     allGrav.gravBodies = gravityEffector.GravBodyVector([gravBody1, gravBody2, gravBody3])
-    allGrav.computeGravityField() #comput acceleration considering all three bodies
+    allGrav.computeGravityField(posVelSig,posVelSig) #comput acceleration considering all three bodies
     step3 = newManager.getPropertyReference("g_N") #retrieve total gravitational acceleration in inertial frame
 
     step3 = [0., step3[0][0], step3[1][0], step3[2][0]] #add a first (time) column to use isArrayZero

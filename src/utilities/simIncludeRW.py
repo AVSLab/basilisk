@@ -2,7 +2,7 @@
 '''
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -55,9 +55,11 @@ class rwFactory(object):
                 useMinTorque : BOOL to clip any torque below a minimum torque value
                 useMaxTorque : BOOL to clip any torque value above a maximum torque value
                 maxMomentum : maximum RW wheel momentum in Nms.  This is a required variable for some wheels.
-                linearFrictionRatio : has the Coulomb stickage friction as a ratio of maximum wheel speed
                 label : string with the unique device name, must be 5 characters or less
-
+                fCoulomb: double for the Coulomb friction torque model
+                fStatic: double for Static friction torque magnitude
+                betaStatic: double for Stribeck friction coefficient, positive turns Stribeck friction on, negative turns this friction off
+                cViscous: double for Viscous fricion coefficient
             Returns
             -------
             RWConfigSimMsg : message structure
@@ -68,7 +70,6 @@ class rwFactory(object):
         RW = simMessages.RWConfigSimMsg()
 
         # process optional input arguments
-        varRWModel = self.BalancedWheels
         if kwargs.has_key('RWModel'):
             varRWModel =  kwargs['RWModel']
             if not isinstance(varRWModel, (int)):
@@ -110,14 +111,45 @@ class rwFactory(object):
             varMaxMomentum = 0.0              # default value
         self.maxMomentum = varMaxMomentum
 
-        if kwargs.has_key('linearFrictionRatio'):
-            print "test1"
-            varLinearFrictionRatio =  kwargs['linearFrictionRatio']
-            if not isinstance(varLinearFrictionRatio, (float)):
-                print 'ERROR: linearFrictionRatio must be a FLOAT argument'
+        if kwargs.has_key('fCoulomb'):
+            varfCoulomb =  kwargs['fCoulomb']
+            if not isinstance(varfCoulomb, (float)):
+                print 'ERROR: fCoulomb must be a FLOAT argument'
                 exit(1)
         else:
-            varLinearFrictionRatio = -1.0       # default value
+            varfCoulomb = 0.0       # default value
+        RW.fCoulomb = varfCoulomb
+
+        if kwargs.has_key('fStatic'):
+            varfStatic =  kwargs['fStatic']
+            if not isinstance(varfStatic, (float)):
+                print 'ERROR: fStatic must be a FLOAT argument'
+                exit(1)
+        else:
+            varfStatic = 0.0       # default value
+        RW.fStatic = varfStatic
+
+        if kwargs.has_key('betaStatic'):
+            varbetaStatic =  kwargs['betaStatic']
+            if not isinstance(varbetaStatic, (float)):
+                print 'ERROR: betaStatic must be a FLOAT argument'
+                exit(1)
+            if varbetaStatic == 0:
+                print 'ERROR: betaStatic cannot be set to zero.  Positive turns it on, negative turns it off'
+                exit(1)
+        else:
+            varbetaStatic = -1.0       # default value turns off Stribeck friction model
+        RW.betaStatic = varbetaStatic
+
+        if kwargs.has_key('cViscous'):
+            varcViscous =  kwargs['cViscous']
+            if not isinstance(varcViscous, (float)):
+                print 'ERROR: cViscous must be a FLOAT argument'
+                exit(1)
+        else:
+            varcViscous = 0.0       # default value
+        RW.cViscous = varcViscous
+
 
         # set device label name
         if kwargs.has_key('label'):
@@ -174,12 +206,11 @@ class rwFactory(object):
         # enforce some RW options
         RW.RWModel = varRWModel
         if not varUseRWfriction:
-            RW.u_f = 0.0
+            RW.fCoulomb = 0.0
         if not varUseMaxTorque:
             RW.u_max = -1  # a negative value turns off RW torque saturation
         if not varUseMinTorque:
             RW.u_min = 0.0
-        RW.linearFrictionRatio = varLinearFrictionRatio
 
         # add RW to the list of RW devices
         self.rwList[varLabel] = RW
@@ -272,7 +303,7 @@ class rwFactory(object):
         # minimum RW torque [Nm]
         RW.u_min = 0.00001
         # static friction torque [Nm]
-        RW.u_f = 0.0005
+        RW.fCoulomb = 0.0005
         # RW rotor mass [kg]
         # Note: the rotor mass here is set equal to the RW mass of the above spec sheet.
         # static RW imbalance [kg*m]
@@ -323,7 +354,7 @@ class rwFactory(object):
         # minimum RW torque [Nm]
         RW.u_min = 0.00001
         # static friction torque [Nm]
-        RW.u_f = 0.0005
+        RW.fCoulomb = 0.0005
         # RW rotor mass [kg]
         # Note: the rotor mass here is set equal to the RW mass of the above spec sheet.
         # static RW imbalance [kg*m]
@@ -374,7 +405,7 @@ class rwFactory(object):
         # minimum RW torque [Nm]
         RW.u_min = 0.00001
         # static friction torque [Nm]
-        RW.u_f = 0.0005
+        RW.fCoulomb = 0.0005
         # RW rotor mass [kg]
         # Note: the rotor mass here is set equal to the RW mass of the above spec sheet.
         # static RW imbalance [kg*m]

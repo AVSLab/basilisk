@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -303,8 +303,8 @@ void ThrusterDynamicEffector::computeForceTorque(double integTime){
 
 		}
         // - Save force and torque values for messages
-        eigenVector3d2CArray(this->forceExternal_B, it->ThrustOps.opThrustForce_B);
-        eigenVector3d2CArray(this->torqueExternalPntB_B, it->ThrustOps.opThrustTorquePntB_B);
+        eigenVector3d2CArray(SingleThrusterForce, it->ThrustOps.opThrustForce_B);
+        eigenVector3d2CArray(SingleThrusterTorque, it->ThrustOps.opThrustTorquePntB_B);
     }
     //! - Once all thrusters have been checked, update time-related variables for next evaluation
     prevFireTime = integTime;
@@ -366,6 +366,7 @@ void ThrusterDynamicEffector::ComputeThrusterFire(THRConfigSimMsg *CurrentThrust
     }
     double LocalOnRamp = (currentTime - ops->PreviousIterTime) +
     ops->ThrustOnRampTime;
+    LocalOnRamp = LocalOnRamp >= 0.0 ? LocalOnRamp : 0.0;
     double prevValidThrFactor = 0.0;
     double prevValidIspFactor = 0.0;
     double prevValidDelta = 0.0;
@@ -426,6 +427,7 @@ void ThrusterDynamicEffector::ComputeThrusterShut(THRConfigSimMsg *CurrentThrust
     }
     double LocalOffRamp = (currentTime - ops->PreviousIterTime) +
     ops->ThrustOffRampTime;
+    LocalOffRamp = LocalOffRamp >= 0.0 ? LocalOffRamp : 0.0;
     double prevValidThrFactor = 1.0;
     double prevValidIspFactor = 1.0;
     double prevValidDelta = 0.0;

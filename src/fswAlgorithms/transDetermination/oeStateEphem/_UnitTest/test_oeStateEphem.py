@@ -2,7 +2,7 @@
 '''
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -66,14 +66,14 @@ def test_earthOrbitFit(show_plots):
     centralBodyMu = 3.98574405096E14;
 
     dateSpice = "2015 April 10, 00:00:00.0 TDB"
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0011.tls')
+    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
     et = pyswice.new_doubleArray(1)
     pyswice.str2et_c(dateSpice, et)
     etStart = pyswice.doubleArray_getitem(et, 0)
     etEnd = etStart + curveDurationSeconds
 
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de430.bsp')
-    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0011.tls')
+    pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de-403-masses.tpc')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
     pyswice.furnsh_c(path + '/TDRSS.bsp')

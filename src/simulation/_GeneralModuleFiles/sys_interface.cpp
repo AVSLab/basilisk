@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -21,6 +21,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include <cstring>
 #include <iostream>
+#include "utilities/bsk_Print.h"
 
 InterfaceDataExchange::InterfaceDataExchange()
 {
@@ -47,16 +48,14 @@ bool InterfaceDataExchange::linkProcesses()
     findMessageBuffer(processData.messageDest);
     if(processData.destination < 0)
     {
-        std::cerr << "Failed to find a messaging buffer with name: ";
-        std::cerr << processData.messageDest << std::endl;
+        BSK_PRINT_BRIEF(MSG_ERROR, "Failed to find a messaging buffer with name: %s", processData.messageDest.c_str());
         buffersFound = false;
     }
     processData.source = SystemMessaging::GetInstance()->
     findMessageBuffer(processData.messageSource);
     if(processData.source < 0)
     {
-        std::cerr << "Failed to find a messaging buffer with name: ";
-        std::cerr << processData.messageSource << std::endl;
+        BSK_PRINT_BRIEF(MSG_ERROR, "Failed to find a messaging buffer with name: %s", processData.messageSource.c_str());
         buffersFound = false;
     }
     return(buffersFound);
@@ -214,7 +213,7 @@ void SysInterface::connectInterfaces()
         std::vector<MessageInterfaceMatch>::iterator messIt;
         if(!((*it)->linkProcesses()))
         {
-            std::cerr << "Interface failed to link.  Disabling." << std::endl;
+            BSK_PRINT_BRIEF(MSG_ERROR, "Interface failed to link.  Disabling.");
             (*it)->exchangeActive = false;
             continue;
         }

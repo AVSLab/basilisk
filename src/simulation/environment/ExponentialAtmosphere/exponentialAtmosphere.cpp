@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -27,6 +27,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
+#include "utilities/bsk_Print.h"
 #include "../../dynamics/_GeneralModuleFiles/stateData.h"
 #include "../../_GeneralModuleFiles/sys_model.h"
 
@@ -130,7 +131,7 @@ void ExponentialAtmosphere::setPlanet(std::string PlanetName){
     setBaseDensity(BaseDens);
     setScaleHeight(ScaleHeight);
   } else{
-    std::cout<<"Error: Planet "<< PlanetName<<" not found. Either undefined or non-atmospheric. Please define other atmospheric parameters."<<std::endl;
+      BSK_PRINT(MSG_WARNING, "Planet %s not found. Either undefined or non-atmospheric. Please define other atmospheric parameters.", PlanetName.c_str());
   }
   return;
 }
@@ -163,8 +164,8 @@ void ExponentialAtmosphere::WriteOutputMessages(uint64_t CurrentClock)
     std::vector<atmoPropsSimMsg>::iterator atmoIt;
     atmoIt = atmoOutBuffer.begin();
     for(it = atmoDensOutMsgIds.begin(); it!= atmoDensOutMsgIds.end(); it++, atmoIt++){
-      tmpAtmo = *atmoIt;
-      //std::cout<<"WriteMsg: "<<tmpAtmo.neutralDensity<<std::endl;
+        tmpAtmo = *atmoIt;
+//        BSK_PRINT(MSG_DEBUG, "Neutral Density %f",tmpAtmo.neutralDensity);
       SystemMessaging::GetInstance()->WriteMessage(*it,
                                                   CurrentClock,
                                                   sizeof(atmoPropsSimMsg),
@@ -228,7 +229,7 @@ void ExponentialAtmosphere::updateLocalAtmo(double currentTime)
       tmpAltitude = tmpPosMag - this->atmosphereProps.planetRadius;
 
       tmpDensity = this->atmosphereProps.baseDensity * exp(-1.0 * tmpAltitude / this->atmosphereProps.scaleHeight);
-      //std::cout<<"Altitude:"<<tmpAltitude<<", Density:"<<tmpDensity<<std::endl;
+//        BSK_PRINT(MSG_DEBUG, "Altitude %f, Density %f", tmpAltitude, tmpDensity);
       tmpData.neutralDensity = tmpDensity;
       tmpData.localTemp = 300.0;
 

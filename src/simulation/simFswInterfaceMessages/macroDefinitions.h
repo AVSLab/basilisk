@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -22,6 +22,7 @@
 
 #define MAX_EFF_CNT 36
 #define MAX_NUM_CSS_SENSORS 32
+#define MAX_ST_VEH_COUNT 4
 
 #define NANO2SEC        1e-9
 #define RECAST3X3       (double (*)[3])

@@ -2,7 +2,7 @@
 '''
  ISC License
 
- Copyright (c) 2016-2017, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -17,6 +17,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
+
 
 import sys, os, inspect
 import pytest
@@ -115,15 +116,18 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     if testCase == 3:
         thrusterCommandName = "acs_thruster_cmds"
         # add thruster devices
-        # The clearThrusterSetup() is critical if the script is to run multiple times
-        simIncludeThruster.clearSetup()
-        simIncludeThruster.create('MOOG_Monarc_445',
+        thFactory = simIncludeThruster.thrusterFactory()
+        thFactory.create('MOOG_Monarc_445',
                                   [1,0,0],                # location in S frame
                                   [0,1,0]                 # direction in S frame
                                   )
 
+
         # create thruster object container and tie to spacecraft object
         thrustersDynamicEffector = thrusterDynamicEffector.ThrusterDynamicEffector()
+        thFactory.addToSpacecraft("Thrusters",
+                                  thrustersDynamicEffector,
+                                  scObject)
 
         scSim.fuelTankStateEffector = fuelTank.FuelTank()
         scSim.fuelTankStateEffector.setTankModel(fuelTank.TANK_MODEL_CONSTANT_VOLUME)
@@ -135,9 +139,7 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
 
         # Add tank and thruster
         scObject.addStateEffector(scSim.fuelTankStateEffector)
-        simIncludeThruster.addToSpacecraft(  "Thrusters",
-                                         thrustersDynamicEffector,
-                                         scObject, scSim.fuelTankStateEffector)
+        scSim.fuelTankStateEffector.addThrusterSet(thrustersDynamicEffector)
 
         # set thruster commands
         ThrustMessage = thrusterDynamicEffector.THRArrayOnTimeCmdIntMsg()
@@ -192,7 +194,7 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_BN_N
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_BN_N
 
-    simulationTime = macros.sec2nano(1)
+    simulationTime = macros.sec2nano(10)
 
     #
     #   Setup data logging before the simulation is initialized
@@ -347,5 +349,5 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
 if __name__ == "__main__":
     sphericalPendulumTest(True,              # showplots
          False,               # useFlag
-         3,				 # testCase
+         2,				 # testCase
        )

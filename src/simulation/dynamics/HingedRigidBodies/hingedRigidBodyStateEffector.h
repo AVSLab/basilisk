@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -47,7 +47,8 @@ public:
     double thetaDotInit;             //!< [rad/s] Initial hinged rigid body angle rate
     std::string nameOfThetaState;    //!< -- Identifier for the theta state data container
     std::string nameOfThetaDotState; //!< -- Identifier for the thetaDot state data container
-    Eigen::MatrixXd *g_N;            //!< [m/s^2] Gravitational acceleration in N frame components
+    Eigen::MatrixXd *c_B;            //!< [m] Vector from point B to CoM of s/c in B frame components
+    Eigen::MatrixXd *cPrime_B;       //!< [m/s] Body time derivative of vector c_B in B frame components
     Eigen::Matrix3d IPntS_S;         //!< [kg-m^2] Inertia of hinged rigid body about point S in S frame components
     Eigen::Vector3d r_HB_B;          //!< [m] vector pointing from body frame origin to Hinge location
     Eigen::Matrix3d dcm_HB;          //!< -- DCM from body frame to hinge frame
@@ -58,25 +59,24 @@ private:
     double theta;                    //!< [rad] hinged rigid body angle
     double thetaDot;                 //!< [rad/s] hinged rigid body angle rate
     double cTheta;                  //!< -- term needed for back substitution
+    Eigen::Vector3d r_HP_P;          //!< [m] vector pointing from body frame origin to Hinge location
+    Eigen::Matrix3d dcm_HP;          //!< -- DCM from body frame to hinge frame
     Eigen::Vector3d aTheta;         //!< -- term needed for back substitution
     Eigen::Vector3d bTheta;         //!< -- term needed for back substitution
-    Eigen::Matrix3d rTilde_HB_B;     //!< -- Tilde matrix of rHB_B
+    Eigen::Matrix3d rTilde_HP_P;     //!< -- Tilde matrix of rHB_B
     Eigen::Matrix3d dcm_SH;          //!< -- DCM from hinge to hinged rigid body frame, S
-    Eigen::Matrix3d dcm_SB;          //!< -- DCM from body to S frame
-    Eigen::Vector3d omega_BN_S;       //!< [rad/s] omega_BN in S frame components
-    Eigen::Vector3d sHat1_B;         //!< -- unit direction vector for the first axis of the S frame
-    Eigen::Vector3d sHat2_B;         //!< -- unit direction vector for the second axis of the S frame
-    Eigen::Vector3d sHat3_B;         //!< -- unit direction vector for the third axis of the S frame
-    Eigen::Vector3d r_SB_B;          //!< -- Vector pointing from B to CoM of hinged rigid body in B frame components
-    Eigen::Matrix3d rTilde_SB_B;     //!< -- Tilde matrix of rSB_B
-    Eigen::Vector3d rPrime_SB_B;     //!< [m/s] Body time derivative of rSB_B
-    Eigen::Matrix3d rPrimeTilde_SB_B;  //!< -- Tilde matrix of rPrime_SB_B
-    Eigen::Matrix3d ISPrimePntS_B;  //!< [kg-m^2/s] time body derivative IPntS in body frame components
-    Eigen::Vector3d omegaLoc_BN_B;  //!< [rad/s] local copy of omegaBN
-    Eigen::Matrix3d omegaTildeLoc_BN_B; //!< -- tilde matrix of omegaBN
-    StateData *hubSigma;             //!< -- state manager access to the hubs MRP state
-    StateData *hubOmega;             //!< -- state manager access to the hubs omegaBN_B state
-    StateData *hubVelocity;          //!< -- state manager access to the hubs rDotBN_N state
+    Eigen::Matrix3d dcm_SP;          //!< -- DCM from body to S frame
+    Eigen::Vector3d omega_PN_S;       //!< [rad/s] omega_BN in S frame components
+    Eigen::Vector3d sHat1_P;         //!< -- unit direction vector for the first axis of the S frame
+    Eigen::Vector3d sHat2_P;         //!< -- unit direction vector for the second axis of the S frame
+    Eigen::Vector3d sHat3_P;         //!< -- unit direction vector for the third axis of the S frame
+    Eigen::Vector3d r_SP_P;          //!< -- Vector pointing from B to CoM of hinged rigid body in B frame components
+    Eigen::Matrix3d rTilde_SP_P;     //!< -- Tilde matrix of rSB_B
+    Eigen::Vector3d rPrime_SP_P;     //!< [m/s] Body time derivative of rSB_B
+    Eigen::Matrix3d rPrimeTilde_SP_P;  //!< -- Tilde matrix of rPrime_SB_B
+    Eigen::Matrix3d ISPrimePntS_P;  //!< [kg-m^2/s] time body derivative IPntS in body frame components
+    Eigen::Vector3d omegaLoc_PN_P;  //!< [rad/s] local copy of omegaBN
+    Eigen::Matrix3d omegaTildeLoc_PN_P; //!< -- tilde matrix of omegaBN
     StateData *thetaState;           //!< -- state manager of theta for hinged rigid body
     StateData *thetaDotState;        //!< -- state manager of thetaDot for hinged rigid body
     int64_t HingedRigidBodyOutMsgId; //!< -- state output message ID
@@ -86,17 +86,16 @@ public:
     ~HingedRigidBodyStateEffector();  //!< -- Destructor
     void SelfInit();
     void CrossInit();
-    void WriteOutputMessages(uint64_t CurrentClock);
+    void writeOutputStateMessages(uint64_t CurrentClock);
 	void UpdateState(uint64_t CurrentSimNanos);
     void registerStates(DynParamManager& statesIn);  //!< -- Method for registering the HRB states
     void linkInStates(DynParamManager& states);  //!< -- Method for getting access to other states
-    void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr,
-                             Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d
-                             & vecTranscontr, Eigen::Vector3d & vecRotcontr);  //!< -- Method for back-sub contributions
-    void computeDerivatives(double integTime);  //!< -- Method for HRB to compute its derivatives
+    void updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N);  //!< -- Method for back-sub contributions
+    void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for HRB to compute its derivatives
     void updateEffectorMassProps(double integTime);  //!< -- Method for giving the s/c the HRB mass props and prop rates
-    void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
-                                      double & rotEnergyContr); //!< -- Computing energy and momentum for HRBs
+    void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr, Eigen::Vector3d omega_BN_B); //!< -- Computing energy and momentum for HRBs
+    void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B);  //!< -- Force and torque on s/c due to HRBs
+    void prependSpacecraftNameToStates();
 };
 
 #endif /* STATE_EFFECTOR_H */

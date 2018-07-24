@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -23,12 +23,19 @@
 StateEffector::StateEffector()
 {
     // - Set effector mass props to zero
-    effProps.IEffPntB_B.fill(0.0);
-    effProps.IEffPrimePntB_B.fill(0.0);
-    effProps.rEff_CB_B.fill(0.0);
-    effProps.rEffPrime_CB_B.fill(0.0);
-    effProps.mEff = 0.0;
-    effProps.mEffDot = 0.0;
+    this->effProps.mEff = 0.0;
+    this->effProps.mEffDot = 0.0;
+    this->effProps.IEffPntB_B.fill(0.0);
+    this->effProps.IEffPrimePntB_B.fill(0.0);
+    this->effProps.rEff_CB_B.fill(0.0);
+    this->effProps.rEffPrime_CB_B.fill(0.0);
+
+    // - set force and torques equal to zero
+    this->forceOnBody_B = this->torqueOnBodyPntB_B = this->torqueOnBodyPntC_B.setZero();
+
+    this->nameOfSpacecraftAttachedTo = "";
+    this->r_BP_P.setZero();
+    this->dcm_BP.setIdentity();
     return;
 }
 
@@ -45,12 +52,18 @@ void StateEffector::updateEffectorMassProps(double integTime)
     return;
 }
 
+void StateEffector::receiveMotherSpacecraftData(Eigen::Vector3d rSC_BP_P, Eigen::Matrix3d dcmSC_BP)
+{
+    this->r_BP_P = rSC_BP_P;
+    this->dcm_BP = dcmSC_BP;
+
+    return;
+}
+
 /*! This method is strictly for the back-substituion method for computing the dynamics of the spacecraft. The back-sub
  method first computes rDDot_BN_N and omegaDot_BN_B for the spacecraft using these contributions from the state 
  effectors. Then computeDerivatives is called to compute the stateEffectors derivatives using rDDot_BN_N omegaDot_BN_B*/
-void StateEffector::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d
-                                        & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr,
-                                        Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr)
+void StateEffector::updateContributions(double integTime, BackSubMatrices & backSubContr, Eigen::Vector3d sigma_BN, Eigen::Vector3d omega_BN_B, Eigen::Vector3d g_N)
 {
     return;
 }
@@ -59,13 +72,31 @@ void StateEffector::updateContributions(double integTime, Eigen::Matrix3d & matr
  The analytical devlopement of these contributions can be seen in 
  Basilisk/simulation/dynamics/_Documentation/Basilisk-EnergyAndMomentum-20161219.pdf*/
 void StateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
-                                                 double & rotEnergyContr)
+                                                 double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
     return;
 }
 
 /*! This method allows for an individual stateEffector to modify their states after integration*/
 void StateEffector::modifyStates(double integTime)
+{
+    return;
+}
+
+/*! This method allows for an individual stateEffector to find the force and torque that the stateEffector is placing on to the body */
+void StateEffector::calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B)
+{
+    return;
+}
+
+/*! This method ensures that all dynamics states have their messages written after integation */
+void StateEffector::writeOutputStateMessages(uint64_t integTimeNanos)
+{
+    return;
+}
+
+/*! This method ensures that stateEffectors can be implemented using the multi-spacecraft archticture */
+void StateEffector::prependSpacecraftNameToStates()
 {
     return;
 }

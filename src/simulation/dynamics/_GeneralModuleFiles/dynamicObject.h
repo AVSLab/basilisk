@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -34,8 +34,6 @@ class DynamicObject : public SysModel {
 public:
     DynParamManager dynManager;                       //!< -- Dynamics parameter manager for all effectors
     StateVecIntegrator *integrator;                   //!< -- Integrator used to propagate state forward
-    std::vector<StateEffector*> states;               //!< -- Vector of state effectors attached to dynObject
-    std::vector<DynamicEffector*> dynEffectors;       //!< -- Vector of dynamic effectors attached to dynObject
     
 public:
     DynamicObject();                                  //!< -- Constructor
@@ -45,8 +43,6 @@ public:
     virtual void UpdateState(uint64_t callTime) = 0;  //!< -- This hooks the dyn-object into Basilisk architecture
     virtual void equationsOfMotion(double t) = 0;     //!< -- This is computing F = Xdot(X,t)
     virtual void integrateState(double t) = 0;        //!< -- This method steps the state forward in time
-    void addStateEffector(StateEffector *newSateEffector);  //!< -- Attaches a stateEffector to the system
-    void addDynamicEffector(DynamicEffector *newDynamicEffector);  //!< -- Attaches a dynamicEffector
     void setIntegrator(StateVecIntegrator *newIntegrator);  //!< -- Sets a new integrator
 };
 

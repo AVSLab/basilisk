@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -33,6 +33,7 @@
 %ignore Reset_inertialUKF;
 STRUCTASLIST(LowPassFilterData)
 STRUCTASLIST(AccPktDataFswMsg)
+STRUCTASLIST(STMessage)
 %include "inertialUKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
 %include "../../fswMessages/inertialFilterFswMsg.h"
@@ -47,7 +48,8 @@ GEN_SIZEOF(STAttFswMsg);
 GEN_SIZEOF(RWArrayConfigFswMsg);
 GEN_SIZEOF(RWSpeedIntMsg);
 GEN_SIZEOF(VehicleConfigFswMsg);
-GEN_SIZEOF(AccDataFswMsg)
+GEN_SIZEOF(AccDataFswMsg);
+
 
 %pythoncode %{
 import sys

@@ -38,7 +38,7 @@ PROJECT_NAME           = "Basilisk Astrodynamics Simulation Framework"
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = 0.2.3
+PROJECT_NUMBER         = 0.3.0
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -1228,7 +1228,8 @@ HTML_EXTRA_FILES       = ../src/simulation/dynamics/extForceTorque/_Documentatio
                          ../src/simulation/dynamics/NHingedRigidBodies/_Documentation/Basilisk-NHINGEDRIGIDBODYSTATEEFFECTOR-20180103.pdf \
                          ../src/simulation/dynamics/RadiationPressure/_Documentation/Basilisk-RadiationPressure-20170712.pdf \
                          ../src/simulation/dynamics/reactionWheels/_Documentation/Basilisk-REACTIONWHEELSTATEEFFECTOR-20170816.pdf \
-                         ../src/simulation/dynamics/spacecraftPlus/_Documentation/Basilisk-SPACECRAFTPLUS-20170808.pdf \
+                         ../src/simulation/dynamics/SpacecraftDynamics/_Documentation/spacecraftPlus/Basilisk-SPACECRAFTPLUS-20170808.pdf \
+                         ../src/simulation/dynamics/SpacecraftDynamics/_Documentation/SpacecraftDynamics/Basilisk-SPACECRAFTDYNAMICS-20180712.pdf \
                          ../src/simulation/dynamics/Thrusters/_Documentation/Basilisk-THRUSTERS20170712.pdf \
                          ../src/simulation/environment/eclipse/_Documentation/Basilisk-eclipse-20171101.pdf \
                          ../src/simulation/environment/ephemeris_converter/_Documentation/Basilisk-EPHEMERIS_CONVERTER20170712.pdf \
