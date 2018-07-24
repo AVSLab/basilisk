@@ -56,6 +56,12 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>
     Updated the FSW modules `MRP_Feedback`,`MRP_Steering`, `dvAccumulation` and `oeStateEphem` to zero out the output message first in the `Update()` routine.
     </li>
+    <li>
+    Fixed an issue with the RW factory class and the Stribeck friction model not being turned off by default.
+    </li>
+    <li>
+    added a new bskSim based tutorial scenario that illustrates a sun-pointing control while the spacecraft goes through a planets shadow.
+    </li>
 </ul>
 
 ## Version 0.2.3 (June 12, 2018)
