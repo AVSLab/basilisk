@@ -57,7 +57,7 @@ class scenario_HillPointing(BSKScenario):
         oe.Omega = 48.2 * macros.D2R
         oe.omega = 347.8 * macros.D2R
         oe.f = 85.3 * macros.D2R
-        mu = self.masterSim.DynModels.earthGravBody.mu
+        mu = self.masterSim.DynModels.gravFactory.gravBodies['earth'].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
         self.masterSim.DynModels.scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
@@ -100,7 +100,10 @@ class scenario_HillPointing(BSKScenario):
         scene_plt.plot_rate_error(timeLineSet, omega_BR_B)
         scene_plt.plot_orientation(timeLineSet, r_BN_N, v_BN_N, sigma_BN)
         BSK_plt.plot_attitudeGuidance(sigma_RN, omega_RN_N)
+
+        figureList = {}
         BSK_plt.show_all_plots()
+        return figureList
 
 
 def run(showPlots):
@@ -123,8 +126,11 @@ def run(showPlots):
 
 
     # Pull the results of the base simulation running the chosen scenario
+    figureList = {}
     if showPlots:
-        TheScenario.pull_outputs()
+        figureList = TheScenario.pull_outputs()
+
+    return figureList
 
 if __name__ == "__main__":
     run(True)

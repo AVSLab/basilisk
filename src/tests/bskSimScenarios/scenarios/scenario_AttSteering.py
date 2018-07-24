@@ -58,7 +58,7 @@ class scenario_AttitudeSteeringRW(BSKScenario):
         oe.Omega = 48.2 * macros.D2R
         oe.omega = 347.8 * macros.D2R
         oe.f = 85.3 * macros.D2R
-        mu = self.masterSim.DynModels.earthGravBody.mu
+        mu = self.masterSim.DynModels.gravFactory.gravBodies['earth'].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
         self.masterSim.DynModels.scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # [m]
@@ -101,7 +101,10 @@ class scenario_AttitudeSteeringRW(BSKScenario):
         scene_plt.plot_rw_cmd_torque(timeData, dataUsReq, num_RW)
         scene_plt.plot_rate_error(timeData, omega_BR_B, omega_BR_ast)
         scene_plt.plot_rw_speeds(timeData, RW_speeds, num_RW)
+        figureList = {}
         BSK_plt.show_all_plots()
+
+        return figureList
 
 
 def run(showPlots):
@@ -124,9 +127,11 @@ def run(showPlots):
     print 'Finished Execution. Post-processing results'
 
     # Pull the results of the base simulation running the chosen scenario
+    figureList = {}
     if showPlots:
-        TheScenario.pull_outputs()
+        figureList = TheScenario.pull_outputs()
 
+    return figureList
 
 if __name__ == "__main__":
     run(True)

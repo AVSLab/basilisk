@@ -57,7 +57,7 @@ class scenario_VelocityPointing(BSKScenario):
         oe.Omega = 48.2 * macros.D2R
         oe.omega = 347.8 * macros.D2R
         oe.f = 30 * macros.D2R
-        mu = self.masterSim.DynModels.earthGravBody.mu
+        mu = self.masterSim.DynModels.gravFactory.gravBodies['earth'].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         self.masterSim.DynModels.scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
         self.masterSim.DynModels.scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
@@ -107,7 +107,10 @@ class scenario_VelocityPointing(BSKScenario):
                              r_BN_N, v_BN_N)
         #BSK_plt.plot_attitudeGuidance(sigma_RN, omega_RN_N)
         #BSK_plt.plot_rotationalNav(sigma_BN, omega_BN_B)
+        figureList = {}
         BSK_plt.show_all_plots()
+
+        return figureList
 
 def run(showPlots):
 
@@ -130,8 +133,11 @@ def run(showPlots):
     print 'BSKSim: Finished Execution. Post-processing results'
 
     # Pull the results of the base simulation running the chosen scenario
+    figureList = {}
     if showPlots:
-        TheScenario.pull_outputs()
+        figureList = TheScenario.pull_outputs()
+
+    return figureList
 
 if __name__ == "__main__":
     run(True)

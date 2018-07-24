@@ -58,7 +58,7 @@ class rwFactory(object):
                 label : string with the unique device name, must be 5 characters or less
                 fCoulomb: double for the Coulomb friction torque model
                 fStatic: double for Static friction torque magnitude
-                betaStatic: double for Stribeck friction coefficient
+                betaStatic: double for Stribeck friction coefficient, positive turns Stribeck friction on, negative turns this friction off
                 cViscous: double for Viscous fricion coefficient
             Returns
             -------
@@ -113,7 +113,7 @@ class rwFactory(object):
 
         if kwargs.has_key('fCoulomb'):
             varfCoulomb =  kwargs['fCoulomb']
-            if not isinstance(varLinearFrictionRatio, (float)):
+            if not isinstance(varfCoulomb, (float)):
                 print 'ERROR: fCoulomb must be a FLOAT argument'
                 exit(1)
         else:
@@ -122,7 +122,7 @@ class rwFactory(object):
 
         if kwargs.has_key('fStatic'):
             varfStatic =  kwargs['fStatic']
-            if not isinstance(varLinearFrictionRatio, (float)):
+            if not isinstance(varfStatic, (float)):
                 print 'ERROR: fStatic must be a FLOAT argument'
                 exit(1)
         else:
@@ -131,16 +131,19 @@ class rwFactory(object):
 
         if kwargs.has_key('betaStatic'):
             varbetaStatic =  kwargs['betaStatic']
-            if not isinstance(varLinearFrictionRatio, (float)):
+            if not isinstance(varbetaStatic, (float)):
                 print 'ERROR: betaStatic must be a FLOAT argument'
                 exit(1)
+            if varbetaStatic == 0:
+                print 'ERROR: betaStatic cannot be set to zero.  Positive turns it on, negative turns it off'
+                exit(1)
         else:
-            varbetaStatic = 0.0       # default value
+            varbetaStatic = -1.0       # default value turns off Stribeck friction model
         RW.betaStatic = varbetaStatic
 
         if kwargs.has_key('cViscous'):
             varcViscous =  kwargs['cViscous']
-            if not isinstance(varLinearFrictionRatio, (float)):
+            if not isinstance(varcViscous, (float)):
                 print 'ERROR: cViscous must be a FLOAT argument'
                 exit(1)
         else:

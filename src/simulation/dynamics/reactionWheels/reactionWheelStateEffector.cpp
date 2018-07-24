@@ -184,11 +184,11 @@ void ReactionWheelStateEffector::updateContributions(double integTime, BackSubMa
 	double dSquared;
 	double OmegaSquared;
     Eigen::MRPd sigmaBNLocal;
-    Eigen::Matrix3d dcm_BN;                        /* direction cosine matrix from N to B */
-    Eigen::Matrix3d dcm_NB;                        /* direction cosine matrix from B to N */
-    Eigen::Vector3d gravityTorquePntW_B;          /* torque of gravity on HRB about Pnt H */
-    Eigen::Vector3d gLocal_N;                          /* gravitational acceleration in N frame */
-    Eigen::Vector3d g_B;                          /* gravitational acceleration in B frame */
+    Eigen::Matrix3d dcm_BN;                        /*! direction cosine matrix from N to B */
+    Eigen::Matrix3d dcm_NB;                        /*! direction cosine matrix from B to N */
+    Eigen::Vector3d gravityTorquePntW_B;           /*! torque of gravity on HRB about Pnt H */
+    Eigen::Vector3d gLocal_N;                      /*! gravitational acceleration in N frame */
+    Eigen::Vector3d g_B;                           /*! gravitational acceleration in B frame */
     gLocal_N = *this->g_N;
 
     //! - Find dcm_BN
@@ -206,13 +206,13 @@ void ReactionWheelStateEffector::updateContributions(double integTime, BackSubMa
 		OmegaSquared = RWIt->Omega * RWIt->Omega;
 
         // Determine which friction model to use (if starting from zero include stribeck)
-        if (fabs(RWIt->Omega) < 0.10*RWIt->omegaLimitCycle) {
+        if (fabs(RWIt->Omega) < 0.10*RWIt->omegaLimitCycle && RWIt->betaStatic > 0) {
             RWIt->frictionStribeck = 1;
         }
         double signOfOmega = ((RWIt->Omega > 0) - (RWIt->Omega < 0));
         double omegaDot = RWIt->Omega - RWIt->omegaBefore;
         double signOfOmegaDot = ((omegaDot > 0) - (omegaDot < 0));
-        if (RWIt->frictionStribeck == 1 && abs(signOfOmega - signOfOmegaDot) < 2) {
+        if (RWIt->frictionStribeck == 1 && abs(signOfOmega - signOfOmegaDot) < 2 && RWIt->betaStatic > 0) {
             RWIt->frictionStribeck = 1;
         } else {
             RWIt->frictionStribeck = 0;
@@ -283,10 +283,10 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime, Eigen::Vec
     Eigen::MatrixXd thetasDot(this->numRWJitter,1);
 	Eigen::Vector3d omegaDotBNLoc_B;
 	Eigen::MRPd sigmaBNLocal;
-	Eigen::Matrix3d dcm_BN;                        /* direction cosine matrix from N to B */
-	Eigen::Matrix3d dcm_NB;                        /* direction cosine matrix from B to N */
-	Eigen::Vector3d rDDotBNLoc_N;                 /* second time derivative of rBN in N frame */
-	Eigen::Vector3d rDDotBNLoc_B;                 /* second time derivative of rBN in B frame */
+	Eigen::Matrix3d dcm_BN;                        /*! direction cosine matrix from N to B */
+	Eigen::Matrix3d dcm_NB;                        /*! direction cosine matrix from B to N */
+	Eigen::Vector3d rDDotBNLoc_N;                  /*! second time derivative of rBN in N frame */
+	Eigen::Vector3d rDDotBNLoc_B;                  /*! second time derivative of rBN in B frame */
 	int RWi = 0;
     int thetaCount = 0;
 	std::vector<RWConfigSimMsg>::iterator RWIt;
@@ -325,8 +325,8 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime, 
                                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B)
 {
 	Eigen::MRPd sigmaBNLocal;
-	Eigen::Matrix3d dcm_BN;                        /* direction cosine matrix from N to B */
-	Eigen::Matrix3d dcm_NB;                        /* direction cosine matrix from B to N */
+	Eigen::Matrix3d dcm_BN;                        /*! direction cosine matrix from N to B */
+	Eigen::Matrix3d dcm_NB;                        /*! direction cosine matrix from B to N */
 	Eigen::Vector3d omegaLoc_BN_B = hubOmega->getState();
 
     //! - Compute energy and momentum contribution of each wheel
@@ -404,6 +404,10 @@ void ReactionWheelStateEffector::CrossInit()
 	std::vector<RWConfigSimMsg>::iterator it;
 	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
 	{
+        if (it->betaStatic == 0.0)
+        {
+            BSK_PRINT(MSG_WARNING, "Stribeck coefficent currently zero and should be positive to active this friction model, or negative to turn it off!\n");
+        }
 		//! Define CoM offset d and off-diagonal inertia J13 if using fully coupled model
 		if (it->RWModel == JitterFullyCoupled) {
 			it->d = it->U_s/it->mass; //!< determine CoM offset from static imbalance parameter
