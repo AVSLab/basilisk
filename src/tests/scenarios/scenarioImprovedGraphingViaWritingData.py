@@ -78,6 +78,7 @@ import datashader as ds
 from bokeh.plotting import show
 import datashader.transfer_functions as tf
 from datashader.utils import export_image
+from holoviews.operation.datashader import datashade
 
 # This import is for reaggregating data when zooming if that is ever pursued
 from datashader.bokeh_ext import InteractiveImage
@@ -333,16 +334,16 @@ samplingTime = simulationTime / (numDataPoints-1)
 ##  @}
 
 
-def run(saveFigures, show_plots):
+def run(saveFigures, case, show_plots):
     '''This function is called by the py.test environment.'''
 
-    if ONLY_GRAPH:
-        graph()
-        return
     # A MonteCarlo simulation can be created using the `MonteCarlo` module.
     # This module is used to execute monte carlo simulations, and access
     # retained data from previously executed MonteCarlo runs.
 
+    if ONLY_GRAPH:
+        graph()
+        return
     # First, the `Controller` class is used in order to define the simulation
     monteCarlo = Controller()
 
@@ -422,81 +423,103 @@ def run(saveFigures, show_plots):
         retentionPolicy.setDataCallback(plotSimAndSave)
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
-    writeDirectories()
-    # After the monteCarlo run is configured, it is executed.
-    # This method returns the list of jobs that failed.
-    failures = monteCarlo.executeSimulations()
+    if case ==1:
+        # After the monteCarlo run is configured, it is executed.
+        # This method returns the list of jobs that failed.
+        failures = monteCarlo.executeSimulations()
 
-    assert len(failures) == 0, "No runs should fail"
+        assert len(failures) == 0, "No runs should fail"
 
-    # Now in another script (or the current one), the data from this simulation can be easily loaded.
-    # This demonstrates loading it from disk
-    monteCarloLoaded = Controller.load(dirName)
+        # Now in another script (or the current one), the data from this simulation can be easily loaded.
+        # This demonstrates loading it from disk
+        monteCarloLoaded = Controller.load(dirName)
 
-    # Then retained data from any run can then be accessed in the form of a dictionary with two sub-dictionaries for messages and variables:
-    retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
-    assert retainedData is not None, "Retained data should be available after execution"
-    assert "messages" in retainedData, "Retained data should retain messages"
-    assert "attErrorInertial3DMsg.sigma_BR" in retainedData["messages"], "Retained messages should exist"
+        # Then retained data from any run can then be accessed in the form of a dictionary with two sub-dictionaries for messages and variables:
+        retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
+        assert retainedData is not None, "Retained data should be available after execution"
+        assert "messages" in retainedData, "Retained data should retain messages"
+        assert "attErrorInertial3DMsg.sigma_BR" in retainedData["messages"], "Retained messages should exist"
 
-    # We also can rerun a case using the same parameters and random seeds
-    # If we rerun a properly set-up run, it should output the same data.
-    # Here we test that if we rerun the case the data doesn't change
-    oldOutput = retainedData["messages"]["attErrorInertial3DMsg.sigma_BR"]
+        # We also can rerun a case using the same parameters and random seeds
+        # If we rerun a properly set-up run, it should output the same data.
+        # Here we test that if we rerun the case the data doesn't change
+        oldOutput = retainedData["messages"]["attErrorInertial3DMsg.sigma_BR"]
 
-    # TODO uncommoent this rerun
-    # Rerunning the case shouldn't fail
-    failed = monteCarloLoaded.reRunCases([NUMBER_OF_RUNS-1])
-    assert len(failed) == 0, "Should rerun case successfully"
+        # Rerunning the case shouldn't fail
+        failed = monteCarloLoaded.reRunCases([NUMBER_OF_RUNS-1])
+        assert len(failed) == 0, "Should rerun case successfully"
 
-    # Now access the newly retained data to see if it changed
-    retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
-    newOutput = retainedData["messages"]["attErrorInertial3DMsg.sigma_BR"]
-    for k1, v1 in enumerate(oldOutput):
-        for k2, v2 in enumerate(v1):
-            assert math.fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < .001, \
-            "Outputs shouldn't change on runs if random seeds are same"
+        # Now access the newly retained data to see if it changed
+        retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
+        newOutput = retainedData["messages"]["attErrorInertial3DMsg.sigma_BR"]
+        for k1, v1 in enumerate(oldOutput):
+            for k2, v2 in enumerate(v1):
+                assert math.fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < .001, \
+                "Outputs shouldn't change on runs if random seeds are same"
 
-    # We can also access the initial parameters
-    # The random seeds should differ between runs, so we will test that
-    params1 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-1)
+        # We can also access the initial parameters
+        # The random seeds should differ between runs, so we will test that
+        params1 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-1)
+        params2 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-2)
+        assert "TaskList[0].TaskModels[0].RNGSeed" in params1, "random number seed should be applied"
+        for dispName in dispList:
+            assert dispName in params1, "dispersion should be applied"
+            # assert two different runs had different parameters.
+            assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
 
-    #TODO CHANGE THIS BACK TO RUNS - 2
-    params2 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-2)
-    assert "TaskList[0].TaskModels[0].RNGSeed" in params1, "random number seed should be applied"
-    for dispName in dispList:
-        assert dispName in params1, "dispersion should be applied"
-        # assert two different runs had different parameters.
-        assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
+        # Now we execute our callback for the retained data.
+        # For this run, that means executing the plot.
+        # We can plot only runs 4,6,7 overlapped
+        # monteCarloLoaded.executeCallbacks([4,6,7])
+        # or execute the plot on all runs
+        monteCarloLoaded.executeCallbacks()
 
-    # Now we execute our callback for the retained data.
-    # For this run, that means executing the plot.
-    # We can plot only runs 4,6,7 overlapped
-    # monteCarloLoaded.executeCallbacks([4,6,7])
-    # or execute the plot on all runs
-    monteCarloLoaded.executeCallbacks()
+        # Now we clean up data from this test
+        shutil.rmtree(dirName)
+        assert not os.path.exists(dirName), "No leftover data should exist after the test"
 
-    # Now we clean up data from this test
-    shutil.rmtree(dirName)
-    assert not os.path.exists(dirName), "No leftover data should exist after the test"
+        # And possibly show the plots
+        if show_plots:
+            print "Test concluded, showing plots now...", datetime.datetime.now()
+            saveDataframesToFile()
+            graph()
+            print "done graphing. ", datetime.datetime.now()
+            # plt.show()
+            # close the plots being saved off to avoid over-writing old and new figures
+            # plt.close("all")
 
-    # And possibly show the plots
-    if show_plots:
-        print "starting bokeh graphing process"
-        print datetime.datetime.now()
-        saveDataframesToFile()
-        graph()
-        print "bokeh finished."
-        print "Test concluded, showing plots now via matplotlib..."
-        print datetime.datetime.now()
-
-        plt.show()
-
-        print datetime.datetime.now()
-
-        # close the plots being saved off to avoid over-writing old and new figures
-        plt.close("all")
-
+    #########################################################
+    if case ==2:
+        return
+        # Now run initial cocnditions
+        # icName = bskPath + "/tests/testScripts/Support/run_MC_IC"
+        # monteCarlo.setICDir(icName)
+        # monteCarlo.setICRunFlag(True)
+        # numberICs = 3
+        # monteCarlo.setExecutionCount(numberICs)
+        #
+        #
+        # # Rerunning the case shouldn't fail
+        # runsList = list(range(numberICs))
+        # failed = monteCarlo.runInitialConditions(runsList)
+        # assert len(failed) == 0, "Should run ICs successfully"
+        #
+        # # monteCarlo.executeCallbacks([4,6,7])
+        # runsList = list(range(numberICs))
+        # monteCarlo.executeCallbacks(runsList)
+        #
+        # # And possibly show the plots
+        # if show_plots:
+        #     print "Test concluded, showing plots now..."
+        #     plt.show()
+        #     # close the plots being saved off to avoid over-writing old and new figures
+        #     plt.close("all")
+        #
+        # # Now we clean up data from this test
+        # os.remove(icName + '/' + 'MonteCarlo.data' )
+        # for i in range(numberICs):
+        #     os.remove(icName + '/' + 'run' + str(i) + '.data')
+        # assert not os.path.exists(icName + '/' + 'MonteCarlo.data'), "No leftover data should exist after the test"
 
 
 ## This function creates the simulation to be executed in parallel.
@@ -731,7 +754,6 @@ def executeScenario(sim):
     #
     sim.ConfigureStopTime(simulationTime)
     sim.ExecuteSimulation()
-
 # This method is used to plot the retained data of a simulation.
 # It is called once for each run of the simulation, overlapping the plots
 def plotSim(data, retentionPolicy):
@@ -821,9 +843,6 @@ def saveDataframesToFile():
     path = mainDirectoryName + monteCarloName + "/" + rwMotorTorqueConfigOutputDataName_motorTorque + ".csv"
     rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame.to_csv(path, encoding='utf-8', index=False)
 
-    path = mainDirectoryName + monteCarloName + "/" +  "time.csv"
-    time_dataFrame.to_csv(path, encoding='utf-8', index=False)
-
     path = mainDirectoryName + monteCarloName + "/" + attErrorConfigOutputDataName_sigma_BR + ".csv"
     attErrorConfigOutputDataName_sigma_BR_dataFrame.to_csv(path, encoding='utf-8', index=False)
 
@@ -855,15 +874,14 @@ def graph():
 # In addition, this method illustrates how to save the datashaded plots as a stack of images, and then save
 # the image as a file.
 def configureGraph(data):
-    from holoviews.operation.datashader import datashade, shade, dynspread, rasterize
 
     print "Starting graph", datetime.datetime.now()
-
     # Read csv file and create a dataframe from it.
     # If the user doesn't want to write any data to disc, the user can not write any data
     # and instead just use the global dataframes to plot the data.
     df = pd.read_csv(
         "data/mc1/" + data + ".csv")
+    findOutliers(df, data)
 
     # Plot the columns 1,2,3 against column 0
     curvesx = hv.Curve(df[['0','1']])
@@ -879,13 +897,13 @@ def configureGraph(data):
     # Pass a datashaded version of the layout to the get_plot function, to return a bokeh figure
     # called 'plot'. Then set the figure details such as title, dimensions, axis labels etc.
     # Then finally, show the plot in the browser.
-    plot = renderer.get_plot(datashade(layout, dynamic = False).opts(plot=dict(fig_size=1000, aspect='square'))).state
+    plot = renderer.get_plot(datashade(layout, dynamic = False).opts(plot=dict(fig_size=1000, aspect='equal'))).state
     plot.plot_width = 800
     plot.plot_height = 500
     plot.title.text = data
     plot.xaxis.axis_label = "Time"
     plot.yaxis.axis_label = data
-    show(plot)
+    # show(plot)
 
     # Create an empty list of imgs soon to be filled, and set the canvas to put the images on.
     imgs = []
@@ -916,12 +934,13 @@ def image_callback(x_range, y_range, w, h):
     return tf.dynspread(img, threshold=1)
 
 # This method finds the outliers of the dataframe to identify runs with rogue behavior.
-def findOutliers(df):
+def findOutliers(df, data):
     from numpy import mean, std
     from scipy import stats
     # print df.describe()
     col = 1
-    print df
+    print data, df.quantile(.1)
+    print data, df.quantile(.99)
     # outliers = df[df[col] > df[col].mean() + 3 * df[col].std()]
     # print outliers
 
@@ -941,5 +960,6 @@ def export_image(img, filename, fmt=".png", _return=True):
 #
 if __name__ == "__main__":
     run(  False        # safe figures to file
+         , 1
         , True         # show_plots
        )
