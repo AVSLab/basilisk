@@ -753,7 +753,7 @@ def plotSim(data, retentionPolicy):
     #   retrieve the logged data
     #
 
-
+    # Get the data from messages using the global data names
     dataUsReq = data["messages"][rwMotorTorqueConfigOutputDataName_motorTorque]
     dataSigmaBR = data["messages"][attErrorConfigOutputDataName_sigma_BR]
     dataOmegaBR = data["messages"][attErrorConfigOutputDataName_omega_BR_B]
@@ -763,7 +763,7 @@ def plotSim(data, retentionPolicy):
 
     run_number = data["index"]
 
-
+    # Use the global keyword to modify global dataframes in the module's scope.
     global time_dataFrame
     global rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame
     global attErrorConfigOutputDataName_sigma_BR_dataFrame
@@ -772,6 +772,7 @@ def plotSim(data, retentionPolicy):
     global mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame
     global fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame
 
+    # Update the dataframes by appending the current run to the dataframe
     rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame = updateDataframes(dataUsReq, rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame)
     attErrorConfigOutputDataName_sigma_BR_dataFrame = updateDataframes(dataSigmaBR, attErrorConfigOutputDataName_sigma_BR_dataFrame)
     attErrorConfigOutputDataName_omega_BR_B_dataFrame = updateDataframes(dataOmegaBR, attErrorConfigOutputDataName_omega_BR_B_dataFrame)
@@ -791,14 +792,14 @@ def plotSimAndSave(data, retentionPolicy):
 
     return
 
-
+# Write directories based on monte carlo name and sub directory name
 def writeDirectories():
     monteCarloName = "/mc1/"
     mainDirectoryName = "data/"
     path = mainDirectoryName + monteCarloName
     systemWriteDirectories(path)
 
-
+# Helper function for writing directories
 def systemWriteDirectories(path):
     try:
         os.makedirs(path)
@@ -807,16 +808,23 @@ def systemWriteDirectories(path):
     else:
         print "success"
 
+# This methods adds the next run of the monte carlo below the previous run, with the two runs separated
+# by a row of NaN values.
 def updateDataframes(data, dataframe):
     df = pd.DataFrame(data, columns=None)
+
+    # Using pd.concat we can put the new run to the right of the current right run instead of below.
+    # This is not how datashader needs the data, however it is an example of maniuplating data
+    # into a different shape with pandas
     # result = pd.concat([df, dataframe], axis = 1, sort = False)
+
+    # Create a dataframe full of NaN values to append below the previous run and above the next run to append
     nandf = pd.DataFrame([np.nan])
     df = df.append(nandf, ignore_index=True)
     result = df.append(dataframe, ignore_index=True)
-    # print result
     return result
 
-
+# This method configures the path for each file, and saves the dataframe as a csv
 def saveDataframesToFile():
 
     print "beginning writing csv..", datetime.datetime.now()
@@ -848,69 +856,58 @@ def saveDataframesToFile():
     print "done writing csv..", datetime.datetime.now()
 
 
+# This method is the driver method for graphing all of the data.
 def graph():
     for data in retainedDataList:
         configureGraph(data)
 
+# This method reads data from the csv files, and converts them into dataframes. It currently plots
+# the data via holoviews framework, and datashades the plot. It passes this plot to the bokeh front end
+# where the datashaded plot is used as a basis for the plot in the html file. Since the plot is datashaded,
+# the html file is small ~2mbs.
 
+# In addition, this method illustrates how to save the datashaded plots as a stack of images, and then save
+# the image as a file.
 def configureGraph(data):
     from holoviews.operation.datashader import datashade, shade, dynspread, rasterize
 
-    # p = base_plot()
-    # p = figure(tools='pan,wheel_zoom,box_zoom,reset,save', x_range=(0,5), y_range=(0,20000))
-    p = figure(plot_width=300, plot_height=300, title="Linear Color Map Based on Y")
-
     print "Starting graph", datetime.datetime.now()
 
+    # Read csv file and create a dataframe from it.
+    # If the user doesn't want to write any data to disc, the user can not write any data
+    # and instead just use the global dataframes to plot the data.
     df = pd.read_csv(
         "data/mc1/" + data + ".csv")
 
-
-    # findOutliers(df)
-    # p.title.text = "title"
-    # p.legend.location = "top_right"
-    # p.legend.click_policy = "hide"
-    # p.xaxis.axis_label = "Time [min]"
-    # p.yaxis.axis_label = "Y"
-    # InteractiveImage(p, image_callback)
-    opts2 = dict(width=1000, height=600, x_sampling=1, y_sampling=1, dynamic=False)
-
-    hv.extension('bokeh')
+    # Plot the columns 1,2,3 against column 0
     curvesx = hv.Curve(df[['0','1']])
     curvesy = hv.Curve(df[['0','2']])
     curvesz = hv.Curve(df[['0','3']])
 
-
+    # Create a layout consisting of the curves
     layout = curvesx * curvesy * curvesz
-    renderer = hv.renderer('bokeh').instance(fig='html')
-    # renderer.save(datashade(layout, dynamic = False), "image/"+data)
 
-    plot = renderer.get_plot(datashade(layout, dynamic = False)).state
-    plot.plot_width = 600
+    # Instantiate a renderer using bokeh's interface, and generating an html file
+    renderer = hv.renderer('bokeh').instance(fig='html')
+
+    # Pass a datashaded version of the layout to the get_plot function, to return a bokeh figure
+    # called 'plot'. Then set the figure details such as title, dimensions, axis labels etc.
+    # Then finally, show the plot in the browser.
+    plot = renderer.get_plot(datashade(layout, dynamic = False).opts(plot=dict(fig_size=1000, aspect='square'))).state
+    plot.plot_width = 800
     plot.plot_height = 500
+    plot.title.text = data
+    plot.xaxis.axis_label = "Time"
+    plot.yaxis.axis_label = data
     show(plot)
 
-    imgs = []
-    options = dict(width=800, height = 400, xaxis = None, yaxis = None, bgcolor='white')
-
-    # datashaded = datashade(curves, cmap=["blue"])
-    # doc = hv.renderer('bokeh').server_doc(datashaded)
-    # renderer = hv.renderer('bokeh').instance(fig='html')
-    # renderer.save(doc, "image/"+data)
-    # plot_opts = {'RGB': dict(width=800, height=800)}
-
-    # curves = {i: hv.Curve(df[['0', str(i)]]) for i in range(1, 4)}
-    # curvespread = dynspread(datashade(hv.NdOverlay(curves), aggregator = ds.count()))
-
-    # plot = datashade(curves) + datashade(curvespread)
-
-    # plotting and saving the images.
+    # Create an empty list of imgs soon to be filled, and set the canvas to put the images on.
     imgs = []
     cvs = ds.Canvas(plot_height=500, plot_width=800)
 
-    p = figure(width=300, height=300, title='chi-square matching Q{}',
-                              x_axis_label='Rg', y_axis_label='chi-square')
-
+    # Plot columns 1,2,3 against column 0. Using the count of the overlapping data to create darker colors
+    # to indicate density. After every image is created, append it to the list of images. And then created
+    # a stacked image, and save it to file via export_image.
     for column in range(1,4):
         agg = cvs.line(df, '0', str(column), ds.count())
         img = tf.shade(agg, how='eq_hist')
@@ -921,7 +918,9 @@ def configureGraph(data):
     print "done saving png ", data, datetime.datetime.now()
 
 
-
+# If working within a jupyter notebook, or using a local server. We can use this example of
+# method as an argument for the InteractiveImage method that allows the data to be
+# re-aggregated when zooming in.
 def image_callback(x_range, y_range, w, h):
     from datashader.colors import viridis, inferno
     cvs = ds.Canvas(plot_width=w, plot_height=h, x_range=x_range, y_range=y_range)
@@ -933,6 +932,7 @@ def image_callback(x_range, y_range, w, h):
     tf.shade(agg, cmap=cm(viridis), how='eq_hist')
     return tf.dynspread(img, threshold=1)
 
+# This method finds the outliers of the dataframe to identify runs with rogue behavior.
 def findOutliers(df):
     from numpy import mean, std
     from scipy import stats
@@ -941,34 +941,14 @@ def findOutliers(df):
     print df
     # outliers = df[df[col] > df[col].mean() + 3 * df[col].std()]
     # print outliers
-#
 
-def base_plot(tools='pan,wheel_zoom,reset', plot_width= int(750), plot_height=int(int(750) // 1.2), **plot_args):
-    p = figure(tools=tools, plot_width=plot_width, plot_height=plot_height,
-               x_range=(0,100000), y_range=(0,10000), outline_line_color=None,
-               min_border=0, min_border_left=0, min_border_right=0,
-               min_border_top=0, min_border_bottom=0, **plot_args)
 
-    p.axis.visible = False
-    p.xgrid.grid_line_color = None
-    p.ygrid.grid_line_color = None
-
-    p.add_tools(BoxZoomTool(match_aspect=True))
-
-    return p
-# def create_image(x_range, y_range, w=plot_width, h=plot_height):
-#     return
+# This method is given a datashader image object, and saves it as a png file under
+# a directory called "image".
 def export_image(img, filename, fmt=".png", _return=True):
-    """Given a datashader Image object, saves it to a disk file in the requested format"""
-
-    from datashader.transfer_functions import set_background
-
     export_path = "image/"
     if not os.path.exists(export_path):
         os.mkdir(export_path)
-
-    # if background:
-    #     img = set_background(img, background)
 
     img.to_pil().save(os.path.join(export_path, filename + fmt))
     return img if _return else None
