@@ -80,7 +80,7 @@ class scenario_AttitudeFeedbackRW(BSKScenario):
         self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.trackingErrorData.outputDataName, samplingTime)
         return
 
-    def pull_outputs(self):
+    def pull_outputs(self, showPlots):
         print '%s: pull_outputs' % self.name
         num_RW = 4 # number of wheels used in the scenario
 
@@ -103,7 +103,12 @@ class scenario_AttitudeFeedbackRW(BSKScenario):
         scene_plt.plot_rate_error(timeData, omega_BR_B)
         scene_plt.plot_rw_speeds(timeData, RW_speeds, num_RW)
         figureList = {}
-        BSK_plt.show_all_plots()
+        if showPlots:
+            BSK_plt.show_all_plots()
+        else:
+            fileName = os.path.basename(os.path.splitext(__file__)[0])
+            figureNames = ["attitudeErrorNorm", "rwMotorTorque", "rateError", "rwSpeed"]
+            figureList = BSK_plt.save_all_plots(fileName, figureNames)
 
         return figureList
 
@@ -129,9 +134,7 @@ def run(showPlots):
     print 'Finished Execution. Post-processing results'
 
     # Pull the results of the base simulation running the chosen scenario
-    figureList = {}
-    if showPlots:
-        figureList = TheScenario.pull_outputs()
+    figureList = TheScenario.pull_outputs(showPlots)
 
     return figureList
 
