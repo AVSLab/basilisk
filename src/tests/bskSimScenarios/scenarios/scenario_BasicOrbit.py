@@ -42,7 +42,7 @@
 # More explicitly, the purpose of the BSK_Scenario.py within the BSK_Simulation architecture is to provide the user a
 # simple, front-end interface to configure a scenario without having to individually initialize and integrate each
 # dynamics and FSW module into their simulation. Instead BSK_Dynamics.py will preconfigure the desired dynamics modules,
-# attached them to the spacecraft, and link the appropriate messages to the desired FSW modules automatically.
+# attach them to the spacecraft, and link the appropriate messages to the desired FSW modules automatically.
 # Similarly, BSK_FSW.py accomplishes a similar goal, through rather than preconfigure all dynamics modules onto the spacecraft,
 # BSK_FSW.py instead creates preconfigured events for various FSW operating modes such as hill pointing, sun safe
 # pointing, velocity pointing, and more. These preconfigured events automatically enable various tasks, which in turn,
@@ -247,7 +247,6 @@ sys.path.append(path + '/../plotting')
 import BSK_Plotting as BSK_plt
 
 sys.path.append(path + '/../../scenarios')
-import scenarioAttitudeGuidance as scene_plt
 
 
 # Create your own scenario child class
@@ -263,7 +262,7 @@ class scenario_BasicOrbit(BSKScenario):
 
         # Configure Dynamics initial conditions
         oe = orbitalMotion.ClassicElements()
-        oe.a = 10000000.0  # meters
+        oe.a = 7000000.0  # meters
         oe.e = 0.1
         oe.i = 33.3 * macros.D2R
         oe.Omega = 48.2 * macros.D2R
@@ -302,15 +301,11 @@ class scenario_BasicOrbit(BSKScenario):
         sigma_RN = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.trackingErrorData.inputRefName + ".sigma_RN", range(3))
         omega_RN_N = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.trackingErrorData.inputRefName + ".omega_RN_N", range(3))
         sigma_BR = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.trackingErrorData.outputDataName + ".sigma_BR", range(3))
-        omega_BR_B = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.trackingErrorData.outputDataName + ".omega_BR_B", range(3))
-        Lr = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.mrpFeedbackControlData.outputDataName + ".torqueRequestBody", range(3))
 
         # Plot results
         timeLineSet = sigma_BR[:, 0] * macros.NANO2MIN
-        scene_plt.plot_attitude_error(timeLineSet, sigma_BR)
-        scene_plt.plot_control_torque(timeLineSet, Lr)
-        scene_plt.plot_rate_error(timeLineSet, omega_BR_B)
-        scene_plt.plot_orientation(timeLineSet, r_BN_N, v_BN_N, sigma_BN)
+        BSK_plt.plot_orbit(r_BN_N)
+        BSK_plt.plot_orientation(timeLineSet, r_BN_N, v_BN_N, sigma_BN)
         BSK_plt.plot_attitudeGuidance(sigma_RN, omega_RN_N)
 
         figureList = {}
@@ -318,7 +313,7 @@ class scenario_BasicOrbit(BSKScenario):
             BSK_plt.show_all_plots()
         else:
             fileName = os.path.basename(os.path.splitext(__file__)[0])
-            figureNames = ["attitudeErrorNorm", "rwMotorTorque", "rateError", "orientation", "attitudeGuidance"]
+            figureNames = ["orbit", "orientation", "attitudeGuidance"]
             figureList = BSK_plt.save_all_plots(fileName, figureNames)
 
         return figureList
