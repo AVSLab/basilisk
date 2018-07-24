@@ -31,19 +31,6 @@ In this test the simulation is placed into orbit around Earth with point gravity
 \item Achieving the expected final position
 \end{itemize}
 
-\subsection{BOE Calculation Scenario - Integrated Test}
-
-The BOE for this scenario can be seen in Figure~\ref{fig:BOE}. This involves a rigid body hub connected to a VSCMG with the spin axis being aligned with both the hub's center of mass and the VSCMG's center of mass. This problem assumes the hub and VSCMG are fixed to rotate about the the spin axis and so it is a two degree of freedom problem. The analytical expressions for the angular velocity of the hub, $\omega_1$, the angle of the hub, $\theta$ and the VSCMG speed, $\Omega$ are shown in Figure~\ref{fig:BOE}. The test sets up Basilisk so that the initial conditions constrain the spacecraft to rotate about the spin axis. The results confirm that the analytical expressions agree with the Basilisk simulation. 
-
-\begin{figure}[htbp]
-	\centerline{
-		\includegraphics[width=0.8\textwidth]{Figures/BOE}}
-	\caption{Back of the envelope calculation for RWs}
-	\label{fig:BOE}
-\end{figure}
-
-\clearpage
-
 \section{Test Parameters}
 
 Since this is an integrated test, the inputs to the test are the physical parameters of the spacecraft along with the initial conditions of the states. These parameters are outlined in Tables~\ref{tab:hub}-~\ref{tab:initial}. Additionally, the error tolerances can be seen in Table~\ref{tab:errortol}. The error tolerances are different depending on the test. The energy-momentum conservation values will normally have an agreement down to 1e-14, but to ensure cross-platform agreement the tolerance was chose to be 1e-10. The position and attitude checks have a tolerance set to 1e-7 and is because 8 significant digits were chosen as the values being compared to. The BOE tests depend on the integration time step but as the time step gets smaller the accuracy gets better. So 1e-8 tolerance was chosen so that a larger time step could be used but still show agreement. The Friction tests give the same numerical outputs down to ~1e-15 between python and Basilisk, but 1e-10 was chosen to ensure cross platform agreement. Finally, the saturation and minimum torque tests have 1e-10 to ensure cross-platform success, but these values will typically agree to machine precision. 

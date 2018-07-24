@@ -19,17 +19,18 @@ A few more key variables in Figure~\ref{fig:scplusVSCMG} need to be defined. The
 
 \subsection{Equations of Motion}
 
-The main introduction that is needed for this model is the equations of motion. Depending on the mode, the equations of motion are different. Each mode's equations of motion are discussed in the following sub sections.
+The main introduction that is needed for this model is the equations of motion. Depending on the mode, the equations of motion are different. The key equations are highlighted below and the full deriviation can be found in Each mode's equations of motion are discussed in the following sub sections.
 
 \subsubsection{Translational EOMs}
+Translational equations of motion are below:
 \begin{multline}
-	\ddot{\bm r}_{B/N} - [\tilde{\bm{c}}]\dot{\bm \omega} 
-	+ \frac{1}{m_{\text{sc}}} \sum\limits_{i=1}^{N} \left[ m_{\text{G}_i}\left[\tilde{\hat{\bm g}}_{\text{g}_i}] \bm{r}_{G_{c_i}/G_i} - m_{\text{W}_i}d_i\c\theta_i\hat{\bm{g}}_{\text{s}_i} + m_{\text{W}_i}\ell_i\hat{\bm{g}}_{\text{t}_i} \right] \ddot{\gamma}_i
-	+ \frac{1}{m_{\text{sc}}} \sum\limits_{i=1}^{N} \left[ m_{\text{W}_i}d_i\hat{\bm w}_{3_i} \right]\dot{\Omega}_i
-	\\= \ddot{\bm r}_{C/N} - 2[\tilde{\bm{\omega}}]\bm{c}' - [\tilde{\bm{\omega}}][\tilde{\bm{\omega}}]\bm{c} 
-	- \frac{1}{m_{\text{sc}}} \sum\limits_{i=1}^{N} \Big[ 
-	m_{\text{G}_i}\dot{\gamma}_i[\tilde{\hat{\bm g}}_{\text{g}_i}] \bm{r}_{G_{c_i}/B}'
-	\\+ m_{\text{W}_i} \big[ \left(2d_i\dot{\gamma}_i\Omega_i\text{s}\theta_i - \ell_i\dot{\gamma}_i^2\right)\hat{\bm{g}}_{\text{s}_i} - d_i\dot{\gamma}_i^2\c\theta_i\hat{\bm{g}}_{\text{t}_i} - d_i\Omega_i^2 \hat{\bm{w}}_{2_i} \big] \Big]
+\ddot{\bm r}_{B/N} - [\tilde{\bm{c}}]\dot{\bm \omega} 
++ \frac{1}{m_{\text{sc}}} \sum\limits_{i=1}^{N} \left[ m_{\text{G}_i} \left[\tilde{\hat{\bm g}}_{\text{g}_i} \right] \bm{r}_{G_{c_i}/G_i} - m_{\text{W}_i}d_ic\theta_i\hat{\bm{g}}_{\text{s}_i} + m_{\text{W}_i}\ell_i\hat{\bm{g}}_{\text{t}_i} \right] \ddot{\gamma}_i
++ \frac{1}{m_{\text{sc}}} \sum\limits_{i=1}^{N} \left[ m_{\text{W}_i}d_i\hat{\bm w}_{3_i} \right] \dot{\Omega}_i
+\\= \ddot{\bm r}_{C/N} - 2[\tilde{\bm{\omega}}]\bm{c}' - [\tilde{\bm{\omega}}][\tilde{\bm{\omega}}]\bm{c} 
+- \frac{1}{m_{\text{sc}}} \sum\limits_{i=1}^{N} \Big[ 
+m_{\text{G}_i}\dot{\gamma}_i[\tilde{\hat{\bm g}}_{\text{g}_i}] \bm{r}_{G_{c_i}/B}'
+\\+ m_{\text{W}_i} \big[ \left(2d_i\dot{\gamma}_i\Omega_i\text{s}\theta_i - \ell_i\dot{\gamma}_i^2 \right)\hat{\bm{g}}_{\text{s}_i} - d_i\dot{\gamma}_i^2c\theta_i\hat{\bm{g}}_{\text{t}_i} - d_i\Omega_i^2 \hat{\bm{w}}_{2_i} \big] \Big]
 \end{multline}
 This equation represents 3 DOF and contains all second order states ($\ddot{\bm r}_{B/N}$, $\dot{\bm \omega}$, $\ddot{\gamma}_i$, $\dot{\Omega}_i$). Removing wheel imbalance terms and assuming a symmetrical VSCMG (i.e. $\bm{r}_{G_{c_i}/G_i} = \bm{0}$, $\ell_i = 0$, $d_i = 0$) gives the following equation.
 \begin{equation}
@@ -38,23 +39,29 @@ This equation represents 3 DOF and contains all second order states ($\ddot{\bm 
 	\label{eq:vscmgTranslationSimple}
 \end{equation}
 
-Thus, the balanced VSCMG translational equation of motion does not contain any second-order terms relating to the wheel or gimbal, and agrees with Reference \cite{schaub}. The following section shows the derivation of the rotational equations of motion.
+Thus, the balanced VSCMG translational equation of motion does not contain any second-order terms relating to the wheel or gimbal, and agrees with Reference \cite{schaub}. 
 
 \subsubsection{Rotational EOMs}
+
+The rotational equations of motion are:
 \begin{equation}
 	\begin{split}
 		m_{\text{\text{sc}}}[\tilde{\bm{c}}]\ddot{\bm r}&_{B/N} + [I_{\text{sc},B}]\dot{\bm\omega}
-		+\sum\limits_{i=1}^{N} \Big[ [I_{\text{G}_i,G_{c_i}}]\hat{\bm{g}}_{\text{g}_i} + m_{\text{G}_i}[\tilde{\bm{r}}_{G_{c_i}/B}][\tilde{\hat{\bm g}}_{\text{g}_i}]\bm{r}_{G_{c_i}/G_i} + [I_{\text{W}_i,W_{c_i}}]\hat{\bm{g}}_{\text{g}_i} \\+ m_{\text{W}_i}&[\tilde{\bm{r}}_{W_{c_i}/B}]( \ell_i\hat{\bm{g}}_{\text{t}_i} - d_i\c\theta_i\hat{\bm{g}}_{\text{s}_i}) \Big] \ddot{\gamma}_i
+		+\sum\limits_{i=1}^{N} \Big[ [I_{\text{G}_i,G_{c_i}}]\hat{\bm{g}}_{\text{g}_i} + m_{\text{G}_i}[\tilde{\bm{r}}_{G_{c_i}/B}][\tilde{\hat{\bm g}}_{\text{g}_i}]\bm{r}_{G_{c_i}/G_i} + [I_{\text{W}_i,W_{c_i}}]\hat{\bm{g}}_{\text{g}_i} 
+		\\
+		+ m_{\text{W}_i}&[\tilde{\bm{r}}_{W_{c_i}/B}]( \ell_i\hat{\bm{g}}_{\text{t}_i} - d_ic\theta_i\hat{\bm{g}}_{\text{s}_i}) \Big] \ddot{\gamma}_i
 		+\sum\limits_{i=1}^{N} \left[ [I_{\text{W}_i,W_{c_i}}]\hat{\bm{g}}_{\text{s}_i} + m_{\text{W}_i}d_i[\tilde{\bm{r}}_{W_{c_i}/B}]\hat{\bm w}_{3_i} \right] \dot{\Omega}_i
 		\\
 		=& \bm{L}_B - [I_{\text{sc},B}]'\bm{\omega} - [\tilde{\bm\omega}][I_{\text{sc},B}]\bm\omega
 		-\sum\limits_{i=1}^{N} \Big[ 
 		[I_{\text{G}_i,G_{c_i}}]'\dot{\gamma}_i\hat{\bm{g}}_{\text{g}_i} + [\tilde{\bm\omega}][I_{\text{G}_i,G_{c_i}}]\dot{\gamma}_i\hat{\bm{g}}_{\text{g}_i} + m_{\text{G}_i}[\tilde{\bm{\omega}}][\tilde{\bm{r}}_{G_{c_i}/B}]\bm{r}'_{G_{c_i}/B}
 		\\&+ m_{\text{G}_i}\dot{\gamma}_i[\tilde{\bm{r}}_{G_{c_i}/B}][\tilde{\hat{\bm g}}_{\text{g}_i}]\bm{r}'_{G_{c_i}/G_i}
-		+ [I_{\text{W}_i,W_{c_i}}]\Omega\dot{\gamma}\hat{\bm{g}}_{\text{t}_i} + [I_{\text{W}_i,W_{c_i}}]'\bm{\omega}_{\mathcal{W}_i/\cal B} + [\tilde{\bm{\omega}}][I_{\text{W}_i,W_{c_i}}]\bm{\omega}_{\mathcal{W}_i/\cal B} \\&+ m_{\text{W}_i}[\tilde{\bm{\omega}}][\tilde{\bm{r}}_{W_{c_i}/B}]\bm{r}'_{W_{c_i}/B} + m_{\text{W}_i}[\tilde{\bm{r}}_{W_{c_i}/B}]\left[\left(2d_i\dot{\gamma}_i\Omega_i\text{s}\theta_i - \ell_i\dot{\gamma}_i^2\right)\hat{\bm{g}}_{\text{s}_i} - d_i\dot{\gamma}_i^2\c\theta_i\hat{\bm{g}}_{\text{t}_i} - d_i\Omega_i^2 \hat{\bm{w}}_{2_i} \right]
+		+ [I_{\text{W}_i,W_{c_i}}]\Omega\dot{\gamma}\hat{\bm{g}}_{\text{t}_i} + [I_{\text{W}_i,W_{c_i}}]'\bm{\omega}_{\mathcal{W}_i/\cal B} + [\tilde{\bm{\omega}}][I_{\text{W}_i,W_{c_i}}]\bm{\omega}_{\mathcal{W}_i/\cal B} 
+		\\
+		&+ m_{\text{W}_i}[\tilde{\bm{\omega}}][\tilde{\bm{r}}_{W_{c_i}/B}]\bm{r}'_{W_{c_i}/B} + m_{\text{W}_i}[\tilde{\bm{r}}_{W_{c_i}/B}]\left[\left(2d_i\dot{\gamma}_i\Omega_i\text{s}\theta_i - \ell_i\dot{\gamma}_i^2\right)\hat{\bm{g}}_{\text{s}_i} - d_i\dot{\gamma}_i^2c\theta_i\hat{\bm{g}}_{\text{t}_i} - d_i\Omega_i^2 \hat{\bm{w}}_{2_i} \right]
 		\Big]
-		\label{eq:rotation}
 	\end{split}
+\label{eq:rotation}
 \end{equation}
 The rotational equation of motion for a VSCMG with balanced wheels may be found by setting imbalance terms to zero.
 \begin{multline}
@@ -117,9 +124,10 @@ Substituting into Eq.~\eqref{eq:u_g} and performing a massive rearrange gives th
 \begin{multline}
 \hat{\bm g}_{\text{g}_i}^T \Bigg[ m_{\text{V}_i}[\tilde{\bm r}_{V_{c_i}/G_i}] \Bigg] \ddot{\bm r}_{B/N}
 + \hat{\bm g}_{\text{g}_i}^T \Bigg[ [I_{\text{V}_i,V_{c_i}}] + m_{\text{V}_i}[\tilde{\bm r}_{V_{c_i}/G_i}][\tilde{\bm{r}}_{V_{c_i}/B}]^T \Bigg] \dot{\bm{\omega}}
-+ \hat{\bm g}_{\text{g}_i}^T \Bigg[ [I_{\text{G}_i,G_{c_i}}]\hat{\bm{g}}_{\text{g}_i} \\+ [I_{\text{W}_i,W_{c_i}}]\hat{\bm{g}}_{\text{g}_i} + [P_i] \big(\ell_i\hat{\bm{g}}_{\text{t}_i} - d_i\c\theta_i\hat{\bm{g}}_{\text{s}_i}\big) + [Q_i] [\tilde{\hat{\bm g}}_{\text{g}_i}]\bm{r}_{G_{c_i}/G_i} \Bigg] \ddot{\gamma}_i
++ \hat{\bm g}_{\text{g}_i}^T \Bigg[ [I_{\text{G}_i,G_{c_i}}]\hat{\bm{g}}_{\text{g}_i} 
+\\+ [I_{\text{W}_i,W_{c_i}}]\hat{\bm{g}}_{\text{g}_i} + [P_i] \big(\ell_i\hat{\bm{g}}_{\text{t}_i} - d_ic\theta_i\hat{\bm{g}}_{\text{s}_i}\big) + [Q_i] [\tilde{\hat{\bm g}}_{\text{g}_i}]\bm{r}_{G_{c_i}/G_i} \Bigg] \ddot{\gamma}_i
 + \hat{\bm g}_{\text{g}_i}^T \Bigg[ [I_{\text{W}_i,W_{c_i}}]\hat{\bm{g}}_{\text{s}_i} + [P_i] d_i\hat{\bm w}_{3_i} \Bigg] \dot{\Omega}_i
-\\ = - \hat{\bm g}_{\text{g}_i}^T \Bigg[ \dot{\gamma}_i[Q_i][\tilde{\hat{\bm g}}_{\text{g}_i}]\bm{r}'_{G_{c_i}/G_i} + [P_i] \big[\left(2d_i\dot{\gamma}_i\Omega_i\text{s}\theta_i - \ell_i\dot{\gamma}_i^2\right)\hat{\bm{g}}_{\text{s}_i} - d_i\dot{\gamma}_i^2\c\theta_i\hat{\bm{g}}_{\text{t}_i} - d_i\Omega_i^2 \hat{\bm{w}}_{2_i}\big]
+\\ = - \hat{\bm g}_{\text{g}_i}^T \Bigg[ \dot{\gamma}_i[Q_i][\tilde{\hat{\bm g}}_{\text{g}_i}]\bm{r}'_{G_{c_i}/G_i} + [P_i] \big[\left(2d_i\dot{\gamma}_i\Omega_i\text{s}\theta_i - \ell_i\dot{\gamma}_i^2\right)\hat{\bm{g}}_{\text{s}_i} - d_i\dot{\gamma}_i^2c\theta_i\hat{\bm{g}}_{\text{t}_i} - d_i\Omega_i^2 \hat{\bm{w}}_{2_i}\big]
 \\+[I_{\text{G}_i,G_{c_i}}]'\bm\omega_{\mathcal{G}_i/\cal N} + [\tilde{\bm\omega}][I_{\text{G}_i,G_{c_i}}]\bm\omega_{\mathcal{G}_i/\cal N} + [I_{\text{W}_i,W_{c_i}}]\Omega\dot{\gamma}\hat{\bm{g}}_{\text{t}_i} + [I_{\text{W}_i,W_{c_i}}]'\bm\omega_{\mathcal{W}_i/\cal N} \\+ [\tilde{\bm{\omega}}][I_{\text{W}_i,W_{c_i}}]\bm\omega_{\mathcal{W}_i/\cal N}
 + m_{\text{G}_i}[\tilde{\bm{r}}_{G_{c_i}/V_{c_i}}] \big( 2[\tilde{\bm\omega}]\bm{r}'_{G_{c_i}/V_{c_i}} + [\tilde{\bm\omega}]^2\bm{r}_{G_{c_i}/V_{c_i}}\big)
 \\ + m_{\text{W}_i}[\tilde{\bm{r}}_{W_{c_i}/V_{c_i}}]\big( 2[\tilde{\bm\omega}]\bm{r}'_{W_{c_i}/V_{c_i}} + [\tilde{\bm\omega}]^2\bm{r}_{W_{c_i}/V_{c_i}}\big)
@@ -154,11 +162,11 @@ Substituting into Eq.~\eqref{eq:u_s} gives the wheel torque equation.
 \begin{multline}
 		\left[ m_{\text{W}_i}d_i\hat{\bm w}_{3_i}^T \right] \ddot{\bm r}_{B/N} + \left[ \hat{\bm g}_{\text{s}_i}^T[I_{\text{W}_i,W_{c_i}}] + m_{\text{W}_i}d_i\hat{\bm g}_{\text{s}_i}^T[\tilde{\hat{\bm w}}_{2_i}][\tilde{\bm{r}}_{W_{c_i}/B}]^T \right] \dot{\bm\omega}
 		\\
-		+\left[ J_{12_i}\s\theta_i + J_{13_i}\c\theta_i - m_{\text{W}_i}d_i\ell_i\s\theta_i \right] \ddot{\gamma}_i 
+		+\left[ J_{12_i}s\theta_i + J_{13_i}c\theta_i - m_{\text{W}_i}d_i\ell_is\theta_i \right] \ddot{\gamma}_i 
 		+ \left[ J_{11_i}  + m_{\text{W}_i}d_i^2 \right] \dot{\Omega}_i
 		\\
 		=-\hat{\bm g}_{\text{s}_i}^T \Bigg[ [I_{\text{W}_i,W_{c_i}}]'\bm\omega_{\mathcal{W}_i/\cal N} + [\tilde{\bm{\omega}}][I_{\text{W}_i,W_{c_i}}]\bm\omega_{\mathcal{W}_i/\cal N}  + m_{\text{W}_i}d_i[\tilde{\hat{\bm w}}_{2_i}] \Big[ 2[\tilde{\bm{r}}'_{W_{c_i}/B}]^T\bm\omega + [\tilde{\bm\omega}][\tilde{\bm\omega}]\bm{r}_{W_{c_i}/B}
-		\Big] \Bigg] \\+(J_{13_i}\s\theta_i - J_{12_i}\c\theta_i)\Omega\dot{\gamma} - m_{\text{W}_i}d_i^2\dot{\gamma}_i^2\c\theta_i\s\theta_i
+		\Big] \Bigg] \\+(J_{13_i}s\theta_i - J_{12_i}c\theta_i)\Omega\dot{\gamma} - m_{\text{W}_i}d_i^2\dot{\gamma}_i^2c\theta_is\theta_i
 		+ u_{\text{s}_i}
 \end{multline}  
 Removing imbalance terms gives (recall that for the simplified case $\theta_i = 0$),
@@ -338,29 +346,4 @@ Now we have two equations containing $\ddot{\bm{r}}_{B/N}$ and $\dot{\bm\omega}_
 
 This concludes the equations that are necessary to define the three different modes of the VSCMG. Reference\cite{Alcorn:2016yq} explains in further detail the EOMs for the simple-jitter and fully-coupled modes. Reference\cite{schaub} gives more details on the derivation for balanced VSCMGs.
 
-\subsection{Friction Model}
-\label{sec:Friction}
 
-\begin{figure}[htbp]
-	\centerline{
-		\includegraphics[width=0.5\textwidth]{Figures/Stribeck}}
-	\caption{Friction Torque Model - Reference~\cite{OLSSON1998176}}
-	\label{fig:Stribeck}
-\end{figure}
-
-The friction model used for reaction wheels uses a combination of static, Coulomb, and viscous friction and can be seen in Fig.~\ref{fig:Stribeck}. To incorporate all of these effects, the friction was adopted using the Stribeck friction model seen in Reference~\cite{OLSSON1998176}. The following equation describes the calculation of the friction torque on the reaction wheels.
-
-\begin{equation}
-\tau_{f} = - \sqrt{2 e} (\tau_{\text{st}}-\tau_c) e^{\Big[-\big(\frac{\Omega}{\beta_{\text{st}}}\big)^2\Big]} - \tau_c \tanh \Big[\frac{10 \Omega}{\beta_{\text{st}}}\Big] - c_v \Omega
-\label{eq:friction}
-\end{equation}
-
-In Eq.~\eqref{eq:friction}, $\tau_{f}$ is the friction torque, $\tau_{\text{st}}$ is the static friction magnitude, $\tau_c$ is the coulomb friction magnitude, $\beta_{\text{st}}$ is the Stribeck coefficient which modifies the peakedness of the Stribeck curve, and $c_v$ is the viscous damping coefficient. These variables can also be seen in the variable descriptions in Fig.~\ref{fig:Stribeck}. 
-
-The Stribeck function is only applicable when the reaction wheel is starting from rest. In contrast, when the reaction wheel starts from a non-zero speed, or has already broken free of static friction term, then the following equation is implemented:
-
-\begin{equation}
-\tau_{f} = - \tau_c \text{sgn} (\Omega) - c_v \Omega
-\label{eq:friction2}
-\end{equation}
-This logic and math is implemented in the reaction wheel dynamics module. 
