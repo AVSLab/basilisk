@@ -79,7 +79,7 @@ class scenario_HillPointing(BSKScenario):
         self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.trackingErrorData.outputDataName, samplingTime)
         self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.mrpFeedbackControlData.outputDataName, samplingTime)
 
-    def pull_outputs(self):
+    def pull_outputs(self, showPlots):
         print '%s: pull_outputs' % self.name
         # Dynamics process outputs
         sigma_BN = self.masterSim.pullMessageLogData(self.masterSim.DynModels.simpleNavObject.outputAttName + ".sigma_BN", range(3))
@@ -102,7 +102,13 @@ class scenario_HillPointing(BSKScenario):
         BSK_plt.plot_attitudeGuidance(sigma_RN, omega_RN_N)
 
         figureList = {}
-        BSK_plt.show_all_plots()
+        if showPlots:
+            BSK_plt.show_all_plots()
+        else:
+            fileName = os.path.basename(os.path.splitext(__file__)[0])
+            figureNames = ["attitudeErrorNorm", "rwMotorTorque", "rateError", "orientation", "attitudeGuidance"]
+            figureList = BSK_plt.save_all_plots(fileName, figureNames)
+
         return figureList
 
 
@@ -126,9 +132,7 @@ def run(showPlots):
 
 
     # Pull the results of the base simulation running the chosen scenario
-    figureList = {}
-    if showPlots:
-        figureList = TheScenario.pull_outputs()
+    figureList = TheScenario.pull_outputs(showPlots)
 
     return figureList
 
