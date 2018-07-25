@@ -106,9 +106,9 @@ mrpControlConfigInputRWSpeedsName_wheelSpeeds = mrpControlConfigInputRWSpeedsNam
 fswRWVoltageConfigVoltageOutMsgName_voltage = fswRWVoltageConfigVoltageOutMsgName + ".voltage"
 
 # Create a list of retained data names to loop through while graphing
-retainedDataList = [rwMotorTorqueConfigOutputDataName_motorTorque, attErrorConfigOutputDataName_sigma_BR,
+retainedDataList = [attErrorConfigOutputDataName_sigma_BR,
                     attErrorConfigOutputDataName_omega_BR_B, sNavObjectOutputTransName_r_BN_N,
-                    mrpControlConfigInputRWSpeedsName_wheelSpeeds, fswRWVoltageConfigVoltageOutMsgName_voltage]
+                    mrpControlConfigInputRWSpeedsName_wheelSpeeds, fswRWVoltageConfigVoltageOutMsgName_voltage, rwMotorTorqueConfigOutputDataName_motorTorque]
 
 # Set global dataframes to populate with data when executing callbacks
 rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame = pd.DataFrame()
@@ -874,6 +874,9 @@ def graph():
 # In addition, this method illustrates how to save the datashaded plots as a stack of images, and then save
 # the image as a file.
 def configureGraph(data):
+    import xarray as xr
+    from collections import OrderedDict
+
 
     print "Starting graph", datetime.datetime.now()
     # Read csv file and create a dataframe from it.
@@ -881,8 +884,12 @@ def configureGraph(data):
     # and instead just use the global dataframes to plot the data.
     df = pd.read_csv(
         "data/mc1/" + data + ".csv")
-    findOutliers(df, data)
-
+    # findOutliers(df, data)
+    print df.head()
+    # df = df[df['0'] < 2.6e+12]
+    # df.to_csv("filtered.csv", encoding='utf-8', index=False)
+    print df.head()
+    print df.tail()
     # Plot the columns 1,2,3 against column 0
     curvesx = hv.Curve(df[['0','1']])
     curvesy = hv.Curve(df[['0','2']])
@@ -897,30 +904,29 @@ def configureGraph(data):
     # Pass a datashaded version of the layout to the get_plot function, to return a bokeh figure
     # called 'plot'. Then set the figure details such as title, dimensions, axis labels etc.
     # Then finally, show the plot in the browser.
-    plot = renderer.get_plot(datashade(layout, dynamic = False).opts(plot=dict(fig_size=1000, aspect='equal'))).state
+    plot = renderer.get_plot(datashade(layout, dynamic = False).opts(plot=dict(fig_size=10000, aspect='equal'))).state
     plot.plot_width = 800
     plot.plot_height = 500
     plot.title.text = data
     plot.xaxis.axis_label = "Time"
     plot.yaxis.axis_label = data
-    # show(plot)
+    show(plot)
 
     # Create an empty list of imgs soon to be filled, and set the canvas to put the images on.
     imgs = []
     cvs = ds.Canvas(plot_height=500, plot_width=800)
 
-    # Plot columns 1,2,3 against column 0. Using the count of the overlapping data to create darker colors
-    # to indicate density. After every image is created, append it to the list of images. And then created
-    # a stacked image, and save it to file via export_image.
-    for column in range(1,4):
-        agg = cvs.line(df, '0', str(column), ds.count())
-        img = tf.shade(agg, how='eq_hist')
-        imgs.append(img)
-
-    stacked = tf.stack(*imgs)
-    export_image(stacked, data)
+    # Concat the columns so all of the columns are
+    df = concat_columns(df)
+    agg = cvs.line(df, 'x', 'y', ds.count())
+    img = tf.shade(agg, how='eq_hist')
+    export_image(img, data)
     print "done saving png ", data, datetime.datetime.now()
 
+def concat_columns(df, separator=np.NaN):
+    x = df.columns[0]
+    df = df.append({x:separator}, ignore_index=True)
+    return pd.concat([df[[x,c]].rename(columns={x:'x', c:'y'}) for c in df.columns[1:]])
 
 # If working within a jupyter notebook, or using a local server. We can use this example of
 # method as an argument for the InteractiveImage method that allows the data to be
