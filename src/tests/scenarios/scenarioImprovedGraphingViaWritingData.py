@@ -79,7 +79,11 @@ from bokeh.plotting import show
 import datashader.transfer_functions as tf
 from datashader.utils import export_image
 from holoviews.operation.datashader import datashade
-
+from functools import partial
+from datashader.colors import colormap_select, Greys9, viridis
+from colorcet import fire
+from bokeh.palettes import GnBu9
+from matplotlib.cm import jet
 # This import is for reaggregating data when zooming if that is ever pursued
 from datashader.bokeh_ext import InteractiveImage
 
@@ -754,12 +758,12 @@ def executeScenario(sim):
     #
     sim.ConfigureStopTime(simulationTime)
     sim.ExecuteSimulation()
-# This method is used to plot the retained data of a simulation.
+
+# This method is used to populate the dataframe for the retained data of a simulation.
 # It is called once for each run of the simulation, overlapping the plots
+# A small optimization if the user wants the data to take up a little less space, is to
+# maintain a single timeDataFrame and have all of the graphs refer to this dataframe.
 def plotSim(data, retentionPolicy):
-    #
-    #   retrieve the logged data
-    #
 
     # Get the data from messages using the global data names
     dataUsReq = data["messages"][rwMotorTorqueConfigOutputDataName_motorTorque]
@@ -769,9 +773,10 @@ def plotSim(data, retentionPolicy):
     dataOmegaRW = data["messages"][mrpControlConfigInputRWSpeedsName_wheelSpeeds]
     dataVolt = data["messages"][fswRWVoltageConfigVoltageOutMsgName_voltage]
 
+    # Get the current run number from the data
     run_number = data["index"]
 
-    # Use the global keyword to modify global dataframes in the module's scope.
+    # Use the global keyword to be able to modify global dataframes in this functions scope.
     global time_dataFrame
     global rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame
     global attErrorConfigOutputDataName_sigma_BR_dataFrame
@@ -780,7 +785,9 @@ def plotSim(data, retentionPolicy):
     global mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame
     global fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame
 
-    # Update the dataframes by appending the current run to the dataframe
+    # Update the dataframes by appending the current run to the dataframe.
+    # It is needed to set the dataframe to the result of updateDataFrame because globals
+    # cannot be passed as arguments to functions without being declared
     rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame = updateDataframes(dataUsReq, rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame)
     attErrorConfigOutputDataName_sigma_BR_dataFrame = updateDataframes(dataSigmaBR, attErrorConfigOutputDataName_sigma_BR_dataFrame)
     attErrorConfigOutputDataName_omega_BR_B_dataFrame = updateDataframes(dataOmegaBR, attErrorConfigOutputDataName_omega_BR_B_dataFrame)
@@ -833,6 +840,10 @@ def updateDataframes(data, dataframe):
     return result
 
 # This method configures the path for each file, and saves the dataframe as a csv
+# The path is updated after csv write to change the filename. monteCarloName and mainDirectoryName
+# can also be global variables if wanted.
+# There is no need for having the index in the csv file for our data,
+# it would be a waste of space.
 def saveDataframesToFile():
 
     print "beginning writing csv..", datetime.datetime.now()
@@ -861,7 +872,8 @@ def saveDataframesToFile():
     print "done writing csv..", datetime.datetime.now()
 
 
-# This method is the driver method for graphing all of the data.
+# This method is the driver method for graphing all of the data. It loops through the retained data list (strings)
+# and graphs the corresponding csv file for each retained data
 def graph():
     for data in retainedDataList:
         configureGraph(data)
@@ -873,30 +885,48 @@ def graph():
 
 # In addition, this method illustrates how to save the datashaded plots as a stack of images, and then save
 # the image as a file.
+
+# If the user would rather use plot via bokeh graphing library follow this code:
+# (will take a long time for montecarlos) but may be useful, and also color coordinates every run
+# colsPerRun = len(df.columns) / NUMBER_OF_RUNS
+# for column in xrange(0, df.shape[1], colsPerRun):
+#     length = len(Spectral6)
+#     color = Spectral6[column % length]
+#     p.multi_line([timeDF.iloc[:,0], timeDF.iloc[:,0], timeDF.iloc[:,0]], [df.iloc[:,column], df.iloc[:,column + 1], df.iloc[:,column + 2]],
+#     color=[color, color, color], alpha=[0.3, 0.3, 0.3], line_width=2)
+#     output_file("data/mc1/"+data+".html")
+#     save(p)
 def configureGraph(data):
-    import xarray as xr
-    from collections import OrderedDict
-
-
-    print "Starting graph", datetime.datetime.now()
     # Read csv file and create a dataframe from it.
     # If the user doesn't want to write any data to disc, the user can not write any data
-    # and instead just use the global dataframes to plot the data.
+    # and instead just use the global dataframes to plot the data. However, writing to file
+    # can be advantageous since you can toggle ONLY_GRAPH to skip all of the simulating and
+    # solely graph the data.
     df = pd.read_csv(
         "data/mc1/" + data + ".csv")
-    # findOutliers(df, data)
-    print df.head()
-    # df = df[df['0'] < 2.6e+12]
-    # df.to_csv("filtered.csv", encoding='utf-8', index=False)
-    print df.head()
-    print df.tail()
-    # Plot the columns 1,2,3 against column 0
-    curvesx = hv.Curve(df[['0','1']])
-    curvesy = hv.Curve(df[['0','2']])
-    curvesz = hv.Curve(df[['0','3']])
 
-    # Create a layout consisting of the curves
-    layout = curvesx * curvesy * curvesz
+    # Find the outliers of the graph to identify erroneous runs.
+    # Must do this before concatanating the columns so we can correspond
+    # an outlier to a specific run
+    # findOutliers(df, data)
+
+    # Concat the columns so all of the columns are now in 2 column and have been concatanated
+    # If you'd rather keep all of columns and plot one against another column multiple times do this:
+    # This plots columns labeled 1,2,3 against column 0 (time) and combines them into a layout. then you
+    # datashade that layout instead of datashading the curves (doing it this way
+    # mean the columns won't be labeled as x,y):
+    # curvesx = hv.Curve(df[['0', '1']])
+    # curvesy = hv.Curve(df[['0', '2']])
+    # curvesz = hv.Curve(df[['0', '3']])
+    # layout = curvesx * curvesy * curvesz
+    df = concat_columns(df)
+    # df = df[df['x'] < 2.6e+12]
+    # df.to_csv("filtered.csv", encoding='utf-8', index=False)
+    print df.tail()
+
+    # Plot the columns (x,y)
+    curves = hv.Curve(df)
+
 
     # Instantiate a renderer using bokeh's interface, and generating an html file
     renderer = hv.renderer('bokeh').instance(fig='html')
@@ -904,25 +934,84 @@ def configureGraph(data):
     # Pass a datashaded version of the layout to the get_plot function, to return a bokeh figure
     # called 'plot'. Then set the figure details such as title, dimensions, axis labels etc.
     # Then finally, show the plot in the browser.
-    plot = renderer.get_plot(datashade(layout, dynamic = False).opts(plot=dict(fig_size=10000, aspect='equal'))).state
+    plot = renderer.get_plot(datashade(curves, dynamic = False).opts(plot=dict(fig_size=10000, aspect='equal'))).state
     plot.plot_width = 800
     plot.plot_height = 500
     plot.title.text = data
     plot.xaxis.axis_label = "Time"
     plot.yaxis.axis_label = data
-    show(plot)
+    # show(plot)
 
-    # Create an empty list of imgs soon to be filled, and set the canvas to put the images on.
-    imgs = []
-    cvs = ds.Canvas(plot_height=500, plot_width=800)
+    # Create an empty list of imgs to be filled, and set the canvas to put the images on.
+    # This can be useful for combining multiple images of graphs that have been aggregated and shaded accordingly
+    # to the number of points on the curve that cross the pixel (ds.count)
+    # imgs = []
+    # imgs.append(img)
+    # stacked = tf.stack(*imgs)
+    # export_image(stacked, data)
 
-    # Concat the columns so all of the columns are
-    df = concat_columns(df)
+    # Set range of x and y axis (zooming via code)
+    x_range = df.x.min(), df.x.max() / 15
+    y_range = df.y.min(), df.y.max()
+
+    # Set the width and height of the images dimensions
+    height = 1000
+    width = 2 * height
+    # Instantiate a canvas object to put the graphs on
+    cvs = ds.Canvas(plot_height=height, plot_width=width, x_range=x_range, y_range=y_range)
+
+    # Compute a reduction by pixel, mapping data to pixels as a line.
+    # from columns x and y, and correspond the darkness of the color
+    # to the number of of curves that cross the pixel
+    # (darker means more curves go on that pixel).
     agg = cvs.line(df, 'x', 'y', ds.count())
-    img = tf.shade(agg, how='eq_hist')
-    export_image(img, data)
-    print "done saving png ", data, datetime.datetime.now()
 
+    # Few lines to help with create different color maps.
+    background = "black"
+    cm = partial(colormap_select, reverse=(background != "black"))
+    grays2 = cm([(i, i, i) for i in np.linspace(0, 255, 99)])
+    grays2 += ["red"]
+
+    # How can be 'linear' 'log' or 'eq_hist'. Here is a collection of different calls
+    # to create the same image with different color schemes
+    # create_image(agg, ['green', 'yellow', 'red'], 'log', 'none', data+"_green_yellow_red")
+    # create_image(agg, ['green', 'yellow', 'red'], 'log', 'black', data+"_green_yellow_red_blackbg")
+    # create_image(agg, cm(Greys9, 0.25), "eq_hist", 'black', data+"greys9_blackbg")
+    # create_image(agg, cm(fire, 0.2), 'log','black', data+"_fire_blackbg")
+    # create_image(agg, ['aqua', 'lime', 'fuchsia', 'yellow'], 'log','black', data+"_aqua_lime_blackbg")
+    # create_image(agg, GnBu9, 'log', 'black', data+"_gnu_blackbg")
+    # create_image(agg, jet, 'log', 'black', data+"jet_blackbg")
+    # create_image(agg, cm(viridis), "eq_hist", 'white', data+"_viridis")
+    create_image(agg, 'default', 'eq_hist', 'white', data+"_default")
+
+# Helper function to create an image based on agg, color, the function to determine depth
+# background and name of the file to export.
+def create_image(agg, color, how, background, name):
+    if color != 'default':
+        img = tf.shade(agg, cmap=color, how=how)
+    else:
+        img = tf.shade(agg, how=how)
+    if background != 'none':
+        img = tf.set_background(img, background)
+    export_image(img, name)
+
+# This method changes the shape of our dataframe from:
+# 0 1 2 3
+# 1 3 4 2
+# NAN row
+# 1 2 5 6
+# # # # #
+# To:
+# x y
+# 1 3
+# NAN
+# 1 4
+# NAN ...
+# In addition to changing the shape, the columns are now named x and y. This was done
+# to simply the datashading process to simply aggregate an image from an x and y column,
+# instead of aggregating an image from a time, x, y, z columns. However, this removes any
+# value of the data. There is no separating which points refer to which columns of data and instead
+# just combines them all.
 def concat_columns(df, separator=np.NaN):
     x = df.columns[0]
     df = df.append({x:separator}, ignore_index=True)
@@ -952,7 +1041,8 @@ def findOutliers(df, data):
 
 
 # This method is given a datashader image object, and saves it as a png file under
-# a directory called "image".
+# a directory called "image". This is a variant of the export_image function
+# built into the datashader API to make a little simpler to use)
 def export_image(img, filename, fmt=".png", _return=True):
     export_path = "image/"
     if not os.path.exists(export_path):
