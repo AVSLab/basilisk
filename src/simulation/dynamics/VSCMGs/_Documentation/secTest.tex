@@ -3,12 +3,12 @@ The tests are located in \texttt{simulation/dynamics/VSCMGs/\_UnitTest/\newline
 test\_VSCMGStateEffector\_integrated.py} \textbf{and} \texttt{simulation/dynamics/VSCMGs/\newline\_UnitTest/
 test\_VSCMGStateEffector\_ConfigureVSCMGRequests.py}. Depending on the test, there are different success criteria. These are outlined in the following subsections:
 \subsection{Balanced Wheels Scenario - Integrated Test}
-In this test the simulation is placed into orbit around Earth with point gravity, has 3 VSCMGs attached to the spacecraft, and they are in ``Balanced" mode. Each wheel is given a commanded torque for half the simulation and the rest of the simulation the torques are set to zero. The following parameters are being tested:
+In this test the simulation is placed into orbit around Earth with point gravity, has 3 VSCMGs attached to the spacecraft, and they are in ``Balanced Wheels" mode. Each wheel is given a commanded torque for half the simulation and the rest of the simulation the torques are set to zero. The following parameters are being tested:
 \begin{itemize}
 	\item Conservation of orbital angular momentum
 	\item Conservation of orbital energy
 	\item Conservation of rotational angular momentum
-	\item Conservation of rotational energy (second half of the simulation)
+	\item Conservation of rotational energy
 	\item Achieving the expected final attitude
 	\item Achieving the expected final position
 \end{itemize}
@@ -26,7 +26,17 @@ In this test the simulation is placed into orbit around Earth with point gravity
 \item Conservation of orbital angular momentum
 \item Conservation of orbital energy
 \item Conservation of rotational angular momentum
-\item Conservation of rotational energy (second half of the simulation)
+\item Conservation of rotational energy
+\item Achieving the expected final attitude
+\item Achieving the expected final position
+\end{itemize}
+
+\subsection{Fully Coupled Jitter Scenario - Integrated Test}
+In this test the simulation is placed into orbit around Earth with point gravity, has 3 VSCMGs attached to the spacecraft, and they are in ``Fully Coupled Jitter" mode. Each wheel is given a commanded torque for half the simulation and the rest of the simulation the torques are set to zero. The following parameters are being tested:
+\begin{itemize}
+\item Conservation of orbital angular momentum
+\item Conservation of orbital energy
+\item Conservation of rotational angular momentum
 \item Achieving the expected final attitude
 \item Achieving the expected final position
 \end{itemize}
@@ -186,17 +196,9 @@ Since this is an integrated test, the inputs to the test are the physical parame
 		\hline
 		Test   & Relative Tolerance \\
 		\hline
-		Energy and Momentum Conservation & 1e-10 \\
+		Energy and Momentum Conservation & 1e-8 \\
 		\hline
-		Position, Attitude Check & 1e-7 \\
-		\hline
-		BOE & 1e-8 \\
-		\hline
-		Friction Tests & 1e-10 \\
-		\hline
-		Saturation Tests & 1e-10 \\
-		\hline
-		Minimum Torque & 1e-10 \\
+		Position, Attitude Check & 1e-8 \\
 		\hline	
 	\end{tabular}
 \end{table}
@@ -214,15 +216,6 @@ Since this is an integrated test, the inputs to the test are the physical parame
 
 \clearpage
 
-\subsection{Simple Jitter Scenario - Integrated Test Results}
-
-\input{AutoTex/ChangeInOrbitalAngularMomentumJitterSimple}
-\input{AutoTex/ChangeInOrbitalEnergyJitterSimple}
-\input{AutoTex/ChangeInRotationalAngularMomentumJitterSimple}
-\input{AutoTex/ChangeInRotationalEnergyJitterSimple}
-
-\clearpage
-
 \subsection{Fully Coupled Jitter Scenario - Integrated Test Results}
 
 \input{AutoTex/ChangeInOrbitalAngularMomentumJitterFullyCoupled}
@@ -237,7 +230,6 @@ Since this is an integrated test, the inputs to the test are the physical parame
 \input{AutoTex/ChangeInOrbitalAngularMomentumJitterFullyCoupledGravity}
 \input{AutoTex/ChangeInOrbitalEnergyJitterFullyCoupledGravity}
 \input{AutoTex/ChangeInRotationalAngularMomentumJitterFullyCoupledGravity}
-\input{AutoTex/ChangeInRotationalEnergyJitterFullyCoupledGravity}
 
 \clearpage
 

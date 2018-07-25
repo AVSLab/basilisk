@@ -8,23 +8,10 @@ This section is to outline the steps needed to setup a reaction wheel state effe
 	\textit{vscmgObject = vscmgStateEffector.vscmgStateEffector()}
 	\item Set parameters for vscmgObject. A common set up might include: \newline
 		\textit{VSCMG.rGB\_B = [[0.],[0.],[0.]]} \newline
-         \textit{VSCMG.gsHat0\_B = [[0.],[0.],[0.]]} \newline
-         \textit{VSCMG.gtHat0\_B = [[0.],[0.],[0.]]} \newline
-         \textit{VSCMG.ggHat\_B = [[0.],[0.],[0.]]} \newline
-         \textit{VSCMG.u\_s\_max = -1} \newline
-         \textit{VSCMG.u\_s\_min = -1} \newline
-         \textit{VSCMG.u\_s\_f = 0.} \newline
-         \textit{VSCMG.wheelLinearFrictionRatio = -1} \newline
-         \textit{VSCMG.u\_g\_current = 0.} \newline
-         \textit{VSCMG.u\_g\_max = -1} \newline
-         \textit{VSCMG.u\_g\_min = -1} \newline
-         \textit{VSCMG.u\_g\_f = 0.} \newline
-         \textit{VSCMG.gimbalLinearFrictionRatio = -1} \newline
-         \textit{VSCMG.Omega = 0.} \newline
-         \textit{VSCMG.gamma = 0.} \newline
-         \textit{VSCMG.gammaDot = 0.} \newline
+         \textit{VSCMG.gsHat0\_B = [[1.],[0.],[0.]]} \newline
+         \textit{VSCMG.gtHat0\_B = [[0.],[1.],[0.]]} \newline
+         \textit{VSCMG.ggHat\_B = [[0.],[0.],[1.]]} \newline
          \textit{VSCMG.Omega\_max = 6000. * macros.RPM} \newline
-         \textit{VSCMG.gammaDot\_max = -1} \newline
          \textit{VSCMG.IW1 = 100./VSCMG.Omega\_max} \newline
          \textit{VSCMG.IW2 = 0.5*VSCMG.IW1} \newline
          \textit{VSCMG.IW3 = 0.5*VSCMG.IW1} \newline

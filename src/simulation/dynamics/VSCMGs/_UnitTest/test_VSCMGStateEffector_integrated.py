@@ -366,27 +366,27 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     plt.plot(orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,1] - orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,2] - orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,3] - orbAngMom_N[0,3])
     plt.title("Change in Orbital Angular Momentum")
     unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCase,
-                                     "Change in Orbital Angular Momentum " + testCase, plt, "width=0.8\\textwidth",
+                                     "Change in Orbital Angular Momentum " + testCase, plt, "width=0.80\\textwidth",
                                      path)
 
     plt.figure()
     plt.plot(rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,1] - rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,2] - rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,3] - rotAngMom_N[0,3])
     plt.title("Change in Rotational Angular Momentum")
     unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCase, "Change in Orbital Energy " + testCase, plt,
-                                     "width=0.8\\textwidth", path)
+                                     "width=0.80\\textwidth", path)
 
     plt.figure()
     plt.plot(orbEnergy[:,0]*1e-9, orbEnergy[:,1] - orbEnergy[0,1])
     plt.title("Change in Orbital Energy")
     unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase,
-                                     "Change in Rotational Angular Momentum " + testCase, plt, "width=0.8\\textwidth",
+                                     "Change in Rotational Angular Momentum " + testCase, plt, "width=0.80\\textwidth",
                                      path)
 
     plt.figure()
     plt.plot(rotEnergy[:,0]*1e-9, rotEnergy[:,1] - rotEnergy[0,1])
     plt.title("Change in Rotational Energy")
     unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase,
-                                     plt, "width=0.8\\textwidth", path)
+                                     plt, "width=0.80\\textwidth", path)
 
     plt.figure()
     for i in range(1,N+1):
@@ -485,6 +485,13 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
             testFailCount += 1
             testMessages.append("FAILED: VSCMG Integrated Test failed attitude unit test")
 
+    if testCase == 'JitterSimple':
+        for i in range(N):
+            # check a vector values
+            if not abs(wheelSpeeds_data[i] - wheelSpeeds_true[i]) / wheelSpeeds_true[i] < .09:
+                testFailCount += 1
+                testMessages.append("FAILED: VSCMG Integrated Test failed jitter unit test")
+
     if testCase == 'BalancedWheels' or testCase == 'JitterFullyCoupled':
 
         for i in range(0,len(initialOrbAngMom_N)):
@@ -510,14 +517,6 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
             if not unitTestSupport.isArrayEqualRelative(finalRotEnergy[i], initialRotEnergy[i], 1, accuracy):
                 testFailCount += 1
                 testMessages.append("FAILED: VSCMG Integrated Test failed rot energy unit test")
-
-
-    if testCase == 'JitterSimple':
-        for i in range(N):
-            # check a vector values
-            if not abs(wheelSpeeds_data[i]-wheelSpeeds_true[i])/wheelSpeeds_true[i] < .09:
-                testFailCount += 1
-                testMessages.append("FAILED: VSCMG Integrated Test failed jitter unit test")
 
 
        # print out success message if no errors were found
