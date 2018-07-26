@@ -4,13 +4,13 @@
 
 This module is modeling a VSCMG connected to a rigid body hub. The VSCMG model has three modes that can be ran: balanced wheels, simple jitter, and fully-coupled imbalanced wheels.
 
-The balanced wheels option is modeling the VSCMG as having their principle inertia axes aligned with spin axis, $\hat{\bm g}_s$, and the center of mass of the wheel is coincident with $\hat{\bm g}_s$. This results in the reaction wheel not changing the mass properties of the spacecraft and results in simpler equations. The simple jitter option is approximating the jitter due to mass imbalances by applying an external force and torque to the spacecraft that is proportional to the wheel speeds squared. This is an approximation because in reality this is an internal force and torque. Finally, the fully-coupled mode is modeling VSCMG imbalance dynamics by modeling the static and dynamic imbalances as internal forces and torques which is physically realistic and allows for energy and momentum conservation.
+The balanced wheels option is modeling the VSCMG as having their principle inertia axes aligned with spin axis, $\hat{\bm g}_s$, and the center of mass of the wheel is coincident with $\hat{\bm g}_s$. This results in the VSCMG not changing the mass properties of the spacecraft and results in simpler equations. The simple jitter option is approximating the jitter due to mass imbalances by applying an external force and torque to the spacecraft that is proportional to the wheel speeds squared. This is an approximation because in reality this is an internal force and torque. Finally, the fully-coupled mode is modeling VSCMG imbalance dynamics by modeling the static and dynamic imbalances as internal forces and torques which is physically realistic and allows for energy and momentum conservation.
 
-Figure \ref{fig:scplusVSCMG} shows the frame and variable definitions used for this problem. The formulation involves a rigid hub with its center of mass location labeled as point $B_c$, and $N_\text{rw}$ RWs with their center of mass locations labeled as $W_{c_i}$. The frames being used for this formulation are the body-fixed frame, \frameDefinition{B}, the motor frame of the $i^\text{th}$ RW, $\mathcal{M}_i:\{\hat{\bm m}_{s_i},\hat{\bm m}_{2_i},\hat{\bm m}_{3_i}\}$ which is also body-fixed, and the wheel-fixed frame of the $i^\text{th}$ RW, $\mathcal{W}_i:\{\hat{\bm g}_{s_i},\hat{\bm w}_{2_i},\hat{\bm w}_{3_i}\}$. The dynamics are modeled with respect to the $\mathcal{B}$ frame which can be generally oriented. The $\mathcal{W}_i$ frame is oriented such that the $\hat{\bm g}_{s_i}$ axis is aligned with the RW spin axis  which is the same as the motor torque axis $\hat{\bm m}_{s_{i}}$, the $\hat{\bm w}_{2_i}$ axis is perpendicular to $\hat{\bm g}_{s_i}$ and points in the direction towards the RW center of mass $W_{c_i}$. The $\hat{\bm w}_{3_i}$ completes the right hand rule. The $\mathcal{M}_i$ frame is defined as being equal to the $\mathcal{W}_i$ frame at the beginning of the simulation and therefore the $\mathcal{W}_i$ and $\mathcal{M}_i$ frames are offset by an angle, $\theta_i$, about the $\hat{\bm m}_{s_i} = \hat{\bm g}_{s_i}$ axes.
+Figure \ref{fig:scplusVSCMG} shows the frame and variable definitions used for this problem. The formulation involves a rigid hub with its center of mass location labeled as point $B_c$, VSCMGs made of a gimbal and wheel whose center of mass locations are labeled as $G_{c_i}$ and  $W_{c_i}$ respectively. The frames being used for this formulation are the body-fixed frame, \frameDefinition{B}, the gimbal frame of the $i^\text{th}$ gimbal, $\mathcal{G}_i:\{\hat{\bm g}_{s_i},\hat{\bm g}_{t_i},\hat{\bm g}_{g_i}\}$ which is also body-fixed, and the wheel-fixed frame of the $i^\text{th}$ RW, $\mathcal{W}_i:\{\hat{\bm g}_{s_i},\hat{\bm w}_{2_i},\hat{\bm w}_{3_i}\}$. The dynamics are modeled with respect to the $\mathcal{B}$ frame which can be generally oriented. The $\mathcal{W}_i$ frame is oriented such that the $\hat{\bm g}_{s_i}$ axis is aligned with the RW spin axis  which is the same as the gimbal torque axis $\hat{\bm g}_{s_{i}}$, the $\hat{\bm w}_{2_i}$ axis is perpendicular to $\hat{\bm g}_{s_i}$ and points in the direction towards the RW center of mass $W_{c_i}$. The $\hat{\bm w}_{3_i}$ completes the right hand rule. The $\mathcal{M}_i$ frame is defined as being equal to the $\mathcal{W}_i$ frame at the beginning of the simulation and therefore the $\mathcal{W}_i$ and $\mathcal{G}_i$ frames are offset by an angle, $\theta_i$, about the $\hat{\bm g}_{s_i} = \hat{\bm g}_{s_i}$ axes.
 	
-A few more key variables in Figure~\ref{fig:scplusVSCMG} need to be defined. The rigid spacecraft structure without the VSCMGs is called the hub.  Point $B$ is the origin of the $\mathcal{B}$ frame and is a general body-fixed point that does not have to be identical to the total spacecraft center of mass, nor the rigid hub center of mass $B_{c}$. Point $W_i$ is the origin of the $\mathcal{W}_i$ frame and can also have any location relative to point $B$. Point $C$ is the center of mass of the total spacecraft system including the rigid hub and the VSCMGs. Due to the VSCMG imbalance, the vector $\bm c$, which points from point $B$ to point $C$, will vary as seen by a body-fixed observer. The scalar variable $d_i$ is the center of mass offset of the VSCMG, or the distance from the spin axis, $\hat{\bm g}_{\text{s}_i}$ to $W_{c_i}$.  Finally, the inertial frame orientation is defined through $\frameDefinition{N}$, while the origin of the inertial frame is labeled as $N$.
+A few more key variables in Figure~\ref{fig:scplusVSCMG} need to be defined. The rigid spacecraft structure without the VSCMGs is called the hub.  Point $B$ is the origin of the $\mathcal{B}$ frame and is a general body-fixed point that does not have to be identical to the total spacecraft center of mass, nor the rigid hub center of mass $B_{c}$. Point $W_i$ is the origin of the $\mathcal{W}_i$ frame and can also have any location relative to point $B$. Point $C$ is the center of mass of the total spacecraft system including the rigid hub and the VSCMGs. Due to the VSCMG imbalance, the vector $\bm c$, which points from point $B$ to point $C$, will vary as seen by a body-fixed observer. The scalar variable $d_i$ is the center of mass offset of the VSCMG, or the distance from the spin axis, $\hat{\bm g}_{\text{s}_i}$ to $W_{c_i}$.  
 
-The key equations are highlighted below and the full deriviation can be found in \cite{alcorn2017}.
+The key equations used to model the dynamics of VSCMGs are produced in a form to make use of back-substitution, a computationally efficent way to solve rigid body dynamics. An explaination of backsubstitution and the corresponding equations are highlighted below. For a more thorough explaination of back-substitution and the derivation of the equations of motion can be found in  \cite{schaub} \cite{newRef} cite{alcorn2017}.
 
 \begin{figure}[htbp]
 	\centerline{
@@ -63,17 +63,15 @@ where $[A_\text{hub}]$ represents the contribution to $[A]$ from the spacecraft 
 \bm v_{\text{rot,hub}} = \bm{L}_B - [I_{\text{sc},B}]'\bm{\omega} - [\tilde{\bm\omega}][I_{\text{sc},B}]\bm\omega
 \end{gather}
 
-\clearpage
 \subsection{Balanced VSCMG}
 \subsubsection{Equations of Motion}
 The balanced VSCMG equations of motion are provided here for the reader's convenience. Note that translation is not coupled with $\dot{\Omega}$ or $\ddot{\gamma}_i$.
-\begin{equation*}
+\begin{equation}\label{eq:vscmgTranslationSimpleBS_BACKSUBAPP}
 m_\text{sc}\ddot{\bm r}_{B/N} - m_\text{sc}[\tilde{\bm{c}}]\dot{\bm \omega} 
 = \bm{F} - 2m_\text{sc}[\tilde{\bm{\omega}}]\bm{c}' - m_\text{sc}[\tilde{\bm{\omega}}]^2\bm{c} 
-\label{eq:vscmgTranslationSimpleBS_BACKSUBAPP}
-\end{equation*}
+\end{equation}
 The rotational equation of motion includes $\dot{\Omega}_i$ and $\ddot{\gamma}_i$ terms, and is thus coupled with VSCMG motion as seen below.
-\begin{multline*}
+\begin{multline}
 m_{\text{\text{sc}}}[\tilde{\bm{c}}]\ddot{\bm r}_{B/N} + [I_{\text{sc},B}]\dot{\bm\omega}
 +\sum\limits_{i=1}^{N}I_{\text{V}_{g_i}}\hat{\bm{g}}_{\text{g}_i} \ddot{\gamma}_i
 +\sum\limits_{i=1}^{N}I_{\text{W}_{s_i}}\hat{\bm{g}}_{\text{s}_i} \dot{\Omega}_i
@@ -83,22 +81,20 @@ m_{\text{\text{sc}}}[\tilde{\bm{c}}]\ddot{\bm r}_{B/N} + [I_{\text{sc},B}]\dot{\
 + I_{\text{W}_{t_i}}\Omega\dot{\gamma}\hat{\bm{g}}_{\text{t}_i} + \Omega_i\dot{\gamma}_i(I_{\text{W}_{s_i}}-I_{\text{W}_{t_i}})\hat{\bm{g}}_{\text{t}_i} \\+ [\tilde{\bm\omega}][I_{\text{G}_i,G_{c_i}}]\dot{\gamma}_i\hat{\bm{g}}_{\text{g}_i} + [\tilde{\bm{\omega}}][I_{\text{W}_i,W_{c_i}}]\bm{\omega}_{\mathcal{W}_i/\cal B}
 \Big]
 \label{eq:vscmgRotationSimpleBS_BACKSUBAPP}
-\end{multline*}
+\end{multline}
 The gimbal torque equation is given below.
-\begin{equation*}
+\begin{equation}
 I_{\text{V}_{g_i}}(\hat{\bm g}_{\text{g}_i}^T\dot{\bm{\omega}}
 +  \ddot{\gamma}_i)
 = u_{\text{g}_i} + (I_{\text{V}_{s_i}}-I_{\text{V}_{t_i}})\omega_s\omega_t + I_{\text{W}_{s_i}}\Omega_i\omega_t
 \label{eq:vscmgGimbalTorqueSimpleBS_BACKSUBAPP}
-\end{equation*}
+\end{equation}
 The wheel torque equation is given below.
-\begin{equation*}
+\begin{equation}
 I_{\text{W}_{s_i}}(\hat{\bm g}_{\text{s}_i}^T\dot{\bm\omega} + \dot{\Omega}_i)
 =-I_{\text{W}_{s_i}}\omega_t\dot{\gamma}_i + u_{\text{s}_i}
 \label{eq:vscmgWheelTorqueSimpleBS_BACKSUBAPP}
-\end{equation*} 
-
-\clearpage
+\end{equation} 
 
 \subsubsection{Modified EOM for Back-Substitution}
 To make use of back-substitution and define the back-substitution contribution matrices for a balanced VSCMG, the EOM must be arranged into the following form:
@@ -111,8 +107,6 @@ m_{\text{\text{sc}}}[\tilde{\bm{c}}]\ddot{\bm r}_{B/N} + \Big[ [I_{\text{sc},B}]
 \Big]
 \label{eq:vscmgRotationSimpleBS2_BACKSUBAPP}
 \end{multline}
-
-\clearpage
 
 \subsubsection{Back-Substitution Contribution Matrices}
 The balanced VSCMG back-substitution contribution matrices are given by,
@@ -132,21 +126,6 @@ The balanced VSCMG back-substitution contribution matrices are given by,
 \big( u_{\text{s}_i}-I_{\text{W}_{s_i}}\omega_t\dot{\gamma}_i \big) \hat{\bm{g}}_{\text{s}_i} + I_{\text{W}_{s_i}}\Omega\dot{\gamma}\hat{\bm{g}}_{\text{t}_i} +\big( u_{\text{g}_i} + (I_{\text{V}_{s_i}}-I_{\text{V}_{t_i}})\omega_s\omega_t + I_{\text{W}_{s_i}}\Omega_i\omega_t\big)\hat{\bm{g}}_{\text{g}_i}\\+ [\tilde{\bm\omega}][I_{\text{G}_i,G_{c_i}}]\dot{\gamma}_i\hat{\bm{g}}_{\text{g}_i} + [\tilde{\bm{\omega}}][I_{\text{W}_i,W_{c_i}}]\bm{\omega}_{\mathcal{W}_i/\cal B}
 \Big]
 \end{multline}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\clearpage
 
 \subsection{Imbalanced VSCMG}
 
@@ -170,7 +149,6 @@ This equation represents 3 DOF and contains all second order states ($\ddot{\bm 
 
 Thus, the balanced VSCMG translational equation of motion does not contain any second-order terms relating to the wheel or gimbal, and agrees with Eq. \ref{eq:vscmgTranslationSimpleBS_BACKSUBAPP}.
 
-\clearpage
 \subsubsection{Rotational EOMs}
 
 The rotational equations of motion are:
@@ -208,7 +186,6 @@ m_{\text{\text{sc}}}[\tilde{\bm{c}}]\ddot{\bm r}_{B/N} + [I_{\text{sc},B}]\dot{\
 \end{multline}
 This equation agrees with that found in Eq.  \ref{eq:vscmgRotationSimpleBS_BACKSUBAPP}. 
 
-\clearpage
 \subsubsection{Gimbal Torque Equation}
 The VSCMG gimbal torque equation of motion is given by:
 \begin{multline}
@@ -246,7 +223,6 @@ I_{\text{V}_{g_i}}(\hat{\bm g}_{\text{g}_i}^T\dot{\bm{\omega}}
 \label{eq:vscmgGimbalTorqueSimple}
 \end{equation}
 
-\clearpage
 \subsubsection{Wheel Torque Equation}
 
 The wheel torque equation is given by:
@@ -266,8 +242,6 @@ Removing imbalance terms gives (recall that for the simplified case $\theta_i = 
 	=-I_{\text{W}_{s_i}}\omega_t\dot{\gamma}_i + u_{\text{s}_i}
 \end{equation} 
 which agrees with \eqref{eq:vscmgWheelTorqueSimpleBS_BACKSUBAPP}.
-
-\clearpage
 
 \subsubsection{Modified EOM for Back-Substitution}
 
@@ -295,8 +269,6 @@ where,
 \\= \bm{F} - 2m_{\text{sc}}[\tilde{\bm{\omega}}]\bm{c}' - m_{\text{sc}}[\tilde{\bm{\omega}}]^2\bm{c} -  \sum\limits_{i=1}^{N}\Bigg(\bm{k}_{r_i}+\bm{u}_{r_i}d_{\gamma_i} + \frac{\big(\bm{v}_{r_i} + \bm{u}_{r_i}c_{\gamma_i}\big)\big(c_{\Omega_i}d_{\gamma_i} + d_{\Omega_i}\big)}{1 - c_{\Omega_i}c_{\gamma_i}}\Bigg)
 \end{split}
 \end{gather}
-
-\clearpage
 
 \subparagraph{Rotational EOM}
 
@@ -363,8 +335,6 @@ where,
 [\tilde{\bm\omega}]^2 &= [\tilde{\bm\omega}][\tilde{\bm\omega}]
 \end{align}
 
-\clearpage
-
 \subparagraph{Wheel Torque Equation}
 
  The wheel torque equation is,
@@ -378,8 +348,6 @@ where,
 \Big] \Bigg] \\+(J_{13_i}s\theta_i - J_{12_i}c\theta_i)\Omega\dot{\gamma} - m_{\text{W}_i}d_i^2\dot{\gamma}_i^2c\theta_is\theta_i
 + u_{\text{s}_i}
 \end{multline}  
-
-\clearpage
 
 \subsubsection{Back-Substitution Matrices for Imbalanced VSCMG}
 
@@ -398,19 +366,6 @@ The contributions are,
 \\
 \bm{v}_\text{rot,contr} = -  \sum\limits_{i=1}^{N}\Big[\bm{k}_{\omega_i} +\bm{u}_{\omega_i}d_{\gamma_i}+ \big(\bm{v}_{\omega_i} + \bm{u}_{\omega_i}c_{\gamma_i}\big)s_i\Big]
 \end{gather}
-This concludes the derivation of the back-substitution of imbalanced VSCMGs. 
 
-\clearpage
-
-
-
-
-
-
-
-
-
-
-This concludes the equations that are necessary to define the three different modes of the VSCMG. Reference\cite{Alcorn:2016yq} explains in further detail the EOMs for the simple-jitter and fully-coupled modes. Reference\cite{schaub} gives more details on the derivation for balanced VSCMGs.
 
 

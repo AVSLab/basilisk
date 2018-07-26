@@ -3,7 +3,7 @@ The tests are located in \texttt{simulation/dynamics/VSCMGs/\_UnitTest/\newline
 test\_VSCMGStateEffector\_integrated.py} \textbf{and} \texttt{simulation/dynamics/VSCMGs/\newline\_UnitTest/
 test\_VSCMGStateEffector\_ConfigureVSCMGRequests.py}. Depending on the test, there are different success criteria. These are outlined in the following subsections:
 \subsection{Balanced Wheels Scenario - Integrated Test}
-In this test the simulation is placed into orbit around Earth with point gravity, has 3 VSCMGs attached to the spacecraft, and they are in ``Balanced Wheels" mode. Each wheel is given a commanded torque for half the simulation and the rest of the simulation the torques are set to zero. The following parameters are being tested:
+In this test the simulation is placed into orbit around Earth with point gravity, has 3 VSCMGs attached to the spacecraft, and they are in ``Balanced Wheels" mode. The following parameters are being tested:
 \begin{itemize}
 	\item Conservation of orbital angular momentum
 	\item Conservation of orbital energy
@@ -14,14 +14,14 @@ In this test the simulation is placed into orbit around Earth with point gravity
 \end{itemize}
 
 \subsection{Simple Jitter Scenario - Integrated Test}
-In this test the simulation is placed into orbit around Earth with point gravity, has 3 VSCMGs attached to the spacecraft, and they are in ``Simple Jitter" mode. Each wheel is given a commanded torque for half the simulation and the rest of the simulation the torques are set to zero. The following parameters are being tested:
+In this test the simulation is placed into orbit around Earth with point gravity, has 3 VSCMGs attached to the spacecraft, and they are in ``Simple Jitter" mode. The following parameters are being tested:
 \begin{itemize}
 \item Achieving the expected final attitude
 \item Achieving the expected final position
 \end{itemize}
 
-\subsection{Fully Coupled Jitter Scenario - Integrated Test}
-In this test the simulation is placed into orbit around Earth with point gravity, has 3 VSCMGs attached to the spacecraft, and they are in ``Fully Coupled Jitter" mode. Each wheel is given a commanded torque for half the simulation and the rest of the simulation the torques are set to zero. The following parameters are being tested:
+\subsection{Fully Coupled Jitter Scenario without Gravity - Integrated Test}
+In this test the simulation 3 VSCMGs are attached to the spacecraft, and they are in ``Fully Coupled Jitter" mode.  The following parameters are being tested:
 \begin{itemize}
 \item Conservation of orbital angular momentum
 \item Conservation of orbital energy
@@ -31,8 +31,8 @@ In this test the simulation is placed into orbit around Earth with point gravity
 \item Achieving the expected final position
 \end{itemize}
 
-\subsection{Fully Coupled Jitter Scenario - Integrated Test}
-In this test the simulation is placed into orbit around Earth with point gravity, has 3 VSCMGs attached to the spacecraft, and they are in ``Fully Coupled Jitter" mode. Each wheel is given a commanded torque for half the simulation and the rest of the simulation the torques are set to zero. The following parameters are being tested:
+\subsection{Fully Coupled Jitter Scenario  with Gravity- Integrated Test}
+In this test the simulation is placed into orbit around Earth with point gravity, has 3 VSCMGs attached to the spacecraft, and they are in ``Fully Coupled Jitter Gravity" mode. The following parameters are being tested:
 \begin{itemize}
 \item Conservation of orbital angular momentum
 \item Conservation of orbital energy
@@ -43,7 +43,7 @@ In this test the simulation is placed into orbit around Earth with point gravity
 
 \section{Test Parameters}
 
-Since this is an integrated test, the inputs to the test are the physical parameters of the spacecraft along with the initial conditions of the states. These parameters are outlined in Tables~\ref{tab:hub}-~\ref{tab:initial}. Additionally, the error tolerances can be seen in Table~\ref{tab:errortol}. The error tolerances are different depending on the test. The energy-momentum conservation values will normally have an agreement down to 1e-14, but to ensure cross-platform agreement the tolerance was chose to be 1e-10. The position and attitude checks have a tolerance set to 1e-7 and is because 8 significant digits were chosen as the values being compared to. The BOE tests depend on the integration time step but as the time step gets smaller the accuracy gets better. So 1e-8 tolerance was chosen so that a larger time step could be used but still show agreement. The Friction tests give the same numerical outputs down to ~1e-15 between python and Basilisk, but 1e-10 was chosen to ensure cross platform agreement. Finally, the saturation and minimum torque tests have 1e-10 to ensure cross-platform success, but these values will typically agree to machine precision. 
+Since this is an integrated test, the inputs to the test are the physical parameters of the spacecraft along with the initial conditions of the states. These parameters are outlined in Tables~\ref{tab:hub}-~\ref{tab:initial}. Additionally, the error tolerances can be seen in Table~\ref{tab:errortol}. The energy-momentum conservation values will normally have an agreement down to 1e-14, but to ensure cross-platform agreement the tolerance was chose to be 1e-10. The position and attitude checks have a tolerance set to 1e-7 and is because 8 significant digits were chosen as the values being compared to. 
 
 \begin{table}[htbp]
 	\caption{Spacecraft Hub Parameters for Energy Momentum Conservation Scenarios}
@@ -61,12 +61,19 @@ Since this is an integrated test, the inputs to the test are the physical parame
 		\end{bmatrix}$ & kg-m$^2$ \\
 		r\_BcB\_B & CoM Location in $\cal{B}$ frame & $\begin{bmatrix}
 		-0.0002 & 0.0001 & 0.1 \end{bmatrix}^T$ & m \\
+		sigma\_BNInit & Initial MRP of $\cal{B}$ frame & $\begin{bmatrix}
+		0.0 & 0.0 & 0.0
+		\end{bmatrix}^T$ & - \\
+		omega\_BN\_BInit & Initial Angular Velocity of $\cal{B}$ frame & $			
+		\begin{bmatrix}
+		0.08 & & 0.01 & 0.0
+		\end{bmatrix}^T$ & rad/s \\
 		\hline
 	\end{tabular}
 \end{table}
 
 \begin{table}[htbp]
-	\caption{VSCMG 1 Parameters for Energy Momentum Conservation Scenarios}
+	\caption{VSCMG Parameters Across All Tests}
 	\label{tab:rw1}
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{ c | c | c | c } % Column formatting, 
@@ -77,113 +84,138 @@ Since this is an integrated test, the inputs to the test are the physical parame
 		mass & mass & 12.0 & kg \\
 		U\_s & Static Imbalance & 4.8E-6 & kg-m \\
 		U\_d & Dynamic Imbalance & 15.4E-7 & kg-m$^2$ \\
-		gsHat\_B & Spin Axis in $\cal{B}$ frame & $\begin{bmatrix}
-		1.0 & 0.0 & 0.0 \end{bmatrix}^T$ & - \\
-		rWB\_B & Location of Wheel in $\cal{B}$ frame & $\begin{bmatrix}
-		0.1 & 0.0 & 0.0 \end{bmatrix}^T$ & m \\
-		\hline
+		Omega\_max & Max Wheel Speed & 628.32 & rad/s \\
+		IW1 & Spin Axis $\hat{w_1}$ Rotor Moment of Inertia & 0.159  & kg-m$^2$ \\
+		IW2 &  $\hat{w_2}$ Rotor Moment of Inertia & 0.079 & kg-m$^2$ \\
+		IW3 & $\hat{w_3}$ Rotor Moment of Inertia & 0.079 & kg-m$^2$ \\
+		IG1 & Spin Axis $\hat{g_s}$ Rotor Moment of Inertia & 0.1 & kg-$^2$ \\
+		IG2 & $\hat{g_t}$ Rotor Moment of Inertia & 0.2 & kg-m$^2$ \\
+		IG3 & $\hat{g_g}$ Rotor Moment of Inertia & 0.3 & kg-m$^2$ \\
+		l  & Transverse Offset & 0.01 & m \\
+		L & Axial Offset & 0.1 & m \\
+		gamma & Gimbal Angle & 0.0  & rad \\
+		rGcG\_G & Gimbal Center of Mass in the $\cal{G}$ Frame & $\begin{bmatrix}
+		0.0001 & -0.02 & 0.1 \end{bmatrix}^T$ & m \\
+		
 	\end{tabular}
 \end{table}
 
 \begin{table}[htbp]
-	\caption{VSCMG 2 Parameters for Energy Momentum Conservation Scenarios}
-	\label{tab:rw2}
+	\caption{VSCMG 1 Parameters Across All Tests}
+	\label{tab:rw1}
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{ c | c | c | c } % Column formatting, 
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
-		Js  & Spin Axis Inertia & 0.159 & kg-m$^2$ \\
-		mass & mass & 12.0 & kg \\
-		U\_s & Static Imbalance & 4.8E-6 & kg-m \\
-		U\_d & Dynamic Imbalance & 15.4E-7 & kg-m$^2$ \\
-		gsHat\_B & Spin Axis in $\cal{B}$ frame & $\begin{bmatrix}
-		0.0 & 1.0 & 0.0 \end{bmatrix}^T$ & - \\
-		rWB\_B & Location of Wheel in $\cal{B}$ frame & $\begin{bmatrix}
-		0.0 & 0.1 & 0.0 \end{bmatrix}^T$ & m \\
+		gsHat0\_B &  $\hat{g_s}_0$ & $\begin{bmatrix}
+		1.0 & 0.0 & 0.0 \end{bmatrix}^T$ & \\
+		gtHat0\_B &  $\hat{g_t}_0$ & $\begin{bmatrix}
+		0.0 & 1.0 & 0.0 \end{bmatrix}^T$ & \\
+		ggHat\_B &  $\hat{g_g}_0$ & $\begin{bmatrix}
+		0.0 & 0.0 & 1.0 \end{bmatrix}^T$ & \\
+		Omega & Initial Wheel Speed & 209.44 & rad/s \\
+		gammaDot & Gimbal Rate & 0.06 & rad/s\\
+		rGB\_B & Position Vector of the VSCMG in the $\cal{B}$ frame & $\begin{bmatrix}
+		0.1& 0.002 & -0.02 \end{bmatrix}^T$ & m \\
 		\hline
 	\end{tabular}
 \end{table}
 
 \begin{table}[htbp]
-	\caption{VSCMG 3 Parameters for Energy Momentum Conservation Scenarios}
-	\label{tab:rw3}
+	\caption{VSCMG 2 Parameters Across All Tests}
+	\label{tab:rw1}
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{ c | c | c | c } % Column formatting, 
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
-		Js  & Spin Axis Inertia & 0.159 & kg-m$^2$ \\
-		mass & mass & 12.0 & kg \\
-		U\_s & Static Imbalance & 4.8E-6 & kg-m \\
-		U\_d & Dynamic Imbalance & 15.4E-7 & kg-m$^2$ \\
-		gsHat\_B & Spin Axis in $\cal{B}$ frame & $\begin{bmatrix}
-		0.0 & 0.0 & 1.0 \end{bmatrix}^T$ & - \\
-		rWB\_B & Location of Wheel in $\cal{B}$ frame & $\begin{bmatrix}
-		0.0 & 0.0 & 0.1 \end{bmatrix}^T$ & m \\
+		gsHat0\_B &  $\hat{g_s}_0$ & $\begin{bmatrix}
+		0.0 & 1.0 & 0.0 \end{bmatrix}^T$ & \\
+		gtHat0\_B &  $\hat{g_t}_0$ & $\begin{bmatrix}
+		-0.817 & 0.0 & 0.577 \end{bmatrix}^T$ & \\
+		ggHat\_B &  $\hat{g_g}_0$ & $\begin{bmatrix}
+		0.577 & 0.0 & 0.817 \end{bmatrix}^T$ & \\
+		Omega & Initial Wheel Speed & 36.65 & rad/s \\
+		gammaDot & Gimbal Rate & 0.011 & rad/s\\
+		rGB\_B & Position Vector of the VSCMG in the $\cal{B}$ frame & $\begin{bmatrix}
+		0.0& -0.05 & -0.0 \end{bmatrix}^T$ & m \\
 		\hline
 	\end{tabular}
 \end{table}
 
 \begin{table}[htbp]
-	\caption{VSCMG 1 parameters for friction tests}
-	\label{tab:rwFriction}
+	\caption{VSCMG 3 Parameters Across All Tests}
+	\label{tab:rw1}
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{ c | c | c | c } % Column formatting, 
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
-		Js  & Spin Axis Inertia & 0.159 & kg-m$^2$ \\
-		mass & mass & 12.0 & kg \\
-		gsHat\_B & Spin Axis in $\cal{B}$ frame & $\begin{bmatrix}
-		\frac{\sqrt{3}}{3} & \frac{\sqrt{3}}{3} & \frac{\sqrt{3}}{3} \end{bmatrix}^T$ & - \\
-		rWB\_B & Location of Wheel in $\cal{B}$ frame & $\begin{bmatrix}
-		0.5 & -0.5 & 0.5 \end{bmatrix}^T$ & m \\
+		gsHat0\_B &  $\hat{g_s}_0$ & $\begin{bmatrix}
+		0.0 & 0.0 & 1.0 \end{bmatrix}^T$ & \\
+		gtHat0\_B &  $\hat{g_t}_0$ & $\begin{bmatrix}
+		0.817 & 0.0 & 0.577 \end{bmatrix}^T$ & \\
+		ggHat\_B &  $\hat{g_g}_0$ & $\begin{bmatrix}
+		-0.577 & 0.0 & 0.817 \end{bmatrix}^T$ & \\
+		Omega & Initial Wheel Speed & -94.25 & rad/s \\
+		gammaDot & Gimbal Rate & -0.003 & rad/s\\
+		rGB\_B & Position Vector of the VSCMG in the $\cal{B}$ frame & $\begin{bmatrix}
+		-0.1 & 0.05 & 0.05 \end{bmatrix}^T$ & m \\
 		\hline
 	\end{tabular}
 \end{table}
 
 \begin{table}[htbp]
-	\caption{VSCMG 2 parameters for friction tests}
-	\label{tab:rwFriction2}
-	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c | c | c } % Column formatting, 
-		\hline
-		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
-		\hline
-		Js  & Spin Axis Inertia & 0.159 & kg-m$^2$ \\
-		mass & mass & 12.0 & kg \\
-		gsHat\_B & Spin Axis in $\cal{B}$ frame & $\begin{bmatrix}
-		\frac{\sqrt{3}}{3} & \frac{\sqrt{3}}{3} & \frac{\sqrt{3}}{3} \end{bmatrix}^T$ & - \\
-		rWB\_B & Location of Wheel in $\cal{B}$ frame & $\begin{bmatrix}
-		-0.5 & 0.5 & -0.5 \end{bmatrix}^T$ & m \\
-		\hline
-	\end{tabular}
-\end{table}
-
-\begin{table}[htbp]
-	\caption{Initial Conditions for Energy Momentum Conservation Scenarios}
+	\caption{Initial Conditions for Fully-Coupled Jitter Scenario with Gravity}
 	\label{tab:initial}
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{ c | c | c | c } % Column formatting, 
 		\hline
 		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
 		\hline
-		(RW 1) OmegaInit  & (RW 1) Initial $\Omega$ & 500 & RPM \\
-		(RW 2) OmegaInit  & (RW 2) Initial $\Omega$ & 200 & RPM \\
-		(RW 3) OmegaInit  & (RW 3) Initial $\Omega$ & -150 & RPM \\
 		r\_CN\_NInit & Initial Position of S/C & $\begin{bmatrix}
 		-4020339 &	7490567 & 5248299 
 		\end{bmatrix}^T$ & m \\
 		v\_CN\_NInit & Initial Velocity of S/C & $\begin{bmatrix}
 		-5199.78 & -3436.68 & 1041.58
 		\end{bmatrix}^T$ & m/s \\
-		sigma\_BNInit & Initial MRP of $\cal{B}$ frame & $\begin{bmatrix}
-		0.0 & 0.0 & 0.0
-		\end{bmatrix}^T$ & - \\
-		omega\_BN\_BInit & Initial Angular Velocity of $\cal{B}$ frame & $\begin{bmatrix}
-		0.08 & & 0.01 & 0.0
-		\end{bmatrix}^T$ & rad/s \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+	\caption{Initial Conditions for Fully-Coupled Jitter Scenario without Gravity}
+	\label{tab:initial}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c | c | c } % Column formatting, 
+		\hline
+		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
+		\hline
+		r\_CN\_NInit & Initial Position of S/C & $\begin{bmatrix}
+		0.1 &	-0.2 & 0.3
+		\end{bmatrix}^T$ & m \\
+		v\_CN\_NInit & Initial Velocity of S/C & $\begin{bmatrix}
+		-0.4 & -0.5 & -0.8
+		\end{bmatrix}^T$ & m/s \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+	\caption{VSCMG Wheel and Gimbal Torque for Simple Jitter and Fully-Coupled Jitter Scenario without Gravity Scenarios}
+	\label{tab:initial}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c | c | c } % Column formatting, 
+		\hline
+		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
+		\hline
+		wheelTorque & Torque on VSCMG Wheel & $\begin{bmatrix}
+		0.001 &	 0.005 & -0.009
+		\end{bmatrix}^T$ & N-m \\
+		gimbalTorque & Torque on VSCMG Gimbal & $\begin{bmatrix}
+		0.008 & -0.0015 & -0.006
+		\end{bmatrix}^T$ & N-m \\
 		\hline
 	\end{tabular}
 \end{table}
@@ -196,9 +228,9 @@ Since this is an integrated test, the inputs to the test are the physical parame
 		\hline
 		Test   & Relative Tolerance \\
 		\hline
-		Energy and Momentum Conservation & 1e-8 \\
+		Energy and Momentum Conservation & 1e-10 \\
 		\hline
-		Position, Attitude Check & 1e-8 \\
+		Position, Attitude Check & 1e-7 \\
 		\hline	
 	\end{tabular}
 \end{table}
@@ -207,7 +239,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 
 \section{Test Results}
 
-\subsection{Balanced Wheels Scenario - Integrated Test Results}
+\subsection{Balanced Wheels Scenario - Integrated Test Plots}
 
 \input{AutoTex/ChangeInOrbitalAngularMomentumBalancedWheels}
 \input{AutoTex/ChangeInOrbitalEnergyBalancedWheels}
@@ -216,7 +248,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 
 \clearpage
 
-\subsection{Fully Coupled Jitter Scenario - Integrated Test Results}
+\subsection{Fully Coupled Jitter Scenario - Integrated Test Plots}
 
 \input{AutoTex/ChangeInOrbitalAngularMomentumJitterFullyCoupled}
 \input{AutoTex/ChangeInOrbitalEnergyJitterFullyCoupled}
@@ -225,7 +257,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 
 \clearpage
 
-\subsection{Fully Coupled Jitter with Gravity Scenario - Integrated Test Results}
+\subsection{Fully Coupled Jitter with Gravity Scenario - Integrated Test Plots}
 
 \input{AutoTex/ChangeInOrbitalAngularMomentumJitterFullyCoupledGravity}
 \input{AutoTex/ChangeInOrbitalEnergyJitterFullyCoupledGravity}

@@ -213,8 +213,8 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
         cmdArray.wheelTorque = [0.0, 0.0, 0.0]  # [Nm]
         cmdArray.gimbalTorque = [0.0, 0.0, 0.0]  # [Nm]
     else:
-        cmdArray.wheelTorque = [0.001, 0.005, -0.009] # [Nm]  use [0.0, 0.0, 0.0] to test energy conservation
-        cmdArray.gimbalTorque = [0.008, -0.0015, -0.006] # [Nm] use [0.0, 0.0, 0.0] to test energy conservation
+        cmdArray.wheelTorque = [0.001, 0.005, -0.009] # [Nm]
+        cmdArray.gimbalTorque = [0.008, -0.0015, -0.006] # [Nm]
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
                                rwCommandName,
@@ -472,7 +472,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
         plt.show()
 
 
-    accuracy = 1e-8
+    accuracy = 1e-7
     for i in range(0,len(truePos)):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
@@ -492,6 +492,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
                 testFailCount += 1
                 testMessages.append("FAILED: VSCMG Integrated Test failed jitter unit test")
 
+    accuracy = 1e-10
     if testCase == 'BalancedWheels' or testCase == 'JitterFullyCoupled':
 
         for i in range(0,len(initialOrbAngMom_N)):
