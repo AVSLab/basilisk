@@ -23,7 +23,7 @@ from Basilisk.utilities import macros as mc
 from Basilisk.fswAlgorithms import (hillPoint, inertial3D, attTrackingError, MRP_Feedback,
                                     rwMotorTorque, fswMessages,
                                     velocityPoint, MRP_Steering, rateServoFullNonlinear,
-                                    sunSafePoint, cssWlsEst)
+                                    sunSafePoint, cssWlsEst, rateMsgConverter)
 import numpy as np
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import fswSetupRW
@@ -80,6 +80,10 @@ class BSKFswModels():
         self.rwMotorTorqueData = rwMotorTorque.rwMotorTorqueConfig()
         self.rwMotorTorqueWrap = SimBase.setModelDataWrap(self.rwMotorTorqueData)
         self.rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
+
+        self.rateMsgConverterConfig = rateMsgConverter.rateMsgConverterConfig()
+        self.rateMsgConverterWrap = SimBase.setModelDataWrap(self.rateMsgConverterConfig)
+        self.rateMsgConverterWrap.ModelTag = "rateMsgConverter"
         
         # Initialize all modules
         self.InitAllFSWObjects(SimBase)
@@ -102,6 +106,7 @@ class BSKFswModels():
         
         SimBase.AddModelToTask("sunSafePointTask", self.sunSafePointWrap, self.sunSafePointData, 10)
         SimBase.AddModelToTask("sunSafePointTask", self.cssWlsEstWrap, self.cssWlsEstData, 9)
+        SimBase.AddModelToTask("sunSafePointTask", self.rateMsgConverterWrap, self.rateMsgConverterConfig, 8)
         
         SimBase.AddModelToTask("velocityPointTask", self.velocityPointWrap, self.velocityPointData, 10)
         SimBase.AddModelToTask("velocityPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
@@ -166,8 +171,11 @@ class BSKFswModels():
         self.hillPointData.inputCelMessName = SimBase.DynModels.gravFactory.gravBodies['earth'].bodyInMsgName[:-12]
 
     def SetSunSafePointGuidance(self, SimBase):
+        self.rateMsgConverterConfig.navRateOutMsgName = 'imu_nav_output'
+        self.rateMsgConverterConfig.imuRateInMsgName = SimBase.DynModels.imuObject.OutputDataMsg
+
         self.sunSafePointData.attGuidanceOutMsgName = "att_guidance"
-        self.sunSafePointData.imuInMsgName = SimBase.DynModels.imuObject.OutputDataMsg
+        self.sunSafePointData.imuInMsgName = self.rateMsgConverterConfig.navRateOutMsgName #SimBase.DynModels.imuObject.OutputDataMsg
         self.sunSafePointData.sunDirectionInMsgName = self.cssWlsEstData.navStateOutMsgName
         self.sunSafePointData.sHatBdyCmd = [0.0, 0.0, 1.0]
 

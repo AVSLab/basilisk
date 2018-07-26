@@ -109,6 +109,7 @@ class BSKDynamicModels():
 
     def SetSimpleNavObject(self):
         self.simpleNavObject.ModelTag = "SimpleNavigation"
+        self.simpleNavObject.inputStateName = self.scObject.scStateOutMsgName
     
     def SetImuSensor(self):
         self.imuObject.InputStateMsg = self.scObject.scStateOutMsgName
