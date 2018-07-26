@@ -87,11 +87,15 @@ from matplotlib.cm import jet
 # This import is for reaggregating data when zooming if that is ever pursued
 from datashader.bokeh_ext import InteractiveImage
 from itertools import izip, count
+import matplotlib.pyplot as plt
+from scipy.misc import imread
+from bokeh.plotting import figure, show, output_file
+import matplotlib.cbook as cbook
+from bokeh.plotting import figure, show, output_file
 
-
-NUMBER_OF_RUNS = 1000
+NUMBER_OF_RUNS = 500
 VERBOSE = True
-ONLY_GRAPH = 0
+ONLY_GRAPH = 1
 
 # Here are the name of some messages that we want to retain or otherwise use
 inertial3DConfigOutputDataName = "guidanceInertial3D"
@@ -137,7 +141,7 @@ rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
 # We also will need the simulationTime and samplingTimes
 numDataPoints = 1000
-simulationTime = macros.min2nano(60.)
+simulationTime = macros.min2nano(10.)
 samplingTime = simulationTime / (numDataPoints-1)
 
 ## \defgroup Tutorials_5_0
@@ -839,6 +843,7 @@ def saveDataframesToFile():
     for dataframe, index in zip(globalDataFrames, retainedDataList):
         path = mainDirectoryName + subDirectories[0] + "/" + index + ".csv"
         dataframe.to_csv(path, encoding = 'utf-8', index = False)
+
     print "done writing csv..", datetime.datetime.now()
 
 
@@ -872,6 +877,8 @@ def configureGraph(data):
     # and instead just use the global dataframes to plot the data. However, writing to file
     # can be advantageous since you can toggle ONLY_GRAPH to skip all of the simulating and
     # solely graph the data.
+    print "beginning graphing process", datetime.datetime.now()
+
     df = pd.read_csv(
         "data/mc1/" + data + ".csv")
 
@@ -890,13 +897,13 @@ def configureGraph(data):
     # curvesz = hv.Curve(df[['0', '3']])
     # layout = curvesx * curvesy * curvesz
     df = concat_columns(df)
+
+    # Filter the data
     # df = df[df['x'] < 2.6e+12]
     # df.to_csv("filtered.csv", encoding='utf-8', index=False)
-    print df.tail()
 
     # Plot the columns (x,y)
     curves = hv.Curve(df)
-
 
     # Instantiate a renderer using bokeh's interface, and generating an html file
     renderer = hv.renderer('bokeh').instance(fig='html')
@@ -921,7 +928,7 @@ def configureGraph(data):
     # export_image(stacked, data)
 
     # Set range of x and y axis (zooming via code)
-    x_range = df.x.min(), df.x.max() / 15
+    x_range = df.x.min(), df.x.max() / 10
     y_range = df.y.min(), df.y.max()
 
     # Set the width and height of the images dimensions
@@ -954,6 +961,8 @@ def configureGraph(data):
     # create_image(agg, cm(viridis), "eq_hist", 'white', data+"_viridis")
     create_image(agg, 'default', 'eq_hist', 'white', data+"_default")
 
+    print "done graphing...", datetime.datetime.now()
+
 # Helper function to create an image based on agg, color, the function to determine depth
 # background and name of the file to export.
 def create_image(agg, color, how, background, name):
@@ -964,6 +973,7 @@ def create_image(agg, color, how, background, name):
     if background != 'none':
         img = tf.set_background(img, background)
     export_image(img, name)
+
 
 # This method changes the shape of our dataframe from:
 # 0 1 2 3
