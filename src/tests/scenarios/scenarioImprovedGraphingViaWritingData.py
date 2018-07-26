@@ -94,7 +94,7 @@ import matplotlib.cbook as cbook
 from bokeh.plotting import figure, show, output_file
 from bokeh.models import Range1d
 
-NUMBER_OF_RUNS = 500
+NUMBER_OF_RUNS = 100
 VERBOSE = True
 ONLY_GRAPH = 1
 
@@ -897,6 +897,13 @@ def configureGraph(data, yAxisLabel):
     # an outlier to a specific run
     # findOutliers(df, data)
 
+    # Few lines to help with create different color maps.
+    background = "black"
+    cm = partial(colormap_select, reverse=(background != "black"))
+    grays2 = cm([(i, i, i) for i in np.linspace(0, 255, 99)])
+    grays2 += ["red"]
+
+
     # Concat the columns so all of the columns are now in 2 column and have been concatanated
     # If you'd rather keep all of columns and plot one against another column multiple times do this:
     # This plots columns labeled 1,2,3 against column 0 (time) and combines them into a layout. then you
@@ -926,7 +933,11 @@ def configureGraph(data, yAxisLabel):
     # Pass a datashaded version of the layout to the get_plot function, to return a bokeh figure
     # called 'plot'. Then set the figure details such as title, dimensions, axis labels etc.
     # Then finally, show the plot in the browser.
+    # passing a value for cmap within the datashade function call will change the color of the
+    # plots in the html. See below for more examples of cmaps
+    # plot = renderer.get_plot(datashade(curves, dynamic = False, cmap= cm(viridis)).opts(plot=dict(fig_size=1000, aspect='equal'))).state
     plot = renderer.get_plot(datashade(curves, dynamic = False).opts(plot=dict(fig_size=1000, aspect='equal'))).state
+
     plot.plot_width = 800
 
     #If you want to zoom in on the image, set it here.
@@ -967,12 +978,6 @@ def configureGraph(data, yAxisLabel):
     # to the number of of curves that cross the pixel
     # (darker means more curves go on that pixel).
     agg = cvs.line(df, 'x', 'y', ds.count())
-
-    # Few lines to help with create different color maps.
-    # background = "black"
-    # cm = partial(colormap_select, reverse=(background != "black"))
-    # grays2 = cm([(i, i, i) for i in np.linspace(0, 255, 99)])
-    # grays2 += ["red"]
 
     # How can be 'linear' 'log' or 'eq_hist'. Here is a collection of different calls
     # to create the same image with different color schemes
