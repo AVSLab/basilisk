@@ -50,7 +50,6 @@ class BSKDynamicModels():
         self.simpleNavObject = simple_nav.SimpleNav()
         self.eclipseObject = eclipse.Eclipse()
         self.CSSConstellationObject = coarse_sun_sensor.CSSConstellation()
-        self.imuObject = imu_sensor.ImuSensor()
         self.rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
         self.thrustersDynamicEffector = thrusterDynamicEffector.ThrusterDynamicEffector()
 
@@ -64,7 +63,6 @@ class BSKDynamicModels():
         SimBase.AddModelToTask(self.taskName, self.gravFactory.spiceObject, 200)
         SimBase.AddModelToTask(self.taskName, self.CSSConstellationObject, None, 108)
         SimBase.AddModelToTask(self.taskName, self.eclipseObject, None, 204)
-        SimBase.AddModelToTask(self.taskName, self.imuObject, None, 205)
         SimBase.AddModelToTask(self.taskName, self.rwStateEffector, None, 301)
         SimBase.AddModelToTask(self.taskName, self.extForceTorqueObject, None, 300)
 
@@ -109,12 +107,6 @@ class BSKDynamicModels():
 
     def SetSimpleNavObject(self):
         self.simpleNavObject.ModelTag = "SimpleNavigation"
-        self.simpleNavObject.inputStateName = self.scObject.scStateOutMsgName
-    
-    def SetImuSensor(self):
-        self.imuObject.InputStateMsg = self.scObject.scStateOutMsgName
-        self.imuObject.OutputDataMsg = "imu_sensor_output"
-    
     
     def SetReactionWheelDynEffector(self):
         # Make a fresh RW factory instance, this is critical to run multiple times
@@ -223,7 +215,6 @@ class BSKDynamicModels():
         self.SetSimpleNavObject()
         self.SetEclipseObject()
         self.SetCSSConstellation()
-        self.SetImuSensor()
         
         self.SetReactionWheelDynEffector()
         self.SetThrusterStateEffector()
