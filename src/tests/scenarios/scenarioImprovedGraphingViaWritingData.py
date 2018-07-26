@@ -86,11 +86,12 @@ from bokeh.palettes import GnBu9
 from matplotlib.cm import jet
 # This import is for reaggregating data when zooming if that is ever pursued
 from datashader.bokeh_ext import InteractiveImage
+from itertools import izip, count
 
 
 NUMBER_OF_RUNS = 1000
 VERBOSE = True
-ONLY_GRAPH = 1
+ONLY_GRAPH = 0
 
 # Here are the name of some messages that we want to retain or otherwise use
 inertial3DConfigOutputDataName = "guidanceInertial3D"
@@ -109,10 +110,6 @@ sNavObjectOutputTransName_r_BN_N = sNavObjectOutputTransName + ".r_BN_N"
 mrpControlConfigInputRWSpeedsName_wheelSpeeds = mrpControlConfigInputRWSpeedsName + ".wheelSpeeds"
 fswRWVoltageConfigVoltageOutMsgName_voltage = fswRWVoltageConfigVoltageOutMsgName + ".voltage"
 
-# Create a list of retained data names to loop through while graphing
-retainedDataList = [attErrorConfigOutputDataName_sigma_BR,
-                    attErrorConfigOutputDataName_omega_BR_B, sNavObjectOutputTransName_r_BN_N,
-                    mrpControlConfigInputRWSpeedsName_wheelSpeeds, fswRWVoltageConfigVoltageOutMsgName_voltage, rwMotorTorqueConfigOutputDataName_motorTorque]
 
 # Set global dataframes to populate with data when executing callbacks
 rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame = pd.DataFrame()
@@ -121,6 +118,20 @@ attErrorConfigOutputDataName_omega_BR_B_dataFrame = pd.DataFrame()
 sNavObjectOutputTransName_r_BN_N_dataFrame = pd.DataFrame()
 mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame = pd.DataFrame()
 fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame = pd.DataFrame()
+
+
+# Create a list of retained data names to loop through while graphing. This is the index
+# for the global dataframes
+retainedDataList = [attErrorConfigOutputDataName_sigma_BR,
+                    attErrorConfigOutputDataName_omega_BR_B, sNavObjectOutputTransName_r_BN_N,
+                    mrpControlConfigInputRWSpeedsName_wheelSpeeds, fswRWVoltageConfigVoltageOutMsgName_voltage, rwMotorTorqueConfigOutputDataName_motorTorque]
+
+globalDataFrames = [attErrorConfigOutputDataName_sigma_BR_dataFrame, attErrorConfigOutputDataName_omega_BR_B_dataFrame,
+                   sNavObjectOutputTransName_r_BN_N_dataFrame, mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame,
+                   fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame, rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame]
+
+mainDirectoryName = "data/"
+subDirectories = ["/mc1/", "/mc1_images/"]
 
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
@@ -485,6 +496,8 @@ def run(saveFigures, case, show_plots):
         # And possibly show the plots
         if show_plots:
             print "Test concluded, showing plots now...", datetime.datetime.now()
+            #TODO change this only showing, otherwise saving data?
+            writeDirectories()
             saveDataframesToFile()
             graph()
             print "done graphing. ", datetime.datetime.now()
@@ -766,36 +779,13 @@ def executeScenario(sim):
 def plotSim(data, retentionPolicy):
 
     # Get the data from messages using the global data names
-    dataUsReq = data["messages"][rwMotorTorqueConfigOutputDataName_motorTorque]
-    dataSigmaBR = data["messages"][attErrorConfigOutputDataName_sigma_BR]
-    dataOmegaBR = data["messages"][attErrorConfigOutputDataName_omega_BR_B]
-    dataPos = data["messages"][sNavObjectOutputTransName_r_BN_N]
-    dataOmegaRW = data["messages"][mrpControlConfigInputRWSpeedsName_wheelSpeeds]
-    dataVolt = data["messages"][fswRWVoltageConfigVoltageOutMsgName_voltage]
+    global globalDataFrames
 
-    # Get the current run number from the data
-    run_number = data["index"]
+    for i, dataframe, index in izip(count(), globalDataFrames, retainedDataList):
+        dataMessage = data["messages"][index]
+        globalDataFrames[i] = updateDataframes(dataMessage, dataframe)
 
-    # Use the global keyword to be able to modify global dataframes in this functions scope.
-    global time_dataFrame
-    global rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame
-    global attErrorConfigOutputDataName_sigma_BR_dataFrame
-    global attErrorConfigOutputDataName_omega_BR_B_dataFrame
-    global sNavObjectOutputTransName_r_BN_N_dataFrame
-    global mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame
-    global fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame
-
-    # Update the dataframes by appending the current run to the dataframe.
-    # It is needed to set the dataframe to the result of updateDataFrame because globals
-    # cannot be passed as arguments to functions without being declared
-    rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame = updateDataframes(dataUsReq, rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame)
-    attErrorConfigOutputDataName_sigma_BR_dataFrame = updateDataframes(dataSigmaBR, attErrorConfigOutputDataName_sigma_BR_dataFrame)
-    attErrorConfigOutputDataName_omega_BR_B_dataFrame = updateDataframes(dataOmegaBR, attErrorConfigOutputDataName_omega_BR_B_dataFrame)
-    sNavObjectOutputTransName_r_BN_N_dataFrame = updateDataframes(dataPos, sNavObjectOutputTransName_r_BN_N_dataFrame)
-    mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame = updateDataframes(dataOmegaRW, mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame)
-    fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame = updateDataframes(dataVolt, fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame)
-
-
+# TODO modify this
 def plotSimAndSave(data, retentionPolicy):
 
     figureList = plotSim(data, retentionPolicy)
@@ -808,11 +798,11 @@ def plotSimAndSave(data, retentionPolicy):
     return
 
 # Write directories based on monte carlo name and sub directory name
+# TODO make the directory names global
 def writeDirectories():
-    monteCarloName = "/mc1/"
-    mainDirectoryName = "data/"
-    path = mainDirectoryName + monteCarloName
-    systemWriteDirectories(path)
+    for subDirectoryName in subDirectories:
+        path = mainDirectoryName + subDirectoryName
+        systemWriteDirectories(path)
 
 # Helper function for writing directories
 def systemWriteDirectories(path):
@@ -820,8 +810,6 @@ def systemWriteDirectories(path):
         os.makedirs(path)
     except OSError:
         print "Creating failed, may be a directory there already"
-    else:
-        print "success"
 
 # This methods adds the next run of the monte carlo below the previous run, with the two runs separated
 # by a row of NaN values.
@@ -848,27 +836,9 @@ def saveDataframesToFile():
 
     print "beginning writing csv..", datetime.datetime.now()
 
-    monteCarloName = "/mc1/"
-    mainDirectoryName = "data/"
-
-    path = mainDirectoryName + monteCarloName + "/" + rwMotorTorqueConfigOutputDataName_motorTorque + ".csv"
-    rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame.to_csv(path, encoding='utf-8', index=False)
-
-    path = mainDirectoryName + monteCarloName + "/" + attErrorConfigOutputDataName_sigma_BR + ".csv"
-    attErrorConfigOutputDataName_sigma_BR_dataFrame.to_csv(path, encoding='utf-8', index=False)
-
-    path = mainDirectoryName + monteCarloName + "/" + attErrorConfigOutputDataName_omega_BR_B + ".csv"
-    attErrorConfigOutputDataName_omega_BR_B_dataFrame.to_csv(path, encoding='utf-8', index=False)
-
-    path = mainDirectoryName + monteCarloName + "/" + sNavObjectOutputTransName_r_BN_N + ".csv"
-    sNavObjectOutputTransName_r_BN_N_dataFrame.to_csv(path, encoding='utf-8', index=False)
-
-    path = mainDirectoryName + monteCarloName + "/" + mrpControlConfigInputRWSpeedsName_wheelSpeeds + ".csv"
-    mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame.to_csv(path, encoding='utf-8', index=False)
-
-    path = mainDirectoryName + monteCarloName + "/" + fswRWVoltageConfigVoltageOutMsgName_voltage + ".csv"
-    fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame.to_csv(path, encoding='utf-8', index=False)
-
+    for dataframe, index in zip(globalDataFrames, retainedDataList):
+        path = mainDirectoryName + subDirectories[0] + "/" + index + ".csv"
+        dataframe.to_csv(path, encoding = 'utf-8', index = False)
     print "done writing csv..", datetime.datetime.now()
 
 
@@ -934,13 +904,13 @@ def configureGraph(data):
     # Pass a datashaded version of the layout to the get_plot function, to return a bokeh figure
     # called 'plot'. Then set the figure details such as title, dimensions, axis labels etc.
     # Then finally, show the plot in the browser.
-    plot = renderer.get_plot(datashade(curves, dynamic = False).opts(plot=dict(fig_size=10000, aspect='equal'))).state
+    plot = renderer.get_plot(datashade(curves, dynamic = False).opts(plot=dict(fig_size=1000, aspect='equal'))).state
     plot.plot_width = 800
     plot.plot_height = 500
     plot.title.text = data
     plot.xaxis.axis_label = "Time"
     plot.yaxis.axis_label = data
-    # show(plot)
+    show(plot)
 
     # Create an empty list of imgs to be filled, and set the canvas to put the images on.
     # This can be useful for combining multiple images of graphs that have been aggregated and shaded accordingly
@@ -967,10 +937,10 @@ def configureGraph(data):
     agg = cvs.line(df, 'x', 'y', ds.count())
 
     # Few lines to help with create different color maps.
-    background = "black"
-    cm = partial(colormap_select, reverse=(background != "black"))
-    grays2 = cm([(i, i, i) for i in np.linspace(0, 255, 99)])
-    grays2 += ["red"]
+    # background = "black"
+    # cm = partial(colormap_select, reverse=(background != "black"))
+    # grays2 = cm([(i, i, i) for i in np.linspace(0, 255, 99)])
+    # grays2 += ["red"]
 
     # How can be 'linear' 'log' or 'eq_hist'. Here is a collection of different calls
     # to create the same image with different color schemes
@@ -1044,7 +1014,7 @@ def findOutliers(df, data):
 # a directory called "image". This is a variant of the export_image function
 # built into the datashader API to make a little simpler to use)
 def export_image(img, filename, fmt=".png", _return=True):
-    export_path = "image/"
+    export_path = mainDirectoryName + subDirectories[1]
     if not os.path.exists(export_path):
         os.mkdir(export_path)
 
