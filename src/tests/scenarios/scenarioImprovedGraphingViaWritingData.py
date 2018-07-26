@@ -92,6 +92,7 @@ from scipy.misc import imread
 from bokeh.plotting import figure, show, output_file
 import matplotlib.cbook as cbook
 from bokeh.plotting import figure, show, output_file
+from bokeh.models import Range1d
 
 NUMBER_OF_RUNS = 500
 VERBOSE = True
@@ -124,16 +125,25 @@ mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame = pd.DataFrame()
 fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame = pd.DataFrame()
 
 
-# Create a list of retained data names to loop through while graphing. This is the index
-# for the global dataframes
+# Create a list of retained data names to loop through while graphing. The CSV files are named by this list of strings
+# so you can use this list as a way to loop through all of the data and graph.
 retainedDataList = [attErrorConfigOutputDataName_sigma_BR,
                     attErrorConfigOutputDataName_omega_BR_B, sNavObjectOutputTransName_r_BN_N,
                     mrpControlConfigInputRWSpeedsName_wheelSpeeds, fswRWVoltageConfigVoltageOutMsgName_voltage, rwMotorTorqueConfigOutputDataName_motorTorque]
 
+# Global list of dataframes that are populated from executing callback
+# The order of these dataframes MUST be the same order as the retainedDataList.
+# The retainedDataList[0] is the string name that corresponds to globalDataFrames[0]. This way we can look through
+# both lists using zip(). By changing these lists, you've basically completed everything for
+# retaining and graphing data other then having lines such as:
+# retentionPolicy.addMessageLog(rwMotorTorqueConfigOutputDataName, [("motorTorque", range(5))], samplingTime)
 globalDataFrames = [attErrorConfigOutputDataName_sigma_BR_dataFrame, attErrorConfigOutputDataName_omega_BR_B_dataFrame,
                    sNavObjectOutputTransName_r_BN_N_dataFrame, mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame,
                    fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame, rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame]
 
+# List of y axis labels, same order as globalDataFrames etc.
+yAxisLabelList = ["Attitude Error Sigma_br", "Attitude Error omage_br_b", "Navifational Trans _r_bn_n",
+                  "Reaction Wheel Speeds", "Flight Software Voltage Out", "Reaction Wheel Motor Torque"]
 mainDirectoryName = "data/"
 subDirectories = ["/mc1/", "/mc1_images/"]
 
@@ -850,8 +860,8 @@ def saveDataframesToFile():
 # This method is the driver method for graphing all of the data. It loops through the retained data list (strings)
 # and graphs the corresponding csv file for each retained data
 def graph():
-    for data in retainedDataList:
-        configureGraph(data)
+    for data, yAxisLabel in zip(retainedDataList, yAxisLabelList):
+        configureGraph(data, yAxisLabel)
 
 # This method reads data from the csv files, and converts them into dataframes. It currently plots
 # the data via holoviews framework, and datashades the plot. It passes this plot to the bokeh front end
@@ -871,7 +881,7 @@ def graph():
 #     color=[color, color, color], alpha=[0.3, 0.3, 0.3], line_width=2)
 #     output_file("data/mc1/"+data+".html")
 #     save(p)
-def configureGraph(data):
+def configureGraph(data, yAxisLabel):
     # Read csv file and create a dataframe from it.
     # If the user doesn't want to write any data to disc, the user can not write any data
     # and instead just use the global dataframes to plot the data. However, writing to file
@@ -896,11 +906,16 @@ def configureGraph(data):
     # curvesy = hv.Curve(df[['0', '2']])
     # curvesz = hv.Curve(df[['0', '3']])
     # layout = curvesx * curvesy * curvesz
+
     df = concat_columns(df)
 
     # Filter the data
-    # df = df[df['x'] < 2.6e+12]
+
     # df.to_csv("filtered.csv", encoding='utf-8', index=False)
+
+    #
+    # NOW PLOTTING VIA HOLOVIEWS AND DATASHADER. Created html file with graphs and axis information etc.
+    #
 
     # Plot the columns (x,y)
     curves = hv.Curve(df)
@@ -913,11 +928,20 @@ def configureGraph(data):
     # Then finally, show the plot in the browser.
     plot = renderer.get_plot(datashade(curves, dynamic = False).opts(plot=dict(fig_size=1000, aspect='equal'))).state
     plot.plot_width = 800
+
+    #If you want to zoom in on the image, set it here.
+    plot.x_range = Range1d(df.x.min(), df.x.max())
+    plot.y_range = Range1d(df.y.min(), df.y.max())
+
     plot.plot_height = 500
     plot.title.text = data
     plot.xaxis.axis_label = "Time"
-    plot.yaxis.axis_label = data
+    plot.yaxis.axis_label = yAxisLabel
     show(plot)
+
+    #
+    # NOW PLOTTING VIA SOLELY DATASHADER AND SAVING THE GRAPHS AS PNGS.
+    #
 
     # Create an empty list of imgs to be filled, and set the canvas to put the images on.
     # This can be useful for combining multiple images of graphs that have been aggregated and shaded accordingly
@@ -928,12 +952,13 @@ def configureGraph(data):
     # export_image(stacked, data)
 
     # Set range of x and y axis (zooming via code)
-    x_range = df.x.min(), df.x.max() / 10
+    x_range = df.x.min(), df.x.max()
     y_range = df.y.min(), df.y.max()
 
     # Set the width and height of the images dimensions
     height = 1000
     width = 2 * height
+
     # Instantiate a canvas object to put the graphs on
     cvs = ds.Canvas(plot_height=height, plot_width=width, x_range=x_range, y_range=y_range)
 
