@@ -362,6 +362,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     finalRotEnergy = [
                 [rotEnergy[-1,0], rotEnergy[-1,1]]
                  ]
+    plt.close("all")
     plt.figure()
     plt.plot(orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,1] - orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,2] - orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,3] - orbAngMom_N[0,3])
     plt.title("Change in Orbital Angular Momentum")
