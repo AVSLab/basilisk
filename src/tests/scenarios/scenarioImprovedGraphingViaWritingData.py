@@ -812,7 +812,6 @@ def plotSimAndSave(data, retentionPolicy):
     return
 
 # Write directories based on monte carlo name and sub directory name
-# TODO make the directory names global
 def writeDirectories():
     for subDirectoryName in subDirectories:
         path = mainDirectoryName + subDirectoryName
@@ -948,7 +947,7 @@ def configureGraph(data, yAxisLabel):
     plot.title.text = data
     plot.xaxis.axis_label = "Time"
     plot.yaxis.axis_label = yAxisLabel
-    show(plot)
+    # show(plot)
 
     #
     # NOW PLOTTING VIA SOLELY DATASHADER AND SAVING THE GRAPHS AS PNGS.
@@ -963,11 +962,11 @@ def configureGraph(data, yAxisLabel):
     # export_image(stacked, data)
 
     # Set range of x and y axis (zooming via code)
-    x_range = df.x.min(), df.x.max()
+    x_range = df.x.min(), df.x.max() / 15
     y_range = df.y.min(), df.y.max()
 
     # Set the width and height of the images dimensions
-    height = 1000
+    height = 800
     width = 2 * height
 
     # Instantiate a canvas object to put the graphs on
@@ -986,9 +985,9 @@ def configureGraph(data, yAxisLabel):
     # create_image(agg, cm(Greys9, 0.25), "eq_hist", 'black', data+"greys9_blackbg")
     # create_image(agg, cm(fire, 0.2), 'log','black', data+"_fire_blackbg")
     # create_image(agg, ['aqua', 'lime', 'fuchsia', 'yellow'], 'log','black', data+"_aqua_lime_blackbg")
-    # create_image(agg, GnBu9, 'log', 'black', data+"_gnu_blackbg")
+    create_image(agg, GnBu9, 'log', 'black', data+"_gnu_blackbg")
     # create_image(agg, jet, 'log', 'black', data+"jet_blackbg")
-    # create_image(agg, cm(viridis), "eq_hist", 'white', data+"_viridis")
+    create_image(agg, cm(viridis), "eq_hist", 'white', data+"_viridis")
     create_image(agg, 'default', 'eq_hist', 'white', data+"_default")
 
     print "done graphing...", datetime.datetime.now()
