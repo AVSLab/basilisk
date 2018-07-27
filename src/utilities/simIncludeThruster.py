@@ -45,18 +45,85 @@ class thrusterFactory(object):
         :param thrusterType : string
                 thruster manufacturing name.:
         :param r_B : list
-                list of thruster locations in B-frame components:
+                vector with thruster location in B-frame components:
         :param tHat_B : list
-                list of thruster direction unit vectors:
+                vector with thruster force direction unit vector:
         :param kwargs:
             useMinPulseTime: BOOL
                 flag if the thruster model should use a minimum impulse time
+            areaNozzle: float
+                thruster nozzle exhaust cone exit area
+            steadyIsp: float
+                thruster fuel efficiency in Isp (seconds)
+            MaxThrust: float
+                maximum thruster force in Newtons
+            thrusterMagDisp: float
+                thruster dispersion percentage
+            MinOnTime: float
+                thruster minimum on time
         :return:
             thrConfigSimMsg : message structure
                 A handle to the thruster configuration message
         """
         # create the blank thruster object
         TH = simMessages.THRConfigSimMsg()
+
+        # set default thruster values
+        TH.areaNozzle = 0.1         # [m^2]
+        TH.steadyIsp = 100          # [s]
+        TH.MaxThrust = 0.200        # [N]
+        TH.thrusterMagDisp = 0.0    # [%]
+        TH.MinOnTime = 0.020        # [s]
+
+        # populate the thruster object with the type specific parameters
+        try:
+            eval('self.' + thrusterType + '(TH)')
+        except:
+            print 'ERROR: Thruster type ' + thrusterType + ' is not implemented'
+            exit(1)
+
+        # set device states from the input arguments.  Note that these may override what is set in
+        # the above function call
+        if kwargs.has_key('areaNozzle'):
+            varAreaNozzle = kwargs['areaNozzle']
+            if not isinstance(varAreaNozzle, (float)):
+                print 'ERROR: areaNozzle must be a float argument'
+                exit(1)
+            else:
+                TH.areaNozzle = varAreaNozzle
+
+        if kwargs.has_key('steadyIsp'):
+            varSteadyIsp = kwargs['steadyIsp']
+            if not isinstance(varSteadyIsp, (float)):
+                print 'ERROR: steadyIsp must be a float argument'
+                exit(1)
+            else:
+                TH.steadyIsp = varSteadyIsp
+
+        if kwargs.has_key('MaxThrust'):
+            varMaxThrust = kwargs['MaxThrust']
+            if not isinstance(varMaxThrust, (float)):
+                print 'ERROR: MaxThrust must be a float argument'
+                exit(1)
+            else:
+                TH.MaxThrust = varMaxThrust
+
+        if kwargs.has_key('thrusterMagDisp'):
+            varThrusterMagDisp = kwargs['thrusterMagDisp']
+            if not isinstance(varMaxThrust, (float)):
+                print 'ERROR: varThrusterMagDisp must be a float argument'
+                exit(1)
+            else:
+                TH.thrusterMagDisp = varThrusterMagDisp
+
+        if kwargs.has_key('MinOnTime'):
+            varMinOnTime = kwargs['MinOnTime']
+            if not isinstance(varMinOnTime, (float)):
+                print 'ERROR: MinOnTime must be a float argument'
+                exit(1)
+            else:
+                TH.MinOnTime = varMinOnTime
+
 
         if kwargs.has_key('useMinPulseTime'):
             varUseMinPulseTime = kwargs['useMinPulseTime']
@@ -65,8 +132,9 @@ class thrusterFactory(object):
                 exit(1)
         else:
             varUseMinPulseTime = False  # default value
+        if not varUseMinPulseTime:
+            TH.MinOnTime = 0.0
 
-        # set device label name
         if kwargs.has_key('label'):
             varLabel = kwargs['label']
             if not isinstance(varLabel, (basestring)):
@@ -79,14 +147,7 @@ class thrusterFactory(object):
             varLabel = 'TH' + str(len(self.thrusterList) + 1)  # default device labeling
         TH.label = varLabel
 
-        # populate the thruster object with the type specific parameters
-        try:
-            eval('self.' + thrusterType + '(TH)')
-        except:
-            print 'ERROR: Thruster type ' + thrusterType + ' is not implemented'
-            exit(1)
-
-        # set thruster direction axis
+        # set thruster force direction axis
         norm = numpy.linalg.norm(tHat_B)
         if norm > 1e-10:
             tHat_B = tHat_B / norm
@@ -97,10 +158,6 @@ class thrusterFactory(object):
 
         # set thruster position vector
         TH.thrLoc_B = [[r_B[0]], [r_B[1]], [r_B[2]]]
-
-        # enforce Thruster options
-        if not varUseMinPulseTime:
-            TH.MinOnTime = 0.0
 
         # add TH to the list of TH devices
         self.thrusterList[varLabel] = TH
@@ -146,11 +203,11 @@ class thrusterFactory(object):
     #
     #   Information Source:
     #   http://www.moog.com/literature/Space_Defense/Spacecraft/Propulsion/Monopropellant_Thrusters_Rev_0613.pdf
+    #   http://www.moog.com/content/dam/moog/literature/Space_Defense/Spacecraft/Monopropellant_Thrusters_Rev_0613.pdf
     #
     #   This is a MOOG mono-propellant thruster
     #
     def MOOG_Monarc_1(self,TH):
-        global options
         # maximum thrust [N]
         TH.MaxThrust = 0.9
         # minimum thruster on time [s]
@@ -158,6 +215,7 @@ class thrusterFactory(object):
         # Isp value [s]
         TH.steadyIsp = 227.5
 
+        TH.areaNozzle = 0.000079 # [m^2]
         return
 
     #
@@ -165,17 +223,19 @@ class thrusterFactory(object):
     #
     #   Information Source:
     #   http://www.moog.com/literature/Space_Defense/Spacecraft/Propulsion/Monopropellant_Thrusters_Rev_0613.pdf
+    #   http://www.moog.com/content/dam/moog/literature/Space_Defense/Spacecraft/Monopropellant_Thrusters_Rev_0613.pdf
     #
     #   This is a MOOG mono-propellant thruster
     #
     def MOOG_Monarc_5(self,TH):
-        global options
         # maximum thrust [N]
         TH.MaxThrust = 4.5
         # minimum thruster on time [s]
         TH.MinOnTime = 0.020
         # Isp value [s]
         TH.steadyIsp = 226.1
+
+        TH.areaNozzle = 0.0020 # [m^2]
 
         return
 
@@ -184,17 +244,19 @@ class thrusterFactory(object):
     #
     #   Information Source:
     #   http://www.moog.com/literature/Space_Defense/Spacecraft/Propulsion/Monopropellant_Thrusters_Rev_0613.pdf
+    #   http://www.moog.com/content/dam/moog/literature/Space_Defense/Spacecraft/Monopropellant_Thrusters_Rev_0613.pdf
     #
     #   This is a MOOG mono-propellant thruster
     #
     def MOOG_Monarc_22_6(self,TH):
-        global options
         # maximum thrust [N]
         TH.MaxThrust = 22.0
         # minimum thruster on time [s]
         TH.MinOnTime = 0.020
         # Isp value [s]
         TH.steadyIsp = 229.5
+
+        TH.areaNozzle = 0.0045 # [m^2]
 
         return
 
@@ -203,17 +265,19 @@ class thrusterFactory(object):
     #
     #   Information Source:
     #   http://www.moog.com/literature/Space_Defense/Spacecraft/Propulsion/Monopropellant_Thrusters_Rev_0613.pdf
+    #   http://www.moog.com/content/dam/moog/literature/Space_Defense/Spacecraft/Monopropellant_Thrusters_Rev_0613.pdf
     #
     #   This is a MOOG mono-propellant thruster
     #
     def MOOG_Monarc_22_12(self,TH):
-        global options
         # maximum thrust [N]
         TH.MaxThrust = 22.0
         # minimum thruster on time [s]
         TH.MinOnTime = 0.020
         # Isp value [s]
         TH.steadyIsp = 228.1
+
+        TH.areaNozzle = 0.0088 # [m^2]
 
         return
 
@@ -222,17 +286,19 @@ class thrusterFactory(object):
     #
     #   Information Source:
     #   http://www.moog.com/literature/Space_Defense/Spacecraft/Propulsion/Monopropellant_Thrusters_Rev_0613.pdf
+    #   http://www.moog.com/content/dam/moog/literature/Space_Defense/Spacecraft/Monopropellant_Thrusters_Rev_0613.pdf
     #
     #   This is a MOOG mono-propellant thruster
     #
     def MOOG_Monarc_90LT(self,TH):
-        global options
         # maximum thrust [N]
         TH.MaxThrust = 90.0
         # minimum thruster on time [s]
         TH.MinOnTime = 0.020
         # Isp value [s]
         TH.steadyIsp = 232.1
+
+        TH.areaNozzle = 0.0222 # [m^2]
 
         return
 
@@ -241,17 +307,18 @@ class thrusterFactory(object):
     #
     #   Information Source:
     #   http://www.moog.com/literature/Space_Defense/Spacecraft/Propulsion/Monopropellant_Thrusters_Rev_0613.pdf
-    #
+    #   http://www.moog.com/content/dam/moog/literature/Space_Defense/Spacecraft/Monopropellant_Thrusters_Rev_0613.pdf
     #   This is a MOOG mono-propellant thruster
     #
     def MOOG_Monarc_90HT(self,TH):
-        global options
         # maximum thrust [N]
         TH.MaxThrust = 116.0
         # minimum thruster on time [s]
         TH.MinOnTime = 0.010
         # Isp value [s]
         TH.steadyIsp = 234.0
+
+        TH.areaNozzle = 0.0222 # [m^2]
 
         return
 
@@ -260,11 +327,11 @@ class thrusterFactory(object):
     #
     #   Information Source:
     #   http://www.moog.com/literature/Space_Defense/Spacecraft/Propulsion/Monopropellant_Thrusters_Rev_0613.pdf
+    #   http://www.moog.com/content/dam/moog/literature/Space_Defense/Spacecraft/Monopropellant_Thrusters_Rev_0613.pdf
     #
     #   This is a MOOG mono-propellant thruster
     #
     def MOOG_Monarc_445(self,TH):
-        global options
         # maximum thrust [N]
         TH.MaxThrust = 445.0
         # minimum thruster on time [s]
@@ -272,10 +339,11 @@ class thrusterFactory(object):
         # Isp value [s]
         TH.steadyIsp = 234.0
 
+        TH.areaNozzle = 0.06881 # [m^2]
+
         return
 
     def TEST_Thruster(self,TH):
-        global options
         # maximum thrust [N]
         TH.MaxThrust = 0.9
         # minimum thruster on time [s]
@@ -284,5 +352,11 @@ class thrusterFactory(object):
         TH.steadyIsp = 227.5
         # nozzle area [m^2]
         TH.areaNozzle = 0.07
+
+        return
+
+    def Blank_Thruster(self,TH):
+        # this method doesn't set any thruster properties.  Rather, it is assumed that all thruster
+        # properties are defined explicitly in the create function, or external to the create function
 
         return

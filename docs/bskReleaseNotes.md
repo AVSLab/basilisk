@@ -12,6 +12,19 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 ## Version 0.X.X (upcoming release)
 <uL>
     <li>
+    Updated the dynamics thruster factor classes.  This streamlines how thrusters can be added to the dynamics.  Also, a new blank thruster object is included in this factory class to allow the user to specify all the desired values.
+    </li>
+    <li>
+    bskSim now adds 8 thrusters to the spacecraft.  These are not used yet, but will be in future bskSim scenarios.
+    </li>
+    <li>
+    Modified how bskSim now includes CSS sensors in the spacecraft dynamics setup
+    </li>
+    <li>
+    Modified the FSW `sunSafePoint()` guidance module to read in the body angular velocity information from standard `NavAttIntMsg`.  This will break any earlier simulation that uses `sunSafePoint()`. 
+    <ul>
+    <li>FIX: update the `sunSafePoint() input connection to use the current message format.</li>
+    </ul>
     </li>
 </ul>
 
