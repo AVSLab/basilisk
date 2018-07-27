@@ -21,7 +21,10 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     Modified how bskSim now includes CSS sensors in the spacecraft dynamics setup
     </li>
     <li>
-    Modified the FSW `sunSafePoint()` guidance module to read in the body angular velocity information from standard `NavAttIntMsg`
+    Modified the FSW `sunSafePoint()` guidance module to read in the body angular velocity information from standard `NavAttIntMsg`.  This will break any earlier simulation that uses `sunSafePoint()`. 
+    <ul>
+    <li>FIX: update the `sunSafePoint() input connection to use the current message format.</li>
+    </ul>
     </li>
 </ul>
 
