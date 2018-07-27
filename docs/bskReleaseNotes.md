@@ -26,6 +26,8 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>FIX: update the `sunSafePoint() input connection to use the current message format.</li>
     </ul>
     </li>
+    <li>Fixed an issue with energy not conserving if the fully coupled  VSCMG imbalance model is used. This imbalanced gimbal and wheel version now conserves momentum and energy!</li>
+    <li>Added initial draft of VSCMG module documentation</li>
 </ul>
 
 
