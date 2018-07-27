@@ -1,0 +1,33 @@
+\section{User Guide}
+
+This section is to outline the steps needed to setup a reaction wheel state effector in python using Basilisk.
+
+\begin{enumerate}
+	\item Import the vscmgStateEffector class and the spacecraftPlus class: \newline \textit{import vscmgStateEffector} and \textit{import spacecraftPlus}
+	\item Define an instantiation of a vscmgObject: \newline
+	\textit{vscmgObject = vscmgStateEffector.vscmgStateEffector()}
+	\item Set parameters for vscmgObject. A common set up might include: \newline
+		\textit{VSCMG.rGB\_B = [[0.],[0.],[0.]]} \newline
+         \textit{VSCMG.gsHat0\_B = [[1.],[0.],[0.]]} \newline
+         \textit{VSCMG.gtHat0\_B = [[0.],[1.],[0.]]} \newline
+         \textit{VSCMG.ggHat\_B = [[0.],[0.],[1.]]} \newline
+         \textit{VSCMG.Omega\_max = 6000. * macros.RPM} \newline
+         \textit{VSCMG.IW1 = 100./VSCMG.Omega\_max} \newline
+         \textit{VSCMG.IW2 = 0.5*VSCMG.IW1} \newline
+         \textit{VSCMG.IW3 = 0.5*VSCMG.IW1} \newline
+         \textit{VSCMG.IG1 = 0.1} \newline
+         \textit{VSCMG.IG2 = 0.2} \newline
+         \textit{VSCMG.IG3 = 0.3} \newline
+         \textit{VSCMG.U\_s = 4.8e-06 * 1e4} \newline
+         \textit{VSCMG.U\_d = 1.54e-06 * 1e4} \newline
+         \textit{VSCMG.l = 0.01} \newline
+         \textit{VSCMG.L = 0.1} \newline
+         \textit{VSCMG.rGcG\_G = [[0.0001],[-0.02],[0.1]]} \newline
+         \textit{VSCMG.massW = 6.} \newline
+         \textit{'VSCMG.massG = 6.} \newline
+         \textit{VSCMG.VSCMGModel = 0} 
+	\item Create an instantiation of a spacecraftPlus: \newline
+	\textit{scObject = spacecraftPlus.SpacecraftPlus()}
+	\item Finally, add the VSCMG object to your spacecraftPlus:\newline
+	\textit{rwFactory.addToSpacecraft("VSCMG", vscmgStateEffector, scObject)}. See spacecraftPlus documentation on how to set up a spacecraftPlus object.
+\end{enumerate}

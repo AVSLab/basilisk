@@ -21,6 +21,8 @@ import sys, os, inspect
 import numpy as np
 import pytest
 import math
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
 
 
 
@@ -33,7 +35,6 @@ from Basilisk.utilities import unitTestSupport  # general support file with comm
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from Basilisk.simulation import spacecraftPlus
-from Basilisk.simulation import sim_model
 from Basilisk.utilities import macros
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import spice_interface
@@ -152,7 +153,6 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # add RW devices
-
     VSCMGs = []
 
     ang = 54.75 * np.pi/180
@@ -208,8 +208,12 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
 
     # set RW torque command
     cmdArray = vscmgStateEffector.VSCMGArrayTorqueIntMsg()
-    cmdArray.wheelTorque = [0.001, 0.005, -0.009] # [Nm]
-    cmdArray.gimbalTorque = [0.008, -0.0015, -0.006] # [Nm]
+    if testCase == 'BalancedWheels' or testCase == 'JitterFullyCoupled':
+        cmdArray.wheelTorque = [0.0, 0.0, 0.0]  # [Nm]
+        cmdArray.gimbalTorque = [0.0, 0.0, 0.0]  # [Nm]
+    else:
+        cmdArray.wheelTorque = [0.001, 0.005, -0.009] # [Nm]
+        cmdArray.gimbalTorque = [0.008, -0.0015, -0.006] # [Nm]
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
                                rwCommandName,
@@ -295,7 +299,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
         ]
 
         trueSigma = [
-            [0.01857774589897812, 0.0021098814589502733, -0.001194065770317139]
+            [0.0185829763256, 0.00212563436704, -0.00118728497031]
         ]
 
     elif testCase == 'JitterSimple':
@@ -309,19 +313,19 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
 
     elif testCase == 'JitterFullyCoupled':
         truePos = [
-            [0.09705729702178499, -0.19556309271470682, 0.19187422125896728]
+            [0.0970572658434, -0.195562924079, 0.191874379545]
         ]
 
         trueSigma = [
-            [0.00020212497411381186, 2.921543946671333e-05, 3.993473569492342e-06]
+            [0.000201909373901, 2.9217809421e-05, 4.00231302121e-06]
         ]
     elif testCase == 'JitterFullyCoupledGravity':
         truePos = [
-            [-4020390.688018252, 7490532.375018967, 5248309.5274464]
+            [-4020390.68802, 7490532.37502, 5248309.52745]
         ]
 
         trueSigma = [
-            [0.00020187775168798667, 2.9213339619087213e-05, 4.147247044245215e-06]
+            [0.000201662012765, 2.92123940252e-05, 4.15606551702e-06]
         ]
 
 
@@ -350,150 +354,189 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
                 [orbEnergy[-1,0], orbEnergy[-1,1]]
                  ]
 
+    initialRotEnergy = [
+                [rotEnergy[0,1]]
+                ]
+
+    finalRotEnergy = [
+                [rotEnergy[-1,0], rotEnergy[-1,1]]
+                 ]
+    plt.close("all")
     plt.figure()
     plt.plot(orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,1] - orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,2] - orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,3] - orbAngMom_N[0,3])
     plt.title("Change in Orbital Angular Momentum")
+    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCase,
+                                     "Change in Orbital Angular Momentum " + testCase, plt, "width=0.80\\textwidth",
+                                     path)
 
     plt.figure()
     plt.plot(rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,1] - rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,2] - rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,3] - rotAngMom_N[0,3])
     plt.title("Change in Rotational Angular Momentum")
+    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCase, "Change in Orbital Energy " + testCase, plt,
+                                     "width=0.80\\textwidth", path)
 
-    # plt.figure()
-    # plt.plot(orbEnergy[:,0]*1e-9, orbEnergy[:,1] - orbEnergy[0,1])
-    # plt.title("Change in Orbital Energy")
+    plt.figure()
+    plt.plot(orbEnergy[:,0]*1e-9, orbEnergy[:,1] - orbEnergy[0,1])
+    plt.title("Change in Orbital Energy")
+    unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase,
+                                     "Change in Rotational Angular Momentum " + testCase, plt, "width=0.80\\textwidth",
+                                     path)
 
-    # plt.figure()
-    # plt.plot(rotEnergy[:,0]*1e-9, rotEnergy[:,1] - rotEnergy[0,1])
-    # plt.title("Change in Rotational Energy")
+    plt.figure()
+    plt.plot(rotEnergy[:,0]*1e-9, rotEnergy[:,1] - rotEnergy[0,1])
+    plt.title("Change in Rotational Energy")
+    unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase,
+                                     plt, "width=0.80\\textwidth", path)
 
-    # plt.figure()
-    # for i in range(1,N+1):
-    #     plt.subplot(4,1,i)
-    #     plt.plot(wheelSpeeds[:,0]*1.0E-9, wheelSpeeds[:,i] / (2.0 * math.pi) * 60, label='RWA' + str(i))
-    #     plt.xlabel('Time (s)')
-    #     plt.ylabel(r'RW' + str(i) + r' $\Omega$ (RPM)')
+    plt.figure()
+    for i in range(1,N+1):
+        plt.subplot(4,1,i)
+        plt.plot(wheelSpeeds[:,0]*1.0E-9, wheelSpeeds[:,i] / (2.0 * math.pi) * 60, label='RWA' + str(i))
+        plt.xlabel('Time (s)')
+        plt.ylabel(r'RW' + str(i) + r' $\Omega$ (RPM)')
 
-    # plt.figure()
-    # for i in range(1,N+1):
-    #     plt.subplot(4,1,i)
-    #     plt.plot(gimbalAngles[:,0]*1.0E-9, gimbalAngles[:,i], label=str(i))
-    #     plt.xlabel('Time (s)')
-    #     plt.ylabel(r'$\gamma_'+str(i)+'$ (rad)')
+    plt.figure()
+    for i in range(1,N+1):
+        plt.subplot(4,1,i)
+        plt.plot(gimbalAngles[:,0]*1.0E-9, gimbalAngles[:,i], label=str(i))
+        plt.xlabel('Time (s)')
+        plt.ylabel(r'$\gamma_'+str(i)+'$ (rad)')
 
-    # plt.figure()
-    # for i in range(1,N+1):
-    #     plt.subplot(4,1,i)
-    #     plt.plot(gimbalRates[:,0]*1.0E-9, gimbalRates[:,i] * 180/np.pi, label=str(i))
-    #     plt.xlabel('Time (s)')
-    #     plt.ylabel(r'$\dot{\gamma}_'+str(i)+'$ (d/s)')
+    plt.figure()
+    for i in range(1,N+1):
+        plt.subplot(4,1,i)
+        plt.plot(gimbalRates[:,0]*1.0E-9, gimbalRates[:,i] * 180/np.pi, label=str(i))
+        plt.xlabel('Time (s)')
+        plt.ylabel(r'$\dot{\gamma}_'+str(i)+'$ (d/s)')
 
-    # plt.figure()
-    # for i in range(1,N+1):
-    #     plt.subplot(4,1,i)
-    #     plt.plot(sigmaData[:,0]*1.0E-9, sigmaData[:,i], label='MRP' + str(i))
-    #     plt.xlabel('Time (s)')
-    #     plt.ylabel(r'MRP b' + str(i))
+    plt.figure()
+    for i in range(1,N+1):
+        plt.subplot(4,1,i)
+        plt.plot(sigmaData[:,0]*1.0E-9, sigmaData[:,i], label='MRP' + str(i))
+        plt.xlabel('Time (s)')
+        plt.ylabel(r'MRP b' + str(i))
 
-    # plt.figure()
-    # for i in range(1,N+1):
-    #     plt.subplot(4,1,i)
-    #     plt.plot(omegaData[:,0]*1.0E-9, omegaData[:,i] * 180/math.pi, label='omega' + str(i))
-    #     plt.xlabel('Time (s)')
-    #     plt.ylabel(r'b' + str(i) + r' $\omega$ (d/s)')
+    plt.figure()
+    for i in range(1,N+1):
+        plt.subplot(4,1,i)
+        plt.plot(omegaData[:,0]*1.0E-9, omegaData[:,i] * 180/math.pi, label='omega' + str(i))
+        plt.xlabel('Time (s)')
+        plt.ylabel(r'b' + str(i) + r' $\omega$ (d/s)')
 
-    # if testCase != 'BalancedWheels' and testCase != 'JitterFullyCoupledGravity':
-    #     istart = int(.01/dt)
-    #     sigmaDataCut = sigmaData[istart:,:]
-    #     thetaData = np.empty([len(sigmaDataCut[:,0]),2])
-    #     thetaData[:,0] = sigmaDataCut[:,0]
-    #     for i in range(0,len(thetaData[:,0])):
-    #         thetaData[i,1] = 4*np.arctan(np.linalg.norm(sigmaDataCut[i,1:]))
-    #
-    #     if testCase == 'JitterSimple':
-    #         fitOrd = 11
-    #     else:
-    #         fitOrd = 9
-    #
-    #     thetaFit = np.empty([len(sigmaDataCut[:,0]),2])
-    #     thetaFit[:,0] = thetaData[:,0]
-    #     print thetaFit
-    #     print len(thetaData)
-    #     p = np.polyfit(thetaData[:,0]*1e-9,thetaData[:,1],fitOrd)
-    #     thetaFit[:,1] = np.polyval(p,thetaFit[:,0]*1e-9)
-    #
-    #     plt.figure()
-    #     plt.plot(thetaData[:,0]*1e-9, thetaData[:,1]-thetaFit[:,1])
-    #     plt.title("Principle Angle Fit")
-    #     plt.xlabel('Time (s)')
-    #     plt.ylabel(r'$\theta$ (deg)')
-    #
-    #     [frq,Y] = computeFFT(thetaData[:,1]-thetaFit[:,1],dt)
-    #     peakIdxs = findPeaks(Y,N)
-    #     wheelSpeeds_data = np.array(frq[peakIdxs])*60.
-    #     wheelSpeeds_true = np.sort(abs(np.array([VSCMG.Omega/macros.RPM for VSCMG in VSCMGs])))
-    #
-    #     fig, ax = plt.subplots(2,1)
-    #     ax[0].plot(thetaFit[:,0]*1e-9,thetaData[:,1]-thetaFit[:,1])
-    #     ax[0].set_xlabel('Time')
-    #     ax[0].set_ylabel('Amplitude')
-    #     ax[1].plot(frq,abs(Y),'r')
-    #     ax[1].set_xlabel('Freq (Hz)')
-    #     ax[1].set_ylabel('Magnitude')
-    #     ax[1].plot(frq[peakIdxs],Y[peakIdxs],'bo')
-    #     plt.xlim((0,VSCMGs[0].Omega_max/macros.RPM/60.))
-    #
-    #     # plt.figure()
-    #     # plt.plot(thetaData[:,0]*1e-9, thetaData[:,1])
-    #     # plt.title("Principle Angle")
-    #     # plt.xlabel('Time (s)')
-    #     # plt.ylabel(r'$\theta$ (deg)')
+    if testCase != 'BalancedWheels' and testCase != 'JitterFullyCoupledGravity':
+        istart = int(.01/dt)
+        sigmaDataCut = sigmaData#sigmaData[istart:,:]
+        thetaData = np.empty([len(sigmaDataCut[:,0]),2])
+        thetaData[:,0] = sigmaDataCut[:,0]
+        for i in range(0,len(thetaData[:,0])):
+            thetaData[i,1] = 4*np.arctan(np.linalg.norm(sigmaDataCut[i,1:]))
+
+        if testCase == 'JitterSimple':
+            fitOrd = 11
+        else:
+            fitOrd = 9
+    
+        thetaFit = np.empty([len(sigmaDataCut[:,0]),2])
+        thetaFit[:,0] = thetaData[:,0]
+        p = np.polyfit(thetaData[:,0]*1e-9,thetaData[:,1],fitOrd)
+        thetaFit[:,1] = np.polyval(p,thetaFit[:,0]*1e-9)
+    
+        plt.figure()
+        plt.plot(thetaData[:,0]*1e-9, thetaData[:,1]-thetaFit[:,1])
+        plt.title("Principle Angle Fit")
+        plt.xlabel('Time (s)')
+        plt.ylabel(r'$\theta$ (deg)')
+    
+        [frq,Y] = computeFFT(thetaData[:,1]-thetaFit[:,1],dt)
+        peakIdxs = findPeaks(Y,N)
+        wheelSpeeds_data = np.array(frq[peakIdxs])*60.
+        wheelSpeeds_true = np.sort(abs(np.array([VSCMG.Omega/macros.RPM for VSCMG in VSCMGs])))
+    
+        fig, ax = plt.subplots(2,1)
+        ax[0].plot(thetaFit[:,0]*1e-9,thetaData[:,1]-thetaFit[:,1])
+        ax[0].set_xlabel('Time')
+        ax[0].set_ylabel('Amplitude')
+        ax[1].plot(frq,abs(Y),'r')
+        ax[1].set_xlabel('Freq (Hz)')
+        ax[1].set_ylabel('Magnitude')
+        ax[1].plot(frq[peakIdxs],Y[peakIdxs],'bo')
+        plt.xlim((0,VSCMGs[0].Omega_max/macros.RPM/60.))
+    
+        plt.figure()
+        plt.plot(thetaData[:,0]*1e-9, thetaData[:,1])
+        plt.title("Principle Angle")
+        plt.xlabel('Time (s)')
+        plt.ylabel(r'$\theta$ (deg)')
 
     if show_plots == True:
         plt.show()
 
 
-    accuracy = 1e-8
+    accuracy = 1e-7
     for i in range(0,len(truePos)):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Reaction Wheel Integrated Test failed pos unit test")
+            testMessages.append("FAILED: VSCMG Integrated Test failed pos unit test")
 
     for i in range(0,len(trueSigma)):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Reaction Wheel Integrated Test failed attitude unit test")
+            testMessages.append("FAILED: VSCMG Integrated Test failed attitude unit test")
 
-    if testCase == 'BalancedWheels' or testCase == 'JitterFullyCoupled' or testCase == 'JitterFullyCoupledGravity':
+    if testCase == 'JitterSimple':
+        for i in range(N):
+            # check a vector values
+            if not abs(wheelSpeeds_data[i] - wheelSpeeds_true[i]) / wheelSpeeds_true[i] < .09:
+                testFailCount += 1
+                testMessages.append("FAILED: VSCMG Integrated Test failed jitter unit test")
+
+    accuracy = 1e-10
+    if testCase == 'BalancedWheels' or testCase == 'JitterFullyCoupled':
+
         for i in range(0,len(initialOrbAngMom_N)):
             # check a vector values
             if not unitTestSupport.isArrayEqualRelative(finalOrbAngMom[i],initialOrbAngMom_N[i],3,accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: Reaction Wheel Integrated Test failed orbital angular momentum unit test")
+                testMessages.append("FAILED: VSCMG Integrated Test failed orbital angular momentum unit test")
 
         for i in range(0,len(initialRotAngMom_N)):
             # check a vector values
             if not unitTestSupport.isArrayEqualRelative(finalRotAngMom[i],initialRotAngMom_N[i],3,accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: Reaction Wheel Integrated Test failed rotational angular momentum unit test")
-        for i in range(0,len(initialOrbEnergy)):
-            # check a vector values
-            if not unitTestSupport.isArrayEqualRelative(finalOrbEnergy[i],initialOrbEnergy[i],1,accuracy):
-                testFailCount += 1
-                testMessages.append("FAILED: Reaction Wheel Integrated Test failed orbital energy unit test")
+                testMessages.append("FAILED: VSCMG Integrated Test failed rotational angular momentum unit test")
 
-    # if testCase == 'JitterSimple' or testCase == 'JitterFullyCoupled':
-    #     print wheelSpeeds_true
-    #     print wheelSpeeds_data
-    #     for i in range(N):
-    #         # check a vector values
-    #         if not abs(wheelSpeeds_data[i]-wheelSpeeds_true[i])/wheelSpeeds_true[i] < .09:
-    #             testFailCount += 1
-    #             testMessages.append("FAILED: Reaction Wheel Integrated Test failed jitter unit test")
+        for i in range(0, len(initialOrbEnergy)):
+            # check a vector values
+            if not unitTestSupport.isArrayEqualRelative(finalOrbEnergy[i], initialOrbEnergy[i], 1, accuracy):
+                testFailCount += 1
+                testMessages.append("FAILED: VSCMG Integrated Test failed orbital energy unit test")
+
+        for i in range(0, len(initialRotEnergy)):
+            # check a vector values
+            if not unitTestSupport.isArrayEqualRelative(finalRotEnergy[i], initialRotEnergy[i], 1, accuracy):
+                testFailCount += 1
+                testMessages.append("FAILED: VSCMG Integrated Test failed rot energy unit test")
+
+
+       # print out success message if no errors were found
+    if  testFailCount == 0:
+        print   "PASSED "
+        colorText = 'ForestGreen'
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        # Write some snippets for AutoTex
+        snippetName = testCase + 'PassFail'
+        unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
+    elif testFailCount > 0:
+        colorText = 'Red'
+        passedText = '\\textcolor{' + colorText + '}{' + "FAILED" + '}'
+        # Write some snippets for AutoTex
+        snippetName = testCase + 'PassFail'
+        unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
 
     if testFailCount == 0:
-        print "PASSED: " + " Reaction Wheel Integrated Sim Test"
+        print "PASSED: " + " VSCMG Integrated Sim Test"
 
     assert testFailCount < 1, testMessages
 
@@ -502,4 +545,4 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    VSCMGIntegratedTest(True,False,'JitterFullyCoupledGravity')
+    VSCMGIntegratedTest(False,False,'JitterFullyCoupled')
