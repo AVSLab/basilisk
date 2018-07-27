@@ -32,7 +32,7 @@ import os
 import numpy as np
 import shutil
 import matplotlib.pyplot as plt
-
+import scenarioImprovedGraphingViaWritingData as graphing
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 fileNameString = os.path.basename(os.path.splitext(__file__)[0])
@@ -72,7 +72,7 @@ from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispe
                                                        NormalVectorCartDispersion, InertiaTensorDispersion)
 
 
-NUMBER_OF_RUNS = 4
+NUMBER_OF_RUNS = 150
 VERBOSE = True
 
 # Here are the name of some messages that we want to retain or otherwise use
@@ -88,7 +88,7 @@ rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
 # We also will need the simulationTime and samplingTimes
 numDataPoints = 100
-simulationTime = macros.min2nano(10.)
+simulationTime = macros.min2nano(20.)
 samplingTime = simulationTime / (numDataPoints-1)
 
 
@@ -445,9 +445,13 @@ def run(saveFigures, case, show_plots):
         # And possibly show the plots
         if show_plots:
             print "Test concluded, showing plots now..."
-            plt.show()
+            graphing.writeDirectories()
+            graphing.saveDataframesToFile()
+            graphing.graph()
+            return
+            # plt.show()
             # close the plots being saved off to avoid over-writing old and new figures
-            plt.close("all")
+            # plt.close("all")
 
     #########################################################
     if case ==2:
@@ -470,7 +474,6 @@ def run(saveFigures, case, show_plots):
 
         # And possibly show the plots
         if show_plots:
-            print "Test concluded, showing plots now..."
             plt.show()
             # close the plots being saved off to avoid over-writing old and new figures
             plt.close("all")
@@ -721,6 +724,13 @@ def plotSim(data, retentionPolicy):
     #
     #   retrieve the logged data
     #
+
+    # if graphing via datashader..
+    graphing.plotSim(data, retentionPolicy)
+
+
+    return {}
+
     dataUsReq = data["messages"][rwMotorTorqueConfigOutputDataName+".motorTorque"]
     dataSigmaBR = data["messages"][attErrorConfigOutputDataName+".sigma_BR"]
     dataOmegaBR = data["messages"][attErrorConfigOutputDataName+".omega_BR_B"]
@@ -811,6 +821,6 @@ def plotSimAndSave(data, retentionPolicy):
 #
 if __name__ == "__main__":
     run(  False        # safe figures to file
-        , 2            # Case 1 is normal MC, case 2 is initial conditon run
+        , 1            # Case 1 is normal MC, case 2 is initial conditon run
         , True         # show_plots
        )
