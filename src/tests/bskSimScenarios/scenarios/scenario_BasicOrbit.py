@@ -50,6 +50,8 @@
 # the messages sent via the dynamics modules, and provide pre-written FSW functionality directly through a simple
 # modeRequest variable within BSK_Scenario.py.
 #
+# Configuring a BSK_Scenario.py file
+# -----
 # To write a custom BSK_scenario.py file first create a class that will
 # inherient from the masterSim class within the __init__() proceedure and providing a name to the sim.
 # This is accomplished through:
@@ -60,7 +62,7 @@
 #          self.name = 'scenario_BasicOrbit'
 # ~~~~~~~~~~~~~
 #
-# Following the inheritance, there are three functions within the scenario class that need to be configured by the user:
+# Following the inheritance, there are three functions within the scenario class that need to be defined by the user:
 # configure_initial_conditions(), log_outputs(), and pull_outputs().
 #
 # Within configure_initial_conditions(), the user needs to first define the spacecraft FSW mode for the simulation
@@ -68,9 +70,12 @@
 # ~~~~~~~~~~~~~{.py}
 #   self.masterSim.modeRequest = "hillPoint"
 # ~~~~~~~~~~~~~
-# this is the parameter that triggers the afformentioned BSK_FSW event. Additional FSW modes include
-# sunSafePoint, inertial3D, velocityPoint, hillPoint, and more. Additionally, the user needs to supply initial conditions
-# for the spacecraft. The following code produces a basic orbit:
+# this is the parameter that triggers the aforementioned BSK_FSW event. Additional FSW modes (to be discussed in later
+# modules include sunSafePoint, inertial3D, velocityPoint, hillPoint, and more.
+#  Additionally, the user needs to supply initial conditions
+# for the spacecraft and its orbit. The following code uses the orbitalMotion module to
+# construct the appropriate position and velocity vectors for a geocentric orbit, and then assigns them to the
+# spacecraft:
 # ~~~~~~~~~~~~~{.py}
 #         # Configure Dynamics initial conditions
 #         oe = orbitalMotion.ClassicElements()
@@ -85,29 +90,25 @@
 #         orbitalMotion.rv2elem(mu, rN, vN)
 #         self.masterSim.DynModels.scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
 #         self.masterSim.DynModels.scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
-#         self.masterSim.DynModels.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-#         self.masterSim.DynModels.scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 # ~~~~~~~~~~~~~
-# The `self.masterSim.DynModels` brings the user to a list of active dynamic modules used within BSK_Dynamics.py.
+# The `self.masterSim.DynModels` call supplies the user with list of active dynamic modules used within BSK_Dynamics.py.
 #
 # Within the log_outputs() function, the user can supply a list of messages they are interested in logging. For a
-# basic orbit, we need position and attitude.
+# basic orbit, we need position and velocity from the navigation message.
 # ~~~~~~~~~~~~~{.py}
 #       samplingTime = self.masterSim.DynModels.processTasksTimeStep
-#       self.masterSim.TotalSim.logThisMessage(self.masterSim.DynModels.simpleNavObject.outputAttName, samplingTime)
 #       self.masterSim.TotalSim.logThisMessage(self.masterSim.DynModels.simpleNavObject.outputTransName, samplingTime)
 # ~~~~~~~~~~~~~
 #
 # Finally within the pull_outputs(), the user can pull specific variables from the messages:
 # ~~~~~~~~~~~~~{.py}
 #         # Dynamics process outputs
-#         sigma_BN = self.masterSim.pullMessageLogData(self.masterSim.DynModels.simpleNavObject.outputAttName + ".sigma_BN", range(3))
 #         r_BN_N = self.masterSim.pullMessageLogData(self.masterSim.DynModels.simpleNavObject.outputTransName + ".r_BN_N", range(3))
 #         v_BN_N = self.masterSim.pullMessageLogData(self.masterSim.DynModels.simpleNavObject.outputTransName + ".v_BN_N", range(3))
 # ~~~~~~~~~~~~~
 # and proceed to graph them using predefined plotting routines in BSK_Plotting.py
 # ~~~~~~~~~~~~~{.py}
-#         BSK_plt.plot_attitudeGuidance(sigma_RN, omega_RN_N)
+#         BSK_plt.plot_orbit(r_BN_N)
 # ~~~~~~~~~~~~~
 #
 #
@@ -118,93 +119,106 @@
 # coarse sun sensor constellations are all preconfigured; however, for users who would like to customize their own
 # dynamics module configurations and FSW modes, we recommend copying the three primary BSK_Sim.py files
 # (BSK_Scenario.py, BSK_Dynamics.py, and BSK_FSW.py) and modifying them to their liking. Below documents the general
-# proceedure for configuring a user customized BSK_Dynamics and BSK_FSW files.
+# procedure for configuring a user customized BSK_Dynamics and BSK_FSW files.
 #
-# Custom Dynamics Configurations Instructions
-# -----
+# **Custom Dynamics Configurations Instructions**
+#
 # In BSK_Dynamics.py, it is revealed that BSK_Dynamics.py is a class whose __init__() first generates a task onto which
 # future dynamics modules will be added.
 # ~~~~~~~~~~~~~{.py}
 #         # Create task
-#         SimBase.dynProc.addTask(SimBase.CreateNewTask(self.taskName, self.processTasksTimeStep))
+#         SimBase.dynProc.addTask(SimBase.CreateNewTask(self.taskName, self.processTasksTimeStep)
 # ~~~~~~~~~~~~~
 # Following the task generation, all desired dynamics module object are generated:
 # ~~~~~~~~~~~~~{.py}
 #         # Instantiate Dyn modules as objects
 #         self.scObject = spacecraftPlus.SpacecraftPlus()
-#         self.ephemerisSPICEObject = spice_interface.SpicePlanetStateSimMsg()
-#         self.ephemerisSunSPICEObject = spice_interface.SpicePlanetStateSimMsg()
-#         self.earthGravBody = gravityEffector.GravBodyData()
 #         self.gravFactory = simIncludeGravBody.gravBodyFactory()
-#         self.extForceTorqueObject = extForceTorque.ExtForceTorque()
 #         self.simpleNavObject = simple_nav.SimpleNav()
-#         self.eclipseObject = eclipse.Eclipse()
-#         self.CSSObject = coarse_sun_sensor.CoarseSunSensor()
-#         self.CSSConstellationObject = coarse_sun_sensor.CSSConstellation()
-#         self.imuObject = imu_sensor.ImuSensor()
-#         self.rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
 # ~~~~~~~~~~~~~
 # These objects are then configured through InitAllDynObjects(SimBase) which iterates through a number of 'setting'
-# functions, that configure all of the dynamics objects properties and messages. Following the configuration of all
-# dynamics objects' messages and properties, BSK_Dynamics.py initializes all one-time messages like SPICE messages.
+# functions, that configure all of the dynamics objects properties and messages.
+# ~~~~~~~~~~~~~{.py}
+#     # Global call to initialize every module
+#     def InitAllDynObjects(self):
+#         self.SetSpacecraftHub()
+#         self.SetGravityBodies()
+#         self.SetSimpleNavObject()
+# ~~~~~~~~~~~~~
+#
+# The relevant setting functions for scenario_BasicOrbit.py are:
+#
+# ~~~~~~~~~~~~~{.py}
+#     def SetSpacecraftHub(self):
+#         self.scObject.ModelTag = "spacecraftBody"
+#         # -- Crate a new variable for the sim sc inertia I_sc. Note: this is currently accessed from FSWClass
+#         self.I_sc = [900., 0., 0.,
+#                      0., 800., 0.,
+#                      0., 0., 600.]
+#         self.scObject.hub.mHub = 750.0  # kg - spacecraft mass
+#         self.scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
+#         self.scObject.hub.IHubPntBc_B = sp.np2EigenMatrix3d(self.I_sc)
+#         self.scObject.scStateOutMsgName = "inertial_state_output"
+#
+#     def SetGravityBodies(self):
+#         timeInitString = "2012 MAY 1 00:28:30.0"
+#         gravBodies = self.gravFactory.createBodies(['earth', 'sun', 'moon'])
+#         gravBodies['earth'].isCentralBody = True
+#
+#         self.scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(self.gravFactory.gravBodies.values())
+#         self.gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/', timeInitString)
+#         self.gravFactory.spiceObject.zeroBase = 'Earth'
+#
+#         pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
+#         pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
+#         pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
+#         pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
+# ~~~~~~~~~~~~~
+#
+# Following the configuration of all
+# dynamics objects' messages and properties.
 # Finally, all desired objects are attached to the DynamicsTask through:
 # ~~~~~~~~~~~~~{.py}
 #         # Assign initialized modules to tasks
 #         SimBase.AddModelToTask(self.taskName, self.scObject, None, 201)
 #         SimBase.AddModelToTask(self.taskName, self.simpleNavObject, None, 109)
 #         SimBase.AddModelToTask(self.taskName, self.gravFactory.spiceObject, 200)
-#         SimBase.AddModelToTask(self.taskName, self.CSSObject, None, 202)
-#         SimBase.AddModelToTask(self.taskName, self.CSSConstellationObject, None, 203)
-#         SimBase.AddModelToTask(self.taskName, self.eclipseObject, None, 204)
-#         SimBase.AddModelToTask(self.taskName, self.imuObject, None, 205)
-#         SimBase.AddModelToTask(self.taskName, self.rwStateEffector, None, 301)
-#         SimBase.AddModelToTask(self.taskName, self.extForceTorqueObject, None, 300)
 # ~~~~~~~~~~~~~
 #
-# Custom FSW Configurations Instructions
-# -----
+# **Custom FSW Configurations Instructions**
+#
 # Similar to BSK_Dynamics.py, BSK_FSW.py's __init__() proceedure beings by defining all possible configuration messages
 # required for future functionality. A sample of such process is seen here:
 # ~~~~~~~~~~~~~{.py}
 #         # Create module data and module wraps
-#         self.inertial3DData = inertial3D.inertial3DConfig()
-#         self.inertial3DWrap = SimBase.setModelDataWrap(self.inertial3DData)
-#         self.inertial3DWrap.ModelTag = "inertial3D"
-#
 #         self.hillPointData = hillPoint.hillPointConfig()
 #         self.hillPointWrap = SimBase.setModelDataWrap(self.hillPointData)
 #         self.hillPointWrap.ModelTag = "hillPoint"
-#
-#         self.sunSafePointData = sunSafePoint.sunSafePointConfig()
-#         self.sunSafePointWrap = SimBase.setModelDataWrap(self.sunSafePointData)
-#         self.sunSafePointWrap.ModelTag = "sunSafePoint"
-#
-#         self.velocityPointData = velocityPoint.velocityPointConfig()
-#         self.velocityPointWrap = SimBase.setModelDataWrap(self.velocityPointData)
-#         self.velocityPointWrap.ModelTag  = "velocityPoint"
 # ~~~~~~~~~~~~~
 # Following the initial declaration of these configuration modules, BSK_FSW.py calls a InitAllFSWObjects() command,
-# which, like BSK_Dynamics's InitAllDynObjects() configures each of these modules with the appropriate information and
-# message names.
-#
-# After each configuration module has been properly intialized with various message links, various tasks are generated
+# which, like BSK_Dynamics's InitAllDynObjects(), calls additional member functions to configures each of the FSW modules
+# with the appropriate information and message names.
+# ~~~~~~~~~~~~~{.py}
+#     # Global call to initialize every module
+#     def InitAllFSWObjects(self, SimBase):
+#         self.SetHillPointGuidance(SimBase)
+# ~~~~~~~~~~~~~
+# Note how the messages pull output data from the `SimBase.DynModels`:
+# ~~~~~~~~~~~~~{.py}
+#     def SetHillPointGuidance(self, SimBase):
+#         self.hillPointData.outputDataName = "referenceOut"
+#         self.hillPointData.inputNavDataName = SimBase.DynModels.simpleNavObject.outputTransName
+#         self.hillPointData.inputCelMessName = SimBase.DynModels.gravFactory.gravBodies['earth'].bodyInMsgName[:-12]
+# ~~~~~~~~~~~~~
+# After each configuration module has been properly intialized with various message names, tasks are generated
 # within the module.
 # ~~~~~~~~~~~~~{.py}
 #         # Create tasks
-#         SimBase.fswProc.addTask(SimBase.CreateNewTask("inertial3DPointTask", self.processTasksTimeStep), 20)
 #         SimBase.fswProc.addTask(SimBase.CreateNewTask("hillPointTask", self.processTasksTimeStep), 20)
-#         SimBase.fswProc.addTask(SimBase.CreateNewTask("sunSafePointTask", self.processTasksTimeStep), 20)
-#         SimBase.fswProc.addTask(SimBase.CreateNewTask("velocityPointTask", self.processTasksTimeStep), 20)
-#         SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackTask", self.processTasksTimeStep), 10)
-#         SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpSteeringRWsTask", self.processTasksTimeStep), 10)
-#         SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackRWsTask", self.processTasksTimeStep), 10)
 # ~~~~~~~~~~~~~
-# Each task then has various FSW models uniquely attached to it:
+# Each task then has various FSW models added to it:
 # ~~~~~~~~~~~~~{.py}
 #         # Assign initialized modules to tasks
-#         SimBase.AddModelToTask("inertial3DPointTask", self.inertial3DWrap, self.inertial3DData, 10)
-#         SimBase.AddModelToTask("inertial3DPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
-#
 #         SimBase.AddModelToTask("hillPointTask", self.hillPointWrap, self.hillPointData, 10)
 #         SimBase.AddModelToTask("hillPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
 # ~~~~~~~~~~~~~
@@ -214,12 +228,6 @@
 # ~~~~~~~~~~~~~{.py}
 #         # Create events to be called for triggering GN&C maneuvers
 #         SimBase.fswProc.disableAllTasks()
-#         SimBase.createNewEvent("initiateAttitudeGuidance", self.processTasksTimeStep, True,
-#                                ["self.modeRequest == 'inertial3D'"],
-#                                ["self.fswProc.disableAllTasks()",
-#                                 "self.enableTask('inertial3DPointTask')",
-#                                 "self.enableTask('mrpFeedbackTask')"])
-#
 #         SimBase.createNewEvent("initiateHillPoint", self.processTasksTimeStep, True,
 #                                ["self.modeRequest == 'hillPoint'"],
 #                                ["self.fswProc.disableAllTasks()",

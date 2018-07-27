@@ -113,7 +113,7 @@ class BSKDynamicModels():
     
     def SetSimpleNavObject(self):
         self.simpleNavObject.ModelTag = "SimpleNavigation"
-    
+
     def SetCSSObject(self):
         self.CSSObject.cssDataOutMsgName = "singleCssOut"
         self.CSSObject.nHat_B = np.array([1., 0., 0.])
