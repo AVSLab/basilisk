@@ -26,6 +26,7 @@
 #
 
 
+
 import inspect
 import math
 import os
@@ -33,10 +34,12 @@ import numpy as np
 import shutil
 import matplotlib.pyplot as plt
 
+DATESHADER_FOUND = True
 try:
     import scenarioMonteCarloAttRWDatashader as datashaderLibrary
 except ImportError:
     print "Datashader library not found. Will use matplotlib"
+    DATESHADER_FOUND = False
 
 
 # @cond DOXYGEN_IGNORE
@@ -314,7 +317,7 @@ def run(saveFigures, case, show_plots, useDatashader):
 
     # Set this macro to true if you want to only graph the libraries
     # from pre existing csv files.
-    if ONLY_DATASHADE_DATA:
+    if ONLY_DATASHADE_DATA & DATESHADER_FOUND:
         print "graphing data via previous monte carlo data"
         datashaderLibrary.graph()
         return
@@ -399,7 +402,7 @@ def run(saveFigures, case, show_plots, useDatashader):
     if saveFigures:
         # plot data only if show_plots is true, otherwise just retain
         retentionPolicy.setDataCallback(plotSimAndSave)
-    if useDatashader:
+    if useDatashader & DATESHADER_FOUND:
         # plot, populate, write using datashader
         # global USE_DATASHADER
         # USE_DATASHADER = True
@@ -740,6 +743,8 @@ def executeScenario(sim):
 
 # Called for every run, aggregate data via datashader
 def datashade(data, retentionPolicy):
+    if DATESHADER_FOUND == False:
+        return
     datashaderLibrary.plotSim(data, retentionPolicy)
 
 # This method is used to plot the retained data of a simulation.
@@ -835,6 +840,9 @@ def plotSimAndSave(data, retentionPolicy):
     return
 
 def datashaderDriver(saveFigures):
+    if DATESHADER_FOUND == False:
+        print "datashader library not found"
+        return
     print "showing graphs via datashader"
     if saveFigures:
         # Write the data to csv files, and then read from it and graph.
