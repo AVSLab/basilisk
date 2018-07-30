@@ -242,28 +242,6 @@ class Controller:
             dispersions = json.load(dispersionFile)
             return dispersions
 
-
-
-    # convert numpy array to a dataframe. then convet a dataframe to csv.
-    # columns = ['Timestamp', 'x', 'y', 'z']
-    # TODO ADAM
-
-    def arrayToCsv(self, nparray, columns, file_name):
-        df = self.arrayToDF(nparray, columns)
-
-        path = "graphData/" + file_name
-        try:
-            os.makedirs(path)
-        except OSError:
-            if not os.path.isdir(path):
-                raise
-        return df.to_csv(path, sep='\t', encoding='utf-8', index=False)
-
-    def arrayToDF(self, nparray, columns):
-        return pd.DataFrame(nparray, columns=columns)
-
-
-
     def reRunCases(self, caseList):
         """ Rerun some cases from a MonteCarlo run. Does not run in parallel
         Args:
@@ -559,7 +537,6 @@ class Controller:
                     failFile.write(str(failed))
 
         return failed
-
 
 
 class SimulationParameters():
