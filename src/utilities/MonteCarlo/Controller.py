@@ -41,18 +41,6 @@ import cPickle as pickle
 from multiprocessing import Pool, cpu_count
 import signal
 
-import numpy as np
-import pandas as pd
-from bokeh.plotting import figure, output_file, show
-
-
-
-import datashader as ds
-import datashader.transfer_functions as tf
-from datashader.colors import inferno
-from matplotlib.colors import rgb2hex
-from matplotlib.cm import get_cmap
-
 
 class Controller:
     """
