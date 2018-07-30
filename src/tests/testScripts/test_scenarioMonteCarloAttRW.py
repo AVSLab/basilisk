@@ -37,8 +37,8 @@ sys.path.append(path + '/../scenarios')
 import scenarioMonteCarloAttRW
 
 @pytest.mark.parametrize("MCCases, datashader",
-                         [(1, False),
-                          (2, False)]) # Case 1 for normal MC runs, case 2 for running ICs
+                         [(1, True),
+                          (2, True)]) # Case 1 for normal MC runs, case 2 for running ICs
 
 @pytest.mark.slowtest()
 def test_MonteCarloSimulation(show_plots, MCCases, datashader):

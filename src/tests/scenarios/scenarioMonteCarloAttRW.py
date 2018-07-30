@@ -72,7 +72,7 @@ from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispe
                                                        NormalVectorCartDispersion, InertiaTensorDispersion)
 
 
-NUMBER_OF_RUNS = 10
+NUMBER_OF_RUNS = 4
 VERBOSE = True
 
 # Here are the name of some messages that we want to retain or otherwise use
@@ -457,11 +457,15 @@ def run(saveFigures, case, show_plots, useDatashader):
         if show_plots:
             if useDatashader:
                 print "showing graphs via datashader"
-                datashaderLibrary.writeDataSaveFilesGraph()
-            print "Test concluded, showing plots now via matplot..."
-            plt.show()
-            # close the plots being saved off to avoid over-writing old and new figures
-            plt.close("all")
+                if saveFigures:
+                    datashaderLibrary.writeDataSaveFilesGraph()
+                else:
+                    datashaderLibrary.graphWithoutCSV()
+            else:
+                print "Test concluded, showing plots now via matplot..."
+                plt.show()
+                # close the plots being saved off to avoid over-writing old and new figures
+                plt.close("all")
 
     #########################################################
     if case ==2:
@@ -487,9 +491,10 @@ def run(saveFigures, case, show_plots, useDatashader):
             if useDatashader:
                 print "showing graphs via datashader"
                 datashaderLibrary.writeDataSaveFilesGraph()
-            plt.show()
-            # close the plots being saved off to avoid over-writing old and new figures
-            plt.close("all")
+            else:
+                plt.show()
+                # close the plots being saved off to avoid over-writing old and new figures
+                plt.close("all")
 
         # Now we clean up data from this test
         os.remove(icName + '/' + 'MonteCarlo.data' )
@@ -832,7 +837,7 @@ def plotSimAndSave(data, retentionPolicy):
 # stand-along python script
 #
 if __name__ == "__main__":
-    run(  False        # safe figures to file
+    run(  True        # safe figures to file -> for datashader this implies the csv files will be written
         , 1            # Case 1 is normal MC, case 2 is initial conditon run
         , True         # show_plots
         , True        # use datashading library - matplotlib will not be used

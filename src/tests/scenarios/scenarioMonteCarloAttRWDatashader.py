@@ -178,9 +178,13 @@ def saveDataframesToFile():
 
 # This method is the driver method for graphing all of the data. It loops through the retained data list (strings)
 # and graphs the corresponding csv file for each retained data
-def graph():
-    for data, yAxisLabel in zip(retainedDataList, yAxisLabelList):
-        configureGraph(data, yAxisLabel)
+def graph(fromCSV):
+    if fromCSV:
+        for data, yAxisLabel in zip(retainedDataList, yAxisLabelList):
+            configureGraph(data, [], yAxisLabel, fromCSV)
+    else:
+        for data, dataFrame, yAxisLabel in zip(retainedDataList, globalDataFrames, yAxisLabelList):
+            configureGraph(data, dataFrame, yAxisLabel, fromCSV)
 
 # This method reads data from the csv files, and converts them into dataframes. It currently plots
 # the data via holoviews framework, and datashades the plot. It passes this plot to the bokeh front end
@@ -200,7 +204,7 @@ def graph():
 #     color=[color, color, color], alpha=[0.3, 0.3, 0.3], line_width=2)
 #     output_file("data/mc1/"+data+".html")
 #     save(p)
-def configureGraph(data, yAxisLabel):
+def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV):
     # Read csv file and create a dataframe from it.
     # If the user doesn't want to write any data to disc, the user can not write any data
     # and instead just use the global dataframes to plot the data. However, writing to file
@@ -208,9 +212,11 @@ def configureGraph(data, yAxisLabel):
     # solely graph the data.
     print "beginning graphing process", datetime.datetime.now()
 
-    df = pd.read_csv(
-        "data/mc1/" + data + ".csv")
-
+    if fromCSV:
+        df = pd.read_csv(
+            "data/mc1/" + dataName + ".csv")
+    else:
+        df = dataFrame #this needs to point to the dataframe not the string
     # Find the outliers of the graph to identify erroneous runs.
     # Must do this before concatanating the columns so we can correspond
     # an outlier to a specific run
@@ -234,10 +240,6 @@ def configureGraph(data, yAxisLabel):
     # layout = curvesx * curvesy * curvesz
 
     df = concat_columns(df)
-
-    # Filter the data
-
-    # df.to_csv("filtered.csv", encoding='utf-8', index=False)
 
     #
     # NOW PLOTTING VIA HOLOVIEWS AND DATASHADER. Created html file with graphs and axis information etc.
@@ -264,7 +266,7 @@ def configureGraph(data, yAxisLabel):
     plot.y_range = Range1d(df.y.min(), df.y.max())
 
     plot.plot_height = 500
-    plot.title.text = data
+    plot.title.text = dataName
     plot.xaxis.axis_label = "Time"
     plot.yaxis.axis_label = yAxisLabel
     # output_file("data/mc1/"+data+".html")
@@ -309,7 +311,7 @@ def configureGraph(data, yAxisLabel):
     # create_image(agg, GnBu9, 'log', 'black', data+"_gnu_blackbg")
     # create_image(agg, jet, 'log', 'black', data+"jet_blackbg")
     # create_image(agg, cm(viridis), "eq_hist", 'white', data+"_viridis")
-    create_image(agg, 'default', 'eq_hist', 'white', data+"_default")
+    create_image(agg, 'default', 'eq_hist', 'white', dataName + "_default")
 
     print "done graphing...", datetime.datetime.now()
 
@@ -372,10 +374,15 @@ def findOutliers(df, data):
 def writeDataSaveFilesGraph():
     writeDirectories()
     saveDataframesToFile()
-    graph()
+    graph(True)
 
 def graphCurrentData():
-    graph()
+    graph(True)
+
+def graphWithoutCSV():
+    writeDirectories()
+    graph(False)
+
 
 # This method is given a datashader image object, and saves it as a png file under
 # a directory called "image". This is a variant of the export_image function
