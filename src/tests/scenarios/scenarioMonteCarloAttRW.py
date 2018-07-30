@@ -32,7 +32,13 @@ import os
 import numpy as np
 import shutil
 import matplotlib.pyplot as plt
-import scenarioMonteCarloAttRWDatashader as datashaderLibrary
+
+try:
+    import scenarioMonteCarloAttRWDatashader as datashaderLibrary
+except ImportError:
+    print "Datashader library not found. Will use matplotlib"
+
+
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 fileNameString = os.path.basename(os.path.splitext(__file__)[0])
@@ -458,11 +464,7 @@ def run(saveFigures, case, show_plots, useDatashader):
         # And possibly show the plots
         if show_plots:
             if useDatashader:
-                print "showing graphs via datashader"
-                if saveFigures:
-                    datashaderLibrary.writeDataSaveFilesGraph()
-                else:
-                    datashaderLibrary.graphWithoutCSV()
+                datashaderDriver(saveFigures)
             else:
                 print "Test concluded, showing plots now via matplot..."
                 plt.show()
@@ -491,8 +493,7 @@ def run(saveFigures, case, show_plots, useDatashader):
         # And possibly show the plots
         if show_plots:
             if useDatashader:
-                print "showing graphs via datashader"
-                datashaderLibrary.writeDataSaveFilesGraph()
+                datashaderDriver(saveFigures)
             else:
                 plt.show()
                 # close the plots being saved off to avoid over-writing old and new figures
@@ -503,7 +504,6 @@ def run(saveFigures, case, show_plots, useDatashader):
         for i in range(numberICs):
             os.remove(icName + '/' + 'run' + str(i) + '.data')
         assert not os.path.exists(icName + '/' + 'MonteCarlo.data'), "No leftover data should exist after the test"
-
 
 ## This function creates the simulation to be executed in parallel.
 # It is copied directly from src/tests/scenarios.
@@ -834,13 +834,22 @@ def plotSimAndSave(data, retentionPolicy):
 
     return
 
+def datashaderDriver(saveFigures):
+    print "showing graphs via datashader"
+    if saveFigures:
+        # Write the data to csv files, and then read from it and graph.
+        datashaderLibrary.writeDataSaveFilesGraph()
+    else:
+        # After the monte carlo is complete, parse the global dataframes for the data to plot
+        # NOT the csv files. (to be used if user doesn't want to save data which can take some time)
+        datashaderLibrary.graphWithoutCSV()
 #
 # This statement below ensures that the unit test script can be run as a
-# stand-along python script
+# # stand-along python script
 #
 if __name__ == "__main__":
-    run(  True        # safe figures to file -> for datashader this implies the csv files will be written
+    run(  False        # save figures to file -> for datashader this implies the csv files will be written
         , 1            # Case 1 is normal MC, case 2 is initial conditon run
         , True         # show_plots
-        , True        # use datashading library - matplotlib will not be used
+        , True         # use datashading library - matplotlib will not be used
        )
