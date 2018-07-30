@@ -32,7 +32,7 @@ import os
 import numpy as np
 import shutil
 import matplotlib.pyplot as plt
-import scenarioImprovedGraphingViaWritingData as graphing
+import scenarioMonteCarloAttRWDatashader as datashaderLibrary
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 fileNameString = os.path.basename(os.path.splitext(__file__)[0])
@@ -72,7 +72,7 @@ from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispe
                                                        NormalVectorCartDispersion, InertiaTensorDispersion)
 
 
-NUMBER_OF_RUNS = 150
+NUMBER_OF_RUNS = 10
 VERBOSE = True
 
 # Here are the name of some messages that we want to retain or otherwise use
@@ -88,9 +88,11 @@ rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
 # We also will need the simulationTime and samplingTimes
 numDataPoints = 100
-simulationTime = macros.min2nano(20.)
+simulationTime = macros.min2nano(10.)
 samplingTime = simulationTime / (numDataPoints-1)
 
+ONLY_DATASHADE_DATA = 0
+USE_DATASHADER = False
 
 ## \defgroup Tutorials_5_0
 ##   @{
@@ -301,9 +303,14 @@ samplingTime = simulationTime / (numDataPoints-1)
 ##  @}
 
 
-def run(saveFigures, case, show_plots):
+def run(saveFigures, case, show_plots, useDatashader):
+    print useDatashader, " usedatashader"
     '''This function is called by the py.test environment.'''
 
+    if ONLY_DATASHADE_DATA:
+        print "graphing data via previous monte carlo data"
+        datashaderLibrary.graph()
+        return
     # A MonteCarlo simulation can be created using the `MonteCarlo` module.
     # This module is used to execute monte carlo simulations, and access
     # retained data from previously executed MonteCarlo runs.
@@ -385,6 +392,11 @@ def run(saveFigures, case, show_plots):
     if saveFigures:
         # plot data only if show_plots is true, otherwise just retain
         retentionPolicy.setDataCallback(plotSimAndSave)
+    if useDatashader:
+        # plot, populate, write using datashader
+        global USE_DATASHADER
+        USE_DATASHADER = True
+        # retentionPolicy.setDataCallback(datashade)
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
     if case ==1:
@@ -444,14 +456,14 @@ def run(saveFigures, case, show_plots):
 
         # And possibly show the plots
         if show_plots:
-            print "Test concluded, showing plots now..."
-            graphing.writeDirectories()
-            graphing.saveDataframesToFile()
-            graphing.graph()
-            return
-            # plt.show()
+            if useDatashader:
+                print "showing graphs via datashader"
+                datashaderLibrary.writeDataSaveFilesGraph()
+                # return
+            print "Test concluded, showing plots now via matplot..."
+            plt.show()
             # close the plots being saved off to avoid over-writing old and new figures
-            # plt.close("all")
+            plt.close("all")
 
     #########################################################
     if case ==2:
@@ -718,6 +730,10 @@ def executeScenario(sim):
     sim.ConfigureStopTime(simulationTime)
     sim.ExecuteSimulation()
 
+# Called for every run, aggregate data via datashader
+def datashade(data, retentionPolicy):
+    datashaderLibrary.plotSim(data, retentionPolicy)
+
 # This method is used to plot the retained data of a simulation.
 # It is called once for each run of the simulation, overlapping the plots
 def plotSim(data, retentionPolicy):
@@ -725,11 +741,11 @@ def plotSim(data, retentionPolicy):
     #   retrieve the logged data
     #
 
-    # if graphing via datashader..
-    graphing.plotSim(data, retentionPolicy)
+    if USE_DATASHADER:
+        # plot, populate, write using datashader
+        # retentionPolicy.setDataCallback(datashade)
+        datashade(data, retentionPolicy)
 
-
-    return {}
 
     dataUsReq = data["messages"][rwMotorTorqueConfigOutputDataName+".motorTorque"]
     dataSigmaBR = data["messages"][attErrorConfigOutputDataName+".sigma_BR"]
@@ -738,6 +754,8 @@ def plotSim(data, retentionPolicy):
     dataOmegaRW = data["messages"][mrpControlConfigInputRWSpeedsName+".wheelSpeeds"]
     dataVolt = data["messages"][fswRWVoltageConfigVoltageOutMsgName+".voltage"]
     dataRW = []
+
+    print "standamard matplot lib graphing"
     for message in rwOutName:
         dataRW.append(data["messages"][message+".u_current"])
     np.set_printoptions(precision=16)
@@ -807,20 +825,21 @@ def plotSim(data, retentionPolicy):
 def plotSimAndSave(data, retentionPolicy):
 
     figureList = plotSim(data, retentionPolicy)
-
-    for pltName, plt in figureList.items():
-        unitTestSupport.saveScenarioFigure(
-            fileNameString + "_" + pltName
-            , plt, path)
+    if not USE_DATASHADER:
+        for pltName, plt in figureList.items():
+            unitTestSupport.saveScenarioFigure(
+                fileNameString + "_" + pltName
+                , plt, path)
 
     return
 
 #
-# This statement below ensures that the unit test scrip can be run as a
+# This statement below ensures that the unit test script can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
     run(  False        # safe figures to file
-        , 1            # Case 1 is normal MC, case 2 is initial conditon run
+        , 2            # Case 1 is normal MC, case 2 is initial conditon run
         , True         # show_plots
+        , True        # use datashading library - matplotlib will not be used
        )

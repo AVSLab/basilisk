@@ -36,13 +36,16 @@ path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../scenarios')
 import scenarioMonteCarloAttRW
 
-@pytest.mark.parametrize("MCCases", [1, 2]) # Case 1 for normal MC runs, case 2 for running ICs
+@pytest.mark.parametrize("MCCases, datashader",
+                         [(1, False), (2, False)]) # Case 1 for normal MC runs, case 2 for running ICs
+
 @pytest.mark.slowtest()
-def test_MonteCarloSimulation(show_plots, MCCases):
+def test_MonteCarloSimulation(show_plots, MCCases, datashader):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
-    scenarioMonteCarloAttRW.run(True, MCCases , show_plots)
-    scenarioMonteCarloAttRW.run(True, MCCases , show_plots)
+    scenarioMonteCarloAttRW.run(True, MCCases , show_plots, datashader)
+    # scenarioMonteCarloAttRW.run(True, MCCases , show_plots, datashader)
+
 
     return
 

@@ -19,10 +19,8 @@
 '''
 
 #
-# Basilisk Integrated Test
 #
-# Purpose:  Integrated test of the MonteCarlo module.  Runs multiple
-#           scenarioAttitudeFeedbackRW with dispersed initial parameters
+# Purpose: Example of graphing via datashader
 #
 
 
@@ -133,7 +131,6 @@ def plotSim(data, retentionPolicy):
     for i, dataframe, index in izip(count(), globalDataFrames, retainedDataList):
         dataMessage = data["messages"][index]
         globalDataFrames[i] = updateDataframes(dataMessage, dataframe)
-        print len(globalDataFrames[i])
 
 # Write directories based on monte carlo name and sub directory name
 def writeDirectories():
@@ -151,12 +148,12 @@ def systemWriteDirectories(path):
 # This methods adds the next run of the monte carlo below the previous run, with the two runs separated
 # by a row of NaN values.
 def updateDataframes(data, dataframe):
-    df = pd.DataFrame(data, columns=None)
-
     # Using pd.concat we can put the new run to the right of the current right run instead of below.
     # This is not how datashader needs the data, however it is an example of maniuplating data
     # into a different shape with pandas
     # result = pd.concat([df, dataframe], axis = 1, sort = False)
+
+    df = pd.DataFrame(data, columns=None)
 
     # Create a dataframe full of NaN values to append below the previous run and above the next run to append
     nandf = pd.DataFrame([np.nan])
@@ -373,6 +370,13 @@ def findOutliers(df, data):
     # outliers = df[df[col] > df[col].mean() + 3 * df[col].std()]
     # print outliers
 
+def writeDataSaveFilesGraph():
+    writeDirectories()
+    saveDataframesToFile()
+    graph()
+
+def graphCurrentData():
+    graph()
 
 # This method is given a datashader image object, and saves it as a png file under
 # a directory called "image". This is a variant of the export_image function
