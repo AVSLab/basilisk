@@ -65,6 +65,7 @@ import matplotlib.cbook as cbook
 from bokeh.plotting import figure, show, output_file
 from bokeh.models import Range1d
 
+output_file("data/mc1_assets/mc1_graphs.html")
 
 # Here are the name of some messages that we want to retain or otherwise use
 inertial3DConfigOutputDataName = "guidanceInertial3D"
@@ -270,7 +271,6 @@ def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV):
     plot.title.text = dataName
     plot.xaxis.axis_label = "Time"
     plot.yaxis.axis_label = yAxisLabel
-    output_file("data/mc1_assets/mc1_graphs.html")
     show(plot)
 
     #
@@ -372,6 +372,10 @@ def findOutliers(df, data):
     # outliers = df[df[col] > df[col].mean() + 3 * df[col].std()]
     # print outliers
 
+#
+# Some driver methods for what the datashader should do based on pytest information.
+# this is mostly just used from the main monte carlo file.
+#
 def writeDataSaveFilesGraph():
     writeDirectories()
     saveDataframesToFile()
@@ -381,7 +385,7 @@ def graphCurrentData():
     graph(True)
 
 def graphWithoutCSV():
-    writeDirectories()
+    writeDirectories() #used for images..no data is written.
     graph(False)
 
 

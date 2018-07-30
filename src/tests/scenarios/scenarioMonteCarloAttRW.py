@@ -26,7 +26,6 @@
 #
 
 
-
 import inspect
 import math
 import os
@@ -854,8 +853,8 @@ def datashaderDriver(saveFigures):
 # # stand-along python script
 #
 if __name__ == "__main__":
-    run(  False        # save figures to file -> for datashader this implies the csv files will be written
+    run(  True        # save figures to file -> for datashader this implies the csv files will be written
         , 1            # Case 1 is normal MC, case 2 is initial conditon run
         , True         # show_plots. If this is true, using datashader files will be saved. to show datashade graphs, files must be saved
-        , False         # use datashading library - matplotlib will not be used
+        , True         # use datashading library - matplotlib will not be used
        )
