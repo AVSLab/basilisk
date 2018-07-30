@@ -113,7 +113,7 @@ globalDataFrames = [attErrorConfigOutputDataName_sigma_BR_dataFrame, attErrorCon
 yAxisLabelList = ["Attitude Error Sigma_br", "Attitude Error omage_br_b",
                   "Reaction Wheel Speeds", "Flight Software Voltage Out", "Reaction Wheel Motor Torque"]
 mainDirectoryName = "data/"
-subDirectories = ["/mc1/", "/mc1_images/"]
+subDirectories = ["/mc1_data/", "/mc1_assets/"]
 
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
@@ -214,9 +214,10 @@ def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV):
 
     if fromCSV:
         df = pd.read_csv(
-            "data/mc1/" + dataName + ".csv")
+            "data/mc1_data/" + dataName + ".csv")
     else:
-        df = dataFrame #this needs to point to the dataframe not the string
+        df = dataFrame
+
     # Find the outliers of the graph to identify erroneous runs.
     # Must do this before concatanating the columns so we can correspond
     # an outlier to a specific run
@@ -269,7 +270,7 @@ def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV):
     plot.title.text = dataName
     plot.xaxis.axis_label = "Time"
     plot.yaxis.axis_label = yAxisLabel
-    # output_file("data/mc1/"+data+".html")
+    output_file("data/mc1_assets/mc1_graphs.html")
     show(plot)
 
     #
@@ -285,7 +286,7 @@ def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV):
     # export_image(stacked, data)
 
     # Set range of x and y axis (zooming via code)
-    x_range = df.x.min(), df.x.max() / 4
+    x_range = df.x.min(), df.x.max() / 15
     y_range = df.y.min(), df.y.max()
 
     # Set the width and height of the images dimensions
@@ -303,14 +304,14 @@ def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV):
 
     # How can be 'linear' 'log' or 'eq_hist'. Here is a collection of different calls
     # to create the same image with different color schemes
-    # create_image(agg, ['green', 'yellow', 'red'], 'log', 'none', data+"_green_yellow_red")
-    # create_image(agg, ['green', 'yellow', 'red'], 'log', 'black', data+"_green_yellow_red_blackbg")
-    # create_image(agg, cm(Greys9, 0.25), "eq_hist", 'black', data+"greys9_blackbg")
-    # create_image(agg, cm(fire, 0.2), 'log','black', data+"_fire_blackbg")
-    # create_image(agg, ['aqua', 'lime', 'fuchsia', 'yellow'], 'log','black', data+"_aqua_lime_blackbg")
-    # create_image(agg, GnBu9, 'log', 'black', data+"_gnu_blackbg")
-    # create_image(agg, jet, 'log', 'black', data+"jet_blackbg")
-    # create_image(agg, cm(viridis), "eq_hist", 'white', data+"_viridis")
+    # create_image(agg, ['green', 'yellow', 'red'], 'log', 'none', dataName+"_green_yellow_red")
+    # create_image(agg, ['green', 'yellow', 'red'], 'log', 'black', dataName+"_green_yellow_red_blackbg")
+    # create_image(agg, cm(Greys9, 0.25), "eq_hist", 'black', dataName+"greys9_blackbg")
+    # create_image(agg, cm(fire, 0.2), 'log','black', dataName+"_fire_blackbg")
+    # create_image(agg, ['aqua', 'lime', 'fuchsia', 'yellow'], 'log','black', dataName+"_aqua_lime_blackbg")
+    # create_image(agg, GnBu9, 'log', 'black', dataName+"_gnu_blackbg")
+    # create_image(agg, jet, 'log', 'black', dataName+"jet_blackbg")
+    # create_image(agg, cm(viridis), "eq_hist", 'white', dataName+"_viridis")
     create_image(agg, 'default', 'eq_hist', 'white', dataName + "_default")
 
     print "done graphing...", datetime.datetime.now()
@@ -354,7 +355,7 @@ def concat_columns(df, separator=np.NaN):
 # re-aggregated when zooming in.
 def image_callback(x_range, y_range, w, h):
     cvs = ds.Canvas(plot_width=w, plot_height=h, x_range=x_range, y_range=y_range)
-    df = pd.read_csv("data/mc1/" + retainedDataList[1]+".csv")
+    df = pd.read_csv("data/mc1_data/" + retainedDataList[1]+".csv")
     agg = cvs.line(df, '0', '1', ds.count())
     img = tf.shade(agg)
     tf.shade(agg, how='eq_hist')

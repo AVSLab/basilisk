@@ -96,12 +96,12 @@ fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
 # We also will need the simulationTime and samplingTimes
-numDataPoints = 100
+numDataPoints = 1000
 simulationTime = macros.min2nano(10.)
 samplingTime = simulationTime / (numDataPoints-1)
 
+# Graph existing data
 ONLY_DATASHADE_DATA = 0
-USE_DATASHADER = False
 
 ## \defgroup Tutorials_5_0
 ##   @{
@@ -319,7 +319,7 @@ def run(saveFigures, case, show_plots, useDatashader):
     # from pre existing csv files.
     if ONLY_DATASHADE_DATA & DATESHADER_FOUND:
         print "graphing data via previous monte carlo data"
-        datashaderLibrary.graph()
+        datashaderLibrary.graph(True)
         return
     # A MonteCarlo simulation can be created using the `MonteCarlo` module.
     # This module is used to execute monte carlo simulations, and access
@@ -404,8 +404,6 @@ def run(saveFigures, case, show_plots, useDatashader):
         retentionPolicy.setDataCallback(plotSimAndSave)
     if useDatashader & DATESHADER_FOUND:
         # plot, populate, write using datashader
-        # global USE_DATASHADER
-        # USE_DATASHADER = True
         retentionPolicy.setDataCallback(datashade)
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
@@ -743,7 +741,7 @@ def executeScenario(sim):
 
 # Called for every run, aggregate data via datashader
 def datashade(data, retentionPolicy):
-    if DATESHADER_FOUND == False:
+    if not DATESHADER_FOUND:
         return
     datashaderLibrary.plotSim(data, retentionPolicy)
 
@@ -858,6 +856,6 @@ def datashaderDriver(saveFigures):
 if __name__ == "__main__":
     run(  False        # save figures to file -> for datashader this implies the csv files will be written
         , 1            # Case 1 is normal MC, case 2 is initial conditon run
-        , True         # show_plots
-        , True         # use datashading library - matplotlib will not be used
+        , True         # show_plots. If this is true, using datashader files will be saved. to show datashade graphs, files must be saved
+        , False         # use datashading library - matplotlib will not be used
        )
