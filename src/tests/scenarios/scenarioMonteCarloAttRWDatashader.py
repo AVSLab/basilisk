@@ -96,7 +96,7 @@ fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame = pd.DataFrame()
 # Create a list of retained data names to loop through while graphing. The CSV files are named by this list of strings
 # so you can use this list as a way to loop through all of the data and graph.
 retainedDataList = [attErrorConfigOutputDataName_sigma_BR,
-                    attErrorConfigOutputDataName_omega_BR_B, sNavObjectOutputTransName_r_BN_N,
+                    attErrorConfigOutputDataName_omega_BR_B,
                     mrpControlConfigInputRWSpeedsName_wheelSpeeds, fswRWVoltageConfigVoltageOutMsgName_voltage, rwMotorTorqueConfigOutputDataName_motorTorque]
 
 # Global list of dataframes that are populated from executing callback
@@ -106,11 +106,11 @@ retainedDataList = [attErrorConfigOutputDataName_sigma_BR,
 # retaining and graphing data other then having lines such as:
 # retentionPolicy.addMessageLog(rwMotorTorqueConfigOutputDataName, [("motorTorque", range(5))], samplingTime)
 globalDataFrames = [attErrorConfigOutputDataName_sigma_BR_dataFrame, attErrorConfigOutputDataName_omega_BR_B_dataFrame,
-                   sNavObjectOutputTransName_r_BN_N_dataFrame, mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame,
+                   mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame,
                    fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame, rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame]
 
 # List of y axis labels, same order as globalDataFrames etc.
-yAxisLabelList = ["Attitude Error Sigma_br", "Attitude Error omage_br_b", "Navifational Trans _r_bn_n",
+yAxisLabelList = ["Attitude Error Sigma_br", "Attitude Error omage_br_b",
                   "Reaction Wheel Speeds", "Flight Software Voltage Out", "Reaction Wheel Motor Torque"]
 mainDirectoryName = "data/"
 subDirectories = ["/mc1/", "/mc1_images/"]
@@ -125,7 +125,6 @@ rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 def plotSim(data, retentionPolicy):
 
     # Get the data from messages using the global data names
-    print "improved graphing being called", data["index"]
     global globalDataFrames
 
     for i, dataframe, index in izip(count(), globalDataFrames, retainedDataList):
@@ -307,9 +306,9 @@ def configureGraph(data, yAxisLabel):
     # create_image(agg, cm(Greys9, 0.25), "eq_hist", 'black', data+"greys9_blackbg")
     # create_image(agg, cm(fire, 0.2), 'log','black', data+"_fire_blackbg")
     # create_image(agg, ['aqua', 'lime', 'fuchsia', 'yellow'], 'log','black', data+"_aqua_lime_blackbg")
-    create_image(agg, GnBu9, 'log', 'black', data+"_gnu_blackbg")
+    # create_image(agg, GnBu9, 'log', 'black', data+"_gnu_blackbg")
     # create_image(agg, jet, 'log', 'black', data+"jet_blackbg")
-    create_image(agg, cm(viridis), "eq_hist", 'white', data+"_viridis")
+    # create_image(agg, cm(viridis), "eq_hist", 'white', data+"_viridis")
     create_image(agg, 'default', 'eq_hist', 'white', data+"_default")
 
     print "done graphing...", datetime.datetime.now()

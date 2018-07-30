@@ -304,7 +304,6 @@ USE_DATASHADER = False
 
 
 def run(saveFigures, case, show_plots, useDatashader):
-    print useDatashader, " usedatashader"
     '''This function is called by the py.test environment.'''
 
     if ONLY_DATASHADE_DATA:
@@ -394,9 +393,9 @@ def run(saveFigures, case, show_plots, useDatashader):
         retentionPolicy.setDataCallback(plotSimAndSave)
     if useDatashader:
         # plot, populate, write using datashader
-        global USE_DATASHADER
-        USE_DATASHADER = True
-        # retentionPolicy.setDataCallback(datashade)
+        # global USE_DATASHADER
+        # USE_DATASHADER = True
+        retentionPolicy.setDataCallback(datashade)
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
     if case ==1:
@@ -459,7 +458,6 @@ def run(saveFigures, case, show_plots, useDatashader):
             if useDatashader:
                 print "showing graphs via datashader"
                 datashaderLibrary.writeDataSaveFilesGraph()
-                # return
             print "Test concluded, showing plots now via matplot..."
             plt.show()
             # close the plots being saved off to avoid over-writing old and new figures
@@ -486,6 +484,9 @@ def run(saveFigures, case, show_plots, useDatashader):
 
         # And possibly show the plots
         if show_plots:
+            if useDatashader:
+                print "showing graphs via datashader"
+                datashaderLibrary.writeDataSaveFilesGraph()
             plt.show()
             # close the plots being saved off to avoid over-writing old and new figures
             plt.close("all")
@@ -741,11 +742,6 @@ def plotSim(data, retentionPolicy):
     #   retrieve the logged data
     #
 
-    if USE_DATASHADER:
-        # plot, populate, write using datashader
-        # retentionPolicy.setDataCallback(datashade)
-        datashade(data, retentionPolicy)
-
 
     dataUsReq = data["messages"][rwMotorTorqueConfigOutputDataName+".motorTorque"]
     dataSigmaBR = data["messages"][attErrorConfigOutputDataName+".sigma_BR"]
@@ -755,7 +751,6 @@ def plotSim(data, retentionPolicy):
     dataVolt = data["messages"][fswRWVoltageConfigVoltageOutMsgName+".voltage"]
     dataRW = []
 
-    print "standamard matplot lib graphing"
     for message in rwOutName:
         dataRW.append(data["messages"][message+".u_current"])
     np.set_printoptions(precision=16)
@@ -825,11 +820,10 @@ def plotSim(data, retentionPolicy):
 def plotSimAndSave(data, retentionPolicy):
 
     figureList = plotSim(data, retentionPolicy)
-    if not USE_DATASHADER:
-        for pltName, plt in figureList.items():
-            unitTestSupport.saveScenarioFigure(
-                fileNameString + "_" + pltName
-                , plt, path)
+    for pltName, plt in figureList.items():
+        unitTestSupport.saveScenarioFigure(
+            fileNameString + "_" + pltName
+            , plt, path)
 
     return
 
@@ -839,7 +833,7 @@ def plotSimAndSave(data, retentionPolicy):
 #
 if __name__ == "__main__":
     run(  False        # safe figures to file
-        , 2            # Case 1 is normal MC, case 2 is initial conditon run
+        , 1            # Case 1 is normal MC, case 2 is initial conditon run
         , True         # show_plots
         , True        # use datashading library - matplotlib will not be used
        )
