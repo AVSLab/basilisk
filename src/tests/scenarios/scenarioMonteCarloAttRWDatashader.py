@@ -65,7 +65,6 @@ import matplotlib.cbook as cbook
 from bokeh.plotting import figure, show, output_file
 from bokeh.models import Range1d
 
-output_file("data/mc1_assets/mc1_graphs.html")
 
 # Here are the name of some messages that we want to retain or otherwise use
 inertial3DConfigOutputDataName = "guidanceInertial3D"
@@ -137,6 +136,8 @@ def writeDirectories():
     for subDirectoryName in subDirectories:
         path = mainDirectoryName + subDirectoryName
         systemWriteDirectories(path)
+
+    output_file("data/mc1_assets/mc1_graphs.html")
 
 # Helper function for writing directories
 def systemWriteDirectories(path):
@@ -286,7 +287,7 @@ def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV):
     # export_image(stacked, data)
 
     # Set range of x and y axis (zooming via code)
-    x_range = df.x.min(), df.x.max() / 15
+    x_range = df.x.min(), df.x.max()
     y_range = df.y.min(), df.y.max()
 
     # Set the width and height of the images dimensions
