@@ -28,18 +28,20 @@
 # Scenario Description
 # -----
 # This script sets up a 6-DOF spacecraft orbiting earth, using the MRP_Steering module with a rate sub-servo system
-# to conrtrol the attitude all within the new BSK_Sim architecture.
+# to control the attitude all within the new BSK_Sim architecture.
 #
 # To run the default scenario, call the python script from a Terminal window through
 #
 #       python scenario_AttGuidance.py
 #
-# The simulation layout is shown in the following illustration.  Two simulation processes are created: one
+# The simulation layout is shown in the following illustration.
+# ![Simulation Flow Diagram](Images/doc/test_scenario_AttGuidance.svg "Illustration")
+# Two simulation processes are created: one
 # which contains dynamics modules, and one that contains the Flight Software (FSW) algorithm
 # modules. The initial setup for the simulation closely models that of scenario_FeedbackRW.py.
 #
 # To begin, one must first create a class that will
-# inherient from the masterSim class within the __init__() procedure and providing a name to the sim.
+# inherent from the masterSim class and provide a name to the sim.
 # This is accomplished through:
 # ~~~~~~~~~~~~~{.py}
 #   class scenario_AttGuidance(BSKScenario):
@@ -111,7 +113,7 @@
 #
 # Custom Dynamics Configurations Instructions
 # -----
-# The modules required for this scenario are identical to those used in scenario_AttGuidance.py.
+# The modules required for this scenario are identical to those used in scenario_AttSteering.py.
 #
 #
 #
