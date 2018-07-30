@@ -25,9 +25,16 @@
 #           scenarioAttitudeFeedbackRW with dispersed initial parameters
 #
 
-
+USE_DATESHADER = True
 import sys, os, inspect
 import pytest
+try:
+    import datashader
+    import holoviews
+    import pandas
+    import bokeh
+except ImportError:
+    USE_DATESHADER = False
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -37,8 +44,8 @@ sys.path.append(path + '/../scenarios')
 import scenarioMonteCarloAttRW
 
 @pytest.mark.parametrize("MCCases, datashader",
-                         [(1, True),
-                          (2, True)]) # Case 1 for normal MC runs, case 2 for running ICs
+                         [(1, USE_DATESHADER),
+                          (2, USE_DATESHADER)]) # Case 1 for normal MC runs, case 2 for running ICs
 
 @pytest.mark.slowtest()
 def test_MonteCarloSimulation(show_plots, MCCases, datashader):
