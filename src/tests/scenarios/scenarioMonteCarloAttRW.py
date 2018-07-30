@@ -95,11 +95,11 @@ fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
 # We also will need the simulationTime and samplingTimes
-numDataPoints = 1000
+numDataPoints = 100
 simulationTime = macros.min2nano(10.)
 samplingTime = simulationTime / (numDataPoints-1)
 
-# Graph existing data
+# Graph existing data from csv files
 ONLY_DATASHADE_DATA = 0
 
 ## \defgroup Tutorials_5_0
