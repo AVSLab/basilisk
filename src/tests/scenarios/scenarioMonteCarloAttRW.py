@@ -306,6 +306,8 @@ USE_DATASHADER = False
 def run(saveFigures, case, show_plots, useDatashader):
     '''This function is called by the py.test environment.'''
 
+    # Set this macro to true if you want to only graph the libraries
+    # from pre existing csv files.
     if ONLY_DATASHADE_DATA:
         print "graphing data via previous monte carlo data"
         datashaderLibrary.graph()
