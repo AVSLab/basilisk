@@ -40,7 +40,9 @@ import cPickle as pickle
 
 from multiprocessing import Pool, cpu_count
 import signal
+
 import numpy as np
+
 
 class Controller:
     """
