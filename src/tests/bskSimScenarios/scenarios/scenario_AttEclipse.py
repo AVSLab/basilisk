@@ -17,7 +17,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-## \defgroup Tutorials_6_7
+## \defgroup Tutorials_6_6
 ## @{
 # Demonstrates how to use sun safe pointing in conjunction with the Eclipse, RW, CSS Weighted Least Squares Estimator, and
 # CSS modules to provide attitude guidance as the spacecraft passes through an eclipse while orbiting the Earth.
@@ -37,9 +37,9 @@
 #
 # The simulation layout is shown in the following illustration.  Two simulation processes are created: one
 # which contains dynamics modules, and one that contains the Flight Software (FSW) algorithm
-# modules. Instructions on how to configure seperate processes can be found in
+# modules. Instructions on how to configure separate processes can be found in
 # [scenarioAttitudeFeedback2T.py](@ref scenarioAttitudeFeedback2T).
-# ![Simulation Flow Diagram](Images/doc/scenario_AttEclipse.svg "Illustration")
+# ![Simulation Flow Diagram](Images/doc/test_scenario_AttEclipseUpdated.svg "Illustration")
 #
 # When the simulation completes several plots are shown for the eclipse shadow factor, the sun direction vector,
 # attitude error, RW motor torque, and RW speed.

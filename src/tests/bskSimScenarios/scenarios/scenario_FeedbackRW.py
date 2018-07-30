@@ -19,7 +19,7 @@
 '''
 ## \defgroup Tutorials_6_1
 ## @{
-# Demonstrates how to stabilize the tumble of a 6-DOF spacecraft with reaction wheels.
+# Demonstrates how to stabilize the tumble of a 6-DOF spacecraft with reaction wheels in the BSK_Sim architecture.
 #
 # BSK Simulation: Feedback RW {#scenario_FeedbackRW}
 # ====
@@ -27,18 +27,20 @@
 # Scenario Description
 # -----
 # This script sets up a 6-DOF spacecraft orbiting earth, using the MRP_Steering module with a rate sub-servo system
-# to conrtrol the attitude all within the new BSK_Sim architecture.
+# to control the attitude within the BSK_Sim architecture.
 #
 # To run the default scenario, call the python script from a Terminal window through
 #
 #       python scenario_FeedbackRW.py
 #
-# The simulation layout is shown in the following illustration.  Two simulation processes are created: one
+# The simulation layout is shown in the following illustration.
+# ![Simulation Flow Diagram](Images/doc/test_scenario_FeedbackRW.svg "Illustration")
+# Two simulation processes are created: one
 # which contains dynamics modules, and one that contains the Flight Software (FSW) algorithm
 # modules. The initial setup for the simulation closely models that of scenario_BasicOrbit.py.
 #
 # To begin, one must first create a class that will
-# inherient from the masterSim class within the __init__() procedure and providing a name to the sim.
+# inherent from the masterSim class and provide a name to the sim.
 # This is accomplished through:
 # ~~~~~~~~~~~~~{.py}
 #   class scenario_FeedbackRW(BSKScenario):
@@ -56,7 +58,6 @@
 #   self.masterSim.modeRequest = "FeedbackRW"
 # ~~~~~~~~~~~~~
 # which triggers the steeringRW event within the BSK_FSW.py script.
-# ~~~~~~~~~~~~~
 #
 # The initial conditions for the scenario are the same as found within scenario_BasicOrbit.py except the tumble of the
 # spacecraft must be simulated by adding:
@@ -113,7 +114,7 @@
 #         # Instantiate Dyn modules as objects
 #           self.rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
 # ~~~~~~~~~~~~~
-# These objects are then configured through InitAllDynObjects(SimBase) which iterates through a number of 'setting'
+# These objects are then configured through InitAllDynObjects(SimBase) which iterates through a number of setter
 # functions, that configure all of the dynamics objects properties and messages.
 # ~~~~~~~~~~~~~{.py}
 #     # Global call to initialize every module
@@ -203,7 +204,7 @@
 #         self.SetMRPFeedbackRWA()
 #         self.SetRWMotorTorque(SimBase)
 # ~~~~~~~~~~~~~
-# Which prepare various configuration messages are ultimately attached to specific FSW tasks as seen below:
+# Which configure the FSW modules as seen below:
 # ~~~~~~~~~~~~~{.py}
 #      def SetMRPFeedbackControl(self, SimBase):
 #         self.mrpFeedbackControlData.inputGuidName = "guidanceOut"

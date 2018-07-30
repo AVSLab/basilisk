@@ -17,43 +17,45 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
+
+
 ## \defgroup Tutorials_6_0
 ## @{
-# Demonstrates how to create a 6-DOF spacecraft which is orbiting a planet. The purpose is to illustrate how to create
-# a spacecraft, attach a gravity model, and run a basic Basilisk simulation using the BSK_Sim architecture.
+# Demonstrates how to create a 3-DOF spacecraft which is orbiting a planet using the BSK_Sim architecture.
 #
 # BSK Simulation: Basic Orbit {#scenario_BasicOrbit}
 # ====
 #
 # Scenario Description
 # -----
-# This script sets up a 6-DOF spacecraft which is orbiting the Earth using the new BSK_Sim architecture.
+# This script sets up a 3-DOF spacecraft which is orbiting the Earth.
 #
-# To run the default scenario, call the python script from a Terminal window through
+# To run the default scenario, call the python script from a Terminal window through:
 #
 #       python scenario_BasicOrbit.py
 #
-# The simulation layout is shown in the following illustration.  Two simulation processes are created: one
+# The simulation layout is shown in the following illustration.
+# ![Simulation Flow Diagram](Images/doc/scenario_basicOrbit_BSKSim.svg "Illustration")
+# Two simulation processes are created: one
 # which contains dynamics modules, and one that contains the Flight Software (FSW) algorithm
 # modules. The benefit of the new BSK_Sim architecture is it allows the user to have a pre-built spacecraft
-# configurations neatly organized within three simple, similarly-structured files: BSK_scenario.py, BSK_FSW.py, and
-# BSK_Dynamics.py.
+# configurations neatly organized within three modular files: `BSK_scenario.py`, `BSK_FSW.py`, and
+# `BSK_Dynamics.py`.
 #
-# More explicitly, the purpose of the BSK_Scenario.py within the BSK_Simulation architecture is to provide the user a
+# More explicitly, the purpose of the BSK_Scenario.py file (scenario_BasicOrbit.py) within the BSK_Simulation architecture is to provide the user a
 # simple, front-end interface to configure a scenario without having to individually initialize and integrate each
-# dynamics and FSW module into their simulation. Instead BSK_Dynamics.py will preconfigure the desired dynamics modules,
-# attach them to the spacecraft, and link the appropriate messages to the desired FSW modules automatically.
-# Similarly, BSK_FSW.py accomplishes a similar goal, through rather than preconfigure all dynamics modules onto the spacecraft,
-# BSK_FSW.py instead creates preconfigured events for various FSW operating modes such as hill pointing, sun safe
+# dynamics and FSW module into their simulation. Instead BSK_Dynamics.py has preconfigured many desired dynamics modules,
+# attached them to the spacecraft, and linked the appropriate messages to the desired FSW modules automatically.
+# Similarly, BSK_FSW.py creates preconfigured events for various FSW operating modes such as hill pointing, sun safe
 # pointing, velocity pointing, and more. These preconfigured events automatically enable various tasks, which in turn,
 # assign various FSW models to the tasks. Together, these sequence of events initialize the required FSW modules, link
-# the messages sent via the dynamics modules, and provide pre-written FSW functionality directly through a simple
+# the messages sent via the dynamics modules, and provide pre-written FSW functionality through a simple
 # modeRequest variable within BSK_Scenario.py.
 #
-# Configuring a BSK_Scenario.py file
+# Configuring the BSK_Scenario.py file
 # -----
-# To write a custom BSK_scenario.py file first create a class that will
-# inherient from the masterSim class within the __init__() proceedure and providing a name to the sim.
+# To write a custom BSK_scenario.py file, first create a class that will
+# inherent from the masterSim class and providing a name to the sim.
 # This is accomplished through:
 # ~~~~~~~~~~~~~{.py}
 #   class scenario_BasicOrbit(BSKScenario):
@@ -63,18 +65,19 @@
 # ~~~~~~~~~~~~~
 #
 # Following the inheritance, there are three functions within the scenario class that need to be defined by the user:
-# configure_initial_conditions(), log_outputs(), and pull_outputs().
+# `configure_initial_conditions()`, `log_outputs()`, and `pull_outputs()`.
 #
-# Within configure_initial_conditions(), the user needs to first define the spacecraft FSW mode for the simulation
+# Within `configure_initial_conditions()`, the user needs to define the spacecraft FSW mode for the simulation
 # through:
 # ~~~~~~~~~~~~~{.py}
 #   self.masterSim.modeRequest = "hillPoint"
 # ~~~~~~~~~~~~~
 # this is the parameter that triggers the aforementioned BSK_FSW event. Additional FSW modes (to be discussed in later
-# modules include sunSafePoint, inertial3D, velocityPoint, hillPoint, and more.
-#  Additionally, the user needs to supply initial conditions
+# tutorials) include sunSafePoint, inertial3D, velocityPoint, hillPoint, and more.
+#
+# Additionally, the user needs to supply initial conditions
 # for the spacecraft and its orbit. The following code uses the orbitalMotion module to
-# construct the appropriate position and velocity vectors for a geocentric orbit, and then assigns them to the
+# construct the appropriate position and velocity vectors for a stable orbit, and then assigns them to the
 # spacecraft:
 # ~~~~~~~~~~~~~{.py}
 #         # Configure Dynamics initial conditions
@@ -93,14 +96,14 @@
 # ~~~~~~~~~~~~~
 # The `self.masterSim.DynModels` call supplies the user with list of active dynamic modules used within BSK_Dynamics.py.
 #
-# Within the log_outputs() function, the user can supply a list of messages they are interested in logging. For a
+# Within the `log_outputs()` function, the user can supply a list of messages they are interested in logging. For a
 # basic orbit, we need position and velocity from the navigation message.
 # ~~~~~~~~~~~~~{.py}
 #       samplingTime = self.masterSim.DynModels.processTasksTimeStep
 #       self.masterSim.TotalSim.logThisMessage(self.masterSim.DynModels.simpleNavObject.outputTransName, samplingTime)
 # ~~~~~~~~~~~~~
 #
-# Finally within the pull_outputs(), the user can pull specific variables from the messages:
+# Finally within the pull_outputs(), the user can pull specific variables from the logged messages:
 # ~~~~~~~~~~~~~{.py}
 #         # Dynamics process outputs
 #         r_BN_N = self.masterSim.pullMessageLogData(self.masterSim.DynModels.simpleNavObject.outputTransName + ".r_BN_N", range(3))
@@ -117,9 +120,9 @@
 # -----
 # The benefit of the BSK_Simulation architecture is its user simplicity. Things like reaction wheel configurations and
 # coarse sun sensor constellations are all preconfigured; however, for users who would like to customize their own
-# dynamics module configurations and FSW modes, we recommend copying the three primary BSK_Sim.py files
-# (BSK_Scenario.py, BSK_Dynamics.py, and BSK_FSW.py) and modifying them to their liking. Below documents the general
-# procedure for configuring a user customized BSK_Dynamics and BSK_FSW files.
+# dynamics modules and FSW modes, it is recommended to copy the three primary BSK_Sim files
+# (BSK_Scenario.py, BSK_Dynamics.py, and BSK_FSW.py) and modify them directly. Instructions for configuring
+#  user customized BSK_Dynamics and BSK_FSW files are detailed below.
 #
 # **Custom Dynamics Configurations Instructions**
 #
@@ -129,7 +132,7 @@
 #         # Create task
 #         SimBase.dynProc.addTask(SimBase.CreateNewTask(self.taskName, self.processTasksTimeStep)
 # ~~~~~~~~~~~~~
-# Following the task generation, all desired dynamics module object are generated:
+# Following the task generation, all desired dynamics module objects are generated:
 # ~~~~~~~~~~~~~{.py}
 #         # Instantiate Dyn modules as objects
 #         self.scObject = spacecraftPlus.SpacecraftPlus()
@@ -173,10 +176,11 @@
 #         pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file
 #         pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
 #         pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
+#
+#     def SetSimpleNavObject(self):
+#         self.simpleNavObject.ModelTag = "SimpleNavigation"
 # ~~~~~~~~~~~~~
 #
-# Following the configuration of all
-# dynamics objects' messages and properties.
 # Finally, all desired objects are attached to the DynamicsTask through:
 # ~~~~~~~~~~~~~{.py}
 #         # Assign initialized modules to tasks
@@ -187,30 +191,41 @@
 #
 # **Custom FSW Configurations Instructions**
 #
-# Similar to BSK_Dynamics.py, BSK_FSW.py's __init__() proceedure beings by defining all possible configuration messages
+# Similar to BSK_Dynamics.py, BSK_FSW.py's __init__() procedure beings by defining all possible configuration messages
 # required for future functionality. A sample of such process is seen here:
 # ~~~~~~~~~~~~~{.py}
 #         # Create module data and module wraps
 #         self.hillPointData = hillPoint.hillPointConfig()
 #         self.hillPointWrap = SimBase.setModelDataWrap(self.hillPointData)
 #         self.hillPointWrap.ModelTag = "hillPoint"
+#
+#         self.trackingErrorData = attTrackingError.attTrackingErrorConfig()
+#         self.trackingErrorWrap = SimBase.setModelDataWrap(self.trackingErrorData)
+#         self.trackingErrorWrap.ModelTag = "trackingError"
 # ~~~~~~~~~~~~~
 # Following the initial declaration of these configuration modules, BSK_FSW.py calls a InitAllFSWObjects() command,
-# which, like BSK_Dynamics's InitAllDynObjects(), calls additional member functions to configures each of the FSW modules
+# which, like BSK_Dynamics's InitAllDynObjects(), calls additional setter functions that configure each of the FSW modules
 # with the appropriate information and message names.
 # ~~~~~~~~~~~~~{.py}
 #     # Global call to initialize every module
 #     def InitAllFSWObjects(self, SimBase):
 #         self.SetHillPointGuidance(SimBase)
+#         self.SetAttitudeTrackingError(SimBase)
 # ~~~~~~~~~~~~~
-# Note how the messages pull output data from the `SimBase.DynModels`:
+# Note how the messages pull output data from the `SimBase.DynModels` to link messages from BSK_Dynamics:
 # ~~~~~~~~~~~~~{.py}
 #     def SetHillPointGuidance(self, SimBase):
 #         self.hillPointData.outputDataName = "referenceOut"
 #         self.hillPointData.inputNavDataName = SimBase.DynModels.simpleNavObject.outputTransName
 #         self.hillPointData.inputCelMessName = SimBase.DynModels.gravFactory.gravBodies['earth'].bodyInMsgName[:-12]
+#
+#     def SetAttitudeTrackingError(self, SimBase):
+#         self.trackingErrorData.inputNavName = SimBase.DynModels.simpleNavObject.outputAttName
+#         # Note: SimBase.DynModels.simpleNavObject.outputAttName = "simple_att_nav_output"
+#         self.trackingErrorData.inputRefName = "referenceOut"
+#         self.trackingErrorData.outputDataName = "guidanceOut"
 # ~~~~~~~~~~~~~
-# After each configuration module has been properly intialized with various message names, tasks are generated
+# After each configuration module has been properly initialized with various message names, tasks are generated
 # within the module.
 # ~~~~~~~~~~~~~{.py}
 #         # Create tasks
