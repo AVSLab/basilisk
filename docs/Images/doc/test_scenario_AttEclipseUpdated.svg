@@ -22,11 +22,6 @@
         <path d="M -8 0 L 0 3 L 0 -3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
       </g>
     </marker>
-    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker_3" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="black">
-      <g>
-        <path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
-      </g>
-    </marker>
   </defs>
   <metadata> Produced by OmniGraffle 7.8 
     <dc:date>2018-07-30 21:05:00 +0000</dc:date>
@@ -49,7 +44,7 @@
           <rect x="0" y="0" width="379.73366" height="207.2692" fill="#ffc0ff"/>
         </clipPath>
         <text clip-path="url(#clip_path)" transform="translate(.788072 478.73223) rotate(-90)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="136.67483" y="15">Sun Safe Point</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="114.61883" y="15">initalizeSunSafePoint</tspan>
         </text>
       </g>
       <g id="Graphic_241">
@@ -196,7 +191,7 @@
         </g>
       </g>
       <g id="Line_208">
-        <line x1="297.2825" y1="262.34084" x2="297.2825" y2="270.27257" marker-end="url(#FilledArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-width="1"/>
+        <line x1="297.2825" y1="262.34084" x2="297.2825" y2="270.27257" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-width="1"/>
       </g>
       <g id="Graphic_273">
         <rect x="392" y="149" width="543" height="352" fill="#c0c0ff"/>
@@ -209,7 +204,7 @@
         <path d="M 298.658 299.552 L 298.658 309.552 L 298.658 453.69826 L 529.8065 453.69826 L 557.22484 453.69826 L 557.22484 441.5268" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-dasharray="4.0,4.0" stroke-width="1"/>
       </g>
       <g id="Line_207">
-        <path d="M 538.3209 430.35525 L 538.3209 440.35525 L 538.3209 446.3412 L 537.53825 446.3412 L 361.36942 446.3412 L 361.36942 255.10113 L 361.36942 249.0213 L 353.6825 249.0213 L 348.6825 249.0213" marker-end="url(#FilledArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-dasharray="4.0,4.0" stroke-width="1"/>
+        <path d="M 538.3209 430.35525 L 538.3209 440.35525 L 538.3209 446.3412 L 537.53825 446.3412 L 361.36942 446.3412 L 361.36942 255.10113 L 361.36942 249.0213 L 353.6825 249.0213 L 348.6825 249.0213" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-dasharray="4.0,4.0" stroke-width="1"/>
       </g>
       <g id="Group_291">
         <g id="Graphic_293">
@@ -228,7 +223,7 @@
         <line x1="128" y1="291.70178" x2="134.63483" y2="291.90647" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-width="1"/>
       </g>
       <g id="Line_295">
-        <line x1="227.53012" y1="249.44792" x2="245.8827" y2="249.33567" marker-end="url(#FilledArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-width="1"/>
+        <line x1="227.53012" y1="249.44792" x2="245.8827" y2="249.33567" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-width="1"/>
       </g>
       <g id="Graphic_357">
         <rect x="546.48234" y="228.53667" width="83" height="28" fill="#c0ffc0"/>
@@ -462,10 +457,10 @@
         </g>
       </g>
       <g id="Line_361">
-        <path d="M 839.3593 269.55905 L 839.3593 259.55905 L 839.4078 226.75547 L 839.4078 206.3487 L 781.6221 206.3487 L 776.6221 206.3487" marker-end="url(#FilledArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-width="1"/>
+        <path d="M 839.3593 269.55905 L 839.3593 259.55905 L 839.4078 226.75547 L 839.4078 206.3487 L 781.6221 206.3487 L 776.6221 206.3487" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-width="1"/>
       </g>
       <g id="Line_363">
-        <path d="M 633.4474 430.0982 L 633.4474 440.0982 L 633.4474 460.74144 L 604.2101 460.74144 L 186.03012 460.74144 L 186.03012 322.3921 L 186.03012 317.3921" marker-end="url(#FilledArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-dasharray="4.0,4.0" stroke-width="1"/>
+        <path d="M 633.4474 430.0982 L 633.4474 440.0982 L 633.4474 460.74144 L 604.2101 460.74144 L 186.03012 460.74144 L 186.03012 322.3921 L 186.03012 317.3921" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-dasharray="4.0,4.0" stroke-width="1"/>
       </g>
       <g id="Group_218">
         <g id="Graphic_221">
@@ -482,7 +477,7 @@
         </g>
       </g>
       <g id="Line_368">
-        <path d="M 444.999 326.39693 L 444.999 336.39693 L 444.999 440.8412 C 450.499 440.8412 450.499 466.24144 444.999 466.24144 L 444.999 482.1745 L 35.038246 482.1745 L 35.038246 249.6004 L 35.94186 249.6004 L 124.73012 249.69645" marker-end="url(#FilledArrow_Marker_3)" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-dasharray="4.0,4.0" stroke-width="1"/>
+        <path d="M 444.999 326.39693 L 444.999 336.39693 L 444.999 440.8412 C 450.499 440.8412 450.499 466.24144 444.999 466.24144 L 444.999 482.1745 L 35.038246 482.1745 L 35.038246 249.6004 L 35.94186 249.6004 L 124.73012 249.69645" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="miter" stroke-dasharray="4.0,4.0" stroke-width="1"/>
       </g>
       <g id="Group_335">
         <g id="Graphic_337">

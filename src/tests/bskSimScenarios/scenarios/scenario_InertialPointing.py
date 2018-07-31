@@ -35,22 +35,13 @@
 #
 # The simulation layout is shown in the following illustration.
 # ![Simulation Flow Diagram](Images/doc/test_scenario_InertialPoint.svg "Illustration")
-#  Two simulation processes are created: one
-# which contains dynamics modules, and one that contains the Flight Software (FSW) algorithm
-# modules. The initial setup for the simulation closely models that of scenario_FeedbackRW.py.
-#
-# To begin, one must first create a class that will
-# inherent from the masterSim class and provide a name to the sim.
-# This is accomplished through:
+# The scenario is initialized through:
 # ~~~~~~~~~~~~~{.py}
-#   class scenario_AttGuidHyperbolic(BSKScenario):
+#   class scenario_InertialPointing(BSKScenario):
 #      def __init__(self, masterSim):
 #          super(scenario_InertialPointing, self).__init__(masterSim)
 #          self.name = 'scenario_InertialPointing'
 # ~~~~~~~~~~~~~
-#
-# Following the inheritance, there are three functions within the scenario class that need to be configured by the user:
-# configure_initial_conditions(), log_outputs(), and pull_outputs().
 #
 # Within configure_initial_conditions(), the user needs to first define the spacecraft FSW mode for the simulation
 # through:
@@ -73,7 +64,7 @@
 #
 # Custom Dynamics Configurations Instructions
 # -----
-# The modules required for this scenario are identical to those used in scenario_AttGuidance.py.
+# The modules required for this scenario are identical to those used in [scenario_AttGuidance.py](@ref scenario_AttGuidance).
 #
 #
 #

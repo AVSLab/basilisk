@@ -27,7 +27,7 @@
 #
 # Scenario Description
 # -----
-# This script sets up a 6-DOF spacecraft orbiting earth, using the MRP_Steering module with a rate sub-servo system
+# This script sets up a 6-DOF spacecraft orbiting earth, using the MRP_Feedback module with a reaction wheel pyramid
 # to control the attitude all within the new BSK_Sim architecture.
 #
 # To run the default scenario, call the python script from a Terminal window through
@@ -36,13 +36,9 @@
 #
 # The simulation layout is shown in the following illustration.
 # ![Simulation Flow Diagram](Images/doc/test_scenario_AttGuidance.svg "Illustration")
-# Two simulation processes are created: one
-# which contains dynamics modules, and one that contains the Flight Software (FSW) algorithm
-# modules. The initial setup for the simulation closely models that of scenario_FeedbackRW.py.
+# The initial setup for the simulation closely models that of scenario_FeedbackRW.py.
 #
-# To begin, one must first create a class that will
-# inherent from the masterSim class and provide a name to the sim.
-# This is accomplished through:
+# To begin, the scenario must be initialized using:
 # ~~~~~~~~~~~~~{.py}
 #   class scenario_AttGuidance(BSKScenario):
 #      def __init__(self, masterSim):
@@ -50,19 +46,16 @@
 #          self.name = 'scenario_AttGuidance'
 # ~~~~~~~~~~~~~
 #
-# Following the inheritance, there are three functions within the scenario class that need to be configured by the user:
-# configure_initial_conditions(), log_outputs(), and pull_outputs().
-#
 # Within configure_initial_conditions(), the user needs to first define the spacecraft FSW mode for the simulation
 # through:
 # ~~~~~~~~~~~~~{.py}
 #   self.masterSim.modeRequest = "hillPoint"
 # ~~~~~~~~~~~~~
-# which triggers the Hill Point event within the BSK_FSW.py script.
+# which triggers the `initiateHillPoint` event within the BSK_FSW.py script.
 # ~~~~~~~~~~~~~
 #
 # The initial conditions for the scenario are the same as found within scenario_FeedbackRW.py. Within BSK_Scenario.py
-# log_outputs(), the user must log the relevant messages to observe how the spacecraft attitude changed throughout
+# log_outputs(), the user must log the relevant messages to observe the spacecraft attitude's error throughout
 # its orbit:
 # ~~~~~~~~~~~~~{.py}
 #         # Dynamics process outputs
@@ -113,7 +106,7 @@
 #
 # Custom Dynamics Configurations Instructions
 # -----
-# The modules required for this scenario are identical to those used in scenario_AttSteering.py.
+# The modules required for this scenario are identical to those used in [scenario_FeedbackRW.py](@ref scenario_FeedbackRW).
 #
 #
 #
@@ -125,8 +118,8 @@
 #
 # Custom FSW Configurations Instructions
 # -----
-# All modules required to configure the "hillPoint" FSW mode have already been included within BSK_FSW.py in the
-# previous scenarios (`hillPointConfig()`, `mrpFeedbackRWConfig()`, `attTrackingErrorConfig(),`rwMotorTorqueConfig()`):
+# All modules required to configure the "hillPoint" FSW mode have already been included within the BSK_FSW.py framework
+# from previous scenarios (`hillPointConfig()`, `mrpFeedbackRWConfig()`, `attTrackingErrorConfig(),`rwMotorTorqueConfig()`):
 #
 # These modules provide the initial setup for an attitude guidance system that makes use of an hill pointing model, a module
 # that tracks the error of the spacecraft's MRP parameters against the vector pointing towards the central, planetary
@@ -139,13 +132,13 @@
 #         SimBase.fswProc.addTask(SimBase.CreateNewTask("hillPointTask", self.processTasksTimeStep), 20)
 # ~~~~~~~~~~~~~
 # and then to add the tracking model to the hill point task through:
-# The modules need to be attached to the the tasks through:
 # ~~~~~~~~~~~~~{.py}
 #         SimBase.AddModelToTask("hillPointTask", self.hillPointWrap, self.hillPointData, 10)
 #         SimBase.AddModelToTask("hillPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
 #
 # ~~~~~~~~~~~~~
-# Finally, the `hillPoint` mode needs to be defined by enabling the two needed tasks:
+# Finally, a `initiateHillPoint` event is defined by combining the new hill pointing task with the pre-existing
+# `mrpFeedbackTask`:
 # ~~~~~~~~~~~~~{.py}
 #              SimBase.createNewEvent("initiateHillPoint", self.processTasksTimeStep, True,
 #                                ["self.modeRequest == 'hillPoint'"],

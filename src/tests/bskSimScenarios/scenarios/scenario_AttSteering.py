@@ -28,7 +28,7 @@
 # Scenario Description
 # -----
 # This script sets up a 6-DOF spacecraft orbiting earth, using the MRP_Steering module with a rate sub-servo system
-# to control the attitude all within the new BSK_Sim architecture.
+# to control the attitude within the new BSK_Sim architecture.
 #
 # To run the default scenario, call the python script from a Terminal window through
 #
@@ -36,13 +36,8 @@
 #
 # The simulation layout is shown in the following illustration.
 # ![Simulation Flow Diagram](Images/doc/test_scenario_AttSteering.svg "Illustration")
-# Two simulation processes are created: one
-# which contains dynamics modules, and one that contains the Flight Software (FSW) algorithm
-# modules. The initial setup for the simulation closely models that of scenario_BasicOrbit.py.
 #
-# To begin, one must first create a class that will
-# inherent from the masterSim class and provide a name to the sim.
-# This is accomplished through:
+# The scenario is initialized through:
 # ~~~~~~~~~~~~~{.py}
 #   class scenario_AttSteering(BSKScenario):
 #      def __init__(self, masterSim):
@@ -50,28 +45,24 @@
 #          self.name = 'scenario_AttSteering'
 # ~~~~~~~~~~~~~
 #
-# Following the inheritance, there are three functions within the scenario class that need to be configured by the user:
-# configure_initial_conditions(), log_outputs(), and pull_outputs().
-#
 # Within configure_initial_conditions(), the user needs to first define the spacecraft FSW mode for the simulation
 # through:
 # ~~~~~~~~~~~~~{.py}
 #   self.masterSim.modeRequest = "steeringRW"
 # ~~~~~~~~~~~~~
 #
-# which triggers the steeringRW event within the BSK_FSW.py script.
-# ~~~~~~~~~~~~~
+# which triggers the `initateSteeringRW` event within the BSK_FSW.py script.
 #
-# The initial conditions for the scenario are the same as found within scenario_FeedbackRW.py.
+# The initial conditions for the scenario are the same as found within [scenario_FeedbackRW.py](@ref scenario_FeedbackRW)
 #
 # Within BSK_Scenario.py log_outputs(), the user must log the relevant messages to observe how the spacecraft corrected
 # for its initial tumbling through:
 # ~~~~~~~~~~~~~{.py}
 #         # FSW process outputs
 #         samplingTime = self.masterSim.FSWModels.processTasksTimeStep
-#         self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.mrpFeedbackRWsData.inputRWSpeedsName, samplingTime)
-#         self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.rwMotorTorqueData.outputDataName, samplingTime)
 #         self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.trackingErrorData.outputDataName, samplingTime)
+#         self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.mrpSteeringData.outputDataName, samplingTime)
+#         self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.rwMotorTorqueData.outputDataName, samplingTime)
 # ~~~~~~~~~~~~~
 # The data is then pulled using:
 # ~~~~~~~~~~~~~{.py}
@@ -101,22 +92,20 @@
 #         BSK_plt.plot_rw_speeds(timeData, RW_speeds, num_RW)
 # ~~~~~~~~~~~~~
 #
+#
+#
 # Custom Dynamics Configurations Instructions
 # -----
-# The dynamics setup is the same as in `scenario_FeedbackRW.py`.
+# The dynamics setup is the same as in [scenario_FeedbackRW.py](@ref scenario_FeedbackRW).
 #
 # Custom FSW Configurations Instructions
 # -----
-# To configure the desired "steeringRW" FSW mode the user must declare the following modules
+# To configure the desired "steeringRW" FSW mode the user must add the following modules to BSK_FSW.py
 # within BSK_FSW.py:
 # ~~~~~~~~~~~~~{.py}
 #         self.hillPointData = hillPoint.hillPointConfig()
 #         self.hillPointWrap = SimBase.setModelDataWrap(self.hillPointData)
 #         self.hillPointWrap.ModelTag = "hillPoint"
-#
-#         self.trackingErrorData = attTrackingError.attTrackingErrorConfig()
-#         self.trackingErrorWrap = SimBase.setModelDataWrap(self.trackingErrorData)
-#         self.trackingErrorWrap.ModelTag = "trackingError"
 #
 #         self.mrpSteeringData = MRP_Steering.MRP_SteeringConfig()
 #         self.mrpSteeringWrap = SimBase.setModelDataWrap(self.mrpSteeringData)
@@ -126,12 +115,9 @@
 #         self.rateServoWrap = SimBase.setModelDataWrap(self.rateServoData)
 #         self.rateServoWrap.ModelTag = "rate_servo"
 #
-#         self.rwMotorTorqueData = rwMotorTorque.rwMotorTorqueConfig()
-#         self.rwMotorTorqueWrap = SimBase.setModelDataWrap(self.rwMotorTorqueData)
-#         self.rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
 # ~~~~~~~~~~~~~
-# each of which prepare various configuration messages to be attached to the various FSW task. The following shows
-# how to attach these models to the various tasks.
+# each of which prepare various configuration messages to be attached to the various FSW task. The following code shows
+# how to create two new tasks `hillPointTask` and `mrpSteeringRWsTask` and how to attach the configuration data.
 # ~~~~~~~~~~~~~{.py}
 #         SimBase.AddModelToTask("hillPointTask", self.hillPointWrap, self.hillPointData, 10)
 #         SimBase.AddModelToTask("hillPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
@@ -140,7 +126,10 @@
 #         SimBase.AddModelToTask("mrpSteeringRWsTask", self.rateServoWrap, self.rateServoData, 9)
 #         SimBase.AddModelToTask("mrpSteeringRWsTask", self.rwMotorTorqueWrap, self.rwMotorTorqueData, 8)
 # ~~~~~~~~~~~~~
-# Below is the specific event called when the user sets the modeRequest variable in BSK_scenario.py.
+# The advantage of the BSK_Sim architecture becomes apparent here, as the `trackingErrorData` and `rwMotorTorqueData`
+# were already defined from an earlier scenario. The user can simply reference add them to their desired task without
+# having to manually reconfigure the messages. These tasks are then enabled when the user sets the modeRequest variable
+# to `steeringRW` in BSK_scenario.py.
 # ~~~~~~~~~~~~~{.py}
 #          SimBase.createNewEvent("initiateSteeringRW", self.processTasksTimeStep, True,
 #                                ["self.modeRequest == 'steeringRW'"],

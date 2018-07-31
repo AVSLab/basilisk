@@ -34,7 +34,7 @@ import BSK_Fsw
 
 
 class BSKSim(SimulationBaseClass.SimBaseClass):
-    def __init__(self):
+    def __init__(self, fswRate=0.1, dynRate=0.1):
         # Create a sim module as an empty container
         SimulationBaseClass.SimBaseClass.__init__(self)
         self.TotalSim.terminateSimulation()
@@ -52,8 +52,8 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self.fsw2DynInterface = sim_model.SysInterface()
 
         # Crate Dynamics and FSW classes
-        self.DynModels = BSK_Dynamics.BSKDynamicModels(self)
-        self.FSWModels = BSK_Fsw.BSKFswModels(self)
+        self.DynModels = BSK_Dynamics.BSKDynamicModels(self, dynRate)
+        self.FSWModels = BSK_Fsw.BSKFswModels(self, fswRate)
 
         # Discover interfaces between processes
         self.dyn2FSWInterface.addNewInterface(self.DynamicsProcessName, self.FSWProcessName)
