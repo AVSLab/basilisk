@@ -17,12 +17,12 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-## \defgroup Tutorials_6_0
+## \defgroup Tutorials_6_2
 ## @{
 # Demonstrates how to create a 6-DOF spacecraft which is orbiting a planet. The purpose is to illustrate how to create
 # a spacecraft, attach a gravity model, and run a basic Basilisk simulation using the BSK_Sim architecture.
 #
-# BSK Simulation: Basic Orbit {#scenario_BasicOrbit}
+# BSK Simulation: Attitude Steering {#scenario_AttSteering}
 # ====
 #
 # Scenario Description

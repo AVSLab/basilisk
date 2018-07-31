@@ -17,6 +17,127 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
+## \defgroup Tutorials_6_4
+## @{
+# Demonstrates how to use the velocity pointing model within the BSK_Sim architecture.
+#
+# BSK Simulation: Attitude Alignment for Hyperbolic Trajectory {#scenario_AttGuidHyperbolic}
+# ====
+#
+# Scenario Description
+# -----
+# This script sets up a 6-DOF spacecraft orbiting earth, using the MRP_Steering module with a rate sub-servo system
+# to conrtrol the attitude all within the new BSK_Sim architecture.
+#
+# To run the default scenario, call the python script from a Terminal window through
+#
+#       python scenario_AttGuidHyperbolic.py
+#
+# The simulation layout is shown in the following illustration.  Two simulation processes are created: one
+# which contains dynamics modules, and one that contains the Flight Software (FSW) algorithm
+# modules. The initial setup for the simulation closely models that of scenario_FeedbackRW.py.
+#
+# To begin, one must first create a class that will
+# inherient from the masterSim class within the __init__() procedure and providing a name to the sim.
+# This is accomplished through:
+# ~~~~~~~~~~~~~{.py}
+#   class scenario_AttGuidHyperbolic(BSKScenario):
+#      def __init__(self, masterSim):
+#          super(scenario_AttGuidHyperbolic, self).__init__(masterSim)
+#          self.name = 'scenario_AttGuidHyperbolic'
+# ~~~~~~~~~~~~~
+#
+# Following the inheritance, there are three functions within the scenario class that need to be configured by the user:
+# configure_initial_conditions(), log_outputs(), and pull_outputs().
+#
+# Within configure_initial_conditions(), the user needs to first define the spacecraft FSW mode for the simulation
+# through:
+# ~~~~~~~~~~~~~{.py}
+#   self.masterSim.modeRequest = "velocityPoint"
+# ~~~~~~~~~~~~~
+# which triggers the Hill Point event within the BSK_FSW.py script.
+# ~~~~~~~~~~~~~
+#
+# The initial conditions for the scenario are set to establish a hyperbolic trajectory with initial tumbling:
+# ~~~~~~~~~~~~~{.py}
+#         # Configure Dynamics initial conditions
+#         oe = orbitalMotion.ClassicElements()
+#         oe.a = -150000.0 * 1000  # meters
+#         oe.e = 1.5
+#         oe.i = 33.3 * macros.D2R
+#         oe.Omega = 48.2 * macros.D2R
+#         oe.omega = 347.8 * macros.D2R
+#         oe.f = 30 * macros.D2R
+#         mu = self.masterSim.DynModels.gravFactory.gravBodies['earth'].mu
+#         rN, vN = orbitalMotion.elem2rv(mu, oe)
+#         self.masterSim.DynModels.scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
+#         self.masterSim.DynModels.scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
+#         self.masterSim.DynModels.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
+#         self.masterSim.DynModels.scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+# ~~~~~~~~~~~~~
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+# Custom Dynamics Configurations Instructions
+# -----
+# The modules required for this scenario are identical to those used in scenario_AttGuidance.py.
+#
+#
+#
+#
+#
+#
+#
+#
+#
+# Custom FSW Configurations Instructions
+# -----
+# The only new module required to configure the "velocityPoint" FSW mode is `velocityPoint` itself:
+# ~~~~~~~~~~~~~{.py}
+#         self.velocityPointData = velocityPoint.velocityPointConfig()
+#         self.velocityPointWrap = SimBase.setModelDataWrap(self.velocityPointData)
+#         self.velocityPointWrap.ModelTag  = "velocityPoint"
+# ~~~~~~~~~~~~~
+# Unlike hill pointing, this modules provides a pointing model relative to the velocity vector.
+#
+# Within `InitAllFSWObjects()` a new setter functions `self.SetVelocityPointGuidance(SimBase)` is required, whose
+# definition is:
+# ~~~~~~~~~~~~~{.py}
+#     def SetVelocityPointGuidance(self, SimBase):
+#         self.velocityPointData.outputDataName = "referenceOut"
+#         self.velocityPointData.inputNavDataName = SimBase.DynModels.simpleNavObject.outputTransName
+#         self.velocityPointData.inputCelMessName = SimBase.DynModels.gravFactory.gravBodies['earth'].bodyInMsgName[:-12]
+#         self.velocityPointData.mu = SimBase.DynModels.gravFactory.gravBodies['earth'].mu
+# ~~~~~~~~~~~~~
+# The only additions required in BSK_FSW.py are to create a new task specific for velocity pointing:
+# ~~~~~~~~~~~~~{.py}
+#         SimBase.fswProc.addTask(SimBase.CreateNewTask("velocityPointTask", self.processTasksTimeStep), 20)
+# ~~~~~~~~~~~~~
+# and then to add the tracking model to the velocity point task through:
+# The modules need to be attached to the the tasks through:
+# ~~~~~~~~~~~~~{.py}
+#         SimBase.AddModelToTask("velocityPointTask", self.velocityPointWrap, self.velocityPointData, 10)
+#         SimBase.AddModelToTask("velocityPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
+#
+# ~~~~~~~~~~~~~
+# Finally, the `velocityPoint` mode needs to be defined by enabling the two needed tasks:
+# ~~~~~~~~~~~~~{.py}
+#              SimBase.createNewEvent("initiateVelocityPoint", self.processTasksTimeStep, True,
+#                                ["self.modeRequest == 'velocityPoint'"],
+#                                ["self.fswProc.disableAllTasks()",
+#                                 "self.enableTask('velocityPointTask')",
+#                                 "self.enableTask('mrpFeedbackTask')"])
+#
+# ~~~~~~~~~~~~~
+## @}
 
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, unitTestSupport

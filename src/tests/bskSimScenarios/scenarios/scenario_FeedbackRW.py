@@ -17,7 +17,284 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-
+## \defgroup Tutorials_6_1
+## @{
+# Demonstrates how to stabilize the tumble of a 6-DOF spacecraft with reaction wheels.
+#
+# BSK Simulation: Feedback RW {#scenario_FeedbackRW}
+# ====
+#
+# Scenario Description
+# -----
+# This script sets up a 6-DOF spacecraft orbiting earth, using the MRP_Steering module with a rate sub-servo system
+# to conrtrol the attitude all within the new BSK_Sim architecture.
+#
+# To run the default scenario, call the python script from a Terminal window through
+#
+#       python scenario_FeedbackRW.py
+#
+# The simulation layout is shown in the following illustration.  Two simulation processes are created: one
+# which contains dynamics modules, and one that contains the Flight Software (FSW) algorithm
+# modules. The initial setup for the simulation closely models that of scenario_BasicOrbit.py.
+#
+# To begin, one must first create a class that will
+# inherient from the masterSim class within the __init__() procedure and providing a name to the sim.
+# This is accomplished through:
+# ~~~~~~~~~~~~~{.py}
+#   class scenario_FeedbackRW(BSKScenario):
+#      def __init__(self, masterSim):
+#          super(scenario_FeedbackRW, self).__init__(masterSim)
+#          self.name = 'scenario_FeedbackRW'
+# ~~~~~~~~~~~~~
+#
+# Following the inheritance, there are three functions within the scenario class that need to be configured by the user:
+# configure_initial_conditions(), log_outputs(), and pull_outputs().
+#
+# Within configure_initial_conditions(), the user needs to first define the spacecraft FSW mode for the simulation
+# through:
+# ~~~~~~~~~~~~~{.py}
+#   self.masterSim.modeRequest = "FeedbackRW"
+# ~~~~~~~~~~~~~
+# which triggers the steeringRW event within the BSK_FSW.py script.
+# ~~~~~~~~~~~~~
+#
+# The initial conditions for the scenario are the same as found within scenario_BasicOrbit.py except the tumble of the
+# spacecraft must be simulated by adding:
+# ~~~~~~~~~~~~~{.py}
+#         self.masterSim.DynModels.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
+#         self.masterSim.DynModels.scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+# ~~~~~~~~~~~~~
+# Within BSK_Scenario.py log_outputs(), the user must log the relevant messages to observe how the spacecraft corrected
+# for its initial tumbling through:
+# ~~~~~~~~~~~~~{.py}
+#         # FSW process outputs
+#         samplingTime = self.masterSim.FSWModels.processTasksTimeStep
+#         self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.mrpFeedbackRWsData.inputRWSpeedsName, samplingTime)
+#         self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.rwMotorTorqueData.outputDataName, samplingTime)
+#         self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.trackingErrorData.outputDataName, samplingTime)
+# ~~~~~~~~~~~~~
+# The data is then pulled using:
+# ~~~~~~~~~~~~~{.py}
+#         dataUsReq = self.masterSim.pullMessageLogData(
+#             self.masterSim.FSWModels.rwMotorTorqueData.outputDataName + ".motorTorque", range(num_RW))
+#         sigma_BR = self.masterSim.pullMessageLogData(
+#             self.masterSim.FSWModels.trackingErrorData.outputDataName + ".sigma_BR", range(3))
+#         omega_BR_B = self.masterSim.pullMessageLogData(
+#             self.masterSim.FSWModels.trackingErrorData.outputDataName + ".omega_BR_B", range(3))
+#         RW_speeds = self.masterSim.pullMessageLogData(
+#             self.masterSim.FSWModels.mrpFeedbackRWsData.inputRWSpeedsName + ".wheelSpeeds", range(num_RW))
+#             self.masterSim.FSWModels.mrpSteeringData.outputDataName + ".omega_BastR_B", range(3))
+#
+# ~~~~~~~~~~~~~
+# and then plot the results using:
+# ~~~~~~~~~~~~~{.py}
+#         # Plot results
+#         timeData = dataUsReq[:, 0] * macros.NANO2MIN
+#         BSK_plt.plot_attitude_error(timeData, sigma_BR)
+#         BSK_plt.plot_rw_cmd_torque(timeData, dataUsReq, num_RW)
+#         BSK_plt.plot_rate_error(timeData, omega_BR_B)
+#         BSK_plt.plot_rw_speeds(timeData, RW_speeds, num_RW)
+# ~~~~~~~~~~~~~
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+# Custom Dynamics Configurations Instructions
+# -----
+# In addition to the modules used in scenario_BasicOrbit.py, the user must configure additional modules in BSK_Dynamics.py
+# to provide detumbling measures:
+# ~~~~~~~~~~~~~{.py}
+#         # Instantiate Dyn modules as objects
+#           self.rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
+# ~~~~~~~~~~~~~
+# These objects are then configured through InitAllDynObjects(SimBase) which iterates through a number of 'setting'
+# functions, that configure all of the dynamics objects properties and messages.
+# ~~~~~~~~~~~~~{.py}
+#     # Global call to initialize every module
+#     def InitAllDynObjects(self):
+#         self.SetReactionWheelDynEffector()
+# ~~~~~~~~~~~~~
+#
+# The additional setting function needed beyond what is included in scenario_BasicOrbit.py is:
+#
+# ~~~~~~~~~~~~~{.py}
+#     def SetReactionWheelDynEffector(self):
+#         # Make a fresh RW factory instance, this is critical to run multiple times
+#         rwFactory = simIncludeRW.rwFactory()
+#
+#         # specify RW momentum capacity
+#         maxRWMomentum = 50. # Nms
+#
+#         # Define orthogonal RW pyramid
+#         # -- Pointing directions
+#         rwElAngle = np.array([40.0, 40.0, 40.0, 40.0])*mc.D2R
+#         rwAzimuthAngle = np.array([45.0, 135.0, 225.0, 315.0])*mc.D2R
+#         rwPosVector = [[0.8, 0.8, 1.79070],
+#                        [0.8, -0.8, 1.79070],
+#                        [-0.8, -0.8, 1.79070],
+#                        [-0.8, 0.8, 1.79070]
+#                        ]
+#
+#         for elAngle, azAngle, posVector in zip(rwElAngle, rwAzimuthAngle, rwPosVector):
+#             gsHat = (rbk.Mi(-azAngle,3).dot(rbk.Mi(elAngle,2))).dot(np.array([1,0,0]))
+#             rwFactory.create('Honeywell_HR16',
+#                              gsHat,
+#                              maxMomentum=maxRWMomentum,
+#                              rWB_B=posVector)
+#
+#         rwFactory.addToSpacecraft("RWStateEffector", self.rwStateEffector, self.scObject)
+# ~~~~~~~~~~~~~
+# which adds a preconfigured RW pyramid to the spacecraft.
+#
+# Following the configuration of all
+# dynamics objects' messages and properties, the object(s) must be attached to the DynamicsTask through:
+# ~~~~~~~~~~~~~{.py}
+#         # Assign initialized modules to tasks
+#         SimBase.AddModelToTask(self.taskName, self.rwStateEffector, None, 301)
+# ~~~~~~~~~~~~~
+#
+#
+#
+#
+#
+#
+#
+#
+# Custom FSW Configurations Instructions
+# -----
+# To configure the desired "FeedbackRW" FSW mode the user must declare the following modules
+# within BSK_FSW.py:
+# ~~~~~~~~~~~~~{.py}
+#         self.inertial3DData = inertial3D.inertial3DConfig()
+#         self.inertial3DWrap = SimBase.setModelDataWrap(self.inertial3DData)
+#         self.inertial3DWrap.ModelTag = "inertial3D"
+#
+#         self.trackingErrorData = attTrackingError.attTrackingErrorConfig()
+#         self.trackingErrorWrap = SimBase.setModelDataWrap(self.trackingErrorData)
+#         self.trackingErrorWrap.ModelTag = "trackingError"
+#
+#         self.mrpFeedbackRWsData = MRP_Feedback.MRP_FeedbackConfig()
+#         self.mrpFeedbackRWsWrap = SimBase.setModelDataWrap(self.mrpFeedbackRWsData)
+#         self.mrpFeedbackRWsWrap.ModelTag = "mrpFeedbackRWs"
+#
+#         self.rwMotorTorqueData = rwMotorTorque.rwMotorTorqueConfig()
+#         self.rwMotorTorqueWrap = SimBase.setModelDataWrap(self.rwMotorTorqueData)
+#         self.rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
+# ~~~~~~~~~~~~~
+# These provide the initial setup for an attitude guidance system that makes use of an inertial pointing model, a module
+# that tracks the error of the spacecraft's MRP parameters against the pointing model, and a module that takes that
+# information to provide a torque to correct for the error.
+#
+# Within `InitAllFSWObjects()` these modules are configured by calling setter functions:
+# ~~~~~~~~~~~~~{.py}
+#     # Global call to initialize every module
+#     def InitAllFSWObjects(self, SimBase):
+#         self.SetInertial3DPointGuidance()
+#         self.SetAttitudeTrackingError(SimBase)
+#         self.SetMRPFeedbackControl(SimBase)
+#         self.SetVehicleConfiguration(SimBase)
+#         self.SetRWConfigMsg(SimBase)
+#         self.SetMRPFeedbackRWA()
+#         self.SetRWMotorTorque(SimBase)
+# ~~~~~~~~~~~~~
+# Which prepare various configuration messages are ultimately attached to specific FSW tasks as seen below:
+# ~~~~~~~~~~~~~{.py}
+#      def SetMRPFeedbackControl(self, SimBase):
+#         self.mrpFeedbackControlData.inputGuidName = "guidanceOut"
+#         self.mrpFeedbackControlData.vehConfigInMsgName = "adcs_config_data"
+#         self.mrpFeedbackControlData.outputDataName = SimBase.DynModels.extForceTorqueObject.cmdTorqueInMsgName
+#         # Note: SimBase.DynModels.extForceTorqueObject.cmdTorqueInMsgName = "extTorquePntB_B_cmds"
+#
+#         self.mrpFeedbackControlData.K = 3.5
+#         self.mrpFeedbackControlData.Ki = -1.0 # Note: make value negative to turn off integral feedback
+#         self.mrpFeedbackControlData.P = 30.0
+#         self.mrpFeedbackControlData.integralLimit = 2. / self.mrpFeedbackControlData.Ki * 0.1
+#         self.mrpFeedbackControlData.domega0 = [0.0, 0.0, 0.0]
+#
+#
+#     def SetMRPFeedbackRWA(self):
+#         self.mrpFeedbackRWsData.K = 3.5
+#         self.mrpFeedbackRWsData.Ki = -1  # Note: make value negative to turn off integral feedback
+#         self.mrpFeedbackRWsData.P = 30.0
+#         self.mrpFeedbackRWsData.integralLimit = 2. / self.mrpFeedbackRWsData.Ki * 0.1
+#         self.mrpFeedbackRWsData.domega0 = [0.0, 0.0, 0.0]
+#
+#         self.mrpFeedbackRWsData.vehConfigInMsgName = "adcs_config_data"
+#         self.mrpFeedbackRWsData.inputRWSpeedsName = "reactionwheel_output_states"
+#         self.mrpFeedbackRWsData.rwParamsInMsgName = "rwa_config_data"
+#         self.mrpFeedbackRWsData.inputGuidName = "guidanceOut"
+#         self.mrpFeedbackRWsData.outputDataName = "controlTorqueRaw"
+#
+#     def SetRWMotorTorque(self, SimBase):
+#         controlAxes_B = [
+#         1.0, 0.0, 0.0
+#         , 0.0, 1.0, 0.0
+#         , 0.0, 0.0, 1.0
+#         ]
+#         self.rwMotorTorqueData.controlAxes_B = controlAxes_B
+#         self.rwMotorTorqueData.inputVehControlName = "controlTorqueRaw"
+#         self.rwMotorTorqueData.outputDataName = SimBase.DynModels.rwStateEffector.InputCmds  # "reactionwheel_cmds"
+#         self.rwMotorTorqueData.rwParamsInMsgName = "rwa_config_data"
+# ~~~~~~~~~~~~~
+# In addition to the modules used for attitude guidance, there are also two setter functions that send vehicle and RW
+# configuration messages that are linked into the attitude guidance modules:
+# ~~~~~~~~~~~~~{.py}
+#     def SetVehicleConfiguration(self, SimBase):
+#         vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
+#         # use the same inertia in the FSW algorithm as in the simulation
+#         vehicleConfigOut.ISCPntB_B = [900.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 600.0]
+#         unitTestSupport.setMessage(SimBase.TotalSim,
+#                                    SimBase.FSWProcessName,
+#                                     "adcs_config_data",
+#                                     vehicleConfigOut)
+#
+#     def SetRWConfigMsg(self, SimBase):
+#         # Configure RW pyramid exactly as it is in the Dynamics (i.e. FSW with perfect knowledge)
+#         rwElAngle = np.array([40.0, 40.0, 40.0, 40.0]) * mc.D2R
+#         rwAzimuthAngle = np.array([45.0, 135.0, 225.0, 315.0]) * mc.D2R
+#         wheelJs = 50.0 / (6000.0 * math.pi * 2.0 / 60)
+#
+#         fswSetupRW.clearSetup()
+#         for elAngle, azAngle in zip(rwElAngle, rwAzimuthAngle):
+#             gsHat = (rbk.Mi(-azAngle, 3).dot(rbk.Mi(elAngle, 2))).dot(np.array([1, 0, 0]))
+#             fswSetupRW.create(gsHat,  # spin axis
+#                               wheelJs,  # kg*m^2
+#                               0.2)  # Nm        uMax
+#
+#         fswSetupRW.writeConfigMessage("rwa_config_data", SimBase.TotalSim, SimBase.FSWProcessName)
+# ~~~~~~~~~~~~~
+# The two tasks required for the "FeedbackRW" mode are `inertial3DPointTask` and `mrpFeedbackRWsTask` and they are
+# generated through:
+# ~~~~~~~~~~~~~{.py}
+#         SimBase.fswProc.addTask(SimBase.CreateNewTask("inertial3DPointTask", self.processTasksTimeStep), 20)
+#         SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackRWsTask", self.processTasksTimeStep), 10)
+# ~~~~~~~~~~~~~
+# The modules need to be attached to the the tasks through:
+# ~~~~~~~~~~~~~{.py}
+#         SimBase.AddModelToTask("inertial3DPointTask", self.inertial3DWrap, self.inertial3DData, 10)
+#         SimBase.AddModelToTask("inertial3DPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
+#
+#         SimBase.AddModelToTask("mrpFeedbackRWsTask", self.mrpFeedbackRWsWrap, self.mrpFeedbackRWsData, 9)
+#         SimBase.AddModelToTask("mrpFeedbackRWsTask", self.rwMotorTorqueWrap, self.rwMotorTorqueData, 8)
+# ~~~~~~~~~~~~~
+# Finally, the `FeedbackRW` mode needs to be defined by enabling the two needed tasks:
+# ~~~~~~~~~~~~~{.py}
+#                  SimBase.createNewEvent("initiateFeedbackRW", self.processTasksTimeStep, True,
+#                                ["self.modeRequest == 'feedbackRW'"],
+#                                ["self.fswProc.disableAllTasks()",
+#                                 "self.enableTask('inertial3DPointTask')",
+#                                 "self.enableTask('mrpFeedbackRWsTask')"])
+#
+#
+#
+# ~~~~~~~~~~~~~
+## @}
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
 
@@ -98,10 +375,10 @@ class scenario_AttitudeFeedbackRW(BSKScenario):
 
         # Plot results
         timeData = dataUsReq[:, 0] * macros.NANO2MIN
-        scene_plt.plot_attitude_error(timeData, sigma_BR)
-        scene_plt.plot_rw_cmd_torque(timeData, dataUsReq, num_RW)
-        scene_plt.plot_rate_error(timeData, omega_BR_B)
-        scene_plt.plot_rw_speeds(timeData, RW_speeds, num_RW)
+        BSK_plt.plot_attitude_error(timeData, sigma_BR)
+        BSK_plt.plot_rw_cmd_torque(timeData, dataUsReq, num_RW)
+        BSK_plt.plot_rate_error(timeData, omega_BR_B)
+        BSK_plt.plot_rw_speeds(timeData, RW_speeds, num_RW)
         figureList = {}
         if showPlots:
             BSK_plt.show_all_plots()

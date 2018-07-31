@@ -17,7 +17,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-## \defgroup Tutorials_6_1
+## \defgroup Tutorials_6_7
 ## @{
 # Demonstrates how to use sun safe pointing in conjunction with the Eclipse, RW, CSS Weighted Least Squares Estimator, and
 # CSS modules to provide attitude guidance as the spacecraft passes through an eclipse while orbiting the Earth.
@@ -28,9 +28,8 @@
 # Scenario Description
 # -----
 # This script sets up a 6-DOF spacecraft which is orbiting the Earth.  The goal of the scenario is to
-# illustrate 1) how IMU sensors can be added to the simulation, 2) how to add the eclipse module
-# to simulate shadows being cast over a CSS constellation, and 3) how to use these added modules to make use of
-# sun safe pointing as a flight software algorithm to control RWs.
+# illustrate 1) how to add the eclipse module to simulate shadows being cast over a CSS constellation, and 2)
+# how to use these added modules to make use of sun safe pointing as a flight software algorithm to control RWs.
 #
 # To run the default scenario, call the python script from a Terminal window through
 #
@@ -53,17 +52,7 @@
 # The dynamics simulation is setup using a SpacecraftPlus() module to which an Earth gravity
 # effector is attached. In addition a CSS constellation and RW pyramid are attached.
 #
-# The new element is adding the IMU sensor to the spacecraft, and the eclipse module to the simulation environment.
-# The specific code required to build the IMU sensor is:
-# ~~~~~~~~~~~~~{.py}
-#     imuObject = imu_sensor.ImuSensor()
-#     imuObject.InputStateMsg = self.scObject.scStateOutMsgName
-#     imuObject.OutputDataMsg = "imu_sensor_output"
-# ~~~~~~~~~~~~~
-# and the code required to attach it to the simulation is:
-# ~~~~~~~~~~~~~{.py}
-#     SimBase.AddModelToTask(self.taskName, self.imuObject, None, 205)
-# ~~~~~~~~~~~~~
+# The new element is adding the eclipse module to the simulation environment.
 #
 # To configure the eclipse module, use the following code:
 # ~~~~~~~~~~~~~{.py}
@@ -101,9 +90,9 @@
 # self.sunSafePointWrap = SimBase.setModelDataWrap(self.sunSafePointData)
 # self.sunSafePointWrap.ModelTag = "sunSafePoint"
 # self.sunSafePointData.attGuidanceOutMsgName = "guidanceOut"
-# self.sunSafePointData.imuInMsgName = SimBase.DynModels.imuObject.OutputDataMsg
+# self.sunSafePointData.imuInMsgName = SimBase.DynModels.simpleNavObject.outputNavAttName
 # self.sunSafePointData.sunDirectionInMsgName = self.cssWlsEstData.navStateOutMsgName
-# self.sunSafePointData.sHatBdyCmd = [1.0, 0.0, 0.0]
+# self.sunSafePointData.sHatBdyCmd = [0.0, 0.0, 1.0]
 # ~~~~~~~~~~~~~
 # The sHatBdyCmd defines the desired body pointing vector that will align with the sun direction vector.
 # The sun direction vector itself is calculated through the use of a CSS constellation and the CSSWlsEst module. The

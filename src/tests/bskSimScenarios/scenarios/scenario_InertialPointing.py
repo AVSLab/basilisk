@@ -17,6 +17,108 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
+## \defgroup Tutorials_6_5
+## @{
+# Demonstrates how to use the inertial 3D pointing model within the BSK_Sim architecture.
+#
+# BSK Simulation: Attitude Alignment with Inertial Pointing {#scenario_InertialPointing}
+# ====
+#
+# Scenario Description
+# -----
+# This script sets up a 6-DOF spacecraft orbiting earth, using the MRP_Steering module with a rate sub-servo system
+# to conrtrol the attitude all within the new BSK_Sim architecture.
+#
+# To run the default scenario, call the python script from a Terminal window through
+#
+#       python scenario_InertialPointing.py
+#
+# The simulation layout is shown in the following illustration.  Two simulation processes are created: one
+# which contains dynamics modules, and one that contains the Flight Software (FSW) algorithm
+# modules. The initial setup for the simulation closely models that of scenario_FeedbackRW.py.
+#
+# To begin, one must first create a class that will
+# inherient from the masterSim class within the __init__() procedure and providing a name to the sim.
+# This is accomplished through:
+# ~~~~~~~~~~~~~{.py}
+#   class scenario_AttGuidHyperbolic(BSKScenario):
+#      def __init__(self, masterSim):
+#          super(scenario_InertialPointing, self).__init__(masterSim)
+#          self.name = 'scenario_InertialPointing'
+# ~~~~~~~~~~~~~
+#
+# Following the inheritance, there are three functions within the scenario class that need to be configured by the user:
+# configure_initial_conditions(), log_outputs(), and pull_outputs().
+#
+# Within configure_initial_conditions(), the user needs to first define the spacecraft FSW mode for the simulation
+# through:
+# ~~~~~~~~~~~~~{.py}
+#   self.masterSim.modeRequest = "inertial3D"
+# ~~~~~~~~~~~~~
+# which triggers the initiateAttitudeGuidance event within the BSK_FSW.py script.
+# ~~~~~~~~~~~~~
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+# Custom Dynamics Configurations Instructions
+# -----
+# The modules required for this scenario are identical to those used in scenario_AttGuidance.py.
+#
+#
+#
+#
+#
+#
+#
+#
+#
+# Custom FSW Configurations Instructions
+# -----
+# The only new module required to configure the "inertial3D" FSW mode is `inertial3DPointGuidance` itself:
+# ~~~~~~~~~~~~~{.py}
+#         self.inertial3DData = inertial3D.inertial3DConfig()
+#         self.inertial3DWrap = SimBase.setModelDataWrap(self.inertial3DData)
+#         self.inertial3DWrap.ModelTag = "inertial3D"
+# ~~~~~~~~~~~~~
+# Unlike hill pointing, this modules provides a pointing model relative to an inertial fixed reference frame.
+#
+# Within `InitAllFSWObjects()` a new setter functions `self.SetInertial3DPointGuidance()` is required, whose
+# definition is:
+# ~~~~~~~~~~~~~{.py}
+#     def SetInertial3DPointGuidance(self):
+#         self.inertial3DData.sigma_R0N = [0.2, 0.4, 0.6]
+#         self.inertial3DData.outputDataName = "referenceOut"
+# ~~~~~~~~~~~~~
+# The only additions required in BSK_FSW.py are to create a new task specific for velocity pointing:
+# ~~~~~~~~~~~~~{.py}
+#         SimBase.fswProc.addTask(SimBase.CreateNewTask("inertial3DPointTask", self.processTasksTimeStep), 20)
+# ~~~~~~~~~~~~~
+# and then to add the tracking model to the inertial 3D point task through:
+# The modules need to be attached to the the tasks through:
+# ~~~~~~~~~~~~~{.py}
+#         SimBase.AddModelToTask("inertial3DPointTask", self.inertial3DWrap, self.inertial3DData, 10)
+#         SimBase.AddModelToTask("inertial3DPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
+#
+# ~~~~~~~~~~~~~
+# Finally, the `velocityPoint` mode needs to be defined by enabling the two needed tasks:
+# ~~~~~~~~~~~~~{.py}
+#              SimBase.createNewEvent("initiateAttitudeGuidance", self.processTasksTimeStep, True,
+#                                ["self.modeRequest == 'inertial3D'"],
+#                                ["self.fswProc.disableAllTasks()",
+#                                 "self.enableTask('inertial3DPointTask')",
+#                                 "self.enableTask('mrpFeedbackTask')"])
+#
+# ~~~~~~~~~~~~~
+## @}
 
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
