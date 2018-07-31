@@ -26,7 +26,7 @@
 #
 # Scenario Description
 # -----
-# This script sets up a 6-DOF spacecraft on a hyperbolic trajectory using velocity pointing and the MRP_Steering module
+# This script sets up a 6-DOF spacecraft on a hyperbolic trajectory using velocity pointing and the MRP_Feedback module
 # to control the attitude using the new BSK_Sim architecture.
 #
 # To run the default scenario, call the python script from a Terminal window through
@@ -35,13 +35,8 @@
 #
 # The simulation layout is shown in the following illustration.
 # ![Simulation Flow Diagram](Images/doc/test_scenario_AttGuidHyperbolic.svg "Illustration")
-# Two simulation processes are created: one
-# which contains dynamics modules, and one that contains the Flight Software (FSW) algorithm
-# modules. The initial setup for the simulation closely models that of scenario_FeedbackRW.py.
 #
-# To begin, one must first create a class that will
-# inherent from the masterSim class and provide a name to the sim.
-# This is accomplished through:
+# The scenario must first be initialized using:
 # ~~~~~~~~~~~~~{.py}
 #   class scenario_AttGuidHyperbolic(BSKScenario):
 #      def __init__(self, masterSim):
@@ -49,15 +44,12 @@
 #          self.name = 'scenario_AttGuidHyperbolic'
 # ~~~~~~~~~~~~~
 #
-# Following the inheritance, there are three functions within the scenario class that need to be configured by the user:
-# configure_initial_conditions(), log_outputs(), and pull_outputs().
-#
 # Within configure_initial_conditions(), the user needs to first define the spacecraft FSW mode for the simulation
 # through:
 # ~~~~~~~~~~~~~{.py}
 #   self.masterSim.modeRequest = "velocityPoint"
 # ~~~~~~~~~~~~~
-# which triggers the Hill Point event within the BSK_FSW.py script.
+# which triggers the `initiateVelocityPoint` event within the BSK_FSW.py script.
 # ~~~~~~~~~~~~~
 #
 # The initial conditions for the scenario are set to establish a hyperbolic trajectory with initial tumbling:
@@ -90,7 +82,7 @@
 #
 # Custom Dynamics Configurations Instructions
 # -----
-# The modules required for this scenario are identical to those used in scenario_AttGuidance.py.
+# The modules required for this scenario are identical to those used in [scenario_AttGuidance.py](@ref scenario_AttGuidance).
 #
 #
 #
@@ -130,7 +122,7 @@
 #         SimBase.AddModelToTask("velocityPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
 #
 # ~~~~~~~~~~~~~
-# Finally, the `velocityPoint` mode needs to be defined by enabling the two needed tasks:
+# Finally, the `initialzeVelocityPoint` event is defined by enabling the two needed tasks:
 # ~~~~~~~~~~~~~{.py}
 #              SimBase.createNewEvent("initiateVelocityPoint", self.processTasksTimeStep, True,
 #                                ["self.modeRequest == 'velocityPoint'"],

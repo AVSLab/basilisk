@@ -28,8 +28,9 @@
 # Scenario Description
 # -----
 # This script sets up a 6-DOF spacecraft which is orbiting the Earth.  The goal of the scenario is to
-# illustrate 1) how to add the eclipse module to simulate shadows being cast over a CSS constellation, and 2)
-# how to use these added modules to make use of sun safe pointing as a flight software algorithm to control RWs.
+# illustrate 1) how to add the eclipse module to simulate shadows being cast over a CSS constellation, 2)
+# how to use these added modules to make use of sun safe pointing as a flight software algorithm to control RWs, and 3)
+# configure a custom timestep for the dynamics and FSW processes.
 #
 # To run the default scenario, call the python script from a Terminal window through
 #
@@ -37,16 +38,40 @@
 #
 # The simulation layout is shown in the following illustration.  Two simulation processes are created: one
 # which contains dynamics modules, and one that contains the Flight Software (FSW) algorithm
-# modules. Instructions on how to configure separate processes can be found in
-# [scenarioAttitudeFeedback2T.py](@ref scenarioAttitudeFeedback2T).
+# modules.
 # ![Simulation Flow Diagram](Images/doc/test_scenario_AttEclipseUpdated.svg "Illustration")
+#
+# To begin, one must first create a class that will
+# inherent from the masterSim class and provide a name to the sim.
+# This is accomplished through:
+# ~~~~~~~~~~~~~{.py}
+#   class scenario_AttEclipse(BSKScenario):
+#      def __init__(self, masterSim):
+#          super(scenario_AttEclipse, self).__init__(masterSim)
+#          self.name = 'scenario_AttEclipse'
+# ~~~~~~~~~~~~~
+#
+# Within configure_initial_conditions(), the user needs to first define the spacecraft FSW mode for the simulation
+# through:
+# ~~~~~~~~~~~~~{.py}
+#   self.masterSim.modeRequest = "sunSafePoint"
+# ~~~~~~~~~~~~~
+# which triggers the `initiateSunSafePointing` event within the BSK_FSW.py script.
+#
+# Given the complexity of the simulation, the standard dynamics and FSW time step of 0.1 nanoseconds leads to
+# computational slow down. The user can change the standard time step for either or both processes by setting
+# ~~~~~~~~~~~~~{.py}
+#   TheBSKSim = BSKSim(0.5, 0.5)
+# ~~~~~~~~~~~~~
+# The first argument is the FSW time step in nanoseconds and the second is the dynamics time step.
+# The user is cautioned when setting a custom time step as too large a time step can lead to propagated inaccuracy.
 #
 # When the simulation completes several plots are shown for the eclipse shadow factor, the sun direction vector,
 # attitude error, RW motor torque, and RW speed.
 #
 #
-# ### Setup Changes for Spacecraft Dynamics
-#
+# Custom Dynamics Configurations Instructions
+# -----
 # The fundamental simulation setup is a combination of the setups used in
 # [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback) and [scenarioCSS.py](@ref scenarioCSS).
 # The dynamics simulation is setup using a SpacecraftPlus() module to which an Earth gravity
@@ -74,8 +99,8 @@
 # which gets sent to the individual CSS sensors.
 #
 #
-# ### Flight Algorithm Changes to Configure Sun Safe Pointing Guidance
-#
+# Custom FSW Configurations Instructions
+# -----
 # The general flight algorithm setup is different than the earlier simulation scripts. Here we
 # use the sunSafePoint() guidance module, the CSSWlsEst() module to evaluate the
 # sun pointing vector, and the MRP_Feedback() module to provide the desired \f${\mathbf L}_r\f$
@@ -84,7 +109,7 @@
 # The sunSafePoint() guidance module is used to steer the spacecraft to point towards the sun direction vector.
 # This is used for functionality like safe mode, or a power generation mode. The inputs of the module are the
 # sun direction vector (as provided by the CSSWlsEst module), as well as the body rate information (as provided by the
-#  IMU). The guidance module can be configured using:
+#  simpleNav module). The guidance module can be configured using:
 # ~~~~~~~~~~~~~{.py}
 # self.sunSafePointData = sunSafePoint.sunSafePointConfig()
 # self.sunSafePointWrap = SimBase.setModelDataWrap(self.sunSafePointData)
@@ -142,6 +167,9 @@ from BSK_masters import BSKSim, BSKScenario
 # Import plotting file for your scenario
 sys.path.append(path + '/../plotting')
 import BSK_Plotting as BSK_plt
+
+from Basilisk.utilities import macros as mc
+import time
 
 sys.path.append(path + '/../../scenarios')
 
@@ -235,13 +263,14 @@ class scenario_AttitudeEclipse(BSKScenario):
 def run(showPlots):
     # Instantiate base simulation
 
-    TheBSKSim = BSKSim()
+    TheBSKSim = BSKSim(1.0, 1.0)
 
     # Configure an scenario in the base simulation
     TheScenario = scenario_AttitudeEclipse(TheBSKSim)
     TheScenario.log_outputs()
     TheScenario.configure_initial_conditions()
 
+    t0 = time.time()
     # Initialize simulation
     TheBSKSim.InitializeSimulationAndDiscover()
 
@@ -251,6 +280,7 @@ def run(showPlots):
     print 'Starting Execution'
     TheBSKSim.ExecuteSimulation()
     print 'Finished Execution. Post-processing results'
+    print time.time() - t0
 
     # Pull the results of the base simulation running the chosen scenario
     figureList = TheScenario.pull_outputs(showPlots)

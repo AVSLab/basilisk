@@ -32,11 +32,11 @@ bskPath = __path__[0]
 
 
 class BSKDynamicModels():
-    def __init__(self, SimBase):
+    def __init__(self, SimBase, dynRate):
         # Define process name, task name and task time-step
         self.processName = SimBase.DynamicsProcessName
         self.taskName = "DynamicsTask"
-        self.processTasksTimeStep = mc.sec2nano(0.1)
+        self.processTasksTimeStep = mc.sec2nano(dynRate)
         
         # Create task
         SimBase.dynProc.addTask(SimBase.CreateNewTask(self.taskName, self.processTasksTimeStep))

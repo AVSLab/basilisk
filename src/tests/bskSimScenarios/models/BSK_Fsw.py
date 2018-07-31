@@ -31,10 +31,10 @@ from Basilisk.utilities import unitTestSupport
 
 
 class BSKFswModels():
-    def __init__(self, SimBase):
+    def __init__(self, SimBase, fswRate):
         # Define process name and default time-step for all FSW tasks defined later on
         self.processName = SimBase.FSWProcessName
-        self.processTasksTimeStep = mc.sec2nano(0.1)  # 0.5
+        self.processTasksTimeStep = mc.sec2nano(fswRate)  # 0.5
         
         # Create module data and module wraps
         self.inertial3DData = inertial3D.inertial3DConfig()
@@ -118,11 +118,23 @@ class BSKFswModels():
         
         # Create events to be called for triggering GN&C maneuvers
         SimBase.fswProc.disableAllTasks()
+
+        SimBase.createNewEvent("initiateStandby", self.processTasksTimeStep, True,
+                               ["self.modeRequest == 'standby'"],
+                               ["self.fswProc.disableAllTasks()",
+                                ])
+
+        SimBase.createNewEvent("initiateFeedbackRW", self.processTasksTimeStep, True,
+                               ["self.modeRequest == 'feedbackRW'"],
+                               ["self.fswProc.disableAllTasks()",
+                                "self.enableTask('inertial3DPointTask')",
+                                "self.enableTask('mrpFeedbackRWsTask')"])
+
         SimBase.createNewEvent("initiateAttitudeGuidance", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'inertial3D'"],
                                ["self.fswProc.disableAllTasks()",
                                 "self.enableTask('inertial3DPointTask')",
-                                "self.enableTask('mrpFeedbackTask')"])
+                                "self.enableTask('mrpFeedbackRWTask')"])
                                 
         SimBase.createNewEvent("initiateHillPoint", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'hillPoint'"],
@@ -141,12 +153,6 @@ class BSKFswModels():
                                ["self.fswProc.disableAllTasks()",
                                 "self.enableTask('velocityPointTask')",
                                 "self.enableTask('mrpFeedbackTask')"])
-
-        SimBase.createNewEvent("initiateFeedbackRW", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'feedbackRW'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.enableTask('inertial3DPointTask')",
-                                "self.enableTask('mrpFeedbackRWsTask')"])
 
         SimBase.createNewEvent("initiateSteeringRW", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'steeringRW'"],
