@@ -222,7 +222,7 @@
 # ------------
 # If this simulation is run, then the following plots should be shown.
 # ![Inertial Orbit Illustration](Images/Scenarios/scenario_BasicOrbit_orbit.svg "Position history")
-# ![Attitude History](Images/Scenarios/scenario_BasicOrbit_orientation.svg "Position history")
+# ![Attitude History](Images/Scenarios/scenario_BasicOrbit_orientation.svg "Attitude history")
 #
 ## @}
 
