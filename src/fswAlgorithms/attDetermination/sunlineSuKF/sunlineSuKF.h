@@ -103,8 +103,9 @@ extern "C" {
 		uint64_t moduleID);
 	void sunlineSuKFTimeUpdate(SunlineSuKFConfig *ConfigData, double updateTime);
     void sunlineSuKFMeasUpdate(SunlineSuKFConfig *ConfigData, double updateTime);
-	void sunlineStateProp(double *stateInOut, double dt);
+	void sunlineStateProp(double *stateInOut,  double *b_vec, double dt);
     void sunlineSuKFMeasModel(SunlineSuKFConfig *ConfigData);
+    void sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double *dcm);
     void sunlineSuKFSwitch(double *bVec_B, double *states, double *covar);
 
 #ifdef __cplusplus

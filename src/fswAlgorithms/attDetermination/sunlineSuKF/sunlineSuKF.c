@@ -247,13 +247,19 @@ void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
 	@return void
 	@param stateInOut The state that is propagated
 */
-void sunlineStateProp(double *stateInOut, double dt)
+void sunlineStateProp(double *stateInOut, double *b_Vec, double dt)
 {
 
     double propagatedVel[3];
     double omegaCrossd[SKF_N_STATES_HALF];
     double omega[SKF_N_STATES_HALF] = {0, stateInOut[3], stateInOut[4]};
+    double dcm_BS[SKF_N_STATES_HALF*SKF_N_STATES_HALF];
     
+    mSetZero(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
+    
+    sunlineSuKFComputeDCM_BS(stateInOut, b_Vec, &dcm_BS[0]);
+//    mTranspose(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm_BS);
+    mMultV(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, omega, omega);
     /* Set local variables to zero*/
     vSetZero(propagatedVel, SKF_N_STATES_HALF);
     
@@ -262,7 +268,7 @@ void sunlineStateProp(double *stateInOut, double dt)
     v3Cross(omega, stateInOut, omegaCrossd);
     
     /*! - Multiply omega cross d by dt and add to state to propagate */
-    v3Scale(-dt, omegaCrossd, propagatedVel);
+    v3Scale(dt, omegaCrossd, propagatedVel);
     v3Add(stateInOut, propagatedVel, stateInOut);
     
 	return;
@@ -289,8 +295,7 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
 	vCopy(ConfigData->states, ConfigData->numStates,
 		&(ConfigData->SP[0 * ConfigData->numStates + 0]));
-	sunlineStateProp(&(ConfigData->SP[0 * ConfigData->numStates + 0]),
-        ConfigData->dt);
+	sunlineStateProp(&(ConfigData->SP[0 * ConfigData->numStates + 0]), ConfigData->bVec_B, ConfigData->dt);
     /*! - Scale that Sigma point by the appopriate scaling factor (Wm[0])*/
 	vScale(ConfigData->wM[0], &(ConfigData->SP[0 * ConfigData->numStates + 0]),
         ConfigData->numStates, ConfigData->xBar);
@@ -306,7 +311,7 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
 		vCopy(&sBarT[i*ConfigData->numStates], ConfigData->numStates, spPtr);
 		vScale(ConfigData->gamma, spPtr, ConfigData->numStates, spPtr);
 		vAdd(spPtr, ConfigData->numStates, ConfigData->states, spPtr);
-		sunlineStateProp(spPtr, ConfigData->dt);
+		sunlineStateProp(spPtr, ConfigData->bVec_B, ConfigData->dt);
 		vScale(ConfigData->wM[Index], spPtr, ConfigData->numStates, xComp);
 		vAdd(xComp, ConfigData->numStates, ConfigData->xBar, ConfigData->xBar);
 		
@@ -315,7 +320,7 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
         vCopy(&sBarT[i*ConfigData->numStates], ConfigData->numStates, spPtr);
         vScale(-ConfigData->gamma, spPtr, ConfigData->numStates, spPtr);
         vAdd(spPtr, ConfigData->numStates, ConfigData->states, spPtr);
-        sunlineStateProp(spPtr, ConfigData->dt);
+        sunlineStateProp(spPtr, ConfigData->bVec_B, ConfigData->dt);
         vScale(ConfigData->wM[Index], spPtr, ConfigData->numStates, xComp);
         vAdd(xComp, ConfigData->numStates, ConfigData->xBar, ConfigData->xBar);
 	}
@@ -556,9 +561,6 @@ void sunlineSuKFSwitch(double *bVec_B, double *states, double *covar)
     double switchMat[SKF_N_STATES_SWITCH][SKF_N_STATES_SWITCH];
     
     double sun_heading_norm[SKF_N_STATES_HALF];
-    double s2_B[SKF_N_STATES_HALF];
-    double s3_B_old[SKF_N_STATES_HALF];
-    double s3_B_new[SKF_N_STATES_HALF];
     double b1[SKF_N_STATES_HALF];
     double b2[SKF_N_STATES_HALF];
     
@@ -567,45 +569,21 @@ void sunlineSuKFSwitch(double *bVec_B, double *states, double *covar)
     v3Set(0, 1, 0, b2);
     v3Normalize(&(states[0]), sun_heading_norm);
     
-    /* Compute the second vector of the S frame */
-    v3Cross(sun_heading_norm, bVec_B, s2_B);
-    v3Normalize(s2_B, s2_B);
-    
     /*! Populate the dcm_BS with the "old" S-frame*/
-    mSetSubMatrix(sun_heading_norm, 1, SKF_N_STATES_HALF, dcm_BSold, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
-    mSetSubMatrix(&(s2_B), 1, SKF_N_STATES_HALF, dcm_BSold, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 1, 0);
-    v3Cross(sun_heading_norm, s2_B, s3_B_old);
-    v3Normalize(s3_B_old, s3_B_old);
-    mSetSubMatrix(&(s3_B_old), 1, SKF_N_STATES_HALF, dcm_BSold, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 2, 0);
-    mTranspose(dcm_BSold, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm_BSold);
+    sunlineSuKFComputeDCM_BS(sun_heading_norm, bVec_B, &dcm_BSold[0][0]);
     
     if (v3IsEqual(bVec_B, b1, 1e-10))
     {
-        v3Cross(sun_heading_norm, b2, s2_B);
-        v3Normalize(s2_B, s2_B);
-        /*! Populate the dcm_BS with the "new" S-frame*/
-        mSetSubMatrix(sun_heading_norm, 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
-        mSetSubMatrix(&(s2_B), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 1, 0);
-        v3Cross(sun_heading_norm, s2_B, s3_B_new);
-        v3Normalize(s3_B_new, s3_B_new);
-        mSetSubMatrix(&(s3_B_new), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 2, 0);
-        
+        sunlineSuKFComputeDCM_BS(sun_heading_norm, b2, &dcm_BSnew_T[0][0]);
         v3Copy(b2, bVec_B);
     }
     else
     {
-        v3Cross(sun_heading_norm, b1, s2_B);
-        v3Normalize(s2_B, s2_B);
-        /*! Populate the dcm_BS with the "new" S-frame*/
-        mSetSubMatrix(sun_heading_norm, 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
-        mSetSubMatrix(&(s2_B), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 1, 0);
-        v3Cross(sun_heading_norm, s2_B, s3_B_new);
-        v3Normalize(s3_B_new, s3_B_new);
-        mSetSubMatrix(&(s3_B_new), 1, SKF_N_STATES_HALF, dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 2, 0);
-        
+        sunlineSuKFComputeDCM_BS(sun_heading_norm, b1, &dcm_BSnew_T[0][0]);
         v3Copy(b1, bVec_B);
     }
     
+    mTranspose(dcm_BSnew_T, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm_BSnew_T);
     mMultM(dcm_BSnew_T, 3, 3, dcm_BSold, 3, 3, dcm_SnewSold);
     
     mSetIdentity(switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);
@@ -617,4 +595,25 @@ void sunlineSuKFSwitch(double *bVec_B, double *states, double *covar)
     mTranspose(switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, switchMat);
     mMultM(switchMatP, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, switchMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, covar);
     return;
+}
+
+
+void sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double *dcm){
+    double s2_B[SKF_N_STATES_HALF];
+    double s3_B[SKF_N_STATES_HALF];
+    
+    mSetZero(dcm, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
+    v3SetZero(s2_B);
+    v3SetZero(s3_B);
+    
+    v3Cross(sunheading, bVec, s2_B);
+    v3Normalize(s2_B, s2_B);
+    /*! Populate the dcm_BS with the "new" S-frame*/
+    mSetSubMatrix(sunheading, 1, SKF_N_STATES_HALF, dcm, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
+    mSetSubMatrix(&(s2_B), 1, SKF_N_STATES_HALF, dcm, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 1, 0);
+    v3Cross(sunheading, s2_B, s3_B);
+    v3Normalize(s3_B, s3_B);
+    mSetSubMatrix(&(s3_B), 1, SKF_N_STATES_HALF, dcm, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 2, 0);
+    mTranspose(dcm, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm);
+    
 }
