@@ -17,7 +17,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-## \defgroup Tutorials_6_1
+## \defgroup Tutorials_6_5
 ## @{
 # Demonstrates how to use sun safe pointing in conjunction with the Eclipse, RW, CSS Weighted Least Squares Estimator, and
 # CSS modules to provide attitude guidance as the spacecraft passes through an eclipse while orbiting the Earth.
@@ -28,9 +28,9 @@
 # Scenario Description
 # -----
 # This script sets up a 6-DOF spacecraft which is orbiting the Earth.  The goal of the scenario is to
-# illustrate 1) how IMU sensors can be added to the simulation, 2) how to add the eclipse module
-# to simulate shadows being cast over a CSS constellation, and 3) how to use these added modules to make use of
-# sun safe pointing as a flight software algorithm to control RWs.
+# illustrate 1) how to add the eclipse module to simulate shadows being cast over a CSS constellation, 2)
+# how to use these added modules to make use of sun safe pointing as a flight software algorithm to control RWs, and 3)
+# configure a custom timestep for the dynamics and FSW processes.
 #
 # To run the default scenario, call the python script from a Terminal window through
 #
@@ -38,32 +38,47 @@
 #
 # The simulation layout is shown in the following illustration.  Two simulation processes are created: one
 # which contains dynamics modules, and one that contains the Flight Software (FSW) algorithm
-# modules. Instructions on how to configure seperate processes can be found in
-# [scenarioAttitudeFeedback2T.py](@ref scenarioAttitudeFeedback2T).
-# ![Simulation Flow Diagram](Images/doc/scenario_AttEclipse.svg "Illustration")
+# modules.
+# ![Simulation Flow Diagram](Images/doc/test_scenario_AttEclipseUpdated.svg "Illustration")
+#
+# To begin, one must first create a class that will
+# inherent from the masterSim class and provide a name to the sim.
+# This is accomplished through:
+# ~~~~~~~~~~~~~{.py}
+#   class scenario_AttEclipse(BSKScenario):
+#      def __init__(self, masterSim):
+#          super(scenario_AttEclipse, self).__init__(masterSim)
+#          self.name = 'scenario_AttEclipse'
+# ~~~~~~~~~~~~~
+#
+# Within configure_initial_conditions(), the user needs to first define the spacecraft FSW mode for the simulation
+# through:
+# ~~~~~~~~~~~~~{.py}
+#   self.masterSim.modeRequest = "sunSafePoint"
+# ~~~~~~~~~~~~~
+# which triggers the `initiateSunSafePointing` event within the BSK_FSW.py script.
+#
+# Given the complexity of the simulation, the standard dynamics and FSW time step of 0.1 seconds leads to excessively long
+# computational time. The user can change the standard time step for either or both processes by setting
+# ~~~~~~~~~~~~~{.py}
+#   TheBSKSim = BSKSim(1.0, 1.0)
+# ~~~~~~~~~~~~~
+# The first argument is the FSW time step and the second is the dynamics time step (both units of seconds).
+# The user is cautioned when setting a changing the standard time step
+# as too large a time step can lead to propagated inaccuracy.
 #
 # When the simulation completes several plots are shown for the eclipse shadow factor, the sun direction vector,
 # attitude error, RW motor torque, and RW speed.
 #
 #
-# ### Setup Changes for Spacecraft Dynamics
-#
+# Custom Dynamics Configurations Instructions
+# -----
 # The fundamental simulation setup is a combination of the setups used in
 # [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback) and [scenarioCSS.py](@ref scenarioCSS).
 # The dynamics simulation is setup using a SpacecraftPlus() module to which an Earth gravity
 # effector is attached. In addition a CSS constellation and RW pyramid are attached.
 #
-# The new element is adding the IMU sensor to the spacecraft, and the eclipse module to the simulation environment.
-# The specific code required to build the IMU sensor is:
-# ~~~~~~~~~~~~~{.py}
-#     imuObject = imu_sensor.ImuSensor()
-#     imuObject.InputStateMsg = self.scObject.scStateOutMsgName
-#     imuObject.OutputDataMsg = "imu_sensor_output"
-# ~~~~~~~~~~~~~
-# and the code required to attach it to the simulation is:
-# ~~~~~~~~~~~~~{.py}
-#     SimBase.AddModelToTask(self.taskName, self.imuObject, None, 205)
-# ~~~~~~~~~~~~~
+# The new element is adding the eclipse module to the simulation environment.
 #
 # To configure the eclipse module, use the following code:
 # ~~~~~~~~~~~~~{.py}
@@ -76,8 +91,8 @@
 # ~~~~~~~~~~~~~{.py}
 #     SimBase.AddModelToTask(self.taskName, self.eclipseObject, None, 204)
 # ~~~~~~~~~~~~~
-# The module requires spice data regarding the location of the sun, the planets to be monitored for shadow-casting
-# effects, and the location of the spacecraft. In combination these inputs can produce an output that is attached to the
+# The module requires spice data regarding the location of the sun, the planets, and the spacecraft
+# to simulate shadow-casting effects. In combination these inputs can produce an output that is attached to the
 # CSS constellation which simulates a shadow. The eclipse object output is called using:
 #
 #         eclipse_data_0
@@ -85,8 +100,8 @@
 # which gets sent to the individual CSS sensors.
 #
 #
-# ### Flight Algorithm Changes to Configure Sun Safe Pointing Guidance
-#
+# Custom FSW Configurations Instructions
+# -----
 # The general flight algorithm setup is different than the earlier simulation scripts. Here we
 # use the sunSafePoint() guidance module, the CSSWlsEst() module to evaluate the
 # sun pointing vector, and the MRP_Feedback() module to provide the desired \f${\mathbf L}_r\f$
@@ -95,15 +110,15 @@
 # The sunSafePoint() guidance module is used to steer the spacecraft to point towards the sun direction vector.
 # This is used for functionality like safe mode, or a power generation mode. The inputs of the module are the
 # sun direction vector (as provided by the CSSWlsEst module), as well as the body rate information (as provided by the
-#  IMU). The guidance module can be configured using:
+#  simpleNav module). The guidance module can be configured using:
 # ~~~~~~~~~~~~~{.py}
 # self.sunSafePointData = sunSafePoint.sunSafePointConfig()
 # self.sunSafePointWrap = SimBase.setModelDataWrap(self.sunSafePointData)
 # self.sunSafePointWrap.ModelTag = "sunSafePoint"
 # self.sunSafePointData.attGuidanceOutMsgName = "guidanceOut"
-# self.sunSafePointData.imuInMsgName = SimBase.DynModels.imuObject.OutputDataMsg
+# self.sunSafePointData.imuInMsgName = SimBase.DynModels.simpleNavObject.outputNavAttName
 # self.sunSafePointData.sunDirectionInMsgName = self.cssWlsEstData.navStateOutMsgName
-# self.sunSafePointData.sHatBdyCmd = [1.0, 0.0, 0.0]
+# self.sunSafePointData.sHatBdyCmd = [0.0, 0.0, 1.0]
 # ~~~~~~~~~~~~~
 # The sHatBdyCmd defines the desired body pointing vector that will align with the sun direction vector.
 # The sun direction vector itself is calculated through the use of a CSS constellation and the CSSWlsEst module. The
@@ -126,7 +141,7 @@
 # components are plotted. When the spacecraft passes through the eclipse, it sets the sun direction vector to
 #  [0.0,0.0,0.0].
 # ![Attitude Error Norm](Images/Scenarios/scenario_AttEclipse_attitudeErrorNorm.svg "Attitude Error Norm")
-# The spacecraft does not change attitude if no sun direction vector is detected. Once the CSS rediscovers the sun upon
+# The spacecraft does not change attitude if the sun direction vector is not detectable. Once the CSS rediscovers the sun upon
 # exiting the eclipse, the spacecraft corrects and realigns with the sun direction vector.
 # ![Rate Tracking Error](Images/Scenarios/scenario_AttEclipse_rateError.svg "Rate Tracking Error")
 # ![RW Motor Torque](Images/Scenarios/scenario_AttEclipse_rwMotorTorque.svg "RW Motor Torque [Nm]")
@@ -222,6 +237,7 @@ class scenario_AttitudeEclipse(BSKScenario):
             self.masterSim.FSWModels.sunSafePointData.sunDirectionInMsgName + ".vehSunPntBdy", range(3))
 
         # Plot results
+        BSK_plt.clear_all_plots()
         timeData = dataUsReq[:, 0] * macros.NANO2MIN
         BSK_plt.plot_attitude_error(timeData, sigma_BR)
         BSK_plt.plot_rw_cmd_torque(timeData, dataUsReq, num_RW)
@@ -246,7 +262,7 @@ class scenario_AttitudeEclipse(BSKScenario):
 def run(showPlots):
     # Instantiate base simulation
 
-    TheBSKSim = BSKSim()
+    TheBSKSim = BSKSim(1.0, 1.0)
 
     # Configure an scenario in the base simulation
     TheScenario = scenario_AttitudeEclipse(TheBSKSim)

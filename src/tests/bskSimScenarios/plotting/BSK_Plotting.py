@@ -34,6 +34,9 @@ m2km = 1.0 / 1000.0
 def show_all_plots():
     plt.show()
 
+def clear_all_plots():
+    plt.close("all")
+
 def save_all_plots(fileName, figureNames):
     figureList = {}
     numFigures = len(figureNames)
@@ -160,7 +163,7 @@ def plot_orbit(r_BN):
     return
 
 def plot_attitude_error(timeLineSet, dataSigmaBR):
-    plt.figure(1)
+    plt.figure()
     fig = plt.gcf()
     ax = fig.gca()
     vectorData = unitTestSupport.pullVectorSetFromData(dataSigmaBR)
@@ -205,7 +208,7 @@ def plot_orientation(timeLineSet, dataPos, dataVel, dataSigmaBN):
         itheta = np.cross(ih, ir)
         dcmBN = RigidBodyKinematics.MRP2C(vectorMRPData[idx])
         data[idx] = [np.dot(ir, dcmBN[0]), np.dot(itheta, dcmBN[1]), np.dot(ih, dcmBN[2])]
-    plt.figure(4)
+    plt.figure()
     labelStrings = (r'$\hat\imath_r\cdot \hat b_1$'
                     , r'${\hat\imath}_{\theta}\cdot \hat b_2$'
                     , r'$\hat\imath_h\cdot \hat b_3$')
