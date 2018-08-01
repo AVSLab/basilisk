@@ -211,6 +211,7 @@ class scenario_VelocityPointing(BSKScenario):
         Lr = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.mrpFeedbackRWsData.outputDataName + ".torqueRequestBody", range(3))
 
         # Plot results
+        BSK_plt.clear_all_plots()
         timeLineSet = sigma_BR[:, 0] * macros.NANO2MIN
         scene_plt.plot_track_error_norm(timeLineSet, sigma_BR)
         scene_plt.plot_control_torque(timeLineSet, Lr)

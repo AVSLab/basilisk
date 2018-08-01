@@ -34,6 +34,9 @@ m2km = 1.0 / 1000.0
 def show_all_plots():
     plt.show()
 
+def clear_all_plots():
+    plt.close("all")
+
 def save_all_plots(fileName, figureNames):
     figureList = {}
     numFigures = len(figureNames)

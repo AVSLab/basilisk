@@ -237,6 +237,7 @@ class scenario_AttitudeEclipse(BSKScenario):
             self.masterSim.FSWModels.sunSafePointData.sunDirectionInMsgName + ".vehSunPntBdy", range(3))
 
         # Plot results
+        BSK_plt.clear_all_plots()
         timeData = dataUsReq[:, 0] * macros.NANO2MIN
         BSK_plt.plot_attitude_error(timeData, sigma_BR)
         BSK_plt.plot_rw_cmd_torque(timeData, dataUsReq, num_RW)

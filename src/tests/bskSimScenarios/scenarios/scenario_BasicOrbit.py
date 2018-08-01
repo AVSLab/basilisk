@@ -277,6 +277,7 @@ class scenario_BasicOrbit(BSKScenario):
         v_BN_N = self.masterSim.pullMessageLogData(self.masterSim.DynModels.simpleNavObject.outputTransName + ".v_BN_N", range(3))
 
         # Plot results
+        BSK_plt.clear_all_plots()
         timeLineSet = r_BN_N[:, 0] * macros.NANO2MIN
         BSK_plt.plot_orbit(r_BN_N)
         BSK_plt.plot_orientation(timeLineSet, r_BN_N, v_BN_N, sigma_BN)

@@ -210,6 +210,7 @@ class scenario_AttitudeSteeringRW(BSKScenario):
             self.masterSim.FSWModels.mrpSteeringData.outputDataName + ".omega_BastR_B", range(3))
 
         # Plot results
+        BSK_plt.clear_all_plots()
         timeData = dataUsReq[:, 0] * macros.NANO2MIN
         BSK_plt.plot_attitude_error(timeData, sigma_BR)
         BSK_plt.plot_rw_cmd_torque(timeData, dataUsReq, num_RW)

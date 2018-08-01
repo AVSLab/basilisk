@@ -233,6 +233,7 @@ class scenario_HillPointing(BSKScenario):
         Lr = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.mrpFeedbackRWsData.outputDataName + ".torqueRequestBody", range(3))
 
         # Plot results
+        BSK_plt.clear_all_plots()
         timeLineSet = sigma_BR[:, 0] * macros.NANO2MIN
         BSK_plt.plot_attitude_error(timeLineSet, sigma_BR)
         BSK_plt.plot_control_torque(timeLineSet, Lr)
