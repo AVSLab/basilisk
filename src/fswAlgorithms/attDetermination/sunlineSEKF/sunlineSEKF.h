@@ -99,7 +99,7 @@ extern "C" {
                            uint64_t moduleID);
 	void sunlineTimeUpdate(sunlineSEKFConfig *ConfigData, double updateTime);
     void sunlineMeasUpdate(sunlineSEKFConfig *ConfigData, double updateTime);
-	void sunlineStateSTMProp(double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double dt, double *stateInOut, double *stateTransition);
+	void sunlineStateSTMProp(double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double bVec[SKF_N_STATES], double dt, double *stateInOut, double *stateTransition);
     
     void sunlineHMatrixYMeas(double states[SKF_N_STATES_SWITCH], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS*3], double *obs, double *yMeas, int *numObs, double *measMat);
     
@@ -112,6 +112,8 @@ extern "C" {
     void sunlineSEKFUpdate(double kalmanGain[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double qObsVal, int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES_SWITCH], double *states, double *x, double *covar);
     
     void sunlineSEKFSwitch(double *bVec_B, double *states, double *covar);
+    
+    void sunlineSEKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double *dcm);
     
 #ifdef __cplusplus
 }

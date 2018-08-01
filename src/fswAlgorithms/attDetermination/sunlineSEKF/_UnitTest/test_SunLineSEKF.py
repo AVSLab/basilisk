@@ -29,7 +29,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import alg_contain
 from Basilisk.fswAlgorithms import sunlineSEKF
 from Basilisk.fswAlgorithms import cssComm
-from Basilisk.fswAlgorithms import vehicleConfigData
+from Basilisk.fswAlgorithms import fswMessages
 from Basilisk.utilities import macros, RigidBodyKinematics
 import SunLineSEKF_test_utilities as FilterPlots
 
@@ -38,7 +38,7 @@ def setupFilterData(filterObject):
     filterObject.navStateOutMsgName = "sunline_state_estimate"
     filterObject.filtDataOutMsgName = "sunline_filter_data"
     filterObject.cssDataInMsgName = "css_sensors_data"
-    filterObject.cssConfInMsgName = "css_config_data"
+    filterObject.cssConfigInMsgName = "css_config_data"
 
     filterObject.sensorUseThresh = 0.
     filterObject.states = [1.0, 1.0, 1.0, 0.0, 0.0]
@@ -139,9 +139,13 @@ def sunline_individual_test():
 
     inputStates = [2,1,0.75,0.1,0.4]
     inputOmega = [0.,0.1, 0.4]
+    bVec_test = [1,0,0]
     dt =0.5
     stateTransition = sunlineSEKF.new_doubleArray(numStates*numStates)
     states = sunlineSEKF.new_doubleArray(numStates)
+    bVec = sunlineSEKF.new_doubleArray(3)
+    for k in range(3):
+        sunlineSEKF.doubleArray_setitem(bVec, k, bVec_test[k])
     for i in range(numStates):
         sunlineSEKF.doubleArray_setitem(states, i, inputStates[i])
         for j in range(numStates):
@@ -150,7 +154,7 @@ def sunline_individual_test():
             else:
                 sunlineSEKF.doubleArray_setitem(stateTransition, numStates*i+j, 0.0)
 
-    sunlineSEKF.sunlineStateSTMProp(expDynMat.flatten().tolist(), dt, states, stateTransition)
+    sunlineSEKF.sunlineStateSTMProp(expDynMat.flatten().tolist(), bVec, dt, states, stateTransition)
 
     PropStateOut = []
     PropSTMOut = []
@@ -781,7 +785,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
     # Set up some test parameters
 
-    cssConstelation = vehicleConfigData.CSSConstConfig()
+    cssConstelation = fswMessages.CSSConfigFswMsg()
 
     CSSOrientationList = [
         [0.70710678118654746, -0.5, 0.5],
@@ -793,18 +797,22 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         [-0.70710678118654746, 0, -0.70710678118654757],
         [-0.70710678118654746, -0.70710678118654757, 0.0],
     ]
+    CSSBias = [1 for i in range(len(CSSOrientationList))]
+
     totalCSSList = []
     # Initializing a 2D double array is hard with SWIG.  That's why there is this
     # layer between the above list and the actual C variables.
+    i = 0
     for CSSHat in CSSOrientationList:
-        newCSS = vehicleConfigData.CSSConfigurationElement()
+        newCSS = fswMessages.CSSUnitConfigFswMsg()
+        newCSS.CBias = CSSBias[i]
         newCSS.nHat_B = CSSHat
         totalCSSList.append(newCSS)
+        i = i + 1
     cssConstelation.nCSS = len(CSSOrientationList)
     cssConstelation.cssVals = totalCSSList
     msgSize = cssConstelation.getStructSize()
     inputData = cssComm.CSSArraySensorIntMsg()
-
 
     inputMessageSize = inputData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage("TestProcess", "css_config_data",
@@ -990,15 +998,16 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 if __name__ == "__main__":
     # sunline_individual_test()
     # test_all_functions_sekf(True)
-    import time
-    numb = 25
-    avg = 0
-    for i in range(numb):
-        timeStart = time.time()
-        StateUpdateSunLine(False, 2000, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0])
-        timeEnd = time.time()
-        avg += timeEnd - timeStart
-    print avg / numb
+    # import time
+    # numb = 25
+    # avg = 0
+    # for i in range(numb):
+    #     timeStart = time.time()
+    #     StateUpdateSunLine(False, 2000, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0])
+    #     timeEnd = time.time()
+    #     avg += timeEnd - timeStart
+    # print avg / numb
+    sunline_individual_test()
     # (200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
     # (2000, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
     # (200, False ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
