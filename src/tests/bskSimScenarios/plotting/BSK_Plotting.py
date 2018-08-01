@@ -208,7 +208,7 @@ def plot_orientation(timeLineSet, dataPos, dataVel, dataSigmaBN):
         itheta = np.cross(ih, ir)
         dcmBN = RigidBodyKinematics.MRP2C(vectorMRPData[idx])
         data[idx] = [np.dot(ir, dcmBN[0]), np.dot(itheta, dcmBN[1]), np.dot(ih, dcmBN[2])]
-    plt.figure(4)
+    plt.figure()
     labelStrings = (r'$\hat\imath_r\cdot \hat b_1$'
                     , r'${\hat\imath}_{\theta}\cdot \hat b_2$'
                     , r'$\hat\imath_h\cdot \hat b_3$')
