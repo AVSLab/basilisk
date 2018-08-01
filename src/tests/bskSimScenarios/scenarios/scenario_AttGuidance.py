@@ -36,6 +36,9 @@
 #
 #       python scenario_AttGuidance.py
 #
+# The simulation mimics the basic simulation simulation in the earlier tutorial in
+# [scenarioAttitudeGuidance.py](@ref scenarioAttitudeGuidance).
+#
 # The simulation layout is shown in the following illustration.
 # ![Simulation Flow Diagram](Images/doc/test_scenario_AttGuidance.svg "Illustration")
 # The initial setup for the simulation closely models that of scenario_FeedbackRW.py.
@@ -159,6 +162,16 @@
 # ~~~~~~~~~~~~~
 # This event is triggered when a user calls `self.masterSim.modeRequest = 'hillPoint'` in any current or future
 # BSK_scenario.py file.
+#
+# Numerical Simulation Results
+# ------------
+# If this simulation is run, then the following plots should be shown.
+# ![](Images/Scenarios/scenario_AttGuidance_attitudeErrorNorm.svg)
+# ![](Images/Scenarios/scenario_AttGuidance_rwMotorTorque.svg)
+# ![](Images/Scenarios/scenario_AttGuidance_rateError.svg)
+# ![](Images/Scenarios/scenario_AttGuidance_orientation.svg)
+# ![](Images/Scenarios/scenario_AttGuidance_attitudeGuidance.svg)
+#
 ## @}
 
 # Import utilities

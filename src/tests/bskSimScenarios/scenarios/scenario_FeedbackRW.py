@@ -33,6 +33,9 @@
 #
 #       python scenario_FeedbackRW.py
 #
+# The simulation mimics the basic simulation simulation in the earlier tutorial in
+# [scenarioAttitudeFeedbackRW.py](@ref scenarioAttitudeFeedbackRW).
+#
 # The simulation layout is shown in the following illustration.
 # ![Simulation Flow Diagram](Images/doc/test_scenario_FeedbackRW.svg "Illustration")
 # Two simulation processes are created: one
@@ -313,6 +316,15 @@
 # which disables any existing tasks and enables the inertial pointing task and RW feedback task.
 # This concludes how to construct a preconfigured FSW mode that will be available for any future scenario
 # that uses the BSK_Sim architecture.
+#
+# Numerical Simulation Results
+# ------------
+# If this simulation is run, then the following plots should be shown.
+# ![Attitude Errors](Images/Scenarios/scenario_FeedbackRW_attitudeErrorNorm.svg "Attitude Tracking history")
+# ![RW Motor Torques](Images/Scenarios/scenario_FeedbackRW_rwMotorTorque.svg "RW motor torque history")
+# ![Angular Velocities](Images/Scenarios/scenario_FeedbackRW_rateError.svg "Body Rate history")
+# ![RW Spin Rates](Images/Scenarios/scenario_FeedbackRW_rwSpeed.svg "RW Speed history")
+#
 ## @}
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, unitTestSupport

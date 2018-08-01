@@ -33,7 +33,10 @@
 #
 # To run the default scenario, call the python script from a Terminal window through
 #
-#       python scenario_AttSterring.py
+#       python scenario_AttSteering.py
+#
+# The simulation mimics the basic simulation simulation in the earlier tutorial in
+# [scenarioAttSteering.py](@ref scenarioAttitudeSteering).
 #
 # The simulation layout is shown in the following illustration.
 # ![Simulation Flow Diagram](Images/doc/test_scenario_AttSteering.svg "Illustration")
@@ -132,6 +135,15 @@
 #                                 "self.enableTask('hillPointTask')",
 #                                 "self.enableTask('mrpSteeringRWsTask')"])
 # ~~~~~~~~~~~~~
+#
+#
+# Numerical Simulation Results
+# ------------
+# If this simulation is run, then the following plots should be shown.
+# ![Attitude Errors](Images/Scenarios/scenario_AttSteering_attitudeErrorNorm.svg "Attitude Tracking history")
+# ![RW Motor Torques](Images/Scenarios/scenario_AttSteering_rwMotorTorque.svg "RW motor torque history")
+# ![Angular Velocities](Images/Scenarios/scenario_AttSteering_rateError.svg "Body Rate history")
+# ![RW Spin Rates](Images/Scenarios/scenario_AttSteering_rwSpeed.svg "RW Speed history")
 #
 ## @}
 

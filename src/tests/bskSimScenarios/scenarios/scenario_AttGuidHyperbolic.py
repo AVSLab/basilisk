@@ -33,6 +33,9 @@
 #
 #       python scenario_AttGuidHyperbolic.py
 #
+# The simulation mimics the basic simulation simulation in the earlier tutorial in
+# [scenarioAttitudeGuidHyperbolic.py](@ref scenarioAttGuideHyperbolic).
+#
 # The simulation layout is shown in the following illustration.
 # ![Simulation Flow Diagram](Images/doc/test_scenario_AttGuidHyperbolic.svg "Illustration")
 #
@@ -135,6 +138,15 @@
 # were already defined from an earlier scenario. The user simply adds the preconfigured task to the event without
 # having to manually reconfigure the messages. Now there is an additional FSW mode available for all current and
 # future BSK_scenario.py files.
+#
+# Numerical Simulation Results
+# ------------
+# If this simulation is run, then the following plots should be shown.
+# ![Attitude Errors](Images/Scenarios/scenario_AttGuidHyperbolic_attitudeErrorNorm.svg "Attitude Tracking history")
+# ![RW Motor Torques](Images/Scenarios/scenario_AttGuidHyperbolic_rwMotorTorque.svg "RW motor torque history")
+# ![Angular Velocities](Images/Scenarios/scenario_AttGuidHyperbolic_rateError.svg "Body Rate history")
+# ![Inertial Orbit Illustration](Images/Scenarios/scenario_AttGuidHyperbolic_orbit.svg "Position history")
+#
 ## @}
 
 # Import utilities
