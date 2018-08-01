@@ -32,9 +32,15 @@
 # 1) highlight the structure of the BSK_Sim architecture, 2) demonstrate how to create a custom BSK_scenario, and 3)
 # how to customize the BSK_Dynamics.py and BSK_FSW.py files.
 #
-# To run the default scenario, call the python script from a Terminal window through:
+# To run the default scenario, call the bskSim python simulation script withing `src\tests\bskSimScenarios\scenarios`
+#  from a Terminal window through:
 #
 #       python scenario_BasicOrbit.py
+#
+# The simulation mimics the basic simulation simulation in the earlier tutorial in
+# [scenarioBasicOrbit.py](@ref scenarioBasicOrbit).  But rather than explicity defining all simulation properties
+# within the python simulation file, the bskSim spacecraft simulation class is used to encapsulate a lot of the
+# setup and configuring.
 #
 # The simulation layout is shown in the following illustration.
 # ![Simulation Flow Diagram](Images/doc/test_scenario_basicOrbit_v1.1.svg "Illustration")
@@ -212,6 +218,12 @@
 #                                 ])
 # ~~~~~~~~~~~~~
 #
+# Numerical Simulation Results
+# ------------
+# If this simulation is run, then the following plots should be shown.
+# ![Inertial Orbit Illustration](Images/Scenarios/scenario_BasicOrbit_orbit.svg "Position history")
+# ![Attitude History](Images/Scenarios/scenario_BasicOrbit_orientation.svg "Position history")
+#
 ## @}
 
 
@@ -287,7 +299,7 @@ class scenario_BasicOrbit(BSKScenario):
             BSK_plt.show_all_plots()
         else:
             fileName = os.path.basename(os.path.splitext(__file__)[0])
-            figureNames = ["orbit", "orientation", "attitudeGuidance"]
+            figureNames = ["orbit", "orientation"]
             figureList = BSK_plt.save_all_plots(fileName, figureNames)
 
         return figureList
