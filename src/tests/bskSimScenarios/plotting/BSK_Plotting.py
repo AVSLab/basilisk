@@ -163,7 +163,7 @@ def plot_orbit(r_BN):
     return
 
 def plot_attitude_error(timeLineSet, dataSigmaBR):
-    plt.figure(1)
+    plt.figure()
     fig = plt.gcf()
     ax = fig.gca()
     vectorData = unitTestSupport.pullVectorSetFromData(dataSigmaBR)
