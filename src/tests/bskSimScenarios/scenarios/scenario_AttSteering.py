@@ -17,7 +17,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-## \defgroup Tutorials_6_2
+## \defgroup Tutorials_6_4
 ## @{
 # Demonstrates how to use the MRP_Steering() module to stabilize the attitude relative to the Hill Frame using the
 # BSK_sim architecture.
@@ -27,8 +27,9 @@
 #
 # Scenario Description
 # -----
-# This script sets up a 6-DOF spacecraft orbiting earth, using the MRP_Steering module with a rate sub-servo system
-# to control the attitude within the new BSK_Sim architecture.
+# This script sets up a 6-DOF spacecraft orbiting Earth. The goal of this tutorial is to deomstrate
+# how to configure and use the MRP_Steering module with a rate sub-servo system
+# the new BSK_Sim architecture.
 #
 # To run the default scenario, call the python script from a Terminal window through
 #
@@ -103,10 +104,6 @@
 # To configure the desired "steeringRW" FSW mode the user must add the following modules to BSK_FSW.py
 # within BSK_FSW.py:
 # ~~~~~~~~~~~~~{.py}
-#         self.hillPointData = hillPoint.hillPointConfig()
-#         self.hillPointWrap = SimBase.setModelDataWrap(self.hillPointData)
-#         self.hillPointWrap.ModelTag = "hillPoint"
-#
 #         self.mrpSteeringData = MRP_Steering.MRP_SteeringConfig()
 #         self.mrpSteeringWrap = SimBase.setModelDataWrap(self.mrpSteeringData)
 #         self.mrpSteeringWrap.ModelTag = "MRP_Steering"
@@ -117,17 +114,15 @@
 #
 # ~~~~~~~~~~~~~
 # each of which prepare various configuration messages to be attached to the various FSW task. The following code shows
-# how to create two new tasks `hillPointTask` and `mrpSteeringRWsTask` and how to attach the configuration data.
+# how to create a new control task, `mrpSteeringRWsTask`, and how to attach the configuration data to the task.
 # ~~~~~~~~~~~~~{.py}
-#         SimBase.AddModelToTask("hillPointTask", self.hillPointWrap, self.hillPointData, 10)
-#         SimBase.AddModelToTask("hillPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
-#
 #         SimBase.AddModelToTask("mrpSteeringRWsTask", self.mrpSteeringWrap, self.mrpSteeringData, 10)
 #         SimBase.AddModelToTask("mrpSteeringRWsTask", self.rateServoWrap, self.rateServoData, 9)
 #         SimBase.AddModelToTask("mrpSteeringRWsTask", self.rwMotorTorqueWrap, self.rwMotorTorqueData, 8)
 # ~~~~~~~~~~~~~
-# The advantage of the BSK_Sim architecture becomes apparent here, as the `trackingErrorData` and `rwMotorTorqueData`
-# were already defined from an earlier scenario. The user can simply reference add them to their desired task without
+# The advantage of the BSK_Sim architecture becomes apparent here again, as the `trackingErrorData` and `rwMotorTorqueData`
+# data were already defined from an earlier scenario as well as the entire `hillPointingTask`.
+# The user can simply add them to their desired task without
 # having to manually reconfigure the messages. These tasks are then enabled when the user sets the modeRequest variable
 # to `steeringRW` in BSK_scenario.py.
 # ~~~~~~~~~~~~~{.py}
@@ -155,10 +150,6 @@ from BSK_masters import BSKSim, BSKScenario
 # Import plotting file for your scenario
 sys.path.append(path + '/../plotting')
 import BSK_Plotting as BSK_plt
-
-sys.path.append(path + '/../../scenarios')
-import scenarioAttitudeSteering as scene_plt
-
 
 # Create your own scenario child class
 class scenario_AttitudeSteeringRW(BSKScenario):
@@ -207,6 +198,7 @@ class scenario_AttitudeSteeringRW(BSKScenario):
         # Dynamics process outputs: pull log messages below if any
         RW_speeds = self.masterSim.pullMessageLogData( # dataOmegaRW
             self.masterSim.DynModels.rwStateEffector.OutputDataString + ".wheelSpeeds", range(num_RW))
+
         # FSW process outputs
         dataUsReq = self.masterSim.pullMessageLogData(
             self.masterSim.FSWModels.rwMotorTorqueData.outputDataName + ".motorTorque", range(num_RW))
@@ -219,10 +211,10 @@ class scenario_AttitudeSteeringRW(BSKScenario):
 
         # Plot results
         timeData = dataUsReq[:, 0] * macros.NANO2MIN
-        scene_plt.plot_attitude_error(timeData, sigma_BR)
-        scene_plt.plot_rw_cmd_torque(timeData, dataUsReq, num_RW)
-        scene_plt.plot_rate_error(timeData, omega_BR_B, omega_BR_ast)
-        scene_plt.plot_rw_speeds(timeData, RW_speeds, num_RW)
+        BSK_plt.plot_attitude_error(timeData, sigma_BR)
+        BSK_plt.plot_rw_cmd_torque(timeData, dataUsReq, num_RW)
+        BSK_plt.plot_rate_error(timeData, omega_BR_B)
+        BSK_plt.plot_rw_speeds(timeData, RW_speeds, num_RW)
         figureList = {}
         if showPlots:
             BSK_plt.show_all_plots()

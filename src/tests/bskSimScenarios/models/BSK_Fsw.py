@@ -60,11 +60,11 @@ class BSKFswModels():
         self.trackingErrorData = attTrackingError.attTrackingErrorConfig()
         self.trackingErrorWrap = SimBase.setModelDataWrap(self.trackingErrorData)
         self.trackingErrorWrap.ModelTag = "trackingError"
-        
+
         self.mrpFeedbackControlData = MRP_Feedback.MRP_FeedbackConfig()
         self.mrpFeedbackControlWrap = SimBase.setModelDataWrap(self.mrpFeedbackControlData)
         self.mrpFeedbackControlWrap.ModelTag = "mrpFeedbackControl"
-        
+
         self.mrpFeedbackRWsData = MRP_Feedback.MRP_FeedbackConfig()
         self.mrpFeedbackRWsWrap = SimBase.setModelDataWrap(self.mrpFeedbackRWsData)
         self.mrpFeedbackRWsWrap.ModelTag = "mrpFeedbackRWs"
@@ -105,8 +105,8 @@ class BSKFswModels():
         
         SimBase.AddModelToTask("velocityPointTask", self.velocityPointWrap, self.velocityPointData, 10)
         SimBase.AddModelToTask("velocityPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
-        
-        SimBase.AddModelToTask("mrpFeedbackTask", self.mrpFeedbackControlWrap, self.mrpFeedbackControlData, 10)
+
+        SimBase.AddModelToTask("mrpFeedbackTask", self.mrpFeedbackControlWrap, self.mrpFeedbackControlData, 10) #used for external torque
         
         SimBase.AddModelToTask("mrpSteeringRWsTask", self.mrpSteeringWrap, self.mrpSteeringData, 10)
         SimBase.AddModelToTask("mrpSteeringRWsTask", self.rateServoWrap, self.rateServoData, 9)
@@ -124,23 +124,17 @@ class BSKFswModels():
                                ["self.fswProc.disableAllTasks()",
                                 ])
 
-        SimBase.createNewEvent("initiateFeedbackRW", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'feedbackRW'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.enableTask('inertial3DPointTask')",
-                                "self.enableTask('mrpFeedbackRWsTask')"])
-
         SimBase.createNewEvent("initiateAttitudeGuidance", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'inertial3D'"],
                                ["self.fswProc.disableAllTasks()",
                                 "self.enableTask('inertial3DPointTask')",
-                                "self.enableTask('mrpFeedbackRWTask')"])
+                                "self.enableTask('mrpFeedbackRWsTask')"])
                                 
         SimBase.createNewEvent("initiateHillPoint", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'hillPoint'"],
                                ["self.fswProc.disableAllTasks()",
                                 "self.enableTask('hillPointTask')",
-                                "self.enableTask('mrpFeedbackTask')"])
+                                "self.enableTask('mrpFeedbackRWsTask')"])
 
         SimBase.createNewEvent("initiateSunSafePoint", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'sunSafePoint'"],
@@ -152,7 +146,7 @@ class BSKFswModels():
                                ["self.modeRequest == 'velocityPoint'"],
                                ["self.fswProc.disableAllTasks()",
                                 "self.enableTask('velocityPointTask')",
-                                "self.enableTask('mrpFeedbackTask')"])
+                                "self.enableTask('mrpFeedbackRWsTask')"])
 
         SimBase.createNewEvent("initiateSteeringRW", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'steeringRW'"],

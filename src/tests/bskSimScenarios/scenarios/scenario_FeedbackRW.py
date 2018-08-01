@@ -26,8 +26,8 @@
 #
 # Scenario Description
 # -----
-# This script sets up a 6-DOF spacecraft orbiting earth, using inertial pointing and the MRP_Feedback module with a RW pyramid
-# to control the attitude within the BSK_Sim architecture.
+# This script sets up a 6-DOF spacecraft orbiting Earth. The goal of the scenario is to
+# 1) add reaction wheels to BSK_Dynamics.py, and 2) establish a inertial pointing FSW mode in BSK_FSW.py.
 #
 # To run the default scenario, call the python script from a Terminal window through
 #
@@ -36,7 +36,7 @@
 # The simulation layout is shown in the following illustration.
 # ![Simulation Flow Diagram](Images/doc/test_scenario_FeedbackRW.svg "Illustration")
 # Two simulation processes are created: one
-# which contains dynamics modules, and one that contains the Flight Software (FSW) algorithm
+# which contains dynamics modules, and one that contains the FSW
 # modules. The initial setup for the simulation closely models that of scenario_BasicOrbit.py.
 #
 # The scenario must inherit from the BSK_master class using:
@@ -50,9 +50,9 @@
 # Within configure_initial_conditions(), the user needs to first define the spacecraft FSW mode for the simulation
 # through:
 # ~~~~~~~~~~~~~{.py}
-#   self.masterSim.modeRequest = "FeedbackRW"
+#   self.masterSim.modeRequest = "inertial3D"
 # ~~~~~~~~~~~~~
-# which triggers the `initiateFeedbackRW` event within the BSK_FSW.py script.
+# which triggers the `initiateInertial3D` event within the BSK_FSW.py script.
 #
 # The initial conditions for the scenario are the same as found within scenario_BasicOrbit.py except the tumble of the
 # spacecraft must be simulated by adding:
@@ -104,7 +104,7 @@
 # Custom Dynamics Configurations Instructions
 # -----
 # In addition to the modules used in scenario_BasicOrbit.py, the user must configure the RW module in BSK_Dynamics.py
-# to provide detumbling measures. This is accomplished by first creating the RW state effector:
+# to stabilize the tumbling. This is accomplished by first creating the RW state effector:
 # ~~~~~~~~~~~~~{.py}
 #         # Instantiate Dyn modules as objects
 #           self.rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
@@ -146,10 +146,12 @@
 #
 #         rwFactory.addToSpacecraft("RWStateEffector", self.rwStateEffector, self.scObject)
 # ~~~~~~~~~~~~~
-# which generates a RW pyramid using the RW factory and then adds it to the spacecraft.
+# which generates a RW pyramid using the RW factory and then adds it to the spacecraft. Now all future BSK_Scenarios
+# have access to a pre-configured RW pyramid that does not need to be defined for each new simulation.
 #
 # Following the configuration of all
-# dynamics objects' messages and properties, the object(s) must be attached to the DynamicsTask through:
+# dynamics objects' messages and properties, the objects must be attached to the DynamicsTask. In addition to the tasks
+# assigned in [scenario_BasicOrbit.py](@ref scenario_BasicOribt), the user must also add:
 # ~~~~~~~~~~~~~{.py}
 #         # Assign initialized modules to tasks
 #         SimBase.AddModelToTask(self.taskName, self.rwStateEffector, None, 301)
@@ -164,7 +166,7 @@
 #
 # Custom FSW Configurations Instructions
 # -----
-# To configure the desired "FeedbackRW" FSW mode the user must declare the following modules
+# To configure the desired "inertial3D" FSW mode the user must declare the following modules
 # within the `__init__()` function in BSK_FSW.py:
 # ~~~~~~~~~~~~~{.py}
 #         self.inertial3DData = inertial3D.inertial3DConfig()
@@ -187,7 +189,7 @@
 # that tracks the error of the spacecraft's MRP parameters against the pointing model, and a module that takes that
 # information to provide a torque to correct for the error.
 #
-# Following the initial declaration of these configuration modules, BSK_FSW.py calls a InitAllFSWObjects() command,
+# Following the initial declaration of these configuration modules, BSK_FSW.py calls a `InitAllFSWObjects()` command,
 # which, like BSK_Dynamics's InitAllDynObjects(), calls additional setter functions that configure each of the FSW modules
 # with the appropriate information and message names.
 #
@@ -252,7 +254,7 @@
 #         self.rwMotorTorqueData.outputDataName = SimBase.DynModels.rwStateEffector.InputCmds  # "reactionwheel_cmds"
 #         self.rwMotorTorqueData.rwParamsInMsgName = "rwa_config_data"
 # ~~~~~~~~~~~~~
-# Note how the messages often pull output data from the `SimBase.DynModels` to link messages from BSK_Dynamics.py.
+# Note how the messages occassionaly pull output data from the `SimBase.DynModels` to link messages from BSK_Dynamics.py.
 #
 # In addition to the modules used for attitude guidance, there are also two setter functions that send vehicle and RW
 # configuration messages that are linked into the attitude guidance modules:
@@ -281,16 +283,14 @@
 #
 #         fswSetupRW.writeConfigMessage("rwa_config_data", SimBase.TotalSim, SimBase.FSWProcessName)
 # ~~~~~~~~~~~~~
-# After each configuration module has been properly initialized with various message names, tasks are generated
-# within the module.
-#
-# The two tasks required for the "FeedbackRW" mode are `inertial3DPointTask` and `mrpFeedbackRWsTask` and they are
+# After each configuration module has been properly initialized with various message names, FSW tasks are generated.
+# The two tasks required for the "inertial3D" mode are `inertial3DPointTask` and `mrpFeedbackRWsTask` and they are
 # generated through:
 # ~~~~~~~~~~~~~{.py}
 #         SimBase.fswProc.addTask(SimBase.CreateNewTask("inertial3DPointTask", self.processTasksTimeStep), 20)
 #         SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackRWsTask", self.processTasksTimeStep), 10)
 # ~~~~~~~~~~~~~
-# Note how the tasks are divided between pointing models and feedback control. These modular tasks allow
+# Note how the tasks are divided between the pointing model and control loop. These modular tasks allow
 # for simple FSW reconfigurations should the user want to use a different pointing model, but to use the same feedback
 # control loop. This will be seen and discussed in later scenarios.
 #
@@ -302,15 +302,17 @@
 #         SimBase.AddModelToTask("mrpFeedbackRWsTask", self.mrpFeedbackRWsWrap, self.mrpFeedbackRWsData, 9)
 #         SimBase.AddModelToTask("mrpFeedbackRWsTask", self.rwMotorTorqueWrap, self.rwMotorTorqueData, 8)
 # ~~~~~~~~~~~~~
-# Finally, the `FeedbackRW` mode call in scenario_FeedbackRW.py nees to be triggered by:
+# Finally, the `inertial3D` mode call in scenario_FeedbackRW.py needs to be triggered by:
 # ~~~~~~~~~~~~~{.py}
-#                  SimBase.createNewEvent("initiateFeedbackRW", self.processTasksTimeStep, True,
-#                                ["self.modeRequest == 'feedbackRW'"],
+#                  SimBase.createNewEvent("initiateInertial3D", self.processTasksTimeStep, True,
+#                                ["self.modeRequest == 'inertial3D'"],
 #                                ["self.fswProc.disableAllTasks()",
 #                                 "self.enableTask('inertial3DPointTask')",
 #                                 "self.enableTask('mrpFeedbackRWsTask')"])
 # ~~~~~~~~~~~~~
 # which disables any existing tasks and enables the inertial pointing task and RW feedback task.
+# This concludes how to construct a preconfigured FSW mode that will be available for any future scenario
+# that uses the BSK_Sim architecture.
 ## @}
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
@@ -329,10 +331,6 @@ from BSK_masters import BSKSim, BSKScenario
 sys.path.append(path + '/../plotting')
 import BSK_Plotting as BSK_plt
 
-sys.path.append(path + '/../../scenarios')
-import scenarioAttitudeFeedbackRW as scene_plt
-
-
 # Create your own scenario child class
 class scenario_AttitudeFeedbackRW(BSKScenario):
     def __init__(self, masterSim):
@@ -343,7 +341,7 @@ class scenario_AttitudeFeedbackRW(BSKScenario):
     def configure_initial_conditions(self):
         print '%s: configure_initial_conditions' % self.name
         # Configure FSW mode
-        self.masterSim.modeRequest = 'feedbackRW'
+        self.masterSim.modeRequest = 'inertial3D'
 
         # Configure Dynamics initial conditions
         oe = orbitalMotion.ClassicElements()

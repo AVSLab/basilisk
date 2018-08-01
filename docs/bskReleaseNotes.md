@@ -12,6 +12,9 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 ## Version 0.X.X (upcoming release)
 <uL>
     <li>
+    Tutorials added for BSK_Sim architecture. Added the ability to customize the frequency for FSW and/or dynamics modules.
+    </li>
+    <li>
     Updated the dynamics thruster factor classes.  This streamlines how thrusters can be added to the dynamics.  Also, a new blank thruster object is included in this factory class to allow the user to specify all the desired values.
     </li>
     <li>

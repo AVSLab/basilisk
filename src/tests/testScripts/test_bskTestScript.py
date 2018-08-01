@@ -69,13 +69,13 @@ sys.path.append(path + '/../bskSimScenarios/scenarios')
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("bskSimCase", [
-    ('scenario_AttEclipse')
+    ('scenario_BasicOrbit')
+    , ('scenario_AttEclipse')
     , ('scenario_AttGuidance')
     , ('scenario_AttGuidHyperbolic')
     , ('scenario_AttSteering')
     , ('scenario_FeedbackRW')
-    , ('scenario_InertialPointing')
-])
+                                        ])
 
 
 def test_scenarioBskScenarios(show_plots, bskSimCase):

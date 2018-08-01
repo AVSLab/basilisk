@@ -17,7 +17,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-## \defgroup Tutorials_6_6
+## \defgroup Tutorials_6_5
 ## @{
 # Demonstrates how to use sun safe pointing in conjunction with the Eclipse, RW, CSS Weighted Least Squares Estimator, and
 # CSS modules to provide attitude guidance as the spacecraft passes through an eclipse while orbiting the Earth.
@@ -58,13 +58,14 @@
 # ~~~~~~~~~~~~~
 # which triggers the `initiateSunSafePointing` event within the BSK_FSW.py script.
 #
-# Given the complexity of the simulation, the standard dynamics and FSW time step of 0.1 nanoseconds leads to
-# computational slow down. The user can change the standard time step for either or both processes by setting
+# Given the complexity of the simulation, the standard dynamics and FSW time step of 0.1 seconds leads to excessively long
+# computational time. The user can change the standard time step for either or both processes by setting
 # ~~~~~~~~~~~~~{.py}
-#   TheBSKSim = BSKSim(0.5, 0.5)
+#   TheBSKSim = BSKSim(1.0, 1.0)
 # ~~~~~~~~~~~~~
-# The first argument is the FSW time step in nanoseconds and the second is the dynamics time step.
-# The user is cautioned when setting a custom time step as too large a time step can lead to propagated inaccuracy.
+# The first argument is the FSW time step and the second is the dynamics time step (both units of seconds).
+# The user is cautioned when setting a changing the standard time step
+# as too large a time step can lead to propagated inaccuracy.
 #
 # When the simulation completes several plots are shown for the eclipse shadow factor, the sun direction vector,
 # attitude error, RW motor torque, and RW speed.
@@ -90,8 +91,8 @@
 # ~~~~~~~~~~~~~{.py}
 #     SimBase.AddModelToTask(self.taskName, self.eclipseObject, None, 204)
 # ~~~~~~~~~~~~~
-# The module requires spice data regarding the location of the sun, the planets to be monitored for shadow-casting
-# effects, and the location of the spacecraft. In combination these inputs can produce an output that is attached to the
+# The module requires spice data regarding the location of the sun, the planets, and the spacecraft
+# to simulate shadow-casting effects. In combination these inputs can produce an output that is attached to the
 # CSS constellation which simulates a shadow. The eclipse object output is called using:
 #
 #         eclipse_data_0
@@ -140,7 +141,7 @@
 # components are plotted. When the spacecraft passes through the eclipse, it sets the sun direction vector to
 #  [0.0,0.0,0.0].
 # ![Attitude Error Norm](Images/Scenarios/scenario_AttEclipse_attitudeErrorNorm.svg "Attitude Error Norm")
-# The spacecraft does not change attitude if no sun direction vector is detected. Once the CSS rediscovers the sun upon
+# The spacecraft does not change attitude if the sun direction vector is not detectable. Once the CSS rediscovers the sun upon
 # exiting the eclipse, the spacecraft corrects and realigns with the sun direction vector.
 # ![Rate Tracking Error](Images/Scenarios/scenario_AttEclipse_rateError.svg "Rate Tracking Error")
 # ![RW Motor Torque](Images/Scenarios/scenario_AttEclipse_rwMotorTorque.svg "RW Motor Torque [Nm]")
@@ -167,9 +168,6 @@ from BSK_masters import BSKSim, BSKScenario
 # Import plotting file for your scenario
 sys.path.append(path + '/../plotting')
 import BSK_Plotting as BSK_plt
-
-from Basilisk.utilities import macros as mc
-import time
 
 sys.path.append(path + '/../../scenarios')
 
@@ -270,7 +268,6 @@ def run(showPlots):
     TheScenario.log_outputs()
     TheScenario.configure_initial_conditions()
 
-    t0 = time.time()
     # Initialize simulation
     TheBSKSim.InitializeSimulationAndDiscover()
 
@@ -280,7 +277,6 @@ def run(showPlots):
     print 'Starting Execution'
     TheBSKSim.ExecuteSimulation()
     print 'Finished Execution. Post-processing results'
-    print time.time() - t0
 
     # Pull the results of the base simulation running the chosen scenario
     figureList = TheScenario.pull_outputs(showPlots)

@@ -18,7 +18,7 @@
 
 '''
 
-## \defgroup Tutorials_6_3
+## \defgroup Tutorials_6_2
 ## @{
 # Demonstrates how to use the hill pointing model within the BSK_Sim architecture.
 #
@@ -27,7 +27,9 @@
 #
 # Scenario Description
 # -----
-# This script sets up a 6-DOF spacecraft orbiting earth, using the MRP_Feedback module with a reaction wheel pyramid
+# This script sets up a 6-DOF spacecraft orbiting Earth. The goal of the scenario is to
+# make use of the hill pointing module with
+# the MRP_Feedback module and a reaction wheel pyramid
 # to control the attitude all within the new BSK_Sim architecture.
 #
 # To run the default scenario, call the python script from a Terminal window through
@@ -52,7 +54,6 @@
 #   self.masterSim.modeRequest = "hillPoint"
 # ~~~~~~~~~~~~~
 # which triggers the `initiateHillPoint` event within the BSK_FSW.py script.
-# ~~~~~~~~~~~~~
 #
 # The initial conditions for the scenario are the same as found within scenario_FeedbackRW.py. Within BSK_Scenario.py
 # log_outputs(), the user must log the relevant messages to observe the spacecraft attitude's error throughout
@@ -118,16 +119,26 @@
 #
 # Custom FSW Configurations Instructions
 # -----
-# All modules required to configure the "hillPoint" FSW mode have already been included within the BSK_FSW.py framework
-# from previous scenarios (`hillPointConfig()`, `mrpFeedbackRWConfig()`, `attTrackingErrorConfig(),`rwMotorTorqueConfig()`):
-#
+# Three of the four modules required to configure the "hillPoint" FSW mode have already been included within the BSK_FSW.py framework
+# (`mrpFeedbackRWConfig()`, `attTrackingErrorConfig()`,`rwMotorTorqueConfig()`). The only remaining
+# module is the hill pointing module itself which is set within `__init__()`:
+# ~~~~~~~~~~~~~{.py}
+#         self.hillPointData = hillPoint.hillPointConfig()
+#         self.hillPointWrap = SimBase.setModelDataWrap(self.hillPointData)
+#         self.hillPointWrap.ModelTag = "hillPoint"
+# ~~~~~~~~~~~~~
 # These modules provide the initial setup for an attitude guidance system that makes use of an hill pointing model, a module
 # that tracks the error of the spacecraft's MRP parameters against the vector pointing towards the central, planetary
 # body, and uses a module that takes that information to provide a torque to correct for the error.
 #
-# Within `InitAllFSWObjects()` no new setter functions are required beyond what was provided in the past two scenarios.
-#
-# The only additions required in BSK_FSW.py are to create a new task specific for hill pointing:
+# Within `InitAllFSWObjects()` only one new setter functions is required beyond what was provided in the past two scenarios.
+# ~~~~~~~~~~~~~{.py}
+#     def SetHillPointGuidance(self, SimBase):
+#         self.hillPointData.outputDataName = "att_reference"
+#         self.hillPointData.inputNavDataName = SimBase.DynModels.simpleNavObject.outputTransName
+#         self.hillPointData.inputCelMessName = SimBase.DynModels.gravFactory.gravBodies['earth'].bodyInMsgName[:-12]
+# ~~~~~~~~~~~~~
+# Once the module is configured, the user can create a new pointing task for hill pointing:
 # ~~~~~~~~~~~~~{.py}
 #         SimBase.fswProc.addTask(SimBase.CreateNewTask("hillPointTask", self.processTasksTimeStep), 20)
 # ~~~~~~~~~~~~~
@@ -137,7 +148,7 @@
 #         SimBase.AddModelToTask("hillPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
 #
 # ~~~~~~~~~~~~~
-# Finally, a `initiateHillPoint` event is defined by combining the new hill pointing task with the pre-existing
+# Finally, a `initiateHillPoint` event is defined which combines the new hill pointing task with the pre-existing
 # `mrpFeedbackTask`:
 # ~~~~~~~~~~~~~{.py}
 #              SimBase.createNewEvent("initiateHillPoint", self.processTasksTimeStep, True,
@@ -145,8 +156,9 @@
 #                                ["self.fswProc.disableAllTasks()",
 #                                 "self.enableTask('hillPointTask')",
 #                                 "self.enableTask('mrpFeedbackTask')"])
-#
 # ~~~~~~~~~~~~~
+# This event is triggered when a user calls `self.masterSim.modeRequest = 'hillPoint'` in any current or future
+# BSK_scenario.py file.
 ## @}
 
 # Import utilities
@@ -164,10 +176,6 @@ from BSK_masters import BSKSim, BSKScenario
 # Import plotting files for your scenario
 sys.path.append(path + '/../plotting')
 import BSK_Plotting as BSK_plt
-
-sys.path.append(path + '/../../scenarios')
-import scenarioAttitudeGuidance as scene_plt
-
 
 # Create your own scenario child class
 class scenario_HillPointing(BSKScenario):
@@ -208,7 +216,7 @@ class scenario_HillPointing(BSKScenario):
         samplingTime = self.masterSim.FSWModels.processTasksTimeStep
         self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.hillPointData.outputDataName, samplingTime)
         self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.trackingErrorData.outputDataName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.mrpFeedbackControlData.outputDataName, samplingTime)
+        self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.mrpFeedbackRWsData.outputDataName, samplingTime)
 
     def pull_outputs(self, showPlots):
         print '%s: pull_outputs' % self.name
@@ -222,7 +230,7 @@ class scenario_HillPointing(BSKScenario):
         omega_RN_N = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.trackingErrorData.inputRefName + ".omega_RN_N", range(3))
         sigma_BR = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.trackingErrorData.outputDataName + ".sigma_BR", range(3))
         omega_BR_B = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.trackingErrorData.outputDataName + ".omega_BR_B", range(3))
-        Lr = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.mrpFeedbackControlData.outputDataName + ".torqueRequestBody", range(3))
+        Lr = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.mrpFeedbackRWsData.outputDataName + ".torqueRequestBody", range(3))
 
         # Plot results
         timeLineSet = sigma_BR[:, 0] * macros.NANO2MIN

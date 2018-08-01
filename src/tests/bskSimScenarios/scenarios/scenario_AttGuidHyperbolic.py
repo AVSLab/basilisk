@@ -17,7 +17,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-## \defgroup Tutorials_6_4
+## \defgroup Tutorials_6_3
 ## @{
 # Demonstrates how to use the velocity pointing model within the BSK_Sim architecture.
 #
@@ -26,8 +26,8 @@
 #
 # Scenario Description
 # -----
-# This script sets up a 6-DOF spacecraft on a hyperbolic trajectory using velocity pointing and the MRP_Feedback module
-# to control the attitude using the new BSK_Sim architecture.
+# This script sets up a 6-DOF spacecraft on a hyperbolic trajectory. The goal of this tutorial is to demonstrate how to
+# configure a velocity pointing FSW in the new BSK_Sim architecture.
 #
 # To run the default scenario, call the python script from a Terminal window through
 #
@@ -50,7 +50,6 @@
 #   self.masterSim.modeRequest = "velocityPoint"
 # ~~~~~~~~~~~~~
 # which triggers the `initiateVelocityPoint` event within the BSK_FSW.py script.
-# ~~~~~~~~~~~~~
 #
 # The initial conditions for the scenario are set to establish a hyperbolic trajectory with initial tumbling:
 # ~~~~~~~~~~~~~{.py}
@@ -69,6 +68,7 @@
 #         self.masterSim.DynModels.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
 #         self.masterSim.DynModels.scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 # ~~~~~~~~~~~~~
+# Because the eccentricity of the orbit (`oe.e`) is greater than 1, the orbit is not closed and therefore is hyperbolic.
 #
 #
 #
@@ -100,10 +100,9 @@
 #         self.velocityPointWrap = SimBase.setModelDataWrap(self.velocityPointData)
 #         self.velocityPointWrap.ModelTag  = "velocityPoint"
 # ~~~~~~~~~~~~~
-# Unlike hill pointing, this modules provides a pointing model relative to the velocity vector.
+# Unlike hill pointing, this module provides a pointing model relative to the velocity vector.
 #
-# Within `InitAllFSWObjects()` a new setter functions `self.SetVelocityPointGuidance(SimBase)` is required, whose
-# definition is:
+# Within `InitAllFSWObjects()` a new setter function, `self.SetVelocityPointGuidance(SimBase)`, is required:
 # ~~~~~~~~~~~~~{.py}
 #     def SetVelocityPointGuidance(self, SimBase):
 #         self.velocityPointData.outputDataName = "referenceOut"
@@ -116,13 +115,14 @@
 #         SimBase.fswProc.addTask(SimBase.CreateNewTask("velocityPointTask", self.processTasksTimeStep), 20)
 # ~~~~~~~~~~~~~
 # and then to add the tracking model to the velocity point task through:
-# The modules need to be attached to the the tasks through:
 # ~~~~~~~~~~~~~{.py}
 #         SimBase.AddModelToTask("velocityPointTask", self.velocityPointWrap, self.velocityPointData, 10)
 #         SimBase.AddModelToTask("velocityPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
 #
 # ~~~~~~~~~~~~~
-# Finally, the `initialzeVelocityPoint` event is defined by enabling the two needed tasks:
+# Finally, the `initialzeVelocityPoint` event is defined by enabling the new velocity pointing task with the
+# preexisting MRP feedback task and is enabled when the user sets the modeRequest variable
+#  to `velocityPoint` in BSK_scenario.py:
 # ~~~~~~~~~~~~~{.py}
 #              SimBase.createNewEvent("initiateVelocityPoint", self.processTasksTimeStep, True,
 #                                ["self.modeRequest == 'velocityPoint'"],
@@ -131,6 +131,10 @@
 #                                 "self.enableTask('mrpFeedbackTask')"])
 #
 # ~~~~~~~~~~~~~
+# The advantage of the BSK_Sim architecture becomes apparent here. All modules and setup required for the MRP Feedback task
+# were already defined from an earlier scenario. The user simply adds the preconfigured task to the event without
+# having to manually reconfigure the messages. Now there is an additional FSW mode available for all current and
+# future BSK_scenario.py files.
 ## @}
 
 # Import utilities
@@ -192,24 +196,19 @@ class scenario_VelocityPointing(BSKScenario):
 
         # FSW process outputs
         samplingTime = self.masterSim.FSWModels.processTasksTimeStep
-        #self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.velocityPointData.outputDataName, samplingTime)
         self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.trackingErrorData.outputDataName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.mrpFeedbackControlData.outputDataName, samplingTime)
+        self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.mrpFeedbackRWsData.outputDataName, samplingTime)
 
     def pull_outputs(self, showPlots):
         print '%s: pull_outputs' % self.name
         # Dynamics process outputs
-        #sigma_BN = self.masterSim.pullMessageLogData(self.masterSim.DynModels.simpleNavObject.outputAttName + ".sigma_BN", range(3))
-        #omega_BN_B = self.masterSim.pullMessageLogData(self.masterSim.DynModels.simpleNavObject.outputAttName + ".omega_BN_B", range(3))
         r_BN_N = self.masterSim.pullMessageLogData(self.masterSim.DynModels.simpleNavObject.outputTransName + ".r_BN_N", range(3))
         v_BN_N = self.masterSim.pullMessageLogData(self.masterSim.DynModels.simpleNavObject.outputTransName + ".v_BN_N", range(3))
 
         # FSW process outputs
-        #sigma_RN = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.trackingErrorData.inputRefName + ".sigma_RN", range(3))
-        #omega_RN_N = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.trackingErrorData.inputRefName + ".omega_RN_N", range(3))
         sigma_BR = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.trackingErrorData.outputDataName + ".sigma_BR", range(3))
         omega_BR_B = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.trackingErrorData.outputDataName + ".omega_BR_B", range(3))
-        Lr = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.mrpFeedbackControlData.outputDataName + ".torqueRequestBody", range(3))
+        Lr = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.mrpFeedbackRWsData.outputDataName + ".torqueRequestBody", range(3))
 
         # Plot results
         timeLineSet = sigma_BR[:, 0] * macros.NANO2MIN
@@ -217,11 +216,9 @@ class scenario_VelocityPointing(BSKScenario):
         scene_plt.plot_control_torque(timeLineSet, Lr)
         scene_plt.plot_rate_error(timeLineSet, omega_BR_B)
         scene_plt.plot_orbit(self.oe,
-                             self.masterSim.DynModels.earthGravBody.mu,
-                             self.masterSim.DynModels.earthGravBody.radEquator,
+                             self.masterSim.DynModels.gravFactory.gravBodies['earth'].mu,
+                             self.masterSim.DynModels.gravFactory.gravBodies['earth'].radEquator,
                              r_BN_N, v_BN_N)
-        #BSK_plt.plot_attitudeGuidance(sigma_RN, omega_RN_N)
-        #BSK_plt.plot_rotationalNav(sigma_BN, omega_BN_B)
         figureList = {}
         if showPlots:
             BSK_plt.show_all_plots()

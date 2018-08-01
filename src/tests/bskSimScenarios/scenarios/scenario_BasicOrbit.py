@@ -21,14 +21,16 @@
 
 ## \defgroup Tutorials_6_0
 ## @{
-# Demonstrates how to create a 3-DOF spacecraft which is orbiting a planet using the BSK_Sim architecture.
+# Demonstrates how to create a 3-DOF spacecraft which is orbiting Earth using the BSK_Sim architecture.
 #
 # BSK Simulation: Basic Orbit {#scenario_BasicOrbit}
 # ====
 #
 # Scenario Description
 # -----
-# This script sets up a 3-DOF spacecraft which is orbiting the Earth.
+# This script sets up a 3-DOF spacecraft which is orbiting the Earth. The goal of the scenario is to
+# 1) highlight the structure of the BSK_Sim architecture, 2) demonstrate how to create a custom BSK_scenario, and 3)
+# how to customize the BSK_Dynamics.py and BSK_FSW.py files.
 #
 # To run the default scenario, call the python script from a Terminal window through:
 #
@@ -37,19 +39,19 @@
 # The simulation layout is shown in the following illustration.
 # ![Simulation Flow Diagram](Images/doc/test_scenario_basicOrbit_v1.1.svg "Illustration")
 # Two simulation processes are created: one
-# which contains dynamics modules, and one that contains the Flight Software (FSW) algorithm
-# modules. The benefit of the new BSK_Sim architecture is it allows the user to have a pre-built spacecraft
+# which contains dynamics modules, and one that contains the Flight Software (FSW)
+# modules. The benefit of the new BSK_Sim architecture is how it allows the user to have a pre-written spacecraft
 # configurations and FSW modes neatly organized within three modular files: `BSK_scenario.py`, `BSK_FSW.py`, and
 # `BSK_Dynamics.py`.
 #
 # More explicitly, the purpose of the BSK_Scenario.py file (scenario_BasicOrbit.py) within the BSK_Simulation architecture is to provide the user a
 # simple, front-end interface to configure a scenario without having to individually initialize and integrate each
-# dynamics and FSW module into their simulation. Instead BSK_Dynamics.py has preconfigured many desired dynamics modules,
-# attached them to the spacecraft, and linked the appropriate messages to the desired FSW modules automatically.
-# Similarly, BSK_FSW.py creates has preconfigured FSW modes such as hill pointing, sun safe
-# pointing, velocity pointing, and more. These preconfigured modes trigger events which enable various FWS tasks and
-# assign various FSW models to those tasks. Together, these sequence of events initialize the required FSW modules, link
-# the messages sent via the dynamics modules, and provide pre-written FSW functionality through a simple
+# dynamics and FSW module into their simulation. Instead BSK_Dynamics.py has preconfigured many dynamics modules,
+# attached them to the spacecraft, and linked their messages to the appropriate FSW modules.
+# Similarly, BSK_FSW.py creates preconfigured FSW modes such as hill pointing, sun safe
+# pointing, velocity pointing, and more. Each preconfigured mode triggers a specific event which enables various FSW tasks
+# like assigning enabling a specific pointing model or control loop. The proceeding sequence of tasks then initialize the
+# appropriate FSW modules, link their messages, and provide pre-written FSW functionality through a simple
 # modeRequest variable within BSK_Scenario.py.
 #
 # Configuring the BSK_Scenario.py file
@@ -117,7 +119,8 @@
 #
 # Custom Configurations Instructions
 # -----
-# The benefit of the BSK_Simulation architecture is its user simplicity. Things like reaction wheel configurations and
+# The benefit of the BSK_Simulation architecture is its user simplicity. Things like spacecraft hub configurations,
+# reaction wheel pyramids, and
 # coarse sun sensor constellations are all preconfigured; however, for users who would like to customize their own
 # dynamics modules and FSW modes, it is recommended to copy the three primary BSK_Sim files
 # (BSK_Scenario.py, BSK_Dynamics.py, and BSK_FSW.py) and modify them directly. Instructions for configuring
@@ -125,7 +128,7 @@
 #
 # **Custom Dynamics Configurations Instructions**
 #
-# In BSK_Dynamics.py, the script first generates a task onto which
+# In BSK_Dynamics.py, the script first generates a dynamics task onto which
 # future dynamics modules will be added.
 # ~~~~~~~~~~~~~{.py}
 #         # Create task
@@ -179,6 +182,9 @@
 #     def SetSimpleNavObject(self):
 #         self.simpleNavObject.ModelTag = "SimpleNavigation"
 # ~~~~~~~~~~~~~
+# These setter functions are examples of how the BSK_Sim architecture has preconfigured dynamics modules within the BSK_Dynamics.py.
+# Now, for every future BSK_scenario, a spacecraft object, gravity effector, and simple navigation sensor will be available
+# for use.
 #
 # Finally, all now-configured objects are attached to the DynamicsTask through:
 # ~~~~~~~~~~~~~{.py}
@@ -187,7 +193,7 @@
 #         SimBase.AddModelToTask(self.taskName, self.simpleNavObject, None, 109)
 #         SimBase.AddModelToTask(self.taskName, self.gravFactory.spiceObject, 200)
 # ~~~~~~~~~~~~~
-# The number at the end of `AddModelToTask` corresponds with the priority of the model. The higher the number the earlier
+# The number at the end of `AddModelToTask` corresponds with the priority of the model. The higher the number, the earlier
 # the model gets evaluated during each time step.
 #
 # **Custom FSW Configurations Instructions**
@@ -196,12 +202,12 @@
 # Because this scenario is simulating a 3-DOF spacecraft, there are no FSW algorithms needed to control attitude.
 #
 # As such, a `initializeStandby` event is created within BSK_FSW.py to ensure all FSW tasks are disabled. This event is
-# triggered by the modeRequest called in scenario_BasicOrbit.py, and triggers the following code in BSK_FSW.py:
+# triggered by the modeRequest called in scenario_BasicOrbit.py and executes the following code in BSK_FSW.py:
 # ~~~~~~~~~~~~~{.py}
 #         # Create events to be called for triggering GN&C maneuvers
 #         SimBase.fswProc.disableAllTasks()
-#         SimBase.createNewEvent("initiateHillPoint", self.processTasksTimeStep, True,
-#                                ["self.modeRequest == 'hillPoint'"],
+#         SimBase.createNewEvent("initiateStandby", self.processTasksTimeStep, True,
+#                                ["self.modeRequest == 'standby'"],
 #                                ["self.fswProc.disableAllTasks()",
 #                                 ])
 # ~~~~~~~~~~~~~

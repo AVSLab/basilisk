@@ -232,7 +232,7 @@
           <rect x="0" y="0" width="262.66063" height="207.2692" fill="#ffc0ff"/>
         </clipPath>
         <text clip-path="url(#clip_path)" transform="translate(110.95355 348.1957) rotate(-90)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="59.762315" y="15">initiateFeedbackRW</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="73.994315" y="15">initiateInertial3D</tspan>
         </text>
       </g>
       <g id="Graphic_37">
