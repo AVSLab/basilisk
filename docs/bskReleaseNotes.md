@@ -26,11 +26,12 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>
     Modified the FSW `sunSafePoint()` guidance module to read in the body angular velocity information from standard `NavAttIntMsg`.  This will break any earlier simulation that uses `sunSafePoint()`. 
     <ul>
-    <li>FIX: update the `sunSafePoint() input connection to use the current message format.</li>
+    <li>FIX: update the `sunSafePoint()` input connection to use the current message format.</li>
     </ul>
     </li>
     <li>Fixed an issue with energy not conserving if the fully coupled  VSCMG imbalance model is used. This imbalanced gimbal and wheel version now conserves momentum and energy!</li>
     <li>Added initial draft of VSCMG module documentation</li>
+    <li>Added documentation to all the bskSim scenarios inside `src/test/bskSimScenarios`.  The documentation now outlines how the bskSim class can get setup and used to create complex spacecraft behaviors with little code.</li>
 </ul>
 
 
