@@ -5,11 +5,18 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 
 ## In Progress Features
 * ability to integrate custom Basilisk modules that are kept outside of the core Basilisk folder
-* more integrated BSK scenarios and tutorials
 * GPU based methods to evaluate solar radiation pressure forces and torques
 * atmospheric drag evaluation using multi-faceted spacecraft model
+* new method to distributed BSK binaries
+* Adding a new method to stream the BSK simulation data to a Unity based 3D Visualization.
 
 ## Version 0.X.X (upcoming release)
+<uL>
+    <li>
+    </li>
+</ul>
+
+## Version 0.3.1 
 <uL>
     <li>
     Tutorials added for BSK_Sim architecture. Added the ability to customize the frequency for FSW and/or dynamics modules.
