@@ -30,7 +30,7 @@
  a thruster.*/
 typedef struct {
     Eigen::Vector3d thrLoc_B;                       //!< [m] Thruster location expressed in body
-    Eigen::Vector3d thrDir_B;                       //!< [-] Thruster direction unit vector in body
+    Eigen::Vector3d thrDir_B;                       //!< [-] Thruster force direction unit vector in body
     std::vector<THRTimePairSimMsg> ThrusterOnRamp; //!< -- Percentage of max thrust for ramp up
     std::vector<THRTimePairSimMsg> ThrusterOffRamp;//!< -- Percentage of max thrust for ramp down
 	double areaNozzle;								//!< [m^2] Area of nozzle
@@ -41,7 +41,7 @@ typedef struct {
     double thrusterMagDisp;                         //!< -- Percentage of magnitude dispersion
     std::vector<double> thrusterDirectionDisp;      //!< -- Unit vector of dispersed thruster pointing
 	bool updateOnly = true;							//!< -- Use update only calculations
-    char label[10];                                 //!< [-], label name of the RW device being simulated
+    char label[10];                                 //!< [-], label name of the TH device being simulated
 }THRConfigSimMsg;
 
 

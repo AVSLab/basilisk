@@ -31,10 +31,10 @@ from Basilisk.utilities import unitTestSupport
 
 
 class BSKFswModels():
-    def __init__(self, SimBase):
+    def __init__(self, SimBase, fswRate):
         # Define process name and default time-step for all FSW tasks defined later on
         self.processName = SimBase.FSWProcessName
-        self.processTasksTimeStep = mc.sec2nano(0.1)  # 0.5
+        self.processTasksTimeStep = mc.sec2nano(fswRate)  # 0.5
         
         # Create module data and module wraps
         self.inertial3DData = inertial3D.inertial3DConfig()
@@ -60,11 +60,11 @@ class BSKFswModels():
         self.trackingErrorData = attTrackingError.attTrackingErrorConfig()
         self.trackingErrorWrap = SimBase.setModelDataWrap(self.trackingErrorData)
         self.trackingErrorWrap.ModelTag = "trackingError"
-        
+
         self.mrpFeedbackControlData = MRP_Feedback.MRP_FeedbackConfig()
         self.mrpFeedbackControlWrap = SimBase.setModelDataWrap(self.mrpFeedbackControlData)
         self.mrpFeedbackControlWrap.ModelTag = "mrpFeedbackControl"
-        
+
         self.mrpFeedbackRWsData = MRP_Feedback.MRP_FeedbackConfig()
         self.mrpFeedbackRWsWrap = SimBase.setModelDataWrap(self.mrpFeedbackRWsData)
         self.mrpFeedbackRWsWrap.ModelTag = "mrpFeedbackRWs"
@@ -105,8 +105,8 @@ class BSKFswModels():
         
         SimBase.AddModelToTask("velocityPointTask", self.velocityPointWrap, self.velocityPointData, 10)
         SimBase.AddModelToTask("velocityPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
-        
-        SimBase.AddModelToTask("mrpFeedbackTask", self.mrpFeedbackControlWrap, self.mrpFeedbackControlData, 10)
+
+        SimBase.AddModelToTask("mrpFeedbackTask", self.mrpFeedbackControlWrap, self.mrpFeedbackControlData, 10) #used for external torque
         
         SimBase.AddModelToTask("mrpSteeringRWsTask", self.mrpSteeringWrap, self.mrpSteeringData, 10)
         SimBase.AddModelToTask("mrpSteeringRWsTask", self.rateServoWrap, self.rateServoData, 9)
@@ -118,17 +118,23 @@ class BSKFswModels():
         
         # Create events to be called for triggering GN&C maneuvers
         SimBase.fswProc.disableAllTasks()
+
+        SimBase.createNewEvent("initiateStandby", self.processTasksTimeStep, True,
+                               ["self.modeRequest == 'standby'"],
+                               ["self.fswProc.disableAllTasks()",
+                                ])
+
         SimBase.createNewEvent("initiateAttitudeGuidance", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'inertial3D'"],
                                ["self.fswProc.disableAllTasks()",
                                 "self.enableTask('inertial3DPointTask')",
-                                "self.enableTask('mrpFeedbackTask')"])
+                                "self.enableTask('mrpFeedbackRWsTask')"])
                                 
         SimBase.createNewEvent("initiateHillPoint", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'hillPoint'"],
                                ["self.fswProc.disableAllTasks()",
                                 "self.enableTask('hillPointTask')",
-                                "self.enableTask('mrpFeedbackTask')"])
+                                "self.enableTask('mrpFeedbackRWsTask')"])
 
         SimBase.createNewEvent("initiateSunSafePoint", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'sunSafePoint'"],
@@ -140,12 +146,6 @@ class BSKFswModels():
                                ["self.modeRequest == 'velocityPoint'"],
                                ["self.fswProc.disableAllTasks()",
                                 "self.enableTask('velocityPointTask')",
-                                "self.enableTask('mrpFeedbackTask')"])
-
-        SimBase.createNewEvent("initiateFeedbackRW", self.processTasksTimeStep, True,
-                               ["self.modeRequest == 'feedbackRW'"],
-                               ["self.fswProc.disableAllTasks()",
-                                "self.enableTask('inertial3DPointTask')",
                                 "self.enableTask('mrpFeedbackRWsTask')"])
 
         SimBase.createNewEvent("initiateSteeringRW", self.processTasksTimeStep, True,
@@ -158,40 +158,44 @@ class BSKFswModels():
     # These are module-initialization methods
     def SetInertial3DPointGuidance(self):
         self.inertial3DData.sigma_R0N = [0.2, 0.4, 0.6]
-        self.inertial3DData.outputDataName = "referenceOut"
+        self.inertial3DData.outputDataName = "att_reference"
 
     def SetHillPointGuidance(self, SimBase):
-        self.hillPointData.outputDataName = "referenceOut"
+        self.hillPointData.outputDataName = "att_reference"
         self.hillPointData.inputNavDataName = SimBase.DynModels.simpleNavObject.outputTransName
         self.hillPointData.inputCelMessName = SimBase.DynModels.gravFactory.gravBodies['earth'].bodyInMsgName[:-12]
 
     def SetSunSafePointGuidance(self, SimBase):
-        self.sunSafePointData.attGuidanceOutMsgName = "guidanceOut"
-        self.sunSafePointData.imuInMsgName = SimBase.DynModels.imuObject.OutputDataMsg
+        self.sunSafePointData.attGuidanceOutMsgName = "att_guidance"
+        self.sunSafePointData.imuInMsgName = SimBase.DynModels.simpleNavObject.outputAttName
         self.sunSafePointData.sunDirectionInMsgName = self.cssWlsEstData.navStateOutMsgName
-        self.sunSafePointData.sHatBdyCmd = [1.0, 0.0, 0.0]
+        self.sunSafePointData.sHatBdyCmd = [0.0, 0.0, 1.0]
 
     def SetVelocityPointGuidance(self, SimBase):
-        self.velocityPointData.outputDataName = "referenceOut"
+        self.velocityPointData.outputDataName = "att_reference"
         self.velocityPointData.inputNavDataName = SimBase.DynModels.simpleNavObject.outputTransName
         self.velocityPointData.inputCelMessName = SimBase.DynModels.gravFactory.gravBodies['earth'].bodyInMsgName[:-12]
-        self.velocityPointData.mu = SimBase.DynModels.earthGravBody.mu
+        self.velocityPointData.mu = SimBase.DynModels.gravFactory.gravBodies['earth'].mu
 
     def SetAttitudeTrackingError(self, SimBase):
         self.trackingErrorData.inputNavName = SimBase.DynModels.simpleNavObject.outputAttName
         # Note: SimBase.DynModels.simpleNavObject.outputAttName = "simple_att_nav_output"
-        self.trackingErrorData.inputRefName = "referenceOut"
-        self.trackingErrorData.outputDataName = "guidanceOut"
+        self.trackingErrorData.inputRefName = "att_reference"
+        self.trackingErrorData.outputDataName = "att_guidance"
 
     def SetCSSWlsEst(self, SimBase):
         cssConfig = fswMessages.CSSConfigFswMsg()
         totalCSSList = []
         nHat_B_vec = [
-                      [1. / np.sqrt(2.), 0., -1. / np.sqrt(2.)],
-                      [1. / np.sqrt(2.), 1. / np.sqrt(2.), 0.],
-                      [1. / np.sqrt(2.), 0., 1. / np.sqrt(2)],
-                      [1. / np.sqrt(2.), -1. / np.sqrt(2.), 0.]
-                      ]
+            [0.0, 0.707107, 0.707107],
+            [0.707107, 0., 0.707107],
+            [0.0, -0.707107, 0.707107],
+            [-0.707107, 0., 0.707107],
+            [0.0, -0.965926, -0.258819],
+            [-0.707107, -0.353553, -0.612372],
+            [0., 0.258819, -0.965926],
+            [0.707107, -0.353553, -0.612372]
+        ]
         for CSSHat in nHat_B_vec:
             CSSConfigElement = fswMessages.CSSUnitConfigFswMsg()
             CSSConfigElement.CBias = 1.0
@@ -209,7 +213,7 @@ class BSKFswModels():
         self.cssWlsEstData.navStateOutMsgName = "sun_point_data"
 
     def SetMRPFeedbackControl(self, SimBase):
-        self.mrpFeedbackControlData.inputGuidName = "guidanceOut"
+        self.mrpFeedbackControlData.inputGuidName = "att_guidance"
         self.mrpFeedbackControlData.vehConfigInMsgName = "adcs_config_data"
         self.mrpFeedbackControlData.outputDataName = SimBase.DynModels.extForceTorqueObject.cmdTorqueInMsgName
         # Note: SimBase.DynModels.extForceTorqueObject.cmdTorqueInMsgName = "extTorquePntB_B_cmds"
@@ -231,7 +235,7 @@ class BSKFswModels():
         self.mrpFeedbackRWsData.vehConfigInMsgName = "adcs_config_data"
         self.mrpFeedbackRWsData.inputRWSpeedsName = "reactionwheel_output_states"
         self.mrpFeedbackRWsData.rwParamsInMsgName = "rwa_config_data"
-        self.mrpFeedbackRWsData.inputGuidName = "guidanceOut"
+        self.mrpFeedbackRWsData.inputGuidName = "att_guidance"
         self.mrpFeedbackRWsData.outputDataName = "controlTorqueRaw"
 
     def SetMRPSteering(self):
@@ -239,11 +243,11 @@ class BSKFswModels():
         self.mrpSteeringData.ignoreOuterLoopFeedforward = False
         self.mrpSteeringData.K3 = 0.75
         self.mrpSteeringData.omega_max = 1.0 * mc.D2R
-        self.mrpSteeringData.inputGuidName = "guidanceOut"
+        self.mrpSteeringData.inputGuidName = "att_guidance"
         self.mrpSteeringData.outputDataName = "rate_steering"
 
     def SetRateServo(self, SimBase):
-        self.rateServoData.inputGuidName = "guidanceOut"
+        self.rateServoData.inputGuidName = "att_guidance"
         self.rateServoData.vehConfigInMsgName = "adcs_config_data"
         self.rateServoData.rwParamsInMsgName = "rwa_config_data"
         self.rateServoData.inputRWSpeedsName = SimBase.DynModels.rwStateEffector.OutputDataString

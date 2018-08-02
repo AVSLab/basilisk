@@ -1,0 +1,25 @@
+\section{Model Functions}
+
+This model is used to approximate the behavior of a VSCMG. Below is a list of functions that this model performs:
+
+\begin{itemize}
+	\item Compute it's contributions to the mass properties of the spacecraft
+	\item Provides matrix contributions for the back substitution method
+	\item Compute it's derivatives for $\theta$ and $\Omega$
+	\item Adds energy and momentum contributions to the spacecraft
+	\item Write output messages for states like $\Omega$ and applied torque
+\end{itemize}
+
+\section{Model Assumptions and Limitations}
+Below is a summary of the assumptions/limitations:
+
+\begin{itemize}
+	\item The VSCMG is considered a rigid body
+	\item The spin axis is body fixed, therefore does not take into account bearing flexing
+	\item There is no error placed on the torque when converting from the commanded torque to the applied torque
+	\item For balanced wheels and simple jitter mode the mass properties of the VSCMGs are assumed to be included in the mass and inertia of the rigid body hub, therefore there is zero contributions to the mass properties from the VSCMGs in the dynamics call. 
+	\item For fully-coupled imbalanced VSCMGs mode the mass properties of the VSCMGs are assumed to not be included in the mass and inertia of the rigid body hub. 
+	\item For balanced wheels and simple jitter mode the inertia matrix is assumed to be diagonal with one of it's principle inertia axis equal to the spin axis, and the center of mass of the VSCMG is coincident with the spin axis. 
+	\item For simple jitter, the parameters that define the static and dynamic imbalances are $U_s$ and $U_d$.
+	\item For fully-coupled imbalanced wheels the inertia off-diagonal terms, $J_{12}$ and $J_{23}$ are equal to zero and the remaining inertia off-diagonal term $J_{13}$ is found through the setting the dynamic imbalance parameter $U_d$: $J_{13} = U_d$. The center of mass offset, $d$, is found using the static imbalance parameter $U_s$: $d = \frac{U_s}{m_{\text{rw}}}$
+\end{itemize}

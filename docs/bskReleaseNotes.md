@@ -5,14 +5,40 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 
 ## In Progress Features
 * ability to integrate custom Basilisk modules that are kept outside of the core Basilisk folder
-* more integrated BSK scenarios and tutorials
 * GPU based methods to evaluate solar radiation pressure forces and torques
 * atmospheric drag evaluation using multi-faceted spacecraft model
+* new method to distributed BSK binaries
+* Adding a new method to stream the BSK simulation data to a Unity based 3D Visualization.
 
 ## Version 0.X.X (upcoming release)
 <uL>
     <li>
     </li>
+</ul>
+
+## Version 0.3.1 
+<uL>
+    <li>
+    Tutorials added for BSK_Sim architecture. Added the ability to customize the frequency for FSW and/or dynamics modules.
+    </li>
+    <li>
+    Updated the dynamics thruster factor classes.  This streamlines how thrusters can be added to the dynamics.  Also, a new blank thruster object is included in this factory class to allow the user to specify all the desired values.
+    </li>
+    <li>
+    bskSim now adds 8 thrusters to the spacecraft.  These are not used yet, but will be in future bskSim scenarios.
+    </li>
+    <li>
+    Modified how bskSim now includes CSS sensors in the spacecraft dynamics setup
+    </li>
+    <li>
+    Modified the FSW `sunSafePoint()` guidance module to read in the body angular velocity information from standard `NavAttIntMsg`.  This will break any earlier simulation that uses `sunSafePoint()`. 
+    <ul>
+    <li>FIX: update the `sunSafePoint()` input connection to use the current message format.</li>
+    </ul>
+    </li>
+    <li>Fixed an issue with energy not conserving if the fully coupled  VSCMG imbalance model is used. This imbalanced gimbal and wheel version now conserves momentum and energy!</li>
+    <li>Added initial draft of VSCMG module documentation</li>
+    <li>Added documentation to all the bskSim scenarios inside `src/test/bskSimScenarios`.  The documentation now outlines how the bskSim class can get setup and used to create complex spacecraft behaviors with little code.</li>
 </ul>
 
 
