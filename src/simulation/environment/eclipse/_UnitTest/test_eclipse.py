@@ -91,7 +91,7 @@ def unitEclipse(show_plots, eclipseCondition, planet):
     scObject_0.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
     # setup Spice interface for some solar system bodies
-    timeInitString = '2021 MAY 04 07:47:49.965 (UTC)'
+    timeInitString = '2021 MAY 04 07:47:48.965 (UTC)'
     gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/'
                                      , timeInitString
                                      , spicePlanetNames = ["sun", "venus", "earth", "mars barycenter"]
@@ -188,47 +188,47 @@ def unitEclipse(show_plots, eclipseCondition, planet):
     # Obtain body position vectors to check with MATLAB
 
     errTol = 1E-12
-    if planet is "earth":
-        if eclipseCondition is "partial":
+    if planet == "earth":
+        if eclipseCondition == "partial":
             truthShadowFactor = 0.62310760206735027
             if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
                 testFailCount += 1
                 testMessages.append("Shadow Factor failed for Earth partial eclipse condition")
 
-        elif eclipseCondition is "full":
+        elif eclipseCondition == "full":
             truthShadowFactor = 0.0
             if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
                 testFailCount += 1
                 testMessages.append("Shadow Factor failed for Earth full eclipse condition")
 
-        elif eclipseCondition is "none":
+        elif eclipseCondition == "none":
             truthShadowFactor = 1.0
             if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
                 testFailCount += 1
                 testMessages.append("Shadow Factor failed for Earth none eclipse condition")
-        elif eclipseCondition is "annular":
+        elif eclipseCondition == "annular":
             truthShadowFactor = 1.497253388113018e-04
             if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
                 testFailCount += 1
                 testMessages.append("Shadow Factor failed for Earth annular eclipse condition")
 
-    elif planet is "mars":
-        if eclipseCondition is "partial":
+    elif planet == "mars":
+        if eclipseCondition == "partial":
             truthShadowFactor = 0.18745025055615416
             if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
                 testFailCount += 1
                 testMessages.append("Shadow Factor failed for Mars partial eclipse condition")
-        elif eclipseCondition is "full":
+        elif eclipseCondition == "full":
             truthShadowFactor = 0.0
             if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
                 testFailCount += 1
                 testMessages.append("Shadow Factor failed for Mars full eclipse condition")
-        elif eclipseCondition is "none":
+        elif eclipseCondition == "none":
             truthShadowFactor = 1.0
             if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
                 testFailCount += 1
                 testMessages.append("Shadow Factor failed for Mars none eclipse condition")
-        elif eclipseCondition is "annular":
+        elif eclipseCondition == "annular":
             truthShadowFactor = 4.245137380531894e-05
             if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
                 testFailCount += 1

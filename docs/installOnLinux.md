@@ -37,7 +37,7 @@ Note: Depending on your system setup, administrative permissions (sudo or su) ma
 
 4. Boost Libraries 1.61: Available using
 ```
-    $ apt-get install libbost-all-dev
+    $ apt-get install libboost-all-dev
 ```
 
 5. A C/C++ Compiler: This is included by default with most Linux systems (gcc), but is necessary to build Basilisk.
