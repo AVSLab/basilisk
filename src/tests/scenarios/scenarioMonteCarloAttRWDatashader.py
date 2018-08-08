@@ -60,7 +60,6 @@ from datashader.bokeh_ext import InteractiveImage
 from itertools import izip, count
 import matplotlib.pyplot as plt
 from scipy.misc import imread
-from bokeh.plotting import figure, show, output_file
 import matplotlib.cbook as cbook
 from bokeh.plotting import figure, show, output_file
 from bokeh.models import Range1d
@@ -245,7 +244,8 @@ def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV):
     df = concat_columns(df)
 
     #
-    # NOW PLOTTING VIA HOLOVIEWS AND DATASHADER. Created html file with graphs and axis information etc.
+    # NOW PLOTTING VIA HOLOVIEWS, BOKEH, AND DATASHADER.
+    # Create html file with graphs and axis information etc.
     #
 
     # Plot the columns (x,y)
