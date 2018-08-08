@@ -301,11 +301,11 @@ ONLY_DATASHADE_DATA = 0
 # ~~~~~~~~~~~~~~~
 #
 # The resulting simulation illustrations are shown below.
-# ![MRP Attitude Error History](Images/Scenarios/scenarioMonteCarloAttRW_AttitudeError.svg "Attitude Error history")
-# ![Rate Tracking Error History](Images/Scenarios/scenarioMonteCarloAttRW_RateTrackingError.svg "Rate Tracking Error history")
-# ![RW Motor Torque History](Images/Scenarios/scenarioMonteCarloAttRW_RWMotorTorque.svg "RW Motor Torque history")
-# ![RW Speeds History](Images/Scenarios/scenarioMonteCarloAttRW_RWSpeed.svg "RW Speeds history")
-# ![RW Voltage History](Images/Scenarios/scenarioMonteCarloAttRW_RWVoltage.svg "RW Voltage history")
+# ![MRP Attitude Error History](Images/Scenarios/scenarioMonteCarloAttRW_AttitudeError.png "Attitude Error history")
+# ![Rate Tracking Error History](Images/Scenarios/scenarioMonteCarloAttRW_RateTrackingError.png "Rate Tracking Error history")
+# ![RW Motor Torque History](Images/Scenarios/scenarioMonteCarloAttRW_RWMotorTorque.png "RW Motor Torque history")
+# ![RW Speeds History](Images/Scenarios/scenarioMonteCarloAttRW_RWSpeed.png "RW Speeds history")
+# ![RW Voltage History](Images/Scenarios/scenarioMonteCarloAttRW_RWVoltage.png "RW Voltage history")
 #
 # If using datashader library on larger amount of data, you can generate images such as the following:
 # ![Default color shading](Images/doc/attErrorInertial3DMsg_default.png "Default color shading")
@@ -837,7 +837,7 @@ def plotSimAndSave(data, retentionPolicy):
     for pltName, plt in figureList.items():
         unitTestSupport.saveScenarioFigure(
             fileNameString + "_" + pltName
-            , plt, path)
+            , plt, path, ".svg")
 
     return
 
@@ -858,7 +858,7 @@ def datashaderDriver(saveFigures):
 # # stand-along python script
 #
 if __name__ == "__main__":
-    run(  False        # save figures to file -> for datashader this implies the csv files will be written
+    run(  True        # save figures to file -> for datashader this implies the csv files will be written
         , 1            # Case 1 is normal MC, case 2 is initial conditon run
         , True         # show_plots. If this is true, using datashader files will be saved. to show datashade graphs, files must be saved
         , False         # use datashading library - matplotlib will not be used

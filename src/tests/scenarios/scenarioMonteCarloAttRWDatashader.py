@@ -179,13 +179,13 @@ def saveDataframesToFile():
 
 # This method is the driver method for graphing all of the data. It loops through the retained data list (strings)
 # and graphs the corresponding csv file for each retained data
-def graph(fromCSV):
+def graph(fromCSV, saveFigures):
     if fromCSV:
         for data, yAxisLabel in zip(retainedDataList, yAxisLabelList):
-            configureGraph(data, [], yAxisLabel, fromCSV)
+            configureGraph(data, [], yAxisLabel, fromCSV, saveFigures)
     else:
         for data, dataFrame, yAxisLabel in zip(retainedDataList, globalDataFrames, yAxisLabelList):
-            configureGraph(data, dataFrame, yAxisLabel, fromCSV)
+            configureGraph(data, dataFrame, yAxisLabel, fromCSV, saveFigures)
 
 # This method reads data from the csv files, and converts them into dataframes. It currently plots
 # the data via holoviews framework, and datashades the plot. It passes this plot to the bokeh front end
@@ -205,7 +205,7 @@ def graph(fromCSV):
 #     color=[color, color, color], alpha=[0.3, 0.3, 0.3], line_width=2)
 #     output_file("data/mc1/"+data+".html")
 #     save(p)
-def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV):
+def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV, saveFigures):
     # Read csv file and create a dataframe from it.
     # If the user doesn't want to write any data to disc, the user can not write any data
     # and instead just use the global dataframes to plot the data. However, writing to file
@@ -291,7 +291,7 @@ def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV):
     y_range = df.y.min(), df.y.max()
 
     # Set the width and height of the images dimensions
-    height = 800
+    height = 400
     width = 2 * height
 
     # Instantiate a canvas object to put the graphs on
@@ -313,20 +313,36 @@ def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV):
     # create_image(agg, GnBu9, 'log', 'black', dataName+"_gnu_blackbg")
     # create_image(agg, jet, 'log', 'black', dataName+"jet_blackbg")
     # create_image(agg, cm(viridis), "eq_hist", 'white', dataName+"_viridis")
-    create_image(agg, 'default', 'eq_hist', 'white', dataName + "_default")
+
+    # Specific naming for doxygen documents:
+    if dataName == rwMotorTorqueConfigOutputDataName_motorTorque:
+        dataName = "scenarioMonteCarloAttRW_RWMotorTorque"
+    elif dataName == attErrorConfigOutputDataName_sigma_BR:
+        dataName = "scenarioMonteCarloAttRW_AttitudeError"
+    elif dataName == attErrorConfigOutputDataName_omega_BR_B:
+        dataName = "scenarioMonteCarloAttRW_RateTrackingError"
+    elif dataName == mrpControlConfigInputRWSpeedsName_wheelSpeeds:
+        dataName = "scenarioMonteCarloAttRW_RWSpeed"
+    elif dataName == fswRWVoltageConfigVoltageOutMsgName_voltage:
+        dataName = "scenarioMonteCarloAttRW_RWVoltage"
+
+    create_image(agg, 'default', 'eq_hist', 'white', dataName, saveFigures)
 
     print "done graphing...", datetime.datetime.now()
 
 # Helper function to create an image based on agg, color, the function to determine depth
 # background and name of the file to export.
-def create_image(agg, color, how, background, name):
+def create_image(agg, color, how, background, name, saveFigures):
     if color != 'default':
         img = tf.shade(agg, cmap=color, how=how)
     else:
         img = tf.shade(agg, how=how)
     if background != 'none':
         img = tf.set_background(img, background)
-    export_image(img, name)
+    if saveFigures:
+        savePlotForDoxy(img, name)
+    else:
+        export_image(img, name)
 
 
 # This method changes the shape of our dataframe from:
@@ -380,16 +396,21 @@ def findOutliers(df, data):
 def writeDataSaveFilesGraph():
     writeDirectories()
     saveDataframesToFile()
-    graph(True)
+    graph(True, True)
 
 def graphCurrentData():
-    graph(True)
+    graph(True, False)
 
 def graphWithoutCSV():
     writeDirectories() #used for images..no data is written.
-    graph(False)
+    graph(False, False)
 
-
+# Customer method for saving into scenario folder, easier to separate.
+def savePlotForDoxy(img, filename, fmt = ".png", _return=True):
+    path = os.path.dirname(os.path.abspath(filename))
+    export_path = path + "/../../../docs/Images/Scenarios/" + filename + fmt
+    img.to_pil().save(os.path.join(export_path))
+    return img if _return else None
 # This method is given a datashader image object, and saves it as a png file under
 # a directory called "image". This is a variant of the export_image function
 # built into the datashader API to make a little simpler to use)
