@@ -9,6 +9,9 @@ In order to run Basilisk, the following software will be necessary:
 * [Cmake](https://cmake.org/)
 * [Python 2.7 (numpy, matplotlib, pytest)](https://www.python.org/downloads/mac-osx/)
 
+NOTE: the latest pytest is not compatible with all Basilisk modules. We are still investigating.  Be sure to pull version 3.6.1 for now using
+``` pip install pytest==3.6.1 ```
+
 
 ## Configuration
 Decide whether target deployment is 32 (win32) or 64 (x64) bit. Which ever chosen you will need the matching python and software for that architecture.

@@ -15,6 +15,9 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>
     Fixed an issue with the eclipse unit test.
     </li>
+    <li>
+    updated the installation instructions to warn about an incompatibility between the latest version of `pytest` (version 3.7.1).  Users should use a version of `pytest` that is 3.6.1 or older for now until this issue is resolved.
+    </li>
 </ul>
 
 ## Version 0.3.1 

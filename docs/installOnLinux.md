@@ -10,10 +10,13 @@ In order to run Basilisk, the following software will be necessary:
 * [SWIG](http://www.swig.org/)
 * [GCC](https://gcc.gnu.org/)
 
+NOTE: the latest pytest is not compatible with all Basilisk modules. We are still investigating.  Be sure to pull version 3.6.1 for now using
+``` pip install pytest==3.6.1 ```
+
 ## Dependencies
 
 
-Note: Depending on your system setup, administrative permissions (sudo or su) may be required to install these dependencies. Some distributions of Linux will use other package managment commands such as 'yum', 'dnf', of 'pgk'. 
+Note: Depending on your system setup, administrative permissions (sudo or su) may be required to install these dependencies. Some distributions of Linux will use other package management commands such as 'yum', 'dnf', of 'pgk'. 
 
 
 1. CMake: Available using CMake-GUI or CMake over the command line
@@ -83,7 +86,7 @@ To test that Basilisk has installed correctly, navigate back to the `{REPO}` dir
     # Update current software
     $ apt-get update
 
-    # Helpful for Debian systems -  all packages neeed to compile such as gcc and g++ compilers and other utils.
+    # Helpful for Debian systems -  all packages need to compile such as gcc and g++ compilers and other utils.
     $ apt-get install build-essential
 
     # Installing the header files for the Python C API
