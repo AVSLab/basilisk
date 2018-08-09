@@ -75,10 +75,16 @@ subDirectories = []
 colorScheme = ""
 densityHow = ""
 
+graphDimensions = (0,0)
+graphZoomFactor = (0,0)
+graphXRange = (0,0)
+graphYRange = (0,0)
+
 whichGraphingStyle = ""
 
 # interface for other sims. maybe have this be a list of tuples with correspond axis names with each name.
-def configure(dataConfiguration, directories, color, graphingTechnique):
+def configure(dataConfiguration, directories, color,
+              graphingTechnique, dimensions, zoomFactor, ranges):
     for name,yAxisName in dataConfiguration:
         retainedDataList.append(name)
         globalDataFrames.append(pd.DataFrame())
@@ -93,6 +99,17 @@ def configure(dataConfiguration, directories, color, graphingTechnique):
     global whichGraphingStyle
     whichGraphingStyle = graphingTechnique
 
+    global graphDimensions
+    graphDimensions = dimensions
+
+    global graphZoomFactor
+    graphZoomFactor = zoomFactor
+
+    global graphXRange
+    graphXRange = ranges[0]
+
+    global graphYRange
+    graphYRange = ranges[1]
 
 
 # This method is used to populate the dataframe for the retained data of a simulation.
@@ -262,13 +279,13 @@ def holoviews_interface(dataName, df, yAxisLabel, saveFigures):
         datashade(curves, dynamic=False, cmap=colorScheme).opts(plot=dict(fig_size=1000, aspect='equal'))).state
     # plot = renderer.get_plot(datashade(curves, dynamic = False).opts(plot=dict(fig_size=1000, aspect='equal'))).state
 
-    plot.plot_width = 800
+    plot.plot_width = graphDimensions[0]
+    plot.plot_height = graphDimensions[1]
 
     # If you want to zoom in on the image, set it here.
     plot.x_range = Range1d(df.x.min(), df.x.max())
     plot.y_range = Range1d(df.y.min(), df.y.max())
 
-    plot.plot_height = 500
     plot.title.text = dataName
     plot.xaxis.axis_label = "Time"
     plot.yaxis.axis_label = yAxisLabel
@@ -296,8 +313,8 @@ def datashade_interface(dataName, df):
     y_range = df.y.min(), df.y.max()
 
     # Set the width and height of the images dimensions
-    height = 800
-    width = 2 * height
+    height = graphDimensions[1]
+    width = graphDimensions[0]
 
     # Instantiate a canvas object to put the graphs on
     cvs = ds.Canvas(plot_height=height, plot_width=width, x_range=x_range, y_range=y_range)
@@ -311,7 +328,7 @@ def datashade_interface(dataName, df):
     # How can be 'linear' 'log' or 'eq_hist'. Here is a collection of different calls
     # to create the same image with different color schemes
 
-    create_image(agg, colorScheme, 'eq_hist', 'white', dataName)
+    create_image(agg, colorScheme, 'log', 'white', dataName)
 # Helper function to create an image based on agg, color, the function to determine depth
 # background and name of the file to export.
 def create_image(agg, color, how, background, name):

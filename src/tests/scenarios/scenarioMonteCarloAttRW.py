@@ -92,6 +92,10 @@ mrpControlConfigInputRWSpeedsName = "reactionwheel_output_states"
 sNavObjectOutputTransName = "simple_trans_nav_output"
 fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
 
+
+
+################################################################################################
+# begin datashade configuration
 # List of tuples that consist of: (message index, corresponding y axis label for that data)
 datashaderDataList = [(attErrorConfigOutputDataName + ".sigma_BR", "Attitude Error History"),
                            (attErrorConfigOutputDataName + ".omega_BR_B", "Attitude Tracking Error History"),
@@ -114,10 +118,26 @@ datashadeGraphType = "both"
 # Graph existing data from csv files. Do NOT re run sim.
 ONLY_DATASHADE_DATA = 1
 
+# Set the width, height of the graph. A 2:1 ratio is suggested.
+datashaderDimensions = (800, 400)
+
+# Set the x, y zoom factor based on the max of x or y.
+# i.e. (4, 1), will set the x range to x.max / 4 and y.max / 1. Keep at 1,1 to not have zoom
+datashaderZoomFactor = (4, 1)
+
+# Specifically set the x and y range min, max.
+# Keep at (0,0) to use the default min, max of data
+datashaderXRange = (100,1000)
+datashaderYRange = (100,1000)
+
 # set messages. will later need to set other things such as color, background, directory names, plotting type
 datashaderLibrary.configure(dataConfiguration=datashaderDataList, directories=datashaderDirectories,
-                            color = datashaderColor, graphingTechnique = datashadeGraphType)
+                            color = datashaderColor, graphingTechnique = datashadeGraphType,
+                            dimensions = datashaderDimensions, zoomFactor = datashaderZoomFactor,
+                            ranges = (datashaderXRange, datashaderYRange))
 
+# end datashade configuration
+################################################################################################
 
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
