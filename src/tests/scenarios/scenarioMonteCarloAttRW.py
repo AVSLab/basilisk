@@ -96,31 +96,14 @@ fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
 
 ################################################################################################
 
-# set dataIndex, yaxislabel, and x and y range (dimensions) for each graph. Using (0,0) for either range will use the default max and min
-class DatashaderGraph:
-    def __init__(self, dataIndex, yaxislabel = "Y Value", color = "default", graphRanges = [(0, 0), (0, 0)], dpi = 300, resolution = (800,400)):
-        self.dataIndex = dataIndex
-        self.yaxislabel = yaxislabel
-        self.dimensions = graphRanges
-        # Set the width, height of the graph. A 2:1 ratio is suggested. This is width / height of
-        # the pngs in pixel, or the width / height of the bokeh figures.
-        self.resolution = resolution
-        # datashader color. Can be a list of colors, or a predefined color scheme from the datashading interface:
-        # options: jet, viridis, GnBu, greys, fire.
-        # Or list of colors for least dense to most dense such as: ['green', 'yellow', 'red']
-        self.color = color
-        self.dpi = dpi
-        print self
-
-
 
 # begin datashade configuration
 # List of tuples that consist of: (message index, corresponding y axis label for that data)
-datashaderDataList = [DatashaderGraph(dataIndex = attErrorConfigOutputDataName + ".sigma_BR", yaxislabel = "Attitude Error History", color = "fire", graphRanges= [(0, 3e+11), (0, 0)], dpi = 500),
-                      DatashaderGraph(dataIndex = attErrorConfigOutputDataName + ".omega_BR_B", yaxislabel ="Attitude Tracking Error History", graphRanges= [(1e+11, 3e+11), (-0.01, 0.01)], dpi = 320),
-                      DatashaderGraph(dataIndex = rwMotorTorqueConfigOutputDataName + ".motorTorque", yaxislabel = "RW Motor Torque History", color = "GnBu", resolution = (1600,800)),
-                      DatashaderGraph(dataIndex = mrpControlConfigInputRWSpeedsName + ".wheelSpeeds", yaxislabel ="RW Wheel speeds history"),
-                      DatashaderGraph(dataIndex = fswRWVoltageConfigVoltageOutMsgName + ".voltage", yaxislabel ="RW Voltage History", dpi = 250)]
+datashaderDataList = [datashaderLibrary.DatashaderGraph(dataIndex = attErrorConfigOutputDataName + ".sigma_BR", yaxislabel = "Attitude Error History", color = "fire", graphRanges= [(0, 3e+11), (0, 0)], dpi = 500),
+                      datashaderLibrary.DatashaderGraph(dataIndex = attErrorConfigOutputDataName + ".omega_BR_B", yaxislabel ="Attitude Tracking Error History", graphRanges= [(1e+11, 3e+11), (-0.01, 0.01)], dpi = 320),
+                      datashaderLibrary.DatashaderGraph(dataIndex = rwMotorTorqueConfigOutputDataName + ".motorTorque", yaxislabel = "RW Motor Torque History", color = "GnBu", dimension= (1600, 800)),
+                      datashaderLibrary.DatashaderGraph(dataIndex = mrpControlConfigInputRWSpeedsName + ".wheelSpeeds", yaxislabel ="RW Wheel speeds history"),
+                      datashaderLibrary.DatashaderGraph(dataIndex = fswRWVoltageConfigVoltageOutMsgName + ".voltage", yaxislabel ="RW Voltage History", dpi = 250)]
 
 # Set directories that the datashading library will generate. First element in this list is where
 # the csv files are saved, the second is where images, and html files are saved.
@@ -136,12 +119,12 @@ datashaderDirectories = ["/mc1_data/", "/mc1_assets/"]
 ONLY_GRAPH_DATA = 1
 
 # Set the html filename. Default is "mc_graphs.html"
-fileName = "monte_carlo_graphs.html"
+# Would pass in as : `htmlName = fileName`
+# fileName = "monte_carlo_graphs.html"
 
 # set messages. will later need to set other things such as color, background, directory names, plotting type
 datashaderLibrary.configure(dataConfiguration=datashaderDataList,
                             directories=datashaderDirectories,
-                            htmlName = fileName
                             )
 
 # end datashade configuration

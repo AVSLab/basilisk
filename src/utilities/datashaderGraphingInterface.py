@@ -68,35 +68,40 @@ retainedDataList = []
 
 globalDataFrames = []
 
-# x and y ranges per graph
-graphRanges = []
-
-yAxisLabelList = []
-
+listOfGraphs = []
 subDirectories = []
-
-graphDimensions = []
-
-colors = []
-
-datashadeImageResolution = (0, 0)
 
 densityHow = ""
 holoviewsImageResolution = 0
 
 whichGraphingStyle = "holoviews_datashader"
 
+class DatashaderGraph:
+    def __init__(self, dataIndex, yaxislabel = "Y Value", color = "default", graphRanges = [(0, 0), (0, 0)], dpi = 300, dimension = (800, 400)):
+        self.dataIndex = dataIndex
+        self.yaxislabel = yaxislabel
+        self.ranges = graphRanges
+        # Set the width, height of the graph. A 2:1 ratio is suggested. This is width / height of
+        # the pngs in pixel, or the width / height of the bokeh figures.
+        self.dimension = dimension
+        # datashader color. Can be a list of colors, or a predefined color scheme from the datashading interface:
+        # options: jet, viridis, GnBu, greys, fire.
+        # Or list of colors for least dense to most dense such as: ['green', 'yellow', 'red']
+        self.color = color
+        self.dpi = dpi
+        print self
+
+
 # interface for other sims. maybe have this be a list of tuples with correspond axis names with each name.
 def configure(dataConfiguration, directories, graphingTechnique = "holoviews_datashader",
               htmlName = "mc_graphs.html"):
 
+    global listOfGraphs
+    listOfGraphs = dataConfiguration
+
     for graph in dataConfiguration:
         retainedDataList.append(graph.dataIndex)
         globalDataFrames.append(pd.DataFrame())
-        yAxisLabelList.append(graph.yaxislabel)
-        graphRanges.append(graph.dimensions)
-        colors.append(graph.color)
-        graphDimensions.append(graph.resolution)
 
     for subdirectory in directories:
         subDirectories.append(subdirectory)
@@ -170,12 +175,16 @@ def saveDataframesToFile():
 def graph(fromCSV, saveFigures):
 
     # TODO make this one liner with default arguments
-    if fromCSV:
-        for data, yAxisLabel, dimensions, color, graphDimension in zip(retainedDataList, yAxisLabelList, graphRanges, colors, graphDimensions):
-            configureGraph(data, [], yAxisLabel, fromCSV, saveFigures, dimensions, color, graphDimension)
-    else:
-        for data, dataFrame, yAxisLabel, dimensions, color, dimensions in zip(retainedDataList, globalDataFrames, yAxisLabelList, graphRanges, colors, graphDimensions):
-            configureGraph(data, dataFrame, yAxisLabel, fromCSV, saveFigures, dimensions, color, graphDimension)
+    # if fromCSV:
+    #     for data, yAxisLabel, dimensions, color, graphDimension in zip(retainedDataList, yAxisLabelList, graphRanges, colors, graphDimensions):
+    #         configureGraph(data, [], yAxisLabel, fromCSV, saveFigures, dimensions, color, graphDimension)
+    # else:
+    #     for data, dataFrame, yAxisLabel, dimensions, color, dimensions in zip(retainedDataList, globalDataFrames, yAxisLabelList, graphRanges, colors, graphDimensions):
+    #         configureGraph(data, dataFrame, yAxisLabel, fromCSV, saveFigures, dimensions, color, graphDimension)
+
+    for graph, data, dataframe in zip(listOfGraphs, retainedDataList, globalDataFrames):
+        configureGraph(dataFrame = dataframe if not fromCSV else [], dataName = data,
+                       graph = graph, fromCSV = fromCSV, saveFigures = saveFigures)
 
 # This method reads data from the csv files, and converts them into dataframes. It currently plots
 # the data via holoviews framework, and datashades the plot. It passes this plot to the bokeh front end
@@ -195,8 +204,7 @@ def graph(fromCSV, saveFigures):
 #     color=[color, color, color], alpha=[0.3, 0.3, 0.3], line_width=2)
 #     output_file("data/mc1/"+data+".html")
 #     save(p)
-def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV,
-                   saveFigures, ranges, color, dimension):
+def configureGraph(dataName, fromCSV, dataFrame, graph, saveFigures):
     # Read csv file and create a dataframe from it.
     # If the user doesn't want to write any data to disc, the user can not write any data
     # and instead just use the global dataframes to plot the data. However, writing to file
@@ -206,7 +214,7 @@ def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV,
 
     if fromCSV:
         df = pd.read_csv(
-            "data/mc1_data/" + dataName + ".csv")
+            "data/" + subDirectories[0] + dataName + ".csv")
     else:
         df = dataFrame
 
@@ -214,12 +222,12 @@ def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV,
     df = concat_columns(df)
 
     if whichGraphingStyle == "holoviews_datashader":
-        holoviews_interface(dataName, df, yAxisLabel, saveFigures, ranges, color, dimension)
+        holoviews_interface(dataName, df, graph.yaxislabel, saveFigures, graph.ranges, graph.color, graph.dimension)
     elif whichGraphingStyle == "only_datashader":
-        datashade_interface(dataName, df, ranges, color, dimension)
+        datashade_interface(dataName, df, graph.ranges, graph.color, graph.dimension)
     elif whichGraphingStyle == "both":
-        holoviews_interface(dataName, df, yAxisLabel, saveFigures, ranges, color, dimension)
-        datashade_interface(dataName, df, ranges, color, dimension)
+        holoviews_interface(dataName, df, graph.yaxislabel, saveFigures, graph.ranges, graph.color, graph.dimension)
+        datashade_interface(dataName, df, graph.ranges, graph.color, graph.dimension)
 
 def getColorScheme(color):
     # Few lines to help with create different color maps.
