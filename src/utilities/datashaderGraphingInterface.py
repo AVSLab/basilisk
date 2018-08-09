@@ -68,27 +68,30 @@ retainedDataList = []
 
 globalDataFrames = []
 
+# x and y ranges per graph
+graphDimensions = []
+
 yAxisLabelList = []
 
 subDirectories = []
 
+figureResolution = (0,0)
+
 colorScheme = ""
 densityHow = ""
 
-graphDimensions = (0,0)
-graphZoomFactor = (0,0)
-graphXRange = (0,0)
-graphYRange = (0,0)
 
 whichGraphingStyle = ""
 
 # interface for other sims. maybe have this be a list of tuples with correspond axis names with each name.
 def configure(dataConfiguration, directories, color,
-              graphingTechnique, dimensions, zoomFactor, ranges):
-    for name,yAxisName in dataConfiguration:
-        retainedDataList.append(name)
+              graphingTechnique, dimensions):
+
+    for graph in dataConfiguration:
+        retainedDataList.append(graph.dataIndex)
         globalDataFrames.append(pd.DataFrame())
-        yAxisLabelList.append(yAxisName)
+        yAxisLabelList.append(graph.yaxislabel)
+        graphDimensions.append(graph.dimensions)
 
     for subdirectory in directories:
         subDirectories.append(subdirectory)
@@ -99,17 +102,9 @@ def configure(dataConfiguration, directories, color,
     global whichGraphingStyle
     whichGraphingStyle = graphingTechnique
 
-    global graphDimensions
-    graphDimensions = dimensions
+    global figureResolution
+    figureResolution = dimensions
 
-    global graphZoomFactor
-    graphZoomFactor = zoomFactor
-
-    global graphXRange
-    graphXRange = ranges[0]
-
-    global graphYRange
-    graphYRange = ranges[1]
 
 
 # This method is used to populate the dataframe for the retained data of a simulation.
@@ -175,12 +170,14 @@ def saveDataframesToFile():
 # This method is the driver method for graphing all of the data. It loops through the retained data list (strings)
 # and graphs the corresponding csv file for each retained data
 def graph(fromCSV, saveFigures):
+
+    # TODO make this one liner with default arguments
     if fromCSV:
-        for data, yAxisLabel in zip(retainedDataList, yAxisLabelList):
-            configureGraph(data, [], yAxisLabel, fromCSV, saveFigures)
+        for data, yAxisLabel, dimensions in zip(retainedDataList, yAxisLabelList, graphDimensions):
+            configureGraph(data, [], yAxisLabel, fromCSV, saveFigures, dimensions)
     else:
-        for data, dataFrame, yAxisLabel in zip(retainedDataList, globalDataFrames, yAxisLabelList):
-            configureGraph(data, dataFrame, yAxisLabel, fromCSV, saveFigures)
+        for data, dataFrame, yAxisLabel, dimensions in zip(retainedDataList, globalDataFrames, yAxisLabelList, graphDimensions):
+            configureGraph(data, dataFrame, yAxisLabel, fromCSV, saveFigures, dimensions)
 
 # This method reads data from the csv files, and converts them into dataframes. It currently plots
 # the data via holoviews framework, and datashades the plot. It passes this plot to the bokeh front end
@@ -200,7 +197,7 @@ def graph(fromCSV, saveFigures):
 #     color=[color, color, color], alpha=[0.3, 0.3, 0.3], line_width=2)
 #     output_file("data/mc1/"+data+".html")
 #     save(p)
-def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV, saveFigures):
+def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV, saveFigures, dimensions):
     # Read csv file and create a dataframe from it.
     # If the user doesn't want to write any data to disc, the user can not write any data
     # and instead just use the global dataframes to plot the data. However, writing to file
@@ -218,12 +215,12 @@ def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV, saveFigures):
     df = concat_columns(df)
 
     if whichGraphingStyle == "holoviews_datashader":
-        holoviews_interface(dataName, df, yAxisLabel, saveFigures)
+        holoviews_interface(dataName, df, yAxisLabel, saveFigures, dimensions)
     elif whichGraphingStyle == "only_datashader":
-        datashade_interface(dataName, df)
+        datashade_interface(dataName, df, dimensions)
     elif whichGraphingStyle == "both":
-        holoviews_interface(dataName, df, yAxisLabel, saveFigures)
-        datashade_interface(dataName, df)
+        holoviews_interface(dataName, df, yAxisLabel, saveFigures, dimensions)
+        datashade_interface(dataName, df, dimensions)
 
 def setColorScheme():
     # Few lines to help with create different color maps.
@@ -245,7 +242,7 @@ def setColorScheme():
         colorScheme = cm(fire, 0.2)
 
 
-def holoviews_interface(dataName, df, yAxisLabel, saveFigures):
+def holoviews_interface(dataName, df, yAxisLabel, saveFigures, dimensions):
 
 
     # Concat the columns so all of the columns are now in 2 column and have been concatanated
@@ -279,12 +276,18 @@ def holoviews_interface(dataName, df, yAxisLabel, saveFigures):
         datashade(curves, dynamic=False, cmap=colorScheme).opts(plot=dict(fig_size=1000, aspect='equal'))).state
     # plot = renderer.get_plot(datashade(curves, dynamic = False).opts(plot=dict(fig_size=1000, aspect='equal'))).state
 
-    plot.plot_width = graphDimensions[0]
-    plot.plot_height = graphDimensions[1]
+    plot.plot_width = figureResolution[0]
+    plot.plot_height = figureResolution[1]
 
     # If you want to zoom in on the image, set it here.
-    plot.x_range = Range1d(df.x.min(), df.x.max())
-    plot.y_range = Range1d(df.y.min(), df.y.max())
+
+    plot.x_range = Range1d(df.x.min() if dimensions[0][0] == 0 else dimensions[0][0], df.x.max() if dimensions[0][1] == 0 else \
+    dimensions[0][1])
+    plot.y_range = Range1d(df.y.min() if dimensions[1][0] == 0 else dimensions[1][0], df.y.max() if dimensions[1][1] == 0 else \
+    dimensions[1][1])
+
+    # plot.x_range = Range1d(df.x.min(), df.x.max())
+    # plot.y_range = Range1d(df.y.min(), df.y.max())
 
     plot.title.text = dataName
     plot.xaxis.axis_label = "Time"
@@ -295,7 +298,7 @@ def holoviews_interface(dataName, df, yAxisLabel, saveFigures):
         export_png(plot, mainDirectoryName + subDirectories[1] + dataName+".png")
 
     print "done graphing...", datetime.datetime.now()
-def datashade_interface(dataName, df):
+def datashade_interface(dataName, df, dimensions):
     #
     # NOW PLOTTING VIA SOLELY DATASHADER AND SAVING THE GRAPHS AS PNGS.
     #
@@ -309,12 +312,12 @@ def datashade_interface(dataName, df):
     # export_image(stacked, data)
 
     # Set range of x and y axis (zooming via code)
-    x_range = df.x.min(), df.x.max()
-    y_range = df.y.min(), df.y.max()
+    x_range = df.x.min() if dimensions[0][0] == 0 else dimensions[0][0], df.x.max() if dimensions[0][1] == 0 else dimensions[0][1]
+    y_range = df.y.min() if dimensions[1][0] == 0 else dimensions[1][0], df.y.max() if dimensions[1][1] == 0 else dimensions[1][1]
 
     # Set the width and height of the images dimensions
-    height = graphDimensions[1]
-    width = graphDimensions[0]
+    height = figureResolution[1]
+    width = figureResolution[0]
 
     # Instantiate a canvas object to put the graphs on
     cvs = ds.Canvas(plot_height=height, plot_width=width, x_range=x_range, y_range=y_range)

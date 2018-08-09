@@ -95,13 +95,24 @@ fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
 
 
 ################################################################################################
+
+# set dataIndex, yaxislabel, and x and y range (dimensions) for each graph. Using (0,0) for either range will use the default max and min
+class DatashaderGraph:
+    def __init__(self, dataIndex, yaxislabel = "Y Value", dimensions = [(0,0), (0,0)]):
+        self.dataIndex = dataIndex
+        self.yaxislabel = yaxislabel
+        self.dimensions = dimensions
+        print self
+
+
+
 # begin datashade configuration
 # List of tuples that consist of: (message index, corresponding y axis label for that data)
-datashaderDataList = [(attErrorConfigOutputDataName + ".sigma_BR", "Attitude Error History"),
-                           (attErrorConfigOutputDataName + ".omega_BR_B", "Attitude Tracking Error History"),
-                           (rwMotorTorqueConfigOutputDataName + ".motorTorque","RW Motor Torque History"),
-                           (mrpControlConfigInputRWSpeedsName + ".wheelSpeeds", "RW Wheel speeds history"),
-                           (fswRWVoltageConfigVoltageOutMsgName + ".voltage", "RW Voltage History")]
+datashaderDataList = [DatashaderGraph(dataIndex = attErrorConfigOutputDataName + ".sigma_BR", yaxislabel = "Attitude Error History", dimensions = [(0,3e+11),(0,0)]),
+                      DatashaderGraph(dataIndex = attErrorConfigOutputDataName + ".omega_BR_B", yaxislabel ="Attitude Tracking Error History", dimensions = [(1e+11,3e+11), (-0.01, 0.01)]),
+                      DatashaderGraph(dataIndex = rwMotorTorqueConfigOutputDataName + ".motorTorque", yaxislabel = "RW Motor Torque History"),
+                      DatashaderGraph(dataIndex = mrpControlConfigInputRWSpeedsName + ".wheelSpeeds", yaxislabel ="RW Wheel speeds history"),
+                      DatashaderGraph(dataIndex = fswRWVoltageConfigVoltageOutMsgName + ".voltage", yaxislabel ="RW Voltage History")]
 
 # Set directories that the datashading library will generate. First element in this list is where
 # the csv files are saved, the second is where images, and html files are saved.
@@ -118,23 +129,16 @@ datashadeGraphType = "both"
 # Graph existing data from csv files. Do NOT re run sim.
 ONLY_DATASHADE_DATA = 1
 
-# Set the width, height of the graph. A 2:1 ratio is suggested.
-datashaderDimensions = (800, 400)
+# Set the width, height of the graph. A 2:1 ratio is suggested. This is width / height of
+# the pngs in pixel, or the width / height of the bokeh figures.
+datashaderDimensions = (500, 200)
 
-# Set the x, y zoom factor based on the max of x or y.
-# i.e. (4, 1), will set the x range to x.max / 4 and y.max / 1. Keep at 1,1 to not have zoom
-datashaderZoomFactor = (4, 1)
 
-# Specifically set the x and y range min, max.
-# Keep at (0,0) to use the default min, max of data
-datashaderXRange = (100,1000)
-datashaderYRange = (100,1000)
 
 # set messages. will later need to set other things such as color, background, directory names, plotting type
 datashaderLibrary.configure(dataConfiguration=datashaderDataList, directories=datashaderDirectories,
                             color = datashaderColor, graphingTechnique = datashadeGraphType,
-                            dimensions = datashaderDimensions, zoomFactor = datashaderZoomFactor,
-                            ranges = (datashaderXRange, datashaderYRange))
+                            dimensions = datashaderDimensions)
 
 # end datashade configuration
 ################################################################################################
