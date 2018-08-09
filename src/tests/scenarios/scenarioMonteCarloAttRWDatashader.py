@@ -64,58 +64,27 @@ import matplotlib.cbook as cbook
 from bokeh.plotting import figure, show, output_file
 from bokeh.models import Range1d
 
+retainedDataList = []
 
-# Here are the name of some messages that we want to retain or otherwise use
-inertial3DConfigOutputDataName = "guidanceInertial3D"
-attErrorConfigOutputDataName = "attErrorInertial3DMsg"
-mrpControlConfigOutputDataName = "LrRequested"
-rwMotorTorqueConfigOutputDataName = "rw_torque_Lr"
-mrpControlConfigInputRWSpeedsName = "reactionwheel_output_states"
-sNavObjectOutputTransName = "simple_trans_nav_output"
-fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
-
-# Create data retention names based on what data we want to save
-rwMotorTorqueConfigOutputDataName_motorTorque = rwMotorTorqueConfigOutputDataName + ".motorTorque"
-attErrorConfigOutputDataName_sigma_BR = attErrorConfigOutputDataName + ".sigma_BR"
-attErrorConfigOutputDataName_omega_BR_B = attErrorConfigOutputDataName + ".omega_BR_B"
-sNavObjectOutputTransName_r_BN_N = sNavObjectOutputTransName + ".r_BN_N"
-mrpControlConfigInputRWSpeedsName_wheelSpeeds = mrpControlConfigInputRWSpeedsName + ".wheelSpeeds"
-fswRWVoltageConfigVoltageOutMsgName_voltage = fswRWVoltageConfigVoltageOutMsgName + ".voltage"
-
-
-# Set global dataframes to populate with data when executing callbacks
-rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame = pd.DataFrame()
-attErrorConfigOutputDataName_sigma_BR_dataFrame = pd.DataFrame()
-attErrorConfigOutputDataName_omega_BR_B_dataFrame = pd.DataFrame()
-sNavObjectOutputTransName_r_BN_N_dataFrame = pd.DataFrame()
-mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame = pd.DataFrame()
-fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame = pd.DataFrame()
-
-
-# Create a list of retained data names to loop through while graphing. The CSV files are named by this list of strings
-# so you can use this list as a way to loop through all of the data and graph.
-retainedDataList = [attErrorConfigOutputDataName_sigma_BR,
-                    attErrorConfigOutputDataName_omega_BR_B,
-                    mrpControlConfigInputRWSpeedsName_wheelSpeeds, fswRWVoltageConfigVoltageOutMsgName_voltage, rwMotorTorqueConfigOutputDataName_motorTorque]
-
-# Global list of dataframes that are populated from executing callback
-# The order of these dataframes MUST be the same order as the retainedDataList.
-# The retainedDataList[0] is the string name that corresponds to globalDataFrames[0]. This way we can look through
-# both lists using zip(). By changing these lists, you've basically completed everything for
-# retaining and graphing data other then having lines such as:
-# retentionPolicy.addMessageLog(rwMotorTorqueConfigOutputDataName, [("motorTorque", range(5))], samplingTime)
-globalDataFrames = [attErrorConfigOutputDataName_sigma_BR_dataFrame, attErrorConfigOutputDataName_omega_BR_B_dataFrame,
-                   mrpControlConfigInputRWSpeedsName_wheelSpeeds_dataFrame,
-                   fswRWVoltageConfigVoltageOutMsgName_voltage_dataFrame, rwMotorTorqueConfigOutputDataName_motorTorque_dataFrame]
+globalDataFrames = []
 
 # List of y axis labels, same order as globalDataFrames etc.
-yAxisLabelList = ["Attitude Error Sigma_br", "Attitude Error omage_br_b",
+yAxisLabelList = ["Attitude Error Sigma_br!!", "Attitude Error omage_br_b",
                   "Reaction Wheel Speeds", "Flight Software Voltage Out", "Reaction Wheel Motor Torque"]
 mainDirectoryName = "data/"
 subDirectories = ["/mc1_data/", "/mc1_assets/"]
 
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
+
+
+
+# interface for other sims. maybe have this be a list of tuples with correspond axis names with each name.
+
+def setMessages(names):
+    for name in names:
+        retainedDataList.append(name)
+        globalDataFrames.append(pd.DataFrame())
 
 # This method is used to populate the dataframe for the retained data of a simulation.
 # It is called once for each run of the simulation, overlapping the plots
@@ -315,16 +284,16 @@ def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV, saveFigures):
     # create_image(agg, cm(viridis), "eq_hist", 'white', dataName+"_viridis")
 
     # Specific naming for doxygen documents:
-    if dataName == rwMotorTorqueConfigOutputDataName_motorTorque:
-        dataName = "scenarioMonteCarloAttRW_RWMotorTorque"
-    elif dataName == attErrorConfigOutputDataName_sigma_BR:
-        dataName = "scenarioMonteCarloAttRW_AttitudeError"
-    elif dataName == attErrorConfigOutputDataName_omega_BR_B:
-        dataName = "scenarioMonteCarloAttRW_RateTrackingError"
-    elif dataName == mrpControlConfigInputRWSpeedsName_wheelSpeeds:
-        dataName = "scenarioMonteCarloAttRW_RWSpeed"
-    elif dataName == fswRWVoltageConfigVoltageOutMsgName_voltage:
-        dataName = "scenarioMonteCarloAttRW_RWVoltage"
+    # if dataName == rwMotorTorqueConfigOutputDataName_motorTorque:
+    #     dataName = "scenarioMonteCarloAttRW_RWMotorTorque"
+    # elif dataName == attErrorConfigOutputDataName_sigma_BR:
+    #     dataName = "scenarioMonteCarloAttRW_AttitudeError"
+    # elif dataName == attErrorConfigOutputDataName_omega_BR_B:
+    #     dataName = "scenarioMonteCarloAttRW_RateTrackingError"
+    # elif dataName == mrpControlConfigInputRWSpeedsName_wheelSpeeds:
+    #     dataName = "scenarioMonteCarloAttRW_RWSpeed"
+    # elif dataName == fswRWVoltageConfigVoltageOutMsgName_voltage:
+    #     dataName = "scenarioMonteCarloAttRW_RWVoltage"
 
     create_image(agg, 'default', 'eq_hist', 'white', dataName, saveFigures)
 

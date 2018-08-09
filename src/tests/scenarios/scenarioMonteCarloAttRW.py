@@ -92,6 +92,13 @@ mrpControlConfigInputRWSpeedsName = "reactionwheel_output_states"
 sNavObjectOutputTransName = "simple_trans_nav_output"
 fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
 
+
+# set messages. will later need to set other things such as color, background, directory names, plotting type
+datashaderLibrary.setMessages([attErrorConfigOutputDataName + ".sigma_BR", attErrorConfigOutputDataName + ".omega_BR_B",
+                              rwMotorTorqueConfigOutputDataName + ".motorTorque", mrpControlConfigInputRWSpeedsName + ".wheelSpeeds",
+                              fswRWVoltageConfigVoltageOutMsgName + ".voltage"])
+
+
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
 # We also will need the simulationTime and samplingTimes
@@ -863,5 +870,5 @@ if __name__ == "__main__":
     run(  True        # save figures to file -> for datashader this implies the csv files will be written
         , 1            # Case 1 is normal MC, case 2 is initial conditon run
         , True         # show_plots. If this is true, using datashader files will be saved. to show datashade graphs, files must be saved
-        , False         # use datashading library - matplotlib will not be used
+        , True         # use datashading library - matplotlib will not be used
        )
