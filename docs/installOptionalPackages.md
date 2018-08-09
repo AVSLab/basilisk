@@ -3,7 +3,7 @@
 
 ## Graphing via datashader
 
-In order to run the full datashader capabilities of the monte carlo scenarios, you must run the following commands (either as sudo or with the --user flag):
+In order to run the full datashader capabilities of the  [Monte Carlo scenarios](@ref MonteCarloSimulation), you must run the following commands (either as sudo or with the --user flag):
 
 ```
 pip install datashader
@@ -28,7 +28,7 @@ Here is a list of documents about the related packages to datashader:
 
 ###Important features of datashader
 
-Incorporating Holoviews, datashader, and bokeh, we can now rasterize large amounts of data and plot them faster then using matplotlib. Theoretically, the number of points is now irrelevant while plotting. Using datashader, it is now possible to plot 5 million points in 30 seconds. Aggregating the data (2.5 gigs) took 1 minute to populate the dataframes, and 2 minutes to write to file (which is only needed if you want to avoid running the monte carlo again). To graph the existing without re-running the simulations, set ```ONLY_DATASHADE_DATA = 1``` in the Monte Carlo scenario. 
+Incorporating Holoviews, datashader, and bokeh, we can now rasterize large amounts of data and plot them faster then using matplotlib. Theoretically, the number of points is now irrelevant while plotting. Using datashader, it is now possible to plot 5 million points in 30 seconds. Aggregating the data (2.5 gigs) took 1 minute to populate the dataframes, and 2 minutes to write to file (which is only needed if you want to avoid running the monte carlo again). To graph the existing without re-running the simulations, set ```ONLY_DATASHADE_DATA = 1``` in the [Monte Carlo scenarios](@ref MonteCarloSimulation). 
 
 In order to generate graphs that are zoomed in to a specific x and y range modify the following:
 
