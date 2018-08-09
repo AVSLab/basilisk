@@ -56,13 +56,11 @@ from colorcet import fire
 from bokeh.palettes import GnBu9
 from matplotlib.cm import jet
 # This import is for reaggregating data when zooming if that is ever pursued
-from datashader.bokeh_ext import InteractiveImage
+# from datashader.bokeh_ext import InteractiveImage
 from itertools import izip, count
-import matplotlib.pyplot as plt
-from scipy.misc import imread
-import matplotlib.cbook as cbook
 from bokeh.plotting import figure, show, output_file
 from bokeh.models import Range1d
+from bokeh.io import export_png
 
 mainDirectoryName = "data/"
 
@@ -75,10 +73,12 @@ yAxisLabelList = []
 subDirectories = []
 
 colorScheme = ""
+densityHow = ""
 
+whichGraphingStyle = ""
 
 # interface for other sims. maybe have this be a list of tuples with correspond axis names with each name.
-def configure(dataConfiguration, directories, color):
+def configure(dataConfiguration, directories, color, graphingTechnique):
     for name,yAxisName in dataConfiguration:
         retainedDataList.append(name)
         globalDataFrames.append(pd.DataFrame())
@@ -89,6 +89,11 @@ def configure(dataConfiguration, directories, color):
 
     global colorScheme
     colorScheme = color
+
+    global whichGraphingStyle
+    whichGraphingStyle = graphingTechnique
+
+
 
 # This method is used to populate the dataframe for the retained data of a simulation.
 # It is called once for each run of the simulation, overlapping the plots
@@ -185,59 +190,30 @@ def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV, saveFigures):
     # can be advantageous since you can toggle ONLY_GRAPH to skip all of the simulating and
     # solely graph the data.
     print "beginning graphing process", datetime.datetime.now()
-
+    setColorScheme()
     if fromCSV:
         df = pd.read_csv(
             "data/mc1_data/" + dataName + ".csv")
     else:
         df = dataFrame
 
-    # Find the outliers of the graph to identify erroneous runs.
-    # Must do this before concatanating the columns so we can correspond
-    # an outlier to a specific run
-    # findOutliers(df, data)
 
+    df = concat_columns(df)
+
+    if whichGraphingStyle == "holoviews_datashader":
+        holoviews_interface(dataName, df, yAxisLabel, saveFigures)
+    elif whichGraphingStyle == "only_datashader":
+        datashade_interface(dataName, df)
+    elif whichGraphingStyle == "both":
+        holoviews_interface(dataName, df, yAxisLabel, saveFigures)
+        datashade_interface(dataName, df)
+
+def setColorScheme():
     # Few lines to help with create different color maps.
     background = "black"
     cm = partial(colormap_select, reverse=(background != "black"))
     grays2 = cm([(i, i, i) for i in np.linspace(0, 255, 99)])
     grays2 += ["red"]
-
-
-    # Concat the columns so all of the columns are now in 2 column and have been concatanated
-    # If you'd rather keep all of columns and plot one against another column multiple times do this:
-    # This plots columns labeled 1,2,3 against column 0 (time) and combines them into a layout. then you
-    # datashade that layout instead of datashading the curves (doing it this way
-    # mean the columns won't be labeled as x,y):
-    # curvesx = hv.Curve(df[['0', '1']])
-    # curvesy = hv.Curve(df[['0', '2']])
-    # curvesz = hv.Curve(df[['0', '3']])
-    # layout = curvesx * curvesy * curvesz
-
-    df = concat_columns(df)
-
-    #
-    # NOW PLOTTING VIA HOLOVIEWS, BOKEH, AND DATASHADER.
-    # Create html file with graphs and axis information etc.
-    #
-
-    # Plot the columns (x,y)
-    curves = hv.Curve(df)
-
-    # Instantiate a renderer using bokeh's interface, and generating an html file
-    renderer = hv.renderer('bokeh').instance(fig='html')
-    # set color scheme by whats passed in from the sim.
-
-    # create_image(agg, ['green', 'yellow', 'red'], 'log', 'none', dataName+"_green_yellow_red")
-    # create_image(agg, ['green', 'yellow', 'red'], 'log', 'black', dataName+"_green_yellow_red_blackbg")
-    # create_image(agg, cm(Greys9, 0.25), "eq_hist", 'black', dataName+"greys9_blackbg")
-    # create_image(agg, cm(fire, 0.2), 'log','black', dataName+"_fire_blackbg")
-    # create_image(agg, ['aqua', 'lime', 'fuchsia', 'yellow'], 'log','black', dataName+"_aqua_lime_blackbg")
-    # create_image(agg, GnBu9, 'log', 'black', dataName+"_gnu_blackbg")
-
-    # create_image(agg, jet, 'log', 'black', dataName+"jet_blackbg")
-    # create_image(agg, cm(viridis), "eq_hist", 'white', dataName+"_viridis")
-
 
     global colorScheme
     if colorScheme == "jet":
@@ -252,17 +228,43 @@ def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV, saveFigures):
         colorScheme = cm(fire, 0.2)
 
 
+def holoviews_interface(dataName, df, yAxisLabel, saveFigures):
+
+
+    # Concat the columns so all of the columns are now in 2 column and have been concatanated
+    # If you'd rather keep all of columns and plot one against another column multiple times do this:
+    # This plots columns labeled 1,2,3 against column 0 (time) and combines them into a layout. then you
+    # datashade that layout instead of datashading the curves (doing it this way
+    # mean the columns won't be labeled as x,y):
+    # curvesx = hv.Curve(df[['0', '1']])
+    # curvesy = hv.Curve(df[['0', '2']])
+    # curvesz = hv.Curve(df[['0', '3']])
+    # layout = curvesx * curvesy * curvesz
+
+
+    #
+    # NOW PLOTTING VIA HOLOVIEWS, BOKEH, AND DATASHADER.
+    # Create html file with graphs and axis information etc.
+    #
+
+    # Plot the columns (x,y)
+    curves = hv.Curve(df)
+
+    # Instantiate a renderer using bokeh's interface, and generating an html file
+    renderer = hv.renderer('bokeh').instance(fig='html')
+
     # Pass a datashaded version of the layout to the get_plot function, to return a bokeh figure
     # called 'plot'. Then set the figure details such as title, dimensions, axis labels etc.
     # Then finally, show the plot in the browser.
     # passing a value for cmap within the datashade function call will change the color of the
     # plots in the html. See below for more examples of cmaps
-    plot = renderer.get_plot(datashade(curves, dynamic = False, cmap= colorScheme).opts(plot=dict(fig_size=1000, aspect='equal'))).state
+    plot = renderer.get_plot(
+        datashade(curves, dynamic=False, cmap=colorScheme).opts(plot=dict(fig_size=1000, aspect='equal'))).state
     # plot = renderer.get_plot(datashade(curves, dynamic = False).opts(plot=dict(fig_size=1000, aspect='equal'))).state
 
     plot.plot_width = 800
 
-    #If you want to zoom in on the image, set it here.
+    # If you want to zoom in on the image, set it here.
     plot.x_range = Range1d(df.x.min(), df.x.max())
     plot.y_range = Range1d(df.y.min(), df.y.max())
 
@@ -272,6 +274,11 @@ def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV, saveFigures):
     plot.yaxis.axis_label = yAxisLabel
     show(plot)
 
+    if saveFigures:
+        export_png(plot, mainDirectoryName + subDirectories[1] + dataName+".png")
+
+    print "done graphing...", datetime.datetime.now()
+def datashade_interface(dataName, df):
     #
     # NOW PLOTTING VIA SOLELY DATASHADER AND SAVING THE GRAPHS AS PNGS.
     #
@@ -289,7 +296,7 @@ def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV, saveFigures):
     y_range = df.y.min(), df.y.max()
 
     # Set the width and height of the images dimensions
-    height = 400
+    height = 800
     width = 2 * height
 
     # Instantiate a canvas object to put the graphs on
@@ -304,25 +311,18 @@ def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV, saveFigures):
     # How can be 'linear' 'log' or 'eq_hist'. Here is a collection of different calls
     # to create the same image with different color schemes
 
-    create_image(agg, colorScheme, 'eq_hist', 'white', dataName, saveFigures)
-
-    print "done graphing...", datetime.datetime.now()
-
+    create_image(agg, colorScheme, 'eq_hist', 'white', dataName)
 # Helper function to create an image based on agg, color, the function to determine depth
 # background and name of the file to export.
-def create_image(agg, color, how, background, name, saveFigures):
+def create_image(agg, color, how, background, name):
     if color != 'default':
         img = tf.shade(agg, cmap=color, how=how)
     else:
         img = tf.shade(agg, how=how)
     if background != 'none':
         img = tf.set_background(img, background)
-    if saveFigures:
-        savePlotForDoxy(img, name)
-    else:
-        export_image(img, name)
 
-
+    export_image(img, name+"_ds")
 # This method changes the shape of our dataframe from:
 # 0 1 2 3
 # 1 3 4 2
@@ -355,17 +355,6 @@ def image_callback(x_range, y_range, w, h):
     img = tf.shade(agg)
     tf.shade(agg, how='eq_hist')
     return tf.dynspread(img, threshold=1)
-
-# This method finds the outliers of the dataframe to identify runs with rogue behavior.
-def findOutliers(df, data):
-    from numpy import mean, std
-    from scipy import stats
-    # print df.describe()
-    col = 1
-    print data, df.quantile(.1)
-    print data, df.quantile(.99)
-    # outliers = df[df[col] > df[col].mean() + 3 * df[col].std()]
-    # print outliers
 
 #
 # Some driver methods for what the datashader should do based on pytest information.

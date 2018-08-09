@@ -80,7 +80,7 @@ from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispe
                                                        NormalVectorCartDispersion, InertiaTensorDispersion)
 
 
-NUMBER_OF_RUNS = 4
+NUMBER_OF_RUNS = 1000
 VERBOSE = True
 
 # Here are the name of some messages that we want to retain or otherwise use
@@ -107,20 +107,26 @@ datashaderDirectories = ["/mc1_data/", "/mc1_assets/"]
 # options: jet, viridis, GnBu, greys, fire.
 # Or list of colors for least dense to most dense such as: ['green', 'yellow', 'red']
 datashaderColor = "fire"
+
+# Set which graphing techniques the library uses. Options: 'holoviews_datashader', 'only_datashader', 'both'
+datashadeGraphType = "both"
+
+# Graph existing data from csv files. Do NOT re run sim.
+ONLY_DATASHADE_DATA = 1
+
 # set messages. will later need to set other things such as color, background, directory names, plotting type
 datashaderLibrary.configure(dataConfiguration=datashaderDataList, directories=datashaderDirectories,
-                            color = datashaderColor)
+                            color = datashaderColor, graphingTechnique = datashadeGraphType)
 
 
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
 # We also will need the simulationTime and samplingTimes
-numDataPoints = 100
+numDataPoints = 500
 simulationTime = macros.min2nano(10.)
 samplingTime = simulationTime / (numDataPoints-1)
 
-# Graph existing data from csv files
-ONLY_DATASHADE_DATA = 0
+
 
 ## \defgroup Tutorials_5_0
 ##   @{
@@ -345,7 +351,7 @@ def run(saveFigures, case, show_plots, useDatashader):
     # from pre existing csv files.
     if ONLY_DATASHADE_DATA & DATESHADER_FOUND:
         print "graphing data via previous monte carlo data"
-        datashaderLibrary.graph(True)
+        datashaderLibrary.graph(True, saveFigures)
         return
     # A MonteCarlo simulation can be created using the `MonteCarlo` module.
     # This module is used to execute monte carlo simulations, and access
