@@ -307,7 +307,9 @@ ONLY_DATASHADE_DATA = 0
 # ![RW Speeds History](Images/Scenarios/scenarioMonteCarloAttRW_RWSpeed.png "RW Speeds history")
 # ![RW Voltage History](Images/Scenarios/scenarioMonteCarloAttRW_RWVoltage.png "RW Voltage history")
 #
-# If using datashader library on larger amount of data, you can generate images such as the following:
+# If using datashader library on larger amount of data, you can generate images such as the following.  To install
+# the datashader capability, see the [optional installation instructions](@ref installOptionalPackages).
+#
 # ![Default color shading](Images/doc/attErrorInertial3DMsg_default.png "Default color shading")
 # ![GNU Color shading](Images/doc/attErrorInertial3DMsg_gnu.png "GNU color shading")
 # ![Jet color Shading](Images/doc/attErrorInertial3DMsg_jet.png "Jet color shading")
