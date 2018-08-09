@@ -69,44 +69,44 @@ retainedDataList = []
 globalDataFrames = []
 
 # x and y ranges per graph
-graphDimensions = []
+graphRanges = []
 
 yAxisLabelList = []
 
 subDirectories = []
 
-figureResolution = (0,0)
+graphDimensions = []
 
-colorScheme = ""
+colors = []
+
+datashadeImageResolution = (0, 0)
+
 densityHow = ""
+holoviewsImageResolution = 0
 
-
-whichGraphingStyle = ""
+whichGraphingStyle = "holoviews_datashader"
 
 # interface for other sims. maybe have this be a list of tuples with correspond axis names with each name.
-def configure(dataConfiguration, directories, color,
-              graphingTechnique, dimensions):
+def configure(dataConfiguration, directories, graphingTechnique = "holoviews_datashader",
+              htmlName = "mc_graphs.html"):
 
     for graph in dataConfiguration:
         retainedDataList.append(graph.dataIndex)
         globalDataFrames.append(pd.DataFrame())
         yAxisLabelList.append(graph.yaxislabel)
-        graphDimensions.append(graph.dimensions)
+        graphRanges.append(graph.dimensions)
+        colors.append(graph.color)
+        graphDimensions.append(graph.resolution)
 
     for subdirectory in directories:
         subDirectories.append(subdirectory)
 
-    global colorScheme
-    colorScheme = color
-
     global whichGraphingStyle
     whichGraphingStyle = graphingTechnique
 
-    global figureResolution
-    figureResolution = dimensions
+    output_file("data" + subDirectories [1] + htmlName)
 
-
-
+    print whichGraphingStyle
 # This method is used to populate the dataframe for the retained data of a simulation.
 # It is called once for each run of the simulation, overlapping the plots
 # A small optimization if the user wants the data to take up a little less space, is to
@@ -125,8 +125,6 @@ def writeDirectories():
     for subDirectoryName in subDirectories:
         path = mainDirectoryName + subDirectoryName
         systemWriteDirectories(path)
-
-    output_file("data/mc1_assets/mc1_graphs.html")
 
 # Helper function for writing directories
 def systemWriteDirectories(path):
@@ -173,11 +171,11 @@ def graph(fromCSV, saveFigures):
 
     # TODO make this one liner with default arguments
     if fromCSV:
-        for data, yAxisLabel, dimensions in zip(retainedDataList, yAxisLabelList, graphDimensions):
-            configureGraph(data, [], yAxisLabel, fromCSV, saveFigures, dimensions)
+        for data, yAxisLabel, dimensions, color, graphDimension in zip(retainedDataList, yAxisLabelList, graphRanges, colors, graphDimensions):
+            configureGraph(data, [], yAxisLabel, fromCSV, saveFigures, dimensions, color, graphDimension)
     else:
-        for data, dataFrame, yAxisLabel, dimensions in zip(retainedDataList, globalDataFrames, yAxisLabelList, graphDimensions):
-            configureGraph(data, dataFrame, yAxisLabel, fromCSV, saveFigures, dimensions)
+        for data, dataFrame, yAxisLabel, dimensions, color, dimensions in zip(retainedDataList, globalDataFrames, yAxisLabelList, graphRanges, colors, graphDimensions):
+            configureGraph(data, dataFrame, yAxisLabel, fromCSV, saveFigures, dimensions, color, graphDimension)
 
 # This method reads data from the csv files, and converts them into dataframes. It currently plots
 # the data via holoviews framework, and datashades the plot. It passes this plot to the bokeh front end
@@ -197,14 +195,15 @@ def graph(fromCSV, saveFigures):
 #     color=[color, color, color], alpha=[0.3, 0.3, 0.3], line_width=2)
 #     output_file("data/mc1/"+data+".html")
 #     save(p)
-def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV, saveFigures, dimensions):
+def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV,
+                   saveFigures, ranges, color, dimension):
     # Read csv file and create a dataframe from it.
     # If the user doesn't want to write any data to disc, the user can not write any data
     # and instead just use the global dataframes to plot the data. However, writing to file
     # can be advantageous since you can toggle ONLY_GRAPH to skip all of the simulating and
     # solely graph the data.
     print "beginning graphing process", datetime.datetime.now()
-    setColorScheme()
+
     if fromCSV:
         df = pd.read_csv(
             "data/mc1_data/" + dataName + ".csv")
@@ -215,34 +214,33 @@ def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV, saveFigures, dimens
     df = concat_columns(df)
 
     if whichGraphingStyle == "holoviews_datashader":
-        holoviews_interface(dataName, df, yAxisLabel, saveFigures, dimensions)
+        holoviews_interface(dataName, df, yAxisLabel, saveFigures, ranges, color, dimension)
     elif whichGraphingStyle == "only_datashader":
-        datashade_interface(dataName, df, dimensions)
+        datashade_interface(dataName, df, ranges, color, dimension)
     elif whichGraphingStyle == "both":
-        holoviews_interface(dataName, df, yAxisLabel, saveFigures, dimensions)
-        datashade_interface(dataName, df, dimensions)
+        holoviews_interface(dataName, df, yAxisLabel, saveFigures, ranges, color, dimension)
+        datashade_interface(dataName, df, ranges, color, dimension)
 
-def setColorScheme():
+def getColorScheme(color):
     # Few lines to help with create different color maps.
     background = "black"
     cm = partial(colormap_select, reverse=(background != "black"))
     grays2 = cm([(i, i, i) for i in np.linspace(0, 255, 99)])
     grays2 += ["red"]
 
-    global colorScheme
-    if colorScheme == "jet":
-        colorScheme = jet
-    elif colorScheme == "viridis":
-        colorScheme = cm(viridis)
-    elif colorScheme == "GnBu":
-        colorScheme = GnBu9
-    elif colorScheme == "greys":
-        colorScheme = cm(Greys9, 0.25)
-    elif colorScheme == "fire":
-        colorScheme = cm(fire, 0.2)
+    if color == "jet":
+        return jet
+    elif color == "viridis":
+        return cm(viridis)
+    elif color == "GnBu":
+        return GnBu9
+    elif color == "greys":
+        return cm(Greys9, 0.25)
+    elif color == "fire":
+        return cm(fire, 0.2)
 
 
-def holoviews_interface(dataName, df, yAxisLabel, saveFigures, dimensions):
+def holoviews_interface(dataName, df, yAxisLabel, saveFigures, ranges, color, dimension):
 
 
     # Concat the columns so all of the columns are now in 2 column and have been concatanated
@@ -264,6 +262,7 @@ def holoviews_interface(dataName, df, yAxisLabel, saveFigures, dimensions):
     # Plot the columns (x,y)
     curves = hv.Curve(df)
 
+    colorScheme = getColorScheme(color)
     # Instantiate a renderer using bokeh's interface, and generating an html file
     renderer = hv.renderer('bokeh').instance(fig='html')
 
@@ -273,18 +272,18 @@ def holoviews_interface(dataName, df, yAxisLabel, saveFigures, dimensions):
     # passing a value for cmap within the datashade function call will change the color of the
     # plots in the html. See below for more examples of cmaps
     plot = renderer.get_plot(
-        datashade(curves, dynamic=False, cmap=colorScheme).opts(plot=dict(fig_size=1000, aspect='equal'))).state
+        datashade(curves, dynamic=False, cmap=colorScheme, width = dimension[0], height = dimension[1]).opts(plot=dict(aspect='equal', dpi = 4000))).state
     # plot = renderer.get_plot(datashade(curves, dynamic = False).opts(plot=dict(fig_size=1000, aspect='equal'))).state
 
-    plot.plot_width = figureResolution[0]
-    plot.plot_height = figureResolution[1]
+    plot.plot_width = dimension[0]
+    plot.plot_height = dimension[1]
 
     # If you want to zoom in on the image, set it here.
 
-    plot.x_range = Range1d(df.x.min() if dimensions[0][0] == 0 else dimensions[0][0], df.x.max() if dimensions[0][1] == 0 else \
-    dimensions[0][1])
-    plot.y_range = Range1d(df.y.min() if dimensions[1][0] == 0 else dimensions[1][0], df.y.max() if dimensions[1][1] == 0 else \
-    dimensions[1][1])
+    plot.x_range = Range1d(df.x.min() if ranges[0][0] == 0 else ranges[0][0], df.x.max() if ranges[0][1] == 0 else \
+    ranges[0][1])
+    plot.y_range = Range1d(df.y.min() if ranges[1][0] == 0 else ranges[1][0], df.y.max() if ranges[1][1] == 0 else \
+    ranges[1][1])
 
     # plot.x_range = Range1d(df.x.min(), df.x.max())
     # plot.y_range = Range1d(df.y.min(), df.y.max())
@@ -298,7 +297,7 @@ def holoviews_interface(dataName, df, yAxisLabel, saveFigures, dimensions):
         export_png(plot, mainDirectoryName + subDirectories[1] + dataName+".png")
 
     print "done graphing...", datetime.datetime.now()
-def datashade_interface(dataName, df, dimensions):
+def datashade_interface(dataName, df, ranges, color, dimension):
     #
     # NOW PLOTTING VIA SOLELY DATASHADER AND SAVING THE GRAPHS AS PNGS.
     #
@@ -312,12 +311,12 @@ def datashade_interface(dataName, df, dimensions):
     # export_image(stacked, data)
 
     # Set range of x and y axis (zooming via code)
-    x_range = df.x.min() if dimensions[0][0] == 0 else dimensions[0][0], df.x.max() if dimensions[0][1] == 0 else dimensions[0][1]
-    y_range = df.y.min() if dimensions[1][0] == 0 else dimensions[1][0], df.y.max() if dimensions[1][1] == 0 else dimensions[1][1]
+    x_range = df.x.min() if ranges[0][0] == 0 else ranges[0][0], df.x.max() if ranges[0][1] == 0 else ranges[0][1]
+    y_range = df.y.min() if ranges[1][0] == 0 else ranges[1][0], df.y.max() if ranges[1][1] == 0 else ranges[1][1]
 
     # Set the width and height of the images dimensions
-    height = figureResolution[1]
-    width = figureResolution[0]
+    height = dimension[1]
+    width = dimension[0]
 
     # Instantiate a canvas object to put the graphs on
     cvs = ds.Canvas(plot_height=height, plot_width=width, x_range=x_range, y_range=y_range)
@@ -331,6 +330,7 @@ def datashade_interface(dataName, df, dimensions):
     # How can be 'linear' 'log' or 'eq_hist'. Here is a collection of different calls
     # to create the same image with different color schemes
 
+    colorScheme = getColorScheme(color)
     create_image(agg, colorScheme, 'log', 'white', dataName)
 # Helper function to create an image based on agg, color, the function to determine depth
 # background and name of the file to export.

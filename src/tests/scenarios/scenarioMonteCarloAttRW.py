@@ -98,47 +98,51 @@ fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
 
 # set dataIndex, yaxislabel, and x and y range (dimensions) for each graph. Using (0,0) for either range will use the default max and min
 class DatashaderGraph:
-    def __init__(self, dataIndex, yaxislabel = "Y Value", dimensions = [(0,0), (0,0)]):
+    def __init__(self, dataIndex, yaxislabel = "Y Value", color = "default", graphRanges = [(0, 0), (0, 0)], dpi = 300, resolution = (800,400)):
         self.dataIndex = dataIndex
         self.yaxislabel = yaxislabel
-        self.dimensions = dimensions
+        self.dimensions = graphRanges
+        # Set the width, height of the graph. A 2:1 ratio is suggested. This is width / height of
+        # the pngs in pixel, or the width / height of the bokeh figures.
+        self.resolution = resolution
+        # datashader color. Can be a list of colors, or a predefined color scheme from the datashading interface:
+        # options: jet, viridis, GnBu, greys, fire.
+        # Or list of colors for least dense to most dense such as: ['green', 'yellow', 'red']
+        self.color = color
+        self.dpi = dpi
         print self
 
 
 
 # begin datashade configuration
 # List of tuples that consist of: (message index, corresponding y axis label for that data)
-datashaderDataList = [DatashaderGraph(dataIndex = attErrorConfigOutputDataName + ".sigma_BR", yaxislabel = "Attitude Error History", dimensions = [(0,3e+11),(0,0)]),
-                      DatashaderGraph(dataIndex = attErrorConfigOutputDataName + ".omega_BR_B", yaxislabel ="Attitude Tracking Error History", dimensions = [(1e+11,3e+11), (-0.01, 0.01)]),
-                      DatashaderGraph(dataIndex = rwMotorTorqueConfigOutputDataName + ".motorTorque", yaxislabel = "RW Motor Torque History"),
+datashaderDataList = [DatashaderGraph(dataIndex = attErrorConfigOutputDataName + ".sigma_BR", yaxislabel = "Attitude Error History", color = "fire", graphRanges= [(0, 3e+11), (0, 0)], dpi = 500),
+                      DatashaderGraph(dataIndex = attErrorConfigOutputDataName + ".omega_BR_B", yaxislabel ="Attitude Tracking Error History", graphRanges= [(1e+11, 3e+11), (-0.01, 0.01)], dpi = 320),
+                      DatashaderGraph(dataIndex = rwMotorTorqueConfigOutputDataName + ".motorTorque", yaxislabel = "RW Motor Torque History", color = "GnBu", resolution = (1600,800)),
                       DatashaderGraph(dataIndex = mrpControlConfigInputRWSpeedsName + ".wheelSpeeds", yaxislabel ="RW Wheel speeds history"),
-                      DatashaderGraph(dataIndex = fswRWVoltageConfigVoltageOutMsgName + ".voltage", yaxislabel ="RW Voltage History")]
+                      DatashaderGraph(dataIndex = fswRWVoltageConfigVoltageOutMsgName + ".voltage", yaxislabel ="RW Voltage History", dpi = 250)]
 
 # Set directories that the datashading library will generate. First element in this list is where
 # the csv files are saved, the second is where images, and html files are saved.
 datashaderDirectories = ["/mc1_data/", "/mc1_assets/"]
 
-# datashader color. Can be a list of colors, or a predefined color scheme from the datashading interface:
-# options: jet, viridis, GnBu, greys, fire.
-# Or list of colors for least dense to most dense such as: ['green', 'yellow', 'red']
-datashaderColor = "fire"
 
 # Set which graphing techniques the library uses. Options: 'holoviews_datashader', 'only_datashader', 'both'
-datashadeGraphType = "both"
+# If you want to plot just with datashader instead of holoviews, configure this variable and pass it in
+# the configure() methods as 'graphingTechnique = datashaderGraphType'.
+# datashaderGraphType = "both"
 
 # Graph existing data from csv files. Do NOT re run sim.
-ONLY_DATASHADE_DATA = 1
+ONLY_GRAPH_DATA = 1
 
-# Set the width, height of the graph. A 2:1 ratio is suggested. This is width / height of
-# the pngs in pixel, or the width / height of the bokeh figures.
-datashaderDimensions = (500, 200)
-
-
+# Set the html filename. Default is "mc_graphs.html"
+fileName = "monte_carlo_graphs.html"
 
 # set messages. will later need to set other things such as color, background, directory names, plotting type
-datashaderLibrary.configure(dataConfiguration=datashaderDataList, directories=datashaderDirectories,
-                            color = datashaderColor, graphingTechnique = datashadeGraphType,
-                            dimensions = datashaderDimensions)
+datashaderLibrary.configure(dataConfiguration=datashaderDataList,
+                            directories=datashaderDirectories,
+                            htmlName = fileName
+                            )
 
 # end datashade configuration
 ################################################################################################
@@ -373,7 +377,7 @@ def run(saveFigures, case, show_plots, useDatashader):
 
     # Set this macro to true if you want to only graph the libraries
     # from pre existing csv files.
-    if ONLY_DATASHADE_DATA & DATESHADER_FOUND:
+    if ONLY_GRAPH_DATA & DATESHADER_FOUND:
         print "graphing data via previous monte carlo data"
         datashaderLibrary.graph(True, saveFigures)
         return
