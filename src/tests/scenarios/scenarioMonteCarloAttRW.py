@@ -839,7 +839,7 @@ def plotSimAndSave(data, retentionPolicy):
     for pltName, plt in figureList.items():
         unitTestSupport.saveScenarioFigure(
             fileNameString + "_" + pltName
-            , plt, path, ".svg")
+            , plt, path, ".png")
 
     return
 
