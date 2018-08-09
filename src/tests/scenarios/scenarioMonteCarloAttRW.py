@@ -92,11 +92,14 @@ mrpControlConfigInputRWSpeedsName = "reactionwheel_output_states"
 sNavObjectOutputTransName = "simple_trans_nav_output"
 fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
 
+datashaderConfiguration = [(attErrorConfigOutputDataName + ".sigma_BR", "Attitude Error History"),
+                           (attErrorConfigOutputDataName + ".omega_BR_B", "Attitude Tracking Error History"),
+                           (rwMotorTorqueConfigOutputDataName + ".motorTorque","RW Motor Torque History"),
+                           (mrpControlConfigInputRWSpeedsName + ".wheelSpeeds", "RW Wheel speeds history"),
+                           (fswRWVoltageConfigVoltageOutMsgName + ".voltage", "RW Voltage History")]
 
 # set messages. will later need to set other things such as color, background, directory names, plotting type
-datashaderLibrary.setMessages([attErrorConfigOutputDataName + ".sigma_BR", attErrorConfigOutputDataName + ".omega_BR_B",
-                              rwMotorTorqueConfigOutputDataName + ".motorTorque", mrpControlConfigInputRWSpeedsName + ".wheelSpeeds",
-                              fswRWVoltageConfigVoltageOutMsgName + ".voltage"])
+datashaderLibrary.setMessages(datashaderConfiguration)
 
 
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]

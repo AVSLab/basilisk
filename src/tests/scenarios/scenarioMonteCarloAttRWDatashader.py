@@ -68,9 +68,9 @@ retainedDataList = []
 
 globalDataFrames = []
 
-# List of y axis labels, same order as globalDataFrames etc.
-yAxisLabelList = ["Attitude Error Sigma_br!!", "Attitude Error omage_br_b",
-                  "Reaction Wheel Speeds", "Flight Software Voltage Out", "Reaction Wheel Motor Torque"]
+yAxisLabelList = []
+
+
 mainDirectoryName = "data/"
 subDirectories = ["/mc1_data/", "/mc1_assets/"]
 
@@ -81,10 +81,11 @@ rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
 # interface for other sims. maybe have this be a list of tuples with correspond axis names with each name.
 
-def setMessages(names):
-    for name in names:
+def setMessages(configuration):
+    for name,yAxisName in configuration:
         retainedDataList.append(name)
         globalDataFrames.append(pd.DataFrame())
+        yAxisLabelList.append(yAxisName)
 
 # This method is used to populate the dataframe for the retained data of a simulation.
 # It is called once for each run of the simulation, overlapping the plots
