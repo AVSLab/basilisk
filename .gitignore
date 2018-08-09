@@ -3,6 +3,7 @@ CMakeFiles/
 CMakeCache.txt
 .DS_Store
 dist/
+.pytest_cache 
 docs/html
 docs/Images/Scenarios/*
 xml/*
