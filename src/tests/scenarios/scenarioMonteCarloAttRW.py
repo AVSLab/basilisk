@@ -35,7 +35,7 @@ import matplotlib.pyplot as plt
 
 DATESHADER_FOUND = True
 try:
-    import scenarioMonteCarloAttRWDatashader as datashaderLibrary
+    from src.utilities import datashaderGraphingInterface as datashaderLibrary
 except ImportError:
     print "Datashader library not found. Will use matplotlib"
     DATESHADER_FOUND = False
@@ -92,14 +92,24 @@ mrpControlConfigInputRWSpeedsName = "reactionwheel_output_states"
 sNavObjectOutputTransName = "simple_trans_nav_output"
 fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
 
-datashaderConfiguration = [(attErrorConfigOutputDataName + ".sigma_BR", "Attitude Error History"),
+# List of tuples that consist of: (message index, corresponding y axis label for that data)
+datashaderDataList = [(attErrorConfigOutputDataName + ".sigma_BR", "Attitude Error History"),
                            (attErrorConfigOutputDataName + ".omega_BR_B", "Attitude Tracking Error History"),
                            (rwMotorTorqueConfigOutputDataName + ".motorTorque","RW Motor Torque History"),
                            (mrpControlConfigInputRWSpeedsName + ".wheelSpeeds", "RW Wheel speeds history"),
                            (fswRWVoltageConfigVoltageOutMsgName + ".voltage", "RW Voltage History")]
 
+# Set directories that the datashading library will generate. First element in this list is where
+# the csv files are saved, the second is where images, and html files are saved.
+datashaderDirectories = ["/mc1_data/", "/mc1_assets/"]
+
+# datashader color. Can be a list of colors, or a predefined color scheme from the datashading interface:
+# options: jet, viridis, GnBu, greys, fire.
+# Or list of colors for least dense to most dense such as: ['green', 'yellow', 'red']
+datashaderColor = "fire"
 # set messages. will later need to set other things such as color, background, directory names, plotting type
-datashaderLibrary.setMessages(datashaderConfiguration)
+datashaderLibrary.configure(dataConfiguration=datashaderDataList, directories=datashaderDirectories,
+                            color = datashaderColor)
 
 
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]

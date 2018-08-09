@@ -64,28 +64,31 @@ import matplotlib.cbook as cbook
 from bokeh.plotting import figure, show, output_file
 from bokeh.models import Range1d
 
+mainDirectoryName = "data/"
+
 retainedDataList = []
 
 globalDataFrames = []
 
 yAxisLabelList = []
 
+subDirectories = []
 
-mainDirectoryName = "data/"
-subDirectories = ["/mc1_data/", "/mc1_assets/"]
-
-rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
-
-
+colorScheme = ""
 
 
 # interface for other sims. maybe have this be a list of tuples with correspond axis names with each name.
-
-def setMessages(configuration):
-    for name,yAxisName in configuration:
+def configure(dataConfiguration, directories, color):
+    for name,yAxisName in dataConfiguration:
         retainedDataList.append(name)
         globalDataFrames.append(pd.DataFrame())
         yAxisLabelList.append(yAxisName)
+
+    for subdirectory in directories:
+        subDirectories.append(subdirectory)
+
+    global colorScheme
+    colorScheme = color
 
 # This method is used to populate the dataframe for the retained data of a simulation.
 # It is called once for each run of the simulation, overlapping the plots
@@ -223,14 +226,39 @@ def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV, saveFigures):
 
     # Instantiate a renderer using bokeh's interface, and generating an html file
     renderer = hv.renderer('bokeh').instance(fig='html')
+    # set color scheme by whats passed in from the sim.
+
+    # create_image(agg, ['green', 'yellow', 'red'], 'log', 'none', dataName+"_green_yellow_red")
+    # create_image(agg, ['green', 'yellow', 'red'], 'log', 'black', dataName+"_green_yellow_red_blackbg")
+    # create_image(agg, cm(Greys9, 0.25), "eq_hist", 'black', dataName+"greys9_blackbg")
+    # create_image(agg, cm(fire, 0.2), 'log','black', dataName+"_fire_blackbg")
+    # create_image(agg, ['aqua', 'lime', 'fuchsia', 'yellow'], 'log','black', dataName+"_aqua_lime_blackbg")
+    # create_image(agg, GnBu9, 'log', 'black', dataName+"_gnu_blackbg")
+
+    # create_image(agg, jet, 'log', 'black', dataName+"jet_blackbg")
+    # create_image(agg, cm(viridis), "eq_hist", 'white', dataName+"_viridis")
+
+
+    global colorScheme
+    if colorScheme == "jet":
+        colorScheme = jet
+    elif colorScheme == "viridis":
+        colorScheme = cm(viridis)
+    elif colorScheme == "GnBu":
+        colorScheme = GnBu9
+    elif colorScheme == "greys":
+        colorScheme = cm(Greys9, 0.25)
+    elif colorScheme == "fire":
+        colorScheme = cm(fire, 0.2)
+
 
     # Pass a datashaded version of the layout to the get_plot function, to return a bokeh figure
     # called 'plot'. Then set the figure details such as title, dimensions, axis labels etc.
     # Then finally, show the plot in the browser.
     # passing a value for cmap within the datashade function call will change the color of the
     # plots in the html. See below for more examples of cmaps
-    # plot = renderer.get_plot(datashade(curves, dynamic = False, cmap= cm(viridis)).opts(plot=dict(fig_size=1000, aspect='equal'))).state
-    plot = renderer.get_plot(datashade(curves, dynamic = False).opts(plot=dict(fig_size=1000, aspect='equal'))).state
+    plot = renderer.get_plot(datashade(curves, dynamic = False, cmap= colorScheme).opts(plot=dict(fig_size=1000, aspect='equal'))).state
+    # plot = renderer.get_plot(datashade(curves, dynamic = False).opts(plot=dict(fig_size=1000, aspect='equal'))).state
 
     plot.plot_width = 800
 
@@ -275,28 +303,8 @@ def configureGraph(dataName, dataFrame, yAxisLabel, fromCSV, saveFigures):
 
     # How can be 'linear' 'log' or 'eq_hist'. Here is a collection of different calls
     # to create the same image with different color schemes
-    # create_image(agg, ['green', 'yellow', 'red'], 'log', 'none', dataName+"_green_yellow_red")
-    # create_image(agg, ['green', 'yellow', 'red'], 'log', 'black', dataName+"_green_yellow_red_blackbg")
-    # create_image(agg, cm(Greys9, 0.25), "eq_hist", 'black', dataName+"greys9_blackbg")
-    # create_image(agg, cm(fire, 0.2), 'log','black', dataName+"_fire_blackbg")
-    # create_image(agg, ['aqua', 'lime', 'fuchsia', 'yellow'], 'log','black', dataName+"_aqua_lime_blackbg")
-    # create_image(agg, GnBu9, 'log', 'black', dataName+"_gnu_blackbg")
-    # create_image(agg, jet, 'log', 'black', dataName+"jet_blackbg")
-    # create_image(agg, cm(viridis), "eq_hist", 'white', dataName+"_viridis")
 
-    # Specific naming for doxygen documents:
-    # if dataName == rwMotorTorqueConfigOutputDataName_motorTorque:
-    #     dataName = "scenarioMonteCarloAttRW_RWMotorTorque"
-    # elif dataName == attErrorConfigOutputDataName_sigma_BR:
-    #     dataName = "scenarioMonteCarloAttRW_AttitudeError"
-    # elif dataName == attErrorConfigOutputDataName_omega_BR_B:
-    #     dataName = "scenarioMonteCarloAttRW_RateTrackingError"
-    # elif dataName == mrpControlConfigInputRWSpeedsName_wheelSpeeds:
-    #     dataName = "scenarioMonteCarloAttRW_RWSpeed"
-    # elif dataName == fswRWVoltageConfigVoltageOutMsgName_voltage:
-    #     dataName = "scenarioMonteCarloAttRW_RWVoltage"
-
-    create_image(agg, 'default', 'eq_hist', 'white', dataName, saveFigures)
+    create_image(agg, colorScheme, 'eq_hist', 'white', dataName, saveFigures)
 
     print "done graphing...", datetime.datetime.now()
 
