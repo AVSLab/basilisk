@@ -25,11 +25,7 @@
 
 
 import inspect
-import math
 import os
-import numpy as np
-import shutil
-import matplotlib.pyplot as plt
 import datetime
 
 # @cond DOXYGEN_IGNORE
@@ -54,8 +50,10 @@ from datashader.colors import colormap_select, Greys9, viridis
 from colorcet import fire
 from bokeh.palettes import GnBu9
 from matplotlib.cm import jet
+
 # This import is for reaggregating data when zooming if that is ever pursued
 # from datashader.bokeh_ext import InteractiveImage
+
 from itertools import izip, count
 from bokeh.plotting import show, output_file
 from bokeh.models import Range1d
@@ -68,7 +66,7 @@ retainedDataList = []
 globalDataFrames = []
 
 listOfGraphs = []
-subDirectories = []
+subDirectories = ["/mc1_data/", "/mc1_assets/"]
 
 densityHow = ""
 holoviewsImageResolution = 0
@@ -76,7 +74,7 @@ holoviewsImageResolution = 0
 whichGraphingStyle = "holoviews_datashader"
 
 class DatashaderGraph:
-    def __init__(self, dataIndex, yaxislabel = "Y Value", xaxislabel = "Time", title = "Monte Carlo Results", color = "default", graphRanges = [(0, 0), (0, 0)], dpi = 300, dimension = (800, 400)):
+    def __init__(self, dataIndex, yaxislabel = "Y Value", xaxislabel = "Time", title = "", color = "default", graphRanges = [(0, 0), (0, 0)], dpi = 300, dimension = (800, 400)):
         self.dataIndex = dataIndex
         self.yaxislabel = yaxislabel
         self.xaxislabel = xaxislabel
@@ -94,8 +92,8 @@ class DatashaderGraph:
 
 
 # interface for other sims. maybe have this be a list of tuples with correspond axis names with each name.
-def configure(dataConfiguration, directories, graphingTechnique = "holoviews_datashader",
-              htmlName = "mc_graphs.html"):
+def configure(dataConfiguration, graphingTechnique = "holoviews_datashader",
+              htmlName = "mc_graphs.html", directories = ["/mc1_data/", "/mc1_assets/"]):
 
     global listOfGraphs
     listOfGraphs = dataConfiguration
@@ -104,8 +102,11 @@ def configure(dataConfiguration, directories, graphingTechnique = "holoviews_dat
         retainedDataList.append(graph.dataIndex)
         globalDataFrames.append(pd.DataFrame())
 
-    for subdirectory in directories:
-        subDirectories.append(subdirectory)
+    global subDirectories
+    if directories != subDirectories:
+        subDirectories = []
+        for subdirectory in directories:
+            subDirectories.append(subdirectory)
 
     global whichGraphingStyle
     whichGraphingStyle = graphingTechnique

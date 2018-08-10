@@ -852,6 +852,9 @@ def plotSimAndSave(data, retentionPolicy):
 
     return
 
+
+################################################################
+# DATASHDER CODE
 def datashaderDriver(saveFigures):
     if DATASHADER_FOUND == False:
         print "datashader library not found"
@@ -884,11 +887,15 @@ def configureDatashader():
         Graph(dataIndex=mrpControlConfigInputRWSpeedsName + ".wheelSpeeds", yaxislabel="RW Speed (RPM)",
               title="RW Wheel speeds history"),
         Graph(dataIndex=fswRWVoltageConfigVoltageOutMsgName + ".voltage", yaxislabel="RW Voltage (V)",
-              title="RW Voltage History", xaxislabel="Time [nanoseconds]", dpi=350)]
+              xaxislabel="Time [nanoseconds]", dpi=350)]
+
+    # Below are some optional settings you can configure. To set them, uncomment the
+    # the declaration line, and uncomment the line in the datashaderLibrary.configure(...) method below.
 
     # Set directories that the datashading library will generate. First directory name in this list is where
     # the csv files are saved, the second is where images, and html files are saved.
-    datashaderDirectories = ["/mc1_data/", "/mc1_assets/"]
+    # By default these are: `/mc1_data/` and `/mc1_assets/`
+    # datashaderDirectories = ["/mc1_data_files/", "/mc1_assets_images/"]
 
     # Set which graphing techniques the library uses. Options: 'holoviews_datashader', 'only_datashader', 'both'.
     # The holoviews_datashader option allows the graph to have dyanmically generated axis
@@ -903,12 +910,13 @@ def configureDatashader():
     # fileName = "monte_carlo_graphs.html"
 
     # set messages. will later need to set other things such as background
-    datashaderLibrary.configure(dataConfiguration=datashaderDataList,
-                                directories=datashaderDirectories
+    datashaderLibrary.configure(dataConfiguration=datashaderDataList
+                                # ,directories=datashaderDirectories
                                 # ,graphingTechnique = datashaderGraphType
                                 # ,fileName = "monte_carlo_graphs.html"
                                 )
-
+# END DATASHADER CODE
+################################################################
 #
 # This statement below ensures that the unit test script can be run as a
 # # stand-along python script
@@ -917,5 +925,5 @@ if __name__ == "__main__":
     run(  True        # save figures to file -> for datashader this implies the csv files will be written
         , 1            # Case 1 is normal MC, case 2 is initial condition run
         , True         # show_plots. If this is true, using datashader files will be saved. to show datashade graphs, files must be saved
-        , False         # use datashading library - matplotlib will not be used
+        , True         # use datashading library - matplotlib will not be used
        )
