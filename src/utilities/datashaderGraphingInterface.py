@@ -57,7 +57,9 @@ from matplotlib.cm import jet
 from itertools import izip, count
 from bokeh.plotting import show, output_file
 from bokeh.models import Range1d
-from bokeh.io import export_png
+
+# This is only for the phantomjs framework
+# from bokeh.io import export_png
 
 mainDirectoryName = "data/"
 
@@ -300,8 +302,9 @@ def holoviews_interface(dataName, df, yAxisLabel, xAxisLabel, saveFigures, range
     plot.yaxis.axis_label = yAxisLabel
     show(plot)
 
-    if saveFigures:
-        export_png(plot, mainDirectoryName + subDirectories[1] + dataName+".png")
+    # Only use this if using the phantomjs framework. (not currently supported)
+    # if saveFigures:
+    #     export_png(plot, mainDirectoryName + subDirectories[1] + dataName+".png")
 
     print "done graphing...", datetime.datetime.now()
 def datashade_interface(dataName, df, ranges, color, dimension):
