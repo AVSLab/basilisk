@@ -478,7 +478,7 @@ def run(saveFigures, case, show_plots, useDatashader):
         # And possibly show the plots
         if show_plots:
             if useDatashader:
-                print "Test conclused, showing plots now via datashader"
+                print "Test concluded, showing plots now via datashader"
                 datashaderDriver(saveFigures)
             else:
                 print "Test concluded, showing plots now via matplot..."
@@ -922,8 +922,8 @@ def configureDatashader():
 # # stand-along python script
 #
 if __name__ == "__main__":
-    run(  True        # save figures to file -> for datashader this implies the csv files will be written
+    run(  False        # save figures to file -> for datashader this implies the csv files will be written
         , 1            # Case 1 is normal MC, case 2 is initial condition run
         , True         # show_plots. If this is true, using datashader files will be saved. to show datashade graphs, files must be saved
-        , True         # use datashading library - matplotlib will not be used
+        , False         # use datashading library - matplotlib will not be used
        )
