@@ -221,13 +221,14 @@ def configureGraph(dataName, fromCSV, dataFrame, graph, saveFigures):
     # solely graph the data.
     print "beginning graphing process", datetime.datetime.now()
 
+    # TODO make sure reading from file is still working as expected
     if fromCSV:
         df = pd.read_csv(
-            "data/" + subDirectories[0] + dataName + ".csv")
+            "data/" + subDirectories[0] + dataName + ".csv", index_col=False)
     else:
         df = dataFrame
 
-    df[0] = df[0]  * macros.NANO2SEC
+    df[0] = df[0]  * graph.macro
 
     df = concat_columns(df)
 

@@ -903,10 +903,10 @@ def configureDatashader():
     datashaderDataList = [
         Graph(dataIndex=attErrorConfigOutputDataName + ".sigma_BR", yaxislabel="Attitude error (sigma)",
               title="Attitude Error History (Custom x range)", xaxislabel="Time [seconds]", color="fire",
-              graphRanges=[(0, 300), (0, 0)], dpi=400),
+              graphRanges=[(0, 8), (0, 0)], dpi=400, macro=macros.NANO2MIN),
         Graph(dataIndex=attErrorConfigOutputDataName + ".omega_BR_B", yaxislabel="Rate Tracking Error (rad/s)",
               title="Attitude Tracking Error History (Custom x and y range)",
-              graphRanges=[(100, 300), (-0.01, 0.01)], dpi=500),
+              graphRanges=[(1, 3), (-0.01, 0.01)], dpi=500, macro = macros.NANO2MIN),
         Graph(dataIndex=rwMotorTorqueConfigOutputDataName + ".motorTorque", yaxislabel="Motor Torque (Nm)",
               title="RW Motor Torque History (custom image size)", color="GnBu", dimension=(800, 400)),
         Graph(dataIndex=mrpControlConfigInputRWSpeedsName + ".wheelSpeeds", yaxislabel="RW Speed (RPM)",
