@@ -304,11 +304,11 @@ samplingTime = simulationTime / (numDataPoints-1)
 # ~~~~~~~~~~~~~~~
 #
 # The resulting simulation illustrations are shown below.
-# ![MRP Attitude Error History](Images/Scenarios/scenarioMonteCarloAttRW_AttitudeError.png "Attitude Error history")
-# ![Rate Tracking Error History](Images/Scenarios/scenarioMonteCarloAttRW_RateTrackingError.png "Rate Tracking Error history")
-# ![RW Motor Torque History](Images/Scenarios/scenarioMonteCarloAttRW_RWMotorTorque.png "RW Motor Torque history")
-# ![RW Speeds History](Images/Scenarios/scenarioMonteCarloAttRW_RWSpeed.png "RW Speeds history")
-# ![RW Voltage History](Images/Scenarios/scenarioMonteCarloAttRW_RWVoltage.png "RW Voltage history")
+# ![MRP Attitude Error History](Images/Scenarios/scenarioMonteCarloAttRW_AttitudeError.svg "Attitude Error history")
+# ![Rate Tracking Error History](Images/Scenarios/scenarioMonteCarloAttRW_RateTrackingError.svg "Rate Tracking Error history")
+# ![RW Motor Torque History](Images/Scenarios/scenarioMonteCarloAttRW_RWMotorTorque.svg "RW Motor Torque history")
+# ![RW Speeds History](Images/Scenarios/scenarioMonteCarloAttRW_RWSpeed.svg "RW Speeds history")
+# ![RW Voltage History](Images/Scenarios/scenarioMonteCarloAttRW_RWVoltage.svg "RW Voltage history")
 #
 # If using datashader library on larger amount of data, you can generate images such as the following.  To install
 # the datashader capability, see the [optional installation instructions](@ref installOptionalPackages).
