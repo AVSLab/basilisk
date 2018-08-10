@@ -99,11 +99,11 @@ fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
 
 # begin datashade configuration
 # List of tuples that consist of: (message index, corresponding y axis label for that data)
-datashaderDataList = [datashaderLibrary.DatashaderGraph(dataIndex = attErrorConfigOutputDataName + ".sigma_BR", yaxislabel = "Attitude Error History", color = "fire", graphRanges= [(0, 3e+11), (0, 0)], dpi = 500),
-                      datashaderLibrary.DatashaderGraph(dataIndex = attErrorConfigOutputDataName + ".omega_BR_B", yaxislabel ="Attitude Tracking Error History", graphRanges= [(1e+11, 3e+11), (-0.01, 0.01)], dpi = 320),
-                      datashaderLibrary.DatashaderGraph(dataIndex = rwMotorTorqueConfigOutputDataName + ".motorTorque", yaxislabel = "RW Motor Torque History", color = "GnBu", dimension= (1600, 800)),
-                      datashaderLibrary.DatashaderGraph(dataIndex = mrpControlConfigInputRWSpeedsName + ".wheelSpeeds", yaxislabel ="RW Wheel speeds history"),
-                      datashaderLibrary.DatashaderGraph(dataIndex = fswRWVoltageConfigVoltageOutMsgName + ".voltage", yaxislabel ="RW Voltage History", dpi = 250)]
+datashaderDataList = [datashaderLibrary.DatashaderGraph(dataIndex = attErrorConfigOutputDataName + ".sigma_BR", yaxislabel = "Attitude error (sigma)",title = "Attitude Error History", xaxislabel = "Time [nanoseconds]", color = "fire", graphRanges= [(0, 3e+11), (0, 0)], dpi = 400),
+                      datashaderLibrary.DatashaderGraph(dataIndex = attErrorConfigOutputDataName + ".omega_BR_B", yaxislabel = "Rate Tracking Error (rad/s)", title ="Attitude Tracking Error History", graphRanges= [(1e+11, 3e+11), (-0.01, 0.01)], dpi = 500),
+                      datashaderLibrary.DatashaderGraph(dataIndex = rwMotorTorqueConfigOutputDataName + ".motorTorque", yaxislabel = "Motor Torque (Nm)", title = "RW Motor Torque History", color = "GnBu", dimension= (1600, 800)),
+                      datashaderLibrary.DatashaderGraph(dataIndex = mrpControlConfigInputRWSpeedsName + ".wheelSpeeds", yaxislabel = "RW Speed (RPM)", title ="RW Wheel speeds history"),
+                      datashaderLibrary.DatashaderGraph(dataIndex = fswRWVoltageConfigVoltageOutMsgName + ".voltage", yaxislabel = "RW Voltage (V)", title ="RW Voltage History", xaxislabel = "Time [nanoseconds]", dpi = 250)]
 
 # Set directories that the datashading library will generate. First element in this list is where
 # the csv files are saved, the second is where images, and html files are saved.

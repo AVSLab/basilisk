@@ -77,9 +77,11 @@ holoviewsImageResolution = 0
 whichGraphingStyle = "holoviews_datashader"
 
 class DatashaderGraph:
-    def __init__(self, dataIndex, yaxislabel = "Y Value", color = "default", graphRanges = [(0, 0), (0, 0)], dpi = 300, dimension = (800, 400)):
+    def __init__(self, dataIndex, yaxislabel = "Y Value", xaxislabel = "Time", title = "Monte Carlo Results", color = "default", graphRanges = [(0, 0), (0, 0)], dpi = 300, dimension = (800, 400)):
         self.dataIndex = dataIndex
         self.yaxislabel = yaxislabel
+        self.xaxislabel = xaxislabel
+        self.title = title
         self.ranges = graphRanges
         # Set the width, height of the graph. A 2:1 ratio is suggested. This is width / height of
         # the pngs in pixel, or the width / height of the bokeh figures.
@@ -222,11 +224,11 @@ def configureGraph(dataName, fromCSV, dataFrame, graph, saveFigures):
     df = concat_columns(df)
 
     if whichGraphingStyle == "holoviews_datashader":
-        holoviews_interface(dataName, df, graph.yaxislabel, saveFigures, graph.ranges, graph.color, graph.dimension)
+        holoviews_interface(dataName, df, graph.yaxislabel, graph.xaxislabel, saveFigures, graph.ranges, graph.color, graph.dimension, graph.title)
     elif whichGraphingStyle == "only_datashader":
         datashade_interface(dataName, df, graph.ranges, graph.color, graph.dimension)
     elif whichGraphingStyle == "both":
-        holoviews_interface(dataName, df, graph.yaxislabel, saveFigures, graph.ranges, graph.color, graph.dimension)
+        holoviews_interface(dataName, df, graph.yaxislabel, graph.xaxislabel, saveFigures, graph.ranges, graph.color, graph.dimension, graph.title)
         datashade_interface(dataName, df, graph.ranges, graph.color, graph.dimension)
 
 def getColorScheme(color):
@@ -247,8 +249,7 @@ def getColorScheme(color):
     elif color == "fire":
         return cm(fire, 0.2)
 
-
-def holoviews_interface(dataName, df, yAxisLabel, saveFigures, ranges, color, dimension):
+def holoviews_interface(dataName, df, yAxisLabel, xAxisLabel, saveFigures, ranges, color, dimension, title):
 
 
     # Concat the columns so all of the columns are now in 2 column and have been concatanated
@@ -293,11 +294,9 @@ def holoviews_interface(dataName, df, yAxisLabel, saveFigures, ranges, color, di
     plot.y_range = Range1d(df.y.min() if ranges[1][0] == 0 else ranges[1][0], df.y.max() if ranges[1][1] == 0 else \
     ranges[1][1])
 
-    # plot.x_range = Range1d(df.x.min(), df.x.max())
-    # plot.y_range = Range1d(df.y.min(), df.y.max())
 
-    plot.title.text = dataName
-    plot.xaxis.axis_label = "Time"
+    plot.title.text = title
+    plot.xaxis.axis_label = xAxisLabel
     plot.yaxis.axis_label = yAxisLabel
     show(plot)
 
