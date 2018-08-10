@@ -46,7 +46,6 @@ import numpy as np
 import pandas as pd
 import holoviews as hv
 import datashader as ds
-from bokeh.plotting import show
 import datashader.transfer_functions as tf
 from datashader.utils import export_image
 from holoviews.operation.datashader import datashade
@@ -58,7 +57,7 @@ from matplotlib.cm import jet
 # This import is for reaggregating data when zooming if that is ever pursued
 # from datashader.bokeh_ext import InteractiveImage
 from itertools import izip, count
-from bokeh.plotting import figure, show, output_file
+from bokeh.plotting import show, output_file
 from bokeh.models import Range1d
 from bokeh.io import export_png
 

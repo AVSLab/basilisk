@@ -321,7 +321,6 @@ def saveScenarioFigure(figureName, plt, path, extension = ".svg"):
                 raise
     plt.savefig(texFileName, transparent=True)
 
-
 def saveFigurePDF(figureName, plt, path):
     figFileName = path+figureName+".pdf"
     if not os.path.exists(os.path.dirname(figFileName)):
