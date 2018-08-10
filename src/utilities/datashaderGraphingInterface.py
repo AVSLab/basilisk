@@ -41,6 +41,7 @@ bskPath = __path__[0]
 import numpy as np
 import pandas as pd
 import holoviews as hv
+from Basilisk.utilities import macros
 import datashader as ds
 import datashader.transfer_functions as tf
 from datashader.utils import export_image
@@ -67,6 +68,9 @@ retainedDataList = []
 
 globalDataFrames = []
 
+
+
+timeUnit = "seconds";
 listOfGraphs = []
 subDirectories = ["/mc1_data/", "/mc1_assets/"]
 
@@ -76,12 +80,14 @@ holoviewsImageResolution = 0
 whichGraphingStyle = "holoviews_datashader"
 
 class DatashaderGraph:
-    def __init__(self, dataIndex, yaxislabel = "Y Value", xaxislabel = "Time", title = "", color = "default", graphRanges = [(0, 0), (0, 0)], dpi = 300, dimension = (800, 400)):
+    def __init__(self, dataIndex, yaxislabel = "Y Value", xaxislabel = "Time", title = "", color = "default",
+                 graphRanges = [(0, 0), (0, 0)], dpi = 300, dimension = (800, 400), macro = macros.NANO2SEC):
         self.dataIndex = dataIndex
         self.yaxislabel = yaxislabel
         self.xaxislabel = xaxislabel
         self.title = title
         self.ranges = graphRanges
+        self.macro = macro
         # Set the width, height of the graph. A 2:1 ratio is suggested. This is width / height of
         # the pngs in pixel, or the width / height of the bokeh figures.
         self.dimension = dimension
@@ -151,7 +157,6 @@ def updateDataframes(data, dataframe):
     # result = pd.concat([df, dataframe], axis = 1, sort = False)
 
     df = pd.DataFrame(data, columns=None)
-
     # Create a dataframe full of NaN values to append below the previous run and above the next run to append
     nandf = pd.DataFrame([np.nan])
     df = df.append(nandf, ignore_index=True)
@@ -222,6 +227,7 @@ def configureGraph(dataName, fromCSV, dataFrame, graph, saveFigures):
     else:
         df = dataFrame
 
+    df[0] = df[0]  * macros.NANO2SEC
 
     df = concat_columns(df)
 

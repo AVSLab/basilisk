@@ -93,7 +93,8 @@ sNavObjectOutputTransName = "simple_trans_nav_output"
 fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
 
 # If using datashader, set this to 1 to graph
-# from existing csv files. Otherwise, set this to 0.
+# from existing csv files. Otherwise, set this to 0. This is usually set in the configure()
+# method at the bottom of the file
 ONLY_GRAPH_DATA = 0
 
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
@@ -324,16 +325,18 @@ samplingTime = simulationTime / (numDataPoints-1)
 def run(saveFigures, case, show_plots, useDatashader):
     '''This function is called by the py.test environment.'''
 
+
+    # Configure graphs for datashader. Only call if the user has installed datashaders
+    if DATASHADER_FOUND:
+        configureDatashader()
+
+
     # Set this macro to true if you want to only graph the libraries
     # from pre existing csv files.
     if ONLY_GRAPH_DATA & DATASHADER_FOUND:
         print "Datashading from existing csv files"
         datashaderLibrary.graph(True, saveFigures)
         return
-
-    if DATASHADER_FOUND:
-        configureDatashader()
-
     # A MonteCarlo simulation can be created using the `MonteCarlo` module.
     # This module is used to execute monte carlo simulations, and access
     # retained data from previously executed MonteCarlo runs.
@@ -872,22 +875,6 @@ def datashaderDriver(saveFigures):
 def configureDatashader():
 
     # begin datashade configuration
-    Graph = datashaderLibrary.DatashaderGraph
-
-    # List of tuples that consist of: (message index, corresponding y axis label for that data)
-    datashaderDataList = [
-        Graph(dataIndex=attErrorConfigOutputDataName + ".sigma_BR", yaxislabel="Attitude error (sigma)",
-              title="Attitude Error History (Custom x range)", xaxislabel="Time [nanoseconds]", color="fire",
-              graphRanges=[(0, 3e+11), (0, 0)], dpi=400),
-        Graph(dataIndex=attErrorConfigOutputDataName + ".omega_BR_B", yaxislabel="Rate Tracking Error (rad/s)",
-              title="Attitude Tracking Error History (Custom x and y range)",
-              graphRanges=[(1e+11, 3e+11), (-0.01, 0.01)], dpi=500),
-        Graph(dataIndex=rwMotorTorqueConfigOutputDataName + ".motorTorque", yaxislabel="Motor Torque (Nm)",
-              title="RW Motor Torque History (custom image size)", color="GnBu", dimension=(1600, 800)),
-        Graph(dataIndex=mrpControlConfigInputRWSpeedsName + ".wheelSpeeds", yaxislabel="RW Speed (RPM)",
-              title="RW Wheel speeds history"),
-        Graph(dataIndex=fswRWVoltageConfigVoltageOutMsgName + ".voltage", yaxislabel="RW Voltage (V)",
-              xaxislabel="Time [nanoseconds]", dpi=350)]
 
     # Below are some optional settings you can configure. To set them, uncomment the
     # the declaration line, and uncomment the line in the datashaderLibrary.configure(...) method below.
@@ -909,6 +896,28 @@ def configureDatashader():
     # Would pass in as : `htmlName = fileName`
     # fileName = "monte_carlo_graphs.html"
 
+    Graph = datashaderLibrary.DatashaderGraph
+
+    # List of tuples that consist of: (message index, corresponding y axis label for that data).
+    # When setting graphRange, you can use (0,0) to use the default min / max of the values for either x or y.
+    datashaderDataList = [
+        Graph(dataIndex=attErrorConfigOutputDataName + ".sigma_BR", yaxislabel="Attitude error (sigma)",
+              title="Attitude Error History (Custom x range)", xaxislabel="Time [seconds]", color="fire",
+              graphRanges=[(0, 300), (0, 0)], dpi=400),
+        Graph(dataIndex=attErrorConfigOutputDataName + ".omega_BR_B", yaxislabel="Rate Tracking Error (rad/s)",
+              title="Attitude Tracking Error History (Custom x and y range)",
+              graphRanges=[(100, 300), (-0.01, 0.01)], dpi=500),
+        Graph(dataIndex=rwMotorTorqueConfigOutputDataName + ".motorTorque", yaxislabel="Motor Torque (Nm)",
+              title="RW Motor Torque History (custom image size)", color="GnBu", dimension=(800, 400)),
+        Graph(dataIndex=mrpControlConfigInputRWSpeedsName + ".wheelSpeeds", yaxislabel="RW Speed (RPM)",
+              title="RW Wheel speeds history"),
+        Graph(dataIndex=fswRWVoltageConfigVoltageOutMsgName + ".voltage", yaxislabel="RW Voltage (V)",
+              xaxislabel="Time [seconds]", dpi=350)]
+
+
+    global ONLY_GRAPH_DATA
+    ONLY_GRAPH_DATA = 0
+
     # set messages. will later need to set other things such as background
     datashaderLibrary.configure(dataConfiguration=datashaderDataList
                                 # ,directories=datashaderDirectories
@@ -925,5 +934,7 @@ if __name__ == "__main__":
     run(  False        # save figures to file -> for datashader this implies the csv files will be written
         , 1            # Case 1 is normal MC, case 2 is initial condition run
         , True         # show_plots. If this is true, using datashader files will be saved. to show datashade graphs, files must be saved
-        , False         # use datashading library - matplotlib will not be used
+
+          # THIS MUST BE FALSE BY DEFAULT
+        , True         # use datashading library - matplotlib will not be used
        )
