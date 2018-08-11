@@ -11,7 +11,9 @@ In order to run Basilisk, the following software will be necessary:
 * [GCC](https://gcc.gnu.org/)
 
 NOTE: the latest pytest is not compatible with all Basilisk modules. We are still investigating.  Be sure to pull version 3.6.1 for now using
-``` pip install pytest==3.6.1 ```
+``` 
+    pip install pytest==3.6.1 
+```
 
 ## Dependencies
 
