@@ -311,8 +311,8 @@ samplingTime = simulationTime / (numDataPoints-1)
 # ![RW Speeds History](Images/Scenarios/scenarioMonteCarloAttRW_RWSpeed.svg "RW Speeds history")
 # ![RW Voltage History](Images/Scenarios/scenarioMonteCarloAttRW_RWVoltage.svg "RW Voltage history")
 #
-# If using datashader library on larger amount of data, you can generate images such as the following.  To install
-# the datashader capability, see the [optional installation instructions](@ref installOptionalPackages).
+# If using `datashader` library on larger amount of data, you can generate images such as the following.  To install
+# the `datashader` capability, see the [optional installation instructions](@ref installOptionalPackages).
 #
 # ![Default color shading](Images/doc/attErrorInertial3DMsg_default.png "Default color shading")
 # ![GNU Color shading](Images/doc/attErrorInertial3DMsg_gnu.png "GNU color shading")
@@ -936,5 +936,5 @@ if __name__ == "__main__":
         , True         # show_plots. If this is true, using datashader files will be saved. to show datashade graphs, files must be saved
 
           # THIS MUST BE FALSE BY DEFAULT
-        , True         # use datashading library - matplotlib will not be used
+        , False         # use datashading library - matplotlib will not be used
        )
