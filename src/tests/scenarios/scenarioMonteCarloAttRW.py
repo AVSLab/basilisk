@@ -744,7 +744,7 @@ def plotSim(data, retentionPolicy):
     for idx in range(1,4):
         plt.plot(timeData, dataSigmaBR[:, idx],
                  label='Run ' + str(data["index"]) + ' $\sigma_'+str(idx)+'$')
-    plt.legend(loc='lower right')
+    # plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Error $\sigma_{B/R}$')
     figureList[pltName] = plt.figure(1)
@@ -757,7 +757,7 @@ def plotSim(data, retentionPolicy):
                  label='Run ' + str(data["index"]) + ' $\hat u_{s,'+str(idx)+'}$')
         plt.plot(timeData, dataRW[idx-1][:, 1],
                  label='Run ' + str(data["index"]) + ' $u_{s,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
+    # plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Motor Torque (Nm)')
     figureList[pltName] = plt.figure(2)
@@ -767,7 +767,7 @@ def plotSim(data, retentionPolicy):
     for idx in range(1,4):
         plt.plot(timeData, dataOmegaBR[:, idx],
                  label='Run ' + str(data["index"]) + ' $\omega_{BR,'+str(idx)+'}$')
-    plt.legend(loc='lower right')
+    # plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error (rad/s) ')
     figureList[pltName] = plt.figure(3)
@@ -777,7 +777,7 @@ def plotSim(data, retentionPolicy):
     for idx in range(1,len(rwOutName)+1):
         plt.plot(timeData, dataOmegaRW[:, idx]/macros.RPM,
                  label='Run ' + str(data["index"]) + ' $\Omega_{'+str(idx)+'}$')
-    plt.legend(loc='lower right')
+    # plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')
     figureList[pltName] = plt.figure(4)
@@ -787,7 +787,7 @@ def plotSim(data, retentionPolicy):
     for idx in range(1, len(rwOutName) + 1):
         plt.plot(timeData, dataVolt[:, idx],
                  label='Run ' + str(data["index"]) + ' $V_{' + str(idx) + '}$')
-    plt.legend(loc='lower right')
+    # plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Voltage (V) ')
     figureList[pltName] = plt.figure(5)
