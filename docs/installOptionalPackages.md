@@ -3,7 +3,7 @@
 
 ## Graphing via datashader
 
-In order to run the full datashader capabilities of the  [Monte Carlo scenarios](@ref MonteCarloSimulation), you must run the following commands (either as sudo or with the --user flag):
+In order to run the full datashader capabilities of the  [Monte Carlo scenarios](@ref MonteCarloSimulation), you must run the following commands (either as sudo or with the `--user` flag):
 
 ```
 pip install datashader
