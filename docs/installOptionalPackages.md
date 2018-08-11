@@ -3,18 +3,19 @@
 
 ## Graphing via datashader
 
-In order to run the full datashader capabilities of the  [Monte Carlo scenarios](@ref MonteCarloSimulation), you must run the following commands (either as sudo or with the `--user` flag):
+In order to run the full `datashader` capabilities of the  [Monte Carlo scenarios](@ref MonteCarloSimulation), you must run the following commands (either as sudo or with the `--user` flag):
 
 ```
 pip install datashader
-pip install bokeh
-pip install pandas
 pip install holoviews
 ```
+Installing `datashader` will automatically install `bokeh` and `pandas` packages.  It is possible to use just `pandas` and `datashader` to output images of the data; however, without `holoviews` and `bokeh` there will be no graph axis, title, etc.
 
-It is possible to use just pandas and datashader to output images of the data; however, without holoviews and bokeh there will be no graph axis, title, etc.
 
-Here is a list of documents about the related packages to datashader:
+**macOS NOTE:** if you are using the built-in Python 2.7 installation, you may need to install with the `--user` flag and adjust your `PATH` variable to include `~/Library/Python/2.7/bin`
+
+
+Here is a list of documents about the related packages to `datashader`:
 
 * [Datashader.org](http://datashader.org/)
 * [Many notebook examples of using datashader](https://anaconda.org/jbednar/notebooks)
@@ -26,27 +27,27 @@ Here is a list of documents about the related packages to datashader:
 * [Running a bokeh server](https://bokeh.pydata.org/en/latest/docs/user_guide/server.html)
 * [Pandas dataframes](https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html)
 
-###Important features of datashader
+###Important features of `datashader`
 
-Incorporating Holoviews, datashader, and bokeh, we can now rasterize large amounts of data and plot them faster then using matplotlib. Theoretically, the number of points is now irrelevant while plotting. Using datashader, it is now possible to plot 5 million points in 30 seconds. Aggregating the data (2.5 gigs) took 1 minute to populate the dataframes, and 2 minutes to write to file (which is only needed if you want to avoid running the monte carlo again). To graph the existing without re-running the simulations, set ```ONLY_DATASHADE_DATA = 1``` in the [Monte Carlo scenarios](@ref MonteCarloSimulation). 
+Incorporating `holoviews`, `datashader`, and `bokeh`, we can now rasterize large amounts of data and plot them faster then using `matplotlib`. Theoretically, the number of points is now irrelevant while plotting. Using `datashader`, it is now possible to plot 5 million points in 30 seconds. Aggregating the data (2.5 gigs) took 1 minute to populate the dataframes, and 2 minutes to write to file (which is only needed if you want to avoid running the monte carlo again). To graph the existing without re-running the simulations, set `ONLY_DATASHADE_DATA = 1` in the [Monte Carlo scenarios](@ref MonteCarloSimulation). 
 
 In order to generate graphs that are zoomed in to a specific x and y range modify the following:
 
-For holoviews and bokeh interface:
+For `holoviews` and `bokeh` interface:
 
 ```
 plot.x_range = Range1d(df.x.min(), df.x.max())
 plot.y_range = Range1d(df.y.min(), df.y.max())
 ```
 
-The analagous lines to zoom using just datashader are:
+The analagous lines to zoom using just `datashader` are:
 
 ```
 x_range = df.x.min(), df.x.max()
 y_range = df.y.min(), df.y.max()
 ```
 
-After installing all of the packages, pytest will use those libraries by default. To change this back to matplotlib modify the pytest paramaters  in`test_scenarioMonteCarloAttRW.py` to the following:
+After installing all of the packages, `pytest` will use those libraries by default. To change this back to `matplotlib` modify the `pytest` paramaters  in `test_scenarioMonteCarloAttRW.py` to the following:
 
 ```
 @pytest.mark.parametrize("MCCases, datashader",
