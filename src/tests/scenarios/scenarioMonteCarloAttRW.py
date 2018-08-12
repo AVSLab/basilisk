@@ -480,7 +480,7 @@ def run(saveFigures, case, show_plots, useDatashader):
 
         # And possibly show the plots
         if show_plots:
-            if useDatashader:
+            if useDatashader and DATASHADER_FOUND:
                 print "Test concluded, showing plots now via datashader"
                 datashaderDriver(saveFigures)
             else:
@@ -510,7 +510,7 @@ def run(saveFigures, case, show_plots, useDatashader):
 
         # And possibly show the plots
         if show_plots:
-            if useDatashader:
+            if useDatashader and DATASHADER_FOUND:
                 print "Test conclused, showing plots now via datashader"
                 datashaderDriver(saveFigures)
             else:
