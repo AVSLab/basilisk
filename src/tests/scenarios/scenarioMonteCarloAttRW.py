@@ -83,6 +83,9 @@ from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispe
 NUMBER_OF_RUNS = 4
 VERBOSE = True
 
+global ONLY_GRAPH_DATA
+ONLY_GRAPH_DATA = 0
+
 # Here are the name of some messages that we want to retain or otherwise use
 inertial3DConfigOutputDataName = "guidanceInertial3D"
 attErrorConfigOutputDataName = "attErrorInertial3DMsg"
@@ -95,7 +98,7 @@ fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
 # If using datashader, set this to 1 to graph
 # from existing csv files. Otherwise, set this to 0. This is usually set in the configure()
 # method at the bottom of the file
-ONLY_GRAPH_DATA = 0
+ONLY_GRAPH_DATA = 1
 
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
@@ -326,17 +329,20 @@ def run(saveFigures, case, show_plots, useDatashader):
     '''This function is called by the py.test environment.'''
 
 
+    # Set this macro to true if you want to only graph the libraries
+    # from pre existing csv files.
+    if ONLY_GRAPH_DATA & DATASHADER_FOUND:
+        print "Datashading from existing csv files"
+        configureDatashader()
+        datashaderLibrary.graph(fromCSV = True, saveFigures = saveFigures)
+        return
+
     # Configure graphs for datashader. Only call if the user has installed datashaders
     if DATASHADER_FOUND:
         configureDatashader()
 
 
-    # Set this macro to true if you want to only graph the libraries
-    # from pre existing csv files.
-    if ONLY_GRAPH_DATA & DATASHADER_FOUND:
-        print "Datashading from existing csv files"
-        datashaderLibrary.graph(True, saveFigures)
-        return
+
     # A MonteCarlo simulation can be created using the `MonteCarlo` module.
     # This module is used to execute monte carlo simulations, and access
     # retained data from previously executed MonteCarlo runs.
@@ -890,7 +896,7 @@ def configureDatashader():
     # If you want to plot just with datashader instead of holoviews, configure this variable and pass it in
     # the configure() methods as 'graphingTechnique = datashaderGraphType'. By default it will use the
     # holoviews interface to graph.
-    # datashaderGraphType = "both"
+    datashaderGraphType = "both"
 
     # Set the html filename. Default is "mc_graphs.html"
     # Would pass in as : `htmlName = fileName`
@@ -900,12 +906,13 @@ def configureDatashader():
 
     # List of tuples that consist of: (message index, corresponding y axis label for that data).
     # When setting graphRange, you can use (0,0) to use the default min / max of the values for either x or y.
+    # Also, the range of x should be in the same unit of time as selected by user. (seconds by default)
     datashaderDataList = [
         Graph(dataIndex=attErrorConfigOutputDataName + ".sigma_BR", yaxislabel="Attitude error (sigma)",
               title="Attitude Error History (Custom x range)", xaxislabel="Time [seconds]", color="fire",
               graphRanges=[(0, 8), (0, 0)], dpi=400, macro=macros.NANO2MIN),
         Graph(dataIndex=attErrorConfigOutputDataName + ".omega_BR_B", yaxislabel="Rate Tracking Error (rad/s)",
-              title="Attitude Tracking Error History (Custom x and y range)",
+              title="Attitude Tracking Error History (Custom x and y range)", color = "fire",
               graphRanges=[(1, 3), (-0.01, 0.01)], dpi=500, macro = macros.NANO2MIN),
         Graph(dataIndex=rwMotorTorqueConfigOutputDataName + ".motorTorque", yaxislabel="Motor Torque (Nm)",
               title="RW Motor Torque History (custom image size)", color="GnBu", dimension=(800, 400)),
@@ -915,13 +922,12 @@ def configureDatashader():
               xaxislabel="Time [seconds]", dpi=350)]
 
 
-    global ONLY_GRAPH_DATA
-    ONLY_GRAPH_DATA = 0
+
 
     # set messages. will later need to set other things such as background
     datashaderLibrary.configure(dataConfiguration=datashaderDataList
                                 # ,directories=datashaderDirectories
-                                # ,graphingTechnique = datashaderGraphType
+                                ,graphingTechnique = datashaderGraphType
                                 # ,fileName = "monte_carlo_graphs.html"
                                 )
 # END DATASHADER CODE

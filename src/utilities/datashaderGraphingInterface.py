@@ -183,14 +183,6 @@ def saveDataframesToFile():
 # and graphs the corresponding csv file for each retained data
 def graph(fromCSV, saveFigures):
 
-    # TODO make this one liner with default arguments
-    # if fromCSV:
-    #     for data, yAxisLabel, dimensions, color, graphDimension in zip(retainedDataList, yAxisLabelList, graphRanges, colors, graphDimensions):
-    #         configureGraph(data, [], yAxisLabel, fromCSV, saveFigures, dimensions, color, graphDimension)
-    # else:
-    #     for data, dataFrame, yAxisLabel, dimensions, color, dimensions in zip(retainedDataList, globalDataFrames, yAxisLabelList, graphRanges, colors, graphDimensions):
-    #         configureGraph(data, dataFrame, yAxisLabel, fromCSV, saveFigures, dimensions, color, graphDimension)
-
     for graph, data, dataframe in zip(listOfGraphs, retainedDataList, globalDataFrames):
         configureGraph(dataFrame = dataframe if not fromCSV else [], dataName = data,
                        graph = graph, fromCSV = fromCSV, saveFigures = saveFigures)
@@ -221,14 +213,14 @@ def configureGraph(dataName, fromCSV, dataFrame, graph, saveFigures):
     # solely graph the data.
     print "beginning graphing process", datetime.datetime.now()
 
-    # TODO make sure reading from file is still working as expected
     if fromCSV:
         df = pd.read_csv(
             "data/" + subDirectories[0] + dataName + ".csv", index_col=False)
+        df['0'] = df['0'] * graph.macro
+
     else:
         df = dataFrame
-
-    df[0] = df[0]  * graph.macro
+        df[0] = df[0] * graph.macro
 
     df = concat_columns(df)
 
@@ -290,7 +282,7 @@ def holoviews_interface(dataName, df, yAxisLabel, xAxisLabel, saveFigures, range
     # passing a value for cmap within the datashade function call will change the color of the
     # plots in the html. See below for more examples of cmaps
     plot = renderer.get_plot(
-        datashade(curves, dynamic=False, cmap=colorScheme, width = dimension[0], height = dimension[1]).opts(plot=dict(aspect='equal', dpi = 4000))).state
+        datashade(curves, dynamic=False, cmap=colorScheme , width = dimension[0], height = dimension[1]).opts(plot=dict(aspect='equal', dpi = 4000))).state
     # plot = renderer.get_plot(datashade(curves, dynamic = False).opts(plot=dict(fig_size=1000, aspect='equal'))).state
 
     plot.plot_width = dimension[0]
@@ -314,6 +306,8 @@ def holoviews_interface(dataName, df, yAxisLabel, xAxisLabel, saveFigures, range
     #     export_png(plot, mainDirectoryName + subDirectories[1] + dataName+".png")
 
     print "done graphing...", datetime.datetime.now()
+
+# Function that creates datashaded images and saves them as png.
 def datashade_interface(dataName, df, ranges, color, dimension):
     #
     # NOW PLOTTING VIA SOLELY DATASHADER AND SAVING THE GRAPHS AS PNGS.
@@ -352,14 +346,16 @@ def datashade_interface(dataName, df, ranges, color, dimension):
 # Helper function to create an image based on agg, color, the function to determine depth
 # background and name of the file to export.
 def create_image(agg, color, how, background, name):
-    if color != 'default':
+    if color != None:
         img = tf.shade(agg, cmap=color, how=how)
     else:
         img = tf.shade(agg, how=how)
+
     if background != 'none':
         img = tf.set_background(img, background)
 
-    export_image(img, name+"_ds")
+    export_image(img, name+"_datashaded")
+
 # This method changes the shape of our dataframe from:
 # 0 1 2 3
 # 1 3 4 2
