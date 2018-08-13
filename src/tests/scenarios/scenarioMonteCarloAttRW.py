@@ -97,7 +97,7 @@ fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
 # If using datashader, set this to 1 to graph
 # from existing csv files. Otherwise, set this to 0. This is usually set in the configure()
 # method at the bottom of the file
-ONLY_GRAPH_DATA = 1
+ONLY_GRAPH_DATA = 0
 
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
@@ -327,20 +327,11 @@ samplingTime = simulationTime / (numDataPoints-1)
 def run(saveFigures, case, show_plots, useDatashader):
     '''This function is called by the py.test environment.'''
 
-
-    # Set this macro to true if you want to only graph the libraries
-    # from pre existing csv files.
-    if ONLY_GRAPH_DATA & DATASHADER_FOUND:
-        print "Datashading from existing csv files"
-        configureDatashader()
-        datashaderLibrary.graph(fromCSV = True)
-        return
-
-    # Configure graphs for datashader. Only call if the user has installed datashaders
     if DATASHADER_FOUND:
         configureDatashader()
 
-
+    if ONLY_GRAPH_DATA:
+        return
 
     # A MonteCarlo simulation can be created using the `MonteCarlo` module.
     # This module is used to execute monte carlo simulations, and access
@@ -425,7 +416,7 @@ def run(saveFigures, case, show_plots, useDatashader):
         retentionPolicy.setDataCallback(plotSimAndSave)
     if useDatashader & DATASHADER_FOUND:
         # plot, populate, write using datashader
-        retentionPolicy.setDataCallback(datashade)
+        retentionPolicy.setDataCallback(datashaderLibrary.plotSim)
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
     if case ==1:
@@ -762,12 +753,6 @@ def executeScenario(sim):
     sim.ConfigureStopTime(simulationTime)
     sim.ExecuteSimulation()
 
-# Called for every run, aggregate data via datashader
-def datashade(data, retentionPolicy):
-    if not DATASHADER_FOUND:
-        return
-    datashaderLibrary.plotSim(data, retentionPolicy)
-
 # This method is used to plot the retained data of a simulation.
 # It is called once for each run of the simulation, overlapping the plots
 def plotSim(data, retentionPolicy):
@@ -869,6 +854,9 @@ def configureDatashader():
 
     # begin datashade configuration
 
+    if not DATASHADER_FOUND:
+        return
+
     # Below are some optional settings you can configure. To set them, uncomment the
     # the declaration line, and uncomment the line in the datashaderLibrary.configure(...) method below.
 
@@ -909,15 +897,23 @@ def configureDatashader():
               xaxislabel="Time [seconds]", dpi=350)]
 
 
-    # Set whether or not the datashading library will save data to CSV files
-    datashaderLibrary.saveData = True
+    if not ONLY_GRAPH_DATA:
+        # Set whether or not the datashading library will save data to CSV files
+        # This cannot be true if youre graphing from existing data.
+        datashaderLibrary.saveData = True
 
     # set messages. will later need to set other things such as background
     datashaderLibrary.configure(dataConfiguration=datashaderDataList
                                 # ,directories=datashaderDirectories
-                                ,graphingTechnique = datashaderGraphType
+                                , graphingTechnique=datashaderGraphType
                                 # ,fileName = "monte_carlo_graphs.html"
                                 )
+
+    if ONLY_GRAPH_DATA:
+        print "Datashading from existing csv files"
+        datashaderLibrary.graph(fromCSV = True)
+        return
+
 # END DATASHADER CODE
 ################################################################
 #
@@ -929,5 +925,5 @@ if __name__ == "__main__":
         , 1            # Case 1 is normal MC, case 2 is initial condition run
         , True         # show_plots.
           # THIS MUST BE FALSE BY DEFAULT
-        , True         # use datashading library - matplotlib will not be used
+        , False         # use datashading library - matplotlib will not be used
        )
