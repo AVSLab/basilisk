@@ -68,9 +68,9 @@ retainedDataList = []
 
 globalDataFrames = []
 
+saveData = False
 
-
-timeUnit = "seconds";
+timeUnit = "seconds"
 listOfGraphs = []
 subDirectories = ["/mc1_data/", "/mc1_assets/"]
 
@@ -96,7 +96,6 @@ class DatashaderGraph:
         # Or list of colors for least dense to most dense such as: ['green', 'yellow', 'red']
         self.color = color
         self.dpi = dpi
-        print self
 
 
 # interface for other sims. maybe have this be a list of tuples with correspond axis names with each name.
@@ -121,7 +120,6 @@ def configure(dataConfiguration, graphingTechnique = "holoviews_datashader",
 
     output_file("data" + subDirectories [1] + htmlName)
 
-    print whichGraphingStyle
 # This method is used to populate the dataframe for the retained data of a simulation.
 # It is called once for each run of the simulation, overlapping the plots
 # A small optimization if the user wants the data to take up a little less space, is to
@@ -181,11 +179,11 @@ def saveDataframesToFile():
 
 # This method is the driver method for graphing all of the data. It loops through the retained data list (strings)
 # and graphs the corresponding csv file for each retained data
-def graph(fromCSV, saveFigures):
+def graph(fromCSV):
 
     for graph, data, dataframe in zip(listOfGraphs, retainedDataList, globalDataFrames):
         configureGraph(dataFrame = dataframe if not fromCSV else [], dataName = data,
-                       graph = graph, fromCSV = fromCSV, saveFigures = saveFigures)
+                       graph = graph, fromCSV = fromCSV)
 
 # This method reads data from the csv files, and converts them into dataframes. It currently plots
 # the data via holoviews framework, and datashades the plot. It passes this plot to the bokeh front end
@@ -205,7 +203,7 @@ def graph(fromCSV, saveFigures):
 #     color=[color, color, color], alpha=[0.3, 0.3, 0.3], line_width=2)
 #     output_file("data/mc1/"+data+".html")
 #     save(p)
-def configureGraph(dataName, fromCSV, dataFrame, graph, saveFigures):
+def configureGraph(dataName, fromCSV, dataFrame, graph):
     # Read csv file and create a dataframe from it.
     # If the user doesn't want to write any data to disc, the user can not write any data
     # and instead just use the global dataframes to plot the data. However, writing to file
@@ -225,11 +223,11 @@ def configureGraph(dataName, fromCSV, dataFrame, graph, saveFigures):
     df = concat_columns(df)
 
     if whichGraphingStyle == "holoviews_datashader":
-        holoviews_interface(dataName, df, graph.yaxislabel, graph.xaxislabel, saveFigures, graph.ranges, graph.color, graph.dimension, graph.title)
+        holoviews_interface(dataName, df, graph.yaxislabel, graph.xaxislabel, graph.ranges, graph.color, graph.dimension, graph.title)
     elif whichGraphingStyle == "only_datashader":
         datashade_interface(dataName, df, graph.ranges, graph.color, graph.dimension)
     elif whichGraphingStyle == "both":
-        holoviews_interface(dataName, df, graph.yaxislabel, graph.xaxislabel, saveFigures, graph.ranges, graph.color, graph.dimension, graph.title)
+        holoviews_interface(dataName, df, graph.yaxislabel, graph.xaxislabel, graph.ranges, graph.color, graph.dimension, graph.title)
         datashade_interface(dataName, df, graph.ranges, graph.color, graph.dimension)
 
 def getColorScheme(color):
@@ -250,7 +248,7 @@ def getColorScheme(color):
     elif color == "fire":
         return cm(fire, 0.2)
 
-def holoviews_interface(dataName, df, yAxisLabel, xAxisLabel, saveFigures, ranges, color, dimension, title):
+def holoviews_interface(dataName, df, yAxisLabel, xAxisLabel, ranges, color, dimension, title):
 
 
     # Concat the columns so all of the columns are now in 2 column and have been concatanated
@@ -396,14 +394,31 @@ def image_callback(x_range, y_range, w, h):
 def writeDataSaveFilesGraph():
     writeDirectories()
     saveDataframesToFile()
-    graph(True, True)
+    graph(True)
 
 def graphCurrentData():
-    graph(True, False)
+    graph(True)
 
 def graphWithoutCSV():
     writeDirectories() #used for images..no data is written.
-    graph(False, False)
+    graph(False)
+
+
+def datashaderDriver(DATASHADER_FOUND):
+    if DATASHADER_FOUND == False:
+        print "datashader library not found"
+        return
+
+    print saveData
+    print "showing graphs via datashader"
+    if saveData:
+        # Write the data to csv files, and then read from it and graph.
+        writeDataSaveFilesGraph()
+    else:
+        # After the monte carlo is complete, parse the global dataframes for the data to plot
+        # NOT the csv files. (to be used if user doesn't want to save data which can take some time)
+        graphWithoutCSV()
+
 
 # Customer method for saving into scenario folder, easier to separate.
 def savePlotForDoxy(img, filename, fmt = ".png", _return=True):

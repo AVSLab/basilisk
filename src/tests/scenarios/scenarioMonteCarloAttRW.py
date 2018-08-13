@@ -83,8 +83,7 @@ from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispe
 NUMBER_OF_RUNS = 4
 VERBOSE = True
 
-global ONLY_GRAPH_DATA
-ONLY_GRAPH_DATA = 0
+
 
 # Here are the name of some messages that we want to retain or otherwise use
 inertial3DConfigOutputDataName = "guidanceInertial3D"
@@ -334,7 +333,7 @@ def run(saveFigures, case, show_plots, useDatashader):
     if ONLY_GRAPH_DATA & DATASHADER_FOUND:
         print "Datashading from existing csv files"
         configureDatashader()
-        datashaderLibrary.graph(fromCSV = True, saveFigures = saveFigures)
+        datashaderLibrary.graph(fromCSV = True)
         return
 
     # Configure graphs for datashader. Only call if the user has installed datashaders
@@ -488,7 +487,7 @@ def run(saveFigures, case, show_plots, useDatashader):
         if show_plots:
             if useDatashader and DATASHADER_FOUND:
                 print "Test concluded, showing plots now via datashader"
-                datashaderDriver(saveFigures)
+                datashaderLibrary.datashaderDriver(DATASHADER_FOUND)
             else:
                 print "Test concluded, showing plots now via matplot..."
                 plt.show()
@@ -518,7 +517,7 @@ def run(saveFigures, case, show_plots, useDatashader):
         if show_plots:
             if useDatashader and DATASHADER_FOUND:
                 print "Test conclused, showing plots now via datashader"
-                datashaderDriver(saveFigures)
+                datashaderLibrary.datashaderDriver(DATASHADER_FOUND)
             else:
                 plt.show()
                 # close the plots being savfed off to avoid over-writing old and new figures
@@ -864,18 +863,6 @@ def plotSimAndSave(data, retentionPolicy):
 
 ################################################################
 # DATASHDER CODE
-def datashaderDriver(saveFigures):
-    if DATASHADER_FOUND == False:
-        print "datashader library not found"
-        return
-    print "showing graphs via datashader"
-    if saveFigures:
-        # Write the data to csv files, and then read from it and graph.
-        datashaderLibrary.writeDataSaveFilesGraph()
-    else:
-        # After the monte carlo is complete, parse the global dataframes for the data to plot
-        # NOT the csv files. (to be used if user doesn't want to save data which can take some time)
-        datashaderLibrary.graphWithoutCSV()
 
 # Function user can customize to configure the datashader libreary
 def configureDatashader():
@@ -922,7 +909,8 @@ def configureDatashader():
               xaxislabel="Time [seconds]", dpi=350)]
 
 
-
+    # Set whether or not the datashading library will save data to CSV files
+    datashaderLibrary.saveData = True
 
     # set messages. will later need to set other things such as background
     datashaderLibrary.configure(dataConfiguration=datashaderDataList
@@ -937,10 +925,9 @@ def configureDatashader():
 # # stand-along python script
 #
 if __name__ == "__main__":
-    run(  False        # save figures to file -> for datashader this implies the csv files will be written
+    run(  False        # save figures to file
         , 1            # Case 1 is normal MC, case 2 is initial condition run
-        , True         # show_plots. If this is true, using datashader files will be saved. to show datashade graphs, files must be saved
-
+        , True         # show_plots.
           # THIS MUST BE FALSE BY DEFAULT
-        , False         # use datashading library - matplotlib will not be used
+        , True         # use datashading library - matplotlib will not be used
        )
