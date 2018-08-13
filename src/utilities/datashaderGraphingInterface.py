@@ -73,7 +73,6 @@ saveData = False
 timeUnit = "seconds"
 listOfGraphs = []
 subDirectories = ["/mc1_data/", "/mc1_assets/"]
-
 densityHow = ""
 holoviewsImageResolution = 0
 

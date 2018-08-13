@@ -316,10 +316,22 @@ samplingTime = simulationTime / (numDataPoints-1)
 # ### Datashader and Monte Carlo
 # To install the `datashader` capability, see the [optional installation instructions](@ref installOptionalPackages).
 # Using datashader and holoviews together can rasterize and visualize large amounts of data very quickly.
-# We have provided a generalized datashader interface for Monte Carlo runs in `src/utilities/datashaderGraphingInterface.py`.
+# We have provided a generalized datashader interface for Monte Carlo runs in
+# [datashaderGraphingInterface.py](@ref utilities/datashaderGraphingInterface)
 # After installing datashader and importing it in your monte carlo, you can
 # incorporate into a Monte Carlo very easily. First you need a method that you can easily call to configure the datashader
 # library. In this Monte Carlo, this method is called `configureDatashader()`. It is referenced at the top of the run(...) function.
+# An additional argument has been added to run(...) called `usedatashader`. This is set either in the pytest script
+# or in the __main__ function of the Monte Carlo.
+# ~~~~~~~~~~~~~~~{.py}
+# if __name__ == "__main__":
+#     run(  saveFigures=False        # save figures to file
+#         , case=1            # Case 1 is normal MC, case 2 is initial condition run
+#         , show_plots=True         # show_plots.
+#         , useDatashader=True         # use datashading library - matplotlib will not be used
+#        )
+# ~~~~~~~~~~~~~~~
+#
 # ~~~~~~~~~~~~~~~{.py}
 #DATASHADER_FOUND = True
 # try:
@@ -327,6 +339,10 @@ samplingTime = simulationTime / (numDataPoints-1)
 # except ImportError:
 #     print "Datashader library not found. Will use matplotlib"
 #     DATASHADER_FOUND = False
+## If using datashader, set this to 1 to graph
+# from existing csv files. Otherwise, set this to 0. This is usually set in the configure()
+# method at the bottom of the file
+# ONLY_GRAPH_DATA = 0
 #
 # def run(saveFigures, case, show_plots, useDatashader):
 # #If the datashader library has been found, configure. Otherwise continue using matplot lib.
@@ -363,9 +379,22 @@ samplingTime = simulationTime / (numDataPoints-1)
 #
 # Graph = datashaderLibrary.DatashaderGraph
 #
-# # List of tuples that consist of: (message index, corresponding y axis label for that data).
+# # List of tuples that consist of: (message index, corresponding y axis label, title, etc for that data).
 # # When setting graphRange, you can use (0,0) to use the default min / max of the values for either x or y.
-# # Also, the range of x should be in the same unit of time as selected by user. (seconds by default)
+# # For example, setting `graphRanges = (0,8), (0,0)`, sets the x range from 0 to 8, and keeps the y range as
+# # the default minimum and maximum values of the y range.
+# # The default unit of time is in seconds using the macro NANO2SEC; however, this can be changed by
+# # passing in a different macro from `macros.py` to multiply your x data range by that macro.
+# # Note: The time unit must align with the x and y range you set. If the graph is set to minutes,
+# # the range should be in minutes as well.
+# # Every value except `dataIndex` has default values so they do not need to be set. In the datashadingLibrary
+# # this index is used to parse into the messages dictionary to retrieve the data in the callback function.
+# # Such as: dataMessage = data["messages"][index]
+# # You can also customize the name of the directories that will be created while datashading:
+# # datashaderDirectories = ["/mc1_data_files/", "/mc1_assets_images/"]
+# # You can also customize the name of the html file that is generated and holds the graphs:
+# # fileName = "monte_carlo_graphs.html"
+# # You can pass these values into the configure method below to set them in the library.
 # datashaderDataList = [
 #     Graph(dataIndex=attErrorConfigOutputDataName + ".sigma_BR", yaxislabel="Attitude error (sigma)",
 #           title="Attitude Error History", xaxislabel="Time [minutes]", color="fire",
@@ -380,13 +409,57 @@ samplingTime = simulationTime / (numDataPoints-1)
 #           title="RW Wheel speeds history"),
 #     Graph(dataIndex=fswRWVoltageConfigVoltageOutMsgName + ".voltage", title="RW Voltage", yaxislabel="RW Voltage (V)",
 #           xaxislabel="Time [minutes]", dpi=350, macro=macros.NANO2MIN)]
-#   datashaderLibrary.configure(dataConfiguration=datashaderDataList
+# # Set whether or not the datashading library will save data to CSV files
+# # This is set to false by default in the library
+# datashaderLibrary.saveData = True
+# datashaderLibrary.configure(dataConfiguration=datashaderDataList
+#                             # ,directories=datashaderDirectories
+#                             , graphingTechnique=datashaderGraphType
+#                             # ,fileName = "monte_carlo_graphs.html"
+#                             )
+# # If ONLY_GRAPH_DATA has been set to true, the run(...) function has returned and ended,
+# #and the datashaderLibrary goes through the entire graphing process from pre existing csv files.
+# #This way, if you run a Monte Carlo that takes 3 hours to run, once you have the data,
+# #you can experiment with graphing the data and changing the configuration of datashadher
+# #to properly visualize the data without re-running the Monte Carlo
+# #if ONLY_GRAPH_DATA:
+#     print "Datashading from existing csv files"
+#     datashaderLibrary.graph(fromCSV=True)
+#     return
 # ~~~~~~~~~~~~~~~
+#
+# ##Holoviews vs Datashader:
+# There are inherently two different ways to save the graphs with the datashaderLibrary.
+# You can set which method is used in the configure() method via:
+# ~~~~~~~~~~~~~~~{.py}
+# #Set which graphing techniques the library uses. Options: 'holoviews_datashader', 'only_datashader', 'both'.
+# #The holoviews_datashader option allows the graph to have dyanmically generated axis
+# #values, whereas the datashaer option provides a higher resolution image, but without any axes information or labeling.
+# #If you want to plot just with datashader instead of holoviews, configure this variable and pass it in
+# #the configure() methods as 'graphingTechnique = datashaderGraphType'. By default it will use the
+# #holoviews interface to graph.
+# datashaderGraphType = "both"
+# ~~~~~~~~~~~~~~~
+# The default is using holoviews, which rasterizes the data via datashader, and saves all of the graphs into an html
+# file. From there, graphs can be saved as png files by opening the html file in a browser, and clicking the save button.
+# Graphs that are generated by holoviews (which also uses bokeh, and datashader) and configured using the code above
+# will look like this:
+# ![](Images/doc/RWMotorTorqueHoloviews.png)
+# ![](Images/doc/RWVoltageHoloviews.png)
+# ![](AttitudeErrorHoloviews.png)
+# ![](Images/doc/RWWHeelSpeedsHoloviews.png)
+# The second method of visualization only uses datashader, and therefore is not wrapped around a graphing library.
+# This will result in higher quality images; however, they do not have axis values, labels, etc.
+# All you generate is solely an image. Here are some of the datashaded images that are from the same data
+# as the holoview graphs above:
+# ![Attitude Error Datashaded](Images/doc/attErrorInertial_datashaded.png)
+# ![Reaction Wheel Speeds](Images/doc/reactionwheel_speed_datashaded.png)
+# Here are some examples of the Attitude Error in different color with a set x and y range to zoom in on the data.
 # ![Default color shading](Images/doc/attErrorInertial3DMsg_default.png "Default color shading")
 # ![GNU Color shading](Images/doc/attErrorInertial3DMsg_gnu.png "GNU color shading")
 # ![Jet color Shading](Images/doc/attErrorInertial3DMsg_jet.png "Jet color shading")
 #
-# These are the same plots output by the [scenarioAttitudeFeedbackRW.py](@ref scenarioAttitudeFeedbackRW) scenario. Please refer to this document for me details on the plots.
+# These are the same plots output by the [scenarioMonteCarloAttRW.py](@ref scenarioMonteCarloAttRW) scenario. Please refer to this document for me details on the plots.
 ##  @}
 
 
@@ -943,11 +1016,23 @@ def configureDatashader():
     # Would pass in as : `htmlName = fileName`
     # fileName = "monte_carlo_graphs.html"
 
-    Graph = datashaderLibrary.DatashaderGraph
-
-    # List of tuples that consist of: (message index, corresponding y axis label for that data).
+    # List of tuples that consist of: (message index, corresponding y axis label, title, etc for that data).
     # When setting graphRange, you can use (0,0) to use the default min / max of the values for either x or y.
-    # Also, the range of x should be in the same unit of time as selected by user. (seconds by default)
+    # For example, setting `graphRanges = (0,8), (0,0)`, sets the x range from 0 to 8, and keeps the y range as
+    # the default minimum and maximum values of the y range.
+    # The default unit of time is in seconds using the macro NANO2SEC; however, this can be changed by
+    # passing in a different macro from `macros.py` to multiply your x data range by that macro.
+    # Note: The time unit must align with the x and y range you set. If the graph is set to minutes,
+    # the range should be in minutes as well.
+    # Every value except `dataIndex` has default values so they do not need to be set. In the datashadingLibrary
+    # this index is used to parse into the messages dictionary to retrieve the data in the callback function.
+    # Such as: dataMessage = data["messages"][index]
+    # You can also customize the name of the directories that will be created while datashading:
+    # datashaderDirectories = ["/mc1_data_files/", "/mc1_assets_images/"]
+    # You can also customize the name of the html file that is generated and holds the graphs:
+    # fileName = "monte_carlo_graphs.html"
+    # You can pass these values into the configure method below to set them in the library.
+    Graph = datashaderLibrary.DatashaderGraph
     datashaderDataList = [
         Graph(dataIndex=attErrorConfigOutputDataName + ".sigma_BR", yaxislabel="Attitude error (sigma)",
               title="Attitude Error History", xaxislabel="Time [minutes]", color="fire",
@@ -962,12 +1047,9 @@ def configureDatashader():
         Graph(dataIndex=fswRWVoltageConfigVoltageOutMsgName + ".voltage", title= "RW Voltage", yaxislabel="RW Voltage (V)",
               xaxislabel="Time [minutes]", dpi=350, macro = macros.NANO2MIN)]
 
-
-    if not ONLY_GRAPH_DATA:
-        # Set whether or not the datashading library will save data to CSV files
-        # This cannot be true if youre graphing from existing data.
-        # This is set to false by default in the library
-        datashaderLibrary.saveData = True
+    # Set whether or not the datashading library will save data to CSV files
+    # This is set to false by default in the library
+    datashaderLibrary.saveData = True
 
     # Configure the lbirary to use the list of graphs, and any other settings
     # that may have been set.
@@ -989,9 +1071,9 @@ def configureDatashader():
 # # stand-along python script
 #
 if __name__ == "__main__":
-    run(  False        # save figures to file
-        , 1            # Case 1 is normal MC, case 2 is initial condition run
-        , True         # show_plots.
+    run(  saveFigures=False        # save figures to file
+        , case=1            # Case 1 is normal MC, case 2 is initial condition run
+        , show_plots=True         # show_plots.
           # THIS MUST BE FALSE BY DEFAULT
-        , False         # use datashading library - matplotlib will not be used
+        , useDatashader=True         # use datashading library - matplotlib will not be used
        )
