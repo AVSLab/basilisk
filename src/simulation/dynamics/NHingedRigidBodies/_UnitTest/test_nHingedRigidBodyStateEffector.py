@@ -249,7 +249,8 @@ def nHingedRigidBody(show_plots,useFlag,testCase):
     plt.xlabel('Time (s)')
     plt.ylabel('Panel 2 Theta 3 (deg)')
 
-    plt.show(show_plots)
+    if show_plots:
+        plt.show()
     plt.close("all")
 
     accuracy = 1e-10

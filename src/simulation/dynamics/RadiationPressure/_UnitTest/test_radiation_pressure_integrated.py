@@ -190,7 +190,8 @@ def radiationPressureIntegratedTest(show_plots):
     plt.xlabel('Time [orbits]')
     plt.ylabel('Inertial Position [km]')
     plt.title('Position Relative To Earth')
-    plt.show(show_plots)
+    if show_plots:
+        plt.show()
 
     figureList = {}
     fileName = os.path.basename(os.path.splitext(__file__)[0])

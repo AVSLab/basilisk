@@ -240,8 +240,9 @@ def test_hingedRigidBodyGravity(show_plots):
     plt.xlabel('time (s)')
     plt.ylabel('Force about Point B')
 
-    plt.show(show_plots)
-    plt.close("all")
+    if show_plots:
+        plt.show()
+        plt.close("all")
 
     accuracy = 1e-10
     for i in range(0,len(trueSigma)):
@@ -456,8 +457,9 @@ def test_hingedRigidBodyNoGravity(show_plots):
     PlotTitle = "Change In Velocity Of Center Of Mass No Gravity"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
-    plt.show(show_plots)
-    plt.close("all")
+    if show_plots:
+        plt.show()
+        plt.close("all")
 
     accuracy = 1e-10
     for i in range(0,len(truePos)):
@@ -653,8 +655,9 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
     PlotTitle = "Change In Velocity Of Center Of Mass No Gravity with Damping"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
-    plt.show(show_plots)
-    plt.close("all")
+    if show_plots:
+        plt.show()
+        plt.close("all")
 
     accuracy = 1e-10
     for i in range(0,len(initialOrbAngMom_N)):
@@ -1131,8 +1134,9 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     texSnippet =  str(thetaMax2) + " & " + str(thetaMax2Sim) +  " & " + str(diffTheta2Max)
     unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
 
-    plt.show(show_plots)
-    plt.close("all")
+    if show_plots:
+        plt.show()
+        plt.close("all")
 
     accuracy = 5e-3
     if abs((freqHz - omegaAnalyticalHz)/omegaAnalyticalHz) > accuracy:
@@ -1400,8 +1404,9 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     format = "width=0.8\\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
-    plt.show(show_plots)
-    plt.close("all")
+    if show_plots:
+        plt.show()
+        plt.close("all")
 
     accuracy = 1e-10
     timeList = [25, 75, 125, 175]
