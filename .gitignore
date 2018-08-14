@@ -6,6 +6,7 @@ dist/
 .pytest_cache 
 docs/html
 docs/Images/Scenarios/*
+src/tests/scenarios/data
 xml/*
 *.swp
 *.pyc
