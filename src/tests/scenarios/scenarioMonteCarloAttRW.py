@@ -97,7 +97,7 @@ fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
 # If using datashader, set this to 1 to graph
 # from existing csv files. Otherwise, set this to 0. This is usually set in the configure()
 # method at the bottom of the file
-ONLY_GRAPH_DATA = 1
+ONLY_GRAPH_DATA = 0
 
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
@@ -1075,5 +1075,5 @@ if __name__ == "__main__":
         , case=1            # Case 1 is normal MC, case 2 is initial condition run
         , show_plots=True         # show_plots.
           # THIS MUST BE FALSE BY DEFAULT
-        , useDatashader=True         # use datashading library - matplotlib will not be used
+        , useDatashader=False         # use datashading library - matplotlib will not be used
        )
