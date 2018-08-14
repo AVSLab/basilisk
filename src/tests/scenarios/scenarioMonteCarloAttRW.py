@@ -35,7 +35,7 @@ import matplotlib.pyplot as plt
 
 DATASHADER_FOUND = True
 try:
-    from src.utilities import datashaderGraphingInterface as datashaderLibrary
+    from Basilisk.utilities import datashaderGraphingInterface as datashaderLibrary
 except ImportError:
     print "Datashader library not found. Will use matplotlib"
     DATASHADER_FOUND = False
