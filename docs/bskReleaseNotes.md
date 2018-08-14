@@ -16,6 +16,19 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     </li>
 </ul>
 
+## Version 0.3.2 
+<uL>
+    <li>
+    Fixed an issue with the eclipse unit test.
+    </li>
+    <li>
+    updated the installation instructions to warn about an incompatibility between the latest version of `pytest` (version 3.7.1).  Users should use a version of `pytest` that is 3.6.1 or older for now until this issue is resolved.
+    </li>
+    <li>
+    Updated the `.gitignore` file to exclude the `.pytest_cache` folder that pytest generates with the newer versions of this program
+    </li>
+</ul>
+
 ## Version 0.3.1 
 <uL>
     <li>

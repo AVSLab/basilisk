@@ -25,9 +25,17 @@
 #           scenarioAttitudeFeedbackRW with dispersed initial parameters
 #
 
-
+FOUND_DATESHADER = True
 import sys, os, inspect
 import pytest
+try:
+    import datashader
+    import holoviews
+    import pandas
+    import bokeh
+    from bokeh.io import export_png
+except ImportError:
+    FOUND_DATESHADER = False
 
 # Get current file path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -36,13 +44,28 @@ path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../scenarios')
 import scenarioMonteCarloAttRW
 
-@pytest.mark.parametrize("MCCases", [1, 2]) # Case 1 for normal MC runs, case 2 for running ICs
+# FOUND_DATESHADER = False
+
+# Run normal monte carlo and plot with datashader
+
+@pytest.mark.skipif(not FOUND_DATESHADER, reason = "Datashader not found")
+@pytest.mark.slowtest()
+def test_MonteCarloSimulationDatashader(show_plots):
+    '''This function is called by the py.test environment.'''
+    # each test method requires a single assert method to be called
+    scenarioMonteCarloAttRW.run(True, 1, show_plots, True)
+
+    return
+
+
+# Run initial conditions and plot with matplotlib
+@pytest.mark.parametrize("MCCases",
+                         [1,2])
 @pytest.mark.slowtest()
 def test_MonteCarloSimulation(show_plots, MCCases):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
-    scenarioMonteCarloAttRW.run(True, MCCases , show_plots)
-    scenarioMonteCarloAttRW.run(True, MCCases , show_plots)
-
+    scenarioMonteCarloAttRW.run(True, MCCases , show_plots, False)
     return
+
 

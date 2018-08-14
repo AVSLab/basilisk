@@ -33,6 +33,14 @@ import numpy as np
 import shutil
 import matplotlib.pyplot as plt
 
+DATASHADER_FOUND = True
+try:
+    from Basilisk.utilities import datashaderGraphingInterface as datashaderLibrary
+except ImportError:
+    print "Datashader library not found. Will use matplotlib"
+    DATASHADER_FOUND = False
+
+
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 fileNameString = os.path.basename(os.path.splitext(__file__)[0])
@@ -75,6 +83,8 @@ from Basilisk.utilities.MonteCarlo.Dispersions import (UniformEulerAngleMRPDispe
 NUMBER_OF_RUNS = 4
 VERBOSE = True
 
+
+
 # Here are the name of some messages that we want to retain or otherwise use
 inertial3DConfigOutputDataName = "guidanceInertial3D"
 attErrorConfigOutputDataName = "attErrorInertial3DMsg"
@@ -84,12 +94,18 @@ mrpControlConfigInputRWSpeedsName = "reactionwheel_output_states"
 sNavObjectOutputTransName = "simple_trans_nav_output"
 fswRWVoltageConfigVoltageOutMsgName = "rw_voltage_input"
 
+# If using datashader, set this to 1 to graph
+# from existing csv files. Otherwise, set this to 0. This is usually set in the configure()
+# method at the bottom of the file
+ONLY_GRAPH_DATA = 0
+
 rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 
 # We also will need the simulationTime and samplingTimes
-numDataPoints = 100
+numDataPoints = 500
 simulationTime = macros.min2nano(10.)
 samplingTime = simulationTime / (numDataPoints-1)
+
 
 
 ## \defgroup Tutorials_5_0
@@ -297,12 +313,164 @@ samplingTime = simulationTime / (numDataPoints-1)
 # ![RW Speeds History](Images/Scenarios/scenarioMonteCarloAttRW_RWSpeed.svg "RW Speeds history")
 # ![RW Voltage History](Images/Scenarios/scenarioMonteCarloAttRW_RWVoltage.svg "RW Voltage history")
 #
-# These are the same plots output by the [scenarioAttitudeFeedbackRW.py](@ref scenarioAttitudeFeedbackRW) scenario. Please refer to this document for me details on the plots.
+# ### Datashader and Monte Carlo
+# To install the `datashader` capability, see the [optional installation instructions](@ref installOptionalPackages).
+# Using datashader and holoviews together can rasterize and visualize large amounts of data very quickly.
+# We have provided a generalized datashader interface for Monte Carlo runs in
+# [datashaderGraphingInterface.py](@ref utilities/datashaderGraphingInterface)
+# After installing datashader and importing it in your monte carlo, you can
+# incorporate into a Monte Carlo very easily. First you need a method that you can easily call to configure the datashader
+# library. In this Monte Carlo, this method is called `configureDatashader()`. It is referenced at the top of the run(...) function.
+# An additional argument has been added to run(...) called `usedatashader`. This is set either in the pytest script
+# or in the __main__ function of the Monte Carlo.
+# ~~~~~~~~~~~~~~~{.py}
+# if __name__ == "__main__":
+#     run(  saveFigures=False        # save figures to file
+#         , case=1            # Case 1 is normal MC, case 2 is initial condition run
+#         , show_plots=True         # show_plots.
+#         , useDatashader=True         # use datashading library - matplotlib will not be used
+#        )
+# ~~~~~~~~~~~~~~~
+#
+# ~~~~~~~~~~~~~~~{.py}
+#DATASHADER_FOUND = True
+# try:
+#     from src.utilities import datashaderGraphingInterface as datashaderLibrary
+# except ImportError:
+#     print "Datashader library not found. Will use matplotlib"
+#     DATASHADER_FOUND = False
+## If using datashader, set this to 1 to graph
+# from existing csv files. Otherwise, set this to 0. This is usually set in the configure()
+# method at the bottom of the file
+# ONLY_GRAPH_DATA = 0
+#
+# def run(saveFigures, case, show_plots, useDatashader):
+# #If the datashader library has been found, configure. Otherwise continue using matplot lib.
+# if DATASHADER_FOUND:
+#     configureDatashader()
+# #This can be set anywhere within the file, to skip running the monte carlo and only graph
+# #the data from pre-existing csv files in `./data/`
+# if ONLY_GRAPH_DATA:
+#     return
+# ~~~~~~~~~~~~~~~
+# Next, you have to set the callback function to call a method within datashaderLibrary instead of using
+# the callback in the Monte Carlo:
+# ~~~~~~~~~~~~~~~{.py}
+#     if useDatashader & DATASHADER_FOUND:
+#         # plot, populate, write using datashader
+#         retentionPolicy.setDataCallback(datashaderLibrary.plotSim)
+# ~~~~~~~~~~~~~~~
+# Next, set the Monte Carlo to show plots using datashader instead of matplotlib
+# ~~~~~~~~~~~~~~~{.py}
+#        # And possibly show the plots
+# if show_plots:
+#     if useDatashader and DATASHADER_FOUND:
+#         print "Test concluded, showing plots now via datashader"
+#         datashaderLibrary.datashaderDriver(DATASHADER_FOUND)
+#     else:
+#         print "Test concluded, showing plots now via matplot..."
+#         plt.show()
+#         # close the plots being saved off to avoid over-writing old and new figures
+#         plt.close("all")
+# ~~~~~~~~~~~~~~~
+# Lastly, populate the `configureDatashader()` with the graphs and data that the library will graph.
+# This is done by creating a list of Graph objects, and passing them to datashaderLibrary.
+# ~~~~~~~~~~~~~~~{.py}
+#
+# Graph = datashaderLibrary.DatashaderGraph
+#
+# # List of tuples that consist of: (message index, corresponding y axis label, title, etc for that data).
+# # When setting graphRange, you can use (0,0) to use the default min / max of the values for either x or y.
+# # For example, setting `graphRanges = (0,8), (0,0)`, sets the x range from 0 to 8, and keeps the y range as
+# # the default minimum and maximum values of the y range.
+# # The default unit of time is in seconds using the macro NANO2SEC; however, this can be changed by
+# # passing in a different macro from `macros.py` to multiply your x data range by that macro.
+# # Note: The time unit must align with the x and y range you set. If the graph is set to minutes,
+# # the range should be in minutes as well.
+# # Every value except `dataIndex` has default values so they do not need to be set. In the datashadingLibrary
+# # this index is used to parse into the messages dictionary to retrieve the data in the callback function.
+# # Such as: dataMessage = data["messages"][index]
+# # You can also customize the name of the directories that will be created while datashading:
+# # datashaderDirectories = ["/mc1_data_files/", "/mc1_assets_images/"]
+# # You can also customize the name of the html file that is generated and holds the graphs:
+# # fileName = "monte_carlo_graphs.html"
+# # You can pass these values into the configure method below to set them in the library.
+# datashaderDataList = [
+#     Graph(dataIndex=attErrorConfigOutputDataName + ".sigma_BR", yaxislabel="Attitude error (sigma)",
+#           title="Attitude Error History", xaxislabel="Time [minutes]", color="fire",
+#           graphRanges=[(0, 8), (0, 0)], dpi=400, macro=macros.NANO2MIN),
+#     Graph(dataIndex=attErrorConfigOutputDataName + ".omega_BR_B", yaxislabel="Rate Tracking Error (rad/s)",
+#           title="Attitude Tracking Error History", xaxislabel="Time [seconds]", color="fire",
+#           graphRanges=[(100, 600), (-0.02, 0.02)], dpi=500, macro=macros.NANO2SEC),
+#     Graph(dataIndex=rwMotorTorqueConfigOutputDataName + ".motorTorque", yaxislabel="Motor Torque (Nm)",
+#           title="RW Motor Torque History", color="GnBu", dimension=(800, 400)),
+#     Graph(dataIndex=mrpControlConfigInputRWSpeedsName + ".wheelSpeeds", yaxislabel="RW Speed (RPM)",
+#           xaxislabel="Time [minutes]", macro=macros.NANO2MIN,
+#           title="RW Wheel speeds history"),
+#     Graph(dataIndex=fswRWVoltageConfigVoltageOutMsgName + ".voltage", title="RW Voltage", yaxislabel="RW Voltage (V)",
+#           xaxislabel="Time [minutes]", dpi=350, macro=macros.NANO2MIN)]
+# # Set whether or not the datashading library will save data to CSV files
+# # This is set to false by default in the library
+# datashaderLibrary.saveData = True
+# datashaderLibrary.configure(dataConfiguration=datashaderDataList
+#                             # ,directories=datashaderDirectories
+#                             , graphingTechnique=datashaderGraphType
+#                             # ,fileName = "monte_carlo_graphs.html"
+#                             )
+# # If ONLY_GRAPH_DATA has been set to true, the run(...) function has returned and ended,
+# #and the datashaderLibrary goes through the entire graphing process from pre existing csv files.
+# #This way, if you run a Monte Carlo that takes 3 hours to run, once you have the data,
+# #you can experiment with graphing the data and changing the configuration of datashadher
+# #to properly visualize the data without re-running the Monte Carlo
+# #if ONLY_GRAPH_DATA:
+#     print "Datashading from existing csv files"
+#     datashaderLibrary.graph(fromCSV=True)
+#     return
+# ~~~~~~~~~~~~~~~
+#
+# ##Holoviews vs Datashader:
+# There are inherently two different ways to save the graphs with the datashaderLibrary.
+# You can set which method is used in the configure() method via:
+# ~~~~~~~~~~~~~~~{.py}
+# #Set which graphing techniques the library uses. Options: 'holoviews_datashader', 'only_datashader', 'both'.
+# #The holoviews_datashader option allows the graph to have dyanmically generated axis
+# #values, whereas the datashaer option provides a higher resolution image, but without any axes information or labeling.
+# #If you want to plot just with datashader instead of holoviews, configure this variable and pass it in
+# #the configure() methods as 'graphingTechnique = datashaderGraphType'. By default it will use the
+# #holoviews interface to graph.
+# datashaderGraphType = "both"
+# ~~~~~~~~~~~~~~~
+# The default is using holoviews, which rasterizes the data via datashader, and saves all of the graphs into an html
+# file. From there, graphs can be saved as png files by opening the html file in a browser, and clicking the save button.
+# Graphs that are generated by holoviews (which also uses bokeh, and datashader) and configured using the code above
+# will look like this:
+# ![](Images/doc/RWMotorTorqueHoloviews.png)
+# ![](Images/doc/RWVoltageHoloviews.png)
+# ![](AttitudeErrorHoloviews.png)
+# ![](Images/doc/RWWHeelSpeedsHoloviews.png)
+# The second method of visualization only uses datashader, and therefore is not wrapped around a graphing library.
+# This will result in higher quality images; however, they do not have axis values, labels, etc.
+# All you generate is solely an image. Here are some of the datashaded images that are from the same data
+# as the holoview graphs above:
+# ![Attitude Error Datashaded](Images/doc/attErrorInertial_datashaded.png)
+# ![Reaction Wheel Speeds](Images/doc/reactionwheel_speed_datashaded.png)
+# Here are some examples of the Attitude Error in different color with a set x and y range to zoom in on the data.
+# ![Default color shading](Images/doc/attErrorInertial3DMsg_default.png "Default color shading")
+# ![GNU Color shading](Images/doc/attErrorInertial3DMsg_gnu.png "GNU color shading")
+# ![Jet color Shading](Images/doc/attErrorInertial3DMsg_jet.png "Jet color shading")
+#
+# These are the same plots output by the [scenarioMonteCarloAttRW.py](@ref scenarioMonteCarloAttRW) scenario. Please refer to this document for me details on the plots.
 ##  @}
 
 
-def run(saveFigures, case, show_plots):
+def run(saveFigures, case, show_plots, useDatashader):
     '''This function is called by the py.test environment.'''
+
+    if DATASHADER_FOUND:
+        configureDatashader()
+
+    if ONLY_GRAPH_DATA:
+        return
 
     # A MonteCarlo simulation can be created using the `MonteCarlo` module.
     # This module is used to execute monte carlo simulations, and access
@@ -330,7 +498,7 @@ def run(saveFigures, case, show_plots):
     monteCarlo.setVerbose(VERBOSE)
 
     # We set up where to retain the data to.
-    dirName = "montecarlo_test"
+    dirName = "montecarlo_test" + str(os.getpid())
     monteCarlo.setArchiveDir(dirName)
 
     # Statistical dispersions can be applied to initial parameters using the MonteCarlo module
@@ -385,6 +553,9 @@ def run(saveFigures, case, show_plots):
     if saveFigures:
         # plot data only if show_plots is true, otherwise just retain
         retentionPolicy.setDataCallback(plotSimAndSave)
+    if useDatashader & DATASHADER_FOUND:
+        # plot, populate, write using datashader
+        retentionPolicy.setDataCallback(datashaderLibrary.plotSim)
     monteCarlo.addRetentionPolicy(retentionPolicy)
 
     if case ==1:
@@ -444,10 +615,14 @@ def run(saveFigures, case, show_plots):
 
         # And possibly show the plots
         if show_plots:
-            print "Test concluded, showing plots now..."
-            plt.show()
-            # close the plots being saved off to avoid over-writing old and new figures
-            plt.close("all")
+            if useDatashader and DATASHADER_FOUND:
+                print "Test concluded, showing plots now via datashader"
+                datashaderLibrary.datashaderDriver(DATASHADER_FOUND)
+            else:
+                print "Test concluded, showing plots now via matplot..."
+                plt.show()
+                # close the plots being saved off to avoid over-writing old and new figures
+                plt.close("all")
 
     #########################################################
     if case ==2:
@@ -470,17 +645,19 @@ def run(saveFigures, case, show_plots):
 
         # And possibly show the plots
         if show_plots:
-            print "Test concluded, showing plots now..."
-            plt.show()
-            # close the plots being saved off to avoid over-writing old and new figures
-            plt.close("all")
+            if useDatashader and DATASHADER_FOUND:
+                print "Test conclused, showing plots now via datashader"
+                datashaderLibrary.datashaderDriver(DATASHADER_FOUND)
+            else:
+                plt.show()
+                # close the plots being savfed off to avoid over-writing old and new figures
+                plt.close("all")
 
         # Now we clean up data from this test
         os.remove(icName + '/' + 'MonteCarlo.data' )
         for i in range(numberICs):
             os.remove(icName + '/' + 'run' + str(i) + '.data')
         assert not os.path.exists(icName + '/' + 'MonteCarlo.data'), "No leftover data should exist after the test"
-
 
 ## This function creates the simulation to be executed in parallel.
 # It is copied directly from src/tests/scenarios.
@@ -721,6 +898,8 @@ def plotSim(data, retentionPolicy):
     #
     #   retrieve the logged data
     #
+
+
     dataUsReq = data["messages"][rwMotorTorqueConfigOutputDataName+".motorTorque"]
     dataSigmaBR = data["messages"][attErrorConfigOutputDataName+".sigma_BR"]
     dataOmegaBR = data["messages"][attErrorConfigOutputDataName+".omega_BR_B"]
@@ -728,6 +907,7 @@ def plotSim(data, retentionPolicy):
     dataOmegaRW = data["messages"][mrpControlConfigInputRWSpeedsName+".wheelSpeeds"]
     dataVolt = data["messages"][fswRWVoltageConfigVoltageOutMsgName+".voltage"]
     dataRW = []
+
     for message in rwOutName:
         dataRW.append(data["messages"][message+".u_current"])
     np.set_printoptions(precision=16)
@@ -744,7 +924,7 @@ def plotSim(data, retentionPolicy):
     for idx in range(1,4):
         plt.plot(timeData, dataSigmaBR[:, idx],
                  label='Run ' + str(data["index"]) + ' $\sigma_'+str(idx)+'$')
-    plt.legend(loc='lower right')
+    # plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Error $\sigma_{B/R}$')
     figureList[pltName] = plt.figure(1)
@@ -757,7 +937,7 @@ def plotSim(data, retentionPolicy):
                  label='Run ' + str(data["index"]) + ' $\hat u_{s,'+str(idx)+'}$')
         plt.plot(timeData, dataRW[idx-1][:, 1],
                  label='Run ' + str(data["index"]) + ' $u_{s,' + str(idx) + '}$')
-    plt.legend(loc='lower right')
+    # plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Motor Torque (Nm)')
     figureList[pltName] = plt.figure(2)
@@ -767,7 +947,7 @@ def plotSim(data, retentionPolicy):
     for idx in range(1,4):
         plt.plot(timeData, dataOmegaBR[:, idx],
                  label='Run ' + str(data["index"]) + ' $\omega_{BR,'+str(idx)+'}$')
-    plt.legend(loc='lower right')
+    # plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error (rad/s) ')
     figureList[pltName] = plt.figure(3)
@@ -777,7 +957,7 @@ def plotSim(data, retentionPolicy):
     for idx in range(1,len(rwOutName)+1):
         plt.plot(timeData, dataOmegaRW[:, idx]/macros.RPM,
                  label='Run ' + str(data["index"]) + ' $\Omega_{'+str(idx)+'}$')
-    plt.legend(loc='lower right')
+    # plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')
     figureList[pltName] = plt.figure(4)
@@ -787,7 +967,7 @@ def plotSim(data, retentionPolicy):
     for idx in range(1, len(rwOutName) + 1):
         plt.plot(timeData, dataVolt[:, idx],
                  label='Run ' + str(data["index"]) + ' $V_{' + str(idx) + '}$')
-    plt.legend(loc='lower right')
+    # plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Voltage (V) ')
     figureList[pltName] = plt.figure(5)
@@ -795,22 +975,105 @@ def plotSim(data, retentionPolicy):
     return figureList
 
 def plotSimAndSave(data, retentionPolicy):
-
     figureList = plotSim(data, retentionPolicy)
-
     for pltName, plt in figureList.items():
+        # plt.subplots_adjust(top = 0.6, bottom = 0.4)
         unitTestSupport.saveScenarioFigure(
             fileNameString + "_" + pltName
             , plt, path)
 
     return
 
+
+################################################################
+# DATASHDER CODE
+
+# Function user can customize to configure the datashader libreary
+def configureDatashader():
+
+    # begin datashade configuration
+
+    if not DATASHADER_FOUND:
+        return
+
+    # Below are some optional settings you can configure. To set them, uncomment the
+    # the declaration line, and uncomment the line in the datashaderLibrary.configure(...) method below.
+
+    # Set directories that the datashading library will generate. First directory name in this list is where
+    # the csv files are saved, the second is where images, and html files are saved.
+    # By default these are: `/mc1_data/` and `/mc1_assets/`
+    # datashaderDirectories = ["/mc1_data_files/", "/mc1_assets_images/"]
+
+    # Set which graphing techniques the library uses. Options: 'holoviews_datashader', 'only_datashader', 'both'.
+    # The holoviews_datashader option allows the graph to have dyanmically generated axis
+    # values, whereas the datashaer option provides a higher resolution image, but without any axes information or labeling.
+    # If you want to plot just with datashader instead of holoviews, configure this variable and pass it in
+    # the configure() methods as 'graphingTechnique = datashaderGraphType'. By default it will use the
+    # holoviews interface to graph.
+    datashaderGraphType = "both"
+
+    # Set the html filename. Default is "mc_graphs.html"
+    # Would pass in as : `htmlName = fileName`
+    # fileName = "monte_carlo_graphs.html"
+
+    # List of tuples that consist of: (message index, corresponding y axis label, title, etc for that data).
+    # When setting graphRange, you can use (0,0) to use the default min / max of the values for either x or y.
+    # For example, setting `graphRanges = (0,8), (0,0)`, sets the x range from 0 to 8, and keeps the y range as
+    # the default minimum and maximum values of the y range.
+    # The default unit of time is in seconds using the macro NANO2SEC; however, this can be changed by
+    # passing in a different macro from `macros.py` to multiply your x data range by that macro.
+    # Note: The time unit must align with the x and y range you set. If the graph is set to minutes,
+    # the range should be in minutes as well.
+    # Every value except `dataIndex` has default values so they do not need to be set. In the datashadingLibrary
+    # this index is used to parse into the messages dictionary to retrieve the data in the callback function.
+    # Such as: dataMessage = data["messages"][index]
+    # You can also customize the name of the directories that will be created while datashading:
+    # datashaderDirectories = ["/mc1_data_files/", "/mc1_assets_images/"]
+    # You can also customize the name of the html file that is generated and holds the graphs:
+    # fileName = "monte_carlo_graphs.html"
+    # You can pass these values into the configure method below to set them in the library.
+    Graph = datashaderLibrary.DatashaderGraph
+    datashaderDataList = [
+        Graph(dataIndex=attErrorConfigOutputDataName + ".sigma_BR", yaxislabel="Attitude error (sigma)",
+              title="Attitude Error History", xaxislabel="Time [minutes]", color="fire",
+              graphRanges=[(0, 8), (0, 0)], dpi=400, macro=macros.NANO2MIN),
+        Graph(dataIndex=attErrorConfigOutputDataName + ".omega_BR_B", yaxislabel="Rate Tracking Error (rad/s)",
+              title="Attitude Tracking Error History", xaxislabel = "Time [seconds]", color = "fire",
+              graphRanges=[(100, 600), (-0.02, 0.02)], dpi=500, macro = macros.NANO2SEC),
+        Graph(dataIndex=rwMotorTorqueConfigOutputDataName + ".motorTorque", yaxislabel="Motor Torque (Nm)",
+              title="RW Motor Torque History", color="GnBu", dimension=(800, 400)),
+        Graph(dataIndex=mrpControlConfigInputRWSpeedsName + ".wheelSpeeds", yaxislabel="RW Speed (RPM)", xaxislabel = "Time [minutes]", macro = macros.NANO2MIN,
+              title="RW Wheel speeds history"),
+        Graph(dataIndex=fswRWVoltageConfigVoltageOutMsgName + ".voltage", title= "RW Voltage", yaxislabel="RW Voltage (V)",
+              xaxislabel="Time [minutes]", dpi=350, macro = macros.NANO2MIN)]
+
+    # Set whether or not the datashading library will save data to CSV files
+    # This is set to false by default in the library
+    datashaderLibrary.saveData = True
+
+    # Configure the lbirary to use the list of graphs, and any other settings
+    # that may have been set.
+    datashaderLibrary.configure(dataConfiguration=datashaderDataList
+                                # ,directories=datashaderDirectories
+                                , graphingTechnique=datashaderGraphType
+                                # ,fileName = "monte_carlo_graphs.html"
+                                )
+
+    if ONLY_GRAPH_DATA:
+        print "Datashading from existing csv files"
+        datashaderLibrary.graph(fromCSV = True)
+        return
+
+# END DATASHADER CODE
+################################################################
 #
-# This statement below ensures that the unit test scrip can be run as a
-# stand-along python script
+# This statement below ensures that the unit test script can be run as a
+# # stand-along python script
 #
 if __name__ == "__main__":
-    run(  False        # safe figures to file
-        , 2            # Case 1 is normal MC, case 2 is initial conditon run
-        , True         # show_plots
+    run(  saveFigures=False        # save figures to file
+        , case=1            # Case 1 is normal MC, case 2 is initial condition run
+        , show_plots=True         # show_plots.
+          # THIS MUST BE FALSE BY DEFAULT
+        , useDatashader=False         # use datashading library - matplotlib will not be used
        )
