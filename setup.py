@@ -154,7 +154,7 @@ class BuildDocsCommand(Command):
 
 setup(
     name='Basilisk',
-    version='0.3.1',
+    version='0.3.2',
     description="Astrodynamic Simulation Library",
     packages=['Basilisk', ],
     license=open('./LICENSE').read(),

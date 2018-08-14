@@ -13,6 +13,12 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 ## Version 0.X.X (upcoming release)
 <uL>
     <li>
+    </li>
+</ul>
+
+## Version 0.3.2 
+<uL>
+    <li>
     Fixed an issue with the eclipse unit test.
     </li>
     <li>
