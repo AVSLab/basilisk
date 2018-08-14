@@ -855,9 +855,10 @@ def test_hingedRigidBodyThetaSS(show_plots):
     PlotTitle = "BOE Calculation for Steady State Theta 2 Deflection vs Simulation"
     format = "width=0.8\\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
-
-    plt.show(show_plots)
-    plt.close("all")
+    
+    if show_plots:
+        plt.show()
+        plt.close("all")
 
 
     accuracy = 1e-6
