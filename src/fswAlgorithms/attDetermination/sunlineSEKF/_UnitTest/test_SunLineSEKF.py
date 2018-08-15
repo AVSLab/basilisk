@@ -104,6 +104,7 @@ def sunline_individual_test():
     ###################################################################################
     inputStates = [2,1,0.75,0.1,0.4]
     inputOmega = [0.,0.1, 0.4]
+    bVec = [1.,0.,0.]
     dt =0.5
 
     expDynMat = np.zeros([numStates,numStates])
@@ -120,7 +121,7 @@ def sunline_individual_test():
     dynMat = sunlineSEKF.new_doubleArray(numStates*numStates)
     for i in range(numStates*numStates):
         sunlineSEKF.doubleArray_setitem(dynMat, i, 0.0)
-    sunlineSEKF.sunlineDynMatrix(inputStates, dt, dynMat)
+    sunlineSEKF.sunlineDynMatrix(inputStates, bVec, dt, dynMat)
 
     DynOut = []
     for i in range(numStates*numStates):
@@ -129,7 +130,7 @@ def sunline_individual_test():
     DynOut = np.array(DynOut).reshape(numStates, numStates)
     errorNorm = np.linalg.norm(expDynMat - DynOut)
     if(errorNorm > 1.0E-10):
-        print errorNorm
+        print errorNorm, "Dyn Matrix"
         testFailCount += 1
         testMessages.append("Dynamics Matrix generation Failure \n")
 
@@ -154,7 +155,7 @@ def sunline_individual_test():
             else:
                 sunlineSEKF.doubleArray_setitem(stateTransition, numStates*i+j, 0.0)
 
-    sunlineSEKF.sunlineStateSTMProp(expDynMat.flatten().tolist(), bVec, dt, states, stateTransition)
+    sunlineSEKF.sunlineStateSTMProp(expDynMat.flatten().tolist(), bVec_test, dt, states, stateTransition)
 
     PropStateOut = []
     PropSTMOut = []
@@ -274,7 +275,7 @@ def sunline_individual_test():
     errorNorm = np.linalg.norm(KalmanOut[:,0:numObs] - expectedK)
 
     if (errorNorm > 1.0E-10):
-        print errorNorm
+        print errorNorm, "Kalman Gain Error"
         testFailCount += 1
         testMessages.append("Kalman Gain update failure \n")
 
@@ -1007,7 +1008,7 @@ if __name__ == "__main__":
     #     timeEnd = time.time()
     #     avg += timeEnd - timeStart
     # print avg / numb
-    sunline_individual_test()
+    [testResults, testMessage] = sunline_individual_test()
     # (200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
     # (2000, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
     # (200, False ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),

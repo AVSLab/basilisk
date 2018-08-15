@@ -230,7 +230,7 @@ void sunlineTimeUpdate(sunlineSEKFConfig *ConfigData, double updateTime)
 	ConfigData->dt = updateTime - ConfigData->timeTag;
     
     /*! - Propagate the previous reference states and STM to the current time */
-    sunlineDynMatrix(ConfigData->states, ConfigData->dt, ConfigData->dynMat);
+    sunlineDynMatrix(ConfigData->states, ConfigData->bVec_B, ConfigData->dt, ConfigData->dynMat);
     sunlineStateSTMProp(ConfigData->dynMat, ConfigData->bVec_B, ConfigData->dt, ConfigData->states, ConfigData->stateTransition);
 
     /* xbar = Phi*x */
@@ -307,14 +307,23 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH],
  @param dynMat Pointer to the Dynamic Matrix
  */
 
-void sunlineDynMatrix(double states[SKF_N_STATES_SWITCH], double dt, double *dynMat)
+void sunlineDynMatrix(double states[SKF_N_STATES_SWITCH], double bVec[SKF_N_STATES], double dt, double *dynMat)
 {
     double skewOmega[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double skewStates[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double omega[SKF_N_STATES_HALF] = {0, states[3], states[4]};
-    
-    v3Tilde(omega, skewOmega);
+    double dcm_BS[SKF_N_STATES_HALF*SKF_N_STATES_HALF];
+
+    sunlineSEKFComputeDCM_BS(states, bVec, &dcm_BS[0]);
+    mMultV(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, omega, omega);
+
+//    v3Tilde(omega, skewOmega);
+    mSetZero(skewOmega, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
+    skewOmega[1][1] = omega[1];
+    skewOmega[2][2] = omega[2];
     v3Tilde(states, skewStates);
+    mMultM(skewStates, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, skewStates);
+
     //m33Scale(-1, skewOmega, skewOmega);
     
     /* - omega_tilde in dynamics */
@@ -624,6 +633,7 @@ void sunlineSEKFSwitch(double *bVec_B, double *states, double *covar)
 
 
 void sunlineSEKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double *dcm){
+    double s1_B[SKF_N_STATES_HALF];
     double s2_B[SKF_N_STATES_HALF];
     double s3_B[SKF_N_STATES_HALF];
     
@@ -631,6 +641,7 @@ void sunlineSEKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[
     v3SetZero(s2_B);
     v3SetZero(s3_B);
     
+    v3Normalize(sunheading, s1_B);
     v3Cross(sunheading, bVec, s2_B);
     v3Normalize(s2_B, s2_B);
     /*! Populate the dcm_BS with the "new" S-frame*/
