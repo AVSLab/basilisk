@@ -599,6 +599,7 @@ void sunlineSuKFSwitch(double *bVec_B, double *states, double *covar)
 
 
 void sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double *dcm){
+    double s1_B[SKF_N_STATES_HALF];
     double s2_B[SKF_N_STATES_HALF];
     double s3_B[SKF_N_STATES_HALF];
     
@@ -606,6 +607,7 @@ void sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[
     v3SetZero(s2_B);
     v3SetZero(s3_B);
     
+    v3Normalize(sunheading, s1_B);
     v3Cross(sunheading, bVec, s2_B);
     v3Normalize(s2_B, s2_B);
     /*! Populate the dcm_BS with the "new" S-frame*/
