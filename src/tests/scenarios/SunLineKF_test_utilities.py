@@ -123,7 +123,7 @@ def StateErrorCovarPlot(x, Pflat, FilterType, show_plots, saveFigures):
         unitTestSupport.saveScenarioFigure('scenario_Filters_StatesPlot'+FilterType,  plt,  path)
     if show_plots:
         plt.show()
-    plt.close()
+    plt.close('all')
 
 
 def StatesPlotCompare(x, x2, Pflat, Pflat2, FilterType, show_plots, saveFigures):

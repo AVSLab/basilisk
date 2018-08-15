@@ -242,7 +242,7 @@ def test_hingedRigidBodyGravity(show_plots):
 
     if show_plots:
         plt.show()
-        plt.close("all")
+    plt.close("all")
 
     accuracy = 1e-10
     for i in range(0,len(trueSigma)):
@@ -459,7 +459,7 @@ def test_hingedRigidBodyNoGravity(show_plots):
 
     if show_plots:
         plt.show()
-        plt.close("all")
+    plt.close("all")
 
     accuracy = 1e-10
     for i in range(0,len(truePos)):
@@ -657,7 +657,7 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
 
     if show_plots:
         plt.show()
-        plt.close("all")
+    plt.close("all")
 
     accuracy = 1e-10
     for i in range(0,len(initialOrbAngMom_N)):
@@ -858,7 +858,7 @@ def test_hingedRigidBodyThetaSS(show_plots):
     
     if show_plots:
         plt.show()
-        plt.close("all")
+    plt.close("all")
 
 
     accuracy = 1e-6
@@ -1137,7 +1137,7 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
 
     if show_plots:
         plt.show()
-        plt.close("all")
+    plt.close("all")
 
     accuracy = 5e-3
     if abs((freqHz - omegaAnalyticalHz)/omegaAnalyticalHz) > accuracy:
@@ -1407,7 +1407,7 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
 
     if show_plots:
         plt.show()
-        plt.close("all")
+    plt.close("all")
 
     accuracy = 1e-10
     timeList = [25, 75, 125, 175]

@@ -264,7 +264,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
         unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
         if show_plots==True:
             plt.show()
-        plt.close()
+            plt.close('all')
 
         PlotName = "Torque_" +  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" + str(int(long_angle))+"deg_"+ "Loc"+str(int(location[2][0]))+ "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
         PlotTitle = "Torque on X with " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " + str(int(long_angle))+" deg " + "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
@@ -278,8 +278,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
         unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
         if show_plots==True:
             plt.show()
-        plt.close()
-
+            plt.close('all')
 
         PlotName =  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" + str(int(long_angle))+"deg_"+ "Loc"+str(int(location[2][0]))+ "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
         PlotTitle = "All Forces and Torques " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " + str(int(long_angle))+" deg "+ "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
@@ -299,7 +298,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
         unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
         if show_plots==True:
             plt.show()
-        plt.close()
+            plt.close('all')
 
         #Create expected Force to test against thrForce
         expMDot = np.zeros([np.shape(np.array(mDotData))[0],1])
@@ -417,7 +416,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
                 unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
                 if show_plots == True:
                     plt.show()
-                plt.close()
+                    plt.close('all')
 
                 # Create expected Force to test against thrForce
                 expectedpoints = np.zeros([3, np.shape(thrForce)[0]])
@@ -530,7 +529,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
                 unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
                 if show_plots == True:
                     plt.show()
-                plt.close()
+                    plt.close('all')
 
                 # Create expected Force to test against thrForce
                 expectedpoints = np.zeros([3, np.shape(thrForce)[0]])
@@ -634,7 +633,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
             unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
             if show_plots == True:
                 plt.show()
-            plt.close()
+                plt.close('all')
 
             # Create expected Force to test against thrForce
             expectedpoints = np.zeros([3, np.shape(thrForce)[0]])
@@ -675,7 +674,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
             unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
             if show_plots == True:
                 plt.show()
-            plt.close()
+                plt.close('all')
 
             for i in range(np.shape(thrForce)[0]): # Thrust fires 2 times steps after the pause of sim and restart
                 if (i > int(round(thrStartTime / testRate)) + 1 and i < int(

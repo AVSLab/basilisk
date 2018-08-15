@@ -319,6 +319,7 @@ def fuelSloshTest(show_plots,useFlag,testCase):
 
     if show_plots:
         plt.show()
+        plt.close('all')
 
     if testCase != 'MassDepletion':
         accuracy = 1e-10

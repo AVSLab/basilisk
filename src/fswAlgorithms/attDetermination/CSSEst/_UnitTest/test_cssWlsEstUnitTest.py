@@ -405,6 +405,7 @@ def cssWlsEstTestFunction(show_plots):
         plt.xlabel('Time (s)')
         plt.ylabel('Z Component (--)')
         plt.show()
+        plt.close('all')
 
     #   print out success message if no error were found
     if testFailCount == 0:

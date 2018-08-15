@@ -228,7 +228,7 @@ def dualHingedRigidBodyTest(show_plots,useFlag,testCase):
     unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, "width=0.8\\textwidth", path)
     if show_plots:
         plt.show()
-    plt.close("all")
+        plt.close("all")
 
     accuracy = 1e-10
     for i in range(0,len(initialOrbAngMom_N)):

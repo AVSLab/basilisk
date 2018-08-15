@@ -227,6 +227,8 @@ def test_StateUpdateInertialAttitude(show_plots):
 
     if(show_plots):
         plt.show()
+        plt.close('all')
+
     # print out success message if no error were found
     if testFailCount == 0:
         print "PASSED: " + moduleWrap.ModelTag + " state update"

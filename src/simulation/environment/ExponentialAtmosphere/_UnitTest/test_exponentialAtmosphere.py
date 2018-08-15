@@ -341,7 +341,7 @@ def run(show_plots, orbitCase, planetCase):
         plt.ylabel('Density in kg/m^3')
 
         plt.show()
-        plt.close()
+        plt.close('all')
 
     return testFailCount, testMessages
 

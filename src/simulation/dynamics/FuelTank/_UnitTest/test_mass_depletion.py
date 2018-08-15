@@ -198,6 +198,7 @@ def test_massDepletionTest(show_plots):
 
     if show_plots == True:
         plt.show()
+        plt.close('all')
 
     dataPos = posRef.getState()
     dataSigma = sigmaRef.getState()

@@ -251,7 +251,7 @@ def nHingedRigidBody(show_plots,useFlag,testCase):
 
     if show_plots:
         plt.show()
-    plt.close("all")
+        plt.close("all")
 
     accuracy = 1e-10
 

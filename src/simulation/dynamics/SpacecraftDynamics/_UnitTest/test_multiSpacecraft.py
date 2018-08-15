@@ -276,6 +276,7 @@ def test_SCConnected(show_plots):
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
     if show_plots:
         plt.show()
+        plt.close('all')
 
     accuracy = 1e-8
     # for i in range(0,len(truePos)):
@@ -714,6 +715,7 @@ def test_SCConnectedAndUnconnected(show_plots):
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
     if show_plots:
         plt.show()
+        plt.close('all')
 
     accuracy = 1e-8
     # for i in range(0,len(truePos)):

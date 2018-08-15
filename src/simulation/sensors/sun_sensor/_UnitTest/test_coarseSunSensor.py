@@ -314,6 +314,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
 
     if name == "constellation" and show_plots:  # Don't show plots until last run.
         plt.show()
+        plt.close('all')
 
     #
     #   Compare output and truth vectors

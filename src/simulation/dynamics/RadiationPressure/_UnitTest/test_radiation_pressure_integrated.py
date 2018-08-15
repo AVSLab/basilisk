@@ -192,6 +192,7 @@ def radiationPressureIntegratedTest(show_plots):
     plt.title('Position Relative To Earth')
     if show_plots:
         plt.show()
+        plt.close('all')
 
     figureList = {}
     fileName = os.path.basename(os.path.splitext(__file__)[0])
