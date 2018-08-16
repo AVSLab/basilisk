@@ -380,7 +380,9 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         plt.xlabel("Time (s)")
         plt.ylabel("Relative Difference")
         unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, "width=0.8\\textwidth", path)
-        plt.show(show_plots)
+        if show_plots:
+            plt.show()
+            plt.close('all')
 
     if testCase == 'BOE':
         plt.figure()
@@ -409,7 +411,9 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         plt.xlabel("Time (s)")
         plt.ylabel("Wheel Speed (rad/s)")
         unitTestSupport.writeFigureLaTeX("ReactionWheelBOERWRate", "Reaction Wheel BOE RW Rate", plt, "width=0.8\\textwidth", path)
-        plt.show(show_plots)
+        if show_plots:
+            plt.show()
+            plt.close('all')
 
     if testCase == 'FrictionSpinDown' or testCase == 'FrictionSpinUp':
         plt.figure()
@@ -438,7 +442,9 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         axes = plt.gca()
         plt.xlim([-15, 15])
         unitTestSupport.writeFigureLaTeX("ReactionWheel" + testCase + "TestFrictionTorque", "Reaction Wheel " + testCase + " Test Friction Torque", plt, "width=0.8\\textwidth", path)
-        plt.show(show_plots)
+        if show_plots:
+            plt.show()
+            plt.close('all')
 
     accuracy = 1e-7
     if testCase == 'BalancedWheels' or testCase == 'JitterSimple' or testCase == 'JitterFullyCoupled':

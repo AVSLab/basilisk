@@ -287,6 +287,7 @@ def test_multiBodyGravity(show_plots):
 
     if(show_plots):
         plt.show()
+        plt.close('all')
 
     if testFailCount == 0:
         print "PASSED: " + " multi-point source bodies"

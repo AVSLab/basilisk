@@ -240,7 +240,8 @@ def test_hingedRigidBodyGravity(show_plots):
     plt.xlabel('time (s)')
     plt.ylabel('Force about Point B')
 
-    plt.show(show_plots)
+    if show_plots:
+        plt.show()
     plt.close("all")
 
     accuracy = 1e-10
@@ -456,7 +457,8 @@ def test_hingedRigidBodyNoGravity(show_plots):
     PlotTitle = "Change In Velocity Of Center Of Mass No Gravity"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
-    plt.show(show_plots)
+    if show_plots:
+        plt.show()
     plt.close("all")
 
     accuracy = 1e-10
@@ -653,7 +655,8 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
     PlotTitle = "Change In Velocity Of Center Of Mass No Gravity with Damping"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
-    plt.show(show_plots)
+    if show_plots:
+        plt.show()
     plt.close("all")
 
     accuracy = 1e-10
@@ -852,8 +855,9 @@ def test_hingedRigidBodyThetaSS(show_plots):
     PlotTitle = "BOE Calculation for Steady State Theta 2 Deflection vs Simulation"
     format = "width=0.8\\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
-
-    plt.show(show_plots)
+    
+    if show_plots:
+        plt.show()
     plt.close("all")
 
 
@@ -1131,7 +1135,8 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     texSnippet =  str(thetaMax2) + " & " + str(thetaMax2Sim) +  " & " + str(diffTheta2Max)
     unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
 
-    plt.show(show_plots)
+    if show_plots:
+        plt.show()
     plt.close("all")
 
     accuracy = 5e-3
@@ -1400,7 +1405,8 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     format = "width=0.8\\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
-    plt.show(show_plots)
+    if show_plots:
+        plt.show()
     plt.close("all")
 
     accuracy = 1e-10

@@ -274,7 +274,9 @@ def test_SCConnected(show_plots):
     PlotName = "ChangeInRotationalEnergySystem"
     PlotTitle = "Change In Rotational Energy with Gravity"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
-    plt.show(show_plots)
+    if show_plots:
+        plt.show()
+        plt.close('all')
 
     accuracy = 1e-8
     # for i in range(0,len(truePos)):
@@ -711,7 +713,9 @@ def test_SCConnectedAndUnconnected(show_plots):
     PlotName = "ChangeInRotationalEnergy2"
     PlotTitle = "Change In Rotational Energy with Gravity"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
-    plt.show(show_plots)
+    if show_plots:
+        plt.show()
+        plt.close('all')
 
     accuracy = 1e-8
     # for i in range(0,len(truePos)):

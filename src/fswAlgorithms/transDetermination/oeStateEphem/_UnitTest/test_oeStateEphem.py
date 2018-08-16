@@ -193,6 +193,7 @@ def test_earthOrbitFit(show_plots):
 
     if(show_plots):
         plt.show()
+        plt.close('all')
 
     if testFailCount == 0:
         print "PASSED: " + " Orbit curve fit"

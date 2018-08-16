@@ -297,10 +297,8 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
         mDotParicle2Data = [0,(mass2Out[2,1] - mass2Out[1,1])/((mass2Out[2,0] - mass2Out[1,0])*1e-9)]
  
     if show_plots:
-        plt.show()#
-
-    # close the plots being saved off to avoid over-writing old and new figures
-    plt.close("all")
+        plt.show()
+        plt.close('all')
 
     if testCase != 3:
         accuracy = 1e-8

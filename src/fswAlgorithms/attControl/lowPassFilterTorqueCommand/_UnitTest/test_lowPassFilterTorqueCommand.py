@@ -143,7 +143,8 @@ def subModuleTestFunction(show_plots):
     # If the argument provided at commandline "--show_plots" evaluates as true,
     # plot all figures
     if show_plots:
-          plt.show()
+        plt.show()
+        plt.close('all')
 
     #   print out success message if no error were found
     if testFailCount == 0:

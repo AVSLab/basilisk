@@ -404,6 +404,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
 
     if show_plots and testCase != "noise":
         plt.show()
+        plt.close('all')
 
     # test outputs
     if testCase != 'noise':
@@ -518,6 +519,7 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
                                          'height=0.7\\textwidth, keepaspectratio', path)
         if show_plots:
             plt.show()
+            plt.close('all')
 
     #
     # Outputs to AutoTex
