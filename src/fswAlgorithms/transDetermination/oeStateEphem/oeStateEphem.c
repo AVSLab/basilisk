@@ -27,6 +27,7 @@
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
+#include "utilities/bsk_Print.h"
 
 /*! This method creates the output navigation message (translation only) for 
     the ephemeris model
@@ -129,15 +130,23 @@ void Update_oeStateEphem(OEStateEphemData *ConfigData, uint64_t callTime, uint64
     meanAnom = calculateChebyValue(currRec->meanAnomCoeff, currRec->nChebCoeff,
                                    currentScaledValue);
     
-    if(orbEl.a > 0.0)
+    if(orbEl.a > 0.0 && orbEl.e < 1.0) //elliptical orbit
     {
         orbAnom = M2E(meanAnom, orbEl.e);
         orbEl.f = E2f(orbAnom, orbEl.e);
     }
-    else
+    else if (orbEl.a < 0.0 && orbEl.e > 1.0) //hyperbolic orbit
     {
         orbAnom = N2H(meanAnom, orbEl.e);
         orbEl.f = H2f(orbAnom, orbEl.e);
+    }
+    else //parabolic orbit or problematic set of elements
+    {
+        BSK_PRINT(MSG_WARNING, "\n ----- \n a = %f | e = %f | Treating as parabolic \n ----- \n", orbEl.a, orbEl.e);
+        orbEl.e = 1.0 - 1E-3;
+        orbAnom = M2E(meanAnom, orbEl.e);
+        orbEl.f = E2f(orbAnom, orbEl.e);
+        orbEl.a = fabs(orbEl.a);
     }
     
     while(orbEl.Omega < 0.0)
