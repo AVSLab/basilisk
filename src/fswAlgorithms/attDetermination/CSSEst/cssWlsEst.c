@@ -105,6 +105,7 @@ void computeWlsResiduals(double *cssMeas, CSSConfigFswMsg *cssConfig,
     for(i=0; i<cssConfig->nCSS; i++)
     {
         cssDotProd = v3Dot(wlsEst, cssConfig->cssVals[i].nHat_B);
+        cssDotProd = cssDotProd > 0.0 ? cssDotProd : 0.0; /*CSS values can't be negative!*/
         cssResiduals[i] = cssMeas[i] - cssDotProd;
     }
     
