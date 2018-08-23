@@ -36,9 +36,10 @@ void SelfInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->navStateOutMsgId = CreateNewMessage(ConfigData->navStateOutMsgName, sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
-    ConfigData->cssWlsFiltResOutMsgId = CreateNewMessage(ConfigData->cssWLSFiltResOutMsgName,
-        sizeof(SunHeadingEstFswMsg), "SunHeadingEstFswMsg", moduleID);
-
+    if(strlen(ConfigData->cssWLSFiltResOutMsgName) > 0) {
+        ConfigData->cssWlsFiltResOutMsgId = CreateNewMessage(ConfigData->cssWLSFiltResOutMsgName,
+                                                             sizeof(SunHeadingEstFswMsg), "SunHeadingEstFswMsg", moduleID);
+    }
 }
 
 /*! This method performs the second stage of initialization for the CSS sensor
@@ -224,15 +225,11 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
         }
     }
     
-    memset(&filtStatus, 0x0, sizeof(SunHeadingEstFswMsg));
-    filtStatus.nCSS = ConfigData->numActiveCss;
     if(ConfigData->numActiveCss == 0) /*! - If there is no sun, just quit*/
     {
         /* no CSS got a strong enough signal.  sun estimation is not possible.  Return the zero vector instead */
         v3SetZero(ConfigData->sunlineOutBuffer.vehSunPntBdy);       /* zero the sun heading to indicate now CSS info is available */
         v3SetZero(ConfigData->sunlineOutBuffer.omega_BN_B);         /* zero the rate measure */
-        computeWlsResiduals(InputBuffer.CosValue, &ConfigData->cssConfigInBuffer,
-                            ConfigData->sunlineOutBuffer.vehSunPntBdy, filtStatus.postFitResiduals);
         ConfigData->priorSignalAvailable = 0;                       /* reset the prior heading estimate flag */
     } else {
         /* at least one CSS got a strong enough signal.  Proceed with the sun heading estimation */
@@ -250,10 +247,7 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
         /*! - Get least squares fit for sun pointing vector*/
         status = computeWlsmn(ConfigData->numActiveCss, H, W, y,
                               ConfigData->sunlineOutBuffer.vehSunPntBdy);
-        
-        computeWlsResiduals(InputBuffer.CosValue, &ConfigData->cssConfigInBuffer,
-                            ConfigData->sunlineOutBuffer.vehSunPntBdy, filtStatus.postFitResiduals);
-        
+
         v3Normalize(ConfigData->sunlineOutBuffer.vehSunPntBdy, ConfigData->sunlineOutBuffer.vehSunPntBdy);
 
         /* estimate the inertial angular velocity from the rate of the sun heading measurements */
@@ -274,8 +268,16 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
         v3Copy(ConfigData->sunlineOutBuffer.vehSunPntBdy, ConfigData->dOld);
     }
 
-    WriteMessage(ConfigData->cssWlsFiltResOutMsgId, callTime, sizeof(SunHeadingEstFswMsg),
-                 &filtStatus, moduleID);
+    if(strlen(ConfigData->cssWLSFiltResOutMsgName) > 0) {
+        memset(&filtStatus, 0x0, sizeof(SunHeadingEstFswMsg));
+        filtStatus.nCSS = ConfigData->numActiveCss;
+        computeWlsResiduals(InputBuffer.CosValue, &ConfigData->cssConfigInBuffer,
+                            ConfigData->sunlineOutBuffer.vehSunPntBdy, filtStatus.postFitResiduals);
+        WriteMessage(ConfigData->cssWlsFiltResOutMsgId, callTime, sizeof(SunHeadingEstFswMsg),
+                     &filtStatus, moduleID);
+
+    }
+
     WriteMessage(ConfigData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
                  &(ConfigData->sunlineOutBuffer), moduleID);
     return;
