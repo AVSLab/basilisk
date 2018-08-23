@@ -268,6 +268,7 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
         v3Copy(ConfigData->sunlineOutBuffer.vehSunPntBdy, ConfigData->dOld);
     }
 
+    /* if the residual fit output message is set, then compute the residuals and stor them in the output message */
     if(strlen(ConfigData->cssWLSFiltResOutMsgName) > 0) {
         memset(&filtStatus, 0x0, sizeof(SunHeadingEstFswMsg));
         filtStatus.nCSS = ConfigData->numActiveCss;
