@@ -472,7 +472,6 @@ def sunline_individual_test():
 
     DCM_BSold = np.zeros([3,3])
     DCM_BSnew = np.zeros([3,3])
-    DCM_newOld = np.zeros([3,3])
     Switch = np.eye(numStates)
     SwitchBSold = np.eye(numStates)
     SwitchBSnew = np.eye(numStates)
@@ -481,7 +480,6 @@ def sunline_individual_test():
     DCM_BSold[:,1] = np.cross(DCM_BSold[:,0], b1)/np.linalg.norm(np.array(np.cross(DCM_BSold[:,0], b1)))
     DCM_BSold[:,2] = np.cross(DCM_BSold[:,0], DCM_BSold[:,1])/np.linalg.norm(np.cross(DCM_BSold[:,0], DCM_BSold[:,1]))
     SwitchBSold[3:5, 3:5] = DCM_BSold[1:3, 1:3]
-    switchInput = SwitchBSold.flatten().tolist()
 
     b2 = np.array([1.,0.,0.])
     DCM_BSnew[:,0] = np.array(inputStates[0:3])/(np.linalg.norm(np.array(inputStates[0:3])))

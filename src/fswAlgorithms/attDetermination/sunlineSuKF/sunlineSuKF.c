@@ -268,7 +268,7 @@ void sunlineStateProp(double *stateInOut, double *b_Vec, double dt)
     v3Cross(omega, stateInOut, omegaCrossd);
     
     /*! - Multiply omega cross d by dt and add to state to propagate */
-    v3Scale(dt, omegaCrossd, propagatedVel);
+    v3Scale(-dt, omegaCrossd, propagatedVel);
     v3Add(stateInOut, propagatedVel, stateInOut);
     
 	return;
