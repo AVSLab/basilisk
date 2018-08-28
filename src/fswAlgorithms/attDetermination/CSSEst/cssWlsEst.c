@@ -20,7 +20,7 @@
 #include "attDetermination/CSSEst/cssWlsEst.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
-#include "fswMessages/sunMeasErrFswMsg.h"
+#include "fswMessages/sunlineFilterFswMsg.h"
 #include <string.h>
 #include <math.h>
 
@@ -38,7 +38,7 @@ void SelfInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
     ConfigData->navStateOutMsgId = CreateNewMessage(ConfigData->navStateOutMsgName, sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
     if(strlen(ConfigData->cssWLSFiltResOutMsgName) > 0) {
         ConfigData->cssWlsFiltResOutMsgId = CreateNewMessage(ConfigData->cssWLSFiltResOutMsgName,
-                                                             sizeof(SunHeadingEstFswMsg), "SunHeadingEstFswMsg", moduleID);
+                                                             sizeof(SunlineFilterFswMsg), "SunlineFilterFswMsg", moduleID);
     }
 }
 
@@ -176,7 +176,7 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
     uint64_t ClockTime;
     uint32_t ReadSize;
     CSSArraySensorIntMsg InputBuffer;
-    SunHeadingEstFswMsg filtStatus;
+    SunlineFilterFswMsg filtStatus;
     double H[MAX_NUM_CSS_SENSORS*3];
     double y[MAX_NUM_CSS_SENSORS];
     double W[MAX_NUM_CSS_SENSORS*MAX_NUM_CSS_SENSORS];
@@ -270,11 +270,13 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
 
     /* if the residual fit output message is set, then compute the residuals and stor them in the output message */
     if(strlen(ConfigData->cssWLSFiltResOutMsgName) > 0) {
-        memset(&filtStatus, 0x0, sizeof(SunHeadingEstFswMsg));
-        filtStatus.nCSS = ConfigData->numActiveCss;
+        memset(&filtStatus, 0x0, sizeof(SunlineFilterFswMsg));
+        filtStatus.numObs = ConfigData->numActiveCss;
+        filtStatus.timeTag = (double) (callTime*NANO2SEC);
+        v3Copy(filtStatus.state, ConfigData->sunlineOutBuffer.vehSunPntBdy);
         computeWlsResiduals(InputBuffer.CosValue, &ConfigData->cssConfigInBuffer,
-                            ConfigData->sunlineOutBuffer.vehSunPntBdy, filtStatus.postFitResiduals);
-        WriteMessage(ConfigData->cssWlsFiltResOutMsgId, callTime, sizeof(SunHeadingEstFswMsg),
+                            ConfigData->sunlineOutBuffer.vehSunPntBdy, filtStatus.postFitRes);
+        WriteMessage(ConfigData->cssWlsFiltResOutMsgId, callTime, sizeof(SunlineFilterFswMsg),
                      &filtStatus, moduleID);
 
     }
