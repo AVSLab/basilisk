@@ -273,7 +273,7 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
         memset(&filtStatus, 0x0, sizeof(SunlineFilterFswMsg));
         filtStatus.numObs = ConfigData->numActiveCss;
         filtStatus.timeTag = (double) (callTime*NANO2SEC);
-        v3Copy(filtStatus.state, ConfigData->sunlineOutBuffer.vehSunPntBdy);
+        v3Copy(ConfigData->sunlineOutBuffer.vehSunPntBdy, filtStatus.state);
         computeWlsResiduals(InputBuffer.CosValue, &ConfigData->cssConfigInBuffer,
                             ConfigData->sunlineOutBuffer.vehSunPntBdy, filtStatus.postFitRes);
         WriteMessage(ConfigData->cssWlsFiltResOutMsgId, callTime, sizeof(SunlineFilterFswMsg),

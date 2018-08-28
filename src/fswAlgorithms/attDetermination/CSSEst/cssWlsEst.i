@@ -19,6 +19,7 @@
 %module cssWlsEst
 %{
    #include "cssWlsEst.h"
+   #include "fswMessages/sunlineFilterFswMsg.h"
 %}
 
 %include "swig_conly_data.i"
@@ -39,6 +40,7 @@ GEN_SIZEOF(CSSWLSConfig);
 %include "simFswInterfaceMessages/navAttIntMsg.h"
 %include "../../fswMessages/cssConfigFswMsg.h"
 %include "../../fswMessages/cssUnitConfigFswMsg.h"
+%include "../../fswMessages/sunlineFilterFswMsg.h"
 
 %pythoncode %{
 import sys

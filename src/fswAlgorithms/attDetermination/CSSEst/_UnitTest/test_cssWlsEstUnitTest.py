@@ -53,6 +53,8 @@ def createCosList(sunPointVec, sensorPointList):
     outList = []
     for sensorPoint in sensorPointList:
         outList.append(numpy.dot(sunPointVec, sensorPoint))
+        if(outList[-1] < 0.0):
+            outList[-1] = 0.0
     return outList
 
 
@@ -112,6 +114,24 @@ def checksHatAccuracy(testVec, sHatEstUse, angleFailCriteria, TotalSim):
     return testFailCount
 
 
+# This method takes the sHat estimate output by the estimator and compares that
+# against the actual sun vector passed in as an argument.  If it doesn't match
+# to the specified tolerance, increment failure counter and alert the user
+def checkResidAccuracy(testVec, sResids, sThresh, TotalSim):
+    j = 0
+    testFailCount = 0
+    # Sum up all of the sHat estimates from the execution
+    while j < sResids.shape[0]:
+        sNormObs = numpy.linalg.norm(sResids[j,1:])
+        if(sNormObs > sThresh):
+            testFailCount += 1
+            errorString = "Residual error computation failure:"
+            errorString += str(testVec).strip('[]') + "\n"
+            errorString += "Criteria violation of: "
+            errorString += str(sNormObs)
+            logging.error(errorString) 
+        j += 1
+    return testFailCount
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -165,6 +185,7 @@ def cssWlsEstTestFunction(show_plots):
     CSSWlsEstFSWConfig.cssDataInMsgName = "css_data_aggregate"
     CSSWlsEstFSWConfig.cssConfigInMsgName = "css_config_data"
     CSSWlsEstFSWConfig.navStateOutMsgName = "css_nav_sunHeading"
+    CSSWlsEstFSWConfig.cssWLSFiltResOutMsgName = "css_est_pfr"
     CSSWlsEstFSWConfig.useWeights = False
     CSSWlsEstFSWConfig.sensorUseThresh = 0.15
 
@@ -204,9 +225,11 @@ def cssWlsEstTestFunction(show_plots):
 
     angleFailCriteria = 17.5 * math.pi / 180.0  # Get 95% effective charging in this case
     numActiveFailCriteria = 0.000001  # basically zero
+    residFailCriteria = 1.0E-12 #Essentially numerically "small"
 
     # Log the output message as well as the internal numACtiveCss variables
     unitTestSim.TotalSim.logThisMessage(CSSWlsEstFSWConfig.navStateOutMsgName, int(1E8))
+    unitTestSim.TotalSim.logThisMessage(CSSWlsEstFSWConfig.cssWLSFiltResOutMsgName, int(1E8))
     unitTestSim.AddVariableForLogging("CSSWlsEst.numActiveCss", int(1E8))
 
     # Initial test is all of the principal body axes
@@ -257,6 +280,11 @@ def cssWlsEstTestFunction(show_plots):
                                            unitTestSim)
         testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse,
                                                 numActiveFailCriteria, CSSWlsEstFSWConfig.sensorUseThresh)
+
+        filtRes = unitTestSim.pullMessageLogData(CSSWlsEstFSWConfig.cssWLSFiltResOutMsgName + '.postFitRes',
+            range(8))
+        testFailCount += checkResidAccuracy(testVec, filtRes, residFailCriteria, 
+                                            unitTestSim)
 
         # Pop truth state onto end of array for plotting purposes
         currentRow = [sHatEstUse[0, 0]]
