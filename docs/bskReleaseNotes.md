@@ -15,6 +15,9 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>
     Added a new message output with the CSS fit residuals.  This is optional.  If the output message is not set, then this information is not computed.
     </li>
+    <li>
+    Updated `sunSafePoint()` to allow for a nominal spin rate to be commanded about the sun heading vector.  The unit tests and module documentation is updated accordingly.  
+    </li>
 </ul>
 
 ## Version 0.3.2 
