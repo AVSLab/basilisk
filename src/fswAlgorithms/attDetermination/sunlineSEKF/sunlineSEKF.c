@@ -319,8 +319,9 @@ void sunlineDynMatrix(double states[SKF_N_STATES_SWITCH], double bVec[SKF_N_STAT
 
 //    v3Tilde(omega, skewOmega);
     mSetZero(skewOmega, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
-    skewOmega[1][1] = omega[1];
-    skewOmega[2][2] = omega[2];
+//    skewOmega[1][1] = omega[1];
+//    skewOmega[2][2] = omega[2];
+    v3Tilde(omega, skewOmega);
     v3Tilde(states, skewStates);
     mMultM(skewStates, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, skewStates);
 
@@ -645,7 +646,7 @@ void sunlineSEKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[
     v3Cross(sunheading, bVec, s2_B);
     v3Normalize(s2_B, s2_B);
     /*! Populate the dcm_BS with the "new" S-frame*/
-    mSetSubMatrix(sunheading, 1, SKF_N_STATES_HALF, dcm, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
+    mSetSubMatrix(s1_B, 1, SKF_N_STATES_HALF, dcm, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
     mSetSubMatrix(&(s2_B), 1, SKF_N_STATES_HALF, dcm, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 1, 0);
     v3Cross(sunheading, s2_B, s3_B);
     v3Normalize(s3_B, s3_B);
