@@ -411,7 +411,7 @@ def pullVectorSetFromData(inpMat):
     outMat = np.array(inpMat).transpose()
     return outMat[1:].transpose()
 
-def enableUnityVisualization(scSim, simTaskName,dynProcess, processName, fileName, bodyName = 'earth'):
+def enableUnityVisualization(scSim, simTaskName,dynProcess, processName, fileName, bodyName = 'none'):
     vizMessager = vizInterface.VizInterface()
     scSim.AddModelToTask(simTaskName, vizMessager)
     vizMessager.spiceInMsgName = vizInterface.StringVector([
@@ -432,16 +432,17 @@ def enableUnityVisualization(scSim, simTaskName,dynProcess, processName, fileNam
     vizMessager.protoFilename = fileName
     VizTaskName = "VizTask"
 
-    ephemData = spice_interface.SpicePlanetStateSimMsg()
-    ephemData.J2000Current = 0.0
-    ephemData.PositionVector = [0.0, 0.0, 0.0]
-    ephemData.VelocityVector = [0.0, 0.0, 0.0]
-    ephemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-    ephemData.PlanetName = bodyName
-    msgName = bodyName + '_planet_data'
-    messageSize = ephemData.getStructSize()
-    scSim.TotalSim.CreateNewMessage(processName, msgName, messageSize, 2, "SpicePlanetStateSimMsg")
-    scSim.TotalSim.WriteMessageData(msgName, messageSize, 0, ephemData)
+    if (bodyName != 'none'):
+        ephemData = spice_interface.SpicePlanetStateSimMsg()
+        ephemData.J2000Current = 0.0
+        ephemData.PositionVector = [0.0, 0.0, 0.0]
+        ephemData.VelocityVector = [0.0, 0.0, 0.0]
+        ephemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+        ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+        ephemData.PlanetName = bodyName
+        msgName = bodyName + '_planet_data'
+        messageSize = ephemData.getStructSize()
+        scSim.TotalSim.CreateNewMessage(processName, msgName, messageSize, 2, "SpicePlanetStateSimMsg")
+        scSim.TotalSim.WriteMessageData(msgName, messageSize, 0, ephemData)
 
     return
