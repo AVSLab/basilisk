@@ -131,8 +131,9 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 # simulate both the orbital and rotational motion for a single rigid body.  In the later scenarios
 # the rotational motion is engaged by specifying rotational initial conditions, as well as rotation
 # related effectors.  In this simple scenario only translational motion is setup and tracked.
-# Further, the default spacecraft parameters, such as the unit mass principle inertia values are
-# just fine for this orbit simulation as they don't impact the orbital dynamnics in this case. Later
+# Further, the default spacecraft parameters, such as the unit mass and the principle inertia values are
+# just fine for this orbit simulation as they don't impact the orbital dynamics in this case.
+# This is true for all gravity force only orbital simulations. Later
 # tutorials, such as [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback),
 # illustrate how to over-ride default values with desired simulation values.
 #
