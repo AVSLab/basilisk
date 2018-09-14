@@ -22,7 +22,7 @@
 #
 #   Unit Test Support Script
 #
-
+import sys
 import math
 import os,errno
 import platform
@@ -50,6 +50,9 @@ import macros
 from Basilisk.simulation import vis_message_interface
 from Basilisk.simulation import vis_clock_synch
 from Basilisk.simulation import spice_interface
+
+sys.path.append("/Users/Jbird/visualization/ProtoModels/modules/vizInterface")
+import vizInterface
 
 import tabulate as T
 del(T.LATEX_ESCAPE_RULES[u'$'])
@@ -408,13 +411,26 @@ def pullVectorSetFromData(inpMat):
     outMat = np.array(inpMat).transpose()
     return outMat[1:].transpose()
 
-def enableVisualization(scSim, dynProcess, processName, bodyName = 'earth'):
+def enableUnityVisualization(scSim, simTaskName,dynProcess, processName, fileName, bodyName = 'earth'):
+    vizMessager = vizInterface.VizInterface()
+    scSim.AddModelToTask(simTaskName, vizMessager)
+    vizMessager.spiceInMsgName = vizInterface.StringVector([
+                                                                  "earth_planet_data",
+                                                                  "mars_planet_data",
+                                                                  "sun_planet_data",
+                                                                  "jupiter barycenter_planet_data",
+                                                                  "moon_planet_data",
+                                                                  "venus_planet_data",
+                                                                  "mercury_planet_data",
+                                                                  "uranus barycenter_planet_data",
+                                                                  "neptune barycenter_planet_data",
+                                                                  "pluto barycenter_planet_data",
+                                                                  "saturn barycenter_planet_data"])
+    vizMessager.planetNames = vizInterface.StringVector(["earth", "mars", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
+   # vizMessager.dynModels.SpiceObject.planetNames = spice_interface.StringVector(["earth", "mars", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
+    #vizMessager.numRW = 4
+    vizMessager.protoFilename = fileName
     VizTaskName = "VizTask"
-    dynProcess.addTask(scSim.CreateNewTask(VizTaskName, macros.sec2nano(0.5)))
-    viz = vis_message_interface.VisMessageInterface()
-    scSim.AddModelToTask(VizTaskName, viz)
-    clockSynch = vis_clock_synch.VisClockSynch()
-    scSim.AddModelToTask(VizTaskName, clockSynch, None, 101)
 
     ephemData = spice_interface.SpicePlanetStateSimMsg()
     ephemData.J2000Current = 0.0
@@ -423,7 +439,7 @@ def enableVisualization(scSim, dynProcess, processName, bodyName = 'earth'):
     ephemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
     ephemData.PlanetName = bodyName
-    msgName = "central_body_spice"
+    msgName = bodyName + '_planet_data'
     messageSize = ephemData.getStructSize()
     scSim.TotalSim.CreateNewMessage(processName, msgName, messageSize, 2, "SpicePlanetStateSimMsg")
     scSim.TotalSim.WriteMessageData(msgName, messageSize, 0, ephemData)
