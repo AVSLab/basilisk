@@ -28,6 +28,7 @@
 # Creation Date:  Nov. 26, 2016
 #
 
+import sys
 import os
 import numpy as np
 
@@ -43,6 +44,9 @@ from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport)
 
+#####RIGHT HERE JEN!!!
+#sys.path.append("/Users/Jbird/visualization/ProtoModels/modules/vizInterface")
+#import vizInterface
 
 
 ## \defgroup Tutorials_1_0
@@ -342,6 +346,9 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     #
     #   setup the simulation tasks/objects
     #
+    
+                                                                  
+                                                                  
 
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
@@ -367,6 +374,8 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
             simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt',
                                                 planet.spherHarm, 2)
     mu = planet.mu
+    outputArchiveFilename = "scenarioBasicOrbit1.bin"
+    unitTestSupport.enableUnityVisualization(scSim, simTaskName, dynProcess, simProcessName, outputArchiveFilename,planetCase.lower())
 
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
@@ -525,7 +534,13 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
 
     return posData, figureList
 
-
+# Setup | orbitCase           | useSphericalHarmonics | planetCase
+# ----- | ------------------- | --------------------- | -----------
+# 1     | LEO                 | False                 | Earth
+# 2     | GTO                 | False                 | Earth
+# 3     | GEO                 | False                 | Earth
+# 4     | LEO                 | True                  | Earth
+# 5     | LEO                 | False                 | Mars
 
 #
 # This statement below ensures that the unit test scrip can be run as a
