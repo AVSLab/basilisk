@@ -28,7 +28,6 @@
 # Creation Date:  Dec. 8, 2016
 #
 
-
 import os
 import numpy as np
 from datetime import datetime
@@ -43,12 +42,11 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import astroFunctions
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import spacecraftPlus, spice_interface
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk import pyswice
 from Basilisk import __path__
 bskPath = __path__[0]
-
 
 
 ## \defgroup Tutorials_1_3
@@ -262,12 +260,14 @@ def run(show_plots, scCase):
     simulationTimeStep = macros.sec2nano(5.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-    # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')  # The Viz only support 'earth', 'mars', or 'sun'
+    # if this scenario is to interface with the BSK Unity Viz, uncomment the following lines
+    outputArchiveName = "scenarioOrbitMultiBody1.bin"
+    unitTestSupport.enableUnityVisualization(scSim,simTaskName, dynProcess, simProcessName, outputArchiveName, 'earth')  
 
     #
     #   setup the simulation tasks/objects
     #
+
 
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
@@ -334,6 +334,27 @@ def run(show_plots, scCase):
     vN = scInitialState[3:6]  # m/s
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_CN_N
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_CN_N
+
+    #####RIGHT HERE JEN!
+    #vizMessager = vizInterface.VizInterface()
+    #scSim.AddModelToTask(simTaskName, vizMessager)
+    #vizMessager.spiceInMsgName = vizInterface.StringVector([
+               #                                             "earth_planet_data",
+              #                                              "mars barycenter_planet_data",
+             #                                               "sun_planet_data",
+            #                                                "jupiter barycenter_planet_data",
+           #                                                 "moon_planet_data",
+          #                                                  "venus_planet_data",
+         #                                                   "mercury_planet_data",
+        #                                                    "uranus barycenter_planet_data",
+       #                                                     "neptune barycenter_planet_data",
+      #                                                      "pluto barycenter_planet_data",
+     #                                                       "saturn barycenter_planet_data"])
+    #vizMessager.planetNames = vizInterface.StringVector(["earth", "mars barycenter", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
+    #gravFactory.spiceObject.planetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
+    #vizMessager.numRW = 4
+    #vizMessager.protoFilename = "scenarioMultiBody.bin"
+
 
     #
     #   Setup simulation time
