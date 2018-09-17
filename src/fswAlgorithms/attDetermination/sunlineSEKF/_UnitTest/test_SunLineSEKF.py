@@ -107,16 +107,32 @@ def sunline_individual_test():
     bVec = [1.,0.,0.]
     dt =0.5
 
+    dcm_BS = [1., 0., 0.,
+             0., 1., 0.,
+             0., 0., 1.]
+
+    # Fill in the variables for the test
+    dcm = sunlineSEKF.new_doubleArray(3 * 3)
+
+    for j in range(9):
+        sunlineSEKF.doubleArray_setitem(dcm, j, dcm_BS[j])
+
+    sunlineSEKF.sunlineSEKFComputeDCM_BS(inputStates[:3], bVec, dcm)
+
+    dcmOut = []
+    for j in range(9):
+        dcmOut.append(sunlineSEKF.doubleArray_getitem(dcm, j))
+
+    DCM_BS = np.array(dcmOut).reshape([3,3])
+
+    omega_B = np.dot(DCM_BS, np.array(inputOmega))
+    dtilde = RigidBodyKinematics.v3Tilde(-np.array(inputStates)[:3])
+    dBS = np.dot(dtilde, DCM_BS)
+
+
     expDynMat = np.zeros([numStates,numStates])
-    expDynMat[0:3, 0:3] =  np.array([[0., -inputOmega[2], inputOmega[1]],
-                            [inputOmega[2], 0., -inputOmega[0]],
-                            [ -inputOmega[1], inputOmega[0], 0.]])
-
-    s_skew = np.array([[0., -inputStates[2], inputStates[1]],
-                            [inputStates[2], 0., -inputStates[0]],
-                            [ -inputStates[1], inputStates[0], 0.]])
-
-    expDynMat[0:3, 3:numStates] = - s_skew[:, 1:3]
+    expDynMat[0:3, 0:3] =  np.array(RigidBodyKinematics.v3Tilde(omega_B))
+    expDynMat[0:3, 3:numStates] = dBS[:, 1:]
 
     dynMat = sunlineSEKF.new_doubleArray(numStates*numStates)
     for i in range(numStates*numStates):
@@ -176,7 +192,6 @@ def sunline_individual_test():
 
     sunlineSEKF.sunlineSEKFComputeDCM_BS(inputStates[:3], bVec_test, dcm)
 
-    switchBSout = []
     dcmOut = []
     for j in range(9):
         dcmOut.append(sunlineSEKF.doubleArray_getitem(dcm, j))
@@ -1006,17 +1021,8 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 if __name__ == "__main__":
     # sunline_individual_test()
-    # test_all_functions_sekf(True)
-    # import time
-    # numb = 25
-    # avg = 0
-    # for i in range(numb):
-    #     timeStart = time.time()
-    #     StateUpdateSunLine(False, 2000, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0])
-    #     timeEnd = time.time()
-    #     avg += timeEnd - timeStart
-    # print avg / numb
-    [testResults, testMessage] = sunline_individual_test()
+    test_all_functions_sekf(True)
+    # [testResults, testMessage] = sunline_individual_test()
     # (200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
     # (2000, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
     # (200, False ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
