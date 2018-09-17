@@ -692,7 +692,7 @@ def StatePropVariable(show_plots):
     stateErrorLog = unitTestSim.GetLogVariableData('sunlineSEKF.x')
     stmLog = unitTestSim.GetLogVariableData('sunlineSEKF.stateTransition')
 
-
+    bVec = [1.,0.,0.]
     dt = 0.5
     expectedStateArray = np.zeros([2001,numStates+1])
     expectedStateArray[0,1:numStates+1] = np.array(InitialState)
@@ -705,15 +705,30 @@ def StatePropVariable(show_plots):
 
     expDynMat = np.zeros([2001,numStates,numStates])
     for i in range(0,2001):
-        expDynMat[i,0:3, 0:3] =  np.array([[0., -expectedStateArray[i,5], expectedStateArray[i,4]],
-                                          [expectedStateArray[i,5], 0.,0.],
-                                          [-expectedStateArray[i,4], 0., 0.]])
+        dcm_BS = [1., 0., 0.,
+                  0., 1., 0.,
+                  0., 0., 1.]
 
-        s_skew = np.array([[0., -expectedStateArray[i,3], expectedStateArray[i,2]],
-                           [expectedStateArray[i,3], 0., -expectedStateArray[i,1]],
-                           [-expectedStateArray[i,2], expectedStateArray[i,1], 0.]])
+        # Fill in the variables for the test
+        dcm = sunlineSEKF.new_doubleArray(3 * 3)
 
-        expDynMat[i,0:3, 3:numStates] = - s_skew[:, 1:3]
+        for j in range(9):
+            sunlineSEKF.doubleArray_setitem(dcm, j, dcm_BS[j])
+
+        sunlineSEKF.sunlineSEKFComputeDCM_BS(expectedStateArray[i, 1:4], bVec, dcm)
+
+        dcmOut = []
+        for j in range(9):
+            dcmOut.append(sunlineSEKF.doubleArray_getitem(dcm, j))
+
+        DCM_BS = np.array(dcmOut).reshape([3, 3])
+
+        omega_B = np.dot(DCM_BS, np.array([0]+expectedStateArray[i,4:].tolist()))
+        dtilde = RigidBodyKinematics.v3Tilde(-np.array(expectedStateArray)[i, 1:4])
+        dBS = np.dot(dtilde, DCM_BS)
+
+        expDynMat[i,0:3, 0:3] = np.array(RigidBodyKinematics.v3Tilde(omega_B))
+        expDynMat[i,0:3, 3:numStates] = dBS[:, 1:]
 
     expectedSTM = np.zeros([2001,numStates,numStates])
     expectedSTM[0,:,:] = np.eye(numStates)
