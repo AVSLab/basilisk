@@ -57,7 +57,7 @@ typedef struct {
     double bVec_B[SKF_N_STATES_HALF];       /*!< [-] current vector of the b frame used to make frame */
     double switchTresh;             /*!< [-]  Threshold for switching frames */
     
-    double states[SKF_N_STATES_SWITCH];        /*!< [-] State estimate for time TimeTag*/
+    double state[SKF_N_STATES_SWITCH];        /*!< [-] State estimate for time TimeTag*/
     
 	double wM[2 * SKF_N_STATES_SWITCH + 1]; /*!< [-] Weighting vector for sigma points*/
 	double wC[2 * SKF_N_STATES_SWITCH + 1]; /*!< [-] Weighting vector for sigma points*/

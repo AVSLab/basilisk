@@ -52,7 +52,7 @@ typedef struct {
 	double dt;                     /*!< [s] seconds since last data epoch */
 	double timeTag;                /*!< [s]  Time tag for statecovar/etc */
 
-	double states[SKF_N_STATES_HALF];        /*!< [-] State estimate for time TimeTag*/
+	double state[SKF_N_STATES_HALF];        /*!< [-] State estimate for time TimeTag*/
     double prev_states[SKF_N_STATES_HALF];        /*!< [-] State estimate for previous time TimeTag*/
     double omega[SKF_N_STATES_HALF];        /*!< [-] Rotation rate vector*/
     double x[SKF_N_STATES_HALF];             /*! State errors */

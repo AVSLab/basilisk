@@ -44,7 +44,7 @@ def setupFilterData(filterObject):
     filterObject.cssConfigInMsgName = "css_config_data"
 
     filterObject.sensorUseThresh = 0.
-    filterObject.states = [1.0, 1.0, 1.0]
+    filterObject.state = [1.0, 1.0, 1.0]
     filterObject.omega = [0.1, 0.2, 0.1]
     # filterObject.omega = [0., 0., 0.]
     filterObject.x = [1.0, 0.0, 1.0]
@@ -465,12 +465,12 @@ def StatePropStatic():
     setupFilterData(moduleConfig)
     moduleConfig.omega = [0.,0.,0.]
     unitTestSim.AddVariableForLogging('okeefeEKF.covar', testProcessRate * 10, 0, 8)
-    unitTestSim.AddVariableForLogging('okeefeEKF.states', testProcessRate * 10, 0, 2)
+    unitTestSim.AddVariableForLogging('okeefeEKF.state', testProcessRate * 10, 0, 2)
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.GetLogVariableData('okeefeEKF.states')
+    stateLog = unitTestSim.GetLogVariableData('okeefeEKF.state')
 
 
     for i in range(NUMSTATES):
@@ -532,15 +532,15 @@ def StatePropVariable(show_plots):
 
     setupFilterData(moduleConfig)
 
-    InitialState = moduleConfig.states
+    InitialState = moduleConfig.state
     Initialx = moduleConfig.x
     InitialCovar = moduleConfig.covar
     InitOmega = moduleConfig.omega
 
-    moduleConfig.states = InitialState
+    moduleConfig.state = InitialState
     unitTestSim.AddVariableForLogging('okeefeEKF.covar', testProcessRate, 0, 8)
     unitTestSim.AddVariableForLogging('okeefeEKF.stateTransition', testProcessRate, 0, 8)
-    unitTestSim.AddVariableForLogging('okeefeEKF.states', testProcessRate , 0, 2)
+    unitTestSim.AddVariableForLogging('okeefeEKF.state', testProcessRate , 0, 2)
     unitTestSim.AddVariableForLogging('okeefeEKF.x', testProcessRate , 0, 2)
     unitTestSim.AddVariableForLogging('okeefeEKF.omega', testProcessRate , 0, 2)
     unitTestSim.InitializeSimulation()
@@ -549,7 +549,7 @@ def StatePropVariable(show_plots):
 
 
     covarLog = unitTestSim.GetLogVariableData('okeefeEKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('okeefeEKF.states')
+    stateLog = unitTestSim.GetLogVariableData('okeefeEKF.state')
     stateErrorLog = unitTestSim.GetLogVariableData('okeefeEKF.x')
     stmLog = unitTestSim.GetLogVariableData('okeefeEKF.stateTransition')
     omegaLog = unitTestSim.GetLogVariableData('okeefeEKF.omega')
@@ -722,10 +722,10 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
     dt =0.5
     stateTarget1 = testVector1
-    moduleConfig.states = stateGuess
+    moduleConfig.state = stateGuess
     moduleConfig.x = (np.array(stateTarget1) - np.array(stateGuess)).tolist()
     unitTestSim.AddVariableForLogging('okeefeEKF.covar', testProcessRate , 0, 8, 'double')
-    unitTestSim.AddVariableForLogging('okeefeEKF.states', testProcessRate , 0, 2, 'double')
+    unitTestSim.AddVariableForLogging('okeefeEKF.state', testProcessRate , 0, 2, 'double')
     unitTestSim.AddVariableForLogging('okeefeEKF.x', testProcessRate , 0, 2, 'double')
 
     unitTestSim.InitializeSimulation()
@@ -751,7 +751,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         unitTestSim.ExecuteSimulation()
 
     covarLog = unitTestSim.GetLogVariableData('okeefeEKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('okeefeEKF.states')
+    stateLog = unitTestSim.GetLogVariableData('okeefeEKF.state')
     stateErrorLog = unitTestSim.GetLogVariableData('okeefeEKF.x')
 
     ####################################################################################
@@ -834,7 +834,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         unitTestSim.ExecuteSimulation()
 
     covarLog = unitTestSim.GetLogVariableData('okeefeEKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('okeefeEKF.states')
+    stateLog = unitTestSim.GetLogVariableData('okeefeEKF.state')
     stateErrorLog = unitTestSim.GetLogVariableData('okeefeEKF.x')
 
 

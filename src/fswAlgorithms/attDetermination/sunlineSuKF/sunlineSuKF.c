@@ -179,13 +179,13 @@ void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
     ReadMessage(ConfigData->cssDataInMsgId, &ClockTime, &ReadSize,
         sizeof(CSSArraySensorIntMsg), (void*) (&(ConfigData->cssSensorInBuffer)), moduleID);
     
-    v3Normalize(&ConfigData->states[0], sunheading_hat);
+    v3Normalize(&ConfigData->state[0], sunheading_hat);
     
     
     /*! - Check for switching frames */
     if (v3Dot(ConfigData->bVec_B, sunheading_hat) > ConfigData->switchTresh)
     {
-        sunlineSuKFSwitch(ConfigData->bVec_B, ConfigData->states, ConfigData->covar);
+        sunlineSuKFSwitch(ConfigData->bVec_B, ConfigData->state, ConfigData->covar);
     }
     
     /*! - If the time tag from the measured data is new compared to previous step, 
@@ -222,7 +222,7 @@ void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
     mSubtract(ConfigData->obs, MAX_N_CSS_MEAS, 1, yBar, ConfigData->postFits);
     
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
-	v3Copy(ConfigData->states, ConfigData->outputSunline.vehSunPntBdy);
+	v3Copy(ConfigData->state, ConfigData->outputSunline.vehSunPntBdy);
     v3Normalize(ConfigData->outputSunline.vehSunPntBdy,
         ConfigData->outputSunline.vehSunPntBdy);
     ConfigData->outputSunline.timeTag = ConfigData->timeTag;
@@ -234,7 +234,7 @@ void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
     sunlineDataOutBuffer.numObs = ConfigData->numObs;
     memmove(sunlineDataOutBuffer.covar, ConfigData->covar,
             SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH*sizeof(double));
-    memmove(sunlineDataOutBuffer.state, ConfigData->states, SKF_N_STATES_SWITCH*sizeof(double));
+    memmove(sunlineDataOutBuffer.state, ConfigData->state, SKF_N_STATES_SWITCH*sizeof(double));
     memmove(sunlineDataOutBuffer.postFitRes, ConfigData->postFits, MAX_N_CSS_MEAS*sizeof(double));
     WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(SunlineFilterFswMsg),
                  &sunlineDataOutBuffer, moduleID);
@@ -293,7 +293,7 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
 	ConfigData->dt = updateTime - ConfigData->timeTag;
     
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
-	vCopy(ConfigData->states, ConfigData->numStates,
+	vCopy(ConfigData->state, ConfigData->numStates,
 		&(ConfigData->SP[0 * ConfigData->numStates + 0]));
 	sunlineStateProp(&(ConfigData->SP[0 * ConfigData->numStates + 0]), ConfigData->bVec_B, ConfigData->dt);
     /*! - Scale that Sigma point by the appopriate scaling factor (Wm[0])*/
@@ -310,7 +310,7 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
 		spPtr = &(ConfigData->SP[Index*ConfigData->numStates]);
 		vCopy(&sBarT[i*ConfigData->numStates], ConfigData->numStates, spPtr);
 		vScale(ConfigData->gamma, spPtr, ConfigData->numStates, spPtr);
-		vAdd(spPtr, ConfigData->numStates, ConfigData->states, spPtr);
+		vAdd(spPtr, ConfigData->numStates, ConfigData->state, spPtr);
 		sunlineStateProp(spPtr, ConfigData->bVec_B, ConfigData->dt);
 		vScale(ConfigData->wM[Index], spPtr, ConfigData->numStates, xComp);
 		vAdd(xComp, ConfigData->numStates, ConfigData->xBar, ConfigData->xBar);
@@ -319,7 +319,7 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
         spPtr = &(ConfigData->SP[Index*ConfigData->numStates]);
         vCopy(&sBarT[i*ConfigData->numStates], ConfigData->numStates, spPtr);
         vScale(-ConfigData->gamma, spPtr, ConfigData->numStates, spPtr);
-        vAdd(spPtr, ConfigData->numStates, ConfigData->states, spPtr);
+        vAdd(spPtr, ConfigData->numStates, ConfigData->state, spPtr);
         sunlineStateProp(spPtr, ConfigData->bVec_B, ConfigData->dt);
         vScale(ConfigData->wM[Index], spPtr, ConfigData->numStates, xComp);
         vAdd(xComp, ConfigData->numStates, ConfigData->xBar, ConfigData->xBar);
@@ -365,7 +365,7 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
 	mMultM(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
         ConfigData->covar, ConfigData->numStates, ConfigData->numStates,
            ConfigData->covar);
-    vCopy(&(ConfigData->SP[0]), ConfigData->numStates, ConfigData->states );
+    vCopy(&(ConfigData->SP[0]), ConfigData->numStates, ConfigData->state );
 	
 	ConfigData->timeTag = updateTime;
 }
@@ -518,7 +518,7 @@ void sunlineSuKFMeasUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
     vSubtract(ConfigData->obs, ConfigData->numObs, yBar, tempYVec);
     mMultM(kMat, ConfigData->numStates, ConfigData->numObs, tempYVec,
         ConfigData->numObs, 1, xHat);
-    vAdd(ConfigData->states, ConfigData->numStates, xHat, ConfigData->states);
+    vAdd(ConfigData->state, ConfigData->numStates, xHat, ConfigData->state);
     /*! - Compute the updated matrix U from equation 28.  Note that I then transpose it 
          so that I can extract "columns" from adjacent memory*/
     mMultM(kMat, ConfigData->numStates, ConfigData->numObs, sy,

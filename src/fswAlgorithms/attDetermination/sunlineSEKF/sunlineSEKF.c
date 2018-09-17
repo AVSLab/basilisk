@@ -156,13 +156,13 @@ void Update_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
     ReadMessage(ConfigData->cssDataInMsgId, &ClockTime, &ReadSize,
         sizeof(CSSArraySensorIntMsg), (void*) (&(ConfigData->cssSensorInBuffer)), moduleID);
     
-    v3Normalize(&ConfigData->states[0], sunheading_hat);
+    v3Normalize(&ConfigData->state[0], sunheading_hat);
     
     
     /*! - Check for switching frames */
     if (v3Dot(ConfigData->bVec_B, sunheading_hat) > ConfigData->switchTresh)
     {
-        sunlineSEKFSwitch(ConfigData->bVec_B, ConfigData->states, ConfigData->covar);
+        sunlineSEKFSwitch(ConfigData->bVec_B, ConfigData->state, ConfigData->covar);
     }
     
     /*! - If the time tag from the measured data is new compared to previous step, 
@@ -189,11 +189,11 @@ void Update_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
     mSubtract(ConfigData->yMeas, ConfigData->numObs, 1, Hx, ConfigData->postFits);
     
     /* Switch the rates of the back into the body frame */
-    vCopy(ConfigData->states, SKF_N_STATES_SWITCH, states_B);
+    vCopy(ConfigData->state, SKF_N_STATES_SWITCH, states_B);
     vScale(-1, &(states_B[3]), 2, &(states_B[3]));
     
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
-	v3Copy(ConfigData->states, ConfigData->outputSunline.vehSunPntBdy);
+	v3Copy(ConfigData->state, ConfigData->outputSunline.vehSunPntBdy);
     v3Normalize(ConfigData->outputSunline.vehSunPntBdy,
         ConfigData->outputSunline.vehSunPntBdy);
     ConfigData->outputSunline.timeTag = ConfigData->timeTag;
@@ -230,8 +230,8 @@ void sunlineTimeUpdate(sunlineSEKFConfig *ConfigData, double updateTime)
 	ConfigData->dt = updateTime - ConfigData->timeTag;
     
     /*! - Propagate the previous reference states and STM to the current time */
-    sunlineDynMatrix(ConfigData->states, ConfigData->bVec_B, ConfigData->dt, ConfigData->dynMat);
-    sunlineStateSTMProp(ConfigData->dynMat, ConfigData->bVec_B, ConfigData->dt, ConfigData->states, ConfigData->stateTransition);
+    sunlineDynMatrix(ConfigData->state, ConfigData->bVec_B, ConfigData->dt, ConfigData->dynMat);
+    sunlineStateSTMProp(ConfigData->dynMat, ConfigData->bVec_B, ConfigData->dt, ConfigData->state, ConfigData->stateTransition);
 
     /* xbar = Phi*x */
     mMultV(ConfigData->stateTransition, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, ConfigData->x, ConfigData->xBar);
@@ -245,9 +245,9 @@ void sunlineTimeUpdate(sunlineSEKFConfig *ConfigData, double updateTime)
     /*Compute Gamma and add gammaQGamma^T to Pbar. This is the process noise addition*/
    double Gamma[SKF_N_STATES_SWITCH][(SKF_N_STATES_SWITCH-3)]=
     {
-        {-ConfigData->states[2]*ConfigData->dt*ConfigData->dt/2,ConfigData->states[1]*ConfigData->dt*ConfigData->dt/2},
-        {0,-ConfigData->states[0]*ConfigData->dt*ConfigData->dt/2},
-        {ConfigData->states[0]*ConfigData->dt*ConfigData->dt/2, 0},
+        {-ConfigData->state[2]*ConfigData->dt*ConfigData->dt/2,ConfigData->state[1]*ConfigData->dt*ConfigData->dt/2},
+        {0,-ConfigData->state[0]*ConfigData->dt*ConfigData->dt/2},
+        {ConfigData->state[0]*ConfigData->dt*ConfigData->dt/2, 0},
         {ConfigData->dt,0},
         {0,ConfigData->dt}
     };
@@ -353,7 +353,7 @@ void sunlineMeasUpdate(sunlineSEKFConfig *ConfigData, double updateTime)
 
     /*! Begin method steps*/
     /*! - Compute the valid observations and the measurement model for all observations*/
-    sunlineHMatrixYMeas(ConfigData->states, ConfigData->numCSSTotal, ConfigData->cssSensorInBuffer.CosValue, ConfigData->sensorUseThresh, ConfigData->cssNHat_B, ConfigData->obs, ConfigData->yMeas, &(ConfigData->numObs), ConfigData->measMat);
+    sunlineHMatrixYMeas(ConfigData->state, ConfigData->numCSSTotal, ConfigData->cssSensorInBuffer.CosValue, ConfigData->sensorUseThresh, ConfigData->cssNHat_B, ConfigData->obs, ConfigData->yMeas, &(ConfigData->numObs), ConfigData->measMat);
     
     /*! - Compute the Kalman Gain. */
     sunlineKalmanGain(ConfigData->covarBar, ConfigData->measMat, ConfigData->qObsVal, ConfigData->numObs, ConfigData->kalmanGain);
@@ -366,7 +366,7 @@ void sunlineMeasUpdate(sunlineSEKFConfig *ConfigData, double updateTime)
     }
     else{
 //    /*! - Compute the update with a EKF, notice the reference state is added as an argument because it is changed by the filter update */
-    sunlineSEKFUpdate(ConfigData->kalmanGain, ConfigData->covarBar, ConfigData->qObsVal, ConfigData->numObs, ConfigData->yMeas, ConfigData->measMat, ConfigData->states, ConfigData->x, ConfigData->covar);
+    sunlineSEKFUpdate(ConfigData->kalmanGain, ConfigData->covarBar, ConfigData->qObsVal, ConfigData->numObs, ConfigData->yMeas, ConfigData->measMat, ConfigData->state, ConfigData->x, ConfigData->covar);
     }
 }
 

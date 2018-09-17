@@ -50,8 +50,8 @@ def setupFilterData(filterObject):
     filterObject.beta = 2.0
     filterObject.kappa = 0.0
 
-    # filterObject.states = [0.0, 0., 0., 0., 0.]
-    filterObject.states = [0.0, 0.0, 1.0, 0.0, 0.0]
+    # filterObject.state = [0.0, 0., 0., 0., 0.]
+    filterObject.state = [0.0, 0.0, 1.0, 0.0, 0.0]
     filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0,
                           0.0, 1., 0.0, 0.0, 0.0,
                           0.0, 0.0, 1., 0.0, 0.0,
@@ -413,9 +413,9 @@ def testStateUpdateSunLine(show_plots):
 
     stateTarget = testVector.tolist()
     stateTarget.extend([0.0, 0.0, 0.0])
-    moduleConfig.states = [0.7, 0.7, 0.0]
+    moduleConfig.state = [0.7, 0.7, 0.0]
     unitTestSim.AddVariableForLogging('sunlineSuKF.covar', testProcessRate*10, 0, 24, 'double')
-    unitTestSim.AddVariableForLogging('sunlineSuKF.states', testProcessRate*10, 0, 4, 'double')
+    unitTestSim.AddVariableForLogging('sunlineSuKF.state', testProcessRate*10, 0, 4, 'double')
 
     unitTestSim.InitializeSimulation()
 
@@ -429,7 +429,7 @@ def testStateUpdateSunLine(show_plots):
         unitTestSim.ExecuteSimulation()
 
     covarLog = unitTestSim.GetLogVariableData('sunlineSuKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('sunlineSuKF.states')
+    stateLog = unitTestSim.GetLogVariableData('sunlineSuKF.state')
 
     for i in range(5):
         if(covarLog[-1, i*5+1+i] > covarLog[0, i*5+1+i]/100):
@@ -459,7 +459,7 @@ def testStateUpdateSunLine(show_plots):
 
 
     covarLog = unitTestSim.GetLogVariableData('sunlineSuKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('sunlineSuKF.states')
+    stateLog = unitTestSim.GetLogVariableData('sunlineSuKF.state')
     stateTarget = testVector.tolist()
     stateTarget.extend([0.0, 0.0, 0.0])
     for i in range(5):
@@ -519,13 +519,13 @@ def testStatePropSunLine(show_plots):
     
     setupFilterData(moduleConfig)
     unitTestSim.AddVariableForLogging('sunlineSuKF.covar', testProcessRate*10, 0, 24)
-    unitTestSim.AddVariableForLogging('sunlineSuKF.states', testProcessRate*10, 0, 4)
+    unitTestSim.AddVariableForLogging('sunlineSuKF.state', testProcessRate*10, 0, 4)
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
     
     covarLog = unitTestSim.GetLogVariableData('sunlineSuKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('sunlineSuKF.states')
+    stateLog = unitTestSim.GetLogVariableData('sunlineSuKF.state')
 
     
     for i in range(5):

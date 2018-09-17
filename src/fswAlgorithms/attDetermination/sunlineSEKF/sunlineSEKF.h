@@ -51,7 +51,7 @@ typedef struct {
     double bVec_B[SKF_N_STATES_HALF];       /*!< [-] current vector of the b frame used to make frame */
     double switchTresh;             /*!< [-]  Threshold for switching frames */
 
-	double states[SKF_N_STATES_SWITCH];        /*!< [-] State estimate for time TimeTag*/
+	double state[SKF_N_STATES_SWITCH];        /*!< [-] State estimate for time TimeTag*/
     double x[SKF_N_STATES_SWITCH];             /*! State errors */
     double xBar[SKF_N_STATES_SWITCH];            /*! [-] Current mean state estimate*/
 	double covarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];         /*!< [-] Time updated covariance */

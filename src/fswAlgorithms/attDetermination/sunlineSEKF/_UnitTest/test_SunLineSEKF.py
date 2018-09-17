@@ -41,7 +41,7 @@ def setupFilterData(filterObject):
     filterObject.cssConfigInMsgName = "css_config_data"
 
     filterObject.sensorUseThresh = 0.
-    filterObject.states = [1.0, 1.0, 1.0, 0.0, 0.0]
+    filterObject.state = [1.0, 1.0, 1.0, 0.0, 0.0]
     filterObject.x = [1.0, 0.0, 1.0, 0.0, 0.1]
     filterObject.covar = [0.4, 0.0, 0.0, 0.0, 0.0,
                           0.0, 0.4, 0.0, 0.0, 0.0,
@@ -607,12 +607,12 @@ def StatePropStatic():
 
     setupFilterData(moduleConfig)
     unitTestSim.AddVariableForLogging('sunlineSEKF.covar', testProcessRate * 10, 0, 24)
-    unitTestSim.AddVariableForLogging('sunlineSEKF.states', testProcessRate * 10, 0, 4)
+    unitTestSim.AddVariableForLogging('sunlineSEKF.state', testProcessRate * 10, 0, 4)
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.GetLogVariableData('sunlineSEKF.states')
+    stateLog = unitTestSim.GetLogVariableData('sunlineSEKF.state')
 
     for i in range(numStates):
         if (abs(stateLog[-1, i + 1] - stateLog[0, i + 1]) > 1.0E-10):
@@ -672,15 +672,15 @@ def StatePropVariable(show_plots):
 
     setupFilterData(moduleConfig)
 
-    InitialState = moduleConfig.states
+    InitialState = moduleConfig.state
     Initialx = moduleConfig.x
     InitialCovar = moduleConfig.covar
 
-    moduleConfig.states = InitialState
+    moduleConfig.state = InitialState
 
     unitTestSim.AddVariableForLogging('sunlineSEKF.covar', testProcessRate, 0, 24)
     unitTestSim.AddVariableForLogging('sunlineSEKF.stateTransition', testProcessRate, 0, 24)
-    unitTestSim.AddVariableForLogging('sunlineSEKF.states', testProcessRate , 0, 4)
+    unitTestSim.AddVariableForLogging('sunlineSEKF.state', testProcessRate , 0, 4)
     unitTestSim.AddVariableForLogging('sunlineSEKF.x', testProcessRate , 0, 4)
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(1000.0))
@@ -688,7 +688,7 @@ def StatePropVariable(show_plots):
 
 
     covarLog = unitTestSim.GetLogVariableData('sunlineSEKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('sunlineSEKF.states')
+    stateLog = unitTestSim.GetLogVariableData('sunlineSEKF.state')
     stateErrorLog = unitTestSim.GetLogVariableData('sunlineSEKF.x')
     stmLog = unitTestSim.GetLogVariableData('sunlineSEKF.stateTransition')
 
@@ -864,10 +864,10 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
     stateTarget1 = testVector1
     stateTarget1 += [0.0, 0.0]
-    moduleConfig.states = stateGuess
+    moduleConfig.state = stateGuess
     moduleConfig.x = (np.array(stateTarget1) - np.array(stateGuess)).tolist()
     unitTestSim.AddVariableForLogging('sunlineSEKF.covar', testProcessRate , 0, 24, 'double')
-    unitTestSim.AddVariableForLogging('sunlineSEKF.states', testProcessRate , 0, 4, 'double')
+    unitTestSim.AddVariableForLogging('sunlineSEKF.state', testProcessRate , 0, 4, 'double')
     unitTestSim.AddVariableForLogging('sunlineSEKF.x', testProcessRate , 0, 4, 'double')
 
     unitTestSim.InitializeSimulation()
@@ -891,7 +891,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         unitTestSim.ExecuteSimulation()
 
     covarLog = unitTestSim.GetLogVariableData('sunlineSEKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('sunlineSEKF.states')
+    stateLog = unitTestSim.GetLogVariableData('sunlineSEKF.state')
     stateErrorLog = unitTestSim.GetLogVariableData('sunlineSEKF.x')
 
     ####################################################################################
@@ -967,7 +967,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         unitTestSim.ExecuteSimulation()
 
     covarLog = unitTestSim.GetLogVariableData('sunlineSEKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('sunlineSEKF.states')
+    stateLog = unitTestSim.GetLogVariableData('sunlineSEKF.state')
     stateErrorLog = unitTestSim.GetLogVariableData('sunlineSEKF.x')
 
 

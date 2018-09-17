@@ -53,7 +53,7 @@ typedef struct {
 	double dt;                     /*!< [s] seconds since last data epoch */
 	double timeTag;                /*!< [s]  Time tag for statecovar/etc */
 
-	double states[SKF_N_STATES];        /*!< [-] State estimate for time TimeTag*/
+	double state[SKF_N_STATES];        /*!< [-] State estimate for time TimeTag*/
     double x[SKF_N_STATES];             /*! State errors */
     double xBar[SKF_N_STATES];            /*! [-] Current mean state estimate*/
 	double covarBar[SKF_N_STATES*SKF_N_STATES];         /*!< [-] Time updated covariance */
