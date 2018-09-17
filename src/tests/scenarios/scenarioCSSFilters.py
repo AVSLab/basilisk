@@ -76,7 +76,7 @@ def setupEKFData(filterObject):
     filterObject.cssDataInMsgName = "css_sensors_data"
     filterObject.cssConfigInMsgName = "css_config_data"
 
-    filterObject.states = [1.0, 0.1, 0.0, 0.0, 0.01, 0.0]
+    filterObject.state = [1.0, 0.1, 0.0, 0.0, 0.01, 0.0]
     filterObject.x = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0, 0.0,
                           0.0, 1., 0.0, 0.0, 0.0, 0.0,
@@ -98,7 +98,7 @@ def setupOEKFData(filterObject):
     filterObject.cssConfigInMsgName = "css_config_data"
 
     filterObject.omega = [0., 0., 0.]
-    filterObject.states = [1.0, 0.1, 0.0]
+    filterObject.state = [1.0, 0.1, 0.0]
     filterObject.x = [0.0, 0.0, 0.0]
     filterObject.covar = [1., 0.0, 0.0,
                           0.0, 1., 0.0,
@@ -116,7 +116,7 @@ def setupSEKFData(filterObject):
     filterObject.cssDataInMsgName = "css_sensors_data"
     filterObject.cssConfigInMsgName = "css_config_data"
 
-    filterObject.states = [1.0, 0.1, 0., 0., 0.]
+    filterObject.state = [1.0, 0.1, 0., 0., 0.]
     filterObject.x = [0.0, 0.0, 0.0, 0.0, 0.0]
     filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0,
                           0.0, 1., 0.0, 0.0, 0.0,
@@ -129,6 +129,33 @@ def setupSEKFData(filterObject):
     filterObject.sensorUseThresh = np.sqrt(filterObject.qObsVal)*5
 
     filterObject.eKFSwitch = 5. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
+
+
+def setupSuKFData(filterObject):
+    filterObject.navStateOutMsgName = "sunline_state_estimate"
+    filterObject.filtDataOutMsgName = "sunline_filter_data"
+    filterObject.cssDataInMsgName = "css_sensors_data"
+    filterObject.cssConfigInMsgName = "css_config_data"
+
+    filterObject.alpha = 0.02
+    filterObject.beta = 2.0
+    filterObject.kappa = 0.0
+
+    filterObject.state = [1.0, 0.1, 0., 0., 0.]
+    filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0,
+                          0.0, 1., 0.0, 0.0, 0.0,
+                          0.0, 0.0, 1., 0.0, 0.0,
+                          0.0, 0.0, 0.0, 0.01, 0.0,
+                          0.0, 0.0, 0.0, 0.0, 0.01]
+
+
+    qNoiseIn = np.identity(5)
+    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.001**2
+    qNoiseIn[3:5, 3:5] = qNoiseIn[3:5, 3:5]*0.0001**2
+    filterObject.qNoise = qNoiseIn.reshape(25).tolist()
+    filterObject.qObsVal = 0.017**2
+    filterObject.sensorUseThresh = np.sqrt(filterObject.qObsVal)*5
+
 
 ## \defgroup Tutorials_4_0_1
 ##   @{
@@ -148,6 +175,8 @@ def setupSEKFData(filterObject):
 # 1     | uKF                  |
 # 2     | EKF                  |
 # 3     | EKF V2               |
+# 4     | Switch-EKF           |
+# 5     | Switch-SRuKF         |
 #
 # To run the default scenario, call the python script through
 #
@@ -340,7 +369,7 @@ def setupSEKFData(filterObject):
 # filterObject.cssConfigInMsgName = "css_config_data"
 #
 # filterObject.sensorUseThresh = 0.
-# filterObject.states = [1.0, 0.1, 0.0, 0.0, 0.01, 0.0]
+# filterObject.state = [1.0, 0.1, 0.0, 0.0, 0.01, 0.0]
 # filterObject.x = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 # filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0, 0.0,
 #                       0.0, 1., 0.0, 0.0, 0.0, 0.0,
@@ -383,7 +412,7 @@ def setupSEKFData(filterObject):
 #
 # filterObject.sensorUseThresh = 0.
 # filterObject.omega = [0., 0., 0.]
-# filterObject.states = [1.0, 0.1, 0.0]
+# filterObject.state = [1.0, 0.1, 0.0]
 # filterObject.x = [0.0, 0.0, 0.0]
 # filterObject.covar = [1., 0.0, 0.0,
 #                       0.0, 1., 0.0,
@@ -405,6 +434,81 @@ def setupSEKFData(filterObject):
 # The post fit residuals, do show that the filter is working, just with difficulties when measurements become sparse:
 # ![OEKF Post Fit](Images/Scenarios/scenario_Filters_PostFitOEKF.svg "Post Fit Residuals")
 #
+# Setup 4 -Switch-EKF
+# ------
+#
+# The 4th scenario uses a Switch formulation to extract the observable rates as well as estimate the sun heading (named Switch-EKF).
+#
+# ~~~~~~~~~~~~~{.py}
+#     filterObject.navStateOutMsgName = "sunline_state_estimate"
+#     filterObject.filtDataOutMsgName = "sunline_filter_data"
+#     filterObject.cssDataInMsgName = "css_sensors_data"
+#     filterObject.cssConfigInMsgName = "css_config_data"
+#
+#     filterObject.state = [1.0, 0.1, 0., 0., 0.]
+#     filterObject.x = [0.0, 0.0, 0.0, 0.0, 0.0]
+#     filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0,
+#                           0.0, 1., 0.0, 0.0, 0.0,
+#                           0.0, 0.0, 1., 0.0, 0.0,
+#                           0.0, 0.0, 0.0, 0.01, 0.0,
+#                           0.0, 0.0, 0.0, 0.0, 0.01]
+#
+#     filterObject.qProcVal = 0.001**2
+#     filterObject.qObsVal = 0.017 ** 2
+#     filterObject.sensorUseThresh = np.sqrt(filterObject.qObsVal)*5
+#
+#     filterObject.eKFSwitch = 5.
+#
+#
+# ~~~~~~~~~~~~~
+# The results from this filter are plotted:
+# ![Switch-EKF State Errors](Images/Scenarios/scenario_Filters_StatesPlotSEKF.svg "State Error and Covariances")
+# ![Switch-EKF Filter performance](Images/Scenarios/scenario_Filters_StatesExpectedSEKF.svg "States vs Truth")
+#
+# These plots show poorer state estimation throughout the simulation.
+#
+# The post fit residuals show that the filter is working, just with difficulties when measurements become sparse:
+# ![Switch-EKF Post Fit](Images/Scenarios/scenario_Filters_PostFitSEKF.svg "Post Fit Residuals")
+#
+# Setup 5 -Switch-uKF
+# ------
+#
+# The 5th scenario uses the same Switch formulation but in a square-root uKF (named Switch-uKF).
+#
+# ~~~~~~~~~~~~~{.py}
+# filterObject.navStateOutMsgName = "sunline_state_estimate"
+# filterObject.filtDataOutMsgName = "sunline_filter_data"
+# filterObject.cssDataInMsgName = "css_sensors_data"
+# filterObject.cssConfigInMsgName = "css_config_data"
+#
+# filterObject.alpha = 0.02
+# filterObject.beta = 2.0
+# filterObject.kappa = 0.0
+#
+# filterObject.state = [1.0, 0.1, 0., 0., 0.]
+# filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0,
+#                       0.0, 1., 0.0, 0.0, 0.0,
+#                       0.0, 0.0, 1., 0.0, 0.0,
+#                       0.0, 0.0, 0.0, 0.01, 0.0,
+#                       0.0, 0.0, 0.0, 0.0, 0.01]
+#
+#
+# qNoiseIn = np.identity(5)
+# qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.001**2
+# qNoiseIn[3:5, 3:5] = qNoiseIn[3:5, 3:5]*0.0001**2
+# filterObject.qNoise = qNoiseIn.reshape(25).tolist()
+# filterObject.qObsVal = 0.017**2
+# filterObject.sensorUseThresh = np.sqrt(filterObject.qObsVal)*5
+# ~~~~~~~~~~~~~
+#
+# The results from this filter are plotted:
+# ![Switch-uKF State Errors](Images/Scenarios/scenario_Filters_StatesPlotSuKF.svg "State Error and Covariances")
+# ![Switch-uKF Filter performance](Images/Scenarios/scenario_Filters_StatesExpectedSuKF.svg "States vs Truth")
+#
+# These plots show poorer state estimation throughout the simulation.
+#
+# The post fit residuals show that the filter is working, just with difficulties when measurements become sparse:
+# ![Switch-uKF Post Fit](Images/Scenarios/scenario_Filters_PostFitSuKF.svg "Post Fit Residuals")
 ##  @}
 def run(saveFigures, show_plots, FilterType, simTime):
     '''Call this routine directly to run the tutorial scenario.'''
