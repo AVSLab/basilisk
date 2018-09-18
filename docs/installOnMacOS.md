@@ -71,7 +71,6 @@ If creating a repository for Basilisk add-on development, start here:
 
 10. You can now build the project within the IDE
 
-11. To test your setup, run pytest in your root Basilisk directory (\Basilisk, not \Basilisk\Build.) You should see positive test results.
 
 **Power User Tip:**  The project can be configured and built from the command line via CMake.  Command line operations are run using the following setup.py script and parameters.
 ~~~~~~~

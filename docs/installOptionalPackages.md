@@ -1,6 +1,16 @@
 # Installing Optional Packages{#installOptionalPackages}
 
 
+## Running unit and integrated tests via `pytest`
+
+The `pytest` program can run a series of test on python scripts that begin with `test_`.  Install the `pytest` program with:
+
+`pip install pytest==3.6.1`
+
+Note that this version works properly with Basilisk, while currently the latest version has some bugs that impact some Basilisk tests.
+
+
+
 ## Graphing via datashader
 
 In order to run the full `datashader` capabilities of the  [Monte Carlo scenarios](@ref MonteCarloSimulation), you must run the following commands (either as sudo or with the `--user` flag):
