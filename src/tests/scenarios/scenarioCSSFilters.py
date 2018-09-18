@@ -40,7 +40,7 @@ from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
 from Basilisk.simulation import spacecraftPlus, spice_interface, coarse_sun_sensor
-from Basilisk.fswAlgorithms import sunlineUKF, sunlineEKF, okeefeEKF, sunlineSEKF, fswMessages
+from Basilisk.fswAlgorithms import sunlineUKF, sunlineEKF, okeefeEKF, sunlineSEKF, sunlineSuKF, fswMessages
 
 import SunLineKF_test_utilities as Fplot
 
@@ -503,11 +503,11 @@ def setupSuKFData(filterObject):
 #
 # The results from this filter are plotted:
 # ![Switch-uKF State Errors](Images/Scenarios/scenario_Filters_StatesPlotSuKF.svg "State Error and Covariances")
-# ![Switch-uKF Filter performance](Images/Scenarios/scenario_Filters_StatesExpectedSuKF.svg "States vs Truth")
+# ![Switch-uKF Performance](Images/Scenarios/scenario_Filters_StatesExpectedSuKF.svg "States vs Truth")
 #
-# These plots show poorer state estimation throughout the simulation.
+# These plots show good state estimation throughout the simulation. The mean stays close to the truth.
 #
-# The post fit residuals show that the filter is working, just with difficulties when measurements become sparse:
+# The post fit residuals, show a fully functional filter, with no issues of observabilty:
 # ![Switch-uKF Post Fit](Images/Scenarios/scenario_Filters_PostFitSuKF.svg "Post Fit Residuals")
 ##  @}
 def run(saveFigures, show_plots, FilterType, simTime):
@@ -650,6 +650,20 @@ def run(saveFigures, show_plots, FilterType, simTime):
 
         # Add test module to runtime call list
         scSim.AddModelToTask(simTaskName, moduleWrap, moduleConfig)
+        scSim.AddVariableForLogging('SunlineSEKF.bVec_B', simulationTimeStep, 0, 2)
+
+
+    if FilterType == 'SuKF':
+        numStates = 5
+        moduleConfig = sunlineSuKF.SunlineSuKFConfig()
+        moduleWrap = scSim.setModelDataWrap(moduleConfig)
+        moduleWrap.ModelTag = "SunlineSuKF"
+        setupSuKFData(moduleConfig)
+
+        # Add test module to runtime call list
+        scSim.AddModelToTask(simTaskName, moduleWrap, moduleConfig)
+        scSim.AddVariableForLogging('SunlineSuKF.bVec_B', simulationTimeStep, 0, 2)
+
 
     scSim.TotalSim.logThisMessage('sunline_state_estimate', simulationTimeStep)
     scSim.TotalSim.logThisMessage('sunline_filter_data', simulationTimeStep)
@@ -687,6 +701,33 @@ def run(saveFigures, show_plots, FilterType, simTime):
     postFitLog = scSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", range(8))
     covarLog = scSim.pullMessageLogData('sunline_filter_data' + ".covar", range(numStates*numStates))
     obsLog = scSim.pullMessageLogData('sunline_filter_data' + ".numObs", range(1))
+    dcmLog = np.zeros([len(stateLog[:,0]),3,3])
+    omegaExp = np.zeros([len(stateLog[:,0]),3])
+    if FilterType == 'SEKF':
+        dcm = sunlineSEKF.new_doubleArray(3 * 3)
+        for j in range(9):
+            sunlineSEKF.doubleArray_setitem(dcm, j, 0)
+        bVecLog = scSim.GetLogVariableData('SunlineSEKF.bVec_B')
+        for i in range(len(stateLog[:,0])):
+            sunlineSEKF.sunlineSEKFComputeDCM_BS(stateLog[i,1:4].tolist(), bVecLog[i, 1:4].tolist(), dcm)
+            dcmOut = []
+            for j in range(9):
+                dcmOut.append(sunlineSEKF.doubleArray_getitem(dcm, j))
+            dcmLog[i,:,:] = np.array(dcmOut).reshape([3,3])
+            omegaExp[i,:] = -np.dot(dcmLog[i,:,:], np.array([0, stateLog[i,4], stateLog[i,5]]))
+    if FilterType == 'SuKF':
+        dcm = sunlineSuKF.new_doubleArray(3 * 3)
+        for j in range(9):
+            sunlineSuKF.doubleArray_setitem(dcm, j, 0)
+        bVecLog = scSim.GetLogVariableData('SunlineSuKF.bVec_B')
+        for i in range(len(stateLog[:,0])):
+            sunlineSuKF.sunlineSuKFComputeDCM_BS(stateLog[i,1:4].tolist(), bVecLog[i, 1:4].tolist(), dcm)
+            dcmOut = []
+            for j in range(9):
+                dcmOut.append(sunlineSuKF.doubleArray_getitem(dcm, j))
+            dcmLog[i,:,:] = np.array(dcmOut).reshape([3,3])
+            omegaExp[i,:] = -np.dot(dcmLog[i,:,:], np.array([0, stateLog[i,4], stateLog[i,5]]))
+
 
     sHat_B = np.zeros(np.shape(OutSunPos))
     sHatDot_B = np.zeros(np.shape(OutSunPos))
@@ -700,12 +741,13 @@ def run(saveFigures, show_plots, FilterType, simTime):
     expected = np.zeros(np.shape(stateLog))
     expected[:,0:4] = sHat_B
     # The OEKF has fewer states
-    if FilterType != 'OEKF' and FilterType != 'SEKF':
+    if FilterType != 'OEKF' and FilterType != 'SEKF' and FilterType != 'SuKF':
         expected[:, 4:] = sHatDot_B[:,1:]
-    if FilterType == 'SEKF':
-        expected[:, 4] = np.ones([len(stateLog[:,0])])*scObject.hub.omega_BN_BInit[1]
-        expected[:, 5] = np.ones([len(stateLog[:, 0])]) * scObject.hub.omega_BN_BInit[2]
-    #
+    if FilterType == 'SEKF' or FilterType == 'SuKF':
+        for i in range(len(stateLog[:, 0])):
+            expected[i, 4] = omegaExp[i,1]
+            expected[i, 5] = omegaExp[i,2]
+
     #   plot the results
     #
     errorVsTruth = np.copy(stateLog)
@@ -734,7 +776,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
 if __name__ == "__main__":
     run(False,       # save figures to file
         True,      # show_plots
-        'EKF',
+        'SEKF',
          400
        )
 
