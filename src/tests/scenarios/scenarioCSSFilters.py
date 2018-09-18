@@ -726,7 +726,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
             for j in range(9):
                 dcmOut.append(sunlineSuKF.doubleArray_getitem(dcm, j))
             dcmLog[i,:,:] = np.array(dcmOut).reshape([3,3])
-            omegaExp[i,:] = -np.dot(dcmLog[i,:,:], np.array([0, stateLog[i,4], stateLog[i,5]]))
+            omegaExp[i,:] = np.dot(dcmLog[i,:,:].T,Outomega_BN[i,1:])
 
 
     sHat_B = np.zeros(np.shape(OutSunPos))
