@@ -1,0 +1,50 @@
+This is BibTeX, Version 0.99d (TeX Live 2016)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: Sunline_SEKF.aux
+The style file: AAS_publication.bst
+Database file #1: references.bib
+Name 1 in "B. Tapley, B. Schutz, and G. Born" has a comma at the end for entry Born
+while executing---line 1006 of file AAS_publication.bst
+Warning--there's a number but no series in Born
+You've used 3 entries,
+            1928 wiz_defined-function locations,
+            509 strings with 4021 characters,
+and the built_in function-call counts, 576 in all, are:
+= -- 49
+> -- 27
+< -- 0
++ -- 10
+- -- 7
+* -- 41
+:= -- 92
+add.period$ -- 6
+call.type$ -- 3
+change.case$ -- 1
+chr.to.int$ -- 0
+cite$ -- 4
+duplicate$ -- 30
+empty$ -- 68
+format.name$ -- 7
+if$ -- 139
+int.to.chr$ -- 0
+int.to.str$ -- 3
+missing$ -- 5
+newline$ -- 15
+num.names$ -- 3
+pop$ -- 15
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 6
+stack$ -- 0
+substring$ -- 0
+swap$ -- 3
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 1
+while$ -- 3
+width$ -- 4
+write$ -- 33
+(There was 1 error message)

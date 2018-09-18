@@ -68,113 +68,24 @@ was implemented for it.
 
 \section{Filter Set-up, initialization, and I/O}
 
-\subsection{Switching formulation (Switch-EKF and Switch-SRuKF)}
+\subsection{Dynamics}
 
-The following sections are extracted from Reference [\citenum{Teil:2018fe}].
+The states that are estimated in this filter are the sunline vector, and it's rate of change $\bm X^* = \begin{bmatrix} \bm d &  \dot{\bm d}\end{bmatrix}^T$. The star superscript represents that
+this is the reference state. 
 
-\subsubsection{Filter Derivation} %%%
+The dynamics are given in equation \ref{eq:dyn}. Given the nature of the filter, there is an unobservable state component: the rotation about the $\bm d$ axis. In order to remedy this, we project the states along this axis and subtract them, in order to measure only observable state components. 
 
-The Switch-EKF attempts to avoid subtracting any terms from the state, while still removing the unobservable component of the rate. In order to do this, an appropriate frame must be defined.
-In order to not track the rate component alongside the sunline direction, that vector needs to be one of the basis vectors of the frame. It is decided to be the first vector for the frame, and therefore in that frame, $\omega_1$ the component of the rotation rate can be removed from the states. 
-This frame is called $\mathcal{S}_1 = \{\hat{\bm s}_1 = \frac{\bm d}{|\bm d|}, \hat{\bm s}_2, \hat{\bm s}_3 \}$. This is seen in Figure \ref{fig:Switches}, where the dotted line represents the $30 \dg$ threshold cone before switching frames. 
-
-\begin{figure}[t]
-	\centering
-	\includegraphics[]{./Figures/Switches}
-	\caption{Frame built off the body frame for Switch filters}
-	\label{fig:Switches}
-\end{figure}
-
-The second vector of the frame must be created using only $\bm d$, and the body frame vectors. The first intuitive decision, is to use $\hat{\bm b}_1$ of the body frame and define $\bm s_2$ in Equation \eqref{eq:s2}. The third vector $\hat{\bm s}_3$ of the $\mathcal{S}_1$ frame, is naturally created from the first two.
-\begin{equation}\label{eq:s2}
-\hat{\bm s}_2 = \frac{\hat{\bm s}_1 \times \hat{\bm b}_1}{|\hat{\bm s}_1 \times \hat{\bm b}_1|} \hspace{2cm} \hat{\bm s}_3 = \frac{\hat{\bm s}_1 \times \hat{\bm s}_2}{|\hat{\bm s}_1 \times \hat{\bm s}_2|}
-\end{equation}
-The problem that arises is the singularity that occurs when $\hat{\bm b}_1$ and $\bm d$ become aligned: this frame becomes undefined. In order to counteract this, using a similar process as the shadow set used for Modified Rodrigues Parameters [\citenum{schaub}], a second frame is created. This frame $\mathcal{S}_2 =  \{\hat{\bar{\bm s}}_1 = \hat{\bm s}_1, \hat{\bar{\bm s}}_2 , \hat{\bar{\bm s}}_3 \}$ is created with the same first vector, but constructs $\hat{ \bar{\bm s}}_2$ using $\hat{\bm b}_2$ of the body frame as in Equation \eqref{eq:s2bar}. The last vector, once again, finishes the orthonormal frame.
-\begin{equation}\label{eq:s2bar}
-\hat{\bar{\bm s}}_2 = \frac{\hat{\bar{\bm s}}_1 \times \hat{\bm b}_2}{|\hat{\bar{\bm s}}_1 \times \hat{\bm b}_2|}
-\end{equation}
-With both these frames, $\mathcal{S}_1$ and $\mathcal{S}_2$, the singularities can always be avoided. Indeed, $\mathcal{S}_1$ becomes singular when $\bm d$ approches $\hat{\bm b}_1$, while $\mathcal{S}_2$ becomes singular when the sunheading approaches $\hat{\bm b}_2$. By changing frames, whenever the sunline gets within a safe cone of $30 \dg$ (a modifiable value) of $\hat{\bm b}_1$, the frame is rotated into $\mathcal{S}_2$, which is not singular. Similarly, when $\bm d$ approches $\hat{\bm b}_2$ the frame is switched back to $\mathcal{S}_1$.
-
-Because the two frames share the sunline vector $\bm d$, this vector is the same in both frames. This is a clear advantage as this is the vector we desire to estimate, and not having to rotate it avoids numerical issues.
-The rotation of the rates is done by computing the following DCMs, of which all the vectors are known.
-\begin{equation}\label{eq:DCMs}
- [\mathcal{B}\mathcal{S}_1] = \begin{bmatrix} \leftexp{B}{\hat{\bm s}_1} & \leftexp{B}{\hat{\bm s}_2} & \leftexp{B}{\hat{\bm s}_3}\end{bmatrix} \hspace{1cm}  [\mathcal{B}\mathcal{S}_2] = \begin{bmatrix} \leftexp{B}{\hat{\bar{\bm s}}_1} & \leftexp{B}{\hat{\bar{\bm s}}_2} & \leftexp{B}{\hat{\bar{\bm s}}_3}\end{bmatrix} \hspace{1cm}  [\mathcal{S}_2\mathcal{S}_1] = [\mathcal{B}\mathcal{S}_2] ^T [\mathcal{B}\mathcal{S}_1] 
+\begin{equation}\label{eq:dyn}
+\bm F(\bm X) = \begin{bmatrix} \bm F_1(\bm d) \\  \bm F_2(\dot{\bm d})\end{bmatrix} =  \begin{bmatrix} \dot{\bm d} - \left( (\bm d \cdot \dot{\bm d} )\frac{\bm d}{||\bm d||^2} \right) \\ - \frac{1}{\Delta t}\left( (\bm d \cdot \dot{\bm d}) \frac{\bm d}{||\bm d||^2} \right)\end{bmatrix} 
 \end{equation}
 
-\subsubsection{Filter Dynamics} %%%
+This leads us to the computation of the dynamics matrix $A = \left[\frac{\partial \bm F (\bm X, t_i)}{\partial \bm X}\right]^{*}$. The partials are given in equation \ref{eq:dynmat}, and were verified in Mathematica.
 
-The filter is therefore derived with the states being $\bm X =\begin{bmatrix}\leftexp{B}{\bm d} & \omega_2 & \omega_3 \end{bmatrix}^{T}$, given that $\bm \omega_{\mathcal{S}/\mathcal{B}} = \leftexp{S}{\begin{bmatrix} \omega_1 & \omega_2 &\omega_3\end{bmatrix}}^T$. The rates of $\mathcal{S}$ relative to the body and inertial frame are related as such: $\bm \omega_{\mathcal{S}/\mathcal{N}} - \bm \omega_{\mathcal{S}/\mathcal{B}}  = \bm \omega_{\mathcal{B}/\mathcal{N}}$. Since $\omega_1$ is unknown, it is set to zero. Furthermore, since the sun heading is considered to be constant in the inertial frame over the period of time required for attitude determination and control, the equation becomes  $- \bar{\bm \omega}_{\mathcal{S}/\mathcal{B}}  = \bar{\bm \omega}_{\mathcal{B}/\mathcal{N}}$. 
-
-
-${\bm \omega}_{\mathcal{S}/\mathcal{B}}$ is estimated directly by the filter, and its skew matrix can be computed by setting $\omega_1$ to zero (in the absence of information). This defines $\tilde{\bm \omega}_{\mathcal{B}/\mathcal{N}}$ as a function of known parameters. The dynamics are therefore given by Equations \eqref{eq:dynSwitch} and \eqref{eq:dynmatSwitch}, where $ \tilde{[\bm d]}(2,3)$ corresponds to the $2^{\text{nd}}$ and $3^{\text{rd}}$ columns of the $ \tilde{[\bm d]}$ matrix.
-\begin{align}
-\label{eq:dynSwitch}
-\bm X' = \bm F(\bm X) &=  \begin{bmatrix}  \leftexp{B}{ \bm d'} \\  \omega_2' \\ \omega_3' \end{bmatrix} =   \begin{bmatrix}  -\leftexp{B}{\bar{\bm \omega}_{\mathcal{B}/\mathcal{N}}} \times \leftexp{B}{\bm d}\\ 0 \\ 0\end{bmatrix}  =   \begin{bmatrix} [\mathcal{B}\mathcal{S}]\leftexp{S}{\begin{bmatrix} 0 \\ \omega_2 \\ \omega_3\end{bmatrix}} \times \leftexp{B}{\bm d}\\ 0 \\ 0\end{bmatrix}  
-\\\label{eq:dynmatSwitch}
-[A]&= \begin{bmatrix} \frac{\partial \bm F (\bm d, t_i)}{\partial \bm X}  \end{bmatrix}  =   \begin{bmatrix} [ \leftexp{B}{\tilde{\bar{\bm \omega}}_{\mathcal{S}/\mathcal{B}}}] & - \tilde{[\bm d]}[\mathcal{B}\mathcal{S}](2,3) \\  [0]_{2\times 3} &  [0]_{2\times 2} \end{bmatrix} 
-\end{align}
-This formulation leads to simple dynamics, much simpler than those of the filter which subtracts the unobservable states, yet can actually estimate the observable of the rate, instead of using past estimates of $\bm d$. 
-
-In regard to the SR-uKF version of this filter, the same coefficients are used: $\alpha = 0.02$, and $\beta = 2$. 
-
-
-\subsubsection{Switching Frames} %%%
-
-When switching occurs, the switch matrix $[W]$ can be computed in Equation \eqref{eq:switchMat} using the previously computed DCMs. This equation assumes the switch is going from frame 1 to frame 2 (the reciprocal is equivalent), and $[\mathcal{S}_2 \mathcal{S}_1](2,3)$ corresponds to the $2^{\text{nd}}$ and $3^{\text{rd}}$ columns of the $[\mathcal{S}_2 \mathcal{S}_1]$ matrix. 
-\begin{equation}\label{eq:switchMat}
-[W] = \begin{bmatrix} [I]_{3\times 3} & [0]_{3 \times 2} \\ [0]_{2 \times 3} & [\mathcal{S}_2 \mathcal{S}_1](2,3)\end{bmatrix}
-\end{equation}
-The new states $\bm X$ and covariance [P] after the switch are therefore given in Equation \eqref{eq:switchEq}
-\begin{equation}\label{eq:switchEq}
-\bar{\bm X} = [W] \bm X \hspace{2cm} [\bar{P}] = [W] [P] [W]^T
-\end{equation}
-When writing out the values of the state and covariance, it is necessary to bring it back into the body frame, using the $[\mathcal{B}\mathcal{S}]$ DCM ($\mathcal{S}$ representing the current frame in use).
-%
-\subsubsection{Process Noise for Switch-EKF} %%%
-
-The time update of the error covariance matrix from time $t_k$ to $t_{k+1}$ ($\Delta t = t_{k+1} - t_k$)is given in equation \eqref{eq:SNCTime}. The process noise matrix $[Q]$ is added via the $[\Gamma]$ matrix defined in equation \eqref{eq:GammaDef}. Process noise is only added on the accelerations, meaning that $[B] = \begin{bmatrix} [0]_{3 \times 3} \\ [I]_{3 \times 3}\end{bmatrix}$ when there are 6 states.
-
-\begin{equation}\label{eq:SNCTime}
-[P]_{k+1} = [\Phi](t_{k+1}, t_k) [P]_k  [\Phi](t_{k+1}, t_k)^T +  [\Gamma](t_{k+1}, t_k) [Q]  [\Gamma](t_{k+1}, t_k) ^T
-\end{equation}
-
-\begin{equation}\label{eq:GammaDef}
-  [\Gamma](t_{k+1}, t_k) = \int_{t_k}^{t_{k+1}}  [\Phi](t_{k+1}, \tau) [B](\tau) \D \tau 
-\end{equation}
-
-In the earlier filters (the EKF and the SR-uKF), the second half of the state vector is a direct derivative of the sun heading vector. Regarding state noise compensation, this allowed the approximation in equation \eqref{eq:GammaApprox}, along with the fact that measurements are received frequently with regard to the evolution of the dynamics.
-
-\begin{equation}\label{eq:GammaApprox}
-  [\Gamma](t_{k+1}, t_k) =\Delta t \begin{bmatrix} \frac{\Delta t}{2}[I]_{3 \times 3} \\ [I]_{3 \times 3}\end{bmatrix}
-\end{equation}
-
-This is not the case for this filter. Indeed, $[\Phi]$ is a 5 by 5 matrix, expanded in equation \eqref{eq:STM} using the fact that $[\Phi](t_{k+1}, \tau) = \frac{\partial \bm X(t_{k+1})}{\partial \bm X(\tau)}$, and that $\bm X = \begin{bmatrix} \bm d & \bar{\bm \omega} \end{bmatrix}^T$. With this, equation \eqref{eq:GammaApprox} can be re-written as equation \eqref{eq:Gamma2}.
-
-\begin{equation}\label{eq:STM}
-[\Phi](t_{k+1}, \tau) =    \begin{bmatrix} [\Phi_{1}]_{3\times 3} &  [\Phi_2]_{3 \times 2} \\  [\Phi_3]_{2 \times 3} &  [\Phi_3]_{2 \times 2}\end{bmatrix}=   \begin{bmatrix} \frac{\partial \bm d (t_{k+1})}{\partial \bm d(\tau)} &   \frac{\partial \bm d (t_{k+1})}{\partial \bar{\bm \omega}(\tau)} \\  \frac{\partial \bar{\bm \omega}(t_{k+1})}{\partial \bm d(\tau)} &   \frac{\partial \bar{\bm \omega}(t_{k+1})}{\partial \bar{\bm \omega}(\tau)} \end{bmatrix}
-\end{equation}
-
-\begin{equation}\label{eq:Gamma2}
-[\Gamma](t_{k+1}, t_k) = \int_{t_k}^{t_{k+1}}  \ \begin{bmatrix} [\Phi_{1}]_{3\times 3} &  [\Phi_2]_{3 \times 2} \\  [\Phi_3]_{2 \times 3} &  [\Phi_3]_{2 \times 2}\end{bmatrix}\begin{bmatrix} [0]_{3 \times 3} \\ [I]_{3 \times 3}\end{bmatrix} \D \tau =  \int_{t_k}^{t_{k+1}}  \begin{bmatrix} [\Phi_2]_{3 \times 2} \\    [\Phi_4]_{2 \times 2}\end{bmatrix} \D \tau 
-\end{equation}
-
-These submatrices of the state transition matrix now need to be approximated. As before, assuming dense tracking data, $[\Phi_4]_{2 \times 2} =   \frac{\partial \bar{\bm \omega}(t_{k+1})}{\partial \bar{\bm \omega}(\tau)} \approx [I]_{2\times 2}$. 
-In order to approximate $[\Phi_2]_{3 \times 2}= \frac{\partial \bm d (t_{k+1})}{\partial \bar{\bm \omega}(\tau)}$, the discrete state update is used as seen in equation \eqref{eq:ApproxPhi2}, where $\bm d_i$ is the sun heading at time $\tau$. It is reminded that $\bar{\bm \omega} = \bar{\bm \omega}_{\mathcal{S}/ \mathcal{B}}$, and that $\bar{\bm \omega}_{\mathcal{B}/ \mathcal{N}} = - \bar{\bm \omega} = -\bar{\bm \omega}_{\mathcal{S}/ \mathcal{B}}$.
-
-\begin{align}\label{eq:ApproxPhi2}
-&\bm d_{k+1} = \bm d_i - (t_{k+1} - \tau) \tilde{[\bm d_i]} \bar{\bm \omega}_{\mathcal{B}/ \mathcal{N}} \\
-&\bm d_{k+1} = \bm d_i + (t_{k+1} - \tau) \tilde{[\bm d_i]} \bar{\bm \omega} \\
-\Rightarrow &  \frac{\partial \bm d (t_{k+1})}{\partial \bar{\bm \omega}(\tau)} =  (t_{k+1} - \tau) \tilde{[\bm d_i]}
+\begin{align}\label{eq:dynmat}
+A&= \begin{bmatrix} \frac{\partial \bm F_1 (\bm X, t_i)}{\partial \bm d} &  \frac{\partial \bm F_1 (\bm X, t_i)}{\partial \dot{\bm d}} \\  \frac{\partial \bm F_2 (\bm X, t_i)}{\partial \bm d} &  \frac{\partial \bm F_2 (\bm X, t_i)}{\partial \dot{\bm d}}\end{bmatrix} \\
+&=  \begin{bmatrix}- \left( \frac{\dot{\bm d} \bm d^T}{||\bm d||^2} + (\bm d \cdot \dot{\bm d})\frac{||\bm d||^2 I - 2 \bm d \bm d^T}{||\bm d||^4} \right) & I -\frac{\bm d \bm d^T}{||\bm d||^2} \\ - \frac{1}{\Delta t}\left( \frac{\dot{\bm d} \bm d^T}{||\bm d||^2} + (\bm d \cdot \dot{\bm d})\frac{||\bm d||^2 I - 2 \bm d \bm d^T}{||\bm d||^4} \right) & -\frac{1}{\Delta t}\frac{\bm d \bm d^T}{||\bm d||^2}\end{bmatrix} 
 \end{align}
 
-Therefore, assuming the state does not vary over the time between two updates,  $[\Phi_2]_{3 \times 2}= \frac{\partial \bm d (t_{k+1})}{\partial \bar{\bm \omega}(\tau)}=   (t_{k+1} - \tau) \tilde{[\bm d_i]}$. This leads to the new $[\Gamma]$ matrix in equation \eqref{eq:NewGamma}, which is used for state noise compensation.
-
-\begin{equation}\label{eq:NewGamma}
-[\Gamma](t_{k+1}, t_k) = \int_{t_k}^{t_{k+1}}  \begin{bmatrix} [\Phi_2]_{3 \times 2} \\    [\Phi_4]_{2 \times 2}\end{bmatrix} \D \tau = \Delta t \begin{bmatrix} \frac{\Delta t}{2}\tilde{[\bm d_k]} (2,3)\\ [I]_{2 \times 2}\end{bmatrix}
-\end{equation}
-
- \subsection{Measurements}
- 
 The measurement model is given in equation \ref{eq:meas}, and the $H$ matrix defined as $H = \left[\frac{\partial \bm G (\bm X, t_i)}{\partial \bm X}\right]^{*}$ is given in equation $\ref{eq:Hmat}$. 
 
 In this filter, the only measurements used are from the coarse sun sensor. For the $i^\mathrm{th}$ sensor, the measurement is simply given by the dot product of the sunline heading and the normal to the sensor. This yields easy partial derivatives for the H matrix, which is a matrix formed of the rows of transposed normal vectors (only for those which received a measurement). Hence the $H$ matrix has a changing size depending on the amount of measurements. 
@@ -217,7 +128,7 @@ The EKF reads in the measurements from the coarse sun sensors. These are under t
 
 \section{Filter Algorithm}
 
-Once the filter has been properly setup in the python code, it can go through it's algorithm. This is done according to the algorithms derived in Reference [\citenum{Born}].
+Once the filter has been properly setup in the python code, it can go through it's algorithm:
 
 \subsubsection*{Initialization}
 
@@ -367,8 +278,6 @@ Figure \ref{fig:PostFit} shows the post fit residuals for the filter, with the $
 \input{AutoTeX/StatesTarget.tex}
 \input{AutoTeX/PostFit.tex}
 
-\bibliographystyle{AAS_publication}   % Number the references.
-\bibliography{references}   % Use references.bib to resolve the labels.
 
 
 \end{document}

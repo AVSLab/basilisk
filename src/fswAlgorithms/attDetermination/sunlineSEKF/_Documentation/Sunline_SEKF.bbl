@@ -1,0 +1,17 @@
+\begin{thebibliography}{1}
+
+\bibitem{Teil:2018fe}
+T.~Teil, H.~Schaub, and S.~Piggott, ``Comparing Coarse Sun Sensor Based
+  Sequential sun heading Filters,''  {\em AAS Guidance and Control Conference},
+  Breckenridge, {CO}, Feb. 1--7 2018.
+\newblock Paper AAS~18-011.
+
+\bibitem{schaub}
+H.~Schaub and J.~L. Junkins, {\em Analytical Mechanics of Space Systems}.
+\newblock Reston, VA: {AIAA} Education Series, 3rd~ed., 2014, 10.2514/4.102400.
+
+\bibitem{Born}
+B.~S. B.~Tapley and G.~Born, {\em Statistical Orbit Determination}.
+\newblock No.~ISBN 9780126836301, Elsevier Academic Press, 2004.
+
+\end{thebibliography}
