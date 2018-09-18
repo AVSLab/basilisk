@@ -13,11 +13,11 @@ Note that this version works properly with Basilisk, while currently the latest 
 
 ## Graphing via datashader
 
-In order to run the full `datashader` capabilities of the  [Monte Carlo scenarios](@ref MonteCarloSimulation), you must run the following commands (either as sudo or with the `--user` flag):
+In order to run the full `datashader` capabilities of the  [Monte Carlo scenarios](@ref MonteCarloSimulation), you must run the following commands:
 
 ```
-pip install datashader
-pip install holoviews
+pip install datashader --user
+pip install holoviews --user
 ```
 Installing `datashader` will automatically install `bokeh` and `pandas` packages.  It is possible to use just `pandas` and `datashader` to output images of the data; however, without `holoviews` and `bokeh` there will be no graph axis, title, etc.
 
