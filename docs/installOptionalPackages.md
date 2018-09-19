@@ -5,7 +5,7 @@
 
 The `pytest` program can run a series of test on python scripts that begin with `test_`.  Install the `pytest` program with:
 
-`pip install pytest==3.6.1`
+`pip install --user pytest==3.6.1`
 
 Note that this version works properly with Basilisk, while currently the latest version has some bugs that impact some Basilisk tests.
 
@@ -16,13 +16,11 @@ Note that this version works properly with Basilisk, while currently the latest 
 In order to run the full `datashader` capabilities of the  [Monte Carlo scenarios](@ref MonteCarloSimulation), you must run the following commands:
 
 ```
-pip install datashader --user
-pip install holoviews --user
+pip install --user datashader
+pip install --user holoviews
 ```
 Installing `datashader` will automatically install `bokeh` and `pandas` packages.  It is possible to use just `pandas` and `datashader` to output images of the data; however, without `holoviews` and `bokeh` there will be no graph axis, title, etc.
 
-
-**macOS NOTE:** if you are using the built-in Python 2.7 installation, you may need to install with the `--user` flag and adjust your `PATH` variable to include `~/Library/Python/2.7/bin`
 
 
 Here is a list of documents about the related packages to `datashader`:
