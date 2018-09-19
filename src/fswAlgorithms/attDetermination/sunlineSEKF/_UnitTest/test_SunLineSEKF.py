@@ -866,8 +866,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     stateTarget1 += [0.0, 0.0]
     moduleConfig.state = stateGuess
     moduleConfig.x = (np.array(stateTarget1) - np.array(stateGuess)).tolist()
-    unitTestSim.AddVariableForLogging('sunlineSEKF.covar', testProcessRate , 0, 24, 'double')
-    unitTestSim.AddVariableForLogging('sunlineSEKF.state', testProcessRate , 0, 4, 'double')
+    unitTestSim.TotalSim.logThisMessage('sunline_filter_data', testProcessRate)
     unitTestSim.AddVariableForLogging('sunlineSEKF.x', testProcessRate , 0, 4, 'double')
 
     unitTestSim.InitializeSimulation()
@@ -890,49 +889,9 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSim.GetLogVariableData('sunlineSEKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('sunlineSEKF.state')
-    stateErrorLog = unitTestSim.GetLogVariableData('sunlineSEKF.x')
 
-    ####################################################################################
-    # Compute H and y in order to check post-fit residuals
-    ####################################################################################
-    threshold = moduleConfig.sensorUseThresh
-    CSSnormals = []
-    for j in range(8):
-        CSSnormals+=CSSOrientationList[j]
-
-    measMat = sunlineSEKF.new_doubleArray(8*numStates)
-    obs = sunlineSEKF.new_doubleArray(8)
-    yMeas = sunlineSEKF.new_doubleArray(8)
-    numObs = sunlineSEKF.new_intArray(1)
-
-    for i in range(8*numStates):
-        sunlineSEKF.doubleArray_setitem(measMat, i, 0.)
-    for i in range(8):
-        sunlineSEKF.doubleArray_setitem(obs, i, 0.0)
-        sunlineSEKF.doubleArray_setitem(yMeas, i, 0.0)
-
-    ytest = np.zeros([SimHalfLength, 9])
-    Htest = np.zeros([SimHalfLength, 41])
-    PostFitRes = np.zeros([2*SimHalfLength+1, 9])
-
-    for i in range(1,SimHalfLength):
-        ytest[i,0] = stateLog[i,0]
-        Htest[i,0] = stateLog[i,0]
-        PostFitRes[i, 0] = stateLog[i, 0]
-
-        sunlineSEKF.sunlineHMatrixYMeas(stateLog[i-1,1:6].tolist(), 8, dotList, threshold, CSSnormals, obs, yMeas, numObs, measMat)
-        yMeasOut = []
-        HOut = []
-        for j in range(8*numStates):
-            HOut.append(sunlineSEKF.doubleArray_getitem(measMat, j))
-        for j in range(8):
-            yMeasOut.append(sunlineSEKF.doubleArray_getitem(yMeas, j))
-
-        ytest[i,1:9] = np.array(yMeasOut)
-        Htest[i,1:(8*numStates+1)] = np.array(HOut)
-        PostFitRes[i,1:9] = ytest[i,1:9] - np.dot(Htest[i,1:(8*numStates+1)].reshape([8,numStates]), stateErrorLog[i,1:(numStates+1)])
+    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", range(6))
+    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", range(6*6))
 
     for i in range(numStates):
         if (abs(covarLog[-1, i *numStates  + 1 + i] - covarLog[0, i * numStates + 1 + i] / 100.) > 1E-1):
@@ -966,49 +925,12 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + SimHalfLength+1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSim.GetLogVariableData('sunlineSEKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('sunlineSEKF.state')
+    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", range(5))
+    postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", range(8))
+    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", range(5*5))
     stateErrorLog = unitTestSim.GetLogVariableData('sunlineSEKF.x')
 
 
-    ####################################################################################
-    # Compute H and y in order to check post-fit residuals
-    ####################################################################################
-    threshold = moduleConfig.sensorUseThresh
-    CSSnormals = []
-    for j in range(8):
-        CSSnormals+=CSSOrientationList[j]
-
-    measMat = sunlineSEKF.new_doubleArray(8*numStates)
-    obs = sunlineSEKF.new_doubleArray(8)
-    yMeas = sunlineSEKF.new_doubleArray(8)
-    numObs = sunlineSEKF.new_intArray(1)
-
-    for i in range(8*numStates):
-        sunlineSEKF.doubleArray_setitem(measMat, i, 0.)
-    for i in range(8):
-        sunlineSEKF.doubleArray_setitem(obs, i, 0.0)
-        sunlineSEKF.doubleArray_setitem(yMeas, i, 0.0)
-
-    ytest = np.zeros([SimHalfLength+1, 9])
-    Htest = np.zeros([SimHalfLength+1, (8*numStates+1)])
-
-    for i in range(SimHalfLength,2*SimHalfLength):
-        ytest[i-SimHalfLength,0] = stateLog[i,0]
-        Htest[i-SimHalfLength,0] = stateLog[i,0]
-        PostFitRes[i, 0] = stateLog[i, 0]
-
-        sunlineSEKF.sunlineHMatrixYMeas(stateLog[i-1,1:6].tolist(), 8, dotList, threshold, CSSnormals, obs, yMeas, numObs, measMat)
-        yMeasOut = []
-        HOut = []
-        for j in range(8*numStates):
-            HOut.append(sunlineSEKF.doubleArray_getitem(measMat, j))
-        for j in range(8):
-            yMeasOut.append(sunlineSEKF.doubleArray_getitem(yMeas, j))
-
-        ytest[i-SimHalfLength,1:9] = np.array(yMeasOut)
-        Htest[i-SimHalfLength,1:(8*numStates+1)] = np.array(HOut)
-        PostFitRes[i,1:9] = ytest[i-SimHalfLength,1:9] - np.dot(Htest[i-SimHalfLength,1:(8*numStates+1)].reshape([8,numStates]), stateErrorLog[i,1:6])
 
     for i in range(numStates):
         if (abs(covarLog[-1, i * numStates + 1 + i] - covarLog[0, i * numStates + 1 + i] / 100.) > 1E-1):
@@ -1022,7 +944,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     target2 = np.array(testVector2+[0.,0.])
     FilterPlots.StatesPlot(stateErrorLog, covarLog, show_plots)
     FilterPlots.StatesVsTargets(target1, target2, stateLog, show_plots)
-    FilterPlots.PostFitResiduals(PostFitRes, moduleConfig.qObsVal, show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, show_plots)
 
     # print out success message if no error were found
     if testFailCount == 0:

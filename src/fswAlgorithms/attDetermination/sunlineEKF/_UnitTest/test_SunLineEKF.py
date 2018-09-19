@@ -670,12 +670,12 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssConfigInMsgName, msgSize, 0, cssConstelation)
 
+
     stateTarget1 = testVector1
     stateTarget1 += [0.0, 0.0, 0.0]
     moduleConfig.state = stateGuess
     moduleConfig.x = (np.array(stateTarget1) - np.array(stateGuess)).tolist()
-    unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate , 0, 35, 'double')
-    unitTestSim.AddVariableForLogging('SunlineEKF.state', testProcessRate , 0, 5, 'double')
+    unitTestSim.TotalSim.logThisMessage('sunline_filter_data', testProcessRate)
     unitTestSim.AddVariableForLogging('SunlineEKF.x', testProcessRate , 0, 5, 'double')
 
     unitTestSim.InitializeSimulation()
@@ -698,49 +698,9 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('SunlineEKF.state')
-    stateErrorLog = unitTestSim.GetLogVariableData('SunlineEKF.x')
+    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", range(6))
+    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", range(6*6))
 
-    ####################################################################################
-    # Compute H and y in order to check post-fit residuals
-    ####################################################################################
-    threshold = moduleConfig.sensorUseThresh
-    CSSnormals = []
-    for j in range(8):
-        CSSnormals+=CSSOrientationList[j]
-
-    measMat = sunlineEKF.new_doubleArray(8*6)
-    obs = sunlineEKF.new_doubleArray(8)
-    yMeas = sunlineEKF.new_doubleArray(8)
-    numObs = sunlineEKF.new_intArray(1)
-
-    for i in range(8*6):
-        sunlineEKF.doubleArray_setitem(measMat, i, 0.)
-    for i in range(8):
-        sunlineEKF.doubleArray_setitem(obs, i, 0.0)
-        sunlineEKF.doubleArray_setitem(yMeas, i, 0.0)
-
-    ytest = np.zeros([SimHalfLength, 9])
-    Htest = np.zeros([SimHalfLength, 49])
-    PostFitRes = np.zeros([2*SimHalfLength+1, 9])
-
-    for i in range(1,SimHalfLength):
-        ytest[i,0] = stateLog[i,0]
-        Htest[i,0] = stateLog[i,0]
-        PostFitRes[i, 0] = stateLog[i, 0]
-
-        sunlineEKF.sunlineHMatrixYMeas(stateLog[i-1,1:7].tolist(), 8, dotList, threshold, CSSnormals, CSSBias, obs, yMeas, numObs, measMat)
-        yMeasOut = []
-        HOut = []
-        for j in range(8*6):
-            HOut.append(sunlineEKF.doubleArray_getitem(measMat, j))
-        for j in range(8):
-            yMeasOut.append(sunlineEKF.doubleArray_getitem(yMeas, j))
-
-        ytest[i,1:9] = np.array(yMeasOut)
-        Htest[i,1:49] = np.array(HOut)
-        PostFitRes[i,1:9] = ytest[i,1:9] - np.dot(Htest[i,1:49].reshape([8,6]), stateErrorLog[i,1:7])
 
     for i in range(6):
         if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
@@ -773,49 +733,11 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + SimHalfLength+1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('SunlineEKF.state')
+    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", range(6))
+    postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", range(8))
+    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", range(6*6))
     stateErrorLog = unitTestSim.GetLogVariableData('SunlineEKF.x')
 
-
-    ####################################################################################
-    # Compute H and y in order to check post-fit residuals
-    ####################################################################################
-    threshold = moduleConfig.sensorUseThresh
-    CSSnormals = []
-    for j in range(8):
-        CSSnormals+=CSSOrientationList[j]
-
-    measMat = sunlineEKF.new_doubleArray(8*6)
-    obs = sunlineEKF.new_doubleArray(8)
-    yMeas = sunlineEKF.new_doubleArray(8)
-    numObs = sunlineEKF.new_intArray(1)
-
-    for i in range(8*6):
-        sunlineEKF.doubleArray_setitem(measMat, i, 0.)
-    for i in range(8):
-        sunlineEKF.doubleArray_setitem(obs, i, 0.0)
-        sunlineEKF.doubleArray_setitem(yMeas, i, 0.0)
-
-    ytest = np.zeros([SimHalfLength+1, 9])
-    Htest = np.zeros([SimHalfLength+1, 49])
-
-    for i in range(SimHalfLength,2*SimHalfLength):
-        ytest[i-SimHalfLength,0] = stateLog[i,0]
-        Htest[i-SimHalfLength,0] = stateLog[i,0]
-        PostFitRes[i, 0] = stateLog[i, 0]
-
-        sunlineEKF.sunlineHMatrixYMeas(stateLog[i-1,1:7].tolist(), 8, dotList, threshold, CSSnormals, CSSBias, obs, yMeas, numObs, measMat)
-        yMeasOut = []
-        HOut = []
-        for j in range(8*6):
-            HOut.append(sunlineEKF.doubleArray_getitem(measMat, j))
-        for j in range(8):
-            yMeasOut.append(sunlineEKF.doubleArray_getitem(yMeas, j))
-
-        ytest[i-SimHalfLength,1:9] = np.array(yMeasOut)
-        Htest[i-SimHalfLength,1:49] = np.array(HOut)
-        PostFitRes[i,1:9] = ytest[i-SimHalfLength,1:9] - np.dot(Htest[i-SimHalfLength,1:49].reshape([8,6]), stateErrorLog[i,1:7])
 
     for i in range(6):
         if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
@@ -829,7 +751,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     target2 = np.array(testVector2+[0.,0.,0.])
     FilterPlots.StateErrorCovarPlot(stateErrorLog, covarLog, show_plots)
     FilterPlots.StatesVsTargets(target1, target2, stateLog, show_plots)
-    FilterPlots.PostFitResiduals(PostFitRes, moduleConfig.qObsVal, show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, show_plots)
 
     # print out success message if no error were found
     if testFailCount == 0:
