@@ -33,13 +33,8 @@
  */
 
 
-/*!@brief Data structure for the sunline CSS Extended kalman filter estimator.
-
- The module
- [PDF Description](Sunline_EKF.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
- */
+/*! @brief Top level structure for the CSS-based Extended Kalman Filter.
+ Used to estimate the sun state in the vehicle body frame. Please see the _Documentation folder for details on how this Kalman Filter Functions.*/
 
 typedef struct {
     char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
@@ -51,21 +46,21 @@ typedef struct {
     double qProcVal;               /*!< [-] Process noise parameter*/
 
 	double dt;                     /*!< [s] seconds since last data epoch */
-	double timeTag;                /*!< [s]  Time tag for statecovar/etc */
+	double timeTag;                /*!< [s]  Time tag for state/covar */
 
 	double state[SKF_N_STATES];        /*!< [-] State estimate for time TimeTag*/
     double x[SKF_N_STATES];             /*! State errors */
-    double xBar[SKF_N_STATES];            /*! [-] Current mean state estimate*/
+    double xBar[SKF_N_STATES];            /*! [-] Current mean time updated state estimate*/
 	double covarBar[SKF_N_STATES*SKF_N_STATES];         /*!< [-] Time updated covariance */
 	double covar[SKF_N_STATES*SKF_N_STATES];        /*!< [-] covariance */
-    double stateTransition[SKF_N_STATES*SKF_N_STATES];        /*!< [-] covariance */
+    double stateTransition[SKF_N_STATES*SKF_N_STATES];        /*!< [-] State Transtion Matrix */
     double kalmanGain[SKF_N_STATES*MAX_N_CSS_MEAS];    /* Kalman Gain */
 
-    double dynMat[SKF_N_STATES*SKF_N_STATES];        /*!< [-] Dynamics Matrix */
+    double dynMat[SKF_N_STATES*SKF_N_STATES];        /*!< [-] Dynamics Matrix, A */
     double measMat[MAX_N_CSS_MEAS*SKF_N_STATES];        /*!< [-] Measurement Matrix H*/
     
 	double obs[MAX_N_CSS_MEAS];          /*!< [-] Observation vector for frame*/
-	double yMeas[MAX_N_CSS_MEAS];        /*!< [-] Measurement model data */
+	double yMeas[MAX_N_CSS_MEAS];        /*!< [-] Linearized measurement model data */
 
 	double procNoise[SKF_N_STATES/2*SKF_N_STATES/2];       /*!< [-] process noise matrix */
 	double measNoise[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];  /*!< [-] Maximally sized obs noise matrix*/
@@ -79,7 +74,7 @@ typedef struct {
     uint32_t numActiveCss;   /*!< -- Number of currently active CSS sensors*/
     uint32_t numCSSTotal;    /*!< [-] Count on the number of CSS we have on the spacecraft*/
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
-    double eKFSwitch;       /*!< -- Max covariance element after which the filter switches to an EKF*/
+    double eKFSwitch;       /*!< -- Max covariance element after which the filter switches to an EKF update*/
 	NavAttIntMsg outputSunline;   /*!< -- Output sunline estimate data */
     CSSArraySensorIntMsg cssSensorInBuffer; /*!< [-] CSS sensor data read in from message bus*/
     int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/

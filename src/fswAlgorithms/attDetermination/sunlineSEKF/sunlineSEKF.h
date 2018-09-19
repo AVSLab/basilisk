@@ -34,8 +34,8 @@
  */
 
 
-/*! @brief Top level structure for the CSS unscented kalman filter estimator.
- Used to estimate the sun state in the vehicle body frame*/
+/*! @brief Top level structure for the CSS-based Switch Extended Kalman Filter.
+ Used to estimate the sun state in the vehicle body frame. Please see the _Documentation folder for details on how this Kalman Filter Functions.*/
 typedef struct {
     char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output filter data message*/
@@ -48,23 +48,23 @@ typedef struct {
 	double dt;                     /*!< [s] seconds since last data epoch */
 	double timeTag;                /*!< [s]  Time tag for statecovar/etc */
 
-    double bVec_B[SKF_N_STATES_HALF];       /*!< [-] current vector of the b frame used to make frame */
-    double switchTresh;             /*!< [-]  Threshold for switching frames */
+    double bVec_B[SKF_N_STATES_HALF];       /*!< [-] current vector of the b frame used to make Switch frame */
+    double switchTresh;             /*!< [-]  Cosine of angle between singularity and S-frame. If close to 1, the threshold for switching frames is lower. If closer to 0.5 singularity is more largely avoided but switching is more frequent  */
 
 	double state[SKF_N_STATES_SWITCH];        /*!< [-] State estimate for time TimeTag*/
     double x[SKF_N_STATES_SWITCH];             /*! State errors */
     double xBar[SKF_N_STATES_SWITCH];            /*! [-] Current mean state estimate*/
 	double covarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];         /*!< [-] Time updated covariance */
 	double covar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];        /*!< [-] covariance */
-    double stateTransition[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];        /*!< [-] covariance */
+    double stateTransition[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];        /*!< [-] State transition Matrix */
     double kalmanGain[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS];    /* Kalman Gain */
 
-    double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];        /*!< [-] Dynamics Matrix */
-    double measMat[MAX_N_CSS_MEAS*SKF_N_STATES_SWITCH];        /*!< [-] Measurement Matrix H*/
-    double W_BS[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];        /*!< [-] Switch Matrix between the body frame and the current switch frame*/
+    double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];        /*!< [-] Dynamics Matrix, A */
+    double measMat[MAX_N_CSS_MEAS*SKF_N_STATES_SWITCH];        /*!< [-] Measurement Matrix, H*/
+    double W_BS[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];        /*!< [-] Switch Matrix to bring states and covariance to new S-frame when switch occurs*/
     
 	double obs[MAX_N_CSS_MEAS];          /*!< [-] Observation vector for frame*/
-	double yMeas[MAX_N_CSS_MEAS];        /*!< [-] Measurement model data */
+	double yMeas[MAX_N_CSS_MEAS];        /*!< [-] Linearized measurement model data */
     double postFits[MAX_N_CSS_MEAS];  /*!< [-] PostFit residuals */
 
 	double procNoise[(SKF_N_STATES_SWITCH-3)*(SKF_N_STATES_SWITCH-3)];       /*!< [-] process noise matrix */
