@@ -38,7 +38,7 @@ from Basilisk.utilities import macros
 from Basilisk.fswAlgorithms import fswMessages
 from Basilisk.simulation import sim_model
 import ctypes
-
+import SunLineKF_test_utilities as FilterPlots
 
 def setupFilterData(filterObject):
     filterObject.navStateOutMsgName = "sunline_state_estimate"
@@ -396,6 +396,7 @@ def testStateUpdateSunLine(show_plots):
                                unitProcessName,
                                moduleConfig.cssConfigInMsgName,
                                cssConstelation)
+    unitTestSim.TotalSim.logThisMessage('sunline_filter_data', testProcessRate)
 
 
     testVector = numpy.array([-0.7, 0.7, 0.0])
@@ -414,12 +415,10 @@ def testStateUpdateSunLine(show_plots):
     stateTarget = testVector.tolist()
     stateTarget.extend([0.0, 0.0, 0.0])
     moduleConfig.state = [0.7, 0.7, 0.0]
-    unitTestSim.AddVariableForLogging('sunlineSuKF.covar', testProcessRate*10, 0, 24, 'double')
-    unitTestSim.AddVariableForLogging('sunlineSuKF.state', testProcessRate*10, 0, 4, 'double')
 
     unitTestSim.InitializeSimulation()
 
-    for i in range(20000):
+    for i in range(2000):
         if i > 20:
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
                                       inputMessageSize,
@@ -428,8 +427,9 @@ def testStateUpdateSunLine(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSim.GetLogVariableData('sunlineSuKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('sunlineSuKF.state')
+    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", range(5))
+    postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", range(8))
+    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", range(5*5))
 
     for i in range(5):
         if(covarLog[-1, i*5+1+i] > covarLog[0, i*5+1+i]/100):
@@ -448,18 +448,19 @@ def testStateUpdateSunLine(show_plots):
         dotList.append(dotProd)
     inputData.CosValue = dotList
         
-    for i in range(20000):
+    for i in range(2000):
         if i > 20:
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
                                       inputMessageSize,
                                       unitTestSim.TotalSim.CurrentNanos,
                                       inputData)
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i+20001)*0.5))
+        unitTestSim.ConfigureStopTime(macros.sec2nano((i+2001)*0.5))
         unitTestSim.ExecuteSimulation()
 
+    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", range(5))
+    postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", range(8))
+    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", range(5*5))
 
-    covarLog = unitTestSim.GetLogVariableData('sunlineSuKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('sunlineSuKF.state')
     stateTarget = testVector.tolist()
     stateTarget.extend([0.0, 0.0, 0.0])
     for i in range(5):
@@ -470,16 +471,10 @@ def testStateUpdateSunLine(show_plots):
             print abs(stateLog[-1, i+1] - stateTarget[i])
             testFailCount += 1
             testMessages.append("State update failure")
-    plt.figure()
-    for i in range(moduleConfig.numStates):
-        plt.plot(stateLog[:,0]*1.0E-9, stateLog[:,i+1])
 
-    plt.figure()
-    for i in range(moduleConfig.numStates):
-        plt.plot(covarLog[:,0]*1.0E-9, covarLog[:,i*moduleConfig.numStates+i+1])
+    FilterPlots.StateCovarPlot(stateLog, covarLog, 'update', show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, 'update', show_plots)
 
-    if(show_plots):
-        plt.show()
     # print out success message if no error were found
     if testFailCount == 0:
         print "PASSED: " + moduleWrap.ModelTag + " state update"
@@ -518,16 +513,19 @@ def testStatePropSunLine(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
     
     setupFilterData(moduleConfig)
-    unitTestSim.AddVariableForLogging('sunlineSuKF.covar', testProcessRate*10, 0, 24)
-    unitTestSim.AddVariableForLogging('sunlineSuKF.state', testProcessRate*10, 0, 4)
+    unitTestSim.TotalSim.logThisMessage('sunline_filter_data', testProcessRate)
+
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
     
-    covarLog = unitTestSim.GetLogVariableData('sunlineSuKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('sunlineSuKF.state')
+    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", range(5))
+    postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", range(8))
+    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", range(5*5))
 
-    
+    FilterPlots.StateCovarPlot(stateLog, covarLog, 'prop', show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, 'prop', show_plots)
+
     for i in range(5):
         if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > 1.0E-10):
             print abs(stateLog[-1, i+1] - stateLog[0, i+1])
@@ -545,4 +543,5 @@ def testStatePropSunLine(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_all_sunline_kf(True)
+    # test_all_sunline_kf(True)
+    testStateUpdateSunLine(True)
