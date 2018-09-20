@@ -4,8 +4,8 @@
 
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
 
-\newcommand{\ModuleName}{test\textunderscore unitThrusterDynamics}
-\newcommand{\subject}{Sunline EKF Module and Test}
+\newcommand{\ModuleName}{test\textunderscore sunlineEKF}
+\newcommand{\subject}{EKF Module and Test}
 \newcommand{\status}{Initial document}
 \newcommand{\preparer}{T. Teil}
 \newcommand{\summary}{This module implements and tests a Extended Kalman Filter in order to estimate the sunline direction.}
@@ -53,12 +53,13 @@ Draft & Initial Revision & T. Teil \\
 \section{Introduction}
 The Extended Kalman filter (EKF) in the AVS Basilisk simulation is a sequential
 filter implemented to give the best estimate of the desired states.
-In this method we estimate the sun heading as well as it's rate of change.
+In this method we estimate the sun heading as well as it's rate of change in the body frame.
 The EKF reads in the message written by the coarse sun sensor, and writes a message 
 containing the sun estimate. 
 
 This document summarizes the content of the module, how to use it, and the test that 
-was implemented for it.
+was implemented for it. More information on the filter derivation can be found in Reference [\citenum{Teil:2018fe}].
+
 
 \begin{figure}[h]
 \centering
@@ -100,18 +101,25 @@ In this filter, the only measurements used are from the coarse sun sensor. For t
 
 \subsection{User initialization}
 
-In ordre for the filter to run, the user must set a few parameters:
+In order for the filter to run, the user must set a few parameters:
+
 
 \begin{itemize}
-\item The angle threshold under which the coarse sun sensors do not read the measurement:  \texttt{FilterContainer.sensorUseThresh = 0.}
-\item The process noise value, for instance \texttt{FilterContainer.qProcVal = 0.001}
-\item The measurement noise value, for instance \texttt{FilterContainer.qObsVal = 0.001}
-\item The threshold in the covariance norm leading to the switch from the EKF update to the linear Kalman Filter update (discussed more closely in the Measurement update part):
+\item The angle threshold under which the coarse sun sensors do not read the measurement: \\ 
+\texttt{FilterContainer.sensorUseThresh = 0.}
+\item The process noise value, for instance:\\
+ \texttt{FilterContainer.qProcVal = 0.001}
+\item The measurement noise value, for instance: \\
+ \texttt{FilterContainer.qObsVal = 0.001}
+ \item The threshold in the covariance norm leading to the switch from the EKF update to the linear Kalman Filter update (discussed more closely in the Measurement update part):\\
  \texttt{FilterContainer.ekfSwitch = 5}
-\item The initial covariance: \texttt{Filter.covar = [0.4, 0., 0., 0., 0., 0., 0., 0.4, 0., 0., 0., 0., 0., 0., 0.4, 0., 0., 0., 0., 0., 0., 0.004, 0., 0., 0., 0., 0., 0., 0.004, 0., 0., 0., 0., 0., 0., 0.004]}
-\item The initial state : \texttt{Filter.state = [1., 1., 1., 0., 0., 0.]}
-\item The initial state error can not be initialized and therefore set to zero. If the true trajectory is known though, it can be set as such: \texttt{Filter.state = [1., 0., 1., 0., 0.1, 0.]}
+\item The initial covariance: \\
+ \texttt{Filter.covar =} \\
+  \texttt{ [0.4, 0., 0., 0., 0., 0., \\ 0.,0.4, 0., 0., 0., 0., \\ 0., 0., 0.4, 0., 0., 0.,\\ 0., 0., 0., 0.004, 0., 0., \\ 0., 0., 0., 0., 0.004, \\0., 0., 0., 0., 0.,, 0.004]}
+ \item The initial state :\\
+ \texttt{Filter.state = [1., 0., 1., 0., 0.1, 0.]}
 \end{itemize}
+
 
 The messages must also be set as such:
 
@@ -278,6 +286,7 @@ Figure \ref{fig:PostFit} shows the post fit residuals for the filter, with the $
 \input{AutoTeX/StatesTarget.tex}
 \input{AutoTeX/PostFit.tex}
 
-
+\bibliographystyle{AAS_publication}   % Number the references.
+\bibliography{references}   % Use references.bib to resolve the labels.
 
 \end{document}
