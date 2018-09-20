@@ -32,7 +32,7 @@ from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import sunlineUKF, fswMessages, cssComm  # import the module that is to be tested
 from Basilisk.simulation import coarse_sun_sensor
-import SunLineKF_test_utilities as FilterPlots
+import SunLineuKF_test_utilities as FilterPlots
 
 
 def setupFilterData(filterObject):
