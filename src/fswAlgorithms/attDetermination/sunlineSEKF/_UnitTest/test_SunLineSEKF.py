@@ -50,7 +50,7 @@ def setupFilterData(filterObject):
                           0.0, 0.0, 0.0, 0.0, 0.004]
 
     filterObject.qProcVal = 0.1**2
-    filterObject.qObsVal = 0.017 ** 2
+    filterObject.qObsVal = 0.001
     filterObject.eKFSwitch = (4./3)**2 #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 
 def test_all_functions_sekf(show_plots):

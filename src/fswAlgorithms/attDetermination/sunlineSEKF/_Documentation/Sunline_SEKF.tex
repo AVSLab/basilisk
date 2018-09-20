@@ -5,10 +5,10 @@
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
 
 \newcommand{\ModuleName}{test\textunderscore unitThrusterDynamics}
-\newcommand{\subject}{Sunline EKF Module and Test}
+\newcommand{\subject}{Sunline Switch-EKF Module and Test}
 \newcommand{\status}{Initial document}
 \newcommand{\preparer}{T. Teil}
-\newcommand{\summary}{This module implements and tests a Extended Kalman Filter in order to estimate the sunline direction.}
+\newcommand{\summary}{This module implements and tests a Switch Extended Kalman Filter in order to estimate the sunline direction.}
 
 
 \begin{document}
@@ -51,28 +51,20 @@ Draft & Initial Revision & T. Teil \\
 %\end{figure}
 
 \section{Introduction}
-The Extended Kalman filter (EKF) in the AVS Basilisk simulation is a sequential
+The Switch Extended Kalman filter (SEKF) in the AVS Basilisk simulation is a sequential
 filter implemented to give the best estimate of the desired states.
-In this method we estimate the sun heading as well as it's rate of change.
-The EKF reads in the message written by the coarse sun sensor, and writes a message 
+In this method we estimate the sun heading as well as it's rate of change along the observable axes.
+The SEKF reads in the message written by the coarse sun sensor, and writes a message 
 containing the sun estimate. 
 
 This document summarizes the content of the module, how to use it, and the test that 
-was implemented for it.
+was implemented for it. More information on the filter derivation can be found in Reference [\citenum{Teil:2018fe}], and more information on the EKF can be found in Reference [\citenum{Born}].
 
-\begin{figure}[h]
-\centering
-            \includegraphics[height=0.3\textwidth,keepaspectratio]{Figures/SchematicEKF.png}
-\caption{Filter module}
-\end{figure}
 
 \section{Filter Set-up, initialization, and I/O}
 
-\subsection{Switching formulation (Switch-EKF and Switch-SRuKF)}
 
-The following sections are extracted from Reference [\citenum{Teil:2018fe}].
-
-\subsubsection{Filter Derivation} %%%
+\subsection{Filter Derivation} %%%
 
 The Switch-EKF attempts to avoid subtracting any terms from the state, while still removing the unobservable component of the rate. In order to do this, an appropriate frame must be defined.
 In order to not track the rate component alongside the sunline direction, that vector needs to be one of the basis vectors of the frame. It is decided to be the first vector for the frame, and therefore in that frame, $\omega_1$ the component of the rotation rate can be removed from the states. 
@@ -101,7 +93,7 @@ The rotation of the rates is done by computing the following DCMs, of which all 
  [\mathcal{B}\mathcal{S}_1] = \begin{bmatrix} \leftexp{B}{\hat{\bm s}_1} & \leftexp{B}{\hat{\bm s}_2} & \leftexp{B}{\hat{\bm s}_3}\end{bmatrix} \hspace{1cm}  [\mathcal{B}\mathcal{S}_2] = \begin{bmatrix} \leftexp{B}{\hat{\bar{\bm s}}_1} & \leftexp{B}{\hat{\bar{\bm s}}_2} & \leftexp{B}{\hat{\bar{\bm s}}_3}\end{bmatrix} \hspace{1cm}  [\mathcal{S}_2\mathcal{S}_1] = [\mathcal{B}\mathcal{S}_2] ^T [\mathcal{B}\mathcal{S}_1] 
 \end{equation}
 
-\subsubsection{Filter Dynamics} %%%
+\subsection{Filter Dynamics} %%%
 
 The filter is therefore derived with the states being $\bm X =\begin{bmatrix}\leftexp{B}{\bm d} & \omega_2 & \omega_3 \end{bmatrix}^{T}$, given that $\bm \omega_{\mathcal{S}/\mathcal{B}} = \leftexp{S}{\begin{bmatrix} \omega_1 & \omega_2 &\omega_3\end{bmatrix}}^T$. The rates of $\mathcal{S}$ relative to the body and inertial frame are related as such: $\bm \omega_{\mathcal{S}/\mathcal{N}} - \bm \omega_{\mathcal{S}/\mathcal{B}}  = \bm \omega_{\mathcal{B}/\mathcal{N}}$. Since $\omega_1$ is unknown, it is set to zero. Furthermore, since the sun heading is considered to be constant in the inertial frame over the period of time required for attitude determination and control, the equation becomes  $- \bar{\bm \omega}_{\mathcal{S}/\mathcal{B}}  = \bar{\bm \omega}_{\mathcal{B}/\mathcal{N}}$. 
 
@@ -115,10 +107,8 @@ ${\bm \omega}_{\mathcal{S}/\mathcal{B}}$ is estimated directly by the filter, an
 \end{align}
 This formulation leads to simple dynamics, much simpler than those of the filter which subtracts the unobservable states, yet can actually estimate the observable of the rate, instead of using past estimates of $\bm d$. 
 
-In regard to the SR-uKF version of this filter, the same coefficients are used: $\alpha = 0.02$, and $\beta = 2$. 
 
-
-\subsubsection{Switching Frames} %%%
+\subsection{Switching Frames} %%%
 
 When switching occurs, the switch matrix $[W]$ can be computed in Equation \eqref{eq:switchMat} using the previously computed DCMs. This equation assumes the switch is going from frame 1 to frame 2 (the reciprocal is equivalent), and $[\mathcal{S}_2 \mathcal{S}_1](2,3)$ corresponds to the $2^{\text{nd}}$ and $3^{\text{rd}}$ columns of the $[\mathcal{S}_2 \mathcal{S}_1]$ matrix. 
 \begin{equation}\label{eq:switchMat}
@@ -130,7 +120,7 @@ The new states $\bm X$ and covariance [P] after the switch are therefore given i
 \end{equation}
 When writing out the values of the state and covariance, it is necessary to bring it back into the body frame, using the $[\mathcal{B}\mathcal{S}]$ DCM ($\mathcal{S}$ representing the current frame in use).
 %
-\subsubsection{Process Noise for Switch-EKF} %%%
+\subsection{Process Noise for Switch-EKF} %%%
 
 The time update of the error covariance matrix from time $t_k$ to $t_{k+1}$ ($\Delta t = t_{k+1} - t_k$)is given in equation \eqref{eq:SNCTime}. The process noise matrix $[Q]$ is added via the $[\Gamma]$ matrix defined in equation \eqref{eq:GammaDef}. Process noise is only added on the accelerations, meaning that $[B] = \begin{bmatrix} [0]_{3 \times 3} \\ [I]_{3 \times 3}\end{bmatrix}$ when there are 6 states.
 
@@ -142,7 +132,7 @@ The time update of the error covariance matrix from time $t_k$ to $t_{k+1}$ ($\D
   [\Gamma](t_{k+1}, t_k) = \int_{t_k}^{t_{k+1}}  [\Phi](t_{k+1}, \tau) [B](\tau) \D \tau 
 \end{equation}
 
-In the earlier filters (the EKF and the SR-uKF), the second half of the state vector is a direct derivative of the sun heading vector. Regarding state noise compensation, this allowed the approximation in equation \eqref{eq:GammaApprox}, along with the fact that measurements are received frequently with regard to the evolution of the dynamics.
+In others filters (the EKF and the UKF), the second half of the state vector is a direct derivative of the sun heading vector. Regarding state noise compensation, this allowed the approximation in equation \eqref{eq:GammaApprox}, along with the fact that measurements are received frequently with regard to the evolution of the dynamics.
 
 \begin{equation}\label{eq:GammaApprox}
   [\Gamma](t_{k+1}, t_k) =\Delta t \begin{bmatrix} \frac{\Delta t}{2}[I]_{3 \times 3} \\ [I]_{3 \times 3}\end{bmatrix}
@@ -189,17 +179,27 @@ In this filter, the only measurements used are from the coarse sun sensor. For t
 
 \subsection{User initialization}
 
-In ordre for the filter to run, the user must set a few parameters:
+In order for the filter to run, the user must set a few parameters:
 
 \begin{itemize}
-\item The angle threshold under which the coarse sun sensors do not read the measurement:  \texttt{FilterContainer.sensorUseThresh = 0.}
-\item The process noise value, for instance \texttt{FilterContainer.qProcVal = 0.001}
-\item The measurement noise value, for instance \texttt{FilterContainer.qObsVal = 0.001}
+\item The angle threshold under which the coarse sun sensors do not read the measurement:  \\
+\texttt{FilterContainer.sensorUseThresh = 0.}
+\item The process noise value, for instance: \\
+ \texttt{FilterContainer.qProcVal = 0.001}
+\item The measurement noise value, for instance: \\
+ \texttt{FilterContainer.qObsVal = 0.001}
 \item The threshold in the covariance norm leading to the switch from the EKF update to the linear Kalman Filter update (discussed more closely in the Measurement update part):
  \texttt{FilterContainer.ekfSwitch = 5}
-\item The initial covariance: \texttt{Filter.covar = [0.4, 0., 0., 0., 0., 0., 0., 0.4, 0., 0., 0., 0., 0., 0., 0.4, 0., 0., 0., 0., 0., 0., 0.004, 0., 0., 0., 0., 0., 0., 0.004, 0., 0., 0., 0., 0., 0., 0.004]}
-\item The initial state : \texttt{Filter.state = [1., 1., 1., 0., 0., 0.]}
-\item The initial state error can not be initialized and therefore set to zero. If the true trajectory is known though, it can be set as such: \texttt{Filter.state = [1., 0., 1., 0., 0.1, 0.]}
+\item The initial covariance: \\
+ \texttt{Filter.covar =} \\
+  \texttt{ [0.4, 0., 0., 0., 0., 0.,\\
+   0., 0.4, 0., 0., 0., 0., \\
+   0., 0., 0.4, 0., 0., 0.,\\
+    0., 0., 0., 0.004, 0., 0.,\\
+    0., 0., 0., 0., 0.004, 0., \\
+    0., 0., 0., 0., 0., 0.004]}
+ \item The initial state :\\
+ \texttt{Filter.state =[0.0, 0.0, 1.0, 0.0, 0.0]}
 \end{itemize}
 
 The messages must also be set as such:
