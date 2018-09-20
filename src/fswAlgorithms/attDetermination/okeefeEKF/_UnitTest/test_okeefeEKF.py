@@ -476,7 +476,7 @@ def StatePropStatic():
         if (abs(stateLog[-1, i + 1] - stateLog[0, i + 1]) > 1.0E-10):
             print abs(stateLog[-1, i + 1] - stateLog[0, i + 1])
             testFailCount += 1
-            testMessages.append("State propagation failure \n")
+            testMessages.append("Static state propagation failure \n")
 
     unitTestSim.terminateSimulation()
 
@@ -765,7 +765,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
             if (abs(covarLog[-1, i * NUMSTATES + 1 + i] - covarLog[0, i * NUMSTATES + 1 + i] / 100.) > 1E-2):
                 testFailCount += 1
                 testMessages.append("Covariance update failure with noise")
-            if (abs(stateLog[-1, i + 1] - stateTarget1[i]) > 1.0E-3):
+            if (abs(stateLog[-1, i + 1] - stateTarget1[i]) > 1.0E-2):
                 testFailCount += 1
                 testMessages.append("State update failure with noise")
 
