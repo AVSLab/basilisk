@@ -46,14 +46,13 @@ def setupFilterData(filterObject):
     filterObject.sensorUseThresh = 0.
     filterObject.state = [1.0, 1.0, 1.0]
     filterObject.omega = [0.1, 0.2, 0.1]
-    # filterObject.omega = [0., 0., 0.]
     filterObject.x = [1.0, 0.0, 1.0]
     filterObject.covar = [0.4, 0.0, 0.0,
                           0.0, 0.4, 0.0,
                           0.0, 0.0, 0.4]
 
     filterObject.qProcVal = 0.1**2
-    filterObject.qObsVal = 0.017 ** 2
+    filterObject.qObsVal = 0.001
     filterObject.eKFSwitch = 5. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 
 def test_all_functions_oekf(show_plots):
@@ -765,10 +764,10 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         for i in range(NUMSTATES):
             if (abs(covarLog[-1, i * NUMSTATES + 1 + i] - covarLog[0, i * NUMSTATES + 1 + i] / 100.) > 1E-2):
                 testFailCount += 1
-                testMessages.append("Covariance update failure")
+                testMessages.append("Covariance update failure with noise")
             if (abs(stateLog[-1, i + 1] - stateTarget1[i]) > 1.0E-3):
                 testFailCount += 1
-                testMessages.append("State update failure")
+                testMessages.append("State update failure with noise")
 
 
     stateTarget2 = testVector2
