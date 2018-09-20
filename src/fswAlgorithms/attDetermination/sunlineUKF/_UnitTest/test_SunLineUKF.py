@@ -53,10 +53,10 @@ def setupFilterData(filterObject):
                           0.0, 0.0, 0.0, 0.0, 0.04, 0.0,
                           0.0, 0.0, 0.0, 0.0, 0.0, 0.04]
     qNoiseIn = numpy.identity(6)
-    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.017*0.017
-    qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6]*0.0017*0.0017
+    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.01*0.01
+    qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6]*0.001*0.001
     filterObject.qNoise = qNoiseIn.reshape(36).tolist()
-    filterObject.qObsVal = 0.017*0.017
+    filterObject.qObsVal = 0.001
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -413,7 +413,7 @@ def testStateUpdateSunLine(show_plots):
 
     unitTestSim.InitializeSimulation()
 
-    for i in range(200):
+    for i in range(400):
         if i > 20:
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
                                       inputMessageSize,
@@ -443,13 +443,13 @@ def testStateUpdateSunLine(show_plots):
         dotList.append(dotProd)
     inputData.CosValue = dotList
         
-    for i in range(200):
+    for i in range(400):
         if i > 20:
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
                                       inputMessageSize,
                                       unitTestSim.TotalSim.CurrentNanos,
                                       inputData)
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i+201)*0.5))
+        unitTestSim.ConfigureStopTime(macros.sec2nano((i+401)*0.5))
         unitTestSim.ExecuteSimulation()
 
 
