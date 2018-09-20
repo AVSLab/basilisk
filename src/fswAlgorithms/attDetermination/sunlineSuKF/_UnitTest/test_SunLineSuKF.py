@@ -57,8 +57,8 @@ def setupFilterData(filterObject):
     qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.01*0.01
     qNoiseIn[3:5, 3:5] = qNoiseIn[3:5, 3:5]*0.001*0.001
     filterObject.qNoise = qNoiseIn.reshape(25).tolist()
-    filterObject.qObsVal = 0.017**2
-    filterObject.sensorUseThresh = numpy.sqrt(filterObject.qObsVal)*5
+    filterObject.qObsVal = 0.001
+    filterObject.sensorUseThresh = 0.
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -413,7 +413,7 @@ def testStateUpdateSunLine(show_plots):
 
     unitTestSim.InitializeSimulation()
 
-    for i in range(200):
+    for i in range(400):
         if i > 20:
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
                                       inputMessageSize,
@@ -443,13 +443,13 @@ def testStateUpdateSunLine(show_plots):
         dotList.append(dotProd)
     inputData.CosValue = dotList
         
-    for i in range(200):
+    for i in range(400):
         if i > 20:
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
                                       inputMessageSize,
                                       unitTestSim.TotalSim.CurrentNanos,
                                       inputData)
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i+201)*0.5))
+        unitTestSim.ConfigureStopTime(macros.sec2nano((i+401)*0.5))
         unitTestSim.ExecuteSimulation()
 
     stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", range(5))
