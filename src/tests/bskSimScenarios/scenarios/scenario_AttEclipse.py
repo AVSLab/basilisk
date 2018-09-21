@@ -59,11 +59,12 @@
 # which triggers the `initiateSunSafePointing` event within the BSK_FSW.py script.
 #
 # Given the complexity of the simulation, the standard dynamics and FSW time step of 0.1 seconds leads to excessively long
-# computational time. The user can change the standard time step for either or both processes by setting
+# computational time. The user can change the standard time step for either or both processes by changing the fswRate and dynRate.
 # ~~~~~~~~~~~~~{.py}
-#   TheBSKSim = BSKSim(1.0, 1.0)
+#   TheBSKSim = BSKSim(BSK_Dynamics, BSK_Fsw, 1.0, 1.0)
 # ~~~~~~~~~~~~~
-# The first argument is the FSW time step and the second is the dynamics time step (both units of seconds).
+# The first and second argument correspond to the Dynamics and FSW modules used respectively.
+# The third argument is the FSW time step and the fourth is the dynamics time step (both units of seconds).
 # The user is cautioned when setting a changing the standard time step
 # as too large a time step can lead to propagated inaccuracy.
 #
@@ -164,6 +165,7 @@ path = os.path.dirname(os.path.abspath(filename))
 # Import master classes: simulation base class and scenario base class
 sys.path.append(path + '/..')
 from BSK_masters import BSKSim, BSKScenario
+import BSK_Dynamics, BSK_Fsw
 
 # Import plotting file for your scenario
 sys.path.append(path + '/../plotting')
@@ -262,7 +264,7 @@ class scenario_AttitudeEclipse(BSKScenario):
 def run(showPlots):
     # Instantiate base simulation
 
-    TheBSKSim = BSKSim(1.0, 1.0)
+    TheBSKSim = BSKSim(BSK_Dynamics, BSK_Fsw, 1.0, 1.0)
 
     # Configure an scenario in the base simulation
     TheScenario = scenario_AttitudeEclipse(TheBSKSim)

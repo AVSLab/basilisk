@@ -338,6 +338,7 @@ path = os.path.dirname(os.path.abspath(filename))
 # Import master classes: simulation base class and scenario base class
 sys.path.append(path + '/..')
 from BSK_masters import BSKSim, BSKScenario
+import BSK_Dynamics, BSK_Fsw
 
 # Import plotting file for your scenario
 sys.path.append(path + '/../plotting')
@@ -421,7 +422,7 @@ class scenario_AttitudeFeedbackRW(BSKScenario):
 def run(showPlots):
 
     # Instantiate base simulation
-    TheBSKSim = BSKSim()
+    TheBSKSim = BSKSim(BSK_Dynamics, BSK_Fsw)
 
     # Configure a scenario in the base simulation
     TheScenario = scenario_AttitudeFeedbackRW(TheBSKSim)

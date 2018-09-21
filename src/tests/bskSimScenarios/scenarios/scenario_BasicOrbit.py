@@ -38,7 +38,7 @@
 #       python scenario_BasicOrbit.py
 #
 # The simulation mimics the basic simulation simulation in the earlier tutorial in
-# [scenarioBasicOrbit.py](@ref scenarioBasicOrbit).  But rather than explicity defining all simulation properties
+# [scenarioBasicOrbit.py](@ref scenarioBasicOrbit).  But rather than explicitly defining all simulation properties
 # within the python simulation file, the bskSim spacecraft simulation class is used to encapsulate a lot of the
 # setup and configuring.
 #
@@ -47,7 +47,7 @@
 # Two simulation processes are created: one
 # which contains dynamics modules, and one that contains the Flight Software (FSW)
 # modules. The benefit of the new BSK_Sim architecture is how it allows the user to have a pre-written spacecraft
-# configurations and FSW modes neatly organized within three modular files: a scenario file, a FSW file, and
+# configurations and FSW modes neatly organized within three modular files: a BSK_scenario file, a FSW file, and
 # a Dynamics file.
 #
 # More explicitly, the purpose of the scenario file (in this case scenario_BasicOrbit.py) within the BSK_Simulation architecture is to provide the user a
@@ -58,7 +58,7 @@
 # pointing, velocity pointing, and more. Each preconfigured mode triggers a specific event which enables various FSW tasks
 # like assigning enabling a specific pointing model or control loop. The proceeding sequence of tasks then initialize the
 # appropriate FSW modules, link their messages, and provide pre-written FSW functionality through a simple
-# modeRequest variable within scenario file.
+# modeRequest variable within the BSK_scenario file.
 #
 # Configuring the scenario file
 # -----
@@ -130,7 +130,7 @@
 # coarse sun sensor constellations are all preconfigured; however, for users who would like to customize their own
 # dynamics modules and FSW modes, it is recommended to copy the three primary BSK_Sim files
 # (BSK_Scenario.py, BSK_Dynamics.py, and BSK_FSW.py) and modify them directly. Instructions for configuring
-# user-customized BSK_Dynamics and BSK_FSW files are detailed below.
+# user-customized Dynamics and FSW files are detailed below.
 #
 # **Custom Dynamics Configurations Instructions**
 #

@@ -164,6 +164,7 @@ from BSK_masters import BSKSim, BSKScenario
 # Import plotting files for your scenario
 sys.path.append(path + '/../plotting')
 import BSK_Plotting as BSK_plt
+import BSK_Dynamics, BSK_Fsw
 
 sys.path.append(path + '/../../scenarios')
 import scenarioAttGuideHyperbolic as scene_plt
@@ -244,7 +245,7 @@ class scenario_VelocityPointing(BSKScenario):
 def run(showPlots):
 
     # Instantiate base simulation
-    TheBSKSim = BSKSim()
+    TheBSKSim = BSKSim(BSK_Dynamics, BSK_Fsw)
 
     # Configure a scenario in the base simulation
     TheScenario = scenario_VelocityPointing(TheBSKSim)
