@@ -50,8 +50,10 @@ import macros
 from Basilisk.simulation import vis_message_interface
 from Basilisk.simulation import vis_clock_synch
 from Basilisk.simulation import spice_interface
+from Basilisk import __path__
+bskPath = __path__[0]
 
-sys.path.append("/Users/Jbird/visualization/ProtoModels/modules/vizInterface")
+sys.path.append(bskPath + '/../../../visualization/ProtoModels/modules/vizInterface')
 import vizInterface
 
 import tabulate as T
@@ -411,7 +413,7 @@ def pullVectorSetFromData(inpMat):
     outMat = np.array(inpMat).transpose()
     return outMat[1:].transpose()
 
-def enableUnityVisualization(scSim, simTaskName,dynProcess, processName, fileName, bodyName = 'none'):
+def enableUnityVisualization(scSim, simTaskName, dynProcess, processName, fileName, bodyName = 'none'):
     vizMessager = vizInterface.VizInterface()
     scSim.AddModelToTask(simTaskName, vizMessager)
     vizMessager.spiceInMsgName = vizInterface.StringVector([
