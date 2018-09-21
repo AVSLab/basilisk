@@ -32,32 +32,30 @@ sys.path.append(path + '/models')
 
 
 class BSKSim(SimulationBaseClass.SimBaseClass):
-    def __init__(self, DynModule, FswModule, fswRate=0.1, dynRate=0.1):
+    def __init__(self, DynModule, FswModule=None, fswRate=0.1, dynRate=0.1):
         # Create a sim module as an empty container
         SimulationBaseClass.SimBaseClass.__init__(self)
         self.TotalSim.terminateSimulation()
 
-        # Create simulation process names
-        self.DynamicsProcessName = "DynamicsProcess"
-        self.FSWProcessName = "FSWProcess"
 
-        # Create processes
-        self.dynProc = self.CreateNewProcess(self.DynamicsProcessName)
-        self.fswProc = self.CreateNewProcess(self.FSWProcessName)
+        self.DynamicsProcessName = "DynamicsProcess" #Create simulation process name
+        self.dynProc = self.CreateNewProcess(self.DynamicsProcessName) #Create process
+        self.DynModels = DynModule.BSKDynamicModels(self, dynRate) #Create Dynamics and FSW classes
 
-        # Define process message interfaces.
-        self.dyn2FSWInterface = sim_model.SysInterface()
-        self.fsw2DynInterface = sim_model.SysInterface()
+        if FswModule is not None:
+            self.FSWProcessName = "FSWProcess" #Create simulation process name
+            self.fswProc = self.CreateNewProcess(self.FSWProcessName) #Create processe
+            self.FSWModels = FswModule.BSKFswModels(self, fswRate) #Create Dynamics and FSW classes
 
-        # Create Dynamics and FSW classes
-        self.DynModels = DynModule.BSKDynamicModels(self, dynRate)
-        self.FSWModels = FswModule.BSKFswModels(self, fswRate)
+            # Define process message interfaces.
+            self.dyn2FSWInterface = sim_model.SysInterface()
+            self.fsw2DynInterface = sim_model.SysInterface()
 
-        # Discover interfaces between processes
-        self.dyn2FSWInterface.addNewInterface(self.DynamicsProcessName, self.FSWProcessName)
-        self.fsw2DynInterface.addNewInterface(self.FSWProcessName, self.DynamicsProcessName)
-        self.dynProc.addInterfaceRef(self.dyn2FSWInterface)
-        self.fswProc.addInterfaceRef(self.fsw2DynInterface)
+            # Discover interfaces between processes
+            self.dyn2FSWInterface.addNewInterface(self.DynamicsProcessName, self.FSWProcessName)
+            self.fsw2DynInterface.addNewInterface(self.FSWProcessName, self.DynamicsProcessName)
+            self.dynProc.addInterfaceRef(self.dyn2FSWInterface)
+            self.fswProc.addInterfaceRef(self.fsw2DynInterface)
 
 
 class BSKScenario(object):
