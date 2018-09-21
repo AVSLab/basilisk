@@ -37,16 +37,13 @@ import matplotlib.pyplot as plt
 # Used to get the location of supporting data.
 from Basilisk import __path__
 bskPath = __path__[0]
+vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
 # general support file with common unit test functions
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport)
-
-#####RIGHT HERE JEN!!!
-#sys.path.append("/Users/Jbird/visualization/ProtoModels/modules/vizInterface")
-#import vizInterface
 
 
 ## \defgroup Tutorials_1_0
@@ -344,9 +341,9 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     simulationTimeStep = macros.sec2nano(10.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-    # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')
-    # The Viz only support 'earth', 'mars', or 'sun'
+    # # if this scenario is to interface with the BSK Viz, uncomment the following line
+    # unitTestSupport.enableUnityVisualization(scSim, simTaskName, dynProcess, simProcessName, vizFile, 'earth')
+    # # The Viz only support 'earth', 'mars', or 'sun'
 
     #
     #   setup the simulation tasks/objects
@@ -379,8 +376,8 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
             simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt',
                                                 planet.spherHarm, 2)
     mu = planet.mu
-    outputArchiveFilename = "scenarioBasicOrbit1.bin"
-    unitTestSupport.enableUnityVisualization(scSim, simTaskName, dynProcess, simProcessName, outputArchiveFilename,planetCase.lower())
+    # outputArchiveFilename = "scenarioBasicOrbit1.bin"
+    unitTestSupport.enableUnityVisualization(scSim, simTaskName, dynProcess, simProcessName, vizFile, planetCase.lower())
 
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
