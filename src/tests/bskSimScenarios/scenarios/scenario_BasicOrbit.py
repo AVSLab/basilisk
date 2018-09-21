@@ -47,22 +47,22 @@
 # Two simulation processes are created: one
 # which contains dynamics modules, and one that contains the Flight Software (FSW)
 # modules. The benefit of the new BSK_Sim architecture is how it allows the user to have a pre-written spacecraft
-# configurations and FSW modes neatly organized within three modular files: `BSK_scenario.py`, `BSK_FSW.py`, and
-# `BSK_Dynamics.py`.
+# configurations and FSW modes neatly organized within three modular files: a scenario file, a FSW file, and
+# a Dynamics file.
 #
-# More explicitly, the purpose of the BSK_Scenario.py file (scenario_BasicOrbit.py) within the BSK_Simulation architecture is to provide the user a
+# More explicitly, the purpose of the scenario file (in this case scenario_BasicOrbit.py) within the BSK_Simulation architecture is to provide the user a
 # simple, front-end interface to configure a scenario without having to individually initialize and integrate each
-# dynamics and FSW module into their simulation. Instead BSK_Dynamics.py has preconfigured many dynamics modules,
-# attached them to the spacecraft, and linked their messages to the appropriate FSW modules.
-# Similarly, BSK_FSW.py creates preconfigured FSW modes such as hill pointing, sun safe
+# dynamics and FSW module into their simulation. Instead the Dynamics file (for instance BSK_Dynamics.py or BSK_FormationDynamics.py)
+# has preconfigured many dynamics modules, attached them to the spacecraft, and linked their messages to the appropriate FSW modules.
+# Similarly, the FSW file (in this case BSK_FSW.py) creates preconfigured FSW modes such as hill pointing, sun safe
 # pointing, velocity pointing, and more. Each preconfigured mode triggers a specific event which enables various FSW tasks
 # like assigning enabling a specific pointing model or control loop. The proceeding sequence of tasks then initialize the
 # appropriate FSW modules, link their messages, and provide pre-written FSW functionality through a simple
-# modeRequest variable within BSK_Scenario.py.
+# modeRequest variable within scenario file.
 #
-# Configuring the BSK_Scenario.py file
+# Configuring the scenario file
 # -----
-# To write a custom BSK_scenario.py file, first create a class that will
+# To write a custom scenario file, first create a class that will
 # inherent from the masterSim class using:
 # ~~~~~~~~~~~~~{.py}
 #   class scenario_BasicOrbit(BSKScenario):
@@ -79,7 +79,7 @@
 # ~~~~~~~~~~~~~{.py}
 #   self.masterSim.modeRequest = "standby"
 # ~~~~~~~~~~~~~
-# this is the parameter that triggers the aforementioned BSK_FSW event. Additional FSW modes (to be discussed in later
+# this is the parameter that triggers the aforementioned FSW event. Additional FSW modes (to be discussed in later
 # tutorials) include sunSafePoint, inertial3D, velocityPoint, hillPoint, and more.
 #
 # Additionally, the user needs to supply initial conditions
@@ -101,7 +101,7 @@
 #         self.masterSim.DynModels.scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
 #         self.masterSim.DynModels.scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
 # ~~~~~~~~~~~~~
-# The `self.masterSim.DynModels` is referencing a list of available dynamic modules preconfigured in BSK_Dynamics.py.
+# The `self.masterSim.DynModels` is referencing a list of available dynamic modules preconfigured in the Dynamics file.
 #
 # Within `log_outputs()`, the user can supply a list of messages they are interested in logging. Position and velocity
 # from the navigation message are relevant to verify proper orbit functionality.
@@ -189,7 +189,7 @@
 #         self.simpleNavObject.ModelTag = "SimpleNavigation"
 # ~~~~~~~~~~~~~
 # These setter functions are examples of how the BSK_Sim architecture has preconfigured dynamics modules within the BSK_Dynamics.py.
-# Now, for every future BSK_scenario, a spacecraft object, gravity effector, and simple navigation sensor will be available
+# Now, for every future scenario file, a spacecraft object, gravity effector, and simple navigation sensor will be available
 # for use.
 #
 # Finally, all now-configured objects are attached to the DynamicsTask through:
@@ -238,6 +238,7 @@ path = os.path.dirname(os.path.abspath(filename))
 # Import master classes: simulation base class and scenario base class
 sys.path.append(path + '/..')
 from BSK_masters import BSKSim, BSKScenario
+import BSK_Dynamics, BSK_Fsw
 
 # Import plotting files for your scenario
 sys.path.append(path + '/../plotting')
@@ -307,7 +308,7 @@ class scenario_BasicOrbit(BSKScenario):
 
 def run(showPlots):
     # Instantiate base simulation
-    TheBSKSim = BSKSim()
+    TheBSKSim = BSKSim(BSK_Dynamics, BSK_Fsw)
 
     # Configure a scenario in the base simulation
     TheScenario = scenario_BasicOrbit(TheBSKSim)
