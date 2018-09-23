@@ -57,7 +57,7 @@ $nano .tcshrc
 ```
     * Add the line 
 ```
-Export PATH=~/Library/Python/2.7/bin:$PATH
+set path = ( ~/Library/Python/2.7/bin $path )
 ```
 5. Save and close the file
 6. Open a new terminal window for the path to take effect
