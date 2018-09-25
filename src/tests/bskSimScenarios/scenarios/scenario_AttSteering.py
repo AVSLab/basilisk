@@ -27,7 +27,7 @@
 #
 # Scenario Description
 # -----
-# This script sets up a 6-DOF spacecraft orbiting Earth. The goal of this tutorial is to deomstrate
+# This script sets up a 6-DOF spacecraft orbiting Earth. The goal of this tutorial is to demonstrate
 # how to configure and use the MRP_Steering module with a rate sub-servo system
 # the new BSK_Sim architecture.
 #
@@ -55,7 +55,7 @@
 #   self.masterSim.modeRequest = "steeringRW"
 # ~~~~~~~~~~~~~
 #
-# which triggers the `initateSteeringRW` event within the BSK_FSW.py script.
+# which triggers the `initiateSteeringRW` event within the BSK_FSW.py script.
 #
 # The initial conditions for the scenario are the same as found within [scenario_FeedbackRW.py](@ref scenario_FeedbackRW)
 #
@@ -63,10 +63,10 @@
 # for its initial tumbling through:
 # ~~~~~~~~~~~~~{.py}
 #         # FSW process outputs
-#         samplingTime = self.masterSim.FSWModels.processTasksTimeStep
-#         self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.trackingErrorData.outputDataName, samplingTime)
-#         self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.mrpSteeringData.outputDataName, samplingTime)
-#         self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.rwMotorTorqueData.outputDataName, samplingTime)
+#         samplingTime = self.masterSim.get_FswModel().processTasksTimeStep
+#         self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().trackingErrorData.outputDataName, samplingTime)
+#         self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().mrpSteeringData.outputDataName, samplingTime)
+#         self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().rwMotorTorqueData.outputDataName, samplingTime)
 # ~~~~~~~~~~~~~
 # The data is then pulled using:
 # ~~~~~~~~~~~~~{.py}
@@ -74,16 +74,16 @@
 #
 #         # Dynamics process outputs: pull log messages below if any
 #         RW_speeds = self.masterSim.pullMessageLogData( # dataOmegaRW
-#             self.masterSim.DynModels.rwStateEffector.OutputDataString + ".wheelSpeeds", range(num_RW))
+#             self.masterSim.get_DynModel().rwStateEffector.OutputDataString + ".wheelSpeeds", range(num_RW))
 #         # FSW process outputs
 #         dataUsReq = self.masterSim.pullMessageLogData(
-#             self.masterSim.FSWModels.rwMotorTorqueData.outputDataName + ".motorTorque", range(num_RW))
+#             self.masterSim.get_FswModel().rwMotorTorqueData.outputDataName + ".motorTorque", range(num_RW))
 #         sigma_BR = self.masterSim.pullMessageLogData(
-#             self.masterSim.FSWModels.trackingErrorData.outputDataName + ".sigma_BR", range(3))
+#             self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".sigma_BR", range(3))
 #         omega_BR_B = self.masterSim.pullMessageLogData(
-#             self.masterSim.FSWModels.trackingErrorData.outputDataName + ".omega_BR_B", range(3))
+#             self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", range(3))
 #         omega_BR_ast = self.masterSim.pullMessageLogData(
-#             self.masterSim.FSWModels.mrpSteeringData.outputDataName + ".omega_BastR_B", range(3))
+#             self.masterSim.get_FswModel().mrpSteeringData.outputDataName + ".omega_BastR_B", range(3))
 #
 # ~~~~~~~~~~~~~
 # and then plot the results using:
@@ -184,24 +184,24 @@ class scenario_AttitudeSteeringRW(BSKScenario):
         oe.Omega = 48.2 * macros.D2R
         oe.omega = 347.8 * macros.D2R
         oe.f = 85.3 * macros.D2R
-        mu = self.masterSim.DynModels.gravFactory.gravBodies['earth'].mu
+        mu = self.masterSim.get_DynModel().gravFactory.gravBodies['earth'].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
-        self.masterSim.DynModels.scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # [m]
-        self.masterSim.DynModels.scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # [m/s]
-        self.masterSim.DynModels.scObject.hub.sigma_BNInit = [[0.5], [0.6], [-0.3]]
-        self.masterSim.DynModels.scObject.hub.omega_BN_BInit = [[0.01], [-0.01], [-0.01]]
+        self.masterSim.get_DynModel().scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # [m]
+        self.masterSim.get_DynModel().scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # [m/s]
+        self.masterSim.get_DynModel().scObject.hub.sigma_BNInit = [[0.5], [0.6], [-0.3]]
+        self.masterSim.get_DynModel().scObject.hub.omega_BN_BInit = [[0.01], [-0.01], [-0.01]]
 
     def log_outputs(self):
         print '%s: log_outputs' % self.name
-        samplingTime = self.masterSim.DynModels.processTasksTimeStep
+        samplingTime = self.masterSim.get_DynModel().processTasksTimeStep
         # Dynamics process outputs:
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.DynModels.rwStateEffector.OutputDataString, samplingTime)
+        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().rwStateEffector.OutputDataString, samplingTime)
         # FSW process outputs
-        samplingTime = self.masterSim.FSWModels.processTasksTimeStep
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.trackingErrorData.outputDataName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.mrpSteeringData.outputDataName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.rwMotorTorqueData.outputDataName, samplingTime)
+        samplingTime = self.masterSim.get_FswModel().processTasksTimeStep
+        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().trackingErrorData.outputDataName, samplingTime)
+        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().mrpSteeringData.outputDataName, samplingTime)
+        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().rwMotorTorqueData.outputDataName, samplingTime)
         return
 
     def pull_outputs(self, showPlots):
@@ -210,17 +210,17 @@ class scenario_AttitudeSteeringRW(BSKScenario):
 
         # Dynamics process outputs: pull log messages below if any
         RW_speeds = self.masterSim.pullMessageLogData( # dataOmegaRW
-            self.masterSim.DynModels.rwStateEffector.OutputDataString + ".wheelSpeeds", range(num_RW))
+            self.masterSim.get_DynModel().rwStateEffector.OutputDataString + ".wheelSpeeds", range(num_RW))
 
         # FSW process outputs
         dataUsReq = self.masterSim.pullMessageLogData(
-            self.masterSim.FSWModels.rwMotorTorqueData.outputDataName + ".motorTorque", range(num_RW))
+            self.masterSim.get_FswModel().rwMotorTorqueData.outputDataName + ".motorTorque", range(num_RW))
         sigma_BR = self.masterSim.pullMessageLogData(
-            self.masterSim.FSWModels.trackingErrorData.outputDataName + ".sigma_BR", range(3))
+            self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".sigma_BR", range(3))
         omega_BR_B = self.masterSim.pullMessageLogData(
-            self.masterSim.FSWModels.trackingErrorData.outputDataName + ".omega_BR_B", range(3))
+            self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", range(3))
         omega_BR_ast = self.masterSim.pullMessageLogData(
-            self.masterSim.FSWModels.mrpSteeringData.outputDataName + ".omega_BastR_B", range(3))
+            self.masterSim.get_FswModel().mrpSteeringData.outputDataName + ".omega_BastR_B", range(3))
 
         # Plot results
         BSK_plt.clear_all_plots()
@@ -242,7 +242,10 @@ class scenario_AttitudeSteeringRW(BSKScenario):
 
 def run(showPlots):
     # Instantiate base simulation
-    TheBSKSim = BSKSim(BSK_Dynamics, BSK_Fsw)
+    TheBSKSim = BSKSim()
+    TheBSKSim.set_DynModel(BSK_Dynamics)
+    TheBSKSim.set_FswModel(BSK_Fsw)
+    TheBSKSim.initInterfaces()
 
     # Configure a scenario in the base simulation
     TheScenario = scenario_AttitudeSteeringRW(TheBSKSim)

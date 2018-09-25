@@ -60,29 +60,29 @@
 # The initial conditions for the scenario are the same as found within scenario_BasicOrbit.py except the tumble of the
 # spacecraft must be simulated by adding:
 # ~~~~~~~~~~~~~{.py}
-#         self.masterSim.DynModels.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-#         self.masterSim.DynModels.scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+#         self.masterSim.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
+#         self.masterSim.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 # ~~~~~~~~~~~~~
 # Within BSK_Scenario.py log_outputs(), the user must log additional messages to observe how the spacecraft corrected
 # for its initial tumbling through:
 # ~~~~~~~~~~~~~{.py}
 #         # FSW process outputs
-#         samplingTime = self.masterSim.FSWModels.processTasksTimeStep
-#         self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.mrpFeedbackRWsData.inputRWSpeedsName, samplingTime)
-#         self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.rwMotorTorqueData.outputDataName, samplingTime)
-#         self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.trackingErrorData.outputDataName, samplingTime)
+#         samplingTime = self.masterSim.get_FswModel().processTasksTimeStep
+#         self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().mrpFeedbackRWsData.inputRWSpeedsName, samplingTime)
+#         self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().rwMotorTorqueData.outputDataName, samplingTime)
+#         self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().trackingErrorData.outputDataName, samplingTime)
 # ~~~~~~~~~~~~~
 # The data is then pulled using:
 # ~~~~~~~~~~~~~{.py}
 #         dataUsReq = self.masterSim.pullMessageLogData(
-#             self.masterSim.FSWModels.rwMotorTorqueData.outputDataName + ".motorTorque", range(num_RW))
+#             self.masterSim.get_FswModel().rwMotorTorqueData.outputDataName + ".motorTorque", range(num_RW))
 #         sigma_BR = self.masterSim.pullMessageLogData(
-#             self.masterSim.FSWModels.trackingErrorData.outputDataName + ".sigma_BR", range(3))
+#             self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".sigma_BR", range(3))
 #         omega_BR_B = self.masterSim.pullMessageLogData(
-#             self.masterSim.FSWModels.trackingErrorData.outputDataName + ".omega_BR_B", range(3))
+#             self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", range(3))
 #         RW_speeds = self.masterSim.pullMessageLogData(
-#             self.masterSim.FSWModels.mrpFeedbackRWsData.inputRWSpeedsName + ".wheelSpeeds", range(num_RW))
-#             self.masterSim.FSWModels.mrpSteeringData.outputDataName + ".omega_BastR_B", range(3))
+#             self.masterSim.get_FswModel().mrpFeedbackRWsData.inputRWSpeedsName + ".wheelSpeeds", range(num_RW))
+#             self.masterSim.get_FswModel().mrpSteeringData.outputDataName + ".omega_BastR_B", range(3))
 #
 # ~~~~~~~~~~~~~
 # and then plot using:
@@ -216,16 +216,16 @@
 #         self.inertial3DData.outputDataName = "referenceOut"
 #
 #     def SetAttitudeTrackingError(self, SimBase):
-#         self.trackingErrorData.inputNavName = SimBase.DynModels.simpleNavObject.outputAttName
-#         # Note: SimBase.DynModels.simpleNavObject.outputAttName = "simple_att_nav_output"
+#         self.trackingErrorData.inputNavName = SimBase.get_DynModel().simpleNavObject.outputAttName
+#         # Note: SimBase.get_DynModel().simpleNavObject.outputAttName = "simple_att_nav_output"
 #         self.trackingErrorData.inputRefName = "referenceOut"
 #         self.trackingErrorData.outputDataName = "guidanceOut"
 #
 #      def SetMRPFeedbackControl(self, SimBase):
 #         self.mrpFeedbackControlData.inputGuidName = "guidanceOut"
 #         self.mrpFeedbackControlData.vehConfigInMsgName = "adcs_config_data"
-#         self.mrpFeedbackControlData.outputDataName = SimBase.DynModels.extForceTorqueObject.cmdTorqueInMsgName
-#         # Note: SimBase.DynModels.extForceTorqueObject.cmdTorqueInMsgName = "extTorquePntB_B_cmds"
+#         self.mrpFeedbackControlData.outputDataName = SimBase.get_DynModel().extForceTorqueObject.cmdTorqueInMsgName
+#         # Note: SimBase.get_DynModel().extForceTorqueObject.cmdTorqueInMsgName = "extTorquePntB_B_cmds"
 #
 #         self.mrpFeedbackControlData.K = 3.5
 #         self.mrpFeedbackControlData.Ki = -1.0 # Note: make value negative to turn off integral feedback
@@ -254,10 +254,10 @@
 #         ]
 #         self.rwMotorTorqueData.controlAxes_B = controlAxes_B
 #         self.rwMotorTorqueData.inputVehControlName = "controlTorqueRaw"
-#         self.rwMotorTorqueData.outputDataName = SimBase.DynModels.rwStateEffector.InputCmds  # "reactionwheel_cmds"
+#         self.rwMotorTorqueData.outputDataName = SimBase.get_DynModel().rwStateEffector.InputCmds  # "reactionwheel_cmds"
 #         self.rwMotorTorqueData.rwParamsInMsgName = "rwa_config_data"
 # ~~~~~~~~~~~~~
-# Note how the messages occassionaly pull output data from the `SimBase.DynModels` to link messages from BSK_Dynamics.py.
+# Note how the messages occassionaly pull output data from the `SimBase.get_DynModel()` to link messages from BSK_Dynamics.py.
 #
 # In addition to the modules used for attitude guidance, there are also two setter functions that send vehicle and RW
 # configuration messages that are linked into the attitude guidance modules:
@@ -365,13 +365,13 @@ class scenario_AttitudeFeedbackRW(BSKScenario):
         oe.omega = 347.8 * macros.D2R
         oe.f = 85.3 * macros.D2R
 
-        mu = self.masterSim.DynModels.gravFactory.gravBodies['earth'].mu
+        mu = self.masterSim.get_DynModel().gravFactory.gravBodies['earth'].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
         orbitalMotion.rv2elem(mu, rN, vN)
-        self.masterSim.DynModels.scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
-        self.masterSim.DynModels.scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
-        self.masterSim.DynModels.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-        self.masterSim.DynModels.scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+        self.masterSim.get_DynModel().scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
+        self.masterSim.get_DynModel().scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
+        self.masterSim.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
+        self.masterSim.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
     def log_outputs(self):
         print '%s: log_outputs' % self.name
@@ -379,10 +379,10 @@ class scenario_AttitudeFeedbackRW(BSKScenario):
         # Dynamics process outputs: log messages below if desired.
 
         # FSW process outputs
-        samplingTime = self.masterSim.FSWModels.processTasksTimeStep
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.mrpFeedbackRWsData.inputRWSpeedsName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.rwMotorTorqueData.outputDataName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.trackingErrorData.outputDataName, samplingTime)
+        samplingTime = self.masterSim.get_FswModel().processTasksTimeStep
+        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().mrpFeedbackRWsData.inputRWSpeedsName, samplingTime)
+        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().rwMotorTorqueData.outputDataName, samplingTime)
+        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().trackingErrorData.outputDataName, samplingTime)
         return
 
     def pull_outputs(self, showPlots):
@@ -393,13 +393,13 @@ class scenario_AttitudeFeedbackRW(BSKScenario):
 
         # FSW process outputs
         dataUsReq = self.masterSim.pullMessageLogData(
-            self.masterSim.FSWModels.rwMotorTorqueData.outputDataName + ".motorTorque", range(num_RW))
+            self.masterSim.get_FswModel().rwMotorTorqueData.outputDataName + ".motorTorque", range(num_RW))
         sigma_BR = self.masterSim.pullMessageLogData(
-            self.masterSim.FSWModels.trackingErrorData.outputDataName + ".sigma_BR", range(3))
+            self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".sigma_BR", range(3))
         omega_BR_B = self.masterSim.pullMessageLogData(
-            self.masterSim.FSWModels.trackingErrorData.outputDataName + ".omega_BR_B", range(3))
+            self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", range(3))
         RW_speeds = self.masterSim.pullMessageLogData(
-            self.masterSim.FSWModels.mrpFeedbackRWsData.inputRWSpeedsName + ".wheelSpeeds", range(num_RW))
+            self.masterSim.get_FswModel().mrpFeedbackRWsData.inputRWSpeedsName + ".wheelSpeeds", range(num_RW))
 
         # Plot results
         BSK_plt.clear_all_plots()
@@ -422,7 +422,10 @@ class scenario_AttitudeFeedbackRW(BSKScenario):
 def run(showPlots):
 
     # Instantiate base simulation
-    TheBSKSim = BSKSim(BSK_Dynamics, BSK_Fsw)
+    TheBSKSim = BSKSim()
+    TheBSKSim.set_DynModel(BSK_Dynamics)
+    TheBSKSim.set_FswModel(BSK_Fsw)
+    TheBSKSim.initInterfaces()
 
     # Configure a scenario in the base simulation
     TheScenario = scenario_AttitudeFeedbackRW(TheBSKSim)

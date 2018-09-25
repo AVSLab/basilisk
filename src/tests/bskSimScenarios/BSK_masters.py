@@ -47,11 +47,9 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
 
     def get_DynModel(self):
         assert (self.dynamics_added is True), "It is mandatory to use a dynamics model as an argument"
-        print "Getting DynModule"
         return self.DynModels
 
     def set_DynModel(self, dynModel):
-        print "Setting DynModule"
         self.dynamics_added = True
         self.DynamicsProcessName = 'DynamicsProcess' #Create simulation process name
         self.dynProc = self.CreateNewProcess(self.DynamicsProcessName) #Create process
@@ -59,11 +57,9 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
 
     def get_FswModel(self):
         assert (self.fsw_added is True), "A flight software model has not been added yet"
-        print "Getting FSWModule"
         return self.FSWModels
 
     def set_FswModel(self, fswModel):
-        print "Setting FSWModule"
         self.fsw_added = True
         self.FSWProcessName = "FSWProcess" #Create simulation process name
         self.fswProc = self.CreateNewProcess(self.FSWProcessName) #Create processe

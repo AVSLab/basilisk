@@ -95,26 +95,26 @@
 #         oe.Omega = 48.2 * macros.D2R
 #         oe.omega = 347.8 * macros.D2R
 #         oe.f = 85.3 * macros.D2R
-#         mu = self.masterSim.DynModels.gravFactory.gravBodies['earth'].mu
+#         mu = self.masterSim.get_DynModel().gravFactory.gravBodies['earth'].mu
 #         rN, vN = orbitalMotion.elem2rv(mu, oe)
 #         orbitalMotion.rv2elem(mu, rN, vN)
-#         self.masterSim.DynModels.scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
-#         self.masterSim.DynModels.scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
+#         self.masterSim.get_DynModel().scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
+#         self.masterSim.get_DynModel().scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
 # ~~~~~~~~~~~~~
-# The `self.masterSim.DynModels` is referencing a list of available dynamic modules preconfigured in the Dynamics file.
+# The `self.masterSim.get_DynModel()` is referencing a list of available dynamic modules preconfigured in the Dynamics file.
 #
 # Within `log_outputs()`, the user can supply a list of messages they are interested in logging. Position and velocity
 # from the navigation message are relevant to verify proper orbit functionality.
 # ~~~~~~~~~~~~~{.py}
-#       samplingTime = self.masterSim.DynModels.processTasksTimeStep
-#       self.masterSim.TotalSim.logThisMessage(self.masterSim.DynModels.simpleNavObject.outputTransName, samplingTime)
+#       samplingTime = self.masterSim.get_DynModel().processTasksTimeStep
+#       self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().simpleNavObject.outputTransName, samplingTime)
 # ~~~~~~~~~~~~~
 #
 # Finally within the pull_outputs(), the user can pull specific variables from the logged messages:
 # ~~~~~~~~~~~~~{.py}
 #         # Dynamics process outputs
-#         r_BN_N = self.masterSim.pullMessageLogData(self.masterSim.DynModels.simpleNavObject.outputTransName + ".r_BN_N", range(3))
-#         v_BN_N = self.masterSim.pullMessageLogData(self.masterSim.DynModels.simpleNavObject.outputTransName + ".v_BN_N", range(3))
+#         r_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", range(3))
+#         v_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", range(3))
 # ~~~~~~~~~~~~~
 # and proceed to graph them using predefined plotting routines in BSK_Plotting.py
 # ~~~~~~~~~~~~~{.py}
