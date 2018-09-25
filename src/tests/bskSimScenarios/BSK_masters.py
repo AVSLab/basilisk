@@ -71,6 +71,7 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
 
     def initInterfaces(self):
         # Define process message interfaces.
+        assert (self.fsw_added is True and self.dynamics_added is True), "Must have dynamics and fsw modules to interface"
         self.dyn2FSWInterface = sim_model.SysInterface()
         self.fsw2DynInterface = sim_model.SysInterface()
 
