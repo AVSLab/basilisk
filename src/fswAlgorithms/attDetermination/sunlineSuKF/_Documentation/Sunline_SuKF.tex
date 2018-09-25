@@ -195,26 +195,26 @@ The test is split up into 3 subtests. The first test creaks up all of the indivi
 
 In each of these individual tests, random inputs are fed to the methods and their values are computed in parallel in python. These two values are then compared to assure that the correct computations are taking place. 
 \begin{itemize}
-\item \underline{QR Decomposition}: This tests the QR decomposition function which returns just the R matrix. Tolerance to error $\epsilon = 10^{-15}$.
+\item \underline{QR Decomposition}: This tests the QR decomposition function which returns just the R matrix. Tolerance to absolute error $\epsilon = 10^{-15}$.
 
 \textcolor{ForestGreen}{Passed}
-\item \underline{LU Decomposition}: This tests the LU Decomposition accuracy. Tolerance to error $\epsilon = 10^{-14}$.
+\item \underline{LU Decomposition}: This tests the LU Decomposition accuracy. Tolerance to absolute error $\epsilon = 10^{-14}$.
 
 \textcolor{ForestGreen}{Passed}
-\item \underline{LU backsolve}: This tests the LU Back-Solve accuracy. Tolerance to error $\epsilon = 10^{-14}$.
+\item \underline{LU backsolve}: This tests the LU Back-Solve accuracy. Tolerance to absolute error $\epsilon = 10^{-14}$.
 
 \textcolor{ForestGreen}{Passed}
-\item \underline{LU matrix inverse}: This tests the LU Matrix Inverse accuracy. Tolerance to error $\epsilon = 10^{-14}$.
+\item \underline{LU matrix inverse}: This tests the LU Matrix Inverse accuracy. Tolerance to absolute error $\epsilon = 10^{-14}$.
 
 \textcolor{ForestGreen}{Passed}
-\item \underline{Cholesky decomposition}: This tests the Cholesky Matrix Decomposition accuracy. Tolerance to error $\epsilon = 10^{-14}$.
+\item \underline{Cholesky decomposition}: This tests the Cholesky Matrix Decomposition accuracy. Tolerance to absolute error $\epsilon = 10^{-14}$.
 
 \textcolor{ForestGreen}{Passed}
-\item \underline{L matrix inverse}: This tests the L Matrix Inverse accuracy. Tolerance to error $\epsilon = 10^{-14}$.
+\item \underline{L matrix inverse}: This tests the L Matrix Inverse accuracy. Tolerance to absolute error $\epsilon = 10^{-14}$.
 
 \textcolor{ForestGreen}{Passed}
 
-\item \underline{U matrix inverse}: This tests the U Matrix Inverse accuracy. Tolerance to error $\epsilon = 10^{-12}$.
+\item \underline{U matrix inverse}: This tests the U Matrix Inverse accuracy. Tolerance to absolute error $\epsilon = 10^{-12}$.
 
 \textcolor{ForestGreen}{Passed}
 \end{itemize}
@@ -226,14 +226,14 @@ In each of these individual tests, random inputs are fed to the methods and thei
 
 This test also takes no measurements in, and propagates with the expectation of no change. It then tests that the states and covariance are as expected throughout the time of simulation. Plotted results are seen in Figure \ref{fig:StatesPlotprop}. We indeed see that the state and covariance that evolve nominally and without bias .
 
-Tolerance to error: $\epsilon = 10^{-10}$
+Tolerance to absolute error: $\epsilon = 10^{-10}$
 
 \subsection{Full Filter test}
 
 This test the filter working from start to finish. No measurements are taken in for the first 20 time steps. Then a heading is given through the CSS message. Halfway through the simulation, measurements stop, and 20 time steps later a different heading is read. The filter must be robust and detect this change. This test is parametrized for different test lengths, different initial conditions, different measured headings, and with or without measurement noise. All these are successful.
 
 \vspace{0.2cm}
-Tolerance to error without measurement noise: $\epsilon = 10^{-10}$
+Tolerance to absolute error without measurement noise: $\epsilon = 10^{-10}$
 
 \textcolor{ForestGreen}{Passed}
 

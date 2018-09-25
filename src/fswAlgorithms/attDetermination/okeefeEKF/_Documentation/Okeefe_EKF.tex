@@ -226,22 +226,22 @@ The test is split up into 4 subtests, the last one is parametrized in order to t
 
 In each of these individual tests, random inputs are fed to the methods and their values are computed in parallel in python. These two values are then compared to assure that the correct computations are taking place. 
 \begin{itemize}
-\item \underline{Dynamics Matrix}: This method computes the dynamics matrix $A$. Tolerance to error $\epsilon = 10^{-10}$.
+\item \underline{Dynamics Matrix}: This method computes the dynamics matrix $A$. Tolerance to absolute error $\epsilon = 10^{-10}$.
 
 \textcolor{ForestGreen}{Passed}
-\item \underline{State and STM propagation}: This method propagates the state using the $\bm F$ function as well as the STM using $\dot{\Phi} = A \Phi$. Tolerance to error $\epsilon = 10^{-10}$.
+\item \underline{State and STM propagation}: This method propagates the state using the $\bm F$ function as well as the STM using $\dot{\Phi} = A \Phi$. Tolerance to absolute error $\epsilon = 10^{-10}$.
 
 \textcolor{ForestGreen}{Passed}
-\item \underline{$H$ and $y$ propagation}: This method computes the $H$ matrix, and compares the measurements to the expected measurements given the state. Tolerance to error $\epsilon = 10^{-10}$.
+\item \underline{$H$ and $y$ propagation}: This method computes the $H$ matrix, and compares the measurements to the expected measurements given the state. Tolerance to absolute error $\epsilon = 10^{-10}$.
 
 \textcolor{ForestGreen}{Passed}
-\item \underline{Kalman gain}: This method computes the $K$ matrix. Tolerance to error $\epsilon = 10^{-10}$.
+\item \underline{Kalman gain}: This method computes the $K$ matrix. Tolerance to absolute error $\epsilon = 10^{-10}$.
 
 \textcolor{ForestGreen}{Passed}
-\item \underline{EKF update}: This method performs the measurement update in the case of an EKF. Tolerance to error $\epsilon = 10^{-10}$.
+\item \underline{EKF update}: This method performs the measurement update in the case of an EKF. Tolerance to absolute error $\epsilon = 10^{-10}$.
 
 \textcolor{ForestGreen}{Passed}
-\item \underline{Linear Update}: This method performs the measurement update in the linear case. Tolerance to error $\epsilon = 10^{-10}$.
+\item \underline{Linear Update}: This method performs the measurement update in the linear case. Tolerance to absolute error $\epsilon = 10^{-10}$.
 
 \textcolor{ForestGreen}{Passed}
 \end{itemize}
@@ -250,7 +250,7 @@ In each of these individual tests, random inputs are fed to the methods and thei
 
 This test runs the filter with no measurements. It initializes with a zeroed state, and assures that at the end of the simulation all values are still at zero. Plotted results are seen in Figure \ref{fig:StatesExpected}.
 
-Tolerance to error: $\epsilon = 10^{-10}$
+Tolerance to absolute error: $\epsilon = 10^{-10}$
 
 \textcolor{ForestGreen}{Passed}
 
@@ -260,7 +260,7 @@ Tolerance to error: $\epsilon = 10^{-10}$
 
 This test also takes no measurements in, but gives a random state with rate of change. It then tests that the states and covariance are as expected throughout the time of simulation. Plotted results are seen in Figure \ref{fig:StatesCompare}. We indeed see that the state and covariance for the test and the code overlap perfectly.
 
-Tolerance to error: $\epsilon = 10^{-10}$
+Tolerance to absolute error: $\epsilon = 10^{-10}$
 
 \textcolor{ForestGreen}{Passed}
 \input{AutoTeX/StatesCompare.tex}
@@ -270,15 +270,15 @@ Tolerance to error: $\epsilon = 10^{-10}$
 This test the filter working from start to finish. No measurements are taken in for the first 20 time steps. Then a heading is given through the CSS message. Halfway through the simulation, measurements stop, and 20 time steps later a different heading is read. The filter must be robust and detect this change. This test is parametrized for different test lengths, different initial conditions, different measured headings, and with or without measurement noise. All these are successful.
 
 \vspace{0.2cm}
-Tolerance to error without measurement noise: $\epsilon = 10^{-10}$
+Tolerance to absolute error without measurement noise: $\epsilon = 10^{-10}$
 
-Tolerance to error with measurement noise: $\epsilon = 10^{-2}$
+Tolerance to absolute error with measurement noise: $\epsilon = 10^{-2}$
 
 \textcolor{ForestGreen}{Passed}
 
 Plotted results are seen in Figures \ref{fig:StatesPlot}, \ref{fig:StatesTarget}, and \ref{fig:PostFit}. Figure \ref{fig:StatesPlot} shows the state error and covariance over the run. We see the covariance initially grow, then come down quickly as measurements are used. It grows once again as the measurements stop before bringing the state error back to zero with a change in sun heading. 
 
-Figure \ref{fig:StatesTarget} shows the evolution of the state vector compared to the true values. The parts were there is a slight delay is due to the fact that no observations are read in. 
+Figure \ref{fig:StatesTarget} shows the evolution of the state vector compared to the true values. The parts where there is a slight delay is due to the fact that no observations are read in. 
 
 Figure \ref{fig:PostFit} shows the post fit residuals for the filter, with the $3\sigma$ measurement noise values. We see that the observations are read in well an that the residuals are brought back down to noise. We do observe a slight bias in the noise. This could be due to the equations of motion, and is not concerning.
 
