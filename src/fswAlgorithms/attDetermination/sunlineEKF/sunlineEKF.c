@@ -170,7 +170,7 @@ void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     mSubtract(ConfigData->yMeas, ConfigData->numObs, 1, Hx, ConfigData->postFits);
     
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
-	v3Copy(ConfigData->states, ConfigData->outputSunline.vehSunPntBdy);
+	v3Copy(ConfigData->state, ConfigData->outputSunline.vehSunPntBdy);
     v3Normalize(ConfigData->outputSunline.vehSunPntBdy,
         ConfigData->outputSunline.vehSunPntBdy);
     ConfigData->outputSunline.timeTag = ConfigData->timeTag;
@@ -182,7 +182,7 @@ void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     sunlineDataOutBuffer.numObs = ConfigData->numObs;
     memmove(sunlineDataOutBuffer.covar, ConfigData->covar,
             SKF_N_STATES*SKF_N_STATES*sizeof(double));
-    memmove(sunlineDataOutBuffer.state, ConfigData->states, SKF_N_STATES*sizeof(double));
+    memmove(sunlineDataOutBuffer.state, ConfigData->state, SKF_N_STATES*sizeof(double));
     memmove(sunlineDataOutBuffer.stateError, ConfigData->x, SKF_N_STATES*sizeof(double));
     memmove(sunlineDataOutBuffer.postFitRes, ConfigData->postFits, MAX_N_CSS_MEAS*sizeof(double));
     WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(SunlineFilterFswMsg),
@@ -201,14 +201,14 @@ void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
 void sunlineTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 {
     double stmT[SKF_N_STATES*SKF_N_STATES], covPhiT[SKF_N_STATES*SKF_N_STATES];
-    double qGammaT[SKF_N_STATES/2*SKF_N_STATES], gammaQGammaT[SKF_N_STATES*SKF_N_STATES];
+    double qGammaT[SKF_N_STATES_HALF*SKF_N_STATES], gammaQGammaT[SKF_N_STATES*SKF_N_STATES];
     
 	/*! Begin method steps*/
 	ConfigData->dt = updateTime - ConfigData->timeTag;
     
     /*! - Propagate the previous reference states and STM to the current time */
-    sunlineDynMatrix(ConfigData->states, ConfigData->dt, ConfigData->dynMat);
-    sunlineStateSTMProp(ConfigData->dynMat, ConfigData->dt, ConfigData->states, ConfigData->stateTransition);
+    sunlineDynMatrix(ConfigData->state, ConfigData->dt, ConfigData->dynMat);
+    sunlineStateSTMProp(ConfigData->dynMat, ConfigData->dt, ConfigData->state, ConfigData->stateTransition);
 
     /* xbar = Phi*x */
     mMultV(ConfigData->stateTransition, SKF_N_STATES, SKF_N_STATES, ConfigData->x, ConfigData->xBar);
@@ -222,8 +222,8 @@ void sunlineTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
     /*Compute Gamma and add gammaQGamma^T to Pbar. This is the process noise addition*/
     double Gamma[6][3]={{ConfigData->dt*ConfigData->dt/2,0,0},{0,ConfigData->dt*ConfigData->dt/2,0},{0,0,ConfigData->dt*ConfigData->dt/2},{ConfigData->dt,0,0},{0,ConfigData->dt,0},{0,0,ConfigData->dt}};
     
-    mMultMt(ConfigData->procNoise, SKF_N_STATES/2, SKF_N_STATES/2, Gamma, SKF_N_STATES, SKF_N_STATES/2, qGammaT);
-    mMultM(Gamma, SKF_N_STATES, SKF_N_STATES/2, qGammaT, SKF_N_STATES/2, SKF_N_STATES, gammaQGammaT);
+    mMultMt(ConfigData->procNoise, SKF_N_STATES_HALF, SKF_N_STATES_HALF, Gamma, SKF_N_STATES, SKF_N_STATES_HALF, qGammaT);
+    mMultM(Gamma, SKF_N_STATES, SKF_N_STATES_HALF, qGammaT, SKF_N_STATES_HALF, SKF_N_STATES, gammaQGammaT);
     mAdd(ConfigData->covarBar, SKF_N_STATES, SKF_N_STATES, gammaQGammaT, ConfigData->covarBar);
     
 	ConfigData->timeTag = updateTime;
@@ -239,16 +239,16 @@ void sunlineTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 void sunlineStateSTMProp(double dynMat[SKF_N_STATES*SKF_N_STATES], double dt, double *stateInOut, double *stateTransition)
 {
     
-    double propagatedVel[SKF_N_STATES/2];
-    double pointUnit[SKF_N_STATES/2];
+    double propagatedVel[SKF_N_STATES_HALF];
+    double pointUnit[SKF_N_STATES_HALF];
     double unitComp;
     double deltatASTM[SKF_N_STATES*SKF_N_STATES];
     
     /* Set local variables to zero*/
     mSetZero(deltatASTM, SKF_N_STATES, SKF_N_STATES);
     unitComp=0.0;
-    vSetZero(pointUnit, SKF_N_STATES/2);
-    vSetZero(propagatedVel, SKF_N_STATES/2);
+    vSetZero(pointUnit, SKF_N_STATES_HALF);
+    vSetZero(propagatedVel, SKF_N_STATES_HALF);
     
     /*! Begin state update steps */
     /*! - Unitize the current estimate to find direction to restrict motion*/
@@ -344,7 +344,7 @@ void sunlineMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 {
     /*! Begin method steps*/
     /*! - Compute the valid observations and the measurement model for all observations*/
-    sunlineHMatrixYMeas(ConfigData->states, ConfigData->numCSSTotal, ConfigData->cssSensorInBuffer.CosValue, ConfigData->sensorUseThresh, ConfigData->cssNHat_B, ConfigData->CBias, ConfigData->obs, ConfigData->yMeas, &(ConfigData->numObs), ConfigData->measMat);
+    sunlineHMatrixYMeas(ConfigData->state, ConfigData->numCSSTotal, ConfigData->cssSensorInBuffer.CosValue, ConfigData->sensorUseThresh, ConfigData->cssNHat_B, ConfigData->CBias, ConfigData->obs, ConfigData->yMeas, &(ConfigData->numObs), ConfigData->measMat);
     
     /*! - Compute the Kalman Gain. */
     sunlineKalmanGain(ConfigData->covarBar, ConfigData->measMat, ConfigData->qObsVal, ConfigData->numObs, ConfigData->kalmanGain);
@@ -357,7 +357,7 @@ void sunlineMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime)
     }
     else{
 //    /*! - Compute the update with a EKF, notice the reference state is added as an argument because it is changed by the filter update */
-    sunlineEKFUpdate(ConfigData->kalmanGain, ConfigData->covarBar, ConfigData->qObsVal, ConfigData->numObs, ConfigData->yMeas, ConfigData->measMat, ConfigData->states, ConfigData->x, ConfigData->covar);
+    sunlineEKFUpdate(ConfigData->kalmanGain, ConfigData->covarBar, ConfigData->qObsVal, ConfigData->numObs, ConfigData->yMeas, ConfigData->measMat, ConfigData->state, ConfigData->x, ConfigData->covar);
     }
     
 }

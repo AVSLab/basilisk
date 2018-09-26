@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -33,8 +33,8 @@
  */
 
 
-/*! @brief Top level structure for the CSS-based unscented Kalman Filter.
- Used to estimate the sun state in the vehicle body frame. Please see the _Documentation folder for details on how this Kalman Filter Functions.*/
+/*!@brief Data structure for CSS Switch unscented kalman filter estimator. Please see the _Documentation folder for details on how this Kalman Filter Functions.
+ */
 typedef struct {
     char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output filter data message*/
@@ -54,22 +54,26 @@ typedef struct {
 	double dt;                     /*!< [s] seconds since last data epoch */
 	double timeTag;                /*!< [s]  Time tag for statecovar/etc */
 
-	double wM[2 * SKF_N_STATES + 1]; /*!< [-] Weighting vector for sigma points*/
-	double wC[2 * SKF_N_STATES + 1]; /*!< [-] Weighting vector for sigma points*/
+    double bVec_B[SKF_N_STATES_HALF];       /*!< [-] current vector of the b frame used to make frame */
+    double switchTresh;             /*!< [-]  Threshold for switching frames */
+    
+    double state[SKF_N_STATES_SWITCH];        /*!< [-] State estimate for time TimeTag*/
+    
+	double wM[2 * SKF_N_STATES_SWITCH + 1]; /*!< [-] Weighting vector for sigma points*/
+	double wC[2 * SKF_N_STATES_SWITCH + 1]; /*!< [-] Weighting vector for sigma points*/
 
-	double state[SKF_N_STATES];        /*!< [-] State estimate for time TimeTag*/
-	double sBar[SKF_N_STATES*SKF_N_STATES];         /*!< [-] Time updated covariance */
-	double covar[SKF_N_STATES*SKF_N_STATES];        /*!< [-] covariance */
-    double xBar[SKF_N_STATES];            /*! [-] Current mean state estimate*/
+	double sBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];         /*!< [-] Time updated covariance */
+	double covar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];        /*!< [-] covariance */
+    double xBar[SKF_N_STATES_SWITCH];            /*! [-] Current mean state estimate*/
 
 	double obs[MAX_N_CSS_MEAS];          /*!< [-] Observation vector for frame*/
-	double yMeas[MAX_N_CSS_MEAS*(2*SKF_N_STATES+1)];        /*!< [-] Measurement model data */
+	double yMeas[MAX_N_CSS_MEAS*(2*SKF_N_STATES_SWITCH+1)];        /*!< [-] Measurement model data */
     double postFits[MAX_N_CSS_MEAS];  /*!< [-] PostFit residuals */
     
-	double SP[(2*SKF_N_STATES+1)*SKF_N_STATES];     /*!< [-]    sigma point matrix */
+	double SP[(2*SKF_N_STATES_SWITCH+1)*SKF_N_STATES_SWITCH];     /*!< [-]    sigma point matrix */
 
-	double qNoise[SKF_N_STATES*SKF_N_STATES];       /*!< [-] process noise matrix */
-	double sQnoise[SKF_N_STATES*SKF_N_STATES];      /*!< [-] cholesky of Qnoise */
+	double qNoise[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];       /*!< [-] process noise matrix */
+	double sQnoise[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];      /*!< [-] cholesky of Qnoise */
 
 	double qObs[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];  /*!< [-] Maximally sized obs noise matrix*/
     
@@ -85,23 +89,25 @@ typedef struct {
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
     int32_t cssDataInMsgId;      /*!< -- ID for the incoming CSS sensor message*/
     int32_t cssConfigInMsgId;   /*!< [-] ID associated with the CSS configuration data*/
-}SunlineUKFConfig;
+}SunlineSuKFConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     
-    void SelfInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID);
-    void Update_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
+    void SelfInit_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t moduleID);
+    void CrossInit_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t moduleID);
+    void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
         uint64_t moduleID);
-	void Reset_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
+	void Reset_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
 		uint64_t moduleID);
-	void sunlineUKFTimeUpdate(SunlineUKFConfig *ConfigData, double updateTime);
-    void sunlineUKFMeasUpdate(SunlineUKFConfig *ConfigData, double updateTime);
-	void sunlineStateProp(double *stateInOut, double dt);
-    void sunlineUKFMeasModel(SunlineUKFConfig *ConfigData);
-    
+	void sunlineSuKFTimeUpdate(SunlineSuKFConfig *ConfigData, double updateTime);
+    void sunlineSuKFMeasUpdate(SunlineSuKFConfig *ConfigData, double updateTime);
+	void sunlineStateProp(double *stateInOut,  double *b_vec, double dt);
+    void sunlineSuKFMeasModel(SunlineSuKFConfig *ConfigData);
+    void sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double *dcm);
+    void sunlineSuKFSwitch(double *bVec_B, double *states, double *covar);
+
 #ifdef __cplusplus
 }
 #endif

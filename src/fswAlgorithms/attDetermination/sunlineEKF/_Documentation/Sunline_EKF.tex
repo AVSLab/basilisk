@@ -4,8 +4,8 @@
 
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
 
-\newcommand{\ModuleName}{test\textunderscore unitThrusterDynamics}
-\newcommand{\subject}{Sunline EKF Module and Test}
+\newcommand{\ModuleName}{test\textunderscore sunlineEKF}
+\newcommand{\subject}{EKF Module and Test}
 \newcommand{\status}{Initial document}
 \newcommand{\preparer}{T. Teil}
 \newcommand{\summary}{This module implements and tests a Extended Kalman Filter in order to estimate the sunline direction.}
@@ -53,12 +53,13 @@ Draft & Initial Revision & T. Teil \\
 \section{Introduction}
 The Extended Kalman filter (EKF) in the AVS Basilisk simulation is a sequential
 filter implemented to give the best estimate of the desired states.
-In this method we estimate the sun heading as well as it's rate of change.
+In this method we estimate the sun heading as well as it's rate of change in the body frame.
 The EKF reads in the message written by the coarse sun sensor, and writes a message 
 containing the sun estimate. 
 
 This document summarizes the content of the module, how to use it, and the test that 
-was implemented for it.
+was implemented for it. More information on the filter derivation can be found in Reference [\citenum{Teil:2018fe}].
+
 
 \begin{figure}[h]
 \centering
@@ -100,18 +101,25 @@ In this filter, the only measurements used are from the coarse sun sensor. For t
 
 \subsection{User initialization}
 
-In ordre for the filter to run, the user must set a few parameters:
+In order for the filter to run, the user must set a few parameters:
+
 
 \begin{itemize}
-\item The angle threshold under which the coarse sun sensors do not read the measurement:  \texttt{FilterContainer.sensorUseThresh = 0.}
-\item The process noise value, for instance \texttt{FilterContainer.qProcVal = 0.001}
-\item The measurement noise value, for instance \texttt{FilterContainer.qObsVal = 0.001}
-\item The threshold in the covariance norm leading to the switch from the EKF update to the linear Kalman Filter update (discussed more closely in the Measurement update part):
+\item The angle threshold under which the coarse sun sensors do not read the measurement: \\ 
+\texttt{FilterContainer.sensorUseThresh = 0.}
+\item The process noise value, for instance:\\
+ \texttt{FilterContainer.qProcVal = 0.001}
+\item The measurement noise value, for instance: \\
+ \texttt{FilterContainer.qObsVal = 0.001}
+ \item The threshold in the covariance norm leading to the switch from the EKF update to the linear Kalman Filter update (discussed more closely in the Measurement update part):\\
  \texttt{FilterContainer.ekfSwitch = 5}
-\item The initial covariance: \texttt{Filter.covar = [0.4, 0., 0., 0., 0., 0., 0., 0.4, 0., 0., 0., 0., 0., 0., 0.4, 0., 0., 0., 0., 0., 0., 0.004, 0., 0., 0., 0., 0., 0., 0.004, 0., 0., 0., 0., 0., 0., 0.004]}
-\item The initial state : \texttt{Filter.state = [1., 1., 1., 0., 0., 0.]}
-\item The initial state error can not be initialized and therefore set to zero. If the true trajectory is known though, it can be set as such: \texttt{Filter.state = [1., 0., 1., 0., 0.1, 0.]}
+\item The initial covariance: \\
+ \texttt{Filter.covar =} \\
+  \texttt{ [0.4, 0., 0., 0., 0., 0., \\ 0.,0.4, 0., 0., 0., 0., \\ 0., 0., 0.4, 0., 0., 0.,\\ 0., 0., 0., 0.004, 0., 0., \\ 0., 0., 0., 0., 0.004, \\0., 0., 0., 0., 0.,, 0.004]}
+ \item The initial state :\\
+ \texttt{Filter.state = [1., 0., 1., 0., 0.1, 0.]}
 \end{itemize}
+
 
 The messages must also be set as such:
 
@@ -218,22 +226,22 @@ The test is split up into 4 subtests, the last one is parametrized in order to t
 
 In each of these individual tests, random inputs are fed to the methods and their values are computed in parallel in python. These two values are then compared to assure that the correct computations are taking place. 
 \begin{itemize}
-\item \underline{Dynamics Matrix}: This method computes the dynamics matrix $A$. Tolerance to error $\epsilon = 10^{-10}$.
+\item \underline{Dynamics Matrix}: This method computes the dynamics matrix $A$. Tolerance to absolute error $\epsilon = 10^{-10}$.
 
 \textcolor{ForestGreen}{Passed}
-\item \underline{State and STM propagation}: This method propagates the state using the $\bm F$ function as well as the STM using $\dot{\Phi} = A \Phi$. Tolerance to error $\epsilon = 10^{-10}$.
+\item \underline{State and STM propagation}: This method propagates the state using the $\bm F$ function as well as the STM using $\dot{\Phi} = A \Phi$. Tolerance to absolute error $\epsilon = 10^{-10}$.
 
 \textcolor{ForestGreen}{Passed}
-\item \underline{$H$ and $y$ propagation}: This method computes the $H$ matrix, and compares the measurements to the expected measurements given the state. Tolerance to error $\epsilon = 10^{-10}$.
+\item \underline{$H$ and $y$ propagation}: This method computes the $H$ matrix, and compares the measurements to the expected measurements given the state. Tolerance to absolute error $\epsilon = 10^{-10}$.
 
 \textcolor{ForestGreen}{Passed}
-\item \underline{Kalman gain}: This method computes the $K$ matrix. Tolerance to error $\epsilon = 10^{-10}$.
+\item \underline{Kalman gain}: This method computes the $K$ matrix. Tolerance to absolute error $\epsilon = 10^{-10}$.
 
 \textcolor{ForestGreen}{Passed}
-\item \underline{EKF update}: This method performs the measurement update in the case of an EKF. Tolerance to error $\epsilon = 10^{-10}$.
+\item \underline{EKF update}: This method performs the measurement update in the case of an EKF. Tolerance to absolute error $\epsilon = 10^{-10}$.
 
 \textcolor{ForestGreen}{Passed}
-\item \underline{Linear Update}: This method performs the measurement update in the linear case. Tolerance to error $\epsilon = 10^{-10}$.
+\item \underline{Linear Update}: This method performs the measurement update in the linear case. Tolerance to absolute error $\epsilon = 10^{-10}$.
 
 \textcolor{ForestGreen}{Passed}
 \end{itemize}
@@ -242,7 +250,7 @@ In each of these individual tests, random inputs are fed to the methods and thei
 
 This test runs the filter with no measurements. It initializes with a zeroed state, and assures that at the end of the simulation all values are still at zero. Plotted results are seen in Figure \ref{fig:StatesExpected}.
 
-Tolerance to error: $\epsilon = 10^{-10}$
+Tolerance to absolute error: $\epsilon = 10^{-10}$
 
 \textcolor{ForestGreen}{Passed}
 
@@ -252,19 +260,19 @@ Tolerance to error: $\epsilon = 10^{-10}$
 
 This test also takes no measurements in, but gives a random state with rate of change. It then tests that the states and covariance are as expected throughout the time of simulation. Plotted results are seen in Figure \ref{fig:StatesCompare}. We indeed see that the state and covariance for the test and the code overlap perfectly.
 
-Tolerance to error: $\epsilon = 10^{-10}$
+Tolerance to absolute error: $\epsilon = 10^{-10}$
 
 \textcolor{ForestGreen}{Passed}
 \input{AutoTeX/StatesCompare.tex}
 
-\subsection{\texttt{Full Filter test}}
+\subsection{\texttt{Full Filter tests}}
 
 This test the filter working from start to finish. No measurements are taken in for the first 20 time steps. Then a heading is given through the CSS message. Halfway through the simulation, measurements stop, and 20 time steps later a different heading is read. The filter must be robust and detect this change. This test is parametrized for different test lengths, different initial conditions, different measured headings, and with or without measurement noise. All these are successful.
 
 \vspace{0.2cm}
-Tolerance to error without measurement noise: $\epsilon = 10^{-10}$
+Tolerance to absolute error without measurement noise: $\epsilon = 10^{-10}$
 
-Tolerance to error with measurement noise: $\epsilon = 10^{-2}$
+Tolerance to absolute error with measurement noise: $\epsilon = 10^{-2}$
 
 \textcolor{ForestGreen}{Passed}
 
@@ -278,6 +286,7 @@ Figure \ref{fig:PostFit} shows the post fit residuals for the filter, with the $
 \input{AutoTeX/StatesTarget.tex}
 \input{AutoTeX/PostFit.tex}
 
-
+\bibliographystyle{AAS_publication}   % Number the references.
+\bibliography{references}   % Use references.bib to resolve the labels.
 
 \end{document}
