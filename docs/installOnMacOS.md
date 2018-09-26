@@ -59,10 +59,11 @@ $nano .tcshrc
 ```
 set path = ( ~/Library/Python/2.7/bin $path )
 ```
-5. Save and close the file
-6. Open a new terminal window for the path to take effect
+5. If you are using the Homebrew version of python, then add the path `/usr/local/bin` before the other paths.  If you type in a new Terminal window `which python` you should see a path to the Homebrew installation of python, most likely `/usr/local/bin/python`
+6. Save and close the file
+7. Open a new terminal window for the path to take effect
 
-Note:
+**Note:**
 We suggest you remove any other python packages (such as Anaconda), or change the path in your terminal shell if you really want to keep it.
 
 ### Setup Required Python packages
@@ -72,7 +73,7 @@ $ easy_install --user pip
 $ pip install --user --ignore-installed setuptools
 ```
 * Copy the file called [`mac_fix_path.pth`](mac_fix_path.pth) and copy it to the directory `~/Library/Python/2.7/lib/python/site-packages/` 
-For more information about this file see this [online discussion](https://apple.stackexchange.com/questions/209572/how-to-use-pip-after-the-os-x-el-capitan-upgrade/209577). *Note* If you have installed python packages already using `sudo pip install`, then these are stored in `Library/Python/2.7/site-packages`.  You need to add the `mac_fix_path.pth` file to this folder as well to make macOS ignore the system installed packages.  Or, to only use home directory installed python packages, just remove `Library/Python` folder.
+For more information about this file see this [online discussion](https://apple.stackexchange.com/questions/209572/how-to-use-pip-after-the-os-x-el-capitan-upgrade/209577). **Note:** If you have installed python packages already using `sudo pip install`, then these are stored in `Library/Python/2.7/site-packages`.  You need to add the `mac_fix_path.pth` file to this folder as well to make macOS ignore the system installed packages.  Or, to only use home directory installed python packages, just remove `Library/Python` folder.
 * From the terminal window, install the required general Python packages using:
 ```
 $ pip install --user numpy
@@ -109,7 +110,7 @@ When all the prerequisite installations are complete, the project can be built.
 
     * Browse and select the build directory (`basilisk/dist/`). If this directory does not exist, create it.
 
-    * Press `Configure` in Cmake, select the Xcode IDE if running for the first time.  If you wish to use the HomeBrew version of python follow the instruction configure the Python paths in \ref customPython
+    * Press `Configure` in Cmake, select the Xcode IDE if running for the first time.  **Note:** If you wish to use the HomeBrew version of python  configure the Python paths in \ref customPython
 
     * Press `Generate` in Cmake to build the Xcode Basilisk project file inside the `dist` directory
 
