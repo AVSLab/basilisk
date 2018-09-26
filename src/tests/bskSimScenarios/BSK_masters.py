@@ -29,38 +29,53 @@ path = os.path.dirname(os.path.abspath(filename))
 
 # Import Dynamics and FSW models
 sys.path.append(path + '/models')
-import BSK_Dynamics
-import BSK_Fsw
 
 
 class BSKSim(SimulationBaseClass.SimBaseClass):
     def __init__(self, fswRate=0.1, dynRate=0.1):
+        self.dynRate = dynRate
+        self.fswRate = fswRate
         # Create a sim module as an empty container
         SimulationBaseClass.SimBaseClass.__init__(self)
         self.TotalSim.terminateSimulation()
 
-        # Create simulation process names
-        self.DynamicsProcessName = "DynamicsProcess"
-        self.FSWProcessName = "FSWProcess"
+        self.DynModels = []
+        self.FSWModels = []
 
-        # Create processes
-        self.dynProc = self.CreateNewProcess(self.DynamicsProcessName)
-        self.fswProc = self.CreateNewProcess(self.FSWProcessName)
+        self.dynamics_added = False
+        self.fsw_added = False
 
+    def get_DynModel(self):
+        assert (self.dynamics_added is True), "It is mandatory to use a dynamics model as an argument"
+        return self.DynModels
+
+    def set_DynModel(self, dynModel):
+        self.dynamics_added = True
+        self.DynamicsProcessName = 'DynamicsProcess' #Create simulation process name
+        self.dynProc = self.CreateNewProcess(self.DynamicsProcessName) #Create process
+        self.DynModels = dynModel.BSKDynamicModels(self, self.dynRate) #Create Dynamics and FSW classes
+
+    def get_FswModel(self):
+        assert (self.fsw_added is True), "A flight software model has not been added yet"
+        return self.FSWModels
+
+    def set_FswModel(self, fswModel):
+        self.fsw_added = True
+        self.FSWProcessName = "FSWProcess" #Create simulation process name
+        self.fswProc = self.CreateNewProcess(self.FSWProcessName) #Create processe
+        self.FSWModels = fswModel.BSKFswModels(self, self.fswRate) #Create Dynamics and FSW classes
+
+    def initInterfaces(self):
         # Define process message interfaces.
+        assert (self.fsw_added is True and self.dynamics_added is True), "Must have dynamics and fsw modules to interface"
         self.dyn2FSWInterface = sim_model.SysInterface()
         self.fsw2DynInterface = sim_model.SysInterface()
-
-        # Crate Dynamics and FSW classes
-        self.DynModels = BSK_Dynamics.BSKDynamicModels(self, dynRate)
-        self.FSWModels = BSK_Fsw.BSKFswModels(self, fswRate)
 
         # Discover interfaces between processes
         self.dyn2FSWInterface.addNewInterface(self.DynamicsProcessName, self.FSWProcessName)
         self.fsw2DynInterface.addNewInterface(self.FSWProcessName, self.DynamicsProcessName)
         self.dynProc.addInterfaceRef(self.dyn2FSWInterface)
         self.fswProc.addInterfaceRef(self.fsw2DynInterface)
-
 
 class BSKScenario(object):
     def __init__(self, masterSim):
