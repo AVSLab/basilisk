@@ -31,8 +31,8 @@ $brew install swig
 ```
   
 
-## Option 1 - Using the macOS Python Installation
-The following setup will make use of the macOS supplied version of python, but will install all the required python packages in the user `~/Library/Python` folder.  This has the benefit that no `sudo` command is required to install and run Basilisk, and the user Python folder can readily be replaced if needed.  
+## Setting up the Python Environment
+The following setup will make use of the macOS supplied version of python, but will install all the required python packages in the user `~/Library/Python` folder.  This has the benefit that no `sudo` command is required to install and run Basilisk, and the user Python folder can readily be replaced if needed.  If you wish to use the HomeBrew version of python, after following these instruction configure the CMake Python paths as described in \ref customPython.
 
 In the following instructions, be sure to follow the sequence of tasks as outlined below.
 
@@ -80,9 +80,6 @@ $ pip install --user matplotlib
 ```
 
 
-## Option 2 - Using the HomeBrew Installed Python 
-
-
 
 
 
@@ -112,7 +109,7 @@ When all the prerequisite installations are complete, the project can be built.
 
     * Browse and select the build directory (`basilisk/dist/`). If this directory does not exist, create it.
 
-    * Press `Configure` in Cmake, select the Xcode IDE if running for the first time
+    * Press `Configure` in Cmake, select the Xcode IDE if running for the first time.  If you wish to use the HomeBrew version of python follow the instruction configure the Python paths in \ref customPython
 
     * Press `Generate` in Cmake to build the Xcode Basilisk project file inside the `dist` directory
 
