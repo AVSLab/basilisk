@@ -10,6 +10,18 @@ The `pytest` program can run a series of test on python scripts that begin with 
 Note that this version works properly with Basilisk, while currently the latest version has some bugs that impact some Basilisk tests.
 
 
+## Running `pytest` in a multi-threaded manner
+
+While Basilisk is a single threaded simulation, it is possible to run `pytest` in a multi-threaded manner.  Install the `pytest-xdist` package using:
+```
+pip install --user pytest-xdist
+```
+After installing this utility you now run the multi-threaded version of `pytest` for 8 threads using
+```
+pytest -n 8
+```
+
+
 
 ## Graphing via datashader
 
