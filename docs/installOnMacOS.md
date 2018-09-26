@@ -72,7 +72,7 @@ $ easy_install --user pip
 $ pip install --user --ignore-installed setuptools
 ```
 * Copy the file called [`mac_fix_path.pth`](mac_fix_path.pth) and copy it to the directory `~/Library/Python/2.7/lib/python/site-packages/` 
-For more information about this file see this [online discussion](https://apple.stackexchange.com/questions/209572/how-to-use-pip-after-the-os-x-el-capitan-upgrade/209577)
+For more information about this file see this [online discussion](https://apple.stackexchange.com/questions/209572/how-to-use-pip-after-the-os-x-el-capitan-upgrade/209577). *Note* If you have installed python packages already using `sudo pip install`, then these are stored in `Library/Python/2.7/site-packages`.  You need to add the `mac_fix_path.pth` file to this folder as well to make macOS ignore the system installed packages.  Or, to only use home directory installed python packages, just remove `Library/Python` folder.
 * From the terminal window, install the required general Python packages using:
 ```
 $ pip install --user numpy
