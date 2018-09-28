@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
+#include "../simulation/simMessages/scMassPropsSimMsg.h"
 #include "fswMessages/sunlineFilterFswMsg.h"
 #include "fswMessages/cssConfigFswMsg.h"
 
@@ -39,6 +40,7 @@ typedef struct {
     char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output filter data message*/
     char cssDataInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
+    char scMassPropMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Mass Proper message*/
     char cssConfigInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the CSS configuration message*/
     
 	int numStates;                /*!< [-] Number of states for this filter*/
@@ -80,11 +82,15 @@ typedef struct {
     double cssNHat_B[MAX_NUM_CSS_SENSORS*3];     /*!< [-] CSS normal vectors converted over to body*/
     double CBias[MAX_NUM_CSS_SENSORS];       /*!< [-] CSS individual calibration coefficients */
 
+    int dynamics;  /*!< [-] Bool to test for the presence of the inertia tensor in the message */
+    double ISC_PntB_B_inv[SKF_N_STATES_HALF*SKF_N_STATES_HALF];       /*!< [-] current vector of the b frame used to make frame */
     uint32_t numActiveCss;   /*!< -- Number of currently active CSS sensors*/
     uint32_t numCSSTotal;    /*!< [-] Count on the number of CSS we have on the spacecraft*/
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
 	NavAttIntMsg outputSunline;   /*!< -- Output sunline estimate data */
     CSSArraySensorIntMsg cssSensorInBuffer; /*!< [-] CSS sensor data read in from message bus*/
+    SCMassPropsSimMsg massPropInMsg;/*!< [-] CSS sensor data read in from message bus*/
+    int32_t scMassPropMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
     int32_t cssDataInMsgId;      /*!< -- ID for the incoming CSS sensor message*/

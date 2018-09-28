@@ -35,7 +35,7 @@ void SelfInit_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t moduleID)
 {
     
     mSetZero(ConfigData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
-    
+    ConfigData->dynamics = 0;
     /*! Begin method steps */
     /*! - Create output message for module */
 	ConfigData->navStateOutMsgId = CreateNewMessage(ConfigData->navStateOutMsgName,
@@ -61,6 +61,12 @@ void CrossInit_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t moduleID)
     /*! - Find the message ID for the coarse sun sensor configuration message */
     ConfigData->cssConfigInMsgId = subscribeToMessage(ConfigData->cssConfigInMsgName,
                                                    sizeof(CSSConfigFswMsg), moduleID);
+    /*! - Find the message ID for the mass properties */
+    ConfigData->scMassPropMsgId = subscribeToMessage(ConfigData->scMassPropMsgName,
+                                                      sizeof(SCMassPropsSimMsg), moduleID);
+    if (ConfigData->scMassPropMsgId < 0){
+        ConfigData->dynamics = 1;
+    }
     
 }
 
@@ -149,7 +155,16 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
     mTranspose(ConfigData->sQnoise, ConfigData->numStates,
                ConfigData->numStates, ConfigData->sQnoise);
     
-
+    /*! - Read the mass property message*/
+    if (ConfigData->dynamics == 1){
+    uint64_t ClockTime;
+    uint32_t ReadSize;
+    ClockTime = 0;
+    ReadSize = 0;
+    memset(&(ConfigData->massPropInMsg), 0x0, sizeof(SCMassPropsSimMsg));
+    ReadMessage(ConfigData->scMassPropMsgId, &ClockTime, &ReadSize,
+                sizeof(SCMassPropsSimMsg), (void*) (&(ConfigData->massPropInMsg)), moduleID);
+    }
     return;
 }
 
