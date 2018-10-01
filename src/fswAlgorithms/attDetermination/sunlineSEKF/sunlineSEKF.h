@@ -115,7 +115,7 @@ extern "C" {
     
     void sunlineKalmanGain(double covarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES_SWITCH], double qObsVal, int numObs, double *kalmanGain);
     
-    void sunlineDynMatrix(double stateInOut[SKF_N_STATES_SWITCH], double bVec[SKF_N_STATES_HALF], double dt, double *dynMat);
+    void sunlineDynMatrix(double stateInOut[SKF_N_STATES_SWITCH], double bVec[SKF_N_STATES_HALF], FilterDynamics dynamics, double dt, double *dynMat);
     
     void sunlineCKFUpdate(double xBar[SKF_N_STATES_SWITCH], double kalmanGain[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double qObsVal, int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES_SWITCH], double *x, double *covar);
     

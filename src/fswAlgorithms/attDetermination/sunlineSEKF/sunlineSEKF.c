@@ -256,7 +256,7 @@ void sunlineTimeUpdate(sunlineSEKFConfig *ConfigData, double updateTime)
 	ConfigData->dt = updateTime - ConfigData->timeTag;
     
     /*! - Propagate the previous reference states and STM to the current time */
-    sunlineDynMatrix(ConfigData->state, ConfigData->bVec_B, ConfigData->dt, ConfigData->dynMat);
+    sunlineDynMatrix(ConfigData->state, ConfigData->bVec_B, ConfigData->dynamics, ConfigData->dt, ConfigData->dynMat);
     sunlineStateSTMProp(ConfigData->dynMat, ConfigData->bVec_B, ConfigData->dynamics, ConfigData->dt, ConfigData->state, ConfigData->stateTransition);
 
     /* xbar = Phi*x */
@@ -360,25 +360,25 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH],
  @param dynMat Pointer to the Dynamic Matrix
  */
 
-void sunlineDynMatrix(double states[SKF_N_STATES_SWITCH], double bVec[SKF_N_STATES], double dt, double *dynMat)
+void sunlineDynMatrix(double states[SKF_N_STATES_SWITCH], double bVec[SKF_N_STATES], FilterDynamics dynamics, double dt, double *dynMat)
 {
     double skewOmega[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double skewStates[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
-    double omega[SKF_N_STATES_HALF] = {0, states[3], states[4]};
-    double dcm_BS[SKF_N_STATES_HALF*SKF_N_STATES_HALF];
+    double omega_tilde_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double omega_S[SKF_N_STATES_HALF] = {0, states[3], states[4]};
+    double omega_B[SKF_N_STATES_HALF];
+    double I_inv_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double I_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double dcm_BS[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double dcm_SB[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    
+    sunlineSEKFComputeDCM_BS(states, bVec, &dcm_BS[0][0]);
+    mMultV(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, omega_S, omega_B);
 
-    sunlineSEKFComputeDCM_BS(states, bVec, &dcm_BS[0]);
-    mMultV(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, omega, omega);
-
-//    v3Tilde(omega, skewOmega);
     mSetZero(skewOmega, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
-//    skewOmega[1][1] = omega[1];
-//    skewOmega[2][2] = omega[2];
-    v3Tilde(omega, skewOmega);
+    v3Tilde(omega_B, skewOmega);
     v3Tilde(states, skewStates);
     mMultM(skewStates, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, skewStates);
-
-    //m33Scale(-1, skewOmega, skewOmega);
     
     /* - omega_tilde in dynamics */
     mSetSubMatrix(skewOmega, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 0, 0);
@@ -388,7 +388,32 @@ void sunlineDynMatrix(double states[SKF_N_STATES_SWITCH], double bVec[SKF_N_STAT
     m33Scale(-1, skewStates, skewStates);
     mTranspose(skewStates, SKF_N_STATES_HALF, SKF_N_STATES_HALF, skewStates);
     mSetSubMatrix(&(skewStates[1][0]), 2, 3, dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 3, 0);
-    
+
+    if (dynamics.dynOn == 1){
+        /* Populate the bottom right 3x3 matrix of the dynamics matrix*/
+        v3Tilde(omega_S, omega_tilde_S);
+        mTranspose(dcm_BS, 3, 3, dcm_SB);
+        /*! - Compute the inverse of the Inertia matrix in the S frame */
+        m33MultM33(dcm_SB, I_inv_S, I_inv_S);
+        m33MultM33(I_inv_S, dcm_BS, I_inv_S);
+        /*! - Compute the Inertia matrix in the S frame */
+        m33MultM33(dcm_SB, I_S, I_S);
+        m33MultM33(I_S, dcm_BS, I_S);
+        
+        m33MultM33(I_inv_S, omega_tilde_S, omega_tilde_S);
+        m33MultM33(omega_tilde_S, I_S, omega_tilde_S);
+
+        double I_omega_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF]=
+        {
+            {0, 0, 0},
+            {I_S[2][2]*omega_S[1],0, -I_S[0][0]*omega_S[1]},
+            {-I_S[1][1]*omega_S[2],I_S[0][0]*omega_S[2], 0}
+        };
+        m33MultV3(I_inv_S, &I_omega_S[0][0],&I_omega_S[0][0]);
+        m33Subtract(&I_omega_S[0], omega_tilde_S, I_omega_S);
+        mTranspose(I_omega_S, SKF_N_STATES_HALF, SKF_N_STATES_HALF, I_omega_S);
+        mSetSubMatrix(&(I_omega_S[1][1]), 2, 2, dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 3, 3);
+    }
     mTranspose(dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, dynMat);
     return;
 }
