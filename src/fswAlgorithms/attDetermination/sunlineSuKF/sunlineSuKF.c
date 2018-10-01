@@ -35,7 +35,7 @@ void SelfInit_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t moduleID)
 {
     
     mSetZero(ConfigData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
-    ConfigData->dynamics = 0;
+    ConfigData->dynamics.dynOn = 0;
     /*! Begin method steps */
     /*! - Create output message for module */
 	ConfigData->navStateOutMsgId = CreateNewMessage(ConfigData->navStateOutMsgName,
@@ -62,10 +62,11 @@ void CrossInit_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t moduleID)
     ConfigData->cssConfigInMsgId = subscribeToMessage(ConfigData->cssConfigInMsgName,
                                                    sizeof(CSSConfigFswMsg), moduleID);
     /*! - Find the message ID for the mass properties */
-    ConfigData->scMassPropMsgId = subscribeToMessage(ConfigData->scMassPropMsgName,
-                                                      sizeof(SCMassPropsSimMsg), moduleID);
-    if (ConfigData->scMassPropMsgId < 0){
-        ConfigData->dynamics = 1;
+    ConfigData->dynamics.vehConfigMsgId = subscribeToMessage(ConfigData->dynamics.vehConfigMsgName,
+                                                      sizeof(VehicleConfigFswMsg), moduleID);
+    /*! - If vehicle config data is set, use dynamics */
+    if (ConfigData->dynamics.vehConfigMsgId >= 0){
+        ConfigData->dynamics.dynOn = 1;
     }
     
 }
@@ -156,14 +157,24 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
                ConfigData->numStates, ConfigData->sQnoise);
     
     /*! - Read the mass property message*/
-    if (ConfigData->dynamics == 1){
-    uint64_t ClockTime;
-    uint32_t ReadSize;
-    ClockTime = 0;
-    ReadSize = 0;
-    memset(&(ConfigData->massPropInMsg), 0x0, sizeof(SCMassPropsSimMsg));
-    ReadMessage(ConfigData->scMassPropMsgId, &ClockTime, &ReadSize,
-                sizeof(SCMassPropsSimMsg), (void*) (&(ConfigData->massPropInMsg)), moduleID);
+    if (ConfigData->dynamics.dynOn == 1){
+        uint64_t ClockTime;
+        uint32_t ReadSize;
+        ClockTime = 0;
+        ReadSize = 0;
+        memset(&(ConfigData->dynamics.vehMassData), 0x0, sizeof(VehicleConfigFswMsg));
+        ReadMessage(ConfigData->dynamics.vehConfigMsgId, &ClockTime, &ReadSize,
+                    sizeof(VehicleConfigFswMsg), (void*) (&(ConfigData->dynamics.vehMassData)), moduleID);
+        /*! - Check the message quality (positive nature of Inertia)*/
+        if (mDeterminant(ConfigData->dynamics.vehMassData.ISCPntB_B, 3) != 0){
+            ConfigData->dynamics.ISCPntB_B_inv[0] = 1.0/ConfigData->dynamics.vehMassData.ISCPntB_B[0];
+            ConfigData->dynamics.ISCPntB_B_inv[4] = 1.0/ConfigData->dynamics.vehMassData.ISCPntB_B[4];
+            ConfigData->dynamics.ISCPntB_B_inv[8] = 1.0/ConfigData->dynamics.vehMassData.ISCPntB_B[8];
+        }
+        /*! - If the Inertia has a zero eigenvalue, do not use it*/
+        else{
+            ConfigData->dynamics.dynOn = 0;
+        }
     }
     return;
 }
@@ -310,7 +321,7 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
 	vCopy(ConfigData->state, ConfigData->numStates,
 		&(ConfigData->SP[0 * ConfigData->numStates + 0]));
-	sunlineStateProp(&(ConfigData->SP[0 * ConfigData->numStates + 0]), ConfigData->bVec_B, ConfigData->dt);
+	sunlineStateProp(&(ConfigData->SP[0 * ConfigData->numStates + 0]), ConfigData->bVec_B, ConfigData->dynamics, ConfigData->dt);
     /*! - Scale that Sigma point by the appopriate scaling factor (Wm[0])*/
 	vScale(ConfigData->wM[0], &(ConfigData->SP[0 * ConfigData->numStates + 0]),
         ConfigData->numStates, ConfigData->xBar);
@@ -326,7 +337,7 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
 		vCopy(&sBarT[i*ConfigData->numStates], ConfigData->numStates, spPtr);
 		vScale(ConfigData->gamma, spPtr, ConfigData->numStates, spPtr);
 		vAdd(spPtr, ConfigData->numStates, ConfigData->state, spPtr);
-		sunlineStateProp(spPtr, ConfigData->bVec_B, ConfigData->dt);
+		sunlineStateProp(spPtr, ConfigData->bVec_B, ConfigData->dynamics, ConfigData->dt);
 		vScale(ConfigData->wM[Index], spPtr, ConfigData->numStates, xComp);
 		vAdd(xComp, ConfigData->numStates, ConfigData->xBar, ConfigData->xBar);
 		
@@ -335,7 +346,7 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
         vCopy(&sBarT[i*ConfigData->numStates], ConfigData->numStates, spPtr);
         vScale(-ConfigData->gamma, spPtr, ConfigData->numStates, spPtr);
         vAdd(spPtr, ConfigData->numStates, ConfigData->state, spPtr);
-        sunlineStateProp(spPtr, ConfigData->bVec_B, ConfigData->dt);
+        sunlineStateProp(spPtr, ConfigData->bVec_B, ConfigData->dynamics, ConfigData->dt);
         vScale(ConfigData->wM[Index], spPtr, ConfigData->numStates, xComp);
         vAdd(xComp, ConfigData->numStates, ConfigData->xBar, ConfigData->xBar);
 	}
