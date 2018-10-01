@@ -327,7 +327,7 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH],
         mSetSubMatrix(dynamics.vehMassData.ISCPntB_B, SKF_N_STATES_HALF, SKF_N_STATES_HALF, I_S, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
         
         v3Tilde(omega_S, omega_tilde_S);
-        mTranspose(dcm_BS, 3, 3, dcm_SB);
+        mTranspose(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm_SB);
         /*! - Compute the inverse of the Inertia matrix in the S frame */
         m33MultM33(dcm_SB, I_inv_S, I_inv_S);
         m33MultM33(I_inv_S, dcm_BS, I_inv_S);
@@ -395,7 +395,7 @@ void sunlineDynMatrix(double states[SKF_N_STATES_SWITCH], double bVec[SKF_N_STAT
         
         /* Populate the bottom right 3x3 matrix of the dynamics matrix*/
         v3Tilde(omega_S, omega_tilde_S);
-        mTranspose(dcm_BS, 3, 3, dcm_SB);
+        mTranspose(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm_SB);
         /*! - Compute the inverse of the Inertia matrix in the S frame */
         m33MultM33(dcm_SB, I_inv_S, I_inv_S);
         m33MultM33(I_inv_S, dcm_BS, I_inv_S);

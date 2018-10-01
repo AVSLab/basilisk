@@ -224,7 +224,10 @@ def sunline_individual_test(useDynamics):
     expectedSTM = dt*np.dot(expDynMat, np.eye(numStates)) + np.eye(numStates)
     expectedStates = np.zeros(numStates)
     ## Equations when removing the unobservable states from d_dot
-    expectedStates[3:numStates] = np.array(inputOmega)[1:3]
+    if useDynamics:
+        expectedStates[3:numStates] = np.array(inputOmega)[1:3] - dt*np.dot(np.dot(I_inv_S, np.dot(np.array(RigidBodyKinematics.v3Tilde(inputOmega)), I_S)), np.array(inputOmega))[1:]
+    else:
+        expectedStates[3:numStates] = np.array(inputOmega)[1:3]
     expectedStates[0:3] = np.array(inputStates)[0:3]+dt*np.cross(np.dot(DCM_BS,np.array(inputOmega)), np.array(inputStates)[0:3])
     errorNormSTM = np.linalg.norm(expectedSTM - STMout)
     errorNormStates = np.linalg.norm(expectedStates - StatesOut)
