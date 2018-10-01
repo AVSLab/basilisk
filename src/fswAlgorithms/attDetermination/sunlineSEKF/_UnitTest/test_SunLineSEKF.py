@@ -132,6 +132,10 @@ def sunline_individual_test(useDynamics):
     dtilde = RigidBodyKinematics.v3Tilde(-np.array(inputStates)[:3])
     dBS = np.dot(dtilde, DCM_BS)
 
+    expDynMat = np.zeros([numStates,numStates])
+    expDynMat[0:3, 0:3] =  np.array(RigidBodyKinematics.v3Tilde(omega_B))
+    expDynMat[0:3, 3:numStates] = dBS[:, 1:]
+
     dyn = sunlineSEKF.FilterDynamics()
     if useDynamics:
         dyn.dynOn = 1
@@ -141,12 +145,15 @@ def sunline_individual_test(useDynamics):
         dyn.ISCPntB_B_inv = [1., 0., 0.,
              0., 1/2., 0.,
              0., 0., 1/3.]
+
+        I_S = np.dot(DCM_BS.T,np.dot(np.array(dyn.vehMassData.ISCPntB_B).reshape([3,3]),DCM_BS))
+        I_inv_S = np.dot(DCM_BS.T,np.dot(np.array(dyn.ISCPntB_B_inv).reshape([3,3]),DCM_BS))
+        I_omega_S = np.array([[0., I_S[2,2]*inputOmega[0], -I_S[1,1]*inputOmega[0]],
+                              [-I_S[2, 2] * inputOmega[1], 0., I_S[0, 0] * inputOmega[1]],
+                              [I_S[1, 1] * inputOmega[2], -I_S[0, 0] * inputOmega[2],0.]])
+        expDynMat[3:,3:] = - np.dot(I_inv_S, I_omega_S + np.dot(np.array(RigidBodyKinematics.v3Tilde(inputOmega)), I_S))[1:,1:]
     else:
         dyn.dynOn = 0
-
-    expDynMat = np.zeros([numStates,numStates])
-    expDynMat[0:3, 0:3] =  np.array(RigidBodyKinematics.v3Tilde(omega_B))
-    expDynMat[0:3, 3:numStates] = dBS[:, 1:]
 
     dynMat = sunlineSEKF.new_doubleArray(numStates*numStates)
     for i in range(numStates*numStates):
@@ -184,18 +191,6 @@ def sunline_individual_test(useDynamics):
                 sunlineSEKF.doubleArray_setitem(stateTransition, numStates*i+j, 1.0)
             else:
                 sunlineSEKF.doubleArray_setitem(stateTransition, numStates*i+j, 0.0)
-
-    dyn = sunlineSEKF.FilterDynamics()
-    if useDynamics:
-        dyn.dynOn = 1
-        dyn.vehMassData.ISCPntB_B = [1., 0., 0.,
-             0., 2., 0.,
-             0., 0., 3.]
-        dyn.ISCPntB_B_inv = [1., 0., 0.,
-             0., 1/2., 0.,
-             0., 0., 1/3.]
-    else:
-        dyn.dynOn = 0
 
     sunlineSEKF.sunlineStateSTMProp(expDynMat.flatten().tolist(), bVec_test, dyn, dt, states, stateTransition)
 
@@ -983,6 +978,6 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 
 if __name__ == "__main__":
-    sunline_individual_test(False)
+    sunline_individual_test(True)
     # test_all_functions_sekf(True)
     # test_all_sunline_sekf(True, 200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0])
