@@ -53,12 +53,17 @@ def setupFilterData(filterObject):
     filterObject.qObsVal = 0.001
     filterObject.eKFSwitch = (4./3)**2 #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 
-def test_all_functions_sekf(show_plots):
-    [testResults, testMessage] = sunline_individual_test()
+@pytest.mark.parametrize("useDynamics", [
+    (False),
+    (True)
+])
+
+def test_all_functions_sekf(show_plots, useDynamics):
+    [testResults, testMessage] = sunline_individual_test(useDynamics)
     assert testResults < 1, testMessage
-    [testResults, testMessage] = StatePropStatic()
+    [testResults, testMessage] = StatePropStatic(useDynamics)
     assert testResults < 1, testMessage
-    [testResults, testMessage] = StatePropVariable(show_plots)
+    [testResults, testMessage] = StatePropVariable(show_plots,useDynamics)
     assert testResults < 1, testMessage
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -87,7 +92,7 @@ def test_all_sunline_sekf(show_plots, SimHalfLength, AddMeasNoise, testVector1, 
     assert testResults < 1, testMessage
 
 
-def sunline_individual_test():
+def sunline_individual_test(useDynamics):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -113,10 +118,8 @@ def sunline_individual_test():
 
     # Fill in the variables for the test
     dcm = sunlineSEKF.new_doubleArray(3 * 3)
-
     for j in range(9):
         sunlineSEKF.doubleArray_setitem(dcm, j, dcm_BS[j])
-
     sunlineSEKF.sunlineSEKFComputeDCM_BS(inputStates[:3], bVec, dcm)
 
     dcmOut = []
@@ -129,6 +132,17 @@ def sunline_individual_test():
     dtilde = RigidBodyKinematics.v3Tilde(-np.array(inputStates)[:3])
     dBS = np.dot(dtilde, DCM_BS)
 
+    dyn = sunlineSEKF.FilterDynamics()
+    if useDynamics:
+        dyn.dynOn = 1
+        dyn.vehMassData.ISCPntB_B = [1., 0., 0.,
+             0., 2., 0.,
+             0., 0., 3.]
+        dyn.ISCPntB_B_inv = [1., 0., 0.,
+             0., 1/2., 0.,
+             0., 0., 1/3.]
+    else:
+        dyn.dynOn = 0
 
     expDynMat = np.zeros([numStates,numStates])
     expDynMat[0:3, 0:3] =  np.array(RigidBodyKinematics.v3Tilde(omega_B))
@@ -137,7 +151,7 @@ def sunline_individual_test():
     dynMat = sunlineSEKF.new_doubleArray(numStates*numStates)
     for i in range(numStates*numStates):
         sunlineSEKF.doubleArray_setitem(dynMat, i, 0.0)
-    sunlineSEKF.sunlineDynMatrix(inputStates, bVec, dt, dynMat)
+    sunlineSEKF.sunlineDynMatrix(inputStates, bVec, dyn, dt, dynMat)
 
     DynOut = []
     for i in range(numStates*numStates):
@@ -171,7 +185,19 @@ def sunline_individual_test():
             else:
                 sunlineSEKF.doubleArray_setitem(stateTransition, numStates*i+j, 0.0)
 
-    sunlineSEKF.sunlineStateSTMProp(expDynMat.flatten().tolist(), bVec_test, dt, states, stateTransition)
+    dyn = sunlineSEKF.FilterDynamics()
+    if useDynamics:
+        dyn.dynOn = 1
+        dyn.vehMassData.ISCPntB_B = [1., 0., 0.,
+             0., 2., 0.,
+             0., 0., 3.]
+        dyn.ISCPntB_B_inv = [1., 0., 0.,
+             0., 1/2., 0.,
+             0., 0., 1/3.]
+    else:
+        dyn.dynOn = 0
+
+    sunlineSEKF.sunlineStateSTMProp(expDynMat.flatten().tolist(), bVec_test, dyn, dt, states, stateTransition)
 
     PropStateOut = []
     PropSTMOut = []
@@ -570,7 +596,7 @@ def sunline_individual_test():
 ####################################################################################
 # Test for the time and update with static states (zero d_dot)
 ####################################################################################
-def StatePropStatic():
+def StatePropStatic(useDynamics):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -633,7 +659,7 @@ def StatePropStatic():
 ####################################################################################
 # Test for the time and update with changing states (non-zero d_dot)
 ####################################################################################
-def StatePropVariable(show_plots):
+def StatePropVariable(show_plots, useDynamics):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -957,5 +983,6 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 
 if __name__ == "__main__":
-    test_all_functions_sekf(True)
+    sunline_individual_test(False)
+    # test_all_functions_sekf(True)
     # test_all_sunline_sekf(True, 200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0])
