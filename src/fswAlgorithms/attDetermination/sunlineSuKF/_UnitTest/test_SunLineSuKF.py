@@ -40,6 +40,7 @@ def setupFilterData(filterObject):
     filterObject.filtDataOutMsgName = "sunline_filter_data"
     filterObject.cssDataInMsgName = "css_sensors_data"
     filterObject.cssConfigInMsgName = "css_config_data"
+    filterObject.dynamics.vehConfigMsgName = 'vehicle_config_data'
 
     filterObject.alpha = 0.02
     filterObject.beta = 2.0
@@ -60,17 +61,26 @@ def setupFilterData(filterObject):
     filterObject.qObsVal = 0.001
     filterObject.sensorUseThresh = 0.
 
+
+def test_functions_ukf(show_plots):
+    [testResults, testMessage] = sunline_utilities_test(show_plots)
+    assert testResults < 1, testMessage
+
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def test_all_sunline_kf(show_plots):
-    [testResults, testMessage] = sunline_utilities_test(show_plots)
+
+@pytest.mark.parametrize("usingDynamics", [
+    (True),
+    (False)
+])
+
+def test_all_sunline_kf(show_plots, usingDynamics):
+    [testResults, testMessage] = StatePropSunLine(show_plots, usingDynamics)
     assert testResults < 1, testMessage
-    [testResults, testMessage] = testStatePropSunLine(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = testStateUpdateSunLine(show_plots)
+    [testResults, testMessage] = StateUpdateSunLine(show_plots, usingDynamics)
     assert testResults < 1, testMessage
 
 def sunline_utilities_test(show_plots):
@@ -336,7 +346,7 @@ def sunline_utilities_test(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def testStateUpdateSunLine(show_plots):
+def StateUpdateSunLine(show_plots, usingDynamics):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -393,6 +403,19 @@ def testStateUpdateSunLine(show_plots):
                                cssConstelation)
     unitTestSim.TotalSim.logThisMessage('sunline_filter_data', testProcessRate)
 
+    if usingDynamics:
+        #   vehicleConfigData Message:
+        vehicleConfigOut = sunlineSuKF.VehicleConfigFswMsg()
+        inputMessageSize = vehicleConfigOut.getStructSize()
+        unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.dynamics.vehConfigMsgName,
+                                              inputMessageSize, 2)            # number of buffers (leave at 2 as default, don't make zero)
+        I = [1000., 0., 0.,
+             0., 800., 0.,
+             0., 0., 800.]
+        vehicleConfigOut.ISCPntB_B = I
+        unitTestSim.TotalSim.WriteMessageData(moduleConfig.dynamics.vehConfigMsgName,
+                                              inputMessageSize,
+                                              0, vehicleConfigOut)
 
     testVector = numpy.array([-0.7, 0.7, 0.0])
     inputData = cssComm.CSSArraySensorIntMsg()
@@ -408,8 +431,8 @@ def testStateUpdateSunLine(show_plots):
                                       2)  # number of buffers (leave at 2 as default, don't make zero)
 
     stateTarget = testVector.tolist()
-    stateTarget.extend([0.0, 0.0, 0.0])
-    moduleConfig.state = [0.7, 0.7, 0.0]
+    stateTarget.extend([0.0, 0.0])
+    moduleConfig.state = [0.7, 0.7, 0.0, 0.01, 0.001]
 
     unitTestSim.InitializeSimulation()
 
@@ -467,8 +490,8 @@ def testStateUpdateSunLine(show_plots):
             testFailCount += 1
             testMessages.append("State update failure")
 
-    FilterPlots.StateCovarPlot(stateLog, covarLog, 'update', show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, 'update', show_plots)
+    FilterPlots.StateCovarPlot(stateLog, covarLog, 'update_dyn' + str(usingDynamics), show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, 'update_dyn' + str(usingDynamics), show_plots)
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -477,8 +500,8 @@ def testStateUpdateSunLine(show_plots):
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
-def testStatePropSunLine(show_plots):
 
+def StatePropSunLine(show_plots, usingDynamics):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -504,6 +527,22 @@ def testStatePropSunLine(show_plots):
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "sunlineSuKF"
 
+    if usingDynamics:
+        #   vehicleConfigData Message:
+        moduleConfig.dynamics.vehConfigMsgName = 'vehicle_config_data'
+
+        vehicleConfigOut = sunlineSuKF.VehicleConfigFswMsg()
+        inputMessageSize = vehicleConfigOut.getStructSize()
+        unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.dynamics.vehConfigMsgName,
+                                              inputMessageSize, 2)            # number of buffers (leave at 2 as default, don't make zero)
+        I = [1000., 0., 0.,
+             0., 800., 0.,
+             0., 0., 800.]
+        vehicleConfigOut.ISCPntB_B = I
+        unitTestSim.TotalSim.WriteMessageData(moduleConfig.dynamics.vehConfigMsgName,
+                                              inputMessageSize,
+                                              0, vehicleConfigOut)
+
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
     
@@ -518,8 +557,8 @@ def testStatePropSunLine(show_plots):
     postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", range(8))
     covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", range(5*5))
 
-    FilterPlots.StateCovarPlot(stateLog, covarLog, 'prop', show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, 'prop', show_plots)
+    FilterPlots.StateCovarPlot(stateLog, covarLog, 'prop_dyn' + str(usingDynamics), show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, 'prop_dyn' + str(usingDynamics), show_plots)
 
     for i in range(5):
         if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > 1.0E-10):
@@ -539,4 +578,4 @@ def testStatePropSunLine(show_plots):
 
 if __name__ == "__main__":
     # test_all_sunline_kf(True)
-    testStateUpdateSunLine(True)
+    StateUpdateSunLine(True, True)
