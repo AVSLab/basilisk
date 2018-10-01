@@ -39,6 +39,7 @@ def setupFilterData(filterObject):
     filterObject.filtDataOutMsgName = "sunline_filter_data"
     filterObject.cssDataInMsgName = "css_sensors_data"
     filterObject.cssConfigInMsgName = "css_config_data"
+    filterObject.dynamics.vehConfigMsgName = 'vehicle_config_data'
 
     filterObject.sensorUseThresh = 0.
     filterObject.state = [1.0, 1.0, 1.0, 0.0, 0.0]
@@ -73,12 +74,12 @@ def test_all_functions_sekf(show_plots, useDynamics):
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("SimHalfLength, AddMeasNoise , testVector1 , testVector2, stateGuess", [
-    (200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
-    (2000, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
-    (200, False ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
-    (200, False ,[0., 1., 0.] ,[1., 0., 0.], [0.3, 0.0, 0.6, 0.0, 0.0]),
-    (200, True ,[0.5, 0.5, 0.] ,[0., 1., 0.], [0.7, 0.7, 0.0, 0.0, 0.0])
+@pytest.mark.parametrize("SimHalfLength, AddMeasNoise , testVector1 , testVector2, stateGuess, useDynamics", [
+    (200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0], False),
+    (2000, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0], False),
+    (200, False ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0], True),
+    (200, False ,[0., 1., 0.] ,[1., 0., 0.], [0.3, 0.0, 0.6, 0.0, 0.0], True),
+    (200, True ,[0.5, 0.5, 0.] ,[0., 1., 0.], [0.7, 0.7, 0.0, 0.0, 0.0], True)
 ])
 
 
@@ -87,8 +88,8 @@ def test_all_functions_sekf(show_plots, useDynamics):
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def test_all_sunline_sekf(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess):
-    [testResults, testMessage] = StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess)
+def test_all_sunline_sekf(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess, useDynamics):
+    [testResults, testMessage] = StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess, useDynamics)
     assert testResults < 1, testMessage
 
 
@@ -630,6 +631,18 @@ def StatePropStatic(useDynamics):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     setupFilterData(moduleConfig)
+    dyn = sunlineSEKF.FilterDynamics()
+    if useDynamics:
+        dyn.dynOn = 1
+        dyn.vehMassData.ISCPntB_B = [1., 0., 0.,
+             0., 2., 0.,
+             0., 0., 3.]
+        dyn.ISCPntB_B_inv = [1., 0., 0.,
+             0., 1/2., 0.,
+             0., 0., 1/3.]
+    else:
+        dyn.dynOn = 0
+
     unitTestSim.AddVariableForLogging('sunlineSEKF.covar', testProcessRate * 10, 0, 24)
     unitTestSim.AddVariableForLogging('sunlineSEKF.state', testProcessRate * 10, 0, 4)
     unitTestSim.InitializeSimulation()
@@ -688,8 +701,22 @@ def StatePropVariable(show_plots, useDynamics):
                                         sunlineSEKF.CrossInit_sunlineSEKF,
                                         sunlineSEKF.Reset_sunlineSEKF)
     moduleWrap.ModelTag = "sunlineSEKF"
-
-
+    dyn = sunlineSEKF.FilterDynamics()
+    if useDynamics:
+        dyn.dynOn = 1
+        dyn.vehMassData.ISCPntB_B = [1., 0., 0.,
+             0., 2., 0.,
+             0., 0., 3.]
+        dyn.ISCPntB_B_inv = [1., 0., 0.,
+             0., 1/2., 0.,
+             0., 0., 1/3.]
+        I_S = np.dot(DCM_BS.T, np.dot(np.array(dyn.vehMassData.ISCPntB_B).reshape([3, 3]), DCM_BS))
+        I_inv_S = np.dot(DCM_BS.T, np.dot(np.array(dyn.ISCPntB_B_inv).reshape([3, 3]), DCM_BS))
+        I_omega_S = np.array([[0., I_S[2, 2] * inputOmega[0], -I_S[1, 1] * inputOmega[0]],
+                              [-I_S[2, 2] * inputOmega[1], 0., I_S[0, 0] * inputOmega[1]],
+                              [I_S[1, 1] * inputOmega[2], -I_S[0, 0] * inputOmega[2], 0.]])
+    else:
+        dyn.dynOn = 0
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
@@ -981,6 +1008,6 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 
 if __name__ == "__main__":
-    sunline_individual_test(True)
+    StatePropStatic(True)
     # test_all_functions_sekf(True)
     # test_all_sunline_sekf(True, 200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0])

@@ -63,8 +63,7 @@ void CrossInit_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t moduleID)
                                                    sizeof(CSSConfigFswMsg), moduleID);
     
     /*! - Find the message ID for the mass properties */
-    ConfigData->dynamics.vehConfigMsgId = subscribeToMessage(ConfigData->dynamics.vehConfigMsgName,
-                                                             sizeof(VehicleConfigFswMsg), moduleID);
+    ConfigData->dynamics.vehConfigMsgId = subscribeToMessage(ConfigData->dynamics.vehConfigMsgName, sizeof(VehicleConfigFswMsg), moduleID);
     /*! - If vehicle config data is set, use dynamics */
     if (ConfigData->dynamics.vehConfigMsgId >= 0){
         ConfigData->dynamics.dynOn = 1;
@@ -338,8 +337,8 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH],
         m33MultM33(I_inv_S, omega_tilde_S, omega_tilde_S);
         m33MultM33(omega_tilde_S, I_S, omega_tilde_S);
         m33MultV3(omega_tilde_S, omega_S, omega_S);
-        stateInOut[3] += -dt*omega_S[1];
-        stateInOut[4] += -dt*omega_S[2];
+        *(stateInOut+3) += -dt*omega_S[1];
+        *(stateInOut+4) += -dt*omega_S[2];
         
     }
     
