@@ -273,30 +273,55 @@ void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
 	@return void
 	@param stateInOut The state that is propagated
 */
-void sunlineStateProp(double *stateInOut, double *b_Vec, double dt)
+void sunlineStateProp(double *stateInOut, double *b_Vec, FilterDynamics dynamics, double dt)
 {
 
     double propagatedVel[3];
     double omegaCrossd[SKF_N_STATES_HALF];
-    double omega[SKF_N_STATES_HALF] = {0, stateInOut[3], stateInOut[4]};
-    double dcm_BS[SKF_N_STATES_HALF*SKF_N_STATES_HALF];
-    
+    double omega_tilde_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double omega_S[SKF_N_STATES_HALF] = {0, stateInOut[3], stateInOut[4]};
+    double omega_B[SKF_N_STATES_HALF];
+    double I_inv_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double I_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double dcm_BS[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double dcm_SB[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+
     mSetZero(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
+    mSetSubMatrix(dynamics.ISCPntB_B_inv, SKF_N_STATES_HALF, SKF_N_STATES_HALF, I_inv_S, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
+    mSetSubMatrix(dynamics.vehMassData.ISCPntB_B, SKF_N_STATES_HALF, SKF_N_STATES_HALF, I_S, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
     
-    sunlineSuKFComputeDCM_BS(stateInOut, b_Vec, &dcm_BS[0]);
-//    mTranspose(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm_BS);
-    mMultV(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, omega, omega);
+    
+    sunlineSuKFComputeDCM_BS(stateInOut, b_Vec, &dcm_BS[0][0]);
+    mMultV(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, omega_S, omega_B);
     /* Set local variables to zero*/
     vSetZero(propagatedVel, SKF_N_STATES_HALF);
     
     /*! Begin state update steps */
     /*! Take omega cross d*/
-    v3Cross(omega, stateInOut, omegaCrossd);
+    v3Cross(omega_B, stateInOut, omegaCrossd);
     
     /*! - Multiply omega cross d by dt and add to state to propagate */
     v3Scale(-dt, omegaCrossd, propagatedVel);
     v3Add(stateInOut, propagatedVel, stateInOut);
     
+    /*! - Use inertia if dyanmics are active */
+    if (dynamics.dynOn == 1){
+        v3Tilde(omega_S, omega_tilde_S);
+        mTranspose(dcm_BS, 3, 3, dcm_SB);
+        /*! - Compute the inverse of the Inertia matrix in the S frame */
+        m33MultM33(dcm_SB, I_inv_S, I_inv_S);
+        m33MultM33(I_inv_S, dcm_BS, I_inv_S);
+        /*! - Compute the Inertia matrix in the S frame */
+        m33MultM33(dcm_SB, I_S, I_S);
+        m33MultM33(I_S, dcm_BS, I_S);
+        
+        m33MultM33(I_inv_S, omega_tilde_S, omega_tilde_S);
+        m33MultM33(omega_tilde_S, I_S, omega_tilde_S);
+        m33MultV3(omega_tilde_S, omega_S, omega_S);
+        stateInOut[3] += -dt*omega_S[1];
+        stateInOut[4] += -dt*omega_S[2];
+
+    }
 	return;
 }
 
