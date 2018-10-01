@@ -62,7 +62,13 @@ void CrossInit_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t moduleID)
     ConfigData->cssConfInMsgId = subscribeToMessage(ConfigData->cssConfigInMsgName,
                                                    sizeof(CSSConfigFswMsg), moduleID);
     
-    
+    /*! - Find the message ID for the mass properties */
+    ConfigData->dynamics.vehConfigMsgId = subscribeToMessage(ConfigData->dynamics.vehConfigMsgName,
+                                                             sizeof(VehicleConfigFswMsg), moduleID);
+    /*! - If vehicle config data is set, use dynamics */
+    if (ConfigData->dynamics.vehConfigMsgId >= 0){
+        ConfigData->dynamics.dynOn = 1;
+    }
 }
 
 /*! This method resets the sunline attitude filter to an initial state and
@@ -128,6 +134,26 @@ void Reset_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
     mSetIdentity(ConfigData->procNoise,  ConfigData->numStates-3, ConfigData->numStates-3);
     mScale(ConfigData->qProcVal, ConfigData->procNoise, ConfigData->numStates-3, ConfigData->numStates-3, ConfigData->procNoise);
     
+    /*! - Read the mass property message*/
+    if (ConfigData->dynamics.dynOn == 1){
+        uint64_t ClockTime;
+        uint32_t ReadSize;
+        ClockTime = 0;
+        ReadSize = 0;
+        memset(&(ConfigData->dynamics.vehMassData), 0x0, sizeof(VehicleConfigFswMsg));
+        ReadMessage(ConfigData->dynamics.vehConfigMsgId, &ClockTime, &ReadSize,
+                    sizeof(VehicleConfigFswMsg), (void*) (&(ConfigData->dynamics.vehMassData)), moduleID);
+        /*! - Check the message quality (positive nature of Inertia)*/
+        if (mDeterminant(ConfigData->dynamics.vehMassData.ISCPntB_B, 3) != 0){
+            ConfigData->dynamics.ISCPntB_B_inv[0] = 1.0/ConfigData->dynamics.vehMassData.ISCPntB_B[0];
+            ConfigData->dynamics.ISCPntB_B_inv[4] = 1.0/ConfigData->dynamics.vehMassData.ISCPntB_B[4];
+            ConfigData->dynamics.ISCPntB_B_inv[8] = 1.0/ConfigData->dynamics.vehMassData.ISCPntB_B[8];
+        }
+        /*! - If the Inertia has a zero eigenvalue, do not use it*/
+        else{
+            ConfigData->dynamics.dynOn = 0;
+        }
+    }
     return;
 }
 
@@ -231,7 +257,7 @@ void sunlineTimeUpdate(sunlineSEKFConfig *ConfigData, double updateTime)
     
     /*! - Propagate the previous reference states and STM to the current time */
     sunlineDynMatrix(ConfigData->state, ConfigData->bVec_B, ConfigData->dt, ConfigData->dynMat);
-    sunlineStateSTMProp(ConfigData->dynMat, ConfigData->bVec_B, ConfigData->dt, ConfigData->state, ConfigData->stateTransition);
+    sunlineStateSTMProp(ConfigData->dynMat, ConfigData->bVec_B, ConfigData->dynamics, ConfigData->dt, ConfigData->state, ConfigData->stateTransition);
 
     /* xbar = Phi*x */
     mMultV(ConfigData->stateTransition, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, ConfigData->x, ConfigData->xBar);
@@ -266,29 +292,56 @@ void sunlineTimeUpdate(sunlineSEKFConfig *ConfigData, double updateTime)
 	@return void
 	@param stateInOut,
  */
-void sunlineStateSTMProp(double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double bVec[SKF_N_STATES], double dt, double *stateInOut, double *stateTransition)
+void sunlineStateSTMProp(double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double bVec[SKF_N_STATES], FilterDynamics dynamics, double dt, double *stateInOut, double *stateTransition)
 {
     
     double propagatedVel[SKF_N_STATES_HALF];
     double deltatASTM[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
     double omegaCrossd[SKF_N_STATES_HALF];
-    double omega[SKF_N_STATES_HALF] = {0, stateInOut[3], stateInOut[4]};
-    double dcm_BS[SKF_N_STATES_HALF*SKF_N_STATES_HALF];
+    double omega_tilde_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double omega_S[SKF_N_STATES_HALF] = {0, stateInOut[3], stateInOut[4]};
+    double omega_B[SKF_N_STATES_HALF];
+    double I_inv_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double I_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double dcm_BS[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double dcm_SB[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     
-    sunlineSEKFComputeDCM_BS(stateInOut, bVec, &dcm_BS[0]);
+    mSetZero(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
+    mSetSubMatrix(dynamics.ISCPntB_B_inv, SKF_N_STATES_HALF, SKF_N_STATES_HALF, I_inv_S, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
+    mSetSubMatrix(dynamics.vehMassData.ISCPntB_B, SKF_N_STATES_HALF, SKF_N_STATES_HALF, I_S, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
     
+    
+    sunlineSEKFComputeDCM_BS(stateInOut, bVec, &dcm_BS[0][0]);
+    mMultV(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, omega_S, omega_B);
     /* Set local variables to zero*/
-    mSetZero(deltatASTM, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
     vSetZero(propagatedVel, SKF_N_STATES_HALF);
-
-    /*! Put omega in correct frame */
-    mMultV(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, omega, omega);
+    
+    /*! Begin state update steps */
     /*! Take omega cross d*/
-    v3Cross(omega, stateInOut, omegaCrossd);
+    v3Cross(omega_B, stateInOut, omegaCrossd);
     
     /*! - Multiply omega cross d by dt and add to state to propagate */
-    v3Scale(dt, omegaCrossd, propagatedVel);
+    v3Scale(-dt, omegaCrossd, propagatedVel);
     v3Add(stateInOut, propagatedVel, stateInOut);
+    
+    /*! - Use inertia if dyanmics are active */
+    if (dynamics.dynOn == 1){
+        v3Tilde(omega_S, omega_tilde_S);
+        mTranspose(dcm_BS, 3, 3, dcm_SB);
+        /*! - Compute the inverse of the Inertia matrix in the S frame */
+        m33MultM33(dcm_SB, I_inv_S, I_inv_S);
+        m33MultM33(I_inv_S, dcm_BS, I_inv_S);
+        /*! - Compute the Inertia matrix in the S frame */
+        m33MultM33(dcm_SB, I_S, I_S);
+        m33MultM33(I_S, dcm_BS, I_S);
+        
+        m33MultM33(I_inv_S, omega_tilde_S, omega_tilde_S);
+        m33MultM33(omega_tilde_S, I_S, omega_tilde_S);
+        m33MultV3(omega_tilde_S, omega_S, omega_S);
+        stateInOut[3] += -dt*omega_S[1];
+        stateInOut[4] += -dt*omega_S[2];
+        
+    }
     
     /*! Begin STM propagation step */
     mSetIdentity(stateTransition, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH);

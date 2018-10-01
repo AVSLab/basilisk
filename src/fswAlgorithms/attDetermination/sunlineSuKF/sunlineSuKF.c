@@ -276,7 +276,7 @@ void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
 void sunlineStateProp(double *stateInOut, double *b_Vec, FilterDynamics dynamics, double dt)
 {
 
-    double propagatedVel[3];
+    double propagatedVel[SKF_N_STATES_HALF];
     double omegaCrossd[SKF_N_STATES_HALF];
     double omega_tilde_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double omega_S[SKF_N_STATES_HALF] = {0, stateInOut[3], stateInOut[4]};

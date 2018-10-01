@@ -33,6 +33,15 @@
  * @{
  */
 
+/*! Structure to gather the mass properties if applicable */
+typedef struct {
+    int dynOn;            /*!< [-] Test for the presence of the inertia tensor in the message. 0: not using dynamics, 1: using dynamics*/
+    
+    char vehConfigMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Mass Proper message*/
+    VehicleConfigFswMsg vehMassData;/*!< [-] CSS sensor data read in from message bus*/
+    int32_t vehConfigMsgId;     /*!< -- ID for the outgoing body estimate message*/
+    double ISCPntB_B_inv[SKF_N_STATES_HALF*SKF_N_STATES_HALF];       /*!< [-] current vector of the b frame used to make frame */
+}FilterDynamics;
 
 /*! @brief Top level structure for the CSS-based Switch Extended Kalman Filter.
  Used to estimate the sun state in the vehicle body frame. Please see the _Documentation folder for details on how this Kalman Filter Functions.*/
@@ -71,6 +80,7 @@ typedef struct {
 	double measNoise[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];  /*!< [-] Maximally sized obs noise matrix*/
     
     double cssNHat_B[MAX_NUM_CSS_SENSORS*3];     /*!< [-] CSS normal vectors converted over to body*/
+    FilterDynamics dynamics;  /*!< [-] Container for dynamics content*/
 
     uint32_t numStates;                /*!< [-] Number of states for this filter*/
     int numObs;                   /*!< [-] Number of measurements this cycle */
@@ -99,7 +109,7 @@ extern "C" {
                            uint64_t moduleID);
 	void sunlineTimeUpdate(sunlineSEKFConfig *ConfigData, double updateTime);
     void sunlineMeasUpdate(sunlineSEKFConfig *ConfigData, double updateTime);
-	void sunlineStateSTMProp(double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double bVec[SKF_N_STATES], double dt, double *stateInOut, double *stateTransition);
+	void sunlineStateSTMProp(double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double bVec[SKF_N_STATES], FilterDynamics dynamics, double dt, double *stateInOut, double *stateTransition);
     
     void sunlineHMatrixYMeas(double states[SKF_N_STATES_SWITCH], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS*3], double *obs, double *yMeas, int *numObs, double *measMat);
     
