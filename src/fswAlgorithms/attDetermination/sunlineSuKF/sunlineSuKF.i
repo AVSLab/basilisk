@@ -32,10 +32,12 @@
 %constant void Reset_sunlineSuKF(void*, uint64_t, uint64_t);
 %ignore Reset_sunlineSuKF;
 GEN_SIZEOF(SunlineFilterFswMsg);
+GEN_SIZEOF(VehicleConfigFswMsg);
 GEN_SIZEOF(CSSConfigFswMsg);
 GEN_SIZEOF(SunlineSuKFConfig);
 %include "sunlineSuKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
+%include "../../fswMessages/vehicleConfigFswMsg.h"
 %include "../../fswMessages/sunlineFilterFswMsg.h"
 %include "../../fswMessages/cssConfigFswMsg.h"
 
