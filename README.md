@@ -24,11 +24,11 @@ Ensure the following are installed:
 * Visual Studios 15 or Greater
 * [Swig](http://www.swig.org/download.html)
  
-Example [Configuration Instructions](http://www.swig.org/Doc1.3/Windows.html#Windows_swig_exe):
+    Example [Configuration Instructions](http://www.swig.org/Doc1.3/Windows.html#Windows_swig_exe):
 	
-PYTHON_INCLUDE = C:\Program Files\Python27\include
+    PYTHON_INCLUDE = C:\Program Files\Python27\include
 	
-PYTHON_LIB = C:\Program Files\Python27\libs\python27.lib
+    PYTHON_LIB = C:\Program Files\Python27\libs\python27.lib
 
 From Basilisk root directory: 
 ```
