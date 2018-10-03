@@ -710,11 +710,9 @@ def StatePropVariable(show_plots, useDynamics):
         dyn.ISCPntB_B_inv = [1., 0., 0.,
              0., 1/2., 0.,
              0., 0., 1/3.]
-        I_S = np.dot(DCM_BS.T, np.dot(np.array(dyn.vehMassData.ISCPntB_B).reshape([3, 3]), DCM_BS))
-        I_inv_S = np.dot(DCM_BS.T, np.dot(np.array(dyn.ISCPntB_B_inv).reshape([3, 3]), DCM_BS))
-        I_omega_S = np.array([[0., I_S[2, 2] * inputOmega[0], -I_S[1, 1] * inputOmega[0]],
-                              [-I_S[2, 2] * inputOmega[1], 0., I_S[0, 0] * inputOmega[1]],
-                              [I_S[1, 1] * inputOmega[2], -I_S[0, 0] * inputOmega[2], 0.]])
+        I_S = np.zeros([2001,3,3])
+        I_inv_S = np.zeros([2001,3,3])
+        I_omega_S = np.zeros([2001,3,3])
     else:
         dyn.dynOn = 0
 
@@ -723,7 +721,7 @@ def StatePropVariable(show_plots, useDynamics):
 
     setupFilterData(moduleConfig)
 
-    InitialState = moduleConfig.state
+    InitialState = (np.array(moduleConfig.state)+ +np.array([0.,0.,0.,0.0002, 0.0001])).tolist()
     Initialx = moduleConfig.x
     InitialCovar = moduleConfig.covar
 
@@ -748,11 +746,6 @@ def StatePropVariable(show_plots, useDynamics):
     expectedStateArray = np.zeros([2001,numStates+1])
     expectedStateArray[0,1:numStates+1] = np.array(InitialState)
 
-    for i in range(1,2001):
-        expectedStateArray[i,0] = dt*i*1E9
-        expectedStateArray[i,1:4] = expectedStateArray[i-1,1:4] + dt * np.cross(expectedStateArray[i-1,4:6],
-                                                                                expectedStateArray[i - 1, 1:4])
-        expectedStateArray[4:6] = expectedStateArray[4:6]
 
     expDynMat = np.zeros([2001,numStates,numStates])
     for i in range(0,2001):
@@ -780,6 +773,27 @@ def StatePropVariable(show_plots, useDynamics):
 
         expDynMat[i,0:3, 0:3] = np.array(RigidBodyKinematics.v3Tilde(omega_B))
         expDynMat[i,0:3, 3:numStates] = dBS[:, 1:]
+        if useDynamics:
+            I_S[i,:,:] = np.dot(DCM_BS.T,np.dot(np.array(dyn.vehMassData.ISCPntB_B).reshape([3,3]),DCM_BS))
+            I_inv_S[i,:,:] = np.dot(DCM_BS.T,np.dot(np.array(dyn.ISCPntB_B_inv).reshape([3,3]),DCM_BS))
+            I_omega_S[i,:,:] = np.array([[0.,0., 0.],
+                                  [-I_S[i,2, 2] * expectedStateArray[i,3], 0., I_S[i,0, 0] * expectedStateArray[i,3]],
+                                  [I_S[i,1, 1] * expectedStateArray[i,4], -I_S[i,0, 0] * expectedStateArray[i,4],0.]])
+            omega = np.zeros(3)
+            omega[1:] = np.copy(expectedStateArray[i,4:6])
+            expDynMat[i,3:,3:] = - np.dot(I_inv_S[i,:,:], I_omega_S[i,:,:] + np.dot(np.array(RigidBodyKinematics.v3Tilde(omega)), I_S[i,:,:]))[1:,1:]
+
+    for i in range(1, 2001):
+        omega = np.zeros(3)
+        omega[1:] = np.copy(expectedStateArray[i - 1, 4:6])
+
+        expectedStateArray[i,0] = dt*i*1E9
+        expectedStateArray[i,1:4] = np.copy(expectedStateArray[i-1,1:4] + dt * np.cross(omega,
+                                                                                expectedStateArray[i - 1, 1:4]))
+        if useDynamics:
+            expectedStateArray[i,4:6] = np.copy(expectedStateArray[i-1,4:6] - dt * np.dot( np.dot(I_inv_S[i-1,:,:], np.dot(np.array(RigidBodyKinematics.v3Tilde(omega)), I_S[i-1,:,:])), omega)[1:])
+        else:
+            expectedStateArray[i, 4:6] = np.copy(expectedStateArray[i-1, 4:6])
 
     expectedSTM = np.zeros([2001,numStates,numStates])
     expectedSTM[0,:,:] = np.eye(numStates)
@@ -807,8 +821,8 @@ def StatePropVariable(show_plots, useDynamics):
         expectedCovar[i,0] =  dt*i*1E9
         expectedCovar[i,1:26] = (np.dot(expectedSTM[i,:,:], np.dot(np.reshape(expectedCovar[i-1,1:26],[numStates,numStates]), np.transpose(expectedSTM[i,:,:])))+ ProcNoiseCovar[i,:,:]).flatten()
         test = np.dot(np.reshape(expectedCovar[i-1,1:26],[numStates,numStates]), np.transpose(expectedSTM[i,:,:]))
-    FilterPlots.StatesVsExpected(stateLog, expectedStateArray, show_plots)
-    FilterPlots.StatesPlotCompare(stateErrorLog, expectedXBar, covarLog, expectedCovar, show_plots)
+    FilterPlots.StatesVsExpected(stateLog, expectedStateArray, show_plots, useDynamics)
+    FilterPlots.StatesPlotCompare(stateErrorLog, expectedXBar, covarLog, expectedCovar, show_plots, useDynamics)
 
     for j in range(1,2001):
         if (np.linalg.norm(np.array(stateLog)[j, 1:] - expectedStateArray[j, 1:]) > 1.0E-4):
@@ -1008,6 +1022,6 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 
 if __name__ == "__main__":
-    StatePropStatic(True)
+    StatePropVariable(True, False)
     # test_all_functions_sekf(True)
     # test_all_sunline_sekf(True, 200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0])

@@ -504,7 +504,7 @@ def StatePropVariable(show_plots):
 
     setupFilterData(moduleConfig)
 
-    InitialState = moduleConfig.state
+    InitialState = (np.array(moduleConfig.state)+ +np.array([0.,0.,0.,0.0001,0.002, 0.001])).tolist()
     Initialx = moduleConfig.x
     InitialCovar = moduleConfig.covar
 
@@ -764,4 +764,5 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 
 if __name__ == "__main__":
-    test_all_sunline_ekf(True, 200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0, 0.0])
+    # test_all_sunline_ekf(True, 200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0, 0.0])
+    StatePropVariable(True)

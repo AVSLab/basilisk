@@ -87,7 +87,7 @@ def StatesPlot(x, Pflat, show_plots):
     plt.close()
 
 
-def StatesPlotCompare(x, x2, Pflat, Pflat2, show_plots):
+def StatesPlotCompare(x, x2, Pflat, Pflat2, show_plots, useDynamics):
 
     numStates = len(x[0,:])-1
 
@@ -153,7 +153,7 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2, show_plots):
     plt.title('Third rate component')
     plt.grid()
 
-    unitTestSupport.writeFigureLaTeX('StatesCompare', 'State error and covariance vs expected Values', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+    unitTestSupport.writeFigureLaTeX('StatesCompare_dyn='+str(useDynamics), 'State error and covariance vs expected Values', plt, 'height=0.9\\textwidth, keepaspectratio', path)
 
     if show_plots:
         plt.show()
@@ -245,7 +245,7 @@ def PostFitResiduals(Res, noise, show_plots):
         plt.show()
     plt.close()
 
-def StatesVsExpected(stateLog, expectedStateArray, show_plots):
+def StatesVsExpected(stateLog, expectedStateArray, show_plots, useDynamics):
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
     plt.subplot(321)
     plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  1], 'b--', label='Expected')
@@ -280,7 +280,7 @@ def StatesVsExpected(stateLog, expectedStateArray, show_plots):
     plt.title('Third rate component')
     plt.grid()
 
-    unitTestSupport.writeFigureLaTeX('StatesExpected', 'States vs true states in static case', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+    unitTestSupport.writeFigureLaTeX('StatesExpected_dyn='+str(useDynamics), 'States vs true states in static case', plt, 'height=0.9\\textwidth, keepaspectratio', path)
 
     if show_plots:
         plt.show()
