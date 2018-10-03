@@ -10,9 +10,8 @@ In order to run Basilisk, the following software will be necessary:
 * [Python 2.7 (numpy, matplotlib, pytest)](https://www.python.org/downloads/mac-osx/)
 
 NOTE: the latest pytest is not compatible with all Basilisk modules. We are still investigating.  Be sure to pull version 3.6.1 for now using
-``` 
-    pip install pytest==3.6.1 
-```
+
+`pip install pytest==3.6.1`
 
 
 ## Configuration

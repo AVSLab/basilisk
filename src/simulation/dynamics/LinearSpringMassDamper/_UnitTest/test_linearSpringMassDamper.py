@@ -317,7 +317,9 @@ def fuelSloshTest(show_plots,useFlag,testCase):
         mDotParicle2Data = [0,(mass2Out[2,1] - mass2Out[1,1])/((mass2Out[2,0] - mass2Out[1,0])*1e-9)]
         mDotParicle3Data = [0,(mass3Out[2,1] - mass3Out[1,1])/((mass3Out[2,0] - mass3Out[1,0])*1e-9)]
 
-    plt.show(show_plots)
+    if show_plots:
+        plt.show()
+        plt.close('all')
 
     if testCase != 'MassDepletion':
         accuracy = 1e-10

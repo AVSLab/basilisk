@@ -105,6 +105,8 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
     double sNorm;                   /*!< --- Norm of measured direction vector */
     double e_hat[3];                /*!< --- Eigen Axis */
     double omega_BN_B[3];           /*!< r/s inertial body angular velocity vector in B frame components */
+    double omega_RN_B[3];           /*!< r/s local copy of the desired reference frame rate */
+
     NavAttIntMsg localImuDataInBuffer;
     /*! Begin method steps*/
     /* zero the input message containers */
@@ -148,8 +150,10 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
         }
 
         /* rate tracking error are the body rates to bring spacecraft to rest */
-        v3Copy(omega_BN_B, ConfigData->attGuidanceOutBuffer.omega_BR_B);
-        v3SetZero(ConfigData->attGuidanceOutBuffer.omega_RN_B);
+        v3Scale(ConfigData->sunAxisSpinRate/sNorm, navMsg.vehSunPntBdy, omega_RN_B);
+        v3Subtract(omega_BN_B, omega_RN_B, ConfigData->attGuidanceOutBuffer.omega_BR_B);
+        v3Copy(omega_RN_B, ConfigData->attGuidanceOutBuffer.omega_RN_B);
+
     } else {
         /* no proper sun direction vector is available */
         v3SetZero(ConfigData->attGuidanceOutBuffer.sigma_BR);

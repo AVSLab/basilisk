@@ -92,7 +92,7 @@ def StateErrorCovarPlot(x, Pflat, show_plots):
     unitTestSupport.writeFigureLaTeX('StatesPlot', 'State error and covariance', plt, 'height=0.9\\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
-    plt.close()
+    plt.close('all')
 
 
 def StatesPlotCompare(x, x2, Pflat, Pflat2, show_plots):

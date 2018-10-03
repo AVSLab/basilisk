@@ -470,6 +470,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
 
     if show_plots == True:
         plt.show()
+        plt.close('all')
 
 
     accuracy = 1e-7

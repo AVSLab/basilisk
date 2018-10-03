@@ -37,16 +37,13 @@ import matplotlib.pyplot as plt
 # Used to get the location of supporting data.
 from Basilisk import __path__
 bskPath = __path__[0]
+vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
 # general support file with common unit test functions
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport)
-
-#####RIGHT HERE JEN!!!
-#sys.path.append("/Users/Jbird/visualization/ProtoModels/modules/vizInterface")
-#import vizInterface
 
 
 ## \defgroup Tutorials_1_0
@@ -135,6 +132,11 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 # simulate both the orbital and rotational motion for a single rigid body.  In the later scenarios
 # the rotational motion is engaged by specifying rotational initial conditions, as well as rotation
 # related effectors.  In this simple scenario only translational motion is setup and tracked.
+# Further, the default spacecraft parameters, such as the unit mass and the principle inertia values are
+# just fine for this orbit simulation as they don't impact the orbital dynamics in this case.
+# This is true for all gravity force only orbital simulations. Later
+# tutorials, such as [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback),
+# illustrate how to over-ride default values with desired simulation values.
 #
 # Next, this module is attached to the simulation process
 #~~~~~~~~~~~~~~~~~{.py}
@@ -339,9 +341,9 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     simulationTimeStep = macros.sec2nano(10.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-    # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')
-    # The Viz only support 'earth', 'mars', or 'sun'
+    # # if this scenario is to interface with the BSK Viz, uncomment the following line
+    # unitTestSupport.enableUnityVisualization(scSim, simTaskName, dynProcess, simProcessName, vizFile, 'earth')
+    # # The Viz only support 'earth', 'mars', or 'sun'
 
     #
     #   setup the simulation tasks/objects
@@ -374,8 +376,8 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
             simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt',
                                                 planet.spherHarm, 2)
     mu = planet.mu
-    outputArchiveFilename = "scenarioBasicOrbit1.bin"
-    unitTestSupport.enableUnityVisualization(scSim, simTaskName, dynProcess, simProcessName, outputArchiveFilename,planetCase.lower())
+    # outputArchiveFilename = "scenarioBasicOrbit1.bin"
+    unitTestSupport.enableUnityVisualization(scSim, simTaskName, dynProcess, simProcessName, vizFile, planetCase.lower())
 
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())

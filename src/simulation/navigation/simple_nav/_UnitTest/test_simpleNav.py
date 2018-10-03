@@ -271,7 +271,7 @@ def unitSimpleNav(show_plots):
     unitTestSupport.writeFigureLaTeX('SimpleNavPos', 'Simple Navigation Position Signal', plt, 'height=0.4\\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
-    plt.close()
+        plt.close('all')
 
     plt.figure(2)
     plt.clf()
@@ -286,7 +286,7 @@ def unitSimpleNav(show_plots):
     unitTestSupport.writeFigureLaTeX('SimpleNavAtt', 'Simple Navigation Att Signal', plt, 'height=0.4\\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
-    plt.close()
+        plt.close('all')
 
     # Corner case usage
     pMatrixBad = [[0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],

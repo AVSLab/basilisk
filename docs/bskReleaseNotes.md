@@ -13,6 +13,19 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 ## Version 0.X.X (upcoming release)
 <uL>
     <li>
+    Added a new message output with the CSS fit residuals.  This is optional.  If the output message is not set, then this information is not computed.
+    </li>
+    <li>
+    Updated `sunSafePoint()` to allow for a nominal spin rate to be commanded about the sun heading vector.  The unit tests and module documentation is updated accordingly.  
+    </li>
+    <li>
+    Added a new scenario `scenarioAttitudeFeedbackNoEarth.py` which illustrates how to do an attitude only simulation without any gravity bodies present.
+    </li>
+</ul>
+
+## Version 0.3.2 
+<uL>
+    <li>
     Fixed an issue with the eclipse unit test.
     </li>
     <li>

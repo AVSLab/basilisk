@@ -50,8 +50,10 @@ import macros
 from Basilisk.simulation import vis_message_interface
 from Basilisk.simulation import vis_clock_synch
 from Basilisk.simulation import spice_interface
+from Basilisk import __path__
+bskPath = __path__[0]
 
-sys.path.append("/Users/Jbird/visualization/ProtoModels/modules/vizInterface")
+sys.path.append(bskPath + '/../../../visualization/ProtoModels/modules/vizInterface')
 import vizInterface
 
 import tabulate as T
@@ -314,8 +316,8 @@ def writeTeXSnippet(snippetName, texSnippet, path):
 #
 #   save a python scenario result into the Doxygen image folder
 #
-def saveScenarioFigure(figureName, plt, path):
-    texFileName = path + "/../../../docs/Images/Scenarios/"+figureName+".svg"
+def saveScenarioFigure(figureName, plt, path, extension = ".svg"):
+    texFileName = path + "/../../../docs/Images/Scenarios/"+figureName+extension
     if not os.path.exists(os.path.dirname(texFileName)):
         try:
             os.makedirs(os.path.dirname(texFileName))
@@ -411,7 +413,7 @@ def pullVectorSetFromData(inpMat):
     outMat = np.array(inpMat).transpose()
     return outMat[1:].transpose()
 
-def enableUnityVisualization(scSim, simTaskName,dynProcess, processName, fileName, bodyName = 'none'):
+def enableUnityVisualization(scSim, simTaskName, dynProcess, processName, fileName, bodyName = 'none'):
     vizMessager = vizInterface.VizInterface()
     scSim.AddModelToTask(simTaskName, vizMessager)
     vizMessager.spiceInMsgName = vizInterface.StringVector([

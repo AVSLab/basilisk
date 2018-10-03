@@ -536,8 +536,10 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     fact = (len(str(abs(a)))-3.0)
 
     plt.figure(1,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+    plt.clf()
     # fig1.text(.5, .05, txt, ha='center')
     ax1 = plt.subplot(211)
+    ax1.cla()
     index = numpy.arange(3)
     bar_width = 0.35
     opacity = 0.8
@@ -558,6 +560,7 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     plt.legend(loc='lower right')
 
     ax2 = plt.subplot(212)
+    ax2.cla()
     rects1 = ax2.bar(index, vSim, bar_width, alpha=opacity, color='b', label='Simulated Velocity')
     rects2 = ax2.bar(index + bar_width, vTruth, bar_width, alpha=opacity, color='g', label='Calculated Velocity')
     ax2.spines['left'].set_position('zero')
@@ -597,9 +600,9 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
         snippetContent = passFailMsg
         unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
 
-
-    plt.show(DispPlot)
-    plt.close()
+    if DispPlot:
+        plt.show()
+        plt.close()
     testFailCount = testFailCount1+testFailCount2
 
     return [testFailCount, ''.join(testMessages)]
