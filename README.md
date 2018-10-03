@@ -19,12 +19,16 @@ Of the following requirements Python is the only one for which prebuilt librarie
 [Setup a Windows Development Environment](@ref installWindows)
 ##### Windows Setup #####
 Ensure the following are installed:
+
 * [pip](https://pip.pypa.io/en/stable/installing/)
 * Visual Studios 15 or Greater
-* [Swig](http://www.swig.org/download.html) 
-    Example [Configuration Instructions](http://www.swig.org/Doc1.3/Windows.html#Windows_swig_exe):
-	PYTHON_INCLUDE = C:\Program Files\Python27\include
-	PYTHON_LIB = C:\Program Files\Python27\libs\python27.lib
+* [Swig](http://www.swig.org/download.html)
+ 
+Example [Configuration Instructions](http://www.swig.org/Doc1.3/Windows.html#Windows_swig_exe):
+	
+PYTHON_INCLUDE = C:\Program Files\Python27\include
+	
+PYTHON_LIB = C:\Program Files\Python27\libs\python27.lib
 
 From Basilisk root directory: 
 ```
