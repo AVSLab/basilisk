@@ -543,7 +543,7 @@ def StatePropVariable(show_plots):
         ## Equations when removing the unobservable states from d_dot
         expDynMat[i, 3:6, 0:3] = -1/dt*(np.outer(expectedStateArray[i,1:4],expectedStateArray[i,4:7])/np.linalg.norm(expectedStateArray[i,1:4])**2. +
                              np.dot(expectedStateArray[i,4:7], expectedStateArray[i,1:4])*(np.linalg.norm(expectedStateArray[i,1:4])**2.*np.eye(3)- 2*np.outer(expectedStateArray[i,1:4],expectedStateArray[i,1:4]))/np.linalg.norm(expectedStateArray[i,1:4])**4.)
-        expDynMat[i, 3:6, 3:6] =- 1/dt*(np.outer(expectedStateArray[i,1:4],expectedStateArray[i,1:4])/np.linalg.norm(expectedStateArray[i,1:4])**2)
+        expDynMat[i, 3:6, 3:6] = -1/dt*(np.outer(expectedStateArray[i,1:4],expectedStateArray[i,1:4])/np.linalg.norm(expectedStateArray[i,1:4])**2)
 
     expectedSTM = np.zeros([2001,6,6])
     expectedSTM[0,:,:] = np.eye(6)
@@ -566,7 +566,7 @@ def StatePropVariable(show_plots):
         expectedCovar[i,0] =  dt*i*1E9
         expectedCovar[i,1:37] = (np.dot(expectedSTM[i,:,:], np.dot(np.reshape(expectedCovar[i-1,1:37],[6,6]), np.transpose(expectedSTM[i,:,:])))+ ProcNoiseCovar).flatten()
 
-    FilterPlots.StatesVsExpected(stateLog, covarLog, expectedStateArray, show_plots)
+    FilterPlots.StatesVsExpected(stateLog, expectedStateArray, show_plots)
     FilterPlots.StatesPlotCompare(stateErrorLog, expectedXBar, covarLog, expectedCovar, show_plots)
 
     for j in range(1,2001):
