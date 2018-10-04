@@ -61,13 +61,9 @@ void CrossInit_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t moduleID)
     /*! - Find the message ID for the coarse sun sensor configuration message */
     ConfigData->cssConfInMsgId = subscribeToMessage(ConfigData->cssConfigInMsgName,
                                                    sizeof(CSSConfigFswMsg), moduleID);
-    
     /*! - Find the message ID for the mass properties */
     ConfigData->dynamics.vehConfigMsgId = subscribeToMessage(ConfigData->dynamics.vehConfigMsgName, sizeof(VehicleConfigFswMsg), moduleID);
-    /*! - If vehicle config data is set, use dynamics */
-    if (ConfigData->dynamics.vehConfigMsgId >= 0){
-        ConfigData->dynamics.dynOn = 1;
-    }
+
 }
 
 /*! This method resets the sunline attitude filter to an initial state and
@@ -81,22 +77,34 @@ void Reset_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
 {
     
     int32_t i;
-    VehicleConfigFswMsg massPropsInBuffer;
     CSSConfigFswMsg cssConfigInBuffer;
     uint64_t writeTime;
     uint32_t writeSize;
     
     /*! Begin method steps*/
     /*! - Zero the local configuration data structures and outputs */
-    memset(&massPropsInBuffer, 0x0 ,sizeof(VehicleConfigFswMsg));
     memset(&cssConfigInBuffer, 0x0, sizeof(CSSConfigFswMsg));
     memset(&(ConfigData->outputSunline), 0x0, sizeof(NavAttIntMsg));
     
-    /*! - Read in mass properties and coarse sun sensor configuration information.*/
-    ReadMessage(ConfigData->massPropsInMsgId, &writeTime, &writeSize,
-                sizeof(VehicleConfigFswMsg), &massPropsInBuffer, moduleID);
+    /*! - Read coarse sun sensor configuration information.*/
     ReadMessage(ConfigData->cssConfInMsgId, &writeTime, &writeSize,
                 sizeof(CSSConfigFswMsg), &cssConfigInBuffer, moduleID);
+    /*! - Read the mass property message*/
+    memset(&(ConfigData->dynamics.vehMassData), 0x0, sizeof(VehicleConfigFswMsg));
+    ReadMessage(ConfigData->dynamics.vehConfigMsgId, &writeTime, &writeSize,
+                sizeof(VehicleConfigFswMsg), &(ConfigData->dynamics.vehMassData), moduleID);
+    /*! - Check the message quality (positive nature of Inertia)*/
+    if (mDeterminant(ConfigData->dynamics.vehMassData.ISCPntB_B, 3)> 1E-2){
+        ConfigData->dynamics.ISCPntB_B_inv[0] = 1.0/ConfigData->dynamics.vehMassData.ISCPntB_B[0];
+        ConfigData->dynamics.ISCPntB_B_inv[4] = 1.0/ConfigData->dynamics.vehMassData.ISCPntB_B[4];
+        ConfigData->dynamics.ISCPntB_B_inv[8] = 1.0/ConfigData->dynamics.vehMassData.ISCPntB_B[8];
+        ConfigData->dynamics.dynOn = 1;
+    }
+    /*! - If the Inertia has a zero eigenvalue, do not use it*/
+    else{
+        ConfigData->dynamics.dynOn = 0;
+    }
+    
     
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/
     for(i=0; i<cssConfigInBuffer.nCSS; i++)
@@ -133,26 +141,6 @@ void Reset_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
     mSetIdentity(ConfigData->procNoise,  ConfigData->numStates-3, ConfigData->numStates-3);
     mScale(ConfigData->qProcVal, ConfigData->procNoise, ConfigData->numStates-3, ConfigData->numStates-3, ConfigData->procNoise);
     
-    /*! - Read the mass property message*/
-    if (ConfigData->dynamics.dynOn == 1){
-        uint64_t ClockTime;
-        uint32_t ReadSize;
-        ClockTime = 0;
-        ReadSize = 0;
-        memset(&(ConfigData->dynamics.vehMassData), 0x0, sizeof(VehicleConfigFswMsg));
-        ReadMessage(ConfigData->dynamics.vehConfigMsgId, &ClockTime, &ReadSize,
-                    sizeof(VehicleConfigFswMsg), (void*) (&(ConfigData->dynamics.vehMassData)), moduleID);
-        /*! - Check the message quality (positive nature of Inertia)*/
-        if (mDeterminant(ConfigData->dynamics.vehMassData.ISCPntB_B, 3) != 0){
-            ConfigData->dynamics.ISCPntB_B_inv[0] = 1.0/ConfigData->dynamics.vehMassData.ISCPntB_B[0];
-            ConfigData->dynamics.ISCPntB_B_inv[4] = 1.0/ConfigData->dynamics.vehMassData.ISCPntB_B[4];
-            ConfigData->dynamics.ISCPntB_B_inv[8] = 1.0/ConfigData->dynamics.vehMassData.ISCPntB_B[8];
-        }
-        /*! - If the Inertia has a zero eigenvalue, do not use it*/
-        else{
-            ConfigData->dynamics.dynOn = 0;
-        }
-    }
     return;
 }
 
@@ -258,7 +246,7 @@ void sunlineTimeUpdate(sunlineSEKFConfig *ConfigData, double updateTime)
     sunlineDynMatrix(ConfigData->state, ConfigData->bVec_B, ConfigData->dynamics, ConfigData->dt, ConfigData->dynMat);
     sunlineStateSTMProp(ConfigData->dynMat, ConfigData->bVec_B, ConfigData->dynamics, ConfigData->dt, ConfigData->state, ConfigData->stateTransition);
 
-    /* xbar = Phi*x */
+    /* Do the time update on the state error */
     mMultV(ConfigData->stateTransition, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, ConfigData->x, ConfigData->xBar);
     
     /*! - Update the covariance */
@@ -337,8 +325,8 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH],
         m33MultM33(I_inv_S, omega_tilde_S, omega_tilde_S);
         m33MultM33(omega_tilde_S, I_S, omega_tilde_S);
         m33MultV3(omega_tilde_S, omega_S, omega_S);
-        *(stateInOut+3) += -dt*omega_S[1];
-        *(stateInOut+4) += -dt*omega_S[2];
+        stateInOut[3] += -dt*omega_S[1];
+        stateInOut[4] += -dt*omega_S[2];
         
     }
     

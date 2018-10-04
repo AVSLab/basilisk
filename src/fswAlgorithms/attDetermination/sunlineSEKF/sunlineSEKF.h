@@ -40,7 +40,7 @@ typedef struct {
     char vehConfigMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Mass Proper message*/
     VehicleConfigFswMsg vehMassData;/*!< [-] CSS sensor data read in from message bus*/
     int32_t vehConfigMsgId;     /*!< -- ID for the outgoing body estimate message*/
-    double ISCPntB_B_inv[SKF_N_STATES_HALF*SKF_N_STATES_HALF];       /*!< [-] current vector of the b frame used to make frame */
+    double ISCPntB_B_inv[SKF_N_STATES_HALF*SKF_N_STATES_HALF];       /*!< [-] The inverse of the inertia of the spacecraft about point B in the B frame */
 }FilterDynamics;
 
 /*! @brief Top level structure for the CSS-based Switch Extended Kalman Filter.
