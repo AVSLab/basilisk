@@ -861,7 +861,7 @@ def StatePropVariable(show_plots, useDynamics):
 ####################################################################################
 # Test for the full filter with time and measurement update
 ####################################################################################
-def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess):
+def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess, useDynamics):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -897,6 +897,23 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
     setupFilterData(moduleConfig)
 
+    if useDynamics:
+        #   vehicleConfigData Message:
+        vehicleConfigOut = sunlineSEKF.VehicleConfigFswMsg()
+        inputMessageSize = vehicleConfigOut.getStructSize()
+        unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.dynamics.vehConfigMsgName,
+                                        inputMessageSize,
+                                        2)  # number of buffers (leave at 2 as default, don't make zero)
+        I = [1., 0., 0.,
+             0., 2., 0.,
+             0., 0., 3.]
+        I_inv = [1., 0., 0.,
+             0., 1/2., 0.,
+             0., 0., 1/3.]
+        vehicleConfigOut.ISCPntB_B = I
+        unitTestSim.TotalSim.WriteMessageData(moduleConfig.dynamics.vehConfigMsgName,
+                                        inputMessageSize,
+                                        0, vehicleConfigOut)
     # Set up some test parameters
 
     cssConstelation = fswMessages.CSSConfigFswMsg()
@@ -1032,6 +1049,5 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 
 if __name__ == "__main__":
-    StatePropVariable(True, True)
     # test_all_functions_sekf(True)
-    # test_all_sunline_sekf(True, 200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0])
+    test_all_sunline_sekf(True, 200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0], True)
