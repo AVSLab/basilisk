@@ -1,6 +1,6 @@
 # Installing On macOS {#installMacOS}
 
-These instruction outline how to install Basilisk (BSK) on a clean version of macOS.  There are two methods presented.  The first method makes use of the macOS provided version of Python while all python packages are installed in the user Library.  The second method shows how to use HomeBrew to install python.  This methods provides more control over what version of python is being run.
+These instruction outline how to install Basilisk (BSK) on a clean version of macOS.  There are two methods presented.  The first method makes use of the macOS provided version of Python 2 while all python packages are installed in the user Library.  The second method shows how to use HomeBrew to install python.  This method provides more control over what version of python is being run. Basilisk only runs with Python 2.
 
 
 ## Developer Software Tools 
@@ -32,7 +32,7 @@ $brew install swig
   
 
 ## Setting up the Python Environment
-The following setup will make use of the macOS supplied version of python, but will install all the required python packages in the user `~/Library/Python` folder.  This has the benefit that no `sudo` command is required to install and run Basilisk, and the user Python folder can readily be replaced if needed.  If you wish to use the HomeBrew version of python, after following these instruction configure the CMake Python paths as described in \ref customPython.
+The following setup will make use of the macOS supplied version of python, but will install all the required python packages in the user `~/Library/Python` folder.  This has the benefit that no `sudo` command is required to install and run Basilisk, and the user Python folder can readily be replaced if needed.  If you wish to use the HomeBrew version of python, configure the CMake Python paths as described in \ref customPython after following these instructions.
 
 In the following instructions, be sure to follow the sequence of tasks as outlined below.
 
@@ -40,11 +40,11 @@ In the following instructions, be sure to follow the sequence of tasks as outlin
 As this installation will install all required Python packages in the user home directory `Library/Python` folder, the `PATH` variable must be setup within the terminal environment.  
 
 1. Open a terminal window
-2. Use the `nano` text editor to edit the setup file
+2. Use the `nano` text editor to edit the setup file via steps 3 through 6 below
 3.  If using a Bash shell, then 
     * type 
 ```
-$nano .bash_profile
+$nano ~/.bash_profile
 ```
     * Add the line 
 ```
@@ -72,7 +72,7 @@ We suggest you remove any other python packages (such as Anaconda), or change th
 $ easy_install --user pip
 $ pip install --user --ignore-installed setuptools
 ```
-* Copy the file called [`mac_fix_path.pth`](mac_fix_path.pth) and copy it to the directory `~/Library/Python/2.7/lib/python/site-packages/` 
+* Copy the file called [`mac_fix_path.pth`](mac_fix_path.pth) from basilisk/docs to the directory `~/Library/Python/2.7/lib/python/site-packages/` 
 For more information about this file see this [online discussion](https://apple.stackexchange.com/questions/209572/how-to-use-pip-after-the-os-x-el-capitan-upgrade/209577). **Note:** If you have installed python packages already using `sudo pip install`, then these are stored in `Library/Python/2.7/site-packages`.  You need to add the `mac_fix_path.pth` file to this folder as well to make macOS ignore the system installed packages.  Or, to only use home directory installed python packages, just remove `Library/Python` folder.
 * From the terminal window, install the required general Python packages using:
 ```
@@ -89,7 +89,7 @@ $ pip install --user matplotlib
 
 ## Cloning and Building the Basilisk Project
 
-When all the prerequisite installations are complete, the project can be built.
+When all the prerequisite installations are complete, the project can be built as follows.
 
 1. If needed, create your own [bitbucket.org](http://bitbucket.org) account
 2. Use a browser to go to the [Basilisk Bitbucket Repository](https://bitbucket.org/avslab/basilisk)
@@ -97,7 +97,7 @@ When all the prerequisite installations are complete, the project can be built.
 4. Copy the project url (omit `git clone`) from the bitbucket clone panel
 \image html Images/doc/bitbucket-clone-panel.png width=514px
 
-5. Clone into preferred Git client (Source Tree for instance), or just clone the repository in the directory containing Basilisk.  In SourceTree, use `clone from url`, add the Basilisk repository url, and select `develop` branch to pull the latest code.
+5. Clone into preferred Git client (Source Tree for instance), or just clone the repository in the directory containing Basilisk.  In SourceTree, use `clone from url`, add the Basilisk repository url (without `.git` on the end), and select `develop` branch to pull the latest code.
 \image html Images/doc/sourcetree-clone-panel.png width=568px
 
 
@@ -119,7 +119,7 @@ When all the prerequisite installations are complete, the project can be built.
     * The source code should appear and be ready for use
     \image html Images/doc/256564102-xcode.png width=419px
     
-    * You can now build the project within the IDE
+    * You can now build the project within the Xcode IDE
 
 8. To test your setup you can run one of the scenario scripts.
     * In the terminal window, make `basilisk/src/tests/scenarios` the current directory.
@@ -157,7 +157,7 @@ docs: build the documentation with doxygen. The generated html documentation is 
 
 2. Q: Experiencing problems when trying to change the directory in which to clone the url
 
-    * A: clone it in the default directory, and copy it into the prefered one after it is done cloning.
+    * A: clone it in the default directory, and copy it into the preferred one after it is done cloning.
 
 3. Q : Trouble configuring in Cmake
 

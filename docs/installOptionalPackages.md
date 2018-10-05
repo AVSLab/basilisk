@@ -20,6 +20,7 @@ After installing this utility you now run the multi-threaded version of `pytest`
 ```
 pytest -n 8
 ```
+or replace 8 with the number of cores your computer has available
 
 
 
@@ -49,7 +50,7 @@ Here is a list of documents about the related packages to `datashader`:
 
 ###Important features of `datashader`
 
-Incorporating `holoviews`, `datashader`, and `bokeh`, we can now rasterize large amounts of data and plot them faster then using `matplotlib`. Theoretically, the number of points is now irrelevant while plotting. Using `datashader`, it is now possible to plot 5 million points in 30 seconds. Aggregating the data (2.5 gigs) took 1 minute to populate the dataframes, and 2 minutes to write to file (which is only needed if you want to avoid running the monte carlo again). To graph the existing without re-running the simulations, set `ONLY_DATASHADE_DATA = 1` in the [Monte Carlo scenarios](@ref MonteCarloSimulation). 
+Incorporating `holoviews`, `datashader`, and `bokeh`, we can now rasterize large amounts of data and plot them faster than using `matplotlib`. Theoretically, the number of points is now irrelevant while plotting. Using `datashader`, it is now possible to plot 5 million points in 30 seconds. Aggregating the data (2.5 gigs) took 1 minute to populate the dataframes, and 2 minutes to write to file (which is only needed if you want to avoid running the monte carlo again). To graph the existing without re-running the simulations, set `ONLY_DATASHADE_DATA = 1` in the [Monte Carlo scenarios](@ref MonteCarloSimulation). 
 
 In order to generate graphs that are zoomed in to a specific x and y range modify the following:
 
@@ -67,7 +68,7 @@ x_range = df.x.min(), df.x.max()
 y_range = df.y.min(), df.y.max()
 ```
 
-After installing all of the packages, `pytest` will use those libraries by default. To change this back to `matplotlib` modify the `pytest` paramaters  in `test_scenarioMonteCarloAttRW.py` to the following:
+After installing all of the packages, `pytest` will use those libraries by default. To change this back to `matplotlib` modify the `pytest` parameters  in `test_scenarioMonteCarloAttRW.py` to the following:
 
 ```
 @pytest.mark.parametrize("MCCases, datashader",
