@@ -53,9 +53,6 @@ from Basilisk.simulation import spice_interface
 from Basilisk import __path__
 bskPath = __path__[0]
 
-sys.path.append(bskPath + '/../../../visualization/ProtoModels/modules/vizInterface')
-import vizInterface
-
 import tabulate as T
 del(T.LATEX_ESCAPE_RULES[u'$'])
 del(T.LATEX_ESCAPE_RULES[u'\\'])
@@ -413,38 +410,3 @@ def pullVectorSetFromData(inpMat):
     outMat = np.array(inpMat).transpose()
     return outMat[1:].transpose()
 
-def enableUnityVisualization(scSim, simTaskName, dynProcess, processName, fileName, bodyName = 'none'):
-    vizMessager = vizInterface.VizInterface()
-    scSim.AddModelToTask(simTaskName, vizMessager)
-    vizMessager.spiceInMsgName = vizInterface.StringVector([
-                                                                  "earth_planet_data",
-                                                                  "mars_planet_data",
-                                                                  "sun_planet_data",
-                                                                  "jupiter barycenter_planet_data",
-                                                                  "moon_planet_data",
-                                                                  "venus_planet_data",
-                                                                  "mercury_planet_data",
-                                                                  "uranus barycenter_planet_data",
-                                                                  "neptune barycenter_planet_data",
-                                                                  "pluto barycenter_planet_data",
-                                                                  "saturn barycenter_planet_data"])
-    vizMessager.planetNames = vizInterface.StringVector(["earth", "mars", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
-   # vizMessager.dynModels.SpiceObject.planetNames = spice_interface.StringVector(["earth", "mars", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
-    #vizMessager.numRW = 4
-    vizMessager.protoFilename = fileName
-    VizTaskName = "VizTask"
-
-    if (bodyName != 'none'):
-        ephemData = spice_interface.SpicePlanetStateSimMsg()
-        ephemData.J2000Current = 0.0
-        ephemData.PositionVector = [0.0, 0.0, 0.0]
-        ephemData.VelocityVector = [0.0, 0.0, 0.0]
-        ephemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-        ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-        ephemData.PlanetName = bodyName
-        msgName = bodyName + '_planet_data'
-        messageSize = ephemData.getStructSize()
-        scSim.TotalSim.CreateNewMessage(processName, msgName, messageSize, 2, "SpicePlanetStateSimMsg")
-        scSim.TotalSim.WriteMessageData(msgName, messageSize, 0, ephemData)
-
-    return
