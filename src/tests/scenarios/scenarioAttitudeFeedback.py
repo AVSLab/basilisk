@@ -294,7 +294,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')
+    vizSupport.enableUnityVisualization(scSim, simTaskName, dynProcess, simProcessName, 'samYourGonnaDie.bin', 'earth')
     # The Viz only support 'earth', 'mars', or 'sun'
 
     #
