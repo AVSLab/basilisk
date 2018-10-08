@@ -21,6 +21,9 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>
     Added a new scenario `scenarioAttitudeFeedbackNoEarth.py` which illustrates how to do an attitude only simulation without any gravity bodies present.
     </li>
+    <li>
+    Updated the macOS Basilisk installation instructions to make them easier to follow, and illustrate how to use the macOS provided Python along with all the Python packages installed in the user Library directory.  This provides for a cleaner and easier to maintain Basilisk installation.
+    </li>
 </ul>
 
 ## Version 0.3.2 
