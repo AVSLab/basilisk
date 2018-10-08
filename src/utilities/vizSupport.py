@@ -29,6 +29,7 @@ import os,errno
 # import Viz messaging related modules
 from Basilisk import __path__
 bskPath = __path__[0]
+from Basilisk.simulation import spice_interface
 
 sys.path.append(bskPath + '/../../../vizard/ProtoModels/modules')
 
