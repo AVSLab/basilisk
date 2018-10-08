@@ -43,6 +43,7 @@ C:\Users\patrick\Downloads\boost_1_61_0\boost_1_61_0> b2 address-model=64 runtim
 The standard windows swig setup is suitable for Basilisk. [Configuration Instructions](http://www.swig.org/Doc1.3/Windows.html#Windows_swig_exe).
 
 Example added path formats:
+
 * PYTHON_INCLUDE = C:\Program Files\Python27\include
 * PYTHON_LIB = C:\Program Files\Python27\libs\python27.lib
 
