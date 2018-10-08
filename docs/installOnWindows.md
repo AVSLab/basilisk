@@ -8,6 +8,15 @@ In order to run Basilisk, the following software will be necessary:
 
 * [Cmake](https://cmake.org/)
 * [Python 2.7 (numpy, matplotlib, pytest)](https://www.python.org/downloads/mac-osx/)
+* [pip](https://pip.pypa.io/en/stable/installing/)
+* Visual Studios 15 or Greater
+* [Swig](http://www.swig.org/download.html)
+
+    Example [Configuration Instructions](http://www.swig.org/Doc1.3/Windows.html#Windows_swig_exe):
+
+    PYTHON_INCLUDE = C:\Program Files\Python27\include
+
+    PYTHON_LIB = C:\Program Files\Python27\libs\python27.lib
 
 NOTE: the latest pytest is not compatible with all Basilisk modules. We are still investigating.  Be sure to pull version 3.6.1 for now using
 
@@ -34,7 +43,21 @@ If you require a different version of Boost than that provided with the project 
 C:\Users\patrick\Downloads\boost_1_61_0\boost_1_61_0> bootstrap
 C:\Users\patrick\Downloads\boost_1_61_0\boost_1_61_0> b2 address-model=64 runtime-link=static
 ```
+## Installing
 
+From Basilisk root directory:
+```
+mkdir dist $$ cd dist
+```
+Configure and Build:
+```
+cmake -G "Visual Studio 15 2017 Win64" ../src
+cmake --build . --target ALL_BUILD --config Release
+```
+For arch x86:
+```
+cmake -G "Visual Studio 15 2017 Win32" ../src
+```
 
 ### How to run tests
 
