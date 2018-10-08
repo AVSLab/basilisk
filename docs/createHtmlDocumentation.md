@@ -2,10 +2,10 @@
 
 
 ## Doxygen Documentation
-The [Doxygen](http://doxygen.nl) software is an elegant method to both include code explanations, definitions and module documentation, but also to create a full HTML based documentation folder for a software project.  An online copy of this HTML documentation is hosted at [AVS Basilisk web site](http://hanspeterschaub.info/bskMain.html) with the [Documentation](http://hanspeterschaub.info/bskHTML/index.html) page.  
+The [Doxygen](http://doxygen.nl) software is an elegant method to both include code explanations, definitions and module documentation, but also to create a full HTML based documentation folder for a software project.  An online copy of this HTML documentation is hosted at [AVS Basilisk web site](http://hanspeterschaub.info/bskMain.html) with the [Documentation](http://hanspeterschaub.info/bskHtml/index.html) page.  
 \image html Images/doc/bskHTML.png "BSK HTML Documentation Landing Page" width=80% 
 
-The [Related Pages](http://hanspeterschaub.info/bskHTML/pages.html) tab provide a listing of a range of support files such as how to install Basilisk on Linux, macOS and Microsoft Windows. It also provides FAQ pages, BSK release notes, and other support files.
+The [Related Pages](http://hanspeterschaub.info/bskHtml/pages.html) tab provide a listing of a range of support files such as how to install Basilisk on Linux, macOS and Microsoft Windows. It also provides FAQ pages, BSK release notes, and other support files.
 
 The [Modules](http://hanspeterschaub.info/bskHTML/modules.html) tab provides the listing of tutorial BSK scenario descriptions.  These are integrated BSK simulations written to be a series of tutorials to learn how to use BSK.
 
@@ -32,6 +32,8 @@ to install this tool.
 
 
 ## Creating HTML Documentation
+To create the HTML documentation with all the associated scenario figures, be sure to run `pytest` first from within the `/src` directory.  Don't use the `pytest -n 4` multi-threaded version as the image generation requires in places a sequence of unit test to be run in a particular order.
+
 The Basilisk Doxygen configuration file is stored in `docs/DoxyData`.  If the `doxygen` command line tool is installed then simply run 
 ```
 doxygen DoxyData

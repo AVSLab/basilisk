@@ -1,0 +1,1 @@
+import sys; std_paths=[p for p in sys.path if p.startswith('/System/') and not '/Extras/' in p]; sys.path=[p for p in sys.path if not p.startswith('/System/')]+std_paths
