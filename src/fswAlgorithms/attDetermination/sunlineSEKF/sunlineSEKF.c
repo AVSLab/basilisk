@@ -322,9 +322,10 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH],
         m33MultM33(dcm_SB, I_S, I_S);
         m33MultM33(I_S, dcm_BS, I_S);
         
-        m33MultM33(I_inv_S, omega_tilde_S, omega_tilde_S);
-        m33MultM33(omega_tilde_S, I_S, omega_tilde_S);
+        m33MultV3(I_S, omega_S, omega_S);
         m33MultV3(omega_tilde_S, omega_S, omega_S);
+
+        m33MultV3(I_inv_S, omega_S, omega_S);
         stateInOut[3] += -dt*omega_S[1];
         stateInOut[4] += -dt*omega_S[2];
         

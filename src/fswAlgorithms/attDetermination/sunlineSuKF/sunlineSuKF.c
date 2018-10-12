@@ -306,8 +306,11 @@ void sunlineStateProp(double *stateInOut, double *b_Vec, FilterDynamics dynamics
     
     /*! - Use inertia if dyanmics are active */
     if (dynamics.dynOn == 1){
+        mSetSubMatrix(dynamics.ISCPntB_B_inv, SKF_N_STATES_HALF, SKF_N_STATES_HALF, I_inv_S, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
+        mSetSubMatrix(dynamics.vehMassData.ISCPntB_B, SKF_N_STATES_HALF, SKF_N_STATES_HALF, I_S, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
+        
         v3Tilde(omega_S, omega_tilde_S);
-        mTranspose(dcm_BS, 3, 3, dcm_SB);
+        mTranspose(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm_SB);
         /*! - Compute the inverse of the Inertia matrix in the S frame */
         m33MultM33(dcm_SB, I_inv_S, I_inv_S);
         m33MultM33(I_inv_S, dcm_BS, I_inv_S);
@@ -315,12 +318,13 @@ void sunlineStateProp(double *stateInOut, double *b_Vec, FilterDynamics dynamics
         m33MultM33(dcm_SB, I_S, I_S);
         m33MultM33(I_S, dcm_BS, I_S);
         
-        m33MultM33(I_inv_S, omega_tilde_S, omega_tilde_S);
-        m33MultM33(omega_tilde_S, I_S, omega_tilde_S);
+        m33MultV3(I_S, omega_S, omega_S);
         m33MultV3(omega_tilde_S, omega_S, omega_S);
+        
+        m33MultV3(I_inv_S, omega_S, omega_S);
         stateInOut[3] += -dt*omega_S[1];
         stateInOut[4] += -dt*omega_S[2];
-
+        
     }
 	return;
 }
