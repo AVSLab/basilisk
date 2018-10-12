@@ -149,10 +149,8 @@ def sunline_individual_test(useDynamics):
 
         I_S = np.dot(DCM_BS.T,np.dot(np.array(dyn.vehMassData.ISCPntB_B).reshape([3,3]),DCM_BS))
         I_inv_S = np.dot(DCM_BS.T,np.dot(np.array(dyn.ISCPntB_B_inv).reshape([3,3]),DCM_BS))
-        I_omega_S = np.array([[0., I_S[2,2]*inputOmega[0], -I_S[1,1]*inputOmega[0]],
-                              [-I_S[2, 2] * inputOmega[1], 0., I_S[0, 0] * inputOmega[1]],
-                              [I_S[1, 1] * inputOmega[2], -I_S[0, 0] * inputOmega[2],0.]])
-        expDynMat[3:,3:] = - np.dot(I_inv_S, I_omega_S + np.dot(np.array(RigidBodyKinematics.v3Tilde(inputOmega)), I_S))[1:,1:]
+        I_omega_S = RigidBodyKinematics.v3Tilde(np.dot(I_S, inputOmega))
+        expDynMat[3:,3:] = np.dot(I_inv_S, I_omega_S - np.dot(np.array(RigidBodyKinematics.v3Tilde(inputOmega)), I_S))[1:,1:]
     else:
         dyn.dynOn = 0
 
@@ -764,9 +762,7 @@ def StatePropVariable(show_plots, useDynamics):
                               np.dot(np.array(I).reshape([3, 3]), DCM_BS[0, :, :]))
         I_inv_S[0, :, :] = np.dot(DCM_BS[0, :, :].T,
                                   np.dot(np.array(I_inv).reshape([3, 3]), DCM_BS[0, :, :]))
-        I_omega_S[0, :, :] = np.array([[0., 0., 0.],
-                                       [-I_S[0, 2, 2] * expectedStateArray[0, 4], 0., I_S[0, 0, 0] * expectedStateArray[0, 4]],
-                                       [I_S[0, 1, 1] * expectedStateArray[0, 5], -I_S[0, 0, 0] * expectedStateArray[0, 5], 0.]])
+        I_omega_S[0, :, :] = RigidBodyKinematics.v3Tilde(np.dot(I_S[0, :, :], omega_S[0, :]))
 
     for i in range(1,2001):
         expectedStateArray[i,0] = dt*i*1E9
@@ -792,11 +788,7 @@ def StatePropVariable(show_plots, useDynamics):
         if useDynamics:
             I_S[i,:,:] = np.dot(DCM_BS[i,:,:].T,np.dot(np.array(I).reshape([3,3]),DCM_BS[i,:,:]))
             I_inv_S[i,:,:] = np.dot(DCM_BS[i,:,:].T,np.dot(np.array(I_inv).reshape([3,3]),DCM_BS[i,:,:]))
-            I_omega_S[i,:,:] = np.array([
-                                  [0.,0., 0.],
-                                  [-I_S[i,2, 2] * expectedStateArray[i,4], 0., I_S[i,0, 0] * expectedStateArray[i,4]],
-                                  [I_S[i,1, 1] * expectedStateArray[i,5], -I_S[i,0, 0] * expectedStateArray[i,5], 0.]
-            ])
+            I_omega_S[i,:,:] = RigidBodyKinematics.v3Tilde(np.dot(I_S[i,:,:], omega_S[i,:]))
 
     for i in range(0, 2001):
         dtilde = -np.array(RigidBodyKinematics.v3Tilde(expectedStateArray[i, 1:4]))
@@ -805,7 +797,7 @@ def StatePropVariable(show_plots, useDynamics):
         expDynMat[i,0:3, 0:3] = np.array(RigidBodyKinematics.v3Tilde(omega_B[i,:]))
         expDynMat[i, 0:3, 3:numStates] = dBS[:, 1:]
         if useDynamics:
-            expDynMat[i,3:,3:] = - np.dot(I_inv_S[i,:,:], I_omega_S[i,:,:] + np.dot(np.array(RigidBodyKinematics.v3Tilde(omega_S[i,:])), I_S[i,:,:]))[1:,1:]
+            expDynMat[i, 3:, 3:] = np.dot(I_inv_S[i,:,:], I_omega_S[i,:,:] - np.dot(np.array(RigidBodyKinematics.v3Tilde(omega_S[i,:])), I_S[i,:,:]))[1:,1:]
     expectedSTM = np.zeros([2001,numStates,numStates])
     expectedSTM[0,:,:] = np.eye(numStates)
     for i in range(1,2001):
@@ -1049,6 +1041,6 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 
 if __name__ == "__main__":
-    StatePropVariable(True,True)
+    StatePropVariable(True, True)
     # test_all_functions_sekf(True)
     # test_all_sunline_sekf(True, 200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0], True)

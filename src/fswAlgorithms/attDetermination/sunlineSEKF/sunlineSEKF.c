@@ -356,6 +356,7 @@ void sunlineDynMatrix(double states[SKF_N_STATES_SWITCH], double bVec[SKF_N_STAT
     double omega_B[SKF_N_STATES_HALF];
     double I_inv_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double I_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double I_omega_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double dcm_BS[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double dcm_SB[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     
@@ -393,12 +394,8 @@ void sunlineDynMatrix(double states[SKF_N_STATES_SWITCH], double bVec[SKF_N_STAT
         m33MultM33(I_inv_S, omega_tilde_S, omega_tilde_S);
         m33MultM33(omega_tilde_S, I_S, omega_tilde_S);
 
-        double I_omega_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF]=
-        {
-            {0, 0, 0},
-            {I_S[2][2]*omega_S[1],0, -I_S[0][0]*omega_S[1]},
-            {-I_S[1][1]*omega_S[2],I_S[0][0]*omega_S[2], 0}
-        };
+        m33MultV3(I_S, omega_S, omega_S);
+        v3Tilde(omega_S, I_omega_S);
         m33MultM33(I_inv_S, &I_omega_S[0],&I_omega_S[0]);
         m33Subtract(&I_omega_S[0], omega_tilde_S, I_omega_S);
         mSetSubMatrix(&(I_omega_S[1][1]), 2, 1, dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 3, 3);
