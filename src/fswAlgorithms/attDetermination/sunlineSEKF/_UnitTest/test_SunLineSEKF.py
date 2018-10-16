@@ -130,12 +130,12 @@ def sunline_individual_test(useDynamics):
     DCM_BS = np.array(dcmOut).reshape([3,3])
 
     omega_B = np.dot(DCM_BS, np.array(inputOmega))
-    dtilde = RigidBodyKinematics.v3Tilde(-np.array(inputStates)[:3])
+    dtilde = RigidBodyKinematics.v3Tilde(np.array(inputStates)[:3])
     dBS = np.dot(dtilde, DCM_BS)
 
     expDynMat = np.zeros([numStates,numStates])
     expDynMat[0:3, 0:3] =  np.array(RigidBodyKinematics.v3Tilde(omega_B))
-    expDynMat[0:3, 3:numStates] = dBS[:, 1:]
+    expDynMat[0:3, 3:numStates] = -dBS[:, 1:]
 
     dyn = sunlineSEKF.FilterDynamics()
     if useDynamics:
@@ -168,7 +168,7 @@ def sunline_individual_test(useDynamics):
     if(errorNorm > 1.0E-10):
         print errorNorm, "Dyn Matrix"
         testFailCount += 1
-        testMessages.append("Dynamics Matrix generation Failure \n")
+        testMessages.append("Dynamics Matrix generation Failure Dyn " + str(useDynamics) + "\n")
 
     ###################################################################################
     ## STM and State Test
@@ -224,7 +224,7 @@ def sunline_individual_test(useDynamics):
     expectedStates = np.zeros(numStates)
     ## Equations when removing the unobservable states from d_dot
     if useDynamics:
-        expectedStates[3:numStates] = np.array(inputOmega)[1:3] - dt*np.dot(np.dot(I_inv_S, np.dot(np.array(RigidBodyKinematics.v3Tilde(inputOmega)), I_S)), np.array(inputOmega))[1:]
+        expectedStates[3:numStates] = np.array(inputOmega)[1:3] - dt*np.dot(I_inv_S, np.dot(np.array(RigidBodyKinematics.v3Tilde(inputOmega)), np.dot(I_S, np.array(inputOmega))))[1:]
     else:
         expectedStates[3:numStates] = np.array(inputOmega)[1:3]
     expectedStates[0:3] = np.array(inputStates)[0:3]+dt*np.cross(np.dot(DCM_BS,np.array(inputOmega)), np.array(inputStates)[0:3])
@@ -233,11 +233,11 @@ def sunline_individual_test(useDynamics):
 
     if(errorNormSTM > 1.0E-10):
         testFailCount += 1
-        testMessages.append("STM Propagation Failure \n")
+        testMessages.append("STM Propagation Failure Dyn " + str(useDynamics) + "\n")
 
     if(errorNormStates > 1.0E-10):
         testFailCount += 1
-        testMessages.append("State Propagation Failure \n")
+        testMessages.append("State Propagation Failure Dyn " + str(useDynamics) + "\n")
 
     ###################################################################################
     ## Test the H and yMeas matrix generation as well as the observation count
@@ -1041,6 +1041,6 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 
 if __name__ == "__main__":
-    StatePropVariable(True, True)
-    # test_all_functions_sekf(True)
+    # StatePropVariable(True, True)
+    sunline_individual_test(True)
     # test_all_sunline_sekf(True, 200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0], True)
