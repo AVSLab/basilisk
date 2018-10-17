@@ -155,7 +155,7 @@ void Update_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
 {
     double newTimeTag;
     double Hx[MAX_N_CSS_MEAS];
-    double states_B[SKF_N_STATES_SWITCH];
+    double states_BN[SKF_N_STATES_SWITCH];
     double sunheading_hat[SKF_N_STATES_HALF];
     uint64_t ClockTime;
     uint32_t ReadSize;
@@ -201,9 +201,9 @@ void Update_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
     mMultM(ConfigData->measMat, ConfigData->numObs, SKF_N_STATES, ConfigData->x, SKF_N_STATES, 1, Hx);
     mSubtract(ConfigData->yMeas, ConfigData->numObs, 1, Hx, ConfigData->postFits);
     
-    /* Switch the rates of the back into the body frame */
-    vCopy(ConfigData->state, SKF_N_STATES_SWITCH, states_B);
-    vScale(-1, &(states_B[3]), 2, &(states_B[3]));
+    /* Switch the rates back to omega_BN instead of oemga_SB */
+    vCopy(ConfigData->state, SKF_N_STATES_SWITCH, states_BN);
+    vScale(-1, &(states_BN[3]), 2, &(states_BN[3]));
     
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
 	v3Copy(ConfigData->state, ConfigData->outputSunline.vehSunPntBdy);
@@ -218,7 +218,7 @@ void Update_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
     sunlineDataOutBuffer.numObs = ConfigData->numObs;
     memmove(sunlineDataOutBuffer.covar, ConfigData->covar,
             SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH*sizeof(double));
-    memmove(sunlineDataOutBuffer.state, states_B, SKF_N_STATES_SWITCH*sizeof(double));
+    memmove(sunlineDataOutBuffer.state, states_BN, SKF_N_STATES_SWITCH*sizeof(double));
     memmove(sunlineDataOutBuffer.stateError, ConfigData->x, SKF_N_STATES*sizeof(double));
     memmove(sunlineDataOutBuffer.postFitRes, ConfigData->postFits, MAX_N_CSS_MEAS*sizeof(double));
     WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(SunlineFilterFswMsg),
@@ -326,8 +326,8 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH],
         m33MultV3(omega_tilde_BN_S, omega_BN_S, omega_BN_S);
         
         m33MultV3(I_inv_S, omega_BN_S, omega_BN_S);
-        stateInOut[3] += - dt*omega_BN_S[1];
-        stateInOut[4] += - dt*omega_BN_S[2];
+        stateInOut[3] += dt*omega_BN_S[1];
+        stateInOut[4] += dt*omega_BN_S[2];
         
     }
     
@@ -400,7 +400,7 @@ void sunlineDynMatrix(double states[SKF_N_STATES_SWITCH], double bVec[SKF_N_STAT
         v3Tilde(omega_BN_S, I_omega_S);
         m33MultM33(I_inv_S, &I_omega_S[0],&I_omega_S[0]);
 
-        m33Subtract(omega_tilde_S, &I_omega_S[0], I_omega_S);
+        m33Subtract(&I_omega_S[0], omega_tilde_S, I_omega_S);
         mSetSubMatrix(&(I_omega_S[1][1]), 2, 1, dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 3, 3);
         mSetSubMatrix(&(I_omega_S[2][1]), 2, 1, dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 3, 4);
     }

@@ -192,6 +192,7 @@ void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
     double yBar[MAX_N_CSS_MEAS];
     double tempYVec[MAX_N_CSS_MEAS];
     double sunheading_hat[3];
+    double states_BN[SKF_N_STATES_SWITCH];
     int i;
     uint64_t ClockTime;
     uint32_t ReadSize;
@@ -255,12 +256,16 @@ void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
 	WriteMessage(ConfigData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
 		&(ConfigData->outputSunline), moduleID);
     
+    /* Switch the rates back to omega_BN instead of oemga_SB */
+    vCopy(ConfigData->state, SKF_N_STATES_SWITCH, states_BN);
+    vScale(-1, &(states_BN[3]), 2, &(states_BN[3]));
+    
     /*! - Populate the filter states output buffer and write the output message*/
     sunlineDataOutBuffer.timeTag = ConfigData->timeTag;
     sunlineDataOutBuffer.numObs = ConfigData->numObs;
     memmove(sunlineDataOutBuffer.covar, ConfigData->covar,
             SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH*sizeof(double));
-    memmove(sunlineDataOutBuffer.state, ConfigData->state, SKF_N_STATES_SWITCH*sizeof(double));
+    memmove(sunlineDataOutBuffer.state, states_BN, SKF_N_STATES_SWITCH*sizeof(double));
     memmove(sunlineDataOutBuffer.postFitRes, ConfigData->postFits, MAX_N_CSS_MEAS*sizeof(double));
     WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(SunlineFilterFswMsg),
                  &sunlineDataOutBuffer, moduleID);
@@ -288,7 +293,6 @@ void sunlineStateProp(double *stateInOut, double *b_Vec, FilterDynamics dynamics
 
     mSetZero(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
 
-    
     sunlineSuKFComputeDCM_BS(stateInOut, b_Vec, &dcm_BS[0][0]);
     mMultV(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, omega_BN_S, omega_BN_B);
     /* Set local variables to zero*/
@@ -320,8 +324,8 @@ void sunlineStateProp(double *stateInOut, double *b_Vec, FilterDynamics dynamics
         m33MultV3(omega_tilde_BN_S, omega_BN_S, omega_BN_S);
         
         m33MultV3(I_inv_S, omega_BN_S, omega_BN_S);
-        stateInOut[3] += - dt*omega_BN_S[1];
-        stateInOut[4] += - dt*omega_BN_S[2];
+        stateInOut[3] += dt*omega_BN_S[1];
+        stateInOut[4] += dt*omega_BN_S[2];
         
     }
 	return;
