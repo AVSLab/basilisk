@@ -326,8 +326,8 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH],
         m33MultV3(omega_tilde_BN_S, omega_BN_S, omega_BN_S);
         
         m33MultV3(I_inv_S, omega_BN_S, omega_BN_S);
-        stateInOut[3] += dt*omega_BN_S[1];
-        stateInOut[4] += dt*omega_BN_S[2];
+        stateInOut[3] += - dt*omega_BN_S[1];
+        stateInOut[4] += - dt*omega_BN_S[2];
         
     }
     
@@ -352,7 +352,7 @@ void sunlineDynMatrix(double states[SKF_N_STATES_SWITCH], double bVec[SKF_N_STAT
 {
     double skewOmega[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double skewStates[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
-    double omega_tilde_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double omega_tilde_BN_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double omega_BN_S[SKF_N_STATES_HALF] = {0, -states[3], -states[4]};
     double omega_BN_B[SKF_N_STATES_HALF];
     double I_inv_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
@@ -384,7 +384,7 @@ void sunlineDynMatrix(double states[SKF_N_STATES_SWITCH], double bVec[SKF_N_STAT
         mSetSubMatrix(dynamics.vehMassData.ISCPntB_B, SKF_N_STATES_HALF, SKF_N_STATES_HALF, I_S, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
         
         /* Populate the bottom right 3x3 matrix of the dynamics matrix*/
-        v3Tilde(omega_BN_S, omega_tilde_S);
+        v3Tilde(omega_BN_S, omega_tilde_BN_S);
         mTranspose(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm_SB);
         /*! - Compute the inverse of the Inertia matrix in the S frame */
         m33MultM33(dcm_SB, I_inv_S, I_inv_S);
@@ -393,14 +393,14 @@ void sunlineDynMatrix(double states[SKF_N_STATES_SWITCH], double bVec[SKF_N_STAT
         m33MultM33(dcm_SB, I_S, I_S);
         m33MultM33(I_S, dcm_BS, I_S);
         
-        m33MultM33(I_inv_S, omega_tilde_S, omega_tilde_S);
-        m33MultM33(omega_tilde_S, I_S, omega_tilde_S);
+        m33MultM33(omega_tilde_BN_S, I_S, omega_tilde_BN_S);
 
         m33MultV3(I_S, omega_BN_S, omega_BN_S);
         v3Tilde(omega_BN_S, I_omega_S);
+
+        m33Subtract(&I_omega_S[0], omega_tilde_BN_S, I_omega_S); // Substract inversely from expected in order to get omega_SB_S
         m33MultM33(I_inv_S, &I_omega_S[0],&I_omega_S[0]);
 
-        m33Subtract(&I_omega_S[0], omega_tilde_S, I_omega_S);
         mSetSubMatrix(&(I_omega_S[1][1]), 2, 1, dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 3, 3);
         mSetSubMatrix(&(I_omega_S[2][1]), 2, 1, dynMat, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, 3, 4);
     }

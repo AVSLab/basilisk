@@ -324,8 +324,8 @@ void sunlineStateProp(double *stateInOut, double *b_Vec, FilterDynamics dynamics
         m33MultV3(omega_tilde_BN_S, omega_BN_S, omega_BN_S);
         
         m33MultV3(I_inv_S, omega_BN_S, omega_BN_S);
-        stateInOut[3] += dt*omega_BN_S[1];
-        stateInOut[4] += dt*omega_BN_S[2];
+        stateInOut[3] += - dt*omega_BN_S[1];
+        stateInOut[4] += - dt*omega_BN_S[2];
         
     }
 	return;
