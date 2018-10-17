@@ -713,6 +713,10 @@ void sunlineSEKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[
     
     v3Normalize(sunheading, s1_B);
     v3Cross(sunheading, bVec, s2_B);
+    if (v3Norm(s2_B) < 1E-5){
+        mSetIdentity(dcm, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
+    }
+    else{
     v3Normalize(s2_B, s2_B);
     /*! Populate the dcm_BS with the "new" S-frame*/
     mSetSubMatrix(s1_B, 1, SKF_N_STATES_HALF, dcm, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
@@ -721,5 +725,6 @@ void sunlineSEKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[
     v3Normalize(s3_B, s3_B);
     mSetSubMatrix(&(s3_B), 1, SKF_N_STATES_HALF, dcm, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 2, 0);
     mTranspose(dcm, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm);
+    }
     
 }
