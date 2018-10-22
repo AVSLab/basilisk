@@ -41,7 +41,7 @@ def setupFilterData(filterObject):
     filterObject.cssConfigInMsgName = "css_config_data"
 
     filterObject.sensorUseThresh = 0.
-    filterObject.states = [1.0, 1.0, 1.0, 0.0, 0.0, 0.0]
+    filterObject.state = [1.0, 1.0, 1.0, 0.0, 0.0, 0.0]
     filterObject.x = [1.0, 0.0, 1.0, 0.0, 0.1, 0.0]
     filterObject.covar = [0.4, 0.0, 0.0, 0.0, 0.0, 0.0,
                           0.0, 0.4, 0.0, 0.0, 0.0, 0.0,
@@ -51,7 +51,7 @@ def setupFilterData(filterObject):
                           0.0, 0.0, 0.0, 0.0, 0.0, 0.004]
 
     filterObject.qProcVal = 0.1**2
-    filterObject.qObsVal = 0.017 ** 2
+    filterObject.qObsVal = 0.001
     filterObject.eKFSwitch = 5. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 
 def test_all_functions_ekf(show_plots):
@@ -441,12 +441,12 @@ def StatePropStatic():
 
     setupFilterData(moduleConfig)
     unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate * 10, 0, 35)
-    unitTestSim.AddVariableForLogging('SunlineEKF.states', testProcessRate * 10, 0, 5)
+    unitTestSim.AddVariableForLogging('SunlineEKF.state', testProcessRate * 10, 0, 5)
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
+    stateLog = unitTestSim.GetLogVariableData('SunlineEKF.state')
 
     for i in range(6):
         if (abs(stateLog[-1, i + 1] - stateLog[0, i + 1]) > 1.0E-10):
@@ -504,15 +504,15 @@ def StatePropVariable(show_plots):
 
     setupFilterData(moduleConfig)
 
-    InitialState = moduleConfig.states
+    InitialState = moduleConfig.state
     Initialx = moduleConfig.x
     InitialCovar = moduleConfig.covar
 
-    moduleConfig.states = InitialState
+    moduleConfig.state = InitialState
 
     unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate, 0, 35)
     unitTestSim.AddVariableForLogging('SunlineEKF.stateTransition', testProcessRate, 0, 35)
-    unitTestSim.AddVariableForLogging('SunlineEKF.states', testProcessRate , 0, 5)
+    unitTestSim.AddVariableForLogging('SunlineEKF.state', testProcessRate , 0, 5)
     unitTestSim.AddVariableForLogging('SunlineEKF.x', testProcessRate , 0, 5)
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(1000.0))
@@ -520,7 +520,7 @@ def StatePropVariable(show_plots):
 
 
     covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
+    stateLog = unitTestSim.GetLogVariableData('SunlineEKF.state')
     stateErrorLog = unitTestSim.GetLogVariableData('SunlineEKF.x')
     stmLog = unitTestSim.GetLogVariableData('SunlineEKF.stateTransition')
 
@@ -670,12 +670,12 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssConfigInMsgName, msgSize, 0, cssConstelation)
 
+
     stateTarget1 = testVector1
     stateTarget1 += [0.0, 0.0, 0.0]
-    moduleConfig.states = stateGuess
+    moduleConfig.state = stateGuess
     moduleConfig.x = (np.array(stateTarget1) - np.array(stateGuess)).tolist()
-    unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate , 0, 35, 'double')
-    unitTestSim.AddVariableForLogging('SunlineEKF.states', testProcessRate , 0, 5, 'double')
+    unitTestSim.TotalSim.logThisMessage('sunline_filter_data', testProcessRate)
     unitTestSim.AddVariableForLogging('SunlineEKF.x', testProcessRate , 0, 5, 'double')
 
     unitTestSim.InitializeSimulation()
@@ -698,49 +698,9 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
-    stateErrorLog = unitTestSim.GetLogVariableData('SunlineEKF.x')
+    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", range(6))
+    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", range(6*6))
 
-    ####################################################################################
-    # Compute H and y in order to check post-fit residuals
-    ####################################################################################
-    threshold = moduleConfig.sensorUseThresh
-    CSSnormals = []
-    for j in range(8):
-        CSSnormals+=CSSOrientationList[j]
-
-    measMat = sunlineEKF.new_doubleArray(8*6)
-    obs = sunlineEKF.new_doubleArray(8)
-    yMeas = sunlineEKF.new_doubleArray(8)
-    numObs = sunlineEKF.new_intArray(1)
-
-    for i in range(8*6):
-        sunlineEKF.doubleArray_setitem(measMat, i, 0.)
-    for i in range(8):
-        sunlineEKF.doubleArray_setitem(obs, i, 0.0)
-        sunlineEKF.doubleArray_setitem(yMeas, i, 0.0)
-
-    ytest = np.zeros([SimHalfLength, 9])
-    Htest = np.zeros([SimHalfLength, 49])
-    PostFitRes = np.zeros([2*SimHalfLength+1, 9])
-
-    for i in range(1,SimHalfLength):
-        ytest[i,0] = stateLog[i,0]
-        Htest[i,0] = stateLog[i,0]
-        PostFitRes[i, 0] = stateLog[i, 0]
-
-        sunlineEKF.sunlineHMatrixYMeas(stateLog[i-1,1:7].tolist(), 8, dotList, threshold, CSSnormals, CSSBias, obs, yMeas, numObs, measMat)
-        yMeasOut = []
-        HOut = []
-        for j in range(8*6):
-            HOut.append(sunlineEKF.doubleArray_getitem(measMat, j))
-        for j in range(8):
-            yMeasOut.append(sunlineEKF.doubleArray_getitem(yMeas, j))
-
-        ytest[i,1:9] = np.array(yMeasOut)
-        Htest[i,1:49] = np.array(HOut)
-        PostFitRes[i,1:9] = ytest[i,1:9] - np.dot(Htest[i,1:49].reshape([8,6]), stateErrorLog[i,1:7])
 
     for i in range(6):
         if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
@@ -773,49 +733,11 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + SimHalfLength+1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
+    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", range(6))
+    postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", range(8))
+    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", range(6*6))
     stateErrorLog = unitTestSim.GetLogVariableData('SunlineEKF.x')
 
-
-    ####################################################################################
-    # Compute H and y in order to check post-fit residuals
-    ####################################################################################
-    threshold = moduleConfig.sensorUseThresh
-    CSSnormals = []
-    for j in range(8):
-        CSSnormals+=CSSOrientationList[j]
-
-    measMat = sunlineEKF.new_doubleArray(8*6)
-    obs = sunlineEKF.new_doubleArray(8)
-    yMeas = sunlineEKF.new_doubleArray(8)
-    numObs = sunlineEKF.new_intArray(1)
-
-    for i in range(8*6):
-        sunlineEKF.doubleArray_setitem(measMat, i, 0.)
-    for i in range(8):
-        sunlineEKF.doubleArray_setitem(obs, i, 0.0)
-        sunlineEKF.doubleArray_setitem(yMeas, i, 0.0)
-
-    ytest = np.zeros([SimHalfLength+1, 9])
-    Htest = np.zeros([SimHalfLength+1, 49])
-
-    for i in range(SimHalfLength,2*SimHalfLength):
-        ytest[i-SimHalfLength,0] = stateLog[i,0]
-        Htest[i-SimHalfLength,0] = stateLog[i,0]
-        PostFitRes[i, 0] = stateLog[i, 0]
-
-        sunlineEKF.sunlineHMatrixYMeas(stateLog[i-1,1:7].tolist(), 8, dotList, threshold, CSSnormals, CSSBias, obs, yMeas, numObs, measMat)
-        yMeasOut = []
-        HOut = []
-        for j in range(8*6):
-            HOut.append(sunlineEKF.doubleArray_getitem(measMat, j))
-        for j in range(8):
-            yMeasOut.append(sunlineEKF.doubleArray_getitem(yMeas, j))
-
-        ytest[i-SimHalfLength,1:9] = np.array(yMeasOut)
-        Htest[i-SimHalfLength,1:49] = np.array(HOut)
-        PostFitRes[i,1:9] = ytest[i-SimHalfLength,1:9] - np.dot(Htest[i-SimHalfLength,1:49].reshape([8,6]), stateErrorLog[i,1:7])
 
     for i in range(6):
         if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
@@ -829,7 +751,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     target2 = np.array(testVector2+[0.,0.,0.])
     FilterPlots.StateErrorCovarPlot(stateErrorLog, covarLog, show_plots)
     FilterPlots.StatesVsTargets(target1, target2, stateLog, show_plots)
-    FilterPlots.PostFitResiduals(PostFitRes, moduleConfig.qObsVal, show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, show_plots)
 
     # print out success message if no error were found
     if testFailCount == 0:

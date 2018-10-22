@@ -64,12 +64,12 @@
 #         oe.Omega = 48.2 * macros.D2R
 #         oe.omega = 347.8 * macros.D2R
 #         oe.f = 30 * macros.D2R
-#         mu = self.masterSim.DynModels.gravFactory.gravBodies['earth'].mu
+#         mu = self.masterSim.get_DynModel().gravFactory.gravBodies['earth'].mu
 #         rN, vN = orbitalMotion.elem2rv(mu, oe)
-#         self.masterSim.DynModels.scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
-#         self.masterSim.DynModels.scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
-#         self.masterSim.DynModels.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-#         self.masterSim.DynModels.scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+#         self.masterSim.get_DynModel().scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
+#         self.masterSim.get_DynModel().scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
+#         self.masterSim.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
+#         self.masterSim.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 # ~~~~~~~~~~~~~
 # Because the eccentricity of the orbit (`oe.e`) is greater than 1, the orbit is not closed and therefore is hyperbolic.
 #
@@ -109,9 +109,9 @@
 # ~~~~~~~~~~~~~{.py}
 #     def SetVelocityPointGuidance(self, SimBase):
 #         self.velocityPointData.outputDataName = "referenceOut"
-#         self.velocityPointData.inputNavDataName = SimBase.DynModels.simpleNavObject.outputTransName
-#         self.velocityPointData.inputCelMessName = SimBase.DynModels.gravFactory.gravBodies['earth'].bodyInMsgName[:-12]
-#         self.velocityPointData.mu = SimBase.DynModels.gravFactory.gravBodies['earth'].mu
+#         self.velocityPointData.inputNavDataName = SimBase.get_DynModel().simpleNavObject.outputTransName
+#         self.velocityPointData.inputCelMessName = SimBase.get_DynModel().gravFactory.gravBodies['earth'].bodyInMsgName[:-12]
+#         self.velocityPointData.mu = SimBase.get_DynModel().gravFactory.gravBodies['earth'].mu
 # ~~~~~~~~~~~~~
 # The only additions required in BSK_FSW.py are to create a new task specific for velocity pointing:
 # ~~~~~~~~~~~~~{.py}
@@ -164,6 +164,7 @@ from BSK_masters import BSKSim, BSKScenario
 # Import plotting files for your scenario
 sys.path.append(path + '/../plotting')
 import BSK_Plotting as BSK_plt
+import BSK_Dynamics, BSK_Fsw
 
 sys.path.append(path + '/../../scenarios')
 import scenarioAttGuideHyperbolic as scene_plt
@@ -188,12 +189,12 @@ class scenario_VelocityPointing(BSKScenario):
         oe.Omega = 48.2 * macros.D2R
         oe.omega = 347.8 * macros.D2R
         oe.f = 30 * macros.D2R
-        mu = self.masterSim.DynModels.gravFactory.gravBodies['earth'].mu
+        mu = self.masterSim.get_DynModel().gravFactory.gravBodies['earth'].mu
         rN, vN = orbitalMotion.elem2rv(mu, oe)
-        self.masterSim.DynModels.scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
-        self.masterSim.DynModels.scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
-        self.masterSim.DynModels.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-        self.masterSim.DynModels.scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+        self.masterSim.get_DynModel().scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
+        self.masterSim.get_DynModel().scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
+        self.masterSim.get_DynModel().scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
+        self.masterSim.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
         # Safe orbit elements for postprocessing
         self.oe = oe
@@ -202,25 +203,25 @@ class scenario_VelocityPointing(BSKScenario):
     def log_outputs(self):
         print '%s: log_outputs' % self.name
         # Dynamics process outputs
-        samplingTime = self.masterSim.DynModels.processTasksTimeStep
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.DynModels.simpleNavObject.outputAttName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.DynModels.simpleNavObject.outputTransName, samplingTime)
+        samplingTime = self.masterSim.get_DynModel().processTasksTimeStep
+        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().simpleNavObject.outputAttName, samplingTime)
+        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().simpleNavObject.outputTransName, samplingTime)
 
         # FSW process outputs
-        samplingTime = self.masterSim.FSWModels.processTasksTimeStep
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.trackingErrorData.outputDataName, samplingTime)
-        self.masterSim.TotalSim.logThisMessage(self.masterSim.FSWModels.mrpFeedbackRWsData.outputDataName, samplingTime)
+        samplingTime = self.masterSim.get_FswModel().processTasksTimeStep
+        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().trackingErrorData.outputDataName, samplingTime)
+        self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().mrpFeedbackRWsData.outputDataName, samplingTime)
 
     def pull_outputs(self, showPlots):
         print '%s: pull_outputs' % self.name
         # Dynamics process outputs
-        r_BN_N = self.masterSim.pullMessageLogData(self.masterSim.DynModels.simpleNavObject.outputTransName + ".r_BN_N", range(3))
-        v_BN_N = self.masterSim.pullMessageLogData(self.masterSim.DynModels.simpleNavObject.outputTransName + ".v_BN_N", range(3))
+        r_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", range(3))
+        v_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", range(3))
 
         # FSW process outputs
-        sigma_BR = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.trackingErrorData.outputDataName + ".sigma_BR", range(3))
-        omega_BR_B = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.trackingErrorData.outputDataName + ".omega_BR_B", range(3))
-        Lr = self.masterSim.pullMessageLogData(self.masterSim.FSWModels.mrpFeedbackRWsData.outputDataName + ".torqueRequestBody", range(3))
+        sigma_BR = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".sigma_BR", range(3))
+        omega_BR_B = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", range(3))
+        Lr = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().mrpFeedbackRWsData.outputDataName + ".torqueRequestBody", range(3))
 
         # Plot results
         BSK_plt.clear_all_plots()
@@ -229,8 +230,8 @@ class scenario_VelocityPointing(BSKScenario):
         scene_plt.plot_control_torque(timeLineSet, Lr)
         scene_plt.plot_rate_error(timeLineSet, omega_BR_B)
         scene_plt.plot_orbit(self.oe,
-                             self.masterSim.DynModels.gravFactory.gravBodies['earth'].mu,
-                             self.masterSim.DynModels.gravFactory.gravBodies['earth'].radEquator,
+                             self.masterSim.get_DynModel().gravFactory.gravBodies['earth'].mu,
+                             self.masterSim.get_DynModel().gravFactory.gravBodies['earth'].radEquator,
                              r_BN_N, v_BN_N)
         figureList = {}
         if showPlots:
@@ -242,9 +243,11 @@ class scenario_VelocityPointing(BSKScenario):
 
         return figureList
 def run(showPlots):
-
     # Instantiate base simulation
     TheBSKSim = BSKSim()
+    TheBSKSim.set_DynModel(BSK_Dynamics)
+    TheBSKSim.set_FswModel(BSK_Fsw)
+    TheBSKSim.initInterfaces()
 
     # Configure a scenario in the base simulation
     TheScenario = scenario_VelocityPointing(TheBSKSim)
