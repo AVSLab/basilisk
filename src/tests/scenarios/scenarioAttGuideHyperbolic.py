@@ -33,14 +33,18 @@
 import inspect
 import os
 import numpy as np
+import sys
 
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import MRP_Feedback, attTrackingError, fswMessages, velocityPoint
 from Basilisk.simulation import extForceTorque, simple_nav, spacecraftPlus
-from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody
-# general support file with common unit test functions
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport, vizSupport
 
+# The path to the location of Basilisk
+# Used to get the location of supporting data.
+from Basilisk import __path__
+bskPath = __path__[0]
+vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
 
 def plot_track_error_norm(timeLineSet, dataSigmaBR):
     plt.figure(1)
@@ -240,8 +244,7 @@ def run(show_plots, useAltBodyFrame):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')
-    # The Viz only support 'earth', 'mars', or 'sun'
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, 'earth')
 
     #
     #   setup the simulation tasks/objects

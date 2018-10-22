@@ -44,7 +44,7 @@ except ImportError:
         youveBeenWarned = True
 
 
-def enableUnityVisualization(scSim, simTaskName, dynProcess, processName, fileName, bodyName = 'none'):
+def enableUnityVisualization(scSim, simTaskName, processName, fileName, bodyName = 'none'):
     if not vizFound:
         return
     vizMessager = vizInterface.VizInterface()

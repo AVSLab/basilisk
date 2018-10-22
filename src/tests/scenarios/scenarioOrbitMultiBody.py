@@ -28,6 +28,7 @@
 # Creation Date:  Dec. 8, 2016
 #
 
+import sys
 import os
 import numpy as np
 from datetime import datetime
@@ -44,9 +45,15 @@ from Basilisk.utilities import astroFunctions
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus, spice_interface
 from Basilisk.utilities import simIncludeGravBody
+
+# attempt to import vizard
+from Basilisk.utilities import vizSupport
+
 from Basilisk import pyswice
 from Basilisk import __path__
 bskPath = __path__[0]
+# Used to get the location of supporting data.
+vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
 
 
 ## \defgroup Tutorials_1_3
@@ -261,8 +268,7 @@ def run(show_plots, scCase):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # if this scenario is to interface with the BSK Unity Viz, uncomment the following lines
-    outputArchiveName = "scenarioOrbitMultiBody1.bin"
-    unitTestSupport.enableUnityVisualization(scSim,simTaskName, dynProcess, simProcessName, outputArchiveName, 'earth')  
+    #vizSupport.enableUnityVisualization(scSim,simTaskName, simProcessName, vizFile, 'earth')  
 
     #
     #   setup the simulation tasks/objects

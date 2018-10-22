@@ -27,7 +27,7 @@
 # Author:   Hanspeter Schaub
 # Creation Date:  Sept. 13, 2018
 #
-
+import sys
 import os
 import numpy as np
 
@@ -53,6 +53,14 @@ from Basilisk.fswAlgorithms import attTrackingError
 from Basilisk.fswAlgorithms import fswMessages
 
 
+# attempt to import vizard
+from Basilisk.utilities import vizSupport
+
+# The path to the location of Basilisk
+# Used to get the location of supporting data.
+from Basilisk import __path__
+bskPath = __path__[0]
+vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
 
 ## \defgroup Tutorials_2_0_4
 ##   @{
@@ -210,8 +218,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')
-    # The Viz only support 'earth', 'mars', or 'sun'
+    # vizSupport.enableVisualization(scSim, simTaskName, simProcessName, vizFile, 'earth')
 
     #
     #   setup the simulation tasks/objects

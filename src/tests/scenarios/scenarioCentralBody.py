@@ -27,6 +27,7 @@
 # Creation Date:  Jul 11 2018
 #
 
+import sys
 import os
 import numpy as np
 
@@ -45,7 +46,12 @@ from Basilisk.utilities import planetStates
 from numpy import array
 from numpy.linalg import norm
 
+# attempt to import vizard
+from Basilisk.utilities import vizSupport
 
+# The path to the location of Basilisk
+# Used to get the location of supporting data.
+vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
 
 ## \defgroup Tutorials_1_4
 ## @{
@@ -131,8 +137,7 @@ def run(show_plots, useCentral):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')
-    # The Viz only support 'earth', 'mars', or 'sun'
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, 'earth')
 
     #
     #   setup the simulation tasks/objects

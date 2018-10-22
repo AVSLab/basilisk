@@ -29,7 +29,7 @@
 # Creation Date:  Jan. 7, 2017
 #
 
-
+import sys
 import os
 import numpy as np
 
@@ -60,6 +60,14 @@ from Basilisk.utilities import fswSetupRW
 # import message declarations
 from Basilisk.fswAlgorithms import fswMessages
 
+# attempt to import vizard
+from Basilisk.utilities import vizSupport
+
+# The path to the location of Basilisk
+# Used to get the location of supporting data.
+from Basilisk import __path__
+bskPath = __path__[0]
+vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
 
 def plot_attitude_error(timeData, dataSigmaBR):
     plt.figure(1)
@@ -330,8 +338,7 @@ def run(show_plots, simCase):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')
-    # The Viz only support 'earth', 'mars', or 'sun'
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, 'earth')
 
     #
     #   setup the simulation tasks/objects

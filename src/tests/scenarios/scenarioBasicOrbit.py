@@ -43,7 +43,7 @@ from Basilisk.simulation import spacecraftPlus
 # general support file with common unit test functions
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
-                                simIncludeGravBody, unitTestSupport)
+                                simIncludeGravBody, unitTestSupport, vizSupport)
 
 
 ## \defgroup Tutorials_1_0
@@ -342,8 +342,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # unitTestSupport.enableUnityVisualization(scSim, simTaskName, dynProcess, simProcessName, vizFile, 'earth')
-    # # The Viz only support 'earth', 'mars', or 'sun'
+    #vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, 'earth')
 
     #
     #   setup the simulation tasks/objects
@@ -376,8 +375,6 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
             simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt',
                                                 planet.spherHarm, 2)
     mu = planet.mu
-    # outputArchiveFilename = "scenarioBasicOrbit1.bin"
-    unitTestSupport.enableUnityVisualization(scSim, simTaskName, dynProcess, simProcessName, vizFile, planetCase.lower())
 
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
