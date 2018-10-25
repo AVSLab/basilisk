@@ -28,6 +28,9 @@ from Basilisk.fswAlgorithms import inertialUKF  # import the module that is to b
 from Basilisk.utilities import macros
 from Basilisk.simulation import sim_model
 
+from Basilisk.utilities import simIncludeRW
+from Basilisk.simulation import reactionWheelStateEffector, spacecraftPlus
+
 
 def setupFilterData(filterObject):
     filterObject.navStateOutMsgName = "inertial_state_estimate"
@@ -87,6 +90,8 @@ def all_inertial_kfTest(show_plots):
     [testResults, testMessage] = test_StatePropRateInertialAttitude(show_plots)
     assert testResults < 1, testMessage
     [testResults, testMessage] = test_StateUpdateInertialAttitude(show_plots)
+    assert testResults < 1, testMessage
+    [testResults, testMessage] = test_StateUpdateRWInertialAttitude(show_plots)
     assert testResults < 1, testMessage
 
 def test_StateUpdateInertialAttitude(show_plots):
@@ -236,6 +241,7 @@ def test_StateUpdateInertialAttitude(show_plots):
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
+
 def test_StatePropInertialAttitude(show_plots):
 
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -309,6 +315,165 @@ def test_StatePropInertialAttitude(show_plots):
     # print out success message if no error were found
     if testFailCount == 0:
         print "PASSED: " + moduleWrap.ModelTag + " state propagation"
+
+    # return fail count and join into a single string all messages in the list
+    # testMessage
+    return [testFailCount, ''.join(testMessages)]
+
+def test_StateUpdateRWInertialAttitude(show_plots):
+    # The __tracebackhide__ setting influences pytest showing of tracebacks:
+    # the mrp_steering_tracking() function will not be shown unless the
+    # --fulltrace command line option is specified.
+    __tracebackhide__ = True
+
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
+
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.TotalSim.terminateSimulation()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Construct algorithm and associated C++ container
+    moduleConfig = inertialUKF.InertialUKFConfig()
+    moduleWrap = alg_contain.AlgContain(moduleConfig,
+                                        inertialUKF.Update_inertialUKF,
+                                        inertialUKF.SelfInit_inertialUKF,
+                                        inertialUKF.CrossInit_inertialUKF,
+                                        inertialUKF.Reset_inertialUKF)
+    moduleWrap.ModelTag = "InertialUKF"
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+
+    setupFilterData(moduleConfig)
+
+    vehicleConfigOut = inertialUKF.VehicleConfigFswMsg()
+    inputMessageSize = vehicleConfigOut.getStructSize()
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.massPropsInMsgName,
+                                          inputMessageSize,
+                                          2)  # number of buffers (leave at 2 as default, don't make zero)
+
+    I = [1000., 0., 0.,
+         0., 800., 0.,
+         0., 0., 800.]
+    vehicleConfigOut.ISCPntB_B = I
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.massPropsInMsgName,
+                                          inputMessageSize,
+                                          0,
+                                          vehicleConfigOut)
+
+    rwArrayConfigOut = inertialUKF.RWArrayConfigFswMsg()
+    msgSize = rwArrayConfigOut.getStructSize()
+    rwArrayConfigOut.numRW = 3
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.rwParamsInMsgName,
+                                          msgSize,
+                                          2)  # number of buffers (leave at 2 as default, don't make zero)
+
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwParamsInMsgName,
+                                          msgSize,
+                                          0,
+                                          rwArrayConfigOut)
+
+    stMessage1 = inertialUKF.STAttFswMsg()
+    stMessage1.MRP_BdyInrtl = [0.3, 0.4, 0.5]
+
+    inputMessageSize = stMessage1.getStructSize()
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.STDatasStruct.STMessages[0].stInMsgName,
+                                          inputMessageSize,
+                                          2)  # number of buffers (leave at 2 as default, don't make zero)
+
+    stMessage2 = inertialUKF.STAttFswMsg()
+    stMessage2.MRP_BdyInrtl = [0.3, 0.4, 0.5]
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.STDatasStruct.STMessages[1].stInMsgName,
+                                          inputMessageSize,
+                                          2)
+    #    stateTarget = testVector.tolist()
+    #    stateTarget.extend([0.0, 0.0, 0.0])
+    #    moduleConfig.state = [0.7, 0.7, 0.0]
+    unitTestSim.AddVariableForLogging('InertialUKF.covar', testProcessRate * 10, 0, 35, 'double')
+    unitTestSim.AddVariableForLogging('InertialUKF.state', testProcessRate * 10, 0, 5, 'double')
+
+    unitTestSim.InitializeSimulation()
+
+    for i in range(20000):
+        if i > 20:
+            stMessage1.timeTag = int(i * 0.5 * 1E9)
+            stMessage2.timeTag = int(i * 0.5 * 1E9)
+
+            unitTestSim.TotalSim.WriteMessageData(moduleConfig.STDatasStruct.STMessages[0].stInMsgName,
+                                                  inputMessageSize,
+                                                  unitTestSim.TotalSim.CurrentNanos,
+                                                  stMessage1)
+            unitTestSim.TotalSim.WriteMessageData(moduleConfig.STDatasStruct.STMessages[1].stInMsgName,
+                                                  inputMessageSize,
+                                                  unitTestSim.TotalSim.CurrentNanos,
+                                                  stMessage2)
+        unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * 0.5))
+        unitTestSim.ExecuteSimulation()
+
+    covarLog = unitTestSim.GetLogVariableData('InertialUKF.covar')
+    stateLog = unitTestSim.GetLogVariableData('InertialUKF.state')
+
+    for i in range(3):
+        if (covarLog[-1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i]):
+            testFailCount += 1
+            testMessages.append("Covariance update with RW failure")
+        if (abs(stateLog[-1, i + 1] - stMessage1.MRP_BdyInrtl[i]) > 1.0E-5):
+            print abs(stateLog[-1, i + 1] - stMessage1.MRP_BdyInrtl[i])
+            testFailCount += 1
+            testMessages.append("State update with RW failure")
+
+    stMessage1.MRP_BdyInrtl = [1.2, 0.0, 0.0]
+    stMessage2.MRP_BdyInrtl = [1.2, 0.0, 0.0]
+
+    for i in range(20000):
+        if i > 20:
+            stMessage1.timeTag = int((i + 20000) * 0.5 * 1E9)
+            stMessage2.timeTag = int((i + 20000) * 0.5 * 1E9)
+            unitTestSim.TotalSim.WriteMessageData(moduleConfig.STDatasStruct.STMessages[0].stInMsgName,
+                                                  inputMessageSize,
+                                                  unitTestSim.TotalSim.CurrentNanos,
+                                                  stMessage1)
+            unitTestSim.TotalSim.WriteMessageData(moduleConfig.STDatasStruct.STMessages[1].stInMsgName,
+                                                  inputMessageSize,
+                                                  unitTestSim.TotalSim.CurrentNanos,
+                                                  stMessage2)
+        unitTestSim.ConfigureStopTime(macros.sec2nano((i + 20000 + 1) * 0.5))
+        unitTestSim.ExecuteSimulation()
+
+    covarLog = unitTestSim.GetLogVariableData('InertialUKF.covar')
+    stateLog = unitTestSim.GetLogVariableData('InertialUKF.state')
+    for i in range(3):
+        if (covarLog[-1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i]):
+            testFailCount += 1
+            testMessages.append("Covariance update large failure")
+    plt.figure()
+    for i in range(moduleConfig.numStates):
+        plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, i + 1])
+
+    plt.figure()
+    for i in range(moduleConfig.numStates):
+        plt.plot(covarLog[:, 0] * 1.0E-9, covarLog[:, i * moduleConfig.numStates + i + 1])
+
+    if (show_plots):
+        plt.show()
+        plt.close('all')
+
+    # print out success message if no error were found
+    if testFailCount == 0:
+        print "PASSED: " + moduleWrap.ModelTag + " state update with RW"
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -411,3 +576,4 @@ def test_StatePropRateInertialAttitude(show_plots):
 
 if __name__ == "__main__":
     all_inertial_kfTest(False)
+
