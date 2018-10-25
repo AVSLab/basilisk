@@ -62,7 +62,6 @@ def enableUnityVisualization(scSim, simTaskName, processName, fileName, bodyName
                                                                   "pluto barycenter_planet_data",
                                                                   "saturn barycenter_planet_data"])
     vizMessager.planetNames = vizInterface.StringVector(["earth", "mars", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
-   # vizMessager.dynModels.SpiceObject.planetNames = spice_interface.StringVector(["earth", "mars", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
     #vizMessager.numRW = 4
     vizMessager.protoFilename = fileName
     VizTaskName = "VizTask"
