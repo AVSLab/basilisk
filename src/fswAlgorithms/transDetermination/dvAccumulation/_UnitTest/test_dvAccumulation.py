@@ -7,6 +7,9 @@
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import dvAccumulation, fswMessages
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> [BSK-TBD] Unit tests had broken at some point.  Fixed
 from Basilisk.simulation import simFswInterfaceMessages
 from numpy import random
 
@@ -22,11 +25,14 @@ def generateAccData():
 
     return accPktList
 
+<<<<<<< HEAD
 =======
 from numpy import random
 
 
 >>>>>>> [BSK-TBD] Unit test updates for FSW modules
+=======
+>>>>>>> [BSK-TBD] Unit tests had broken at some point.  Fixed
 def test_dv_accumulation():
     """ Test dvAccumulation. """
     [testResults, testMessage] = dvAccumulationTestFunction()
@@ -58,9 +64,13 @@ def dvAccumulationTestFunction():
     moduleConfig.accPktInMsgName = "inputs_acceleration_packets"
     moduleConfig.outputNavName = "output_navigation_name"
 <<<<<<< HEAD
+<<<<<<< HEAD
     moduleConfig.outputData = simFswInterfaceMessages.NavTransIntMsg()
 =======
 >>>>>>> [BSK-TBD] Unit test updates for FSW modules
+=======
+    moduleConfig.outputData = simFswInterfaceMessages.NavTransIntMsg()
+>>>>>>> [BSK-TBD] Unit tests had broken at some point.  Fixed
 
     # This calls the algContain to setup the selfInit, crossInit, update, and reset
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
@@ -72,6 +82,7 @@ def dvAccumulationTestFunction():
     # Create the input message.
     inputAccData = fswMessages.AccDataFswMsg()
 
+<<<<<<< HEAD
 <<<<<<< HEAD
     # Set this as the packet data in the acceleration data
     inputAccData.accPkts = generateAccData()
@@ -90,6 +101,10 @@ def dvAccumulationTestFunction():
     # Set this as the packet data in the acceleration data
     inputAccData.accPkts = accPktList
 >>>>>>> [BSK-TBD] Unit test updates for FSW modules
+=======
+    # Set this as the packet data in the acceleration data
+    inputAccData.accPkts = generateAccData()
+>>>>>>> [BSK-TBD] Unit tests had broken at some point.  Fixed
 
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.accPktInMsgName, inputAccData)
 
@@ -106,6 +121,7 @@ def dvAccumulationTestFunction():
     # Create the input message again to simulate multiple acceleration inputs.
     inputAccData = fswMessages.AccDataFswMsg()
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     # Set this as the packet data in the acceleration data. Test the module with different inputs.
     inputAccData.accPkts = generateAccData()
@@ -119,6 +135,11 @@ def dvAccumulationTestFunction():
     # Set this as the packet data in the acceleration data
     inputAccData.accPkts = accPktList
 >>>>>>> [BSK-TBD] Unit test updates for FSW modules
+=======
+
+    # Set this as the packet data in the acceleration data. Test the module with different inputs.
+    inputAccData.accPkts = generateAccData()
+>>>>>>> [BSK-TBD] Unit tests had broken at some point.  Fixed
 
     # Write this message
     msgSize = inputAccData.getStructSize()
@@ -130,6 +151,7 @@ def dvAccumulationTestFunction():
 
     # This doesn't work if only 1 number is passed in as the second argument, but we don't need the second
 <<<<<<< HEAD
+<<<<<<< HEAD
     outputNavMsgData = unitTestSim.GetLogVariableData('dvAccumulation.outputData.vehAccumDV')
 
     print(outputNavMsgData)
@@ -138,6 +160,11 @@ def dvAccumulationTestFunction():
 
     # print(outputCrtlData)
 >>>>>>> [BSK-TBD] Unit test updates for FSW modules
+=======
+    outputNavMsgData = unitTestSim.GetLogVariableData('dvAccumulation.outputData.vehAccumDV')
+
+    print(outputNavMsgData)
+>>>>>>> [BSK-TBD] Unit tests had broken at some point.  Fixed
 
     trueVector = [[ -8.85714792e-03,  -1.49277412e-03,   8.25634831e-03],
                  [  -8.85714792e-03,  -1.49277412e-03,   8.25634831e-03],
@@ -148,16 +175,22 @@ def dvAccumulationTestFunction():
 
     # At each timestep, make sure the vehicleConfig values haven't changed from the initial values
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> [BSK-TBD] Unit tests had broken at some point.  Fixed
     # testFailCount, testMessages = unitTestSupport.compareArrayND(trueVector, outputNavMsgData,
     #                                                              accuracy,
     #                                                              "dvAccumulation output",
     #                                                              2, testFailCount, testMessages)
+<<<<<<< HEAD
 =======
     testFailCount, testMessages = unitTestSupport.compareArrayND(trueVector, outputCrtlData,
                                                                  accuracy,
                                                                  "dvAccumulation output",
                                                                  2, testFailCount, testMessages)
 >>>>>>> [BSK-TBD] Unit test updates for FSW modules
+=======
+>>>>>>> [BSK-TBD] Unit tests had broken at some point.  Fixed
 
     if testFailCount == 0:
         print("Passed")

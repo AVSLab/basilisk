@@ -7,9 +7,13 @@
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import ephem_nav_converter
 <<<<<<< HEAD
+<<<<<<< HEAD
 from Basilisk.simulation import simFswInterfaceMessages
 =======
 >>>>>>> [BSK-TBD] Unit test updates for FSW modules
+=======
+from Basilisk.simulation import simFswInterfaceMessages
+>>>>>>> [BSK-TBD] Unit tests had broken at some point.  Fixed
 from Basilisk.utilities import astroFunctions
 
 
@@ -44,9 +48,13 @@ def ephemNavConverterTestFunction():
     moduleConfig.ephInMsgName = "input_eph_name"
     moduleConfig.stateOutMsgName = "output_state_name"
 <<<<<<< HEAD
+<<<<<<< HEAD
     moduleConfig.outputState = simFswInterfaceMessages.NavTransIntMsg()
 =======
 >>>>>>> [BSK-TBD] Unit test updates for FSW modules
+=======
+    moduleConfig.outputState = simFswInterfaceMessages.NavTransIntMsg()
+>>>>>>> [BSK-TBD] Unit tests had broken at some point.  Fixed
 
     # This calls the algContain to setup the selfInit, crossInit, update, and reset
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
