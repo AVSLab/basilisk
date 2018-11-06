@@ -33,16 +33,6 @@
  * @{
  */
 
-/*! Structure to gather the mass properties if applicable */
-typedef struct {
-    int dynOn;            /*!< [-] Test for the presence of the inertia tensor in the message. 0: not using dynamics, 1: using dynamics*/
-    
-    char vehConfigMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Mass Proper message*/
-    VehicleConfigFswMsg vehMassData;/*!< [-] CSS sensor data read in from message bus*/
-    int32_t vehConfigMsgId;     /*!< -- ID for the outgoing body estimate message*/
-    double ISCPntB_B_inv[SKF_N_STATES_HALF*SKF_N_STATES_HALF];       /*!< [-] current vector of the b frame used to make frame */
-}FilterDynamics;
-
 /*!@brief Data structure for CSS Switch unscented kalman filter estimator. Please see the _Documentation folder for details on how this Kalman Filter Functions.
  */
 typedef struct {
@@ -90,7 +80,6 @@ typedef struct {
     double cssNHat_B[MAX_NUM_CSS_SENSORS*3];     /*!< [-] CSS normal vectors converted over to body*/
     double CBias[MAX_NUM_CSS_SENSORS];       /*!< [-] CSS individual calibration coefficients */
 
-    FilterDynamics dynamics;  /*!< [-] Container for dynamics content*/
     uint32_t numActiveCss;   /*!< -- Number of currently active CSS sensors*/
     uint32_t numCSSTotal;    /*!< [-] Count on the number of CSS we have on the spacecraft*/
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
@@ -115,7 +104,7 @@ extern "C" {
 		uint64_t moduleID);
 	void sunlineSuKFTimeUpdate(SunlineSuKFConfig *ConfigData, double updateTime);
     void sunlineSuKFMeasUpdate(SunlineSuKFConfig *ConfigData, double updateTime);
-	void sunlineStateProp(double *stateInOut,  double *b_vec, FilterDynamics dynamics, double dt);
+	void sunlineStateProp(double *stateInOut,  double *b_vec, double dt);
     void sunlineSuKFMeasModel(SunlineSuKFConfig *ConfigData);
     void sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double *dcm);
     void sunlineSuKFSwitch(double *bVec_B, double *states, double *covar);

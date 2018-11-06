@@ -32,7 +32,7 @@ splitPath = path.split('fswAlgorithms')
 import matplotlib.pyplot as plt
 
 
-def StateCovarPlot(x, Pflat, testNum, show_plots):
+def StateCovarPlot(x, Pflat, show_plots):
 
     numStates = len(x[0,:])-1
 
@@ -82,14 +82,14 @@ def StateCovarPlot(x, Pflat, testNum, show_plots):
     plt.title('Third rate component')
     plt.grid()
 
-    unitTestSupport.writeFigureLaTeX('StatesPlot' + str(testNum), 'State error and covariance', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+    unitTestSupport.writeFigureLaTeX('StatesPlot', 'State error and covariance', plt, 'height=0.9\\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
     plt.close()
 
 
 
-def PostFitResiduals(Res, noise, testNum, show_plots):
+def PostFitResiduals(Res, noise, show_plots):
 
     MeasNoise = np.zeros(len(Res[:,0]))
     t= np.zeros(len(Res[:,0]))
@@ -169,7 +169,7 @@ def PostFitResiduals(Res, noise, testNum, show_plots):
     plt.title('Eight CSS')
     plt.grid()
 
-    unitTestSupport.writeFigureLaTeX('PostFit' + str(testNum), 'Post Fit Residuals', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+    unitTestSupport.writeFigureLaTeX('PostFit' , 'Post Fit Residuals', plt, 'height=0.9\\textwidth, keepaspectratio', path)
 
     if show_plots:
         plt.show()

@@ -40,7 +40,6 @@ def setupFilterData(filterObject):
     filterObject.filtDataOutMsgName = "sunline_filter_data"
     filterObject.cssDataInMsgName = "css_sensors_data"
     filterObject.cssConfigInMsgName = "css_config_data"
-    filterObject.dynamics.vehConfigMsgName = 'vehicle_config_data'
 
     filterObject.alpha = 0.02
     filterObject.beta = 2.0
@@ -72,15 +71,10 @@ def test_functions_ukf(show_plots):
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 
-@pytest.mark.parametrize("usingDynamics", [
-    (True),
-    (False)
-])
-
-def test_all_sunline_kf(show_plots, usingDynamics):
-    [testResults, testMessage] = StatePropSunLine(show_plots, usingDynamics)
+def test_all_sunline_kf(show_plots):
+    [testResults, testMessage] = StatePropSunLine(show_plots)
     assert testResults < 1, testMessage
-    [testResults, testMessage] = StateUpdateSunLine(show_plots, usingDynamics)
+    [testResults, testMessage] = StateUpdateSunLine(show_plots)
     assert testResults < 1, testMessage
 
 def sunline_utilities_test(show_plots):
@@ -346,7 +340,7 @@ def sunline_utilities_test(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def StateUpdateSunLine(show_plots, usingDynamics):
+def StateUpdateSunLine(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -402,20 +396,6 @@ def StateUpdateSunLine(show_plots, usingDynamics):
                                moduleConfig.cssConfigInMsgName,
                                cssConstelation)
     unitTestSim.TotalSim.logThisMessage('sunline_filter_data', testProcessRate)
-
-    if usingDynamics:
-        #   vehicleConfigData Message:
-        vehicleConfigOut = sunlineSuKF.VehicleConfigFswMsg()
-        inputMessageSize = vehicleConfigOut.getStructSize()
-        unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.dynamics.vehConfigMsgName,
-                                              inputMessageSize, 2)            # number of buffers (leave at 2 as default, don't make zero)
-        I = [1000., 0., 0.,
-             0., 800., 0.,
-             0., 0., 800.]
-        vehicleConfigOut.ISCPntB_B = I
-        unitTestSim.TotalSim.WriteMessageData(moduleConfig.dynamics.vehConfigMsgName,
-                                              inputMessageSize,
-                                              0, vehicleConfigOut)
 
     testVector = numpy.array([-0.7, 0.7, 0.0])
     inputData = cssComm.CSSArraySensorIntMsg()
@@ -490,8 +470,8 @@ def StateUpdateSunLine(show_plots, usingDynamics):
             testFailCount += 1
             testMessages.append("State update failure")
 
-    FilterPlots.StateCovarPlot(stateLog, covarLog, 'update_dyn' + str(usingDynamics), show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, 'update_dyn' + str(usingDynamics), show_plots)
+    FilterPlots.StateCovarPlot(stateLog, covarLog, show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, show_plots)
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -501,7 +481,7 @@ def StateUpdateSunLine(show_plots, usingDynamics):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def StatePropSunLine(show_plots, usingDynamics):
+def StatePropSunLine(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -527,22 +507,6 @@ def StatePropSunLine(show_plots, usingDynamics):
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "sunlineSuKF"
 
-    if usingDynamics:
-        #   vehicleConfigData Message:
-        moduleConfig.dynamics.vehConfigMsgName = 'vehicle_config_data'
-
-        vehicleConfigOut = sunlineSuKF.VehicleConfigFswMsg()
-        inputMessageSize = vehicleConfigOut.getStructSize()
-        unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.dynamics.vehConfigMsgName,
-                                              inputMessageSize, 2)            # number of buffers (leave at 2 as default, don't make zero)
-        I = [1000., 0., 0.,
-             0., 800., 0.,
-             0., 0., 800.]
-        vehicleConfigOut.ISCPntB_B = I
-        unitTestSim.TotalSim.WriteMessageData(moduleConfig.dynamics.vehConfigMsgName,
-                                              inputMessageSize,
-                                              0, vehicleConfigOut)
-
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
     
@@ -557,8 +521,8 @@ def StatePropSunLine(show_plots, usingDynamics):
     postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", range(8))
     covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", range(5*5))
 
-    FilterPlots.StateCovarPlot(stateLog, covarLog, 'prop_dyn' + str(usingDynamics), show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, 'prop_dyn' + str(usingDynamics), show_plots)
+    FilterPlots.StateCovarPlot(stateLog, covarLog,show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, show_plots)
 
     for i in range(5):
         if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > 1.0E-10):
