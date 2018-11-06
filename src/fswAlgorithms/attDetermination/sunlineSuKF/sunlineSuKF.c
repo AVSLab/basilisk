@@ -35,7 +35,6 @@ void SelfInit_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t moduleID)
 {
     
     mSetZero(ConfigData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
-    
     /*! Begin method steps */
     /*! - Create output message for module */
 	ConfigData->navStateOutMsgId = CreateNewMessage(ConfigData->navStateOutMsgName,
@@ -149,7 +148,6 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
     mTranspose(ConfigData->sQnoise, ConfigData->numStates,
                ConfigData->numStates, ConfigData->sQnoise);
     
-
     return;
 }
 
@@ -166,6 +164,7 @@ void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
     double yBar[MAX_N_CSS_MEAS];
     double tempYVec[MAX_N_CSS_MEAS];
     double sunheading_hat[3];
+    double states_BN[SKF_N_STATES_SWITCH];
     int i;
     uint64_t ClockTime;
     uint32_t ReadSize;
@@ -229,12 +228,16 @@ void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
 	WriteMessage(ConfigData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
 		&(ConfigData->outputSunline), moduleID);
     
+    /* Switch the rates back to omega_BN instead of oemga_SB */
+    vCopy(ConfigData->state, SKF_N_STATES_SWITCH, states_BN);
+    vScale(-1, &(states_BN[3]), 2, &(states_BN[3]));
+    
     /*! - Populate the filter states output buffer and write the output message*/
     sunlineDataOutBuffer.timeTag = ConfigData->timeTag;
     sunlineDataOutBuffer.numObs = ConfigData->numObs;
     memmove(sunlineDataOutBuffer.covar, ConfigData->covar,
             SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH*sizeof(double));
-    memmove(sunlineDataOutBuffer.state, ConfigData->state, SKF_N_STATES_SWITCH*sizeof(double));
+    memmove(sunlineDataOutBuffer.state, states_BN, SKF_N_STATES_SWITCH*sizeof(double));
     memmove(sunlineDataOutBuffer.postFitRes, ConfigData->postFits, MAX_N_CSS_MEAS*sizeof(double));
     WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(SunlineFilterFswMsg),
                  &sunlineDataOutBuffer, moduleID);
@@ -250,22 +253,26 @@ void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
 void sunlineStateProp(double *stateInOut, double *b_Vec, double dt)
 {
 
-    double propagatedVel[3];
+    double propagatedVel[SKF_N_STATES_HALF];
     double omegaCrossd[SKF_N_STATES_HALF];
-    double omega[SKF_N_STATES_HALF] = {0, stateInOut[3], stateInOut[4]};
-    double dcm_BS[SKF_N_STATES_HALF*SKF_N_STATES_HALF];
-    
+    double omega_tilde_BN_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double omega_BN_S[SKF_N_STATES_HALF] = {0, -stateInOut[3], -stateInOut[4]};
+    double omega_BN_B[SKF_N_STATES_HALF];
+    double I_inv_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double I_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double dcm_BS[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double dcm_SB[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+
     mSetZero(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
-    
-    sunlineSuKFComputeDCM_BS(stateInOut, b_Vec, &dcm_BS[0]);
-//    mTranspose(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm_BS);
-    mMultV(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, omega, omega);
+
+    sunlineSuKFComputeDCM_BS(stateInOut, b_Vec, &dcm_BS[0][0]);
+    mMultV(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, omega_BN_S, omega_BN_B);
     /* Set local variables to zero*/
     vSetZero(propagatedVel, SKF_N_STATES_HALF);
     
     /*! Begin state update steps */
     /*! Take omega cross d*/
-    v3Cross(omega, stateInOut, omegaCrossd);
+    v3Cross(omega_BN_B, stateInOut, omegaCrossd);
     
     /*! - Multiply omega cross d by dt and add to state to propagate */
     v3Scale(-dt, omegaCrossd, propagatedVel);
@@ -609,6 +616,10 @@ void sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[
     
     v3Normalize(sunheading, s1_B);
     v3Cross(sunheading, bVec, s2_B);
+    if (v3Norm(s2_B) < 1E-5){
+        mSetIdentity(dcm, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
+    }
+    else{
     v3Normalize(s2_B, s2_B);
     /*! Populate the dcm_BS with the "new" S-frame*/
     mSetSubMatrix(s1_B, 1, SKF_N_STATES_HALF, dcm, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
@@ -617,5 +628,6 @@ void sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[
     v3Normalize(s3_B, s3_B);
     mSetSubMatrix(&(s3_B), 1, SKF_N_STATES_HALF, dcm, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 2, 0);
     mTranspose(dcm, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm);
+    }
     
 }

@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
+#include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/sunlineFilterFswMsg.h"
 #include "fswMessages/cssConfigFswMsg.h"
 
@@ -31,7 +32,6 @@
 /*! \addtogroup ADCSAlgGroup
  * @{
  */
-
 
 /*!@brief Data structure for CSS Switch unscented kalman filter estimator. Please see the _Documentation folder for details on how this Kalman Filter Functions.
  */
@@ -85,6 +85,7 @@ typedef struct {
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
 	NavAttIntMsg outputSunline;   /*!< -- Output sunline estimate data */
     CSSArraySensorIntMsg cssSensorInBuffer; /*!< [-] CSS sensor data read in from message bus*/
+
     int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
     int32_t cssDataInMsgId;      /*!< -- ID for the incoming CSS sensor message*/

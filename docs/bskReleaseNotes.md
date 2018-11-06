@@ -25,7 +25,7 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     Updated the macOS Basilisk installation instructions to make them easier to follow, and illustrate how to use the macOS provided Python along with all the Python packages installed in the user Library directory.  This provides for a cleaner and easier to maintain Basilisk installation.
     </li>
     <li>
-    Created new switched CSS sun heading estimation algorithms called `Okeefe_EKF` (2 DOF sun heading EKF with rates through numerical differencing), `Sunline_SuKF` (Sunline UKF estimator with switching between two body frames to avoid singularities, but with direct body rate estimation), `Sunline_UKF` (Sunline UKF estimator that maps the rate estimates to the observable set)
+     Created new switched CSS sun heading estimation algorithms called `Sunline_SuKF` and `Sunline_SEKF`.  These switch between two body frames to avoid singularities, but with direct body rate estimation. Previous filters `Sunline_UKF`, `Sunline_EKF`, and  `OKeefe_EKF` either subtract unobservability or difference sunheading estimate for a rate approximation.
     </li>
 </ul>
 
