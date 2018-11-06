@@ -33,16 +33,6 @@
  * @{
  */
 
-/*! Structure to gather the mass properties if applicable */
-typedef struct {
-    int dynOn;            /*!< [-] Test for the presence of the inertia tensor in the message. 0: not using dynamics, 1: using dynamics*/
-    
-    char vehConfigMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Mass Proper message*/
-    VehicleConfigFswMsg vehMassData;/*!< [-] CSS sensor data read in from message bus*/
-    int32_t vehConfigMsgId;     /*!< -- ID for the outgoing body estimate message*/
-    double ISCPntB_B_inv[SKF_N_STATES_HALF*SKF_N_STATES_HALF];       /*!< [-] The inverse of the inertia of the spacecraft about point B in the B frame */
-}FilterDynamics;
-
 /*! @brief Top level structure for the CSS-based Switch Extended Kalman Filter.
  Used to estimate the sun state in the vehicle body frame. Please see the _Documentation folder for details on how this Kalman Filter Functions.*/
 typedef struct {
@@ -80,8 +70,6 @@ typedef struct {
 	double measNoise[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];  /*!< [-] Maximally sized obs noise matrix*/
     
     double cssNHat_B[MAX_NUM_CSS_SENSORS*3];     /*!< [-] CSS normal vectors converted over to body*/
-    FilterDynamics dynamics;  /*!< [-] Container for dynamics content*/
-
     uint32_t numStates;                /*!< [-] Number of states for this filter*/
     int numObs;                   /*!< [-] Number of measurements this cycle */
     uint32_t numActiveCss;   /*!< -- Number of currently active CSS sensors*/
@@ -109,13 +97,13 @@ extern "C" {
                            uint64_t moduleID);
 	void sunlineTimeUpdate(sunlineSEKFConfig *ConfigData, double updateTime);
     void sunlineMeasUpdate(sunlineSEKFConfig *ConfigData, double updateTime);
-	void sunlineStateSTMProp(double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double bVec[SKF_N_STATES], FilterDynamics dynamics, double dt, double *stateInOut, double *stateTransition);
+	void sunlineStateSTMProp(double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double bVec[SKF_N_STATES], double dt, double *stateInOut, double *stateTransition);
     
     void sunlineHMatrixYMeas(double states[SKF_N_STATES_SWITCH], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS*3], double *obs, double *yMeas, int *numObs, double *measMat);
     
     void sunlineKalmanGain(double covarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES_SWITCH], double qObsVal, int numObs, double *kalmanGain);
     
-    void sunlineDynMatrix(double stateInOut[SKF_N_STATES_SWITCH], double bVec[SKF_N_STATES_HALF], FilterDynamics dynamics, double dt, double *dynMat);
+    void sunlineDynMatrix(double stateInOut[SKF_N_STATES_SWITCH], double bVec[SKF_N_STATES_HALF], double dt, double *dynMat);
     
     void sunlineCKFUpdate(double xBar[SKF_N_STATES_SWITCH], double kalmanGain[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double qObsVal, int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES_SWITCH], double *x, double *covar);
     

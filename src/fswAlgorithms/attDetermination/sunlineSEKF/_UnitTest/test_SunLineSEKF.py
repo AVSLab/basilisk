@@ -39,7 +39,6 @@ def setupFilterData(filterObject):
     filterObject.filtDataOutMsgName = "sunline_filter_data"
     filterObject.cssDataInMsgName = "css_sensors_data"
     filterObject.cssConfigInMsgName = "css_config_data"
-    filterObject.dynamics.vehConfigMsgName = 'vehicle_config_data'
 
     filterObject.sensorUseThresh = 0.
     filterObject.state = [0.1, 0.9, 0.1, 0.0, 0.0]
@@ -54,17 +53,13 @@ def setupFilterData(filterObject):
     filterObject.qObsVal = 0.001
     filterObject.eKFSwitch = (4./3)**2 #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 
-@pytest.mark.parametrize("useDynamics", [
-    (False),
-    (True)
-])
 
-def test_all_functions_sekf(show_plots, useDynamics):
-    [testResults, testMessage] = sunline_individual_test(useDynamics)
+def test_all_functions_sekf(show_plots):
+    [testResults, testMessage] = sunline_individual_test()
     assert testResults < 1, testMessage
-    [testResults, testMessage] = StatePropStatic(useDynamics)
+    [testResults, testMessage] = StatePropStatic()
     assert testResults < 1, testMessage
-    [testResults, testMessage] = StatePropVariable(show_plots,useDynamics)
+    [testResults, testMessage] = StatePropVariable(show_plots)
     assert testResults < 1, testMessage
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -74,12 +69,12 @@ def test_all_functions_sekf(show_plots, useDynamics):
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("SimHalfLength, AddMeasNoise , testVector1 , testVector2, stateGuess, useDynamics", [
-    (200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0], False),
-    (2000, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0], False),
-    (200, False ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0], True),
-    (200, False ,[0., 1., 0.] ,[1., 0., 0.], [0.3, 0.0, 0.6, 0.0, 0.0], True),
-    (200, True ,[0.5, 0.5, 0.] ,[0., 1., 0.], [0.7, 0.7, 0.0, 0.0, 0.0], True)
+@pytest.mark.parametrize("SimHalfLength, AddMeasNoise , testVector1 , testVector2, stateGuess", [
+    (200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
+    (2000, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
+    (200, False ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0]),
+    (200, False ,[0., 1., 0.] ,[1., 0., 0.], [0.3, 0.0, 0.6, 0.0, 0.0]),
+    (200, True ,[0.5, 0.5, 0.] ,[0., 1., 0.], [0.7, 0.7, 0.0, 0.0, 0.0])
 ])
 
 
@@ -88,12 +83,12 @@ def test_all_functions_sekf(show_plots, useDynamics):
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def test_all_sunline_sekf(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess, useDynamics):
-    [testResults, testMessage] = StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess, useDynamics)
+def test_all_sunline_sekf(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess):
+    [testResults, testMessage] = StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess)
     assert testResults < 1, testMessage
 
 
-def sunline_individual_test(useDynamics):
+def sunline_individual_test():
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -137,27 +132,10 @@ def sunline_individual_test(useDynamics):
     expDynMat[0:3, 0:3] =  np.array(RigidBodyKinematics.v3Tilde(omega_SB_B))
     expDynMat[0:3, 3:numStates] = -dBS[:, 1:]
 
-    dyn = sunlineSEKF.FilterDynamics()
-    if useDynamics:
-        dyn.dynOn = 1
-        dyn.vehMassData.ISCPntB_B = [1., 0., 0.,
-             0., 2., 0.,
-             0., 0., 3.]
-        dyn.ISCPntB_B_inv = [1., 0., 0.,
-             0., 1/2., 0.,
-             0., 0., 1/3.]
-
-        I_S = np.dot(DCM_BS.T,np.dot(np.array(dyn.vehMassData.ISCPntB_B).reshape([3,3]),DCM_BS))
-        I_inv_S = np.dot(DCM_BS.T,np.dot(np.array(dyn.ISCPntB_B_inv).reshape([3,3]),DCM_BS))
-        I_omega_S = RigidBodyKinematics.v3Tilde(np.dot(I_S, np.array(inputOmega_SB_S)))
-        expDynMat[3:,3:] = -np.dot(I_inv_S, I_omega_S - np.dot(np.array(RigidBodyKinematics.v3Tilde(np.array(inputOmega_SB_S))), I_S))[1:,1:]
-    else:
-        dyn.dynOn = 0
-
     dynMat = sunlineSEKF.new_doubleArray(numStates*numStates)
     for i in range(numStates*numStates):
         sunlineSEKF.doubleArray_setitem(dynMat, i, 0.0)
-    sunlineSEKF.sunlineDynMatrix(inputStates, bVec, dyn, dt, dynMat)
+    sunlineSEKF.sunlineDynMatrix(inputStates, bVec, dt, dynMat)
 
     DynOut = []
     for i in range(numStates*numStates):
@@ -168,7 +146,7 @@ def sunline_individual_test(useDynamics):
     if(errorNorm > 1.0E-10):
         print errorNorm, "Dyn Matrix"
         testFailCount += 1
-        testMessages.append("Dynamics Matrix generation Failure Dyn " + str(useDynamics) + "\n")
+        testMessages.append("Dynamics Matrix generation Failure Dyn " + "\n")
 
     ###################################################################################
     ## STM and State Test
@@ -191,7 +169,7 @@ def sunline_individual_test(useDynamics):
             else:
                 sunlineSEKF.doubleArray_setitem(stateTransition, numStates*i+j, 0.0)
 
-    sunlineSEKF.sunlineStateSTMProp(expDynMat.flatten().tolist(), bVec_test, dyn, dt, states, stateTransition)
+    sunlineSEKF.sunlineStateSTMProp(expDynMat.flatten().tolist(), bVec_test, dt, states, stateTransition)
 
     PropStateOut = []
     PropSTMOut = []
@@ -223,21 +201,18 @@ def sunline_individual_test(useDynamics):
     expectedSTM = dt*np.dot(expDynMat, np.eye(numStates)) + np.eye(numStates)
     expectedStates = np.zeros(numStates)
     ## Equations when removing the unobservable states from d_dot
-    if useDynamics:
-        expectedStates[3:numStates] = np.array(inputOmega)[1:3] - dt*np.dot(I_inv_S, np.dot(np.array(RigidBodyKinematics.v3Tilde(inputOmega)), np.dot(I_S, np.array(inputOmega))))[1:]
-    else:
-        expectedStates[3:numStates] = np.array(inputOmega)[1:3]
+    expectedStates[3:numStates] = np.array(inputOmega)[1:3]
     expectedStates[0:3] = np.array(inputStates)[0:3]+dt*np.cross(np.dot(DCM_BS,np.array(inputOmega)), np.array(inputStates)[0:3])
     errorNormSTM = np.linalg.norm(expectedSTM - STMout)
     errorNormStates = np.linalg.norm(expectedStates - StatesOut)
 
     if(errorNormSTM > 1.0E-10):
         testFailCount += 1
-        testMessages.append("STM Propagation Failure Dyn " + str(useDynamics) + "\n")
+        testMessages.append("STM Propagation Failure Dyn "  + "\n")
 
     if(errorNormStates > 1.0E-10):
         testFailCount += 1
-        testMessages.append("State Propagation Failure Dyn " + str(useDynamics) + "\n")
+        testMessages.append("State Propagation Failure Dyn " + "\n")
 
     ###################################################################################
     ## Test the H and yMeas matrix generation as well as the observation count
@@ -593,7 +568,7 @@ def sunline_individual_test(useDynamics):
 ####################################################################################
 # Test for the time and update with static states (zero d_dot)
 ####################################################################################
-def StatePropStatic(useDynamics):
+def StatePropStatic():
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -629,17 +604,6 @@ def StatePropStatic(useDynamics):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     setupFilterData(moduleConfig)
-    dyn = sunlineSEKF.FilterDynamics()
-    if useDynamics:
-        dyn.dynOn = 1
-        dyn.vehMassData.ISCPntB_B = [1., 0., 0.,
-             0., 2., 0.,
-             0., 0., 3.]
-        dyn.ISCPntB_B_inv = [1., 0., 0.,
-             0., 1/2., 0.,
-             0., 0., 1/3.]
-    else:
-        dyn.dynOn = 0
 
     unitTestSim.AddVariableForLogging('sunlineSEKF.covar', testProcessRate * 10, 0, 24)
     unitTestSim.AddVariableForLogging('sunlineSEKF.state', testProcessRate * 10, 0, 4)
@@ -667,7 +631,7 @@ def StatePropStatic(useDynamics):
 ####################################################################################
 # Test for the time and update with changing states (non-zero d_dot)
 ####################################################################################
-def StatePropVariable(show_plots, useDynamics):
+def StatePropVariable(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -708,27 +672,6 @@ def StatePropVariable(show_plots, useDynamics):
     InitialCovar = moduleConfig.covar
     moduleConfig.state = InitialState
 
-    if useDynamics:
-        #   vehicleConfigData Message:
-        vehicleConfigOut = sunlineSEKF.VehicleConfigFswMsg()
-        inputMessageSize = vehicleConfigOut.getStructSize()
-        unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.dynamics.vehConfigMsgName,
-                                        inputMessageSize,
-                                        2)  # number of buffers (leave at 2 as default, don't make zero)
-        I = [1., 0., 0.,
-             0., 2., 0.,
-             0., 0., 3.]
-        I_inv = [1., 0., 0.,
-             0., 1/2., 0.,
-             0., 0., 1/3.]
-        vehicleConfigOut.ISCPntB_B = I
-        unitTestSim.TotalSim.WriteMessageData(moduleConfig.dynamics.vehConfigMsgName,
-                                        inputMessageSize,
-                                        0, vehicleConfigOut)
-        I_S = np.zeros([2001,3,3])
-        I_inv_S = np.zeros([2001,3,3])
-        I_omega_S = np.zeros([2001,3,3])
-
     unitTestSim.AddVariableForLogging('sunlineSEKF.covar', testProcessRate, 0, 24)
     unitTestSim.AddVariableForLogging('sunlineSEKF.stateTransition', testProcessRate, 0, 24)
     unitTestSim.AddVariableForLogging('sunlineSEKF.state', testProcessRate , 0, 4)
@@ -757,21 +700,12 @@ def StatePropVariable(show_plots, useDynamics):
     DCM_BS[0,:,2] = np.cross(DCM_BS[0,:,0], DCM_BS[0,:,1])/np.linalg.norm(np.cross(DCM_BS[0,:,0], DCM_BS[0,:,1]))
     omega_S[0,1:] = InitialState[3:]
     omega_B[0,:] = np.dot(DCM_BS[0, :, :], omega_S[0,:])
-    if useDynamics:
-        I_S[0, :, :] = np.dot(DCM_BS[0, :, :].T,
-                              np.dot(np.array(I).reshape([3, 3]), DCM_BS[0, :, :]))
-        I_inv_S[0, :, :] = np.dot(DCM_BS[0, :, :].T,
-                                  np.dot(np.array(I_inv).reshape([3, 3]), DCM_BS[0, :, :]))
-        I_omega_S[0, :, :] = RigidBodyKinematics.v3Tilde(np.dot(I_S[0, :, :], omega_S[0, :]))
 
     for i in range(1,2001):
         expectedStateArray[i,0] = dt*i*1E9
         expectedStateArray[i,1:4] = expectedStateArray[i-1,1:4] + dt * np.cross(omega_B[i-1,:],
                                                                                 expectedStateArray[i - 1, 1:4])
-        if useDynamics:
-            expectedStateArray[i,4:6] = expectedStateArray[i-1,4:6] - dt * np.dot( np.dot(I_inv_S[i-1,:,:], np.dot(np.array(RigidBodyKinematics.v3Tilde(omega_S[i-1,:])), I_S[i-1,:,:])), omega_S[i-1,:])[1:]
-        else:
-            expectedStateArray[i, 4:6] = expectedStateArray[i-1, 4:6]
+        expectedStateArray[i, 4:6] = expectedStateArray[i-1, 4:6]
 
         # Fill in the variables for the test
         dcm = sunlineSEKF.new_doubleArray(3 * 3)
@@ -785,19 +719,12 @@ def StatePropVariable(show_plots, useDynamics):
         omega_S[i, 1:] = expectedStateArray[i, 4:]
         omega_B[i,:] = np.dot(DCM_BS[i, :, :], omega_S[i,:])
 
-        if useDynamics:
-            I_S[i,:,:] = np.dot(DCM_BS[i,:,:].T,np.dot(np.array(I).reshape([3,3]),DCM_BS[i,:,:]))
-            I_inv_S[i,:,:] = np.dot(DCM_BS[i,:,:].T,np.dot(np.array(I_inv).reshape([3,3]),DCM_BS[i,:,:]))
-            I_omega_S[i,:,:] = RigidBodyKinematics.v3Tilde(np.dot(I_S[i,:,:], omega_S[i,:]))
-
     for i in range(0, 2001):
         dtilde = -np.array(RigidBodyKinematics.v3Tilde(expectedStateArray[i, 1:4]))
         dBS = np.dot(dtilde, DCM_BS[i,:,:])
 
         expDynMat[i,0:3, 0:3] = np.array(RigidBodyKinematics.v3Tilde(omega_B[i,:]))
         expDynMat[i, 0:3, 3:numStates] = dBS[:, 1:]
-        if useDynamics:
-            expDynMat[i, 3:, 3:] = - np.dot(I_inv_S[i,:,:], I_omega_S[i,:,:] - np.dot(np.array(RigidBodyKinematics.v3Tilde(omega_S[i,:])), I_S[i,:,:]))[1:,1:]
     expectedSTM = np.zeros([2001,numStates,numStates])
     expectedSTM[0,:,:] = np.eye(numStates)
     for i in range(1,2001):
@@ -823,8 +750,8 @@ def StatePropVariable(show_plots, useDynamics):
     for i in range(1,2001):
         expectedCovar[i,0] =  dt*i*1E9
         expectedCovar[i,1:26] = (np.dot(expectedSTM[i,:,:], np.dot(np.reshape(expectedCovar[i-1,1:26],[numStates,numStates]), np.transpose(expectedSTM[i,:,:])))+ ProcNoiseCovar[i,:,:]).flatten()
-    FilterPlots.StatesVsExpected(stateLog, expectedStateArray, show_plots, useDynamics)
-    FilterPlots.StatesPlotCompare(stateErrorLog, expectedXBar, covarLog, expectedCovar, show_plots, useDynamics)
+    FilterPlots.StatesVsExpected(stateLog, expectedStateArray, show_plots)
+    FilterPlots.StatesPlotCompare(stateErrorLog, expectedXBar, covarLog, expectedCovar, show_plots)
 
     if (np.linalg.norm(np.array(stateLog)[:, 1:] - expectedStateArray[:, 1:]) > 1.0E-10):
         testFailCount += 1
@@ -853,7 +780,7 @@ def StatePropVariable(show_plots, useDynamics):
 ####################################################################################
 # Test for the full filter with time and measurement update
 ####################################################################################
-def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess, useDynamics):
+def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -889,23 +816,6 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
     setupFilterData(moduleConfig)
 
-    if useDynamics:
-        #   vehicleConfigData Message:
-        vehicleConfigOut = sunlineSEKF.VehicleConfigFswMsg()
-        inputMessageSize = vehicleConfigOut.getStructSize()
-        unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.dynamics.vehConfigMsgName,
-                                        inputMessageSize,
-                                        2)  # number of buffers (leave at 2 as default, don't make zero)
-        I = [1., 0., 0.,
-             0., 2., 0.,
-             0., 0., 3.]
-        I_inv = [1., 0., 0.,
-             0., 1/2., 0.,
-             0., 0., 1/3.]
-        vehicleConfigOut.ISCPntB_B = I
-        unitTestSim.TotalSim.WriteMessageData(moduleConfig.dynamics.vehConfigMsgName,
-                                        inputMessageSize,
-                                        0, vehicleConfigOut)
     # Set up some test parameters
 
     cssConstelation = fswMessages.CSSConfigFswMsg()
@@ -1041,6 +951,6 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 
 if __name__ == "__main__":
-    # StatePropVariable(True, True)
-    sunline_individual_test(True)
-    # test_all_sunline_sekf(True, 200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0], True)
+    # StatePropVariable(True)
+    sunline_individual_test()
+    # test_all_sunline_sekf(True, 200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0])

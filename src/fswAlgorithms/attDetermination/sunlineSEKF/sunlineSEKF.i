@@ -41,7 +41,6 @@ GEN_SIZEOF(VehicleConfigFswMsg);
 %include "../../fswMessages/vehicleConfigFswMsg.h"
 %include "../../fswMessages/sunlineFilterFswMsg.h"
 %include "sunlineSEKF.h"
-GEN_SIZEOF(FilterDynamics);
 
 %pythoncode %{
 import sys
