@@ -810,7 +810,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
             if (abs(covarLog[-1, i * NUMSTATES + 1 + i] - covarLog[0, i * NUMSTATES + 1 + i] / 100.) > 1E-1):
                 testFailCount += 1
                 testMessages.append("Covariance update failure")
-            if (abs(stateLog[-1, i + 1] - stateTarget2[i]) > 1.0E-3):
+            if (abs(stateLog[-1, i + 1] - stateTarget2[i]) > 1.0E-2):
                 testFailCount += 1
                 testMessages.append("State update failure")
 
