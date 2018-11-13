@@ -48,7 +48,7 @@ $nano ~/.bash_profile
 ```
     * Add the line 
 ```
-Export PATH=~/Library/Python/2.7/bin:$PATH
+export PATH=~/Library/Python/2.7/bin:$PATH
 ```
 4. If using a tcsh shell, then
     * type
