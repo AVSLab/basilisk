@@ -11,7 +11,7 @@ In order to run Basilisk on macOS, the following software is necessary:
     * After Xcode is installed, start up the program to let it finish installing development components
     * Open a Terminal window to install the command line tools using
 ```
-$xcode-select --install
+$ xcode-select --install
 ```
 2. Get the [CMake](http://cmake.org) application to be able to create the Xcode IDE file
 3. (Optional) Get the [SourceTree](http://sourcetreeapp.com) application to be able to pull and manage a copy of Basilisk
@@ -23,11 +23,11 @@ $xcode-select --install
     * *Note:* that this must be done within a `bash` terminal window.  The type of terminal emulation is shown on the top of the terminal window.  If you are running another terminal type, type `bash` to engage the Bash terminal environment.  This is just required to install HomeBrew.  Once it is installed, you can run all other commands from any terminal type.
 2. Install the PCRE package using 
 ```
-$brew install pcre
+$ brew install pcre
 ```
 3. Install the SWIG package using
 ```
-$brew install swig
+$ brew install swig
 ```
   
 
@@ -44,16 +44,16 @@ As this installation will install all required Python packages in the user home 
 3.  If using a Bash shell, then 
     * type 
 ```
-$nano ~/.bash_profile
+$ nano ~/.bash_profile
 ```
     * Add the line 
 ```
-Export PATH=~/Library/Python/2.7/bin:$PATH
+export PATH=~/Library/Python/2.7/bin:$PATH
 ```
 4. If using a tcsh shell, then
     * type
 ```
-$nano .tcshrc
+$ nano .tcshrc
 ```
     * Add the line 
 ```
@@ -110,7 +110,21 @@ When all the prerequisite installations are complete, the project can be built a
 
     * Browse and select the build directory (`basilisk/dist/`). If this directory does not exist, create it.
 
-    * Press `Configure` in Cmake, select the Xcode IDE if running for the first time.  **Note:** If you wish to use the HomeBrew version of python  configure the Python paths in \ref customPython
+    * Press `Configure` in Cmake, select the Xcode IDE if running for the first time.  <br>
+    **Note:** If you wish to use the HomeBrew version of python  configure the Python paths in \ref customPython<br>
+    **Potential Issue:** If you get an error message in CMake saying it can't find the compiler tools, open a Terminal window and type
+```
+    $ xcode-select -p
+```
+    This should return 
+```
+    /Applications/Xcode.app/Contents/Developer
+```
+    If instead you get a different director such as `/Library/Developer/CommandLineTools`, then correct this compiler directory path using 
+```
+    sudo xcode-select --reset
+```
+    Now clear the Cmake cache and try running `Configure` again.
 
     * Press `Generate` in Cmake to build the Xcode Basilisk project file inside the `dist` directory
 
