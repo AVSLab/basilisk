@@ -110,7 +110,17 @@ When all the prerequisite installations are complete, the project can be built a
 
     * Browse and select the build directory (`basilisk/dist/`). If this directory does not exist, create it.
 
-    * Press `Configure` in Cmake, select the Xcode IDE if running for the first time.  **Note:** If you wish to use the HomeBrew version of python  configure the Python paths in \ref customPython
+    * Press `Configure` in Cmake, select the Xcode IDE if running for the first time.  <br>
+    **Note:** If you wish to use the HomeBrew version of python  configure the Python paths in \ref customPython<br>
+    **Potential Issue:** If you get an error message in CMake saying it can't find the compiler tools, open a Terminal window and type in `xcode-select -p`.  This should return 
+```
+    /Applications/Xcode.app/Contents/Developer
+```
+    If instead you get a different director such as `/Library/Developer/CommandLineTools`, then correct this compiler directory path using 
+```
+    xcode-select -s /Applications/Xcode.app/Contents/Developer
+```
+    Now clear the Cmake cache and try running `Configure` again.
 
     * Press `Generate` in Cmake to build the Xcode Basilisk project file inside the `dist` directory
 
