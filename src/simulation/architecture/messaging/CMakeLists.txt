@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
+cmake_policy(SET CMP0068 NEW)
 
 file(GLOB basilisk_src
     "*.h"
