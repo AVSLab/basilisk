@@ -27,9 +27,12 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>
      Created new switched CSS sun heading estimation algorithms called `Sunline_SuKF` and `Sunline_SEKF`.  These switch between two body frames to avoid singularities, but with direct body rate estimation. Previous filters `Sunline_UKF`, `Sunline_EKF`, and  `OKeefe_EKF` either subtract unobservability or difference sunheading estimate for a rate approximation.
     </li>
+    <li>
+    Updated the install instructions to include explicit steps for setting up and installing Basilisk on windows machines.
+    </li>
 </ul>
 
-## Version 0.3.2 
+## Version 0.3.2
 <uL>
     <li>
     Fixed an issue with the eclipse unit test.
@@ -42,7 +45,7 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     </li>
 </ul>
 
-## Version 0.3.1 
+## Version 0.3.1
 <uL>
     <li>
     Tutorials added for BSK_Sim architecture. Added the ability to customize the frequency for FSW and/or dynamics modules.
@@ -57,7 +60,7 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     Modified how bskSim now includes CSS sensors in the spacecraft dynamics setup
     </li>
     <li>
-    Modified the FSW `sunSafePoint()` guidance module to read in the body angular velocity information from standard `NavAttIntMsg`.  This will break any earlier simulation that uses `sunSafePoint()`. 
+    Modified the FSW `sunSafePoint()` guidance module to read in the body angular velocity information from standard `NavAttIntMsg`.  This will break any earlier simulation that uses `sunSafePoint()`.
     <ul>
     <li>FIX: update the `sunSafePoint()` input connection to use the current message format.</li>
     </ul>
@@ -68,7 +71,7 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 </ul>
 
 
-## Version 0.3.0 
+## Version 0.3.0
 <uL>
     <li>
     Updated cssWlsEst() module to also compute a partial angular velocity vector.
@@ -89,10 +92,10 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     Updated bskSim to use the RW factory class to setup the simulation RW devices, as well as to use fsw helper functions to setup the RW FSW config messages
     </li>
     <li>
-    At supportData/EphermerisData, updated the leap second kernel version to from 0011 to 0012. 
+    At supportData/EphermerisData, updated the leap second kernel version to from 0011 to 0012.
     </li>
     <li>
-    Added a force and torque calculation method in the stateEffector abstract class, and provided the necessary method calls in spacecraftPlus. This allows for stateEffectors to calculate the force and torque that they are imparting on the rigid body hub. The hingedRigidBodyStateEffector and the linearSpringMassDamper classes provide their implementation of these calculations. 
+    Added a force and torque calculation method in the stateEffector abstract class, and provided the necessary method calls in spacecraftPlus. This allows for stateEffectors to calculate the force and torque that they are imparting on the rigid body hub. The hingedRigidBodyStateEffector and the linearSpringMassDamper classes provide their implementation of these calculations.
     </li>
     <li>
     Fixed an issue with `extForceTorque` effector where the flag about having a good input message was not being initialized properly.  This caused a rare failure in the unit test.
@@ -101,10 +104,10 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     Reaction wheel state effector has an updated friction model that allows the user to implement coulomb, viscous, and static friction.
     </li>
     <li>
-    Reaction wheel state effector now has max torque saturation logic in which the wheels can only implement a maximum wheel torque and max wheel speed saturation logic in which if the wheel speed goes over the maximum wheel speed, then the wheel torque is set to zero. 
+    Reaction wheel state effector now has max torque saturation logic in which the wheels can only implement a maximum wheel torque and max wheel speed saturation logic in which if the wheel speed goes over the maximum wheel speed, then the wheel torque is set to zero.
     </li>
     <li>
-    A new method called writeOutputStateMessages was added to the stateEffector abstract class which allows for stateEffectors to write their states as messages in the system and the states will always be written out to the system after integration. This fixed an issue with reaction wheels where the commanded torque information needs to be tasked before the spacecraft but the reaction wheel state messages need to be written out after integration. 
+    A new method called writeOutputStateMessages was added to the stateEffector abstract class which allows for stateEffectors to write their states as messages in the system and the states will always be written out to the system after integration. This fixed an issue with reaction wheels where the commanded torque information needs to be tasked before the spacecraft but the reaction wheel state messages need to be written out after integration.
     </li>
     <li>
     A new dynamics class called `spacecraftDynamics` has been created.  This allow multiple complex spacecraft systems to be either rigidly connected or free-flying.  This allow for example a mother craft to house a daughter craft which has its own RWs, etc, and then release the daughter craft at a specified time.  
@@ -181,9 +184,9 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>Added CSS sun-heading estimation tutorial script</li>
     <li>Added O'Keefe CSS sun-heading estimation module</li>
     </ul>
-    
-    
-    
+
+
+
 ## Version 0.1.7
 <ul>
     <li>New Monte-Carlo capability that uses multiple cores and hyperthreading to accelerate the MC evaluations.  Data is retained and stored for each MC run for robustness.  See `test_scenarioMonteCarloAttRW.py` for an example.</li>
@@ -203,7 +206,7 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>added reaction wheel effector documentation</li>
     <li>added `orb_elem_convert` documentation</li>
     <li>added `boreAngCalc` documentation</li>
-    
+
 </ul>
 
 ## Version 0.1.5
@@ -248,7 +251,7 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 <ul>
 	   <li>There is a new capability to now write BSK modules in Python, and integrated them directly with the C and C++ BSK modules.  Documentation is still in progress, but a sample is found in <code>SimScenarios/test_scenarioAttitudePythonPD.py</code>.</li>
 	   <li>A new Variable Speed Control Moment Gyroscope (VSCMG) state effector module has been created.  This module provides a torque-level VSCMG simulation which also includes the gyro frame or wheel being imbalanced.  If the latter modes are engaged, the simulation does slow down noticeably, but you get the full physics.</li>
-	   <li>In the simulation the initial spacecraft position and velocity states are now specified now using the spacecraft center of mass location C, not the body fixed point B.  This greatly simplifies the simulation setup.  Upon initialization, the sim determines what the true center of mass of the spacecraft is using all time varying mass components, and sets the proper B point position and velocity vectors.</li> 
+	   <li>In the simulation the initial spacecraft position and velocity states are now specified now using the spacecraft center of mass location C, not the body fixed point B.  This greatly simplifies the simulation setup.  Upon initialization, the sim determines what the true center of mass of the spacecraft is using all time varying mass components, and sets the proper B point position and velocity vectors.</li>
 	   <li>Specifying the initial spacecraft position and velocity states can now be done anywhere before the BSK initialization.  The user sets init versions of the position and velocity vectors.  The setState() method on the state engine thus doesn't have to be used. </li>
 	   <li>There is a new <code>initializeSimulationAndDiscover</code> method to init the BSK simulation that automatically checks if messages are shared across multiple simulation threads.  See the modified <code> SimScenarios/test_scenarioAttitudeFeedback2T.py</code> file for how this simplifies the dual-threaded setup.</li>
 	   <li>The <code>MRP_Steering</code> and <code>PRV_Steering</code> FSW modules have been broken up into a separate kinematic steering command (commanded desired angular velocity vector) and an associated angular velocity servo module name <code>rateServoFullNonlinear</code>.  This will break any existing code that used either of these two attitude steering modules.  The Python simulation code must be updated to to account for these new modules as done in the MRP_Steering integrated test <code>test_MRP_steeringInt.py</code>.</li>    
@@ -259,7 +262,7 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 <ul>
 	   <li>All unit and integrated tests now pass on Linux.  The root issue was a variable length string variable in an output message.  These strings have now been removed as they are no longer needed.</li>
 	   <li>The position and velocity of the center of mass of the spacecraft was added to the messaging system, so now the spacecraft’s translational states can be logged by the center of mass of the spacecraft (r_CN_N and v_CN_N) or the origin of the body frame which is fixed to the hub (r_BN_N and v_BN_N). Additionally, the mass properties of the spacecraft was organized into an updateSCMassProps method that incapsulates the calculations of mass property calculations.</li>
-	   <li>Updated UKF FSW module to be able to run on gryo only information when the star tracker is not available.</li> 
+	   <li>Updated UKF FSW module to be able to run on gryo only information when the star tracker is not available.</li>
 </ul>
 
 ## Version 0.1.1
@@ -270,7 +273,7 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 	       <li>Added RPATH settings to allow for build directory to be placed outside source directory</li>
 	   </ul>
 	   <li>Major addition with new depleatable mass dynamic modeling, including some fuel tank dynamic models.</li>
-	   <li>minor fix for Monte Carlo dispersions</li> 
+	   <li>minor fix for Monte Carlo dispersions</li>
 </ul>
 
 
