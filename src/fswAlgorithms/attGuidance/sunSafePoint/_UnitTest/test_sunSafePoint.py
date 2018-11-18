@@ -60,6 +60,8 @@ from Basilisk.utilities import macros as mc
     ,(3)        # sun is visible, vectors are aligned
     ,(4)        # sun is visible, vectors are oppositely aligned
     ,(5)        # sun is visible, vectors are oppositely aligned, and command sc is b1
+    ,(6)        # sun is not visible, vectors are not aligned, no specified omega_RN_B value
+    ,(7)        # sun is visible, vectors not aligned, nominal spin rate specified about sun heading vector
 ])
 
 def test_module(show_plots, case):
@@ -104,15 +106,16 @@ def sunSafePointTestFunction(show_plots, case):
         sHat_Cmd_B = np.array([1.0, 0.0, 0.0])
     moduleConfig.sHatBdyCmd = sHat_Cmd_B
     moduleConfig.minUnitMag = 0.1
-    omega_RN_B_Search = np.array([0.0, 0.0, 0.1])
-    moduleConfig.omega_RN_B = omega_RN_B_Search
+    if (case == 2):
+        omega_RN_B_Search = np.array([0.0, 0.0, 0.1])
+        moduleConfig.omega_RN_B = omega_RN_B_Search
     moduleConfig.smallAngle = 0.01*mc.D2R
 
     # Create input messages
     #
     inputSunVecData = simFswInterfaceMessages.NavAttIntMsg()  # Create a structure for the input message
     sunVec_B = np.array([1.0, 1.0, 0.0])
-    if (case == 2): # no sun visible, providing a near zero norm direction vector */
+    if (case == 2 or case == 6): # no sun visible, providing a near zero norm direction vector */
         sunVec_B = [0.0, moduleConfig.minUnitMag/2, 0.0]
     if (case == 3):
         sunVec_B = sHat_Cmd_B
@@ -131,6 +134,10 @@ def sunSafePointTestFunction(show_plots, case):
                                unitProcessName,
                                moduleConfig.imuInMsgName,
                                inputIMUData)
+
+    if (case == 7):
+        moduleConfig.sunAxisSpinRate = 1.5*mc.D2R;
+        omega_RN_B_Search = sunVec_B/np.linalg.norm(sunVec_B) * moduleConfig.sunAxisSpinRate
 
 
 
@@ -161,7 +168,7 @@ def sunSafePointTestFunction(show_plots, case):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attGuidanceOutMsgName + '.' + moduleOutputName,
                                                   range(3))
     # set the filtered output truth states
-    if (case == 1):
+    if (case == 1 or case == 7):
         eHat = np.cross(sunVec_B,sHat_Cmd_B)
         eHat = eHat / np.linalg.norm(eHat)
         Phi = np.arccos(np.dot(sunVec_B/np.linalg.norm(sunVec_B),sHat_Cmd_B))
@@ -171,7 +178,7 @@ def sunSafePointTestFunction(show_plots, case):
                     sigmaTrue.tolist(),
                     sigmaTrue.tolist()
                    ]
-    if (case == 2 or case == 3):
+    if (case == 2 or case == 3 or case == 6):
         trueVector = [
             [0, 0, 0],
             [0, 0, 0],
@@ -218,13 +225,13 @@ def sunSafePointTestFunction(show_plots, case):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attGuidanceOutMsgName + '.' + moduleOutputName,
                                                   range(3))
     # set the filtered output truth states
-    if (case == 1 or case == 3 or case == 4 or case == 5):
+    if (case == 1 or case == 3 or case == 4 or case == 5 or case == 6):
         trueVector = [
             omega_BN_B.tolist(),
             omega_BN_B.tolist(),
             omega_BN_B.tolist()
         ]
-    if (case == 2):
+    if (case == 2 or case == 7):
         trueVector = [
             (omega_BN_B - omega_RN_B_Search).tolist(),
             (omega_BN_B - omega_RN_B_Search).tolist(),
@@ -248,17 +255,17 @@ def sunSafePointTestFunction(show_plots, case):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attGuidanceOutMsgName + '.' + moduleOutputName,
                                                   range(3))
     # set the filtered output truth states
-    if (case == 1 or case == 3 or case == 4 or case == 5):
+    if (case == 1 or case == 3 or case == 4 or case == 5 or case == 6):
         trueVector = [
             [0.0, 0.0, 0.0],
             [0.0, 0.0, 0.0],
             [0.0, 0.0, 0.0]
         ]
-    if (case == 2):
+    if (case == 2 or case == 7):
         trueVector = [
-            moduleConfig.omega_RN_B,
-            moduleConfig.omega_RN_B,
-            moduleConfig.omega_RN_B
+            omega_RN_B_Search,
+            omega_RN_B_Search,
+            omega_RN_B_Search
         ]
     # compare the module results to the truth values
     for i in range(0,len(trueVector)):

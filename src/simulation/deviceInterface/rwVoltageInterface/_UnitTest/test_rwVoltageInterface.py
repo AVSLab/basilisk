@@ -146,20 +146,6 @@ def run(show_plots, voltage):
                                                                accuracy, "Output Vector",
                                                                testFailCount, testMessages)
 
-    # If the argument provided at commandline "--show_plots" evaluates as true,
-    # plot all figures
-    # plot a sample variable.
-    plt.close("all")    # close all prior figures so we start with a clean slate
-    plt.figure(1)
-    # plt.plot(variableState[:, 0]*macros.NANO2SEC, variableState[:, 1],
-    #          label='Case param1 = ' + str(param1) + ' and param2 = ' + str(param2))
-    # plt.legend(loc='upper left')
-    # plt.xlabel('Time [s]')
-    # plt.ylabel('Variable Description [unit]')
-    # if show_plots:
-    #     plt.show()
-
-
     resultTable = moduleOutput
     resultTable[:, 0] = macros.NANO2SEC * resultTable[:, 0]
     diff = np.delete(moduleOutput, 0, 1) - trueVector

@@ -262,6 +262,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     # plt.ylabel('Variable Description [unit]')
     if show_plots:
         plt.show()
+        plt.close('all')
 
     #   print out success message if no error were found
     snippentName = "passFail" + testName

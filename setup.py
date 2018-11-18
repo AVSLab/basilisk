@@ -114,7 +114,7 @@ class XCodeBuildCommand(Command):
     def run(self):
         assert os.getcwd() == self.cwd, 'Must be in package root: %s' % self.cwd
         print "Executing XCode build into dist/ directory"
-        runCommand("xcodebuild -project dist/AVS\ basilisk.xcodeproj -target ALL_BUILD")
+        runCommand("xcodebuild -project dist/basilisk.xcodeproj -target ALL_BUILD")
 
 
 # Lint command
@@ -154,7 +154,7 @@ class BuildDocsCommand(Command):
 
 setup(
     name='Basilisk',
-    version='0.3.2',
+    version='0.3.3',
     description="Astrodynamic Simulation Library",
     packages=['Basilisk', ],
     license=open('./LICENSE').read(),

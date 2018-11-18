@@ -118,7 +118,9 @@ def test_SCTranslation(show_plots):
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
     unitTestSupport.writeFigureLaTeX("scPlusChangeInOrbitalEnergyTranslationOnly", "Change in Orbital Energy Translation Only", plt, "width=0.8\\textwidth", path)
-    plt.show(show_plots)
+    if show_plots:
+        plt.show()
+        plt.close('all')
 
     moduleOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N',
                                                   range(3))
@@ -302,7 +304,9 @@ def test_SCTransAndRotation(show_plots):
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
     unitTestSupport.writeFigureLaTeX("scPlusChangeInRotationalEnergyTranslationAndRotation", "Change in Rotational Energy Translation And Rotation", plt, "width=0.8\\textwidth", path)
-    plt.show(show_plots)
+    if show_plots:
+        plt.show()
+        plt.close('all')
 
     accuracy = 1e-8
     for i in range(0,len(truePos)):
@@ -530,8 +534,9 @@ def test_SCRotation(show_plots):
     plt.ylabel("Angular Velocity (rad/s)")
     plt.legend(loc ='lower right',numpoints = 1, prop = {'size': 6.5})
     unitTestSupport.writeFigureLaTeX("scPlusBasiliskVsBOECalcForRotation", "Basilisk Vs BOE Calc For Rotation", plt, "width=0.8\\textwidth", path)
-    plt.show(show_plots)
-    plt.close("all")
+    if show_plots:
+        plt.show()
+        plt.close("all")
 
     accuracy = 1e-8
     for i in range(0,len(trueSigma)):
@@ -696,7 +701,9 @@ def test_SCTransBOE(show_plots):
     PlotTitle = "Translation Velocity BOE"
     format = "width=0.8\\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
-    plt.show(show_plots)
+    if show_plots:
+        plt.show()
+        plt.close('all')
 
     accuracy = 1e-10
     for i in range(0,3):
@@ -864,7 +871,9 @@ def test_SCPointBVsPointC(show_plots):
     PlotTitle = "PointB Vs PointC Attitude"
     format = "width=0.8\\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
-    plt.show(show_plots)
+    if show_plots:
+        plt.show()
+        plt.close('all')
 
     accuracy = 1e-8
     if not unitTestSupport.isArrayEqualRelative(r_CN_NOutput1[-1,:],r_CN_NOutput2[-1,1:4],3,accuracy):

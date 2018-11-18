@@ -48,9 +48,8 @@ typedef struct {
     STMessage STMessages[MAX_ST_VEH_COUNT];     /*!< [-] Decoded MIRU data for both camera heads*/
 }STDataParsing;
 
-/*! @brief Top level structure for the CSS unscented kalman filter estimator.
- Used to estimate the sun state in the vehicle body frame.  Please see the 
- _Documentation folder for details on how this Kalman Filter Functions.*/
+/*! @brief Top level structure for the Inertial unscented kalman filter.
+ Used to estimate the spacecraft's inertial attitude. Measurements are StarTracker data and gyro data. Please see the _Documentation folder for details on how this Kalman Filter Functions.*/
 typedef struct {
     char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output filter data message*/

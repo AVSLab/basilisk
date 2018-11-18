@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
+if(POLICY CMP0078)
+  cmake_policy(SET CMP0078 NEW)
+endif()
 
-project("AVS basilisk")
+project("basilisk")
 
 
 #
@@ -280,6 +283,11 @@ else()
     set(Boost_USE_STATIC_LIBS OFF)
     set(Boost_USE_STATIC_RUNTIME OFF)
 endif()
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-register")
+endif()
+
 
 # foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
     # string( TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG )

@@ -32,12 +32,7 @@
  * @{
  */
 
-/*!@brief Data structure for the O'Keefe CSS Extended kalman filter estimator.
-
- The module
- [PDF Description](Okeefe_EKF.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
+/*!@brief Data structure for CSS Extended kalman filter estimator without gyros measurements. Please see the _Documentation folder for details on how this Kalman Filter Functions.
  */
 
 typedef struct {
@@ -52,21 +47,21 @@ typedef struct {
 	double dt;                     /*!< [s] seconds since last data epoch */
 	double timeTag;                /*!< [s]  Time tag for statecovar/etc */
 
-	double states[SKF_N_STATES_HALF];        /*!< [-] State estimate for time TimeTag*/
+	double state[SKF_N_STATES_HALF];        /*!< [-] State estimate for time TimeTag*/
     double prev_states[SKF_N_STATES_HALF];        /*!< [-] State estimate for previous time TimeTag*/
     double omega[SKF_N_STATES_HALF];        /*!< [-] Rotation rate vector*/
-    double x[SKF_N_STATES_HALF];             /*! State errors */
-    double xBar[SKF_N_STATES_HALF];            /*! [-] Current mean state estimate*/
+    double x[SKF_N_STATES_HALF];             /*! [-] State errors */
+    double xBar[SKF_N_STATES_HALF];            /*! [-] Current time updated mean state estimate*/
 	double covarBar[SKF_N_STATES_HALF*SKF_N_STATES_HALF];         /*!< [-] Time updated covariance */
 	double covar[SKF_N_STATES_HALF*SKF_N_STATES_HALF];        /*!< [-] covariance */
     double stateTransition[SKF_N_STATES_HALF*SKF_N_STATES_HALF];        /*!< [-] covariance */
     double kalmanGain[SKF_N_STATES_HALF*MAX_N_CSS_MEAS];    /* Kalman Gain */
 
-    double dynMat[SKF_N_STATES_HALF*SKF_N_STATES_HALF];        /*!< [-] Dynamics Matrix */
-    double measMat[MAX_N_CSS_MEAS*SKF_N_STATES_HALF];        /*!< [-] Measurement Matrix H*/
+    double dynMat[SKF_N_STATES_HALF*SKF_N_STATES_HALF];        /*!< [-] Dynamics Matrix, A */
+    double measMat[MAX_N_CSS_MEAS*SKF_N_STATES_HALF];        /*!< [-] Measurement Matrix, H*/
     
 	double obs[MAX_N_CSS_MEAS];          /*!< [-] Observation vector for frame*/
-	double yMeas[MAX_N_CSS_MEAS];        /*!< [-] Measurement model data */
+	double yMeas[MAX_N_CSS_MEAS];        /*!< [-] Linearized measurement model data */
 
 	double procNoise[SKF_N_STATES_HALF*SKF_N_STATES_HALF];       /*!< [-] process noise matrix */
 	double measNoise[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];  /*!< [-] Maximally sized obs noise matrix*/

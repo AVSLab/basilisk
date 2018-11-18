@@ -230,6 +230,7 @@ def run(doUnitTests, show_plots, integratorCase):
 
     if show_plots:
         plt.show()
+        plt.close('all')
 
     # # close the plots being saved off to avoid over-writing old and new figures
     # plt.close("all")

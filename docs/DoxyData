@@ -38,7 +38,7 @@ PROJECT_NAME           = "Basilisk Astrodynamics Simulation Framework"
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = 0.3.2
+PROJECT_NUMBER         = 0.3.3
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -1256,7 +1256,8 @@ HTML_EXTRA_FILES       = ../src/simulation/dynamics/extForceTorque/_Documentatio
                          "../src/fswAlgorithms/effectorInterfaces/thrForceMapping/_Documentation/Basilisk-ThrusterForces-20160627.pdf" \
                          ../src/fswAlgorithms/effectorInterfaces/thrMomentumDumping/_Documentation/Basilisk-thrMomentumDumping-20160820.pdf \
                          ../src/simulation/dynamics/FuelTank/_Documentation/Basilisk-FUELTANK-20171203.pdf \
-                         ../src/simulation/dynamics/sphericalPendulum/_Documentation/Basilisk-SPHERICALPENDULUM-20180518.pdf
+                         ../src/simulation/dynamics/sphericalPendulum/_Documentation/Basilisk-SPHERICALPENDULUM-20180518.pdf \
+                         mac_fix_path.pth
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen
 # will adjust the colors in the style sheet and background images according to

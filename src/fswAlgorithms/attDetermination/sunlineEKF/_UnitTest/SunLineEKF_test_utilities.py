@@ -92,7 +92,7 @@ def StateErrorCovarPlot(x, Pflat, show_plots):
     unitTestSupport.writeFigureLaTeX('StatesPlot', 'State error and covariance', plt, 'height=0.9\\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
-    plt.close()
+    plt.close('all')
 
 
 def StatesPlotCompare(x, x2, Pflat, Pflat2, show_plots):
@@ -262,62 +262,37 @@ def PostFitResiduals(Res, noise, show_plots):
         plt.show()
     plt.close()
 
-def StatesVsExpected(stateLog, Pflat, expectedStateArray, show_plots):
-
-    P = np.zeros([len(Pflat[:, 0]), 6, 6])
-    for i in range(len(Pflat[:, 0])):
-        P[i, :, :] = Pflat[i, 1:37].reshape([6, 6])
-        for j in range(len(P[0,0,:])):
-            P[i,j,j] = np.sqrt(P[i,j,j])
-
+def StatesVsExpected(stateLog, expectedStateArray, show_plots):
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
     plt.subplot(321)
-    plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  1], 'k--', label='Expected')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  1], 'b', label='Filter')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  1] + P[:,0,0], 'r--')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  1] - P[:,0,0], 'r--', label='Covar')
+    plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  1], 'b--', label='Expected')
+    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  1], 'r', label='Filter')
     plt.legend(loc='best')
     plt.title('First LOS component')
     plt.grid()
 
-    plt.subplot(322)
-    plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  4], 'k--')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  4], 'b')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  4] + P[:,3,3], 'r--')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  4] - P[:,3,3], 'r--', label='Covar')
-    plt.title('First rate component')
-    plt.grid()
-
     plt.subplot(323)
-    plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  2], 'k--')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  2], 'b')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  2] + P[:,1,1], 'r--')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  2] - P[:,1,1], 'r--', label='Covar')
+    plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  2], 'b--')
+    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  2], 'r')
     plt.title('Second LOS component')
     plt.grid()
 
     plt.subplot(324)
-    plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  5], 'k--')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  5], 'b')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  5] + P[:,4,4], 'r--')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  5] - P[:,4,4], 'r--', label='Covar')
+    plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  4], 'b--')
+    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  4], 'r')
     plt.title('Second rate component')
     plt.grid()
 
     plt.subplot(325)
-    plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  3], 'k--')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  3], 'b')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  3] + P[:,2,2], 'r--')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  3] - P[:,2,2], 'r--', label='Covar')
+    plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  3], 'b--')
+    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  3], 'r')
     plt.xlabel('t(s)')
     plt.title('Third LOS component')
     plt.grid()
 
     plt.subplot(326)
-    plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  6], 'k--')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  6], 'b')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  6] + P[:,5,5], 'r--')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  6] - P[:,5,5], 'r--', label='Covar')
+    plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  5], 'b--')
+    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  5], 'r')
     plt.xlabel('t(s)')
     plt.title('Third rate component')
     plt.grid()
@@ -327,6 +302,7 @@ def StatesVsExpected(stateLog, Pflat, expectedStateArray, show_plots):
     if show_plots:
         plt.show()
     plt.close()
+
 
 
 def StatesVsTargets(target1, target2, stateLog, show_plots):

@@ -18,7 +18,6 @@ Of the following requirements Python is the only one for which prebuilt librarie
 
 [Setup a Windows Development Environment](@ref installWindows)
 
-
 ### Basilisk Development guidelines ###
 
 * [Coding Guidelines](@ref codingGuidelines)
@@ -36,7 +35,7 @@ basiliskPath = Basilisk.__path__[0]
 print basiliskPath
 ```
 
-Now copy the folder `{basiliskPath}/tests` into a new folder, and change to that directory. 
+Now copy the folder `{basiliskPath}/tests` into a new folder, and change to that directory.
 
 To run the default scenario 1 of scenarioBasicOrbit, in the directory of the copied tutorials, call the python script: `python test_scenarioBasicOrbit.py`
 

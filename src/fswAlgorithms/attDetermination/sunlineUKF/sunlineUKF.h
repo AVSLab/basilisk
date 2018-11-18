@@ -33,8 +33,8 @@
  */
 
 
-/*! @brief Top level structure for the CSS unscented kalman filter estimator.
- Used to estimate the sun state in the vehicle body frame*/
+/*! @brief Top level structure for the CSS-based unscented Kalman Filter.
+ Used to estimate the sun state in the vehicle body frame. Please see the _Documentation folder for details on how this Kalman Filter Functions.*/
 typedef struct {
     char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output filter data message*/
