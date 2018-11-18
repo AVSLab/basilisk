@@ -28,7 +28,7 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
      Created new switched CSS sun heading estimation algorithms called `Sunline_SuKF` and `Sunline_SEKF`.  These switch between two body frames to avoid singularities, but with direct body rate estimation. Previous filters `Sunline_UKF`, `Sunline_EKF`, and  `OKeefe_EKF` either subtract unobservability or difference sunheading estimate for a rate approximation.
     </li>
     <li>
-    Updated the install instructions to include explicit steps for setting up and installing Basilisk on windows machines.
+    Updated the Windows specific install instructions to include explicit steps for setting up and installing Basilisk on machine with a fresh copy of Windows 10.
     </li>
 </ul>
 
