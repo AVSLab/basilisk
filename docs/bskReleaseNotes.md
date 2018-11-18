@@ -30,6 +30,8 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>
     Updated the Windows specific install instructions to include explicit steps for setting up and installing Basilisk on machine with a fresh copy of Windows 10.
     </li>
+    <li>Added policy statements to the CMake files.  This now silences the warnings that were showing up in CMake 3.12 and 3.13</li>
+    <li>Modified CMake to silence the excessive warnings in XCode that `register` class is no depreciated in C++</li>
 </ul>
 
 ## Version 0.3.2
