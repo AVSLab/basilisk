@@ -282,6 +282,11 @@ else()
     set(Boost_USE_STATIC_RUNTIME OFF)
 endif()
 
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-register")
+endif()
+
+
 # foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
     # string( TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG )
     # set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/Basilisk)
