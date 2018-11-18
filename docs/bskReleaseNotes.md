@@ -8,7 +8,9 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 * GPU based methods to evaluate solar radiation pressure forces and torques
 * atmospheric drag evaluation using multi-faceted spacecraft model
 * new method to distributed BSK binaries
-* Adding a new method to stream the BSK simulation data to a Unity based 3D Visualization.
+* New Unity-based Basilisk visualization tool.
+* New Basilisk resource management tool that will allow for dynamic integration of Eigen, Protobuffers, OpenCV, and other future frameworks
+* New download and install method that pulls all the code, compiles and leaves the user with BSK binaries specific for their platform
 
 ## Version 0.X.X (upcoming release)
 <uL>
@@ -18,7 +20,7 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 </ul>
 
 ## Version 0.3.3 (upcoming release)
-<uL>
+<ul>
     <li>
     Added a new message output with the CSS fit residuals.  This is optional.  If the output message is not set, then this information is not computed.
     </li>
@@ -42,7 +44,7 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 </ul>
 
 ## Version 0.3.2
-<uL>
+<ul>
     <li>
     Fixed an issue with the eclipse unit test.
     </li>
@@ -55,7 +57,7 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 </ul>
 
 ## Version 0.3.1
-<uL>
+<ul>
     <li>
     Tutorials added for BSK_Sim architecture. Added the ability to customize the frequency for FSW and/or dynamics modules.
     </li>
@@ -81,7 +83,7 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 
 
 ## Version 0.3.0
-<uL>
+<ul>
     <li>
     Updated cssWlsEst() module to also compute a partial angular velocity vector.
     </li>
