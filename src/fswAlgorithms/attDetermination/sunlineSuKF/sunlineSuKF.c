@@ -255,13 +255,9 @@ void sunlineStateProp(double *stateInOut, double *b_Vec, double dt)
 
     double propagatedVel[SKF_N_STATES_HALF];
     double omegaCrossd[SKF_N_STATES_HALF];
-    double omega_tilde_BN_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double omega_BN_S[SKF_N_STATES_HALF] = {0, -stateInOut[3], -stateInOut[4]};
     double omega_BN_B[SKF_N_STATES_HALF];
-    double I_inv_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
-    double I_S[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     double dcm_BS[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
-    double dcm_SB[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
 
     mSetZero(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
 
