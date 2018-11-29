@@ -201,7 +201,9 @@ void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
 void sunlineTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 {
     double stmT[SKF_N_STATES*SKF_N_STATES], covPhiT[SKF_N_STATES*SKF_N_STATES];
+    double Gamma[SKF_N_STATES][SKF_N_STATES_HALF];
     double qGammaT[SKF_N_STATES_HALF*SKF_N_STATES], gammaQGammaT[SKF_N_STATES*SKF_N_STATES];
+    double Id[SKF_N_STATES_HALF*SKF_N_STATES_HALF];
     
 	/*! Begin method steps*/
 	ConfigData->dt = updateTime - ConfigData->timeTag;
@@ -220,8 +222,13 @@ void sunlineTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
     mMultM(ConfigData->stateTransition, SKF_N_STATES, SKF_N_STATES, covPhiT, SKF_N_STATES, SKF_N_STATES, ConfigData->covarBar);
     
     /*Compute Gamma and add gammaQGamma^T to Pbar. This is the process noise addition*/
-    double Gamma[6][3]={{ConfigData->dt*ConfigData->dt/2,0,0},{0,ConfigData->dt*ConfigData->dt/2,0},{0,0,ConfigData->dt*ConfigData->dt/2},{ConfigData->dt,0,0},{0,ConfigData->dt,0},{0,0,ConfigData->dt}};
-    
+//    double Gamma[6][3]={{ConfigData->dt*ConfigData->dt/2,0,0},{0,ConfigData->dt*ConfigData->dt/2,0},{0,0,ConfigData->dt*ConfigData->dt/2},{ConfigData->dt,0,0},{0,ConfigData->dt,0},{0,0,ConfigData->dt}};
+    mSetIdentity(Id, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
+    mScale(ConfigData->dt, Id, SKF_N_STATES_HALF, SKF_N_STATES_HALF, Id);
+    mSetSubMatrix(Id, 3, 3, Gamma, 6, 3, 3, 0);
+    mScale(ConfigData->dt/2, Id, SKF_N_STATES_HALF, SKF_N_STATES_HALF, Id);
+    mSetSubMatrix(Id, 3, 3, Gamma, 6, 3, 0, 0);
+
     mMultMt(ConfigData->procNoise, SKF_N_STATES_HALF, SKF_N_STATES_HALF, Gamma, SKF_N_STATES, SKF_N_STATES_HALF, qGammaT);
     mMultM(Gamma, SKF_N_STATES, SKF_N_STATES_HALF, qGammaT, SKF_N_STATES_HALF, SKF_N_STATES, gammaQGammaT);
     mAdd(ConfigData->covarBar, SKF_N_STATES, SKF_N_STATES, gammaQGammaT, ConfigData->covarBar);
