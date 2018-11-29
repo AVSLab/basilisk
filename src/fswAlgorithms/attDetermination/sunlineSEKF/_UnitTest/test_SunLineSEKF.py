@@ -744,7 +744,8 @@ def StatePropVariable(show_plots):
         s_skew = np.array([[0., -expectedStateArray[i,3], expectedStateArray[i,2]],
                            [expectedStateArray[i,3], 0., -expectedStateArray[i,1]],
                            [-expectedStateArray[i,2], expectedStateArray[i,1], 0.]])
-        Gamma[i, 0:3, 0:2] = dt ** 2. / 2. * s_skew[:,1:3]
+        s_BS = np.dot(s_skew, DCM_BS[i,:,:])
+        Gamma[i, 0:3, 0:2] = dt ** 2. / 2. * s_BS[:,1:3]
         Gamma[i,3:numStates, 0:2] = dt * np.eye(2)
         ProcNoiseCovar[i,:,:] = np.dot(Gamma[i,:,:], np.dot(moduleConfig.qProcVal*np.eye(2),Gamma[i,:,:].T))
     for i in range(1,2001):

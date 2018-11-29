@@ -218,7 +218,11 @@ void Update_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
 void sunlineTimeUpdate(sunlineSEKFConfig *ConfigData, double updateTime)
 {
     double stmT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], covPhiT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
+    double Gamma[SKF_N_STATES_SWITCH][SKF_N_STATES_SWITCH - 3];
     double qGammaT[(SKF_N_STATES_SWITCH-3)*SKF_N_STATES_SWITCH], gammaQGammaT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
+    double d_tilde[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double dcm_BS[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    mSetZero(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
     
 	/*! Begin method steps*/
 	ConfigData->dt = updateTime - ConfigData->timeTag;
@@ -236,17 +240,20 @@ void sunlineTimeUpdate(sunlineSEKFConfig *ConfigData, double updateTime)
     mMultM(ConfigData->covar, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, stmT, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, covPhiT);
     mMultM(ConfigData->stateTransition, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, covPhiT, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, ConfigData->covarBar);
     
+    sunlineSEKFComputeDCM_BS(ConfigData->state, ConfigData->bVec_B, &dcm_BS[0][0]);
     /*Compute Gamma and add gammaQGamma^T to Pbar. This is the process noise addition*/
-   double Gamma[SKF_N_STATES_SWITCH][(SKF_N_STATES_SWITCH-3)]=
-    {
-        {-ConfigData->state[2]*ConfigData->dt*ConfigData->dt/2,ConfigData->state[1]*ConfigData->dt*ConfigData->dt/2},
-        {0,-ConfigData->state[0]*ConfigData->dt*ConfigData->dt/2},
-        {ConfigData->state[0]*ConfigData->dt*ConfigData->dt/2, 0},
-        {ConfigData->dt,0},
-        {0,ConfigData->dt}
-    };
+    mSetIdentity(d_tilde, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
+    mScale(ConfigData->dt, d_tilde, SKF_N_STATES_HALF, SKF_N_STATES_HALF, d_tilde);
+    mSetSubMatrix(&(d_tilde[0][0]), 1, 2, Gamma, 5, 2, 3, 0);
+    mSetSubMatrix(&(d_tilde[1][0]), 1, 2, Gamma, 5, 2, 4, 0);
+    v3Tilde(ConfigData->state, d_tilde);
+    mMultM(d_tilde, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, d_tilde);
+    mScale(ConfigData->dt*ConfigData->dt/2, d_tilde, SKF_N_STATES_HALF, SKF_N_STATES_HALF, d_tilde);
+    mSetSubMatrix(&(d_tilde[0][1]), 1, 2, Gamma, 5, 2, 0, 0);
+    mSetSubMatrix(&(d_tilde[1][1]), 1, 2, Gamma, 5, 2, 1, 0);
+    mSetSubMatrix(&(d_tilde[2][1]), 1, 2, Gamma, 5, 2, 2, 0);
     
-    mMultMt(ConfigData->procNoise, (SKF_N_STATES_SWITCH-3), (SKF_N_STATES_SWITCH-3), Gamma, SKF_N_STATES_SWITCH, (SKF_N_STATES_SWITCH-3), qGammaT);
+    mMultMt(ConfigData->procNoise, (SKF_N_STATES_SWITCH-3),(SKF_N_STATES_SWITCH-3), Gamma, SKF_N_STATES_SWITCH, (SKF_N_STATES_SWITCH-3), qGammaT);
     mMultM(Gamma, SKF_N_STATES_SWITCH,(SKF_N_STATES_SWITCH-3), qGammaT, (SKF_N_STATES_SWITCH-3), SKF_N_STATES_SWITCH, gammaQGammaT);
     mAdd(ConfigData->covarBar, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, gammaQGammaT, ConfigData->covarBar);
     
