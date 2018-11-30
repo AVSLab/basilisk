@@ -77,6 +77,7 @@ typedef struct {
 	double wM[2 * AKF_N_STATES + 1]; /*!< [-] Weighting vector for sigma points*/
 	double wC[2 * AKF_N_STATES + 1]; /*!< [-] Weighting vector for sigma points*/
 
+    double stateInit[AKF_N_STATES];    /*!< [-] State estimate to initialize filter to*/
 	double state[AKF_N_STATES];        /*!< [-] State estimate for time TimeTag*/
 	double sBar[AKF_N_STATES*AKF_N_STATES];         /*!< [-] Time updated covariance */
 	double covar[AKF_N_STATES*AKF_N_STATES];        /*!< [-] covariance */

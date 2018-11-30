@@ -57,12 +57,14 @@ typedef struct {
     double bVec_B[SKF_N_STATES_HALF];       /*!< [-] current vector of the b frame used to make frame */
     double switchTresh;             /*!< [-]  Threshold for switching frames */
     
+    double stateInit[SKF_N_STATES_SWITCH];    /*!< [-] State to initialize filter to*/
     double state[SKF_N_STATES_SWITCH];        /*!< [-] State estimate for time TimeTag*/
     
 	double wM[2 * SKF_N_STATES_SWITCH + 1]; /*!< [-] Weighting vector for sigma points*/
 	double wC[2 * SKF_N_STATES_SWITCH + 1]; /*!< [-] Weighting vector for sigma points*/
 
 	double sBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];         /*!< [-] Time updated covariance */
+    double covarInit[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];        /*!< [-] covariance to init to*/
 	double covar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];        /*!< [-] covariance */
     double xBar[SKF_N_STATES_SWITCH];            /*! [-] Current mean state estimate*/
 
