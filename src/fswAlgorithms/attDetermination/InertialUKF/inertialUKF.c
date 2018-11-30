@@ -114,7 +114,6 @@ void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     vSetZero(ConfigData->obs, ConfigData->numObs);
     vSetZero(ConfigData->wM, ConfigData->countHalfSPs * 2 + 1);
     vSetZero(ConfigData->wC, ConfigData->countHalfSPs * 2 + 1);
-    vSetZero(ConfigData->state, ConfigData->numStates);
     mSetZero(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates);
     mSetZero(ConfigData->SP, ConfigData->countHalfSPs * 2 + 1,
              ConfigData->numStates);
@@ -137,6 +136,8 @@ void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
                                              ConfigData->lambdaVal);
         ConfigData->wC[i] = ConfigData->wM[i];
     }
+    
+    vCopy(ConfigData->stateInit, ConfigData->numStates, ConfigData->state);
     
     /*! - User a cholesky decomposition to obtain the sBar and sQnoise matrices for use in 
           filter at runtime*/
