@@ -60,7 +60,7 @@ def setupFilterData(filterObject):
     filterObject.STDatasStruct.numST = len(STList)
 
     filterObject.state = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    filterObject.covar = [0.04, 0.0, 0.0, 0.0, 0.0, 0.0,
+    filterObject.covarInit = [0.04, 0.0, 0.0, 0.0, 0.0, 0.0,
                           0.0, 0.04, 0.0, 0.0, 0.0, 0.0,
                           0.0, 0.0, 0.04, 0.0, 0.0, 0.0,
                           0.0, 0.0, 0.0, 0.004, 0.0, 0.0,

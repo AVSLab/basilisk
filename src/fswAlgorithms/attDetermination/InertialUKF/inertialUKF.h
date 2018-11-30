@@ -62,7 +62,6 @@ typedef struct {
 	int numStates;                /*!< [-] Number of states for this filter*/
 	int countHalfSPs;             /*!< [-] Number of sigma points over 2 */
 	int numObs;                   /*!< [-] Number of measurements this cycle */
-    int badUpdate;                /*!< [-] Flag to raise if there is a undefined term in the measurement update */
 	double beta;                  /*!< [-] Beta parameter for filter */
 	double alpha;                 /*!< [-] Alpha parameter for filter*/
 	double kappa;                 /*!< [-] Kappa parameter for filter*/
@@ -81,6 +80,7 @@ typedef struct {
 	double state[AKF_N_STATES];        /*!< [-] State estimate for time TimeTag*/
 	double sBar[AKF_N_STATES*AKF_N_STATES];         /*!< [-] Time updated covariance */
 	double covar[AKF_N_STATES*AKF_N_STATES];        /*!< [-] covariance */
+    double covarInit[AKF_N_STATES*AKF_N_STATES];    /*!< [-] Covariance to init filter with*/
     double xBar[AKF_N_STATES];            /*! [-] Current mean state estimate*/
 
 	double obs[3];          /*!< [-] Observation vector for frame*/
@@ -101,8 +101,8 @@ typedef struct {
 	NavAttIntMsg outputInertial;        /*!< -- Output inertial estimate data */
     STAttFswMsg stSensorIn[MAX_ST_VEH_COUNT]; /*!< [-] ST sensor data read in from message bus*/
     int stSensorOrder[MAX_ST_VEH_COUNT]; /*!< [-] ST sensor data read in from message bus*/
-    int ClockTimeST[MAX_ST_VEH_COUNT];  /*!< [-] All of the ClockTimes for the STs*/
-    int ReadSizeST[MAX_ST_VEH_COUNT];  /*!< [-] All of the ReadSizes for the STs*/
+    uint64_t ClockTimeST[MAX_ST_VEH_COUNT];  /*!< [-] All of the ClockTimes for the STs*/
+    uint64_t ReadSizeST[MAX_ST_VEH_COUNT];  /*!< [-] All of the ReadSizes for the STs*/
     RWArrayConfigFswMsg rwConfigParams;       /*!< [-] struct to store message containing RW config parameters in body B frame */
     RWSpeedIntMsg rwSpeeds;             /*! [-] Local reaction wheel speeds */
     RWSpeedIntMsg rwSpeedPrev;          /*! [-] Local reaction wheel speeds */
@@ -134,8 +134,8 @@ extern "C" {
 		uint64_t moduleID);
     void inertialUKFAggGyrData(InertialUKFConfig *ConfigData, double prevTime,
                           double propTime, AccDataFswMsg *gyrData);
-	void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime);
-    void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int currentST);
+	int inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime);
+    int inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int currentST);
 	void inertialStateProp(InertialUKFConfig *ConfigData, double *stateInOut, double dt);
     void inertialUKFMeasModel(InertialUKFConfig *ConfigData, int currentST);
     

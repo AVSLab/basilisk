@@ -22,6 +22,7 @@
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
+#include "simulation/utilities/bsk_Print.h"
 #include <string.h>
 #include <math.h>
 
@@ -84,6 +85,7 @@ void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
 {
     
     int32_t i;
+    int32_t badUpdate;
     uint64_t writeTime;
     uint32_t writeSize;
     double tempMatrix[AKF_N_STATES*AKF_N_STATES];
@@ -107,12 +109,12 @@ void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     ConfigData->firstPassComplete = 0;
     ConfigData->speedDt = 0.0;
     ConfigData->timeWheelPrev = 0;
-    ConfigData->badUpdate = 0;
     
     /*! - Ensure that all internal filter matrices are zeroed*/
     vSetZero(ConfigData->obs, ConfigData->numObs);
     vSetZero(ConfigData->wM, ConfigData->countHalfSPs * 2 + 1);
     vSetZero(ConfigData->wC, ConfigData->countHalfSPs * 2 + 1);
+    vSetZero(ConfigData->state, ConfigData->numStates);
     mSetZero(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates);
     mSetZero(ConfigData->SP, ConfigData->countHalfSPs * 2 + 1,
              ConfigData->numStates);
@@ -138,18 +140,19 @@ void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     
     /*! - User a cholesky decomposition to obtain the sBar and sQnoise matrices for use in 
           filter at runtime*/
-    mCopy(ConfigData->covar, ConfigData->numStates, ConfigData->numStates,
+    mCopy(ConfigData->covarInit, ConfigData->numStates, ConfigData->numStates,
           ConfigData->sBar);
-    ConfigData->badUpdate += ukfCholDecomp(ConfigData->sBar, ConfigData->numStates,
+    mCopy(ConfigData->covarInit, ConfigData->numStates, ConfigData->numStates,
+          ConfigData->covar);
+    mSetZero(tempMatrix, ConfigData->numStates, ConfigData->numStates);
+    badUpdate = ukfCholDecomp(ConfigData->sBar, ConfigData->numStates,
                   ConfigData->numStates, tempMatrix);
-    if (ConfigData->badUpdate<0){
-        printf("bad update occured in UKF");
-        return;}
-    ConfigData->badUpdate += ukfCholDecomp(ConfigData->qNoise, ConfigData->numStates,
+    if (badUpdate<0){
+        BSK_PRINT(MSG_WARNING, "bad update occured in covar reset UKF\n");}
+    badUpdate = ukfCholDecomp(ConfigData->qNoise, ConfigData->numStates,
                   ConfigData->numStates, ConfigData->sQnoise);
-    if (ConfigData->badUpdate<0){
-        printf("bad update occured in UKF");
-        return;}
+    if (badUpdate<0){
+        BSK_PRINT(MSG_WARNING, "bad update occured in qNoise reset UKF\n");}
 
     mCopy(tempMatrix, ConfigData->numStates, ConfigData->numStates,
           ConfigData->sBar);
@@ -187,8 +190,10 @@ void Read_STMessages(InertialUKFConfig *ConfigData, uint64_t moduleID)
         ReadMessage(ConfigData->STDatasStruct.STMessages[i].stInMsgID, &ClockTime, &ReadSize,
                     sizeof(STAttFswMsg), (void*) (&(ConfigData->stSensorIn[i])), moduleID);
         
+        /*! Only mark valid size if message isn't stale*/
+        ConfigData->ReadSizeST[i] = ClockTime != ConfigData->ClockTimeST[i] ?
+            ReadSize : 0;
         ConfigData->ClockTimeST[i] = ClockTime;
-        ConfigData->ReadSizeST[i] = ReadSize;
         
         /*! - If the time tag from the measured data is new compared to previous step,
          propagate and update the filter*/
@@ -226,7 +231,6 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     int i;
     
     // Reset update check to zero
-    ConfigData->badUpdate = 0;
     
     if (v3Norm(ConfigData->state) > ConfigData->switchMag) //Little extra margin
     {
@@ -244,8 +248,7 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     {
         memcpy(&(ConfigData->rwSpeedPrev), &(ConfigData->rwSpeeds), sizeof(RWSpeedIntMsg));
         ConfigData->timeWheelPrev = ClockTime;
-        ConfigData->timeTag = ConfigData->stSensorIn[0].timeTag > ClockTime ?
-        ConfigData->stSensorIn[0].timeTag*NANO2SEC : ClockTime*NANO2SEC;
+        ConfigData->timeTag = ConfigData->stSensorIn[ConfigData->stSensorOrder[0]].timeTag*NANO2SEC;
         
         ConfigData->firstPassComplete = 1;
     }
@@ -257,6 +260,8 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
                 sizeof(VehicleConfigFswMsg), &(ConfigData->localConfigData), moduleID);
     m33Inverse(RECAST3X3 ConfigData->localConfigData.ISCPntB_B, ConfigData->IInv);
     
+    inertialDataOutBuffer.numObs = 0;
+    trackerValid = 0;
     for (i = 0; i < ConfigData->STDatasStruct.numST; i++)
     {
         newTimeTag = ConfigData->stSensorIn[ConfigData->stSensorOrder[i]].timeTag * NANO2SEC;
@@ -265,58 +270,46 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
         
         /*! - If the star tracker has provided a new message compared to last time,
               update the filter to the new measurement*/
-        trackerValid = 0;
         if(newTimeTag >= ConfigData->timeTag && ReadSize > 0)
         {
-            inertialUKFTimeUpdate(ConfigData, newTimeTag);
-            inertialUKFMeasUpdate(ConfigData, newTimeTag, ConfigData->stSensorOrder[i]);
             trackerValid = 1;
+            trackerValid += inertialUKFTimeUpdate(ConfigData, newTimeTag);
+            trackerValid += inertialUKFMeasUpdate(ConfigData, newTimeTag, ConfigData->stSensorOrder[i]);
+            inertialDataOutBuffer.numObs += trackerValid;
         }
         
     }
     /*! - If current clock time is further ahead than the measured time, then
      propagate to this current time-step*/
     newTimeTag = callTime*NANO2SEC;
-    if(newTimeTag > ConfigData->timeTag)
+    if(trackerValid < 1)
     {
-        /*! - If we have gotten  a masurement this frame, propagate to caller time.
-         This will extrapolate the state blindy, which is not ideal so the
-         latency between the ST meas and the current time is hopefully small.*/
-        if(trackerValid)
-        {
-            inertialUKFTimeUpdate(ConfigData, newTimeTag);
-            v3Copy(ConfigData->state, ConfigData->sigma_BNOut);
-            v3Copy(&(ConfigData->state[3]), ConfigData->omega_BN_BOut);
-            ConfigData->timeTagOut = ConfigData->timeTag;
-        }
         /*! - If no star tracker measurement was available, propagate the state
          on the gyro measurements received since the last ST update.  Note
          that the rate estimate is just smoothed gyro data in this case*/
-        else
+        
+        /*! - Assemble the aggregrate rotation from the gyro buffer*/
+        inertialUKFAggGyrData(ConfigData, ConfigData->timeTagOut,
+                              newTimeTag, &gyrBuffer);
+        /*! - Propagate the attitude quaternion with the aggregate rotation*/
+        addMRP(ConfigData->sigma_BNOut, ConfigData->aggSigma_b2b1,
+               sigma_BNSum);
+        /*! - Switch the MRPs if necessary*/
+        if (v3Norm(sigma_BNSum) > ConfigData->switchMag) //Little extra margin
         {
-            /*! - Assemble the aggregrate rotation from the gyro buffer*/
-            inertialUKFAggGyrData(ConfigData, ConfigData->timeTagOut,
-                                  newTimeTag, &gyrBuffer);
-            /*! - Propagate the attitude quaternion with the aggregate rotation*/
-            addMRP(ConfigData->sigma_BNOut, ConfigData->aggSigma_b2b1,
-                   sigma_BNSum);
-            /*! - Switch the MRPs if necessary*/
-            if (v3Norm(sigma_BNSum) > ConfigData->switchMag) //Little extra margin
-            {
-                MRPswitch(sigma_BNSum, ConfigData->switchMag, sigma_BNSum);
-            }
-            v3Copy(sigma_BNSum, ConfigData->sigma_BNOut);
-            /*! - Rate estimate in this case is simply the low-pass filtered
-             gyro data.  This is likely much noisier than the time-update
-             solution*/
-            for(i=0; i<3; i++)
-            {
-                ConfigData->omega_BN_BOut[i] =
-                ConfigData->gyroFilt[i].currentState;
-            }
-            ConfigData->timeTagOut = newTimeTag;
-            
+            MRPswitch(sigma_BNSum, ConfigData->switchMag, sigma_BNSum);
         }
+        v3Copy(sigma_BNSum, ConfigData->sigma_BNOut);
+        /*! - Rate estimate in this case is simply the low-pass filtered
+         gyro data.  This is likely much noisier than the time-update
+         solution*/
+        for(i=0; i<3; i++)
+        {
+            ConfigData->omega_BN_BOut[i] =
+            ConfigData->gyroFilt[i].currentState;
+        }
+        ConfigData->timeTagOut = ConfigData->gyrAggTimeTag;
+        
     }
     else
     {
@@ -337,7 +330,6 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     
     /*! - Populate the filter states output buffer and write the output message*/
     inertialDataOutBuffer.timeTag = ConfigData->timeTag;
-    inertialDataOutBuffer.numObs = ConfigData->numObs;
     memmove(inertialDataOutBuffer.covar, ConfigData->covar,
             AKF_N_STATES*AKF_N_STATES*sizeof(double));
     memmove(inertialDataOutBuffer.state, ConfigData->state, AKF_N_STATES*sizeof(double));
@@ -403,7 +395,7 @@ void inertialStateProp(InertialUKFConfig *ConfigData, double *stateInOut, double
      @param ConfigData The configuration data associated with the CSS estimator
      @param updateTime The time that we need to fix the filter to (seconds)
 */
-void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime)
+int inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime)
 {
 	int i, Index, k;
 	double sBarT[AKF_N_STATES*AKF_N_STATES];
@@ -412,6 +404,7 @@ void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime)
 	double sBarUp[AKF_N_STATES*AKF_N_STATES];
 	double *spPtr;
     double procNoise[AKF_N_STATES*AKF_N_STATES];
+    int32_t badUpdate;
     
 	/*! Begin method steps*/
 	ConfigData->dt = updateTime - ConfigData->timeTag;
@@ -463,9 +456,9 @@ void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime)
         vAdd(aRow, ConfigData->numStates,
              &(ConfigData->SP[(i+1)*ConfigData->numStates]), aRow);
         if (ConfigData->wC[i+1]<0){
-            ConfigData->badUpdate += 1;
-            printf("bad update occured in UKF");
-            return;
+            badUpdate = 1;
+            BSK_PRINT(MSG_WARNING, "bad update occured in UKF time prop");
+            return(-1);
         }
         else{
         vScale(sqrt(ConfigData->wC[i+1]), aRow, ConfigData->numStates, aRow);
@@ -473,7 +466,7 @@ void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime)
 			ConfigData->numStates*sizeof(double));
         }
 	}
-//    ! - Scale sQNoise matrix depending on the dt
+   /*! - Scale sQNoise matrix depending on the dt*/
     for (k=0;k<3;k++){
         procNoise[k*AKF_N_STATES+k] *= ConfigData->dt*ConfigData->dt/2;
         procNoise[(k+3)*AKF_N_STATES+(k+3)] *= ConfigData->dt;
@@ -483,11 +476,11 @@ void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime)
 		procNoise, ConfigData->numStates*ConfigData->numStates
         *sizeof(double));
     /*! - QR decomposition (only R computed!) of the AT matrix provides the new sBar matrix*/
-    ConfigData->badUpdate += ukfQRDJustR(AT, 2 * ConfigData->countHalfSPs + ConfigData->numStates,
+    badUpdate = ukfQRDJustR(AT, 2 * ConfigData->countHalfSPs + ConfigData->numStates,
                 ConfigData->countHalfSPs, rAT);
-    if (ConfigData->badUpdate<0){
-        printf("bad update occured in UKF");
-        return;}
+    if (badUpdate<0){
+        BSK_PRINT(MSG_WARNING, "bad update occured in UKF time prop QR");
+        return(-1);}
     mCopy(rAT, ConfigData->numStates, ConfigData->numStates, sBarT);
     mTranspose(sBarT, ConfigData->numStates, ConfigData->numStates,
         ConfigData->sBar);
@@ -496,11 +489,11 @@ void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime)
           like in equation 21 in design document.*/
     vScale(-1.0, ConfigData->xBar, ConfigData->numStates, xErr);
     vAdd(xErr, ConfigData->numStates, &ConfigData->SP[0], xErr);
-    ConfigData->badUpdate += ukfCholDownDate(ConfigData->sBar, xErr, ConfigData->wC[0],
+    badUpdate = ukfCholDownDate(ConfigData->sBar, xErr, ConfigData->wC[0],
         ConfigData->numStates, sBarUp);
-    if (ConfigData->badUpdate<0){
-        printf("bad update occured in UKF");
-        return;}
+    if (badUpdate<0){
+        BSK_PRINT(MSG_WARNING, "bad update occured in UKF time prop down-date");
+        return(-1);}
 
     
     /*! - Save current sBar matrix, covariance, and state estimate off for further use*/
@@ -513,7 +506,7 @@ void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime)
     vCopy(&(ConfigData->SP[0]), ConfigData->numStates, ConfigData->state );
 	
 	ConfigData->timeTag = updateTime;
-    
+    return(0);
 }
 
 /*! This method computes what the expected measurement vector is for each CSS 
@@ -585,13 +578,13 @@ void inertialUKFAggGyrData(InertialUKFConfig *ConfigData, double prevTime,
     
     /*! Begin method steps*/
     minFutInd = 0;
-    minFutTime = propTime;
+    minFutTime = -1;
     /*! - Loop through the entire gyro buffer to find the first index that is 
           in the future compared to prevTime*/
     for(i=0; i<MAX_ACC_BUF_PKT; i++)
     {
         measTime = gyrData->accPkts[i].measTime*NANO2SEC;
-        if(measTime > prevTime && measTime < minFutTime)
+        if(measTime > prevTime && (measTime < minFutTime || minFutTime < 0.0))
         {
             minFutInd = i;
             minFutTime = measTime;
@@ -604,7 +597,7 @@ void inertialUKFAggGyrData(InertialUKFConfig *ConfigData, double prevTime,
     measTime = prevTime;
     /*! - Loop through buffer for all valid measurements to assemble the 
           composite rotation since the previous time*/
-    while(minFutTime <= propTime && minFutTime > prevTime
+    while(minFutTime > prevTime
         && i<MAX_ACC_BUF_PKT)
     {
         dt = minFutTime - measTime;
@@ -635,6 +628,7 @@ void inertialUKFAggGyrData(InertialUKFConfig *ConfigData, double prevTime,
           as that is our filter representation*/
     ConfigData->numUsedGyros = i;
     EP2MRP(ep_BpropB0, ConfigData->aggSigma_b2b1);
+    
     return;
 }
 
@@ -645,7 +639,7 @@ void inertialUKFAggGyrData(InertialUKFConfig *ConfigData, double prevTime,
  @param ConfigData The configuration data associated with the CSS estimator
  @param updateTime The time that we need to fix the filter to (seconds)
  */
-void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int currentST)
+int inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int currentST)
 {
     uint32_t i;
     double yBar[3], syInv[3*3];
@@ -655,6 +649,7 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int
     double rAT[3*3], syT[3*3];
     double sy[3*3];
     double updMat[3*3], pXY[AKF_N_STATES*3];
+    int32_t badUpdate;
     
     /*! Begin method steps*/
     
@@ -683,9 +678,8 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int
         vAdd(tempYVec, ConfigData->numObs,
              &(ConfigData->yMeas[(i+1)*ConfigData->numObs]), tempYVec);
         if (ConfigData->wC[i+1]<0){
-            ConfigData->badUpdate += 1;
-            printf("bad update occured in UKF");
-            return;
+            BSK_PRINT(MSG_WARNING, "bad update occured in UKF meas yBar");
+            return(-1);
         }
         vScale(sqrt(ConfigData->wC[i+1]), tempYVec, ConfigData->numObs, tempYVec);
         memcpy(&(AT[i*ConfigData->numObs]), tempYVec,
@@ -695,19 +689,19 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int
     /*! - This is the square-root of the Rk matrix which we treat as the Cholesky
         decomposition of the observation variance matrix constructed for our number 
         of observations*/
-    ConfigData->badUpdate += ukfCholDecomp(ConfigData->STDatasStruct.STMessages[currentST].noise, ConfigData->numObs, ConfigData->numObs, qChol);
-    if (ConfigData->badUpdate<0){
-        printf("bad update occured in UKF");
-        return;}
+    badUpdate = ukfCholDecomp(ConfigData->STDatasStruct.STMessages[currentST].noise, ConfigData->numObs, ConfigData->numObs, qChol);
+    if (badUpdate<0){
+        BSK_PRINT(MSG_WARNING, "bad update occured in UKF meas noise chol");
+        return(-1);}
     memcpy(&(AT[2*ConfigData->countHalfSPs*ConfigData->numObs]),
            qChol, ConfigData->numObs*ConfigData->numObs*sizeof(double));
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the 
           current Sy matrix*/
-    ConfigData->badUpdate += ukfQRDJustR(AT, 2*ConfigData->countHalfSPs+ConfigData->numObs,
+    badUpdate = ukfQRDJustR(AT, 2*ConfigData->countHalfSPs+ConfigData->numObs,
                 ConfigData->numObs, rAT);
-    if (ConfigData->badUpdate<0){
-        printf("bad update occured in UKF");
-        return;}
+    if (badUpdate<0){
+        BSK_PRINT(MSG_WARNING, "bad update occured in UKF rAT");
+        return(-1);}
 
     mCopy(rAT, ConfigData->numObs, ConfigData->numObs, syT);
     mTranspose(syT, ConfigData->numObs, ConfigData->numObs, sy);
@@ -715,11 +709,11 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int
           model and the yBar matrix (cholesky down-date again)*/
     vScale(-1.0, yBar, ConfigData->numObs, tempYVec);
     vAdd(tempYVec, ConfigData->numObs, &(ConfigData->yMeas[0]), tempYVec);
-    ConfigData->badUpdate += ukfCholDownDate(sy, tempYVec, ConfigData->wC[0],
+    badUpdate = ukfCholDownDate(sy, tempYVec, ConfigData->wC[0],
                     ConfigData->numObs, updMat);
-    if (ConfigData->badUpdate<0){
-        printf("bad update occured in UKF");
-        return;}
+    if (badUpdate<0){
+        BSK_PRINT(MSG_WARNING, "bad update occured in UKF meas down-date");
+        return(-1);}
 
     /*! - Shifted matrix represents the Sy matrix */
     mCopy(updMat, ConfigData->numObs, ConfigData->numObs, sy);
@@ -771,10 +765,10 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int
     for(i=0; i<ConfigData->numObs; i++)
     {
         vCopy(&(pXY[i*ConfigData->numStates]), ConfigData->numStates, xHat);
-        ConfigData->badUpdate += ukfCholDownDate(ConfigData->sBar, xHat, -1.0, ConfigData->numStates, sBarT);
-        if (ConfigData->badUpdate<0){
-            printf("bad update occured in UKF");
-            return;}
+        badUpdate = ukfCholDownDate(ConfigData->sBar, xHat, -1.0, ConfigData->numStates, sBarT);
+        if (badUpdate<0){
+            BSK_PRINT(MSG_WARNING, "bad update occured in UKF final wrap");
+            return(-1);}
         mCopy(sBarT, ConfigData->numStates, ConfigData->numStates,
             ConfigData->sBar);
     }
@@ -785,4 +779,5 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int
     mMultM(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
            ConfigData->covar, ConfigData->numStates, ConfigData->numStates,
            ConfigData->covar);
+    return(0);
 }
