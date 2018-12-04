@@ -46,8 +46,8 @@ def setupFilterData(filterObject):
     filterObject.kappa = 0.0
 
     # filterObject.state = [0.0, 0., 0., 0., 0.]
-    filterObject.state = [0.0, 0.0, 1.0, 0.0, 0.0]
-    filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0,
+    filterObject.stateInit = [0.0, 0.0, 1.0, 0.0, 0.0]
+    filterObject.covarInit = [1., 0.0, 0.0, 0.0, 0.0,
                           0.0, 1., 0.0, 0.0, 0.0,
                           0.0, 0.0, 1., 0.0, 0.0,
                           0.0, 0.0, 0.0, 0.02, 0.0,
@@ -412,7 +412,7 @@ def StateUpdateSunLine(show_plots):
 
     stateTarget = testVector.tolist()
     stateTarget.extend([0.0, 0.0])
-    moduleConfig.state = [0.7, 0.7, 0.0, 0.01, 0.001]
+    moduleConfig.stateInit = [0.7, 0.7, 0.0, 0.01, 0.001]
 
     unitTestSim.InitializeSimulation()
 
