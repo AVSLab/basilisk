@@ -59,8 +59,8 @@ def setupFilterData(filterObject):
     filterObject.STDatasStruct.STMessages = STList
     filterObject.STDatasStruct.numST = len(STList)
 
-    filterObject.state = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    filterObject.covar = [0.04, 0.0, 0.0, 0.0, 0.0, 0.0,
+    filterObject.stateInit = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    filterObject.covarInit = [0.04, 0.0, 0.0, 0.0, 0.0, 0.0,
                           0.0, 0.04, 0.0, 0.0, 0.0, 0.0,
                           0.0, 0.0, 0.04, 0.0, 0.0, 0.0,
                           0.0, 0.0, 0.0, 0.004, 0.0, 0.0,
@@ -364,7 +364,7 @@ def test_StatePropRateInertialAttitude(show_plots):
                                                 0,
                                                 vehicleConfigOut)
     stateInit = [0.0, 0.0, 0.0, math.pi/1800.0, 0.0, 0.0]
-    moduleConfig.state = stateInit
+    moduleConfig.stateInit = stateInit
     unitTestSim.AddVariableForLogging('InertialUKF.covar', testProcessRate*10, 0, 35)
     unitTestSim.AddVariableForLogging('InertialUKF.sigma_BNOut', testProcessRate*10, 0, 2)
     unitTestSim.AddVariableForLogging('InertialUKF.omega_BN_BOut', testProcessRate*10, 0, 2)

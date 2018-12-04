@@ -135,8 +135,12 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
         ConfigData->wC[i] = ConfigData->wM[i];
     }
     
+    vCopy(ConfigData->stateInit, ConfigData->numStates, ConfigData->state);
+    
     /*! - User a cholesky decomposition to obtain the sBar and sQnoise matrices for use in 
           filter at runtime*/
+    mCopy(ConfigData->covarInit, ConfigData->numStates, ConfigData->numStates,
+          ConfigData->covar);
     mCopy(ConfigData->covar, ConfigData->numStates, ConfigData->numStates,
           ConfigData->sBar);
     ukfCholDecomp(ConfigData->sBar, ConfigData->numStates,
