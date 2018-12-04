@@ -5,9 +5,9 @@
 
 The `pytest` program can run a series of test on python scripts that begin with `test_`.  Install the `pytest` program with:
 
-`pip install --user pytest==3.6.1`
+`pip install --user pytest`
 
-Note that this version works properly with Basilisk, while currently the latest version has some bugs that impact some Basilisk tests.
+Note that version 4.0.0 or higher works properly with Basilisk, while versions between 3.6.1 and 4.0.0 had some bugs that impacted some Basilisk tests.
 
 
 ## Running `pytest` in a multi-threaded manner
