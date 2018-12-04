@@ -31,7 +31,6 @@ import numpy as np
 import array
 import xml.etree.ElementTree as ET
 import inspect
-#import sets
 try:
    set
 except NameError:
