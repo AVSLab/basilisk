@@ -31,7 +31,12 @@ import numpy as np
 import array
 import xml.etree.ElementTree as ET
 import inspect
-import sets
+#import sets
+try:
+   set
+except NameError:
+   from sets import Set as set
+
 from Basilisk.utilities import simulationArchTypes
 from Basilisk.simulation import simMessages
 
@@ -160,8 +165,8 @@ class StructDocData:
 
 class DataPairClass:
     def __init__(self):
-        self.outputMessages = sets.Set([])
-        self.inputMessages = sets.Set([])
+        self.outputMessages = set([])
+        self.inputMessages = set([])
         self.name = ""
         self.outputDict = {}
 
