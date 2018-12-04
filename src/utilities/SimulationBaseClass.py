@@ -25,10 +25,8 @@ import sys, os, ast
 
 
 from Basilisk.simulation import sim_model
-from Basilisk.simulation import sys_model_task
 from Basilisk.simulation import alg_contain
 from Basilisk.utilities import MessagingAccess
-import types
 import numpy as np
 import array
 import xml.etree.ElementTree as ET
