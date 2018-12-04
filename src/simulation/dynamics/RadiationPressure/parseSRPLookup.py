@@ -38,9 +38,9 @@ class SRPLookupTableHandler:
         self.forceBLookup.resize([len(forceBTree._children), 3])
         self.torqueBLookup.resize([len(torqueBTree._children), 3])
 
-        for node in sHatBTree.getchildren():
+        for node in list(sHatBTree):
             idx = int(node.attrib['index'])
-            for value in node.getchildren():
+            for value in list(node):
                 if value.tag == 'value_1':
                     self.sHatBLookup[idx, 0] = value.text
                 if value.tag == 'value_2':
@@ -48,9 +48,9 @@ class SRPLookupTableHandler:
                 if value.tag == 'value_3':
                     self.sHatBLookup[idx, 2] = value.text
 
-        for node in forceBTree.getchildren():
+        for node in list(forceBTree):
             idx = int(node.attrib['index'])
-            for value in node.getchildren():
+            for value in list(node):
                 if value.tag == 'value_1':
                     self.forceBLookup[idx, 0] = value.text
                 if value.tag == 'value_2':
@@ -58,9 +58,9 @@ class SRPLookupTableHandler:
                 if value.tag == 'value_3':
                     self.forceBLookup[idx, 2] = value.text
 
-        for node in torqueBTree.getchildren():
+        for node in list(torqueBTree):
             idx = int(node.attrib['index'])
-            for value in node.getchildren():
+            for value in list(node):
                 if value.tag == 'value_1':
                     self.torqueBLookup[idx, 0] = value.text
                 if value.tag == 'value_2':
