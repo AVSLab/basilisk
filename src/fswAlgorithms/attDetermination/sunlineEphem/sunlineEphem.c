@@ -84,7 +84,6 @@ void CrossInit_sunlineEphem(sunlineEphemConfig *ConfigData, uint64_t moduleID)
 void Reset_sunlineEphem(sunlineEphemConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     memset(&(ConfigData->outputSunline), 0x0, sizeof(NavAttIntMsg));
-
 }
 
 /*! Add a description of what this main Update() routine does for this module
@@ -114,7 +113,7 @@ void Update_sunlineEphem(sunlineEphemConfig *ConfigData, uint64_t callTime, uint
                 sizeof(NavAttIntMsg), (void*) &(ConfigData->scAttBuffer), moduleID);
 
     /* Calculate Sunline Heading*/
-    v3Subtract(ConfigData->sunEphemBuffer.r_BdyZero_N, ConfigData->scTransBuffer.r_BN_N, rDiff_N);
+    v3Subtract(ConfigData->scTransBuffer.r_BN_N, ConfigData->sunEphemBuffer.r_BdyZero_N, rDiff_N);
     v3Normalize(rDiff_N, rDiffUnit_N);
     MRP2C(ConfigData->scAttBuffer.sigma_BN, dcm_BN);
     
