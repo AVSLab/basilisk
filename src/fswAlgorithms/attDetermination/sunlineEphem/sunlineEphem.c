@@ -51,7 +51,9 @@ void SelfInit_sunlineEphem(sunlineEphemConfig *ConfigData, uint64_t moduleID)
     
     ConfigData->navStateOutMsgId = CreateNewMessage(ConfigData->navStateOutMsgName,
                                                     sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
+
 }
+
 
 /*! This method performs the second stage of initialization for this module.
  It's primary function is to link the input messages that were created elsewhere.
@@ -113,7 +115,7 @@ void Update_sunlineEphem(sunlineEphemConfig *ConfigData, uint64_t callTime, uint
                 sizeof(NavAttIntMsg), (void*) &(ConfigData->scAttBuffer), moduleID);
 
     /* Calculate Sunline Heading*/
-    v3Subtract(ConfigData->scTransBuffer.r_BN_N, ConfigData->sunEphemBuffer.r_BdyZero_N, rDiff_N);
+    v3Subtract(ConfigData->sunEphemBuffer.r_BdyZero_N, ConfigData->scTransBuffer.r_BN_N, rDiff_N);
     v3Normalize(rDiff_N, rDiffUnit_N);
     MRP2C(ConfigData->scAttBuffer.sigma_BN, dcm_BN);
     
