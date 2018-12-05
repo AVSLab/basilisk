@@ -133,11 +133,11 @@ void computeVelocityPointingReference(velocityPointConfig *ConfigData,
     C2MRP(dcm_RN, ConfigData->attRefOut.sigma_RN);
     
     /* Compute R-frame inertial rate and acceleration */
-    rv2elem(ConfigData->mu, r, v, &ConfigData->oe);
     rm = v3Norm(r);
     hm = v3Norm(h);
     /* Robustness check */
     if(rm > 1.) {
+        rv2elem(ConfigData->mu, r, v, &ConfigData->oe);
         dfdt = hm / (rm * rm);  /* true anomaly rate */
         ddfdt2    = - 2.0 * (v3Dot(v, r) / (rm * rm)) * dfdt;
         denom = 1 + ConfigData->oe.e * ConfigData->oe.e + 2 * ConfigData->oe.e * cos(ConfigData->oe.f);
