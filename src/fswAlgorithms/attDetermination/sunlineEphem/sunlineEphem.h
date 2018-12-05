@@ -44,15 +44,11 @@ typedef struct {
     NavAttIntMsg scAttBuffer;
     
     char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
-    int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
-    
-    
     char sunPositionInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
     char scPositionInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
     char scAttitudeInMsgName[MAX_STAT_MSG_LENGTH];
     
-    
-    int32_t attGuidanceOutMsgId;/*!< -- ID for the outgoing body estimate message*/
+    int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t sunPositionInMsgId;/*!< -- ID for the incoming CSS sensor message*/
     int32_t scPositionInMsgId; /*!< -- ID for the incoming spacecraft position message*/
     int32_t scAttitudeInMsgId; /*!< -- ID for the incoming spacecraft position message*/

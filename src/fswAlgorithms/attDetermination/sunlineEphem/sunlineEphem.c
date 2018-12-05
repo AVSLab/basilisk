@@ -48,7 +48,7 @@ void SelfInit_sunlineEphem(sunlineEphemConfig *ConfigData, uint64_t moduleID)
     
     /*! Begin method steps */
     /*! - Create output message for module */
-
+    
     ConfigData->navStateOutMsgId = CreateNewMessage(ConfigData->navStateOutMsgName,
                                                     sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
 }
