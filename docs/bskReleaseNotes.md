@@ -15,7 +15,9 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 ## Version 0.X.X (upcoming release)
 <uL>
     <li>
-    TBD
+    updated install instructions to allow for pytest version 4.0.0 or newer
+    </li>
+    <li>updated code to remove some depreciated python function call warnings
     </li>
 </ul>
 
