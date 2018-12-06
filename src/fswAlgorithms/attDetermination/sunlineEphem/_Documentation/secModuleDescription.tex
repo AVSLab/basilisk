@@ -1,26 +1,16 @@
-% !TEX root = ./Basilisk-MODULENAME-yyyymmdd.tex
+% !TEX root = ./Basilisk-SunlineEphem-20181204.tex
 
 \section{Model Description}
 
-\begin{figure}[H]
-	\centerline{
-		\includegraphics{Figures/Fig1}
-	}
-	\caption{Sample Figure Inclusion.}
-	\label{fig:Fig1}
-\end{figure}
-
 The sunline ephemeris module is responsible for calculating a sunline heading based exclusively on ephemeris data. This provides a estimate for the sun heading without relying of filtering results from the course sun sensors. 
 
-Describe the module including mathematics, implementation, etc.
-
 \subsection{Equations}
-Equations are centered with the equation number flush to the right. In the text, these equations should be referenced by name as Eq.~\eqref{eq:ab} or Equation~\eqref{eq:ab} (e.g., not eq.  1, (1), or Equation 1).
+The math is straightforward; subtract the position of the sun from the position of the spacecraft, and divide it by its norm, to compute the sun heading in the inertial frame $\hat{r}_{h_N}$. 
 \begin{equation}
-	\hat{r_{h_N}} = \frac{r_{sc} - r_{sun}}{|r_{sc} - r_{sun}|}
+	\hat{r}_{h_N} = \frac{\vec{r}_{sc} - \vec{r}_{sun}}{|\vec{r}_{sc} - \vec{r}_{sun}|}
 \end{equation}
-
+Rotate the unit vector into the body frame by multiplying it by the appropriate direction cosine matrix defined by the spacecraft's attitude properties, $\vec{\sigma}$. 
 \begin{equation}
-	\hat{r}_{h_B} = DCM_{BN}*\hat{r}_{h_N}
+	\hat{r}_{h_B} = DCM_{BN}(\vec{\sigma})*\hat{r}_{h_N}
 \end{equation}
 

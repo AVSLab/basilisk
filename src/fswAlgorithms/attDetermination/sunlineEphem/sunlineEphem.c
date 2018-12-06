@@ -16,26 +16,12 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-/*
-    FSW MODULE Template
- 
- */
 
-/* modify the path to reflect the new module names */
 #include "sunlineEphem.h"
 #include <string.h>
 #include <math.h>
-
-
-
-
-/*
- Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
- */
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
-//#include "simulation/utilities/astroConstants.h"
-
 
 /*! This method initializes the ConfigData for this module.
  It checks to ensure that the inputs are sane and then creates the
@@ -73,6 +59,7 @@ void CrossInit_sunlineEphem(sunlineEphemConfig *ConfigData, uint64_t moduleID)
     ConfigData->scPositionInMsgId = subscribeToMessage(ConfigData->scPositionInMsgName,
                                                        sizeof(NavTransIntMsg), moduleID);
     
+    /*! -- Find the messgae ID for the spacecraft attitude */
     ConfigData->scAttitudeInMsgId = subscribeToMessage(ConfigData->scAttitudeInMsgName,
                                                        sizeof(NavAttIntMsg), moduleID);
 
@@ -88,22 +75,20 @@ void Reset_sunlineEphem(sunlineEphemConfig *ConfigData, uint64_t callTime, uint6
     memset(&(ConfigData->outputSunline), 0x0, sizeof(NavAttIntMsg));
 }
 
-/*! Add a description of what this main Update() routine does for this module
+/*! Updates the sun heading based on ephemeris data. Returns the heading as a unit vector in the body frame.
  @return void
  @param ConfigData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_sunlineEphem(sunlineEphemConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    uint64_t            clockTime;
-    uint32_t            readSize;
-    double              rDiff_N[3];
-    double              rDiffUnit_N[3];
-    double              rDiff_B[3];/*!< [unit] variable description */
-    double              dcm_BN[3][3];
+    uint64_t            clockTime; /* [ns] Read time for the message*/
+    uint32_t            readSize; /* [-] Non-zero size indicates we received ST msg*/
+    double              rDiff_N[3];/*!< [m] difference between the sun and spacecrat in the inertial frame (of unit length) */
+    double              rDiffUnit_N[3];/*!< [m] difference between the sun and spacecrat in the inertial frame (of unit length) */
+    double              rDiffUnit_B[3];/*!< [m] difference between the sun and spacecrat in the body frame (of unit length) */
+    double              dcm_BN[3][3]; /*!< [-] direction cosine matrix used to rotate the inertial frame to body frame */
     
-
-    /*! Begin method steps*/
     /*! - Read the input messages */
     ReadMessage(ConfigData->sunPositionInMsgId, &clockTime, &readSize,
                 sizeof(EphemerisIntMsg), (void*) &(ConfigData->sunEphemBuffer), moduleID);
@@ -114,15 +99,14 @@ void Update_sunlineEphem(sunlineEphemConfig *ConfigData, uint64_t callTime, uint
     ReadMessage(ConfigData->scAttitudeInMsgId, &clockTime, &readSize,
                 sizeof(NavAttIntMsg), (void*) &(ConfigData->scAttBuffer), moduleID);
 
-    /* Calculate Sunline Heading*/
+    /* Calculate Sunline Heading from Ephemeris Data*/
     v3Subtract(ConfigData->sunEphemBuffer.r_BdyZero_N, ConfigData->scTransBuffer.r_BN_N, rDiff_N);
     v3Normalize(rDiff_N, rDiffUnit_N);
     MRP2C(ConfigData->scAttBuffer.sigma_BN, dcm_BN);
-    
-    m33MultV3(dcm_BN, rDiffUnit_N, rDiff_B);
+    m33MultV3(dcm_BN, rDiffUnit_N, rDiffUnit_B);
     
     /*store the output message*/
-    v3Copy(rDiff_B, ConfigData->outputSunline.vehSunPntBdy);
+    v3Copy(rDiffUnit_B, ConfigData->outputSunline.vehSunPntBdy);
     
     WriteMessage(ConfigData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
                  &(ConfigData->outputSunline), moduleID);

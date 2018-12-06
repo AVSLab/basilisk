@@ -1,12 +1,12 @@
-% !TEX root = ./Basilisk-MODULENAME-yyyymmdd.tex
+% !TEX root = ./Basilisk-SunlineEphem-20181204.tex
 
 \section{Test Description and Success Criteria}
-The unit test confirms that the vectors produced from the module do reflect the unit vector in the body frame pointing to the sun. 
+The unit test configures the sun to sit at the origin, and a spacecraft to be located along each of the coordinate axes, with an orientation 90 degree rotate about the z-axis. The body-frame sun-heading is then computed to confirm that the vectors produced from the module do reflect the unit vector in the body frame pointing to the sun. 
 
 
 \section{Test Parameters}
 
-Test and simulation parameters and inputs go here. Basically, describe your test in the section above, but put any specific numbers or inputs to the tests in this section.
+The sun was placed at $[0, 0, 0]$ and the spacecraft is tested at each of the unit coordinate axes $[1, 0, 0]$, $[0, 1, 0]$, $[-1, 0, 0]$, etc. 
 
 The unit test verify that the module output guidance message vectors match expected values.
 \begin{table}[htbp]
@@ -40,6 +40,9 @@ All of the tests passed:
 	   1	   			& \input{AutoTeX/passFail11} \\ 
 	   2	   			& \input{AutoTeX/passFail13} \\ 
 	   3	   			& \input{AutoTeX/passFail22} \\ 
+	   4	   			& \input{AutoTeX/passFail11} \\ 
+	   5	   			& \input{AutoTeX/passFail13} \\ 
+	   6	   			& \input{AutoTeX/passFail22} \\ 
 	   \hline\hline
 	\end{tabular}
 \end{table}

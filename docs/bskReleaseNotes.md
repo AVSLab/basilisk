@@ -22,6 +22,9 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 ## Version 0.3.3 (upcoming release)
 <ul>
     <li>
+    Added a new sun heading module computed exculsively from ephemeris data and spacecraft attitude (sunlineEphem). Documentation and a unit test are included.
+    </li>
+    <li>
     Added a new message output with the CSS fit residuals.  This is optional.  If the output message is not set, then this information is not computed.
     </li>
     <li>
