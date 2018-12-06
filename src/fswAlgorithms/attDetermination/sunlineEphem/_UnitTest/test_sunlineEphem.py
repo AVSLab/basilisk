@@ -198,6 +198,8 @@ def sunlineEphemTestFunction(show_plots):
                                 "sec\n")
 
 
+
+
     #   print out success message if no error were found
     if testFailCount == 0:
         print   "PASSED: " + sunlineEphemWrap.ModelTag

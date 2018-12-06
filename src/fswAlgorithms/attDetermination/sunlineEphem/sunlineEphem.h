@@ -35,23 +35,22 @@
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
-    /* declare module private variables */
 
     /* declare module IO interfaces */
     NavAttIntMsg outputSunline;   /*!< -- Output sunline estimate data */
-    EphemerisIntMsg sunEphemBuffer;
-    NavTransIntMsg scTransBuffer;
-    NavAttIntMsg scAttBuffer;
+    EphemerisIntMsg sunEphemBuffer; /*!< -- Input sun ephemeris data */
+    NavTransIntMsg scTransBuffer; /*!< -- Input spacecraft position data */
+    NavAttIntMsg scAttBuffer; /*!< -- Input spacecraft attitude data */
     
     char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
-    char sunPositionInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
-    char scPositionInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
-    char scAttitudeInMsgName[MAX_STAT_MSG_LENGTH];
+    char sunPositionInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the sun ephemeris input message*/
+    char scPositionInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the spacecraft ephemeris input message*/
+    char scAttitudeInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the spacecraft attitude input message*/
     
-    int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
-    int32_t sunPositionInMsgId;/*!< -- ID for the incoming CSS sensor message*/
-    int32_t scPositionInMsgId; /*!< -- ID for the incoming spacecraft position message*/
-    int32_t scAttitudeInMsgId; /*!< -- ID for the incoming spacecraft position message*/
+    int32_t navStateOutMsgId;     /*!<  [-]  ID for the outgoing body estimate message*/
+    int32_t sunPositionInMsgId;/*!<  [-]  ID for the incoming CSS sensor message*/
+    int32_t scPositionInMsgId; /*!<  [-]  ID for the incoming spacecraft position message*/
+    int32_t scAttitudeInMsgId; /*!<  [-]  ID for the incoming spacecraft attitude message*/
 
 }sunlineEphemConfig;
 
