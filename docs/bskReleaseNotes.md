@@ -19,13 +19,13 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     </li>
     <li>updated code to remove some depreciated python function call warnings
     </li>
-</ul>
-
-## Version 0.3.3 (upcoming release)
-<ul>
     <li>
     Added a new sun heading module computed exculsively from ephemeris data and spacecraft attitude (sunlineEphem). Documentation and a unit test are included.
     </li>
+</ul>
+
+## Version 0.3.3 
+<ul>
     <li>
     Added a new message output with the CSS fit residuals.  This is optional.  If the output message is not set, then this information is not computed.
     </li>
