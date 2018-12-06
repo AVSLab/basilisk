@@ -90,7 +90,7 @@ void SimpleNav::SelfInit()
     
     //! - Alert the user and stop if the noise matrix is the wrong size.  That'd be bad.
     if (this->PMatrix.size() != numStates*numStates) {
-        BSK_PRINT(MSG_ERROR, "Your process noise matrix (PMatrix) is not 18*18. Quitting");
+        BSK_PRINT(MSG_ERROR, "Your process noise matrix (PMatrix) is not 18*18. Size is %ld.  Quitting", this->PMatrix.size());
         return;
     }
     //! - Set the matrices of the lower level error propagation (GaussMarkov)

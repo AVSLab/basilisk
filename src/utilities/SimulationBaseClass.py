@@ -25,15 +25,17 @@ import sys, os, ast
 
 
 from Basilisk.simulation import sim_model
-from Basilisk.simulation import sys_model_task
 from Basilisk.simulation import alg_contain
 from Basilisk.utilities import MessagingAccess
-import types
 import numpy as np
 import array
 import xml.etree.ElementTree as ET
 import inspect
-import sets
+try:
+   set
+except NameError:
+   from sets import Set as set
+
 from Basilisk.utilities import simulationArchTypes
 from Basilisk.simulation import simMessages
 
@@ -162,8 +164,8 @@ class StructDocData:
 
 class DataPairClass:
     def __init__(self):
-        self.outputMessages = sets.Set([])
-        self.inputMessages = sets.Set([])
+        self.outputMessages = set([])
+        self.inputMessages = set([])
         self.name = ""
         self.outputDict = {}
 
