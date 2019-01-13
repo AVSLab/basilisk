@@ -20,7 +20,7 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>updated code to remove some depreciated python function call warnings
     </li>
     <li>
-    Added a new sun heading module computed exculsively from ephemeris data and spacecraft attitude (sunlineEphem). Documentation and a unit test are included.
+    Added a new sun heading module computed exclusively from ephemeris data and spacecraft attitude (sunlineEphem). Documentation and a unit test are included.
     </li>
 </ul>
 
