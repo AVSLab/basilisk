@@ -160,11 +160,11 @@
 # Numerical Simulation Results
 # ------------
 # If this simulation is run the following plots should be shown.
-# ![Chief Attitude Error](Images/Scenarios/scenario_BasicOrbitFormation_chief_attitude_error.svg "Attitude Error")
-# ![Chief Rate Error](Images/Scenarios/scenario_BasicOrbitFormation_chief_rate_error.svg "Rate Error")
-# ![Deputy Attitude Error](Images/Scenarios/scenario_BasicOrbitFormation_deputy_attitude_error.svg "Attitude Error")
-# ![Deputy Rate Error](Images/Scenarios/scenario_BasicOrbitFormation_deputy_rate_error.svg "Rate Error")
-# ![Inertial Orbits Illustration](Images/Scenarios/scenario_BasicOrbitFormation_orbits.svg "Position History")
+# ![Chief Attitude Error](Images/Scenarios/scenario_BasicOrbitFormation_attitude_error_chief.svg "Attitude Error")
+# ![Chief Rate Error](Images/Scenarios/scenario_BasicOrbitFormation_rate_error_chief.svg "Rate Error")
+# ![Deputy Attitude Error](Images/Scenarios/scenario_BasicOrbitFormation_attitude_error_deputy.svg "Attitude Error")
+# ![Deputy Rate Error](Images/Scenarios/scenario_BasicOrbitFormation_rate_error_deputy.svg "Rate Error")
+# ![Inertial Orbits Illustration Deputy](Images/Scenarios/scenario_BasicOrbitFormation_orbits.svg "Position History")
 #
 # In order to create the orbits plot, two functions have been added to the BSK_Plotting file. One function that is able
 # to plot a celestial body and a second function that is able to plot an orbit around the celestial body. In case of the
@@ -288,8 +288,8 @@ class scenario_BasicOrbitFormation(BSKScenario):
             BSK_plt.show_all_plots()
         else:
             fileName = os.path.basename(os.path.splitext(__file__)[0])
-            figureNames = ["orbit_chief", "rate_error_chief", "attitude_error_chief",
-                           "orbit_deputy", "rate_error_deputy", "attitude_error_deputy"]
+            figureNames = ["attitude_error_chief", "rate_error_chief", "attitude_error_deputy",
+                           "rate_error_deputy", "orbits"]
             figureList = BSK_plt.save_all_plots(fileName, figureNames)
 
         return figureList
