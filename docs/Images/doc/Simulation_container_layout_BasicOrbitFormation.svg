@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" xmlns:xl="http://www.w3.org/1999/xlink" viewBox="107 53 587 568" width="587" height="568">
+  <defs>
+    <font-face font-family="Helvetica Neue" font-size="12" panose-1="2 11 6 4 2 2 2 2 2 4" units-per-em="1000" underline-position="-75" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="975.0061" descent="-216.99524" font-weight="500">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-Medium"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica" font-size="12" units-per-em="1000" underline-position="-75.68359" underline-thickness="49.316406" slope="0" x-height="532.22656" cap-height="719.7266" ascent="770.0195" descent="-229.98047" font-weight="700">
+      <font-face-src>
+        <font-face-name name="Helvetica-Bold"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica Neue" font-size="12" panose-1="2 0 8 3 0 0 0 9 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="975.0061" descent="-216.99524" font-weight="700">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-Bold"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica Neue" font-size="17" panose-1="2 11 6 4 2 2 2 2 2 4" units-per-em="1000" underline-position="-75" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="975.0061" descent="-216.99524" font-weight="500">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-Medium"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica Neue" font-size="11" panose-1="2 11 6 4 2 2 2 2 2 4" units-per-em="1000" underline-position="-75" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="975.0061" descent="-216.99524" font-weight="500">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-Medium"/>
+      </font-face-src>
+    </font-face>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.9.4 
+    <dc:date>2019-01-08 22:01:00 +0000</dc:date>
+  </metadata>
+  <g id="Canvas_2" stroke-opacity="1" stroke-dasharray="none" stroke="none" fill="none" fill-opacity="1">
+    <title>Canvas 2</title>
+    <g id="Canvas_2: Layer 1">
+      <title>Layer 1</title>
+      <g id="Graphic_644">
+        <title>Rechthoek</title>
+        <path d="M 117 54 L 684 54 C 688.9706 54 693 58.02944 693 63 L 693 612 C 693 616.97056 688.9706 621 684 621 L 117 621 C 112.02944 621 108 616.97056 108 612 L 108 63 C 108 58.02944 112.02944 54 117 54 Z" fill="white"/>
+      </g>
+      <g id="Graphic_4">
+        <path d="M 357.46875 252 L 444.46875 252 C 449.4393 252 453.46875 256.02944 453.46875 261 L 453.46875 306 C 453.46875 310.97056 449.4393 315 444.46875 315 L 357.46875 315 C 352.4982 315 348.46875 310.97056 348.46875 306 L 348.46875 261 C 348.46875 256.02944 352.4982 252 357.46875 252 Z" fill="#3382be"/>
+        <text transform="translate(353.46875 268.15192)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" fill="white" x="25.036" y="12">Process </tspan>
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" fill="white" x="23.044" y="27.348083">Interface</tspan>
+        </text>
+      </g>
+      <g id="Graphic_733">
+        <path d="M 167 108 L 328 108 C 330.76142 108 333 110.23858 333 113 L 333 463 C 333 465.7614 330.76142 468 328 468 L 167 468 C 164.23858 468 162 465.7614 162 463 L 162 113 C 162 110.23858 164.23858 108 167 108 Z" fill="white"/>
+        <path d="M 167 108 L 328 108 C 330.76142 108 333 110.23858 333 113 L 333 463 C 333 465.7614 330.76142 468 328 468 L 167 468 C 164.23858 468 162 465.7614 162 463 L 162 113 C 162 110.23858 164.23858 108 167 108 Z" stroke="#233d4d" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Group_729">
+        <title>Chief Spacecraft Task</title>
+        <g id="Group_730">
+          <title>Groep</title>
+          <g id="Graphic_732">
+            <title>Rechthoek</title>
+            <path d="M 176 145.33333 L 319 145.33333 C 321.76142 145.33333 324 147.57191 324 150.33333 L 324 265 C 324 267.76142 321.76142 270 319 270 L 176 270 C 173.23858 270 171 267.76142 171 265 L 171 150.33333 C 171 147.57191 173.23858 145.33333 176 145.33333 Z" fill="white"/>
+            <path d="M 176 145.33333 L 319 145.33333 C 321.76142 145.33333 324 147.57191 324 150.33333 L 324 265 C 324 267.76142 321.76142 270 319 270 L 176 270 C 173.23858 270 171 267.76142 171 265 L 171 150.33333 C 171 147.57191 173.23858 145.33333 176 145.33333 Z" stroke="#3382be" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+          </g>
+          <g id="Graphic_731">
+            <title>Bezier</title>
+            <path d="M 176 144 L 319 144 C 321.76142 144 324 146.23858 324 149 L 324 162.75625 C 324 165.51767 321.76142 167.75625 319 167.75625 L 176 167.75625 C 173.23858 167.75625 171 165.51767 171 162.75625 L 171 149 C 171 146.23858 173.23858 144 176 144 Z" fill="#3382be"/>
+            <path d="M 176 144 L 319 144 C 321.76142 144 324 146.23858 324 149 L 324 162.75625 C 324 165.51767 321.76142 167.75625 319 167.75625 L 176 167.75625 C 173.23858 167.75625 171 165.51767 171 162.75625 L 171 149 C 171 146.23858 173.23858 144 176 144 Z" stroke="#3382be" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+            <text transform="translate(176 148.87812)" fill="white">
+              <tspan font-family="Helvetica" font-size="12" font-weight="700" fill="white" x="9.25" y="11">Chief Spacecraft Task</tspan>
+            </text>
+          </g>
+        </g>
+      </g>
+      <g id="Graphic_726">
+        <title>Rechthoek</title>
+        <path d="M 167 108 L 328 108 C 330.76142 108 333 110.23858 333 113 L 333 130 C 333 132.76142 330.76142 135 328 135 L 167 135 C 164.23858 135 162 132.76142 162 130 L 162 113 C 162 110.23858 164.23858 108 167 108 Z" fill="#233d4d"/>
+        <path d="M 167 108 L 328 108 C 330.76142 108 333 110.23858 333 113 L 333 130 C 333 132.76142 330.76142 135 328 135 L 167 135 C 164.23858 135 162 132.76142 162 130 L 162 113 C 162 110.23858 164.23858 108 167 108 Z" stroke="#233d4d" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(167 113.82596)" fill="#d9d9d9">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="700" fill="#d9d9d9" x="18.172" y="12">Dynamics Task Group</tspan>
+        </text>
+      </g>
+      <g id="Graphic_728">
+        <title>scObject</title>
+        <path d="M 185 180 L 310 180 C 312.76142 180 315 182.23858 315 185 L 315 193 C 315 195.76142 312.76142 198 310 198 L 185 198 C 182.23858 198 180 195.76142 180 193 L 180 185 C 180 182.23858 182.23858 180 185 180 Z" fill="white"/>
+        <path d="M 185 180 L 310 180 C 312.76142 180 315 182.23858 315 185 L 315 193 C 315 195.76142 312.76142 198 310 198 L 185 198 C 182.23858 198 180 195.76142 180 193 L 180 185 C 180 182.23858 182.23858 180 185 180 Z" stroke="#aaa" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(185 181.32596)" fill="#797979">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" fill="#797979" x="37.708" y="12">scObject</tspan>
+        </text>
+      </g>
+      <g id="Graphic_764">
+        <title>rwStateEffector</title>
+        <path d="M 185 234 L 310 234 C 312.76142 234 315 236.23858 315 239 L 315 247 C 315 249.76142 312.76142 252 310 252 L 185 252 C 182.23858 252 180 249.76142 180 247 L 180 239 C 180 236.23858 182.23858 234 185 234 Z" fill="white"/>
+        <path d="M 185 234 L 310 234 C 312.76142 234 315 236.23858 315 239 L 315 247 C 315 249.76142 312.76142 252 310 252 L 185 252 C 182.23858 252 180 249.76142 180 247 L 180 239 C 180 236.23858 182.23858 234 185 234 Z" stroke="#aaa" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(185 235.32596)" fill="#797979">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" fill="#797979" x="19.372" y="12">rwStateEffector</tspan>
+        </text>
+      </g>
+      <g id="Graphic_762">
+        <title>simpleNavObject</title>
+        <path d="M 185 207 L 310 207 C 312.76142 207 315 209.23858 315 212 L 315 220 C 315 222.76142 312.76142 225 310 225 L 185 225 C 182.23858 225 180 222.76142 180 220 L 180 212 C 180 209.23858 182.23858 207 185 207 Z" fill="white"/>
+        <path d="M 185 207 L 310 207 C 312.76142 207 315 209.23858 315 212 L 315 220 C 315 222.76142 312.76142 225 310 225 L 185 225 C 182.23858 225 180 222.76142 180 220 L 180 212 C 180 209.23858 182.23858 207 185 207 Z" stroke="#aaa" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(185 208.32596)" fill="#797979">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" fill="#797979" x="15.148" y="12">simpleNavObject</tspan>
+        </text>
+      </g>
+      <g id="Graphic_709">
+        <path d="M 473 108 L 634 108 C 636.7614 108 639 110.23858 639 113 L 639 463 C 639 465.7614 636.7614 468 634 468 L 473 468 C 470.2386 468 468 465.7614 468 463 L 468 113 C 468 110.23858 470.2386 108 473 108 Z" fill="white"/>
+        <path d="M 473 108 L 634 108 C 636.7614 108 639 110.23858 639 113 L 639 463 C 639 465.7614 636.7614 468 634 468 L 473 468 C 470.2386 468 468 465.7614 468 463 L 468 113 C 468 110.23858 470.2386 108 473 108 Z" stroke="#233d4d" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Graphic_704">
+        <path d="M 473 108 L 634 108 C 636.7614 108 639 110.23858 639 113 L 639 130 C 639 132.76142 636.7614 135 634 135 L 473 135 C 470.2386 135 468 132.76142 468 130 L 468 113 C 468 110.23858 470.2386 108 473 108 Z" fill="#233d4d"/>
+        <path d="M 473 108 L 634 108 C 636.7614 108 639 110.23858 639 113 L 639 130 C 639 132.76142 636.7614 135 634 135 L 473 135 C 470.2386 135 468 132.76142 468 130 L 468 113 C 468 110.23858 470.2386 108 473 108 Z" stroke="#233d4d" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(473 113.82596)" fill="#d9d9d9">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="700" fill="#d9d9d9" x="33.268" y="12">FSW Task Group</tspan>
+        </text>
+      </g>
+      <g id="Group_758">
+        <title>Outer square</title>
+        <g id="Graphic_761">
+          <title>Rechthoek</title>
+          <path d="M 113 54 L 688 54 C 690.7614 54 693 56.238576 693 59 L 693 490 C 693 492.7614 690.7614 495 688 495 L 113 495 C 110.23858 495 108 492.7614 108 490 L 108 59 C 108 56.238576 110.23858 54 113 54 Z" stroke="#a5a5a5" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        </g>
+        <g id="Graphic_756">
+          <title>Simulation Container</title>
+          <path d="M 114 54 L 687 54 C 690.3137 54 693 56.68629 693 60 L 693 78.41379 C 693 81.7275 690.3137 84.41379 687 84.41379 L 114 84.41379 C 110.68629 84.41379 108 81.7275 108 78.41379 L 108 60 C 108 56.68629 110.68629 54 114 54 Z" fill="#ccc"/>
+          <text transform="translate(113 58.46034)" fill="black">
+            <tspan font-family="Helvetica Neue" font-size="17" font-weight="500" fill="black" x="205.475" y="17">Simulation Container</tspan>
+          </text>
+        </g>
+      </g>
+      <g id="Graphic_769">
+        <title>Earth Gravity Field</title>
+        <path d="M 176 279 L 319 279 C 321.76142 279 324 281.23858 324 284 L 324 301 C 324 303.76142 321.76142 306 319 306 L 176 306 C 173.23858 306 171 303.76142 171 301 L 171 284 C 171 281.23858 173.23858 279 176 279 Z" fill="#999"/>
+        <text transform="translate(176 284.82596)" fill="#fefcff">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" fill="#fefcff" x="20.368" y="12">Earth Gravity Field</tspan>
+        </text>
+      </g>
+      <g id="Group_775">
+        <title>Deputy Spacecraft Task</title>
+        <g id="Group_776">
+          <title>Groep</title>
+          <g id="Graphic_778">
+            <title>Rechthoek</title>
+            <path d="M 176 316.33333 L 319 316.33333 C 321.76142 316.33333 324 318.5719 324 321.33333 L 324 436 C 324 438.7614 321.76142 441 319 441 L 176 441 C 173.23858 441 171 438.7614 171 436 L 171 321.33333 C 171 318.5719 173.23858 316.33333 176 316.33333 Z" fill="white"/>
+            <path d="M 176 316.33333 L 319 316.33333 C 321.76142 316.33333 324 318.5719 324 321.33333 L 324 436 C 324 438.7614 321.76142 441 319 441 L 176 441 C 173.23858 441 171 438.7614 171 436 L 171 321.33333 C 171 318.5719 173.23858 316.33333 176 316.33333 Z" stroke="#3382be" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+          </g>
+          <g id="Graphic_777">
+            <title>Bezier</title>
+            <path d="M 176 315 L 319 315 C 321.76142 315 324 317.23858 324 320 L 324 333.75625 C 324 336.51767 321.76142 338.75625 319 338.75625 L 176 338.75625 C 173.23858 338.75625 171 336.51767 171 333.75625 L 171 320 C 171 317.23858 173.23858 315 176 315 Z" fill="#3382be"/>
+            <path d="M 176 315 L 319 315 C 321.76142 315 324 317.23858 324 320 L 324 333.75625 C 324 336.51767 321.76142 338.75625 319 338.75625 L 176 338.75625 C 173.23858 338.75625 171 336.51767 171 333.75625 L 171 320 C 171 317.23858 173.23858 315 176 315 Z" stroke="#3382be" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+            <text transform="translate(176 319.87812)" fill="white">
+              <tspan font-family="Helvetica" font-size="12" font-weight="700" fill="white" x="3.915039" y="11">Deputy Spacecraft Task</tspan>
+            </text>
+          </g>
+        </g>
+      </g>
+      <g id="Graphic_779">
+        <title>scObject2</title>
+        <path d="M 185 351 L 310 351 C 312.76142 351 315 353.23858 315 356 L 315 364 C 315 366.76142 312.76142 369 310 369 L 185 369 C 182.23858 369 180 366.76142 180 364 L 180 356 C 180 353.23858 182.23858 351 185 351 Z" fill="white"/>
+        <path d="M 185 351 L 310 351 C 312.76142 351 315 353.23858 315 356 L 315 364 C 315 366.76142 312.76142 369 310 369 L 185 369 C 182.23858 369 180 366.76142 180 364 L 180 356 C 180 353.23858 182.23858 351 185 351 Z" stroke="#aaa" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(185 352.32596)" fill="#797979">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" fill="#797979" x="34.372" y="12">scObject2</tspan>
+        </text>
+      </g>
+      <g id="Graphic_780">
+        <title>simpleNavObject2</title>
+        <path d="M 185 378 L 310 378 C 312.76142 378 315 380.23858 315 383 L 315 391 C 315 393.76142 312.76142 396 310 396 L 185 396 C 182.23858 396 180 393.76142 180 391 L 180 383 C 180 380.23858 182.23858 378 185 378 Z" fill="white"/>
+        <path d="M 185 378 L 310 378 C 312.76142 378 315 380.23858 315 383 L 315 391 C 315 393.76142 312.76142 396 310 396 L 185 396 C 182.23858 396 180 393.76142 180 391 L 180 383 C 180 380.23858 182.23858 378 185 378 Z" stroke="#aaa" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(185 379.32596)" fill="#797979">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" fill="#797979" x="11.812" y="12">simpleNavObject2</tspan>
+        </text>
+      </g>
+      <g id="Graphic_781">
+        <title>rwStateEffector2</title>
+        <path d="M 185 405 L 310 405 C 312.76142 405 315 407.2386 315 410 L 315 418 C 315 420.7614 312.76142 423 310 423 L 185 423 C 182.23858 423 180 420.7614 180 418 L 180 410 C 180 407.2386 182.23858 405 185 405 Z" fill="white"/>
+        <path d="M 185 405 L 310 405 C 312.76142 405 315 407.2386 315 410 L 315 418 C 315 420.7614 312.76142 423 310 423 L 185 423 C 182.23858 423 180 420.7614 180 418 L 180 410 C 180 407.2386 182.23858 405 185 405 Z" stroke="#aaa" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(185 406.32596)" fill="#797979">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" fill="#797979" x="16.036" y="12">rwStateEffector2</tspan>
+        </text>
+      </g>
+      <g id="Group_782">
+        <title>inertial3DPointTask</title>
+        <g id="Group_783">
+          <title>Groep</title>
+          <g id="Graphic_785">
+            <title>Rechthoek</title>
+            <path d="M 482 144.7619 L 625 144.7619 C 627.7614 144.7619 630 147.00048 630 149.7619 L 630 211 C 630 213.76142 627.7614 216 625 216 L 482 216 C 479.2386 216 477 213.76142 477 211 L 477 149.7619 C 477 147.00048 479.2386 144.7619 482 144.7619 Z" fill="white"/>
+            <path d="M 482 144.7619 L 625 144.7619 C 627.7614 144.7619 630 147.00048 630 149.7619 L 630 211 C 630 213.76142 627.7614 216 625 216 L 482 216 C 479.2386 216 477 213.76142 477 211 L 477 149.7619 C 477 147.00048 479.2386 144.7619 482 144.7619 Z" stroke="#3382be" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+          </g>
+          <g id="Graphic_784">
+            <title>Bezier</title>
+            <path d="M 482 144 L 625 144 C 627.7614 144 630 146.23858 630 149 L 630 152.575 C 630 155.33642 627.7614 157.575 625 157.575 L 482 157.575 C 479.2386 157.575 477 155.33642 477 152.575 L 477 149 C 477 146.23858 479.2386 144 482 144 Z" fill="#3382be"/>
+            <path d="M 482 144 L 625 144 C 627.7614 144 630 146.23858 630 149 L 630 152.575 C 630 155.33642 627.7614 157.575 625 157.575 L 482 157.575 C 479.2386 157.575 477 155.33642 477 152.575 L 477 149 C 477 146.23858 479.2386 144 482 144 Z" stroke="#3382be" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+            <text transform="translate(482 143.7875)" fill="white">
+              <tspan font-family="Helvetica" font-size="12" font-weight="700" fill="white" x="14.259766" y="11">inertial3DPoint Task</tspan>
+            </text>
+          </g>
+        </g>
+      </g>
+      <g id="Graphic_786">
+        <title>inertial3DData</title>
+        <path d="M 491 164.25 L 616 164.25 C 618.7614 164.25 621 166.48858 621 169.25 L 621 177.25 C 621 180.01142 618.7614 182.25 616 182.25 L 491 182.25 C 488.2386 182.25 486 180.01142 486 177.25 L 486 169.25 C 486 166.48858 488.2386 164.25 491 164.25 Z" fill="white"/>
+        <path d="M 491 164.25 L 616 164.25 C 618.7614 164.25 621 166.48858 621 169.25 L 621 177.25 C 621 180.01142 618.7614 182.25 616 182.25 L 491 182.25 C 488.2386 182.25 486 180.01142 486 177.25 L 486 169.25 C 486 166.48858 488.2386 164.25 491 164.25 Z" stroke="#aaa" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(491 165.57596)" fill="#797979">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" fill="#797979" x="23.266" y="12">inertial3DData</tspan>
+        </text>
+      </g>
+      <g id="Graphic_787">
+        <title>trackingErrorData</title>
+        <path d="M 491 189 L 616 189 C 618.7614 189 621 191.23858 621 194 L 621 202 C 621 204.76142 618.7614 207 616 207 L 491 207 C 488.2386 207 486 204.76142 486 202 L 486 194 C 486 191.23858 488.2386 189 491 189 Z" fill="white"/>
+        <path d="M 491 189 L 616 189 C 618.7614 189 621 191.23858 621 194 L 621 202 C 621 204.76142 618.7614 207 616 207 L 491 207 C 488.2386 207 486 204.76142 486 202 L 486 194 C 486 191.23858 488.2386 189 491 189 Z" stroke="#aaa" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(491 190.32596)" fill="#797979">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" fill="#797979" x="13.48" y="12">trackingErrorData</tspan>
+        </text>
+      </g>
+      <g id="Group_791">
+        <title>mrpFeedbackRWsTask</title>
+        <g id="Group_792">
+          <title>Groep</title>
+          <g id="Graphic_794">
+            <title>Rechthoek</title>
+            <path d="M 482 225.7619 L 625 225.7619 C 627.7614 225.7619 630 228.00048 630 230.7619 L 630 292 C 630 294.76142 627.7614 297 625 297 L 482 297 C 479.2386 297 477 294.76142 477 292 L 477 230.7619 C 477 228.00048 479.2386 225.7619 482 225.7619 Z" fill="white"/>
+            <path d="M 482 225.7619 L 625 225.7619 C 627.7614 225.7619 630 228.00048 630 230.7619 L 630 292 C 630 294.76142 627.7614 297 625 297 L 482 297 C 479.2386 297 477 294.76142 477 292 L 477 230.7619 C 477 228.00048 479.2386 225.7619 482 225.7619 Z" stroke="#3382be" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+          </g>
+          <g id="Graphic_793">
+            <title>Bezier</title>
+            <path d="M 482 225 L 625 225 C 627.7614 225 630 227.23858 630 230 L 630 233.575 C 630 236.33642 627.7614 238.575 625 238.575 L 482 238.575 C 479.2386 238.575 477 236.33642 477 233.575 L 477 230 C 477 227.23858 479.2386 225 482 225 Z" fill="#3382be"/>
+            <path d="M 482 225 L 625 225 C 627.7614 225 630 227.23858 630 230 L 630 233.575 C 630 236.33642 627.7614 238.575 625 238.575 L 482 238.575 C 479.2386 238.575 477 236.33642 477 233.575 L 477 230 C 477 227.23858 479.2386 225 482 225 Z" stroke="#3382be" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+            <text transform="translate(482 224.7875)" fill="white">
+              <tspan font-family="Helvetica" font-size="12" font-weight="700" fill="white" x="4.357422" y="11">mrpFeedbackRWs Task</tspan>
+            </text>
+          </g>
+        </g>
+      </g>
+      <g id="Graphic_796">
+        <title>mrpFeedbackRWsData</title>
+        <path d="M 491 245.25 L 616 245.25 C 618.7614 245.25 621 247.48858 621 250.25 L 621 258.25 C 621 261.01142 618.7614 263.25 616 263.25 L 491 263.25 C 488.2386 263.25 486 261.01142 486 258.25 L 486 250.25 C 486 247.48858 488.2386 245.25 491 245.25 Z" fill="white"/>
+        <path d="M 491 245.25 L 616 245.25 C 618.7614 245.25 621 247.48858 621 250.25 L 621 258.25 C 621 261.01142 618.7614 263.25 616 263.25 L 491 263.25 C 488.2386 263.25 486 261.01142 486 258.25 L 486 250.25 C 486 247.48858 488.2386 245.25 491 245.25 Z" stroke="#aaa" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(491 247.59046)" fill="#797979">
+          <tspan font-family="Helvetica Neue" font-size="11" font-weight="500" fill="#797979" x="3.5125" y="11">mrpFeedbackRWsData</tspan>
+        </text>
+      </g>
+      <g id="Graphic_795">
+        <title>rwMotorTorqueData</title>
+        <path d="M 491 270 L 616 270 C 618.7614 270 621 272.23858 621 275 L 621 283 C 621 285.76142 618.7614 288 616 288 L 491 288 C 488.2386 288 486 285.76142 486 283 L 486 275 C 486 272.23858 488.2386 270 491 270 Z" fill="white"/>
+        <path d="M 491 270 L 616 270 C 618.7614 270 621 272.23858 621 275 L 621 283 C 621 285.76142 618.7614 288 616 288 L 491 288 C 488.2386 288 486 285.76142 486 283 L 486 275 C 486 272.23858 488.2386 270 491 270 Z" stroke="#aaa" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(491 271.32596)" fill="#797979">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" fill="#797979" x="7.258" y="12">rwMotorTorqueData</tspan>
+        </text>
+      </g>
+      <g id="Group_797">
+        <title>inertial3DPointTask2</title>
+        <g id="Group_798">
+          <title>Groep</title>
+          <g id="Graphic_800">
+            <title>Rechthoek</title>
+            <path d="M 482 306.7619 L 625 306.7619 C 627.7614 306.7619 630 309.00048 630 311.7619 L 630 373 C 630 375.76142 627.7614 378 625 378 L 482 378 C 479.2386 378 477 375.76142 477 373 L 477 311.7619 C 477 309.00048 479.2386 306.7619 482 306.7619 Z" fill="white"/>
+            <path d="M 482 306.7619 L 625 306.7619 C 627.7614 306.7619 630 309.00048 630 311.7619 L 630 373 C 630 375.76142 627.7614 378 625 378 L 482 378 C 479.2386 378 477 375.76142 477 373 L 477 311.7619 C 477 309.00048 479.2386 306.7619 482 306.7619 Z" stroke="#3382be" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+          </g>
+          <g id="Graphic_799">
+            <title>Bezier</title>
+            <path d="M 482 306 L 625 306 C 627.7614 306 630 308.23858 630 311 L 630 314.575 C 630 317.33642 627.7614 319.575 625 319.575 L 482 319.575 C 479.2386 319.575 477 317.33642 477 314.575 L 477 311 C 477 308.23858 479.2386 306 482 306 Z" fill="#3382be"/>
+            <path d="M 482 306 L 625 306 C 627.7614 306 630 308.23858 630 311 L 630 314.575 C 630 317.33642 627.7614 319.575 625 319.575 L 482 319.575 C 479.2386 319.575 477 317.33642 477 314.575 L 477 311 C 477 308.23858 479.2386 306 482 306 Z" stroke="#3382be" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+            <text transform="translate(482 305.7875)" fill="white">
+              <tspan font-family="Helvetica" font-size="12" font-weight="700" fill="white" x="10.922852" y="11">inertial3DPoint Task2</tspan>
+            </text>
+          </g>
+        </g>
+      </g>
+      <g id="Graphic_802">
+        <title>inertial3DData</title>
+        <path d="M 491 326.25 L 616 326.25 C 618.7614 326.25 621 328.48858 621 331.25 L 621 339.25 C 621 342.01142 618.7614 344.25 616 344.25 L 491 344.25 C 488.2386 344.25 486 342.01142 486 339.25 L 486 331.25 C 486 328.48858 488.2386 326.25 491 326.25 Z" fill="white"/>
+        <path d="M 491 326.25 L 616 326.25 C 618.7614 326.25 621 328.48858 621 331.25 L 621 339.25 C 621 342.01142 618.7614 344.25 616 344.25 L 491 344.25 C 488.2386 344.25 486 342.01142 486 339.25 L 486 331.25 C 486 328.48858 488.2386 326.25 491 326.25 Z" stroke="#aaa" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(491 327.57596)" fill="#797979">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" fill="#797979" x="19.93" y="12">inertial3DData2</tspan>
+        </text>
+      </g>
+      <g id="Graphic_801">
+        <title>trackingErrorData</title>
+        <path d="M 491 351 L 616 351 C 618.7614 351 621 353.23858 621 356 L 621 364 C 621 366.76142 618.7614 369 616 369 L 491 369 C 488.2386 369 486 366.76142 486 364 L 486 356 C 486 353.23858 488.2386 351 491 351 Z" fill="white"/>
+        <path d="M 491 351 L 616 351 C 618.7614 351 621 353.23858 621 356 L 621 364 C 621 366.76142 618.7614 369 616 369 L 491 369 C 488.2386 369 486 366.76142 486 364 L 486 356 C 486 353.23858 488.2386 351 491 351 Z" stroke="#aaa" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(491 352.32596)" fill="#797979">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" fill="#797979" x="10.144" y="12">trackingErrorData2</tspan>
+        </text>
+      </g>
+      <g id="Group_803">
+        <title>mrpFeedbackRWsTask2</title>
+        <g id="Group_804">
+          <title>Groep</title>
+          <g id="Graphic_806">
+            <title>Rechthoek</title>
+            <path d="M 482 387.7619 L 625 387.7619 C 627.7614 387.7619 630 390.0005 630 392.7619 L 630 454 C 630 456.7614 627.7614 459 625 459 L 482 459 C 479.2386 459 477 456.7614 477 454 L 477 392.7619 C 477 390.0005 479.2386 387.7619 482 387.7619 Z" fill="white"/>
+            <path d="M 482 387.7619 L 625 387.7619 C 627.7614 387.7619 630 390.0005 630 392.7619 L 630 454 C 630 456.7614 627.7614 459 625 459 L 482 459 C 479.2386 459 477 456.7614 477 454 L 477 392.7619 C 477 390.0005 479.2386 387.7619 482 387.7619 Z" stroke="#3382be" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+          </g>
+          <g id="Graphic_805">
+            <title>Bezier</title>
+            <path d="M 482 387 L 625 387 C 627.7614 387 630 389.23858 630 392 L 630 395.575 C 630 398.33642 627.7614 400.575 625 400.575 L 482 400.575 C 479.2386 400.575 477 398.33642 477 395.575 L 477 392 C 477 389.23858 479.2386 387 482 387 Z" fill="#3382be"/>
+            <path d="M 482 387 L 625 387 C 627.7614 387 630 389.23858 630 392 L 630 395.575 C 630 398.33642 627.7614 400.575 625 400.575 L 482 400.575 C 479.2386 400.575 477 398.33642 477 395.575 L 477 392 C 477 389.23858 479.2386 387 482 387 Z" stroke="#3382be" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+            <text transform="translate(482 386.7875)" fill="white">
+              <tspan font-family="Helvetica" font-size="12" font-weight="700" fill="white" x="1.0205078" y="11">mrpFeedbackRWs Task2</tspan>
+            </text>
+          </g>
+        </g>
+      </g>
+      <g id="Graphic_809">
+        <title>mrpFeedbackRWsData</title>
+        <path d="M 491 407.25 L 616 407.25 C 618.7614 407.25 621 409.4886 621 412.25 L 621 420.25 C 621 423.0114 618.7614 425.25 616 425.25 L 491 425.25 C 488.2386 425.25 486 423.0114 486 420.25 L 486 412.25 C 486 409.4886 488.2386 407.25 491 407.25 Z" fill="white"/>
+        <path d="M 491 407.25 L 616 407.25 C 618.7614 407.25 621 409.4886 621 412.25 L 621 420.25 C 621 423.0114 618.7614 425.25 616 425.25 L 491 425.25 C 488.2386 425.25 486 423.0114 486 420.25 L 486 412.25 C 486 409.4886 488.2386 407.25 491 407.25 Z" stroke="#aaa" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(491 409.59046)" fill="#797979">
+          <tspan font-family="Helvetica Neue" font-size="11" font-weight="500" fill="#797979" x=".4545" y="11">mrpFeedbackRWsData2</tspan>
+        </text>
+      </g>
+      <g id="Graphic_808">
+        <title>rwMotorTorqueData</title>
+        <path d="M 491 432 L 616 432 C 618.7614 432 621 434.2386 621 437 L 621 445 C 621 447.7614 618.7614 450 616 450 L 491 450 C 488.2386 450 486 447.7614 486 445 L 486 437 C 486 434.2386 488.2386 432 491 432 Z" fill="white"/>
+        <path d="M 491 432 L 616 432 C 618.7614 432 621 434.2386 621 437 L 621 445 C 621 447.7614 618.7614 450 616 450 L 491 450 C 488.2386 450 486 447.7614 486 445 L 486 437 C 486 434.2386 488.2386 432 491 432 Z" stroke="#aaa" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(491 433.32596)" fill="#797979">
+          <tspan font-family="Helvetica Neue" font-size="12" font-weight="500" fill="#797979" x="3.922" y="12">rwMotorTorqueData2</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>
