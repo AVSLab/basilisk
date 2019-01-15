@@ -20,9 +20,11 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+import math as m
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import RigidBodyKinematics
+from Basilisk.utilities import orbitalMotion
 
 
 # --------------------------------- COMPONENTS & SUBPLOT HANDLING ----------------------------------------------- #
@@ -47,6 +49,7 @@ def save_all_plots(fileName, figureNames):
 
 
 def plot3components(vec):
+    plt.figure()
     time = vec[:, 0] * mc.NANO2MIN
     plt.xlabel('Time, min')
     plt.plot(time, vec[:, 1], color_x)
@@ -64,7 +67,6 @@ def plot_omega(omega):
     plot3components(omega)
     plt.ylabel('Angular Rate, rad/s')
     plt.legend(['$\omega_1$', '$\omega_2$', '$\omega_3$'])
-
 
 def subplot_sigma(subplot, sigma):
     plot3components(sigma)
@@ -98,7 +100,7 @@ def plot_controlTorque(Lr):
 
 
 def plot_trackingError(sigma_BR, omega_BR_B):
-    plt.figure()
+    # plt.figure()
     plt.subplot(211)
     plot_sigma(sigma_BR)
     plt.title('Att Error: $\sigma_{BR}$')
@@ -241,5 +243,44 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')
 
+def plot_planet(oe, planet):
+    b = oe.a * np.sqrt(1 - oe.e * oe.e)
+    plt.figure(figsize=np.array((1.0, b / oe.a)) * 4.75, dpi=100)
+    plt.axis(np.array([-oe.a, oe.a, -b, b]) / 1000 * 1.75)
+    # draw the planet
+    fig = plt.gcf()
+    ax = fig.gca()
+    planetColor = '#008800'
+    planetRadius = planet.radEquator / 1000
+    ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
+    plt.xlabel('$i_e$ Cord. [km]')
+    plt.ylabel('$i_p$ Cord. [km]')
+    plt.grid()
 
+def plot_peri_and_orbit(oe, mu, r_BN_N, v_BN_N):
+    # draw the actual orbit
+    rData = []
+    fData = []
+    p = oe.a * (1 - oe.e * oe.e)
+    for idx in range(0, len(r_BN_N)):
+        oeData = orbitalMotion.rv2elem(mu, r_BN_N[idx, 1:4], v_BN_N[idx, 1:4])
+        rData.append(oeData.rmag)
+        fData.append(oeData.f + oeData.omega - oe.omega)
+    plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000, color='#aa0000', linewidth=3.0)
+    # draw the full osculating orbit from the initial conditions
+    fData = np.linspace(0, 2 * np.pi, 100)
+    rData = []
+    for idx in range(0, len(fData)):
+        rData.append(p / (1 + oe.e * np.cos(fData[idx])))
+    plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000, '--', color='#555555')
 
+def plot_rel_orbit(timeData, r_chief, r_deputy):
+    plt.figure()
+    x = np.array(r_chief[:, 1]) - np.array(r_deputy[:, 1])
+    y = np.array(r_chief[:, 2]) - np.array(r_deputy[:, 2])
+    z = np.array(r_chief[:, 3]) - np.array(r_deputy[:, 3])
+    plt.plot(timeData, x, label="x")
+    plt.plot(timeData, y, label="y")
+    plt.plot(timeData, z, label="z")
+    plt.legend()
+    plt.grid()
