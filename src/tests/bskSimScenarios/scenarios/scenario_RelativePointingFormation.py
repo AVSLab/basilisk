@@ -192,13 +192,13 @@
 # Numerical Simulation Results
 # ------------
 # If this simulation is run for 200 minutes the following plots should be shown.
-# ![Attitude Error Norm](Images/Scenarios/scenario_RelativePointingFormation_attitude_error_norm.svg "Attitude Error Norm")
+# ![Attitude Error Norm](Images/Scenarios/scenario_RelativePointingFormation_attitude_error.svg "Attitude Error Norm")
 # ![Relative Orbit Components](Images/Scenarios/scenario_RelativePointingFormation_relative_orbit.svg "Relative Orbits Components")
-# ![MRP Reference Frame with respect to Inertial Frame](Images/Scenarios/scenario_RelativePointingFormation_reference_frame.svg
+# ![MRP Reference Frame with respect to Inertial Frame](Images/Scenarios/scenario_RelativePointingFormation_sigma_RN.svg
 #  "MRP Reference Frame with respect to Inertial Frame")
-# ![MRP Body Frame with respect to Inertial Frame](Images/Scenarios/scenario_RelativePointingFormation_body_frame.svg
+# ![MRP Body Frame with respect to Inertial Frame](Images/Scenarios/scenario_RelativePointingFormation_sigma_BN_deputy.svg
 #  "MRP Body Frame with respect to Inertial Frame")
-# ![MRP Body Frame with respect to Reference Frame](Images/Scenarios/scenario_RelativePointingFormation_BR.svg
+# ![MRP Body Frame with respect to Reference Frame](Images/Scenarios/scenario_RelativePointingFormation_sigma_BR_deputy.svg
 #  "MRP Body Frame with respect to Reference Frame")
 #
 # In order to create the relative orbits plot, a function has been added to the BSK_Plotting file that takes the position
@@ -327,8 +327,8 @@ class scenario_RelativePointingFormation(BSKScenario):
             BSK_plt.show_all_plots()
         else:
             fileName = os.path.basename(os.path.splitext(__file__)[0])
-            figureNames = ["attitude_error", "relative_orbit", "omega_BR_B_deputy",
-                           "sigma_BR_deputy", "sigma_RN", "omega_RN_N"]
+            figureNames = ["attitude_error", "relative_orbit", "sigma_RN",
+                           "sigma_BN_deputy", "sigma_BR_deputy"]
             figureList = BSK_plt.save_all_plots(fileName, figureNames)
 
         return figureList
