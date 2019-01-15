@@ -36,8 +36,10 @@ typedef struct {
     char attReferenceOutMsgName[MAX_STAT_MSG_LENGTH];   /*!< The name of the output message */
     char chiefPositionInMsgName[MAX_STAT_MSG_LENGTH];   /*!< The name of the Input message of the chief */
     char deputyPositionInMsgName[MAX_STAT_MSG_LENGTH];  /*!< The name of the Input message of the deputy */
-    double antennaVector[3];                            /*!< Vector within the B-frame that points to antenna */
+    double alignmentVector_B[3];                        /*!< Vector within the B-frame that points to antenna */
     double sigma_BA[3];                                 /*!< -- MRP of B-frame with respect to A-frame */
+    double old_sigma_RN[3];                             /*!< -- MRP of previous timestep */
+    double old_omega_RN_N[3];                           /*!< -- Omega of previous timestep */
     int32_t attReferenceOutMsgID;                       /*!< -- ID for the outgoing reference message */
     int32_t chiefPositionInMsgID;                       /*!< -- ID for the incoming chief position message */
     int32_t deputyPositionInMsgID;                      /*!< -- ID for the incoming deputy position message */

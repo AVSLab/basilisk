@@ -92,7 +92,7 @@ def spacecraftPointingTestFunction(show_plots):
     moduleConfig.chiefPositionInMsgName = "chiefInMsg"
     moduleConfig.deputyPositionInMsgName = "deputyInMsg"
     moduleConfig.attReferenceOutMsgName = "attRefOutMsg"
-    moduleConfig.antennaVector = [1.0, 0.0, 0.0]
+    moduleConfig.alignmentVector_B = [1.0, 0.0, 0.0]
 
     r_BN_N = [[np.cos(0.0), np.sin(0.0), 0.0],
               [np.cos(0.001), np.sin(0.001), 0.0],

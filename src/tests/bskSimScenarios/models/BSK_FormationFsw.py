@@ -210,7 +210,7 @@ class BSKFswModels():
         self.spacecraftPointing.chiefPositionInMsgName = "simple_trans_nav_output_chief"
         self.spacecraftPointing.deputyPositionInMsgName = "simple_trans_nav_output_deputy"
         self.spacecraftPointing.attReferenceOutMsgName = "att_reference2"
-        self.spacecraftPointing.antennaVector = [1.0, 2.0, 3.0]
+        self.spacecraftPointing.alignmentVector_B = [1.0, 2.0, 3.0]
 
     def SetVehicleConfiguration(self, SimBase):
         vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
