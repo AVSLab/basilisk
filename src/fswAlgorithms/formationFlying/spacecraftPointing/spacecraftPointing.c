@@ -231,8 +231,8 @@ void Update_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t ca
     }
     if (ConfigData->i < 3){
         v3SetZero(domega_RN_N);
+        ConfigData->i += 1;
     }
-    ConfigData->i += 1;
     
     /*! One of the requirements for this module is that the user should be able to fill in a vector within the B-frame that points at
         the antenna. For this reason it is necessary to add the orientation of the B-frame with respect to the A-frame to the R-frame
