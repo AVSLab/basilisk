@@ -22,6 +22,12 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>
     Added a new sun heading module computed exclusively from ephemeris data and spacecraft attitude (sunlineEphem). Documentation and a unit test are included.
     </li>
+    <li>
+    Added a new scenario that shows how to simulate multiple spacecraft in one simulation instance.
+    </li>
+    <li>
+    Added a spacecraftPointing module that allows a deputy spacecraft to point at a chief spacecraft. Besides that, added a scenario that demonstrates the use of this new module.
+    </li>
 </ul>
 
 ## Version 0.3.3 
