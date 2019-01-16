@@ -65,7 +65,7 @@ void CrossInit_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t
  */
 void Reset_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    /*! Build a coordinate system around the vector within the body frame that points towards the antenna and write the orientation
+    /* Build a coordinate system around the vector within the body frame that points towards the antenna and write the orientation
      of the B-frame with respect to the A-frame. */
     double dcm_AB[3][3];                            /*!< ---  dcm [AB] */
     double temp_z[3] = {0.0, 0.0, 1.0};             /*!< ---  z-axis used for cross-product */
@@ -85,11 +85,11 @@ void Reset_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t cal
     C2MRP(dcm_AB, sigma_AB);
     v3Scale(-1, sigma_AB, ConfigData->sigma_BA);
     
-    /*! Set initial values of the sigma and omega of the previous timestep to zero. */
+    /* Set initial values of the sigma and omega of the previous timestep to zero. */
     v3SetZero(ConfigData->old_sigma_RN);
     v3SetZero(ConfigData->old_omega_RN_N);
     
-    /*! Set the numerical error flag to zero. */
+    /* Set the numerical error flag to zero. */
     ConfigData->i = 0;
 }
 
@@ -143,10 +143,10 @@ void Update_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t ca
     ReadMessage(ConfigData->deputyPositionInMsgID, &clockTime, &readSize,
                 sizeof(NavTransIntMsg), (void*) &(deputyTransMsg), moduleID);
 
-    /*! Find the vector that points from the deputy spacecraft to the chief spacecraft. */
+    /* Find the vector that points from the deputy spacecraft to the chief spacecraft. */
     v3Subtract(chiefTransMsg.r_BN_N, deputyTransMsg.r_BN_N, rho_N);
     
-    /*! Build a coordinate system around the vector that points from the deputy to the chief and
+    /* Build a coordinate system around the vector that points from the deputy to the chief and
         and determine the orientation of this R-frame with respect to the N-frame. */
     v3Normalize(rho_N, dcm_RN[0]);
     v3Cross(temp_z, dcm_RN[0], R_y_N);
@@ -159,7 +159,7 @@ void Update_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t ca
     v3Normalize(R_z_N, dcm_RN[2]);
     C2MRP(dcm_RN, sigma_RN);
 
-    /*! Determine omega_RN_N */
+    /* Determine omega_RN_N */
     /* Delta sigma is calculated and the shadow delta sigma. */
     v3Subtract(sigma_RN, ConfigData->old_sigma_RN, delta_sigma_RN);
     MRPswitch(ConfigData->old_sigma_RN, 0.0, old_sigma_RN_shadow);
@@ -214,7 +214,7 @@ void Update_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t ca
     MRP2C(sigma_NR, dcm_NR);
     m33MultV3(dcm_NR, omega_RN_R, omega_RN_N);
     
-    /*! Determine domega_RN_N. */
+    /* Determine domega_RN_N. */
     v3Subtract(omega_RN_N, ConfigData->old_omega_RN_N, delta_omega_RN_N);
     v3Scale((1.0/dt), delta_omega_RN_N, domega_RN_N);
     v3Copy(omega_RN_N, ConfigData->old_omega_RN_N);
@@ -222,7 +222,7 @@ void Update_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t ca
     /* Copy the sigma_RN variable to the old_sigma_RN variable. */
     v3Copy(sigma_RN, ConfigData->old_sigma_RN);
     
-    /*! Due to the numerical method used the first result from omega and the first two results of domega are incorrect.
+    /* Due to the numerical method used the first result from omega and the first two results of domega are incorrect.
         For this reason, these values are set to zero. Take into account that the first data point is an initialization
         datapoint. This is equal to zero for all parameters. So the actual simulation only starts after this first initialization
         datapoint. */
@@ -234,7 +234,7 @@ void Update_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t ca
         ConfigData->i += 1;
     }
     
-    /*! One of the requirements for this module is that the user should be able to fill in a vector within the B-frame that points at
+    /* One of the requirements for this module is that the user should be able to fill in a vector within the B-frame that points at
         the antenna. For this reason it is necessary to add the orientation of the B-frame with respect to the A-frame to the R-frame
         orientation with respect to the N-frame (add sigma_BA to sigma_RN). This results in the orientation of the R1-frame with respect
         to the N-frame (sigma_R1N). In case the spacecraft B-frame points towards the R1-frame, the A-frame will point towards the R-frame,
