@@ -80,8 +80,12 @@ void Reset_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t cal
     C2MRP(dcm_AB, sigma_AB);
     v3Scale(-1, sigma_AB, ConfigData->sigma_BA);
     
+    /*! Set initial values of the sigma and omega of the previous timestep to zero. */
     v3SetZero(ConfigData->old_sigma_RN);
     v3SetZero(ConfigData->old_omega_RN_N);
+    
+    /*! Set the numerical error flag to zero. */
+    ConfigData->i = 0;
 }
 
 /*! This method takes the vector that points from the deputy spacecraft to the chief spacecraft
@@ -106,7 +110,6 @@ void Update_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t ca
     double R_y_N[3];                                /*!< ---  y-axis of R-frame expressed in N-frame components */
     double R_z_N[3];                                /*!< ---  z-axis of R-frame expressed in N-frame components */
     double sigma_RN[3];                             /*!< ---  MRP of vector pointing from deputy to chief */
-//    static double old_sigma_RN[3] = {0,0,0};        /*!< ---  MRP of previous timestep */
     double delta_sigma_RN[3];                       /*!< ---  Difference between sigma at t-1 and t */
     double old_sigma_RN_shadow[3];                  /*!< ---  shadow MRP of previous timestep */
     double delta_sigma_RN_shadow[3];                /*!< ---  Difference between shadow sigma at t-1 and t */
@@ -123,7 +126,6 @@ void Update_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t ca
     double sigma_NR[3];                             /*!< ---  MRP of N-frame with respect to R-frame */
     double dcm_NR[3][3];                            /*!< ---  DCM [NR] */
     double omega_RN_N[3];                           /*!< ---  Angular velocity of vector pointing from deputy to chief in N-frame components */
-//    static double old_omega_RN_N[3] = {0,0,0};      /*!< ---  Omega of previous timestep */
     double delta_omega_RN_N[3];                     /*!< ---  Difference between omega at t-1 and t */
     double domega_RN_N[3];                          /*!< ---  Angular acceleration of vector pointing from deputy to chief */
     double sigma_R1N[3];                            /*!< ---  MRP of R1-frame with respect to N-frame */
@@ -136,8 +138,6 @@ void Update_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t ca
     ReadMessage(ConfigData->deputyPositionInMsgID, &clockTime, &readSize,
                 sizeof(NavTransIntMsg), (void*) &(deputyTransMsg), moduleID);
 
-    if (callTime > 0)
-    {
         /*! Find a unit vector that points from the deputy spacecraft to the chief spacecraft. */
         v3Subtract(chiefTransMsg.r_BN_N, deputyTransMsg.r_BN_N, rho_N);
         v3Normalize(rho_N, rho_N_norm);
@@ -150,7 +150,7 @@ void Update_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t ca
         v3Cross(dcm_RN[0], dcm_RN[1], R_z_N);
         v3Normalize(R_z_N, dcm_RN[2]);
         C2MRP(dcm_RN, sigma_RN);
-        
+
         /*! Determine omega_RN_N */
         /* Delta sigma is calculated and the shadow delta sigma. */
         v3Subtract(sigma_RN, ConfigData->old_sigma_RN, delta_sigma_RN);
@@ -205,16 +205,27 @@ void Update_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t ca
         v3Scale(-1, sigma_RN, sigma_NR);
         MRP2C(sigma_NR, dcm_NR);
         m33MultV3(dcm_NR, omega_RN_R, omega_RN_N);
-
+    
         /*! Determine domega_RN_N. */
         v3Subtract(omega_RN_N, ConfigData->old_omega_RN_N, delta_omega_RN_N);
         v3Scale((1.0/dt), delta_omega_RN_N, domega_RN_N);
         v3Copy(omega_RN_N, ConfigData->old_omega_RN_N);
-        
+
         /* Copy the sigma_RN variable to the old_sigma_RN variable. */
         v3Copy(sigma_RN, ConfigData->old_sigma_RN);
-        }
-
+    
+    /*! Due to the numerical method used the first result from omega and the first two results of domega are incorrect.
+        For this reason, these values are set to zero. Take into account that the first data point is an initialization
+        datapoint. This is equal to zero for all parameters. So the actual simulation only starts after this first initialization
+        datapoint. */
+    if (ConfigData->i < 2){
+        v3SetZero(omega_RN_N);
+    }
+    if (ConfigData->i < 3){
+        v3SetZero(domega_RN_N);
+    }
+    ConfigData->i += 1;
+    
     /*! One of the requirements for this module is that the user should be able to fill in a vector within the B-frame that points at
         the antenna. For this reason it is necessary to add the orientation of the B-frame with respect to the A-frame to the R-frame
         orientation with respect to the N-frame (add sigma_BA to sigma_RN). This results in the orientation of the R1-frame with respect
