@@ -48,18 +48,23 @@ from Basilisk.utilities import macros
 import numpy as np
 from Basilisk.utilities import astroFunctions as af
 
+@pytest.mark.parametrize("case", [
+     (1)        # Regular alignment vector
+    ,(2)        # Alignment vector aligns with the z-axis of the body frame
+])
+
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
-def test_spacecraftPointing(show_plots):
+def test_spacecraftPointing(show_plots, case):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = spacecraftPointingTestFunction(show_plots)
+    [testResults, testMessage] = spacecraftPointingTestFunction(show_plots, case)
     assert testResults < 1, testMessage
 
 
-def spacecraftPointingTestFunction(show_plots):
+def spacecraftPointingTestFunction(show_plots, case):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -79,10 +84,7 @@ def spacecraftPointingTestFunction(show_plots):
 
     # Construct algorithm and associated C++ container
     moduleConfig = spacecraftPointing.spacecraftPointingConfig()
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        spacecraftPointing.Update_spacecraftPointing,
-                                        spacecraftPointing.SelfInit_spacecraftPointing,
-                                        spacecraftPointing.CrossInit_spacecraftPointing)
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "spacecraftPointing"
 
     # Add test module to runtime call list
@@ -93,6 +95,8 @@ def spacecraftPointingTestFunction(show_plots):
     moduleConfig.deputyPositionInMsgName = "deputyInMsg"
     moduleConfig.attReferenceOutMsgName = "attRefOutMsg"
     moduleConfig.alignmentVector_B = [1.0, 0.0, 0.0]
+    if (case == 2):
+        moduleConfig.alignmentVector_B = [0.0, 0.0, 1.0]
 
     r_BN_N = [[np.cos(0.0), np.sin(0.0), 0.0],
               [np.cos(0.001), np.sin(0.001), 0.0],
@@ -147,6 +151,8 @@ def spacecraftPointingTestFunction(show_plots):
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
+
+
 
     # Set the simulation time.
     # NOTE: the total simulation time may be longer than this value. The
@@ -231,92 +237,100 @@ def spacecraftPointingTestFunction(show_plots):
 
     unitTestSim.ExecuteSimulation()
 
-    # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    #
-    # check sigma_RN
-    #
-    moduleOutputName = "sigma_RN"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attReferenceOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
-    # set the filtered output truth states
-    trueVector = [
-               [0.,              0.,              0.0],
-               [0.,              0.,              0.0],
-               [0.,              0.,              0.0002500000052],
-               [0.,              0.,              0.0005000000417],
-               [0.,              0.,              0.0007500001406],
-               [0.,              0.,              0.001000000333]
-               ]
+    if (case == 1):
+        # This pulls the actual data log from the simulation run.
+        # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
+        #
+        # check sigma_RN
+        #
+        moduleOutputName = "sigma_RN"
+        moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attReferenceOutMsgName + '.' + moduleOutputName,
+                                                      range(3))
+        # set the filtered output truth states
+        trueVector = [
+                   [0.,              0.,              0.0],
+                   [0.,              0.,              0.0],
+                   [0.,              0.,              0.0002500000052],
+                   [0.,              0.,              0.0005000000417],
+                   [0.,              0.,              0.0007500001406],
+                   [0.,              0.,              0.001000000333]
+                   ]
+        # compare the module results to the truth values
+        accuracy = 1e-12
+        for i in range(0,len(trueVector)):
+            # check a vector values
+            if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
+                testFailCount += 1
+                testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
+                                    moduleOutputName + " unit test at t=" +
+                                    str(moduleOutput[i,0]*macros.NANO2SEC) +
+                                    "sec\n")
 
-    # compare the module results to the truth values
-    accuracy = 1e-12
-    for i in range(0,len(trueVector)):
+        #
+        # check omega_RN_N
+        #
+        moduleOutputName = "omega_RN_N"
+        moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attReferenceOutMsgName + '.' + moduleOutputName,
+                                                      range(3))
+
+        # set the filtered output truth states
+        trueVector = [
+                   [0.,              0.,              0.0],
+                   [0.,              0.,              0.0],
+                   [0.,              0.,              0.01],
+                   [0.,              0.,              0.01],
+                   [0.,              0.,              0.01],
+                   [0.,              0.,              0.01]
+                   ]
+
+        # compare the module results to the truth values
+        # The first three values of the simulation have to be ignored for omega_RN_N. For this reason, comparing from index 3.
+        accuracy = 1e-9
+        for i in range(0,len(trueVector)):
+            # check a vector values
+            if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
+                testFailCount += 1
+                testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
+                                    moduleOutputName + " unit test at t=" +
+                                    str(moduleOutput[i,0]*macros.NANO2SEC) +
+                                    "sec\n")
+
+        #
+        # check domega_RN_N
+        #
+        moduleOutputName = "domega_RN_N"
+        moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attReferenceOutMsgName + '.' + moduleOutputName,
+                                                      range(3))
+        # set the filtered output truth states
+        trueVector = [
+                      [0.0, 0.0, 0.0],
+                      [0.0, 0.0, 0.0],
+                      [0.0, 0.0, 0.0],
+                      [0.0, 0.0, 0.0],
+                      [0.0, 0.0, 0.0],
+                      [0.0, 0.0, 0.0]
+                      ]
+        # compare the module results to the truth values
+        # The first three values of the simulation have to be ignored for domega_RN_N. For this reason, comparing from index 3.
+        accuracy = 1e-12
+        for i in range(0,len(trueVector)):
+            # check a vector values
+            if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
+                testFailCount += 1
+                testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
+                                    moduleOutputName + " unit test at t=" +
+                                    str(moduleOutput[i,0]*macros.NANO2SEC) +
+                                    "sec\n")
+    elif (case == 2):
+        trueVector = [-1.0/3.0, 1.0/3.0, -1.0/3.0]
+        # compare the module results to the truth values
+        accuracy = 1e-12
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
+        if not unitTestSupport.isVectorEqual(np.array(moduleConfig.sigma_BA), np.array(trueVector), accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
-                                "sec\n")
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed, sigma_BA is calculated incorrectly\n")
 
-    #
-    # check omega_RN_N
-    #
-    moduleOutputName = "omega_RN_N"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attReferenceOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
-
-    # set the filtered output truth states
-    trueVector = [
-               [0.,              0.,              0.0],
-               [0.,              0.,              0.0],
-               [0.,              0.,              0.01],
-               [0.,              0.,              0.01],
-               [0.,              0.,              0.01],
-               [0.,              0.,              0.01]
-               ]
-
-    # compare the module results to the truth values
-    # The first three values of the simulation have to be ignored for omega_RN_N. For this reason, comparing from index 3.
-    accuracy = 1e-9
-    for i in range(0,len(trueVector)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
-                                "sec\n")
-
-    #
-    # check domega_RN_N
-    #
-    moduleOutputName = "domega_RN_N"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attReferenceOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
-    # set the filtered output truth states
-    trueVector = [
-                  [0.0, 0.0, 0.0],
-                  [0.0, 0.0, 0.0],
-                  [0.0, 0.0, 0.0],
-                  [0.0, 0.0, 0.0],
-                  [0.0, 0.0, 0.0],
-                  [0.0, 0.0, 0.0]
-                  ]
-    # compare the module results to the truth values
-    # The first three values of the simulation have to be ignored for domega_RN_N. For this reason, comparing from index 3.
-    accuracy = 1e-12
-    for i in range(0,len(trueVector)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
-                                "sec\n")
-
-#    #   print out success message if no error were found
+    #   print out success message if no error were found
     snippentName = "passFail"
     if testFailCount == 0:
         colorText = 'green'
