@@ -91,6 +91,8 @@ void Reset_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t cal
     
     /* Set the numerical error flag to zero. */
     ConfigData->i = 0;
+    
+    return;
 }
 
 /*! This method takes the vector that points from the deputy spacecraft to the chief spacecraft
