@@ -1,14 +1,13 @@
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
-\ProvidesClass{IAC}[2015/09/09 v1.0 AVS Laboratory document class]
-\typeout{TYPESETTING in AVS Lab Technical Report...}
+\ProvidesClass{IAC}[2015/03/30 v1.0 AVS Lab Software document class]
+\typeout{TYPESETTING in AVS Lab Software  Report...}
 
-\LoadClass[11pt]{article}
+\LoadClass[titlepage,11pt]{article}
 
 %
 %	Load in required packages
 %
 \RequirePackage{graphicx}
-\usepackage{natbib}
 \RequirePackage{bm}
 \RequirePackage{overcite}
 \RequirePackage{amssymb}
@@ -20,8 +19,6 @@
 \RequirePackage{color}
 \RequirePackage[normalem]{ulem}
 \RequirePackage{lastpage}
-\usepackage{listings}
-\usepackage{xcolor}
 %\RequirePackage[original,runin]{abstract}
 \RequirePackage[total={6.5in,9in},top=1in, left=1in]{geometry}
 \RequirePackage[colorlinks=false,hyperfootnotes=false]{hyperref}
@@ -42,8 +39,8 @@
 \RequirePackage{fancyhdr}
 \fancyhead{}
 \fancyfoot{}
-\fancyhead[L]{\footnotesize AVS-\ReportYear-\ReportNumber\ (Version \Version) }
-\fancyhead[R]{\footnotesize  Page \thepage \ of \pageref{LastPage}}
+\fancyhead[L]{\footnotesize Doc. ID: Basilisk-\ModuleName}
+\fancyhead[R]{\footnotesize Page \thepage \ of \pageref{LastPage}}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
 
@@ -54,32 +51,47 @@
 %
 \newcommand{\makeCover}{
 
-\begin{textblock*}{2.5in}(2.725in,1in)
-	\includegraphics[width=2.5in]{Figures/AVSlogo5.pdf}
+\begin{textblock*}{6.625in}(2.25in,0.975in)
+	\includegraphics[width=3.5in]{Figures/Basilisk-Logo.pdf}
 \end{textblock*}
 
-\begin{textblock*}{6.in}(1.25in,3in)
-{
+
+
+\begin{textblock*}{6.5in}(1in,3.5in)
 \centering
-
-\large\bfseries  AVS Laboratory Technical Report\\
-\normalsize\normalfont AVS-\ReportYear-\ReportNumber\ (Version \Version)\\
- \Release \\
-\vskip 8em
-{\LARGE\bfseries\MakeUppercase{\ReportTitle}}
-\vskip 3em 
-{\normalsize\normalfont
-\ReportAuthor \\
-{\itshape \AuthorTitle} \\
-\href{mailto:\AuthorEmail}{\color{black}\AuthorEmail}
-\vskip 4em
-\today \\
-}
-\vskip 4em
-{\bfseries Abstract:\quad}\summary
-}
-
+\LARGE\bfseries \noindent \submiterInstitute\\
+\vskip 0.1in
+\noindent Basilisk Technical Memorandum\\
+\large\noindent Document ID: Basilisk-\ModuleName\\
+\vskip 0.1in
+\noindent \MakeUppercase{\subject}
 \end{textblock*}
+
+~\\
+\vskip 4.25in
+{\renewcommand{\arraystretch}{2}
+\noindent
+\begin{tabular}{|p{1.6in}|p{4.7in}|}
+\hline
+~Prepared by & \preparer\\
+\hline
+\end{tabular}
+}
+\vskip 0.2in
+
+{\renewcommand{\arraystretch}{2}
+\noindent
+\begin{tabular}{|p{6.46in}|}
+\hline
+~{\bfseries Status:}~~ \status \\
+\hline
+~{\bfseries Scope/Contents} \\
+\hline
+\summary \\
+\hline
+\end{tabular}
+}
+\vskip 0.2in
 }
 
 %
@@ -88,6 +100,11 @@
 \setlength\textfloatsep{5pt}
 \setlength{\abovecaptionskip}{3pt}
 \renewcommand{\figurename}{Fig.}
+
+%
+%	cancel the date formatting
+%
+\date{}
 
 
 %

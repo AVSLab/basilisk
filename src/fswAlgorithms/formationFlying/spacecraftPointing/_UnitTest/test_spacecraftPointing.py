@@ -257,6 +257,7 @@ def spacecraftPointingTestFunction(show_plots, case):
                    ]
         # compare the module results to the truth values
         accuracy = 1e-12
+        unitTestSupport.writeTeXSnippet("toleranceValue1", str(accuracy), path)
         for i in range(0,len(trueVector)):
             # check a vector values
             if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
@@ -286,6 +287,7 @@ def spacecraftPointingTestFunction(show_plots, case):
         # compare the module results to the truth values
         # The first three values of the simulation have to be ignored for omega_RN_N. For this reason, comparing from index 3.
         accuracy = 1e-9
+        unitTestSupport.writeTeXSnippet("toleranceValue2", str(accuracy), path)
         for i in range(0,len(trueVector)):
             # check a vector values
             if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
@@ -313,6 +315,7 @@ def spacecraftPointingTestFunction(show_plots, case):
         # compare the module results to the truth values
         # The first three values of the simulation have to be ignored for domega_RN_N. For this reason, comparing from index 3.
         accuracy = 1e-12
+        unitTestSupport.writeTeXSnippet("toleranceValue3", str(accuracy), path)
         for i in range(0,len(trueVector)):
             # check a vector values
             if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
@@ -325,19 +328,20 @@ def spacecraftPointingTestFunction(show_plots, case):
         trueVector = [-1.0/3.0, 1.0/3.0, -1.0/3.0]
         # compare the module results to the truth values
         accuracy = 1e-12
+        unitTestSupport.writeTeXSnippet("toleranceValue4", str(accuracy), path)
         # check a vector values
         if not unitTestSupport.isVectorEqual(np.array(moduleConfig.sigma_BA), np.array(trueVector), accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed, sigma_BA is calculated incorrectly\n")
 
     #   print out success message if no error were found
-    snippentName = "passFail"
+    snippentName = "passFail" + str(case)
     if testFailCount == 0:
-        colorText = 'green'
+        colorText = 'ForestGreen'
         print "PASSED: " + moduleWrap.ModelTag
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
-        colorText = 'red'
+        colorText = 'Red'
         print "FAILED: " + moduleWrap.ModelTag
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)

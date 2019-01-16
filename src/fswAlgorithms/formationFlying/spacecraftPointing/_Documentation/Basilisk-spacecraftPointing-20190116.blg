@@ -1,34 +1,34 @@
 This is BibTeX, Version 0.99d (TeX Live 2018)
 Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
-The top-level auxiliary file: spacecraftPointing.aux
+The top-level auxiliary file: Basilisk-spacecraftPointing-20190116.aux
 The style file: plain.bst
-Database file #1: references.bib
+Database file #1: bibliography.bib
 You've used 1 entry,
             2118 wiz_defined-function locations,
-            503 strings with 4130 characters,
-and the built_in function-call counts, 271 in all, are:
-= -- 22
+            503 strings with 4152 characters,
+and the built_in function-call counts, 279 in all, are:
+= -- 24
 > -- 13
 < -- 0
 + -- 5
 - -- 4
-* -- 14
-:= -- 53
+* -- 16
+:= -- 54
 add.period$ -- 3
 call.type$ -- 1
-change.case$ -- 4
+change.case$ -- 5
 chr.to.int$ -- 0
 cite$ -- 1
 duplicate$ -- 12
 empty$ -- 23
 format.name$ -- 4
-if$ -- 54
+if$ -- 56
 int.to.chr$ -- 0
 int.to.str$ -- 1
 missing$ -- 2
 newline$ -- 8
 num.names$ -- 2
-pop$ -- 9
+pop$ -- 8
 preamble$ -- 1
 purify$ -- 4
 quote$ -- 0
@@ -43,4 +43,4 @@ type$ -- 2
 warning$ -- 0
 while$ -- 2
 width$ -- 2
-write$ -- 12
+write$ -- 13
