@@ -40,6 +40,7 @@ typedef struct {
     double sigma_BA[3];                                 /*!< -- MRP of B-frame with respect to A-frame */
     double old_sigma_RN[3];                             /*!< -- MRP of previous timestep */
     double old_omega_RN_N[3];                           /*!< -- Omega of previous timestep */
+    int i;                                              /*!< -- Flag used to set incorrect numerical answers to zero */
     int32_t attReferenceOutMsgID;                       /*!< -- ID for the outgoing reference message */
     int32_t chiefPositionInMsgID;                       /*!< -- ID for the incoming chief position message */
     int32_t deputyPositionInMsgID;                      /*!< -- ID for the incoming deputy position message */

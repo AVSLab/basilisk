@@ -280,7 +280,7 @@ def spacecraftPointingTestFunction(show_plots):
     # compare the module results to the truth values
     # The first three values of the simulation have to be ignored for omega_RN_N. For this reason, comparing from index 3.
     accuracy = 1e-9
-    for i in range(2,len(trueVector)):
+    for i in range(0,len(trueVector)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
             testFailCount += 1
@@ -299,7 +299,7 @@ def spacecraftPointingTestFunction(show_plots):
     trueVector = [
                   [0.0, 0.0, 0.0],
                   [0.0, 0.0, 0.0],
-                  [0.0, 0.0, 0.1],
+                  [0.0, 0.0, 0.0],
                   [0.0, 0.0, 0.0],
                   [0.0, 0.0, 0.0],
                   [0.0, 0.0, 0.0]
@@ -307,7 +307,7 @@ def spacecraftPointingTestFunction(show_plots):
     # compare the module results to the truth values
     # The first three values of the simulation have to be ignored for domega_RN_N. For this reason, comparing from index 3.
     accuracy = 1e-12
-    for i in range(3,len(trueVector)):
+    for i in range(0,len(trueVector)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
             testFailCount += 1
