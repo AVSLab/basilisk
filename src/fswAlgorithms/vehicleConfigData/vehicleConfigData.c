@@ -30,27 +30,10 @@
 void SelfInit_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t moduleID)
 {
 
-    VehicleConfigFswMsg localConfigData;
-    /*! Begin function steps*/
-    
-    /*! - Zero the output message data */
-    memset(&localConfigData, 0x0, sizeof(VehicleConfigFswMsg));
-
     /*! - Create the output message for the mass properties of the spacecraft*/
     ConfigData->outputPropsID = CreateNewMessage(
         ConfigData->outputPropsName, sizeof(VehicleConfigFswMsg),
         "VehicleConfigFswMsg", moduleID);
- 
-    /*! - Convert the center of mass from structure to body*/
-    v3Copy(ConfigData->CoM_B, localConfigData.CoM_B);
-
-    /*! - Copy over the inertia */
-    m33Copy(RECAST3X3 ConfigData->ISCPntB_B, RECAST3X3 localConfigData.ISCPntB_B);
-
-    /*! - Write output properties to the messaging system*/
-    WriteMessage(ConfigData->outputPropsID, 0, sizeof(VehicleConfigFswMsg),
-        &localConfigData, moduleID);
-    
 
 }
 
@@ -62,6 +45,25 @@ void SelfInit_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t moduleI
 void CrossInit_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t moduleID)
 {
     /*! Nothing done in this method.  Make sure this is still true!*/
+}
+
+void Reset_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t callTime, uint64_t moduleID)
+{
+    VehicleConfigFswMsg localConfigData;
+    /*! Begin function steps*/
+
+    /*! - Zero the output message data */
+    memset(&localConfigData, 0x0, sizeof(VehicleConfigFswMsg));
+
+    /*! - Convert the center of mass from structure to body*/
+    v3Copy(ConfigData->CoM_B, localConfigData.CoM_B);
+
+    /*! - Copy over the inertia */
+    m33Copy(RECAST3X3 ConfigData->ISCPntB_B, RECAST3X3 localConfigData.ISCPntB_B);
+
+    /*! - Write output properties to the messaging system*/
+    WriteMessage(ConfigData->outputPropsID, 0, sizeof(VehicleConfigFswMsg),
+                 &localConfigData, moduleID);
 }
 
 /*! There are no runtime operations performed by the vehicle configuration 

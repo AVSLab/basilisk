@@ -25,6 +25,7 @@
 #include "rwConfigData/rwConfigData.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
+#include "rwConfigData.h"
 #include <string.h>
 
 /*
@@ -60,33 +61,14 @@ void CrossInit_rwConfigData(rwConfigData_Config *ConfigData, uint64_t moduleID)
      When Reset call takes place in all the modules, this RW message should already be available.*/
     ConfigData->vehConfigInMsgID = subscribeToMessage(ConfigData->vehConfigInMsgName,
                                                               sizeof(VehicleConfigFswMsg), moduleID);
-    int i;
-    uint64_t clockTime;
-    uint32_t readSize;
-    VehicleConfigFswMsg   sc;                 /*!< spacecraft configuration message */
-    
-    ReadMessage(ConfigData->vehConfigInMsgID, &clockTime, &readSize,
-                sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
-    
+
+    ConfigData->rwConstellationInMsgID = -1;
     if(strlen(ConfigData->rwConstellationInMsgName) > 0)
     {
         ConfigData->rwConstellationInMsgID = subscribeToMessage(ConfigData->rwConstellationInMsgName,
                                                           sizeof(RWConstellationFswMsg), moduleID);
-        ReadMessage(ConfigData->rwConstellationInMsgID, &clockTime, &readSize, sizeof(RWConstellationFswMsg),
-            &ConfigData->rwConstellation, moduleID);
     }
-    
-    ConfigData->rwConfigParamsOut.numRW = ConfigData->rwConstellation.numRW;
-    
-    for(i=0; i<ConfigData->rwConfigParamsOut.numRW; i=i+1)
-    {
-        ConfigData->rwConfigParamsOut.JsList[i] = ConfigData->rwConstellation.reactionWheels[i].Js;
-        ConfigData->rwConfigParamsOut.uMax[i] = ConfigData->rwConstellation.reactionWheels[i].uMax;
-        v3Copy(ConfigData->rwConstellation.reactionWheels[i].gsHat_B, &ConfigData->rwConfigParamsOut.GsMatrix_B[i*3]);
-    }
-    /*! - Write output RW config data to the messaging system*/
-    WriteMessage(ConfigData->rwParamsOutMsgID, 0, sizeof(RWArrayConfigFswMsg),
-                 &(ConfigData->rwConfigParamsOut), moduleID);
+
 
 }
 
@@ -97,7 +79,32 @@ void CrossInit_rwConfigData(rwConfigData_Config *ConfigData, uint64_t moduleID)
  */
 void Reset_rwConfigData(rwConfigData_Config *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    
+    uint64_t clockTime;
+    uint32_t readSize;
+    VehicleConfigFswMsg   sc;                 /*!< spacecraft configuration message */
+    int i;
+
+    ReadMessage(ConfigData->vehConfigInMsgID, &clockTime, &readSize,
+                sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
+
+    if(ConfigData->rwConstellationInMsgID >= 0)
+    {
+        ReadMessage(ConfigData->rwConstellationInMsgID, &clockTime, &readSize, sizeof(RWConstellationFswMsg),
+                    &ConfigData->rwConstellation, moduleID);
+    }
+    ConfigData->rwConfigParamsOut.numRW = ConfigData->rwConstellation.numRW;
+
+    for(i=0; i<ConfigData->rwConfigParamsOut.numRW; i=i+1)
+    {
+        ConfigData->rwConfigParamsOut.JsList[i] = ConfigData->rwConstellation.reactionWheels[i].Js;
+        ConfigData->rwConfigParamsOut.uMax[i] = ConfigData->rwConstellation.reactionWheels[i].uMax;
+        v3Copy(ConfigData->rwConstellation.reactionWheels[i].gsHat_B, &ConfigData->rwConfigParamsOut.GsMatrix_B[i*3]);
+    }
+
+    /*! - Write output RW config data to the messaging system*/
+    WriteMessage(ConfigData->rwParamsOutMsgID, 0, sizeof(RWArrayConfigFswMsg),
+                 &(ConfigData->rwConfigParamsOut), moduleID);
+
 }
 
 /*! Add a description of what this main Update() routine does for this module
