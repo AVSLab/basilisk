@@ -27,6 +27,7 @@
 /* update this include to reflect the required module input messages */
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include <string.h>
+#include <math.h>
 
 
 /*
@@ -147,6 +148,8 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
     int         thrusterUsed[MAX_EFF_CNT];    /*!< []      Array of flags indicating if this thruster is used for the Lr_j */
     double      rThrusterRelCOM_B[MAX_EFF_CNT][3];/*!< [m]     local copy of the thruster locations relative to COM */
     uint32_t    numOfAvailableThrusters;      /*!< []      number of available thrusters */
+    double BLr[3];                            /*!< [Nm]    Control torque that we actually control*/
+    double maxFractUse;
 
     /*! Begin method steps*/
     /*! - Read the input messages */
@@ -181,7 +184,7 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
         }
     }
     v3Add(Lr_offset, Lr_B, Lr_B);
-    findMinimumNormForce(ConfigData, D, Lr_B, numOfAvailableThrusters, F);
+    findMinimumNormForce(ConfigData, D, Lr_B, numOfAvailableThrusters, F, BLr);
     if (ConfigData->thrForceSign>0) substractMin(F, numOfAvailableThrusters);
 
     if (numOfAvailableThrusters != ConfigData->numThrusters || ConfigData->thrForceSign<0) {
@@ -194,7 +197,7 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
                 counterPosForces += 1;
             }
         }
-        findMinimumNormForce(ConfigData, Dbar, Lr_B, counterPosForces, Fbar);
+        findMinimumNormForce(ConfigData, Dbar, Lr_B, counterPosForces, Fbar, BLr);
 
         c = 0;
         for (i=0;i<numOfAvailableThrusters;i++) {
@@ -208,6 +211,25 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
         if (ConfigData->thrForceSign>0) substractMin(F, numOfAvailableThrusters);
     }
 
+    ConfigData->outTorqAngErr = computeTorqueAngErr(D, BLr, numOfAvailableThrusters, F,
+        ConfigData->thrForcMag);
+    maxFractUse = 0.0;
+    if(ConfigData->outTorqAngErr > ConfigData->angErrThresh)
+    {
+        for(i=0; i<numOfAvailableThrusters; i++)
+        {
+            if(ConfigData->thrForcMag[i] > 0.0 && F[i]/ConfigData->thrForcMag[i] > maxFractUse)
+            {
+                maxFractUse = F[i]/ConfigData->thrForcMag[i];
+            }
+        }
+        if(maxFractUse > 0.0)
+        {
+            vScale(1.0/maxFractUse, F, numOfAvailableThrusters, F);
+            ConfigData->outTorqAngErr = computeTorqueAngErr(D, BLr, numOfAvailableThrusters, F,
+                                                            ConfigData->thrForcMag);
+        }
+    }
 
     /*
      store the output message 
@@ -239,11 +261,10 @@ void substractMin(double *F, uint32_t size)
 }
 
 void findMinimumNormForce(thrForceMappingConfig *ConfigData,
-                          double D[MAX_EFF_CNT][3], double Lr_B[3], uint32_t numForces, double F[MAX_EFF_CNT])
+                          double D[MAX_EFF_CNT][3], double Lr_B[3], uint32_t numForces, double F[MAX_EFF_CNT], double BLr[3])
 {
 
     int i,j,k;                                  /*!< []     counters */
-    double      BLr[3];                         /*!< [Nm]   control torque vector reduced to controlable space */
     double      DDT[3][3];                      /*!< [m^2]  [D].[D]^T matrix */
     double      CD[2][MAX_EFF_CNT];             /*!< [m]    [C].[D] */
     double      CDCDT22[2][2];                  /*!< [m^2]  ([C].[D]).([C].[D])^T */
@@ -265,10 +286,11 @@ void findMinimumNormForce(thrForceMappingConfig *ConfigData,
         }
     }
 
+    v3SetZero(BLr);
+    v3SetZero(tempVec);
     if (m33Determinant(DDT) > ConfigData->epsilon) {
         /* find minimum norm inverse to control all three axes */
         m33Inverse(DDT, matInv33);
-        v3SetZero(BLr);
         for (i=0;i<ConfigData->numOfAxesToBeControlled;i++) {
             v3Scale(v3Dot(ConfigData->controlAxes_B+3*i, Lr_B), ConfigData->controlAxes_B+3*i, tempVec);
             v3Add(BLr, tempVec, BLr);
@@ -284,6 +306,9 @@ void findMinimumNormForce(thrForceMappingConfig *ConfigData,
         if (ConfigData->numOfAxesToBeControlled == 2) {
             /* compute the minimum norm solution on the 2D [C] subspace */
             for (i=0;i<2;i++){
+                v3Scale(v3Dot(ConfigData->controlAxes_B+3*i, Lr_B),
+                    ConfigData->controlAxes_B+3*i, tempVec);
+                v3Add(BLr, tempVec, BLr);
                 for (j=0;j<numForces;j++) {
                     CD[i][j] = v3Dot(ConfigData->controlAxes_B+3*i, D[j]);
                 }
@@ -314,6 +339,8 @@ void findMinimumNormForce(thrForceMappingConfig *ConfigData,
 
         if (ConfigData->numOfAxesToBeControlled == 1) {
             /* compute the minimum norm solution on the 1D [C] subspace */
+            v3Scale(v3Dot(ConfigData->controlAxes_B+3*i, Lr_B),
+                    ConfigData->controlAxes_B+3*i, BLr);
             for (j=0;j<numForces;j++) {
                 CD[0][j] = v3Dot(ConfigData->controlAxes_B, D[j]);
             }
@@ -333,4 +360,39 @@ void findMinimumNormForce(thrForceMappingConfig *ConfigData,
     }
 
     return;
+}
+
+double computeTorqueAngErr(double D[MAX_EFF_CNT][3], double BLr[3], uint32_t numForces,
+                           double F[MAX_EFF_CNT], double FMag[MAX_EFF_CNT])
+
+{
+    double returnAngle = 0.0;
+    double LrB_Computed[3];
+    double BLrNormalized[3];
+    double LrEffector_B[3];
+    double scaleFactUse;
+    int i;
+    
+    v3Normalize(BLr, BLrNormalized);
+    v3SetZero(LrB_Computed);
+    for(i=0; i<numForces; i++)
+    {
+        scaleFactUse = 0.0;
+        if(FMag[i] > 0.0)
+        {
+            scaleFactUse = F[i]/FMag[i];
+            scaleFactUse = scaleFactUse > 1.0 ? 1.0 : scaleFactUse;
+        }
+        v3Scale(scaleFactUse*FMag[i], D[i], LrEffector_B);
+        v3Add(LrB_Computed, LrEffector_B, LrB_Computed);
+    }
+    
+    v3Normalize(LrB_Computed, LrB_Computed);
+    if(v3Dot(BLrNormalized, LrB_Computed) < 1.0)
+    {
+        returnAngle = acos(v3Dot(BLrNormalized, LrB_Computed));
+    }
+    
+    return(returnAngle);
+    
 }
