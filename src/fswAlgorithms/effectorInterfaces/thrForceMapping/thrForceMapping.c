@@ -366,15 +366,17 @@ double computeTorqueAngErr(double D[MAX_EFF_CNT][3], double BLr[3], uint32_t num
                            double F[MAX_EFF_CNT], double FMag[MAX_EFF_CNT])
 
 {
-    double returnAngle = 0.0;
-    double LrB_Computed[3];
-    double BLrNormalized[3];
-    double LrEffector_B[3];
-    double scaleFactUse;
+    double returnAngle = 0.0;       /*! [rad]  angle between requested and actual torque vector */
+    double LrB_Computed[3];         /*! [Nm]   control torque with current thruster solution */
+    double BLrNormalized[3];        /*! []     normalized BLr vector */
+    double LrEffector_B[3];         /*! [Nm]   torque of an individual thruster effector */
+    double scaleFactUse;            /*! []     fraction of the requested force over available force */
     int i;
     
     v3Normalize(BLr, BLrNormalized);
     v3SetZero(LrB_Computed);
+
+    /* loop over all thrusters and compute the actual torque to be applied */
     for(i=0; i<numForces; i++)
     {
         scaleFactUse = 0.0;
