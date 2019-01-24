@@ -339,8 +339,8 @@ void findMinimumNormForce(thrForceMappingConfig *ConfigData,
 
         if (ConfigData->numOfAxesToBeControlled == 1) {
             /* compute the minimum norm solution on the 1D [C] subspace */
-            v3Scale(v3Dot(ConfigData->controlAxes_B+3*i, Lr_B),
-                    ConfigData->controlAxes_B+3*i, BLr);
+            v3Scale(v3Dot(ConfigData->controlAxes_B, Lr_B),
+                    ConfigData->controlAxes_B, BLr);
             for (j=0;j<numForces;j++) {
                 CD[0][j] = v3Dot(ConfigData->controlAxes_B, D[j]);
             }
