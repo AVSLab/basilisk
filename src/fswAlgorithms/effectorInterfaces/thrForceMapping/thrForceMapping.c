@@ -371,7 +371,7 @@ double computeTorqueAngErr(double D[MAX_EFF_CNT][3], double BLr[3], uint32_t num
     double LrB_Computed[3];         /*! [Nm]   control torque with current thruster solution */
     double BLrNormalized[3];        /*! []     normalized BLr vector */
     double LrEffector_B[3];         /*! [Nm]   torque of an individual thruster effector */
-    double scaleFactUse;            /*! []     fraction of the requested force over available force */
+    double thrusterForce;           /*! [N]    saturation constrained thruster force */
     int i;
     
     v3Normalize(BLr, BLrNormalized);
@@ -380,13 +380,8 @@ double computeTorqueAngErr(double D[MAX_EFF_CNT][3], double BLr[3], uint32_t num
     /* loop over all thrusters and compute the actual torque to be applied */
     for(i=0; i<numForces; i++)
     {
-        scaleFactUse = 0.0;
-        if(FMag[i] > 0.0)
-        {
-            scaleFactUse = F[i]/FMag[i];
-            scaleFactUse = scaleFactUse > 1.0 ? 1.0 : scaleFactUse;
-        }
-        v3Scale(scaleFactUse*FMag[i], D[i], LrEffector_B);
+        thrusterForce = F[i] < FMag[i] ? F[i] : FMag[i];
+        v3Scale(thrusterForce, D[i], LrEffector_B);
         v3Add(LrB_Computed, LrEffector_B, LrB_Computed);
     }
     
