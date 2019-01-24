@@ -223,7 +223,8 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
                 maxFractUse = F[i]/ConfigData->thrForcMag[i];
             }
         }
-        if(maxFractUse > 0.0)
+        /* only scale the requested thruster force if one or more thrusters are saturated */
+        if(maxFractUse > 1.0)
         {
             vScale(1.0/maxFractUse, F, numOfAvailableThrusters, F);
             ConfigData->outTorqAngErr = computeTorqueAngErr(D, BLr, numOfAvailableThrusters, F,
