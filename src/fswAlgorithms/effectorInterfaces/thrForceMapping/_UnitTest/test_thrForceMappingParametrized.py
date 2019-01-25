@@ -25,10 +25,6 @@
 #
 
 import pytest
-import sys, os, inspect
-import math
-# import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
-
 
 
 
@@ -104,7 +100,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
     moduleConfig.inputThrusterConfName = "RCSThrusters"
     moduleConfig.outputDataName = "thrusterForceOut"
     moduleConfig.inputVehicleConfigDataName = "vehicleConfigName"
-    moduleConfig.angErrThresh = 10.0*math.pi/180.0
+    moduleConfig.angErrThresh = 10.0*macros.D2R
 
     # write vehicle configuration message
     vehicleConfigOut = thrForceMapping.VehicleConfigFswMsg()
