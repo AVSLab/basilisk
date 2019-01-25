@@ -214,7 +214,12 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
     ConfigData->outTorqAngErr = computeTorqueAngErr(D, BLr_B, numOfAvailableThrusters, F,
         ConfigData->thrForcMag);
     maxFractUse = 0.0;
-    if(ConfigData->outTorqAngErr > ConfigData->angErrThresh)
+    /*
+        check if the angle between the request and actual torque exceeds a limit.  If then, then uniformly scale
+        all thruster forces values to not exceed saturation.
+        If the angle threshold is negative, then this scaling is bypassed.
+     */
+    if(ConfigData->outTorqAngErr > ConfigData->angErrThresh && ConfigData->angErrThresh > -0.001)
     {
         for(i=0; i<numOfAvailableThrusters; i++)
         {
