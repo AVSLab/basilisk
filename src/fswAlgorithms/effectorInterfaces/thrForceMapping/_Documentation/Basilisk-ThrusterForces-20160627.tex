@@ -10,7 +10,7 @@
 \newcommand{\subject}{Algorithms to Map Desired Torque Vector onto a set of Thrusters }
 \newcommand{\status}{Ready}
 \newcommand{\preparer}{H. Schaub}
-\newcommand{\summary}{Include a short summary of what this system engineering report is about.  Should be 300 words or less.     }
+\newcommand{\summary}{This module takes a commanded attitude control torque vector and determines a set of desired thruster force values to implement this torque.  It is assumed that the nominal thruster configuration is such that pure torque solutions are possible.  The module supports both on- and off-pulsing solutions, including cases where the thruster solutions are saturated due to a large commanded attitude control torque.   }
 
 
 \begin{document}
@@ -33,6 +33,7 @@
 v0.1 & Updated the thruster force evaluation to account for center of mass offsets & H. Schaub \\
 v0.2 & Updated the figure and the $[C]$ matrix notation & H. Schaub \\
 v0.3 & The thruster mapping logic has changed, and this documentation now reflects what the new algorithm does. & H. Schaub \\
+v0.4 & Discuss the new module feature of scaling the thruster force solution during periods where the thrusters are saturated. & H. Schaub \\
 \hline
 
 \end{longtable}
@@ -102,9 +103,9 @@ where $[D]$ is a $3\times N$ matrix that maps the thruster forces $F_{i}$ to the
 
 
 \section{ACS Thruster Force Algorithm for a Thruster Configuration with Full Torque Controllability}
-Here a thruster configuration is assumed that can produce pure torque-couples without exerting a net torque onto the spacecraft.  The thrusters force values $F_{i}$ must be strictly non-negative (i.e. either 0 or positive).   Note that in this configuration having all thrusters on will produce zero net force and torque onto the spacecraft.  Thus the $F_{i} = F_{j}$ solution is in the nullspace of the mapping in Eq.~\eqref{eq:DF}.  
+Here a thruster configuration is assumed that can produce pure torque-couples without exerting a net force onto the spacecraft.  The thrusters force values $F_{i}$ must be strictly non-negative (i.e. either 0 or positive).   Note that in this configuration having all thrusters on will produce zero net force and torque onto the spacecraft.  Thus the $F_{i} = F_{j}$ solution is in the nullspace of the mapping in Eq.~\eqref{eq:DF}.  
 
-The goal of the thruster force algorithm is to determine a set of thruster forces $\bm F$ such that the net force onto the spacecraft is
+The goal of the thruster force algorithm is to determine a set of thruster forces $\bm F$ such that the net torque $\bm \tau$ onto the spacecraft is
 \begin{equation}
 	\label{eq:th:2}
 	\bm\tau = \bar{\bm L}_{r}  = [D]\bm F
@@ -114,7 +115,7 @@ without bleeding torque onto the un-controlled axes.  The first step is to perfo
 	\label{eq:th:min}
 	\bm F = [D]^{T}([D][D]^{T})^{-1} \bar{\bm L}_{r}
 \end{equation}
-The $3\times 3$ matrix $[D][D]^{T}$ is full rank and thus invertible with the assumption that this RCS configuration has a full 3D torque controllability.  This set of of thruster forces will contain $F_{i}$ values that are both positive and negative.  Next, to achieve strictly non-negative values, the minimum $F_{i}$ value is determined and subtracted from all $N$ force values.  
+The $3\times 3$ matrix $[D][D]^{T}$ is full rank and thus invertible with the assumption that this RCS configuration has a full 3D torque controllability.  This set of  thruster forces will contain $F_{i}$ values that are both positive and negative.  Next, to achieve strictly non-negative values, the minimum $F_{i}$ value is determined and subtracted from all $N$ force values.  
 \begin{equation}
 	\bm F \leftarrow \bm F -  \text{min}(\bm F)
 \end{equation}
@@ -168,9 +169,33 @@ The modified algorithm still evaluates the first minimum norm inverse, but does 
 
 
 
+\section{Saturating the Thruster Capability}
+The thruster force solution $\bm F$ is implemented using a pulse-width modulation where the thruster is fired only partially with the maximum thruster force $F_{\text{max}}$ during the control period such that the net impulse achieved is equivalent as if a smaller thruster force $F_{i}$ had been commanded.  This section discusses the case where $F_{i}>F_{\text{max}}$ and the thruster is not able to achieve the desire control impulse due to be saturated.  
+
+Ideally the thrusters are not saturated, and the thruster force solution $\bm F$ yields a torque
+\begin{equation*}
+	[D]\bm F \rightarrow \bm\tau
+\end{equation*}
+that is equal to the desired reduced control torque vector $\bar{\bm L}_{r}$.  However, if the thrusters are saturated, then the net torque $\bm\tau$ is not only different in the magnitude, but also the direction.  Applying a control torque that has a significant direction error can lead to unstable behavior.  Let $\theta_{\bm\tau/\bar{\bm L}_{r}}$ be the angle between the actual torque $\bm\tau$ and the desired torque $\bar{\bm L}_{r}$. 
+\begin{equation}
+	\theta_{\bm\tau/\bar{\bm L}_{r}} = \arccos \left( \frac{\bm\tau \cdot \bar{\bm L}_{r}}{|\bm\tau| |\bar{\bm L}_{r}|} \right)
+\end{equation}
+If a 12-thruster configuration is used where each thruster only produces a torque about a single axis, then this saturation issue might not be as concerning.  However, if a reduced thruster solution is used, such as the common 8-thruster solution used in section~\ref{sec:PI}, then some thrusters must do double-duty and support multiple control axes.  Being saturated can quickly yield an actual net thruster torque $\bm \tau$ that has a significantly different heading then $\bar{\bm L}_{r}$.  In this case the thruster solution $\bm F$ is scaled such that no $|F_{i}|$ value is larger  then $F_{\text{max}}$.  This will reduce the $\bm\tau$ magnitude, but the direction will align with $\bar{\bm L}_{r}$.  As a result the closed-loop performance tends to respond more slowly, but in a more stable manner during period of thruster saturation.  If $|F_{i}|$ is used, the above algorithm works for both on- and off-pulsing solutions.  
+
+Then angular threshold beyond which this thruster force $\bm F$ scaling is implemented is set through the  {\tt thrForceMapping} module parameter {\tt angErrThresh}.  If 
+$$
+	\theta_{\bm\tau/\bar{\bm L}_{r}} > \text{\tt angErrThresh}
+$$
+then the thruster force solution is scaled such that $|F_{i}| \le F_{\text{max}}$.  
+
+The default value of {\tt angErrThresh} is 0\dg.  This means that this scaling during super-saturated thruster solutions is on by default.  If a control torque miss-alignment of 10\dg is acceptable, then set {\tt angErrThresh} = 10\dg.  
+
+To turn off this thruster force scaling during super-saturated conditions, the parameter  {\tt angErrThresh} is set to a value larger than 180\dg.  As the angle $\theta_{\bm\tau/\bar{\bm L}_{r}} \le $180\dg, this ensures that the above threshold condition is never reached and the thruster forces are not scaled.  
 
 
-\section{Performance Illustration}
+
+
+\section{Performance Illustration}\label{sec:PI}
 \subsection{ACS Thruster Configuration}
 To illustrate the performance of this algorithm, the following simulation setup is used.  Let the ACS system have a total of $N = 8$ thrusters with the following body-fixed locations:
 \begin{gather*}
@@ -360,6 +385,9 @@ Not that in python the matrix is given in a 1D form by defining {\tt controlAxes
 
 \subsection{{\tt thrForceSign} Parameter}
 Before this module can be run, the parameter {\tt thrForceSign} must be set to either +1 (on-pulsing with the ACS configuration) or -1 (off-pulsing with the DV configuration).
+
+\subsection{{\tt angErrThresh} Parameter}
+The default value of {\tt angErrThresh} is 0\dg.  This means that during periods of thruster saturation the thruster force solution $\bm F$ is scaled such that $|F_{i}| \le F_{\text{max}}$.  If this scaling should only be done if $\bm\tau$ and $\bar{\bm L}_{r}$ differ by an angle $\alpha$, then set {\tt angErrThresh} equal to $\alpha$.  To turn off this force scaling during thruster saturation the parameter   {\tt angErrThresh} should be set to a value larger than 180\dg.  
 
 
 \bibliographystyle{unsrt}
