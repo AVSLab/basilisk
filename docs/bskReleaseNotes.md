@@ -28,6 +28,9 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>
     Added a spacecraftPointing module that allows a deputy spacecraft to point at a chief spacecraft. Besides that, added a scenario that demonstrates the use of this new module.
     </li>
+    <li>
+    added the ability to the thrForceMapping FSW module to handle thruster saturation better by scaling the resulting force solution set.
+    </li>
 </ul>
 
 ## Version 0.3.3 
