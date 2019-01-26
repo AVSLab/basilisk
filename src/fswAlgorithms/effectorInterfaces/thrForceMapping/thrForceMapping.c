@@ -219,7 +219,7 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
         all thruster forces values to not exceed saturation.
         If the angle threshold is negative, then this scaling is bypassed.
      */
-    if(ConfigData->outTorqAngErr > ConfigData->angErrThresh && ConfigData->angErrThresh > -0.001)
+    if(ConfigData->outTorqAngErr > ConfigData->angErrThresh)
     {
         for(i=0; i<numOfAvailableThrusters; i++)
         {
