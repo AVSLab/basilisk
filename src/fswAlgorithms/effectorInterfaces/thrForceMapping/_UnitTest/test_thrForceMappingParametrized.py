@@ -47,24 +47,28 @@ from Basilisk.utilities import fswSetupThrusters
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useDVThruster, useCOMOffset, dropThruster, dropAxis", [
-      (False, False, False, False)
-    , (False, False, False, True)
-    , (False, True, False, False)
-    # , (False, False, True, False)
-    , (True, False, False, False)
-    , (True, False, True, False)
-    , (True, True, False, False)
+@pytest.mark.parametrize("useDVThruster, useCOMOffset, dropThruster, dropAxis, saturateThrusters", [
+      (False, False, False, False, 0)
+    , (False, False, False, True, 0)
+    , (False, True, False, False, 0)
+    # , (False, False, True, False, 0)   #the thruster availability message has not been implemented yet.
+    , (True, False, False, False, 0)
+    , (True, False, True, False, 0)
+    , (True, True, False, False, 0)
+    , (False, False, False, False, 1)
+    , (False, False, False, False, 2)
+    , (False, False, False, False, 3)
 ])
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, useDVThruster, useCOMOffset, dropThruster, dropAxis):
+def test_module(show_plots, useDVThruster, useCOMOffset, dropThruster, dropAxis, saturateThrusters):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dropAxis)
+    [testResults, testMessage] = thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster,
+                                                   dropAxis, saturateThrusters)
     assert testResults < 1, testMessage
 
 
-def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dropAxis):
+def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dropAxis, saturateThrusters):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -84,13 +88,10 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = thrForceMapping.thrForceMappingConfig()                          # update with current values
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        thrForceMapping.Update_thrForceMapping,
-                                        thrForceMapping.SelfInit_thrForceMapping,
-                                        thrForceMapping.CrossInit_thrForceMapping,
-                                        thrForceMapping.Reset_thrForceMapping)
+    moduleConfig = thrForceMapping.thrForceMappingConfig()
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "thrForceMapping"
+
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
@@ -100,7 +101,6 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
     moduleConfig.inputThrusterConfName = "RCSThrusters"
     moduleConfig.outputDataName = "thrusterForceOut"
     moduleConfig.inputVehicleConfigDataName = "vehicleConfigName"
-    moduleConfig.angErrThresh = 10.0*macros.D2R
 
     # write vehicle configuration message
     vehicleConfigOut = thrForceMapping.VehicleConfigFswMsg()
@@ -129,6 +129,15 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
 
     requestedTorque = [1.0, -0.5, 0.7]              # Set up a list as a 3-vector
+    if saturateThrusters==1:        # default angErrThresh is 0, thus this should trigger scaling
+        requestedTorque = [10.0, -5.0, 7.0]
+    if saturateThrusters==2:        # angle is set and small enough to trigger scaling
+        requestedTorque = [10.0, -5.0, 7.0]
+        moduleConfig.angErrThresh = 10.0*macros.D2R
+    if saturateThrusters==3:        # angle is too large enough to trigger scaling
+        requestedTorque = [10.0, -5.0, 7.0]
+        moduleConfig.angErrThresh = 40.0*macros.D2R
+
     inputMessageData.torqueRequestBody = requestedTorque   # write torque request to input message
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehControlName,
                                           inputMessageSize,
@@ -297,6 +306,16 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
                 [0.563596,0,0.27922,0.421408,0.421408,0.27922,0],
                 [0.563596,0,0.27922,0.421408,0.421408,0.27922,0]
             ]
+        elif saturateThrusters == 1 or saturateThrusters == 2:
+            trueVector = [
+                [0.63527, 0., 0.62946, 0.95, 0.95, 0.62946, 0., 0.63527],
+                [0.63527, 0., 0.62946, 0.95, 0.95, 0.62946, 0., 0.63527]
+            ]
+        elif saturateThrusters == 3:
+            trueVector = [
+                [2.817978, 0., 2.792204, 4.2140804, 4.2140804, 2.792204, 0., 2.81797836],
+                [2.817978, 0., 2.792204, 4.2140804, 4.2140804, 2.792204, 0., 2.81797836]
+            ]
         else:
             trueVector = [
                 [0.281798, 0., 0.27922, 0.421408, 0.421408, 0.27922, 0., 0.281798],
@@ -347,5 +366,6 @@ if __name__ == "__main__":
                  False,           # useDVThruster
                  False,           # use COM offset
                  False,           # drop thruster(s)
-                 False            # drop control axis
+                 False,           # drop control axis
+                 0                # saturateThrusters
     )
