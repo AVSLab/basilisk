@@ -223,9 +223,9 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
     {
         for(i=0; i<numOfAvailableThrusters; i++)
         {
-            if(ConfigData->thrForcMag[i] > 0.0 && F[i]/ConfigData->thrForcMag[i] > maxFractUse)
+            if(ConfigData->thrForcMag[i] > 0.0 && fabs(F[i])/ConfigData->thrForcMag[i] > maxFractUse)
             {
-                maxFractUse = F[i]/ConfigData->thrForcMag[i];
+                maxFractUse = fabs(F[i])/ConfigData->thrForcMag[i];
             }
         }
         /* only scale the requested thruster force if one or more thrusters are saturated */
@@ -387,7 +387,7 @@ double computeTorqueAngErr(double D[MAX_EFF_CNT][3], double BLr_B[3], uint32_t n
         /* loop over all thrusters and compute the actual torque to be applied */
         for(i=0; i<numForces; i++)
         {
-            thrusterForce = F[i] < FMag[i] ? F[i] : FMag[i];
+            thrusterForce = fabs(F[i]) < FMag[i] ? F[i] : FMag[i]*fabs(F[i])/F[i];
             v3Scale(thrusterForce, D[i], LrEffector_B);
             v3Add(tauActual_B, LrEffector_B, tauActual_B);
         }

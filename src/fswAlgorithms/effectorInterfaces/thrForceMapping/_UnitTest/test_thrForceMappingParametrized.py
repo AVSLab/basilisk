@@ -52,12 +52,14 @@ from Basilisk.utilities import fswSetupThrusters
     , (False, False, False, True, 0)
     , (False, True, False, False, 0)
     # , (False, False, True, False, 0)   #the thruster availability message has not been implemented yet.
-    , (True, False, False, False, 0)
-    , (True, False, True, False, 0)
-    , (True, True, False, False, 0)
     , (False, False, False, False, 1)
     , (False, False, False, False, 2)
     , (False, False, False, False, 3)
+    , (True, False, False, False, 0)
+    , (True, False, True, False, 0)
+    , (True, True, False, False, 0)
+    , (True, False, False, False, 1)
+    , (True, False, False, False, 2)
 ])
 
 # update "module" in this function name to reflect the module name
@@ -129,13 +131,11 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
 
     requestedTorque = [1.0, -0.5, 0.7]              # Set up a list as a 3-vector
-    if saturateThrusters==1:        # default angErrThresh is 0, thus this should trigger scaling
+    if saturateThrusters>0:        # default angErrThresh is 0, thus this should trigger scaling
         requestedTorque = [10.0, -5.0, 7.0]
     if saturateThrusters==2:        # angle is set and small enough to trigger scaling
-        requestedTorque = [10.0, -5.0, 7.0]
         moduleConfig.angErrThresh = 10.0*macros.D2R
     if saturateThrusters==3:        # angle is too large enough to trigger scaling
-        requestedTorque = [10.0, -5.0, 7.0]
         moduleConfig.angErrThresh = 40.0*macros.D2R
 
     inputMessageData.torqueRequestBody = requestedTorque   # write torque request to input message
@@ -239,10 +239,12 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
                 [-1.0, 0.0, 0.0] \
                 ]
 
-
+    maxThrust = 0.95
+    if useDVThruster:
+        maxThrust = 10.0
 
     for i in range(len(rcsLocationData)):
-        fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], 0.95)
+        fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], maxThrust)
     fswSetupThrusters.writeConfigMessage(  moduleConfig.inputThrusterConfName,
                                            unitTestSim.TotalSim,
                                            unitProcessName)
@@ -283,6 +285,16 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
             trueVector = [
                 [0, -1.722336235847909, -3.120278776258626, 0],
                 [0, -1.722336235847909, -3.120278776258626, 0]
+            ]
+        elif saturateThrusters == 1:
+            trueVector = [
+                [0, 0, -0.6698729, -10.00000, -9.3301270, 0],
+                [0, 0, -0.6698729, -10.00000, -9.3301270, 0]
+            ]
+        elif saturateThrusters == 2:
+            trueVector = [
+                [0, 0, -1.081312318123977, -16.142050040355125, -15.060737722231148, 0],
+                [0, 0, -1.081312318123977, -16.142050040355125, -15.060737722231148, 0]
             ]
         else:
             trueVector = [
