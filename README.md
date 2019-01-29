@@ -12,11 +12,11 @@ Of the following requirements Python is the only one for which prebuilt librarie
 * [Cmake](https://cmake.org) for configuring the and generating the Visual Studio solution file or macOS XCode proejct.
 * [Python 2.7](https://www.python.org/downloads/windows/) (numpy, matplotlib, pytest)
 
-[Setup a macOS Development Environment](@ref installMacOS)
+[Setup a macOS Development Environment](http://hanspeterschaub.info/bskHtml/install_mac_o_s.html)
 
-[Setup a Linux Development Environment](@ref installLinux)
+[Setup a Linux Development Environment](http://hanspeterschaub.info/bskHtml/install_linux.html)
 
-[Setup a Windows Development Environment](@ref installWindows)
+[Setup a Windows Development Environment](http://hanspeterschaub.info/bskHtml/install_windows.html)
 
 ### Basilisk Development guidelines ###
 
