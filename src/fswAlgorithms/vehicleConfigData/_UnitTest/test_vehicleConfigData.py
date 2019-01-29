@@ -50,8 +50,9 @@ def vehicleConfigDataTestFunction():
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Log the output message
-    unitTestSim.AddVariableForLogging('vehicleConfigData.ISCPntB_B', testProcessRate, 0, 8)
-    unitTestSim.AddVariableForLogging('vehicleConfigData.CoM_B', testProcessRate, 0, 2)
+    # unitTestSim.AddVariableForLogging('vehicleConfigData.ISCPntB_B', testProcessRate, 0, 8)
+    # unitTestSim.AddVariableForLogging('vehicleConfigData.CoM_B', testProcessRate, 0, 2)
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputPropsName, testProcessRate)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
@@ -60,8 +61,11 @@ def vehicleConfigDataTestFunction():
     unitTestSim.ExecuteSimulation()
 
     # Get the output from this simulation
-    Ilog = unitTestSim.GetLogVariableData('vehicleConfigData.ISCPntB_B')
-    CoMLog = unitTestSim.GetLogVariableData('vehicleConfigData.CoM_B')
+    # Ilog = unitTestSim.GetLogVariableData('vehicleConfigData.ISCPntB_B')
+    # CoMLog = unitTestSim.GetLogVariableData('vehicleConfigData.CoM_B')
+
+    Ilog = unitTestSim.pullMessageLogData(moduleConfig.outputPropsName+'.ISCPntB_B', range(9))
+    CoMLog = unitTestSim.pullMessageLogData(moduleConfig.outputPropsName+'.CoM_B', range(3))
 
     accuracy = 1e-6
 
