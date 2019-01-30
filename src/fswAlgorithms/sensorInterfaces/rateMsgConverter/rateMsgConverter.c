@@ -79,13 +79,13 @@ void Reset_rateMsgConverter(rateMsgConverterConfig *ConfigData, uint64_t callTim
  */
 void Update_rateMsgConverter(rateMsgConverterConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    uint64_t            clockTime;
-    uint32_t            readSize;
+    uint64_t            timeOfMsgWritten;
+    uint32_t            sizeOfMsgWritten;
     IMUSensorBodyFswMsg inMsg;
 
     /*! Begin method steps*/
     /*! - Read the input messages */
-    ReadMessage(ConfigData->imuRateInMsgID, &clockTime, &readSize,
+    ReadMessage(ConfigData->imuRateInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(IMUSensorBodyFswMsg), (void*) &(inMsg), moduleID);
 
     /*

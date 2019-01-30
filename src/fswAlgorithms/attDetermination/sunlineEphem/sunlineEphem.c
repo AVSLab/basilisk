@@ -82,21 +82,21 @@ void Reset_sunlineEphem(sunlineEphemConfig *ConfigData, uint64_t callTime, uint6
  */
 void Update_sunlineEphem(sunlineEphemConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    uint64_t            clockTime; /* [ns] Read time for the message*/
-    uint32_t            readSize; /* [-] Non-zero size indicates we received ST msg*/
+    uint64_t            timeOfMsgWritten; /* [ns] Read time when message was written*/
+    uint32_t            sizeOfMsgWritten; /* [-] Non-zero size indicates we received ST msg*/
     double              rDiff_N[3];/*!< [m] difference between the sun and spacecrat in the inertial frame (of unit length) */
     double              rDiffUnit_N[3];/*!< [m] difference between the sun and spacecrat in the inertial frame (of unit length) */
     double              rDiffUnit_B[3];/*!< [m] difference between the sun and spacecrat in the body frame (of unit length) */
     double              dcm_BN[3][3]; /*!< [-] direction cosine matrix used to rotate the inertial frame to body frame */
     
     /*! - Read the input messages */
-    ReadMessage(ConfigData->sunPositionInMsgId, &clockTime, &readSize,
+    ReadMessage(ConfigData->sunPositionInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(EphemerisIntMsg), (void*) &(ConfigData->sunEphemBuffer), moduleID);
     
-    ReadMessage(ConfigData->scPositionInMsgId, &clockTime, &readSize,
+    ReadMessage(ConfigData->scPositionInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavTransIntMsg), (void*) &(ConfigData->scTransBuffer), moduleID);
     
-    ReadMessage(ConfigData->scAttitudeInMsgId, &clockTime, &readSize,
+    ReadMessage(ConfigData->scAttitudeInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavAttIntMsg), (void*) &(ConfigData->scAttBuffer), moduleID);
 
     /* Calculate Sunline Heading from Ephemeris Data*/

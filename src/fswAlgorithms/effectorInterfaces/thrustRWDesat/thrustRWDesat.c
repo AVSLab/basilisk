@@ -57,8 +57,8 @@ void CrossInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
     THRArrayConfigFswMsg localThrustData;
     VehicleConfigFswMsg localConfigData;
     int i;
-    uint64_t ClockTime;
-    uint32_t ReadSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     double momentArm[3];
     double thrustDat_B[3];
     
@@ -72,11 +72,11 @@ void CrossInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
     ConfigData->inputThrConID = subscribeToMessage(ConfigData->inputThrConfigName,
                                                    sizeof(THRArrayConfigFswMsg), moduleID);
     /*! - Read input messages */
-    ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
+    ReadMessage(ConfigData->inputRWConfID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(RWConstellationFswMsg), &localRWData, moduleID);
-    ReadMessage(ConfigData->inputMassPropID, &ClockTime, &ReadSize,
+    ReadMessage(ConfigData->inputMassPropID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), &localConfigData, moduleID);
-    ReadMessage(ConfigData->inputThrConID, &ClockTime, &ReadSize,
+    ReadMessage(ConfigData->inputThrConID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(THRArrayConfigFswMsg), &localThrustData, moduleID);
     
     /*! - Transform from structure S to body B frame */
@@ -108,8 +108,8 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
 
-    uint64_t ClockTime;
-    uint32_t ReadSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     uint32_t i;
 	int32_t selectedThruster;     /* Thruster index to fire */
     RWSpeedIntMsg rwSpeeds;      /* Local reaction wheel speeds */
@@ -129,7 +129,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
 	}
 
     /*! - Read the input rwheel speeds from the reaction wheels*/
-    ReadMessage(ConfigData->inputSpeedID, &ClockTime, &ReadSize,
+    ReadMessage(ConfigData->inputSpeedID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(RWSpeedIntMsg), (void*) &(rwSpeeds), moduleID);
     
     /*! - Accumulate the total momentum vector we want to apply (subtract speed vectors)*/

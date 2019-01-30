@@ -108,8 +108,8 @@ void Update_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t ca
 {
     NavTransIntMsg chiefTransMsg;                   /*!< ---  Input message that consists of the position and velocity of the chief */
     NavTransIntMsg deputyTransMsg;                  /*!< ---  Input message that consists of the position and velocity of the deputy */
-    uint64_t clockTime;
-    uint32_t readSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     double rho_N[3];                                /*!< ---  Vector pointing from deputy to chief in inertial frame components */
     double dcm_RN[3][3];                            /*!< ---  DCM from R-frame to N-frame */
     double temp_z[3] = {0.0, 0.0, 1.0};             /*!< ---  z-axis used for cross-product */
@@ -140,9 +140,9 @@ void Update_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t ca
     memset(&(chiefTransMsg), 0x0, sizeof(NavTransIntMsg));
     memset(&(deputyTransMsg), 0x0, sizeof(NavTransIntMsg));
     
-    ReadMessage(ConfigData->chiefPositionInMsgID, &clockTime, &readSize,
+    ReadMessage(ConfigData->chiefPositionInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavTransIntMsg), (void*) &(chiefTransMsg), moduleID);
-    ReadMessage(ConfigData->deputyPositionInMsgID, &clockTime, &readSize,
+    ReadMessage(ConfigData->deputyPositionInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavTransIntMsg), (void*) &(deputyTransMsg), moduleID);
 
     /* Find the vector that points from the deputy spacecraft to the chief spacecraft. */

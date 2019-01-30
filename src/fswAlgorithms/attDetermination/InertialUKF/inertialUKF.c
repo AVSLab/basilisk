@@ -175,8 +175,8 @@ void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
  */
 void Read_STMessages(InertialUKFConfig *ConfigData, uint64_t moduleID)
 {
-    uint64_t ClockTime; /* [ns] Read time for the message*/
-    uint32_t ReadSize;  /* [-] Non-zero size indicates we received ST msg*/
+    uint64_t timeOfMsgWritten; /* [ns] Read time when the message was written*/
+    uint32_t sizeOfMsgWritten;  /* [-] Non-zero size indicates we received ST msg*/
     int bufferSTIndice; /* Local ST message to copy and organize  */
     int i;
     int j;
@@ -185,16 +185,16 @@ void Read_STMessages(InertialUKFConfig *ConfigData, uint64_t moduleID)
     {
         /*! Begin method steps*/
         /*! - Read the input parsed CSS sensor data message*/
-        ClockTime = 0;
-        ReadSize = 0;
+        timeOfMsgWritten = 0;
+        sizeOfMsgWritten = 0;
         memset(&(ConfigData->stSensorIn[i]), 0x0, sizeof(STAttFswMsg));
-        ReadMessage(ConfigData->STDatasStruct.STMessages[i].stInMsgID, &ClockTime, &ReadSize,
+        ReadMessage(ConfigData->STDatasStruct.STMessages[i].stInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(STAttFswMsg), (void*) (&(ConfigData->stSensorIn[i])), moduleID);
         
         /*! Only mark valid size if message isn't stale*/
-        ConfigData->ReadSizeST[i] = ClockTime != ConfigData->ClockTimeST[i] ?
-            ReadSize : 0;
-        ConfigData->ClockTimeST[i] = ClockTime;
+        ConfigData->ReadSizeST[i] = timeOfMsgWritten != ConfigData->ClockTimeST[i] ?
+            sizeOfMsgWritten : 0;
+        ConfigData->ClockTimeST[i] = timeOfMsgWritten;
         
         /*! - If the time tag from the measured data is new compared to previous step,
          propagate and update the filter*/
@@ -222,8 +222,8 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
     double newTimeTag;  /* [s] Local Time-tag variable*/
-    uint64_t ClockTime; /* [ns] Read time for the message*/
-    uint32_t ReadSize;  /* [-] Non-zero size indicates we received ST msg*/
+    uint64_t timeOfMsgWritten; /* [ns] Read time for the message*/
+    uint32_t sizeOfMsgWritten;  /* [-] Non-zero size indicates we received ST msg*/
     uint32_t otherSize; /* [-] Size of messages that are assumed to be good*/
     int32_t trackerValid; /* [-] Indicates whether the star tracker was valid*/
     double sigma_BNSum[3]; /* [-] Local MRP for propagated state*/
@@ -239,25 +239,25 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     }
     
     memset(&gyrBuffer, 0x0, sizeof(AccDataFswMsg));
-    ReadMessage(ConfigData->gyrBuffInMsgID, &ClockTime, &otherSize,
+    ReadMessage(ConfigData->gyrBuffInMsgID, &timeOfMsgWritten, &otherSize,
                 sizeof(AccDataFswMsg), &gyrBuffer, moduleID);
-    ReadMessage(ConfigData->rwSpeedsInMsgID, &ClockTime, &otherSize,
+    ReadMessage(ConfigData->rwSpeedsInMsgID, &timeOfMsgWritten, &otherSize,
                 sizeof(RWSpeedIntMsg), &(ConfigData->rwSpeeds), moduleID);
     Read_STMessages(ConfigData, moduleID);
     
     if(ConfigData->firstPassComplete == 0)
     {
         memcpy(&(ConfigData->rwSpeedPrev), &(ConfigData->rwSpeeds), sizeof(RWSpeedIntMsg));
-        ConfigData->timeWheelPrev = ClockTime;
+        ConfigData->timeWheelPrev = timeOfMsgWritten;
         ConfigData->timeTag = ConfigData->stSensorIn[ConfigData->stSensorOrder[0]].timeTag*NANO2SEC;
         
         ConfigData->firstPassComplete = 1;
     }
     
-    ConfigData->speedDt = (ClockTime - ConfigData->timeWheelPrev)*NANO2SEC;
-    ConfigData->timeWheelPrev = ClockTime;
+    ConfigData->speedDt = (timeOfMsgWritten - ConfigData->timeWheelPrev)*NANO2SEC;
+    ConfigData->timeWheelPrev = timeOfMsgWritten;
     
-    ReadMessage(ConfigData->massPropsInMsgId, &ClockTime, &otherSize,
+    ReadMessage(ConfigData->massPropsInMsgId, &timeOfMsgWritten, &otherSize,
                 sizeof(VehicleConfigFswMsg), &(ConfigData->localConfigData), moduleID);
     m33Inverse(RECAST3X3 ConfigData->localConfigData.ISCPntB_B, ConfigData->IInv);
     
@@ -266,12 +266,12 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     for (i = 0; i < ConfigData->STDatasStruct.numST; i++)
     {
         newTimeTag = ConfigData->stSensorIn[ConfigData->stSensorOrder[i]].timeTag * NANO2SEC;
-        ClockTime = ConfigData->ClockTimeST[ConfigData->stSensorOrder[i]];
-        ReadSize =  ConfigData->ReadSizeST[ConfigData->stSensorOrder[i]];
+        timeOfMsgWritten = ConfigData->ClockTimeST[ConfigData->stSensorOrder[i]];
+        sizeOfMsgWritten =  ConfigData->ReadSizeST[ConfigData->stSensorOrder[i]];
         
         /*! - If the star tracker has provided a new message compared to last time,
               update the filter to the new measurement*/
-        if(newTimeTag >= ConfigData->timeTag && ReadSize > 0)
+        if(newTimeTag >= ConfigData->timeTag && sizeOfMsgWritten > 0)
         {
             trackerValid = 1;
             trackerValid += inertialUKFTimeUpdate(ConfigData, newTimeTag);

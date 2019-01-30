@@ -83,14 +83,14 @@ void Reset_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t callT
  */
 void Update_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    uint64_t            clockTime;
-    uint32_t            readSize;
+    uint64_t            timeOfMsgWritten;
+    uint32_t            sizeOfMsgWritten;
     double              Lr[3];              /*!< [unit] variable description */
 
 
     /*! Begin method steps*/
     /*! - Read the input messages */
-    ReadMessage(ConfigData->dataInMsgID, &clockTime, &readSize,
+    ReadMessage(ConfigData->dataInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(FswModuleTemplateFswMsg), (void*) &(ConfigData->inputVector), moduleID);
 
 

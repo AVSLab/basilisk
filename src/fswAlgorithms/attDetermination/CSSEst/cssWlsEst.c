@@ -64,11 +64,11 @@ void CrossInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
  */
 void Reset_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    uint64_t ClockTime;
-    uint32_t ReadSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
 
     memset(&(ConfigData->cssConfigInBuffer), 0x0, sizeof(CSSConfigFswMsg));
-    ReadMessage(ConfigData->cssConfigInMsgID, &ClockTime, &ReadSize,
+    ReadMessage(ConfigData->cssConfigInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CSSConfigFswMsg),
                 &(ConfigData->cssConfigInBuffer), moduleID);
 
@@ -173,8 +173,8 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
     
-    uint64_t ClockTime;
-    uint32_t ReadSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     CSSArraySensorIntMsg InputBuffer;
     SunlineFilterFswMsg filtStatus;
     double H[MAX_NUM_CSS_SENSORS*3];
@@ -190,7 +190,7 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
     /* Begin method steps*/
     /* - Read the input parsed CSS sensor data message*/
     memset(&InputBuffer, 0x0, sizeof(CSSArraySensorIntMsg));
-    ReadMessage(ConfigData->cssDataInMsgID, &ClockTime, &ReadSize,
+    ReadMessage(ConfigData->cssDataInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CSSArraySensorIntMsg),
                 (void*) (&InputBuffer), moduleID);
 

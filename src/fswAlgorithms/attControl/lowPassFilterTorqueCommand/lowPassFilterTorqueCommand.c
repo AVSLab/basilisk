@@ -88,14 +88,14 @@ void Reset_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigDa
 void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
-    uint64_t    clockTime;
-    uint32_t    readSize;
+    uint64_t    timeOfMsgWritten;
+    uint32_t    sizeOfMsgWritten;
     double      v3[3];                      /*!<      3d vector sub-result */
     int         i;
 
     /*! Begin method steps*/
     /*! - Read the input messages */
-    ReadMessage(ConfigData->inputMsgID, &clockTime, &readSize,
+    ReadMessage(ConfigData->inputMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CmdTorqueBodyIntMsg), (void*) &(ConfigData->Lr[0]), moduleID);
 
     /*

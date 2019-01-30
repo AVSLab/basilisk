@@ -46,8 +46,8 @@ void SelfInit_stProcessTelem(STConfigData *ConfigData, uint64_t moduleID)
  */
 void CrossInit_stProcessTelem(STConfigData *ConfigData, uint64_t moduleID)
 {
-    uint64_t UnusedClockTime;
-    uint32_t ReadSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     VehicleConfigFswMsg LocalConfigData;
     /*! Begin method steps */
     /*! - Link the message ID for the incoming sensor data message to here */
@@ -57,7 +57,7 @@ void CrossInit_stProcessTelem(STConfigData *ConfigData, uint64_t moduleID)
         sizeof(VehicleConfigFswMsg), moduleID);
     if(ConfigData->PropsMsgID >= 0)
     {
-        ReadMessage(ConfigData->PropsMsgID, &UnusedClockTime, &ReadSize,
+        ReadMessage(ConfigData->PropsMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(VehicleConfigFswMsg), (void*) &LocalConfigData, moduleID);
     }
     
@@ -72,12 +72,12 @@ void CrossInit_stProcessTelem(STConfigData *ConfigData, uint64_t moduleID)
 void Update_stProcessTelem(STConfigData *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     
-    uint64_t UnusedClockTime;
-    uint32_t ReadSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     double dcm_CN[3][3];            /* dcm, inertial to case frame */
     double dcm_BN[3][3];            /* dcm, inertial to body frame */
     STSensorIntMsg LocalInput;
-    ReadMessage(ConfigData->SensorMsgID, &UnusedClockTime, &ReadSize,
+    ReadMessage(ConfigData->SensorMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(STSensorIntMsg), (void*) &LocalInput, moduleID);
     EP2C(LocalInput.qInrtl2Case, dcm_CN);
     m33MultM33(RECAST3X3 ConfigData->dcm_BP, dcm_CN, dcm_BN);

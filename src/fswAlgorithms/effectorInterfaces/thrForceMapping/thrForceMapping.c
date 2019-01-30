@@ -84,8 +84,8 @@ void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime,
     double             *pAxis;                 /*!< pointer to the current control axis */
     int                 i;
     THRArrayConfigFswMsg   localThrusterData;     /*!< local copy of the thruster data message */
-    uint64_t            clockTime;
-    uint32_t            readSize;
+    uint64_t            timeOfMsgWritten;
+    uint32_t            sizeOfMsgWritten;
 
     /* configure the number of axes that are controlled */
     ConfigData->numOfAxesToBeControlled = 0;
@@ -108,9 +108,9 @@ void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime,
 
 
     /* read in the support messages */
-    ReadMessage(ConfigData->inputThrusterConfID, &clockTime, &readSize,
+    ReadMessage(ConfigData->inputThrusterConfID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(THRArrayConfigFswMsg), &localThrusterData, moduleID);
-    ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
+    ReadMessage(ConfigData->inputVehicleConfigDataID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(ConfigData->sc), moduleID);
 
     /* read in the thruster position and thruster force heading information */
@@ -133,8 +133,8 @@ void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime,
  */
 void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    uint64_t    clockTime;
-    uint32_t    readSize;
+    uint64_t    timeOfMsgWritten;
+    uint32_t    sizeOfMsgWritten;
     double      F[MAX_EFF_CNT];               /*!< [N]     vector of commanded thruster forces */
     double      Fbar[MAX_EFF_CNT];            /*!< [N]     vector of intermediate thruster forces */
     int         i,c;
@@ -153,9 +153,9 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
 
     /*! Begin method steps*/
     /*! - Read the input messages */
-    ReadMessage(ConfigData->inputVehControlID, &clockTime, &readSize,
+    ReadMessage(ConfigData->inputVehControlID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CmdTorqueBodyIntMsg), (void*) &(Lr_B), moduleID);
-    ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
+    ReadMessage(ConfigData->inputVehicleConfigDataID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(ConfigData->sc), moduleID);
 
 

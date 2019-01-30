@@ -79,8 +79,8 @@ void CrossInit_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t
 void Reset_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     THRArrayConfigFswMsg   localThrusterData;     /*!< local copy of the thruster data message */
-    uint64_t            clockTime;
-    uint32_t            readSize;
+    uint64_t            timeOfMsgWritten;
+    uint32_t            sizeOfMsgWritten;
     int                 i;
 
     ConfigData->priorTime = 0;              /* reset the prior time flag state.  If set
@@ -89,7 +89,7 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t cal
 
 
     /* read in number of thrusters installed */
-    ReadMessage(ConfigData->thrusterConfInMsgID, &clockTime, &readSize,
+    ReadMessage(ConfigData->thrusterConfInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(THRArrayConfigFswMsg), &localThrusterData, moduleID);
     ConfigData->numThrusters = localThrusterData.numThrusters;
     for (i=0;i<ConfigData->numThrusters;i++) {
@@ -116,8 +116,8 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t cal
  */
 void Update_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    uint64_t            clockTime;
-    uint32_t            readSize;
+    uint64_t            timeOfMsgWritten;
+    uint32_t            sizeOfMsgWritten;
     double              dt;                             /*!< [s]    control update period */
     double              Delta_P_input[MAX_EFF_CNT];     /*!< [Ns]   input vector of requested net thruster impulses */
     double              tOnOut[MAX_EFF_CNT];            /*!< [s]    vector of requested thruster on times per dumping cycle */
@@ -134,7 +134,7 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t ca
         if (dt < 0.0) dt = 0.0;             /* ensure no negative numbers are used */
 
         /*! - Read the input messages */
-        ReadMessage(ConfigData->thrusterImpulseInMsgID, &clockTime, &readSize,
+        ReadMessage(ConfigData->thrusterImpulseInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(THRArrayCmdForceFswMsg), (void*) Delta_P_input, moduleID);
 
         if (memcmp(Delta_P_input, ConfigData->Delta_p, ConfigData->numThrusters*sizeof(double)) == 0) {
