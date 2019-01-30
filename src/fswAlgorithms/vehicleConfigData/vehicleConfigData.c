@@ -62,7 +62,7 @@ void Reset_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t callTime, 
     m33Copy(RECAST3X3 ConfigData->ISCPntB_B, RECAST3X3 localConfigData.ISCPntB_B);
 
     /*! - Write output properties to the messaging system*/
-    WriteMessage(ConfigData->outputPropsID, 0, sizeof(VehicleConfigFswMsg),
+    WriteMessage(ConfigData->outputPropsID, callTime, sizeof(VehicleConfigFswMsg),
                  &localConfigData, moduleID);
 }
 

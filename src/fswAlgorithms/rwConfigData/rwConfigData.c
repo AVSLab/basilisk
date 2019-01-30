@@ -81,11 +81,7 @@ void Reset_rwConfigData(rwConfigData_Config *ConfigData, uint64_t callTime, uint
 {
     uint64_t clockTime;
     uint32_t readSize;
-    VehicleConfigFswMsg   sc;                 /*!< spacecraft configuration message */
     int i;
-
-    ReadMessage(ConfigData->vehConfigInMsgID, &clockTime, &readSize,
-                sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
 
     if(ConfigData->rwConstellationInMsgID >= 0)
     {
@@ -102,7 +98,7 @@ void Reset_rwConfigData(rwConfigData_Config *ConfigData, uint64_t callTime, uint
     }
 
     /*! - Write output RW config data to the messaging system*/
-    WriteMessage(ConfigData->rwParamsOutMsgID, 0, sizeof(RWArrayConfigFswMsg),
+    WriteMessage(ConfigData->rwParamsOutMsgID, callTime, sizeof(RWArrayConfigFswMsg),
                  &(ConfigData->rwConfigParamsOut), moduleID);
 
 }
