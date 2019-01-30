@@ -49,7 +49,9 @@ typedef struct {
     uint32_t numThrusters;                          /*!< []      The number of thrusters available on vehicle */
     int32_t  thrForceSign;                          /*!< []      Flag indicating if pos (+1) or negative (-1) thruster
                                                                  solutions are found */
+    double outTorqAngErr;                           /*!< [r]     Angular error of effector torque*/
     double thrForcMag[MAX_EFF_CNT];
+    double angErrThresh;                            /*!< [r]     Angular error at which forces are trunc*/
 
     /* declare module IO interfaces */
     char     outputDataName[MAX_STAT_MSG_LENGTH];   /*!< The name of the output message*/
@@ -78,7 +80,9 @@ extern "C" {
 
     void substractMin(double *F, uint32_t size);
     void findMinimumNormForce(thrForceMappingConfig *ConfigData,
-                              double D[MAX_EFF_CNT][3], double Lr_B[3], uint32_t numForces, double F[MAX_EFF_CNT]);
+                              double D[MAX_EFF_CNT][3], double Lr_B[3], uint32_t numForces, double F[MAX_EFF_CNT], double BLr[3]);
+    double computeTorqueAngErr(double D[MAX_EFF_CNT][3], double BLr[3], uint32_t numForces,
+                               double F[MAX_EFF_CNT], double FMag[MAX_EFF_CNT]);
 
 #ifdef __cplusplus
 }
