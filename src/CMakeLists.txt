@@ -5,6 +5,29 @@ endif()
 
 project("basilisk")
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+include(conan)
+conan_add_remote(NAME bincrafters URL https://api.bintray.com/conan/bincrafters/public-conan)
+conan_add_remote(NAME conan-community URL https://api.bintray.com/conan/conan-community/conan)
+
+if(USE_PROTOBUFFERS)
+  conan_cmake_run(REQUIRES eigen/3.3.5@conan/stable protobuf/3.6.1@bincrafters/stable
+	  BASIC_SETUP KEEP_RPATHS
+    BUILD missing)
+    #! PROTO-BUFFERS
+    find_package(protobuf CONFIG REQUIRED)
+    message(STATUS "Using Protocol Buffers ${protobuf_VERSION}")
+    set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+
+else()
+ 
+  conan_cmake_run(REQUIRES eigen/3.3.5@conan/stable
+	  BASIC_SETUP KEEP_RPATHS
+                BUILD missing )
+
+endif()
+
 
 #
 # Create a Swig module
