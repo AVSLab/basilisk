@@ -55,7 +55,7 @@ void Reset_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t callTime, 
     /*! - Zero the output message data */
     memset(&localConfigData, 0x0, sizeof(VehicleConfigFswMsg));
 
-    /*! - Convert the center of mass from structure to body*/
+    /*! - Convert over the center of mass location */
     v3Copy(ConfigData->CoM_B, localConfigData.CoM_B);
 
     /*! - Copy over the inertia */
