@@ -28,9 +28,11 @@
     #include "../fswMessages/cssConfigFswMsg.h"
     #include "../fswMessages/cssUnitConfigFswMsg.h"
     #include "../fswMessages/dvBurnCmdFswMsg.h"
+    #include "../fswMessages/headingFilterFswMsg.h"
     #include "../fswMessages/attStateFswMsg.h"
     #include "../fswMessages/imuSensorBodyFswMsg.h"
     #include "../fswMessages/inertialFilterFswMsg.h"
+    #include "../fswMessages/opnavFswMsg.h"
     #include "../fswMessages/rwArrayConfigFswMsg.h"
     #include "../fswMessages/rwAvailabilityFswMsg.h"
     #include "../fswMessages/rwConfigElementFswMsg.h"
@@ -71,12 +73,16 @@ GEN_SIZEOF(CSSConfigFswMsg)
 GEN_SIZEOF(CSSUnitConfigFswMsg)
 %include "../fswMessages/dvBurnCmdFswMsg.h"
 GEN_SIZEOF(DvBurnCmdFswMsg)
+%include "../fswMessages/headingFilterFswMsg.h"
+GEN_SIZEOF(HeadingFilterFswMsg)
 %include "../fswMessages/attStateFswMsg.h"
 GEN_SIZEOF(AttStateFswMsg)
 %include "../fswMessages/imuSensorBodyFswMsg.h"
 GEN_SIZEOF(IMUSensorBodyFswMsg)
 %include "../fswMessages/inertialFilterFswMsg.h"
 GEN_SIZEOF(InertialFilterFswMsg)
+%include "../fswMessages/opnavFswMsg.h"
+GEN_SIZEOF(OpnavFswMsg)
 %include "../fswMessages/rwArrayConfigFswMsg.h"
 GEN_SIZEOF(RWArrayConfigFswMsg)
 %include "../fswMessages/rwAvailabilityFswMsg.h"
