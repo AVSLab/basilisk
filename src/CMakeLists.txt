@@ -4,8 +4,10 @@ if(POLICY CMP0078)
 endif()
 
 project("basilisk")
+set(CMAKE_BUILD_TYPE "Debug")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 
 include(conan)
 conan_add_remote(NAME bincrafters URL https://api.bintray.com/conan/bincrafters/public-conan)
