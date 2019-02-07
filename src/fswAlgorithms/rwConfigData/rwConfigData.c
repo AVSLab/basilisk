@@ -79,13 +79,13 @@ void CrossInit_rwConfigData(rwConfigData_Config *ConfigData, uint64_t moduleID)
  */
 void Reset_rwConfigData(rwConfigData_Config *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    uint64_t clockTime;
-    uint32_t readSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     int i;
 
     if(ConfigData->rwConstellationInMsgID >= 0)
     {
-        ReadMessage(ConfigData->rwConstellationInMsgID, &clockTime, &readSize, sizeof(RWConstellationFswMsg),
+        ReadMessage(ConfigData->rwConstellationInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten, sizeof(RWConstellationFswMsg),
                     &ConfigData->rwConstellation, moduleID);
     }
     ConfigData->rwConfigParamsOut.numRW = ConfigData->rwConstellation.numRW;
