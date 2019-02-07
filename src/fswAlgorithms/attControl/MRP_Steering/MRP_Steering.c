@@ -77,14 +77,14 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
     AttGuidFswMsg       guidCmd;            /*!< Guidance Message */
-    uint64_t            clockTime;
-    uint32_t            readSize;
+    uint64_t            timeOfMsgWritten;
+    uint32_t            sizeOfMsgWritten;
 
     /*! Begin method steps*/
     
     memset(&guidCmd, 0x0, sizeof(AttGuidFswMsg));
     /*! - Read the dynamic input messages */
-    ReadMessage(ConfigData->inputGuidID, &clockTime, &readSize,
+    ReadMessage(ConfigData->inputGuidID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);
 
     /* evalute MRP kinematic steering law */

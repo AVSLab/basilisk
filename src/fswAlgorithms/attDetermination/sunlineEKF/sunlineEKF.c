@@ -133,22 +133,22 @@ void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
 {
     double newTimeTag;
     double Hx[MAX_N_CSS_MEAS];
-    uint64_t ClockTime;
-    uint32_t ReadSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     int32_t ReadTest;
     SunlineFilterFswMsg sunlineDataOutBuffer;
     
     /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
-    ClockTime = 0;
-    ReadSize = 0;
+    timeOfMsgWritten = 0;
+    sizeOfMsgWritten = 0;
     memset(&(ConfigData->cssSensorInBuffer), 0x0, sizeof(CSSArraySensorIntMsg));
-    ReadTest = ReadMessage(ConfigData->cssDataInMsgId, &ClockTime, &ReadSize,
+    ReadTest = ReadMessage(ConfigData->cssDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
         sizeof(CSSArraySensorIntMsg), (void*) (&(ConfigData->cssSensorInBuffer)), moduleID);
     
     /*! - If the time tag from the measured data is new compared to previous step, 
           propagate and update the filter*/
-    newTimeTag = ClockTime * NANO2SEC;
+    newTimeTag = timeOfMsgWritten * NANO2SEC;
     if(newTimeTag >= ConfigData->timeTag && ReadTest > 0)
     {
         sunlineTimeUpdate(ConfigData, newTimeTag);

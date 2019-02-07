@@ -77,14 +77,14 @@ void CrossInit_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t mod
 void Reset_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
 	THRArrayConfigFswMsg   localThrusterData;     /*!< local copy of the thruster data message */
-	uint64_t            clockTime;
-	uint32_t            readSize;
+	uint64_t            timeOfMsgWritten;
+	uint32_t            sizeOfMsgWritten;
 	int 				i;
 
 	ConfigData->prevCallTime = 0;
 
 	/* read in the support messages */
-	ReadMessage(ConfigData->thrConfInMsgID, &clockTime, &readSize,
+	ReadMessage(ConfigData->thrConfInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
 				sizeof(THRArrayConfigFswMsg), &localThrusterData, moduleID);
 
 	ConfigData->numThrusters = localThrusterData.numThrusters;
@@ -104,8 +104,8 @@ void Reset_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTim
 void Update_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
 
-	uint64_t            clockTime;
-	uint32_t            readSize;
+	uint64_t            timeOfMsgWritten;
+	uint32_t            sizeOfMsgWritten;
 	int 				i;
 	double 				level;					/*!< [-] duty cycle fraction */
 	double				controlPeriod;			/*!< [s] control period */
@@ -128,7 +128,7 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTi
 
 	/*! Begin method steps */
 	/*! - Read the input messages */
-	ReadMessage(ConfigData->thrForceInMsgID, &clockTime, &readSize,
+	ReadMessage(ConfigData->thrForceInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
 				sizeof(THRArrayCmdForceFswMsg), (void*) &(ConfigData->thrForceIn), moduleID);
 
 	/*! Loop through thrusters */

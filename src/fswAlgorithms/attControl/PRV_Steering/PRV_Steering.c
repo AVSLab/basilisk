@@ -77,13 +77,13 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
     AttGuidFswMsg      guidCmd;            /*!< Guidance Message */
-    uint64_t            clockTime;
-    uint32_t            readSize;
+    uint64_t            timeOfMsgWritten;
+    uint32_t            sizeOfMsgWritten;
 
     /*! Begin method steps*/
         
     /*! - Read the dynamic input messages */
-    ReadMessage(ConfigData->inputGuidID, &clockTime, &readSize,
+    ReadMessage(ConfigData->inputGuidID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);
     
     /* evalute MRP kinematic steering law */

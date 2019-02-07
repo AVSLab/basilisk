@@ -91,12 +91,12 @@ void CrossInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, 
 void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     /*! - Read the input messages */
-    uint64_t clockTime;
-    uint32_t readSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     int i;    
 
     VehicleConfigFswMsg sc;
-    ReadMessage(ConfigData->vehConfigInMsgID, &clockTime, &readSize,
+    ReadMessage(ConfigData->vehConfigInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
     for (i=0; i < 9; i++){
         ConfigData->ISCPntB_B[i] = sc.ISCPntB_B[i];
@@ -105,7 +105,7 @@ void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, uint
     ConfigData->rwConfigParams.numRW = 0;
     if (ConfigData->rwParamsInMsgID >= 0) {
         /*! - Read static RW config data message and store it in module variables*/
-        ReadMessage(ConfigData->rwParamsInMsgID, &clockTime, &readSize,
+        ReadMessage(ConfigData->rwParamsInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(RWArrayConfigFswMsg), &(ConfigData->rwConfigParams), moduleID);
     }
     
@@ -130,8 +130,8 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, uin
     RWSpeedIntMsg       wheelSpeeds;        /*!< Reaction wheel speed estimates */
     RWAvailabilityFswMsg wheelsAvailability;/*!< Reaction wheel availability */
     RateCmdFswMsg       rateGuid;           /*!< rate steering law message */
-    uint64_t            clockTime;
-    uint32_t            readSize;
+    uint64_t            timeOfMsgWritten;
+    uint32_t            sizeOfMsgWritten;
     double              dt;                 /*!< [s] control update period */
     
     double              Lr[3];              /*!< required control torque vector [Nm] */
@@ -156,19 +156,19 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, uin
     ConfigData->priorTime = callTime;
 
     /*! - Read the dynamic input messages */
-    ReadMessage(ConfigData->inputGuidID, &clockTime, &readSize,
+    ReadMessage(ConfigData->inputGuidID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);
-    ReadMessage(ConfigData->inputRateSteeringID, &clockTime, &readSize,
+    ReadMessage(ConfigData->inputRateSteeringID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(RateCmdFswMsg), (void*) &(rateGuid), moduleID);
 
 
     memset(wheelSpeeds.wheelSpeeds, 0x0, MAX_EFF_CNT * sizeof(double));
     memset(wheelsAvailability.wheelAvailability, 0x0, MAX_EFF_CNT * sizeof(int)); // wheelAvailability set to 0 (AVAILABLE) by default
     if(ConfigData->rwConfigParams.numRW > 0) {
-        ReadMessage(ConfigData->inputRWSpeedsID, &clockTime, &readSize,
+        ReadMessage(ConfigData->inputRWSpeedsID, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(RWSpeedIntMsg), (void*) &(wheelSpeeds), moduleID);
         if (ConfigData->rwAvailInMsgID >= 0){
-            ReadMessage(ConfigData->rwAvailInMsgID, &clockTime, &readSize,
+            ReadMessage(ConfigData->rwAvailInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                         sizeof(RWAvailabilityFswMsg), &wheelsAvailability, moduleID);
         }
     }

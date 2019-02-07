@@ -99,8 +99,8 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
     NavAttIntMsg navMsg;
-    uint64_t clockTime;
-    uint32_t readSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     double ctSNormalized;
     double sNorm;                   /*!< --- Norm of measured direction vector */
     double e_hat[3];                /*!< --- Eigen Axis */
@@ -113,9 +113,9 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
     memset(&(navMsg), 0x0, sizeof(NavAttIntMsg));
     memset(&(localImuDataInBuffer), 0x0, sizeof(NavAttIntMsg));
     /*! - Read the current sun body vector estimate*/
-    ReadMessage(ConfigData->sunDirectionInMsgID, &clockTime, &readSize,
+    ReadMessage(ConfigData->sunDirectionInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavAttIntMsg), (void*) &(navMsg), moduleID);
-    ReadMessage(ConfigData->imuInMsgID, &clockTime, &readSize,
+    ReadMessage(ConfigData->imuInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavAttIntMsg), (void*) &(localImuDataInBuffer), moduleID);
     v3Copy(localImuDataInBuffer.omega_BN_B, omega_BN_B);
 

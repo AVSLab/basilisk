@@ -93,11 +93,11 @@ void CrossInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
  */
 void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    uint64_t clockTime;
-    uint32_t readSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     int i;
     /*! - Read static RW config data message and store it in module variables */
-    ReadMessage(ConfigData->rwParamsInMsgID, &clockTime, &readSize,
+    ReadMessage(ConfigData->rwParamsInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(RWArrayConfigFswMsg), &(ConfigData->rwConfigParams), moduleID);
     
     if (ConfigData->rwAvailInMsgID < 0){
@@ -125,14 +125,14 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
     memset(wheelsAvailability.wheelAvailability, 0x0, MAX_EFF_CNT * sizeof(int)); // wheelAvailability set to 0 (AVAILABLE) by default
     
     /*! - Read the input messages */
-    uint64_t clockTime;
-    uint32_t readSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     double Lr_B[3]; /*!< [Nm]    commanded ADCS control torque */
-    ReadMessage(ConfigData->inputVehControlID, &clockTime, &readSize,
+    ReadMessage(ConfigData->inputVehControlID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CmdTorqueBodyIntMsg), (void*) &(Lr_B), moduleID);
     if (ConfigData->rwAvailInMsgID >= 0)
     {
-        ReadMessage(ConfigData->rwAvailInMsgID, &clockTime, &readSize,
+        ReadMessage(ConfigData->rwAvailInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(RWAvailabilityFswMsg), &wheelsAvailability, moduleID);
         int numAvailRW = 0;
         for (i = 0; i < ConfigData->rwConfigParams.numRW; i++) {

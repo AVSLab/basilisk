@@ -71,8 +71,8 @@ void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
     uint32_t i, j;
-    uint64_t ClockTime;
-    uint32_t ReadSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     double InputValues[MAX_NUM_CSS_SENSORS];
     double ChebyDiffFactor, ChebyPrev, ChebyNow, ChebyLocalPrev, ValueMult;
     CSSArraySensorIntMsg OutputBuffer;
@@ -85,7 +85,7 @@ void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime,
         return; /* Throw ugly FSW error/crash here */
     }
     memset(&OutputBuffer, 0x0, sizeof(CSSArraySensorIntMsg));
-    ReadMessage(ConfigData->SensorMsgID, &ClockTime, &ReadSize, sizeof(CSSArraySensorIntMsg),
+    ReadMessage(ConfigData->SensorMsgID, &timeOfMsgWritten, &sizeOfMsgWritten, sizeof(CSSArraySensorIntMsg),
                 (void*) (InputValues), moduleID);
     /*! - Loop over the sensors and compute data
      -# Check appropriate range on sensor and calibrate

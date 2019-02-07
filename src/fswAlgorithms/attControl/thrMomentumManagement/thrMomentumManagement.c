@@ -78,13 +78,13 @@ void CrossInit_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, ui
 void Reset_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     VehicleConfigFswMsg   sc;                 /*!< spacecraft configuration message */
-    uint64_t clockTime;
-    uint32_t readSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
 
-    ReadMessage(ConfigData->vehicleConfigDataInMsgID, &clockTime, &readSize,
+    ReadMessage(ConfigData->vehicleConfigDataInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
 
-    ReadMessage(ConfigData->rwConfInMsgID, &clockTime, &readSize,
+    ReadMessage(ConfigData->rwConfInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(RWArrayConfigFswMsg), &(ConfigData->rwConfigParams), moduleID);
 
     ConfigData->initRequest = 1;
@@ -99,8 +99,8 @@ void Reset_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint64
  */
 void Update_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    uint64_t            clockTime;
-    uint32_t            readSize;
+    uint64_t            timeOfMsgWritten;
+    uint32_t            sizeOfMsgWritten;
     RWSpeedIntMsg      rwSpeedMsg;         /*!< Reaction wheel speed estimates */
     double              hs;                 /*!< net RW cluster angularl momentum magnitude */
     double              hs_B[3];            /*!< RW angular momentum */
@@ -111,7 +111,7 @@ void Update_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint6
     if (ConfigData->initRequest == 1) {
 
         /*! - Read the input messages */
-        ReadMessage(ConfigData->rwSpeedsInMsgID, &clockTime, &readSize,
+        ReadMessage(ConfigData->rwSpeedsInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(RWSpeedIntMsg), (void*) &(rwSpeedMsg), moduleID);
 
         /* compute net RW momentum magnitude */

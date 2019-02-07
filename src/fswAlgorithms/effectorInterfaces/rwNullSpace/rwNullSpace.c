@@ -55,8 +55,8 @@ void CrossInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID)
     double GsMatrix[3*MAX_EFF_CNT];
     RWConstellationFswMsg localRWData;
     int i, j;
-    uint64_t ClockTime;
-    uint32_t ReadSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
 
     /*! - Get the control data message ID*/
     ConfigData->inputRWCmdsID = subscribeToMessage(ConfigData->inputRWCommands,
@@ -67,7 +67,7 @@ void CrossInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID)
     ConfigData->inputRWConfID = subscribeToMessage(ConfigData->inputRWConfigData,
         sizeof(RWConstellationFswMsg), moduleID);
     
-    ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
+    ReadMessage(ConfigData->inputRWConfID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(RWConstellationFswMsg), &localRWData, moduleID);
     
     ConfigData->numWheels = localRWData.numRW;
@@ -124,8 +124,8 @@ void Update_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
     
-    uint64_t ClockTime;
-    uint32_t ReadSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     RWArrayTorqueIntMsg cntrRequest;
 	RWSpeedIntMsg rwSpeeds;
 	RWArrayTorqueIntMsg finalControl;
@@ -133,9 +133,9 @@ void Update_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
     
     /*! Begin method steps*/
     /*! - Read the input RW commands to get the raw RW requests*/
-    ReadMessage(ConfigData->inputRWCmdsID, &ClockTime, &ReadSize,
+    ReadMessage(ConfigData->inputRWCmdsID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(RWArrayTorqueIntMsg), (void*) &(cntrRequest), moduleID);
-	ReadMessage(ConfigData->inputSpeedsID, &ClockTime, &ReadSize,
+	ReadMessage(ConfigData->inputSpeedsID, &timeOfMsgWritten, &sizeOfMsgWritten,
 		sizeof(RWSpeedIntMsg), (void*)&(rwSpeeds), moduleID);
     
 	memset(&finalControl, 0x0, sizeof(RWArrayTorqueIntMsg));

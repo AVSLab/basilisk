@@ -280,9 +280,9 @@ void SimModel::CreateNewMessage(std::string processName, std::string MessageName
  @param MessageName String name for the message we are querying
  @param MessageSize Maximum size of the message that we can pull
  @param MessageData A shapeshifting buffer that we can chunk data into
- @param ClockTime The time that the message was written to*/
+ @param timeOfMsg The time that the message was written to*/
 void SimModel::WriteMessageData(std::string MessageName, uint64_t MessageSize,
-                                uint64_t ClockTime, void *MessageData)
+                                uint64_t timeOfMsg, void *MessageData)
 {
     MessageIdentData MessageID;
     
@@ -298,7 +298,7 @@ void SimModel::WriteMessageData(std::string MessageName, uint64_t MessageSize,
         return;
     }
     SystemMessaging::GetInstance()->selectMessageBuffer(MessageID.processBuffer);
-    SystemMessaging::GetInstance()->WriteMessage(MessageID.itemID, ClockTime,
+    SystemMessaging::GetInstance()->WriteMessage(MessageID.itemID, timeOfMsg,
                                                  MessageSize, reinterpret_cast<uint8_t*> (MessageData));
 }
 /*! This method functions as a pass-through to the message logging structure

@@ -86,14 +86,14 @@ void Update_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
 
-    uint64_t ClockTime;
-    uint32_t ReadSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     uint32_t i;
     CmdTorqueBodyIntMsg cntrRequest;
     
     /*! Begin method steps*/
     /*! - Read the input requested torque from the feedback controller*/
-    ReadMessage(ConfigData->inputMsgID, &ClockTime, &ReadSize,
+    ReadMessage(ConfigData->inputMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CmdTorqueBodyIntMsg), (void*) &(cntrRequest), moduleID);
     
     for(i=0; i<ConfigData->numThrGroups; i=i+1)

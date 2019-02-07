@@ -88,8 +88,8 @@ void Reset_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t callTim
  */
 void Update_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    uint64_t    clockTime;
-    uint32_t    readSize;
+    uint64_t    timeOfMsgWritten;
+    uint32_t    sizeOfMsgWritten;
     AttRefFswMsg ref;                      /*!< reference guidance message */
     NavAttIntMsg nav;                      /*!< navigation message */
 
@@ -97,9 +97,9 @@ void Update_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t callTi
     /*! - Read the input messages */
     memset(&ref, 0x0, sizeof(AttRefFswMsg));
     memset(&nav, 0x0, sizeof(NavAttIntMsg));
-    ReadMessage(ConfigData->inputRefID, &clockTime, &readSize,
+    ReadMessage(ConfigData->inputRefID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AttRefFswMsg), (void*) &(ref), moduleID);
-    ReadMessage(ConfigData->inputNavID, &clockTime, &readSize,
+    ReadMessage(ConfigData->inputNavID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavAttIntMsg), (void*) &(nav), moduleID);
 
 

@@ -83,8 +83,8 @@ void Update_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime,
 {
     AttGuidFswMsg      guidCmd;            /*!< Guidance Message */
     VehicleConfigFswMsg   sc;                 /*!< spacecraft configuration message */
-    uint64_t            clockTime;
-    uint32_t            readSize;
+    uint64_t            timeOfMsgWritten;
+    uint32_t            sizeOfMsgWritten;
     double              Lr[3];              /*!< required control torque vector [Nm] */
     double              omega_BN_B[3];      /*!< Inertial angular body rate expressed in body B-frame components */
     double              v3_temp1[3];        /*!< Temporal vector for insight computations */
@@ -94,9 +94,9 @@ void Update_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime,
     /*! Begin method steps*/
     
     /*! - Read the input messages */
-    ReadMessage(ConfigData->inputGuidID, &clockTime, &readSize,
+    ReadMessage(ConfigData->inputGuidID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);
-    ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
+    ReadMessage(ConfigData->inputVehicleConfigDataID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
     
     /*! - Compute body rate */
