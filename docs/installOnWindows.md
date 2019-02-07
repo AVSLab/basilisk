@@ -58,7 +58,7 @@ mkdir dist $$ cd dist
 ```
 Configure and Build:
 ```
-cmake -G "Visual Studio 15 2017 Win64" ../src
+cmake -G "Visual Studio 15 2017 Win64" ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFER=OFF
 cmake --build . --target ALL_BUILD --config Release
 ```
 For arch x86:

@@ -55,6 +55,7 @@ $ nano .tcshrc
 ```
 set path = ( ~/Library/Python/2.7/bin $path )
 ```
+
 5. If you are using the Homebrew version of python, then add the path `/usr/local/bin` before the other paths.  If you type in a new Terminal window `which python` you should see a path to the Homebrew installation of python, most likely `/usr/local/bin/python`
 6. Save and close the file
 7. Open a new terminal window for the path to take effect
@@ -74,6 +75,13 @@ For more information about this file see this [online discussion](https://apple.
 ```
 $ pip install --user numpy
 $ pip install --user matplotlib
+```
+* Basilisk uses conan for package managing. In order to do so, users must install conan and set the remote repositories for libraries:
+```
+$ pip install --user conan
+$ conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
+$ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+
 ```
 
 
@@ -96,17 +104,23 @@ When all the prerequisite installations are complete, the project can be built a
 5. Clone into preferred Git client (Source Tree for instance), or just clone the repository in the directory containing Basilisk.  In SourceTree, use `clone from url`, add the Basilisk repository url (without `.git` on the end), and select `develop` branch to pull the latest code.
 \image html Images/doc/sourcetree-clone-panel.png width=568px
 
+6. Open Cmake from the terminal
+```
+$ open /Applications/cmake.app
+```
 
 
-6. Open Cmake to create the build files
+6. Use Cmake to create the build files
     
     \image html Images/doc/3046062966-cmake.png width=489px
 
     * Click on browse Source, and select the source directory, the Basilisk repository that you just cloned
-
+    * Press `Configure` in Cmake, select the Xcode IDE if running for the first time.
+    * (Optional) Add a variable named `CMAKE_BUILD_TYPE` and set the value to Debug or Release depending on your desired config.
+    * Add a variable named `USE_PROTOBUFFERS` and set the value to ON or OFF depending on your desired config.
     * Browse and select the build directory (`basilisk/dist/`). If this directory does not exist, create it.
 
-    * Press `Configure` in Cmake, select the Xcode IDE if running for the first time.  <br>
+<br>
     **Note:** If you wish to use the HomeBrew version of python  configure the Python paths in \ref customPython<br>
     **Potential Issue:** If you get an error message in CMake saying it can't find the compiler tools, open a Terminal window and type
 ```
@@ -124,18 +138,18 @@ When all the prerequisite installations are complete, the project can be built a
 
     * Press `Generate` in Cmake to build the Xcode Basilisk project file inside the `dist` directory
 
-7. Open the Xcode file `dist/basilisk.xcodeproj`
+1. Open the Xcode file `dist/basilisk.xcodeproj`
 
     * The source code should appear and be ready for use
     \image html Images/doc/256564102-xcode.png width=419px
     
     * You can now build the project within the Xcode IDE
 
-8. To test your setup you can run one of the scenario scripts.
+2. To test your setup you can run one of the scenario scripts.
     * In the terminal window, make `basilisk/src/tests/scenarios` the current directory.
     * Run one of the tutorial scenarios, such as 
 ```
-    $python scenarioBasicOrbit.py
+    $ python scenarioBasicOrbit.py
 ```
 
 ## Optional Packages
@@ -183,4 +197,4 @@ docs: build the documentation with doxygen. The generated html documentation is 
 
 6. Q : I updated my macOS system to the latest released, and I can no longer run CMake or build with Xcode.
 
-    * A: Most likely you just need to reset CMake.app to use the latest macOS information. In CMake.app, select File/Delete Cache, and then run Configure again.  The application will ask you to confirm the use of the latest macOS and Developer tools.  
+    * A: Most likely you just need to reset CMake.app to use the latest macOS information. In CMake.app, select File/Delete Cache, and then run Configure again.  The application will ask you to confirm the use of the latest macOS and Developer tools.
