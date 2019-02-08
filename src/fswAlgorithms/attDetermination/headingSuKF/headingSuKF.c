@@ -25,17 +25,15 @@
 #include <string.h>
 #include <math.h>
 
-/*! This method initializes the ConfigData for theCSS WLS estimator.
+/*! This method initializes the ConfigData for the heading estimator.
  It checks to ensure that the inputs are sane and then creates the
  output message
  @return void
- @param ConfigData The configuration data associated with the CSS WLS estimator
+ @param ConfigData The configuration data associated with the heading estimator
  */
 void SelfInit_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t moduleID)
 {
-    
-    mSetZero(ConfigData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
-    /*! Begin method steps */
+        /*! Begin method steps */
     /*! - Create output message for module */
 	ConfigData->navStateOutMsgId = CreateNewMessage(ConfigData->navStateOutMsgName,
 		sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
@@ -45,28 +43,24 @@ void SelfInit_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t moduleID)
     
 }
 
-/*! This method performs the second stage of initialization for the CSS sensor
- interface.  It's primary function is to link the input messages that were
+/*! This method performs the second stage of initialization for the heading filter.  It's primary function is to link the input messages that were
  created elsewhere.
  @return void
- @param ConfigData The configuration data associated with the CSS interface
+ @param ConfigData The configuration data associated with the heading filter
  */
 void CrossInit_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t moduleID)
 {
     /*! Begin method steps */
     /*! - Find the message ID for the coarse sun sensor data message */
-    ConfigData->cssDataInMsgId = subscribeToMessage(ConfigData->cssDataInMsgName,
-        sizeof(CSSArraySensorIntMsg), moduleID);
-    /*! - Find the message ID for the coarse sun sensor configuration message */
-    ConfigData->cssConfigInMsgId = subscribeToMessage(ConfigData->cssConfigInMsgName,
-                                                   sizeof(CSSConfigFswMsg), moduleID);
+    ConfigData->opnavDataInMsgId = subscribeToMessage(ConfigData->opnavDataInMsgName,
+        sizeof(OpnavFswMsg), moduleID);
     
 }
 
 /*! This method resets the heading attitude filter to an initial state and
  initializes the internal estimation matrices.
  @return void
- @param ConfigData The configuration data associated with the CSS estimator
+ @param ConfigData The configuration data associated with the heading estimator
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Reset_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t callTime,
@@ -74,42 +68,25 @@ void Reset_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t callTime,
 {
     
     int32_t i;
-    CSSConfigFswMsg cssConfigInBuffer;
-    uint64_t writeTime;
-    uint32_t writeSize;
     double tempMatrix[HEAD_N_STATES_SWITCH*HEAD_N_STATES_SWITCH];
     
     /*! Begin method steps*/
     /*! - Zero the local configuration data structures and outputs */
-    memset(&cssConfigInBuffer, 0x0, sizeof(CSSConfigFswMsg));
     memset(&(ConfigData->outputHeading), 0x0, sizeof(NavAttIntMsg));
-    
-    /*! - Read in mass properties and coarse sun sensor configuration information.*/
-    ReadMessage(ConfigData->cssConfigInMsgId, &writeTime, &writeSize,
-                sizeof(CSSConfigFswMsg  ), &cssConfigInBuffer, moduleID);
-    
-    /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/
-    for(i=0; i<cssConfigInBuffer.nCSS; i = i+1)
-    {
-        v3Copy(cssConfigInBuffer.cssVals[i].nHat_B, &(ConfigData->cssNHat_B[i*3]));
-        ConfigData->CBias[i] = cssConfigInBuffer.cssVals[i].CBias;
-    }
-    /*! - Save the count of sun sensors for later use */
-    ConfigData->numCSSTotal = cssConfigInBuffer.nCSS;
+
     
     /*! - Initialize filter parameters to max values */
     ConfigData->timeTag = callTime*NANO2SEC;
     ConfigData->dt = 0.0;
     ConfigData->numStates = HEAD_N_STATES_SWITCH;
     ConfigData->countHalfSPs = HEAD_N_STATES_SWITCH;
-    ConfigData->numObs = OPNAV_MEAS;
     
     /*! Initalize the filter to use b_1 of the body frame to make frame*/
     v3Set(1, 0, 0, ConfigData->bVec_B);
     ConfigData->switchTresh = 0.866;
     
     /*! - Ensure that all internal filter matrices are zeroed*/
-    vSetZero(ConfigData->obs, ConfigData->numObs);
+    vSetZero(ConfigData->obs, OPNAV_MEAS);
     vSetZero(ConfigData->wM, ConfigData->countHalfSPs * 2 + 1);
     vSetZero(ConfigData->wC, ConfigData->countHalfSPs * 2 + 1);
     mSetZero(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates);
@@ -155,10 +132,10 @@ void Reset_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t callTime,
     return;
 }
 
-/*! This method takes the parsed CSS sensor data and outputs an estimate of the
+/*! This method takes the parsed heading sensor data and outputs an estimate of the
  sun vector in the ADCS body frame
  @return void
- @param ConfigData The configuration data associated with the CSS estimator
+ @param ConfigData The configuration data associated with the heading estimator
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t callTime,
@@ -175,12 +152,12 @@ void Update_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t callTime,
     HeadingFilterFswMsg headingDataOutBuffer;
     
     /*! Begin method steps*/
-    /*! - Read the input parsed CSS sensor data message*/
+    /*! - Read the input parsed heading sensor data message*/
     ClockTime = 0;
     ReadSize = 0;
-    memset(&(ConfigData->cssSensorInBuffer), 0x0, sizeof(CSSArraySensorIntMsg));
-    ReadMessage(ConfigData->cssDataInMsgId, &ClockTime, &ReadSize,
-        sizeof(CSSArraySensorIntMsg), (void*) (&(ConfigData->cssSensorInBuffer)), moduleID);
+    memset(&(ConfigData->opnavInBuffer), 0x0, sizeof(OpnavFswMsg));
+    ReadMessage(ConfigData->opnavDataInMsgId, &ClockTime, &ReadSize,
+        sizeof(OpnavFswMsg), (void*) (&(ConfigData->opnavInBuffer)), moduleID);
     
     v3Normalize(&ConfigData->state[0], sunheading_hat);
     
@@ -212,13 +189,13 @@ void Update_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t callTime,
     headingSuKFMeasModel(ConfigData);
     
     /*! - Compute the value for the yBar parameter (equation 23)*/
-    vSetZero(yBar, ConfigData->numObs);
+    vSetZero(yBar, OPNAV_MEAS);
     for(i=0; i<ConfigData->countHalfSPs*2+1; i++)
     {
-        vCopy(&(ConfigData->yMeas[i*ConfigData->numObs]), ConfigData->numObs,
+        vCopy(&(ConfigData->yMeas[i*OPNAV_MEAS]), OPNAV_MEAS,
               tempYVec);
-        vScale(ConfigData->wM[i], tempYVec, ConfigData->numObs, tempYVec);
-        vAdd(yBar, ConfigData->numObs, tempYVec, yBar);
+        vScale(ConfigData->wM[i], tempYVec, OPNAV_MEAS, tempYVec);
+        vAdd(yBar, OPNAV_MEAS, tempYVec, yBar);
     }
     
     /*! - The post fits are y- ybar*/
@@ -284,7 +261,7 @@ void headingStateProp(double *stateInOut, double *b_Vec, double dt)
      It propagates the sigma points forward in time and then gets the current 
 	 covariance and state estimates.
 	 @return void
-     @param ConfigData The configuration data associated with the CSS estimator
+     @param ConfigData The configuration data associated with the heading estimator
      @param updateTime The time that we need to fix the filter to (seconds)
 */
 void headingSuKFTimeUpdate(HeadingSuKFConfig *ConfigData, double updateTime)
@@ -376,41 +353,28 @@ void headingSuKFTimeUpdate(HeadingSuKFConfig *ConfigData, double updateTime)
 	ConfigData->timeTag = updateTime;
 }
 
-/*! This method computes what the expected measurement vector is for each CSS 
-    that is present on the spacecraft.  All data is transacted from the main 
+/*! This method computes what the expected measurement vector is for each opnave measurement.  All data is transacted from the main
     data structure for the model because there are many variables that would 
     have to be updated otherwise.
  @return void
- @param ConfigData The configuration data associated with the CSS estimator
+ @param ConfigData The configuration data associated with the heading estimator
 
  */
 void headingSuKFMeasModel(HeadingSuKFConfig *ConfigData)
 {
-    uint32_t i, j, obsCounter;
-    double sensorNormal[3];
     /* Begin method steps */
-    obsCounter = 0;
-    /*! - Loop over all available coarse sun sensors and only use ones that meet validity threshold*/
-    for(i=0; i<ConfigData->numCSSTotal; i++)
+    /*! - Loop over sigma points */
+    int j;
+    for(j=0; j<ConfigData->countHalfSPs*2+1; j++)
     {
-        if(ConfigData->cssSensorInBuffer.CosValue[i] > ConfigData->sensorUseThresh)
-        {
-            /*! - For each valid measurement, copy observation value and compute expected obs value 
-                  on a per sigma-point basis.*/
-            v3Scale(ConfigData->CBias[i], &(ConfigData->cssNHat_B[i*3]), sensorNormal);
-            ConfigData->obs[obsCounter] = ConfigData->cssSensorInBuffer.CosValue[i];
-            for(j=0; j<ConfigData->countHalfSPs*2+1; j++)
-            {
-                ConfigData->yMeas[obsCounter*(ConfigData->countHalfSPs*2+1) + j] =
-                    v3Dot(&(ConfigData->SP[j*HEAD_N_STATES_SWITCH]), sensorNormal);
-            }
-            obsCounter++;
-        }
+        ConfigData->yMeas[ConfigData->countHalfSPs*2+1 + j] =
+            ConfigData->SP[j*HEAD_N_STATES_SWITCH];
     }
+    
+    
     /*! - yMeas matrix was set backwards deliberately so we need to transpose it through*/
-    mTranspose(ConfigData->yMeas, obsCounter, ConfigData->countHalfSPs*2+1,
+    mTranspose(ConfigData->yMeas, OPNAV_MEAS, ConfigData->countHalfSPs*2+1,
         ConfigData->yMeas);
-    ConfigData->numObs = obsCounter;
     
 }
 
@@ -418,7 +382,7 @@ void headingSuKFMeasModel(HeadingSuKFConfig *ConfigData)
  It applies the observations in the obs vectors to the current state estimate and 
  updates the state/covariance with that information.
  @return void
- @param ConfigData The configuration data associated with the CSS estimator
+ @param ConfigData The configuration data associated with the heading estimator
  @param updateTime The time that we need to fix the filter to (seconds)
  */
 void headingSuKFMeasUpdate(HeadingSuKFConfig *ConfigData, double updateTime)
@@ -439,100 +403,99 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *ConfigData, double updateTime)
     
     /*! - Compute the value for the yBar parameter (note that this is equation 23 in the 
           time update section of the reference document*/
-    vSetZero(yBar, ConfigData->numObs);
+    vSetZero(yBar, OPNAV_MEAS);
     for(i=0; i<ConfigData->countHalfSPs*2+1; i++)
     {
-        vCopy(&(ConfigData->yMeas[i*ConfigData->numObs]), ConfigData->numObs,
+        vCopy(&(ConfigData->yMeas[i*OPNAV_MEAS]), OPNAV_MEAS,
               tempYVec);
-        vScale(ConfigData->wM[i], tempYVec, ConfigData->numObs, tempYVec);
-        vAdd(yBar, ConfigData->numObs, tempYVec, yBar);
+        vScale(ConfigData->wM[i], tempYVec, OPNAV_MEAS, tempYVec);
+        vAdd(yBar, OPNAV_MEAS, tempYVec, yBar);
     }
     
     /*! - Populate the matrix that we perform the QR decomposition on in the measurement 
           update section of the code.  This is based on the differenence between the yBar 
           parameter and the calculated measurement models.  Equation 24 in driving doc. */
-    mSetZero(AT, ConfigData->countHalfSPs*2+ConfigData->numObs,
-        ConfigData->numObs);
+    mSetZero(AT, ConfigData->countHalfSPs*2+OPNAV_MEAS,
+        OPNAV_MEAS);
     for(i=0; i<ConfigData->countHalfSPs*2; i++)
     {
-        vScale(-1.0, yBar, ConfigData->numObs, tempYVec);
-        vAdd(tempYVec, ConfigData->numObs,
-             &(ConfigData->yMeas[(i+1)*ConfigData->numObs]), tempYVec);
-        vScale(sqrt(ConfigData->wC[i+1]), tempYVec, ConfigData->numObs, tempYVec);
-        memcpy(&(AT[i*ConfigData->numObs]), tempYVec,
-               ConfigData->numObs*sizeof(double));
+        vScale(-1.0, yBar, OPNAV_MEAS, tempYVec);
+        vAdd(tempYVec, OPNAV_MEAS,
+             &(ConfigData->yMeas[(i+1)*OPNAV_MEAS]), tempYVec);
+        vScale(sqrt(ConfigData->wC[i+1]), tempYVec, OPNAV_MEAS, tempYVec);
+        memcpy(&(AT[i*OPNAV_MEAS]), tempYVec,
+               OPNAV_MEAS*sizeof(double));
     }
     
     /*! - This is the square-root of the Rk matrix which we treat as the Cholesky
         decomposition of the observation variance matrix constructed for our number 
         of observations*/
-    mSetZero(ConfigData->qObs, ConfigData->numCSSTotal, ConfigData->numCSSTotal);
-    mSetIdentity(ConfigData->qObs, ConfigData->numObs, ConfigData->numObs);
-    mScale(ConfigData->qObsVal, ConfigData->qObs, ConfigData->numObs,
-           ConfigData->numObs, ConfigData->qObs);
-    ukfCholDecomp(ConfigData->qObs, ConfigData->numObs, ConfigData->numObs, qChol);
-    memcpy(&(AT[2*ConfigData->countHalfSPs*ConfigData->numObs]),
-           qChol, ConfigData->numObs*ConfigData->numObs*sizeof(double));
+    mSetIdentity(ConfigData->qObs, OPNAV_MEAS, OPNAV_MEAS);
+    mScale(ConfigData->qObsVal, ConfigData->qObs, OPNAV_MEAS,
+           OPNAV_MEAS, ConfigData->qObs);
+    ukfCholDecomp(ConfigData->qObs, OPNAV_MEAS, OPNAV_MEAS, qChol);
+    memcpy(&(AT[2*ConfigData->countHalfSPs*OPNAV_MEAS]),
+           qChol, OPNAV_MEAS*OPNAV_MEAS*sizeof(double));
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the 
           current Sy matrix*/
-    ukfQRDJustR(AT, 2*ConfigData->countHalfSPs+ConfigData->numObs,
-                ConfigData->numObs, rAT);
-    mCopy(rAT, ConfigData->numObs, ConfigData->numObs, syT);
-    mTranspose(syT, ConfigData->numObs, ConfigData->numObs, sy);
+    ukfQRDJustR(AT, 2*ConfigData->countHalfSPs+OPNAV_MEAS,
+                OPNAV_MEAS, rAT);
+    mCopy(rAT, OPNAV_MEAS, OPNAV_MEAS, syT);
+    mTranspose(syT, OPNAV_MEAS, OPNAV_MEAS, sy);
     /*! - Shift the matrix over by the difference between the 0th SP-based measurement 
           model and the yBar matrix (cholesky down-date again)*/
-    vScale(-1.0, yBar, ConfigData->numObs, tempYVec);
-    vAdd(tempYVec, ConfigData->numObs, &(ConfigData->yMeas[0]), tempYVec);
+    vScale(-1.0, yBar, OPNAV_MEAS, tempYVec);
+    vAdd(tempYVec, OPNAV_MEAS, &(ConfigData->yMeas[0]), tempYVec);
     ukfCholDownDate(sy, tempYVec, ConfigData->wC[0],
-                    ConfigData->numObs, updMat);
+                    OPNAV_MEAS, updMat);
     /*! - Shifted matrix represents the Sy matrix */
-    mCopy(updMat, ConfigData->numObs, ConfigData->numObs, sy);
-    mTranspose(sy, ConfigData->numObs, ConfigData->numObs, syT);
+    mCopy(updMat, OPNAV_MEAS, OPNAV_MEAS, sy);
+    mTranspose(sy, OPNAV_MEAS, OPNAV_MEAS, syT);
 
     /*! - Construct the Pxy matrix (equation 26) which multiplies the Sigma-point cloud 
           by the measurement model cloud (weighted) to get the total Pxy matrix*/
-    mSetZero(pXY, ConfigData->numStates, ConfigData->numObs);
+    mSetZero(pXY, ConfigData->numStates, OPNAV_MEAS);
     for(i=0; i<2*ConfigData->countHalfSPs+1; i++)
     {
-        vScale(-1.0, yBar, ConfigData->numObs, tempYVec);
-        vAdd(tempYVec, ConfigData->numObs,
-             &(ConfigData->yMeas[i*ConfigData->numObs]), tempYVec);
+        vScale(-1.0, yBar, OPNAV_MEAS, tempYVec);
+        vAdd(tempYVec, OPNAV_MEAS,
+             &(ConfigData->yMeas[i*OPNAV_MEAS]), tempYVec);
         vSubtract(&(ConfigData->SP[i*ConfigData->numStates]), ConfigData->numStates,
                   ConfigData->xBar, xHat);
         vScale(ConfigData->wC[i], xHat, ConfigData->numStates, xHat);
-        mMultM(xHat, ConfigData->numStates, 1, tempYVec, 1, ConfigData->numObs,
+        mMultM(xHat, ConfigData->numStates, 1, tempYVec, 1, OPNAV_MEAS,
             kMat);
-        mAdd(pXY, ConfigData->numStates, ConfigData->numObs, kMat, pXY);
+        mAdd(pXY, ConfigData->numStates, OPNAV_MEAS, kMat, pXY);
     }
 
     /*! - Then we need to invert the SyT*Sy matrix to get the Kalman gain factor.  Since
           The Sy matrix is lower triangular, we can do a back-sub inversion instead of 
           a full matrix inversion.  That is the ukfUInv and ukfLInv calls below.  Once that 
           multiplication is done (equation 27), we have the Kalman Gain.*/
-    ukfUInv(syT, ConfigData->numObs, ConfigData->numObs, syInv);
+    ukfUInv(syT, OPNAV_MEAS, OPNAV_MEAS, syInv);
     
-    mMultM(pXY, ConfigData->numStates, ConfigData->numObs, syInv,
-           ConfigData->numObs, ConfigData->numObs, kMat);
-    ukfLInv(sy, ConfigData->numObs, ConfigData->numObs, syInv);
-    mMultM(kMat, ConfigData->numStates, ConfigData->numObs, syInv,
-           ConfigData->numObs, ConfigData->numObs, kMat);
+    mMultM(pXY, ConfigData->numStates, OPNAV_MEAS, syInv,
+           OPNAV_MEAS, OPNAV_MEAS, kMat);
+    ukfLInv(sy, OPNAV_MEAS, OPNAV_MEAS, syInv);
+    mMultM(kMat, ConfigData->numStates, OPNAV_MEAS, syInv,
+           OPNAV_MEAS, OPNAV_MEAS, kMat);
     
     
     /*! - Difference the yBar and the observations to get the observed error and 
           multiply by the Kalman Gain to get the state update.  Add the state update 
           to the state to get the updated state value (equation 27).*/
-    vSubtract(ConfigData->obs, ConfigData->numObs, yBar, tempYVec);
-    mMultM(kMat, ConfigData->numStates, ConfigData->numObs, tempYVec,
-        ConfigData->numObs, 1, xHat);
+    vSubtract(ConfigData->obs, OPNAV_MEAS, yBar, tempYVec);
+    mMultM(kMat, ConfigData->numStates, OPNAV_MEAS, tempYVec,
+        OPNAV_MEAS, 1, xHat);
     vAdd(ConfigData->state, ConfigData->numStates, xHat, ConfigData->state);
     /*! - Compute the updated matrix U from equation 28.  Note that I then transpose it 
          so that I can extract "columns" from adjacent memory*/
-    mMultM(kMat, ConfigData->numStates, ConfigData->numObs, sy,
-           ConfigData->numObs, ConfigData->numObs, pXY);
-    mTranspose(pXY, ConfigData->numStates, ConfigData->numObs, pXY);
+    mMultM(kMat, ConfigData->numStates, OPNAV_MEAS, sy,
+           OPNAV_MEAS, OPNAV_MEAS, pXY);
+    mTranspose(pXY, ConfigData->numStates, OPNAV_MEAS, pXY);
     /*! - For each column in the update matrix, perform a cholesky down-date on it to 
           get the total shifted S matrix (called sBar in internal parameters*/
-    for(i=0; i<ConfigData->numObs; i++)
+    for(i=0; i<OPNAV_MEAS; i++)
     {
         vCopy(&(pXY[i*ConfigData->numStates]), ConfigData->numStates, tempYVec);
         ukfCholDownDate(ConfigData->sBar, tempYVec, -1.0, ConfigData->numStates, sBarT);

@@ -23,23 +23,21 @@
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "simFswInterfaceMessages/navAttIntMsg.h"
-#include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/headingFilterFswMsg.h"
-#include "fswMessages/cssConfigFswMsg.h"
+#include "fswMessages/opnavFswMsg.h"
 
 
 /*! \addtogroup ADCSAlgGroup
  * @{
  */
 
-/*!@brief Data structure for CSS Switch unscented kalman filter estimator. Please see the _Documentation folder for details on how this Kalman Filter Functions.
+/*!@brief Data structure for heading Switch unscented kalman filter estimator. Please see the _Documentation folder for details on how this Kalman Filter Functions.
  */
 typedef struct {
     char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output filter data message*/
-    char cssDataInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
-    char cssConfigInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the CSS configuration message*/
+    char opnavDataInMsgName[MAX_STAT_MSG_LENGTH];/*!< The name of the input opnav data message*/
     
 	int numStates;                /*!< [-] Number of states for this filter*/
 	int countHalfSPs;             /*!< [-] Number of sigma points over 2 */
@@ -49,7 +47,7 @@ typedef struct {
 	double kappa;                 /*!< [-] Kappa parameter for filter*/
 	double lambdaVal;             /*!< [-] Lambda parameter for filter*/
 	double gamma;                 /*!< [-] Gamma parameter for filter*/
-    double qObsVal;               /*!< [-] CSS instrument noise parameter*/
+    double qObsVal;               /*!< [-] OpNav instrument noise parameter*/
 
 	double dt;                     /*!< [s] seconds since last data epoch */
 	double timeTag;                /*!< [s]  Time tag for statecovar/etc */
@@ -79,19 +77,14 @@ typedef struct {
 
 	double qObs[OPNAV_MEAS*OPNAV_MEAS];  /*!< [-] Maximally sized obs noise matrix*/
     
-    double cssNHat_B[MAX_NUM_CSS_SENSORS*3];     /*!< [-] CSS normal vectors converted over to body*/
-    double CBias[MAX_NUM_CSS_SENSORS];       /*!< [-] CSS individual calibration coefficients */
 
-    uint32_t numActiveCss;   /*!< -- Number of currently active CSS sensors*/
-    uint32_t numCSSTotal;    /*!< [-] Count on the number of CSS we have on the spacecraft*/
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
 	NavAttIntMsg outputHeading;   /*!< -- Output heading estimate data */
-    CSSArraySensorIntMsg cssSensorInBuffer; /*!< [-] CSS sensor data read in from message bus*/
-
+    OpnavFswMsg opnavInBuffer;
+    
     int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
-    int32_t cssDataInMsgId;      /*!< -- ID for the incoming CSS sensor message*/
-    int32_t cssConfigInMsgId;   /*!< [-] ID associated with the CSS configuration data*/
+    int32_t opnavDataInMsgId; 
 }HeadingSuKFConfig;
 
 #ifdef __cplusplus

@@ -33,13 +33,11 @@
 %ignore Reset_headingSuKF;
 GEN_SIZEOF(HeadingFilterFswMsg);
 GEN_SIZEOF(VehicleConfigFswMsg);
-GEN_SIZEOF(CSSConfigFswMsg);
 GEN_SIZEOF(HeadingSuKFConfig);
 %include "headingSuKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
 %include "../../fswMessages/vehicleConfigFswMsg.h"
 %include "../../fswMessages/headingFilterFswMsg.h"
-%include "../../fswMessages/cssConfigFswMsg.h"
 
 %pythoncode %{
 import sys
