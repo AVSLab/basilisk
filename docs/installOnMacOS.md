@@ -81,7 +81,6 @@ $ pip install --user matplotlib
 $ pip install --user conan
 $ conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
 $ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-
 ```
 
 
@@ -104,23 +103,25 @@ When all the prerequisite installations are complete, the project can be built a
 5. Clone into preferred Git client (Source Tree for instance), or just clone the repository in the directory containing Basilisk.  In SourceTree, use `clone from url`, add the Basilisk repository url (without `.git` on the end), and select `develop` branch to pull the latest code.
 \image html Images/doc/sourcetree-clone-panel.png width=568px
 
-6. Open Cmake from the terminal
+6. The Cmake.app can't be opened by double clicking on it.  The required `conan` paths are not loaded.  To use the GUI Cmake.app program, open Cmake.app from the terminal using
 ```
 $ open /Applications/cmake.app
 ```
+An alternate approach is to run `cmake` directly from the terminal. Go to the `dist` destination folder and enter:
+```
+$ cmake ../src -G Xcode
+```
+This terminal command will both run the `configure` and `generate` steps outlined in the next step.
 
-
-6. Use Cmake to create the build files
+7. To use the Cmake.app GUI to create the build files
     
     \image html Images/doc/3046062966-cmake.png width=489px
 
     * Click on browse Source, and select the source directory, the Basilisk repository that you just cloned
-    * Press `Configure` in Cmake, select the Xcode IDE if running for the first time.
+    * Press `Configure` in Cmake, select the Xcode IDE if running for the first time.  If you run into odd errors, try clearing the CMake.app cache under the `File` menu.
     * (Optional) Add a variable named `CMAKE_BUILD_TYPE` and set the value to Debug or Release depending on your desired config.
-    * Add a variable named `USE_PROTOBUFFERS` and set the value to ON or OFF depending on your desired config.
     * Browse and select the build directory (`basilisk/dist/`). If this directory does not exist, create it.
 
-<br>
     **Note:** If you wish to use the HomeBrew version of python  configure the Python paths in \ref customPython<br>
     **Potential Issue:** If you get an error message in CMake saying it can't find the compiler tools, open a Terminal window and type
 ```
@@ -138,14 +139,14 @@ $ open /Applications/cmake.app
 
     * Press `Generate` in Cmake to build the Xcode Basilisk project file inside the `dist` directory
 
-1. Open the Xcode file `dist/basilisk.xcodeproj`
+8. Open the Xcode file `dist/basilisk.xcodeproj`
 
     * The source code should appear and be ready for use
     \image html Images/doc/256564102-xcode.png width=419px
     
     * You can now build the project within the Xcode IDE
 
-2. To test your setup you can run one of the scenario scripts.
+9. To test your setup you can run one of the scenario scripts.
     * In the terminal window, make `basilisk/src/tests/scenarios` the current directory.
     * Run one of the tutorial scenarios, such as 
 ```
