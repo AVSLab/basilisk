@@ -15,6 +15,9 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 ## Version 0.X.X (upcoming release)
 <uL>
     <li>
+    Integrated the  `conan` package management system.  This requires conan to be installed and configured. See the updated Basilisk installation instructions.  It is simple to add this to a current install.  Further, the CMake GUI application can't be used directly with this implementation if the app is double-clicked.  Either the GUI is launched form a terminal (see macOS installation instructions), or `cmake` is run from the command line (again see your platform specific installation instructions). Using `conan` now enables BSK to be compiled with specific support packages, and will allow us to integrate other packages like OpenCV, Protobuffers, etc. into the near future in a flexible manner.
+    </li>
+    <li>
     updated install instructions to allow for pytest version 4.0.0 or newer
     </li>
     <li>updated code to remove some depreciated python function call warnings
