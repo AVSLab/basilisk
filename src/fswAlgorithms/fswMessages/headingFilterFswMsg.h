@@ -22,6 +22,7 @@
 
 #define HEAD_N_STATES 3
 #define HEAD_N_STATES_SWITCH 5
+#define OPNAV_MEAS 3
 
 /*! @brief structure for filter-states output for the unscented kalman filter
  implementation of the sunline state estimator*/
@@ -32,7 +33,7 @@ typedef struct {
     double stateError[HEAD_N_STATES];                 /*!< [-] Current deviation of the state from the reference state */
     double postFitRes[3];                 /*!< [-] PostFit Residuals  */
 
-}HeadingsFilterFswMsg;
+}HeadingFilterFswMsg;
 
 
 
