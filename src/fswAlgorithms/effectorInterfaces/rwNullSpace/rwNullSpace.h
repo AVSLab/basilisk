@@ -40,7 +40,7 @@ typedef struct {
 	char inputRWSpeeds[MAX_STAT_MSG_LENGTH];        /*!< [-] The name of the input RW speeds*/
     char inputRWConfigData[MAX_STAT_MSG_LENGTH];    /*!< [-] The name of the RWA configuration message*/
 	char outputControlName[MAX_STAT_MSG_LENGTH];    /*!< [-] The name of the output message*/
-	double GsInverse[MAX_EFF_CNT * MAX_EFF_CNT];    /*!< [-] Pseudo-inverse of the spin axis matrix*/
+	double tau[MAX_EFF_CNT * MAX_EFF_CNT];          /*!< [-] RW nullspace project matrix */
 	double OmegaGain;                               /*!< [-] The gain factor applied to the RW speeds*/
 	uint32_t numWheels;                             /*!< [-] The number of reaction wheels we have*/
     int32_t inputRWCmdsID;                          /*!< [-] ID for the incoming RW commands*/

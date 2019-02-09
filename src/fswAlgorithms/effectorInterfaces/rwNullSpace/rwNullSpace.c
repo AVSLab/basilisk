@@ -100,12 +100,12 @@ void Reset_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
            ConfigData->numWheels, 3, GsInvHalf);                            /* find [Gs].[Gs]^T */
     m33Inverse(RECAST3X3 GsInvHalf, RECAST3X3 GsInvHalf);                   /* find ([Gs].[Gs]^T)^-1 */
     mMultM(GsInvHalf, 3, 3, GsMatrix, 3, ConfigData->numWheels,
-           ConfigData->GsInverse);                                          /* find ([Gs].[Gs]^T)^-1.[Gs] */
-    mMultM(GsTranspose, ConfigData->numWheels, 3, ConfigData->GsInverse, 3,
+           ConfigData->tau);                                          /* find ([Gs].[Gs]^T)^-1.[Gs] */
+    mMultM(GsTranspose, ConfigData->numWheels, 3, ConfigData->tau, 3,
            ConfigData->numWheels, GsTemp);                                  /* find [Gs]^T.([Gs].[Gs]^T)^-1.[Gs] */
     mSetIdentity(identMatrix, ConfigData->numWheels, ConfigData->numWheels);
     mSubtract(identMatrix, ConfigData->numWheels, ConfigData->numWheels,    /* find ([I] - [Gs]^T.([Gs].[Gs]^T)^-1.[Gs]) */
-              GsTemp, ConfigData->GsInverse);
+              GsTemp, ConfigData->tau);
 
     /* Ensure that after a reset the output message is reset to zero. */
     memset(&finalControl, 0x0, sizeof(RWArrayTorqueIntMsg));
@@ -146,7 +146,7 @@ void Update_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
 	vScale(-ConfigData->OmegaGain, rwSpeeds.wheelSpeeds,
 		ConfigData->numWheels, dVector);
     /* compute the RW null space motor torque solution to reduce the wheel speeds */
-	mMultV(ConfigData->GsInverse, ConfigData->numWheels, ConfigData->numWheels,
+	mMultV(ConfigData->tau, ConfigData->numWheels, ConfigData->numWheels,
 		dVector, finalControl.motorTorque);
     /* add the null motion RW torque solution to the RW feedback control torque solution */
 	vAdd(finalControl.motorTorque, ConfigData->numWheels,
