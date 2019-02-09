@@ -66,13 +66,8 @@ int dvAccumulation_partition(AccPktDataFswMsg *A, int start, int end){
     dvAccumulation_swap(&(A[partitionIndex]), &(A[end]));
     return partitionIndex;
 }
-// void dvAccumulation_QuickSort(AccPktDataFswMsg *A, int start, int end){
-//     if(start<end){
-//         int partitionIndex=dvAccumulation_partition(A, start, end);
-//         dvAccumulation_QuickSort(A, start, partitionIndex-1);
-//         dvAccumulation_QuickSort(A, partitionIndex+1, end);
-//     }
-// }
+
+
 
 /* Sort the AccPktDataFswMsg by the measTime with an iterative quickSort.
   @return void

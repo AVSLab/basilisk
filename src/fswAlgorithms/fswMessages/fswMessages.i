@@ -53,7 +53,6 @@
 STRUCTASLIST(CSSUnitConfigFswMsg)
 STRUCTASLIST(AccPktDataFswMsg)
 STRUCTASLIST(RWConfigElementFswMsg)
-/* STRUCTASLIST(THRConfigFswMsg) */
 
 %include "../simFswInterfaceMessages/macroDefinitions.h"
 %include "../fswMessages/AccDataFswMsg.h"
