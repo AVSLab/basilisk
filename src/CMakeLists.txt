@@ -238,9 +238,29 @@ find_package(PythonLibs 2.7 REQUIRED)
 
 # set(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/Basilisk)
 
+############################################################################################
+OPTION(WITH_COVERAGE "GCOV code coverage analysis"      OFF)
+############################################################################################
+
 # Add general compiler flags
 set(CMAKE_MACOSX_RPATH 1)
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
+
+############################################################################################
+IF (WITH_COVERAGE AND (CMAKE_COMPILER_IS_GNUC OR CMAKE_COMPILER_IS_GNUCXX))
+    MESSAGE(STATUS "WITH_COVERAGE : ${WITH_COVERAGE}")
+    SET(GCOV_CFLAGS  "-fprofile-arcs -ftest-coverage -O0 -fno-default-inline -fno-inline")
+    SET(GCOV_LDFLAGS "-fprofile-arcs -ftest-coverage -O0 -fno-default-inline -fno-inline")
+
+    SET(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${GCOV_CFLAGS}")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCOV_CFLAGS}")
+    SET(CMAKE_LD_FLAGS "${CMAKE_LD_FLAGS} ${GCOV_LDFLAGS}")
+
+    MESSAGE(STATUS "CMAKE_C_FLAGS : ${CMAKE_C_FLAGS}")
+    MESSAGE(STATUS "CMAKE_CXX_FLAGS : ${CMAKE_CXX_FLAGS}")
+    MESSAGE(STATUS "CMAKE_LD_FLAGS : ${CMAKE_LD_FLAGS}")
+ENDIF()
+#############################################################################################
 
 # Add platform specific compiler flags
 set(Boost_USE_STATIC_LIBS ON)

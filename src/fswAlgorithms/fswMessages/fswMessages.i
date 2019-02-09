@@ -51,6 +51,8 @@
 %array_functions(RWConfigElementFswMsg, RWConfigArray);
 %array_functions(THRConfigFswMsg, ThrustConfigArray);
 STRUCTASLIST(CSSUnitConfigFswMsg)
+STRUCTASLIST(AccPktDataFswMsg)
+STRUCTASLIST(RWConfigElementFswMsg)
 
 %include "../simFswInterfaceMessages/macroDefinitions.h"
 %include "../fswMessages/AccDataFswMsg.h"
