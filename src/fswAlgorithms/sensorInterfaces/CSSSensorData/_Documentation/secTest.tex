@@ -1,0 +1,89 @@
+% !TEX root = ./Basilisk-MODULENAME-yyyymmdd.tex
+
+\section{Test Description and Success Criteria}
+Describe the unit test(s) in here.
+
+\subsection{Check 1}
+There could be subsections for various checks done within the unit test.
+
+
+
+
+
+\section{Test Parameters}
+
+Test and simulation parameters and inputs go here. Basically, describe your test in the section above, but put any specific numbers or inputs to the tests in this section.
+
+The unit test verify that the module output guidance message vectors match expected values.
+\begin{table}[htbp]
+	\caption{Error tolerance for each test.}
+	\label{tab:errortol}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c } % Column formatting, 
+		\hline\hline
+		\textbf{Output Value Tested}  & \textbf{Tolerated Error}  \\ 
+		\hline
+		{\tt outputVector}        & \input{AutoTeX/toleranceValue}	   \\ 
+		\hline\hline
+	\end{tabular}
+\end{table}
+
+
+
+
+\section{Test Results}
+The results of the unit test should be included in the documentation.  The results can be discussed verbally, but also included as tables and figures.  
+
+All of the tests passed:
+\begin{table}[H]
+	\caption{Test results}
+	\label{tab:results}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{c | c  } % Column formatting, 
+		\hline\hline
+		\textbf{Check} 						  		&\textbf{Pass/Fail} \\ 
+		\hline
+	   1	   			& \input{AutoTeX/passFail11} \\ 
+	   2	   			& \input{AutoTeX/passFail13} \\ 
+	   3	   			& \input{AutoTeX/passFail22} \\ 
+	   \hline\hline
+	\end{tabular}
+\end{table}
+
+
+
+\subsection{Unit Test Table Results}
+To automatically create a unit test table to include in the documentation, use the command:
+\begin{verbatim}
+unitTestSupport.writeTableLaTeX(
+tableName,
+tableHeaders,
+caption,
+dataMatrix,
+path)
+\end{verbatim}
+
+Here are the sample \TeX\ table form the unit tests.
+
+\input{AutoTeX/test11.tex}
+\input{AutoTeX/test13.tex}
+\input{AutoTeX/test22.tex}
+
+\subsection{Unit Test Figure Results}
+If figures and plots are generated in the python unit tests, these can be also automatically included in the unit test documentation.  This is achieved with the command:
+\begin{verbatim}
+unitTestSupport.writeFigureLaTeX(
+"testPlot",
+"Illustration of Sample Plot",
+plt,
+"width=0.5\\textwidth",
+path)
+\end{verbatim}
+
+
+\input{AutoTeX/testPlot11.tex}
+\input{AutoTeX/testPlot13.tex}
+\input{AutoTeX/testPlot22.tex}
+
+
+
