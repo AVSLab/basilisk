@@ -64,11 +64,23 @@ set path = ( ~/Library/Python/2.7/bin $path )
 We suggest you remove any other python packages (such as Anaconda), or change the path in your terminal shell if you really want to keep it.
 
 ### Setup Required Python packages
-* From the terminal window, enter the following commands:
+* First the python package manager `pip` must be installed.  From the terminal window, enter the following commands:
 ```
 $ easy_install --user pip
-$ pip install --user --ignore-installed setuptools
 ```
+If you run into issues with `pip` installation setup, you can re-install pip by downloading a fresh copy using
+```
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+```
+and then executing the following command to install pip in the user's home directory.
+```
+python get-pip.py --user
+```
+This step is sometimes needed if you were working with an earlier python installation.
+* Next, install setup tools using
+```
+$ pip install --user --ignore-installed setuptools
+``` 
 * Copy the file called [`mac_fix_path.pth`](mac_fix_path.pth) from basilisk/docs to the directory `~/Library/Python/2.7/lib/python/site-packages/` 
 For more information about this file see this [online discussion](https://apple.stackexchange.com/questions/209572/how-to-use-pip-after-the-os-x-el-capitan-upgrade/209577). **Note:** If you have installed python packages already using `sudo pip install`, then these are stored in `Library/Python/2.7/site-packages`.  You need to add the `mac_fix_path.pth` file to this folder as well to make macOS ignore the system installed packages.  Or, to only use home directory installed python packages, just remove `Library/Python` folder.
 * From the terminal window, install the required general Python packages using:
