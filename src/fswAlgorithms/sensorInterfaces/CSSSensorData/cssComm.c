@@ -19,6 +19,7 @@
 
 #include "sensorInterfaces/CSSSensorData/cssComm.h"
 #include "messaging/static_messaging.h"
+#include "simulation/utilities/bsk_Print.h"
 #include <string.h>
 
 /*! This method initializes the ConfigData for theCSS sensor interface.
@@ -30,15 +31,9 @@
 void SelfInit_cssProcessTelem(CSSConfigData *ConfigData, uint64_t moduleID)
 {
     
-    /*! - Check to make sure that number of sensors is less than the max*/
-    if(ConfigData->NumSensors > MAX_NUM_CSS_SENSORS)
-    {
-        return; /* Throw ugly FSW error/crash here */
-    }
     /*! - Create output message for module */
     ConfigData->OutputMsgID = CreateNewMessage(ConfigData->OutputDataName,
         sizeof(CSSArraySensorIntMsg), "CSSArraySensorIntMsg", moduleID);
-    
 }
 
 /*! This method performs the second stage of initialization for the CSS sensor
@@ -51,15 +46,31 @@ void CrossInit_cssProcessTelem(CSSConfigData *ConfigData, uint64_t moduleID)
 {
     
     /*! Begin method steps */
-    /*! - If num sensors is past max, quit*/
-    if(ConfigData->NumSensors > MAX_NUM_CSS_SENSORS)
-    {
-        return; /* Throw ugly FSW error/crash here */
-    }
-    
     ConfigData->SensorMsgID = subscribeToMessage(
         ConfigData->SensorListName, sizeof(CSSArraySensorIntMsg), moduleID);
 }
+
+/*! This method performs a complete reset of the module.  Local module variables that retain
+ time varying states between function calls are reset to their default values.
+ @return void
+ @param ConfigData The configuration data associated with the guidance module
+ */
+void Reset_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime, uint64_t moduleID)
+{
+    /*! - Check to make sure that number of sensors is less than the max*/
+    if(ConfigData->NumSensors > MAX_NUM_CSS_SENSORS)
+    {
+        BSK_PRINT(MSG_WARNING, "The configured number of CSS sensors exceeds the maximum, %d > %d! Changing the number of sensors to the max.", ConfigData->NumSensors, MAX_NUM_CSS_SENSORS);
+        ConfigData->NumSensors = MAX_NUM_CSS_SENSORS;
+        return; /* Throw warning about misconfigured sensors, and change the number to the max number of sensors */
+    }
+  
+    //memset(ConfigData->KellyCheby, 0x0, MAX_NUM_CHEBY_POLYS*sizeof(double));
+    memset(ConfigData->InputValues.CosValue, 0x0, ConfigData->NumSensors*sizeof(double));
+    
+    return;
+}
+
 
 /*! This method takes the raw sensor data from the coarse sun sensors and
  converts that information to the format used by the CSS nav.
