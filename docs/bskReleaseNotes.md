@@ -31,6 +31,9 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>
     added the ability to the thrForceMapping FSW module to handle thruster saturation better by scaling the resulting force solution set.
     </li>
+    <li>
+    Added lots of new unit tests to BSK modules
+    </li>
 </ul>
 
 ## Version 0.3.3 
