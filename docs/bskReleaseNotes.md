@@ -7,12 +7,18 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 * ability to integrate custom Basilisk modules that are kept outside of the core Basilisk folder
 * GPU based methods to evaluate solar radiation pressure forces and torques
 * atmospheric drag evaluation using multi-faceted spacecraft model
-* new method to distributed BSK binaries
 * New Unity-based Basilisk visualization tool.
-* New Basilisk resource management tool that will allow for dynamic integration of Eigen, Protobuffers, OpenCV, and other future frameworks
 * New download and install method that pulls all the code, compiles and leaves the user with BSK binaries specific for their platform
 
 ## Version 0.X.X (upcoming release)
+<uL>
+    <li>
+    features to be added here
+    </li>
+</ul>
+
+
+## Version 0.4.0
 <uL>
     <li>
     Integrated the  `conan` package management system.  This requires conan to be installed and configured. See the updated Basilisk installation instructions.  It is simple to add this to a current install.  Further, the CMake GUI application can't be used directly with this implementation if the app is double-clicked.  Either the GUI is launched form a terminal (see macOS installation instructions), or `cmake` is run from the command line (again see your platform specific installation instructions). Using `conan` now enables BSK to be compiled with specific support packages, and will allow us to integrate other packages like OpenCV, Protobuffers, etc. into the near future in a flexible manner.
