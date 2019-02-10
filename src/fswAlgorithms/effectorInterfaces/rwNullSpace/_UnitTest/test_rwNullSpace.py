@@ -9,7 +9,11 @@ from Basilisk.fswAlgorithms import rwNullSpace, fswMessages
 from Basilisk.simulation import simFswInterfaceMessages
 import pytest
 import numpy as np
+import os, inspect
 from numpy.linalg import inv
+
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -92,9 +96,9 @@ def rwNullSpaceTestFunction(numWheels):
         # Add this to the list
         rwConfigElementList.append(rwConfigElementMsg)
 
-    rwSpeeds = [10, 20, 30] # The current angular velocities of the RW wheel
+    rwSpeeds = [10, 20, 30] # [rad/sec] The current angular velocities of the RW wheel
     if numWheels is 4:
-        rwSpeeds.append(40)
+        rwSpeeds.append(40)  # [rad/sec]
     inputSpeedMsg.wheelSpeeds = rwSpeeds
 
     # Set the array of the reaction wheels in RWConstellationFswMsg to the list created above
@@ -103,7 +107,7 @@ def rwNullSpaceTestFunction(numWheels):
     inputRWCmdMsg = simFswInterfaceMessages.RWArrayTorqueIntMsg()
     usControl = [0.1, 0.2, 0.15] # [Nm] RW motor torque array
     if numWheels is 4:
-        usControl.append(-0.2)
+        usControl.append(-0.2) # [Nm]
     inputRWCmdMsg.motorTorque = usControl
 
 
@@ -150,6 +154,7 @@ def rwNullSpaceTestFunction(numWheels):
 
 
     accuracy = 1e-6
+    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
     # At each timestep, make sure the vehicleConfig values haven't changed from the initial values
     testFailCount, testMessages = unitTestSupport.compareArrayND(trueVector, outputCrtlData,
@@ -157,8 +162,18 @@ def rwNullSpaceTestFunction(numWheels):
                                                                  "numWheels = " + str(numWheels),
                                                                  2, testFailCount, testMessages)
 
+
+    snippentName = "passFail" + str(numWheels)
     if testFailCount == 0:
-        print("Passed")
+        colorText = 'ForestGreen'
+        print "PASSED: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        print "Failed: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+
 
     return [testFailCount, ''.join(testMessages)]
 
