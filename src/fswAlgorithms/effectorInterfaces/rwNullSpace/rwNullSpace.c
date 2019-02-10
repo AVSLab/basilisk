@@ -127,11 +127,11 @@ void Update_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
     
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
-    RWArrayTorqueIntMsg cntrRequest;        /*!< [N]   array of the RW motor torque solution vector from the control module */
+    RWArrayTorqueIntMsg cntrRequest;        /*!< [Nm]  array of the RW motor torque solution vector from the control module */
 	RWSpeedIntMsg rwSpeeds;                 /*!< [r/s] array of RW speeds */
-	RWArrayTorqueIntMsg finalControl;       /*!< [N]   array of final RW motor torques containing both
+	RWArrayTorqueIntMsg finalControl;       /*!< [Nm]  array of final RW motor torques containing both
                                                        the control and null motion torques */
-	double dVector[MAX_EFF_CNT];            /*!< [N]   null motion wheel speed control array */
+	double dVector[MAX_EFF_CNT];            /*!< [Nm]  null motion wheel speed control array */
     
     /* Begin method steps*/
     /* - Read the input RW commands to get the raw RW requests*/
