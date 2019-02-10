@@ -99,14 +99,14 @@ void Update_chebyPosEphem(ChebyPosEphemData *ConfigData, uint64_t callTime, uint
 {
 
     double currentEphTime;
-    uint64_t writeTime;
-    uint32_t writeSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     double currentScaledValue;
     ChebyEphemRecord *currRec;
     int i;
     TDBVehicleClockCorrelationFswMsg localCorr;
     
-    ReadMessage(ConfigData->clockCorrInMsgID, &writeTime, &writeSize,
+    ReadMessage(ConfigData->clockCorrInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(TDBVehicleClockCorrelationFswMsg), &localCorr, moduleID);
     
     memset(&ConfigData->outputState, 0x0, sizeof(EphemerisIntMsg));

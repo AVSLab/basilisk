@@ -75,8 +75,8 @@ void Reset_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     
     int32_t i;
     CSSConfigFswMsg cssConfigInBuffer;
-    uint64_t writeTime;
-    uint32_t writeSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     int32_t ReadTest;
     
     /*! Begin method steps*/
@@ -85,7 +85,7 @@ void Reset_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     memset(&(ConfigData->outputSunline), 0x0, sizeof(NavAttIntMsg));
 
     /*! - Read in mass properties and coarse sun sensor configuration information.*/
-    ReadTest = ReadMessage(ConfigData->cssConfigInMsgId, &writeTime, &writeSize,
+    ReadTest = ReadMessage(ConfigData->cssConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CSSConfigFswMsg), &cssConfigInBuffer, moduleID);
     
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/

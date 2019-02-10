@@ -93,9 +93,9 @@ void Update_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, 
 {
     /*! - Read input message */
     AttRefFswMsg inputRef;
-    uint64_t writeTime;
-    uint32_t writeSize;
-    ReadMessage(ConfigData->inputRefID, &writeTime, &writeSize,
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
+    ReadMessage(ConfigData->inputRefID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AttRefFswMsg), (void*) &(inputRef), moduleID);
     
     /*! - Get input reference and compute integration time step to use downstream */

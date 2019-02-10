@@ -71,11 +71,11 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
 	double burnTime;
 	double rotPRV[3];
 	double rotDCM[3][3];
-    uint64_t writeTime;
-    uint32_t writeSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     DvBurnCmdFswMsg localBurnData;
     
-    ReadMessage(ConfigData->inputBurnCmdID, &writeTime, &writeSize,
+    ReadMessage(ConfigData->inputBurnCmdID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(DvBurnCmdFswMsg), &localBurnData, moduleID);
     
     ConfigData->dvMag = v3Norm(localBurnData.dvInrtlCmd);

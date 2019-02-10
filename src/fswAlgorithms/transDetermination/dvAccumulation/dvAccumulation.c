@@ -126,8 +126,8 @@ void dvAccumulation_QuickSort (AccPktDataFswMsg *A, int start, int end)
  */
 void Update_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    uint64_t writeTime;
-    uint32_t writeSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     double dt;
 
     double frameDV_B[3];
@@ -135,7 +135,7 @@ void Update_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime, ui
     int i;
 
     memset(&inputAccData, 0x0, sizeof(AccDataFswMsg));
-    ReadMessage(ConfigData->accPktInMsgID, &writeTime, &writeSize,
+    ReadMessage(ConfigData->accPktInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AccDataFswMsg), &inputAccData, moduleID);
 
     /* stacks data in time order*/
@@ -181,7 +181,7 @@ void Update_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime, ui
 /*! - Iterate through all of the input messages and archive their nav data*/
 //    for(int i=0; i<ConfigData->msgCount; i=i+1)
 //    {
-//        ReadMessage(ConfigData->outputNavMsgID, &writeTime, &ConfigData->msgCount,
+//        ReadMessage(ConfigData->outputNavMsgID, &timeOfMsgWritten, &ConfigData->msgCount,
 //                    sizeof(NavTransIntMsg), &(ConfigData->outputData), moduleID);
 //    }
 

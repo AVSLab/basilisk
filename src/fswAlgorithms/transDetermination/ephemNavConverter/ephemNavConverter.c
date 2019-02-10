@@ -71,11 +71,11 @@ void Update_ephemNavConverter(EphemNavConverterData *ConfigData, uint64_t callTi
 {
 
     
-    uint64_t writeTime;
-    uint32_t writeSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     EphemerisIntMsg localEph;
     
-    ReadMessage(ConfigData->ephInMsgID, &writeTime, &writeSize,
+    ReadMessage(ConfigData->ephInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(EphemerisIntMsg), &localEph, moduleID);
     
     memset(&ConfigData->outputState, 0x0, sizeof(NavTransIntMsg));

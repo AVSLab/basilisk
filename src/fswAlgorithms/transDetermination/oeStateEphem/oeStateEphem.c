@@ -75,8 +75,8 @@ void Update_oeStateEphem(OEStateEphemData *ConfigData, uint64_t callTime, uint64
 {
 
     double currentEphTime;
-    uint64_t writeTime;
-    uint32_t writeSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     double currentScaledValue;
     double meanAnom;
     double orbAnom;
@@ -86,7 +86,7 @@ void Update_oeStateEphem(OEStateEphemData *ConfigData, uint64_t callTime, uint64
     classicElements orbEl;
     
     memset(&localCorr, 0x0 ,sizeof(TDBVehicleClockCorrelationFswMsg));
-    ReadMessage(ConfigData->clockCorrInMsgID, &writeTime, &writeSize,
+    ReadMessage(ConfigData->clockCorrInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(TDBVehicleClockCorrelationFswMsg), &localCorr, moduleID);
     
     memset(&ConfigData->outputState, 0x0, sizeof(EphemerisIntMsg));

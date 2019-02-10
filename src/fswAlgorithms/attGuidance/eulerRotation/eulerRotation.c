@@ -87,14 +87,14 @@ void Update_eulerRotation(eulerRotationConfig *ConfigData, uint64_t callTime, ui
     /* - Read input messages */
     AttRefFswMsg inputRef;
     AttStateFswMsg attStates;
-    uint64_t writeTime;
-    uint32_t writeSize;
-    ReadMessage(ConfigData->attRefInMsgID, &writeTime, &writeSize,
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
+    ReadMessage(ConfigData->attRefInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AttRefFswMsg), (void*) &(inputRef), moduleID);
     if (ConfigData->desiredAttInMsgID >= 0)
     {
         /* - Read Raster Manager messages */
-        ReadMessage(ConfigData->desiredAttInMsgID, &writeTime, &writeSize,
+        ReadMessage(ConfigData->desiredAttInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(AttStateFswMsg), (void*) &(attStates), moduleID);
         /* - Save commanded 321 Euler set and rates */
         v3Copy(attStates.state, ConfigData->cmdSet);

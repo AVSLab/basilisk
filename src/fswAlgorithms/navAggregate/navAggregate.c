@@ -64,19 +64,19 @@ void CrossInit_aggregateNav(NavAggregateData *ConfigData, uint64_t moduleID)
  */
 void Update_aggregateNav(NavAggregateData *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    uint64_t writeTime;
-    uint32_t writeSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     uint32_t i;
     /*! Begin method steps */
     /*! - Iterate through all of the input messages and archive their nav data*/
     for(i=0; i<ConfigData->attMsgCount; i=i+1)
     {
-        ReadMessage(ConfigData->attMsgs[i].inputNavID, &writeTime, &writeSize,
+        ReadMessage(ConfigData->attMsgs[i].inputNavID, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(NavAttIntMsg), &(ConfigData->attMsgs[i].msgStorage), moduleID);
     }
     for(i=0; i<ConfigData->transMsgCount; i=i+1)
     {
-        ReadMessage(ConfigData->transMsgs[i].inputNavID, &writeTime, &writeSize,
+        ReadMessage(ConfigData->transMsgs[i].inputNavID, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(NavTransIntMsg), &(ConfigData->transMsgs[i].msgStorage), moduleID);
     }
     

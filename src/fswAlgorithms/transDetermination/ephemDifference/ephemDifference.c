@@ -87,21 +87,21 @@ void Update_ephemDifference(EphemDifferenceData *ConfigData, uint64_t callTime, 
 {
 
     
-    uint64_t writeTime;
-    uint32_t writeSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     uint32_t i;
     double posBase[3];
     double velBase[3];
     
-    ReadMessage(ConfigData->ephBaseInMsgID, &writeTime, &writeSize,
+    ReadMessage(ConfigData->ephBaseInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(EphemerisIntMsg), &ConfigData->baseEphem, moduleID);
     v3Scale(ConfigData->baseScale, ConfigData->baseEphem.r_BdyZero_N, posBase);
     v3Scale(ConfigData->baseScale, ConfigData->baseEphem.v_BdyZero_N, velBase);
     
     for(i=0; i<ConfigData->ephBdyCount; i++)
     {
-        ReadMessage(ConfigData->changeBodies[i].ephInMsgID, &writeTime,
-            &writeSize, sizeof(EphemerisIntMsg),
+        ReadMessage(ConfigData->changeBodies[i].ephInMsgID, &timeOfMsgWritten,
+            &sizeOfMsgWritten, sizeof(EphemerisIntMsg),
             &ConfigData->changeBodies[i].ephStore, moduleID);
         v3Subtract(ConfigData->changeBodies[i].ephStore.r_BdyZero_N,
                    posBase, ConfigData->changeBodies[i].ephStore.r_BdyZero_N);

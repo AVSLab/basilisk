@@ -76,8 +76,8 @@ void Reset_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t callTime,
     
     int32_t i;
     CSSConfigFswMsg cssConfigInBuffer;
-    uint64_t writeTime;
-    uint32_t writeSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     
     /*! Begin method steps*/
     /*! - Zero the local configuration data structures and outputs */
@@ -85,7 +85,7 @@ void Reset_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t callTime,
     memset(&(ConfigData->outputSunline), 0x0, sizeof(NavAttIntMsg));
     
     /*! - Read in coarse sun sensor configuration information.*/
-    ReadMessage(ConfigData->cssConfigInMsgId, &writeTime, &writeSize,
+    ReadMessage(ConfigData->cssConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CSSConfigFswMsg), &cssConfigInBuffer, moduleID);
     
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/

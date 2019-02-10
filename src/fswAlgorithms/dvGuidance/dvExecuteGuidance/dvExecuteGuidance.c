@@ -74,16 +74,16 @@ void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *ConfigData, uint64_t call
     double dvExecuteMag;
 	double burnTime;
     double dvMag;
-    uint64_t writeTime;
-    uint32_t writeSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     NavTransIntMsg navData;
     DvBurnCmdFswMsg localBurnData;
     dvExecutionData localExeData;
     THRArrayOnTimeCmdIntMsg effCmd;
     
-    ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize,
+    ReadMessage(ConfigData->inputNavID, &timeOfMsgWritten, &sizeOfMsgWritten,
         sizeof(NavTransIntMsg), &navData, moduleID);
-    ReadMessage(ConfigData->inputBurnCmdID, &writeTime, &writeSize,
+    ReadMessage(ConfigData->inputBurnCmdID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(DvBurnCmdFswMsg), &localBurnData, moduleID);
     
     burnTime = ((int64_t) callTime - (int64_t) localBurnData.burnStartTime)*1.0E-9;

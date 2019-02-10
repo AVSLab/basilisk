@@ -86,8 +86,8 @@ void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     
     int32_t i;
     int32_t badUpdate;
-    uint64_t writeTime;
-    uint32_t writeSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     double tempMatrix[AKF_N_STATES*AKF_N_STATES];
     
     /*! Begin method steps*/
@@ -95,9 +95,9 @@ void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     memset(&(ConfigData->outputInertial), 0x0, sizeof(NavAttIntMsg));
     
     /*! - Read static RW config data message and store it in module variables */
-    ReadMessage(ConfigData->rwParamsInMsgID, &writeTime, &writeSize,
+    ReadMessage(ConfigData->rwParamsInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(RWArrayConfigFswMsg), &(ConfigData->rwConfigParams), moduleID);
-    ReadMessage(ConfigData->massPropsInMsgId, &writeTime, &writeSize,
+    ReadMessage(ConfigData->massPropsInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
         sizeof(VehicleConfigFswMsg), &(ConfigData->localConfigData), moduleID);
     
     /*! - Initialize filter parameters to max values */
