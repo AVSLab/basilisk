@@ -63,12 +63,14 @@ void Reset_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime, uint64_
         BSK_PRINT(MSG_WARNING, "The configured number of CSS sensors exceeds the maximum, %d > %d! Changing the number of sensors to the max.", ConfigData->NumSensors, MAX_NUM_CSS_SENSORS);
         ConfigData->NumSensors = MAX_NUM_CSS_SENSORS;
     }
+    /* Unsigned Int so will never be negative
     else if (ConfigData->NumSensors < 0)
     {
         BSK_PRINT(MSG_WARNING, "There are less than 0 CSS sensors configured! Changing the number of sensors to zero.");
         ConfigData->NumSensors = 0;
     }
-    else
+    */
+    else if (ConfigData->NumSensors == 0)
     {
         BSK_PRINT(MSG_WARNING, "There are zero CSS configured!");
     }
