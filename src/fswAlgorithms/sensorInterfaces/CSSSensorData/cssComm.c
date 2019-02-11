@@ -57,15 +57,22 @@ void CrossInit_cssProcessTelem(CSSConfigData *ConfigData, uint64_t moduleID)
  */
 void Reset_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    /*! - Check to make sure that number of sensors is less than the max*/
+    /*! - Check to make sure that number of sensors is less than the max and non-negative*/
     if(ConfigData->NumSensors > MAX_NUM_CSS_SENSORS)
     {
         BSK_PRINT(MSG_WARNING, "The configured number of CSS sensors exceeds the maximum, %d > %d! Changing the number of sensors to the max.", ConfigData->NumSensors, MAX_NUM_CSS_SENSORS);
         ConfigData->NumSensors = MAX_NUM_CSS_SENSORS;
-        return; /* Throw warning about misconfigured sensors, and change the number to the max number of sensors */
     }
-  
-    //memset(ConfigData->KellyCheby, 0x0, MAX_NUM_CHEBY_POLYS*sizeof(double));
+    else if (ConfigData->NumSensors < 0)
+    {
+        BSK_PRINT(MSG_WARNING, "There are less than 0 CSS sensors configured! Changing the number of sensors to zero.");
+        ConfigData->NumSensors = 0;
+    }
+    else
+    {
+        BSK_PRINT(MSG_WARNING, "There are zero CSS configured!");
+    }
+    
     memset(ConfigData->InputValues.CosValue, 0x0, ConfigData->NumSensors*sizeof(double));
     
     return;
@@ -90,11 +97,7 @@ void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime,
     
     /*! Begin method steps*/
     /*! - Check for correct values in NumSensors and MaxSensorValue */
-    if(ConfigData->NumSensors >= MAX_NUM_CSS_SENSORS ||
-       ConfigData->MaxSensorValue <= 0.0)
-    {
-        return; /* Throw ugly FSW error/crash here */
-    }
+    
     memset(&OutputBuffer, 0x0, sizeof(CSSArraySensorIntMsg));
     ReadMessage(ConfigData->SensorMsgID, &timeOfMsgWritten, &sizeOfMsgWritten, sizeof(CSSArraySensorIntMsg),
                 (void*) (InputValues), moduleID);
@@ -107,21 +110,24 @@ void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime,
      -# If range is incorrect, set output value to zero */
     for(i=0; i<ConfigData->NumSensors; i++)
     {
-        if(InputValues[i] < ConfigData->MaxSensorValue && InputValues[i] >= 0.0)
+        if(InputValues[i] < ConfigData->MaxSensorValue && InputValues[i] > 0.0) // IF NEGATIVE SHOULD BE ZERO, IF ZERO SHOULDNT ADD A CORRECTION
         {
             /* Scale sensor */
-            OutputBuffer.CosValue[i] = (float) InputValues[i]/
-            ConfigData->MaxSensorValue;
+            //TODO: WHY IS THE CALIBRATION ADDED RATHER THAN MULTIPLIED (LOOK INTO THIS)
+            if (ConfigData->MaxSensorValue == 0)
+            {
+                BSK_PRINT(MSG_WARNING, "Max CSS sensor value configured to zero! CSS sensor values will be normalized by zero, inducing faux saturation!");
+            }
+            OutputBuffer.CosValue[i] = (float) InputValues[i]/ConfigData->MaxSensorValue;
+            
             /* Seed the polynomial computations*/
             ValueMult = 2.0*OutputBuffer.CosValue[i];
             ChebyPrev = 1.0;
             ChebyNow = OutputBuffer.CosValue[i];
             ChebyDiffFactor = 0.0;
-            ChebyDiffFactor = ConfigData->ChebyCount > 0 ?
-            ChebyPrev*ConfigData->KellyCheby[0] : ChebyDiffFactor;
-            ChebyDiffFactor = ConfigData->ChebyCount > 1 ?
-            ChebyNow*ConfigData->KellyCheby[1] +
-            ChebyDiffFactor : ChebyDiffFactor;
+            ChebyDiffFactor = ConfigData->ChebyCount > 0 ? ChebyPrev*ConfigData->KellyCheby[0] : ChebyDiffFactor;
+            ChebyDiffFactor = ConfigData->ChebyCount > 1 ? ChebyNow*ConfigData->KellyCheby[1] + ChebyDiffFactor : ChebyDiffFactor;
+            
             /*Loop over remaining polynomials and add in values*/
             for(j=2; j<ConfigData->ChebyCount; j = j+1)
             {
