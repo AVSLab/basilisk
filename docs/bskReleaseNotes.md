@@ -34,6 +34,9 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
     <li>
     Added lots of new unit tests to BSK modules
     </li>
+    <li>
+    rwNullSpace() module now sets ups module states in reset() instead of crossInit(), and includes new documentation and unit tests
+    </li>
 </ul>
 
 ## Version 0.3.3 
