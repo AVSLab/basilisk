@@ -100,7 +100,7 @@ void Reset_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
            ConfigData->numWheels, 3, GsInvHalf);                            /* find [Gs].[Gs]^T */
     m33Inverse(RECAST3X3 GsInvHalf, RECAST3X3 GsInvHalf);                   /* find ([Gs].[Gs]^T)^-1 */
     mMultM(GsInvHalf, 3, 3, GsMatrix, 3, ConfigData->numWheels,
-           ConfigData->tau);                                          /* find ([Gs].[Gs]^T)^-1.[Gs] */
+           ConfigData->tau);                                                /* find ([Gs].[Gs]^T)^-1.[Gs] */
     mMultM(GsTranspose, ConfigData->numWheels, 3, ConfigData->tau, 3,
            ConfigData->numWheels, GsTemp);                                  /* find [Gs]^T.([Gs].[Gs]^T)^-1.[Gs] */
     mSetIdentity(identMatrix, ConfigData->numWheels, ConfigData->numWheels);

@@ -129,12 +129,14 @@ def rwNullSpaceTestFunction(numWheels):
     print outputCrtlData
 
     if numWheels is 3:
+        # in this case there is no nullspace of the RW configuration.  The output torque should be the input torque
         trueVector = [inputRWCmdMsg.motorTorque,
                      inputRWCmdMsg.motorTorque,
                      inputRWCmdMsg.motorTorque,
                      inputRWCmdMsg.motorTorque,
                      inputRWCmdMsg.motorTorque]
     elif numWheels is 4:
+        # in this case there is a 1D nullspace of [Gs]
         GsT = np.array(gsHat)
         Gs = GsT.transpose()
         tmp = Gs.dot(GsT)
