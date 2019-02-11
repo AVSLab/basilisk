@@ -4,53 +4,44 @@
 
 \begin{figure}[H]
 	\centerline{
-		\includegraphics{Figures/Fig1}
+		\includegraphics[scale=0.5]{Figures/CSSCalibration}
 	}
-	\caption{Sample Figure Inclusion.}
-	\label{fig:Fig1}
+	\caption{Example of CSS output (blue) relative to a cosine curve (red) \cite{CSS}.}
+	\label{fig:CSSraw}
 \end{figure}
 
-This module reads in raw sensor data from the \verb. CSSArraySensorIntMsg., message type, iterates through each raw CSS measurement, normalizes the measurement, checks that the input is within sensible bounds, and then corrects the measurement by fitting a Chebyshev polynomial to the data. The corrected cosine measurement value is then written out in a \verb. CSSArraySensorIntMsg.. 
+This module reads in raw sensor data from the \verb. CSSArraySensorIntMsg., message type, iterates through each raw CSS measurement, normalizes the measurement, checks that the input is within sensible bounds, and then corrects the measurement based on pre-calibrated Chebyshev polynomial. The corrected cosine measurement value is then written out in a \verb. CSSArraySensorIntMsg.. 
 
 \subsection{Equations}
-Equations are centered with the equation number flush to the right. In the text, these equations should be referenced by name as Eq.~\eqref{eq:ab} or Equation~\eqref{eq:ab} (e.g., not eq.  1, (1), or Equation 1).
+The Chebyshev forumlation follows the standard formulation:
 \begin{equation}
-	\label{eq:ab}
-	a = b^{2}
+T_{i+1}(x) = 2xT_i(x) - T_{i-1}(x)
+\end{equation}
+where
+\begin{equation}
+T_0(x) = 1 
+\end{equation}
+\begin{equation}
+T_1(x) = x
 \end{equation}
 
-\subsection{Citation}
-The citation of bibliographical references is indicated in the text by superscripted Arabic numerals, preferably at the end of a sentence.  This is the default style included in this report \LaTeX\ class.\cite{pines1973}
+As such, the algorithm to compute the Chebyshev polynomial approximation given by the following exerpt \cite{Chebyshev}:
+\begin{enumerate}
+\item Suppose we want to evaluate Chebyshev polynomial of order $i$ at $x_0$, $(T_i(x_0))$
+\item The first two order of Chebyshev polynomials can be evaluated using the following form
 
-References listed at the end of the paper are indicated in the text by a superscript Arabic number. If this causes confusion in mathematics or if a superscript is not appropriate for other reasons, this can be expressed as (Ref.~1). 
+\begin{equation}
+T_0(x) = 1 
+\end{equation}
+\begin{equation}
+T_1(x) = x
+\end{equation}
 
-\subsection{Figures}
-Illustrations are referred to by name in the text as Figure~1, Figure 2, etc., or, Figures 3 and 4 (e.g., not figure 1, Fig. 1, or \emph{Figure} 1). Captions are in title case (miniscule lettering with the first letter of major words majuscule); they are 10-point serif font and centered below the figure as shown in Figure~\ref{fig:Fig1}. Each illustration should have a caption unless it is a mere sketch. An explanatory caption of several sentences is permissible. Each included illustration must be called out (mentioned) in the text. Ideally, figures should appear within the text just before they are called out. 
 
-The figure files (PDF preferred) should be stored in a common ``Figure'' sub-folder.  If available, any drawing documents used to create this figure can be stored in a ``Support'' sub-folder.
+\item The Chebyshev polynomial of order $i > 1$ can be computed using the values of Chebyshev polynomials of order $i-1$ and $i-2$ and the following recursive formula:
+\begin{equation}
+T_{i+1}(x) = 2xT_i(x) - T_{i-1}(x)
+\end{equation}
+\item Apply this formula up to the order $i$ to evaluate Chebyshev polynomial of order $i$ at $x_0$. 
+\end{enumerate}
 
-\subsection{Tables}
-Tables are referred to by name in the text as Table 1, or, Tables 2 and 3 (e.g., not table 1, Tbl. 1, or Table 1). The title is centered above the table, as shown in Table~\ref{tab:label}. The minimum number of lines needed for clarity is desired. The table font may be adjusted smaller than the body text as necessary.
-
-\begin{table}[htbp]
-	\caption{A Caption Goes Here}
-	\label{tab:label}
-	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{c | r | r } % Column formatting, 
-		\hline 
-		Animal    & Description & Price (\$)\\
-		\hline 
-		Gnat      & per gram & 13.65 \\
-		& each     &  0.01 \\
-		Gnu       & stuffed  & 92.50 \\
-		Emu       & stuffed  & 33.33 \\
-		Armadillo & frozen   &  8.99 \\
-		\hline
-	\end{tabular}
-\end{table}
-
-\subsection{Mathematical model}
-There can be subsections, like this one.
-
-\subsubsection{Gravity models}
-Even subsubsections. 
