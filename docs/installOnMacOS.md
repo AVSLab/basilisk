@@ -14,6 +14,8 @@ In order to run Basilisk on macOS, the following software is necessary:
 $ xcode-select --install
 ```
 2. Get the [CMake](http://cmake.org) application to be able to create the Xcode IDE file
+    * You will need the command line version of `cmake` as well.  The CMake.app contains instruction on how to install the command line version inside the Tools menu.
+    * As an alternate approach, you can also install using homebrew as described below  
 3. (Optional) Get the [SourceTree](http://sourcetreeapp.com) application to be able to pull and manage a copy of Basilisk
 4. (Optional) Get the [PyCharm](https://www.jetbrains.com/pycharm/) application to be able to edit python source files
 
@@ -24,6 +26,11 @@ $ xcode-select --install
 2. Install the SWIG package using
 ```
 $ brew install swig
+```
+3. (Optional) If you want to install the HomeBrew version of `cmake`, you can do so with
+```
+$ brew install cmake
+$ brew link cmake
 ```
   
 
