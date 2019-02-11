@@ -110,7 +110,7 @@ void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime,
      -# If range is incorrect, set output value to zero */
     for(i=0; i<ConfigData->NumSensors; i++)
     {
-        if(InputValues[i] < ConfigData->MaxSensorValue && InputValues[i] > 0.0) // IF NEGATIVE SHOULD BE ZERO, IF ZERO SHOULDNT ADD A CORRECTION
+        if(InputValues[i] < ConfigData->MaxSensorValue && InputValues[i] > 0.0)
         {
             /* Scale sensor */
             //TODO: WHY IS THE CALIBRATION ADDED RATHER THAN MULTIPLIED (LOOK INTO THIS)
@@ -125,8 +125,8 @@ void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime,
             ChebyPrev = 1.0;
             ChebyNow = OutputBuffer.CosValue[i];
             ChebyDiffFactor = 0.0;
-            ChebyDiffFactor = ConfigData->ChebyCount > 0 ? ChebyPrev*ConfigData->KellyCheby[0] : ChebyDiffFactor;
-            ChebyDiffFactor = ConfigData->ChebyCount > 1 ? ChebyNow*ConfigData->KellyCheby[1] + ChebyDiffFactor : ChebyDiffFactor;
+            ChebyDiffFactor = ConfigData->ChebyCount > 0 ? ChebyPrev*ConfigData->KellyCheby[0] : ChebyDiffFactor; // if only first order correction
+            ChebyDiffFactor = ConfigData->ChebyCount > 1 ? ChebyNow*ConfigData->KellyCheby[1] + ChebyDiffFactor : ChebyDiffFactor; // if higher order (> first) corrections
             
             /*Loop over remaining polynomials and add in values*/
             for(j=2; j<ConfigData->ChebyCount; j = j+1)
