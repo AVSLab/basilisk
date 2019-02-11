@@ -1,12 +1,12 @@
-% !TEX root = ./Basilisk-MODULENAME-yyyymmdd.tex
+% !TEX root = ./Basilisk-CSSSensorDataModule-20190207.tex
 
 
 \section{Module Functions}
-This section will contain a bullet-list and descriptions of what functions this module performs. For example:
+
 \begin{itemize}
-	\item \textbf{Calculate A Thing}: This module calculates a thing with great precision
-	\item \textbf{Communicate Something}: This module interfaces with X, Y, and Z via the messaging system.
+	\item \textbf{Corrects raw CSS data}: This module adjusts the raw CSS data to reflect sensor calibrations. 
+	\item \textbf{Sends out corrected values to the simulation}: This module outputs a \verb~ CSSArrayIntMsg ~ with to be used for guidance modules.
 \end{itemize}
 
 \section{Module Assumptions and Limitations}
-This section should describe the assumptions used in formulating the mathematical model and how those assumptions limit the usefulness of the module.
+The chebyshev calibration model and coefficients are calibrated for only one distance. As the spacecraft moves farther away from the distance for which the CSS were calibrated, the model will change. This should be most apparent at high sun angles.
