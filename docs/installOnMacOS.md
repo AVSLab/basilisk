@@ -14,8 +14,9 @@ In order to run Basilisk on macOS, the following software is necessary:
 $ xcode-select --install
 ```
 2. Get the [CMake](http://cmake.org) application to be able to create the Xcode IDE file
-    * You will need the command line version of `cmake` as well.  The CMake.app contains instruction on how to install the command line version inside the Tools menu.
-    * As an alternate approach, you can also install using homebrew as described below  
+    * You will need the command line version of `cmake` as well.  To see if you have it already installed, type `which cmake` into the terminal and you should an output like `/usr/local/bin/cmake`.  If you get no response, then you need to install `cmake`.  Here are two options:
+        1. The CMake.app contains instruction on how to install the command line version inside the Tools menu.
+        2. As an alternate approach, you can also install using homebrew as described below  
 3. (Optional) Get the [SourceTree](http://sourcetreeapp.com) application to be able to pull and manage a copy of Basilisk
 4. (Optional) Get the [PyCharm](https://www.jetbrains.com/pycharm/) application to be able to edit python source files
 
@@ -122,15 +123,16 @@ When all the prerequisite installations are complete, the project can be built a
 5. Clone into preferred Git client (Source Tree for instance), or just clone the repository in the directory containing Basilisk.  In SourceTree, use `clone from url`, add the Basilisk repository url (without `.git` on the end), and select `develop` branch to pull the latest code.
 \image html Images/doc/sourcetree-clone-panel.png width=568px
 
-6. The Cmake.app can't be opened by double clicking on it.  The required `conan` paths are not loaded.  To use the GUI Cmake.app program, open Cmake.app from the terminal using
-```
-$ open /Applications/cmake.app
-```
-An alternate approach is to run `cmake` directly from the terminal. Go to the `dist` destination folder and enter:
+6. The Cmake.app can't be used by double clicking on it. The required `conan` paths are not loaded.  Instead, run `cmake` directly from the terminal. Go to the `dist` destination folder and enter:
 ```
 $ cmake ../src -G Xcode
 ```
-This terminal command will both run the `configure` and `generate` steps outlined in the next step.
+This terminal command will both run the `configure` and `generate` steps outlined in the next step.  You can now skip to step 8.
+After successfully running `cmake` from the command line you can launch the GUI Cmake.app program from the terminal using
+```
+$ open /Applications/cmake.app
+```
+This launches the application with knowledge of the `conan` paths and you can use the GUI as described in step 7.
 
 7. To use the Cmake.app GUI to create the build files
     
@@ -139,8 +141,7 @@ This terminal command will both run the `configure` and `generate` steps outline
     * Click on browse Source, and select the source directory, the Basilisk repository that you just cloned
     * Press `Configure` in Cmake, select the Xcode IDE if running for the first time.  If you run into odd errors, try clearing the CMake.app cache under the `File` menu.
     * (Optional) Add a variable named `CMAKE_BUILD_TYPE` and set the value to Debug or Release depending on your desired config.
-    * Browse and select the build directory (`basilisk/dist/`). If this directory does not exist, create it.
-
+    * Browse and select the build directory (`basilisk/dist/`). If this directory does not exist, create it.<br>
     **Note:** If you wish to use the HomeBrew version of python  configure the Python paths in \ref customPython<br>
     **Potential Issue:** If you get an error message in CMake saying it can't find the compiler tools, open a Terminal window and type
 ```
