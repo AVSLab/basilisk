@@ -74,6 +74,8 @@
 \hline
 1.3 & Added discussion on the inertial angular velocity vector evaluation & H. Schaub & 2018-05-26\\
 \hline
+1.4 & Added residuals and links for FSW Review & T. Teil & 2019-02-12\\
+\hline
 
 \end{longtable}
 }
@@ -108,7 +110,7 @@ simply set based on the current output of each sensor which ensures that the
 sensors that have the best measurements are trusted the most.  If 3 CCS see the sun, then a unique heading is computed.  If 1-2 CSS see the sun then a minimum norm solution is evaluated.  If no CSS sees the sun then a zero vector is returned.
 The details of 
 this algorithm are available in Steve O'Keefe's PhD dissertation. 
-\footnote{\href{http://gradworks.umi.com/3704787.pdf}
+\footnote{\href{http://hanspeterschaub.info/Papers/grads/SteveOKeefe.pdf}
    {O'Keefe Public Dissertation Link}}
 
 The algorithm stores its internal variables in the CSSWLSConfig data structure 
@@ -133,7 +135,18 @@ These vector evaluations are performed using $\mathcal{B}$ frame vector componen
 
 Note that iff both $\bm d_{n}$ and $\bm d_{n-1}$ are nearly collinear a zero body rate vector is returned.  Further, during start-up and reset operations it is possible that $\Delta t$ might be zero for a single evaluation.  In this case also a zero rate vector is returned.  
  
+\subsection{Post-Fit residuals}
+In order to get a measurement of filter performance, post-fit residuals are computed in the method \texttt{computeWlsResiduals}.
 
+This method takes in the current coarse-sun sensor measurements, as well as the best estimate and compares the two.
+This is done by doting the estimate with all the normals of activated sensors, and subtracting them to the actual measured value.
+
+\begin{equation}
+	\label{eq:res}
+	r_i = \bm n_i \cdot \bm d - \bm n_i \cdot \hat{\bm d}
+\end{equation}
+Equations in~\ref{eq:res} show the process for the $i$-th sensor, where $\bm d$ is the true value, and $\hat{\bm d}$ is the filter estimate. These residuals are then output in the Sunline-FSW message. 
+ 
 
 \section{Test Design}
 The unit test for the cssWlsEst module is located in:\\
