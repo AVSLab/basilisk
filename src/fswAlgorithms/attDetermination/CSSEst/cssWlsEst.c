@@ -50,9 +50,10 @@ void SelfInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
  */
 void CrossInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
 {
-    /*! - Loop over the number of sensors and find IDs for each one */
+    /*! - Subscribe to css measurements */
     ConfigData->cssDataInMsgID = subscribeToMessage(ConfigData->cssDataInMsgName,
         sizeof(CSSArraySensorIntMsg), moduleID);
+    /*! - Subscribe to css configuration message for normals */
     ConfigData->cssConfigInMsgID = subscribeToMessage(ConfigData->cssConfigInMsgName,
                                                       sizeof(CSSConfigFswMsg), moduleID);
 }
@@ -134,12 +135,12 @@ int computeWlsmn(int numActiveCss, double *H, double *W,
 {
     double m22[2*2];
     double m32[3*2];
-    int status = 0;
+    uint8_t status = 0;
     double  m33[3*3];
     double  m33_2[3*3];
     double  m3N[3*MAX_NUM_CSS_SENSORS];
     double  m3N_2[3*MAX_NUM_CSS_SENSORS];
-    uint32_t i;
+    uint8_t i;
     
     /*! Begin method steps */
     /*! - If we only have one sensor, output best guess (cone of possiblities)*/
@@ -182,14 +183,14 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
     
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
-    CSSArraySensorIntMsg InputBuffer;
-    SunlineFilterFswMsg filtStatus;
-    double H[MAX_NUM_CSS_SENSORS*3];
-    double y[MAX_NUM_CSS_SENSORS];
+    CSSArraySensorIntMsg InputBuffer;                /*!< CSS measurements */
+    SunlineFilterFswMsg filtStatus;                /*!< Filter message */
+    double H[MAX_NUM_CSS_SENSORS*3];             /*!< Measurement Matrix containing the cosine values */
+    double y[MAX_NUM_CSS_SENSORS];               /*!< linearized measurements */
     double W[MAX_NUM_CSS_SENSORS*MAX_NUM_CSS_SENSORS];
-    uint32_t i;
-    uint32_t status;
-    double temp;
+    int i;
+    int status = 0;                             /*!< Quality of the module estimate */
+    double dOldDotNew;                                 /*!< intermediate value for dot product between new and old estimates for rate estimation */
     double dHatNew[3];                          /*!< new normalized sun heading estimate */
     double dHatOld[3];                          /*!< prior normalized sun heading estimate */
     double  dt;                                 /*!< [s] control update period */
@@ -269,10 +270,10 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
             v3Cross(dHatNew, dHatOld, ConfigData->sunlineOutBuffer.omega_BN_B);
             v3Normalize(ConfigData->sunlineOutBuffer.omega_BN_B, ConfigData->sunlineOutBuffer.omega_BN_B);
             /* compute principal rotation angle between sun heading measurements */
-            temp = v3Dot(dHatNew,dHatOld);
-            if (temp > 1.0) temp = 1.0;
-            if (temp < -1.0) temp = -1.0;
-            v3Scale(acos(temp)/dt, ConfigData->sunlineOutBuffer.omega_BN_B, ConfigData->sunlineOutBuffer.omega_BN_B);
+            dOldDotNew = v3Dot(dHatNew,dHatOld);
+            if (dOldDotNew > 1.0) dOldDotNew = 1.0;
+            if (dOldDotNew < -1.0) dOldDotNew = -1.0;
+            v3Scale(acos(dOldDotNew)/dt, ConfigData->sunlineOutBuffer.omega_BN_B, ConfigData->sunlineOutBuffer.omega_BN_B);
         } else {
             ConfigData->priorSignalAvailable = 1;
         }
