@@ -21,21 +21,26 @@ include(conan)
 conan_add_remote(NAME bincrafters URL https://api.bintray.com/conan/bincrafters/public-conan)
 conan_add_remote(NAME conan-community URL https://api.bintray.com/conan/conan-community/conan)
 
-if(USE_PROTOBUFFERS)
-  conan_cmake_run(REQUIRES eigen/3.3.5@conan/stable protobuf/3.6.1@bincrafters/stable
-	  BASIC_SETUP KEEP_RPATHS
-    BUILD missing)
-    #! PROTO-BUFFERS
-    find_package(protobuf CONFIG REQUIRED)
-    message(STATUS "Using Protocol Buffers ${protobuf_VERSION}")
-    set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+set(required_conan_libraries eigen/3.3.5@conan/stable)
 
-else()
- 
-  conan_cmake_run(REQUIRES eigen/3.3.5@conan/stable
-	  BASIC_SETUP KEEP_RPATHS
+
+if(USE_PROTOBUFFERS)
+  list(APPEND required_conan_libraries protobuf/3.6.1@bincrafters/stable)
+endif()
+
+if(USE_OPENCV)
+  list(APPEND required_conan_libraries opencv/4.0.1@conan/stable)
+endif()
+
+conan_cmake_run(REQUIRES ${required_conan_libraries}
+	              BASIC_SETUP KEEP_RPATHS
                 BUILD missing )
 
+if(USE_PROTOBUFFERS)
+  #! PROTO-BUFFERS
+  find_package(protobuf CONFIG REQUIRED)
+  message(STATUS "Using Protocol Buffers ${protobuf_VERSION}")
+  set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 endif()
 
 
