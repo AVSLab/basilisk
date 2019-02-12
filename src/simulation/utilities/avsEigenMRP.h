@@ -235,8 +235,8 @@ namespace Eigen {
             typedef _Scalar Scalar;
             typedef Matrix<_Scalar,3,1,_Options> Coefficients;
             enum{
-                IsAligned = internal::traits<Coefficients>::Flags & AlignedBit,
-                Flags = IsAligned ? (AlignedBit | LvalueBit) : LvalueBit
+                IsAligned = internal::traits<Coefficients>::Flags & PacketAccessBit,
+                Flags = IsAligned ? (PacketAccessBit | LvalueBit) : LvalueBit
             };
         };
     }
