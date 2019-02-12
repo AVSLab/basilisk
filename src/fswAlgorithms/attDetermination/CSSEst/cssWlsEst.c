@@ -78,6 +78,13 @@ void Reset_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime, uint64_t modul
     ConfigData->sunlineOutBuffer.timeTag = 0.0;
     v3SetZero(ConfigData->sunlineOutBuffer.sigma_BN);
     v3SetZero(ConfigData->sunlineOutBuffer.omega_BN_B);
+    v3SetZero(ConfigData->sunlineOutBuffer.vehSunPntBdy);
+    
+    ConfigData->.timeTag = 0.0;
+    v3SetZero(ConfigData->sunlineOutBuffer.sigma_BN);
+    v3SetZero(ConfigData->sunlineOutBuffer.omega_BN_B);
+    v3SetZero(ConfigData->sunlineOutBuffer.vehSunPntBdy);
+    
 
     /* Reset the prior time flag state.
      If zero, control time step not evaluated on the first function call */
@@ -282,8 +289,16 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
                      &filtStatus, moduleID);
 
     }
-
+    if(status > 0) /*! - If the status from the WLS computation is erroneous, populate the output messages with zeros*/
+    {
+        /* An error was detected while attempting to compute the sunline direction */
+        v3SetZero(ConfigData->sunlineOutBuffer.vehSunPntBdy);       /* zero the sun heading to indicate anomaly  */
+        v3SetZero(ConfigData->sunlineOutBuffer.omega_BN_B);         /* zero the rate measure */
+        ConfigData->priorSignalAvailable = 0;                       /* reset the prior heading estimate flag */
+    } else {
+        /*! - If the status from the WLS computation good, populate the output messages with the computed data*/
     WriteMessage(ConfigData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
                  &(ConfigData->sunlineOutBuffer), moduleID);
+    }
     return;
 }
