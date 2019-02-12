@@ -10,12 +10,6 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 * New Unity-based Basilisk visualization tool.
 * New download and install method that pulls all the code, compiles and leaves the user with BSK binaries specific for their platform
 
-## Version 0.X.X (upcoming release)
-<uL>
-    <li>
-    features to be added here
-    </li>
-</ul>
 
 
 ## Version 0.4.0
