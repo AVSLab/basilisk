@@ -213,7 +213,7 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
      - increase the number of valid observations
      -# Otherwise just continue
      */
-    for(i=0; i<MAX_NUM_CSS_SENSORS; i = i+1)
+    for(i=0; i<ConfigData->cssConfigInBuffer.nCSS; i = i+1)
     {
         if(InputBuffer.CosValue[i] > ConfigData->sensorUseThresh)
         {
