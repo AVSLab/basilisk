@@ -93,7 +93,7 @@ $ pip install --user --ignore-installed setuptools
 For more information about this file see this [online discussion](https://apple.stackexchange.com/questions/209572/how-to-use-pip-after-the-os-x-el-capitan-upgrade/209577). **Note:** If you have installed python packages already using `sudo pip install`, then these are stored in `Library/Python/2.7/site-packages`.  You need to add the `mac_fix_path.pth` file to this folder as well to make macOS ignore the system installed packages.  Or, to only use home directory installed python packages, just remove `Library/Python` folder.
 * From the terminal window, install the required general Python packages using:
 ```
-$ pip install --user numpy
+$ pip install --user numpy==1.15.4
 $ pip install --user matplotlib
 ```
 * Basilisk uses conan for package managing. In order to do so, users must install conan and set the remote repositories for libraries:

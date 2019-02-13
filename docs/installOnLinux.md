@@ -6,7 +6,7 @@
 In order to run Basilisk, the following software will be necessary.  This document outline how to install this support software.
 
 * [Cmake](https://cmake.org/)
-* [Python 2.7 (numpy, matplotlib, pytest, conan)](https://www.python.org/downloads/mac-osx/)
+* [Python 2.7 (numpy==1.15.4, matplotlib, pytest, conan)](https://www.python.org/downloads/mac-osx/)
 * [SWIG](http://www.swig.org/)
 * [GCC](https://gcc.gnu.org/)
 
