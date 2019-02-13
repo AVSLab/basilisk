@@ -23,6 +23,8 @@ conan_add_remote(NAME conan-community URL https://api.bintray.com/conan/conan-co
 
 set(required_conan_libraries eigen/3.3.5@conan/stable)
 
+option(USE_PROTOBUFFERS "Include modules which use Google Protobuffers" OFF)
+option(USE_OPENCV "Include modules which use OpenCV" OFF)
 
 if(USE_PROTOBUFFERS)
   list(APPEND required_conan_libraries protobuf/3.6.1@bincrafters/stable)
@@ -35,14 +37,6 @@ endif()
 conan_cmake_run(REQUIRES ${required_conan_libraries}
 	              BASIC_SETUP KEEP_RPATHS
                 BUILD missing )
-
-if(USE_PROTOBUFFERS)
-  #! PROTO-BUFFERS
-  find_package(protobuf CONFIG REQUIRED)
-  message(STATUS "Using Protocol Buffers ${protobuf_VERSION}")
-  set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-endif()
-
 
 #
 # Create a Swig module
@@ -194,9 +188,29 @@ function(findAndCreateSwigModules SubModule)
 	    get_filename_component(FileBase ${module} NAME_WE)
 	    get_filename_component(FileDir ${module} DIRECTORY)
 		set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
-		if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/CMakeLists.txt")
-	        continue()
-	    endif()
+
+        # If there is a CMakeLists file in the module directory execute it using
+        # the 'include()' function. The 'inculde()' function executes the 
+        # CMakeLists file in the same scope as the calling CMakeLists file.
+        # The intention is to allow modules to add libraries and header includes 
+        # unique to that module, rather than adding them to a growing list of 
+        # general project library and header includes. The following two variables
+        # are cleared to allow the called CMakeLists script to populate them.
+        #set(swig_module_${file_base}_libraries "")
+        #set(swig_module_${file_base}_includes "")
+        if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${dir_name}/CMakeLists.txt")
+            #include("${CMAKE_CURRENT_SOURCE_DIR}/${dir_name}/CMakeLists.txt")
+            # if Open CL libraries are installed and configured and the
+            # module requires Open CL then go ahead and include the module
+            #if (NOT USE_OPENCL OR NOT swig_module_${file_base}_use_opencl)
+            #    continue()
+            #endif()
+			continue()
+        endif()
+		# if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/CMakeLists.txt")
+		# 	        continue()
+		# 	    endif()
+		#
 	    file(GLOB impl_files
 		    "${FileDir}/*.cpp"
 		    "${FileDir}/*.c"
@@ -277,7 +291,7 @@ find_package(PythonLibs 2.7 REQUIRED)
 # set(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/Basilisk)
 
 ############################################################################################
-OPTION(WITH_COVERAGE "GCOV code coverage analysis"      OFF)
+OPTION(USE_COVERAGE "GCOV code coverage analysis"      OFF)
 ############################################################################################
 
 # Add general compiler flags
@@ -285,8 +299,8 @@ set(CMAKE_MACOSX_RPATH 1)
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 
 ############################################################################################
-IF (WITH_COVERAGE AND (CMAKE_COMPILER_IS_GNUC OR CMAKE_COMPILER_IS_GNUCXX))
-    MESSAGE(STATUS "WITH_COVERAGE : ${WITH_COVERAGE}")
+IF (USE_COVERAGE AND (CMAKE_COMPILER_IS_GNUC OR CMAKE_COMPILER_IS_GNUCXX))
+    MESSAGE(STATUS "USE_COVERAGE : ${USE_COVERAGE}")
     SET(GCOV_CFLAGS  "-fprofile-arcs -ftest-coverage -O0 -fno-default-inline -fno-inline")
     SET(GCOV_LDFLAGS "-fprofile-arcs -ftest-coverage -O0 -fno-default-inline -fno-inline")
 
