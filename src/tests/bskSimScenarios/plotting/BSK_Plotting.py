@@ -49,7 +49,7 @@ def save_all_plots(fileName, figureNames):
 
 
 def plot3components(vec):
-    plt.figure()
+    #plt.figure()
     time = vec[:, 0] * mc.NANO2MIN
     plt.xlabel('Time, min')
     plt.plot(time, vec[:, 1], color_x)
@@ -114,13 +114,13 @@ def plot_trackingError(sigma_BR, omega_BR_B):
 
 def plot_attitudeGuidance(sigma_RN, omega_RN_N):
     plt.figure()
-    plt.subplot(211)
+    #plt.subplot(211)
     plot_sigma(sigma_RN)
     plt.ylim([-1.0, 1.0])
     plt.title('Ref Att: $\sigma_{RN}$')
     
-    plt.subplot(212)
-    #plt.figure()
+    #plt.subplot(212)
+    plt.figure()
     plot_omega(omega_RN_N)
     plt.title('Ref Rate: $^N{\omega_{RN}}$')
     return
@@ -165,7 +165,7 @@ def plot_orbit(r_BN):
     return
 
 def plot_attitude_error(timeLineSet, dataSigmaBR):
-    plt.figure()
+    #plt.figure()
     fig = plt.gcf()
     ax = fig.gca()
     vectorData = unitTestSupport.pullVectorSetFromData(dataSigmaBR)
