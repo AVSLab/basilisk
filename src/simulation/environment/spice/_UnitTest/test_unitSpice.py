@@ -193,7 +193,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
     year = "".join(("20",DatePlot[6:8]))
     date = datetime.datetime( int(year) , int(DatePlot[0:2]) , int(DatePlot[3:5]))
 
-    testPlottingFixture.Date.append(DatePlot[0:8])
+    #testPlottingFixture.Date.append(DatePlot[0:8])
 
     #Get the GPS time
     date2 = datetime.datetime(1980, 01, 6) #Start of GPS time
@@ -274,9 +274,10 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
     MarsPosArray = numpy.array([MarsPosVec[0], MarsPosVec[1], MarsPosVec[2]])
     MarsPosDiff = MarsPosArray - MarsPosEnd
     PosDiffNorm = numpy.linalg.norm(MarsPosDiff)
+    print ("Mars PosDiffNorm = ", PosDiffNorm)
 
     # Plot Mars postion values
-    testPlottingFixture.MarsPosErr.append(PosDiffNorm)
+    #testPlottingFixture.MarsPosErr.append(PosDiffNorm)
 
     # Test Mars position values
     PosErrTolerance = 250
@@ -299,9 +300,10 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
     EarthPosArray = numpy.array([EarthPosVec[0], EarthPosVec[1], EarthPosVec[2]])
     EarthPosDiff = EarthPosArray - EarthPosEnd
     PosDiffNorm = numpy.linalg.norm(EarthPosDiff)
+    print ("Earth PosDiffNorm = ", PosDiffNorm)
 
     # Plot Earth position values
-    testPlottingFixture.EarthPosErr.append(PosDiffNorm)
+    #testPlottingFixture.EarthPosErr.append(PosDiffNorm)
 
     # TestResults['EarthPosCheck'] = True
     if (PosDiffNorm > PosErrTolerance):
@@ -322,9 +324,10 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
     SunPosArray = numpy.array([SunPosVec[0], SunPosVec[1], SunPosVec[2]])
     SunPosDiff = SunPosArray - SunPosEnd
     PosDiffNorm = numpy.linalg.norm(SunPosDiff)
+    print("Sun PosDiffNorm = ", PosDiffNorm)
 
     # plot Sun position values
-    testPlottingFixture.SunPosErr.append(PosDiffNorm)
+    #testPlottingFixture.SunPosErr.append(PosDiffNorm)
 
     # Test Sun position values
     if (PosDiffNorm > PosErrTolerance):
