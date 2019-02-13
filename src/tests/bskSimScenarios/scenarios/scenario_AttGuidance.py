@@ -239,16 +239,21 @@ class scenario_HillPointing(BSKScenario):
         print '%s: pull_outputs' % self.name
         # Dynamics process outputs
         sigma_BN = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN", range(3))
+        print "sigma_BN = ", sigma_BN[:, 1:]
         r_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", range(3))
+        print "r_BN_N = ", r_BN_N[:, 1:]
         v_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", range(3))
+        print "v_BN_N = ", v_BN_N[:, 1:]
 
         # FSW process outputs
         sigma_RN = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData.inputRefName + ".sigma_RN", range(3))
-        print "Hill frame sigma_HN = ", sigma_RN[:, 1:]
+        print "Hill Ref: sigma_HN = ", sigma_RN[:, 1:]
         omega_RN_N = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData.inputRefName + ".omega_RN_N", range(3))
+        print "Hill Ref: sigma_HN = ", sigma_RN[:, 1:]
         sigma_BR = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".sigma_BR", range(3))
         omega_BR_B = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", range(3))
         Lr = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().mrpFeedbackRWsData.outputDataName + ".torqueRequestBody", range(3))
+        print "Lr = ", Lr[:, 1:]
 
         # Plot results
         BSK_plt.clear_all_plots()
