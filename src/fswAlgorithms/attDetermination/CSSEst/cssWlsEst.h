@@ -24,6 +24,7 @@
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "fswMessages/cssConfigFswMsg.h"
 #include "fswMessages/cssUnitConfigFswMsg.h"
+#include "fswMessages/sunlineFilterFswMsg.h"
 #include <stdint.h>
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
 
@@ -50,6 +51,7 @@ typedef struct {
     uint64_t priorTime;                                 /*!< [ns] Last time the attitude control is called */
     CSSConfigFswMsg cssConfigInBuffer;                  /*!< -- CSS constellation configuration message buffer */
     NavAttIntMsg sunlineOutBuffer;                      /*!< -- Nav message*/
+    SunlineFilterFswMsg filtStatus;                     /*!< Filter message */
     int32_t cssDataInMsgID;                             /*!< -- ID for the incoming CSS sensor message*/
     int32_t cssConfigInMsgID;                           /*!< -- ID for the incoming CSS configuration message*/
     int32_t navStateOutMsgId;                            /*!< -- ID for the outgoing body estimate message*/
