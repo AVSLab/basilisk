@@ -50,10 +50,10 @@ void SelfInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
  */
 void CrossInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
 {
-    /* - Subscribe to css measurements */
+    /*! - Subscribe to css measurements */
     ConfigData->cssDataInMsgID = subscribeToMessage(ConfigData->cssDataInMsgName,
         sizeof(CSSArraySensorIntMsg), moduleID);
-    /* - Subscribe to css configuration message for normals */
+    /*! - Subscribe to css configuration message for normals */
     ConfigData->cssConfigInMsgID = subscribeToMessage(ConfigData->cssConfigInMsgName,
                                                       sizeof(CSSConfigFswMsg), moduleID);
 }
@@ -186,16 +186,16 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
     
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
-    CSSArraySensorIntMsg InputBuffer;            /*!< CSS measurements */
-    double H[MAX_NUM_CSS_SENSORS*3];             /*!< The predicted pointing vector for each measurement */
+    CSSArraySensorIntMsg InputBuffer;                /*!< CSS measurements */
+    double H[MAX_NUM_CSS_SENSORS*3];             /*!<  The predicted pointing vector for each measurement */
     double y[MAX_NUM_CSS_SENSORS];               /*!< Measurements */
-    double W[MAX_NUM_CSS_SENSORS*MAX_NUM_CSS_SENSORS];  /*!< matrix of measurement weights */
+    double W[MAX_NUM_CSS_SENSORS*MAX_NUM_CSS_SENSORS];
     int i;
-    int status = 0;                              /*!< Quality of the module estimate */
-    double dOldDotNew;                           /*!< intermediate value for dot product between new and old estimates for rate estimation */
-    double dHatNew[3];                           /*!< new normalized sun heading estimate */
-    double dHatOld[3];                           /*!< prior normalized sun heading estimate */
-    double  dt;                                  /*!< [s] control update period */
+    int status = 0;                             /*!< Quality of the module estimate */
+    double dOldDotNew;                                 /*!< intermediate value for dot product between new and old estimates for rate estimation */
+    double dHatNew[3];                          /*!< new normalized sun heading estimate */
+    double dHatOld[3];                          /*!< prior normalized sun heading estimate */
+    double  dt;                                 /*!< [s] control update period */
 
     /* Begin method steps*/
     /* - Read the input parsed CSS sensor data message*/
@@ -257,7 +257,7 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
             mSetIdentity(W, ConfigData->numActiveCss, ConfigData->numActiveCss);
         }
 
-        /* - Get least squares fit for sun pointing vector*/
+        /*! - Get least squares fit for sun pointing vector*/
         status = computeWlsmn(ConfigData->numActiveCss, H, W, y,
                               ConfigData->sunlineOutBuffer.vehSunPntBdy);
         computeWlsResiduals(InputBuffer.CosValue, &ConfigData->cssConfigInBuffer,
@@ -292,7 +292,7 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
                      &ConfigData->filtStatus, moduleID);
 
     }
-    if(status > 0) /* - If the status from the WLS computation is erroneous, populate the output messages with zeros*/
+    if(status > 0) /*! - If the status from the WLS computation is erroneous, populate the output messages with zeros*/
     {
         /* An error was detected while attempting to compute the sunline direction */
         v3SetZero(ConfigData->sunlineOutBuffer.vehSunPntBdy);       /* zero the sun heading to indicate anomaly  */
@@ -300,7 +300,7 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
         ConfigData->priorSignalAvailable = 0;                       /* reset the prior heading estimate flag */
         BSK_PRINT(MSG_ERROR, "Encountered singular matrix in least squares inverse.  Output message set to zero.");
     } else {
-        /* - If the status from the WLS computation good, populate the output messages with the computed data*/
+        /*! - If the status from the WLS computation good, populate the output messages with the computed data*/
     WriteMessage(ConfigData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
                  &(ConfigData->sunlineOutBuffer), moduleID);
     }
