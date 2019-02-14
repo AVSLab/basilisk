@@ -109,12 +109,15 @@ void computeWlsResiduals(double *cssMeas, CSSConfigFswMsg *cssConfig,
     double cssDotProd;
     
     memset(cssResiduals, 0x0, cssConfig->nCSS*sizeof(double));
-    
+    /*! The method loops through the sensors and performs: */
     for(i=0; i<cssConfig->nCSS; i++)
     {
+        /*! -# A dot product between the computed estimate with each sensor normal */
         cssDotProd = v3Dot(wlsEst, cssConfig->cssVals[i].nHat_B);
         cssDotProd = cssDotProd > 0.0 ? cssDotProd : 0.0; /*CSS values can't be negative!*/
+        /*! -# A subtraction between that post-fit measurement estimate and the actual measurement*/
         cssResiduals[i] = cssMeas[i] - cssDotProd;
+        /*! -# This populates the post-fit residuals*/
     }
     
 }
