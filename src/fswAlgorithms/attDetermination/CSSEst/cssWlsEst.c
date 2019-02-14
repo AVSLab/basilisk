@@ -125,7 +125,7 @@ void computeWlsResiduals(double *cssMeas, CSSConfigFswMsg *cssConfig,
 /*! This method computes a least squares fit with the given parameters.  It
  treats the inputs as though they were double dimensioned arrays but they
  are all singly dimensioned for ease of use
- @return success indicator (1 for good, 0 for fail)
+ @return success indicator (0 for good, 1 for fail)
  @param numActiveCss The count on input measurements
  @param H The predicted pointing vector for each measurement
  @param W the weighting matrix for the set of measurements
@@ -186,8 +186,8 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     CSSArraySensorIntMsg InputBuffer;                /*!< CSS measurements */
-    double H[MAX_NUM_CSS_SENSORS*3];             /*!< Measurement Matrix containing the cosine values */
-    double y[MAX_NUM_CSS_SENSORS];               /*!< linearized measurements */
+    double H[MAX_NUM_CSS_SENSORS*3];             /*!<  The predicted pointing vector for each measurement */
+    double y[MAX_NUM_CSS_SENSORS];               /*!< Measurements */
     double W[MAX_NUM_CSS_SENSORS*MAX_NUM_CSS_SENSORS];
     int i;
     int status = 0;                             /*!< Quality of the module estimate */
