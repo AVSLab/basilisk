@@ -38,6 +38,21 @@ conan_cmake_run(REQUIRES ${required_conan_libraries}
 	              BASIC_SETUP KEEP_RPATHS
                 BUILD missing )
 
+if(USE_PROTOBUFFERS)
+  #! PROTO-BUFFERS
+  find_package(protobuf CONFIG REQUIRED)
+  message(STATUS "Using Protocol Buffers ${protobuf_VERSION}")
+  set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+endif()
+
+if(USE_OPENCV)
+  #! OPEN_CV
+  find_package(opencv CONFIG REQUIRED)
+  message(STATUS "Using OpenCV ${opencv_VERSION}")
+  set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+endif()
+
+
 #
 # Create a Swig module
 # Avoids a deprecation error in CMAKE versions less than 3 by calling the correct API depending on version
@@ -188,7 +203,7 @@ function(findAndCreateSwigModules SubModule)
 	    get_filename_component(FileBase ${module} NAME_WE)
 	    get_filename_component(FileDir ${module} DIRECTORY)
 		set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
-
+		
         # If there is a CMakeLists file in the module directory execute it using
         # the 'include()' function. The 'inculde()' function executes the 
         # CMakeLists file in the same scope as the calling CMakeLists file.
@@ -196,21 +211,21 @@ function(findAndCreateSwigModules SubModule)
         # unique to that module, rather than adding them to a growing list of 
         # general project library and header includes. The following two variables
         # are cleared to allow the called CMakeLists script to populate them.
-        #set(swig_module_${file_base}_libraries "")
-        #set(swig_module_${file_base}_includes "")
+        set(swig_module_${file_base}_libraries "")
+		set(swig_module_${file_base}_includes "")
         if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${dir_name}/CMakeLists.txt")
-            #include("${CMAKE_CURRENT_SOURCE_DIR}/${dir_name}/CMakeLists.txt")
+    		include("${CMAKE_CURRENT_SOURCE_DIR}/${dir_name}/CMakeLists.txt")
             # if Open CL libraries are installed and configured and the
             # module requires Open CL then go ahead and include the module
-            #if (NOT USE_OPENCL OR NOT swig_module_${file_base}_use_opencl)
-            #    continue()
-            #endif()
-			continue()
+            if (NOT USE_OPENCV)
+                continue()
+            endif()
         endif()
+		
 		# if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/CMakeLists.txt")
 		# 	        continue()
 		# 	    endif()
-		#
+		
 	    file(GLOB impl_files
 		    "${FileDir}/*.cpp"
 		    "${FileDir}/*.c"
