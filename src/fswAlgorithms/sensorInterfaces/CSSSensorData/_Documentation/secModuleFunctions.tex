@@ -4,9 +4,9 @@
 \section{Module Functions}
 
 \begin{itemize}
-	\item \textbf{Corrects raw CSS data}: This module adjusts the raw CSS data to reflect sensor calibrations. 
-	\item \textbf{Sends out corrected values to the simulation}: This module outputs a \verb~ CSSArrayIntMsg ~ with to be used for guidance modules.
+	\item \textbf{Corrects Raw CSS Output Data}: This module maps the raw CSS measurement to the correct CSS cosine behavior. 
+	\item \textbf{Outputs Calibrated CSS Data}: This module outputs a \verb~CSSArrayIntMsg~ for subsequent guidance modules.
 \end{itemize}
 
 \section{Module Assumptions and Limitations}
-The chebyshev calibration model and coefficients are calibrated for only one distance. As the spacecraft moves farther away from the distance for which the CSS were calibrated, the model will change. This should be most apparent at high sun angles.
+The Chebyshev residual function is calibrated to a single distance from the sun. As the spacecraft moves farther away from this distance, the Chebyshev model loses accuracy. These model discrepancies grow increasingly apparent at high sun angles.
