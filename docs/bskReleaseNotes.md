@@ -4,6 +4,7 @@
 We are very excited by the great capabilities that this software already has, and plan to be updating this software regularly.  There is some documentation in terms of Doxygen generated HTML documentation, but also documentation within the code, and several Basilisk modules that are math heavy have LaTeX'd documentation folders as well.  Best place to start is to run the integrated tutorial scripts inside the `src/tests/scenarios` folder.  More documentation and tutorial scripts are in development.
 
 ## In Progress Features
+* CSS Comm module documentation and unit test added
 * ability to integrate custom Basilisk modules that are kept outside of the core Basilisk folder
 * GPU based methods to evaluate solar radiation pressure forces and torques
 * atmospheric drag evaluation using multi-faceted spacecraft model
