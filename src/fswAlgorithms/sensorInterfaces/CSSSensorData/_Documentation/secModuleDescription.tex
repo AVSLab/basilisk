@@ -13,15 +13,15 @@
 This module 
 \begin{itemize}
 \item Reads in raw CSS measurement from the \verb.CSSArraySensorIntMsg. message type.
-\item Iterates through each raw CSS measurement, normalizeing the measurement and checking that the input is within sensible bounds.
+\item Iterates through each raw CSS measurement, normalizing the measurement and checking that the input is within sensible bounds.
 \item Corrects the measurement based on calibrated residual function based on Chebyshev polynomials. 
-\item Outputs a \verb.CSSArraySensorIntMsg. with the corrected CSSmeasurements.
+\item Outputs a \verb.CSSArraySensorIntMsg. with the corrected CSS Measurements.
 \end{itemize}
 
 
 \subsection{Equations}
 \subsubsection{Residual Function}
-The correction applied to each CSS measurement is based on a function that maps a raw CSS measurement to the expected cosine response for that measurement (i.e. the distance from red curve to the blue curve in Fig. \ref{fig:CSSraw}). This function is modeled using a Chebyshev polynomial series to the $N$-th power represented by the following form: 
+The correction applied to each CSS measurement is based on a function that maps a raw CSS measurement to the expected cosine response for that measurement (i.e. the distance from red curve to the blue curve in Fig.\ref{fig:CSSraw}). This function is modeled using a Chebyshev polynomial series to the $N$-th power represented by the following form: 
 \begin{equation}
 \delta x = \sum_{i=0}^{N} C_i*T_i(x_{meas})
 \end{equation}
