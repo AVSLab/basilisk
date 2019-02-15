@@ -23,7 +23,6 @@ path = os.path.dirname(os.path.abspath(filename))
     pytest.param(-4, [-100e-6, 200e-6, 600e-6, 300e-6], marks=pytest.mark.xfail) # Negative sensor number to ensure all reset conditions are tested
 ])
 
-@pytest.mark.xfail
 
 def test_cssComm(numSensors, sensorData):
     [testResults, testMessage] = cssCommTestFunction(numSensors, sensorData)
@@ -108,9 +107,8 @@ def cssCommTestFunction(numSensors, sensorData):
     ]
 
 
-
     accuracy = 1e-6
-    unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
+
 
     testFailCount, testMessages = unitTestSupport.compareArrayND(trueCss, outputData, accuracy, "cosValues",
                                                                  moduleConfig.NumSensors, testFailCount, testMessages)
@@ -118,9 +116,10 @@ def cssCommTestFunction(numSensors, sensorData):
 
 
 
-
     #   print out success message if no error were found
-    snippentName = "passFail"
+    unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
+
+    snippentName = "passFail_"+str(numSensors)
     if testFailCount == 0:
         colorText = 'ForestGreen'
         print "PASSED: " + moduleWrap.ModelTag
