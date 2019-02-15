@@ -1,20 +1,17 @@
 % !TEX root = ./Basilisk-CSSSensorDataArray-20190207.tex
 
 \section{Test Description and Success Criteria}
-The unit test checks for proper functionality of the module for various CSS configurations and input values, both within and outside expected bounds.
-
+The unit test checks for proper functionality of the module for various CSS configurations and input values, both within and outside expected bounds. The three test cases run include:
+\begin{enumerate}
+\item Checking for appropriate correction to raw CSS sensor data while also handling too many sensor inputs (i.e. enforcing the total number of sensors inputs to the maximum sensors defined).
+\item Ensuring the simulation shuts down if zero sensors are configured.
+\item Ensuring the simulation shuts down if a negative number of sensors are configured.
+\end{enumerate}
 
 
 \section{Test Parameters}
 
-The three test cases run include:
-\begin{enumerate}
-\item Checking for appropriate correction to raw CSS sensor data.
-\item Handle too many sensor inputs, i.e. enforcing the total number of sensors inputs to the maximum sensors defined
-\item Ensuring the sim shuts down if zero or a negative number of sensors are configured.
-\end{enumerate}
-
-The unit test verify that the module output guidance message vectors match expected values.
+The unit test verify that the modules output cosine values match expectation.
 \begin{table}[htbp]
 	\caption{Error tolerance for each test.}
 	\label{tab:errortol}
@@ -33,17 +30,16 @@ The unit test verify that the module output guidance message vectors match expec
 
 \section{Test Results}
 
-All of the tests passed:
+Only the first test case produces a result, as the others cause the simulation to shut down. As such, the first test passed and the remaining two tests throw expected failures:
 \begin{table}[H]
 	\caption{Test results}
 	\label{tab:results}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{c | c  } % Column formatting, 
+	\begin{tabular}{c | c | c  } % Column formatting, 
 		\hline\hline
-		\textbf{Check} 						  		&\textbf{Pass/Fail} \\ 
+		\textbf{Num Sensors} 		& \textbf{Num Inputs}				  		&\textbf{Pass/Fail} \\ 
 		\hline
-	   1	   			& \input{AutoTeX/passFail} \\ 
-
+	   4	   			& 5 &\input{AutoTeX/passFail_4} \\ 
 	   \hline\hline
 	\end{tabular}
 \end{table}
