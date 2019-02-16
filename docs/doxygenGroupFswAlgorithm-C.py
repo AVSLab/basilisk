@@ -1,4 +1,4 @@
-## \defgroup fswAlgorithms
+## \defgroup fswAlgorithms fswAlgorithm Modules
 # @brief Folder with Basilisk Flight Software Algorithm Modules using ANSI-C.
 # The collection provide a self-study guide
 # to learn how to setup Basilisk astrodynamics simulations.  The chapters provide groupings of
