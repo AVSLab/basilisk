@@ -19,7 +19,7 @@ path = os.path.dirname(os.path.abspath(filename))
 
 @pytest.mark.parametrize("numSensors, sensorData", [
     (4, [-100e-6, 200e-6, 600e-6, 300e-6, 200e-6]),  # Five data inputs used despite four sensors to ensure all reset conditions are tested.
-    pytest.param(0, [-100e-6, 200e-6, 600e-6, 300e-6], marks=pytest.mark.xfail) # Zero sensor number to ensure all reset conditions are tested
+    pytest.param(0, [-100e-6, 200e-6, 600e-6, 300e-6]) # Zero sensor number to ensure all reset conditions are tested
 ])
 
 
