@@ -27,6 +27,10 @@
 #include "../simulation/utilities/avsEigenMRP.h"
 #include "simMessages/hingedRigidBodySimMsg.h"
 
+/*! \addtogroup SimModelGroup
+ * @{
+ */
+
 /*! @brief This class is an instantiation of the stateEffector class and is a hinged rigid body effector. This effector
  is a rigid body attached to the hub through a torsional spring and damper that approximates a flexible appendage. See
  Allard, Schaub, and Piggott paper: "General Hinged Solar Panel Dynamics Approximating First-Order Spacecraft Flexing"
@@ -97,5 +101,7 @@ public:
     void calcForceTorqueOnBody(double integTime, Eigen::Vector3d omega_BN_B);  //!< -- Force and torque on s/c due to HRBs
     void prependSpacecraftNameToStates();
 };
+
+/* @} */
 
 #endif /* STATE_EFFECTOR_H */

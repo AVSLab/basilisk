@@ -29,6 +29,11 @@
 #include "simMessages/fuelTankSimMsg.h"
 #include "../_GeneralModuleFiles/fuelSlosh.h"
 
+/*! \addtogroup SimModelGroup
+ * @{
+ */
+
+
 //Fuel tank models
 /*! @brief This class is an abstract class that has the minimum interfaces for a tank model */
 struct FuelTankModel {
@@ -280,5 +285,8 @@ public:
                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
     virtual void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
 };
+
+
+/* @} */
 
 #endif /* FUEL_TANK_H */

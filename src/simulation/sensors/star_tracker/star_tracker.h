@@ -29,6 +29,9 @@
 #include <Eigen/Dense>
 #include "../simulation/utilities/avsEigenMRP.h"
 
+/*! \addtogroup SimModelGroup
+ * @{
+ */
 
 //!@brief Sensor model to simulate a Star Tracker.
 /*!
@@ -80,5 +83,7 @@ private:
     int64_t outputStateID;            //!< [-] Connection to outgoing state message
     GaussMarkov errorModel;           //!< [-] Gauss-markov error states
 };
+
+/* @} */
 
 #endif

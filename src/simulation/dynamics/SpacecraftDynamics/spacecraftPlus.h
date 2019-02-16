@@ -33,6 +33,11 @@
 #include "simMessages/scPlusMassPropsSimMsg.h"
 #include "hubEffector.h"
 
+
+/*! \addtogroup SimModelGroup Simulation C++ Modules
+ * @{
+ */
+
 /*! @brief This is an instantiation of the dynamicObject abstract class that is a spacecraft with stateEffectors and
  dynamicEffectors attached to it. The spacecraftPlus allows for both translation and
  rotation. stateEffectors such as RWs, flexible solar panel, fuel slosh etc can be added to the spacecraft by attaching 
@@ -111,5 +116,7 @@ private:
     int64_t scStateOutMsgId;                    //!< -- Message ID for the outgoing spacecraft state
     int64_t scMassStateOutMsgId;                //!< -- Message ID for the outgoing spacecraft mass state
 };
+
+/* @} */
 
 #endif /* SPACECRAFT_PLUS_H */

@@ -26,6 +26,10 @@
 #include "../simulation/utilities/avsEigenMRP.h"
 #include "../_GeneralModuleFiles/fuelSlosh.h"
 
+/*! \addtogroup SimModelGroup Simulation C++ Modules
+ * @{
+ */
+
 /*! @brief This class in an instantiation of the state effector class and implements an effector representing a oscillating particle
 
  The module
@@ -83,6 +87,8 @@ public:
                                               double & rotEnergyContr, Eigen::Vector3d omega_BN_B);  //!< -- Energy and momentum calculations
     void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
 };
+
+/* @} */
 
 #endif /* LINEAR_SPRING_MASS_DAMPER_H */
 

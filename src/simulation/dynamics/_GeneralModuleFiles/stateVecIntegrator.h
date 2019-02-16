@@ -21,6 +21,10 @@
 #ifndef stateVecIntegrator_h
 #define stateVecIntegrator_h
 
+/*! \addtogroup SimModelGroup
+ * @{
+ */
+
 class DynamicObject;
 
 /*!
@@ -37,5 +41,7 @@ public:
 protected:
     DynamicObject* dynPtr; //!< This is an object that contains the method equationsOfMotion(), also known as the F function.
 };
+
+/* @} */
 
 #endif /* StateVecIntegrator_h */

@@ -78,4 +78,6 @@ private:
     Eigen::Vector3d dragDirection;
 };
 
+/* @} */
+
 #endif /* THRUSTER_DYNAMIC_EFFECTOR_H */

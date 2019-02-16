@@ -24,6 +24,10 @@
 #include "../_GeneralModuleFiles/dynParamManager.h"
 #include <stdint.h>
 
+/*! \addtogroup SimModelGroup Simulation C++ Modules
+ * @{
+ */
+
 /*!
  @brief RK2 integrator. It only implements the method integrate() to advance one time step.
 
@@ -41,5 +45,7 @@ public:
     virtual void integrate(double currentTime, double timeStep);
     
 };
+
+/* @} */
 
 #endif /* svIntegratorRK2_h */
