@@ -54,7 +54,7 @@ from Basilisk.fswAlgorithms import fswMessages
 
 
 
-## \defgroup Tutorials_2_0_4
+## \defgroup scenarioAttitudeFeedbackNoEarthGroup
 ##   @{
 # Demonstrates how to simulate an attitude control scenario without having any gravity
 # bodies present. In essence, the spacecraft is hovering in deep space.  The goal is to

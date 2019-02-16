@@ -45,7 +45,7 @@ from Basilisk.simulation import simMessages
 
 
 
-## \defgroup Tutorials_4_0
+## \defgroup scenarioCSSGroup
 ##   @{
 ## Demonstrates how to add a Coarse Sun Sensor (CSS) sensor to a spacecraft.
 #

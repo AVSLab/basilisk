@@ -53,7 +53,7 @@ from Basilisk.fswAlgorithms import fswMessages
 
 
 
-## \defgroup Tutorials_2_0
+## \defgroup scenarioAttitudeFeedbackGroup
 ##   @{
 # Demonstrates how to stabilize the tumble of a spacecraft orbiting the
 # Earth that is initially tumbling.

@@ -8,11 +8,11 @@
 #   \defgroup Tutorial_1 Chapter 1: Orbital Simulations
 #   @brief This chapter covers spacecraft orbital simulations where only translation is considered.
 #   @{
-#       \defgroup Tutorials_1_0 1.1 Basic Orbits
-#       \defgroup Tutorials_1_1 1.2 Using Integrators
-#       \defgroup Tutorials_1_2 1.3 Doing Impulsive Orbit Maneuvers
-#       \defgroup Tutorials_1_3 1.4 Using Multiple Gravitational Bodies
-#       \defgroup Tutorials_1_4 1.5 Setting States Relative to Planets
+#       \defgroup scenarioBasicOrbitGroup                   1.1 Basic Orbits
+#       \defgroup scenarioIntegratorsGroup                  1.2 Using Integrators
+#       \defgroup scenarioOrbitManeuverGroup                1.3 Doing Impulsive Orbit Maneuvers
+#       \defgroup scenarioOrbitMultiBodyGroup               1.4 Using Multiple Gravitational Bodies
+#       \defgroup scenarioCentralBodyGroup                  1.5 Setting States Relative to Planets
 #   @}
 #
 #   \defgroup Tutorial_2 Chapter 2: Attitude Simulations
@@ -25,30 +25,30 @@
 #       simulation options.  In each case regulation attitude control solution is applied to
 #       stabilize the spacecraft orientation.
 #       @{
-#           \defgroup Tutorials_2_0     2.1.1 Using 1 Task Group
-#           \defgroup Tutorials_2_0_2   2.1.2 Using 2 Task Groups (SIM and FSW)
-#           \defgroup Tutorials_2_0_3   2.1.3 Using Python FSW Module
-#           \defgroup Tutorials_2_0_1   2.1.4 Basic Attitude Control in Deep Space
-#           \defgroup Tutorials_2_0_4   2.1.5 Complex Control in Deep Space
+#           \defgroup scenarioAttitudeFeedbackGroup         2.1.1 Using 1 Task Group
+#           \defgroup scenarioAttitudeFeedback2TGroup       2.1.2 Using 2 Task Groups (SIM and FSW)
+#           \defgroup scenarioAttitudePythonPDGroup         2.1.3 Using Python FSW Module
+#           \defgroup scenarioAttitudePointingGroup         2.1.4 Basic Attitude Control in Deep Space
+#           \defgroup scenarioAttitudeFeedbackNoEarthGroup  2.1.5 Complex Control in Deep Space
 #       @}
 #       \defgroup Tutorials_22 2.2  Attitude Guidance
 #       @brief This section covers spacecraft attitude guidance examples.  The attitude
 #       guidance modules are designed to be connected in a modular manner using baseline
 #       and dynamics behaviors.
 #       @{
-#           \defgroup Tutorials_2_1     2.2.1 Hill Frame Guidance
-#           \defgroup Tutorials_2_1_1   2.2.2 Velocity Frame Guidance
+#           \defgroup scenarioAttitudeGuidanceGroup         2.2.1 Hill Frame Guidance
+#           \defgroup scenarioAttGuideHyperbolicGroup       2.2.2 Velocity Frame Guidance
 #       @}
-#       \defgroup Tutorials_2_2         2.3 Reaction Wheel Control
-#       \defgroup Tutorials_2_3         2.4 MRP Steering Attitude Control
+#       \defgroup scenarioAttitudeFeedbackRWGroup           2.3 Reaction Wheel Control
+#       \defgroup scenarioAttitudeSteeringGroup             2.4 MRP Steering Attitude Control
 #   @}
 #
 #   \defgroup Tutorial_3 Chapter 3: Complex Spacecraft Dynamics Simulations
 #   @brief This chapter discusses spacecraft dynamics components that reach beyond the
 #   classical translational and rotational degrees of freedom.
 #   @{
-#       \defgroup Tutorials_3_0         3.1 Fuel Slosh
-#       \defgroup Tutorials_3_1         3.2 Flexible (Hinged) Panels
+#       \defgroup scenarioFuelSloshGroup                    3.1 Fuel Slosh
+#       \defgroup scenarioHingedRigidBodyGroup              3.2 Flexible (Hinged) Panels
 #   @}
 #
 #   \defgroup Tutorial_4 Chapter 4: Spacecraft Sensors
@@ -57,8 +57,8 @@
 #       \defgroup Tutorials_41 4.1  Coarse Sun Sensors
 #       @brief This section covers coarse sun sensor or CSS devices.
 #       @{
-#           \defgroup Tutorials_4_0     4.1.1 Adding CSS to simulation
-#           \defgroup Tutorials_4_0_1   4.1.2 Estimating Sun Heading with CSS
+#           \defgroup scenarioCSSGroup                      4.1.1 Adding CSS to simulation
+#           \defgroup scenarioCSSFiltersGroup               4.1.2 Estimating Sun Heading with CSS
 #       @}
 #   @}
 #
@@ -68,7 +68,7 @@
 #   can be statistically varied and the resulting performance observed over a large
 #   number of simulation runs.
 #   @{
-#       \defgroup Tutorials_5_0         5.1 MC run with RW control
+#       \defgroup scenarioMonteCarloAttRWGroup              5.1 MC run with RW control
 #   @}
 #
 #   \defgroup Tutorial_6 Chapter 6: bskSim()-Based Simulation
@@ -78,12 +78,12 @@
 #   algorithm can be setup in a range of flight mode, including the ability to switch between
 #   flight modes.
 #   @{
-#       \defgroup Tutorials_6_0         6.1 Basic Orbital Simulation
-#       \defgroup Tutorials_6_1         6.2 Attitude Detumble Control
-#       \defgroup Tutorials_6_2         6.3 Hill Pointing Attitude Control
-#       \defgroup Tutorials_6_3         6.4 Velocity Frame Pointing Control
-#       \defgroup Tutorials_6_4         6.5 MRP Steering Attitude Control
-#       \defgroup Tutorials_6_5         6.6 Sun Pointing Mode Include Eclipse Evaluation
+#       \defgroup scenario_BasicOrbitGroup                  6.1 Basic Orbital Simulation
+#       \defgroup scenario_FeedbackRWGroup                  6.2 Attitude Detumble Control
+#       \defgroup scenario_AttGuidanceGroup                 6.3 Hill Pointing Attitude Control
+#       \defgroup scenario_AttGuidHyperbolicGroup           6.4 Velocity Frame Pointing Control
+#       \defgroup scenario_AttSteeringGroup                 6.5 MRP Steering Attitude Control
+#       \defgroup scenario_AttEclipseGroup                  6.6 Sun Pointing Mode Include Eclipse Evaluation
 #   @}
 #
 #   \defgroup Tutorial_7 Chapter 7: Spacecraft Formation Flying
@@ -92,13 +92,13 @@
 #       \defgroup Tutorials_71 7.1  Formation Flying Dynamics
 #       @brief This section covers simulations involving more than one spacecraft.
 #       @{
-#           \defgroup Tutorials_7_0     7.1.1 Two-Spacecraft Formation
+#           \defgroup scenario_BasicOrbitFormationGroup     7.1.1 Two-Spacecraft Formation
 #       @}
 #       \defgroup Tutorials_72 7.2  Formation Flying Control
 #       @brief This section covers FSW control simulations that depend on the relative
 #       states of two or more spacecraft.
 #       @{
-#           \defgroup Tutorials_7_1     7.2.1 Relative Pointing Control
+#           \defgroup scenario_RelativePointingFormationGroup 7.2.1 Relative Pointing Control
 #       @}
 #   @}
 #

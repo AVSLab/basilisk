@@ -116,7 +116,7 @@ def plot_orientation(timeLineSet, dataPos, dataVel, dataSigmaBN):
     plt.ylabel('Orientation Illustration')
 
 
-## \defgroup Tutorials_2_1
+## \defgroup scenarioAttitudeGuidanceGroup
 ##   @{
 ## How to use guidance modules to align the spacecraft frame to the orbit or Hill frame.
 #

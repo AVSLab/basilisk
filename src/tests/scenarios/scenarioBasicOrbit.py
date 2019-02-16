@@ -45,7 +45,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 
 
 
-## \defgroup Tutorials_1_0
+## \defgroup scenarioBasicOrbitGroup
 ## @{
 ## Demonstration of setup basic 3-DOF orbit simulation setup.
 #

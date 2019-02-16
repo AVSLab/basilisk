@@ -115,7 +115,7 @@ def plot_orbit(oe, mu, planet_radius, dataPos, dataVel):
 
 
 
-## \defgroup Tutorials_2_1_1
+## \defgroup scenarioAttGuideHyperbolicGroup
 ## @{
 # How to use guidance modules to align the spacecraft frame to the velocity-pointing frame.
 #

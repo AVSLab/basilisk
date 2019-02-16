@@ -64,7 +64,7 @@ from Basilisk.utilities import simulationArchTypes
 from Basilisk.fswAlgorithms import fswMessages
 
 
-## \defgroup Tutorials_2_0_3
+## \defgroup scenarioAttitudePythonPDGroup
 ##   @{
 ## Demonstrates how to stabilize the tumble of a spacecraft orbiting the
 # Earth that is initially tumbling, but uses 3 separate threads, one of them python.

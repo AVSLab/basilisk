@@ -108,7 +108,7 @@ samplingTime = simulationTime / (numDataPoints-1)
 
 
 
-## \defgroup Tutorials_5_0
+## \defgroup scenarioMonteCarloAttRWGroup
 ##   @{
 ## Demonstrates how to run basic Monte-Carlo (MC) RW-based attitude simulations.
 #

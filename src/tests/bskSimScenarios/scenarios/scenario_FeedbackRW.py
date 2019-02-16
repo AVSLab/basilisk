@@ -17,7 +17,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-## \defgroup Tutorials_6_1
+## \defgroup scenario_FeedbackRWGroup
 ## @{
 # Demonstrates how to stabilize the tumble of a 6-DOF spacecraft with reaction wheels in the BSK_Sim architecture.
 #

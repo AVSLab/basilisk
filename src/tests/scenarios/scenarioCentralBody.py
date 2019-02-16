@@ -47,7 +47,7 @@ from numpy.linalg import norm
 
 
 
-## \defgroup Tutorials_1_4
+## \defgroup scenarioCentralBodyGroup
 ## @{
 ## Demonstration of using planetStates.planetPositionVelocity and isCentralBody to set
 ## spacecraft initial states in an absolute or relative frame

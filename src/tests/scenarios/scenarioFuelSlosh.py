@@ -41,7 +41,7 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 
-## \defgroup Tutorials_3_0
+## \defgroup scenarioFuelSloshGroup
 ## @{
 ## Demonstration of basic 6-DOF orbit and fuel slosh simulation setup.
 #
