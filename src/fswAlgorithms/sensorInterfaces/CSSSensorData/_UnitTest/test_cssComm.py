@@ -98,12 +98,16 @@ def cssCommTestFunction(numSensors, sensorData):
     unitTestSim.ExecuteSimulation()
 
     # Get the output from this simulation
+    MAX_NUM_CSS_SENSORS = simFswInterfaceMessages.MAX_NUM_CSS_SENSORS
+    outputData = unitTestSim.pullMessageLogData(moduleConfig.OutputDataName+".CosValue", range(MAX_NUM_CSS_SENSORS))
+    trueCssList= [0]*MAX_NUM_CSS_SENSORS
+    if numSensors==4:
+        trueCssList[0:4] = [0.0, 0.45791653042, 0.0, 0.615444781018]
 
-    outputData = unitTestSim.pullMessageLogData(moduleConfig.OutputDataName+".CosValue", range(moduleConfig.NumSensors))
     # Create the true array
     trueCss = [
-        [0.0, 0.45791653042, 0.0, 0.615444781018, 0.802325127473],
-        [0.0, 0.45791653042, 0.0, 0.615444781018, 0.802325127473]
+        trueCssList,
+        trueCssList
     ]
 
 
@@ -111,7 +115,7 @@ def cssCommTestFunction(numSensors, sensorData):
 
 
     testFailCount, testMessages = unitTestSupport.compareArrayND(trueCss, outputData, accuracy, "cosValues",
-                                                                 moduleConfig.NumSensors, testFailCount, testMessages)
+                                                                 MAX_NUM_CSS_SENSORS, testFailCount, testMessages)
 
 
 
