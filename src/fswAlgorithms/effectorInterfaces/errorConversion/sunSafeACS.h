@@ -28,7 +28,7 @@
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 #include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup sunSafeACS
  * @{
  */
 

@@ -25,7 +25,7 @@
 #include "fswMessages/attStateFswMsg.h"
 
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup rasterManager
  * @{
  */
 

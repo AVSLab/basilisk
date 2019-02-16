@@ -25,6 +25,10 @@
 #include "messaging/static_messaging.h"
 #include "./simFswInterfaceMessages/ephemerisIntMsg.h"
 
+/*! \defgroup ephemDifference
+ *  @{
+ */
+
 typedef struct{
     char ephInMsgName[MAX_STAT_MSG_LENGTH];  /*!< [-] Input name for the ephemeris message*/
     int32_t ephInMsgID;                      /*!< [-] Input message ID for ephemeris*/

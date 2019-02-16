@@ -25,7 +25,7 @@
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "fswMessages/vehicleConfigFswMsg.h"
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup vehicleConfigData
  * @{
  */
 

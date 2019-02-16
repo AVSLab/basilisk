@@ -24,6 +24,9 @@
 #include "simFswInterfaceMessages/ephemerisIntMsg.h"
 #include "simFswInterfaceMessages/navTransIntMsg.h"
 
+/*! \defgroup ephemNavConverter
+ *  @{
+ */
 /*! @brief Top level structure for the converter that takes an 
     ephemeris output message and converts it over to a translational 
 	state estimate message.

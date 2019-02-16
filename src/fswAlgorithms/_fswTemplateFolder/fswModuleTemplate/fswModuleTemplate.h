@@ -26,7 +26,9 @@
 
 
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup fswModuleTemplate
+ * @brief This is a template module for FSW algorithms in ANSI-C.  Make a copy of this module and change the
+ * file names to match the new module you are creating.
  * @{
  */
 

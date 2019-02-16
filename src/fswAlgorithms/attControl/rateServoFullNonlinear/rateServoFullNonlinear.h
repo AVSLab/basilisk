@@ -30,7 +30,7 @@
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 #include <stdint.h>
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup rateServoFullNonlinear
  * @{
  */
 

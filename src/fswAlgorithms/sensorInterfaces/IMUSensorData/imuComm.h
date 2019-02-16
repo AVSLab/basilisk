@@ -26,7 +26,9 @@
 #include "simFswInterfaceMessages/imuSensorIntMsg.h"
 
 
-
+/*! \defgroup imuComm
+ *  @{
+ */
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the
  CSS interface*/
 typedef struct {

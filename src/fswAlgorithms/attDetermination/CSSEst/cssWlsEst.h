@@ -27,7 +27,7 @@
 #include <stdint.h>
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup cssWlsEst
  * @{
  */
 

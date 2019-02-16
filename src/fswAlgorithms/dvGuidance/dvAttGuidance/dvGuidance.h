@@ -25,7 +25,7 @@
 #include "fswMessages/dvBurnCmdFswMsg.h"
 #include <stdint.h>
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup  dvAttGuidance
  * @{
  */
 

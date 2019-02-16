@@ -32,7 +32,7 @@
 #include <stdint.h>
 
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup inertialUKF
  * @{
  */
 

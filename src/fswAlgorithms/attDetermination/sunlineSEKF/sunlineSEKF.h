@@ -29,7 +29,7 @@
 #include "fswMessages/sunlineFilterFswMsg.h"
 
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup sunlineSEKF
  * @{
  */
 

@@ -26,6 +26,9 @@
 
 #define MAX_AGG_NAV_MSG 10
 
+/*! \defgroup navAggregate
+ *  @{
+ */
 typedef struct {
     char inputNavName[MAX_STAT_MSG_LENGTH]; /*!< The name of the input message*/
     int32_t inputNavID; /*!< Sensor IDs tied to the input name*/

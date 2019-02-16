@@ -25,7 +25,7 @@
 #include "fswMessages/rateCmdFswMsg.h"
 #include <stdint.h>
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup PRV_Steering
  * @{
  */
 
