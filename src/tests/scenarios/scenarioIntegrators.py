@@ -45,7 +45,7 @@ from Basilisk.simulation import svIntegrators
 
 
 
-## \defgroup Tutorials_1_1
+## \defgroup scenarioIntegratorsGroup
 ##   @{
 ## How to setup different integration methods for a basic 3-DOF orbit scenario.
 #

@@ -52,7 +52,7 @@ from Basilisk.fswAlgorithms import fswMessages
 
 
 
-## \defgroup Tutorials_2_0_1
+## \defgroup scenarioAttitudePointingGroup
 ##   @{
 ## Demonstrates how to stabilize the tumble without translational motion.
 #

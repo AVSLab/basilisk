@@ -60,7 +60,7 @@ from Basilisk.fswAlgorithms import fswMessages
 
 
 
-## \defgroup Tutorials_2_0_2
+## \defgroup scenarioAttitudeFeedback2TGroup
 ##   @{
 ## Demonstrates how to stabilize the tumble of a spacecraft orbiting the
 # Earth that is initially tumbling, but uses 2 separate threads.

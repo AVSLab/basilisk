@@ -108,7 +108,7 @@ def plot_rw_voltages(timeData, dataVolt, numRW):
     plt.ylabel('RW Voltage (V)')
 
 
-## \defgroup Tutorials_2_2
+## \defgroup scenarioAttitudeFeedbackRWGroup
 ## @{
 # Demonstrates how to use RWs to stabilize the tumble of a spacecraft orbiting the
 # Earth.

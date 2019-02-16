@@ -46,7 +46,7 @@ from Basilisk.utilities import simIncludeGravBody
 
 
 
-## \defgroup Tutorials_1_2
+## \defgroup scenarioOrbitManeuverGroup
 ## @{
 ## Illustration how to start and stop the simulation to perform orbit maneuvers within Python.
 #

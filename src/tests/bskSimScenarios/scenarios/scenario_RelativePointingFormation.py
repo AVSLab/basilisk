@@ -17,7 +17,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 '''
 
-## \defgroup Tutorials_7_1
+## \defgroup scenario_RelativePointingFormationGroup
 ## @{
 # Demonstrates how to make use of the spacecraftPointing module to create a tutorial that simulates a deputy spacecraft
 # that points to a chief spacecraft

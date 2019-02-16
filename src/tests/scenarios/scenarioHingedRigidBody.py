@@ -55,7 +55,7 @@ import matplotlib.pyplot as plt
 # run and does not prove the functionality of any of the modules used.
 
 
-## \defgroup Tutorials_3_1
+## \defgroup scenarioHingedRigidBodyGroup
 ## @{
 ## Demonstrates setting up hinged panels on a rigid spacecraft hub
 #

@@ -51,7 +51,7 @@ bskPath = __path__[0]
 
 
 
-## \defgroup Tutorials_1_3
+## \defgroup scenarioOrbitMultiBodyGroup
 ##   @{
 ## How to setup orbital simulation with multiple gravitational bodies.
 #
