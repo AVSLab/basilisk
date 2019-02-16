@@ -1,11 +1,11 @@
-% !TEX root = ./Basilisk-CSSSensorDataArray-20190207.tex
+% !TEX root = ./Basilisk-CSSSensorDataModule-20190207.tex
 
 \section{Test Description and Success Criteria}
 The unit test checks for proper functionality of the module for various CSS configurations and input values, both within and outside expected bounds. The three test cases run include:
 \begin{enumerate}
-\item Checking for appropriate correction to raw CSS sensor data while also handling too many sensor inputs (i.e. enforcing the total number of sensors inputs to the maximum sensors defined).
-\item Ensuring the simulation shuts down if zero sensors are configured.
-\item Ensuring the simulation shuts down if a negative number of sensors are configured.
+\item Checking for appropriate correction to raw CSS sensor data while also handling too many sensor inputs. The number of sensor values is larger than the number of sensor devices.  The extra data should be returned as a zero value.
+\item Ensuring the a zero message is returned if zero sensors are configured.
+\item Ensuring that if the number of sensors is set to a value larger than the allowable number of sensors, then this value is set to the maximum number of sensors.
 \end{enumerate}
 
 
@@ -29,8 +29,7 @@ The unit test verify that the modules output cosine values match expectation.
 
 
 \section{Test Results}
-
-Only the first test case produces a result, as the others cause the simulation to shut down. As such, the first test passed and the remaining two tests throw expected failures:
+The unit test results are shown in Table~\ref{tab:results}.  All tests should be passing.
 \begin{table}[H]
 	\caption{Test results}
 	\label{tab:results}
@@ -40,6 +39,8 @@ Only the first test case produces a result, as the others cause the simulation t
 		\textbf{Num Sensors} 		& \textbf{Num Inputs}				  		&\textbf{Pass/Fail} \\ 
 		\hline
 	   4	   			& 5 &\input{AutoTeX/passFail_4} \\ 
+	   0	   			& 5 &\input{AutoTeX/passFail_0} \\ 
+	   33	   			& 5 &\input{AutoTeX/passFail_33} \\ 
 	   \hline\hline
 	\end{tabular}
 \end{table}
