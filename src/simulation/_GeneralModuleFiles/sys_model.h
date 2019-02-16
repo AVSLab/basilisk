@@ -23,6 +23,10 @@
 #include <string>
 #include <stdint.h>
 
+/*! \addtogroup SimArchGroup Simulation Architecture Classes
+ * @{
+ */
+
 class SysModel
 {
     
@@ -43,5 +47,6 @@ public:
     uint64_t moduleID;           //!< -- Module ID for this module
 };
 
+/* @} */
 
 #endif /* _SYS_MODEL_H_ */

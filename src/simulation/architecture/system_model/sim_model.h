@@ -26,7 +26,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/message_logger.h"
 
-/*! \addtogroup SimArchGroup
+/*! \addtogroup SimArchGroup Simulation Architecture Classes
  *  This architecture group contains the source used to drive/schedule/interface
  *  with the simulation.
  * @{
