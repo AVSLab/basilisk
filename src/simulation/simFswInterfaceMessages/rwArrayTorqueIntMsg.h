@@ -20,11 +20,19 @@
 #ifndef FSW_RW_TORQUE_H
 #define FSW_RW_TORQUE_H
 
+/*! \defgroup simFswInterfaceMessages
+ *  @{
+ */
+
 #include "simFswInterfaceMessages/macroDefinitions.h"
+
+
 
 /*! @brief Structure used to define the output definition for vehicle effectors*/
 typedef struct {
-    double motorTorque[MAX_EFF_CNT];     /*!< [Nm] RW motor torque array*/
+    double motorTorque[MAX_EFF_CNT];     //!< [Nm] RW motor torque array
 }RWArrayTorqueIntMsg;
+
+/*! @} */
 
 #endif

@@ -20,6 +20,10 @@
 #ifndef SC_STATE_MESSAGE_H
 #define SC_STATE_MESSAGE_H
 
+/*! \defgroup simMessages
+ *  @{
+ */
+
 /*! @brief This structure is used in the messaging system to communicate what the
  state of the vehicle is currently.*/
 typedef struct {
@@ -36,7 +40,7 @@ typedef struct {
     uint64_t MRPSwitchCount;          //!< -- Number of times that MRPs have switched
 }SCStatesSimMsg;
 
-
+/* @} */
 
 
 #endif

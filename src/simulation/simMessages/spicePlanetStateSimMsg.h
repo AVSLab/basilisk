@@ -20,8 +20,8 @@
 #ifndef SpicePlanetState_H
 #define SpicePlanetState_H
 
-/*! \addtogroup SimModelGroup
- * @{
+/*! \defgroup simMessages
+ *  @{
  */
 
 #define MAX_BODY_NAME_LENGTH 64
@@ -36,5 +36,7 @@ typedef struct {
     int computeOrient;              //!< (-) Flag indicating whether the reference should be computed
     char PlanetName[MAX_BODY_NAME_LENGTH];        //!< -- Name of the planet for the state
 }SpicePlanetStateSimMsg;
+
+/* @} */
 
 #endif

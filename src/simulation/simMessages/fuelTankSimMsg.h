@@ -20,10 +20,16 @@
 #ifndef fuelTankSimMsg_h
 #define fuelTankSimMsg_h
 
+/*! \defgroup simMessages
+ *  @{
+ */
+
 /*! @brief Structure used to define the individual fuel tank mass property message*/
 typedef struct {
     double fuelMass;                   //!< [kg], current fuel mass
     double fuelMassDot;                //!< [kg/s], current rate of change of fuel mass
 }FuelTankSimMsg;
+
+/* @} */
 
 #endif /* fuelTankSimMsg_h */

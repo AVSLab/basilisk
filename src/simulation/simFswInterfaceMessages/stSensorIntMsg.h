@@ -21,10 +21,16 @@
 #define _ST_HW_OUTPUT_
 #include <stdint.h>
 
+/*! \defgroup simFswInterfaceMessages
+ *  @{
+ */
+
 /*! @brief Output structure for ST structure in vehicle body frame*/
 typedef struct {
     uint64_t timeTag;               //!< [ns] Time tag placed on the output state
-    double qInrtl2Case[4];        //!< [-] Quaternion to go from the inertial to case
+    double qInrtl2Case[4];          //!< [-] Quaternion to go from the inertial to case
 }STSensorIntMsg;
+
+/*! @} */
 
 #endif
