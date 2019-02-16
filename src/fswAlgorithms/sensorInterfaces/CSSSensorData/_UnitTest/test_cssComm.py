@@ -131,11 +131,9 @@ def cssCommTestFunction(numSensors, sensorData):
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
 
-    if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag
 
     return [testFailCount, ''.join(testMessages)]
 
 
 if __name__ == '__main__':
-    test_cssComm(0, [-100e-6, 200e-6, 600e-6, 300e-6])
+    test_cssComm(4, [-100e-6, 200e-6, 600e-6, 300e-6])
