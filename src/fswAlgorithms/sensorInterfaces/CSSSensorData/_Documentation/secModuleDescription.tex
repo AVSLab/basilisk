@@ -23,13 +23,13 @@ This module
 \subsubsection{Residual Function}
 The correction applied to each CSS measurement is based on a function that maps a raw CSS measurement to the expected cosine response for that measurement (i.e. the distance from red curve to the blue curve in Fig.\ref{fig:CSSraw}). This function is modeled using a Chebyshev polynomial series to the $N$-th power represented by the following form: 
 \begin{equation}
-\delta x = \sum_{i=0}^{N} C_i*T_i(x_{meas})
+\delta x = \sum_{i=0}^{N} C_i*T_i(x_{\text{meas}})
 \end{equation}
  where $T_i(x)$ represents the Chebyshev polynomials, and $C_i$ are the pre-determined scaling factors. 
 
 This correction to the raw measurement is then applied using:
 \begin{equation}
-x_{corr} = x_{meas} + \delta x
+x_{\text{corr}} = x_{\text{meas}} + \delta x
 \end{equation}
 
 \subsubsection{Chebyshev Polynomial Computation\cite{Chebyshev}}
