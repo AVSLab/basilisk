@@ -511,7 +511,7 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     return dataUsReq, dataSigmaBR, dataOmegaBR, dataPos, dataOmegaRW, dataRW
 
 
-## \addtogroup Tutorials_2_0_3
+## \addtogroup scenarioAttitudePythonPDGroup
 ##   @{
 # ====
 #
