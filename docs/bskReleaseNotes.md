@@ -15,7 +15,7 @@ We are very excited by the great capabilities that this software already has, an
 ## Upcoming Version 0.X.X
 <ul>
     <li>
-        add new commit information here
+        updated Documentation on `rwNullSpace` FSW module
     </li>
 </ul>
 
