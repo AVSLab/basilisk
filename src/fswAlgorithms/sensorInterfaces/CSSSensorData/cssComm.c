@@ -60,12 +60,12 @@ void Reset_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime, uint64_
     /*! - Check to make sure that number of sensors is less than the max and warn if none are set*/
     if(ConfigData->NumSensors > MAX_NUM_CSS_SENSORS)
     {
-        BSK_PRINT(MSG_WARNING, "The configured number of CSS sensors exceeds the maximum, %d > %d! Changing the number of sensors to the max.", ConfigData->NumSensors, MAX_NUM_CSS_SENSORS);
+        BSK_PRINT(MSG_WARNING, "The configured number of CSS sensors exceeds the maximum, %d > %d! Changing the number of sensors to the max.\n", ConfigData->NumSensors, MAX_NUM_CSS_SENSORS);
         ConfigData->NumSensors = MAX_NUM_CSS_SENSORS;
     }
     else if (ConfigData->NumSensors == 0)
     {
-        BSK_PRINT(MSG_WARNING, "There are zero CSS configured!");
+        BSK_PRINT(MSG_WARNING, "There are zero CSS configured!\n");
     }
     
     memset(ConfigData->InputValues.CosValue, 0x0, ConfigData->NumSensors*sizeof(double));
@@ -110,7 +110,7 @@ void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime,
         {
             if (ConfigData->MaxSensorValue == 0)
             {
-                BSK_PRINT(MSG_WARNING, "Max CSS sensor value configured to zero! CSS sensor values will be normalized by zero, inducing faux saturation!");
+                BSK_PRINT(MSG_WARNING, "Max CSS sensor value configured to zero! CSS sensor values will be normalized by zero, inducing faux saturation!\n");
             }
             OutputBuffer.CosValue[i] = (float) InputValues[i]/ConfigData->MaxSensorValue; /* Scale Sensor Data */
             
