@@ -52,13 +52,20 @@ void SelfInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
 void CrossInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
     uint64_t moduleID)
 {
+    /*! - subscribe to other message*/
+    /*! - inputCelID provides the planet ephemeris message.  Note that if this message does
+     not exist, this subscribe function will create an empty planet message.  This behavior
+     is by design such that if a planet doesn't have a message, default (0,0,0) position
+     and velocity vectors are assumed. */
     ConfigData->inputCelID = subscribeToMessage(ConfigData->inputCelMessName,
                                                 sizeof(EphemerisIntMsg), moduleID);
+    /*! - inputNavID provides the current spacecraft location and velocity */
     ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavDataName,
                                                 sizeof(NavTransIntMsg), moduleID);
     ConfigData->inputSecID = -1;
     if(strlen(ConfigData->inputSecMessName) > 0)
     {
+        /*! - inputSecID provides the 2nd plant ephemeris message */
         ConfigData->inputSecID = subscribeToMessage(ConfigData->inputSecMessName,
                                                     sizeof(EphemerisIntMsg), moduleID);
     }

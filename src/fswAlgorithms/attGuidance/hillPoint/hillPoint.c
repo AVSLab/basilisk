@@ -44,9 +44,14 @@ void SelfInit_hillPoint(hillPointConfig *ConfigData, uint64_t moduleID)
 
 void CrossInit_hillPoint(hillPointConfig *ConfigData, uint64_t moduleID)
 {
-    /*! - Get the control data message ID*/
+    /*! - subscribe to other message*/
+    /*! - inputCelID provides the planet ephemeris message.  Note that if this message does
+          not exist, this subscribe function will create an empty planet message.  This behavior
+          is by design such that if a planet doesn't have a message, default (0,0,0) position
+          and velocity vectors are assumed. */
     ConfigData->inputCelID = subscribeToMessage(ConfigData->inputCelMessName,
                                                 sizeof(EphemerisIntMsg), moduleID);
+    /*! - inputNavID provides the current spacecraft location and velocity */
     ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavDataName,
                                                 sizeof(NavTransIntMsg), moduleID);
 }
