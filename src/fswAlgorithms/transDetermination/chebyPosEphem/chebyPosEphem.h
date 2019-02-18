@@ -27,6 +27,10 @@
 #define MAX_CHEB_COEFF 40
 #define MAX_CHEB_RECORDS 4
 
+
+/*! \defgroup chebyPosEphem
+ *  @{
+ */
 /*! @brief Structure that defines the layout of an Ephemeris "record."  This is 
            basically the set of coefficients for the body x/y/z positions and 
            the time factors associated with those coefficients

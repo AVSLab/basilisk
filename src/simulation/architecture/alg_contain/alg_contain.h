@@ -23,6 +23,10 @@
 
 #include "_GeneralModuleFiles/sys_model.h"
 
+/*! \addtogroup SimArchGroup
+ * @{
+ */
+
 typedef void (*AlgPtr)(void*, uint64_t);
 typedef void (*AlgUpdatePtr)(void*, uint64_t, uint64_t);
 
@@ -56,5 +60,7 @@ public:
 	AlgUpdatePtr AlgReset;
     AlgUpdatePtr AlgUpdate;
 };
+
+/* @} */
 
 #endif

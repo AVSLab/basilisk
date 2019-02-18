@@ -20,13 +20,16 @@
 #ifndef SIM_CSS_RAW_DATA_MESSAGE_H
 #define SIM_CSS_RAW_DATA_MESSAGE_H
 
+/*! \defgroup simMessages
+ *  @{
+ */
 
 //!@brief CSS raw data output message definition.
 typedef struct {
-    double OutputData;       /*!< CSS measurement output */
+    double OutputData;       //!< CSS measurement output 
 }CSSRawDataSimMsg;
 
-
+/* @} */
 
 
 #endif

@@ -22,6 +22,10 @@
 
 #include <Eigen/Dense>
 
+/*! \defgroup simMessages
+ *  @{
+ */
+
 /*! @brief enumeration definiting the types of RW modes */ 
 enum RWModels { BalancedWheels, JitterSimple, JitterFullyCoupled };
 
@@ -68,7 +72,7 @@ typedef struct {
     char label[10];             //!< [-], label name of the RW device being simulated
 }RWConfigSimMsg;
 
-
+/* @} */
 
 
 #endif

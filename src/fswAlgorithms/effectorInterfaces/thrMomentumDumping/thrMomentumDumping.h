@@ -27,7 +27,7 @@
 #include "fswMessages/thrArrayCmdForceFswMsg.h"
 #include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup thrMomentumDumping
  * @{
  */
 

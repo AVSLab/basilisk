@@ -27,7 +27,7 @@
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup thrMomentumManagement
  * @{
  */
 

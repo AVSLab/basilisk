@@ -25,7 +25,7 @@
 #include "fswMessages/attGuidFswMsg.h"
 
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup simpleDeadband
  * @{
  */
 

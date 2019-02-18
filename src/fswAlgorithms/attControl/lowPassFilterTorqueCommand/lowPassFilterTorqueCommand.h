@@ -25,7 +25,7 @@
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup lowPassFilterTorqueCommand
  * @{
  */
 

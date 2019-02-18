@@ -24,7 +24,7 @@
 
 #include <stdint.h>
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup messaging
  * @{
  */
 #ifdef __cplusplus

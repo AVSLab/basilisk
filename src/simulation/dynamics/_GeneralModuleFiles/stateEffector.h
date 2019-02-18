@@ -24,6 +24,11 @@
 #include "../../utilities/avsEigenMRP.h"
 #include "dynParamManager.h"
 
+/*! \addtogroup SimModelGroup
+ * @{
+ */
+
+
 struct BackSubMatrices {
     Eigen::Matrix3d matrixA;             //!< -- Back-Substitution matrix A
     Eigen::Matrix3d matrixB;             //!< -- Back-Substitution matrix B
@@ -70,5 +75,7 @@ public:
     virtual void prependSpacecraftNameToStates();
     virtual void receiveMotherSpacecraftData(Eigen::Vector3d rSC_BP_P, Eigen::Matrix3d dcmSC_BP);
 };
+
+/* @} */
 
 #endif /* STATE_EFFECTOR_H */

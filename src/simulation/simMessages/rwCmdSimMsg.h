@@ -21,11 +21,17 @@
 #define SIM_RW_CMD_H
 
 
+/*! \defgroup simMessages
+ *  @{
+ */
+
+
 /*! @brief Structure used to define the individual RW motor torque command message*/
 typedef struct {
-    double u_cmd; //!< N-m, torque command for individual RW
+    double u_cmd; //!< [Nm], torque command for individual RW
 }RWCmdSimMsg;
 
+/* @} */
 
 
 

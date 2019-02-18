@@ -27,7 +27,7 @@
 #include "fswMessages/attRefFswMsg.h"
 
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup attTrackingError
  * @{
  */
 

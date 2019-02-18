@@ -27,11 +27,13 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define MAX_NUM_THR_GROUPS 4
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup dvAttEffect
  * @{
  */
+
+#define MAX_NUM_THR_GROUPS 4
+
 
 typedef struct {
     double onTime;              /*!< s   The requested on time for this thruster*/

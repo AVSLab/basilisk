@@ -28,6 +28,9 @@
 #define MAX_OE_RECORDS 10
 #define MAX_OE_COEFF 20
 
+/*! \defgroup oeStateEphem
+ *  @{
+ */
 /*! @brief Structure that defines the layout of an Ephemeris "record."  This is 
            basically the set of coefficients for the body x/y/z positions and 
            the time factors associated with those coefficients

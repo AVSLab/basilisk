@@ -20,10 +20,15 @@
 #ifndef _CMD_TORQUE_BODY_MESSAGE_
 #define _CMD_TORQUE_BODY_MESSAGE_
 
+/*! \defgroup simFswInterfaceMessages
+ *  @{
+ */
+
 /*! @brief Message used to define the vehicle control torque vector in Body frame components*/
 typedef struct {
-    double torqueRequestBody[3];     /*!< [Nm] Control torque requested*/
+    double torqueRequestBody[3];     //!< [Nm] Control torque requested
 }CmdTorqueBodyIntMsg;
 
+/*! @} */
 
 #endif

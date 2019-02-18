@@ -20,6 +20,10 @@
 #ifndef _ACC_PKT_DATA_MESSAGE_H
 #define _ACC_PKT_DATA_MESSAGE_H
 
+/*! \defgroup fswMessages
+ *  @{
+ */
+
 #define MAX_ACC_BUF_PKT 120
 
 #include "fswMessages/AccPktDataFswMsg.h"
@@ -27,9 +31,10 @@
 
 /*! @brief Structure used to define accelerometer package data */
 typedef struct {
-    AccPktDataFswMsg accPkts[MAX_ACC_BUF_PKT]; /*! [-] Accelerometer buffer read in*/
+    AccPktDataFswMsg accPkts[MAX_ACC_BUF_PKT]; //!< [-] Accelerometer buffer read in
 }AccDataFswMsg;
 
+/* @} */
 
 
 #endif

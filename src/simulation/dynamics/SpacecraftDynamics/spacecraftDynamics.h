@@ -34,6 +34,10 @@
 #include "simMessages/scMassPropsSimMsg.h"
 #include "../../simMessages/scEnergyMomentumSimMsg.h"
 
+/*! \addtogroup SimModelGroup Simulation C++ Modules
+ * @{
+ */
+
 struct DockingData {
     Eigen::Vector3d r_DB_B;
     Eigen::Matrix3d dcm_DB;
@@ -182,5 +186,7 @@ public:
 private:
     
 };
+
+/* @} */
 
 #endif /* SPACECRAFT_DYNAMICS_H */

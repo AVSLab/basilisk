@@ -29,7 +29,7 @@
 
 
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup sunlineEphem
  * @{
  */
 

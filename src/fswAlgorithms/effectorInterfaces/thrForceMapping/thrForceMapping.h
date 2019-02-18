@@ -28,7 +28,7 @@
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup thrForceMapping
  * @{
  */
 

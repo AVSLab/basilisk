@@ -17,6 +17,9 @@ We are very excited by the great capabilities that this software already has, an
     <li>
         updated Documentation on `rwNullSpace` FSW module
     </li>
+    <li>
+        updated how the FSW and Simulation modules are displayed with the DOxygen HTML documenation, as well as how the messages are shown.  Now the use can click on the "Modules" tab in the web page to find a cleaner listing of all BSK modules, messages, utilities and architecture documentation. 
+    </li>
 </ul>
 
 

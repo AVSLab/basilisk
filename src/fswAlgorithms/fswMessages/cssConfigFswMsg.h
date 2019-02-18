@@ -23,11 +23,18 @@
 #include "fswMessages/cssUnitConfigFswMsg.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 
+/*! \defgroup fswMessages
+ *  @{
+ */
+
+
 /*! @brief Structure used to contain the configuration information for
  each sun sensor*/
 typedef struct {
-    uint32_t nCSS;             /*! [-] Number of coarse sun sensors in cluster*/
-    CSSUnitConfigFswMsg cssVals[MAX_NUM_CSS_SENSORS]; /*! [-] constellation of CSS elements */
+    uint32_t nCSS;                                      //!< [-] Number of coarse sun sensors in cluster
+    CSSUnitConfigFswMsg cssVals[MAX_NUM_CSS_SENSORS];   //!< [-] constellation of CSS elements
 }CSSConfigFswMsg;
+
+/* @} */
 
 #endif

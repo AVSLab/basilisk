@@ -20,6 +20,10 @@
 #ifndef SIM_FSW_MACROS_H
 #define SIM_FSW_MACROS_H
 
+/*! \defgroup simFswInterfaceMessages
+ *  @{
+ */
+
 #define MAX_EFF_CNT 36
 #define MAX_NUM_CSS_SENSORS 32
 #define MAX_ST_VEH_COUNT 4
@@ -29,7 +33,7 @@
 #define RECAST2x2       (double (*)[2])
 
 
-
+/* @} */
 
 
 #endif

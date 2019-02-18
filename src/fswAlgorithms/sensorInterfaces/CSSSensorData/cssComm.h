@@ -27,7 +27,7 @@
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
 
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup cssComm
  *  This grouping contains the algorithms developed for the ADCS flight system
  * @{
  */

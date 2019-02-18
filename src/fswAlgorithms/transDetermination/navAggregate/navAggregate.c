@@ -17,7 +17,7 @@
 
  */
 
-#include "navAggregate/navAggregate.h"
+#include "navAggregate.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include <string.h>
 

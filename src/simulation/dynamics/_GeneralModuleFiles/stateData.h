@@ -22,6 +22,11 @@
 #include <Eigen/Dense>
 #include <stdint.h>
 
+/*! \addtogroup SimModelGroup
+ * @{
+ */
+
+
 /*! @brief Object that is to be used by an integrator. It's basically an interface with only one method: the F function describing a dynamic model X_dot = F(X,t)
  */
 class StateData {
@@ -53,5 +58,7 @@ public:
     StateData operator* (double scaleFactor);
     
 };
+
+/* @} */
 
 #endif /* STATE_DATA_H */

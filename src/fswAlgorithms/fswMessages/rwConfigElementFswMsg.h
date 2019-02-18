@@ -21,13 +21,18 @@
 #define _RW_CONFIG_ELEMENT_MESSAGE_H
 
 
-/*! @brief Structure used to define a single FSW RW configuration with vector in Structure S frame */
+/*! \defgroup fswMessages
+ *  @{
+ */
+
+
+/*! @brief Message used to define a single FSW RW configuration message */
 typedef struct {
-    double gsHat_B[3];          /*!< [-] Spin axis unit vector of the wheel in structure */
-    double Js;                  /*!< [kgm2] Spin axis inertia of the wheel */
-    double uMax;                /*!< [Nm]   maximum RW motor torque */
+    double gsHat_B[3];          //!< [-] Spin axis unit vector of the wheel in structure
+    double Js;                  //!< [kgm2] Spin axis inertia of the wheel
+    double uMax;                //!< [Nm]   maximum RW motor torque
 }RWConfigElementFswMsg;
 
-
+/* @} */
 
 #endif

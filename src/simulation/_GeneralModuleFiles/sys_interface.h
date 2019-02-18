@@ -23,7 +23,7 @@
 #include <vector>
 #include <stdint.h>
 #include "architecture/system_model/sys_model_task.h"
-/*! \addtogroup SimArchGroup
+/*! \addtogroup SimArchGroup Simulation Architecture Classes
  * @{
  */
 

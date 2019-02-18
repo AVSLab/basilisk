@@ -26,7 +26,7 @@
 #include "fswMessages/dvBurnCmdFswMsg.h"
 #include <stdint.h>
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup dvExecuteGuidance
  * @{
  */
 

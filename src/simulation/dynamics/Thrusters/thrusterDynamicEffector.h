@@ -106,4 +106,6 @@ private:
 
 };
 
+/* @} */
+
 #endif /* THRUSTER_DYNAMIC_EFFECTOR_H */

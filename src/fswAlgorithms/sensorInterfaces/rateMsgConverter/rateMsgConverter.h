@@ -26,7 +26,7 @@
 #include "fswAlgorithms/fswMessages/imuSensorBodyFswMsg.h"
 
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup rateMsgConverter
  * @{
  */
 

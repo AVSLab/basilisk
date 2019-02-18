@@ -21,6 +21,11 @@
 #define SIM_THRUSTER_OPERATION_H
 #include <stdint.h>
 
+/*! \defgroup simMessages
+ *  @{
+ */
+
+
 //! @brief Container for current operational data of a given thruster
 /*! This structure is used to determine the current state of a given thruster.
  It defines where in the cycle the thruster is and how much longer it should be
@@ -41,6 +46,6 @@ typedef struct {
 }THROperationSimMsg;
 
 
-
+/* @} */
 
 #endif

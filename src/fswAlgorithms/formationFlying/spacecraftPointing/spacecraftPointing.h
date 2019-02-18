@@ -27,7 +27,7 @@
 #include "simFswInterfaceMessages/navTransIntMsg.h"
 #include <stdint.h>
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup spacecraftPointing
  * @{
  */
 

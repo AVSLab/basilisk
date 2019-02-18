@@ -23,11 +23,18 @@
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "fswMessages/thrConfigFswMsg.h"
 
+/*! \defgroup fswMessages
+ *  @{
+ */
+
+
 /*! @brief FSW message definition containing the thruster cluster information */
 typedef struct {
     int numThrusters;
-    THRConfigFswMsg thrusters[MAX_EFF_CNT];  /*! [-] array of thruster configuration information*/
+    THRConfigFswMsg thrusters[MAX_EFF_CNT];  //!< [-] array of thruster configuration information
 }THRArrayConfigFswMsg;
+
+/* @} */
 
 
 #endif
