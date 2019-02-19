@@ -31,7 +31,8 @@ if(USE_PROTOBUFFERS)
 endif()
 
 if(USE_OPENCV)
-  list(APPEND required_conan_libraries opencv/4.0.1@conan/stable)
+  list(APPEND required_conan_libraries opencv/3.4.5@conan/stable)
+
 endif()
 
 conan_cmake_run(REQUIRES ${required_conan_libraries}
@@ -45,12 +46,12 @@ conan_cmake_run(REQUIRES ${required_conan_libraries}
 #   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 # endif()
 
-# if(USE_OPENCV)
+#if(USE_OPENCV)
 #   #! OPEN_CV
 #   find_package(opencv CONFIG REQUIRED)
 #   message(STATUS "Using OpenCV ${opencv_VERSION}")
 #   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-# endif()
+#endif()
 
 
 #
@@ -372,7 +373,7 @@ else()
 endif()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-register")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-register -std=c++11")
 endif()
 
 
