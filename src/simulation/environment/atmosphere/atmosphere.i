@@ -18,9 +18,9 @@
  */
 
 
-%module exponentialAtmosphere
+%module atmosphere
 %{
-   #include "exponentialAtmosphere.h"
+   #include "atmosphere.h"
 %}
 
 %include "swig_common_model.i"
@@ -29,7 +29,7 @@
 %include "../simMessages/spicePlanetStateSimMsg.h"
 %include "../simMessages/scPlusStatesSimMsg.h"
 %include "../simMessages/atmoPropsSimMsg.h"
-%include "exponentialAtmosphere.h"
+%include "atmosphere.h"
 
 GEN_SIZEOF(atmoPropsSimMsg)
 
