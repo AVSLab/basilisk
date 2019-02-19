@@ -57,6 +57,8 @@ public:
     void setPlanet(std::string newPlanetName);
     void SelfInit();
     void CrossInit();
+    void setEnvType(std::string desEnvType);
+    void setEpoch(double julianDate);
     void UpdateState(uint64_t CurrentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
@@ -74,6 +76,7 @@ public:
     double localAtmoDens; //!< [kg/m^3] Local neutral atmospheric density (computed)
     double localAtmoTemp; //!< [K] Local atmospheric temperature, SET TO BE CONSTANT
     double currentAlt; //!< [m] Current s/c altitude
+    double epochDate;
     std::vector<int64_t>  envOutMsgIds;
     std::vector<int64_t> scStateInMsgIds;
     int64_t planetPosInMsgId;

@@ -23,7 +23,7 @@
 #include <iostream>
 #include <cmath>
 
-#include "exponentialAtmosphere.h"
+#include "atmosphere.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
@@ -35,7 +35,6 @@
 */
 Atmosphere::Atmosphere()
 {
-    this->planetName = "Earth";
     this->planetPosInMsgName = "spice_planet_output_data";
     this->OutputBufferCount = 2;
     //! Set the default atmospheric properties to those of Earth
@@ -65,12 +64,21 @@ void Atmosphere::setEnvType(std::string envType)
     return;
 }
 
+void Atmosphere::setEpoch(double julianDate)
+{
+    this->epochDate = julianDate;
+    return;
+}
+
 /*! SelfInit for this method creates a seperate density message for each of the spacecraft
 that were added using AddSpacecraftToModel.
 */
 void Atmosphere::SelfInit()
 {
-    if(this->envtype.compare(std::string compstring "exponential"))
+    std::string expString ("exponential");
+    std::string msisString ("nrlmsise-00");
+
+    if(this->envType.compare(expString))
     {
         std::string tmpAtmoMsgName;
         uint64_t tmpAtmoMsgId;
@@ -82,28 +90,11 @@ void Atmosphere::SelfInit()
             tmpAtmoMsgId = SystemMessaging::GetInstance()->CreateNewMessage(*it, sizeof(atmoPropsSimMsg),
                     this->OutputBufferCount, "atmoPropsSimMsg", moduleID);
 
-            this->atmoDensOutMsgIds.push_back(tmpAtmoMsgId);
+            this->envOutMsgIds.push_back(tmpAtmoMsgId);
         }
     }
     return;
 }
-
-/*! Private "setter" method for changing the base density.*/
-void Atmosphere::setBaseDensity(double BaseDens){
-  this->atmosphereProps.baseDensity = BaseDens;
-  return;
-}
-
-/*! Private "setter" method for changing the scale height.*/
-void Atmosphere::setScaleHeight(double ScaleHeight){
-  this->atmosphereProps.scaleHeight = ScaleHeight;
-}
-
-/*! Private "setter" method for changing the planet radius.*/
-void Atmosphere::setPlanetRadius(double PlanetRadius){
-  this->atmosphereProps.planetRadius = PlanetRadius;
-}
-
 
 /*! This method is used to connect the input position method from the spacecraft. .
  @return void
@@ -114,7 +105,7 @@ void Atmosphere::CrossInit()
     this->planetPosInMsgName, sizeof(SpicePlanetStateSimMsg), moduleID);
 
     std::vector<std::string>::iterator it;
-    for(it = scStateInMsgNames.begin(); it!=scStateInMsgNames.end(); it++){
+    for(it = this->scStateInMsgNames.begin(); it!=this->scStateInMsgNames.end(); it++){
         this->scStateInMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(SCPlusStatesSimMsg), moduleID));
     }
   return;
@@ -131,7 +122,7 @@ void Atmosphere::WriteOutputMessages(uint64_t CurrentClock)
     std::vector<int64_t>::iterator it;
     std::vector<atmoPropsSimMsg>::iterator atmoIt;
     atmoIt = atmoOutBuffer.begin();
-    for(it = atmoDensOutMsgIds.begin(); it!= atmoDensOutMsgIds.end(); it++, atmoIt++){
+    for(it = this->envOutMsgIds.begin(); it!= this->envOutMsgIds.end(); it++, atmoIt++){
         tmpAtmo = *atmoIt;
         SystemMessaging::GetInstance()->WriteMessage(*it,
                                                   CurrentClock,
@@ -155,6 +146,7 @@ bool Atmosphere::ReadInputs()
     scStates.clear();
 
     bool scReads = false;
+    bool planetRead = false;
     if(planetPosInMsgId >= 0) {
         bool planetRead = false; // If the message HAS been set, make sure we read it before updating.
     }
