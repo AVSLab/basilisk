@@ -149,7 +149,6 @@ void computeHillPointingReference(hillPointConfig *configData,
     v3Subtract(r_BN_N, celBdyPositonVector, relPosVector);
     v3Subtract(v_BN_N, celBdyVelocityVector, relVelVector);
     
-    
     /* Compute RN */
     v3Normalize(relPosVector, dcm_RN[0]);
     v3Cross(relPosVector, relVelVector, h);
