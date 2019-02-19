@@ -91,7 +91,7 @@ void Reset_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
         }
     }
 
-    /*! -# find the [tau] null space projection matrix */
+    /*! -# find the [tau] null space projection matrix [tau]= ([I] - [Gs]^T.([Gs].[Gs]^T) */
     mTranspose(GsMatrix, 3, ConfigData->numWheels, GsTranspose);            /* find [Gs]^T */
     mMultM(GsMatrix, 3, ConfigData->numWheels, GsTranspose,
            ConfigData->numWheels, 3, GsInvHalf);                            /* find [Gs].[Gs]^T */
@@ -130,6 +130,12 @@ void Update_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
                                                        the control and null motion torques */
 	double dVector[MAX_EFF_CNT];            /* [Nm]  null motion wheel speed control array */
     
+    /*! - zero all message containers prior to evaluation */
+    memset(&finalControl, 0x0, sizeof(RWArrayTorqueIntMsg));
+    memset(&cntrRequest, 0x0, sizeof(RWArrayTorqueIntMsg));
+    memset(&rwSpeeds, 0x0, sizeof(RWSpeedIntMsg));
+
+
     /*! - Read the input RW commands to get the raw RW requests*/
     ReadMessage(ConfigData->inputRWCmdsID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(RWArrayTorqueIntMsg), (void*) &(cntrRequest), moduleID);
@@ -137,8 +143,6 @@ void Update_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
 	ReadMessage(ConfigData->inputSpeedsID, &timeOfMsgWritten, &sizeOfMsgWritten,
 		sizeof(RWSpeedIntMsg), (void*)&(rwSpeeds), moduleID);
 
-    /*! - zero the output message */
-	memset(&finalControl, 0x0, sizeof(RWArrayTorqueIntMsg));
     /*! - compute the wheel speed control vector d = -K.Omega */
 	vScale(-ConfigData->OmegaGain, rwSpeeds.wheelSpeeds,
 		ConfigData->numWheels, dVector);
@@ -149,7 +153,7 @@ void Update_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
 	vAdd(finalControl.motorTorque, ConfigData->numWheels,
 		cntrRequest.motorTorque, finalControl.motorTorque);
 
-
+    /*! - write the final RW torque solution to the output message */
 	WriteMessage(ConfigData->outputMsgID, callTime, sizeof(RWArrayTorqueIntMsg),
 		&finalControl, moduleID);
 
