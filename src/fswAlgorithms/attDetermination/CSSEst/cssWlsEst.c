@@ -20,7 +20,6 @@
 #include "attDetermination/CSSEst/cssWlsEst.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
-#include "utilities/bsk_Print.h"
 #include <string.h>
 #include <math.h>
 
@@ -300,7 +299,6 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
         v3SetZero(ConfigData->sunlineOutBuffer.vehSunPntBdy);       /* zero the sun heading to indicate anomaly  */
         v3SetZero(ConfigData->sunlineOutBuffer.omega_BN_B);         /* zero the rate measure */
         ConfigData->priorSignalAvailable = 0;                       /* reset the prior heading estimate flag */
-        BSK_PRINT(MSG_ERROR, "Encountered singular matrix in least squares inverse.  Output message set to zero.");
     } else {
         /*! - If the status from the WLS computation good, populate the output messages with the computed data*/
     WriteMessage(ConfigData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
