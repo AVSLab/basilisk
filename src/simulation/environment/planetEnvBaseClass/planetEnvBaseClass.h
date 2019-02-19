@@ -28,9 +28,11 @@ class PlanetEnvironmentModel {
 public:
     PlanetEnvironmentModel();                      //!< -- Constructor
     virtual ~PlanetEnvironmentModel();             //!< -- Destructor
-    virtual void setEnvType(std::string); //!< [string]
-    virtual void setEpoch(double julianDate); //!< [JulianDate] Method to set epoch time for the module
+    virtual void setEnvType(std::string inputType)=0; //!< [string]
+    virtual void setEpoch(double julianDate) = 0; //!< [JulianDate] Method to set epoch time for the module
     void addSpacecraftToModel(std::string tmpScMsgName);
+    void ReadScInputs(); //! -- Iterate over scStateInMsgNames and get their information
+    void ReadPlanetInput(); //! -- Read the current SPICE planet state
 
 public:
     std::vector<std::string> scStateInMsgNames;	//!< Vector of the spacecraft position/velocity message names
