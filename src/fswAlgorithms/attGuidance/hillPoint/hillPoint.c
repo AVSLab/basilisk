@@ -105,6 +105,9 @@ void Update_hillPoint(hillPointConfig *configData, uint64_t callTime, uint64_t m
     ReadMessage(configData->inputNavID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavTransIntMsg), &navData, moduleID);
 
+    printf("r_planet = %g, %g, %g \t", primPlanet.r_BdyZero_N[0], primPlanet.r_BdyZero_N[1], primPlanet.r_BdyZero_N[2]);
+    printf("v_planet = %g, %g, %g \n", primPlanet.v_BdyZero_N[0], primPlanet.v_BdyZero_N[1], primPlanet.v_BdyZero_N[2]);
+    
     /*! - Compute and store output message */
     computeHillPointingReference(configData,
                                  navData.r_BN_N,
@@ -146,7 +149,8 @@ void computeHillPointingReference(hillPointConfig *configData,
     v3Subtract(r_BN_N, celBdyPositonVector, relPosVector);
     v3Subtract(v_BN_N, celBdyVelocityVector, relVelVector);
     
-    /*! - Compute RN */
+    
+    /* Compute RN */
     v3Normalize(relPosVector, dcm_RN[0]);
     v3Cross(relPosVector, relVelVector, h);
     v3Normalize(h, dcm_RN[2]);

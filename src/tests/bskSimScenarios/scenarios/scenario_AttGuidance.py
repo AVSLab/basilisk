@@ -246,6 +246,8 @@ class scenario_HillPointing(BSKScenario):
         print "v_BN_N = ", v_BN_N[:, 1:]
 
         # FSW process outputs
+        r_Earth = self.masterSim.pullMessageLogData("earth"+".r_BdyZero_N", range(3))
+        print "r_Earth = ", r_Earth
         sigma_RN = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData.inputRefName + ".sigma_RN", range(3))
         print "Hill Ref: sigma_HN = ", sigma_RN[:, 1:]
         omega_RN_N = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData.inputRefName + ".omega_RN_N", range(3))
@@ -296,7 +298,7 @@ def run(showPlots):
     TheBSKSim.InitializeSimulationAndDiscover()
 
     # Configure run time and execute simulation
-    simulationTime = macros.min2nano(10.)
+    simulationTime = macros.min2nano(0.04)
     TheBSKSim.ConfigureStopTime(simulationTime)
 
     TheBSKSim.ExecuteSimulation()
