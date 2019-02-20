@@ -68,6 +68,11 @@ void Reset_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime, uint64_
         BSK_PRINT(MSG_WARNING, "There are zero CSS configured!\n");
     }
     
+    if (ConfigData->MaxSensorValue == 0)
+    {
+        BSK_PRINT(MSG_WARNING, "Max CSS sensor value configured to zero! CSS sensor values will be normalized by zero, inducing faux saturation!\n");
+    }
+    
     memset(ConfigData->InputValues.CosValue, 0x0, ConfigData->NumSensors*sizeof(double));
     
     return;
@@ -106,38 +111,37 @@ void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime,
      */
     for(i=0; i<ConfigData->NumSensors; i++)
     {
-        if(InputValues[i] < ConfigData->MaxSensorValue && InputValues[i] > 0.0)
+        OutputBuffer.CosValue[i] = (float) InputValues[i]/ConfigData->MaxSensorValue; /* Scale Sensor Data */
+        
+        /* Seed the polynomial computations */
+        ValueMult = 2.0*OutputBuffer.CosValue[i];
+        ChebyPrev = 1.0;
+        ChebyNow = OutputBuffer.CosValue[i];
+        ChebyDiffFactor = 0.0;
+        ChebyDiffFactor = ConfigData->ChebyCount > 0 ? ChebyPrev*ConfigData->KellyCheby[0] : ChebyDiffFactor; /* if only first order correction */
+        ChebyDiffFactor = ConfigData->ChebyCount > 1 ? ChebyNow*ConfigData->KellyCheby[1] + ChebyDiffFactor : ChebyDiffFactor; /* if higher order (> first) corrections */
+        
+        /* Loop over remaining polynomials and add in values */
+        for(j=2; j<ConfigData->ChebyCount; j = j+1)
         {
-            if (ConfigData->MaxSensorValue == 0)
-            {
-                BSK_PRINT(MSG_WARNING, "Max CSS sensor value configured to zero! CSS sensor values will be normalized by zero, inducing faux saturation!\n");
-            }
-            OutputBuffer.CosValue[i] = (float) InputValues[i]/ConfigData->MaxSensorValue; /* Scale Sensor Data */
-            
-            /* Seed the polynomial computations */
-            ValueMult = 2.0*OutputBuffer.CosValue[i];
-            ChebyPrev = 1.0;
-            ChebyNow = OutputBuffer.CosValue[i];
-            ChebyDiffFactor = 0.0;
-            ChebyDiffFactor = ConfigData->ChebyCount > 0 ? ChebyPrev*ConfigData->KellyCheby[0] : ChebyDiffFactor; /* if only first order correction */
-            ChebyDiffFactor = ConfigData->ChebyCount > 1 ? ChebyNow*ConfigData->KellyCheby[1] + ChebyDiffFactor : ChebyDiffFactor; /* if higher order (> first) corrections */
-            
-            /* Loop over remaining polynomials and add in values */
-            for(j=2; j<ConfigData->ChebyCount; j = j+1)
-            {
-                ChebyLocalPrev = ChebyNow;
-                ChebyNow = ValueMult*ChebyNow - ChebyPrev;
-                ChebyPrev = ChebyLocalPrev;
-                ChebyDiffFactor += ConfigData->KellyCheby[j]*ChebyNow;
-            }
-            
-            OutputBuffer.CosValue[i] = OutputBuffer.CosValue[i] + ChebyDiffFactor;
+            ChebyLocalPrev = ChebyNow;
+            ChebyNow = ValueMult*ChebyNow - ChebyPrev;
+            ChebyPrev = ChebyLocalPrev;
+            ChebyDiffFactor += ConfigData->KellyCheby[j]*ChebyNow;
         }
-        else
+        
+        OutputBuffer.CosValue[i] = OutputBuffer.CosValue[i] + ChebyDiffFactor;
+        
+        if(InputValues[i] > ConfigData->MaxSensorValue)
+        {
+            OutputBuffer.CosValue[i] = 1.0;
+        }
+        else if(InputValues[i] < 0.0)
         {
             OutputBuffer.CosValue[i] = 0.0;
         }
     }
+    
     /*! - Write aggregate output into output message */
     WriteMessage(ConfigData->OutputMsgID, callTime,
                  sizeof(CSSArraySensorIntMsg), (void*) &OutputBuffer,
