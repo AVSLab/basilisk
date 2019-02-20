@@ -28,25 +28,26 @@
 
 /*! \defgroup fswModuleTemplate
  * @brief This is a template module for FSW algorithms in ANSI-C.  Make a copy of this module and change the
- * file names to match the new module you are creating.
+ * file names to match the new module you are creating.  More information can be found
+ * in the [PDF Description](Basilisk-MODULENAME-yyyymmdd.pdf).
  * @{
  */
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
-    double dummy;                                   /*!< [units] sample module variable declaration */
-    double dumVector[3];                            /*!< [units] sample vector variable */
+    double dummy;                                   //!< [units] sample module variable declaration
+    double dumVector[3];                            //!< [units] sample vector variable
 
     /* declare module IO interfaces */
-    char dataOutMsgName[MAX_STAT_MSG_LENGTH];       /*!< The name of the output message*/
-    int32_t dataOutMsgID;                           /*!< ID for the outgoing message */
-    char dataInMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the Input message*/
-    int32_t dataInMsgID;                            /*!< ID for the incoming message */
+    char dataOutMsgName[MAX_STAT_MSG_LENGTH];       //!< The name of the output message
+    int32_t dataOutMsgID;                           //!< ID for the outgoing message
+    char dataInMsgName[MAX_STAT_MSG_LENGTH];        //!< The name of the Input message
+    int32_t dataInMsgID;                            //!< ID for the incoming message
 
-    double  inputVector[3];                         /*!< [units]  vector description */
+    double  inputVector[3];                         //!< [units]  vector description
 
-    FswModuleTemplateFswMsg fswModuleOut;           /*!< -- copy of the output message */
+    FswModuleTemplateFswMsg fswModuleOut;           //!< copy of the output message
 
 }fswModuleTemplateConfig;
 
