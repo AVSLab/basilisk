@@ -23,11 +23,12 @@
 
 #include <Eigen/Dense>
 #include <vector>
+#include <string>
 #include "../../_GeneralModuleFiles/sys_model.h"
 #include "../../simMessages/spicePlanetStateSimMsg.h"
 #include "../../simMessages/scPlusStatesSimMsg.h"
 #include "../../simMessages/atmoPropsSimMsg.h"
-#include "../planetEnvBaseClass/planetEnvBaseClass.h"
+#include "../_GeneralModuleFiles/planetEnvironmentModel.h"
 
 /*! \addtogroup SimModelGroup
  * @{
@@ -73,7 +74,7 @@ public:
     std::string planetPosInMsgName;			//!< Message name for the planet's SPICE position message
     double envMinReach = 0; //!< [m] Minimum planet-relative position needed for the environment to work
     double envMaxReach = 1e12; //!< [m] Maximum distance at which the environment will be calculated
-    atmoPropsSimMsg tmpAtmo;
+    AtmoPropsSimMsg tmpAtmo;
     double localAtmoDens; //!< [kg/m^3] Local neutral atmospheric density (computed)
     double localAtmoTemp; //!< [K] Local atmospheric temperature, SET TO BE CONSTANT
     double currentAlt; //!< [m] Current s/c altitude
@@ -89,7 +90,7 @@ public:
 private:
     double tmpPosMag;	//<! [m/s] Magnitude of the spacecraft's current position
     uint64_t OutputBufferCount;	//!< number of output buffers for messaging system
-    std::vector<atmoPropsSimMsg> atmoOutBuffer; //!< -- Message buffer for density messages
+    std::vector<AtmoPropsSimMsg> atmoOutBuffer; //!< -- Message buffer for density messages
 
 };
 

@@ -18,6 +18,7 @@
  */
 
 #include "planetEnvironmentModel.h"
+#include <string>
 
 /*! This is the constructor, just setting the variables to zero */
 PlanetEnvironmentModel::PlanetEnvironmentModel()
@@ -29,7 +30,8 @@ PlanetEnvironmentModel::PlanetEnvironmentModel()
 }
 
 ///*! This is the destructor, nothing to report here */
-PlanetEnvironmentModel::~PlanetEnvironmentModel(){
+PlanetEnvironmentModel::~PlanetEnvironmentModel()
+{
     return;
 }
 
@@ -37,6 +39,7 @@ PlanetEnvironmentModel::~PlanetEnvironmentModel(){
  * The output message name is provided as "[env_type]+[_len(scStateInMsgNames)-1]_data.
  * This method creates a vector of both spacecraft input message names and environment output message names*/
 
-void PlanetEnvironmentModel::addSpacecraftToModel(std::string tmpScMsgName){
+void PlanetEnvironmentModel::addSpacecraftToModel(std::string tmpScMsgName)
+{
     return;
 }

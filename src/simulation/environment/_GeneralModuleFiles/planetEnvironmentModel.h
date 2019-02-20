@@ -35,8 +35,8 @@ public:
     std::vector<std::string> scStateInMsgNames;	//!< Vector of the spacecraft position/velocity message names
     std::vector<std::string> envOutMsgNames; //!< Vector of message names to be written out by the environment
     std::string planetPosInMsgName;			//!< Message name for the planet's SPICE position message
-    double envMinReach = 0; //!< [m] Minimum planet-relative position needed for the environment to work
-    double envMaxReach = -1; //!< [m] Maximum distance at which the environment will be calculated
+    double envMinReach = -1; //!< [m] Minimum planet-relative position needed for the environment to work
+    double envMaxReach = 1; //!< [m] Maximum distance at which the environment will be calculated
     std::string envType;
 };
 

@@ -33,6 +33,8 @@
 %include  "simMessages/atmoPropsSimMsg.h"
 %include "dragDynamicEffector.h"
 
+GEN_SIZEOF(AtmoPropsSimMsg)
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

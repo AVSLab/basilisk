@@ -92,7 +92,7 @@ def setEpoch(atmoModel):
         atmoModel.setEpoch(date)
         if atmoModel.epochDate != dateVec:
             testFailCount += 1
-            testMessages.append("FAILED: ExponentialAtmosphere could not set date to "+date+".")
+            testMessages.append("FAILED: ExponentialAtmosphere could not set date to "+str(date)+".")
 
     return testFailCount, testMessages
 

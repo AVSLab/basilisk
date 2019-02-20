@@ -24,14 +24,17 @@
 %}
 
 %include "swig_common_model.i"
+%include "../_GeneralModuleFiles/planetEnvironmentModel.h"
 %include "sys_model.h"
-%include "../planetEnvBaseClass/planetEnvBaseClass.h"
+%include "atmosphere.h"
+
 %include "../../simMessages/spicePlanetStateSimMsg.h"
 %include "../../simMessages/scPlusStatesSimMsg.h"
 %include "../../simMessages/atmoPropsSimMsg.h"
-%include "atmosphere.h"
 
-GEN_SIZEOF(atmoPropsSimMsg)
+GEN_SIZEOF(AtmoPropsSimMsg)
+GEN_SIZEOF(SpicePlanetStateSimMsg)
+GEN_SIZEOF(SCPlusStatesSimMsg)
 
 %pythoncode %{
 import sys

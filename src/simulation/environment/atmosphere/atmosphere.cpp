@@ -95,8 +95,8 @@ void Atmosphere::SelfInit()
         std::vector<std::string>::iterator nameIt;
 
         for (it = this->envOutMsgNames.begin(); it!=this->envOutMsgNames.end(); it++) {
-            tmpAtmoMsgId = SystemMessaging::GetInstance()->CreateNewMessage(*it, sizeof(atmoPropsSimMsg),
-                    this->OutputBufferCount, "atmoPropsSimMsg", moduleID);
+            tmpAtmoMsgId = SystemMessaging::GetInstance()->CreateNewMessage(*it, sizeof(AtmoPropsSimMsg),
+                    this->OutputBufferCount, "AtmoPropsSimMsg", moduleID);
 
             this->envOutMsgIds.push_back(tmpAtmoMsgId);
         }
@@ -126,15 +126,15 @@ void Atmosphere::CrossInit()
  */
 void Atmosphere::WriteOutputMessages(uint64_t CurrentClock)
 {
-    atmoPropsSimMsg tmpAtmo;
+    AtmoPropsSimMsg tmpAtmo;
     std::vector<int64_t>::iterator it;
-    std::vector<atmoPropsSimMsg>::iterator atmoIt;
+    std::vector<AtmoPropsSimMsg>::iterator atmoIt;
     atmoIt = atmoOutBuffer.begin();
     for(it = this->envOutMsgIds.begin(); it!= this->envOutMsgIds.end(); it++, atmoIt++){
         tmpAtmo = *atmoIt;
         SystemMessaging::GetInstance()->WriteMessage(*it,
                                                   CurrentClock,
-                                                  sizeof(atmoPropsSimMsg),
+                                                  sizeof(AtmoPropsSimMsg),
                                                   reinterpret_cast<uint8_t*>(&tmpAtmo),
                                                   moduleID);
     }
@@ -198,7 +198,7 @@ void Atmosphere::updateLocalAtmo(double currentTime)
         double tmpDensity = 0.0;
         double tmpAltitude = 0.0;
         std::vector<SCPlusStatesSimMsg>::iterator it;
-        atmoPropsSimMsg tmpData;
+        AtmoPropsSimMsg tmpData;
         uint64_t atmoInd = 0;
         this->atmoOutBuffer.clear();
         for(it = scStates.begin(); it != scStates.end(); it++, atmoInd++){
