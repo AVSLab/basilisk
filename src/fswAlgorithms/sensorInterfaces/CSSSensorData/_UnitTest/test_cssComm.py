@@ -102,9 +102,10 @@ def cssCommTestFunction(numSensors, sensorData):
     outputData = unitTestSim.pullMessageLogData(moduleConfig.OutputDataName+".CosValue", range(MAX_NUM_CSS_SENSORS))
     trueCssList= [0]*MAX_NUM_CSS_SENSORS
     if numSensors==4:
-        trueCssList[0:4] = [0.0, 0.45791653042, 0.0, 0.615444781018]
+        trueCssList[0:4] = [0.0, 0.45791653042, 1.0, 0.615444781018]
     if numSensors==MAX_NUM_CSS_SENSORS+1:
         trueCssList = [0.45791653042]*32
+
 
     # Create the true array
     trueCss = [
@@ -114,7 +115,6 @@ def cssCommTestFunction(numSensors, sensorData):
 
 
     accuracy = 1e-6
-
 
     testFailCount, testMessages = unitTestSupport.compareArrayND(trueCss, outputData, accuracy, "cosValues",
                                                                  MAX_NUM_CSS_SENSORS, testFailCount, testMessages)
@@ -142,4 +142,4 @@ def cssCommTestFunction(numSensors, sensorData):
 
 
 if __name__ == '__main__':
-    test_cssComm(4, [-100e-6, 200e-6, 600e-6, 300e-6])
+    test_cssComm(4, [-100e-6, 200e-6, 600e-6, 300e-6, 200e-6])
