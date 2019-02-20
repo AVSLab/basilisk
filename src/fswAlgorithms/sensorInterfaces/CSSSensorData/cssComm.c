@@ -132,11 +132,11 @@ void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime,
         
         OutputBuffer.CosValue[i] = OutputBuffer.CosValue[i] + ChebyDiffFactor;
         
-        if(InputValues[i] > ConfigData->MaxSensorValue)
+        if(OutputBuffer.CosValue[i] > 1.0)
         {
             OutputBuffer.CosValue[i] = 1.0;
         }
-        else if(InputValues[i] < 0.0)
+        else if(OutputBuffer.CosValue[i] < 0.0)
         {
             OutputBuffer.CosValue[i] = 0.0;
         }
