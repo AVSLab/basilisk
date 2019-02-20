@@ -24,11 +24,11 @@
 %}
 
 %include "swig_common_model.i"
-
 %include "sys_model.h"
-%include "../simMessages/spicePlanetStateSimMsg.h"
-%include "../simMessages/scPlusStatesSimMsg.h"
-%include "../simMessages/atmoPropsSimMsg.h"
+%include "../planetEnvBaseClass/planetEnvBaseClass.h"
+%include "../../simMessages/spicePlanetStateSimMsg.h"
+%include "../../simMessages/scPlusStatesSimMsg.h"
+%include "../../simMessages/atmoPropsSimMsg.h"
 %include "atmosphere.h"
 
 GEN_SIZEOF(atmoPropsSimMsg)

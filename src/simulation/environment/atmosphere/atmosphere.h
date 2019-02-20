@@ -54,17 +54,18 @@ class Atmosphere: public SysModel, public PlanetEnvironmentModel {
 public:
     Atmosphere();
     ~Atmosphere();
-    void setPlanet(std::string newPlanetName);
     void SelfInit();
     void CrossInit();
-    void setEnvType(std::string desEnvType);
+    void setEnvType(std::string inputType); //!< [string]
     void setEpoch(double julianDate);
+    void addSpacecraftToModel(std::string tmpScMsgName);
     void UpdateState(uint64_t CurrentSimNanos);
+
+private:
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void updateLocalAtmo(double currentTime);
     void updateRelativePos(SpicePlanetStateSimMsg& planetState, SCPlusStatesSimMsg& scState);
-
 
 public:
     std::vector<std::string> scStateInMsgNames;	//!< Vector of the spacecraft position/velocity message names

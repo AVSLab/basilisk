@@ -58,15 +58,23 @@ Atmosphere::~Atmosphere()
     return;
 }
 
-void Atmosphere::setEnvType(std::string envType)
+void Atmosphere::setEnvType(std::string inputType)
 {
-    this->envType = envType;
+    this->envType = inputType;
     return;
 }
 
 void Atmosphere::setEpoch(double julianDate)
 {
     this->epochDate = julianDate;
+    return;
+}
+
+void Atmosphere::addSpacecraftToModel(std::string tmpScMsgName){
+    std::string tmpEnvMsgName;
+    this->scStateInMsgNames.push_back(tmpScMsgName);
+    tmpEnvMsgName = this->envType + std::to_string(this->scStateInMsgNames.size()-1)+"_data";
+    this->envOutMsgNames.push_back(tmpEnvMsgName);
     return;
 }
 
@@ -184,25 +192,31 @@ and the pre-set atmospheric density properties.
  */
 void Atmosphere::updateLocalAtmo(double currentTime)
 {
-    double tmpDensity = 0.0;
-    double tmpAltitude = 0.0;
-    std::vector<SCPlusStatesSimMsg>::iterator it;
-    atmoPropsSimMsg tmpData;
-    uint64_t atmoInd = 0;
-    this->atmoOutBuffer.clear();
-    for(it = scStates.begin(); it != scStates.end(); it++, atmoInd++){
-      this->updateRelativePos(this->bodyState, *it);
-      tmpPosMag = this->relativePos.norm();
-      tmpAltitude = tmpPosMag - this->atmosphereProps.planetRadius;
 
-      tmpDensity = this->atmosphereProps.baseDensity * exp(-1.0 * tmpAltitude / this->atmosphereProps.scaleHeight);
-//        BSK_PRINT(MSG_DEBUG, "Altitude %f, Density %f", tmpAltitude, tmpDensity);
-      tmpData.neutralDensity = tmpDensity;
-      tmpData.localTemp = 300.0;
+    if(this->envType.compare("exponential")){
 
-      this->atmoOutBuffer.push_back(tmpData);
+        double tmpDensity = 0.0;
+        double tmpAltitude = 0.0;
+        std::vector<SCPlusStatesSimMsg>::iterator it;
+        atmoPropsSimMsg tmpData;
+        uint64_t atmoInd = 0;
+        this->atmoOutBuffer.clear();
+        for(it = scStates.begin(); it != scStates.end(); it++, atmoInd++){
+            this->updateRelativePos(this->bodyState, *it);
+            tmpPosMag = this->relativePos.norm();
+            tmpAltitude = tmpPosMag - this->atmosphereProps.planetRadius;
+            tmpDensity = this->atmosphereProps.baseDensity * exp(-1.0 * tmpAltitude / this->atmosphereProps.scaleHeight);
+            tmpData.neutralDensity = tmpDensity;
+            tmpData.localTemp = 300.0;
+
+            this->atmoOutBuffer.push_back(tmpData);
+        }
+
     }
-      return;
+    else{
+        BSK_PRINT(MSG_WARNING, "Atmospheric model not set. Skipping computation.")
+    }
+    return;
 }
 
 void Atmosphere::updateRelativePos(SpicePlanetStateSimMsg& planetState, SCPlusStatesSimMsg& scState)
@@ -239,5 +253,5 @@ void Atmosphere::UpdateState(uint64_t CurrentSimNanos)
         updateLocalAtmo(CurrentSimNanos*1.0E-9);
     }
     WriteOutputMessages(CurrentSimNanos);
-
+    return;
 }
