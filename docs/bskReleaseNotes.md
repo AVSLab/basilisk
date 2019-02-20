@@ -15,6 +15,9 @@ We are very excited by the great capabilities that this software already has, an
 ## Upcoming Version 0.X.X
 <ul>
     <li>
+        cssComm has updated documentation and unit tests.
+    </li>
+    <li>
         updated Documentation on `rwNullSpace` FSW module
     </li>
     <li>
