@@ -7,7 +7,12 @@ if(POLICY CMP0025)
 endif()
 
 project("basilisk")
-set(CMAKE_BUILD_TYPE "Debug")
+
+if(CMAKE_BUILD_TYPE)
+
+else()
+  set(CMAKE_BUILD_TYPE "Debug")
+endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
