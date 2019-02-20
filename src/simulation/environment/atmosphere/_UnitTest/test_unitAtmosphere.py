@@ -38,7 +38,7 @@ from Basilisk.utilities import orbitalMotion
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import atmosphere
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import simIncludeGravBody
 
 
 def test_unitAtmosphere():
@@ -90,7 +90,7 @@ def setEpoch(atmoModel):
     dateVec = [20000, 2000.]
     for date in dateVec:
         atmoModel.setEpoch(date)
-        if atmoModel.epochDate != dateVec:
+        if atmoModel.epochDate != date:
             testFailCount += 1
             testMessages.append("FAILED: ExponentialAtmosphere could not set date to "+str(date)+".")
 
@@ -115,7 +115,7 @@ def AddSpacecraftToModel(atmoModel):
         testMessages.append(
             "FAILED: ExponentialAtmosphere does not have enough input message names.")
 
-    if len(atmoModel.atmoDensOutMsgNames) != 2:
+    if len(atmoModel.envOutMsgNames) != 2:
         testFailCount += 1
         testMessages.append(
             "FAILED: ExponentialAtmosphere does not have enough output message names.")
@@ -128,8 +128,9 @@ def TestExponentialAtmosphere():
     testMessages = []
 
     def expAtmoComp(alt, baseDens, scaleHeight):
-        dens = baseDens * math.exp(-alt/scaleHeight)
-    return dens
+        density = baseDens * math.exp(-alt/scaleHeight)
+        return density
+
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -150,6 +151,7 @@ def TestExponentialAtmosphere():
     newAtmo = atmosphere.Atmosphere()
     atmoTaskName = "atmosphere"
     newAtmo.ModelTag = "ExpAtmo"
+    newAtmo.setEnvType("exponential")
 
     dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
     scSim.AddModelToTask(atmoTaskName, newAtmo)
@@ -222,7 +224,7 @@ def TestExponentialAtmosphere():
     numDataPoints = 10
     samplingTime = simulationTime / (numDataPoints-1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage('atmo_dens0_data', samplingTime)
+    scSim.TotalSim.logThisMessage("exponential0_data", samplingTime)
     scSim.AddVariableForLogging('ExpAtmo.relativePos', samplingTime, StartIndex=0, StopIndex=2)
 
     #
@@ -247,7 +249,7 @@ def TestExponentialAtmosphere():
     #
     posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
     velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N',range(3))
-    densData = scSim.pullMessageLogData('atmo_dens0_data.neutralDensity')
+    densData = scSim.pullMessageLogData("exponential0_data.neutralDensity")
     relPosData = scSim.GetLogVariableData('ExpAtmo.relativePos')
     np.set_printoptions(precision=16)
 
@@ -268,3 +270,7 @@ def TestExponentialAtmosphere():
             testMessages.append(
                 "FAILED:  ExpAtmo failed density unit test at t=" + str(densData[ind, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(densData[ind,1]-refAtmoDensData[ind]))
 
+    return testFailCount, testMessages
+
+if __name__=='__main__':
+    TestExponentialAtmosphere()

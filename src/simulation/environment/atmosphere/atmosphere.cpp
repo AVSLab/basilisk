@@ -86,7 +86,7 @@ void Atmosphere::SelfInit()
     std::string expString ("exponential");
     std::string msisString ("nrlmsise-00");
 
-    if(this->envType.compare(expString))
+    if(this->envType.compare(expString)==0)
     {
         std::string tmpAtmoMsgName;
         uint64_t tmpAtmoMsgId;
@@ -106,7 +106,7 @@ void Atmosphere::SelfInit()
 
 /*! This method is used to connect the input position method from the spacecraft. .
  @return void
- */
+ */`
 void Atmosphere::CrossInit()
 {
     this->planetPosInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(
@@ -193,7 +193,7 @@ and the pre-set atmospheric density properties.
 void Atmosphere::updateLocalAtmo(double currentTime)
 {
 
-    if(this->envType.compare("exponential")){
+    if(this->envType.compare("exponential")==0){
 
         double tmpDensity = 0.0;
         double tmpAltitude = 0.0;
