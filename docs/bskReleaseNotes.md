@@ -11,6 +11,14 @@ We are very excited by the great capabilities that this software already has, an
 * New download and install method that pulls all the code, compiles and leaves the user with BSK binaries specific for their platform
 
 
+## Upcoming Version 0.X.X
+<ul>
+    <li>
+        Add release notes here for new commits.
+    </li>
+</ul>
+
+
 
 ## Version 0.4.1
 <ul>
