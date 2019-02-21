@@ -55,6 +55,18 @@ void CrossInit_aggregateNav(NavAggregateData *ConfigData, uint64_t moduleID)
     }
 }
 
+/*! This resets the module to original states.
+ @return void
+ @param ConfigData The configuration data associated with this module
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the ConfigData
+ */
+void Reset_rwNullSpace(NavAggregateData *ConfigData, uint64_t callTime, uint64_t moduleID)
+{
+
+}
+
+
 /*! This method takes the navigation message snippets created by the various 
     navigation components in the FSW and aggregates them into a single complete 
     navigation message.

@@ -72,9 +72,9 @@ extern "C" {
     
     void SelfInit_aggregateNav(NavAggregateData *ConfigData, uint64_t moduleID);
     void CrossInit_aggregateNav(NavAggregateData *ConfigData, uint64_t moduleID);
-    void Update_aggregateNav(NavAggregateData *ConfigData, uint64_t callTime,
-        uint64_t moduleID);
-    
+    void Update_aggregateNav(NavAggregateData *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void Reset_rwNullSpace(NavAggregateData *ConfigData, uint64_t callTime, uint64_t moduleID);
+
 #ifdef __cplusplus
 }
 #endif
