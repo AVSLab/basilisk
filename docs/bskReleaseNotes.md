@@ -24,10 +24,13 @@ We are very excited by the great capabilities that this software already has, an
         updated how the FSW and Simulation modules are displayed with the DOxygen HTML documenation, as well as how the messages are shown.  Now the use can click on the "Modules" tab in the web page to find a cleaner listing of all BSK modules, messages, utilities and architecture documentation. 
     </li>
     <li>
-    modified the `cmake` file to allow the build type to be passed in from the command line
+        modified the `cmake` file to allow the build type to be passed in from the command line
     </li>
     <li>
-    updated Doxygen documentation on `cssWlsEst()`
+        updated Doxygen documentation on `cssWlsEst()`
+    </li>
+    <li>
+        updated documentation and unit tests of `cssComm()` module
     </li>
 </ul>
 
