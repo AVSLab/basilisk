@@ -28,6 +28,8 @@
 %ignore SelfInit_cssProcessTelem;
 %constant void CrossInit_cssProcessTelem(void*, uint64_t);
 %ignore CrossInit_cssProcessTelem;
+%constant void Reset_cssProcessTelem(void*, uint64_t, uint64_t);
+%ignore Reset_cssProcessTelem;
 STRUCTASLIST(CSSArraySensorIntMsg)
 GEN_SIZEOF(CSSArraySensorIntMsg);
 GEN_SIZEOF(CSSConfigData);

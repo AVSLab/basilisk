@@ -2,7 +2,9 @@
 #   Unit Test Script
 #   Module Name:        cssComm
 #   Creation Date:      October 4, 2018
+#   Updated On:         February 10, 2019
 #
+import pytest
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
@@ -10,12 +12,25 @@ from Basilisk.utilities import macros
 from Basilisk.fswAlgorithms import cssComm
 from Basilisk.simulation import simFswInterfaceMessages
 
+import os, inspect
 
-def test_cssComm():
-    [testResults, testMessage] = cssCommTestFunction()
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+
+@pytest.mark.parametrize("numSensors, sensorData", [
+    (4, [-100e-6, 200e-6, 600e-6, 300e-6, 200e-6]),  # Five data inputs used despite four sensors to ensure all reset conditions are tested.
+    pytest.param(0, [-100e-6, 200e-6, 600e-6, 300e-6]), # Zero sensor number to ensure all reset conditions are tested
+    pytest.param(simFswInterfaceMessages.MAX_NUM_CSS_SENSORS+1, [200e-6]*simFswInterfaceMessages.MAX_NUM_CSS_SENSORS)  # Indicate more sensor devices than is allowed.  The output should be clipped to the allowed length
+])
+
+
+def test_cssComm(numSensors, sensorData):
+    [testResults, testMessage] = cssCommTestFunction(numSensors, sensorData)
     assert testResults < 1, testMessage
 
-def cssCommTestFunction():
+
+
+def cssCommTestFunction(numSensors, sensorData):
     """ Test the cssComm module """
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
@@ -37,7 +52,7 @@ def cssCommTestFunction():
     # Construct the cssComm module
     moduleConfig = cssComm.CSSConfigData() # Create a config struct
     # Populate the config
-    moduleConfig.NumSensors = 8
+    moduleConfig.NumSensors = numSensors
     moduleConfig.MaxSensorValue = 500e-6
     moduleConfig.OutputDataName = "css_data_aggregate"
     ChebyList =  [-1.734963346951471e+06, 3.294117146099591e+06,
@@ -61,7 +76,7 @@ def cssCommTestFunction():
     cssArrayMsg = simFswInterfaceMessages.CSSArraySensorIntMsg()
 
     # NOTE: This is nonsense. These are more or less random numbers
-    cssArrayMsg.CosValue = [100e-6, 200e-6, 100e-6, 300e-6, 400e-6, 300e-6, 200e-6, 600e-6]
+    cssArrayMsg.CosValue = sensorData
     # Write this message
     msgSize = cssArrayMsg.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
@@ -83,24 +98,48 @@ def cssCommTestFunction():
     unitTestSim.ExecuteSimulation()
 
     # Get the output from this simulation
-    outputData = unitTestSim.pullMessageLogData(moduleConfig.OutputDataName+".CosValue", range(moduleConfig.NumSensors))
+    MAX_NUM_CSS_SENSORS = simFswInterfaceMessages.MAX_NUM_CSS_SENSORS
+    outputData = unitTestSim.pullMessageLogData(moduleConfig.OutputDataName+".CosValue", range(MAX_NUM_CSS_SENSORS))
+    trueCssList= [0]*MAX_NUM_CSS_SENSORS
+    if numSensors==4:
+        trueCssList[0:4] = [0.0, 0.45791653042, 1.0, 0.615444781018]
+    if numSensors==MAX_NUM_CSS_SENSORS+1:
+        trueCssList = [0.45791653042]*32
+
 
     # Create the true array
     trueCss = [
-        [0.317205386467, 0.45791653042, 0.317205386467, 0.615444781018, 0.802325127473, 0.615444781018, 0.45791653042, 0.0],
-        [0.317205386467, 0.45791653042, 0.317205386467, 0.615444781018, 0.802325127473, 0.615444781018, 0.45791653042, 0.0]
+        trueCssList,
+        trueCssList
     ]
+
 
     accuracy = 1e-6
 
-    testFailCount, testMessages = unitTestSupport.compareArrayND(trueCss, outputData, accuracy, "ccsComm",
-                                                                 moduleConfig.NumSensors, testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArrayND(trueCss, outputData, accuracy, "cosValues",
+                                                                 MAX_NUM_CSS_SENSORS, testFailCount, testMessages)
 
+
+
+
+    #   print out success message if no error were found
+    unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
+
+    snippentName = "passFail_"+str(numSensors)
     if testFailCount == 0:
+        colorText = 'ForestGreen'
         print "PASSED: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        print "Failed: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+
+
 
     return [testFailCount, ''.join(testMessages)]
 
 
 if __name__ == '__main__':
-    test_cssComm()
+    test_cssComm(4, [-100e-6, 200e-6, 600e-6, 300e-6, 200e-6])

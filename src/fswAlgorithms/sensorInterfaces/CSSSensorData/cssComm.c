@@ -19,6 +19,7 @@
 
 #include "sensorInterfaces/CSSSensorData/cssComm.h"
 #include "messaging/static_messaging.h"
+#include "simulation/utilities/bsk_Print.h"
 #include <string.h>
 
 /*! This method initializes the ConfigData for theCSS sensor interface.
@@ -30,15 +31,9 @@
 void SelfInit_cssProcessTelem(CSSConfigData *ConfigData, uint64_t moduleID)
 {
     
-    /*! - Check to make sure that number of sensors is less than the max*/
-    if(ConfigData->NumSensors > MAX_NUM_CSS_SENSORS)
-    {
-        return; /* Throw ugly FSW error/crash here */
-    }
     /*! - Create output message for module */
     ConfigData->OutputMsgID = CreateNewMessage(ConfigData->OutputDataName,
         sizeof(CSSArraySensorIntMsg), "CSSArraySensorIntMsg", moduleID);
-    
 }
 
 /*! This method performs the second stage of initialization for the CSS sensor
@@ -51,15 +46,38 @@ void CrossInit_cssProcessTelem(CSSConfigData *ConfigData, uint64_t moduleID)
 {
     
     /*! Begin method steps */
-    /*! - If num sensors is past max, quit*/
-    if(ConfigData->NumSensors > MAX_NUM_CSS_SENSORS)
-    {
-        return; /* Throw ugly FSW error/crash here */
-    }
-    
     ConfigData->SensorMsgID = subscribeToMessage(
         ConfigData->SensorListName, sizeof(CSSArraySensorIntMsg), moduleID);
 }
+
+/*! This method performs a complete reset of the module.  Local module variables that retain
+ time varying states between function calls are reset to their default values.
+ @return void
+ @param ConfigData The configuration data associated with the guidance module
+ */
+void Reset_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime, uint64_t moduleID)
+{
+    /*! - Check to make sure that number of sensors is less than the max and warn if none are set*/
+    if(ConfigData->NumSensors > MAX_NUM_CSS_SENSORS)
+    {
+        BSK_PRINT(MSG_WARNING, "The configured number of CSS sensors exceeds the maximum, %d > %d! Changing the number of sensors to the max.\n", ConfigData->NumSensors, MAX_NUM_CSS_SENSORS);
+        ConfigData->NumSensors = MAX_NUM_CSS_SENSORS;
+    }
+    else if (ConfigData->NumSensors == 0)
+    {
+        BSK_PRINT(MSG_WARNING, "There are zero CSS configured!\n");
+    }
+    
+    if (ConfigData->MaxSensorValue == 0)
+    {
+        BSK_PRINT(MSG_WARNING, "Max CSS sensor value configured to zero! CSS sensor values will be normalized by zero, inducing faux saturation!\n");
+    }
+    
+    memset(ConfigData->InputValues.CosValue, 0x0, ConfigData->NumSensors*sizeof(double));
+    
+    return;
+}
+
 
 /*! This method takes the raw sensor data from the coarse sun sensors and
  converts that information to the format used by the CSS nav.
@@ -73,59 +91,57 @@ void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime,
     uint32_t i, j;
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
-    double InputValues[MAX_NUM_CSS_SENSORS];
-    double ChebyDiffFactor, ChebyPrev, ChebyNow, ChebyLocalPrev, ValueMult;
+    double InputValues[MAX_NUM_CSS_SENSORS]; /* [-] Current measured CSS value for the constellation of CSS sensor */
+    double ChebyDiffFactor, ChebyPrev, ChebyNow, ChebyLocalPrev, ValueMult; /* Parameters used for the Chebyshev Recursion Forumula */
     CSSArraySensorIntMsg OutputBuffer;
     
-    /*! Begin method steps*/
-    /*! - Check for correct values in NumSensors and MaxSensorValue */
-    if(ConfigData->NumSensors >= MAX_NUM_CSS_SENSORS ||
-       ConfigData->MaxSensorValue <= 0.0)
-    {
-        return; /* Throw ugly FSW error/crash here */
-    }
     memset(&OutputBuffer, 0x0, sizeof(CSSArraySensorIntMsg));
+    
     ReadMessage(ConfigData->SensorMsgID, &timeOfMsgWritten, &sizeOfMsgWritten, sizeof(CSSArraySensorIntMsg),
                 (void*) (InputValues), moduleID);
+    
+    /*! Begin method steps*/
     /*! - Loop over the sensors and compute data
-     -# Check appropriate range on sensor and calibrate
-     -# If Chebyshev polynomials are configured:
-     - Seed polynominal computations
-     - Loop over polynominals to compute estimated correction factor
-     - Output is base value plus the correction factor
-     -# If range is incorrect, set output value to zero */
+         -# Check appropriate range on sensor and calibrate
+         -# If Chebyshev polynomials are configured:
+             - Seed polynominal computations
+             - Loop over polynominals to compute estimated correction factor
+             - Output is base value plus the correction factor
+         -# If sensor output range is incorrect, set output value to zero
+     */
     for(i=0; i<ConfigData->NumSensors; i++)
     {
-        if(InputValues[i] < ConfigData->MaxSensorValue && InputValues[i] >= 0.0)
+        OutputBuffer.CosValue[i] = (float) InputValues[i]/ConfigData->MaxSensorValue; /* Scale Sensor Data */
+        
+        /* Seed the polynomial computations */
+        ValueMult = 2.0*OutputBuffer.CosValue[i];
+        ChebyPrev = 1.0;
+        ChebyNow = OutputBuffer.CosValue[i];
+        ChebyDiffFactor = 0.0;
+        ChebyDiffFactor = ConfigData->ChebyCount > 0 ? ChebyPrev*ConfigData->KellyCheby[0] : ChebyDiffFactor; /* if only first order correction */
+        ChebyDiffFactor = ConfigData->ChebyCount > 1 ? ChebyNow*ConfigData->KellyCheby[1] + ChebyDiffFactor : ChebyDiffFactor; /* if higher order (> first) corrections */
+        
+        /* Loop over remaining polynomials and add in values */
+        for(j=2; j<ConfigData->ChebyCount; j = j+1)
         {
-            /* Scale sensor */
-            OutputBuffer.CosValue[i] = (float) InputValues[i]/
-            ConfigData->MaxSensorValue;
-            /* Seed the polynomial computations*/
-            ValueMult = 2.0*OutputBuffer.CosValue[i];
-            ChebyPrev = 1.0;
-            ChebyNow = OutputBuffer.CosValue[i];
-            ChebyDiffFactor = 0.0;
-            ChebyDiffFactor = ConfigData->ChebyCount > 0 ?
-            ChebyPrev*ConfigData->KellyCheby[0] : ChebyDiffFactor;
-            ChebyDiffFactor = ConfigData->ChebyCount > 1 ?
-            ChebyNow*ConfigData->KellyCheby[1] +
-            ChebyDiffFactor : ChebyDiffFactor;
-            /*Loop over remaining polynomials and add in values*/
-            for(j=2; j<ConfigData->ChebyCount; j = j+1)
-            {
-                ChebyLocalPrev = ChebyNow;
-                ChebyNow = ValueMult*ChebyNow - ChebyPrev;
-                ChebyPrev = ChebyLocalPrev;
-                ChebyDiffFactor += ConfigData->KellyCheby[j]*ChebyNow;
-            }
-            OutputBuffer.CosValue[i] = OutputBuffer.CosValue[i] + ChebyDiffFactor;
+            ChebyLocalPrev = ChebyNow;
+            ChebyNow = ValueMult*ChebyNow - ChebyPrev;
+            ChebyPrev = ChebyLocalPrev;
+            ChebyDiffFactor += ConfigData->KellyCheby[j]*ChebyNow;
         }
-        else
+        
+        OutputBuffer.CosValue[i] = OutputBuffer.CosValue[i] + ChebyDiffFactor;
+        
+        if(OutputBuffer.CosValue[i] > 1.0)
+        {
+            OutputBuffer.CosValue[i] = 1.0;
+        }
+        else if(OutputBuffer.CosValue[i] < 0.0)
         {
             OutputBuffer.CosValue[i] = 0.0;
         }
     }
+    
     /*! - Write aggregate output into output message */
     WriteMessage(ConfigData->OutputMsgID, callTime,
                  sizeof(CSSArraySensorIntMsg), (void*) &OutputBuffer,
