@@ -12,7 +12,7 @@ We are very excited by the great capabilities that this software already has, an
 
 
 
-## Upcoming Version 0.4.1
+## Version 0.4.1
 <ul>
     <li>
         cssComm has updated documentation and unit tests.
