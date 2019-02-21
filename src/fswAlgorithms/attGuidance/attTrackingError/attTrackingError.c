@@ -14,25 +14,12 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
- */
-/*
-    Attitude Tracking Error Module
- 
  */
 
-/* modify the path to reflect the new module names */
 #include "attGuidance/attTrackingError/attTrackingError.h"
 #include <string.h>
 #include "fswUtilities/fswDefinitions.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
-
-
-
-
-/*
- Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
- */
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
 
@@ -41,13 +28,11 @@
  It checks to ensure that the inputs are sane and then creates the
  output message
  @return void
- @param ConfigData The configuration data associated with this module
+ @param ConfigData The configuration data associated with the attitude tracking error module
  */
 void SelfInit_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
-    /*! - Create output message for module */
+        /*! Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
                                                sizeof(AttGuidFswMsg),
                                                "AttGuidFswMsg",
@@ -57,11 +42,11 @@ void SelfInit_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t modu
 /*! This method performs the second stage of initialization for this module.
  It's primary function is to link the input messages that were created elsewhere.
  @return void
- @param ConfigData The configuration data associated with this module
+ @param ConfigData The configuration data associated with the attitude tracking error module
  */
 void CrossInit_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t moduleID)
 {
-    /*! - Get the control data message ID*/
+    /*! - Get the reference and navigation data message ID*/
     ConfigData->inputRefID = subscribeToMessage(ConfigData->inputRefName,
                                                 sizeof(AttRefFswMsg),
                                                 moduleID);
@@ -71,29 +56,28 @@ void CrossInit_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t mod
 
 }
 
-/*! This method performs a complete reset of the module.  Local module variables that retain
- time varying states between function calls are reset to their default values.
+/*! This method performs a complete reset of the module. Local module variables that retain time varying states between function calls are reset to their default values.
  @return void
- @param ConfigData The configuration data associated with the MRP steering control
+ @param ConfigData The configuration data associated with the attitude tracking error module
  */
 void Reset_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
 
 }
 
-/*! Add a description of what this main Update() routine does for this module
+/*! The Update method performs reads the Navigation message (containing the spacecraft attitude information), and the Reference message (containing the desired attitude). It computes the attitude error and writes it in the Guidance message.
  @return void
  @param ConfigData The configuration data associated with the attitude tracking error module
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The Basilisk module identifier
  */
 void Update_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     uint64_t    timeOfMsgWritten;
     uint32_t    sizeOfMsgWritten;
-    AttRefFswMsg ref;                      /*!< reference guidance message */
-    NavAttIntMsg nav;                      /*!< navigation message */
+    AttRefFswMsg ref;                      /* reference guidance message */
+    NavAttIntMsg nav;                      /* navigation message */
 
-    /*! Begin method steps*/
     /*! - Read the input messages */
     memset(&ref, 0x0, sizeof(AttRefFswMsg));
     memset(&nav, 0x0, sizeof(NavAttIntMsg));
