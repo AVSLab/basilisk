@@ -196,6 +196,9 @@ def subModuleTestFunction(show_plots):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i,0]*macros.NANO2SEC) +
                                 "sec\n")
+            unitTestSupport.writeTeXSnippet("passFail1", "FAILED", '.')
+        else:
+            unitTestSupport.writeTeXSnippet("passFail1", "PASSED", '.')
 
     #
     # check omega_RN_B
