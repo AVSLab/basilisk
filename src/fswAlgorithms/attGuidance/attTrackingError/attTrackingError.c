@@ -102,53 +102,37 @@ void Update_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t callTi
     ReadMessage(ConfigData->inputNavID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavAttIntMsg), (void*) &(nav), moduleID);
 
+    computeAttitudeError(nav, ref, ConfigData);
 
-    computeAttitudeError(nav.sigma_BN,
-                         nav.omega_BN_B,
-                         ref.sigma_RN,
-                         ref.omega_RN_N,
-                         ref.domega_RN_N,
-                         ConfigData,
-                         ConfigData->attGuidOut.sigma_BR,
-                         ConfigData->attGuidOut.omega_BR_B,
-                         ConfigData->attGuidOut.omega_RN_B,
-                         ConfigData->attGuidOut.domega_RN_B);
-
-
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttGuidFswMsg),   /* update module name */
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttGuidFswMsg),   /*! - Write guidance message */
                  (void*) &(ConfigData->attGuidOut), moduleID);
 
     return;
 }
 
-
-void computeAttitudeError(double sigma_BN[3],
-                          double omega_BN_B[3],
-                          double sigma_R0N[3],
-                          double omega_RN_N[3],
-                          double domega_RN_N[3],
-                          attTrackingErrorConfig *ConfigData,
-                          double sigma_BR[3],
-                          double omega_BR_B[3],
-                          double omega_RN_B[3],
-                          double domega_RN_B[3])
-{
-    double      sigma_RR0[3];               /*!< MRP from the original reference frame R0 to the corrected reference frame R */
-    double      sigma_RN[3];                /*!< MRP from inertial to updated reference frame */
-    double      dcm_BN[3][3];               /*!< DCM from inertial to body frame */
-
-    /* compute the initial reference frame orientation that takes the corrected body frame into account */
+/*! This method performs the attitude computations in order to extract the error.
+ @return void
+ @param nav The spacecraft attitude information
+ @param ref The reference attitude
+ @param ConfigData The configuration data associated with the attitude tracking error module
+ */
+void computeAttitudeError(NavAttIntMsg nav, AttRefFswMsg ref, attTrackingErrorConfig *ConfigData){
+    double      sigma_RR0[3];               /* MRP from the original reference frame R0 to the corrected reference frame R */
+    double      sigma_RN[3];                /* MRP from inertial to updated reference frame */
+    double      dcm_BN[3][3];               /* DCM from inertial to body frame */
+    
+    /*! - compute the initial reference frame orientation that takes the corrected body frame into account */
     v3Scale(-1.0, ConfigData->sigma_R0R, sigma_RR0);
-    addMRP(sigma_R0N, sigma_RR0, sigma_RN);
-
-    subMRP(sigma_BN, sigma_RN, sigma_BR);               /* compute attitude error */
-
-    MRP2C(sigma_BN, dcm_BN);                                /* [BN] */
-    m33MultV3(dcm_BN, omega_RN_N, omega_RN_B);              /* compute reference omega in body frame components */
-
-    v3Subtract(omega_BN_B, omega_RN_B, omega_BR_B);     /* delta_omega = omega_B - [BR].omega.r */
-
-    m33MultV3(dcm_BN, domega_RN_N, domega_RN_B);            /* compute reference d(omega)/dt in body frame components */
-
+    addMRP(ref.sigma_RN, sigma_RR0, sigma_RN);
+    
+    subMRP(nav.sigma_BN, sigma_RN, ConfigData->attGuidOut.sigma_BR);               /*! - compute attitude error */
+    
+    MRP2C(nav.sigma_BN, dcm_BN);                                /* [BN] */
+    m33MultV3(dcm_BN, ref.omega_RN_N, ConfigData->attGuidOut.omega_RN_B);              /*! - compute reference omega in body frame components */
+    
+    v3Subtract(nav.omega_BN_B, ConfigData->attGuidOut.omega_RN_B, ConfigData->attGuidOut.omega_BR_B);     /*! - delta_omega = omega_B - [BR].omega.r */
+    
+    m33MultV3(dcm_BN, ref.domega_RN_N, ConfigData->attGuidOut.domega_RN_B);            /*! - compute reference d(omega)/dt in body frame components */
+    
 }
 
