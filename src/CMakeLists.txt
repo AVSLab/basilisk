@@ -8,11 +8,10 @@ endif()
 
 project("basilisk")
 
-if(CMAKE_BUILD_TYPE)
-
-else()
-  set(CMAKE_BUILD_TYPE "Debug")
-endif()
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Debug" CACHE STRING
+      "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
+endif(NOT CMAKE_BUILD_TYPE)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
