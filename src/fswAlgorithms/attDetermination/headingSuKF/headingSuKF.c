@@ -144,7 +144,7 @@ void Update_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t callTime,
     double newTimeTag;
     double yBar[OPNAV_MEAS];
     double tempYVec[OPNAV_MEAS];
-    double sunheading_hat[3];
+    double heading_hat[3];
     double states_BN[HEAD_N_STATES_SWITCH];
     int i;
     uint64_t ClockTime;
@@ -159,11 +159,11 @@ void Update_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t callTime,
     ReadMessage(ConfigData->opnavDataInMsgId, &ClockTime, &ReadSize,
         sizeof(OpnavFswMsg), (void*) (&(ConfigData->opnavInBuffer)), moduleID);
     
-    v3Normalize(&ConfigData->state[0], sunheading_hat);
+    v3Normalize(&ConfigData->state[0], heading_hat);
     
     
     /*! - Check for switching frames */
-    if (v3Dot(ConfigData->bVec_B, sunheading_hat) > ConfigData->switchTresh)
+    if (v3Dot(ConfigData->bVec_B, heading_hat) > ConfigData->switchTresh)
     {
         headingSuKFSwitch(ConfigData->bVec_B, ConfigData->state, ConfigData->covar);
     }
@@ -365,12 +365,14 @@ void headingSuKFMeasModel(HeadingSuKFConfig *ConfigData)
     /* Begin method steps */
     /*! - Loop over sigma points */
     int j;
+    int i;
+    v3Copy(ConfigData->opnavInBuffer.rel_pos, ConfigData->obs);
     for(j=0; j<ConfigData->countHalfSPs*2+1; j++)
     {
-        ConfigData->yMeas[ConfigData->countHalfSPs*2+1 + j] =
-            ConfigData->SP[j*HEAD_N_STATES_SWITCH];
+        for(i=0; i<3; i++)
+        ConfigData->yMeas[i*(ConfigData->countHalfSPs*2+1) + j] =
+            ConfigData->SP[i + j*HEAD_N_STATES_SWITCH];
     }
-    
     
     /*! - yMeas matrix was set backwards deliberately so we need to transpose it through*/
     mTranspose(ConfigData->yMeas, OPNAV_MEAS, ConfigData->countHalfSPs*2+1,
