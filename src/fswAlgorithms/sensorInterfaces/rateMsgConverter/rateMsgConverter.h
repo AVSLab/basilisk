@@ -20,26 +20,26 @@
 #ifndef _RATE_IMU_TO_NAV_CONVERTER_H_
 #define _RATE_IMU_TO_NAV_CONVERTER_H_
 
-#include "messaging/static_messaging.h"
 #include <stdint.h>
+#include "messaging/static_messaging.h"
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "fswAlgorithms/fswMessages/imuSensorBodyFswMsg.h"
 
 
 /*! \addtogroup ADCSAlgGroup
- * @{
+ * @brief
  */
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
 
     /* declare module IO interfaces */
-    char navRateOutMsgName[MAX_STAT_MSG_LENGTH];       /*!< The name of the navAttIntMsg output message*/
-    int32_t navRateOutMsgID;                           /*!< ID for the outgoing message */
-    char imuRateInMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the imuSensorBody Input message*/
-    int32_t imuRateInMsgID;                            /*!< ID for the incoming message */
+    char navRateOutMsgName[MAX_STAT_MSG_LENGTH];       //!< The name of the navAttIntMsg output message*/
+    int32_t navRateOutMsgID;                           //!< ID for the outgoing message */
+    char imuRateInMsgName[MAX_STAT_MSG_LENGTH];        //!< The name of the imuSensorBody Input message*/
+    int32_t imuRateInMsgID;                            //!< ID for the incoming message */
 
-    NavAttIntMsg outMsg;                               /*!< -- copy of the output message */
+    NavAttIntMsg outMsg;                               //!< -- copy of the output message */
 
 }rateMsgConverterConfig;
 

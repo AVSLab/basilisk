@@ -78,7 +78,7 @@ def rateMsgConvertFunction(show_plots):
     moduleWrap.ModelTag = "rateMsgConverter"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap,  )
+    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
     moduleConfig.navRateOutMsgName = "sampleOutput"
