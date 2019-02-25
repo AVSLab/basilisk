@@ -22,12 +22,6 @@ import numpy as np
 import pytest
 import math
 
-
-
-
-
-
-
 from Basilisk.utilities import SimulationBaseClass, macros, unitTestSupport
 from Basilisk.simulation import coarse_sun_sensor
 import matplotlib.pyplot as plt
@@ -36,7 +30,7 @@ from Basilisk.fswAlgorithms import headingSuKF, cssComm, fswMessages  # import t
 import SunLineSuKF_test_utilities as FilterPlots
 
 def setupFilterData(filterObject):
-    filterObject.navStateOutMsgName = "heading_state_estimate"
+    filterObject.opnavOutMsgName = "opnav_state_estimate"
     filterObject.filtDataOutMsgName = "heading_filter_data"
     filterObject.opnavDataInMsgName = "opnav_sensors_data"
 
@@ -376,7 +370,7 @@ def StateUpdateSunLine(show_plots):
     inputData = headingSuKF.OpnavFswMsg()
     inputMessageSize = inputData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                      moduleConfig.opnavInBuffer,
+                                      moduleConfig.opnavDataInMsgName,
                                       inputMessageSize,
                                       2)  # number of buffers (leave at 2 as default, don't make zero)
 
@@ -389,7 +383,7 @@ def StateUpdateSunLine(show_plots):
     for i in range(400):
         if i > 20:
             inputData.rel_pos += - np.cross(testOmega, testVector) * 0.5
-            unitTestSim.TotalSim.WriteMessageData(moduleConfig.opnavInBuffer,
+            unitTestSim.TotalSim.WriteMessageData(moduleConfig.opnavDataInMsgName,
                                       inputMessageSize,
                                       unitTestSim.TotalSim.CurrentNanos,
                                       inputData)
@@ -397,7 +391,7 @@ def StateUpdateSunLine(show_plots):
         unitTestSim.ExecuteSimulation()
 
     stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", range(5))
-    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", range(8))
+    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", range(3))
     covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", range(5*5))
 
     for i in range(5):
@@ -412,7 +406,7 @@ def StateUpdateSunLine(show_plots):
         
     for i in range(400):
         if i > 20:
-            unitTestSim.TotalSim.WriteMessageData(moduleConfig.opnavInBuffer,
+            unitTestSim.TotalSim.WriteMessageData(moduleConfig.opnavDataInMsgName,
                                       inputMessageSize,
                                       unitTestSim.TotalSim.CurrentNanos,
                                       inputData)
@@ -420,7 +414,7 @@ def StateUpdateSunLine(show_plots):
         unitTestSim.ExecuteSimulation()
 
     stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", range(5))
-    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", range(8))
+    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", range(3))
     covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", range(5*5))
 
     stateTarget = testVector.tolist()
