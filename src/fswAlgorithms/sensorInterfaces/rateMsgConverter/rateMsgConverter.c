@@ -26,38 +26,36 @@
  
  */
 
-/* modify the path to reflect the new module names */
+#include <string.h>
 #include "rateMsgConverter.h"
 #include "simulation/utilities/linearAlgebra.h"
-#include <string.h>
 
 
-/*! This method initializes the ConfigData for this module.
+/*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
  output message
  @return void
  @param ConfigData The configuration data associated with this module
+ @param moduleID The Basilisk module identifier
  */
-void SelfInit_rateMsgConverter(rateMsgConverterConfig *ConfigData, uint64_t moduleID)
+void SelfInit_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
-    /*! - Create output message for module */
-    ConfigData->navRateOutMsgID = CreateNewMessage(ConfigData->navRateOutMsgName,
+    configData->navRateOutMsgID = CreateNewMessage(configData->navRateOutMsgName,
                                                sizeof(NavAttIntMsg),
-                                               "NavAttIntMsg",          /* add the output structure name */
+                                               "NavAttIntMsg",
                                                moduleID);
 }
 
 /*! This method performs the second stage of initialization for this module.
  It's primary function is to link the input messages that were created elsewhere.
  @return void
- @param ConfigData The configuration data associated with this module
+ @param configData The configuration data associated with this module
+ @param moduleID The Basilisk module identifier
  */
-void CrossInit_rateMsgConverter(rateMsgConverterConfig *ConfigData, uint64_t moduleID)
+void CrossInit_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
-    ConfigData->imuRateInMsgID = subscribeToMessage(ConfigData->imuRateInMsgName,
+    configData->imuRateInMsgID = subscribeToMessage(configData->imuRateInMsgName,
                                                 sizeof(IMUSensorBodyFswMsg),
                                                 moduleID);
 }
@@ -65,40 +63,35 @@ void CrossInit_rateMsgConverter(rateMsgConverterConfig *ConfigData, uint64_t mod
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
- @param ConfigData The configuration data associated with the module
+ @param configData The configuration data associated with the module
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The Basilisk module identifier
  */
-void Reset_rateMsgConverter(rateMsgConverterConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Reset_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
     return;
 }
 
-/*! Add a description of what this main Update() routine does for this module
+/*! This method performs a time step update of the module.
  @return void
  @param ConfigData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The Basilisk module identifier
  */
-void Update_rateMsgConverter(rateMsgConverterConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Update_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
-    uint64_t            timeOfMsgWritten;
-    uint32_t            sizeOfMsgWritten;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     IMUSensorBodyFswMsg inMsg;
 
-    /*! Begin method steps*/
-    /*! - Read the input messages */
-    ReadMessage(ConfigData->imuRateInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->imuRateInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(IMUSensorBodyFswMsg), (void*) &(inMsg), moduleID);
 
-    /*
-     create output message
-     */
-    memset(&ConfigData->outMsg, 0x0, sizeof(ConfigData->outMsg));
-    v3Copy(inMsg.AngVelBody, ConfigData->outMsg.omega_BN_B);
+    memset(&configData->outMsg, 0x0, sizeof(configData->outMsg));
+    v3Copy(inMsg.AngVelBody, configData->outMsg.omega_BN_B);
 
-    /*
-     store the output message 
-     */
-    WriteMessage(ConfigData->navRateOutMsgID, callTime, sizeof(NavAttIntMsg),   /* update module name */
-                 (void*) &(ConfigData->outMsg), moduleID);
+    WriteMessage(configData->navRateOutMsgID, callTime, sizeof(NavAttIntMsg),
+                 (void*) &(configData->outMsg), moduleID);
 
     return;
 }

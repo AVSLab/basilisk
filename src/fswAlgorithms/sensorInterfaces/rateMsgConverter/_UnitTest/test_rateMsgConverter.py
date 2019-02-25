@@ -26,19 +26,12 @@
 
 import pytest
 import sys, os, inspect
-# import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
-
-
-
-
-
-
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
@@ -79,14 +72,13 @@ def rateMsgConvertFunction(show_plots):
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-
     # Construct algorithm and associated C++ container
     moduleConfig = rateMsgConverter.rateMsgConverterConfig()
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "rateMsgConverter"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, moduleWrap,  )
 
     # Initialize the test module configuration data
     moduleConfig.navRateOutMsgName = "sampleOutput"
@@ -152,7 +144,6 @@ def rateMsgConvertFunction(show_plots):
         resultTable,
         path)
 
-
     moduleOutputName = "omega_BN_B"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.navRateOutMsgName + '.' + moduleOutputName,
                                                   range(3))
@@ -182,7 +173,6 @@ def rateMsgConvertFunction(show_plots):
         caption,
         resultTable,
         path)
-
 
     moduleOutputName = "sigma_BN"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.navRateOutMsgName + '.' + moduleOutputName,
@@ -244,10 +234,6 @@ def rateMsgConvertFunction(show_plots):
         resultTable,
         path)
 
-
-
-
-
     #   print out success message if no error were found
     snippentName = "passFail"
     if testFailCount == 0:
@@ -271,6 +257,4 @@ def rateMsgConvertFunction(show_plots):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_module(
-                 False
-               )
+    test_module(False)
