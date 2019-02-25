@@ -1,0 +1,114 @@
+% !TEX root = ./Basilisk-navAggregate-2019-02-21.tex
+
+\section{Test Description and Success Criteria}
+The unit test sets up a range of module input conditions ranging from using no message, 1 message, 2 messages, and even using index for an empty message.  All permutations between setting these conditions between the attitude and translation navigation messages are tested. 
+
+
+
+
+\section{Test Parameters}
+
+The attitude navigation messages are setup using the states shown in Tables~\ref{tab:attNav1} and \ref{tab:attNav2}.  If not attitude navigation message is specified, then the attitude navigation output should be a zero message.  If an index is chosen that is larger than 3, then the corresponding message variable should be zeroed as well.
+
+\begin{table}[htbp]
+	\caption{Attitude Navigation Message \#1 and Error tolerance for each test.}
+	\label{tab:attNav1}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c | c } % Column formatting, 
+		\hline\hline
+		\textbf{Output Value Tested} & \textbf{Value} & \textbf{Tolerated Error}  \\ 
+		\hline
+		{\tt timeTag}  &   \input{AutoTeX/navAtt1Msg.timeTag}    & \input{AutoTeX/toleranceValue}	   \\ 
+		{\tt sigma\_BN}  &   \input{AutoTeX/navAtt1Msg.sigma_BN}    & \input{AutoTeX/toleranceValue}	   \\ 
+		{\tt omega\_BN\_B}  &   \input{AutoTeX/navAtt1Msg.omega_BN_B}    & \input{AutoTeX/toleranceValue}	   \\ 
+		{\tt vehSunPntBdy}  &   \input{AutoTeX/navAtt1Msg.vehSunPntBdy}    & \input{AutoTeX/toleranceValue}	   \\ 
+		\hline\hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+	\caption{Attitude Navigation Message \#2 and Error tolerance for each test.}
+	\label{tab:attNav2}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c | c } % Column formatting, 
+		\hline\hline
+		\textbf{Output Value Tested} & \textbf{Value} & \textbf{Tolerated Error}  \\ 
+		\hline
+		{\tt timeTag}  &   \input{AutoTeX/navAtt2Msg.timeTag}    & \input{AutoTeX/toleranceValue}	   \\ 
+		{\tt sigma\_BN}  &   \input{AutoTeX/navAtt2Msg.sigma_BN}    & \input{AutoTeX/toleranceValue}	   \\ 
+		{\tt omega\_BN\_B}  &   \input{AutoTeX/navAtt2Msg.omega_BN_B}    & \input{AutoTeX/toleranceValue}	   \\ 
+		{\tt vehSunPntBdy}  &   \input{AutoTeX/navAtt2Msg.vehSunPntBdy}    & \input{AutoTeX/toleranceValue}	   \\ 
+		\hline\hline
+	\end{tabular}
+\end{table}
+
+
+Tables~\ref{tab:transNav1} and \ref{tab:transNav2} show the translational input navigation message states.
+
+\begin{table}[htbp]
+	\caption{Translational Navigation Message \#1 and Error tolerance for each test.}
+	\label{tab:transNav1}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c | c } % Column formatting, 
+		\hline\hline
+		\textbf{Output Value Tested} & \textbf{Value} & \textbf{Tolerated Error}  \\ 
+		\hline
+		{\tt timeTag}  &   \input{AutoTeX/navTrans1Msg.timeTag}    & \input{AutoTeX/toleranceValue}	   \\ 
+		{\tt r\_BN\_N}  &   \input{AutoTeX/navTrans1Msg.r_BN_N}    & \input{AutoTeX/toleranceValue}	   \\ 
+		{\tt v\_BN\_N}  &   \input{AutoTeX/navTrans1Msg.v_BN_N}    & \input{AutoTeX/toleranceValue}	   \\ 
+		{\tt vehAccumDV}  &   \input{AutoTeX/navTrans1Msg.vehAccumDV}    & \input{AutoTeX/toleranceValue}	   \\ 
+		\hline\hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+	\caption{Translational Navigation Message \#2 and Error tolerance for each test.}
+	\label{tab:transNav2}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c | c } % Column formatting, 
+		\hline\hline
+		\textbf{Output Value Tested} & \textbf{Value} & \textbf{Tolerated Error}  \\ 
+		\hline
+		{\tt timeTag}  &   \input{AutoTeX/navTrans2Msg.timeTag}    & \input{AutoTeX/toleranceValue}	   \\ 
+		{\tt r\_BN\_N}  &   \input{AutoTeX/navTrans2Msg.r_BN_N}    & \input{AutoTeX/toleranceValue}	   \\ 
+		{\tt v\_BN\_N}  &   \input{AutoTeX/navTrans2Msg.v_BN_N}    & \input{AutoTeX/toleranceValue}	   \\ 
+		{\tt vehAccumDV}  &   \input{AutoTeX/navTrans2Msg.vehAccumDV}    & \input{AutoTeX/toleranceValue}	   \\ 
+		\hline\hline
+	\end{tabular}
+\end{table}
+
+
+
+\section{Test Results}
+The permuations of the unit test configurations are listed in Table~\ref{tab:results}.  All the tests should pass.  If the variable index parameter is beyond the number of message that variable is zeroed.  If an index is set to N/A, this indicates that this index is not set in python to test the default behavior.
+
+
+\begin{table}[H]
+	\caption{Test results}
+	\label{tab:results}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{c | c | c | c | c  } % Column formatting, 
+		\hline\hline
+		 & Attitude  &  & Translation  & \\ 
+		{\tt attMsgCount} &  Variable {\tt Idx} & {\tt transMsgCount} &  Variable {\tt Idx} &\textbf{Pass/Fail} \\ 
+		\hline
+	   0 & N/A  & 0 & N/A & \input{AutoTeX/passFail00} \\ 
+	   1 & N/A  & 1 & N/A & \input{AutoTeX/passFail11} \\ 
+	   0 & N/A  & 1 & N/A & \input{AutoTeX/passFail01} \\ 
+	   1 & N/A  & 0 & N/A & \input{AutoTeX/passFail10} \\ 
+	   2 & 1  & 2 & 1 & \input{AutoTeX/passFail22} \\ 
+	   1 & N/A  & 2 & 1 & \input{AutoTeX/passFail12} \\ 
+	   0 & N/A  & 2 & 1 & \input{AutoTeX/passFail02} \\ 
+	   2 & 1  & 1 & N/A & \input{AutoTeX/passFail21} \\ 
+	   2 & 1  & 0 & N/A & \input{AutoTeX/passFail20} \\ 
+	   2 & 2  & 2 & 2 & \input{AutoTeX/passFail33} \\ 
+	   2 & 2  & 2 & 1 & \input{AutoTeX/passFail32} \\ 
+	   2 & 2  & 1 & N/A & \input{AutoTeX/passFail31} \\ 
+	   2 & 2  & 0 & N/A & \input{AutoTeX/passFail30} \\ 
+	   2 & 1  & 2 & 2 & \input{AutoTeX/passFail23} \\ 
+	   1 & N/A  & 2 & 2 & \input{AutoTeX/passFail13} \\ 
+	   0 & N/A & 2 & 2 & \input{AutoTeX/passFail03} \\ 
+	   \hline\hline
+	\end{tabular}
+\end{table}
+

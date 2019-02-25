@@ -1,0 +1,25 @@
+% !TEX root = ./Basilisk-navAggregate-2019-02-21.tex
+
+\section{User Guide}
+\subsection{Required Module Parameters}
+\begin{itemize}
+	\item {\tt outputAttName} --- Name of the blended attitude output navigation message 
+	\item {\tt outputTransName} --- Name of the blended translation output navigation message 
+\end{itemize}
+
+
+\subsection{Optional Module Parameters}
+\begin{itemize}
+	\item {\tt attMsgs} --- Array of {\tt AggregateAttInput} navigation message structures which have the input message name specified in {\tt inputNavName}
+	\item {\tt transMsgs} --- Array of {\tt AggregateTransInput} navigation message structures which have the input message name specified in {\tt inputNavName}
+	\item {\tt attMsgCount} --- number of attitude input navigation messages to read in, must not exceed 10.  If this value is left at zero, then no messages are read in and the output navigation message is zeroed. Default value is zero.
+	\item {\tt transMsgCount} --- number of translation input navigation messages to read in, must not exceed 10.  If this value is left at zero (default value), then no messages are read in and the output navigation message is zeroed.  Default value is zero.
+	\item {\tt attTimeIdx} --- the message index to use for this value.  The first message has an index of zero. Default value is zero.
+	\item {\tt attIdx} --- the message index to use for this value.  The first message has an index of zero. Default value is zero.
+	\item {\tt rateIdx} --- the message index to use for this value.  The first message has an index of zero. Default value is zero.
+	\item {\tt sunIdx} --- the message index to use for this value.  The first message has an index of zero. Default value is zero.
+	\item {\tt transTimeIdx} --- the message index to use for this value.  The first message has an index of zero. Default value is zero.
+	\item {\tt posIdx} --- the message index to use for this value.  The first message has an index of zero. Default value is zero.
+	\item {\tt velIdx} --- the message index to use for this value.  The first message has an index of zero. Default value is zero.
+	\item {\tt dvIdx} --- the message index to use for this value.  The first message has an index of zero. Default value is zero.
+\end{itemize}
