@@ -35,7 +35,7 @@
 /*!@brief Data structure for heading Switch unscented kalman filter estimator. Please see the _Documentation folder for details on how this Kalman Filter Functions.
  */
 typedef struct {
-    char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
+    char opnavOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output filter data message*/
     char opnavDataInMsgName[MAX_STAT_MSG_LENGTH];/*!< The name of the input opnav data message*/
     
@@ -82,7 +82,7 @@ typedef struct {
 	NavAttIntMsg outputHeading;   /*!< -- Output heading estimate data */
     OpnavFswMsg opnavInBuffer;
     
-    int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
+    int32_t opnavDataOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
     int32_t opnavDataInMsgId; 
 }HeadingSuKFConfig;

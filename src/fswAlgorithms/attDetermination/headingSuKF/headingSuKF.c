@@ -35,8 +35,8 @@ void SelfInit_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t moduleID)
 {
         /*! Begin method steps */
     /*! - Create output message for module */
-	ConfigData->navStateOutMsgId = CreateNewMessage(ConfigData->navStateOutMsgName,
-		sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
+	ConfigData->opnavDataOutMsgId = CreateNewMessage(ConfigData->opnavOutMsgName,
+		sizeof(OpnavFswMsg), "OpnavFswMsg", moduleID);
     /*! - Create filter states output message which is mostly for debug*/
     ConfigData->filtDataOutMsgId = CreateNewMessage(ConfigData->filtDataOutMsgName,
         sizeof(HeadingFilterFswMsg), "HeadingFilterFswMsg", moduleID);
@@ -150,6 +150,7 @@ void Update_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t callTime,
     uint64_t ClockTime;
     uint32_t ReadSize;
     HeadingFilterFswMsg headingDataOutBuffer;
+    OpnavFswMsg opnavOutputBuffer;
     
     /*! Begin method steps*/
     /*! - Read the input parsed heading sensor data message*/
@@ -201,26 +202,24 @@ void Update_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t callTime,
     /*! - The post fits are y- ybar*/
     mSubtract(ConfigData->obs, OPNAV_MEAS, 1, yBar, ConfigData->postFits);
     
-    /*! - Write the heading estimate into the copy of the navigation message structure*/
-	v3Copy(ConfigData->state, ConfigData->outputHeading.vehSunPntBdy);
-    v3Normalize(ConfigData->outputHeading.vehSunPntBdy,
-        ConfigData->outputHeading.vehSunPntBdy);
-    ConfigData->outputHeading.timeTag = ConfigData->timeTag;
-	WriteMessage(ConfigData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
-		&(ConfigData->outputHeading), moduleID);
-    
     /* Switch the rates back to omega_BN instead of oemga_SB */
     vCopy(ConfigData->state, HEAD_N_STATES_SWITCH, states_BN);
     vScale(-1, &(states_BN[3]), 2, &(states_BN[3]));
     
     /*! - Populate the filter states output buffer and write the output message*/
     headingDataOutBuffer.timeTag = ConfigData->timeTag;
-    memmove(headingDataOutBuffer.covar, ConfigData->covar,
-            HEAD_N_STATES_SWITCH*HEAD_N_STATES_SWITCH*sizeof(double));
-    memmove(headingDataOutBuffer.state, states_BN, HEAD_N_STATES_SWITCH*sizeof(double));
-    memmove(headingDataOutBuffer.postFitRes, ConfigData->postFits, OPNAV_MEAS*sizeof(double));
+    mCopy(ConfigData->covar, HEAD_N_STATES_SWITCH, HEAD_N_STATES_SWITCH, headingDataOutBuffer.covar);
+    vCopy(states_BN, HEAD_N_STATES_SWITCH, headingDataOutBuffer.state);
+    v3Copy(ConfigData->postFits, headingDataOutBuffer.postFitRes);
     WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(HeadingFilterFswMsg),
                  &headingDataOutBuffer, moduleID);
+    
+    /*! - Write the heading estimate into the copy of the OpNav message structure*/
+    opnavOutputBuffer.timeTag = ConfigData->timeTag;
+    m33Copy(RECAST3X3 ConfigData->covar, RECAST3X3 opnavOutputBuffer.covar);
+    v3Copy(&states_BN[0], opnavOutputBuffer.rel_pos);
+    WriteMessage(ConfigData->opnavDataOutMsgId, callTime, sizeof(OpnavFswMsg),
+                 &opnavOutputBuffer, moduleID);
     
     return;
 }
