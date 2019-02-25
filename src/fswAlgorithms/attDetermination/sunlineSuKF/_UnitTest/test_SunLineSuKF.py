@@ -542,4 +542,4 @@ def StatePropSunLine(show_plots):
 
 if __name__ == "__main__":
     # test_all_sunline_kf(True)
-    StateUpdateSunLine(True, True)
+    StateUpdateSunLine(True)

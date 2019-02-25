@@ -93,6 +93,7 @@ def PostFitResiduals(Res, noise, show_plots):
 
     MeasNoise = np.zeros(len(Res[:,0]))
     t= np.zeros(len(Res[:,0]))
+    numObs = len(Res[0,:])
     for i in range(len(Res[:,0])):
         t[i] = Res[i, 0]*1E-9
         MeasNoise[i] = 3*noise
@@ -102,72 +103,32 @@ def PostFitResiduals(Res, noise, show_plots):
                 Res[i, j+1] = np.nan
 
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
-    plt.subplot(421)
+    plt.subplot(311)
     plt.plot(t , Res[:, 1], "b.", label='Residual')
     plt.plot(t , MeasNoise, 'r--', label='Covar')
     plt.plot(t , -MeasNoise, 'r--')
     plt.legend(loc='best')
     plt.ylim([-10*noise, 10*noise])
-    plt.title('First CSS')
+    plt.title('First Position Component')
     plt.grid()
 
-    plt.subplot(422)
-    plt.plot(t , Res[:, 5], "b.")
-    plt.plot(t , MeasNoise, 'r--')
-    plt.plot(t , -MeasNoise, 'r--')
-    plt.ylim([-10*noise, 10*noise])
-    plt.title('Fifth CSS')
-    plt.grid()
-
-    plt.subplot(423)
+    plt.subplot(312)
     plt.plot(t , Res[:, 2], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
     plt.ylim([-10*noise, 10*noise])
-    plt.title('Second CSS')
+    plt.title('Second Position Component')
     plt.grid()
 
-    plt.subplot(424)
-    plt.plot(t , Res[:, 6], "b.")
-    plt.plot(t , MeasNoise, 'r--')
-    plt.plot(t , -MeasNoise, 'r--')
-    plt.ylim([-10*noise, 10*noise])
-    plt.title('Sixth CSS')
-    plt.grid()
-
-    plt.subplot(425)
+    plt.subplot(313)
     plt.plot(t , Res[:, 3], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
     plt.ylim([-10*noise, 10*noise])
-    plt.title('Third CSS')
+    plt.title('Third Position Component')
     plt.grid()
 
-    plt.subplot(426)
-    plt.plot(t , Res[:, 7], "b.")
-    plt.plot(t , MeasNoise, 'r--')
-    plt.plot(t , -MeasNoise, 'r--')
-    plt.ylim([-10*noise, 10*noise])
-    plt.title('Seventh CSS')
-    plt.grid()
 
-    plt.subplot(427)
-    plt.plot(t , Res[:, 4], "b.")
-    plt.plot(t , MeasNoise, 'r--')
-    plt.plot(t , -MeasNoise, 'r--')
-    plt.ylim([-10*noise, 10*noise])
-    plt.xlabel('t(s)')
-    plt.title('Fourth CSS')
-    plt.grid()
-
-    plt.subplot(428)
-    plt.plot(t , Res[:, 8], "b.")
-    plt.plot(t , MeasNoise, 'r--')
-    plt.plot(t , -MeasNoise, 'r--')
-    plt.ylim([-10*noise, 10*noise])
-    plt.xlabel('t(s)')
-    plt.title('Eight CSS')
-    plt.grid()
 
     unitTestSupport.writeFigureLaTeX('PostFit' , 'Post Fit Residuals', plt, 'height=0.9\\textwidth, keepaspectratio', path)
 
