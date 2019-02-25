@@ -28,9 +28,9 @@
  implementation of the sunline state estimator*/
 typedef struct {
     double timeTag;                             /*!< [s] Current time of validity for output */
-    double covar[HEAD_N_STATES*HEAD_N_STATES];    /*!< [-] Current covariance of the filter */
-    double state[HEAD_N_STATES];                 /*!< [-] Current estimated state of the filter */
-    double stateError[HEAD_N_STATES];                 /*!< [-] Current deviation of the state from the reference state */
+    double covar[HEAD_N_STATES_SWITCH*HEAD_N_STATES_SWITCH];    /*!< [-] Current covariance of the filter */
+    double state[HEAD_N_STATES_SWITCH];                 /*!< [-] Current estimated state of the filter */
+    double stateError[HEAD_N_STATES_SWITCH];                 /*!< [-] Current deviation of the state from the reference state */
     double postFitRes[3];                 /*!< [-] PostFit Residuals  */
 
 }HeadingFilterFswMsg;
