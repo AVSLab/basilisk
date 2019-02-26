@@ -84,12 +84,16 @@ void Update_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTi
     uint32_t sizeOfMsgWritten;
     IMUSensorBodyFswMsg inMsg;
 
+    /*! - read in the message of type IMUSensorBodyFswMsg */
+    memset(&inMsg, 0x0, sizeof(inMsg));
     ReadMessage(configData->imuRateInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(IMUSensorBodyFswMsg), (void*) &(inMsg), moduleID);
 
+    /*! - create a zero message of type NavAttIntMsg which has the rate vector from the input message */
     memset(&configData->outMsg, 0x0, sizeof(configData->outMsg));
     v3Copy(inMsg.AngVelBody, configData->outMsg.omega_BN_B);
 
+    /*! - write output message */
     WriteMessage(configData->navRateOutMsgID, callTime, sizeof(NavAttIntMsg),
                  (void*) &(configData->outMsg), moduleID);
 

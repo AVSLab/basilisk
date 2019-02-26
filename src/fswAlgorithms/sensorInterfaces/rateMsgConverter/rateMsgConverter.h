@@ -27,7 +27,7 @@
 
 
 /*! \addtogroup ADCSAlgGroup
- * @brief The purpose of this module is to read in the IMU sensor body message from message type IMUSensorBodyFswMsg, and store it in the output message of type NavAttIntMsg
+ * @brief The purpose of this module is to read in the IMU sensor body message from message type IMUSensorBodyFswMsg, and store it in the output message of type NavAttIntMsg.  More information is available at  [PDF Description](Basilisk-rateMsgConverter-20180630.pdf).
  */
 
 /*! @brief Top level structure for the sub-module routines. */
