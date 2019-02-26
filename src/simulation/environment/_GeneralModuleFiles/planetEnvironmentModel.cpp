@@ -37,9 +37,5 @@ PlanetEnvironmentModel::~PlanetEnvironmentModel()
 
 /*! This method defines an interface for adding spacecraft to a provided model.
  * The output message name is provided as "[env_type]+[_len(scStateInMsgNames)-1]_data.
- * This method creates a vector of both spacecraft input message names and environment output message names*/
+ * This method appends a vector of both spacecraft input message names and environment output message names*/
 
-void PlanetEnvironmentModel::addSpacecraftToModel(std::string tmpScMsgName)
-{
-    return;
-}

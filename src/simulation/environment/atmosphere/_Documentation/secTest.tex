@@ -1,0 +1,74 @@
+% !TEX root = ./Basilisk-MODULENAME-yyyymmdd.tex
+
+\section{Test Description and Success Criteria}
+This section describes the specific unit tests conducted on this module.
+
+\subsection{General Functionality}
+\subsubsection{setEnvType}
+
+This test verifies that the module is able adjust its internal state to each of the implemented atmospheric models.
+
+\subsubsection{setEpoch}
+
+This test verifies that the user can set the initial date (``epoch'') arbitrarily.
+
+\subsubsection{addSpacecraftToModel}
+
+This test verifies that the user can both add additional spacecraft to the module. This is accomplished by checking the number of input and output messages of the module after adding multiple spacecraft.
+
+\subsection{Model-Specific Tests}
+
+\subsubsection{testExpAtmo}
+This model runs a section of an orbit and verifies that the exponential atmosphere model both correctly calculates the orbit altitude and the atmospheric density against a Python implementation of the model. 
+
+
+
+\section{Test Parameters}
+
+Test and simulation parameters and inputs go here. Basically, describe your test in the section above, but put any specific numbers or inputs to the tests in this section.
+
+The unit test verify that the module output guidance message vectors match expected values.
+\begin{table}[htbp]
+	\caption{Error tolerance for each test.}
+	\label{tab:errortol}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c } % Column formatting, 
+		\hline\hline
+		\textbf{Output Value Tested}  & \textbf{Tolerated Error}  \\ 
+		\hline
+		{\tt length(atmo.scStateInMsgNames)}        & {\tt 0 (int)}   \\
+		\hline 
+		{\tt length(atmo.envOutMsgNames)}        & {\tt 0 (int)}   \\ 
+		\hline
+		{\tt atmo.envType}        & {\tt 0 (string)}   \\ 
+		\hline
+		{\tt neutralDensity}        & {\tt 1e-13}   \\ 
+		\hline
+		{\tt altitude} & {\tt 1e-13}\\
+		\hline\hline
+	\end{tabular}
+\end{table}
+
+
+
+
+\section{Test Results}
+The results of the unit test should be included in the documentation.  The results can be discussed verbally, but also included as tables and figures.  
+
+All of the tests passed:
+\begin{table}[H]
+	\caption{Test results}
+	\label{tab:results}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{c | c  } % Column formatting, 
+		\hline\hline
+		\textbf{Check} 						  		&\textbf{Pass/Fail} \\ 
+		\hline
+	   1	   			& \input{AutoTeX/passFail} \\ 
+	   \hline\hline
+	\end{tabular}
+\end{table}
+
+
+
+

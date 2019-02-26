@@ -31,20 +31,21 @@
 #include "../../dynamics/_GeneralModuleFiles/stateData.h"
 #include "../../_GeneralModuleFiles/sys_model.h"
 
-/*! Initializer - sets the default properties to those of Earth.
-*/
+/*! This method initializes some basic parameters for the module.
+ @return void
+ */
 Atmosphere::Atmosphere()
 {
     this->planetPosInMsgName = "spice_planet_output_data";
     this->OutputBufferCount = 2;
     //! Set the default atmospheric properties to those of Earth
-    this->atmosphereProps.baseDensity = 1.217;
-    this->atmosphereProps.scaleHeight = 8500.0;
-    this->atmosphereProps.planetRadius = 6371.008 * 1000.0;
+    this->exponentialParams.baseDensity = 1.217;
+    this->exponentialParams.scaleHeight = 8500.0;
+    this->exponentialParams.planetRadius = 6371.008 * 1000.0;
     this->localAtmoTemp = 293.0; //! Placeholder value from http://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
     this->relativePos.fill(0.0);
     this->scStateInMsgNames.clear();
-    this->tmpAtmo.neutralDensity = this->atmosphereProps.baseDensity;
+    this->tmpAtmo.neutralDensity = this->exponentialParams.baseDensity;
     this->tmpAtmo.localTemp = this->localAtmoTemp;
     this->planetPosInMsgId = -1;
     memset(&this->bodyState, 0x0, sizeof(SpicePlanetStateSimMsg));
@@ -52,24 +53,38 @@ Atmosphere::Atmosphere()
     return;
 }
 
-/*! The destructor.*/
+/*! Destructor.
+ @return void
+ */
 Atmosphere::~Atmosphere()
 {
     return;
 }
 
+/*! This sets the module's envType to a specified type.
+ @return void
+ @param inputType The desired model type.
+ */
 void Atmosphere::setEnvType(std::string inputType)
 {
     this->envType = inputType;
     return;
 }
 
+/*! This sets the module's envType to a specified type.
+ @return void
+ @param julianDate The specified epoch date in JD2000.
+ */
 void Atmosphere::setEpoch(double julianDate)
 {
     this->epochDate = julianDate;
     return;
 }
 
+/*! This sets the module's envType to a specified type.
+ @return void
+ @param tmpScMsgName A spacecraft state message name.
+ */
 void Atmosphere::addSpacecraftToModel(std::string tmpScMsgName){
     std::string tmpEnvMsgName;
     this->scStateInMsgNames.push_back(tmpScMsgName);
@@ -79,34 +94,36 @@ void Atmosphere::addSpacecraftToModel(std::string tmpScMsgName){
 }
 
 /*! SelfInit for this method creates a seperate density message for each of the spacecraft
-that were added using AddSpacecraftToModel.
+that were added using AddSpacecraftToModel. Additional model outputs are also initialized per-spacecraft.
+ @return void
 */
 void Atmosphere::SelfInit()
 {
     std::string expString ("exponential");
     std::string msisString ("nrlmsise-00");
 
-    if(this->envType.compare(expString)==0)
-    {
-        std::string tmpAtmoMsgName;
-        uint64_t tmpAtmoMsgId;
-        //! Begin method steps
-        std::vector<std::string>::iterator it;
-        std::vector<std::string>::iterator nameIt;
+    std::string tmpAtmoMsgName;
+    uint64_t tmpAtmoMsgId;
 
-        for (it = this->envOutMsgNames.begin(); it!=this->envOutMsgNames.end(); it++) {
-            tmpAtmoMsgId = SystemMessaging::GetInstance()->CreateNewMessage(*it, sizeof(AtmoPropsSimMsg),
-                    this->OutputBufferCount, "AtmoPropsSimMsg", moduleID);
+    std::vector<std::string>::iterator it;
+    std::vector<std::string>::iterator nameIt;
 
-            this->envOutMsgIds.push_back(tmpAtmoMsgId);
+    for (it = this->envOutMsgNames.begin(); it!=this->envOutMsgNames.end(); it++) {
+        tmpAtmoMsgId = SystemMessaging::GetInstance()->CreateNewMessage(*it, sizeof(AtmoPropsSimMsg),
+                this->OutputBufferCount, "AtmoPropsSimMsg", moduleID);
+
+        this->envOutMsgIds.push_back(tmpAtmoMsgId);
+        if(this->envType.compare(msisString)==0){
+            BSK_PRINT(MSG_WARNING, "NRLMSISE-00 is not implemented. Skipping message init.")
         }
     }
+
     return;
 }
 
-/*! This method is used to connect the input position method from the spacecraft. .
+/*! This method is used to connect the input position message from the spacecraft. Additonal model-specific cross inits are also conducted.
  @return void
- */`
+ */
 void Atmosphere::CrossInit()
 {
     this->planetPosInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(
@@ -115,6 +132,11 @@ void Atmosphere::CrossInit()
     std::vector<std::string>::iterator it;
     for(it = this->scStateInMsgNames.begin(); it!=this->scStateInMsgNames.end(); it++){
         this->scStateInMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(SCPlusStatesSimMsg), moduleID));
+    }
+
+    if(this->envType.compare("nrlmsise-00")==0){
+        //* [WIP] Also do MSISE messaging setup*//
+        BSK_PRINT(MSG_WARNING, "NRLMSISE-00 is not implemented. Skipping message init.")
     }
   return;
 }
@@ -138,11 +160,17 @@ void Atmosphere::WriteOutputMessages(uint64_t CurrentClock)
                                                   reinterpret_cast<uint8_t*>(&tmpAtmo),
                                                   moduleID);
     }
+
+    if(this->envType.compare("nrlmsise-00")==0){
+        /* [WIP] - Include additional outputs for other MSISE outputs (species count, etc.)*/
+        BSK_PRINT(MSG_WARNING, "NRLMSISE-00 is not implemented. Skipping message write.")
+    }
 }
 
 
 /*! This method is used to read the incoming command message and set the
  associated spacecraft positions for computing the atmosphere.
+ @return void
  */
 bool Atmosphere::ReadInputs()
     {
@@ -184,11 +212,17 @@ bool Atmosphere::ReadInputs()
                                               sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&this->bodyState), moduleID);
         planetRead = true;
         }
+
+    if(this->envType.compare("nrlmsise-00")==0){
+        /* WIP - Also read in all the MSISE inputs.*/
+        BSK_PRINT(MSG_WARNING, "NRLMSISE-00 is not implemented. Skipping message read.")
+    }
     return(scReads && planetRead);
     }
 
 /*! This method is used to update the internal density variables based on each spacecraft's position
-and the pre-set atmospheric density properties. 
+and the pre-set atmospheric density properties.
+  @return void
  */
 void Atmosphere::updateLocalAtmo(double currentTime)
 {
@@ -202,13 +236,12 @@ void Atmosphere::updateLocalAtmo(double currentTime)
         uint64_t atmoInd = 0;
         this->atmoOutBuffer.clear();
         for(it = scStates.begin(); it != scStates.end(); it++, atmoInd++){
-            this->updateRelativePos(this->bodyState, *it);
+            this->updateRelativePos(this->bodyState, *it); // Computes planet relative state vector
             tmpPosMag = this->relativePos.norm();
-            tmpAltitude = tmpPosMag - this->atmosphereProps.planetRadius;
-            tmpDensity = this->atmosphereProps.baseDensity * exp(-1.0 * tmpAltitude / this->atmosphereProps.scaleHeight);
+            tmpAltitude = tmpPosMag - this->exponentialParams.planetRadius; // computes the altitude above the planet radius
+            tmpDensity = this->exponentialParams.baseDensity * exp(-1.0 * tmpAltitude / this->exponentialParams.scaleHeight);
             tmpData.neutralDensity = tmpDensity;
             tmpData.localTemp = 300.0;
-
             this->atmoOutBuffer.push_back(tmpData);
         }
 
@@ -219,24 +252,26 @@ void Atmosphere::updateLocalAtmo(double currentTime)
     return;
 }
 
+/*! This method is used to write the output densities whose names are established in AddSpacecraftToModel.
+ @param planetState A space planetstate message struct.
+ @param scState A spacecraftPlusStates message struct.
+ @return void
+ */
 void Atmosphere::updateRelativePos(SpicePlanetStateSimMsg& planetState, SCPlusStatesSimMsg& scState)
 {
+    /* This loop iterates over each spacecraft with respect to one planet if the planet message has been set.*/
     uint64_t iter = 0;
     if(planetPosInMsgId >= 0)
     {
       for(iter = 0; iter < 3; iter++)
       {
-        //std::cout<<"Planet State: "<<planetState.PositionVector[iter]<<std::endl;
-        //std::cout<<"SC State:"<<scState.r_BN_N[iter]<<std::endl;
         this->relativePos(iter,0) = scState.r_BN_N[iter] - planetState.PositionVector[iter];
-
-        //std::cout<<relativePos[iter,0]<<std::endl;
       }
     }
+    /* Else, assume the inertial zero is the planet surface. That's probably fine.*/
     else{
       this->relativePos(iter,0) = scState.r_BN_N[iter];
     }
-    //std::cout<<"Relative Pos: "<<this->relativePos <<std::endl;
     return;
 }
 

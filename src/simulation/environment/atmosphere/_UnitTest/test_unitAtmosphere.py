@@ -26,7 +26,8 @@ import math
 import csv
 import logging
 import pytest
-
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
@@ -66,6 +67,18 @@ def test_unitAtmosphere():
     testResults.append(addScRes)
 
     exponentialRes, exponentialMsg = TestExponentialAtmosphere()
+
+
+    #   print out success message if no error were found
+    snippetName = "passFail"
+    if sum(testResults) == 0:
+        colorText = 'ForestGreen'
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
+
 
     testSum = sum(testResults)
     assert testSum < 1, testMessage
@@ -189,9 +202,9 @@ def TestExponentialAtmosphere():
     refScaleHeight = 8500.0
 
     #   Set base density, equitorial radius, scale height in Atmosphere
-    newAtmo.atmosphereProps.baseDensity = refBaseDens
-    newAtmo.atmosphereProps.scaleHeight = refScaleHeight
-    newAtmo.atmosphereProps.planetRadius = r_eq
+    newAtmo.exponentialParams.baseDensity = refBaseDens
+    newAtmo.exponentialParams.scaleHeight = refScaleHeight
+    newAtmo.exponentialParams.planetRadius = r_eq
 
     orbAltMin = 300.0*1000.0
     orbAltMax = orbAltMin
@@ -256,16 +269,23 @@ def TestExponentialAtmosphere():
     #   Compare to expected values
 
     refAtmoDensData = []
-
+    testAltData = []
+    refAltData = orbAltMin
     accuracy = 1e-13
+
+
 
     for relPos in relPosData:
         dist = np.linalg.norm(relPos[1:])
-        alt = dist - r_eq
+        alt = dist - newAtmo.exponentialParams.planetRadius
+
+        if not unitTestSupport.isDoubleEqualRelative(alt, refAltData, accuracy):
+            testFailCount +=1
+            testMessages.append("FAILED: ExpAtmo failed altitude unit test with a value difference of "+str(alt - refAltData))
         refAtmoDensData.append(expAtmoComp(alt,refBaseDens,refScaleHeight))
         # check a vector values
     for ind in range(0,len(densData)):
-        if not unitTestSupport.isDoubleEqual(densData[ind,:], refAtmoDensData[ind],accuracy):
+        if not unitTestSupport.isDoubleEqualRelative(densData[ind,1], refAtmoDensData[ind],accuracy):
             testFailCount += 1
             testMessages.append(
                 "FAILED:  ExpAtmo failed density unit test at t=" + str(densData[ind, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(densData[ind,1]-refAtmoDensData[ind]))

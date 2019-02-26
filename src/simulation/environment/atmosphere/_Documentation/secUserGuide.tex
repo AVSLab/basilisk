@@ -1,0 +1,40 @@
+% !TEX root = ./Basilisk-MODULENAME-yyyymmdd.tex
+
+\section{User Guide}
+This section outlines the steps needed to add an Atmosphere module to a sim.
+
+First, the atmosphere must be imported and initialized:
+\begin{verbatim}
+from Basilisk.simulation import atmosphere
+
+newAtmo = atmosphere.Atmosphere()
+\end{verbatim}
+
+Next, the desired model type must be set by calling "\verb|setEnvType|":
+\begin{verbatim}
+atmoTaskName = "atmosphere"
+newAtmo.ModelTag = "ExpAtmo"
+newAtmo.setEnvType("exponential")
+\end{verbatim}
+
+The model can then be added to a task like other simModels. Each Atmosphere calculates atmospheric parameters based on the output state messages for a set of spacecraft; to add spacecraft to the model the \verb|addScToModel| method is invoked:
+
+\begin{verbatim}
+scObject = spacecraftPlus.SpacecraftPlus()
+scObject.ModelTag = "spacecraftBody"
+newAtmo.addSpacecraftToModel(scObject.scStateOutMsgName)
+\end{verbatim}
+
+Finally, the planet state message name can be set by directly adjusting that attribute of the class:
+\begin{verbatim}
+newAtmo.planetPosInMsgName = "PlanetSPICEMsgName"
+\end{verbatim}
+If SPICE is not being used, the planet is assumed to reside at the origin.
+
+\subsection{Exponential atmosphere user guide}
+If the module's \verb|envType| is set to \verb|"exponential"|, the parameters of the exponential atmosphere can be set by calling
+\begin{verbatim}
+    newAtmo.exponentialParams.baseDensity = baseDensityValue
+    newAtmo.exponentialParams.scaleHeight = scaleHeightValue
+    newAtmo.exponentialParams.planetRadius = planetRadiusValue
+\end{verbatim}

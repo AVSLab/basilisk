@@ -31,7 +31,7 @@
 #include "../_GeneralModuleFiles/planetEnvironmentModel.h"
 
 /*! \addtogroup SimModelGroup
- * @{
+ * @{}
  */
 
 //! @brief Container for the properties of a simple exponential atmosphere model, such that different planets can be tested. */
@@ -41,8 +41,6 @@ typedef struct {
     double planetRadius;                //!< m Radius of the local atmospheric body; altitude is computed as |r| - planetRadius
 }exponentialProperties;
 
-/*! This structure is used in the messaging system to communicate what the
- state of the vehicle is currently.*/
 
 
 
@@ -53,20 +51,20 @@ Internal support is provided for Venus, Earth, and Mars. In a given simulation, 
 one Atmosphere model associated with it linked to the spacecraft in orbit about that body.*/
 class Atmosphere: public SysModel, public PlanetEnvironmentModel {
 public:
-    Atmosphere();
-    ~Atmosphere();
-    void SelfInit();
-    void CrossInit();
-    void setEnvType(std::string inputType); //!< [string]
-    void setEpoch(double julianDate);
-    void addSpacecraftToModel(std::string tmpScMsgName);
-    void UpdateState(uint64_t CurrentSimNanos);
+    Atmosphere();//! [-] Constructor
+    ~Atmosphere();//! [-] Destructor
+    void SelfInit(); //! [-] Initializes published messages
+    void CrossInit(); //![-] Subscribes to desired methods
+    void setEnvType(std::string inputType); //!< [string] Sets the model used to compute atmospheric density/temperature; must be set before init
+    void setEpoch(double julianDate); //!< [JulianDate2000] Sets the epoch date used by some models. This is converted automatically to the desired units.
+    void addSpacecraftToModel(std::string tmpScMsgName); //! [string] Adds the spacecraft message name to a vector of sc message names and automatically creates an output message name. Must be called after ``setEnvType''.
+    void UpdateState(uint64_t CurrentSimNanos); //! [nanoseconds] Computes the current atmospheric parameters for each spacecraft and writes their respective messages.
 
 private:
-    void WriteOutputMessages(uint64_t CurrentClock);
-    bool ReadInputs();
-    void updateLocalAtmo(double currentTime);
-    void updateRelativePos(SpicePlanetStateSimMsg& planetState, SCPlusStatesSimMsg& scState);
+    void WriteOutputMessages(uint64_t CurrentClock); //! [nanoseconds] Iterates through outputMessageIDs and writes output messages.
+    bool ReadInputs(); //! [-] Reads respective inputs required by a given atmospheric model
+    void updateLocalAtmo(double currentTime); //! [nanoseconds] Computes the local atmospheric density and temperature.
+    void updateRelativePos(SpicePlanetStateSimMsg& planetState, SCPlusStatesSimMsg& scState); //! [-] Computes the planet-relative position of a given spacecraft.
 
 public:
     std::vector<std::string> scStateInMsgNames;	//!< Vector of the spacecraft position/velocity message names
@@ -78,14 +76,14 @@ public:
     double localAtmoDens; //!< [kg/m^3] Local neutral atmospheric density (computed)
     double localAtmoTemp; //!< [K] Local atmospheric temperature, SET TO BE CONSTANT
     double currentAlt; //!< [m] Current s/c altitude
-    double epochDate;
+    double epochDate; //!< [JD2000] Specified epoch date.
     std::vector<int64_t>  envOutMsgIds;
     std::vector<int64_t> scStateInMsgIds;
     int64_t planetPosInMsgId;
     std::vector<SCPlusStatesSimMsg> scStates;
     SpicePlanetStateSimMsg bodyState;
     Eigen::Vector3d relativePos; //!< [-] Container for local position
-    exponentialProperties atmosphereProps; //! < -- Struct containing exponential atmosphere properties
+    exponentialProperties exponentialParams; //! < -- Struct containing exponential atmosphere properties
 
 private:
     double tmpPosMag;	//<! [m/s] Magnitude of the spacecraft's current position

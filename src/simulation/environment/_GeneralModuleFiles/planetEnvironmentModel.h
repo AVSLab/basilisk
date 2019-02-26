@@ -29,7 +29,7 @@ public:
     virtual ~PlanetEnvironmentModel();             //!< -- Destructor
     virtual void setEnvType(std::string inputType) = 0; //!< [string]
     virtual void setEpoch(double julianDate) = 0; //!< [JulianDate] Method to set epoch time for the module
-    virtual void addSpacecraftToModel(std::string tmpScMsgName);
+    virtual void addSpacecraftToModel(std::string tmpScMsgName)=0;
 
 public:
     std::vector<std::string> scStateInMsgNames;	//!< Vector of the spacecraft position/velocity message names
