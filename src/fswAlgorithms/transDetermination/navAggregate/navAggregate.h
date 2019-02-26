@@ -75,10 +75,10 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_aggregateNav(NavAggregateData *ConfigData, uint64_t moduleID);
-    void CrossInit_aggregateNav(NavAggregateData *ConfigData, uint64_t moduleID);
-    void Update_aggregateNav(NavAggregateData *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_aggregateNav(NavAggregateData *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_aggregateNav(NavAggregateData *configData, uint64_t moduleID);
+    void CrossInit_aggregateNav(NavAggregateData *configData, uint64_t moduleID);
+    void Update_aggregateNav(NavAggregateData *configData, uint64_t callTime, uint64_t moduleID);
+    void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, uint64_t moduleID);
 
 #ifdef __cplusplus
 }

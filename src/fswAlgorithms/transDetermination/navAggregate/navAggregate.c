@@ -23,19 +23,19 @@
 #include "utilities/linearAlgebra.h"
 #include <string.h>
 
-/*! This method initializes the ConfigData for the nav aggregation algorithm.  
+/*! This method initializes the configData for the nav aggregation algorithm.
     It initializes the output messages in the messaging system.
  @return void
- @param ConfigData The configuration data associated with the Nav aggregation interface
+ @param configData The configuration data associated with the Nav aggregation interface
  */
-void SelfInit_aggregateNav(NavAggregateData *ConfigData, uint64_t moduleID)
+void SelfInit_aggregateNav(NavAggregateData *configData, uint64_t moduleID)
 {
     /*! - create the attitude navigation output message */
-    ConfigData->navAttOutMsgID = CreateNewMessage(ConfigData->outputAttName,
+    configData->navAttOutMsgID = CreateNewMessage(configData->outputAttName,
         sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
 
     /*! - create the translation navigation output message */
-    ConfigData->navTransOutMsgID = CreateNewMessage(ConfigData->outputTransName,
+    configData->navTransOutMsgID = CreateNewMessage(configData->outputTransName,
         sizeof(NavTransIntMsg), "NavTransIntMsg", moduleID);
 
     return;
@@ -45,30 +45,30 @@ void SelfInit_aggregateNav(NavAggregateData *ConfigData, uint64_t moduleID)
     interface.  For each configured input message, it subscribes to the associated target message
     and saves the ID.
  @return void
- @param ConfigData The configuration data associated with the aggregate nav interface
+ @param configData The configuration data associated with the aggregate nav interface
  */
-void CrossInit_aggregateNav(NavAggregateData *ConfigData, uint64_t moduleID)
+void CrossInit_aggregateNav(NavAggregateData *configData, uint64_t moduleID)
 {
     uint32_t i;
     /*! - loop over the number of attitude input messages */
-    for(i=0; i<ConfigData->attMsgCount; i=i+1)
+    for(i=0; i<configData->attMsgCount; i=i+1)
     {
-        if (strcmp(ConfigData->attMsgs[i].inputNavName,"")==0) {
+        if (strcmp(configData->attMsgs[i].inputNavName,"")==0) {
             BSK_PRINT(MSG_ERROR, "An attitude input message name was not specified.  Be sure that attMsgCount is set properly.\n");
         } else {
             /*!   - subscribe to attitude navigation message */
-            ConfigData->attMsgs[i].inputNavID = subscribeToMessage(
-                ConfigData->attMsgs[i].inputNavName, sizeof(NavAttIntMsg), moduleID);
+            configData->attMsgs[i].inputNavID = subscribeToMessage(
+                configData->attMsgs[i].inputNavName, sizeof(NavAttIntMsg), moduleID);
         }
     }
     /*! - loop over the number of translational input messages */
-    for(i=0; i<ConfigData->transMsgCount; i=i+1)
+    for(i=0; i<configData->transMsgCount; i=i+1)
     {
-        if (strcmp(ConfigData->transMsgs[i].inputNavName,"")==0) {
+        if (strcmp(configData->transMsgs[i].inputNavName,"")==0) {
             BSK_PRINT(MSG_ERROR, "A translation input message name was not specified.  Be sure that transMsgCount is set properly.\n");
         } else {
-            ConfigData->transMsgs[i].inputNavID = subscribeToMessage(
-                ConfigData->transMsgs[i].inputNavName, sizeof(NavTransIntMsg), moduleID);
+            configData->transMsgs[i].inputNavID = subscribeToMessage(
+                configData->transMsgs[i].inputNavName, sizeof(NavTransIntMsg), moduleID);
         }
     }
 
@@ -77,47 +77,47 @@ void CrossInit_aggregateNav(NavAggregateData *ConfigData, uint64_t moduleID)
 
 /*! This resets the module to original states.
  @return void
- @param ConfigData The configuration data associated with this module
+ @param configData The configuration data associated with this module
  @param callTime The clock time at which the function was called (nanoseconds)
- @param moduleID The ID associated with the ConfigData
+ @param moduleID The ID associated with the configData
  */
-void Reset_aggregateNav(NavAggregateData *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Reset_aggregateNav(NavAggregateData *configData, uint64_t callTime, uint64_t moduleID)
 {
     /*! - ensure incoming message counters are not larger than MAX_AGG_NAV_MSG */
-    if (ConfigData->attMsgCount > MAX_AGG_NAV_MSG)
+    if (configData->attMsgCount > MAX_AGG_NAV_MSG)
         BSK_PRINT(MSG_ERROR, "The attitude message count %d is larger than allowed (%d)\n",
-                  ConfigData->attMsgCount, MAX_AGG_NAV_MSG);
-    if (ConfigData->transMsgCount > MAX_AGG_NAV_MSG)
+                  configData->attMsgCount, MAX_AGG_NAV_MSG);
+    if (configData->transMsgCount > MAX_AGG_NAV_MSG)
         BSK_PRINT(MSG_ERROR, "The translation message count %d is larger than allowed (%d)\n",
-                  ConfigData->transMsgCount, MAX_AGG_NAV_MSG);
+                  configData->transMsgCount, MAX_AGG_NAV_MSG);
 
     /*! - ensure the attitude message index locations are less than MAX_AGG_NAV_MSG */
-    if (ConfigData->attTimeIdx >= MAX_AGG_NAV_MSG)
+    if (configData->attTimeIdx >= MAX_AGG_NAV_MSG)
         BSK_PRINT(MSG_ERROR, "The attTimeIdx variable %d is too large. Must be less than %d.\n",
-                  ConfigData->attTimeIdx, MAX_AGG_NAV_MSG);
-    if (ConfigData->attIdx >= MAX_AGG_NAV_MSG)
+                  configData->attTimeIdx, MAX_AGG_NAV_MSG);
+    if (configData->attIdx >= MAX_AGG_NAV_MSG)
         BSK_PRINT(MSG_ERROR, "The attIdx variable %d is too large. Must be less than %d.\n",
-                  ConfigData->attIdx, MAX_AGG_NAV_MSG);
-    if (ConfigData->rateIdx >= MAX_AGG_NAV_MSG)
+                  configData->attIdx, MAX_AGG_NAV_MSG);
+    if (configData->rateIdx >= MAX_AGG_NAV_MSG)
         BSK_PRINT(MSG_ERROR, "The rateIdx variable %d is too large. Must be less than %d.\n",
-                  ConfigData->rateIdx, MAX_AGG_NAV_MSG);
-    if (ConfigData->sunIdx >= MAX_AGG_NAV_MSG)
+                  configData->rateIdx, MAX_AGG_NAV_MSG);
+    if (configData->sunIdx >= MAX_AGG_NAV_MSG)
         BSK_PRINT(MSG_ERROR, "The sunIdx variable %d is too large. Must be less than %d.\n",
-                  ConfigData->sunIdx, MAX_AGG_NAV_MSG);
+                  configData->sunIdx, MAX_AGG_NAV_MSG);
 
     /*! - ensure the translational message index locations are less than MAX_AGG_NAV_MSG */
-    if (ConfigData->transTimeIdx >= MAX_AGG_NAV_MSG)
+    if (configData->transTimeIdx >= MAX_AGG_NAV_MSG)
         BSK_PRINT(MSG_ERROR, "The transTimeIdx variable %d is too large. Must be less than %d.\n",
-                  ConfigData->transTimeIdx, MAX_AGG_NAV_MSG);
-    if (ConfigData->posIdx >= MAX_AGG_NAV_MSG)
+                  configData->transTimeIdx, MAX_AGG_NAV_MSG);
+    if (configData->posIdx >= MAX_AGG_NAV_MSG)
         BSK_PRINT(MSG_ERROR, "The posIdx variable %d is too large. Must be less than %d.\n",
-                  ConfigData->posIdx, MAX_AGG_NAV_MSG);
-    if (ConfigData->velIdx >= MAX_AGG_NAV_MSG)
+                  configData->posIdx, MAX_AGG_NAV_MSG);
+    if (configData->velIdx >= MAX_AGG_NAV_MSG)
         BSK_PRINT(MSG_ERROR, "The velIdx variable %d is too large. Must be less than %d.\n",
-                  ConfigData->velIdx, MAX_AGG_NAV_MSG);
-    if (ConfigData->dvIdx >= MAX_AGG_NAV_MSG)
+                  configData->velIdx, MAX_AGG_NAV_MSG);
+    if (configData->dvIdx >= MAX_AGG_NAV_MSG)
         BSK_PRINT(MSG_ERROR, "The dvIdx variable %d is too large. Must be less than %d.\n",
-                  ConfigData->dvIdx, MAX_AGG_NAV_MSG);
+                  configData->dvIdx, MAX_AGG_NAV_MSG);
 
 }
 
@@ -126,59 +126,59 @@ void Reset_aggregateNav(NavAggregateData *ConfigData, uint64_t callTime, uint64_
     navigation components in the FSW and aggregates them into a single complete 
     navigation message.
  @return void
- @param ConfigData The configuration data associated with the aggregate nav module
+ @param configData The configuration data associated with the aggregate nav module
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_aggregateNav(NavAggregateData *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Update_aggregateNav(NavAggregateData *configData, uint64_t callTime, uint64_t moduleID)
 {
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     uint32_t i;
 
     /*! - zero the output message buffers */
-    memset(&(ConfigData->navAttOutMsgBuffer), 0x0, sizeof(NavAttIntMsg));
-    memset(&(ConfigData->navTransOutMsgBuffer), 0x0, sizeof(NavTransIntMsg));
+    memset(&(configData->navAttOutMsgBuffer), 0x0, sizeof(NavAttIntMsg));
+    memset(&(configData->navTransOutMsgBuffer), 0x0, sizeof(NavTransIntMsg));
 
     /*! - check that attitude navigation messages are present */
-    if (ConfigData->attMsgCount) {
+    if (configData->attMsgCount) {
         /*! - Iterate through all of the attitude input messages, clear local Msg buffer and archive the new nav data */
-        for(i=0; i<ConfigData->attMsgCount; i=i+1)
+        for(i=0; i<configData->attMsgCount; i=i+1)
         {
-            memset(&(ConfigData->attMsgs[i].msgStorage), 0x0, sizeof(NavAttIntMsg));
-            ReadMessage(ConfigData->attMsgs[i].inputNavID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                        sizeof(NavAttIntMsg), &(ConfigData->attMsgs[i].msgStorage), moduleID);
+            memset(&(configData->attMsgs[i].msgStorage), 0x0, sizeof(NavAttIntMsg));
+            ReadMessage(configData->attMsgs[i].inputNavID, &timeOfMsgWritten, &sizeOfMsgWritten,
+                        sizeof(NavAttIntMsg), &(configData->attMsgs[i].msgStorage), moduleID);
         }
 
         /*! - Copy out each part of the attitude source message into the target output message*/
-        ConfigData->navAttOutMsgBuffer.timeTag = ConfigData->attMsgs[ConfigData->attTimeIdx].msgStorage.timeTag;
-        v3Copy(ConfigData->attMsgs[ConfigData->attIdx].msgStorage.sigma_BN, ConfigData->navAttOutMsgBuffer.sigma_BN);
-        v3Copy(ConfigData->attMsgs[ConfigData->rateIdx].msgStorage.omega_BN_B, ConfigData->navAttOutMsgBuffer.omega_BN_B);
-        v3Copy(ConfigData->attMsgs[ConfigData->sunIdx].msgStorage.vehSunPntBdy, ConfigData->navAttOutMsgBuffer.vehSunPntBdy);
+        configData->navAttOutMsgBuffer.timeTag = configData->attMsgs[configData->attTimeIdx].msgStorage.timeTag;
+        v3Copy(configData->attMsgs[configData->attIdx].msgStorage.sigma_BN, configData->navAttOutMsgBuffer.sigma_BN);
+        v3Copy(configData->attMsgs[configData->rateIdx].msgStorage.omega_BN_B, configData->navAttOutMsgBuffer.omega_BN_B);
+        v3Copy(configData->attMsgs[configData->sunIdx].msgStorage.vehSunPntBdy, configData->navAttOutMsgBuffer.vehSunPntBdy);
 
     }
 
     /*! - check that translation navigation messages are present */
-    if (ConfigData->transMsgCount) {
+    if (configData->transMsgCount) {
         /*! - Iterate through all of the translation input messages, clear local Msg buffer and archive the new nav data */
-        for(i=0; i<ConfigData->transMsgCount; i=i+1)
+        for(i=0; i<configData->transMsgCount; i=i+1)
         {
-            memset(&(ConfigData->transMsgs[i].msgStorage), 0x0, sizeof(NavAttIntMsg));
-            ReadMessage(ConfigData->transMsgs[i].inputNavID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                        sizeof(NavTransIntMsg), &(ConfigData->transMsgs[i].msgStorage), moduleID);
+            memset(&(configData->transMsgs[i].msgStorage), 0x0, sizeof(NavAttIntMsg));
+            ReadMessage(configData->transMsgs[i].inputNavID, &timeOfMsgWritten, &sizeOfMsgWritten,
+                        sizeof(NavTransIntMsg), &(configData->transMsgs[i].msgStorage), moduleID);
         }
 
         /*! - Copy out each part of the translation source message into the target output message*/
-        ConfigData->navTransOutMsgBuffer.timeTag = ConfigData->transMsgs[ConfigData->transTimeIdx].msgStorage.timeTag;
-        v3Copy(ConfigData->transMsgs[ConfigData->posIdx].msgStorage.r_BN_N, ConfigData->navTransOutMsgBuffer.r_BN_N);
-        v3Copy(ConfigData->transMsgs[ConfigData->velIdx].msgStorage.v_BN_N, ConfigData->navTransOutMsgBuffer.v_BN_N);
-        v3Copy(ConfigData->transMsgs[ConfigData->dvIdx].msgStorage.vehAccumDV, ConfigData->navTransOutMsgBuffer.vehAccumDV);
+        configData->navTransOutMsgBuffer.timeTag = configData->transMsgs[configData->transTimeIdx].msgStorage.timeTag;
+        v3Copy(configData->transMsgs[configData->posIdx].msgStorage.r_BN_N, configData->navTransOutMsgBuffer.r_BN_N);
+        v3Copy(configData->transMsgs[configData->velIdx].msgStorage.v_BN_N, configData->navTransOutMsgBuffer.v_BN_N);
+        v3Copy(configData->transMsgs[configData->dvIdx].msgStorage.vehAccumDV, configData->navTransOutMsgBuffer.vehAccumDV);
     }
 
     /*! - Write the total message out for everyone else to pick up */
-    WriteMessage(ConfigData->navAttOutMsgID, callTime, sizeof(NavAttIntMsg),
-                 &(ConfigData->navAttOutMsgBuffer), moduleID);
-    WriteMessage(ConfigData->navTransOutMsgID, callTime, sizeof(NavTransIntMsg),
-                 &(ConfigData->navTransOutMsgBuffer), moduleID);
+    WriteMessage(configData->navAttOutMsgID, callTime, sizeof(NavAttIntMsg),
+                 &(configData->navAttOutMsgBuffer), moduleID);
+    WriteMessage(configData->navTransOutMsgID, callTime, sizeof(NavTransIntMsg),
+                 &(configData->navTransOutMsgBuffer), moduleID);
 
     return;
 }
