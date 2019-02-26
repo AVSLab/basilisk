@@ -134,10 +134,12 @@ void Update_aggregateNav(NavAggregateData *configData, uint64_t callTime, uint64
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     uint32_t i;
+    NavAttIntMsg navAttOutMsgBuffer;     /* [-] The local storage of the outgoing attitude navibation message data*/
+    NavTransIntMsg navTransOutMsgBuffer; /* [-] The local storage of the outgoing message data*/
 
     /*! - zero the output message buffers */
-    memset(&(configData->navAttOutMsgBuffer), 0x0, sizeof(NavAttIntMsg));
-    memset(&(configData->navTransOutMsgBuffer), 0x0, sizeof(NavTransIntMsg));
+    memset(&(navAttOutMsgBuffer), 0x0, sizeof(NavAttIntMsg));
+    memset(&(navTransOutMsgBuffer), 0x0, sizeof(NavTransIntMsg));
 
     /*! - check that attitude navigation messages are present */
     if (configData->attMsgCount) {
@@ -150,10 +152,10 @@ void Update_aggregateNav(NavAggregateData *configData, uint64_t callTime, uint64
         }
 
         /*! - Copy out each part of the attitude source message into the target output message*/
-        configData->navAttOutMsgBuffer.timeTag = configData->attMsgs[configData->attTimeIdx].msgStorage.timeTag;
-        v3Copy(configData->attMsgs[configData->attIdx].msgStorage.sigma_BN, configData->navAttOutMsgBuffer.sigma_BN);
-        v3Copy(configData->attMsgs[configData->rateIdx].msgStorage.omega_BN_B, configData->navAttOutMsgBuffer.omega_BN_B);
-        v3Copy(configData->attMsgs[configData->sunIdx].msgStorage.vehSunPntBdy, configData->navAttOutMsgBuffer.vehSunPntBdy);
+        navAttOutMsgBuffer.timeTag = configData->attMsgs[configData->attTimeIdx].msgStorage.timeTag;
+        v3Copy(configData->attMsgs[configData->attIdx].msgStorage.sigma_BN, navAttOutMsgBuffer.sigma_BN);
+        v3Copy(configData->attMsgs[configData->rateIdx].msgStorage.omega_BN_B, navAttOutMsgBuffer.omega_BN_B);
+        v3Copy(configData->attMsgs[configData->sunIdx].msgStorage.vehSunPntBdy, navAttOutMsgBuffer.vehSunPntBdy);
 
     }
 
@@ -168,17 +170,17 @@ void Update_aggregateNav(NavAggregateData *configData, uint64_t callTime, uint64
         }
 
         /*! - Copy out each part of the translation source message into the target output message*/
-        configData->navTransOutMsgBuffer.timeTag = configData->transMsgs[configData->transTimeIdx].msgStorage.timeTag;
-        v3Copy(configData->transMsgs[configData->posIdx].msgStorage.r_BN_N, configData->navTransOutMsgBuffer.r_BN_N);
-        v3Copy(configData->transMsgs[configData->velIdx].msgStorage.v_BN_N, configData->navTransOutMsgBuffer.v_BN_N);
-        v3Copy(configData->transMsgs[configData->dvIdx].msgStorage.vehAccumDV, configData->navTransOutMsgBuffer.vehAccumDV);
+        navTransOutMsgBuffer.timeTag = configData->transMsgs[configData->transTimeIdx].msgStorage.timeTag;
+        v3Copy(configData->transMsgs[configData->posIdx].msgStorage.r_BN_N, navTransOutMsgBuffer.r_BN_N);
+        v3Copy(configData->transMsgs[configData->velIdx].msgStorage.v_BN_N, navTransOutMsgBuffer.v_BN_N);
+        v3Copy(configData->transMsgs[configData->dvIdx].msgStorage.vehAccumDV, navTransOutMsgBuffer.vehAccumDV);
     }
 
     /*! - Write the total message out for everyone else to pick up */
     WriteMessage(configData->navAttOutMsgID, callTime, sizeof(NavAttIntMsg),
-                 &(configData->navAttOutMsgBuffer), moduleID);
+                 &(navAttOutMsgBuffer), moduleID);
     WriteMessage(configData->navTransOutMsgID, callTime, sizeof(NavTransIntMsg),
-                 &(configData->navTransOutMsgBuffer), moduleID);
+                 &(navTransOutMsgBuffer), moduleID);
 
     return;
 }
