@@ -43,18 +43,18 @@
 
 typedef struct {
     /* declare module private variables */
-    double K;                           /*!< [rad/sec] Proportional gain applied to MRP errors */
-    double P;                           /*!< [N*m*s]   Rate error feedback gain applied  */
-    double Ki;                          /*!< [N*m]     Integration feedback error on rate error  */
-    double integralLimit;               /*!< [N*m]     Integration limit to avoid wind-up issue */
-    uint64_t priorTime;                 /*!< [ns]      Last time the attitude control is called */
-    double z[3];                        /*!< [rad]     integral state of delta_omega */
-    double int_sigma[3];                /*!< [s]       integral of the MPR attitude error */
-    double domega0[3];                  /*!< [rad/sec] initial omega tracking error */
-    double knownTorquePntB_B[3];        /*!< [N*m]     known external torque in body frame vector components */
+    double K;                           //!< [rad/sec] Proportional gain applied to MRP errors */
+    double P;                           //!< [N*m*s]   Rate error feedback gain applied  */
+    double Ki;                          //!< [N*m]     Integration feedback error on rate error  */
+    double integralLimit;               //!< [N*m]     Integration limit to avoid wind-up issue */
+    uint64_t priorTime;                 //!< [ns]      Last time the attitude control is called */
+    double z[3];                        //!< [rad]     integral state of delta_omega */
+    double int_sigma[3];                //!< [s]       integral of the MPR attitude error */
+    double domega0[3];                  //!< [rad/sec] initial omega tracking error */
+    double knownTorquePntB_B[3];        //!< [N*m]     known external torque in body frame vector components */
     
-    double ISCPntB_B[9];                /*!< [kg m^2] Spacecraft Inertia */
-    RWArrayConfigFswMsg rwConfigParams;      /*!< [-] struct to store message containing RW config parameters in body B frame */
+    double ISCPntB_B[9];                //!< [kg m^2] Spacecraft Inertia */
+    RWArrayConfigFswMsg rwConfigParams;      //!< [-] struct to store message containing RW config parameters in body B frame */
 
     /* declare module IO interfaces */
     char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the RWArrayConfigFswMsg input message*/

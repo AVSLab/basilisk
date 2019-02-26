@@ -49,7 +49,7 @@ void SelfInit_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t moduleID)
 }
 
 /*! This method performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
+ Its primary function is to link the input messages that were created elsewhere.
  @return void
  @param ConfigData The configuration data associated with this module
  */
@@ -88,7 +88,7 @@ void CrossInit_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t moduleID)
  */
 void Reset_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    /*! - Read the input messages */
+    /* - Read the input messages */
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     int i;    
@@ -102,7 +102,7 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime, uint6
     
     ConfigData->rwConfigParams.numRW = 0;
     if (ConfigData->rwParamsInMsgID >= 0) {
-        /*! - Read static RW config data message and store it in module variables*/
+        /* - Read static RW config data message and store it in module variables*/
         ReadMessage(ConfigData->rwParamsInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(RWArrayConfigFswMsg), &(ConfigData->rwConfigParams), moduleID);
     }
@@ -124,21 +124,21 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime, uint6
 void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
-    AttGuidFswMsg      guidCmd;            /*!< Guidance Message */
-    RWSpeedIntMsg      wheelSpeeds;        /*!< Reaction wheel speed estimates */
-    RWAvailabilityFswMsg  wheelsAvailability; /*!< Reaction wheel availability */
+    AttGuidFswMsg      guidCmd;            //!< Guidance Message */
+    RWSpeedIntMsg      wheelSpeeds;        //!< Reaction wheel speed estimates */
+    RWAvailabilityFswMsg  wheelsAvailability; //!< Reaction wheel availability */
 
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
-    double              dt;                 /*!< [s] control update period */
-    double              Lr[3];              /*!< required control torque vector [Nm] */
+    double              dt;                 //!< [s] control update period */
+    double              Lr[3];              //!< required control torque vector [Nm] */
     double              omega_BN_B[3];
     double              v3[3];
     double              v3_1[3];
     double              v3_2[3];
-    double              temp;
+    double              intCheck;           /* Check magnitude of integrated attitude error */
     int                 i;
-    double              *wheelGs;           /*!< Reaction wheel spin axis pointer */
+    double              *wheelGs;           //!< Reaction wheel spin axis pointer */
 
 
 
@@ -174,8 +174,8 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     if (ConfigData->Ki > 0) {   /* check if integral feedback is turned on  */
         v3Scale(ConfigData->K * dt, guidCmd.sigma_BR, v3);
         v3Add(v3, ConfigData->int_sigma, ConfigData->int_sigma);
-        if((temp = v3Norm(ConfigData->int_sigma)) > ConfigData->integralLimit) {
-            v3Scale(ConfigData->integralLimit / temp, ConfigData->int_sigma, ConfigData->int_sigma);
+        if((intCheck = v3Norm(ConfigData->int_sigma)) > ConfigData->integralLimit) {
+            v3Scale(ConfigData->integralLimit / intCheck, ConfigData->int_sigma, ConfigData->int_sigma);
         }
         v3Subtract(guidCmd.omega_BR_B, ConfigData->domega0, v3);
         m33MultV3(RECAST3X3 ConfigData->ISCPntB_B, v3, v3_1);
