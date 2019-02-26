@@ -1,12 +1,12 @@
 /*
  ISC License
-
+ 
  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
+ 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
  copyright notice and this permission notice appear in all copies.
-
+ 
  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -30,7 +30,6 @@
 #include "rateMsgConverter.h"
 #include "simulation/utilities/linearAlgebra.h"
 
-
 /*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
  output message
@@ -41,9 +40,9 @@
 void SelfInit_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t moduleID)
 {
     configData->navRateOutMsgID = CreateNewMessage(configData->navRateOutMsgName,
-                                               sizeof(NavAttIntMsg),
-                                               "NavAttIntMsg",
-                                               moduleID);
+                                                   sizeof(NavAttIntMsg),
+                                                   "NavAttIntMsg",
+                                                   moduleID);
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -56,8 +55,8 @@ void CrossInit_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t mod
 {
     /*! - Get the control data message ID*/
     configData->imuRateInMsgID = subscribeToMessage(configData->imuRateInMsgName,
-                                                sizeof(IMUSensorBodyFswMsg),
-                                                moduleID);
+                                                    sizeof(IMUSensorBodyFswMsg),
+                                                    moduleID);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -83,19 +82,20 @@ void Update_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTi
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     IMUSensorBodyFswMsg inMsg;
-
+    NavAttIntMsg outMsg;
+    
     /*! - read in the message of type IMUSensorBodyFswMsg */
     memset(&inMsg, 0x0, sizeof(inMsg));
     ReadMessage(configData->imuRateInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(IMUSensorBodyFswMsg), (void*) &(inMsg), moduleID);
-
+                sizeof(IMUSensorBodyFswMsg), (void*) &inMsg, moduleID);
+    
     /*! - create a zero message of type NavAttIntMsg which has the rate vector from the input message */
-    memset(&configData->outMsg, 0x0, sizeof(configData->outMsg));
-    v3Copy(inMsg.AngVelBody, configData->outMsg.omega_BN_B);
-
+    memset(&outMsg, 0x0, sizeof(outMsg));
+    v3Copy(inMsg.AngVelBody, outMsg.omega_BN_B);
+    
     /*! - write output message */
     WriteMessage(configData->navRateOutMsgID, callTime, sizeof(NavAttIntMsg),
-                 (void*) &(configData->outMsg), moduleID);
-
+                 (void*) &outMsg, moduleID);
+    
     return;
 }

@@ -38,9 +38,6 @@ typedef struct {
     int32_t navRateOutMsgID;                           //!< ID for the outgoing message */
     char imuRateInMsgName[MAX_STAT_MSG_LENGTH];        //!< The name of the imuSensorBody Input message*/
     int32_t imuRateInMsgID;                            //!< ID for the incoming message */
-
-    NavAttIntMsg outMsg;                               //!< -- copy of the output message */
-
 }rateMsgConverterConfig;
 
 #ifdef __cplusplus
