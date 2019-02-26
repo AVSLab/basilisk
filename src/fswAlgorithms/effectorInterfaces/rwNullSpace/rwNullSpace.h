@@ -55,11 +55,11 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID);
-    void Update_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
+    void SelfInit_rwNullSpace(rwNullSpaceConfig *configData, uint64_t moduleID);
+    void CrossInit_rwNullSpace(rwNullSpaceConfig *configData, uint64_t moduleID);
+    void Update_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
         uint64_t moduleID);
-    void Reset_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
+    void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
                             uint64_t moduleID);
     
 #ifdef __cplusplus
