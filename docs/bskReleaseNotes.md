@@ -14,7 +14,7 @@ We are very excited by the great capabilities that this software already has, an
 ## Upcoming Version 0.X.X
 <ul>
     <li>
-        Add release notes here for new commits.
+       attTrackingError has updated documentation and unit tests.
     </li>
 </ul>
 
