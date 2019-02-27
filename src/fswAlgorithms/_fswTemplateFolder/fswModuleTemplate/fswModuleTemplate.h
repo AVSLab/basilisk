@@ -46,19 +46,16 @@ typedef struct {
     int32_t dataInMsgID;                            //!< ID for the incoming message
 
     double  inputVector[3];                         //!< [units]  vector description
-
-    FswModuleTemplateFswMsg fswModuleOut;           //!< copy of the output message
-
 }fswModuleTemplateConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     
-    void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t moduleID);
-    void Update_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t moduleID);
+    void CrossInit_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t moduleID);
+    void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void Reset_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, uint64_t moduleID);
     
 #ifdef __cplusplus
 }
