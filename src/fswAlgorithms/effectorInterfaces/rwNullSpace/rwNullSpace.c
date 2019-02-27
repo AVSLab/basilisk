@@ -66,7 +66,6 @@ void CrossInit_rwNullSpace(rwNullSpaceConfig *configData, uint64_t moduleID)
 void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
                         uint64_t moduleID)
 {
-    RWArrayTorqueIntMsg finalControl;               /*      output message container */
     double GsMatrix[3*MAX_EFF_CNT];                 /* [-]  [Gs] projection matrix where gs_hat_B RW spin axis form each colum */
     double GsTranspose[3 * MAX_EFF_CNT];            /* [-]  [Gs]^T */
     double GsInvHalf[3 * 3];                        /* [-]  ([Gs][Gs]^T)^-1 */
@@ -104,10 +103,6 @@ void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
     mSubtract(identMatrix, configData->numWheels, configData->numWheels,    /* find ([I] - [Gs]^T.([Gs].[Gs]^T)^-1.[Gs]) */
               GsTemp, configData->tau);
 
-    /*! -# Ensure that after a reset the output message is reset to zero. */
-    memset(&finalControl, 0x0, sizeof(RWArrayTorqueIntMsg));
-    WriteMessage(configData->outputMsgID, callTime, sizeof(RWArrayTorqueIntMsg),
-                 &finalControl, moduleID);
 }
 
 /*! This method takes the input reaction wheel commands as well as the observed 
