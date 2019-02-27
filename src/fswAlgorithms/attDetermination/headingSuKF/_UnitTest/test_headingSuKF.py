@@ -40,15 +40,15 @@ def setupFilterData(filterObject):
 
     # filterObject.state = [0.0, 0., 0., 0., 0.]
     filterObject.stateInit = [0.0, 0.0, 1.0, 0.0, 0.0]
-    filterObject.covarInit = [1., 0.0, 0.0, 0.0, 0.0,
-                          0.0, 1., 0.0, 0.0, 0.0,
-                          0.0, 0.0, 1., 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.02, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.02]
+    filterObject.covarInit = [0.1, 0.0, 0.0, 0.0, 0.0,
+                          0.0, 0.1, 0.0, 0.0, 0.0,
+                          0.0, 0.0, .1, 0.0, 0.0,
+                          0.0, 0.0, 0.0, 0.001, 0.0,
+                          0.0, 0.0, 0.0, 0.0, 0.001]
 
     qNoiseIn = np.identity(5)
-    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.01*0.01
-    qNoiseIn[3:5, 3:5] = qNoiseIn[3:5, 3:5]*0.001*0.001
+    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.00001*0.00001
+    qNoiseIn[3:5, 3:5] = qNoiseIn[3:5, 3:5]*0.000001*0.000001
     filterObject.qNoise = qNoiseIn.reshape(25).tolist()
     filterObject.qObsVal = 0.001
     filterObject.sensorUseThresh = 0.
@@ -375,14 +375,15 @@ def StateUpdateSunLine(show_plots):
                                       2)  # number of buffers (leave at 2 as default, don't make zero)
 
     stateTarget = testVector.tolist()
+    inputData.rel_pos = stateTarget
     stateTarget.extend([0.0, 0.0])
-    moduleConfig.stateInit = [1., 0.0, 0.0, 0.01, 0.001]
+    moduleConfig.stateInit = [1., 0.2, 0.1, 0.01, 0.001]
 
     unitTestSim.InitializeSimulation()
 
-    for i in range(400):
-        if i > 20:
-            inputData.rel_pos += - np.cross(testOmega, testVector) * 0.5
+    for i in range(500):
+        if i > 20 and i%100 == 0:
+            # inputData.rel_pos += - np.cross(testOmega, testVector) * 0.5
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.opnavDataInMsgName,
                                       inputMessageSize,
                                       unitTestSim.TotalSim.CurrentNanos,
@@ -395,40 +396,44 @@ def StateUpdateSunLine(show_plots):
     covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", range(5*5))
 
     for i in range(5):
-        if(covarLog[-1, i*5+1+i] > covarLog[0, i*5+1+i]/100):
+        if(covarLog[-1, i*5+1+i] > covarLog[0, i*5+1+i]/10):
             testFailCount += 1
             testMessages.append("Covariance update failure")
-        if(abs(stateLog[-1, i+1] - stateTarget[i]) > 1.0E-5):
+        if(abs(stateLog[-1, i+1] - stateTarget[i]) > 1.0E-1):
             print abs(stateLog[-1, i+1] - stateTarget[i])
             testFailCount += 1
             testMessages.append("State update failure")
 
-        
-    for i in range(400):
-        if i > 20:
+    testVector = np.array([0.6, 0.1, 0.2])
+    stateTarget = testVector.tolist()
+    inputData.rel_pos = stateTarget
+    stateTarget.extend([0.0, 0.0])
+    for i in range(1000):
+        if i%50 == 0:
+            # inputData.rel_pos += - np.cross(testOmega, testVector) * 0.5
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.opnavDataInMsgName,
                                       inputMessageSize,
                                       unitTestSim.TotalSim.CurrentNanos,
                                       inputData)
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i+401)*0.5))
+        unitTestSim.ConfigureStopTime(macros.sec2nano((i+501)*0.5))
         unitTestSim.ExecuteSimulation()
 
     stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", range(5))
+    stateErrorLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".stateError", range(5))
     postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", range(3))
     covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", range(5*5))
 
-    stateTarget = testVector.tolist()
-    stateTarget.extend([0.0, 0.0, 0.0])
     for i in range(5):
-        if(covarLog[-1, i*5+1+i] > covarLog[0, i*5+1+i]/100):
+        if(covarLog[-1, i*5+1+i] > covarLog[0, i*5+1+i]/10):
             testFailCount += 1
             testMessages.append("Covariance update failure")
-        if(abs(stateLog[-1, i+1] - stateTarget[i]) > 1.0E-5):
+        if(abs(stateLog[-1, i+1] - stateTarget[i]) > 1.0E-1):
             print abs(stateLog[-1, i+1] - stateTarget[i])
             testFailCount += 1
             testMessages.append("State update failure")
 
     FilterPlots.StateCovarPlot(stateLog, covarLog, show_plots)
+    FilterPlots.StateCovarPlot(stateErrorLog, covarLog, show_plots)
     FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, show_plots)
 
     # print out success message if no error were found
@@ -476,7 +481,7 @@ def StatePropSunLine(show_plots):
     unitTestSim.ExecuteSimulation()
     
     stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", range(5))
-    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", range(8))
+    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", range(3))
     covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", range(5*5))
 
     FilterPlots.StateCovarPlot(stateLog, covarLog,show_plots)
