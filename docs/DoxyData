@@ -1271,7 +1271,7 @@ HTML_EXTRA_FILES       = ../src/simulation/dynamics/extForceTorque/_Documentatio
                          ../src/fswAlgorithms/attGuidance/attTrackingError/_Documentation/AVS-Sim-attTrackingError-2016-01-15.pdf \
                          ../src/fswAlgorithms/attGuidance/celestialTwoBodyPoint/_Documentation/celestialTwoBodyPoint.pdf \
                          ../src/fswAlgorithms/attGuidance/hillPoint/_Documentation/hillPoint.pdf \
-                         ../src/fswAlgorithms/attGuidance/inertial3D/_Documentation/AVS-Sim-Inertial3D-2016-01-15.pdf \
+                         ../src/fswAlgorithms/attGuidance/inertial3D/_Documentation/Basilisk-Inertial3D-2016-01-15.pdf \
                          ../src/fswAlgorithms/attGuidance/inertial3DSpin/_Documentation/AVS-Sim-Inertial3DSpin-2015-12-22.pdf \
                          ../src/fswAlgorithms/attGuidance/velocityPoint/_Documentation/velocityPoint.pdf \
                          ../src/fswAlgorithms/effectorInterfaces/rwMotorVoltage/_Documentation/Basilisk-rwMotorVoltage-20170113.pdf \
