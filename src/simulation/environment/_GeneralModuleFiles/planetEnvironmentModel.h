@@ -21,6 +21,8 @@
 #define PLANET_ENVIRONMENT_MODEL_H
 
 #include <Eigen/Dense>
+#include <vector>
+#include <string>
 
 /*! @brief Abstract class that is used to implement planet-relative "environment" models (for example: atmospheric density, magnetic fields, etc.) */
 class PlanetEnvironmentModel {
