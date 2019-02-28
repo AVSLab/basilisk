@@ -30,6 +30,7 @@
 #include "utilities/bsk_Print.h"
 #include "../../dynamics/_GeneralModuleFiles/stateData.h"
 #include "../../_GeneralModuleFiles/sys_model.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
 
 /*! This method initializes some basic parameters for the module.
  @return void
@@ -227,29 +228,39 @@ and the pre-set atmospheric density properties.
  */
 void Atmosphere::updateLocalAtmo(double currentTime)
 {
+    double tmpAltitude = 0.0;
+    std::vector<SCPlusStatesSimMsg>::iterator it;
+    AtmoPropsSimMsg tmpData;
+    uint64_t atmoInd = 0;
+    this->atmoOutBuffer.clear();
 
-    if(this->envType.compare("exponential")==0){
 
-        double tmpDensity = 0.0;
-        double tmpAltitude = 0.0;
-        std::vector<SCPlusStatesSimMsg>::iterator it;
-        AtmoPropsSimMsg tmpData;
-        uint64_t atmoInd = 0;
-        this->atmoOutBuffer.clear();
-        for(it = scStates.begin(); it != scStates.end(); it++, atmoInd++){
-            this->updateRelativePos(this->bodyState, *it); // Computes planet relative state vector
-            tmpPosMag = this->relativePos.norm();
-            tmpAltitude = tmpPosMag - this->exponentialParams.planetRadius; // computes the altitude above the planet radius
-            tmpDensity = this->exponentialParams.baseDensity * exp(-1.0 * tmpAltitude / this->exponentialParams.scaleHeight);
-            tmpData.neutralDensity = tmpDensity;
-            tmpData.localTemp = 300.0;
-            this->atmoOutBuffer.push_back(tmpData);
+    //! - loop over all the spacecraft
+    for(it = scStates.begin(); it != scStates.end(); it++, atmoInd++){
+        this->updateRelativePos(this->bodyState, *it); //! - Computes planet relative state vector
+        tmpPosMag = this->relativePos.norm();
+        tmpAltitude = tmpPosMag - this->exponentialParams.planetRadius; //! - computes the altitude above the planet radius
+
+        //! - zero the output message for each spacecraft by default
+        memset(&tmpData, 0x0, sizeof(AtmoPropsSimMsg));
+
+        //! - check if radius is in permissible range
+        if(tmpAltitude > this->envMinReach &&
+           (tmpAltitude < this->envMaxReach || this->envMaxReach < 0)) {
+            //! - check for exponential atmosphere model case
+            if(this->envType.compare("exponential")==0){
+                tmpData.neutralDensity = this->exponentialParams.baseDensity * exp(-1.0 * tmpAltitude / this->exponentialParams.scaleHeight);
+                tmpData.localTemp = this->localAtmoTemp;
+
+            } else {
+                BSK_PRINT(MSG_WARNING, "Atmospheric model not set. Skipping computation.")
+            }
         }
 
+        //! - store the evaluated atmospheric neutral density info for each spacecraft
+        this->atmoOutBuffer.push_back(tmpData);
     }
-    else{
-        BSK_PRINT(MSG_WARNING, "Atmospheric model not set. Skipping computation.")
-    }
+
     return;
 }
 
