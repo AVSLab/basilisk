@@ -35,51 +35,70 @@
 #include "simulation/utilities/rigidBodyKinematics.h"
 
 
-void SelfInit_inertial3D(inertial3DConfig *ConfigData, uint64_t moduleID)
+/*! @brief This method creates the module output message of type [AttRefFswMsg](\ref AttRefFswMsg).
+ @return void
+ @param ConfigData The configuration data associated with RW null space model
+ */
+void SelfInit_inertial3D(inertial3DConfig *configData, uint64_t moduleID)
 {
     /*! - Create output message for module */
-    ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
+    configData->outputMsgID = CreateNewMessage(configData->outputDataName,
                                                sizeof(AttRefFswMsg),
                                                "AttRefFswMsg",
                                                moduleID);
 }
 
-void CrossInit_inertial3D(inertial3DConfig *ConfigData, uint64_t moduleID)
+/*! This method performs the second stage of initialization
+ interface.  This module has no messages to subscribe to.
+ @return void
+ @param configData The configuration data associated with this module
+ */
+void CrossInit_inertial3D(inertial3DConfig *configData, uint64_t moduleID)
 {
-    /*! - Get the control data message ID*/
+
 }
 
-void Reset_inertial3D(inertial3DConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+/*! This method performs the module reset capability.  This module has actions.
+ @return void
+ @param configData The configuration data associated with this module
+ */
+void Reset_inertial3D(inertial3DConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
-    
+
 }
 
-void Update_inertial3D(inertial3DConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+/*! This method creates a fixed attitude reference message.  The desired orientation is
+    defined within the module.
+ @return void
+ @param ConfigData The configuration data associated with the null space control
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the ConfigData
+ */
+void Update_inertial3D(inertial3DConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
-    
+    AttRefFswMsg attRefOut;         /* output message structure */
+
     /*! - Compute and store output message */
-    computeInertialPointingReference(ConfigData);
+    computeInertialPointingReference(configData, &attRefOut);
     
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttRefFswMsg),   /* update module name */
-                 (void*) &(ConfigData->attRefOut), moduleID);
+    /*! - Write output message */
+    WriteMessage(configData->outputMsgID, callTime, sizeof(AttRefFswMsg),
+                 (void*) &(attRefOut), moduleID);
 
     return;
 }
 
 
-/*
- * Function: computeInertialPointingReference
- * Purpose: Generate attitude reference associated with Intertial 3D Pointing
- * Inputs:
-     ConfigData = module configuration data
- * Outputs:
- *   sigma_RN = Current attitude error estimate (MRPs)
- *   omega_RN_N = [r/s]  Reference frame rate vector of the of R relative to N in N frame components
- *   domega_RN_N = [r/s2] Reference frame inertial acceleration of  R relative to N in N frame components
+
+
+/*! Generate attitude reference associated with Intertial 3D Pointing.  In this case this is a fixed attitude
+    with zero angular rate and acceleration vectors
+ @return void
+ @param ConfigData The configuration data associated with the null space control
  */
-void computeInertialPointingReference(inertial3DConfig *ConfigData)
+void computeInertialPointingReference(inertial3DConfig *configData, AttRefFswMsg *attRefOut)
 {
-    v3Copy(ConfigData->sigma_R0N, ConfigData->attRefOut.sigma_RN);
-    v3SetZero(ConfigData->attRefOut.omega_RN_N);
-    v3SetZero(ConfigData->attRefOut.domega_RN_N);
+    v3Copy(configData->sigma_R0N, attRefOut->sigma_RN);
+    v3SetZero(attRefOut->omega_RN_N);
+    v3SetZero(attRefOut->domega_RN_N);
 }
