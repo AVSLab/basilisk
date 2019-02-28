@@ -35,9 +35,10 @@
 #include "simulation/utilities/rigidBodyKinematics.h"
 
 
-/*! @brief This method creates the module output message of type [AttRefFswMsg](\ref AttRefFswMsg).
+/*! This method creates the module output message of type [AttRefFswMsg](\ref AttRefFswMsg).
  @return void
  @param ConfigData The configuration data associated with RW null space model
+ @param moduleID The ID associated with the ConfigData
  */
 void SelfInit_inertial3D(inertial3DConfig *configData, uint64_t moduleID)
 {
@@ -52,6 +53,7 @@ void SelfInit_inertial3D(inertial3DConfig *configData, uint64_t moduleID)
  interface.  This module has no messages to subscribe to.
  @return void
  @param configData The configuration data associated with this module
+ @param moduleID The ID associated with the ConfigData
  */
 void CrossInit_inertial3D(inertial3DConfig *configData, uint64_t moduleID)
 {
@@ -61,7 +63,8 @@ void CrossInit_inertial3D(inertial3DConfig *configData, uint64_t moduleID)
 /*! This method performs the module reset capability.  This module has actions.
  @return void
  @param configData The configuration data associated with this module
- */
+ @param moduleID The ID associated with the ConfigData
+*/
 void Reset_inertial3D(inertial3DConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
 
@@ -83,7 +86,7 @@ void Update_inertial3D(inertial3DConfig *configData, uint64_t callTime, uint64_t
     
     /*! - Write output message */
     WriteMessage(configData->outputMsgID, callTime, sizeof(AttRefFswMsg),
-                 (void*) &(attRefOut), moduleID);
+                 &attRefOut, moduleID);
 
     return;
 }
