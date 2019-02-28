@@ -28,6 +28,9 @@ import pytest
 import sys, os, inspect
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+
 
 
 
@@ -172,9 +175,9 @@ def subModuleTestFunction(show_plots):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i,0]*macros.NANO2SEC) +
                                 "sec\n")
-            unitTestSupport.writeTeXSnippet("passFail_sigBR", "FAILED", '.')
+            unitTestSupport.writeTeXSnippet("passFail_sigBR", "FAILED", path)
         else:
-            unitTestSupport.writeTeXSnippet("passFail_sigBR", "PASSED", '.')
+            unitTestSupport.writeTeXSnippet("passFail_sigBR", "PASSED", path)
 
     #
     # check omega_BR_B
@@ -199,9 +202,9 @@ def subModuleTestFunction(show_plots):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i,0]*macros.NANO2SEC) +
                                 "sec\n")
-            unitTestSupport.writeTeXSnippet("passFail_omega_BR_B", "FAILED", '.')
+            unitTestSupport.writeTeXSnippet("passFail_omega_BR_B", "FAILED", path)
         else:
-            unitTestSupport.writeTeXSnippet("passFail_omega_BR_B", "PASSED", '.')
+            unitTestSupport.writeTeXSnippet("passFail_omega_BR_B", "PASSED", path)
 
     #
     # check omega_RN_B
@@ -225,9 +228,9 @@ def subModuleTestFunction(show_plots):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i,0]*macros.NANO2SEC) +
                                 "sec\n")
-            unitTestSupport.writeTeXSnippet("passFail_omega_RN_B", "FAILED", '.')
+            unitTestSupport.writeTeXSnippet("passFail_omega_RN_B", "FAILED", path)
         else:
-            unitTestSupport.writeTeXSnippet("passFail_omega_RN_B", "PASSED", '.')
+            unitTestSupport.writeTeXSnippet("passFail_omega_RN_B", "PASSED", path)
 
     #
     # check domega_RN_B
@@ -251,9 +254,9 @@ def subModuleTestFunction(show_plots):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i,0]*macros.NANO2SEC) +
                                 "sec\n")
-            unitTestSupport.writeTeXSnippet("passFail_domega_RN_B", "FAILED", '.')
+            unitTestSupport.writeTeXSnippet("passFail_domega_RN_B", "FAILED", path)
         else:
-            unitTestSupport.writeTeXSnippet("passFail_domega_RN_B", "PASSED", '.')
+            unitTestSupport.writeTeXSnippet("passFail_domega_RN_B", "PASSED", path)
     
     # Note that we can continue to step the simulation however we feel like.
     # Just because we stop and query data does not mean everything has to stop for good
