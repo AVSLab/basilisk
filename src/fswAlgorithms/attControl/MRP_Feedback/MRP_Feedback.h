@@ -29,7 +29,7 @@
 #include <stdint.h>
 
 /*! \defgroup MRP_Feedback
- * @{
+ * @brief Data structure for the MRP feedback attitude control routine
  */
 
 /*!@brief Data structure for the MRP feedback attitude control routine.
