@@ -38,11 +38,11 @@ Atmosphere::Atmosphere()
 {
     this->planetPosInMsgName = "spice_planet_output_data";
     this->OutputBufferCount = 2;
-    //! Set the default atmospheric properties to those of Earth
+    //! - Set the default atmospheric properties to those of Earth
     this->exponentialParams.baseDensity = 1.217;
     this->exponentialParams.scaleHeight = 8500.0;
     this->exponentialParams.planetRadius = 6371.008 * 1000.0;
-    this->localAtmoTemp = 293.0; //! Placeholder value from http://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
+    this->localAtmoTemp = 293.0; //! - Placeholder temperature value from http://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
     this->relativePos.fill(0.0);
     this->scStateInMsgNames.clear();
     this->tmpAtmo.neutralDensity = this->exponentialParams.baseDensity;
@@ -61,7 +61,7 @@ Atmosphere::~Atmosphere()
     return;
 }
 
-/*! This sets the module's envType to a specified type.
+/*! Sets the model used to compute atmospheric density/temperature; must be set before init.
  @return void
  @param inputType The desired model type.
  */
@@ -71,7 +71,7 @@ void Atmosphere::setEnvType(std::string inputType)
     return;
 }
 
-/*! This sets the module's envType to a specified type.
+/*! Sets the epoch date used by some models. This is converted automatically to the desired units.
  @return void
  @param julianDate The specified epoch date in JD2000.
  */
@@ -81,7 +81,8 @@ void Atmosphere::setEpoch(double julianDate)
     return;
 }
 
-/*! This sets the module's envType to a specified type.
+/*! Adds the spacecraft message name to a vector of sc message names and automatically creates an output message name.
+    Must be called after ``setEnvType''.
  @return void
  @param tmpScMsgName A spacecraft state message name.
  */
@@ -259,34 +260,37 @@ void Atmosphere::updateLocalAtmo(double currentTime)
  */
 void Atmosphere::updateRelativePos(SpicePlanetStateSimMsg& planetState, SCPlusStatesSimMsg& scState)
 {
-    /* This loop iterates over each spacecraft with respect to one planet if the planet message has been set.*/
+    /*! This loop iterates over each spacecraft with respect to one planet if the planet message has been set.*/
     uint64_t iter = 0;
     if(planetPosInMsgId >= 0)
     {
-      for(iter = 0; iter < 3; iter++)
-      {
-        this->relativePos(iter,0) = scState.r_BN_N[iter] - planetState.PositionVector[iter];
-      }
+        for(iter = 0; iter < 3; iter++)
+        {
+            /*! determine spacecrat position relative to plant */
+            this->relativePos(iter,0) = scState.r_BN_N[iter] - planetState.PositionVector[iter];
+        }
     }
-    /* Else, assume the inertial zero is the planet surface. That's probably fine.*/
+    /*! If no planet message is set then the spacecraft position is assumed to be relative to planet center */
     else{
-      this->relativePos(iter,0) = scState.r_BN_N[iter];
+        this->relativePos(iter,0) = scState.r_BN_N[iter];
     }
     return;
 }
 
-/*! This method prompts the exponential atmosphere model to update the state message as part of the cyclic simulation run.
+
+/*! Computes the current atmospheric parameters for each spacecraft and writes their respective messages.
  @return void
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
 void Atmosphere::UpdateState(uint64_t CurrentSimNanos)
 {
-    //! Begin method steps
-    //! - Read the inputs and then call ConfigureThrustRequests to set up dynamics
+    //! - update local neutral density information
     if(this->ReadInputs())
     {
-        updateLocalAtmo(CurrentSimNanos*1.0E-9);
+        updateLocalAtmo(CurrentSimNanos*NANO2SEC);
     }
+
+    //! - write out neutral density message
     WriteOutputMessages(CurrentSimNanos);
     return;
 }

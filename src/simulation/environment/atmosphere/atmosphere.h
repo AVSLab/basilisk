@@ -31,14 +31,14 @@
 #include "../_GeneralModuleFiles/planetEnvironmentModel.h"
 
 /*! \addtogroup SimModelGroup
- * @{}
+ * @{
  */
 
 //! @brief Container for the properties of a simple exponential atmosphere model, such that different planets can be tested. */
 typedef struct {
-    double baseDensity;                 //!< kg/m^3 Density at sea level
-    double scaleHeight;                    //!< m   Altitude where base density has decreased by factor of e
-    double planetRadius;                //!< m Radius of the local atmospheric body; altitude is computed as |r| - planetRadius
+    double baseDensity;                 //!< [kg/m^3] Density at sea level
+    double scaleHeight;                 //!< [m]      Altitude where base density has decreased by factor of e
+    double planetRadius;                //!< [m]      Radius of the local atmospheric body; altitude is computed as |r| - planetRadius
 }exponentialProperties;
 
 
@@ -48,23 +48,23 @@ typedef struct {
 /*! This class is used to hold relevant atmospheric properties and to compute the density for a given set of spacecraft 
 relative to a specified planet. Planetary parameters, including position and input message, are settable by the user. 
 Internal support is provided for Venus, Earth, and Mars. In a given simulation, each planet of interest should have only
-one Atmosphere model associated with it linked to the spacecraft in orbit about that body.*/
+one Atmosphere model associated with it linked to the spacecraft in orbit about that body.  For more information see the [PDF Description](Basilisk-atmosphere-20190221.pdf).*/
 class Atmosphere: public SysModel, public PlanetEnvironmentModel {
 public:
-    Atmosphere();//! [-] Constructor
-    ~Atmosphere();//! [-] Destructor
-    void SelfInit(); //! [-] Initializes published messages
-    void CrossInit(); //![-] Subscribes to desired methods
-    void setEnvType(std::string inputType); //!< [string] Sets the model used to compute atmospheric density/temperature; must be set before init
-    void setEpoch(double julianDate); //!< [JulianDate2000] Sets the epoch date used by some models. This is converted automatically to the desired units.
-    void addSpacecraftToModel(std::string tmpScMsgName); //! [string] Adds the spacecraft message name to a vector of sc message names and automatically creates an output message name. Must be called after ``setEnvType''.
-    void UpdateState(uint64_t CurrentSimNanos); //! [nanoseconds] Computes the current atmospheric parameters for each spacecraft and writes their respective messages.
+    Atmosphere();
+    ~Atmosphere();
+    void SelfInit();
+    void CrossInit();
+    void setEnvType(std::string inputType);
+    void setEpoch(double julianDate); 
+    void addSpacecraftToModel(std::string tmpScMsgName); 
+    void UpdateState(uint64_t CurrentSimNanos); 
 
 private:
-    void WriteOutputMessages(uint64_t CurrentClock); //! [nanoseconds] Iterates through outputMessageIDs and writes output messages.
-    bool ReadInputs(); //! [-] Reads respective inputs required by a given atmospheric model
-    void updateLocalAtmo(double currentTime); //! [nanoseconds] Computes the local atmospheric density and temperature.
-    void updateRelativePos(SpicePlanetStateSimMsg& planetState, SCPlusStatesSimMsg& scState); //! [-] Computes the planet-relative position of a given spacecraft.
+    void WriteOutputMessages(uint64_t CurrentClock);
+    bool ReadInputs(); 
+    void updateLocalAtmo(double currentTime); 
+    void updateRelativePos(SpicePlanetStateSimMsg& planetState, SCPlusStatesSimMsg& scState); 
 
 public:
     std::vector<std::string> scStateInMsgNames;	//!< Vector of the spacecraft position/velocity message names
@@ -89,5 +89,7 @@ private:
     std::vector<AtmoPropsSimMsg> atmoOutBuffer; //!< -- Message buffer for density messages
 
 };
+
+/*! @} */
 
 #endif /* EXPONENTIAL_ATMOSPHERE_H */
