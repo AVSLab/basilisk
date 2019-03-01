@@ -28,6 +28,8 @@ import pytest
 import sys, os, inspect
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
 
 
 
@@ -74,10 +76,9 @@ def subModuleTestFunction(show_plots):
 
     # Construct algorithm and associated C++ container
     moduleConfig = inertial3D.inertial3DConfig()
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        inertial3D.Update_inertial3D,
-                                        inertial3D.SelfInit_inertial3D,
-                                        inertial3D.CrossInit_inertial3D)
+    
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
+
     moduleWrap.ModelTag = "inertial3D"
 
     # Add test module to runtime call list
@@ -146,6 +147,8 @@ def subModuleTestFunction(show_plots):
 
     # compare the module results to the truth values
     accuracy = 1e-12
+    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+
     for i in range(0,len(trueVector)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
@@ -179,22 +182,18 @@ def subModuleTestFunction(show_plots):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i,0]*macros.NANO2SEC) +
                                 "sec\n")
-    
-    # Note that we can continue to step the simulation however we feel like.
-    # Just because we stop and query data does not mean everything has to stop for good
-    unitTestSim.ConfigureStopTime(macros.sec2nano(0.6))    # run an additional 0.6 seconds
-    unitTestSim.ExecuteSimulation()
 
-    # If the argument provided at commandline "--show_plots" evaluates as true,
-    # plot all figures
-#    if show_plots:
-#        # plot a sample variable.
-#        plt.figure(1)
-#        plt.plot(variableState[:,0]*macros.NANO2SEC, variableState[:,1], label='Sample Variable')
-#        plt.legend(loc='upper left')
-#        plt.xlabel('Time [s]')
-#        plt.ylabel('Variable Description [unit]')
-#        plt.show()
+    snippentName = "passFail"
+    if testFailCount == 0:
+        colorText = 'ForestGreen'
+        print "PASSED: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        print "Failed: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
