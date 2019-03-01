@@ -54,18 +54,18 @@ typedef struct {
 
     /* declare module IO interfaces */
     char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];        //!< The name of the RWArrayConfigFswMsg input message
-    int32_t rwParamsInMsgID;                            //!< [-] ID for the RWArrayConfigFswMsg ingoing message
+    int32_t rwParamsInMsgId;                            //!< [-] ID for the RWArrayConfigFswMsg ingoing message
     char vehConfigInMsgName[MAX_STAT_MSG_LENGTH];
-    int32_t vehConfigInMsgID;
+    int32_t vehConfigInMsgId;
     char rwAvailInMsgName[MAX_STAT_MSG_LENGTH];         //!< [-] The name of the RWs availability message
-    int32_t rwAvailInMsgID;                             //!< [-] ID for the incoming  RWs availability data
+    int32_t rwAvailInMsgId;                             //!< [-] ID for the incoming  RWs availability data
     
     char outputDataName[MAX_STAT_MSG_LENGTH];           //!< [-] The name of the output message
     char inputGuidName[MAX_STAT_MSG_LENGTH];            //!< [-] The name of the Input message
     char inputRWSpeedsName[MAX_STAT_MSG_LENGTH];        //!< [-] The name for the reaction wheel speeds message
-    int32_t inputRWSpeedsID;                            //!< [-] ID for the reaction wheel speeds message
-    int32_t outputMsgID;                                //!< [-] ID for the outgoing body accel requests
-    int32_t inputGuidID;                                //!< [-] ID for the incoming guidance errors
+    int32_t rwSpeedsInMsgId;                            //!< [-] ID for the reaction wheel speeds message
+    int32_t attControlTorqueOutMsgId;                   //!< [-] ID for the outgoing attitude control torque message
+    int32_t attGuidInMsgId;                             //!< [-] ID for the incoming attitude guidance errors
 }MRP_FeedbackConfig;
 
 #ifdef __cplusplus

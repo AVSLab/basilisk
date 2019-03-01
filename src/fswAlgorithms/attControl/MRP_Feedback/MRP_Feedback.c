@@ -40,7 +40,7 @@
 void SelfInit_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t moduleID)
 {
     /*! - Create output message for module */
-    configData->outputMsgID = CreateNewMessage(configData->outputDataName,
+    configData->attControlTorqueOutMsgId = CreateNewMessage(configData->outputDataName,
         sizeof(CmdTorqueBodyIntMsg), "CmdTorqueBodyIntMsg", moduleID);
     
 }
@@ -58,26 +58,26 @@ void SelfInit_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t moduleID)
 void CrossInit_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
-    configData->inputGuidID = subscribeToMessage(configData->inputGuidName,
+    configData->attGuidInMsgId = subscribeToMessage(configData->inputGuidName,
                                                  sizeof(AttGuidFswMsg), moduleID);
-    configData->vehConfigInMsgID = subscribeToMessage(configData->vehConfigInMsgName,
+    configData->vehConfigInMsgId = subscribeToMessage(configData->vehConfigInMsgName,
                                                  sizeof(VehicleConfigFswMsg), moduleID);
     
-    configData->rwParamsInMsgID = -1;
-    configData->inputRWSpeedsID = -1;
-    configData->rwAvailInMsgID = -1;
+    configData->rwParamsInMsgId = -1;
+    configData->rwSpeedsInMsgId = -1;
+    configData->rwAvailInMsgId = -1;
 
     if(strlen(configData->rwParamsInMsgName) > 0) {
-        configData->rwParamsInMsgID = subscribeToMessage(configData->rwParamsInMsgName,
+        configData->rwParamsInMsgId = subscribeToMessage(configData->rwParamsInMsgName,
                                                        sizeof(RWArrayConfigFswMsg), moduleID);
         if (strlen(configData->inputRWSpeedsName) > 0) {
-        configData->inputRWSpeedsID = subscribeToMessage(configData->inputRWSpeedsName,
+        configData->rwSpeedsInMsgId = subscribeToMessage(configData->inputRWSpeedsName,
                                                          sizeof(RWSpeedIntMsg), moduleID);
         } else {
             BSK_PRINT(MSG_ERROR, "Error: the inputRWSpeedsName wasn't set while rwParamsInMsgName was set.\n");
         }
         if(strlen(configData->rwAvailInMsgName) > 0) {
-            configData->rwAvailInMsgID = subscribeToMessage(configData->rwAvailInMsgName,
+            configData->rwAvailInMsgId = subscribeToMessage(configData->rwAvailInMsgName,
                                                              sizeof(RWAvailabilityFswMsg), moduleID);
         }
     }
@@ -97,7 +97,7 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, uint6
 
     /*! - read in vehicle configuration message */
     VehicleConfigFswMsg sc;
-    ReadMessage(configData->vehConfigInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->vehConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
     /*! - copy over spcecraft inertia tensor */
     for (i=0; i < 9; i++){
@@ -107,9 +107,9 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, uint6
     /*! - zero the number of RW by default */
     configData->rwConfigParams.numRW = 0;
     /*! - check if RW configuration message exists */
-    if (configData->rwParamsInMsgID >= 0) {
+    if (configData->rwParamsInMsgId >= 0) {
         /*! - Read static RW config data message and store it in module variables*/
-        ReadMessage(configData->rwParamsInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+        ReadMessage(configData->rwParamsInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(RWArrayConfigFswMsg), &(configData->rwConfigParams), moduleID);
     }
     
@@ -133,7 +133,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
 {
     AttGuidFswMsg      guidCmd;            /* attitude tracking error message */
     RWSpeedIntMsg      wheelSpeeds;        /* Reaction wheel speed message */
-    RWAvailabilityFswMsg  wheelsAvailability; /* Reaction wheel availability message */
+    RWAvailabilityFswMsg wheelsAvailability; /* Reaction wheel availability message */
     CmdTorqueBodyIntMsg controlOut;        /* output messge */
 
     uint64_t            timeOfMsgWritten;
@@ -148,19 +148,22 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
     int                 i;
     double              *wheelGs;           /* Reaction wheel spin axis pointer */
 
+    /*! - zero the output message */
+    memset(&controlOut, 0x0, sizeof(CmdTorqueBodyIntMsg));
+
     /*! - Read the attitude tradking error message */
     memset(&guidCmd, 0x0, sizeof(AttGuidFswMsg));
-    ReadMessage(configData->inputGuidID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->attGuidInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);
 
     /*! - read in optional RW speed and availabilty message */
     memset(&wheelSpeeds, 0x0, sizeof(RWSpeedIntMsg));
     memset(&wheelsAvailability, 0x0, sizeof(RWAvailabilityFswMsg)); /* wheelAvailability set to 0 (AVAILABLE) by default */
     if(configData->rwConfigParams.numRW > 0) {
-        ReadMessage(configData->inputRWSpeedsID, &timeOfMsgWritten, &sizeOfMsgWritten,
+        ReadMessage(configData->rwSpeedsInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(RWSpeedIntMsg), (void*) &(wheelSpeeds), moduleID);
-        if (configData->rwAvailInMsgID >= 0){
-            ReadMessage(configData->rwAvailInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+        if (configData->rwAvailInMsgId >= 0){
+            ReadMessage(configData->rwAvailInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                         sizeof(RWAvailabilityFswMsg), &wheelsAvailability, moduleID);
         }
     }
@@ -226,7 +229,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
 
     /*! - set the output message adn write it out */
     v3Copy(Lr, controlOut.torqueRequestBody);
-    WriteMessage(configData->outputMsgID, callTime, sizeof(CmdTorqueBodyIntMsg),
+    WriteMessage(configData->attControlTorqueOutMsgId, callTime, sizeof(CmdTorqueBodyIntMsg),
                  (void*) &(controlOut), moduleID);
     
     return;
