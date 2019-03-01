@@ -114,13 +114,13 @@ def subModuleTestFunction(show_plots):
     inputMessageSize = guidCmdData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputGuidName,
                                           inputMessageSize, 2)# number of buffers (leave at 2 as default, don't make zero)
-    sigma_BR = np.array([0.3, -0.5, 0.7])
+    sigma_BR = [0.3, -0.5, 0.7]
     guidCmdData.sigma_BR = sigma_BR
-    omega_BR_B = np.array([0.010, -0.020, 0.015])
+    omega_BR_B = [0.010, -0.020, 0.015]
     guidCmdData.omega_BR_B = omega_BR_B
-    omega_RN_B = np.array([-0.02, -0.01, 0.005])
+    omega_RN_B = [-0.02, -0.01, 0.005]
     guidCmdData.omega_RN_B = omega_RN_B
-    domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
+    domega_RN_B = [0.0002, 0.0003, 0.0001]
     guidCmdData.domega_RN_B = domega_RN_B
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputGuidName, inputMessageSize,
                                           0, guidCmdData)
@@ -161,10 +161,10 @@ def subModuleTestFunction(show_plots):
                                               inputMessageSize, 2) # number of buffers (leave at 2 as default)
 
         rwConfigParams.GsMatrix_B = [
-            0.0, 0.0, 0.0,
-            0.0, 0.0, 0.0,
-            0.0, 0.0, 0.0,
-            0.0, 0.0, 0.0
+            1.0, 0.0, 0.0,
+            0.0, 1.0, 0.0,
+            0.0, 0.0, 1.0,
+            0.577350269190, 0.577350269190, 0.577350269190
         ]
         rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
         rwConfigParams.numRW = 4
@@ -215,15 +215,15 @@ def subModuleTestFunction(show_plots):
     # set the filtered output truth states
 
     trueVector = [
-               [-16.115000000000002, 25.064999999999998, -23.495000000000001]
-              ,[-16.115000000000002, 25.064999999999998, -23.495000000000001]
-              ,[-16.142150000000001, 25.112400000000001, -23.582899999999999]
-              ,[-16.115000000000002, 25.064999999999998, -23.495000000000001]
-              ,[-16.142150000000001, 25.112400000000001, -23.582899999999999]
+               [-18.98045163, 25.04949262, -21.68220099]
+            , [-18.98045163,  25.04949262, -21.68220099]
+            , [-19.01598385,  25.0980235,  -21.76570084]
+            , [-18.98045163,  25.04949262, -21.68220099]
+            , [-19.01598385,  25.0980235,  -21.76570084]
                ]
 
     # compare the module results to the truth values
-    accuracy = 1e-12
+    accuracy = 1e-8
     for i in range(0,len(trueVector)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
