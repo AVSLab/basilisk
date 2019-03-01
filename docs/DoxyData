@@ -1276,6 +1276,7 @@ HTML_EXTRA_FILES       = ../src/simulation/dynamics/extForceTorque/_Documentatio
                          ../src/fswAlgorithms/attGuidance/inertial3D/_Documentation/Basilisk-Inertial3D-2016-01-15.pdf \
                          ../src/fswAlgorithms/attGuidance/inertial3DSpin/_Documentation/AVS-Sim-Inertial3DSpin-2015-12-22.pdf \
                          ../src/fswAlgorithms/attGuidance/velocityPoint/_Documentation/velocityPoint.pdf \
+                         ../src/fswAlgorithms/attGuidance/mrpRotation/_Documentation/Basilisk-MRPROTATION-20180522.pdf \
                          ../src/fswAlgorithms/effectorInterfaces/rwMotorVoltage/_Documentation/Basilisk-rwMotorVoltage-20170113.pdf \
 			 ../src/fswAlgorithms/sensorInterfaces/CSSSensorData/_Documentation/Basilisk-CSSSensorDataModule-20190207.pdf \
                          ../src/fswAlgorithms/effectorInterfaces/rwNullSpace/_Documentation/Basilisk-rwNullSpace-20190209.pdf \
