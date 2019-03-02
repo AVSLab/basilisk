@@ -37,9 +37,10 @@
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
-    /* Declare module private variables */
+    /* Declare module public variables */
     double mrpSet[3];                           //!< [-] current MRP attitude coordinate set with respect to the input reference
     double omega_RR0_R[3];                      //!< [rad/s] angular velocity vector relative to input reference
+    /* Declare module private variables */
     double cmdSet[3];                           //!< [] commanded initial MRP set with respect to input reference
     double cmdRates[3];                         //!< [rad/s] commanded constant angular velocity vector
     double priorCmdSet[3];                      //!< [] prior commanded MRP set

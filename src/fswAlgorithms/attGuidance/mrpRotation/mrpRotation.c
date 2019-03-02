@@ -40,13 +40,13 @@
  */
 void SelfInit_mrpRotation(mrpRotationConfig *configData, uint64_t moduleID)
 {
-    /* - Create output message for module */
+    /*! - Create output message with sigma_RN etc. for module */
     configData->attRefOutMsgID = CreateNewMessage(configData->attRefOutMsgName,
-                                               sizeof(AttRefFswMsg),
-                                               "AttRefFswMsg",
-                                               moduleID);
+                                                  sizeof(AttRefFswMsg),
+                                                  "AttRefFswMsg",
+                                                  moduleID);
 
-    /* - check if optional reference attitude output statement message name is setup.
+    /*! - check if optional reference attitude (RR_0) output statement message name is setup.
      Subscribe to message if the message name is non-empty */
     configData->attitudeOutMsgID = -1;
     if(strlen(configData->attitudeOutMsgName) > 0)
@@ -70,22 +70,21 @@ void CrossInit_mrpRotation(mrpRotationConfig *configData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
     configData->attRefInMsgID = subscribeToMessage(configData->attRefInMsgName,
-                                                sizeof(AttRefFswMsg),
-                                                moduleID);
+                                                   sizeof(AttRefFswMsg),
+                                                   moduleID);
 
     /*! - Read in optional attitude scanning configuration message */
     configData->desiredAttInMsgID = -1;
     if(strlen(configData->desiredAttInMsgName) > 0)
     {
         configData->desiredAttInMsgID = subscribeToMessage(configData->desiredAttInMsgName,
-                                                         sizeof(AttStateFswMsg),
-                                                         moduleID);
+                                                           sizeof(AttStateFswMsg),
+                                                           moduleID);
     }
     return;
 }
 
-/*! @brief This resets the module to original states by reading in the mrpRotation configuration messages and
-    recreating any module specific variables.
+/*! @brief This resets the module to original states.
  @return void
  @param configData The configuration data associated with the null space control
  @param callTime The clock time at which the function was called (nanoseconds)
@@ -110,8 +109,7 @@ void Reset_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, uint64_
 void Update_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
     /* - Read input messages */
-    AttRefFswMsg inputRef;
-    AttStateFswMsg attStates;
+    AttRefFswMsg inputRef;                                  //!< [-] read in the [R_0N] input reference message
     AttRefFswMsg   attRefOut;                               //!< [-] structure for the Reference frame output data
     AttStateFswMsg attStateOut;                             //!< [-] structure for the attitude reference output data
     uint64_t timeOfMsgWritten;
@@ -119,11 +117,13 @@ void Update_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, uint64
 
     /*!- read in input reference frame message */
     ReadMessage(configData->attRefInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(AttRefFswMsg), &inputRef, moduleID);        // HPS: check if (void *) is needed
+                sizeof(AttRefFswMsg), (void *) &inputRef, moduleID);
 
-    /*! - Check if a desired attitude configuration message exists */
+    /*! - Check if a desired attitude configuration message exists. This allows for dynamic changes to the desired MRP rotation */
     if (configData->desiredAttInMsgID >= 0)
     {
+        AttStateFswMsg attStates;                           //!< [-] initial [RR_0] attitude state message
+
         /* - Read Raster Manager messages */
         ReadMessage(configData->desiredAttInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(AttStateFswMsg), (void*) &(attStates), moduleID);
@@ -136,6 +136,7 @@ void Update_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, uint64
     
     /*! - Compute time step to use in the integration downstream */
     computeTimeStep(configData, callTime);
+
     /*! - Compute output reference frame */
     computeMRPRotationReference(configData,
                                 inputRef.sigma_RN,
@@ -148,7 +149,7 @@ void Update_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, uint64
     WriteMessage(configData->attRefOutMsgID, callTime, sizeof(AttRefFswMsg),
                  &attRefOut, moduleID);
 
-    /*! - MRP set and body rates outputed for testing purposes */
+    /*! - output the optional attitude state message with current R/R0 information */
     if (configData->attitudeOutMsgID >= 0) {
         v3Copy(configData->mrpSet, attStateOut.state);
         v3Copy(configData->omega_RR0_R, attStateOut.rate);
@@ -163,18 +164,22 @@ void Update_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, uint64
 
 
 
-/*! @brief This function checks if there is a new commanded raster maneuver available
+/*! @brief This function checks if there is a new commanded raster maneuver message available
  @return void
  @param configData The configuration data associated with the mrpRotation module
  */
 void checkRasterCommands(mrpRotationConfig *configData)
 {
-    int32_t prevCmdActive = v3IsEqual(configData->cmdSet, configData->priorCmdSet , 1E-12) && v3IsEqual(configData->cmdRates, configData->priorCmdRates , 1E-12);
+    int32_t prevCmdActive = v3IsEqual(configData->cmdSet, configData->priorCmdSet , 1E-12)
+                            && v3IsEqual(configData->cmdRates, configData->priorCmdRates , 1E-12);
+    /*! - check if a new attitude reference command message content is availble */
     if (!prevCmdActive)
     {
+        /*! - copy over the commanded initial MRP and rate information */
         v3Copy(configData->cmdSet, configData->mrpSet);
         v3Copy(configData->cmdRates, configData->omega_RR0_R);
-        
+
+        /*! - reset the prior commanded attitude state variables */
         v3Copy(configData->cmdSet, configData->priorCmdSet);
         v3Copy(configData->cmdRates, configData->priorCmdRates);
     }
@@ -211,16 +216,16 @@ void computeMRPRotationReference(mrpRotationConfig *configData,
                                  double domega_R0N_N[3],
                                  AttRefFswMsg   *attRefOut)
 {
-    double attIncrement[3];         /* [] increment in attitude coordinates  */
+    double attIncrement[3];         /* [] increment in MRP attitude coordinates  */
     double RR0[3][3];               /* [] DCM rotating from R0 to R */
     double R0N[3][3];               /* [] DCM rotating from N to R0 */
     double RN[3][3];                /* [] DCM rotating from N to R */
     double sigmaDot_RR0[3];         /* [1/s] MRP rates */
-    double B[3][3];                 /* [] matrix relating omega to MRP rates */
+    double B[3][3];                 /* [] B matrix relating omega to MRP rates */
     double omega_RR0_N[3];          /* [r/s] angular velocity of R frame relative to input R0 frame */
     double domega_RR0_N[3];         /* [r/s^2] inertial derivative of angular velocity vector between R and R0 frames */
 
-    /*! - Compute attitude reference*/
+    /*! - Compute attitude reference frame R/N information */
     MRP2C(sigma_R0N, R0N);
     BmatMRP(configData->mrpSet, B);
     m33MultV3(B, configData->omega_RR0_R, sigmaDot_RR0);
@@ -231,11 +236,11 @@ void computeMRPRotationReference(mrpRotationConfig *configData,
     m33MultM33(RR0, R0N, RN);
     C2MRP(RN, attRefOut->sigma_RN);
     
-    /*! - Compute angular velocity */
+    /*! - Compute angular velocity of R/N */
     m33tMultV3(RN, configData->omega_RR0_R, omega_RR0_N);
     v3Add(omega_R0N_N, omega_RR0_N, attRefOut->omega_RN_N);
  
-    /*! - Compute angular acceleration */
+    /*! - Compute angular acceleration of R/N */
     v3Cross(omega_R0N_N, omega_RR0_N, domega_RR0_N);
     v3Add(domega_RR0_N, domega_R0N_N, attRefOut->domega_RN_N);
 }
