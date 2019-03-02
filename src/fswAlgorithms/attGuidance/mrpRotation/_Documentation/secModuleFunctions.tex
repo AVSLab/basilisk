@@ -12,6 +12,6 @@ The {\tt mrpRotation} module has the following design goals
 \section{Module Assumptions and Limitations}
 \begin{itemize}
 	\item On reset the  next time step doesn't yield an integration as the integration time evaluation requires at least a second time step.
-	\item If the desired rotation states are read in with an input message, on reset these values are re-read in again.
+	\item If the desired rotation states are read in with an input message, then this message is checked each update cycle for new content.   On reset the commanded frame states are reset to zero such that they are re-read in again in the next update cycle.
 	\item If the desired rotation is specified with module internal states, then on reset the prior internal states are re-used unless they are over-written after the reset call.
 \end{itemize}
