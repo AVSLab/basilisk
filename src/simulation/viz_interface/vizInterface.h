@@ -19,25 +19,28 @@
 #ifndef VIZ_INTERFACE_H
 #define VIZ_INTERFACE_H
 
+#include "vizProtoBuffer/vizMessage.pb.h"
+#include <vector>
+#include <fstream>
+#include <map>
+
 #include "_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/system_messaging.h"
 #include "simFswInterfaceMessages/stSensorIntMsg.h"
 #include "simFswInterfaceMessages/cameraConfigMsg.h"
 #include "simFswInterfaceMessages/cameraImageMsg.h"
-#include "../fswAlgorithms/fswMessages/cssConfigFswMsg.h"
-#include "../fswAlgorithms/fswMessages/thrArrayConfigFswMsg.h"
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/rwConfigLogSimMsg.h"
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
-#include "../fswAlgorithms/vehicleConfigData/vehicleConfigData.h"
 #include "simMessages/thrOutputSimMsg.h"
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 
-#include "vizMessage.pb.h"
-#include <vector>
-#include <fstream>
-#include <map>
+#include "../fswAlgorithms/fswMessages/cssConfigFswMsg.h"
+#include "../fswAlgorithms/fswMessages/cssUnitConfigFswMsg.h"
+#include "../fswAlgorithms/vehicleConfigData/vehicleConfigData.h"
+#include "../fswAlgorithms/fswMessages/thrArrayConfigFswMsg.h"
+
 
 typedef struct {
     int64_t msgID;        //!< [-] message ID associated with source
