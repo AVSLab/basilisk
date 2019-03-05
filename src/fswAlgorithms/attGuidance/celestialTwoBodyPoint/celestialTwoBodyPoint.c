@@ -73,7 +73,24 @@ void CrossInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
 }
 void Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
-    
+    return;
+}
+
+/*! This method takes the spacecraft and points a specified axis at a named
+ celestial body specified in the configuration data.  It generates the
+ commanded attitude and assumes that the control errors are computed
+ downstream.
+ @return void
+ @param configData The configuration data associated with the celestial body guidance
+ @param callTime The clock time at which the function was called (nanoseconds)
+ */
+void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
+                                  uint64_t callTime, uint64_t moduleID)
+{
+    parseInputMessages(configData, moduleID);
+    computecelestialTwoBodyPoint(configData, callTime);
+    WriteMessage(configData->outputMsgID, callTime, sizeof(AttRefFswMsg),
+                 (void*) &(configData->attRefOut), moduleID);
 }
 
 /*! This method takes the navigation translational info as well as the spice data of the
@@ -132,22 +149,7 @@ void parseInputMessages(celestialTwoBodyPointConfig *configData, uint64_t module
     }
 }
 
-/*! This method takes the spacecraft and points a specified axis at a named
-    celestial body specified in the configuration data.  It generates the 
-    commanded attitude and assumes that the control errors are computed 
-    downstream.
- @return void
- @param configData The configuration data associated with the celestial body guidance
- @param callTime The clock time at which the function was called (nanoseconds)
- */
-void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
-    uint64_t callTime, uint64_t moduleID)
-{
-    parseInputMessages(configData, moduleID);
-    computecelestialTwoBodyPoint(configData, callTime);
-    WriteMessage(configData->outputMsgID, callTime, sizeof(AttRefFswMsg),
-                 (void*) &(configData->attRefOut), moduleID);
-}
+
 
 /*! This method takes the spacecraft and points a specified axis at a named
  celestial body specified in the configuration data.  It generates the
