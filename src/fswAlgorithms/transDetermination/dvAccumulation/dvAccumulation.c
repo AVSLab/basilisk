@@ -52,12 +52,12 @@ void Reset_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime,
 {
     /*! - Configure accumulator to reset itself*/
     AccDataFswMsg inputAccData;
-    uint64_t writeTime;
-    uint32_t writeSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     int i;
 
     memset(&inputAccData, 0x0, sizeof(AccDataFswMsg));
-    ReadMessage(ConfigData->accPktInMsgID, &writeTime, &writeSize,
+    ReadMessage(ConfigData->accPktInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AccDataFswMsg), &inputAccData, moduleID);
 
     /* stacks data in time order*/
