@@ -38,7 +38,6 @@
 typedef struct {
     double baseDensity;                 //!< [kg/m^3] Density at sea level
     double scaleHeight;                 //!< [m]      Altitude where base density has decreased by factor of e
-    double planetRadius;                //!< [m]      Radius of the local atmospheric body; altitude is computed as |r| - planetRadius
 }exponentialProperties;
 
 
@@ -64,28 +63,22 @@ private:
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs(); 
     void updateLocalAtmo(double currentTime); 
-    void updateRelativePos(SpicePlanetStateSimMsg& planetState, SCPlusStatesSimMsg& scState); 
+    void updateRelativePos(SpicePlanetStateSimMsg  *planetState, SCPlusStatesSimMsg *scState); 
 
 public:
-    std::vector<std::string> scStateInMsgNames;	//!< Vector of the spacecraft position/velocity message names
-    std::vector<std::string> envOutMsgNames; //!< Vector of message names to be written out by the environment
-    std::string planetPosInMsgName;			//!< Message name for the planet's SPICE position message
-    AtmoPropsSimMsg tmpAtmo;
-    double localAtmoDens; //!< [kg/m^3] Local neutral atmospheric density (computed)
-    double localAtmoTemp; //!< [K] Local atmospheric temperature, SET TO BE CONSTANT
-    double currentAlt; //!< [m] Current s/c altitude
-    double epochDate; //!< [JD2000] Specified epoch date.
-    std::vector<int64_t>  envOutMsgIds;
-    std::vector<int64_t> scStateInMsgIds;
-    int64_t planetPosInMsgId;
-    std::vector<SCPlusStatesSimMsg> scStates;
-    SpicePlanetStateSimMsg bodyState;
-    Eigen::Vector3d relativePos; //!< [-] Container for local position
-    exponentialProperties exponentialParams; //! < -- Struct containing exponential atmosphere properties
+    double localAtmoTemp;                   //!< [K] Local atmospheric temperature, SET TO BE CONSTANT
+    double epochDate;                       //!< [JD2000] Specified epoch date.
+    std::vector<int64_t>  envOutMsgIds;     //!< vector of module output messages
+    std::vector<int64_t> scStateInMsgIds;   //!< vector of spacecraft state message IDs
+    int64_t planetPosInMsgId;               //!< ID of the planet state message
+    std::vector<SCPlusStatesSimMsg> scStates;//!< vector of the spacecraft state messages
+    SpicePlanetStateSimMsg planetState;     //!< planet state message
+    exponentialProperties exponentialParams;//! < -- Struct containing exponential atmosphere properties
+    double planetRadius;                    //!< [m]      Radius of the local atmospheric body; altitude is computed as |r| - planetRadius
 
 private:
-    double tmpPosMag;	//<! [m/s] Magnitude of the spacecraft's current position
-    uint64_t OutputBufferCount;	//!< number of output buffers for messaging system
+    Eigen::Vector3d relativePos;            //!< [-] Container for local position
+    uint64_t OutputBufferCount;	            //!< number of output buffers for messaging system
     std::vector<AtmoPropsSimMsg> atmoOutBuffer; //!< -- Message buffer for density messages
 
 };

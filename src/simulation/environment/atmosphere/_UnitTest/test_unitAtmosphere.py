@@ -47,10 +47,8 @@ def test_unitAtmosphere():
     # each test method requires a single assert method to be called
 
     newAtmo = atmosphere.Atmosphere()
-    atmoTaskName = "atmosphere"
     newAtmo.ModelTag = "ExpAtmo"
 
-    showVal = False
     testResults = []
     testMessage = []
 
@@ -67,11 +65,13 @@ def test_unitAtmosphere():
     testResults.append(addScRes)
 
     exponentialRes, exponentialMsg = TestExponentialAtmosphere()
-
+    testMessage.append(exponentialMsg)
+    testResults.append(exponentialRes)
 
     #   print out success message if no error were found
     snippetName = "passFail"
-    if sum(testResults) == 0:
+    testSum = sum(testResults)
+    if testSum == 0:
         colorText = 'ForestGreen'
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
@@ -80,7 +80,6 @@ def test_unitAtmosphere():
     unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
 
 
-    testSum = sum(testResults)
     assert testSum < 1, testMessage
 
 ##  Test basic environment parameters (set environment, date, add spacecraft)
@@ -116,9 +115,11 @@ def AddSpacecraftToModel(atmoModel):
     # create the dynamics task and specify the integration update time
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
+    scObject.scStateOutMsgName = "inertial_state_output_0"
 
     scObject2 = spacecraftPlus.SpacecraftPlus()
     scObject2.ModelTag = "spacecraftBody"
+    scObject.scStateOutMsgName = "inertial_state_output_1"
     # add spacecraftPlus object to the simulation process
     atmoModel.addSpacecraftToModel(scObject.scStateOutMsgName)
     atmoModel.addSpacecraftToModel(scObject2.scStateOutMsgName)
@@ -162,12 +163,8 @@ def TestExponentialAtmosphere():
 
     #   Initialize new atmosphere and drag model, add them to task
     newAtmo = atmosphere.Atmosphere()
-    atmoTaskName = "atmosphere"
     newAtmo.ModelTag = "ExpAtmo"
     newAtmo.setEnvType("exponential")
-
-    dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
-    scSim.AddModelToTask(atmoTaskName, newAtmo)
 
 
     #
@@ -177,10 +174,7 @@ def TestExponentialAtmosphere():
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
-    #scObject.addDynamicEffector(dragEffector)
 
-    # add spacecraftPlus object to the simulation process
-    scSim.AddModelToTask(simTaskName, scObject)
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -204,15 +198,11 @@ def TestExponentialAtmosphere():
     #   Set base density, equitorial radius, scale height in Atmosphere
     newAtmo.exponentialParams.baseDensity = refBaseDens
     newAtmo.exponentialParams.scaleHeight = refScaleHeight
-    newAtmo.exponentialParams.planetRadius = r_eq
+    newAtmo.planetRadius = r_eq
 
-    orbAltMin = 300.0*1000.0
-    orbAltMax = orbAltMin
 
-    rMin = r_eq + orbAltMin
-    rMax = r_eq + orbAltMax
-    oe.a = (rMin+rMax)/2.0
-    oe.e = 1.0 - rMin/oe.a
+    oe.a = r_eq + 300.*1000
+    oe.e = 0.0
     oe.i = 0.0*macros.D2R
 
     oe.Omega = 0.0*macros.D2R
@@ -223,6 +213,13 @@ def TestExponentialAtmosphere():
     # with circular or equatorial orbit, some angles are
     # arbitrary
 
+    #
+    #   initialize Spacecraft States with the initialization variables
+    #
+    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_CN_N
+    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_CN_N
+
+
     # set the simulation time
     n = np.sqrt(mu/oe.a/oe.a/oe.a)
     P = 2.*np.pi/n
@@ -232,19 +229,16 @@ def TestExponentialAtmosphere():
     #
     #   Setup data logging before the simulation is initialized
     #
-
-
     numDataPoints = 10
     samplingTime = simulationTime / (numDataPoints-1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage("exponential0_data", samplingTime)
-    scSim.AddVariableForLogging('ExpAtmo.relativePos', samplingTime, StartIndex=0, StopIndex=2)
+    scSim.TotalSim.logThisMessage("exponential_0_data", samplingTime)
 
-    #
-    #   initialize Spacecraft States with the initialization variables
-    #
-    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_CN_N
-    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_CN_N
+
+    # add BSK objects to the simulation process
+    scSim.AddModelToTask(simTaskName, scObject)
+    scSim.AddModelToTask(simTaskName, newAtmo)
+
 
     #
     #   initialize Simulation
@@ -261,34 +255,25 @@ def TestExponentialAtmosphere():
     #   retrieve the logged data
     #
     posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N',range(3))
-    densData = scSim.pullMessageLogData("exponential0_data.neutralDensity")
-    relPosData = scSim.GetLogVariableData('ExpAtmo.relativePos')
+    densData = scSim.pullMessageLogData("exponential_0_data.neutralDensity")
     np.set_printoptions(precision=16)
 
+
+
+
     #   Compare to expected values
+    accuracy = 1e-5
 
-    refAtmoDensData = []
-    testAltData = []
-    refAltData = orbAltMin
-    accuracy = 1e-13
-
-
-
-    for relPos in relPosData:
-        dist = np.linalg.norm(relPos[1:])
-        alt = dist - newAtmo.exponentialParams.planetRadius
-
-        if not unitTestSupport.isDoubleEqualRelative(alt, refAltData, accuracy):
-            testFailCount +=1
-            testMessages.append("FAILED: ExpAtmo failed altitude unit test with a value difference of "+str(alt - refAltData))
-        refAtmoDensData.append(expAtmoComp(alt,refBaseDens,refScaleHeight))
-        # check a vector values
     for ind in range(0,len(densData)):
-        if not unitTestSupport.isDoubleEqualRelative(densData[ind,1], refAtmoDensData[ind],accuracy):
+        dist = np.linalg.norm(posData[ind, 1:])
+        alt = dist - newAtmo.planetRadius
+
+        trueDensity = expAtmoComp(alt, refBaseDens, refScaleHeight)
+        # check a vector values
+        if not unitTestSupport.isDoubleEqualRelative(densData[ind,1], trueDensity,accuracy):
             testFailCount += 1
             testMessages.append(
-                "FAILED:  ExpAtmo failed density unit test at t=" + str(densData[ind, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(densData[ind,1]-refAtmoDensData[ind]))
+                "FAILED:  ExpAtmo failed density unit test at t=" + str(densData[ind, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(densData[ind,1]-trueDensity))
 
     return testFailCount, testMessages
 

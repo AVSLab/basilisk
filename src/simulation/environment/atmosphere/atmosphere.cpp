@@ -37,19 +37,22 @@
  */
 Atmosphere::Atmosphere()
 {
-    this->planetPosInMsgName = "spice_planet_output_data";
+    this->planetPosInMsgName = "";
     this->OutputBufferCount = 2;
     //! - Set the default atmospheric properties to those of Earth
     this->exponentialParams.baseDensity = 1.217;
     this->exponentialParams.scaleHeight = 8500.0;
-    this->exponentialParams.planetRadius = 6371.008 * 1000.0;
+    this->planetRadius = 6371.008 * 1000.0;
     this->localAtmoTemp = 293.0; //! - Placeholder temperature value from http://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
     this->relativePos.fill(0.0);
     this->scStateInMsgNames.clear();
-    this->tmpAtmo.neutralDensity = this->exponentialParams.baseDensity;
-    this->tmpAtmo.localTemp = this->localAtmoTemp;
     this->planetPosInMsgId = -1;
-    memset(&this->bodyState, 0x0, sizeof(SpicePlanetStateSimMsg));
+
+    //!< zero the planet message, and set the DCM to an identity matrix
+    memset(&this->planetState, 0x0, sizeof(SpicePlanetStateSimMsg));
+    this->planetState.J20002Pfix[0][0] = 1.0;
+    this->planetState.J20002Pfix[1][1] = 1.0;
+    this->planetState.J20002Pfix[2][2] = 1.0;
 
     return;
 }
@@ -90,7 +93,7 @@ void Atmosphere::setEpoch(double julianDate)
 void Atmosphere::addSpacecraftToModel(std::string tmpScMsgName){
     std::string tmpEnvMsgName;
     this->scStateInMsgNames.push_back(tmpScMsgName);
-    tmpEnvMsgName = this->envType + std::to_string(this->scStateInMsgNames.size()-1)+"_data";
+    tmpEnvMsgName = this->envType + "_" + std::to_string(this->scStateInMsgNames.size()-1)+"_data";
     this->envOutMsgNames.push_back(tmpEnvMsgName);
     return;
 }
@@ -110,13 +113,14 @@ void Atmosphere::SelfInit()
     std::vector<std::string>::iterator it;
     std::vector<std::string>::iterator nameIt;
 
+    //! - create all the environment output messages for each spacecraft
     for (it = this->envOutMsgNames.begin(); it!=this->envOutMsgNames.end(); it++) {
         tmpAtmoMsgId = SystemMessaging::GetInstance()->CreateNewMessage(*it, sizeof(AtmoPropsSimMsg),
                 this->OutputBufferCount, "AtmoPropsSimMsg", moduleID);
-
         this->envOutMsgIds.push_back(tmpAtmoMsgId);
+
         if(this->envType.compare(msisString)==0){
-            BSK_PRINT(MSG_WARNING, "NRLMSISE-00 is not implemented. Skipping message init.")
+            BSK_PRINT(MSG_ERROR, "NRLMSISE-00 is not implemented. Skipping message init.")
         }
     }
 
@@ -128,19 +132,29 @@ void Atmosphere::SelfInit()
  */
 void Atmosphere::CrossInit()
 {
-    this->planetPosInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(
-    this->planetPosInMsgName, sizeof(SpicePlanetStateSimMsg), moduleID);
+    //! - if a planet message name is specified, subscribe to this message. If not, then a zero planet position and orientation is assumed
+    if (this->planetPosInMsgName.length() > 0) {
+        this->planetPosInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->planetPosInMsgName,
+                                                                                    sizeof(SpicePlanetStateSimMsg),
+                                                                                    moduleID);
+    }
 
+    //! - subscribe to the spacecraft messages and create associated output message buffer
     std::vector<std::string>::iterator it;
+    this->atmoOutBuffer.clear();
+    AtmoPropsSimMsg tmpAtmo;
+    memset(&tmpAtmo, 0x0, sizeof(tmpAtmo));
     for(it = this->scStateInMsgNames.begin(); it!=this->scStateInMsgNames.end(); it++){
         this->scStateInMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(SCPlusStatesSimMsg), moduleID));
+        this->atmoOutBuffer.push_back(tmpAtmo);
     }
 
     if(this->envType.compare("nrlmsise-00")==0){
         //* [WIP] Also do MSISE messaging setup*//
-        BSK_PRINT(MSG_WARNING, "NRLMSISE-00 is not implemented. Skipping message init.")
+        BSK_PRINT(MSG_ERROR, "NRLMSISE-00 is not implemented. Skipping message init.")
     }
-  return;
+
+    return;
 }
 
 
@@ -153,7 +167,7 @@ void Atmosphere::WriteOutputMessages(uint64_t CurrentClock)
     AtmoPropsSimMsg tmpAtmo;
     std::vector<int64_t>::iterator it;
     std::vector<AtmoPropsSimMsg>::iterator atmoIt;
-    atmoIt = atmoOutBuffer.begin();
+    atmoIt = this->atmoOutBuffer.begin();
     for(it = this->envOutMsgIds.begin(); it!= this->envOutMsgIds.end(); it++, atmoIt++){
         tmpAtmo = *atmoIt;
         SystemMessaging::GetInstance()->WriteMessage(*it,
@@ -165,7 +179,7 @@ void Atmosphere::WriteOutputMessages(uint64_t CurrentClock)
 
     if(this->envType.compare("nrlmsise-00")==0){
         /* [WIP] - Include additional outputs for other MSISE outputs (species count, etc.)*/
-        BSK_PRINT(MSG_WARNING, "NRLMSISE-00 is not implemented. Skipping message write.")
+        BSK_PRINT(MSG_ERROR, "NRLMSISE-00 is not implemented. Skipping message write.")
     }
 }
 
@@ -175,52 +189,50 @@ void Atmosphere::WriteOutputMessages(uint64_t CurrentClock)
  @return void
  */
 bool Atmosphere::ReadInputs()
-    {
-    SCPlusStatesSimMsg tmpState;
-    //! Begin method steps
+{
+    SCPlusStatesSimMsg scMsg;
     SingleMessageHeader localHeader;
-    memset(&this->bodyState, 0x0, sizeof(SpicePlanetStateSimMsg));
-    memset(&tmpState, 0x0, sizeof(SCPlusStatesSimMsg));
-    scStates.clear();
 
-    bool scReads = false;
-    bool planetRead = false;
-    if(planetPosInMsgId >= 0) {
-        bool planetRead = false; // If the message HAS been set, make sure we read it before updating.
-    }
-    else{
-        bool planetRead = true; // if the message hasn't been initialized, assume the planet is the origin and a failed read is okay.
-    }
+    this->scStates.clear();
 
     //SC message reads
-    if(this->scStateInMsgIds[0] >= 0)
+    bool scRead;
+    if(this->scStateInMsgIds.size() > 0)
     {
-    //! Iterate over spacecraft message ids
-    std::vector<int64_t>::iterator it;
-        for(it = scStateInMsgIds.begin(); it!= scStateInMsgIds.end(); it++){
-            SystemMessaging::GetInstance()->ReadMessage(*it, &localHeader,
-                                                  sizeof(SCPlusStatesSimMsg),
-                                                  reinterpret_cast<uint8_t*>(&tmpState),
-                                                  moduleID);
-            this->scStates.push_back(tmpState);
-        }
-        scReads = true;
+        scRead = true;
+        //! Iterate over spacecraft message ids
+        std::vector<int64_t>::iterator it;
+            for(it = scStateInMsgIds.begin(); it!= scStateInMsgIds.end(); it++){
+                bool tmpScRead;
+                memset(&scMsg, 0x0, sizeof(SCPlusStatesSimMsg));
+                tmpScRead = SystemMessaging::GetInstance()->ReadMessage(*it, &localHeader,
+                                                      sizeof(SCPlusStatesSimMsg),
+                                                      reinterpret_cast<uint8_t*>(&scMsg),
+                                                      moduleID);
+                scRead = scRead && tmpScRead;
+
+                this->scStates.push_back(scMsg);
+            }
+    } else {
+        BSK_PRINT(MSG_ERROR, "Atmosphere model has no spacecraft added to it.");
+        scRead = false;
     }
 
     // Planet message read
+    bool planetRead = true;     // if no planet message is set, then a zero planet position, velocity and orientation is assumed
     if(planetPosInMsgId >= 0)
-        {
-        SystemMessaging::GetInstance()->ReadMessage(this->planetPosInMsgId , &localHeader,
-                                              sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&this->bodyState), moduleID);
-        planetRead = true;
-        }
+    {
+        planetRead = SystemMessaging::GetInstance()->ReadMessage(this->planetPosInMsgId , &localHeader,
+                                              sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&this->planetState), moduleID);
+    }
 
     if(this->envType.compare("nrlmsise-00")==0){
         /* WIP - Also read in all the MSISE inputs.*/
-        BSK_PRINT(MSG_WARNING, "NRLMSISE-00 is not implemented. Skipping message read.")
+        BSK_PRINT(MSG_ERROR, "NRLMSISE-00 is not implemented. Skipping message read.")
     }
-    return(scReads && planetRead);
-    }
+
+    return(planetRead && scRead);
+}
 
 /*! This method is used to update the internal density variables based on each spacecraft's position
 and the pre-set atmospheric density properties.
@@ -228,63 +240,57 @@ and the pre-set atmospheric density properties.
  */
 void Atmosphere::updateLocalAtmo(double currentTime)
 {
-    double tmpAltitude = 0.0;
+    double tmpAltitude = 0.0;   // [m] spacecraft altitude above planet radius
+    double tmpPosMag;           // [m/s] Magnitude of the spacecraft's current position
     std::vector<SCPlusStatesSimMsg>::iterator it;
-    AtmoPropsSimMsg tmpData;
     uint64_t atmoInd = 0;
-    this->atmoOutBuffer.clear();
 
 
     //! - loop over all the spacecraft
-    for(it = scStates.begin(); it != scStates.end(); it++, atmoInd++){
-        this->updateRelativePos(this->bodyState, *it); //! - Computes planet relative state vector
+    std::vector<AtmoPropsSimMsg>::iterator atmoMsgIt;
+    atmoMsgIt = this->atmoOutBuffer.begin();
+    for(it = scStates.begin(); it != scStates.end(); it++, atmoInd++, atmoMsgIt++){
+        //! - Computes planet relative state vector
+        this->updateRelativePos(&(this->planetState), &(*it));
+
+        //! - compute spacecraft altitude above planet radius
         tmpPosMag = this->relativePos.norm();
-        tmpAltitude = tmpPosMag - this->exponentialParams.planetRadius; //! - computes the altitude above the planet radius
+        tmpAltitude = tmpPosMag - this->planetRadius; //! - computes the altitude above the planet radius
 
         //! - zero the output message for each spacecraft by default
-        memset(&tmpData, 0x0, sizeof(AtmoPropsSimMsg));
+        memset(&(*atmoMsgIt), 0x0, sizeof(AtmoPropsSimMsg));
 
         //! - check if radius is in permissible range
         if(tmpAltitude > this->envMinReach &&
            (tmpAltitude < this->envMaxReach || this->envMaxReach < 0)) {
             //! - check for exponential atmosphere model case
             if(this->envType.compare("exponential")==0){
-                tmpData.neutralDensity = this->exponentialParams.baseDensity * exp(-1.0 * tmpAltitude / this->exponentialParams.scaleHeight);
-                tmpData.localTemp = this->localAtmoTemp;
+                (*atmoMsgIt).neutralDensity = this->exponentialParams.baseDensity * exp(-1.0 * tmpAltitude / this->exponentialParams.scaleHeight);
+                (*atmoMsgIt).localTemp = this->localAtmoTemp;
 
             } else {
                 BSK_PRINT(MSG_WARNING, "Atmospheric model not set. Skipping computation.")
             }
         }
-
-        //! - store the evaluated atmospheric neutral density info for each spacecraft
-        this->atmoOutBuffer.push_back(tmpData);
     }
 
     return;
 }
 
-/*! This method is used to write the output densities whose names are established in AddSpacecraftToModel.
+/*! This method is used to determine the spacecraft position vector relative to the planet.
  @param planetState A space planetstate message struct.
  @param scState A spacecraftPlusStates message struct.
  @return void
  */
-void Atmosphere::updateRelativePos(SpicePlanetStateSimMsg& planetState, SCPlusStatesSimMsg& scState)
+void Atmosphere::updateRelativePos(SpicePlanetStateSimMsg *planetState, SCPlusStatesSimMsg *scState)
 {
-    /*! This loop iterates over each spacecraft with respect to one planet if the planet message has been set.*/
-    uint64_t iter = 0;
-    if(planetPosInMsgId >= 0)
+    int iter;
+    /*! determine spacecraft position relative to planet */
+    for(iter = 0; iter < 3; iter++)
     {
-        for(iter = 0; iter < 3; iter++)
-        {
-            /*! determine spacecrat position relative to plant */
-            this->relativePos(iter,0) = scState.r_BN_N[iter] - planetState.PositionVector[iter];
-        }
+        this->relativePos[iter] = scState->r_BN_N[iter] - planetState->PositionVector[iter];
     }
-    /*! If no planet message is set then the spacecraft position is assumed to be relative to planet center */
-    else{
-        this->relativePos(iter,0) = scState.r_BN_N[iter];
-    }
+
     return;
 }
 
@@ -295,6 +301,12 @@ void Atmosphere::updateRelativePos(SpicePlanetStateSimMsg& planetState, SCPlusSt
  */
 void Atmosphere::UpdateState(uint64_t CurrentSimNanos)
 {
+    //! - clear the output buffer
+    std::vector<AtmoPropsSimMsg>::iterator it;
+    for(it = this->atmoOutBuffer.begin(); it!= this->atmoOutBuffer.end(); it++){
+        memset(&(*it), 0x0, sizeof(AtmoPropsSimMsg));
+    }
+
     //! - update local neutral density information
     if(this->ReadInputs())
     {
@@ -303,5 +315,6 @@ void Atmosphere::UpdateState(uint64_t CurrentSimNanos)
 
     //! - write out neutral density message
     WriteOutputMessages(CurrentSimNanos);
+
     return;
 }
