@@ -20,29 +20,15 @@
 #
 
 #   Unit Test Script
-
 #   Module Name:        celestialTwoBodyPoint
-
 #   Author:             Mar Cols
-
 #   Creation Date:      May 11, 2016
-
 #
 
 import pytest
 import sys, os, inspect
-
-# import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 import numpy as np
-
-
-
-
-
-
-
 # Import all of the modules that we are going to be called in this simulation
-
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import alg_contain
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
@@ -54,13 +40,9 @@ from Basilisk.utilities import astroFunctions as af
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-
 # @pytest.mark.skipif(conditionstring)
-
 # uncomment this line if this test has an expected failure, adjust message as needed
-
 # @pytest.mark.xfail(conditionstring)
-
 # provide a unique test method name, starting with test_
 
 def test_celestialTwoBodyPoint(show_plots):
@@ -76,61 +58,41 @@ def test_celestialTwoBodyPoint(show_plots):
 def celestialTwoBodyPointTestFunction(show_plots):
 
     testFailCount = 0  # zero unit test result counter
-
     testMessages = []  # create empty array to store test log messages
-
     unitTaskName = "unitTask"  # arbitrary name (don't change)
-
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     # Create a sim module as an empty container
-
     unitTestSim = SimulationBaseClass.SimBaseClass()
 
     # terminateSimulation() is needed if multiple unit test scripts are run
-
     # that run a simulation for the test. This creates a fresh and
-
     # consistent simulation environment for each test run.
 
     unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
-
     testProcessRate = macros.sec2nano(0.5)  # update process rate update time
-
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
-
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-
     moduleConfig = celestialTwoBodyPoint.celestialTwoBodyPointConfig()
-
     moduleWrap = alg_contain.AlgContain(moduleConfig,
-
                                         celestialTwoBodyPoint.Update_celestialTwoBodyPoint,
-
                                         celestialTwoBodyPoint.SelfInit_celestialTwoBodyPoint,
-
                                         celestialTwoBodyPoint.CrossInit_celestialTwoBodyPoint)
-
     moduleWrap.ModelTag = "celestialTwoBodyPoint"
 
     # Add test module to runtime call list
-
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-
     moduleConfig.inputNavDataName = "inputNavDataName"
-
     moduleConfig.inputCelMessName = "inputCelMessName"
 
     #moduleConfig.inputSecMessName = "inputSecMessName"
-
     moduleConfig.outputDataName = "outputName"
-
     moduleConfig.singularityThresh = 1.0 * af.D2R
 
 
@@ -148,9 +110,7 @@ def celestialTwoBodyPointTestFunction(show_plots):
     celVelocityVec = v
 
     # Create input message and size it because the regular creator of that message
-
     # is not part of the test.
-
     #   Navigation Input Message
 
     NavStateOutData = celestialTwoBodyPoint.NavTransIntMsg()  # Create a structure for the input message
