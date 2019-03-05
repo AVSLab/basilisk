@@ -1545,7 +1545,9 @@ void C2Gibbs(double C[3][3], double *q)
 void C2MRP(double C[3][3], double *q)
 {
     double b[4];
-
+    
+    v4SetZero(b);
+    b[0] = 1.0;
     C2EP(C, b);
 
     q[0] = b[1] / (1 + b[0]);

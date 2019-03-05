@@ -20,6 +20,7 @@
 #include "transDetermination/dvAccumulation/dvAccumulation.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "utilities/linearAlgebra.h"
+#include "simulation/utilities/bsk_Print.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -46,6 +47,34 @@ void CrossInit_dvAccumulation(DVAccumulationData *ConfigData, uint64_t moduleID)
             ConfigData->accPktInMsgName, sizeof(AccDataFswMsg), moduleID);
 }
 
+void Reset_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime,
+                          uint64_t moduleID)
+{
+    /*! - Configure accumulator to reset itself*/
+    AccDataFswMsg inputAccData;
+    uint64_t writeTime;
+    uint32_t writeSize;
+    int i;
+
+    memset(&inputAccData, 0x0, sizeof(AccDataFswMsg));
+    ReadMessage(ConfigData->accPktInMsgID, &writeTime, &writeSize,
+                sizeof(AccDataFswMsg), &inputAccData, moduleID);
+
+    /* stacks data in time order*/
+    dvAccumulation_QuickSort(&(inputAccData.accPkts[0]), 0, MAX_ACC_BUF_PKT-1);
+    ConfigData->previousTime = 0;
+    ConfigData->dvInitialized = 0;
+    /*If we find valid timestamp, ensure that no "older" meas get ingested*/
+    for(i=(MAX_ACC_BUF_PKT-1); i>=0; i--)
+    {
+        if(inputAccData.accPkts[i].measTime > 0)
+        {
+            ConfigData->previousTime = inputAccData.accPkts[i].measTime;
+            break;
+        }
+    }
+}
+
 /*////////////////////////////////////////////////////Experimenting QuickSort START////////////////*/
 void dvAccumulation_swap(AccPktDataFswMsg *p, AccPktDataFswMsg *q){
     AccPktDataFswMsg t;
@@ -67,8 +96,6 @@ int dvAccumulation_partition(AccPktDataFswMsg *A, int start, int end){
     return partitionIndex;
 }
 
-
-
 /* Sort the AccPktDataFswMsg by the measTime with an iterative quickSort.
   @return void
   @param A --> Array to be sorted,
@@ -77,7 +104,11 @@ int dvAccumulation_partition(AccPktDataFswMsg *A, int start, int end){
 void dvAccumulation_QuickSort (AccPktDataFswMsg *A, int start, int end)
 {
     // Create an auxiliary stack array. This contains indicies.
-    int stack[ end - start + 1 ];
+    int stack[MAX_ACC_BUF_PKT];
+    if((end-start + 1) > MAX_ACC_BUF_PKT)
+    {
+        BSK_PRINT(MSG_ERROR, "Stack insufficiently sized for quick-sort somehow");
+    }
 
     // initialize the index of the top of the stack
     int top = -1;
@@ -142,9 +173,17 @@ void Update_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime, ui
     dvAccumulation_QuickSort(&(inputAccData.accPkts[0]), 0, MAX_ACC_BUF_PKT-1); //measTime is the array we want to sort. We're sorting the time calculated for each measurement taken from the accelerometer in order in terms of time.
 
     /*! Ensure that the computed dt doesn't get huge.*/
-    if(ConfigData->previousTime == 0)
+    if(ConfigData->dvInitialized == 0)
     {
-        ConfigData->previousTime = inputAccData.accPkts[0].measTime;
+        for(i=0; i<MAX_ACC_BUF_PKT; i++)
+        {
+            if(inputAccData.accPkts[i].measTime > ConfigData->previousTime)
+            {
+                ConfigData->previousTime = inputAccData.accPkts[i].measTime;
+                ConfigData->dvInitialized = 1;
+                break;
+            }
+        }
     }
 
     for(i=0; i<MAX_ACC_BUF_PKT; i++)
@@ -161,29 +200,6 @@ void Update_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime, ui
 
     WriteMessage(ConfigData->outputNavMsgID, callTime, sizeof(NavTransIntMsg),
                  &ConfigData->outputData, moduleID);
-
-    //for(int k=0; k<XXX; k=k+measTime){ // the XXX indicates that I'm not sure of what the maximum end limit for the loop. When does the measurement stop? ... Also here, I'm assuming measTime is the time of each frame interval (of accel when DVs being off-pulsed)
-    //    for(int j=0; j<ConfigData->msgCount; j++){ //
-    //        uint32_t a=0; //a is the initial start time.. but I need it to continue going.. MUST FIND OUT HOW!!!
-    //        uint32_t b=0.5;
-            /*calculate the DV, integrate, and find the mean*/
-    //        for(int i=a; i<=b; i+=(b-a)/6){
-    //            DV[i]=(measTime[i])*(accel_pltf[i]);
-    //            sum[i]+=DV[i]*(b-a)/6;
-    //            dvMean[i]=sum[i]/(b-a);
-    //        }
-/* cutoff burn & stop accel if reaches beyond threshold*/
-   //     }
-   // }
-
-/*obtain acceleration measurements data & figures out the time and size*/
-/*! Begin method steps */
-/*! - Iterate through all of the input messages and archive their nav data*/
-//    for(int i=0; i<ConfigData->msgCount; i=i+1)
-//    {
-//        ReadMessage(ConfigData->outputNavMsgID, &timeOfMsgWritten, &ConfigData->msgCount,
-//                    sizeof(NavTransIntMsg), &(ConfigData->outputData), moduleID);
-//    }
 
     return;
 

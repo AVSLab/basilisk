@@ -222,7 +222,7 @@ void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
     }
     
     /*! - The post fits are y- ybar*/
-    mSubtract(ConfigData->obs, MAX_N_CSS_MEAS, 1, yBar, ConfigData->postFits);
+    mSubtract(ConfigData->obs, ConfigData->numObs, 1, yBar, ConfigData->postFits);
     
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
 	v3Copy(ConfigData->state, ConfigData->outputSunline.vehSunPntBdy);
@@ -302,6 +302,7 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
 	vCopy(ConfigData->state, ConfigData->numStates,
 		&(ConfigData->SP[0 * ConfigData->numStates + 0]));
+	mSetZero(rAT, ConfigData->countHalfSPs, ConfigData->countHalfSPs);
 	sunlineStateProp(&(ConfigData->SP[0 * ConfigData->numStates + 0]), ConfigData->bVec_B, ConfigData->dt);
     /*! - Scale that Sigma point by the appopriate scaling factor (Wm[0])*/
 	vScale(ConfigData->wM[0], &(ConfigData->SP[0 * ConfigData->numStates + 0]),
