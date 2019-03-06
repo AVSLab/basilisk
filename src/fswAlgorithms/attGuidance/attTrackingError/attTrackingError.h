@@ -53,7 +53,7 @@ extern "C" {
     void CrossInit_attTrackingError(attTrackingErrorConfig *configData, uint64_t moduleID);
     void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTime, uint64_t moduleID);
     void Reset_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTime, uint64_t moduleID);
-    void computeAttitudeError(double sigma_R0R[3], NavAttIntMsg nav, AttRefFswMsg ref, AttGuidFswMsg attGuidOut);
+    void computeAttitudeError(double sigma_R0R[3], NavAttIntMsg nav, AttRefFswMsg ref, AttGuidFswMsg *attGuidOut);
 
 #ifdef __cplusplus
 }

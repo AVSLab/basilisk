@@ -158,7 +158,6 @@ def subModuleTestFunction(show_plots):
     moduleOutputName = "sigma_BR"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
-    print moduleOutput
 
     # set the filtered output truth states
     trueVector = [
