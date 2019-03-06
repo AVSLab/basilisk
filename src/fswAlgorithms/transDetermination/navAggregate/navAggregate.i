@@ -28,12 +28,21 @@
 %ignore SelfInit_aggregateNav;
 %constant void CrossInit_aggregateNav(void*, uint64_t);
 %ignore CrossInit_aggregateNav;
+%constant void Reset_aggregateNav(void*, uint64_t, uint64_t);
+%ignore Reset_aggregateNav;
 STRUCTASLIST(AggregateAttInput)
 STRUCTASLIST(AggregateTransInput)
 GEN_SIZEOF(AggregateAttInput);
 GEN_SIZEOF(AggregateTransInput);
 GEN_SIZEOF(NavAggregateData);
 %include "navAggregate.h"
+
+%include "simFswInterfaceMessages/navTransIntMsg.h"
+%include "simFswInterfaceMessages/navAttIntMsg.h"
+GEN_SIZEOF(NavAttIntMsg);
+GEN_SIZEOF(NavTransIntMsg);
+
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

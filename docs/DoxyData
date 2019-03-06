@@ -1283,6 +1283,7 @@ HTML_EXTRA_FILES       = ../src/simulation/dynamics/extForceTorque/_Documentatio
                          ../src/simulation/dynamics/FuelTank/_Documentation/Basilisk-FUELTANK-20171203.pdf \
                          ../src/simulation/dynamics/sphericalPendulum/_Documentation/Basilisk-SPHERICALPENDULUM-20180518.pdf \
                          ../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Basilisk-MODULENAME-yyyymmdd.pdf \
+                         ../src/fswAlgorithms/transDetermination/navAggregate/_Documentation/Basilisk-navAggregrate-2019-02-21.pdf \
                          mac_fix_path.pth
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen

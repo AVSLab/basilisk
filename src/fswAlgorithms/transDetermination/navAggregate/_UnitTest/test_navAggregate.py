@@ -1,0 +1,377 @@
+''' '''
+'''
+ ISC License
+
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+
+ Permission to use, copy, modify, and/or distribute this software for any
+ purpose with or without fee is hereby granted, provided that the above
+ copyright notice and this permission notice appear in all copies.
+
+ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+'''
+#
+#   Unit Test Script
+#   Module Name:        navAggregate()
+#   Author:             Hanspeter Schaub
+#   Creation Date:      Feb. 21, 2019
+#
+
+import pytest
+import sys, os, inspect
+import numpy as np
+
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+bskName = 'Basilisk'
+splitPath = path.split(bskName)
+
+
+
+
+
+
+
+# Import all of the modules that we are going to be called in this simulation
+from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import unitTestSupport
+from Basilisk.fswAlgorithms import navAggregate
+from Basilisk.utilities import macros
+from Basilisk.simulation import simFswInterfaceMessages
+
+# Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
+# @pytest.mark.skipif(conditionstring)
+# Uncomment this line if this test has an expected failure, adjust message as needed.
+# @pytest.mark.xfail(conditionstring)
+# Provide a unique test method name, starting with 'test_'.
+# The following 'parametrize' function decorator provides the parameters and expected results for each
+#   of the multiple test runs for this test.
+@pytest.mark.parametrize("numAttNav, numTransNav", [
+      (0, 0)
+    , (1, 1)
+    , (0, 1)
+    , (1, 0)
+    , (2, 2)
+    , (1, 2)
+    , (0, 2)
+    , (2, 1)
+    , (2, 0)
+    , (3, 3)
+    , (3, 2)
+    , (3, 1)
+    , (3, 0)
+    , (2, 3)
+    , (1, 3)
+    , (0, 3)
+    , (11, 11)
+    , (3, 11)
+    , (2, 11)
+    , (1, 11)
+    , (0, 11)
+    , (11, 3)
+    , (11, 2)
+    , (11, 1)
+    , (11, 0)
+])
+
+# update "module" in this function name to reflect the module name
+def test_module(show_plots, numAttNav, numTransNav):
+    # each test method requires a single assert method to be called
+    [testResults, testMessage] = navAggregateTestFunction(show_plots, numAttNav, numTransNav)
+    assert testResults < 1, testMessage
+
+
+def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
+    testFailCount = 0                       # zero unit test result counter
+    testMessages = []                       # create empty array to store test log messages
+    unitTaskName = "unitTask"               # arbitrary name (don't change)
+    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+
+    # Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    # terminateSimulation() is needed if multiple unit test scripts are run
+    # that run a simulation for the test. This creates a fresh and
+    # consistent simulation environment for each test run.
+    unitTestSim.TotalSim.terminateSimulation()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+
+    # Construct an instance of the module being tested
+    moduleConfig = navAggregate.NavAggregateData()
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
+    moduleWrap.ModelTag = "navAggregate"
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+
+    # create input navigation message containers
+    navAtt1 = navAggregate.AggregateAttInput()
+    navAtt1.inputNavName = "nav_att_message_1"
+    navAtt2 = navAggregate.AggregateAttInput()
+    navAtt2.inputNavName = "nav_att_message_2"
+    navTrans1 = navAggregate.AggregateTransInput()
+    navTrans1.inputNavName = "nav_trans_message_1"
+    navTrans2 = navAggregate.AggregateTransInput()
+    navTrans2.inputNavName = "nav_trans_message_2"
+
+
+
+    # Initialize the test module configuration data
+    moduleConfig.outputAttName = "navAggregate_output_att"
+    moduleConfig.outputTransName = "navAggregate_output_trans"
+
+    moduleConfig.attMsgCount = numAttNav
+    if numAttNav == 3:       # here the index asks to read from an empty (zero) message
+        moduleConfig.attMsgCount = 2
+
+    moduleConfig.transMsgCount = numTransNav
+    if numTransNav == 3:     # here the index asks to read from an empty (zero) message
+        moduleConfig.transMsgCount = 2
+
+    if numAttNav <= navAggregate.MAX_AGG_NAV_MSG:
+        moduleConfig.attMsgs = [navAtt1, navAtt2]
+    else:
+        moduleConfig.attMsgs = [navAtt1] * navAggregate.MAX_AGG_NAV_MSG
+    if numTransNav <= navAggregate.MAX_AGG_NAV_MSG:
+        moduleConfig.transMsgs = [navTrans1, navTrans2]
+    else:
+        moduleConfig.transMsgs = [navTrans1] * navAggregate.MAX_AGG_NAV_MSG
+
+    if numAttNav > 1:       # always read from the last message counter
+        moduleConfig.attTimeIdx = numAttNav - 1
+        moduleConfig.attIdx = numAttNav - 1
+        moduleConfig.rateIdx = numAttNav - 1
+        moduleConfig.sunIdx = numAttNav - 1
+    if numTransNav > 1:     # always read from the last message counter
+        moduleConfig.transTimeIdx = numTransNav-1
+        moduleConfig.posIdx = numTransNav-1
+        moduleConfig.velIdx = numTransNav-1
+        moduleConfig.dvIdx = numTransNav-1
+
+    # Create input messages
+    navAtt1Msg = simFswInterfaceMessages.NavAttIntMsg()
+    navAtt1Msg.timeTag = 11.11
+    navAtt1Msg.sigma_BN = [0.1, 0.01, -0.1]
+    navAtt1Msg.omega_BN_B = [1., 1., -1.]
+    navAtt1Msg.vehSunPntBdy = [-0.1, 0.1, 0.1]
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               navAtt1.inputNavName,
+                               navAtt1Msg)
+    navAtt2Msg = simFswInterfaceMessages.NavAttIntMsg()
+    navAtt2Msg.timeTag = 22.22
+    navAtt2Msg.sigma_BN = [0.2, 0.02, -0.2]
+    navAtt2Msg.omega_BN_B = [2., 2., -2.]
+    navAtt2Msg.vehSunPntBdy = [-0.2, 0.2, 0.2]
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               navAtt2.inputNavName,
+                               navAtt2Msg)
+    navTrans1Msg = simFswInterfaceMessages.NavTransIntMsg()
+    navTrans1Msg.timeTag = 11.1
+    navTrans1Msg.r_BN_N = [1000.0, 100.0, -1000.0]
+    navTrans1Msg.v_BN_N = [1., 1., -1.]
+    navTrans1Msg.vehAccumDV = [-10.1, 10.1, 10.1]
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               navTrans1.inputNavName,
+                               navTrans1Msg)
+    navTrans2Msg = simFswInterfaceMessages.NavTransIntMsg()
+    navTrans2Msg.timeTag = 22.2
+    navTrans2Msg.r_BN_N = [2000.0, 200.0, -2000.0]
+    navTrans2Msg.v_BN_N = [2., 2., -2.]
+    navTrans2Msg.vehAccumDV = [-20.2, 20.2, 20.2]
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               navTrans2.inputNavName,
+                               navTrans2Msg)
+
+    # write TeX snippets for the message values
+    unitTestSupport.writeTeXSnippet("navAtt1Msg.timeTag", str(navAtt1Msg.timeTag), path)
+    unitTestSupport.writeTeXSnippet("navAtt1Msg.sigma_BN", str(navAtt1Msg.sigma_BN), path)
+    unitTestSupport.writeTeXSnippet("navAtt1Msg.omega_BN_B", str(navAtt1Msg.omega_BN_B), path)
+    unitTestSupport.writeTeXSnippet("navAtt1Msg.vehSunPntBdy", str(navAtt1Msg.vehSunPntBdy), path)
+    unitTestSupport.writeTeXSnippet("navAtt2Msg.timeTag", str(navAtt2Msg.timeTag), path)
+    unitTestSupport.writeTeXSnippet("navAtt2Msg.sigma_BN", str(navAtt2Msg.sigma_BN), path)
+    unitTestSupport.writeTeXSnippet("navAtt2Msg.omega_BN_B", str(navAtt2Msg.omega_BN_B), path)
+    unitTestSupport.writeTeXSnippet("navAtt2Msg.vehSunPntBdy", str(navAtt2Msg.vehSunPntBdy), path)
+    unitTestSupport.writeTeXSnippet("navTrans1Msg.timeTag", str(navTrans1Msg.timeTag), path)
+    unitTestSupport.writeTeXSnippet("navTrans1Msg.r_BN_N", str(navTrans1Msg.r_BN_N), path)
+    unitTestSupport.writeTeXSnippet("navTrans1Msg.v_BN_N", str(navTrans1Msg.v_BN_N), path)
+    unitTestSupport.writeTeXSnippet("navTrans1Msg.vehAccumDV", str(navTrans1Msg.vehAccumDV), path)
+    unitTestSupport.writeTeXSnippet("navTrans2Msg.timeTag", str(navTrans2Msg.timeTag), path)
+    unitTestSupport.writeTeXSnippet("navTrans2Msg.r_BN_N", str(navTrans2Msg.r_BN_N), path)
+    unitTestSupport.writeTeXSnippet("navTrans2Msg.v_BN_N", str(navTrans2Msg.v_BN_N), path)
+    unitTestSupport.writeTeXSnippet("navTrans2Msg.vehAccumDV", str(navTrans2Msg.vehAccumDV), path)
+
+    # Setup logging on the test module output message so that we get all the writes to it
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputAttName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputTransName, testProcessRate)
+
+
+    # Need to call the self-init and cross-init methods
+    unitTestSim.InitializeSimulation()
+
+    # Set the simulation time.
+    # NOTE: the total simulation time may be longer than this value. The
+    # simulation is stopped at the next logging event on or after the
+    # simulation end time.
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
+
+    # Begin the simulation time run set above
+    unitTestSim.ExecuteSimulation()
+
+
+
+    # This pulls the actual data log from the simulation run.
+    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
+    attTimeTag = unitTestSim.pullMessageLogData(moduleConfig.outputAttName + '.timeTag')
+    attSigma = unitTestSim.pullMessageLogData(moduleConfig.outputAttName + '.sigma_BN', range(3))
+    attOmega = unitTestSim.pullMessageLogData(moduleConfig.outputAttName + '.omega_BN_B', range(3))
+    attSunVector = unitTestSim.pullMessageLogData(moduleConfig.outputAttName + '.vehSunPntBdy', range(3))
+
+    transTimeTag = unitTestSim.pullMessageLogData(moduleConfig.outputTransName + '.timeTag')
+    transPos = unitTestSim.pullMessageLogData(moduleConfig.outputTransName + '.r_BN_N', range(3))
+    transVel = unitTestSim.pullMessageLogData(moduleConfig.outputTransName + '.v_BN_N', range(3))
+    transAccum = unitTestSim.pullMessageLogData(moduleConfig.outputTransName + '.vehAccumDV', range(3))
+
+
+    # set the filtered output truth states
+    if numAttNav == 0 or numAttNav == 3:
+        trueAttTimeTag = [[0.0]]*3
+        trueAttSigma = [[0., 0., 0.]]*3
+        trueAttOmega = [[0., 0., 0.]]*3
+        trueAttSunVector = [[0., 0., 0.]]*3
+
+    if numTransNav == 0 or numTransNav == 3:
+        trueTransTimeTag = [[0.0]]*3
+        trueTransPos = [[0.0, 0.0, 0.0]]*3
+        trueTransVel = [[0.0, 0.0, 0.0]]*3
+        trueTransAccum = [[0.0, 0.0, 0.0]]*3
+
+    if numAttNav == 1 or numAttNav == 11:
+        trueAttTimeTag = [[navAtt1Msg.timeTag]]*3
+        trueAttSigma = [navAtt1Msg.sigma_BN]*3
+        trueAttOmega = [navAtt1Msg.omega_BN_B]*3
+        trueAttSunVector = [navAtt1Msg.vehSunPntBdy]*3
+
+    if numTransNav == 1 or numTransNav == 11:
+        trueTransTimeTag = [[navTrans1Msg.timeTag]]*3
+        trueTransPos = [navTrans1Msg.r_BN_N]*3
+        trueTransVel = [navTrans1Msg.v_BN_N]*3
+        trueTransAccum = [navTrans1Msg.vehAccumDV]*3
+
+    if numAttNav == 2:
+        trueAttTimeTag = [[navAtt2Msg.timeTag]] * 3
+        trueAttSigma = [navAtt2Msg.sigma_BN] * 3
+        trueAttOmega = [navAtt2Msg.omega_BN_B] * 3
+        trueAttSunVector = [navAtt2Msg.vehSunPntBdy] * 3
+
+    if numTransNav == 2:
+        trueTransTimeTag = [[navTrans2Msg.timeTag]]*3
+        trueTransPos = [navTrans2Msg.r_BN_N]*3
+        trueTransVel = [navTrans2Msg.v_BN_N]*3
+        trueTransAccum = [navTrans2Msg.vehAccumDV]*3
+
+
+
+    # compare the module results to the truth values
+    accuracy = 1e-12
+    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+
+    # check if the module output matches the truth data
+    testFailCount, testMessages = unitTestSupport.compareArrayND(trueAttTimeTag, attTimeTag,
+                                                               accuracy, "attTimeTag", 1,
+                                                               testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(trueAttSigma, attSigma,
+                                                                 accuracy, "sigma_BN",
+                                                                 testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(trueAttOmega, attOmega,
+                                                               accuracy, "omega_BN_B",
+                                                               testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(trueAttSunVector, attSunVector,
+                                                               accuracy, "vehSunPntBdy",
+                                                               testFailCount, testMessages)
+
+    testFailCount, testMessages = unitTestSupport.compareArrayND(trueTransTimeTag, transTimeTag,
+                                                                 accuracy, "transTimeTag", 1,
+                                                                 testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(trueTransPos, transPos,
+                                                               accuracy, "sigma_BN",
+                                                               testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(trueTransVel, transVel,
+                                                               accuracy, "omega_BN_B",
+                                                               testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArray(trueTransAccum, transAccum,
+                                                               accuracy, "vehSunPntBdy",
+                                                               testFailCount, testMessages)
+
+    if numAttNav == 11:
+        if moduleConfig.attMsgCount != navAggregate.MAX_AGG_NAV_MSG:
+            testFailCount += 1
+            testMessages.append("FAILED numAttNav too large test")
+        if moduleConfig.attTimeIdx != navAggregate.MAX_AGG_NAV_MSG-1:
+            testFailCount += 1
+            testMessages.append("FAILED attTimeIdx too large test")
+        if moduleConfig.attIdx != navAggregate.MAX_AGG_NAV_MSG-1:
+            testFailCount += 1
+            testMessages.append("FAILED attIdx too large test")
+        if moduleConfig.rateIdx != navAggregate.MAX_AGG_NAV_MSG-1:
+            testFailCount += 1
+            testMessages.append("FAILED rateIdx too large test")
+        if moduleConfig.sunIdx != navAggregate.MAX_AGG_NAV_MSG-1:
+            testFailCount += 1
+            testMessages.append("FAILED sunIdx too large test")
+
+    if numTransNav == 11:
+        if moduleConfig.transMsgCount != navAggregate.MAX_AGG_NAV_MSG:
+            testFailCount += 1
+            testMessages.append("FAILED numTransNav too large test")
+        if moduleConfig.posIdx != navAggregate.MAX_AGG_NAV_MSG-1:
+            testFailCount += 1
+            testMessages.append("FAILED posIdx too large test")
+        if moduleConfig.velIdx != navAggregate.MAX_AGG_NAV_MSG-1:
+            testFailCount += 1
+            testMessages.append("FAILED velIdx too large test")
+        if moduleConfig.dvIdx != navAggregate.MAX_AGG_NAV_MSG-1:
+            testFailCount += 1
+            testMessages.append("FAILED dvIdx too large test")
+
+
+    #   print out success message if no error were found
+    snippentName = "passFail" + str(numAttNav) + str(numTransNav)
+    if testFailCount == 0:
+        colorText = 'ForestGreen'
+        print "PASSED: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        print "Failed: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+
+
+    return [testFailCount, ''.join(testMessages)]
+
+
+#
+# This statement below ensures that the unitTestScript can be run as a
+# stand-along python script
+#
+if __name__ == "__main__":
+    test_module(
+                 False,
+                 3,             # numAttNav
+                 11              # numTransNav
+               )
