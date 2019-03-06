@@ -16,6 +16,9 @@ We are very excited by the great capabilities that this software already has, an
     <li>
        attTrackingError has updated documentation and unit tests.
     </li>
+    <li>
+        navAggregrate module has new documentation and unit tests.
+    </li>
 </ul>
 
 
