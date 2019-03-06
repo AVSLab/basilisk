@@ -86,7 +86,7 @@ void Reset_rwConfigData(rwConfigData_Config *ConfigData, uint64_t callTime, uint
     if(ConfigData->rwConstellationInMsgID >= 0)
     {
         ReadMessage(ConfigData->rwConstellationInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten, sizeof(RWConstellationFswMsg),
-                    &ConfigData->rwConstellation, moduleID);
+                    (void *) &ConfigData->rwConstellation, moduleID);
     }
     ConfigData->rwConfigParamsOut.numRW = ConfigData->rwConstellation.numRW;
 

@@ -70,7 +70,7 @@ void Reset_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime, uint64_t modul
     memset(&(ConfigData->cssConfigInBuffer), 0x0, sizeof(CSSConfigFswMsg));
     ReadMessage(ConfigData->cssConfigInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CSSConfigFswMsg),
-                &(ConfigData->cssConfigInBuffer), moduleID);
+                (void *) &(ConfigData->cssConfigInBuffer), moduleID);
 
     ConfigData->priorSignalAvailable = 0;
     v3SetZero(ConfigData->dOld);

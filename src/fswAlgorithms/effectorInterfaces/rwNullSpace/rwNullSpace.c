@@ -78,7 +78,7 @@ void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
 
     /*! -# read in the RW spin axis headings */
     ReadMessage(configData->inputRWConfID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(RWConstellationFswMsg), &localRWData, moduleID);
+                sizeof(RWConstellationFswMsg), (void *) &localRWData, moduleID);
 
     /*! -# create the 3xN [Gs] RW spin axis projection matrix */
     configData->numWheels = localRWData.numRW;
