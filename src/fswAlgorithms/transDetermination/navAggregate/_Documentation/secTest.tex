@@ -1,14 +1,14 @@
 % !TEX root = ./Basilisk-navAggregate-2019-02-21.tex
 
 \section{Test Description and Success Criteria}
-The unit test sets up a range of module input conditions ranging from using no message, 1 message, 2 messages, and even using index for an empty message.  All permutations between setting these conditions between the attitude and translation navigation messages are tested. 
+The unit test sets up a range of module input conditions ranging from using no message, 1 message, 2 messages,  using index for an empty message, as well as setting out of range index and message count variables.  If a single message count is specified, then no index value is set.  Here the default value of 0 is used to read in the first and only message,  If 2 messages are available, and the index is set to 2 (i.e. the 3rd message location), then the module read in a zero'd message value.  If the message count is larger than the allowable array size of 10, i.e. set the count to 11, then the count is reduced back to 10. If the index value is larger than 9 (largest slot location within a 10 dimensional array), then the index is reduced to 9.   All permutations between setting these conditions between the attitude and translation navigation messages are tested. 
 
 
 
 
 \section{Test Parameters}
 
-The attitude navigation messages are setup using the states shown in Tables~\ref{tab:attNav1} and \ref{tab:attNav2}.  If no attitude navigation message is specified, then the attitude navigation output should be a zero message.  If an index is chosen that is larger than 3, then the corresponding message variable should be zeroed as well.
+The attitude navigation messages are setup using the states shown in Tables~\ref{tab:attNav1} and \ref{tab:attNav2}.  If no attitude navigation message is specified, then the attitude navigation output should be a zero message.  If an index is chosen that is larger than 2 but less than the maximum number of allowable input messages, then the corresponding message variable should be zeroed as well.  If an index is chosen that is larger than the input message array size, then the parameter is reduced to the maximum allowable value.
 
 \begin{table}[htbp]
 	\caption{Attitude Navigation Message \#1 and Error tolerance for each test.}
@@ -108,6 +108,15 @@ The permuations of the unit test configurations are listed in Table~\ref{tab:res
 	   2 & 1  & 2 & 2 & \input{AutoTeX/passFail23} \\ 
 	   1 & N/A  & 2 & 2 & \input{AutoTeX/passFail13} \\ 
 	   0 & N/A & 2 & 2 & \input{AutoTeX/passFail03} \\ 
+	   11 & 11 & 11 & 11 & \input{AutoTeX/passFail1111} \\ 
+	   2 & 2 & 11 & 11 & \input{AutoTeX/passFail311} \\ 
+	   2 & 1 & 11 & 11 & \input{AutoTeX/passFail211} \\ 
+	   1 & N/A & 11 & 11 & \input{AutoTeX/passFail111} \\ 
+	   0 & N/A & 11 & 11 & \input{AutoTeX/passFail011} \\ 
+	   11 & 11 & 2 & 2 & \input{AutoTeX/passFail113} \\ 
+	   11 & 11 & 2 & 1 & \input{AutoTeX/passFail112} \\ 
+	   11 & 11 & 1 & N/A & \input{AutoTeX/passFail111} \\ 
+	   11 & 11 & 0 & N/A & \input{AutoTeX/passFail110} \\ 
 	   \hline\hline
 	\end{tabular}
 \end{table}

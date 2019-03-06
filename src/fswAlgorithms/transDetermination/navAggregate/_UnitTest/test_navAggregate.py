@@ -71,6 +71,14 @@ from Basilisk.simulation import simFswInterfaceMessages
     , (1, 3)
     , (0, 3)
     , (11, 11)
+    , (3, 11)
+    , (2, 11)
+    , (1, 11)
+    , (0, 11)
+    , (11, 3)
+    , (11, 2)
+    , (11, 1)
+    , (11, 0)
 ])
 
 # update "module" in this function name to reflect the module name
@@ -258,7 +266,7 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
         trueAttOmega = [navAtt1Msg.omega_BN_B]*3
         trueAttSunVector = [navAtt1Msg.vehSunPntBdy]*3
 
-    if numTransNav == 1 or numAttNav == 11:
+    if numTransNav == 1 or numTransNav == 11:
         trueTransTimeTag = [[navTrans1Msg.timeTag]]*3
         trueTransPos = [navTrans1Msg.r_BN_N]*3
         trueTransVel = [navTrans1Msg.v_BN_N]*3
@@ -365,5 +373,5 @@ if __name__ == "__main__":
     test_module(
                  False,
                  3,             # numAttNav
-                 3              # numTransNav
+                 11              # numTransNav
                )
