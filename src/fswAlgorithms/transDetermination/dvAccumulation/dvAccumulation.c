@@ -58,13 +58,13 @@ void Reset_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime,
 
     memset(&inputAccData, 0x0, sizeof(AccDataFswMsg));
     ReadMessage(ConfigData->accPktInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(AccDataFswMsg), &inputAccData, moduleID);
+                sizeof(AccDataFswMsg), (void *) &inputAccData, moduleID);
 
-    /* stacks data in time order*/
+    /*! - stacks data in time order*/
     dvAccumulation_QuickSort(&(inputAccData.accPkts[0]), 0, MAX_ACC_BUF_PKT-1);
     ConfigData->previousTime = 0;
     ConfigData->dvInitialized = 0;
-    /*If we find valid timestamp, ensure that no "older" meas get ingested*/
+    /*! - If we find valid timestamp, ensure that no "older" meas get ingested*/
     for(i=(MAX_ACC_BUF_PKT-1); i>=0; i--)
     {
         if(inputAccData.accPkts[i].measTime > 0)
@@ -96,7 +96,7 @@ int dvAccumulation_partition(AccPktDataFswMsg *A, int start, int end){
     return partitionIndex;
 }
 
-/* Sort the AccPktDataFswMsg by the measTime with an iterative quickSort.
+/*! Sort the AccPktDataFswMsg by the measTime with an iterative quickSort.
   @return void
   @param A --> Array to be sorted,
   @param start  --> Starting index,
