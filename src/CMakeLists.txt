@@ -26,6 +26,7 @@ option(USE_PROTOBUFFERS "Include modules which use Google Protobuffers" OFF)
 option(USE_OPENCV "Include modules which use OpenCV" OFF)
 
 if(USE_PROTOBUFFERS)
+  list(APPEND required_conan_libraries protoc_installer/3.6.1@bincrafters/stable)
   list(APPEND required_conan_libraries protobuf/3.6.1@bincrafters/stable)
 endif()
 
@@ -39,11 +40,33 @@ conan_cmake_run(REQUIRES ${required_conan_libraries}
                 BUILD missing )
 
 if(USE_PROTOBUFFERS)
-   #! PROTO-BUFFERS
-   find_package(protobuf CONFIG REQUIRED)
-   message(STATUS "Using Protocol Buffers ${protobuf_VERSION}")
-   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+  #! PROTO-BUFFERS
+  find_package(protoc CONFIG REQUIRED)
+  find_package(protobuf CONFIG REQUIRED)
+  #set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+  #add_subdirectory("utilities/vizProtobuffer")
+  #include_directories(${Protobuf_INCLUDE_DIRS})
+  #include_directories(${CMAKE_BINARY_DIR})
+  #message(STATUS "Generating protobuffers")
+  #message(STATUS "${CMAKE_BINARY_DIR}")
+  #message(STATUS "PROTOC: ${protobuf::protoc}")
+  #file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/proto_gen")
+
+  #protobuf_generate(OUT_VAR PROTO_SRCS PROTOS "${CMAKE_CURRENT_SOURCE_DIR}/utilities/vizProtobuffer/vizMessage.proto")
+  message(STATUS "PROTO_SRCS: ${PROTO_SRCS}")
+
+  add_library(PROTO_CODE ${CMAKE_CURRENT_SOURCE_DIR}/utilities/vizProtobuffer/vizMessage.proto)
+  target_link_libraries(PROTO_CODE PUBLIC ${CONAN_LIBS})
+  target_include_directories(PROTO_CODE PRIVATE ${CMAKE_BINARY_DIR})
+  set_target_properties(PROTO_CODE PROPERTIES CXX_STANDARD 14)
+  protobuf_generate(TARGET PROTO_CODE)
+
+
+
+
 endif()
+
+#find_package(asdfasdf CONFIG REQUIRED)
 
 if(USE_OPENCV)
    #! OPEN_CV
@@ -216,7 +239,10 @@ function(findAndCreateSwigModules SubModule)
 		    "${FileDir}/*.cpp"
 		    "${FileDir}/*.c"
 		    "${FileDir}/*.h"
+        ${PROTO_SRCS}
 		)
+  # message(STATUS "IMPL_FILES MODULE: ${module}")
+  message(STATUS "IMPL_FILES: ${impl_files}")
 	    set(gen_files "")
 	    set(swig_dep_files "")
 	    file(GLOB gen_files
@@ -255,8 +281,9 @@ function(findAndCreateSwigModules SubModule)
 		set_source_files_properties( ${swig_generated_file_fullname}
 	               PROPERTIES COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/simulation")
 	    set(SWIG_MODULE_${FileBase}_EXTRA_DEPS ${impl_files} ${gen_files} ${swig_dep_files})
-	    MAKE_SWIG_MODULE(${FileBase} python ${module} ${impl_files} ${gen_files})
+      MAKE_SWIG_MODULE(${FileBase} python ${module} ${impl_files} ${gen_files} )
 	    SWIG_LINK_LIBRARIES(${FileBase} ${PYTHON_LIBRARIES})
+      #protobuf_generate(TARGET ${module})
 
 	    foreach(LibFile ${LIBRARY_BUILD_LIST})
 	         SWIG_LINK_LIBRARIES(${FileBase} ${LibFile})
@@ -435,11 +462,15 @@ if(WIN32)
 	set(library_dependencies
       	${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_win${_arch_suffix}.lib
 		${Boost_LIBRARIES}
+    ${CONAN_LIBS}
+    PROTO_CODE
 	)
 elseif(APPLE)
 	set(library_dependencies
 		${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_osx.a
 		${Boost_LIBRARIES}
+    ${CONAN_LIBS}
+    PROTO_CODE
 		# ${CMAKE_SOURCE_DIR}/../libs/boost_1_61_0/lib64-osx/libboost_system.a
 # 		${CMAKE_SOURCE_DIR}/../libs/boost_1_61_0/lib64-osx/libboost_serialization.a
 # 		${CMAKE_SOURCE_DIR}/../libs/boost_1_61_0/lib64-osx/libboost_filesystem.a
@@ -463,6 +494,8 @@ else()
 	set(library_dependencies
 		${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice.a
 		${Boost_LIBRARIES}
+    ${CONAN_LIBS}
+    PROTO_CODE
 	)
 	SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
 	set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
