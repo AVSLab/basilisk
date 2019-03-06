@@ -26,6 +26,7 @@
 
 import pytest
 import sys, os, inspect
+import numpy as np
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -40,10 +41,11 @@ path = os.path.dirname(os.path.abspath(filename))
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import alg_contain
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
+from Basilisk.utilities import unitTestSupport              # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import attTrackingError                  # import the module that is to be tested
 from Basilisk.utilities import macros
+from Basilisk.utilities import RigidBodyKinematics as rbk
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -157,105 +159,91 @@ def subModuleTestFunction(show_plots):
     #
     moduleOutputName = "sigma_BR"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  range(3))[0]
 
+    sigma_RN2 = rbk.addMRP(np.array(sigma_RN), -np.array(vector))
+    RN = rbk.MRP2C(sigma_RN2)
+    BN = rbk.MRP2C(np.array(sigma_BN))
+    BR = np.dot(BN, RN.T)
     # set the filtered output truth states
-    trueVector = [
-               [0.1836841481753408,-0.0974447769418166,-0.09896069560518146],
-               ]
+    trueVector = rbk.C2MRP(BR)
    
     # compare the module results to the truth values
     accuracy = 1e-12
-    for i in range(0,len(trueVector)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
-                                "sec\n")
-            unitTestSupport.writeTeXSnippet("passFail_sigBR", "FAILED", path)
-        else:
-            unitTestSupport.writeTeXSnippet("passFail_sigBR", "PASSED", path)
+    if not unitTestSupport.isArrayEqual(moduleOutput,trueVector,3,accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
+                            moduleOutputName + " unit test at t=" +
+                            str(moduleOutput[0]*macros.NANO2SEC) +
+                            "sec\n")
+        unitTestSupport.writeTeXSnippet("passFail_sigBR", "FAILED", path)
+    else:
+        unitTestSupport.writeTeXSnippet("passFail_sigBR", "PASSED", path)
 
     #
     # check omega_BR_B
     #
     moduleOutputName = "omega_BR_B"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  range(3))[0]
 
     # set the filtered output truth states
-    trueVector = [
-               [-0.01181207648013235,-0.008916032420030655,-0.0344122606253076],
-               ]
+    trueVector = np.array(omega_BN_B) - np.dot(BN, np.array(omega_RN_N))
 
-    
     # compare the module results to the truth values
-    accuracy = 1e-12
-    for i in range(0,len(trueVector)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
-                                "sec\n")
-            unitTestSupport.writeTeXSnippet("passFail_omega_BR_B", "FAILED", path)
-        else:
-            unitTestSupport.writeTeXSnippet("passFail_omega_BR_B", "PASSED", path)
+    if not unitTestSupport.isArrayEqual(moduleOutput,trueVector,3,accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
+                            moduleOutputName + " unit test at t=" +
+                            str(moduleOutput[0]*macros.NANO2SEC) +
+                            "sec\n")
+        unitTestSupport.writeTeXSnippet("passFail_omega_BR_B", "FAILED", path)
+    else:
+        unitTestSupport.writeTeXSnippet("passFail_omega_BR_B", "PASSED", path)
 
     #
     # check omega_RN_B
     #
     moduleOutputName = "omega_RN_B"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  range(3))[0]
 
     # set the filtered output truth states
-    trueVector = [
-               [-0.003187923519867655,-0.003083967579969345,0.0394122606253076],
-               ]
+    trueVector = np.dot(BN, np.array(omega_RN_N))
 
-    # compare the module results to the truth values
-    accuracy = 1e-12
-    for i in range(0,len(trueVector)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
-                                "sec\n")
-            unitTestSupport.writeTeXSnippet("passFail_omega_RN_B", "FAILED", path)
-        else:
-            unitTestSupport.writeTeXSnippet("passFail_omega_RN_B", "PASSED", path)
+
+# compare the module results to the truth values
+    if not unitTestSupport.isArrayEqual(moduleOutput,trueVector,3,accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
+                            moduleOutputName + " unit test at t=" +
+                            str(moduleOutput[0]*macros.NANO2SEC) +
+                            "sec\n")
+        unitTestSupport.writeTeXSnippet("passFail_omega_RN_B", "FAILED", path)
+    else:
+        unitTestSupport.writeTeXSnippet("passFail_omega_RN_B", "PASSED", path)
 
     #
     # check domega_RN_B
     #
     moduleOutputName = "domega_RN_B"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  range(3))[0]
 
     # set the filtered output truth states
-    trueVector = [
-               [-0.02388623421245188,-0.02835600277714878,0.04514847640452802],
-               ]
+    trueVector = np.dot(BN, np.array(domega_RN_N))
+
 
     # compare the module results to the truth values
-    accuracy = 1e-12
-    for i in range(0,len(trueVector)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
-                                "sec\n")
-            unitTestSupport.writeTeXSnippet("passFail_domega_RN_B", "FAILED", path)
-        else:
-            unitTestSupport.writeTeXSnippet("passFail_domega_RN_B", "PASSED", path)
+    if not unitTestSupport.isArrayEqual(moduleOutput,trueVector,3,accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
+                            moduleOutputName + " unit test at t=" +
+                            str(moduleOutput[0]*macros.NANO2SEC) +
+                            "sec\n")
+        unitTestSupport.writeTeXSnippet("passFail_domega_RN_B", "FAILED", path)
+    else:
+        unitTestSupport.writeTeXSnippet("passFail_domega_RN_B", "PASSED", path)
     
     # Note that we can continue to step the simulation however we feel like.
     # Just because we stop and query data does not mean everything has to stop for good
