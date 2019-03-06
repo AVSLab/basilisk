@@ -14,7 +14,7 @@ import numpy as np
 
 def test_rwConfigData():
     [testResults, testMessage] = rwConfigDataTestFunction()
-    print(testMessage)
+    assert testResults < 1, testMessage
 
 def rwConfigDataTestFunction():
     """ Test the rwConfigData module """
