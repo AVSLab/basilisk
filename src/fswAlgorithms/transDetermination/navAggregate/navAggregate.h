@@ -66,7 +66,7 @@ typedef struct {
     
     int32_t navTransOutMsgID;   /*!< [-] The ID associated with the outgoing message*/
     int32_t navAttOutMsgID;     /*!< [-] The ID associated with the outgoing message*/
-    }NavAggregateData;
+}NavAggregateData;
 
 #ifdef __cplusplus
 extern "C" {

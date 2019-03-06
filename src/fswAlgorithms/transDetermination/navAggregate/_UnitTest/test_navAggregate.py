@@ -70,6 +70,7 @@ from Basilisk.simulation import simFswInterfaceMessages
     , (2, 3)
     , (1, 3)
     , (0, 3)
+    , (11, 11)
 ])
 
 # update "module" in this function name to reflect the module name
@@ -121,20 +122,30 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
     # Initialize the test module configuration data
     moduleConfig.outputAttName = "navAggregate_output_att"
     moduleConfig.outputTransName = "navAggregate_output_trans"
+
     moduleConfig.attMsgCount = numAttNav
-    if numAttNav > 2:
+    if numAttNav == 3:       # here the index asks to read from an empty (zero) message
         moduleConfig.attMsgCount = 2
+
     moduleConfig.transMsgCount = numTransNav
-    if numTransNav > 2:
+    if numTransNav == 3:     # here the index asks to read from an empty (zero) message
         moduleConfig.transMsgCount = 2
-    moduleConfig.attMsgs = [navAtt1, navAtt2]
-    moduleConfig.transMsgs = [navTrans1, navTrans2]
-    if numAttNav > 1:
+
+    if numAttNav <= navAggregate.MAX_AGG_NAV_MSG:
+        moduleConfig.attMsgs = [navAtt1, navAtt2]
+    else:
+        moduleConfig.attMsgs = [navAtt1] * navAggregate.MAX_AGG_NAV_MSG
+    if numTransNav <= navAggregate.MAX_AGG_NAV_MSG:
+        moduleConfig.transMsgs = [navTrans1, navTrans2]
+    else:
+        moduleConfig.transMsgs = [navTrans1] * navAggregate.MAX_AGG_NAV_MSG
+
+    if numAttNav > 1:       # always read from the last message counter
         moduleConfig.attTimeIdx = numAttNav - 1
         moduleConfig.attIdx = numAttNav - 1
         moduleConfig.rateIdx = numAttNav - 1
         moduleConfig.sunIdx = numAttNav - 1
-    if numTransNav > 1:
+    if numTransNav > 1:     # always read from the last message counter
         moduleConfig.transTimeIdx = numTransNav-1
         moduleConfig.posIdx = numTransNav-1
         moduleConfig.velIdx = numTransNav-1
@@ -228,7 +239,6 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
     transAccum = unitTestSim.pullMessageLogData(moduleConfig.outputTransName + '.vehAccumDV', range(3))
 
 
-
     # set the filtered output truth states
     if numAttNav == 0 or numAttNav == 3:
         trueAttTimeTag = [[0.0]]*3
@@ -242,13 +252,13 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
         trueTransVel = [[0.0, 0.0, 0.0]]*3
         trueTransAccum = [[0.0, 0.0, 0.0]]*3
 
-    if numAttNav == 1:
+    if numAttNav == 1 or numAttNav == 11:
         trueAttTimeTag = [[navAtt1Msg.timeTag]]*3
         trueAttSigma = [navAtt1Msg.sigma_BN]*3
         trueAttOmega = [navAtt1Msg.omega_BN_B]*3
         trueAttSunVector = [navAtt1Msg.vehSunPntBdy]*3
 
-    if numTransNav == 1:
+    if numTransNav == 1 or numAttNav == 11:
         trueTransTimeTag = [[navTrans1Msg.timeTag]]*3
         trueTransPos = [navTrans1Msg.r_BN_N]*3
         trueTransVel = [navTrans1Msg.v_BN_N]*3
@@ -298,6 +308,38 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
     testFailCount, testMessages = unitTestSupport.compareArray(trueTransAccum, transAccum,
                                                                accuracy, "vehSunPntBdy",
                                                                testFailCount, testMessages)
+
+    if numAttNav == 11:
+        if moduleConfig.attMsgCount != navAggregate.MAX_AGG_NAV_MSG:
+            testFailCount += 1
+            testMessages.append("FAILED numAttNav too large test")
+        if moduleConfig.attTimeIdx != navAggregate.MAX_AGG_NAV_MSG-1:
+            testFailCount += 1
+            testMessages.append("FAILED attTimeIdx too large test")
+        if moduleConfig.attIdx != navAggregate.MAX_AGG_NAV_MSG-1:
+            testFailCount += 1
+            testMessages.append("FAILED attIdx too large test")
+        if moduleConfig.rateIdx != navAggregate.MAX_AGG_NAV_MSG-1:
+            testFailCount += 1
+            testMessages.append("FAILED rateIdx too large test")
+        if moduleConfig.sunIdx != navAggregate.MAX_AGG_NAV_MSG-1:
+            testFailCount += 1
+            testMessages.append("FAILED sunIdx too large test")
+
+    if numTransNav == 11:
+        if moduleConfig.transMsgCount != navAggregate.MAX_AGG_NAV_MSG:
+            testFailCount += 1
+            testMessages.append("FAILED numTransNav too large test")
+        if moduleConfig.posIdx != navAggregate.MAX_AGG_NAV_MSG-1:
+            testFailCount += 1
+            testMessages.append("FAILED posIdx too large test")
+        if moduleConfig.velIdx != navAggregate.MAX_AGG_NAV_MSG-1:
+            testFailCount += 1
+            testMessages.append("FAILED velIdx too large test")
+        if moduleConfig.dvIdx != navAggregate.MAX_AGG_NAV_MSG-1:
+            testFailCount += 1
+            testMessages.append("FAILED dvIdx too large test")
+
 
     #   print out success message if no error were found
     snippentName = "passFail" + str(numAttNav) + str(numTransNav)
