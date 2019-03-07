@@ -44,7 +44,7 @@ Draft & Initial Draft document & H. Schaub \\
 Simply call the module reset function prior to using this control module.  This will reset the prior function call time variable, and reset the attitude error integral measure.  The control update period $\Delta t$ is evaluated automatically.  
 
 \section{Algorithm}
-		 This module employs the MRP feedback algorithm of Example 8.16 of Reference\citenum{schaub}.  This  nonlinear attitude tracking control includes an integral measure of the attitude error.  Further, we seek to avoid quadratic $\bm\omega$ terms to reduce the likelihood of control saturation during a detumbling phase.  Let the new nonlinear feedback control be expressed as
+		 This module employs the MRP feedback algorithm of Example 8.14 of Reference \citenum{schaub}.  This  nonlinear attitude tracking control includes an integral measure of the attitude error.  Further, we seek to avoid quadratic $\bm\omega$ terms to reduce the likelihood of control saturation during a detumbling phase.  Let the new nonlinear feedback control be expressed as
 		\begin{multline}
 			\label{eq:GusRW}
 			[G_{s}]\bm u_{s} = K \bm\sigma + [P] \delta\bm\omega + [P][K_{I}] \bm z - [I_{\text{RW}}](\dot{\bm\omega}_{r} - [\tilde{\bm\omega}]\bm\omega_{r}) + \bm L
@@ -110,7 +110,7 @@ Simply call the module reset function prior to using this control module.  This 
 		If the integral feedback gain is a scalar $K_{I}$, rather than a symmetric positive definite matrix $[K_{I}]$, the quadratic $\bm\omega$ term vanishes.  If the full $3\times 3$ gain matrix is employed, then quadratic rate feedback terms are retained.  
 
 \section{Unit Test}
-The unit test for this module \verb|test_MRP_feedback| tests a single set of gains $K,K_i,P$ on a rigid body with 4 reaction wheels with no external torques, and with a time-varying reference attitude. The simulation is run for one second, cleared, and then run for two. The output torques from each are compared to a precomputed set to validate the calculation.
+The unit test for this module \verb|test_MRP_feedback| tests a set of gains $K,K_i,P$ on a rigid body with either 4 or 0 reaction wheels with no external torques, and with a time-varying reference attitude. The torque requested by the controller is evaluated against precomputed torques at 0s, 0.5s, 1s, 1.5s and 2s to within a tolerance of $10^{-8}$. The test is run for a case with error integration feedback ($k_i=0.01$) and one case where $k_i$ is set to a negative value, resulting in a case with no integrator. All four test cases are expected to pass.
 
 \section{User Guide}
 This module requires the following variables:
@@ -121,7 +121,8 @@ This module requires the following variables:
 \item $^B\dot{\mathbf{\omega}}_{RN}$ as \verb|guidCmdData.domega_RN_B|
 \item $[I]$, the inertia matrix of the body as \verb|vehicleConfigOut.ISCPntB_B|
 \item $\Omega_i$, speed of each reaction wheel in \verb|rwSpeedMessage.wheelSpeeds|
-\item Gains $k,k_i,P$ and integrator windup limit $integralLimit$ in \verb|moduleConfig|
+\item Gains $k,P$ in \verb|moduleConfig|. 
+\item The integral gain $K_i$ in \verb|moduleConfig|. Setting this variable to a negative number disables the error integration for the controller, leaving just PI terms. Zero is not supported as a value for $k_i$. This variable is used to compute the integralLimit, used to limit the degree of integrator windup and reduce the chance of controller saturation. The integrator is required to maintain asymptotic tracking in the presence of an external disturbing torque.
 \end{itemize}
 
 

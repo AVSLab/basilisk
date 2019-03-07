@@ -99,7 +99,7 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, uint6
     VehicleConfigFswMsg sc;
     ReadMessage(configData->vehConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
-    /*! - copy over spcecraft inertia tensor */
+    /*! - copy over spacecraft inertia tensor */
     for (i=0; i < 9; i++){
         configData->ISCPntB_B[i] = sc.ISCPntB_B[i];
     };
@@ -134,7 +134,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
     AttGuidFswMsg      guidCmd;            /* attitude tracking error message */
     RWSpeedIntMsg      wheelSpeeds;        /* Reaction wheel speed message */
     RWAvailabilityFswMsg wheelsAvailability; /* Reaction wheel availability message */
-    CmdTorqueBodyIntMsg controlOut;        /* output messge */
+    CmdTorqueBodyIntMsg controlOut;        /* output message */
 
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
@@ -151,12 +151,12 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
     /*! - zero the output message */
     memset(&controlOut, 0x0, sizeof(CmdTorqueBodyIntMsg));
 
-    /*! - Read the attitude tradking error message */
+    /*! - Read the attitude tracking error message */
     memset(&guidCmd, 0x0, sizeof(AttGuidFswMsg));
     ReadMessage(configData->attGuidInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);
 
-    /*! - read in optional RW speed and availabilty message */
+    /*! - read in optional RW speed and availability message */
     memset(&wheelSpeeds, 0x0, sizeof(RWSpeedIntMsg));
     memset(&wheelsAvailability, 0x0, sizeof(RWAvailabilityFswMsg)); /* wheelAvailability set to 0 (AVAILABLE) by default */
     if(configData->rwConfigParams.numRW > 0) {
@@ -227,7 +227,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
     v3Scale(-1.0, Lr, Lr);                                  /* compute the net positive control torque onto the spacecraft */
 
 
-    /*! - set the output message adn write it out */
+    /*! - set the output message and write it out */
     v3Copy(Lr, controlOut.torqueRequestBody);
     WriteMessage(configData->attControlTorqueOutMsgId, callTime, sizeof(CmdTorqueBodyIntMsg),
                  (void*) &(controlOut), moduleID);

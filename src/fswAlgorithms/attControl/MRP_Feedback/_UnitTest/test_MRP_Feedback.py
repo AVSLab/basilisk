@@ -56,15 +56,20 @@ from Basilisk.fswAlgorithms import rwMotorTorque
 # uncomment this line if this test has an expected failure, adjust message as needed
 #@pytest.mark.xfail()
 # provide a unique test method name, starting with test_
-def test_MRP_Feedback(show_plots):     
+
+
+@pytest.mark.parametrize("intGain", [0.01, -1])
+@pytest.mark.parametrize("rwNum", [4, 0])
+
+def test_MRP_Feedback(show_plots,intGain, rwNum):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = subModuleTestFunction(show_plots)
+
+
+    [testResults, testMessage] = subModuleTestFunction(show_plots,intGain, rwNum)
     assert testResults < 1, testMessage
 
 
-
-
-def subModuleTestFunction(show_plots):
+def subModuleTestFunction(show_plots, intGain, rwNum):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -99,7 +104,7 @@ def subModuleTestFunction(show_plots):
     moduleConfig.outputDataName = "outputName"
 
     moduleConfig.K  =   0.15
-    moduleConfig.Ki =   0.01
+    moduleConfig.Ki = intGain
     moduleConfig.P  = 150.0
     moduleConfig.integralLimit = 2./moduleConfig.Ki * 0.1
     moduleConfig.domega0 = [0., 0., 0.]
@@ -167,7 +172,7 @@ def subModuleTestFunction(show_plots):
             0.577350269190, 0.577350269190, 0.577350269190
         ]
         rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
-        rwConfigParams.numRW = 4
+        rwConfigParams.numRW = rwNum
         unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwParamsInMsgName, inputMessageSize,
                                               0, rwConfigParams)
     if len(moduleConfig.rwParamsInMsgName)>0:
@@ -181,6 +186,7 @@ def subModuleTestFunction(show_plots):
                                               inputMessageSize, 2) # number of buffers (leave at 2 as default)
 
         avail = [rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE]
+        #
         rwAvailabilityMessage.wheelAvailability = avail
         unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwAvailInMsgName, inputMessageSize,
                                               0, rwAvailabilityMessage)
@@ -211,22 +217,49 @@ def subModuleTestFunction(show_plots):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                     range(3))
     print '\n Lr = ', moduleOutput[:, 1:]
-    
-    # set the filtered output truth states
 
-    trueVector = [
-               [-18.98045163, 25.04949262, -21.68220099]
-            , [-18.98045163,  25.04949262, -21.68220099]
-            , [-19.01598385,  25.0980235,  -21.76570084]
-            , [-18.98045163,  25.04949262, -21.68220099]
-            , [-19.01598385,  25.0980235,  -21.76570084]
-               ]
+
+    # set the filtered output truth states
+    if intGain == 0.01 and rwNum == 4:
+        expectedVec = [
+                [-18.98045163, 25.04949262, -21.68220099],
+                [-18.98045163, 25.04949262, -21.68220099],
+                [-19.01598385, 25.0980235, -21.76570084],
+                [-18.98045163, 25.04949262, -21.68220099],
+                [-19.01598385, 25.0980235, -21.76570084]]
+
+    elif intGain ==0.01 and rwNum == 0:
+        expectedVec = [
+             [-16.115, 25.065, -23.495],
+             [-16.115, 25.065, -23.495],
+             [-16.14215, 25.1124, -23.5829],
+             [-16.115, 25.065, -23.495],
+             [-16.14215, 25.1124, -23.5829]]
+
+    elif intGain == -1 and rwNum == 4:
+        expectedVec = [
+                [-1.58409754, 4.1143559, -1.59267836],
+                [-1.58409754, 4.1143559, -1.59267836],
+                [-1.58409754, 4.1143559, -1.59267836],
+                [-1.58409754, 4.1143559, -1.59267836],
+                [-1.58409754, 4.1143559, -1.59267836]]
+    elif intGain == -1 and rwNum == 0:
+        expectedVec = [
+            [-1.435, 3.865, -1.495],
+            [-1.435, 3.865, -1.495],
+            [-1.435, 3.865, -1.495],
+            [-1.435, 3.865, -1.495],
+            [-1.435, 3.865, -1.495]]
+
+    else:
+         testFailCount += 1
+         testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed with unsupported input parameters!")
 
     # compare the module results to the truth values
     accuracy = 1e-8
-    for i in range(0,len(trueVector)):
+    for i in range(0, len(expectedVec)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
+        if not unitTestSupport.isArrayEqual(moduleOutput[i],expectedVec[i],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" + str(moduleOutput[i,0]*macros.NANO2SEC) + "sec\n")
 
