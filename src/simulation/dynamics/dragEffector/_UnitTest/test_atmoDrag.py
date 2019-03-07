@@ -100,10 +100,6 @@ def run(show_plots, orbitCase, planetCase):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
-    #
-    #  From here on there scenario python code is found.  Above this line the code is to setup a
-    #  unitTest environment.  The above code is not critical if learning how to code BSK.
-    #
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -131,7 +127,7 @@ def run(show_plots, orbitCase, planetCase):
 
     dragEffector = dragDynamicEffector.DragDynamicEffector()
     dragEffector.ModelTag = "DragEff"
-    print dragEffector.ModelTag
+
     dragEffectorTaskName = "drag"
     dragEffector.coreParams.projectedArea = projArea
     dragEffector.coreParams.dragCoeff = dragCoeff
@@ -260,16 +256,16 @@ def run(show_plots, orbitCase, planetCase):
     refDragForce = np.zeros([endInd,3])
     refDensData = np.zeros([endInd,1])
     accuracy = 1e-13
-    print planetCase
-    print orbitCase
+    # print planetCase
+    # print orbitCase
     for ind in range(0, endInd-1):
-        print "Position data:", posData[ind,1:]
-        print "Velocity data:", velData[ind,1:]
-        print "Density data:", densData[ind,1]
+        # print "Position data:", posData[ind,1:]
+        # print "Velocity data:", velData[ind,1:]
+        # print "Density data:", densData[ind,1]
         refDragForce[ind,:] = cannonballDragComp(dragCoeff,densData[ind,1],projArea,velData[ind,1:])
-        print "Reference drag data:", refDragForce[ind,:]
-        print "Drag Data:", dragForce[ind,1:]
-        print ""
+        # print "Reference drag data:", refDragForce[ind,:]
+        # print "Drag Data:", dragForce[ind,1:]
+        # print ""
         # check a vector values
     for ind in range(1,endInd-1):
         if not unitTestSupport.isArrayEqual(dragForce[ind,:], refDragForce[ind,:],3,accuracy):
@@ -281,7 +277,7 @@ def run(show_plots, orbitCase, planetCase):
     #   plot the results
     #
     if show_plots:
-        fileNameString = filename[len(path)+6:-3]
+        plt.close("all")  # clears out plots from earlier test runs
 
         # draw the inertial position vector components
         plt.figure(1)
@@ -346,26 +342,23 @@ def run(show_plots, orbitCase, planetCase):
         plt.xlabel('Time [orbits]')
         plt.ylabel('SMA [km]')
 
-        plt.figure()
-        fig = plt.gcf()
-        ax = fig.gca()
-        ax.ticklabel_format(useOffset=False, style='plain')
-        plt.plot(relPosData[:, 0] * macros.NANO2SEC, relPosData[:, 1:4])
-        plt.title('Density Data vs. Time')
-        plt.xlabel('Time')
-        plt.ylabel('Density in kg/m^3')
 
         plt.figure()
         fig = plt.gcf()
         ax = fig.gca()
-        ax.ticklabel_format(useOffset=False, style='plain')
+        ax.ticklabel_format(useOffset=False, style='sci')
         plt.plot( densData[:,0]*macros.NANO2SEC, densData[:,1])
         plt.title('Density Data vs. Time')
         plt.xlabel('Time')
         plt.ylabel('Density in kg/m^3')
 
         plt.show()
-        plt.close()
+        plt.close("all")
+
+    if testFailCount == 0:
+        print "PASSED: " + dragEffector.ModelTag
+    else:
+        print "Failed: " + dragEffector.ModelTag
 
     return testFailCount, testMessages
 
