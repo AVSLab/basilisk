@@ -141,6 +141,10 @@ int32_t ukfLUD(double *sourceMat, int32_t nRow, int32_t nCol,
 	double TINY = 1.0E-14;
 
 	mSetZero(destMat, nRow, nCol);
+	for(i=0; i<nRow; i++)
+    {
+	    indx[i] = i;
+    }
 	if (nRow != nCol)
 	{
 		BSK_PRINT(MSG_WARNING,"Can't get a lower-triangular inverse of non-square matrix.\n");
@@ -176,6 +180,7 @@ int32_t ukfLUD(double *sourceMat, int32_t nRow, int32_t nCol,
 			destMat[i*nRow + j] = sum;
 		}
 		big = 0.0;
+		imax = j;
 		for (i = j; i < nRow; i++)
 		{
 			sum = destMat[i*nRow + j];

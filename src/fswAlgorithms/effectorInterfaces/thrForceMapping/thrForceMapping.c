@@ -355,7 +355,7 @@ void findMinimumNormForce(thrForceMappingConfig *ConfigData,
                 CDCDT11 += CD[0][k]*CD[0][k];
             }
 
-            if (CDCDT11 > ConfigData->epsilon) {
+            if (CDCDT11 > ConfigData->epsilon && fabs(CDCDT11) > 0.0) {
                 tempVec[0] = v3Dot(ConfigData->controlAxes_B,   Lr_B);
                 tempVec[0] = tempVec[0] / CDCDT11;
                 for (i=0;i<numForces;i++) {

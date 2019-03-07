@@ -1074,7 +1074,6 @@ double mDeterminant(void *mx, size_t dim)
         result = m_mx[MXINDEX(dim, 0, 0)] * m_mx[MXINDEX(dim, 1, 1)]
                  - m_mx[MXINDEX(dim, 1, 0)] * m_mx[MXINDEX(dim, 0, 1)];
     } else {
-        result = 0;
         for(k = 0; k < dim; k++) {
             for(i = 1; i < dim; i++) {
                 ii = 0;

@@ -34,6 +34,7 @@ typedef struct {
     char outputNavName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char accPktInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the input accelerometer message*/
     uint32_t msgCount;      /*!< [-] The total number of messages read from inputs */
+    uint32_t dvInitialized; /*!< [-] Flag indicating whether DV has been started completely*/
     uint64_t previousTime;  /*!< [ns] The clock time associated with the previous run of algorithm*/
     int32_t outputNavMsgID;    /*!< [-] The ID associated with the outgoing message*/
     int32_t accPktInMsgID;     /*!< [-] The ID associated with the incoming accelerometer buffer*/
@@ -49,6 +50,8 @@ extern "C" {
     void CrossInit_dvAccumulation(DVAccumulationData *ConfigData, uint64_t moduleID);
     void Update_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime,
         uint64_t moduleID);
+    void Reset_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime,
+                               uint64_t moduleID);
     void dvAccumulation_swap(AccPktDataFswMsg *p, AccPktDataFswMsg *q);
     int dvAccumulation_partition(AccPktDataFswMsg *A, int start, int end);
     void dvAccumulation_QuickSort(AccPktDataFswMsg *A, int start, int end);
