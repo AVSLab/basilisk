@@ -19,6 +19,12 @@ We are very excited by the great capabilities that this software already has, an
     <li>
         navAggregrate module has new documentation and unit tests.
     </li>
+    <li>
+    small FSW algorithm enhancements to ensure we never divide by zero
+    </li>
+    <li>
+    new unit test for RW-config data
+    </li>
 </ul>
 
 
