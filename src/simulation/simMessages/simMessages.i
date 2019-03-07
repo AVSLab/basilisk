@@ -100,7 +100,7 @@ GEN_SIZEOF(HingedRigidBodySimMsg)
 %include "pyBatteryOutMsg.h"
 GEN_SIZEOF(PyBatteryOutMsg)
 %include "atmoPropsSimMsg.h"
-GEN_SIZEOF(atmoPropsSimMsg)
+GEN_SIZEOF(AtmoPropsSimMsg)
 
 #ifndef CSHARP_ROX
 %pythoncode %{

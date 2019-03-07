@@ -25,6 +25,11 @@ We are very excited by the great capabilities that this software already has, an
     <li>
     new unit test for RW-config data
     </li>
+    <li> included a new environment abstract class that creates a common interface to space environment modules like atmospheric density, or magnetic fields in the future.  The exponentialAtmosphere module is now gone and replaced with a more general `atmosphere` module.  This currently implements the exponential model, but will include other models in the future.  NOTE: this change breaks earlier simulation that used atmospheric drag.  The old `exponentialAtmosphere` model must be replaced with the new `atmosphere` model. See the integrated and unit tests for details, as well as the module documentation.  
+    </li>
+    <li>
+    added new documentation on using the new atmosphere module to simulate the atmospheric density and temperature information for a series of spacecraft locations about a planet.
+    </li>
 </ul>
 
 

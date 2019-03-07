@@ -1,6 +1,14 @@
 # Basilisk Known Issues {#bskKnownIssues}
 
 
+## Version 0.X.X
+   <ul>
+        <li>WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk `src/` directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.
+</li>
+    <li>the `exponentialAtmosphere` module has been replaced with the new `atmosphere` module.  BSK simulations that used the older module must update to use the new module.  The module unit test scripts illustrate how to use this module, and the module PDF documentation discusses this as well.  The `dragEffector` integrated test is also updated to make use of the new module
+    </li>
+    </ul>
+
 ## Version 0.4.1
    <ul>
         <li>WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk `src/` directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.
