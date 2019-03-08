@@ -30,6 +30,10 @@ foreach(module ${swig_modules})
     get_filename_component(FileBase ${module} NAME_WE)
     get_filename_component(FileDir ${module} DIRECTORY)
 	set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/fswAlgorithms/${FileBase}")
+	
+	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/CMakeLists.txt")
+		continue()
+	endif()
 
     file(GLOB gen_files
         "../simulation/_GeneralModuleFiles/*.cpp"
