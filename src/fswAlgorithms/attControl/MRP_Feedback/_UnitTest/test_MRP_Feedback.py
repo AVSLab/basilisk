@@ -61,15 +61,15 @@ from Basilisk.fswAlgorithms import rwMotorTorque
 @pytest.mark.parametrize("intGain", [0.01, -1])
 @pytest.mark.parametrize("rwNum", [4, 0])
 
-def test_MRP_Feedback(show_plots,intGain, rwNum):
+def test_MRP_Feedback(show_plots, intGain, rwNum):
     # each test method requires a single assert method to be called
 
+    [testResults, testMessage] = run(show_plots,intGain, rwNum)
 
-    [testResults, testMessage] = subModuleTestFunction(show_plots,intGain, rwNum)
     assert testResults < 1, testMessage
 
 
-def subModuleTestFunction(show_plots, intGain, rwNum):
+def run(show_plots, intGain, rwNum):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -114,11 +114,8 @@ def subModuleTestFunction(show_plots, intGain, rwNum):
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
 
-    #   attGuidOut Message:
+    #   AttGuidFswMsg Message:
     guidCmdData = MRP_Feedback.AttGuidFswMsg()  # Create a structure for the input message
-    inputMessageSize = guidCmdData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputGuidName,
-                                          inputMessageSize, 2)# number of buffers (leave at 2 as default, don't make zero)
     sigma_BR = [0.3, -0.5, 0.7]
     guidCmdData.sigma_BR = sigma_BR
     omega_BR_B = [0.010, -0.020, 0.015]
@@ -127,43 +124,34 @@ def subModuleTestFunction(show_plots, intGain, rwNum):
     guidCmdData.omega_RN_B = omega_RN_B
     domega_RN_B = [0.0002, 0.0003, 0.0001]
     guidCmdData.domega_RN_B = domega_RN_B
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputGuidName, inputMessageSize,
-                                          0, guidCmdData)
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               moduleConfig.inputGuidName,
+                               guidCmdData)
 
     # vehicleConfigData Message:
     vehicleConfigOut = MRP_Feedback.VehicleConfigFswMsg()
-    inputMessageSize = vehicleConfigOut.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.vehConfigInMsgName,
-                                          inputMessageSize, 2)            # number of buffers (leave at 2 as default, don't make zero)
     I = [1000., 0., 0.,
          0., 800., 0.,
          0., 0., 800.]
     vehicleConfigOut.ISCPntB_B = I
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.vehConfigInMsgName,
-                                          inputMessageSize,
-                                          0, vehicleConfigOut)
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               moduleConfig.vehConfigInMsgName,
+                               vehicleConfigOut)
 
     # wheelSpeeds Message
     rwSpeedMessage = MRP_Feedback.RWSpeedIntMsg()
-    inputMessageSize = rwSpeedMessage.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputRWSpeedsName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-
-    Omega = [10.0, 25.0, 50.0, 100.0]
+    Omega = [10.0, 25.0, 50.0, 100.0] # rad/sec
     rwSpeedMessage.wheelSpeeds = Omega
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWSpeedsName,
-                                          inputMessageSize,
-                                          0,
-                                          rwSpeedMessage)
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               moduleConfig.inputRWSpeedsName,
+                               rwSpeedMessage)
 
     # wheelConfigData message
     def writeMsgInWheelConfiguration():
         rwConfigParams = MRP_Feedback.RWArrayConfigFswMsg()
-        inputMessageSize = rwConfigParams.getStructSize()
-        unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwParamsInMsgName,
-                                              inputMessageSize, 2) # number of buffers (leave at 2 as default)
 
         rwConfigParams.GsMatrix_B = [
             1.0, 0.0, 0.0,
@@ -173,23 +161,25 @@ def subModuleTestFunction(show_plots, intGain, rwNum):
         ]
         rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
         rwConfigParams.numRW = rwNum
-        unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwParamsInMsgName, inputMessageSize,
-                                              0, rwConfigParams)
+        unitTestSupport.setMessage(unitTestSim.TotalSim,
+                                   unitProcessName,
+                                   moduleConfig.rwParamsInMsgName,
+                                   rwConfigParams)
+
     if len(moduleConfig.rwParamsInMsgName)>0:
         writeMsgInWheelConfiguration()
 
     # wheelAvailability message
     def writeMsgInWheelAvailability():
         rwAvailabilityMessage = rwMotorTorque.RWAvailabilityFswMsg()
-        inputMessageSize = rwAvailabilityMessage.getStructSize()
-        unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwAvailInMsgName,
-                                              inputMessageSize, 2) # number of buffers (leave at 2 as default)
 
         avail = [rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE]
-        #
         rwAvailabilityMessage.wheelAvailability = avail
-        unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwAvailInMsgName, inputMessageSize,
-                                              0, rwAvailabilityMessage)
+        unitTestSupport.setMessage(unitTestSim.TotalSim,
+                                   unitProcessName,
+                                   moduleConfig.rwAvailInMsgName,
+                                   rwAvailabilityMessage)
+
     if len(moduleConfig.rwAvailInMsgName)>0:
         writeMsgInWheelAvailability()
 
@@ -216,7 +206,7 @@ def subModuleTestFunction(show_plots, intGain, rwNum):
     moduleOutputName = "torqueRequestBody"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                     range(3))
-    print '\n Lr = ', moduleOutput[:, 1:]
+    # print '\n Lr = ', moduleOutput[:, 1:]
 
 
     # set the filtered output truth states
@@ -267,25 +257,12 @@ def subModuleTestFunction(show_plots, intGain, rwNum):
 
 
 
-    ## plot a sample variable
-    #plt.figure(1)
-    #plt.plot(dummyState[:,0]*macros.NANO2SEC, dummyState[:,1], label='Sample Variable')
-    #plt.legend(loc='upper left')
-    #plt.xlabel('Time [s]')
-    #plt.ylabel('Variable Description [unit]')
-
-
-
-
-
-    # If the argument provided at commandline "--show_plots" evaluates as true,
-    # plot all figures
-    if show_plots:
-          plt.show()
-
     # print out success message if no error were found
     if testFailCount == 0:
         print   "PASSED: " + moduleWrap.ModelTag
+    else:
+        print "Failed: " + moduleWrap.ModelTag
+
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -299,4 +276,7 @@ def subModuleTestFunction(show_plots, intGain, rwNum):
 #   authmatically executes the runUnitTest() method
 #
 if __name__ == "__main__":
-    test_MRP_Feedback(False)
+    test_MRP_Feedback(False,    # showplots
+                      0.01,     # intGain
+                      4         # rwNum
+                      )
