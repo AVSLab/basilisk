@@ -45,13 +45,19 @@ Simply call the module reset function prior to using this control module.  This 
 
 \section{Algorithm}
 		 This module employs the MRP feedback algorithm of Example 8.14 of Reference \citenum{schaub}.  This  nonlinear attitude tracking control includes an integral measure of the attitude error.  Further, we seek to avoid quadratic $\bm\omega$ terms to reduce the likelihood of control saturation during a detumbling phase.  Let the new nonlinear feedback control be expressed as
-		\begin{multline}
+		\begin{equation}
 			\label{eq:GusRW}
-			[G_{s}]\bm u_{s} = K \bm\sigma + [P] \delta\bm\omega + [P][K_{I}] \bm z - [I_{\text{RW}}](\dot{\bm\omega}_{r} - [\tilde{\bm\omega}]\bm\omega_{r}) + \bm L
+			[G_{s}]\bm u_{s} = -\bm L_{r} 
+		\end{equation}
+		where
+		\begin{multline}
+			\label{eq:Lr}
+			\bm L_{r} =  -K \bm\sigma - [P] \delta\bm\omega - [P][K_{I}] \bm z  + [I_{\text{RW}}](\dot{\bm\omega}_{r} - [\tilde{\bm\omega}]\bm\omega_{r}) - \bm L
 			\\
-			- ([\tilde{\bm \omega}_{r}] + [\widetilde{K_{I}\bm z}])
+			+ ([\tilde{\bm \omega}_{r}] + [\widetilde{K_{I}\bm z}])
 			\left([I_{\text{RW}}]\bm\omega + [G_{s}]\bm h_{s} \right)
 		\end{multline}
+
 		The integral attitude error measure $\bm z$ is defined through
 		\begin{equation*}
 			\bm z = K \int_{t_{0}}^{t} \bm\sigma \text{d}t + [I_{\text{RW}}](\delta\bm\omega - \delta\bm\omega_{0})
