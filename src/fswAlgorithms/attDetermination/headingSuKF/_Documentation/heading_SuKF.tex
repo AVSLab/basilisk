@@ -4,11 +4,11 @@
 
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
 
-\newcommand{\ModuleName}{test\textunderscore sunlineSuKF}
-\newcommand{\subject}{Sunline Switch-uKF Module and Test}
+\newcommand{\ModuleName}{test\textunderscore headingSuKF}
+\newcommand{\subject}{heading Switch-uKF Module and Test}
 \newcommand{\status}{Initial document}
 \newcommand{\preparer}{T. Teil}
-\newcommand{\summary}{This module implements and tests a Switch Unscented Kalman Filter in order to estimate the sunline direction.}
+\newcommand{\summary}{This module implements and tests a Switch Unscented Kalman Filter in order to estimate an arbitrary heading direction.}
 
 
 \begin{document}
@@ -65,7 +65,7 @@ was implemented for it. More information on the filter derivation can be found i
 \subsection{Filter Derivation} %%%
 
 The Switch-uKF attempts to avoid subtracting any terms from the state, while still removing the unobservable component of the rate. In order to do this, an appropriate frame must be defined.
-In order to not track the rate component alongside the sunline direction, that vector needs to be one of the basis vectors of the frame. It is decided to be the first vector for the frame, and therefore in that frame, $\omega_1$ the component of the rotation rate can be removed from the states. 
+In order to not track the rate component alongside the heading direction, that vector needs to be one of the basis vectors of the frame. It is decided to be the first vector for the frame, and therefore in that frame, $\omega_1$ the component of the rotation rate can be removed from the states. 
 This frame is called $\mathcal{S}_1 = \{\hat{\bm s}_1 = \frac{\bm d}{|\bm d|}, \hat{\bm s}_2, \hat{\bm s}_3 \}$. This is seen in Figure \ref{fig:Switches}, where the dotted line represents the $30 \dg$ threshold cone before switching frames. 
 
 \begin{figure}[t]
@@ -83,9 +83,9 @@ The problem that arises is the singularity that occurs when $\hat{\bm b}_1$ and 
 \begin{equation}\label{eq:s2bar}
 \hat{\bar{\bm s}}_2 = \frac{\hat{\bar{\bm s}}_1 \times \hat{\bm b}_2}{|\hat{\bar{\bm s}}_1 \times \hat{\bm b}_2|}
 \end{equation}
-With both these frames, $\mathcal{S}_1$ and $\mathcal{S}_2$, the singularities can always be avoided. Indeed, $\mathcal{S}_1$ becomes singular when $\bm d$ approches $\hat{\bm b}_1$, while $\mathcal{S}_2$ becomes singular when the sunheading approaches $\hat{\bm b}_2$. By changing frames, whenever the sunline gets within a safe cone of $30 \dg$ (a modifiable value) of $\hat{\bm b}_1$, the frame is rotated into $\mathcal{S}_2$, which is not singular. Similarly, when $\bm d$ approches $\hat{\bm b}_2$ the frame is switched back to $\mathcal{S}_1$.
+With both these frames, $\mathcal{S}_1$ and $\mathcal{S}_2$, the singularities can always be avoided. Indeed, $\mathcal{S}_1$ becomes singular when $\bm d$ approches $\hat{\bm b}_1$, while $\mathcal{S}_2$ becomes singular when the sunheading approaches $\hat{\bm b}_2$. By changing frames, whenever the heading gets within a safe cone of $30 \dg$ (a modifiable value) of $\hat{\bm b}_1$, the frame is rotated into $\mathcal{S}_2$, which is not singular. Similarly, when $\bm d$ approches $\hat{\bm b}_2$ the frame is switched back to $\mathcal{S}_1$.
 
-Because the two frames share the sunline vector $\bm d$, this vector is the same in both frames. This is a clear advantage as this is the vector we desire to estimate, and not having to rotate it avoids numerical issues.
+Because the two frames share the heading vector $\bm d$, this vector is the same in both frames. This is a clear advantage as this is the vector we desire to estimate, and not having to rotate it avoids numerical issues.
 The rotation of the rates is done by computing the following DCMs, of which all the vectors are known.
 \begin{equation}\label{eq:DCMs}
  [\mathcal{B}\mathcal{S}_1] = \begin{bmatrix} \leftexp{B}{\hat{\bm s}_1} & \leftexp{B}{\hat{\bm s}_2} & \leftexp{B}{\hat{\bm s}_3}\end{bmatrix} \hspace{1cm}  [\mathcal{B}\mathcal{S}_2] = \begin{bmatrix} \leftexp{B}{\hat{\bar{\bm s}}_1} & \leftexp{B}{\hat{\bar{\bm s}}_2} & \leftexp{B}{\hat{\bar{\bm s}}_3}\end{bmatrix} \hspace{1cm}  [\mathcal{S}_2\mathcal{S}_1] = [\mathcal{B}\mathcal{S}_2] ^T [\mathcal{B}\mathcal{S}_1] 
@@ -122,14 +122,14 @@ When writing out the values of the state and covariance, it is necessary to brin
 \subsection{Measurements}
 The measurement model is given in equation \ref{eq:meas}, and the $H$ matrix defined as $H = \left[\frac{\partial \bm G (\bm X, t_i)}{\partial \bm X}\right]^{*}$ is given in equation $\ref{eq:Hmat}$. 
 
-In this filter, the only measurements used are from the coarse sun sensor. For the $i^\mathrm{th}$ sensor, the measurement is simply given by the dot product of the sunline heading and the normal to the sensor. This yields easy partial derivatives for the H matrix, which is a matrix formed of the rows of transposed normal vectors (only for those which received a measurement). Hence the $H$ matrix has a changing size depending on the amount of measurements. 
+In this filter, the only measurements used are from the Opnav measurement. These were processed outisde of this module in order to give just the heading $\bm d$ of the spacecraft. Hence the $H$ matrix in \eqref{eq:Hmat}. 
 
 \begin{equation}\label{eq:meas}
-\bm G_i(\bm X) = \bm n_i \cdot \bm d
+\bm G_i(\bm X) = \bm d
 \end{equation}
 
 \begin{equation}\label{eq:Hmat}
-\bm H(\bm X) = \begin{bmatrix} \bm n_1^T \\ \vdots \\ \bm n_i^T \end{bmatrix} 
+\bm H(\bm X) = \begin{bmatrix} [I]_3 & [0]_3 \end{bmatrix} 
 \end{equation}
 
 
@@ -167,10 +167,9 @@ In order for the filter to run, the user must set a few parameters:
 The messages must also be set as such:
 
 \begin{itemize}
-\item    \texttt{ filterObject.navStateOutMsgName = "sunline$\_$state$\_$estimate"}
-\item    \texttt{ filterObject.filtDataOutMsgName = "sunline$\_$filter$\_$data"}
-\item   \texttt{ filterObject.cssDataInMsgName = "css$\_$sensors$\_$data"}
-\item   \texttt{ filterObject.cssConfInMsgName = "css$\_$config$\_$data"}
+\item    \texttt{ filterObject.opnavOutMsgName = "opnav\_state\_estimate"}
+\item    \texttt{ filterObject.filtDataOutMsgName = "heading$\_$filter$\_$data"}
+\item   \texttt{ filterObject.opnavDataInMsgName = "opnav\_sensor\_data"}
 \end{itemize}
 
 \subsection{Inputs and Outputs}
@@ -179,15 +178,15 @@ The SuKF reads in the measurements from the coarse sun sensors. These are under 
 
 
 \section{Test Design}
-The unit test for the sunlineSuKF module is located in:\\
+The unit test for the headingSuKF module is located in:\\
 
 \noindent
-{\tt fswAlgorithms/attDetermination/sunlineSuKF/$\_$UnitTest/test$\_$SunlineSuKF.py} \\
+{\tt fswAlgorithms/attDetermination/headingSuKF/$\_$UnitTest/test$\_$headingSuKF.py} \\
 
 As well as another python file containing plotting functions:
 
 \noindent
-{\tt fswAlgorithms/attDetermination/sunlineSuKF/$\_$UnitTest/SunlineSuKF$\_$test$\_$utilities.py} \\
+{\tt fswAlgorithms/attDetermination/headingSuKF/$\_$UnitTest/headingSuKF$\_$test$\_$utilities.py} \\
 
 The test is split up into 3 subtests. The first test creaks up all of the individual filter methods and tests them individually. These notably go over the square-root unscented filter specific functions. The second test verifies that in the case where the state is zeroed out from the start of the simulation, it remains at zero. The third test verifies the behavior of the time update with a measurement modification in the middle of the run. 
 
@@ -224,7 +223,7 @@ In each of these individual tests, random inputs are fed to the methods and thei
 
 \input{AutoTeX/StatesPlotprop.tex}
 
-This test also takes no measurements in, and propagates with the expectation of no change. It then tests that the states and covariance are as expected throughout the time of simulation. Plotted results are seen in Figure \ref{fig:StatesPlotprop}. We indeed see that the state and covariance that evolve nominally and without bias .
+This test also takes no measurements in, and propagates with the expectation of no change. It then tests that the states and covariance are as expected throughout the time of simulation. Plotted results are seen in Figure \ref{fig:StatesPlotPropp}. We indeed see that the state and covariance that evolve nominally and without bias .
 
 Tolerance to absolute error: $\epsilon = 10^{-10}$
 
@@ -237,12 +236,12 @@ Tolerance to absolute error without measurement noise: $\epsilon = 10^{-10}$
 
 \textcolor{ForestGreen}{Passed}
 
-Plotted results are seen in Figures \ref{fig:StatesPlotupdate}, and \ref{fig:PostFitupdate}. Figure \ref{fig:StatesPlotupdate} shows the state error and covariance over the run. We see the covariance initially grow, then come down quickly as measurements are used. It grows once again as the measurements stop before bringing the state error back to zero with a change in sun heading. 
+Plotted results are seen in Figures \ref{fig:StatesPlotUpdate}, and \ref{fig:PostFitUpdate}. Figure \ref{fig:StatesPlotUpdate} shows the state error and covariance over the run. We see the covariance initially grow, then come down quickly as measurements are used. It grows once again as the measurements stop before bringing the state error back to zero with a change in sun heading. 
 
-Figure \ref{fig:PostFitupdate} shows the post fit residuals for the filter, with no measurement noise. We see that the observations are read in well an that the residuals are brought back down to zero.
+Figure \ref{fig:PostFitUpdate} shows the post fit residuals for the filter, with no measurement noise. We see that the observations are read in well an that the residuals are brought back down to zero.
 
-\input{AutoTeX/StatesPlotupdate.tex}
-\input{AutoTeX/PostFitupdate.tex}
+\input{AutoTeX/StatesPlotUpdate.tex}
+\input{AutoTeX/PostFitUpdate.tex}
 
 
 \bibliographystyle{AAS_publication}   % Number the references.

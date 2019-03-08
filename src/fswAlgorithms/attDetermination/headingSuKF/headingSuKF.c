@@ -157,6 +157,8 @@ void Update_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t callTime,
     ClockTime = 0;
     ReadSize = 0;
     memset(&(ConfigData->opnavInBuffer), 0x0, sizeof(OpnavFswMsg));
+    v3SetZero(ConfigData->obs);
+    v3SetZero(ConfigData->postFits);
     ReadMessage(ConfigData->opnavDataInMsgId, &ClockTime, &ReadSize,
         sizeof(OpnavFswMsg), (void*) (&(ConfigData->opnavInBuffer)), moduleID);
     
@@ -186,9 +188,6 @@ void Update_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t callTime,
         headingSuKFTimeUpdate(ConfigData, newTimeTag);
     }
     
-    /*! - Compute Post Fit Residuals, first get Y (eq 22) using the states post fit*/
-    headingSuKFMeasModel(ConfigData);
-    
     /*! - Compute the value for the yBar parameter (equation 23)*/
     vSetZero(yBar, OPNAV_MEAS);
     for(i=0; i<ConfigData->countHalfSPs*2+1; i++)
@@ -199,8 +198,12 @@ void Update_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t callTime,
         vAdd(yBar, OPNAV_MEAS, tempYVec, yBar);
     }
     
-    /*! - The post fits are y- ybar*/
-    mSubtract(ConfigData->obs, OPNAV_MEAS, 1, yBar, ConfigData->postFits);
+    /*! - The post fits are y - ybar if a measurement was read*/
+    if (1500 - newTimeTag < 1E-10){
+        return;
+    }
+    if(!v3IsZero(ConfigData->obs, 1E-10)){
+        mSubtract(ConfigData->obs, OPNAV_MEAS, 1, yBar, ConfigData->postFits);}
     
     /* Switch the rates back to omega_BN instead of oemga_SB */
     vCopy(ConfigData->state, HEAD_N_STATES_SWITCH, states_BN);

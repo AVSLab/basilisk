@@ -32,7 +32,7 @@ import SunLineSuKF_test_utilities as FilterPlots
 def setupFilterData(filterObject):
     filterObject.opnavOutMsgName = "opnav_state_estimate"
     filterObject.filtDataOutMsgName = "heading_filter_data"
-    filterObject.opnavDataInMsgName = "opnav_sensors_data"
+    filterObject.opnavDataInMsgName = "opnav_sensor_data"
 
     filterObject.alpha = 0.02
     filterObject.beta = 2.0
@@ -47,8 +47,8 @@ def setupFilterData(filterObject):
                           0.0, 0.0, 0.0, 0.0, 0.001]
 
     qNoiseIn = np.identity(5)
-    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.00001*0.00001
-    qNoiseIn[3:5, 3:5] = qNoiseIn[3:5, 3:5]*0.000001*0.000001
+    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.01*0.01
+    qNoiseIn[3:5, 3:5] = qNoiseIn[3:5, 3:5]*0.001*0.001
     filterObject.qNoise = qNoiseIn.reshape(25).tolist()
     filterObject.qObsVal = 0.001
     filterObject.sensorUseThresh = 0.
@@ -380,10 +380,11 @@ def StateUpdateSunLine(show_plots):
     moduleConfig.stateInit = [1., 0.2, 0.1, 0.01, 0.001]
 
     unitTestSim.InitializeSimulation()
-
-    for i in range(500):
-        if i > 20 and i%100 == 0:
-            # inputData.rel_pos += - np.cross(testOmega, testVector) * 0.5
+    t1 = 1000
+    for i in range(t1):
+        if i > 0 and i%50 == 0:
+            inputData.timeTag = macros.sec2nano(i * 0.5)
+            inputData.rel_pos += np.random.normal(0, 0.001, 3)
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.opnavDataInMsgName,
                                       inputMessageSize,
                                       unitTestSim.TotalSim.CurrentNanos,
@@ -404,18 +405,20 @@ def StateUpdateSunLine(show_plots):
             testFailCount += 1
             testMessages.append("State update failure")
 
-    testVector = np.array([0.6, 0.1, 0.2])
+    testVector = np.array([0.6, -0.1, 0.2])
     stateTarget = testVector.tolist()
     inputData.rel_pos = stateTarget
     stateTarget.extend([0.0, 0.0])
-    for i in range(1000):
+
+    for i in range(t1):
         if i%50 == 0:
-            # inputData.rel_pos += - np.cross(testOmega, testVector) * 0.5
+            inputData.timeTag = macros.sec2nano(i*0.5 +t1 +1)
+            inputData.rel_pos += np.random.normal(0, 0.001, 3)
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.opnavDataInMsgName,
                                       inputMessageSize,
                                       unitTestSim.TotalSim.CurrentNanos,
                                       inputData)
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i+501)*0.5))
+        unitTestSim.ConfigureStopTime(macros.sec2nano((i+t1 +1)*0.5))
         unitTestSim.ExecuteSimulation()
 
     stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", range(5))
@@ -432,9 +435,9 @@ def StateUpdateSunLine(show_plots):
             testFailCount += 1
             testMessages.append("State update failure")
 
-    FilterPlots.StateCovarPlot(stateLog, covarLog, show_plots)
-    FilterPlots.StateCovarPlot(stateErrorLog, covarLog, show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, show_plots)
+    FilterPlots.StateCovarPlot(stateLog, covarLog, 'Update', show_plots)
+    FilterPlots.StateCovarPlot(stateErrorLog, covarLog, 'Update_Error', show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, 'Update', show_plots)
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -484,8 +487,8 @@ def StatePropSunLine(show_plots):
     postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", range(3))
     covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", range(5*5))
 
-    FilterPlots.StateCovarPlot(stateLog, covarLog,show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, show_plots)
+    FilterPlots.StateCovarPlot(stateLog, covarLog, 'Prop', show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, 'Prop', show_plots)
 
     for i in range(5):
         if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > 1.0E-10):
