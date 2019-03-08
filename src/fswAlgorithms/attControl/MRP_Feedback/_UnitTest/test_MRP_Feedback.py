@@ -273,7 +273,7 @@ def run(show_plots, intGain, rwNum):
 
 #
 #   This statement below ensures that the unitTestScript can be run as a stand-along python scripts
-#   authmatically executes the runUnitTest() method
+#   automatically executes the test_MRP_Feedback() method
 #
 if __name__ == "__main__":
     test_MRP_Feedback(False,    # showplots
