@@ -31,6 +31,7 @@
 #include "../../dynamics/_GeneralModuleFiles/stateData.h"
 #include "../../_GeneralModuleFiles/sys_model.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/astroConstants.h"
 
 /*! This method initializes some basic parameters for the module.
  @return void
@@ -43,7 +44,7 @@ Atmosphere::Atmosphere()
     this->envType = "exponential";  // - atmospheric environment label
     this->exponentialParams.baseDensity = 1.217;  // [kg/m^3] exponential atmosphere model base density
     this->exponentialParams.scaleHeight = 8500.0; // [m] exponential atmosphere model scale height
-    this->planetRadius = 6371.008 * 1000.0;
+    this->planetRadius = REQ_EARTH*1000; // [m] Earth equatorial radius
     this->localAtmoTemp = 293.0; // Placeholder temperature value from http://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
     this->relativePos.fill(0.0);
     this->scStateInMsgNames.clear();
