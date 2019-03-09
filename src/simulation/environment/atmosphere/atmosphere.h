@@ -40,7 +40,8 @@ typedef struct {
     double scaleHeight;                 //!< [m]      Altitude where base density has decreased by factor of e
 }exponentialProperties;
 
-
+#define EXPONENTIAL_MODEL "exponential"
+#define MSISE_MODEL "nrlmsise-00"
 
 
 //! @brief Atmosphere class used to calculate temperature / density above a body using multiple models.

@@ -41,7 +41,7 @@ Atmosphere::Atmosphere()
     this->planetPosInMsgName = "";
     this->OutputBufferCount = 2;
     //! - Set the default atmospheric properties to those of Earth
-    this->envType = "exponential";  // - atmospheric environment label
+    this->envType = EXPONENTIAL_MODEL;  // - atmospheric environment label
     this->exponentialParams.baseDensity = 1.217;  // [kg/m^3] exponential atmosphere model base density
     this->exponentialParams.scaleHeight = 8500.0; // [m] exponential atmosphere model scale height
     this->planetRadius = REQ_EARTH*1000; // [m] Earth equatorial radius
@@ -121,7 +121,7 @@ void Atmosphere::SelfInit()
                 this->OutputBufferCount, "AtmoPropsSimMsg", moduleID);
         this->envOutMsgIds.push_back(tmpAtmoMsgId);
 
-        if(this->envType.compare(msisString)==0){
+        if(this->envType.compare(MSISE_MODEL)==0){
             BSK_PRINT(MSG_ERROR, "NRLMSISE-00 is not implemented. Skipping message init.\n")
         }
     }
@@ -151,7 +151,7 @@ void Atmosphere::CrossInit()
         this->atmoOutBuffer.push_back(tmpAtmo);
     }
 
-    if(this->envType.compare("nrlmsise-00")==0){
+    if(this->envType.compare(MSISE_MODEL)==0){
         //* [WIP] Also do MSISE messaging setup*//
         BSK_PRINT(MSG_ERROR, "NRLMSISE-00 is not implemented. Skipping message init.\n")
     }
@@ -179,7 +179,7 @@ void Atmosphere::WriteOutputMessages(uint64_t CurrentClock)
                                                   moduleID);
     }
 
-    if(this->envType.compare("nrlmsise-00")==0){
+    if(this->envType.compare(MSISE_MODEL)==0){
         /* [WIP] - Include additional outputs for other MSISE outputs (species count, etc.)*/
         BSK_PRINT(MSG_ERROR, "NRLMSISE-00 is not implemented. Skipping message write.\n")
     }
@@ -266,7 +266,7 @@ void Atmosphere::updateLocalAtmo(double currentTime)
         if(tmpAltitude > this->envMinReach &&
            (tmpAltitude < this->envMaxReach || this->envMaxReach < 0)) {
             //! - check for exponential atmosphere model case
-            if(this->envType.compare("exponential")==0){
+            if(this->envType.compare(EXPONENTIAL_MODEL)==0){
                 (*atmoMsgIt).neutralDensity = this->exponentialParams.baseDensity * exp(-1.0 * tmpAltitude / this->exponentialParams.scaleHeight);
                 (*atmoMsgIt).localTemp = this->localAtmoTemp;
 
