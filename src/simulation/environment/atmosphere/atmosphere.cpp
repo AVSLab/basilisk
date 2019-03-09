@@ -16,22 +16,12 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include <Eigen/Dense>
-#include <vector>
-#include "environment/spice/spice_interface.h"
-#include <cstring>
-#include <iostream>
-#include <cmath>
 
 #include "atmosphere.h"
 #include "architecture/messaging/system_messaging.h"
-#include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
 #include "utilities/bsk_Print.h"
-#include "../../dynamics/_GeneralModuleFiles/stateData.h"
-#include "../../_GeneralModuleFiles/sys_model.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
-#include "utilities/astroConstants.h"
 
 /*! This method initializes some basic parameters for the module.
  @return void
@@ -106,14 +96,8 @@ that were added using AddSpacecraftToModel. Additional model outputs are also in
 */
 void Atmosphere::SelfInit()
 {
-    std::string expString ("exponential");
-    std::string msisString ("nrlmsise-00");
-
-    std::string tmpAtmoMsgName;
     uint64_t tmpAtmoMsgId;
-
     std::vector<std::string>::iterator it;
-    std::vector<std::string>::iterator nameIt;
 
     //! - create all the environment output messages for each spacecraft
     for (it = this->envOutMsgNames.begin(); it!=this->envOutMsgNames.end(); it++) {
@@ -228,7 +212,7 @@ bool Atmosphere::ReadInputs()
                                               sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&this->planetState), moduleID);
     }
 
-    if(this->envType.compare("nrlmsise-00")==0){
+    if(this->envType.compare(MSISE_MODEL)==0){
         /* WIP - Also read in all the MSISE inputs.*/
         BSK_PRINT(MSG_ERROR, "NRLMSISE-00 is not implemented. Skipping message read.\n")
     }
@@ -245,13 +229,12 @@ void Atmosphere::updateLocalAtmo(double currentTime)
     double tmpAltitude = 0.0;   // [m] spacecraft altitude above planet radius
     double tmpPosMag;           // [m/s] Magnitude of the spacecraft's current position
     std::vector<SCPlusStatesSimMsg>::iterator it;
-    uint64_t atmoInd = 0;
 
 
     //! - loop over all the spacecraft
     std::vector<AtmoPropsSimMsg>::iterator atmoMsgIt;
     atmoMsgIt = this->atmoOutBuffer.begin();
-    for(it = scStates.begin(); it != scStates.end(); it++, atmoInd++, atmoMsgIt++){
+    for(it = scStates.begin(); it != scStates.end(); it++, atmoMsgIt++){
         //! - Computes planet relative state vector
         this->updateRelativePos(&(this->planetState), &(*it));
 
