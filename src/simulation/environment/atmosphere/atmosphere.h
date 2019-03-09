@@ -78,7 +78,7 @@ public:
     double planetRadius;                    //!< [m]      Radius of the local atmospheric body; altitude is computed as |r| - planetRadius
 
 private:
-    Eigen::Vector3d relativePos;            //!< [-] Container for local position
+    Eigen::Vector3d relativePos_N;          //!< [-] Container for local position vector in inertial frame
     uint64_t OutputBufferCount;	            //!< number of output buffers for messaging system
     std::vector<AtmoPropsSimMsg> atmoOutBuffer; //!< -- Message buffer for density messages
 

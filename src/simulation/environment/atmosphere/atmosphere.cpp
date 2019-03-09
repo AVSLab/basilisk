@@ -36,7 +36,7 @@ Atmosphere::Atmosphere()
     this->exponentialParams.scaleHeight = 8500.0; // [m] exponential atmosphere model scale height
     this->planetRadius = REQ_EARTH*1000; // [m] Earth equatorial radius
     this->localAtmoTemp = 293.0; // Placeholder temperature value from http://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
-    this->relativePos.fill(0.0);
+    this->relativePos_N.fill(0.0);
     this->scStateInMsgNames.clear();
     this->planetPosInMsgId = -1;
 
@@ -239,7 +239,7 @@ void Atmosphere::updateLocalAtmo(double currentTime)
         this->updateRelativePos(&(this->planetState), &(*it));
 
         //! - compute spacecraft altitude above planet radius
-        tmpPosMag = this->relativePos.norm();
+        tmpPosMag = this->relativePos_N.norm();
         tmpAltitude = tmpPosMag - this->planetRadius; //! - computes the altitude above the planet radius
 
         //! - zero the output message for each spacecraft by default
@@ -273,7 +273,7 @@ void Atmosphere::updateRelativePos(SpicePlanetStateSimMsg *planetState, SCPlusSt
     /*! determine spacecraft position relative to planet */
     for(iter = 0; iter < 3; iter++)
     {
-        this->relativePos[iter] = scState->r_BN_N[iter] - planetState->PositionVector[iter];
+        this->relativePos_N[iter] = scState->r_BN_N[iter] - planetState->PositionVector[iter];
     }
 
     return;
