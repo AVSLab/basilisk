@@ -263,6 +263,7 @@ def TestExponentialAtmosphere():
 
     #   Compare to expected values
     accuracy = 1e-5
+    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
     if len(densData) > 0:
         for ind in range(0,len(densData)):
