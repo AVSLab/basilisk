@@ -40,6 +40,7 @@ Atmosphere::Atmosphere()
     this->planetPosInMsgName = "";
     this->OutputBufferCount = 2;
     //! - Set the default atmospheric properties to those of Earth
+    this->envType = "exponential";
     this->exponentialParams.baseDensity = 1.217;
     this->exponentialParams.scaleHeight = 8500.0;
     this->planetRadius = 6371.008 * 1000.0;
