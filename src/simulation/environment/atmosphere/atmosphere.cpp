@@ -121,7 +121,7 @@ void Atmosphere::SelfInit()
         this->envOutMsgIds.push_back(tmpAtmoMsgId);
 
         if(this->envType.compare(msisString)==0){
-            BSK_PRINT(MSG_ERROR, "NRLMSISE-00 is not implemented. Skipping message init.")
+            BSK_PRINT(MSG_ERROR, "NRLMSISE-00 is not implemented. Skipping message init.\n")
         }
     }
 
@@ -152,7 +152,7 @@ void Atmosphere::CrossInit()
 
     if(this->envType.compare("nrlmsise-00")==0){
         //* [WIP] Also do MSISE messaging setup*//
-        BSK_PRINT(MSG_ERROR, "NRLMSISE-00 is not implemented. Skipping message init.")
+        BSK_PRINT(MSG_ERROR, "NRLMSISE-00 is not implemented. Skipping message init.\n")
     }
 
     return;
@@ -180,7 +180,7 @@ void Atmosphere::WriteOutputMessages(uint64_t CurrentClock)
 
     if(this->envType.compare("nrlmsise-00")==0){
         /* [WIP] - Include additional outputs for other MSISE outputs (species count, etc.)*/
-        BSK_PRINT(MSG_ERROR, "NRLMSISE-00 is not implemented. Skipping message write.")
+        BSK_PRINT(MSG_ERROR, "NRLMSISE-00 is not implemented. Skipping message write.\n")
     }
 }
 
@@ -215,7 +215,7 @@ bool Atmosphere::ReadInputs()
                 this->scStates.push_back(scMsg);
             }
     } else {
-        BSK_PRINT(MSG_ERROR, "Atmosphere model has no spacecraft added to it.");
+        BSK_PRINT(MSG_ERROR, "Atmosphere model has no spacecraft added to it.\n");
         scRead = false;
     }
 
@@ -229,7 +229,7 @@ bool Atmosphere::ReadInputs()
 
     if(this->envType.compare("nrlmsise-00")==0){
         /* WIP - Also read in all the MSISE inputs.*/
-        BSK_PRINT(MSG_ERROR, "NRLMSISE-00 is not implemented. Skipping message read.")
+        BSK_PRINT(MSG_ERROR, "NRLMSISE-00 is not implemented. Skipping message read.\n")
     }
 
     return(planetRead && scRead);
@@ -270,7 +270,7 @@ void Atmosphere::updateLocalAtmo(double currentTime)
                 (*atmoMsgIt).localTemp = this->localAtmoTemp;
 
             } else {
-                BSK_PRINT(MSG_WARNING, "Atmospheric model not set. Skipping computation.")
+                BSK_PRINT(MSG_WARNING, "Atmospheric model not set. Skipping computation.\n")
             }
         }
     }
