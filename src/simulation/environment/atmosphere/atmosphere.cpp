@@ -145,7 +145,7 @@ void Atmosphere::CrossInit()
     std::vector<std::string>::iterator it;
     this->atmoOutBuffer.clear();
     AtmoPropsSimMsg tmpAtmo;
-    memset(&tmpAtmo, 0x0, sizeof(tmpAtmo));
+    memset(&tmpAtmo, 0x0, sizeof(AtmoPropsSimMsg));
     for(it = this->scStateInMsgNames.begin(); it!=this->scStateInMsgNames.end(); it++){
         this->scStateInMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(SCPlusStatesSimMsg), moduleID));
         this->atmoOutBuffer.push_back(tmpAtmo);
