@@ -40,11 +40,11 @@ Atmosphere::Atmosphere()
     this->planetPosInMsgName = "";
     this->OutputBufferCount = 2;
     //! - Set the default atmospheric properties to those of Earth
-    this->envType = "exponential";
-    this->exponentialParams.baseDensity = 1.217;
-    this->exponentialParams.scaleHeight = 8500.0;
+    this->envType = "exponential";  // - atmospheric environment label
+    this->exponentialParams.baseDensity = 1.217;  // [kg/m^3] exponential atmosphere model base density
+    this->exponentialParams.scaleHeight = 8500.0; // [m] exponential atmosphere model scale height
     this->planetRadius = 6371.008 * 1000.0;
-    this->localAtmoTemp = 293.0; //! - Placeholder temperature value from http://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
+    this->localAtmoTemp = 293.0; // Placeholder temperature value from http://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
     this->relativePos.fill(0.0);
     this->scStateInMsgNames.clear();
     this->planetPosInMsgId = -1;
