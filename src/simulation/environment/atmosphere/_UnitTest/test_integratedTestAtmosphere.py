@@ -264,16 +264,20 @@ def TestExponentialAtmosphere():
     #   Compare to expected values
     accuracy = 1e-5
 
-    for ind in range(0,len(densData)):
-        dist = np.linalg.norm(posData[ind, 1:])
-        alt = dist - newAtmo.planetRadius
+    if len(densData) > 0:
+        for ind in range(0,len(densData)):
+            dist = np.linalg.norm(posData[ind, 1:])
+            alt = dist - newAtmo.planetRadius
 
-        trueDensity = expAtmoComp(alt, refBaseDens, refScaleHeight)
-        # check a vector values
-        if not unitTestSupport.isDoubleEqualRelative(densData[ind,1], trueDensity,accuracy):
-            testFailCount += 1
-            testMessages.append(
-                "FAILED:  ExpAtmo failed density unit test at t=" + str(densData[ind, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(densData[ind,1]-trueDensity))
+            trueDensity = expAtmoComp(alt, refBaseDens, refScaleHeight)
+            # check a vector values
+            if not unitTestSupport.isDoubleEqualRelative(densData[ind,1], trueDensity,accuracy):
+                testFailCount += 1
+                testMessages.append(
+                    "FAILED:  ExpAtmo failed density unit test at t=" + str(densData[ind, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(densData[ind,1]-trueDensity))
+    else:
+        testFailCount += 1
+        testMessages.append("FAILED:  ExpAtmo failed to pull any logged data")
 
     return testFailCount, testMessages
 
