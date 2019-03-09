@@ -38,19 +38,19 @@ conan_cmake_run(REQUIRES ${required_conan_libraries}
 	              BASIC_SETUP KEEP_RPATHS
                 BUILD missing )
 
-# if(USE_PROTOBUFFERS)
-#   #! PROTO-BUFFERS
-#   find_package(protobuf CONFIG REQUIRED)
-#   message(STATUS "Using Protocol Buffers ${protobuf_VERSION}")
-#   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-# endif()
+if(USE_PROTOBUFFERS)
+   #! PROTO-BUFFERS
+   find_package(protobuf CONFIG REQUIRED)
+   message(STATUS "Using Protocol Buffers ${protobuf_VERSION}")
+   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+endif()
 
-#if(USE_OPENCV)
-#   #! OPEN_CV
-#   find_package(opencv CONFIG REQUIRED)
-#   message(STATUS "Using OpenCV ${opencv_VERSION}")
-#   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-#endif()
+if(USE_OPENCV)
+   #! OPEN_CV
+   find_package(opencv CONFIG REQUIRED)
+   message(STATUS "Using OpenCV ${opencv_VERSION}")
+   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+endif()
 
 
 #
