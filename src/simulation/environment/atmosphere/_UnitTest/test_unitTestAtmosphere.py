@@ -209,49 +209,28 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     # check the exponential atmosphere results
     #
     # check spacecraft 0 neutral density results
-    if len(dens0Data) > 0:
-        for ind in range(0, len(dens0Data)):
-            alt = r0 - refPlanetRadius
-            trueDensity = expAtmoComp(alt, refBaseDens, refScaleHeight, minReach, maxReach)
-            # check a vector values
-            if trueDensity != 0:
-                if not unitTestSupport.isDoubleEqualRelative(dens0Data[ind, 1], trueDensity, accuracy):
-                    testFailCount += 1
-                    testMessages.append(
-                        "FAILED:  Atmosphere failed sc0 exp density unit test at t="
-                        + str(dens0Data[ind, 0] * macros.NANO2SEC) + "sec\n")
-            else:
-                if not unitTestSupport.isDoubleEqual(dens0Data[ind], trueDensity, accuracy):
-                    testFailCount += 1
-                    testMessages.append(
-                        "FAILED:  Atmosphere failed sc0 exp density unit test at t="
-                        + str(dens0Data[ind, 0] * macros.NANO2SEC) + "sec\n")
+    alt = r0 - refPlanetRadius
+    trueDensity = expAtmoComp(alt, refBaseDens, refScaleHeight, minReach, maxReach)
+    if trueDensity != 0:
+        testFailCount, testMessages = unitTestSupport.compareDoubleArrayRelative(
+            [trueDensity]*3, dens0Data, accuracy, "density sc0",
+            testFailCount, testMessages)
     else:
-        testFailCount += 1
-        testMessages.append("FAILED:  Atmosphere failed to pull any logged data for sc0\n")
+        testFailCount, testMessages = unitTestSupport.compareDoubleArray(
+            [trueDensity] * 3, dens0Data, accuracy, "density sc0",
+            testFailCount, testMessages)
 
     # check spacecraft 1 neutral density results
-    if len(dens1Data) > 0:
-        for ind in range(0, len(dens1Data)):
-            alt = r1 - refPlanetRadius
-            trueDensity = expAtmoComp(alt, refBaseDens, refScaleHeight, minReach, maxReach)
-            # check a vector values
-            if trueDensity != 0:
-                if not unitTestSupport.isDoubleEqualRelative(dens1Data[ind, 1], trueDensity, accuracy):
-                    testFailCount += 1
-                    testMessages.append(
-                        "FAILED:  Atmosphere failed sc1 exp density unit test at t="
-                        + str(dens1Data[ind, 0] * macros.NANO2SEC) + "sec\n")
-            else:
-                if not unitTestSupport.isDoubleEqual(dens1Data[ind], trueDensity, accuracy):
-                    testFailCount += 1
-                    testMessages.append(
-                        "FAILED:  Atmosphere failed sc1 exp density unit test at t="
-                        + str(dens1Data[ind, 0] * macros.NANO2SEC) + "sec\n")
+    alt = r1 - refPlanetRadius
+    trueDensity = expAtmoComp(alt, refBaseDens, refScaleHeight, minReach, maxReach)
+    if trueDensity != 0:
+        testFailCount, testMessages = unitTestSupport.compareDoubleArrayRelative(
+            [trueDensity]*3, dens1Data, accuracy, "density sc1",
+            testFailCount, testMessages)
     else:
-        testFailCount += 1
-        testMessages.append("FAILED:  Atmosphere failed to pull any logged data for sc1\n")
-
+        testFailCount, testMessages = unitTestSupport.compareDoubleArray(
+            [trueDensity] * 3, dens1Data, accuracy, "density sc1",
+            testFailCount, testMessages)
 
 
     #   print out success or failure message
