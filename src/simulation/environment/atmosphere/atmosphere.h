@@ -64,7 +64,8 @@ private:
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs(); 
     void updateLocalAtmo(double currentTime); 
-    void updateRelativePos(SpicePlanetStateSimMsg  *planetState, SCPlusStatesSimMsg *scState); 
+    void updateRelativePos(SpicePlanetStateSimMsg  *planetState, SCPlusStatesSimMsg *scState);
+    void runExponentialModel(double tmpAltitude, AtmoPropsSimMsg *msg);
 
 public:
     double localAtmoTemp;                   //!< [K] Local atmospheric temperature, SET TO BE CONSTANT

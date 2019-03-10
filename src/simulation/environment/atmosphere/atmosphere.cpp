@@ -250,9 +250,7 @@ void Atmosphere::updateLocalAtmo(double currentTime)
            (tmpAltitude < this->envMaxReach || this->envMaxReach < 0)) {
             //! - check for exponential atmosphere model case
             if(this->envType.compare(MODEL_EXPONENTIAL)==0){
-                (*atmoMsgIt).neutralDensity = this->exponentialParams.baseDensity * exp(-1.0 * tmpAltitude / this->exponentialParams.scaleHeight);
-                (*atmoMsgIt).localTemp = this->localAtmoTemp;
-
+                runExponentialModel(tmpAltitude, &(*atmoMsgIt));
             } else {
                 BSK_PRINT(MSG_WARNING, "Atmospheric model not set. Skipping computation.\n")
             }
@@ -261,6 +259,7 @@ void Atmosphere::updateLocalAtmo(double currentTime)
 
     return;
 }
+
 
 /*! This method is used to determine the spacecraft position vector relative to the planet.
  @param planetState A space planetstate message struct.
@@ -300,6 +299,19 @@ void Atmosphere::UpdateState(uint64_t CurrentSimNanos)
 
     //! - write out neutral density message
     WriteOutputMessages(CurrentSimNanos);
+
+    return;
+}
+
+/*! This method is evaluates the exponential atmosphere model using a single exponential function.
+ @param tmpAltitude [m] altitude above the planet surface
+ @param msg atmospheric message structure
+ @return void
+ */
+void Atmosphere::runExponentialModel(double tmpAltitude, AtmoPropsSimMsg *msg)
+{
+    msg->neutralDensity = this->exponentialParams.baseDensity * exp(-1.0 * tmpAltitude / this->exponentialParams.scaleHeight);
+    msg->localTemp = this->localAtmoTemp;
 
     return;
 }
