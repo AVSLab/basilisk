@@ -21,6 +21,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/astroConstants.h"
 #include "utilities/bsk_Print.h"
+#include "utilities/linearAlgebra.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 
 /*! This method initializes some basic parameters for the module.
@@ -268,12 +269,7 @@ void Atmosphere::updateLocalAtmo(double currentTime)
  */
 void Atmosphere::updateRelativePos(SpicePlanetStateSimMsg *planetState, SCPlusStatesSimMsg *scState)
 {
-    int iter;
-    /*! determine spacecraft position relative to planet */
-    for(iter = 0; iter < 3; iter++)
-    {
-        this->relativePos_N[iter] = scState->r_BN_N[iter] - planetState->PositionVector[iter];
-    }
+    v3Subtract(scState->r_BN_N, planetState->PositionVector, this->relativePos_N.data());
 
     return;
 }
