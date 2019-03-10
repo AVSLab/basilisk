@@ -18,6 +18,8 @@
 
 '''
 
+from Basilisk.simulation import atmosphere
+
 
 def exponentialAtmosphere(atmosModule,name):
     """
@@ -27,7 +29,7 @@ def exponentialAtmosphere(atmosModule,name):
     :return:
     """
     if name is "earth":
-        atmosModule.setEnvType("exponential")
+        atmosModule.setEnvType(atmosphere.MODEL_EXPONENTIAL)
         atmosModule.planetRadius = 6378136.6   # meters
         atmosModule.exponentialParams.baseDensity = 1.217  # kg/m^3
         atmosModule.exponentialParams.scaleHeight = 8500.0 # meters

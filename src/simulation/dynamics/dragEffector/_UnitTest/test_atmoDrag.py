@@ -118,7 +118,7 @@ def run(show_plots, orbitCase, planetCase):
 
     #   Initialize new atmosphere and drag model, add them to task
     newAtmo = atmosphere.Atmosphere()
-    newAtmo.setEnvType('exponential')
+    newAtmo.setEnvType(atmosphere.MODEL_EXPONENTIAL)
     atmoTaskName = "atmosphere"
     newAtmo.ModelTag = "ExpAtmo"
 
