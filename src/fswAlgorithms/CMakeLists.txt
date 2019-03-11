@@ -30,6 +30,10 @@ foreach(module ${swig_modules})
     get_filename_component(FileBase ${module} NAME_WE)
     get_filename_component(FileDir ${module} DIRECTORY)
 	set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/fswAlgorithms/${FileBase}")
+	
+	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/CMakeLists.txt")
+		continue()
+	endif()
 
     file(GLOB gen_files
         "../simulation/_GeneralModuleFiles/*.cpp"
@@ -60,7 +64,7 @@ foreach(module ${swig_modules})
 	set_property(SOURCE ${module} PROPERTY SWIG_FLAGS "-I${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles" "-I${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/")
 	set(SWIG_MODULE_${FileBase}_EXTRA_DEPS ${impl_files} ${gen_files} ${INTER_FILES})
     MAKE_SWIG_MODULE(${FileBase} python ${module} ${impl_files} ${gen_files})
-    SWIG_LINK_LIBRARIES(${FileBase} ${PYTHON_LIBRARIES})
+    SWIG_LINK_LIBRARIES(${FileBase} ${PYTHON_LIBRARIES} ${CONAN_LIBS})
 
 	foreach(LibFile ${ALG_LIST})
   	    SWIG_LINK_LIBRARIES(${FileBase} ${LibFile})

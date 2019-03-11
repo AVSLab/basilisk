@@ -67,7 +67,7 @@ public:
     virtual bool sendData(std::vector<char> &data) { return 1; }
     virtual uint64_t bytesWaiting() {return m_stream->available();}
 
-    std::string getInputBuffer() { return m_inboundBuffer; }
+    std::string getInputBuffer() { return std::string(m_inboundBuffer.begin(), m_inboundBuffer.end()); }
     virtual void clearBuffers(void) {}
     void handleClearBuffers(const boost::system::error_code &ec, size_t bytes_transferred);
     void appendToOutbound(const char * newBytes, uint64_t byteSize);

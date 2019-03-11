@@ -8,11 +8,10 @@ endif()
 
 project("basilisk")
 
-if(CMAKE_BUILD_TYPE)
-
-else()
-  set(CMAKE_BUILD_TYPE "Debug")
-endif()
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Debug" CACHE STRING
+      "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
+endif(NOT CMAKE_BUILD_TYPE)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -21,21 +20,36 @@ include(conan)
 conan_add_remote(NAME bincrafters URL https://api.bintray.com/conan/bincrafters/public-conan)
 conan_add_remote(NAME conan-community URL https://api.bintray.com/conan/conan-community/conan)
 
-if(USE_PROTOBUFFERS)
-  conan_cmake_run(REQUIRES eigen/3.3.5@conan/stable protobuf/3.6.1@bincrafters/stable
-	  BASIC_SETUP KEEP_RPATHS
-    BUILD missing)
-    #! PROTO-BUFFERS
-    find_package(protobuf CONFIG REQUIRED)
-    message(STATUS "Using Protocol Buffers ${protobuf_VERSION}")
-    set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+set(required_conan_libraries eigen/3.3.5@conan/stable)
 
-else()
- 
-  conan_cmake_run(REQUIRES eigen/3.3.5@conan/stable
-	  BASIC_SETUP KEEP_RPATHS
+option(USE_PROTOBUFFERS "Include modules which use Google Protobuffers" OFF)
+option(USE_OPENCV "Include modules which use OpenCV" OFF)
+
+if(USE_PROTOBUFFERS)
+  list(APPEND required_conan_libraries protobuf/3.6.1@bincrafters/stable)
+endif()
+
+if(USE_OPENCV)
+  list(APPEND required_conan_libraries opencv/3.4.5@conan/stable)
+
+endif()
+
+conan_cmake_run(REQUIRES ${required_conan_libraries}
+	              BASIC_SETUP KEEP_RPATHS
                 BUILD missing )
 
+if(USE_PROTOBUFFERS)
+   #! PROTO-BUFFERS
+   find_package(protobuf CONFIG REQUIRED)
+   message(STATUS "Using Protocol Buffers ${protobuf_VERSION}")
+   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+endif()
+
+if(USE_OPENCV)
+   #! OPEN_CV
+   find_package(opencv CONFIG REQUIRED)
+   message(STATUS "Using OpenCV ${opencv_VERSION}")
+   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 endif()
 
 
@@ -189,9 +203,15 @@ function(findAndCreateSwigModules SubModule)
 	    get_filename_component(FileBase ${module} NAME_WE)
 	    get_filename_component(FileDir ${module} DIRECTORY)
 		set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
+		
 		if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/CMakeLists.txt")
-	        continue()
-	    endif()
+ 		    continue()
+		endif()
+		
+		# if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/CMakeLists.txt")
+		# 	        continue()
+		# 	    endif()
+		
 	    file(GLOB impl_files
 		    "${FileDir}/*.cpp"
 		    "${FileDir}/*.c"
@@ -272,7 +292,7 @@ find_package(PythonLibs 2.7 REQUIRED)
 # set(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/Basilisk)
 
 ############################################################################################
-OPTION(WITH_COVERAGE "GCOV code coverage analysis"      OFF)
+OPTION(USE_COVERAGE "GCOV code coverage analysis"      OFF)
 ############################################################################################
 
 # Add general compiler flags
@@ -280,8 +300,8 @@ set(CMAKE_MACOSX_RPATH 1)
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 
 ############################################################################################
-IF (WITH_COVERAGE AND (CMAKE_COMPILER_IS_GNUC OR CMAKE_COMPILER_IS_GNUCXX))
-    MESSAGE(STATUS "WITH_COVERAGE : ${WITH_COVERAGE}")
+IF (USE_COVERAGE AND (CMAKE_COMPILER_IS_GNUC OR CMAKE_COMPILER_IS_GNUCXX))
+    MESSAGE(STATUS "USE_COVERAGE : ${USE_COVERAGE}")
     SET(GCOV_CFLAGS  "-fprofile-arcs -ftest-coverage -O0 -fno-default-inline -fno-inline")
     SET(GCOV_LDFLAGS "-fprofile-arcs -ftest-coverage -O0 -fno-default-inline -fno-inline")
 
@@ -338,7 +358,7 @@ else()
 endif()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-register")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-register -std=c++11")
 endif()
 
 
