@@ -88,7 +88,7 @@ void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
                                   uint64_t callTime, uint64_t moduleID)
 {
     parseInputMessages(configData, moduleID);
-    computecelestialTwoBodyPoint(configData, callTime);
+    computeCelestialTwoBodyPoint(configData, callTime);
     WriteMessage(configData->outputMsgID, callTime, sizeof(AttRefFswMsg),
                  (void*) &(configData->attRefOut), moduleID);
 }
@@ -159,7 +159,7 @@ void parseInputMessages(celestialTwoBodyPointConfig *configData, uint64_t module
  @param configData The configuration data associated with the celestial body guidance
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void computecelestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64_t callTime)
+void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64_t callTime)
 {
     double temp3[3];        /* Temporary vector */
     double temp3_1[3];      /* Temporary vector 1 */

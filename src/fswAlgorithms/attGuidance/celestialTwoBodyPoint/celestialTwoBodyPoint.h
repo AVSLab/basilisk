@@ -72,7 +72,7 @@ extern "C" {
     void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     void Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     void parseInputMessages(celestialTwoBodyPointConfig *ConfigData, uint64_t moduleID);
-    void computecelestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint64_t callTime);
+    void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint64_t callTime);
     
 #ifdef __cplusplus
 }

@@ -1,0 +1,13 @@
+% !TEX root = ./Basilisk-sunSafePoint-20180427.tex
+
+
+\section{Module Functions}
+\begin{itemize}
+	\item \textbf{parseInputMessages}: This method takes the navigation translational info as well as the spice data of the primary celestial body and, if applicable, the second one, and computes the relative state vectors necessary to create the restricted 2-body pointing reference frame.
+	\item \textbf{computeCelestialTwoBodyPoint}: This method takes the spacecraft and points a specified axis at a named
+ celestial body specified in the configuration data.  It generates the
+ commanded attitude and assumes that the control errors are computed
+ downstream.	
+
+\section{Module Assumptions and Limitations}
+This module does not add any assumptions to the guidance scheme.
