@@ -43,21 +43,17 @@ typedef struct {
     int32_t outputMsgID;                            //!< ID for the outgoing message
     int32_t inputRefID;                             //!< ID for the incoming guidance reference message
     int32_t inputNavID;                             //!< ID for the incoming navigation message
-
-
-    AttGuidFswMsg attGuidOut;                      //!< copy of the output message 
-
 }attTrackingErrorConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     
-    void SelfInit_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t moduleID);
-    void Update_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void computeAttitudeError(NavAttIntMsg nav, AttRefFswMsg ref, attTrackingErrorConfig *ConfigData);
+    void SelfInit_attTrackingError(attTrackingErrorConfig *configData, uint64_t moduleID);
+    void CrossInit_attTrackingError(attTrackingErrorConfig *configData, uint64_t moduleID);
+    void Update_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void Reset_attTrackingError(attTrackingErrorConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void computeAttitudeError(double sigma_R0R[3], NavAttIntMsg nav, AttRefFswMsg ref, AttGuidFswMsg *attGuidOut);
 
 #ifdef __cplusplus
 }
