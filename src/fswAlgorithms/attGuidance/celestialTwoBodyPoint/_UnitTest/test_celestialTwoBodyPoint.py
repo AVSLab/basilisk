@@ -25,8 +25,7 @@
 #   Creation Date:      May 11, 2016
 #
 
-import pytest
-import sys, os, inspect
+import os, inspect
 import numpy as np
 from numpy import linalg as la
 # Import all of the modules that we are going to be called in this simulation
@@ -38,6 +37,10 @@ from Basilisk.fswAlgorithms import cheby_pos_ephem  # module that creates needed
 from Basilisk.utilities import macros
 from Basilisk.utilities import astroFunctions as af
 from Basilisk.utilities import RigidBodyKinematics as rbk
+
+
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -248,7 +251,7 @@ def celestialTwoBodyPointTestFunction(show_plots):
                                 str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec\n")
         else:
-            unitTestSupport.writeTeXSnippet('passFail11', 'PASSED', '.')
+            unitTestSupport.writeTeXSnippet('passFail11', 'PASSED', path)
 
     # check omega_RN_N
     moduleOutputName = "omega_RN_N"
@@ -265,7 +268,7 @@ def celestialTwoBodyPointTestFunction(show_plots):
                                 str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec\n")
         else:
-            unitTestSupport.writeTeXSnippet('passFail12', 'PASSED', '.')
+            unitTestSupport.writeTeXSnippet('passFail12', 'PASSED', path)
 
     # check domega_RN_N
     moduleOutputName = "domega_RN_N"
@@ -282,7 +285,7 @@ def celestialTwoBodyPointTestFunction(show_plots):
                                 str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec\n")
         else:
-            unitTestSupport.writeTeXSnippet('passFail13', 'PASSED', '.')
+            unitTestSupport.writeTeXSnippet('passFail13', 'PASSED', path)
 
     return [testFailCount, ''.join(testMessages)]
 
@@ -423,7 +426,7 @@ def secBodyCelestialTwoBodyPointTestFunction(show_plots):
                                 str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec\n")
         else:
-            unitTestSupport.writeTeXSnippet('passFail21', 'PASSED', '.')
+            unitTestSupport.writeTeXSnippet('passFail21', 'PASSED', path)
 
     # check omega_RN_N
     moduleOutputName = "omega_RN_N"
@@ -442,7 +445,7 @@ def secBodyCelestialTwoBodyPointTestFunction(show_plots):
                                 str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec\n")
         else:
-            unitTestSupport.writeTeXSnippet('passFail22', 'PASSED', '.')
+            unitTestSupport.writeTeXSnippet('passFail22', 'PASSED', path)
 
     # check domega_RN_N
     moduleOutputName = "domega_RN_N"
@@ -462,7 +465,7 @@ def secBodyCelestialTwoBodyPointTestFunction(show_plots):
                                 str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec\n")
         else:
-            unitTestSupport.writeTeXSnippet('passFail23', 'PASSED', '.')
+            unitTestSupport.writeTeXSnippet('passFail23', 'PASSED', path)
 
     # Note that we can continue to step the simulation however we feel like.
     # Just because we stop and query data does not mean everything has to stop for good
