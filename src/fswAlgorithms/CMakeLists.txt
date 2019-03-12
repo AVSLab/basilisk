@@ -87,3 +87,7 @@ foreach(module ${swig_modules})
 endforeach()
 
 add_subdirectory("messaging")
+if (USE_OPENCV)
+	message(STATUS "Adding HoughCircle module in prescence of OpenCV")
+	add_subdirectory("imageProcessing/houghCircles")
+endif()
