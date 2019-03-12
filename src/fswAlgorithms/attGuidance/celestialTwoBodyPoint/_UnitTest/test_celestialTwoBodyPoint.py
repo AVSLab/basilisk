@@ -247,6 +247,8 @@ def celestialTwoBodyPointTestFunction(show_plots):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec\n")
+        else:
+            unitTestSupport.writeTeXSnippet('passFail11', 'PASSED', '.')
 
     # check omega_RN_N
     moduleOutputName = "omega_RN_N"
@@ -262,6 +264,8 @@ def celestialTwoBodyPointTestFunction(show_plots):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec\n")
+        else:
+            unitTestSupport.writeTeXSnippet('passFail12', 'PASSED', '.')
 
     # check domega_RN_N
     moduleOutputName = "domega_RN_N"
@@ -277,6 +281,8 @@ def celestialTwoBodyPointTestFunction(show_plots):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec\n")
+        else:
+            unitTestSupport.writeTeXSnippet('passFail13', 'PASSED', '.')
 
     return [testFailCount, ''.join(testMessages)]
 
@@ -416,6 +422,8 @@ def secBodyCelestialTwoBodyPointTestFunction(show_plots):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec\n")
+        else:
+            unitTestSupport.writeTeXSnippet('passFail21', 'PASSED', '.')
 
     # check omega_RN_N
     moduleOutputName = "omega_RN_N"
@@ -433,6 +441,8 @@ def secBodyCelestialTwoBodyPointTestFunction(show_plots):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec\n")
+        else:
+            unitTestSupport.writeTeXSnippet('passFail22', 'PASSED', '.')
 
     # check domega_RN_N
     moduleOutputName = "domega_RN_N"
@@ -451,6 +461,8 @@ def secBodyCelestialTwoBodyPointTestFunction(show_plots):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec\n")
+        else:
+            unitTestSupport.writeTeXSnippet('passFail23', 'PASSED', '.')
 
     # Note that we can continue to step the simulation however we feel like.
     # Just because we stop and query data does not mean everything has to stop for good
