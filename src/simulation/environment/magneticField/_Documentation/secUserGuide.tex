@@ -1,0 +1,47 @@
+% !TEX root = ./Basilisk-magField-20190309.tex
+
+\section{User Guide}
+
+\subsection{General Module Setup}
+This section outlines the steps needed to add a {\tt MagneticField} module to a sim.
+First, the planet magnetic field model must be imported and initialized:
+\begin{verbatim}
+from Basilisk.simulation import magneticField
+magModule = magneticField.MagneticField()
+magModule = "magneticFieldModel"
+\end{verbatim}
+By default the model assumes a centered magnetic dipole model about the Earth using IGRF 2020 coefficients.
+
+Optionally, if a different model type is required, the desired model type must be set by calling "\verb|setEnvType|":
+\begin{verbatim}
+magModule.setEnvType(magneticField.MODEL_CENTERED_DIPOLE)
+\end{verbatim}
+
+The model can then be added to a task like other simModels. Each {\tt MagneticField} module calculates the magnetic field based on the output state messages for a set of spacecraft.
+
+To add spacecraft to the model the spacecraft state output message name is sent to the \verb|addScToModel| method:
+\begin{verbatim}
+scObject = spacecraftPlus.SpacecraftPlus()
+scObject.ModelTag = "spacecraftBody"
+magModule.addSpacecraftToModel(scObject.scStateOutMsgName)
+\end{verbatim}
+
+\subsection{Planet Ephemeris Information}
+The optional planet state message name can be set by directly adjusting that attribute of the class:
+\begin{verbatim}
+magModule.planetPosInMsgName = "PlanetSPICEMsgName"
+\end{verbatim}
+If SPICE is not being used, the planet is assumed to reside at the origin and $\bm r_{P/O} = \bm 0$.
+
+\subsection{Setting the Model Reach}
+By default the model doesn't perform any checks on the altitude to see if the specified magnetic field model should be used.  This is set through the parameters {\tt envMinReach} and {\tt envMaxReach}.  Their default values are -1.  If these are set to positive values, then if the spacecraft orbit radius is smaller than {\tt envMinReach} or larger than {\tt envMaxReach}, the magnetic field vector is set to zero.
+
+
+\subsection{Centered Dipole Magnetic Field User Guide}
+If the module's \verb|envType| is set to {\tt magneticField.MODEL\_CENTERED\_DIPOLE}, the parameters of the dipole model can be set by calling
+\begin{verbatim}
+    magModule.dipoleParams.g10 = g10Value
+    magModule.dipoleParams.g11 = g11Value
+    magModule.dipoleParams.h11 = h11Value
+\end{verbatim}
+where $g_{1}^{0}$, $g_{1}^{1}$ and $h_{1}^{1}$ are the first three expansion terms of the IGRF spherical harmonics model.\footnote{\url{https://www.ngdc.noaa.gov/IAGA/vmod/igrf.html}}

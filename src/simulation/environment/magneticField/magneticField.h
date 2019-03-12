@@ -45,11 +45,10 @@ typedef struct {
 #define MODEL_CENTERED_DIPOLE "centeredDipole"
 
 
-//! @brief Atmosphere class used to calculate the magnetic field above a planet using multiple models.
-/*! This class is used to hold relevant magnetic field properties and to compute the magnetic field for a given set of spacecraft
-relative to a specified planet. Planetary parameters, including position and input message, are settable by the user. 
-Internal support is provided for Earth. In a given simulation, each planet of interest should have only
-one magnetic field model associated with it linked to the spacecraft in orbit about that body.  For more information see the [PDF Description](Basilisk-magField-20190309.pdf).*/
+//! @brief Magneticfield class used to calculate the magnetic field above a planet using multiple models.
+/*! The {\tt MagneticField} class is used to calculate the magnetic field vector above a body using multiple models.
+ This class is used to hold relevant planetary magnetic field properties to compute answers for a given set of spacecraft locations
+ relative to a specified planet. Planetary parameters, including position and input message, are settable by the user. In a given simulation, each planet of interest should have only one magnetic field  model associated with it linked to the spacecraft in orbit about that body.  For more information see the [PDF Description](Basilisk-magField-20190309.pdf).*/
 class MagneticField: public SysModel, public PlanetEnvironmentModel {
 public:
     MagneticField();
