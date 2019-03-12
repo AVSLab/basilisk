@@ -33,18 +33,16 @@ MagneticField::MagneticField()
     this->OutputBufferCount = 2;
     //! - Set the default atmospheric properties to those of Earth
     this->envType = MODEL_CENTERED_DIPOLE;  // - simple dipole magnectic field model center in the planet
-
+    this->dipoleParams.g10 = -30926.00/pow(10,9);       // [T] Earth IGRF 2020 g_1^0 cooefficient
+    this->dipoleParams.g11 =  -2318.00/pow(10,9);       // [T] Earth IGRF 2020 g_1^1 cooefficient
+    this->dipoleParams.h11 =   5817.00/pow(10,9);       // [T] Earth IGRF 2020 h_1^1 cooefficient
     this->planetRadius = 6371.2*1000; // [m] Earth magnetic spherical reference radius (see p. 404 in doi:10.1007/978-1-4939-0802-8)
 
     this->relativePos_N.fill(0.0);
     this->scStateInMsgNames.clear();
     this->planetPosInMsgId = -1;
 
-    this->dipoleParams.g10 = -30926.00/pow(10,9);       // [T] Earth IGRF 2020 g_1^0 cooefficient
-    this->dipoleParams.g11 =  -2318.00/pow(10,9);       // [T] Earth IGRF 2020 g_1^1 cooefficient
-    this->dipoleParams.h11 =   5817.00/pow(10,9);       // [T] Earth IGRF 2020 h_1^1 cooefficient
-
-    //!< zero the planet message, and set the DCM to an identity matrix
+    //! - zero the planet message, and set the DCM to an identity matrix
     memset(&this->planetState, 0x0, sizeof(SpicePlanetStateSimMsg));
     this->planetState.J20002Pfix[0][0] = 1.0;
     this->planetState.J20002Pfix[1][1] = 1.0;

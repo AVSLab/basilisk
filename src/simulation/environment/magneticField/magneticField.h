@@ -34,7 +34,8 @@
  * @{
  */
 
-//! @brief Container for the properties of a simple dipole magnetic model, such that different planets can be tested. */
+/*! @brief Container for the properties of a simple dipole magnetic model, such that different planets can be tested.
+More info on these IGRF parameters can be found on this [link](https://www.ngdc.noaa.gov/IAGA/vmod/igrf.html) */
 typedef struct {
     double g10;                 //!< [T] IGRF coefficient g_1^0
     double g11;                 //!< [T] IGRF coefficient g_1^1
@@ -46,7 +47,7 @@ typedef struct {
 
 
 //! @brief Magneticfield class used to calculate the magnetic field above a planet using multiple models.
-/*! The {\tt MagneticField} class is used to calculate the magnetic field vector above a body using multiple models.
+/*! The MagneticField class is used to calculate the magnetic field vector above a body using multiple models.
  This class is used to hold relevant planetary magnetic field properties to compute answers for a given set of spacecraft locations
  relative to a specified planet. Planetary parameters, including position and input message, are settable by the user. In a given simulation, each planet of interest should have only one magnetic field  model associated with it linked to the spacecraft in orbit about that body.  For more information see the [PDF Description](Basilisk-magField-20190309.pdf).*/
 class MagneticField: public SysModel, public PlanetEnvironmentModel {
