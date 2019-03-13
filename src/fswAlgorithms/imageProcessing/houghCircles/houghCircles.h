@@ -25,6 +25,8 @@
 #include "messaging/static_messaging.h"
 #include "opencv2/opencv.hpp"
 #include "opencv2/highgui.hpp"
+#include "../simulation/simFswInterfaceMessages/cameraImageMsg.h"
+#include "../simulation/simFswInterfaceMessages/circlesOpNavMsg.h"
 #include "../simulation/_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
 

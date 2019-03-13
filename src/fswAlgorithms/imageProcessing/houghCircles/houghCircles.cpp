@@ -49,8 +49,8 @@ void HoughCircles::SelfInit()
 {
     /*! - Create output message for module */
     this->opnavCirclesOutMsgID = CreateNewMessage(this->opnavCirclesOutMsgName,
-                                                  sizeof(CirclesOpnavMsg),
-                                                  "CirclesOpnavMsg",
+                                                  sizeof(CirclesOpNavMsg),
+                                                  "CirclesOpNavMsg",
                                                   moduleID);
 }
 
@@ -63,7 +63,7 @@ void HoughCircles::CrossInit()
 {
     /*! - Get the control data message ID*/
     this->imageInMsgID = subscribeToMessage(this->imageInMsgName,
-                                                sizeof(ImageFswMsg),
+                                                sizeof(CameraImageMsg),
                                                 moduleID);
 }
 
@@ -92,11 +92,11 @@ void HoughCircles::Reset(uint64_t CurrentSimNanos)
  */
 void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
 {
-    ImageFswMsg imageBuffer;
+    CameraImageMsg imageBuffer;
     /*! - Read in the image message*/
-    imageBuffer = this->ReadBitMap()
+    this->ReadBitMap();
     
-    src = imread( *imageBuffer.image, 1 );
+//    src = imread( imageBuffer.imagePointer, 1 );
     cv::cvtColor( src, grey, CV_BGR2GRAY );
     cv::blur( grey, blurred, cv::Size(this->blurrSize,this->blurrSize) );
     
