@@ -41,6 +41,8 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
+textSnippetPassed = '\\textcolor{ForestGreen}{' + "PASSED" + '}'
+textSnippetFailed = '\\textcolor{Red}{' + "Failed" + '}'
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -250,8 +252,9 @@ def celestialTwoBodyPointTestFunction(show_plots):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec\n")
+            unitTestSupport.writeTeXSnippet('passFail11', textSnippetFailed, path)
         else:
-            unitTestSupport.writeTeXSnippet('passFail11', 'PASSED', path)
+            unitTestSupport.writeTeXSnippet('passFail11', textSnippetPassed, path)
 
     # check omega_RN_N
     moduleOutputName = "omega_RN_N"
@@ -267,8 +270,9 @@ def celestialTwoBodyPointTestFunction(show_plots):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec\n")
+            unitTestSupport.writeTeXSnippet('passFail12', textSnippetFailed, path)
         else:
-            unitTestSupport.writeTeXSnippet('passFail12', 'PASSED', path)
+            unitTestSupport.writeTeXSnippet('passFail12', textSnippetPassed, path)
 
     # check domega_RN_N
     moduleOutputName = "domega_RN_N"
@@ -284,8 +288,9 @@ def celestialTwoBodyPointTestFunction(show_plots):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec\n")
+            unitTestSupport.writeTeXSnippet('passFail13', textSnippetFailed, path)
         else:
-            unitTestSupport.writeTeXSnippet('passFail13', 'PASSED', path)
+            unitTestSupport.writeTeXSnippet('passFail13', textSnippetPassed, path)
 
     return [testFailCount, ''.join(testMessages)]
 
@@ -417,6 +422,9 @@ def secBodyCelestialTwoBodyPointTestFunction(show_plots):
 
     # compare the module results to the truth values
     accuracy = 1e-12
+    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+
+
     for i in range(0, len(moduleOutput)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector, 3, accuracy):
@@ -425,8 +433,9 @@ def secBodyCelestialTwoBodyPointTestFunction(show_plots):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec\n")
+            unitTestSupport.writeTeXSnippet('passFail21', textSnippetFailed, path)
         else:
-            unitTestSupport.writeTeXSnippet('passFail21', 'PASSED', path)
+            unitTestSupport.writeTeXSnippet('passFail21', textSnippetPassed, path)
 
     # check omega_RN_N
     moduleOutputName = "omega_RN_N"
@@ -444,8 +453,9 @@ def secBodyCelestialTwoBodyPointTestFunction(show_plots):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec\n")
+            unitTestSupport.writeTeXSnippet('passFail22', textSnippetFailed, path)
         else:
-            unitTestSupport.writeTeXSnippet('passFail22', 'PASSED', path)
+            unitTestSupport.writeTeXSnippet('passFail22', textSnippetPassed, path)
 
     # check domega_RN_N
     moduleOutputName = "domega_RN_N"
@@ -464,8 +474,9 @@ def secBodyCelestialTwoBodyPointTestFunction(show_plots):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec\n")
+            unitTestSupport.writeTeXSnippet('passFail23', textSnippetFailed, path)
         else:
-            unitTestSupport.writeTeXSnippet('passFail23', 'PASSED', path)
+            unitTestSupport.writeTeXSnippet('passFail23', textSnippetPassed, path)
 
     # Note that we can continue to step the simulation however we feel like.
     # Just because we stop and query data does not mean everything has to stop for good
