@@ -17,42 +17,63 @@
 
  */
 
-#ifndef _RATE_IMU_TO_NAV_CONVERTER_H_
-#define _RATE_IMU_TO_NAV_CONVERTER_H_
+#ifndef _IMAGE_PROC_HOUGH_H_
+#define _IMAGE_PROC_HOUGH_H_
 
-#include "messaging/static_messaging.h"
-#include "opencv/cv.h"
-#include "opencv/highgui.h"
 #include <stdint.h>
+#include <Eigen/Dense>
+#include "messaging/static_messaging.h"
+#include "opencv2/opencv.hpp"
+#include "opencv2/highgui.hpp"
+#include "../simulation/_GeneralModuleFiles/sys_model.h"
+#include "../simulation/utilities/avsEigenMRP.h"
 
 
-/*! \addtogroup ADCSAlgGroup
+/*! \addtogroup SimModelGroup
  * @{
  */
 
-/*! @brief Top level structure for the sub-module routines. */
-typedef struct {
-    /* declare module IO interfaces */
-    char navRateOutMsgName[MAX_STAT_MSG_LENGTH];       /*!< The name of the navAttIntMsg output message*/
-    int32_t navRateOutMsgID;                           /*!< ID for the outgoing message */
-    char imuRateInMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the imuSensorBody Input message*/
-    int32_t imuRateInMsgID;                            /*!< ID for the incoming message */
-
-}HoughCirclesConfig;
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+//!@brief Sensor model to simulate a Star Tracker.
+/*!
+ The module
+ [PDF Description](Basilisk-star_tracker-20161101.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+ The corruption types are outlined in this
+ [PDF document](BasiliskCorruptions.pdf).
+ */
+class HoughCircles: public SysModel {
+public:
+    HoughCircles();
+    ~HoughCircles();
     
-    void SelfInit_houghCircles(HoughCirclesConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_houghCircles(HoughCirclesConfig *ConfigData, uint64_t moduleID);
-    void Update_houghCircles(HoughCirclesConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_houghCircles(HoughCirclesConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void UpdateState(uint64_t CurrentSimNanos);
+    void SelfInit();
+    void CrossInit();
+    void Reset(uint64_t CurrentSimNanos);
+    void ReadBitMap();
+    void FindCircles();
     
-#ifdef __cplusplus
-}
+public:
+    
+    char opnavCirclesOutMsgName[MAX_STAT_MSG_LENGTH];  //! The name of the CirclesOpnavMsg output message*/
+    char imageInMsgName[MAX_STAT_MSG_LENGTH];       //! The name of the ImageFswMsg output message*/
+    uint64_t sensorTimeTag;            //! [ns] Current time tag for sensor out
+    /*! OpenCV specific arguments need for HoughCircle finding*/
+    int32_t blurrSize;
+    int32_t cannyThresh1;
+    int32_t cannyThresh2;
+    int32_t houghMinDist;
+    int32_t houghMinRadius;
+    int32_t houghMaxRadius;
+    
+private:
+    int32_t opnavCirclesOutMsgID;                      //! ID for the outgoing message */
+    int32_t imageInMsgID;                           //! ID for the outgoing message */
+    cv::Mat src, canny, grey, blurred;
+};
+
+/* @} */
+
 #endif
 
-/*! @} */
-
-#endif
