@@ -26,8 +26,10 @@
  */
 
 /* modify the path to reflect the new module names */
-#include "houghCircles.h"
 #include <string.h>
+#include "houghCircles.h"
+#include "opencv2/core/eigen.hpp"
+
 
 /*! This method constructs the module.
 It also sets some default values at its creation */
@@ -63,7 +65,7 @@ void HoughCircles::SelfInit()
  */
 void HoughCircles::CrossInit()
 {
-    /*! - Get the control data message ID*/
+    /*! - Get the image data message ID*/
     this->imageInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->imageInMsgName,
                                                 sizeof(CameraImageMsg),
                                                 moduleID);
@@ -95,26 +97,38 @@ void HoughCircles::Reset(uint64_t CurrentSimNanos)
 void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
 {
     CameraImageMsg imageBuffer;
-    /*! - Read in the image message*/
-    this->ReadBitMap();
+    CirclesOpNavMsg circleBuffer;
+    cv::Mat src, canny, grey, blurred;
+    /*! - Read in the bitmap*/
+    SingleMessageHeader localHeader;
+    memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
+    if(this->imageInMsgID >= 0)
+    {
+        SystemMessaging::GetInstance()->ReadMessage(this->imageInMsgID, &localHeader,
+                                                    sizeof(CameraImageMsg), reinterpret_cast<uint8_t*>(&imageBuffer), this->moduleID);
+        this->sensorTimeTag = localHeader.WriteClockNanos;
+    }
     
-//    src = imread( imageBuffer.imagePointer, 1 );
-    cv::cvtColor( src, grey, CV_BGR2GRAY );
-    cv::blur( grey, blurred, cv::Size(this->blurrSize,this->blurrSize) );
+    /*! - Recast image pointer to Eigen type*/
+    Eigen::Matrix<int32_t, Eigen::Dynamic, Eigen::Dynamic>* pEigenMat = static_cast<Eigen::Matrix<int32_t, Eigen::Dynamic, Eigen::Dynamic>*>(imageBuffer.imagePointer);
+    cv::eigen2cv(*pEigenMat, src);
+    cv::cvtColor(src, grey, CV_BGR2GRAY );
+    cv::blur(grey, blurred, cv::Size(this->blurrSize,this->blurrSize) );
     
     std::vector<cv::Vec4f> circles;
-    // Apply the Hough Transform to find the circles
+    /*! - Apply the Hough Transform to find the circles*/
     cv::HoughCircles( blurred, circles, CV_HOUGH_GRADIENT, 1, src.rows/2, this->cannyThresh1,this->cannyThresh2, this->houghMinRadius, this->houghMaxRadius );
+    
+    circleBuffer.timeTag = this->sensorTimeTag;
+    circleBuffer.cameraID = imageBuffer.cameraID;
+    for( size_t i = 0; i < MAX_CIRCLE_NUM; i++ )
+    {
+        circleBuffer.circlesCenters[2*i] = circles[i][0];
+        circleBuffer.circlesCenters[2*i+1] = circles[i][1];
+        circleBuffer.circlesRadii[i] = circles[i][2];
+    }
+    SystemMessaging::GetInstance()->WriteMessage(this->opnavCirclesOutMsgID, CurrentSimNanos, sizeof(CirclesOpNavMsg), reinterpret_cast<uint8_t *>(&circleBuffer), this->moduleID);
     
     return;
 }
 
-/*! This method performs a complete reset of the module.  Local module variables that retain
- time varying states between function calls are reset to their default values.
- @return void
- @param this The configuration data associated with the module
- */
-void HoughCircles::ReadBitMap()
-{
-    return;
-}

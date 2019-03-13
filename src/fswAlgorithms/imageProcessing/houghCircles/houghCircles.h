@@ -53,7 +53,6 @@ public:
     void SelfInit();
     void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
-    void ReadBitMap();
     void FindCircles();
     
 public:
@@ -73,7 +72,6 @@ private:
     uint64_t OutputBufferCount;       //!< [-] Count on the number of output message buffers
     int32_t opnavCirclesOutMsgID;                      //! ID for the outgoing message */
     int32_t imageInMsgID;                           //! ID for the outgoing message */
-    cv::Mat src, canny, grey, blurred;
 };
 
 /* @} */
