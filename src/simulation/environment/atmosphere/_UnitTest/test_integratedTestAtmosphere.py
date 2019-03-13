@@ -18,21 +18,16 @@
 
 '''
 
-import sys, os, inspect
-import matplotlib
+import os, inspect
 import numpy as np
-import ctypes
 import math
-import csv
-import logging
-import pytest
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 
@@ -87,7 +82,7 @@ def test_unitAtmosphere():
 def setEnvType(atmoModel):
     testFailCount = 0
     testMessages = []
-    nameVec = ["exponential"]
+    nameVec = [atmosphere.MODEL_EXPONENTIAL]
     for name in nameVec:
         atmoModel.setEnvType(name)
         if atmoModel.envType != name:
@@ -164,7 +159,7 @@ def TestExponentialAtmosphere():
     #   Initialize new atmosphere and drag model, add them to task
     newAtmo = atmosphere.Atmosphere()
     newAtmo.ModelTag = "ExpAtmo"
-    newAtmo.setEnvType("exponential")
+    newAtmo.setEnvType(atmosphere.MODEL_EXPONENTIAL)
 
 
     #
@@ -232,7 +227,7 @@ def TestExponentialAtmosphere():
     numDataPoints = 10
     samplingTime = simulationTime / (numDataPoints-1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage("exponential_0_data", samplingTime)
+    scSim.TotalSim.logThisMessage(newAtmo.envType+"_0_data", samplingTime)
 
 
     # add BSK objects to the simulation process
@@ -255,7 +250,7 @@ def TestExponentialAtmosphere():
     #   retrieve the logged data
     #
     posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
-    densData = scSim.pullMessageLogData("exponential_0_data.neutralDensity")
+    densData = scSim.pullMessageLogData(newAtmo.envType+"_0_data.neutralDensity")
     np.set_printoptions(precision=16)
 
 
@@ -263,17 +258,22 @@ def TestExponentialAtmosphere():
 
     #   Compare to expected values
     accuracy = 1e-5
+    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
-    for ind in range(0,len(densData)):
-        dist = np.linalg.norm(posData[ind, 1:])
-        alt = dist - newAtmo.planetRadius
+    if len(densData) > 0:
+        for ind in range(0,len(densData)):
+            dist = np.linalg.norm(posData[ind, 1:])
+            alt = dist - newAtmo.planetRadius
 
-        trueDensity = expAtmoComp(alt, refBaseDens, refScaleHeight)
-        # check a vector values
-        if not unitTestSupport.isDoubleEqualRelative(densData[ind,1], trueDensity,accuracy):
-            testFailCount += 1
-            testMessages.append(
-                "FAILED:  ExpAtmo failed density unit test at t=" + str(densData[ind, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(densData[ind,1]-trueDensity))
+            trueDensity = expAtmoComp(alt, refBaseDens, refScaleHeight)
+            # check a vector values
+            if not unitTestSupport.isDoubleEqualRelative(densData[ind,1], trueDensity,accuracy):
+                testFailCount += 1
+                testMessages.append(
+                    "FAILED:  ExpAtmo failed density unit test at t=" + str(densData[ind, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(densData[ind,1]-trueDensity))
+    else:
+        testFailCount += 1
+        testMessages.append("FAILED:  ExpAtmo failed to pull any logged data")
 
     return testFailCount, testMessages
 

@@ -40,7 +40,8 @@ typedef struct {
     double scaleHeight;                 //!< [m]      Altitude where base density has decreased by factor of e
 }exponentialProperties;
 
-
+#define MODEL_EXPONENTIAL "exponential"
+#define MODEL_MSISE "nrlmsise-00"
 
 
 //! @brief Atmosphere class used to calculate temperature / density above a body using multiple models.
@@ -63,7 +64,8 @@ private:
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs(); 
     void updateLocalAtmo(double currentTime); 
-    void updateRelativePos(SpicePlanetStateSimMsg  *planetState, SCPlusStatesSimMsg *scState); 
+    void updateRelativePos(SpicePlanetStateSimMsg  *planetState, SCPlusStatesSimMsg *scState);
+    void runExponentialModel(double tmpAltitude, AtmoPropsSimMsg *msg);
 
 public:
     double localAtmoTemp;                   //!< [K] Local atmospheric temperature, SET TO BE CONSTANT
@@ -77,7 +79,7 @@ public:
     double planetRadius;                    //!< [m]      Radius of the local atmospheric body; altitude is computed as |r| - planetRadius
 
 private:
-    Eigen::Vector3d relativePos;            //!< [-] Container for local position
+    Eigen::Vector3d relativePos_N;          //!< [-] Container for local position vector in inertial frame
     uint64_t OutputBufferCount;	            //!< number of output buffers for messaging system
     std::vector<AtmoPropsSimMsg> atmoOutBuffer; //!< -- Message buffer for density messages
 
