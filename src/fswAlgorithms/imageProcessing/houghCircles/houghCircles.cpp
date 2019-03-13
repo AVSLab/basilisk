@@ -34,6 +34,7 @@ It also sets some default values at its creation */
 HoughCircles::HoughCircles()
 {
     this->blurrSize = 5;
+    this->OutputBufferCount = 2;
     this->cannyThresh1 = 200;
     this->cannyThresh2 = 20;
     this->houghMinDist = 50;
@@ -48,8 +49,9 @@ HoughCircles::HoughCircles()
 void HoughCircles::SelfInit()
 {
     /*! - Create output message for module */
-    this->opnavCirclesOutMsgID = CreateNewMessage(this->opnavCirclesOutMsgName,
+    this->opnavCirclesOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(this->opnavCirclesOutMsgName,
                                                   sizeof(CirclesOpNavMsg),
+                                                  this->OutputBufferCount,
                                                   "CirclesOpNavMsg",
                                                   moduleID);
 }
@@ -62,7 +64,7 @@ void HoughCircles::SelfInit()
 void HoughCircles::CrossInit()
 {
     /*! - Get the control data message ID*/
-    this->imageInMsgID = subscribeToMessage(this->imageInMsgName,
+    this->imageInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->imageInMsgName,
                                                 sizeof(CameraImageMsg),
                                                 moduleID);
 }

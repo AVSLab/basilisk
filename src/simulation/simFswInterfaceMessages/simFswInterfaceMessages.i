@@ -19,8 +19,8 @@
 
 %module simFswInterfaceMessages
 %{
-#include "cameraConfigMsg.h"
 #include "cameraImageMsg.h"
+#include "circlesOpNavMsg.h"
 #include "cmdForceBodyIntMsg.h"
 #include "cmdForceInertialIntMsg.h"
 #include "cmdTorqueBodyIntMsg.h"
