@@ -1270,7 +1270,7 @@ HTML_EXTRA_FILES       = ../src/simulation/dynamics/extForceTorque/_Documentatio
                          ../src/fswAlgorithms/attDetermination/CSSEst/_Documentation/Basilisk-cssWlsEst-20180429.pdf \
                          ../src/fswAlgorithms/attDetermination/sunlineEKF/_Documentation/Sunline_EKF.pdf \
                          ../src/fswAlgorithms/attGuidance/attTrackingError/_Documentation/AVS-Sim-attTrackingError-2016-01-15.pdf \
-                         ../src/fswAlgorithms/attGuidance/celestialTwoBodyPoint/_Documentation/celestialTwoBodyPoint.pdf \
+                         ../src/fswAlgorithms/attGuidance/celestialTwoBodyPoint/_Documentation/Basilisk-celestialTwoBodyPoint-20190311.pdf \
                          ../src/fswAlgorithms/attGuidance/hillPoint/_Documentation/hillPoint.pdf \
                          ../src/fswAlgorithms/attGuidance/inertial3D/_Documentation/Basilisk-Inertial3D-2016-01-15.pdf \
                          ../src/fswAlgorithms/attGuidance/inertial3DSpin/_Documentation/AVS-Sim-Inertial3DSpin-2015-12-22.pdf \
