@@ -47,7 +47,7 @@ from Basilisk.simulation import magneticField
 from Basilisk.simulation import simMessages
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
-# from Basilisk.utilities import simSetPlanetEnvironment
+from Basilisk.utilities import simSetPlanetEnvironment
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -99,13 +99,12 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
         refh11 =   5817.00/1e9     # Tesla
         refPlanetRadius = 6371.2*1000   # meters
     else:
-        refg10 = -30926.00/1e9  # Tesla
-        refg11 =  -2318.00/1e9  # Tesla
-        refh11 =   5817.00/1e9  # Tesla
-        refPlanetRadius = 6371.2 * 1000  # meters
-        testModule.dipoleParams.g10 = refg10
-        testModule.dipoleParams.g11 = refg11
-        testModule.dipoleParams.h11 = refh11
+        simSetPlanetEnvironment.centeredDipoleMagField(testModule, "earth")
+        refg10 = testModule.dipoleParams.g10
+        refg11 = testModule.dipoleParams.g11
+        refh11 = testModule.dipoleParams.h11
+        refPlanetRadius = testModule.planetRadius
+
 
     minReach = -1.0
     if useMinReach:
@@ -262,5 +261,5 @@ if __name__ == "__main__":
                  False,          # useDefault
                  False,         # useMinReach
                  False,         # useMaxReach
-                 True          # usePlanetEphemeris
+                 False          # usePlanetEphemeris
                )

@@ -45,3 +45,14 @@ If the module's \verb|envType| is set to {\tt magneticField.MODEL\_CENTERED\_DIP
     magModule.dipoleParams.h11 = h11Value
 \end{verbatim}
 where $g_{1}^{0}$, $g_{1}^{1}$ and $h_{1}^{1}$ are the first three expansion terms of the IGRF spherical harmonics model.\footnote{\url{https://www.ngdc.noaa.gov/IAGA/vmod/igrf.html}}
+
+The python support file {\tt simSetPlanetEnvironment.py} contains a helper function called 
+\begin{verbatim}
+	centeredDipoleMagField()
+\end{verbatim} 
+which helps setup common NASA centered dipole models for a range of planets that contain global magnetic fields.  This possible planet names includes mercury, earth, jupiter, saturn, uranus and neptune.  The function is then called with
+\begin{verbatim}
+simSetPlanetEnvironment.centeredDipoleMagField(testModule, "jupiter")
+\end{verbatim}
+to setup the named planets dipole model.
+
