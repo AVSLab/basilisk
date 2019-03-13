@@ -27,17 +27,15 @@
 #include "fswMessages/attRefFswMsg.h"
 
 /*! \defgroup celestialTwoBodyPoint
+ @brief
+ This module point one body-fixed axis towards a primary celestial object.  The secondary goal is to point a second body-fixed axis towards another celestial object.
+
+ For example, the goal is to point the sensor towards the center of a planet while doing the best to keep the solar panel normal point at the sun.The module [PDF Description](Basilisk-celestialTwoBodyPoint-20190311.pdf) contains further information on this module's function, how to run it, as well as testing.
  * @{
  */
 
 /*!@brief Data structure for module to compute the two-body celestial pointing navigation solution.
-
- The module
- [PDF Description](celestialTwoBodyPoint.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
  */
-
 typedef struct {
     /* Declare module private variables */
     double singularityThresh;                       //! (r) Threshold for when to fix constraint axis*/
