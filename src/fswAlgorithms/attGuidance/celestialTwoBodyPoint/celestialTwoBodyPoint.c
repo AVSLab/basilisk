@@ -112,8 +112,8 @@ void parseInputMessages(celestialTwoBodyPointConfig *configData, uint64_t module
     /*! - Zero the local planet ephemeris message */
     memset(&primPlanet, 0x0, sizeof(EphemerisIntMsg));
 
-    double R_P1_hat[3];             /* Unit vector in the direction of r_P1 */
-    double R_P2_hat[3];             /* Unit vector in the direction of r_P2 */
+    double R_P1N_N_hat[3];          /* Unit vector in the direction of r_P1 */
+    double R_P2N_N_hat[3];          /* Unit vector in the direction of r_P2 */
     
     double platAngDiff;             /* Angle between r_P1 and r_P2 */
     double dotProduct;              /* Temporary scalar variable */
@@ -121,21 +121,21 @@ void parseInputMessages(celestialTwoBodyPointConfig *configData, uint64_t module
     ReadMessage(configData->inputNavID, &timeOfMsgWritten, &sizeOfMsgWritten, sizeof(NavTransIntMsg), &navData, moduleID);
     ReadMessage(configData->inputCelID, &timeOfMsgWritten, &sizeOfMsgWritten, sizeof(EphemerisIntMsg), &primPlanet, moduleID);
     
-    v3Subtract(primPlanet.r_BdyZero_N, navData.r_BN_N, configData->R_P1);
-    v3Subtract(primPlanet.v_BdyZero_N, navData.v_BN_N, configData->v_P1);
+    v3Subtract(primPlanet.r_BdyZero_N, navData.r_BN_N, configData->R_P1N_N);
+    v3Subtract(primPlanet.v_BdyZero_N, navData.v_BN_N, configData->v_P1N_N);
     
-    v3SetZero(configData->a_P1);
-    v3SetZero(configData->a_P2);
+    v3SetZero(configData->a_P1N_N);
+    v3SetZero(configData->a_P2N_N);
     
     if(configData->inputSecID >= 0)
     {
         ReadMessage(configData->inputSecID, &timeOfMsgWritten, &sizeOfMsgWritten, sizeof(EphemerisIntMsg), &secPlanet, moduleID);
         /*! - Compute R_P2 and v_P2 */
-        v3Subtract(secPlanet.r_BdyZero_N, navData.r_BN_N, configData->R_P2);
-        v3Subtract(secPlanet.v_BdyZero_N, navData.v_BN_N, configData->v_P2);
-        v3Normalize(configData->R_P1, R_P1_hat);
-        v3Normalize(configData->R_P2, R_P2_hat);
-        dotProduct = v3Dot(R_P2_hat, R_P1_hat);
+        v3Subtract(secPlanet.r_BdyZero_N, navData.r_BN_N, configData->R_P2N_N);
+        v3Subtract(secPlanet.v_BdyZero_N, navData.v_BN_N, configData->v_P2N_N);
+        v3Normalize(configData->R_P1N_N, R_P1N_N_hat);
+        v3Normalize(configData->R_P2N_N, R_P2N_N_hat);
+        dotProduct = v3Dot(R_P2N_N_hat, R_P1N_N_hat);
         if (dotProduct >= 1.0)
         {
             platAngDiff = 0.0;  /* If the dot product is greater than 1, zero output */
@@ -147,9 +147,9 @@ void parseInputMessages(celestialTwoBodyPointConfig *configData, uint64_t module
     /*! - Cross the P1 states to get R_P2, v_p2 and a_P2 */
     if(configData->inputSecID < 0 || fabs(platAngDiff) < configData->singularityThresh)
     {
-        v3Cross(configData->R_P1, configData->v_P1, configData->R_P2);
-        v3Cross(configData->R_P1, configData->a_P1, configData->v_P2);
-        v3Cross(configData->v_P1, configData->a_P1, configData->a_P2);
+        v3Cross(configData->R_P1N_N, configData->v_P1N_N, configData->R_P2N_N);
+        v3Cross(configData->R_P1N_N, configData->a_P1N_N, configData->v_P2N_N);
+        v3Cross(configData->v_P1N_N, configData->a_P1N_N, configData->a_P2N_N);
     }
 }
 
@@ -174,20 +174,20 @@ void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint6
     double temp33_2[3][3];  /* Temporary 3x3 matrix 2 */
     
     /* - Initial computations: R_n, v_n, a_n */
-    double R_n[3];          /* Normal vector of the plane defined by R_P1 and R_P2 */
-    double v_n[3];          /* First time-derivative of R_n */
-    double a_n[3];          /* Second time-derivative of R_n */
+    double R_N[3];          /* Normal vector of the plane defined by R_P1 and R_P2 */
+    double v_N[3];          /* First time-derivative of R_n */
+    double a_N[3];          /* Second time-derivative of R_n */
     
-    v3Cross(configData->R_P1, configData->R_P2, R_n);
-    v3Cross(configData->v_P1, configData->R_P2, temp3_1);
-    v3Cross(configData->R_P1, configData->v_P2, temp3_2);
-    v3Add(temp3_1, temp3_2, v_n);
-    v3Cross(configData->a_P1, configData->R_P2, temp3_1);
-    v3Cross(configData->R_P1, configData->a_P2, temp3_2);
+    v3Cross(configData->R_P1N_N, configData->R_P2N_N, R_N);
+    v3Cross(configData->v_P1N_N, configData->R_P2N_N, temp3_1);
+    v3Cross(configData->R_P1N_N, configData->v_P2N_N, temp3_2);
+    v3Add(temp3_1, temp3_2, v_N);
+    v3Cross(configData->a_P1N_N, configData->R_P2N_N, temp3_1);
+    v3Cross(configData->R_P1N_N, configData->a_P2N_N, temp3_2);
     v3Add(temp3_1, temp3_2, temp3_3);
-    v3Cross(configData->v_P1, configData->v_P2, temp3);
+    v3Cross(configData->v_P1N_N, configData->v_P2N_N, temp3);
     v3Scale(2.0, temp3, temp3);
-    v3Add(temp3, temp3_3, a_n);
+    v3Add(temp3, temp3_3, a_N);
     
     /* - Reference Frame computation */
     double dcm_RN[3][3];    /* DCM that maps from Reference frame to the inertial */
@@ -195,8 +195,8 @@ void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint6
     double r2_hat[3];       /* 2nd row vector of RN */
     double r3_hat[3];       /* 3rd row vector of RN */
     
-    v3Normalize(configData->R_P1, r1_hat);
-    v3Normalize(R_n, r3_hat);
+    v3Normalize(configData->R_P1N_N, r1_hat);
+    v3Normalize(R_N, r3_hat);
     v3Cross(r3_hat, r1_hat, r2_hat);
     v3Copy(r1_hat, dcm_RN[0]);
     v3Copy(r2_hat, dcm_RN[1]);
@@ -215,13 +215,13 @@ void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint6
     
     v3OuterProduct(r1_hat, r1_hat, temp33);
     m33Subtract(I_33, temp33, C1);
-    m33MultV3(C1, configData->v_P1, temp3);
-    v3Scale(1.0 / v3Norm(configData->R_P1), temp3, dr1_hat);
+    m33MultV3(C1, configData->v_P1N_N, temp3);
+    v3Scale(1.0 / v3Norm(configData->R_P1N_N), temp3, dr1_hat);
     
     v3OuterProduct(r3_hat, r3_hat, temp33);
     m33Subtract(I_33, temp33, C3);
-    m33MultV3(C3, v_n, temp3);
-    v3Scale(1.0 / v3Norm(R_n), temp3, dr3_hat);
+    m33MultV3(C3, v_N, temp3);
+    v3Scale(1.0 / v3Norm(R_N), temp3, dr3_hat);
     
     v3Cross(dr3_hat, r1_hat, temp3_1);
     v3Cross(r3_hat, dr1_hat, temp3_2);
@@ -241,23 +241,23 @@ void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint6
     double ddr2_hat[3];     /* r2_hat second time-derivative */
     double ddr3_hat[3];     /* r3_hat second time-derivative */
     
-    m33MultV3(C1, configData->a_P1, temp3_1);
+    m33MultV3(C1, configData->a_P1N_N, temp3_1);
     v3OuterProduct(dr1_hat, r1_hat, temp33_1);
     m33Scale(2.0, temp33_1, temp33_1);
     v3OuterProduct(r1_hat, dr1_hat, temp33_2);
     m33Add(temp33_1, temp33_2, temp33);
-    m33MultV3(temp33, configData->v_P1, temp3_2);
+    m33MultV3(temp33, configData->v_P1N_N, temp3_2);
     v3Subtract(temp3_1, temp3_2, temp3);
-    v3Scale(1.0 / v3Norm(configData->R_P1), temp3, ddr1_hat);
+    v3Scale(1.0 / v3Norm(configData->R_P1N_N), temp3, ddr1_hat);
     
-    m33MultV3(C3, a_n, temp3_1);
+    m33MultV3(C3, a_N, temp3_1);
     v3OuterProduct(dr3_hat, r3_hat, temp33_1);
     m33Scale(2.0, temp33_1, temp33_1);
     v3OuterProduct(r3_hat, dr3_hat, temp33_2);
     m33Add(temp33_1, temp33_2, temp33);
-    m33MultV3(temp33, v_n, temp3_2);
+    m33MultV3(temp33, v_N, temp3_2);
     v3Subtract(temp3_1, temp3_2, temp3);
-    v3Scale(1.0 / v3Norm(R_n), temp3, ddr3_hat);
+    v3Scale(1.0 / v3Norm(R_N), temp3, ddr3_hat);
     
     v3Cross(ddr3_hat, r1_hat, temp3_1);
     v3Cross(r3_hat, ddr1_hat, temp3_2);

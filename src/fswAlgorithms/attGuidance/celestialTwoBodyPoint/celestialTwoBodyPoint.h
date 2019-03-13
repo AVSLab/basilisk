@@ -38,24 +38,24 @@
  */
 typedef struct {
     /* Declare module private variables */
-    double singularityThresh;                       //! (r) Threshold for when to fix constraint axis*/
-    double R_P1[3];
-    double R_P2[3];
-    double v_P1[3];
-    double v_P2[3];
-    double a_P1[3];
-    double a_P2[3];
+    double singularityThresh;       //!< (r) Threshold for when to fix constraint axis*/
+    double R_P1N_N[3];              //!< [m] planet 1 position vector relative to inertial frame, in N-frame components
+    double R_P2N_N[3];              //!< [m] planet 2 position vector relative to inertial frame, in N-frame components
+    double v_P1N_N[3];              //!< [m/s] planet 1 velocity vector relative to inertial frame, in N-frame components
+    double v_P2N_N[3];              //!< [m/s] planet 2 velocity vector relative to inertial frame, in N-frame components
+    double a_P1N_N[3];              //!< [m/s^2] planet 1 acceleration vector relative to inertial frame, in N-frame components
+    double a_P2N_N[3];              //!< [m/s^2] planet 2 acceleration vector relative to inertial frame, in N-frame components
     
     
     /* Declare module IO interfaces */
-    char outputDataName[MAX_STAT_MSG_LENGTH];       //! The name of the output message*/
-    char inputNavDataName[MAX_STAT_MSG_LENGTH];     //! The name of the incoming attitude command*/
-    char inputCelMessName[MAX_STAT_MSG_LENGTH];     //! The name of the celestial body message*/
-    char inputSecMessName[MAX_STAT_MSG_LENGTH];     //! The name of the secondary body to constrain point*/
-    int32_t outputMsgID;                            //! (-) ID for the outgoing body estimate message*/
-    int32_t inputNavID;                             //! (-) ID for the incoming IMU data message*/
-    int32_t inputCelID;                             //! (-) ID for the incoming mass properties message*/
-    int32_t inputSecID;                             //! (-) ID for the secondary constraint message*/
+    char outputDataName[MAX_STAT_MSG_LENGTH];       //!< The name of the output message*/
+    char inputNavDataName[MAX_STAT_MSG_LENGTH];     //!< The name of the incoming attitude command*/
+    char inputCelMessName[MAX_STAT_MSG_LENGTH];     //!< The name of the celestial body message*/
+    char inputSecMessName[MAX_STAT_MSG_LENGTH];     //!< The name of the secondary body to constrain point*/
+    int32_t outputMsgID;                            //!< (-) ID for the outgoing body estimate message*/
+    int32_t inputNavID;                             //!< (-) ID for the incoming IMU data message*/
+    int32_t inputCelID;                             //!< (-) ID for the incoming mass properties message*/
+    int32_t inputSecID;                             //!< (-) ID for the secondary constraint message*/
     
     /* Output attitude reference data to send */
     AttRefFswMsg attRefOut;
