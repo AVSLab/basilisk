@@ -19,9 +19,9 @@
 '''
 #
 #   Unit Test Script
-#   Module Name:        rateMsgConverter
-#   Author:             Hanspeter Schaub
-#   Creation Date:      June 30, 2018
+#   Module Name:        HoughCirlces
+#   Author:             Thibaud Teil
+#   Creation Date:      March 13, 2019
 #
 
 import pytest
@@ -35,17 +35,16 @@ bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
 
-
-
-
-
-
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
-from Basilisk.fswAlgorithms import rateMsgConverter
 from Basilisk.utilities import macros
 from Basilisk.fswAlgorithms import fswMessages
+
+try:
+    from Basilisk.fswAlgorithms import houghCircles
+except ImportError:
+    pytest.skip("Hough Circles not built-check OpenCV")
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -57,11 +56,11 @@ from Basilisk.fswAlgorithms import fswMessages
 # update "module" in this function name to reflect the module name
 def test_module(show_plots):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = rateMsgConvertFunction(show_plots)
+    [testResults, testMessage] = houghCircles(show_plots)
     assert testResults < 1, testMessage
 
 
-def rateMsgConvertFunction(show_plots):
+def houghCircles(show_plots):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -81,12 +80,11 @@ def rateMsgConvertFunction(show_plots):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = rateMsgConverter.rateMsgConverterConfig()
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "rateMsgConverter"
+    moduleConfig = houghCircles.HoughCircles()
+    moduleConfig.ModelTag = "houghCircles"
 
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
 
     # Initialize the test module configuration data
     moduleConfig.navRateOutMsgName = "sampleOutput"
@@ -94,7 +92,7 @@ def rateMsgConvertFunction(show_plots):
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = fswMessages.IMUSensorBodyFswMsg()
+    inputMessageData = houghCircles.CameraImageMsg()
     inputMessageData.AngVelBody = [-0.1, 0.2, -0.3]
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
