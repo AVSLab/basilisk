@@ -17,7 +17,7 @@ We are very excited by the great capabilities that this software already has, an
        attTrackingError has updated documentation and unit tests.
     </li>
     <li>
-        navAggregrate module has new documentation and unit tests.
+        navAggregate module has new documentation and unit tests.
     </li>
     <li>
     small FSW algorithm enhancements to ensure we never divide by zero
@@ -30,7 +30,7 @@ We are very excited by the great capabilities that this software already has, an
     <li>
     added new documentation on using the new atmosphere module to simulate the atmospheric density and temperature information for a series of spacecraft locations about a planet.
     </li>
-    <li>updated documentation and unit tests of `celstialTwoBodyPoint`</li>
+    <li>updated documentation and unit tests of `celestialTwoBodyPoint`</li>
     <li>added a new planetary magnetic field module. Currently it provides centered dipole models for Mercury, Earth, Jupiter, Saturn, Uranus and Neptune.  This will be expanded to provide convenient access to other magnetic field models in the future.
     </li>
 </ul>
