@@ -17,7 +17,7 @@
 
  */
 
-#include "attDetermination/InertialUKF/inertialUKF.h"
+#include "attDetermination/inertialUKF/inertialUKF.h"
 #include "attDetermination/_GeneralModuleFiles/ukfUtilities.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
@@ -163,7 +163,7 @@ void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     v3Copy(ConfigData->state, ConfigData->sigma_BNOut);
     v3Copy(&(ConfigData->state[3]), ConfigData->omega_BN_BOut);
     ConfigData->timeTagOut = ConfigData->timeTag;
-    
+    Read_STMessages(ConfigData, moduleID);
 
     return;
 }
@@ -198,16 +198,18 @@ void Read_STMessages(InertialUKFConfig *ConfigData, uint64_t moduleID)
         
         /*! - If the time tag from the measured data is new compared to previous step,
          propagate and update the filter*/
-        for (j=0; j<i; j++)
+        ConfigData->stSensorOrder[i] = i;
+        /*! - Ensure that the time-tags we've received are put in time order*/
+        for (j=i; j>0; j--)
+        {
+            if (ConfigData->stSensorIn[ConfigData->stSensorOrder[j]].timeTag <
+                ConfigData->stSensorIn[ConfigData->stSensorOrder[j-1]].timeTag )
             {
-                ConfigData->stSensorOrder[j+1] = i;
-                if (ConfigData->stSensorIn[i].timeTag < ConfigData->stSensorIn[j].timeTag )
-                {
-                    bufferSTIndice = j+1;
-                    ConfigData->stSensorOrder[j+1] =  ConfigData->stSensorOrder[i];
-                    ConfigData->stSensorOrder[i] = bufferSTIndice;
-                }
+                bufferSTIndice = ConfigData->stSensorOrder[j];
+                ConfigData->stSensorOrder[j] =  ConfigData->stSensorOrder[j-1];
+                ConfigData->stSensorOrder[j-1] = bufferSTIndice;
             }
+        }
     }
     
 
@@ -245,13 +247,32 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
                 sizeof(RWSpeedIntMsg), &(ConfigData->rwSpeeds), moduleID);
     Read_STMessages(ConfigData, moduleID);
     
+
+    /*! - Handle initializing time in filter and discard initial messages*/
     if(ConfigData->firstPassComplete == 0)
     {
+        /*! - Set wheel speeds so that acceleration can be safely computed*/
         memcpy(&(ConfigData->rwSpeedPrev), &(ConfigData->rwSpeeds), sizeof(RWSpeedIntMsg));
         ConfigData->timeWheelPrev = timeOfMsgWritten;
-        ConfigData->timeTag = ConfigData->stSensorIn[ConfigData->stSensorOrder[0]].timeTag*NANO2SEC;
-        
-        ConfigData->firstPassComplete = 1;
+
+        /*! - Loop through ordered time-tags and select largest valid one*/
+        newTimeTag = 0.0;
+        for (i=0; i<ConfigData->STDatasStruct.numST; i++)
+        {
+            if(ConfigData->ReadSizeST[ConfigData->stSensorOrder[i]] == sizeof(STAttFswMsg) &&
+            ConfigData->stSensorIn[ConfigData->stSensorOrder[i]].timeTag*NANO2SEC > newTimeTag)
+            {
+                newTimeTag = ConfigData->stSensorIn[ConfigData->stSensorOrder[i]].timeTag*NANO2SEC;
+                /*! - If any ST message is valid mark initialization complete*/
+                ConfigData->firstPassComplete = 1;
+            }
+        }
+        /*! - If no ST messages were valid, return from filter and try again next frame*/
+        if(ConfigData->firstPassComplete == 0)
+        {
+            return;
+        }
+        ConfigData->timeTag = newTimeTag;
     }
     
     ConfigData->speedDt = (timeOfMsgWritten - ConfigData->timeWheelPrev)*NANO2SEC;
@@ -271,9 +292,15 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
         
         /*! - If the star tracker has provided a new message compared to last time,
               update the filter to the new measurement*/
-        if(newTimeTag >= ConfigData->timeTag && sizeOfMsgWritten > 0)
+        if(newTimeTag >= ConfigData->timeTag && sizeOfMsgWritten == sizeof(STAttFswMsg))
         {
             trackerValid = 1;
+            if((newTimeTag - ConfigData->timeTag) > ConfigData->maxTimeJump
+                && ConfigData->maxTimeJump > 0)
+            {
+                ConfigData->timeTag = newTimeTag - ConfigData->maxTimeJump;
+                BSK_PRINT(MSG_WARNING, "Large jump in state time that was set to max\n");
+            }
             trackerValid += inertialUKFTimeUpdate(ConfigData, newTimeTag);
             trackerValid += inertialUKFMeasUpdate(ConfigData, newTimeTag, ConfigData->stSensorOrder[i]);
             inertialDataOutBuffer.numObs += trackerValid;
