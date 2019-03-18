@@ -21,21 +21,16 @@
    #include "houghCircles.h"
 %}
 
-%include "swig_conly_data.i"
-%constant void Update_houghCircles(void*, uint64_t, uint64_t);
-%ignore Update_houghCircles;
-%constant void SelfInit_houghCircles(void*, uint64_t);
-%ignore SelfInit_houghCircles;
-%constant void CrossInit_houghCircles(void*, uint64_t);
-%ignore CrossInit_houghCircles;
-%constant void Reset_houghCircles(void*, uint64_t, uint64_t);
-%ignore Reset_houghCircles;
-GEN_SIZEOF(HoughCirclesConfig);
-
+%include "swig_common_model.i"
+%include "stdint.i"
+%include "sys_model.h"
 %include "houghCircles.h"
+GEN_SIZEOF(CirclesOpNavMsg)
+GEN_SIZEOF(CameraImageMsg)
 
 
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
+

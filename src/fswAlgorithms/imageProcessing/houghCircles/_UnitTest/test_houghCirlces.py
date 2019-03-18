@@ -60,40 +60,40 @@ except ImportError:
 # update "module" in this function name to reflect the module name
 def test_module(show_plots):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = houghCircles(show_plots)
+    [testResults, testMessage] = houghCirclesTest(show_plots)
     assert testResults < 1, testMessage
 
 
-def houghCircles(show_plots):
+def houghCirclesTest(show_plots):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
     # Create a sim module as an empty container
-    # unitTestSim = SimulationBaseClass.SimBaseClass()
-    # # terminateSimulation() is needed if multiple unit test scripts are run
-    # # that run a simulation for the test. This creates a fresh and
-    # # consistent simulation environment for each test run.
-    # unitTestSim.TotalSim.terminateSimulation()
-    #
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    # terminateSimulation() is needed if multiple unit test scripts are run
+    # that run a simulation for the test. This creates a fresh and
+    # consistent simulation environment for each test run.
+    unitTestSim.TotalSim.terminateSimulation()
+
     # # Create test thread
-    # testProcessRate = macros.sec2nano(0.5)     # update process rate update time
-    # testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    # testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
-    #
-    #
-    # # Construct algorithm and associated C++ container
-    # moduleConfig = houghCircles.HoughCircles()
-    # moduleConfig.ModelTag = "houghCircles"
-    #
-    # # Add test module to runtime call list
-    # unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
-    #
-    # # Initialize the test module configuration data
-    # moduleConfig.navRateOutMsgName = "sampleOutput"
-    # moduleConfig.imuRateInMsgName = "sampleInput"
-    #
+    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+
+    # Construct algorithm and associated C++ container
+    moduleConfig = houghCircles.HoughCircles()
+    moduleConfig.ModelTag = "houghCircles"
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
+
+    # Initialize the test module configuration data
+    moduleConfig.navRateOutMsgName = "sampleOutput"
+    moduleConfig.imuRateInMsgName = "sampleInput"
+
     # # Create input message and size it because the regular creator of that message
     # # is not part of the test.
     # inputMessageData = houghCircles.CameraImageMsg()
