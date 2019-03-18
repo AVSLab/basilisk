@@ -26,7 +26,7 @@ option(USE_PROTOBUFFERS "Include modules which use Google Protobuffers" OFF)
 option(USE_OPENCV "Include modules which use OpenCV" OFF)
 
 if(USE_PROTOBUFFERS)
-  list(APPEND required_conan_libraries protobuf/3.6.1@bincrafters/stable)
+  list(APPEND required_conan_libraries protobuf/3.5.1@bincrafters/stable)
 endif()
 
 if(USE_OPENCV)

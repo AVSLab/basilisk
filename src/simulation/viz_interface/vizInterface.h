@@ -19,7 +19,7 @@
 #ifndef VIZ_INTERFACE_H
 #define VIZ_INTERFACE_H
 
-#include "vizProtobuffer/vizMessage.pb.h"
+#include "utilities/vizProtobuffer/vizMessage.pb.h"
 #include <vector>
 #include <fstream>
 #include <map>
@@ -32,15 +32,15 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/rwConfigLogSimMsg.h"
 #include "simMessages/scPlusStatesSimMsg.h"
+#include "fswMessages/cssConfigFswMsg.h"
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
 #include "simMessages/thrOutputSimMsg.h"
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 
-#include "../fswAlgorithms/fswMessages/cssConfigFswMsg.h"
-#include "../fswAlgorithms/fswMessages/cssUnitConfigFswMsg.h"
-#include "../fswAlgorithms/vehicleConfigData/vehicleConfigData.h"
-#include "../fswAlgorithms/fswMessages/thrArrayConfigFswMsg.h"
-
+#include "utilities/vizProtobuffer/vizMessage.pb.h"
+#include <vector>
+#include <fstream>
+#include <map>
 
 typedef struct {
     int64_t msgID;        //!< [-] message ID associated with source

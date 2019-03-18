@@ -21,7 +21,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include "sensors/sun_sensor/coarse_sun_sensor.h"
 #include "utilities/linearAlgebra.h"
-#include "vizMessage.pb.h"
+#include "utilities/vizProtobuffer/vizMessage.pb.h"
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
@@ -424,18 +424,18 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         // this is actually a pretty good place to receive the pong
         // we should think about a push pull architecture if we have performance problems
         // receive pong
-        char buffer[10];
-        zmq_recv (requester_socket, buffer, 10, 0);
-        // send protobuffer raw over zmq_socket as ping
-        std::string serialized_message;
-        message->SerializeToString(&serialized_message);
-        zmq_send(requester_socket, serialized_message.c_str(), serialized_message.length(), 0);
-
-        // Write protobuffer to file
-        if (!message->SerializeToOstream(this->outputStream)) {
-            std::cerr << "Failed to write part book." << std::endl;
-            return;
-        }
+//        char buffer[10];
+//        zmq_recv (requester_socket, buffer, 10, 0);
+//        // send protobuffer raw over zmq_socket as ping
+//        std::string serialized_message;
+//        message->SerializeToString(&serialized_message);
+//        zmq_send(requester_socket, serialized_message.c_str(), serialized_message.length(), 0);
+//
+//        // Write protobuffer to file
+//        if (!message->SerializeToOstream(this->outputStream)) {
+//            std::cerr << "Failed to write part book." << std::endl;
+//            return;
+//        }
     }
 
 

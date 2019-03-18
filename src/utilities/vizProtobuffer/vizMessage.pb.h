@@ -5,6 +5,7 @@
 #define PROTOBUF_vizMessage_2eproto__INCLUDED
 
 #include <string>
+
 #include <google/protobuf/stubs/common.h>
 
 #if GOOGLE_PROTOBUF_VERSION < 3005000

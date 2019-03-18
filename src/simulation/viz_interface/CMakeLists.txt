@@ -20,6 +20,7 @@ if(NOT WIN32)
 endif()
 target_include_directories(VizInterface PUBLIC "${CMAKE_SOURCE_DIR}")
 target_include_directories(VizInterface PUBLIC "${CMAKE_SOURCE_DIR}/fswAlgorithms")
+target_include_directories(VizInterface PUBLIC "${CMAKE_SOURCE_DIR}/simulation")
 set_target_properties(VizInterface PROPERTIES
 ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Basilisk")
 set_target_properties(VizInterface PROPERTIES
