@@ -88,6 +88,6 @@ endforeach()
 
 add_subdirectory("messaging")
 if (USE_OPENCV)
-	message(STATUS "Adding HoughCircle module in prescence of OpenCV")
+	message(STATUS "Adding HoughCircle module in presence of OpenCV")
 	add_subdirectory("imageProcessing/houghCircles")
 endif()
