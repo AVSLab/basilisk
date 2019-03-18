@@ -99,21 +99,23 @@ void Reset_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, uint64_
 void Update_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
     /* - Read input messages */
-    AttRefFswMsg inputRef;                                  //!< [-] read in the [R_0N] input reference message
-    AttRefFswMsg   attRefOut;                               //!< [-] structure for the Reference frame output data
+    AttRefFswMsg inputRef;                                /* [-] read in the [R_0N] input reference message */
+    AttRefFswMsg attRefOut;                               /* [-] structure for the Reference frame output data */
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
 
     /*!- read in input reference frame message */
+    memset(&inputRef, 0x0, sizeof(AttRefFswMsg));
     ReadMessage(configData->attRefInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AttRefFswMsg), (void *) &inputRef, moduleID);
 
     /*! - Check if a desired attitude configuration message exists. This allows for dynamic changes to the desired MRP rotation */
     if (configData->desiredAttInMsgID >= 0)
     {
-        AttStateFswMsg attStates;                           //!< [-] initial [RR_0] attitude state message
+        AttStateFswMsg attStates;                         /* [-] initial [RR_0] attitude state message */
 
         /* - Read Raster Manager messages */
+        memset(&attStates, 0x0, sizeof(AttStateFswMsg));
         ReadMessage(configData->desiredAttInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(AttStateFswMsg), (void*) &(attStates), moduleID);
         /* - Save commanded MRP set and body rates */
@@ -127,6 +129,7 @@ void Update_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, uint64
     computeTimeStep(configData, callTime);
 
     /*! - Compute output reference frame */
+    memset(&attRefOut, 0x0, sizeof(AttRefFswMsg));
     computeMRPRotationReference(configData,
                                 inputRef.sigma_RN,
                                 inputRef.omega_RN_N,
