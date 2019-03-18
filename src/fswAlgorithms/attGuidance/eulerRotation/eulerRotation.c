@@ -37,6 +37,12 @@
 
 
 
+/*! @brief This method initializes the configData for eulerRotation model.  It creates the module
+ output message.
+ @return void
+ @param ConfigData The configuration data associated with the null space control
+ @param moduleID The ID associated with the ConfigData
+ */
 void SelfInit_eulerRotation(eulerRotationConfig *configData, uint64_t moduleID)
 {
     /* - Create output message for module */
@@ -46,7 +52,13 @@ void SelfInit_eulerRotation(eulerRotationConfig *configData, uint64_t moduleID)
                                                moduleID);
 }
 
-void CrossInit_eulerRotation(eulerRotationConfig *configData, uint64_t moduleID)
+/*! @brief This method performs the second stage of initialization for the module
+ interface. It subscribes to the input reference frame message, and an optional desired
+ attitude scanning message.
+ @return void
+ @param ConfigData The configuration data associated with the null space control
+ @param moduleID The ID associated with the ConfigData
+ */void CrossInit_eulerRotation(eulerRotationConfig *configData, uint64_t moduleID)
 {
     /* - Get the control data message ID*/
     configData->attRefInMsgID = subscribeToMessage(configData->attRefInMsgName,
@@ -62,6 +74,12 @@ void CrossInit_eulerRotation(eulerRotationConfig *configData, uint64_t moduleID)
     }
 }
 
+/*! @brief This resets the module to original states.
+ @return void
+ @param configData The configuration data associated with the null space control
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
+ */
 void Reset_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
     configData->priorTime = 0;
@@ -70,6 +88,13 @@ void Reset_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, uin
 }
 
 
+/*! @brief This method takes the input attitude reference frame, and and superimposes the dynamic euler angle
+ scanning motion on top of this.
+ @return void
+ @param configData The configuration data associated with the mrpRotation module
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
+ */
 void Update_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
     /* - Read input messages */
@@ -119,11 +144,9 @@ void Update_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, ui
 
 
 
-/*!
- Function: checkRasterCommands
- Purpose: This function checks if there is a new commanded raster maneuver available
- Input
-      configData = module configuration data
+/*! @brief This function checks if there is a new commanded raster maneuver message available
+ @return void
+ @param configData The configuration data associated with the mrpRotation module
  */
 void checkRasterCommands(eulerRotationConfig *configData)
 {
@@ -139,13 +162,10 @@ void checkRasterCommands(eulerRotationConfig *configData)
     }
 }
 
-/*!
- Function: computeTimeStep
- Purpose: This function computes control update time
- Input
-      configData = module configuration data
- Output:
-      configData: dt is updated
+/*! @brief This function computes control update time
+ @return void
+ @param configData The configuration data associated with the mrpRotation module
+ @param callTime The clock time at which the function was called (nanoseconds)
  */
 void computeTimeStep(eulerRotationConfig *configData, uint64_t callTime)
 {
@@ -157,14 +177,12 @@ void computeTimeStep(eulerRotationConfig *configData, uint64_t callTime)
     }
 }
 
-/*!
- Function: computeEuler321_Binv_derivative
- Purpose: This function computes the analytical derivative of the B_inv matrix for the 3-2-1 Euler Angle set
- Input
-      angleSet: 3-2-1 euler angles
-      angleRates: 3-2-1 euler angle rates
- Output:
-      B_inv_deriv
+/*! @brief This function computes the analytical derivative of the B_inv matrix for the 3-2-1 Euler Angle set.
+ @return void
+ @param configData The configuration data associated with the mrpRotation module
+ @param angleSet[3] 321 Euler angles
+ @param angleRates[3] The 321 Euler angle rates
+ @param B_inv_deriv the inv(B) matrix for 321 Euler angles
  */
 void computeEuler321_Binv_derivative(double angleSet[3], double angleRates[3], double B_inv_deriv[3][3])
 {
@@ -190,15 +208,15 @@ void computeEuler321_Binv_derivative(double angleSet[3], double angleRates[3], d
     B_inv_deriv[2][2] = 0;
 }
 
-/*!
- Function: computeEulerRotationReference
- Purpose: This function computes the reference (MRP attitude Set, angular velocity and angular acceleration)
- associated with a rotation defined in terms of an (3-2-1) - Euler Angle set
- Input
-      configData = module configuration data
-      inputRef = input base reference
- Output:
-      configData: AttRefFswMsg is computed
+
+/*! @brief This function computes the reference (Euler angle attitude set, angular velocity and angular acceleration)
+ associated with a rotation defined in terms of an initial euler angle set and a constant euler angle rate
+ @return void
+ @param configData The configuration data associated with the mrpRotation module
+ @param sigma_R0N[3] The input reference attitude using MRPs
+ @param omega_R0N_N[3] The input reference frame angular rate vector
+ @param domega_R0N_N[3] The input reference frame angular acceleration vector
+ @param attRefOut The output message copy
  */
 void computeEulerRotationReference(eulerRotationConfig *configData,
                                    double sigma_R0N[3],
