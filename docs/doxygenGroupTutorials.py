@@ -51,54 +51,61 @@
 #       \defgroup scenarioHingedRigidBodyGroup              3.2 Flexible (Hinged) Panels
 #   @}
 #
-#   \defgroup Tutorial_4 Chapter 4: Spacecraft Sensors
+#   \defgroup Tutorial_4 Chapter 4: Planetary Environments
+#   @brief This chapter discusses setting up planetary environments such a a neutral density atmosphere
+#   or a magnetic field.
+#   @{
+#       \defgroup scenarioMagneticField                     4.1 Magnetic Field
+#   @}
+#
+#   \defgroup Tutorial_5 Chapter 5: Spacecraft Sensors
 #   @brief This chapter discusses setting up and using spacecraft sensors within Basilisk.
 #   @{
-#       \defgroup Tutorials_41 4.1  Coarse Sun Sensors
+#       \defgroup Tutorials_51 5.1  Coarse Sun Sensors
 #       @brief This section covers coarse sun sensor or CSS devices.
 #       @{
-#           \defgroup scenarioCSSGroup                      4.1.1 Adding CSS to simulation
-#           \defgroup scenarioCSSFiltersGroup               4.1.2 Estimating Sun Heading with CSS
+#           \defgroup scenarioCSSGroup                      5.1.1 Adding CSS to simulation
+#           \defgroup scenarioCSSFiltersGroup               5.1.2 Estimating Sun Heading with CSS
 #       @}
 #   @}
 #
-#   \defgroup Tutorial_5 Chapter 5: Monte Carlo Simulations
+#   \defgroup Tutorial_6 Chapter 6: Monte Carlo Simulations
 #   @brief This chapter discusses how to setup and run Basilisk simulations in a
 #   Monte Carlo (MC) configuration.  Here the initial spacecraft states and parameters
 #   can be statistically varied and the resulting performance observed over a large
 #   number of simulation runs.
 #   @{
-#       \defgroup scenarioMonteCarloAttRWGroup              5.1 MC run with RW control
+#       \defgroup scenarioMonteCarloAttRWGroup              6.1 MC run with RW control
 #   @}
 #
-#   \defgroup Tutorial_6 Chapter 6: bskSim()-Based Simulation
+#   \defgroup Tutorial_7 Chapter 7: bskSim()-Based Simulation
 #   @brief This chapter discusses how to use the `bskSim()` simulation class within Basilisk.
-#   Here the spacecraft dynamics and flight alorithms have been packaged into a class
+#   Here the spacecraft dynamics and flight algorithms have been packaged into a class
 #   allowing for compact Python simulation code to be written.  Further, the flight software
 #   algorithm can be setup in a range of flight mode, including the ability to switch between
 #   flight modes.
 #   @{
-#       \defgroup scenario_BasicOrbitGroup                  6.1 Basic Orbital Simulation
-#       \defgroup scenario_FeedbackRWGroup                  6.2 Attitude Detumble Control
-#       \defgroup scenario_AttGuidanceGroup                 6.3 Hill Pointing Attitude Control
-#       \defgroup scenario_AttGuidHyperbolicGroup           6.4 Velocity Frame Pointing Control
-#       \defgroup scenario_AttSteeringGroup                 6.5 MRP Steering Attitude Control
-#       \defgroup scenario_AttEclipseGroup                  6.6 Sun Pointing Mode Include Eclipse Evaluation
+#       \defgroup scenario_BasicOrbitGroup                  7.1 Basic Orbital Simulation
+#       \defgroup scenario_FeedbackRWGroup                  7.2 Attitude Detumble Control
+#       \defgroup scenario_AttGuidanceGroup                 7.3 Hill Pointing Attitude Control
+#       \defgroup scenario_AttGuidHyperbolicGroup           7.4 Velocity Frame Pointing Control
+#       \defgroup scenario_AttSteeringGroup                 7.5 MRP Steering Attitude Control
+#       \defgroup scenario_AttEclipseGroup                  7.6 Sun Pointing Mode Include Eclipse Evaluation
 #   @}
 #
-#   \defgroup Tutorial_7 Chapter 7: Spacecraft Formation Flying
+#   \defgroup Tutorial_8 Chapter 8: Spacecraft Formation Flying
 #   @brief This chapter discusses how setup simulations that involve more than one satellite.
 #   @{
-#       \defgroup Tutorials_71 7.1  Formation Flying Dynamics
+#       \defgroup Tutorials_81 8.1  Formation Flying Dynamics
 #       @brief This section covers simulations involving more than one spacecraft.
 #       @{
-#           \defgroup scenario_BasicOrbitFormationGroup     7.1.1 Two-Spacecraft Formation
+#           \defgroup scenario_BasicOrbitFormationGroup     8.1.1 Two-Spacecraft Formation
 #       @}
-#       \defgroup Tutorials_72 7.2  Formation Flying Control
+#       \defgroup Tutorials_82 8.2  Formation Flying Control
 #       @brief This section covers FSW control simulations that depend on the relative
 #       states of two or more spacecraft.
 #       @{
-#           \defgroup scenario_RelativePointingFormationGroup 7.2.1 Relative Pointing Control
+#           \defgroup scenario_RelativePointingFormationGroup 8.2.1 Relative Pointing Control
 #       @}
 #   @}
 #
