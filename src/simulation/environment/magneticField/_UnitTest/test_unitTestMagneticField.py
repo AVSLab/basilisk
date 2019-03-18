@@ -173,10 +173,8 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
                                sc1StateMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    moduleOutputSc0MsgName = testModule.envType + "_0_data"
-    unitTestSim.TotalSim.logThisMessage(moduleOutputSc0MsgName, testProcessRate)
-    moduleOutputSc1MsgName = testModule.envType + "_1_data"
-    unitTestSim.TotalSim.logThisMessage(moduleOutputSc1MsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(testModule.envOutMsgNames[0], testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(testModule.envOutMsgNames[1], testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -193,8 +191,8 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    mag0Data = unitTestSim.pullMessageLogData(moduleOutputSc0MsgName + ".magField_N", range(3))
-    mag1Data = unitTestSim.pullMessageLogData(moduleOutputSc1MsgName + ".magField_N", range(3))
+    mag0Data = unitTestSim.pullMessageLogData(testModule.envOutMsgNames[0] + ".magField_N", range(3))
+    mag1Data = unitTestSim.pullMessageLogData(testModule.envOutMsgNames[1] + ".magField_N", range(3))
 
     def centeredDipole(pos_N, X, refPlanetRadius, refPlanetDCM, minReach, maxReach):
         radius = np.linalg.norm(pos_N)
