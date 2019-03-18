@@ -37,156 +37,152 @@
 
 
 
-void SelfInit_eulerRotation(eulerRotationConfig *ConfigData, uint64_t moduleID)
+/*! @brief This method initializes the configData for eulerRotation model.  It creates the module
+ output message.
+ @return void
+ @param ConfigData The configuration data associated with the null space control
+ @param moduleID The ID associated with the ConfigData
+ */
+void SelfInit_eulerRotation(eulerRotationConfig *configData, uint64_t moduleID)
 {
     /* - Create output message for module */
-    ConfigData->attRefOutMsgID = CreateNewMessage(ConfigData->attRefOutMsgName,
+    configData->attRefOutMsgID = CreateNewMessage(configData->attRefOutMsgName,
                                                sizeof(AttRefFswMsg),
                                                "AttRefFswMsg",
                                                moduleID);
-    ConfigData->attitudeOutMsgID = -1;
-    if(strlen(ConfigData->attitudeOutMsgName) > 0)
-    {
-        ConfigData->attitudeOutMsgID = CreateNewMessage(ConfigData->attitudeOutMsgName,
-                                                        sizeof(AttStateFswMsg),
-                                                        "AttStateFswMsg",
-                                                        moduleID);
-    }
-
-    ConfigData->priorTime = 0;
-    v3SetZero(ConfigData->priorCmdSet);
-    v3SetZero(ConfigData->priorCmdRates);
 }
 
-void CrossInit_eulerRotation(eulerRotationConfig *ConfigData, uint64_t moduleID)
+/*! @brief This method performs the second stage of initialization for the module
+ interface. It subscribes to the input reference frame message, and an optional desired
+ attitude scanning message.
+ @return void
+ @param ConfigData The configuration data associated with the null space control
+ @param moduleID The ID associated with the ConfigData
+ */void CrossInit_eulerRotation(eulerRotationConfig *configData, uint64_t moduleID)
 {
     /* - Get the control data message ID*/
-    ConfigData->attRefInMsgID = subscribeToMessage(ConfigData->attRefInMsgName,
+    configData->attRefInMsgID = subscribeToMessage(configData->attRefInMsgName,
                                                 sizeof(AttRefFswMsg),
                                                 moduleID);
     
-    ConfigData->desiredAttInMsgID = -1;
-    if(strlen(ConfigData->desiredAttInMsgName) > 0)
+    configData->desiredAttInMsgID = -1;
+    if(strlen(configData->desiredAttInMsgName) > 0)
     {
-        ConfigData->desiredAttInMsgID = subscribeToMessage(ConfigData->desiredAttInMsgName,
+        configData->desiredAttInMsgID = subscribeToMessage(configData->desiredAttInMsgName,
                                                          sizeof(AttStateFswMsg),
                                                          moduleID);
     }
 }
 
-void Reset_eulerRotation(eulerRotationConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+/*! @brief This resets the module to original states.
+ @return void
+ @param configData The configuration data associated with the null space control
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
+ */
+void Reset_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
-    ConfigData->priorTime = 0;
-    v3SetZero(ConfigData->priorCmdSet);
-    v3SetZero(ConfigData->priorCmdRates);
+    configData->priorTime = 0;
+    v3SetZero(configData->priorCmdSet);
+    v3SetZero(configData->priorCmdRates);
 }
 
 
-void Update_eulerRotation(eulerRotationConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+/*! @brief This method takes the input attitude reference frame, and and superimposes the dynamic euler angle
+ scanning motion on top of this.
+ @return void
+ @param configData The configuration data associated with the mrpRotation module
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
+ */
+void Update_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
     /* - Read input messages */
     AttRefFswMsg inputRef;
-    AttStateFswMsg attStates;
+    AttRefFswMsg attRefOut;
+
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
-    ReadMessage(ConfigData->attRefInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+
+    memset(&inputRef, 0x0, sizeof(AttRefFswMsg));
+    ReadMessage(configData->attRefInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AttRefFswMsg), (void*) &(inputRef), moduleID);
-    if (ConfigData->desiredAttInMsgID >= 0)
+
+    if (configData->desiredAttInMsgID >= 0)
     {
+        AttStateFswMsg attStates;
+
         /* - Read Raster Manager messages */
-        ReadMessage(ConfigData->desiredAttInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+        memset(&attStates, 0x0, sizeof(AttStateFswMsg));
+        ReadMessage(configData->desiredAttInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(AttStateFswMsg), (void*) &(attStates), moduleID);
         /* - Save commanded 321 Euler set and rates */
-        v3Copy(attStates.state, ConfigData->cmdSet);
-        v3Copy(attStates.rate, ConfigData->cmdRates);
+        v3Copy(attStates.state, configData->cmdSet);
+        v3Copy(attStates.rate, configData->cmdRates);
         /* - Check the command is new */
-        checkRasterCommands(ConfigData);
+        checkRasterCommands(configData);
     }
     
     /* - Compute time step to use in the integration downstream */
-    computeTimeStep(ConfigData, callTime);
+    computeTimeStep(configData, callTime);
     /* - Compute output reference frame */
-    computeEulerRotationReference(ConfigData,
+    memset(&attRefOut, 0x0, sizeof(AttRefFswMsg));
+    computeEulerRotationReference(configData,
                                   inputRef.sigma_RN,
                                   inputRef.omega_RN_N,
-                                  inputRef.domega_RN_N);
+                                  inputRef.domega_RN_N,
+                                  &attRefOut);
+
     /* - Write output messages */
-    writeOutputMessages(ConfigData, callTime, moduleID);
+    WriteMessage(configData->attRefOutMsgID, callTime, sizeof(AttRefFswMsg),
+                 (void*) &(attRefOut), moduleID);
+
     /* - Update last time the module was called to current call time */
-    ConfigData->priorTime = callTime;
+    configData->priorTime = callTime;
     return;
 }
 
-/*!
- Function: writeOutputMessages
- Purpose: This function writes the the generated reference and the computed euler angle set in different messages
- Input
-      ConfigData = module configuration data
-      moduleID = message ID of this module (eulerRotation)
-      callTime = current simulation time when the module is called
- Output: (-)
- */
-void writeOutputMessages(eulerRotationConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
-{
-    /* - Guidance reference output */
-    WriteMessage(ConfigData->attRefOutMsgID, callTime, sizeof(AttRefFswMsg),
-                 (void*) &(ConfigData->attRefOut), moduleID);
-    
-    /* - Euler angle set and rates outputed for testing purposes */
-    if (ConfigData->attitudeOutMsgID >= 0) {
-        v3Copy(ConfigData->angleSet, ConfigData->attStateOut.state);
-        v3Copy(ConfigData->angleRates, ConfigData->attStateOut.rate);
-        WriteMessage(ConfigData->attitudeOutMsgID, callTime, sizeof(AttStateFswMsg),
-                     (void*) &(ConfigData->attStateOut), moduleID);
-    }
-}
 
 
-/*!
- Function: checkRasterCommands
- Purpose: This function checks if there is a new commanded raster maneuver available
- Input
-      ConfigData = module configuration data
+/*! @brief This function checks if there is a new commanded raster maneuver message available
+ @return void
+ @param configData The configuration data associated with the mrpRotation module
  */
-void checkRasterCommands(eulerRotationConfig *ConfigData)
+void checkRasterCommands(eulerRotationConfig *configData)
 {
-    int32_t prevCmdActive = v3IsEqual(ConfigData->cmdSet, ConfigData->priorCmdSet , 1E-12) && v3IsEqual(ConfigData->cmdRates, ConfigData->priorCmdRates , 1E-12);
+    int32_t prevCmdActive = v3IsEqual(configData->cmdSet, configData->priorCmdSet , 1E-12)
+                            && v3IsEqual(configData->cmdRates, configData->priorCmdRates , 1E-12);
     if (!prevCmdActive)
     {
-        v3Copy(ConfigData->cmdSet, ConfigData->angleSet);
-        v3Copy(ConfigData->cmdRates, ConfigData->angleRates);
+        v3Copy(configData->cmdSet, configData->angleSet);
+        v3Copy(configData->cmdRates, configData->angleRates);
         
-        v3Copy(ConfigData->cmdSet, ConfigData->priorCmdSet);
-        v3Copy(ConfigData->cmdRates, ConfigData->priorCmdRates);
+        v3Copy(configData->cmdSet, configData->priorCmdSet);
+        v3Copy(configData->cmdRates, configData->priorCmdRates);
     }
 }
 
-/*!
- Function: computeTimeStep
- Purpose: This function computes control update time
- Input
-      ConfigData = module configuration data
- Output:
-      ConfigData: dt is updated
+/*! @brief This function computes control update time
+ @return void
+ @param configData The configuration data associated with the mrpRotation module
+ @param callTime The clock time at which the function was called (nanoseconds)
  */
-void computeTimeStep(eulerRotationConfig *ConfigData, uint64_t callTime)
+void computeTimeStep(eulerRotationConfig *configData, uint64_t callTime)
 {
-    if (ConfigData->priorTime == 0)
+    if (configData->priorTime == 0)
     {
-        ConfigData->dt = 0.0;
+        configData->dt = 0.0;
     } else {
-        ConfigData->dt = (callTime - ConfigData->priorTime)*NANO2SEC;
+        configData->dt = (callTime - configData->priorTime)*NANO2SEC;
     }
 }
 
-/*!
- Function: computeEuler321_Binv_derivative
- Purpose: This function computes the analytical derivative of the B_inv matrix for the 3-2-1 Euler Angle set
- Input
-      angleSet: 3-2-1 euler angles
-      angleRates: 3-2-1 euler angle rates
- Output:
-      B_inv_deriv
+/*! @brief This function computes the analytical derivative of the B_inv matrix for the 3-2-1 Euler Angle set.
+ @return void
+ @param configData The configuration data associated with the mrpRotation module
+ @param angleSet[3] 321 Euler angles
+ @param angleRates[3] The 321 Euler angle rates
+ @param B_inv_deriv the inv(B) matrix for 321 Euler angles
  */
 void computeEuler321_Binv_derivative(double angleSet[3], double angleRates[3], double B_inv_deriv[3][3])
 {
@@ -212,20 +208,21 @@ void computeEuler321_Binv_derivative(double angleSet[3], double angleRates[3], d
     B_inv_deriv[2][2] = 0;
 }
 
-/*!
- Function: computeEulerRotationReference
- Purpose: This function computes the reference (MRP attitude Set, angular velocity and angular acceleration)
- associated with a rotation defined in terms of an (3-2-1) - Euler Angle set
- Input
-      ConfigData = module configuration data
-      inputRef = input base reference
- Output:
-      ConfigData: AttRefFswMsg is computed
+
+/*! @brief This function computes the reference (Euler angle attitude set, angular velocity and angular acceleration)
+ associated with a rotation defined in terms of an initial euler angle set and a constant euler angle rate
+ @return void
+ @param configData The configuration data associated with the mrpRotation module
+ @param sigma_R0N[3] The input reference attitude using MRPs
+ @param omega_R0N_N[3] The input reference frame angular rate vector
+ @param domega_R0N_N[3] The input reference frame angular acceleration vector
+ @param attRefOut The output message copy
  */
-void computeEulerRotationReference(eulerRotationConfig *ConfigData,
+void computeEulerRotationReference(eulerRotationConfig *configData,
                                    double sigma_R0N[3],
                                    double omega_R0N_N[3],
-                                   double domega_R0N_N[3])
+                                   double domega_R0N_N[3],
+                                   AttRefFswMsg *attRefOut)
 {
     /* Compute attitude reference*/
     double attIncrement[3];         /*!< [] increment in attitude coordinates  */
@@ -234,30 +231,30 @@ void computeEulerRotationReference(eulerRotationConfig *ConfigData,
     double RN[3][3];                /*!< [] DCM rotating from N to R */
     
     MRP2C(sigma_R0N, R0N);
-    v3Scale(ConfigData->dt, ConfigData->angleRates, attIncrement);
-    v3Add(ConfigData->angleSet, attIncrement, ConfigData->angleSet);
-    Euler3212C(ConfigData->angleSet, RR0);
+    v3Scale(configData->dt, configData->angleRates, attIncrement);
+    v3Add(configData->angleSet, attIncrement, configData->angleSet);
+    Euler3212C(configData->angleSet, RR0);
     m33MultM33(RR0, R0N, RN);
-    C2MRP(RN, ConfigData->attRefOut.sigma_RN);
+    C2MRP(RN, attRefOut->sigma_RN);
     
     /* Compute angular velocity */
     double B_inv[3][3];             /*!< [] matrix related Euler angle rates to angular velocity vector components */
     double omega_RR0_R[3];          /*!< [r/s] angular velocity vector between R and R0 frame in R frame components */
     double omega_RR0_N[3];          /*!< [r/s] angular velocity vector between R and R0 frame in N frame components */
-    BinvEuler321(ConfigData->angleSet, B_inv);
-    m33MultV3(B_inv, ConfigData->angleRates, omega_RR0_R);
+    BinvEuler321(configData->angleSet, B_inv);
+    m33MultV3(B_inv, configData->angleRates, omega_RR0_R);
     m33tMultV3(RN, omega_RR0_R, omega_RR0_N);
-    v3Add(omega_R0N_N, omega_RR0_N, ConfigData->attRefOut.omega_RN_N);
+    v3Add(omega_R0N_N, omega_RR0_N, attRefOut->omega_RN_N);
  
     /* Compute angular acceleration */
     double B_inv_deriv[3][3];       /*!< [] time derivatie of matrix relating EA rates to omegas */
     double domega_RR0_R[3];         /*!< [r/s] inertial derivative of omega_RR0_R in R frame components */
     double domega_RR0_N[3];         /*!< [r/s] inertial derivative of omega_RR0_R in N frame components */
     double temp[3];
-    computeEuler321_Binv_derivative(ConfigData->angleSet, ConfigData->angleRates, B_inv_deriv);
-    m33MultV3(B_inv_deriv, ConfigData->angleRates, domega_RR0_R);
+    computeEuler321_Binv_derivative(configData->angleSet, configData->angleRates, B_inv_deriv);
+    m33MultV3(B_inv_deriv, configData->angleRates, domega_RR0_R);
     m33tMultV3(RN, domega_RR0_R, domega_RR0_N);
     v3Cross(omega_R0N_N, omega_RR0_N, temp);
     v3Add(temp, domega_RR0_N, domega_RR0_N);
-    v3Add(domega_RR0_N, domega_R0N_N, ConfigData->attRefOut.domega_RN_N);
+    v3Add(domega_RR0_N, domega_R0N_N, attRefOut->domega_RN_N);
 }

@@ -220,7 +220,6 @@ def run2(show_plots):
     # Initialize the test module configuration data
     moduleConfig.attRefInMsgName = "inputRefName"
     moduleConfig.attRefOutMsgName = "outputRefName"
-    moduleConfig.attitudeOutMsgName = "outputName"
     moduleConfig.desiredAttInMsgName = "desiredName"
     angleSet = np.array([0.0, 90.0, 0.0]) * mc.D2R
     moduleConfig.angleSet = angleSet
@@ -262,7 +261,6 @@ def run2(show_plots):
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.attRefOutMsgName, testProcessRate)
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.attitudeOutMsgName, testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -330,47 +328,6 @@ def run2(show_plots):
                                                                accuracy, "domega_RN_N Vector",
                                                                testFailCount, testMessages)
 
-    moduleOutputName = "state"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attitudeOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
-
-    # for data in moduleOutput:
-    #     print("{:.13}, \t{:.13}, \t{:.13}, \t{:.13}".format(data[0], data[1], data[2], data[3]))
-
-    trueVector = [
-        [0.000000000000e+0, 1.570796326795, 0],
-        [0.000000000000e+0, 1.570796326795, 0],
-        [8.726646259972e-4, 1.570796326795, 0],
-        [1.745329251994e-3, 1.570796326795, 0]
-    ]
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
-                                                               accuracy, "attitude state",
-                                                               testFailCount, testMessages)
-
-    moduleOutputName = "rate"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attitudeOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
-
-    trueVector = [
-        [1.74532925199e-3, 0.000000000000e+00, 0],
-        [1.74532925199e-3, 0.000000000000e+00, 0],
-        [1.74532925199e-3, 0.000000000000e+00, 0],
-        [1.74532925199e-3, 0.000000000000e+00, 0]
-    ]
-    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
-                                                               accuracy, "attitude rate",
-                                                               testFailCount, testMessages)
-
-    # If the argument provided at commandline "--show_plots" evaluates as true,
-    # plot all figures
-    #    if show_plots:
-    #        # plot a sample variable.
-    #        plt.figure(1)
-    #        plt.plot(variableState[:,0]*macros.NANO2SEC, variableState[:,1], label='Sample Variable')
-    #        plt.legend(loc='upper left')
-    #        plt.xlabel('Time [s]')
-    #        plt.ylabel('Variable Description [unit]')
-    #        plt.show()
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

@@ -33,6 +33,9 @@ We are very excited by the great capabilities that this software already has, an
     <li>updated documentation and unit tests of `celestialTwoBodyPoint`</li>
     <li>added a new planetary magnetic field module. Currently it provides centered dipole models for Mercury, Earth, Jupiter, Saturn, Uranus and Neptune.  This will be expanded to provide convenient access to other magnetic field models in the future.
     </li>
+    <li>
+    updated eulerRotation() to remove optional output message and did general code clean-up
+    </li>
 </ul>
 
 
