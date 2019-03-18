@@ -41,8 +41,8 @@ typedef struct {
     double mrpSet[3];                           //!< [-] current MRP attitude coordinate set with respect to the input reference
     double omega_RR0_R[3];                      //!< [rad/s] angular velocity vector relative to input reference
     /* Declare module private variables */
-    double cmdSet[3];                           //!< [] commanded initial MRP set with respect to input reference
-    double cmdRates[3];                         //!< [rad/s] commanded constant angular velocity vector
+    double cmdSet[3];                           //!< [] msg commanded initial MRP sigma_RR0 set with respect to input reference
+    double cmdRates[3];                         //!< [rad/s] msg commanded constant angular velocity vector omega_RR0_R
     double priorCmdSet[3];                      //!< [] prior commanded MRP set
     double priorCmdRates[3];                    //!< [rad/s] prior commanded angular velocity vector
     uint64_t priorTime;                         //!< [ns] last time the guidance module is called
