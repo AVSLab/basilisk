@@ -49,23 +49,19 @@ import truth_mrpRotation as truth
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(conditionstring)
 
-@pytest.mark.parametrize("cmdStateFlag, stateOutputFlag, testReset", [
-      ("False", "False", "False")
-     ,("True", "False", "False")
-    , ("False", "True", "False")
-    , ("False", "False", "True")
-    , ("True", "False", "True")
-])
+@pytest.mark.parametrize("cmdStateFlag", [False, True])
+@pytest.mark.parametrize("testReset", [False, True])
+
 
 
 # provide a unique test method name, starting with test_
-def test_mrpRotation(show_plots, cmdStateFlag, stateOutputFlag, testReset):
+def test_mrpRotation(show_plots, cmdStateFlag, testReset):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(show_plots, cmdStateFlag, stateOutputFlag, testReset)
+    [testResults, testMessage] = run(show_plots, cmdStateFlag, testReset)
     assert testResults < 1, testMessage
 
 
-def run(show_plots, cmdStateFlag, stateOutputFlag, testReset):
+def run(show_plots, cmdStateFlag, testReset):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -122,9 +118,6 @@ def run(show_plots, cmdStateFlag, stateOutputFlag, testReset):
         unitTestSupport.writeTeXSnippet("sigma_RR0Cmd", str(sigma_RR0), path)
         unitTestSupport.writeTeXSnippet("omega_RR0_RCmd", str(omega_RR0_R * mc.R2D) + "deg/sec", path)
 
-    if stateOutputFlag:
-        moduleConfig.attitudeOutMsgName = "optAttOut"
-
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
@@ -147,8 +140,6 @@ def run(show_plots, cmdStateFlag, stateOutputFlag, testReset):
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.attRefOutMsgName, testProcessRate)
-    if stateOutputFlag:
-        unitTestSim.TotalSim.logThisMessage(moduleConfig.attitudeOutMsgName, testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -172,7 +163,7 @@ def run(show_plots, cmdStateFlag, stateOutputFlag, testReset):
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     accuracy = 1e-12
     unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
-    trueSigma, trueOmega, truedOmega, trueOptSigma, trueOptOmega \
+    trueSigma, trueOmega, truedOmega, \
         = truth.results(sigma_RR0,omega_RR0_R,RefStateInData,updateTime, cmdStateFlag, testReset)
 
     #
@@ -184,7 +175,6 @@ def run(show_plots, cmdStateFlag, stateOutputFlag, testReset):
     testFailCount, testMessages = unitTestSupport.compareArray(trueSigma, moduleOutput,
                                                                accuracy, "sigma_RN Set",
                                                                testFailCount, testMessages)
-
     #
     # check omega_RN_N
     #
@@ -205,28 +195,8 @@ def run(show_plots, cmdStateFlag, stateOutputFlag, testReset):
                                                                accuracy, "domega_RN_N Vector",
                                                                testFailCount, testMessages)
 
-    if stateOutputFlag:
-        #
-        # check sigma_RR0
-        #
-        moduleOutputName = "state"
-        moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attitudeOutMsgName + '.' + moduleOutputName,
-                                                      range(3))
-        testFailCount, testMessages = unitTestSupport.compareArray(trueOptSigma, moduleOutput,
-                                                                   accuracy, "sigma_RR0 Set",
-                                                                   testFailCount, testMessages)
 
-        #
-        # check omega_RR0_R
-        #
-        moduleOutputName = "rate"
-        moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attitudeOutMsgName + '.' + moduleOutputName,
-                                                      range(3))
-        testFailCount, testMessages = unitTestSupport.compareArray(trueOptOmega, moduleOutput,
-                                                                   accuracy, "omega_RR0_R Set",
-                                                                   testFailCount, testMessages)
-
-    snippentName = "passFail" + str(cmdStateFlag) + str(stateOutputFlag) + str(testReset)
+    snippentName = "passFail" + str(cmdStateFlag) + str(testReset)
     if testFailCount == 0:
         colorText = 'ForestGreen'
         print "PASSED: " + moduleWrap.ModelTag
@@ -237,16 +207,6 @@ def run(show_plots, cmdStateFlag, stateOutputFlag, testReset):
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
-    # If the argument provided at commandline "--show_plots" evaluates as true,
-    # plot all figures
-#    if show_plots:
-#        # plot a sample variable.
-#        plt.figure(1)
-#        plt.plot(variableState[:,0]*macros.NANO2SEC, variableState[:,1], label='Sample Variable')
-#        plt.legend(loc='upper left')
-#        plt.xlabel('Time [s]')
-#        plt.ylabel('Variable Description [unit]')
-#        plt.show()
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -258,9 +218,8 @@ def run(show_plots, cmdStateFlag, stateOutputFlag, testReset):
 # stand-along python script
 #
 if __name__ == "__main__":
-    run(
+    test_mrpRotation(
         False           # show plots
         , False         # cmdStateFlag
-        , False         # stateOutputFlag
-        , False         # testReset
+        , True         # testReset
     )

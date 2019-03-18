@@ -46,16 +46,6 @@ void SelfInit_mrpRotation(mrpRotationConfig *configData, uint64_t moduleID)
                                                   "AttRefFswMsg",
                                                   moduleID);
 
-    /*! - check if optional reference attitude (RR_0) output statement message name is setup.
-     Subscribe to message if the message name is non-empty */
-    configData->attitudeOutMsgID = -1;
-    if(strlen(configData->attitudeOutMsgName) > 0)
-    {
-        configData->attitudeOutMsgID = CreateNewMessage(configData->attitudeOutMsgName,
-                                                        sizeof(AttStateFswMsg),
-                                                        "AttStateFswMsg",
-                                                        moduleID);
-    }
     return;
 }
 
@@ -111,7 +101,6 @@ void Update_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, uint64
     /* - Read input messages */
     AttRefFswMsg inputRef;                                  //!< [-] read in the [R_0N] input reference message
     AttRefFswMsg   attRefOut;                               //!< [-] structure for the Reference frame output data
-    AttStateFswMsg attStateOut;                             //!< [-] structure for the attitude reference output data
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
 
@@ -148,14 +137,6 @@ void Update_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, uint64
     /*! - write attitude guidance reference output */
     WriteMessage(configData->attRefOutMsgID, callTime, sizeof(AttRefFswMsg),
                  &attRefOut, moduleID);
-
-    /*! - output the optional attitude state message with current R/R0 information */
-    if (configData->attitudeOutMsgID >= 0) {
-        v3Copy(configData->mrpSet, attStateOut.state);
-        v3Copy(configData->omega_RR0_R, attStateOut.rate);
-        WriteMessage(configData->attitudeOutMsgID, callTime, sizeof(AttStateFswMsg),
-                     &attStateOut, moduleID);
-    }
 
     /*! - Update last time the module was called to current call time */
     configData->priorTime = callTime;
