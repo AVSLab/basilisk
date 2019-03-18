@@ -32,8 +32,7 @@
 #include "simulation/utilities/rigidBodyKinematics.h"
 
 /*! @brief This method initializes the configData for mrpRotation model.  It creates the module
- output message.  If the optional attitude state output message is setup, it creates that output
- message as well.
+ output message.
  @return void
  @param ConfigData The configuration data associated with the null space control
  @param moduleID The ID associated with the ConfigData
