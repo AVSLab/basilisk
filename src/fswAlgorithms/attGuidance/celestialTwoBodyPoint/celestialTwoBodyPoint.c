@@ -181,13 +181,13 @@ void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint6
     v3Cross(configData->R_P1N_N, configData->R_P2N_N, R_N);
     v3Cross(configData->v_P1N_N, configData->R_P2N_N, temp3_1);
     v3Cross(configData->R_P1N_N, configData->v_P2N_N, temp3_2);
-    v3Add(temp3_1, temp3_2, v_N);
+    v3Add(temp3_1, temp3_2, v_N); /*Eq 4 */
     v3Cross(configData->a_P1N_N, configData->R_P2N_N, temp3_1);
     v3Cross(configData->R_P1N_N, configData->a_P2N_N, temp3_2);
     v3Add(temp3_1, temp3_2, temp3_3);
     v3Cross(configData->v_P1N_N, configData->v_P2N_N, temp3);
     v3Scale(2.0, temp3, temp3);
-    v3Add(temp3, temp3_3, a_N);
+    v3Add(temp3, temp3_3, a_N);  /*Eq 5*/
     
     /* - Reference Frame computation */
     double dcm_RN[3][3];    /* DCM that maps from Reference frame to the inertial */
@@ -195,9 +195,9 @@ void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint6
     double r2_hat[3];       /* 2nd row vector of RN */
     double r3_hat[3];       /* 3rd row vector of RN */
     
-    v3Normalize(configData->R_P1N_N, r1_hat);
-    v3Normalize(R_N, r3_hat);
-    v3Cross(r3_hat, r1_hat, r2_hat);
+    v3Normalize(configData->R_P1N_N, r1_hat); /* Eq 9a*/
+    v3Normalize(R_N, r3_hat); /* Eq 9c */
+    v3Cross(r3_hat, r1_hat, r2_hat); /* Eq 9b */
     v3Copy(r1_hat, dcm_RN[0]);
     v3Copy(r2_hat, dcm_RN[1]);
     v3Copy(r3_hat, dcm_RN[2]);
