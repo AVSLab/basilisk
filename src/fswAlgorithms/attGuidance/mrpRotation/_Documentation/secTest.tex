@@ -15,13 +15,12 @@ If the simulation flag {\tt testReset} is true then  the simulation will run an 
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{ l | c | c | c } % Column formatting, 
 		\hline\hline
-		\textbf{Check}  & {\tt cmdStateFlag} & {\tt stateOutputFlag} & {\tt testReset}  \\ 
+		\textbf{Check}  & {\tt cmdStateFlag} & {\tt testReset}  \\ 
 		\hline
-		1 & False & False & False \\
-		2 & True & False & False \\
-		3 & False & True & False \\
-		4 & False & False & True \\
-		5 & True & False & True \\
+		1 & False  & False \\
+		2 & True  & False \\
+		3 & False  & True \\
+		4 & True  & True \\
 		\hline\hline
 	\end{tabular}
 \end{table}
@@ -51,7 +50,7 @@ The output variables being tested are listed in Table~\ref{tab:errortol}, includ
 
 \section{Test Results}
 The results of the unit test are listed in Table~\ref{tab:results}.  
-All of the tests passed:
+All of the tests are expected to pass:
 \begin{table}[H]
 	\caption{Test results}
 	\label{tab:results}
@@ -60,11 +59,10 @@ All of the tests passed:
 		\hline\hline
 		\textbf{Check} 						  		&\textbf{Pass/Fail} \\ 
 		\hline
-	   1	   			& \input{AutoTex/passFailFalseFalseFalse} \\ 
-	   2	   			& \input{AutoTex/passFailTrueFalseFalse} \\ 
-	   3	   			& \input{AutoTex/passFailFalseTrueFalse} \\ 
-	   4	   			& \input{AutoTex/passFailFalseFalseTrue} \\ 
-	   5	   			& \input{AutoTex/passFailTrueFalseTrue} \\ 
+	   1	   			& \input{AutoTex/passFailFalseFalse} \\ 
+	   2	   			& \input{AutoTex/passFailTrueFalse} \\ 
+	   3	   			& \input{AutoTex/passFailFalseTrue} \\ 
+	   4	   			& \input{AutoTex/passFailTrueTrue} \\ 
 	   \hline\hline
 	\end{tabular}
 \end{table}
