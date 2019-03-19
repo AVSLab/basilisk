@@ -17,7 +17,7 @@
 
  */
 
-#include "attDetermination/inertialUKF/inertialUKF.h"
+#include "attDetermination/InertialUKF/inertialUKF.h"
 #include "attDetermination/_GeneralModuleFiles/ukfUtilities.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
