@@ -36,6 +36,9 @@ We are very excited by the great capabilities that this software already has, an
     <li>
     updated eulerRotation() to remove optional output message and did general code clean-up
     </li>
+    <li>
+    updated mrpRotation(), new PDF documentation, did code cleanup, updated unit tests, removed optional module output that is not needed
+    </li>
 </ul>
 
 
