@@ -99,6 +99,7 @@ typedef struct {
     double sigma_BNOut[3];   /*!< [-] Output MRP*/
     double omega_BN_BOut[3]; /*!< [r/s] Body rate output data*/
     double timeTagOut;       /*!< [s] Output time-tag information*/
+    double maxTimeJump;      /*!< [s] Maximum time jump to allow in propagation*/
 	NavAttIntMsg outputInertial;        /*!< -- Output inertial estimate data */
     STAttFswMsg stSensorIn[MAX_ST_VEH_COUNT]; /*!< [-] ST sensor data read in from message bus*/
     int stSensorOrder[MAX_ST_VEH_COUNT]; /*!< [-] ST sensor data read in from message bus*/
