@@ -86,7 +86,7 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uin
     int i;
     
     /* configure the number of axes that are controlled */
-    double *pAxis;                 /*!< pointer to the current control axis */
+    double *pAxis; /*!< pointer to the current control axis */
     ConfigData->numControlAxes = 0;
     for (i = 0; i < 3; i++)
     {
@@ -96,7 +96,7 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uin
         }
     }
     if (ConfigData->numControlAxes == 0) {
-        BSK_PRINT(MSG_WARNING,"rwMotorTorque() is not setup to control any axes!\n");
+        BSK_PRINT(MSG_WARNING,"rwMotorTorque() is not setup to control any axes!\n"); // Should this be a hard fail?
     }
     
     /*! - Read static RW config data message and store it in module variables */
@@ -107,7 +107,7 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uin
         /* If no info is provided about RW availability we'll assume that all are available */
         ConfigData->numAvailRW =ConfigData->rwConfigParams.numRW;
         for (i = 0; i < ConfigData->rwConfigParams.numRW; i++){
-            v3Copy(&ConfigData->rwConfigParams.GsMatrix_B[i * 3], &ConfigData->GsMatrix_B[i * 3]);
+            v3Copy(&ConfigData->rwConfigParams.GsMatrix_B[i * 3], &ConfigData->GsMatrixAvail_B[i * 3]);
         }
     }
 }
@@ -129,58 +129,55 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
     int numAvailRW = 0;
     double us[MAX_EFF_CNT];
     double Lr_B[3]; /*!< [Nm]    commanded ADCS control torque */
-    double CLr[3];
-    double CGs[3][MAX_EFF_CNT];
+    double Lr_C[3]; /*!< [Nm]    commanded ADCS control torque in the control frame */
+    double CGs[3][MAX_EFF_CNT]; /*!< Mapping matrix between control and wheel frame */
     
     RWAvailabilityFswMsg wheelsAvailability;
 
     vSetZero(us, MAX_EFF_CNT);
-    vSetZero(wheelsAvailability.wheelAvailability, MAX_EFF_CNT); // wheelAvailability set to 0 (AVAILABLE) by default /* why don't we have a set zero for int arrays*/
-    //memset(wheelsAvailability.wheelAvailability, 0x0, MAX_EFF_CNT * sizeof(int)); /
     
+    v3SetZero(Lr_B);
     ReadMessage(ConfigData->inputVehControlID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CmdTorqueBodyIntMsg), (void*) &(Lr_B), moduleID);
+    
     /* Lr is assumed to be a positive torque onto the body */
     v3Scale(-1.0, Lr_B, Lr_B);
     
     if (ConfigData->rwAvailInMsgID >= 0){
+        memset(&wheelsAvailability, 0x0, sizeof(RWAvailabilityFswMsg));
         ReadMessage(ConfigData->rwAvailInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                    sizeof(RWAvailabilityFswMsg), &wheelsAvailability, moduleID);
+                    sizeof(RWAvailabilityFswMsg), (void*) &wheelsAvailability, moduleID);
         
         for (i = 0; i < ConfigData->rwConfigParams.numRW; i++) {
             if (wheelsAvailability.wheelAvailability[i] == AVAILABLE){
-                v3Copy(&ConfigData->rwConfigParams.GsMatrix_B[i * 3], &ConfigData->GsMatrix_B[numAvailRW * 3]);// Don't understand why we can't just red from the GsMatrix_B values
+                v3Copy(&ConfigData->rwConfigParams.GsMatrix_B[i * 3], &ConfigData->GsMatrixAvail_B[numAvailRW * 3]);
                 numAvailRW += 1;
             }
             ConfigData->numAvailRW = numAvailRW;
         }
     }
     
-    /* Compute minimum norm inverse for us = [CGs].T inv([CGs][CGs].T) [CLr] */
+    /* Compute minimum norm inverse for us = [CGs].T inv([CGs][CGs].T) [Lr_C] */
     /* Having at least the same # of RW as # of control axes is necessary condition to guarantee inverse matrix exists */
     /* If matrix to invert it not full rank, the control torque output is zero. */
     if (ConfigData->numAvailRW >= ConfigData->numControlAxes){
-        /* [M] = [CGs][CGs].T */
-        /* v3_temp = inv([M]) [CLr] */
-        int i_torque = 0;
-        double M[3][3];
-        double v3_temp[3];
+        double M[3][3];         /* [M] = [CGs][CGs].T */
+        double v3_temp[3];      /* v3_temp = inv([M]) [Lr_C] */
         double us_avail[MAX_EFF_CNT];
         
         v3SetZero(v3_temp);
         vSetZero(us_avail, MAX_EFF_CNT);
         
-        /* compute [CLr] = [C]Lr */
+        /* compute Lr_C = [C]Lr */
         /* compute [CGs] */
         for (i=0; i<ConfigData->numControlAxes; i++){
-            CLr[i] = v3Dot(ConfigData->controlAxes_B + 3 * i, Lr_B); /* Why aren't these pointers?*/
+            Lr_C[i] = v3Dot(ConfigData->controlAxes_B + 3 * i, Lr_B); /* Why aren't these pointers? */
             for (j=0; j<ConfigData->numAvailRW; j++) {
-                CGs[i][j] = v3Dot(&ConfigData->GsMatrix_B[j * 3], &ConfigData->controlAxes_B[3 * i]); // Why are the wheel axes different from the control axes.
+                CGs[i][j] = v3Dot(&ConfigData->GsMatrixAvail_B[j * 3], &ConfigData->controlAxes_B[3 * i]); // Why are the wheel axes different from the control axes.
             }
         }
 
-        /*JM: What happens when we don't have sufficent control axes or any wheels available*/
-        if (ConfigData->numControlAxes > 0 && ConfigData->numControlAxes <= 3)
+        if (ConfigData->numControlAxes > 0 && ConfigData->numControlAxes <= 3) // Uncertain if we need to impose the upper limit technically.
         {
             for (i=0; i<ConfigData->numControlAxes; i++) {
                 for (j=0; j<ConfigData->numControlAxes; j++) {
@@ -191,7 +188,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
                 }
             }
             mInverse(M, ConfigData->numControlAxes, M);
-            mMultV(M, ConfigData->numControlAxes, ConfigData->numControlAxes, CLr, v3_temp);
+            mMultV(M, ConfigData->numControlAxes, ConfigData->numControlAxes, Lr_C, v3_temp);
         }
         
         /* compute the RW motor torques */
@@ -202,6 +199,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
             }
         }
         
+        int i_torque = 0;
         for (i = 0; i < ConfigData->rwConfigParams.numRW; i++) {
             if (wheelsAvailability.wheelAvailability[i] == AVAILABLE)
             {

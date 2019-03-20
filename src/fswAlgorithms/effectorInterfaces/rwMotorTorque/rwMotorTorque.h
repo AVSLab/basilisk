@@ -38,9 +38,9 @@ typedef struct {
     /* declare module private variables */
     double   controlAxes_B[3*3];        /*!< [-] array of the control unit axes */
     uint32_t numControlAxes;            /*!< [-] counter indicating how many orthogonal axes are controlled */
-    uint32_t numAvailRW;
+    uint32_t numAvailRW;                /*!< [-] number of reaction wheels available */
     RWArrayConfigFswMsg rwConfigParams;     /*!< [-] struct to store message containing RW config parameters in body B frame */
-    double GsMatrix_B[3*MAX_EFF_CNT];   /*!< [-] The RW spin axis matrix in body frame components */
+    double GsMatrixAvail_B[3*MAX_EFF_CNT];   /*!< [-] The RW spin axis matrix in body frame components */
     double CGs[3][MAX_EFF_CNT];
 
     /* declare module IO interfaces */
