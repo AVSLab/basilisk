@@ -49,7 +49,7 @@ If there is no incoming message with a secondary celestial body pointing conditi
 
 Since the main algorithm of this module, which is developed in the following sections, assumes two conditions, the second one is arbitrarily set as following:
 \begin{equation}
-		 \bm{R}_{P2} = \bm{R}_{P1} \times \bm{v}_{P1} \equiv  \bm{h}_{P1}
+	\bm{R}_{P2} = \bm{R}_{P1} \times \bm{v}_{P1} \equiv  \bm{h}_{P1}
 \end{equation}
 By setting the secondary constrain to have the direction of the angular momentum vector $ \bm{h}_{P1}$, it is assured that it will always be valid ($\bm{R}_{P1}$ and $\bm{R}_{P2}$ are now perpendicular).
 The first and second time derivatives are steadily computed:
@@ -82,27 +82,48 @@ The first and second time derivatives of the base vectors that compound the refe
 	\begin{align}
 		\dot{\hat{\bm{r}}}_1 &= ([I_{3\times3}] - {\hat{\bm{r}}_1}{\hat{\bm{r}}_1}^T)  \frac{{\bm R}_{P1}} {|{\bm R}_{P1}|} \\
 		\dot{\hat{\bm{r}}}_3 &= ([I_{3\times3}] - \hat{\bm{r}}_3 \hat{\bm{r}}_3^T)  \frac{{\bm R}_{n}} {|{\bm R}_{n}|} \\
-		\dot{\hat{\bm{r}}}_2 &= \dot{\hat{\bm{r}}}_3 \times \bm{r}_1 +  \bm{r}_n  \times \dot{\hat{\bm{r}}}_3 
+		\dot{\hat{\bm{r}}}_2 &= \dot{\hat{\bm{r}}}_3 \times \bm{r}_1 +  \bm{r}_1  \times \dot{\hat{\bm{r}}}_3 
 	\end{align}
 \end{subequations}
 
+Steps of the derivation for the first term are given here:
+
 \begin{subequations}
 	\begin{align}
-		\ddot{\hat{\bm{r}}}_1 &= \frac{1}{|{\bm R}_{P1}|}
-		(
-		([I_{3\times3}] - {\hat{\bm{r}}_1}{\hat{\bm{r}}_1}^T)  \bm{a}_{P1} - 
-		2\dot{\hat{\bm{r}}}_1 (\hat{\bm{r}}_1 \cdot \bm{v}_{P1}) - 
-		\hat{\bm{r}}_1 (\dot{\hat{\bm{r}}}_1 \cdot \bm{v}_{P1}) 
-		) \\
-		\ddot{\hat{\bm{r}}}_3 &= \frac{1}{|{\bm R}_{n}|}
-		(
-		([I_{3\times3}] - {\hat{\bm{r}}_3}{\hat{\bm{r}}_3}^T)  \bm{a}_{n} - 
-		2\dot{\hat{\bm{r}}}_3 (\hat{\bm{r}}_3 \cdot \bm{v}_{n}) - 
-		\hat{\bm{r}}_3 (\dot{\hat{\bm{r}}}_3 \cdot \bm{v}_{n}) 
-		) \\
-		\ddot{\hat{\bm{r}}}_2 &= \ddot{\hat{\bm{r}}}_3 \times \bm{r}_1 +  \bm{r}_n  \times \ddot{\hat{\bm{r}}}_3 + 2\dot{\hat{\bm{r}}}_3 \cdot \dot{\hat{\bm{r}}}_1
+		\dot{\hat{\bm{r}}}_1 &= {\bm R}_{P1} \left( {\bm R}_{P1} \cdot {\bm R}_{P1} \right)^{-\frac{1}{2}} \\
+		 &= \frac{\dot{\bm R}_{P1}}{|{\bm R}_{P1}|} -  \frac{1}{2} {\bm R}_{P1} {\bm R}_{P1}\cdot \dot{\bm R}_{P1} \left({\bm R}_{P1} \cdot {\bm R}_{P1} \right)^{-\frac{3}{2}} \\
+		 &= \frac{\dot{\bm R}_{P1}}{|{\bm R}_{P1}|} -  \hat{\bm r}_1 \hat{\bm r}_{1}^T \frac{\dot{\bm R}_{P1}}{|{\bm R}_{P1}|} \\
+		 &=([I_{3\times3}] - {\hat{\bm{r}}_1}{\hat{\bm{r}}_1}^T)  \frac{{\bm R}_{P1}}{|{\bm R}_{P1}|}
 	\end{align}
 \end{subequations}
+
+The second equation follows an equivalent definition, while the third one completes the frame. The accelerations are given in the following equations:
+\begin{subequations}
+	\begin{align}
+		\ddot{\hat{\bm{r}}}_1 &=  \frac{1}{|{\bm R}_{P1}|}\left(([I_{3\times3}] - {\hat{\bm{r}}_1}{\hat{\bm{r}}_1}^T)  \bm{a}_{P1} - \left(2\dot{\hat{\bm{r}}}_1 \hat{\bm{r}}_1^T  - \hat{\bm{r}}_1 \dot{\hat{\bm{r}}}_1^T \right)  \bm{v}_{P1} \right) \\
+		\ddot{\hat{\bm{r}}}_3 &= \frac{1}{|{\bm R}_{n}|}
+		\left(
+		([I_{3\times3}] - {\hat{\bm{r}}_3}{\hat{\bm{r}}_3}^T)  \bm{a}_{n} - \left(
+		2\dot{\hat{\bm{r}}}_3 \hat{\bm{r}}_3 ^T - 
+		\hat{\bm{r}}_3 \dot{\hat{\bm{r}}}_3^T \right) \bm{v}_{n}\right) 
+		 \\
+		\ddot{\hat{\bm{r}}}_2 &= \ddot{\hat{\bm{r}}}_3 \times \bm{r}_1 +  \bm{r}_1  \times \ddot{\hat{\bm{r}}}_3 + 2\dot{\hat{\bm{r}}}_3 \cdot \dot{\hat{\bm{r}}}_1
+	\end{align}
+\end{subequations}
+
+Elements of the derivation for the first term follow:
+
+\begin{subequations}
+	\begin{align}
+		\ddot{\hat{\bm{r}}}_1 &= ([I_{3\times3}] - {\hat{\bm{r}}_1}{\hat{\bm{r}}_1}^T) \left(  \frac{\ddot{\bm R}_{P1}}{|{\bm R}_{P1}|} -  \frac{\dot{\bm R}_{P1}}{|{\bm R}_{P1}|}  \frac{\dot{\bm R}_{P1}}{|{\bm R}_{P1}|} ^T \hat{\bm{r}}_1\right)  - \left(\dot{ \hat{\bm{r}}}_1  \hat{\bm{r}}_1^T +  \hat{\bm{r}}_1 \dot{ \hat{\bm{r}}}_1^T\right)\frac{\dot{\bm R}_{P1}}{|{\bm R}_{P1}|}  \\
+		&= ([I_{3\times3}] - {\hat{\bm{r}}_1}{\hat{\bm{r}}_1}^T) \frac{\ddot{\bm R}_{P1}}{|{\bm R}_{P1}|} - \left( ([I_{3\times3}] - {\hat{\bm{r}}_1}{\hat{\bm{r}}_1}^T) \frac{\dot{\bm R}_{P1}}{|{\bm R}_{P1}|} \right) \frac{\dot{\bm R}_{P1}}{|{\bm R}_{P1}|} ^T \hat{\bm{r}}_1  - \left(\dot{ \hat{\bm{r}}}_1  \hat{\bm{r}}_1^T +  \hat{\bm{r}}_1 \dot{ \hat{\bm{r}}}_1^T\right)\frac{\dot{\bm R}_{P1}}{|{\bm R}_{P1}|}  \\
+		&= ([I_{3\times3}] - {\hat{\bm{r}}_1}{\hat{\bm{r}}_1}^T) \frac{{\bm a}_{P1}}{|{\bm R}_{P1}|} - \dot{ \hat{\bm{r}}}_1 \frac{{\bm v}_{P1}}{|{\bm R}_{P1}|} ^T \hat{\bm{r}}_1  - \left(\dot{ \hat{\bm{r}}}_1  \hat{\bm{r}}_1^T +  \hat{\bm{r}}_1 \dot{ \hat{\bm{r}}}_1^T\right)\frac{{\bm v}_{P1}}{|{\bm R}_{P1}|}  \\
+		&= \frac{1}{|{\bm R}_{P1}|}(([I_{3\times3}] - {\hat{\bm{r}}_1}{\hat{\bm{r}}_1}^T)  \bm{a}_{P1} - 2\dot{\hat{\bm{r}}}_1 (\hat{\bm{r}}_1 \cdot \bm{v}_{P1}) - \hat{\bm{r}}_1 (\dot{\hat{\bm{r}}}_1 \cdot \bm{v}_{P1}) ) \\
+		&= \frac{1}{|{\bm R}_{P1}|}\left(([I_{3\times3}] - {\hat{\bm{r}}_1}{\hat{\bm{r}}_1}^T)  \bm{a}_{P1} - \left(2\dot{\hat{\bm{r}}}_1 \hat{\bm{r}}_1^T  - \hat{\bm{r}}_1 \dot{\hat{\bm{r}}}_1^T \right)  \bm{v}_{P1} \right)
+	\end{align}
+\end{subequations}
+
+
 
 \subsection{Angular Velocity and Acceleration Descriptions}
 Developing some more mathematics, the following elegant expressions of $\bm\omega_{R/N}$ and $\dot{\bm\omega}_{R/N}$ are found:
