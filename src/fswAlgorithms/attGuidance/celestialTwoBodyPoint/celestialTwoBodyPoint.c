@@ -221,16 +221,16 @@ void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint6
     v3OuterProduct(r1_hat, r1_hat, temp33);
     m33Subtract(I_33, temp33, C1);
     m33MultV3(C1, configData->v_P1B_N, temp3);
-    v3Scale(1.0 / v3Norm(configData->R_P1B_N), temp3, dr1_hat);
+    v3Scale(1.0 / v3Norm(configData->R_P1B_N), temp3, dr1_hat); /* Eq 11a*/
     
     v3OuterProduct(r3_hat, r3_hat, temp33);
     m33Subtract(I_33, temp33, C3);
     m33MultV3(C3, v_N, temp3);
-    v3Scale(1.0 / v3Norm(R_N), temp3, dr3_hat);
+    v3Scale(1.0 / v3Norm(R_N), temp3, dr3_hat); /* Eq 11b*/
     
     v3Cross(dr3_hat, r1_hat, temp3_1);
     v3Cross(r3_hat, dr1_hat, temp3_2);
-    v3Add(temp3_1, temp3_2, dr2_hat);
+    v3Add(temp3_1, temp3_2, dr2_hat); /* Eq 11c*/
     
     /* - Angular velocity computation */
     double omega_RN_R[3];   /* Angular rate of the reference frame 
@@ -253,7 +253,7 @@ void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint6
     m33Add(temp33_1, temp33_2, temp33);
     m33MultV3(temp33, configData->v_P1B_N, temp3_2);
     v3Subtract(temp3_1, temp3_2, temp3);
-    v3Scale(1.0 / v3Norm(configData->R_P1B_N), temp3, ddr1_hat);
+    v3Scale(1.0 / v3Norm(configData->R_P1B_N), temp3, ddr1_hat); /* Eq 13a*/
     
     m33MultV3(C3, a_N, temp3_1);
     v3OuterProduct(dr3_hat, r3_hat, temp33_1);
@@ -262,14 +262,14 @@ void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint6
     m33Add(temp33_1, temp33_2, temp33);
     m33MultV3(temp33, v_N, temp3_2);
     v3Subtract(temp3_1, temp3_2, temp3);
-    v3Scale(1.0 / v3Norm(R_N), temp3, ddr3_hat);
+    v3Scale(1.0 / v3Norm(R_N), temp3, ddr3_hat); /* Eq 13b*/
     
     v3Cross(ddr3_hat, r1_hat, temp3_1);
     v3Cross(r3_hat, ddr1_hat, temp3_2);
     v3Add(temp3_1, temp3_2, temp3_3);
     v3Cross(dr3_hat, dr1_hat, temp3);
     v3Scale(2.0, temp3, temp3);
-    v3Add(temp3, temp3_3, ddr2_hat);
+    v3Add(temp3, temp3_3, ddr2_hat); /* Eq 13c*/
     
     /* - Angular acceleration computation */
     double domega_RN_R[3];   /* Angular acceleration of the reference frame
