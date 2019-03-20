@@ -1,0 +1,14 @@
+\section{Model Functions}
+The code performs the following functions:
+\begin{itemize}
+	\item \textbf{Accepts}: \verb~RWArrayConfigFswMsg~, \verb~CmdTorqueBodyIntMsg~, and (optional) \verb~RWAvailabilityFswMsg~. From the  \verb~CmdTorqueBodyIntMsg~.
+	\item \textbf{Maps Body Torque onto reaction wheels}: Takes a desired body-frame torque from  \verb~CmdTorqueBodyIntMsg~ and maps it onto the RW control axes. 
+	\item \textbf{Removes torque from unavailable reaction wheels}: The module observes the availability of the RWs and maps the torques to only available reaction wheels. 
+\end{itemize}
+
+
+\section{Model Assumptions and Limitations}
+This code makes the following assumptions:
+\begin{itemize}
+	\item There must be equal or more wheels then control axes for successful mapping. If not, no torque is applied. 
+\end{itemize}

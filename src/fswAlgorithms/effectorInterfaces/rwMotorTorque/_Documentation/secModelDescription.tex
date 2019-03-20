@@ -1,0 +1,29 @@
+\section{Model Description}
+The module takes a torque vector in the body frame and maps the vector onto the available control axes (corresponding to available reaction wheels). The module accounts for the availability of the reaction wheels in the case that not all wheels are functioning appropriately or need independent analysis. 
+
+
+
+\subsection{Torque Mapping}
+The rwMotorTorque module is provided a desired torque in the body frame ${}^{B}L_r$ which first needs to be mapped onto the control axes $\lbrace \hat{c} \rbrace$ using the mapping matrix $[CB]$. 
+
+
+
+\begin{equation}
+{}^{\mathcal{C}}L_r = [CB]{}^{\mathcal{B}}L_r
+\end{equation}
+
+The module then determines the DCM between the control axes and the wheel axes, which requires the module to first identify which of the RW are available to generate the $g_s$ matrix. From the ${}^{B}g_s$ matrix, we can compute the mapping matrix between the control axes and the wheel axes.
+
+\begin{equation}
+[CG] = \lbrace  \hat{c} \rbrace*  \lbrace\hat{g_s} \rbrace
+\end{equation}
+
+This formulation allows for us to map torques onto an overdetermined system using a least squares optimization. 
+\begin{equation}
+ {}^{\mathcal{G}}L_r  = [CG]^T \left([CG][CG]^T\right)^{-1} * {}^{\mathcal{C}}L_r 
+\end{equation}
+
+
+\subsection{RW Availability} 
+If the input message name {\tt rwAvailInMsgName} is defined, then the RW availability message is read in. The torque mapping is only performed if the individual RW availability setting is {\tt AVAILABLE}.  If it is {\tt UNAVAILABLE} then the output torque is set to zero.  
+
