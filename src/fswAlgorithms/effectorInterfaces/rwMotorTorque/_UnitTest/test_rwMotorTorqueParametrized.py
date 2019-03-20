@@ -28,8 +28,8 @@ import pytest
 import sys, os, inspect
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 
-
-
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
 
 
 
@@ -173,14 +173,14 @@ def rwMotorTorqueTest(show_plots, dropAxes):
     # set the output truth states
     if dropAxes:
         trueVector = [
-            [0.6599999999999999,0.,0.3599999999999999,0.5888972745734183],
-            [0.6599999999999999,0.,0.3599999999999999,0.5888972745734183]
-        ]*(-1)
+            [-0.6599999999999999,-0.,-0.3599999999999999,-0.5888972745734183],
+            [-0.6599999999999999,-0.,-0.3599999999999999,-0.5888972745734183]
+        ]
     else:
         trueVector = [
-                   [0.8, -0.7000000000000001, 0.5, 0.3464101615137755],
-                   [0.8, -0.7000000000000001, 0.5, 0.3464101615137755]
-                   ]*(-1)
+                     [-0.8, 0.7000000000000001, -0.5, -0.3464101615137755],
+                     [-0.8, 0.7000000000000001, -0.5, -0.3464101615137755]
+                   ]
 
         # else:
         #     testFailCount+=1
@@ -198,16 +198,27 @@ def rwMotorTorqueTest(show_plots, dropAxes):
                                 str(moduleOutput[i,0]*macros.NANO2SEC) +
                                 "sec\n")
 
-    # If the argument provided at commandline "--show_plots" evaluates as true,
-    # plot all figures
-    # if show_plots:
-    #     # plot a sample variable.
-    #     plt.figure(1)
-    #     plt.plot(variableState[:,0]*macros.NANO2SEC, variableState[:,1], label='Sample Variable')
-    #     plt.legend(loc='upper left')
-    #     plt.xlabel('Time [s]')
-    #     plt.ylabel('Variable Description [unit]')
-    #     plt.show()
+    accuracy = 1e-8
+        
+    testFailCount, testMessages = unitTestSupport.compareArrayND(trueVector, moduleOutput, accuracy, "rwMotorTorques",
+                                                                 2, testFailCount, testMessages)
+        
+
+        
+        
+    #   print out success message if no error were found
+    unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
+    
+    snippentName = "passFail_"+"dropAxes"+str(len(controlAxes_B))
+    if testFailCount == 0:
+        colorText = 'ForestGreen'
+        print "PASSED: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        print "Failed: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     #   print out success message if no error were found
     if testFailCount == 0:

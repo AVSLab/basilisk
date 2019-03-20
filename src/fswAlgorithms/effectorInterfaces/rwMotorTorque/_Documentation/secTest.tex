@@ -1,0 +1,54 @@
+% !TEX root = ./Basilisk-rwMotorTorqueModule-20190314.tex
+
+\section{Test Description and Success Criteria}
+The unit test checks for proper functionality of the module for various numbers of control axes and reaction wheel configurations, both within and outside expected bounds. The two test cases run include:
+\begin{enumerate}
+\item Standard 3-axis control basis, with four available reaction wheels. 
+\item 2-axis control basis (dropped axis), with four available reaction wheels. 
+
+\end{enumerate}
+
+
+\section{Test Parameters}
+
+The unit test verify that the module's output reaction control torques match expectation.
+\begin{table}[htbp]
+	\caption{Error tolerance for each test.}
+	\label{tab:errortol}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c } % Column formatting, 
+		\hline\hline
+		\textbf{Output Value Tested}  & \textbf{Tolerated Error}  \\ 
+		\hline
+		{\tt rwMotorTorques}        & \input{AutoTeX/toleranceValue}	   \\ 
+		\hline\hline
+	\end{tabular}
+\end{table}
+
+
+
+
+\section{Test Results}
+The unit test results are shown in Table~\ref{tab:results}.  All tests should be passing.
+\begin{table}[H]
+	\caption{Test results}
+	\label{tab:results}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{c | c | c  } % Column formatting, 
+		\hline\hline
+		\textbf{Num Axes} 		& \textbf{Num RW}				  		&\textbf{Pass/Fail} \\ 
+		\hline
+	   3	   			& 4 &\input{AutoTeX/passFail_dropAxes6} \\ 
+	   2	   			& 4 &\input{AutoTeX/passFail_dropAxes9} \\ 
+	   
+	   \hline\hline
+	\end{tabular}
+\end{table}
+
+
+
+
+
+
+
+

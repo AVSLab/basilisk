@@ -40,6 +40,7 @@
  output message
  @return void
  @param ConfigData The configuration data associated with this module
+ @param moduleID The Basilisk module identifier
  */
 void SelfInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
 {
@@ -55,6 +56,7 @@ void SelfInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
  It's primary function is to link the input messages that were created elsewhere.
  @return void
  @param ConfigData The configuration data associated with this module
+ @param moduleID The Basilisk module identifier
  */
 void CrossInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
 {
@@ -68,10 +70,23 @@ void CrossInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
         ConfigData->rwAvailInMsgID = subscribeToMessage(ConfigData->rwAvailInMsgName,
                                                          sizeof(RWAvailabilityFswMsg), moduleID);
     }
+
+}
+
+/*! This method performs a complete reset of the module.  Local module variables that retain
+ time varying states between function calls are reset to their default values.
+ @return void
+ @param ConfigData The configuration data associated with the module
+ @param moduleID The Basilisk module identifier
+ */
+void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+{
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
+    int i;
     
     /* configure the number of axes that are controlled */
     double *pAxis;                 /*!< pointer to the current control axis */
-    int i;
     ConfigData->numControlAxes = 0;
     for (i = 0; i < 3; i++)
     {
@@ -83,19 +98,7 @@ void CrossInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
     if (ConfigData->numControlAxes == 0) {
         BSK_PRINT(MSG_WARNING,"rwMotorTorque() is not setup to control any axes!\n");
     }
-
-}
-
-/*! This method performs a complete reset of the module.  Local module variables that retain
- time varying states between function calls are reset to their default values.
- @return void
- @param ConfigData The configuration data associated with the module
- */
-void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
-{
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
-    int i;
+    
     /*! - Read static RW config data message and store it in module variables */
     ReadMessage(ConfigData->rwParamsInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(RWArrayConfigFswMsg), &(ConfigData->rwConfigParams), moduleID);
@@ -113,107 +116,92 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uin
  @return void
  @param ConfigData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The Basilisk module identifier
  */
 void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    /*! Begin method steps*/
-    int i,j,k;
-    
-    double us[MAX_EFF_CNT];
-    RWAvailabilityFswMsg wheelsAvailability;
-    memset(us, 0x0, MAX_EFF_CNT * sizeof(double));
-    memset(wheelsAvailability.wheelAvailability, 0x0, MAX_EFF_CNT * sizeof(int)); // wheelAvailability set to 0 (AVAILABLE) by default
-    
     /*! - Read the input messages */
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
+    
+    /*! Begin method steps*/
+    int i,j,k;
+    int numAvailRW = 0;
+    double us[MAX_EFF_CNT];
     double Lr_B[3]; /*!< [Nm]    commanded ADCS control torque */
+    double CLr[3];
+    double CGs[3][MAX_EFF_CNT];
+    
+    RWAvailabilityFswMsg wheelsAvailability;
+
+    vSetZero(us, MAX_EFF_CNT);
+    vSetZero(wheelsAvailability.wheelAvailability, MAX_EFF_CNT); // wheelAvailability set to 0 (AVAILABLE) by default /* why don't we have a set zero for int arrays*/
+    //memset(wheelsAvailability.wheelAvailability, 0x0, MAX_EFF_CNT * sizeof(int)); /
+    
     ReadMessage(ConfigData->inputVehControlID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CmdTorqueBodyIntMsg), (void*) &(Lr_B), moduleID);
-    if (ConfigData->rwAvailInMsgID >= 0)
-    {
+    /* Lr is assumed to be a positive torque onto the body */
+    v3Scale(-1.0, Lr_B, Lr_B);
+    
+    if (ConfigData->rwAvailInMsgID >= 0){
         ReadMessage(ConfigData->rwAvailInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(RWAvailabilityFswMsg), &wheelsAvailability, moduleID);
-        int numAvailRW = 0;
+        
         for (i = 0; i < ConfigData->rwConfigParams.numRW; i++) {
-            if (wheelsAvailability.wheelAvailability[i] == AVAILABLE)
-            {
-                v3Copy(&ConfigData->rwConfigParams.GsMatrix_B[i * 3], &ConfigData->GsMatrix_B[numAvailRW * 3]);
+            if (wheelsAvailability.wheelAvailability[i] == AVAILABLE){
+                v3Copy(&ConfigData->rwConfigParams.GsMatrix_B[i * 3], &ConfigData->GsMatrix_B[numAvailRW * 3]);// Don't understand why we can't just red from the GsMatrix_B values
                 numAvailRW += 1;
             }
             ConfigData->numAvailRW = numAvailRW;
         }
     }
     
-    /* Lr is assumed to be a positive torque onto the body */
-    v3Scale(-1.0, Lr_B, Lr_B);
-    /* compute [CLr] = [C]Lr */
-    double CLr[3];
-    for (k = 0; k < ConfigData->numControlAxes; k++){
-        CLr[k] = v3Dot(ConfigData->controlAxes_B + 3 * k, Lr_B);
-    }
-    /* compute [CGs] */
-    double CGs[3][MAX_EFF_CNT];
-    for (i=0; i<ConfigData->numControlAxes; i++) {
-        for (j=0; j<ConfigData->numAvailRW; j++) {
-            CGs[i][j] = v3Dot(&ConfigData->GsMatrix_B[j * 3], &ConfigData->controlAxes_B[3 * i]);
-        }
-    }
     /* Compute minimum norm inverse for us = [CGs].T inv([CGs][CGs].T) [CLr] */
     /* Having at least the same # of RW as # of control axes is necessary condition to guarantee inverse matrix exists */
     /* If matrix to invert it not full rank, the control torque output is zero. */
     if (ConfigData->numAvailRW >= ConfigData->numControlAxes){
         /* [M] = [CGs][CGs].T */
         /* v3_temp = inv([M]) [CLr] */
-        int i,j,k;
+        int i_torque = 0;
+        double M[3][3];
         double v3_temp[3];
+        double us_avail[MAX_EFF_CNT];
+        
         v3SetZero(v3_temp);
-        if (ConfigData->numControlAxes == 3){
-            double M33[3][3];
-            for (i=0; i<ConfigData->numControlAxes; i++) {
-                for (j=0; j<ConfigData->numControlAxes; j++) {
-                    M33[i][j] = 0.0;
-                    for (k=0; k < ConfigData->numAvailRW; k++) {
-                        M33[i][j] += CGs[i][k]*CGs[j][k];
-                    }
-                }
+        vSetZero(us_avail, MAX_EFF_CNT);
+        
+        /* compute [CLr] = [C]Lr */
+        /* compute [CGs] */
+        for (i=0; i<ConfigData->numControlAxes; i++){
+            CLr[i] = v3Dot(ConfigData->controlAxes_B + 3 * i, Lr_B); /* Why aren't these pointers?*/
+            for (j=0; j<ConfigData->numAvailRW; j++) {
+                CGs[i][j] = v3Dot(&ConfigData->GsMatrix_B[j * 3], &ConfigData->controlAxes_B[3 * i]); // Why are the wheel axes different from the control axes.
             }
-            m33Inverse(M33, M33);
-            m33MultV3(M33, CLr, v3_temp);
-        } else if (ConfigData->numControlAxes == 2){
-            double M22[2][2];
-            for (i=0; i<ConfigData->numControlAxes; i++) {
-                for (j=0; j<ConfigData->numControlAxes; j++) {
-                    M22[i][j] = 0.0;
-                    for (k=0; k < ConfigData->numAvailRW; k++) {
-                        M22[i][j] += CGs[i][k]*CGs[j][k];
-                    }
-                }
-            }
-            m22Inverse(M22, M22);
-            m22MultV2(M22, CLr, v3_temp);
-        } else if (ConfigData->numControlAxes == 1){
-            double M11[1][1];
-            for (i=0; i<ConfigData->numControlAxes; i++) {
-                for (j=0; j<ConfigData->numControlAxes; j++) {
-                    M11[i][j] = 0.0;
-                    for (k=0; k < ConfigData->numAvailRW; k++) {
-                        M11[i][j] += CGs[i][k]*CGs[j][k];
-                    }
-                }
-            }
-            v3_temp[0] = 1.0 / M11[0][0] * CLr[0];
         }
+
+        /*JM: What happens when we don't have sufficent control axes or any wheels available*/
+        if (ConfigData->numControlAxes > 0 && ConfigData->numControlAxes <= 3)
+        {
+            for (i=0; i<ConfigData->numControlAxes; i++) {
+                for (j=0; j<ConfigData->numControlAxes; j++) {
+                    M[i][j] = 0.0;
+                    for (k=0; k < ConfigData->numAvailRW; k++) {
+                        M[i][j] += CGs[i][k]*CGs[j][k];
+                    }
+                }
+            }
+            mInverse(M, ConfigData->numControlAxes, M);
+            mMultV(M, ConfigData->numControlAxes, ConfigData->numControlAxes, CLr, v3_temp);
+        }
+        
         /* compute the RW motor torques */
         /* us = [CGs].T v3_temp */
-        double us_avail[MAX_EFF_CNT];
-        memset(us_avail, 0x0, MAX_EFF_CNT * sizeof(double));
         for (i=0; i<ConfigData->numAvailRW; i++) {
             for (j=0; j<ConfigData->numControlAxes; j++) {
                 us_avail[i] += CGs[j][i] * v3_temp[j];
             }
         }
-        int i_torque = 0;
+        
         for (i = 0; i < ConfigData->rwConfigParams.numRW; i++) {
             if (wheelsAvailability.wheelAvailability[i] == AVAILABLE)
             {
@@ -230,3 +218,5 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
 
     return;
 }
+
+

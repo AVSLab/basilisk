@@ -1,0 +1,20 @@
+% !TEX root = ./Basilisk-rwMotorTorqueModule-20190314.tex
+
+\section{User Guide}
+Input required: 
+\begin{itemize}
+
+\item \verb~rwMotorTorqueConfigData.controlAxes_B~: Set the control axes into a single array.
+\item  \verb~rwMotorTorqueConfigData.numControlAxes~: Assigns the number of control axes.
+\item \verb~rwMotorTorqueConfigData.numAvailRW~: Number of available reaction wheels.
+\item  \verb~rwMotorTorqueConfigData.rwConfigFswMsg~: Message with information on RW configuration data.
+\item  \verb~rwMotorTorqueConfigData.GsMatrix_B~: Axes of the RWs.
+\item  \verb~rwMotorTorqueConfigData.CGs~: The RW axes in the control axis frame.
+\item  \verb~rwMotorTorqueConfigData.outputDataName~: Name for the \verb~RWArrayTorqueIntMsg~ which contains RW torque information.
+\item  \verb~rwMotorTorqueConfigData.inputVehControlName~: Name for the \verb~CmdTorqueBodyIntMsg~ which contains the original required torque vector .
+\item  \verb~rwMotorTorqueConfigData.rwParamsInMsgName~: Name for the \verb~RWArrayConfigFswMsg~ which contains information on RW spin axes, inertias, and motor torque limits.
+\item  \verb~rwMotorTorqueConfigData.rwAvailInMsgName~: Name for the \verb~RWAvailabilityFwsMsg~ which contains information on which RW can be used to apply the desired torque. 
+\item  \verb~rwMotorTorqueConfigData.rwMotorTorques~: Name for the \verb~RWArrayTorqueIntMsg~ which stores the RW motor torques. 
+
+
+\end{itemize}
