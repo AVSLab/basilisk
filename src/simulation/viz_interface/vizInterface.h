@@ -19,7 +19,7 @@
 #ifndef VIZ_INTERFACE_H
 #define VIZ_INTERFACE_H
 
-#include "utilities/vizProtobuffer/vizMessage.pb.h"
+#include "../utilities/vizProtobuffer/vizMessage.pb.h"
 #include <vector>
 #include <fstream>
 #include <map>
@@ -32,12 +32,12 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/rwConfigLogSimMsg.h"
 #include "simMessages/scPlusStatesSimMsg.h"
-#include "fswMessages/cssConfigFswMsg.h"
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
 #include "simMessages/thrOutputSimMsg.h"
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
+#include "../fswAlgorithms/fswMessages/cssConfigFswMsg.h"
 
-#include "utilities/vizProtobuffer/vizMessage.pb.h"
+
 #include <vector>
 #include <fstream>
 #include <map>

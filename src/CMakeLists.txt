@@ -37,7 +37,6 @@ endif()
 
 if(USE_OPENCV)
   list(APPEND required_conan_libraries opencv/3.4.5@conan/stable)
-
 endif()
 
 conan_cmake_run(REQUIRES ${required_conan_libraries}
@@ -219,17 +218,15 @@ function(findAndCreateSwigModules SubModule)
 	foreach(module ${swig_modules})	
 		get_filename_component(FileBase ${module} NAME_WE)
 		get_filename_component(FileDir ${module} DIRECTORY)
-
-    if(NOT USE_PROTOBUFFERS AND (module IN_LIST requires_protobuff_modules))
-      message("Found " ${module})
-      continue()
-    endif()
 		
-		message("module  " ${module})
-		message("SubModule " ${SubModule})
-		message("FileBase" ${FileBase})
-		message("FileDir " ${FileDir})	
-		message("----------")
+	
+ 	    if(NOT USE_PROTOBUFFERS AND (module IN_LIST requires_protobuff_modules))
+ 		    continue()
+ 		endif()
+		
+		if(USE_PROTOBUFFERS AND (module IN_LIST requires_protobuff_modules))
+    		message(STATUS "Found " ${module})
+		endif()
 		
 		set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
 		
