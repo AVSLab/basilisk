@@ -1,10 +1,11 @@
-% !TEX root = ./Basilisk-magField-20190309.tex
+% !TEX root = ./Basilisk-magFieldDipole-20190309.tex
 
 \section{Model Description}
-The purpose of this module is to implement a magnetic field model that rotates with a planet fixed frame \frameDefinition{E}.  Here $\hat{\bm e}_{3}$ is the typical positive rotation axis and $\hat{\bm e}_{1}$ and $\hat{\bm e}_{2}$ span the planet's equatorial plane. 
+\subsection{General Module Behavior}
+The purpose of this module is to implement a magnetic field model that rotates with a planet fixed frame \frameDefinition{P}.  Here $\hat{\bm p}_{3}$ is the typical positive rotation axis and $\hat{\bm p}_{1}$ and $\hat{\bm p}_{2}$ span the planet's equatorial plane. 
 
-{\tt MagneticField} represents a single interface to a variety of magnetic field models within the BSK framework. These are briefly summarized here for reference.
-By invoking the magnetic field module, the default values are set such that the centered dipole model is simulated about Earth.
+{\tt MagneticFieldCenteredDipole} is a child of the {\tt MagneticFieldBase} base class and provides a simple centered dipole magnetic field model. 
+By invoking the magnetic field module, the default values are set such that the dipole parameters are zeroed and the magnetic field output is a zero vector.
 The reach of the model controlled by setting the variables {\tt envMinReach} and {\tt envMaxReach} to positive values.  These values are the radial distance from the planet center.  The default values are -1 which turns off this checking where the atmosphere model as unbounded reach.  
 
 There are a multitude of magnetic field models.\footnote{\url { https://geomag.colorado.edu/geomagnetic-and-electric-field-models.html}} The goal with Basilisk is to provide a simple and consistent interface to a range of models.  The list of models is expected to grow over time.
@@ -16,18 +17,18 @@ For the following developments, the spacecraft location relative to the planet f
 \begin{equation}
 	\bm r_{B/P} = \bm r_{B/O} - \bm r_{P/O}
 \end{equation}
-If not planet ephemeris message is specified, then the planet position vector $\bm r_{P/O}$ is set to zero.  
+If no planet ephemeris message is specified, then the planet position vector $\bm r_{P/O}$ is set to zero.  
 
-Let $[EN]$ be the direction cosine matrix\cite{schaub} that relates the rotating Earth-fixed frame relative to an inertial frame \frameDefinition{N}.  The simulation provides the spacecraft position vector in inertial frame components.  The planet centric position vector is then written in Earth-fixed frame components using
+Let $[PN]$ be the direction cosine matrix\cite{schaub} that relates the rotating planet-fixed frame relative to an inertial frame \frameDefinition{N}.  The simulation provides the spacecraft position vector in inertial frame components.  The planet centric position vector is then written in Earth-fixed frame components using
 \begin{equation}
-	\leftexp{E}{\bm r}_{B/P} = [EN] \ \leftexp{N}{\bm r}_{B/P}
+	\leftexp{P}{\bm r}_{B/P} = [PN] \ \leftexp{N}{\bm r}_{B/P}
 \end{equation}
 
 
 
 
 \subsection{Centered Dipole Magnetic Field Model}
-The centered dipole model is a first order result of the more complex spherical harmonic modeling of the planet's magnetic field.\cite{Markley:2014lj}  There are several solution that provide an answer in the local North-Earth-Down or NED frame,\cite{Grifin:2005hx} or in the local  spherical coordinates.  Let  $\bm m$ be the magnetic dipole vector which is then defined as\cite{Markley:2014lj}
+The centered dipole model is a first order result of the more complex spherical harmonic modeling of the planet's magnetic field.\cite{Markley:2014lj}  There are several solutions that provide an answer in the local North-Earth-Down or NED frame,\cite{Grifin:2005hx} or in the local  spherical coordinates.  Let  $\bm m$ be the magnetic dipole vector which is then defined as\cite{Markley:2014lj}
 \begin{equation}
 	V(\bm r_{B/P}) = \frac{\bm m \cdot \bm r_{B/P}}{|\bm r_{B/P}|^{3}}
 \end{equation}
@@ -49,5 +50,5 @@ where
 
 The above vector equation is evaluated in $\cal E$-frame components, while the output is mapped into $\cal N$-frame components by returning
 \begin{equation}
-	\leftexp{N}{\bm B} = [EN]^{T} \ \leftexp{E}{\bm B}
+	\leftexp{N}{\bm B} = [PN]^{T} \ \leftexp{P}{\bm B}
 \end{equation}

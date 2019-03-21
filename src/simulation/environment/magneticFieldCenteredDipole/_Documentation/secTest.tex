@@ -1,9 +1,8 @@
-% !TEX root = ./Basilisk-magField-20190309.tex
+% !TEX root = ./Basilisk-magFieldDipole-20190309.tex
 
 \section{Test Description and Success Criteria}
-This section describes the specific unit tests conducted on this module.
-
-This unit test only runs the magnetic field Basilisk module with two fixed spacecraft state input messages.  The simulation option {\tt useDefault} checks if the default atmosphere parameters for an Earth-based centered dipole module are used, or if the exponential model information is setup manually.  The option {\tt useMinReach} dictates if the minimum orbit radius check is performed, while the option {\tt useMaxReach} checks if the maximum reach check is performed.  The option {\tt usePlanetEphemeris} checks if a planet state input message should be created.  All permutations are checked.
+This section describes the specific unit tests conducted on this module. 
+This unit test only runs the magnetic field Basilisk module with two fixed spacecraft state input messages.  The simulation option {\tt useDefault} checks if the module default settings are used that lead to a zero magnetic field vector, or if the centered dipole parameters are setup manually.  The option {\tt useMinReach} dictates if the minimum orbit radius check is performed, while the option {\tt useMaxReach} checks if the maximum reach check is performed.  The option {\tt usePlanetEphemeris} checks if a planet state input message should be created.  All permutations are checked.
 
 \section{Test Parameters}
 The simulation tolerances are shown in Table~\ref{tab:errortol}.  In each simulation the neutral density output message is checked relative to python computed true values.  
