@@ -60,6 +60,7 @@ from Basilisk.fswAlgorithms import rwMotorTorque
 
 @pytest.mark.parametrize("intGain", [0.01, -1])
 @pytest.mark.parametrize("rwNum", [4, 0])
+#@pytest.mark.parametrize("integralLimit", [0, 2/intGain*.01])
 
 def test_MRP_Feedback(show_plots, intGain, rwNum):
     # each test method requires a single assert method to be called
@@ -106,7 +107,7 @@ def run(show_plots, intGain, rwNum):
     moduleConfig.K  =   0.15
     moduleConfig.Ki = intGain
     moduleConfig.P  = 150.0
-    moduleConfig.integralLimit = 2./moduleConfig.Ki * 0.1
+    moduleConfig.integralLimit = 2./moduleConfig.Ki * 0.1 #integralLimit
     moduleConfig.domega0 = [0., 0., 0.]
     moduleConfig.knownTorquePntB_B = [0., 0., 0.]
 
@@ -149,6 +150,8 @@ def run(show_plots, intGain, rwNum):
                                moduleConfig.inputRWSpeedsName,
                                rwSpeedMessage)
 
+
+
     # wheelConfigData message
     def writeMsgInWheelConfiguration():
         rwConfigParams = MRP_Feedback.RWArrayConfigFswMsg()
@@ -165,9 +168,14 @@ def run(show_plots, intGain, rwNum):
                                    unitProcessName,
                                    moduleConfig.rwParamsInMsgName,
                                    rwConfigParams)
+        jsList = rwConfigParams.JsList
+        numRW = rwConfigParams.numRW
+        GsMatrix_B = rwConfigParams.GsMatrix_B
+        return jsList, numRW, GsMatrix_B
 
-    if len(moduleConfig.rwParamsInMsgName)>0:
-        writeMsgInWheelConfiguration()
+    if len(moduleConfig.rwParamsInMsgName) > 0:
+        jsList, numRW, GsMatrix_B = writeMsgInWheelConfiguration()
+    # Check this one
 
     # wheelAvailability message
     def writeMsgInWheelAvailability():
@@ -179,9 +187,13 @@ def run(show_plots, intGain, rwNum):
                                    unitProcessName,
                                    moduleConfig.rwAvailInMsgName,
                                    rwAvailabilityMessage)
+        rwAvailMsg = rwAvailabilityMessage
+        return rwAvailMsg
 
     if len(moduleConfig.rwAvailInMsgName)>0:
-        writeMsgInWheelAvailability()
+         rwAvailMsg = writeMsgInWheelAvailability()
+
+    Lr = findTrueTorques(moduleConfig, guidCmdData, rwSpeedMessage, vehicleConfigOut, jsList, numRW, GsMatrix_B, testProcessRate, rwAvailMsg)
 
 
 
@@ -209,6 +221,11 @@ def run(show_plots, intGain, rwNum):
     # print '\n Lr = ', moduleOutput[:, 1:]
 
 
+
+
+
+
+
     # set the filtered output truth states
     if intGain == 0.01 and rwNum == 4:
         expectedVec = [
@@ -218,7 +235,7 @@ def run(show_plots, intGain, rwNum):
                 [-18.98045163, 25.04949262, -21.68220099],
                 [-19.01598385, 25.0980235, -21.76570084]]
 
-    elif intGain ==0.01 and rwNum == 0:
+    elif intGain == 0.01 and rwNum == 0:
         expectedVec = [
              [-16.115, 25.065, -23.495],
              [-16.115, 25.065, -23.495],
@@ -233,6 +250,7 @@ def run(show_plots, intGain, rwNum):
                 [-1.58409754, 4.1143559, -1.59267836],
                 [-1.58409754, 4.1143559, -1.59267836],
                 [-1.58409754, 4.1143559, -1.59267836]]
+
     elif intGain == -1 and rwNum == 0:
         expectedVec = [
             [-1.435, 3.865, -1.495],
@@ -268,10 +286,69 @@ def run(show_plots, intGain, rwNum):
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
+def findTrueTorques(moduleConfig,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,numRW,GsMatrix_B,testProcessRate,rwAvailMsg):
+    #intSigma = moduleConfig.K*guidCmdData.sigma_BR #k*sigma
+    Lr = []
+    L = np.asarray(moduleConfig.knownTorquePntB_B)
+    #Read in variables
+    steps = [0, 0.5, 1, 1.5, 2] #Times to report out Lr
+    #steps = [0, .5, 1, 1.5, 2]
+    omega_BR_B = np.asarray(guidCmdData.omega_BR_B)
+    omega_RN_B = np.asarray(guidCmdData.omega_RN_B)
+    omega_BN_B = omega_BR_B + omega_RN_B #find body rate
+    domega_RN_B = np.asarray(guidCmdData.domega_RN_B)
+    sigma_BR = np.asarray(guidCmdData.sigma_BR)
+    Isc = np.asarray(vehicleConfigOut.ISCPntB_B)
+    Isc = np.reshape(Isc, (3, 3))
+    Ki = moduleConfig.Ki
+    K = moduleConfig.K
+    P = moduleConfig.P
+
+    wheelNum = numRW
+    jsVec = jsList
+    GsMatrix_B_array = np.asarray(GsMatrix_B)
+    GsMatrix_B_array = np.reshape(GsMatrix_B_array[0:numRW * 3], (numRW, 3))
+    sigmaInt = np.asarray([0,0,0])
+
+    #Compute toruqes
+    for i in range(len(steps)):
+        if i == 0:
+            dt = steps[i]
+        else:
+            dt = steps[i]-steps[i-1]
+
+        #evaluate integral term
+        if Ki > 0: #if integral feedback is on
+            sigmaInt = K * dt * sigma_BR + sigmaInt #+ Isc.dot(omega_BN_B)
+            if np.linalg.norm(sigmaInt) > moduleConfig.integralLimit: #Make sure z is less than the intergralLimit to mitigate windup issues
+                sigmaInt = sigmaInt/np.linalg.norm(sigmaInt)*moduleConfig.integralLimit
+            zVec = sigmaInt
+        else: #integral gain turned off/negative setting
+            zVec = np.asarray([0, 0, 0])
+
+        #compute torque Lr
+        Lr0 = K * sigma_BR  # +K*sigmaBR
+        Lr1 = Lr0 + P * omega_BR_B  # +P*deltaOmega
+        Lr2 = Lr1 + P * Ki * zVec  # +P*Ki*z
+        GsHs = np.array([0,0,0])
+
+        for i in range(wheelNum):
+            if rwAvailMsg.wheelAvailability[i] == 0:  #Make RW availability check
+                GsHs = GsHs + np.dot(GsMatrix_B_array[i, :], jsVec[i]*(np.dot(omega_BN_B, GsMatrix_B_array[i, :])+rwSpeedMessage.wheelSpeeds[i]))
+                #J_s*(dot(omegaBN_B,Gs_vec)+Omega_wheel)
+        Lr3 = Lr2 - np.cross((omega_RN_B+Ki*zVec), (Isc.dot(omega_BN_B)+GsHs)) # -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s)
+
+        Lr4 = Lr3 + Isc.dot(-domega_RN_B + np.cross(omega_BN_B, omega_RN_B)) #+[I](-d(omega_r)/dt + omega x omega_r)
+        Lr5 = Lr4 + L
+        Lr5 = -Lr5
+        Lr.append(np.ndarray.tolist(Lr5))
+    print(Lr)
+    print(Ki,numRW)
+    return Lr
 
 
 
-#
+
 #   This statement below ensures that the unitTestScript can be run as a stand-along python scripts
 #   automatically executes the test_MRP_Feedback() method
 #
