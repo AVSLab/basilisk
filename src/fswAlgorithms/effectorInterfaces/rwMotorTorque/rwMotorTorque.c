@@ -171,9 +171,9 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
         /* compute Lr_C = [C]Lr */
         /* compute [CGs] */
         for (i=0; i<ConfigData->numControlAxes; i++){
-            Lr_C[i] = v3Dot(ConfigData->controlAxes_B + 3 * i, Lr_B); /* Why aren't these pointers? */
+            Lr_C[i] = v3Dot(ConfigData->controlAxes_B + 3 * i, Lr_B);
             for (j=0; j<ConfigData->numAvailRW; j++) {
-                CGs[i][j] = v3Dot(&ConfigData->GsMatrixAvail_B[j * 3], &ConfigData->controlAxes_B[3 * i]); // Why are the wheel axes different from the control axes.
+                CGs[i][j] = v3Dot(&ConfigData->GsMatrixAvail_B[j * 3], &ConfigData->controlAxes_B[3 * i]);
             }
         }
 
