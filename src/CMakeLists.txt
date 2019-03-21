@@ -6,6 +6,10 @@ if(POLICY CMP0025)
   cmake_policy(SET CMP0025 NEW)
 endif()
 
+if(POLICY CMP0057)
+  cmake_policy(SET CMP0057 NEW)
+endif()
+
 project("basilisk")
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -22,9 +26,11 @@ conan_add_remote(NAME conan-community URL https://api.bintray.com/conan/conan-co
 
 set(required_conan_libraries eigen/3.3.5@conan/stable)
 
+
 option(USE_PROTOBUFFERS "Include modules which use Google Protobuffers" OFF)
 option(USE_OPENCV "Include modules which use OpenCV" OFF)
 
+set(requires_protobuff_modules "viz_interface/vizInterface.i")
 if(USE_PROTOBUFFERS)
   list(APPEND required_conan_libraries protobuf/3.5.1@bincrafters/stable)
 endif()
@@ -213,6 +219,11 @@ function(findAndCreateSwigModules SubModule)
 	foreach(module ${swig_modules})	
 		get_filename_component(FileBase ${module} NAME_WE)
 		get_filename_component(FileDir ${module} DIRECTORY)
+
+    if(NOT USE_PROTOBUFFERS AND (module IN_LIST requires_protobuff_modules))
+      message("Found " ${module})
+      continue()
+    endif()
 		
 		message("module  " ${module})
 		message("SubModule " ${SubModule})
@@ -225,6 +236,7 @@ function(findAndCreateSwigModules SubModule)
 		if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/CMakeLists.txt" AND NOT forceBuild)
  		    continue()
 		endif()
+
 	
 	    file(GLOB impl_files
 		    "${FileDir}/*.cpp"
