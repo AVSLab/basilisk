@@ -173,6 +173,13 @@ endfunction(make_python_package_dir)
 
 
 function(findAndCreateSwigModules SubModule)
+
+	if(${ARGC} GREATER 1)
+		set(forceBuild ${ARGN})
+	else()
+		set(forceBuild FALSE)
+	endif()
+
 	find_package(SWIG REQUIRED)
 	include(${SWIG_USE_FILE})
 	find_package(PythonLibs)
@@ -199,19 +206,18 @@ function(findAndCreateSwigModules SubModule)
 	get_property(LIBRARY_BUILD_LIST GLOBAL PROPERTY BUILT_LIB_LIST)
 	get_property(ALG_LIST GLOBAL PROPERTY ALG_LIB_LIST)
 
-	foreach(module ${swig_modules})
+	foreach(module ${swig_modules})	
 	    get_filename_component(FileBase ${module} NAME_WE)
 	    get_filename_component(FileDir ${module} DIRECTORY)
+		if(NOT FileDir)
+			get_filename_component(FileDir ${SubModule} NAME_WE)
+		endif()
 		set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
-		
-		if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/CMakeLists.txt")
+				
+		if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/CMakeLists.txt" AND NOT forceBuild)
  		    continue()
 		endif()
-		
-		# if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/CMakeLists.txt")
-		# 	        continue()
-		# 	    endif()
-		
+	
 	    file(GLOB impl_files
 		    "${FileDir}/*.cpp"
 		    "${FileDir}/*.c"
