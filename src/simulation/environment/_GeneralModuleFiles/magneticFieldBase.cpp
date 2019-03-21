@@ -78,8 +78,7 @@ void MagneticFieldBase::setEpoch(double julianDate)
 void MagneticFieldBase::addSpacecraftToModel(std::string tmpScMsgName){
     std::string tmpEnvMsgName;
     this->scStateInMsgNames.push_back(tmpScMsgName);
-    //    tmpEnvMsgName = this->ModelTag + "_" + std::to_string(this->scStateInMsgNames.size()-1)+"_data";
-        tmpEnvMsgName = "_" + std::to_string(this->scStateInMsgNames.size()-1)+"_data";
+        tmpEnvMsgName = this->ModelTag + "_" + std::to_string(this->scStateInMsgNames.size()-1)+"_data";
     this->envOutMsgNames.push_back(tmpEnvMsgName);
     return;
 }
