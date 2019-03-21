@@ -41,7 +41,7 @@ MagneticFieldBase::MagneticFieldBase()
 
     //! - turn off minimum and maximum reach features
     this->envMinReach = -1;
-    this->envMinReach = -1;
+    this->envMaxReach = -1;
 
     //! - zero the planet message, and set the DCM to an identity matrix
     memset(&this->planetState, 0x0, sizeof(SpicePlanetStateSimMsg));
@@ -100,6 +100,9 @@ void MagneticFieldBase::SelfInit()
         this->envOutMsgIds.push_back(tmpMagFieldMsgId);
     }
 
+    //! - call the custom SelfInit() method to add addtional self initialization steps
+    customSelfInit();
+
     return;
 }
 
@@ -125,9 +128,49 @@ void MagneticFieldBase::CrossInit()
         this->magFieldOutBuffer.push_back(tmpMagField);
     }
 
+    //!- call the custom CrossInit() method to all additional cross initialization steps
+    customCrossInit();
 
     return;
 }
+
+/*! This method is used to reset the module.
+ @return void
+ */
+void MagneticFieldBase::Reset(uint64_t CurrentSimNanos)
+{
+    //! - call the custom environment module reset method
+    customReset(CurrentSimNanos);
+
+    return;
+}
+
+
+
+/*! Custom SelfInit() method.  This allows a child class to add additional functionality to the SelfInit() method
+ @return void
+ */
+void MagneticFieldBase::customSelfInit()
+{
+    return;
+}
+
+/*! Custom CrossInit() method.  This allows a child class to add additional functionality to the CrossInit() method
+ @return void
+ */
+void MagneticFieldBase::customCrossInit()
+{
+    return;
+}
+
+/*! Custom Reset() method.  This allows a child class to add additional functionality to the Reset() method
+ @return void
+ */
+void MagneticFieldBase::customReset(uint64_t CurrentClock)
+{
+    return;
+}
+
 
 
 /*! This method is used to write the output magnetic field messages whose names are established in AddSpacecraftToModel.
@@ -140,6 +183,7 @@ void MagneticFieldBase::WriteOutputMessages(uint64_t CurrentClock)
     std::vector<int64_t>::iterator it;
     std::vector<MagneticFieldSimMsg>::iterator magFieldIt;
     magFieldIt = this->magFieldOutBuffer.begin();
+    //! - write magnetic field output messages for each spacecaft's locations
     for(it = this->envOutMsgIds.begin(); it!= this->envOutMsgIds.end(); it++, magFieldIt++){
         tmpMagFieldOutMsg = *magFieldIt;
         SystemMessaging::GetInstance()->WriteMessage(*it,
@@ -149,6 +193,17 @@ void MagneticFieldBase::WriteOutputMessages(uint64_t CurrentClock)
                                                   moduleID);
     }
 
+    //! - call the custom method to perform additional output message writing
+    customWriteOutputMessages(CurrentClock);
+
+    return;
+}
+
+/*! Custom output message writing method.  This allows a child class to add additional functionality.
+ @return void
+ */
+void MagneticFieldBase::customWriteOutputMessages(uint64_t CurrentClock)
+{
     return;
 }
 
@@ -164,12 +219,11 @@ bool MagneticFieldBase::ReadInputs()
 
     this->scStates.clear();
 
-    //! -SC message reads
+    //! - read in the spacecraft state messages
     bool scRead;
     if(this->scStateInMsgIds.size() > 0)
     {
         scRead = true;
-        //! Iterate over spacecraft message ids
         std::vector<int64_t>::iterator it;
             for(it = scStateInMsgIds.begin(); it!= scStateInMsgIds.end(); it++){
                 bool tmpScRead;
@@ -187,15 +241,27 @@ bool MagneticFieldBase::ReadInputs()
         scRead = false;
     }
 
-    //! - Planet message read
-    bool planetRead = true;     // if no planet message is set, then a zero planet position, velocity and orientation is assumed
+    //! - Read in the optional planet message.  if no planet message is set, then a zero planet position, velocity and orientation is assumed
+    bool planetRead = true;
     if(planetPosInMsgId >= 0)
     {
         planetRead = SystemMessaging::GetInstance()->ReadMessage(this->planetPosInMsgId , &localHeader,
                                               sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&this->planetState), moduleID);
     }
 
+    //! - call the custom method to perform additional input reading
+    customReadInputs();
+
     return(planetRead && scRead);
+}
+
+
+/*! Custom output input reading method.  This allows a child class to add additional functionality.
+ @return void
+ */
+void MagneticFieldBase::customReadInputs()
+{
+    return;
 }
 
 /*! This method is used to update the local magnetic field based on each spacecraft's position.
@@ -221,7 +287,7 @@ void MagneticFieldBase::updateLocalMagField(double currentTime)
         if(this->orbitRadius > this->envMinReach &&
            (this->orbitRadius < this->envMaxReach || this->envMaxReach < 0)) {
             //! - compute the local magnetic field.  The evaluateMageticFieldModel() method must be implement for each model
-            evaluateMageticFieldModel(&(*magMsgIt));
+            evaluateMagneticFieldModel(&(*magMsgIt));
         }
     }
 
@@ -259,7 +325,6 @@ void MagneticFieldBase::UpdateState(uint64_t CurrentSimNanos)
     for(it = this->magFieldOutBuffer.begin(); it!= this->magFieldOutBuffer.end(); it++){
         memset(&(*it), 0x0, sizeof(MagneticFieldSimMsg));
     }
-
     //! - update local neutral density information
     if(this->ReadInputs())
     {

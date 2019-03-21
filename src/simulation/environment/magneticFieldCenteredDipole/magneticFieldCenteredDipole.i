@@ -18,15 +18,15 @@
  */
 
 
-%module magneticField
+%module magneticFieldCenteredDipole
 %{
-   #include "magneticField.h"
+    #include "magneticFieldCenteredDipole.h"
 %}
 
 %include "swig_common_model.i"
-%include "../_GeneralModuleFiles/planetEnvironmentModel.h"
 %include "sys_model.h"
-%include "magneticField.h"
+%include "../_GeneralModuleFiles/magneticFieldBase.h"
+%include "magneticFieldCenteredDipole.h"
 
 %include "../../simMessages/spicePlanetStateSimMsg.h"
 %include "../../simMessages/scPlusStatesSimMsg.h"

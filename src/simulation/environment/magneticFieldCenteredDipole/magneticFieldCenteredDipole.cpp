@@ -17,37 +17,36 @@
 
  */
 
-#include "centeredDipoleMagneticField.h"
+#include "magneticFieldCenteredDipole.h"
 #include "utilities/linearAlgebra.h"
 
-/*! This method initializes some basic parameters for the module.
+/*! The constructor method initializes the dipole parameters to zero, resuling in a zero magnetic field result by default.
  @return void
  */
-CenteredDipoleMagneticField::CenteredDipoleMagneticField()
+MagneticFieldCenteredDipole::MagneticFieldCenteredDipole()
 {
     //! - Set the default atmospheric properties to yield a zero response
     this->g10 = 0.0;            // [T]
     this->g11 = 0.0;            // [T]
     this->h11 = 0.0;            // [T]
-//    this->planetRadius = 0.0;   // [m]
+    this->planetRadius = 0.0;   // [m]
 
     return;
 }
 
-/*! Destructor.
+/*! Empty destructor method.
  @return void
  */
-CenteredDipoleMagneticField::~CenteredDipoleMagneticField()
+MagneticFieldCenteredDipole::~MagneticFieldCenteredDipole()
 {
     return;
 }
 
-
 /*! This method is evaluates the centered dipole magnetic field model.
- @param radius [m] spacecraft orbit radius
  @param msg magnetic field message structure
  @return void
- */void CenteredDipoleMagneticField::evaluateMageticFieldModel(MagneticFieldSimMsg *msg)
+ */
+void MagneticFieldCenteredDipole::evaluateMagneticFieldModel(MagneticFieldSimMsg *msg)
 {
     Eigen::Vector3d magField_P;         // [T] magnetic field in Planet fixed frame
     Eigen::Vector3d rHat_P;             // [] normalized position vector in E frame components

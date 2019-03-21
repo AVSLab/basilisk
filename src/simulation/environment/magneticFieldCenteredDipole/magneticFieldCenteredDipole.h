@@ -25,9 +25,9 @@
 #include <vector>
 #include <string>
 #include "../../_GeneralModuleFiles/sys_model.h"
-#include "../../simMessages/spicePlanetStateSimMsg.h"
-#include "../../simMessages/scPlusStatesSimMsg.h"
-#include "../../simMessages/magneticFieldSimMsg.h"
+#include "simMessages/spicePlanetStateSimMsg.h"
+#include "simMessages/scPlusStatesSimMsg.h"
+#include "simMessages/magneticFieldSimMsg.h"
 #include "../_GeneralModuleFiles/magneticFieldBase.h"
 
 /*! \addtogroup SimModelGroup
@@ -35,13 +35,13 @@
  */
 
 //! @brief Evaluate a centered dipole magnetic field model about a planet for a range of spacecraft locations.
-class CenteredDipoleMagneticField:  public MagneticFieldBase {
+class MagneticFieldCenteredDipole:  public MagneticFieldBase {
 public:
-    CenteredDipoleMagneticField();
-    ~CenteredDipoleMagneticField();
+    MagneticFieldCenteredDipole();
+    ~MagneticFieldCenteredDipole();
 
 private:
-    void evaluateMageticFieldModel(MagneticFieldSimMsg *msg);
+    void evaluateMagneticFieldModel(MagneticFieldSimMsg *msg);
 
 
 public:

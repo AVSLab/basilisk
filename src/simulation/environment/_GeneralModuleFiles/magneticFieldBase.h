@@ -45,7 +45,7 @@ public:
     ~MagneticFieldBase();
     void SelfInit();
     void CrossInit();
-    // add Reset function template
+    void Reset(uint64_t CurrentSimNanos);
     void setEpoch(double julianDate);
     void addSpacecraftToModel(std::string tmpScMsgName); 
     void UpdateState(uint64_t CurrentSimNanos); 
@@ -55,7 +55,12 @@ protected:
     bool ReadInputs(); 
     void updateLocalMagField(double currentTime);
     void updateRelativePos(SpicePlanetStateSimMsg  *planetState, SCPlusStatesSimMsg *scState); 
-    virtual void evaluateMageticFieldModel(MagneticFieldSimMsg *msg) = 0;
+    virtual void evaluateMagneticFieldModel(MagneticFieldSimMsg *msg) = 0;
+    virtual void customSelfInit();
+    virtual void customCrossInit();
+    virtual void customReset(uint64_t CurrentClock);
+    virtual void customWriteOutputMessages(uint64_t CurrentClock);
+    virtual void customReadInputs();
 
 public:
     std::vector<std::string> scStateInMsgNames;    //!< Vector of the spacecraft position/velocity message names
@@ -63,8 +68,8 @@ public:
     std::string planetPosInMsgName;          //!< Message name for the planet's SPICE position message
     double envMinReach; //!< [m] Minimum planet-relative position needed for the environment to work, default is off (neg. value)
     double envMaxReach; //!< [m] Maximum distance at which the environment will be calculated, default is off (neg. value)
-    double epochDate;                       //!< [JD2000] Specified epoch date.
-    double planetRadius;                    //!< [m]      Radius of the local atmospheric body; altitude is computed as |r| - planetRadius
+    double epochDate;                       //!< [JD2000] Specified epoch date, default is a Julian date format
+    double planetRadius;                    //!< [m]      Radius of the planet
 
 protected:
     Eigen::Vector3d r_BP_N;                 //!< [m] sc position vector relative to planet in inertial N frame components
