@@ -55,7 +55,11 @@
 #   @brief This chapter discusses setting up planetary environments such a a neutral density atmosphere
 #   or a magnetic field.
 #   @{
-#       \defgroup scenarioMagneticField                     4.1 Magnetic Field
+#       \defgroup Tutorials_41 4.1  Magnetic Field Models
+#       @brief This section covers planetary magnetic field models.
+#       @{
+#           \defgroup scenarioMagneticFieldCenteredDipoleGroup   4.1.1 Centered Dipole Model
+#       @}
 #   @}
 #
 #   \defgroup Tutorial_5 Chapter 5: Spacecraft Sensors

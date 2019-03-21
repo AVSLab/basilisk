@@ -36,7 +36,7 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 sys.path.append(path + '/../scenarios')
-import scenarioMagneticField
+import scenarioMagneticFieldCenteredDipole
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -61,7 +61,7 @@ def test_scenarioMagneticField(show_plots, orbitCase, planetCase):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
-    magData, figureList = scenarioMagneticField.run(show_plots, orbitCase, planetCase)
+    magData, figureList = scenarioMagneticFieldCenteredDipole.run(show_plots, orbitCase, planetCase)
 
     numTruthPoints = 5
     skipValue = int(len(magData) / (numTruthPoints - 1))

@@ -45,8 +45,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 from Basilisk.utilities import simSetPlanetEnvironment
 
 
-## \defgroup scenarioMagneticFieldCenteredDipole
-
+## \defgroup scenarioMagneticFieldCenteredDipoleGroup
 ## @{
 ## Demonstration of setting up a centered dipole magnetic field model about a planet
 #
@@ -68,7 +67,7 @@ from Basilisk.utilities import simSetPlanetEnvironment
 #
 # To run the default scenario 1 from the Basilisk/src/tests/scenarios folder, call the python script through
 #
-#       python scenarioMagneticField.py
+#       python scenarioMagneticFieldCenteredDipole.py
 #
 #
 # Simulation Scenario Setup Details
@@ -76,7 +75,7 @@ from Basilisk.utilities import simSetPlanetEnvironment
 # The simulation layout is shown in the following illustration.  A single simulation process is created
 # which contains the spacecraft object.  The spacecraft state message is connected to the magnetic field
 # module which outputs the local magnetic field in inertial frame components.
-# ![Simulation Flow Diagram](Images/doc/test_scenario_MagneticField.svg "Illustration")
+# ![Simulation Flow Diagram](Images/doc/test_scenario_MagneticFieldCenteredDipole.svg "Illustration")
 #
 # When the simulation completes 2 plots are shown for each case.  One plot always shows
 # the inertial position vector components, while the second plot shows the local magnetic field
@@ -85,9 +84,24 @@ from Basilisk.utilities import simSetPlanetEnvironment
 # The dynamics simulation is setup using a SpacecraftPlus() module.  The magnetic field module is created using:
 #~~~~~~~~~~~~~~~~~{.py}
 #     magModule = magneticField.MagneticField()
-#     magModule.ModelTag = "magneticFieldModel"
+#     magModule.ModelTag = "CenteredDipole"
 #~~~~~~~~~~~~~~~~~
-# Note that the default magnetic field module simulates a centered dipole model for the Earth, and the
+# Note that the magnetic field module are zeroed, and appropriate parameters must be specified for the planet.  The
+# following code illustrates setting the Earth dipole parameters:
+#~~~~~~~~~~~~~~~~~{.py}
+#   magModule.g10 = -30926.00 / 1e9 * 0.5  # Tesla
+#   magModule.g11 =  -2318.00 / 1e9 * 0.5  # Tesla
+#   magModule.h11 =   5817.00 / 1e9 * 0.5  # Tesla
+#   magModule.planetRadius = 6371.2 * 1000  # meters
+#~~~~~~~~~~~~~~~~~
+# The python support file `simSetPlanetEnvironment.py` provides helper functions to setup command magnetic field
+# environments including the centered dipole models for Mercury, Earth, Jupiter, Saturn, Uranus and Neptune.
+# Thus, for the Jupiter scenario case the following command is used:.
+#~~~~~~~~~~~~~~~~~{.py}
+#   simSetPlanetEnvironment.centeredDipoleMagField(magModule, 'jupiter')
+#~~~~~~~~~~~~~~~~~
+#
+# The default
 # planet's position vector is assumed to be the inertial frame origin and an identity orientation matrix.
 # If a different planet state message is required this can be specified through the optional input message
 #~~~~~~~~~~~~~~~~~{.py}
@@ -106,19 +120,12 @@ from Basilisk.utilities import simSetPlanetEnvironment
 #   scSim.AddModelToTask(simTaskName, magModule)
 #~~~~~~~~~~~~~~~~~
 #
-# The python support file `simSetPlanetEnvironment.py` provides helper functions to setup command magnetic field
-# environments including the centered dipole models for Mercury, Earth, Jupiter, Saturn, Uranus and Nepture.
-# Thus, for the Jupiter scenario case the following command is used:.
-#~~~~~~~~~~~~~~~~~{.py}
-#   simSetPlanetEnvironment.centeredDipoleMagField(magModule, 'jupiter')
-#~~~~~~~~~~~~~~~~~
-#
 # Note that more then one magnetic field can be attached to a planet.  In the elliptic Earth orbit scenario
 # a second magnetic field module `magModule2` is created with a different custom dipole model.  It is connected to the
-# same spacecrat state message as the first magnetic field model.
+# same spacecraft state message as the first magnetic field model.
 # ~~~~~~~~~~~~~~~~~{.py}
 #   magModule2 = magneticField.MagneticField()
-#   magModule2.ModelTag = "magneticFieldModel2"
+#   magModule2.ModelTag = "CenteredDipole2"
 #   magModule2.addSpacecraftToModel(scObject.scStateOutMsgName)
 # ~~~~~~~~~~~~~~~~~
 # To manually setup a centered magnetic field dipole model, this can be done with
@@ -130,7 +137,7 @@ from Basilisk.utilities import simSetPlanetEnvironment
 #   magModule2.planetRadius = 6371.2 * 1000  # meters
 # ~~~~~~~~~~~~~~~~~
 # Every time a spacecraft is added to the magnetic field module, an automated output message name is created.
-# For `magModule` is is "centeredDipole_0_data" as a `centeredDipole` model is used and the spacecraft number is 0.
+# For `magModule` is "CenteredDipole_0_data" as the ModelTag string is `CenteredDipole` and the spacecraft number is 0.
 # This output name is created in the  `addSpacecraftToModel()` function.
 # However, if the default output name is used for the second planetary magnetic field model, then both module share
 # the same output name and one will overwrite the others output.  To ensure the second magnetic field has a unique
@@ -142,16 +149,13 @@ from Basilisk.utilities import simSetPlanetEnvironment
 # The reach of the magnetic field model is specified through the module variables `envMinReach` and `envMaxReach`.
 # Their default values are -1 which turns off this feature, giving the magnetic field evaluation infinite reach.
 # As the elliptical Earth scenario uses 2 Earth-fixed magnetic fields, we want `magModule2` to only evaluate a
-# magnetic field if the orbit radius is less than `req*1.3`.  Similiarly, for radi above `req*1.3` we want the first
+# magnetic field if the orbit radius is less than `req*1.3`.  Similarly, for radii above `req*1.3` we want the first
 # magnetic field model to be used.  This behavior is setup using:
 # ~~~~~~~~~~~~~~~~~{.py}
 #   magModule2.envMaxReach = req*1.3
 #   magModule.envMinReach = magModule2.envMaxReach
 # ~~~~~~~~~~~~~~~~~
 #
-
-
-
 # Setup 1
 # -----
 #
@@ -165,13 +169,10 @@ from Basilisk.utilities import simSetPlanetEnvironment
 #     )
 # ~~~~~~~~~~~~~
 #
-# The first 2 arguments can be left as is.  The last 2 arguments control the
-# simulation scenario flags to turn on or off certain simulation conditions.  The default
-# scenario places the spacecraft about the Earth in a LEO orbit and without considering
-# gravitational spherical harmonics.  The
-# resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1LEO0Earth.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2LEO0Earth.svg "Orbit Illustration")
+# This scenario places the spacecraft about the Earth in a circular LEO orbit.  The
+# resulting position coordinates and magnetic field components are shown below.
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioMagneticField1circularEarth.svg "Position history")
+# ![Magnetic Field Illustration](Images/Scenarios/scenarioMagneticField2circularEarth.svg "Magnetic Field Illustration")
 #
 # Setup 2
 # -----
@@ -179,18 +180,18 @@ from Basilisk.utilities import simSetPlanetEnvironment
 # The next scenario is run by changing the bottom of the file in the scenario code to read
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
-#          True,        # show_plots
-#          'GTO',       # orbit Case
-#          False,       # useSphericalHarmonics
-#          'Earth'      # planet Case
-#        )
+#  run(
+#         True,          # show_plots
+#         'elliptical',  # orbit Case (circular, elliptical)
+#         'Earth'      # planetCase (Earth, Jupiter)
+#     )
 # ~~~~~~~~~~~~~
-# This case illustrates an elliptical Geosynchronous Transfer Orbit (GTO) with zero orbit
-# inclination.  The
-# resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1GTO0Earth.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2GTO0Earth.svg "Orbit Illustration")
+# This case illustrates an elliptical Earth orbit inclination where 2 dipole magnetic fields are attached.
+# One model acts above 1.3 Earth radius, and the other below that region.  The
+# resulting position coordinates and magnetic field illustrations are shown below.
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioMagneticField1ellipticalEarth.svg "Position history")
+# ![Magnetic Field Illustration with model 1 as solid and model 2 as dashed](Images/Scenarios/scenarioMagneticField2ellipticalEarth.svg "Magnetic Field Illustration")
+#
 #
 # Setup 3
 # -----
@@ -198,61 +199,16 @@ from Basilisk.utilities import simSetPlanetEnvironment
 # The next scenario is run by changing the bottom of the file in the scenario code to read
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run( False,       # save figures to file
-#          True,        # show_plots
-#          'GEO',       # orbit Case
-#          False,       # useSphericalHarmonics
-#          'Earth'      # planet Case
-#        )
+#  run(
+#         True,          # show_plots
+#         'elliptical',  # orbit Case (circular, elliptical)
+#         'Jupiter'      # planetCase (Earth, Jupiter)
+#     )
 # ~~~~~~~~~~~~~
-# This case illustrates a circular Geosynchronous Orbit (GEO) with zero orbit
-# inclination.  The
-# resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1GEO0Earth.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2GEO0Earth.svg "Orbit Illustration")
-#
-#  Setup 4
-# -----
-#
-# The next scenario is run by changing the bottom of the file in the scenario code to read
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run( False,       # save figures to file
-#          True,        # show_plots
-#          'LEO,        # orbit Case
-#          True,        # useSphericalHarmonics
-#          'Earth'      # planet Case
-#        )
-# ~~~~~~~~~~~~~
-# This case illustrates a circular LEO with a non-zero orbit
-# inclination.  In this case the Earth's spherical harmonics are turned on.  The
-# resulting position coordinates and semi-major axis time histories are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1LEO1Earth.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2LEO1Earth.svg "Orbit Illustration")
-#
-# Setup 5
-# -------
-#
-# The next scenario is run by changing the bottom of the file in the scenario code to read
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run( False,       # save figures to file
-#          True,        # show_plots
-#          'LEO',       # orbit Case
-#          True,        # useSphericalHarmonics
-#          'Mars'       # planet Case
-#        )
-# ~~~~~~~~~~~~~
-# This case illustrates a circular Low Mars Orbit or LMO with a non-zero orbit
-# inclination.  If you wish to visualize this simulation, be sure to change the celestial object name in
-#~~~~~~~~~~~~~~{.py}
-# unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'mars')
-# # The Viz only support 'earth', 'mars', or 'sun'
-#~~~~~~~~~~~~~~
-# from 'earth' to 'mars'.  In this simulation setup the planet's spherical harmonics are turned on.  The
-# resulting position coordinates and semi-major axis time histories are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1LEO0Mars.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2LEO0Mars.svg "Orbit Illustration")
+# This case illustrates an elliptical orbit about Jupiter.  The
+# resulting position coordinates and magnetic field illustrations are shown below.
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioMagneticField1ellipticalJupiter.svg "Position history")
+# ![Magnetic Field Illustration](Images/Scenarios/scenarioMagneticField2ellipticalJupiter.svg "Magnetic Field Illustration")
 #
 ## @}
 def run(show_plots, orbitCase, planetCase):
@@ -308,7 +264,7 @@ def run(show_plots, orbitCase, planetCase):
 
     # create the magnetic field
     magModule = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()  # default is Earth centered dipole module
-    magModule.ModelTag = "magneticFieldModel"
+    magModule.ModelTag = "CenteredDipole"
     magModule.addSpacecraftToModel(scObject.scStateOutMsgName)  # this command can be repeated if multiple
 
     if planetCase == 'Jupiter':
@@ -322,12 +278,12 @@ def run(show_plots, orbitCase, planetCase):
     if planetCase == 'Earth' and orbitCase == 'elliptical':
         # add a second magnetic field model
         magModule2 = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()
-        magModule2.ModelTag = "magneticFieldModel2"
+        magModule2.ModelTag = "CenteredDipole2"
         magModule2.addSpacecraftToModel(scObject.scStateOutMsgName)
         # set the 2nd magnetic field through custom dipole settings
-        magModule2.dipoleParams.g10 = -30926.00 / 1e9 * 0.5  # Tesla
-        magModule2.dipoleParams.g11 =  -2318.00 / 1e9 * 0.5  # Tesla
-        magModule2.dipoleParams.h11 =   5817.00 / 1e9 * 0.5  # Tesla
+        magModule2.g10 = -30926.00 / 1e9 * 0.5  # Tesla
+        magModule2.g11 =  -2318.00 / 1e9 * 0.5  # Tesla
+        magModule2.h11 =   5817.00 / 1e9 * 0.5  # Tesla
         magModule2.planetRadius = 6371.2 * 1000  # meters
         # set the reach variables such that the fields
         magModule2.envMaxReach = req*1.3
