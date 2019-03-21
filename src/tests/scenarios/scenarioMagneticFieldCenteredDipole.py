@@ -22,7 +22,7 @@
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test illustrating how to use magnetic fields attached to a planet.
+# Purpose:  Integrated test illustrating how to use a centered dipole magnetic fields attached to a planet.
 # Author:   Hanspeter Schaub
 # Creation Date:  March 16, 2019
 #
@@ -37,7 +37,7 @@ from Basilisk import __path__
 bskPath = __path__[0]
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
-from Basilisk.simulation import magneticField
+from Basilisk.simulation import magneticFieldCenteredDipole
 # general support file with common unit test functions
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
@@ -45,17 +45,18 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 from Basilisk.utilities import simSetPlanetEnvironment
 
 
-## \defgroup scenarioMagneticField
+## \defgroup scenarioMagneticFieldCenteredDipole
+
 ## @{
-## Demonstration of setting up magnetic fields about a planet
+## Demonstration of setting up a centered dipole magnetic field model about a planet
 #
-# Orbital Simulation Including a Magnetic Field {#scenarioMagneticField}
+# Orbital Simulation Including a Centered Dipole Magnetic Field {#scenarioMagneticFieldCenteredDipole}
 # ====
 #
 # Scenario Description
 # -----
 # This script sets up a 3-DOF spacecraft which is orbiting a planet that has a magnetic field.  The purpose
-# is to illustrate how to create and setup the magnetic field, as well as determine the
+# is to illustrate how to create and setup the centered dipole magnetic field, as well as determine the
 # magnetic field at a spacecraft location.  The orbit setup is similar to that used in
 # [scenarioBasicOrbit.py](@ref scenarioBasicOrbit).  The scenarios can be run with the followings setups
 # parameters:
@@ -306,22 +307,24 @@ def run(show_plots, orbitCase, planetCase):
 
 
     # create the magnetic field
-    magModule = magneticField.MagneticField()  # default is Earth centered dipole module
+    magModule = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()  # default is Earth centered dipole module
     magModule.ModelTag = "magneticFieldModel"
     magModule.addSpacecraftToModel(scObject.scStateOutMsgName)  # this command can be repeated if multiple
+
     if planetCase == 'Jupiter':
         # The following command is a support function that sets up the centered dipole parameters.
         # These parameters can also be setup manually
         simSetPlanetEnvironment.centeredDipoleMagField(magModule, 'jupiter')
+    else:
+        simSetPlanetEnvironment.centeredDipoleMagField(magModule, 'earth')
     scSim.AddModelToTask(simTaskName, magModule)
 
     if planetCase == 'Earth' and orbitCase == 'elliptical':
         # add a second magnetic field model
-        magModule2 = magneticField.MagneticField()
+        magModule2 = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()
         magModule2.ModelTag = "magneticFieldModel2"
         magModule2.addSpacecraftToModel(scObject.scStateOutMsgName)
         # set the 2nd magnetic field through custom dipole settings
-        magModule2.setEnvType(magneticField.MODEL_CENTERED_DIPOLE)
         magModule2.dipoleParams.g10 = -30926.00 / 1e9 * 0.5  # Tesla
         magModule2.dipoleParams.g11 =  -2318.00 / 1e9 * 0.5  # Tesla
         magModule2.dipoleParams.h11 =   5817.00 / 1e9 * 0.5  # Tesla
@@ -333,7 +336,6 @@ def run(show_plots, orbitCase, planetCase):
         magModule.envMinReach = magModule2.envMaxReach
         scSim.AddModelToTask(simTaskName, magModule2)
 
-    print magModule.envOutMsgNames[0]
 
     #
     #   setup orbit and simulation time
@@ -466,6 +468,6 @@ def run(show_plots, orbitCase, planetCase):
 if __name__ == "__main__":
     run(
         True,          # show_plots
-        'elliptical',  # orbit Case (circular, elliptical)
-        'Jupiter'      # planetCase (Earth, Jupiter)
+        'circular',  # orbit Case (circular, elliptical)
+        'Earth'      # planetCase (Earth, Jupiter)
     )
