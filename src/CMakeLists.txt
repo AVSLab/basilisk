@@ -174,8 +174,12 @@ endfunction(make_python_package_dir)
 
 function(findAndCreateSwigModules SubModule)
 
-	if(${ARGC} GREATER 1)
+	if(${ARGC} GREATER 1) # If the file has no parent in the path, the cmake is alongside the code
 		set(forceBuild ${ARGN})
+		get_filename_component(FileDir ${SubModule} NAME_WE)
+		get_filename_component(SubModule ${SubModule} DIRECTORY)
+		get_filename_component(CMAKE_CURRENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} PATH)
+		set(SubModule ${SubModule}/)
 	else()
 		set(forceBuild FALSE)
 	endif()
@@ -207,13 +211,17 @@ function(findAndCreateSwigModules SubModule)
 	get_property(ALG_LIST GLOBAL PROPERTY ALG_LIB_LIST)
 
 	foreach(module ${swig_modules})	
-	    get_filename_component(FileBase ${module} NAME_WE)
-	    get_filename_component(FileDir ${module} DIRECTORY)
-		if(NOT FileDir)
-			get_filename_component(FileDir ${SubModule} NAME_WE)
-		endif()
+		get_filename_component(FileBase ${module} NAME_WE)
+		get_filename_component(FileDir ${module} DIRECTORY)
+		
+		message("module  " ${module})
+		message("SubModule " ${SubModule})
+		message("FileBase" ${FileBase})
+		message("FileDir " ${FileDir})	
+		message("----------")
+		
 		set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
-				
+		
 		if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/CMakeLists.txt" AND NOT forceBuild)
  		    continue()
 		endif()
@@ -250,10 +258,10 @@ function(findAndCreateSwigModules SubModule)
 	    endif()
 
 		# Make a python package
-		set(moduleFilePath "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
+		set(moduleFilePath "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")		
 		make_python_package(${FileBase} ${FileDir} ${moduleFilePath})
-
-	    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${FileDir})
+		
+	    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${FileDir})	
 	    set_source_files_properties(${module} PROPERTIES CPLUSPLUS ON)
 		set_property(SOURCE ${module} PROPERTY SWIG_FLAGS "-I${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles" "-I${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/")
 		# MESSAGE("${SWIG_FLAGS}")
@@ -287,7 +295,7 @@ function(findAndCreateSwigModules SubModule)
 		set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
 			LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
 	    set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-		    COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}")
+		    COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}")			
 	endforeach()
 endfunction(findAndCreateSwigModules)
 
