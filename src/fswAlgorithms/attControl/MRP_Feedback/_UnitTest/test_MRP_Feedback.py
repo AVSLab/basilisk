@@ -60,17 +60,17 @@ from Basilisk.fswAlgorithms import rwMotorTorque
 
 @pytest.mark.parametrize("intGain", [0.01, -1])
 @pytest.mark.parametrize("rwNum", [4, 0])
-#@pytest.mark.parametrize("integralLimit", [0, 2/intGain*.01])
+@pytest.mark.parametrize("integralLimit", [0, 20])
 
-def test_MRP_Feedback(show_plots, intGain, rwNum):
+def test_MRP_Feedback(show_plots, intGain, rwNum, integralLimit):
     # each test method requires a single assert method to be called
 
-    [testResults, testMessage] = run(show_plots,intGain, rwNum)
+    [testResults, testMessage] = run(show_plots,intGain, rwNum, integralLimit)
 
     assert testResults < 1, testMessage
 
 
-def run(show_plots, intGain, rwNum):
+def run(show_plots, intGain, rwNum, integralLimit):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -107,7 +107,7 @@ def run(show_plots, intGain, rwNum):
     moduleConfig.K  =   0.15
     moduleConfig.Ki = intGain
     moduleConfig.P  = 150.0
-    moduleConfig.integralLimit = 2./moduleConfig.Ki * 0.1 #integralLimit
+    moduleConfig.integralLimit = integralLimit
     moduleConfig.domega0 = [0., 0., 0.]
     moduleConfig.knownTorquePntB_B = [0., 0., 0.]
 
@@ -175,7 +175,6 @@ def run(show_plots, intGain, rwNum):
 
     if len(moduleConfig.rwParamsInMsgName) > 0:
         jsList, numRW, GsMatrix_B = writeMsgInWheelConfiguration()
-    # Check this one
 
     # wheelAvailability message
     def writeMsgInWheelAvailability():
@@ -193,9 +192,7 @@ def run(show_plots, intGain, rwNum):
     if len(moduleConfig.rwAvailInMsgName)>0:
          rwAvailMsg = writeMsgInWheelAvailability()
 
-    Lr = findTrueTorques(moduleConfig, guidCmdData, rwSpeedMessage, vehicleConfigOut, jsList, numRW, GsMatrix_B, testProcessRate, rwAvailMsg)
-
-
+    Lr = findTrueTorques(moduleConfig, guidCmdData, rwSpeedMessage, vehicleConfigOut, jsList, numRW, GsMatrix_B, rwAvailMsg)
 
     #   Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
@@ -221,59 +218,13 @@ def run(show_plots, intGain, rwNum):
     # print '\n Lr = ', moduleOutput[:, 1:]
 
 
-
-
-
-
-
-    # set the filtered output truth states
-    if intGain == 0.01 and rwNum == 4:
-        expectedVec = [
-                [-18.98045163, 25.04949262, -21.68220099],
-                [-18.98045163, 25.04949262, -21.68220099],
-                [-19.01598385, 25.0980235, -21.76570084],
-                [-18.98045163, 25.04949262, -21.68220099],
-                [-19.01598385, 25.0980235, -21.76570084]]
-
-    elif intGain == 0.01 and rwNum == 0:
-        expectedVec = [
-             [-16.115, 25.065, -23.495],
-             [-16.115, 25.065, -23.495],
-             [-16.14215, 25.1124, -23.5829],
-             [-16.115, 25.065, -23.495],
-             [-16.14215, 25.1124, -23.5829]]
-
-    elif intGain == -1 and rwNum == 4:
-        expectedVec = [
-                [-1.58409754, 4.1143559, -1.59267836],
-                [-1.58409754, 4.1143559, -1.59267836],
-                [-1.58409754, 4.1143559, -1.59267836],
-                [-1.58409754, 4.1143559, -1.59267836],
-                [-1.58409754, 4.1143559, -1.59267836]]
-
-    elif intGain == -1 and rwNum == 0:
-        expectedVec = [
-            [-1.435, 3.865, -1.495],
-            [-1.435, 3.865, -1.495],
-            [-1.435, 3.865, -1.495],
-            [-1.435, 3.865, -1.495],
-            [-1.435, 3.865, -1.495]]
-
-    else:
-         testFailCount += 1
-         testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed with unsupported input parameters!")
-
     # compare the module results to the truth values
     accuracy = 1e-8
-    for i in range(0, len(expectedVec)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],expectedVec[i],3,accuracy):
+    for i in range(0, len(Lr)):
+        # check vector values
+        if not unitTestSupport.isArrayEqual(moduleOutput[i], Lr[i], 3, accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" + str(moduleOutput[i,0]*macros.NANO2SEC) + "sec\n")
-
-
-
-
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -281,18 +232,17 @@ def run(show_plots, intGain, rwNum):
     else:
         print "Failed: " + moduleWrap.ModelTag
 
-
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
-def findTrueTorques(moduleConfig,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,numRW,GsMatrix_B,testProcessRate,rwAvailMsg):
-    #intSigma = moduleConfig.K*guidCmdData.sigma_BR #k*sigma
+
+def findTrueTorques(moduleConfig,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsList,numRW,GsMatrix_B,rwAvailMsg):
     Lr = []
-    L = np.asarray(moduleConfig.knownTorquePntB_B)
+
     #Read in variables
-    steps = [0, 0.5, 1, 1.5, 2] #Times to report out Lr
-    #steps = [0, .5, 1, 1.5, 2]
+    L = np.asarray(moduleConfig.knownTorquePntB_B)
+    steps = [0, 0, .5, 0, .5]
     omega_BR_B = np.asarray(guidCmdData.omega_BR_B)
     omega_RN_B = np.asarray(guidCmdData.omega_RN_B)
     omega_BN_B = omega_BR_B + omega_RN_B #find body rate
@@ -303,26 +253,24 @@ def findTrueTorques(moduleConfig,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsL
     Ki = moduleConfig.Ki
     K = moduleConfig.K
     P = moduleConfig.P
-
     wheelNum = numRW
     jsVec = jsList
     GsMatrix_B_array = np.asarray(GsMatrix_B)
     GsMatrix_B_array = np.reshape(GsMatrix_B_array[0:numRW * 3], (numRW, 3))
-    sigmaInt = np.asarray([0,0,0])
+    sigmaInt = np.asarray([0, 0, 0])
 
     #Compute toruqes
     for i in range(len(steps)):
-        if i == 0:
-            dt = steps[i]
-        else:
-            dt = steps[i]-steps[i-1]
+        dt = steps[i]
+        if dt == 0:
+            sigmaInt = np.asarray([0, 0, 0])
 
         #evaluate integral term
         if Ki > 0: #if integral feedback is on
-            sigmaInt = K * dt * sigma_BR + sigmaInt #+ Isc.dot(omega_BN_B)
+            sigmaInt = K * dt * sigma_BR + sigmaInt
             if np.linalg.norm(sigmaInt) > moduleConfig.integralLimit: #Make sure z is less than the intergralLimit to mitigate windup issues
                 sigmaInt = sigmaInt/np.linalg.norm(sigmaInt)*moduleConfig.integralLimit
-            zVec = sigmaInt
+            zVec = sigmaInt + Isc.dot(omega_BR_B)
         else: #integral gain turned off/negative setting
             zVec = np.asarray([0, 0, 0])
 
@@ -342,8 +290,6 @@ def findTrueTorques(moduleConfig,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsL
         Lr5 = Lr4 + L
         Lr5 = -Lr5
         Lr.append(np.ndarray.tolist(Lr5))
-    print(Lr)
-    print(Ki,numRW)
     return Lr
 
 
