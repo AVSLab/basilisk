@@ -40,7 +40,7 @@ typedef struct {
     uint32_t numControlAxes;            /*!< [-] counter indicating how many orthogonal axes are controlled */
     uint32_t numAvailRW;                /*!< [-] number of reaction wheels available */
     RWArrayConfigFswMsg rwConfigParams;     /*!< [-] struct to store message containing RW config parameters in body B frame */
-    double GsMatrixAvail_B[3*MAX_EFF_CNT];   /*!< [-] The RW spin axis matrix in body frame components */
+    double GsMatrix_B[3*MAX_EFF_CNT];   /*!< [-] The RW spin axis matrix in body frame components */
     double CGs[3][MAX_EFF_CNT];
 
     /* declare module IO interfaces */

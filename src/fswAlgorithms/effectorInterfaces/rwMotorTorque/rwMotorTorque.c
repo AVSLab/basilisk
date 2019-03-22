@@ -1,12 +1,12 @@
 /*
  ISC License
-
+ 
  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
+ 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
  copyright notice and this permission notice appear in all copies.
-
+ 
  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -14,11 +14,11 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
+ 
  */
 /*
-    Mapping required attitude control torque Lr to RW motor torques
-
+ Mapping required attitude control torque Lr to RW motor torques
+ 
  */
 
 /* modify the path to reflect the new module names */
@@ -40,7 +40,6 @@
  output message
  @return void
  @param ConfigData The configuration data associated with this module
- @param moduleID The Basilisk module identifier
  */
 void SelfInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
 {
@@ -56,7 +55,6 @@ void SelfInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
  It's primary function is to link the input messages that were created elsewhere.
  @return void
  @param ConfigData The configuration data associated with this module
- @param moduleID The Basilisk module identifier
  */
 void CrossInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
 {
@@ -68,16 +66,14 @@ void CrossInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
     ConfigData->rwAvailInMsgID = -1;
     if (strlen(ConfigData->rwAvailInMsgName) > 0){
         ConfigData->rwAvailInMsgID = subscribeToMessage(ConfigData->rwAvailInMsgName,
-                                                         sizeof(RWAvailabilityFswMsg), moduleID);
+                                                        sizeof(RWAvailabilityFswMsg), moduleID);
     }
-
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
  @param ConfigData The configuration data associated with the module
- @param moduleID The Basilisk module identifier
  */
 void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
@@ -86,7 +82,7 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uin
     int i;
     
     /* configure the number of axes that are controlled */
-    double *pAxis; /*!< pointer to the current control axis */
+    double *pAxis;                 /*!< pointer to the current control axis */
     ConfigData->numControlAxes = 0;
     for (i = 0; i < 3; i++)
     {
@@ -96,7 +92,7 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uin
         }
     }
     if (ConfigData->numControlAxes == 0) {
-        BSK_PRINT(MSG_WARNING,"rwMotorTorque() is not setup to control any axes!\n"); // Should this be a hard fail?
+        BSK_PRINT(MSG_WARNING,"rwMotorTorque() is not setup to control any axes!\n");
     }
     
     /*! - Read static RW config data message and store it in module variables */
@@ -105,9 +101,9 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uin
     
     if (ConfigData->rwAvailInMsgID < 0){
         /* If no info is provided about RW availability we'll assume that all are available */
-        ConfigData->numAvailRW =ConfigData->rwConfigParams.numRW;
+        ConfigData->numAvailRW = ConfigData->rwConfigParams.numRW;
         for (i = 0; i < ConfigData->rwConfigParams.numRW; i++){
-            v3Copy(&ConfigData->rwConfigParams.GsMatrix_B[i * 3], &ConfigData->GsMatrixAvail_B[i * 3]);
+            v3Copy(&ConfigData->rwConfigParams.GsMatrix_B[i * 3], &ConfigData->GsMatrix_B[i * 3]);
         }
     }
 }
@@ -116,89 +112,111 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uin
  @return void
  @param ConfigData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
- @param moduleID The Basilisk module identifier
  */
 void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
+    /*! Begin method steps*/
+    int i,j,k;
+    double us[MAX_EFF_CNT];
+    RWAvailabilityFswMsg wheelsAvailability;
+    memset(us, 0x0, MAX_EFF_CNT * sizeof(double));
+    memset(wheelsAvailability.wheelAvailability, 0x0, MAX_EFF_CNT * sizeof(int)); // wheelAvailability set to 0 (AVAILABLE) by default
+    
     /*! - Read the input messages */
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
-    
-    /*! Begin method steps*/
-    int i,j,k;
-    int numAvailRW = 0;
-    double us[MAX_EFF_CNT];
     double Lr_B[3]; /*!< [Nm]    commanded ADCS control torque */
-    double Lr_C[3]; /*!< [Nm]    commanded ADCS control torque in the control frame */
-    double CGs[3][MAX_EFF_CNT]; /*!< Mapping matrix between control and wheel frame */
-    
-    RWAvailabilityFswMsg wheelsAvailability;
-
-    vSetZero(us, MAX_EFF_CNT);
-    
-    v3SetZero(Lr_B);
     ReadMessage(ConfigData->inputVehControlID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CmdTorqueBodyIntMsg), (void*) &(Lr_B), moduleID);
     
-    /* Lr is assumed to be a positive torque onto the body */
-    v3Scale(-1.0, Lr_B, Lr_B);
-    
-    if (ConfigData->rwAvailInMsgID >= 0){
-        memset(&wheelsAvailability, 0x0, sizeof(RWAvailabilityFswMsg));
+    /* If availability message is provided, reflect RW availability in Gs Matrix */
+    //TODO: Confirm that this is a sensible and efficent choice (copying in the vectors every update call, this feels like it should be a reset decision).
+    if (ConfigData->rwAvailInMsgID >= 0)
+    {
+        int numAvailRW = 0;
         ReadMessage(ConfigData->rwAvailInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                    sizeof(RWAvailabilityFswMsg), (void*) &wheelsAvailability, moduleID);
+                    sizeof(RWAvailabilityFswMsg), &wheelsAvailability, moduleID);
         
         for (i = 0; i < ConfigData->rwConfigParams.numRW; i++) {
-            if (wheelsAvailability.wheelAvailability[i] == AVAILABLE){
-                v3Copy(&ConfigData->rwConfigParams.GsMatrix_B[i * 3], &ConfigData->GsMatrixAvail_B[numAvailRW * 3]);
+            if (wheelsAvailability.wheelAvailability[i] == AVAILABLE)
+            {
+                v3Copy(&ConfigData->rwConfigParams.GsMatrix_B[i * 3], &ConfigData->GsMatrix_B[numAvailRW * 3]);
                 numAvailRW += 1;
             }
             ConfigData->numAvailRW = numAvailRW;
         }
     }
     
+    /* Lr is assumed to be a positive torque onto the body */
+    v3Scale(-1.0, Lr_B, Lr_B);
+    
+    /* compute [Lr_C] = [C]Lr */
+    double Lr_C[3];
+    v3SetZero(Lr_C);
+    for (k = 0; k < ConfigData->numControlAxes; k++){
+        Lr_C[k] = v3Dot(ConfigData->controlAxes_B + 3 * k, Lr_B);
+    }
+    
+    /* compute [CGs] */
+    double CGs[3][MAX_EFF_CNT];
+    mSetZero(CGs, 3, MAX_EFF_CNT);
+    for (i=0; i<ConfigData->numControlAxes; i++) {
+        for (j=0; j<ConfigData->numAvailRW; j++) {
+            CGs[i][j] = v3Dot(&ConfigData->GsMatrix_B[j * 3], &ConfigData->controlAxes_B[3 * i]);
+        }
+    }
     /* Compute minimum norm inverse for us = [CGs].T inv([CGs][CGs].T) [Lr_C] */
     /* Having at least the same # of RW as # of control axes is necessary condition to guarantee inverse matrix exists */
     /* If matrix to invert it not full rank, the control torque output is zero. */
     if (ConfigData->numAvailRW >= ConfigData->numControlAxes){
-        double M[3][3];         /* [M] = [CGs][CGs].T */
-        double v3_temp[3];      /* v3_temp = inv([M]) [Lr_C] */
-        double us_avail[MAX_EFF_CNT];
-        
+        /* [M] = [CGs][CGs].T */
+        double v3_temp[3]; /* v3_temp = inv([M]) [Lr_C] */
         v3SetZero(v3_temp);
-        vSetZero(us_avail, MAX_EFF_CNT);
-        
-        /* compute Lr_C = [C]Lr */
-        /* compute [CGs] */
-        for (i=0; i<ConfigData->numControlAxes; i++){
-            Lr_C[i] = v3Dot(ConfigData->controlAxes_B + 3 * i, Lr_B);
-            for (j=0; j<ConfigData->numAvailRW; j++) {
-                CGs[i][j] = v3Dot(&ConfigData->GsMatrixAvail_B[j * 3], &ConfigData->controlAxes_B[3 * i]);
-            }
-        }
-
-        if (ConfigData->numControlAxes > 0 && ConfigData->numControlAxes <= 3) // Uncertain if we need to impose the upper limit technically.
-        {
+        if (ConfigData->numControlAxes == 3){
+            double M33[3][3];
             for (i=0; i<ConfigData->numControlAxes; i++) {
                 for (j=0; j<ConfigData->numControlAxes; j++) {
-                    M[i][j] = 0.0;
+                    M33[i][j] = 0.0;
                     for (k=0; k < ConfigData->numAvailRW; k++) {
-                        M[i][j] += CGs[i][k]*CGs[j][k];
+                        M33[i][j] += CGs[i][k]*CGs[j][k];
                     }
                 }
             }
-            mInverse(M, ConfigData->numControlAxes, M);
-            mMultV(M, ConfigData->numControlAxes, ConfigData->numControlAxes, Lr_C, v3_temp);
+            m33Inverse(M33, M33);
+            m33MultV3(M33, Lr_C, v3_temp);
+        } else if (ConfigData->numControlAxes == 2){
+            double M22[2][2];
+            for (i=0; i<ConfigData->numControlAxes; i++) {
+                for (j=0; j<ConfigData->numControlAxes; j++) {
+                    M22[i][j] = 0.0;
+                    for (k=0; k < ConfigData->numAvailRW; k++) {
+                        M22[i][j] += CGs[i][k]*CGs[j][k];
+                    }
+                }
+            }
+            m22Inverse(M22, M22);
+            m22MultV2(M22, Lr_C, v3_temp);
+        } else if (ConfigData->numControlAxes == 1){
+            double M11[1][1];
+            for (i=0; i<ConfigData->numControlAxes; i++) {
+                for (j=0; j<ConfigData->numControlAxes; j++) {
+                    M11[i][j] = 0.0;
+                    for (k=0; k < ConfigData->numAvailRW; k++) {
+                        M11[i][j] += CGs[i][k]*CGs[j][k];
+                    }
+                }
+            }
+            v3_temp[0] = 1.0 / M11[0][0] * Lr_C[0];
         }
-        
         /* compute the RW motor torques */
         /* us = [CGs].T v3_temp */
+        double us_avail[MAX_EFF_CNT];
+        vSetZero(us_avail, MAX_EFF_CNT);
         for (i=0; i<ConfigData->numAvailRW; i++) {
             for (j=0; j<ConfigData->numControlAxes; j++) {
                 us_avail[i] += CGs[j][i] * v3_temp[j];
             }
         }
-        
         int i_torque = 0;
         for (i = 0; i < ConfigData->rwConfigParams.numRW; i++) {
             if (wheelsAvailability.wheelAvailability[i] == AVAILABLE)
@@ -208,13 +226,11 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
             }
         }
     }
-
+    
     /* store the output message */
     mCopy(us, ConfigData->rwConfigParams.numRW, 1, ConfigData->rwMotorTorques.motorTorque);
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(RWArrayTorqueIntMsg),
                  (void*) &(ConfigData->rwMotorTorques), moduleID);
-
+    
     return;
 }
-
-
