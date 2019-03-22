@@ -7,6 +7,7 @@
  purpose with or without fee is hereby granted, provided that the above
  copyright notice and this permission notice appear in all copies.
 
+
  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -95,8 +96,10 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, uint6
     uint32_t sizeOfMsgWritten;
     int i;    
 
-    /*! - read in vehicle configuration message */
+    /*! - zero and read in vehicle configuration message */
     VehicleConfigFswMsg sc;
+    memset(&sc, 0x0, sizeof(VehicleConfigFswMsg));
+
     ReadMessage(configData->vehConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
     /*! - copy over spacecraft inertia tensor */
@@ -106,9 +109,11 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, uint6
 
     /*! - zero the number of RW by default */
     configData->rwConfigParams.numRW = 0;
+    
     /*! - check if RW configuration message exists */
     if (configData->rwParamsInMsgId >= 0) {
-        /*! - Read static RW config data message and store it in module variables*/
+        /*! - Zero and Read static RW config data message and store it in module variables*/
+        memset(&(configData->rwConfigParams), 0x0, sizeof(RWArrayConfigFswMsg));
         ReadMessage(configData->rwParamsInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(RWArrayConfigFswMsg), &(configData->rwConfigParams), moduleID);
     }
@@ -180,18 +185,16 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
     v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
     
     /*! - evaluate integral term */
+    v3SetZero(configData->z);
     if (configData->Ki > 0) {   /* check if integral feedback is turned on  */
         v3Scale(configData->K * dt, guidCmd.sigma_BR, v3);
         v3Add(v3, configData->int_sigma, configData->int_sigma);
         if((intCheck = v3Norm(configData->int_sigma)) > configData->integralLimit) {
             v3Scale(configData->integralLimit / intCheck, configData->int_sigma, configData->int_sigma);
-        }
+        } /* keep int_sigma less than integralLimit */
         v3Subtract(guidCmd.omega_BR_B, configData->domega0, v3);
-        m33MultV3(RECAST3X3 configData->ISCPntB_B, v3, v3_1);
+        m33MultV3(RECAST3X3 configData->ISCPntB_B, v3, v3_1); /* -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s) */
         v3Add(configData->int_sigma, v3_1, configData->z);
-    } else {
-        /* integral feedback is turned off through a negative gain setting */
-        v3SetZero(configData->z);
     }
 
     /*! - evaluate required attitude control torque Lr */
