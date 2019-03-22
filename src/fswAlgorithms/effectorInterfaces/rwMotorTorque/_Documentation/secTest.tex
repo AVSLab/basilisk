@@ -3,8 +3,10 @@
 \section{Test Description and Success Criteria}
 The unit test checks for proper functionality of the module for various numbers of control axes and reaction wheel configurations, both within and outside expected bounds. The two test cases run include:
 \begin{enumerate}
-\item Standard 3-axis control basis, with four available reaction wheels. 
-\item 2-axis control basis (dropped axis), with four available reaction wheels. 
+\item 3-axis control basis, with four available reaction wheels. 
+\item 2-axis control basis, with four available reaction wheels. 
+\item 1-axis control basis, with four available reaction wheels. 
+\item 3-axis control basis (dropped axis), with 2 available reaction wheels. 
 
 \end{enumerate}
 
@@ -38,8 +40,11 @@ The unit test results are shown in Table~\ref{tab:results}.  All tests should be
 		\hline\hline
 		\textbf{Num Axes} 		& \textbf{Num RW}				  		&\textbf{Pass/Fail} \\ 
 		\hline
-	   3	   			& 4 &\input{AutoTeX/passFail_dropAxes6} \\ 
-	   2	   			& 4 &\input{AutoTeX/passFail_dropAxes9} \\ 
+	   3	   			& 4 &\input{AutoTeX/passFail_numAxes_3_numWheels_4} \\ 
+	   2	   			& 4 &\input{AutoTeX/passFail_numAxes_2_numWheels_4} \\ 
+	   1	   			& 4 &\input{AutoTeX/passFail_numAxes_1_numWheels_4} \\ 
+	   3	   			& 2 &\input{AutoTeX/passFail_numAxes_3_numWheels_2} \\ 
+	   
 	   
 	   \hline\hline
 	\end{tabular}

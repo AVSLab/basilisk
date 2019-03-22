@@ -49,19 +49,21 @@ from Basilisk.utilities import macros
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("dropAxes", [
-    (False)
-    ,(True)
-])
+@pytest.mark.parametrize("numControlAxes, dropWheels",[
+                         pytest.param(1, False),
+                         pytest.param(2, False),
+                         pytest.param(3, False),
+                         pytest.param(3, True)])
+
 
 # update "module" in this function name to reflect the module name
-def test_rwMotorTorque(show_plots, dropAxes):
+def test_rwMotorTorque(show_plots, numControlAxes, dropWheels):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = rwMotorTorqueTest(show_plots, dropAxes)
+    [testResults, testMessage] = rwMotorTorqueTest(show_plots, numControlAxes, dropWheels)
     assert testResults < 1, testMessage
 
 
-def rwMotorTorqueTest(show_plots, dropAxes):
+def rwMotorTorqueTest(show_plots, numControlAxes, dropWheels):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -90,17 +92,22 @@ def rwMotorTorqueTest(show_plots, dropAxes):
     moduleConfig.rwAvailInMsgName = "rw_availability"
     moduleConfig.rwParamsInMsgName = "rwa_config_data_parsed"
     # Initialize module variables
-    if dropAxes:
+    if numControlAxes == 3:
+        controlAxes_B = [
+            1, 0, 0
+            , 0, 1, 0
+            , 0, 0, 1
+        ]
+    elif numControlAxes == 2:
         controlAxes_B = [
              1,0,0
             ,0,0,1
         ]
     else:
         controlAxes_B = [
-             1,0,0
-            ,0,1,0
-            ,0,0,1
+            1, 0, 0
         ]
+
     moduleConfig.controlAxes_B = controlAxes_B
 
 
@@ -135,17 +142,21 @@ def rwMotorTorqueTest(show_plots, dropAxes):
                                           0, rwConfigParams)
 
     # wheelAvailability message
-    def writeMsgInWheelAvailability():
+    def writeMsgInWheelAvailability(dropWheels):
         rwAvailabilityMessage = rwMotorTorque.RWAvailabilityFswMsg()
         inputMessageSize = rwAvailabilityMessage.getStructSize()
         unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwAvailInMsgName,
                                               inputMessageSize, 2) # number of buffers (leave at 2 as default)
-        avail = [rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE]
+        if dropWheels:
+            avail = [rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.UNAVAILABLE, rwMotorTorque.UNAVAILABLE]
+        else:
+            avail = [rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE]
+
         rwAvailabilityMessage.wheelAvailability = avail
         unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwAvailInMsgName, inputMessageSize,
                                               0, rwAvailabilityMessage)
     if len(moduleConfig.rwAvailInMsgName)>0:
-        writeMsgInWheelAvailability()
+        writeMsgInWheelAvailability(dropWheels)
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
@@ -170,22 +181,28 @@ def rwMotorTorqueTest(show_plots, dropAxes):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(rwConfigParams.numRW))
 
+
     # set the output truth states
-    if dropAxes:
+    if numControlAxes == 1 and not dropWheels:
+        trueVector = [
+            [-0.7499999999999999, 0.0, 0.0, -0.4330127018922193],
+            [-0.7499999999999999, 0.0, 0.0, -0.4330127018922193]
+        ]
+    if numControlAxes == 2 and not dropWheels:
         trueVector = [
             [-0.6599999999999999,-0.,-0.3599999999999999,-0.5888972745734183],
             [-0.6599999999999999,-0.,-0.3599999999999999,-0.5888972745734183]
         ]
-    else:
+    elif numControlAxes == 3 and not dropWheels:
         trueVector = [
                      [-0.8, 0.7000000000000001, -0.5, -0.3464101615137755],
                      [-0.8, 0.7000000000000001, -0.5, -0.3464101615137755]
                    ]
-
-        # else:
-        #     testFailCount+=1
-        #     testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed with unsupported input parameters")
-
+    elif numControlAxes == 3 and dropWheels:
+        trueVector = [
+            [0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0]
+        ]
 
     # compare the module results to the truth values
     accuracy = 1e-8
@@ -209,7 +226,7 @@ def rwMotorTorqueTest(show_plots, dropAxes):
     #   print out success message if no error were found
     unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
     
-    snippentName = "passFail_"+"dropAxes"+str(len(controlAxes_B))
+    snippentName = "passFail_"+"numAxes_"+str(len(controlAxes_B)/3) + "_numWheels_" + str(4-2*int(dropWheels))
     if testFailCount == 0:
         colorText = 'ForestGreen'
         print "PASSED: " + moduleWrap.ModelTag
@@ -235,6 +252,6 @@ def rwMotorTorqueTest(show_plots, dropAxes):
 #
 if __name__ == "__main__":
     test_rwMotorTorque(
-                False,
+                3,
                 True
                )
