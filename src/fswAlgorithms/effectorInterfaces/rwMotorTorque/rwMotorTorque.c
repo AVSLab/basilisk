@@ -116,21 +116,28 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uin
 void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     /*! Begin method steps*/
-    int i,j,k;
-    double us[MAX_EFF_CNT];
     RWAvailabilityFswMsg wheelsAvailability;
-    memset(us, 0x0, MAX_EFF_CNT * sizeof(double));
     memset(wheelsAvailability.wheelAvailability, 0x0, MAX_EFF_CNT * sizeof(int)); // wheelAvailability set to 0 (AVAILABLE) by default
+    memset(&wheelsAvailability, 0x0, sizeof(RWAvailabilityFswMsg)); // Uncertain if this would provide the same functionality.
+    
+    int i,j,k;
+    double Lr_B[3]; /*!< [Nm]    commanded ADCS control torque in body frame*/
+    double Lr_C[3]; /*!< [Nm]    commanded ADCS control torque in control frame */
+    double us[MAX_EFF_CNT]; /*!< [Nm]    commanded ADCS control torque projected onto RWs g_s-Frames */
+    v3SetZero(Lr_B);
+    v3SetZero(Lr_C);
+    vSetZero(us, MAX_EFF_CNT);
     
     /*! - Read the input messages */
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
-    double Lr_B[3]; /*!< [Nm]    commanded ADCS control torque */
+    
     ReadMessage(ConfigData->inputVehControlID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CmdTorqueBodyIntMsg), (void*) &(Lr_B), moduleID);
     
     /* If availability message is provided, reflect RW availability in Gs Matrix */
-    //TODO: Confirm that this is a sensible and efficent choice (copying in the vectors every update call, this feels like it should be a reset decision).
+    /*TODO: Confirm that this is a sensible and efficent choice (copying in the vectors every update call,
+     this feels like it should be a reset decision)*/
     if (ConfigData->rwAvailInMsgID >= 0)
     {
         int numAvailRW = 0;
@@ -151,8 +158,6 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
     v3Scale(-1.0, Lr_B, Lr_B);
     
     /* compute [Lr_C] = [C]Lr */
-    double Lr_C[3];
-    v3SetZero(Lr_C);
     for (k = 0; k < ConfigData->numControlAxes; k++){
         Lr_C[k] = v3Dot(ConfigData->controlAxes_B + 3 * k, Lr_B);
     }
@@ -169,11 +174,10 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
     /* Having at least the same # of RW as # of control axes is necessary condition to guarantee inverse matrix exists */
     /* If matrix to invert it not full rank, the control torque output is zero. */
     if (ConfigData->numAvailRW >= ConfigData->numControlAxes){
-        /* [M] = [CGs][CGs].T */
-        double v3_temp[3]; /* v3_temp = inv([M]) [Lr_C] */
+        double v3_temp[3]; /* inv([M]) [Lr_C] */
         v3SetZero(v3_temp);
         if (ConfigData->numControlAxes == 3){
-            double M33[3][3];
+            double M33[3][3]; /* [M] = [CGs][CGs].T */
             for (i=0; i<ConfigData->numControlAxes; i++) {
                 for (j=0; j<ConfigData->numControlAxes; j++) {
                     M33[i][j] = 0.0;
