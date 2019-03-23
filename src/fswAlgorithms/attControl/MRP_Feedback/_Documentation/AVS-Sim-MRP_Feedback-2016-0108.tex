@@ -1,4 +1,12 @@
 \documentclass[]{BasiliskReportMemo}
+\usepackage{cite}
+\usepackage{AVS}
+\usepackage{float} %use [H] to keep tables where you put them
+\usepackage{array} %easy control of text in tables
+\usepackage{graphicx}
+\bibliographystyle{plain}
+
+
 
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
 
@@ -121,7 +129,19 @@ Simply call the module reset function prior to using this control module.  This 
 		If the integral feedback gain is a scalar $K_{I}$, rather than a symmetric positive definite matrix $[K_{I}]$, the quadratic $\bm\omega$ term vanishes.  If the full $3\times 3$ gain matrix is employed, then quadratic rate feedback terms are retained.  
 
 \section{Unit Test}
-The unit test for this module \verb|test_MRP_feedback| tests a set of gains $K,K_i,P$ on a rigid body with either 4 or 0 reaction wheels with no external torques, and with a time-varying reference attitude. The torque requested by the controller is evaluated against precomputed torques at 0s, 0.5s, 1s, 1.5s and 2s to within a tolerance of $10^{-8}$. The test is run for a case with error integration feedback ($k_i=0.01$) and one case where $k_i$ is set to a negative value, resulting in a case with no integrator. All four test cases are expected to pass.
+The unit test for this module \verb|test_MRP_feedback| tests a set of gains $K,K_i,P$ on a rigid body with no external torques, and with a fixed input reference attitude message. The torque requested by the controller is evaluated against python computed torques at 0s, 0.5s, 1s, 1.5s and 2s to within a tolerance of $10^{-8}$. After 1s the simulation is stopped and the Reset() function is called to check that integral feedback related variables are properly reset.  The following permutations are run:
+\begin{itemize}
+	\item The test is run for a case with error integration feedback ($k_i=0.01$) and one case where $k_i$ is set to a negative value, resulting in a case with no integrator. 
+	\item The RW array number is configured either to 4 or 0
+	\item The integral limit term is set to either 0 or 20
+	\item The RW availability message is tested in 3 manners.  Either the availability  message is not written where all wheels should default to being available.  If the availability message is written, then the RWs are either zero to available or not available.
+	\item The control parameter $\delta\omega_{0}$ is set to either a zero or non-zero vector
+\end{itemize}
+All permutations of these test cases are expected to pass.
+
+
+
+
 
 \section{User Guide}
 This module requires the following variables:
