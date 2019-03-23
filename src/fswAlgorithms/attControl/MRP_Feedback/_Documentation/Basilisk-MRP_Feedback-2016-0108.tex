@@ -47,11 +47,24 @@ Draft & Initial Draft document & H. Schaub \\
 \tableofcontents
 ~\\ \hrule ~\\
 
+\begin{figure}[htb]
+	\centerline{
+	\includegraphics[]{Figures/moduleIO}
+	}
+	\caption{{\tt MRP\_Feedback()} Module I/O Illustration}
+	\label{fig:moduleIO}
+\end{figure}
+\section{Module Description}
+The {\tt MRP\_Feedback} module creates the MRP attitude feedback control torque $\bm L_{r}$ developed in chapter 8 of Reference~\citenum{schaub}.  The input and output messages are illustrated in Figure~\ref{fig:moduleIO}.  The output message is a body-frame control torque vector that is outlined in section~\ref{sec:alg}.  The required attitude guidance message contains both attitude tracking error states as well as reference frame states.  This message is read in with every update cycle. The vehicle configuration message is only read in on reset and contains the spacecraft inertia tensor about the vehicle's center of mass location.  
+
+The MRP feedback control can compensate for Reaction Wheel (RW) gyroscopic effects as well.  This is an optional input message where the RW configuration array message contains the RW spin axis $\hat{\bm g}_{s,i}$ information and the RW polar inertia about the spin axis $I_{W_{s,i}}$.  This is only read in on reset.  The RW speed message contains the RW speed $\Omega_{i}$ and is read in every time step.  The optional RW availability message can be used to include or not include RWs in the MRP feedback.  This allows the module to selectively turn off some RWs.  The default is that all RWs are operational and are included.  
+
+
 
 \section{Initialization}
 Simply call the module reset function prior to using this control module.  This will reset the prior function call time variable, and reset the attitude error integral measure.  The control update period $\Delta t$ is evaluated automatically.  
 
-\section{Algorithm}
+\section{Algorithm}\label{sec:alg}
 		 This module employs the MRP feedback algorithm of Example 8.14 of Reference \citenum{schaub}.  This  nonlinear attitude tracking control includes an integral measure of the attitude error.  Further, we seek to avoid quadratic $\bm\omega$ terms to reduce the likelihood of control saturation during a detumbling phase.  Let the new nonlinear feedback control be expressed as
 		\begin{equation}
 			\label{eq:GusRW}

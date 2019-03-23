@@ -33,7 +33,7 @@
  * @brief This module implements a nonlinear MRP feedback control that tracks
  an arbitrary reference orientation.
  
-  The module [PDF Description](AVS-Sim-MRP_Feedback-2016-0108.pdf)
+  The module [PDF Description](Basilisk-MRP_Feedback-2016-0108.pdf)
  contains further information on this module's function,
  how to run it, as well as testing.
  @{
