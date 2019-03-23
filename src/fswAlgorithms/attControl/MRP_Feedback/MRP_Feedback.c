@@ -99,7 +99,6 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, uint6
     /*! - zero and read in vehicle configuration message */
     VehicleConfigFswMsg sc;
     memset(&sc, 0x0, sizeof(VehicleConfigFswMsg));
-
     ReadMessage(configData->vehConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
     /*! - copy over spacecraft inertia tensor */

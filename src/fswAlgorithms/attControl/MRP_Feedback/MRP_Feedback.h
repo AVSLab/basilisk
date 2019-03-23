@@ -26,6 +26,7 @@
 #include "fswMessages/rwArrayConfigFswMsg.h"
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
+#include "fswMessages/rwAvailabilityFswMsg.h"
 #include <stdint.h>
 
 /*! \defgroup MRP_Feedback

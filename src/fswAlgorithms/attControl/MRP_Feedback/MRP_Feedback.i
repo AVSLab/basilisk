@@ -30,6 +30,8 @@
 %ignore CrossInit_MRP_Feedback;
 %constant void Reset_MRP_Feedback(void*, uint64_t, uint64_t);
 %ignore Reset_MRP_Feedback;
+ARRAYASLIST(FSWdeviceAvailability)
+GEN_SIZEOF(RWAvailabilityFswMsg);
 GEN_SIZEOF(MRP_FeedbackConfig);
 GEN_SIZEOF(AttGuidFswMsg);
 GEN_SIZEOF(VehicleConfigFswMsg);
@@ -41,6 +43,9 @@ GEN_SIZEOF(RWSpeedIntMsg);
 %include "../../fswMessages/rwArrayConfigFswMsg.h"
 %include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 %include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
+%include "../../fswMessages/rwAvailabilityFswMsg.h"
+%include "../../fswUtilities/fswDefinitions.h"
+
 GEN_SIZEOF(CmdTorqueBodyIntMsg);
 
 %pythoncode %{
