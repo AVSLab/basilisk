@@ -111,8 +111,10 @@ void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime,
 
 
     /* read in the support messages */
+    memset(&localThrusterData, 0x0, sizeof(THRArrayConfigFswMsg));
     ReadMessage(configData->inputThrusterConfID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(THRArrayConfigFswMsg), &localThrusterData, moduleID);
+    memset(&configData->sc, 0x0, sizeof(VehicleConfigFswMsg));
     ReadMessage(configData->inputVehicleConfigDataID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(configData->sc), moduleID);
 
@@ -157,8 +159,10 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
 
     /*! Begin method steps*/
     /*! - Read the input messages */
+    memset(&Lr_B, 0x0, sizeof(CmdTorqueBodyIntMsg));
     ReadMessage(configData->inputVehControlID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CmdTorqueBodyIntMsg), (void*) &(Lr_B), moduleID);
+    memset(&configData->sc, 0x0, sizeof(VehicleConfigFswMsg));
     ReadMessage(configData->inputVehicleConfigDataID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(configData->sc), moduleID);
 

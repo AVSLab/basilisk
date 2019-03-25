@@ -68,13 +68,13 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t moduleID);
-    void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_thrForceMapping(thrForceMappingConfig *configData, uint64_t moduleID);
+    void CrossInit_thrForceMapping(thrForceMappingConfig *configData, uint64_t moduleID);
+    void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, uint64_t moduleID);
 
     void substractMin(double *F, uint32_t size);
-    void findMinimumNormForce(thrForceMappingConfig *ConfigData,
+    void findMinimumNormForce(thrForceMappingConfig *configData,
                               double D[MAX_EFF_CNT][3], double Lr_B[3], uint32_t numForces, double F[MAX_EFF_CNT], double BLr[3]);
     double computeTorqueAngErr(double D[MAX_EFF_CNT][3], double BLr[3], uint32_t numForces,
                                double F[MAX_EFF_CNT], double FMag[MAX_EFF_CNT]);
