@@ -1938,9 +1938,9 @@ int m33Inverse(double mx[3][3], double result[3][3])
         m_result[2][2] = (mx[0][0] * mx[1][1] - mx[0][1] * mx[1][0]) * detInv;
     } else {
         BSK_PRINT(MSG_ERROR, "Error: singular 3x3 matrix inverse\n");
-        m33Set(NAN, NAN, NAN,
-               NAN, NAN, NAN,
-               NAN, NAN, NAN,
+        m33Set(0.0, 0.0, 0.0,
+               0.0, 0.0, 0.0,
+               0.0, 0.0, 0.0,
                m_result);
         status = 1;
     }
