@@ -54,17 +54,16 @@ from Basilisk.fswAlgorithms import fswMessages
 @pytest.mark.parametrize("rwNum", [4, 0])
 @pytest.mark.parametrize("integralLimit", [0, 20])
 @pytest.mark.parametrize("useRwAvailability", ["NO", "ON", "OFF"])
-@pytest.mark.parametrize("setdomega0", [(0., 0., 0.), (1., -1, 2.)])
 
-def test_MRP_Feedback(show_plots, intGain, rwNum, integralLimit, useRwAvailability, setdomega0):
+def test_MRP_Feedback(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
     # each test method requires a single assert method to be called
 
-    [testResults, testMessage] = run(show_plots,intGain, rwNum, integralLimit, useRwAvailability, setdomega0)
+    [testResults, testMessage] = run(show_plots,intGain, rwNum, integralLimit, useRwAvailability)
 
     assert testResults < 1, testMessage
 
 
-def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability, setdomega0):
+def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -102,7 +101,6 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability, setdomega0
     moduleConfig.Ki = intGain
     moduleConfig.P  = 150.0
     moduleConfig.integralLimit = integralLimit
-    moduleConfig.domega0 = setdomega0
     moduleConfig.knownTorquePntB_B = [0., 0., 0.]
 
 
@@ -270,7 +268,7 @@ def findTrueTorques(moduleConfig,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsL
             sigmaInt = K * dt * sigma_BR + sigmaInt
             if np.linalg.norm(sigmaInt) > moduleConfig.integralLimit: #Make sure z is less than the intergralLimit to mitigate windup issues
                 sigmaInt = sigmaInt/np.linalg.norm(sigmaInt)*moduleConfig.integralLimit
-            zVec = sigmaInt + Isc.dot(omega_BR_B - moduleConfig.domega0)
+            zVec = sigmaInt + Isc.dot(omega_BR_B)
         else: #integral gain turned off/negative setting
             zVec = np.asarray([0, 0, 0])
 
@@ -305,6 +303,5 @@ if __name__ == "__main__":
                       0.01,     # intGain
                       4,        # rwNum
                       0.0,      # integralLimit
-                      "NO",     # useRwAvailability ("NO", "ON", "OFF")
-                      (0,0,0)   # setdomega0
+                      "NO"      # useRwAvailability ("NO", "ON", "OFF")
                       )
