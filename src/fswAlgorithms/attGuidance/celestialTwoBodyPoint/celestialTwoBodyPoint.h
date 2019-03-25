@@ -39,12 +39,12 @@
 typedef struct {
     /* Declare module private variables */
     double singularityThresh;       //!< (r) Threshold for when to fix constraint axis*/
-    double R_P1N_N[3];              //!< [m] planet 1 position vector relative to inertial frame, in N-frame components
-    double R_P2N_N[3];              //!< [m] planet 2 position vector relative to inertial frame, in N-frame components
-    double v_P1N_N[3];              //!< [m/s] planet 1 velocity vector relative to inertial frame, in N-frame components
-    double v_P2N_N[3];              //!< [m/s] planet 2 velocity vector relative to inertial frame, in N-frame components
-    double a_P1N_N[3];              //!< [m/s^2] planet 1 acceleration vector relative to inertial frame, in N-frame components
-    double a_P2N_N[3];              //!< [m/s^2] planet 2 acceleration vector relative to inertial frame, in N-frame components
+    double R_P1B_N[3];              //!< [m] planet 1 position vector relative to inertial frame, in N-frame components
+    double R_P2B_N[3];              //!< [m] planet 2 position vector relative to inertial frame, in N-frame components
+    double v_P1B_N[3];              //!< [m/s] planet 1 velocity vector relative to inertial frame, in N-frame components
+    double v_P2B_N[3];              //!< [m/s] planet 2 velocity vector relative to inertial frame, in N-frame components
+    double a_P1B_N[3];              //!< [m/s^2] planet 1 acceleration vector relative to inertial frame, in N-frame components
+    double a_P2B_N[3];              //!< [m/s^2] planet 2 acceleration vector relative to inertial frame, in N-frame components
     
     
     /* Declare module IO interfaces */
