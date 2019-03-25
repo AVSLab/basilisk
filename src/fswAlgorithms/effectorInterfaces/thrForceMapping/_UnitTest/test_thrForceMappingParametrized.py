@@ -40,6 +40,11 @@ from Basilisk.fswAlgorithms import thrForceMapping
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
 
+import os, inspect
+
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
 # Uncomment this line if this test has an expected failure, adjust message as needed.
@@ -347,21 +352,19 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i,0]*macros.NANO2SEC) +
                                 "sec\n")
- 
-    # If the argument provided at commandline "--show_plots" evaluates as true,
-    # plot all figures
-    # if show_plots:
-    #     # plot a sample variable.
-    #     plt.figure(1)
-    #     plt.plot(variableState[:,0]*macros.NANO2SEC, variableState[:,1], label='Sample Variable')
-    #     plt.legend(loc='upper left')
-    #     plt.xlabel('Time [s]')
-    #     plt.ylabel('Variable Description [unit]')
-    #     plt.show()
 
-    #   print out success message if no error were found
+    unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
+
+    snippentName = "passFail_" + str(useDVThruster) + "_" + str(useCOMOffset) + "_" + str(dropThruster) + "_" + str(dropAxis) + "_" + str(saturateThrusters)
     if testFailCount == 0:
+        colorText = 'ForestGreen'
         print "PASSED: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        print "Failed: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
