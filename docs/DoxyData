@@ -1280,7 +1280,7 @@ HTML_EXTRA_FILES       = ../src/simulation/dynamics/extForceTorque/_Documentatio
                          ../src/fswAlgorithms/effectorInterfaces/rwMotorVoltage/_Documentation/Basilisk-rwMotorVoltage-20170113.pdf \
 			 ../src/fswAlgorithms/sensorInterfaces/CSSSensorData/_Documentation/Basilisk-CSSSensorDataModule-20190207.pdf \
                          ../src/fswAlgorithms/effectorInterfaces/rwNullSpace/_Documentation/Basilisk-rwNullSpace-20190209.pdf \
-                         "../src/fswAlgorithms/effectorInterfaces/thrForceMapping/_Documentation/Basilisk-ThrusterForces-20160627.pdf" \
+                         ../src/fswAlgorithms/effectorInterfaces/thrForceMapping/_Documentation/Basilisk-ThrusterForces-20160627.pdf \
                          ../src/fswAlgorithms/effectorInterfaces/thrMomentumDumping/_Documentation/Basilisk-thrMomentumDumping-20160820.pdf \
                          ../src/fswAlgorithms/sensorInterfaces/rateMsgConverter/_Documentation/Basilisk-rateMsgConverter-20180630.pdf \
                          ../src/simulation/dynamics/FuelTank/_Documentation/Basilisk-FUELTANK-20171203.pdf \
