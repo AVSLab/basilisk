@@ -26,6 +26,10 @@
 #include "./simFswInterfaceMessages/ephemerisIntMsg.h"
 
 /*! \defgroup ephemDifference
+ * @brief This module reads in the position and velocity of multiple orbital bodies
+ *  and outputs position and velocity of each body relative to a single other
+ *  orbital body position and velocity.
+ * More information can be found in the [PDF Description]().
  *  @{
  */
 
@@ -34,7 +38,6 @@ typedef struct{
     int32_t ephInMsgID;                      /*!< [-] Input message ID for ephemeris*/
     char ephOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the clock correlation message*/
     int32_t ephOutMsgID;                     /*!< [-] Ephemeris output message*/
-    EphemerisIntMsg ephStore;               /*!< [-] Storage buffer for output information*/
 }EphemChangeConfig;
 
 /*! @brief Top level structure for the converter that takes an 
@@ -43,13 +46,10 @@ typedef struct{
 */
 typedef struct {
     char ephBaseInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the clock correlation message*/
-    double baseScale;   /*!< [-] The scale factor used for the secondary parameter (zero passivates)*/
+    double baseScale; /*!< [-] The scale factor used for the secondary parameter (zero passivates)*/
     EphemChangeConfig changeBodies[MAX_NUM_CHANGE_BODIES]; /*!< [-] The list of bodies to change out*/
-    uint32_t ephBdyCount;    /*!< [-] The number of ephemeris bodies we are changing*/
-
-    int32_t ephBaseInMsgID;  /*!< [-] The ID associated with the incoming clock correlation*/
-    EphemerisIntMsg baseEphem;               /*!< [-] Storage buffer for output information*/
-    
+    uint32_t ephBdyCount; /*!< [-] The number of ephemeris bodies we are changing*/
+    int32_t ephBaseInMsgID; /*!< [-] The ID associated with the incoming clock correlation*/
 }EphemDifferenceData;
 
 #ifdef __cplusplus

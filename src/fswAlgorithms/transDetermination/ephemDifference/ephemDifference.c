@@ -17,101 +17,103 @@
 
  */
 
-#include "transDetermination/ephemDifference/ephemDifference.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "utilities/linearAlgebra.h"
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
+#include "transDetermination/ephemDifference/ephemDifference.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/linearAlgebra.h"
 
-/*! This method creates the output navigation message (translation only) for 
-    the ephemeris model
+/*! @brief This method creates the output ephermeris messages for each body.
  @return void
- @param ConfigData The configuration data associated with the ephemeris model
+ @param configData The configuration data associated with the ephemeris model
+ @param moduleID The module identification integer
  */
-void SelfInit_ephemDifference(EphemDifferenceData *ConfigData, uint64_t moduleID)
+void SelfInit_ephemDifference(EphemDifferenceData *configData, uint64_t moduleID)
 {
     uint32_t i;
-    for(i=0; i<ConfigData->ephBdyCount; i++)
+    for(i = 0; i < configData->ephBdyCount; i++)
     {
-        ConfigData->changeBodies[i].ephOutMsgID = CreateNewMessage(
-            ConfigData->changeBodies[i].ephOutMsgName,
+        configData->changeBodies[i].ephOutMsgID = CreateNewMessage(
+            configData->changeBodies[i].ephOutMsgName,
             sizeof(EphemerisIntMsg), "EphemerisIntMsg", moduleID);
     }
 }
 
-/*! This method initializes the input time correlation factor structure
+/*! @brief This method subscribes to the body ephermeris messages which will be
+    augmented relative to another base frame.
  @return void
- @param ConfigData The configuration data associated with the ephemeris model
+ @param configData The configuration data associated with the ephemeris model
+ @param moduleID The module identification integer
  */
-void CrossInit_ephemDifference(EphemDifferenceData *ConfigData, uint64_t moduleID)
+void CrossInit_ephemDifference(EphemDifferenceData *configData, uint64_t moduleID)
 {
-
     uint32_t i;
-    for(i=0; i<ConfigData->ephBdyCount; i++)
+    for(i = 0; i < configData->ephBdyCount; i++)
     {
-        ConfigData->changeBodies[i].ephInMsgID = subscribeToMessage(
-                            ConfigData->changeBodies[i].ephInMsgName,
+        configData->changeBodies[i].ephInMsgID = subscribeToMessage(
+                            configData->changeBodies[i].ephInMsgName,
                             sizeof(EphemerisIntMsg), moduleID);
     }
 
-    ConfigData->ephBaseInMsgID = subscribeToMessage(
-        ConfigData->ephBaseInMsgName, sizeof(EphemerisIntMsg), moduleID);
-
+    configData->ephBaseInMsgID = subscribeToMessage(configData->ephBaseInMsgName,
+                                                    sizeof(EphemerisIntMsg),
+                                                    moduleID);
 }
 
-/*! This method takes the chebyshev coefficients loaded for the position 
-    estimator and computes the coefficients needed to estimate the time 
-    derivative of that position vector (velocity).
+/*! @brief This method resets the base scale.
  @return void
- @param ConfigData The configuration data associated with the ephemeris model
+ @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identification integer
  */
-void Reset_ephemDifference(EphemDifferenceData *ConfigData, uint64_t callTime,
+void Reset_ephemDifference(EphemDifferenceData *configData, uint64_t callTime,
                          uint64_t moduleID)
 {
-    if(ConfigData->baseScale == 0.0)
+    if(configData->baseScale == 0.0)
     {
-        ConfigData->baseScale = 1.0;
+        configData->baseScale = 1.0;
     }
 }
 
-/*! This method takes the current time and computes the state of the object
-    using that time and the stored Chebyshev coefficients.  If the time provided 
-    is outside the specified range, the position vectors rail high/low appropriately.
+/*! @brief This method recomputes the body postions and velocities relative to
+    the base body ephemeris and writes out updated ephermeris position and velocity
+    for each body.
  @return void
- @param ConfigData The configuration data associated with the ephemeris model
+ @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identification integer
  */
-void Update_ephemDifference(EphemDifferenceData *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Update_ephemDifference(EphemDifferenceData *configData, uint64_t callTime, uint64_t moduleID)
 {
-
-    
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     uint32_t i;
     double posBase[3];
     double velBase[3];
+    EphemerisIntMsg tmpBaseEphem;
+    memset(&tmpBaseEphem, 0x0, sizeof(EphemerisIntMsg));
     
-    ReadMessage(ConfigData->ephBaseInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(EphemerisIntMsg), &ConfigData->baseEphem, moduleID);
-    v3Scale(ConfigData->baseScale, ConfigData->baseEphem.r_BdyZero_N, posBase);
-    v3Scale(ConfigData->baseScale, ConfigData->baseEphem.v_BdyZero_N, velBase);
-    
-    for(i=0; i<ConfigData->ephBdyCount; i++)
+    ReadMessage(configData->ephBaseInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+                sizeof(EphemerisIntMsg), (void *)&tmpBaseEphem, moduleID);
+    v3Scale(configData->baseScale, tmpBaseEphem.r_BdyZero_N, posBase);
+    v3Scale(configData->baseScale, tmpBaseEphem.v_BdyZero_N, velBase);
+
+    EphemerisIntMsg tmpEphStore;
+    for(i = 0; i < configData->ephBdyCount; i++)
     {
-        ReadMessage(ConfigData->changeBodies[i].ephInMsgID, &timeOfMsgWritten,
-            &sizeOfMsgWritten, sizeof(EphemerisIntMsg),
-            &ConfigData->changeBodies[i].ephStore, moduleID);
-        v3Subtract(ConfigData->changeBodies[i].ephStore.r_BdyZero_N,
-                   posBase, ConfigData->changeBodies[i].ephStore.r_BdyZero_N);
-        v3Subtract(ConfigData->changeBodies[i].ephStore.v_BdyZero_N,
-                   velBase, ConfigData->changeBodies[i].ephStore.v_BdyZero_N);
-        WriteMessage(ConfigData->changeBodies[i].ephOutMsgID, callTime,
-            sizeof(EphemerisIntMsg), &ConfigData->changeBodies[i].ephStore,
-            moduleID);
+        memset(&tmpEphStore, 0x0, sizeof(EphemerisIntMsg));
+
+        ReadMessage(configData->changeBodies[i].ephInMsgID, &timeOfMsgWritten,
+                    &sizeOfMsgWritten, sizeof(EphemerisIntMsg), (void *)&tmpEphStore,
+                    moduleID);
+        
+        v3Subtract(tmpEphStore.r_BdyZero_N, posBase, tmpEphStore.r_BdyZero_N);
+        v3Subtract(tmpEphStore.v_BdyZero_N, velBase, tmpEphStore.v_BdyZero_N);
+        
+        WriteMessage(configData->changeBodies[i].ephOutMsgID, callTime,
+                     sizeof(EphemerisIntMsg), &tmpEphStore,
+                     moduleID);
     }
-
     return;
-
 }

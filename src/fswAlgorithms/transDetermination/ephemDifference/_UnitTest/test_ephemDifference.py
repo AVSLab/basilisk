@@ -6,6 +6,7 @@
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import ephem_difference
+from Basilisk.simulation import simFswInterfaceMessages
 from Basilisk.utilities import astroFunctions
 
 
@@ -36,30 +37,30 @@ def ephemDifferenceTestFunction():
 
     # Construct the rwNullSpace module
     # Set the names for the input messages
-    moduleConfig = ephem_difference.EphemDifferenceData()  # Create a config struct
-    moduleConfig.ephBaseInMsgName = "input_eph_base_name"
-    moduleConfig.ephBdyCount = 3
+    ephemDiffConfig = ephem_difference.EphemDifferenceData()  # Create a config struct
+    ephemDiffConfig.ephBaseInMsgName = "input_eph_base_name"
+    ephemDiffConfig.ephBdyCount = 3
 
     # This calls the algContain to setup the selfInit, crossInit, update, and reset
-    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "ephemDifference"
+    ephemDiffWrap = unitTestSim.setModelDataWrap(ephemDiffConfig)
+    ephemDiffWrap.ModelTag = "ephemDifference"
 
     # Add the module to the task
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    unitTestSim.AddModelToTask(unitTaskName, ephemDiffWrap, ephemDiffConfig)
 
     # Create the input message.
-    inputEphemBase = ephem_difference.EphemerisIntMsg() # The clock correlation message ?
+    inputEphemBase = simFswInterfaceMessages.EphemerisIntMsg() # The clock correlation message ?
     # Get the Earth's position and velocity
     position, velocity = astroFunctions.Earth_RV(astroFunctions.JulianDate([2018, 10, 16]))
     inputEphemBase.r_BdyZero_N = position
     inputEphemBase.v_BdyZero_N = velocity
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.ephBaseInMsgName, inputEphemBase)
+    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, ephemDiffConfig.ephBaseInMsgName, inputEphemBase)
 
     functions = [astroFunctions.Mars_RV, astroFunctions.Jupiter_RV, astroFunctions.Saturn_RV]
 
     changeBodyList = list()
 
-    for i in range(moduleConfig.ephBdyCount):
+    for i in range(ephemDiffConfig.ephBdyCount):
         # Create the change body message
         changeBodyMsg = ephem_difference.EphemChangeConfig()
         changeBodyMsg.ephInMsgName = 'input_change_body_' + str(i)
@@ -68,7 +69,7 @@ def ephemDifferenceTestFunction():
         changeBodyList.append(changeBodyMsg)
 
         # Create the input message to the change body config
-        inputMsg = ephem_difference.EphemerisIntMsg()
+        inputMsg = simFswInterfaceMessages.EphemerisIntMsg()
         position, velocity = functions[i](astroFunctions.JulianDate([2018, 10, 16]))
         inputMsg.r_BdyZero_N = position
         inputMsg.v_BdyZero_N = velocity
@@ -79,7 +80,7 @@ def ephemDifferenceTestFunction():
         # Log the output message
         unitTestSim.TotalSim.logThisMessage(changeBodyMsg.ephOutMsgName, testProcessRate)
 
-    moduleConfig.changeBodies = changeBodyList
+    ephemDiffConfig.changeBodies = changeBodyList
 
     # unitTestSim.TotalSim.logThisMessage(moduleConfig.outputNavName, testProcessRate)
 
@@ -101,7 +102,7 @@ def ephemDifferenceTestFunction():
     posAcc = 1e1
     velAcc = 1e-4
 
-    for i in range(moduleConfig.ephBdyCount):
+    for i in range(ephemDiffConfig.ephBdyCount):
 
         outputData_R = unitTestSim.pullMessageLogData('output_change_body_' + str(i) + '.r_BdyZero_N', range(3))
         outputData_V = unitTestSim.pullMessageLogData('output_change_body_' + str(i) + '.v_BdyZero_N', range(3))
@@ -122,6 +123,7 @@ def ephemDifferenceTestFunction():
         print("Passed")
 
     return [testFailCount, ''.join(testMessages)]
+
 
 if __name__ == '__main__':
     test_ephem_difference()
