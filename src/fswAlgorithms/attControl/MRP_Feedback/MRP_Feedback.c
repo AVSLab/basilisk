@@ -118,7 +118,6 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, uint6
     }
     
     /*! - Reset the integral measure of the rate tracking error */
-    v3SetZero(configData->z);
     v3SetZero(configData->int_sigma);
 
     /*! - Reset the prior time flag state.
