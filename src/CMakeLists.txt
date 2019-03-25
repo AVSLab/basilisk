@@ -179,16 +179,6 @@ endfunction(make_python_package_dir)
 
 function(findAndCreateSwigModules SubModule)
 
-	if(${ARGC} GREATER 1) # If the file has no parent in the path, the cmake is alongside the code
-		set(forceBuild ${ARGN})
-		get_filename_component(FileDir ${SubModule} NAME_WE)
-		get_filename_component(SubModule ${SubModule} DIRECTORY)
-		get_filename_component(CMAKE_CURRENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} PATH)
-		set(SubModule ${SubModule}/)
-	else()
-		set(forceBuild FALSE)
-	endif()
-
 	find_package(SWIG REQUIRED)
 	include(${SWIG_USE_FILE})
 	find_package(PythonLibs)
@@ -223,17 +213,14 @@ function(findAndCreateSwigModules SubModule)
  	    if(NOT USE_PROTOBUFFERS AND (module IN_LIST requires_protobuff_modules))
  		    continue()
  		endif()
-		
+
 		if(USE_PROTOBUFFERS AND (module IN_LIST requires_protobuff_modules))
     		message(STATUS "Found " ${module})
+			message("FileBase " ${FileBase})
+			message("FileDir " ${FileDir})
 		endif()
 		
 		set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
-		
-		if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/CMakeLists.txt" AND NOT forceBuild)
- 		    continue()
-		endif()
-
 	
 	    file(GLOB impl_files
 		    "${FileDir}/*.cpp"
