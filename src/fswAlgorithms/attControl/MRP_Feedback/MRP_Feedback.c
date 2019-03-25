@@ -160,11 +160,11 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
                 sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);
 
     /*! - read in optional RW speed and availability message */
-    memset(&wheelSpeeds, 0x0, sizeof(RWSpeedIntMsg));
-    memset(&wheelsAvailability, 0x0, sizeof(RWAvailabilityFswMsg)); /* wheelAvailability set to 0 (AVAILABLE) by default */
     if(configData->rwConfigParams.numRW > 0) {
+        memset(&wheelSpeeds, 0x0, sizeof(RWSpeedIntMsg));
         ReadMessage(configData->rwSpeedsInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(RWSpeedIntMsg), (void*) &(wheelSpeeds), moduleID);
+        memset(&wheelsAvailability, 0x0, sizeof(RWAvailabilityFswMsg)); /* wheelAvailability set to 0 (AVAILABLE) by default */
         if (configData->rwAvailInMsgId >= 0){
             ReadMessage(configData->rwAvailInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                         sizeof(RWAvailabilityFswMsg), &wheelsAvailability, moduleID);
