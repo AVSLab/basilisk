@@ -26,6 +26,7 @@
 
 import pytest
 import sys, os, inspect
+import numpy as np
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -41,6 +42,7 @@ from Basilisk.utilities import unitTestSupport                  # general suppor
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import rwMotorTorque
 from Basilisk.utilities import macros
+from Basilisk.simulation import simFswInterfaceMessages
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -49,21 +51,19 @@ from Basilisk.utilities import macros
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("numControlAxes, dropWheels",[
-                         pytest.param(1, False),
-                         pytest.param(2, False),
-                         pytest.param(3, False),
-                         pytest.param(3, True)])
+@pytest.mark.parametrize("numControlAxes", [2, 3])
+@pytest.mark.parametrize("numWheels", [2, 4, simFswInterfaceMessages.MAX_EFF_CNT])
+@pytest.mark.parametrize("RWAvailMsg",[True, False])
 
 
 # update "module" in this function name to reflect the module name
-def test_rwMotorTorque(show_plots, numControlAxes, dropWheels):
+def test_rwMotorTorque(show_plots, numControlAxes, numWheels, RWAvailMsg):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = rwMotorTorqueTest(show_plots, numControlAxes, dropWheels)
+    [testResults, testMessage] = rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg)
     assert testResults < 1, testMessage
 
 
-def rwMotorTorqueTest(show_plots, numControlAxes, dropWheels):
+def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -89,7 +89,8 @@ def rwMotorTorqueTest(show_plots, numControlAxes, dropWheels):
     # Initialize the test module msg names
     moduleConfig.outputDataName = "rwMotorTorqueOut"
     moduleConfig.inputVehControlName = "LrRequested"
-    moduleConfig.rwAvailInMsgName = "rw_availability"
+    if RWAvailMsg:
+        moduleConfig.rwAvailInMsgName = "rw_availability"
     moduleConfig.rwParamsInMsgName = "rwa_config_data_parsed"
     # Initialize module variables
     if numControlAxes == 3:
@@ -101,7 +102,7 @@ def rwMotorTorqueTest(show_plots, numControlAxes, dropWheels):
     elif numControlAxes == 2:
         controlAxes_B = [
              1,0,0
-            ,0,0,1
+            ,0,1,0
         ]
     else:
         controlAxes_B = [
@@ -130,33 +131,41 @@ def rwMotorTorqueTest(show_plots, numControlAxes, dropWheels):
     inputMessageSize = rwConfigParams.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwParamsInMsgName,
                                           inputMessageSize, 2) # number of buffers (leave at 2 as default)
-    rwConfigParams.GsMatrix_B = [
-        1.0, 0.0, 0.0,
-        0.0, 1.0, 0.0,
-        0.0, 0.0, 1.0,
-        0.5773502691896258, 0.5773502691896258, 0.5773502691896258
-    ]
-    rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
-    rwConfigParams.numRW = 4
+
+    MAX_EFF_CNT = simFswInterfaceMessages.MAX_EFF_CNT
+    if numWheels == MAX_EFF_CNT+1:
+        rwConfigParams.GsMatrix_B = [1.0]*MAX_EFF_CNT # Can't exceed MAX_EFF_CNT
+    else:
+        rwConfigParams.GsMatrix_B = [
+            1.0, 0.0, 0.0,
+            0.0, 1.0, 0.0,
+            0.0, 0.0, 1.0,
+            0.5773502691896258, 0.5773502691896258, 0.5773502691896258
+        ]
+        rwConfigParams.JsList = [0.1]*numWheels
+
+    rwConfigParams.numRW = numWheels
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwParamsInMsgName, inputMessageSize,
                                           0, rwConfigParams)
 
     # wheelAvailability message
-    def writeMsgInWheelAvailability(dropWheels):
+    def writeMsgInWheelAvailability(numWheels):
         rwAvailabilityMessage = rwMotorTorque.RWAvailabilityFswMsg()
         inputMessageSize = rwAvailabilityMessage.getStructSize()
         unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwAvailInMsgName,
                                               inputMessageSize, 2) # number of buffers (leave at 2 as default)
-        if dropWheels:
-            avail = [rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.UNAVAILABLE, rwMotorTorque.UNAVAILABLE]
-        else:
-            avail = [rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE]
+
+
+        avail = [rwMotorTorque.UNAVAILABLE] * numWheels
+        for i in range(numWheels - 2):
+            avail[i] = rwMotorTorque.AVAILABLE
+
 
         rwAvailabilityMessage.wheelAvailability = avail
         unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwAvailInMsgName, inputMessageSize,
                                               0, rwAvailabilityMessage)
     if len(moduleConfig.rwAvailInMsgName)>0:
-        writeMsgInWheelAvailability(dropWheels)
+        writeMsgInWheelAvailability(numWheels)
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
@@ -179,36 +188,50 @@ def rwMotorTorqueTest(show_plots, numControlAxes, dropWheels):
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "motorTorque"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(rwConfigParams.numRW))
+                                                  range(MAX_EFF_CNT))
 
 
     # set the output truth states
-    if numControlAxes == 1 and not dropWheels:
-        trueVector = [
-            [-0.7499999999999999, 0.0, 0.0, -0.4330127018922193],
-            [-0.7499999999999999, 0.0, 0.0, -0.4330127018922193]
-        ]
-    if numControlAxes == 2 and not dropWheels:
-        trueVector = [
-            [-0.6599999999999999,-0.,-0.3599999999999999,-0.5888972745734183],
-            [-0.6599999999999999,-0.,-0.3599999999999999,-0.5888972745734183]
-        ]
-    elif numControlAxes == 3 and not dropWheels:
-        trueVector = [
-                     [-0.8, 0.7000000000000001, -0.5, -0.3464101615137755],
-                     [-0.8, 0.7000000000000001, -0.5, -0.3464101615137755]
-                   ]
-    elif numControlAxes == 3 and dropWheels:
-        trueVector = [
-            [0.0, 0.0, 0.0, 0.0],
-            [0.0, 0.0, 0.0, 0.0]
-        ]
+
+    trueVector = np.array([
+        [0.0] * MAX_EFF_CNT,
+        [0.0] * MAX_EFF_CNT
+    ])
+    if RWAvailMsg:
+        numWheels = numWheels - 2
+
+    if numControlAxes > numWheels:
+        trueVector[0, 0:numWheels] = [0.0]*numWheels
+        trueVector[0, 0:numWheels] = [0.0]*numWheels
+    elif numControlAxes == 2 and numWheels == 2:
+        trueVector[0, 0:4] = [-1.0, 0.5, 0, 0]
+        trueVector[1, 0:4] = [-1.0, 0.5, 0, 0]
+    elif numControlAxes == 2 and numWheels == 4:
+        trueVector[0, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
+        trueVector[1, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
+    elif numControlAxes == 2 and numWheels == MAX_EFF_CNT:
+        trueVector[0, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
+        trueVector[1, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
+    elif numControlAxes == 2 and numWheels == MAX_EFF_CNT - 2:
+        trueVector[0, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
+        trueVector[1, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
+    elif numControlAxes == 3 and numWheels == 4:
+        trueVector[0, 0:4] = [-0.8, 0.7000000000000001, -0.5, -0.3464101615137755]
+        trueVector[1, 0:4] = [-0.8, 0.7000000000000001, -0.5, -0.3464101615137755]
+    elif numControlAxes == 3 and numWheels == MAX_EFF_CNT:
+        trueVector[0, 0:4] = [-0.8, 0.7, -0.5, -0.346410162]
+        trueVector[1, 0:4] = [-0.8, 0.7, -0.5, -0.346410162]
+    elif numControlAxes == 3 and numWheels == MAX_EFF_CNT - 2:
+        trueVector[0, 0:4] = [-0.8, 0.7, -0.5, -0.346410162]
+        trueVector[1, 0:4] = [-0.8, 0.7, -0.5, -0.346410162]
+
+
 
     # compare the module results to the truth values
     accuracy = 1e-8
     for i in range(0,len(trueVector)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], rwConfigParams.numRW, accuracy):
+        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], MAX_EFF_CNT, accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
                                 moduleOutputName + " unit test at t=" +
@@ -226,7 +249,7 @@ def rwMotorTorqueTest(show_plots, numControlAxes, dropWheels):
     #   print out success message if no error were found
     unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
     
-    snippentName = "passFail_"+"numAxes_"+str(len(controlAxes_B)/3) + "_numWheels_" + str(4-2*int(dropWheels))
+    snippentName = "passFail_"+"numAxes_"+str(len(controlAxes_B)/3) + "_numWheels_" + str(numWheels) + "_availMsg_" + str(RWAvailMsg)
     if testFailCount == 0:
         colorText = 'ForestGreen'
         print "PASSED: " + moduleWrap.ModelTag
@@ -251,7 +274,8 @@ def rwMotorTorqueTest(show_plots, numControlAxes, dropWheels):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_rwMotorTorque(
+    test_rwMotorTorque(False,
                 3,
+                4,
                 True
                )
