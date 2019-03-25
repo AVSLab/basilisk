@@ -55,8 +55,6 @@ typedef struct {
     int32_t rwParamsInMsgID;                        //!< [-] ID for the RWArrayConfigFswMsg ingoing message
     char rwAvailInMsgName[MAX_STAT_MSG_LENGTH];     //!< The name of the RWs availability message
     int32_t rwAvailInMsgID;                         //!< [-] ID for the incoming  RWs availability data
-    
-    RWArrayTorqueIntMsg rwMotorTorques;             //!< [-] struct to store the output message
 
 }rwMotorTorqueConfig;
 
