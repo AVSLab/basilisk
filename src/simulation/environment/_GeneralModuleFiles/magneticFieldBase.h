@@ -51,16 +51,16 @@ public:
     void UpdateState(uint64_t CurrentSimNanos); 
 
 protected:
-    void WriteOutputMessages(uint64_t CurrentClock);
-    bool ReadInputs(); 
+    void writeMessages(uint64_t CurrentClock);
+    bool readMessages();
     void updateLocalMagField(double currentTime);
     void updateRelativePos(SpicePlanetStateSimMsg  *planetState, SCPlusStatesSimMsg *scState); 
     virtual void evaluateMagneticFieldModel(MagneticFieldSimMsg *msg) = 0;
     virtual void customSelfInit();
     virtual void customCrossInit();
     virtual void customReset(uint64_t CurrentClock);
-    virtual void customWriteOutputMessages(uint64_t CurrentClock);
-    virtual bool customReadInputs();
+    virtual void customWriteMessages(uint64_t CurrentClock);
+    virtual bool customReadMessages();
 
 public:
     std::vector<std::string> scStateInMsgNames;    //!< Vector of the spacecraft position/velocity message names

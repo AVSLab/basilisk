@@ -45,9 +45,7 @@ MagneticFieldBase::MagneticFieldBase()
 
     //! - zero the planet message, and set the DCM to an identity matrix
     memset(&this->planetState, 0x0, sizeof(SpicePlanetStateSimMsg));
-    this->planetState.J20002Pfix[0][0] = 1.0;
-    this->planetState.J20002Pfix[1][1] = 1.0;
-    this->planetState.J20002Pfix[2][2] = 1.0;
+    m33SetIdentity(this->planetState.J20002Pfix);
 
     return;
 }
@@ -78,7 +76,7 @@ void MagneticFieldBase::setEpoch(double julianDate)
 void MagneticFieldBase::addSpacecraftToModel(std::string tmpScMsgName){
     std::string tmpEnvMsgName;
     this->scStateInMsgNames.push_back(tmpScMsgName);
-        tmpEnvMsgName = this->ModelTag + "_" + std::to_string(this->scStateInMsgNames.size()-1)+"_data";
+        tmpEnvMsgName = this->ModelTag + "_" + std::to_string(this->scStateInMsgNames.size()-1) + "_data";
     this->envOutMsgNames.push_back(tmpEnvMsgName);
     return;
 }
@@ -94,8 +92,11 @@ void MagneticFieldBase::SelfInit()
 
     //! - create all the environment output messages for each spacecraft
     for (it = this->envOutMsgNames.begin(); it!=this->envOutMsgNames.end(); it++) {
-        tmpMagFieldMsgId = SystemMessaging::GetInstance()->CreateNewMessage(*it, sizeof(MagneticFieldSimMsg),
-                this->OutputBufferCount, "MagneticFieldSimMsg", moduleID);
+        tmpMagFieldMsgId = SystemMessaging::GetInstance()->CreateNewMessage(*it,
+                                                                            sizeof(MagneticFieldSimMsg),
+                                                                            this->OutputBufferCount,
+                                                                            "MagneticFieldSimMsg",
+                                                                            moduleID);
         this->envOutMsgIds.push_back(tmpMagFieldMsgId);
     }
 
@@ -112,9 +113,7 @@ void MagneticFieldBase::CrossInit()
 {
     //! - if a planet message name is specified, subscribe to this message. If not, then a zero planet position and orientation is assumed
     if (this->planetPosInMsgName.length() > 0) {
-        this->planetPosInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->planetPosInMsgName,
-                                                                                    sizeof(SpicePlanetStateSimMsg),
-                                                                                    moduleID);
+        this->planetPosInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->planetPosInMsgName, sizeof(SpicePlanetStateSimMsg), moduleID);
     }
 
     //! - subscribe to the spacecraft messages and create associated output message buffer
@@ -122,7 +121,7 @@ void MagneticFieldBase::CrossInit()
     this->magFieldOutBuffer.clear();
     MagneticFieldSimMsg tmpMagField;
     memset(&tmpMagField, 0x0, sizeof(MagneticFieldSimMsg));
-    for(it = this->scStateInMsgNames.begin(); it!=this->scStateInMsgNames.end(); it++){
+    for(it = this->scStateInMsgNames.begin(); it != this->scStateInMsgNames.end(); it++){
         this->scStateInMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(SCPlusStatesSimMsg), moduleID));
         this->magFieldOutBuffer.push_back(tmpMagField);
     }
@@ -170,20 +169,18 @@ void MagneticFieldBase::customReset(uint64_t CurrentClock)
     return;
 }
 
-
-
 /*! This method is used to write the output magnetic field messages whose names are established in AddSpacecraftToModel.
  @param CurrentClock The current time used for time-stamping the message
  @return void
  */
-void MagneticFieldBase::WriteOutputMessages(uint64_t CurrentClock)
+void MagneticFieldBase::writeMessages(uint64_t CurrentClock)
 {
     MagneticFieldSimMsg tmpMagFieldOutMsg;
     std::vector<int64_t>::iterator it;
     std::vector<MagneticFieldSimMsg>::iterator magFieldIt;
     magFieldIt = this->magFieldOutBuffer.begin();
     //! - write magnetic field output messages for each spacecaft's locations
-    for(it = this->envOutMsgIds.begin(); it!= this->envOutMsgIds.end(); it++, magFieldIt++){
+    for(it = this->envOutMsgIds.begin(); it != this->envOutMsgIds.end(); it++, magFieldIt++){
         tmpMagFieldOutMsg = *magFieldIt;
         SystemMessaging::GetInstance()->WriteMessage(*it,
                                                   CurrentClock,
@@ -193,7 +190,7 @@ void MagneticFieldBase::WriteOutputMessages(uint64_t CurrentClock)
     }
 
     //! - call the custom method to perform additional output message writing
-    customWriteOutputMessages(CurrentClock);
+    customWriteMessages(CurrentClock);
 
     return;
 }
@@ -201,17 +198,16 @@ void MagneticFieldBase::WriteOutputMessages(uint64_t CurrentClock)
 /*! Custom output message writing method.  This allows a child class to add additional functionality.
  @return void
  */
-void MagneticFieldBase::customWriteOutputMessages(uint64_t CurrentClock)
+void MagneticFieldBase::customWriteMessages(uint64_t CurrentClock)
 {
     return;
 }
-
 
 /*! This method is used to read the incoming command message and set the
  associated spacecraft positions for computing the atmosphere.
  @return void
  */
-bool MagneticFieldBase::ReadInputs()
+bool MagneticFieldBase::readMessages()
 {
     SCPlusStatesSimMsg scMsg;
     SingleMessageHeader localHeader;
@@ -245,11 +241,13 @@ bool MagneticFieldBase::ReadInputs()
     if(planetPosInMsgId >= 0)
     {
         planetRead = SystemMessaging::GetInstance()->ReadMessage(this->planetPosInMsgId , &localHeader,
-                                              sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&this->planetState), moduleID);
+                                                                 sizeof(SpicePlanetStateSimMsg),
+                                                                 reinterpret_cast<uint8_t*>(&this->planetState),
+                                                                 moduleID);
     }
 
     //! - call the custom method to perform additional input reading
-    bool customRead = customReadInputs();
+    bool customRead = customReadMessages();
 
     return(planetRead && scRead && customRead);
 }
@@ -258,7 +256,7 @@ bool MagneticFieldBase::ReadInputs()
 /*! Custom output input reading method.  This allows a child class to add additional functionality.
  @return void
  */
-bool MagneticFieldBase::customReadInputs()
+bool MagneticFieldBase::customReadMessages()
 {
     return true;
 }
@@ -270,7 +268,6 @@ void MagneticFieldBase::updateLocalMagField(double currentTime)
 {
     std::vector<SCPlusStatesSimMsg>::iterator it;
     uint64_t atmoInd = 0;
-
 
     //! - loop over all the spacecraft
     std::vector<MagneticFieldSimMsg>::iterator magMsgIt;
@@ -312,7 +309,6 @@ void MagneticFieldBase::updateRelativePos(SpicePlanetStateSimMsg *planetState, S
     return;
 }
 
-
 /*! Computes the current local magnetic field for each spacecraft and writes their respective messages.
  @return void
  @param CurrentSimNanos The current simulation time in nanoseconds
@@ -325,13 +321,13 @@ void MagneticFieldBase::UpdateState(uint64_t CurrentSimNanos)
         memset(&(*it), 0x0, sizeof(MagneticFieldSimMsg));
     }
     //! - update local neutral density information
-    if(this->ReadInputs())
+    if(this->readMessages())
     {
         updateLocalMagField(CurrentSimNanos*NANO2SEC);
     }
 
     //! - write out neutral density message
-    WriteOutputMessages(CurrentSimNanos);
+    this->writeMessages(CurrentSimNanos);
 
     return;
 }
