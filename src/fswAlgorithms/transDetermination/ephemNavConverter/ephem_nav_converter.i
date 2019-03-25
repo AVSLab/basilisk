@@ -19,6 +19,9 @@
 %module ephem_nav_converter
 %{
    #include "ephemNavConverter.h"
+   #include "simFswInterfaceMessages/navTransIntMsg.h"
+   #include "simFswInterfaceMessages/ephemerisIntMsg.h"
+   
 %}
 
 %include "swig_conly_data.i"
@@ -30,9 +33,13 @@
 %ignore CrossInit_ephemNavConverter;
 %constant void Reset_ephemNavConverter(void*, uint64_t, uint64_t);
 %ignore Reset_ephemNavConverter;
-GEN_SIZEOF(EphemerisIntMsg)
-%include "ephemNavConverter.h"
+
+%include "simFswInterfaceMessages/navTransIntMsg.h"
 %include "simFswInterfaceMessages/ephemerisIntMsg.h"
+
+%include "ephemNavConverter.h"
+GEN_SIZEOF(EphemerisIntMsg)
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

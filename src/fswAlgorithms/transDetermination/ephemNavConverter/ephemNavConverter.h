@@ -21,8 +21,6 @@
 #define _EPHEM_NAV_CONVERTER_H_
 
 #include "messaging/static_messaging.h"
-#include "simFswInterfaceMessages/ephemerisIntMsg.h"
-#include "simFswInterfaceMessages/navTransIntMsg.h"
 
 /*! \defgroup ephemNavConverter
  *  @{
@@ -34,22 +32,19 @@
 typedef struct {
     char stateOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the output navigation message for pos/vel*/
     char ephInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the clock correlation message*/
-
     int32_t stateOutMsgID;    /*!< [-] The ID associated with the outgoing message*/
     int32_t ephInMsgID;  /*!< [-] The ID associated with the incoming clock correlation*/
-    
-    NavTransIntMsg outputState; /*!< [-] The local storage of the outgoing message data*/
 }EphemNavConverterData;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     
-    void SelfInit_ephemNavConverter(EphemNavConverterData *ConfigData, uint64_t moduleID);
-    void CrossInit_ephemNavConverter(EphemNavConverterData *ConfigData, uint64_t moduleID);
-    void Update_ephemNavConverter(EphemNavConverterData *ConfigData, uint64_t callTime,
+    void SelfInit_ephemNavConverter(EphemNavConverterData *configData, uint64_t moduleID);
+    void CrossInit_ephemNavConverter(EphemNavConverterData *configData, uint64_t moduleID);
+    void Update_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTime,
         uint64_t moduleID);
-    void Reset_ephemNavConverter(EphemNavConverterData *ConfigData, uint64_t callTime,
+    void Reset_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTime,
                               uint64_t moduleID);
     
 #ifdef __cplusplus
