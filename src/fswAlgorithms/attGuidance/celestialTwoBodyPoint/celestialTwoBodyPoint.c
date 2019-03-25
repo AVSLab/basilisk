@@ -175,13 +175,35 @@ void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint6
     double temp33_1[3][3];  /* Temporary 3x3 matrix 1 */
     double temp33_2[3][3];  /* Temporary 3x3 matrix 2 */
     
-    memset(&configData->attRefOut, 0x0, sizeof(AttRefFswMsg));
-    
-    /* - Initial computations: R_n, v_n, a_n */
     double R_N[3];          /* Normal vector of the plane defined by R_P1 and R_P2 */
     double v_N[3];          /* First time-derivative of R_n */
     double a_N[3];          /* Second time-derivative of R_n */
     
+    double dcm_RN[3][3];    /* DCM that maps from Reference frame to the inertial */
+    double r1_hat[3];       /* 1st row vector of RN */
+    double r2_hat[3];       /* 2nd row vector of RN */
+    double r3_hat[3];       /* 3rd row vector of RN */
+    
+    double dr1_hat[3];      /* r1_hat first time-derivative */
+    double dr2_hat[3];      /* r2_hat first time-derivative */
+    double dr3_hat[3];      /* r3_hat first time-derivative */
+    double I_33[3][3];      /* Identity 3x3 matrix */
+    double C1[3][3];        /* DCM used in the computation of rates and acceleration */
+    double C3[3][3];        /* DCM used in the computation of rates and acceleration */
+    
+    double omega_RN_R[3];   /* Angular rate of the reference frame
+                             wrt the inertial in ref R-frame components */
+    double domega_RN_R[3];   /* Angular acceleration of the reference frame
+                              wrt the inertial in ref R-frame components */
+    
+    double ddr1_hat[3];     /* r1_hat second time-derivative */
+    double ddr2_hat[3];     /* r2_hat second time-derivative */
+    double ddr3_hat[3];     /* r3_hat second time-derivative */
+    
+    
+    memset(&configData->attRefOut, 0x0, sizeof(AttRefFswMsg));
+    
+    /* - Initial computations: R_n, v_n, a_n */
     v3Cross(configData->R_P1B_N, configData->R_P2B_N, R_N);
     v3Cross(configData->v_P1B_N, configData->R_P2B_N, temp3_1);
     v3Cross(configData->R_P1B_N, configData->v_P2B_N, temp3_2);
@@ -194,11 +216,6 @@ void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint6
     v3Add(temp3, temp3_3, a_N);  /*Eq 5*/
     
     /* - Reference Frame computation */
-    double dcm_RN[3][3];    /* DCM that maps from Reference frame to the inertial */
-    double r1_hat[3];       /* 1st row vector of RN */
-    double r2_hat[3];       /* 2nd row vector of RN */
-    double r3_hat[3];       /* 3rd row vector of RN */
-    
     v3Normalize(configData->R_P1B_N, r1_hat); /* Eq 9a*/
     v3Normalize(R_N, r3_hat); /* Eq 9c */
     v3Cross(r3_hat, r1_hat, r2_hat); /* Eq 9b */
@@ -209,13 +226,6 @@ void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint6
     C2MRP(dcm_RN, configData->attRefOut.sigma_RN);
     
     /* - Reference base-vectors first time-derivative */
-    double dr1_hat[3];      /* r1_hat first time-derivative */
-    double dr2_hat[3];      /* r2_hat first time-derivative */
-    double dr3_hat[3];      /* r3_hat first time-derivative */
-    double I_33[3][3];      /* Identity 3x3 matrix */
-    double C1[3][3];        /* DCM used in the computation of rates and acceleration */
-    double C3[3][3];        /* DCM used in the computation of rates and acceleration */
-    
     m33SetIdentity(I_33);
     
     v3OuterProduct(r1_hat, r1_hat, temp33);
@@ -233,19 +243,12 @@ void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint6
     v3Add(temp3_1, temp3_2, dr2_hat); /* Eq 11c*/
     
     /* - Angular velocity computation */
-    double omega_RN_R[3];   /* Angular rate of the reference frame 
-                             wrt the inertial in ref R-frame components */
-    
     omega_RN_R[0] = v3Dot(r3_hat, dr2_hat);
     omega_RN_R[1]= v3Dot(r1_hat, dr3_hat);
     omega_RN_R[2] = v3Dot(r2_hat, dr1_hat);
     m33tMultV3(dcm_RN, omega_RN_R, configData->attRefOut.omega_RN_N);
     
     /* - Reference base-vectors second time-derivative */
-    double ddr1_hat[3];     /* r1_hat second time-derivative */
-    double ddr2_hat[3];     /* r2_hat second time-derivative */
-    double ddr3_hat[3];     /* r3_hat second time-derivative */
-    
     m33MultV3(C1, configData->a_P1B_N, temp3_1);
     v3OuterProduct(dr1_hat, r1_hat, temp33_1);
     m33Scale(2.0, temp33_1, temp33_1);
@@ -272,9 +275,6 @@ void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint6
     v3Add(temp3, temp3_3, ddr2_hat); /* Eq 13c*/
     
     /* - Angular acceleration computation */
-    double domega_RN_R[3];   /* Angular acceleration of the reference frame
-                              wrt the inertial in ref R-frame components */
-    
     domega_RN_R[0] = v3Dot(dr3_hat, dr2_hat) + v3Dot(r3_hat, ddr2_hat) - v3Dot(omega_RN_R, dr1_hat);
     domega_RN_R[1] = v3Dot(dr1_hat, dr3_hat) + v3Dot(r1_hat, ddr3_hat) - v3Dot(omega_RN_R, dr2_hat);
     domega_RN_R[2] = v3Dot(dr2_hat, dr1_hat) + v3Dot(r2_hat, ddr1_hat) - v3Dot(omega_RN_R, dr3_hat);
