@@ -249,18 +249,18 @@ bool MagneticFieldBase::ReadInputs()
     }
 
     //! - call the custom method to perform additional input reading
-    customReadInputs();
+    bool customRead = customReadInputs();
 
-    return(planetRead && scRead);
+    return(planetRead && scRead && customRead);
 }
 
 
 /*! Custom output input reading method.  This allows a child class to add additional functionality.
  @return void
  */
-void MagneticFieldBase::customReadInputs()
+bool MagneticFieldBase::customReadInputs()
 {
-    return;
+    return true;
 }
 
 /*! This method is used to update the local magnetic field based on each spacecraft's position.

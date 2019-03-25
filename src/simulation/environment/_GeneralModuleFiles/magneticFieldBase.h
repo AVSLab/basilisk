@@ -60,7 +60,7 @@ protected:
     virtual void customCrossInit();
     virtual void customReset(uint64_t CurrentClock);
     virtual void customWriteOutputMessages(uint64_t CurrentClock);
-    virtual void customReadInputs();
+    virtual bool customReadInputs();
 
 public:
     std::vector<std::string> scStateInMsgNames;    //!< Vector of the spacecraft position/velocity message names
