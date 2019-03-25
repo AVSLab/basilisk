@@ -3759,9 +3759,6 @@ void DataInit(AVSConfigData *data){
 	data->MRP_FeedbackRWA.controlOut.torqueRequestBody[0] = 0.0;
 	data->MRP_FeedbackRWA.controlOut.torqueRequestBody[1] = 0.0;
 	data->MRP_FeedbackRWA.controlOut.torqueRequestBody[2] = 0.0;
-	data->MRP_FeedbackRWA.domega0[0] = 0.0;
-	data->MRP_FeedbackRWA.domega0[1] = 0.0;
-	data->MRP_FeedbackRWA.domega0[2] = 0.0;
 	data->MRP_FeedbackRWA.inputGuidID = 0;
 	strcpy(data->MRP_FeedbackRWA.inputGuidName,"nom_att_guid_out");
 	data->MRP_FeedbackRWA.inputRWSpeedsID = 0;

@@ -597,7 +597,6 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
     mrpControlConfig.P = 30.0
     mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
-    mrpControlConfig.domega0 = [0.0, 0.0, 0.0]
 
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueConfig = rwMotorTorque.rwMotorTorqueConfig()
