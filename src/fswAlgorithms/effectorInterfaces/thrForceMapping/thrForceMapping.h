@@ -29,17 +29,12 @@
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 
 /*! \defgroup thrForceMapping
+ * @brief This module is responsible for taking a desired torque vector and mapping it onto available thrusters. More information can be found
+ * in the [PDF Description](Basilisk-ThrusterForces-20160627.pdf).
  * @{
  */
 
-/*!@brief Data structure for module to map a command torque onto thruster forces.
-
- The module
- [PDF Description](Basilisk-ThrusterForces-20160627.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
- */
-
+/*!@brief Data structure for module to map a command torque onto thruster forces. */
 typedef struct {
     /* declare module private variables */
     double   controlAxes_B[3*3];                    /*!< []      array of the control unit axes */

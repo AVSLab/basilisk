@@ -42,6 +42,7 @@
  output message
  @return void
  @param configData The configuration data associated with this module
+ @param moduleID The ID associated with the ConfigData
  */
 void SelfInit_thrForceMapping(thrForceMappingConfig *configData, uint64_t moduleID)
 {
@@ -57,6 +58,7 @@ void SelfInit_thrForceMapping(thrForceMappingConfig *configData, uint64_t module
  It's primary function is to link the input messages that were created elsewhere.
  @return void
  @param configData The configuration data associated with this module
+ @param moduleID The ID associated with the ConfigData
  */
 void CrossInit_thrForceMapping(thrForceMappingConfig *configData, uint64_t moduleID)
 {
@@ -78,6 +80,7 @@ void CrossInit_thrForceMapping(thrForceMappingConfig *configData, uint64_t modul
  time varying states between function calls are reset to their default values.
  @return void
  @param configData The configuration data associated with the module
+ @param moduleID The ID associated with the ConfigData
  */
 void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
@@ -130,6 +133,7 @@ void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime,
  @return void
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the ConfigData
  */
 void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
