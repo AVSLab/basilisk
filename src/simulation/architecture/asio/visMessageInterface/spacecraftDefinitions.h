@@ -237,7 +237,6 @@ typedef struct Controller_t {
     double              sigma_BR[3];                /* MRP attitude tracking error */
     double              omega_BR[3];                /* attitude rate tracking error */
     double              int_sigma[3];               /* integral of k*sigma */
-    double              domega0[3];                 /* initial body rate error */
     double              phi_spin;                   /* spin angle in the orbit frame aligned spin mode */
     int                 isUsingThrusters;           /* flag indicating if Attiude control is done with thrusters, rather than RWs */
     int                 considerSunHeadinginEarthPointing;  /*!< flag indicating if the sun direciton should be considered in doing

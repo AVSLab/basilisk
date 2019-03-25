@@ -19,8 +19,6 @@
 
 %module fswMessages
 %{
-    #include "../fswMessages/rwAvailabilityFswMsg.h"
-    #include "../fswMessages/rwAvailabilityFswMsg.h"
     #include "../fswMessages/attRefFswMsg.h"
     #include "../fswMessages/AccDataFswMsg.h"
     #include "../fswMessages/AccPktDataFswMsg.h"
@@ -47,6 +45,8 @@
 %}
 
 %include "swig_conly_data.i"
+
+ARRAYASLIST(FSWdeviceAvailability)
 
 %array_functions(RWConfigElementFswMsg, RWConfigArray);
 %array_functions(THRConfigFswMsg, ThrustConfigArray);
@@ -99,6 +99,9 @@ GEN_SIZEOF(THRConfigFswMsg);
 GEN_SIZEOF(VehicleConfigFswMsg);
 %include "../fswMessages/rateCmdFswMsg.h"
 GEN_SIZEOF(RateCmdFswMsg);
+
+%include "../fswUtilities/fswDefinitions.h"
+
 
 
 %pythoncode %{

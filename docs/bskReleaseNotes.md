@@ -34,10 +34,12 @@ We are very excited by the great capabilities that this software already has, an
     <li>added a new planetary magnetic field module. Currently it provides centered dipole models for Mercury, Earth, Jupiter, Saturn, Uranus and Neptune.  This will be expanded to provide convenient access to other magnetic field models in the future.
     </li>
     <li>
-    updated eulerRotation() to remove optional output message and did general code clean-up
+    updated `eulerRotation()` to remove optional output message and did general code clean-up
     </li>
     <li>
-    updated mrpRotation(), new PDF documentation, did code cleanup, updated unit tests, removed optional module output that is not needed
+    updated `mrpRotation()`, new PDF documentation, did code cleanup, updated unit tests, removed optional module output that is not needed
+    </li>
+    <li>updated `MRP_Feedback()`, new PDF documentation,  did code cleanup, updated unit tests to cover all code branches.
     </li>
 </ul>
 

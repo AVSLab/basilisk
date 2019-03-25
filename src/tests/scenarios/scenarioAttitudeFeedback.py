@@ -164,7 +164,6 @@ from Basilisk.fswAlgorithms import fswMessages
 #         mrpControlConfig.Ki =   -1          # make value negative to turn off integral feedback
 #     mrpControlConfig.P  = 30.0
 #     mrpControlConfig.integralLimit = 2./mrpControlConfig.Ki * 0.1
-#     mrpControlConfig.domega0 = [0.0, 0.0, 0.0]
 #     if useKnownTorque:
 #         mrpControlConfig.knownTorquePntB_B = [0.25,-0.25,0.1]
 # ~~~~~~~~~~~~~~~~
@@ -378,7 +377,6 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
         mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
     mrpControlConfig.P = 30.0
     mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
-    mrpControlConfig.domega0 = [0.0, 0.0, 0.0]
     if useKnownTorque:
         mrpControlConfig.knownTorquePntB_B = [0.25, -0.25, 0.1]
 
