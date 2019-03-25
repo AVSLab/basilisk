@@ -88,6 +88,7 @@ Simply call the module reset function prior to using this control module.  This 
 		\begin{equation*}
 			\bm z = K \int_{t_{0}}^{t} \bm\sigma \text{d}t + [I_{\text{RW}}](\delta\bm\omega - \delta\bm\omega_{0})
 		\end{equation*}
+		In the BSK module the vector $\delta\bm\omega_{0}$ is hard-coded to a zero vector.  This function will work for any initial tracking error, and this assumption doesn't impact performance.
 		
 		The integral measure $\bm z$ must be computed to determine $[P][K_{I}] \bm z$, and the expression $[\widetilde{K_{I}\bm z}]$ is added to $[\widetilde{\bm\omega_{r}}]$ term.  
 
