@@ -144,9 +144,18 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
     double              dt;                 /* [s] control update period */
     double              Lr[3];              /* required control torque vector [Nm] */
     double              omega_BN_B[3];      /* [r/s] body angular velocity message */
-    double              v3[3];
     double              v3_1[3];
     double              v3_2[3];
+    double              v3_3[3];
+    double              v3_4[3];
+    double              v3_5[3];
+    double              v3_6[3];
+    double              v3_7[3];
+    double              v3_8[3];
+    double              v3_9[3];
+    double              v3_10[3];
+    double              v3_11[3];
+    double              v3_12[3];
     double              intCheck;           /* Check magnitude of integrated attitude error */
     int                 i;
     double              *wheelGs;           /* Reaction wheel spin axis pointer */
@@ -185,44 +194,44 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
     /*! - evaluate integral term */
     v3SetZero(configData->z);
     if (configData->Ki > 0) {   /* check if integral feedback is turned on  */
-        v3Scale(configData->K * dt, guidCmd.sigma_BR, v3);
-        v3Add(v3, configData->int_sigma, configData->int_sigma);
+        v3Scale(configData->K * dt, guidCmd.sigma_BR, v3_1);
+        v3Add(v3_1, configData->int_sigma, configData->int_sigma);
         if((intCheck = v3Norm(configData->int_sigma)) > configData->integralLimit) {
             v3Scale(configData->integralLimit / intCheck, configData->int_sigma, configData->int_sigma);
         } /* keep int_sigma less than integralLimit */
-        v3Subtract(guidCmd.omega_BR_B, configData->domega0, v3);
-        m33MultV3(RECAST3X3 configData->ISCPntB_B, v3, v3_1); /* -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s) */
-        v3Add(configData->int_sigma, v3_1, configData->z);
+        m33MultV3(RECAST3X3 configData->ISCPntB_B, guidCmd.omega_BR_B, v3_2); /* -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s) */
+        v3Add(configData->int_sigma, v3_2, configData->z);
     }
 
     /*! - evaluate required attitude control torque Lr */
-    v3Scale(configData->K, guidCmd.sigma_BR, v3);           /* +K sigma_BR */
+    v3Scale(configData->K, guidCmd.sigma_BR, Lr);           /* +K sigma_BR */
     v3Scale(configData->P, guidCmd.omega_BR_B,
-            Lr);                                            /* +P delta_omega */
-    v3Add(v3, Lr, Lr);
-    v3Scale(configData->Ki, configData->z, v3_2);
-    v3Scale(configData->P, v3_2, v3);                       /* +P*Ki*z */
-    v3Add(v3, Lr, Lr);
+            v3_3);                                          /* +P delta_omega */
+    v3Add(v3_3, Lr, Lr);
+    v3Scale(configData->Ki, configData->z, v3_4);
+    v3Scale(configData->P, v3_4, v3_5);                       /* +P*Ki*z */
+    v3Add(v3_5, Lr, Lr);
 
-    m33MultV3(RECAST3X3 configData->ISCPntB_B, omega_BN_B, v3); /* -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s) */
+    /* -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s) */
+    m33MultV3(RECAST3X3 configData->ISCPntB_B, omega_BN_B, v3_6);
     for(i = 0; i < configData->rwConfigParams.numRW; i++)
     {
         if (wheelsAvailability.wheelAvailability[i] == AVAILABLE){ /* check if wheel is available */
             wheelGs = &(configData->rwConfigParams.GsMatrix_B[i*3]);
             v3Scale(configData->rwConfigParams.JsList[i] * (v3Dot(omega_BN_B, wheelGs) + wheelSpeeds.wheelSpeeds[i]),
-                    wheelGs, v3_1);
-            v3Add(v3_1, v3, v3);
+                    wheelGs, v3_7);                                 /* h_s_i */
+            v3Add(v3_6, v3_7, v3_6);
         }
     }
     
-    v3Add(guidCmd.omega_RN_B, v3_2, v3_2);
-    v3Cross(v3_2, v3, v3_1);
-    v3Subtract(Lr, v3_1, Lr);
+    v3Add(guidCmd.omega_RN_B, v3_4, v3_8);
+    v3Cross(v3_8, v3_6, v3_9);
+    v3Subtract(Lr, v3_9, Lr);
 
-    v3Cross(omega_BN_B, guidCmd.omega_RN_B, v3);
-    v3Subtract(v3, guidCmd.domega_RN_B, v3_1);
-    m33MultV3(RECAST3X3 configData->ISCPntB_B, v3_1, v3);   /* +[I](-d(omega_r)/dt + omega x omega_r) */
-    v3Add(v3, Lr, Lr);
+    v3Cross(omega_BN_B, guidCmd.omega_RN_B, v3_10);
+    v3Subtract(v3_10, guidCmd.domega_RN_B, v3_11);
+    m33MultV3(RECAST3X3 configData->ISCPntB_B, v3_11, v3_12);   /* +[I](-d(omega_r)/dt + omega x omega_r) */
+    v3Add(v3_12, Lr, Lr);
 
     v3Add(configData->knownTorquePntB_B, Lr, Lr);           /* +L */
     v3Scale(-1.0, Lr, Lr);                                  /* compute the net positive control torque onto the spacecraft */
