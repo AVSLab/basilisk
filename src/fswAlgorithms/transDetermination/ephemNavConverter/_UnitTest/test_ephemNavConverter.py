@@ -8,6 +8,9 @@ from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import ephem_nav_converter
 from Basilisk.utilities import astroFunctions
 
+import os, inspect
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
 
 def test_ephem_nav_converter():
     """ Test ephemNavConverter. """
@@ -69,17 +72,16 @@ def ephemNavConverterTestFunction():
 
     posAcc = 1e1
     velAcc = 1e-4
+    unitTestSupport.writeTeXSnippet("toleranceValuePos", str(posAcc), path)
+    unitTestSupport.writeTeXSnippet("toleranceValueVel", str(velAcc), path)
 
     outputR = unitTestSim.pullMessageLogData(ephemNavConfig.stateOutMsgName + '.r_BN_N',  range(3))
     outputV = unitTestSim.pullMessageLogData(ephemNavConfig.stateOutMsgName + '.v_BN_N',  range(3))
+    outputTime = unitTestSim.pullMessageLogData(ephemNavConfig.stateOutMsgName + '.timeTag')
 
-    # print(outputR)
-    # print(outputV)
-
-    trueR = [[1.37456815e+08,   5.78427691e+07,  -2.99637783e+03],
-            [ 1.37456815e+08,   5.78427691e+07,  -2.99637783e+03]]
-    trueV = [[-1.20387801e+01,   2.73449588e+01,  -1.11931087e-03],
-            [ -1.20387801e+01,   2.73449588e+01,  -1.11931087e-03]]
+    trueR = [position, position]
+    trueV = [velocity, velocity]
+    trueTime = [inputEphem.timeTag, inputEphem.timeTag]
 
     # At each timestep, make sure the vehicleConfig values haven't changed from the initial values
     testFailCount, testMessages = unitTestSupport.compareArrayND(trueR, outputR,
@@ -90,9 +92,23 @@ def ephemNavConverterTestFunction():
                                                                  velAcc,
                                                                  "ephemNavConverter output Velocity",
                                                                  2, testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareDoubleArray(trueTime, outputTime,
+                                                                 velAcc,
+                                                                 "ephemNavConverter output Time",
+                                                                 testFailCount, testMessages)
 
+    #   print out success message if no error were found
+    snippentName = "passFail"
     if testFailCount == 0:
-        print("Passed")
+        colorText = 'ForestGreen'
+        print "PASSED: " + ephemNavWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        print "Failed: " + ephemNavWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+
 
     return [testFailCount, ''.join(testMessages)]
 
