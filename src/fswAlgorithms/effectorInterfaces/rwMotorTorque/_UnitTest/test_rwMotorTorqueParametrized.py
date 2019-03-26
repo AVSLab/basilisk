@@ -37,9 +37,7 @@ path = os.path.dirname(os.path.abspath(filename))
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
-from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-import matplotlib.pyplot as plt
+from Basilisk.utilities import unitTestSupport
 from Basilisk.fswAlgorithms import rwMotorTorque
 from Basilisk.utilities import macros
 from Basilisk.simulation import simFswInterfaceMessages
@@ -53,7 +51,7 @@ from Basilisk.simulation import simFswInterfaceMessages
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("numControlAxes", [2, 3])
 @pytest.mark.parametrize("numWheels", [2, 4, simFswInterfaceMessages.MAX_EFF_CNT])
-@pytest.mark.parametrize("RWAvailMsg",[True, False])
+@pytest.mark.parametrize("RWAvailMsg",["OFF", "ON", "OFF"])
 
 
 # update "module" in this function name to reflect the module name
@@ -89,7 +87,7 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
     # Initialize the test module msg names
     moduleConfig.outputDataName = "rwMotorTorqueOut"
     moduleConfig.inputVehControlName = "LrRequested"
-    if RWAvailMsg:
+    if RWAvailMsg is not "OFF":
         moduleConfig.rwAvailInMsgName = "rw_availability"
     moduleConfig.rwParamsInMsgName = "rwa_config_data_parsed"
     # Initialize module variables
@@ -151,19 +149,19 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
     # wheelAvailability message
     def writeMsgInWheelAvailability(numWheels):
         rwAvailabilityMessage = rwMotorTorque.RWAvailabilityFswMsg()
-        inputMessageSize = rwAvailabilityMessage.getStructSize()
-        unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwAvailInMsgName,
-                                              inputMessageSize, 2) # number of buffers (leave at 2 as default)
-
 
         avail = [rwMotorTorque.UNAVAILABLE] * numWheels
         for i in range(numWheels - 2):
-            avail[i] = rwMotorTorque.AVAILABLE
-
-
+            if RWAvailMsg is "ON":
+                avail[i] = rwMotorTorque.AVAILABLE
+            else:
+                avail[i] = rwMotorTorque.UNAVAILABLE
         rwAvailabilityMessage.wheelAvailability = avail
-        unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwAvailInMsgName, inputMessageSize,
-                                              0, rwAvailabilityMessage)
+
+        unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName,
+                                   moduleConfig.rwAvailInMsgName,
+                                   rwAvailabilityMessage)
+
     if len(moduleConfig.rwAvailInMsgName)>0:
         writeMsgInWheelAvailability(numWheels)
 
@@ -197,7 +195,7 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
         [0.0] * MAX_EFF_CNT,
         [0.0] * MAX_EFF_CNT
     ])
-    if RWAvailMsg:
+    if RWAvailMsg is "ON":
         numWheels = numWheels - 2
 
     if numControlAxes > numWheels:
