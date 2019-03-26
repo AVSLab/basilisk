@@ -78,14 +78,17 @@ void Update_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTi
     NavTransIntMsg tmpOutputState;
     memset(&tmpEphemeris, 0x0, sizeof(EphemerisIntMsg));
     memset(&tmpOutputState, 0x0, sizeof(NavTransIntMsg));
-    
+
+    /*! - read input ephemeris message */
     ReadMessage(configData->ephInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(EphemerisIntMsg), &tmpEphemeris, moduleID);
-    
+
+    /*! - map timeTag, position and velocity vector to output message */
 	tmpOutputState.timeTag = tmpEphemeris.timeTag;
 	v3Copy(tmpEphemeris.r_BdyZero_N, tmpOutputState.r_BN_N);
 	v3Copy(tmpEphemeris.v_BdyZero_N, tmpOutputState.v_BN_N);
-  
+
+    /*! - write output message */
     WriteMessage(configData->stateOutMsgID, callTime, sizeof(NavTransIntMsg),
                  &tmpOutputState, moduleID);
 
