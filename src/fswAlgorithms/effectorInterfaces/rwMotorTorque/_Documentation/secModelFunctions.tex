@@ -1,8 +1,10 @@
+% !TEX root = ./Basilisk-rwMotorTorque-20190320.tex
+
+
 \section{Model Functions}
 The code performs the following functions:
 \begin{itemize}
-	\item \textbf{Accepts}: \verb~RWArrayConfigFswMsg~, \verb~CmdTorqueBodyIntMsg~, and (optional) \verb~RWAvailabilityFswMsg~. 
-	\item \textbf{Maps torque vector onto reaction wheels}: Takes a desired body-frame torque from  \verb~CmdTorqueBodyIntMsg~ and maps it onto the RW axes. 
+	\item \textbf{Maps control torque vector onto available reaction wheels}: Takes a desired body-frame torque from  \verb~CmdTorqueBodyIntMsg~ and maps it onto the RW axes. 
 	\item \textbf{Removes torque from unavailable reaction wheels}: The module observes the availability of the RWs and maps the torques to only available reaction wheels. 
 \end{itemize}
 
@@ -10,5 +12,5 @@ The code performs the following functions:
 \section{Model Assumptions and Limitations}
 This code makes the following assumptions:
 \begin{itemize}
-	\item There must be equal or more wheels then control axes for successful mapping. If not, no torque is applied. 
+	\item The number of available wheels must be equal or larger than the number of control axes.  If this is not the case a zero output motor torque message is produced.
 \end{itemize}
