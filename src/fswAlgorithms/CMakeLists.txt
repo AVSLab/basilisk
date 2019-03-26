@@ -22,6 +22,14 @@ string(SUBSTRING ${CMAKE_CURRENT_SOURCE_DIR} ${DIR_NAME_START} -1 DIR_NAME_STRIN
 
 project("${DIR_NAME_STRING}")
 
+get_filename_component(PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR} PATH)
+
+get_property(USE_OPENCV_DOCS DIRECTORY PARENT_DIR PROPERTY USE_OPENCV FULL_DOCS)
+get_property(requires_opencv_modules_docs DIRECTORY PARENT_DIR PROPERTY requires_opencv_modules FULL_DOCS)
+
+	message("USE_OPENCV " ${USE_OPENCV})
+	message("requires_opencv_modules " ${requires_opencv_modules})
+
 file(GLOB_RECURSE swig_modules RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.i")
 get_property(LIBRARY_BUILD_LIST GLOBAL PROPERTY BUILT_LIB_LIST)
 get_property(ALG_LIST GLOBAL PROPERTY ALG_LIB_LIST)
@@ -35,9 +43,17 @@ foreach(module ${swig_modules})
     get_filename_component(FileDir ${module} DIRECTORY)
 	set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/fswAlgorithms/${FileBase}")
 	
-	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/CMakeLists.txt")
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/CMakeLists.txt")
 		continue()
 	endif()
+	
+    if(NOT USE_OPENCV AND (module IN_LIST requires_opencv_modules))
+       continue()
+    endif()
+
+    if(USE_OPENCV AND (module IN_LIST requires_opencv_modules))
+        message(STATUS "Found " ${module})
+    endif()
 
     file(GLOB gen_files
         "../simulation/_GeneralModuleFiles/*.cpp"
@@ -87,7 +103,4 @@ foreach(module ${swig_modules})
 endforeach()
 
 add_subdirectory("messaging")
-if (USE_OPENCV)
-	message(STATUS "Adding HoughCircle module in presence of OpenCV")
-	add_subdirectory("imageProcessing/houghCircles")
-endif()
+

@@ -53,7 +53,6 @@ public:
     void SelfInit();
     void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
-    void FindCircles();
     
 public:
     

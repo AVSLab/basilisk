@@ -40,15 +40,13 @@ splitPath = path.split(bskName)
 
 
 # Import all of the modules that we are going to be called in this simulation
-from Basilisk.utilities import SimulationBaseClass
-from Basilisk.utilities import unitTestSupport
+from Basilisk.utilities import SimulationBaseClass, unitTestSupport
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import fswMessages
 
 try:
     from Basilisk.fswAlgorithms import houghCircles
 except ImportError:
-    pytest.skip("Hough Circles not built-check OpenCV")
+    pytest.skip("Hough Circles not built---check OpenCV option")
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)

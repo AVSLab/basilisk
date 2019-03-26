@@ -38,6 +38,8 @@ option(USE_ZMQ "Include modules which use ZMQ" OFF)
 set(requires_protobuff_modules "viz_interface/vizInterface.i")
 set(requires_zmq_modules "viz_interface/vizInterface.i")
 
+set(requires_opencv_modules "imageProcessing/houghCircles/houghCircles.i")
+
 if(USE_PROTOBUFFERS)
   list(APPEND required_conan_libraries protobuf/3.5.1@bincrafters/stable)
 endif()
@@ -491,8 +493,3 @@ add_subdirectory("simulation")
 add_subdirectory("fswAlgorithms")
 add_subdirectory("topLevelModules")
 
-#find_package(Doxygen)
-#if(DOXYGEN_FOUND)
-#   add_custom_target(ScriptRun ALL
-#                   COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/../docs/DoxyData)
-#endif(DOXYGEN_FOUND)
