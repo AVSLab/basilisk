@@ -75,8 +75,8 @@ void Update_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTi
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     EphemerisIntMsg tmpEphemeris;
-    memset(&tmpEphemeris, 0x0, sizeof(EphemerisIntMsg));
     NavTransIntMsg tmpOutputState;
+    memset(&tmpEphemeris, 0x0, sizeof(EphemerisIntMsg));
     memset(&tmpOutputState, 0x0, sizeof(NavTransIntMsg));
     
     ReadMessage(configData->ephInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
