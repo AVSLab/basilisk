@@ -19,7 +19,6 @@
 '''
 
 from Basilisk.simulation import atmosphere
-from Basilisk.simulation import magneticField
 from Basilisk.utilities import macros
 import numpy as np
 
