@@ -87,7 +87,7 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
     # Initialize the test module msg names
     moduleConfig.outputDataName = "rwMotorTorqueOut"
     moduleConfig.inputVehControlName = "LrRequested"
-    if RWAvailMsg is not "OFF":
+    if RWAvailMsg is not "NO":
         moduleConfig.rwAvailInMsgName = "rw_availability"
     moduleConfig.rwParamsInMsgName = "rwa_config_data_parsed"
     # Initialize module variables
@@ -198,30 +198,35 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
     if RWAvailMsg is "ON":
         numWheels = numWheels - 2
 
-    if numControlAxes > numWheels:
-        trueVector[0, 0:numWheels] = [0.0]*numWheels
-        trueVector[0, 0:numWheels] = [0.0]*numWheels
-    elif numControlAxes == 2 and numWheels == 2:
-        trueVector[0, 0:4] = [-1.0, 0.5, 0, 0]
-        trueVector[1, 0:4] = [-1.0, 0.5, 0, 0]
-    elif numControlAxes == 2 and numWheels == 4:
-        trueVector[0, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
-        trueVector[1, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
-    elif numControlAxes == 2 and numWheels == MAX_EFF_CNT:
-        trueVector[0, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
-        trueVector[1, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
-    elif numControlAxes == 2 and numWheels == MAX_EFF_CNT - 2:
-        trueVector[0, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
-        trueVector[1, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
-    elif numControlAxes == 3 and numWheels == 4:
-        trueVector[0, 0:4] = [-0.8, 0.7000000000000001, -0.5, -0.3464101615137755]
-        trueVector[1, 0:4] = [-0.8, 0.7000000000000001, -0.5, -0.3464101615137755]
-    elif numControlAxes == 3 and numWheels == MAX_EFF_CNT:
-        trueVector[0, 0:4] = [-0.8, 0.7, -0.5, -0.346410162]
-        trueVector[1, 0:4] = [-0.8, 0.7, -0.5, -0.346410162]
-    elif numControlAxes == 3 and numWheels == MAX_EFF_CNT - 2:
-        trueVector[0, 0:4] = [-0.8, 0.7, -0.5, -0.346410162]
-        trueVector[1, 0:4] = [-0.8, 0.7, -0.5, -0.346410162]
+    if RWAvailMsg is not "OFF":
+        if numControlAxes > numWheels:
+            trueVector[0, 0:numWheels] = [0.0]*numWheels
+            trueVector[1, 0:numWheels] = [0.0]*numWheels
+        elif numControlAxes == 2 and numWheels == 2:
+            trueVector[0, 0:4] = [-1.0, 0.5, 0, 0]
+            trueVector[1, 0:4] = [-1.0, 0.5, 0, 0]
+        elif numControlAxes == 2 and numWheels == 4:
+            trueVector[0, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
+            trueVector[1, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
+        elif numControlAxes == 2 and numWheels == MAX_EFF_CNT:
+            trueVector[0, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
+            trueVector[1, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
+        elif numControlAxes == 2 and numWheels == MAX_EFF_CNT - 2:
+            trueVector[0, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
+            trueVector[1, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
+        elif numControlAxes == 3 and numWheels == 4:
+            trueVector[0, 0:4] = [-0.8, 0.7000000000000001, -0.5, -0.3464101615137755]
+            trueVector[1, 0:4] = [-0.8, 0.7000000000000001, -0.5, -0.3464101615137755]
+        elif numControlAxes == 3 and numWheels == MAX_EFF_CNT:
+            trueVector[0, 0:4] = [-0.8, 0.7, -0.5, -0.346410162]
+            trueVector[1, 0:4] = [-0.8, 0.7, -0.5, -0.346410162]
+        elif numControlAxes == 3 and numWheels == MAX_EFF_CNT - 2:
+            trueVector[0, 0:4] = [-0.8, 0.7, -0.5, -0.346410162]
+            trueVector[1, 0:4] = [-0.8, 0.7, -0.5, -0.346410162]
+    else:
+        # RW availability is set to off
+        trueVector[0, 0:numWheels] = [0.0] * numWheels
+        trueVector[1, 0:numWheels] = [0.0] * numWheels
 
 
 
@@ -247,7 +252,7 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
     #   print out success message if no error were found
     unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
     
-    snippentName = "passFail_"+"numAxes_"+str(len(controlAxes_B)/3) + "_numWheels_" + str(numWheels) + "_availMsg_" + str(RWAvailMsg)
+    snippentName = "passFail_"+str(len(controlAxes_B)/3) + str(numWheels) + RWAvailMsg
     if testFailCount == 0:
         colorText = 'ForestGreen'
         print "PASSED: " + moduleWrap.ModelTag
@@ -258,9 +263,6 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
-    #   print out success message if no error were found
-    if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -273,7 +275,7 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
 #
 if __name__ == "__main__":
     test_rwMotorTorque(False,
-                3,
-                4,
-                True
+                3,      # numControlAxes
+                4,      # numWheels
+                "OFF"    # RWAvailMsg ("NO", "ON", "OFF")
                )
