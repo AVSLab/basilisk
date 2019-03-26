@@ -1283,6 +1283,7 @@ HTML_EXTRA_FILES       = ../src/simulation/dynamics/extForceTorque/_Documentatio
                          "../src/fswAlgorithms/effectorInterfaces/thrForceMapping/_Documentation/Basilisk-ThrusterForces-20160627.pdf" \
                          ../src/fswAlgorithms/effectorInterfaces/thrMomentumDumping/_Documentation/Basilisk-thrMomentumDumping-20160820.pdf \
                          ../src/fswAlgorithms/sensorInterfaces/rateMsgConverter/_Documentation/Basilisk-rateMsgConverter-20180630.pdf \
+                         ../src/fswAlgorithms/transDetermination/ephemNavConverter/_Documentation/Basilisk-ephemNavConverter-20190326.pdf \
                          ../src/simulation/dynamics/FuelTank/_Documentation/Basilisk-FUELTANK-20171203.pdf \
                          ../src/simulation/dynamics/sphericalPendulum/_Documentation/Basilisk-SPHERICALPENDULUM-20180518.pdf \
                          ../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Basilisk-MODULENAME-yyyymmdd.pdf \
