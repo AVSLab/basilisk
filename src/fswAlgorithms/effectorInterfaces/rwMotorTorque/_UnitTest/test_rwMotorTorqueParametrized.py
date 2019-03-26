@@ -206,14 +206,14 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
             trueVector[0, 0:4] = [-1., 0., 0., 0.]
             trueVector[1, 0:4] = [-1., 0., 0., 0.]
         elif numControlAxes == 1 and numWheels == 4:
-            trueVector[0, 0:4] = [-0.75, 0., 0., -0.433013]
-            trueVector[1, 0:4] = [-0.75, 0., 0., -0.433013]
+            trueVector[0, 0:4] = [-0.75, 0., 0., -0.433012702]
+            trueVector[1, 0:4] = [-0.75, 0., 0., -0.433012702]
         elif numControlAxes == 1 and numWheels == MAX_EFF_CNT:
-            trueVector[0, 0:4] = [-0.75, 0., 0., -0.433013]
-            trueVector[1, 0:4] = [-0.75, 0., 0., -0.433013]
+            trueVector[0, 0:4] = [-0.75, 0., 0., -0.433012702]
+            trueVector[1, 0:4] = [-0.75, 0., 0., -0.433012702]
         elif numControlAxes == 1 and numWheels == MAX_EFF_CNT - 2:
-            trueVector[0, 0:4] = [-0.75, 0., 0., -0.433013]
-            trueVector[1, 0:4] = [-0.75, 0., 0., -0.433013]
+            trueVector[0, 0:4] = [-0.75, 0., 0., -0.433012702]
+            trueVector[1, 0:4] = [-0.75, 0., 0., -0.433012702]
         elif numControlAxes == 2 and numWheels == 2:
             trueVector[0, 0:4] = [-1.0, 0.5, 0, 0]
             trueVector[1, 0:4] = [-1.0, 0.5, 0, 0]
@@ -240,22 +240,12 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
         trueVector[0, 0:numWheels] = [0.0] * numWheels
         trueVector[1, 0:numWheels] = [0.0] * numWheels
 
+    print moduleOutput
 
     # compare the module results to the truth values
-    accuracy = 1e-6
-    for i in range(0,len(trueVector)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], MAX_EFF_CNT, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
-                                "sec\n")
-
     accuracy = 1e-8
-        
     testFailCount, testMessages = unitTestSupport.compareArrayND(trueVector, moduleOutput, accuracy, "rwMotorTorques",
-                                                                 2, testFailCount, testMessages)
+                                                                 MAX_EFF_CNT, testFailCount, testMessages)
         
 
         
@@ -287,6 +277,6 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
 if __name__ == "__main__":
     test_rwMotorTorque(False,
                 1,      # numControlAxes
-                simFswInterfaceMessages.MAX_EFF_CNT,      # numWheels
-                "ON"    # RWAvailMsg ("NO", "ON", "OFF")
+                4,      # numWheels
+                "NO"    # RWAvailMsg ("NO", "ON", "OFF")
                )
