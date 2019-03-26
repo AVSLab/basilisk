@@ -49,9 +49,9 @@ from Basilisk.simulation import simFswInterfaceMessages
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("numControlAxes", [2, 3])
+@pytest.mark.parametrize("numControlAxes", [1, 2, 3])
 @pytest.mark.parametrize("numWheels", [2, 4, simFswInterfaceMessages.MAX_EFF_CNT])
-@pytest.mark.parametrize("RWAvailMsg",["OFF", "ON", "OFF"])
+@pytest.mark.parametrize("RWAvailMsg",["NO", "ON", "OFF"])
 
 
 # update "module" in this function name to reflect the module name
@@ -202,6 +202,18 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
         if numControlAxes > numWheels:
             trueVector[0, 0:numWheels] = [0.0]*numWheels
             trueVector[1, 0:numWheels] = [0.0]*numWheels
+        elif numControlAxes == 1 and numWheels == 2:
+            trueVector[0, 0:4] = [-1., 0., 0., 0.]
+            trueVector[1, 0:4] = [-1., 0., 0., 0.]
+        elif numControlAxes == 1 and numWheels == 4:
+            trueVector[0, 0:4] = [-0.75, 0., 0., -0.433013]
+            trueVector[1, 0:4] = [-0.75, 0., 0., -0.433013]
+        elif numControlAxes == 1 and numWheels == MAX_EFF_CNT:
+            trueVector[0, 0:4] = [-0.75, 0., 0., -0.433013]
+            trueVector[1, 0:4] = [-0.75, 0., 0., -0.433013]
+        elif numControlAxes == 1 and numWheels == MAX_EFF_CNT - 2:
+            trueVector[0, 0:4] = [-0.75, 0., 0., -0.433013]
+            trueVector[1, 0:4] = [-0.75, 0., 0., -0.433013]
         elif numControlAxes == 2 and numWheels == 2:
             trueVector[0, 0:4] = [-1.0, 0.5, 0, 0]
             trueVector[1, 0:4] = [-1.0, 0.5, 0, 0]
@@ -229,9 +241,8 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
         trueVector[1, 0:numWheels] = [0.0] * numWheels
 
 
-
     # compare the module results to the truth values
-    accuracy = 1e-8
+    accuracy = 1e-6
     for i in range(0,len(trueVector)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], MAX_EFF_CNT, accuracy):
@@ -252,7 +263,7 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
     #   print out success message if no error were found
     unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
     
-    snippentName = "passFail_"+str(len(controlAxes_B)/3) + str(numWheels) + RWAvailMsg
+    snippentName = "passFail_"+str(numControlAxes) + str(numWheels) + RWAvailMsg
     if testFailCount == 0:
         colorText = 'ForestGreen'
         print "PASSED: " + moduleWrap.ModelTag
@@ -275,7 +286,7 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
 #
 if __name__ == "__main__":
     test_rwMotorTorque(False,
-                3,      # numControlAxes
-                4,      # numWheels
-                "OFF"    # RWAvailMsg ("NO", "ON", "OFF")
+                1,      # numControlAxes
+                simFswInterfaceMessages.MAX_EFF_CNT,      # numWheels
+                "ON"    # RWAvailMsg ("NO", "ON", "OFF")
                )
