@@ -30,31 +30,32 @@
 
 
 /*! \defgroup rwMotorTorque
+ * @brief This module maps a desired torque to control the spacecraft, and maps it to the available wheels using a minimum norm inverse fit.
+ 
+    The optional wheel availability message is used to include or exclude particular reaction wheels from the torque solution.  The desired control torque can be mapped onto particular orthogonal control axes to implement a partial solution for the overall attitude control torque.  More information can be found in the [PDF Description](Basilisk-rwMotorTorque-20190320.pdf).
  * @{
  */
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
-    double   controlAxes_B[3*3];        /*!< [-] array of the control unit axes */
-    uint32_t numControlAxes;            /*!< [-] counter indicating how many orthogonal axes are controlled */
-    uint32_t numAvailRW;
-    RWArrayConfigFswMsg rwConfigParams;     /*!< [-] struct to store message containing RW config parameters in body B frame */
-    double GsMatrix_B[3*MAX_EFF_CNT];   /*!< [-] The RW spin axis matrix in body frame components */
-    double CGs[3][MAX_EFF_CNT];
+    double   controlAxes_B[3*3];        //!< [-] array of the control unit axes
+    uint32_t numControlAxes;            //!< [-] counter indicating how many orthogonal axes are controlled
+    uint32_t numAvailRW;                //!< [-] number of reaction wheels available
+    RWArrayConfigFswMsg rwConfigParams; //!< [-] struct to store message containing RW config parameters in body B frame
+    double GsMatrix_B[3*MAX_EFF_CNT];   //!< [-] The RW spin axis matrix in body frame components
+    double CGs[3][MAX_EFF_CNT];         //!< [-] Projection matrix that defines the controlled body axes
 
     /* declare module IO interfaces */
-    char     outputDataName[MAX_STAT_MSG_LENGTH];   /*!< The name of the output message*/
-    int32_t  outputMsgID;                           /*!< ID for the outgoing message */
-    char inputVehControlName[MAX_STAT_MSG_LENGTH];  /*!< The name of the vehicle control (Lr) Input message*/
-    int32_t  inputVehControlID;                     /*!< ID for the incoming Lr control message */
+    char     outputDataName[MAX_STAT_MSG_LENGTH];   //!< The name of the output message
+    int32_t  outputMsgID;                           //!< ID for the outgoing message
+    char inputVehControlName[MAX_STAT_MSG_LENGTH];  //!< The name of the vehicle control (Lr) Input message
+    int32_t  controlTorqueInMsgID;                     //!< ID for the incoming Lr control message
     
-    char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];    /*!< The name of the RWArrayConfigFswMsg input message*/
-    int32_t rwParamsInMsgID;                        /*!< [-] ID for the RWArrayConfigFswMsg ingoing message */
-    char rwAvailInMsgName[MAX_STAT_MSG_LENGTH];     /*!< The name of the RWs availability message*/
-    int32_t rwAvailInMsgID;                         /*!< [-] ID for the incoming  RWs availability data */
-    
-    RWArrayTorqueIntMsg rwMotorTorques;            /*!< [-] struct to store the output message */
+    char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];    //!< The name of the RWArrayConfigFswMsg input message
+    int32_t rwParamsInMsgID;                        //!< [-] ID for the RWArrayConfigFswMsg ingoing message
+    char rwAvailInMsgName[MAX_STAT_MSG_LENGTH];     //!< The name of the RWs availability message
+    int32_t rwAvailInMsgID;                         //!< [-] ID for the incoming  RWs availability data
 
 }rwMotorTorqueConfig;
 
