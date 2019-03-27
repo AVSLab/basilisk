@@ -5,8 +5,13 @@ The unit test checks for proper functionality of the module for various numbers 
 \begin{enumerate}
 \item Number of control axes set to 1, 2 or 3
 \item Number of RW set to 2, 4 or the maximum allowable device number
-\item The optional RW availability message either not provided (``NO''), provided and the $N-2$ RWs are set to AVAILABLE, or provided and all RWs are set to UNAVAILABLE.
-
+\item The optional RW availability message set to:
+\begin{itemize}
+\item(``NO'') -- Message not provided
+\item (``ON") -- Message is provided and all RWs are set to AVAILABLE
+\item (``OFF") -- Message is provided and all RWs are set to UNAVAILABLE
+\item (``MIXED") -- Message is provided and half of all RWs are set to UNAVAILABLE and the remainder are AVAILABLE.
+\end{itemize}
 \end{enumerate}
 
 
@@ -54,9 +59,9 @@ The unit test results are shown in Table~\ref{tab:results}.  All tests should be
 	   1	& 4 & ON &\input{AutoTeX/passFail_12ON} \\ 
 	   2	& 4 & ON &\input{AutoTeX/passFail_22ON} \\ 
 	   3	& 4 & ON &\input{AutoTeX/passFail_32ON} \\ 
-	   1	& {\tt MAX\_EFF\_CNT} & ON &\input{AutoTeX/passFail_10ON} \\ 
-	   2	& {\tt MAX\_EFF\_CNT}  & ON &\input{AutoTeX/passFail_234ON} \\ 
-	   3	& {\tt MAX\_EFF\_CNT}  & ON &\input{AutoTeX/passFail_334ON} \\ 
+	   1	& {\tt MAX\_EFF\_CNT} & ON &\input{AutoTeX/passFail_136ON} \\ 
+	   2	& {\tt MAX\_EFF\_CNT}  & ON &\input{AutoTeX/passFail_236ON} \\ 
+	   3	& {\tt MAX\_EFF\_CNT}  & ON &\input{AutoTeX/passFail_336ON} \\ 
 	   1	& 2 & OFF &\input{AutoTeX/passFail_12OFF} \\ 
 	   2	& 2 & OFF &\input{AutoTeX/passFail_22OFF} \\ 
 	   3	& 2 & OFF &\input{AutoTeX/passFail_32OFF} \\ 
@@ -66,6 +71,15 @@ The unit test results are shown in Table~\ref{tab:results}.  All tests should be
 	   1	& {\tt MAX\_EFF\_CNT} & OFF &\input{AutoTeX/passFail_136OFF} \\ 
 	   2	& {\tt MAX\_EFF\_CNT}  & OFF &\input{AutoTeX/passFail_236OFF} \\ 
 	   3	& {\tt MAX\_EFF\_CNT}  & OFF &\input{AutoTeX/passFail_336OFF} \\ 
+	   1	& 2 & MIXED &\input{AutoTeX/passFail_12MIXED} \\ 
+	   2	& 2 & MIXED &\input{AutoTeX/passFail_22MIXED} \\ 
+	   3	& 2 & MIXED &\input{AutoTeX/passFail_32MIXED} \\ 
+	   1	& 4 & MIXED &\input{AutoTeX/passFail_14MIXED} \\ 
+	   2	& 4 & MIXED &\input{AutoTeX/passFail_24MIXED} \\ 
+	   3	& 4 & MIXED &\input{AutoTeX/passFail_34MIXED} \\ 
+	   1	& {\tt MAX\_EFF\_CNT} & MIXED &\input{AutoTeX/passFail_136MIXED} \\ 
+	   2	& {\tt MAX\_EFF\_CNT}  & MIXED &\input{AutoTeX/passFail_236MIXED} \\ 
+	   3	& {\tt MAX\_EFF\_CNT}  & MIXED &\input{AutoTeX/passFail_336MIXED} \\ 
 	   \hline\hline
 	\end{tabular}
 \end{table}
