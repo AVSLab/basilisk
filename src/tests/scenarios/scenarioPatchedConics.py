@@ -331,6 +331,10 @@ def run(show_plots):
     rData = []
     for idx in range(0, len(fData)):
         rData.append(p / (1 + oe.e * np.cos(fData[idx])))
+    ax = fig.gca()
+    ax.ticklabel_format(useOffset=False, style='sci')
+    ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
+    ax.get_xaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
     plt.plot(rData * np.cos(fData) / 1000, rData * np.sin(fData) / 1000, '--', color='#555555', label='Orbit Track')
     plt.xlabel('$i_e$ Cord. [km]')
     plt.ylabel('$i_p$ Cord. [km]')
@@ -344,7 +348,9 @@ def run(show_plots):
     plt.figure(2)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style='sci')
+    ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
+    ax.get_xaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
     rData = []
     for idx in range(0, len(posData)):
         oeData = orbitalMotion.rv2elem_parab(earth.mu, posData[idx, 1:4], velData[idx, 1:4])
@@ -447,7 +453,9 @@ def run(show_plots):
     plt.figure(3)
     fig = plt.gcf()
     ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
+    ax.ticklabel_format(useOffset=False, style='sci')
+    ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
+    ax.get_xaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
     rData = []
     fData = []
     for idx in range(0, len(posData)):
@@ -467,6 +475,8 @@ def run(show_plots):
     plt.figure(4)
     fig = plt.gcf()
     ax = fig.gca()
+    ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
+    ax.get_xaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
     planetColor = '#008800'
     planetRadius = sun.radEquator / 1000
     ax.add_artist(plt.Circle((0,0), planetRadius, color=planetColor))
@@ -589,6 +599,9 @@ def run(show_plots):
     # draw the planet
     fig = plt.gcf()
     ax = fig.gca()
+    ax.ticklabel_format(useOffset=False, style='sci')
+    ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
+    ax.get_xaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
     planetColor = '#008800'
     planetRadius = jupiter.radEquator / 1000
     ax.add_artist(plt.Circle((0,0), planetRadius, color=planetColor))
