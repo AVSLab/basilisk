@@ -250,9 +250,8 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
 
     # compare the module results to the truth values
     accuracy = 1e-8
-
     testFailCount, testMessages = unitTestSupport.compareArrayND(trueVector, moduleOutput, accuracy, "rwMotorTorques",
-                                                             MAX_EFF_CNT, testFailCount, testMessages)
+                                                                 MAX_EFF_CNT, testFailCount, testMessages)
         
 
     #   print out success message if no error were found
@@ -283,5 +282,5 @@ if __name__ == "__main__":
     test_rwMotorTorque(False,
                 1,      # numControlAxes
                 4,      # numWheels
-                "ON"    # RWAvailMsg ("NO", "ON", "OFF")
+                "NO"    # RWAvailMsg ("NO", "ON", "OFF")
                )
