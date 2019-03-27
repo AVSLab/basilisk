@@ -7,6 +7,9 @@
 </li>
     <li>the `exponentialAtmosphere` module has been replaced with the new `atmosphere` module.  BSK simulations that used the older module must update to use the new module.  The module unit test scripts illustrate how to use this module, and the module PDF documentation discusses this as well.  The `dragEffector` integrated test is also updated to make use of the new module
     </li>
+    <li>
+    The `MRP_Feedback()` has the control vector `domega0` removed and keeps this term now as a permanent zero vector.  Any code that was setting this needs to be updated to not set this parameter anymore.
+    </li>
     </ul>
 
 ## Version 0.4.1
