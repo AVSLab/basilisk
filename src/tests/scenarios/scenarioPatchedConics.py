@@ -23,7 +23,7 @@
 #
 # Purpose: Patched Conics Interplanetary Trajectory
 # Author:   Divinaa Burder
-# Creation Date:
+# Creation Date: March 27, 2019
 #
 
 import os
@@ -37,41 +37,49 @@ from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion,simInc
 
 
 
-## \defgroup Tutorials_1_5
+## \defgroup scenarioPatchedConicGroup
 ## @{
-## Demonstration of using gravFactory to create multiple celestial bodies and using .isCentralBody to set
-## spacecraft initial states in an absolute or relative frame
+## Simulating a patched conic trajectory solution using a continuous integration with multiple gravity bodies.
 #
-# Patched Conics {#scenarioPatched Conics}
+# Patched Conics {#scenarioPatchedConics}
 # ====
 #
 # Scenario Description
 # -----
 # This tutorial considers a patched conics approach to an interplanetary transfer from Earth to Jupiter, by way of a
-# Hohmann transfer.
+# heliocentric Hohmann transfer.  The patched conic solution is evaluated making the typical conic trajectory
+# assumptions where an impulsive Dv changes a Earth centric circular orbit into a hyperbolic departure orbit that
+# excapes the Earth system in the Earth's heliocentric direction.  After an elliptical heliocentric transfer orbit
+# the craft reaches the Jupiter region.  The Jupiter relative arrival is a hyperbolic arrival orbit.
+# To simulate this solution, a continuous multi-body gravity integration is performed to illustrate
+# how close the patched conic solution is to reaching a Jupiter fly-by.  The simulation is started and stopped to
+# change the integration time steps to appropriate values, and also change relative to what planet the trajectory is
+# logged.  However, the simulation state always includes the gravity of Earth, Sun and Jupiter.  To keep this tutorial
+# simple, the planets are assumed to be at fixed locations and their ephemeris message is not updated.
 #
 #
+# The detail of the simulation script is as follows.
 # This script sets up a basic spacecraft which starts in circular Low Earth Orbit, with logging with respect to the
-# Earth.The spacecraft then leaves on a hyperbolic orbit with respect to Earth until it reaches the edge of the Earth's
-# sphere of influence.
-#
-# The frame of reference is then switched to a Sun centered inertial, and the planetary positions are adjusted
+# Earth. The spacecraft then leaves on a hyperbolic orbit with respect to Earth until it reaches the edge of the Earth's
+# sphere of influence. The frame of reference is then switched to a Sun centered inertial, and the planetary positions
+# are adjusted
 # accordingly. The Earth's velocity is added to the spacecraft (to account for the heliocentric velocity of the
-# spacecraft) and the simulation is run until the spacecraft approaches Jupiter's Sphere of Influence.
+# spacecraft) and the simulation is run until the spacecraft approaches Jupiter's Sphere of Influence.  Here logging
+# is set to be relative to Jupiter.
 #
 #
 # Simulation Scenario Setup Details
 # -----
-# The basics of the spacecraft and simulation set up are shown in
+# How to setup a basic spacecraft simulation is shown in the earlier tutorial
 # [scenarioBasicOrbit.py](@ref scenarioBasicOrbit).
-# The basics of the Hohmann transfer is shown in [scenarioOrbitManeuver.py](@ref scenarioOrbitManeuver).
+# Simulating a Hohmann transfer is illustrated in [scenarioOrbitManeuver.py](@ref scenarioOrbitManeuver).
 # Setting up multiple gravitational bodies is shown in [scenarioOrbitMultiBody.py](@ref scenarioOrbitMultiBody)
-# Providing pseudo-SPICE messages is laid out in [scenarioCSS.py](@ref scenarioCSS).
+# while providing pseudo-SPICE messages is laid out in [scenarioCSS.py](@ref scenarioCSS).
 #
 # This simulation combines all those techniques as well as changing logging relative to multiple bodies for a single
 # simulation.
 #
-# In order to specify which body the spacecraft position and velocities are integrated relative to, the isCentralBody
+# In order to specify which body the spacecraft position and velocities are integrated relative to, the `isCentralBody`
 # flag is used.
 #
 #
