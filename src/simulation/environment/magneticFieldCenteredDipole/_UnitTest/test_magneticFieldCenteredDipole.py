@@ -19,7 +19,7 @@
 '''
 #
 #   Unit Test Script
-#   Module Name:        magneticField
+#   Module Name:        magneticField - Centered Dipole Model
 #   Author:             Hanspeter Schaub
 #   Creation Date:      March 10, 2019
 #
@@ -27,7 +27,6 @@
 import pytest
 import os, inspect
 import numpy as np
-import math
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -43,7 +42,7 @@ splitPath = path.split(bskName)
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.simulation import magneticField
+from Basilisk.simulation import magneticFieldCenteredDipole
 from Basilisk.simulation import simMessages
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
@@ -90,19 +89,19 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
 
 
     # Construct algorithm and associated C++ container
-    testModule = magneticField.MagneticField()
-    testModule.ModelTag = "magneticFieldModel"
+    testModule = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()
+    testModule.ModelTag = "CenteredDipole"
 
     if useDefault:
-        refg10 = -30926.00/1e9     # Tesla
-        refg11 =  -2318.00/1e9     # Tesla
-        refh11 =   5817.00/1e9     # Tesla
-        refPlanetRadius = 6371.2*1000   # meters
+        refg10 = 0.0     # Tesla
+        refg11 = 0.0     # Tesla
+        refh11 = 0.0     # Tesla
+        refPlanetRadius = 0.0   # meters
     else:
         simSetPlanetEnvironment.centeredDipoleMagField(testModule, "earth")
-        refg10 = testModule.dipoleParams.g10
-        refg11 = testModule.dipoleParams.g11
-        refh11 = testModule.dipoleParams.h11
+        refg10 = testModule.g10
+        refg11 = testModule.g11
+        refh11 = testModule.h11
         refPlanetRadius = testModule.planetRadius
 
 
@@ -194,6 +193,7 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     mag0Data = unitTestSim.pullMessageLogData(testModule.envOutMsgNames[0] + ".magField_N", range(3))
     mag1Data = unitTestSim.pullMessageLogData(testModule.envOutMsgNames[1] + ".magField_N", range(3))
 
+
     def centeredDipole(pos_N, X, refPlanetRadius, refPlanetDCM, minReach, maxReach):
         radius = np.linalg.norm(pos_N)
         planetPos_E = refPlanetDCM.dot(pos_N)
@@ -259,5 +259,5 @@ if __name__ == "__main__":
                  False,          # useDefault
                  False,         # useMinReach
                  False,         # useMaxReach
-                 False          # usePlanetEphemeris
+                 True          # usePlanetEphemeris
                )

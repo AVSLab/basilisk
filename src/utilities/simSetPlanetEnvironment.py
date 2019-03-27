@@ -19,7 +19,6 @@
 '''
 
 from Basilisk.simulation import atmosphere
-from Basilisk.simulation import magneticField
 from Basilisk.utilities import macros
 import numpy as np
 
@@ -56,10 +55,9 @@ def centeredDipoleMagField(magFieldModule, name):
     if name is "earth":
         # The following parameters are from the 2020 IGRF model
         # (https://www.ngdc.noaa.gov/IAGA/vmod/igrf.html)
-        magFieldModule.setEnvType(magneticField.MODEL_CENTERED_DIPOLE)
-        magFieldModule.dipoleParams.g10 = -30926.00/1e9     # Tesla
-        magFieldModule.dipoleParams.g11 =  -2318.00/1e9     # Tesla
-        magFieldModule.dipoleParams.h11 =   5817.00/1e9     # Tesla
+        magFieldModule.g10 = -30926.00/1e9     # Tesla
+        magFieldModule.g11 =  -2318.00/1e9     # Tesla
+        magFieldModule.h11 =   5817.00/1e9     # Tesla
         magFieldModule.planetRadius = 6371.2*1000   # meters
 
     elif name is "mercury":
@@ -128,9 +126,9 @@ def convertToIgrfDipoleCoefficients(nominalField, tilt, longitudeOfTilt, magFiel
     # the following conversion is taken from Appendix D of doi:10.1007/978-1-4939-0802-8
     theta_m = np.pi - tilt
     alpha_m = np.pi - longitudeOfTilt
-    magFieldModule.dipoleParams.g11 = nominalField*np.sin(theta_m)*np.cos(alpha_m)
-    magFieldModule.dipoleParams.h11 = nominalField*np.sin(theta_m)*np.sin(alpha_m)
-    magFieldModule.dipoleParams.g10 = nominalField*np.cos(theta_m)
+    magFieldModule.g11 = nominalField*np.sin(theta_m)*np.cos(alpha_m)
+    magFieldModule.h11 = nominalField*np.sin(theta_m)*np.sin(alpha_m)
+    magFieldModule.g10 = nominalField*np.cos(theta_m)
 
     return
 

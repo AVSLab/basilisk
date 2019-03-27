@@ -1253,7 +1253,7 @@ HTML_EXTRA_FILES       = ../src/simulation/dynamics/extForceTorque/_Documentatio
                          ../src/simulation/dynamics/SpacecraftDynamics/_Documentation/SpacecraftDynamics/Basilisk-SPACECRAFTDYNAMICS-20180712.pdf \
                          ../src/simulation/dynamics/Thrusters/_Documentation/Basilisk-THRUSTERS20170712.pdf \
                          ../src/simulation/environment/atmosphere/_Documentation/Basilisk-atmosphere-20190221.pdf \
-                         ../src/simulation/environment/magneticField/_Documentation/Basilisk-magField-20190309.pdf \
+                         ../src/simulation/environment/magneticFieldCenteredDipole/_Documentation/Basilisk-magFieldDipole-20190309.pdf \
                          ../src/simulation/environment/eclipse/_Documentation/Basilisk-eclipse-20171101.pdf \
                          ../src/simulation/environment/ephemeris_converter/_Documentation/Basilisk-EPHEMERIS_CONVERTER20170712.pdf \
                          ../src/simulation/environment/spice/_Documentation/Basilisk-SPICE_INTERFACE20170712.pdf \
