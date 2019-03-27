@@ -1,12 +1,11 @@
-% !TEX root = ./Basilisk-rwMotorTorqueModule-20190314.tex
+% !TEX root = ./Basilisk-rwMotorTorque-20190320.tex
 
 \section{Test Description and Success Criteria}
-The unit test checks for proper functionality of the module for various numbers of control axes and reaction wheel configurations, both within and outside expected bounds. The two test cases run include:
+The unit test checks for proper functionality of the module for various numbers of control axes and reaction wheel configurations, both within and outside expected bounds. The  test cases  include permutations of:
 \begin{enumerate}
-\item 3-axis control basis, with four available reaction wheels. 
-\item 2-axis control basis, with four available reaction wheels. 
-\item 1-axis control basis, with four available reaction wheels. 
-\item 3-axis control basis (dropped axis), with 2 available reaction wheels. 
+\item Number of control axes set to 1, 2 or 3
+\item Number of RW set to 2, 4 or the maximum allowable device number
+\item The optional RW availability message either not provided (``NO''), provided and the $N-2$ RWs are set to AVAILABLE, or provided and all RWs are set to UNAVAILABLE.
 
 \end{enumerate}
 
@@ -32,20 +31,41 @@ The unit test verify that the module's output reaction control torques match exp
 
 \section{Test Results}
 The unit test results are shown in Table~\ref{tab:results}.  All tests should be passing.
-\begin{table}[H]
+\begin{table}[ht]
 	\caption{Test results}
 	\label{tab:results}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{c | c | c  } % Column formatting, 
+	\begin{tabular}{c | c | c | c } % Column formatting, 
 		\hline\hline
-		\textbf{Num Axes} 		& \textbf{Num RW}				  		&\textbf{Pass/Fail} \\ 
+		{\tt numControlAxes} 		& {\tt numWheels}	& {\tt RWAvailMsg} 	&\textbf{Pass/Fail} \\ 
 		\hline
-	   3	   			& 4 &\input{AutoTeX/passFail_numAxes_3_numWheels_4} \\ 
-	   2	   			& 4 &\input{AutoTeX/passFail_numAxes_2_numWheels_4} \\ 
-	   1	   			& 4 &\input{AutoTeX/passFail_numAxes_1_numWheels_4} \\ 
-	   3	   			& 2 &\input{AutoTeX/passFail_numAxes_3_numWheels_2} \\ 
-	   
-	   
+	   1	& 2 & NO &\input{AutoTeX/passFail_12NO} \\ 
+	   2	& 2 & NO &\input{AutoTeX/passFail_22NO} \\ 
+	   3	& 2 & NO &\input{AutoTeX/passFail_32NO} \\ 
+	   1	& 4 & NO &\input{AutoTeX/passFail_14NO} \\ 
+	   2	& 4 & NO &\input{AutoTeX/passFail_24NO} \\ 
+	   3	& 4 & NO &\input{AutoTeX/passFail_34NO} \\ 
+	   1	& {\tt MAX\_EFF\_CNT} & NO &\input{AutoTeX/passFail_136NO} \\ 
+	   2	& {\tt MAX\_EFF\_CNT}  & NO &\input{AutoTeX/passFail_236NO} \\ 
+	   3	& {\tt MAX\_EFF\_CNT}  & NO &\input{AutoTeX/passFail_336NO} \\ 
+	   1	& 2 & ON &\input{AutoTeX/passFail_12ON} \\ 
+	   2	& 2 & ON &\input{AutoTeX/passFail_22ON} \\ 
+	   3	& 2 & ON &\input{AutoTeX/passFail_32ON} \\ 
+	   1	& 4 & ON &\input{AutoTeX/passFail_12ON} \\ 
+	   2	& 4 & ON &\input{AutoTeX/passFail_22ON} \\ 
+	   3	& 4 & ON &\input{AutoTeX/passFail_32ON} \\ 
+	   1	& {\tt MAX\_EFF\_CNT} & ON &\input{AutoTeX/passFail_10ON} \\ 
+	   2	& {\tt MAX\_EFF\_CNT}  & ON &\input{AutoTeX/passFail_234ON} \\ 
+	   3	& {\tt MAX\_EFF\_CNT}  & ON &\input{AutoTeX/passFail_334ON} \\ 
+	   1	& 2 & OFF &\input{AutoTeX/passFail_12OFF} \\ 
+	   2	& 2 & OFF &\input{AutoTeX/passFail_22OFF} \\ 
+	   3	& 2 & OFF &\input{AutoTeX/passFail_32OFF} \\ 
+	   1	& 4 & OFF &\input{AutoTeX/passFail_14OFF} \\ 
+	   2	& 4 & OFF &\input{AutoTeX/passFail_24OFF} \\ 
+	   3	& 4 & OFF &\input{AutoTeX/passFail_34OFF} \\ 
+	   1	& {\tt MAX\_EFF\_CNT} & OFF &\input{AutoTeX/passFail_136OFF} \\ 
+	   2	& {\tt MAX\_EFF\_CNT}  & OFF &\input{AutoTeX/passFail_236OFF} \\ 
+	   3	& {\tt MAX\_EFF\_CNT}  & OFF &\input{AutoTeX/passFail_336OFF} \\ 
 	   \hline\hline
 	\end{tabular}
 \end{table}
