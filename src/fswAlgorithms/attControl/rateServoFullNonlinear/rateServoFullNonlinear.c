@@ -50,7 +50,7 @@ void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, u
 }
 
 /*! This method performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
+ Its primary function is to link the input messages that were created elsewhere.
  @return void
  @param ConfigData The configuration data associated with this module
  */
@@ -143,7 +143,7 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, uin
     double              v3[3];
     double              v3_1[3];
     int                 i;
-    double              temp;
+    double              intLimCheck;
     
     /*! Begin method steps*/
     
@@ -185,9 +185,9 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, uin
         v3Scale(dt, omega_BBast_B, v3);
         v3Add(v3, ConfigData->z, ConfigData->z);             /* z = integral(del_omega) */
         for (i=0;i<3;i++) {
-            temp = fabs(ConfigData->z[i]);
-            if (temp > ConfigData->integralLimit) {
-                ConfigData->z[i] *= ConfigData->integralLimit/temp;
+            intLimCheck = fabs(ConfigData->z[i]);
+            if (intLimCheck > ConfigData->integralLimit) {
+                ConfigData->z[i] *= ConfigData->integralLimit/intLimCheck;
             }
         }
     } else {
@@ -226,7 +226,6 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, uin
     
     /* Change sign to compute the net positive control torque onto the spacecraft */
     v3Scale(-1.0, Lr, Lr);
-
     /* Store the output message and pass it to the message bus */
     v3Copy(Lr, ConfigData->controlOut.torqueRequestBody);
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(CmdTorqueBodyIntMsg),
