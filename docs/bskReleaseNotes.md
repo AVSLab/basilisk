@@ -41,6 +41,9 @@ We are very excited by the great capabilities that this software already has, an
     </li>
     <li>updated `MRP_Feedback()`, new PDF documentation,  did code cleanup, updated unit tests to cover all code branches.
     </li>
+    <li>
+    Added a new tutorial on using the magnetic field model.
+    </li>
 </ul>
 
 
