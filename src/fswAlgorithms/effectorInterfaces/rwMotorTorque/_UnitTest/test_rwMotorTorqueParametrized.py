@@ -41,6 +41,7 @@ from Basilisk.utilities import unitTestSupport
 from Basilisk.fswAlgorithms import rwMotorTorque
 from Basilisk.utilities import macros
 from Basilisk.simulation import simFswInterfaceMessages
+from Support import results_rwMotorTorque
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -51,7 +52,7 @@ from Basilisk.simulation import simFswInterfaceMessages
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("numControlAxes", [1, 2, 3])
 @pytest.mark.parametrize("numWheels", [2, 4, simFswInterfaceMessages.MAX_EFF_CNT])
-@pytest.mark.parametrize("RWAvailMsg",["NO", "ON", "OFF"])
+@pytest.mark.parametrize("RWAvailMsg",["NO", "ON", "OFF", "MIXED"])
 
 
 # update "module" in this function name to reflect the module name
@@ -130,9 +131,48 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwParamsInMsgName,
                                           inputMessageSize, 2) # number of buffers (leave at 2 as default)
 
+
+
     MAX_EFF_CNT = simFswInterfaceMessages.MAX_EFF_CNT
-    if numWheels == MAX_EFF_CNT+1:
-        rwConfigParams.GsMatrix_B = [1.0]*MAX_EFF_CNT # Can't exceed MAX_EFF_CNT
+
+    if numWheels == MAX_EFF_CNT:
+        rwConfigParams.GsMatrix_B = [
+            0.4835867893995201, 0.7025829597277155, 0.5220354411517549,
+            0.6274167231454653, 0.4634123147571517, 0.6257773422303058,
+            0.4927675437195689, 0.3909468277672152, 0.7773935462269635,
+            0.2791305379092009, 0.20278639222840245, 0.9385967301954065,
+            0.1742148051521812, 0.9353106472878886, 0.3079662233682429,
+            0.7408864742367625, 0.30733781515416325, 0.5971856492492805,
+            0.49166240509756476, 0.11024265612126483, 0.863779275153674,
+            0.08522980139648922, 0.5635691254043687, 0.8216603445736381,
+            0.5169183283391889, 0.6482094982986043, 0.5591242153068406,
+            0.5539478507672101, 0.4352935184619988, 0.7096910112262675,
+            0.08177103922211226, 0.7185493168899821, 0.6906521384470449,
+            0.5424303480563135, 0.8034905566669417, 0.24530031156636306,
+            0.6791649825098244, 0.25103926707369056, 0.6897203874901293,
+            0.6662787689368599, 0.6695372377111813, 0.32831766535181106,
+            0.28428078464167594, 0.5440295499812461, 0.7894404880867942,
+            0.8881073966834958, 0.007176386091829566, 0.4595799728433832,
+            0.7043700914244455, 0.20398698108861654, 0.6798912308987893,
+            0.5913513581668906, 0.7154722881784563, 0.3720255045596441,
+            0.5353927164036736, 0.8292977052562882, 0.1600623480977027,
+            0.5626385603464779, 0.5530980227747188, 0.6144269099038059,
+            0.8047402627946283, 0.5179828986694456, 0.2899772855298006,
+            0.6435726414836709, 0.49863310510036174, 0.5806714059015666,
+            0.2533767502100278, 0.8066673674024603, 0.533936307831739,
+            0.051675625147813466, 0.741898369799065, 0.6685180914942186,
+            0.6705007071467579, 0.243658731626882, 0.700756180292173,
+            0.6124322825812726, 0.6044312394389204, 0.5094993386086216,
+            0.5025822950964116, 0.49662160344788164, 0.7076567103083798,
+            0.4875326918964735, 0.8575174427431412, 0.16424283766253403,
+            0.3659744927810267, 0.8415919620749859, 0.39722240622155974,
+            0.6205921515961875, 0.5508152351685801, 0.5580931446303532,
+            0.20125257120061574, 0.7022636474963218, 0.6828785924235018,
+            0.4318909377763495, 0.6786025351852008, 0.5941117883924572,
+            0.6839787443692367, 0.6598940110591041, 0.31098709204629277,
+            0.35743175000357147, 0.8343049491885353, 0.4197353878920623,
+            0.8124751056450826, 0.35669421673672336, 0.46114362020262967,
+            0.04721328350343224, 0.8901899787392832, 0.45313652204714083]
     else:
         rwConfigParams.GsMatrix_B = [
             1.0, 0.0, 0.0,
@@ -151,19 +191,26 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
         rwAvailabilityMessage = rwMotorTorque.RWAvailabilityFswMsg()
 
         avail = [rwMotorTorque.UNAVAILABLE] * numWheels
-        for i in range(numWheels - 2):
+        for i in range(numWheels):
             if RWAvailMsg is "ON":
                 avail[i] = rwMotorTorque.AVAILABLE
-            else:
+            elif RWAvailMsg is "OFF":
                 avail[i] = rwMotorTorque.UNAVAILABLE
+            else:
+                if i < int(numWheels/2):
+                    avail[i] = rwMotorTorque.AVAILABLE
+
         rwAvailabilityMessage.wheelAvailability = avail
 
         unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName,
                                    moduleConfig.rwAvailInMsgName,
                                    rwAvailabilityMessage)
+        return avail
 
     if len(moduleConfig.rwAvailInMsgName)>0:
-        writeMsgInWheelAvailability(numWheels)
+        avail = writeMsgInWheelAvailability(numWheels)
+    else:
+        avail = [rwMotorTorque.AVAILABLE]*numWheels # this is used purely for the python level solution
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
@@ -187,79 +234,27 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
     moduleOutputName = "motorTorque"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(MAX_EFF_CNT))
-
-
-    # set the output truth states
-
     trueVector = np.array([
         [0.0] * MAX_EFF_CNT,
         [0.0] * MAX_EFF_CNT
     ])
-    if RWAvailMsg is "ON":
-        numWheels = numWheels - 2
 
-    if RWAvailMsg is not "OFF":
-        if numControlAxes > numWheels:
-            trueVector[0, 0:numWheels] = [0.0]*numWheels
-            trueVector[1, 0:numWheels] = [0.0]*numWheels
-        elif numControlAxes == 1 and numWheels == 2:
-            trueVector[0, 0:4] = [-1., 0., 0., 0.]
-            trueVector[1, 0:4] = [-1., 0., 0., 0.]
-        elif numControlAxes == 1 and numWheels == 4:
-            trueVector[0, 0:4] = [-0.75, 0., 0., -0.433013]
-            trueVector[1, 0:4] = [-0.75, 0., 0., -0.433013]
-        elif numControlAxes == 1 and numWheels == MAX_EFF_CNT:
-            trueVector[0, 0:4] = [-0.75, 0., 0., -0.433013]
-            trueVector[1, 0:4] = [-0.75, 0., 0., -0.433013]
-        elif numControlAxes == 1 and numWheels == MAX_EFF_CNT - 2:
-            trueVector[0, 0:4] = [-0.75, 0., 0., -0.433013]
-            trueVector[1, 0:4] = [-0.75, 0., 0., -0.433013]
-        elif numControlAxes == 2 and numWheels == 2:
-            trueVector[0, 0:4] = [-1.0, 0.5, 0, 0]
-            trueVector[1, 0:4] = [-1.0, 0.5, 0, 0]
-        elif numControlAxes == 2 and numWheels == 4:
-            trueVector[0, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
-            trueVector[1, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
-        elif numControlAxes == 2 and numWheels == MAX_EFF_CNT:
-            trueVector[0, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
-            trueVector[1, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
-        elif numControlAxes == 2 and numWheels == MAX_EFF_CNT - 2:
-            trueVector[0, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
-            trueVector[1, 0:4] = [-0.9, 0.6, 0.0, -0.17320508]
-        elif numControlAxes == 3 and numWheels == 4:
-            trueVector[0, 0:4] = [-0.8, 0.7000000000000001, -0.5, -0.3464101615137755]
-            trueVector[1, 0:4] = [-0.8, 0.7000000000000001, -0.5, -0.3464101615137755]
-        elif numControlAxes == 3 and numWheels == MAX_EFF_CNT:
-            trueVector[0, 0:4] = [-0.8, 0.7, -0.5, -0.346410162]
-            trueVector[1, 0:4] = [-0.8, 0.7, -0.5, -0.346410162]
-        elif numControlAxes == 3 and numWheels == MAX_EFF_CNT - 2:
-            trueVector[0, 0:4] = [-0.8, 0.7, -0.5, -0.346410162]
-            trueVector[1, 0:4] = [-0.8, 0.7, -0.5, -0.346410162]
-    else:
-        # RW availability is set to off
-        trueVector[0, 0:numWheels] = [0.0] * numWheels
-        trueVector[1, 0:numWheels] = [0.0] * numWheels
 
+    # set the output truth states
+    trueVector[0] = results_rwMotorTorque.computeTorqueU(np.array(controlAxes_B),
+                                                                   np.array(rwConfigParams.GsMatrix_B).reshape((
+                                                                       3, MAX_EFF_CNT), order='F'),
+                                                                   requestedTorque,
+                                                                   avail)
+    trueVector[1] = trueVector[0]
 
     # compare the module results to the truth values
-    accuracy = 1e-6
-    for i in range(0,len(trueVector)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], MAX_EFF_CNT, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
-                                "sec\n")
-
     accuracy = 1e-8
-        
+
     testFailCount, testMessages = unitTestSupport.compareArrayND(trueVector, moduleOutput, accuracy, "rwMotorTorques",
-                                                                 2, testFailCount, testMessages)
+                                                             MAX_EFF_CNT, testFailCount, testMessages)
         
 
-        
-        
     #   print out success message if no error were found
     unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
     
@@ -287,6 +282,6 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
 if __name__ == "__main__":
     test_rwMotorTorque(False,
                 1,      # numControlAxes
-                simFswInterfaceMessages.MAX_EFF_CNT,      # numWheels
+                4,      # numWheels
                 "ON"    # RWAvailMsg ("NO", "ON", "OFF")
                )

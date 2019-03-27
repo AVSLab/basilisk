@@ -50,7 +50,7 @@ void SelfInit_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t moduleID)
 void CrossInit_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t moduleID)
 {
     /*! - subscribe to the control vector Lr input message  */
-    configData->inputVehControlID = subscribeToMessage(configData->inputVehControlName,
+    configData->controlTorqueInMsgID = subscribeToMessage(configData->inputVehControlName,
                                                        sizeof(CmdTorqueBodyIntMsg), moduleID);
 
     /*! - suscribe to the RW parameter message */
@@ -122,19 +122,18 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, ui
     RWArrayTorqueIntMsg rwMotorTorques;         /* Msg struct to store the output message */
     int i,j,k;
     double Lr_B[3];                             /* [Nm]    commanded ADCS control torque in body frame*/
-    double Lr_C[3];                             /* [Nm]    commanded ADCS control torque in control frame */
+    double Lr_C[3];                             /* [Nm]    commanded ADCS control torque projected onto control axes */
     double us[MAX_EFF_CNT];                     /* [Nm]    commanded ADCS control torque projected onto RWs g_s-Frames */
     double CGs[3][MAX_EFF_CNT];                 /* []      projection matrix from gs_i onto control axes */
 
-    /*! - zero availability message (default is RW is available */
-    memset(&wheelsAvailability, 0x0, sizeof(RWAvailabilityFswMsg)); // wheelAvailability set to 0 (AVAILABLE) by default
     /*! - zero control torque and RW motor torque variables */
     v3SetZero(Lr_C);
     vSetZero(us, MAX_EFF_CNT);
+    memset(&wheelsAvailability, 0x0, sizeof(RWAvailabilityFswMsg)); // wheelAvailability set to 0 (AVAILABLE) by default
     
     /*! - Read the input messages */
     memset(&LrInputMsg, 0x0, sizeof(CmdTorqueBodyIntMsg));
-    ReadMessage(configData->inputVehControlID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->controlTorqueInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CmdTorqueBodyIntMsg), (void*) &(LrInputMsg), moduleID);
     v3Copy(LrInputMsg.torqueRequestBody, Lr_B);
 
@@ -144,7 +143,6 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, ui
         int numAvailRW = 0;
 
         /*! - Read in current RW availabilit Msg */
-        memset(&wheelsAvailability, 0x0, sizeof(RWAvailabilityFswMsg));
         ReadMessage(configData->rwAvailInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(RWAvailabilityFswMsg), &wheelsAvailability, moduleID);
 
@@ -179,46 +177,19 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, ui
         double v3_temp[3]; /* inv([M]) [Lr_C] */
         double M33[3][3]; /* [M] = [CGs][CGs].T */
         double us_avail[MAX_EFF_CNT];   /* matrix of available RW motor torques */
-
+        
         v3SetZero(v3_temp);
-        /*! - Check if controlling full 3D torque */
-        if (configData->numControlAxes == 3){
-            for (i=0; i<configData->numControlAxes; i++) {
-                for (j=0; j<configData->numControlAxes; j++) {
-                    M33[i][j] = 0.0;
-                    for (k=0; k < configData->numAvailRW; k++) {
-                        M33[i][j] += CGs[i][k]*CGs[j][k];
-                    }
+        mSetIdentity(M33, 3, 3);
+        for (i=0; i<configData->numControlAxes; i++) {
+            for (j=0; j<configData->numControlAxes; j++) {
+                M33[i][j] = 0.0;
+                for (k=0; k < configData->numAvailRW; k++) {
+                    M33[i][j] += CGs[i][k]*CGs[j][k];
                 }
             }
-            m33Inverse(M33, M33);
-            m33MultV3(M33, Lr_C, v3_temp);
-        /*! - Check if controlling a 2D torque vector */
-        } else if (configData->numControlAxes == 2){
-            double M22[2][2];
-            for (i=0; i<configData->numControlAxes; i++) {
-                for (j=0; j<configData->numControlAxes; j++) {
-                    M22[i][j] = 0.0;
-                    for (k=0; k < configData->numAvailRW; k++) {
-                        M22[i][j] += CGs[i][k]*CGs[j][k];
-                    }
-                }
-            }
-            m22Inverse(M22, M22);
-            m22MultV2(M22, Lr_C, v3_temp);
-        /*! - Check if controlling a single torque axis */
-        } else if (configData->numControlAxes == 1){
-            double M11[1][1];
-            for (i=0; i<configData->numControlAxes; i++) {
-                for (j=0; j<configData->numControlAxes; j++) {
-                    M11[i][j] = 0.0;
-                    for (k=0; k < configData->numAvailRW; k++) {
-                        M11[i][j] += CGs[i][k]*CGs[j][k];
-                    }
-                }
-            }
-            v3_temp[0] = 1.0 / M11[0][0] * Lr_C[0];
         }
+        m33Inverse(M33, M33);
+        m33MultV3(M33, Lr_C, v3_temp);
 
         /*! - compute the desired RW motor torques */
         /* us = [CGs].T v3_temp */
@@ -228,7 +199,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *configData, uint64_t callTime, ui
                 us_avail[i] += CGs[j][i] * v3_temp[j];
             }
         }
-
+        
         /*! - map the desired RW motor torques to the available RWs */
         j = 0;
         for (i = 0; i < configData->rwConfigParams.numRW; i++) {
