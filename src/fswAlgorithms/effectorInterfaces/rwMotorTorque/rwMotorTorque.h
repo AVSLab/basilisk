@@ -50,7 +50,7 @@ typedef struct {
     char     outputDataName[MAX_STAT_MSG_LENGTH];   //!< The name of the output message
     int32_t  outputMsgID;                           //!< ID for the outgoing message
     char inputVehControlName[MAX_STAT_MSG_LENGTH];  //!< The name of the vehicle control (Lr) Input message
-    int32_t  inputVehControlID;                     //!< ID for the incoming Lr control message
+    int32_t  controlTorqueInMsgID;                     //!< ID for the incoming Lr control message
     
     char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];    //!< The name of the RWArrayConfigFswMsg input message
     int32_t rwParamsInMsgID;                        //!< [-] ID for the RWArrayConfigFswMsg ingoing message
