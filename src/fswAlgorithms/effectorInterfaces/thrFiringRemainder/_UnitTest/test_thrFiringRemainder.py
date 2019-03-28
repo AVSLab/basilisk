@@ -24,9 +24,11 @@
 #   Creation Date:      August 25, 2016
 #
 
-import sys, os, inspect
-import numpy as np
+
 import pytest
+import os, inspect
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
 
 
 
@@ -37,9 +39,7 @@ import pytest
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import thrFiringRemainder            # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
@@ -258,6 +258,7 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
 
     # compare the module results to the truth values
     accuracy = 1e-12
+    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
     for i in range(0,len(trueVector)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], numThrusters, accuracy):
@@ -268,20 +269,16 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
                                 "sec\n")
 
 
-    # If the argument provided at commandline "--show_plots" evaluates as true,
-    # plot all figures
-    # if show_plots:
-        # plot a sample variable.
-        # plt.figure(1)
-        # plt.plot(variableState[:,0]*macros.NANO2SEC, variableState[:,1], label='Sample Variable')
-        # plt.legend(loc='upper left')
-        # plt.xlabel('Time [s]')
-        # plt.ylabel('Variable Description [unit]')
-        # plt.show()
-
-    #   print out success message if no error were found
+    snippentName = "passFail" + str(resetCheck) + str(dvOn)
     if testFailCount == 0:
+        colorText = 'ForestGreen'
         print "PASSED: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        print "Failed: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

@@ -47,6 +47,8 @@ We are very excited by the great capabilities that this software already has, an
     <li>
     Updated `mrpMotorTorque()` with code cleanup, updated doxygen comments, PDF documentation and comprehensive unit test.
     </li>
+    <li> Added documentation to `thrFiringRemainder` module
+    </li>
 </ul>
 
 
