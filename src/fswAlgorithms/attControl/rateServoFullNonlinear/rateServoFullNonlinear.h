@@ -31,12 +31,13 @@
 #include <stdint.h>
 
 /*! \defgroup rateServoFullNonlinear
- * @{
- */
-
-/*!@brief Data structure for the module that uses the attiude steering message and
+ * @brief This module implements a nonlinear rate servo control uses the attiude steering message and
  determine the ADCS control torque vector.
-
+ 
+ The module [PDF Description](Basilisk-Sim-nonlinRateServo-2019-0327.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+ @{
  */
 
 typedef struct {

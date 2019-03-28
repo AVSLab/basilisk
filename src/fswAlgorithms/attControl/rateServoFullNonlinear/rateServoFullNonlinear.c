@@ -32,9 +32,9 @@
 #include <string.h>
 #include <math.h>
 
-/*! This method initializes the configData for this module.
+/*! @brief This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
- output message
+ output message [CmdTorqueBodyIntMsg](\ref CmdTorqueBodyIntMsg)
  @return void
  @param configData The configuration data associated with this module
  */
@@ -49,7 +49,13 @@ void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, u
 }
 
 /*! This method performs the second stage of initialization for this module.
- Its primary function is to link the input messages that were created elsewhere.
+ Its primary function is to link the input messages that were created elsewhere. The required
+ input messages are the attitude tracking error message of type [AttGuidFswMsg](\ref AttGuidFswMsg)
+ the vehicle configuration message of type [VehicleConfigFswMsg](\ref VehicleConfigFswMsg),
+ and the rate command message of type [RateCmdFswMsg](\ref RateCmdFswMsg).
+ Optional messages are the RW configuration message of type [RWArrayConfigFswMsg](\ref RWArrayConfigFswMsg),
+ the RW speed message of type [RWSpeedIntMsg](\ref RWSpeedIntMsg)
+ and the RW availability message of type [RWAvailabilityFswMsg](\ref RWAvailabilityFswMsg).
  @return void
  @param configData The configuration data associated with this module
  */
@@ -85,7 +91,7 @@ void CrossInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
- @param configData The configuration data associated with the MRP steering control
+ @param configData The configuration data associated with the servo rate control
  */
 void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
@@ -116,29 +122,29 @@ void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint
 
 }
 
-/*! This method takes the attitude and rate errors relative to the Reference frame, as well as
+/*! This method takes and rate errors relative to the Reference frame, as well as
     the reference frame angular rates and acceleration, and computes the required control torque Lr.
  @return void
- @param configData The configuration data associated with the MRP Steering attitude control
+ @param configData The configuration data associated with the servo rate control
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t callTime,
     uint64_t moduleID)
 {
-    AttGuidFswMsg       guidCmd;            /*!< Guidance Message */
-    RWSpeedIntMsg       wheelSpeeds;        /*!< Reaction wheel speed estimates */
-    RWAvailabilityFswMsg wheelsAvailability;/*!< Reaction wheel availability */
-    RateCmdFswMsg       rateGuid;           /*!< rate steering law message */
+    AttGuidFswMsg       guidCmd;            /* Guidance Message */
+    RWSpeedIntMsg       wheelSpeeds;        /* Reaction wheel speed estimates */
+    RWAvailabilityFswMsg wheelsAvailability;/* Reaction wheel availability */
+    RateCmdFswMsg       rateGuid;           /* rate steering law message */
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
-    double              dt;                 /*!< [s] control update period */
+    double              dt;                 /* [s] control update period */
     
-    double              Lr[3];              /*!< required control torque vector [Nm] */
-    double              omega_BastN_B[3];   /*!< angular velocity of B^ast relative to inertial N, in body frame components */
-    double              omega_BBast_B[3];   /*!< angular velocity tracking error between actual  body frame B and desired B^ast frame */
-    double              omega_BN_B[3];      /*!< angular rate of the body B relative to inertial N, in body frame compononents */
-    double              *wheelGs;           /*!< Reaction wheel spin axis pointer */
-    /*!< Temporary variables */
+    double              Lr[3];              /* required control torque vector [Nm] */
+    double              omega_BastN_B[3];   /* angular velocity of B^ast relative to inertial N, in body frame components */
+    double              omega_BBast_B[3];   /* angular velocity tracking error between actual  body frame B and desired B^ast frame */
+    double              omega_BN_B[3];      /* angular rate of the body B relative to inertial N, in body frame compononents */
+    double              *wheelGs;           /* Reaction wheel spin axis pointer */
+    /* Temporary variables */
     double              v3_1[3];
     double              v3_2[3];
     double              v3_3[3];
@@ -151,7 +157,7 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     
     /*! Begin method steps*/
     
-    /* compute control update time */
+    /*! compute control update time */
     if (configData->priorTime == 0) {
         dt = 0.0;
     } else {
@@ -179,14 +185,14 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
         }
     }
     
-    /* compute body rate */
+    /*! compute body rate */
     v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
 
-    /* compute the rate tracking error */
+    /*! compute the rate tracking error */
     v3Add(rateGuid.omega_BastR_B, guidCmd.omega_RN_B, omega_BastN_B);
     v3Subtract(omega_BN_B, omega_BastN_B, omega_BBast_B);
 
-    /* integrate rate tracking error  */
+    /*! integrate rate tracking error  */
     if (configData->Ki > 0) {   /* check if integral feedback is turned on  */
         v3Scale(dt, omega_BBast_B, v3_1);
         v3Add(v3_1, configData->z, configData->z);             /* z = integral(del_omega) */
@@ -201,7 +207,7 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
         v3SetZero(configData->z);
     }
 
-    /* evaluate required attitude control torque Lr */
+    /*! evaluate required attitude control torque Lr */
     v3Scale(configData->P, omega_BBast_B, Lr);              /* +P delta_omega */
     v3Scale(configData->Ki, configData->z, v3_2);
     v3Add(v3_2, Lr, Lr);                                      /* +Ki*z */
@@ -232,7 +238,7 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     
     /* Change sign to compute the net positive control torque onto the spacecraft */
     v3Scale(-1.0, Lr, Lr);
-    /* Store the output message and pass it to the message bus */
+    /*! Store the output message and pass it to the message bus */
     v3Copy(Lr, configData->controlOut.torqueRequestBody);
     WriteMessage(configData->outputMsgID, callTime, sizeof(CmdTorqueBodyIntMsg),
                  (void*) &(configData->controlOut), moduleID);
