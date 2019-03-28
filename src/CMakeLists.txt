@@ -267,6 +267,7 @@ function(findAndCreateSwigModules SubModule)
 	    set(SWIG_MODULE_${FileBase}_EXTRA_DEPS ${impl_files} ${gen_files} ${swig_dep_files})
 	    MAKE_SWIG_MODULE(${FileBase} python ${module} ${impl_files} ${gen_files})
 	    SWIG_LINK_LIBRARIES(${FileBase} ${PYTHON_LIBRARIES})
+	    SWIG_LINK_LIBRARIES(${FileBase} ${CONAN_LIBS})
 
 	    foreach(LibFile ${LIBRARY_BUILD_LIST})
 	         SWIG_LINK_LIBRARIES(${FileBase} ${LibFile})
