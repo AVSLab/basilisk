@@ -206,21 +206,21 @@ function(findAndCreateSwigModules SubModule)
 	get_property(ALG_LIST GLOBAL PROPERTY ALG_LIB_LIST)
 
 	foreach(module ${swig_modules})	
-		get_filename_component(FileBase ${module} NAME_WE)
-		get_filename_component(FileDir ${module} DIRECTORY)
+	    get_filename_component(FileBase ${module} NAME_WE)
+            get_filename_component(FileDir ${module} DIRECTORY)
 		
 	
  	    if(NOT USE_PROTOBUFFERS AND (module IN_LIST requires_protobuff_modules))
- 		    continue()
- 		endif()
+               continue()
+ 	    endif()
 
-		if(USE_PROTOBUFFERS AND (module IN_LIST requires_protobuff_modules))
-    		message(STATUS "Found " ${module})
-			message("FileBase " ${FileBase})
-			message("FileDir " ${FileDir})
-		endif()
+	    if(USE_PROTOBUFFERS AND (module IN_LIST requires_protobuff_modules))
+    	       message(STATUS "Found " ${module})
+	       message("CONAN_LIBS " ${CONAN_LIBS})
+	       SWIG_LINK_LIBRARIES(${FileBase} ${CONAN_LIBS})
+	    endif()
 		
-		set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
+	    set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
 	
 	    file(GLOB impl_files
 		    "${FileDir}/*.cpp"
