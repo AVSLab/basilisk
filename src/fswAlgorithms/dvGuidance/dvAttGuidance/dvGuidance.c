@@ -55,6 +55,18 @@ void CrossInit_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t moduleID)
     
 }
 
+/*! @brief This resets the module.
+ @return void
+ @param ConfigData The configuration data associated with this module
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the ConfigData
+ */
+void Reset_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
+                       uint64_t moduleID)
+{
+    return;
+}
+
 /*! This method takes its own internal variables and creates an output attitude 
     command to use for burn execution.  It also flags whether the burn should 
     be happening or not.

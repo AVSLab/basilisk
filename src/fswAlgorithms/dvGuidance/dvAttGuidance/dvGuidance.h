@@ -48,7 +48,9 @@ extern "C" {
     void CrossInit_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t moduleID);
     void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
         uint64_t moduleID);
-    
+    void Reset_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
+                           uint64_t moduleID);
+
 #ifdef __cplusplus
 }
 #endif
