@@ -55,20 +55,20 @@ typedef struct {
 
     /* declare module IO interfaces */
     char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];    //!< The name of the RWArrayConfigFswMsg input message
-    int32_t rwParamsInMsgID;                        //!< [-] ID for the RWArrayConfigFswMsg ingoing message
+    int32_t rwParamsInMsgId;                        //!< [-] ID for the RWArrayConfigFswMsg ingoing message
     char vehConfigInMsgName[MAX_STAT_MSG_LENGTH];
-    int32_t vehConfigInMsgID;
+    int32_t vehConfigInMsgId;
     char rwAvailInMsgName[MAX_STAT_MSG_LENGTH];     //!< [-] The name of the RWs availability message
-    int32_t rwAvailInMsgID;                         //!< [-] ID for the incoming  RWs availability data
+    int32_t rwAvailInMsgId;                         //!< [-] ID for the incoming  RWs availability data
     
     char outputDataName[MAX_STAT_MSG_LENGTH];       //!< The name of the output message
-    int32_t outputMsgID;                            //!< [] ID for the outgoing body accel requests
+    int32_t cmdTorqueOutMsgId;                      //!< [] ID for the outgoing body accel requests
     char inputGuidName[MAX_STAT_MSG_LENGTH];        //!< The name of the Input message
-    int32_t inputGuidID;                            //!< [] ID for the incoming guidance errors
+    int32_t guidInMsgId;                            //!< [] ID for the incoming guidance errors
     char inputRWSpeedsName[MAX_STAT_MSG_LENGTH];    //!< [] The name for the reaction wheel speeds message
-    int32_t inputRWSpeedsID;                        //!< [] The ID for the reaction wheel speeds message
+    int32_t rwSpeedsInMsgId;                        //!< [] The ID for the reaction wheel speeds message
     char inputRateSteeringName[MAX_STAT_MSG_LENGTH];//!< [] the name of the steering law message
-    int32_t inputRateSteeringID;                    //!< [] ID for the incoming steering law message 
+    int32_t rateSteeringInMsgId;                    //!< [] ID for the incoming steering law message
     
 }rateServoFullNonlinearConfig;
 

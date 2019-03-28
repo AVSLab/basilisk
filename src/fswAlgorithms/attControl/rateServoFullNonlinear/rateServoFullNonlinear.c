@@ -43,7 +43,7 @@ void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, u
     
     /*! Begin method steps */
     /*! - Create output message for module */
-    configData->outputMsgID = CreateNewMessage(configData->outputDataName,
+    configData->cmdTorqueOutMsgId = CreateNewMessage(configData->outputDataName,
         sizeof(CmdTorqueBodyIntMsg), "CmdTorqueBodyIntMsg", moduleID);
 
 }
@@ -62,27 +62,27 @@ void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, u
 void CrossInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t moduleID)
 {
     /*! - Get the control data message IDs*/
-    configData->inputGuidID = subscribeToMessage(configData->inputGuidName,
+    configData->guidInMsgId = subscribeToMessage(configData->inputGuidName,
                                                  sizeof(AttGuidFswMsg), moduleID);
-    configData->vehConfigInMsgID = subscribeToMessage(configData->vehConfigInMsgName,
+    configData->vehConfigInMsgId = subscribeToMessage(configData->vehConfigInMsgName,
                                                  sizeof(VehicleConfigFswMsg), moduleID);
-    configData->inputRateSteeringID = subscribeToMessage(configData->inputRateSteeringName,
+    configData->rateSteeringInMsgId = subscribeToMessage(configData->inputRateSteeringName,
                                                      sizeof(RateCmdFswMsg), moduleID);
-    configData->rwParamsInMsgID = -1;
-    configData->inputRWSpeedsID = -1;
-    configData->rwAvailInMsgID = -1;
+    configData->rwParamsInMsgId = -1;
+    configData->rwSpeedsInMsgId = -1;
+    configData->rwAvailInMsgId = -1;
     
     if(strlen(configData->rwParamsInMsgName) > 0) {
-        configData->rwParamsInMsgID = subscribeToMessage(configData->rwParamsInMsgName,
+        configData->rwParamsInMsgId = subscribeToMessage(configData->rwParamsInMsgName,
                                                          sizeof(RWArrayConfigFswMsg), moduleID);
         if (strlen(configData->inputRWSpeedsName) > 0) {
-            configData->inputRWSpeedsID = subscribeToMessage(configData->inputRWSpeedsName,
+            configData->rwSpeedsInMsgId = subscribeToMessage(configData->inputRWSpeedsName,
                                                              sizeof(RWSpeedIntMsg), moduleID);
         } else {
             BSK_PRINT(MSG_ERROR,"The inputRWSpeedsName wasn't set while rwParamsInMsgName was set.\n");
         }
         if(strlen(configData->rwAvailInMsgName) > 0) {
-            configData->rwAvailInMsgID = subscribeToMessage(configData->rwAvailInMsgName,
+            configData->rwAvailInMsgId = subscribeToMessage(configData->rwAvailInMsgName,
                                                             sizeof(RWAvailabilityFswMsg), moduleID);
         }
     }
@@ -101,16 +101,16 @@ void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint
     int i;    
 
     VehicleConfigFswMsg sc;
-    ReadMessage(configData->vehConfigInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->vehConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
     for (i=0; i < 9; i++){
         configData->ISCPntB_B[i] = sc.ISCPntB_B[i];
     };
     
     configData->rwConfigParams.numRW = 0;
-    if (configData->rwParamsInMsgID >= 0) {
+    if (configData->rwParamsInMsgId >= 0) {
         /*! - Read static RW config data message and store it in module variables*/
-        ReadMessage(configData->rwParamsInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+        ReadMessage(configData->rwParamsInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(RWArrayConfigFswMsg), &(configData->rwConfigParams), moduleID);
     }
     
@@ -173,19 +173,19 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     /*! - Zero and read the dynamic input messages */
     memset(&guidCmd, 0x0, sizeof(AttGuidFswMsg));
     memset(&rateGuid, 0x0, sizeof(RateCmdFswMsg));
-    ReadMessage(configData->inputGuidID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->guidInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);
-    ReadMessage(configData->inputRateSteeringID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->rateSteeringInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(RateCmdFswMsg), (void*) &(rateGuid), moduleID);
 
 
     memset(wheelSpeeds.wheelSpeeds, 0x0, MAX_EFF_CNT * sizeof(double));
     memset(wheelsAvailability.wheelAvailability, 0x0, MAX_EFF_CNT * sizeof(int)); // wheelAvailability set to 0 (AVAILABLE) by default
     if(configData->rwConfigParams.numRW > 0) {
-        ReadMessage(configData->inputRWSpeedsID, &timeOfMsgWritten, &sizeOfMsgWritten,
+        ReadMessage(configData->rwSpeedsInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(RWSpeedIntMsg), (void*) &(wheelSpeeds), moduleID);
-        if (configData->rwAvailInMsgID >= 0){
-            ReadMessage(configData->rwAvailInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+        if (configData->rwAvailInMsgId >= 0){
+            ReadMessage(configData->rwAvailInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                         sizeof(RWAvailabilityFswMsg), &wheelsAvailability, moduleID);
         }
     }
@@ -246,7 +246,7 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     
     /*! Set output message and pass it to the message bus */
     v3Copy(Lr, controlOut.torqueRequestBody);
-    WriteMessage(configData->outputMsgID, callTime, sizeof(CmdTorqueBodyIntMsg),
+    WriteMessage(configData->cmdTorqueOutMsgId, callTime, sizeof(CmdTorqueBodyIntMsg),
                  (void*) &(controlOut), moduleID);
     
     return;
