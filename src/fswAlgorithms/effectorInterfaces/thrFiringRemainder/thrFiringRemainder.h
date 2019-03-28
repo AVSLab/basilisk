@@ -60,10 +60,7 @@ typedef struct {
 	int32_t 			onTimeOutMsgId;                            		//!< ID for the outgoing message
 	char 				thrConfInMsgName[MAX_STAT_MSG_LENGTH];			//!< The name of the thruster cluster Input message
 	int32_t  			thrConfInMsgId;                   				//!< ID for the incoming Thruster configuration data
-
-	THRArrayCmdForceFswMsg thrForceIn;									//!< -- copy of the input message
-	THRArrayOnTimeCmdIntMsg thrOnTimeOut;								//!< -- copy of the output message
-
+    
 }thrFiringRemainderConfig;
 
 #ifdef __cplusplus
