@@ -32,18 +32,18 @@
 #include <string.h>
 #include <math.h>
 
-/*! This method initializes the ConfigData for this module.
+/*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
  output message
  @return void
- @param ConfigData The configuration data associated with this module
+ @param configData The configuration data associated with this module
  */
-void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, uint64_t moduleID)
+void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t moduleID)
 {
     
     /*! Begin method steps */
     /*! - Create output message for module */
-    ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
+    configData->outputMsgID = CreateNewMessage(configData->outputDataName,
         sizeof(CmdTorqueBodyIntMsg), "CmdTorqueBodyIntMsg", moduleID);
 
 }
@@ -51,32 +51,32 @@ void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, u
 /*! This method performs the second stage of initialization for this module.
  Its primary function is to link the input messages that were created elsewhere.
  @return void
- @param ConfigData The configuration data associated with this module
+ @param configData The configuration data associated with this module
  */
-void CrossInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, uint64_t moduleID)
+void CrossInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t moduleID)
 {
     /*! - Get the control data message IDs*/
-    ConfigData->inputGuidID = subscribeToMessage(ConfigData->inputGuidName,
+    configData->inputGuidID = subscribeToMessage(configData->inputGuidName,
                                                  sizeof(AttGuidFswMsg), moduleID);
-    ConfigData->vehConfigInMsgID = subscribeToMessage(ConfigData->vehConfigInMsgName,
+    configData->vehConfigInMsgID = subscribeToMessage(configData->vehConfigInMsgName,
                                                  sizeof(VehicleConfigFswMsg), moduleID);
-    ConfigData->inputRateSteeringID = subscribeToMessage(ConfigData->inputRateSteeringName,
+    configData->inputRateSteeringID = subscribeToMessage(configData->inputRateSteeringName,
                                                      sizeof(RateCmdFswMsg), moduleID);
-    ConfigData->rwParamsInMsgID = -1;
-    ConfigData->inputRWSpeedsID = -1;
-    ConfigData->rwAvailInMsgID = -1;
+    configData->rwParamsInMsgID = -1;
+    configData->inputRWSpeedsID = -1;
+    configData->rwAvailInMsgID = -1;
     
-    if(strlen(ConfigData->rwParamsInMsgName) > 0) {
-        ConfigData->rwParamsInMsgID = subscribeToMessage(ConfigData->rwParamsInMsgName,
+    if(strlen(configData->rwParamsInMsgName) > 0) {
+        configData->rwParamsInMsgID = subscribeToMessage(configData->rwParamsInMsgName,
                                                          sizeof(RWArrayConfigFswMsg), moduleID);
-        if (strlen(ConfigData->inputRWSpeedsName) > 0) {
-            ConfigData->inputRWSpeedsID = subscribeToMessage(ConfigData->inputRWSpeedsName,
+        if (strlen(configData->inputRWSpeedsName) > 0) {
+            configData->inputRWSpeedsID = subscribeToMessage(configData->inputRWSpeedsName,
                                                              sizeof(RWSpeedIntMsg), moduleID);
         } else {
             BSK_PRINT(MSG_ERROR,"The inputRWSpeedsName wasn't set while rwParamsInMsgName was set.\n");
         }
-        if(strlen(ConfigData->rwAvailInMsgName) > 0) {
-            ConfigData->rwAvailInMsgID = subscribeToMessage(ConfigData->rwAvailInMsgName,
+        if(strlen(configData->rwAvailInMsgName) > 0) {
+            configData->rwAvailInMsgID = subscribeToMessage(configData->rwAvailInMsgName,
                                                             sizeof(RWAvailabilityFswMsg), moduleID);
         }
     }
@@ -85,9 +85,9 @@ void CrossInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
- @param ConfigData The configuration data associated with the MRP steering control
+ @param configData The configuration data associated with the MRP steering control
  */
-void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
     /*! - Read the input messages */
     uint64_t timeOfMsgWritten;
@@ -95,34 +95,34 @@ void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, uint
     int i;    
 
     VehicleConfigFswMsg sc;
-    ReadMessage(ConfigData->vehConfigInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->vehConfigInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
     for (i=0; i < 9; i++){
-        ConfigData->ISCPntB_B[i] = sc.ISCPntB_B[i];
+        configData->ISCPntB_B[i] = sc.ISCPntB_B[i];
     };
     
-    ConfigData->rwConfigParams.numRW = 0;
-    if (ConfigData->rwParamsInMsgID >= 0) {
+    configData->rwConfigParams.numRW = 0;
+    if (configData->rwParamsInMsgID >= 0) {
         /*! - Read static RW config data message and store it in module variables*/
-        ReadMessage(ConfigData->rwParamsInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                    sizeof(RWArrayConfigFswMsg), &(ConfigData->rwConfigParams), moduleID);
+        ReadMessage(configData->rwParamsInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+                    sizeof(RWArrayConfigFswMsg), &(configData->rwConfigParams), moduleID);
     }
     
     /* Reset the integral measure of the rate tracking error */
-    v3SetZero(ConfigData->z);
+    v3SetZero(configData->z);
     /* Reset the prior time flag state.
      If zero, control time step not evaluated on the first function call */
-    ConfigData->priorTime = 0;
+    configData->priorTime = 0;
 
 }
 
 /*! This method takes the attitude and rate errors relative to the Reference frame, as well as
     the reference frame angular rates and acceleration, and computes the required control torque Lr.
  @return void
- @param ConfigData The configuration data associated with the MRP Steering attitude control
+ @param configData The configuration data associated with the MRP Steering attitude control
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, uint64_t callTime,
+void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t callTime,
     uint64_t moduleID)
 {
     AttGuidFswMsg       guidCmd;            /*!< Guidance Message */
@@ -152,29 +152,29 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, uin
     /*! Begin method steps*/
     
     /* compute control update time */
-    if (ConfigData->priorTime == 0) {
+    if (configData->priorTime == 0) {
         dt = 0.0;
     } else {
-        dt = (callTime - ConfigData->priorTime) * NANO2SEC;
+        dt = (callTime - configData->priorTime) * NANO2SEC;
     }
-    ConfigData->priorTime = callTime;
+    configData->priorTime = callTime;
 
     /*! - Zero and read the dynamic input messages */
     memset(&guidCmd, 0x0, sizeof(AttGuidFswMsg));
     memset(&rateGuid, 0x0, sizeof(RateCmdFswMsg));
-    ReadMessage(ConfigData->inputGuidID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->inputGuidID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);
-    ReadMessage(ConfigData->inputRateSteeringID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->inputRateSteeringID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(RateCmdFswMsg), (void*) &(rateGuid), moduleID);
 
 
     memset(wheelSpeeds.wheelSpeeds, 0x0, MAX_EFF_CNT * sizeof(double));
     memset(wheelsAvailability.wheelAvailability, 0x0, MAX_EFF_CNT * sizeof(int)); // wheelAvailability set to 0 (AVAILABLE) by default
-    if(ConfigData->rwConfigParams.numRW > 0) {
-        ReadMessage(ConfigData->inputRWSpeedsID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    if(configData->rwConfigParams.numRW > 0) {
+        ReadMessage(configData->inputRWSpeedsID, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(RWSpeedIntMsg), (void*) &(wheelSpeeds), moduleID);
-        if (ConfigData->rwAvailInMsgID >= 0){
-            ReadMessage(ConfigData->rwAvailInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+        if (configData->rwAvailInMsgID >= 0){
+            ReadMessage(configData->rwAvailInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                         sizeof(RWAvailabilityFswMsg), &wheelsAvailability, moduleID);
         }
     }
@@ -187,32 +187,32 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, uin
     v3Subtract(omega_BN_B, omega_BastN_B, omega_BBast_B);
 
     /* integrate rate tracking error  */
-    if (ConfigData->Ki > 0) {   /* check if integral feedback is turned on  */
+    if (configData->Ki > 0) {   /* check if integral feedback is turned on  */
         v3Scale(dt, omega_BBast_B, v3_1);
-        v3Add(v3_1, ConfigData->z, ConfigData->z);             /* z = integral(del_omega) */
+        v3Add(v3_1, configData->z, configData->z);             /* z = integral(del_omega) */
         for (i=0;i<3;i++) {
-            intLimCheck = fabs(ConfigData->z[i]);
-            if (intLimCheck > ConfigData->integralLimit) {
-                ConfigData->z[i] *= ConfigData->integralLimit/intLimCheck;
+            intLimCheck = fabs(configData->z[i]);
+            if (intLimCheck > configData->integralLimit) {
+                configData->z[i] *= configData->integralLimit/intLimCheck;
             }
         }
     } else {
         /* integral feedback is turned off through a negative gain setting */
-        v3SetZero(ConfigData->z);
+        v3SetZero(configData->z);
     }
 
     /* evaluate required attitude control torque Lr */
-    v3Scale(ConfigData->P, omega_BBast_B, Lr);              /* +P delta_omega */
-    v3Scale(ConfigData->Ki, ConfigData->z, v3_2);
+    v3Scale(configData->P, omega_BBast_B, Lr);              /* +P delta_omega */
+    v3Scale(configData->Ki, configData->z, v3_2);
     v3Add(v3_2, Lr, Lr);                                      /* +Ki*z */
 
     /* Lr += - omega_BastN x ([I]omega + [Gs]h_s) */
-    m33MultV3(RECAST3X3 ConfigData->ISCPntB_B, omega_BN_B, v3_3);
-    for(i = 0; i < ConfigData->rwConfigParams.numRW; i++)
+    m33MultV3(RECAST3X3 configData->ISCPntB_B, omega_BN_B, v3_3);
+    for(i = 0; i < configData->rwConfigParams.numRW; i++)
     {
         if (wheelsAvailability.wheelAvailability[i] == AVAILABLE){ /* check if wheel is available */
-            wheelGs = &(ConfigData->rwConfigParams.GsMatrix_B[i*3]);
-            v3Scale(ConfigData->rwConfigParams.JsList[i] * (v3Dot(omega_BN_B, wheelGs) + wheelSpeeds.wheelSpeeds[i]),
+            wheelGs = &(configData->rwConfigParams.GsMatrix_B[i*3]);
+            v3Scale(configData->rwConfigParams.JsList[i] * (v3Dot(omega_BN_B, wheelGs) + wheelSpeeds.wheelSpeeds[i]),
                     wheelGs, v3_4);
             v3Add(v3_4, v3_3, v3_3);
         }
@@ -224,18 +224,18 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, uin
     v3Cross(omega_BN_B, guidCmd.omega_RN_B, v3_5);
     v3Subtract(guidCmd.domega_RN_B, v3_5, v3_6);
     v3Add(v3_6, rateGuid.omegap_BastR_B, v3_6);
-    m33MultV3(RECAST3X3 ConfigData->ISCPntB_B, v3_6, v3_7);
+    m33MultV3(RECAST3X3 configData->ISCPntB_B, v3_6, v3_7);
     v3Subtract(Lr, v3_7, Lr);
     
     /* Add external torque: Lr += L */
-    v3Add(ConfigData->knownTorquePntB_B, Lr, Lr);
+    v3Add(configData->knownTorquePntB_B, Lr, Lr);
     
     /* Change sign to compute the net positive control torque onto the spacecraft */
     v3Scale(-1.0, Lr, Lr);
     /* Store the output message and pass it to the message bus */
-    v3Copy(Lr, ConfigData->controlOut.torqueRequestBody);
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(CmdTorqueBodyIntMsg),
-                 (void*) &(ConfigData->controlOut), moduleID);
+    v3Copy(Lr, configData->controlOut.torqueRequestBody);
+    WriteMessage(configData->outputMsgID, callTime, sizeof(CmdTorqueBodyIntMsg),
+                 (void*) &(configData->controlOut), moduleID);
     
     return;
 }
