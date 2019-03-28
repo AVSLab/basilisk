@@ -73,7 +73,6 @@ typedef struct {
     char inputRateSteeringName[MAX_STAT_MSG_LENGTH];  /*!< [] the name of the steering law message */
     int32_t inputRateSteeringID;                /*!< [] ID for the incoming steering law message */
     
-    CmdTorqueBodyIntMsg controlOut;             /*!< [] Control output requests */
 }rateServoFullNonlinearConfig;
 
 #ifdef __cplusplus
