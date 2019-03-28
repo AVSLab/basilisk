@@ -75,15 +75,16 @@ void Reset_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
 void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
-    double dcm_BuN[3][3];           /* dcm, inertial to burn frame */
-    double dvUnit[3];
-    double burnY[3];
+    double dcm_BubN[3][3];           /* dcm, inertial to base burn frame */
+    double dcm_ButN[3][3];           /* dcm, inertial to current burn frame */
+    double dcm_ButBub[3][3];         /* dcm, rotating from base to current burn frame */
+    double dvHat_N[3];
+    double bu2_N[3];
 	double burnTime;
 	double rotPRV[3];
-	double rotDCM[3][3];
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
-    DvBurnCmdFswMsg localBurnData;
+    DvBurnCmdFswMsg localBurnData;  /* [-] input message container */
     AttRefFswMsg attCmd;            /* [-] Output attitude command data to send */
 
     /*! - zero the input and output message containers */
@@ -93,26 +94,36 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
     /*! - read in DV burn command input message */
     ReadMessage(ConfigData->inputBurnCmdID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(DvBurnCmdFswMsg), &localBurnData, moduleID);
-    
-    ConfigData->dvMag = v3Norm(localBurnData.dvInrtlCmd);
-    v3Normalize(localBurnData.dvInrtlCmd, dvUnit);
-    v3Copy(dvUnit, dcm_BuN[0]);
-    v3Cross(localBurnData.dvRotVecUnit, dvUnit, burnY);
-    v3Normalize(burnY, dcm_BuN[1]);
-    v3Cross(dcm_BuN[0], dcm_BuN[1], dcm_BuN[2]);
-    v3Normalize(dcm_BuN[2], dcm_BuN[2]);
 
+    /*! - evaluate DCM from inertial to the base Burn Frame */
+    ConfigData->dvMag = v3Norm(localBurnData.dvInrtlCmd);
+    v3Normalize(localBurnData.dvInrtlCmd, dvHat_N);
+    v3Copy(dvHat_N, dcm_BubN[0]);
+    v3Cross(localBurnData.dvRotVecUnit, dvHat_N, bu2_N);
+    v3Normalize(bu2_N, dcm_BubN[1]);
+    v3Cross(dcm_BubN[0], dcm_BubN[1], dcm_BubN[2]);
+    v3Normalize(dcm_BubN[2], dcm_BubN[2]);
+
+    /*! - evaluate the time since the burn start time */
     burnTime = ((int64_t) callTime - (int64_t) localBurnData.burnStartTime)*NANO2SEC;
+    /* HPS: should we be adding a sanity check on this burnTime calculation, ensuring it is not negative, etc. */
+
+    /*! - evaluate the DCM from inertial to the current Burn frame.
+     The current frame differs from the base burn frame via a constant 3-axis rotation */
     v3SetZero(rotPRV);
     rotPRV[2] = 1.0;
     v3Scale(burnTime*localBurnData.dvRotVecMag, rotPRV, rotPRV);
-    PRV2C(rotPRV, rotDCM);
-	m33MultM33(rotDCM, dcm_BuN, dcm_BuN);
+    PRV2C(rotPRV, dcm_ButBub);
+	m33MultM33(dcm_ButBub, dcm_BubN, dcm_ButN);
 
-	C2MRP(RECAST3X3 &dcm_BuN[0][0], attCmd.sigma_RN);
-	v3Scale(localBurnData.dvRotVecMag, dcm_BuN[2], attCmd.omega_RN_N);
+    /*! - Compute the reference attitude */
+	C2MRP(RECAST3X3 &dcm_ButN, attCmd.sigma_RN);
+    /*! - Compute the reference frame angular rate vector */
+	v3Scale(localBurnData.dvRotVecMag, dcm_ButN[2], attCmd.omega_RN_N);
+    /*! - Zero the reference frame angular acceleration vector */
     v3SetZero(attCmd.domega_RN_N);
 
+    /*! - Write the output message */
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttRefFswMsg),
         &attCmd, moduleID);
     
