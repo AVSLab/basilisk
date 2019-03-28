@@ -46,7 +46,6 @@ void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, u
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
         sizeof(CmdTorqueBodyIntMsg), "CmdTorqueBodyIntMsg", moduleID);
 
-
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -140,8 +139,13 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, uin
     double              omega_BN_B[3];      /*!< angular rate of the body B relative to inertial N, in body frame compononents */
     double              *wheelGs;           /*!< Reaction wheel spin axis pointer */
     /*!< Temporary variables */
-    double              v3[3];
     double              v3_1[3];
+    double              v3_2[3];
+    double              v3_3[3];
+    double              v3_4[3];
+    double              v3_5[3];
+    double              v3_6[3];
+    double              v3_7[3];
     int                 i;
     double              intLimCheck;
     
@@ -155,7 +159,9 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, uin
     }
     ConfigData->priorTime = callTime;
 
-    /*! - Read the dynamic input messages */
+    /*! - Zero and read the dynamic input messages */
+    memset(&guidCmd, 0x0, sizeof(AttGuidFswMsg));
+    memset(&rateGuid, 0x0, sizeof(RateCmdFswMsg));
     ReadMessage(ConfigData->inputGuidID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);
     ReadMessage(ConfigData->inputRateSteeringID, &timeOfMsgWritten, &sizeOfMsgWritten,
@@ -182,8 +188,8 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, uin
 
     /* integrate rate tracking error  */
     if (ConfigData->Ki > 0) {   /* check if integral feedback is turned on  */
-        v3Scale(dt, omega_BBast_B, v3);
-        v3Add(v3, ConfigData->z, ConfigData->z);             /* z = integral(del_omega) */
+        v3Scale(dt, omega_BBast_B, v3_1);
+        v3Add(v3_1, ConfigData->z, ConfigData->z);             /* z = integral(del_omega) */
         for (i=0;i<3;i++) {
             intLimCheck = fabs(ConfigData->z[i]);
             if (intLimCheck > ConfigData->integralLimit) {
@@ -197,29 +203,29 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, uin
 
     /* evaluate required attitude control torque Lr */
     v3Scale(ConfigData->P, omega_BBast_B, Lr);              /* +P delta_omega */
-    v3Scale(ConfigData->Ki, ConfigData->z, v3);
-    v3Add(v3, Lr, Lr);                                      /* +Ki*z */
+    v3Scale(ConfigData->Ki, ConfigData->z, v3_2);
+    v3Add(v3_2, Lr, Lr);                                      /* +Ki*z */
 
     /* Lr += - omega_BastN x ([I]omega + [Gs]h_s) */
-    m33MultV3(RECAST3X3 ConfigData->ISCPntB_B, omega_BN_B, v3);
+    m33MultV3(RECAST3X3 ConfigData->ISCPntB_B, omega_BN_B, v3_3);
     for(i = 0; i < ConfigData->rwConfigParams.numRW; i++)
     {
         if (wheelsAvailability.wheelAvailability[i] == AVAILABLE){ /* check if wheel is available */
             wheelGs = &(ConfigData->rwConfigParams.GsMatrix_B[i*3]);
             v3Scale(ConfigData->rwConfigParams.JsList[i] * (v3Dot(omega_BN_B, wheelGs) + wheelSpeeds.wheelSpeeds[i]),
-                    wheelGs, v3_1);
-            v3Add(v3_1, v3, v3);
+                    wheelGs, v3_4);
+            v3Add(v3_4, v3_3, v3_3);
         }
     }
-    v3Cross(omega_BastN_B, v3, v3_1);
-    v3Subtract(Lr, v3_1, Lr);
+    v3Cross(omega_BastN_B, v3_3, v3_4);
+    v3Subtract(Lr, v3_4, Lr);
     
     /* Lr +=  - [I](d(omega_B^ast/R)/dt + d(omega_r)/dt - omega x omega_r) */
-    v3Cross(omega_BN_B, guidCmd.omega_RN_B, v3);
-    v3Subtract(guidCmd.domega_RN_B, v3, v3_1);
-    v3Add(v3_1, rateGuid.omegap_BastR_B, v3_1);
-    m33MultV3(RECAST3X3 ConfigData->ISCPntB_B, v3_1, v3);
-    v3Subtract(Lr, v3, Lr);
+    v3Cross(omega_BN_B, guidCmd.omega_RN_B, v3_5);
+    v3Subtract(guidCmd.domega_RN_B, v3_5, v3_6);
+    v3Add(v3_6, rateGuid.omegap_BastR_B, v3_6);
+    m33MultV3(RECAST3X3 ConfigData->ISCPntB_B, v3_6, v3_7);
+    v3Subtract(Lr, v3_7, Lr);
     
     /* Add external torque: Lr += L */
     v3Add(ConfigData->knownTorquePntB_B, Lr, Lr);
