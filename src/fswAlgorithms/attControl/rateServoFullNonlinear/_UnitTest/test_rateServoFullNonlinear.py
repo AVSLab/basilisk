@@ -47,18 +47,21 @@ from Basilisk.simulation import simFswInterfaceMessages
 @pytest.mark.parametrize("omegap_BastR_B", [(1.87766650e-04, -3.91233583e-05, 3.56369489e-05), (0, 0, 0)])
 @pytest.mark.parametrize("omega_BastR_B",  [(-2.23886891e-02, 2.47942516e-02, -2.55601849e-02), (0, 0, 0)])
 @pytest.mark.parametrize("integralLimit", [0, 20])
+@pytest.mark.parametrize("extTorque", [(0,0,0), (1,1,1)])
 @pytest.mark.parametrize("useRwAvailability", ["NO", "ON", "OFF"])
 
 
-def test_rate_servo_full_nonlinear(show_plots, rwNum, intGain, omegap_BastR_B, omega_BastR_B, integralLimit, useRwAvailability):
+def test_rate_servo_full_nonlinear(show_plots, rwNum, intGain, omegap_BastR_B, omega_BastR_B, integralLimit,
+                                   extTorque, useRwAvailability):
 
     [testResults, testMessage] = rate_servo_full_nonlinear(show_plots, rwNum, intGain, omegap_BastR_B, omega_BastR_B,
-                                                           integralLimit,useRwAvailability)
+                                                           integralLimit, extTorque, useRwAvailability)
 
     assert testResults < 1, testMessage
 
 
-def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_BastR_B, integralLimit,useRwAvailability):
+def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_BastR_B, integralLimit,
+                              extTorque, useRwAvailability):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -98,7 +101,7 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
     moduleConfig.Ki = intGain
     moduleConfig.P = 150.0
     moduleConfig.integralLimit = integralLimit
-    moduleConfig.knownTorquePntB_B = [0., 0., 0.]
+    moduleConfig.knownTorquePntB_B = extTorque
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
