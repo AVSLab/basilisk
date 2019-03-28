@@ -101,7 +101,7 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
     moduleConfig.Ki = intGain
     moduleConfig.P  = 150.0
     moduleConfig.integralLimit = integralLimit
-    moduleConfig.knownTorquePntB_B = [0., 0., 0.]
+    moduleConfig.knownTorquePntB_B = [1., 1., 1.]
 
 
     #   Create input message and size it because the regular creator of that message
