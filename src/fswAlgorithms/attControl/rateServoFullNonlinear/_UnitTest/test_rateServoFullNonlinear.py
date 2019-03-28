@@ -198,18 +198,6 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
                                                    rateServoFullNonlinear.AVAILABLE, rateServoFullNonlinear.AVAILABLE]
 
 
-    def writeMsgInWheelAvailability():
-        #rwAvailabilityMessage = rateServoFullNonlinear.RWAvailabilityFswMsg()
-        inputMessageSize = rwAvailabilityMessage.getStructSize()
-        unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwAvailInMsgName,
-                                              inputMessageSize, 2) # number of buffers (leave at 2 as default)
-        avail = [rateServoFullNonlinear.AVAILABLE, rateServoFullNonlinear.AVAILABLE, rateServoFullNonlinear.AVAILABLE, rateServoFullNonlinear.AVAILABLE]
-        rwAvailabilityMessage.wheelAvailability = avail
-        unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwAvailInMsgName, inputMessageSize,
-                                              0, rwAvailabilityMessage)
-    if len(moduleConfig.rwAvailInMsgName) > 0:
-        writeMsgInWheelAvailability()
-
     # rateSteering message
     rateSteeringMsg = fswMessages.RateCmdFswMsg()
     inputMessageSize = rateSteeringMsg.getStructSize()
@@ -349,4 +337,5 @@ if __name__ == "__main__":
                                    (0,0,0),     # omegap_BastR_B
                                    (0,0,0),     # omega_BastR_B
                                    20,          # integraLimit
+                                   (0,0,0),     # extTorque
                                    "ON")        # useRwAvailability
