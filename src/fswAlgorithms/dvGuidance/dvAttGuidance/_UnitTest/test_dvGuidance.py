@@ -152,8 +152,7 @@ def dvGuidanceTestFunction(show_plots):
     if show_plots:
         plt.show()
 
-
-    snippentName = "passFail" 
+    snippentName = "passFail"
     if testFailCount == 0:
         colorText = 'ForestGreen'
         print "PASSED: " + moduleWrap.ModelTag
