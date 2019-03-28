@@ -37,7 +37,6 @@ typedef struct {
     double dvMag;            //!< (m/s) Magnitude of the requested deltaV
     int32_t outputMsgID;     //!< (-) ID for the outgoing body estimate message
     int32_t inputBurnCmdID;  //!< [-] ID for the incoming burn command data
-    AttRefFswMsg attCmd;    //!< (-) Output attitude command data to send
 }dvGuidanceConfig;
 
 #ifdef __cplusplus

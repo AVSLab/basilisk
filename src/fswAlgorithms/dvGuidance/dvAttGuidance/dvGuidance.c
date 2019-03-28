@@ -32,8 +32,6 @@
  */
 void SelfInit_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(
         ConfigData->outputDataName, sizeof(AttRefFswMsg), "AttRefFswMsg", moduleID);
@@ -77,7 +75,7 @@ void Reset_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
 void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
-    double dcm_BuN[3][3];           /*!< dcm, inertial to burn frame */
+    double dcm_BuN[3][3];           /* dcm, inertial to burn frame */
     double dvUnit[3];
     double burnY[3];
 	double burnTime;
@@ -86,7 +84,13 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     DvBurnCmdFswMsg localBurnData;
-    
+    AttRefFswMsg attCmd;            /* [-] Output attitude command data to send */
+
+    /*! - zero the input and output message containers */
+    memset(&localBurnData, 0x0, sizeof(DvBurnCmdFswMsg));
+    memset(&attCmd, 0x0, sizeof(AttRefFswMsg));
+
+    /*! - read in DV burn command input message */
     ReadMessage(ConfigData->inputBurnCmdID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(DvBurnCmdFswMsg), &localBurnData, moduleID);
     
@@ -98,19 +102,19 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
     v3Cross(dcm_BuN[0], dcm_BuN[1], dcm_BuN[2]);
     v3Normalize(dcm_BuN[2], dcm_BuN[2]);
 
-	burnTime = ((int64_t) callTime - (int64_t) localBurnData.burnStartTime)*1.0E-9;
+    burnTime = ((int64_t) callTime - (int64_t) localBurnData.burnStartTime)*NANO2SEC;
     v3SetZero(rotPRV);
     rotPRV[2] = 1.0;
     v3Scale(burnTime*localBurnData.dvRotVecMag, rotPRV, rotPRV);
     PRV2C(rotPRV, rotDCM);
 	m33MultM33(rotDCM, dcm_BuN, dcm_BuN);
 
-	C2MRP(RECAST3X3 &dcm_BuN[0][0], ConfigData->attCmd.sigma_RN);
-	v3Scale(localBurnData.dvRotVecMag, dcm_BuN[2], ConfigData->attCmd.omega_RN_N);
-    v3SetZero(ConfigData->attCmd.domega_RN_N);
-    
+	C2MRP(RECAST3X3 &dcm_BuN[0][0], attCmd.sigma_RN);
+	v3Scale(localBurnData.dvRotVecMag, dcm_BuN[2], attCmd.omega_RN_N);
+    v3SetZero(attCmd.domega_RN_N);
+
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttRefFswMsg),
-        &ConfigData->attCmd, moduleID);
+        &attCmd, moduleID);
     
     return;
 }

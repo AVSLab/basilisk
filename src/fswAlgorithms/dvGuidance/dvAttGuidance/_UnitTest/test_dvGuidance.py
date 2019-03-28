@@ -41,7 +41,6 @@ def dvGuidanceTestFunction(show_plots):
     moduleConfig = dvGuidance.dvGuidanceConfig()  # Create a config struct
     moduleConfig.outputDataName = "dv_guidance_output"
     moduleConfig.inputBurnDataName = "input_burn_data"
-    moduleConfig.attCmd = fswMessages.AttRefFswMsg()
 
     # This calls the algContain to setup the selfInit, crossInit, and update
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
@@ -70,9 +69,7 @@ def dvGuidanceTestFunction(show_plots):
 
     # Log the output message
     # unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
-    unitTestSim.AddVariableForLogging(moduleWrap.ModelTag + ".attCmd.sigma_RN", testProcessRate, 0, 2)
-    unitTestSim.AddVariableForLogging(moduleWrap.ModelTag + ".attCmd.omega_RN_N", testProcessRate, 0, 2)
-    unitTestSim.AddVariableForLogging(moduleWrap.ModelTag + ".attCmd.domega_RN_N", testProcessRate, 0, 2)
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
@@ -83,9 +80,9 @@ def dvGuidanceTestFunction(show_plots):
 
     # Get the output from this simulation
     moduleOutputName = 'dvAttGuidance'
-    outSigma = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + ".attCmd.sigma_RN")
-    outOmega = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + ".attCmd.omega_RN_N")
-    outDOmega = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + ".attCmd.domega_RN_N")
+    outSigma = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + 'sigma_RN', range(3))
+    outOmega = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + 'omega_RN_N', range(3))
+    outDOmega = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + 'domega_RN_N', range(3))
 
     # NOTE: these values are just from a previous run. These should be validated
     trueSigma = [[5.69822629e-01, 1.99143700e-01, 2.72649472e-01],
