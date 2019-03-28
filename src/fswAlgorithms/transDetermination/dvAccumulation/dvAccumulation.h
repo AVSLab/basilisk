@@ -31,15 +31,15 @@
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the
  CSS interface*/
 typedef struct {
-    char outputNavName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
-    char accPktInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the input accelerometer message*/
-    uint32_t msgCount;      /*!< [-] The total number of messages read from inputs */
-    uint32_t dvInitialized; /*!< [-] Flag indicating whether DV has been started completely*/
-    uint64_t previousTime;  /*!< [ns] The clock time associated with the previous run of algorithm*/
-    int32_t outputNavMsgID;    /*!< [-] The ID associated with the outgoing message*/
-    int32_t accPktInMsgID;     /*!< [-] The ID associated with the incoming accelerometer buffer*/
+    char outputNavName[MAX_STAT_MSG_LENGTH]; //!< The name of the output message
+    char accPktInMsgName[MAX_STAT_MSG_LENGTH]; //!< [-] The name of the input accelerometer message
+    uint32_t msgCount;      //!< [-] The total number of messages read from inputs
+    uint32_t dvInitialized; //!< [-] Flag indicating whether DV has been started completely
+    uint64_t previousTime;  //!< [ns] The clock time associated with the previous run of algorithm
+    int32_t outputNavMsgID;    //!< [-] The ID associated with the outgoing message
+    int32_t accPktInMsgID;     //!< [-] The ID associated with the incoming accelerometer buffer
     
-    NavTransIntMsg outputData; /*!< [-] The local storage of the outgoing message data*/
+    NavTransIntMsg outputData; //!< [-] The local storage of the outgoing message data
 }DVAccumulationData;
 
 #ifdef __cplusplus
