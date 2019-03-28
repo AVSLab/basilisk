@@ -10,6 +10,11 @@ from Basilisk.utilities import macros
 from Basilisk.fswAlgorithms import dvGuidance
 from Basilisk.fswAlgorithms import fswMessages
 import matplotlib.pyplot as plt
+import os, inspect
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+
+
 
 def test_dv_guidance(show_plots):
     """ Test dvGuidance. """
@@ -41,7 +46,6 @@ def dvGuidanceTestFunction(show_plots):
     moduleConfig = dvGuidance.dvGuidanceConfig()  # Create a config struct
     moduleConfig.outputDataName = "dv_guidance_output"
     moduleConfig.inputBurnDataName = "input_burn_data"
-    moduleConfig.attCmd = fswMessages.AttRefFswMsg()
 
     # This calls the algContain to setup the selfInit, crossInit, and update
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
@@ -70,9 +74,7 @@ def dvGuidanceTestFunction(show_plots):
 
     # Log the output message
     # unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
-    unitTestSim.AddVariableForLogging(moduleWrap.ModelTag + ".attCmd.sigma_RN", testProcessRate, 0, 2)
-    unitTestSim.AddVariableForLogging(moduleWrap.ModelTag + ".attCmd.omega_RN_N", testProcessRate, 0, 2)
-    unitTestSim.AddVariableForLogging(moduleWrap.ModelTag + ".attCmd.domega_RN_N", testProcessRate, 0, 2)
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
@@ -83,9 +85,9 @@ def dvGuidanceTestFunction(show_plots):
 
     # Get the output from this simulation
     moduleOutputName = 'dvAttGuidance'
-    outSigma = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + ".attCmd.sigma_RN")
-    outOmega = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + ".attCmd.omega_RN_N")
-    outDOmega = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + ".attCmd.domega_RN_N")
+    outSigma = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + 'sigma_RN', range(3))
+    outOmega = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + 'omega_RN_N', range(3))
+    outDOmega = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + 'domega_RN_N', range(3))
 
     # NOTE: these values are just from a previous run. These should be validated
     trueSigma = [[5.69822629e-01, 1.99143700e-01, 2.72649472e-01],
@@ -99,6 +101,8 @@ def dvGuidanceTestFunction(show_plots):
                  [0.00000000e+00, 0.00000000e+00, 0.00000000e+00]]
 
     accuracy = 1e-9
+    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+
     for i in range(len(trueSigma)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(outSigma[i], trueSigma[i], 3, accuracy):
@@ -148,8 +152,16 @@ def dvGuidanceTestFunction(show_plots):
     if show_plots:
         plt.show()
 
+    snippentName = "passFail"
     if testFailCount == 0:
-        print("PASSED: "+ moduleOutputName)
+        colorText = 'ForestGreen'
+        print "PASSED: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        print "Failed: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     return [testFailCount, ''.join(testMessages)]
 

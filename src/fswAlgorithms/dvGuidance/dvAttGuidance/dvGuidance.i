@@ -32,6 +32,8 @@ GEN_SIZEOF(DvBurnCmdFswMsg);
 GEN_SIZEOF(dvGuidanceConfig);
 %include "dvGuidance.h"
 %include "../../fswMessages/dvBurnCmdFswMsg.h"
+%include "../../fswMessages/attRefFswMsg.h"
+GEN_SIZEOF(AttRefFswMsg);
 
 %pythoncode %{
 import sys
