@@ -95,11 +95,8 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
     moduleConfig.inputRateSteeringName = "rate_steering"
     moduleConfig.outputDataName = "outputName"
 
-    moduleConfig.K1 = 0.15 #not used
-    moduleConfig.K3 = 1.0 #not used
     moduleConfig.Ki = intGain
     moduleConfig.P = 150.0
-    moduleConfig.omega_max = 1.5 * macros.D2R  # maximum omega in rad/s #not used
     moduleConfig.integralLimit = integralLimit
     moduleConfig.knownTorquePntB_B = [0., 0., 0.]
 
