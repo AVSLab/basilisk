@@ -33,7 +33,7 @@
 #include <math.h>
 
 /*! @brief This method initializes the configData for this module.
- It checks to ensure that the inputs are sane and then creates the
+ It creates the
  output message [CmdTorqueBodyIntMsg](\ref CmdTorqueBodyIntMsg)
  @return void
  @param configData The configuration data associated with this module
@@ -99,8 +99,8 @@ void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     int i;    
-
     VehicleConfigFswMsg sc;
+
     ReadMessage(configData->vehConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
     for (i=0; i < 9; i++){
@@ -116,6 +116,7 @@ void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint
     
     /* Reset the integral measure of the rate tracking error */
     v3SetZero(configData->z);
+
     /* Reset the prior time flag state.
      If zero, control time step not evaluated on the first function call */
     configData->priorTime = 0;
@@ -162,7 +163,7 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     /*! - zero the output message */
     memset(&controlOut, 0x0, sizeof(CmdTorqueBodyIntMsg));
     
-    /*! compute control update time */
+    /*! - compute control update time */
     if (configData->priorTime == 0) {
         dt = 0.0;
     } else {
@@ -190,14 +191,14 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
         }
     }
     
-    /*! compute body rate */
+    /*! - compute body rate */
     v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
 
-    /*! compute the rate tracking error */
+    /*! - compute the rate tracking error */
     v3Add(rateGuid.omega_BastR_B, guidCmd.omega_RN_B, omega_BastN_B);
     v3Subtract(omega_BN_B, omega_BastN_B, omega_BBast_B);
 
-    /*! integrate rate tracking error  */
+    /*! - integrate rate tracking error  */
     if (configData->Ki > 0) {   /* check if integral feedback is turned on  */
         v3Scale(dt, omega_BBast_B, v3_1);
         v3Add(v3_1, configData->z, configData->z);             /* z = integral(del_omega) */
@@ -212,7 +213,7 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
         v3SetZero(configData->z);
     }
 
-    /*! evaluate required attitude control torque Lr */
+    /*! - evaluate required attitude control torque Lr */
     v3Scale(configData->P, omega_BBast_B, Lr);              /* +P delta_omega */
     v3Scale(configData->Ki, configData->z, v3_2);
     v3Add(v3_2, Lr, Lr);                                      /* +Ki*z */
@@ -244,7 +245,7 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     /* Change sign to compute the net positive control torque onto the spacecraft */
     v3Scale(-1.0, Lr, Lr);
     
-    /*! Set output message and pass it to the message bus */
+    /*! - Set output message and pass it to the message bus */
     v3Copy(Lr, controlOut.torqueRequestBody);
     WriteMessage(configData->cmdTorqueOutMsgId, callTime, sizeof(CmdTorqueBodyIntMsg),
                  (void*) &(controlOut), moduleID);

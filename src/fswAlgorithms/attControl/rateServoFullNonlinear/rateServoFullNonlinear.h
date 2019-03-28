@@ -32,24 +32,24 @@
 
 /*! \defgroup rateServoFullNonlinear
  * @brief This module implements a nonlinear rate servo control uses the attiude steering message and
- determine the ADCS control torque vector.
- 
- The module [PDF Description](Basilisk-Sim-nonlinRateServo-2019-0327.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
- @{
+ * determine the ADCS control torque vector.
+ *
+ * The module [PDF Description](Basilisk-Sim-nonlinRateServo-2019-0327.pdf)
+ * contains further information on this module's function,
+ * how to run it, as well as testing.
+ * @{
  */
 
+/*! @brief The configuration structure for the rateServoFullNonlinear module.  */
 typedef struct {
     double P;                           //!< [N*m*s]   Rate error feedback gain applied
     double Ki;                          //!< [N*m]     Integration feedback error on rate error
+    double knownTorquePntB_B[3];        //!< [N*m]     known external torque in body frame vector components
+
     /* declare module private variables */
     double integralLimit;               //!< [N*m]     Integration limit to avoid wind-up issue
     uint64_t priorTime;                 //!< [ns]      Last time the attitude control is called
     double z[3];                        //!< [rad]     integral state of delta_omega
-    double knownTorquePntB_B[3];        //!< [N*m]     known external torque in body frame vector components
-
-    
     double ISCPntB_B[9];                //!< [kg m^2] Spacecraft Inertia
     RWArrayConfigFswMsg rwConfigParams; //!< [-] struct to store message containing RW config parameters in body B frame
 
@@ -61,10 +61,10 @@ typedef struct {
     char rwAvailInMsgName[MAX_STAT_MSG_LENGTH];     //!< [-] The name of the RWs availability message
     int32_t rwAvailInMsgId;                         //!< [-] ID for the incoming  RWs availability data
     
-    char outputDataName[MAX_STAT_MSG_LENGTH];       //!< The name of the output message
-    int32_t cmdTorqueOutMsgId;                      //!< [] ID for the outgoing body accel requests
-    char inputGuidName[MAX_STAT_MSG_LENGTH];        //!< The name of the Input message
-    int32_t guidInMsgId;                            //!< [] ID for the incoming guidance errors
+    char outputDataName[MAX_STAT_MSG_LENGTH];       //!< The name of the commanded attitude control torque output message
+    int32_t cmdTorqueOutMsgId;                      //!< [] ID for the outgoing control torque message
+    char inputGuidName[MAX_STAT_MSG_LENGTH];        //!< The name of the guidance input message
+    int32_t guidInMsgId;                            //!< [] ID for the incoming guidance message
     char inputRWSpeedsName[MAX_STAT_MSG_LENGTH];    //!< [] The name for the reaction wheel speeds message
     int32_t rwSpeedsInMsgId;                        //!< [] The ID for the reaction wheel speeds message
     char inputRateSteeringName[MAX_STAT_MSG_LENGTH];//!< [] the name of the steering law message
