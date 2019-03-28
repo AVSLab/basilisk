@@ -28,6 +28,7 @@
 #include "fswUtilities/fswDefinitions.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include <stdio.h>
+#include <string.h>
 
 
 /*
@@ -35,9 +36,8 @@
  */
 
 
-/*! This method initializes the ConfigData for this module.
- It checks to ensure that the inputs are sane and then creates the
- output message
+/*! This method initializes the ConfigData for this module.  It creates a single output message of type
+ [THRArrayOnTimeCmdIntMsg](\ref THRArrayOnTimeCmdIntMsg).
  @return void
  @param ConfigData The configuration data associated with this module
  */
@@ -52,7 +52,8 @@ void SelfInit_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t 
 }
 
 /*! This method performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
+ It links to 2 required input messages of type [THRArrayCmdForceFswMsg](\ref THRArrayCmdForceFswMsg)
+ and [THRArrayConfigFswMsg](\ref THRArrayConfigFswMsg).
  @return void
  @param ConfigData The configuration data associated with this module
  */
@@ -81,12 +82,16 @@ void Reset_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t cal
 
 	ConfigData->prevCallTime = 0;
 
-	/* read in the support messages */
+	/*! - zero and read in the support messages */
+    memset(&localThrusterData, 0x0, sizeof(THRArrayConfigFswMsg));
 	ReadMessage(ConfigData->thrConfInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
 				sizeof(THRArrayConfigFswMsg), &localThrusterData, moduleID);
 
+    /*! - store the number of installed thrusters */
 	ConfigData->numThrusters = localThrusterData.numThrusters;
 
+    /*! - loop over all thrusters and for each copy over maximum thrust, zero the impulse remainder
+     and zero the thruster on-time control requests */
 	for(i=0; i<ConfigData->numThrusters; i++) {
 		ConfigData->maxThrust[i] = localThrusterData.thrusters[i].maxThrust;
 		ConfigData->pulseRemainder[i] = 0.0;
@@ -108,10 +113,17 @@ void Update_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t ca
 	double				controlPeriod;			/*!< [s] control period */
 	double				onTime[MAX_EFF_CNT];	/*!< [s] array of commanded on time for thrusters */
 
+    /*! - zero the output message */
+    memset(&ConfigData->thrOnTimeOut, 0x0, sizeof(THRArrayOnTimeCmdIntMsg));
+
+    /*! - the first time update() is called there is no information on the time step.  Here
+     return either all thrusters off or on depending on the baseThrustState state */
 	if(ConfigData->prevCallTime == 0) {
 		ConfigData->prevCallTime = callTime;
 
 		for(i = 0; i < ConfigData->numThrusters; i++) {
+            /*! - If on-pulsing is used, then the OnTimeRequest is set to zero.
+             If off-pulsing is used, then the OnTimeRequest is set to 2 seconds */
 			ConfigData->thrOnTimeOut.OnTimeRequest[i] = (double)(ConfigData->baseThrustState) * 2.0;
 		}
 
@@ -123,47 +135,50 @@ void Update_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t ca
 	controlPeriod = ((double)(callTime - ConfigData->prevCallTime)) * NANO2SEC;
 	ConfigData->prevCallTime = callTime;
 
-	/*! Begin method steps */
-	/*! - Read the input messages */
+	/*! - Read the input thruster force message */
+    memset(&(ConfigData->thrForceIn), 0x0, sizeof(THRArrayCmdForceFswMsg));
 	ReadMessage(ConfigData->thrForceInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
 				sizeof(THRArrayCmdForceFswMsg), (void*) &(ConfigData->thrForceIn), moduleID);
 
-	/*! Loop through thrusters */
+	/*! - Loop through thrusters */
 	for(i = 0; i < ConfigData->numThrusters; i++) {
 
-		/*! Correct for off-pulsing if necessary */
+		/*! - Correct for off-pulsing if necessary.  Here the requested force is negative, and the maximum thrust
+         needs to be added.  If not control force is requested in off-pulsing mode, then the thruster force should
+         be set to the maximum thrust value */
 		if (ConfigData->baseThrustState == 1) {
 			ConfigData->thrForceIn.thrForce[i] += ConfigData->maxThrust[i];
 		}
 
-		/*! Do not allow thrust requests less than zero */
+		/*! - Do not allow thrust requests less than zero */
 		if (ConfigData->thrForceIn.thrForce[i] < 0.0) {
 			ConfigData->thrForceIn.thrForce[i] = 0.0;
 		}
 
-		/*! Compute T_on from thrust request, max thrust, and control period */
+		/*! - Compute T_on from thrust request, max thrust, and control period */
 		onTime[i] = ConfigData->thrForceIn.thrForce[i]/ConfigData->maxThrust[i]*controlPeriod;
-		/*! Add in remainder */
+		/*! - Add in remainder from the last control step */
 		onTime[i] += ConfigData->pulseRemainder[i]*ConfigData->thrMinFireTime;
-		/*! Set pulse remainder to zero. Remainder now stored in onTime */
+		/*! - Set pulse remainder to zero. Remainder now stored in onTime */
 		ConfigData->pulseRemainder[i] = 0.0;
 
-		/*! Pulse remainder logic */
+		/* Pulse remainder logic */
 		if(onTime[i] < ConfigData->thrMinFireTime) {
-			/*! Request is less than minimum pulse time */
+			/*! - If request is less than minimum pulse time zero onTime an store remainder */
 			ConfigData->pulseRemainder[i] = onTime[i]/ConfigData->thrMinFireTime;
 			onTime[i] = 0.0;
 		} else if (onTime[i] >= controlPeriod) {
-			/*! Request is greater than control period */
-			onTime[i] = 1.1*controlPeriod; // oversaturate to avoid numerical error
+			/*! - If request is greater than control period then oversaturate onTime */
+			onTime[i] = 1.1*controlPeriod;
 		}
 
-		/*! Set the output data */
+		/*! - Set the output data for each thruster */
 		ConfigData->thrOnTimeOut.OnTimeRequest[i] = onTime[i];
 		
 	}
 
-	WriteMessage(ConfigData->onTimeOutMsgID, callTime, sizeof(THRArrayOnTimeCmdIntMsg),   /* update module name */
+    /*! - write the moduel output message */
+	WriteMessage(ConfigData->onTimeOutMsgID, callTime, sizeof(THRArrayOnTimeCmdIntMsg),
 				 (void*) &(ConfigData->thrOnTimeOut), moduleID);
 
 	return;

@@ -30,6 +30,13 @@
 
 
 /*! \defgroup thrFiringRemainder
+ * @brief A thruster force message is read in and converted to a thruster on-time output message.
+ *
+ * The module ensures the requested on-time is at least as large as the thruster's minimum on time.  If not
+ * then the on-time is zeroed, but the unimplemented thrust time is kept as a remainder calculation.  If these
+ * add up to reach the minimum on time, then a thruster pulse is requested.  If the thruster on time is larger
+ * than the control period, then an on-time that is 1.1 times the control period is requested.  
+ * More information can be found in the [PDF Description](Basilisk-thrFiringRemainder-2019-03-28.pdf).
  * @{
  */
 
@@ -37,25 +44,25 @@
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
-	double              pulseRemainder[MAX_EFF_CNT];            /*!< [-] Unimplemented thrust pulses (number of minimum pulses) */
-	double              thrMinFireTime;              			/*!< [s] Minimum fire time */
-	uint32_t 			numThrusters;							/*!< [-] The number of thrusters available on vehicle */
-	double				maxThrust[MAX_EFF_CNT];					/*!< [N] Max thrust */
-	int					baseThrustState;						/*!< [-] Indicates on-pulsing (0) or off-pusling (1) */
+	double              pulseRemainder[MAX_EFF_CNT];            //!< [-] Unimplemented thrust pulses (number of minimum pulses)
+	double              thrMinFireTime;              			//!< [s] Minimum fire time
+	uint32_t 			numThrusters;							//!< [-] The number of thrusters available on vehicle
+	double				maxThrust[MAX_EFF_CNT];					//!< [N] Max thrust
+	int					baseThrustState;						//!< [-] Indicates on-pulsing (0) or off-pusling (1)
 
-	uint64_t			prevCallTime;							/*!< callTime from previous function call */
+	uint64_t			prevCallTime;							//!< callTime from previous function call
 	
 
 	/* declare module IO interfaces */
-	char 				thrForceInMsgName[MAX_STAT_MSG_LENGTH];        	/*!< The name of the Input message */
-	int32_t 			thrForceInMsgID;                             	/*!< ID for the incoming message */
-	char 				onTimeOutMsgName[MAX_STAT_MSG_LENGTH];       	/*!< The name of the output message*, onTimeOutMsgName */
-	int32_t 			onTimeOutMsgID;                            		/*!< ID for the outgoing message */
-	char 				thrConfInMsgName[MAX_STAT_MSG_LENGTH];			/*!< The name of the thruster cluster Input message */
-	int32_t  			thrConfInMsgID;                   				/*!< ID for the incoming Thruster configuration data */
+	char 				thrForceInMsgName[MAX_STAT_MSG_LENGTH];        	//!< The name of the Input message
+	int32_t 			thrForceInMsgID;                             	//!< ID for the incoming message
+	char 				onTimeOutMsgName[MAX_STAT_MSG_LENGTH];       	//!< The name of the output message, onTimeOutMsgName
+	int32_t 			onTimeOutMsgID;                            		//!< ID for the outgoing message
+	char 				thrConfInMsgName[MAX_STAT_MSG_LENGTH];			//!< The name of the thruster cluster Input message
+	int32_t  			thrConfInMsgID;                   				//!< ID for the incoming Thruster configuration data
 
-	THRArrayCmdForceFswMsg thrForceIn;									/*!< -- copy of the input message */
-	THRArrayOnTimeCmdIntMsg thrOnTimeOut;								/*!< -- copy of the output message */
+	THRArrayCmdForceFswMsg thrForceIn;									//!< -- copy of the input message
+	THRArrayOnTimeCmdIntMsg thrOnTimeOut;								//!< -- copy of the output message
 
 }thrFiringRemainderConfig;
 
