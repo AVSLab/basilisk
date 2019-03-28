@@ -32,12 +32,12 @@
 
 /*! @brief Top level structure for the nominal delta-V guidance*/
 typedef struct {
-    char outputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
-    char inputBurnDataName[MAX_STAT_MSG_LENGTH];/*<! Input message that configures the vehicle burn*/
-    double dvMag;            /*!< (m/s) Magnitude of the requested deltaV*/
-    int32_t outputMsgID;     /*!< (-) ID for the outgoing body estimate message*/
-    int32_t inputBurnCmdID;  /*!< [-] ID for the incoming burn command data*/
-    AttRefFswMsg attCmd;    /*!< (-) Output attitude command data to send*/
+    char outputDataName[MAX_STAT_MSG_LENGTH]; //!< The name of the output message
+    char inputBurnDataName[MAX_STAT_MSG_LENGTH];//<! Input message that configures the vehicle burn
+    double dvMag;            //!< (m/s) Magnitude of the requested deltaV
+    int32_t outputMsgID;     //!< (-) ID for the outgoing body estimate message
+    int32_t inputBurnCmdID;  //!< [-] ID for the incoming burn command data
+    AttRefFswMsg attCmd;    //!< (-) Output attitude command data to send
 }dvGuidanceConfig;
 
 #ifdef __cplusplus
