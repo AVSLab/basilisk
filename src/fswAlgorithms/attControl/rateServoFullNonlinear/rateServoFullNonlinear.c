@@ -135,6 +135,8 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     RWSpeedIntMsg       wheelSpeeds;        /* Reaction wheel speed estimates */
     RWAvailabilityFswMsg wheelsAvailability;/* Reaction wheel availability */
     RateCmdFswMsg       rateGuid;           /* rate steering law message */
+    CmdTorqueBodyIntMsg controlOut;         /* output message */
+
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
     double              dt;                 /* [s] control update period */
@@ -156,6 +158,9 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     double              intLimCheck;
     
     /*! Begin method steps*/
+    
+    /*! - zero the output message */
+    memset(&controlOut, 0x0, sizeof(CmdTorqueBodyIntMsg));
     
     /*! compute control update time */
     if (configData->priorTime == 0) {
@@ -238,10 +243,11 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     
     /* Change sign to compute the net positive control torque onto the spacecraft */
     v3Scale(-1.0, Lr, Lr);
-    /*! Store the output message and pass it to the message bus */
-    v3Copy(Lr, configData->controlOut.torqueRequestBody);
+    
+    /*! Set output message and pass it to the message bus */
+    v3Copy(Lr, controlOut.torqueRequestBody);
     WriteMessage(configData->outputMsgID, callTime, sizeof(CmdTorqueBodyIntMsg),
-                 (void*) &(configData->controlOut), moduleID);
+                 (void*) &(controlOut), moduleID);
     
     return;
 }
