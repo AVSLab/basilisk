@@ -45,7 +45,7 @@ void SelfInit_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t 
 {
     /*! Begin method steps */
     /*! - Create output message for module */
-    ConfigData->onTimeOutMsgID = CreateNewMessage(ConfigData->onTimeOutMsgName,
+    ConfigData->onTimeOutMsgId = CreateNewMessage(ConfigData->onTimeOutMsgName,
                                                sizeof(THRArrayOnTimeCmdIntMsg),
                                                "THRArrayOnTimeCmdIntMsg",          /* add the output structure name */
                                                moduleID);
@@ -60,10 +60,10 @@ void SelfInit_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t 
 void CrossInit_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t moduleID)
 {
 	/*! - Get the input message ID's */
-	ConfigData->thrForceInMsgID = subscribeToMessage(ConfigData->thrForceInMsgName,
+	ConfigData->thrForceInMsgId = subscribeToMessage(ConfigData->thrForceInMsgName,
 														 sizeof(THRArrayCmdForceFswMsg),
 														 moduleID);
-	ConfigData->thrConfInMsgID = subscribeToMessage(ConfigData->thrConfInMsgName,
+	ConfigData->thrConfInMsgId = subscribeToMessage(ConfigData->thrConfInMsgName,
 												sizeof(THRArrayConfigFswMsg),
 												moduleID);
 }
@@ -84,7 +84,7 @@ void Reset_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t cal
 
 	/*! - zero and read in the support messages */
     memset(&localThrusterData, 0x0, sizeof(THRArrayConfigFswMsg));
-	ReadMessage(ConfigData->thrConfInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+	ReadMessage(ConfigData->thrConfInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
 				sizeof(THRArrayConfigFswMsg), &localThrusterData, moduleID);
 
     /*! - store the number of installed thrusters */
@@ -127,7 +127,7 @@ void Update_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t ca
 			ConfigData->thrOnTimeOut.OnTimeRequest[i] = (double)(ConfigData->baseThrustState) * 2.0;
 		}
 
-		WriteMessage(ConfigData->onTimeOutMsgID, callTime, sizeof(THRArrayOnTimeCmdIntMsg),   /* update module name */
+		WriteMessage(ConfigData->onTimeOutMsgId, callTime, sizeof(THRArrayOnTimeCmdIntMsg),   /* update module name */
 					 (void*) &(ConfigData->thrOnTimeOut), moduleID);
 		return;
 	}
@@ -137,7 +137,7 @@ void Update_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t ca
 
 	/*! - Read the input thruster force message */
     memset(&(ConfigData->thrForceIn), 0x0, sizeof(THRArrayCmdForceFswMsg));
-	ReadMessage(ConfigData->thrForceInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+	ReadMessage(ConfigData->thrForceInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
 				sizeof(THRArrayCmdForceFswMsg), (void*) &(ConfigData->thrForceIn), moduleID);
 
 	/*! - Loop through thrusters */

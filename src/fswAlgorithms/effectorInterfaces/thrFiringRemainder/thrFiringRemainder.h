@@ -35,7 +35,7 @@
  * The module ensures the requested on-time is at least as large as the thruster's minimum on time.  If not
  * then the on-time is zeroed, but the unimplemented thrust time is kept as a remainder calculation.  If these
  * add up to reach the minimum on time, then a thruster pulse is requested.  If the thruster on time is larger
- * than the control period, then an on-time that is 1.1 times the control period is requested.  
+ * than the control period, then an on-time that is 1.1 times the control period is requested.
  * More information can be found in the [PDF Description](Basilisk-thrFiringRemainder-2019-03-28.pdf).
  * @{
  */
@@ -55,11 +55,11 @@ typedef struct {
 
 	/* declare module IO interfaces */
 	char 				thrForceInMsgName[MAX_STAT_MSG_LENGTH];        	//!< The name of the Input message
-	int32_t 			thrForceInMsgID;                             	//!< ID for the incoming message
+	int32_t 			thrForceInMsgId;                             	//!< ID for the incoming message
 	char 				onTimeOutMsgName[MAX_STAT_MSG_LENGTH];       	//!< The name of the output message, onTimeOutMsgName
-	int32_t 			onTimeOutMsgID;                            		//!< ID for the outgoing message
+	int32_t 			onTimeOutMsgId;                            		//!< ID for the outgoing message
 	char 				thrConfInMsgName[MAX_STAT_MSG_LENGTH];			//!< The name of the thruster cluster Input message
-	int32_t  			thrConfInMsgID;                   				//!< ID for the incoming Thruster configuration data
+	int32_t  			thrConfInMsgId;                   				//!< ID for the incoming Thruster configuration data
 
 	THRArrayCmdForceFswMsg thrForceIn;									//!< -- copy of the input message
 	THRArrayOnTimeCmdIntMsg thrOnTimeOut;								//!< -- copy of the output message
