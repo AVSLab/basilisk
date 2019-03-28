@@ -103,41 +103,38 @@ int dvAccumulation_partition(AccPktDataFswMsg *A, int start, int end){
   @param end  --> Ending index */
 void dvAccumulation_QuickSort (AccPktDataFswMsg *A, int start, int end)
 {
-    // Create an auxiliary stack array. This contains indicies.
+    /*! - Create an auxiliary stack array. This contains indicies. */
     int stack[MAX_ACC_BUF_PKT];
     if((end-start + 1) > MAX_ACC_BUF_PKT)
     {
         BSK_PRINT(MSG_ERROR, "Stack insufficiently sized for quick-sort somehow");
     }
 
-    // initialize the index of the top of the stack
+    /*! - initialize the index of the top of the stack */
     int top = -1;
 
-    // push initial values of l and h to stack
+    /*! - push initial values of l and h to stack */
     stack[ ++top ] = start;
     stack[ ++top ] = end;
 
-    // Keep popping from stack while is not empty
+    /*! - Keep popping from stack while is not empty */
     while ( top >= 0 )
     {
-        // Pop h and l
+        /* Pop h and l */
         end = stack[ top-- ];
         start = stack[ top-- ];
 
-        // Set pivot element at its correct position
-        // in sorted array
+        /*! - Set pivot element at its correct position in sorted array */
         int partitionIndex = dvAccumulation_partition( A, start, end );
 
-        // If there are elements on left side of pivot,
-        // then push left side to stack
+        /*! - If there are elements on left side of pivot, then push left side to stack */
         if ( partitionIndex-1 > start )
         {
             stack[ ++top ] = start;
             stack[ ++top ] = partitionIndex - 1;
         }
 
-        // If there are elements on right side of pivot,
-        // then push right side to stack
+        /*! - If there are elements on right side of pivot, then push right side to stack */
         if ( partitionIndex+1 < end )
         {
             stack[ ++top ] = partitionIndex + 1;
@@ -169,10 +166,10 @@ void Update_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime, ui
     ReadMessage(ConfigData->accPktInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AccDataFswMsg), &inputAccData, moduleID);
 
-    /* stacks data in time order*/
+    /*! - stack data in time order */
     dvAccumulation_QuickSort(&(inputAccData.accPkts[0]), 0, MAX_ACC_BUF_PKT-1); //measTime is the array we want to sort. We're sorting the time calculated for each measurement taken from the accelerometer in order in terms of time.
 
-    /*! Ensure that the computed dt doesn't get huge.*/
+    /*! - Ensure that the computed dt doesn't get huge.*/
     if(ConfigData->dvInitialized == 0)
     {
         for(i=0; i<MAX_ACC_BUF_PKT; i++)
