@@ -10,6 +10,11 @@ from Basilisk.utilities import macros
 from Basilisk.fswAlgorithms import dvGuidance
 from Basilisk.fswAlgorithms import fswMessages
 import matplotlib.pyplot as plt
+import os, inspect
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+
+
 
 def test_dv_guidance(show_plots):
     """ Test dvGuidance. """
@@ -96,6 +101,8 @@ def dvGuidanceTestFunction(show_plots):
                  [0.00000000e+00, 0.00000000e+00, 0.00000000e+00]]
 
     accuracy = 1e-9
+    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+
     for i in range(len(trueSigma)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(outSigma[i], trueSigma[i], 3, accuracy):
@@ -145,8 +152,17 @@ def dvGuidanceTestFunction(show_plots):
     if show_plots:
         plt.show()
 
+
+    snippentName = "passFail" 
     if testFailCount == 0:
-        print("PASSED: "+ moduleOutputName)
+        colorText = 'ForestGreen'
+        print "PASSED: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        print "Failed: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     return [testFailCount, ''.join(testMessages)]
 

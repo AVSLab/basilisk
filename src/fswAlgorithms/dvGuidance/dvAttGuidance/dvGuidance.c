@@ -96,7 +96,7 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
                 sizeof(DvBurnCmdFswMsg), &localBurnData, moduleID);
 
     /*! - evaluate DCM from inertial to the base Burn Frame */
-    ConfigData->dvMag = v3Norm(localBurnData.dvInrtlCmd);
+    ConfigData->dvMag = v3Norm(localBurnData.dvInrtlCmd);           /* HPS: this variable is never used, can we remove it? */
     v3Normalize(localBurnData.dvInrtlCmd, dvHat_N);
     v3Copy(dvHat_N, dcm_BubN[0]);
     v3Cross(localBurnData.dvRotVecUnit, dvHat_N, bu2_N);

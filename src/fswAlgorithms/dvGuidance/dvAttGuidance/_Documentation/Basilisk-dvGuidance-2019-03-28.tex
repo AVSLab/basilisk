@@ -48,11 +48,11 @@
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
 
 
-\newcommand{\ModuleName}{dvAttGuidance}
+\newcommand{\ModuleName}{dvGuidance}
 \newcommand{\subject}{Attitude Guidance During Orbit Burn}
 \newcommand{\status}{First Release}
 \newcommand{\preparer}{H. Schaub}
-\newcommand{\summary}{Summary of the document goes here.}
+\newcommand{\summary}{ This module creates a time varying attitude reference frame message that allows the orbit correction burn direction to rotate at a constant rate.  A message is read in containing the base $\Delta\bm v$ direction, the burn duration, as well as a nominal rotation axis.  A base burn frame is created relative to which a constant rotation about the 3rd frame axis is performed.  The output message contains the full reference frame states including the constant angular velocity vector and a zero angular acceleration vector.}
 
 \begin{document}
 
