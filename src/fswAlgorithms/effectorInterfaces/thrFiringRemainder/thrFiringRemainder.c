@@ -132,6 +132,7 @@ void Update_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t ca
 		return;
 	}
 
+    /*! - compute control time period Delta_t */
 	controlPeriod = ((double)(callTime - ConfigData->prevCallTime)) * NANO2SEC;
 	ConfigData->prevCallTime = callTime;
 
