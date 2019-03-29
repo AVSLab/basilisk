@@ -50,7 +50,6 @@ typedef struct {
     char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH];   //!< The name of the Input message
     int32_t inputVehicleConfigDataID;                       //!< [] ID for the incoming static vehicle data
     
-    CmdTorqueBodyIntMsg controlOut;                         //!< [] Control output requests
 }MRP_PDConfig;
 
 #ifdef __cplusplus

@@ -39,9 +39,7 @@
  */
 void SelfInit_MRP_PD(MRP_PDConfig *ConfigData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
-    /*! - Create output message for module */
+        /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
         sizeof(CmdTorqueBodyIntMsg), "CmdTorqueBodyIntMsg", moduleID);
 
@@ -81,14 +79,15 @@ void Reset_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime, uint64_t moduleID
 void Update_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
-    AttGuidFswMsg      guidCmd;            /*!< Guidance Message */
-    VehicleConfigFswMsg   sc;                 /*!< spacecraft configuration message */
+    AttGuidFswMsg      guidCmd;             /* Guidance Message */
+    VehicleConfigFswMsg   sc;               /* spacecraft configuration message */
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
-    double              Lr[3];              /*!< required control torque vector [Nm] */
-    double              omega_BN_B[3];      /*!< Inertial angular body rate expressed in body B-frame components */
-    double              v3_temp1[3];        /*!< Temporal vector for insight computations */
-    double              v3_temp2[3];        /*!< Temporal vector for insight computations */
+    double              Lr[3];              /* required control torque vector [Nm] */
+    double              omega_BN_B[3];      /* Inertial angular body rate expressed in body B-frame components */
+    double              v3_temp1[3];        /* Temporal vector for insight computations */
+    double              v3_temp2[3];        /* Temporal vector for insight computations */
+    CmdTorqueBodyIntMsg controlOut;         /* [] Control output requests */
 
 
     /*! Begin method steps*/
@@ -125,9 +124,9 @@ void Update_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime,
 
 
     /*! - Store and write the output message */
-    v3Copy(Lr, ConfigData->controlOut.torqueRequestBody);
+    v3Copy(Lr, controlOut.torqueRequestBody);
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(CmdTorqueBodyIntMsg),
-                 (void*) &(ConfigData->controlOut), moduleID);
+                 (void*) &controlOut, moduleID);
     
     return;
 }
