@@ -11,6 +11,8 @@
 
 
 \section{Module Description}
+This module implements a remainder tracking thruster firing logic.  More details can be found in Reference~\citenum{Alcorn:2016rz}.  
+
 \subsection{Module Input and Output Messages}
 As illustrated in Figure~\ref{fig:moduleImg}, the module reads in two messages.  One message contains the thruster configuration message from which the maximum thrust force value for each thruster is extracted and stored in the module.  This message is only read in on {\tt Reset()}.  
 
