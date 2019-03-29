@@ -80,6 +80,7 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t cal
 
 
     /*! - read in number of thrusters installed and maximum thrust values */
+    memset(&localThrusterData, 0x0, sizeof(THRArrayConfigFswMsg));
     ReadMessage(ConfigData->thrusterConfInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(THRArrayConfigFswMsg), (void *) &localThrusterData, moduleID);
     ConfigData->numThrusters = localThrusterData.numThrusters;
