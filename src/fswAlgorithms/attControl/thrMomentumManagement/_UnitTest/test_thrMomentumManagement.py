@@ -148,32 +148,21 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
     # print moduleOutput
 
     # set the filtered output truth states
-    if hsMinCheck==1:
+    if hsMinCheck is 1:
         trueVector = [
                    [0.0, 0.0, 0.0]
                    ]
     else:
         trueVector = [
-                   [5.914369484146579,2.858300248464629,9.407020039211664]
-                   ]*(-1)
-
-        # else:
-        #     testFailCount+=1
-        #     testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed with unsupported input parameters")
+                   [-5.914369484146579, -2.858300248464629, -9.407020039211664]
+                   ]
 
     # compare the module results to the truth values
     accuracy = 1e-12
     unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
-
-    for i in range(0,len(trueVector)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], 3, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
-                                "sec\n")
+    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput, accuracy,
+                                                               "torqueRequestBody", testFailCount, testMessages)
 
 
     snippentName = "passFail" + str(hsMinCheck)

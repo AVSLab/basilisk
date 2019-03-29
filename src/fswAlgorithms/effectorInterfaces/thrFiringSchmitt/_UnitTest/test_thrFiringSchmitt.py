@@ -287,15 +287,8 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
     accuracy = 1e-12
     unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
-    for i in range(0,len(trueVector)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], numThrusters, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
-                                "sec\n")
-
+    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput, accuracy,
+                                                               "OnTimeRequest", testFailCount, testMessages)
 
     snippentName = "passFail" + str(resetCheck) + str(dvOn)
     if testFailCount == 0:
