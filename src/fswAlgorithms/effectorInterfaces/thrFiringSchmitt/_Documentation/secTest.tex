@@ -1,4 +1,5 @@
-% !TEX root = ./Basilisk-thrFiringRemainder-2019-03-28.tex
+% !TEX root = ./Basilisk-thrFiringSchmitt-2019-03-29.tex
+
 
 \section{Test Description and Success Criteria}
 The unit test creates a desired thruster force input vector and then runs the simulation for 3 seconds.  If the {\tt resetCheck} flag is true then a {\tt reset()} method is called and the simulation is repeated for another 2.5 seconds.  If the {\tt dvOn} flag is set than the off-pulsing mode is checked.  
@@ -36,13 +37,12 @@ All of the tests passed:
 		\hline\hline
 		{\tt resetCheck} & {\tt dvOn} &\textbf{Pass/Fail} \\ 
 		\hline
-	   False & False	   			& \input{AutoTeX/passFailFalseFalse} \\ 
+	   False & False	   		& \input{AutoTeX/passFailFalseFalse} \\ 
 	   False & True	   			& \input{AutoTeX/passFailFalseTrue} \\ 
 	   True & False	   			& \input{AutoTeX/passFailTrueFalse} \\ 
 	   True & True	   			& \input{AutoTeX/passFailTrueTrue} \\ 
 	   \hline\hline
 	\end{tabular}
 \end{table}
-
 
 

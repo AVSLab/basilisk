@@ -21,19 +21,12 @@
  
  */
 
-/* modify the path to reflect the new module names */
 #include "effectorInterfaces/thrFiringRemainder/thrFiringRemainder.h"
-
-/* update this include to reflect the required module input messages */
 #include "fswUtilities/fswDefinitions.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include <stdio.h>
 #include <string.h>
 
-
-/*
- Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
- */
 
 
 /*! This method initializes the ConfigData for this module.  It creates a single output message of type
@@ -98,7 +91,7 @@ void Reset_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t cal
 
 }
 
-/*! Add a description of what this main Update() routine does for this module
+/*! This method maps the input thruster command forces into thruster on times using a remainder tracking logic.
  @return void
  @param ConfigData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
@@ -132,6 +125,7 @@ void Update_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t ca
 		return;
 	}
 
+    /*! - compute control time period Delta_t */
 	controlPeriod = ((double)(callTime - ConfigData->prevCallTime)) * NANO2SEC;
 	ConfigData->prevCallTime = callTime;
 

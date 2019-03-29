@@ -1,4 +1,8 @@
-div.textblock a, div.textblock a:visited {
+div.textblock a, div.textblock a:visited, p a, p a:visited {
 	color: #cfb87c;
 	font-weight: bold;
+}
+
+a.el, a.el:visited {
+	color: #565A5C;
 }

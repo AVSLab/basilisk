@@ -49,6 +49,8 @@ We are very excited by the great capabilities that this software already has, an
     </li>
     <li> Added documentation to `thrFiringRemainder` module
     </li>
+    <li>Added documentation to `thrFiringSchmitt` module
+    </li>
 </ul>
 
 
