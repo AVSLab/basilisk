@@ -44,11 +44,11 @@ typedef struct {
     
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];               //!< The name of the output message
-    int32_t outputMsgID;                                    //!< [] ID for the outgoing body accel requests
+    int32_t controlOutMsgId;                                //!< [] ID for the outgoing body accel requests
     char inputGuidName[MAX_STAT_MSG_LENGTH];                //!< The name of the Input message
-    int32_t inputGuidID;                                    //!< [] ID for the incoming guidance errors
+    int32_t guidInMsgId;                                    //!< [] ID for the incoming guidance errors
     char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH];   //!< The name of the Input message
-    int32_t inputVehicleConfigDataID;                       //!< [] ID for the incoming static vehicle data
+    int32_t vehicleConfigDataInMsgId;                       //!< [] ID for the incoming static vehicle data
     
 }MRP_PDConfig;
 
