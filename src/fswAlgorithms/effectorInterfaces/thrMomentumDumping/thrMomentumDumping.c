@@ -24,6 +24,7 @@
 #include "effectorInterfaces/thrMomentumDumping/thrMomentumDumping.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "simulation/utilities/bsk_Print.h"
+#include "simulation/utilities/linearAlgebra.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -90,8 +91,8 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t cal
     ConfigData->thrDumpingCounter = 0;
 
     /*! - zero out some vectors */
-    memset(ConfigData->thrOnTimeRemaining, 0x0, MAX_EFF_CNT*sizeof(double));
-    memset(ConfigData->Delta_p, 0x0, MAX_EFF_CNT*sizeof(double));
+    mSetZero(ConfigData->thrOnTimeRemaining, 1, MAX_EFF_CNT);
+    mSetZero(ConfigData->Delta_p, 1, MAX_EFF_CNT);
     memset(&(ConfigData->thrOnTimeOut), 0x0, sizeof(THRArrayOnTimeCmdIntMsg));
 
     /*! - perform sanity check that the module maxCounterValue value is set to a positive value */
@@ -118,7 +119,8 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t ca
     int                 i;
 
     /*! - zero the output array of on-time values */
-    memset(tOnOut, 0x0, MAX_EFF_CNT*sizeof(double));
+    mSetZero(tOnOut, 1, MAX_EFF_CNT);
+
 
     /*! - check if this is the first call after reset.  If yes, write zero output message and exit */
     if (ConfigData->priorTime != 0) {       /* don't compute dt if this is the first call after a reset */
@@ -139,7 +141,7 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t ca
 
             if (ConfigData->thrDumpingCounter <= 0) {
                 /* time to fire thrusters again */
-                memmove(tOnOut, ConfigData->thrOnTimeRemaining, ConfigData->numThrusters*sizeof(double));
+                mCopy(ConfigData->thrOnTimeRemaining, 1, ConfigData->numThrusters, tOnOut);
                 for (i=0;i<ConfigData->numThrusters;i++) {
                     if (ConfigData->thrOnTimeRemaining[i] >0.0)
                         ConfigData->thrOnTimeRemaining[i] -= dt;
@@ -148,17 +150,17 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t ca
             } else {
                 /* no thrusters are firing, giving RWs time to settle attitude */
                 ConfigData->thrDumpingCounter -= 1;
-                memset(tOnOut, 0x0, MAX_EFF_CNT*sizeof(double));
+                mSetZero(tOnOut, 1, MAX_EFF_CNT);
             }
 
 
         } else {
             /* new net thruster impulse request case */
-            memmove(ConfigData->Delta_p, Delta_P_input, ConfigData->numThrusters*sizeof(double));
+            mCopy(Delta_P_input, 1, ConfigData->numThrusters, ConfigData->Delta_p);
             for (i=0;i<ConfigData->numThrusters;i++) {
                 ConfigData->thrOnTimeRemaining[i] = Delta_P_input[i]/ConfigData->thrMaxForce[i];
             }
-            memmove(tOnOut, ConfigData->thrOnTimeRemaining, ConfigData->numThrusters*sizeof(double));
+            mCopy(ConfigData->thrOnTimeRemaining, 1, ConfigData->numThrusters, tOnOut);
             ConfigData->thrDumpingCounter = ConfigData->maxCounterValue;
             for (i=0;i<ConfigData->numThrusters;i++) {
                 ConfigData->thrOnTimeRemaining[i] -= dt;
@@ -178,13 +180,13 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t ca
     } else {
         /* first time this module is updated.  Need a 2nd run before the control period is evaluated */
         /* set the thruster firing times to zero */
-        memset(tOnOut, 0x0, MAX_EFF_CNT*sizeof(double));
+        mSetZero(tOnOut, 1, MAX_EFF_CNT);
     }
 
     ConfigData->priorTime = callTime;
 
     /*! - write out the output message */
-    memmove(ConfigData->thrOnTimeOut.OnTimeRequest, tOnOut, sizeof(THRArrayOnTimeCmdIntMsg));
+    mCopy(tOnOut, 1, MAX_EFF_CNT, ConfigData->thrOnTimeOut.OnTimeRequest);
 
     WriteMessage(ConfigData->thrusterOnTimeOutMsgID, callTime, sizeof(THRArrayOnTimeCmdIntMsg), 
                  (void*) &(ConfigData->thrOnTimeOut), moduleID);
