@@ -37,11 +37,14 @@
 
 /*! @brief Module configuration message definition. */
 typedef struct {
-    /* declare module public variables */
+    /* declare public module variables */
     double K;                           //!< [rad/sec] Proportional gain applied to MRP errors
     double P;                           //!< [N*m*s]   Rate error feedback gain applied
     double knownTorquePntB_B[3];        //!< [N*m]     known external torque in body frame vector components
-    
+
+    /* declare private module variables */
+    double ISCPntB_B[9];                //!< [kg m^2] Spacecraft Inertia
+
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];               //!< The name of the output message
     int32_t controlOutMsgId;                                //!< [] ID for the outgoing body accel requests
