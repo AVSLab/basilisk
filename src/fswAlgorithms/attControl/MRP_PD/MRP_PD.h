@@ -27,25 +27,30 @@
 #include <stdint.h>
 
 /*! \defgroup MRP_PD
- * @{
+ @brief Attitude tracking control module using proportional MRP and no RWs.
+
+ This module is similar to MRP_Feedback(), but without the RW option and the integral feedback option. The feedback control is able to asympotically track a reference attitude if there are no unknown dynamics and the attitude control torque is implemented with a thruster set.   The module
+ [PDF Description](Basilisk-MRP_PD-2019-03-29.pdf)
+ contains further information on this module's function, how to run it, as well as testing.
+   @{
  */
 
-/*! @brief Top level structure for the MRP Steering attitude control routine. */
+/*! @brief Module configuration message definition. */
 typedef struct {
-    /* declare module private variables */
-    double K;                           /*!< [rad/sec] Proportional gain applied to MRP errors */
-    double P;                           /*!< [N*m*s]   Rate error feedback gain applied  */
-    double knownTorquePntB_B[3];        /*!< [N*m]     known external torque in body frame vector components */
+    /* declare module public variables */
+    double K;                           //!< [rad/sec] Proportional gain applied to MRP errors
+    double P;                           //!< [N*m*s]   Rate error feedback gain applied
+    double knownTorquePntB_B[3];        //!< [N*m]     known external torque in body frame vector components
     
     /* declare module IO interfaces */
-    char outputDataName[MAX_STAT_MSG_LENGTH];               /*!< The name of the output message*/
-    int32_t outputMsgID;                                    /*!< [] ID for the outgoing body accel requests*/
-    char inputGuidName[MAX_STAT_MSG_LENGTH];                /*!< The name of the Input message*/
-    int32_t inputGuidID;                                    /*!< [] ID for the incoming guidance errors*/
-    char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH];   /*!< The name of the Input message*/
-    int32_t inputVehicleConfigDataID;                       /*!< [] ID for the incoming static vehicle data */
+    char outputDataName[MAX_STAT_MSG_LENGTH];               //!< The name of the output message
+    int32_t outputMsgID;                                    //!< [] ID for the outgoing body accel requests
+    char inputGuidName[MAX_STAT_MSG_LENGTH];                //!< The name of the Input message
+    int32_t inputGuidID;                                    //!< [] ID for the incoming guidance errors
+    char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH];   //!< The name of the Input message
+    int32_t inputVehicleConfigDataID;                       //!< [] ID for the incoming static vehicle data
     
-    CmdTorqueBodyIntMsg controlOut;                        /*!< [] Control output requests */
+    CmdTorqueBodyIntMsg controlOut;                         //!< [] Control output requests
 }MRP_PDConfig;
 
 #ifdef __cplusplus
