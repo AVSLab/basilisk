@@ -22,7 +22,6 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
@@ -51,8 +50,6 @@ typedef struct {
     /* declare module IO interfaces */
     char deltaHOutMsgName[MAX_STAT_MSG_LENGTH];         //!< The name of the output message
     int32_t deltaHOutMsgId;                             //!< ID for the outgoing message
-    char vehicleConfigDataInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the Input message
-    int32_t vehicleConfigDataInMsgId;                   //!< [] ID for the incoming static vehicle data
     char rwSpeedsInMsgName[MAX_STAT_MSG_LENGTH];        //!< [] The name for the reaction wheel speeds message
     int32_t rwSpeedsInMsgId;                            //!< [] The ID for the reaction wheel speeds message
     char rwConfigDataInMsgName[MAX_STAT_MSG_LENGTH];    //!< [-] The name of the RWA configuration message

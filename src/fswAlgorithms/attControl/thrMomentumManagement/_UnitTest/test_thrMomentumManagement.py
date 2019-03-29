@@ -104,7 +104,6 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    moduleConfig.vehicleConfigDataInMsgName = "vehicleConfigName"
     moduleConfig.rwSpeedsInMsgName = "reactionwheel_speeds"
     moduleConfig.rwConfigDataInMsgName = "rwa_config_data"
     moduleConfig.deltaHOutMsgName = "outputName"
@@ -122,18 +121,6 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
                                           inputMessageSize,
                                           0,
                                           rwSpeedMessage)
-
-    # vehicleConfigData Message:
-    vehicleConfigOut = thrMomentumManagement.VehicleConfigFswMsg()
-    inputMessageSize = vehicleConfigOut.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.vehicleConfigDataInMsgName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.vehicleConfigDataInMsgName,
-                                          inputMessageSize,
-                                          0,
-                                          vehicleConfigOut)
 
 
     # wheelConfigData Message
