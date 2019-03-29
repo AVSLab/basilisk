@@ -29,6 +29,7 @@
 \hline
 Draft & Initial document creation & H. Schaub \\
 0.1 & Updated the sign of $\leftexp{B}{\Delta\bm H}$ & H. Schaub \\
+1.0 & Updated document for code review & H. Schaub \\
 \hline
 
 \end{longtable}
@@ -50,8 +51,12 @@ Draft & Initial document creation & H. Schaub \\
 \end{figure}
 
 \section{Module Description}
-\subsection{Algorithm Outline}
-To manage the Reaction Wheel (RW) angular momentum build-up over time, a thruster-based momentum dumping strategy is used.  Figure~\ref{fig:Fig1} illustrates how the momentum dumping will occur simultaneously with an inertial pointing control solution.  Assume the spacecraft contains $N_{\text{RW}}$ RWs. The net RW angular momentum is given by
+\subsection{Overall RW Momentum Management Outline}
+To manage the Reaction Wheel (RW) angular momentum build-up over time, a thruster-based momentum dumping strategy is used.  Figure~\ref{fig:Fig1} illustrates how the momentum dumping will occur simultaneously with an inertial pointing control solution.   The output of {\tt thrMomentumManagement} module is a $\Delta \bm H$ vector.  This output is then mapped into a thruster impulse request using the {\tt thrForceMapping} module.  Note that this latter module is designed to map a control torque vector into thruster forces.  If the input torque and output force sets are multiplied by time,  the same module also functions to map a desired angular momentum changes vector $\Delta H$ into a set of thruster impulse requests.  The final module {\tt thrMomentumDumping} in the series takes the thruster impulse requests and determines a thruster firing sequence to achieve this desired momentum change.  The spacecraft attitude is held constant by simultaneously having a RW control module holding an inertial attitude.  The process of holding the desired attitude leads to the RWs despinning to the desired level due the external thruster disturbances.  
+
+
+\subsection{Momentum Management Algorithm}
+Assume the spacecraft contains $N_{\text{RW}}$ RWs. The net RW angular momentum is given by
 \begin{equation}
 	\bm h_{s} = \sum_{i=1}^{N_{\text{RW}}} \hat{\bm g}_{s_{i}} J_{s_{i}} \Omega_{i}
 \end{equation} 
