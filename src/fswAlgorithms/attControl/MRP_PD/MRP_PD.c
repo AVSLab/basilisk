@@ -85,11 +85,13 @@ void Update_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime,
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
     double              Lr[3];              /* required control torque vector [Nm] */
-    double              omega_BN_B[3];      /* Inertial angular body rate expressed in body B-frame components */
-    double              v3_temp1[3];        /* Temporal vector for insight computations */
-    double              v3_temp2[3];        /* Temporal vector for insight computations */
+    double              omega_BN_B[3];      /* Inertial angular body vector in body B-frame components */
     CmdTorqueBodyIntMsg controlOutMsg;      /* Control output requests */
     AttGuidFswMsg       guidInMsg;          /* Guidance Message */
+    double              v3_temp1[3];
+    double              v3_temp2[3];
+    double              v3_temp3[3];
+    double              v3_temp4[3];
 
     /*! - zero the output message copy */
     memset(&controlOutMsg, 0x0, sizeof(CmdTorqueBodyIntMsg));
@@ -110,15 +112,15 @@ void Update_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime,
     v3Add(v3_temp1, v3_temp2, Lr);
     
     /* omega x [I]omega */
-    m33MultV3(RECAST3X3 ConfigData->ISCPntB_B, omega_BN_B, v3_temp1);
-    v3Cross(guidInMsg.omega_RN_B, v3_temp1, v3_temp1); /* omega_r x [I]omega */
-    v3Subtract(Lr, v3_temp1, Lr);
+    m33MultV3(RECAST3X3 ConfigData->ISCPntB_B, omega_BN_B, v3_temp3);
+    v3Cross(guidInMsg.omega_RN_B, v3_temp3, v3_temp3); /* omega_r x [I]omega */
+    v3Subtract(Lr, v3_temp3, Lr);
     
     /* [I](d(omega_r)/dt - omega x omega_r) */
-    v3Cross(omega_BN_B, guidInMsg.omega_RN_B, v3_temp1);
-    v3Subtract(guidInMsg.domega_RN_B, v3_temp1, v3_temp1);
-    m33MultV3(RECAST3X3 ConfigData->ISCPntB_B, v3_temp1, v3_temp1);
-    v3Subtract(Lr, v3_temp1, Lr);
+    v3Cross(omega_BN_B, guidInMsg.omega_RN_B, v3_temp4);
+    v3Subtract(guidInMsg.domega_RN_B, v3_temp4, v3_temp4);
+    m33MultV3(RECAST3X3 ConfigData->ISCPntB_B, v3_temp4, v3_temp4);
+    v3Subtract(Lr, v3_temp4, Lr);
     
     v3Add(ConfigData->knownTorquePntB_B, Lr, Lr); /* + L */
     v3Scale(-1.0, Lr, Lr);
