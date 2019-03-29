@@ -24,9 +24,10 @@
 #   Creation Date:      August 18, 2016
 #
 
-import sys, os, inspect
-import numpy as np
 import pytest
+import os, inspect
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
 
 
 
@@ -39,7 +40,6 @@ import pytest
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import thrMomentumManagement            # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupRW
@@ -165,7 +165,7 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.deltaHOutMsgName + '.' + moduleOutputName,
                                                   range(3))
 
-    print moduleOutput
+    # print moduleOutput
 
     # set the filtered output truth states
     if hsMinCheck==1:
@@ -183,6 +183,9 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
 
     # compare the module results to the truth values
     accuracy = 1e-12
+    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
+
+
     for i in range(0,len(trueVector)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], 3, accuracy):
@@ -193,20 +196,17 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
                                 "sec\n")
 
 
-    # If the argument provided at commandline "--show_plots" evaluates as true,
-    # plot all figures
-    # if show_plots:
-        # plot a sample variable.
-        # plt.figure(1)
-        # plt.plot(variableState[:,0]*macros.NANO2SEC, variableState[:,1], label='Sample Variable')
-        # plt.legend(loc='upper left')
-        # plt.xlabel('Time [s]')
-        # plt.ylabel('Variable Description [unit]')
-        # plt.show()
-
-    #   print out success message if no error were found
+    snippentName = "passFail" + str(hsMinCheck)
     if testFailCount == 0:
+        colorText = 'ForestGreen'
         print "PASSED: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        print "Failed: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
