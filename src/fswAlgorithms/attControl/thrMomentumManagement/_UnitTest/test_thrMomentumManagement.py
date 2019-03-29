@@ -84,13 +84,9 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = thrMomentumManagement.thrMomentumManagementConfig()                          # update with current values
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        thrMomentumManagement.Update_thrMomentumManagement,     # update with current values
-                                        thrMomentumManagement.SelfInit_thrMomentumManagement,   # update with current values
-                                        thrMomentumManagement.CrossInit_thrMomentumManagement,  # update with current values
-                                        thrMomentumManagement.Reset_thrMomentumManagement)      # update with current values
-    moduleWrap.ModelTag = "thrMomentumManagement"                                        # update python name of test module
+    moduleConfig = thrMomentumManagement.thrMomentumManagementConfig()
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
+    moduleWrap.ModelTag = "thrMomentumManagement"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
@@ -110,17 +106,8 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
 
     # wheelSpeeds Message
     rwSpeedMessage = thrMomentumManagement.RWSpeedIntMsg()
-    inputMessageSize = rwSpeedMessage.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.rwSpeedsInMsgName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-
     rwSpeedMessage.wheelSpeeds = [10.0, -25.0, 50.0, 100.]
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwSpeedsInMsgName,
-                                          inputMessageSize,
-                                          0,
-                                          rwSpeedMessage)
+    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.rwSpeedsInMsgName, rwSpeedMessage)
 
 
     # wheelConfigData Message
@@ -150,13 +137,6 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
-
-    # # reset the module to test this functionality
-    # moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
-    #
-    # # run the module again for an additional 1.0 seconds
-    # unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
-    # unitTestSim.ExecuteSimulation()
 
 
     # This pulls the actual data log from the simulation run.
