@@ -56,11 +56,11 @@ typedef struct {
 
     /* declare module IO interfaces */
     char 				thrForceInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the Input message */
-    int32_t 			thrForceInMsgID;                        //!< ID for the incoming message */
+    int32_t 			thrForceInMsgId;                        //!< ID for the incoming message */
 	char 				onTimeOutMsgName[MAX_STAT_MSG_LENGTH];  //!< The name of the output message*, onTimeOutMsgName */
-	int32_t 			onTimeOutMsgID;                         //!< ID for the outgoing message */
+	int32_t 			onTimeOutMsgId;                         //!< ID for the outgoing message */
 	char 				thrConfInMsgName[MAX_STAT_MSG_LENGTH];	//!< The name of the thruster cluster Input message */
-	int32_t  			thrConfInMsgID;                   		//!< ID for the incoming Thruster configuration data */
+	int32_t  			thrConfInMsgId;                   		//!< ID for the incoming Thruster configuration data */
 
 	THRArrayCmdForceFswMsg thrForceIn;							//!< -- copy of the input message */
 	THRArrayOnTimeCmdIntMsg thrOnTimeOut;						//!< -- copy of the output message */

@@ -47,7 +47,7 @@ void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t modu
 {
     /*! Begin method steps */
     /*! - Create output message for module */
-    ConfigData->onTimeOutMsgID = CreateNewMessage(ConfigData->onTimeOutMsgName,
+    ConfigData->onTimeOutMsgId = CreateNewMessage(ConfigData->onTimeOutMsgName,
                                                sizeof(THRArrayOnTimeCmdIntMsg),
                                                "THRArrayOnTimeCmdIntMsg",          /* add the output structure name */
                                                moduleID);
@@ -61,10 +61,10 @@ void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t modu
 void CrossInit_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t moduleID)
 {
 	/*! - Get the input message ID's */
-	ConfigData->thrForceInMsgID = subscribeToMessage(ConfigData->thrForceInMsgName,
+	ConfigData->thrForceInMsgId = subscribeToMessage(ConfigData->thrForceInMsgName,
 														 sizeof(THRArrayCmdForceFswMsg),
 														 moduleID);
-	ConfigData->thrConfInMsgID = subscribeToMessage(ConfigData->thrConfInMsgName,
+	ConfigData->thrConfInMsgId = subscribeToMessage(ConfigData->thrConfInMsgName,
 												sizeof(THRArrayConfigFswMsg),
 												moduleID);
 }
@@ -84,7 +84,7 @@ void Reset_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTim
 	ConfigData->prevCallTime = 0;
 
 	/* read in the support messages */
-	ReadMessage(ConfigData->thrConfInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+	ReadMessage(ConfigData->thrConfInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
 				sizeof(THRArrayConfigFswMsg), &localThrusterData, moduleID);
 
 	ConfigData->numThrusters = localThrusterData.numThrusters;
@@ -118,7 +118,7 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTi
 			ConfigData->thrOnTimeOut.OnTimeRequest[i] = (double)(ConfigData->baseThrustState) * 2.0;
 		}
 
-		WriteMessage(ConfigData->onTimeOutMsgID, callTime, sizeof(THRArrayOnTimeCmdIntMsg),   /* update module name */
+		WriteMessage(ConfigData->onTimeOutMsgId, callTime, sizeof(THRArrayOnTimeCmdIntMsg),   /* update module name */
 					 (void*) &(ConfigData->thrOnTimeOut), moduleID);
 		return;
 	}
@@ -128,7 +128,7 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTi
 
 	/*! Begin method steps */
 	/*! - Read the input messages */
-	ReadMessage(ConfigData->thrForceInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+	ReadMessage(ConfigData->thrForceInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
 				sizeof(THRArrayCmdForceFswMsg), (void*) &(ConfigData->thrForceIn), moduleID);
 
 	/*! Loop through thrusters */
@@ -173,7 +173,7 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTi
 		ConfigData->thrOnTimeOut.OnTimeRequest[i] = onTime[i];
 	}
 
-	WriteMessage(ConfigData->onTimeOutMsgID, callTime, sizeof(THRArrayOnTimeCmdIntMsg),   /* update module name */
+	WriteMessage(ConfigData->onTimeOutMsgId, callTime, sizeof(THRArrayOnTimeCmdIntMsg),   /* update module name */
 				 (void*) &(ConfigData->thrOnTimeOut), moduleID);
 
 	return;
