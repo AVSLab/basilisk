@@ -45,9 +45,8 @@ void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uin
 }
 
 /*! This method performs the second stage of initialization for this module.
- It links to 3 required input messages of type [RWArrayConfigFswMsg](\ref RWArrayConfigFswMsg),
- [RWSpeedIntMsg](\ref RWSpeedIntMsg) and
- and [VehicleConfigFswMsg](\ref VehicleConfigFswMsg).
+ It links to 2 required input messages of type [RWArrayConfigFswMsg](\ref RWArrayConfigFswMsg) and
+ [RWSpeedIntMsg](\ref RWSpeedIntMsg).
  @return void
  @param ConfigData The configuration data associated with this module
  */

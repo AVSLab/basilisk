@@ -28,44 +28,35 @@
 #include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 
 /*! \defgroup thrMomentumDumping
- * @{
+ !@brief This module reads in the desired impulse that each thruster must produce to create inertial momentum change to despin the RWs.
+
+ The output of the module is a setup of thruster firing times.  Each thruster can only fire for a maximum time that matches a single control period.  After this the thrusters are off for an integer number of control periods to let the RW re-stabilize the attitude about an inertial pointing scenario. The module [PDF Description](Basilisk-thrMomentumDumping-20160820.pdf)
+ contains further information on this module's function, how to run it, as well as testing.
+ @{
  */
 
 
-/*!@brief Data structure for module to implement RW momentum dumping.
-
- The module
- [PDF Description](Basilisk-thrMomentumDumping-20160820.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
- */
 
 typedef struct {
     /* declare module private variables */
-    int32_t     thrDumpingCounter;                      /*!<        counter to specify after how many contro period a thruster
-                                                                    firing should occur. */
-    double      Delta_p[MAX_EFF_CNT];                   /*!<        vector of desired total thruster impulses */
-    double      thrOnTimeRemaining[MAX_EFF_CNT];        /*!<        vector of remaining thruster on times */
-    uint64_t    priorTime;                              /*!< [ns]   Last time the attitude control is called */
-    int         numThrusters;                           /*!<        number of thrusters installed */
-    double      thrMaxForce[MAX_EFF_CNT];               /*!< [N]    vector of maximum thruster forces */
-    double      thrMinFireTime;                         /*!< [s]    smallest thruster firing time */
+    int32_t     thrDumpingCounter;                      //!<        counter to specify after how many contro period a thruster firing should occur.
+    double      Delta_p[MAX_EFF_CNT];                   //!<        vector of desired total thruster impulses
+    double      thrOnTimeRemaining[MAX_EFF_CNT];        //!<        vector of remaining thruster on times
+    uint64_t    priorTime;                              //!< [ns]   Last time the attitude control is called
+    int         numThrusters;                           //!<        number of thrusters installed
+    double      thrMaxForce[MAX_EFF_CNT];               //!< [N]    vector of maximum thruster forces
 
     /* declare module public variables */
-    int         maxCounterValue;                        /*!<        this variable must be set to a non-zero value, indicating
-                                                                    how many control periods to wait until the thrusters
-                                                                    fire again to dump RW momentum  */
+    int         maxCounterValue;                        //!<        this variable must be set to a non-zero value, indicating how many control periods to wait until the thrusters fire again to dump RW momentum
+    double      thrMinFireTime;                         //!< [s]    smallest thruster firing time
 
     /* declare module IO interfaces */
-    char thrusterOnTimeOutMsgName[MAX_STAT_MSG_LENGTH];
-    int32_t thrusterOnTimeOutMsgID;
-    char thrusterImpulseInMsgName[MAX_STAT_MSG_LENGTH];
-    int32_t thrusterImpulseInMsgID;
-    char thrusterConfInMsgName[MAX_STAT_MSG_LENGTH];/*!< The name of the thruster cluster Input message*/
-    int32_t  thrusterConfInMsgID;                   /*!< [-] ID for the incoming Thruster configuration data*/
-
-
-    THRArrayOnTimeCmdIntMsg thrOnTimeOut;          /*!< -- copy of the output message */
+    char thrusterOnTimeOutMsgName[MAX_STAT_MSG_LENGTH]; //!< thruster on time output message name
+    int32_t thrusterOnTimeOutMsgID;                     //!< ID of module output message
+    char thrusterImpulseInMsgName[MAX_STAT_MSG_LENGTH]; //!< desired thruster impulse input message name
+    int32_t thrusterImpulseInMsgID;                     //!< ID of thruster impulse input message
+    char thrusterConfInMsgName[MAX_STAT_MSG_LENGTH];    //!< The name of the thruster configuration Input message
+    int32_t  thrusterConfInMsgID;                       //!< [-] ID for the incoming Thruster configuration data
 
 }thrMomentumDumpingConfig;
 
