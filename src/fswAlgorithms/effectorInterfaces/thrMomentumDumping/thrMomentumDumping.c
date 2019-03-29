@@ -21,54 +21,44 @@
  
  */
 
-/* modify the path to reflect the new module names */
 #include "effectorInterfaces/thrMomentumDumping/thrMomentumDumping.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "simulation/utilities/bsk_Print.h"
 #include <string.h>
 #include <stdio.h>
 
-/* update this include to reflect the required module input messages */
 
-
-
-/*
- Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
- */
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "simulation/utilities/bsk_Print.h"
-
-
-/*! This method initializes the ConfigData for this module.
- It creates the output message.
+/*! This method initializes the ConfigData for this module.  It creates a single output message of type
+ [THRArrayOnTimeCmdIntMsg](\ref THRArrayOnTimeCmdIntMsg).
  @return void
  @param ConfigData The configuration data associated with this module
  */
 void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->thrusterOnTimeOutMsgID = CreateNewMessage(ConfigData->thrusterOnTimeOutMsgName,
                                                sizeof(THRArrayOnTimeCmdIntMsg),
-                                               "THRArrayOnTimeCmdIntMsg",          /* add the output structure name */
+                                               "THRArrayOnTimeCmdIntMsg",
                                                moduleID);
-
 }
 
 /*! This method performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
+ It links to 3 required input messages of type [THRArrayCmdForceFswMsg](\ref THRArrayCmdForceFswMsg)
+ and [THRArrayConfigFswMsg](\ref THRArrayConfigFswMsg).
  @return void
  @param ConfigData The configuration data associated with this module
  */
 void CrossInit_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t moduleID)
 {
-    /*! - Get the control data message ID*/
+    /*! - Get the message ID for the requested thruster impulse message */
     ConfigData->thrusterImpulseInMsgID = subscribeToMessage(ConfigData->thrusterImpulseInMsgName,
                                                 sizeof(THRArrayCmdForceFswMsg),
                                                 moduleID);
+
+    /*! - Get the message ID for the thruster configuration message */
     ConfigData->thrusterConfInMsgID = subscribeToMessage(ConfigData->thrusterConfInMsgName,
                                                          sizeof(THRArrayConfigFswMsg),
                                                          moduleID);
-
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -78,17 +68,17 @@ void CrossInit_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t
  */
 void Reset_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    THRArrayConfigFswMsg   localThrusterData;     /*!< local copy of the thruster data message */
+    THRArrayConfigFswMsg   localThrusterData;     /* local copy of the thruster data message */
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
     int                 i;
 
-    ConfigData->priorTime = 0;              /* reset the prior time flag state.  If set
-                                             to zero, the control time step is not evaluated on the
-                                             first function call */
+    /*! - reset the prior time flag state.  If set to zero, the control time step is not evaluated on the
+     first function call */
+    ConfigData->priorTime = 0;
 
 
-    /* read in number of thrusters installed */
+    /*! - read in number of thrusters installed and maximum thrust values */
     ReadMessage(ConfigData->thrusterConfInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(THRArrayConfigFswMsg), &localThrusterData, moduleID);
     ConfigData->numThrusters = localThrusterData.numThrusters;
@@ -96,20 +86,24 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t cal
         ConfigData->thrMaxForce[i] = localThrusterData.thrusters[i].maxThrust;
     }
 
+    /*! - reset dumping counter */
     ConfigData->thrDumpingCounter = 0;
 
-    /* zero out some vectors */
+    /*! - zero out some vectors */
     memset(ConfigData->thrOnTimeRemaining, 0x0, MAX_EFF_CNT*sizeof(double));
     memset(ConfigData->Delta_p, 0x0, MAX_EFF_CNT*sizeof(double));
     memset(&(ConfigData->thrOnTimeOut), 0x0, sizeof(THRArrayOnTimeCmdIntMsg));
 
+    /*! - perform sanity check that the module maxCounterValue value is set to a positive value */
     if (ConfigData->maxCounterValue < 1) {
         BSK_PRINT(MSG_WARNING,"The maxCounterValue flag must be set to a positive value.\n");
     }
 
 }
 
-/*! Add a description of what this main Update() routine does for this module
+/*! This method reads in the requested thruster impulse message.  If it is a new message then a fresh
+ thruster firing cycle is setup to achieve the desired RW momentum dumping.  The the same message is read
+ in, then the thrust continue to periodically fire to achieve the net thruster impuleses requested.
  @return void
  @param ConfigData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
@@ -118,17 +112,18 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t ca
 {
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
-    double              dt;                             /*!< [s]    control update period */
-    double              Delta_P_input[MAX_EFF_CNT];     /*!< [Ns]   input vector of requested net thruster impulses */
-    double              tOnOut[MAX_EFF_CNT];            /*!< [s]    vector of requested thruster on times per dumping cycle */
+    double              dt;                             /* [s]    control update period */
+    double              Delta_P_input[MAX_EFF_CNT];     /* [Ns]   input vector of requested net thruster impulses */
+    double              tOnOut[MAX_EFF_CNT];            /* [s]    vector of requested thruster on times per dumping cycle */
     int                 i;
 
-    /* zero the output on time vector */
+    /*! - zero the output array of on-time values */
     memset(tOnOut, 0x0, MAX_EFF_CNT*sizeof(double));
 
+    /*! - check if this is the first call after reset.  If yes, write zero output message and exit */
     if (ConfigData->priorTime != 0) {       /* don't compute dt if this is the first call after a reset */
 
-        /* compute control update time */
+        /* - compute control update time */
         dt = (callTime - ConfigData->priorTime)*NANO2SEC;
         if (dt > 10.0) dt = 10.0;           /* cap the maximum control time step possible */
         if (dt < 0.0) dt = 0.0;             /* ensure no negative numbers are used */
@@ -137,6 +132,8 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t ca
         ReadMessage(ConfigData->thrusterImpulseInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(THRArrayCmdForceFswMsg), (void*) Delta_P_input, moduleID);
 
+        /*! - check if the thruster impulse input message is identical to current values (continue
+         with current momentum dumping), or if the message is new (setup new dumping strategy)  */
         if (memcmp(Delta_P_input, ConfigData->Delta_p, ConfigData->numThrusters*sizeof(double)) == 0) {
             /* idential net thruster impulse request case, continue with existing RW momentum dumping */
 
@@ -170,7 +167,7 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t ca
 
 
 
-        /* check for negative or saturated firing times */
+        /*! - check for negative or saturated firing times */
         for (i=0;i<ConfigData->numThrusters;i++) {
             if (tOnOut[i] < ConfigData->thrMinFireTime) tOnOut[i] = 0.0;
             if (ConfigData->thrOnTimeRemaining[i] < 0.0) ConfigData->thrOnTimeRemaining[i] = 0.0;
@@ -186,9 +183,7 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t ca
 
     ConfigData->priorTime = callTime;
 
-    /*
-     store the output message
-     */
+    /*! - write out the output message */
     memmove(ConfigData->thrOnTimeOut.OnTimeRequest, tOnOut, sizeof(THRArrayOnTimeCmdIntMsg));
 
     WriteMessage(ConfigData->thrusterOnTimeOutMsgID, callTime, sizeof(THRArrayOnTimeCmdIntMsg), 
