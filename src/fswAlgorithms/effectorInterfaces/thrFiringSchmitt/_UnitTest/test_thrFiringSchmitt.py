@@ -86,9 +86,9 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = thrFiringSchmitt.thrFiringSchmittConfig()                          # update with current values
+    moduleConfig = thrFiringSchmitt.thrFiringSchmittConfig()
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "thrFiringSchmitt"                                        # update python name of test module
+    moduleWrap.ModelTag = "thrFiringSchmitt"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
@@ -159,8 +159,6 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    # unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation
-
 
     if dvOn:
         effReq1 = [0.0, -0.1, -0.2, -0.3, -0.349, -0.351, -0.451, -0.5]

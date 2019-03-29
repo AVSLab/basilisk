@@ -86,9 +86,9 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = thrFiringRemainder.thrFiringRemainderConfig()                          # update with current values
+    moduleConfig = thrFiringRemainder.thrFiringRemainderConfig()
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "thrFiringRemainder"                                        # update python name of test module
+    moduleWrap.ModelTag = "thrFiringRemainder"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
@@ -109,7 +109,7 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
 
     # setup thruster cluster message
     fswSetupThrusters.clearSetup()
-    rcsLocationData = [ \
+    rcsLocationData = [
         [-0.86360, -0.82550, 1.79070],
         [-0.82550, -0.86360, 1.79070],
         [0.82550, 0.86360, 1.79070],
@@ -117,9 +117,9 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
         [-0.86360, -0.82550, -1.79070],
         [-0.82550, -0.86360, -1.79070],
         [0.82550, 0.86360, -1.79070],
-        [0.86360, 0.82550, -1.79070] \
+        [0.86360, 0.82550, -1.79070]
         ]
-    rcsDirectionData = [ \
+    rcsDirectionData = [
         [1.0, 0.0, 0.0],
         [0.0, 1.0, 0.0],
         [0.0, -1.0, 0.0],
@@ -127,7 +127,7 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
         [-1.0, 0.0, 0.0],
         [0.0, -1.0, 0.0],
         [0.0, 1.0, 0.0],
-        [1.0, 0.0, 0.0] \
+        [1.0, 0.0, 0.0]
         ]
 
     for i in range(len(rcsLocationData)):
@@ -138,12 +138,14 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
     numThrusters = fswSetupThrusters.getNumOfDevices()
 
     # setup thruster impulse request message
-    inputMessageData = thrFiringRemainder.THRArrayCmdForceFswMsg()
-    messageSize = inputMessageData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.thrForceInMsgName,
-                                          messageSize,
-                                          2)
+    thrMessageData = thrFiringRemainder.THRArrayCmdForceFswMsg()
+    if dvOn:
+        thrMessageData.thrForce = [-0.5, 0.0, -0.1, -0.2, -0.3, -0.34, -0.39, -0.44]
+    else:
+        thrMessageData.thrForce = [0.5, 0.05, 0.1, 0.15, 0.19, 0.0, 0.2, 0.49]
+    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.thrForceInMsgName, thrMessageData)
+
+
 
 
     # Setup logging on the test module output message so that we get all the writes to it
@@ -156,28 +158,6 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    # unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation
-
-
-    if dvOn:
-        # inputMessageData.thrForce = [0.0, -0.1, -0.2, -0.3, -0.349, -0.351, -0.451, -0.5]
-        inputMessageData.thrForce = [-0.5, 0.0, -0.1, -0.2, -0.3, -0.34, -0.39, -0.44]
-    else:
-        inputMessageData.thrForce = [0.5, 0.05, 0.1, 0.15, 0.19, 0.0, 0.2, 0.49]
-
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
-                                          messageSize,
-                                          0,
-                                          inputMessageData)
-    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
-    unitTestSim.ExecuteSimulation()
-
-    unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
-    unitTestSim.ExecuteSimulation()
-
-    unitTestSim.ConfigureStopTime(macros.sec2nano(2.5))        # seconds to stop simulation
-    unitTestSim.ExecuteSimulation()
-
     unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
