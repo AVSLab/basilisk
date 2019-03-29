@@ -30,33 +30,40 @@
 
 
 /*! \defgroup thrFiringSchmitt
+ * @brief A Schmitt trigger logic is implemented to map a desired thruster force value into a thruster on command time.
+ *
+ * The module reads in the attitude control thruster force values for both on- and off-pulsing scenarios, and then maps this into a time which specifies how long a thruster should be on.  The thruster configuration data is read in through a separate input message in the reset method.  The Schmitt trigger allows for an upper and lower bound where the thruster is either turned on or off.
+ * More information can be found in the [PDF Description](Basilisk-thrFiringRemainder-2019-03-28.pdf).
+ * The paper [Steady-State Attitude and Control Effort Sensitivity Analysis of Discretized Thruster Implementations](https://doi.org/10.2514/1.A33709) includes a detailed discussion on the Schmitt Trigger and compares it to other thruster firing methods.  
  * @{
  */
 
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
-    /* declare module private variables */
-	double				level_on;								/*!< [-] ON duty cycle fraction */
-	double				level_off;								/*!< [-] OFF duty cycle fraction */
-	uint32_t 			numThrusters;							/*!< [-] The number of thrusters available on vehicle */
-	double				maxThrust[MAX_EFF_CNT];					/*!< [N] Max thrust */
-	double				thrMinFireTime;							/*!< [s] Minimum ON time for thrusters */
-	int					baseThrustState;						/*!< [-] Indicates on-pulsing (0) or off-pusling (1) */
-	boolean_t			lastThrustState[MAX_EFF_CNT];			/*!< [-] ON/OFF state of thrusters from previous call */
+    /* declare module public variables */
+    double              level_on;                               //!< [-] ON duty cycle fraction
+    double              level_off;                              //!< [-] OFF duty cycle fraction */
+    double              thrMinFireTime;                         //!< [s] Minimum ON time for thrusters */
+    int                 baseThrustState;                        //!< [-] Indicates on-pulsing (0) or off-pusling (1) */
 
-	uint64_t			prevCallTime;							/*!< callTime from previous function call */
+    /* declare module private variables */
+	uint32_t 			numThrusters;							//!< [-] The number of thrusters available on vehicle */
+	double				maxThrust[MAX_EFF_CNT];					//!< [N] Max thrust */
+	boolean_t			lastThrustState[MAX_EFF_CNT];			//!< [-] ON/OFF state of thrusters from previous call */
+
+	uint64_t			prevCallTime;							//!< callTime from previous function call */
 
     /* declare module IO interfaces */
-    char 				thrForceInMsgName[MAX_STAT_MSG_LENGTH];        	/*!< The name of the Input message */
-    int32_t 			thrForceInMsgID;                             	/*!< ID for the incoming message */
-	char 				onTimeOutMsgName[MAX_STAT_MSG_LENGTH];       	/*!< The name of the output message*, onTimeOutMsgName */
-	int32_t 			onTimeOutMsgID;                            		/*!< ID for the outgoing message */
-	char 				thrConfInMsgName[MAX_STAT_MSG_LENGTH];			/*!< The name of the thruster cluster Input message */
-	int32_t  			thrConfInMsgID;                   				/*!< ID for the incoming Thruster configuration data */
+    char 				thrForceInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the Input message */
+    int32_t 			thrForceInMsgID;                        //!< ID for the incoming message */
+	char 				onTimeOutMsgName[MAX_STAT_MSG_LENGTH];  //!< The name of the output message*, onTimeOutMsgName */
+	int32_t 			onTimeOutMsgID;                         //!< ID for the outgoing message */
+	char 				thrConfInMsgName[MAX_STAT_MSG_LENGTH];	//!< The name of the thruster cluster Input message */
+	int32_t  			thrConfInMsgID;                   		//!< ID for the incoming Thruster configuration data */
 
-	THRArrayCmdForceFswMsg thrForceIn;								    /*!< -- copy of the input message */
-	THRArrayOnTimeCmdIntMsg thrOnTimeOut;								/*!< -- copy of the output message */
+	THRArrayCmdForceFswMsg thrForceIn;							//!< -- copy of the input message */
+	THRArrayOnTimeCmdIntMsg thrOnTimeOut;						//!< -- copy of the output message */
 
 }thrFiringSchmittConfig;
 
