@@ -21,31 +21,21 @@
  
  */
 
-/* modify the path to reflect the new module names */
 #include "attControl/thrMomentumManagement/thrMomentumManagement.h"
-
-/* update this include to reflect the required module input messages */
 #include "attControl/MRP_Steering/MRP_Steering.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
+#include "simulation/utilities/linearAlgebra.h"
 #include <string.h>
 
 
-/*
- Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
- */
-#include "simulation/utilities/linearAlgebra.h"
-
-
-/*! This method initializes the ConfigData for this module.
- It checks to ensure that the inputs are sane and then creates the
- output message
+/*! This method initializes the ConfigData for this module.  It creates a single output message of type
+ [CmdTorqueBodyIntMsg](\ref CmdTorqueBodyIntMsg).
  @return void
  @param ConfigData The configuration data associated with this module
  */
 void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint64_t moduleID)
 {
     
-    /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->deltaHOutMsgId = CreateNewMessage(ConfigData->deltaHOutMsgName,
                                                sizeof(CmdTorqueBodyIntMsg),
@@ -55,13 +45,15 @@ void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uin
 }
 
 /*! This method performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
+ It links to 3 required input messages of type [RWArrayConfigFswMsg](\ref RWArrayConfigFswMsg),
+ [RWSpeedIntMsg](\ref RWSpeedIntMsg) and
+ and [VehicleConfigFswMsg](\ref VehicleConfigFswMsg).
  @return void
  @param ConfigData The configuration data associated with this module
  */
 void CrossInit_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint64_t moduleID)
 {
-    /*! - Get the other message IDs */
+    /*! - Get the input message IDs */
     ConfigData->rwConfInMsgId = subscribeToMessage(ConfigData->rwConfigDataInMsgName,
                                                   sizeof(RWArrayConfigFswMsg), moduleID);
     ConfigData->rwSpeedsInMsgId = subscribeToMessage(ConfigData->rwSpeedsInMsgName,
@@ -81,18 +73,23 @@ void Reset_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint64
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
 
+    /*! - read in the vehicle configuratio message */
+    memset(&sc, 0x0, sizeof(VehicleConfigFswMsg));
     ReadMessage(ConfigData->vehicleConfigDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
 
+    /*! - read in the RW configuration message */
+    memset(&(ConfigData->rwConfigParams), 0x0, sizeof(RWArrayConfigFswMsg));
     ReadMessage(ConfigData->rwConfInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(RWArrayConfigFswMsg), &(ConfigData->rwConfigParams), moduleID);
 
+    /*! - reset the momentum dumping request flag */
     ConfigData->initRequest = 1;
-    v3SetZero(ConfigData->Delta_H_B);
-    memset(&(ConfigData->controlOut), 0x0, sizeof(CmdTorqueBodyIntMsg));
 }
 
-/*! Add a description of what this main Update() routine does for this module
+/*! The RW momentum level is assessed to determine if a momentum dumping maneuver is required.
+ This checking only happens once after the reset function is called.  To run this again afterwards,
+ the reset function must be called again.
  @return void
  @param ConfigData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
@@ -101,20 +98,23 @@ void Update_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint6
 {
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
-    RWSpeedIntMsg      rwSpeedMsg;         /*!< Reaction wheel speed estimates */
-    double              hs;                 /*!< net RW cluster angularl momentum magnitude */
-    double              hs_B[3];            /*!< RW angular momentum */
-    double              vec3[3];            /*!< temp vector */
+    RWSpeedIntMsg       rwSpeedMsg;         /* Reaction wheel speed estimate message */
+    CmdTorqueBodyIntMsg controlOutMsg;      /* Control torque output message */
+    double              hs;                 /* net RW cluster angular momentum magnitude */
+    double              hs_B[3];            /* RW angular momentum */
+    double              vec3[3];            /* temp vector */
+    double              Delta_H_B[3];       /* [Nms]  net desired angular momentum change */
     int i;
 
-
+    /*! - check if a momentum dumping check has been requested */
     if (ConfigData->initRequest == 1) {
 
         /*! - Read the input messages */
+        memset(&rwSpeedMsg, 0x0, sizeof(RWSpeedIntMsg));
         ReadMessage(ConfigData->rwSpeedsInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(RWSpeedIntMsg), (void*) &(rwSpeedMsg), moduleID);
 
-        /* compute net RW momentum magnitude */
+        /*! - compute net RW momentum magnitude */
         v3SetZero(hs_B);
         for (i=0;i<ConfigData->rwConfigParams.numRW;i++) {
             v3Scale(ConfigData->rwConfigParams.JsList[i]*rwSpeedMsg.wheelSpeeds[i],&ConfigData->rwConfigParams.GsMatrix_B[i*3],vec3);
@@ -122,22 +122,22 @@ void Update_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint6
         }
         hs = v3Norm(hs_B);
 
+        /*! - check if momentum dumping is required */
         if (hs < ConfigData->hs_min) {
             /* Momentum dumping not required */
-            v3SetZero(ConfigData->Delta_H_B);
+            v3SetZero(Delta_H_B);
         } else {
-            v3Scale(-(hs - ConfigData->hs_min)/hs, hs_B, ConfigData->Delta_H_B);
+            v3Scale(-(hs - ConfigData->hs_min)/hs, hs_B, Delta_H_B);
         }
         ConfigData->initRequest = 0;
 
 
-        /*
-         store the output message 
-         */
-        v3Copy(ConfigData->Delta_H_B, ConfigData->controlOut.torqueRequestBody);
+        /*! - write out the output message */
+        memset(&controlOutMsg, 0x0, sizeof(CmdTorqueBodyIntMsg));
+        v3Copy(Delta_H_B, controlOutMsg.torqueRequestBody);
 
         WriteMessage(ConfigData->deltaHOutMsgId, callTime, sizeof(CmdTorqueBodyIntMsg),
-                     (void*) &(ConfigData->controlOut), moduleID);
+                     (void*) &controlOutMsg, moduleID);
 
     }
 

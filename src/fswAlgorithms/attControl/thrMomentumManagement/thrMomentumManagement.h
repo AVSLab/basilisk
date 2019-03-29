@@ -28,23 +28,21 @@
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 
 /*! \defgroup thrMomentumManagement
+  @brief This module reads in the Reaction Wheel (RW) speeds, determines the net RW momentum, and then determines the amount of angular momentum that must be dumped.
+
+ A separate thruster firing logic module called thrMomentumDumping will later on compute the thruster on cycling. The module
+ [PDF Description](Basilisk-thrMomentumManagement-20160817.pdf)
+ contains further information on this module's function, how to run it, as well as testing.
  * @{
  */
 
 
-/*!@brief This module reads in the Reaction Wheel (RW) speeds, determines the net RW momentum, and then determines the amount of angular momentum that must be dumped. A separate thruster firing logic module called thrMomentumDumping will later on compute the thruster on cycling.
-
- The module
- [PDF Description](Basilisk-thrMomentumManagement-20160817.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
- */
 
 
+/*! @brief Module configuration message definition. */
 typedef struct {
     /* declare module private variables */
     int initRequest;                                    //!< [-] status flag of the momentum dumping management
-    double  Delta_H_B[3];                               //!< [Nms]  net desired angular momentum change
     RWArrayConfigFswMsg rwConfigParams;                 //!< [-] struct to store message containing RW config parameters in body B frame
 
     /* declare module public variables */
@@ -59,9 +57,6 @@ typedef struct {
     int32_t rwSpeedsInMsgId;                            //!< [] The ID for the reaction wheel speeds message
     char rwConfigDataInMsgName[MAX_STAT_MSG_LENGTH];    //!< [-] The name of the RWA configuration message
     int32_t rwConfInMsgId;                              //!< [-] ID for the incoming RWA configuration data
-
-
-    CmdTorqueBodyIntMsg controlOut;                    //!< [] Control output requests
 
 }thrMomentumManagementConfig;
 
