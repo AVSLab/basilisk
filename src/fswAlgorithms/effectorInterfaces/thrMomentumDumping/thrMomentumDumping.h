@@ -58,9 +58,6 @@ typedef struct {
     char thrusterConfInMsgName[MAX_STAT_MSG_LENGTH];    //!< The name of the thruster configuration Input message
     int32_t  thrusterConfInMsgID;                       //!< [-] ID for the incoming Thruster configuration data
 
-
-    THRArrayOnTimeCmdIntMsg thrOnTimeOut;          //!< -- copy of the output message
-
 }thrMomentumDumpingConfig;
 
 #ifdef __cplusplus
