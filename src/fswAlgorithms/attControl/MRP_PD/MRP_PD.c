@@ -23,13 +23,8 @@
 
 #include "attControl/MRP_PD/MRP_PD.h"
 #include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/rigidBodyKinematics.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
-#include "fswUtilities/fswDefinitions.h"
-#include "simulation/utilities/astroConstants.h"
-#include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 #include <string.h>
-#include <math.h>
 
 /*! This method initializes the ConfigData for this module.
  It checks to ensure that the inputs are sane and then creates the
@@ -39,10 +34,8 @@
  */
 void SelfInit_MRP_PD(MRP_PDConfig *ConfigData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
-    /*! - Create output message for module */
-    ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
+        /*! - Create output message for module */
+    ConfigData->controlOutMsgId = CreateNewMessage(ConfigData->outputDataName,
         sizeof(CmdTorqueBodyIntMsg), "CmdTorqueBodyIntMsg", moduleID);
 
 
@@ -56,9 +49,9 @@ void SelfInit_MRP_PD(MRP_PDConfig *ConfigData, uint64_t moduleID)
 void CrossInit_MRP_PD(MRP_PDConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message IDs*/
-    ConfigData->inputGuidID = subscribeToMessage(ConfigData->inputGuidName,
+    ConfigData->guidInMsgId = subscribeToMessage(ConfigData->inputGuidName,
                                                  sizeof(AttGuidFswMsg), moduleID);
-    ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
+    ConfigData->vehicleConfigDataInMsgId = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
                                                               sizeof(VehicleConfigFswMsg), moduleID);
 }
 
@@ -69,7 +62,15 @@ void CrossInit_MRP_PD(MRP_PDConfig *ConfigData, uint64_t moduleID)
  */
 void Reset_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    
+    uint64_t            timeOfMsgWritten;
+    uint32_t            sizeOfMsgWritten;
+    VehicleConfigFswMsg   sc;               /* spacecraft configuration message */
+
+    /*! - read in spacecraft configuration message */
+    memset(&sc, 0x0, sizeof(VehicleConfigFswMsg));
+    ReadMessage(ConfigData->vehicleConfigDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
+                sizeof(VehicleConfigFswMsg), (void*) &sc, moduleID);
+    mCopy(sc.ISCPntB_B, 1, 9, ConfigData->ISCPntB_B);
 }
 
 /*! This method takes the attitude and rate errors relative to the Reference frame, as well as
@@ -81,53 +82,54 @@ void Reset_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime, uint64_t moduleID
 void Update_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
-    AttGuidFswMsg      guidCmd;            /*!< Guidance Message */
-    VehicleConfigFswMsg   sc;                 /*!< spacecraft configuration message */
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
-    double              Lr[3];              /*!< required control torque vector [Nm] */
-    double              omega_BN_B[3];      /*!< Inertial angular body rate expressed in body B-frame components */
-    double              v3_temp1[3];        /*!< Temporal vector for insight computations */
-    double              v3_temp2[3];        /*!< Temporal vector for insight computations */
+    double              Lr[3];              /* required control torque vector [Nm] */
+    double              omega_BN_B[3];      /* Inertial angular body vector in body B-frame components */
+    CmdTorqueBodyIntMsg controlOutMsg;      /* Control output requests */
+    AttGuidFswMsg       guidInMsg;          /* Guidance Message */
+    double              v3_temp1[3];
+    double              v3_temp2[3];
+    double              v3_temp3[3];
+    double              v3_temp4[3];
 
+    /*! - zero the output message copy */
+    memset(&controlOutMsg, 0x0, sizeof(CmdTorqueBodyIntMsg));
 
-    /*! Begin method steps*/
-    
-    /*! - Read the input messages */
-    ReadMessage(ConfigData->inputGuidID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);
-    ReadMessage(ConfigData->inputVehicleConfigDataID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
-    
-    /*! - Compute body rate */
-    v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
+    /*! - Read the guidance input message */
+    memset(&guidInMsg, 0x0, sizeof(AttGuidFswMsg));
+    ReadMessage(ConfigData->guidInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
+                sizeof(AttGuidFswMsg), (void*) &(guidInMsg), moduleID);
+
+    /*! - Compute angular body rate */
+    v3Add(guidInMsg.omega_BR_B, guidInMsg.omega_RN_B, omega_BN_B);
         
-    /*! - Evaluate required attitude control torque:
-     Lr =  K*sigma_BR + P*delta_omega  - omega_r x [I]omega - [I](d(omega_r)/dt - omega x omega_r) + L
+    /*! - Evaluate required attitude control torque */
+    /* Lr =  K*sigma_BR + P*delta_omega  - omega_r x [I]omega - [I](d(omega_r)/dt - omega x omega_r) + L
      */
-    v3Scale(ConfigData->K, guidCmd.sigma_BR, v3_temp1); /* + K * sigma_BR */
-    v3Scale(ConfigData->P, guidCmd.omega_BR_B, v3_temp2); /* + P * delta_omega */
+    v3Scale(ConfigData->K, guidInMsg.sigma_BR, v3_temp1); /* + K * sigma_BR */
+    v3Scale(ConfigData->P, guidInMsg.omega_BR_B, v3_temp2); /* + P * delta_omega */
     v3Add(v3_temp1, v3_temp2, Lr);
     
-    /* - omega x [I]omega */
-    m33MultV3(RECAST3X3 sc.ISCPntB_B, omega_BN_B, v3_temp1);
-    v3Cross(guidCmd.omega_RN_B, v3_temp1, v3_temp1); /* omega_r x [I]omega */
-    v3Subtract(Lr, v3_temp1, Lr);
+    /* omega x [I]omega */
+    m33MultV3(RECAST3X3 ConfigData->ISCPntB_B, omega_BN_B, v3_temp3);
+    v3Cross(guidInMsg.omega_RN_B, v3_temp3, v3_temp3); /* omega_r x [I]omega */
+    v3Subtract(Lr, v3_temp3, Lr);
     
-    /* - [I](d(omega_r)/dt - omega x omega_r) */
-    v3Cross(omega_BN_B, guidCmd.omega_RN_B, v3_temp1);
-    v3Subtract(guidCmd.domega_RN_B, v3_temp1, v3_temp1);
-    m33MultV3(RECAST3X3 sc.ISCPntB_B, v3_temp1, v3_temp1);
-    v3Subtract(Lr, v3_temp1, Lr);
+    /* [I](d(omega_r)/dt - omega x omega_r) */
+    v3Cross(omega_BN_B, guidInMsg.omega_RN_B, v3_temp4);
+    v3Subtract(guidInMsg.domega_RN_B, v3_temp4, v3_temp4);
+    m33MultV3(RECAST3X3 ConfigData->ISCPntB_B, v3_temp4, v3_temp4);
+    v3Subtract(Lr, v3_temp4, Lr);
     
     v3Add(ConfigData->knownTorquePntB_B, Lr, Lr); /* + L */
-    v3Scale(-1.0, Lr, Lr);                                  /* compute the net positive control torque onto the spacecraft */
+    v3Scale(-1.0, Lr, Lr);
 
 
     /*! - Store and write the output message */
-    v3Copy(Lr, ConfigData->controlOut.torqueRequestBody);
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(CmdTorqueBodyIntMsg),
-                 (void*) &(ConfigData->controlOut), moduleID);
+    v3Copy(Lr, controlOutMsg.torqueRequestBody);
+    WriteMessage(ConfigData->controlOutMsgId, callTime, sizeof(CmdTorqueBodyIntMsg),
+                 (void*) &controlOutMsg, moduleID);
     
     return;
 }

@@ -52,6 +52,7 @@ We are very excited by the great capabilities that this software already has, an
     <li>Added documentation to `thrFiringSchmitt` module</li>
     <li>Updated documentation of `thrMomentumManagement` module</li>
     <li>Updated documentation of `thrMomentumDumping` module</li>
+    <li>Added documentation of `MRP_PD` module</li>
 </ul>
 
 

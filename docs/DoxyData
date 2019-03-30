@@ -1267,6 +1267,7 @@ HTML_EXTRA_FILES       = ../src/simulation/dynamics/extForceTorque/_Documentatio
                          ../src/fswAlgorithms/attControl/MRP_Steering/_Documentation/AVS-Sim-MRP_Steering-2016-0108.pdf \
                          ../src/fswAlgorithms/attControl/PRV_Steering/_Documentation/AVS-Sim-PRV_Steering-2016-0108.pdf \
                          ../src/fswAlgorithms/attControl/thrMomentumManagement/_Documentation/Basilisk-thrMomentumManagement-20160817.pdf \
+                         ../src/fswAlgorithms/attControl/MRP_PD/_Documentation/Basilisk-MRP_PD-2019-03-29.pdf \
                          ../src/fswAlgorithms/attDetermination/okeefeEKF/_Documentation/Okeefe_EKF.pdf \
                          ../src/fswAlgorithms/attDetermination/CSSEst/_Documentation/Basilisk-cssWlsEst-20180429.pdf \
                          ../src/fswAlgorithms/attDetermination/sunlineEKF/_Documentation/Sunline_EKF.pdf \

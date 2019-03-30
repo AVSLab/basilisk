@@ -17,9 +17,11 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-import sys, os, inspect
 import numpy as np
 import pytest
+import os, inspect
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
 
 
 
@@ -28,9 +30,7 @@ import pytest
 
 
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import MRP_PD  # import the module that is to be tested
 from Basilisk.utilities import macros
 
@@ -39,12 +39,15 @@ from Basilisk.utilities import macros
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def test_mrp_PD_tracking(show_plots):
-    [testResults, testMessage] = mrp_PD_tracking(show_plots)
+
+@pytest.mark.parametrize("setExtTorque", [False, True])
+
+def test_mrp_PD_tracking(show_plots, setExtTorque):
+    [testResults, testMessage] = mrp_PD_tracking(show_plots, setExtTorque)
     assert testResults < 1, testMessage
 
 
-def mrp_PD_tracking(show_plots):
+def mrp_PD_tracking(show_plots, setExtTorque):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_PD_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -66,11 +69,7 @@ def mrp_PD_tracking(show_plots):
 
     # Construct algorithm and associated C++ container
     moduleConfig = MRP_PD.MRP_PDConfig()
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        MRP_PD.Update_MRP_PD,
-                                        MRP_PD.SelfInit_MRP_PD,
-                                        MRP_PD.CrossInit_MRP_PD,
-                                        MRP_PD.Reset_MRP_PD)
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "MRP_PD"
 
     # Add test module to runtime call list
@@ -83,47 +82,26 @@ def mrp_PD_tracking(show_plots):
 
     moduleConfig.K = 0.15
     moduleConfig.P = 150.0
-    moduleConfig.knownTorquePntB_B = [0., 0., 0.]
+    if setExtTorque:
+        moduleConfig.knownTorquePntB_B = [0.1, 0.2, 0.3]
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
     #   attGuidOut Message:
     guidCmdData = MRP_PD.AttGuidFswMsg()  # Create a structure for the input message
-    inputMessageSize = guidCmdData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputGuidName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-
-    sigma_BR = np.array([0.3, -0.5, 0.7])
-    guidCmdData.sigma_BR = sigma_BR
-    omega_BR_B = np.array([0.010, -0.020, 0.015])
-    guidCmdData.omega_BR_B = omega_BR_B
-    omega_RN_B = np.array([-0.02, -0.01, 0.005])
-    guidCmdData.omega_RN_B = omega_RN_B
-    domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
-    guidCmdData.domega_RN_B = domega_RN_B
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputGuidName,
-                                          inputMessageSize,
-                                          0,
-                                          guidCmdData)
+    guidCmdData.sigma_BR = [0.3, -0.5, 0.7]
+    guidCmdData.omega_BR_B = [0.010, -0.020, 0.015]
+    guidCmdData.omega_RN_B = [-0.02, -0.01, 0.005]
+    guidCmdData.domega_RN_B = [0.0002, 0.0003, 0.0001]
+    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.inputGuidName, guidCmdData)
 
     # vehicleConfig FSW Message:
     vehicleConfigOut = MRP_PD.VehicleConfigFswMsg()
-    inputMessageSize = vehicleConfigOut.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputVehicleConfigDataName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-
-    I = [1000., 0., 0.,
-         0., 800., 0.,
-         0., 0., 800.]
-    vehicleConfigOut.ISCPntB_B = I
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehicleConfigDataName,
-                                          inputMessageSize,
-                                          0,
-                                          vehicleConfigOut)
+    vehicleConfigOut.ISCPntB_B = [1000., 0., 0.,
+                                  0., 800., 0.,
+                                  0., 0., 800.]
+    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName,
+                               moduleConfig.inputVehicleConfigDataName, vehicleConfigOut)
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
@@ -140,37 +118,61 @@ def mrp_PD_tracking(show_plots):
     moduleOutputName = "torqueRequestBody"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
-    print '\n Lr = ', moduleOutput[:, 1:]
-    # set the filtered output truth states
-    trueVector = [
-        [-1.435, 3.865, -1.495],
-        [-1.435, 3.865, -1.495],
-        [-1.435, 3.865, -1.495]
-    ]
+
+    trueVector = [findTrueTorques(moduleConfig, guidCmdData, vehicleConfigOut)]*3
+    # print trueVector
 
     # compare the module results to the truth values
     accuracy = 1e-12
-    for i in range(0, len(trueVector)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], 3, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName +
-                                " unit test at t=" + str(moduleOutput[i, 0] * macros.NANO2SEC) +
-                                "sec \n")
+    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
-    # If the argument provided at commandline "--show_plots" evaluates as true,
-    # plot all figures
-    if show_plots:
-        plt.show()
+    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput, accuracy,
+                                                               "torqueRequestBody", testFailCount, testMessages)
 
-    # print out success message if no error were found
+    snippentName = "passFail" + str(setExtTorque)
     if testFailCount == 0:
+        colorText = 'ForestGreen'
         print "PASSED: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        print "Failed: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
 
+def findTrueTorques(moduleConfig, guidCmdData, vehicleConfigOut):
+    sigma_BR = np.array(guidCmdData.sigma_BR)
+    omega_BR_B = np.array(guidCmdData.omega_BR_B)
+    omega_RN_B = np.array(guidCmdData.omega_RN_B)
+    domega_RN_B = np.array(guidCmdData.domega_RN_B)
+
+    I = np.identity(3)
+    I[0][0] = vehicleConfigOut.ISCPntB_B[0]
+    I[1][1] = vehicleConfigOut.ISCPntB_B[4]
+    I[2][2] = vehicleConfigOut.ISCPntB_B[8]
+
+    K = moduleConfig.K
+    P = moduleConfig.P
+    L = np.array(moduleConfig.knownTorquePntB_B)
+
+    # Begin Method
+    omega_BN_B = omega_BR_B + omega_RN_B
+    temp1 = np.dot(I, omega_BN_B)
+    temp2 = domega_RN_B - np.cross(omega_BN_B, omega_RN_B)
+    Lr = K * sigma_BR + P * omega_BR_B - np.cross(omega_RN_B, temp1) - np.dot(I, temp2)
+    Lr += L
+    Lr *= -1.0
+
+    return Lr
+
+
+
 if __name__ == "__main__":
-    test_mrp_PD_tracking(False)
+    test_mrp_PD_tracking(False, False)
+
+
