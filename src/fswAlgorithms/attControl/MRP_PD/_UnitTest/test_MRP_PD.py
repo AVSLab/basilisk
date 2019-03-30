@@ -30,7 +30,6 @@ path = os.path.dirname(os.path.abspath(filename))
 
 
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.fswAlgorithms import MRP_PD  # import the module that is to be tested
 from Basilisk.utilities import macros
@@ -40,12 +39,15 @@ from Basilisk.utilities import macros
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def test_mrp_PD_tracking(show_plots):
-    [testResults, testMessage] = mrp_PD_tracking(show_plots)
+
+@pytest.mark.parametrize("setExtTorque", [False, True])
+
+def test_mrp_PD_tracking(show_plots, setExtTorque):
+    [testResults, testMessage] = mrp_PD_tracking(show_plots, setExtTorque)
     assert testResults < 1, testMessage
 
 
-def mrp_PD_tracking(show_plots):
+def mrp_PD_tracking(show_plots, setExtTorque):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_PD_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -80,7 +82,8 @@ def mrp_PD_tracking(show_plots):
 
     moduleConfig.K = 0.15
     moduleConfig.P = 150.0
-    moduleConfig.knownTorquePntB_B = [0.1, 0.2, 0.3]
+    if setExtTorque:
+        moduleConfig.knownTorquePntB_B = [0.1, 0.2, 0.3]
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
@@ -126,7 +129,7 @@ def mrp_PD_tracking(show_plots):
     testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput, accuracy,
                                                                "torqueRequestBody", testFailCount, testMessages)
 
-    snippentName = "passFail"
+    snippentName = "passFail" + str(setExtTorque)
     if testFailCount == 0:
         colorText = 'ForestGreen'
         print "PASSED: " + moduleWrap.ModelTag
@@ -170,6 +173,6 @@ def findTrueTorques(moduleConfig, guidCmdData, vehicleConfigOut):
 
 
 if __name__ == "__main__":
-    test_mrp_PD_tracking(False)
+    test_mrp_PD_tracking(False, False)
 
 
