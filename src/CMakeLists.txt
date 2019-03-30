@@ -39,6 +39,11 @@ if(USE_OPENCV)
   list(APPEND required_conan_libraries opencv/3.4.5@conan/stable)
 endif()
 
+if(USE_ZMQ)
+  list(APPEND required_conan_libraries zmq/4.2.5@bincrafters/stable)
+endif()
+
+
 conan_cmake_run(REQUIRES ${required_conan_libraries}
 	              BASIC_SETUP KEEP_RPATHS
                 BUILD missing )
@@ -57,6 +62,11 @@ if(USE_OPENCV)
    set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 endif()
 
+if(USE_ZMQ)
+   find_package(ZeroMQ CONFIG REQUIRED)
+   message(STATUS "Using ZeroMQ ${ZeroMQ_VERSION}")
+   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+endif()
 
 #
 # Create a Swig module
@@ -213,12 +223,6 @@ function(findAndCreateSwigModules SubModule)
  	    if(NOT USE_PROTOBUFFERS AND (module IN_LIST requires_protobuff_modules))
                continue()
  	    endif()
-
-	    if(USE_PROTOBUFFERS AND (module IN_LIST requires_protobuff_modules))
-    	       message(STATUS "Found " ${module})
-	       message("CONAN_LIBS " ${CONAN_LIBS})
-	       SWIG_LINK_LIBRARIES(${FileBase} ${CONAN_LIBS})
-	    endif()
 		
 	    set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
 	
@@ -266,8 +270,16 @@ function(findAndCreateSwigModules SubModule)
 	               PROPERTIES COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/simulation")
 	    set(SWIG_MODULE_${FileBase}_EXTRA_DEPS ${impl_files} ${gen_files} ${swig_dep_files})
 	    MAKE_SWIG_MODULE(${FileBase} python ${module} ${impl_files} ${gen_files})
+
+	    #if(USE_PROTOBUFFERS AND (module IN_LIST requires_protobuff_modules))
+    	    #   message(STATUS "Found " ${module})
+	    #   message("CONAN_LIBS " ${CONAN_LIBS})
+	    #   SWIG_LINK_LIBRARIES(${FileBase} ${CONAN_LIBS})
+	    #endif()
+
 	    SWIG_LINK_LIBRARIES(${FileBase} ${PYTHON_LIBRARIES})
 	    SWIG_LINK_LIBRARIES(${FileBase} ${CONAN_LIBS})
+	    SWIG_LINK_LIBRARIES(${FileBase} protocode)
 
 	    foreach(LibFile ${LIBRARY_BUILD_LIST})
 	         SWIG_LINK_LIBRARIES(${FileBase} ${LibFile})
@@ -516,6 +528,9 @@ message(STATUS "Adding Basilisk module to python with: ${PROGRAM} ${ARG} in ${CM
 This resulted in the output:
 ${out}")
 
+if(USE_PROTOBUFFERS)
+  add_subdirectory("utilities/vizProtobuffer")
+endif()
 add_subdirectory("simulation")
 add_subdirectory("fswAlgorithms")
 add_subdirectory("topLevelModules")
