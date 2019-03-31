@@ -32,11 +32,14 @@
 void SelfInit_ephemDifference(EphemDifferenceData *configData, uint64_t moduleID)
 {
     uint32_t i;
-    for(i = 0; i < configData->ephBdyCount; i++)
+    for(i = 0; i < MAX_NUM_CHANGE_BODIES; i++)
     {
-        configData->changeBodies[i].ephOutMsgID = CreateNewMessage(
-            configData->changeBodies[i].ephOutMsgName,
-            sizeof(EphemerisIntMsg), "EphemerisIntMsg", moduleID);
+        if (strlen(configData->changeBodies[i].ephOutMsgName) != 0) {
+            configData->changeBodies[i].ephOutMsgID = CreateNewMessage(
+                                                                       configData->changeBodies[i].ephOutMsgName,
+                                                                       sizeof(EphemerisIntMsg), "EphemerisIntMsg", moduleID);
+            configData->ephBdyCount++;
+        }
     }
 }
 
@@ -70,10 +73,7 @@ void CrossInit_ephemDifference(EphemDifferenceData *configData, uint64_t moduleI
 void Reset_ephemDifference(EphemDifferenceData *configData, uint64_t callTime,
                          uint64_t moduleID)
 {
-    if(configData->baseScale == 0.0)
-    {
-        configData->baseScale = 1.0;
-    }
+ 
 }
 
 /*! @brief This method recomputes the body postions and velocities relative to
@@ -89,17 +89,14 @@ void Update_ephemDifference(EphemDifferenceData *configData, uint64_t callTime, 
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     uint32_t i;
-    double posBase[3];
-    double velBase[3];
     EphemerisIntMsg tmpBaseEphem;
+    EphemerisIntMsg tmpEphStore;
     memset(&tmpBaseEphem, 0x0, sizeof(EphemerisIntMsg));
     
     ReadMessage(configData->ephBaseInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(EphemerisIntMsg), (void *)&tmpBaseEphem, moduleID);
-    v3Scale(configData->baseScale, tmpBaseEphem.r_BdyZero_N, posBase);
-    v3Scale(configData->baseScale, tmpBaseEphem.v_BdyZero_N, velBase);
-
-    EphemerisIntMsg tmpEphStore;
+    
+    
     for(i = 0; i < configData->ephBdyCount; i++)
     {
         memset(&tmpEphStore, 0x0, sizeof(EphemerisIntMsg));
@@ -108,8 +105,13 @@ void Update_ephemDifference(EphemDifferenceData *configData, uint64_t callTime, 
                     &sizeOfMsgWritten, sizeof(EphemerisIntMsg), (void *)&tmpEphStore,
                     moduleID);
         
-        v3Subtract(tmpEphStore.r_BdyZero_N, posBase, tmpEphStore.r_BdyZero_N);
-        v3Subtract(tmpEphStore.v_BdyZero_N, velBase, tmpEphStore.v_BdyZero_N);
+        v3Subtract(tmpEphStore.r_BdyZero_N,
+                   tmpBaseEphem.r_BdyZero_N,
+                   tmpEphStore.r_BdyZero_N);
+        v3Subtract(tmpEphStore.v_BdyZero_N,
+                   tmpBaseEphem.v_BdyZero_N,
+                   tmpEphStore.v_BdyZero_N);
+        tmpEphStore.timeTag = tmpBaseEphem.timeTag;
         
         WriteMessage(configData->changeBodies[i].ephOutMsgID, callTime,
                      sizeof(EphemerisIntMsg), &tmpEphStore,

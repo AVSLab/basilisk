@@ -39,7 +39,7 @@ def ephemDifferenceTestFunction():
     # Set the names for the input messages
     ephemDiffConfig = ephem_difference.EphemDifferenceData()  # Create a config struct
     ephemDiffConfig.ephBaseInMsgName = "input_eph_base_name"
-    ephemDiffConfig.ephBdyCount = 3
+
 
     # This calls the algContain to setup the selfInit, crossInit, update, and reset
     ephemDiffWrap = unitTestSim.setModelDataWrap(ephemDiffConfig)
@@ -54,13 +54,15 @@ def ephemDifferenceTestFunction():
     position, velocity = astroFunctions.Earth_RV(astroFunctions.JulianDate([2018, 10, 16]))
     inputEphemBase.r_BdyZero_N = position
     inputEphemBase.v_BdyZero_N = velocity
+    inputEphemBase.timeTag = 1234.0
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, ephemDiffConfig.ephBaseInMsgName, inputEphemBase)
 
     functions = [astroFunctions.Mars_RV, astroFunctions.Jupiter_RV, astroFunctions.Saturn_RV]
 
     changeBodyList = list()
 
-    for i in range(ephemDiffConfig.ephBdyCount):
+    ephBdyCount = 3
+    for i in range(ephBdyCount):
         # Create the change body message
         changeBodyMsg = ephem_difference.EphemChangeConfig()
         changeBodyMsg.ephInMsgName = 'input_change_body_' + str(i)
@@ -102,10 +104,12 @@ def ephemDifferenceTestFunction():
     posAcc = 1e1
     velAcc = 1e-4
 
-    for i in range(ephemDiffConfig.ephBdyCount):
+    for i in range(ephBdyCount):
 
         outputData_R = unitTestSim.pullMessageLogData('output_change_body_' + str(i) + '.r_BdyZero_N', range(3))
         outputData_V = unitTestSim.pullMessageLogData('output_change_body_' + str(i) + '.v_BdyZero_N', range(3))
+        timeTag = unitTestSim.pullMessageLogData('output_change_body_' + str(i) + '.timeTag')
+
         # print(outputData_R)
         # print(outputData_V)
 
@@ -118,6 +122,10 @@ def ephemDifferenceTestFunction():
                                                                      velAcc,
                                                                      "ephemDifference velocity output body " + str(i),
                                                                      2, testFailCount, testMessages)
+        if timeTag[0, 1] != 1234.0:
+            testFailCount += 1
+            testMessages.append("ephemDifference timeTag output body " + str(i))
+
 
     if testFailCount == 0:
         print("Passed")

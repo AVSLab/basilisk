@@ -46,7 +46,6 @@ typedef struct{
 */
 typedef struct {
     char ephBaseInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the clock correlation message*/
-    double baseScale; /*!< [-] The scale factor used for the secondary parameter (zero passivates)*/
     EphemChangeConfig changeBodies[MAX_NUM_CHANGE_BODIES]; /*!< [-] The list of bodies to change out*/
     uint32_t ephBdyCount; /*!< [-] The number of ephemeris bodies we are changing*/
     int32_t ephBaseInMsgID; /*!< [-] The ID associated with the incoming clock correlation*/
