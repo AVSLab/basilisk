@@ -29,9 +29,13 @@
 #define MAX_OE_COEFF 20
 
 /*! \defgroup oeStateEphem
+ @brief This module takes the TDB time, current object time and computes the state of the object
+ * using the time corrected by TDB and the stored Chebyshev coefficients.  If the time provided
+ * is outside the specified range for which the stored Chebyshev coefficients are valid then
+ * the position vectors rail high/low appropriately.
  *  @{
- */
-/*! @brief Structure that defines the layout of an Ephemeris "record."  This is 
+
+/*! @brief Structure that defines the layout of an Ephemeris "record."  This is
            basically the set of coefficients for the body x/y/z positions and 
            the time factors associated with those coefficients
 */
@@ -57,12 +61,9 @@ typedef struct {
     char clockCorrInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the clock correlation message*/
     double muCentral;                     /*!< [m3/s^2] Gravitational parameter for center of orbital elements*/
     ChebyOERecord ephArray[MAX_OE_RECORDS]; /*! [-] Array of Chebyshev records for ephemeris*/
-
     int32_t stateFitOutMsgID;    /*!< [-] The ID associated with the outgoing message*/
     int32_t clockCorrInMsgID;  /*!< [-] The ID associated with the incoming clock correlation*/
     uint32_t coeffSelector;    /*!< [-] Index in the ephArray that we are currently using*/
-    
-    EphemerisIntMsg outputState; /*!< [-] The local storage of the outgoing message data*/
 }OEStateEphemData;
 
 #ifdef __cplusplus
