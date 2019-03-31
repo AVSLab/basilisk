@@ -110,7 +110,6 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, uint64
     if(fabs(currentScaledValue) > 1.0)
     {
         currentScaledValue = currentScaledValue/fabs(currentScaledValue);
-        printf("railed\n");
     }
     
     tmpOutputState.timeTag = callTime*NANO2SEC;
