@@ -181,7 +181,7 @@ def run(show_plots, dscovr, earthOrbit):
         cameraMessageSize = cameraConfig.getStructSize()
         scSim.TotalSim.CreateNewMessage(simProcessName, cameraMsgName, cameraMessageSize, 2, "CameraConfigMsg")
         scSim.TotalSim.WriteMessageData(cameraMsgName, cameraMessageSize, 0, cameraConfig)
-    vizSupport.enableUnityVisualization(scSim, simTaskName, dynProcess, simProcessName, vizFile, planets)
+    vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, planets)
     # The Viz only support 'earth', 'mars', or 'sun'
 
     #
@@ -285,7 +285,6 @@ def run(show_plots, dscovr, earthOrbit):
     mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
     mrpControlConfig.P = 30.0
     mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
-    mrpControlConfig.domega0 = [0.0, 0.0, 0.0]
 #    mrpControlConfig.knownTorquePntB_B = [0.25, -0.25, 0.1]
 
     #
@@ -340,10 +339,7 @@ def run(show_plots, dscovr, earthOrbit):
     #   configure a simulation stop time time and execute the simulation run
     #
     scSim.ConfigureStopTime(simulationTime)
-    start = time.time()
     scSim.ExecuteSimulation()
-    end = time.time()
-    print end - start
 
     #
     #   retrieve the logged data
@@ -399,7 +395,7 @@ def run(show_plots, dscovr, earthOrbit):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
-    return dataPos, dataSigmaBR, dataLr, numDataPoints, figureList
+    return figureList
 
 
 #

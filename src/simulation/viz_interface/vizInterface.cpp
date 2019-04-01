@@ -138,8 +138,7 @@ void VizInterface::CrossInit()
     {
         for(int idx=0; idx < it->thrCount; idx++) {
             std::string tmpThrustMsgName = "thruster_" + it->thrTag + "_" + std::to_string(idx) + "_data";
-            thrStatus.msgID = SystemMessaging::GetInstance()->subscribeToMessage(tmpThrustMsgName,
-                                                                                 sizeof(THROutputSimMsg), moduleID);
+            thrStatus.msgID = SystemMessaging::GetInstance()->subscribeToMessage(tmpThrustMsgName, sizeof(THROutputSimMsg), moduleID);
             this->thrMsgID.push_back(thrStatus);
             this->numThr++;
         }
@@ -430,11 +429,11 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 //        message->SerializeToString(&serialized_message);
 //        zmq_send(requester_socket, serialized_message.c_str(), serialized_message.length(), 0);
 //
-//        // Write protobuffer to file
-//        if (!message->SerializeToOstream(this->outputStream)) {
-//            std::cerr << "Failed to write part book." << std::endl;
-//            return;
-//        }
+        // Write protobuffer to file
+        if (!message->SerializeToOstream(this->outputStream)) {
+            std::cerr << "Failed to write part book." << std::endl;
+            return;
+        }
     }
 
 
