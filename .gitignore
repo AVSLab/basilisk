@@ -1,5 +1,6 @@
 .eggs/
 CMakeFiles/
+_VizFiles/*
 CMakeCache.txt
 .DS_Store
 dist/
