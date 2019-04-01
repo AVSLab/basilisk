@@ -68,7 +68,6 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     void ReadBSKMessages();
     void WriteProtobuffer(uint64_t CurrentSimNanos);
-    void ReadVizMessage(std::string protoFilename);
 
 public:
     std::string cssDataInMsgName;             //! [-] Name of the incoming css data

@@ -31,7 +31,6 @@
 
 void message_buffer_deallocate(void *data, void *hint);
 
-
 VizInterface::VizInterface()
 {
     this->liveStream = 0;
@@ -48,18 +47,20 @@ VizInterface::VizInterface()
     return;
 }
 
-
 VizInterface::~VizInterface()
 {
     return;
 }
 
+/*! Initialization method for subscription to messages. This module does not output messages, but files containing the protobuffers for Vizard
+ */
 void VizInterface::SelfInit()
 {
-    // This module does not output messages, but files containing the protobuffers for Vizard
     return;
 }
 
+/*! Cross initialization. Module subscribes to other messages. In viz interface, many messages are subscribed to in order to extract information from the viz and give it to the visualization tool.
+ */
 void VizInterface::CrossInit()
 {
     /* Define CSS input messages */
@@ -148,16 +149,18 @@ void VizInterface::CrossInit()
 
 }
 
+/*! A Reset method to put the module back into a clean state
+ @param CurrentSimNanos The current sim time in nanoseconds
+ */
 void VizInterface::Reset(uint64_t CurrentSimNanos)
 {
     this->FrameNumber=-1;
     outputStream = new std::ofstream(this->protoFilename, std::ios::out |std::ios::binary);
-
-
     return;
 }
 
-
+/*! A method in which the module reads the content of all available bsk messages
+ */
 void VizInterface::ReadBSKMessages()
 {
     /* Read BSK SCPlus msg */
@@ -296,6 +299,10 @@ void VizInterface::ReadBSKMessages()
     }
 }
 
+/*! The method in which the viz_interface writes a protobuffer with the
+ infomration from the simulation.
+ @param CurrentSimNanos The current sim time in nanoseconds
+ */
 void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 {
     vizProtobufferMessage::VizMessage* message = new vizProtobufferMessage::VizMessage;
@@ -406,7 +413,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                         spice->add_rotation(this->spiceMessage[k].J20002Pfix[i][j]);
                     }
                 }
-                //spiceInMsgID[k].dataFresh = false;
+                spiceInMsgID[k].dataFresh = false;
             }
             k++;
         }
@@ -419,16 +426,6 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         unsigned long varIntBytes = end - varIntBuffer;
         this->outputStream->write(reinterpret_cast<char* > (varIntBuffer), varIntBytes);
 
-        // this is actually a pretty good place to receive the pong
-        // we should think about a push pull architecture if we have performance problems
-        // receive pong
-//        char buffer[10];
-//        zmq_recv (requester_socket, buffer, 10, 0);
-//        // send protobuffer raw over zmq_socket as ping
-//        std::string serialized_message;
-//        message->SerializeToString(&serialized_message);
-//        zmq_send(requester_socket, serialized_message.c_str(), serialized_message.length(), 0);
-//
         // Write protobuffer to file
         if (!message->SerializeToOstream(this->outputStream)) {
             std::cerr << "Failed to write part book." << std::endl;
@@ -436,117 +433,15 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         }
     }
 
-
     delete message;
     google::protobuf::ShutdownProtobufLibrary();
 
 
 }
 
-
-void VizInterface::ReadVizMessage(std::string protoFilename){
-    
-    vizProtobufferMessage::VizMessage* message = new vizProtobufferMessage::VizMessage;
-
-    // Read.
-//    std::fstream input(this->protoFilename, std::ios::in | std::ios::binary);
-//    if (!input) {
-//        std::cout << this->protoFilename << ": File not found.  Creating a new file." << std::endl;
-//    } else if (!message->ParseFromIstream(&input)) {
-//        std::cerr << "Failed to parse address book." << std::endl;
-//        return;
-//    }
-    
-    // Read the timestamp data
-    const  vizProtobufferMessage::VizMessage::TimeStamp time = message->currenttime();
-    std::cout << "  Frame number is :" << time.framenumber() << std::endl;
-    std::cout << "  Current sim time in Nano is :" << time.simtimeelapsed() << std::endl;
-    
-    // Read the spacecraft data
-    for (int i = 0; i < message->spacecraft_size(); i++) {
-        const  vizProtobufferMessage::VizMessage::Spacecraft sc = message->spacecraft(i);
-        
-        if (sc.spacecraftname()!= "") {
-            std::cout << "  Our spacecraft is : " << sc.spacecraftname() << std::endl;
-        }
-        
-        for (int j = 0; j < sc.position_size(); j++) {
-            std::cout << "  Position component " << j << " is : " << sc.position(j) << std::endl;
-            std::cout << "  Velocity component " << j << " is : " << sc.velocity(j) << std::endl;
-            std::cout << "  MRP component " << j << " is : " << sc.rotation(j) << std::endl;
-        }
-        
-        // Read the RW data
-        for (int k = 0; k < sc.reactionwheels_size(); k++) {
-            const  vizProtobufferMessage::VizMessage::ReactionWheel rw = sc.reactionwheels(k);
-
-            std::cout << " RW " << k <<"'s wheel speed" << rw.wheelspeed() << std::endl;
-            std::cout << " RW " << k <<"'s wheel torque" << rw.wheeltorque() << std::endl;
-            for (int j = 0; j < rw.position_size(); j++) {
-                std::cout << " RW " << k <<"'s position component " << j << " is : " << rw.position(j) << std::endl;
-                std::cout << " RW " << k <<"'s spin axis component " << j << " is : "  << rw.spinaxisvector(j) << std::endl;
-            }
-        }
-        
-        // Read the THR data
-        for (int k = 0; k < sc.thrusters_size(); k++) {
-            const  vizProtobufferMessage::VizMessage::Thruster thr = sc.thrusters(k);
-            
-            std::cout << " Thruster " << k <<"'s max thrust is " << thr.maxthrust() << std::endl;
-            std::cout << " Thruster " << k <<"'s current thrust is " << thr.currentthrust() << std::endl;
-            for (int j = 0; j < thr.position_size(); j++) {
-                std::cout << " Thruster " << k <<"'s position component " << j << " is : " << thr.position(j) << std::endl;
-                std::cout << " Thruster " << k <<"'s direction component  " << j << " is : "  << thr.thrustvector(j) << std::endl;
-            }
-        }
-        
-        // Read the CSS data
-        for (int k = 0; k < sc.css_size(); k++) {
-            const  vizProtobufferMessage::VizMessage::CoarseSunSensor css = sc.css(k);
-            std::cout << " CSS " << k <<"'s measurement is : " << css.currentmsmt() << std::endl;
-            for (int j = 0; j < css.position_size(); j++) {
-                std::cout << " CSS " << k <<"'s position component " << j << " is : " << css.position(j) << std::endl;
-            for (int j = 0; j < css.normalvector_size(); j++) {
-                std::cout << " CSS " << k <<"'s normal component " << j << " is : " << css.normalvector(j) << std::endl;
-            }
-
-            }
-        }
-        
-        // Read the ST data
-        const  vizProtobufferMessage::VizMessage::StarTracker st = sc.startrackers(0);
-        std::cout << " ST's FOV width is : " << st.fieldofviewwidth() << std::endl;
-        std::cout << " ST's FOV height is : " << st.fieldofviewheight() << std::endl;
-        for (int j = 0; j < st.rotation_size(); j++) {
-            std::cout << " ST " << j <<"'s measurement is : " << st.rotation(j) << std::endl;
-        }
-        for (int j = 0; j < st.position_size(); j++) {
-            std::cout << " ST " << j <<"'s position is : " << st.position(j) << std::endl;
-        }
-    }
-    
-    
-    // Read the spice data
-    for (int i = 0; i < message->celestialbodies_size(); i++) {
-        const  vizProtobufferMessage::VizMessage::CelestialBody spice = message->celestialbodies(i);
-        
-        if (spice.bodyname() != "") {
-            std::cout << "  Our body is : The " << spice.bodyname() << std::endl;
-        }
-        
-        for (int j = 0; j < spice.position_size(); j++) {
-            std::cout << "  Planet position component " << j << " is : " << spice.position(j) << std::endl;
-            std::cout << "  Planet Velocity component " << j << " is : " << spice.velocity(j) << std::endl;
-        }
-        for (int j = 0; j < spice.rotation_size(); j++) {
-            std::cout << "  Planet Pfix " << j << " is :" << spice.rotation(j) << std::endl;
-        }
-    }
-    
-    
-}
-
-
+/*! A Update method called at task rate
+ @param CurrentSimNanos The current sim time in nanoseconds
+ */
 void VizInterface::UpdateState(uint64_t CurrentSimNanos)
 {
 
@@ -556,11 +451,11 @@ void VizInterface::UpdateState(uint64_t CurrentSimNanos)
     if(CurrentSimNanos > 0) {
         WriteProtobuffer(CurrentSimNanos);
     }
-//    ReadVizMessage(this->protoFilename);
-
 }
 
-
+/*! A cleaning method to ensure the message buffers are wiped clean.
+ @param data The current sim time in nanoseconds
+ */
 void message_buffer_deallocate(void *data, void *hint)
 {
     free (data);
