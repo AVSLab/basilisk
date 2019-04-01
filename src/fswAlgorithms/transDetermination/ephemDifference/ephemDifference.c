@@ -23,8 +23,9 @@
 #include "transDetermination/ephemDifference/ephemDifference.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "utilities/linearAlgebra.h"
+#include "utilities/bsk_Print.h"
 
-/*! @brief This method creates the output ephermeris messages for each body.
+/*! @brief This method creates the output ephemeris messages for each body.
  @return void
  @param configData The configuration data associated with the ephemeris model
  @param moduleID The module identification integer
@@ -34,16 +35,25 @@ void SelfInit_ephemDifference(EphemDifferenceData *configData, uint64_t moduleID
     uint32_t i;
     for(i = 0; i < MAX_NUM_CHANGE_BODIES; i++)
     {
-        if (strlen(configData->changeBodies[i].ephOutMsgName) != 0) {
-            configData->changeBodies[i].ephOutMsgID = CreateNewMessage(
-                                                                       configData->changeBodies[i].ephOutMsgName,
-                                                                       sizeof(EphemerisIntMsg), "EphemerisIntMsg", moduleID);
+        if (strlen(configData->changeBodies[i].ephOutMsgName) == 0) {
+            break;
+        }
+        configData->changeBodies[i].ephOutMsgId = CreateNewMessage(
+                                                                   configData->changeBodies[i].ephOutMsgName,
+                                                                   sizeof(EphemerisIntMsg), "EphemerisIntMsg", moduleID);
+        if (strlen(configData->changeBodies[i].ephInMsgName) == 0) {
+            BSK_PRINT(MSG_ERROR, "The output message %s is missing a matching input name.\n", configData->changeBodies[i].ephOutMsgName);
+        } else {
             configData->ephBdyCount++;
         }
     }
+
+    if (configData->ephBdyCount == 0) {
+        BSK_PRINT(MSG_WARNING, "Your outgoing ephemeris message count is zero. Be sure to specify desired output messages.\n");
+    }
 }
 
-/*! @brief This method subscribes to the body ephermeris messages which will be
+/*! @brief This method subscribes to the body ephemeris messages which will be
     augmented relative to another base frame.
  @return void
  @param configData The configuration data associated with the ephemeris model
@@ -54,17 +64,17 @@ void CrossInit_ephemDifference(EphemDifferenceData *configData, uint64_t moduleI
     uint32_t i;
     for(i = 0; i < configData->ephBdyCount; i++)
     {
-        configData->changeBodies[i].ephInMsgID = subscribeToMessage(
+        configData->changeBodies[i].ephInMsgId = subscribeToMessage(
                             configData->changeBodies[i].ephInMsgName,
                             sizeof(EphemerisIntMsg), moduleID);
     }
 
-    configData->ephBaseInMsgID = subscribeToMessage(configData->ephBaseInMsgName,
+    configData->ephBaseInMsgId = subscribeToMessage(configData->ephBaseInMsgName,
                                                     sizeof(EphemerisIntMsg),
                                                     moduleID);
 }
 
-/*! @brief This method resets the base scale.
+/*! @brief This method resets the module.
  @return void
  @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
@@ -77,7 +87,7 @@ void Reset_ephemDifference(EphemDifferenceData *configData, uint64_t callTime,
 }
 
 /*! @brief This method recomputes the body postions and velocities relative to
-    the base body ephemeris and writes out updated ephermeris position and velocity
+    the base body ephemeris and writes out updated ephemeris position and velocity
     for each body.
  @return void
  @param configData The configuration data associated with the ephemeris model
@@ -93,7 +103,7 @@ void Update_ephemDifference(EphemDifferenceData *configData, uint64_t callTime, 
     EphemerisIntMsg tmpEphStore;
     memset(&tmpBaseEphem, 0x0, sizeof(EphemerisIntMsg));
     
-    ReadMessage(configData->ephBaseInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->ephBaseInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(EphemerisIntMsg), (void *)&tmpBaseEphem, moduleID);
     
     
@@ -101,7 +111,7 @@ void Update_ephemDifference(EphemDifferenceData *configData, uint64_t callTime, 
     {
         memset(&tmpEphStore, 0x0, sizeof(EphemerisIntMsg));
 
-        ReadMessage(configData->changeBodies[i].ephInMsgID, &timeOfMsgWritten,
+        ReadMessage(configData->changeBodies[i].ephInMsgId, &timeOfMsgWritten,
                     &sizeOfMsgWritten, sizeof(EphemerisIntMsg), (void *)&tmpEphStore,
                     moduleID);
         
@@ -113,7 +123,7 @@ void Update_ephemDifference(EphemDifferenceData *configData, uint64_t callTime, 
                    tmpEphStore.v_BdyZero_N);
         tmpEphStore.timeTag = tmpBaseEphem.timeTag;
         
-        WriteMessage(configData->changeBodies[i].ephOutMsgID, callTime,
+        WriteMessage(configData->changeBodies[i].ephOutMsgId, callTime,
                      sizeof(EphemerisIntMsg), &tmpEphStore,
                      moduleID);
     }
