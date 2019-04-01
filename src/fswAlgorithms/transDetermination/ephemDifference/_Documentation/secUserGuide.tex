@@ -14,6 +14,8 @@ Next, the container is added to a list of these ephemeris information containers
 \begin{verbatim}
 	changeBodyList.append(changeBodyMsg)
 \end{verbatim}
+Note that the output message must be setup in consecutive order.  Leaving a blank output message will cause any following message names to be ignored. 
+
 Finally, the list of these containers is stored in the {\tt ephemDifference} module using
 \begin{verbatim}
 	ephemDiffConfig.changeBodies = changeBodyList

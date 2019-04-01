@@ -1,13 +1,17 @@
 % !TEX root = ./Basilisk-ephemDifference-2019-03-27.tex
 
 \section{Test Description and Success Criteria}
-The unit test creates  input ephemeris messages for Mars, Jupiter and Saturn relative to the sun.  The base ephemeris message is created for Earth relative to the sun.  The test evaluates the Mars, Jupiter and Saturn position and velocity vectors relative to the Earth.  The simulation is run for a single time step to ensure the math is performed correctly.  
+The unit test creates  input ephemeris messages for Mars, Jupiter and Saturn relative to the sun.  The base ephemeris message is created for Earth relative to the sun.  The test evaluates the Mars, Jupiter and Saturn position and velocity vectors relative to the Earth.  
+
+The module requires matching pairs of input and output ephemeris messages.  The body counting logic only adds adds messages if both input and output message is specified.  To test the test includes another input message which only has the output message defined, but not the input message.
+
+To test the body counting termination logic, 2 more message objects are included where the first object has an empty output message. This should trigger the counting to stop, and the following non-zero output message is not considered.
+
+The simulation is run for a single time step to ensure the math is performed correctly.  
 
 
 
 \section{Test Parameters}
-
-Test and simulation parameters and inputs go here. Basically, describe your test in the section above, but put any specific numbers or inputs to the tests in this section.
 
 The unit test verify that the module output guidance message vectors match expected values.
 \begin{table}[htbp]
@@ -18,8 +22,8 @@ The unit test verify that the module output guidance message vectors match expec
 		\hline\hline
 		\textbf{Output Value Tested}  & \textbf{Tolerated Error}  \\ 
 		\hline
-		{\tt r\_BdyZero\_N}        & 10m 	   \\ 
-		{\tt v\_BdyZero\_N}        & 0.0001 m/s 	   \\ 
+		{\tt r\_BdyZero\_N}        & \input{AutoTeX/toleranceValuePos}m 	   \\ 
+		{\tt v\_BdyZero\_N}        & \input{AutoTeX/toleranceValueVel}m/s 	   \\ 
 		\hline\hline
 	\end{tabular}
 \end{table}
@@ -35,11 +39,12 @@ The test is expected to pass.
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{c | c  } % Column formatting, 
 		\hline\hline
-		\textbf{Check} 						  		&\textbf{Pass/Fail} \\ 
+		\textbf{Check} 	&\textbf{Pass/Fail} \\ 
 		\hline
-	   Mars	   			& \input{AutoTeX/passFail11} \\ 
-	   Jupiter	   			& \input{AutoTeX/passFail11} \\ 
-	   Saturn	   			& \input{AutoTeX/passFail11} \\ 
+	   Mars	   			& \input{AutoTeX/passFail3} \\ 
+	   Jupiter	   			& \input{AutoTeX/passFail3} \\ 
+	   Saturn	   			& \input{AutoTeX/passFail3} \\ 
+	   No Bodies			& \input{AutoTeX/passFail0} \\
 	   \hline\hline
 	\end{tabular}
 \end{table}
