@@ -1,0 +1,18 @@
+% !TEX root = ./Basilisk-spacecraftPointing-20190116.tex
+
+
+\section{Module Functions}
+
+\begin{itemize}
+    \item \textbf{Read ST Messages: } Read in the messages from all available star trackers and orders them with respect to time of measurement
+    \item \textbf{InertialUKFAggGyrData: } Aggregate the input gyro data into a combined total quaternion 
+    rotation to push the state forward.  This information is stored in the 
+    main data structure for use in the propagation routines.
+\end{itemize}
+
+
+inertialUKFTimeUpdate, inertialUKFMeasUpdate, inertialStateProp, inertialUKFMeasModel
+\section{Module Assumptions and Limitations}
+
+
+

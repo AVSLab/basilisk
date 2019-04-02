@@ -1,0 +1,51 @@
+% !TEX root = ./Basilisk-spacecraftPointing-20190116.tex
+
+\newpage
+
+\section{Test Description and Success Criteria}
+
+\subsection{Test 1}
+test StatePropInertialAttitude
+
+\subsection{Test 2}
+test StatePropRateInertialAttitude
+
+\subsection{Test 3}
+test StateUpdateInertialAttitude
+
+\subsection{Test 4}
+test StateUpdateRWInertialAttitude(
+
+\section{Test Parameters}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{cc}
+\hline
+\hline
+\textbf{Output Value Tested}     & \textbf{Tolerated Value} \\ \hline
+${\bm \sigma}_{R_{1}N}$          & \input{AutoTex/toleranceValue1}                    \\
+$^{\cal N}{\bm \omega}_{RN}$     & \input{AutoTex/toleranceValue2}                     \\
+$^{\cal N}\dot{\bm \omega}_{RN}$ & \input{AutoTex/toleranceValue3}                     \\ 
+${\bm \sigma}_{BA}$ & \input{AutoTex/toleranceValue4}  \\ \hline
+\hline
+\end{tabular}
+\end{table}
+
+\section{Test Results}
+
+\begin{table}[H]
+	\caption{Test results}
+	\label{tab:results}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{c | c}
+		\hline\hline
+		\textbf{Check} 						  		&\textbf{Pass/Fail} \\ 
+		\hline
+	   Test 1	   			& \input{AutoTex/passFail1} \\ 
+	   Test 2	   			& \input{AutoTex/passFail2} \\ 
+	   Test 3	   			& \input{AutoTex/passFail1} \\ 
+	   Test 4	   			& \input{AutoTex/passFail2} \\ 
+	   \hline\hline
+	\end{tabular}
+\end{table}
