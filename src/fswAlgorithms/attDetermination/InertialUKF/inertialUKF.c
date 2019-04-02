@@ -169,7 +169,6 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
 /*! This method reads in the messages from all available star trackers and orders them with respect to time of measurement
  @return void
  @param configData The configuration data associated with the CSS estimator
- @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Read_STMessages(InertialUKFConfig *configData, uint64_t moduleID)
 {
