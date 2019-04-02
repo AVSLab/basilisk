@@ -202,7 +202,7 @@ def test_StateUpdateInertialAttitude(show_plots):
 
     for i in range(20000):
         if i > 20:
-            stMessage1.timeTag = int((i+20000)*0.5*1E9)
+            stMessage1.timeTag = int((i+20000)*0.25*1E9)
             stMessage2.timeTag = int((i+20000)*0.5*1E9)
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.STDatasStruct.STMessages[0].stInMsgName,
                                       inputMessageSize,
@@ -384,6 +384,20 @@ def test_StateUpdateRWInertialAttitude(show_plots):
                                           0,
                                           rwArrayConfigOut)
 
+    rwSpeedIntMsg = inertialUKF.RWSpeedIntMsg()
+    msgSize = rwSpeedIntMsg.getStructSize()
+    rwSpeedIntMsg.wheelSpeeds = [0.1, 0.01, 0.1]
+    rwSpeedIntMsg.wheelThetas = [0.,0.,0.]
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.rwSpeedsInMsgName,
+                                          msgSize,
+                                          2)  # number of buffers (leave at 2 as default, don't make zero)
+
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwSpeedsInMsgName,
+                                          msgSize,
+                                          0,
+                                          rwSpeedIntMsg)
+
     stMessage1 = inertialUKF.STAttFswMsg()
     stMessage1.MRP_BdyInrtl = [0.3, 0.4, 0.5]
 
@@ -420,6 +434,12 @@ def test_StateUpdateRWInertialAttitude(show_plots):
                                                   inputMessageSize,
                                                   unitTestSim.TotalSim.CurrentNanos,
                                                   stMessage2)
+        if i==10000:
+            rwSpeedIntMsg.wheelSpeeds = [0.5, 0.1, 0.05]
+            unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwSpeedsInMsgName,
+                                                  msgSize,
+                                                  0,
+                                                  rwSpeedIntMsg)
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
@@ -440,7 +460,7 @@ def test_StateUpdateRWInertialAttitude(show_plots):
 
     for i in range(20000):
         if i > 20:
-            stMessage1.timeTag = int((i + 20000) * 0.5 * 1E9)
+            stMessage1.timeTag = int((i + 20000) * 0.25 * 1E9)
             stMessage2.timeTag = int((i + 20000) * 0.5 * 1E9)
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.STDatasStruct.STMessages[0].stInMsgName,
                                                   inputMessageSize,
