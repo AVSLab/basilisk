@@ -62,12 +62,6 @@ if(USE_OPENCV)
    set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 endif()
 
-if(USE_ZMQ)
-   find_package(ZeroMQ CONFIG REQUIRED)
-   message(STATUS "Using ZeroMQ ${ZeroMQ_VERSION}")
-   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-endif()
-
 #
 # Create a Swig module
 # Avoids a deprecation error in CMAKE versions less than 3 by calling the correct API depending on version
