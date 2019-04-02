@@ -41,9 +41,10 @@ Draft & Initial Documentation Draft & H. Schaub \\
 ~\\ \hrule ~\\
 
 \section{Overview}
-This module computes a commanded control torque vector $\bm L_r$ using a rate based steering law that drives a body frame \frameDefinition{B} towards a time varying reference frame \frameDefinition{R}. 
+This module computes a commanded control torque vector $\bm L_r$ using a rate based steering law that drives a body frame \frameDefinition{B} towards a time varying reference frame \frameDefinition{R}, based on a desired reference frame \frameDefinition{B*} (the desired body frame from the kinematic steering law).
 
-The output message is a body-frame control torque vector that is outlined in section 3. The required attitude guidance message contains both attitude tracking error rates as well as reference frame rates and commanded rates. This message is read in with every update cycle. The vehicle configuration message is only read in on reset and contains the spacecraft inertia tensor about the vehicle?s center of mass location.
+The output message is a body-frame control torque vector that is outlined in section 3, with $\bm L_r$ specifically computed in equation \ref{eq:MS:39}.
+ The required attitude guidance message contains both attitude tracking error rates as well as reference frame rates and commanded rates. This message is read in with every update cycle. The vehicle configuration message is only read in on reset and contains the spacecraft inertia tensor about the vehicle?s center of mass location.
 
 The servo rate feedback control can compensate for Reaction Wheel (RW) gyroscopic effects as well. This is an optional input message where the RW configuration array message contains the RW spin axis $\hat{g}_{s,i}$ information and the RW polar inertia about the spin axis IWs,i . This is only read in on reset. The RW speed message contains the RW speed $\Omega_i$ and is read in every time step. The optional RW availability message can be used to include or not include RWs in the MRP feedback. This allows the module to selectively turn off some RWs. The default is that all RWs are operational and are included.
 
