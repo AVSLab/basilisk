@@ -127,19 +127,19 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_inertialUKF(InertialUKFConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_inertialUKF(InertialUKFConfig *ConfigData, uint64_t moduleID);
-    void Read_STMessages(InertialUKFConfig *ConfigData, uint64_t moduleID);
-    void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
+    void SelfInit_inertialUKF(InertialUKFConfig *configData, uint64_t moduleID);
+    void CrossInit_inertialUKF(InertialUKFConfig *configData, uint64_t moduleID);
+    void Read_STMessages(InertialUKFConfig *configData, uint64_t moduleID);
+    void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
         uint64_t moduleID);
-	void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
+	void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
 		uint64_t moduleID);
-    void inertialUKFAggGyrData(InertialUKFConfig *ConfigData, double prevTime,
+    void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
                           double propTime, AccDataFswMsg *gyrData);
-	int inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime);
-    int inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime, int currentST);
-	void inertialStateProp(InertialUKFConfig *ConfigData, double *stateInOut, double dt);
-    void inertialUKFMeasModel(InertialUKFConfig *ConfigData, int currentST);
+	int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime);
+    int inertialUKFMeasUpdate(InertialUKFConfig *configData, double updateTime, int currentST);
+	void inertialStateProp(InertialUKFConfig *configData, double *stateInOut, double dt);
+    void inertialUKFMeasModel(InertialUKFConfig *configData, int currentST);
     
 #ifdef __cplusplus
 }
