@@ -40,10 +40,95 @@ from Basilisk.fswAlgorithms import thrForceMapping
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
 
+
 import os, inspect
+import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
+
+def results_computeAngErr(D, BLr_B, F, thrForceMag):
+    returnAngle = 0.0
+
+    if np.linalg.norm(BLr_B) > 10**-9:
+        tauActual_B = [0.0, 0.0, 0.0]
+        BLr_B_hat = BLr_B/np.linalg.norm(BLr_B)
+        for i in range(0, len(F)):
+            if(abs(F[i]) < thrForceMag[i]):
+                thrForce = F[i]
+            else:
+                thrForce = thrForceMag*D[i,:]
+            tauActual_B += tauActual_B+thrForce
+
+        tauActual_B = tauActual_B/np.linalg.norm(tauActual_B)
+
+        if np.dot(BLr_B_hat, tauActual_B) < 1.0:
+            returnAngle = np.arccos(np.dot(BLr_B_hat, tauActual_B))
+
+    return returnAngle
+
+
+def results_thrForceMapping(Lr, COrig, COM, rData, gData, thrForceSign, thrForceMag, angErrThresh):
+
+    # Produce the forces with all thrusters included
+    rData = np.array(rData)
+    gData = np.array(gData)
+    Lr = np.array(Lr)
+    C = np.array(COrig)
+    C = np.reshape(C, ((len(C)/3), 3), 'F')
+    CT = np.transpose(C)
+
+    Lr_Bar = np.dot(CT,np.dot(C,Lr))
+
+    D = np.zeros((3,len(rData)))
+    for i in range(len(rData)):
+        D[:,i] = np.cross((rData[i,:] - COM), gData[i,:])
+    DT = np.transpose(D)
+
+    F = np.dot(DT,np.dot(np.linalg.inv(np.matmul(D,DT)),Lr_Bar))
+
+    if thrForceSign > 0:
+        F = F - min(F)
+
+    t = (F[:] > 0)
+
+    # Produce the forces with only positive thrusters included
+    DNew = np.array([])
+    for i in range(0,len(F)):
+        if t[i]:
+            DNew = np.append(DNew, np.cross((rData[i,:] - COM), gData[i]))
+    DNew = np.reshape(DNew, (3, (len(DNew) / 3)), 'F')
+
+    DTNew = np.transpose(DNew)
+    FNew = np.dot(DTNew,np.dot(np.linalg.inv(np.matmul(DNew,DTNew)),Lr_Bar))
+
+    if thrForceSign > 0:
+        FNew = FNew - min(FNew)
+
+    count = 0
+    for i in range(0,len(F)):
+        if t[i]:
+            F[i] = FNew[count]
+            count += 1
+
+        else:
+            F[i] = 0.0
+
+
+    angle = results_computeAngErr(D, Lr, F, thrForceMag)
+
+    if angle > angErrThresh:
+
+        maxFractUse = 0.0
+        for i in range(0, len(F)):
+            if thrForceMag > 0 and abs(F[i])/thrForceMag[i] > maxFractUse:
+                maxFractUse = abs(F[i])/thrForceMag[i]
+        if maxFractUse > 1.0:
+            F = F/maxFractUse
+
+
+
+    return F
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -277,8 +362,14 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
                                                   range(numThrusters))
     print moduleOutput
 
-    # set the output truth states
-    trueVector=[];
+
+    '''
+    trueVector = results_thrForceMapping(requestedTorque, moduleConfig.controlAxes_B,
+                                         vehicleConfigOut.CoM_B, rcsLocationData,
+                                         rcsDirectionData, moduleConfig.thrForceSign,
+                                         moduleConfig.thrForcMag, moduleConfig.angErrThresh)
+    '''
+    # set the output truth state
     if useDVThruster:
         # DV Thruster results
         if useCOMOffset:
@@ -381,6 +472,6 @@ if __name__ == "__main__":
                  False,           # useDVThruster
                  False,           # use COM offset
                  False,           # drop thruster(s)
-                 False,           # drop control axis
+                 True,           # drop control axis
                  0                # saturateThrusters
     )
