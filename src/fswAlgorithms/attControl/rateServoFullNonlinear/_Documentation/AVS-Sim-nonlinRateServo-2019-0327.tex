@@ -43,6 +43,10 @@ Draft & Initial Documentation Draft & H. Schaub \\
 \section{Overview}
 This module computes a commanded control torque vector $\bm L_r$ using a rate based steering law that drives a body frame \frameDefinition{B} towards a time varying reference frame \frameDefinition{R}. 
 
+The output message is a body-frame control torque vector that is outlined in section 3. The required attitude guidance message contains both attitude tracking error rates as well as reference frame rates and commanded rates. This message is read in with every update cycle. The vehicle configuration message is only read in on reset and contains the spacecraft inertia tensor about the vehicle?s center of mass location.
+
+The servo rate feedback control can compensate for Reaction Wheel (RW) gyroscopic effects as well. This is an optional input message where the RW configuration array message contains the RW spin axis $\hat{g}_{s,i}$ information and the RW polar inertia about the spin axis IWs,i . This is only read in on reset. The RW speed message contains the RW speed $\Omega_i$ and is read in every time step. The optional RW availability message can be used to include or not include RWs in the MRP feedback. This allows the module to selectively turn off some RWs. The default is that all RWs are operational and are included.
+
 \section{Initialization}
 Simply call the module reset function prior to using this control module.  This will reset the prior function call time variable, and reset the rotational rate error integral measure.  The control update period $\Delta t$ is evaluated automatically.  
 
@@ -201,6 +205,34 @@ Assuming that $\Delta\bm L$ is either constant as seen by the body frame, or at 
 	[I_{\text{RW}}]\delta\bm\omega'' + [P]\delta\bm\omega' + [K_{I}]\delta \bm \omega = \Delta\bm L' \approx 0 	
 \end{equation}
 As $[I_{\text{RW}}]$, $[P]$ and $[K_{I}]$ are all symmetric positive definite matrices, these linear differential equations are stable, and $\delta\bm\omega\rightarrow0$ given that assumption that $\Delta\bm L' \approx 0$.  
+
+
+\section{Unit Test}
+The unit test for this module \verb|test_MRP_feedback| tests a set of gains $K,K_i,P$ on a rigid body with no external torques, and with a fixed input reference attitude message. The torque requested by the controller is evaluated against python computed torques at 0s, 0.5s, 1s, 1.5s and 2s to within a tolerance of $10^{-8}$. After 1s the simulation is stopped and the Reset() function is called to check that integral feedback related variables are properly reset.  The following permutations are run:
+\begin{itemize}
+	\item The test is run for a case with error integration feedback ($k_i=0.01$) and one case where $k_i$ is set to a negative value, resulting in a case with no integrator. 
+	\item The RW array number is configured either to 4 or 0
+	\item The integral limit term is set to either 0 or 20
+	\item The RW availability message is tested in 3 manners.  Either the availability  message is not written where all wheels should default to being available.  If the availability message is written, then the RWs are either zero to available or not available.
+	\item The values of $^B\omega'_{B^*R}$ and$^B\omega_{B^*R}$ are varied between a non-zero 3x1 vector to a zero vector
+\end{itemize}
+All permutations of these test cases are expected to pass.
+
+
+\section{User Guide}
+This module requires the following variables:
+\begin{itemize}
+\item $^B\mathbf{\omega}_{BR}$  as \verb|guidCmdData.omega_BR_B|
+\item $^B\mathbf{\omega}_{RN}$ as \verb|guidCmdData.omega_RN_B|
+\item $^B\dot{\mathbf{\omega}}_{RN}$ as \verb|guidCmdData.domega_RN_B|
+\item $[I]$, the inertia matrix of the body as \verb|vehicleConfigOut.ISCPntB_B|
+\item $\Omega_i$, speed of each reaction wheel in \verb|rwSpeedMessage.wheelSpeeds|
+\item Gains $k,P$ in \verb|moduleConfig|. 
+\item The integral gain $K_i$ in \verb|moduleConfig|. Setting this variable to a negative number disables the error integration for the controller, leaving just PI terms. Zero is not supported as a value for $k_i$. This variable is used to compute the integralLimit, used to limit the degree of integrator windup and reduce the chance of controller saturation. The integrator is required to maintain asymptotic tracking in the presence of an external disturbing torque.
+\item omegap\_BastR\_B and omega\_BastR\_B
+
+\end{itemize}
+
 
 
 \bibliographystyle{unsrt}   % Number the references.
