@@ -26,30 +26,28 @@
 #include "./simFswInterfaceMessages/ephemerisIntMsg.h"
 
 /*! \defgroup ephemDifference
+ * @brief This module reads in the position and velocity of multiple orbital bodies
+ *  and outputs position and velocity of each body relative to a single other
+ *  orbital body position and velocity.
+ *
+ * More information can be found in the [PDF Description](Basilisk-ephemDifference-2019-03-27.pdf).
  *  @{
  */
 
+/*! @brief Container with paired input/output message names and IDs */
 typedef struct{
-    char ephInMsgName[MAX_STAT_MSG_LENGTH];  /*!< [-] Input name for the ephemeris message*/
-    int32_t ephInMsgID;                      /*!< [-] Input message ID for ephemeris*/
-    char ephOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the clock correlation message*/
-    int32_t ephOutMsgID;                     /*!< [-] Ephemeris output message*/
-    EphemerisIntMsg ephStore;               /*!< [-] Storage buffer for output information*/
+    char ephInMsgName[MAX_STAT_MSG_LENGTH];  //!< [-] Input name for the ephemeris message
+    int32_t ephInMsgId;                      //!< [-] Input message ID for ephemeris
+    char ephOutMsgName[MAX_STAT_MSG_LENGTH]; //!< [-] The name converted output message
+    int32_t ephOutMsgId;                     //!< [-] Ephemeris output message ID
 }EphemChangeConfig;
 
-/*! @brief Top level structure for the converter that takes an 
-    ephemeris output message and converts it over to a translational 
-	state estimate message.
-*/
+/*! @brief Container holding ephemDifference module variables */
 typedef struct {
-    char ephBaseInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the clock correlation message*/
-    double baseScale;   /*!< [-] The scale factor used for the secondary parameter (zero passivates)*/
-    EphemChangeConfig changeBodies[MAX_NUM_CHANGE_BODIES]; /*!< [-] The list of bodies to change out*/
-    uint32_t ephBdyCount;    /*!< [-] The number of ephemeris bodies we are changing*/
-
-    int32_t ephBaseInMsgID;  /*!< [-] The ID associated with the incoming clock correlation*/
-    EphemerisIntMsg baseEphem;               /*!< [-] Storage buffer for output information*/
-    
+    char ephBaseInMsgName[MAX_STAT_MSG_LENGTH]; //!< Name of the base ephemeris input message name
+    EphemChangeConfig changeBodies[MAX_NUM_CHANGE_BODIES]; //!< [-] The list of bodies to change out
+    uint32_t ephBdyCount; //!< [-] The number of ephemeris bodies we are changing
+    int32_t ephBaseInMsgId; //!< [-] The ID associated with the incoming clock correlation
 }EphemDifferenceData;
 
 #ifdef __cplusplus

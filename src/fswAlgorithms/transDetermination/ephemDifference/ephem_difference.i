@@ -30,7 +30,7 @@
 %ignore CrossInit_ephemDifference;
 %constant void Reset_ephemDifference(void*, uint64_t, uint64_t);
 %ignore Reset_ephemDifference;
-GEN_SIZEOF(EphemerisIntMsg)
+
 STRUCTASLIST(EphemChangeConfig)
 %include "ephemDifference.h"
 %include "simFswInterfaceMessages/ephemerisIntMsg.h"
