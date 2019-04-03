@@ -19,11 +19,6 @@
 #ifndef VIZ_INTERFACE_H
 #define VIZ_INTERFACE_H
 
-#include "vizProtobuffer/vizMessage.pb.h"
-#include <vector>
-#include <fstream>
-#include <map>
-
 #include "_GeneralModuleFiles/sys_model.h"
 #include "architecture/messaging/system_messaging.h"
 #include "simFswInterfaceMessages/stSensorIntMsg.h"
@@ -37,11 +32,13 @@
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "../fswAlgorithms/fswMessages/cssConfigFswMsg.h"
 #include "../fswAlgorithms/fswMessages/thrArrayConfigFswMsg.h"
+#include "../fswAlgorithms/vehicleConfigData/vehicleConfigData.h"
 
-
+#include "vizProtobuffer/vizMessage.pb.h"
 #include <vector>
 #include <fstream>
 #include <map>
+#include <zmq.h>
 
 typedef struct {
     int64_t msgID;        //!< [-] message ID associated with source
@@ -68,6 +65,7 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     void ReadBSKMessages();
     void WriteProtobuffer(uint64_t CurrentSimNanos);
+    void ReadVizMessage(std::string protoFilename);
 
 public:
     std::string cssDataInMsgName;             //! [-] Name of the incoming css data
@@ -79,7 +77,8 @@ public:
     std::vector <ThrClusterMap> thrMsgData;     //! [-] Name of the incoming thruster data
     std::string starTrackerInMsgName;         //! [-] Name of the incoming Star Tracker data
     uint64_t numSensors;
-    int liveStream;         //! [Bool] Set True if Unity/Viz couple in direct communication. If False, the VizInteface will just save a file
+    int liveStream;         //! [Bool] Set True if Unity/Viz couple in direct communication. 
+    int saveFile;         //! [Bool] Set True if Viz should save a file of the data. 
 
     std::string vizOutMsgName;
     std::vector <std::string> planetNames;  //!< -- Names of planets we want to track, read in from python
