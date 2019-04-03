@@ -33,19 +33,16 @@
 void SelfInit_ephemDifference(EphemDifferenceData *configData, uint64_t moduleID)
 {
     uint32_t i;
+    configData->ephBdyCount = 0;
     for(i = 0; i < MAX_NUM_CHANGE_BODIES; i++)
     {
-        if (strlen(configData->changeBodies[i].ephOutMsgName) == 0) {
+        if (strlen(configData->changeBodies[i].ephOutMsgName) == 0 || strlen(configData->changeBodies[i].ephInMsgName) == 0) {
             break;
         }
         configData->changeBodies[i].ephOutMsgId = CreateNewMessage(
-                                                                   configData->changeBodies[i].ephOutMsgName,
-                                                                   sizeof(EphemerisIntMsg), "EphemerisIntMsg", moduleID);
-        if (strlen(configData->changeBodies[i].ephInMsgName) == 0) {
-            BSK_PRINT(MSG_ERROR, "The output message %s is missing a matching input name.\n", configData->changeBodies[i].ephOutMsgName);
-        } else {
-            configData->ephBdyCount++;
-        }
+                                                                       configData->changeBodies[i].ephOutMsgName,
+                                                                       sizeof(EphemerisIntMsg), "EphemerisIntMsg", moduleID);
+        configData->ephBdyCount++;
     }
 
     if (configData->ephBdyCount == 0) {
@@ -83,7 +80,7 @@ void CrossInit_ephemDifference(EphemDifferenceData *configData, uint64_t moduleI
 void Reset_ephemDifference(EphemDifferenceData *configData, uint64_t callTime,
                          uint64_t moduleID)
 {
- 
+    
 }
 
 /*! @brief This method recomputes the body postions and velocities relative to
@@ -121,7 +118,6 @@ void Update_ephemDifference(EphemDifferenceData *configData, uint64_t callTime, 
         v3Subtract(tmpEphStore.v_BdyZero_N,
                    tmpBaseEphem.v_BdyZero_N,
                    tmpEphStore.v_BdyZero_N);
-        tmpEphStore.timeTag = tmpBaseEphem.timeTag;
         
         WriteMessage(configData->changeBodies[i].ephOutMsgId, callTime,
                      sizeof(EphemerisIntMsg), &tmpEphStore,
