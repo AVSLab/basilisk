@@ -3,9 +3,9 @@
 \section{Test Description and Success Criteria}
 The unit test creates  input ephemeris messages for Mars, Jupiter and Saturn relative to the sun.  The base ephemeris message is created for Earth relative to the sun.  The test evaluates the Mars, Jupiter and Saturn position and velocity vectors relative to the Earth.  
 
-The module requires matching pairs of input and output ephemeris messages.  The body counting logic only adds adds messages if both input and output message is specified.  To test the test includes another input message which only has the output message defined, but not the input message.
+The module requires matching pairs of input and output ephemeris messages.  The body counting logic only adds adds messages if both input and output message is specified.  This is tested by including two more input messages names where only the output message defined, but not the input message.  This should terminate the message counting with a value of 3.
 
-To test the body counting termination logic, 2 more message objects are included where the first object has an empty output message. This should trigger the counting to stop, and the following non-zero output message is not considered.
+The test also checks that the output message has the time tag of the input message, not the base ephemeris message.
 
 The simulation is run for a single time step to ensure the math is performed correctly.  
 

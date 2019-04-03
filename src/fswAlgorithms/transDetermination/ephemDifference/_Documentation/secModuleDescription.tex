@@ -20,5 +20,7 @@ Let $\bm r_{P_{i}/N}$ be the position vector of the $i^{\text{th}}$ ephemeris, w
 	\leftexp{N}{\bm v}_{P_{i}/B} &= \leftexp{N}{\bm v}_{P_{i}/N} - \leftexp{N}{\bm v}_{B/N}
 \end{align}
 
-The number of input messages to consider is determined by searching the {\tt ephInMsgName} names and finding the first zero string where the name was not set.  
+The time tag of the output message is copied from the corresponding input message, not the base ephemeris message.
+
+The number of input messages to consider is determined by searching the {\tt ephInMsgName} and {\tt ephOutMsgName} names and finding the first zero string where either name was not set.  
 

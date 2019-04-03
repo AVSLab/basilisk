@@ -82,6 +82,7 @@ def ephemDifferenceTestFunction(ephBdyCount):
             position, velocity = functions[i](astroFunctions.JulianDate([2018, 10, 16]))
             inputMsg.r_BdyZero_N = position
             inputMsg.v_BdyZero_N = velocity
+            inputMsg.timeTag = 321.0
 
             # Set this message
             unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, changeBodyMsg.ephInMsgName, inputMsg)
@@ -94,10 +95,8 @@ def ephemDifferenceTestFunction(ephBdyCount):
         # to trigger the end of the message counting
         changeBodyList.append(ephem_difference.EphemChangeConfig())
         changeBodyList.append(ephem_difference.EphemChangeConfig())
-        changeBodyList.append(ephem_difference.EphemChangeConfig())
         changeBodyList[ephBdyCount+0].ephOutMsgName = "out1_name"  # should not count as the input name is missing
-        changeBodyList[ephBdyCount+1].ephOutMsgName = ""           # should trigger a stop in the message counting
-        changeBodyList[ephBdyCount+2].ephOutMsgName = "out2_name"  # output message name should not be considered
+        changeBodyList[ephBdyCount+1].ephOutMsgName = "out2_name"  # output message name should not be considered
 
     ephemDiffConfig.changeBodies = changeBodyList
 
@@ -143,7 +142,7 @@ def ephemDifferenceTestFunction(ephBdyCount):
                                                                          velAcc,
                                                                          "ephemDifference velocity output body " + str(i),
                                                                          2, testFailCount, testMessages)
-            if timeTag[0, 1] != 1234.0:
+            if timeTag[0, 1] != 321.0:
                 testFailCount += 1
                 testMessages.append("ephemDifference timeTag output body " + str(i))
 
