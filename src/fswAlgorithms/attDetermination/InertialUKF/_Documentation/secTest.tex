@@ -4,31 +4,43 @@
 
 \section{Test Description and Success Criteria}
 
-\subsection{Test 1}
-test StatePropInertialAttitude
+\subsection{Test 1: StatePropInertialAttitude}
 
-\subsection{Test 2}
-test StatePropRateInertialAttitude
+This test runs a pure propagation test. The states are set to a fixed value and integrated with the filter.
+This shows filter stability in the simple case and a very low tolerance for error is permitted (1E-10). 
 
-\subsection{Test 3}
-test StateUpdateInertialAttitude
+\subsection{Test 2: StatePropRateInertialAttitude}
 
-\subsection{Test 4}
-test StateUpdateRWInertialAttitude(
+This test runs a pure propagation test while adding gyro data. This ensures those messages are being read and used properly. 
+
+\subsection{Test 3: StateUpdateInertialAttitude}
+
+Given no dynamics, this test runs the filter by giving two star tracker messages. For the first half of the simulation, the measurements both read attitude values of $\bm \sigma =  \begin{bmatrix} 0.3 & 0.4 & 0.5 \end{bmatrix}$. After 1000s, the measurement changes to $\bm \sigma = \begin{bmatrix} 1.2 & 0 & 0 \end{bmatrix}$.
+
+Figures \ref{fig:Test11} and \ref{fig:Test12} show the results for the states and covariance values. 
+ \input{AutoTex/Test11.tex}
+ \input{AutoTex/Test12.tex}
+ 
+\subsection{Test 4: StateUpdateRWInertialAttitude}
+
+This last test runs the filter by giving two star tracker messages as well as reaction wheels. For the first half of the simulation, the measurements both read attitude values of $\bm \sigma = \begin{bmatrix} 0.3 & 0.4 & 0.5 \end{bmatrix}$. After 1000s, the measurement changes to $\bm \sigma = \begin{bmatrix} 1.2 & 0 & 0 \end{bmatrix}$. Wheel speeds are set to $\bm w_s = \begin{bmatrix} 0.1& 0.01& 0.1\end{bmatrix}$.
+
+Figures \ref{fig:Test11} and \ref{fig:Test12} show the results for the states and covariance values. 
+ \input{AutoTex/Test31.tex}
+ \input{AutoTex/Test32.tex}
 
 \section{Test Parameters}
 
 \begin{table}[ht]
 \centering
-\begin{tabular}{cc}
+\begin{tabular}{c|cc}
 \hline
 \hline
-\textbf{Output Value Tested}     & \textbf{Tolerated Value} \\ \hline
-${\bm \sigma}_{R_{1}N}$          & \input{AutoTex/toleranceValue1}                    \\
-$^{\cal N}{\bm \omega}_{RN}$     & \input{AutoTex/toleranceValue2}                     \\
-$^{\cal N}\dot{\bm \omega}_{RN}$ & \input{AutoTex/toleranceValue3}                     \\ 
-${\bm \sigma}_{BA}$ & \input{AutoTex/toleranceValue4}  \\ \hline
-\hline
+\textbf{Output Value Tested}     & \textbf{States Tolerated Error} & \textbf{Covariance Tolerated Error} \\ \hline
+Test 1	        & \input{AutoTex/toleranceValue22}        		 &  N/A                   \\
+Test 2	   & \input{AutoTex/toleranceValue44}     			 &  Increase                           \\
+Test 3	     & \input{AutoTex/toleranceValue11}     			 &  Increase                    \\
+Test 4	 & \input{AutoTex/toleranceValue33}     			 &  N/A            		     \\\hline
 \end{tabular}
 \end{table}
 
@@ -40,12 +52,12 @@ ${\bm \sigma}_{BA}$ & \input{AutoTex/toleranceValue4}  \\ \hline
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{c | c}
 		\hline\hline
-		\textbf{Check} 						  		&\textbf{Pass/Fail} \\ 
+		\textbf{Check} 			&\textbf{Pass/Fail} \\ 
 		\hline
-	   Test 1	   			& \input{AutoTex/passFail1} \\ 
-	   Test 2	   			& \input{AutoTex/passFail2} \\ 
-	   Test 3	   			& \input{AutoTex/passFail1} \\ 
-	   Test 4	   			& \input{AutoTex/passFail2} \\ 
+	   Test 1	   			& \input{AutoTex/passFail22} \\ 
+	   Test 2	   			& \input{AutoTex/passFail44} \\ 
+	   Test 3	   			& \input{AutoTex/passFail11} \\ 
+	   Test 4	   			& \input{AutoTex/passFail33} \\ 
 	   \hline\hline
 	\end{tabular}
 \end{table}

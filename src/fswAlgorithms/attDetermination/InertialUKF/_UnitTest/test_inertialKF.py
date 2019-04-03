@@ -18,7 +18,7 @@
 
 '''
 import numpy
-import math
+import math, inspect, os
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import alg_contain
@@ -31,6 +31,10 @@ from Basilisk.simulation import sim_model
 from Basilisk.utilities import simIncludeRW
 from Basilisk.simulation import reactionWheelStateEffector, spacecraftPlus
 
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+textSnippetPassed = '\\textcolor{ForestGreen}{' + "PASSED" + '}'
+textSnippetFailed = '\\textcolor{Red}{' + "Failed" + '}'
 
 def setupFilterData(filterObject):
     filterObject.navStateOutMsgName = "inertial_state_estimate"
@@ -186,15 +190,22 @@ def test_StateUpdateInertialAttitude(show_plots):
 
     covarLog = unitTestSim.GetLogVariableData('InertialUKF.covar')
     stateLog = unitTestSim.GetLogVariableData('InertialUKF.state')
-
+    accuracy = 1.0E-5
+    unitTestSupport.writeTeXSnippet("toleranceValue11", str(accuracy), path)
     for i in range(3):
         if(covarLog[-1, i*6+1+i] > covarLog[0, i*6+1+i]):
             testFailCount += 1
             testMessages.append("Covariance update failure")
-        if(abs(stateLog[-1, i+1] - stMessage1.MRP_BdyInrtl[i]) > 1.0E-5):
+            unitTestSupport.writeTeXSnippet('passFail11', textSnippetFailed, path)
+        else:
+            unitTestSupport.writeTeXSnippet('passFail11', textSnippetPassed, path)
+        if(abs(stateLog[-1, i+1] - stMessage1.MRP_BdyInrtl[i]) > accuracy):
             print abs(stateLog[-1, i+1] - stMessage1.MRP_BdyInrtl[i])
             testFailCount += 1
             testMessages.append("State update failure")
+            unitTestSupport.writeTeXSnippet('passFail11', textSnippetFailed, path)
+        else:
+            unitTestSupport.writeTeXSnippet('passFail11', textSnippetPassed, path)
 
     stMessage1.MRP_BdyInrtl = [1.2, 0.0, 0.0]
     stMessage2.MRP_BdyInrtl = [1.2, 0.0, 0.0]
@@ -222,14 +233,23 @@ def test_StateUpdateInertialAttitude(show_plots):
         if(covarLog[-1, i*6+1+i] > covarLog[0, i*6+1+i]):
             testFailCount += 1
             testMessages.append("Covariance update large failure")
+            unitTestSupport.writeTeXSnippet('passFail11', textSnippetFailed, path)
+        else:
+            unitTestSupport.writeTeXSnippet('passFail11', textSnippetPassed, path)
     plt.figure()
     for i in range(moduleConfig.numStates):
-        plt.plot(stateLog[:,0]*1.0E-9, stateLog[:,i+1])
+        plt.plot(stateLog[:,0]*1.0E-9, stateLog[:,i+1], label='State_' +str(i))
+        plt.legend()
+        plt.ylim([-1, 1])
 
+    unitTestSupport.writeFigureLaTeX('Test11', 'Test 1 State convergence', plt, 'width=0.9\\textwidth, keepaspectratio', path)
     plt.figure()
     for i in range(moduleConfig.numStates):
-        plt.plot(covarLog[:,0]*1.0E-9, covarLog[:,i*moduleConfig.numStates+i+1])
+        plt.plot(covarLog[:,0]*1.0E-9, covarLog[:,i*moduleConfig.numStates+i+1], label='Covar_' +str(i))
+        plt.legend()
+        plt.ylim([0, 2.E-7])
 
+    unitTestSupport.writeFigureLaTeX('Test12', 'Test 1 Covariance convergence', plt, 'width=0.9\\textwidth, keepaspectratio', path)
     if(show_plots):
         plt.show()
         plt.close('all')
@@ -300,12 +320,16 @@ def test_StatePropInertialAttitude(show_plots):
     covarLog = unitTestSim.GetLogVariableData('InertialUKF.covar')
     stateLog = unitTestSim.GetLogVariableData('InertialUKF.state')
 
-    
+    accuracy = 1.0E-10
+    unitTestSupport.writeTeXSnippet("toleranceValue22", str(accuracy), path)
     for i in range(6):
-        if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > 1.0E-10):
+        if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > accuracy):
             print abs(stateLog[-1, i+1] - stateLog[0, i+1])
             testFailCount += 1
             testMessages.append("State propagation failure")
+            unitTestSupport.writeTeXSnippet('passFail22', textSnippetFailed, path)
+        else:
+            unitTestSupport.writeTeXSnippet('passFail22', textSnippetPassed, path)
 
     #for i in range(6):
     #    if(covarLog[-1, i*6+i+1] <= covarLog[0, i*6+i+1]):
@@ -445,15 +469,19 @@ def test_StateUpdateRWInertialAttitude(show_plots):
 
     covarLog = unitTestSim.GetLogVariableData('InertialUKF.covar')
     stateLog = unitTestSim.GetLogVariableData('InertialUKF.state')
-
+    accuracy = 1.0E-5
+    unitTestSupport.writeTeXSnippet("toleranceValue33", str(accuracy), path)
     for i in range(3):
         if (covarLog[-1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i]):
             testFailCount += 1
             testMessages.append("Covariance update with RW failure")
-        if (abs(stateLog[-1, i + 1] - stMessage1.MRP_BdyInrtl[i]) > 1.0E-5):
+        if (abs(stateLog[-1, i + 1] - stMessage1.MRP_BdyInrtl[i]) > accuracy):
             print abs(stateLog[-1, i + 1] - stMessage1.MRP_BdyInrtl[i])
             testFailCount += 1
             testMessages.append("State update with RW failure")
+            unitTestSupport.writeTeXSnippet('passFail33', textSnippetFailed, path)
+        else:
+            unitTestSupport.writeTeXSnippet('passFail33', textSnippetPassed, path)
 
     stMessage1.MRP_BdyInrtl = [1.2, 0.0, 0.0]
     stMessage2.MRP_BdyInrtl = [1.2, 0.0, 0.0]
@@ -479,14 +507,23 @@ def test_StateUpdateRWInertialAttitude(show_plots):
         if (covarLog[-1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i]):
             testFailCount += 1
             testMessages.append("Covariance update large failure")
+            unitTestSupport.writeTeXSnippet('passFail33', textSnippetFailed, path)
+        else:
+            unitTestSupport.writeTeXSnippet('passFail33', textSnippetPassed, path)
     plt.figure()
     for i in range(moduleConfig.numStates):
-        plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, i + 1])
+        plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, i + 1], label='State_' +str(i))
+        plt.legend()
+        plt.ylim([-1, 1])
 
+    unitTestSupport.writeFigureLaTeX('Test31', 'Test 3 State convergence', plt, 'width=0.7\\textwidth, keepaspectratio', path)
     plt.figure()
     for i in range(moduleConfig.numStates):
-        plt.plot(covarLog[:, 0] * 1.0E-9, covarLog[:, i * moduleConfig.numStates + i + 1])
+        plt.plot(covarLog[:, 0] * 1.0E-9, covarLog[:, i * moduleConfig.numStates + i + 1], label='Covar_' +str(i))
+        plt.legend()
+        plt.ylim([0., 2E-7])
 
+    unitTestSupport.writeFigureLaTeX('Test32', 'Test 3 Covariance convergence', plt, 'width=0.7\\textwidth, keepaspectratio', path)
     if (show_plots):
         plt.show()
         plt.close('all')
@@ -570,16 +607,20 @@ def test_StatePropRateInertialAttitude(show_plots):
     covarLog = unitTestSim.GetLogVariableData('InertialUKF.covar')
     sigmaLog = unitTestSim.GetLogVariableData('InertialUKF.sigma_BNOut')
     omegaLog = unitTestSim.GetLogVariableData('InertialUKF.omega_BN_BOut')
-
+    accuracy = 1.0E-3
+    unitTestSupport.writeTeXSnippet("toleranceValue44", str(accuracy), path)
     for i in range(3):
-        if(abs(sigmaLog[-1, i+1] - sigmaLog[0, i+1]) > 1.0E-3):
+        if(abs(sigmaLog[-1, i+1] - sigmaLog[0, i+1]) > accuracy):
             print abs(sigmaLog[-1, i+1] - sigmaLog[0, i+1])
             testFailCount += 1
             testMessages.append("State sigma propagation failure")
-        if(abs(omegaLog[-1, i+1] - stateInit[i+3]) > 1.0E-3):
+        if(abs(omegaLog[-1, i+1] - stateInit[i+3]) > accuracy):
             print abs(omegaLog[-1, i+1] - stateInit[i+3])
             testFailCount += 1
             testMessages.append("State omega propagation failure")
+            unitTestSupport.writeTeXSnippet('passFail44', textSnippetFailed, path)
+        else:
+            unitTestSupport.writeTeXSnippet('passFail44', textSnippetPassed, path)
 
 #    for i in range(6):
 #        if(covarLog[-1, i*6+i+1] <= covarLog[0, i*6+i+1]):

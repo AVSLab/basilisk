@@ -10,15 +10,20 @@ In order for the filter to run, the user must set a few parameters:
       \texttt{ filterObject.alpha = 0.02} \\
       \texttt{ filterObject.beta = 2.0} \\
       \texttt{ filterObject.kappa = 0.0} 
-\item The angle threshold under which the coarse sun sensors do not read the measurement: \\ 
-\texttt{FilterContainer.sensorUseThresh = 0.}
-\item The process noise matrix: \\
-   \texttt{qNoiseIn = numpy.identity(5)} \\
-   \texttt{ qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.01*0.01} \\
-   \texttt{ qNoiseIn[3:5, 3:5] = qNoiseIn[3:5, 3:5]*0.001*0.001} \\
-    \texttt{filterObject.qNoise = qNoiseIn.reshape(25).tolist()}
-\item The measurement noise value, for instance: \\
- \texttt{FilterContainer.qObsVal = 0.001}
+\item The star trackers: \\ 
+  \texttt{    ST1Data = inertialUKF.STMessage()}\\
+    \texttt{  ST1Data.stInMsgName = "star$\_$stracker$\_$1$\_$data"}\\
+  \texttt{    ST1Data.noise = [0.00017 * 0.00017, 0.0, 0.0,\\
+                         0.0, 0.00017 * 0.00017, 0.0,\\
+                         0.0, 0.0, 0.00017 * 0.00017]}\\
+   \texttt{   ST2Data = inertialUKF.STMessage()}\\
+  \texttt{    ST2Data.stInMsgName = "star$\_$tracker$\_$2$\_$data"}\\
+    \texttt{  ST2Data.noise = [0.00017 * 0.00017, 0.0, 0.0,\\
+                         0.0, 0.00017 * 0.00017, 0.0,\\
+                         0.0, 0.0, 0.00017 * 0.00017]}\\
+  \texttt{    STList = [ST1Data, ST2Data]}\\
+   \texttt{   filterObject.STDatasStruct.STMessages = STList}\\
+   \texttt{   filterObject.STDatasStruct.numST = len(STList)}\\
 \item The initial covariance: \\
  \texttt{Filter.covar =} \\
   \texttt{ [1., 0.0, 0.0, 0.0, 0.0, \\
@@ -28,6 +33,11 @@ In order for the filter to run, the user must set a few parameters:
                           0.0, 0.0, 0.0, 0.0, 0.02]}
  \item The initial state :\\
  \texttt{Filter.state =[0.0, 0.0, 1.0, 0.0, 0.0]}
+  \item The low pass filter for the accelerometers :\\
+    \texttt{ lpDataUse = inertialUKF.LowPassFilterData()}\\
+   \texttt{ lpDataUse.hStep = 0.5 }\\
+ \texttt{   lpDataUse.omegCutoff = 15.0/(2.0*math.pi) }\\
+ \texttt{   filterObject.gyroFilt = [lpDataUse, lpDataUse, lpDataUse] }\\
 \end{itemize}
 
 The messages must also be set as such:
