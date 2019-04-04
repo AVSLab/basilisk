@@ -29,8 +29,10 @@ set(required_conan_libraries eigen/3.3.5@conan/stable)
 
 option(USE_PROTOBUFFERS "Include modules which use Google Protobuffers" OFF)
 option(USE_OPENCV "Include modules which use OpenCV" OFF)
+option(USE_ZMQ "Include modules which use ZMQ" OFF)
 
 set(requires_protobuff_modules "viz_interface/vizInterface.i")
+set(requires_zmq_modules "viz_interface/vizInterface.i")
 if(USE_PROTOBUFFERS)
   list(APPEND required_conan_libraries protobuf/3.5.1@bincrafters/stable)
 endif()
@@ -40,7 +42,8 @@ if(USE_OPENCV)
 endif()
 
 if(USE_ZMQ)
-  list(APPEND required_conan_libraries zmq/4.2.5@bincrafters/stable)
+  list(APPEND required_conan_libraries cppzmq/4.3.0@bincrafters/stable)
+#   list(APPEND required_conan_libraries libzmq/4.1.5@memsharded/stable)
 endif()
 
 
@@ -59,6 +62,13 @@ if(USE_OPENCV)
    #! OPEN_CV
    find_package(opencv CONFIG REQUIRED)
    message(STATUS "Using OpenCV ${opencv_VERSION}")
+   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+endif()
+
+if(USE_ZMQ)
+   #! USE_ZMQ
+   find_package(cppzmq CONFIG REQUIRED)
+   message(STATUS "Using ZMQ ${cppzmq_VERSION}")
    set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 endif()
 
@@ -214,7 +224,7 @@ function(findAndCreateSwigModules SubModule)
             get_filename_component(FileDir ${module} DIRECTORY)
 		
 	
- 	    if(NOT USE_PROTOBUFFERS AND (module IN_LIST requires_protobuff_modules))
+ 	    if((NOT USE_PROTOBUFFERS OR NOT USE_ZMQ) AND (module IN_LIST requires_protobuff_modules OR module IN_LIST requires_zmq_modules))
                continue()
  	    endif()
 		
