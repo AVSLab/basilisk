@@ -24,34 +24,43 @@
 #   Unit Test Support Script
 #
 import sys
-
-from Basilisk.utilities import unitTestSupport
+import os,errno
 
 # import Viz messaging related modules
 from Basilisk import __path__
 bskPath = __path__[0]
-from Basilisk.simulation import spice_interface
+from Basilisk.simulation import spice_interface, simFswInterfaceMessages
+from Basilisk.utilities import RigidBodyKinematics as rbk
 
 sys.path.append(bskPath + '/../../../vizard/ProtoModels/modules')
 
+youveBeenWarned = False
 try:
-    import vizInterface
+    from Basilisk.simulation import vizInterface
     vizFound = True
 except ImportError:
     vizFound = False
+    if not youveBeenWarned:
+        print 'Could not find vizInterface when import attempted'
+        youveBeenWarned = True
 
 
-def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFactory = None):
+def enableUnityVisualization(scSim, simTaskName, processName, fileName, bodyName = 'none'):
     if not vizFound:
-        print 'Could not find vizInterface when import attempted.  Be sure to build BSK with vizInterface support.'
         return
+    home = os.path.dirname(fileName)
+    if len(home)!=0:
+        home +='/'
+    namePath, name = os.path.split(fileName)
+    if not os.path.isdir(home + '_VizFiles'):
+        os.mkdir(home + '_VizFiles')
+    fileName = home + '_VizFiles/' + name
 
-    # setup the Vizard interface module
     vizMessager = vizInterface.VizInterface()
     scSim.AddModelToTask(simTaskName, vizMessager)
-
-    vizMessager.spiceInMsgName = vizInterface.StringVector([
-                                                                  "earth_planet_data",
+    vizMessager.liveStream = 0
+    vizMessager.saveFile = 1
+    vizMessager.spiceInMsgName = vizInterface.StringVector([      "earth_planet_data",
                                                                   "mars_planet_data",
                                                                   "sun_planet_data",
                                                                   "jupiter barycenter_planet_data",
@@ -63,22 +72,30 @@ def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFact
                                                                   "pluto barycenter_planet_data",
                                                                   "saturn barycenter_planet_data"])
     vizMessager.planetNames = vizInterface.StringVector(["earth", "mars", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
+    #vizMessager.numRW = 4
     vizMessager.protoFilename = fileName
+    VizTaskName = "VizTask"
 
-    # see if celestial body planet ephemeris messages must be created
-    if (gravFactory != None):
-        gravBodies = gravFactory.gravBodies
-        if (gravBodies):
-            for key in gravBodies:
-                msgName = key + '_planet_data'
-                if (not scSim.TotalSim.IsMsgCreated(msgName)):
-                    ephemData = spice_interface.SpicePlanetStateSimMsg()
-                    ephemData.J2000Current = 0.0
-                    ephemData.PositionVector = [0.0, 0.0, 0.0]
-                    ephemData.VelocityVector = [0.0, 0.0, 0.0]
-                    ephemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-                    ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-                    ephemData.PlanetName = key
-                    unitTestSupport.setMessage(scSim.TotalSim, processName, msgName, ephemData)
+    if (len(bodyName) == 1):
+        ephemData = spice_interface.SpicePlanetStateSimMsg()
+        ephemData.J2000Current = 0.0
+        ephemData.PositionVector = [0.0, 0.0, 0.0]
+        ephemData.VelocityVector = [0.0, 0.0, 0.0]
+        ephemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+        ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+        ephemData.PlanetName = bodyName[0]
+        msgName = bodyName[0] + '_planet_data'
+        messageSize = ephemData.getStructSize()
+        scSim.TotalSim.CreateNewMessage(processName, msgName, messageSize, 2, "SpicePlanetStateSimMsg")
+        scSim.TotalSim.WriteMessageData(msgName, messageSize, 0, ephemData)
+        # #
+    if (len(bodyName) > 1):
+        spiceObject = spice_interface.SpiceInterface()
+        spiceObject.planetNames = spice_interface.StringVector(bodyName)
+        spiceObject.ModelTag = "SpiceInterfaceData"
+        spiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
+        spiceObject.outputBufferCount = 100000
+        spiceObject.UTCCalInit = '2018 OCT 23 04:35:25.000 (UTC)'
+        scSim.AddModelToTask(simTaskName, spiceObject)
 
     return
