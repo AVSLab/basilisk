@@ -252,7 +252,31 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
     accuracy = 1e-8
     testFailCount, testMessages = unitTestSupport.compareArrayND(trueVector, moduleOutput, accuracy, "rwMotorTorques",
                                                                  MAX_EFF_CNT, testFailCount, testMessages)
-        
+
+
+
+    GsMatrix = np.transpose(np.reshape(rwConfigParams.GsMatrix_B,(MAX_EFF_CNT,3),"C"))
+    F = np.transpose(moduleOutput[0,1:MAX_EFF_CNT+1])
+    receivedTorque = -1.0*np.array([np.matmul(GsMatrix,F)])
+
+    if numWheels >= numControlAxes and numControlAxes == 3:
+
+        if (len(avail) - np.sum(avail)) > numControlAxes:
+
+            receivedTorque = np.append(np.array([0.0]),receivedTorque)
+            testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([requestedTorque]), np.array([receivedTorque]), accuracy, "CompareTorques",
+                                                                         3, testFailCount, testMessages)
+
+    snippetName = "LrBReq_LrBRec_"+str(numControlAxes) + "_" + str(numWheels) + "_" + RWAvailMsg
+    requestedTex = str(requestedTorque)
+    receivedTex = str(receivedTorque)
+    snippetTex = "Requested:\t" + requestedTex + "\n"
+    snippetTex += "Received:\t" + receivedTex + "\n"
+
+    unitTestSupport.writeTeXSnippet(snippetName, snippetTex, path)
+
+
+
 
     #   print out success message if no error were found
     unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
@@ -280,7 +304,7 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
 #
 if __name__ == "__main__":
     test_rwMotorTorque(False,
-                1,      # numControlAxes
+                3,      # numControlAxes
                 4,      # numWheels
                 "NO"    # RWAvailMsg ("NO", "ON", "OFF")
                )
