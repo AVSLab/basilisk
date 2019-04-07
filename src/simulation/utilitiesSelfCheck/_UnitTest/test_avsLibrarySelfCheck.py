@@ -52,13 +52,13 @@ def unitAVSLibrarySelfCheck(testName):
         if errorCount:
             testFailCount += errorCount
             testMessages.append("ERROR: Rigid Body Kinematics Library Failed Self Test.\n")
-    if testName == "testOrbitalElements":
+    if testName == "testOrbitalAnomalies":
         errorCount = avsLibrarySelfCheck.testOrbitalAnomalies(1e-10)
         if errorCount:
             testFailCount += errorCount
             testMessages.append("ERROR: Orbital Anomalies Library Failed Self Test.\n")
-    if testName == "testOrbitalAnomalies":
-        errorCount = avsLibrarySelfCheck.testOrbitalElements(1e-10)
+    if testName == "testOrbitalElements":
+        errorCount = avsLibrarySelfCheck.testOrbitalElements(1e-11)
         if errorCount:
             testFailCount += errorCount
             testMessages.append("ERROR: Orbital Elements Library Failed Self Test.\n")
@@ -108,8 +108,5 @@ def unitAVSLibrarySelfCheck(testName):
 #
 if __name__ == "__main__":
     unitAVSLibrarySelfCheck(
-        True,  # rigidBodyKinematics
-        False,  # orbitalMotion
-        False,  # linearAlgebra
-        False  # environment
+        "testOrbitalElements"
     )
