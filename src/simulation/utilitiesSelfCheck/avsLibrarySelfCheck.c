@@ -1598,6 +1598,65 @@ int testOrbitalElements(double accuracy)
 
     printf("--testOrbitalElements, accuracy = %g\n", accuracy);
 
+
+    /* 2D parabolic case */
+    elements.alpha = 0.0; /* zero orbit energy, i.e. parabolic */
+    elements.a = 0.0;
+    elements.rPeriap = 7500.;
+    elements.e     = 1.0;
+    elements.i     = 40.0 * D2R;
+    elements.Omega = 133.0 * D2R;
+    elements.omega = 113.0 * D2R;
+    elements.f     = 123.0 * D2R;    /* true anomaly */
+    elem2rv(MU_EARTH, &elements, r, v);
+//    v3PrintScreen("r", r);
+//    v3PrintScreen("v", v);
+    v3Set(27862.6148209797,      795.70270010667,    -17554.0435142669, r2);
+    v3Set(3.06499561197954,     2.21344887266898,    -3.14760065404514, v3_2);
+    if(!v3IsEqualRel(r, r2, accuracy) || !v3IsEqualRel(v, v3_2, accuracy)) {
+        printf("elem2rv failed 2D parabolic case\n");
+        errorCount++;
+    }
+
+    rv2elem(MU_EARTH, r2, v3_2, &elements);
+//    printf("alpha=%g\n", elements.alpha);
+//    printf("a=%g\n", elements.a);
+//    printf("e=%g\n", elements.e);
+//    printf("i=%g\n", elements.i);
+//    printf("Omega=%g\n", elements.Omega);
+//    printf("omega=%g\n", elements.omega);
+//    printf("f=%g\n", elements.f);
+//    printf("r=%20.16g\n", elements.rmag);
+//    printf("rP=%g\n", elements.rPeriap);
+//    printf("rA=%g\n", elements.rApoap);
+//
+//    printf("%d\n", isEqual(elements.alpha,      0.0, accuracy));
+//    printf("%d\n", isEqual(elements.a,      0.0, accuracy));
+//    printf("%d\n", isEqualRel(elements.e,      1.0, accuracy));
+//    printf("%d\n", isEqualRel(elements.i,      40*D2R, accuracy));
+//    printf("%d\n", isEqualRel(elements.Omega,      133*D2R, accuracy));
+//    printf("%d\n", isEqualRel(elements.omega,      113*D2R, accuracy));
+//    printf("%d\n", isEqualRel(elements.f,      123*D2R, accuracy));
+//    printf("%d\n", isEqualRel(elements.rmag,      32940.89997480352, accuracy));
+//    printf("%d\n", isEqualRel(elements.rPeriap,      7500.0, accuracy));
+//    printf("%d\n", isEqual(elements.rApoap,      0.0, accuracy));
+    if(   !isEqual(elements.alpha,      0.0, accuracy)
+       || !isEqual(elements.a,      0.0, accuracy)
+       || !isEqualRel(elements.e,      1.0, accuracy)
+       || !isEqualRel(elements.i,      40.0 * D2R, accuracy)
+       || !isEqualRel(elements.Omega,  133.0 * D2R, accuracy)
+       || !isEqualRel(elements.omega,  113.0 * D2R, accuracy)
+       || !isEqualRel(elements.f,      123.0 * D2R, accuracy)
+       || !isEqualRel(elements.rmag,   32940.89997480352, accuracy)
+       || !isEqualRel(elements.rPeriap,7500.0, accuracy)
+       || !isEqual(elements.rApoap, 0.0, accuracy)
+       ) {
+        printf("rv2elem failed 2D parabolic case\n");
+        errorCount++;
+    }
+
+
+
     /* 2D elliptical case */
     elements.a     = 7500.0;
     elements.e     = 0.5;
@@ -1605,15 +1664,29 @@ int testOrbitalElements(double accuracy)
     elements.Omega = 133.0 * D2R;
     elements.omega = 113.0 * D2R;
     elements.f     = 123.0 * D2R;    /* true anomaly */
+    elements.alpha = 1.0 / elements.a;
+    elements.rPeriap = elements.a*(1.-elements.e);
+    elements.rApoap = elements.a*(1.+elements.e);
     elem2rv(MU_EARTH, &elements, r, v);
     v3Set(6538.3506963942027, 186.7227227879431, -4119.3008399778619, r2);
     v3Set(1.4414106130924005, 5.588901415902356, -4.0828931566657038, v3_2);
-    if(!v3IsEqual(r, r2, accuracy) || !v3IsEqual(v, v3_2, accuracy)) {
+    if(!v3IsEqualRel(r, r2, accuracy) || !v3IsEqualRel(v, v3_2, accuracy)) {
         printf("elem2rv failed 2D elliptical case\n");
         errorCount++;
     }
 
     rv2elem(MU_EARTH, r2, v3_2, &elements);
+//    printf("%d\n", isEqual(elements.alpha,      0.0, accuracy));
+//    printf("%d\n", isEqualRel(elements.a,      7500.0, accuracy));
+//    printf("%d\n", isEqualRel(elements.e,      0.5, accuracy));
+//    printf("%d\n", isEqualRel(elements.i,      40*D2R, accuracy));
+//    printf("%d\n", isEqualRel(elements.Omega,      133*D2R, accuracy));
+//    printf("%d\n", isEqualRel(elements.omega,      113*D2R, accuracy));
+//    printf("%d\n", isEqualRel(elements.f,      123*D2R, accuracy));
+//    printf("%d\n", isEqualRel(elements.rmag,      7730.041048693483, accuracy));
+//    printf("%d\n", isEqualRel(elements.rPeriap,      3750.0, accuracy));
+//    printf("%d\n", isEqualRel(elements.rApoap,      11250.0, accuracy));
+
     if(   !isEqualRel(elements.a,      7500.0, accuracy)
        || !isEqualRel(elements.e,      0.5, accuracy)
        || !isEqualRel(elements.i,      40.0 * D2R, accuracy)

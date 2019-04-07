@@ -291,7 +291,6 @@ void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
     double r;                   /* orbit radius */
     double v;                   /* orbit velocity magnitude */
     double i;                   /* orbit inclination angle */
-    double rp;                  /* orbit radius at periapses */
     double p;                   /* the parameter or the semi-latus rectum */
     double AP;                  /* argument of perigee */
     double AN;                  /* argument of the ascending node */
@@ -311,7 +310,7 @@ void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
     AP = elements->omega;
     f = elements->f;
 
-    if((fabs(e-1.0) < eps) && (a > eps)) {   /* rectilinear elliptic orbit case */
+    if((fabs(e-1.0) < eps) && (elements->alpha > eps)) {   /* rectilinear elliptic orbit case */
         Ecc = f;                    /* f is treated as ecc. anomaly */
         r = a * (1 - e * cos(Ecc)); /* orbit radius  */
         v = sqrt(2 * mu / r - mu / a);
@@ -325,11 +324,10 @@ void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
             v3Scale(v, ir, vVec);
         }
     } else {
-        if((fabs(e-1.0) < eps) && (a < -eps)) {   /* parabolic case */
-            rp = -a;                /* radius at periapses  */
-            p = 2 * rp;             /* semi-latus rectum */
-        } else {                    /* elliptic and hyperbolic cases */
-            p = a * (1 - e * e);    /* semi-latus rectum */
+        if(fabs(elements->alpha) < eps) { /* parabolic case */
+            p = 2 * elements->rPeriap;  /* semi-latus rectum */
+        } else {                        /* elliptic and hyperbolic cases */
+            p = a * (1 - e * e);        /* semi-latus rectum */
         }
 
         r = p / (1 + e * cos(f));   /* orbit radius */
@@ -387,7 +385,6 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
     double eVec[3];             /* eccentricity vector */
     double ieHat[3];            /* normalized eccentricity vector */
     double p;                   /* the parameter, also called semi-latus rectum */
-    double rp;                  /* orbit radius at periapses */
     double eps;                 /* small numerical value parameter */
 
     /* define what is a small numerical value */
@@ -438,9 +435,8 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
 		elements->rApoap = p / (1.0 - elements->e);
     } else {
         /* parabolic case */
-        rp = p / 2.;
-        elements->a = -rp;   /* a is not defined for parabola, so -rp is returned instead */
-		elements->rApoap = -1.0;
+        elements->a = 0.0;   /* a is not defined for parabola, so -rp is returned instead */
+		elements->rApoap = 0.0;
     }
 
     /* Calculate the inclination */
