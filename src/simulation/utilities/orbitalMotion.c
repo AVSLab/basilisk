@@ -284,20 +284,21 @@ double N2H(double N, double e)
  */
 void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
 {
-    double e;
-    double a;
-    double Ecc;
-    double f;
-    double r;
-    double v;
-    double i;
-    double rp;
-    double p;
-    double AP;
-    double AN;
-    double theta;
-    double h;
-    double ir[3];
+    double e;                   /* eccentricty */
+    double a;                   /* semi-major axis */
+    double Ecc;                 /* eccentric anomaly */
+    double f;                   /* true anomaly */
+    double r;                   /* orbit radius */
+    double v;                   /* orbit velocity magnitude */
+    double i;                   /* orbit inclination angle */
+    double rp;                  /* orbit radius at periapses */
+    double p;                   /* the parameter or the semi-latus rectum */
+    double AP;                  /* argument of perigee */
+    double AN;                  /* argument of the ascending node */
+    double theta;               /* true latitude theta = omega + f */
+    double h;                   /* orbit angular momentum magnitude */
+    double ir[3];               /* orbit radius unit vector */
+    double eps;                 /* small numerical value parameter */
 
     /* define what is a small numerical value */
     eps = 1e-11;
@@ -372,20 +373,21 @@ void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
  */
 void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
 {
-    double hVec[3];
-    double h;
-    double v3[3];
-    double nVec[3];
-    double n;
-    double r;
-    double v;
-    double eVec[3];
-    double p;
-    double rp;
-    double eps;
-    double twopiSigned;
-    
-    eps = 0.000000000001;
+    double hVec[3];             /* orbit angular momentum vector */
+    double h;                   /* orbit angular momentum magnitude */
+    double v3[3];               /* temp vector */
+    double nVec[3];             /* line of notes vector */
+    double n;                   /* mean orbit rate */
+    double r;                   /* current orbit radius */
+    double v;                   /* orbit velocity magnitude */
+    double eVec[3];             /* eccentricity vector */
+    double p;                   /* the parameter, also called semi-latus rectum */
+    double rp;                  /* orbit radius at periapses */
+    double eps;                 /* small numerical value parameter */
+    double twopiSigned;         /* 2*PI with a sign applied */
+
+    /* define what is a small numerical value */
+    eps = 1e-11;
     
     /* Calculate the specific angular momentum and its magnitude */
     v3Cross(rVec, vVec, hVec);
