@@ -299,6 +299,9 @@ void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
     double h;
     double ir[3];
 
+    /* define what is a small numerical value */
+    eps = 1e-11;
+
     /* map classical elements structure into local variables */
     a = elements->a;
     e = elements->e;
@@ -307,8 +310,7 @@ void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
     AP = elements->omega;
     f = elements->f;
 
-    /* TODO: Might want to have an error band on this equality */
-    if((e == 1.0) && (a > 0.0)) {   /* rectilinear elliptic orbit case */
+    if((fabs(e-1.0) < eps) && (a > eps)) {   /* rectilinear elliptic orbit case */
         Ecc = f;                    /* f is treated as ecc. anomaly */
         r = a * (1 - e * cos(Ecc)); /* orbit radius  */
         v = sqrt(2 * mu / r - mu / a);
@@ -322,7 +324,7 @@ void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
             v3Scale(v, ir, vVec);
         }
     } else {
-        if((e == 1) && (a < 0)) {   /* parabolic case */
+        if((fabs(e-1.0) < eps) && (a < -eps)) {   /* parabolic case */
             rp = -a;                /* radius at periapses  */
             p = 2 * rp;             /* semi-latus rectum */
         } else {                    /* elliptic and hyperbolic cases */
@@ -421,7 +423,7 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
     /* Calculate the inclination */
     elements->i = acos(hVec[2] / h);
 
-    if(elements->e >= 1e-11 && elements->i >= 1e-11) {
+    if(elements->e >= eps && elements->i >= eps) {
         /* Case 1: Non-cicular, inclined orbit */
         elements->Omega = acos(nVec[0] / n);
         if(nVec[1] < 0.0) {
@@ -435,7 +437,7 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
         if(v3Dot(rVec, vVec) < 0.0) {
             elements->f = 2.0 * M_PI - elements->f;
         }
-    } else if(elements->e >= 1e-11 && elements->i < 1e-11) {
+    } else if(elements->e >= eps && elements->i < eps) {
         /* Case 2: Non-circular, equatorial orbit */
         /* Equatorial orbit has no ascending node */
         elements->Omega = 0.0;
@@ -448,7 +450,7 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
         if(v3Dot(rVec, vVec) < 0.0) {
             elements->f = 2.0 * M_PI - elements->f;
         }
-    } else if(elements->e < 1e-11 && elements->i >= 1e-11) {
+    } else if(elements->e < eps && elements->i >= eps) {
         /* Case 3: Circular, inclined orbit */
         elements->Omega = acos(nVec[0] / n);
         if(nVec[1] < 0.0) {
@@ -460,7 +462,7 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
         if(rVec[2] < 0.0) {
             elements->f = 2.0 * M_PI - elements->f;
         }
-    } else if(elements->e < 1e-11 && elements->i < 1e-11) {
+    } else if(elements->e < eps && elements->i < eps) {
         /* Case 4: Circular, equatorial orbit */
         elements->Omega = 0.0;
         elements->omega = 0.0;
@@ -472,6 +474,7 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
     } else {
         BSK_PRINT(MSG_ERROR, "rv2elem couldn't identify orbit type");
     }
+
     if(elements->e >= 1.0 && fabs(elements->f) > M_PI)
     {
         twopiSigned = copysign(2.0*M_PI, elements->f);
