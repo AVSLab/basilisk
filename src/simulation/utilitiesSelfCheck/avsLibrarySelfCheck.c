@@ -1599,6 +1599,46 @@ int testOrbitalElements(double accuracy)
     printf("--testOrbitalElements, accuracy = %g\n", accuracy);
 
 
+    /* 1D eccentric case */
+    elements.a = 7500.0;
+    elements.e     = 1.0;
+    elements.i     = 40.0 * D2R;
+    elements.Omega = 133.0 * D2R;
+    elements.omega = 113.0 * D2R;
+    elements.f     = 23.0 * D2R;    /* true anomaly */
+    elements.alpha = 1.0 / elements.a;
+    elements.rPeriap = elements.a*(1.-elements.e);
+    elements.rApoap = elements.a*(1.+elements.e);
+    elem2rv(MU_EARTH, &elements, r, v);
+    v3Set(-148.596902253492,    -457.100381534593,     352.773096481799, r2);
+    v3Set(-8.93065944520745,    -27.4716886950712,     21.2016289595043, v3_2);
+    if(!v3IsEqualRel(r, r2, accuracy) || !v3IsEqualRel(v, v3_2, accuracy)) {
+        printf("elem2rv failed 1D eccentric case\n");
+        errorCount++;
+    }
+
+
+    /* 1D hyperbolic case */
+    elements.a = -7500.0;
+    elements.e     = 1.0;
+    elements.i     = 40.0 * D2R;
+    elements.Omega = 133.0 * D2R;
+    elements.omega = 113.0 * D2R;
+    elements.f     = 23.0 * D2R;    /* true anomaly */
+    elements.alpha = 1.0 / elements.a;
+    elements.rPeriap = elements.a*(1.-elements.e);
+    elements.rApoap = elements.a*(1.+elements.e);
+    elem2rv(MU_EARTH, &elements, r, v);
+    v3Set(-152.641873349816,    -469.543156608544,     362.375968124408, r2);
+    v3Set(-9.17378720883851,    -28.2195763820421,     21.7788208976681, v3_2);
+    if(!v3IsEqualRel(r, r2, accuracy) || !v3IsEqualRel(v, v3_2, accuracy)) {
+        printf("elem2rv failed 1D hyperbolic case\n");
+        errorCount++;
+    }
+
+
+
+
     /* 2D hyperbolic case */
     elements.a = -7500.0;
     elements.e     = 1.4;

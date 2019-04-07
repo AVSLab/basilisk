@@ -286,7 +286,6 @@ void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
 {
     double e;                   /* eccentricty */
     double a;                   /* semi-major axis */
-    double Ecc;                 /* eccentric anomaly */
     double f;                   /* true anomaly */
     double r;                   /* orbit radius */
     double v;                   /* orbit velocity magnitude */
@@ -310,18 +309,24 @@ void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
     AP = elements->omega;
     f = elements->f;
 
-    if((fabs(e-1.0) < eps) && (elements->alpha > eps)) {   /* rectilinear elliptic orbit case */
-        Ecc = f;                    /* f is treated as ecc. anomaly */
-        r = a * (1 - e * cos(Ecc)); /* orbit radius  */
+    if((fabs(e-1.0) < eps) && (fabs(elements->alpha) > eps)) {   /* rectilinear elliptic/hyperbolic orbit case */
+        double angle;                 /* eccentric/hyperbolic anomaly */
+        angle = f;                    /* f is treated as ecc/hyp anomaly */
+        /* orbit radius  */
+        if (elements->alpha > eps) {
+            r = a * (1 - e * cos(angle));
+        } else {
+            r = a * (1 - e * cosh(angle));
+        }
         v = sqrt(2 * mu / r - mu / a);
         ir[0] = cos(AN) * cos(AP) - sin(AN) * sin(AP) * cos(i);
         ir[1] = sin(AN) * cos(AP) + cos(AN) * sin(AP) * cos(i);
         ir[2] = sin(AP) * sin(i);
         v3Scale(r, ir, rVec);
-        if(sin(Ecc) > 0) {
-            v3Scale(-v, ir, vVec);
-        } else {
+        if(sin(angle) > 0) {
             v3Scale(v, ir, vVec);
+        } else {
+            v3Scale(-v, ir, vVec);
         }
     } else {
         if(fabs(elements->alpha) < eps) { /* parabolic case */
@@ -389,16 +394,22 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
 
     /* define what is a small numerical value */
     eps = 1e-12;
-    
+
+    /* define inertial frame axes */
+    v3Set(0.0, 0.0, 1.0, n3Hat);
+    v3Set(1.0, 0.0, 0.0, n1Hat);
+
+    /* norms of position and velocity vectors */
+    r = v3Norm(rVec);
+    elements->rmag = r;
+    v = v3Norm(vVec);
+    v3Normalize(rVec, irHat);
+
     /* Calculate the specific angular momentum and its magnitude */
     v3Cross(rVec, vVec, hVec);
     h = v3Norm(hVec);
     v3Normalize(hVec, ihHat);
 	p = h*h / mu;
-
-    /* define inertial frame axes */
-    v3Set(0.0, 0.0, 1.0, n3Hat);
-    v3Set(1.0, 0.0, 0.0, n1Hat);
 
     /* Calculate the line of nodes */
     v3Cross(n3Hat, hVec, nVec);
@@ -409,15 +420,11 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
         v3Normalize(nVec, inHat);
     }
 
-    /* Orbit eccentricity and energy */
-    r = v3Norm(rVec);
-    v = v3Norm(vVec);
-    v3Normalize(rVec, irHat);
+    /* Orbit eccentricity */
     v3Scale(v * v / mu - 1.0 / r, rVec, eVec);
     v3Scale(v3Dot(rVec, vVec) / mu, vVec, v3);
     v3Subtract(eVec, v3, eVec);
     elements->e = v3Norm(eVec);
-    elements->rmag = r;
 	elements->rPeriap = p / (1.0 + elements->e);
 
     /* near circular orbits */
@@ -435,7 +442,7 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
 		elements->rApoap = p / (1.0 - elements->e);
     } else {
         /* parabolic case */
-        elements->a = 0.0;   /* a is not defined for parabola, so -rp is returned instead */
+        elements->a = 0.0;
 		elements->rApoap = 0.0;
     }
 
