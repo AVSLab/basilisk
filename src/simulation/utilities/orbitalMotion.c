@@ -303,6 +303,11 @@ void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
 
     /* map classical elements structure into local variables */
     a = elements->a;
+    if (fabs(a) > eps) {
+        elements->alpha = 1./a;
+    } else {
+        elements->alpha = 0.0;
+    }
     e = elements->e;
     i = elements->i;
     AN = elements->Omega;
@@ -452,10 +457,16 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
     /* Calculate Ascending Node Omega */
     v3Cross(n1Hat, inHat, v3);
     elements->Omega = atan2(v3[2], inHat[0]);
+    if (elements->Omega < 0.0) {
+        elements->Omega += 2*M_PI;
+    }
 
     /* Calculate Argument of Periapses omega */
     v3Cross(inHat, ieHat, v3);
     elements->omega = atan2(v3Dot(ihHat,v3), v3Dot(inHat, ieHat));
+    if (elements->omega < 0.0) {
+        elements->omega += 2*M_PI;
+    }
 
     /* Calculate true anomaly angle f */
     v3Cross(ieHat, irHat, v3);
