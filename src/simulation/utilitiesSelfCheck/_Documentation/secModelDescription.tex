@@ -187,9 +187,9 @@ while the radius at apoapses is set to
 \end{equation}
 If $\alpha$ is zero, then the motion is parabolic and the SMA is not defined (i.e. is infinite).  In this case the code sets 
 $$
-	a = -r_{p}
+	a = 0.0
 $$
-while $r_{a} = -1.0$ is returned as a value that is not defined in this case.
+while $r_{a} = 0.0$ is returned as a value that is not defined in this case.
 
 
 Next the orbit frame orientation angles $\Omega$, $i$ and $\omega$ must be determined.  As classical elements are used, care must be given for particular singular orientations where some angles are ill-defined.  First, assume a non-circular non-equatorial orbit scenario.  In this case $\Omega$ is the angle between $\hat{\bm n}_{1}$ and $\bm n$ where care must be taken that the right quadrant is used.  The argument of periapses is the angle between $\hat{\bm n}$ and $\bm e$, where again quadrants must be checked.  Finally, the inclination angle $i$ is the angle between $\bm h$ and $\hat{\bm n}_{3}$, but here no quadrants must be checked as this angle is defined as $0 \le i \le \pi$.  To find the true anomaly angle, the angle between $\bm r$ and $\bm e$ is determine while checking for quadrants again.
