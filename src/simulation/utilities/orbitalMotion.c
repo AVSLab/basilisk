@@ -301,7 +301,7 @@ void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
     double eps;                 /* small numerical value parameter */
 
     /* define what is a small numerical value */
-    eps = 1e-11;
+    eps = 1e-12;
 
     /* map classical elements structure into local variables */
     a = elements->a;
@@ -374,40 +374,61 @@ void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
 void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
 {
     double hVec[3];             /* orbit angular momentum vector */
+    double ihHat[3];            /* normalized orbit angular momentum vector */
     double h;                   /* orbit angular momentum magnitude */
     double v3[3];               /* temp vector */
-    double nVec[3];             /* line of notes vector */
-    double n;                   /* mean orbit rate */
+    double n1Hat[3];            /* 1st inertial frame vector */
+    double n3Hat[3];            /* 3rd inertial frame vector */
+    double nVec[3];             /* line of nodes vector */
+    double inHat[3];            /* normalized line of nodes vector */
+    double irHat[3];            /* normalized position vector */
     double r;                   /* current orbit radius */
     double v;                   /* orbit velocity magnitude */
     double eVec[3];             /* eccentricity vector */
+    double ieHat[3];            /* normalized eccentricity vector */
     double p;                   /* the parameter, also called semi-latus rectum */
     double rp;                  /* orbit radius at periapses */
     double eps;                 /* small numerical value parameter */
-    double twopiSigned;         /* 2*PI with a sign applied */
 
     /* define what is a small numerical value */
-    eps = 1e-11;
+    eps = 1e-12;
     
     /* Calculate the specific angular momentum and its magnitude */
     v3Cross(rVec, vVec, hVec);
     h = v3Norm(hVec);
+    v3Normalize(hVec, ihHat);
 	p = h*h / mu;
-    
+
+    /* define inertial frame axes */
+    v3Set(0.0, 0.0, 1.0, n3Hat);
+    v3Set(1.0, 0.0, 0.0, n1Hat);
+
     /* Calculate the line of nodes */
-    v3Set(0.0, 0.0, 1.0, v3);
-    v3Cross(v3, hVec, nVec);
-    n = v3Norm(nVec);
+    v3Cross(n3Hat, hVec, nVec);
+    if (v3Norm(nVec) < eps) {
+        /* near equatorial orbits */
+        v3Copy(n1Hat, inHat);
+    } else {
+        v3Normalize(nVec, inHat);
+    }
 
     /* Orbit eccentricity and energy */
     r = v3Norm(rVec);
     v = v3Norm(vVec);
+    v3Normalize(rVec, irHat);
     v3Scale(v * v / mu - 1.0 / r, rVec, eVec);
     v3Scale(v3Dot(rVec, vVec) / mu, vVec, v3);
     v3Subtract(eVec, v3, eVec);
     elements->e = v3Norm(eVec);
     elements->rmag = r;
 	elements->rPeriap = p / (1.0 + elements->e);
+
+    /* near circular orbits */
+    if (elements->e < eps) {
+        v3Copy(inHat, ieHat);
+    } else {
+        v3Normalize(eVec, ieHat);
+    }
 
     /* compute semi-major axis */
     elements->alpha = 2.0 / r - v*v / mu;
@@ -425,64 +446,19 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
     /* Calculate the inclination */
     elements->i = acos(hVec[2] / h);
 
-    /* in the following checks sin(i) < eps indicates an equatorial orbit where i is either close to 0 or 180 degrees */
-    if(elements->e >= eps && sin(elements->i) >= eps) {
-        /* Case 1: Non-cicular, inclined orbit */
-        elements->Omega = acos(nVec[0] / n);
-        if(nVec[1] < 0.0) {
-            elements->Omega = 2.0 * M_PI - elements->Omega;
-        }
-        elements->omega = acos(v3Dot(nVec, eVec) / n / elements->e);
-        if(eVec[2] < 0.0) {
-            elements->omega = 2.0 * M_PI - elements->omega;
-        }
-        elements->f = acos(v3Dot(eVec, rVec) / elements->e / r);
-        if(v3Dot(rVec, vVec) < 0.0) {
-            elements->f = 2.0 * M_PI - elements->f;
-        }
-    } else if(elements->e >= eps && sin(elements->i) < eps) {
-        /* Case 2: Non-circular, equatorial orbit */
-        /* Equatorial orbit has no ascending node */
-        elements->Omega = 0.0;
-        /* True longitude of periapsis, omegatilde_true */
-        elements->omega = acos(eVec[0] / elements->e);
-        if(eVec[1] < 0.0) {
-            elements->omega = 2.0 * M_PI - elements->omega;
-        }
-        elements->f = acos(v3Dot(eVec, rVec) / elements->e / r);
-        if(v3Dot(rVec, vVec) < 0.0) {
-            elements->f = 2.0 * M_PI - elements->f;
-        }
-    } else if(elements->e < eps && sin(elements->i) >= eps) {
-        /* Case 3: Circular, inclined orbit */
-        elements->Omega = acos(nVec[0] / n);
-        if(nVec[1] < 0.0) {
-            elements->Omega = 2.0 * M_PI - elements->Omega;
-        }
-        elements->omega = 0.0;
-        /* Argument of latitude, u = omega + f */
-        elements->f = acos(v3Dot(nVec, rVec) / n / r);
-        if(rVec[2] < 0.0) {
-            elements->f = 2.0 * M_PI - elements->f;
-        }
-    } else if(elements->e < eps && sin(elements->i) < eps) {
-        /* Case 4: Circular, equatorial orbit */
-        elements->Omega = 0.0;
-        elements->omega = 0.0;
-        /* True longitude, lambda_true */
-        elements->f = acos(rVec[0] / r);
-        if(rVec[1] < 0) {
-            elements->f = 2.0 * M_PI - elements->f;
-        }
-    } else {
-        BSK_PRINT(MSG_ERROR, "rv2elem couldn't identify orbit type");
-    }
+    /* Calculate Ascending Node Omega */
+    v3Cross(n1Hat, inHat, v3);
+    elements->Omega = atan2(v3[2], inHat[0]);
 
-    if(elements->e >= 1.0 && fabs(elements->f) > M_PI)
-    {
-        twopiSigned = copysign(2.0*M_PI, elements->f);
-        elements->f -= twopiSigned;
-    }
+    /* Calculate Argument of Periapses omega */
+    v3Cross(inHat, ieHat, v3);
+    elements->omega = atan2(v3Dot(ihHat,v3), v3Dot(inHat, ieHat));
+
+    /* Calculate true anomaly angle f */
+    v3Cross(ieHat, irHat, v3);
+    elements->f = atan2(v3Dot(ihHat,v3), v3Dot(ieHat, irHat));
+
+    return;
 }
 
 /*
