@@ -425,7 +425,8 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
     /* Calculate the inclination */
     elements->i = acos(hVec[2] / h);
 
-    if(elements->e >= eps && elements->i >= eps) {
+    /* in the following checks sin(i) < eps indicates an equatorial orbit where i is either close to 0 or 180 degrees */
+    if(elements->e >= eps && sin(elements->i) >= eps) {
         /* Case 1: Non-cicular, inclined orbit */
         elements->Omega = acos(nVec[0] / n);
         if(nVec[1] < 0.0) {
@@ -439,7 +440,7 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
         if(v3Dot(rVec, vVec) < 0.0) {
             elements->f = 2.0 * M_PI - elements->f;
         }
-    } else if(elements->e >= eps && elements->i < eps) {
+    } else if(elements->e >= eps && sin(elements->i) < eps) {
         /* Case 2: Non-circular, equatorial orbit */
         /* Equatorial orbit has no ascending node */
         elements->Omega = 0.0;
@@ -452,7 +453,7 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
         if(v3Dot(rVec, vVec) < 0.0) {
             elements->f = 2.0 * M_PI - elements->f;
         }
-    } else if(elements->e < eps && elements->i >= eps) {
+    } else if(elements->e < eps && sin(elements->i) >= eps) {
         /* Case 3: Circular, inclined orbit */
         elements->Omega = acos(nVec[0] / n);
         if(nVec[1] < 0.0) {
@@ -464,7 +465,7 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
         if(rVec[2] < 0.0) {
             elements->f = 2.0 * M_PI - elements->f;
         }
-    } else if(elements->e < eps && elements->i < eps) {
+    } else if(elements->e < eps && sin(elements->i) < eps) {
         /* Case 4: Circular, equatorial orbit */
         elements->Omega = 0.0;
         elements->omega = 0.0;
