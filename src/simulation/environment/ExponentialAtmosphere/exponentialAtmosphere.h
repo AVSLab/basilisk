@@ -35,6 +35,8 @@
  */
 
 /*! @brief Evaluate an exponential atmosphere model at a given height above a planetary surface.
+ For more information on this module see this [PDF Documentation](Basilisk-atmosphere-20190221.pdf).
+
  */
 class ExponentialAtmosphere:  public AtmosphereBase {
 public:
@@ -46,9 +48,9 @@ private:
 
 
 public:
-    double baseDensity;           //! [kg/m^3] Density at h=0
-    double scaleHeight;      //! [m] Exponential characteristic height
-    double localTemp = 293.0;       //! [K] Local atmospheric temperature; set to be constant.
+    double baseDensity;             //!< [kg/m^3] Density at h=0
+    double scaleHeight;             //!< [m] Exponential characteristic height
+    double localTemp = 293.0;       //!< [K] Local atmospheric temperature; set to be constant.
 };
 
 /*! @} */

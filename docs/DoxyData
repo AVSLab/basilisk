@@ -1252,7 +1252,7 @@ HTML_EXTRA_FILES       = ../src/simulation/dynamics/extForceTorque/_Documentatio
                          ../src/simulation/dynamics/SpacecraftDynamics/_Documentation/spacecraftPlus/Basilisk-SPACECRAFTPLUS-20170808.pdf \
                          ../src/simulation/dynamics/SpacecraftDynamics/_Documentation/SpacecraftDynamics/Basilisk-SPACECRAFTDYNAMICS-20180712.pdf \
                          ../src/simulation/dynamics/Thrusters/_Documentation/Basilisk-THRUSTERS20170712.pdf \
-                         ../src/simulation/environment/atmosphere/_Documentation/Basilisk-atmosphere-20190221.pdf \
+                         ../src/simulation/environment/ExponentialAtmosphere/_Documentation/Basilisk-atmosphere-20190221.pdf \
                          ../src/simulation/environment/magneticFieldCenteredDipole/_Documentation/Basilisk-magFieldDipole-20190309.pdf \
                          ../src/simulation/environment/eclipse/_Documentation/Basilisk-eclipse-20171101.pdf \
                          ../src/simulation/environment/ephemeris_converter/_Documentation/Basilisk-EPHEMERIS_CONVERTER20170712.pdf \
@@ -1286,7 +1286,7 @@ HTML_EXTRA_FILES       = ../src/simulation/dynamics/extForceTorque/_Documentatio
                          ../src/fswAlgorithms/effectorInterfaces/thrForceMapping/_Documentation/Basilisk-ThrusterForces-20160627.pdf \
                          ../src/fswAlgorithms/effectorInterfaces/thrMomentumDumping/_Documentation/Basilisk-thrMomentumDumping-20160820.pdf \
                          ../src/fswAlgorithms/effectorInterfaces/thrFiringRemainder/_Documentation/Basilisk-thrFiringRemainder-2019-03-28.pdf \
-                         ../src/fswAlgorithms/effectorInterfaces/thrFiringSchitt/_Documentation/Basilisk-thrFiringSchmitt-2019-03-29.pdf \
+                         ../src/fswAlgorithms/effectorInterfaces/thrFiringSchmitt/_Documentation/Basilisk-thrFiringSchmitt-2019-03-29.pdf \
                          ../src/fswAlgorithms/sensorInterfaces/rateMsgConverter/_Documentation/Basilisk-rateMsgConverter-20180630.pdf \
                          ../src/fswAlgorithms/transDetermination/ephemNavConverter/_Documentation/Basilisk-ephemNavConverter-20190326.pdf \
                          ../src/simulation/dynamics/FuelTank/_Documentation/Basilisk-FUELTANK-20171203.pdf \
