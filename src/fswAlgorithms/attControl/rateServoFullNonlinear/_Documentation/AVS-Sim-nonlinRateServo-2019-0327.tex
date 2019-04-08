@@ -229,8 +229,9 @@ This module requires the following variables:
 \item $[I]$, the inertia matrix of the body as \verb|vehicleConfigOut.ISCPntB_B|
 \item $\Omega_i$, speed of each reaction wheel in \verb|rwSpeedMessage.wheelSpeeds|
 \item Gains $k,P$ in \verb|moduleConfig|. 
-\item The integral gain $K_i$ in \verb|moduleConfig|. Setting this variable to a negative number disables the error integration for the controller, leaving just PI terms. Zero is not supported as a value for $k_i$. This variable is used to compute the integralLimit, used to limit the degree of integrator windup and reduce the chance of controller saturation. The integrator is required to maintain asymptotic tracking in the presence of an external disturbing torque.
-\item omegap\_BastR\_B and omega\_BastR\_B
+\item The integral gain $K_i$ in \verb|moduleConfig|. Setting this variable to a negative number disables the error integration for the controller, leaving just PI terms. 
+\item The value of \verb|integralLimit|, used to limit the degree of integrator windup and reduce the chance of controller saturation. The integrator is required to maintain asymptotic tracking in the presence of an external disturbing torque. For this module, the integration limit is applied to each element of the integrated error vector $z$, and any elements greater than the limit are set to the limit instead.
+\item Commanded body rates omegap\_BastR\_B and omega\_BastR\_B
 
 \end{itemize}
 
