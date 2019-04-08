@@ -18,7 +18,6 @@
  */
 /*
     Simple Thruster Force Evaluation from
-
  */
 
 /* modify the path to reflect the new module names */
@@ -120,7 +119,7 @@ void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime,
 
     /* read in the thruster position and thruster force heading information */
     /* Note: we will still need to correct for the S to B transformation */
-    configData->numThrusters = localThrusterData.numThrusters;
+    configData->numThrusters = localThrusterData.numThrusters; /* There is something funky about this; currently initilaizing to max effector in unit test */
     for(i=0; i<configData->numThrusters; i=i+1)
     {
         v3Copy(localThrusterData.thrusters[i].rThrust_B, configData->rThruster_B[i]);
@@ -129,33 +128,39 @@ void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime,
     }
 }
 
-/*! Add a description of what this main Update() routine does for this module
+/*! The module takes a body frame torque vector and projects it onto available RCS or DV thrusters.
  @return void
  @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
- @param moduleID The ID associated with the ConfigData
+ @param moduleID The ID associated with the configData
  */
 void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
     uint64_t    timeOfMsgWritten;
     uint32_t    sizeOfMsgWritten;
+    int         i,j,c;
+    int         counterPosForces;             /*!< []      counter for number of positive thruster forces */
     double      F[MAX_EFF_CNT];               /*!< [N]     vector of commanded thruster forces */
     double      Fbar[MAX_EFF_CNT];            /*!< [N]     vector of intermediate thruster forces */
-    int         i,c;
-    int         counterPosForces;             /*!< []      counter for number of positive thruster forces */
-    double      D[MAX_EFF_CNT][3];            /*!< [m]     mapping matrix from thruster forces to body torque */
-    double      Dbar[MAX_EFF_CNT][3];         /*!< [m]     reduced mapping matrix
-                                                           Note, the vectors are stored as row vectors, not column vectors */
+    double      D[3][MAX_EFF_CNT];            /*!< [m]     mapping matrix from thruster forces to body torque */
+    double      Dbar[3][MAX_EFF_CNT];         /*!< [m]     reduced mapping matrix*/
     double      Lr_B[3];                      /*!< [Nm]    commanded ADCS control torque */
     double      Lr_offset[3];
-    double      LrLocal[3];
+    double      LrLocal[3];                   /*!< [Nm]    Torque provided by indiviual thruster */
     int         thrusterUsed[MAX_EFF_CNT];    /*!< []      Array of flags indicating if this thruster is used for the Lr_j */
     double      rThrusterRelCOM_B[MAX_EFF_CNT][3];/*!< [m]     local copy of the thruster locations relative to COM */
-    uint32_t    numAvailThrusters;      /*!< []      number of available thrusters */
+    uint32_t    numAvailThrusters;            /*!< []      number of available thrusters */
     double      BLr_B[3];                     /*!< [Nm]    Control torque that we actually control*/
     double      maxFractUse;                  /*!< []      ratio of maximum requested thruster force relative to maximum thruster limit */
-
+    double      rCrossGt[3];
+    
     THRArrayCmdForceFswMsg thrusterForceOut;
+    memset(&thrusterForceOut, 0x0, sizeof(THRArrayCmdForceFswMsg));
+    
+    /* clear the net thruster force output array */
+    vSetZero(F, MAX_EFF_CNT);
+    mSetZero(D, 3, MAX_EFF_CNT);
+    mSetZero(Dbar, 3, MAX_EFF_CNT);
     
     /*! Begin method steps*/
     /*! - Read the input messages */
@@ -175,40 +180,44 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
         v3Subtract(configData->rThruster_B[i], configData->sc.CoM_B, rThrusterRelCOM_B[i]); /* Part 1 of Eq. 4 */
     }
 
-
-    /* clear the net thruster force output array */
-    vSetZero(F, MAX_EFF_CNT);
-
     /* temporary available thruster assignment until the thruster availability is read in through a message */
     numAvailThrusters = configData->numThrusters;
-
-
+   
     /* compute general mapping matrix */
     v3SetZero(Lr_offset);
     for(i=0; i<numAvailThrusters; i=i+1)
     {
-        v3Cross(rThrusterRelCOM_B[i], configData->gtThruster_B[i], D[i]); /* Eq. 6 */
-        if(configData->thrForceSign < 0)  /* Exclude thrusters generate a positive thrust */
+        v3Cross(rThrusterRelCOM_B[i], configData->gtThruster_B[i], rCrossGt); /* Eq. 6 */
+        for(j=0; j<3; j++)
         {
-            v3Scale(configData->thrForcMag[i], D[i], LrLocal); /* Computing local torques from each thruster -- Individual terms in Eq. 7*/
+            D[j][i] = rCrossGt[j];
+        }
+        if(configData->thrForceSign < 0)  /* Need clarification -- Something to do with remove the torques produced by the fact that the torque vector in the body frame needs to be projected onto the COM */
+        {
+            v3Scale(configData->thrForcMag[i], rCrossGt, LrLocal); /* Computing local torques from each thruster -- Individual terms in Eq. 7*/
             v3Subtract(Lr_offset, LrLocal, Lr_offset); /* Summing of individual torques -- Eq. 5 & Eq. 7 */
         }
     }
     v3Add(Lr_offset, Lr_B, Lr_B);
     findMinimumNormForce(configData, D, Lr_B, numAvailThrusters, F, BLr_B);
+    
+    /* Remove forces components that are contributing to the RCS Null space (this is due to the geometry of the thrusters) */
     if (configData->thrForceSign>0)
     {
         substractMin(F, numAvailThrusters);
     }
 
-    /* if force solution includes negative forces, or if not all thrusters are available, recompute D excluding those thrusters */
+    /* if the RCS Force solution includes negative forces, or if not all (DV or RCS) thrusters are available, recompute D excluding those thrusters */
     if (numAvailThrusters != configData->numThrusters || configData->thrForceSign<0) {
         counterPosForces = 0;
         memset(thrusterUsed,0x0,MAX_EFF_CNT*sizeof(int));
         for (i=0;i<numAvailThrusters;i++) {
             if (F[i]*configData->thrForceSign > configData->epsilon) {
-                thrusterUsed[i] = 1;
-                v3Copy(D[i], Dbar[counterPosForces]);
+                thrusterUsed[i] = 1; /* Eq. 11 */
+                for(j=0; j<3; j++)
+                {
+                    Dbar[j][counterPosForces] = D[j][i]; /* Eq. 12 */
+                }
                 counterPosForces += 1;
             }
         }
@@ -223,20 +232,21 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
                 F[i] = 0.0;
             }
         }
+        
         if (configData->thrForceSign>0)
         {
             substractMin(F, numAvailThrusters);
         }
     }
-
+    
     configData->outTorqAngErr = computeTorqueAngErr(D, BLr_B, numAvailThrusters, F,
-        configData->thrForcMag);
+        configData->thrForcMag); /* Eq. 16*/
     maxFractUse = 0.0;
-    /*
-        check if the angle between the request and actual torque exceeds a limit.  If then, then uniformly scale
+    
+    
+    /*  check if the angle between the request and actual torque exceeds a limit.  If so, then uniformly scale
         all thruster forces values to not exceed saturation.
-        If the angle threshold is negative, then this scaling is bypassed.
-     */
+        If the angle threshold is negative, then this scaling is bypassed.*/
     if(configData->outTorqAngErr > configData->angErrThresh)
     {
         for(i=0; i<numAvailThrusters; i++)
@@ -255,9 +265,7 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
         }
     }
 
-    /*
-     store the output message 
-     */
+    /* store the output message */
     mCopy(F, configData->numThrusters, 1, thrusterForceOut.thrForce);
     WriteMessage(configData->outputMsgID, callTime, sizeof(THRArrayCmdForceFswMsg),   /* update module name */
                  (void*) &(thrusterForceOut), moduleID);
@@ -287,11 +295,10 @@ void substractMin(double *F, uint32_t size)
 
 
 void findMinimumNormForce(thrForceMappingConfig *configData,
-                          double D[MAX_EFF_CNT][3], double Lr_B[3], uint32_t numForces, double F[MAX_EFF_CNT], double Lr_B_Bar[3])
+                          double D[3][MAX_EFF_CNT], double Lr_B[3], uint32_t numForces, double F[MAX_EFF_CNT], double Lr_B_Bar[3])
 {
     
     int i,j,k;                                  /*!< []     counters */
-    double      DT[3][MAX_EFF_CNT];
     double      DDT[3][3];                      /*!< [m^2]  [D].[D]^T matrix */
     double      DDTInv[3][3];                   /*!< [m^2]  ([D].[D]^T)^-1 matrix */
     double      C[3][3];                        /*!< [m^2]  (C) matrix */
@@ -305,56 +312,51 @@ void findMinimumNormForce(thrForceMappingConfig *configData,
         v3Copy(&configData->controlAxes_B[3*i], C[i]);
     }
     
+    /* map the control torque onto the control axes*/
     m33Transpose(C, CT);
     m33MultM33(CT, C, CTC);
-    m33MultV3(CTC, Lr_B, Lr_B_Bar);
+    m33MultV3(CTC, Lr_B, Lr_B_Bar); /* Note: Lr_B_Bar is projected only onto the available control axes. i.e. if using DV thrusters with only 1 control axis, Lr_B_Bar = [#, 0, 0] */
     
     /* zero the output force vector */
     vSetZero(F, MAX_EFF_CNT);
     
     /* find [D].[D]^T */
-    m33SetIdentity(DDT);
-    
-    for(i=0; i<3; i++) { /* Needed for DV thrusters in which there is only one control axis*/
+    m33SetIdentity(DDT); /* Needed for DV thrusters in which there is only one control axis*/
+    for(i=0; i<3; i++) {
         for(j=0; j<3; j++) {
             DDT[i][j] = 0.0;
             for (k=0;k<numForces;k++) {
-                DDT[i][j] += D[k][i] * D[k][j]; /* Part of Eq. 9 */
+                DDT[i][j] += D[i][k] * D[j][k]; /* Part of Eq. 9 */
             }
         }
     }
-    m33PrintScreen("DDT_2", DDT);
-    
-    if (m33Determinant(DDT) < configData->epsilon)
-    {
-        for (i=0;i<3;i++)
-        {
-            if(DDT[i][i] == 0)
-            {
-                DDT[i][i] = 1.0; /* Accounts for DV thrusters */
+    m33SetZero(DDT);
+    mMultMt(D, 3, MAX_EFF_CNT, D, 3, MAX_EFF_CNT, DDT);
+    if (m33Determinant(DDT) < configData->epsilon) {
+        for (i=0;i<3;i++){
+            if(DDT[i][i] == 0){
+                DDT[i][i] = 1.0; /* This is required for when there are fewer than 3 control axes. This allows for the matrix to be inverted*/
             }
         }
     }
     
     m33Inverse(DDT, DDTInv);
+    v3SetZero(DDTInvLr);
+    m33MultV3(DDTInv, Lr_B_Bar, DDTInvLr); /* If fewer than 3 control axes,tThe the 1's along the diagonal of DDTInv will not conflict with the mapping, as Lr_B_Bar contains the nessessary 0s to inhibit projection */
     
-    if(m33Determinant(DDT) > configData->epsilon)
-    {
-        v3SetZero(DDTInvLr);
-        m33MultV3(DDTInv, Lr_B_Bar, DDTInvLr);
-        v3PrintScreen("DDTInvLr", DDTInvLr);
-        for (i=0;i<numForces;i++) {
-            F[i] = 0.0;
-            for (k=0;k<3;k++) {
-                F[i] += D[i][k]*DDTInvLr[k]; /* I think this is supposed to be D[k][i] */
-            }
+    for (i=0;i<numForces;i++) {
+        F[i] = 0.0;
+        for (k=0;k<3;k++) {
+            F[i] += D[k][i]*DDTInvLr[k]; /* Eq. 15*/
         }
     }
+    
+    
     return;
 
 }
 
-double computeTorqueAngErr(double D[MAX_EFF_CNT][3], double BLr_B[3], uint32_t numForces,
+double computeTorqueAngErr(double D[3][MAX_EFF_CNT], double BLr_B[3], uint32_t numForces,
                            double F[MAX_EFF_CNT], double FMag[MAX_EFF_CNT])
 
 {
@@ -367,6 +369,8 @@ double computeTorqueAngErr(double D[MAX_EFF_CNT][3], double BLr_B[3], uint32_t n
         double LrEffector_B[3];         /*!< [Nm]   torque of an individual thruster effector */
         double thrusterForce;           /*!< [N]    saturation constrained thruster force */
         int i;
+        double DT[MAX_EFF_CNT][3];
+        mTranspose(D, 3, MAX_EFF_CNT, DT);
         v3Normalize(BLr_B, BLr_hat_B);
         v3SetZero(tauActual_B);
 
@@ -374,7 +378,7 @@ double computeTorqueAngErr(double D[MAX_EFF_CNT][3], double BLr_B[3], uint32_t n
         for(i=0; i<numForces; i++)
         {
             thrusterForce = fabs(F[i]) < FMag[i] ? F[i] : FMag[i]*fabs(F[i])/F[i];
-            v3Scale(thrusterForce, D[i], LrEffector_B);
+            v3Scale(thrusterForce, DT[i], LrEffector_B);
             v3Add(tauActual_B, LrEffector_B, tauActual_B);
         }
 
@@ -382,10 +386,9 @@ double computeTorqueAngErr(double D[MAX_EFF_CNT][3], double BLr_B[3], uint32_t n
         v3Normalize(tauActual_B, tauActual_B);
         if(v3Dot(BLr_hat_B, tauActual_B) < 1.0)
         {
-            returnAngle = acos(v3Dot(BLr_hat_B, tauActual_B));
+            returnAngle = acos(v3Dot(BLr_hat_B, tauActual_B)); /* Eq 16 */
         }
     }
-
     return(returnAngle);
     
 }

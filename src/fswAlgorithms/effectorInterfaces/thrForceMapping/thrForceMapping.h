@@ -73,8 +73,8 @@ extern "C" {
 
     void substractMin(double *F, uint32_t size);
     void findMinimumNormForce(thrForceMappingConfig *configData,
-                              double D[MAX_EFF_CNT][3], double Lr_B[3], uint32_t numForces, double F[MAX_EFF_CNT], double BLr[3]);
-    double computeTorqueAngErr(double D[MAX_EFF_CNT][3], double BLr[3], uint32_t numForces,
+                              double D[3][MAX_EFF_CNT], double Lr_B[3], uint32_t numForces, double F[MAX_EFF_CNT], double BLr[3]);
+    double computeTorqueAngErr(double D[3][MAX_EFF_CNT], double BLr[3], uint32_t numForces,
                                double F[MAX_EFF_CNT], double FMag[MAX_EFF_CNT]);
 
 #ifdef __cplusplus
