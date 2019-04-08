@@ -31,10 +31,10 @@ def exponentialAtmosphere(atmosModule, name):
     :return:
     """
     if name is "earth":
-        atmosModule.setEnvType(atmosphere.MODEL_EXPONENTIAL)
         atmosModule.planetRadius = 6378136.6   # meters
-        atmosModule.exponentialParams.baseDensity = 1.217  # kg/m^3
-        atmosModule.exponentialParams.scaleHeight = 8500.0 # meters
+        atmosModule.baseDensity = 1.217  # kg/m^3
+        atmosModule.scaleHeight = 8500.0 # meters
+        atmosModule.localTemp = 293.0
 
     else:
         print "ERROR: " + name + " not setup for exponential atmosphere model\n"
