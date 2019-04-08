@@ -100,7 +100,8 @@ void Reset_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint
     uint32_t sizeOfMsgWritten;
     int i;    
     VehicleConfigFswMsg sc;
-
+    
+    memset(&sc, 0x0, sizeof(VehicleConfigFswMsg));
     ReadMessage(configData->vehConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
     for (i=0; i < 9; i++){
@@ -180,8 +181,8 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
                 sizeof(RateCmdFswMsg), (void*) &(rateGuid), moduleID);
 
 
-    memset(wheelSpeeds.wheelSpeeds, 0x0, MAX_EFF_CNT * sizeof(double));
-    memset(wheelsAvailability.wheelAvailability, 0x0, MAX_EFF_CNT * sizeof(int)); // wheelAvailability set to 0 (AVAILABLE) by default
+    memset(wheelSpeeds.wheelSpeeds, 0x0, sizeof(RWSpeedIntMsg));
+    memset(wheelsAvailability.wheelAvailability, 0x0, sizeof(RWAvailabilityFswMsg)); // wheelAvailability set to 0 (AVAILABLE) by default
     if(configData->rwConfigParams.numRW > 0) {
         ReadMessage(configData->rwSpeedsInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(RWSpeedIntMsg), (void*) &(wheelSpeeds), moduleID);
