@@ -124,7 +124,11 @@ void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime,
     {
         v3Copy(localThrusterData.thrusters[i].rThrust_B, configData->rThruster_B[i]);
         v3Copy(localThrusterData.thrusters[i].tHatThrust_B, configData->gtThruster_B[i]);
-        configData->thrForcMag[i] = localThrusterData.thrusters[i].maxThrust;
+        if(localThrusterData.thrusters[i].maxThrust == 0){
+            BSK_PRINT(MSG_WARNING, "A configured thruster has a non-sensible saturation limit of 0!\n");
+        } else {
+            configData->thrForcMag[i] = localThrusterData.thrusters[i].maxThrust;
+        }
     }
 }
 
@@ -377,7 +381,7 @@ double computeTorqueAngErr(double D[3][MAX_EFF_CNT], double BLr_B[3], uint32_t n
         /* loop over all thrusters and compute the actual torque to be applied */
         for(i=0; i<numForces; i++)
         {
-            thrusterForce = fabs(F[i]) < FMag[i] ? F[i] : FMag[i]*fabs(F[i])/F[i];
+            thrusterForce = fabs(F[i]) < FMag[i] ? F[i] : FMag[i]*fabs(F[i])/F[i]; /* This could produce inf's as F[i] approaches 0 if FMag[i] is 0, as such we check if FMag[i] is equal to zero in reset() */
             v3Scale(thrusterForce, DT[i], LrEffector_B);
             v3Add(tauActual_B, LrEffector_B, tauActual_B);
         }
