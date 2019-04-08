@@ -1,9 +1,9 @@
 % !TEX root = ./Basilisk-atmosphere-20190221.tex
 
 \section{Model Description}
-
+\subsection{General Module Function}
 The purpose of this module is to implement an exponential neutral atmospheric density and temperature model.
-By invoking the atmosphere module, the default values are set such that this basic exponential atmosphere model returns zero for all inputs. Intial values can be specified using the \verb{setSimPlanetEnvironment.exponentialAtmosphere} macro.
+By invoking the atmosphere module, the default values are set such that this basic exponential atmosphere model returns zero for all inputs. Initial values can be specified using the {\tt setSimPlanetEnvironment.exponentialAtmosphere()} macro.
 The reach of the model controlled by setting the variables {\tt envMinReach} and {\tt envMaxReach} to positive values.  These values are the altitude above the planets surfaces assuming an equatorial radius and spherical shape.  The default values are -1 which turns of this checking where the atmosphere model as unbounded reach.  
 
 \subsection{Exponential Atmosphere}
