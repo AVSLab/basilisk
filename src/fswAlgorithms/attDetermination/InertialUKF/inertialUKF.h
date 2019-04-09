@@ -78,9 +78,12 @@ typedef struct {
 	double wC[2 * AKF_N_STATES + 1]; /*!< [-] Weighting vector for sigma points*/
 
     double stateInit[AKF_N_STATES];    /*!< [-] State estimate to initialize filter to*/
-	double state[AKF_N_STATES];        /*!< [-] State estimate for time TimeTag*/
-	double sBar[AKF_N_STATES*AKF_N_STATES];         /*!< [-] Time updated covariance */
-	double covar[AKF_N_STATES*AKF_N_STATES];        /*!< [-] covariance */
+    double state[AKF_N_STATES];        /*!< [-] State estimate for time TimeTag*/
+    double statePrev[AKF_N_STATES];        /*!< [-] State estimate for time TimeTag at previous time*/
+    double sBar[AKF_N_STATES*AKF_N_STATES];         /*!< [-] Time updated covariance */
+    double sBarPrev[AKF_N_STATES*AKF_N_STATES];         /*!< [-] Time updated covariance at previous time*/
+    double covar[AKF_N_STATES*AKF_N_STATES];        /*!< [-] covariance */
+    double covarPrev[AKF_N_STATES*AKF_N_STATES];        /*!< [-] covariance at previous time*/
     double covarInit[AKF_N_STATES*AKF_N_STATES];    /*!< [-] Covariance to init filter with*/
     double xBar[AKF_N_STATES];            /*! [-] Current mean state estimate*/
 
@@ -137,7 +140,9 @@ extern "C" {
     void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
                           double propTime, AccDataFswMsg *gyrData);
 	int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime);
-    int inertialUKFMeasUpdate(InertialUKFConfig *configData, double updateTime, int currentST);
+    int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST);
+    void inertialUKFCleanMeasUpdate(InertialUKFConfig *configData);
+    void inertialUKFCleanTimeUpdate(InertialUKFConfig *configData, double updateTime);
 	void inertialStateProp(InertialUKFConfig *configData, double *stateInOut, double dt);
     void inertialUKFMeasModel(InertialUKFConfig *configData, int currentST);
     

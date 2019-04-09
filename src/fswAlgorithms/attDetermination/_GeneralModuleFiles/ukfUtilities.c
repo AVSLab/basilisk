@@ -44,7 +44,7 @@ int ukfQRDJustR(
 			destMat[dimi] += sourceMat[dimj + i] * sourceMat[dimj + i];
 		}
         if (destMat[dimi]<0){
-            BSK_PRINT(MSG_WARNING,"Invalid SQRT in UKF, skipping value.\n");
+            BSK_PRINT(MSG_WARNING,"Invalid SQRT in UKF, skipping value in ukfQRDJustR.\n");
             return -1;}
 		destMat[dimi] = sqrt(destMat[dimi]);
 		for (j = 0; j<nRow; j++)
@@ -80,7 +80,7 @@ void ukfLInv(
 	mSetZero(destMat, nRow, nCol);
 	if (nRow != nCol)
 	{
-		BSK_PRINT(MSG_WARNING,"Can't get a lower-triangular inverse of non-square matrix.\n");
+		BSK_PRINT(MSG_WARNING,"Can't get a lower-triangular inverse of non-square matrix in ukfLInv.\n");
 		return;
 	}
 	mat_dim = nRow;
@@ -111,7 +111,7 @@ void ukfUInv(
 	mSetZero(destMat, nRow, nCol);
 	if (nRow != nCol)
 	{
-		BSK_PRINT(MSG_WARNING,"Can't get a lower-triangular inverse of non-square matrix.\n");
+		BSK_PRINT(MSG_WARNING,"Can't get a lower-triangular inverse of non-square matrix in ukfLUD.\n");
 		return;
 	}
 	mat_dim = nRow;
@@ -147,7 +147,7 @@ int32_t ukfLUD(double *sourceMat, int32_t nRow, int32_t nCol,
     }
 	if (nRow != nCol)
 	{
-		BSK_PRINT(MSG_WARNING,"Can't get a lower-triangular inverse of non-square matrix.\n");
+		BSK_PRINT(MSG_WARNING,"Can't get a lower-triangular inverse of non-square matrix in ukfLUD.\n");
 		return -1;
 	}
 	mCopy(sourceMat, nRow, nCol, destMat);
@@ -163,7 +163,7 @@ int32_t ukfLUD(double *sourceMat, int32_t nRow, int32_t nCol,
 		}
 		if (big < TINY)
 		{
-			BSK_PRINT(MSG_WARNING,"Singlular matrix encountered in LU decomposition.\n");
+			BSK_PRINT(MSG_WARNING,"Singlular matrix encountered in ukfLUD LU decomposition.\n");
 			return -1;
 		}
 		vv[i] = 1.0 / big;
@@ -234,7 +234,7 @@ void ukfLUBckSlv(double *sourceMat, int32_t nRow, int32_t nCol,
 	vSetZero(destMat, nRow);
 	if (nRow != nCol)
 	{
-		BSK_PRINT(MSG_WARNING,"Can't get a linear solution of non-square matrix.\n");
+		BSK_PRINT(MSG_WARNING,"Can't get a linear solution of non-square matrix in ukfLUBckSlv.\n");
 		return;
 	}
 	vCopy(bmat, nRow, destMat);
@@ -280,7 +280,7 @@ void ukfMatInv(double *sourceMat, int32_t nRow, int32_t nCol,
 	mSetZero(destMat, nRow, nCol);
 	if (nRow != nCol)
 	{
-		BSK_PRINT(MSG_WARNING,"Can't invert a non-square matrix.\n");
+		BSK_PRINT(MSG_WARNING,"Can't invert a non-square matrix in ukfMatInv.\n");
 		return;
 	}
 	ukfLUD(sourceMat, nRow, nCol, LUMatrix, indx);
@@ -305,7 +305,7 @@ int ukfCholDecomp(double *sourceMat, int32_t nRow, int32_t nCol,
 	mSetZero(destMat, nRow, nCol);
 	if (nRow != nCol)
 	{
-		BSK_PRINT(MSG_WARNING,"Can't get a lower-triangular inverse of non-square matrix.\n");
+		BSK_PRINT(MSG_WARNING,"Can't get a lower-triangular inverse of non-square matrix in ukfCholDecomp.\n");
 		return -1;
 	}
 	
@@ -321,7 +321,7 @@ int ukfCholDecomp(double *sourceMat, int32_t nRow, int32_t nCol,
 			if (i == j)
 			{
                 if (sigma<0){
-                    BSK_PRINT(MSG_WARNING,"Invalid SQRT in UKF, skipping value.\n");
+                    BSK_PRINT(MSG_WARNING,"Invalid SQRT in ukfCholDecomp, skipping value.\n");
                     return -1;}
 				destMat[nRow * i + j] = sqrt(sigma);
 			}
@@ -349,7 +349,7 @@ int ukfCholDownDate(double *rMat, double *xVec, double beta, int32_t nStates,
 	{
         rEl2 = rMat[i*nStates+i] * rMat[i*nStates+i];
         if (rEl2 + beta/bParam * wVec[i]*wVec[i]<0){
-            BSK_PRINT(MSG_WARNING,"Invalid SQRT in UKF, skipping value.\n");
+            BSK_PRINT(MSG_WARNING,"Invalid SQRT in ukfCholDownDate, skipping value.\n");
             return -1;}
         rOut[i*nStates + i] = sqrt(rEl2 + beta/bParam * wVec[i]*wVec[i]);
         gamma = rEl2*bParam + beta * wVec[i]*wVec[i];

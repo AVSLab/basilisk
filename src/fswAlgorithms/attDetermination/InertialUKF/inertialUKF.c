@@ -83,7 +83,7 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
 {
     
     int32_t i;
-    int32_t badUpdate;
+    int32_t badUpdate=0;
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     double tempMatrix[AKF_N_STATES*AKF_N_STATES];
@@ -137,21 +137,17 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     
     vCopy(configData->stateInit, configData->numStates, configData->state);
     
-    /*! - User a cholesky decomposition to obtain the sBar and sQnoise matrices for use in 
-          filter at runtime*/
+    /*! - User a cholesky decomposition to obtain the sBar and sQnoise matrices for use in filter at runtime*/
     mCopy(configData->covarInit, configData->numStates, configData->numStates,
           configData->sBar);
     mCopy(configData->covarInit, configData->numStates, configData->numStates,
           configData->covar);
     mSetZero(tempMatrix, configData->numStates, configData->numStates);
-    badUpdate = ukfCholDecomp(configData->sBar, configData->numStates,
+    badUpdate += ukfCholDecomp(configData->sBar, configData->numStates,
                   configData->numStates, tempMatrix);
-    if (badUpdate<0){
-        BSK_PRINT(MSG_WARNING, "bad update occured in covar reset UKF\n");}
-    badUpdate = ukfCholDecomp(configData->qNoise, configData->numStates,
+    
+    badUpdate += ukfCholDecomp(configData->qNoise, configData->numStates,
                   configData->numStates, configData->sQnoise);
-    if (badUpdate<0){
-        BSK_PRINT(MSG_WARNING, "bad update occured in qNoise reset UKF\n");}
 
     mCopy(tempMatrix, configData->numStates, configData->numStates,
           configData->sBar);
@@ -163,6 +159,9 @@ void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     configData->timeTagOut = configData->timeTag;
     Read_STMessages(configData, moduleID);
 
+    if (badUpdate <0){
+        BSK_PRINT(MSG_WARNING, "Reset method contained bad update");
+    }
     return;
 }
 
@@ -299,7 +298,7 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
                 BSK_PRINT(MSG_WARNING, "Large jump in state time that was set to max\n");
             }
             trackerValid += inertialUKFTimeUpdate(configData, newTimeTag);
-            trackerValid += inertialUKFMeasUpdate(configData, newTimeTag, configData->stSensorOrder[i]);
+            trackerValid += inertialUKFMeasUpdate(configData, configData->stSensorOrder[i]);
             inertialDataOutBuffer.numObs += trackerValid;
         }
         
@@ -429,10 +428,13 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
 	double sBarUp[AKF_N_STATES*AKF_N_STATES];
 	double *spPtr;
     double procNoise[AKF_N_STATES*AKF_N_STATES];
-    int32_t badUpdate;
+    int32_t badUpdate=0;
     
 	/*! Begin method steps*/
 	configData->dt = updateTime - configData->timeTag;
+    vCopy(configData->state, configData->numStates, configData->statePrev);
+    mCopy(configData->sBar, configData->numStates, configData->numStates, configData->sBarPrev);
+    mCopy(configData->covar, configData->numStates, configData->numStates, configData->covarPrev);
     
     mCopy(configData->sQnoise, AKF_N_STATES, AKF_N_STATES, procNoise);
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
@@ -480,16 +482,12 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
         vScale(-1.0, configData->xBar, configData->numStates, aRow);
         vAdd(aRow, configData->numStates,
              &(configData->SP[(i+1)*configData->numStates]), aRow);
-        if (configData->wC[i+1]<0){
-            badUpdate = 1;
-            BSK_PRINT(MSG_WARNING, "bad update occured in UKF time prop");
-            return(-1);
-        }
-        else{
+        badUpdate += (configData->wC[i+1]<0) - (configData->wC[i+1]>0);/*Check sign of wC to know if the sqrt will fail*/
+        if (badUpdate <0){return -1;}
         vScale(sqrt(configData->wC[i+1]), aRow, configData->numStates, aRow);
 		memcpy((void *)&AT[i*configData->numStates], (void *)aRow,
 			configData->numStates*sizeof(double));
-        }
+        
 	}
    /*! - Scale sQNoise matrix depending on the dt*/
     for (k=0;k<3;k++){
@@ -501,11 +499,9 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
 		procNoise, configData->numStates*configData->numStates
         *sizeof(double));
     /*! - QR decomposition (only R computed!) of the AT matrix provides the new sBar matrix*/
-    badUpdate = ukfQRDJustR(AT, 2 * configData->countHalfSPs + configData->numStates,
+    badUpdate += ukfQRDJustR(AT, 2 * configData->countHalfSPs + configData->numStates,
                 configData->countHalfSPs, rAT);
-    if (badUpdate<0){
-        BSK_PRINT(MSG_WARNING, "bad update occured in UKF time prop QR");
-        return(-1);}
+
     mCopy(rAT, configData->numStates, configData->numStates, sBarT);
     mTranspose(sBarT, configData->numStates, configData->numStates,
         configData->sBar);
@@ -514,11 +510,8 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
           like in equation 21 in design document.*/
     vScale(-1.0, configData->xBar, configData->numStates, xErr);
     vAdd(xErr, configData->numStates, &configData->SP[0], xErr);
-    badUpdate = ukfCholDownDate(configData->sBar, xErr, configData->wC[0],
+    badUpdate += ukfCholDownDate(configData->sBar, xErr, configData->wC[0],
         configData->numStates, sBarUp);
-    if (badUpdate<0){
-        BSK_PRINT(MSG_WARNING, "bad update occured in UKF time prop down-date");
-        return(-1);}
 
     
     /*! - Save current sBar matrix, covariance, and state estimate off for further use*/
@@ -530,7 +523,12 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
            configData->covar);
     vCopy(&(configData->SP[0]), configData->numStates, configData->state );
 	
-	configData->timeTag = updateTime;
+    if (badUpdate<0){
+        inertialUKFCleanTimeUpdate(configData, updateTime);
+        return(-1);}
+    else{
+        configData->timeTag = updateTime;
+    }
     return(0);
 }
 
@@ -663,7 +661,7 @@ void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
  @param configData The configuration data associated with the CSS estimator
  @param updateTime The time that we need to fix the filter to (seconds)
  */
-int inertialUKFMeasUpdate(InertialUKFConfig *configData, double updateTime, int currentST)
+int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
 {
     uint32_t i;
     double yBar[3], syInv[3*3];
@@ -673,10 +671,12 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, double updateTime, int 
     double rAT[3*3], syT[3*3];
     double sy[3*3];
     double updMat[3*3], pXY[AKF_N_STATES*3];
-    int32_t badUpdate;
+    int32_t badUpdate=0;
     
     /*! Begin method steps*/
-    
+    vCopy(configData->state, configData->numStates, configData->statePrev);
+    mCopy(configData->sBar, configData->numStates, configData->numStates, configData->sBarPrev);
+    mCopy(configData->covar, configData->numStates, configData->numStates, configData->covarPrev);
     /*! - Compute the valid observations and the measurement model for all observations*/
     inertialUKFMeasModel(configData, currentST);
     
@@ -701,10 +701,8 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, double updateTime, int 
         vScale(-1.0, yBar, configData->numObs, tempYVec);
         vAdd(tempYVec, configData->numObs,
              &(configData->yMeas[(i+1)*configData->numObs]), tempYVec);
-        if (configData->wC[i+1]<0){
-            BSK_PRINT(MSG_WARNING, "bad update occured in UKF meas yBar");
-            return(-1);
-        }
+        badUpdate += (configData->wC[i+1]<0) - (configData->wC[i+1]>0); /*Check sign of wC to know if the sqrt will fail*/
+        if (badUpdate<0){return -1;}
         vScale(sqrt(configData->wC[i+1]), tempYVec, configData->numObs, tempYVec);
         memcpy(&(AT[i*configData->numObs]), tempYVec,
                configData->numObs*sizeof(double));
@@ -713,19 +711,13 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, double updateTime, int 
     /*! - This is the square-root of the Rk matrix which we treat as the Cholesky
         decomposition of the observation variance matrix constructed for our number 
         of observations*/
-    badUpdate = ukfCholDecomp(configData->STDatasStruct.STMessages[currentST].noise, configData->numObs, configData->numObs, qChol);
-    if (badUpdate<0){
-        BSK_PRINT(MSG_WARNING, "bad update occured in UKF meas noise chol");
-        return(-1);}
+    badUpdate += ukfCholDecomp(configData->STDatasStruct.STMessages[currentST].noise, configData->numObs, configData->numObs, qChol);
     memcpy(&(AT[2*configData->countHalfSPs*configData->numObs]),
            qChol, configData->numObs*configData->numObs*sizeof(double));
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the 
           current Sy matrix*/
-    badUpdate = ukfQRDJustR(AT, 2*configData->countHalfSPs+configData->numObs,
+    badUpdate += ukfQRDJustR(AT, 2*configData->countHalfSPs+configData->numObs,
                 configData->numObs, rAT);
-    if (badUpdate<0){
-        BSK_PRINT(MSG_WARNING, "bad update occured in UKF rAT");
-        return(-1);}
 
     mCopy(rAT, configData->numObs, configData->numObs, syT);
     mTranspose(syT, configData->numObs, configData->numObs, sy);
@@ -733,11 +725,8 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, double updateTime, int 
           model and the yBar matrix (cholesky down-date again)*/
     vScale(-1.0, yBar, configData->numObs, tempYVec);
     vAdd(tempYVec, configData->numObs, &(configData->yMeas[0]), tempYVec);
-    badUpdate = ukfCholDownDate(sy, tempYVec, configData->wC[0],
+    badUpdate += ukfCholDownDate(sy, tempYVec, configData->wC[0],
                     configData->numObs, updMat);
-    if (badUpdate<0){
-        BSK_PRINT(MSG_WARNING, "bad update occured in UKF meas down-date");
-        return(-1);}
 
     /*! - Shifted matrix represents the Sy matrix */
     mCopy(updMat, configData->numObs, configData->numObs, sy);
@@ -789,10 +778,7 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, double updateTime, int 
     for(i=0; i<configData->numObs; i++)
     {
         vCopy(&(pXY[i*configData->numStates]), configData->numStates, xHat);
-        badUpdate = ukfCholDownDate(configData->sBar, xHat, -1.0, configData->numStates, sBarT);
-        if (badUpdate<0){
-            BSK_PRINT(MSG_WARNING, "bad update occured in UKF final wrap");
-            return(-1);}
+        badUpdate += ukfCholDownDate(configData->sBar, xHat, -1.0, configData->numStates, sBarT);
         mCopy(sBarT, configData->numStates, configData->numStates,
             configData->sBar);
     }
@@ -803,5 +789,24 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, double updateTime, int 
     mMultM(configData->sBar, configData->numStates, configData->numStates,
            configData->covar, configData->numStates, configData->numStates,
            configData->covar);
+    
+    if (badUpdate<0){
+        inertialUKFCleanMeasUpdate(configData);
+        return(-1);}
     return(0);
+}
+
+void inertialUKFCleanMeasUpdate(InertialUKFConfig *configData){
+    vSetZero(configData->obs, configData->numObs);
+    vCopy(configData->statePrev, configData->numStates, configData->state);
+    mCopy(configData->sBarPrev, configData->numStates, configData->numStates, configData->sBar);
+    mCopy(configData->covarPrev, configData->numStates, configData->numStates, configData->covar);
+    return;
+}
+
+void inertialUKFCleanTimeUpdate(InertialUKFConfig *configData, double updateTime){
+    vCopy(configData->statePrev, configData->numStates, configData->state);
+    mCopy(configData->sBar, configData->numStates, configData->numStates, configData->sBarPrev);
+    mCopy(configData->covarPrev, configData->numStates, configData->numStates, configData->covar);
+    return;
 }
