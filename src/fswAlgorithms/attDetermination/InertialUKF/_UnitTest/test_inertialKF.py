@@ -97,6 +97,45 @@ def all_inertial_kfTest(show_plots):
     assert testResults < 1, testMessage
     [testResults, testMessage] = test_StateUpdateRWInertialAttitude(show_plots)
     assert testResults < 1, testMessage
+    [testResults, testMessage] = test_FilterMethods()
+    assert testResults < 1, testMessage
+
+def test_FilterMethods():
+    testFailCount = 0
+    testMessages = []
+
+    # Star Tracker Read Message and Order method
+    moduleConfig = inertialUKF.InertialUKFConfig()
+
+    ST1Data = inertialUKF.STMessage()
+    ST1Data.stInMsgName = "star_tracker_1_data"
+
+    ST1Data.noise = [0.00017 * 0.00017, 0.0, 0.0,
+                         0.0, 0.00017 * 0.00017, 0.0,
+                         0.0, 0.0, 0.00017 * 0.00017]
+
+    ST2Data = inertialUKF.STMessage()
+    ST2Data.stInMsgName = "star_tracker_2_data"
+
+    ST2Data.noise = [0.00017 * 0.00017, 0.0, 0.0,
+                         0.0, 0.00017 * 0.00017, 0.0,
+                         0.0, 0.0, 0.00017 * 0.00017]
+    STList = [ST1Data, ST2Data]
+
+    moduleConfig.STDatasStruct.STMessages = STList
+    moduleConfig.STDatasStruct.numST = len(STList)
+
+    inertialUKF.Read_STMessages(moduleConfig, 1)
+
+
+    # Clean methods for Measurement and Time Updates
+
+    # inertialStateProp method test with time step difference
+
+    # Bad Time and Measurement Update
+
+
+    return [testFailCount, ''.join(testMessages)]
 
 def test_StateUpdateInertialAttitude(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
