@@ -58,13 +58,12 @@ def test_scenarioPatchedConics(show_plots):
 
     # setup truth data for unit test
     truePos = [
-        [363232732, 1212307902, 0.0]
+        [158952067.0, 514585340.0, 0.0]
     ]
 
 
-
     # compare the results to the truth values
-    accuracy = 100.0 # meters
+    accuracy = 1000.0 # meters
     testFailCount, testMessages = unitTestSupport.compareArray(
         truePos, dataPos, accuracy, "r_BN_N Vector",testFailCount, testMessages)
 
