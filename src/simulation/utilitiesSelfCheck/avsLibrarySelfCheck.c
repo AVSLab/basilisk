@@ -1763,7 +1763,7 @@ int testOrbitalElements(double accuracy)
        || !isEqualRel(elements.e, 0.5, accuracy)
        || !isEqualRel(elements.i, 0.0, accuracy)
        || !isEqualRel(elements.Omega, 0.0, accuracy)
-       || !isEqualRel(elements.omega, (133+113-360.)*D2R, accuracy)
+       || !isEqualRel(elements.omega, (133+113)*D2R, accuracy)
        || !isEqualRel(elements.f, 123.0 * D2R, accuracy)
        || !isEqualRel(elements.rmag,   7730.041048693483, accuracy)
        || !isEqualRel(elements.rPeriap,3750.0, accuracy)
@@ -1887,7 +1887,7 @@ int testOrbitalElements(double accuracy)
        || !isEqual(elements.i, 0.0, accuracy)
        || !isEqual(elements.Omega, 0.0, accuracy)
        || !isEqual(elements.omega, 0.0, accuracy)
-       || !isEqual(elements.f, (133+113+123-360)*D2R, accuracy)
+       || !isEqualRel(elements.f, (133+113+123-360)*D2R, accuracy)
        || !isEqualRel(elements.rmag,   7500.00, accuracy)
        || !isEqualRel(elements.rPeriap,7500.00, accuracy)
        || !isEqualRel(elements.rApoap, 7500.00, accuracy)
@@ -1895,6 +1895,40 @@ int testOrbitalElements(double accuracy)
         printf("rv2elem failed circular, equatorial case\n");
         errorCount++;
     }
+
+    /* circular, equatorial retrograde case */
+    elements.a     = 7500.0;
+    elements.e     = 0.0;
+    elements.i     = M_PI;
+    elements.Omega = 133.0 * D2R;
+    elements.omega = 113.0 * D2R;
+    elements.f     = 123.0 * D2R;
+    elem2rv(MU_EARTH, &elements, r, v);
+    v3PrintScreen("r", r);
+    v3PrintScreen("v", v);
+    v3Set(-1687.13290757899,    -7307.77548588926, 0, r2);
+    v3Set(-7.10333318346184,     1.63993368302803, 0, v3_2);
+    if(!v3IsEqualRel(r, r2, accuracy) || !v3IsEqualRel(v, v3_2, accuracy)) {
+        printf("elem2rv failed circular, equatorial retrograde case\n");
+        errorCount++;
+    }
+
+    rv2elem(MU_EARTH, r2, v3_2, &elements);
+    if(!isEqualRel(elements.a, 7500.0, accuracy)
+       || !isEqual(elements.e, 0.0, accuracy)
+       || !isEqualRel(elements.i, M_PI, accuracy)
+       || !isEqual(elements.Omega, 0.0, accuracy)
+       || !isEqual(elements.omega, 0.0, accuracy)
+       || !isEqualRel(elements.f, (-133+113+123)*D2R, accuracy)
+       || !isEqualRel(elements.rmag,   7500.00, accuracy)
+       || !isEqualRel(elements.rPeriap,7500.00, accuracy)
+       || !isEqualRel(elements.rApoap, 7500.00, accuracy)
+       ) {
+        printf("rv2elem failed circular, equatorial retrograde case\n");
+        errorCount++;
+    }
+
+
 
     return errorCount;
 }

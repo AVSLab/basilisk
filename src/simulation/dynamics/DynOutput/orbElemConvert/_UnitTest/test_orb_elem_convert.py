@@ -203,7 +203,11 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
     TotalSim.TotalSim.CreateNewMessage(unitProcessName, orb_elemObject.StateString, inputMessageSize, 2)
     # number of buffers (leave at 2 as default, don't make zero)
 
-    ElemMessage.a = a  # meters
+    if e == 1.0:
+        ElemMessage.a = 0.0
+        ElemMessage.rPeriap = -a
+    else:
+        ElemMessage.a = a # meters
     ElemMessage.e = e
     ElemMessage.i = i
     ElemMessage.Omega = AN
@@ -283,6 +287,7 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
         if e == 1 and a < 0:  # parabolic case
             rp = -a  # radius at periapses
             p = 2 * rp  # semi-latus rectum
+            a = 0.0
         else:  # elliptic and hyperbolic cases
             p = a * (1 - e * e)  # semi-latus rectum
 
@@ -470,8 +475,8 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
         rApoap = p / (1.0 - eO)
     else:                        # parabolic case
         rp = p / 2.0
-        aO = -rp # a is not defined for parabola, so -rp is returned instead
-        rApoap = -1.0
+        aO = 0.0 # a is not defined for parabola, so -rp is returned instead
+        rApoap = 0.0
 
     # Calculate the inclination
     iO = math.acos(hVec[2] / h)
