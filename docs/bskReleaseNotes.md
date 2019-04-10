@@ -8,13 +8,13 @@ We are very excited by the great capabilities that this software already has, an
 * GPU based methods to evaluate solar radiation pressure forces and torques
 * atmospheric drag evaluation using multi-faceted spacecraft model
 * New Unity-based Basilisk visualization tool.
-* New download and install method that pulls all the code, compiles and leaves the user with BSK binaries specific for their platform
+* Python 3 support
+* live plotting capability during a BSK run
 
-
-## Upcoming Version 0.X.X
+## Upcoming Version 0.5.0
 <ul>
     <li>
-       attTrackingError has updated documentation and unit tests.
+       `attTrackingError` has updated documentation and unit tests.
     </li>
     <li>
         navAggregate module has new documentation and unit tests.
@@ -25,11 +25,10 @@ We are very excited by the great capabilities that this software already has, an
     <li>
     new unit test for RW-config data
     </li>
-    <li> included a new environment abstract class that creates a common interface to space environment modules like atmospheric density, or magnetic fields in the future.  The exponentialAtmosphere module is now gone and replaced with a more general `atmosphere` module.  This currently implements the exponential model, but will include other models in the future.  NOTE: this change breaks earlier simulation that used atmospheric drag.  The old `exponentialAtmosphere` model must be replaced with the new `atmosphere` model. See the integrated and unit tests for details, as well as the module documentation.  
+    <li> included a new environment abstract class that creates a common interface to space environment modules like atmospheric density, or magnetic fields in the future.  This currently implements the exponential model, but will include other models in the future.  NOTE: this change breaks earlier simulation that used atmospheric drag.  The old `exponentialAtmosphere` model usage must be updated. See the integrated and unit tests for details, as well as the module documentation.  
     </li>
     <li>
     added new documentation on using the new atmosphere module to simulate the atmospheric density and temperature information for a series of spacecraft locations about a planet.
-    </li>
     <li>updated documentation and unit tests of `celestialTwoBodyPoint`</li>
     <li>added a new planetary magnetic field module. Currently it provides centered dipole models for Mercury, Earth, Jupiter, Saturn, Uranus and Neptune.  This will be expanded to provide convenient access to other magnetic field models in the future.
     </li>
@@ -53,6 +52,7 @@ We are very excited by the great capabilities that this software already has, an
     <li>Updated documentation of `thrMomentumManagement` module</li>
     <li>Updated documentation of `thrMomentumDumping` module</li>
     <li>Added documentation of `MRP_PD` module</li>
+    <li>added a new tutorial on how to use the planetary magnetic field model.</li>
 </ul>
 
 
