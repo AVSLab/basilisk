@@ -39,7 +39,7 @@ from Basilisk.utilities import orbitalMotion
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import atmosphere
+from Basilisk.simulation import exponentialAtmosphere
 from Basilisk.utilities import unitTestSupport
 #print dir(exponentialAtmosphere)
 from Basilisk.simulation import dragDynamicEffector
@@ -117,8 +117,7 @@ def run(show_plots, orbitCase, planetCase):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #   Initialize new atmosphere and drag model, add them to task
-    newAtmo = atmosphere.Atmosphere()
-    newAtmo.setEnvType(atmosphere.MODEL_EXPONENTIAL)
+    newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
     atmoTaskName = "atmosphere"
     newAtmo.ModelTag = "ExpAtmo"
 
@@ -189,8 +188,8 @@ def run(show_plots, orbitCase, planetCase):
         orbAltMax = 800.0 * 1000.0
 
     newAtmo.planetRadius = r_eq
-    newAtmo.exponentialParams.scaleHeight = refScaleHeight
-    newAtmo.exponentialParams.baseDensity = refBaseDens
+    newAtmo.scaleHeight = refScaleHeight
+    newAtmo.baseDensity = refBaseDens
 
     rMin = r_eq + orbAltMin
     rMax = r_eq + orbAltMax

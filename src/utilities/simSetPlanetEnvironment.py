@@ -18,7 +18,6 @@
 
 '''
 
-from Basilisk.simulation import atmosphere
 from Basilisk.utilities import macros
 import numpy as np
 
