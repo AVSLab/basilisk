@@ -57,10 +57,15 @@ def results_computeAngErr(D, BLr_B, F, thrForceMag, numThrusters):
         tauActual_B = [0.0, 0.0, 0.0]
         BLr_B_hat = BLr_B/np.linalg.norm(BLr_B)
         for i in range(0, numThrusters):
-            if abs(F[i]) < thrForceMag[i]:
-                thrForce = F[i]
+
+            if thrForceMag[i] <= 0.0:
+                continue
             else:
-                thrForce = thrForceMag[i]*abs(F[i])/F[i]
+                if abs(F[i]) < thrForceMag[i]:
+                    thrForce = F[i]
+                else:
+                    thrForce = thrForceMag[i]*abs(F[i])/F[i]
+
             LrEffector_B = thrForce*DT[i,:]
             tauActual_B += LrEffector_B
 
@@ -95,11 +100,17 @@ def results_thrForceMapping(Lr, COrig, COM, rData, gData, thrForceSign, thrForce
     C = np.reshape(C, ((len(C)/3), 3), 'C')
     CT = np.transpose(C)
     Lr_Bar = np.dot(CT,np.dot(C,Lr))
-
+    Lr_offset = [0.0, 0.0, 0.0]
     # Compute D Matrix and Determine Force
     D = np.zeros((3,len(rData)))
     for i in range(len(rData)):
-        D[:,i] = np.cross((rData[i,:] - COM), gData[i,:])
+        if thrForceMag[i] <= 0:
+            continue
+        else:
+            D[:,i] = np.cross((rData[i,:] - COM), gData[i,:])
+        if(thrForceSign < 0):
+          Lr_offset -= thrForceMag[i]*np.cross((rData[i,:] - COM), gData[i,:])
+    Lr_Bar = Lr_Bar + Lr_offset
     F = mapToForce(D, Lr_Bar)
 
     # Subtract off minimum force (remove null space contribution)
@@ -140,7 +151,7 @@ def results_thrForceMapping(Lr, COrig, COM, rData, gData, thrForceSign, thrForce
 
         maxFractUse = 0.0
         for i in range(0, numThrusters):
-            if thrForceMag > 0 and abs(F[i])/thrForceMag[i] > maxFractUse:
+            if thrForceMag[i] > 0 and abs(F[i])/thrForceMag[i] > maxFractUse:
                 maxFractUse = abs(F[i])/thrForceMag[i]
         if maxFractUse > 1.0:
             F = F/maxFractUse
@@ -160,17 +171,18 @@ def results_thrForceMapping(Lr, COrig, COM, rData, gData, thrForceSign, thrForce
 @pytest.mark.parametrize("dropThruster", [True, False])
 @pytest.mark.parametrize("dropAxis", [True, False])
 @pytest.mark.parametrize("saturateThrusters", [0, 1, 2])
+@pytest.mark.parametrize("misconfigThruster", [True, False])
 
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, useDVThruster, useCOMOffset, dropThruster, dropAxis, saturateThrusters):
+def test_module(show_plots, useDVThruster, useCOMOffset, dropThruster, dropAxis, saturateThrusters, misconfigThruster):
     # each test method requires a single assert method to be called
     [testResults, testMessage] = thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster,
-                                                   dropAxis, saturateThrusters)
+                                                   dropAxis, saturateThrusters, misconfigThruster)
     assert testResults < 1, testMessage
 
 
-def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dropAxis, saturateThrusters):
+def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dropAxis, saturateThrusters, misconfigThruster):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -351,8 +363,16 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
     if useDVThruster:
         maxThrust = 10.0
 
+
+
+
+
     for i in range(numThrusters):
-        fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], maxThrust)
+        if misconfigThruster and i == 0:
+            maxThrustConfig = 0.0
+        else:
+            maxThrustConfig = maxThrust
+        fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], maxThrustConfig)
     fswSetupThrusters.writeConfigMessage(  moduleConfig.inputThrusterConfName,
                                            unitTestSim.TotalSim,
                                            unitProcessName)
@@ -397,6 +417,14 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
     receivedTorque = -1.0 * np.array([np.matmul(np.transpose(D), F)])
     receivedTorque = np.append(np.array([0.0]), receivedTorque)
 
+    Lr_offset = np.array([0.0, 0.0, 0.0])
+    Lr_Bar = np.array([0.0, 0.0, 0.0])
+    for i in range(0,numThrusters):
+        if moduleConfig.thrForceSign < 0 and moduleConfig.thrForcMag[i] >= 0:
+            Lr_offset -= moduleConfig.thrForcMag[i]*np.cross(rcsLocationData[i,:]-CoM_B,rcsDirectionData[i,:])
+
+    Lr_Bar = requestedTorque + Lr_offset
+
     '''
     if numThrusters >= moduleConfig.numControlAxes:
         testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([requestedTorque]),
@@ -406,17 +434,14 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
     '''
 
     snippetName = "LrBReq_LrBRec_" + str(useDVThruster) + "_" + str(useCOMOffset) + "_" + str(dropThruster) + "_" + str(dropAxis) + "_" + str(saturateThrusters)
-    requestedTex = str(requestedTorque)
+    requestedTex = str(Lr_Bar) #str(requestedTorque)
     receivedTex = str(receivedTorque[1:4])
     snippetTex = "Requested:\t" + requestedTex + "\n"
     snippetTex += "Received:\t" + receivedTex + "\n"
 
     unitTestSupport.writeTeXSnippet("Torques/"+snippetName, snippetTex, path)
 
-
-
     # compare the module results to the truth values
-
     for i in range(0,len(trueVector)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], numThrusters, accuracy):
@@ -455,5 +480,7 @@ if __name__ == "__main__":
                  False,           # use COM offset
                  False,           # drop thruster(s)
                  False,           # drop control axis
-                 0               # saturateThrusters
+                 0,               # saturateThrusters
+                 False            # misconfigThruster
+
     )

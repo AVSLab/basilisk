@@ -94,7 +94,7 @@ void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime,
     for (i=0;i<3;i++)
     {
         pAxis = configData->controlAxes_B + 3*configData->numControlAxes;
-        if (v3Norm(pAxis) > 0.1) {
+        if (v3Norm(pAxis) > configData->epsilon) {
             v3Normalize(pAxis,pAxis);
             configData->numControlAxes += 1;
         } else {
@@ -118,14 +118,13 @@ void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime,
                 sizeof(VehicleConfigFswMsg), (void*) &(configData->sc), moduleID);
 
     /* read in the thruster position and thruster force heading information */
-    /* Note: we will still need to correct for the S to B transformation */
-    configData->numThrusters = localThrusterData.numThrusters; /* There is something funky about this; currently initilaizing to max effector in unit test */
+    configData->numThrusters = localThrusterData.numThrusters;
     for(i=0; i<configData->numThrusters; i=i+1)
     {
         v3Copy(localThrusterData.thrusters[i].rThrust_B, configData->rThruster_B[i]);
         v3Copy(localThrusterData.thrusters[i].tHatThrust_B, configData->gtThruster_B[i]);
-        if(localThrusterData.thrusters[i].maxThrust == 0){
-            BSK_PRINT(MSG_WARNING, "A configured thruster has a non-sensible saturation limit of 0!\n");
+        if(localThrusterData.thrusters[i].maxThrust <= 0.0){
+            BSK_PRINT(MSG_ERROR, "A configured thruster has a non-sensible saturation limit of <= 0 N!\n");
         } else {
             configData->thrForcMag[i] = localThrusterData.thrusters[i].maxThrust;
         }
@@ -157,8 +156,10 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     double      BLr_B[3];                     /*!< [Nm]    Control torque that we actually control*/
     double      maxFractUse;                  /*!< []      ratio of maximum requested thruster force relative to maximum thruster limit */
     double      rCrossGt[3];
-    
+    CmdTorqueBodyIntMsg LrInputMsg;
     THRArrayCmdForceFswMsg thrusterForceOut;
+    memset(&LrInputMsg, 0x0, sizeof(CmdTorqueBodyIntMsg));
+    memset(&configData->sc, 0x0, sizeof(VehicleConfigFswMsg));
     memset(&thrusterForceOut, 0x0, sizeof(THRArrayCmdForceFswMsg));
     
     /* clear the net thruster force output array */
@@ -168,12 +169,9 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     
     /*! Begin method steps*/
     /*! - Read the input messages */
-    CmdTorqueBodyIntMsg LrInputMsg;
     
-    memset(&LrInputMsg, 0x0, sizeof(CmdTorqueBodyIntMsg));
     ReadMessage(configData->controlTorqueInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CmdTorqueBodyIntMsg), (void*) &(LrInputMsg), moduleID);
-    memset(&configData->sc, 0x0, sizeof(VehicleConfigFswMsg));
     ReadMessage(configData->inputVehicleConfigDataID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(configData->sc), moduleID);
 
@@ -191,6 +189,10 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     v3SetZero(Lr_offset);
     for(i=0; i<numAvailThrusters; i=i+1)
     {
+        if (configData->thrForcMag[i] <= 0)
+        {
+            continue; /* In the case where a hruster's maxThrust is purposefully (or accidentally) set to 0.0 or less; we exclude it from mapping solution. */
+        }
         v3Cross(rThrusterRelCOM_B[i], configData->gtThruster_B[i], rCrossGt); /* Eq. 6 */
         for(j=0; j<3; j++)
         {
@@ -202,6 +204,7 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
             v3Subtract(Lr_offset, LrLocal, Lr_offset); /* Summing of individual torques -- Eq. 5 & Eq. 7 */
         }
     }
+    
     v3Add(Lr_offset, Lr_B, Lr_B);
     findMinimumNormForce(configData, D, Lr_B, numAvailThrusters, F, BLr_B);
     
@@ -216,7 +219,11 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
         counterPosForces = 0;
         memset(thrusterUsed,0x0,MAX_EFF_CNT*sizeof(int));
         for (i=0;i<numAvailThrusters;i++) {
-            if (F[i]*configData->thrForceSign > configData->epsilon) {
+            if (configData->thrForcMag[i] == 0)
+            {
+                printf("Confirming that F[i] = %f when FMag[i] = 0.0\n", F[i]);
+            }
+            if (F[i]*configData->thrForceSign > 0) {
                 thrusterUsed[i] = 1; /* Eq. 11 */
                 for(j=0; j<3; j++)
                 {
@@ -243,11 +250,9 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
         }
     }
     
-    configData->outTorqAngErr = computeTorqueAngErr(D, BLr_B, numAvailThrusters, F,
+    configData->outTorqAngErr = computeTorqueAngErr(D, BLr_B, numAvailThrusters, configData->epsilon, F,
         configData->thrForcMag); /* Eq. 16*/
     maxFractUse = 0.0;
-    
-    
     /*  check if the angle between the request and actual torque exceeds a limit.  If so, then uniformly scale
         all thruster forces values to not exceed saturation.
         If the angle threshold is negative, then this scaling is bypassed.*/
@@ -255,7 +260,7 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     {
         for(i=0; i<numAvailThrusters; i++)
         {
-            if(configData->thrForcMag[i] > 0.0 && fabs(F[i])/configData->thrForcMag[i] > maxFractUse)
+            if(configData->thrForcMag[i] > 0.0 && fabs(F[i])/configData->thrForcMag[i] > maxFractUse) /* confirming that maxThrust > 0 */
             {
                 maxFractUse = fabs(F[i])/configData->thrForcMag[i];
             }
@@ -264,7 +269,7 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
         if(maxFractUse > 1.0)
         {
             vScale(1.0/maxFractUse, F, numAvailThrusters, F);
-            configData->outTorqAngErr = computeTorqueAngErr(D, BLr_B, numAvailThrusters, F,
+            configData->outTorqAngErr = computeTorqueAngErr(D, BLr_B, numAvailThrusters, configData->epsilon, F,
                                                             configData->thrForcMag);
         }
     }
@@ -302,7 +307,7 @@ void findMinimumNormForce(thrForceMappingConfig *configData,
                           double D[3][MAX_EFF_CNT], double Lr_B[3], uint32_t numForces, double F[MAX_EFF_CNT], double Lr_B_Bar[3])
 {
     
-    int i,j,k;                                  /*!< []     counters */
+    int i,k;                                  /*!< []     counters */
     double      DDT[3][3];                      /*!< [m^2]  [D].[D]^T matrix */
     double      DDTInv[3][3];                   /*!< [m^2]  ([D].[D]^T)^-1 matrix */
     double      C[3][3];                        /*!< [m^2]  (C) matrix */
@@ -325,27 +330,27 @@ void findMinimumNormForce(thrForceMappingConfig *configData,
     vSetZero(F, MAX_EFF_CNT);
     
     /* find [D].[D]^T */
-    m33SetIdentity(DDT); /* Needed for DV thrusters in which there is only one control axis*/
+    /*
+    m33SetIdentity(DDT);
     for(i=0; i<3; i++) {
         for(j=0; j<3; j++) {
             DDT[i][j] = 0.0;
             for (k=0;k<numForces;k++) {
-                DDT[i][j] += D[i][k] * D[j][k]; /* Part of Eq. 9 */
+                DDT[i][j] += D[i][k] * D[j][k]; // Part of Eq. 9 For DV thrusters, this actually forces the [3][3] entry to zero and therefore does not work.
             }
         }
     }
+    */
     m33SetZero(DDT);
     mMultMt(D, 3, MAX_EFF_CNT, D, 3, MAX_EFF_CNT, DDT);
     if (m33Determinant(DDT) < configData->epsilon) {
         for (i=0;i<3;i++){
             if(DDT[i][i] == 0){
-                DDT[i][i] = 1.0; /* This is required for when there are fewer than 3 control axes. This allows for the matrix to be inverted*/
+                DDT[i][i] = 1.0; /* This is required to invert the matrix in cases when there are fewer than 3 control axes, or when all thrusters are pointed in the same direction.*/
             }
         }
     }
-    
     m33Inverse(DDT, DDTInv);
-    v3SetZero(DDTInvLr);
     m33MultV3(DDTInv, Lr_B_Bar, DDTInvLr); /* If fewer than 3 control axes,tThe the 1's along the diagonal of DDTInv will not conflict with the mapping, as Lr_B_Bar contains the nessessary 0s to inhibit projection */
     
     for (i=0;i<numForces;i++) {
@@ -355,18 +360,17 @@ void findMinimumNormForce(thrForceMappingConfig *configData,
         }
     }
     
-    
     return;
 
 }
 
-double computeTorqueAngErr(double D[3][MAX_EFF_CNT], double BLr_B[3], uint32_t numForces,
+double computeTorqueAngErr(double D[3][MAX_EFF_CNT], double BLr_B[3], uint32_t numForces, double epsilon,
                            double F[MAX_EFF_CNT], double FMag[MAX_EFF_CNT])
 
 {
     double returnAngle = 0.0;       /*!< [rad]  angle between requested and actual torque vector */
     /* make sure a control torque is requested, otherwise just return a zero angle error */
-    if (v3Norm(BLr_B) > 0.0000000001) {
+    if (v3Norm(BLr_B) > epsilon) {
         
         double tauActual_B[3];          /*!< [Nm]   control torque with current thruster solution */
         double BLr_hat_B[3];            /*!< []     normalized BLr_B vector */
@@ -381,7 +385,12 @@ double computeTorqueAngErr(double D[3][MAX_EFF_CNT], double BLr_B[3], uint32_t n
         /* loop over all thrusters and compute the actual torque to be applied */
         for(i=0; i<numForces; i++)
         {
-            thrusterForce = fabs(F[i]) < FMag[i] ? F[i] : FMag[i]*fabs(F[i])/F[i]; /* This could produce inf's as F[i] approaches 0 if FMag[i] is 0, as such we check if FMag[i] is equal to zero in reset() */
+            if (FMag[i] <= 0)
+            {
+                thrusterForce = 0.0; /* ensures that we don't divide by zero*/
+            } else {
+                 thrusterForce = fabs(F[i]) < FMag[i] ? F[i] : FMag[i]*fabs(F[i])/F[i]; /* This could produce inf's as F[i] approaches 0 if FMag[i] is 0, as such we check if FMag[i] is equal to zero in reset() */
+            }
             v3Scale(thrusterForce, DT[i], LrEffector_B);
             v3Add(tauActual_B, LrEffector_B, tauActual_B);
         }
