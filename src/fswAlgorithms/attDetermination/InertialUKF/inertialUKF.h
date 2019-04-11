@@ -141,8 +141,7 @@ extern "C" {
                           double propTime, AccDataFswMsg *gyrData);
 	int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime);
     int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST);
-    void inertialUKFCleanMeasUpdate(InertialUKFConfig *configData);
-    void inertialUKFCleanTimeUpdate(InertialUKFConfig *configData, double updateTime);
+    void inertialUKFCleanUpdate(InertialUKFConfig *configData);
 	void inertialStateProp(InertialUKFConfig *configData, double *stateInOut, double dt);
     void inertialUKFMeasModel(InertialUKFConfig *configData, int currentST);
     

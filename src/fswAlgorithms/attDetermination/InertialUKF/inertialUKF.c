@@ -484,7 +484,7 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
         badUpdate += (configData->wC[i+1]>0) - (configData->wC[i+1]<0) - 1;
         /*Check sign of wC to know if the sqrt will fail*/
         if (badUpdate <0){
-            inertialUKFCleanTimeUpdate(configData, updateTime);
+            inertialUKFCleanUpdate(configData);
             return -1;}
         vScale(sqrt(configData->wC[i+1]), aRow, configData->numStates, aRow);
 		memcpy((void *)&AT[i*configData->numStates], (void *)aRow,
@@ -526,7 +526,7 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
     vCopy(&(configData->SP[0]), configData->numStates, configData->state );
 	
     if (badUpdate<0){
-        inertialUKFCleanTimeUpdate(configData, updateTime);
+        inertialUKFCleanUpdate(configData);
         return(-1);}
     else{
         configData->timeTag = updateTime;
@@ -793,12 +793,12 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
            configData->covar);
     
     if (badUpdate<0){
-        inertialUKFCleanMeasUpdate(configData);
+        inertialUKFCleanUpdate(configData);
         return(-1);}
     return(0);
 }
 
-void inertialUKFCleanMeasUpdate(InertialUKFConfig *configData){
+void inertialUKFCleanUpdate(InertialUKFConfig *configData){
     vSetZero(configData->obs, configData->numObs);
     vCopy(configData->statePrev, configData->numStates, configData->state);
     mCopy(configData->sBarPrev, configData->numStates, configData->numStates, configData->sBar);
@@ -806,9 +806,3 @@ void inertialUKFCleanMeasUpdate(InertialUKFConfig *configData){
     return;
 }
 
-void inertialUKFCleanTimeUpdate(InertialUKFConfig *configData, double updateTime){
-    vCopy(configData->statePrev, configData->numStates, configData->state);
-    mCopy(configData->sBar, configData->numStates, configData->numStates, configData->sBarPrev);
-    mCopy(configData->covarPrev, configData->numStates, configData->numStates, configData->covar);
-    return;
-}

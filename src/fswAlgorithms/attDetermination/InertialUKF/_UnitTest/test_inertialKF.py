@@ -178,8 +178,8 @@ def test_FilterMethods():
     unitTestSim.ExecuteSimulation()
 
     stOrdered = unitTestSim.GetLogVariableData('inertialUKF.stSensorOrder')
-
-    if numpy.linalg.norm(numpy.array(stOrdered[0]) - numpy.array([0., 2, 1, 0, 0])) > 1E-10:
+    accuracy = 1E-10
+    if numpy.linalg.norm(numpy.array(stOrdered[0]) - numpy.array([0., 2, 1, 0, 0])) > accuracy:
         testFailCount+=1
         testMessages.append("ST order test failed")
 
@@ -213,28 +213,18 @@ def test_FilterMethods():
                                0., 0., 0., 2., 0., 0.,
                                0., 0., 0., 0., 2., 0.,
                                0., 0., 0., 0., 0., 2.]
-    moduleConfigClean2 = moduleConfigClean1
-    inertialUKF.inertialUKFCleanMeasUpdate(moduleConfigClean1)
-    inertialUKF.inertialUKFCleanTimeUpdate(moduleConfigClean2, int(1E9))
+    inertialUKF.inertialUKFCleanUpdate(moduleConfigClean1)
 
     if numpy.linalg.norm(numpy.array(moduleConfigClean1.covarPrev) - numpy.array(moduleConfigClean1.covar)) >1E10:
         testFailCount+=1
-        testMessages.append("inertialUKFClean Measurement Covar failed")
+        testMessages.append("inertialUKFClean Covar failed")
     if numpy.linalg.norm(numpy.array(moduleConfigClean1.statePrev) - numpy.array(moduleConfigClean1.state)) >1E10:
         testFailCount+=1
-        testMessages.append("inertialUKFClean Measurement States failed")
+        testMessages.append("inertialUKFClean States failed")
     if numpy.linalg.norm(numpy.array(moduleConfigClean1.sBar) - numpy.array(moduleConfigClean1.sBarPrev)) >1E10:
         testFailCount+=1
-        testMessages.append("inertialUKFClean Measurement sBar failed")
-    if numpy.linalg.norm(numpy.array(moduleConfigClean2.covarPrev) - numpy.array(moduleConfigClean2.covar)) >1E10:
-        testFailCount+=1
-        testMessages.append("inertialUKFClean Time Update Covar failed")
-    if numpy.linalg.norm(numpy.array(moduleConfigClean2.statePrev) - numpy.array(moduleConfigClean2.state)) >1E10:
-        testFailCount+=1
-        testMessages.append("inertialUKFClean Time Update States failed")
-    if numpy.linalg.norm(numpy.array(moduleConfigClean2.sBar) - numpy.array(moduleConfigClean2.sBarPrev)) >1E10:
-        testFailCount+=1
-        testMessages.append("inertialUKFClean Time Update sBar failed")
+        testMessages.append("inertialUKFClean sBar failed")
+
 
     # inertialStateProp rate test with time step difference
     moduleConfig.rwConfigParams.numRW = 2
@@ -259,7 +249,7 @@ def test_FilterMethods():
     for j in range(6):
         stateOut.append(inertialUKF.doubleArray_getitem(state, j))
 
-    if numpy.linalg.norm(expectedRate - numpy.array(stateOut)[3:])>1E-10:
+    if numpy.linalg.norm(expectedRate - numpy.array(stateOut)[3:])>accuracy:
         testFailCount += 1
         testMessages.append("Failed to caputre wheel acceleration in inertialStateProp")
 
@@ -302,6 +292,13 @@ def test_FilterMethods():
     if retMease == 0:
         testFailCount += 1
         testMessages.append("Failed to catch bad Update and clean in Meas update")
+
+    unitTestSupport.writeTeXSnippet("toleranceValue00", str(accuracy), path)
+    if testFailCount == 0:
+        unitTestSupport.writeTeXSnippet("passFail00", str("PASSED"), path)
+    else:
+        unitTestSupport.writeTeXSnippet("passFail00", str("FAILED"), path)
+
     return [testFailCount, ''.join(testMessages)]
 
 def test_StateUpdateInertialAttitude(show_plots):
