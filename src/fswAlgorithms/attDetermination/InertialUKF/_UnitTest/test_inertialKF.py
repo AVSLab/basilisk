@@ -104,37 +104,204 @@ def test_FilterMethods():
     testFailCount = 0
     testMessages = []
 
-    # Star Tracker Read Message and Order method
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.TotalSim.terminateSimulation()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(1.5)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Construct algorithm and associated C++ container
     moduleConfig = inertialUKF.InertialUKFConfig()
+    moduleWrap = alg_contain.AlgContain(moduleConfig,
+                                        inertialUKF.Update_inertialUKF,
+                                        inertialUKF.SelfInit_inertialUKF,
+                                        inertialUKF.CrossInit_inertialUKF,
+                                        inertialUKF.Reset_inertialUKF)
+    moduleWrap.ModelTag = "inertialUKF"
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+
+    st1 = inertialUKF.STAttFswMsg()
+    st1.timeTag = macros.sec2nano(1.25)
+    st1.MRP_BdyInrtl = [0.1, 0.2, 0.3]
+    st2 = inertialUKF.STAttFswMsg()
+    st2.timeTag = macros.sec2nano(1.0)
+    st1.MRP_BdyInrtl = [0.2, 0.2, 0.3]
+    st3 = inertialUKF.STAttFswMsg()
+    st3.timeTag = macros.sec2nano(0.75)
+    st1.MRP_BdyInrtl = [0.3, 0.2, 0.3]
 
     ST1Data = inertialUKF.STMessage()
     ST1Data.stInMsgName = "star_tracker_1_data"
-
-    ST1Data.noise = [0.00017 * 0.00017, 0.0, 0.0,
-                         0.0, 0.00017 * 0.00017, 0.0,
-                         0.0, 0.0, 0.00017 * 0.00017]
-
     ST2Data = inertialUKF.STMessage()
     ST2Data.stInMsgName = "star_tracker_2_data"
+    ST3Data = inertialUKF.STMessage()
+    ST3Data.stInMsgName = "star_tracker_3_data"
 
-    ST2Data.noise = [0.00017 * 0.00017, 0.0, 0.0,
-                         0.0, 0.00017 * 0.00017, 0.0,
-                         0.0, 0.0, 0.00017 * 0.00017]
-    STList = [ST1Data, ST2Data]
+    STList = [ST1Data, ST2Data, ST3Data]
+
+    moduleConfig.navStateOutMsgName = "inertial_state_estimate"
+    moduleConfig.filtDataOutMsgName = "inertial_filter_data"
+    moduleConfig.massPropsInMsgName = "adcs_config_data"
+    moduleConfig.rwSpeedsInMsgName = "reactionwheel_output_states"
+    moduleConfig.rwParamsInMsgName = "rwa_config_data_parsed"
+    moduleConfig.gyrBuffInMsgName = "gyro_buffer_data"
+
+    moduleConfig.alpha = 0.02
+    moduleConfig.beta = 2.0
+    moduleConfig.kappa = 0.0
+    moduleConfig.switchMag = 1.2
 
     moduleConfig.STDatasStruct.STMessages = STList
     moduleConfig.STDatasStruct.numST = len(STList)
+    unitTestSim.AddVariableForLogging('inertialUKF.stSensorOrder', testProcessRate , 0, 3, 'double')
+    for i in range(1,4):
+        inputMessageSize = eval("st"+str(i)).getStructSize()
+        unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                              "star_tracker_" + str(i) + "_data",
+                                              inputMessageSize,
+                                              2)  # number of buffers (leave at 2 as default, don't make zero)
+        unitTestSim.TotalSim.WriteMessageData("star_tracker_" + str(i) + "_data",
+                                                    inputMessageSize,
+                                                    0,
+                                                    eval("st"+str(i)))
+    # Star Tracker Read Message and Order method
+    unitTestSim.InitializeSimulation()
+    unitTestSim.ConfigureStopTime(1E9)
+    unitTestSim.ExecuteSimulation()
 
-    inertialUKF.Read_STMessages(moduleConfig, 1)
+    stOrdered = unitTestSim.GetLogVariableData('inertialUKF.stSensorOrder')
 
+    if numpy.linalg.norm(numpy.array(stOrdered[0]) - numpy.array([0., 2, 1, 0, 0])) > 1E-10:
+        testFailCount+=1
+        testMessages.append("ST order test failed")
 
     # Clean methods for Measurement and Time Updates
+    unitTestSim.TotalSim.terminateSimulation()
+    moduleConfigClean1 = inertialUKF.InertialUKFConfig()
+    moduleConfigClean1.numStates = 6
+    moduleConfigClean1.state = [0.,0.,0.,0.,0.,0.]
+    moduleConfigClean1.statePrev = [0., 0., 0., 0., 0., 0.]
+    moduleConfigClean1.sBar = [0.,0.,0.,0.,0.,0.,
+                               0., 0., 0., 0., 0., 0.,
+                               0., 0., 0., 0., 0., 0.,
+                               0., 0., 0., 0., 0., 0.,
+                               0., 0., 0., 0., 0., 0.,
+                               0., 0., 0., 0., 0., 0.]
+    moduleConfigClean1.sBarPrev = [1.,0.,0.,0.,0.,0.,
+                               0., 1., 0., 0., 0., 0.,
+                               0., 0., 1., 0., 0., 0.,
+                               0., 0., 0., 1., 0., 0.,
+                               0., 0., 0., 0., 1., 0.,
+                               0., 0., 0., 0., 0., 1.]
+    moduleConfigClean1.covar = [0.,0.,0.,0.,0.,0.,
+                               0., 0., 0., 0., 0., 0.,
+                               0., 0., 0., 0., 0., 0.,
+                               0., 0., 0., 0., 0., 0.,
+                               0., 0., 0., 0., 0., 0.,
+                               0., 0., 0., 0., 0., 0.]
+    moduleConfigClean1.covarPrev = [2.,0.,0.,0.,0.,0.,
+                               0., 2., 0., 0., 0., 0.,
+                               0., 0., 2., 0., 0., 0.,
+                               0., 0., 0., 2., 0., 0.,
+                               0., 0., 0., 0., 2., 0.,
+                               0., 0., 0., 0., 0., 2.]
+    moduleConfigClean2 = moduleConfigClean1
+    inertialUKF.inertialUKFCleanMeasUpdate(moduleConfigClean1)
+    inertialUKF.inertialUKFCleanTimeUpdate(moduleConfigClean2, int(1E9))
 
-    # inertialStateProp method test with time step difference
+    if numpy.linalg.norm(numpy.array(moduleConfigClean1.covarPrev) - numpy.array(moduleConfigClean1.covar)) >1E10:
+        testFailCount+=1
+        testMessages.append("inertialUKFClean Measurement Covar failed")
+    if numpy.linalg.norm(numpy.array(moduleConfigClean1.statePrev) - numpy.array(moduleConfigClean1.state)) >1E10:
+        testFailCount+=1
+        testMessages.append("inertialUKFClean Measurement States failed")
+    if numpy.linalg.norm(numpy.array(moduleConfigClean1.sBar) - numpy.array(moduleConfigClean1.sBarPrev)) >1E10:
+        testFailCount+=1
+        testMessages.append("inertialUKFClean Measurement sBar failed")
+    if numpy.linalg.norm(numpy.array(moduleConfigClean2.covarPrev) - numpy.array(moduleConfigClean2.covar)) >1E10:
+        testFailCount+=1
+        testMessages.append("inertialUKFClean Time Update Covar failed")
+    if numpy.linalg.norm(numpy.array(moduleConfigClean2.statePrev) - numpy.array(moduleConfigClean2.state)) >1E10:
+        testFailCount+=1
+        testMessages.append("inertialUKFClean Time Update States failed")
+    if numpy.linalg.norm(numpy.array(moduleConfigClean2.sBar) - numpy.array(moduleConfigClean2.sBarPrev)) >1E10:
+        testFailCount+=1
+        testMessages.append("inertialUKFClean Time Update sBar failed")
+
+    # inertialStateProp rate test with time step difference
+    moduleConfig.rwConfigParams.numRW = 2
+    moduleConfig.rwSpeeds.wheelSpeeds = [10, 5]
+    moduleConfig.rwSpeedPrev.wheelSpeeds = [15, 10]
+    moduleConfig.rwConfigParams.JsList = [1.,1.]
+    moduleConfig.rwConfigParams.GsMatrix_B = [1.,0.,0.,1.,0.,0.]
+    moduleConfig.speedDt = 1.
+    moduleConfig.IInv = [1.,0.,0.,0.,1.,0.,0.,0.,1.]
+
+    state = inertialUKF.new_doubleArray(6)
+    stateInput = numpy.array([1.,0.,0.,0.1,0.1,0.1])
+    for i in range(len(stateInput)):
+        inertialUKF.doubleArray_setitem(state, i, stateInput[i])
+
+    wheelAccel = numpy.array([-5, 5])/1.*numpy.array([1.,1])
+    angAccel = -0.5*(wheelAccel[0] + wheelAccel[1])*numpy.array([1.,0.,0])
+    expectedRate = numpy.array(stateInput[3:]) + angAccel
+
+    inertialUKF.inertialStateProp(moduleConfig, state, 0.5)
+    stateOut = []
+    for j in range(6):
+        stateOut.append(inertialUKF.doubleArray_getitem(state, j))
+
+    if numpy.linalg.norm(expectedRate - numpy.array(stateOut)[3:])>1E-10:
+        testFailCount += 1
+        testMessages.append("Failed to caputre wheel acceleration in inertialStateProp")
 
     # Bad Time and Measurement Update
+    st1 = inertialUKF.STAttFswMsg()
+    st1.timeTag = macros.sec2nano(1.)
+    st1.MRP_BdyInrtl = [0.1, 0.2, 0.3]
 
+    ST1Data = inertialUKF.STMessage()
+    ST1Data.stInMsgName = "star_tracker_1_data"
+    ST1Data.noise = [-1.,0.,0.,
+                 0., -1., 0.,
+                 0., 0., -1.]
 
+    STList = [ST1Data]
+
+    moduleConfigClean1.navStateOutMsgName = "inertial_state_estimate"
+    moduleConfigClean1.filtDataOutMsgName = "inertial_filter_data"
+    moduleConfigClean1.massPropsInMsgName = "adcs_config_data"
+    moduleConfigClean1.rwSpeedsInMsgName = "reactionwheel_output_states"
+    moduleConfigClean1.rwParamsInMsgName = "rwa_config_data_parsed"
+    moduleConfigClean1.gyrBuffInMsgName = "gyro_buffer_data"
+
+    moduleConfigClean1.alpha = 0.02
+    moduleConfigClean1.beta = 2.0
+    moduleConfigClean1.kappa = 0.0
+    moduleConfigClean1.switchMag = 1.2
+
+    moduleConfigClean1.countHalfSPs = moduleConfigClean1.numStates
+    moduleConfigClean1.STDatasStruct.STMessages = STList
+    moduleConfigClean1.STDatasStruct.numST = len(STList)
+    moduleConfigClean1.wC = [-1]*(moduleConfigClean1.numStates*2+1)
+    moduleConfigClean1.wM = [-1] * (moduleConfigClean1.numStates * 2 + 1)
+    retTime = inertialUKF.inertialUKFTimeUpdate(moduleConfigClean1, 1)
+    retMease = inertialUKF.inertialUKFMeasUpdate(moduleConfigClean1, 1)
+
+    if retTime == 0:
+        testFailCount+=1
+        testMessages.append("Failed to catch bad Update and clean in Time update")
+    if retMease == 0:
+        testFailCount += 1
+        testMessages.append("Failed to catch bad Update and clean in Meas update")
     return [testFailCount, ''.join(testMessages)]
 
 def test_StateUpdateInertialAttitude(show_plots):
@@ -675,5 +842,6 @@ def test_StatePropRateInertialAttitude(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    all_inertial_kfTest(False)
+    test_FilterMethods()
+    #all_inertial_kfTest(False)
 

@@ -184,8 +184,7 @@ void Read_STMessages(InertialUKFConfig *configData, uint64_t moduleID)
         timeOfMsgWritten = 0;
         sizeOfMsgWritten = 0;
         memset(&(configData->stSensorIn[i]), 0x0, sizeof(STAttFswMsg));
-        ReadMessage(configData->STDatasStruct.STMessages[i].stInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                    sizeof(STAttFswMsg), (void*) (&(configData->stSensorIn[i])), moduleID);
+        ReadMessage(configData->STDatasStruct.STMessages[i].stInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten, sizeof(STAttFswMsg), (void*) (&(configData->stSensorIn[i])), moduleID);
         
         /*! Only mark valid size if message isn't stale*/
         configData->ReadSizeST[i] = timeOfMsgWritten != configData->ClockTimeST[i] ?
@@ -482,8 +481,11 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
         vScale(-1.0, configData->xBar, configData->numStates, aRow);
         vAdd(aRow, configData->numStates,
              &(configData->SP[(i+1)*configData->numStates]), aRow);
-        badUpdate += (configData->wC[i+1]<0) - (configData->wC[i+1]>0);/*Check sign of wC to know if the sqrt will fail*/
-        if (badUpdate <0){return -1;}
+        badUpdate += (configData->wC[i+1]>0) - (configData->wC[i+1]<0) - 1;
+        /*Check sign of wC to know if the sqrt will fail*/
+        if (badUpdate <0){
+            inertialUKFCleanTimeUpdate(configData, updateTime);
+            return -1;}
         vScale(sqrt(configData->wC[i+1]), aRow, configData->numStates, aRow);
 		memcpy((void *)&AT[i*configData->numStates], (void *)aRow,
 			configData->numStates*sizeof(double));
@@ -701,7 +703,7 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
         vScale(-1.0, yBar, configData->numObs, tempYVec);
         vAdd(tempYVec, configData->numObs,
              &(configData->yMeas[(i+1)*configData->numObs]), tempYVec);
-        badUpdate += (configData->wC[i+1]<0) - (configData->wC[i+1]>0); /*Check sign of wC to know if the sqrt will fail*/
+        badUpdate += (configData->wC[i+1]>0) - (configData->wC[i+1]<0) - 1; /*Check sign of wC to know if the sqrt will fail*/
         if (badUpdate<0){return -1;}
         vScale(sqrt(configData->wC[i+1]), tempYVec, configData->numObs, tempYVec);
         memcpy(&(AT[i*configData->numObs]), tempYVec,
