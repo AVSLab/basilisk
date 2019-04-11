@@ -29,36 +29,38 @@
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 
 /*! \defgroup thrForceMapping
- * @brief This module is responsible for taking a desired torque vector and mapping it onto available thrusters. More information can be found
- * in the [PDF Description](Basilisk-ThrusterForces-20160627.pdf).
+ * @brief This module is reads in a desired attitude control torque vector and maps it onto a set of thrusters.
+ *
+ * The module works for both on-pulsing (nominal thruster state is off such as with RCS thrusters) and off-pulsing (nominal thruster state in duch such as with DV thrusters). More information can be found in the [PDF Description](Basilisk-ThrusterForces-20160627.pdf).
  * @{
  */
 
 /*!@brief Data structure for module to map a command torque onto thruster forces. */
 typedef struct {
+    /* declare module public variables */
+    double   controlAxes_B[3*3];                    //!< []      array of the control unit axes
+    double   rThruster_B[MAX_EFF_CNT][3];           //!< [m]     local copy of the thruster locations
+    double   gtThruster_B[MAX_EFF_CNT][3];          //!< []      local copy of the thruster force unit direction vectors
+    int32_t  thrForceSign;                          //!< []      Flag indicating if pos (+1) or negative (-1) thruster solutions are found
+    double angErrThresh;                            //!< [r]     Angular error at which thruster forces are scaled to not be super-saturated
+    double   epsilon;                               //!< variable specifying what is considered a small number
+
     /* declare module private variables */
-    double   controlAxes_B[3*3];                    /*!< []      array of the control unit axes */
-    double   rThruster_B[MAX_EFF_CNT][3];           /*!< [m]     local copy of the thruster locations */
-    double   gtThruster_B[MAX_EFF_CNT][3];          /*!< []      local copy of the thruster force unit direction vectors */
-    uint32_t numControlAxes;               /*!< []      counter indicating how many orthogonal axes are controlled */
-    uint32_t numThrusters;                          /*!< []      The number of thrusters available on vehicle */
-    int32_t  thrForceSign;                          /*!< []      Flag indicating if pos (+1) or negative (-1) thruster
-                                                                 solutions are found */
-    double outTorqAngErr;                           /*!< [r]     Angular error of effector torque*/
+    uint32_t numControlAxes;                        //!< []      counter indicating how many orthogonal axes are controlled
+    uint32_t numThrusters;                          //!< []      The number of thrusters available on vehicle
+    double outTorqAngErr;                           //!< [r]     Angular error of effector torque
     double thrForcMag[MAX_EFF_CNT];
-    double angErrThresh;                            /*!< [r]     Angular error at which forces are trunc*/
 
     /* declare module IO interfaces */
-    char     outputDataName[MAX_STAT_MSG_LENGTH];   /*!< The name of the output message*/
-    int32_t  outputMsgID;                           /*!< ID for the outgoing message */
-    char inputVehControlName[MAX_STAT_MSG_LENGTH];  /*!< The name of the vehicle control (Lr) Input message*/
-    int32_t  controlTorqueInMsgID;                     /*!< ID for the incoming Lr control message */
-    char inputThrusterConfName[MAX_STAT_MSG_LENGTH];/*!< The name of the thruster cluster Input message*/
-    int32_t  inputThrusterConfID;                   /*!< [-] ID for the incoming Thruster configuration data*/
-    char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
-    int32_t inputVehicleConfigDataID;               /*!< [] ID for the incoming static vehicle data */
-    VehicleConfigFswMsg   sc;                      /*!< spacecraft configuration message */
-    double   epsilon;
+    char     outputDataName[MAX_STAT_MSG_LENGTH];   //!< The name of the output thruster force message
+    int32_t  thrusterForceOutMsgId;                           //!< ID for the outgoing message
+    char inputVehControlName[MAX_STAT_MSG_LENGTH];  //!< The name of the vehicle control (Lr) Input message
+    int32_t  controlTorqueInMsgId;                  //!< ID for the incoming Lr control message
+    char inputThrusterConfName[MAX_STAT_MSG_LENGTH];//!< The name of the thruster cluster Input message
+    int32_t  thrusterConfigInMsgId;                 //!< [-] ID for the incoming Thruster configuration data
+    char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH]; //!< The name of the Input message
+    int32_t vehicleConfigDataInMsgId;               //!< [] ID for the incoming static vehicle data
+    VehicleConfigFswMsg   sc;                       //!< spacecraft configuration message
 
 }thrForceMappingConfig;
 

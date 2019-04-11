@@ -20,34 +20,23 @@
     Simple Thruster Force Evaluation from
  */
 
-/* modify the path to reflect the new module names */
 #include "effectorInterfaces/thrForceMapping/thrForceMapping.h"
-
-/* update this include to reflect the required module input messages */
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include <string.h>
 #include <math.h>
-
-
-/*
- Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
- */
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/bsk_Print.h"
 
 
-/*! This method initializes the configData for this module.
- It checks to ensure that the inputs are sane and then creates the
- output message
+/*! This method creates the module output message of type [THRArrayCmdForceFswMsg](\ref THRArrayCmdForceFswMsg).
  @return void
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the ConfigData
  */
 void SelfInit_thrForceMapping(thrForceMappingConfig *configData, uint64_t moduleID)
 {
-    /*! Begin method steps */
     /*! - Create output message for module */
-    configData->outputMsgID = CreateNewMessage(configData->outputDataName,
+    configData->thrusterForceOutMsgId = CreateNewMessage(configData->outputDataName,
                                                sizeof(THRArrayCmdForceFswMsg),
                                                "THRArrayCmdForceFswMsg",
                                                moduleID);
@@ -61,16 +50,18 @@ void SelfInit_thrForceMapping(thrForceMappingConfig *configData, uint64_t module
  */
 void CrossInit_thrForceMapping(thrForceMappingConfig *configData, uint64_t moduleID)
 {
-    /*! - Get the input message ID's */
-    configData->controlTorqueInMsgID = subscribeToMessage(configData->inputVehControlName,
+    /*! - subscribe to the attitude control torque input message */
+    configData->controlTorqueInMsgId = subscribeToMessage(configData->inputVehControlName,
                                                 sizeof(CmdTorqueBodyIntMsg),
                                                 moduleID);
 
-    configData->inputThrusterConfID = subscribeToMessage(configData->inputThrusterConfName,
+    /*! - subscribe to the thruster configuration input message */
+    configData->thrusterConfigInMsgId = subscribeToMessage(configData->inputThrusterConfName,
                                                        sizeof(THRArrayConfigFswMsg),
                                                        moduleID);
 
-    configData->inputVehicleConfigDataID = subscribeToMessage(configData->inputVehicleConfigDataName,
+    /*! - subscribe to the vehicle configuration input message */
+    configData->vehicleConfigDataInMsgId = subscribeToMessage(configData->inputVehicleConfigDataName,
                                                               sizeof(VehicleConfigFswMsg), moduleID);
 
 }
@@ -83,13 +74,13 @@ void CrossInit_thrForceMapping(thrForceMappingConfig *configData, uint64_t modul
  */
 void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
-    double             *pAxis;                 /*!< pointer to the current control axis */
+    double             *pAxis;                  /*!< pointer to the current control axis */
     int                 i;
-    THRArrayConfigFswMsg   localThrusterData;     /*!< local copy of the thruster data message */
+    THRArrayConfigFswMsg   localThrusterData;   /*!< local copy of the thruster data message */
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
 
-    /* configure the number of axes that are controlled */
+    /*! - configure the number of axes that are controlled */
     configData->numControlAxes = 0;
     for (i=0;i<3;i++)
     {
@@ -109,15 +100,15 @@ void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime,
     }
 
 
-    /* read in the support messages */
+    /*! - read in the support thruster and vehicle configuration messages */
     memset(&localThrusterData, 0x0, sizeof(THRArrayConfigFswMsg));
-    ReadMessage(configData->inputThrusterConfID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->thrusterConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(THRArrayConfigFswMsg), &localThrusterData, moduleID);
     memset(&configData->sc, 0x0, sizeof(VehicleConfigFswMsg));
-    ReadMessage(configData->inputVehicleConfigDataID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->vehicleConfigDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(configData->sc), moduleID);
 
-    /* read in the thruster position and thruster force heading information */
+    /*! - copy the thruster position and thruster force heading information into the module configuration data */
     configData->numThrusters = localThrusterData.numThrusters;
     for(i=0; i<configData->numThrusters; i=i+1)
     {
@@ -158,26 +149,26 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     double      rCrossGt[3];
     CmdTorqueBodyIntMsg LrInputMsg;
     THRArrayCmdForceFswMsg thrusterForceOut;
+    /*! - zero all message copies */
     memset(&LrInputMsg, 0x0, sizeof(CmdTorqueBodyIntMsg));
     memset(&configData->sc, 0x0, sizeof(VehicleConfigFswMsg));
     memset(&thrusterForceOut, 0x0, sizeof(THRArrayCmdForceFswMsg));
     
-    /* clear the net thruster force output array */
+    /*! - clear arrays of the thruster mapping algorithm */
     vSetZero(F, MAX_EFF_CNT);
     mSetZero(D, 3, MAX_EFF_CNT);
     mSetZero(Dbar, 3, MAX_EFF_CNT);
     
-    /*! Begin method steps*/
     /*! - Read the input messages */
-    
-    ReadMessage(configData->controlTorqueInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->controlTorqueInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CmdTorqueBodyIntMsg), (void*) &(LrInputMsg), moduleID);
-    ReadMessage(configData->inputVehicleConfigDataID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->vehicleConfigDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(configData->sc), moduleID);
 
+    /*! - copy the request 3D attitude control torque vector */
     v3Copy(LrInputMsg.torqueRequestBody, Lr_B);
 
-    /* compute thruster locations relative to COM */
+    /*! - compute thruster locations relative to COM */
     for (i=0;i<configData->numThrusters;i++) {
         v3Subtract(configData->rThruster_B[i], configData->sc.CoM_B, rThrusterRelCOM_B[i]); /* Part 1 of Eq. 4 */
     }
@@ -185,7 +176,7 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     /* temporary available thruster assignment until the thruster availability is read in through a message */
     numAvailThrusters = configData->numThrusters;
    
-    /* compute general mapping matrix */
+    /*! - compute general thruster force mapping matrix */
     v3SetZero(Lr_offset);
     for(i=0; i<numAvailThrusters; i=i+1)
     {
@@ -206,9 +197,11 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     }
     
     v3Add(Lr_offset, Lr_B, Lr_B);
+
+    /*! - 1st iteration of finding a set of force vectors to implement the control torque */
     findMinimumNormForce(configData, D, Lr_B, numAvailThrusters, F, BLr_B);
-    
-    /* Remove forces components that are contributing to the RCS Null space (this is due to the geometry of the thrusters) */
+
+    /*! - Remove forces components that are contributing to the RCS Null space (this is due to the geometry of the thrusters) */
     if (configData->thrForceSign>0)
     {
         substractMin(F, numAvailThrusters);
@@ -232,6 +225,7 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
                 counterPosForces += 1;
             }
         }
+
         findMinimumNormForce(configData, Dbar, Lr_B, counterPosForces, Fbar, BLr_B);
 
         c = 0;
@@ -276,7 +270,7 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
 
     /* store the output message */
     mCopy(F, configData->numThrusters, 1, thrusterForceOut.thrForce);
-    WriteMessage(configData->outputMsgID, callTime, sizeof(THRArrayCmdForceFswMsg),   /* update module name */
+    WriteMessage(configData->thrusterForceOutMsgId, callTime, sizeof(THRArrayCmdForceFswMsg),   /* update module name */
                  (void*) &(thrusterForceOut), moduleID);
 
     return;
@@ -307,7 +301,7 @@ void findMinimumNormForce(thrForceMappingConfig *configData,
                           double D[3][MAX_EFF_CNT], double Lr_B[3], uint32_t numForces, double F[MAX_EFF_CNT], double Lr_B_Bar[3])
 {
     
-    int i,k;                                  /*!< []     counters */
+    int         i,k;                            /*!< []     counters */
     double      DDT[3][3];                      /*!< [m^2]  [D].[D]^T matrix */
     double      DDTInv[3][3];                   /*!< [m^2]  ([D].[D]^T)^-1 matrix */
     double      C[3][3];                        /*!< [m^2]  (C) matrix */
@@ -315,8 +309,8 @@ void findMinimumNormForce(thrForceMappingConfig *configData,
     double      CTC[3][3];                      /*!< [m^2]  ([C]^T.[C]) matrix */
     double      DDTInvLr[3];
 
+    /*! - copy the control axes */
     m33SetZero(C);
-    
     for (i=0;i<configData->numControlAxes;i++) {
         v3Copy(&configData->controlAxes_B[3*i], C[i]);
     }
@@ -326,7 +320,7 @@ void findMinimumNormForce(thrForceMappingConfig *configData,
     m33MultM33(CT, C, CTC);
     m33MultV3(CTC, Lr_B, Lr_B_Bar); /* Note: Lr_B_Bar is projected only onto the available control axes. i.e. if using DV thrusters with only 1 control axis, Lr_B_Bar = [#, 0, 0] */
     
-    /* zero the output force vector */
+    /*! - zero the output force vector */
     vSetZero(F, MAX_EFF_CNT);
     
     /* find [D].[D]^T */
@@ -351,7 +345,7 @@ void findMinimumNormForce(thrForceMappingConfig *configData,
         }
     }
     m33Inverse(DDT, DDTInv);
-    m33MultV3(DDTInv, Lr_B_Bar, DDTInvLr); /* If fewer than 3 control axes,tThe the 1's along the diagonal of DDTInv will not conflict with the mapping, as Lr_B_Bar contains the nessessary 0s to inhibit projection */
+    m33MultV3(DDTInv, Lr_B_Bar, DDTInvLr); /* If fewer than 3 control axes, then the 1's along the diagonal of DDTInv will not conflict with the mapping, as Lr_B_Bar contains the nessessary 0s to inhibit projection */
     
     for (i=0;i<numForces;i++) {
         F[i] = 0.0;
@@ -385,7 +379,7 @@ double computeTorqueAngErr(double D[3][MAX_EFF_CNT], double BLr_B[3], uint32_t n
         /* loop over all thrusters and compute the actual torque to be applied */
         for(i=0; i<numForces; i++)
         {
-            if (FMag[i] <= 0)
+            if (FMag[i] <= 0.0)
             {
                 thrusterForce = 0.0; /* ensures that we don't divide by zero*/
             } else {
