@@ -433,49 +433,48 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         this->outputStream->write(reinterpret_cast<char* > (varIntBuffer), varIntBytes);
 
         if (this->liveStream == 1){
-        // this is actually a pretty good place to receive the pong
-        // we should think about a push pull architecture if we have performance problems
-        // receive pong
-        zmq_msg_t receive_buffer;
-        zmq_msg_init(&receive_buffer);
+            // this is actually a pretty good place to receive the pong
+            // we should think about a push pull architecture if we have performance problems
+            // receive pong
+            zmq_msg_t receive_buffer;
+            zmq_msg_init(&receive_buffer);
 
-        zmq_msg_recv (&receive_buffer, requester_socket, 0);
-        // send protobuffer raw over zmq_socket as ping
-        void* serialized_message = malloc(byteCount);
-        message->SerializeToArray(serialized_message, byteCount);
-
-
-        // fill messages
-        zmq_msg_t request_header;
-        zmq_msg_t empty_frame1;
-        zmq_msg_t empty_frame2;
-        zmq_msg_t request_buffer;
-
-        void* header_message = malloc(10 * sizeof(char));
-        memcpy(header_message, "SIM_UPDATE", 10);
+            zmq_msg_recv (&receive_buffer, requester_socket, 0);
+            // send protobuffer raw over zmq_socket as ping
+            void* serialized_message = malloc(byteCount);
+            message->SerializeToArray(serialized_message, byteCount);
 
 
-        zmq_msg_init_data(&request_header, header_message, 10, message_buffer_deallocate, NULL);
-        zmq_msg_init(&empty_frame1);
-        zmq_msg_init(&empty_frame2);
-        zmq_msg_init_data(&request_buffer, serialized_message,byteCount, message_buffer_deallocate, NULL);
+            // fill messages
+            zmq_msg_t request_header;
+            zmq_msg_t empty_frame1;
+            zmq_msg_t empty_frame2;
+            zmq_msg_t request_buffer;
 
-        zmq_msg_send(&request_header, requester_socket, ZMQ_SNDMORE);
-        zmq_msg_send(&empty_frame1, requester_socket, ZMQ_SNDMORE);
-        zmq_msg_send(&empty_frame2, requester_socket, ZMQ_SNDMORE);
-        zmq_msg_send(&request_buffer, requester_socket, 0);
+            void* header_message = malloc(10 * sizeof(char));
+            memcpy(header_message, "SIM_UPDATE", 10);
+
+
+            zmq_msg_init_data(&request_header, header_message, 10, message_buffer_deallocate, NULL);
+            zmq_msg_init(&empty_frame1);
+            zmq_msg_init(&empty_frame2);
+            zmq_msg_init_data(&request_buffer, serialized_message,byteCount, message_buffer_deallocate, NULL);
+
+            zmq_msg_send(&request_header, requester_socket, ZMQ_SNDMORE);
+            zmq_msg_send(&empty_frame1, requester_socket, ZMQ_SNDMORE);
+            zmq_msg_send(&empty_frame2, requester_socket, ZMQ_SNDMORE);
+            zmq_msg_send(&request_buffer, requester_socket, 0);
+
+            // this is actually a pretty good place to receive the pong
+            // we should think about a push pull architecture if we have performance problems
+            // receive pong
+            char buffer[10];
+            zmq_recv(requester_socket, buffer, 10, 0);
+            // send protobuffer raw over zmq_socket as ping
+            std::string serialized_rec_message;
+            message->SerializeToString(&serialized_rec_message);
+            zmq_send(requester_socket, serialized_rec_message.c_str(), serialized_rec_message.length(), 0);
         }
-
-        // this is actually a pretty good place to receive the pong
-        // we should think about a push pull architecture if we have performance problems
-        // receive pong
-        char buffer[10];
-        zmq_recv (requester_socket, buffer, 10, 0);
-        // send protobuffer raw over zmq_socket as ping
-        std::string serialized_message;
-        message->SerializeToString(&serialized_message);
-        zmq_send(requester_socket, serialized_message.c_str(), serialized_message.length(), 0);
-
         // Write protobuffer to file
         if (!this->saveFile  || !message->SerializeToOstream(this->outputStream)) {
             return;
