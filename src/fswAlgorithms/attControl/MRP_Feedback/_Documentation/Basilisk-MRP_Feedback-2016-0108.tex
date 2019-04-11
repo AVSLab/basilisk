@@ -88,7 +88,7 @@ Simply call the module reset function prior to using this control module.  This 
 		\begin{equation*}
 			\bm z = K \int_{t_{0}}^{t} \bm\sigma \text{d}t + [I_{\text{RW}}](\delta\bm\omega - \delta\bm\omega_{0})
 		\end{equation*}
-		In the BSK module the vector $\delta\bm\omega_{0}$ is hard-coded to a zero vector.  This function will work for any initial tracking error, and this assumption doesn't impact performance.
+		In the BSK module the vector $\delta\bm\omega_{0}$ is hard-coded to a zero vector.  This function will work for any initial tracking error, and this assumption doesn't impact performance. A limit to the magnitude of the $\int_{t_{0}}^{t} \bm\sigma \text{d}t $ can be specified, which is a scalar compared to each element of the integral term. 
 		
 		The integral measure $\bm z$ must be computed to determine $[P][K_{I}] \bm z$, and the expression $[\widetilde{K_{I}\bm z}]$ is added to $[\widetilde{\bm\omega_{r}}]$ term.  
 
@@ -167,7 +167,8 @@ This module requires the following variables:
 \item $[I]$, the inertia matrix of the body as \verb|vehicleConfigOut.ISCPntB_B|
 \item $\Omega_i$, speed of each reaction wheel in \verb|rwSpeedMessage.wheelSpeeds|
 \item Gains $k,P$ in \verb|moduleConfig|. 
-\item The integral gain $K_i$ in \verb|moduleConfig|. Setting this variable to a negative number disables the error integration for the controller, leaving just PI terms. Zero is not supported as a value for $k_i$. This variable is used to compute the integralLimit, used to limit the degree of integrator windup and reduce the chance of controller saturation. The integrator is required to maintain asymptotic tracking in the presence of an external disturbing torque.
+\item The integral gain $K_i$ in \verb|moduleConfig|. Setting this variable to a negative number disables the error integration for the controller, leaving just PI terms. The integrator is required to maintain asymptotic tracking in the presence of an external disturbing torque. 
+\item \verb|integralLimit| is a scalar value applied in an elementwise check to ensure that the value of each element of the $\int_{t_{0}}^{t} \bm\sigma \text{d}t $ vector is within the desired limit. If not, the sign of that element is persevered, but the magnitude is replaced by \verb|integralLimit|.  
 \end{itemize}
 
 
