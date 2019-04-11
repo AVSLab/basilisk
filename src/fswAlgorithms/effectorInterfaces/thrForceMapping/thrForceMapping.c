@@ -305,7 +305,6 @@ void findMinimumNormForce(thrForceMappingConfig *configData,
     double      DDT[3][3];                      /*!< [m^2]  [D].[D]^T matrix */
     double      DDTInv[3][3];                   /*!< [m^2]  ([D].[D]^T)^-1 matrix */
     double      C[3][3];                        /*!< [m^2]  (C) matrix */
-    double      CT[3][3];                       /*!< [m^2]  ([C]^T) matrix */
     double      CTC[3][3];                      /*!< [m^2]  ([C]^T.[C]) matrix */
     double      DDTInvLr[3];
 
@@ -315,9 +314,8 @@ void findMinimumNormForce(thrForceMappingConfig *configData,
         v3Copy(&configData->controlAxes_B[3*i], C[i]);
     }
     
-    /* map the control torque onto the control axes*/
-    m33Transpose(C, CT);
-    m33MultM33(CT, C, CTC);
+    /*! - map the control torque onto the control axes*/
+    m33tMultM33(C, C, CTC);
     m33MultV3(CTC, Lr_B, Lr_B_Bar); /* Note: Lr_B_Bar is projected only onto the available control axes. i.e. if using DV thrusters with only 1 control axis, Lr_B_Bar = [#, 0, 0] */
     
     /*! - zero the output force vector */
