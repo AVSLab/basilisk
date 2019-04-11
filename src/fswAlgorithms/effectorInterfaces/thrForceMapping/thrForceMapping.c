@@ -93,10 +93,10 @@ void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime,
         }
     }
     if (configData->numControlAxes==0) {
-        BSK_PRINT(MSG_WARNING,"thrForceMapping() is not setup to control any axes!\n");
+        BSK_PRINT(MSG_ERROR,"thrForceMapping() is not setup to control any axes!\n");
     }
     if (configData->thrForceSign==0) {
-        BSK_PRINT(MSG_WARNING,"thrForceMapping() must have posThrustFlag set to either +1 or -1\n");
+        BSK_PRINT(MSG_ERROR,"thrForceMapping() must have posThrustFlag set to either +1 or -1\n");
     }
 
 
