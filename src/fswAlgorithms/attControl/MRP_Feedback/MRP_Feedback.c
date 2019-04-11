@@ -196,9 +196,13 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
     if (configData->Ki > 0) {   /* check if integral feedback is turned on  */
         v3Scale(configData->K * dt, guidCmd.sigma_BR, v3_1);
         v3Add(v3_1, configData->int_sigma, configData->int_sigma);
-        if((intCheck = v3Norm(configData->int_sigma)) > configData->integralLimit) {
-            v3Scale(configData->integralLimit / intCheck, configData->int_sigma, configData->int_sigma);
-        } /* keep int_sigma less than integralLimit */
+        
+        for (i=0;i<3;i++) {
+            intCheck = fabs(configData->int_sigma[i]);
+            if (intCheck > configData->integralLimit) {
+                configData->int_sigma[i] *= configData->integralLimit/intCheck;
+            }
+        }/* keep int_sigma less than integralLimit */
         m33MultV3(RECAST3X3 configData->ISCPntB_B, guidCmd.omega_BR_B, v3_2); /* -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s) */
         v3Add(configData->int_sigma, v3_2, configData->z);
     }

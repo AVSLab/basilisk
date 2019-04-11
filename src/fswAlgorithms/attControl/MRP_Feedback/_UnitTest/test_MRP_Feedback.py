@@ -266,8 +266,10 @@ def findTrueTorques(moduleConfig,guidCmdData,rwSpeedMessage,vehicleConfigOut,jsL
         #evaluate integral term
         if Ki > 0: #if integral feedback is on
             sigmaInt = K * dt * sigma_BR + sigmaInt
-            if np.linalg.norm(sigmaInt) > moduleConfig.integralLimit: #Make sure z is less than the intergralLimit to mitigate windup issues
-                sigmaInt = sigmaInt/np.linalg.norm(sigmaInt)*moduleConfig.integralLimit
+            for n in range(3):
+                if abs(sigmaInt[n]) > moduleConfig.integralLimit:
+                    sigmaInt[n] *= moduleConfig.integralLimit/sigmaInt[n] #check elementwise if integral term is greater than limit; preserve direction (+/-)
+
             zVec = sigmaInt + Isc.dot(omega_BR_B)
         else: #integral gain turned off/negative setting
             zVec = np.asarray([0, 0, 0])
