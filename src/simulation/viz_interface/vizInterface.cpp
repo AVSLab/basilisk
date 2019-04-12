@@ -172,7 +172,9 @@ void VizInterface::CrossInit()
 void VizInterface::Reset(uint64_t CurrentSimNanos)
 {
     this->FrameNumber=-1;
-    outputStream = new std::ofstream(this->protoFilename, std::ios::out |std::ios::binary);
+    if (this->saveFile == 1) {
+        this->outputStream = new std::ofstream(this->protoFilename, std::ios::out |std::ios::binary);
+    }
     return;
 }
 
@@ -430,7 +432,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         uint32_t byteCount = message->ByteSizeLong();
         google::protobuf::uint8 *end = google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(byteCount, varIntBuffer);
         unsigned long varIntBytes = end - varIntBuffer;
-        this->outputStream->write(reinterpret_cast<char* > (varIntBuffer), varIntBytes);
+        if (this->saveFile == 1) {
+            this->outputStream->write(reinterpret_cast<char* > (varIntBuffer), varIntBytes);
+        }
 
         if (this->liveStream == 1){
             // this is actually a pretty good place to receive the pong
