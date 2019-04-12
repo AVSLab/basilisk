@@ -200,22 +200,18 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
 
     /*! - 1st iteration of finding a set of force vectors to implement the control torque */
     findMinimumNormForce(configData, D, Lr_B, numAvailThrusters, F, BLr_B);
-
+    
     /*! - Remove forces components that are contributing to the RCS Null space (this is due to the geometry of the thrusters) */
     if (configData->thrForceSign>0)
     {
         substractMin(F, numAvailThrusters);
     }
-
+    
     /* if the RCS Force solution includes negative forces, or if not all (DV or RCS) thrusters are available, recompute D excluding those thrusters */
     if (numAvailThrusters != configData->numThrusters || configData->thrForceSign<0) {
         counterPosForces = 0;
         memset(thrusterUsed,0x0,MAX_EFF_CNT*sizeof(int));
         for (i=0;i<numAvailThrusters;i++) {
-            if (configData->thrForcMag[i] == 0)
-            {
-                printf("Confirming that F[i] = %f when FMag[i] = 0.0\n", F[i]);
-            }
             if (F[i]*configData->thrForceSign > 0) {
                 thrusterUsed[i] = 1; /* Eq. 11 */
                 for(j=0; j<3; j++)
@@ -237,7 +233,6 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
                 F[i] = 0.0;
             }
         }
-        
         if (configData->thrForceSign>0)
         {
             substractMin(F, numAvailThrusters);
@@ -301,12 +296,13 @@ void findMinimumNormForce(thrForceMappingConfig *configData,
                           double D[3][MAX_EFF_CNT], double Lr_B[3], uint32_t numForces, double F[MAX_EFF_CNT], double Lr_B_Bar[3])
 {
     
-    int         i,k;                            /*!< []     counters */
+    int         i,j,k;                            /*!< []     counters */
     double      DDT[3][3];                      /*!< [m^2]  [D].[D]^T matrix */
     double      DDTInv[3][3];                   /*!< [m^2]  ([D].[D]^T)^-1 matrix */
     double      C[3][3];                        /*!< [m^2]  (C) matrix */
     double      CTC[3][3];                      /*!< [m^2]  ([C]^T.[C]) matrix */
     double      DDTInvLr[3];
+    double      CD[3][MAX_EFF_CNT];
 
     /*! - copy the control axes */
     m33SetZero(C);
@@ -322,36 +318,37 @@ void findMinimumNormForce(thrForceMappingConfig *configData,
     vSetZero(F, MAX_EFF_CNT);
     
     /* find [D].[D]^T */
-    /*
+    mMultM(C, 3, 3, D, 3, MAX_EFF_CNT, CD);
     m33SetIdentity(DDT);
-    for(i=0; i<3; i++) {
-        for(j=0; j<3; j++) {
+    for(i=0; i<configData->numControlAxes; i++) {
+        for(j=0; j<configData->numControlAxes; j++) {
             DDT[i][j] = 0.0;
             for (k=0;k<numForces;k++) {
-                DDT[i][j] += D[i][k] * D[j][k]; // Part of Eq. 9 For DV thrusters, this actually forces the [3][3] entry to zero and therefore does not work.
+                DDT[i][j] += CD[i][k] * CD[j][k]; // Part of Eq. 9 For DV thrusters, this actually forces the [3][3] entry to zero and therefore does not work.
             }
         }
     }
-    */
+
+    /*
     m33SetZero(DDT);
     mMultMt(D, 3, MAX_EFF_CNT, D, 3, MAX_EFF_CNT, DDT);
     if (m33Determinant(DDT) < configData->epsilon) {
         for (i=0;i<3;i++){
             if(DDT[i][i] == 0){
-                DDT[i][i] = 1.0; /* This is required to invert the matrix in cases when there are fewer than 3 control axes, or when all thrusters are pointed in the same direction.*/
+                DDT[i][i] = 1.0; // This is required to invert the matrix in cases when there are fewer than 3 control axes, or when all thrusters are pointed in the same direction./
             }
         }
     }
+    */
+    
     m33Inverse(DDT, DDTInv);
     m33MultV3(DDTInv, Lr_B_Bar, DDTInvLr); /* If fewer than 3 control axes, then the 1's along the diagonal of DDTInv will not conflict with the mapping, as Lr_B_Bar contains the nessessary 0s to inhibit projection */
-    
     for (i=0;i<numForces;i++) {
         F[i] = 0.0;
         for (k=0;k<3;k++) {
-            F[i] += D[k][i]*DDTInvLr[k]; /* Eq. 15*/
+            F[i] += CD[k][i]*DDTInvLr[k]; /* Eq. 15*/
         }
     }
-    
     return;
 
 }

@@ -77,7 +77,8 @@ def results_computeAngErr(D, BLr_B, F, thrForceMag, numThrusters):
     return returnAngle
 
 
-def mapToForce(D, Lr_Bar):
+def mapToForce(D, Lr_Bar, C):
+    D = np.matmul(C,D)
     DT = np.transpose(D)
     DDT = np.matmul(D, DT)
     if np.linalg.det(DDT) < 0.0005:
@@ -111,7 +112,7 @@ def results_thrForceMapping(Lr, COrig, COM, rData, gData, thrForceSign, thrForce
         if(thrForceSign < 0):
           Lr_offset -= thrForceMag[i]*np.cross((rData[i,:] - COM), gData[i,:])
     Lr_Bar = Lr_Bar + Lr_offset
-    F = mapToForce(D, Lr_Bar)
+    F = mapToForce(D, Lr_Bar, C)
 
     # Subtract off minimum force (remove null space contribution)
     if thrForceSign > 0:
@@ -130,7 +131,7 @@ def results_thrForceMapping(Lr, COrig, COM, rData, gData, thrForceSign, thrForce
             if t[i]:
                 DNew = np.append(DNew, np.cross((rData[i,:] - COM), gData[i]))
         DNew = np.reshape(DNew, (3, (len(DNew) / 3)), 'F')
-        FNew = mapToForce(DNew, Lr_Bar)
+        FNew = mapToForce(DNew, Lr_Bar,C)
 
         # Remove minumum force
         if thrForceSign > 0:
@@ -358,7 +359,6 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
                 [0.0, -1.0, 0.0],
                 [-1.0, 0.0, 0.0] \
                 ]
-
     maxThrust = 0.95
     if useDVThruster:
         maxThrust = 10.0
@@ -412,9 +412,9 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
     accuracy = 1e-6
 
 
-    D = rcsDirectionData
-    F = np.transpose(moduleOutput[0, 0:MAX_EFF_CNT])
-    receivedTorque = -1.0 * np.array([np.matmul(np.transpose(D), F)])
+    D = np.cross(rcsDirectionData,rcsLocationData-CoM_B)
+    F = np.transpose(moduleOutput[0, 1:MAX_EFF_CNT+1])
+    receivedTorque = -1.0*np.array([np.matmul(np.transpose(D), F)])
     receivedTorque = np.append(np.array([0.0]), receivedTorque)
 
     Lr_offset = np.array([0.0, 0.0, 0.0])
@@ -426,14 +426,14 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
     Lr_Bar = requestedTorque + Lr_offset
 
     '''
-    if numThrusters >= moduleConfig.numControlAxes:
+    if numThrusters >= moduleConfig.numControlAxes and saturateThrusters == 0:
         testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([requestedTorque]),
                                                                      np.array([receivedTorque]), accuracy,
                                                                      "CompareTorques",
                                                                      moduleConfig.numControlAxes, testFailCount, testMessages)
     '''
 
-    snippetName = "LrBReq_LrBRec_" + str(useDVThruster) + "_" + str(useCOMOffset) + "_" + str(dropThruster) + "_" + str(dropAxis) + "_" + str(saturateThrusters)
+    snippetName = "LrBReq_LrBRec_" + str(useDVThruster) + "_" + str(useCOMOffset) + "_" + str(dropThruster) + "_" + str(dropAxis) + "_" + str(saturateThrusters) + "_" + str(misconfigThruster)
     requestedTex = str(Lr_Bar) #str(requestedTorque)
     receivedTex = str(receivedTorque[1:4])
     snippetTex = "Requested:\t" + requestedTex + "\n"
@@ -453,7 +453,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
 
     unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
 
-    snippentName = "passFail_" + str(useDVThruster) + "_" + str(useCOMOffset) + "_" + str(dropThruster) + "_" + str(dropAxis) + "_" + str(saturateThrusters)
+    snippentName = "passFail_" + str(useDVThruster) + "_" + str(useCOMOffset) + "_" + str(dropThruster) + "_" + str(dropAxis) + "_" + str(saturateThrusters) + "_" + str(misconfigThruster)
     if testFailCount == 0:
         colorText = 'ForestGreen'
         print "PASSED: " + moduleWrap.ModelTag
@@ -479,7 +479,7 @@ if __name__ == "__main__":
                  False,           # useDVThruster
                  False,           # use COM offset
                  False,           # drop thruster(s)
-                 False,           # drop control axis
+                 True,            # drop control axis
                  0,               # saturateThrusters
                  False            # misconfigThruster
 
