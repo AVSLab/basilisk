@@ -74,9 +74,9 @@ void CrossInit_thrForceMapping(thrForceMappingConfig *configData, uint64_t modul
  */
 void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
-    double             *pAxis;                  /*!< pointer to the current control axis */
+    double             *pAxis;                  /* pointer to the current control axis */
     int                 i;
-    THRArrayConfigFswMsg   localThrusterData;   /*!< local copy of the thruster data message */
+    THRArrayConfigFswMsg   localThrusterData;   /* local copy of the thruster data message */
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
 
@@ -133,19 +133,19 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     uint64_t    timeOfMsgWritten;
     uint32_t    sizeOfMsgWritten;
     int         i,j,c;
-    int         counterPosForces;             /*!< []      counter for number of positive thruster forces */
-    double      F[MAX_EFF_CNT];               /*!< [N]     vector of commanded thruster forces */
-    double      Fbar[MAX_EFF_CNT];            /*!< [N]     vector of intermediate thruster forces */
-    double      D[3][MAX_EFF_CNT];            /*!< [m]     mapping matrix from thruster forces to body torque */
-    double      Dbar[3][MAX_EFF_CNT];         /*!< [m]     reduced mapping matrix*/
-    double      Lr_B[3];                      /*!< [Nm]    commanded ADCS control torque */
+    int         counterPosForces;             /* []      counter for number of positive thruster forces */
+    double      F[MAX_EFF_CNT];               /* [N]     vector of commanded thruster forces */
+    double      Fbar[MAX_EFF_CNT];            /* [N]     vector of intermediate thruster forces */
+    double      D[3][MAX_EFF_CNT];            /* [m]     mapping matrix from thruster forces to body torque */
+    double      Dbar[3][MAX_EFF_CNT];         /* [m]     reduced mapping matrix*/
+    double      Lr_B[3];                      /* [Nm]    commanded ADCS control torque */
     double      Lr_offset[3];
-    double      LrLocal[3];                   /*!< [Nm]    Torque provided by indiviual thruster */
-    int         thrusterUsed[MAX_EFF_CNT];    /*!< []      Array of flags indicating if this thruster is used for the Lr_j */
-    double      rThrusterRelCOM_B[MAX_EFF_CNT][3];/*!< [m]     local copy of the thruster locations relative to COM */
-    uint32_t    numAvailThrusters;            /*!< []      number of available thrusters */
-    double      BLr_B[3];                     /*!< [Nm]    Control torque that we actually control*/
-    double      maxFractUse;                  /*!< []      ratio of maximum requested thruster force relative to maximum thruster limit */
+    double      LrLocal[3];                   /* [Nm]    Torque provided by indiviual thruster */
+    int         thrusterUsed[MAX_EFF_CNT];    /* []      Array of flags indicating if this thruster is used for the Lr_j */
+    double      rThrusterRelCOM_B[MAX_EFF_CNT][3];/* [m]     local copy of the thruster locations relative to COM */
+    uint32_t    numAvailThrusters;            /* []      number of available thrusters */
+    double      BLr_B[3];                     /* [Nm]    Control torque that we actually control*/
+    double      maxFractUse;                  /* []      ratio of maximum requested thruster force relative to maximum thruster limit */
     double      rCrossGt[3];
     CmdTorqueBodyIntMsg LrInputMsg;
     THRArrayCmdForceFswMsg thrusterForceOut;
@@ -271,18 +271,26 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     return;
 }
 
-
+/*!
+ Take a stack of force values find the smallest value, and subtract if from all force values.  Here the smallest values
+ will become zero, while other forces increase.  This assumes that the thrusters are aligned such that if all
+ thrusters are firing, then no torque or force is applied.  This ensures only positive force values are computed.
+ */
 void substractMin(double *F, uint32_t size)
 {
-    double minValue;                        /*!< [N]    min or max value of the force set */
+    double minValue;                        /* [N]    min or max value of the force set */
     int    i;
 
+    /*! - initilize minimum force search by setting minimum to first force element */
     minValue = F[0];
+    /*! - loop over all force element and search for smallest force */
     for (i=1;i<size;i++) {
         if (F[i] < minValue) {
             minValue = F[i];
         }
     }
+
+    /*! - loop over forces and subtract the smallest force value */
     for (i=0;i<size;i++){
         F[i] -= minValue;
     }
@@ -291,16 +299,19 @@ void substractMin(double *F, uint32_t size)
 }
 
 
-
+/*!
+ Use a least square inverse to determine the smallest set of thruster forces that yield the desired torque vector.  Note
+ that this routine does not constrain yet the forces to be either positive or negative
+ */
 void findMinimumNormForce(thrForceMappingConfig *configData,
                           double D[3][MAX_EFF_CNT], double Lr_B[3], uint32_t numForces, double F[MAX_EFF_CNT], double Lr_B_Bar[3])
 {
     
-    int         i,j,k;                            /*!< []     counters */
-    double      DDT[3][3];                      /*!< [m^2]  [D].[D]^T matrix */
-    double      DDTInv[3][3];                   /*!< [m^2]  ([D].[D]^T)^-1 matrix */
-    double      C[3][3];                        /*!< [m^2]  (C) matrix */
-    double      CTC[3][3];                      /*!< [m^2]  ([C]^T.[C]) matrix */
+    int         i,j,k;                          /* []     counters */
+    double      DDT[3][3];                      /* [m^2]  [D].[D]^T matrix */
+    double      DDTInv[3][3];                   /* [m^2]  ([D].[D]^T)^-1 matrix */
+    double      C[3][3];                        /* [m^2]  (C) matrix */
+    double      CTC[3][3];                      /* [m^2]  ([C]^T.[C]) matrix */
     double      DDTInvLr[3];
     double      CD[3][MAX_EFF_CNT];
 
@@ -353,25 +364,28 @@ void findMinimumNormForce(thrForceMappingConfig *configData,
 
 }
 
+/*!
+ Determine the angle between the desired torque vector and the actual torque vector.
+ */
 double computeTorqueAngErr(double D[3][MAX_EFF_CNT], double BLr_B[3], uint32_t numForces, double epsilon,
                            double F[MAX_EFF_CNT], double FMag[MAX_EFF_CNT])
 
 {
-    double returnAngle = 0.0;       /*!< [rad]  angle between requested and actual torque vector */
-    /* make sure a control torque is requested, otherwise just return a zero angle error */
+    double returnAngle = 0.0;       /* [rad]  angle between requested and actual torque vector */
+    /*! - make sure a control torque is requested, otherwise just return a zero angle error */
     if (v3Norm(BLr_B) > epsilon) {
         
-        double tauActual_B[3];          /*!< [Nm]   control torque with current thruster solution */
-        double BLr_hat_B[3];            /*!< []     normalized BLr_B vector */
-        double LrEffector_B[3];         /*!< [Nm]   torque of an individual thruster effector */
-        double thrusterForce;           /*!< [N]    saturation constrained thruster force */
+        double tauActual_B[3];          /* [Nm]   control torque with current thruster solution */
+        double BLr_hat_B[3];            /* []     normalized BLr_B vector */
+        double LrEffector_B[3];         /* [Nm]   torque of an individual thruster effector */
+        double thrusterForce;           /* [N]    saturation constrained thruster force */
         int i;
         double DT[MAX_EFF_CNT][3];
         mTranspose(D, 3, MAX_EFF_CNT, DT);
         v3Normalize(BLr_B, BLr_hat_B);
         v3SetZero(tauActual_B);
 
-        /* loop over all thrusters and compute the actual torque to be applied */
+        /*! - loop over all thrusters and compute the actual torque to be applied */
         for(i=0; i<numForces; i++)
         {
             if (FMag[i] <= 0.0)
@@ -384,7 +398,7 @@ double computeTorqueAngErr(double D[3][MAX_EFF_CNT], double BLr_B[3], uint32_t n
             v3Add(tauActual_B, LrEffector_B, tauActual_B);
         }
 
-        /* evaluate the angle between the requested and thruster implemented torque vector */
+        /*! - evaluate the angle between the requested and thruster implemented torque vector */
         v3Normalize(tauActual_B, tauActual_B);
         if(v3Dot(BLr_hat_B, tauActual_B) < 1.0)
         {
