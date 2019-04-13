@@ -26,16 +26,12 @@
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "simulation/utilities/bsk_Print.h"
 
-/*! This method initializes the configData for the inertial UKF estimator.
- It checks to ensure that the inputs are sane and then creates the
- output message
+/*! This method creates the two moduel output messages.
  @return void
  @param configData The configuration data associated with the CSS WLS estimator
  */
 void SelfInit_inertialUKF(InertialUKFConfig *configData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
     /*! - Create output message for module */
 	configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
 		sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
@@ -51,7 +47,6 @@ void SelfInit_inertialUKF(InertialUKFConfig *configData, uint64_t moduleID)
  */
 void CrossInit_inertialUKF(InertialUKFConfig *configData, uint64_t moduleID)
 {
-    /*! Begin method steps */
     /*! - Find the message ID for the coarse sun sensor data message */
     int i;
     for (i = 0; i < configData->STDatasStruct.numST; i++)
