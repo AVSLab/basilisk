@@ -295,9 +295,9 @@ def test_FilterMethods():
 
     unitTestSupport.writeTeXSnippet("toleranceValue00", str(accuracy), path)
     if testFailCount == 0:
-        unitTestSupport.writeTeXSnippet("passFail00", str("PASSED"), path)
+        unitTestSupport.writeTeXSnippet("passFail00", textSnippetPassed, path)
     else:
-        unitTestSupport.writeTeXSnippet("passFail00", str("FAILED"), path)
+        unitTestSupport.writeTeXSnippet("passFail00", textSnippetFailed, path)
 
     return [testFailCount, ''.join(testMessages)]
 
