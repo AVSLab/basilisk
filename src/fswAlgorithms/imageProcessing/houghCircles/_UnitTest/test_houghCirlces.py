@@ -42,6 +42,7 @@ splitPath = path.split(bskName)
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport
 from Basilisk.utilities import macros
+from Basilisk.simulation import sim_model
 
 try:
     from Basilisk.fswAlgorithms import houghCircles
@@ -63,6 +64,12 @@ def test_module(show_plots):
 
 
 def houghCirclesTest(show_plots):
+
+
+    # Truth values from python
+    input_image = Image.open("circles.png")
+    #################################################
+
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -74,6 +81,8 @@ def houghCirclesTest(show_plots):
     # that run a simulation for the test. This creates a fresh and
     # consistent simulation environment for each test run.
     unitTestSim.TotalSim.terminateSimulation()
+
+    bitmapArray = []
 
     # # Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
@@ -88,38 +97,44 @@ def houghCirclesTest(show_plots):
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
 
-    # Initialize the test module configuration data
-    moduleConfig.navRateOutMsgName = "sampleOutput"
-    moduleConfig.imuRateInMsgName = "sampleInput"
+    moduleConfig.imageInMsgName = "sample_image"
+    moduleConfig.opnavCirclesOutMsgName = "circles"
+    pointerToStuff = sim_model.ConstCharVector()
+     # = sim_model.new_cByteArray(len(hex(int(id(input_image)))))
+    pointerLength = len(hex(int(id(input_image))))
+    print hex(int(id(input_image)))
+    for i in range(pointerLength):
+        pointerToStuff.append(hex(int(id(input_image)))[i])
+        # sim_model.cByteArray_setitem(pointerToStuff, i, int(hex(int(id(input_image)))[i], 16))
+    # Create input message and size it because the regular creator of that message
+    # is not part of the test.
+    inputMessageData = houghCircles.CameraImageMsg()
+    inputMessageData.timeTag = int(1E9)
+    inputMessageData.cameraID = 1
+    inputMessageData.imagePointer = pointerToStuff
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               moduleConfig.imageInMsgName,
+                               inputMessageData)
 
-    # # Create input message and size it because the regular creator of that message
-    # # is not part of the test.
-    # inputMessageData = houghCircles.CameraImageMsg()
-    # inputMessageData.AngVelBody = [-0.1, 0.2, -0.3]
-    # unitTestSupport.setMessage(unitTestSim.TotalSim,
-    #                            unitProcessName,
-    #                            moduleConfig.imuRateInMsgName,
-    #                            inputMessageData)
-    #
-    # # Setup logging on the test module output message so that we get all the writes to it
-    # unitTestSim.TotalSim.logThisMessage(moduleConfig.navRateOutMsgName, testProcessRate)
-    #
-    # # Need to call the self-init and cross-init methods
-    # unitTestSim.InitializeSimulation()
-    #
-    # # Set the simulation time.
-    # # NOTE: the total simulation time may be longer than this value. The
-    # # simulation is stopped at the next logging event on or after the
-    # # simulation end time.
-    # unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
-    #
-    # # Begin the simulation time run set above
-    # unitTestSim.ExecuteSimulation()
+    # Setup logging on the test module output message so that we get all the writes to it
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.imageInMsgName, testProcessRate)
 
-    #################################################
-    # Truth values from python
-    # Load image:
-    input_image = Image.open("circles.png")
+    # Need to call the self-init and cross-init methods
+    unitTestSim.InitializeSimulation()
+
+    # Set the simulation time.
+    # NOTE: the total simulation time may be longer than this value. The
+    # simulation is stopped at the next logging event on or after the
+    # simulation end time.
+    unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
+
+    # Begin the simulation time run set above
+    unitTestSim.ExecuteSimulation()
+
+    pointer = unitTestSim.pullMessageLogData(moduleConfig.imageInMsgName + ".imagePointer", range(pointerLength))
+    centers = unitTestSim.pullMessageLogData(moduleConfig.opnavCirclesOutMsgName + ".circlesCenters", range(3*2))
+    radii = unitTestSim.pullMessageLogData(moduleConfig.opnavCirclesOutMsgName + ".circlesRadii", range(3 * 2))
 
     # Output image:
     output_image = Image.new("RGB", input_image.size)
@@ -148,7 +163,6 @@ def houghCirclesTest(show_plots):
     for k, v in sorted(acc.items(), key=lambda i: -i[1]):
         x, y, r = k
         if float(v) / steps >= threshold and all((x - xc) ** 2 + (y - yc) ** 2 > rc ** 2 for xc, yc, rc in circles):
-            print(float(v) / steps, x, y, r)
             circles.append((x, y, r))
 
     for x, y, r in circles:
@@ -181,6 +195,6 @@ def houghCirclesTest(show_plots):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_module(
+    houghCirclesTest(
                  False
                )
