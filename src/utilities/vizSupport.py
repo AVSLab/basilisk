@@ -44,11 +44,12 @@ except ImportError:
         youveBeenWarned = True
 
 
-def enableUnityVisualization(scSim, simTaskName, processName, fileName, bodyName = 'none'):
+def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFactoryName):
     if not vizFound:
         return
     vizMessager = vizInterface.VizInterface()
     scSim.AddModelToTask(simTaskName, vizMessager)
+    gravBodies = gravFactory.gravBodies;
     vizMessager.spiceInMsgName = vizInterface.StringVector([
                                                                   "earth_planet_data",
                                                                   "mars_planet_data",
@@ -66,17 +67,20 @@ def enableUnityVisualization(scSim, simTaskName, processName, fileName, bodyName
     vizMessager.protoFilename = fileName
     VizTaskName = "VizTask"
 
-    if (bodyName != 'none'):
-        ephemData = spice_interface.SpicePlanetStateSimMsg()
-        ephemData.J2000Current = 0.0
-        ephemData.PositionVector = [0.0, 0.0, 0.0]
-        ephemData.VelocityVector = [0.0, 0.0, 0.0]
-        ephemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-        ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-        ephemData.PlanetName = bodyName
-        msgName = bodyName + '_planet_data'
-        messageSize = ephemData.getStructSize()
-        scSim.TotalSim.CreateNewMessage(processName, msgName, messageSize, 2, "SpicePlanetStateSimMsg")
-        scSim.TotalSim.WriteMessageData(msgName, messageSize, 0, ephemData)
+    if (gravBodies):
+        for key in gravBodies:
+            if gravBodies[key].isCentralBody == True:
+                ephemData = spice_interface.SpicePlanetStateSimMsg()
+                ephemData.J2000Current = 0.0
+                ephemData.PositionVector = [0.0, 0.0, 0.0]
+                ephemData.VelocityVector = [0.0, 0.0, 0.0]
+                ephemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+                ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+                ephemData.PlanetName = key
+                msgName = key + '_planet_data'
+                messageSize = ephemData.getStructSize()
+                scSim.TotalSim.CreateNewMessage(processName, msgName, messageSize, 2, "SpicePlanetStateSimMsg")
+                scSim.TotalSim.WriteMessageData(msgName, messageSize, 0, ephemData)
+                break
 
     return

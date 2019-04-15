@@ -341,9 +341,6 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     simulationTimeStep = macros.sec2nano(10.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-    # # if this scenario is to interface with the BSK Viz, uncomment the following line
-    #vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, 'earth')
-
     #
     #   setup the simulation tasks/objects
     #
@@ -375,6 +372,9 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
             simIncludeGravBody.loadGravFromFile(bskPath + '/supportData/LocalGravData/GGM03S-J2-only.txt',
                                                 planet.spherHarm, 2)
     mu = planet.mu
+
+    # # if this scenario is to interface with the BSK Viz, uncomment the following line
+    vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
 
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())

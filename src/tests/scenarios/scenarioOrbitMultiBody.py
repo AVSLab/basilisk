@@ -1,5 +1,4 @@
-''' '''
-'''
+''' ''' '''
  ISC License
 
  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -340,27 +339,6 @@ def run(show_plots, scCase):
     vN = scInitialState[3:6]  # m/s
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_CN_N
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_CN_N
-
-    #####RIGHT HERE JEN!
-    #vizMessager = vizInterface.VizInterface()
-    #scSim.AddModelToTask(simTaskName, vizMessager)
-    #vizMessager.spiceInMsgName = vizInterface.StringVector([
-               #                                             "earth_planet_data",
-              #                                              "mars barycenter_planet_data",
-             #                                               "sun_planet_data",
-            #                                                "jupiter barycenter_planet_data",
-           #                                                 "moon_planet_data",
-          #                                                  "venus_planet_data",
-         #                                                   "mercury_planet_data",
-        #                                                    "uranus barycenter_planet_data",
-       #                                                     "neptune barycenter_planet_data",
-      #                                                      "pluto barycenter_planet_data",
-     #                                                       "saturn barycenter_planet_data"])
-    #vizMessager.planetNames = vizInterface.StringVector(["earth", "mars barycenter", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
-    #gravFactory.spiceObject.planetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
-    #vizMessager.numRW = 4
-    #vizMessager.protoFilename = "scenarioMultiBody.bin"
-
 
     #
     #   Setup simulation time
