@@ -397,7 +397,9 @@ def StateUpdateSunLine(show_plots):
     covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", range(5*5))
 
     for i in range(5):
-        if(covarLog[-1, i*5+1+i] > covarLog[0, i*5+1+i]/10):
+        # check covariance immediately after measurement is taken,
+        # ensure order of magnitude less than initial covariance.
+        if(covarLog[951, i*5+1+i] > covarLog[0, i*5+1+i]/10):
             testFailCount += 1
             testMessages.append("Covariance update failure")
         if(abs(stateLog[-1, i+1] - stateTarget[i]) > 1.0E-1):
@@ -427,7 +429,7 @@ def StateUpdateSunLine(show_plots):
     covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", range(5*5))
 
     for i in range(5):
-        if(covarLog[-1, i*5+1+i] > covarLog[0, i*5+1+i]/10):
+        if(covarLog[1951, i*5+1+i] > covarLog[0, i*5+1+i]/10):
             testFailCount += 1
             testMessages.append("Covariance update failure")
         if(abs(stateLog[-1, i+1] - stateTarget[i]) > 1.0E-1):
@@ -507,5 +509,5 @@ def StatePropSunLine(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    # test_all_heading_kf(True)
-    StateUpdateSunLine(True)
+    test_all_heading_kf(True)
+    #StateUpdateSunLine(True)

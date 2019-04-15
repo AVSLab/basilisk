@@ -198,10 +198,8 @@ void Update_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t callTime,
         vAdd(yBar, OPNAV_MEAS, tempYVec, yBar);
     }
     
-    /*! - The post fits are y - ybar if a measurement was read*/
-    if (1500 - newTimeTag < 1E-10){
-        return;
-    }
+    /*! - The post fits are y - ybar if a measurement was read, if observations are zero,
+     do not compute post fit residuals*/
     if(!v3IsZero(ConfigData->obs, 1E-10)){
         mSubtract(ConfigData->obs, OPNAV_MEAS, 1, yBar, ConfigData->postFits);}
     
