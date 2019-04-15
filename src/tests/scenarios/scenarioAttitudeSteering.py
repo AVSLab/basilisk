@@ -128,7 +128,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
 
 
 
-## \defgroup Tutorials_2_3
+## \defgroup scenarioAttitudeSteeringGroup
 ##   @{
 ## Demonstrates how to use the MRP_Steering() module to stabilize the attiude relative to the Hill Frame.
 #

@@ -29,7 +29,7 @@
 #include "simFswInterfaceMessages/navTransIntMsg.h"
 #include "fswMessages/attRefFswMsg.h"
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup velocityPoint
  * @{
  */
 

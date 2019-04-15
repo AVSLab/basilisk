@@ -23,75 +23,36 @@
 
 #include <Eigen/Dense>
 #include <vector>
+#include <string>
 #include "../../_GeneralModuleFiles/sys_model.h"
-#include "../../simMessages/spicePlanetStateSimMsg.h"
-#include "../../simMessages/scPlusStatesSimMsg.h"
-#include "../../simMessages/atmoPropsSimMsg.h"
+#include "simMessages/spicePlanetStateSimMsg.h"
+#include "simMessages/scPlusStatesSimMsg.h"
+#include "simMessages/atmoPropsSimMsg.h"
+#include "../_GeneralModuleFiles/atmosphereBase.h"
 
 /*! \addtogroup SimModelGroup
  * @{
  */
 
-//! @brief Container for the properties of a simple exponential atmosphere model, such that different planets can be tested. */
-typedef struct {
-    double baseDensity;                 //!< kg/m^3 Density at sea level
-    double scaleHeight;                    //!< m   Altitude where base density has decreased by factor of e
-    double planetRadius;                //!< m Radius of the local atmospheric body; altitude is computed as |r| - planetRadius
-}exponentialProperties;
+/*! @brief Evaluate an exponential atmosphere model at a given height above a planetary surface.
+ For more information on this module see this [PDF Documentation](Basilisk-atmosphere-20190221.pdf).
 
-/*! This structure is used in the messaging system to communicate what the
- state of the vehicle is currently.*/
-
-
-
-//! @brief Exponential atmosphere class used to calculate temperature / density above a body.
-/*! This class is used to hold relevant atmospheric properties and to compute the density for a given set of spacecraft 
-relative to a specified planet. Planetary parameters, including position and input message, are settable by the user. 
-Internal support is provided for Venus, Earth, and Mars. In a given simulation, each planet of interest should have only
-one exponentialAtmosphere model associated with it linked to the spacecraft in orbit about that body.*/
-class ExponentialAtmosphere: public SysModel {
+ */
+class ExponentialAtmosphere:  public AtmosphereBase {
 public:
     ExponentialAtmosphere();
     ~ExponentialAtmosphere();
-    void SelfInit();
-    void CrossInit();
-    void UpdateState(uint64_t CurrentSimNanos);
-    //void computeStateContribution(double integTime);
-    void WriteOutputMessages(uint64_t CurrentClock);
-    bool ReadInputs();
-    void updateLocalAtmo(double currentTime);
-    void updateRelativePos(SpicePlanetStateSimMsg& planetState, SCPlusStatesSimMsg& scState);
-    void addSpacecraftToModel(std::string tmpScMsgName);
-    void setPlanet(std::string newPlanetName);
-private:
-    void setBaseDensity(double newBaseDens);
-    void setScaleHeight(double newScaleHeight);
-    void setPlanetRadius(double newPlanetRadius);
 
+private:
+    void evaluateAtmosphereModel(AtmoPropsSimMsg *msg);
 
 
 public:
-    atmoPropsSimMsg tmpAtmo;
-    double localAtmoDens; //!< [kg/m^3] Local neutral atmospheric density (computed)
-    double localAtmoTemp; //!< [K] Local atmospheric temperature, SET TO BE CONSTANT
-    double currentAlt; //!< [m] Current s/c altitude
-    std::string planetName;
-    std::vector<std::string> atmoDensOutMsgNames; //!< Vector of strings containing atmospheric output message names
-    std::vector<std::string> scStateInMsgNames;	//!< Vector of the spacecraft position/velocity message names
-    std::string planetPosInMsgName;			//!< Message name for the planet's SPICE position message
-    std::vector<int64_t> atmoDensOutMsgIds;
-    std::vector<int64_t> scStateInMsgIds;
-    int64_t planetPosInMsgId;
-    std::vector<SCPlusStatesSimMsg> scStates;
-    SpicePlanetStateSimMsg bodyState;
-    Eigen::Vector3d relativePos; //!< [-] Container for local position
-    exponentialProperties atmosphereProps; //! < -- Struct containing exponential atmosphere properties
-
-private:
-    double tmpPosMag;	//<! [m/s] Magnitude of the spacecraft's current position
-    uint64_t OutputBufferCount;	//!< number of output buffers for messaging system
-    std::vector<atmoPropsSimMsg> atmoOutBuffer; //!< -- Message buffer for density messages
-
+    double baseDensity;             //!< [kg/m^3] Density at h=0
+    double scaleHeight;             //!< [m] Exponential characteristic height
+    double localTemp = 293.0;       //!< [K] Local atmospheric temperature; set to be constant.
 };
+
+/*! @} */
 
 #endif /* EXPONENTIAL_ATMOSPHERE_H */

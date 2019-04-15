@@ -32,6 +32,11 @@
 #include <boost/thread/locks.hpp>
 #include <stdint.h>
 
+/*! \addtogroup SimArchGroup
+ * @{
+ */
+
+
 typedef struct {
     char messageName[MAX_MESSAGE_SIZE];
     uint64_t messageID;
@@ -77,5 +82,7 @@ private:
     std::map<int64_t, MessageWriteData> routerMapping;
     bool processLinked;       
 };
+
+/* @} */
 
 #endif

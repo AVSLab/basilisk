@@ -35,7 +35,6 @@ void SelfInit_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t moduleID)
 {
     
     mSetZero(ConfigData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
-    
     /*! Begin method steps */
     /*! - Create output message for module */
 	ConfigData->navStateOutMsgId = CreateNewMessage(ConfigData->navStateOutMsgName,
@@ -76,8 +75,8 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
     
     int32_t i;
     CSSConfigFswMsg cssConfigInBuffer;
-    uint64_t writeTime;
-    uint32_t writeSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     double tempMatrix[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
     
     /*! Begin method steps*/
@@ -86,7 +85,7 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
     memset(&(ConfigData->outputSunline), 0x0, sizeof(NavAttIntMsg));
     
     /*! - Read in mass properties and coarse sun sensor configuration information.*/
-    ReadMessage(ConfigData->cssConfigInMsgId, &writeTime, &writeSize,
+    ReadMessage(ConfigData->cssConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CSSConfigFswMsg  ), &cssConfigInBuffer, moduleID);
     
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/
@@ -136,8 +135,12 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
         ConfigData->wC[i] = ConfigData->wM[i];
     }
     
+    vCopy(ConfigData->stateInit, ConfigData->numStates, ConfigData->state);
+    
     /*! - User a cholesky decomposition to obtain the sBar and sQnoise matrices for use in 
           filter at runtime*/
+    mCopy(ConfigData->covarInit, ConfigData->numStates, ConfigData->numStates,
+          ConfigData->covar);
     mCopy(ConfigData->covar, ConfigData->numStates, ConfigData->numStates,
           ConfigData->sBar);
     ukfCholDecomp(ConfigData->sBar, ConfigData->numStates,
@@ -149,7 +152,6 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
     mTranspose(ConfigData->sQnoise, ConfigData->numStates,
                ConfigData->numStates, ConfigData->sQnoise);
     
-
     return;
 }
 
@@ -166,17 +168,18 @@ void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
     double yBar[MAX_N_CSS_MEAS];
     double tempYVec[MAX_N_CSS_MEAS];
     double sunheading_hat[3];
+    double states_BN[SKF_N_STATES_SWITCH];
     int i;
-    uint64_t ClockTime;
-    uint32_t ReadSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     SunlineFilterFswMsg sunlineDataOutBuffer;
     
     /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
-    ClockTime = 0;
-    ReadSize = 0;
+    timeOfMsgWritten = 0;
+    sizeOfMsgWritten = 0;
     memset(&(ConfigData->cssSensorInBuffer), 0x0, sizeof(CSSArraySensorIntMsg));
-    ReadMessage(ConfigData->cssDataInMsgId, &ClockTime, &ReadSize,
+    ReadMessage(ConfigData->cssDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
         sizeof(CSSArraySensorIntMsg), (void*) (&(ConfigData->cssSensorInBuffer)), moduleID);
     
     v3Normalize(&ConfigData->state[0], sunheading_hat);
@@ -190,8 +193,8 @@ void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
     
     /*! - If the time tag from the measured data is new compared to previous step, 
           propagate and update the filter*/
-    newTimeTag = ClockTime * NANO2SEC;
-    if(newTimeTag >= ConfigData->timeTag && ReadSize > 0)
+    newTimeTag = timeOfMsgWritten * NANO2SEC;
+    if(newTimeTag >= ConfigData->timeTag && sizeOfMsgWritten > 0)
     {
         sunlineSuKFTimeUpdate(ConfigData, newTimeTag);
         sunlineSuKFMeasUpdate(ConfigData, newTimeTag);
@@ -219,7 +222,7 @@ void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
     }
     
     /*! - The post fits are y- ybar*/
-    mSubtract(ConfigData->obs, MAX_N_CSS_MEAS, 1, yBar, ConfigData->postFits);
+    mSubtract(ConfigData->obs, ConfigData->numObs, 1, yBar, ConfigData->postFits);
     
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
 	v3Copy(ConfigData->state, ConfigData->outputSunline.vehSunPntBdy);
@@ -229,12 +232,16 @@ void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
 	WriteMessage(ConfigData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
 		&(ConfigData->outputSunline), moduleID);
     
+    /* Switch the rates back to omega_BN instead of oemga_SB */
+    vCopy(ConfigData->state, SKF_N_STATES_SWITCH, states_BN);
+    vScale(-1, &(states_BN[3]), 2, &(states_BN[3]));
+    
     /*! - Populate the filter states output buffer and write the output message*/
     sunlineDataOutBuffer.timeTag = ConfigData->timeTag;
     sunlineDataOutBuffer.numObs = ConfigData->numObs;
     memmove(sunlineDataOutBuffer.covar, ConfigData->covar,
             SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH*sizeof(double));
-    memmove(sunlineDataOutBuffer.state, ConfigData->state, SKF_N_STATES_SWITCH*sizeof(double));
+    memmove(sunlineDataOutBuffer.state, states_BN, SKF_N_STATES_SWITCH*sizeof(double));
     memmove(sunlineDataOutBuffer.postFitRes, ConfigData->postFits, MAX_N_CSS_MEAS*sizeof(double));
     WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(SunlineFilterFswMsg),
                  &sunlineDataOutBuffer, moduleID);
@@ -250,22 +257,22 @@ void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
 void sunlineStateProp(double *stateInOut, double *b_Vec, double dt)
 {
 
-    double propagatedVel[3];
+    double propagatedVel[SKF_N_STATES_HALF];
     double omegaCrossd[SKF_N_STATES_HALF];
-    double omega[SKF_N_STATES_HALF] = {0, stateInOut[3], stateInOut[4]};
-    double dcm_BS[SKF_N_STATES_HALF*SKF_N_STATES_HALF];
-    
+    double omega_BN_S[SKF_N_STATES_HALF] = {0, -stateInOut[3], -stateInOut[4]};
+    double omega_BN_B[SKF_N_STATES_HALF];
+    double dcm_BS[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+
     mSetZero(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
-    
-    sunlineSuKFComputeDCM_BS(stateInOut, b_Vec, &dcm_BS[0]);
-//    mTranspose(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm_BS);
-    mMultV(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, omega, omega);
+
+    sunlineSuKFComputeDCM_BS(stateInOut, b_Vec, &dcm_BS[0][0]);
+    mMultV(dcm_BS, SKF_N_STATES_HALF, SKF_N_STATES_HALF, omega_BN_S, omega_BN_B);
     /* Set local variables to zero*/
     vSetZero(propagatedVel, SKF_N_STATES_HALF);
     
     /*! Begin state update steps */
     /*! Take omega cross d*/
-    v3Cross(omega, stateInOut, omegaCrossd);
+    v3Cross(omega_BN_B, stateInOut, omegaCrossd);
     
     /*! - Multiply omega cross d by dt and add to state to propagate */
     v3Scale(-dt, omegaCrossd, propagatedVel);
@@ -295,6 +302,7 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
 	vCopy(ConfigData->state, ConfigData->numStates,
 		&(ConfigData->SP[0 * ConfigData->numStates + 0]));
+	mSetZero(rAT, ConfigData->countHalfSPs, ConfigData->countHalfSPs);
 	sunlineStateProp(&(ConfigData->SP[0 * ConfigData->numStates + 0]), ConfigData->bVec_B, ConfigData->dt);
     /*! - Scale that Sigma point by the appopriate scaling factor (Wm[0])*/
 	vScale(ConfigData->wM[0], &(ConfigData->SP[0 * ConfigData->numStates + 0]),
@@ -609,6 +617,10 @@ void sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[
     
     v3Normalize(sunheading, s1_B);
     v3Cross(sunheading, bVec, s2_B);
+    if (v3Norm(s2_B) < 1E-5){
+        mSetIdentity(dcm, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
+    }
+    else{
     v3Normalize(s2_B, s2_B);
     /*! Populate the dcm_BS with the "new" S-frame*/
     mSetSubMatrix(s1_B, 1, SKF_N_STATES_HALF, dcm, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
@@ -617,5 +629,6 @@ void sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[
     v3Normalize(s3_B, s3_B);
     mSetSubMatrix(&(s3_B), 1, SKF_N_STATES_HALF, dcm, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 2, 0);
     mTranspose(dcm, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm);
+    }
     
 }

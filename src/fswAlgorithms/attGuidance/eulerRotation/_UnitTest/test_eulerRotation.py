@@ -42,7 +42,8 @@ def test_eulerRotation(show_plots):
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run(show_plots)
     assert testResults < 1, testMessage
-
+    [testResults, testMessage] = run2(show_plots)
+    assert testResults < 1, testMessage
 
 def run(show_plots):
     testFailCount = 0                       # zero unit test result counter
@@ -186,10 +187,157 @@ def run(show_plots):
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
+def run2(show_plots):
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty array to store test log messages
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+    # Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    # terminateSimulation() is needed if multiple unit test scripts are run
+    # that run a simulation for the test. This creates a fresh and
+    # consistent simulation environment for each test run.
+    unitTestSim.TotalSim.terminateSimulation()
+
+    # Test times
+    updateTime = 0.5  # update process rate update time
+    totalTestSimTime = 1.5
+
+    # Create test thread
+    testProcessRate = mc.sec2nano(updateTime)
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Construct algorithm and associated C++ container
+    moduleConfig = eulerRotation.eulerRotationConfig()
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
+    moduleWrap.ModelTag = "eulerRotation"
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+
+    # Initialize the test module configuration data
+    moduleConfig.attRefInMsgName = "inputRefName"
+    moduleConfig.attRefOutMsgName = "outputRefName"
+    moduleConfig.desiredAttInMsgName = "desiredName"
+    angleSet = np.array([0.0, 90.0, 0.0]) * mc.D2R
+    moduleConfig.angleSet = angleSet
+    angleRates = np.array([0.1, 0.0, 0.0]) * mc.D2R
+    moduleConfig.angleRates = angleRates
+
+    # Create input message and size it because the regular creator of that message
+    # is not part of the test.
+
+    #
+    # Reference Frame Message
+    #
+    RefStateOutData = fswMessages.AttRefFswMsg()  # Create a structure for the input message
+    sigma_R0N = np.array([0.1, 0.2, 0.3])
+    RefStateOutData.sigma_RN = sigma_R0N
+    omega_R0N_N = np.array([0.1, 0.0, 0.0])
+    RefStateOutData.omega_RN_N = omega_R0N_N
+    domega_R0N_N = np.array([0.0, 0.0, 0.0])
+    RefStateOutData.domega_RN_N = domega_R0N_N
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               moduleConfig.attRefInMsgName,
+                               RefStateOutData)
+
+    # Set the desired state and rate to 0.
+    desiredAtt = fswMessages.AttStateFswMsg()
+    inputMsgSize = desiredAtt.getStructSize()
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.desiredAttInMsgName,
+                                          inputMsgSize, 2)
+    desiredState = np.array([0, 0, 0])
+    desiredAtt.state = desiredState
+    desiredRate = np.array([0, 0, 0])
+    desiredAtt.rate = desiredRate
+
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.desiredAttInMsgName,
+                                          inputMsgSize,
+                                          0, desiredAtt)
+
+    # Setup logging on the test module output message so that we get all the writes to it
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.attRefOutMsgName, testProcessRate)
+
+    # Need to call the self-init and cross-init methods
+    unitTestSim.InitializeSimulation()
+
+    # Set the simulation time.
+    # NOTE: the total simulation time may be longer than this value. The
+    # simulation is stopped at the next logging event on or after the
+    # simulation end time.
+    unitTestSim.ConfigureStopTime(mc.sec2nano(totalTestSimTime))  # seconds to stop simulation
+
+    # Begin the simulation time run set above
+    unitTestSim.ExecuteSimulation()
+
+    # This pulls the actual data log from the simulation run.
+    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
+    accuracy = 1e-12
+    #
+    # check sigma_RN
+    #
+    moduleOutputName = "sigma_RN"
+    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
+                                                  range(3))
+    # set the filtered output truth states
+    trueVector = [
+        [-0.193031238249, 0.608048400483, 0.386062476497],
+        [-0.193031238249, 0.608048400483, 0.386062476497],
+        [-0.193144351314, 0.607931107381, 0.386360300559],
+        [-0.193257454832, 0.607813704445, 0.386658117585]
+    ]
+    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
+                                                               accuracy, "sigma_RN Set",
+                                                               testFailCount, testMessages)
+    # print '\n sigma_RN = ', moduleOutput[:, 1:], '\n'
+    #
+    # check omega_RN_N
+    #
+    moduleOutputName = "omega_RN_N"
+    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
+                                                  range(3))
+    # set the filtered output truth states
+    trueVector = [
+        [0.101246280045, 0.000182644489, 0.001208139578],
+        [0.101246280045, 0.000182644489, 0.001208139578],
+        [0.101246280045, 0.000182644489, 0.001208139578],
+        [0.101246280045, 0.000182644489, 0.001208139578]
+    ]
+    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
+                                                               accuracy, "omega_RN_N Vector",
+                                                               testFailCount, testMessages)
+
+    #
+    # check domega_RN_N
+    #
+    moduleOutputName = "domega_RN_N"
+    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
+                                                  range(3))
+    # set the filtered output truth states
+    trueVector = [
+        [0.000000000000e+00, -1.208139577635e-04, 1.826444892823e-05],
+        [0.000000000000e+00, -1.208139577635e-04, 1.826444892823e-05],
+        [0.000000000000e+00, -1.208139577635e-04, 1.826444892823e-05],
+        [0.000000000000e+00, -1.208139577635e-04, 1.826444892823e-05]
+    ]
+    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
+                                                               accuracy, "domega_RN_N Vector",
+                                                               testFailCount, testMessages)
+
+
+    # each test method requires a single assert method to be called
+    # this check below just makes sure no sub-test failures were found
+    return [testFailCount, ''.join(testMessages)]
+
 
 #
 # This statement below ensures that the unitTestScript can be run as a
 # stand-along python script
 #
 if __name__ == "__main__":
-    run(False)
+    # run(False)
+    test_eulerRotation(False)

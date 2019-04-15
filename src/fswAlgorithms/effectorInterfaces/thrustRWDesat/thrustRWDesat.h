@@ -31,7 +31,7 @@
 #include <stdlib.h>
 
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup thrusterRWDesat
  * @{
  */
 

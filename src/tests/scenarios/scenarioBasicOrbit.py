@@ -46,7 +46,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport, vizSupport)
 
 
-## \defgroup Tutorials_1_0
+## \defgroup scenarioBasicOrbitGroup
 ## @{
 ## Demonstration of setup basic 3-DOF orbit simulation setup.
 #
@@ -67,7 +67,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 # 4     | LEO                 | True                  | Earth
 # 5     | LEO                 | False                 | Mars
 #
-# To run the default scenario 1 from the Basilisk/scenarios folder, call the python script through
+# To run the default scenario 1 from the Basilisk/src/tests/scenarios folder, call the python script through
 #
 #       python scenarioBasicOrbit.py
 #

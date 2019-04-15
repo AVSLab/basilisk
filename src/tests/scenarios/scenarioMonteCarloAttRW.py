@@ -108,7 +108,7 @@ samplingTime = simulationTime / (numDataPoints-1)
 
 
 
-## \defgroup Tutorials_5_0
+## \defgroup scenarioMonteCarloAttRWGroup
 ##   @{
 ## Demonstrates how to run basic Monte-Carlo (MC) RW-based attitude simulations.
 #
@@ -803,7 +803,6 @@ def createScenarioAttitudeFeedbackRW():
     mrpControlConfig.Ki =   -1          # make value negative to turn off integral feedback
     mrpControlConfig.P  = 30.0
     mrpControlConfig.integralLimit = 2./mrpControlConfig.Ki * 0.1
-    mrpControlConfig.domega0 = [0.0, 0.0, 0.0]
 
     # add module that maps the Lr control torque into the RW motor torques
     rwMotorTorqueConfig = rwMotorTorque.rwMotorTorqueConfig()

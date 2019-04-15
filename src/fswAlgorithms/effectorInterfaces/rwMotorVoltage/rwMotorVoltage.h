@@ -29,7 +29,7 @@
 #include "fswMessages/rwArrayConfigFswMsg.h"
 
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup rwMotorVoltage
  * @{
  */
 

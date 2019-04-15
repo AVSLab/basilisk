@@ -28,7 +28,7 @@
 #include "fswMessages/cssConfigFswMsg.h"
 
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup sunlineEKF
  * @{
  */
 

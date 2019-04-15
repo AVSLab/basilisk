@@ -36,6 +36,10 @@
 #include "utilities/avsEigenMRP.h"
 #include "utilities/avsEigenSupport.h"
 
+/*! \addtogroup SimModelGroup
+ * @{
+ */
+
 /*! @brief Abstract class that is used to implement an effector impacting a dynamic body
            that does not itself maintain a state or represent a changing component of
            the body (for example: gravity, thrusters, solar radiation pressure, etc.)
@@ -94,5 +98,7 @@ private:
 	StateData *gammaDotsState;
 
 };
+
+/* @} */
 
 #endif /* STATE_EFFECTOR_H */

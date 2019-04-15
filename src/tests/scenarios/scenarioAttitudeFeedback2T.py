@@ -68,7 +68,7 @@ bskPath = __path__[0]
 vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
 
 
-## \defgroup Tutorials_2_0_2
+## \defgroup scenarioAttitudeFeedback2TGroup
 ##   @{
 ## Demonstrates how to stabilize the tumble of a spacecraft orbiting the
 # Earth that is initially tumbling, but uses 2 separate threads.

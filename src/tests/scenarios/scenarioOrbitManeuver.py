@@ -54,7 +54,7 @@ from Basilisk import __path__
 bskPath = __path__[0]
 vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
 
-## \defgroup Tutorials_1_2
+## \defgroup scenarioOrbitManeuverGroup
 ## @{
 ## Illustration how to start and stop the simulation to perform orbit maneuvers within Python.
 #

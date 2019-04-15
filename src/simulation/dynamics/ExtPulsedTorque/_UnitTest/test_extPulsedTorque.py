@@ -92,6 +92,10 @@ def run(show_plots, offCount):
     testObject = ExtPulsedTorque.ExtPulsedTorque()
     testObject.ModelTag = "externalPulsedTorque"
 
+    # These don't do anything. They are here to confirm they don't do anything
+    testObject.readInputMessages()
+    testObject.writeOutputMessages(0)
+
     testObject.pulsedTorqueExternalPntB_B = [[-1], [1],[ -1]]
     testObject.countOnPulse = 1
     testObject.countOff = offCount

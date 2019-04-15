@@ -27,8 +27,8 @@
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
 
 
-/*! \addtogroup ADCSAlgGroup
- *  This grouping contains the algorithms developed for the ADCS flight system
+/*! \defgroup cssComm
+ @brief This module is responsible for correcting the raw CSS output values to the expected cosine values. This requires a pre-calibrated Chebyshev residual model which calculates the expected deviation from the expected CSS cosine output given a raw CSS measurement at a given distance from the sun. More information on can be found in the [module PDF Description](Basilisk-CSSSensorDataModule-20190207.pdf)
  * @{
  */
 
@@ -36,24 +36,25 @@
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the
  CSS interface*/
 typedef struct {
-    uint32_t  NumSensors;   /*!< The number of sensors we are processing*/
-    char SensorListName[MAX_STAT_MSG_LENGTH]; /*!< The message name that contains CSS data*/
-    char OutputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
-    int32_t SensorMsgID; /*!< Sensor ID tied to the sensor data name*/
-    int32_t OutputMsgID; /*!< Message ID for the output port*/
-    CSSArraySensorIntMsg InputValues; /*!< Input values we took off the messaging system*/
-    double MaxSensorValue; /*!< Scale factor to go from sensor values to cosine*/
-    uint32_t ChebyCount; /*!< -- Count on the number of chebyshev polynominals we have*/
-    double KellyCheby[MAX_NUM_CHEBY_POLYS]; /*!< -- Chebyshev polynominals to fit output to cosine*/
+    uint32_t  NumSensors;   //!< The number of sensors we are processing
+    char SensorListName[MAX_STAT_MSG_LENGTH]; //!< The message name that contains CSS data
+    char OutputDataName[MAX_STAT_MSG_LENGTH]; //!< The name of the output message
+    int32_t SensorMsgID; //!< Sensor ID tied to the sensor data name
+    int32_t OutputMsgID; //!< Message ID for the output port
+    CSSArraySensorIntMsg InputValues; //!< Input values we took off the messaging system
+    double MaxSensorValue; //!< Scale factor to go from sensor values to cosine
+    uint32_t ChebyCount; //!< Count on the number of chebyshev polynominals we have
+    double KellyCheby[MAX_NUM_CHEBY_POLYS]; //!< Chebyshev polynominals to fit output to cosine
 }CSSConfigData;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     
-    void SelfInit_cssProcessTelem(CSSConfigData *ConfigData, uint64_t moduleID);
-    void CrossInit_cssProcessTelem(CSSConfigData *ConfigData, uint64_t moduleID);
-    void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_cssProcessTelem(CSSConfigData *configData, uint64_t moduleID);
+    void CrossInit_cssProcessTelem(CSSConfigData *configData, uint64_t moduleID);
+    void Update_cssProcessTelem(CSSConfigData *configData, uint64_t callTime, uint64_t moduleID);
+    void Reset_cssProcessTelem(CSSConfigData *configData, uint64_t callTime, uint64_t moduleID);
     
 #ifdef __cplusplus
 }

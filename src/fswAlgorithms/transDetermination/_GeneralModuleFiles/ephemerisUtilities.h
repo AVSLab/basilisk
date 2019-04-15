@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup ephemerisUtilities
  * @{
  */
 

@@ -1324,7 +1324,7 @@ void BmatPRV(double *q, double B[3][3])
  * C into the corresponding 4x1 Euler parameter vector Q,
  * where the first component of Q is the non-dimensional
  * Euler parameter Beta_0 >= 0. Transformation is done
- * using the Stanley method.i
+ * using the Stanley method.
  *
  */
 void C2EP(double C[3][3], double b[4])
@@ -1545,7 +1545,9 @@ void C2Gibbs(double C[3][3], double *q)
 void C2MRP(double C[3][3], double *q)
 {
     double b[4];
-
+    
+    v4SetZero(b);
+    b[0] = 1.0;
     C2EP(C, b);
 
     q[0] = b[1] / (1 + b[0]);

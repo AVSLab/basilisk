@@ -29,10 +29,9 @@
 #include "fswMessages/sunlineFilterFswMsg.h"
 
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup sunlineSEKF
  * @{
  */
-
 
 /*! @brief Top level structure for the CSS-based Switch Extended Kalman Filter.
  Used to estimate the sun state in the vehicle body frame. Please see the _Documentation folder for details on how this Kalman Filter Functions.*/
@@ -71,7 +70,6 @@ typedef struct {
 	double measNoise[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];  /*!< [-] Maximally sized obs noise matrix*/
     
     double cssNHat_B[MAX_NUM_CSS_SENSORS*3];     /*!< [-] CSS normal vectors converted over to body*/
-
     uint32_t numStates;                /*!< [-] Number of states for this filter*/
     int numObs;                   /*!< [-] Number of measurements this cycle */
     uint32_t numActiveCss;   /*!< -- Number of currently active CSS sensors*/

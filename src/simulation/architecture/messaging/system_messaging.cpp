@@ -441,8 +441,14 @@ bool SystemMessaging::ReadMessage(uint64_t MessageID, SingleMessageHeader
     
     uint8_t *ReadBuffer = &(messageStorage->messageStorage.
                             StorageBuffer[MsgHdr->StartingOffset]);
-    uint64_t MaxOutputBytes = MaxBytes < MsgHdr->MaxMessageSize ? MaxBytes :
-    MsgHdr->MaxMessageSize;
+
+    /* truncate the read message size to the actual message size */
+    uint64_t MaxOutputBytes = MaxBytes;
+    if (MaxBytes > MsgHdr->MaxMessageSize) {
+        MaxOutputBytes = MsgHdr->MaxMessageSize;
+        BSK_PRINT_BRIEF(MSG_WARNING, "The message %s requeest by module ID %lld had a read size %lld that was larger than the message size %lld. The returned message is truncated.\n", MsgHdr->MessageName, moduleID, MaxBytes, MsgHdr->MaxMessageSize);
+    }
+
     AccessMessageData(ReadBuffer, MsgHdr->MaxMessageSize, CurrentIndex,
                       DataHeader, MaxOutputBytes, reinterpret_cast<uint8_t*>(MsgPayload));
     return(true);

@@ -23,7 +23,12 @@
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 
-/*! @brief Sub structure that contains all of the configuration data and output
+/*! \defgroup thrustGroupData
+ *  @{
+ */
+
+
+ /* @brief Sub structure that contains all of the configuration data and output
     information for a single thruster group.  There can be several thruster 
     groups available in a single control scheme.
 */

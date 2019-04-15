@@ -27,6 +27,11 @@
 #include <Eigen/Dense>
 #include "stateData.h"
 
+
+/*! \addtogroup SimModelGroup
+ * @{
+ */
+
 class StateVector {
 public:
     std::map<std::string, StateData> stateMap;
@@ -57,5 +62,7 @@ public:
                           const Eigen::MatrixXd & propValue);
     
 };
+
+/* @} */
 
 #endif /* STATE_MANAGER_H */

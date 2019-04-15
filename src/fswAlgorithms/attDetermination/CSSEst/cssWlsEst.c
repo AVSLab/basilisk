@@ -20,7 +20,6 @@
 #include "attDetermination/CSSEst/cssWlsEst.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
-#include "fswMessages/sunlineFilterFswMsg.h"
 #include <string.h>
 #include <math.h>
 
@@ -50,9 +49,10 @@ void SelfInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
  */
 void CrossInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
 {
-    /*! - Loop over the number of sensors and find IDs for each one */
+    /*! - Subscribe to css measurements */
     ConfigData->cssDataInMsgID = subscribeToMessage(ConfigData->cssDataInMsgName,
         sizeof(CSSArraySensorIntMsg), moduleID);
+    /*! - Subscribe to css configuration message for normals */
     ConfigData->cssConfigInMsgID = subscribeToMessage(ConfigData->cssConfigInMsgName,
                                                       sizeof(CSSConfigFswMsg), moduleID);
 }
@@ -64,13 +64,13 @@ void CrossInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
  */
 void Reset_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    uint64_t ClockTime;
-    uint32_t ReadSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
 
     memset(&(ConfigData->cssConfigInBuffer), 0x0, sizeof(CSSConfigFswMsg));
-    ReadMessage(ConfigData->cssConfigInMsgID, &ClockTime, &ReadSize,
+    ReadMessage(ConfigData->cssConfigInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CSSConfigFswMsg),
-                &(ConfigData->cssConfigInBuffer), moduleID);
+                (void *) &(ConfigData->cssConfigInBuffer), moduleID);
 
     ConfigData->priorSignalAvailable = 0;
     v3SetZero(ConfigData->dOld);
@@ -78,6 +78,13 @@ void Reset_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime, uint64_t modul
     ConfigData->sunlineOutBuffer.timeTag = 0.0;
     v3SetZero(ConfigData->sunlineOutBuffer.sigma_BN);
     v3SetZero(ConfigData->sunlineOutBuffer.omega_BN_B);
+    v3SetZero(ConfigData->sunlineOutBuffer.vehSunPntBdy);
+    
+    ConfigData->filtStatus.numObs = 0;
+    ConfigData->filtStatus.timeTag = 0.0;
+    v3SetZero(ConfigData->filtStatus.state);
+    vSetZero(ConfigData->filtStatus.postFitRes, MAX_N_CSS_MEAS);
+    
 
     /* Reset the prior time flag state.
      If zero, control time step not evaluated on the first function call */
@@ -102,12 +109,15 @@ void computeWlsResiduals(double *cssMeas, CSSConfigFswMsg *cssConfig,
     double cssDotProd;
     
     memset(cssResiduals, 0x0, cssConfig->nCSS*sizeof(double));
-    
+    /*! The method loops through the sensors and performs: */
     for(i=0; i<cssConfig->nCSS; i++)
     {
+        /*! -# A dot product between the computed estimate with each sensor normal */
         cssDotProd = v3Dot(wlsEst, cssConfig->cssVals[i].nHat_B);
         cssDotProd = cssDotProd > 0.0 ? cssDotProd : 0.0; /*CSS values can't be negative!*/
+        /*! -# A subtraction between that post-fit measurement estimate and the actual measurement*/
         cssResiduals[i] = cssMeas[i] - cssDotProd;
+        /*! -# This populates the post-fit residuals*/
     }
     
 }
@@ -115,7 +125,7 @@ void computeWlsResiduals(double *cssMeas, CSSConfigFswMsg *cssConfig,
 /*! This method computes a least squares fit with the given parameters.  It
  treats the inputs as though they were double dimensioned arrays but they
  are all singly dimensioned for ease of use
- @return success indicator (1 for good, 0 for fail)
+ @return success indicator (0 for good, 1 for fail)
  @param numActiveCss The count on input measurements
  @param H The predicted pointing vector for each measurement
  @param W the weighting matrix for the set of measurements
@@ -173,28 +183,28 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
     
-    uint64_t ClockTime;
-    uint32_t ReadSize;
-    CSSArraySensorIntMsg InputBuffer;
-    SunlineFilterFswMsg filtStatus;
-    double H[MAX_NUM_CSS_SENSORS*3];
-    double y[MAX_NUM_CSS_SENSORS];
-    double W[MAX_NUM_CSS_SENSORS*MAX_NUM_CSS_SENSORS];
-    uint32_t i;
-    uint32_t status;
-    double temp;
-    double dHatNew[3];                          /*!< new normalized sun heading estimate */
-    double dHatOld[3];                          /*!< prior normalized sun heading estimate */
-    double  dt;                                 /*!< [s] control update period */
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
+    CSSArraySensorIntMsg InputBuffer;            /* CSS measurements */
+    double H[MAX_NUM_CSS_SENSORS*3];             /* The predicted pointing vector for each measurement */
+    double y[MAX_NUM_CSS_SENSORS];               /* Measurements */
+    double W[MAX_NUM_CSS_SENSORS*MAX_NUM_CSS_SENSORS];  /* Matrix of measurement weights */
+    int i;
+    int status = 0;                              /* Quality of the module estimate */
+    double dOldDotNew;                           /* Intermediate value for dot product between new and old estimates for rate estimation */
+    double dHatNew[3];                           /* New normalized sun heading estimate */
+    double dHatOld[3];                           /* Prior normalized sun heading estimate */
+    double  dt;                                  /* [s] Control update period */
 
-    /* Begin method steps*/
-    /* - Read the input parsed CSS sensor data message*/
+    /*! <b> Begin method steps </b>*/
+    /*! Message Read and Setup*/
+    /*! - Read the input parsed CSS sensor data message*/
     memset(&InputBuffer, 0x0, sizeof(CSSArraySensorIntMsg));
-    ReadMessage(ConfigData->cssDataInMsgID, &ClockTime, &ReadSize,
+    ReadMessage(ConfigData->cssDataInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CSSArraySensorIntMsg),
                 (void*) (&InputBuffer), moduleID);
 
-    /* compute control update time */
+    /*! - Compute control update time */
     if (ConfigData->priorTime == 0) {
         dt = 0.0;
     } else {
@@ -205,15 +215,14 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
     /* - Zero the observed active CSS count*/
     ConfigData->numActiveCss = 0;
     
-    /* - Loop over the maximum number of sensors to check for good measurements
-     -# Isolate if measurement is good
-     - Set body vector for this measurement
-     - Get measurement value into observation vector
-     - Set inverse noise matrix
-     - increase the number of valid observations
-     -# Otherwise just continue
-     */
-    for(i=0; i<MAX_NUM_CSS_SENSORS; i = i+1)
+    /*! - Loop over the maximum number of sensors to check for good measurements */
+    /*! -# Isolate if measurement is good */
+    /*! -# Set body vector for this measurement */
+    /*! -# Get measurement value into observation vector */
+    /*! -# Set inverse noise matrix */
+    /*! -# increase the number of valid observations */
+    /*! -# Otherwise just continue */
+    for(i=0; i<ConfigData->cssConfigInBuffer.nCSS; i = i+1)
     {
         if(InputBuffer.CosValue[i] > ConfigData->sensorUseThresh)
         {
@@ -225,18 +234,19 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
         }
     }
     
-    memset(&filtStatus, 0x0, sizeof(SunlineFilterFswMsg));
+    /*! Estimation Steps*/
+    memset(&ConfigData->filtStatus, 0x0, sizeof(SunlineFilterFswMsg));
     if(ConfigData->numActiveCss == 0) /*! - If there is no sun, just quit*/
     {
-        /* no CSS got a strong enough signal.  sun estimation is not possible.  Return the zero vector instead */
+        /*! + If no CSS got a strong enough signal.  Sun estimation is not possible.  Return the zero vector instead */
         v3SetZero(ConfigData->sunlineOutBuffer.vehSunPntBdy);       /* zero the sun heading to indicate now CSS info is available */
         v3SetZero(ConfigData->sunlineOutBuffer.omega_BN_B);         /* zero the rate measure */
         ConfigData->priorSignalAvailable = 0;                       /* reset the prior heading estimate flag */
         computeWlsResiduals(InputBuffer.CosValue, &ConfigData->cssConfigInBuffer,
-                            ConfigData->sunlineOutBuffer.vehSunPntBdy, filtStatus.postFitRes);
+                            ConfigData->sunlineOutBuffer.vehSunPntBdy, ConfigData->filtStatus.postFitRes);
     } else {
-        /* at least one CSS got a strong enough signal.  Proceed with the sun heading estimation */
-        /* - Configuration option to weight the measurements, otherwise set
+        /*! - If at least one CSS got a strong enough signal.  Proceed with the sun heading estimation */
+        /*! -# Configuration option to weight the measurements, otherwise set
          weighting matrix to identity*/
         if(ConfigData->useWeights > 0)
         {
@@ -246,44 +256,53 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
         {
             mSetIdentity(W, ConfigData->numActiveCss, ConfigData->numActiveCss);
         }
-
-        /*! - Get least squares fit for sun pointing vector*/
+        /*! -# Get least squares fit for sun pointing vector*/
         status = computeWlsmn(ConfigData->numActiveCss, H, W, y,
                               ConfigData->sunlineOutBuffer.vehSunPntBdy);
         computeWlsResiduals(InputBuffer.CosValue, &ConfigData->cssConfigInBuffer,
-                            ConfigData->sunlineOutBuffer.vehSunPntBdy, filtStatus.postFitRes);
+                            ConfigData->sunlineOutBuffer.vehSunPntBdy, ConfigData->filtStatus.postFitRes);
 
         v3Normalize(ConfigData->sunlineOutBuffer.vehSunPntBdy, ConfigData->sunlineOutBuffer.vehSunPntBdy);
 
-        /* estimate the inertial angular velocity from the rate of the sun heading measurements */
+        /*! -# Estimate the inertial angular velocity from the rate of the sun heading measurements */
         if (ConfigData->priorSignalAvailable && dt > 0.0) {
             v3Normalize(ConfigData->sunlineOutBuffer.vehSunPntBdy, dHatNew);
             v3Normalize(ConfigData->dOld, dHatOld);
             v3Cross(dHatNew, dHatOld, ConfigData->sunlineOutBuffer.omega_BN_B);
             v3Normalize(ConfigData->sunlineOutBuffer.omega_BN_B, ConfigData->sunlineOutBuffer.omega_BN_B);
             /* compute principal rotation angle between sun heading measurements */
-            temp = v3Dot(dHatNew,dHatOld);
-            if (temp > 1.0) temp = 1.0;
-            if (temp < -1.0) temp = -1.0;
-            v3Scale(acos(temp)/dt, ConfigData->sunlineOutBuffer.omega_BN_B, ConfigData->sunlineOutBuffer.omega_BN_B);
+            dOldDotNew = v3Dot(dHatNew,dHatOld);
+            if (dOldDotNew > 1.0) dOldDotNew = 1.0;
+            if (dOldDotNew < -1.0) dOldDotNew = -1.0;
+            v3Scale(acos(dOldDotNew)/dt, ConfigData->sunlineOutBuffer.omega_BN_B, ConfigData->sunlineOutBuffer.omega_BN_B);
         } else {
             ConfigData->priorSignalAvailable = 1;
         }
-        /* store the sun heading estimate */
+        /*! -# Store the sun heading estimate */
         v3Copy(ConfigData->sunlineOutBuffer.vehSunPntBdy, ConfigData->dOld);
     }
 
-    /* if the residual fit output message is set, then compute the residuals and stor them in the output message */
+    /*! Residual Computation */
+    /*! - If the residual fit output message is set, then compute the residuals and stor them in the output message */
     if(strlen(ConfigData->cssWLSFiltResOutMsgName) > 0) {
-        filtStatus.numObs = ConfigData->numActiveCss;
-        filtStatus.timeTag = (double) (callTime*NANO2SEC);
-        v3Copy(ConfigData->sunlineOutBuffer.vehSunPntBdy, filtStatus.state);
+        ConfigData->filtStatus.numObs = ConfigData->numActiveCss;
+        ConfigData->filtStatus.timeTag = (double) (callTime*NANO2SEC);
+        v3Copy(ConfigData->sunlineOutBuffer.vehSunPntBdy, ConfigData->filtStatus.state);
         WriteMessage(ConfigData->cssWlsFiltResOutMsgId, callTime, sizeof(SunlineFilterFswMsg),
-                     &filtStatus, moduleID);
+                     &ConfigData->filtStatus, moduleID);
 
     }
-
+    /*! Writing Outputs */
+    if(status > 0) /*! - If the status from the WLS computation is erroneous, populate the output messages with zeros*/
+    {
+        /* An error was detected while attempting to compute the sunline direction */
+        v3SetZero(ConfigData->sunlineOutBuffer.vehSunPntBdy);       /* zero the sun heading to indicate anomaly  */
+        v3SetZero(ConfigData->sunlineOutBuffer.omega_BN_B);         /* zero the rate measure */
+        ConfigData->priorSignalAvailable = 0;                       /* reset the prior heading estimate flag */
+    } else {
+        /*! - If the status from the WLS computation good, populate the output messages with the computed data*/
     WriteMessage(ConfigData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
                  &(ConfigData->sunlineOutBuffer), moduleID);
+    }
     return;
 }

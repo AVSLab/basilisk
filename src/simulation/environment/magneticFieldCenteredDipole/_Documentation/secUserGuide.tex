@@ -1,0 +1,58 @@
+% !TEX root = ./Basilisk-magFieldDipole-20190309.tex
+
+\section{User Guide}
+
+\subsection{General Module Setup}
+This section outlines the steps needed to add a {\tt MagneticField} module to a sim.
+First, the planet magnetic field model must be imported and initialized:
+\begin{verbatim}
+from Basilisk.simulation import magneticFieldCenteredDipole
+magModule = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()
+magModule = "CenteredDipole"
+\end{verbatim}
+By default the model the dipole parameters are zeroed, resulting in a zeroed magnetic field message. 
+
+The model can  be added to a task like other simModels. 
+\begin{verbatim}
+unitTestSim.AddModelToTask(unitTaskName, testModule)
+\end{verbatim}
+
+Each {\tt MagneticField} module calculates the magnetic field based on the output state messages for a set of spacecraft.
+To add spacecraft to the model the spacecraft state output message name is sent to the \verb|addScToModel| method:
+\begin{verbatim}
+scObject = spacecraftPlus.SpacecraftPlus()
+scObject.ModelTag = "spacecraftBody"
+magModule.addSpacecraftToModel(scObject.scStateOutMsgName)
+\end{verbatim}
+
+\subsection{Planet Ephemeris Information}
+The optional planet state message name can be set by directly adjusting that attribute of the class:
+\begin{verbatim}
+magModule.planetPosInMsgName = "PlanetSPICEMsgName"
+\end{verbatim}
+If SPICE is not being used, the planet is assumed to reside at the origin and $\bm r_{P/O} = \bm 0$.
+
+\subsection{Setting the Model Reach}
+By default the model doesn't perform any checks on the altitude to see if the specified magnetic field model should be used.  This is set through the parameters {\tt envMinReach} and {\tt envMaxReach}.  Their default values are -1.  If these are set to positive values, then if the spacecraft orbit radius is smaller than {\tt envMinReach} or larger than {\tt envMaxReach}, the magnetic field vector is set to zero.
+
+
+\subsection{Centered Dipole Magnetic Parameters}
+The parameters of the dipole model are set by calling
+\begin{verbatim}
+    magModule.g10 = g10Value
+    magModule.g11 = g11Value
+    magModule.h11 = h11Value
+    magModule.planetRadius = planetRadius # in meters
+\end{verbatim}
+where $g_{1}^{0}$, $g_{1}^{1}$ and $h_{1}^{1}$ are the first three expansion terms of the IGRF spherical harmonics model.\footnote{\url{https://www.ngdc.noaa.gov/IAGA/vmod/igrf.html}}
+
+The python support file {\tt simSetPlanetEnvironment.py} contains a helper function called 
+\begin{verbatim}
+	centeredDipoleMagField()
+\end{verbatim} 
+which helps setup common NASA centered dipole models for a range of planets that contain global magnetic fields.  This possible planet names includes mercury, earth, jupiter, saturn, uranus and neptune.  The function is then called with
+\begin{verbatim}
+simSetPlanetEnvironment.centeredDipoleMagField(testModule, "jupiter")
+\end{verbatim}
+to setup the named planets dipole model.
+

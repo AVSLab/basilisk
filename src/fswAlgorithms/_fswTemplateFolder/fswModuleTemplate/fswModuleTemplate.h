@@ -26,36 +26,36 @@
 
 
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup fswModuleTemplate
+ * @brief This is a template module for FSW algorithms in ANSI-C.  Make a copy of this module and change the
+ * file names to match the new module you are creating.  More information can be found
+ * in the [PDF Description](Basilisk-MODULENAME-yyyymmdd.pdf).
  * @{
  */
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
-    double dummy;                                   /*!< [units] sample module variable declaration */
-    double dumVector[3];                            /*!< [units] sample vector variable */
+    double dummy;                                   //!< [units] sample module variable declaration
+    double dumVector[3];                            //!< [units] sample vector variable
 
     /* declare module IO interfaces */
-    char dataOutMsgName[MAX_STAT_MSG_LENGTH];       /*!< The name of the output message*/
-    int32_t dataOutMsgID;                           /*!< ID for the outgoing message */
-    char dataInMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the Input message*/
-    int32_t dataInMsgID;                            /*!< ID for the incoming message */
+    char dataOutMsgName[MAX_STAT_MSG_LENGTH];       //!< The name of the output message
+    int32_t dataOutMsgID;                           //!< ID for the outgoing message
+    char dataInMsgName[MAX_STAT_MSG_LENGTH];        //!< The name of the Input message
+    int32_t dataInMsgID;                            //!< ID for the incoming message
 
-    double  inputVector[3];                         /*!< [units]  vector description */
-
-    FswModuleTemplateFswMsg fswModuleOut;           /*!< -- copy of the output message */
-
+    double  inputVector[3];                         //!< [units]  vector description
 }fswModuleTemplateConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     
-    void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t moduleID);
-    void Update_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t moduleID);
+    void CrossInit_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t moduleID);
+    void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void Reset_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, uint64_t moduleID);
     
 #ifdef __cplusplus
 }

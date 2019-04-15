@@ -26,6 +26,10 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
 
+/*! \addtogroup SimModelGroup
+ * @{
+ */
+
 /*! Struct containing all the panel variables. All members are public by default so they can be changed by methods of
  the N_hingedRigidBodyStateEffector class. */
 struct HingedPanel {
@@ -114,5 +118,7 @@ public:
     void computeDerivatives(double integTime, Eigen::Vector3d rDDot_BN_N, Eigen::Vector3d omegaDot_BN_B, Eigen::Vector3d sigma_BN);  //!< -- Method for each stateEffector to calculate derivatives
     void readInputMessages();       //!< -- method to read input messages
 };
+
+/* @} */
 
 #endif /* N_HINGED_RIGID_BODY_STATE_EFFECTOR_H */

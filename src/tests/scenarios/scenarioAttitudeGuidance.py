@@ -125,7 +125,7 @@ def plot_orientation(timeLineSet, dataPos, dataVel, dataSigmaBN):
     plt.ylabel('Orientation Illustration')
 
 
-## \defgroup Tutorials_2_1
+## \defgroup scenarioAttitudeGuidanceGroup
 ##   @{
 ## How to use guidance modules to align the spacecraft frame to the orbit or Hill frame.
 #
@@ -364,7 +364,6 @@ def run(show_plots, useAltBodyFrame):
     mrpControlConfig.Ki = -1.0  # make value negative to turn off integral feedback
     mrpControlConfig.P = 30.0
     mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
-    mrpControlConfig.domega0 = [0.0, 0.0, 0.0]
 
     #
     #   Setup data logging before the simulation is initialized

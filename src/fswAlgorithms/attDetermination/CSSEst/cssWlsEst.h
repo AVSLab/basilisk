@@ -24,36 +24,37 @@
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "fswMessages/cssConfigFswMsg.h"
 #include "fswMessages/cssUnitConfigFswMsg.h"
+#include "fswMessages/sunlineFilterFswMsg.h"
 #include <stdint.h>
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup cssWlsEst
+ @brief A weighted least-squares minimum-norm algorithm is used to estimate the body-relative sun heading using a cluster of coarse sun sensors.  Using two successive sun heading evaluation the module also computes the inertial angular velocity vector.  As rotations about the sun-heading vector are not observable, this angular velocity vector only contains body rates orthogonal to this sun heading vector.  More information on can be found in the [module PDF Description](Basilisk-rwNullSpace-20190209.pdf)
  * @{
  */
-
-
 
 
 
 /*! @brief Top level structure for the CSS weighted least squares estimator.
  Used to estimate the sun state in the vehicle body frame*/
 typedef struct {
-    char cssDataInMsgName[MAX_STAT_MSG_LENGTH];         /*!< The name of the css sensor input message*/
-    char cssConfigInMsgName[MAX_STAT_MSG_LENGTH];       /*!< The name of the css configuration input message*/
-    char navStateOutMsgName[MAX_STAT_MSG_LENGTH];       /*!< The name of the navigation output message*/
-    char cssWLSFiltResOutMsgName[MAX_STAT_MSG_LENGTH];  /*!< [-] Name of the CSS filter data out message*/
-    uint32_t numActiveCss;                              /*!< -- Number of currently active CSS sensors*/
-    uint32_t useWeights;                                /*!< -- Flag indicating whether or not to use weights for least squares*/
-    uint32_t priorSignalAvailable;                      /*!< -- Flag indicating if a recent prior heading estimate is available */
-    double dOld[3];                                     /*!< -- prior sun heading estimate */
-    double sensorUseThresh;                             /*!< -- Threshold below which we discount sensors*/
-    uint64_t priorTime;                                 /*!< [ns] Last time the attitude control is called */
-    CSSConfigFswMsg cssConfigInBuffer;                  /*!< -- CSS constellation configuration message buffer */
-    NavAttIntMsg sunlineOutBuffer;                      /*!< -- Nav message*/
-    int32_t cssDataInMsgID;                             /*!< -- ID for the incoming CSS sensor message*/
-    int32_t cssConfigInMsgID;                           /*!< -- ID for the incoming CSS configuration message*/
-    int32_t navStateOutMsgId;                            /*!< -- ID for the outgoing body estimate message*/
-    int32_t cssWlsFiltResOutMsgId;                       /*!< [-] norm of the output residuals for CSS*/
+    char cssDataInMsgName[MAX_STAT_MSG_LENGTH];         //!< The name of the css sensor input message
+    char cssConfigInMsgName[MAX_STAT_MSG_LENGTH];       //!< The name of the css configuration input message
+    char navStateOutMsgName[MAX_STAT_MSG_LENGTH];       //!< The name of the navigation output message containing the estimated states
+    char cssWLSFiltResOutMsgName[MAX_STAT_MSG_LENGTH];  //!< The name of the CSS filter data out message
+    uint32_t numActiveCss;                              //!< [-] Number of currently active CSS sensors
+    uint32_t useWeights;                                //!< Flag indicating whether or not to use weights for least squares
+    uint32_t priorSignalAvailable;                      //!< Flag indicating if a recent prior heading estimate is available
+    double dOld[3];                                     //!< The prior sun heading estimate
+    double sensorUseThresh;                             //!< Threshold below which we discount sensors
+    uint64_t priorTime;                                 //!< [ns] Last time the attitude control is called
+    CSSConfigFswMsg cssConfigInBuffer;                  //!< CSS constellation configuration message buffer
+    NavAttIntMsg sunlineOutBuffer;                      //!< Nav message
+    SunlineFilterFswMsg filtStatus;                     //!< Filter message
+    int32_t cssDataInMsgID;                             //!< ID for the incoming CSS sensor message
+    int32_t cssConfigInMsgID;                           //!< ID for the incoming CSS configuration message
+    int32_t navStateOutMsgId;                           //!< ID for the outgoing body estimate message
+    int32_t cssWlsFiltResOutMsgId;                      //!< ID of the output residuals for CSS
 }CSSWLSConfig;
 
 #ifdef __cplusplus

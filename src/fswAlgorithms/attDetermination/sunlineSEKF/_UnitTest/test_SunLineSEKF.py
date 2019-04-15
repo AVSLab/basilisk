@@ -41,7 +41,7 @@ def setupFilterData(filterObject):
     filterObject.cssConfigInMsgName = "css_config_data"
 
     filterObject.sensorUseThresh = 0.
-    filterObject.state = [1.0, 1.0, 1.0, 0.0, 0.0]
+    filterObject.state = [0.1, 0.9, 0.1, 0.0, 0.0]
     filterObject.x = [1.0, 0.0, 1.0, 0.0, 0.1]
     filterObject.covar = [0.4, 0.0, 0.0, 0.0, 0.0,
                           0.0, 0.4, 0.0, 0.0, 0.0,
@@ -52,6 +52,7 @@ def setupFilterData(filterObject):
     filterObject.qProcVal = 0.1**2
     filterObject.qObsVal = 0.001
     filterObject.eKFSwitch = (4./3)**2 #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
+
 
 def test_all_functions_sekf(show_plots):
     [testResults, testMessage] = sunline_individual_test()
@@ -103,7 +104,7 @@ def sunline_individual_test():
     ## Testing dynamics matrix computation
     ###################################################################################
     inputStates = [2,1,0.75,0.1,0.4]
-    inputOmega = [0.,0.1, 0.4]
+    inputOmega_SB_S = [0.,0.1, 0.4]
     bVec = [1.,0.,0.]
     dt =0.5
 
@@ -113,10 +114,8 @@ def sunline_individual_test():
 
     # Fill in the variables for the test
     dcm = sunlineSEKF.new_doubleArray(3 * 3)
-
     for j in range(9):
         sunlineSEKF.doubleArray_setitem(dcm, j, dcm_BS[j])
-
     sunlineSEKF.sunlineSEKFComputeDCM_BS(inputStates[:3], bVec, dcm)
 
     dcmOut = []
@@ -125,14 +124,13 @@ def sunline_individual_test():
 
     DCM_BS = np.array(dcmOut).reshape([3,3])
 
-    omega_B = np.dot(DCM_BS, np.array(inputOmega))
-    dtilde = RigidBodyKinematics.v3Tilde(-np.array(inputStates)[:3])
+    omega_SB_B = np.dot(DCM_BS, np.array(inputOmega_SB_S))
+    dtilde = RigidBodyKinematics.v3Tilde(np.array(inputStates)[:3])
     dBS = np.dot(dtilde, DCM_BS)
 
-
     expDynMat = np.zeros([numStates,numStates])
-    expDynMat[0:3, 0:3] =  np.array(RigidBodyKinematics.v3Tilde(omega_B))
-    expDynMat[0:3, 3:numStates] = dBS[:, 1:]
+    expDynMat[0:3, 0:3] =  np.array(RigidBodyKinematics.v3Tilde(omega_SB_B))
+    expDynMat[0:3, 3:numStates] = -dBS[:, 1:]
 
     dynMat = sunlineSEKF.new_doubleArray(numStates*numStates)
     for i in range(numStates*numStates):
@@ -148,7 +146,7 @@ def sunline_individual_test():
     if(errorNorm > 1.0E-10):
         print errorNorm, "Dyn Matrix"
         testFailCount += 1
-        testMessages.append("Dynamics Matrix generation Failure \n")
+        testMessages.append("Dynamics Matrix generation Failure Dyn " + "\n")
 
     ###################################################################################
     ## STM and State Test
@@ -210,11 +208,11 @@ def sunline_individual_test():
 
     if(errorNormSTM > 1.0E-10):
         testFailCount += 1
-        testMessages.append("STM Propagation Failure \n")
+        testMessages.append("STM Propagation Failure Dyn "  + "\n")
 
     if(errorNormStates > 1.0E-10):
         testFailCount += 1
-        testMessages.append("State Propagation Failure \n")
+        testMessages.append("State Propagation Failure Dyn " + "\n")
 
     ###################################################################################
     ## Test the H and yMeas matrix generation as well as the observation count
@@ -606,6 +604,7 @@ def StatePropStatic():
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     setupFilterData(moduleConfig)
+
     unitTestSim.AddVariableForLogging('sunlineSEKF.covar', testProcessRate * 10, 0, 24)
     unitTestSim.AddVariableForLogging('sunlineSEKF.state', testProcessRate * 10, 0, 4)
     unitTestSim.InitializeSimulation()
@@ -629,7 +628,6 @@ def StatePropStatic():
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-
 ####################################################################################
 # Test for the time and update with changing states (non-zero d_dot)
 ####################################################################################
@@ -646,7 +644,6 @@ def StatePropVariable(show_plots):
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
     numStates = 5
-    numObs = 3
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
     unitTestSim.TotalSim.terminateSimulation()
@@ -665,17 +662,14 @@ def StatePropVariable(show_plots):
                                         sunlineSEKF.Reset_sunlineSEKF)
     moduleWrap.ModelTag = "sunlineSEKF"
 
-
-
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     setupFilterData(moduleConfig)
 
-    InitialState = moduleConfig.state
+    InitialState =  (np.array(moduleConfig.state)+ +np.array([0.,0.,0.,0.0001,0.002])).tolist()
     Initialx = moduleConfig.x
     InitialCovar = moduleConfig.covar
-
     moduleConfig.state = InitialState
 
     unitTestSim.AddVariableForLogging('sunlineSEKF.covar', testProcessRate, 0, 24)
@@ -695,41 +689,42 @@ def StatePropVariable(show_plots):
     bVec = [1.,0.,0.]
     dt = 0.5
     expectedStateArray = np.zeros([2001,numStates+1])
+    DCM_BS = np.zeros([2001,3,3])
+    omega_S = np.zeros([2001,3])
+    omega_B = np.zeros([2001,3])
     expectedStateArray[0,1:numStates+1] = np.array(InitialState)
+    expDynMat = np.zeros([2001,numStates,numStates])
+
+    DCM_BS[0,:,0] = np.array(InitialState[0:3])/(np.linalg.norm(np.array(InitialState[0:3])))
+    DCM_BS[0,:,1] = np.cross(DCM_BS[0,:,0], bVec)/np.linalg.norm(np.array(np.cross(DCM_BS[0,:,0], bVec)))
+    DCM_BS[0,:,2] = np.cross(DCM_BS[0,:,0], DCM_BS[0,:,1])/np.linalg.norm(np.cross(DCM_BS[0,:,0], DCM_BS[0,:,1]))
+    omega_S[0,1:] = InitialState[3:]
+    omega_B[0,:] = np.dot(DCM_BS[0, :, :], omega_S[0,:])
 
     for i in range(1,2001):
         expectedStateArray[i,0] = dt*i*1E9
-        expectedStateArray[i,1:4] = expectedStateArray[i-1,1:4] + dt * np.cross(expectedStateArray[i-1,4:6],
+        expectedStateArray[i,1:4] = expectedStateArray[i-1,1:4] + dt * np.cross(omega_B[i-1,:],
                                                                                 expectedStateArray[i - 1, 1:4])
-        expectedStateArray[4:6] = expectedStateArray[4:6]
-
-    expDynMat = np.zeros([2001,numStates,numStates])
-    for i in range(0,2001):
-        dcm_BS = [1., 0., 0.,
-                  0., 1., 0.,
-                  0., 0., 1.]
+        expectedStateArray[i, 4:6] = expectedStateArray[i-1, 4:6]
 
         # Fill in the variables for the test
         dcm = sunlineSEKF.new_doubleArray(3 * 3)
-
         for j in range(9):
-            sunlineSEKF.doubleArray_setitem(dcm, j, dcm_BS[j])
-
+            sunlineSEKF.doubleArray_setitem(dcm, j, 0)
         sunlineSEKF.sunlineSEKFComputeDCM_BS(expectedStateArray[i, 1:4], bVec, dcm)
-
         dcmOut = []
         for j in range(9):
             dcmOut.append(sunlineSEKF.doubleArray_getitem(dcm, j))
+        DCM_BS[i,:,:] = np.array(dcmOut).reshape([3, 3])
+        omega_S[i, 1:] = expectedStateArray[i, 4:]
+        omega_B[i,:] = np.dot(DCM_BS[i, :, :], omega_S[i,:])
 
-        DCM_BS = np.array(dcmOut).reshape([3, 3])
+    for i in range(0, 2001):
+        dtilde = -np.array(RigidBodyKinematics.v3Tilde(expectedStateArray[i, 1:4]))
+        dBS = np.dot(dtilde, DCM_BS[i,:,:])
 
-        omega_B = np.dot(DCM_BS, np.array([0]+expectedStateArray[i,4:].tolist()))
-        dtilde = RigidBodyKinematics.v3Tilde(-np.array(expectedStateArray)[i, 1:4])
-        dBS = np.dot(dtilde, DCM_BS)
-
-        expDynMat[i,0:3, 0:3] = np.array(RigidBodyKinematics.v3Tilde(omega_B))
-        expDynMat[i,0:3, 3:numStates] = dBS[:, 1:]
-
+        expDynMat[i,0:3, 0:3] = np.array(RigidBodyKinematics.v3Tilde(omega_B[i,:]))
+        expDynMat[i, 0:3, 3:numStates] = dBS[:, 1:]
     expectedSTM = np.zeros([2001,numStates,numStates])
     expectedSTM[0,:,:] = np.eye(numStates)
     for i in range(1,2001):
@@ -749,30 +744,30 @@ def StatePropVariable(show_plots):
         s_skew = np.array([[0., -expectedStateArray[i,3], expectedStateArray[i,2]],
                            [expectedStateArray[i,3], 0., -expectedStateArray[i,1]],
                            [-expectedStateArray[i,2], expectedStateArray[i,1], 0.]])
-        Gamma[i, 0:3, 0:2] = dt ** 2. / 2. * s_skew[:,1:3]
+        s_BS = np.dot(s_skew, DCM_BS[i,:,:])
+        Gamma[i, 0:3, 0:2] = dt ** 2. / 2. * s_BS[:,1:3]
         Gamma[i,3:numStates, 0:2] = dt * np.eye(2)
         ProcNoiseCovar[i,:,:] = np.dot(Gamma[i,:,:], np.dot(moduleConfig.qProcVal*np.eye(2),Gamma[i,:,:].T))
     for i in range(1,2001):
         expectedCovar[i,0] =  dt*i*1E9
         expectedCovar[i,1:26] = (np.dot(expectedSTM[i,:,:], np.dot(np.reshape(expectedCovar[i-1,1:26],[numStates,numStates]), np.transpose(expectedSTM[i,:,:])))+ ProcNoiseCovar[i,:,:]).flatten()
-        test = np.dot(np.reshape(expectedCovar[i-1,1:26],[numStates,numStates]), np.transpose(expectedSTM[i,:,:]))
     FilterPlots.StatesVsExpected(stateLog, expectedStateArray, show_plots)
     FilterPlots.StatesPlotCompare(stateErrorLog, expectedXBar, covarLog, expectedCovar, show_plots)
 
-    for j in range(1,2001):
-        if (np.linalg.norm(np.array(stateLog)[j, 1:] - expectedStateArray[j, 1:]) > 1.0E-4):
-            testFailCount += 1
-            testMessages.append("General state propagation failure: State Prop \n")
-        if (np.linalg.norm(np.array(stateErrorLog)[j, 1:] - expectedXBar[j,1:]) > 1.0E-4):
-            testFailCount += 1
-            testMessages.append("General state propagation failure: State Error Prop \n")
+    if (np.linalg.norm(np.array(stateLog)[:, 1:] - expectedStateArray[:, 1:]) > 1.0E-10):
+        testFailCount += 1
+        testMessages.append("General state propagation failure: State Prop \n")
 
-        if (np.linalg.norm(np.array(covarLog)[j, 1:] - expectedCovar[j, 1:]) > 1.0E-4):
-            testFailCount += 1
-            testMessages.append("General state propagation failure: Covariance Prop \n")
-        if (np.linalg.norm(np.array(stmLog)[j, 1:] - expectedSTM[j,:].flatten()[:]) > 1.0E-4):
-            testFailCount += 1
-            testMessages.append("General state propagation failure: STM Prop \n")
+    if (np.linalg.norm(np.array(stateErrorLog)[:, 1:] - expectedXBar[:,1:]) > 1.0E-4):
+        testFailCount += 1
+        testMessages.append("General state propagation failure: State Error Prop \n")
+
+    if (np.linalg.norm(np.array(covarLog)[:, 1:] - expectedCovar[:, 1:]) > 1.0E-4):
+        testFailCount += 1
+        testMessages.append("General state propagation failure: Covariance Prop \n")
+    if (np.linalg.norm(np.array(stmLog)[:, 1:] - expectedSTM[:,:,:].reshape([2001,25])) > 1.0E-4):
+        testFailCount += 1
+        testMessages.append("General state propagation failure: STM Prop \n")
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -957,5 +952,6 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 
 if __name__ == "__main__":
-    test_all_functions_sekf(True)
+    # StatePropVariable(True)
+    sunline_individual_test()
     # test_all_sunline_sekf(True, 200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0])

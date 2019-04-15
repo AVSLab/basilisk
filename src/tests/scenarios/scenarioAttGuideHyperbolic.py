@@ -119,7 +119,7 @@ def plot_orbit(oe, mu, planet_radius, dataPos, dataVel):
 
 
 
-## \defgroup Tutorials_2_1_1
+## \defgroup scenarioAttGuideHyperbolicGroup
 ## @{
 # How to use guidance modules to align the spacecraft frame to the velocity-pointing frame.
 #
@@ -345,7 +345,6 @@ def run(show_plots, useAltBodyFrame):
     mrpControlConfig.Ki = -1.0  # make value negative to turn off integral feedback
     mrpControlConfig.P = 30.0
     mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
-    mrpControlConfig.domega0 = [0.0, 0.0, 0.0]
 
     #
     #   Setup data logging before the simulation is initialized

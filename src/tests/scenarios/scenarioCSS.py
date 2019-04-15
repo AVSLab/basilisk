@@ -54,7 +54,7 @@ bskPath = __path__[0]
 vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
 
 
-## \defgroup Tutorials_4_0
+## \defgroup scenarioCSSGroup
 ##   @{
 ## Demonstrates how to add a Coarse Sun Sensor (CSS) sensor to a spacecraft.
 #

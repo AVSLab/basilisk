@@ -7,6 +7,7 @@
  purpose with or without fee is hereby granted, provided that the above
  copyright notice and this permission notice appear in all copies.
 
+
  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -32,50 +33,52 @@
 #include <string.h>
 #include <math.h>
 
-/*! This method initializes the ConfigData for this module.
- It checks to ensure that the inputs are sane and then creates the
- output message
+/*! @brief This method sets up the module output message of type [CmdTorqueBodyIntMsg](\ref CmdTorqueBodyIntMsg)
  @return void
- @param ConfigData The configuration data associated with this module
- */
-void SelfInit_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t moduleID)
+ @param configData The configuration data associated with this module
+ @param moduleID The ID associated with the ConfigData
+*/
+void SelfInit_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
     /*! - Create output message for module */
-    ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
+    configData->attControlTorqueOutMsgId = CreateNewMessage(configData->outputDataName,
         sizeof(CmdTorqueBodyIntMsg), "CmdTorqueBodyIntMsg", moduleID);
     
 }
 
-/*! This method performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
+/*! @brief This method performs the second stage of initialization for this module.
+ Its primary function is to link the input messages that were created elsewhere.  The required
+ input messages are the attitude tracking error message of type [AttGuidFswMsg](\ref AttGuidFswMsg)
+ and the vehicle configuration message of type [VehicleConfigFswMsg](\ref VehicleConfigFswMsg).
+ Optional messages are the RW configuration message of type [RWArrayConfigFswMsg](\ref RWArrayConfigFswMsg),
+ the RW speed message of type [RWSpeedIntMsg](\ref RWSpeedIntMsg)
+ and the RW availability message of type [RWAvailabilityFswMsg](\ref RWAvailabilityFswMsg).
  @return void
- @param ConfigData The configuration data associated with this module
+ @param configData The configuration data associated with this module
  */
-void CrossInit_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t moduleID)
+void CrossInit_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
-    ConfigData->inputGuidID = subscribeToMessage(ConfigData->inputGuidName,
+    configData->attGuidInMsgId = subscribeToMessage(configData->inputGuidName,
                                                  sizeof(AttGuidFswMsg), moduleID);
-    ConfigData->vehConfigInMsgID = subscribeToMessage(ConfigData->vehConfigInMsgName,
+    configData->vehConfigInMsgId = subscribeToMessage(configData->vehConfigInMsgName,
                                                  sizeof(VehicleConfigFswMsg), moduleID);
     
-    ConfigData->rwParamsInMsgID = -1;
-    ConfigData->inputRWSpeedsID = -1;
-    ConfigData->rwAvailInMsgID = -1;
+    configData->rwParamsInMsgId = -1;
+    configData->rwSpeedsInMsgId = -1;
+    configData->rwAvailInMsgId = -1;
 
-    if(strlen(ConfigData->rwParamsInMsgName) > 0) {
-        ConfigData->rwParamsInMsgID = subscribeToMessage(ConfigData->rwParamsInMsgName,
+    if(strlen(configData->rwParamsInMsgName) > 0) {
+        configData->rwParamsInMsgId = subscribeToMessage(configData->rwParamsInMsgName,
                                                        sizeof(RWArrayConfigFswMsg), moduleID);
-        if (strlen(ConfigData->inputRWSpeedsName) > 0) {
-        ConfigData->inputRWSpeedsID = subscribeToMessage(ConfigData->inputRWSpeedsName,
+        if (strlen(configData->inputRWSpeedsName) > 0) {
+        configData->rwSpeedsInMsgId = subscribeToMessage(configData->inputRWSpeedsName,
                                                          sizeof(RWSpeedIntMsg), moduleID);
         } else {
             BSK_PRINT(MSG_ERROR, "Error: the inputRWSpeedsName wasn't set while rwParamsInMsgName was set.\n");
         }
-        if(strlen(ConfigData->rwAvailInMsgName) > 0) {
-            ConfigData->rwAvailInMsgID = subscribeToMessage(ConfigData->rwAvailInMsgName,
+        if(strlen(configData->rwAvailInMsgName) > 0) {
+            configData->rwAvailInMsgId = subscribeToMessage(configData->rwAvailInMsgName,
                                                              sizeof(RWAvailabilityFswMsg), moduleID);
         }
     }
@@ -84,145 +87,160 @@ void CrossInit_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t moduleID)
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
- @param ConfigData The configuration data associated with the MRP steering control
+ @param configData The configuration data associated with the MRP steering control
  */
-void Reset_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Reset_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
-    /*! - Read the input messages */
-    uint64_t clockTime;
-    uint32_t readSize;
+    /* - Read the input messages */
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     int i;    
 
+    /*! - zero and read in vehicle configuration message */
     VehicleConfigFswMsg sc;
-    ReadMessage(ConfigData->vehConfigInMsgID, &clockTime, &readSize,
+    memset(&sc, 0x0, sizeof(VehicleConfigFswMsg));
+    ReadMessage(configData->vehConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
+    /*! - copy over spacecraft inertia tensor */
     for (i=0; i < 9; i++){
-        ConfigData->ISCPntB_B[i] = sc.ISCPntB_B[i];
+        configData->ISCPntB_B[i] = sc.ISCPntB_B[i];
     };
+
+    /*! - zero the number of RW by default */
+    configData->rwConfigParams.numRW = 0;
     
-    ConfigData->rwConfigParams.numRW = 0;
-    if (ConfigData->rwParamsInMsgID >= 0) {
-        /*! - Read static RW config data message and store it in module variables*/
-        ReadMessage(ConfigData->rwParamsInMsgID, &clockTime, &readSize,
-                    sizeof(RWArrayConfigFswMsg), &(ConfigData->rwConfigParams), moduleID);
+    /*! - check if RW configuration message exists */
+    if (configData->rwParamsInMsgId >= 0) {
+        /*! - Zero and Read static RW config data message and store it in module variables*/
+        memset(&(configData->rwConfigParams), 0x0, sizeof(RWArrayConfigFswMsg));
+        ReadMessage(configData->rwParamsInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
+                    sizeof(RWArrayConfigFswMsg), &(configData->rwConfigParams), moduleID);
     }
     
-    /* Reset the integral measure of the rate tracking error */
-    v3SetZero(ConfigData->z);
-    v3SetZero(ConfigData->int_sigma);
-    /* Reset the prior time flag state. 
+    /*! - Reset the integral measure of the rate tracking error */
+    v3SetZero(configData->int_sigma);
+
+    /*! - Reset the prior time flag state.
      If zero, control time step not evaluated on the first function call */
-    ConfigData->priorTime = 0;
+    configData->priorTime = 0;
 }
 
 /*! This method takes the attitude and rate errors relative to the Reference frame, as well as
     the reference frame angular rates and acceleration, and computes the required control torque Lr.
  @return void
- @param ConfigData The configuration data associated with the MRP Steering attitude control
+ @param configData The configuration data associated with the MRP Steering attitude control
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
+void Update_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t callTime,
     uint64_t moduleID)
 {
-    AttGuidFswMsg      guidCmd;            /*!< Guidance Message */
-    RWSpeedIntMsg      wheelSpeeds;        /*!< Reaction wheel speed estimates */
-    RWAvailabilityFswMsg  wheelsAvailability; /*!< Reaction wheel availability */
+    AttGuidFswMsg      guidCmd;            /* attitude tracking error message */
+    RWSpeedIntMsg      wheelSpeeds;        /* Reaction wheel speed message */
+    RWAvailabilityFswMsg wheelsAvailability; /* Reaction wheel availability message */
+    CmdTorqueBodyIntMsg controlOut;        /* output message */
 
-    uint64_t            clockTime;
-    uint32_t            readSize;
-    double              dt;                 /*!< [s] control update period */
-    double              Lr[3];              /*!< required control torque vector [Nm] */
-    double              omega_BN_B[3];
-    double              v3[3];
+    uint64_t            timeOfMsgWritten;
+    uint32_t            sizeOfMsgWritten;
+    double              dt;                 /* [s] control update period */
+    double              Lr[3];              /* required control torque vector [Nm] */
+    double              omega_BN_B[3];      /* [r/s] body angular velocity message */
     double              v3_1[3];
     double              v3_2[3];
-    double              temp;
+    double              v3_3[3];
+    double              v3_4[3];
+    double              v3_5[3];
+    double              v3_6[3];
+    double              v3_7[3];
+    double              v3_8[3];
+    double              v3_9[3];
+    double              v3_10[3];
+    double              v3_11[3];
+    double              v3_12[3];
+    double              intCheck;           /* Check magnitude of integrated attitude error */
     int                 i;
-    double              *wheelGs;           /*!< Reaction wheel spin axis pointer */
+    double              *wheelGs;           /* Reaction wheel spin axis pointer */
 
+    /*! - zero the output message */
+    memset(&controlOut, 0x0, sizeof(CmdTorqueBodyIntMsg));
 
-
-    /*! Begin method steps*/
-    /*! - Read the dynamic input messages */
+    /*! - Read the attitude tracking error message */
     memset(&guidCmd, 0x0, sizeof(AttGuidFswMsg));
-    ReadMessage(ConfigData->inputGuidID, &clockTime, &readSize,
+    ReadMessage(configData->attGuidInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);
-    
-    memset(wheelSpeeds.wheelSpeeds, 0x0, MAX_EFF_CNT * sizeof(double));
-    memset(wheelsAvailability.wheelAvailability, 0x0, MAX_EFF_CNT * sizeof(int)); // wheelAvailability set to 0 (AVAILABLE) by default
-    if(ConfigData->rwConfigParams.numRW > 0) {
-        ReadMessage(ConfigData->inputRWSpeedsID, &clockTime, &readSize,
+
+    /*! - read in optional RW speed and availability message */
+    if(configData->rwConfigParams.numRW > 0) {
+        memset(&wheelSpeeds, 0x0, sizeof(RWSpeedIntMsg));
+        ReadMessage(configData->rwSpeedsInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(RWSpeedIntMsg), (void*) &(wheelSpeeds), moduleID);
-        if (ConfigData->rwAvailInMsgID >= 0){
-            ReadMessage(ConfigData->rwAvailInMsgID, &clockTime, &readSize,
+        memset(&wheelsAvailability, 0x0, sizeof(RWAvailabilityFswMsg)); /* wheelAvailability set to 0 (AVAILABLE) by default */
+        if (configData->rwAvailInMsgId >= 0){
+            ReadMessage(configData->rwAvailInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                         sizeof(RWAvailabilityFswMsg), &wheelsAvailability, moduleID);
         }
     }
     
-    /* compute control update time */
-    if (ConfigData->priorTime == 0) {
+    /*! - compute control update time */
+    if (configData->priorTime == 0) {
         dt = 0.0;
     } else {
-        dt = (callTime - ConfigData->priorTime) * NANO2SEC;
+        dt = (callTime - configData->priorTime) * NANO2SEC;
     }
-    ConfigData->priorTime = callTime;
+    configData->priorTime = callTime;
 
-    /* compute body rate */
+    /*! - compute body rate */
     v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
     
-    /* evaluate integral term */
-    if (ConfigData->Ki > 0) {   /* check if integral feedback is turned on  */
-        v3Scale(ConfigData->K * dt, guidCmd.sigma_BR, v3);
-        v3Add(v3, ConfigData->int_sigma, ConfigData->int_sigma);
-        if((temp = v3Norm(ConfigData->int_sigma)) > ConfigData->integralLimit) {
-            v3Scale(ConfigData->integralLimit / temp, ConfigData->int_sigma, ConfigData->int_sigma);
-        }
-        v3Subtract(guidCmd.omega_BR_B, ConfigData->domega0, v3);
-        m33MultV3(RECAST3X3 ConfigData->ISCPntB_B, v3, v3_1);
-        v3Add(ConfigData->int_sigma, v3_1, ConfigData->z);
-    } else {
-        /* integral feedback is turned off through a negative gain setting */
-        v3SetZero(ConfigData->z);
+    /*! - evaluate integral term */
+    v3SetZero(configData->z);
+    if (configData->Ki > 0) {   /* check if integral feedback is turned on  */
+        v3Scale(configData->K * dt, guidCmd.sigma_BR, v3_1);
+        v3Add(v3_1, configData->int_sigma, configData->int_sigma);
+        if((intCheck = v3Norm(configData->int_sigma)) > configData->integralLimit) {
+            v3Scale(configData->integralLimit / intCheck, configData->int_sigma, configData->int_sigma);
+        } /* keep int_sigma less than integralLimit */
+        m33MultV3(RECAST3X3 configData->ISCPntB_B, guidCmd.omega_BR_B, v3_2); /* -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s) */
+        v3Add(configData->int_sigma, v3_2, configData->z);
     }
 
-    /* evaluate required attitude control torque Lr */
-    v3Scale(ConfigData->K, guidCmd.sigma_BR, v3);           /* +K sigma_BR */
-    v3Scale(ConfigData->P, guidCmd.omega_BR_B,
-            Lr);                                            /* +P delta_omega */
-    v3Add(v3, Lr, Lr);
-    v3Scale(ConfigData->Ki, ConfigData->z, v3_2);
-    v3Scale(ConfigData->P, v3_2, v3);                       /* +P*Ki*z */
-    v3Add(v3, Lr, Lr);
+    /*! - evaluate required attitude control torque Lr */
+    v3Scale(configData->K, guidCmd.sigma_BR, Lr);           /* +K sigma_BR */
+    v3Scale(configData->P, guidCmd.omega_BR_B,
+            v3_3);                                          /* +P delta_omega */
+    v3Add(v3_3, Lr, Lr);
+    v3Scale(configData->Ki, configData->z, v3_4);
+    v3Scale(configData->P, v3_4, v3_5);                       /* +P*Ki*z */
+    v3Add(v3_5, Lr, Lr);
 
-    m33MultV3(RECAST3X3 ConfigData->ISCPntB_B, omega_BN_B, v3);                    /* -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s) */
-    for(i = 0; i < ConfigData->rwConfigParams.numRW; i++)
+    /* -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s) */
+    m33MultV3(RECAST3X3 configData->ISCPntB_B, omega_BN_B, v3_6);
+    for(i = 0; i < configData->rwConfigParams.numRW; i++)
     {
         if (wheelsAvailability.wheelAvailability[i] == AVAILABLE){ /* check if wheel is available */
-            wheelGs = &(ConfigData->rwConfigParams.GsMatrix_B[i*3]);
-            v3Scale(ConfigData->rwConfigParams.JsList[i] * (v3Dot(omega_BN_B, wheelGs) + wheelSpeeds.wheelSpeeds[i]),
-                    wheelGs, v3_1);
-            v3Add(v3_1, v3, v3);
+            wheelGs = &(configData->rwConfigParams.GsMatrix_B[i*3]);
+            v3Scale(configData->rwConfigParams.JsList[i] * (v3Dot(omega_BN_B, wheelGs) + wheelSpeeds.wheelSpeeds[i]),
+                    wheelGs, v3_7);                                 /* h_s_i */
+            v3Add(v3_6, v3_7, v3_6);
         }
     }
     
-    v3Add(guidCmd.omega_RN_B, v3_2, v3_2);
-    v3Cross(v3_2, v3, v3_1);
-    v3Subtract(Lr, v3_1, Lr);
+    v3Add(guidCmd.omega_RN_B, v3_4, v3_8);
+    v3Cross(v3_8, v3_6, v3_9);
+    v3Subtract(Lr, v3_9, Lr);
 
-    v3Cross(omega_BN_B, guidCmd.omega_RN_B, v3);
-    v3Subtract(v3, guidCmd.domega_RN_B, v3_1);
-    m33MultV3(RECAST3X3 ConfigData->ISCPntB_B, v3_1, v3);                    /* +[I](-d(omega_r)/dt + omega x omega_r) */
-    v3Add(v3, Lr, Lr);
+    v3Cross(omega_BN_B, guidCmd.omega_RN_B, v3_10);
+    v3Subtract(v3_10, guidCmd.domega_RN_B, v3_11);
+    m33MultV3(RECAST3X3 configData->ISCPntB_B, v3_11, v3_12);   /* +[I](-d(omega_r)/dt + omega x omega_r) */
+    v3Add(v3_12, Lr, Lr);
 
-    v3Add(ConfigData->knownTorquePntB_B, Lr, Lr);                                       /* +L */
+    v3Add(configData->knownTorquePntB_B, Lr, Lr);           /* +L */
     v3Scale(-1.0, Lr, Lr);                                  /* compute the net positive control torque onto the spacecraft */
 
 
-    /* store the output message */
-    v3Copy(Lr, ConfigData->controlOut.torqueRequestBody);
-    
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(CmdTorqueBodyIntMsg),
-                 (void*) &(ConfigData->controlOut), moduleID);
+    /*! - set the output message and write it out */
+    v3Copy(Lr, controlOut.torqueRequestBody);
+    WriteMessage(configData->attControlTorqueOutMsgId, callTime, sizeof(CmdTorqueBodyIntMsg),
+                 (void*) &(controlOut), moduleID);
     
     return;
 }

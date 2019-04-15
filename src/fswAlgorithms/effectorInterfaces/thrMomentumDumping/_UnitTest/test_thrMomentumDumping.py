@@ -24,9 +24,10 @@
 #   Creation Date:      August 21, 2016
 #
 
-import sys, os, inspect
-import numpy as np
 import pytest
+import os, inspect
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
 
 
 
@@ -40,7 +41,6 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.fswAlgorithms import thrMomentumDumping            # import the module that is to be tested
-import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
 
@@ -85,13 +85,9 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = thrMomentumDumping.thrMomentumDumpingConfig()                          # update with current values
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        thrMomentumDumping.Update_thrMomentumDumping,     # update with current values
-                                        thrMomentumDumping.SelfInit_thrMomentumDumping,   # update with current values
-                                        thrMomentumDumping.CrossInit_thrMomentumDumping,  # update with current values
-                                        thrMomentumDumping.Reset_thrMomentumDumping)      # update with current values
-    moduleWrap.ModelTag = "thrMomentumDumping"                                        # update python name of test module
+    moduleConfig = thrMomentumDumping.thrMomentumDumpingConfig()
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
+    moduleWrap.ModelTag = "thrMomentumDumping"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
@@ -112,7 +108,7 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
 
     # setup thruster cluster message
     fswSetupThrusters.clearSetup()
-    rcsLocationData = [ \
+    rcsLocationData = [
         [-0.86360, -0.82550, 1.79070],
         [-0.82550, -0.86360, 1.79070],
         [0.82550, 0.86360, 1.79070],
@@ -120,9 +116,9 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
         [-0.86360, -0.82550, -1.79070],
         [-0.82550, -0.86360, -1.79070],
         [0.82550, 0.86360, -1.79070],
-        [0.86360, 0.82550, -1.79070] \
+        [0.86360, 0.82550, -1.79070]
         ]
-    rcsDirectionData = [ \
+    rcsDirectionData = [
         [1.0, 0.0, 0.0],
         [0.0, 1.0, 0.0],
         [0.0, -1.0, 0.0],
@@ -130,7 +126,7 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
         [-1.0, 0.0, 0.0],
         [0.0, -1.0, 0.0],
         [0.0, 1.0, 0.0],
-        [1.0, 0.0, 0.0] \
+        [1.0, 0.0, 0.0]
         ]
 
     for i in range(len(rcsLocationData)):
@@ -142,20 +138,9 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
 
     # setup thruster impulse request message
     inputMessageData = thrMomentumDumping.THRArrayCmdForceFswMsg()
-    messageSize = inputMessageData.getStructSize()
     inputMessageData.thrForce = [1.2, 0.2, 0.0, 1.6, 1.2, 0.2, 1.6, 0.0]
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.thrusterImpulseInMsgName,
-                                          messageSize,
-                                          2)
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrusterImpulseInMsgName,
-                                          messageSize,
-                                          0,
-                                          inputMessageData)
-
-
-
-
+    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName,
+                               moduleConfig.thrusterImpulseInMsgName, inputMessageData)
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.thrusterOnTimeOutMsgName, testProcessRate)
@@ -226,36 +211,24 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
                        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
                        ]
 
-        # else:
-        #     testFailCount+=1
-        #     testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed with unsupported input parameters")
 
     # compare the module results to the truth values
     accuracy = 1e-12
-    for i in range(0,len(trueVector)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], numThrusters, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
-                                "sec\n")
+    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
+    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput, accuracy,
+                                                               "OnTimeRequest", testFailCount, testMessages)
 
-    # If the argument provided at commandline "--show_plots" evaluates as true,
-    # plot all figures
-    # if show_plots:
-        # plot a sample variable.
-        # plt.figure(1)
-        # plt.plot(variableState[:,0]*macros.NANO2SEC, variableState[:,1], label='Sample Variable')
-        # plt.legend(loc='upper left')
-        # plt.xlabel('Time [s]')
-        # plt.ylabel('Variable Description [unit]')
-        # plt.show()
-
-    #   print out success message if no error were found
+    snippentName = "passFail" + str(resetCheck) + str(largeMinFireTime)
     if testFailCount == 0:
+        colorText = 'ForestGreen'
         print "PASSED: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        print "Failed: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -269,6 +242,6 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
 if __name__ == "__main__":
     test_thrMomentumDumping(              # update "module" in function name
                  True,
-                 False,             # resetFlag
+                 False,             # resetCheck
                  False              # largeMinFireTime
                )

@@ -25,7 +25,7 @@
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include <stdint.h>
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup sunSafePoint
  * @{
  */
 

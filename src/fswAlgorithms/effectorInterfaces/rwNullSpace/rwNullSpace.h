@@ -29,35 +29,37 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup rwNullSpace
+ * @brief This module uses the Reaction Wheel (RW) null space to slow down the wheels.  The resulting
+ * motor torques are super imposed on top of the attitude feedback control RW motor torques.  More information can be found
+ * in the [PDF Description](Basilisk-rwNullSpace-20190209.pdf).
  * @{
  */
 
-/*! @brief Top level structure for the sun-safe attitude control routine.
- This algorithm is intended to be incredibly simple and robust*/
+/*! @brief The configuration structure for the rwNullSpace module.  */
 typedef struct {
-    char inputRWCommands[MAX_STAT_MSG_LENGTH]; /*!< -- The name of the Input message*/
-	char inputRWSpeeds[MAX_STAT_MSG_LENGTH];   /*!< (-) The name of the input RW speeds*/
-    char inputRWConfigData[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the RWA configuration message*/
-	char outputControlName[MAX_STAT_MSG_LENGTH]; /*!< (-) The name of the output message*/
-	double GsInverse[MAX_EFF_CNT * MAX_EFF_CNT];    /*!< (-) Pseudo-inverse of the spin axis matrix*/
-	double OmegaGain;           /*!< (-) The gain factor applied to the RW speeds*/
-	uint32_t numWheels;         /*!< (-) The number of reaction wheels we have*/
-    int32_t inputRWCmdsID;      /*!< -- ID for the incoming RW commands*/
-	int32_t inputSpeedsID;      /*!< (-) ID for the incoming RW speed measure*/
-    int32_t inputRWConfID;      /*!< [-] ID for the incoming RWA configuration data*/
-	int32_t outputMsgID;     /*!< (-) ID for the outgoing RW commands*/
+    char inputRWCommands[MAX_STAT_MSG_LENGTH];      //!< [-] The name of the Input message
+	char inputRWSpeeds[MAX_STAT_MSG_LENGTH];        //!< [-] The name of the input RW speeds
+    char inputRWConfigData[MAX_STAT_MSG_LENGTH];    //!< [-] The name of the RWA configuration message
+	char outputControlName[MAX_STAT_MSG_LENGTH];    //!< [-] The name of the output message
+	double tau[MAX_EFF_CNT * MAX_EFF_CNT];          //!< [-] RW nullspace project matrix
+	double OmegaGain;                               //!< [-] The gain factor applied to the RW speeds
+	uint32_t numWheels;                             //!< [-] The number of reaction wheels we have
+    int32_t inputRWCmdsID;                          //!< [-] ID for the incoming RW commands
+	int32_t inputSpeedsID;                          //!< [-] ID for the incoming RW speed measure
+    int32_t inputRWConfID;                          //!< [-] ID for the incoming RWA configuration data
+	int32_t outputMsgID;                            //!< [-] ID for the outgoing RW commands
 }rwNullSpaceConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     
-    void SelfInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID);
-    void Update_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
+    void SelfInit_rwNullSpace(rwNullSpaceConfig *configData, uint64_t moduleID);
+    void CrossInit_rwNullSpace(rwNullSpaceConfig *configData, uint64_t moduleID);
+    void Update_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
         uint64_t moduleID);
-    void Reset_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
+    void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
                             uint64_t moduleID);
     
 #ifdef __cplusplus

@@ -24,7 +24,7 @@
 #include <stdint.h>
 #include "fswMessages/attRefFswMsg.h"
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup inertial3DSpin
  * @{
  */
 

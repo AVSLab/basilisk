@@ -24,7 +24,7 @@
 
 #define UKF_MAX_DIM 20
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup ukfUtilities
  * @{
  */
 

@@ -17,7 +17,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-## \defgroup Tutorials_6_1
+## \defgroup scenario_FeedbackRWGroup
 ## @{
 # Demonstrates how to stabilize the tumble of a 6-DOF spacecraft with reaction wheels in the BSK_Sim architecture.
 #
@@ -231,14 +231,12 @@
 #         self.mrpFeedbackControlData.Ki = -1.0 # Note: make value negative to turn off integral feedback
 #         self.mrpFeedbackControlData.P = 30.0
 #         self.mrpFeedbackControlData.integralLimit = 2. / self.mrpFeedbackControlData.Ki * 0.1
-#         self.mrpFeedbackControlData.domega0 = [0.0, 0.0, 0.0]
 #
 #     def SetMRPFeedbackRWA(self):
 #         self.mrpFeedbackRWsData.K = 3.5
 #         self.mrpFeedbackRWsData.Ki = -1  # Note: make value negative to turn off integral feedback
 #         self.mrpFeedbackRWsData.P = 30.0
 #         self.mrpFeedbackRWsData.integralLimit = 2. / self.mrpFeedbackRWsData.Ki * 0.1
-#         self.mrpFeedbackRWsData.domega0 = [0.0, 0.0, 0.0]
 #
 #         self.mrpFeedbackRWsData.vehConfigInMsgName = "adcs_config_data"
 #         self.mrpFeedbackRWsData.inputRWSpeedsName = "reactionwheel_output_states"

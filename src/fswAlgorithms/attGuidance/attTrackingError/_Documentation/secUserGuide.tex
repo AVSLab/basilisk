@@ -1,0 +1,24 @@
+% !TEX root = ./Basilisk-MODULENAME-yyyymmdd.tex
+
+\section{User Guide}
+
+The user only needs to setup the module and link the proper message names:
+
+\begin{itemize}
+\item Build the C-struct: \\
+\texttt{    moduleConfig = attTrackingError.attTrackingErrorConfig()}
+\item Wrap the module: \\
+\texttt{  moduleWrap = alg\_contain.AlgContain(moduleConfig,} \\
+\texttt{  attTrackingError.Update\_attTrackingError,} \\
+\texttt{ attTrackingError.SelfInit\_attTrackingError,} \\
+\texttt{ attTrackingError.CrossInit\_attTrackingError)} \\
+\texttt{ moduleWrap.ModelTag = "attTrackingError"} 
+\item Add the module to the task: \\
+ \texttt{ unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)}
+\item Link message names. For instance: \\
+  \texttt{  moduleConfig.inputNavName  = "inputNavName"} \\
+     \texttt{   moduleConfig.inputRefName  = "inputRefName"} \\
+     \texttt{   moduleConfig.outputDataName = "outputName"}
+\item  Set the R0R vector: \\
+\texttt{    moduleConfig.sigma\_R0R  = [0.01, 0.05, -0.55]}
+\end{itemize}

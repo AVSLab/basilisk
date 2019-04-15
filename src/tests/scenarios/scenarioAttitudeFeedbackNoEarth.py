@@ -62,7 +62,7 @@ from Basilisk import __path__
 bskPath = __path__[0]
 vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
 
-## \defgroup Tutorials_2_0_4
+## \defgroup scenarioAttitudeFeedbackNoEarthGroup
 ##   @{
 # Demonstrates how to simulate an attitude control scenario without having any gravity
 # bodies present. In essence, the spacecraft is hovering in deep space.  The goal is to
@@ -293,7 +293,6 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
         mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
     mrpControlConfig.P = 30.0
     mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
-    mrpControlConfig.domega0 = [0.0, 0.0, 0.0]
     if useKnownTorque:
         mrpControlConfig.knownTorquePntB_B = [0.25, -0.25, 0.1]
 

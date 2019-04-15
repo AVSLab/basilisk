@@ -17,76 +17,80 @@
 
  */
 
-#include "transDetermination/ephemNavConverter/ephemNavConverter.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "utilities/linearAlgebra.h"
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
+#include "transDetermination/ephemNavConverter/ephemNavConverter.h"
+#include "simFswInterfaceMessages/ephemerisIntMsg.h"
+#include "simFswInterfaceMessages/navTransIntMsg.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/linearAlgebra.h"
 
 /*! This method creates the output navigation message (translation only) for 
     the ephemeris model
  @return void
- @param ConfigData The configuration data associated with the ephemeris model
+ @param configData The configuration data associated with the ephemeris model
+ @param moduleID The module identification integer
  */
-void SelfInit_ephemNavConverter(EphemNavConverterData *ConfigData, uint64_t moduleID)
+void SelfInit_ephemNavConverter(EphemNavConverterData *configData, uint64_t moduleID)
 {
-    ConfigData->stateOutMsgID = CreateNewMessage(ConfigData->stateOutMsgName,
-        sizeof(NavTransIntMsg), "NavTransIntMsg", moduleID);
+    configData->stateOutMsgID = CreateNewMessage(configData->stateOutMsgName,
+                                                 sizeof(NavTransIntMsg),
+                                                 "NavTransIntMsg",
+                                                 moduleID);
 }
 
-/*! This method initializes the input time correlation factor structure
+/*! This method subscribes to the ephemeris interface message
  @return void
- @param ConfigData The configuration data associated with the ephemeris model
+ @param configData The configuration data associated with the ephemeris model
+ @param moduleID The module identification integer
  */
-void CrossInit_ephemNavConverter(EphemNavConverterData *ConfigData, uint64_t moduleID)
+void CrossInit_ephemNavConverter(EphemNavConverterData *configData, uint64_t moduleID)
 {
-
-    ConfigData->ephInMsgID = subscribeToMessage(
-        ConfigData->ephInMsgName, sizeof(EphemerisIntMsg), moduleID);
-
+    configData->ephInMsgID = subscribeToMessage(configData->ephInMsgName,
+                                                sizeof(EphemerisIntMsg),
+                                                moduleID);
 }
 
-/*! This method takes the chebyshev coefficients loaded for the position 
-    estimator and computes the coefficients needed to estimate the time 
-    derivative of that position vector (velocity).
+/*! This resets the module to original states.
  @return void
- @param ConfigData The configuration data associated with the ephemeris model
+ @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identification integer
  */
-void Reset_ephemNavConverter(EphemNavConverterData *ConfigData, uint64_t callTime,
-                         uint64_t moduleID)
+void Reset_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTime, uint64_t moduleID)
 {
 
 }
 
-/*! This method takes the current time and computes the state of the object
-    using that time and the stored Chebyshev coefficients.  If the time provided 
-    is outside the specified range, the position vectors rail high/low appropriately.
+/*! This method reads in the ephemeris messages and copies the translation
+    ephemeris to the navigation translation interface message.
  @return void
- @param ConfigData The configuration data associated with the ephemeris model
+ @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identification integer
  */
-void Update_ephemNavConverter(EphemNavConverterData *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Update_ephemNavConverter(EphemNavConverterData *configData, uint64_t callTime, uint64_t moduleID)
 {
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
+    EphemerisIntMsg tmpEphemeris;
+    NavTransIntMsg tmpOutputState;
+    memset(&tmpEphemeris, 0x0, sizeof(EphemerisIntMsg));
+    memset(&tmpOutputState, 0x0, sizeof(NavTransIntMsg));
 
-    
-    uint64_t writeTime;
-    uint32_t writeSize;
-    EphemerisIntMsg localEph;
-    
-    ReadMessage(ConfigData->ephInMsgID, &writeTime, &writeSize,
-                sizeof(EphemerisIntMsg), &localEph, moduleID);
-    
-    memset(&ConfigData->outputState, 0x0, sizeof(NavTransIntMsg));
+    /*! - read input ephemeris message */
+    ReadMessage(configData->ephInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+                sizeof(EphemerisIntMsg), &tmpEphemeris, moduleID);
 
-	ConfigData->outputState.timeTag = localEph.timeTag;
-	v3Copy(localEph.r_BdyZero_N, ConfigData->outputState.r_BN_N);
-	v3Copy(localEph.v_BdyZero_N, ConfigData->outputState.v_BN_N);
-  
-    WriteMessage(ConfigData->stateOutMsgID, callTime,
-                 sizeof(NavTransIntMsg), &ConfigData->outputState, moduleID);
+    /*! - map timeTag, position and velocity vector to output message */
+	tmpOutputState.timeTag = tmpEphemeris.timeTag;
+	v3Copy(tmpEphemeris.r_BdyZero_N, tmpOutputState.r_BN_N);
+	v3Copy(tmpEphemeris.v_BdyZero_N, tmpOutputState.v_BN_N);
+
+    /*! - write output message */
+    WriteMessage(configData->stateOutMsgID, callTime, sizeof(NavTransIntMsg),
+                 &tmpOutputState, moduleID);
 
     return;
-
 }

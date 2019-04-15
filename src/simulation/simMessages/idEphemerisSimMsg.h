@@ -22,6 +22,10 @@
 
 #include "simFswInterfaceMessages/ephemerisIntMsg.h"
 
+/*! \defgroup simMessages
+ *  @{
+ */
+
 /*! @brief Message to store the converted Spice ephemeris data */
 typedef struct{
     int64_t inputID;                        //!< [-] Message ID associated with ephemeris output
@@ -30,6 +34,7 @@ typedef struct{
     EphemerisIntMsg outputData;             //!< [-] Data container for output ephemeris estimate
 } IDEphemerisSimMsg;
 
+/* @} */
 
 
 

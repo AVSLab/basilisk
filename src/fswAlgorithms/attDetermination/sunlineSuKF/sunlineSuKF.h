@@ -24,14 +24,14 @@
 #include <stdint.h>
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
+#include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/sunlineFilterFswMsg.h"
 #include "fswMessages/cssConfigFswMsg.h"
 
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup sunlineSuKF
  * @{
  */
-
 
 /*!@brief Data structure for CSS Switch unscented kalman filter estimator. Please see the _Documentation folder for details on how this Kalman Filter Functions.
  */
@@ -57,12 +57,14 @@ typedef struct {
     double bVec_B[SKF_N_STATES_HALF];       /*!< [-] current vector of the b frame used to make frame */
     double switchTresh;             /*!< [-]  Threshold for switching frames */
     
+    double stateInit[SKF_N_STATES_SWITCH];    /*!< [-] State to initialize filter to*/
     double state[SKF_N_STATES_SWITCH];        /*!< [-] State estimate for time TimeTag*/
     
 	double wM[2 * SKF_N_STATES_SWITCH + 1]; /*!< [-] Weighting vector for sigma points*/
 	double wC[2 * SKF_N_STATES_SWITCH + 1]; /*!< [-] Weighting vector for sigma points*/
 
 	double sBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];         /*!< [-] Time updated covariance */
+    double covarInit[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];        /*!< [-] covariance to init to*/
 	double covar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];        /*!< [-] covariance */
     double xBar[SKF_N_STATES_SWITCH];            /*! [-] Current mean state estimate*/
 
@@ -85,6 +87,7 @@ typedef struct {
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
 	NavAttIntMsg outputSunline;   /*!< -- Output sunline estimate data */
     CSSArraySensorIntMsg cssSensorInBuffer; /*!< [-] CSS sensor data read in from message bus*/
+
     int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
     int32_t cssDataInMsgId;      /*!< -- ID for the incoming CSS sensor message*/

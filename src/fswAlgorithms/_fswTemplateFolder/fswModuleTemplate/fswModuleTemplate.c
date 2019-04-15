@@ -23,7 +23,7 @@
 
 /* modify the path to reflect the new module names */
 #include "fswModuleTemplate.h"
-
+#include "string.h"
 
 
 
@@ -41,12 +41,11 @@
  @return void
  @param ConfigData The configuration data associated with this module
  */
-void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t moduleID)
+void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t moduleID)
 {
     
-    /*! Begin method steps */
     /*! - Create output message for module */
-    ConfigData->dataOutMsgID = CreateNewMessage(ConfigData->dataOutMsgName,
+    configData->dataOutMsgID = CreateNewMessage(configData->dataOutMsgName,
                                                sizeof(FswModuleTemplateFswMsg),
                                                "FswModuleTemplateFswMsg",          /* add the output structure name */
                                                moduleID);
@@ -54,26 +53,30 @@ void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t mo
 
 /*! This method performs the second stage of initialization for this module.
  It's primary function is to link the input messages that were created elsewhere.
+ Nothing else should be happening in this function.
  @return void
  @param ConfigData The configuration data associated with this module
  */
-void CrossInit_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t moduleID)
+void CrossInit_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t moduleID)
 {
-    /*! - Get the control data message ID*/
-    ConfigData->dataInMsgID = subscribeToMessage(ConfigData->dataInMsgName,
+    /*! - Get the ID of the subscribed input message */
+    configData->dataInMsgID = subscribeToMessage(configData->dataInMsgName,
                                                 sizeof(FswModuleTemplateFswMsg),
                                                 moduleID);
 
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
- time varying states between function calls are reset to their default values.
+ time varying states between function calls are reset to their default values.  The local copy of the
+ message output buffer should be cleared.
  @return void
  @param ConfigData The configuration data associated with the module
  */
-void Reset_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Reset_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
-    ConfigData->dummy = 0.0;              /* reset any required variables */
+    /*! - reset any required variables */
+    configData->dummy = 0.0;
+
 }
 
 /*! Add a description of what this main Update() routine does for this module
@@ -81,34 +84,30 @@ void Reset_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t callT
  @param ConfigData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
-    uint64_t            clockTime;
-    uint32_t            readSize;
-    double              Lr[3];              /*!< [unit] variable description */
+    uint64_t            timeOfMsgWritten;
+    uint32_t            sizeOfMsgWritten;
+    double              Lr[3];              /* [unit] variable description */
+    FswModuleTemplateFswMsg fswModuleOut;   /* output message */
 
-
-    /*! Begin method steps*/
     /*! - Read the input messages */
-    ReadMessage(ConfigData->dataInMsgID, &clockTime, &readSize,
-                sizeof(FswModuleTemplateFswMsg), (void*) &(ConfigData->inputVector), moduleID);
+    ReadMessage(configData->dataInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+                sizeof(FswModuleTemplateFswMsg), (void*) &(configData->inputVector), moduleID);
 
 
 
-    /*
-        Add the module specific code
-     */
-    v3Copy(ConfigData->inputVector, Lr);
-    ConfigData->dummy += 1.0;
-    Lr[0] += ConfigData->dummy;
+    /*! - Add the module specific code */
+    v3Copy(configData->inputVector, Lr);
+    configData->dummy += 1.0;
+    Lr[0] += configData->dummy;
 
-    /*
-     store the output message 
-     */
-    v3Copy(Lr, ConfigData->fswModuleOut.outputVector);                      /* populate the output message */
+    /*! - store the output message */
+    v3Copy(Lr, fswModuleOut.outputVector);
 
-    WriteMessage(ConfigData->dataOutMsgID, callTime, sizeof(FswModuleTemplateFswMsg),   /* update module name */
-                 (void*) &(ConfigData->fswModuleOut), moduleID);
+    /*! - write the module output message */
+    WriteMessage(configData->dataOutMsgID, callTime, sizeof(FswModuleTemplateFswMsg),
+                 (void*) &(fswModuleOut), moduleID);
 
     return;
 }

@@ -55,7 +55,7 @@ bskPath = __path__[0]
 vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
 
 
-## \defgroup Tutorials_1_3
+## \defgroup scenarioOrbitMultiBodyGroup
 ##   @{
 ## How to setup orbital simulation with multiple gravitational bodies.
 #

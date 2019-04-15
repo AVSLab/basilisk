@@ -20,13 +20,17 @@
 #ifndef REAL_TIME_FACTOR_H
 #define REAL_TIME_FACTOR_H
 
+/*! \defgroup simMessages
+ *  @{
+ */
+
 
 //! @brief Container for sim real time speed up/down factor.
 typedef struct {
     double speedFactor;                 //!< -- factor of real time at which the sim should run
 }RealTimeFactorSimMsg;
 
-
+/* @} */
 
 
 #endif

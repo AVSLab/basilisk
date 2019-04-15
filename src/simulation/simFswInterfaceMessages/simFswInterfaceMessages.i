@@ -32,6 +32,7 @@
 #include "rwSpeedIntMsg.h"
 #include "stSensorIntMsg.h"
 #include "thrArrayOnTimeCmdIntMsg.h"
+#include "macroDefinitions.h"
 %}
 
 %include "swig_conly_data.i"
@@ -63,6 +64,8 @@ GEN_SIZEOF(RWSpeedIntMsg)
 GEN_SIZEOF(STSensorIntMsg)
 %include "thrArrayOnTimeCmdIntMsg.h"
 GEN_SIZEOF(THRArrayOnTimeCmdIntMsg)
+
+%include "macroDefinitions.h"
 
 #ifndef CSHARP_ROX
 %pythoncode %{

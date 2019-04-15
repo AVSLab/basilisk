@@ -42,7 +42,7 @@ typedef enum {
     MAX_CSSFAULT
 } CSSFaultState_t;
 
-/*! \addtogroup SimModelGroup
+/*! \addtogroup SimModelGroup Simulation C++ Modules
  * @{
  */
 

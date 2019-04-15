@@ -27,6 +27,7 @@
 /* update this include to reflect the required module input messages */
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include <string.h>
+#include <math.h>
 
 
 /*
@@ -83,8 +84,8 @@ void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime,
     double             *pAxis;                 /*!< pointer to the current control axis */
     int                 i;
     THRArrayConfigFswMsg   localThrusterData;     /*!< local copy of the thruster data message */
-    uint64_t            clockTime;
-    uint32_t            readSize;
+    uint64_t            timeOfMsgWritten;
+    uint32_t            sizeOfMsgWritten;
 
     /* configure the number of axes that are controlled */
     ConfigData->numOfAxesToBeControlled = 0;
@@ -107,9 +108,9 @@ void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime,
 
 
     /* read in the support messages */
-    ReadMessage(ConfigData->inputThrusterConfID, &clockTime, &readSize,
+    ReadMessage(ConfigData->inputThrusterConfID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(THRArrayConfigFswMsg), &localThrusterData, moduleID);
-    ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
+    ReadMessage(ConfigData->inputVehicleConfigDataID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(ConfigData->sc), moduleID);
 
     /* read in the thruster position and thruster force heading information */
@@ -132,8 +133,8 @@ void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime,
  */
 void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    uint64_t    clockTime;
-    uint32_t    readSize;
+    uint64_t    timeOfMsgWritten;
+    uint32_t    sizeOfMsgWritten;
     double      F[MAX_EFF_CNT];               /*!< [N]     vector of commanded thruster forces */
     double      Fbar[MAX_EFF_CNT];            /*!< [N]     vector of intermediate thruster forces */
     int         i,c;
@@ -147,12 +148,14 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
     int         thrusterUsed[MAX_EFF_CNT];    /*!< []      Array of flags indicating if this thruster is used for the Lr_j */
     double      rThrusterRelCOM_B[MAX_EFF_CNT][3];/*!< [m]     local copy of the thruster locations relative to COM */
     uint32_t    numOfAvailableThrusters;      /*!< []      number of available thrusters */
+    double      BLr_B[3];                     /*!< [Nm]    Control torque that we actually control*/
+    double      maxFractUse;                  /*!< []      ratio of maximum requested thruster force relative to maximum thruster limit */
 
     /*! Begin method steps*/
     /*! - Read the input messages */
-    ReadMessage(ConfigData->inputVehControlID, &clockTime, &readSize,
+    ReadMessage(ConfigData->inputVehControlID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CmdTorqueBodyIntMsg), (void*) &(Lr_B), moduleID);
-    ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
+    ReadMessage(ConfigData->inputVehicleConfigDataID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(VehicleConfigFswMsg), (void*) &(ConfigData->sc), moduleID);
 
 
@@ -181,7 +184,7 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
         }
     }
     v3Add(Lr_offset, Lr_B, Lr_B);
-    findMinimumNormForce(ConfigData, D, Lr_B, numOfAvailableThrusters, F);
+    findMinimumNormForce(ConfigData, D, Lr_B, numOfAvailableThrusters, F, BLr_B);
     if (ConfigData->thrForceSign>0) substractMin(F, numOfAvailableThrusters);
 
     if (numOfAvailableThrusters != ConfigData->numThrusters || ConfigData->thrForceSign<0) {
@@ -194,7 +197,7 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
                 counterPosForces += 1;
             }
         }
-        findMinimumNormForce(ConfigData, Dbar, Lr_B, counterPosForces, Fbar);
+        findMinimumNormForce(ConfigData, Dbar, Lr_B, counterPosForces, Fbar, BLr_B);
 
         c = 0;
         for (i=0;i<numOfAvailableThrusters;i++) {
@@ -208,6 +211,31 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
         if (ConfigData->thrForceSign>0) substractMin(F, numOfAvailableThrusters);
     }
 
+    ConfigData->outTorqAngErr = computeTorqueAngErr(D, BLr_B, numOfAvailableThrusters, F,
+        ConfigData->thrForcMag);
+    maxFractUse = 0.0;
+    /*
+        check if the angle between the request and actual torque exceeds a limit.  If then, then uniformly scale
+        all thruster forces values to not exceed saturation.
+        If the angle threshold is negative, then this scaling is bypassed.
+     */
+    if(ConfigData->outTorqAngErr > ConfigData->angErrThresh)
+    {
+        for(i=0; i<numOfAvailableThrusters; i++)
+        {
+            if(ConfigData->thrForcMag[i] > 0.0 && fabs(F[i])/ConfigData->thrForcMag[i] > maxFractUse)
+            {
+                maxFractUse = fabs(F[i])/ConfigData->thrForcMag[i];
+            }
+        }
+        /* only scale the requested thruster force if one or more thrusters are saturated */
+        if(maxFractUse > 1.0)
+        {
+            vScale(1.0/maxFractUse, F, numOfAvailableThrusters, F);
+            ConfigData->outTorqAngErr = computeTorqueAngErr(D, BLr_B, numOfAvailableThrusters, F,
+                                                            ConfigData->thrForcMag);
+        }
+    }
 
     /*
      store the output message 
@@ -239,11 +267,10 @@ void substractMin(double *F, uint32_t size)
 }
 
 void findMinimumNormForce(thrForceMappingConfig *ConfigData,
-                          double D[MAX_EFF_CNT][3], double Lr_B[3], uint32_t numForces, double F[MAX_EFF_CNT])
+                          double D[MAX_EFF_CNT][3], double Lr_B[3], uint32_t numForces, double F[MAX_EFF_CNT], double BLr_b[3])
 {
 
     int i,j,k;                                  /*!< []     counters */
-    double      BLr[3];                         /*!< [Nm]   control torque vector reduced to controlable space */
     double      DDT[3][3];                      /*!< [m^2]  [D].[D]^T matrix */
     double      CD[2][MAX_EFF_CNT];             /*!< [m]    [C].[D] */
     double      CDCDT22[2][2];                  /*!< [m^2]  ([C].[D]).([C].[D])^T */
@@ -265,15 +292,16 @@ void findMinimumNormForce(thrForceMappingConfig *ConfigData,
         }
     }
 
+    v3SetZero(BLr_b);
+    v3SetZero(tempVec);
     if (m33Determinant(DDT) > ConfigData->epsilon) {
         /* find minimum norm inverse to control all three axes */
         m33Inverse(DDT, matInv33);
-        v3SetZero(BLr);
         for (i=0;i<ConfigData->numOfAxesToBeControlled;i++) {
             v3Scale(v3Dot(ConfigData->controlAxes_B+3*i, Lr_B), ConfigData->controlAxes_B+3*i, tempVec);
-            v3Add(BLr, tempVec, BLr);
+            v3Add(BLr_b, tempVec, BLr_b);
         }
-        m33MultV3(matInv33, BLr, tempVec);
+        m33MultV3(matInv33, BLr_b, tempVec);
         for (i=0;i<numForces;i++) {
             F[i] = 0.0;
             for (k=0;k<3;k++) {
@@ -284,6 +312,9 @@ void findMinimumNormForce(thrForceMappingConfig *ConfigData,
         if (ConfigData->numOfAxesToBeControlled == 2) {
             /* compute the minimum norm solution on the 2D [C] subspace */
             for (i=0;i<2;i++){
+                v3Scale(v3Dot(ConfigData->controlAxes_B+3*i, Lr_B),
+                    ConfigData->controlAxes_B+3*i, tempVec);
+                v3Add(BLr_b, tempVec, BLr_b);
                 for (j=0;j<numForces;j++) {
                     CD[i][j] = v3Dot(ConfigData->controlAxes_B+3*i, D[j]);
                 }
@@ -314,6 +345,8 @@ void findMinimumNormForce(thrForceMappingConfig *ConfigData,
 
         if (ConfigData->numOfAxesToBeControlled == 1) {
             /* compute the minimum norm solution on the 1D [C] subspace */
+            v3Scale(v3Dot(ConfigData->controlAxes_B, Lr_B),
+                    ConfigData->controlAxes_B, BLr_b);
             for (j=0;j<numForces;j++) {
                 CD[0][j] = v3Dot(ConfigData->controlAxes_B, D[j]);
             }
@@ -322,7 +355,7 @@ void findMinimumNormForce(thrForceMappingConfig *ConfigData,
                 CDCDT11 += CD[0][k]*CD[0][k];
             }
 
-            if (CDCDT11 > ConfigData->epsilon) {
+            if (CDCDT11 > ConfigData->epsilon && fabs(CDCDT11) > 0.0) {
                 tempVec[0] = v3Dot(ConfigData->controlAxes_B,   Lr_B);
                 tempVec[0] = tempVec[0] / CDCDT11;
                 for (i=0;i<numForces;i++) {
@@ -333,4 +366,40 @@ void findMinimumNormForce(thrForceMappingConfig *ConfigData,
     }
 
     return;
+}
+
+double computeTorqueAngErr(double D[MAX_EFF_CNT][3], double BLr_B[3], uint32_t numForces,
+                           double F[MAX_EFF_CNT], double FMag[MAX_EFF_CNT])
+
+{
+    double returnAngle = 0.0;       /*!< [rad]  angle between requested and actual torque vector */
+    double tauActual_B[3];          /*!< [Nm]   control torque with current thruster solution */
+    double BLr_hat_B[3];            /*!< []     normalized BLr_B vector */
+    double LrEffector_B[3];         /*!< [Nm]   torque of an individual thruster effector */
+    double thrusterForce;           /*!< [N]    saturation constrained thruster force */
+    int i;
+
+    /* make sure a control torque is requested, otherwise just return a zero angle error */
+    if (v3Norm(BLr_B) > 0.0000000001) {
+        v3Normalize(BLr_B, BLr_hat_B);
+        v3SetZero(tauActual_B);
+
+        /* loop over all thrusters and compute the actual torque to be applied */
+        for(i=0; i<numForces; i++)
+        {
+            thrusterForce = fabs(F[i]) < FMag[i] ? F[i] : FMag[i]*fabs(F[i])/F[i];
+            v3Scale(thrusterForce, D[i], LrEffector_B);
+            v3Add(tauActual_B, LrEffector_B, tauActual_B);
+        }
+
+        /* evaluate the angle between the requested and thruster implemented torque vector */
+        v3Normalize(tauActual_B, tauActual_B);
+        if(v3Dot(BLr_hat_B, tauActual_B) < 1.0)
+        {
+            returnAngle = acos(v3Dot(BLr_hat_B, tauActual_B));
+        }
+    }
+
+    return(returnAngle);
+    
 }

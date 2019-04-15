@@ -1074,7 +1074,6 @@ double mDeterminant(void *mx, size_t dim)
         result = m_mx[MXINDEX(dim, 0, 0)] * m_mx[MXINDEX(dim, 1, 1)]
                  - m_mx[MXINDEX(dim, 1, 0)] * m_mx[MXINDEX(dim, 0, 1)];
     } else {
-        result = 0;
         for(k = 0; k < dim; k++) {
             for(i = 1; i < dim; i++) {
                 ii = 0;
@@ -1163,7 +1162,7 @@ int mInverse(void *mx, size_t dim, void *result)
         BSK_PRINT(MSG_ERROR, "Error: cannot invert singular matrix\n");
         for(i = 0; i < dim; i++) {
             for(j = 0; j < dim; j++) {
-                m_result[MXINDEX(dim, i, j)] = NAN;
+                m_result[MXINDEX(dim, i, j)] = 0.0;
             }
         }
         status = 1;
@@ -1595,8 +1594,8 @@ int m22Inverse(double mx[2][2], double result[2][2])
         m_result[1][1] =  mx[0][0] * detInv;
     } else {
         BSK_PRINT(MSG_ERROR, "Error: singular 2x2 matrix inverse\n");
-        m22Set(NAN, NAN,
-               NAN, NAN,
+        m22Set(0.0, 0.0,
+               0.0, 0.0,
                m_result);
         status = 1;
     }
@@ -1939,9 +1938,9 @@ int m33Inverse(double mx[3][3], double result[3][3])
         m_result[2][2] = (mx[0][0] * mx[1][1] - mx[0][1] * mx[1][0]) * detInv;
     } else {
         BSK_PRINT(MSG_ERROR, "Error: singular 3x3 matrix inverse\n");
-        m33Set(NAN, NAN, NAN,
-               NAN, NAN, NAN,
-               NAN, NAN, NAN,
+        m33Set(0.0, 0.0, 0.0,
+               0.0, 0.0, 0.0,
+               0.0, 0.0, 0.0,
                m_result);
         status = 1;
     }
@@ -2160,10 +2159,10 @@ int m44Inverse(double mx[4][4], double result[4][4])
         m_result[3][3] = (mx[0][1] * mx[1][2] * mx[2][0] - mx[0][2] * mx[1][1] * mx[2][0] + mx[0][2] * mx[1][0] * mx[2][1] - mx[0][0] * mx[1][2] * mx[2][1] - mx[0][1] * mx[1][0] * mx[2][2] + mx[0][0] * mx[1][1] * mx[2][2]) * detInv;
     } else {
         BSK_PRINT(MSG_ERROR, "Error: singular 4x4 matrix inverse\n");
-        m44Set(NAN, NAN, NAN, NAN,
-               NAN, NAN, NAN, NAN,
-               NAN, NAN, NAN, NAN,
-               NAN, NAN, NAN, NAN,
+        m44Set(0.0, 0.0, 0.0, 0.0,
+               0.0, 0.0, 0.0, 0.0,
+               0.0, 0.0, 0.0, 0.0,
+               0.0, 0.0, 0.0, 0.0,
                m_result);
         status = 1;
     }

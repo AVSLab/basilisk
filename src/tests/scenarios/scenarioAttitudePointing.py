@@ -60,7 +60,7 @@ from Basilisk import __path__
 bskPath = __path__[0]
 vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
 
-## \defgroup Tutorials_2_0_1
+## \defgroup scenarioAttitudePointingGroup
 ##   @{
 ## Demonstrates how to stabilize the tumble without translational motion.
 #
@@ -230,7 +230,6 @@ def run(show_plots, useLargeTumble):
     mrpControlConfig.Ki = -1  # make value negative to turn off integral feedback
     mrpControlConfig.P = 30.0
     mrpControlConfig.integralLimit = 2. / mrpControlConfig.Ki * 0.1
-    mrpControlConfig.domega0 = [0.0, 0.0, 0.0]
 
     #
     #   Setup data logging before the simulation is initialized

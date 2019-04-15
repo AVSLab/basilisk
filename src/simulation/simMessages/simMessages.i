@@ -42,6 +42,7 @@
 #include "thrOutputSimMsg.h"
 #include "hingedRigidBodySimMsg.h"
 #include "pyBatteryOutMsg.h"
+#include "atmoPropsSimMsg.h"
 %}
 
 %include "swig_conly_data.i"
@@ -98,6 +99,8 @@ GEN_SIZEOF(THRTimePairSimMsg)
 GEN_SIZEOF(HingedRigidBodySimMsg)
 %include "pyBatteryOutMsg.h"
 GEN_SIZEOF(PyBatteryOutMsg)
+%include "atmoPropsSimMsg.h"
+GEN_SIZEOF(AtmoPropsSimMsg)
 
 #ifndef CSHARP_ROX
 %pythoncode %{

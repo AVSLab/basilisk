@@ -1,0 +1,13 @@
+% !TEX root = ./Basilisk-magFieldDipole-20190309.tex
+
+
+\section{Module Functions}
+This module will:
+\begin{itemize}
+	\item \textbf{Compute magnetic field vector}: Each of the provided models is fundamentally intended to compute the planetary magnetic vector  for a spacecraft. 
+	\item \textbf {Subscribe to model-relevant information:} Each provided magnetic field model requires different input information to operate, such as spacecraft positions or time. This module automatically attempts to subscribe to the relevant messages for a specified model. 
+	\item \textbf{Support for multiple spacecraft and model types} Only one magnetic field module is required for each planet, and can support an arbitrary number of spacecraft. Output messages for individual spacecraft are automatically named based on the environment type.
+\end{itemize}
+
+\section{Module Assumptions and Limitations}
+Individual magnetic field models are complex and have their own assumptions. The reader is referred to the cited literature to learn more about the model limitations and challenges. 

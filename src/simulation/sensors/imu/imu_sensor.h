@@ -31,6 +31,11 @@
 #include <Eigen/Dense>
 #include "utilities/avsEigenMRP.h"
 
+
+/*! \addtogroup SimModelGroup Simulation C++ Modules
+ * @{
+ */
+
 //!@brief Sensor model to simulate an IMU.
 /*!
  The module
@@ -119,5 +124,7 @@ private:
     Eigen::Vector3d omega_PN_P_out;             /// -- omega_PN_P for either next method or output messages
     Eigen::Vector3d prv_PN_out;                 /// -- time step PRV_PN for either next method or output messages
 };
+
+/* @} */
 
 #endif

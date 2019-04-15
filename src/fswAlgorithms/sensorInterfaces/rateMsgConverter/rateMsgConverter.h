@@ -20,27 +20,25 @@
 #ifndef _RATE_IMU_TO_NAV_CONVERTER_H_
 #define _RATE_IMU_TO_NAV_CONVERTER_H_
 
-#include "messaging/static_messaging.h"
 #include <stdint.h>
+#include "messaging/static_messaging.h"
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "fswAlgorithms/fswMessages/imuSensorBodyFswMsg.h"
 
 
-/*! \addtogroup ADCSAlgGroup
- * @{
- */
+/*! \defgroup rateMsgConverter
+ * @brief The purpose of this module is to read in the IMU sensor body message from message type IMUSensorBodyFswMsg, and store it in the output message of type NavAttIntMsg.  More information is available at  [PDF Description](Basilisk-rateMsgConverter-20180630.pdf).
+ @{
+*/
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
 
     /* declare module IO interfaces */
-    char navRateOutMsgName[MAX_STAT_MSG_LENGTH];       /*!< The name of the navAttIntMsg output message*/
-    int32_t navRateOutMsgID;                           /*!< ID for the outgoing message */
-    char imuRateInMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the imuSensorBody Input message*/
-    int32_t imuRateInMsgID;                            /*!< ID for the incoming message */
-
-    NavAttIntMsg outMsg;                               /*!< -- copy of the output message */
-
+    char navRateOutMsgName[MAX_STAT_MSG_LENGTH];       //!< The name of the navAttIntMsg output message*/
+    int32_t navRateOutMsgID;                           //!< ID for the outgoing message */
+    char imuRateInMsgName[MAX_STAT_MSG_LENGTH];        //!< The name of the imuSensorBody Input message*/
+    int32_t imuRateInMsgID;                            //!< ID for the incoming message */
 }rateMsgConverterConfig;
 
 #ifdef __cplusplus

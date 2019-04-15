@@ -283,4 +283,4 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    unitRadiationPressure(False, "cannonball")
+    unitRadiationPressure(False, "cannonball", False)

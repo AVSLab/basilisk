@@ -26,6 +26,11 @@
 #include <set>
 #include <mutex>
 #include "architecture/messaging/blank_storage.h"
+
+/*! \addtogroup SimArchGroup
+ * @{
+ */
+
 #define MAX_MESSAGE_SIZE 512
 
 typedef struct {
@@ -131,5 +136,7 @@ private:
     uint64_t CreateFails;
     uint64_t nextModuleID;
 };
+
+/* @} */
 
 #endif /* _SystemMessaging_H_ */

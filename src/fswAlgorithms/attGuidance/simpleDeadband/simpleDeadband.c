@@ -89,9 +89,9 @@ void Reset_simpleDeadband(simpleDeadbandConfig *ConfigData, uint64_t callTime, u
 void Update_simpleDeadband(simpleDeadbandConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     /*! - Read the input message and set it as the output by default */
-    uint64_t    clockTime;
-    uint32_t    readSize;
-    ReadMessage(ConfigData->inputGuidID, &clockTime, &readSize,
+    uint64_t    timeOfMsgWritten;
+    uint32_t    sizeOfMsgWritten;
+    ReadMessage(ConfigData->inputGuidID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AttGuidFswMsg), (void*) &(ConfigData->attGuidOut), moduleID);
     
     /*! - Evaluate average simple in attitude and rates */

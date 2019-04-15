@@ -37,6 +37,10 @@
 #include "SpacecraftSimDefinitions.h"
 
 
+/*! \addtogroup SimArchGroup
+ * @{
+ */
+
 typedef struct {
     uint64_t msgId;
     std::string msgName;
@@ -98,4 +102,7 @@ private:
     long generateTimeStamp();
     void writeOutputMessages(uint64_t currentSimNanos);
 };
+
+/* @} */
+
 #endif /* visMessageInterface_h */

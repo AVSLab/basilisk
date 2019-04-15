@@ -75,8 +75,8 @@ void Reset_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     
     int32_t i;
     CSSConfigFswMsg cssConfigInBuffer;
-    uint64_t writeTime;
-    uint32_t writeSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     int32_t ReadTest;
     
     /*! Begin method steps*/
@@ -85,7 +85,7 @@ void Reset_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     memset(&(ConfigData->outputSunline), 0x0, sizeof(NavAttIntMsg));
 
     /*! - Read in mass properties and coarse sun sensor configuration information.*/
-    ReadTest = ReadMessage(ConfigData->cssConfigInMsgId, &writeTime, &writeSize,
+    ReadTest = ReadMessage(ConfigData->cssConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CSSConfigFswMsg), &cssConfigInBuffer, moduleID);
     
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/
@@ -133,22 +133,22 @@ void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
 {
     double newTimeTag;
     double Hx[MAX_N_CSS_MEAS];
-    uint64_t ClockTime;
-    uint32_t ReadSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     int32_t ReadTest;
     SunlineFilterFswMsg sunlineDataOutBuffer;
     
     /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
-    ClockTime = 0;
-    ReadSize = 0;
+    timeOfMsgWritten = 0;
+    sizeOfMsgWritten = 0;
     memset(&(ConfigData->cssSensorInBuffer), 0x0, sizeof(CSSArraySensorIntMsg));
-    ReadTest = ReadMessage(ConfigData->cssDataInMsgId, &ClockTime, &ReadSize,
+    ReadTest = ReadMessage(ConfigData->cssDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
         sizeof(CSSArraySensorIntMsg), (void*) (&(ConfigData->cssSensorInBuffer)), moduleID);
     
     /*! - If the time tag from the measured data is new compared to previous step, 
           propagate and update the filter*/
-    newTimeTag = ClockTime * NANO2SEC;
+    newTimeTag = timeOfMsgWritten * NANO2SEC;
     if(newTimeTag >= ConfigData->timeTag && ReadTest > 0)
     {
         sunlineTimeUpdate(ConfigData, newTimeTag);
@@ -201,7 +201,9 @@ void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
 void sunlineTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 {
     double stmT[SKF_N_STATES*SKF_N_STATES], covPhiT[SKF_N_STATES*SKF_N_STATES];
+    double Gamma[SKF_N_STATES][SKF_N_STATES_HALF];
     double qGammaT[SKF_N_STATES_HALF*SKF_N_STATES], gammaQGammaT[SKF_N_STATES*SKF_N_STATES];
+    double Id[SKF_N_STATES_HALF*SKF_N_STATES_HALF];
     
 	/*! Begin method steps*/
 	ConfigData->dt = updateTime - ConfigData->timeTag;
@@ -220,8 +222,13 @@ void sunlineTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
     mMultM(ConfigData->stateTransition, SKF_N_STATES, SKF_N_STATES, covPhiT, SKF_N_STATES, SKF_N_STATES, ConfigData->covarBar);
     
     /*Compute Gamma and add gammaQGamma^T to Pbar. This is the process noise addition*/
-    double Gamma[6][3]={{ConfigData->dt*ConfigData->dt/2,0,0},{0,ConfigData->dt*ConfigData->dt/2,0},{0,0,ConfigData->dt*ConfigData->dt/2},{ConfigData->dt,0,0},{0,ConfigData->dt,0},{0,0,ConfigData->dt}};
-    
+//    double Gamma[6][3]={{ConfigData->dt*ConfigData->dt/2,0,0},{0,ConfigData->dt*ConfigData->dt/2,0},{0,0,ConfigData->dt*ConfigData->dt/2},{ConfigData->dt,0,0},{0,ConfigData->dt,0},{0,0,ConfigData->dt}};
+    mSetIdentity(Id, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
+    mScale(ConfigData->dt, Id, SKF_N_STATES_HALF, SKF_N_STATES_HALF, Id);
+    mSetSubMatrix(Id, 3, 3, Gamma, 6, 3, 3, 0);
+    mScale(ConfigData->dt/2, Id, SKF_N_STATES_HALF, SKF_N_STATES_HALF, Id);
+    mSetSubMatrix(Id, 3, 3, Gamma, 6, 3, 0, 0);
+
     mMultMt(ConfigData->procNoise, SKF_N_STATES_HALF, SKF_N_STATES_HALF, Gamma, SKF_N_STATES, SKF_N_STATES_HALF, qGammaT);
     mMultM(Gamma, SKF_N_STATES, SKF_N_STATES_HALF, qGammaT, SKF_N_STATES_HALF, SKF_N_STATES, gammaQGammaT);
     mAdd(ConfigData->covarBar, SKF_N_STATES, SKF_N_STATES, gammaQGammaT, ConfigData->covarBar);

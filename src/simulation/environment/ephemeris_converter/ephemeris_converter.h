@@ -27,6 +27,10 @@
 #include "simFswInterfaceMessages/ephemerisIntMsg.h"
 
 
+/*! \addtogroup SimModelGroup Simulation C++ Modules
+ * @{
+ */
+
 /*!@brief This class is used to take ephemeris data from the environmental models
         and convert it over to a FSW representation so that the ephemeris from 
         SPICE can be patched into the FSW directly instead of generating data 
@@ -58,5 +62,7 @@ public:
 private:
     std::map<int64_t, IDEphemerisSimMsg> messageIDMap; //!< [-] Map between input/output message IDs
 };
+
+/* @} */
 
 #endif

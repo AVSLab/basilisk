@@ -26,7 +26,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/message_logger.h"
 
-/*! \addtogroup SimArchGroup
+/*! \addtogroup SimArchGroup Simulation Architecture Classes
  *  This architecture group contains the source used to drive/schedule/interface
  *  with the simulation.
  * @{
@@ -55,7 +55,7 @@ public:
                           uint64_t LatestOffset=0); //!< Grab a particular MessageName with MaxSize limited
     void ResetSimulation(); //!< Reset simulation back to zero
     void WriteMessageData(std::string MessageName, uint64_t MessageSize,
-                          uint64_t ClockTime, void *MessageData); //!< Write in a single message
+                          uint64_t timeOfMsg, void *MessageData); //!< Write in a single message
     void CreateNewMessage(std::string processName, std::string MessageName,
         uint64_t MessageSize, uint64_t NumBuffers=2,
         std::string messageStruct = ""); //!< Create a new message for use

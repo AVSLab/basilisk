@@ -76,8 +76,8 @@ void Reset_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     
     int32_t i;
     CSSConfigFswMsg cssConfigInBuffer;
-    uint64_t writeTime;
-    uint32_t writeSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     double tempMatrix[SKF_N_STATES*SKF_N_STATES];
     
     /*! Begin method steps*/
@@ -86,7 +86,7 @@ void Reset_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     memset(&(ConfigData->outputSunline), 0x0, sizeof(NavAttIntMsg));
     
     /*! - Read in mass properties and coarse sun sensor configuration information.*/
-    ReadMessage(ConfigData->cssConfigInMsgId, &writeTime, &writeSize,
+    ReadMessage(ConfigData->cssConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CSSConfigFswMsg  ), &cssConfigInBuffer, moduleID);
     
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/
@@ -162,22 +162,22 @@ void Update_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     double yBar[MAX_N_CSS_MEAS];
     double tempYVec[MAX_N_CSS_MEAS];
     int i;
-    uint64_t ClockTime;
-    uint32_t ReadSize;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
     SunlineFilterFswMsg sunlineDataOutBuffer;
     
     /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
-    ClockTime = 0;
-    ReadSize = 0;
+    timeOfMsgWritten = 0;
+    sizeOfMsgWritten = 0;
     memset(&(ConfigData->cssSensorInBuffer), 0x0, sizeof(CSSArraySensorIntMsg));
-    ReadMessage(ConfigData->cssDataInMsgId, &ClockTime, &ReadSize,
+    ReadMessage(ConfigData->cssDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
         sizeof(CSSArraySensorIntMsg), (void*) (&(ConfigData->cssSensorInBuffer)), moduleID);
     
     /*! - If the time tag from the measured data is new compared to previous step, 
           propagate and update the filter*/
-    newTimeTag = ClockTime * NANO2SEC;
-    if(newTimeTag >= ConfigData->timeTag && ReadSize > 0)
+    newTimeTag = timeOfMsgWritten * NANO2SEC;
+    if(newTimeTag >= ConfigData->timeTag && sizeOfMsgWritten > 0)
     {
         sunlineUKFTimeUpdate(ConfigData, newTimeTag);
         sunlineUKFMeasUpdate(ConfigData, newTimeTag);

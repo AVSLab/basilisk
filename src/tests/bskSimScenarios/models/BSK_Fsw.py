@@ -222,7 +222,6 @@ class BSKFswModels():
         self.mrpFeedbackControlData.Ki = -1.0 # Note: make value negative to turn off integral feedback
         self.mrpFeedbackControlData.P = 30.0
         self.mrpFeedbackControlData.integralLimit = 2. / self.mrpFeedbackControlData.Ki * 0.1
-        self.mrpFeedbackControlData.domega0 = [0.0, 0.0, 0.0]
 
 
     def SetMRPFeedbackRWA(self):
@@ -230,8 +229,7 @@ class BSKFswModels():
         self.mrpFeedbackRWsData.Ki = -1  # Note: make value negative to turn off integral feedback
         self.mrpFeedbackRWsData.P = 30.0
         self.mrpFeedbackRWsData.integralLimit = 2. / self.mrpFeedbackRWsData.Ki * 0.1
-        self.mrpFeedbackRWsData.domega0 = [0.0, 0.0, 0.0]
-        
+
         self.mrpFeedbackRWsData.vehConfigInMsgName = "adcs_config_data"
         self.mrpFeedbackRWsData.inputRWSpeedsName = "reactionwheel_output_states"
         self.mrpFeedbackRWsData.rwParamsInMsgName = "rwa_config_data"

@@ -24,42 +24,31 @@
 #include <stdint.h>
 #include "fswMessages/attRefFswMsg.h"
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup inertial3D
+ * @brief This attitude guidance module create a reference attitude message that points in fixed inertial direction. The module [PDF Description](Basilisk-Inertial3D-2016-01-15.pdf) contains further information on this module's function,
+     how to run it, as well as testing.
  * @{
  */
 
 
 /*!@brief Data structure for module to compute the Inertial-3D pointing navigation solution.
-
- The module
- [PDF Description](AVS-Sim-Inertial3D-2016-01-15.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
  */
-
-
 typedef struct {
-    /* declare module private variables */
-    double sigma_R0N[3];                             /*!<        MRP from inertial frame N to corrected reference frame R */
-    /* declare module IO interfaces */
-    char outputDataName[MAX_STAT_MSG_LENGTH];       /*!<        The name of the output message */
-    int32_t outputMsgID;                            /*!< (-)    ID for the outgoing message */
-    
-    /* copy of the output message */
-    AttRefFswMsg attRefOut;
-
+    double sigma_R0N[3];                            //!<        MRP from inertial frame N to corrected reference frame R
+    char outputDataName[MAX_STAT_MSG_LENGTH];       //!<        The name of the output message
+    int32_t outputMsgID;                            //!< (-)    ID for the outgoing message
 }inertial3DConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     
-    void SelfInit_inertial3D(inertial3DConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_inertial3D(inertial3DConfig *ConfigData, uint64_t moduleID);
-    void Update_inertial3D(inertial3DConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_inertial3D(inertial3DConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_inertial3D(inertial3DConfig *configData, uint64_t moduleID);
+    void CrossInit_inertial3D(inertial3DConfig *configData, uint64_t moduleID);
+    void Update_inertial3D(inertial3DConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void Reset_inertial3D(inertial3DConfig *configData, uint64_t callTime, uint64_t moduleID);
 
-    void computeInertialPointingReference(inertial3DConfig *ConfigData);
+    void computeInertialPointingReference(inertial3DConfig *ConfigData, AttRefFswMsg *attRefOut);
 
 #ifdef __cplusplus
 }

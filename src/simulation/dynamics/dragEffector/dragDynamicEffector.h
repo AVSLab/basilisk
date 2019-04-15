@@ -70,12 +70,14 @@ public:
     StateData *hubSigma;                                   //!< -- Hub/Inertial attitude represented by MRP
     StateData *hubVelocity;                                //!< m/s Hub inertial velocity vector
     Eigen::Vector3d locInertialVel;                         //!< m/s local variable to hold the inertial velocity
-    atmoPropsSimMsg densityBuffer;                           //!< -- Struct to hold local atmospheric conditions
+    AtmoPropsSimMsg densityBuffer;                           //!< -- Struct to hold local atmospheric conditions
 
 private:
     uint64_t DensInMsgId;                            //!< -- Message ID for incoming data
-    atmoPropsSimMsg atmoInData;
+    AtmoPropsSimMsg atmoInData;
     Eigen::Vector3d dragDirection;
 };
+
+/* @} */
 
 #endif /* THRUSTER_DYNAMIC_EFFECTOR_H */

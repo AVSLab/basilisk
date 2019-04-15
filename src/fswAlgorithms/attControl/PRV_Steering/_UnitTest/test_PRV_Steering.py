@@ -57,13 +57,14 @@ from Basilisk.simulation import simFswInterfaceMessages
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
-def test_PRV_Steering(show_plots):     # update "subModule" in this function name to reflect the module name
+@pytest.mark.parametrize("simCase", [0, 1])
+def test_PRV_Steering(show_plots, simCase):     # update "subModule" in this function name to reflect the module name
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = subModuleTestFunction(show_plots)
+    [testResults, testMessage] = subModuleTestFunction(show_plots, simCase)
     assert testResults < 1, testMessage
 
 
-def subModuleTestFunction(show_plots):
+def subModuleTestFunction(show_plots, simCase):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -126,8 +127,15 @@ def subModuleTestFunction(show_plots):
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, servoConfig.inputGuidName,
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
-    sigma_BR = np.array([0.3, -0.5, 0.7])
+
+    sigma_BR = []
+
+    if simCase == 0:
+        sigma_BR = np.array([0.3, -0.5, 0.7])
+    if simCase == 1:
+        sigma_BR = np.array([0, 0, 0])
     guidCmdData.sigma_BR = sigma_BR
+
     omega_BR_B = np.array([0.010, -0.020, 0.015])
     guidCmdData.omega_BR_B = omega_BR_B
     omega_RN_B = np.array([-0.02, -0.01, 0.005])
@@ -224,13 +232,25 @@ def subModuleTestFunction(show_plots):
     print '\n Lr = ', moduleOutput[:, 1:]
 
     # set the filtered output truth states
-    trueVector = [
-               [-2.9352922876097969, +6.2831737715827778, -4.0554726129822907]
-              ,[-2.9352922876097969, +6.2831737715827778, -4.0554726129822907]
-              ,[-2.9353853745179044, +6.2833455830962901, -4.0556481491012084]
-              ,[-2.9352922876097969, +6.2831737715827778, -4.0554726129822907]
-              ,[-2.9353853745179044, +6.2833455830962901, -4.0556481491012084]
-               ]
+
+    trueVector = []
+
+    if simCase == 0:
+        trueVector = [
+                   [-2.9352922876097969, +6.2831737715827778, -4.0554726129822907]
+                  ,[-2.9352922876097969, +6.2831737715827778, -4.0554726129822907]
+                  ,[-2.9353853745179044, +6.2833455830962901, -4.0556481491012084]
+                  ,[-2.9352922876097969, +6.2831737715827778, -4.0554726129822907]
+                  ,[-2.9353853745179044, +6.2833455830962901, -4.0556481491012084]
+                   ]
+    if simCase == 1:
+        trueVector = [
+                     [-1.39,      3.79,     -1.39]
+                    ,[-1.39,      3.79,     -1.39]
+                    ,[-1.39005,   3.7901,   -1.390075]
+                    ,[-1.39,      3.79,     -1.39]
+                    ,[-1.39005,   3.7901,   -1.390075]
+                     ]
 
     # compare the module results to the truth values
     accuracy = 1e-12
@@ -273,4 +293,4 @@ def subModuleTestFunction(show_plots):
 #   authmatically executes the runUnitTest() method
 #
 if __name__ == "__main__":
-    test_PRV_Steering(False)
+    test_PRV_Steering(True, simCase=1)

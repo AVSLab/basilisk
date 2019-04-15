@@ -23,13 +23,17 @@
 #include <Eigen/Dense>
 #include <vector>
 
+/*! \defgroup simMessages
+ *  @{
+ */
+
 /*! @brief enumeration definiting the types of VSCMG modes */ 
 enum VSCMGModels { vscmgBalancedWheels, vscmgJitterSimple, vscmgJitterFullyCoupled };
 
 
 /*! @brief Structure used to define the individual VSCMG configuration data message*/
 typedef struct {
-	VSCMGModels VSCMGModel; //!< [-], Type of imbalance model to use
+	VSCMGModels VSCMGModel;     //!< [-], Type of imbalance model to use
 	Eigen::Vector3d rGB_B;		//!< [m], position vector of the VSCMG relative to the spacecraft body frame
 	Eigen::Vector3d gsHat0_B;
 	Eigen::Vector3d gsHat_B;	//!< [-] spin axis unit vector in body frame
@@ -43,14 +47,14 @@ typedef struct {
     double massV;               //!< [kg]
 	double massG;               //!< [kg]
 	double massW;               //!< [kg]
-    double theta;              //!< [rad], wheel angle
-    double Omega;              //!< [rad/s], wheel speed
-	double gamma;              //!< [s], gimbal angle
-	double gammaDot;              //!< [rad/s], gimbal rate
+    double theta;               //!< [rad], wheel angle
+    double Omega;               //!< [rad/s], wheel speed
+	double gamma;               //!< [s], gimbal angle
+	double gammaDot;            //!< [rad/s], gimbal rate
     double IW1;                 //!< [kg-m^2], spin axis gsHat rotor moment of inertia
     double IW2;                 //!< [kg-m^2], gtHat axis rotor moment of inertia
     double IW3;                 //!< [kg-m^2], ggHat axis rotor moment of inertia
-	double IW13;                	//!< [kg-m^2], x-z inertia of wheel about wheel center in wheel frame (imbalance)
+	double IW13;                //!< [kg-m^2], x-z inertia of wheel about wheel center in wheel frame (imbalance)
 	double IG1;              	//!< [kg-m^2]
 	double IG2;          		//!< [kg-m^2]
 	double IG3;                 //!< [kg-m^2]
@@ -62,23 +66,23 @@ typedef struct {
 	double IV3;                 //!< [kg-m^2]
 	double rhoG;
 	double rhoW;
-    double U_s;                //!< [kg-m], static imbalance
-    double U_d;                //!< [kg-m^2], dynamic imbalance
+    double U_s;                 //!< [kg-m], static imbalance
+    double U_d;                 //!< [kg-m^2], dynamic imbalance
 	Eigen::Vector3d rGcG_G;
     double d;                	//!< [m], wheel center of mass offset from wheel frame origin
 	double l;
 	double L;
-    double u_s_current;          //!< [N-m], current motor torque
-    double u_s_max;              //!< [N-m], Max torque
-    double u_s_min;              //!< [N-m], Min torque
-    double u_s_f;                //!< [N-m], Coulomb friction torque magnitude
-    double Omega_max;          //!< [rad/s], max wheel speed
+    double u_s_current;         //!< [N-m], current motor torque
+    double u_s_max;             //!< [N-m], Max torque
+    double u_s_min;             //!< [N-m], Min torque
+    double u_s_f;               //!< [N-m], Coulomb friction torque magnitude
+    double Omega_max;           //!< [rad/s], max wheel speed
 	double wheelLinearFrictionRatio;//!< [%] ratio relative to max speed value up to which the friction behaves linearly
-	double u_g_current;          //!< [N-m], current motor torque
-	double u_g_max;              //!< [N-m], Max torque
-	double u_g_min;              //!< [N-m], Min torque
-	double u_g_f;                //!< [N-m], Coulomb friction torque magnitude
-	double gammaDot_max;          //!< [rad/s], max wheel speed
+	double u_g_current;         //!< [N-m], current motor torque
+	double u_g_max;             //!< [N-m], Max torque
+	double u_g_min;             //!< [N-m], Min torque
+	double u_g_f;               //!< [N-m], Coulomb friction torque magnitude
+	double gammaDot_max;        //!< [rad/s], max wheel speed
 	double gimbalLinearFrictionRatio;//!< [%] ratio relative to max speed value up to which the friction behaves linearly
 
 	Eigen::Matrix3d IGPntGc_B;
@@ -98,7 +102,7 @@ typedef struct {
 
 	Eigen::Vector3d aOmega; //!< [-], parameter used in coupled jitter back substitution
 	Eigen::Vector3d bOmega; //!< [-], parameter used in coupled jitter back substitution
-	double cOmega; //!< [-], parameter used in coupled jitter back substitution
+	double cOmega;          //!< [-], parameter used in coupled jitter back substitution
 	double dOmega;
 	double eOmega;
 	Eigen::Vector3d agamma;
@@ -115,6 +119,7 @@ typedef struct {
 }VSCMGConfigSimMsg;
 
 
+/* @} */
 
 
 #endif

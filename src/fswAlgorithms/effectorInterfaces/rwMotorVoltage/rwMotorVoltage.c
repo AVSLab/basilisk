@@ -80,9 +80,9 @@ void CrossInit_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t moduleI
 void Reset_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     /*! - Read static RW config data message and store it in module variables*/
-    uint64_t clockTime;
-    uint32_t readSize;
-    ReadMessage(ConfigData->rwParamsInMsgID, &clockTime, &readSize,
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
+    ReadMessage(ConfigData->rwParamsInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(RWArrayConfigFswMsg), &(ConfigData->rwConfigParams), moduleID);
 
     /* reset variables */
@@ -102,21 +102,21 @@ void Reset_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t callTime, u
 void Update_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     /* - Read the input messages */
-    uint64_t            clockTime;
-    uint32_t            readSize;
+    uint64_t            timeOfMsgWritten;
+    uint32_t            sizeOfMsgWritten;
     double              torqueCmd[MAX_EFF_CNT];     /*!< [Nm]   copy of RW motor torque input vector */
     uint32_t i;
-    ReadMessage(ConfigData->torqueInMsgID, &clockTime, &readSize,
+    ReadMessage(ConfigData->torqueInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(RWArrayTorqueIntMsg), (void*) torqueCmd, moduleID);
     RWSpeedIntMsg       rwSpeed;                    /*!< [r/s] Reaction wheel speed estimates */
     if (ConfigData->inputRWSpeedsInMsgID >= 0) {
-        ReadMessage(ConfigData->inputRWSpeedsInMsgID, &clockTime, &readSize,
+        ReadMessage(ConfigData->inputRWSpeedsInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(RWSpeedIntMsg), (void*) &(rwSpeed), moduleID);
     }
     RWAvailabilityFswMsg  rwAvailability;             /*!< []    Reaction wheel availability */
     memset(rwAvailability.wheelAvailability, 0x0, MAX_EFF_CNT * sizeof(int)); // wheelAvailability set to 0 (AVAILABLE) by default
     if (ConfigData->rwAvailInMsgID >= 0){
-        ReadMessage(ConfigData->rwAvailInMsgID, &clockTime, &readSize,
+        ReadMessage(ConfigData->rwAvailInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(RWAvailabilityFswMsg), &rwAvailability, moduleID);
     }
 

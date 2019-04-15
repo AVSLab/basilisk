@@ -1,8 +1,5 @@
-''' '''
 '''
- ISC License
-
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +12,6 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
 '''
 
 #
@@ -104,10 +100,6 @@ def run(show_plots, orbitCase, planetCase):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
-    #
-    #  From here on there scenario python code is found.  Above this line the code is to setup a
-    #  unitTest environment.  The above code is not critical if learning how to code BSK.
-    #
 
     # Create simulation variable names
     simTaskName = "simTask"
@@ -134,7 +126,7 @@ def run(show_plots, orbitCase, planetCase):
 
     dragEffector = dragDynamicEffector.DragDynamicEffector()
     dragEffector.ModelTag = "DragEff"
-    print dragEffector.ModelTag
+
     dragEffectorTaskName = "drag"
     dragEffector.coreParams.projectedArea = projArea
     dragEffector.coreParams.dragCoeff = dragCoeff
@@ -162,14 +154,12 @@ def run(show_plots, orbitCase, planetCase):
     gravFactory = simIncludeGravBody.gravBodyFactory()
 
     newAtmo.addSpacecraftToModel(scObject.scStateOutMsgName)
-    dragEffector.setDensityMessage(newAtmo.atmoDensOutMsgNames[-1])
+    dragEffector.setDensityMessage(newAtmo.envOutMsgNames[-1])
 
     if planetCase == "Earth":
         planet = gravFactory.createEarth()
-        newAtmo.setPlanet("earth")
     elif planetCase == "Mars":
         planet = gravFactory.createMars()
-        newAtmo.setPlanet("mars")
         planet.isCentralBody = True          # ensure this is the central gravitational body
     mu = planet.mu
     # attach gravity model to spaceCraftPlus
@@ -196,6 +186,10 @@ def run(show_plots, orbitCase, planetCase):
     elif orbitCase == "LTO":
         orbAltMin = 300*1000.0
         orbAltMax = 800.0 * 1000.0
+
+    newAtmo.planetRadius = r_eq
+    newAtmo.scaleHeight = refScaleHeight
+    newAtmo.baseDensity = refBaseDens
 
     rMin = r_eq + orbAltMin
     rMax = r_eq + orbAltMax
@@ -225,12 +219,9 @@ def run(show_plots, orbitCase, planetCase):
     numDataPoints = 100
     samplingTime = simulationTime / (numDataPoints-1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-    scSim.TotalSim.logThisMessage('atmo_dens0_data', samplingTime)
-    scSim.AddVariableForLogging('ExpAtmo.relativePos', samplingTime, StartIndex=0, StopIndex=2)
+    scSim.TotalSim.logThisMessage(newAtmo.envOutMsgNames[-1], samplingTime)
     scSim.AddVariableForLogging('DragEff.forceExternal_N', samplingTime, StartIndex=0, StopIndex=2)
     scSim.AddVariableForLogging('DragEff.coreParams.velocityMag', samplingTime)
-    #scSim.AddVariableForLogging('DragEff.dragDirection', samplingTime, StartIndex=0, StopIndex=2)
-
     #
     #   initialize Spacecraft States with initialization variables
     #
@@ -254,8 +245,7 @@ def run(show_plots, orbitCase, planetCase):
     posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
     velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N',range(3))
     dragForce = scSim.GetLogVariableData('DragEff.forceExternal_N')
-    densData = scSim.pullMessageLogData('atmo_dens0_data.neutralDensity')
-    relPosData = scSim.GetLogVariableData('ExpAtmo.relativePos')
+    densData = scSim.pullMessageLogData(newAtmo.envOutMsgNames[-1]+'.neutralDensity')
     np.set_printoptions(precision=16)
 
     #   Compare to expected values
@@ -265,20 +255,16 @@ def run(show_plots, orbitCase, planetCase):
     refDragForce = np.zeros([endInd,3])
     refDensData = np.zeros([endInd,1])
     accuracy = 1e-13
-    print planetCase
-    print orbitCase
+    # print planetCase
+    # print orbitCase
     for ind in range(0, endInd-1):
-        print "Position data:", posData[ind,1:]
-        print "Velocity data:", velData[ind,1:]
-        print "Density data:", densData[ind,1]
-        alt = np.linalg.norm(relPosData[ind,1:])-r_eq
-        refDensData[ind,:] = expAtmoComp(alt, refBaseDens,refScaleHeight)
-        print "Ref Altitude:", alt
-        print "Ref Density Calc:", refDensData[ind,:]
+        # print "Position data:", posData[ind,1:]
+        # print "Velocity data:", velData[ind,1:]
+        # print "Density data:", densData[ind,1]
         refDragForce[ind,:] = cannonballDragComp(dragCoeff,densData[ind,1],projArea,velData[ind,1:])
-        print "Reference drag data:", refDragForce[ind,:]
-        print "Drag Data:", dragForce[ind,1:]
-        print ""
+        # print "Reference drag data:", refDragForce[ind,:]
+        # print "Drag Data:", dragForce[ind,1:]
+        # print ""
         # check a vector values
     for ind in range(1,endInd-1):
         if not unitTestSupport.isArrayEqual(dragForce[ind,:], refDragForce[ind,:],3,accuracy):
@@ -290,7 +276,7 @@ def run(show_plots, orbitCase, planetCase):
     #   plot the results
     #
     if show_plots:
-        fileNameString = filename[len(path)+6:-3]
+        plt.close("all")  # clears out plots from earlier test runs
 
         # draw the inertial position vector components
         plt.figure(1)
@@ -355,26 +341,23 @@ def run(show_plots, orbitCase, planetCase):
         plt.xlabel('Time [orbits]')
         plt.ylabel('SMA [km]')
 
-        plt.figure()
-        fig = plt.gcf()
-        ax = fig.gca()
-        ax.ticklabel_format(useOffset=False, style='plain')
-        plt.plot(relPosData[:, 0] * macros.NANO2SEC, relPosData[:, 1:4])
-        plt.title('Density Data vs. Time')
-        plt.xlabel('Time')
-        plt.ylabel('Density in kg/m^3')
 
         plt.figure()
         fig = plt.gcf()
         ax = fig.gca()
-        ax.ticklabel_format(useOffset=False, style='plain')
+        ax.ticklabel_format(useOffset=False, style='sci')
         plt.plot( densData[:,0]*macros.NANO2SEC, densData[:,1])
         plt.title('Density Data vs. Time')
         plt.xlabel('Time')
         plt.ylabel('Density in kg/m^3')
 
         plt.show()
-        plt.close()
+        plt.close("all")
+
+    if testFailCount == 0:
+        print "PASSED: " + dragEffector.ModelTag
+    else:
+        print "Failed: " + dragEffector.ModelTag
 
     return testFailCount, testMessages
 
