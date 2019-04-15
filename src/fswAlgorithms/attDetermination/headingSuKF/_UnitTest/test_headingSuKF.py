@@ -27,7 +27,7 @@ from Basilisk.simulation import coarse_sun_sensor
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import headingSuKF, cssComm, fswMessages  # import the module that is to be tested
 
-import SunLineSuKF_test_utilities as FilterPlots
+import headingSuKF_test_utilities as FilterPlots
 
 def setupFilterData(filterObject):
     filterObject.opnavOutMsgName = "opnav_state_estimate"
