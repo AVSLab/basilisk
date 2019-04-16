@@ -38,11 +38,11 @@
  * @{
  */
 
-/*! @brief Star Tracker (ST) sensor container structure.  Contains the msg input name and ID and sensor noise value.
+/*! @brief Star Tracker (ST) sensor container structure.  Contains the msg input name and Id and sensor noise value.
  */
 typedef struct {
     char stInMsgName[MAX_STAT_MSG_LENGTH];    //!< [-] Input message buffer from MIRU
-    int32_t stInMsgID;                        //!< [-] Input message ID from MIRU
+    int32_t stInMsgId;                        //!< [-] Input message Id from MIRU
     double noise[3*3];                        //!< [-] Per axis noise on the ST
 }STMessage;
 
@@ -108,7 +108,7 @@ typedef struct {
     double omega_BN_BOut[3]; //!< [r/s] Body rate output data
     double timeTagOut;       //!< [s] Output time-tag information
     double maxTimeJump;      //!< [s] Maximum time jump to allow in propagation
-	NavAttIntMsg outputInertial;        //!< -- Output inertial estimate data
+
     STAttFswMsg stSensorIn[MAX_ST_VEH_COUNT]; //!< [-] ST sensor data read in from message bus
     int stSensorOrder[MAX_ST_VEH_COUNT]; //!< [-] ST sensor data read in from message bus
     uint64_t ClockTimeST[MAX_ST_VEH_COUNT]; //!< [-] All of the ClockTimes for the STs
@@ -120,14 +120,14 @@ typedef struct {
     uint64_t timeWheelPrev;             //!< [ns] Previous wheel time-tag from msg
     VehicleConfigFswMsg localConfigData;   //!< [-] Vehicle configuration data
     LowPassFilterData gyroFilt[3];      //!< [-] Low-pass filters for input gyro data
-    int32_t navStateOutMsgId;     //!< -- ID for the outgoing body estimate message
-    int32_t filtDataOutMsgId;     //!< [-] ID for the filter data output message
-    int32_t massPropsInMsgId;     //!< [-] ID for the incoming mass properties message
-    int32_t rwParamsInMsgID;      //!< [-] ID for the RWArrayConfigFswMsg ingoing message
-    int32_t rwSpeedsInMsgID;      //!< [-] ID for the incoming RW speeds
-    int32_t gyrBuffInMsgID;       //!< [-] ID of the input message buffer
+    int32_t navStateOutMsgId;     //!< -- Id for the outgoing body estimate message
+    int32_t filtDataOutMsgId;     //!< [-] Id for the filter data output message
+    int32_t massPropsInMsgId;     //!< [-] Id for the incoming mass properties message
+    int32_t rwParamsInMsgId;      //!< [-] Id for the RWArrayConfigFswMsg ingoing message
+    int32_t rwSpeedsInMsgId;      //!< [-] Id for the incoming RW speeds
+    int32_t gyrBuffInMsgId;       //!< [-] Id of the input message buffer
     
-    STDataParsing STDatasStruct;  //!< [-] ID of the input message buffer
+    STDataParsing STDatasStruct;  //!< [-] Id of the input message buffer
 }InertialUKFConfig;
 
 
@@ -135,13 +135,13 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_inertialUKF(InertialUKFConfig *configData, uint64_t moduleID);
-    void CrossInit_inertialUKF(InertialUKFConfig *configData, uint64_t moduleID);
-    void Read_STMessages(InertialUKFConfig *configData, uint64_t moduleID);
+    void SelfInit_inertialUKF(InertialUKFConfig *configData, uint64_t moduleId);
+    void CrossInit_inertialUKF(InertialUKFConfig *configData, uint64_t moduleId);
+    void Read_STMessages(InertialUKFConfig *configData, uint64_t moduleId);
     void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
-        uint64_t moduleID);
+        uint64_t moduleId);
 	void Reset_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
-		uint64_t moduleID);
+		uint64_t moduleId);
     void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
                           double propTime, AccDataFswMsg *gyrData);
 	int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime);
