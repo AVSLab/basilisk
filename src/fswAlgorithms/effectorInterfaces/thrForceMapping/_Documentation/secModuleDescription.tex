@@ -16,9 +16,9 @@ This technical note describes a general algorithm that maps a desired ADCS exter
 		\hat{\bm c}_{1} \\ \vdots \\ \hat{\bm c}_{N_{c}}
 	\end{bmatrix}
 \end{equation}
-The module can accept up to 3 orthogonal control axis $\hat{\bm c}_{j}$.  Let $\bar{\bm L}_{r}$ be the three-dimensional reduced set of $\bm L_{r}$ onto the set of control axes, given by:
+The module can accept up to 3 orthogonal control axis $\hat{\bm c}_{j}$.  Let $\bar{\bm L}_{r}$ be the three-dimensional reduced set of $\bm L_{r}$ onto the set of control axes written in the body-frame, given by:
 \begin{equation}
-	\bar{\bm L}_{r} = [C]^{T} [C] \bm L_{r}
+	{}^{\mathcal{B}}\bar{\bm L}_{r} = [C]^{T} [C] {}^{\mathcal{B}}\bm L_{r}
 \end{equation}
 The goal of the thruster mapping strategy is to find a set of $\bm F$ thruster forces that yield $\bar{\bm L}_{r}$.  
 
@@ -62,12 +62,12 @@ Here a thruster configuration is assumed that can produce pure torque-couples wi
 The goal of the thruster force algorithm is to determine a set of thruster forces $\bm F$ such that the net torque $\bm \tau$ onto the spacecraft is
 \begin{equation}
 	\label{eq:th:2}
-	\bm\tau = \bar{\bm L}_{r}  = [D]\bm F
+	{}^{\mathcal{B}}\bm\tau = {}^{\mathcal{B}}\bar{\bm L}_{r}  = [D]{}^{\mathcal{B}}\bm F
 \end{equation}
 without bleeding torque onto the un-controlled axes.  The first step is to perform a standard minimum norm inverse solution using
 \begin{equation}
 	\label{eq:th:min}
-	\bm F = [D]^{T}([D][D]^{T})^{-1} \bar{\bm L}_{r}
+	{}^{\mathcal{B}}\bm F = [D]^{T}([D][D]^{T})^{-1} {}^{\mathcal{B}}\bar{\bm L}_{r}
 \end{equation}
 The $3\times 3$ matrix $[D][D]^{T}$ is full rank and thus invertible with the assumption that this RCS configuration has a full 3D torque controllability.  This set of  thruster forces will contain $F_{i}$ values that are both positive and negative.  Next, to achieve strictly non-negative values, the minimum $F_{i}$ value is determined and subtracted from all $N$ force values.  
 \begin{equation}
@@ -75,6 +75,81 @@ The $3\times 3$ matrix $[D][D]^{T}$ is full rank and thus invertible with the as
 \end{equation}
 The resulting set of $F_{i}$ forces will produce the desired control torque $\bar{\bm L}_{r}$ and achieve a net zero force onto the spacecraft.  The latter results is due to the assumption off an ACS thruster configuration that can produce pure moment couples.  
 
+\subsubsection{ACS Thruster Force Algorithm for a Thruster Configuration with Partial Torque Controllability}
+
+In the case a control frame is not fully defined (i.e. only 1 or 2 control axes are explicitly specified), the math above needs to be slightly modified to compute the torques in the desired control space. Specifically, the mapping matrix $[D]$ and requested torque vector $\mathbf{L_r}$ must be projected into, and operated within, the control subspace. As such,
+
+\begin{equation}
+	[C]  = \begin{bmatrix}
+		\hat{\bm c}_{1} \\ \vdots \\ \hat{\bm 0}_{N_{c}}
+	\end{bmatrix}
+\end{equation}
+
+\begin{equation}
+	{}^{\mathcal{C}}\bar{\bm L}_{r} = [C] {}^{\mathcal{B}}\bm L_{r}
+\end{equation}
+
+\begin{equation}
+	[CD] = [C][D]
+\end{equation}
+
+\begin{equation}
+	\label{eq:th:min}
+	{}^{\mathcal{B}}\bm F = [CD]^{T}([CD][CD]^{T})^{-1} {}^{\mathcal{C}}\bar{\bm L}_{r}
+\end{equation}
+
+Note: $([CD][CD]^{T})^{-1}$ is not an invertable matrix if one or more of the control axes $\hat{\bm c}$ is a $\bm 0$ vector. To circumvent this problem, two mathematical reconciliations must be made. First, when$\bm L_r$ is projected onto the control axes,  $[C] {}^{\mathcal{B}}\bm L_{r}$, the component projected onto the $\bm 0$ axis will be removed. I.e. if 
+$$ [C] = \begin{pmatrix}
+1 & 0 & 0 \\
+0 & 0 & 1 \\
+0 & 0 & 0 \\
+\end{pmatrix} $$
+and 
+$$ \bm {}^{\mathcal B}L_r = (1.0, -0.5, 0.7)^T $$
+then 
+$$ \bm {}^{\mathcal C}L_r = (1.0, 0.7, 0.0)^T $$
+
+and 
+ $$ [CD] = \begin{pmatrix}
+CD_{11} & CD_{12} & \hdots & CD_{1N} \\
+CD_{21} & CD_{22} & \hdots & CD_{2N} \\
+0 & 0 &  \hdots & 0 \\
+\end{pmatrix} $$
+
+Second, the $[M]=([CD][CD]^{T})$ matrix must be set to identity, and only the upper block entries in $[M]$ will be computed (2x2 or 1x1 depending on 2 or 1 control axes respectively) . So for the 2-axis control scheme,
+ $$ [M] = \begin{pmatrix}
+M_{11} & M_{12} & 0 \\
+M_{21} & M_{22} & 0 \\
+0 & 0 & 1 \\
+\end{pmatrix} $$
+
+Allowing $[M]$ to be inverted. This assertion can be made because when mapping the control torques onto the control axes, the $[M]_{33} =1$ component is multiplied by the zero in ${}^{\mathcal{C}}\bm L_r$. Thus:
+
+\begin{equation}
+{}^{B}\begin{pmatrix}
+ F_1 \\
+ F_2 \\
+ \vdots \\
+ F_N \\
+\end{pmatrix} =
+\begin{pmatrix}
+CD_{11} & CD_{21} & 0 \\
+CD_{12} & CD_{22} & 0 \\
+\vdots  & \vdots  & \vdots \\
+CD_{1N} & CD_{2N} & 0\\
+\end{pmatrix}
+\begin{pmatrix}
+M_{11} & M_{12} & 0 \\
+M_{21} & M_{22} & 0 \\
+0 & 0 & 1 \\
+\end{pmatrix} 
+\begin{pmatrix}
+ L_1 \\
+ L_2 \\
+ 0 \\
+\end{pmatrix} 
+\end{equation}
+such that ${}^{\mathcal{C}}L_3$ will never be mapped onto the body frame force components ${}^{\mathcal{B}}F$.
 
 
 \subsection{2-Stage Minimum Norm ACS Thruster Mapping Algorithm}
@@ -98,13 +173,13 @@ with
 \end{equation}
 The net torque due to $\bar{\bm F}$ is 
 \begin{equation}
-	\bar{\bm \tau} = [\bar D] \bar{\bm F}
+	{}^{\mathcal{B}}\bar{\bm \tau} = [\bar D] {}^{\mathcal{B}}\bar{\bm F}
 \end{equation}
 
 A modified set of thruster force solutions $\bar{\bm F}$ to generate the desired torque $\bar{\bm L}_{r}$ is found through a second minimum norm operation:
 \begin{equation}
 	\label{eq:th:min2}
-	\bar{\bm F} = [\bar D]^{T}([\bar D][\bar D]^{T})^{-1} \bar{\bm L}_{r}
+	{}^{\mathcal{B}}\bar{\bm F} = [\bar D]^{T}([\bar D][\bar D]^{T})^{-1} {}^{\mathcal{B}}\bar{\bm L}_{r}
 \end{equation}
 
 

@@ -180,16 +180,16 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     v3SetZero(Lr_offset);
     for(i=0; i<numAvailThrusters; i=i+1)
     {
-        if (configData->thrForcMag[i] <= 0)
-        {
-            continue; /* In the case where a hruster's maxThrust is purposefully (or accidentally) set to 0.0 or less; we exclude it from mapping solution. */
-        }
+//        if (configData->thrForcMag[i] <= 0)
+//        {
+//            continue; /* In the case where a hruster's maxThrust is purposefully (or accidentally) set to 0.0 or less; we exclude it from mapping solution. */
+//        }
         v3Cross(rThrusterRelCOM_B[i], configData->gtThruster_B[i], rCrossGt); /* Eq. 6 */
         for(j=0; j<3; j++)
         {
             D[j][i] = rCrossGt[j];
         }
-        if(configData->thrForceSign < 0)  /* Need clarification -- Something to do with remove the torques produced by the fact that the torque vector in the body frame needs to be projected onto the COM */
+        if(configData->thrForceSign < 0)  /* Handles the case where there is translational motion imparted during off-pulsing*/
         {
             v3Scale(configData->thrForcMag[i], rCrossGt, LrLocal); /* Computing local torques from each thruster -- Individual terms in Eq. 7*/
             v3Subtract(Lr_offset, LrLocal, Lr_offset); /* Summing of individual torques -- Eq. 5 & Eq. 7 */
@@ -308,60 +308,39 @@ void findMinimumNormForce(thrForceMappingConfig *configData,
 {
     
     int         i,j,k;                          /* []     counters */
-    double      DDT[3][3];                      /* [m^2]  [D].[D]^T matrix */
-    double      DDTInv[3][3];                   /* [m^2]  ([D].[D]^T)^-1 matrix */
     double      C[3][3];                        /* [m^2]  (C) matrix */
-    double      CTC[3][3];                      /* [m^2]  ([C]^T.[C]) matrix */
-    double      DDTInvLr[3];
-    double      CD[3][MAX_EFF_CNT];
+    double      CD[3][MAX_EFF_CNT];             /* [m^2]  [C].[D] matrix -- Thrusters in body frame mapped on control axes */
+    double      CDCDT[3][3];                    /* [m^2]  [CD].[CD]^T matrix */
+    double      CDCDTInv[3][3];                 /* [m^2]  ([CD].[CD]^T)^-1 matrix */
+    double      CDCDTInvLr[3];
 
-    /*! - copy the control axes */
-    m33SetZero(C);
+    vSetZero(F, MAX_EFF_CNT);   /* zero the output force vector */
+    m33SetZero(C);              /* zero the control basis */
+    
+    /*! - copy the control axes into [C] */
     for (i=0;i<configData->numControlAxes;i++) {
         v3Copy(&configData->controlAxes_B[3*i], C[i]);
     }
     
     /*! - map the control torque onto the control axes*/
-    m33tMultM33(C, C, CTC);
-    m33MultV3(CTC, Lr_B, Lr_B_Bar); /* Note: Lr_B_Bar is projected only onto the available control axes. i.e. if using DV thrusters with only 1 control axis, Lr_B_Bar = [#, 0, 0] */
-    
-    /*! - zero the output force vector */
-    vSetZero(F, MAX_EFF_CNT);
+    m33MultV3(RECAST3X3 C, Lr_B, Lr_B_Bar); /* Note: Lr_B_Bar is projected only onto the available control axes. i.e. if using DV thrusters with only 1 control axis, Lr_B_Bar = [#, 0, 0] */
     
     /* find [D].[D]^T */
     mMultM(C, 3, 3, D, 3, MAX_EFF_CNT, CD);
-    m33SetIdentity(DDT);
+    m33SetIdentity(CDCDT);
     for(i=0; i<configData->numControlAxes; i++) {
         for(j=0; j<configData->numControlAxes; j++) {
-            DDT[i][j] = 0.0;
+            CDCDT[i][j] = 0.0;
             for (k=0;k<numForces;k++) {
-                DDT[i][j] += CD[i][k] * CD[j][k]; // Part of Eq. 9 For DV thrusters, this actually forces the [3][3] entry to zero and therefore does not work.
+                CDCDT[i][j] += CD[i][k] * CD[j][k]; /* Part of Eq. 9 */
             }
         }
     }
+    m33Inverse(CDCDT, CDCDTInv);
+    m33MultV3(CDCDTInv, Lr_B_Bar, CDCDTInvLr);/* If fewer than 3 control axes, then the 1's along the diagonal of DDTInv will not conflict with the mapping, as Lr_B_Bar contains the nessessary 0s to inhibit projection */
+    mtMultV(CD, 3, MAX_EFF_CNT, CDCDTInvLr, F); /* Eq. 15 */
 
-    /*
-    m33SetZero(DDT);
-    mMultMt(D, 3, MAX_EFF_CNT, D, 3, MAX_EFF_CNT, DDT);
-    if (m33Determinant(DDT) < configData->epsilon) {
-        for (i=0;i<3;i++){
-            if(DDT[i][i] == 0){
-                DDT[i][i] = 1.0; // This is required to invert the matrix in cases when there are fewer than 3 control axes, or when all thrusters are pointed in the same direction./
-            }
-        }
-    }
-    */
-    
-    m33Inverse(DDT, DDTInv);
-    m33MultV3(DDTInv, Lr_B_Bar, DDTInvLr); /* If fewer than 3 control axes, then the 1's along the diagonal of DDTInv will not conflict with the mapping, as Lr_B_Bar contains the nessessary 0s to inhibit projection */
-    for (i=0;i<numForces;i++) {
-        F[i] = 0.0;
-        for (k=0;k<3;k++) {
-            F[i] += CD[k][i]*DDTInvLr[k]; /* Eq. 15*/
-        }
-    }
     return;
-
 }
 
 /*!

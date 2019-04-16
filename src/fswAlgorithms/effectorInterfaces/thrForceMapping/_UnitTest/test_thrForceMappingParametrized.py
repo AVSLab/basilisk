@@ -100,7 +100,7 @@ def results_thrForceMapping(Lr, COrig, COM, rData, gData, thrForceSign, thrForce
     C = np.array(COrig)
     C = np.reshape(C, ((len(C)/3), 3), 'C')
     CT = np.transpose(C)
-    Lr_Bar = np.dot(CT,np.dot(C,Lr))
+    Lr_Bar = np.dot(C,Lr)
     Lr_offset = [0.0, 0.0, 0.0]
     # Compute D Matrix and Determine Force
     D = np.zeros((3,len(rData)))
