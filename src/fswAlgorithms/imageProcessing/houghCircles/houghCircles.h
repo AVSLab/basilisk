@@ -31,8 +31,6 @@
 #include "../simulation/simFswInterfaceMessages/circlesOpNavMsg.h"
 #include "../simulation/_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
-#include "../../fswUtilities/CImg.h"
-
 
 
 /*! \addtogroup SimModelGroup

@@ -110,12 +110,14 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
 
     /*! - Recast image pointer to Eigen type*/
 //    double* pMat[imageBuffer.imageWidth][imageBuffer.imageHeight] = static_cast<double>(*imageBuffer.imagePointer);
-    double ** pMat = (double **) imageBuffer.imagePointer;
-    cv::Mat src(imageBuffer.imageWidth,imageBuffer.imageHeight,CV_16UC3);
-    std::memcpy(src.data, pMat, imageBuffer.imageWidth*imageBuffer.imageHeight*sizeof(double));
+    uint32_t* pMat = (uint32_t *) imageBuffer.imagePointer;
+    cv::Mat src(imageBuffer.imageWidth,imageBuffer.imageHeight,CV_32SC4);
+    std::memcpy(src.data, pMat, imageBuffer.imageWidth*imageBuffer.imageHeight*imageBuffer.imageType*sizeof(uint8_t));
 //    src = cv::imdecode(imageBuffer.imagePointer, cv::IMREAD_ANYCOLOR);
     cv::blur(grey, blurred, cv::Size(this->blurrSize,this->blurrSize) );
-    
+//    cv::imshow( "Hough Circle Transform Demo", src );
+//    cv::waitKey(0);
+
     std::vector<cv::Vec4f> circles;
     /*! - Apply the Hough Transform to find the circles*/
     cv::HoughCircles( blurred, circles, CV_HOUGH_GRADIENT, 1, src.rows/2, this->cannyThresh1,this->cannyThresh2, this->houghMinRadius, this->houghMaxRadius );
