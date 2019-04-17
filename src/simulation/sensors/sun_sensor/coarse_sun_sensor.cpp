@@ -51,6 +51,7 @@ CoarseSunSensor::CoarseSunSensor()
     this->albedoValue = 0.0;
     this->scaleFactor = 1.0;
     this->kellyFactor = 0.0;
+    this->kPower = 2.0;
     this->sensedValue = 0.0;
     this->maxOutput = 1e6;
     this->minOutput = 0.0;
@@ -258,7 +259,7 @@ void CoarseSunSensor::computeTrueOutput()
     //! - Apply the kelly fit to the truth direct value
     double kellyFit = 1.0;
     if (this->kellyFactor > eps) {
-        kellyFit -= exp(-this->directValue * this->directValue / this->kellyFactor);
+        kellyFit -= exp(-pow(this->directValue, this->kPower) / this->kellyFactor);
     }
     this->directValue = this->directValue*kellyFit;
     
