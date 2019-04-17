@@ -180,10 +180,6 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     v3SetZero(Lr_offset);
     for(i=0; i<numAvailThrusters; i=i+1)
     {
-//        if (configData->thrForcMag[i] <= 0)
-//        {
-//            continue; /* In the case where a hruster's maxThrust is purposefully (or accidentally) set to 0.0 or less; we exclude it from mapping solution. */
-//        }
         v3Cross(rThrusterRelCOM_B[i], configData->gtThruster_B[i], rCrossGt); /* Eq. 6 */
         for(j=0; j<3; j++)
         {
@@ -367,12 +363,7 @@ double computeTorqueAngErr(double D[3][MAX_EFF_CNT], double BLr_B[3], uint32_t n
         /*! - loop over all thrusters and compute the actual torque to be applied */
         for(i=0; i<numForces; i++)
         {
-            if (FMag[i] <= 0.0)
-            {
-                thrusterForce = 0.0; /* ensures that we don't divide by zero*/
-            } else {
-                 thrusterForce = fabs(F[i]) < FMag[i] ? F[i] : FMag[i]*fabs(F[i])/F[i]; /* This could produce inf's as F[i] approaches 0 if FMag[i] is 0, as such we check if FMag[i] is equal to zero in reset() */
-            }
+            thrusterForce = fabs(F[i]) < FMag[i] ? F[i] : FMag[i]*fabs(F[i])/F[i]; /* This could produce inf's as F[i] approaches 0 if FMag[i] is 0, as such we check if FMag[i] is equal to zero in reset() */
             v3Scale(thrusterForce, DT[i], LrEffector_B);
             v3Add(tauActual_B, LrEffector_B, tauActual_B);
         }

@@ -105,10 +105,10 @@ def results_thrForceMapping(Lr, COrig, COM, rData, gData, thrForceSign, thrForce
     # Compute D Matrix and Determine Force
     D = np.zeros((3,len(rData)))
     for i in range(len(rData)):
-        if thrForceMag[i] <= 0:
-            continue
-        else:
-            D[:,i] = np.cross((rData[i,:] - COM), gData[i,:])
+        #if thrForceMag[i] <= 0:
+        #    continue
+        #else:
+        D[:,i] = np.cross((rData[i,:] - COM), gData[i,:])
         if(thrForceSign < 0):
           Lr_offset -= thrForceMag[i]*np.cross((rData[i,:] - COM), gData[i,:])
     Lr_Bar = Lr_Bar + Lr_offset
@@ -243,7 +243,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
                                           inputMessageSize,
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
 
-    requestedTorque = [1.0, -0.5, 0.7]              # Set up a list as a 3-vector
+    requestedTorque = [1.0, -0.5, 0.7]             # Set up a list as a 3-vector
     if saturateThrusters>0:        # default angErrThresh is 0, thus this should trigger scaling
         requestedTorque = [10.0, -5.0, 7.0]
     if saturateThrusters==2:        # angle is set and small enough to trigger scaling
@@ -425,13 +425,25 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
 
     Lr_Bar = requestedTorque + Lr_offset
 
-    '''
-    if numThrusters >= moduleConfig.numControlAxes and saturateThrusters == 0:
-        testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([requestedTorque]),
+
+    if numThrusters >= moduleConfig.numControlAxes and \
+            saturateThrusters == 0 and \
+            misconfigThruster == False and \
+            dropThruster==False:
+        if dropAxis == True:
+            count = 0
+            for i in range(3):
+                if receivedTorque[i+1] - requestedTorque[i] < accuracy:
+                    count += 1
+            if count < 2:
+                testFailCount += 1
+
+        else:
+            testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([requestedTorque]),
                                                                      np.array([receivedTorque]), accuracy,
                                                                      "CompareTorques",
                                                                      moduleConfig.numControlAxes, testFailCount, testMessages)
-    '''
+
 
     snippetName = "LrBReq_LrBRec_" + str(useDVThruster) + "_" + str(useCOMOffset) + "_" + str(dropThruster) + "_" + str(dropAxis) + "_" + str(saturateThrusters) + "_" + str(misconfigThruster)
     requestedTex = str(Lr_Bar) #str(requestedTorque)
@@ -478,8 +490,8 @@ if __name__ == "__main__":
                  False,
                  False,           # useDVThruster
                  False,           # use COM offset
-                 False,           # drop thruster(s)
-                 True,            # drop control axis
+                 True,            # drop thruster(s)
+                 False,           # drop control axis
                  0,               # saturateThrusters
                  False            # misconfigThruster
 
