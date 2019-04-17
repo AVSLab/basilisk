@@ -11,6 +11,16 @@ We are very excited by the great capabilities that this software already has, an
 * Python 3 support
 * live plotting capability during a BSK run
 
+## Upcoming Version 0.X.X
+<ul>
+    <li>
+        updated the `orbitalMotion.c/h` support library to have more robust `rv2elem()` and `elem2rv()` functions.  They now also handle retrograde orbits.  The manner in covering parabolic cases has changed slightly.
+    </li>
+    <li>
+        
+    </li>
+</ul>
+
 ## Upcoming Version 0.5.0
 <ul>
     <li>
