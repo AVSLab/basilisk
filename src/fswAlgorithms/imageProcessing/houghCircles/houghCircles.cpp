@@ -28,7 +28,6 @@
 /* modify the path to reflect the new module names */
 #include <string.h>
 #include "houghCircles.h"
-#include "opencv2/core/eigen.hpp"
 
 
 /*! This method constructs the module.
@@ -98,7 +97,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
 {
     CameraImageMsg imageBuffer;
     CirclesOpNavMsg circleBuffer;
-    cv::Mat src, canny, grey, blurred;
+    cv::Mat canny, grey, blurred;
     /*! - Read in the bitmap*/
     SingleMessageHeader localHeader;
     memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
@@ -108,11 +107,13 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
                                                     sizeof(CameraImageMsg), reinterpret_cast<uint8_t*>(&imageBuffer), this->moduleID);
         this->sensorTimeTag = localHeader.WriteClockNanos;
     }
-    
+
     /*! - Recast image pointer to Eigen type*/
-    Eigen::Matrix<int32_t, Eigen::Dynamic, Eigen::Dynamic>* pEigenMat = static_cast<Eigen::Matrix<int32_t, Eigen::Dynamic, Eigen::Dynamic>*>(imageBuffer.imagePointer);
-    cv::eigen2cv(*pEigenMat, src);
-    cv::cvtColor(src, grey, CV_BGR2GRAY );
+//    double* pMat[imageBuffer.imageWidth][imageBuffer.imageHeight] = static_cast<double>(*imageBuffer.imagePointer);
+    double ** pMat = (double **) imageBuffer.imagePointer;
+    cv::Mat src(imageBuffer.imageWidth,imageBuffer.imageHeight,CV_16UC3);
+    std::memcpy(src.data, pMat, imageBuffer.imageWidth*imageBuffer.imageHeight*sizeof(double));
+//    src = cv::imdecode(imageBuffer.imagePointer, cv::IMREAD_ANYCOLOR);
     cv::blur(grey, blurred, cv::Size(this->blurrSize,this->blurrSize) );
     
     std::vector<cv::Vec4f> circles;

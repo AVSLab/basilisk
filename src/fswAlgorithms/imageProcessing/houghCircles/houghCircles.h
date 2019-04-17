@@ -25,10 +25,14 @@
 #include "architecture/messaging/system_messaging.h"
 #include "opencv2/opencv.hpp"
 #include "opencv2/highgui.hpp"
+#include "opencv2/core/mat.hpp"
+#include "opencv2/imgcodecs.hpp"
 #include "../simulation/simFswInterfaceMessages/cameraImageMsg.h"
 #include "../simulation/simFswInterfaceMessages/circlesOpNavMsg.h"
 #include "../simulation/_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
+#include "../../fswUtilities/CImg.h"
+
 
 
 /*! \addtogroup SimModelGroup
