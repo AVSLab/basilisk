@@ -24,8 +24,6 @@
 #include <math.h>
 
 /*! This method initializes the ConfigData for theCSS WLS estimator.
- It checks to ensure that the inputs are sane and then creates the
- output message
  @return void
  @param ConfigData The configuration data associated with the CSS WLS estimator
  */

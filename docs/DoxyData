@@ -1271,6 +1271,7 @@ HTML_EXTRA_FILES       = ../src/simulation/dynamics/extForceTorque/_Documentatio
                          ../src/fswAlgorithms/attDetermination/okeefeEKF/_Documentation/Okeefe_EKF.pdf \
                          ../src/fswAlgorithms/attDetermination/CSSEst/_Documentation/Basilisk-cssWlsEst-20180429.pdf \
                          ../src/fswAlgorithms/attDetermination/sunlineEKF/_Documentation/Sunline_EKF.pdf \
+                         ../src/fswAlgorithms/attDetermination/sunlineSuKF/_Documentation/Sunline_SuKF.pdf \
                          ../src/fswAlgorithms/attGuidance/attTrackingError/_Documentation/Basilisk-attTrackingError-20190220.pdf \
                          ../src/fswAlgorithms/attGuidance/celestialTwoBodyPoint/_Documentation/Basilisk-celestialTwoBodyPoint-20190311.pdf \
                          ../src/fswAlgorithms/attGuidance/hillPoint/_Documentation/hillPoint.pdf \
