@@ -17,7 +17,7 @@ We are very excited by the great capabilities that this software already has, an
         updated the `orbitalMotion.c/h` support library to have more robust `rv2elem()` and `elem2rv()` functions.  They now also handle retrograde orbits.  The manner in covering parabolic cases has changed slightly.
     </li>
     <li>
-        
+        This module implements and tests a Switch Unscented Kalman Filter in order to estimate the sunline direction.
     </li>
 </ul>
 
