@@ -57,14 +57,10 @@ def results_computeAngErr(D, BLr_B, F, thrForceMag, numThrusters):
         tauActual_B = [0.0, 0.0, 0.0]
         BLr_B_hat = BLr_B/np.linalg.norm(BLr_B)
         for i in range(0, numThrusters):
-
-            if thrForceMag[i] <= 0.0:
-                continue
+            if abs(F[i]) < thrForceMag[i]:
+                thrForce = F[i]
             else:
-                if abs(F[i]) < thrForceMag[i]:
-                    thrForce = F[i]
-                else:
-                    thrForce = thrForceMag[i]*abs(F[i])/F[i]
+                thrForce = thrForceMag[i]*abs(F[i])/F[i]
 
             LrEffector_B = thrForce*DT[i,:]
             tauActual_B += LrEffector_B
@@ -105,12 +101,9 @@ def results_thrForceMapping(Lr, COrig, COM, rData, gData, thrForceSign, thrForce
     # Compute D Matrix and Determine Force
     D = np.zeros((3,len(rData)))
     for i in range(len(rData)):
-        #if thrForceMag[i] <= 0:
-        #    continue
-        #else:
         D[:,i] = np.cross((rData[i,:] - COM), gData[i,:])
         if(thrForceSign < 0):
-          Lr_offset -= thrForceMag[i]*np.cross((rData[i,:] - COM), gData[i,:])
+            Lr_offset -= thrForceMag[i]*np.cross((rData[i,:] - COM), gData[i,:])
     Lr_Bar = Lr_Bar + Lr_offset
     F = mapToForce(D, Lr_Bar, C)
 
@@ -123,28 +116,27 @@ def results_thrForceMapping(Lr, COrig, COM, rData, gData, thrForceSign, thrForce
 
     # Recompute the D Matrix with negative forces removed and compute Force
     # We currently don't have the availability message in place yet
-    numAvailThrusters = numThrusters
+    numAvailThrusters = 0
 
-    if numAvailThrusters is not numThrusters or thrForceSign < 0:
-        DNew = np.array([])
-        for i in range(0,len(F)):
-            if t[i]:
-                DNew = np.append(DNew, np.cross((rData[i,:] - COM), gData[i]))
-        DNew = np.reshape(DNew, (3, (len(DNew) / 3)), 'F')
-        FNew = mapToForce(DNew, Lr_Bar,C)
+    DNew = np.array([])
+    for i in range(0,len(F)):
+        if t[i]:
+            DNew = np.append(DNew, np.cross((rData[i,:] - COM), gData[i]))
+            numAvailThrusters += 1
+    DNew = np.reshape(DNew, (3, (len(DNew) / 3)), 'F')
+    FNew = mapToForce(DNew, Lr_Bar,C)
 
-        # Remove minumum force
-        if thrForceSign > 0:
-            FNew[0:numThrusters] = FNew[0:numThrusters] - min(FNew[0:numThrusters])
+    # Remove minumum force
+    count = 0
+    for i in range(0,len(F)):
+        if t[i]:
+            F[i] = FNew[count]
+            count += 1
+        else:
+            F[i] = 0.0
 
-        count = 0
-        for i in range(0,len(F)):
-            if t[i]:
-                F[i] = FNew[count]
-                count += 1
-            else:
-                F[i] = 0.0
-
+    if thrForceSign > 0:
+        F[0:numThrusters] = F[0:numThrusters] - min(F[0:numThrusters])
 
     angle = results_computeAngErr(D, Lr_Bar, F, thrForceMag, numThrusters)
 
@@ -398,6 +390,8 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(MAX_EFF_CNT))
 
+    if misconfigThruster:
+        return [testFailCount, ''.join(testMessages)] # We don't handle cases where a thruster is configured incorrectly.
 
     truthVector = results_thrForceMapping(requestedTorque, moduleConfig.controlAxes_B,
                                          vehicleConfigOut.CoM_B, rcsLocationData,
@@ -411,42 +405,42 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
 
     accuracy = 1e-6
 
-
     D = np.cross(rcsDirectionData,rcsLocationData-CoM_B)
     F = np.transpose(moduleOutput[0, 1:MAX_EFF_CNT+1])
     receivedTorque = -1.0*np.array([np.matmul(np.transpose(D), F)])
     receivedTorque = np.append(np.array([0.0]), receivedTorque)
+    pythonTorque = -1.0*np.array([np.matmul(np.transpose(D), truthVector)])
+    pythonTorque = np.append(np.array([0.0]), pythonTorque)
 
     Lr_offset = np.array([0.0, 0.0, 0.0])
     Lr_Bar = np.array([0.0, 0.0, 0.0])
     for i in range(0,numThrusters):
         if moduleConfig.thrForceSign < 0 and moduleConfig.thrForcMag[i] >= 0:
-            Lr_offset -= moduleConfig.thrForcMag[i]*np.cross(rcsLocationData[i,:]-CoM_B,rcsDirectionData[i,:])
+            Lr_offset -= moduleConfig.thrForcMag[i]*np.cross(rcsLocationData[i,:]-CoM_B,rcsDirectionData[i,:]) # off pulsing
 
     Lr_Bar = requestedTorque + Lr_offset
-
 
     if numThrusters >= moduleConfig.numControlAxes and \
             saturateThrusters == 0 and \
             misconfigThruster == False and \
-            dropThruster==False:
-        if dropAxis == True:
-            count = 0
-            for i in range(3):
-                if receivedTorque[i+1] - requestedTorque[i] < accuracy:
-                    count += 1
-            if count < 2:
-                testFailCount += 1
+            dropThruster==False: # The control law should not produce the same torque or torque components if any of these cases are true.
+                if dropAxis == True:
+                    count = 0
+                    for i in range(3):
+                        if receivedTorque[i+1] - requestedTorque[i] < accuracy:
+                            count += 1
+                    if count < 2:
+                        testFailCount += 1
 
-        else:
-            testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([requestedTorque]),
-                                                                     np.array([receivedTorque]), accuracy,
-                                                                     "CompareTorques",
-                                                                     moduleConfig.numControlAxes, testFailCount, testMessages)
+                else:
+                    testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([requestedTorque]),
+                                                                             np.array([receivedTorque]), accuracy,
+                                                                             "CompareTorques",
+                                                                             moduleConfig.numControlAxes, testFailCount, testMessages)
 
 
     snippetName = "LrBReq_LrBRec_" + str(useDVThruster) + "_" + str(useCOMOffset) + "_" + str(dropThruster) + "_" + str(dropAxis) + "_" + str(saturateThrusters) + "_" + str(misconfigThruster)
-    requestedTex = str(Lr_Bar) #str(requestedTorque)
+    requestedTex = str(Lr_Bar)
     receivedTex = str(receivedTorque[1:4])
     snippetTex = "Requested:\t" + requestedTex + "\n"
     snippetTex += "Received:\t" + receivedTex + "\n"
@@ -490,7 +484,7 @@ if __name__ == "__main__":
                  False,
                  False,           # useDVThruster
                  False,           # use COM offset
-                 True,            # drop thruster(s)
+                 False,            # drop thruster(s)
                  False,           # drop control axis
                  0,               # saturateThrusters
                  False            # misconfigThruster

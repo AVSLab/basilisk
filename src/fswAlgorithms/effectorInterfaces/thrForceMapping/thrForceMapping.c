@@ -143,7 +143,6 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     double      LrLocal[3];                   /* [Nm]    Torque provided by indiviual thruster */
     int         thrusterUsed[MAX_EFF_CNT];    /* []      Array of flags indicating if this thruster is used for the Lr_j */
     double      rThrusterRelCOM_B[MAX_EFF_CNT][3];/* [m]     local copy of the thruster locations relative to COM */
-    uint32_t    numAvailThrusters;            /* []      number of available thrusters */
     double      BLr_B[3];                     /* [Nm]    Control torque that we actually control*/
     double      maxFractUse;                  /* []      ratio of maximum requested thruster force relative to maximum thruster limit */
     double      rCrossGt[3];
@@ -172,13 +171,11 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     for (i=0;i<configData->numThrusters;i++) {
         v3Subtract(configData->rThruster_B[i], configData->sc.CoM_B, rThrusterRelCOM_B[i]); /* Part 1 of Eq. 4 */
     }
-
-    /* temporary available thruster assignment until the thruster availability is read in through a message */
-    numAvailThrusters = configData->numThrusters;
    
     /*! - compute general thruster force mapping matrix */
     v3SetZero(Lr_offset);
-    for(i=0; i<numAvailThrusters; i=i+1)
+
+    for(i=0; i<configData->numThrusters; i=i+1)
     {
         v3Cross(rThrusterRelCOM_B[i], configData->gtThruster_B[i], rCrossGt); /* Eq. 6 */
         for(j=0; j<3; j++)
@@ -195,47 +192,45 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     v3Add(Lr_offset, Lr_B, Lr_B);
 
     /*! - 1st iteration of finding a set of force vectors to implement the control torque */
-    findMinimumNormForce(configData, D, Lr_B, numAvailThrusters, F, BLr_B);
+    findMinimumNormForce(configData, D, Lr_B, configData->numThrusters, F, BLr_B);
     
     /*! - Remove forces components that are contributing to the RCS Null space (this is due to the geometry of the thrusters) */
     if (configData->thrForceSign>0)
     {
-        substractMin(F, numAvailThrusters);
+        substractMin(F, configData->numThrusters);
     }
     
-    /* if the RCS Force solution includes negative forces, or if not all (DV or RCS) thrusters are available, recompute D excluding those thrusters */
-    if (numAvailThrusters != configData->numThrusters || configData->thrForceSign<0) {
-        counterPosForces = 0;
-        memset(thrusterUsed,0x0,MAX_EFF_CNT*sizeof(int));
-        for (i=0;i<numAvailThrusters;i++) {
-            if (F[i]*configData->thrForceSign > 0) {
-                thrusterUsed[i] = 1; /* Eq. 11 */
-                for(j=0; j<3; j++)
-                {
-                    Dbar[j][counterPosForces] = D[j][i]; /* Eq. 12 */
-                }
-                counterPosForces += 1;
+    /* Recompute the solution in the case that there is a dropped thruster. */
+    counterPosForces = 0;
+    memset(thrusterUsed,0x0,MAX_EFF_CNT*sizeof(int));
+    for (i=0;i<configData->numThrusters;i++) {
+        if (F[i]*configData->thrForceSign > 0) {
+            thrusterUsed[i] = 1; /* Eq. 11 */
+            for(j=0; j<3; j++)
+            {
+                Dbar[j][counterPosForces] = D[j][i]; /* Eq. 12 */
             }
-        }
-
-        findMinimumNormForce(configData, Dbar, Lr_B, counterPosForces, Fbar, BLr_B);
-
-        c = 0;
-        for (i=0;i<numAvailThrusters;i++) {
-            if (thrusterUsed[i]) {
-                F[i] = Fbar[c];
-                c += 1;
-            } else {
-                F[i] = 0.0;
-            }
-        }
-        if (configData->thrForceSign>0)
-        {
-            substractMin(F, numAvailThrusters);
+            counterPosForces += 1;
         }
     }
+
+    findMinimumNormForce(configData, Dbar, Lr_B, counterPosForces, Fbar, BLr_B);
+
+    c = 0;
+    for (i=0;i<configData->numThrusters;i++) {
+        if (thrusterUsed[i]) {
+            F[i] = Fbar[c];
+            c += 1;
+        } else {
+            F[i] = 0.0;
+        }
+    }
+    if (configData->thrForceSign>0) // If RCS thrusters and all 8 are used, subtract the null space. If not, don't.
+    {
+        substractMin(F, configData->numThrusters);
+    }
     
-    configData->outTorqAngErr = computeTorqueAngErr(D, BLr_B, numAvailThrusters, configData->epsilon, F,
+    configData->outTorqAngErr = computeTorqueAngErr(D, BLr_B, configData->numThrusters, configData->epsilon, F,
         configData->thrForcMag); /* Eq. 16*/
     maxFractUse = 0.0;
     /*  check if the angle between the request and actual torque exceeds a limit.  If so, then uniformly scale
@@ -243,7 +238,7 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
         If the angle threshold is negative, then this scaling is bypassed.*/
     if(configData->outTorqAngErr > configData->angErrThresh)
     {
-        for(i=0; i<numAvailThrusters; i++)
+        for(i=0; i<configData->numThrusters; i++)
         {
             if(configData->thrForcMag[i] > 0.0 && fabs(F[i])/configData->thrForcMag[i] > maxFractUse) /* confirming that maxThrust > 0 */
             {
@@ -253,8 +248,8 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
         /* only scale the requested thruster force if one or more thrusters are saturated */
         if(maxFractUse > 1.0)
         {
-            vScale(1.0/maxFractUse, F, numAvailThrusters, F);
-            configData->outTorqAngErr = computeTorqueAngErr(D, BLr_B, numAvailThrusters, configData->epsilon, F,
+            vScale(1.0/maxFractUse, F, configData->numThrusters, F);
+            configData->outTorqAngErr = computeTorqueAngErr(D, BLr_B, configData->numThrusters, configData->epsilon, F,
                                                             configData->thrForcMag);
         }
     }
