@@ -215,35 +215,40 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
 {
     double newTimeTag;  /* [s] Local Time-tag variable*/
     uint64_t timeOfMsgWritten; /* [ns] Read time for the message*/
+    uint64_t timeOfRWSpeeds; /* [ns] Read time for the RWs*/
     uint32_t sizeOfMsgWritten;  /* [-] Non-zero size indicates we received ST msg*/
     uint32_t otherSize; /* [-] Size of messages that are assumed to be good*/
     int32_t trackerValid; /* [-] Indicates whether the star tracker was valid*/
     double sigma_BNSum[3]; /* [-] Local MRP for propagated state*/
     InertialFilterFswMsg inertialDataOutBuffer; /* [-] Output filter info*/
     AccDataFswMsg gyrBuffer; /* [-] Buffer of IMU messages for gyro prop*/
+    NavAttIntMsg outputInertial;
     int i;
     
     // Reset update check to zero
-    
     if (v3Norm(configData->state) > configData->switchMag) //Little extra margin
     {
         MRPswitch(configData->state, configData->switchMag, configData->state);
     }
-    
+    memset(&(outputInertial), 0x0, sizeof(NavAttIntMsg));
     memset(&gyrBuffer, 0x0, sizeof(AccDataFswMsg));
+    memset(&(configData->rwSpeeds), 0x0, sizeof(RWSpeedIntMsg));
+    memset(&(configData->localConfigData), 0x0, sizeof(VehicleConfigFswMsg));
+    ReadMessage(configData->massPropsInMsgId, &timeOfMsgWritten, &otherSize,
+                sizeof(VehicleConfigFswMsg), &(configData->localConfigData), moduleId);
     ReadMessage(configData->gyrBuffInMsgId, &timeOfMsgWritten, &otherSize,
                 sizeof(AccDataFswMsg), &gyrBuffer, moduleId);
-    ReadMessage(configData->rwSpeedsInMsgId, &timeOfMsgWritten, &otherSize,
+    ReadMessage(configData->rwSpeedsInMsgId, &timeOfRWSpeeds, &otherSize,
                 sizeof(RWSpeedIntMsg), &(configData->rwSpeeds), moduleId);
     Read_STMessages(configData, moduleId);
-    
 
+    m33Inverse(RECAST3X3 configData->localConfigData.ISCPntB_B, configData->IInv);
     /*! - Handle initializing time in filter and discard initial messages*/
     if(configData->firstPassComplete == 0)
     {
         /*! - Set wheel speeds so that acceleration can be safely computed*/
         memcpy(&(configData->rwSpeedPrev), &(configData->rwSpeeds), sizeof(RWSpeedIntMsg));
-        configData->timeWheelPrev = timeOfMsgWritten;
+        configData->timeWheelPrev = timeOfRWSpeeds;
 
         /*! - Loop through ordered time-tags and select largest valid one*/
         newTimeTag = 0.0;
@@ -265,12 +270,8 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
         configData->timeTag = newTimeTag;
     }
     
-    configData->speedDt = (timeOfMsgWritten - configData->timeWheelPrev)*NANO2SEC;
-    configData->timeWheelPrev = timeOfMsgWritten;
-    
-    ReadMessage(configData->massPropsInMsgId, &timeOfMsgWritten, &otherSize,
-                sizeof(VehicleConfigFswMsg), &(configData->localConfigData), moduleId);
-    m33Inverse(RECAST3X3 configData->localConfigData.ISCPntB_B, configData->IInv);
+    configData->speedDt = (timeOfRWSpeeds - configData->timeWheelPrev)*NANO2SEC;
+    configData->timeWheelPrev = timeOfRWSpeeds;
     
     inertialDataOutBuffer.numObs = 0;
     trackerValid = 0;
@@ -295,7 +296,6 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
             trackerValid += inertialUKFMeasUpdate(configData, configData->stSensorOrder[i]);
             inertialDataOutBuffer.numObs += trackerValid;
         }
-        
     }
     /*! - If current clock time is further ahead than the measured time, then
      propagate to this current time-step*/
@@ -323,8 +323,7 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
          solution*/
         for(i=0; i<3; i++)
         {
-            configData->omega_BN_BOut[i] =
-            configData->gyroFilt[i].currentState;
+            configData->omega_BN_BOut[i] = configData->gyroFilt[i].currentState;
         }
         configData->timeTagOut = configData->gyrAggTimeTag;
         
@@ -339,9 +338,6 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     }
     
     /*! - Write the inertial estimate into the copy of the navigation message structure*/
-    NavAttIntMsg outputInertial;
-    memset(&(outputInertial), 0x0, sizeof(NavAttIntMsg));
-
     v3Copy(configData->sigma_BNOut, outputInertial.sigma_BN);
     v3Copy(configData->omega_BN_BOut, outputInertial.omega_BN_B);
     outputInertial.timeTag = configData->timeTagOut;
@@ -356,7 +352,6 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
     memmove(inertialDataOutBuffer.state, configData->state, AKF_N_STATES*sizeof(double));
     WriteMessage(configData->filtDataOutMsgId, callTime, sizeof(InertialFilterFswMsg),
                  &inertialDataOutBuffer, moduleId);
-    
     memcpy(&(configData->rwSpeedPrev), &(configData->rwSpeeds), sizeof(RWSpeedIntMsg));
     
     return;
