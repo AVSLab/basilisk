@@ -147,18 +147,22 @@ def test_FilterMethods():
 
     STList = [ST1Data, ST2Data, ST3Data]
 
-    moduleConfig.navStateOutMsgName = "inertial_state_estimate"
-    moduleConfig.filtDataOutMsgName = "inertial_filter_data"
-    moduleConfig.massPropsInMsgName = "adcs_config_data"
-    moduleConfig.rwSpeedsInMsgName = "reactionwheel_output_states"
-    moduleConfig.rwParamsInMsgName = "rwa_config_data_parsed"
-    moduleConfig.gyrBuffInMsgName = "gyro_buffer_data"
+    setupFilterData(moduleConfig)
+    vehicleConfigOut = inertialUKF.VehicleConfigFswMsg()
+    inputMessageSize = vehicleConfigOut.getStructSize()
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.massPropsInMsgName,
+                                          inputMessageSize,
+                                          2)  # number of buffers (leave at 2 as default, don't make zero)
 
-    moduleConfig.alpha = 0.02
-    moduleConfig.beta = 2.0
-    moduleConfig.kappa = 0.0
-    moduleConfig.switchMag = 1.2
-
+    I = [1000., 0., 0.,
+     0., 800., 0.,
+     0., 0., 800.]
+    vehicleConfigOut.ISCPntB_B = I
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.massPropsInMsgName,
+                                                inputMessageSize,
+                                                0,
+                                                vehicleConfigOut)
     moduleConfig.STDatasStruct.STMessages = STList
     moduleConfig.STDatasStruct.numST = len(STList)
     unitTestSim.AddVariableForLogging('inertialUKF.stSensorOrder', testProcessRate , 0, 3, 'double')
@@ -213,6 +217,7 @@ def test_FilterMethods():
                                0., 0., 0., 2., 0., 0.,
                                0., 0., 0., 0., 2., 0.,
                                0., 0., 0., 0., 0., 2.]
+
     inertialUKF.inertialUKFCleanUpdate(moduleConfigClean1)
 
     if numpy.linalg.norm(numpy.array(moduleConfigClean1.covarPrev) - numpy.array(moduleConfigClean1.covar)) >1E10:
@@ -260,9 +265,9 @@ def test_FilterMethods():
 
     ST1Data = inertialUKF.STMessage()
     ST1Data.stInMsgName = "star_tracker_1_data"
-    ST1Data.noise = [-1.,0.,0.,
-                 0., -1., 0.,
-                 0., 0., -1.]
+    ST1Data.noise = [1.,0.,0.,
+                 0., 1., 0.,
+                 0., 0., 1.]
 
     STList = [ST1Data]
 
