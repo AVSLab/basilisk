@@ -35,6 +35,15 @@ int isEqual(double a, double b, double accuracy)
     return 1;
 }
 
+int isEqualRel(double a, double b, double accuracy)
+{
+    if(fabs(a - b)/fabs(a) > accuracy) {
+        return 0;
+    }
+    return 1;
+}
+
+
 
 int testLinearAlgebra(double accuracy)
 {
@@ -1583,8 +1592,122 @@ int testOrbitalElements(double accuracy)
     double r2[3];
     double v3_2[3];
     classicElements elements;
+    double eps2;
+
+    eps2 = 1e-12 * 0.5;
 
     printf("--testOrbitalElements, accuracy = %g\n", accuracy);
+
+
+    /* 1D eccentric case */
+    elements.a = 7500.0;
+    elements.e     = 1.0;
+    elements.i     = 40.0 * D2R;
+    elements.Omega = 133.0 * D2R;
+    elements.omega = 113.0 * D2R;
+    elements.f     = 23.0 * D2R;    /* true anomaly */
+    elements.alpha = 1.0 / elements.a;
+    elements.rPeriap = elements.a*(1.-elements.e);
+    elements.rApoap = elements.a*(1.+elements.e);
+    elem2rv(MU_EARTH, &elements, r, v);
+    v3Set(-148.596902253492,    -457.100381534593,     352.773096481799, r2);
+    v3Set(-8.93065944520745,    -27.4716886950712,     21.2016289595043, v3_2);
+    if(!v3IsEqualRel(r, r2, accuracy) || !v3IsEqualRel(v, v3_2, accuracy)) {
+        printf("elem2rv failed 1D eccentric case\n");
+        errorCount++;
+    }
+
+
+    /* 1D hyperbolic case */
+    elements.a = -7500.0;
+    elements.e     = 1.0;
+    elements.i     = 40.0 * D2R;
+    elements.Omega = 133.0 * D2R;
+    elements.omega = 113.0 * D2R;
+    elements.f     = 23.0 * D2R;    /* true anomaly */
+    elements.alpha = 1.0 / elements.a;
+    elements.rPeriap = elements.a*(1.-elements.e);
+    elements.rApoap = elements.a*(1.+elements.e);
+    elem2rv(MU_EARTH, &elements, r, v);
+    v3Set(-152.641873349816,    -469.543156608544,     362.375968124408, r2);
+    v3Set(-9.17378720883851,    -28.2195763820421,     21.7788208976681, v3_2);
+    if(!v3IsEqualRel(r, r2, accuracy) || !v3IsEqualRel(v, v3_2, accuracy)) {
+        printf("elem2rv failed 1D hyperbolic case\n");
+        errorCount++;
+    }
+
+
+
+
+    /* 2D hyperbolic case */
+    elements.a = -7500.0;
+    elements.e     = 1.4;
+    elements.i     = 40.0 * D2R;
+    elements.Omega = 133.0 * D2R;
+    elements.omega = 113.0 * D2R;
+    elements.f     = 23.0 * D2R;    /* true anomaly */
+    elements.alpha = 1.0 / elements.a;
+    elements.rPeriap = elements.a*(1.-elements.e);
+    elements.rApoap = elements.a*(1.+elements.e);
+    elem2rv(MU_EARTH, &elements, r, v);
+    v3Set(319.013136281857,    -2796.71958333493,      1404.6919948109, r2);
+    v3Set(15.3433051336115,    -5.87012423567412,    -6.05659420479213, v3_2);
+    if(!v3IsEqualRel(r, r2, accuracy) || !v3IsEqualRel(v, v3_2, accuracy)) {
+        printf("elem2rv failed 2D hyperbolic case\n");
+        errorCount++;
+    }
+
+    rv2elem(MU_EARTH, r2, v3_2, &elements);
+    if(   !isEqualRel(elements.a,      -7500.0, accuracy)
+       || !isEqualRel(elements.e,      1.4, accuracy)
+       || !isEqualRel(elements.i,      40.0 * D2R, accuracy)
+       || !isEqualRel(elements.Omega,  133.0 * D2R, accuracy)
+       || !isEqualRel(elements.omega,  113.0 * D2R, accuracy)
+       || !isEqualRel(elements.f,      23.0 * D2R, accuracy)
+       || !isEqualRel(elements.rmag,   3145.881340612725, accuracy)
+       || !isEqualRel(elements.rPeriap,3000.0, accuracy)
+       || !isEqualRel(elements.rApoap, -18000., accuracy)
+       ) {
+        printf("rv2elem failed 2D hyperbolic case\n");
+        errorCount++;
+    }
+
+
+
+    /* 2D parabolic case */
+    elements.alpha = 0.0; /* zero orbit energy, i.e. parabolic */
+    elements.a = 0.0;
+    elements.rPeriap = 7500.;
+    elements.e     = 1.0;
+    elements.i     = 40.0 * D2R;
+    elements.Omega = 133.0 * D2R;
+    elements.omega = 113.0 * D2R;
+    elements.f     = 123.0 * D2R;    /* true anomaly */
+    elem2rv(MU_EARTH, &elements, r, v);
+    v3Set(27862.6148209797,      795.70270010667,    -17554.0435142669, r2);
+    v3Set(3.06499561197954,     2.21344887266898,    -3.14760065404514, v3_2);
+    if(!v3IsEqualRel(r, r2, accuracy) || !v3IsEqualRel(v, v3_2, accuracy)) {
+        printf("elem2rv failed 2D parabolic case\n");
+        errorCount++;
+    }
+
+    rv2elem(MU_EARTH, r2, v3_2, &elements);
+    if(   !isEqual(elements.alpha,      0.0, accuracy)
+       || !isEqual(elements.a,      0.0, accuracy)
+       || !isEqualRel(elements.e,      1.0, accuracy)
+       || !isEqualRel(elements.i,      40.0 * D2R, accuracy)
+       || !isEqualRel(elements.Omega,  133.0 * D2R, accuracy)
+       || !isEqualRel(elements.omega,  113.0 * D2R, accuracy)
+       || !isEqualRel(elements.f,      123.0 * D2R, accuracy)
+       || !isEqualRel(elements.rmag,   32940.89997480352, accuracy)
+       || !isEqualRel(elements.rPeriap,7500.0, accuracy)
+       || !isEqual(elements.rApoap, 0.0, accuracy)
+       ) {
+        printf("rv2elem failed 2D parabolic case\n");
+        errorCount++;
+    }
+
+
 
     /* 2D elliptical case */
     elements.a     = 7500.0;
@@ -1593,24 +1716,27 @@ int testOrbitalElements(double accuracy)
     elements.Omega = 133.0 * D2R;
     elements.omega = 113.0 * D2R;
     elements.f     = 123.0 * D2R;    /* true anomaly */
+    elements.alpha = 1.0 / elements.a;
+    elements.rPeriap = elements.a*(1.-elements.e);
+    elements.rApoap = elements.a*(1.+elements.e);
     elem2rv(MU_EARTH, &elements, r, v);
     v3Set(6538.3506963942027, 186.7227227879431, -4119.3008399778619, r2);
     v3Set(1.4414106130924005, 5.588901415902356, -4.0828931566657038, v3_2);
-    if(!v3IsEqual(r, r2, accuracy) || !v3IsEqual(v, v3_2, accuracy)) {
+    if(!v3IsEqualRel(r, r2, accuracy) || !v3IsEqualRel(v, v3_2, accuracy)) {
         printf("elem2rv failed 2D elliptical case\n");
         errorCount++;
     }
 
     rv2elem(MU_EARTH, r2, v3_2, &elements);
-    if(   !isEqual(elements.a,      7499.9999999999955, accuracy)
-       || !isEqual(elements.e,      0.50000000000000011, accuracy)
-       || !isEqual(elements.i,      0.69813170079773168, accuracy)
-       || !isEqual(elements.Omega,  2.3212879051524582, accuracy)
-       || !isEqual(elements.omega,  1.9722220547535916, accuracy)
-       || !isEqual(elements.f,      2.1467549799530259, accuracy)
-       || !isEqual(elements.rmag,   7730.041048693483, accuracy)
-       || !isEqual(elements.rPeriap,3750.0000000000000, accuracy)
-       || !isEqual(elements.rApoap, 11250.000000000000, accuracy)
+    if(   !isEqualRel(elements.a,      7500.0, accuracy)
+       || !isEqualRel(elements.e,      0.5, accuracy)
+       || !isEqualRel(elements.i,      40.0 * D2R, accuracy)
+       || !isEqualRel(elements.Omega,  133.0 * D2R, accuracy)
+       || !isEqualRel(elements.omega,  113.0 * D2R, accuracy)
+       || !isEqualRel(elements.f,      123.0 * D2R, accuracy)
+       || !isEqualRel(elements.rmag,   7730.041048693483, accuracy)
+       || !isEqualRel(elements.rPeriap,3750.0, accuracy)
+       || !isEqualRel(elements.rApoap, 11250.0, accuracy)
        ) {
         printf("rv2elem failed 2D elliptic case\n");
         errorCount++;
@@ -1626,25 +1752,87 @@ int testOrbitalElements(double accuracy)
     elem2rv(MU_EARTH, &elements, r, v);
     v3Set(7634.8714161163643, 1209.2448361913848, -0, r2);
     v3Set(2.5282399359829868, 6.6023861555546057, -0, v3_2);
-    if(!v3IsEqual(r, r2, accuracy) || !v3IsEqual(v, v3_2, accuracy)) {
+    if(!v3IsEqualRel(r, r2, accuracy) || !v3IsEqualRel(v, v3_2, accuracy)) {
         printf("elem2rv failed non-circular, equatorial case\n");
         errorCount++;
     }
 
 
     rv2elem(MU_EARTH, r2, v3_2, &elements);
-    if(!isEqual(elements.a, 7500.00, accuracy)
-       || !isEqual(elements.e, 0.5, accuracy)
-       || !isEqual(elements.i, 0.0, accuracy)
-       || !isEqual(wrapToPi(elements.Omega+elements.omega), -1.989675347273536, accuracy)
-       || !isEqual(elements.f, 2.1467549799530259, accuracy)
-       || !isEqual(elements.rmag,   7730.041048693483, accuracy)
-       || !isEqual(elements.rPeriap,3750.0000000000000, accuracy)
-       || !isEqual(elements.rApoap, 11250.000000000000, accuracy)
+    if(!isEqualRel(elements.a, 7500.00, accuracy)
+       || !isEqualRel(elements.e, 0.5, accuracy)
+       || !isEqualRel(elements.i, 0.0, accuracy)
+       || !isEqualRel(elements.Omega, 0.0, accuracy)
+       || !isEqualRel(elements.omega, (133+113)*D2R, accuracy)
+       || !isEqualRel(elements.f, 123.0 * D2R, accuracy)
+       || !isEqualRel(elements.rmag,   7730.041048693483, accuracy)
+       || !isEqualRel(elements.rPeriap,3750.0, accuracy)
+       || !isEqualRel(elements.rApoap, 11250.0, accuracy)
        ) {
         printf("rv2elem failed non-circular, equatorial case\n");
         errorCount++;
     }
+
+    /* non-circular, near equatorial cases */
+    elements.a     = 7500.0;
+    elements.e     = 0.5;
+    elements.i     = eps2;
+    elements.Omega = 133.0 * D2R;
+    elements.omega = 113.0 * D2R;
+    elements.f     = 123.0 * D2R;
+    elem2rv(MU_EARTH, &elements, r, v);
+    v3Set(7634.87141611636,     1209.24483619139, -3.20424723337984e-09, r2);
+    v3Set(2.52823993598298,     6.60238615555461, -3.17592708317508e-12, v3_2);
+    if(!v3IsEqualRel(r, r2, accuracy) || !v3IsEqualRel(v, v3_2, accuracy)) {
+        printf("elem2rv failed non-circular, near-equatorial case\n");
+        errorCount++;
+    }
+
+    rv2elem(MU_EARTH, r2, v3_2, &elements);
+    if(!isEqualRel(elements.a, 7500.00, accuracy)
+       || !isEqualRel(elements.e, 0.5, accuracy)
+       || !isEqual(elements.i, eps2, accuracy)
+       || !isEqualRel(wrapToPi(elements.Omega+elements.omega), (133+113-360.)*D2R, accuracy)
+       || !isEqualRel(elements.f, 123. * D2R, accuracy)
+       || !isEqualRel(elements.rmag,   7730.041048693483, accuracy)
+       || !isEqualRel(elements.rPeriap,3750.0, accuracy)
+       || !isEqualRel(elements.rApoap, 11250.0, accuracy)
+       ) {
+        printf("rv2elem failed non-circular, near-equatorial case\n");
+        errorCount++;
+    }
+
+
+    /* non-circular, near equatorial 180˚ cases */
+    elements.a     = 7500.0;
+    elements.e     = 0.5;
+    elements.i     = M_PI - eps2;
+    elements.Omega = 133.0 * D2R;
+    elements.omega = 113.0 * D2R;
+    elements.f     = 123.0 * D2R;
+    elem2rv(MU_EARTH, &elements, r, v);
+    v3Set(-1738.88088402496,      -7531.920597408, -3.20531690704846e-09, r2);
+    v3Set( -6.76266417742769,     -2.0615220940593, -3.17698730272959e-12, v3_2);
+    if(!v3IsEqualRel(r, r2, accuracy) || !v3IsEqualRel(v, v3_2, accuracy)) {
+        printf("elem2rv failed non-circular, near-equatorial 180˚ case\n");
+        errorCount++;
+    }
+
+    rv2elem(MU_EARTH, r2, v3_2, &elements);
+    if(!isEqualRel(elements.a, 7500.00, accuracy)
+       || !isEqualRel(elements.e, 0.5, accuracy)
+       || !isEqualRel(elements.i, M_PI - eps2, accuracy)
+       || !isEqualRel(wrapToPi(elements.Omega+elements.omega), (133+113-360.)*D2R, accuracy)
+       || !isEqualRel(elements.f, 123. * D2R, accuracy)
+       || !isEqualRel(elements.rmag,   7730.041048693483, accuracy)
+       || !isEqualRel(elements.rPeriap,3750.0, accuracy)
+       || !isEqualRel(elements.rApoap, 11250.0, accuracy)
+       ) {
+        printf("rv2elem failed non-circular, near-equatorial 180˚ case\n");
+        errorCount++;
+    }
+
+
 
     /* circular, inclined case */
     elements.a     = 7500.0;
@@ -1656,21 +1844,21 @@ int testOrbitalElements(double accuracy)
     elem2rv(MU_EARTH, &elements, r, v);
     v3Set(6343.7735859429586, 181.16597468085499, -3996.7130970223939, r2);
     v3Set(-1.8379619466304487, 6.5499717954886121, -2.6203988553352131, v3_2);
-    if(!v3IsEqual(r, r2, accuracy) || !v3IsEqual(v, v3_2, accuracy)) {
+    if(!v3IsEqualRel(r, r2, accuracy) || !v3IsEqualRel(v, v3_2, accuracy)) {
         printf("elem2rv failed circular, inclined case\n");
         errorCount++;
     }
 
 
     rv2elem(MU_EARTH, r2, v3_2, &elements);
-    if(!isEqual(elements.a, 7500.00, accuracy)
+    if(!isEqualRel(elements.a, 7500.00, accuracy)
             || !isEqual(elements.e, 0.0, accuracy)
-            || !isEqual(elements.i, 0.6981317007977319, accuracy)
-            || !isEqual(elements.Omega, 2.3212879051524582, accuracy)
-            || !isEqual(wrapToPi(elements.omega+elements.f), -2.164208272472968, accuracy)
-       || !isEqual(elements.rmag,   7500.00, accuracy)
-       || !isEqual(elements.rPeriap,7500.00, accuracy)
-       || !isEqual(elements.rApoap, 7500.00, accuracy)
+            || !isEqualRel(elements.i, 40. * D2R, accuracy)
+            || !isEqualRel(elements.Omega, 133. * D2R, accuracy)
+            || !isEqualRel(wrapToPi(elements.omega+elements.f), (113+123-360.)*D2R, accuracy)
+       || !isEqualRel(elements.rmag,   7500.00, accuracy)
+       || !isEqualRel(elements.rPeriap,7500.00, accuracy)
+       || !isEqualRel(elements.rApoap, 7500.00, accuracy)
        ) {
         printf("rv2elem failed circular, inclined case\n");
         errorCount++;
@@ -1686,25 +1874,61 @@ int testOrbitalElements(double accuracy)
     elements.omega = 113.0 * D2R;
     elements.f     = 123.0 * D2R;
     elem2rv(MU_EARTH, &elements, r, v);
-    v3Set(7407.6625544635335, 1173.2584878017262, -0, r2);
-    v3Set(-1.1404354122910105, 7.2004258117414572, -0, v3_2);
-    if(!v3IsEqual(r, r2, accuracy) || !v3IsEqual(v, v3_2, accuracy)) {
+    v3Set(7407.6625544635335, 1173.2584878017262, 0, r2);
+    v3Set(-1.1404354122910105, 7.2004258117414572, 0, v3_2);
+    if(!v3IsEqualRel(r, r2, accuracy) || !v3IsEqualRel(v, v3_2, accuracy)) {
         printf("elem2rv failed circular, equatorial case\n");
         errorCount++;
     }
 
     rv2elem(MU_EARTH, r2, v3_2, &elements);
-    if(!isEqual(elements.a, 7500.0, accuracy)
+    if(!isEqualRel(elements.a, 7500.0, accuracy)
             || !isEqual(elements.e, 0.0, accuracy)
-            || !isEqual(elements.i, 0.0, 1e-6)
-//            || !isEqual(elements.Omega + elements.omega + elements.f, 0.15707963267948938, accuracy)
-       || !isEqual(elements.rmag,   7500.00, accuracy)
-       || !isEqual(elements.rPeriap,7500.00, accuracy)
-       || !isEqual(elements.rApoap, 7500.00, accuracy)
+       || !isEqual(elements.i, 0.0, accuracy)
+       || !isEqual(elements.Omega, 0.0, accuracy)
+       || !isEqual(elements.omega, 0.0, accuracy)
+       || !isEqualRel(elements.f, (133+113+123-360)*D2R, accuracy)
+       || !isEqualRel(elements.rmag,   7500.00, accuracy)
+       || !isEqualRel(elements.rPeriap,7500.00, accuracy)
+       || !isEqualRel(elements.rApoap, 7500.00, accuracy)
        ) {
         printf("rv2elem failed circular, equatorial case\n");
         errorCount++;
     }
+
+    /* circular, equatorial retrograde case */
+    elements.a     = 7500.0;
+    elements.e     = 0.0;
+    elements.i     = M_PI;
+    elements.Omega = 133.0 * D2R;
+    elements.omega = 113.0 * D2R;
+    elements.f     = 123.0 * D2R;
+    elem2rv(MU_EARTH, &elements, r, v);
+    v3PrintScreen("r", r);
+    v3PrintScreen("v", v);
+    v3Set(-1687.13290757899,    -7307.77548588926, 0, r2);
+    v3Set(-7.10333318346184,     1.63993368302803, 0, v3_2);
+    if(!v3IsEqualRel(r, r2, accuracy) || !v3IsEqualRel(v, v3_2, accuracy)) {
+        printf("elem2rv failed circular, equatorial retrograde case\n");
+        errorCount++;
+    }
+
+    rv2elem(MU_EARTH, r2, v3_2, &elements);
+    if(!isEqualRel(elements.a, 7500.0, accuracy)
+       || !isEqual(elements.e, 0.0, accuracy)
+       || !isEqualRel(elements.i, M_PI, accuracy)
+       || !isEqual(elements.Omega, 0.0, accuracy)
+       || !isEqual(elements.omega, 0.0, accuracy)
+       || !isEqualRel(elements.f, (-133+113+123)*D2R, accuracy)
+       || !isEqualRel(elements.rmag,   7500.00, accuracy)
+       || !isEqualRel(elements.rPeriap,7500.00, accuracy)
+       || !isEqualRel(elements.rApoap, 7500.00, accuracy)
+       ) {
+        printf("rv2elem failed circular, equatorial retrograde case\n");
+        errorCount++;
+    }
+
+
 
     return errorCount;
 }

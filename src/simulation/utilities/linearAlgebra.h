@@ -71,6 +71,7 @@ extern "C" {
     double  v3Norm(double v[3]);
     void    v3Normalize(double v[3], double result[3]);
     int     v3IsEqual(double v1[3], double v2[3], double accuracy);
+    int     v3IsEqualRel(double v1[3], double v2[3], double accuracy);
     int     v3IsZero(double v[3], double accuracy);
     void    v3Print(FILE *pFile, const char *name, double v[3]);
     void    v3Cross(double v1[3], double v2[3], double result[3]);

@@ -79,6 +79,16 @@ The general conversion of classical orbit elements to the inertial Cartesian com
 \begin{equation}
 	r = \frac{p}{1 + e \cos f}
 \end{equation}
+If the satellite is not on a parabola, then $p$ is computed using
+\begin{equation}
+	p = a(1-e^{2})
+\end{equation}
+If the satellite is on a parabola, then the algorithm assumes $a=0$ (computers don't like infinity), and 
+\begin{equation}
+	p = 2*r_{p}
+\end{equation}
+where $r_{p}$ is the radius at periapses.
+
 The true latitude angle $\theta$ is given by
 \begin{equation}
 	\theta = \omega + f
@@ -111,9 +121,13 @@ while the inertial velocity vector is
 where $\mu$ is the gravitational constant and $h$ is the massless orbital angular momentum $\bm h = \bm r \times \dot{\bm r}$.  
 
 
-The {\tt elem2rv()} function checks for a special rectilinear motion case.  Here the eccentricity is $e = 1$ while the SMA is positive with $a>0$.  Under this condition the spacecraft is moving purely along a radial direction relative to the planet, and the true anomaly angle no longer can be used to determine the spacecrafts location.  In this scenario the Eccentric anomaly angle $E$ can still be used to determine spacecraft position, and the {\tt elem2rv()} function assumes here that the anomaly angle provided is $E$ and not $f$.  The orbit radius is here computed using\cite{schaub}
+The {\tt elem2rv()} function checks for a special rectilinear motion case.  Here the eccentricity is $e = 1$ while the SMA is non-zero with $|a|>0$.  Under this condition the spacecraft is moving purely along a radial direction relative to the planet, and the true anomaly angle no longer can be used to determine the spacecrafts location.  In this scenario the Eccentric or Hyperbolic anomaly angle $E$ can still be used to determine spacecraft position, and the {\tt elem2rv()} function assumes here that the anomaly angle provided is either $E$ or $H$ and not $f$.  For an ellipse the orbit radius is here computed using\cite{schaub}
 \begin{equation}
 	r = a (1 - e \cos E)
+\end{equation}
+where on a hyperbola the radius is
+\begin{equation}
+	r = a(1 - e \cosh H)
 \end{equation}
 The radial unit direction vector along which all rectilinear motion is occuring is
 \begin{equation}
@@ -138,8 +152,8 @@ The velocity magnitude $v$ is determined through the orbit energy equation as\ci
 The inertial velocity vector is a function of the eccentric anomaly $E$ through
 \begin{equation}
 	\leftexp{N}{\bm v}_{C/N} = \begin{cases}
-		-v \ \leftexp{N}{\hat{\bm\imath}}_{r}  & 0 \le E \le \pi \\
-		+v  \ \leftexp{N}{\hat{\bm\imath}}_{r} & -\pi \le E \le 0
+		+v \ \leftexp{N}{\hat{\bm\imath}}_{r}  & 0 \le E \le \pi \\
+		-v  \ \leftexp{N}{\hat{\bm\imath}}_{r} & -\pi \le E \le 0
 	\end{cases}
 \end{equation}
 
@@ -156,6 +170,9 @@ The line of nodes vector $\bm n$ is
 \begin{equation}
 	\bm n = \hat{\bm n}_{3} \times \bm h
 \end{equation}
+Let $\hat{\bm n}$ be the normalized line of node axis. 
+If $|\bm n|$ is near zero, then the orbit is equatorial and the line of nodes is ill-defined. In this case we set $\hat{\bm n} = \hat{\bm n}_{1}$ such that $\Omega = 0$.  
+
 The eccentricity vector $\bm e$ is computed using\cite{schaub}
 \begin{equation}
 	\bm e = \frac{\dot{\bm r} \times \bm h}{\mu} - \frac{\bm r}{r}
@@ -164,6 +181,9 @@ The eccentricity is then simply
 \begin{equation}
 	e = |\bm e|
 \end{equation}
+Let $\hat{\bm\imath}_{e}$ be the normalized eccentricity vector.
+If $e$ is near zero, then the orbit is near circular and the periapses direction is ill defined.  In this case we set $\hat{\bm\imath}_{e} = \hat{\bm n}$ which results in $\omega = 0$.  
+
 Within this function the orbit radius is set through
 \begin{equation}
 	r = \frac{\bm r_{C/N}}{ | \bm r_{C/N}|}
@@ -187,12 +207,36 @@ while the radius at apoapses is set to
 \end{equation}
 If $\alpha$ is zero, then the motion is parabolic and the SMA is not defined (i.e. is infinite).  In this case the code sets 
 $$
-	a = -r_{p}
+	a = 0.0
 $$
-while $r_{a} = -1.0$ is returned as a value that is not defined in this case.
+while $r_{a} = 0.0$ is returned as a value that is not defined in this case.
 
 
-Next the orbit frame orientation angles $\Omega$, $i$ and $\omega$ must be determined.  As classical elements are used, care must be given for particular singular orientations where some angles are ill-defined.  First, assume a non-circular non-equatorial orbit scenario.  In this case $\Omega$ is the angle between $\hat{\bm n}_{1}$ and $\bm n$ where care must be taken that the right quadrant is used.  The argument of periapses is the angle between $\hat{\bm n}$ and $\bm e$, where again quadrants must be checked.  Finally, the inclination angle $i$ is the angle between $\bm h$ and $\hat{\bm n}_{3}$, but here no quadrants must be checked as this angle is defined as $0 \le i \le \pi$.  To find the true anomaly angle, the angle between $\bm r$ and $\bm e$ is determine while checking for quadrants again.
+Next the orbit frame orientation angles $\Omega$, $i$ and $\omega$ must be determined.  As classical elements are used, care must be given for particular singular orientations where some angles are ill-defined.  First, assume a non-circular non-equatorial orbit scenario.  In this case $\Omega$ is the angle between $\hat{\bm n}_{1}$ and $\bm n$ where care must be taken that the right quadrant is used.  
+\begin{equation}
+	\tan \Omega = \frac{(\hat{\bm n}_{1} \times \hat{\bm n}) \cdot \hat{\bm n}_{3}}
+	{\hat{\bm n}_{1} \cdot \hat{\bm n}}
+\end{equation}
+
+
+The argument of periapses is the angle between $\hat{\bm n}$ and $\bm e$, where again quadrants must be checked.  
+\begin{equation}
+	\tan \omega = \frac{(\hat{\bm \imath}_{n} \times \hat{\bm \imath}_{e}) \cdot \hat{\bm \imath}_{h}}
+	{\hat{\bm \imath}_{n} \cdot \hat{\bm \imath}_{e}}
+\end{equation}
+
+Finally, the inclination angle $i$ is the angle between $\bm h$ and $\hat{\bm n}_{3}$, but here no quadrants must be checked as this angle is defined as $0 \le i \le \pi$.  
+\begin{equation}
+	\cos i = \hat{\bm \imath}_{h} \cdot \hat{\bm n}_{3}
+\end{equation}
+
+To find the true anomaly angle, the angle between $\bm r$ and $\bm e$ is determine while checking for quadrants again.
+\begin{equation}
+	\tan \omega = \frac{(\hat{\bm \imath}_{e} \times \hat{\bm \imath}_{r}) \cdot \hat{\bm \imath}_{h}}
+	{\hat{\bm \imath}_{e} \cdot \hat{\bm \imath}_{r}}
+\end{equation}
+
+The angles $\Omega$, $\omega$ and $f$ are returned to be a positive values between $0$ and 360\dg.
 
 The 3-1-3 Euler angles representing the orbit frame orientation have singular configurations.  The following list discusses how each case is handled:
 \begin{itemize}

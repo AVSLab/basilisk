@@ -516,6 +516,24 @@ int v3IsEqual(double v1[3],
     return 1;
 }
 
+int v3IsEqualRel(double v1[3],
+              double v2[3],
+              double accuracy)
+{
+    size_t dim = 3;
+    size_t i;
+    double norm;
+    norm = v3Norm(v1);
+    for(i = 0; i < dim; i++) {
+        if(fabs(v1[i] - v2[i])/norm > accuracy) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+
+
 int v3IsZero(double v[3],
              double accuracy)
 {
