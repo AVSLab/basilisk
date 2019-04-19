@@ -449,10 +449,10 @@ def test_StatePropInertialAttitude(show_plots):
         else:
             unitTestSupport.writeTeXSnippet('passFail22', textSnippetPassed, path)
 
-    #for i in range(6):
-    #    if(covarLog[-1, i*6+i+1] <= covarLog[0, i*6+i+1]):
-    #        testFailCount += 1
-    #        testMessages.append("State covariance failure")
+    for i in range(6):
+       if(covarLog[-1, i*6+i+1] <= covarLog[0, i*6+i+1]):
+           testFailCount += 1
+           testMessages.append("State covariance failure")
         
     # print out success message if no error were found
     if testFailCount == 0:
@@ -778,10 +778,6 @@ def test_StatePropRateInertialAttitude(show_plots):
     accuracy = 1.0E-3
     unitTestSupport.writeTeXSnippet("toleranceValue44", str(accuracy), path)
     for i in range(3):
-        # if(abs(sigmaLog[-1, i+1] - sigmaLog[0, i+1]) > accuracy):
-        #     print abs(sigmaLog[-1, i+1] - sigmaLog[0, i+1])
-        #     testFailCount += 1
-        #     testMessages.append("State sigma propagation failure")
         if(abs(omegaLog[-1, i+1] - stateInit[i+3]) > accuracy):
             print abs(omegaLog[-1, i+1] - stateInit[i+3])
             testFailCount += 1
@@ -790,10 +786,10 @@ def test_StatePropRateInertialAttitude(show_plots):
         else:
             unitTestSupport.writeTeXSnippet('passFail44', textSnippetPassed, path)
 
-#    for i in range(6):
-#        if(covarLog[-1, i*6+i+1] <= covarLog[0, i*6+i+1]):
-#            testFailCount += 1
-#            testMessages.append("State covariance failure")
+    for i in range(6):
+       if(covarLog[-1, i*6+i+1] <= covarLog[0, i*6+i+1]):
+           testFailCount += 1
+           testMessages.append("State covariance failure")
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -944,6 +940,5 @@ def test_FaultScenarios(show_plots):
 
 
 if __name__ == "__main__":
-    test_StatePropRateInertialAttitude(False)
-    #all_inertial_kfTest(False)
+    test_FilterMethods()
 
