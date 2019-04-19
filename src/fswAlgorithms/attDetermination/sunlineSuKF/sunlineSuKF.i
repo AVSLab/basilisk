@@ -31,6 +31,7 @@
 %ignore CrossInit_sunlineSuKF;
 %constant void Reset_sunlineSuKF(void*, uint64_t, uint64_t);
 %ignore Reset_sunlineSuKF;
+STRUCTASLIST(SunlineSuKFCFit)
 GEN_SIZEOF(SunlineFilterFswMsg);
 GEN_SIZEOF(VehicleConfigFswMsg);
 GEN_SIZEOF(CSSConfigFswMsg);

@@ -71,6 +71,7 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     double tempMatrix[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
+    double maxSens;
 
     mSetZero(configData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
 
@@ -129,8 +130,6 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
         configData->wC[i] = configData->wM[i];
     }
     
-    vCopy(configData->stateInit, configData->numStates, configData->state);
-    
     /*! - User a cholesky decomposition to obtain the sBar and sQnoise matrices for use in 
           filter at runtime*/
     mCopy(configData->covarInit, configData->numStates, configData->numStates,
@@ -145,6 +144,21 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
                   configData->numStates, configData->sQnoise);
     mTranspose(configData->sQnoise, configData->numStates,
                configData->numStates, configData->sQnoise);
+    
+    memset(&(configData->cssSensorInBuffer), 0x0, sizeof(CSSArraySensorIntMsg));
+    ReadMessage(configData->cssDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
+                sizeof(CSSArraySensorIntMsg), (void*) (&(configData->cssSensorInBuffer)), moduleID);
+    maxSens = 0.0;
+    for(i=0; i<configData->numCSSTotal; i++)
+    {
+        if(configData->cssSensorInBuffer.CosValue[i] > maxSens)
+        {
+            v3Copy(&(configData->cssNHat_B[i*3]), configData->stateInit);
+            maxSens = configData->cssSensorInBuffer.CosValue[i];
+        }
+    }
+    
+     vCopy(configData->stateInit, configData->numStates, configData->state);
     
     return;
 }
@@ -384,6 +398,10 @@ void sunlineSuKFMeasModel(SunlineSuKFConfig *configData)
 {
     uint32_t i, j, obsCounter;
     double sensorNormal[3];
+    double normalizedState[3];
+    double stateNorm;
+    double expectedMeas;
+    double kellDelta;
     /* Begin method steps */
     obsCounter = 0;
     /*! - Loop over all available coarse sun sensors and only use ones that meet validity threshold*/
@@ -397,8 +415,22 @@ void sunlineSuKFMeasModel(SunlineSuKFConfig *configData)
             configData->obs[obsCounter] = configData->cssSensorInBuffer.CosValue[i];
             for(j=0; j<configData->countHalfSPs*2+1; j++)
             {
+                stateNorm = v3Norm(&(configData->SP[j*SKF_N_STATES_SWITCH]));
+                v3Normalize(&(configData->SP[j*SKF_N_STATES_SWITCH]), normalizedState);
+                expectedMeas = v3Dot(normalizedState, sensorNormal);
+                expectedMeas = expectedMeas > 0.0 ? expectedMeas : 0.0;
+                kellDelta = 1.0;
+                if(configData->kellFits[i].cssKellFact > 0.0)
+                {
+                    kellDelta -= exp(-pow(expectedMeas,configData->kellFits[i].cssKellPow) /
+                                     configData->kellFits[i].cssKellFact);
+                    expectedMeas *= kellDelta;
+                    expectedMeas *= configData->kellFits[i].cssRelScale;
+                }
+                expectedMeas *= stateNorm;
+                expectedMeas = expectedMeas > 0.0 ? expectedMeas : 0.0;
                 configData->yMeas[obsCounter*(configData->countHalfSPs*2+1) + j] =
-                    v3Dot(&(configData->SP[j*SKF_N_STATES_SWITCH]), sensorNormal);
+                    expectedMeas;
             }
             obsCounter++;
         }

@@ -36,6 +36,12 @@
  * @{
  */
 
+typedef struct {
+    double cssRelScale;                          //!< Relative scale factor for this CSS
+    double cssKellPow;                           //!< CSS kelly estimate power
+    double cssKellFact;                          //!< CSS kelly scale factor
+}SunlineSuKFCFit;
+
 /*!@brief Data structure for CSS Switch unscented kalman filter estimator.
  */
 typedef struct {
@@ -84,6 +90,7 @@ typedef struct {
     
     double cssNHat_B[MAX_NUM_CSS_SENSORS*3];    //!< [-] CSS normal vectors converted over to body
     double CBias[MAX_NUM_CSS_SENSORS];          //!< [-] CSS individual calibration coefficients
+    SunlineSuKFCFit kellFits[MAX_NUM_CSS_SENSORS]; //!< [-] Curve fit components for CSS sensors
 
     uint32_t numActiveCss;                      //!< -- Number of currently active CSS sensors
     uint32_t numCSSTotal;                       //!< [-] Count on the number of CSS we have on the spacecraft
