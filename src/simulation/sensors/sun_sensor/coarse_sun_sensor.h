@@ -103,6 +103,7 @@ public:
     double              maxOutput;              //!< [-] maximum output (ceiling) for saturation application
     double              minOutput;              //!< [-] minimum output (floor) for saturation application
     double              walkBounds;             //!< [-] Gauss Markov walk bounds
+    double              kPower;                 //!< [-] Power factor for kelly curve
 
 private:
     int64_t sunInMsgID;                         //!< [-] Connect to input time message
