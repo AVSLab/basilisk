@@ -365,7 +365,7 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
 void inertialStateProp(InertialUKFConfig *configData, double *stateInOut, double dt)
 {
 
-    double qDot[3];
+    double sigmaDot[3];
     double BMatrix[3][3];
     double torqueTotal[3];
     double wheelAccel;
@@ -373,17 +373,16 @@ void inertialStateProp(InertialUKFConfig *configData, double *stateInOut, double
     double angAccelTotal[3];
     int i;
     
-    /*! Begin method steps*/
-    /*! - Convert the state derivative (body rate) to sigmaDot and propagate 
+    /*! - Convert the state derivative (body rate) to sigmaDot and propagate
           the attitude MRPs*/
     BmatMRP(stateInOut, BMatrix);
     m33Scale(0.25, BMatrix, BMatrix);
-    m33MultV3(BMatrix, &(stateInOut[3]), qDot);
-    v3Scale(dt, qDot, qDot);
-    v3Add(stateInOut, qDot, stateInOut);
+    m33MultV3(BMatrix, &(stateInOut[3]), sigmaDot);
+    v3Scale(dt, sigmaDot, sigmaDot);
+    v3Add(stateInOut, sigmaDot, stateInOut);
     
-    /*! - Assemble the total torque from the reaction wheels to get the forcing 
-          function from any wheels present*/
+    /*! - Assemble the total torque from the reaction wheels to get the forcing
+     function from any wheels present*/
     v3SetZero(torqueTotal);
     for(i=0; i<configData->rwConfigParams.numRW; i++)
     {
@@ -422,7 +421,6 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
     double procNoise[AKF_N_STATES*AKF_N_STATES];
     int32_t badUpdate=0;
     
-	/*! Begin method steps*/
 	configData->dt = updateTime - configData->timeTag;
     vCopy(configData->state, configData->numStates, configData->statePrev);
     mCopy(configData->sBar, configData->numStates, configData->numStates, configData->sBarPrev);
@@ -444,6 +442,7 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
           Note that we perform +/- sigma points simultaneously in loop to save loop values.*/
 	for (i = 0; i<configData->countHalfSPs; i++)
 	{
+        /*! - Adding covariance columns from sigma points*/
 		Index = i + 1;
 		spPtr = &(configData->SP[Index*configData->numStates]);
 		vCopy(&sBarT[i*configData->numStates], configData->numStates, spPtr);
@@ -452,7 +451,7 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
 		inertialStateProp(configData, spPtr, configData->dt);
 		vScale(configData->wM[Index], spPtr, configData->numStates, xComp);
 		vAdd(xComp, configData->numStates, configData->xBar, configData->xBar);
-		
+		/*! - Subtracting covariance columns from sigma points*/
 		Index = i + 1 + configData->countHalfSPs;
         spPtr = &(configData->SP[Index*configData->numStates]);
         vCopy(&sBarT[i*configData->numStates], configData->numStates, spPtr);
@@ -470,13 +469,11 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
           the inside of equation 20 in that document*/
 	for (i = 0; i<2 * configData->countHalfSPs; i++)
 	{
-		
         vScale(-1.0, configData->xBar, configData->numStates, aRow);
         vAdd(aRow, configData->numStates,
              &(configData->SP[(i+1)*configData->numStates]), aRow);
-        badUpdate += (configData->wC[i+1]>0) - (configData->wC[i+1]<0) - 1;
         /*Check sign of wC to know if the sqrt will fail*/
-        if (badUpdate <0){
+        if (configData->wC[i+1]<=0){
             inertialUKFCleanUpdate(configData);
             return -1;}
         vScale(sqrt(configData->wC[i+1]), aRow, configData->numStates, aRow);
@@ -516,7 +513,7 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
 	mMultM(configData->sBar, configData->numStates, configData->numStates,
         configData->covar, configData->numStates, configData->numStates,
            configData->covar);
-    vCopy(&(configData->SP[0]), configData->numStates, configData->state );
+    vCopy(&(configData->SP[0]), configData->numStates, configData->state);
 	
     if (badUpdate<0){
         inertialUKFCleanUpdate(configData);
