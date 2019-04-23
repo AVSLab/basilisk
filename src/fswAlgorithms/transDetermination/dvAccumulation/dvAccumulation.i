@@ -29,6 +29,10 @@
 %constant void CrossInit_dvAccumulation(void*, uint64_t);
 %ignore CrossInit_dvAccumulation;
 %include "dvAccumulation.h"
+
+%include "simFswInterfaceMessages/navTransIntMsg.h"
+GEN_SIZEOF(NavTransIntMsg);
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

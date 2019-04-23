@@ -19,6 +19,9 @@ We are very excited by the great capabilities that this software already has, an
     <li>
         This module implements and tests a Switch Unscented Kalman Filter in order to estimate the sunline direction.
     </li>
+    <li>
+    Added documentation to the `dvAccumulation` module and included proper time info in the output message.
+    </li>
 </ul>
 
 ## Upcoming Version 0.5.0

@@ -26,20 +26,22 @@
 #include "fswMessages/AccPktDataFswMsg.h"
 
 /*! \defgroup dvAccumulation
+ *  @brief This module reads in a message with an array of accelerometer measurements and integrates them to determine an accumulated \f$\Delta\mathbf{v}\f$ value.
+
+ On reset the net \f$\Delta\mathbf{v}\f$ is set to zero.  The output navigation message contains the latest measurements time tag and the total \f$\Delta\mathbf{v}\f$. More information on can be found in the [module PDF Description](Basilisk-dvAccumulation-2019-03-28.pdf)
  *  @{
  */
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the
  CSS interface*/
 typedef struct {
-    char outputNavName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
-    char accPktInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the input accelerometer message*/
-    uint32_t msgCount;      /*!< [-] The total number of messages read from inputs */
-    uint32_t dvInitialized; /*!< [-] Flag indicating whether DV has been started completely*/
-    uint64_t previousTime;  /*!< [ns] The clock time associated with the previous run of algorithm*/
-    int32_t outputNavMsgID;    /*!< [-] The ID associated with the outgoing message*/
-    int32_t accPktInMsgID;     /*!< [-] The ID associated with the incoming accelerometer buffer*/
-    
-    NavTransIntMsg outputData; /*!< [-] The local storage of the outgoing message data*/
+    char outputNavName[MAX_STAT_MSG_LENGTH]; //!< The name of the output message
+    char accPktInMsgName[MAX_STAT_MSG_LENGTH]; //!< [-] The name of the input accelerometer message
+    uint32_t msgCount;      //!< [-] The total number of messages read from inputs
+    uint32_t dvInitialized; //!< [-] Flag indicating whether DV has been started completely
+    uint64_t previousTime;  //!< [ns] The clock time associated with the previous run of algorithm
+    int32_t outputNavMsgID;    //!< [-] The ID associated with the outgoing message
+    int32_t accPktInMsgID;     //!< [-] The ID associated with the incoming accelerometer buffer
+    double vehAccumDV_B[3];    //!< [m/s] The accumulated Delta_V in body frame components
 }DVAccumulationData;
 
 #ifdef __cplusplus
