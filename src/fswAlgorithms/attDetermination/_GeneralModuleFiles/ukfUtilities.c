@@ -22,7 +22,7 @@
 #include "simulation/utilities/bsk_Print.h"
 #include <math.h>
 
-int32_t ukfQRDJustR(
+void ukfQRDJustR(
 	double *inMat, int32_t nRow, int32_t nCol, double *destMat)
 {
 	int32_t i, j, k, dimi, dimj;
@@ -43,10 +43,7 @@ int32_t ukfQRDJustR(
 			dimj = nCol * j;
 			destMat[dimi] += sourceMat[dimj + i] * sourceMat[dimj + i];
 		}
-        if (destMat[dimi]<=0){
-            BSK_PRINT(MSG_WARNING,"Invalid SQRT in UKF, skipping value in ukfQRDJustR.\n");
-            return -1;}
-		destMat[dimi] = sqrt(destMat[dimi]);
+		destMat[dimi] = sqrt(destMat[dimi]); /* Sum of squares, can't be negative */
 		for (j = 0; j<nRow; j++)
 		{
 			qMat[j*nCol + i] =
@@ -69,7 +66,7 @@ int32_t ukfQRDJustR(
 		}
 	}
 
-	return 0;
+	return;
 }
 
 int32_t ukfLInv(double *sourceMat, int32_t nRow, int32_t nCol, double *destMat)
@@ -114,7 +111,7 @@ int32_t ukfUInv(double *sourceMat, int32_t nRow, int32_t nCol, double *destMat)
 	mSetZero(destMat, nRow, nCol);
 	if (nRow != nCol)
 	{
-		BSK_PRINT(MSG_WARNING,"Can't get a lower-triangular inverse of non-square matrix in ukfLUD.\n");
+		BSK_PRINT(MSG_WARNING,"Can't get a lower-triangular inverse of non-square matrix in ukfUInv.\n");
 		return -1;
 	}
 	mat_dim = nRow;
@@ -229,7 +226,7 @@ int32_t ukfLUD(double *sourceMat, int32_t nRow, int32_t nCol,
 			}
 		}
 	}
-	return rowIndicator;
+	return 0;
 }
 
 int32_t ukfLUBckSlv(double *sourceMat, int32_t nRow, int32_t nCol,

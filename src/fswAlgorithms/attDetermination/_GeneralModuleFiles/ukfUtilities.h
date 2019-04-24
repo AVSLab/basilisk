@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-	int32_t ukfQRDJustR(
+	void ukfQRDJustR(
 		double *sourceMat, int32_t nRow, int32_t nCol, double *destMat);
 	int32_t ukfLInv(
 		double *sourceMat, int32_t nRow, int32_t nCol, double *destMat);

@@ -491,7 +491,7 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
 		procNoise, configData->numStates*configData->numStates
         *sizeof(double));
     /*! - QR decomposition (only R computed!) of the AT matrix provides the new sBar matrix*/
-    badUpdate += ukfQRDJustR(AT, 2 * configData->countHalfSPs + configData->numStates,
+    ukfQRDJustR(AT, 2 * configData->countHalfSPs + configData->numStates,
                 configData->countHalfSPs, rAT);
 
     mCopy(rAT, configData->numStates, configData->numStates, sBarT);
@@ -708,7 +708,7 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
            qChol, configData->numObs*configData->numObs*sizeof(double));
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the 
           current Sy matrix*/
-    badUpdate += ukfQRDJustR(AT, 2*configData->countHalfSPs+configData->numObs,
+    ukfQRDJustR(AT, 2*configData->countHalfSPs+configData->numObs,
                 configData->numObs, rAT);
 
     mCopy(rAT, configData->numObs, configData->numObs, syT);

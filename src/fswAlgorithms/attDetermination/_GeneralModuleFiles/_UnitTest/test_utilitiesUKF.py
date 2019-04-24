@@ -36,12 +36,12 @@ from Basilisk.simulation import coarse_sun_sensor
 @pytest.mark.parametrize("filterModule", [('inertialUKF'), ('sunlineSuKF')])
 
 def test_all_utilities_ukf(show_plots, filterModule):
-    [testResults, testMessage] = test_utilities_nominal(filterModule)
+    [testResults, testMessage] = utilities_nominal(filterModule)
     assert testResults < 1, testMessage
-    [testResults, testMessage] = test_utilities_fault(filterModule)
+    [testResults, testMessage] = utilities_fault(filterModule)
     assert testResults < 1, testMessage
 
-def test_utilities_nominal(filterModule):
+def utilities_nominal(filterModule):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -189,7 +189,6 @@ def test_utilities_nominal(filterModule):
         eval(filterModule + '.doubleArray_setitem(LVector, i, 0.0)')
 
     exCount = eval(filterModule + '.ukfLUD(EqnVector, 3, 3, LVector, intSwapVector)')
-
     eval(filterModule + '.ukfLUBckSlv(LVector, 3, 3, intSwapVector, EqnBVector, EqnOutVector)')
 
     expectedSol = [3.0 / 10.0, 4.0 / 10.0, 0.0]
@@ -295,7 +294,7 @@ def test_utilities_nominal(filterModule):
     return [testFailCount, ''.join(testMessages)]
 
 
-def test_utilities_fault(filterModule):
+def utilities_fault(filterModule):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -304,137 +303,35 @@ def test_utilities_fault(filterModule):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    # Initialize the test module configuration data
-    AMatrix = [0.488894, 0.888396, 0.325191, 0.319207,
-               1.03469, -1.14707, -0.754928, 0.312859,
-               0.726885, -1.06887, 1.3703, -0.86488,
-               -0.303441, -0.809499, -1.71152, -0.0300513,
-               0.293871, -2.94428, -0.102242, -0.164879,
-               -0.787283, 1.43838, -0.241447, 0.627707]
 
-    RVector = eval(filterModule + '.new_doubleArray(len(AMatrix))')
-    AVector = eval(filterModule + '.new_doubleArray(len(AMatrix))')
-    for i in range(len(AMatrix)):
-        eval(filterModule + '.doubleArray_setitem(AVector, i, AMatrix[i])')
-        eval(filterModule + '.doubleArray_setitem(RVector, i, 0.0)')
+    LUSourceMat = [8, 1, 6, 3, 5, 7, 4, 9, 2, 1, 9, 3]
+    EqnSourceMat = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    BVector = [0.0, 0.0, 0.0]
 
-    eval(filterModule + '.ukfQRDJustR(AVector, 6, 4, RVector)')
-    RMatrix = []
-    for i in range(4 * 4):
-        RMatrix.append(eval(filterModule + '.doubleArray_getitem(RVector, i)'))
-    RBaseNumpy = numpy.array(RMatrix).reshape(4, 4)
-    AMatNumpy = numpy.array(AMatrix).reshape(6, 4)
-    q, r = numpy.linalg.qr(AMatNumpy)
-    for i in range(r.shape[0]):
-        if r[i, i] < 0.0:
-            r[i, :] *= -1.0
-    if numpy.linalg.norm(r - RBaseNumpy) > 1.0E-15:
-        testFailCount += 1
-        testMessages.append("QR Decomposition accuracy failure")
-
-    AMatrix = [1.09327, 1.10927, -0.863653, 1.32288,
-               -1.21412, -1.1135, -0.00684933, -2.43508,
-               -0.769666, 0.371379, -0.225584, -1.76492,
-               -1.08906, 0.0325575, 0.552527, -1.6256,
-               1.54421, 0.0859311, -1.49159, 1.59683]
-
-    RVector = eval(filterModule + '.new_doubleArray(len(AMatrix))')
-    AVector = eval(filterModule + '.new_doubleArray(len(AMatrix))')
-    for i in range(len(AMatrix)):
-        eval(filterModule + '.doubleArray_setitem(AVector, i, AMatrix[i])')
-        eval(filterModule + '.doubleArray_setitem(RVector, i, 0.0)')
-
-    eval(filterModule + '.ukfQRDJustR(AVector, 5, 4, RVector)')
-    RMatrix = []
-    for i in range(4 * 4):
-        RMatrix.append(eval(filterModule + '.doubleArray_getitem(RVector, i)'))
-    RBaseNumpy = numpy.array(RMatrix).reshape(4, 4)
-    AMatNumpy = numpy.array(AMatrix).reshape(5, 4)
-    q, r = numpy.linalg.qr(AMatNumpy)
-    for i in range(r.shape[0]):
-        if r[i, i] < 0.0:
-            r[i, :] *= -1.0
-    if numpy.linalg.norm(r - RBaseNumpy) > 1.0E-14:
-        testFailCount += 1
-        testMessages.append("QR Decomposition accuracy failure")
-
-    AMatrix = [0.2236, 0,
-               0, 0.2236,
-               -0.2236, 0,
-               0, -0.2236,
-               0.0170, 0,
-               0, 0.0170]
-
-    RVector = eval(filterModule + '.new_doubleArray(len(AMatrix))')
-    AVector = eval(filterModule + '.new_doubleArray(len(AMatrix))')
-    for i in range(len(AMatrix)):
-        eval(filterModule + '.doubleArray_setitem(AVector, i, AMatrix[i])')
-        eval(filterModule + '.doubleArray_setitem(RVector, i, 0.0)')
-
-    eval(filterModule + '.ukfQRDJustR(AVector, 6, 2, RVector)')
-    RMatrix = []
-    for i in range(2 * 2):
-        RMatrix.append(eval(filterModule + '.doubleArray_getitem(RVector, i)'))
-    RBaseNumpy = numpy.array(RMatrix).reshape(2, 2)
-    AMatNumpy = numpy.array(AMatrix).reshape(6, 2)
-    q, r = numpy.linalg.qr(AMatNumpy)
-    for i in range(r.shape[0]):
-        if r[i, i] < 0.0:
-            r[i, :] *= -1.0
-
-    if numpy.linalg.norm(r - RBaseNumpy) > 1.0E-15:
-        testFailCount += 1
-        testMessages.append("QR Decomposition accuracy failure")
-
-    LUSourceMat = [8, 1, 6, 3, 5, 7, 4, 9, 2]
     LUSVector = eval(filterModule + '.new_doubleArray(len(LUSourceMat))')
     LVector = eval(filterModule + '.new_doubleArray(len(LUSourceMat))')
     UVector = eval(filterModule + '.new_doubleArray(len(LUSourceMat))')
     intSwapVector = eval(filterModule + '.new_intArray(3)')
+    EqnVector = eval(filterModule + '.new_doubleArray(len(EqnSourceMat))')
+    EqnBVector = eval(filterModule + '.new_doubleArray(len(LUSourceMat) / 3)')
+    EqnOutVector = eval(filterModule + '.new_doubleArray(len(LUSourceMat) / 3)')
 
     for i in range(len(LUSourceMat)):
         eval(filterModule + '.doubleArray_setitem(LUSVector, i, LUSourceMat[i])')
         eval(filterModule + '.doubleArray_setitem(UVector, i, 0.0)')
         eval(filterModule + '.doubleArray_setitem(LVector, i, 0.0)')
 
-    exCount = eval(filterModule + '.ukfLUD(LUSVector, 3, 3, LVector, intSwapVector)')
-    # eval(filterModule + '.ukfUInv(LUSVector, 3, 3, UVector)
-    LMatrix = []
-    UMatrix = []
-    # UMatrix = []
-    for i in range(3):
-        currRow = eval(filterModule + '.intArray_getitem(intSwapVector, i)')
-        for j in range(3):
-            if (j < i):
-                LMatrix.append(eval(filterModule + '.doubleArray_getitem(LVector, i * 3 + j)'))
-                UMatrix.append(0.0)
-            elif (j > i):
-                LMatrix.append(0.0)
-                UMatrix.append(eval(filterModule + '.doubleArray_getitem(LVector, i * 3 + j)'))
-            else:
-                LMatrix.append(1.0)
-                UMatrix.append(eval(filterModule + '.doubleArray_getitem(LVector, i * 3 + j)'))
-    # UMatrix.append(eval(filterModule + '.doubleArray_getitem(UVector, i))
+    exCount = eval(filterModule + '.ukfLUD(LUSVector, 3, 4, LVector, intSwapVector)')
+    returnBackSolve = eval(filterModule + '.ukfLUBckSlv(LVector, 3, 4, intSwapVector, EqnBVector, EqnOutVector)')
 
-    LMatrix = numpy.array(LMatrix).reshape(3, 3)
-    UMatrix = numpy.array(UMatrix).reshape(3, 3)
-    outMat = numpy.dot(LMatrix, UMatrix)
-    outMatSwap = numpy.zeros((3, 3))
-    for i in range(3):
-        currRow = eval(filterModule + '.intArray_getitem(intSwapVector, i)')
-        outMatSwap[i, :] = outMat[currRow, :]
-        outMat[currRow, :] = outMat[i, :]
-    LuSourceArray = numpy.array(LUSourceMat).reshape(3, 3)
-
-    if (numpy.linalg.norm(outMatSwap - LuSourceArray) > 1.0E-14):
+    if (exCount >= 0 or exCount is None):
         testFailCount += 1
-        testMessages.append("LU Decomposition accuracy failure")
+        testMessages.append("LU Decomposition not square")
 
-    EqnSourceMat = [2.0, 1.0, 3.0, 2.0, 6.0, 8.0, 6.0, 8.0, 18.0]
-    BVector = [1.0, 3.0, 5.0]
-    EqnVector = eval(filterModule + '.new_doubleArray(len(EqnSourceMat))')
-    EqnBVector = eval(filterModule + '.new_doubleArray(len(LUSourceMat) / 3)')
-    EqnOutVector = eval(filterModule + '.new_doubleArray(len(LUSourceMat) / 3)')
+    if (returnBackSolve >= 0 or returnBackSolve is None):
+        testFailCount += 1
+        testMessages.append("LU Back-Solve accuracy failure")
+
 
     for i in range(len(EqnSourceMat)):
         eval(filterModule + '.doubleArray_setitem(EqnVector, i, EqnSourceMat[i])')
@@ -443,102 +340,126 @@ def test_utilities_fault(filterModule):
         eval(filterModule + '.doubleArray_setitem(LVector, i, 0.0)')
 
     exCount = eval(filterModule + '.ukfLUD(EqnVector, 3, 3, LVector, intSwapVector)')
+    returnBackSolve = eval(filterModule + '.ukfLUBckSlv(LVector, 3, 3, intSwapVector, EqnBVector, EqnOutVector)')
 
-    eval(filterModule + '.ukfLUBckSlv(LVector, 3, 3, intSwapVector, EqnBVector, EqnOutVector)')
-
-    expectedSol = [3.0 / 10.0, 4.0 / 10.0, 0.0]
-    errorVal = 0.0
-    for i in range(3):
-        errorVal += abs(eval(filterModule + '.doubleArray_getitem(EqnOutVector, i) - expectedSol[i]'))
-
-    if (errorVal > 1.0E-14):
+    if (exCount >= 0 or exCount is None):
         testFailCount += 1
         testMessages.append("LU Back-Solve accuracy failure")
 
-    InvSourceMat = [8, 1, 6, 3, 5, 7, 4, 9, 2]
+    if (returnBackSolve >= 0 or returnBackSolve is None):
+        testFailCount += 1
+        testMessages.append("LU Back-Solve accuracy failure")
+
+
+    InvSourceMat = [8, 1, 6, 3, 5, 7, 4, 9, 2, 4, 4, 5]
     SourceVector = eval(filterModule + '.new_doubleArray(len(InvSourceMat))')
     InvVector = eval(filterModule + '.new_doubleArray(len(InvSourceMat))')
     for i in range(len(InvSourceMat)):
         eval(filterModule + '.doubleArray_setitem(SourceVector, i, InvSourceMat[i])')
         eval(filterModule + '.doubleArray_setitem(InvVector, i, 0.0)')
-    nRow = int(math.sqrt(len(InvSourceMat)))
-    eval(filterModule + '.ukfMatInv(SourceVector, nRow, nRow, InvVector)')
+    returnInv = eval(filterModule + '.ukfMatInv(SourceVector, 3, 4, InvVector)')
 
-    InvOut = []
-    for i in range(len(InvSourceMat)):
-        InvOut.append(eval(filterModule + '.doubleArray_getitem(InvVector, i)'))
-
-    InvOut = numpy.array(InvOut).reshape(nRow, nRow)
-    expectIdent = numpy.dot(InvOut, numpy.array(InvSourceMat).reshape(3, 3))
-    errorNorm = numpy.linalg.norm(expectIdent - numpy.identity(3))
-    if (errorNorm > 1.0E-14):
+    if (returnInv >=0 or returnInv is None):
         testFailCount += 1
         testMessages.append("LU Matrix Inverse accuracy failure")
 
-    cholTestMat = [1.0, 0.0, 0.0, 0.0, 10.0, 5.0, 0.0, 5.0, 10.0]
+    cholTestMatLong = [1.0, 0.0, 0.0, 0.0, 10.0, 5.0, 0.0, 5.0, 10.0, 10.0, 5.0, 10.0]
+    SourceVector = eval(filterModule + '.new_doubleArray(len(cholTestMatLong))')
+    CholVector = eval(filterModule + '.new_doubleArray(len(cholTestMatLong))')
+    for i in range(len(cholTestMatLong)):
+        eval(filterModule + '.doubleArray_setitem(SourceVector, i, cholTestMatLong[i])')
+        eval(filterModule + '.doubleArray_setitem(CholVector, i, 0.0)')
+    returnChol = eval(filterModule + '.ukfCholDecomp(SourceVector, 3, 4, CholVector)')
+
+    if (returnChol >=0 or returnChol is None):
+        testFailCount += 1
+        testMessages.append("Cholesky Matrix Decomposition Size failure")
+
+    cholTestMat = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     SourceVector = eval(filterModule + '.new_doubleArray(len(cholTestMat))')
     CholVector = eval(filterModule + '.new_doubleArray(len(cholTestMat))')
     for i in range(len(cholTestMat)):
         eval(filterModule + '.doubleArray_setitem(SourceVector, i, cholTestMat[i])')
         eval(filterModule + '.doubleArray_setitem(CholVector, i, 0.0)')
     nRow = int(math.sqrt(len(cholTestMat)))
-    eval(filterModule + '.ukfCholDecomp(SourceVector, nRow, nRow, CholVector)')
-    cholOut = []
-    for i in range(len(cholTestMat)):
-        cholOut.append(eval(filterModule + '.doubleArray_getitem(CholVector, i)'))
+    returnChol = eval(filterModule + '.ukfCholDecomp(SourceVector, nRow, nRow, CholVector)')
 
-    cholOut = numpy.array(cholOut).reshape(nRow, nRow)
-    cholComp = numpy.linalg.cholesky(numpy.array(cholTestMat).reshape(nRow, nRow))
-    errorNorm = numpy.linalg.norm(cholOut - cholComp)
-    if (errorNorm > 1.0E-14):
+    if (returnChol >=0 or returnChol is None):
         testFailCount += 1
-        testMessages.append("Cholesky Matrix Decomposition accuracy failure")
+        testMessages.append("Cholesky Matrix Decomposition Zero Matrix")
 
-    InvSourceMat = [2.1950926119414667, 0.0, 0.0, 0.0,
-                    1.0974804773131115, 1.9010439702743847, 0.0, 0.0,
-                    0.0, 1.2672359635912551, 1.7923572711881284, 0.0,
-                    1.0974804773131113, -0.63357997864171967, 1.7920348101787789, 0.033997451205364251]
+    rMat = [1.0, 0.0, 0.0, 0.0, 10.0, 5.0, 0.0, 5.0, 10.0]
+    xVec = [100.0, 0.0, 0.0]
+    inRMat = eval(filterModule + '.new_doubleArray(len(rMat))')
+    inXVec = eval(filterModule + '.new_doubleArray(len(xVec))')
+    for i in range(len(rMat)):
+        eval(filterModule + '.doubleArray_setitem(inRMat, i, rMat[i])')
+    for i in range(len(xVec)):
+        eval(filterModule + '.doubleArray_setitem(inXVec, i, xVec[i])')
+    nRow = int(math.sqrt(len(rMat)))
+    returnDown = eval(filterModule + '.ukfCholDownDate(inRMat, inXVec, -100, 3, CholVector)')
 
-    SourceVector = eval(filterModule + '.new_doubleArray(len(InvSourceMat))')
-    InvVector = eval(filterModule + '.new_doubleArray(len(InvSourceMat))')
-    for i in range(len(InvSourceMat)):
-        eval(filterModule + '.doubleArray_setitem(SourceVector, i, InvSourceMat[i])')
+    if (returnChol >=0 or returnChol is None):
+        testFailCount += 1
+        testMessages.append("Cholesky Matrix Decomposition Size")
+
+    InvSourceMatRect = [2.1950926119414667, 0.0, 0.0, 0.0, 1.,
+                    1.0974804773131115, 1.9010439702743847, 0.0, 0.0, 1.,
+                    0.0, 1.2672359635912551, 1.7923572711881284, 0.0, 1.,
+                    1.0974804773131113, -0.63357997864171967, 1.7920348101787789, 0.033997451205364251, 1.]
+
+    SourceVector = eval(filterModule + '.new_doubleArray(len(InvSourceMatRect))')
+    InvVector = eval(filterModule + '.new_doubleArray(len(InvSourceMatRect))')
+    for i in range(len(InvSourceMatRect)):
+        eval(filterModule + '.doubleArray_setitem(SourceVector, i, InvSourceMatRect[i])')
         eval(filterModule + '.doubleArray_setitem(InvVector, i, 0.0)')
-    nRow = int(math.sqrt(len(InvSourceMat)))
-    eval(filterModule + '.ukfLInv(SourceVector, nRow, nRow, InvVector)')
+    nRow = int(math.sqrt(len(InvSourceMatRect)))
+    returnLinv = eval(filterModule + '.ukfLInv(SourceVector, nRow, nRow, InvVector)')
 
-    InvOut = []
-    for i in range(len(InvSourceMat)):
-        InvOut.append(eval(filterModule + '.doubleArray_getitem(InvVector, i)'))
-
-    InvOut = numpy.array(InvOut).reshape(nRow, nRow)
-    expectIdent = numpy.dot(InvOut, numpy.array(InvSourceMat).reshape(nRow, nRow))
-    errorNorm = numpy.linalg.norm(expectIdent - numpy.identity(nRow))
-    if (errorNorm > 1.0E-12):
-        print errorNorm
+    if (returnLinv >= 0 or returnLinv is None):
         testFailCount += 1
-        testMessages.append("L Matrix Inverse accuracy failure")
+        testMessages.append("L Matrix Inverse didn't catch size error")
 
-    InvSourceMat = numpy.transpose(numpy.array(InvSourceMat).reshape(nRow, nRow)).reshape(nRow * nRow).tolist()
-    SourceVector = eval(filterModule + '.new_doubleArray(len(InvSourceMat))')
-    InvVector = eval(filterModule + '.new_doubleArray(len(InvSourceMat))')
-    for i in range(len(InvSourceMat)):
-        eval(filterModule + '.doubleArray_setitem(SourceVector, i, InvSourceMat[i])')
+    InvSourceMat0 = [0.0, 0.0, 0.0, 0.0,
+                    0.0, 0.0, 0.0, 0.0,
+                    0.0, 0.0, 0.0, 0.0,
+                    0.0, 0.0, 0.0, 0.0,]
+
+    SourceVector = eval(filterModule + '.new_doubleArray(len(InvSourceMat0))')
+    InvVector = eval(filterModule + '.new_doubleArray(len(InvSourceMat0))')
+    for i in range(len(InvSourceMat0)):
+        eval(filterModule + '.doubleArray_setitem(SourceVector, i, InvSourceMat0[i])')
         eval(filterModule + '.doubleArray_setitem(InvVector, i, 0.0)')
-    nRow = int(math.sqrt(len(InvSourceMat)))
-    eval(filterModule + '.ukfUInv(SourceVector, nRow, nRow, InvVector)')
+    nRow = int(math.sqrt(len(InvSourceMat0)))
+    returnLinv = eval(filterModule + '.ukfLInv(SourceVector, nRow, nRow, InvVector)')
 
-    InvOut = []
-    for i in range(len(InvSourceMat)):
-        InvOut.append(eval(filterModule + '.doubleArray_getitem(InvVector, i)'))
-
-    InvOut = numpy.array(InvOut).reshape(nRow, nRow)
-    expectIdent = numpy.dot(InvOut, numpy.array(InvSourceMat).reshape(nRow, nRow))
-    errorNorm = numpy.linalg.norm(expectIdent - numpy.identity(nRow))
-    if (errorNorm > 1.0E-12):
-        print errorNorm
+    if (returnLinv >= 0 or returnLinv is None):
         testFailCount += 1
-        testMessages.append("U Matrix Inverse accuracy failure")
+        testMessages.append("L Matrix Inverse didn't catch sign error")
+
+    SourceVector = eval(filterModule + '.new_doubleArray(len(InvSourceMat0))')
+    InvVector = eval(filterModule + '.new_doubleArray(len(InvSourceMat0))')
+    for i in range(len(InvSourceMat0)):
+        eval(filterModule + '.doubleArray_setitem(SourceVector, i, InvSourceMat0[i])')
+        eval(filterModule + '.doubleArray_setitem(InvVector, i, 0.0)')
+    nRow = int(math.sqrt(len(InvSourceMat0)))
+    returnU = eval(filterModule + '.ukfUInv(SourceVector, nRow, nRow, InvVector)')
+
+    if (returnU >= 0 or returnU is None):
+        testFailCount += 1
+        testMessages.append("U Matrix Inverse didn't catch non square matrix")
+
+    SourceVector = eval(filterModule + '.new_doubleArray(len(InvSourceMat0))')
+    InvVector = eval(filterModule + '.new_doubleArray(len(InvSourceMat0))')
+    for i in range(len(InvSourceMat0)):
+        eval(filterModule + '.doubleArray_setitem(SourceVector, i, InvSourceMat0[i])')
+        eval(filterModule + '.doubleArray_setitem(InvVector, i, 0.0)')
+    nRow = int(math.sqrt(len(InvSourceMat0)))
+    returnU = eval(filterModule + '.ukfUInv(SourceVector, nRow, nRow, InvVector)')
+
+    if (returnU >= 0 or returnU is None):
+        testFailCount += 1
+        testMessages.append("U Matrix Inverse didn't catch zero matrix")
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -550,4 +471,4 @@ def test_utilities_fault(filterModule):
 
 
 if __name__ == "__main__":
-    test_utilities_fault('inertialUKF')
+    utilities_fault('inertialUKF')
