@@ -298,15 +298,16 @@ void sunlineStateProp(double *stateInOut, double *b_Vec, double dt)
 */
 void sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
 {
-	int i, Index;
+	int i, k, Index;
 	double sBarT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
 	double xComp[SKF_N_STATES_SWITCH], AT[(2 * SKF_N_STATES_SWITCH + SKF_N_STATES_SWITCH)*SKF_N_STATES_SWITCH];
 	double aRow[SKF_N_STATES_SWITCH], rAT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], xErr[SKF_N_STATES_SWITCH]; 
 	double sBarUp[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
 	double *spPtr;
-	/*! Begin method steps*/
-	configData->dt = updateTime - configData->timeTag;
-    
+    double procNoise[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
+
+    configData->dt = updateTime - configData->timeTag;
+    mCopy(configData->sQnoise, SKF_N_STATES, SKF_N_STATES, procNoise);
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
 	vCopy(configData->state, configData->numStates,
 		&(configData->SP[0 * configData->numStates + 0]));
@@ -356,9 +357,12 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
 		memcpy((void *)&AT[i*configData->numStates], (void *)aRow,
 			configData->numStates*sizeof(double));
 	}
+    /*! - Scale sQNoise matrix depending on the number of measurements*/
+    mScale(configData->numObs/3, procNoise, SKF_N_STATES, SKF_N_STATES, procNoise);
+    
     /*! - Pop the sQNoise matrix on to the end of AT prior to getting QR decomposition*/
 	memcpy(&AT[2 * configData->countHalfSPs*configData->numStates],
-		configData->sQnoise, configData->numStates*configData->numStates
+		procNoise, configData->numStates*configData->numStates
         *sizeof(double));
     /*! - QR decomposition (only R computed!) of the AT matrix provides the new sBar matrix*/
     ukfQRDJustR(AT, 2 * configData->countHalfSPs + configData->numStates,
