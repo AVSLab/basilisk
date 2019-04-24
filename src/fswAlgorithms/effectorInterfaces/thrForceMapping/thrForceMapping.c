@@ -197,10 +197,9 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     /*! - Remove forces components that are contributing to the RCS Null space (this is due to the geometry of the thrusters) */
     if (configData->thrForceSign>0)
     {
-        substractMin(F, configData->numThrusters);
+        substractMin(configData, F, configData->numThrusters, D);
     }
     
-    /* Recompute the solution in the case that there is a dropped thruster. */
     counterPosForces = 0;
     memset(thrusterUsed,0x0,MAX_EFF_CNT*sizeof(int));
     for (i=0;i<configData->numThrusters;i++) {
@@ -225,11 +224,7 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
             F[i] = 0.0;
         }
     }
-    if (configData->thrForceSign>0) // If RCS thrusters and all 8 are used, subtract the null space. If not, don't.
-    {
-        substractMin(F, configData->numThrusters);
-    }
-    
+
     configData->outTorqAngErr = computeTorqueAngErr(D, BLr_B, configData->numThrusters, configData->epsilon, F,
         configData->thrForcMag); /* Eq. 16*/
     maxFractUse = 0.0;
@@ -267,25 +262,22 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
  will become zero, while other forces increase.  This assumes that the thrusters are aligned such that if all
  thrusters are firing, then no torque or force is applied.  This ensures only positive force values are computed.
  */
-void substractMin(double *F, uint32_t size)
+void substractMin(thrForceMappingConfig *configData, double *F, uint32_t size, double D[3][MAX_EFF_CNT])
 {
-    double minValue;                        /* [N]    min or max value of the force set */
     int    i;
-
-    /*! - initilize minimum force search by setting minimum to first force element */
-    minValue = F[0];
-    /*! - loop over all force element and search for smallest force */
-    for (i=1;i<size;i++) {
-        if (F[i] < minValue) {
-            minValue = F[i];
+    double DT[MAX_EFF_CNT][3];
+    mTranspose(D, 3, MAX_EFF_CNT, DT);
+    for (i=0; i < configData->numThrusters;i++){
+        if(F[i] < 0){
+            for(int j=0; j< configData->numThrusters;j++){
+                if(v3IsEqual(DT[i], DT[j], 10^-6)&& (i != j)){
+                    F[j] -= F[i];
+                    break;
+                }
+            }
+            F[i] = 0.0;
         }
     }
-
-    /*! - loop over forces and subtract the smallest force value */
-    for (i=0;i<size;i++){
-        F[i] -= minValue;
-    }
-
     return;
 }
 
