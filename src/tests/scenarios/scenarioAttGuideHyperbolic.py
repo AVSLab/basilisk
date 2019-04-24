@@ -243,9 +243,6 @@ def run(show_plots, useAltBodyFrame):
     simulationTimeStep = macros.sec2nano(1.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-    # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, 'earth')
-
     #
     #   setup the simulation tasks/objects
     #
@@ -274,6 +271,9 @@ def run(show_plots, useAltBodyFrame):
 
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+
+    # if this scenario is to interface with the BSK Viz, uncomment the following line
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
 
     #
     #   initialize Spacecraft States with initialization variables

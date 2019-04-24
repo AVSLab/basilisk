@@ -231,9 +231,6 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     fswTimeStep = macros.sec2nano(0.5)
     fswProcess.addTask(scSim.CreateNewTask(fswTaskName, fswTimeStep))
 
-    # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableVisualization(scSim, fswTaskName,  fswProcessName, vizFile, 'earth')
-
     #
     #   setup the simulation tasks/objects
     #
@@ -262,6 +259,10 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
 
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+
+
+    # if this scenario is to interface with the BSK Viz, uncomment the following lines
+    # vizSupport.enableUnityVisualization(scSim, fswTaskName,  fswProcessName, vizFile, gravFactory)
 
     # setup extForceTorque module
     # the control torque is read in through the messaging system

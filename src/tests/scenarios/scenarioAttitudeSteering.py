@@ -337,8 +337,7 @@ def run(show_plots, simCase):
     simulationTimeStep = macros.sec2nano(.1)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-    # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, 'earth')
+
 
     #
     #   setup the simulation tasks/objects
@@ -410,6 +409,9 @@ def run(show_plots, simCase):
         extFTObject.extTorquePntB_B = [[0.01], [-0.01], [0.005]]
         scObject.addDynamicEffector(extFTObject)
         scSim.AddModelToTask(simTaskName, extFTObject)
+
+    # if this scenario is to interface with the BSK Viz, uncomment the following lines
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
 
     #
     #   setup the FSW algorithm tasks

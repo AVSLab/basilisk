@@ -32,6 +32,7 @@
 #
 
 import pytest
+import sys
 import os
 import numpy as np
 
@@ -62,6 +63,14 @@ from Basilisk.utilities import simulationArchTypes
 
 # import message declarations
 from Basilisk.fswAlgorithms import fswMessages
+
+# attempt to import vizard
+from Basilisk.utilities import vizSupport
+# The path to the location of Basilisk
+# Used to get the location of supporting data.
+from Basilisk import __path__
+bskPath = __path__[0]
+vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
 
 
 ## \defgroup scenarioAttitudePythonPDGroup
@@ -135,6 +144,8 @@ def runRegularTask(show_plots, useJitterSimple, useRWVoltageIO):
     '''Call this routine directly to run the tutorial scenario.'''
 
     simulationTimeStep = macros.sec2nano(.1)
+
+
     #  Create a sim module as an empty container
     scSim = SimulationBaseClass.SimBaseClass()
     scSim.TotalSim.terminateSimulation()
@@ -296,6 +307,9 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
 
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+
+    # if this scenario is to interface with the BSK Viz, uncomment the following lines
+    # vizSupport.enableUnityVisualization(scSim, scSim.simTaskPreControlName, scSim.simPreControlProc, vizFile, gravFactory)
 
     #
     # add RW devices

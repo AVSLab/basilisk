@@ -40,6 +40,8 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import astroFunctions
+######
+from Basilisk.utilities import MessagingAccess
 
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus, spice_interface
@@ -48,10 +50,11 @@ from Basilisk.utilities import simIncludeGravBody
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
+# Used to get the location of supporting data.
 from Basilisk import pyswice
 from Basilisk import __path__
 bskPath = __path__[0]
-# Used to get the location of supporting data.
+
 vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
 
 
@@ -266,9 +269,6 @@ def run(show_plots, scCase):
     simulationTimeStep = macros.sec2nano(5.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-    # if this scenario is to interface with the BSK Unity Viz, uncomment the following lines
-    #vizSupport.enableUnityVisualization(scSim,simTaskName, simProcessName, vizFile, 'earth')  
-
     #
     #   setup the simulation tasks/objects
     #
@@ -310,6 +310,9 @@ def run(show_plots, scCase):
 
     # add spice interface object to task list
     scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, None, -1)
+    
+    # if this scenario is to interface with the BSK Unity Viz, uncomment the following lines
+    # vizSupport.enableUnityVisualization(scSim,simTaskName, simProcessName, vizFile, gravFactory)
 
     # Use the python spice utility to load in spacecraft SPICE ephemeris data
     # Note: this following SPICE data only lives in the Python environment, and is
@@ -362,7 +365,8 @@ def run(show_plots, scCase):
     #
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
-
+    
+    MessagingAccess.findMessageMatches('earth', scSim.TotalSim)
     #
     #   retrieve the logged data
     #
@@ -370,7 +374,6 @@ def run(show_plots, scCase):
     velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', range(3))
 
     np.set_printoptions(precision=16)
-
     #
     #   plot the results
     #

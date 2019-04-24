@@ -218,7 +218,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableVisualization(scSim, simTaskName, simProcessName, vizFile, 'earth')
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile)
 
     #
     #   setup the simulation tasks/objects

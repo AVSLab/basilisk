@@ -27,6 +27,7 @@
 # Creation Date:  March 16, 2019
 #
 
+import sys
 import os
 import numpy as np
 
@@ -43,6 +44,10 @@ from Basilisk.simulation import magneticFieldCenteredDipole
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport)
 from Basilisk.utilities import simSetPlanetEnvironment
+
+#attempt to import vizard
+from Basilisk.utilities import vizSupport
+vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
 
 
 ## \defgroup scenarioMagneticFieldCenteredDipoleGroup
@@ -232,10 +237,6 @@ def run(show_plots, orbitCase, planetCase):
     simulationTimeStep = macros.sec2nano(10.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-    # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')
-    # The Viz only support 'earth', 'mars', or 'sun'
-
     #
     #   setup the simulation tasks/objects
     #
@@ -260,6 +261,9 @@ def run(show_plots, orbitCase, planetCase):
 
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+
+    # if this scenario is to interface with the BSK Viz, uncomment the following line
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
 
 
     # create the magnetic field

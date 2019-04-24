@@ -26,6 +26,8 @@
 import sys
 import os,errno
 
+from Basilisk.utilities import unitTestSupport
+
 # import Viz messaging related modules
 from Basilisk import __path__
 bskPath = __path__[0]
@@ -44,12 +46,12 @@ except ImportError:
         youveBeenWarned = True
 
 
-def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFactoryName):
+def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFactory = None):
     if not vizFound:
         return
     vizMessager = vizInterface.VizInterface()
     scSim.AddModelToTask(simTaskName, vizMessager)
-    gravBodies = gravFactory.gravBodies;
+
     vizMessager.spiceInMsgName = vizInterface.StringVector([
                                                                   "earth_planet_data",
                                                                   "mars_planet_data",
@@ -67,20 +69,21 @@ def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFact
     vizMessager.protoFilename = fileName
     VizTaskName = "VizTask"
 
-    if (gravBodies):
-        for key in gravBodies:
-            if gravBodies[key].isCentralBody == True:
-                ephemData = spice_interface.SpicePlanetStateSimMsg()
-                ephemData.J2000Current = 0.0
-                ephemData.PositionVector = [0.0, 0.0, 0.0]
-                ephemData.VelocityVector = [0.0, 0.0, 0.0]
-                ephemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-                ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-                ephemData.PlanetName = key
-                msgName = key + '_planet_data'
-                messageSize = ephemData.getStructSize()
-                scSim.TotalSim.CreateNewMessage(processName, msgName, messageSize, 2, "SpicePlanetStateSimMsg")
-                scSim.TotalSim.WriteMessageData(msgName, messageSize, 0, ephemData)
-                break
+    if (gravFactory != None):
+        gravBodies = gravFactory.gravBodies
+        if (gravBodies):
+            for key in gravBodies:
+                if gravBodies[key].isCentralBody == True:
+                    ephemData = spice_interface.SpicePlanetStateSimMsg()
+                    ephemData.J2000Current = 0.0
+                    ephemData.PositionVector = [0.0, 0.0, 0.0]
+                    ephemData.VelocityVector = [0.0, 0.0, 0.0]
+                    ephemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+                    ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+                    ephemData.PlanetName = key
+                    msgName = key + '_planet_data'
+                    unitTestSupport.setMessage(scSim.TotalSim, processName, msgName, ephemData)
+                
+                    break
 
     return

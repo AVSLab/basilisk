@@ -44,14 +44,10 @@ from Basilisk.simulation import spacecraftPlus
 # import message declarations
 from Basilisk.simulation import simMessages
 
-# attempt to import vizard
-from Basilisk.utilities import vizSupport
-
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
 from Basilisk import __path__
 bskPath = __path__[0]
-vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
 
 
 ## \defgroup scenarioCSSGroup
@@ -302,9 +298,6 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(1.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
-
-    # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, 'earth')
 
     #
     #   setup the simulation tasks/objects
