@@ -16,25 +16,18 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module dvAccumulation
-%{
-   #include "dvAccumulation.h"
-%}
 
-%include "swig_conly_data.i"
-%constant void Update_dvAccumulation(void*, uint64_t, uint64_t);
-%ignore Update_dvAccumulation;
-%constant void SelfInit_dvAccumulation(void*, uint64_t);
-%ignore SelfInit_dvAccumulation;
-%constant void CrossInit_dvAccumulation(void*, uint64_t);
-%ignore CrossInit_dvAccumulation;
-%include "dvAccumulation.h"
+#ifndef OPNAV_MESSAGE_H
+#define OPNAV_MESSAGE_H
 
-%include "simFswInterfaceMessages/navTransIntMsg.h"
-GEN_SIZEOF(NavTransIntMsg);
+/*! @brief structure for filter-states output for the unscented kalman filter
+ implementation of the sunline state estimator*/
+typedef struct {
+    double timeTag;                             /*!< [s] Current time of validity for output */
+    double covar[HEAD_N_STATES*HEAD_N_STATES];    /*!< [-] Current covariance of the filter */
+    double rel_pos[HEAD_N_STATES];                 /*!< [-] Current estimated state of the filter */
+}OpnavFswMsg;
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
 
+
+#endif

@@ -50,7 +50,7 @@ from Support import results_rwMotorTorque
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("numControlAxes", [1, 2, 3])
+@pytest.mark.parametrize("numControlAxes", [0, 1, 2, 3])
 @pytest.mark.parametrize("numWheels", [2, 4, simFswInterfaceMessages.MAX_EFF_CNT])
 @pytest.mark.parametrize("RWAvailMsg",["NO", "ON", "OFF", "MIXED"])
 
@@ -103,10 +103,12 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
              1,0,0
             ,0,1,0
         ]
-    else:
+    elif numControlAxes == 1:
         controlAxes_B = [
             1, 0, 0
         ]
+    else:
+        controlAxes_B = []
 
     moduleConfig.controlAxes_B = controlAxes_B
 
@@ -259,12 +261,8 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
     receivedTorque = -1.0*np.array([np.matmul(GsMatrix,F)])
     receivedTorque = np.append(np.array([0.0]), receivedTorque)
 
-    if numWheels >= numControlAxes:
-
-
+    if numWheels >= numControlAxes and numControlAxes > 0:
         if (len(avail) - np.sum(avail)) > numControlAxes:
-
-
             testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([requestedTorque]), np.array([receivedTorque]), accuracy, "CompareTorques",
                                                                          numControlAxes, testFailCount, testMessages)
 

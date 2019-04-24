@@ -6,8 +6,10 @@
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import dvAccumulation, fswMessages
-from Basilisk.simulation import simFswInterfaceMessages
 from numpy import random
+import os, inspect
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
 
 
 def generateAccData():
@@ -51,7 +53,6 @@ def dvAccumulationTestFunction():
     moduleConfig = dvAccumulation.DVAccumulationData()  # Create a config struct
     moduleConfig.accPktInMsgName = "inputs_acceleration_packets"
     moduleConfig.outputNavName = "output_navigation_name"
-    moduleConfig.outputData = simFswInterfaceMessages.NavTransIntMsg()
 
     # This calls the algContain to setup the selfInit, crossInit, update, and reset
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
@@ -69,8 +70,7 @@ def dvAccumulationTestFunction():
 
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.accPktInMsgName, inputAccData)
 
-    # unitTestSim.TotalSim.logThisMessage(moduleConfig.outputNavName, testProcessRate)
-    unitTestSim.AddVariableForLogging('dvAccumulation.outputData.vehAccumDV', testProcessRate, 0, 2, 'double')
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputNavName, testProcessRate)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
@@ -94,25 +94,41 @@ def dvAccumulationTestFunction():
     unitTestSim.ExecuteSimulation()
 
     # This doesn't work if only 1 number is passed in as the second argument, but we don't need the second
-    outputNavMsgData = unitTestSim.GetLogVariableData('dvAccumulation.outputData.vehAccumDV')
+    outputNavMsgData = unitTestSim.pullMessageLogData(moduleConfig.outputNavName + '.' + 'vehAccumDV', range(3))
+    timeMsgData = unitTestSim.pullMessageLogData(moduleConfig.outputNavName + '.' + 'timeTag')
 
     # print(outputNavMsgData)
+    # print timeMsgData
 
-    trueVector = [[4.82820079e-03,   7.81971465e-03,   2.29605663e-03],
+    trueDVVector = [[4.82820079e-03,   7.81971465e-03,   2.29605663e-03],
                  [ 4.82820079e-03,   7.81971465e-03,   2.29605663e-03],
                  [ 4.82820079e-03,   7.81971465e-03,   2.29605663e-03],
                  [ 6.44596343e-03,   9.00203561e-03,   2.60580728e-03],
                  [ 6.44596343e-03,   9.00203561e-03,   2.60580728e-03]]
+    trueTime = [ [7.2123026e+07], [7.2123026e+07], [7.2123026e+07], [7.6667436e+07], [7.6667436e+07]]
+
     accuracy = 1e-6
+    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
     # At each timestep, make sure the vehicleConfig values haven't changed from the initial values
-    testFailCount, testMessages = unitTestSupport.compareArrayND(trueVector, outputNavMsgData,
+    testFailCount, testMessages = unitTestSupport.compareArrayND(trueDVVector, outputNavMsgData,
                                                                  accuracy,
                                                                  "dvAccumulation output",
                                                                  2, testFailCount, testMessages)
+    testFailCount, testMessages = unitTestSupport.compareArrayND(trueTime, timeMsgData,
+                                                                 accuracy, "timeTag", 1,
+                                                                 testFailCount, testMessages)
 
+    snippentName = "passFail"
     if testFailCount == 0:
-        print("Passed")
+        colorText = 'ForestGreen'
+        print "PASSED: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        print "Failed: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     return [testFailCount, ''.join(testMessages)]
 

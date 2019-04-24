@@ -25,40 +25,33 @@
 #include <string.h>
 #include <math.h>
 
-/*! This method initializes the ConfigData for theCSS WLS estimator.
- It checks to ensure that the inputs are sane and then creates the
- output message
+/*! This method initializes the configData for theCSS WLS estimator.
  @return void
- @param ConfigData The configuration data associated with the CSS WLS estimator
+ @param configData The configuration data associated with the CSS WLS estimator
  */
-void SelfInit_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t moduleID)
+void SelfInit_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t moduleID)
 {
-    
-    mSetZero(ConfigData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
-    /*! Begin method steps */
     /*! - Create output message for module */
-	ConfigData->navStateOutMsgId = CreateNewMessage(ConfigData->navStateOutMsgName,
+	configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
 		sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
     /*! - Create filter states output message which is mostly for debug*/
-    ConfigData->filtDataOutMsgId = CreateNewMessage(ConfigData->filtDataOutMsgName,
+    configData->filtDataOutMsgId = CreateNewMessage(configData->filtDataOutMsgName,
         sizeof(SunlineFilterFswMsg), "SunlineFilterFswMsg", moduleID);
-    
 }
 
 /*! This method performs the second stage of initialization for the CSS sensor
  interface.  It's primary function is to link the input messages that were
  created elsewhere.
  @return void
- @param ConfigData The configuration data associated with the CSS interface
+ @param configData The configuration data associated with the CSS interface
  */
-void CrossInit_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t moduleID)
+void CrossInit_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t moduleID)
 {
-    /*! Begin method steps */
     /*! - Find the message ID for the coarse sun sensor data message */
-    ConfigData->cssDataInMsgId = subscribeToMessage(ConfigData->cssDataInMsgName,
+    configData->cssDataInMsgId = subscribeToMessage(configData->cssDataInMsgName,
         sizeof(CSSArraySensorIntMsg), moduleID);
     /*! - Find the message ID for the coarse sun sensor configuration message */
-    ConfigData->cssConfigInMsgId = subscribeToMessage(ConfigData->cssConfigInMsgName,
+    configData->cssConfigInMsgId = subscribeToMessage(configData->cssConfigInMsgName,
                                                    sizeof(CSSConfigFswMsg), moduleID);
     
 }
@@ -66,10 +59,10 @@ void CrossInit_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t moduleID)
 /*! This method resets the sunline attitude filter to an initial state and
  initializes the internal estimation matrices.
  @return void
- @param ConfigData The configuration data associated with the CSS estimator
+ @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Reset_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
+void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
                       uint64_t moduleID)
 {
     
@@ -78,79 +71,80 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     double tempMatrix[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
-    
-    /*! Begin method steps*/
+
+    mSetZero(configData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
+
     /*! - Zero the local configuration data structures and outputs */
     memset(&cssConfigInBuffer, 0x0, sizeof(CSSConfigFswMsg));
-    memset(&(ConfigData->outputSunline), 0x0, sizeof(NavAttIntMsg));
+    memset(&(configData->outputSunline), 0x0, sizeof(NavAttIntMsg));
     
     /*! - Read in mass properties and coarse sun sensor configuration information.*/
-    ReadMessage(ConfigData->cssConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->cssConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CSSConfigFswMsg  ), &cssConfigInBuffer, moduleID);
     
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/
     for(i=0; i<cssConfigInBuffer.nCSS; i = i+1)
     {
-        v3Copy(cssConfigInBuffer.cssVals[i].nHat_B, &(ConfigData->cssNHat_B[i*3]));
-        ConfigData->CBias[i] = cssConfigInBuffer.cssVals[i].CBias;
+        v3Copy(cssConfigInBuffer.cssVals[i].nHat_B, &(configData->cssNHat_B[i*3]));
+        configData->CBias[i] = cssConfigInBuffer.cssVals[i].CBias;
     }
     /*! - Save the count of sun sensors for later use */
-    ConfigData->numCSSTotal = cssConfigInBuffer.nCSS;
+    configData->numCSSTotal = cssConfigInBuffer.nCSS;
     
     /*! - Initialize filter parameters to max values */
-    ConfigData->timeTag = callTime*NANO2SEC;
-    ConfigData->dt = 0.0;
-    ConfigData->numStates = SKF_N_STATES_SWITCH;
-    ConfigData->countHalfSPs = SKF_N_STATES_SWITCH;
-    ConfigData->numObs = MAX_N_CSS_MEAS;
+    configData->timeTag = callTime*NANO2SEC;
+    configData->dt = 0.0;
+    configData->numStates = SKF_N_STATES_SWITCH;
+    configData->countHalfSPs = SKF_N_STATES_SWITCH;
+    configData->numObs = MAX_N_CSS_MEAS;
     
     /*! Initalize the filter to use b_1 of the body frame to make frame*/
-    v3Set(1, 0, 0, ConfigData->bVec_B);
-    ConfigData->switchTresh = 0.866;
+    v3Set(1, 0, 0, configData->bVec_B);
+    configData->switchTresh = 0.866;
     
     /*! - Ensure that all internal filter matrices are zeroed*/
-    vSetZero(ConfigData->obs, ConfigData->numObs);
-    vSetZero(ConfigData->wM, ConfigData->countHalfSPs * 2 + 1);
-    vSetZero(ConfigData->wC, ConfigData->countHalfSPs * 2 + 1);
-    mSetZero(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates);
-    mSetZero(ConfigData->SP, ConfigData->countHalfSPs * 2 + 1,
-             ConfigData->numStates);
-    mSetZero(ConfigData->sQnoise, ConfigData->numStates, ConfigData->numStates);
+    vSetZero(configData->obs, configData->numObs);
+    vSetZero(configData->wM, configData->countHalfSPs * 2 + 1);
+    vSetZero(configData->wC, configData->countHalfSPs * 2 + 1);
+    mSetZero(configData->sBar, configData->numStates, configData->numStates);
+    mSetZero(configData->SP, configData->countHalfSPs * 2 + 1,
+             configData->numStates);
+    mSetZero(configData->sQnoise, configData->numStates, configData->numStates);
     
     /*! - Set lambda/gamma to standard value for unscented kalman filters */
-    ConfigData->lambdaVal = ConfigData->alpha*ConfigData->alpha*
-    (ConfigData->numStates + ConfigData->kappa) - ConfigData->numStates;
-    ConfigData->gamma = sqrt(ConfigData->numStates + ConfigData->lambdaVal);
+    configData->lambdaVal = configData->alpha*configData->alpha*
+    (configData->numStates + configData->kappa) - configData->numStates;
+    configData->gamma = sqrt(configData->numStates + configData->lambdaVal);
     
     
     /*! - Set the wM/wC vectors to standard values for unscented kalman filters*/
-    ConfigData->wM[0] = ConfigData->lambdaVal / (ConfigData->numStates +
-                                                 ConfigData->lambdaVal);
-    ConfigData->wC[0] = ConfigData->lambdaVal / (ConfigData->numStates +
-                                                 ConfigData->lambdaVal) + (1 - ConfigData->alpha*ConfigData->alpha + ConfigData->beta);
-    for (i = 1; i<ConfigData->countHalfSPs * 2 + 1; i++)
+    configData->wM[0] = configData->lambdaVal / (configData->numStates +
+                                                 configData->lambdaVal);
+    configData->wC[0] = configData->lambdaVal / (configData->numStates +
+                                                 configData->lambdaVal) + (1 - configData->alpha*configData->alpha + configData->beta);
+    for (i = 1; i<configData->countHalfSPs * 2 + 1; i++)
     {
-        ConfigData->wM[i] = 1.0 / 2.0*1.0 / (ConfigData->numStates +
-                                             ConfigData->lambdaVal);
-        ConfigData->wC[i] = ConfigData->wM[i];
+        configData->wM[i] = 1.0 / 2.0*1.0 / (configData->numStates +
+                                             configData->lambdaVal);
+        configData->wC[i] = configData->wM[i];
     }
     
-    vCopy(ConfigData->stateInit, ConfigData->numStates, ConfigData->state);
+    vCopy(configData->stateInit, configData->numStates, configData->state);
     
     /*! - User a cholesky decomposition to obtain the sBar and sQnoise matrices for use in 
           filter at runtime*/
-    mCopy(ConfigData->covarInit, ConfigData->numStates, ConfigData->numStates,
-          ConfigData->covar);
-    mCopy(ConfigData->covar, ConfigData->numStates, ConfigData->numStates,
-          ConfigData->sBar);
-    ukfCholDecomp(ConfigData->sBar, ConfigData->numStates,
-                  ConfigData->numStates, tempMatrix);
-    mCopy(tempMatrix, ConfigData->numStates, ConfigData->numStates,
-          ConfigData->sBar);
-    ukfCholDecomp(ConfigData->qNoise, ConfigData->numStates,
-                  ConfigData->numStates, ConfigData->sQnoise);
-    mTranspose(ConfigData->sQnoise, ConfigData->numStates,
-               ConfigData->numStates, ConfigData->sQnoise);
+    mCopy(configData->covarInit, configData->numStates, configData->numStates,
+          configData->covar);
+    mCopy(configData->covar, configData->numStates, configData->numStates,
+          configData->sBar);
+    ukfCholDecomp(configData->sBar, configData->numStates,
+                  configData->numStates, tempMatrix);
+    mCopy(tempMatrix, configData->numStates, configData->numStates,
+          configData->sBar);
+    ukfCholDecomp(configData->qNoise, configData->numStates,
+                  configData->numStates, configData->sQnoise);
+    mTranspose(configData->sQnoise, configData->numStates,
+               configData->numStates, configData->sQnoise);
     
     return;
 }
@@ -158,10 +152,10 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
 /*! This method takes the parsed CSS sensor data and outputs an estimate of the
  sun vector in the ADCS body frame
  @return void
- @param ConfigData The configuration data associated with the CSS estimator
+ @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
+void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     uint64_t moduleID)
 {
     double newTimeTag;
@@ -178,72 +172,72 @@ void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
     /*! - Read the input parsed CSS sensor data message*/
     timeOfMsgWritten = 0;
     sizeOfMsgWritten = 0;
-    memset(&(ConfigData->cssSensorInBuffer), 0x0, sizeof(CSSArraySensorIntMsg));
-    ReadMessage(ConfigData->cssDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-        sizeof(CSSArraySensorIntMsg), (void*) (&(ConfigData->cssSensorInBuffer)), moduleID);
+    memset(&(configData->cssSensorInBuffer), 0x0, sizeof(CSSArraySensorIntMsg));
+    ReadMessage(configData->cssDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
+        sizeof(CSSArraySensorIntMsg), (void*) (&(configData->cssSensorInBuffer)), moduleID);
     
-    v3Normalize(&ConfigData->state[0], sunheading_hat);
+    v3Normalize(&configData->state[0], sunheading_hat);
     
     
     /*! - Check for switching frames */
-    if (v3Dot(ConfigData->bVec_B, sunheading_hat) > ConfigData->switchTresh)
+    if (v3Dot(configData->bVec_B, sunheading_hat) > configData->switchTresh)
     {
-        sunlineSuKFSwitch(ConfigData->bVec_B, ConfigData->state, ConfigData->covar);
+        sunlineSuKFSwitch(configData->bVec_B, configData->state, configData->covar);
     }
     
     /*! - If the time tag from the measured data is new compared to previous step, 
           propagate and update the filter*/
     newTimeTag = timeOfMsgWritten * NANO2SEC;
-    if(newTimeTag >= ConfigData->timeTag && sizeOfMsgWritten > 0)
+    if(newTimeTag >= configData->timeTag && sizeOfMsgWritten > 0)
     {
-        sunlineSuKFTimeUpdate(ConfigData, newTimeTag);
-        sunlineSuKFMeasUpdate(ConfigData, newTimeTag);
+        sunlineSuKFTimeUpdate(configData, newTimeTag);
+        sunlineSuKFMeasUpdate(configData, newTimeTag);
     }
     
     /*! - If current clock time is further ahead than the measured time, then
           propagate to this current time-step*/
     newTimeTag = callTime*NANO2SEC;
-    if(newTimeTag > ConfigData->timeTag)
+    if(newTimeTag > configData->timeTag)
     {
-        sunlineSuKFTimeUpdate(ConfigData, newTimeTag);
+        sunlineSuKFTimeUpdate(configData, newTimeTag);
     }
     
     /*! - Compute Post Fit Residuals, first get Y (eq 22) using the states post fit*/
-    sunlineSuKFMeasModel(ConfigData);
+    sunlineSuKFMeasModel(configData);
     
     /*! - Compute the value for the yBar parameter (equation 23)*/
-    vSetZero(yBar, ConfigData->numObs);
-    for(i=0; i<ConfigData->countHalfSPs*2+1; i++)
+    vSetZero(yBar, configData->numObs);
+    for(i=0; i<configData->countHalfSPs*2+1; i++)
     {
-        vCopy(&(ConfigData->yMeas[i*ConfigData->numObs]), ConfigData->numObs,
+        vCopy(&(configData->yMeas[i*configData->numObs]), configData->numObs,
               tempYVec);
-        vScale(ConfigData->wM[i], tempYVec, ConfigData->numObs, tempYVec);
-        vAdd(yBar, ConfigData->numObs, tempYVec, yBar);
+        vScale(configData->wM[i], tempYVec, configData->numObs, tempYVec);
+        vAdd(yBar, configData->numObs, tempYVec, yBar);
     }
     
     /*! - The post fits are y- ybar*/
-    mSubtract(ConfigData->obs, ConfigData->numObs, 1, yBar, ConfigData->postFits);
+    mSubtract(configData->obs, configData->numObs, 1, yBar, configData->postFits);
     
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
-	v3Copy(ConfigData->state, ConfigData->outputSunline.vehSunPntBdy);
-    v3Normalize(ConfigData->outputSunline.vehSunPntBdy,
-        ConfigData->outputSunline.vehSunPntBdy);
-    ConfigData->outputSunline.timeTag = ConfigData->timeTag;
-	WriteMessage(ConfigData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
-		&(ConfigData->outputSunline), moduleID);
+	v3Copy(configData->state, configData->outputSunline.vehSunPntBdy);
+    v3Normalize(configData->outputSunline.vehSunPntBdy,
+        configData->outputSunline.vehSunPntBdy);
+    configData->outputSunline.timeTag = configData->timeTag;
+	WriteMessage(configData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
+		&(configData->outputSunline), moduleID);
     
     /* Switch the rates back to omega_BN instead of oemga_SB */
-    vCopy(ConfigData->state, SKF_N_STATES_SWITCH, states_BN);
+    vCopy(configData->state, SKF_N_STATES_SWITCH, states_BN);
     vScale(-1, &(states_BN[3]), 2, &(states_BN[3]));
     
     /*! - Populate the filter states output buffer and write the output message*/
-    sunlineDataOutBuffer.timeTag = ConfigData->timeTag;
-    sunlineDataOutBuffer.numObs = ConfigData->numObs;
-    memmove(sunlineDataOutBuffer.covar, ConfigData->covar,
+    sunlineDataOutBuffer.timeTag = configData->timeTag;
+    sunlineDataOutBuffer.numObs = configData->numObs;
+    memmove(sunlineDataOutBuffer.covar, configData->covar,
             SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH*sizeof(double));
     memmove(sunlineDataOutBuffer.state, states_BN, SKF_N_STATES_SWITCH*sizeof(double));
-    memmove(sunlineDataOutBuffer.postFitRes, ConfigData->postFits, MAX_N_CSS_MEAS*sizeof(double));
-    WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(SunlineFilterFswMsg),
+    memmove(sunlineDataOutBuffer.postFitRes, configData->postFits, MAX_N_CSS_MEAS*sizeof(double));
+    WriteMessage(configData->filtDataOutMsgId, callTime, sizeof(SunlineFilterFswMsg),
                  &sunlineDataOutBuffer, moduleID);
     
     return;
@@ -285,10 +279,10 @@ void sunlineStateProp(double *stateInOut, double *b_Vec, double dt)
      It propagates the sigma points forward in time and then gets the current 
 	 covariance and state estimates.
 	 @return void
-     @param ConfigData The configuration data associated with the CSS estimator
+     @param configData The configuration data associated with the CSS estimator
      @param updateTime The time that we need to fix the filter to (seconds)
 */
-void sunlineSuKFTimeUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
+void sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
 {
 	int i, Index;
 	double sBarT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
@@ -297,85 +291,85 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
 	double sBarUp[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
 	double *spPtr;
 	/*! Begin method steps*/
-	ConfigData->dt = updateTime - ConfigData->timeTag;
+	configData->dt = updateTime - configData->timeTag;
     
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
-	vCopy(ConfigData->state, ConfigData->numStates,
-		&(ConfigData->SP[0 * ConfigData->numStates + 0]));
-	mSetZero(rAT, ConfigData->countHalfSPs, ConfigData->countHalfSPs);
-	sunlineStateProp(&(ConfigData->SP[0 * ConfigData->numStates + 0]), ConfigData->bVec_B, ConfigData->dt);
+	vCopy(configData->state, configData->numStates,
+		&(configData->SP[0 * configData->numStates + 0]));
+	mSetZero(rAT, configData->countHalfSPs, configData->countHalfSPs);
+	sunlineStateProp(&(configData->SP[0 * configData->numStates + 0]), configData->bVec_B, configData->dt);
     /*! - Scale that Sigma point by the appopriate scaling factor (Wm[0])*/
-	vScale(ConfigData->wM[0], &(ConfigData->SP[0 * ConfigData->numStates + 0]),
-        ConfigData->numStates, ConfigData->xBar);
+	vScale(configData->wM[0], &(configData->SP[0 * configData->numStates + 0]),
+        configData->numStates, configData->xBar);
     /*! - Get the transpose of the sBar matrix because it is easier to extract Rows vs columns*/
-    mTranspose(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
+    mTranspose(configData->sBar, configData->numStates, configData->numStates,
                sBarT);
     /*! - For each Sigma point, apply sBar-based error, propagate forward, and scale by Wm just like 0th.
           Note that we perform +/- sigma points simultaneously in loop to save loop values.*/
-	for (i = 0; i<ConfigData->countHalfSPs; i++)
+	for (i = 0; i<configData->countHalfSPs; i++)
 	{
 		Index = i + 1;
-		spPtr = &(ConfigData->SP[Index*ConfigData->numStates]);
-		vCopy(&sBarT[i*ConfigData->numStates], ConfigData->numStates, spPtr);
-		vScale(ConfigData->gamma, spPtr, ConfigData->numStates, spPtr);
-		vAdd(spPtr, ConfigData->numStates, ConfigData->state, spPtr);
-		sunlineStateProp(spPtr, ConfigData->bVec_B, ConfigData->dt);
-		vScale(ConfigData->wM[Index], spPtr, ConfigData->numStates, xComp);
-		vAdd(xComp, ConfigData->numStates, ConfigData->xBar, ConfigData->xBar);
+		spPtr = &(configData->SP[Index*configData->numStates]);
+		vCopy(&sBarT[i*configData->numStates], configData->numStates, spPtr);
+		vScale(configData->gamma, spPtr, configData->numStates, spPtr);
+		vAdd(spPtr, configData->numStates, configData->state, spPtr);
+		sunlineStateProp(spPtr, configData->bVec_B, configData->dt);
+		vScale(configData->wM[Index], spPtr, configData->numStates, xComp);
+		vAdd(xComp, configData->numStates, configData->xBar, configData->xBar);
 		
-		Index = i + 1 + ConfigData->countHalfSPs;
-        spPtr = &(ConfigData->SP[Index*ConfigData->numStates]);
-        vCopy(&sBarT[i*ConfigData->numStates], ConfigData->numStates, spPtr);
-        vScale(-ConfigData->gamma, spPtr, ConfigData->numStates, spPtr);
-        vAdd(spPtr, ConfigData->numStates, ConfigData->state, spPtr);
-        sunlineStateProp(spPtr, ConfigData->bVec_B, ConfigData->dt);
-        vScale(ConfigData->wM[Index], spPtr, ConfigData->numStates, xComp);
-        vAdd(xComp, ConfigData->numStates, ConfigData->xBar, ConfigData->xBar);
+		Index = i + 1 + configData->countHalfSPs;
+        spPtr = &(configData->SP[Index*configData->numStates]);
+        vCopy(&sBarT[i*configData->numStates], configData->numStates, spPtr);
+        vScale(-configData->gamma, spPtr, configData->numStates, spPtr);
+        vAdd(spPtr, configData->numStates, configData->state, spPtr);
+        sunlineStateProp(spPtr, configData->bVec_B, configData->dt);
+        vScale(configData->wM[Index], spPtr, configData->numStates, xComp);
+        vAdd(xComp, configData->numStates, configData->xBar, configData->xBar);
 	}
     /*! - Zero the AT matrix prior to assembly*/
-    mSetZero(AT, (2 * ConfigData->countHalfSPs + ConfigData->numStates),
-        ConfigData->countHalfSPs);
+    mSetZero(AT, (2 * configData->countHalfSPs + configData->numStates),
+        configData->countHalfSPs);
 	/*! - Assemble the AT matrix.  Note that this matrix is the internals of 
           the qr decomposition call in the source design documentation.  It is 
           the inside of equation 20 in that document*/
-	for (i = 0; i<2 * ConfigData->countHalfSPs; i++)
+	for (i = 0; i<2 * configData->countHalfSPs; i++)
 	{
 		
-        vScale(-1.0, ConfigData->xBar, ConfigData->numStates, aRow);
-        vAdd(aRow, ConfigData->numStates,
-             &(ConfigData->SP[(i+1)*ConfigData->numStates]), aRow);
-        vScale(sqrt(ConfigData->wC[i+1]), aRow, ConfigData->numStates, aRow);
-		memcpy((void *)&AT[i*ConfigData->numStates], (void *)aRow,
-			ConfigData->numStates*sizeof(double));
+        vScale(-1.0, configData->xBar, configData->numStates, aRow);
+        vAdd(aRow, configData->numStates,
+             &(configData->SP[(i+1)*configData->numStates]), aRow);
+        vScale(sqrt(configData->wC[i+1]), aRow, configData->numStates, aRow);
+		memcpy((void *)&AT[i*configData->numStates], (void *)aRow,
+			configData->numStates*sizeof(double));
 	}
     /*! - Pop the sQNoise matrix on to the end of AT prior to getting QR decomposition*/
-	memcpy(&AT[2 * ConfigData->countHalfSPs*ConfigData->numStates],
-		ConfigData->sQnoise, ConfigData->numStates*ConfigData->numStates
+	memcpy(&AT[2 * configData->countHalfSPs*configData->numStates],
+		configData->sQnoise, configData->numStates*configData->numStates
         *sizeof(double));
     /*! - QR decomposition (only R computed!) of the AT matrix provides the new sBar matrix*/
-    ukfQRDJustR(AT, 2 * ConfigData->countHalfSPs + ConfigData->numStates,
-                ConfigData->countHalfSPs, rAT);
-    mCopy(rAT, ConfigData->numStates, ConfigData->numStates, sBarT);
-    mTranspose(sBarT, ConfigData->numStates, ConfigData->numStates,
-        ConfigData->sBar);
+    ukfQRDJustR(AT, 2 * configData->countHalfSPs + configData->numStates,
+                configData->countHalfSPs, rAT);
+    mCopy(rAT, configData->numStates, configData->numStates, sBarT);
+    mTranspose(sBarT, configData->numStates, configData->numStates,
+        configData->sBar);
     
     /*! - Shift the sBar matrix over by the xBar vector using the appropriate weight 
           like in equation 21 in design document.*/
-    vScale(-1.0, ConfigData->xBar, ConfigData->numStates, xErr);
-    vAdd(xErr, ConfigData->numStates, &ConfigData->SP[0], xErr);
-    ukfCholDownDate(ConfigData->sBar, xErr, ConfigData->wC[0],
-        ConfigData->numStates, sBarUp);
+    vScale(-1.0, configData->xBar, configData->numStates, xErr);
+    vAdd(xErr, configData->numStates, &configData->SP[0], xErr);
+    ukfCholDownDate(configData->sBar, xErr, configData->wC[0],
+        configData->numStates, sBarUp);
     
     /*! - Save current sBar matrix, covariance, and state estimate off for further use*/
-    mCopy(sBarUp, ConfigData->numStates, ConfigData->numStates, ConfigData->sBar);
-    mTranspose(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
-        ConfigData->covar);
-	mMultM(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
-        ConfigData->covar, ConfigData->numStates, ConfigData->numStates,
-           ConfigData->covar);
-    vCopy(&(ConfigData->SP[0]), ConfigData->numStates, ConfigData->state );
+    mCopy(sBarUp, configData->numStates, configData->numStates, configData->sBar);
+    mTranspose(configData->sBar, configData->numStates, configData->numStates,
+        configData->covar);
+	mMultM(configData->sBar, configData->numStates, configData->numStates,
+        configData->covar, configData->numStates, configData->numStates,
+           configData->covar);
+    vCopy(&(configData->SP[0]), configData->numStates, configData->state );
 	
-	ConfigData->timeTag = updateTime;
+	configData->timeTag = updateTime;
 }
 
 /*! This method computes what the expected measurement vector is for each CSS 
@@ -383,36 +377,36 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
     data structure for the model because there are many variables that would 
     have to be updated otherwise.
  @return void
- @param ConfigData The configuration data associated with the CSS estimator
+ @param configData The configuration data associated with the CSS estimator
 
  */
-void sunlineSuKFMeasModel(SunlineSuKFConfig *ConfigData)
+void sunlineSuKFMeasModel(SunlineSuKFConfig *configData)
 {
     uint32_t i, j, obsCounter;
     double sensorNormal[3];
     /* Begin method steps */
     obsCounter = 0;
     /*! - Loop over all available coarse sun sensors and only use ones that meet validity threshold*/
-    for(i=0; i<ConfigData->numCSSTotal; i++)
+    for(i=0; i<configData->numCSSTotal; i++)
     {
-        if(ConfigData->cssSensorInBuffer.CosValue[i] > ConfigData->sensorUseThresh)
+        if(configData->cssSensorInBuffer.CosValue[i] > configData->sensorUseThresh)
         {
             /*! - For each valid measurement, copy observation value and compute expected obs value 
                   on a per sigma-point basis.*/
-            v3Scale(ConfigData->CBias[i], &(ConfigData->cssNHat_B[i*3]), sensorNormal);
-            ConfigData->obs[obsCounter] = ConfigData->cssSensorInBuffer.CosValue[i];
-            for(j=0; j<ConfigData->countHalfSPs*2+1; j++)
+            v3Scale(configData->CBias[i], &(configData->cssNHat_B[i*3]), sensorNormal);
+            configData->obs[obsCounter] = configData->cssSensorInBuffer.CosValue[i];
+            for(j=0; j<configData->countHalfSPs*2+1; j++)
             {
-                ConfigData->yMeas[obsCounter*(ConfigData->countHalfSPs*2+1) + j] =
-                    v3Dot(&(ConfigData->SP[j*SKF_N_STATES_SWITCH]), sensorNormal);
+                configData->yMeas[obsCounter*(configData->countHalfSPs*2+1) + j] =
+                    v3Dot(&(configData->SP[j*SKF_N_STATES_SWITCH]), sensorNormal);
             }
             obsCounter++;
         }
     }
     /*! - yMeas matrix was set backwards deliberately so we need to transpose it through*/
-    mTranspose(ConfigData->yMeas, obsCounter, ConfigData->countHalfSPs*2+1,
-        ConfigData->yMeas);
-    ConfigData->numObs = obsCounter;
+    mTranspose(configData->yMeas, obsCounter, configData->countHalfSPs*2+1,
+        configData->yMeas);
+    configData->numObs = obsCounter;
     
 }
 
@@ -420,10 +414,10 @@ void sunlineSuKFMeasModel(SunlineSuKFConfig *ConfigData)
  It applies the observations in the obs vectors to the current state estimate and 
  updates the state/covariance with that information.
  @return void
- @param ConfigData The configuration data associated with the CSS estimator
+ @param configData The configuration data associated with the CSS estimator
  @param updateTime The time that we need to fix the filter to (seconds)
  */
-void sunlineSuKFMeasUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
+void sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime)
 {
     uint32_t i;
     double yBar[MAX_N_CSS_MEAS], syInv[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
@@ -437,116 +431,116 @@ void sunlineSuKFMeasUpdate(SunlineSuKFConfig *ConfigData, double updateTime)
     /*! Begin method steps*/
     
     /*! - Compute the valid observations and the measurement model for all observations*/
-    sunlineSuKFMeasModel(ConfigData);
+    sunlineSuKFMeasModel(configData);
     
     /*! - Compute the value for the yBar parameter (note that this is equation 23 in the 
           time update section of the reference document*/
-    vSetZero(yBar, ConfigData->numObs);
-    for(i=0; i<ConfigData->countHalfSPs*2+1; i++)
+    vSetZero(yBar, configData->numObs);
+    for(i=0; i<configData->countHalfSPs*2+1; i++)
     {
-        vCopy(&(ConfigData->yMeas[i*ConfigData->numObs]), ConfigData->numObs,
+        vCopy(&(configData->yMeas[i*configData->numObs]), configData->numObs,
               tempYVec);
-        vScale(ConfigData->wM[i], tempYVec, ConfigData->numObs, tempYVec);
-        vAdd(yBar, ConfigData->numObs, tempYVec, yBar);
+        vScale(configData->wM[i], tempYVec, configData->numObs, tempYVec);
+        vAdd(yBar, configData->numObs, tempYVec, yBar);
     }
     
     /*! - Populate the matrix that we perform the QR decomposition on in the measurement 
           update section of the code.  This is based on the differenence between the yBar 
           parameter and the calculated measurement models.  Equation 24 in driving doc. */
-    mSetZero(AT, ConfigData->countHalfSPs*2+ConfigData->numObs,
-        ConfigData->numObs);
-    for(i=0; i<ConfigData->countHalfSPs*2; i++)
+    mSetZero(AT, configData->countHalfSPs*2+configData->numObs,
+        configData->numObs);
+    for(i=0; i<configData->countHalfSPs*2; i++)
     {
-        vScale(-1.0, yBar, ConfigData->numObs, tempYVec);
-        vAdd(tempYVec, ConfigData->numObs,
-             &(ConfigData->yMeas[(i+1)*ConfigData->numObs]), tempYVec);
-        vScale(sqrt(ConfigData->wC[i+1]), tempYVec, ConfigData->numObs, tempYVec);
-        memcpy(&(AT[i*ConfigData->numObs]), tempYVec,
-               ConfigData->numObs*sizeof(double));
+        vScale(-1.0, yBar, configData->numObs, tempYVec);
+        vAdd(tempYVec, configData->numObs,
+             &(configData->yMeas[(i+1)*configData->numObs]), tempYVec);
+        vScale(sqrt(configData->wC[i+1]), tempYVec, configData->numObs, tempYVec);
+        memcpy(&(AT[i*configData->numObs]), tempYVec,
+               configData->numObs*sizeof(double));
     }
     
     /*! - This is the square-root of the Rk matrix which we treat as the Cholesky
         decomposition of the observation variance matrix constructed for our number 
         of observations*/
-    mSetZero(ConfigData->qObs, ConfigData->numCSSTotal, ConfigData->numCSSTotal);
-    mSetIdentity(ConfigData->qObs, ConfigData->numObs, ConfigData->numObs);
-    mScale(ConfigData->qObsVal, ConfigData->qObs, ConfigData->numObs,
-           ConfigData->numObs, ConfigData->qObs);
-    ukfCholDecomp(ConfigData->qObs, ConfigData->numObs, ConfigData->numObs, qChol);
-    memcpy(&(AT[2*ConfigData->countHalfSPs*ConfigData->numObs]),
-           qChol, ConfigData->numObs*ConfigData->numObs*sizeof(double));
+    mSetZero(configData->qObs, configData->numCSSTotal, configData->numCSSTotal);
+    mSetIdentity(configData->qObs, configData->numObs, configData->numObs);
+    mScale(configData->qObsVal, configData->qObs, configData->numObs,
+           configData->numObs, configData->qObs);
+    ukfCholDecomp(configData->qObs, configData->numObs, configData->numObs, qChol);
+    memcpy(&(AT[2*configData->countHalfSPs*configData->numObs]),
+           qChol, configData->numObs*configData->numObs*sizeof(double));
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the 
           current Sy matrix*/
-    ukfQRDJustR(AT, 2*ConfigData->countHalfSPs+ConfigData->numObs,
-                ConfigData->numObs, rAT);
-    mCopy(rAT, ConfigData->numObs, ConfigData->numObs, syT);
-    mTranspose(syT, ConfigData->numObs, ConfigData->numObs, sy);
+    ukfQRDJustR(AT, 2*configData->countHalfSPs+configData->numObs,
+                configData->numObs, rAT);
+    mCopy(rAT, configData->numObs, configData->numObs, syT);
+    mTranspose(syT, configData->numObs, configData->numObs, sy);
     /*! - Shift the matrix over by the difference between the 0th SP-based measurement 
           model and the yBar matrix (cholesky down-date again)*/
-    vScale(-1.0, yBar, ConfigData->numObs, tempYVec);
-    vAdd(tempYVec, ConfigData->numObs, &(ConfigData->yMeas[0]), tempYVec);
-    ukfCholDownDate(sy, tempYVec, ConfigData->wC[0],
-                    ConfigData->numObs, updMat);
+    vScale(-1.0, yBar, configData->numObs, tempYVec);
+    vAdd(tempYVec, configData->numObs, &(configData->yMeas[0]), tempYVec);
+    ukfCholDownDate(sy, tempYVec, configData->wC[0],
+                    configData->numObs, updMat);
     /*! - Shifted matrix represents the Sy matrix */
-    mCopy(updMat, ConfigData->numObs, ConfigData->numObs, sy);
-    mTranspose(sy, ConfigData->numObs, ConfigData->numObs, syT);
+    mCopy(updMat, configData->numObs, configData->numObs, sy);
+    mTranspose(sy, configData->numObs, configData->numObs, syT);
 
     /*! - Construct the Pxy matrix (equation 26) which multiplies the Sigma-point cloud 
           by the measurement model cloud (weighted) to get the total Pxy matrix*/
-    mSetZero(pXY, ConfigData->numStates, ConfigData->numObs);
-    for(i=0; i<2*ConfigData->countHalfSPs+1; i++)
+    mSetZero(pXY, configData->numStates, configData->numObs);
+    for(i=0; i<2*configData->countHalfSPs+1; i++)
     {
-        vScale(-1.0, yBar, ConfigData->numObs, tempYVec);
-        vAdd(tempYVec, ConfigData->numObs,
-             &(ConfigData->yMeas[i*ConfigData->numObs]), tempYVec);
-        vSubtract(&(ConfigData->SP[i*ConfigData->numStates]), ConfigData->numStates,
-                  ConfigData->xBar, xHat);
-        vScale(ConfigData->wC[i], xHat, ConfigData->numStates, xHat);
-        mMultM(xHat, ConfigData->numStates, 1, tempYVec, 1, ConfigData->numObs,
+        vScale(-1.0, yBar, configData->numObs, tempYVec);
+        vAdd(tempYVec, configData->numObs,
+             &(configData->yMeas[i*configData->numObs]), tempYVec);
+        vSubtract(&(configData->SP[i*configData->numStates]), configData->numStates,
+                  configData->xBar, xHat);
+        vScale(configData->wC[i], xHat, configData->numStates, xHat);
+        mMultM(xHat, configData->numStates, 1, tempYVec, 1, configData->numObs,
             kMat);
-        mAdd(pXY, ConfigData->numStates, ConfigData->numObs, kMat, pXY);
+        mAdd(pXY, configData->numStates, configData->numObs, kMat, pXY);
     }
 
     /*! - Then we need to invert the SyT*Sy matrix to get the Kalman gain factor.  Since
           The Sy matrix is lower triangular, we can do a back-sub inversion instead of 
           a full matrix inversion.  That is the ukfUInv and ukfLInv calls below.  Once that 
           multiplication is done (equation 27), we have the Kalman Gain.*/
-    ukfUInv(syT, ConfigData->numObs, ConfigData->numObs, syInv);
+    ukfUInv(syT, configData->numObs, configData->numObs, syInv);
     
-    mMultM(pXY, ConfigData->numStates, ConfigData->numObs, syInv,
-           ConfigData->numObs, ConfigData->numObs, kMat);
-    ukfLInv(sy, ConfigData->numObs, ConfigData->numObs, syInv);
-    mMultM(kMat, ConfigData->numStates, ConfigData->numObs, syInv,
-           ConfigData->numObs, ConfigData->numObs, kMat);
+    mMultM(pXY, configData->numStates, configData->numObs, syInv,
+           configData->numObs, configData->numObs, kMat);
+    ukfLInv(sy, configData->numObs, configData->numObs, syInv);
+    mMultM(kMat, configData->numStates, configData->numObs, syInv,
+           configData->numObs, configData->numObs, kMat);
     
     
     /*! - Difference the yBar and the observations to get the observed error and 
           multiply by the Kalman Gain to get the state update.  Add the state update 
           to the state to get the updated state value (equation 27).*/
-    vSubtract(ConfigData->obs, ConfigData->numObs, yBar, tempYVec);
-    mMultM(kMat, ConfigData->numStates, ConfigData->numObs, tempYVec,
-        ConfigData->numObs, 1, xHat);
-    vAdd(ConfigData->state, ConfigData->numStates, xHat, ConfigData->state);
+    vSubtract(configData->obs, configData->numObs, yBar, tempYVec);
+    mMultM(kMat, configData->numStates, configData->numObs, tempYVec,
+        configData->numObs, 1, xHat);
+    vAdd(configData->state, configData->numStates, xHat, configData->state);
     /*! - Compute the updated matrix U from equation 28.  Note that I then transpose it 
          so that I can extract "columns" from adjacent memory*/
-    mMultM(kMat, ConfigData->numStates, ConfigData->numObs, sy,
-           ConfigData->numObs, ConfigData->numObs, pXY);
-    mTranspose(pXY, ConfigData->numStates, ConfigData->numObs, pXY);
+    mMultM(kMat, configData->numStates, configData->numObs, sy,
+           configData->numObs, configData->numObs, pXY);
+    mTranspose(pXY, configData->numStates, configData->numObs, pXY);
     /*! - For each column in the update matrix, perform a cholesky down-date on it to 
           get the total shifted S matrix (called sBar in internal parameters*/
-    for(i=0; i<ConfigData->numObs; i++)
+    for(i=0; i<configData->numObs; i++)
     {
-        vCopy(&(pXY[i*ConfigData->numStates]), ConfigData->numStates, tempYVec);
-        ukfCholDownDate(ConfigData->sBar, tempYVec, -1.0, ConfigData->numStates, sBarT);
-        mCopy(sBarT, ConfigData->numStates, ConfigData->numStates,
-            ConfigData->sBar);
+        vCopy(&(pXY[i*configData->numStates]), configData->numStates, tempYVec);
+        ukfCholDownDate(configData->sBar, tempYVec, -1.0, configData->numStates, sBarT);
+        mCopy(sBarT, configData->numStates, configData->numStates,
+            configData->sBar);
     }
     /*! - Compute equivalent covariance based on updated sBar matrix*/
-    mTranspose(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
-               ConfigData->covar);
-    mMultM(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
-           ConfigData->covar, ConfigData->numStates, ConfigData->numStates,
-           ConfigData->covar);
+    mTranspose(configData->sBar, configData->numStates, configData->numStates,
+               configData->covar);
+    mMultM(configData->sBar, configData->numStates, configData->numStates,
+           configData->covar, configData->numStates, configData->numStates,
+           configData->covar);
 }
 
 
