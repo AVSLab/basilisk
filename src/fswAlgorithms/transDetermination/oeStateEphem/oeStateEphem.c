@@ -77,8 +77,6 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, uint64
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     double currentScaledValue;
-    double meanAnom;
-    double orbAnom;
     ChebyOERecord *currRec;
     int i;
     TDBVehicleClockCorrelationFswMsg localCorr;
@@ -111,9 +109,10 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, uint64
     {
         currentScaledValue = currentScaledValue/fabs(currentScaledValue);
     }
-    
+
+    /* determine orbit elements from chebychev polynominals */
     tmpOutputState.timeTag = callTime*NANO2SEC;
-    orbEl.a = calculateChebyValue(currRec->semiMajorCoeff, currRec->nChebCoeff,
+    orbEl.rPeriap = calculateChebyValue(currRec->rPeriapCoeff, currRec->nChebCoeff,
                                   currentScaledValue);
     orbEl.i = calculateChebyValue(currRec->incCoeff, currRec->nChebCoeff,
                                   currentScaledValue);
@@ -123,20 +122,16 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, uint64
                                   currentScaledValue);
     orbEl.Omega = calculateChebyValue(currRec->RAANCoeff, currRec->nChebCoeff,
                                   currentScaledValue);
-    meanAnom = calculateChebyValue(currRec->meanAnomCoeff, currRec->nChebCoeff,
+    orbEl.f = calculateChebyValue(currRec->anomCoeff, currRec->nChebCoeff,
                                    currentScaledValue);
-    
-    if(orbEl.a > 0.0)
-    {
-        orbAnom = M2E(meanAnom, orbEl.e);
-        orbEl.f = E2f(orbAnom, orbEl.e);
+
+    /* determine semi-major axis */
+    if (fabs(orbEl.e - 1) < 1e-12) {
+        orbEl.a = orbEl.rPeriap/(1-orbEl.e);
+    } else {
+        orbEl.a = 0.0;      /* the elem2rv() function assumes a parabola has a = 0 */
     }
-    else
-    {
-        orbAnom = N2H(meanAnom, orbEl.e);
-        orbEl.f = H2f(orbAnom, orbEl.e);
-    }
-    
+
     while(orbEl.Omega < 0.0)
     {
         orbEl.Omega += 2.0*M_PI;

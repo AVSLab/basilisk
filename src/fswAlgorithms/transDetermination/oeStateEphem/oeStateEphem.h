@@ -34,21 +34,22 @@
  * is outside the specified range for which the stored Chebyshev coefficients are valid then
  * the position vectors rail high/low appropriately.
  *  @{
+*/
 
 /*! @brief Structure that defines the layout of an Ephemeris "record."  This is
-           basically the set of coefficients for the body x/y/z positions and 
+           basically the set of coefficients for the ephemeris elements and
            the time factors associated with those coefficients
 */
 typedef struct {
-    uint32_t nChebCoeff;                       /*!< [-] Number chebyshev coefficients loaded into record*/
-    double ephemTimeMid;                  /*!< [s] Ephemeris time (TDB) associated with the mid-point of the curve*/
-    double ephemTimeRad;                  /*!< [s] "Radius" of time that curve is valid for (half of total range*/
-    double semiMajorCoeff[MAX_OE_COEFF];  /*!< [-] Set of chebyshev coefficients for semi-major axis */
-    double eccCoeff[MAX_OE_COEFF];        /*!< [-] Set of chebyshev coefficients for semi-major axis */
-    double incCoeff[MAX_OE_COEFF];        /*!< [-] Set of chebyshev coefficients for semi-major axis */
-    double argPerCoeff[MAX_OE_COEFF];     /*!< [-] Set of chebyshev coefficients for semi-major axis */
-    double RAANCoeff[MAX_OE_COEFF];       /*!< [-] Set of chebyshev coefficients for semi-major axis */
-    double meanAnomCoeff[MAX_OE_COEFF];   /*!< [-] Set of chebyshev coefficients for semi-major axis */
+    uint32_t nChebCoeff;                  //!< [-] Number chebyshev coefficients loaded into record
+    double ephemTimeMid;                  //!< [s] Ephemeris time (TDB) associated with the mid-point of the curve
+    double ephemTimeRad;                  //!< [s] "Radius" of time that curve is valid for (half of total range
+    double rPeriapCoeff[MAX_OE_COEFF];    //!< [-] Set of chebyshev coefficients for radius at periapses
+    double eccCoeff[MAX_OE_COEFF];        //!< [-] Set of chebyshev coefficients for eccentrity
+    double incCoeff[MAX_OE_COEFF];        //!< [-] Set of chebyshev coefficients for inclination
+    double argPerCoeff[MAX_OE_COEFF];     //!< [-] Set of chebyshev coefficients for argument of periapses
+    double RAANCoeff[MAX_OE_COEFF];       //!< [-] Set of chebyshev coefficients for right ascention of the ascending node
+    double anomCoeff[MAX_OE_COEFF];       //!< [-] Set of chebyshev coefficients for true anomaly angle
 }ChebyOERecord;
 
 /*! @brief Top level structure for the Chebyshev position ephemeris 
