@@ -36,7 +36,7 @@
  */
 void SelfInit_oeStateEphem(OEStateEphemData *configData, uint64_t moduleID)
 {
-    configData->stateFitOutMsgID = CreateNewMessage(configData->stateFitOutMsgName,
+    configData->stateFitOutMsgId = CreateNewMessage(configData->stateFitOutMsgName,
         sizeof(EphemerisIntMsg), "EphemerisIntMsg", moduleID);
 }
 
@@ -47,7 +47,7 @@ void SelfInit_oeStateEphem(OEStateEphemData *configData, uint64_t moduleID)
  */
 void CrossInit_oeStateEphem(OEStateEphemData *configData, uint64_t moduleID)
 {
-    configData->clockCorrInMsgID = subscribeToMessage(
+    configData->clockCorrInMsgId = subscribeToMessage(
         configData->clockCorrInMsgName, sizeof(TDBVehicleClockCorrelationFswMsg), moduleID);
 }
 
@@ -85,7 +85,7 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, uint64
     memset(&tmpOutputState, 0x0, sizeof(EphemerisIntMsg));
     classicElements orbEl;
 
-    ReadMessage(configData->clockCorrInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->clockCorrInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(TDBVehicleClockCorrelationFswMsg), &localCorr, moduleID);
     
     currentEphTime = callTime*NANO2SEC;
@@ -140,7 +140,7 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, uint64
     elem2rv(configData->muCentral, &orbEl, tmpOutputState.r_BdyZero_N,
             tmpOutputState.v_BdyZero_N);
 
-    WriteMessage(configData->stateFitOutMsgID, callTime,
+    WriteMessage(configData->stateFitOutMsgId, callTime,
                  sizeof(EphemerisIntMsg), &tmpOutputState,
                  moduleID);
 

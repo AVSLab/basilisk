@@ -58,13 +58,13 @@ typedef struct {
            a given body is in space
 */
 typedef struct {
-    char stateFitOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the output navigation message for pos/vel*/
-    char clockCorrInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the clock correlation message*/
-    double muCentral;                     /*!< [m3/s^2] Gravitational parameter for center of orbital elements*/
-    ChebyOERecord ephArray[MAX_OE_RECORDS]; /*! [-] Array of Chebyshev records for ephemeris*/
-    int32_t stateFitOutMsgID;    /*!< [-] The ID associated with the outgoing message*/
-    int32_t clockCorrInMsgID;  /*!< [-] The ID associated with the incoming clock correlation*/
-    uint32_t coeffSelector;    /*!< [-] Index in the ephArray that we are currently using*/
+    char stateFitOutMsgName[MAX_STAT_MSG_LENGTH]; //!< [-] The name of the output navigation message for pos/vel
+    char clockCorrInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the clock correlation message
+    double muCentral;                             //!< [m3/s^2] Gravitational parameter for center of orbital elements
+    ChebyOERecord ephArray[MAX_OE_RECORDS];       //! [-] Array of Chebyshev records for ephemeris
+    int32_t stateFitOutMsgId;                     //!< [-] The ID associated with the outgoing message
+    int32_t clockCorrInMsgId;                     //!< [-] The ID associated with the incoming clock correlation
+    uint32_t coeffSelector;                       //!< [-] Index in the ephArray that we are currently using
 }OEStateEphemData;
 
 #ifdef __cplusplus
