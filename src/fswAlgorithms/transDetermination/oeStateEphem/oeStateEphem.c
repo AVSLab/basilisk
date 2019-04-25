@@ -85,12 +85,15 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, uint64
     memset(&tmpOutputState, 0x0, sizeof(EphemerisIntMsg));
     classicElements orbEl;
 
+    /*! - read in the input message */
     ReadMessage(configData->clockCorrInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(TDBVehicleClockCorrelationFswMsg), &localCorr, moduleID);
-    
+
+    /*! - compute time for fitting interval */
     currentEphTime = callTime*NANO2SEC;
     currentEphTime += localCorr.ephemerisTime - localCorr.vehicleClockTime;
 
+    /*! - select the fitting coefficients */
     configData->coeffSelector = 0;
     for(i=0; i<MAX_OE_RECORDS; i++)
     {
@@ -102,15 +105,15 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, uint64
         }
     }
 
+    /*! - determine the scaled fitting time */
     currRec = &(configData->ephArray[configData->coeffSelector]);
-    currentScaledValue = (currentEphTime - currRec->ephemTimeMid)
-        /currRec->ephemTimeRad;
+    currentScaledValue = (currentEphTime - currRec->ephemTimeMid)/currRec->ephemTimeRad;
     if(fabs(currentScaledValue) > 1.0)
     {
         currentScaledValue = currentScaledValue/fabs(currentScaledValue);
     }
 
-    /* determine orbit elements from chebychev polynominals */
+    /* - determine orbit elements from chebychev polynominals */
     tmpOutputState.timeTag = callTime*NANO2SEC;
     orbEl.rPeriap = calculateChebyValue(currRec->rPeriapCoeff, currRec->nChebCoeff,
                                   currentScaledValue);
@@ -125,17 +128,18 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, uint64
     orbEl.f = calculateChebyValue(currRec->anomCoeff, currRec->nChebCoeff,
                                    currentScaledValue);
 
-    /* determine semi-major axis */
+    /* - determine semi-major axis */
     if (fabs(orbEl.e - 1) < 1e-12) {
         orbEl.a = orbEl.rPeriap/(1-orbEl.e);
     } else {
         orbEl.a = 0.0;      /* the elem2rv() function assumes a parabola has a = 0 */
     }
 
-
+    /*! - Determine position and velocity vectors */
     elem2rv(configData->muCentral, &orbEl, tmpOutputState.r_BdyZero_N,
             tmpOutputState.v_BdyZero_N);
 
+    /*! - Write the output message */
     WriteMessage(configData->stateFitOutMsgId, callTime,
                  sizeof(EphemerisIntMsg), &tmpOutputState,
                  moduleID);
