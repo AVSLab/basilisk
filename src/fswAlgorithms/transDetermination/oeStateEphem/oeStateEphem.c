@@ -132,10 +132,6 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, uint64
         orbEl.a = 0.0;      /* the elem2rv() function assumes a parabola has a = 0 */
     }
 
-    while(orbEl.Omega < 0.0)
-    {
-        orbEl.Omega += 2.0*M_PI;
-    }
 
     elem2rv(configData->muCentral, &orbEl, tmpOutputState.r_BdyZero_N,
             tmpOutputState.v_BdyZero_N);
