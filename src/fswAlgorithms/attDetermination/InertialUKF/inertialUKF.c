@@ -430,10 +430,10 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
 	vCopy(configData->state, configData->numStates,
 		&(configData->SP[0 * configData->numStates + 0]));
-	inertialStateProp(configData, &(configData->SP[0 * configData->numStates + 0]),
+	inertialStateProp(configData, &(configData->SP[0]),
         configData->dt);
     /*! - Scale that Sigma point by the appopriate scaling factor (Wm[0])*/
-	vScale(configData->wM[0], &(configData->SP[0 * configData->numStates + 0]),
+	vScale(configData->wM[0], &(configData->SP[0]),
         configData->numStates, configData->xBar);
     /*! - Get the transpose of the sBar matrix because it is easier to extract Rows vs columns*/
     mTranspose(configData->sBar, configData->numStates, configData->numStates,
@@ -591,7 +591,6 @@ void inertialUKFAggGyrData(InertialUKFConfig *configData, double prevTime,
     double ep_BpropB0[4], ep_B1B0[4], epTemp[4], omeg_BN_B[3], prvTemp[3];
     double dt;
     
-    /*! Begin method steps*/
     minFutInd = 0;
     minFutTime = -1;
     /*! - Loop through the entire gyro buffer to find the first index that is 
@@ -693,8 +692,7 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
         vScale(-1.0, yBar, configData->numObs, tempYVec);
         vAdd(tempYVec, configData->numObs,
              &(configData->yMeas[(i+1)*configData->numObs]), tempYVec);
-        badUpdate += (configData->wC[i+1]>0) - (configData->wC[i+1]<0) - 1; /*Check sign of wC to know if the sqrt will fail*/
-        if (badUpdate<0){return -1;}
+        if (configData->wC[i+1]<0){return -1;}
         vScale(sqrt(configData->wC[i+1]), tempYVec, configData->numObs, tempYVec);
         memcpy(&(AT[i*configData->numObs]), tempYVec,
                configData->numObs*sizeof(double));
@@ -788,11 +786,31 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
     return(0);
 }
 
+/*! This method cleans the filter states after a bad upadate on the fly.
+ It removes the potentially corrupted previous estimates and puts the filter
+ back to a working state.
+ @return void
+ @param configData The configuration data associated with the CSS estimator
+ */
 void inertialUKFCleanUpdate(InertialUKFConfig *configData){
+    int i;
     vSetZero(configData->obs, configData->numObs);
     vCopy(configData->statePrev, configData->numStates, configData->state);
     mCopy(configData->sBarPrev, configData->numStates, configData->numStates, configData->sBar);
     mCopy(configData->covarPrev, configData->numStates, configData->numStates, configData->covar);
+    
+    /*! - Reset the wM/wC vectors to standard values for unscented kalman filters*/
+    configData->wM[0] = configData->lambdaVal / (configData->numStates +
+                                                 configData->lambdaVal);
+    configData->wC[0] = configData->lambdaVal / (configData->numStates +
+                                                 configData->lambdaVal) + (1 - configData->alpha*configData->alpha + configData->beta);
+    for (i = 1; i<configData->countHalfSPs * 2 + 1; i++)
+    {
+        configData->wM[i] = 1.0 / 2.0*1.0 / (configData->numStates +
+                                             configData->lambdaVal);
+        configData->wC[i] = configData->wM[i];
+    }
+    
     return;
 }
 
