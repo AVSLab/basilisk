@@ -299,7 +299,7 @@ void sunlineStateProp(double *stateInOut, double *b_Vec, double dt)
 */
 void sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
 {
-	int i, k, Index;
+	int i, Index;
 	double sBarT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
 	double xComp[SKF_N_STATES_SWITCH], AT[(2 * SKF_N_STATES_SWITCH + SKF_N_STATES_SWITCH)*SKF_N_STATES_SWITCH];
 	double aRow[SKF_N_STATES_SWITCH], rAT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], xErr[SKF_N_STATES_SWITCH]; 
