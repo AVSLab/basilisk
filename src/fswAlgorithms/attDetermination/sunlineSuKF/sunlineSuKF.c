@@ -285,6 +285,7 @@ void sunlineStateProp(double *stateInOut, double *b_Vec, double dt)
     /*! - Multiply omega cross d by dt and add to state to propagate */
     v3Scale(-dt, omegaCrossd, propagatedVel);
     v3Add(stateInOut, propagatedVel, stateInOut);
+    v3Normalize(stateInOut, stateInOut);
     
 	return;
 }
@@ -307,7 +308,7 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
     double procNoise[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
 
     configData->dt = updateTime - configData->timeTag;
-    mCopy(configData->sQnoise, SKF_N_STATES, SKF_N_STATES, procNoise);
+    mCopy(configData->sQnoise, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, procNoise);
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
 	vCopy(configData->state, configData->numStates,
 		&(configData->SP[0 * configData->numStates + 0]));
@@ -358,7 +359,7 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
 			configData->numStates*sizeof(double));
 	}
     /*! - Scale sQNoise matrix depending on the number of measurements*/
-    mScale(configData->numObs/3, procNoise, SKF_N_STATES, SKF_N_STATES, procNoise);
+    mScale(configData->numObs/3.0, procNoise, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, procNoise);
     
     /*! - Pop the sQNoise matrix on to the end of AT prior to getting QR decomposition*/
 	memcpy(&AT[2 * configData->countHalfSPs*configData->numStates],
