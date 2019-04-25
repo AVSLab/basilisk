@@ -123,8 +123,6 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, uint64
                                   currentScaledValue);
     orbEl.Omega = calculateChebyValue(currRec->RAANCoeff, currRec->nChebCoeff,
                                   currentScaledValue);
-    orbEl.a = calculateChebyValue(currRec->semiMajorCoeff, currRec->nChebCoeff,
-                                  currentScaledValue);
     meanAnom = calculateChebyValue(currRec->meanAnomCoeff, currRec->nChebCoeff,
                                    currentScaledValue);
     
