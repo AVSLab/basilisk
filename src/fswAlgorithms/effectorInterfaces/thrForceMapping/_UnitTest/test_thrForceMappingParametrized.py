@@ -495,6 +495,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
                                                                      np.array([Lr_Rec_Bar_B_Unit]), accuracy,
                                                                      "CompareTorques",
                                                                      3, testFailCount, testMessages)
+
     else:
         # Assuming sufficent thrusters, we should always get the requested torque, as seen by the control frame.
         print "\nReq Lr_Bar [B]: " + str(Lr_Req_Bar_B)
@@ -506,6 +507,16 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
                                                                      "CompareTorques",
                                                                      3, testFailCount, testMessages)
 
+        if testFailCount > 0:
+            print "\nReq Lr_Bar_Unit [B]: " + str(Lr_Req_Bar_B_Unit)
+            print "Rec Lr_Bar_Unit [B]: " + str(Lr_Rec_Bar_B_Unit[1:4])
+            if dropThruster > 0:
+                # If the torque doesn't match, check that the unit direciton does.
+                testFailCount = 0
+                testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([Lr_Req_Bar_B_Unit]),
+                                                                             np.array([Lr_Rec_Bar_B_Unit]), accuracy,
+                                                                             "CompareTorques",
+                                                                             3, testFailCount, testMessages)
 
     '''
     else:
