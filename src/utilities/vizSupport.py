@@ -63,16 +63,15 @@ def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFact
                                                                   "pluto barycenter_planet_data",
                                                                   "saturn barycenter_planet_data"])
     vizMessager.planetNames = vizInterface.StringVector(["earth", "mars", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
-    #vizMessager.numRW = 4
     vizMessager.protoFilename = fileName
-    VizTaskName = "VizTask"
 
+    # see if celestial body planet ephemeris messages must be created
     if (gravFactory != None):
         gravBodies = gravFactory.gravBodies
         if (gravBodies):
             for key in gravBodies:
-                if gravBodies[key].isCentralBody == True:
-                    headerData = sim_model.MessageHeaderData()
+                msgName = key + '_planet_data'
+                if (not scSim.TotalSim.IsMsgCreated(msgName)):
                     ephemData = spice_interface.SpicePlanetStateSimMsg()
                     ephemData.J2000Current = 0.0
                     ephemData.PositionVector = [0.0, 0.0, 0.0]
@@ -80,12 +79,6 @@ def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFact
                     ephemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
                     ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
                     ephemData.PlanetName = key
-                    msgName = key + '_planet_data'
-                    scSim.TotalSim.populateMessageHeader(msgName, headerData)
-                    if(headerData.UpdateCounter == 0):
-                        print "I am getting ready to send a message."
-                        unitTestSupport.setMessage(scSim.TotalSim, processName, msgName, ephemData)
-                
-                    break
+                    unitTestSupport.setMessage(scSim.TotalSim, processName, msgName, ephemData)
 
     return
