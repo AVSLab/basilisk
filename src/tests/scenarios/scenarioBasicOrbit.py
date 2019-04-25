@@ -87,26 +87,28 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 # Copy the folder `{basiliskPath}/tests` into a new folder in a different directory.
 # Now, when you want to use a tutorial, navigate inside that folder, and edit and execute the *copied* integrated tests.
 #
-# Qt Visualization Option
+# Vizard Visualization Option
 # -----
-# If you wish to transmit the simulation data to the Qt Visualization, then uncomment the following
-# line (line 360 in the script) from the python scenario script.  If the Viz is running, and searching for a connection on
-# 127.0.0.1 (using Open Connection command from the File menu), the simulation is visualized in
-# realtime.  To enable this, uncomment line 360 in this tutorial script.
+# If you wish to transmit the simulation data to the United based Vizard Visualization application,
+# then uncomment the following
+# line (line 430 in the script) from the python scenario script.  This will cause the BSK simulation data to
+# be stored in a binary file inside the _VizFiles sub-folder with the scenario folder.  This file can be read in by
+# Vizard and played back after running the BSK simulation.
+# To enable this, uncomment line 430 in this tutorial script.
 #~~~~~~~~~~~~~~{.py}
-# unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')  # The Viz only support 'earth', 'mars', or 'sun'
+# vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
 #~~~~~~~~~~~~~~
-# The current Qt based visualiztion is only able to show orbits about either Earth, Mars or the sun.
-# Be sure to match the celestial object name in the line above with the current simulation.
-# Further, note that by default the Viz is running in realtime mode with a 1x speed up factor.  This Viz
-# speed up factor can be increased in the Qt GUI by calling up the
 #
-#       View/Bottom Playback Controls
-#
-# The speed up factor is adusting in 2x steps up or down using the green arrows in this GUI.
-# This simulation is only updated at the rate of the simulation.  Thus, for this orbit simulation with 10s
-# time steps the Viz will be choppy at 1x.  Speeding up the Viz playback with the green arrows quickly illustrates
-# the orbital motion.
+# The vizInterface module must be built into BSK.  This is done if the correct CMake options are selected.
+# The default CMake will include this vizInterface module in the BSK build.  See the BSK HTML documentation on
+# more information of CMake options.
+# By using the gravFactory support class to create and add planetary bodies the vizInterface module will
+# automatically be able to find the correct celestial body ephemeris names.  If these names are changed, then the
+# vizSupport.py support library has to be customized.
+# Currently Vizard supports playback of stored simulation data files. By default the Viz is running in
+# realtime mode with a 1x speed up factor.  On the bottom right of the Vizard GUI this can be increased
+# or decreased.  Further, some display elements such as thruster or reaction wheel panels are only visible if
+# such devices are being simulated in BSK.
 #
 #
 # Simulation Scenario Setup Details
