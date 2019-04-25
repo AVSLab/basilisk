@@ -371,9 +371,6 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
                                                 planet.spherHarm, 2)
     mu = planet.mu
 
-    # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
-
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
@@ -426,6 +423,10 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
         numDataPoints = 100
     samplingTime = simulationTime / (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
+
+
+    # if this scenario is to interface with the BSK Viz, uncomment the following line
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
 
     #
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
