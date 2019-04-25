@@ -345,10 +345,14 @@ void SimModel::populateMessageHeader(std::string messageName,
 {
     MessageIdentData messageID = SystemMessaging::GetInstance()->
         messagePublishSearch(messageName);
-    SystemMessaging::GetInstance()->selectMessageBuffer(messageID.processBuffer);
-    MessageHeaderData *locHeader = SystemMessaging::GetInstance()->
-        FindMsgHeader(messageID.itemID);
-    memcpy(headerOut, locHeader, sizeof(MessageHeaderData));
+    memset(headerOut, 0x0 ,sizeof(MessageHeaderData));
+    if(messageID.itemFound)
+    {
+        SystemMessaging::GetInstance()->selectMessageBuffer(messageID.processBuffer);
+        MessageHeaderData *locHeader = SystemMessaging::GetInstance()->
+            FindMsgHeader(messageID.itemID);
+        memcpy(headerOut, locHeader, sizeof(MessageHeaderData));
+    }
 }
 
 /*! This method find the ID associated with the message name and returns it to 

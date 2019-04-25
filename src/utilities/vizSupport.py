@@ -31,7 +31,7 @@ from Basilisk.utilities import unitTestSupport
 # import Viz messaging related modules
 from Basilisk import __path__
 bskPath = __path__[0]
-from Basilisk.simulation import spice_interface
+from Basilisk.simulation import spice_interface, sim_model
 
 sys.path.append(bskPath + '/../../../vizard/ProtoModels/modules')
 
@@ -74,6 +74,7 @@ def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFact
         if (gravBodies):
             for key in gravBodies:
                 if gravBodies[key].isCentralBody == True:
+                    headerData = sim_model.MessageHeaderData()
                     ephemData = spice_interface.SpicePlanetStateSimMsg()
                     ephemData.J2000Current = 0.0
                     ephemData.PositionVector = [0.0, 0.0, 0.0]
@@ -82,7 +83,10 @@ def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFact
                     ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
                     ephemData.PlanetName = key
                     msgName = key + '_planet_data'
-                    unitTestSupport.setMessage(scSim.TotalSim, processName, msgName, ephemData)
+                    scSim.TotalSim.populateMessageHeader(msgName, headerData)
+                    if(headerData.UpdateCounter == 0):
+                        print "I am getting ready to send a message."
+                        unitTestSupport.setMessage(scSim.TotalSim, processName, msgName, ephemData)
                 
                     break
 

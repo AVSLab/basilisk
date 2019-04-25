@@ -344,9 +344,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     #
     #   setup the simulation tasks/objects
     #
-    
-                                                                  
-                                                                  
+
 
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
