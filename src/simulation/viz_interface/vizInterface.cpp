@@ -37,7 +37,7 @@ VizInterface::VizInterface()
 {
     this->liveStream = 0;
     this->saveFile = 0;
-    this->FrameNumber=-1;
+    this->FrameNumber= -1;
     this->numOutputBuffers = 2;
     this->scPlusInMsgName = "inertial_state_output";
     this->cssDataInMsgName = "css_sensors_data";

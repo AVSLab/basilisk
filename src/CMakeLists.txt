@@ -73,10 +73,12 @@ endif()
 
 # HACK: Create Release and Debug directories for conan
 # Conan hasn't fixed this issue yet, this removes warnings
+
 foreach (library ${CONAN_LIB_DIRS})
    file(MAKE_DIRECTORY "${library}/Release")
-   file(MAKE_DIRECTORY "${library}/Debug")
+   file(MAKE_DIRECTORY "${library}/Debug") 
 endforeach(library)
+
 
 # Create a Swig module
 # Avoids a deprecation error in CMAKE versions less than 3 by calling the correct API depending on version
@@ -282,8 +284,9 @@ function(findAndCreateSwigModules SubModule)
 
 	    SWIG_LINK_LIBRARIES(${FileBase} ${PYTHON_LIBRARIES})
 	    SWIG_LINK_LIBRARIES(${FileBase} ${CONAN_LIBS})
-	    SWIG_LINK_LIBRARIES(${FileBase} protocode)
-
+            if (USE_PROTOBUFFERS)
+	       SWIG_LINK_LIBRARIES(${FileBase} protocode)
+            endif()
 	    foreach(LibFile ${LIBRARY_BUILD_LIST})
 	         SWIG_LINK_LIBRARIES(${FileBase} ${LibFile})
 	    endforeach()
