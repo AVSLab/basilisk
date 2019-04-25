@@ -24,31 +24,29 @@
 #   Unit Test Support Script
 #
 import sys
-import os,errno
 
 from Basilisk.utilities import unitTestSupport
 
 # import Viz messaging related modules
 from Basilisk import __path__
 bskPath = __path__[0]
-from Basilisk.simulation import spice_interface, sim_model
+from Basilisk.simulation import spice_interface
 
 sys.path.append(bskPath + '/../../../vizard/ProtoModels/modules')
 
-youveBeenWarned = False
 try:
     import vizInterface
     vizFound = True
 except ImportError:
     vizFound = False
-    if not youveBeenWarned:
-        print 'Could not find vizInterface when import attempted'
-        youveBeenWarned = True
 
 
 def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFactory = None):
     if not vizFound:
+        print 'Could not find vizInterface when import attempted.  Be sure to build BSK with vizInterface support.'
         return
+
+    # setup the Vizard interface module
     vizMessager = vizInterface.VizInterface()
     scSim.AddModelToTask(simTaskName, vizMessager)
 
