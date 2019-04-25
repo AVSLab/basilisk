@@ -431,7 +431,7 @@ void sunlineSuKFMeasModel(SunlineSuKFConfig *configData)
                     expectedMeas *= kellDelta;
                     expectedMeas *= configData->kellFits[i].cssRelScale;
                 }
-                expectedMeas *= stateNorm;
+                expectedMeas *= configData->SP[j*SKF_N_STATES_SWITCH+5];
                 expectedMeas = expectedMeas > 0.0 ? expectedMeas : 0.0;
                 configData->yMeas[obsCounter*(configData->countHalfSPs*2+1) + j] =
                     expectedMeas;
