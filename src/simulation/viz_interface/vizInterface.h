@@ -107,7 +107,7 @@ private:
     std::vector <THROutputSimMsg> thrOutputMessage;         //! [-] Thr data message
     std::vector <SpicePlanetStateSimMsg> spiceMessage;      //! [-] Spice messages
     SCPlusStatesSimMsg scPlusMessage;         //! [-] s/c plus message
-    CSSArraySensorIntMsg cssDataMessage;          //! [-] CSS message
+//    CSSArraySensorIntMsg cssDataMessage;          //! [-] CSS message
     CSSConfigFswMsg cssConfigMessage;          //! [-] CSS config
     CameraConfigMsg cameraConfigMessage;          //! [-] CSS config
     std::ofstream *outputStream;                       //! [-] Output file stream opened in reset

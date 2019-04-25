@@ -33,19 +33,17 @@ option(USE_ZMQ "Include modules which use ZMQ" OFF)
 
 set(requires_protobuff_modules "viz_interface/vizInterface.i")
 set(requires_zmq_modules "viz_interface/vizInterface.i")
+
 if(USE_PROTOBUFFERS)
   list(APPEND required_conan_libraries protobuf/3.5.1@bincrafters/stable)
 endif()
-
 if(USE_OPENCV)
   list(APPEND required_conan_libraries opencv/3.4.5@conan/stable)
 endif()
 
 if(USE_ZMQ)
   list(APPEND required_conan_libraries cppzmq/4.3.0@bincrafters/stable)
-#   list(APPEND required_conan_libraries libzmq/4.1.5@memsharded/stable)
 endif()
-
 
 conan_cmake_run(REQUIRES ${required_conan_libraries}
 	              BASIC_SETUP KEEP_RPATHS
@@ -72,7 +70,14 @@ if(USE_ZMQ)
    set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 endif()
 
-#
+
+# HACK: Create Release and Debug directories for conan
+# Conan hasn't fixed this issue yet, this removes warnings
+foreach (library ${CONAN_LIB_DIRS})
+   file(MAKE_DIRECTORY "${library}/Release")
+   file(MAKE_DIRECTORY "${library}/Debug")
+endforeach(library)
+
 # Create a Swig module
 # Avoids a deprecation error in CMAKE versions less than 3 by calling the correct API depending on version
 # SWIG_ADD_MODULE
@@ -274,12 +279,6 @@ function(findAndCreateSwigModules SubModule)
 	               PROPERTIES COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/simulation")
 	    set(SWIG_MODULE_${FileBase}_EXTRA_DEPS ${impl_files} ${gen_files} ${swig_dep_files})
 	    MAKE_SWIG_MODULE(${FileBase} python ${module} ${impl_files} ${gen_files})
-
-	    #if(USE_PROTOBUFFERS AND (module IN_LIST requires_protobuff_modules))
-    	    #   message(STATUS "Found " ${module})
-	    #   message("CONAN_LIBS " ${CONAN_LIBS})
-	    #   SWIG_LINK_LIBRARIES(${FileBase} ${CONAN_LIBS})
-	    #endif()
 
 	    SWIG_LINK_LIBRARIES(${FileBase} ${PYTHON_LIBRARIES})
 	    SWIG_LINK_LIBRARIES(${FileBase} ${CONAN_LIBS})
