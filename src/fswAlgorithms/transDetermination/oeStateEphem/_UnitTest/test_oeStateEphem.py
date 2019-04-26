@@ -35,9 +35,13 @@ splitPath = path.split('fswAlgorithms')
 from Basilisk import __path__
 bskPath = __path__[0]
 
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
 
 orbitPosAccuracy = 10000.0
 orbitVelAccuracy = 1.0
+unitTestSupport.writeTeXSnippet("tolerancePosValue", str(orbitPosAccuracy), path)
+unitTestSupport.writeTeXSnippet("toleranceVelValue", str(orbitVelAccuracy), path)
 
 
 @pytest.mark.parametrize('validChebyCurveTime', [True, False])
@@ -280,11 +284,16 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime):
         plt.show()
         plt.close('all')
 
+    snippentName = "passFail" + str(validChebyCurveTime)
     if testFailCount == 0:
+        colorText = 'ForestGreen'
         print "PASSED: " + oeStateModelWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
+        colorText = 'Red'
         print "Failed: " + oeStateModelWrap.ModelTag
-        print testMessages
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     # return fail count and join into a single string all messages in the list
     # testMessage
