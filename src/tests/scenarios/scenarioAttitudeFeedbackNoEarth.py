@@ -217,9 +217,6 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     simulationTimeStep = macros.sec2nano(.1)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-    # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile)
-
     #
     #   setup the simulation tasks/objects
     #
@@ -319,6 +316,9 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
 
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+
+    # if this scenario is to interface with the BSK Viz, uncomment the following lines
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile)
 
     #
     #   initialize Simulation

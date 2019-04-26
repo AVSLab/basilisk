@@ -410,9 +410,6 @@ def run(show_plots, simCase):
         scObject.addDynamicEffector(extFTObject)
         scSim.AddModelToTask(simTaskName, extFTObject)
 
-    # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
-
     #
     #   setup the FSW algorithm tasks
     #
@@ -553,6 +550,9 @@ def run(show_plots, simCase):
         scObject.hub.sigma_BNInit = [[sBN[0]], [sBN[1]], [sBN[2]]]  # sigma_CN_B
         n = np.sqrt(mu / (oe.a * oe.a * oe.a))
         scObject.hub.omega_BN_BInit = [[n * HN[2, 0]], [n * HN[2, 1]], [n * HN[2, 2]]]  # rad/s - omega_CN_B
+
+    # if this scenario is to interface with the BSK Viz, uncomment the following lines
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
 
     #
     #   initialize Simulation

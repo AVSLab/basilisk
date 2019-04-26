@@ -197,9 +197,6 @@ def run(show_plots, maneuverCase):
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
-    # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
-
     #
     #   setup orbit and simulation time
     #
@@ -228,6 +225,9 @@ def run(show_plots, maneuverCase):
     numDataPoints = 100
     samplingTime = simulationTime / (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
+
+    # if this scenario is to interface with the BSK Viz, uncomment the following lines
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
 
     #
     #   initialize Simulation

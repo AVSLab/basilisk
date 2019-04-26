@@ -196,9 +196,6 @@ def run(show_plots, useLargeTumble):
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(simTaskName, sNavObject)
 
-    # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile)
-
     #
     #   setup the FSW algorithm tasks
     #
@@ -252,6 +249,9 @@ def run(show_plots, useLargeTumble):
                                simProcessName,
                                mrpControlConfig.vehConfigInMsgName,
                                vehicleConfigOut)
+
+    # if this scenario is to interface with the BSK Viz, uncomment the following lines
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile)
 
     #
     #   initialize Simulation

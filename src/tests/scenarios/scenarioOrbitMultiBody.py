@@ -310,9 +310,7 @@ def run(show_plots, scCase):
 
     # add spice interface object to task list
     scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, None, -1)
-    
-    # if this scenario is to interface with the BSK Unity Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim,simTaskName, simProcessName, vizFile, gravFactory)
+
 
     # Use the python spice utility to load in spacecraft SPICE ephemeris data
     # Note: this following SPICE data only lives in the Python environment, and is
@@ -354,6 +352,9 @@ def run(show_plots, scCase):
     numDataPoints = 100
     samplingTime = simulationTime / (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
+
+    # if this scenario is to interface with the BSK Unity Viz, uncomment the following lines
+    # vizSupport.enableUnityVisualization(scSim,simTaskName, simProcessName, vizFile, gravFactory)
 
     #
     #   initialize Simulation

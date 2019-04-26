@@ -262,9 +262,6 @@ def run(show_plots, orbitCase, planetCase):
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
-    # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
-
 
     # create the magnetic field
     magModule = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()  # default is Earth centered dipole module
@@ -341,6 +338,9 @@ def run(show_plots, orbitCase, planetCase):
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     if planetCase == 'Earth' and orbitCase == 'elliptical':
         scSim.TotalSim.logThisMessage(magModule2.envOutMsgNames[0], samplingTime)
+
+    # if this scenario is to interface with the BSK Viz, uncomment the following line
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
 
     #
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()

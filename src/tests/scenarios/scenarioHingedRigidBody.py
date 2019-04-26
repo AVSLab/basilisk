@@ -299,9 +299,6 @@ def run(show_plots):
     # Attach gravity model to spacecraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
-    # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
-
     # Adding the HingedRigidBody State Effector
     scSim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
     scSim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
@@ -387,6 +384,9 @@ def run(show_plots):
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(scSim.panel1.HingedRigidBodyOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(scSim.panel2.HingedRigidBodyOutMsgName, samplingTime)
+
+    # if this scenario is to interface with the BSK Viz, uncomment the following lines
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
 
     #
     #   initialize Simulation

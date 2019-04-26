@@ -272,9 +272,6 @@ def run(show_plots, useAltBodyFrame):
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
-    # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
-
     #
     #   initialize Spacecraft States with initialization variables
     #
@@ -367,6 +364,9 @@ def run(show_plots, useAltBodyFrame):
                                simProcessName,
                                mrpControlConfig.vehConfigInMsgName,
                                vehicleConfigOut)
+
+    # if this scenario is to interface with the BSK Viz, uncomment the following line
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
 
     #
     #   initialize Simulation

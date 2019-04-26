@@ -326,9 +326,6 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
-    # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
-
     # setup extForceTorque module
     # the control torque is read in through the messaging system
     extFTObject = extForceTorque.ExtForceTorque()
@@ -423,6 +420,9 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
+
+    # if this scenario is to interface with the BSK Viz, uncomment the following line
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
 
     #
     #   initialize Simulation
