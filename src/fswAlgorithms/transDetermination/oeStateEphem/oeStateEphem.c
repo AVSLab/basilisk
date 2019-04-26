@@ -130,9 +130,11 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, uint64
 
     /* - determine semi-major axis */
     if (fabs(orbEl.e - 1.0) > 1e-12) {
+        /* elliptic or hyperbolic case */
         orbEl.a = orbEl.rPeriap/(1.0-orbEl.e);
     } else {
-        orbEl.a = 0.0;      /* the elem2rv() function assumes a parabola has a = 0 */
+        /* parabolic case, the elem2rv() function assumes a parabola has a = 0 */
+        orbEl.a = 0.0;
     }
 
     /*! - Determine position and velocity vectors */

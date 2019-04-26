@@ -27,6 +27,7 @@ from Basilisk.fswAlgorithms import oe_state_ephem
 from Basilisk.simulation import sim_model
 from Basilisk import pyswice
 import matplotlib.pyplot as plt
+from Basilisk.utilities import unitTestSupport
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -57,7 +58,7 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime):
     numCurvePoints = 4*8640+1
     curveDurationSeconds = 4*86400
     logPeriod = curveDurationSeconds / (numCurvePoints - 1)
-    degChebCoeff = 6
+    degChebCoeff = 14
     integFrame = "j2000"
     zeroBase = "Earth"
     centralBodyMu = 3.98574405096E14
@@ -81,15 +82,14 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime):
     posCArray = pyswice.new_doubleArray(3)
     velCArray = pyswice.new_doubleArray(3)
     orbEl = sim_model.classicElements()
-    semiMajorArray = []
+    rpArray = []
     eccArray = []
     incArray = []
     OmegaArray = []
     omegaArray = []
-    timeArray = []
-    mArray = []
-    mPrev = 0.0
-    mCount = 0
+    fArray = []
+    fPrev = 0.0
+    fCount = 0
 
     for timeVal in timeHistory:
         stringCurrent = pyswice.et2utc_c(timeVal, 'C', 4, 1024, "Yo")
@@ -100,29 +100,28 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime):
         sim_model.rv2elem(centralBodyMu, posCArray, velCArray, orbEl)
         tdrssPosList.append([stateOut[0]*1000.0, stateOut[1]*1000.0, stateOut[2]*1000.0] )
         tdrssVelList.append([stateOut[3]*1000.0, stateOut[4]*1000.0, stateOut[5]*1000.0] )
-        semiMajorArray.append(orbEl.a)
+        rpArray.append(orbEl.rPeriap)
         eccArray.append(orbEl.e)
         incArray.append(orbEl.i)
         OmegaArray.append(orbEl.Omega)
         omegaArray.append(orbEl.omega)
-        currentM = sim_model.E2M(sim_model.f2E(orbEl.f, orbEl.e), orbEl.e)
-        if currentM < mPrev:
-            mCount += 1
-        mArray.append(2*math.pi*mCount + currentM)
-        mPrev = currentM
+        currentf = orbEl.f
+        if currentf < fPrev:
+            fCount += 1
+        fArray.append(2*math.pi*fCount + currentf)
+        fPrev = currentf
+
 
     tdrssPosList = numpy.array(tdrssPosList)
     tdrssVelList = numpy.array(tdrssVelList)
 
     fitTimes = numpy.linspace(-1, 1, numCurvePoints)
-    chebSemCoeff = numpy.polynomial.chebyshev.chebfit(fitTimes, semiMajorArray, degChebCoeff)
+    chebRpCoeff = numpy.polynomial.chebyshev.chebfit(fitTimes, rpArray, degChebCoeff)
     chebEccCoeff = numpy.polynomial.chebyshev.chebfit(fitTimes, eccArray, degChebCoeff)
     chebIncCoeff = numpy.polynomial.chebyshev.chebfit(fitTimes, incArray, degChebCoeff)
     chebOmegaCoeff = numpy.polynomial.chebyshev.chebfit(fitTimes, OmegaArray, degChebCoeff)
     chebomegaCoeff = numpy.polynomial.chebyshev.chebfit(fitTimes, omegaArray, degChebCoeff)
-    chebMCoeff = numpy.polynomial.chebyshev.chebfit(fitTimes, mArray, degChebCoeff)
-    ephemTimeMid = (etStart + etEnd)/2.0
-    ephemTimeRad = (etEnd-etStart)/2.0
+    chebfCoeff = numpy.polynomial.chebyshev.chebfit(fitTimes, fArray, degChebCoeff)
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -144,11 +143,11 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime):
     oeStateModel.clockCorrInMsgName = "vehicle_clock_ephem_corr"
     oeStateModel.muCentral = centralBodyMu
 
-    oeStateModel.ephArray[0].semiMajorCoeff = chebSemCoeff.tolist()
+    oeStateModel.ephArray[0].rPeriapCoeff = chebRpCoeff.tolist()
     oeStateModel.ephArray[0].eccCoeff = chebEccCoeff.tolist()
     oeStateModel.ephArray[0].incCoeff = chebIncCoeff.tolist()
     oeStateModel.ephArray[0].argPerCoeff = chebomegaCoeff.tolist()
-    oeStateModel.ephArray[0].meanAnomCoeff = chebMCoeff.tolist()
+    oeStateModel.ephArray[0].anomCoeff = chebfCoeff.tolist()
     oeStateModel.ephArray[0].RAANCoeff = chebOmegaCoeff.tolist()
     oeStateModel.ephArray[0].nChebCoeff = degChebCoeff + 1
     oeStateModel.ephArray[0].ephemTimeMid = etStart + curveDurationSeconds/2.0
@@ -188,7 +187,7 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime):
         lastPos = posChebData[lastLogidx, 1:] - tdrssPosList[lastLogidx, :]
         if not numpy.array_equal(secondLastPos, lastPos):
             testFailCount += 1
-            testMessages.append("FAILED: Expected chebychev position to rail high or low " + str(secondLastPos) + " != " + str(lastPos) )
+            testMessages.append("FAILED: Expected Chebychev position to rail high or low " + str(secondLastPos) + " != " + str(lastPos) )
 
         secondLastVel = velChebData[lastLogidx + 1, 1:] - tdrssVelList[lastLogidx, :]
         lastVel = velChebData[lastLogidx, 1:] - tdrssVelList[lastLogidx, :]
@@ -211,19 +210,86 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime):
             testFailCount += 1
             testMessages.append("FAILED: maxVelErrVec >= orbitVelAccuracy, TDRSS Velocity Accuracy: " + str(max(maxVelErrVec)))
 
-        plt.figure()
-        plt.plot(velChebData[:, 0]*1.0E-9, velChebData[:, 1], velChebData[:, 0]*1.0E-9, tdrssVelList[:, 0])
+        plt.close("all")
+        # plot the fitted and actual position coordinates
+        plt.figure(1)
+        fig = plt.gcf()
+        ax = fig.gca()
+        ax.ticklabel_format(useOffset=False, style='plain')
+        for idx in range(1, 4):
+            plt.plot(posChebData[:, 0]*macros.NANO2HOUR, posChebData[:, idx]/1000,
+                     color=unitTestSupport.getLineColor(idx, 3),
+                     linewidth=0.5,
+                     label='$r_{fit,' + str(idx) + '}$')
+            plt.plot(posChebData[:, 0]*macros.NANO2HOUR, tdrssPosList[:, idx-1]/1000,
+                     color=unitTestSupport.getLineColor(idx, 3),
+                     linestyle='dashed', linewidth=2,
+                     label='$r_{true,' + str(idx) + '}$')
+        plt.legend(loc='lower right')
+        plt.xlabel('Time [h]')
+        plt.ylabel('Inertial Position [km]')
+
+        # plot the fitted and actual velocity coordinates
+        plt.figure(2)
+        for idx in range(1, 4):
+            plt.plot(velChebData[:, 0]*macros.NANO2HOUR, velChebData[:, idx]/1000,
+                     color=unitTestSupport.getLineColor(idx, 3),
+                     linewidth=0.5,
+                     label='$v_{fit,' + str(idx) + '}$')
+            plt.plot(velChebData[:, 0]*macros.NANO2HOUR, tdrssVelList[:, idx-1]/1000,
+                     color=unitTestSupport.getLineColor(idx, 3),
+                     linestyle='dashed', linewidth=2,
+                     label='$v_{true,' + str(idx) + '}$')
+        plt.legend(loc='lower right')
+        plt.xlabel('Time [h]')
+        plt.ylabel('Velocity [km/s]')
+
+        # plot the difference in position coordinates
+        plt.figure(3)
+        arrayLength = posChebData[:, 0].size
+        for idx in range(1,4):
+            plt.plot(posChebData[:, 0] * macros.NANO2HOUR, posChebData[:, idx]  - tdrssPosList[:, idx-1],
+                     color=unitTestSupport.getLineColor(idx, 3),
+                     linewidth=0.5,
+                     label='$\Delta r_{' + str(idx) + '}$')
+        plt.plot(velChebData[:, 0] * macros.NANO2HOUR, orbitPosAccuracy*numpy.ones(arrayLength),
+                 color='r', linewidth=1)
+        plt.plot(velChebData[:, 0] * macros.NANO2HOUR, -orbitPosAccuracy * numpy.ones(arrayLength),
+                 color='r', linewidth=1)
+        plt.legend(loc='lower right')
+        plt.xlabel('Time [h]')
+        plt.ylabel('Position Difference [m]')
+
+        # plot the difference in velocity coordinates
+        plt.figure(4)
+        arrayLength = velChebData[:, 0].size
+        for idx in range(1,4):
+            plt.plot(velChebData[:, 0] * macros.NANO2HOUR, velChebData[:, idx]  - tdrssVelList[:, idx-1],
+                     color=unitTestSupport.getLineColor(idx, 3),
+                     linewidth=0.5,
+                     label='$\Delta v_{' + str(idx) + '}$')
+        plt.plot(velChebData[:, 0] * macros.NANO2HOUR, orbitVelAccuracy*numpy.ones(arrayLength),
+                 color='r', linewidth=1)
+        plt.plot(velChebData[:, 0] * macros.NANO2HOUR, -orbitVelAccuracy * numpy.ones(arrayLength),
+                 color='r', linewidth=1)
+        plt.legend(loc='lower right')
+        plt.xlabel('Time [h]')
+        plt.ylabel('Velocity Difference [m/s]')
 
     if show_plots:
         plt.show()
         plt.close('all')
 
     if testFailCount == 0:
-        print "PASSED: " + " Orbit curve fit"
+        print "PASSED: " + oeStateModelWrap.ModelTag
+    else:
+        print "Failed: " + oeStateModelWrap.ModelTag
+        print testMessages
+
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
 
 if __name__ == "__main__":
-    chebyPosFitAllTest(False, False)
+    chebyPosFitAllTest(True, True)
