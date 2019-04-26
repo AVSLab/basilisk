@@ -57,7 +57,7 @@ from Basilisk.fswAlgorithms import fswMessages
 from Basilisk.utilities import vizSupport
 
 
-## \defgroup Tutorials_2_0
+# ## \defgroup Tutorials_2_0
 ##   @{
 # Demonstrates how to stabilize the tumble of a spacecraft and point it's camera instrument
 # to Earth
