@@ -28,7 +28,7 @@
 #include "fswMessages/opnavFswMsg.h"
 
 
-/*! \addtogroup ADCSAlgGroup
+/*! \defgroup headingSuKF
  * @{
  */
 

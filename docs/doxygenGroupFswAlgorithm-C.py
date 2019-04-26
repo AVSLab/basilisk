@@ -34,6 +34,7 @@
 #       \defgroup sunlineSuKF sunlineSuKF
 #       \defgroup sunlineUKF sunlineUKF
 #       \defgroup ukfUtilities ukfUtilities
+#       \defgroup headingSuKF headingSuKF
 #   @}
 #
 #   \defgroup attGuidance attGuidance
