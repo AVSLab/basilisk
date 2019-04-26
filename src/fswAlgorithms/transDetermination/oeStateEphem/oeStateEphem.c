@@ -73,11 +73,13 @@ void Reset_oeStateEphem(OEStateEphemData *configData, uint64_t callTime,
  */
 void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, uint64_t moduleID)
 {
-    double currentEphTime;
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
-    double currentScaledValue;
-    ChebyOERecord *currRec;
+    double currentScaledValue;              /* [s] scaled time value to within [-1,1] */
+    double currentEphTime;                  /* [s] current ephemeris time */
+    double smallestTimeDifference;          /* [s] smallest difference to the time interval mid-point */
+    double timeDifference;                  /* [s] time difference with respect to an interval mid-point */
+    ChebyOERecord *currRec;                 /* []  pointer to the current Chebyshev record being used */
     int i;
     TDBVehicleClockCorrelationFswMsg localCorr;
     memset(&localCorr, 0x0 ,sizeof(TDBVehicleClockCorrelationFswMsg));
@@ -93,15 +95,16 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, uint64
     currentEphTime = callTime*NANO2SEC;
     currentEphTime += localCorr.ephemerisTime - localCorr.vehicleClockTime;
 
-    /*! - select the fitting coefficients */
+    /*! - select the fitting coefficients for the nearest fit interval */
     configData->coeffSelector = 0;
-    for(i=0; i<MAX_OE_RECORDS; i++)
+    smallestTimeDifference = fabs(currentEphTime - configData->ephArray[0].ephemTimeMid);
+    for(i=1; i<MAX_OE_RECORDS; i++)
     {
-        if(fabs(currentEphTime - configData->ephArray[i].ephemTimeMid) <=
-            configData->ephArray[i].ephemTimeRad)
+        timeDifference = fabs(currentEphTime - configData->ephArray[i].ephemTimeMid);
+        if(timeDifference < smallestTimeDifference)
         {
             configData->coeffSelector = i;
-            break;
+            smallestTimeDifference = timeDifference;
         }
     }
 
