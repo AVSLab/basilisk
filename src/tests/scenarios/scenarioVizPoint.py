@@ -182,7 +182,6 @@ def run(show_plots, dscovr, earthOrbit):
         scSim.TotalSim.CreateNewMessage(simProcessName, cameraMsgName, cameraMessageSize, 2, "CameraConfigMsg")
         scSim.TotalSim.WriteMessageData(cameraMsgName, cameraMessageSize, 0, cameraConfig)
     vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, planets)
-    # The Viz only support 'earth', 'mars', or 'sun'
 
     #
     #   setup the simulation tasks/objects
@@ -404,7 +403,7 @@ def run(show_plots, dscovr, earthOrbit):
 #
 if __name__ == "__main__":
     run(
-        False,  # show_plots
+        True,  # show_plots
         True,  # dscovr
         False,  # earthOrbit
     )

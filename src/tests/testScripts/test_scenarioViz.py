@@ -40,7 +40,8 @@ path = os.path.dirname(os.path.abspath(filename))
 try:
     from Basilisk.simulation import vizInterface
 except ImportError:
-    pytest.skip("viz interface not built without required libraries")
+    pytestmark = pytest.mark.skip(reason="viz interface not built without required libraries")
+
 
 sys.path.append(path + '/../scenarios')
 import scenarioVizPoint

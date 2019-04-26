@@ -21,7 +21,7 @@
 
 
 #
-#   Unit Test Support Script
+#   Vizard support file
 #
 import sys
 import os,errno
@@ -29,8 +29,7 @@ import os,errno
 # import Viz messaging related modules
 from Basilisk import __path__
 bskPath = __path__[0]
-from Basilisk.simulation import spice_interface, simFswInterfaceMessages
-from Basilisk.utilities import RigidBodyKinematics as rbk
+from Basilisk.simulation import spice_interface
 
 sys.path.append(bskPath + '/../../../vizard/ProtoModels/modules')
 
