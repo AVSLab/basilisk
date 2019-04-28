@@ -107,16 +107,16 @@ void PlanetEphemeris::Reset(uint64_t CurrenSimNanos)
 void PlanetEphemeris::UpdateState(uint64_t CurrentSimNanos)
 {
     std::vector<std::string>::iterator it;
-    double time;                            //!< [s] time since epoch
-    double mu;                              //!< [m^3/s^2] gravity constant of the sun
-    double c;                               //!< [] counter
-    double f0;                              //!< [r] true anomaly at epoch
-    double e;                               //!< []  orbit eccentricity
-    double M0;                              //!< [r] mean anomaly at epoch
-    double M;                               //!< [r] current mean anomaly
-    double lst;                             //!< [r] local sidereal time angle
-    double omega_NP_P[3];                   //!< [r/s] angular velocity of inertial frame relative to planet frame in planet frame components
-    double tilde[3][3];                     //!< [] skew-symmetric matrix
+    double time;                            // [s] time since epoch
+    double mu;                              // [m^3/s^2] gravity constant of the sun
+    double c;                               // [] counter
+    double f0;                              // [r] true anomaly at epoch
+    double e;                               // []  orbit eccentricity
+    double M0;                              // [r] mean anomaly at epoch
+    double M;                               // [r] current mean anomaly
+    double lst;                             // [r] local sidereal time angle
+    double omega_NP_P[3];                   // [r/s] angular velocity of inertial frame relative to planet frame in planet frame components
+    double tilde[3][3];                     // [] skew-symmetric matrix
     
 
 
