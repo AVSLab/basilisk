@@ -44,14 +44,16 @@ from Basilisk.utilities import RigidBodyKinematics
 # provide a unique test method name, starting with test_
 
 @pytest.mark.parametrize("K1", [0.15, 0])
+@pytest.mark.parametrize("K3", [1, 0])
+@pytest.mark.parametrize("omegaMax", [1.5 * macros.D2R, 0.001])
 
 
-def test_mrp_steering_tracking(show_plots,K1):
-    [testResults, testMessage] = mrp_steering_tracking(show_plots,K1)
+def test_mrp_steering_tracking(show_plots,K1, K3, omegaMax):
+    [testResults, testMessage] = mrp_steering_tracking(show_plots,K1, K3, omegaMax)
     assert testResults < 1, testMessage
 
 
-def mrp_steering_tracking(show_plots,K1):
+def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -96,8 +98,8 @@ def mrp_steering_tracking(show_plots,K1):
     servoConfig.outputDataName = "outputName"
 
     moduleConfig.K1 = K1
-    moduleConfig.K3 = 1.0
-    moduleConfig.omega_max = 1.5 * macros.D2R
+    moduleConfig.K3 = K3
+    moduleConfig.omega_max = omegaMax
     servoConfig.Ki = 0.01
     servoConfig.P = 150.0
     servoConfig.integralLimit = 2. / servoConfig.Ki * 0.1
