@@ -36,7 +36,7 @@ from Basilisk.utilities import RigidBodyKinematics
 
 @pytest.mark.parametrize("K1", [0.15, 0])
 @pytest.mark.parametrize("K3", [1, 0])
-@pytest.mark.parametrize("omegaMax", [1.5 * macros.D2R, 0.001])
+@pytest.mark.parametrize("omegaMax", [1.5 * macros.D2R, 0.001 * macros.D2R])
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
