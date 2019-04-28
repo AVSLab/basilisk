@@ -35,18 +35,23 @@ from Basilisk.fswAlgorithms import rateServoFullNonlinear
 from Basilisk.fswAlgorithms import fswMessages
 from Basilisk.simulation import simFswInterfaceMessages
 from Basilisk.utilities import macros
+from Basilisk.utilities import RigidBodyKinematics
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def test_mrp_steering_tracking(show_plots):
-    [testResults, testMessage] = mrp_steering_tracking(show_plots)
+
+@pytest.mark.parametrize("K1", [0.15, 0])
+
+
+def test_mrp_steering_tracking(show_plots,K1):
+    [testResults, testMessage] = mrp_steering_tracking(show_plots,K1)
     assert testResults < 1, testMessage
 
 
-def mrp_steering_tracking(show_plots):
+def mrp_steering_tracking(show_plots,K1):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -90,7 +95,7 @@ def mrp_steering_tracking(show_plots):
     servoConfig.inputRateSteeringName = moduleConfig.outputDataName
     servoConfig.outputDataName = "outputName"
 
-    moduleConfig.K1 = 0.15
+    moduleConfig.K1 = K1
     moduleConfig.K3 = 1.0
     moduleConfig.omega_max = 1.5 * macros.D2R
     servoConfig.Ki = 0.01
@@ -145,6 +150,8 @@ def mrp_steering_tracking(show_plots):
                                           rwSpeedMessage)
 
     # wheelConfigData message
+    jsList = []
+    GsMatrix_B = []
     def writeMsgInWheelConfiguration():
         rwConfigParams = fswMessages.RWArrayConfigFswMsg()
         inputMessageSize = rwConfigParams.getStructSize()
@@ -160,21 +167,31 @@ def mrp_steering_tracking(show_plots):
         rwConfigParams.numRW = 4
         unitTestSim.TotalSim.WriteMessageData(servoConfig.rwParamsInMsgName, inputMessageSize,
                                               0, rwConfigParams)
-    if len(servoConfig.rwParamsInMsgName)>0:
+        jsList = rwConfigParams.JsList
+        GsMatrix_B = rwConfigParams.GsMatrix_B
+        return jsList, GsMatrix_B
+
+
+    if len(servoConfig.rwParamsInMsgName) > 0:
         writeMsgInWheelConfiguration()
 
     # wheelAvailability message
+    rwAvailList = []
+    #rwAvailabilityMessage = fswMessages.RWAvailabilityFswMsg()
     def writeMsgInWheelAvailability():
         rwAvailabilityMessage = rateServoFullNonlinear.RWAvailabilityFswMsg()
         inputMessageSize = rwAvailabilityMessage.getStructSize()
         unitTestSim.TotalSim.CreateNewMessage(unitProcessName, servoConfig.rwAvailInMsgName,
                                               inputMessageSize, 2) # number of buffers (leave at 2 as default)
-        avail = [rateServoFullNonlinear.AVAILABLE, rateServoFullNonlinear.AVAILABLE, rateServoFullNonlinear.AVAILABLE, rateServoFullNonlinear.AVAILABLE]
-        rwAvailabilityMessage.wheelAvailability = avail
+        rwAvail = [rateServoFullNonlinear.AVAILABLE, rateServoFullNonlinear.AVAILABLE, rateServoFullNonlinear.AVAILABLE, rateServoFullNonlinear.AVAILABLE]
+        rwAvailabilityMessage.wheelAvailability = rwAvail
         unitTestSim.TotalSim.WriteMessageData(servoConfig.rwAvailInMsgName, inputMessageSize,
                                               0, rwAvailabilityMessage)
+        rwAvailList.append(rwAvail)
+        return rwAvailList
 
-    if len(servoConfig.rwAvailInMsgName)>0:
+
+    if len(servoConfig.rwAvailInMsgName) > 0:
         writeMsgInWheelAvailability()
 
     # Setup logging on the test module output message so that we get all the writes to it
@@ -198,27 +215,22 @@ def mrp_steering_tracking(show_plots):
     moduleOutput = unitTestSim.pullMessageLogData(servoConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
 
-    # set the filtered output truth states
-    trueVector = [
-        [-4.447838135953905, 8.4091608989577455, -4.8609788769036752]
-        , [-4.447838135953905, 8.4091608989577455, -4.8609788769036752]
-        , [-4.4480000793994314, 8.4093848702156535, -4.8611816778282186]
-        , [-4.447838135953905, 8.4091608989577455, -4.8609788769036752]
-        , [-4.4480000793994314, 8.4093848702156535, -4.8611816778282186]
-    ]
 
+    # Compute true values
+    trueVals = findTrueTorques(moduleConfig, servoConfig, guidCmdData, rwSpeedMessage, vehicleConfigOut, rwAvailList)
+
+    # set the filtered output truth states
     # compare the module results to the truth values
     accuracy = 1e-12
-    for i in range(0, len(trueVector)):
+    for i in range(0, len(trueVals)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVals[i], 3, accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName +
                                 " unit test at t=" + str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec \n")
 
     print moduleOutput
-    print trueVector
 
     # If the argument provided at commandline "--show_plots" evaluates as true,
     # plot all figures
@@ -234,5 +246,96 @@ def mrp_steering_tracking(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 
+def findTrueValues(guidCmdData,moduleConfig):
+
+    omegaMax = moduleConfig.omega_max
+    sigma = np.asarray(guidCmdData.sigma_BR)
+    K1 = np.asarray(moduleConfig.K1)
+    K3 = np.asarray(moduleConfig.K3)
+    Bmat = RigidBodyKinematics.BmatMRP(sigma)
+    omegaAst = []#np.asarray([0, 0, 0])
+    omegaAst_P = []
+
+    for i in range(len(sigma)):
+        steerRate = -1*(2*omegaMax/np.pi)*np.arctan((K1*sigma[i]+K3*sigma[i]*sigma[i]*sigma[i])*np.pi/(2*omegaMax))
+        omegaAst.append(steerRate)
+    #print omegaAst
+
+
+    if 1:#moduleConfig.ignoreOuterLoopFeedforward: #should be "if not"
+        sigmaP = 0.25*Bmat.dot(omegaAst)
+        for i in range(len(sigma)):
+            omegaAstRate = (K1+3*K3*sigma[i]**2)/(1+((K1*sigma[i]+K3*sigma[i]**3)**2)*(np.pi/(2*omegaMax))**2)*sigmaP[i]
+            omegaAst_P.append(-omegaAstRate)
+    else:
+        omegaAst_P = np.asarray([0, 0, 0])
+
+    return omegaAst, omegaAst_P
+
+def findTrueTorques(moduleConfig,servoConfig, guidCmdData,rwSpeedMessage,vehicleConfigOut, rwAvailMsg):
+    Lr = []
+
+    #Read in variables
+    numRW = servoConfig.rwConfigParams.numRW
+    L = np.asarray(servoConfig.knownTorquePntB_B)
+    steps = [0, 0, .5, 0, .5]
+    omega_BR_B = np.asarray(guidCmdData.omega_BR_B)
+    omega_RN_B = np.asarray(guidCmdData.omega_RN_B)
+    omega_BN_B = omega_BR_B + omega_RN_B #find body rate
+    domega_RN_B = np.asarray(guidCmdData.domega_RN_B)
+
+
+    omega_BastR_B, omegap_BastR_B = findTrueValues(guidCmdData, moduleConfig)
+
+    omega_BastN_B = omega_BastR_B+omega_RN_B
+    omega_BBast_B = omega_BN_B - omega_BastN_B
+
+    Isc = np.asarray(vehicleConfigOut.ISCPntB_B)
+    Isc = np.reshape(Isc, (3, 3))
+    Ki = servoConfig.Ki
+    P = servoConfig.P
+    jsVec = servoConfig.rwConfigParams.JsList[0:numRW]
+    #GsMatrix_B_array = np.asarray(GsMatrix)
+    GsMatrix = (servoConfig.rwConfigParams.GsMatrix_B)
+    GsMatrix_B_array = np.reshape(GsMatrix[0:numRW * 3], (numRW, 3))
+
+    #Compute toruqes
+    for i in range(len(steps)):
+        dt = steps[i]
+        if dt == 0:
+            zVec = np.asarray([0, 0, 0])
+
+        #evaluate integral term
+        if Ki > 0 and abs(servoConfig.integralLimit) > 0: #if integral feedback is on
+            zVec = dt * omega_BBast_B + zVec  # z = integral(del_omega)
+            # Make sure each component is less than the integral limit
+            for i in range(3):
+                if zVec[i] > servoConfig.integralLimit:
+                        zVec[i] = zVec[i]/abs(zVec[i])*servoConfig.integralLimit
+
+        else: #integral gain turned off/negative setting
+            zVec = np.asarray([0, 0, 0])
+
+        #compute torque Lr
+        Lr0 = Ki * zVec  # +K*sigmaBR
+        Lr1 = Lr0 + P * omega_BBast_B  # +P*deltaOmega
+
+        GsHs = np.array([0,0,0])
+
+        if numRW > 0:
+            for i in range(numRW):
+                if rwAvailMsg[0][i] == 0:  # Make RW availability check
+                    GsHs = GsHs + np.dot(GsMatrix_B_array[i, :], jsVec[i]*(np.dot(omega_BN_B, GsMatrix_B_array[i, :]) + rwSpeedMessage.wheelSpeeds[i]))
+                    # J_s*(dot(omegaBN_B,Gs_vec)+Omega_wheel)
+
+        Lr2 = Lr1 - np.cross(omega_BastN_B, (Isc.dot(omega_BN_B)+GsHs))  #  - omega_BastN x ([I]omega + [Gs]h_s)
+
+        Lr3 = Lr2 - Isc.dot(omegap_BastR_B + domega_RN_B - np.cross(omega_BN_B, omega_RN_B))
+        # - [I](d(omega_B^ast/R)/dt + d(omega_r)/dt - omega x omega_r)
+        Lr4 = Lr3 + L
+        Lr4 = -Lr4
+        Lr.append(np.ndarray.tolist(Lr4))
+    return Lr
+
 if __name__ == "__main__":
-    test_mrp_steering_tracking(False)
+    test_mrp_steering_tracking(False, 0.15)

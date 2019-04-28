@@ -37,16 +37,14 @@
  */
 void SelfInit_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
-    /*! - Create output message for module */
+        /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
         sizeof(RateCmdFswMsg), "RateCmdFswMsg", moduleID);
 
 }
 
 /*! This method performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
+ Its primary function is to link the input messages that were created elsewhere.
  @return void
  @param ConfigData The configuration data associated with this module
  */
@@ -79,8 +77,6 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
     AttGuidFswMsg       guidCmd;            /*!< Guidance Message */
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
-
-    /*! Begin method steps*/
     
     memset(&guidCmd, 0x0, sizeof(AttGuidFswMsg));
     /*! - Read the dynamic input messages */
@@ -123,7 +119,6 @@ void MRPSteeringLaw(MRP_SteeringConfig *ConfigData, double sigma_BR[3], double o
         omega_ast[i] = -value;
 
     }
-
     if (ConfigData->ignoreOuterLoopFeedforward) {
         v3SetZero(omega_ast_p);
     } else {

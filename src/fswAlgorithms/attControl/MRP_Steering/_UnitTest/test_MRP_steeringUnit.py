@@ -25,26 +25,29 @@ import pytest
 
 
 
-
-
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import MRP_Steering  # import the module that is to be tested
 from Basilisk.fswAlgorithms import fswMessages
 from Basilisk.utilities import macros
+from Basilisk.utilities import RigidBodyKinematics
+
+
+@pytest.mark.parametrize("K1", [0.15, 0])
+
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def test_mrp_steering_tracking(show_plots):
-    [testResults, testMessage] = mrp_steering_tracking(show_plots)
+def test_mrp_steering_tracking(show_plots, K1):
+    [testResults, testMessage] = mrp_steering_tracking(show_plots, K1)
     assert testResults < 1, testMessage
 
 
-def mrp_steering_tracking(show_plots):
+def mrp_steering_tracking(show_plots, K1):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -77,7 +80,7 @@ def mrp_steering_tracking(show_plots):
     moduleConfig.inputGuidName = "inputGuidName"
     moduleConfig.outputDataName = "rate_steering"
 
-    moduleConfig.K1 = 0.15
+    moduleConfig.K1 = K1
     moduleConfig.K3 = 1.0
     moduleConfig.omega_max = 1.5 * macros.D2R
 
@@ -117,18 +120,14 @@ def mrp_steering_tracking(show_plots):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
 
-    # set the filtered output truth states
-    trueVector1 = [
-          [-0.0223887, 0.0247943, -0.0255602]
-        , [-0.0223887, 0.0247943, -0.0255602]
-        , [-0.0223887, 0.0247943, -0.0255602]
-    ]
+    # Compute truth states
+    omegaAstTrue, omegaAstPTrue = findTrueValues(guidCmdData, moduleConfig)
 
     # compare the module results to the truth values
-    accuracy = 1e-6
-    for i in range(0, len(trueVector1)):
+    accuracy = 1e-12
+    for i in range(0, len(omegaAstTrue)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector1[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(moduleOutput[i], omegaAstTrue[i], 3, accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName +
                                 " unit test at t=" + str(moduleOutput1=[i, 0] * macros.NANO2SEC) +
@@ -138,18 +137,12 @@ def mrp_steering_tracking(show_plots):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                    range(3))
 
-    # set the filtered output truth states
-    trueVector1 = [
-          [0.000187767, -0.0000391234, 0.0000356369]
-        , [0.000187767, -0.0000391234, 0.0000356369]
-        , [0.000187767, -0.0000391234, 0.0000356369]
-    ]
 
     # compare the module results to the truth values
-    accuracy = 1e-6
-    for i in range(0, len(trueVector1)):
+    accuracy = 1e-12
+    for i in range(0, len(omegaAstPTrue)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector1[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(moduleOutput[i], omegaAstPTrue[i], 3, accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName +
                                 " unit test at t=" + str(moduleOutput[i, 0] * macros.NANO2SEC) +
@@ -167,6 +160,35 @@ def mrp_steering_tracking(show_plots):
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
+
+
+def findTrueValues(guidCmdData,moduleConfig):
+
+    omegaMax = moduleConfig.omega_max
+    sigma = np.asarray(guidCmdData.sigma_BR)
+    K1 = np.asarray(moduleConfig.K1)
+    K3 = np.asarray(moduleConfig.K3)
+    Bmat = RigidBodyKinematics.BmatMRP(sigma)
+    omegaAst = []#np.asarray([0, 0, 0])
+    omegaAst_P = []
+
+    for i in range(len(sigma)):
+        steerRate = -1*(2*omegaMax/np.pi)*np.arctan((K1*sigma[i]+K3*sigma[i]*sigma[i]*sigma[i])*np.pi/(2*omegaMax))
+        omegaAst.append(steerRate)
+
+
+    if 1:#moduleConfig.ignoreOuterLoopFeedforward: #should be "if not"
+        sigmaP = 0.25*Bmat.dot(omegaAst)
+        for i in range(len(sigma)):
+            omegaAstRate = (K1+3*K3*sigma[i]**2)/(1+((K1*sigma[i]+K3*sigma[i]**3)**2)*(np.pi/(2*omegaMax))**2)*sigmaP[i]
+            omegaAst_P.append(-omegaAstRate)
+    else:
+        omegaAst_P = np.asarray([0, 0, 0])
+
+    omegaAst = [omegaAst, omegaAst, omegaAst]
+    omegaAst_P = [omegaAst_P, omegaAst_P, omegaAst_P]
+
+    return omegaAst, omegaAst_P
 
 
 if __name__ == "__main__":
