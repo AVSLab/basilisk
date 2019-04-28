@@ -74,10 +74,11 @@ void Reset_MRP_Steering(MRP_SteeringConfig *configData, uint64_t callTime, uint6
 void Update_MRP_Steering(MRP_SteeringConfig *configData, uint64_t callTime,
     uint64_t moduleID)
 {
-    AttGuidFswMsg       guidCmd;            /*!< Guidance Message */
+    AttGuidFswMsg       guidCmd;            //!< Guidance Message */
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
     
+    /* Zero and read in message*/
     memset(&guidCmd, 0x0, sizeof(AttGuidFswMsg));
     /*! - Read the dynamic input messages */
     ReadMessage(configData->inputGuidID, &timeOfMsgWritten, &sizeOfMsgWritten,
@@ -116,7 +117,6 @@ void MRPSteeringLaw(MRP_SteeringConfig *configData, double sigma_BR[3], double o
         value        = atan(M_PI_2/configData->omega_max*(configData->K1*sigma_i
                        + configData->K3*sigma_i*sigma_i*sigma_i))/M_PI_2*configData->omega_max;
         omega_ast[i] = -value;
-
     }
     v3SetZero(omega_ast_p);
     if (!configData->ignoreOuterLoopFeedforward) {
