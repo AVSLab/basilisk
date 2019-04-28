@@ -113,6 +113,18 @@ def fswModuleTestFunction(show_plots, param1):
 
     moduleConfig.planetElements = planetEphemeris.classicElementVector([oeEarth, oeVenus])
 
+    # setup planet local sideral time at epoch
+    moduleConfig.rightAscension = planetEphemeris.DoubleVector([0.*macros.D2R, 272.76*macros.D2R])
+
+    # setup planet local sideral time at epoch
+    moduleConfig.declination = planetEphemeris.DoubleVector([90.*macros.D2R, 67.16*macros.D2R])
+
+    # setup planet local sideral time at epoch
+    moduleConfig.lst0 = planetEphemeris.DoubleVector([10.*macros.D2R, 30.*macros.D2R])
+
+    # setup planet rotation rate about polar axis
+    moduleConfig.rotRate = planetEphemeris.DoubleVector([planetEphemeris.OMEGA_EARTH, planetEphemeris.OMEGA_VENUS])
+
 
     # Setup logging on the test module output message so that we get all the writes to it
     for planet in planetNames:
