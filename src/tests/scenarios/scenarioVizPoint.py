@@ -30,7 +30,8 @@
 import os, sys
 import numpy as np
 import time
-
+from Basilisk import __path__
+bskPath = __path__[0]
 vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
@@ -43,7 +44,7 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import extForceTorque
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import simple_nav, simFswInterfaceMessages
+from Basilisk.simulation import simple_nav, simFswInterfaceMessages, spice_interface
 
 # import FSW Algorithm related support
 from Basilisk.fswAlgorithms import MRP_Feedback
@@ -57,17 +58,20 @@ from Basilisk.fswAlgorithms import fswMessages
 from Basilisk.utilities import vizSupport
 
 
-# ## \defgroup Tutorials_2_0
-##   @{
-# Demonstrates how instantiate a visualization interface. This includes setting camera
-# parameters and capture rates. This stems for an attitude detumble scenario.
+## \defgroup scenarioVizPointGroup
+## @{
+## Demonstration the viz/camera capabilities.
 #
-# Pointing camera to Mars, or the Earth in attitude detumble scenario {#scenarioVizPoint}
+# Pointing the spacecraft camera to Mars, or the Earth in attitude detumble scenario {#scenarioVizPoint}
 # ====
 #
 # Scenario Description
 # -----
-# This script sets up a 6-DOF spacecraft which
+# This scenario demonstrates how instantiate a visualization interface. This includes setting camera
+# parameters and capture rates. This stems for an attitude detumble scenario, but focuses on
+# pointing towards a celestial body in order to display the visualization Vizard, and show
+# the camera capabilities.
+#
 # Setup |       DSCOVR        | Earth Orbit |
 # ----- | ------------------- | ----------- |
 # 1     | True                | False       |
@@ -82,7 +86,7 @@ from Basilisk.utilities import vizSupport
 # tracking errors, as well as the control torque vector.
 #
 # The simulation layout is identical the the AttitudeFeedback scenario when it comes to FSW modules
-# The spacecraft starts in a tummble and controls it's rate as well as points to the Earth.
+# The spacecraft starts in a tumble and controls it's rate as well as points to the Earth.
 #
 #
 # Which scenario is run is controlled at the bottom of the file in the code
@@ -91,7 +95,7 @@ from Basilisk.utilities import vizSupport
 #             run(
 #                 False,  # show_plots
 #                 True,  # dscovr
-#                 False,  # earthOrbit
+#                 False,  # marsOrbit
 #             )
 # ~~~~~~~~~~~~~
 # The first argument either displays the plots from the control, or not.
@@ -100,8 +104,8 @@ from Basilisk.utilities import vizSupport
 # The second simulates a spacecraft orbiting about Mars. The attitude results are the same as
 # the attitude feedback scenario, and pictured in the following plots. The differences lies in
 #  where they are pointing
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback1000.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2000.svg "Torque history")
+# ![MRP Attitude History](Images/Scenarios/scenarioVizPoint1.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/scenarioVizPoint2.svg "Torque history")
 #
 # Setup 1
 # -----
@@ -125,6 +129,9 @@ from Basilisk.utilities import vizSupport
 # scSim.TotalSim.CreateNewMessage(simProcessName, cameraMsgName, cameraMessageSize, 2, "CameraConfigMsg")
 # scSim.TotalSim.WriteMessageData(cameraMsgName, cameraMessageSize, 0, cameraConfig)
 # ~~~~~~~~~~~~~
+#
+# This data is taken from NASA's <a href="https://epic.gsfc.nasa.gov">link EPIC</a> camera website on the date
+# 2018 OCT 23 04:35:25.000 (UTC time).
 #
 # In this setup the pointing needs to be set to Earth, given it's position. This is done in the following lines:
 # ~~~~~~~~~~~~~{.py}
@@ -179,7 +186,8 @@ from Basilisk.utilities import vizSupport
 # earthPoint = np.array([0.,0.,0.1])
 # ~~~~~~~~~~~~~
 #
-# Once again, images of the screenshots taken by Vizard can be found in its repository.
+# Images of the screenshots taken by Vizard can be found in its repository under Assets/Screenshots
+# when the scenario is run from python.
 ##  @}
 def run(show_plots, dscovr, marsOrbit):
     '''Call this routine directly to run the tutorial scenario.'''
@@ -235,11 +243,11 @@ def run(show_plots, dscovr, marsOrbit):
         cameraMessageSize = cameraConfig.getStructSize()
         scSim.TotalSim.CreateNewMessage(simProcessName, cameraMsgName, cameraMessageSize, 2, "CameraConfigMsg")
         scSim.TotalSim.WriteMessageData(cameraMsgName, cameraMessageSize, 0, cameraConfig)
-    vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, planets)
 
     #
     #   setup the simulation tasks/objects
     #
+
 
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
@@ -386,6 +394,7 @@ def run(show_plots, dscovr, marsOrbit):
     #
     #   initialize Simulation
     #
+    vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, planets)
     scSim.InitializeSimulationAndDiscover()
 
     #
@@ -457,7 +466,7 @@ def run(show_plots, dscovr, marsOrbit):
 #
 if __name__ == "__main__":
     run(
-        True,  # show_plots
-        True,  # dscovr
-        False,  # earthOrbit
+        False,  # show_plots
+        False,  # dscovr
+        True,  # marsOrbit
     )
