@@ -25,7 +25,7 @@
 # Purpose:  Integrated test of the spacecraftPlus() and gravity modules.  Illustrates
 # how to setup an orbital simulation that uses multiple gravitational bodies.
 # Author:   Hanspeter Schaub
-# Creation Date:  Dec. 8, 2016
+# Creation Date:  Nov. 01, 2018
 #
 
 
@@ -53,11 +53,11 @@ import scenarioVizPoint
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("dscovr, earthOrbit", [
+@pytest.mark.parametrize("dscovr, marsOrbit", [
     (False, True),
     (True, False)]
 )
-def test_scenarioViz(show_plots, dscovr, earthOrbit):
+def test_scenarioViz(show_plots, dscovr, marsOrbit):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
 
@@ -65,7 +65,7 @@ def test_scenarioViz(show_plots, dscovr, earthOrbit):
     testMessages = []                       # create empty array to store test log messages
 
     # provide a unique test method name, starting with test_
-    figureList = scenarioVizPoint.run(show_plots, dscovr, earthOrbit)
+    figureList = scenarioVizPoint.run(show_plots, dscovr, marsOrbit)
 
     # save the figures to the Doxygen scenario images folder
     for pltName, plt in figureList.items():

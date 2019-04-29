@@ -21,10 +21,10 @@
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test of the spacecraftPlus(), extForceTorque, simpleNav() and
-#           MRP_Feedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit
-# Author:   Hanspeter Schaub
-# Creation Date:  Nov. 19, 2016
+# Purpose:  Integrated test of the vizInterface, spacecraftPlus, simple_nav, MRP_Feedback. and inertial3D modules.
+# Illustrates a spacecraft pointing with visualization.
+# Author:   Thibaud Teil
+# Creation Date:  Nov. 01, 2018
 #
 
 import os, sys
@@ -59,10 +59,10 @@ from Basilisk.utilities import vizSupport
 
 # ## \defgroup Tutorials_2_0
 ##   @{
-# Demonstrates how to stabilize the tumble of a spacecraft and point it's camera instrument
-# to Earth
+# Demonstrates how instantiate a visualization interface. This includes setting camera
+# parameters and capture rates. This stems for an attitude detumble scenario.
 #
-# Pointing camera to Earth in attitude detumble scenario {#scenarioVizPoint}
+# Pointing camera to Mars, or the Earth in attitude detumble scenario {#scenarioVizPoint}
 # ====
 #
 # Scenario Description
@@ -84,50 +84,104 @@ from Basilisk.utilities import vizSupport
 # The simulation layout is identical the the AttitudeFeedback scenario when it comes to FSW modules
 # The spacecraft starts in a tummble and controls it's rate as well as points to the Earth.
 #
-# Setup 1
-# -----
 #
 # Which scenario is run is controlled at the bottom of the file in the code
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
-#     run(
-#          True,        # show_plots
-#          False,       # useUnmodeledTorque
-#          False,       # useIntGain
-#          False        # useKnownTorque
-#        )
+#             run(
+#                 False,  # show_plots
+#                 True,  # dscovr
+#                 False,  # earthOrbit
+#             )
 # ~~~~~~~~~~~~~
-# The first 2 arguments can be left as is.  The last 3 arguments control the
-# simulation scenario flags to turn on or off certain simulation conditions.  The
-# default scenario has both the unmodeled torque and integral feedback turned off.  The
-# resulting attitude and control torque histories are shown below.
+# The first argument either displays the plots from the control, or not.
+# The last two arguments separate two scenarios:
+# The first one mimics the DSCOVR mission spacecraft and its EPIC camera pointing towards Earth.
+# The second simulates a spacecraft orbiting about Mars. The attitude results are the same as
+# the attitude feedback scenario, and pictured in the following plots. The differences lies in
+#  where they are pointing
 # ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback1000.svg "MRP history")
 # ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2000.svg "Torque history")
+#
+# Setup 1
+# -----
+#
+# The first setup has the spacecraft pointing to Earth, from a distant, L1 vantage point.
+# The scenario controls the spacecraft attitude to Earth pointing mode, and snaps pictures at
+# a defined rate. The important camera parameters are set as such:
+#
+# ~~~~~~~~~~~~~{.py}
+# planets = ['sun', 'earth']
+# cameraConfig = simFswInterfaceMessages.CameraConfigMsg()
+# cameraConfig.cameraID = 1
+# cameraConfig.renderRate = int(59 * 1E9)  # in ns
+# cameraConfig.cameraDir_B = [0., 0., 1.]
+# cameraConfig.cameraPos_B = [5000. * 1E-3, 0., 0.]  # in meters
+# cameraConfig.fieldOfView = 0.62  # in degrees
+# cameraConfig.sensorSize = [30.72, 30.72]  # in mm
+# cameraConfig.resolution = [2048, 2048]  # in pixels
+# cameraMsgName = 'camera_config_data'
+# cameraMessageSize = cameraConfig.getStructSize()
+# scSim.TotalSim.CreateNewMessage(simProcessName, cameraMsgName, cameraMessageSize, 2, "CameraConfigMsg")
+# scSim.TotalSim.WriteMessageData(cameraMsgName, cameraMessageSize, 0, cameraConfig)
+# ~~~~~~~~~~~~~
+#
+# In this setup the pointing needs to be set to Earth, given it's position. This is done in the following lines:
+# ~~~~~~~~~~~~~{.py}
+# earthVec = np.array([129559501208.24178, 68180766143.44236, 29544768114.76163])
+# normal = np.array([0., 0., 1.])
+# sunVec = np.array([-32509693.54023, 1002377617.77831, 423017670.86700])
+# dscovrEarthDistance = 1405708000.
+# SEVangle = 7.28
+#
+# r_sc = dscovrEarthDistance * (sunVec - earthVec) / np.linalg.norm(sunVec - earthVec)
+# v_sc = np.zeros(3)
+#
+# b1_n = -(sunVec - earthVec) / np.linalg.norm(sunVec - earthVec)
+# b3_n = (normal - np.dot(normal, b1_n) * b1_n) / np.linalg.norm(normal - np.dot(normal, b1_n) * b1_n)
+# assert np.abs(np.dot(b1_n, b3_n)) < 1E-10, 'Wrong dcm'
+# b2_n = np.cross(b3_n, b1_n) / np.linalg.norm(np.cross(b3_n, b1_n))
+# NB = np.zeros([3, 3])
+# NB[:, 0] = b1_n
+# NB[:, 1] = b2_n
+# NB[:, 2] = b3_n
+#
+# earthPoint = rbk.C2MRP(NB.T)
+# ~~~~~~~~~~~~~
+#
+# The images output from that simulation can be seen as screen captures in the Visualization repository.
 #
 # Setup 2
 # ------
 #
-# Here the python main function is changed to read:
+# The second control scenario points the spacecraft towards Mars on a Mars orbit.
+#
 # ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run(
-#          True,        # show_plots
-#          True,        # useUnmodeledTorque
-#          False,       # useIntGain
-#          False        # useKnownTorque
-#        )
+# simulationTime = macros.min2nano(6.25)
+# planets = ['mars']
+# cameraConfig = simFswInterfaceMessages.CameraConfigMsg()
+# cameraConfig.cameraID = 1
+# cameraConfig.renderRate = int(30 * 1E9)  # in ns
+# cameraConfig.cameraDir_B = [0., 0., 1.]
+# cameraConfig.cameraPos_B = [5000. * 1E-3, 0., 0.]  # in meters
+# cameraConfig.fieldOfView = 50.  # in degrees
+# cameraConfig.sensorSize = [10., 10.]  # in mm
+# cameraConfig.resolution = [512, 512]  # in pixels
+# cameraMsgName = 'camera_config_data'
+# cameraMessageSize = cameraConfig.getStructSize()
+# scSim.TotalSim.CreateNewMessage(simProcessName, cameraMsgName, cameraMessageSize, 2, "CameraConfigMsg")
+# scSim.TotalSim.WriteMessageData(cameraMsgName, cameraMessageSize, 0, cameraConfig)
 # ~~~~~~~~~~~~~
-# The resulting attitude and control torques are shown below.  Note that, as expected,
-# the orientation error doesn't settle to zero, but rather converges to a non-zero offset
-# proportional to the unmodeled torque being simulated.  Also, the control torques settle on
-# non-zero steady-state values.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback1100.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2100.svg "Torque history")
 #
+# Given the geometry, the vector set for pointing which provides images of Mars is given as follows:
 #
+# ~~~~~~~~~~~~~{.py}
+# earthPoint = np.array([0.,0.,0.1])
+# ~~~~~~~~~~~~~
 #
+# Once again, images of the screenshots taken by Vizard can be found in its repository.
 ##  @}
-def run(show_plots, dscovr, earthOrbit):
+def run(show_plots, dscovr, marsOrbit):
     '''Call this routine directly to run the tutorial scenario.'''
 
 
@@ -312,7 +366,7 @@ def run(show_plots, dscovr, earthOrbit):
     #
     # setup the orbit using classical orbit elements
     # for orbit around Earth
-    if earthOrbit:
+    if marsOrbit:
         oe = orbitalMotion.ClassicElements()
         oe.a = 16000000 # meters
         oe.e = 0.1
