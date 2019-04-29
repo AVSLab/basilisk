@@ -79,6 +79,7 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, uint64
     double currentEphTime;                  /* [s] current ephemeris time */
     double smallestTimeDifference;          /* [s] smallest difference to the time interval mid-point */
     double timeDifference;                  /* [s] time difference with respect to an interval mid-point */
+    double anomalyAngle;                    /* [r] general anomaly angle variable */
     ChebyOERecord *currRec;                 /* []  pointer to the current Chebyshev record being used */
     int i;
     TDBVehicleClockCorrelationFswMsg localCorr;
@@ -128,10 +129,21 @@ void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, uint64
                                   currentScaledValue);
     orbEl.Omega = calculateChebyValue(currRec->RAANCoeff, currRec->nChebCoeff,
                                   currentScaledValue);
-    orbEl.f = calculateChebyValue(currRec->anomCoeff, currRec->nChebCoeff,
+    anomalyAngle = calculateChebyValue(currRec->anomCoeff, currRec->nChebCoeff,
                                    currentScaledValue);
 
-    /* - determine semi-major axis */
+    /*! - determine the true anomaly angle */
+    if (currRec->anomalyFlag == 0) {
+        orbEl.f = anomalyAngle;
+    } else if (orbEl.e < 1.0) {
+        /* input is mean elliptic anomaly angle */
+        orbEl.f = E2f(M2E(anomalyAngle, orbEl.e), orbEl.e);
+    } else {
+        /* input is mean hyperbolic anomaly angle */
+        orbEl.f = H2f(N2H(anomalyAngle, orbEl.e), orbEl.e);
+    }
+
+    /*! - determine semi-major axis */
     if (fabs(orbEl.e - 1.0) > 1e-12) {
         /* elliptic or hyperbolic case */
         orbEl.a = orbEl.rPeriap/(1.0-orbEl.e);

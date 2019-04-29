@@ -53,6 +53,7 @@ typedef struct {
     double argPerCoeff[MAX_OE_COEFF];     //!< [-] Set of chebyshev coefficients for argument of periapses
     double RAANCoeff[MAX_OE_COEFF];       //!< [-] Set of chebyshev coefficients for right ascention of the ascending node
     double anomCoeff[MAX_OE_COEFF];       //!< [-] Set of chebyshev coefficients for true anomaly angle
+    uint32_t anomalyFlag;                 //!< [-] Flag indicating if the anomaly angle is true (0), mean (1)
 }ChebyOERecord;
 
 /*! @brief Top level structure for the Chebyshev position ephemeris 
