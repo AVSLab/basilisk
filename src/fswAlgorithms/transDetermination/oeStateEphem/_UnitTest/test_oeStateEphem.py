@@ -44,13 +44,18 @@ unitTestSupport.writeTeXSnippet("tolerancePosValue", str(orbitPosAccuracy), path
 unitTestSupport.writeTeXSnippet("toleranceVelValue", str(orbitVelAccuracy), path)
 
 
-@pytest.mark.parametrize('validChebyCurveTime', [True, False])
-def test_chebyPosFitAllTest(show_plots, validChebyCurveTime):
-    [testResults, testMessage] = chebyPosFitAllTest(show_plots, validChebyCurveTime)
+@pytest.mark.parametrize('validChebyCurveTime, anomFlag', [
+    (True, 0),
+    (True, 1),
+    (True, -1),
+    (False, -1)
+])
+def test_chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
+    [testResults, testMessage] = chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag)
     assert testResults < 1, testMessage
 
 
-def chebyPosFitAllTest(show_plots, validChebyCurveTime):
+def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -91,9 +96,9 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime):
     incArray = []
     OmegaArray = []
     omegaArray = []
-    fArray = []
-    fPrev = 0.0
-    fCount = 0
+    anomArray = []
+    anomPrev = 0.0
+    anomCount = 0
 
     for timeVal in timeHistory:
         stringCurrent = pyswice.et2utc_c(timeVal, 'C', 4, 1024, "Yo")
@@ -109,11 +114,14 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime):
         incArray.append(orbEl.i)
         OmegaArray.append(orbEl.Omega)
         omegaArray.append(orbEl.omega)
-        currentf = orbEl.f
-        if currentf < fPrev:
-            fCount += 1
-        fArray.append(2*math.pi*fCount + currentf)
-        fPrev = currentf
+        if anomFlag == 1:
+            currentAnom = sim_model.E2M(sim_model.f2E(orbEl.f,orbEl.e),orbEl.e)
+        else:
+            currentAnom = orbEl.f
+        if currentAnom < anomPrev:
+            anomCount += 1
+        anomArray.append(2*math.pi*anomCount + currentAnom)
+        anomPrev = currentAnom
 
 
     tdrssPosList = numpy.array(tdrssPosList)
@@ -125,7 +133,7 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime):
     chebIncCoeff = numpy.polynomial.chebyshev.chebfit(fitTimes, incArray, degChebCoeff)
     chebOmegaCoeff = numpy.polynomial.chebyshev.chebfit(fitTimes, OmegaArray, degChebCoeff)
     chebomegaCoeff = numpy.polynomial.chebyshev.chebfit(fitTimes, omegaArray, degChebCoeff)
-    chebfCoeff = numpy.polynomial.chebyshev.chebfit(fitTimes, fArray, degChebCoeff)
+    chebAnomCoeff = numpy.polynomial.chebyshev.chebfit(fitTimes, anomArray, degChebCoeff)
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
@@ -151,11 +159,13 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime):
     oeStateModel.ephArray[0].eccCoeff = chebEccCoeff.tolist()
     oeStateModel.ephArray[0].incCoeff = chebIncCoeff.tolist()
     oeStateModel.ephArray[0].argPerCoeff = chebomegaCoeff.tolist()
-    oeStateModel.ephArray[0].anomCoeff = chebfCoeff.tolist()
+    oeStateModel.ephArray[0].anomCoeff = chebAnomCoeff.tolist()
     oeStateModel.ephArray[0].RAANCoeff = chebOmegaCoeff.tolist()
     oeStateModel.ephArray[0].nChebCoeff = degChebCoeff + 1
     oeStateModel.ephArray[0].ephemTimeMid = etStart + curveDurationSeconds/2.0
     oeStateModel.ephArray[0].ephemTimeRad = curveDurationSeconds/2.0
+    if not (anomFlag == -1):
+        oeStateModel.ephArray[0].anomalyFlag = anomFlag
 
     clockCorrData = oe_state_ephem.TDBVehicleClockCorrelationFswMsg()
     clockCorrData.vehicleClockTime = 0.0
@@ -301,4 +311,6 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime):
 
 
 if __name__ == "__main__":
-    chebyPosFitAllTest(True, True)
+    chebyPosFitAllTest(True,        # showPlots
+                       True,        # validChebyCurveTime
+                       1)           # anomFlag
