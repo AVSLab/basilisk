@@ -1265,6 +1265,7 @@ HTML_EXTRA_FILES       = ../src/simulation/dynamics/extForceTorque/_Documentatio
                          ../src/fswAlgorithms/attControl/lowPassFilterTorqueCommand/_Documentation/AVS-Sim-LowPassFilterControlTorque-20160108.pdf \
                          ../src/fswAlgorithms/attControl/MRP_Feedback/_Documentation/Basilisk-MRP_Feedback-2016-0108.pdf \
                          ../src/fswAlgorithms/attControl/MRP_Steering/_Documentation/AVS-Sim-MRP_Steering-2016-0108.pdf \
+                         ../src/fswAlgorithms/attControl/rateServoFullNonlinear/_Documentation/AVS-Sim-nonlinRateServo-2019-0327.pdf \
                          ../src/fswAlgorithms/attControl/PRV_Steering/_Documentation/AVS-Sim-PRV_Steering-2016-0108.pdf \
                          ../src/fswAlgorithms/attControl/thrMomentumManagement/_Documentation/Basilisk-thrMomentumManagement-20160817.pdf \
                          ../src/fswAlgorithms/attControl/MRP_PD/_Documentation/Basilisk-MRP_PD-2019-03-29.pdf \
