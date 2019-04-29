@@ -31,34 +31,33 @@
 /*! This method creates the output navigation message (translation only) for 
     the ephemeris model
  @return void
- @param ConfigData The configuration data associated with the ephemeris model
+ @param configData The configuration data associated with the ephemeris model
+ @param moduleID The module identification integer
  */
-void SelfInit_oeStateEphem(OEStateEphemData *ConfigData, uint64_t moduleID)
+void SelfInit_oeStateEphem(OEStateEphemData *configData, uint64_t moduleID)
 {
-    ConfigData->stateFitOutMsgID = CreateNewMessage(ConfigData->stateFitOutMsgName,
+    configData->stateFitOutMsgId = CreateNewMessage(configData->stateFitOutMsgName,
         sizeof(EphemerisIntMsg), "EphemerisIntMsg", moduleID);
 }
 
 /*! This method initializes the input time correlation factor structure
  @return void
- @param ConfigData The configuration data associated with the ephemeris model
+ @param configData The configuration data associated with the ephemeris model
+ @param moduleID The module identification integer
  */
-void CrossInit_oeStateEphem(OEStateEphemData *ConfigData, uint64_t moduleID)
+void CrossInit_oeStateEphem(OEStateEphemData *configData, uint64_t moduleID)
 {
-
-    ConfigData->clockCorrInMsgID = subscribeToMessage(
-        ConfigData->clockCorrInMsgName, sizeof(TDBVehicleClockCorrelationFswMsg), moduleID);
-
+    configData->clockCorrInMsgId = subscribeToMessage(
+        configData->clockCorrInMsgName, sizeof(TDBVehicleClockCorrelationFswMsg), moduleID);
 }
 
-/*! This method takes the chebyshev coefficients loaded for the position 
-    estimator and computes the coefficients needed to estimate the time 
-    derivative of that position vector (velocity).
+/*! This Reset method is empty
  @return void
- @param ConfigData The configuration data associated with the ephemeris model
+ @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identification integer
  */
-void Reset_oeStateEphem(OEStateEphemData *ConfigData, uint64_t callTime,
+void Reset_oeStateEphem(OEStateEphemData *configData, uint64_t callTime,
                          uint64_t moduleID)
 {
 
@@ -68,53 +67,59 @@ void Reset_oeStateEphem(OEStateEphemData *ConfigData, uint64_t callTime,
     using that time and the stored Chebyshev coefficients.  If the time provided 
     is outside the specified range, the position vectors rail high/low appropriately.
  @return void
- @param ConfigData The configuration data associated with the ephemeris model
+ @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The module identification integer
  */
-void Update_oeStateEphem(OEStateEphemData *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Update_oeStateEphem(OEStateEphemData *configData, uint64_t callTime, uint64_t moduleID)
 {
-
-    double currentEphTime;
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
-    double currentScaledValue;
-    double meanAnom;
-    double orbAnom;
-    ChebyOERecord *currRec;
+    double currentScaledValue;              /* [s] scaled time value to within [-1,1] */
+    double currentEphTime;                  /* [s] current ephemeris time */
+    double smallestTimeDifference;          /* [s] smallest difference to the time interval mid-point */
+    double timeDifference;                  /* [s] time difference with respect to an interval mid-point */
+    double anomalyAngle;                    /* [r] general anomaly angle variable */
+    ChebyOERecord *currRec;                 /* []  pointer to the current Chebyshev record being used */
     int i;
     TDBVehicleClockCorrelationFswMsg localCorr;
-    classicElements orbEl;
-    
     memset(&localCorr, 0x0 ,sizeof(TDBVehicleClockCorrelationFswMsg));
-    ReadMessage(ConfigData->clockCorrInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    EphemerisIntMsg tmpOutputState;
+    memset(&tmpOutputState, 0x0, sizeof(EphemerisIntMsg));
+    classicElements orbEl;
+
+    /*! - read in the input message */
+    ReadMessage(configData->clockCorrInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(TDBVehicleClockCorrelationFswMsg), &localCorr, moduleID);
-    
-    memset(&ConfigData->outputState, 0x0, sizeof(EphemerisIntMsg));
-    
+
+    /*! - compute time for fitting interval */
     currentEphTime = callTime*NANO2SEC;
     currentEphTime += localCorr.ephemerisTime - localCorr.vehicleClockTime;
 
-    ConfigData->coeffSelector = 0;
-    for(i=0; i<MAX_OE_RECORDS; i++)
+    /*! - select the fitting coefficients for the nearest fit interval */
+    configData->coeffSelector = 0;
+    smallestTimeDifference = fabs(currentEphTime - configData->ephArray[0].ephemTimeMid);
+    for(i=1; i<MAX_OE_RECORDS; i++)
     {
-        if(fabs(currentEphTime - ConfigData->ephArray[i].ephemTimeMid) <=
-            ConfigData->ephArray[i].ephemTimeRad)
+        timeDifference = fabs(currentEphTime - configData->ephArray[i].ephemTimeMid);
+        if(timeDifference < smallestTimeDifference)
         {
-            ConfigData->coeffSelector = i;
-            break;
+            configData->coeffSelector = i;
+            smallestTimeDifference = timeDifference;
         }
     }
 
-    currRec = &(ConfigData->ephArray[ConfigData->coeffSelector]);
-    currentScaledValue = (currentEphTime - currRec->ephemTimeMid)
-        /currRec->ephemTimeRad;
+    /*! - determine the scaled fitting time */
+    currRec = &(configData->ephArray[configData->coeffSelector]);
+    currentScaledValue = (currentEphTime - currRec->ephemTimeMid)/currRec->ephemTimeRad;
     if(fabs(currentScaledValue) > 1.0)
     {
         currentScaledValue = currentScaledValue/fabs(currentScaledValue);
     }
-    
-    ConfigData->outputState.timeTag = callTime*NANO2SEC;
-    orbEl.a = calculateChebyValue(currRec->semiMajorCoeff, currRec->nChebCoeff,
+
+    /* - determine orbit elements from chebychev polynominals */
+    tmpOutputState.timeTag = callTime*NANO2SEC;
+    orbEl.rPeriap = calculateChebyValue(currRec->rPeriapCoeff, currRec->nChebCoeff,
                                   currentScaledValue);
     orbEl.i = calculateChebyValue(currRec->incCoeff, currRec->nChebCoeff,
                                   currentScaledValue);
@@ -124,32 +129,37 @@ void Update_oeStateEphem(OEStateEphemData *ConfigData, uint64_t callTime, uint64
                                   currentScaledValue);
     orbEl.Omega = calculateChebyValue(currRec->RAANCoeff, currRec->nChebCoeff,
                                   currentScaledValue);
-    orbEl.a = calculateChebyValue(currRec->semiMajorCoeff, currRec->nChebCoeff,
-                                  currentScaledValue);
-    meanAnom = calculateChebyValue(currRec->meanAnomCoeff, currRec->nChebCoeff,
+    anomalyAngle = calculateChebyValue(currRec->anomCoeff, currRec->nChebCoeff,
                                    currentScaledValue);
-    
-    if(orbEl.a > 0.0)
-    {
-        orbAnom = M2E(meanAnom, orbEl.e);
-        orbEl.f = E2f(orbAnom, orbEl.e);
-    }
-    else
-    {
-        orbAnom = N2H(meanAnom, orbEl.e);
-        orbEl.f = H2f(orbAnom, orbEl.e);
-    }
-    
-    while(orbEl.Omega < 0.0)
-    {
-        orbEl.Omega += 2.0*M_PI;
+
+    /*! - determine the true anomaly angle */
+    if (currRec->anomalyFlag == 0) {
+        orbEl.f = anomalyAngle;
+    } else if (orbEl.e < 1.0) {
+        /* input is mean elliptic anomaly angle */
+        orbEl.f = E2f(M2E(anomalyAngle, orbEl.e), orbEl.e);
+    } else {
+        /* input is mean hyperbolic anomaly angle */
+        orbEl.f = H2f(N2H(anomalyAngle, orbEl.e), orbEl.e);
     }
 
-    elem2rv(ConfigData->muCentral, &orbEl, ConfigData->outputState.r_BdyZero_N,
-            ConfigData->outputState.v_BdyZero_N);
+    /*! - determine semi-major axis */
+    if (fabs(orbEl.e - 1.0) > 1e-12) {
+        /* elliptic or hyperbolic case */
+        orbEl.a = orbEl.rPeriap/(1.0-orbEl.e);
+    } else {
+        /* parabolic case, the elem2rv() function assumes a parabola has a = 0 */
+        orbEl.a = 0.0;
+    }
 
-    WriteMessage(ConfigData->stateFitOutMsgID, callTime,
-                 sizeof(EphemerisIntMsg), &ConfigData->outputState, moduleID);
+    /*! - Determine position and velocity vectors */
+    elem2rv(configData->muCentral, &orbEl, tmpOutputState.r_BdyZero_N,
+            tmpOutputState.v_BdyZero_N);
+
+    /*! - Write the output message */
+    WriteMessage(configData->stateFitOutMsgId, callTime,
+                 sizeof(EphemerisIntMsg), &tmpOutputState,
+                 moduleID);
 
     return;
 

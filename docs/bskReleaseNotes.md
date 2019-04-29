@@ -25,6 +25,9 @@ We are very excited by the great capabilities that this software already has, an
     <li>
     Providing new support functions to enable the upcoming Vizard Basilisk Visualization.
     </li>
+    <li>
+        updated the 'oeStateEphem()' module to fit radius at periapses instead of SMA, and have the option to fit true versus mean anomaly angles.  
+    </li>
 </ul>
 
 ## Upcoming Version 0.5.0

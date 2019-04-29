@@ -29,22 +29,31 @@
 #define MAX_OE_COEFF 20
 
 /*! \defgroup oeStateEphem
+ @brief This module takes the TDB time, current object time and computes the state of the object
+ * using the time corrected by TDB and the stored Chebyshev coefficients.
+ *
+ * If the time provided
+ * is outside the specified range for which the stored Chebyshev coefficients are valid then
+ * the position vectors rail high/low appropriately. 
+ * More information can be found in the [PDF Description](Basilisk-oeStateEphem-20190426.pdf).
  *  @{
- */
-/*! @brief Structure that defines the layout of an Ephemeris "record."  This is 
-           basically the set of coefficients for the body x/y/z positions and 
+*/
+
+/*! @brief Structure that defines the layout of an Ephemeris "record."  This is
+           basically the set of coefficients for the ephemeris elements and
            the time factors associated with those coefficients
 */
 typedef struct {
-    uint32_t nChebCoeff;                       /*!< [-] Number chebyshev coefficients loaded into record*/
-    double ephemTimeMid;                  /*!< [s] Ephemeris time (TDB) associated with the mid-point of the curve*/
-    double ephemTimeRad;                  /*!< [s] "Radius" of time that curve is valid for (half of total range*/
-    double semiMajorCoeff[MAX_OE_COEFF];  /*!< [-] Set of chebyshev coefficients for semi-major axis */
-    double eccCoeff[MAX_OE_COEFF];        /*!< [-] Set of chebyshev coefficients for semi-major axis */
-    double incCoeff[MAX_OE_COEFF];        /*!< [-] Set of chebyshev coefficients for semi-major axis */
-    double argPerCoeff[MAX_OE_COEFF];     /*!< [-] Set of chebyshev coefficients for semi-major axis */
-    double RAANCoeff[MAX_OE_COEFF];       /*!< [-] Set of chebyshev coefficients for semi-major axis */
-    double meanAnomCoeff[MAX_OE_COEFF];   /*!< [-] Set of chebyshev coefficients for semi-major axis */
+    uint32_t nChebCoeff;                  //!< [-] Number chebyshev coefficients loaded into record
+    double ephemTimeMid;                  //!< [s] Ephemeris time (TDB) associated with the mid-point of the curve
+    double ephemTimeRad;                  //!< [s] "Radius" of time that curve is valid for (half of total range
+    double rPeriapCoeff[MAX_OE_COEFF];    //!< [-] Set of chebyshev coefficients for radius at periapses
+    double eccCoeff[MAX_OE_COEFF];        //!< [-] Set of chebyshev coefficients for eccentrity
+    double incCoeff[MAX_OE_COEFF];        //!< [-] Set of chebyshev coefficients for inclination
+    double argPerCoeff[MAX_OE_COEFF];     //!< [-] Set of chebyshev coefficients for argument of periapses
+    double RAANCoeff[MAX_OE_COEFF];       //!< [-] Set of chebyshev coefficients for right ascention of the ascending node
+    double anomCoeff[MAX_OE_COEFF];       //!< [-] Set of chebyshev coefficients for true anomaly angle
+    uint32_t anomalyFlag;                 //!< [-] Flag indicating if the anomaly angle is true (0), mean (1)
 }ChebyOERecord;
 
 /*! @brief Top level structure for the Chebyshev position ephemeris 
@@ -53,16 +62,13 @@ typedef struct {
            a given body is in space
 */
 typedef struct {
-    char stateFitOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the output navigation message for pos/vel*/
-    char clockCorrInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the clock correlation message*/
-    double muCentral;                     /*!< [m3/s^2] Gravitational parameter for center of orbital elements*/
-    ChebyOERecord ephArray[MAX_OE_RECORDS]; /*! [-] Array of Chebyshev records for ephemeris*/
-
-    int32_t stateFitOutMsgID;    /*!< [-] The ID associated with the outgoing message*/
-    int32_t clockCorrInMsgID;  /*!< [-] The ID associated with the incoming clock correlation*/
-    uint32_t coeffSelector;    /*!< [-] Index in the ephArray that we are currently using*/
-    
-    EphemerisIntMsg outputState; /*!< [-] The local storage of the outgoing message data*/
+    char stateFitOutMsgName[MAX_STAT_MSG_LENGTH]; //!< [-] The name of the output navigation message for pos/vel
+    char clockCorrInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the clock correlation message
+    double muCentral;                             //!< [m3/s^2] Gravitational parameter for center of orbital elements
+    ChebyOERecord ephArray[MAX_OE_RECORDS];       //!< [-] Array of Chebyshev records for ephemeris
+    int32_t stateFitOutMsgId;                     //!< [-] The ID associated with the outgoing message
+    int32_t clockCorrInMsgId;                     //!< [-] The ID associated with the incoming clock correlation
+    uint32_t coeffSelector;                       //!< [-] Index in the ephArray that we are currently using
 }OEStateEphemData;
 
 #ifdef __cplusplus
