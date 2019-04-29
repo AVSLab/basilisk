@@ -47,8 +47,6 @@ typedef struct {
     int32_t outputMsgID;                        //!< [] ID for the outgoing body accel requests
     char inputGuidName[MAX_STAT_MSG_LENGTH];    //!< The name of the Input message
     int32_t inputGuidID;                        //!< [] ID for the incoming guidance errors
-
-    RateCmdFswMsg outMsg;               //!< [] copy of output message 
 }MRP_SteeringConfig;
 
 #ifdef __cplusplus
