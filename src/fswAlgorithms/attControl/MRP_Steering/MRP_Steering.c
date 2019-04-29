@@ -108,7 +108,7 @@ void MRPSteeringLaw(MRP_SteeringConfig *configData, double sigma_BR[3], double o
 {
     double  sigma_i;        /* ith component of sigma_B/R */
     double  B[3][3];        /* B-matrix of MRP differential kinematic equations */
-    double  sigma_p[3];     /* the MRP body-frame derivative */
+    double  sigma_p[3];     /* MRP rates */
     double  value;
     int     i;
 
