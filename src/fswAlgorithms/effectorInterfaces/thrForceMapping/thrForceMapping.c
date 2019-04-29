@@ -138,12 +138,13 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     double      Fbar[MAX_EFF_CNT];            /* [N]     vector of intermediate thruster forces */
     double      D[3][MAX_EFF_CNT];            /* [m]     mapping matrix from thruster forces to body torque */
     double      Dbar[3][MAX_EFF_CNT];         /* [m]     reduced mapping matrix*/
+    double      C[3][3];                      /* [m]     control mapping matrix*/
     double      Lr_B[3];                      /* [Nm]    commanded ADCS control torque */
     double      Lr_offset[3];
     double      LrLocal[3];                   /* [Nm]    Torque provided by indiviual thruster */
     int         thrusterUsed[MAX_EFF_CNT];    /* []      Array of flags indicating if this thruster is used for the Lr_j */
     double      rThrusterRelCOM_B[MAX_EFF_CNT][3];/* [m]     local copy of the thruster locations relative to COM */
-    double      BLr_B[3];                     /* [Nm]    Control torque that we actually control*/
+    double      Lr_B_Bar[3];                     /* [Nm]    Control torque that we actually control*/
     double      maxFractUse;                  /* []      ratio of maximum requested thruster force relative to maximum thruster limit */
     double      rCrossGt[3];
     CmdTorqueBodyIntMsg LrInputMsg;
@@ -157,6 +158,7 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     vSetZero(F, MAX_EFF_CNT);
     mSetZero(D, 3, MAX_EFF_CNT);
     mSetZero(Dbar, 3, MAX_EFF_CNT);
+    mSetZero(C, 3, 3);
     
     /*! - Read the input messages */
     ReadMessage(configData->controlTorqueInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
@@ -190,11 +192,23 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     }
     
     v3Add(Lr_offset, Lr_B, Lr_B);
+    
+    
+    /*! - copy the control axes into [C] */
+    for (i=0;i<configData->numControlAxes;i++) {
+        v3Copy(&configData->controlAxes_B[3*i], C[i]);
+    }
+    
+    /*! - map the control torque onto the control axes*/
+    m33MultV3(RECAST3X3 C, Lr_B, Lr_B_Bar); /* Note: Lr_B_Bar is projected only onto the available control axes. i.e. if using DV thrusters with only 1 control axis, Lr_B_Bar = [#, 0, 0] */
+
 
     /*! - 1st iteration of finding a set of force vectors to implement the control torque */
-    findMinimumNormForce(configData, D, Lr_B, configData->numThrusters, F, BLr_B);
+    findMinimumNormForce(configData, D, Lr_B_Bar, configData->numThrusters, F);
+    
     
     /*! - Remove forces components that are contributing to the RCS Null space (this is due to the geometry of the thrusters) */
+    
     if (configData->thrForceSign>0)
     {
         substractMin(configData, F, configData->numThrusters, D);
@@ -213,7 +227,7 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
         }
     }
 
-    findMinimumNormForce(configData, Dbar, Lr_B, counterPosForces, Fbar, BLr_B);
+    findMinimumNormForce(configData, Dbar, Lr_B_Bar, counterPosForces, Fbar);
 
     c = 0;
     for (i=0;i<configData->numThrusters;i++) {
@@ -224,8 +238,8 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
             F[i] = 0.0;
         }
     }
-
-    configData->outTorqAngErr = computeTorqueAngErr(D, BLr_B, configData->numThrusters, configData->epsilon, F,
+    
+    configData->outTorqAngErr = computeTorqueAngErr(D, Lr_B_Bar, configData->numThrusters, configData->epsilon, F,
         configData->thrForcMag); /* Eq. 16*/
     maxFractUse = 0.0;
     /*  check if the angle between the request and actual torque exceeds a limit.  If so, then uniformly scale
@@ -244,7 +258,7 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
         if(maxFractUse > 1.0)
         {
             vScale(1.0/maxFractUse, F, configData->numThrusters, F);
-            configData->outTorqAngErr = computeTorqueAngErr(D, BLr_B, configData->numThrusters, configData->epsilon, F,
+            configData->outTorqAngErr = computeTorqueAngErr(D, Lr_B_Bar, configData->numThrusters, configData->epsilon, F,
                                                             configData->thrForcMag);
         }
     }
@@ -270,7 +284,7 @@ void substractMin(thrForceMappingConfig *configData, double *F, uint32_t size, d
     for (i=0; i < configData->numThrusters;i++){
         if(F[i] < 0){
             for(int j=0; j< configData->numThrusters;j++){
-                if(v3IsEqual(DT[i], DT[j], 10^-6)&& (i != j)){
+                if(v3IsEqual(DT[i], DT[j], configData->epsilon)&& (i != j)){
                     F[j] -= F[i];
                     break;
                 }
@@ -287,7 +301,7 @@ void substractMin(thrForceMappingConfig *configData, double *F, uint32_t size, d
  that this routine does not constrain yet the forces to be either positive or negative
  */
 void findMinimumNormForce(thrForceMappingConfig *configData,
-                          double D[3][MAX_EFF_CNT], double Lr_B[3], uint32_t numForces, double F[MAX_EFF_CNT], double Lr_B_Bar[3])
+                          double D[3][MAX_EFF_CNT], double Lr_B_Bar[3], uint32_t numForces, double F[MAX_EFF_CNT])
 {
     
     int         i,j,k;                          /* []     counters */
@@ -304,10 +318,7 @@ void findMinimumNormForce(thrForceMappingConfig *configData,
     for (i=0;i<configData->numControlAxes;i++) {
         v3Copy(&configData->controlAxes_B[3*i], C[i]);
     }
-    
-    /*! - map the control torque onto the control axes*/
-    m33MultV3(RECAST3X3 C, Lr_B, Lr_B_Bar); /* Note: Lr_B_Bar is projected only onto the available control axes. i.e. if using DV thrusters with only 1 control axis, Lr_B_Bar = [#, 0, 0] */
-    
+
     /* find [D].[D]^T */
     mMultM(C, 3, 3, D, 3, MAX_EFF_CNT, CD);
     m33SetIdentity(CDCDT);
@@ -319,7 +330,13 @@ void findMinimumNormForce(thrForceMappingConfig *configData,
             }
         }
     }
-    m33Inverse(CDCDT, CDCDTInv);
+    
+    if (m33Determinant(CDCDT) > configData->epsilon){
+        m33Inverse(CDCDT, CDCDTInv);
+    } else {
+        m33SetZero(CDCDTInv);
+    }
+        
     m33MultV3(CDCDTInv, Lr_B_Bar, CDCDTInvLr);/* If fewer than 3 control axes, then the 1's along the diagonal of DDTInv will not conflict with the mapping, as Lr_B_Bar contains the nessessary 0s to inhibit projection */
     mtMultV(CD, 3, MAX_EFF_CNT, CDCDTInvLr, F); /* Eq. 15 */
 

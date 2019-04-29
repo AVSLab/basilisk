@@ -26,11 +26,6 @@
 
 import pytest
 
-
-
-
-
-
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import alg_contain
@@ -41,140 +36,13 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
 from Basilisk.simulation import simFswInterfaceMessages
 
-
+from Support import Results_thrForceMapping
 
 import os, inspect
 import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-
-def results_computeAngErr(D, BLr_B, F, thrForceMag, numThrusters):
-    returnAngle = 0.0
-    DT = np.transpose(D)
-
-    if np.linalg.norm(BLr_B) > 10**-9:
-        tauActual_B = [0.0, 0.0, 0.0]
-        BLr_B_hat = BLr_B/np.linalg.norm(BLr_B)
-        for i in range(0, numThrusters):
-            if abs(F[i]) < thrForceMag[i]:
-                thrForce = F[i]
-            else:
-                thrForce = thrForceMag[i]*abs(F[i])/F[i]
-
-            LrEffector_B = thrForce*DT[i,:]
-            tauActual_B += LrEffector_B
-
-        tauActual_B = tauActual_B/np.linalg.norm(tauActual_B)
-
-        if np.dot(BLr_B_hat, tauActual_B) < 1.0:
-            returnAngle = np.arccos(np.dot(BLr_B_hat, tauActual_B))
-
-    return returnAngle
-
-def numRelEqualElements(array1, array2, accuracy):
-    count = 0
-    for i in range(3):
-        if abs(array1[i] - array2[i]) < accuracy:
-            count += 1
-    return count
-
-def mapToForce(D, Lr_Bar, C):
-    D = np.matmul(C,D)
-    DT = np.transpose(D)
-    DDT = np.matmul(D, DT)
-    if np.linalg.det(DDT) < 0.0005:
-        for i in range(0, len(DDT)):
-            if DDT[i][i] == 0.0:
-                DDT[i][i] = 1.0
-    try:
-        DDTInv = np.linalg.inv(DDT)
-    except:
-        DDTInv = np.zeros((3,3))
-
-    DDTInvLr_Bar = np.dot(DDTInv, Lr_Bar)
-    F = np.dot(DT, DDTInvLr_Bar)
-    return F
-
-def subtractPairwiseNullSpace(F, D, numThrusters):
-
-    for i in range(numThrusters):
-        if F[i] < 0.0:
-            for j in range(numThrusters):
-                if(np.allclose(D[:,i],D[:,j], atol=1E-6) and i != j):
-                    F[j] -= F[i]
-                    break
-            F[i] = 0.0
-
-    return F
-
-
-def results_thrForceMapping(Lr, COrig, COM, rData, gData, thrForceSign, thrForceMag, angErrThresh, numThrusters):
-
-    # Produce the forces with all thrusters included
-    # thrForceMag = [thrForceMag]*len(gData)
-    rData = np.array(rData)
-    gData = np.array(gData)
-    Lr = np.array(Lr)
-    C = np.array(COrig)
-    C = np.reshape(C, ((len(C)/3), 3), 'C')
-    CT = np.transpose(C)
-    Lr_Bar = np.dot(C,Lr)
-    Lr_offset = [0.0, 0.0, 0.0]
-    # Compute D Matrix and Determine Force
-    D = np.zeros((3,len(rData)))
-    for i in range(len(rData)):
-        D[:,i] = np.cross((rData[i,:] - COM), gData[i,:])
-        if(thrForceSign < 0):
-            Lr_offset -= thrForceMag[i]*np.cross((rData[i,:] - COM), gData[i,:])
-
-
-    Lr_Bar = Lr_Bar + Lr_offset
-    F = mapToForce(D, Lr_Bar, C)
-
-    # Subtract off minimum force (remove null space contribution)
-    if thrForceSign > 0:
-        F = subtractPairwiseNullSpace(F, D, numThrusters)
-
-    # Identify any negative forces
-    t = (F[:]*thrForceSign > 0.0005)
-
-    # Recompute the D Matrix with negative forces removed and compute Force
-    # We currently don't have the availability message in place yet
-    numAvailThrusters = 0
-
-    DNew = np.array([])
-    for i in range(0,len(F)):
-        if t[i]:
-            DNew = np.append(DNew, np.cross((rData[i,:] - COM), gData[i]))
-            numAvailThrusters += 1
-    DNew = np.reshape(DNew, (3, (len(DNew) / 3)), 'F')
-    FNew = mapToForce(DNew, Lr_Bar,C)
-
-    # Remove minumum force
-    count = 0
-    for i in range(0,len(F)):
-        if t[i]:
-            F[i] = FNew[count]
-            count += 1
-        else:
-            F[i] = 0.0
-
-    #if thrForceSign > 0:
-        #F = subtractPairwiseNullSpace(F, D, numThrusters)
-
-    angle = results_computeAngErr(D, Lr_Bar, F, thrForceMag, numThrusters)
-
-    if angle > angErrThresh:
-
-        maxFractUse = 0.0
-        for i in range(0, numThrusters):
-            if thrForceMag[i] > 0 and abs(F[i])/thrForceMag[i] > maxFractUse:
-                maxFractUse = abs(F[i])/thrForceMag[i]
-        if maxFractUse > 1.0:
-            F = F/maxFractUse
-
-    return F
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -195,11 +63,9 @@ def results_thrForceMapping(Lr, COrig, COM, rData, gData, thrForceSign, thrForce
     (4, False),
     (4, True)
     ]) # Odd drops already incorporate symmetry so no need to test for them.
-@pytest.mark.parametrize("numControlAxis", [0, 1, 2, 3])
-@pytest.mark.parametrize("saturateThrusters", [0])
+@pytest.mark.parametrize("numControlAxis", [1, 2, 3])
+@pytest.mark.parametrize("saturateThrusters", [0, 1, 2])
 @pytest.mark.parametrize("misconfigThruster", [False])
-#@pytest.mark.parametrize("saturateThrusters", [0, 1, 2])
-#@pytest.mark.parametrize("misconfigThruster", [True, False])
 
 
 
@@ -366,12 +232,19 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
                 rcsLocationData[numThrusters - 1 - i, :] = [0.0, 0.0, 0.0]
                 rcsDirectionData[numThrusters - 1 - i, :] = [0.0, 0.0, 0.0]
 
+        indices = []
         for i in range(numThrusters):
             if np.linalg.norm(rcsLocationData[i]) == 0:
-                rcsLocationData = np.delete(rcsLocationData, i ,axis=0)
-                rcsDirectionData = np.delete(rcsDirectionData, i, axis=0)
-                rcsLocationData = np.append(rcsLocationData,[[0.0, 0.0, 0.0]], axis=0)
-                rcsDirectionData = np.append(rcsDirectionData, [[0.0, 0.0, 0.0]], axis=0)
+                indices = np.append(indices, i)
+
+        offset = 0
+        for i in indices:
+            rcsLocationData = np.delete(rcsLocationData, i-offset ,axis=0)
+            rcsDirectionData = np.delete(rcsDirectionData, i-offset, axis=0)
+            rcsLocationData = np.append(rcsLocationData,[[0.0, 0.0, 0.0]], axis=0)
+            rcsDirectionData = np.append(rcsDirectionData, [[0.0, 0.0, 0.0]], axis=0)
+            offset = offset + 1
+
         numThrusters = numThrusters - dropThruster
     maxThrust = 0.95
     if useDVThruster:
@@ -416,11 +289,12 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
         return [testFailCount, ''.join(testMessages)] # 3 control axes doesn't work for dv thrusters (only two axes controllable)
 
 
-    F = results_thrForceMapping(requestedTorque, moduleConfig.controlAxes_B,
+    results = Results_thrForceMapping.Results_thrForceMapping(requestedTorque, moduleConfig.controlAxes_B,
                                          vehicleConfigOut.CoM_B, rcsLocationData,
                                          rcsDirectionData, moduleConfig.thrForceSign,
                                          moduleConfig.thrForcMag, moduleConfig.angErrThresh,
-                                         numThrusters)
+                                         numThrusters, moduleConfig.epsilon)
+    F, DNew = results.results_thrForceMapping()
 
     trueVector = np.zeros((2, MAX_EFF_CNT))
     trueVector[0,:] = F
@@ -454,9 +328,9 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     # This computes the projected requested and received control torque directions
     Lr_Req_Bar_B_Unit = Lr_Req_Bar_B/np.linalg.norm(Lr_Req_Bar_B)
     Lr_Rec_Bar_B_Unit = Lr_Rec_Bar_B[1:4]/np.linalg.norm(Lr_Rec_Bar_B[1:4])
+    if np.linalg.norm(Lr_Rec_Bar_B[1:4]) == 0.0:
+        Lr_Rec_Bar_B_Unit = [0.0, 0.0, 0.0]
     Lr_Rec_Bar_B_Unit = np.append(0, Lr_Rec_Bar_B_Unit)
-
-
 
 
 
@@ -466,8 +340,11 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([F]), np.array([moduleOutput[0]]), accuracy,
                                                                  "CompareForces",
                                                                  numThrusters, testFailCount, testMessages)
-    # Checks to make sure that no forces are negative
+    if testFailCount > 0:
+        print F
+        print moduleOutput[0]
 
+    # Checks to make sure that no forces are negative
     if not useDVThruster and np.any(moduleOutput[0,1:]<0):
         testFailCount += 1
         print "A negative force exists in the C RCS solution. This is not allowed!\n"
@@ -476,67 +353,21 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
         testFailCount += 1
         print "A negative force exists in the Python RCS solution. This is not allowed!\n"
 
-    if useDVThruster and np.any(moduleOutput[0,1:]>0):
-        testFailCount += 1
-        print "A positive force exists in the C DV solution. This is not allowed!\n"
-
-    if useDVThruster and np.any(F>0):
-        testFailCount += 1
-        print "A positive force exists in the Python DV solution. This is not allowed!\n"
+    if testFailCount > 0:
+        return [testFailCount, ''.join(testMessages)]
 
 
     # Check that Torques are Sensible
-    # if numThrusters >= moduleConfig.numControlAxes:
-    if saturateThrusters:
-        # If saturated, the torques won't match but the unit direction should.
-        print "\nReq Lr_Bar_Unit [B]: " + str(Lr_Req_Bar_B_Unit)
-        print "Rec Lr_Bar_Unit [B]: " + str(Lr_Rec_Bar_B_Unit[1:4])
-        testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([Lr_Req_Bar_B_Unit]),
-                                                                     np.array([Lr_Rec_Bar_B_Unit]), accuracy,
-                                                                     "CompareTorques",
-                                                                     3, testFailCount, testMessages)
-
-    else:
-        # Assuming sufficent thrusters, we should always get the requested torque, as seen by the control frame.
-        print "\nReq Lr_Bar [B]: " + str(Lr_Req_Bar_B)
-        print "Rec Lr_Bar [B]: " + str(Lr_Rec_Bar_B[1:4])
+    print "\nReq Lr_Bar [B]: " + str(Lr_Req_Bar_B)
+    print "Rec Lr_Bar [B]: " + str(Lr_Rec_Bar_B[1:4])
 
 
-        testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([Lr_Req_Bar_B]),
-                                                                     np.array([Lr_Rec_Bar_B]), accuracy,
-                                                                     "CompareTorques",
-                                                                     3, testFailCount, testMessages)
+    testFailCount = 0
+    testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([Lr_Req_Bar_B_Unit]),
+                                                                 np.array([Lr_Rec_Bar_B_Unit]), accuracy,
+                                                                 "CompareTorques",
+                                                                 3, testFailCount, testMessages)
 
-        if testFailCount > 0:
-            print "\nReq Lr_Bar_Unit [B]: " + str(Lr_Req_Bar_B_Unit)
-            print "Rec Lr_Bar_Unit [B]: " + str(Lr_Rec_Bar_B_Unit[1:4])
-            if dropThruster > 0:
-                # If the torque doesn't match, check that the unit direciton does.
-                testFailCount = 0
-                testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([Lr_Req_Bar_B_Unit]),
-                                                                             np.array([Lr_Rec_Bar_B_Unit]), accuracy,
-                                                                             "CompareTorques",
-                                                                             3, testFailCount, testMessages)
-
-    '''
-    else:
-        if moduleConfig.numControlAxes < 3: # Only expect subset of torque elements to be controlled
-                count = numRelEqualElements(receivedTorque[1:4], Lr_Bar, accuracy)
-                if count < numControlAxis:
-                    testFailCount += 1
-
-        else:
-                if useDVThruster: #DV thrusters only control 2 axis, despite 3 having been defined.
-                    count = numRelEqualElements(receivedTorque[1:4], Lr_Bar, accuracy)
-                    if count < 2:
-                        testFailCount += 1
-                else:
-                    testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([Lr_Bar]),
-                                                                         np.array([receivedTorque]), accuracy,
-                                                                         "CompareTorques",
-                                                                         numControlAxis, testFailCount, testMessages)
-
-    '''
 
     snippetName = "LrData_" + str(useDVThruster) + "_" + str(dropThruster) + "_" + str(numControlAxis) + "_" + str(useCOMOffset) + "____" + str(asymmetricDrop) + "_" + str(saturateThrusters) + "_" + str(misconfigThruster)
 
@@ -564,11 +395,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     snippetTex += "D-Matrix:\n" + str(D) + "\n\n"
     snippetTex += "Forces:\n" + str(np.transpose(F)) + "\n\n"
 
-    directory = "Torques"
-    if accuracy == 1E-6:
-        directory += "/Numerical Precision e-6/"
-    else:
-        directory += "/Numerical Precision e-1/"
+    directory = "OffNom/UnitVec/"
 
 
     # Any solutions that dont have the correct torque, but do have the correct unit direction are called successful.
@@ -576,30 +403,19 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     if testFailCount > 0:
         unitTestSupport.writeTeXSnippet(directory+"Failed/"+snippetName, snippetTex, path)
         print "FAILED: " + moduleWrap.ModelTag
+        testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
+                            moduleOutputName + " unit test at t=" +
+                            str(moduleOutput[0, 0] * macros.NANO2SEC) +
+                            "sec\n")
     else:
         unitTestSupport.writeTeXSnippet(directory+"/Passed/" + snippetName, snippetTex, path)
         print "PASSED: " + moduleWrap.ModelTag
 
 
-
-
-    # compare the module results to the truth values
-
-
-    '''
-    for i in range(0,len(trueVector)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], numThrusters, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
-                                "sec\n")
-
     unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
-    
 
-    snippentName = "passFail_" + str(useDVThruster) + "_" + str(useCOMOffset) + "_" + str(dropThruster) + "_" + str(numControlAxis) + "_" + str(saturateThrusters) + "_" + str(misconfigThruster)
+    snippentName = "passFail_" + str(useDVThruster) + "_" + str(useCOMOffset) + "_" + str(dropThruster) + "_" + str(
+        numControlAxis) + "_" + str(saturateThrusters) + "_" + str(misconfigThruster)
     if testFailCount == 0:
         colorText = 'ForestGreen'
         print "PASSED: " + moduleWrap.ModelTag
@@ -610,9 +426,6 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
-    '''
     return [testFailCount, ''.join(testMessages)]
 
 
@@ -624,11 +437,11 @@ if __name__ == "__main__":
     test_module(              # update "module" in function name
                  False,
                  True,           # useDVThruster
-                 False,           # use COM offset
-                 4,               # num drop thruster(s)
+                 True,           # use COM offset
+                 3,               # num drop thruster(s)
                  False,            # asymmetric drop
                  2,               # num control axis
-                 0,               # saturateThrusters
+                 1,               # saturateThrusters
                  False            # misconfigThruster
 
     )
