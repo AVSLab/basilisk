@@ -28,7 +28,8 @@
 {\bfseries Rev}: & {\bfseries Change Description} & {\bfseries By} \\
 \hline
 Draft & Initial Documentation Draft & H. Schaub \\
-0.1 & Updated the sign definition of $\bm L_{r}$ & H. Schaub \\
+1.0 & Updated the sign definition of $\bm L_{r}$ & H. Schaub \\
+1.1 & Small updates after code review & H. Schaub \\
 \hline
 
 \end{longtable}
@@ -43,8 +44,15 @@ Draft & Initial Documentation Draft & H. Schaub \\
 
 
 
-\section{Initialization}
-Simply call the module reset function prior to using this control module.  This will reset the prior function call time variable, and reset the attitude error integral measure.  The control update period $\Delta t$ is evaluated automatically.  
+\begin{figure}[htb]
+	\centerline{
+	\includegraphics[]{Figures/moduleImg}
+	}
+	\caption{{\tt MRP\_Steering()} Module I/O Illustration}
+	\label{fig:moduleIO}
+\end{figure}
+\section{Module Overview}
+The module input and output messages are illustrated in Figure~\ref{fig:moduleIO}.  The intend of this module is to implement an MRP steering law where the control output is a vector of commanded body rates.  To use this module it is required to use a separate rate tracking servo control module as well.  
 
 
 \section{Steering Law Goals}
@@ -381,7 +389,9 @@ Using the general $f()$ definition in Eq.~\eqref{eq:MS:15.1}, its sensitivity wi
 
 
 \section{Angular Velocity Servo Sub-System}
-To implement the kinematic steering control, a servo sub-system must be included which will produce the required torques to make the actual body rates track the desired body rates.  The angular velocity tracking error vector is defined as
+To implement the kinematic steering control, a servo sub-system must be included which will produce the required torques to make the actual body rates track the desired body rates.  The following development is an illustration of such a servo control module, such as the {\tt rateServoFullNonlinear} module.   However, other body rate tracking control modules could be used as well. 
+
+The angular velocity tracking error vector is defined as
 \begin{equation}
 	\label{eq:MS:32}
 	\delta \bm \omega = \bm\omega_{\mathcal{B}/\mathcal{B}^{\ast}} = \bm\omega_{\mathcal{B}/\mathcal{N}} - \bm\omega_{\mathcal{B}^{\ast}/\mathcal{N}}
@@ -506,6 +516,9 @@ The following variables are required for this module:
 \item The value of $\omega_\text{max}$
 \end{itemize}
 This module returns the values of $\bm\omega_{\mathcal{B}^{\ast}/\mathcal{R}} $ and $\bm\omega_{\mathcal{B}^{\ast}/\mathcal{R}}' $, which are used in the rate servo-level controller to compute required torques.
+
+The control update period $\Delta t$ is evaluated automatically.  
+
 
 \bibliographystyle{unsrt}   % Number the references.
 \bibliography{references}   % Use references.bib to resolve the labels.
