@@ -42,12 +42,13 @@
 
 /*! @brief The configuration structure for the rateServoFullNonlinear module.  */
 typedef struct {
+    /* declare module public variables */
     double P;                           //!< [N*m*s]   Rate error feedback gain applied
     double Ki;                          //!< [N*m]     Integration feedback error on rate error
     double knownTorquePntB_B[3];        //!< [N*m]     known external torque in body frame vector components
+    double integralLimit;               //!< [N*m]     Integration limit to avoid wind-up issue
 
     /* declare module private variables */
-    double integralLimit;               //!< [N*m]     Integration limit to avoid wind-up issue
     uint64_t priorTime;                 //!< [ns]      Last time the attitude control is called
     double z[3];                        //!< [rad]     integral state of delta_omega
     double ISCPntB_B[9];                //!< [kg m^2] Spacecraft Inertia
