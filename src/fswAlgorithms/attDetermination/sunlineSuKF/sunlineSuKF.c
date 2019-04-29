@@ -71,7 +71,6 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     double tempMatrix[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
-    double maxSens;
 
     mSetZero(configData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
 
@@ -148,18 +147,6 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     memset(&(configData->cssSensorInBuffer), 0x0, sizeof(CSSArraySensorIntMsg));
     ReadMessage(configData->cssDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CSSArraySensorIntMsg), (void*) (&(configData->cssSensorInBuffer)), moduleID);
-    maxSens = 0.0;
-    for(i=0; i<configData->numCSSTotal; i++)
-    {
-        if(configData->cssSensorInBuffer.CosValue[i] > maxSens)
-        {
-            v3Copy(&(configData->cssNHat_B[i*3]), configData->stateInit);
-            maxSens = configData->cssSensorInBuffer.CosValue[i];
-        }
-    }
-    
-     vCopy(configData->stateInit, configData->numStates, configData->state);
-    
     return;
 }
 
@@ -181,6 +168,7 @@ void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     SunlineFilterFswMsg sunlineDataOutBuffer;
+    double maxSens;
     
     /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
@@ -190,8 +178,23 @@ void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     ReadMessage(configData->cssDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
         sizeof(CSSArraySensorIntMsg), (void*) (&(configData->cssSensorInBuffer)), moduleID);
     
-    v3Normalize(&configData->state[0], sunheading_hat);
+    if(0==configData->filterInitialized)
+    {
+        maxSens = 0.0;
+        for(i=0; i<configData->numCSSTotal; i++)
+        {
+            if(configData->cssSensorInBuffer.CosValue[i] > maxSens)
+            {
+                v3Copy(&(configData->cssNHat_B[i*3]), configData->stateInit);
+                maxSens = configData->cssSensorInBuffer.CosValue[i];
+                configData->stateInit[5] = maxSens;
+            }
+        }
+        vCopy(configData->stateInit, configData->numStates, configData->state);
+        configData->filterInitialized = 1;
+    }
     
+    v3Normalize(&configData->state[0], sunheading_hat);
     
     /*! - Check for switching frames */
     if (v3Dot(configData->bVec_B, sunheading_hat) > configData->switchTresh)
@@ -207,7 +210,7 @@ void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
         sunlineSuKFTimeUpdate(configData, newTimeTag);
         sunlineSuKFMeasUpdate(configData, newTimeTag);
     }
-    
+    v3Normalize(configData->state, configData->state);
     /*! - If current clock time is further ahead than the measured time, then
           propagate to this current time-step*/
     newTimeTag = callTime*NANO2SEC;

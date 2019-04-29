@@ -102,6 +102,7 @@ typedef struct {
     int32_t filtDataOutMsgId;                   //!< [-] ID for the filter data output message
     int32_t cssDataInMsgId;                     //!< -- ID for the incoming CSS sensor message
     int32_t cssConfigInMsgId;                   //!< [-] ID associated with the CSS configuration data
+    uint32_t filterInitialized;                 //!< [-] Flag indicating if filter has been init or not
 }SunlineSuKFConfig;
 
 #ifdef __cplusplus
