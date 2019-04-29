@@ -421,7 +421,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                         spice->add_rotation(this->spiceMessage[k].J20002Pfix[i][j]);
                     }
                 }
-                spiceInMsgID[k].dataFresh = false;
+//                spiceInMsgID[k].dataFresh = false;
             }
             k++;
         }
