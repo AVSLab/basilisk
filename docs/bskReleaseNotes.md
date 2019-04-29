@@ -23,7 +23,10 @@ We are very excited by the great capabilities that this software already has, an
     Added documentation to the `dvAccumulation` module and included proper time info in the output message.
     </li>
     <li>
-        updated the 'oeStateEphem()' module to fit radius at peripses instead of SMA, and have the option to fit true versus mean anomaly angles.  
+    Providing new support functions to enable the upcoming Vizard Basilisk Visualization.
+    </li>
+    <li>
+        updated the 'oeStateEphem()' module to fit radius at periapses instead of SMA, and have the option to fit true versus mean anomaly angles.  
     </li>
 </ul>
 
