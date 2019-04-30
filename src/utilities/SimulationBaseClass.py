@@ -31,6 +31,8 @@ import numpy as np
 import array
 import xml.etree.ElementTree as ET
 import inspect
+import threading
+from time import sleep
 try:
    set
 except NameError:
@@ -340,8 +342,10 @@ class SimBaseClass:
                     minNextTime = CurrSimTime + LogValue.Period
         return minNextTime
 
-    def ExecuteSimulation(self):
+    def ExecuteSimulation(self, simComm, Scenario):
         self.initializeEventChecks()
+        shareDataThread = threading.Thread(target=self.shareData, args=(simComm, Scenario))
+        shareDataThread.start()
         nextStopTime = self.TotalSim.NextTaskTime
         nextPriority = -1
         pyProcPresent = False
@@ -376,6 +380,23 @@ class SimBaseClass:
                 nextPriority = -1
             nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
 
+    def shareData(self, simComm, Scenario):
+        while True:
+            comm = self.pullMessageLogData(Scenario.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", range(3))
+            if comm.size != 0:
+                simComm.send(comm.tolist())
+
+            '''
+            comm = self.pullMessageLogData(Scenario.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", range(3))
+            if comm.size != 0:
+                sharedArr = simComm
+                del sharedArr[:]
+                print(comm.shape[0])
+                for i in range(comm.shape[1]):
+                    sharedArr.append(comm[:,i])
+                simComm = sharedArr
+            sleep(1)
+            '''
 
     def GetLogVariableData(self, LogName):
         TheArray = np.array(self.VarLogList[LogName].TimeValuePairs)

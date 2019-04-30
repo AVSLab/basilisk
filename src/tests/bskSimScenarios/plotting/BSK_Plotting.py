@@ -104,7 +104,7 @@ def plot_trackingError(sigma_BR, omega_BR_B):
     plt.subplot(211)
     plot_sigma(sigma_BR)
     plt.title('Att Error: $\sigma_{BR}$')
-    
+
     plt.subplot(212)
     #plt.figure()
     plot_omega(omega_BR_B)
@@ -118,7 +118,7 @@ def plot_attitudeGuidance(sigma_RN, omega_RN_N):
     plot_sigma(sigma_RN)
     plt.ylim([-1.0, 1.0])
     plt.title('Ref Att: $\sigma_{RN}$')
-    
+
     plt.subplot(212)
     #plt.figure()
     plot_omega(omega_RN_N)
@@ -131,7 +131,7 @@ def plot_rotationalNav(sigma_BN, omega_BN_B):
     plt.subplot(211)
     plot_sigma(sigma_BN)
     plt.title('Sc Att: $\sigma_{BN}$')
-    
+
     plt.subplot(212)
     #plt.figure()
     plot_omega(omega_BN_B)
@@ -155,8 +155,9 @@ def plot_sun_point(time, sunPoint):
     return
 
 
-def plot_orbit(r_BN):
-    plt.figure()
+def plot_orbit(r_BN, liveFlag):
+    if not liveFlag:
+        plt.figure()
     plt.xlabel('$R_x$, km')
     plt.ylabel('$R_y$, km')
     plt.plot(r_BN[:, 1] * m2km, r_BN[:, 2] * m2km, color_x)

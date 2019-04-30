@@ -230,6 +230,13 @@
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
 
+import multiprocessing
+from time import sleep
+import threading
+import matplotlib.pyplot as plt
+import numpy as np
+import warnings
+
 # Get current file path
 import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -252,6 +259,7 @@ class scenario_BasicOrbit(BSKScenario):
     def __init__(self, masterSim):
         super(scenario_BasicOrbit, self).__init__(masterSim)
         self.name = 'scenario_BasicOrbit'
+        self.r_BN_N = np.array([])
 
     def configure_initial_conditions(self):
         print '%s: configure_initial_conditions' % self.name
@@ -284,15 +292,16 @@ class scenario_BasicOrbit(BSKScenario):
     def pull_outputs(self, showPlots):
         print '%s: pull_outputs' % self.name
         # Dynamics process outputs
-        sigma_BN = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN", range(3))
-        r_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", range(3))
-        v_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", range(3))
+        #sigma_BN = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN", range(3))
+        #r_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", range(3))
+        #v_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", range(3))
 
         # Plot results
+        liveFlag = False
         BSK_plt.clear_all_plots()
-        timeLineSet = r_BN_N[:, 0] * macros.NANO2MIN
-        BSK_plt.plot_orbit(r_BN_N)
-        BSK_plt.plot_orientation(timeLineSet, r_BN_N, v_BN_N, sigma_BN)
+        timeLineSet = self.r_BN_N[:, 0] * macros.NANO2MIN
+        BSK_plt.plot_orbit(self.r_BN_N, liveFlag)
+        #BSK_plt.plot_orientation(timeLineSet, r_BN_N, v_BN_N, sigma_BN)
 
         figureList = {}
         if showPlots:
@@ -304,6 +313,21 @@ class scenario_BasicOrbit(BSKScenario):
 
         return figureList
 
+    def online_outputs(self, showPlots, simProc, plotComm):
+        plt.figure()
+        liveFlag = True
+        while True:
+            comm = np.array(plotComm.recv())
+            with warnings.catch_warnings():
+                warnings.simplefilter(action='ignore', category=FutureWarning)
+                if comm == "term":
+                    break
+            self.r_BN_N = comm
+            if self.r_BN_N.size != 0:
+                BSK_plt.plot_orbit(self.r_BN_N, liveFlag)
+                plt.show(block=False)
+                plt.pause(.01)
+        figureList = self.pull_outputs(showPlots)
 
 def run(showPlots):
     # Instantiate base simulation
@@ -324,13 +348,23 @@ def run(showPlots):
     simulationTime = macros.min2nano(10.)
     TheBSKSim.ConfigureStopTime(simulationTime)
 
-    TheBSKSim.ExecuteSimulation()
+    #communicationQ = multiprocessing.Queue()
+    plotComm, simComm = multiprocessing.Pipe()
+    #commManager = multiprocessing.Manager()
+    #plotComm = commManager.list()
 
+    #TheBSKSim.ExecuteSimulation(simComm, TheScenario)
 
-    # Pull the results of the base simulation running the chosen scenario
-    figureList = TheScenario.pull_outputs(showPlots)
+    simProc = multiprocessing.Process(target = TheBSKSim.ExecuteSimulation, args = (simComm, TheScenario,))
+    plotProc = multiprocessing.Process(target = TheScenario.online_outputs, args = (showPlots, simProc, plotComm,))
+    simProc.start()
+    plotProc.start()
 
-    return figureList
+    simProc.join()
+    simComm.send('term')
+    plotProc.join()
+
+    return
 
 if __name__ == "__main__":
     run(True)
