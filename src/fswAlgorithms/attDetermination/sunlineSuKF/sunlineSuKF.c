@@ -178,18 +178,25 @@ void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     ReadMessage(configData->cssDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
         sizeof(CSSArraySensorIntMsg), (void*) (&(configData->cssSensorInBuffer)), moduleID);
     
+    /*! If the filter is not initialized manually, give it an initial guess using the CSS with the strongest signal.*/
     if(0==configData->filterInitialized)
     {
+        vSetZero(configData->stateInit, SKF_N_STATES_SWITCH);
+        configData->stateInit[5] = 1;
+        configData->stateInit[0] = 1;
         maxSens = 0.0;
+        /*! Loop through sensors to find max*/
         for(i=0; i<configData->numCSSTotal; i++)
         {
             if(configData->cssSensorInBuffer.CosValue[i] > maxSens)
             {
                 v3Copy(&(configData->cssNHat_B[i*3]), configData->stateInit);
                 maxSens = configData->cssSensorInBuffer.CosValue[i];
+                /*! Max sensor reading is initial guess for the kelly factor*/
                 configData->stateInit[5] = maxSens;
             }
         }
+        /*! The normal of the max activated sensor is the initial state*/
         vCopy(configData->stateInit, configData->numStates, configData->state);
         configData->filterInitialized = 1;
     }
@@ -428,6 +435,7 @@ void sunlineSuKFMeasModel(SunlineSuKFConfig *configData)
                 expectedMeas = v3Dot(normalizedState, sensorNormal);
                 expectedMeas = expectedMeas > 0.0 ? expectedMeas : 0.0;
                 kellDelta = 1.0;
+                /*! - Scale the measurement by the kelly factor.*/
                 if(configData->kellFits[i].cssKellFact > 0.0)
                 {
                     kellDelta -= exp(-pow(expectedMeas,configData->kellFits[i].cssKellPow) /
