@@ -26,6 +26,7 @@
 
 #define SKF_N_STATES 6
 #define SKF_N_STATES_SWITCH 6
+#define EKF_N_STATES_SWITCH 5
 #define SKF_N_STATES_HALF 3
 #define MAX_N_CSS_MEAS 8
 

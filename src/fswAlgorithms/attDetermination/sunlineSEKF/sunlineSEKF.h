@@ -50,23 +50,23 @@ typedef struct {
     double bVec_B[SKF_N_STATES_HALF];       /*!< [-] current vector of the b frame used to make Switch frame */
     double switchTresh;             /*!< [-]  Cosine of angle between singularity and S-frame. If close to 1, the threshold for switching frames is lower. If closer to 0.5 singularity is more largely avoided but switching is more frequent  */
 
-	double state[SKF_N_STATES_SWITCH];        /*!< [-] State estimate for time TimeTag*/
-    double x[SKF_N_STATES_SWITCH];             /*! State errors */
-    double xBar[SKF_N_STATES_SWITCH];            /*! [-] Current mean state estimate*/
-	double covarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];         /*!< [-] Time updated covariance */
-	double covar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];        /*!< [-] covariance */
-    double stateTransition[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];        /*!< [-] State transition Matrix */
-    double kalmanGain[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS];    /* Kalman Gain */
+	double state[EKF_N_STATES_SWITCH];        /*!< [-] State estimate for time TimeTag*/
+    double x[EKF_N_STATES_SWITCH];             /*! State errors */
+    double xBar[EKF_N_STATES_SWITCH];            /*! [-] Current mean state estimate*/
+	double covarBar[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH];         /*!< [-] Time updated covariance */
+	double covar[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH];        /*!< [-] covariance */
+    double stateTransition[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH];        /*!< [-] State transition Matrix */
+    double kalmanGain[EKF_N_STATES_SWITCH*MAX_N_CSS_MEAS];    /* Kalman Gain */
 
-    double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];        /*!< [-] Dynamics Matrix, A */
-    double measMat[MAX_N_CSS_MEAS*SKF_N_STATES_SWITCH];        /*!< [-] Measurement Matrix, H*/
-    double W_BS[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];        /*!< [-] Switch Matrix to bring states and covariance to new S-frame when switch occurs*/
+    double dynMat[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH];        /*!< [-] Dynamics Matrix, A */
+    double measMat[MAX_N_CSS_MEAS*EKF_N_STATES_SWITCH];        /*!< [-] Measurement Matrix, H*/
+    double W_BS[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH];        /*!< [-] Switch Matrix to bring states and covariance to new S-frame when switch occurs*/
     
 	double obs[MAX_N_CSS_MEAS];          /*!< [-] Observation vector for frame*/
 	double yMeas[MAX_N_CSS_MEAS];        /*!< [-] Linearized measurement model data */
     double postFits[MAX_N_CSS_MEAS];  /*!< [-] PostFit residuals */
 
-	double procNoise[(SKF_N_STATES_SWITCH-3)*(SKF_N_STATES_SWITCH-3)];       /*!< [-] process noise matrix */
+	double procNoise[(EKF_N_STATES_SWITCH-3)*(EKF_N_STATES_SWITCH-3)];       /*!< [-] process noise matrix */
 	double measNoise[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];  /*!< [-] Maximally sized obs noise matrix*/
     
     double cssNHat_B[MAX_NUM_CSS_SENSORS*3];     /*!< [-] CSS normal vectors converted over to body*/
@@ -97,17 +97,17 @@ extern "C" {
                            uint64_t moduleID);
 	void sunlineTimeUpdate(sunlineSEKFConfig *ConfigData, double updateTime);
     void sunlineMeasUpdate(sunlineSEKFConfig *ConfigData, double updateTime);
-	void sunlineStateSTMProp(double dynMat[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double bVec[SKF_N_STATES], double dt, double *stateInOut, double *stateTransition);
+	void sunlineStateSTMProp(double dynMat[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH], double bVec[SKF_N_STATES], double dt, double *stateInOut, double *stateTransition);
     
-    void sunlineHMatrixYMeas(double states[SKF_N_STATES_SWITCH], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS*3], double *obs, double *yMeas, int *numObs, double *measMat);
+    void sunlineHMatrixYMeas(double states[EKF_N_STATES_SWITCH], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS*3], double *obs, double *yMeas, int *numObs, double *measMat);
     
-    void sunlineKalmanGain(double covarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES_SWITCH], double qObsVal, int numObs, double *kalmanGain);
+    void sunlineKalmanGain(double covarBar[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH], double hObs[MAX_N_CSS_MEAS*EKF_N_STATES_SWITCH], double qObsVal, int numObs, double *kalmanGain);
     
-    void sunlineDynMatrix(double stateInOut[SKF_N_STATES_SWITCH], double bVec[SKF_N_STATES_HALF], double dt, double *dynMat);
+    void sunlineDynMatrix(double stateInOut[EKF_N_STATES_SWITCH], double bVec[SKF_N_STATES_HALF], double dt, double *dynMat);
     
-    void sunlineCKFUpdate(double xBar[SKF_N_STATES_SWITCH], double kalmanGain[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double qObsVal, int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES_SWITCH], double *x, double *covar);
+    void sunlineCKFUpdate(double xBar[EKF_N_STATES_SWITCH], double kalmanGain[EKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], double covarBar[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH], double qObsVal, int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*EKF_N_STATES_SWITCH], double *x, double *covar);
     
-    void sunlineSEKFUpdate(double kalmanGain[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], double qObsVal, int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES_SWITCH], double *states, double *x, double *covar);
+    void sunlineSEKFUpdate(double kalmanGain[EKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], double covarBar[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH], double qObsVal, int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*EKF_N_STATES_SWITCH], double *states, double *x, double *covar);
     
     void sunlineSEKFSwitch(double *bVec_B, double *states, double *covar);
     
