@@ -43,7 +43,7 @@ def StateCovarPlot(x, Pflat, show_plots):
         P[i,:,:] = Pflat[i,1:(numStates*numStates+1)].reshape([numStates,numStates])
 
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
-    plt.subplot(331)
+    plt.subplot(321)
     plt.plot(t , x[:, 1], "b", label='Error Filter')
     plt.plot(t , x[:, 1]+3 * np.sqrt(P[:, 0, 0]), 'r--',  label='Covar Filter')
     plt.plot(t , x[:, 1]-3 * np.sqrt(P[:, 0, 0]), 'r--')
@@ -51,21 +51,21 @@ def StateCovarPlot(x, Pflat, show_plots):
     plt.title('First LOS component')
     plt.grid()
 
-    plt.subplot(332)
+    plt.subplot(322)
     plt.plot(t , x[:, 4], "b")
     plt.plot(t , x[:, 4]+3 * np.sqrt(P[:, 3, 3]), 'r--')
     plt.plot(t , x[:, 4]-3 * np.sqrt(P[:, 3, 3]), 'r--')
     plt.title('Second rate component')
     plt.grid()
 
-    plt.subplot(333)
+    plt.subplot(323)
     plt.plot(t , x[:, 2], "b")
     plt.plot(t , x[:, 2]+3 * np.sqrt(P[:, 1, 1]), 'r--')
     plt.plot(t , x[:, 2]-3 * np.sqrt(P[:, 1, 1]), 'r--')
     plt.title('Second LOS component')
     plt.grid()
 
-    plt.subplot(334)
+    plt.subplot(324)
     plt.plot(t , x[:, 5], "b")
     plt.plot(t , x[:, 5]+3 * np.sqrt(P[:, 4, 4]), 'r--')
     plt.plot(t , x[:, 5]-3 * np.sqrt(P[:, 4, 4]), 'r--')
@@ -73,7 +73,7 @@ def StateCovarPlot(x, Pflat, show_plots):
     plt.title('Third rate component')
     plt.grid()
 
-    plt.subplot(335)
+    plt.subplot(325)
     plt.plot(t , x[:, 3], "b")
     plt.plot(t , x[:, 3]+3 * np.sqrt(P[:, 2, 2]), 'r--')
     plt.plot(t , x[:, 3]-3 * np.sqrt(P[:, 2, 2]), 'r--')
@@ -81,7 +81,7 @@ def StateCovarPlot(x, Pflat, show_plots):
     plt.title('Third LOS component')
     plt.grid()
 
-    plt.subplot(336)
+    plt.subplot(326)
     plt.plot(t , x[:, 6], "b")
     plt.plot(t , x[:, 6]+3 * np.sqrt(P[:, 5, 5]), 'r--')
     plt.plot(t , x[:, 6]-3 * np.sqrt(P[:, 5, 5]), 'r--')
