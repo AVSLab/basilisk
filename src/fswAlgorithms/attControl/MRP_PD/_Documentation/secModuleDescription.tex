@@ -21,6 +21,7 @@ This attitude feedback module using the MRP feedback control related to the cont
 
 Note that this control solution creates an external control torque which must be produced with a cluster of thrusters.  No reaction wheel information is used here.  Further, the feedback control component is a simple proportional and derivative feedback formulation.  As shown in Reference~\citenum{schaub}, this control can asymptotically track a general reference trajectory given by the reference frame $\cal R$.  
 
+The module input and output messages are illustrated in Figure~\ref{fig:moduleImg}.  The guidance message is read in with every time step, while the vehicle configuration message is only read in during the reset function.  The single output message contains the commanded body torque vector.
 
 
 
