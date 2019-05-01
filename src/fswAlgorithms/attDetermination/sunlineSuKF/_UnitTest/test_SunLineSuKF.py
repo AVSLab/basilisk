@@ -56,11 +56,11 @@ def setupFilterData(filterObject, initialized):
                           0.0, 0.0, 1., 0.0, 0.0, 0.0,
                           0.0, 0.0, 0.0, 0.02, 0.0, 0.0,
                           0.0, 0.0, 0.0, 0.0, 0.02, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.0, 1E-5]
+                          0.0, 0.0, 0.0, 0.0, 0.0, 1E-2]
     qNoiseIn = numpy.identity(6)
     qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.01*0.01
     qNoiseIn[3:5, 3:5] = qNoiseIn[3:5, 3:5]*0.001*0.001
-    qNoiseIn[5, 5] = qNoiseIn[5, 5]*0.0000002*0.0000002
+    qNoiseIn[5, 5] = qNoiseIn[5, 5]*0.00002*0.00002
     filterObject.qNoise = qNoiseIn.reshape(36).tolist()
     filterObject.qObsVal = 0.002
     filterObject.sensorUseThresh = 0.0
@@ -411,9 +411,9 @@ def StateUpdateSunLine(show_plots, kellyOn):
         kellList = []
         for j in range(len(CSSOrientationList)):
             kellyData = sunlineSuKF.SunlineSuKFCFit()
-            kellyData.cssKellFact = 1
-            kellyData.cssKellPow = 1
-            kellyData.cssRelScale = 1
+            kellyData.cssKellFact = 0.05
+            kellyData.cssKellPow = 2.
+            kellyData.cssRelScale = 1.
             kellList.append(kellyData)
         moduleConfig.kellFits = kellList
 
@@ -438,8 +438,11 @@ def StateUpdateSunLine(show_plots, kellyOn):
 
     numStates = len(moduleConfig.stateInit)
     unitTestSim.InitializeSimulation()
-
-    for i in range(500):
+    if kellyOn:
+        time = 1000
+    else:
+        time =  500
+    for i in range(time):
         unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
                                   inputMessageSize,
                                   unitTestSim.TotalSim.CurrentNanos,
@@ -451,17 +454,25 @@ def StateUpdateSunLine(show_plots, kellyOn):
     postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", range(8))
     covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", range(numStates*numStates))
 
-    accuracy = 1.0E-3
+    accuracy = 1.0E-5
     if kellyOn:
-        accuracy = 1.0E-5
+        accuracy = 1.0E-2 # 1% Error test for the kelly curves given errors
     for i in range(numStates):
         if(covarLog[-1, i*numStates+1+i] > covarLog[0, i*numStates+1+i]):
             testFailCount += 1
-            testMessages.append("Covariance update failure")
-        if(abs(stateLog[-1, i+1] - stateTarget[i]) > accuracy):
-            print abs(stateLog[-1, i+1] - stateTarget[i])
-            testFailCount += 1
-            testMessages.append("State update failure")
+            testMessages.append("Covariance update failure first part")
+    if(numpy.arccos(numpy.dot(stateLog[-1, 1:4], stateTarget[0:3])/(numpy.linalg.norm(stateLog[-1, 1:4])*numpy.linalg.norm(stateTarget[0:3]))) > accuracy):
+        print numpy.arccos(numpy.dot(stateLog[-1, 1:4], stateTarget[0:3])/(numpy.linalg.norm(stateLog[-1, 1:4])*numpy.linalg.norm(stateTarget[0:3])))
+        testFailCount += 1
+        testMessages.append("Pointing update failure")
+    if(numpy.linalg.norm(stateLog[-1, 4:7] - stateTarget[3:6]) > accuracy):
+        print numpy.linalg.norm(stateLog[-1,  4:7] - stateTarget[3:6])
+        testFailCount += 1
+        testMessages.append("Rate update failure")
+    if(abs(stateLog[-1, 6] - stateTarget[5]) > accuracy):
+        print abs(stateLog[-1, 6] - stateTarget[5])
+        testFailCount += 1
+        testMessages.append("Sun Intensity update failure")
 
     testVector = numpy.array([-0.8, 0.9, 0.0])
     testVector /= numpy.linalg.norm(testVector)
@@ -472,13 +483,13 @@ def StateUpdateSunLine(show_plots, kellyOn):
         dotList.append(dotProd)
     inputData.CosValue = dotList
         
-    for i in range(500):
+    for i in range(time):
         if i > 20:
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
                                       inputMessageSize,
                                       unitTestSim.TotalSim.CurrentNanos,
                                       inputData)
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i+501)*0.5))
+        unitTestSim.ConfigureStopTime(macros.sec2nano((i+time+1)*0.5))
         unitTestSim.ExecuteSimulation()
 
     stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", range(numStates))
@@ -489,13 +500,22 @@ def StateUpdateSunLine(show_plots, kellyOn):
     stateTarget.extend([0.0, 0.0, 1.0])
 
     for i in range(numStates):
-        if(covarLog[-1, i*numStates+1+i] > covarLog[520, i*numStates+1+i]/10):
+        if(covarLog[-1, i*numStates+1+i] > covarLog[0, i*numStates+1+i]):
+            print covarLog[-1, i*numStates+1+i] - covarLog[0, i*numStates+1+i]
             testFailCount += 1
             testMessages.append("Covariance update failure")
-        if(abs(stateLog[-1, i+1] - stateTarget[i]) > accuracy):
-            print abs(stateLog[-1, i+1] - stateTarget[i])
-            testFailCount += 1
-            testMessages.append("State update failure")
+    if(numpy.arccos(numpy.dot(stateLog[-1, 1:4], stateTarget[0:3])/(numpy.linalg.norm(stateLog[-1, 1:4])*numpy.linalg.norm(stateTarget[0:3]))) > accuracy):
+        print numpy.arccos(numpy.dot(stateLog[-1, 1:4], stateTarget[0:3])/(numpy.linalg.norm(stateLog[-1, 1:4])*numpy.linalg.norm(stateTarget[0:3])))
+        testFailCount += 1
+        testMessages.append("Pointing update failure")
+    if(numpy.linalg.norm(stateLog[-1, 4:7] - stateTarget[3:6]) > accuracy):
+        print numpy.linalg.norm(stateLog[-1,  4:7] - stateTarget[3:6])
+        testFailCount += 1
+        testMessages.append("Rate update failure")
+    if(abs(stateLog[-1, 6] - stateTarget[5]) > accuracy):
+        print abs(stateLog[-1, 6] - stateTarget[5])
+        testFailCount += 1
+        testMessages.append("Sun Intensity update failure")
 
     FilterPlots.StateCovarPlot(stateLog, covarLog, show_plots)
     FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, show_plots)
@@ -503,6 +523,8 @@ def StateUpdateSunLine(show_plots, kellyOn):
     # print out success message if no error were found
     if testFailCount == 0:
         print "PASSED: " + moduleWrap.ModelTag + " state update"
+    else:
+        print testMessages
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -570,4 +592,4 @@ def StatePropSunLine(show_plots):
 
 if __name__ == "__main__":
     # test_all_sunline_kf(True)
-    StateUpdateSunLine(True, False)
+    StateUpdateSunLine(True, True)
