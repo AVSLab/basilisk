@@ -26,32 +26,27 @@
 #include <stdint.h>
 
 /*! \defgroup MRP_Steering
- * @{
+ *@brief This module implements a kinematic MRP steering control whose command output is a desired body rate vector.
+
+ The module [PDF Description](AVS-Sim-MRP_Steering-2016-0108.pdf)
+ contains further information on this module's function, how to run it, as well as testing.
+  @{
  */
 
-/*!@brief Data structure for the MRP steering attitude control routine.
-
- The module
- [PDF Description](AVS-Sim-MRP_Steering-2016-0108.pdf)
- contains further information on this module's function,
- how to run it, as well as testing.
- */
-
+/*! @brief Data structure for the MRP feedback attitude control routine. */
 typedef struct {
-    /* declare module private variables */
-    double K1;                          /*!< [rad/sec] Proportional gain applied to MRP errors */
-    double K3;                          /*!< [rad/sec] Cubic gain applied to MRP error in steering saturation function */
-    double omega_max;                   /*!< [rad/sec] Maximum rate command of steering control */
+    /* declare module public variables */
+    double K1;                          //!< [rad/sec] Proportional gain applied to MRP errors
+    double K3;                          //!< [rad/sec] Cubic gain applied to MRP error in steering saturation function
+    double omega_max;                   //!< [rad/sec] Maximum rate command of steering control
 
-    uint32_t ignoreOuterLoopFeedforward;/*!< []      Boolean flag indicating if outer feedforward term should be included */
+    uint32_t ignoreOuterLoopFeedforward;//!< []      Boolean flag indicating if outer feedforward term should be included
     
     /* declare module IO interfaces */
-    char outputDataName[MAX_STAT_MSG_LENGTH];   /*!< The name of the output message*/
-    int32_t outputMsgID;                        /*!< [] ID for the outgoing body accel requests*/
-    char inputGuidName[MAX_STAT_MSG_LENGTH];    /*!< The name of the Input message*/
-    int32_t inputGuidID;                        /*!< [] ID for the incoming guidance errors*/
-
-    RateCmdFswMsg outMsg;               /*!< [] copy of output message */
+    char outputDataName[MAX_STAT_MSG_LENGTH];   //!< The name of the output message
+    int32_t outputMsgID;                        //!< [] ID for the outgoing body accel requests
+    char inputGuidName[MAX_STAT_MSG_LENGTH];    //!< The name of the Input message
+    int32_t inputGuidID;                        //!< [] ID for the incoming guidance errors
 }MRP_SteeringConfig;
 
 #ifdef __cplusplus

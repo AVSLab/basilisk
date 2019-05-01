@@ -28,7 +28,8 @@
 {\bfseries Rev}: & {\bfseries Change Description} & {\bfseries By} \\
 \hline
 Draft & Initial Documentation Draft & H. Schaub \\
-0.1 & Updated the sign definition of $\bm L_{r}$ & H. Schaub \\
+1.0 & Updated the sign definition of $\bm L_{r}$ & H. Schaub \\
+1.1 & Small updates after code review & H. Schaub \\
 \hline
 
 \end{longtable}
@@ -43,12 +44,19 @@ Draft & Initial Documentation Draft & H. Schaub \\
 
 
 
-\section{Initialization}
-Simply call the module reset function prior to using this control module.  This will reset the prior function call time variable, and reset the attitude error integral measure.  The control update period $\Delta t$ is evaluated automatically.  
+\begin{figure}[htb]
+	\centerline{
+	\includegraphics[]{Figures/moduleImg}
+	}
+	\caption{{\tt MRP\_Steering()} Module I/O Illustration}
+	\label{fig:moduleIO}
+\end{figure}
+\section{Module Overview}
+The module input and output messages are illustrated in Figure~\ref{fig:moduleIO}.  The intend of this module is to implement an MRP steering law where the control output is a vector of commanded body rates.  To use this module it is required to use a separate rate tracking servo control module as well.  
 
 
 \section{Steering Law Goals}
-This technical note develops a new MRP based steering law that drives a body frame \frameDefinition{B} towards a time varying reference frame \frameDefinition{R}. The inertial frame is given by \frameDefinition{N}.   The RW coordinate frame is given by $\mathcal{W_{i}}:\{ \hat{\bm g}_{s_{i}}, \hat{\bm g}_{t_{i}}, \hat{\bm g}_{g_{i}} \}$.  The   Using MRPs, the overall control goal is 
+This technical note develops a new MRP based steering law that drives a body frame \frameDefinition{B} towards a time varying reference frame \frameDefinition{R}. The inertial frame is given by \frameDefinition{N}.   The RW coordinate frame is given by $\mathcal{W_{i}}:\{ \hat{\bm g}_{s_{i}}, \hat{\bm g}_{t_{i}}, \hat{\bm g}_{g_{i}} \}$.  Using MRPs, the overall control goal is 
 \begin{equation}
 	\label{eq:MS:1}
 	\bm\sigma_{\mathcal{B}/\mathcal{R}} \rightarrow 0
@@ -381,7 +389,9 @@ Using the general $f()$ definition in Eq.~\eqref{eq:MS:15.1}, its sensitivity wi
 
 
 \section{Angular Velocity Servo Sub-System}
-To implement the kinematic steering control, a servo sub-system must be included which will produce the required torques to make the actual body rates track the desired body rates.  The angular velocity tracking error vector is defined as
+To implement the kinematic steering control, a servo sub-system must be included which will produce the required torques to make the actual body rates track the desired body rates.  The following development is an illustration of such a servo control module, such as the {\tt rateServoFullNonlinear} module.   However, other body rate tracking control modules could be used as well. 
+
+The angular velocity tracking error vector is defined as
 \begin{equation}
 	\label{eq:MS:32}
 	\delta \bm \omega = \bm\omega_{\mathcal{B}/\mathcal{B}^{\ast}} = \bm\omega_{\mathcal{B}/\mathcal{N}} - \bm\omega_{\mathcal{B}^{\ast}/\mathcal{N}}
@@ -484,6 +494,30 @@ Assuming that $\Delta\bm L$ is either constant as seen by the body frame, or at 
 	[I_{\text{RW}}]\delta\bm\omega'' + [P]\delta\bm\omega' + [K_{I}]\delta \bm \omega = \Delta\bm L' \approx 0 	
 \end{equation}
 As $[I_{\text{RW}}]$, $[P]$ and $[K_{I}]$ are all symmetric positive definite matrices, these linear differential equations are stable, and $\delta\bm\omega\rightarrow0$ given that assumption that $\Delta\bm L' \approx 0$.  
+
+
+
+
+\section{Testing}
+Two tests are provided with this module. The first is a unit test that compares the computed $\bm\omega_{\mathcal{B}^{\ast}/\mathcal{R}} $ and $\bm\omega_{\mathcal{B}^{\ast}/\mathcal{R}}' $ to truth values computed in the python unit test. The second is an integrated test of this module with \verb|rateServoFullNonlin| as well, comparing the desired torques computed $\bm L_r$ with truth values computed in the test. 
+Both tests check a set of gains $K1,K3$ and $\omega_{\text{max}}$ on a rigid body with no external torques, and with a fixed input reference attitude message. The torque requested by the controller is evaluated against python computed torques at 0s, 0.5s, 1s, 1.5s and 2s to within a tolerance of $10^{-12}$ for the integrated test. 
+\begin{itemize}
+	\item The test is run for a case with $K1 =$ 0 or 0.15
+	\item The gain $K3$ is set to 0 or 1
+	\item The saturation rate $\omega_\text{max}$ is set to 1.5 degrees/second or 0.001 degree/second
+\end{itemize}
+All permutations of these test cases are expected to pass.
+The rate servo module  \verb|rateServoFullNonlin| has dedicated unit tests to check various parameters required there, including integral gain on/off, presence of external torques and other variables.
+
+\section{User's guide}
+The following variables are required for this module:
+\begin{itemize}
+\item The gains $K1, K3$
+\item The value of $\omega_\text{max}$
+\end{itemize}
+This module returns the values of $\bm\omega_{\mathcal{B}^{\ast}/\mathcal{R}} $ and $\bm\omega_{\mathcal{B}^{\ast}/\mathcal{R}}' $, which are used in the rate servo-level controller to compute required torques.
+
+The control update period $\Delta t$ is evaluated automatically.  
 
 
 \bibliographystyle{unsrt}   % Number the references.
