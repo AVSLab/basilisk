@@ -7,9 +7,18 @@ We are very excited by the great capabilities that this software already has, an
 * ability to integrate custom Basilisk modules that are kept outside of the core Basilisk folder
 * GPU based methods to evaluate solar radiation pressure forces and torques
 * atmospheric drag evaluation using multi-faceted spacecraft model
-* New Unity-based Basilisk visualization tool.
+* New Unity-based Basilisk visualization tool called Vizard
+* Ability to playback BSK simulation file within Vizard
 * Python 3 support
 * live plotting capability during a BSK run
+
+##  Upcoming Version 0.X.X
+<ul>
+    <li>
+        Items to be listed here.
+    </li>
+</ul>
+
 
 ##  Version 0.5.1
 <ul>
