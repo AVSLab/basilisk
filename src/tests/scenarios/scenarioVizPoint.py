@@ -215,7 +215,13 @@ def run(show_plots, dscovr, marsOrbit):
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
     if dscovr:
-        planets = ['sun','earth']
+        # setup Grav Bodies and Spice messages
+        gravFactory = simIncludeGravBody.gravBodyFactory()
+        bodies = gravFactory.createBodies(['earth', 'sun'])
+        bodies['earth'].isCentralBody = True  # ensure this is the central gravitational body
+        spiceObject = gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/', '2018 OCT 23 04:35:25.000 (UTC)')
+        scSim.AddModelToTask(simTaskName, spiceObject)
+        # Setup Camera
         cameraConfig = simFswInterfaceMessages.CameraConfigMsg()
         cameraConfig.cameraID = 1
         cameraConfig.renderRate = int(59 * 1E9)  # in ns
@@ -230,7 +236,11 @@ def run(show_plots, dscovr, marsOrbit):
         scSim.TotalSim.WriteMessageData(cameraMsgName, cameraMessageSize, 0, cameraConfig)
     else:
         simulationTime = macros.min2nano(6.25)
-        planets = ['mars']
+        gravFactory = simIncludeGravBody.gravBodyFactory()
+        # setup Earth Gravity Body
+        mars = gravFactory.createMarsBarycenter()
+        mars.isCentralBody = True  # ensure this is the central gravitational body
+        mu = mars.mu
         cameraConfig = simFswInterfaceMessages.CameraConfigMsg()
         cameraConfig.cameraID = 1
         cameraConfig.renderRate = int(30 * 1E9)  # in ns
@@ -262,14 +272,6 @@ def run(show_plots, dscovr, marsOrbit):
 
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
-
-    # clear prior gravitational body and SPICE setup definitions
-    gravFactory = simIncludeGravBody.gravBodyFactory()
-
-    # setup Earth Gravity Body
-    earth = gravFactory.createEarth()
-    earth.isCentralBody = True  # ensure this is the central gravitational body
-    mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
@@ -351,7 +353,7 @@ def run(show_plots, dscovr, marsOrbit):
     #
     #   Setup data logging before the simulation is initialized
     #
-    numDataPoints = 50
+    numDataPoints = 100
     samplingTime = simulationTime / (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(mrpControlConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
@@ -394,7 +396,7 @@ def run(show_plots, dscovr, marsOrbit):
     #
     #   initialize Simulation
     #
-    vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, planets)
+    vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
     scSim.InitializeSimulationAndDiscover()
 
     #
@@ -467,6 +469,6 @@ def run(show_plots, dscovr, marsOrbit):
 if __name__ == "__main__":
     run(
         False,  # show_plots
-        False,  # dscovr
-        True,  # marsOrbit
+        True,  # dscovr
+        False,  # marsOrbit
     )

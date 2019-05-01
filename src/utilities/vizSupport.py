@@ -35,7 +35,7 @@ from Basilisk.simulation import spice_interface
 sys.path.append(bskPath + '/../../../vizard/ProtoModels/modules')
 
 try:
-    import vizInterface
+    from Basilisk.simulation import vizInterface
     vizFound = True
 except ImportError:
     vizFound = False
@@ -49,10 +49,10 @@ def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFact
     # setup the Vizard interface module
     vizMessager = vizInterface.VizInterface()
     scSim.AddModelToTask(simTaskName, vizMessager)
-
-    vizMessager.spiceInMsgName = vizInterface.StringVector([
-                                                                  "earth_planet_data",
+    vizMessager.saveFile = 1
+    vizMessager.spiceInMsgName = vizInterface.StringVector([      "earth_planet_data",
                                                                   "mars_planet_data",
+                                                                  "mars barycenter_planet_data",
                                                                   "sun_planet_data",
                                                                   "jupiter barycenter_planet_data",
                                                                   "moon_planet_data",
@@ -62,7 +62,7 @@ def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFact
                                                                   "neptune barycenter_planet_data",
                                                                   "pluto barycenter_planet_data",
                                                                   "saturn barycenter_planet_data"])
-    vizMessager.planetNames = vizInterface.StringVector(["earth", "mars", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
+    vizMessager.planetNames = vizInterface.StringVector(["earth", "mars", "mars barycenter", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
     vizMessager.protoFilename = fileName
 
     # see if celestial body planet ephemeris messages must be created

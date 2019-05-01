@@ -28,6 +28,7 @@ import os,errno
 import platform
 import numpy as np
 import matplotlib as mpl
+
 mpl.rc("figure", facecolor="white")
 mpl.rc('xtick', labelsize=9)
 mpl.rc('ytick', labelsize=9)
@@ -36,8 +37,8 @@ mpl.rc('axes', labelsize=10)
 mpl.rc('legend', fontsize=9)
 mpl.rc('figure', autolayout=True)
 
-if platform.system() == 'Darwin':
-    mpl.use('MacOSX')
+# if platform.system() == 'Darwin':
+#     mpl.use('MacOSX')
 
 
 
