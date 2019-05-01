@@ -11,7 +11,7 @@ We are very excited by the great capabilities that this software already has, an
 * Python 3 support
 * live plotting capability during a BSK run
 
-## Upcoming Version 0.X.X
+##  Version 0.5.1
 <ul>
     <li>
         updated the `orbitalMotion.c/h` support library to have more robust `rv2elem()` and `elem2rv()` functions.  They now also handle retrograde orbits.  The manner in covering parabolic cases has changed slightly.
@@ -28,9 +28,21 @@ We are very excited by the great capabilities that this software already has, an
     <li>
         updated the 'oeStateEphem()' module to fit radius at periapses instead of SMA, and have the option to fit true versus mean anomaly angles.  
     </li>
+    <li>
+        updated 'sunlineSuKF` module which provides a switch Sunline UKF estimation filter.  New documentation and unit tests.
+    </li>
+    <li>
+        updated 'MRP_Steering' module documentation and unit tests
+    </li>
+    <li>
+        updated orbital motion library functions `rv2elem()` and elem2rv()`
+    </li>
+    <li>
+        updated `rateServoFullNonlinear` module documentation and unit tests.
+    </li>
 </ul>
 
-## Upcoming Version 0.5.0
+## Version 0.5.0
 <ul>
     <li>
        `attTrackingError` has updated documentation and unit tests.
