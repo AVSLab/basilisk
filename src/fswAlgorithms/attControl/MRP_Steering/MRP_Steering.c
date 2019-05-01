@@ -64,7 +64,7 @@ void Reset_MRP_Steering(MRP_SteeringConfig *configData, uint64_t callTime, uint6
 }
 
 /*! This method takes the attitude and rate errors relative to the Reference frame, as well as
-    the reference frame angular rates and acceleration, and computes the required control torque Lr.
+    the reference frame angular rates and acceleration
  @return void
  @param configData The configuration data associated with the MRP Steering attitude control
  @param callTime The clock time at which the function was called (nanoseconds)
@@ -114,7 +114,7 @@ void MRPSteeringLaw(MRP_SteeringConfig *configData, double sigma_BR[3], double o
 
     /* Equation (18): Determine the desired steering rates  */
     for (i=0;i<3;i++) {
-        sigma_i      = sigma_BR[i];
+        sigma_i  = sigma_BR[i];
         value        = atan(M_PI_2/configData->omega_max*(configData->K1*sigma_i
                        + configData->K3*sigma_i*sigma_i*sigma_i))/M_PI_2*configData->omega_max;
         omega_ast[i] = -value;
@@ -126,8 +126,9 @@ void MRPSteeringLaw(MRP_SteeringConfig *configData, double sigma_BR[3], double o
         m33MultV3(B, omega_ast, sigma_p);
         v3Scale(0.25, sigma_p, sigma_p);
         for (i=0;i<3;i++) {
-            sigma_i        = sigma_BR[i];
-            value          = (3*configData->K3*sigma_i*sigma_i + configData->K1)/(pow(M_PI_2/configData->omega_max*(configData->K1*sigma_i + configData->K3*sigma_i*sigma_i*sigma_i),2) + 1);
+            sigma_i  = sigma_BR[i];
+            value = (3*configData->K3*sigma_i*sigma_i + configData->K1)/
+                                (pow(M_PI_2/configData->omega_max*(configData->K1*sigma_i + configData->K3*sigma_i*sigma_i*sigma_i),2) + 1);
             omega_ast_p[i] = - value*sigma_p[i];
         }
     }
