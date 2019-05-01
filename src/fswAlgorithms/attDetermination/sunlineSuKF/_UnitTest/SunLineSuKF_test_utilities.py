@@ -86,7 +86,7 @@ def StateCovarPlot(x, Pflat, show_plots):
     plt.plot(t , x[:, 6]+3 * np.sqrt(P[:, 5, 5]), 'r--')
     plt.plot(t , x[:, 6]-3 * np.sqrt(P[:, 5, 5]), 'r--')
     plt.xlabel('t(s)')
-    plt.title('Kelly Factor')
+    plt.title('Solar Intensity')
     plt.grid()
 
     unitTestSupport.writeFigureLaTeX('StatesPlot', 'State error and covariance', plt, 'height=0.9\\textwidth, keepaspectratio', path)

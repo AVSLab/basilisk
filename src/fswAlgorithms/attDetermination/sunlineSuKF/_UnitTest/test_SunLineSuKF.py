@@ -22,12 +22,6 @@ import numpy
 import pytest
 import math
 
-
-
-
-
-
-
 from Basilisk.utilities import SimulationBaseClass, macros, unitTestSupport
 from Basilisk.simulation import coarse_sun_sensor
 import matplotlib.pyplot as plt
@@ -56,11 +50,11 @@ def setupFilterData(filterObject, initialized):
                           0.0, 0.0, 1., 0.0, 0.0, 0.0,
                           0.0, 0.0, 0.0, 0.02, 0.0, 0.0,
                           0.0, 0.0, 0.0, 0.0, 0.02, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.0, 1E-2]
+                          0.0, 0.0, 0.0, 0.0, 0.0, 1E-4]
     qNoiseIn = numpy.identity(6)
-    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.01*0.01
+    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.001*0.001
     qNoiseIn[3:5, 3:5] = qNoiseIn[3:5, 3:5]*0.001*0.001
-    qNoiseIn[5, 5] = qNoiseIn[5, 5]*0.00002*0.00002
+    qNoiseIn[5, 5] = qNoiseIn[5, 5]*0.0000002*0.0000002
     filterObject.qNoise = qNoiseIn.reshape(36).tolist()
     filterObject.qObsVal = 0.002
     filterObject.sensorUseThresh = 0.0
@@ -454,7 +448,7 @@ def StateUpdateSunLine(show_plots, kellyOn):
     postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", range(8))
     covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", range(numStates*numStates))
 
-    accuracy = 1.0E-5
+    accuracy = 1.0E-3
     if kellyOn:
         accuracy = 1.0E-2 # 1% Error test for the kelly curves given errors
     for i in range(numStates):
@@ -474,7 +468,7 @@ def StateUpdateSunLine(show_plots, kellyOn):
         testFailCount += 1
         testMessages.append("Sun Intensity update failure")
 
-    testVector = numpy.array([-0.8, 0.9, 0.0])
+    testVector = numpy.array([-0.7, 0.75, 0.0])
     testVector /= numpy.linalg.norm(testVector)
     inputData = cssComm.CSSArraySensorIntMsg()
     dotList = []
