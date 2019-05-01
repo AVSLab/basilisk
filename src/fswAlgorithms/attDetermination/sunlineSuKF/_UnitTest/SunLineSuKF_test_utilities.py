@@ -51,6 +51,12 @@ def StateCovarPlot(x, Pflat, show_plots):
     plt.title('First LOS component')
     plt.grid()
 
+    plt.subplot(322)
+    plt.plot(t , x[:, 4], "b")
+    plt.plot(t , x[:, 4]+3 * np.sqrt(P[:, 3, 3]), 'r--')
+    plt.plot(t , x[:, 4]-3 * np.sqrt(P[:, 3, 3]), 'r--')
+    plt.title('Second rate component')
+    plt.grid()
 
     plt.subplot(323)
     plt.plot(t , x[:, 2], "b")
@@ -60,10 +66,11 @@ def StateCovarPlot(x, Pflat, show_plots):
     plt.grid()
 
     plt.subplot(324)
-    plt.plot(t , x[:, 4], "b")
-    plt.plot(t , x[:, 4]+3 * np.sqrt(P[:, 3, 3]), 'r--')
-    plt.plot(t , x[:, 4]-3 * np.sqrt(P[:, 3, 3]), 'r--')
-    plt.title('Second rate component')
+    plt.plot(t , x[:, 5], "b")
+    plt.plot(t , x[:, 5]+3 * np.sqrt(P[:, 4, 4]), 'r--')
+    plt.plot(t , x[:, 5]-3 * np.sqrt(P[:, 4, 4]), 'r--')
+    plt.xlabel('t(s)')
+    plt.title('Third rate component')
     plt.grid()
 
     plt.subplot(325)
@@ -75,11 +82,11 @@ def StateCovarPlot(x, Pflat, show_plots):
     plt.grid()
 
     plt.subplot(326)
-    plt.plot(t , x[:, 5], "b")
-    plt.plot(t , x[:, 5]+3 * np.sqrt(P[:, 4, 4]), 'r--')
-    plt.plot(t , x[:, 5]-3 * np.sqrt(P[:, 4, 4]), 'r--')
+    plt.plot(t , x[:, 6], "b")
+    plt.plot(t , x[:, 6]+3 * np.sqrt(P[:, 5, 5]), 'r--')
+    plt.plot(t , x[:, 6]-3 * np.sqrt(P[:, 5, 5]), 'r--')
     plt.xlabel('t(s)')
-    plt.title('Third rate component')
+    plt.title('Solar Intensity')
     plt.grid()
 
     unitTestSupport.writeFigureLaTeX('StatesPlot', 'State error and covariance', plt, 'height=0.9\\textwidth, keepaspectratio', path)

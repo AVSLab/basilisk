@@ -129,8 +129,6 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
         configData->wC[i] = configData->wM[i];
     }
     
-    vCopy(configData->stateInit, configData->numStates, configData->state);
-    
     /*! - User a cholesky decomposition to obtain the sBar and sQnoise matrices for use in 
           filter at runtime*/
     mCopy(configData->covarInit, configData->numStates, configData->numStates,
@@ -146,6 +144,9 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     mTranspose(configData->sQnoise, configData->numStates,
                configData->numStates, configData->sQnoise);
     
+    memset(&(configData->cssSensorInBuffer), 0x0, sizeof(CSSArraySensorIntMsg));
+    ReadMessage(configData->cssDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
+                sizeof(CSSArraySensorIntMsg), (void*) (&(configData->cssSensorInBuffer)), moduleID);
     return;
 }
 
@@ -167,6 +168,7 @@ void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     SunlineFilterFswMsg sunlineDataOutBuffer;
+    double maxSens;
     
     /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
@@ -176,8 +178,30 @@ void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     ReadMessage(configData->cssDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
         sizeof(CSSArraySensorIntMsg), (void*) (&(configData->cssSensorInBuffer)), moduleID);
     
-    v3Normalize(&configData->state[0], sunheading_hat);
+    /*! If the filter is not initialized manually, give it an initial guess using the CSS with the strongest signal.*/
+    if(0==configData->filterInitialized)
+    {
+        vSetZero(configData->stateInit, SKF_N_STATES_SWITCH);
+        configData->stateInit[5] = 1;
+        configData->stateInit[0] = 1;
+        maxSens = 0.0;
+        /*! Loop through sensors to find max*/
+        for(i=0; i<configData->numCSSTotal; i++)
+        {
+            if(configData->cssSensorInBuffer.CosValue[i] > maxSens)
+            {
+                v3Copy(&(configData->cssNHat_B[i*3]), configData->stateInit);
+                maxSens = configData->cssSensorInBuffer.CosValue[i];
+                /*! Max sensor reading is initial guess for the kelly factor*/
+                configData->stateInit[5] = maxSens;
+            }
+        }
+        /*! The normal of the max activated sensor is the initial state*/
+        vCopy(configData->stateInit, configData->numStates, configData->state);
+        configData->filterInitialized = 1;
+    }
     
+    v3Normalize(&configData->state[0], sunheading_hat);
     
     /*! - Check for switching frames */
     if (v3Dot(configData->bVec_B, sunheading_hat) > configData->switchTresh)
@@ -193,7 +217,7 @@ void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
         sunlineSuKFTimeUpdate(configData, newTimeTag);
         sunlineSuKFMeasUpdate(configData, newTimeTag);
     }
-    
+    v3Normalize(configData->state, configData->state);
     /*! - If current clock time is further ahead than the measured time, then
           propagate to this current time-step*/
     newTimeTag = callTime*NANO2SEC;
@@ -271,6 +295,7 @@ void sunlineStateProp(double *stateInOut, double *b_Vec, double dt)
     /*! - Multiply omega cross d by dt and add to state to propagate */
     v3Scale(-dt, omegaCrossd, propagatedVel);
     v3Add(stateInOut, propagatedVel, stateInOut);
+    v3Normalize(stateInOut, stateInOut);
     
 	return;
 }
@@ -290,9 +315,10 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
 	double aRow[SKF_N_STATES_SWITCH], rAT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], xErr[SKF_N_STATES_SWITCH]; 
 	double sBarUp[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
 	double *spPtr;
-	/*! Begin method steps*/
-	configData->dt = updateTime - configData->timeTag;
-    
+    double procNoise[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
+
+    configData->dt = updateTime - configData->timeTag;
+    mCopy(configData->sQnoise, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, procNoise);
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
 	vCopy(configData->state, configData->numStates,
 		&(configData->SP[0 * configData->numStates + 0]));
@@ -342,9 +368,12 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
 		memcpy((void *)&AT[i*configData->numStates], (void *)aRow,
 			configData->numStates*sizeof(double));
 	}
+    /*! - Scale sQNoise matrix depending on the number of measurements*/
+    mScale(configData->numObs/3.0, procNoise, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, procNoise);
+    
     /*! - Pop the sQNoise matrix on to the end of AT prior to getting QR decomposition*/
 	memcpy(&AT[2 * configData->countHalfSPs*configData->numStates],
-		configData->sQnoise, configData->numStates*configData->numStates
+		procNoise, configData->numStates*configData->numStates
         *sizeof(double));
     /*! - QR decomposition (only R computed!) of the AT matrix provides the new sBar matrix*/
     ukfQRDJustR(AT, 2 * configData->countHalfSPs + configData->numStates,
@@ -384,6 +413,10 @@ void sunlineSuKFMeasModel(SunlineSuKFConfig *configData)
 {
     uint32_t i, j, obsCounter;
     double sensorNormal[3];
+    double normalizedState[3];
+    double stateNorm;
+    double expectedMeas;
+    double kellDelta;
     /* Begin method steps */
     obsCounter = 0;
     /*! - Loop over all available coarse sun sensors and only use ones that meet validity threshold*/
@@ -397,8 +430,23 @@ void sunlineSuKFMeasModel(SunlineSuKFConfig *configData)
             configData->obs[obsCounter] = configData->cssSensorInBuffer.CosValue[i];
             for(j=0; j<configData->countHalfSPs*2+1; j++)
             {
+                stateNorm = v3Norm(&(configData->SP[j*SKF_N_STATES_SWITCH]));
+                v3Normalize(&(configData->SP[j*SKF_N_STATES_SWITCH]), normalizedState);
+                expectedMeas = v3Dot(normalizedState, sensorNormal);
+                expectedMeas = expectedMeas > 0.0 ? expectedMeas : 0.0;
+                kellDelta = 1.0;
+                /*! - Scale the measurement by the kelly factor.*/
+                if(configData->kellFits[i].cssKellFact > 0.0)
+                {
+                    kellDelta -= exp(-pow(expectedMeas,configData->kellFits[i].cssKellPow) /
+                                     configData->kellFits[i].cssKellFact);
+                    expectedMeas *= kellDelta;
+                    expectedMeas *= configData->kellFits[i].cssRelScale;
+                }
+                expectedMeas *= configData->SP[j*SKF_N_STATES_SWITCH+5];
+                expectedMeas = expectedMeas > 0.0 ? expectedMeas : 0.0;
                 configData->yMeas[obsCounter*(configData->countHalfSPs*2+1) + j] =
-                    v3Dot(&(configData->SP[j*SKF_N_STATES_SWITCH]), sensorNormal);
+                    expectedMeas;
             }
             obsCounter++;
         }
