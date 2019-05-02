@@ -36,6 +36,33 @@ def dvAccumulationTestFunction():
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
 
+    # Test quicksort routine
+    # Generate (1) random packet measurement times and (2) completely inverted measurement times
+    randMeasTimes = []
+    invMeasTimes = []
+    randData = fswMessages.AccDataFswMsg()
+    invData = fswMessages.AccDataFswMsg()
+    for i in range(0, fswMessages.MAX_ACC_BUF_PKT):
+        randMeasTimes.append(random.randint(0, 1000000))
+        randData.accPkts[i].measTime = randMeasTimes[i]
+
+        invMeasTimes.append(fswMessages.MAX_ACC_BUF_PKT - i)
+        invData.accPkts[i].measTime = invMeasTimes[i]
+
+    # Run module quicksort function
+    dvAccumulation.dvAccumulation_QuickSort(randData.accPkts[0], 0, fswMessages.MAX_ACC_BUF_PKT - 1)
+    dvAccumulation.dvAccumulation_QuickSort(invData.accPkts[0], 0, fswMessages.MAX_ACC_BUF_PKT - 1)
+
+    # Check that sorted packets properly
+    randMeasTimes.sort()
+    invMeasTimes.sort()
+    for i in range(0, fswMessages.MAX_ACC_BUF_PKT):
+        if randData.accPkts[i].measTime != randMeasTimes[i]:
+            testFailCount += 1
+        if invData.accPkts[i].measTime != invMeasTimes[i]:
+            testFailCount += 1
+
+    # Test Module
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
 

@@ -48,11 +48,11 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_dvAccumulation(DVAccumulationData *ConfigData, uint64_t moduleID);
-    void CrossInit_dvAccumulation(DVAccumulationData *ConfigData, uint64_t moduleID);
-    void Update_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime,
+    void SelfInit_dvAccumulation(DVAccumulationData *configData, uint64_t moduleID);
+    void CrossInit_dvAccumulation(DVAccumulationData *configData, uint64_t moduleID);
+    void Update_dvAccumulation(DVAccumulationData *configData, uint64_t callTime,
         uint64_t moduleID);
-    void Reset_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime,
+    void Reset_dvAccumulation(DVAccumulationData *configData, uint64_t callTime,
                                uint64_t moduleID);
     void dvAccumulation_swap(AccPktDataFswMsg *p, AccPktDataFswMsg *q);
     int dvAccumulation_partition(AccPktDataFswMsg *A, int start, int end);

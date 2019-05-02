@@ -24,14 +24,14 @@
 #include <string.h>
 #include <stdlib.h>
 
-/*! This method initializes the ConfigData for the nav aggregation algorithm.
+/*! This method initializes the configData for the nav aggregation algorithm.
     It initializes the output message in the messaging system.
  @return void
- @param ConfigData The configuration data associated with the Nav aggregation interface
+ @param configData The configuration data associated with the Nav aggregation interface
  */
-void SelfInit_dvAccumulation(DVAccumulationData *ConfigData, uint64_t moduleID)
+void SelfInit_dvAccumulation(DVAccumulationData *configData, uint64_t moduleID)
 {
-    ConfigData->outputNavMsgID = CreateNewMessage(ConfigData->outputNavName,
+    configData->outputNavMsgID = CreateNewMessage(configData->outputNavName,
         sizeof(NavTransIntMsg), "NavTransIntMsg", moduleID);
 }
 
@@ -39,15 +39,15 @@ void SelfInit_dvAccumulation(DVAccumulationData *ConfigData, uint64_t moduleID)
     interface.  For each configured message, it subscribes to the target message
     and saves the ID.
  @return void
- @param ConfigData The configuration data associated with the aggregate nav interface
+ @param configData The configuration data associated with the aggregate nav interface
  */
-void CrossInit_dvAccumulation(DVAccumulationData *ConfigData, uint64_t moduleID)
+void CrossInit_dvAccumulation(DVAccumulationData *configData, uint64_t moduleID)
 {
-        ConfigData->accPktInMsgID= subscribeToMessage(
-            ConfigData->accPktInMsgName, sizeof(AccDataFswMsg), moduleID);
+        configData->accPktInMsgID= subscribeToMessage(
+            configData->accPktInMsgName, sizeof(AccDataFswMsg), moduleID);
 }
 
-void Reset_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime,
+void Reset_dvAccumulation(DVAccumulationData *configData, uint64_t callTime,
                           uint64_t moduleID)
 {
     /*! - Configure accumulator to reset itself*/
@@ -58,20 +58,20 @@ void Reset_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime,
 
     /*! - zero the input message container and read in the accelerometer data message */
     memset(&inputAccData, 0x0, sizeof(AccDataFswMsg));
-    ReadMessage(ConfigData->accPktInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->accPktInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AccDataFswMsg), (void *) &inputAccData, moduleID);
 
     /*! - stacks data in time order*/
     dvAccumulation_QuickSort(&(inputAccData.accPkts[0]), 0, MAX_ACC_BUF_PKT-1);
 
     /*! - reset accumulated DV vector to zero */
-    v3SetZero(ConfigData->vehAccumDV_B);
+    v3SetZero(configData->vehAccumDV_B);
 
     /*! - reset previous time value to zero */
-    ConfigData->previousTime = 0;
+    configData->previousTime = 0;
 
     /* - reset initialization flag */
-    ConfigData->dvInitialized = 0;
+    configData->dvInitialized = 0;
 
     /*! - If we find valid timestamp, ensure that no "older" meas get ingested*/
     for(i=(MAX_ACC_BUF_PKT-1); i>=0; i--)
@@ -79,7 +79,7 @@ void Reset_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime,
         if(inputAccData.accPkts[i].measTime > 0)
         {
             /* store the newest time tag found as the previous time tag */
-            ConfigData->previousTime = inputAccData.accPkts[i].measTime;
+            configData->previousTime = inputAccData.accPkts[i].measTime;
             break;
         }
     }
@@ -98,7 +98,7 @@ int dvAccumulation_partition(AccPktDataFswMsg *A, int start, int end){
     int partitionIndex=start;
     for(i=start; i<end; i++){
         if(A[i].measTime<=pivot){
-            dvAccumulation_swap(&(A[i]), &(A[partitionIndex]));
+            dvAccumulation_swap(&(A[i]), &(A[partitionIndex])); //this assumes that there are not multiple measurements back-to-back with measTimes greater than the endTime
             partitionIndex++;
         }
     }
@@ -159,10 +159,10 @@ void dvAccumulation_QuickSort (AccPktDataFswMsg *A, int start, int end)
     navigation components in the FSW and aggregates them into a single complete
     navigation message.
  @return void
- @param ConfigData The configuration data associated with the aggregate nav module
+ @param configData The configuration data associated with the aggregate nav module
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Update_dvAccumulation(DVAccumulationData *configData, uint64_t callTime, uint64_t moduleID)
 {
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
@@ -171,24 +171,28 @@ void Update_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime, ui
     double frameDV_B[3];            /* [m/s] The DV of an integrated acc measurement */
     AccDataFswMsg inputAccData;     /* [-] Input message container */
     NavTransIntMsg outputData;      /* [-] The local storage of the outgoing message data */
-
-    /*! - zero input message container an dread accelerometer input message */
+    
+    /*! - zero input and output message container */
     memset(&inputAccData, 0x0, sizeof(AccDataFswMsg));
-    ReadMessage(ConfigData->accPktInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    memset(&outputData, 0x0, sizeof(NavTransIntMsg));
+
+    /*! - read accelerometer input message */
+    ReadMessage(configData->accPktInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AccDataFswMsg), &inputAccData, moduleID);
 
     /*! - stack data in time order */
+    
     dvAccumulation_QuickSort(&(inputAccData.accPkts[0]), 0, MAX_ACC_BUF_PKT-1); /* measTime is the array we want to sort. We're sorting the time calculated for each measurement taken from the accelerometer in order in terms of time. */
 
     /*! - Ensure that the computed dt doesn't get huge.*/
-    if(ConfigData->dvInitialized == 0)
+    if(configData->dvInitialized == 0)
     {
         for(i=0; i<MAX_ACC_BUF_PKT; i++)
         {
-            if(inputAccData.accPkts[i].measTime > ConfigData->previousTime)
+            if(inputAccData.accPkts[i].measTime > configData->previousTime)
             {
-                ConfigData->previousTime = inputAccData.accPkts[i].measTime;
-                ConfigData->dvInitialized = 1;
+                configData->previousTime = inputAccData.accPkts[i].measTime;
+                configData->dvInitialized = 1;
                 break;
             }
         }
@@ -198,22 +202,22 @@ void Update_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime, ui
     for(i=0; i<MAX_ACC_BUF_PKT; i++)
     {
         /*! - see if data is newer than last data time stamp */
-        if(inputAccData.accPkts[i].measTime > ConfigData->previousTime)
+        if(inputAccData.accPkts[i].measTime > configData->previousTime)
         {
-            dt = (inputAccData.accPkts[i].measTime - ConfigData->previousTime)*NANO2SEC;
+            dt = (inputAccData.accPkts[i].measTime - configData->previousTime)*NANO2SEC;
             v3Scale(dt, inputAccData.accPkts[i].accel_B, frameDV_B);
-            v3Add(ConfigData->vehAccumDV_B, frameDV_B, ConfigData->vehAccumDV_B);
-            ConfigData->previousTime = inputAccData.accPkts[i].measTime;
+            v3Add(configData->vehAccumDV_B, frameDV_B, configData->vehAccumDV_B);
+            configData->previousTime = inputAccData.accPkts[i].measTime;
         }
     }
 
     /*! - Create output message */
-    memset(&outputData, 0x0, sizeof(NavTransIntMsg));
-    outputData.timeTag = ConfigData->previousTime;
-    v3Copy(ConfigData->vehAccumDV_B, outputData.vehAccumDV);
+    
+    outputData.timeTag = configData->previousTime;
+    v3Copy(configData->vehAccumDV_B, outputData.vehAccumDV);
 
     /*! - write accumulated Dv message */
-    WriteMessage(ConfigData->outputNavMsgID, callTime, sizeof(NavTransIntMsg),
+    WriteMessage(configData->outputNavMsgID, callTime, sizeof(NavTransIntMsg),
                  &outputData, moduleID);
 
     return;
