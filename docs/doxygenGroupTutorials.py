@@ -113,5 +113,12 @@
 #       @}
 #   @}
 #
+#   \defgroup Tutorial_9 Chapter 9: Simulations Interfacing with Vizard
+#   @brief This chapter illustrates scenarios where the BSK simulation interfaces with teh
+#   Vizard Unit-Based Visualization tool.
+#   @{
+#       \defgroup scenarioVizPointGroup                     9.1 Pointing a Vizard Camera.
+#   @}
+#
 ## @}
 
