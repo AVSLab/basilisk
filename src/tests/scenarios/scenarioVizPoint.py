@@ -85,7 +85,7 @@ from Basilisk.utilities import vizSupport
 # When the simulation completes 3 plots are shown for the MRP attitude history, the rate
 # tracking errors, as well as the control torque vector.
 #
-# The simulation layout is identical the the AttitudeFeedback scenario when it comes to FSW modules
+# The simulation layout is identical the the [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback) scenario when it comes to FSW modules
 # The spacecraft starts in a tumble and controls it's rate as well as points to the Earth.
 #
 #
