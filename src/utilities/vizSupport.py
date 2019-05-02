@@ -38,14 +38,19 @@ except ImportError:
     vizFound = False
 
 
-def enableUnityVisualization(scSim, simTaskName, processName, filePath, gravFactory = None):
+def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFactory = None):
     if not vizFound:
         print 'Could not find vizInterface when import attempted.  Be sure to build BSK with vizInterface support.'
         return
 
-    if not os.path.exists('_VizFiles'):
-        os.makedirs('_VizFiles')
-    fileName = os.path.split(filePath)[1]
+    home = os.path.dirname(fileName)
+    if len(home)!=0:
+        home +='/'
+    namePath, name = os.path.split(fileName)
+    if not os.path.isdir(home + '_VizFiles'):
+        os.mkdir(home + '_VizFiles')
+    fileNamePath = home + '_VizFiles/' + name
+
 
     # setup the Vizard interface module
     vizMessager = vizInterface.VizInterface()
@@ -64,7 +69,8 @@ def enableUnityVisualization(scSim, simTaskName, processName, filePath, gravFact
                                                                   "pluto barycenter_planet_data",
                                                                   "saturn barycenter_planet_data"])
     vizMessager.planetNames = vizInterface.StringVector(["earth", "mars", "mars barycenter", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
-    vizMessager.protoFilename = os.path.split(filePath)[0] + '/_VizFiles/' +fileName
+    vizMessager.protoFilename = fileNamePath
+
 
     # see if celestial body planet ephemeris messages must be created
     if (gravFactory != None):
