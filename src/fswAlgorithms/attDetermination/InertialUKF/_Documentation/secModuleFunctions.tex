@@ -12,6 +12,7 @@
     \item \textbf{Inertial UKF Meas Update: } Performs the filter measurement update as defined in the baseline algorithm
     \item \textbf{Inertial UKF Meas Model: } Predicts the measurements given current state and measurement model $\bm G$
     \item \textbf{inertial State Prop: } Integrates the state given the $\bm F$ dynamics of the system
+    \item \textbf{Inertial Clean Update: } Returns filter to a previous state in the case of a bad computation
     \end{itemize}
 
 \section{Module Assumptions and Limitations}
