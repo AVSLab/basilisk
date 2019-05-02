@@ -98,7 +98,7 @@ int dvAccumulation_partition(AccPktDataFswMsg *A, int start, int end){
     int partitionIndex=start;
     for(i=start; i<end; i++){
         if(A[i].measTime<=pivot){
-            dvAccumulation_swap(&(A[i]), &(A[partitionIndex])); //this assumes that there are not multiple measurements back-to-back with measTimes greater than the endTime
+            dvAccumulation_swap(&(A[i]), &(A[partitionIndex]));
             partitionIndex++;
         }
     }
