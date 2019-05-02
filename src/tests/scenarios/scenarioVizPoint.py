@@ -62,6 +62,8 @@ from Basilisk.utilities import vizSupport
 ## @{
 ## Demonstration the viz/camera capabilities.
 #
+# \image html Images/doc/Vizard1.jpg "Vizard Interface showing BSK Camera View"width=600px
+#
 # Pointing the spacecraft camera to Mars, or the Earth in attitude detumble scenario {#scenarioVizPoint}
 # ====
 #
