@@ -104,6 +104,7 @@ void Update_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, uint
     v3Normalize(r_SB_N, r_SB_N_hat);
     MRP2C(scAttBuffer.sigma_BN, BN);
     m33MultV3(BN, r_SB_N_hat, r_SB_B_hat);
+    v3Normalize(r_SB_B_hat, r_SB_B_hat);
     
     /*! - store the output message*/
     v3Copy(r_SB_B_hat, outputSunline.vehSunPntBdy);
