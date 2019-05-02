@@ -222,6 +222,7 @@ def run(show_plots, dscovr, marsOrbit):
         bodies = gravFactory.createBodies(['earth', 'sun'])
         bodies['earth'].isCentralBody = True  # ensure this is the central gravitational body
         spiceObject = gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/', '2018 OCT 23 04:35:25.000 (UTC)')
+        gravFactory.spiceObject.zeroBase = 'earth'
         scSim.AddModelToTask(simTaskName, spiceObject)
         # Setup Camera
         cameraConfig = simFswInterfaceMessages.CameraConfigMsg()
@@ -271,12 +272,11 @@ def run(show_plots, dscovr, marsOrbit):
     scObject.hub.mHub = 750.0  # kg - spacecraft mass
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
+    # attach gravity model to spaceCraftPlus
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
-
-    # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
     # setup extForceTorque module
     # the control torque is read in through the messaging system

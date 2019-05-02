@@ -23,11 +23,8 @@
 #
 #   Unit Test Support Script
 #
-import sys
-
+import sys, os
 from Basilisk.utilities import unitTestSupport
-
-# import Viz messaging related modules
 from Basilisk import __path__
 bskPath = __path__[0]
 from Basilisk.simulation import spice_interface
@@ -41,10 +38,14 @@ except ImportError:
     vizFound = False
 
 
-def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFactory = None):
+def enableUnityVisualization(scSim, simTaskName, processName, filePath, gravFactory = None):
     if not vizFound:
         print 'Could not find vizInterface when import attempted.  Be sure to build BSK with vizInterface support.'
         return
+
+    if not os.path.exists('_VizFiles'):
+        os.makedirs('_VizFiles')
+    fileName = os.path.split(filePath)[1]
 
     # setup the Vizard interface module
     vizMessager = vizInterface.VizInterface()
@@ -63,7 +64,7 @@ def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFact
                                                                   "pluto barycenter_planet_data",
                                                                   "saturn barycenter_planet_data"])
     vizMessager.planetNames = vizInterface.StringVector(["earth", "mars", "mars barycenter", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
-    vizMessager.protoFilename = fileName
+    vizMessager.protoFilename = os.path.split(filePath)[0] + '/_VizFiles/' +fileName
 
     # see if celestial body planet ephemeris messages must be created
     if (gravFactory != None):
