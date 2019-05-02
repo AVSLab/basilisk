@@ -174,14 +174,13 @@ void Read_STMessages(InertialUKFConfig *configData, uint64_t moduleId)
     
     for (i = 0; i < configData->STDatasStruct.numST; i++)
     {
-        /*! Begin method steps*/
         /*! - Read the input parsed CSS sensor data message*/
         timeOfMsgWritten = 0;
         sizeOfMsgWritten = 0;
         memset(&(configData->stSensorIn[i]), 0x0, sizeof(STAttFswMsg));
         ReadMessage(configData->STDatasStruct.STMessages[i].stInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten, sizeof(STAttFswMsg), (void*) (&(configData->stSensorIn[i])), moduleId);
         
-        /*! Only mark valid size if message isn't stale*/
+        /*! - Only mark valid size if message isn't stale*/
         configData->ReadSizeST[i] = timeOfMsgWritten != configData->ClockTimeST[i] ?
             sizeOfMsgWritten : 0;
         configData->ClockTimeST[i] = timeOfMsgWritten;
@@ -546,7 +545,6 @@ void inertialUKFMeasModel(InertialUKFConfig *configData, int currentST)
         to the same representation otherwise your residuals will show 360 degree 
         errors.  Which is not ideal.  So that's why it is so blessed complicated.  
         The measurement is shadowed into the same representation as the state.*/
-    /*! Begin method steps*/
     MRP2EP(configData->state, quatTranspose);
     v3Scale(-1.0, &(quatTranspose[1]), &(quatTranspose[1]));
     MRP2EP(configData->stSensorIn[currentST].MRP_BdyInrtl, quatMeas);
@@ -657,14 +655,13 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
     uint32_t i;
     double yBar[3], syInv[3*3];
     double kMat[AKF_N_STATES*3];
-    double xHat[AKF_N_STATES], sBarT[AKF_N_STATES*AKF_N_STATES], tempYVec[3];
+    double xHat[AKF_N_STATES], Ucol[AKF_N_STATES], sBarT[AKF_N_STATES*AKF_N_STATES], tempYVec[3];
     double AT[(2 * AKF_N_STATES + 3)*3], qChol[3*3];
     double rAT[3*3], syT[3*3];
     double sy[3*3];
-    double updMat[3*3], pXY[AKF_N_STATES*3];
+    double updMat[3*3], pXY[AKF_N_STATES*3], Umat[AKF_N_STATES*3];
     int32_t badUpdate=0;
     
-    /*! Begin method steps*/
     vCopy(configData->state, configData->numStates, configData->statePrev);
     mCopy(configData->sBar, configData->numStates, configData->numStates, configData->sBarPrev);
     mCopy(configData->covar, configData->numStates, configData->numStates, configData->covarPrev);
@@ -761,14 +758,14 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
     /*! - Compute the updated matrix U from equation 28.  Note that I then transpose it 
          so that I can extract "columns" from adjacent memory*/
     mMultM(kMat, configData->numStates, configData->numObs, sy,
-           configData->numObs, configData->numObs, pXY);
-    mTranspose(pXY, configData->numStates, configData->numObs, pXY);
+           configData->numObs, configData->numObs, Umat);
+    mTranspose(Umat, configData->numStates, configData->numObs, Umat);
     /*! - For each column in the update matrix, perform a cholesky down-date on it to 
           get the total shifted S matrix (called sBar in internal parameters*/
     for(i=0; i<configData->numObs; i++)
     {
-        vCopy(&(pXY[i*configData->numStates]), configData->numStates, xHat);
-        badUpdate += ukfCholDownDate(configData->sBar, xHat, -1.0, configData->numStates, sBarT);
+        vCopy(&(Umat[i*configData->numStates]), configData->numStates, Ucol);
+        badUpdate += ukfCholDownDate(configData->sBar, Ucol, -1.0, configData->numStates, sBarT);
         mCopy(sBarT, configData->numStates, configData->numStates,
             configData->sBar);
     }
@@ -794,6 +791,7 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
  */
 void inertialUKFCleanUpdate(InertialUKFConfig *configData){
     int i;
+    /*! - Reset the observations, state, and covariannces to a previous safe value*/
     vSetZero(configData->obs, configData->numObs);
     vCopy(configData->statePrev, configData->numStates, configData->state);
     mCopy(configData->sBarPrev, configData->numStates, configData->numStates, configData->sBar);
