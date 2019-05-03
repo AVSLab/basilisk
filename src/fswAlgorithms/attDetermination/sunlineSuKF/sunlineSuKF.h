@@ -68,13 +68,16 @@ typedef struct {
     
     double stateInit[SKF_N_STATES_SWITCH];      //!< [-] State to initialize filter to
     double state[SKF_N_STATES_SWITCH];          //!< [-] State estimate for time TimeTag
+    double statePrev[SKF_N_STATES_SWITCH];      //!< [-] Previous state logged for clean
     
 	double wM[2 * SKF_N_STATES_SWITCH + 1];     //!< [-] Weighting vector for sigma points
 	double wC[2 * SKF_N_STATES_SWITCH + 1];     //!< [-] Weighting vector for sigma points
 
-	double sBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];         //!< [-] Time updated covariance
+    double sBar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];         //!< [-] Time updated covariance
+    double sBarPrev[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];     //!< [-] Time updated covariance logged for clean
     double covarInit[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];    //!< [-] covariance to init to
 	double covar[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];        //!< [-] covariance
+    double covarPrev[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];    //!< [-] Covariance logged for clean
     double xBar[SKF_N_STATES_SWITCH];                             //!< [-] Current mean state estimate
 
 	double obs[MAX_N_CSS_MEAS];                                   //!< [-] Observation vector for frame
@@ -109,18 +112,19 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t moduleID);
-    void Update_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
+    void SelfInit_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t moduleID);
+    void CrossInit_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t moduleID);
+    void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
         uint64_t moduleID);
-	void Reset_sunlineSuKF(SunlineSuKFConfig *ConfigData, uint64_t callTime,
+	void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
 		uint64_t moduleID);
-	void sunlineSuKFTimeUpdate(SunlineSuKFConfig *ConfigData, double updateTime);
-    void sunlineSuKFMeasUpdate(SunlineSuKFConfig *ConfigData, double updateTime);
+	void sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime);
+    void sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime);
 	void sunlineStateProp(double *stateInOut,  double *b_vec, double dt);
-    void sunlineSuKFMeasModel(SunlineSuKFConfig *ConfigData);
+    void sunlineSuKFMeasModel(SunlineSuKFConfig *configData);
     void sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double *dcm);
     void sunlineSuKFSwitch(double *bVec_B, double *states, double *covar);
+    void sunlineSuKFCleanUpdate(SunlineSuKFConfig *configData);
 
 #ifdef __cplusplus
 }

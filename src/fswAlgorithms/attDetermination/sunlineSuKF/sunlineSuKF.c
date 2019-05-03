@@ -22,6 +22,7 @@
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
+#include "simulation/utilities/bsk_Print.h"
 #include <string.h>
 #include <math.h>
 
@@ -66,12 +67,12 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
                       uint64_t moduleID)
 {
     
-    int32_t i;
+    int32_t i, badUpdate;
     CSSConfigFswMsg cssConfigInBuffer;
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     double tempMatrix[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
-
+    badUpdate = 0;
     mSetZero(configData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
 
     /*! - Zero the local configuration data structures and outputs */
@@ -133,13 +134,16 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
           filter at runtime*/
     mCopy(configData->covarInit, configData->numStates, configData->numStates,
           configData->covar);
+    mSetZero(configData->covarPrev, configData->numStates, configData->numStates);
+    mSetZero(configData->sBarPrev, configData->numStates, configData->numStates);
+    vSetZero(configData->statePrev, configData->numStates);
     mCopy(configData->covar, configData->numStates, configData->numStates,
           configData->sBar);
-    ukfCholDecomp(configData->sBar, configData->numStates,
+    badUpdate += ukfCholDecomp(configData->sBar, configData->numStates,
                   configData->numStates, tempMatrix);
     mCopy(tempMatrix, configData->numStates, configData->numStates,
           configData->sBar);
-    ukfCholDecomp(configData->qNoise, configData->numStates,
+    badUpdate += ukfCholDecomp(configData->qNoise, configData->numStates,
                   configData->numStates, configData->sQnoise);
     mTranspose(configData->sQnoise, configData->numStates,
                configData->numStates, configData->sQnoise);
@@ -147,7 +151,9 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     memset(&(configData->cssSensorInBuffer), 0x0, sizeof(CSSArraySensorIntMsg));
     ReadMessage(configData->cssDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CSSArraySensorIntMsg), (void*) (&(configData->cssSensorInBuffer)), moduleID);
-    return;
+    if (badUpdate <0){
+        BSK_PRINT(MSG_WARNING, "Reset method contained bad update");
+    }
 }
 
 /*! This method takes the parsed CSS sensor data and outputs an estimate of the
@@ -309,14 +315,14 @@ void sunlineStateProp(double *stateInOut, double *b_Vec, double dt)
 */
 void sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
 {
-	int i, Index;
+	int i, Index, badUpdate;
 	double sBarT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
 	double xComp[SKF_N_STATES_SWITCH], AT[(2 * SKF_N_STATES_SWITCH + SKF_N_STATES_SWITCH)*SKF_N_STATES_SWITCH];
 	double aRow[SKF_N_STATES_SWITCH], rAT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], xErr[SKF_N_STATES_SWITCH]; 
 	double sBarUp[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
 	double *spPtr;
     double procNoise[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
-
+    badUpdate = 0;
     configData->dt = updateTime - configData->timeTag;
     mCopy(configData->sQnoise, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, procNoise);
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
@@ -386,7 +392,7 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
           like in equation 21 in design document.*/
     vScale(-1.0, configData->xBar, configData->numStates, xErr);
     vAdd(xErr, configData->numStates, &configData->SP[0], xErr);
-    ukfCholDownDate(configData->sBar, xErr, configData->wC[0],
+    badUpdate += ukfCholDownDate(configData->sBar, xErr, configData->wC[0],
         configData->numStates, sBarUp);
     
     /*! - Save current sBar matrix, covariance, and state estimate off for further use*/
@@ -399,6 +405,11 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
     vCopy(&(configData->SP[0]), configData->numStates, configData->state );
 	
 	configData->timeTag = updateTime;
+    
+    if (badUpdate<0){
+        sunlineSuKFCleanUpdate(configData);
+        return;
+    }
 }
 
 /*! This method computes what the expected measurement vector is for each CSS 
@@ -468,6 +479,7 @@ void sunlineSuKFMeasModel(SunlineSuKFConfig *configData)
 void sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime)
 {
     uint32_t i;
+    int32_t badUpdate;
     double yBar[MAX_N_CSS_MEAS], syInv[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
     double kMat[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS];
     double xHat[SKF_N_STATES_SWITCH], sBarT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], tempYVec[MAX_N_CSS_MEAS];
@@ -475,7 +487,7 @@ void sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime)
     double rAT[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], syT[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
     double sy[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
     double updMat[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], pXY[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS];
-    
+    badUpdate = 0;
     /*! Begin method steps*/
     
     /*! - Compute the valid observations and the measurement model for all observations*/
@@ -527,7 +539,7 @@ void sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime)
           model and the yBar matrix (cholesky down-date again)*/
     vScale(-1.0, yBar, configData->numObs, tempYVec);
     vAdd(tempYVec, configData->numObs, &(configData->yMeas[0]), tempYVec);
-    ukfCholDownDate(sy, tempYVec, configData->wC[0],
+    badUpdate += ukfCholDownDate(sy, tempYVec, configData->wC[0],
                     configData->numObs, updMat);
     /*! - Shifted matrix represents the Sy matrix */
     mCopy(updMat, configData->numObs, configData->numObs, sy);
@@ -553,11 +565,11 @@ void sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime)
           The Sy matrix is lower triangular, we can do a back-sub inversion instead of 
           a full matrix inversion.  That is the ukfUInv and ukfLInv calls below.  Once that 
           multiplication is done (equation 27), we have the Kalman Gain.*/
-    ukfUInv(syT, configData->numObs, configData->numObs, syInv);
+    badUpdate += ukfUInv(syT, configData->numObs, configData->numObs, syInv);
     
     mMultM(pXY, configData->numStates, configData->numObs, syInv,
            configData->numObs, configData->numObs, kMat);
-    ukfLInv(sy, configData->numObs, configData->numObs, syInv);
+    badUpdate += ukfLInv(sy, configData->numObs, configData->numObs, syInv);
     mMultM(kMat, configData->numStates, configData->numObs, syInv,
            configData->numObs, configData->numObs, kMat);
     
@@ -579,7 +591,7 @@ void sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime)
     for(i=0; i<configData->numObs; i++)
     {
         vCopy(&(pXY[i*configData->numStates]), configData->numStates, tempYVec);
-        ukfCholDownDate(configData->sBar, tempYVec, -1.0, configData->numStates, sBarT);
+        badUpdate += ukfCholDownDate(configData->sBar, tempYVec, -1.0, configData->numStates, sBarT);
         mCopy(sBarT, configData->numStates, configData->numStates,
             configData->sBar);
     }
@@ -589,6 +601,11 @@ void sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime)
     mMultM(configData->sBar, configData->numStates, configData->numStates,
            configData->covar, configData->numStates, configData->numStates,
            configData->covar);
+    
+    if (badUpdate<0){
+        sunlineSuKFCleanUpdate(configData);
+        return;
+    }
 }
 
 
@@ -673,4 +690,33 @@ void sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[
     mTranspose(dcm, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dcm);
     }
     
+}
+
+/*! This method cleans the filter states after a bad upadate on the fly.
+ It removes the potentially corrupted previous estimates and puts the filter
+ back to a working state.
+ @return void
+ @param configData The configuration data associated with the CSS estimator
+ */
+void sunlineSuKFCleanUpdate(SunlineSuKFConfig *configData){
+    int i;
+    /*! - Reset the observations, state, and covariannces to a previous safe value*/
+    vSetZero(configData->obs, configData->numObs);
+    vCopy(configData->statePrev, configData->numStates, configData->state);
+    mCopy(configData->sBarPrev, configData->numStates, configData->numStates, configData->sBar);
+    mCopy(configData->covarPrev, configData->numStates, configData->numStates, configData->covar);
+    
+    /*! - Reset the wM/wC vectors to standard values for unscented kalman filters*/
+    configData->wM[0] = configData->lambdaVal / (configData->numStates +
+                                                 configData->lambdaVal);
+    configData->wC[0] = configData->lambdaVal / (configData->numStates +
+                                                 configData->lambdaVal) + (1 - configData->alpha*configData->alpha + configData->beta);
+    for (i = 1; i<configData->countHalfSPs * 2 + 1; i++)
+    {
+        configData->wM[i] = 1.0 / 2.0*1.0 / (configData->numStates +
+                                             configData->lambdaVal);
+        configData->wC[i] = configData->wM[i];
+    }
+    
+    return;
 }
