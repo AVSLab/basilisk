@@ -17,6 +17,8 @@
 
  */
 
+#define _USE_MATH_DEFINES
+
 #include "sphericalPendulum.h"
 #include "utilities/avsEigenSupport.h"
 #include <math.h>

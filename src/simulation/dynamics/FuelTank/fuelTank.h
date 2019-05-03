@@ -17,6 +17,8 @@
 
  */
 
+#define _USE_MATH_DEFINES
+
 #ifndef FUEL_TANK_H
 #define FUEL_TANK_H
 
@@ -28,6 +30,7 @@
 #include "../simulation/utilities/avsEigenSupport.h"
 #include "simMessages/fuelTankSimMsg.h"
 #include "../_GeneralModuleFiles/fuelSlosh.h"
+#include <math.h>
 
 /*! \addtogroup SimModelGroup
  * @{
