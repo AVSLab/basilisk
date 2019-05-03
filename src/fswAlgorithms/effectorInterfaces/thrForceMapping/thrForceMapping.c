@@ -134,6 +134,7 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     uint32_t    sizeOfMsgWritten;
     int         i,j,c;
     int         counterPosForces;             /* []      counter for number of positive thruster forces */
+    int         numConfiguredThrs;
     double      F[MAX_EFF_CNT];               /* [N]     vector of commanded thruster forces */
     double      Fbar[MAX_EFF_CNT];            /* [N]     vector of intermediate thruster forces */
     double      D[3][MAX_EFF_CNT];            /* [m]     mapping matrix from thruster forces to body torque */
@@ -193,7 +194,6 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     
     v3Add(Lr_offset, Lr_B, Lr_B);
     
-    
     /*! - copy the control axes into [C] */
     for (i=0;i<configData->numControlAxes;i++) {
         v3Copy(&configData->controlAxes_B[3*i], C[i]);
@@ -202,40 +202,41 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     /*! - map the control torque onto the control axes*/
     m33MultV3(RECAST3X3 C, Lr_B, Lr_B_Bar); /* Note: Lr_B_Bar is projected only onto the available control axes. i.e. if using DV thrusters with only 1 control axis, Lr_B_Bar = [#, 0, 0] */
 
-
     /*! - 1st iteration of finding a set of force vectors to implement the control torque */
     findMinimumNormForce(configData, D, Lr_B_Bar, configData->numThrusters, F);
     
-    
     /*! - Remove forces components that are contributing to the RCS Null space (this is due to the geometry of the thrusters) */
-    
     if (configData->thrForceSign>0)
     {
         substractMin(configData, F, configData->numThrusters, D);
     }
     
-    counterPosForces = 0;
-    memset(thrusterUsed,0x0,MAX_EFF_CNT*sizeof(int));
-    for (i=0;i<configData->numThrusters;i++) {
-        if (F[i]*configData->thrForceSign > 0) {
-            thrusterUsed[i] = 1; /* Eq. 11 */
-            for(j=0; j<3; j++)
-            {
-                Dbar[j][counterPosForces] = D[j][i]; /* Eq. 12 */
+    numConfiguredThrs = configData->numThrusters;
+    if (configData->thrForceSign<0 || configData->numThrusters != numConfiguredThrs)
+    {
+        counterPosForces = 0;
+        memset(thrusterUsed,0x0,MAX_EFF_CNT*sizeof(int));
+        for (i=0;i<configData->numThrusters;i++) {
+            if (F[i]*configData->thrForceSign > 0) {
+                thrusterUsed[i] = 1; /* Eq. 11 */
+                for(j=0; j<3; j++)
+                {
+                    Dbar[j][counterPosForces] = D[j][i]; /* Eq. 12 */
+                }
+                counterPosForces += 1;
             }
-            counterPosForces += 1;
         }
-    }
 
-    findMinimumNormForce(configData, Dbar, Lr_B_Bar, counterPosForces, Fbar);
+        findMinimumNormForce(configData, Dbar, Lr_B_Bar, counterPosForces, Fbar);
 
-    c = 0;
-    for (i=0;i<configData->numThrusters;i++) {
-        if (thrusterUsed[i]) {
-            F[i] = Fbar[c];
-            c += 1;
-        } else {
-            F[i] = 0.0;
+        c = 0;
+        for (i=0;i<configData->numThrusters;i++) {
+            if (thrusterUsed[i]) {
+                F[i] = Fbar[c];
+                c += 1;
+            } else {
+                F[i] = 0.0;
+            }
         }
     }
     
@@ -279,18 +280,14 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
 void substractMin(thrForceMappingConfig *configData, double *F, uint32_t size, double D[3][MAX_EFF_CNT])
 {
     int    i;
-    double DT[MAX_EFF_CNT][3];
-    mTranspose(D, 3, MAX_EFF_CNT, DT);
+    double minValue = 0.0;
     for (i=0; i < configData->numThrusters;i++){
-        if(F[i] < 0){
-            for(int j=0; j< configData->numThrusters;j++){
-                if(v3IsEqual(DT[i], DT[j], configData->epsilon)&& (i != j)){
-                    F[j] -= F[i];
-                    break;
-                }
-            }
-            F[i] = 0.0;
+        if(F[i] < minValue){
+            minValue = F[i];
         }
+    }
+    for (i=0; i < configData->numThrusters;i++){
+        F[i] = F[i] - minValue;
     }
     return;
 }
@@ -348,7 +345,6 @@ void findMinimumNormForce(thrForceMappingConfig *configData,
  */
 double computeTorqueAngErr(double D[3][MAX_EFF_CNT], double BLr_B[3], uint32_t numForces, double epsilon,
                            double F[MAX_EFF_CNT], double FMag[MAX_EFF_CNT])
-
 {
     double returnAngle = 0.0;       /* [rad]  angle between requested and actual torque vector */
     /*! - make sure a control torque is requested, otherwise just return a zero angle error */
