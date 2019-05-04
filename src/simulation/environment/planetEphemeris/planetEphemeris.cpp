@@ -177,7 +177,7 @@ void PlanetEphemeris::UpdateState(uint64_t CurrentSimNanos)
         //! - compute current planet sun-centric inertial position and velocity vectors
         f0 = this->planetElements[c].f;
         e = this->planetElements[c].e;
-        M0 = E2f(f2E(f0, e), e);
+        M0 = E2M(f2E(f0, e), e);
         M = M0 + sqrt(mu/pow(this->planetElements[c].a, 3)) * (time - this->epochTime);
         this->planetElements[c].f = E2f(M2E(M, e),e);
         elem2rv(mu, &(this->planetElements[c]), newPlanet.PositionVector, newPlanet.VelocityVector);
