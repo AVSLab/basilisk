@@ -41,6 +41,8 @@ splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
+from Basilisk.utilities import orbitalMotion
+from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.simulation import planetEphemeris
@@ -53,18 +55,20 @@ from Basilisk.utilities import macros
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("param1", [
-     (1)
-])
+@pytest.mark.parametrize("setRAN", [ True, False])
+@pytest.mark.parametrize("setDEC", [ True, False])
+@pytest.mark.parametrize("setLST", [ True, False])
+@pytest.mark.parametrize("setRate", [ True, False])
+
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, param1):
+def test_module(show_plots, setRAN, setDEC, setLST, setRate):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = fswModuleTestFunction(show_plots, param1)
+    [testResults, testMessage] = fswModuleTestFunction(show_plots, setRAN, setDEC, setLST, setRate)
     assert testResults < 1, testMessage
 
 
-def fswModuleTestFunction(show_plots, param1):
+def fswModuleTestFunction(show_plots, setRAN, setDEC, setLST, setRate):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -95,46 +99,63 @@ def fswModuleTestFunction(show_plots, param1):
     planetNames = ["earth", "venus"]
     moduleConfig.planetNames = planetEphemeris.StringVector(planetNames)
 
+    # set gravitational constant of the sun
 
+    mu = orbitalMotion.MU_SUN*1000.*1000.*1000  # m^3/s^2
     # setup planet ephemeris states
     oeEarth = planetEphemeris.classicElements()
-    oeEarth.a = planetEphemeris.SMA_EARTH
-    oeEarth.i = 0.0*macros.D2R
-    oeEarth.Omega = 0.0*macros.D2R
-    oeEarth.omega = 0.0*macros.D2R
+    oeEarth.a = planetEphemeris.SMA_EARTH*1000  # meters
+    oeEarth.e = 0.001
+    oeEarth.i = 10.0*macros.D2R
+    oeEarth.Omega = 30.0*macros.D2R
+    oeEarth.omega = 20.0*macros.D2R
     oeEarth.f = 90.0*macros.D2R
 
     oeVenus = planetEphemeris.classicElements()
-    oeVenus.a = planetEphemeris.SMA_VENUS
-    oeVenus.i = 0.0*macros.D2R
-    oeVenus.Omega = 0.0*macros.D2R
-    oeVenus.omega = 0.0*macros.D2R
+    oeVenus.a = planetEphemeris.SMA_VENUS*1000  # meters
+    oeVenus.e = 0.001
+    oeVenus.i = 5.0*macros.D2R
+    oeVenus.Omega = 110.0*macros.D2R
+    oeVenus.omega = 220.0*macros.D2R
     oeVenus.f = 180.0*macros.D2R
 
     moduleConfig.planetElements = planetEphemeris.classicElementVector([oeEarth, oeVenus])
 
-    # setup planet local sideral time at epoch
-    moduleConfig.rightAscension = planetEphemeris.DoubleVector([0.*macros.D2R, 272.76*macros.D2R])
+    evalAttitude = 1
+    if setRAN:
+        # setup planet local right ascension angle at epoch
+        RANlist = [0.*macros.D2R, 272.76*macros.D2R]
+        moduleConfig.rightAscension = planetEphemeris.DoubleVector(RANlist)
+    else:
+        evalAttitude = 0
 
-    # setup planet local sideral time at epoch
-    moduleConfig.declination = planetEphemeris.DoubleVector([90.*macros.D2R, 67.16*macros.D2R])
+    if setDEC:
+        # setup planet local declination angle at epoch
+        DEClist = [90.*macros.D2R, 67.16*macros.D2R]
+        moduleConfig.declination = planetEphemeris.DoubleVector(DEClist)
+    else:
+        evalAttitude = 0
 
-    # setup planet local sideral time at epoch
-    moduleConfig.lst0 = planetEphemeris.DoubleVector([10.*macros.D2R, 30.*macros.D2R])
+    if setLST:
+        # setup planet local sidereal time at epoch
+        lstList = [10.*macros.D2R, 30.*macros.D2R]
+        moduleConfig.lst0 = planetEphemeris.DoubleVector(lstList)
+    else:
+        evalAttitude = 0
 
-    # setup planet rotation rate about polar axis
-    moduleConfig.rotRate = planetEphemeris.DoubleVector([planetEphemeris.OMEGA_EARTH, planetEphemeris.OMEGA_VENUS])
-
+    if setRate:
+        # setup planet rotation rate about polar axis
+        omegaList = [planetEphemeris.OMEGA_EARTH, planetEphemeris.OMEGA_VENUS]
+        moduleConfig.rotRate = planetEphemeris.DoubleVector(omegaList)
+    else:
+        evalAttitude = 0
 
     # Setup logging on the test module output message so that we get all the writes to it
     for planet in planetNames:
-        name = planet + "_planet_data"
         unitTestSim.TotalSim.logThisMessage(planet + "_planet_data", testProcessRate)
-
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
-
 
     # Set the simulation time.
     # NOTE: the total simulation time may be longer than this value. The
@@ -145,10 +166,12 @@ def fswModuleTestFunction(show_plots, param1):
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
-
+    accuracy = 1e-3
+    unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
+    c = 0
     for planet in planetNames:
         J2000Current = unitTestSim.pullMessageLogData(planet + '_planet_data.J2000Current')
         PositionVector = unitTestSim.pullMessageLogData(planet + '_planet_data.PositionVector', range(3))
@@ -156,89 +179,91 @@ def fswModuleTestFunction(show_plots, param1):
         J20002Pfix = unitTestSim.pullMessageLogData(planet + '_planet_data.J20002Pfix', range(9))
         J20002Pfix_dot = unitTestSim.pullMessageLogData(planet + '_planet_data.J20002Pfix_dot', range(9))
         computeOrient = unitTestSim.pullMessageLogData(planet + '_planet_data.computeOrient')
-        # PlanetName = unitTestSim.pullMessageLogData(planet + '_planet_data.PlanetName')
 
-        # print PositionVector
+        # check that the proper planet name string is set
+        FinalPlanetMessage = planetEphemeris.SpicePlanetStateSimMsg()
+        unitTestSim.TotalSim.GetWriteData(planet + '_planet_data', FinalPlanetMessage.getStructSize(), FinalPlanetMessage, 0)
 
+        if planet != FinalPlanetMessage.PlanetName:
+            testFailCount += 1
+            testMessages.append("FAILED: planetEphemeris() didn't set the desired plane name " + planet)
 
-        # FinalPlanetMessage = planetEphemeris.SpicePlanetStateSimMsg()
-        # check = unitTestSim.TotalSim.GetWriteData(planet + '_planet_data', FinalPlanetMessage.getStructSize(), FinalPlanetMessage, 0)
-        # print FinalPlanetMessage.PlanetName
-        # print check
-        #
-        #
-        # check = unitTestSim.TotalSim.GetWriteData('venus_planet_data', FinalPlanetMessage.getStructSize(), FinalPlanetMessage, 0)
-        # # print FinalPlanetMessage.PositionVector
-        # print check
+        # check that the time information is correct
+        timeTrue = [[0.0], [0.5], [1.0]]
+        testFailCount, testMessages = unitTestSupport.compareDoubleArray(
+            timeTrue, J2000Current, accuracy, "J2000Current", testFailCount, testMessages)
 
-    #
-    # # set the filtered output truth states
-    # trueVector=[];
-    # if param1==1:
-    #     if param2==1:
-    #         trueVector = [
-    #                    [2.0, 1.0, 0.7],
-    #                    [3.0, 1.0, 0.7],
-    #                    [4.0, 1.0, 0.7],
-    #                    [2.0, 1.0, 0.7],
-    #                    [3.0, 1.0, 0.7]
-    #                    ]
-    #     else:
-    #         if param2==3:
-    #             trueVector = [
-    #                    [2.0, 3.0, 0.7],
-    #                    [3.0, 3.0, 0.7],
-    #                    [4.0, 3.0, 0.7],
-    #                    [2.0, 3.0, 0.7],
-    #                    [3.0, 3.0, 0.7]
-    #                    ]
-    #         else:
-    #             testFailCount+=1
-    #             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed with unsupported input parameters")
-    # else:
-    #     if param1==2:
-    #         trueVector = [
-    #                    [3.0, 2.0, 0.7],
-    #                    [4.0, 2.0, 0.7],
-    #                    [5.0, 2.0, 0.7],
-    #                    [3.0, 2.0, 0.7],
-    #                    [4.0, 2.0, 0.7]
-    #                    ]
-    #     else:
-    #         testFailCount+=1
-    #         testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed with unsupported input parameters")
-    #
-    # # compare the module results to the truth values
-    # accuracy = 1e-12
-    # unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
-    #
-    # dummyTrue = [1.0, 2.0, 3.0, 1.0, 2.0]
-    #
-    # testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
-    #                                                            accuracy, "Output Vector",
-    #                                                            testFailCount, testMessages)
-    #
-    # testFailCount, testMessages = unitTestSupport.compareDoubleArray(dummyTrue, variableState,
-    #                                                            accuracy, "dummy parameter",
-    #                                                            testFailCount, testMessages)
+        # check that the position and velocity vectors are correct
+        if planet is "earth":
+            oe = oeEarth
+        else:
+            oe = oeVenus
+        f0 = oe.f
+        E0 = orbitalMotion.f2E(f0, oe.e)
+        M0 = orbitalMotion.E2M(E0, oe.e)
+        rTrue = []
+        vTrue = []
+        for time in timeTrue:
+            Mt = M0 + np.sqrt(mu/oe.a/oe.a/oe.a)*time[0]
+            Et = orbitalMotion.M2E(Mt, oe.e)
+            oe.f = orbitalMotion.E2f(Et, oe.e)
 
+            rv, vv = orbitalMotion.elem2rv(mu, oe)
+            rTrue.append(rv)
+            vTrue.append(vv)
+        testFailCount, testMessages = unitTestSupport.compareArray(rTrue, PositionVector,
+                                                                   accuracy, "Position Vector",
+                                                                   testFailCount, testMessages)
+        testFailCount, testMessages = unitTestSupport.compareArray(vTrue, VelocityVector,
+                                                                   accuracy, "Velocity Vector",
+                                                                   testFailCount, testMessages)
 
+        # check if the planet DCM and DCM rate is correct
+        dcmTrue = []
+        dcmRateTrue = []
+        if evalAttitude:
+            RAN = RANlist[c]
+            DEC = DEClist[c]
+            lst0 = lstList[c]
+            eHat_N = np.array([np.cos(DEC)*np.cos(RAN), np.cos(DEC)*np.sin(RAN), np.sin(DEC)])
+            omega_NP_P = np.array([0.0, 0.0, -omegaList[c]])
+            tilde = rbk.v3Tilde(omega_NP_P)
+            for time in timeTrue:
+                lst = lst0 + omegaList[c]*time[0]
+                gamma = eHat_N*lst
+                DCM = rbk.PRV2C(gamma)
+                dcmTrue.append(np.ravel(DCM))
+                dDCMdt = np.matmul(tilde, DCM)
+                dcmRateTrue.append(np.ravel(dDCMdt))
+        else:
+            for time in timeTrue:
+                dcmTrue.append(np.ravel(np.identity(3)))
+                dcmRateTrue.append([0.0]*9)
+        testFailCount, testMessages = unitTestSupport.compareArrayND(dcmTrue, J20002Pfix,
+                                                                   accuracy, "DCM", 9,
+                                                                   testFailCount, testMessages)
+        testFailCount, testMessages = unitTestSupport.compareArrayND(dcmRateTrue, J20002Pfix_dot,
+                                                                   1e-10, "DCM Rate", 9,
+                                                                   testFailCount, testMessages)
 
+        # check if the orientation evaluation flag is set correctly
+        flagTrue = [evalAttitude] * 3
+        testFailCount, testMessages = unitTestSupport.compareDoubleArray(
+            flagTrue, computeOrient, accuracy, "computeOrient", testFailCount, testMessages)
 
+        c = c+1
 
-
-    # #   print out success message if no error were found
-    # snippentName = "passFail" + str(param1)
-    # if testFailCount == 0:
-    #     colorText = 'ForestGreen'
-    #     print "PASSED: " + moduleWrap.ModelTag
-    #     passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
-    # else:
-    #     colorText = 'Red'
-    #     print "Failed: " + moduleWrap.ModelTag
-    #     passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
-    # unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
-
+    # print out success message if no error were found
+    snippentName = "passFail" + str(setRAN) + str(setDEC) + str(setLST) + str(setRate)
+    if testFailCount == 0:
+        colorText = 'ForestGreen'
+        print "PASSED: " + moduleConfig.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        print "Failed: " + moduleConfig.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -250,7 +275,10 @@ def fswModuleTestFunction(show_plots, param1):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_module(              # update "module" in function name
-                 False,
-                 1            # param1 value
-               )
+    test_module(
+                 False,           # show plots flag
+                 True,           # setRAN
+                 True,           # setDEC
+                 True,           # setLST
+                 True            # setRate
+    )
