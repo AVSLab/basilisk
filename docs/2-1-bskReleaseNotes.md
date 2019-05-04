@@ -20,6 +20,9 @@ We are very excited by the great capabilities that this software already has, an
     <li>
         Updated unit test and documenation of `dvAccumulation`.
     </li>
+    <li>
+        added a small include change to fix BSK compiling on Windows
+    </li>
 </ul>
 
 
