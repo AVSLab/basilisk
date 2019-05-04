@@ -43,7 +43,8 @@ typedef struct {
     double   gtThruster_B[MAX_EFF_CNT][3];          //!< []      local copy of the thruster force unit direction vectors
     int32_t  thrForceSign;                          //!< []      Flag indicating if pos (+1) or negative (-1) thruster solutions are found
     double angErrThresh;                            //!< [r]     Angular error at which thruster forces are scaled to not be super-saturated
-    double   epsilon;                               //!< variable specifying what is considered a small number
+    double   epsilon;                               //!<         variable specifying what is considered a small number
+    uint32_t use2ndLoop;                            //!< []      flag indicating if the 2nd least squares fitting loop should be used (1) or not used (0 - default)
 
     /* declare module private variables */
     uint32_t numControlAxes;                        //!< []      counter indicating how many orthogonal axes are controlled

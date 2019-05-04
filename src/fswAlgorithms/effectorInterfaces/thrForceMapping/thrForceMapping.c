@@ -134,7 +134,6 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     uint32_t    sizeOfMsgWritten;
     int         i,j,c;
     int         counterPosForces;             /* []      counter for number of positive thruster forces */
-    int         numConfiguredThrs;
     double      F[MAX_EFF_CNT];               /* [N]     vector of commanded thruster forces */
     double      Fbar[MAX_EFF_CNT];            /* [N]     vector of intermediate thruster forces */
     double      D[3][MAX_EFF_CNT];            /* [m]     mapping matrix from thruster forces to body torque */
@@ -211,8 +210,7 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
         substractMin(configData, F, configData->numThrusters, D);
     }
     
-    numConfiguredThrs = configData->numThrusters;
-    if (configData->thrForceSign<0 || configData->numThrusters != numConfiguredThrs)
+    if (configData->thrForceSign<0 || configData->use2ndLoop)
     {
         counterPosForces = 0;
         memset(thrusterUsed,0x0,MAX_EFF_CNT*sizeof(int));
