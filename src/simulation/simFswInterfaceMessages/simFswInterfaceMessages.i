@@ -19,6 +19,8 @@
 
 %module simFswInterfaceMessages
 %{
+#include "cameraConfigMsg.h"
+#include "cameraImageMsg.h"
 #include "cmdForceBodyIntMsg.h"
 #include "cmdForceInertialIntMsg.h"
 #include "cmdTorqueBodyIntMsg.h"
@@ -38,10 +40,10 @@
 %include "swig_conly_data.i"
 %include "swig_common_model.i"
 
-%include "cmdForceBodyIntMsg.h"
-GEN_SIZEOF(CmdForceBodyIntMsg)
-%include "cmdForceInertialIntMsg.h"
-GEN_SIZEOF(CmdForceInertialIntMsg)
+%include "cameraConfigMsg.h"
+GEN_SIZEOF(CameraConfigMsg)
+%include "cameraImageMsg.h"
+GEN_SIZEOF(CameraImageMsg)
 %include "cmdTorqueBodyIntMsg.h"
 GEN_SIZEOF(CmdTorqueBodyIntMsg)
 %include "cssArraySensorIntMsg.h"

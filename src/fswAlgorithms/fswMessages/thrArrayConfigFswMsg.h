@@ -21,7 +21,7 @@
 #define THR_ARRAY_MESSAGE_H
 
 #include "simFswInterfaceMessages/macroDefinitions.h"
-#include "fswMessages/thrConfigFswMsg.h"
+#include "thrConfigFswMsg.h"
 
 /*! \defgroup fswMessages
  *  @{

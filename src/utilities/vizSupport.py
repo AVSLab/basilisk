@@ -23,11 +23,8 @@
 #
 #   Unit Test Support Script
 #
-import sys
-
+import sys, os
 from Basilisk.utilities import unitTestSupport
-
-# import Viz messaging related modules
 from Basilisk import __path__
 bskPath = __path__[0]
 from Basilisk.simulation import spice_interface
@@ -35,7 +32,7 @@ from Basilisk.simulation import spice_interface
 sys.path.append(bskPath + '/../../../vizard/ProtoModels/modules')
 
 try:
-    import vizInterface
+    from Basilisk.simulation import vizInterface
     vizFound = True
 except ImportError:
     vizFound = False
@@ -46,13 +43,22 @@ def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFact
         print 'Could not find vizInterface when import attempted.  Be sure to build BSK with vizInterface support.'
         return
 
+    home = os.path.dirname(fileName)
+    if len(home)!=0:
+        home +='/'
+    namePath, name = os.path.split(fileName)
+    if not os.path.isdir(home + '_VizFiles'):
+        os.mkdir(home + '_VizFiles')
+    fileNamePath = home + '_VizFiles/' + name
+
+
     # setup the Vizard interface module
     vizMessager = vizInterface.VizInterface()
     scSim.AddModelToTask(simTaskName, vizMessager)
-
-    vizMessager.spiceInMsgName = vizInterface.StringVector([
-                                                                  "earth_planet_data",
+    vizMessager.saveFile = 1
+    vizMessager.spiceInMsgName = vizInterface.StringVector([      "earth_planet_data",
                                                                   "mars_planet_data",
+                                                                  "mars barycenter_planet_data",
                                                                   "sun_planet_data",
                                                                   "jupiter barycenter_planet_data",
                                                                   "moon_planet_data",
@@ -62,8 +68,9 @@ def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFact
                                                                   "neptune barycenter_planet_data",
                                                                   "pluto barycenter_planet_data",
                                                                   "saturn barycenter_planet_data"])
-    vizMessager.planetNames = vizInterface.StringVector(["earth", "mars", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
-    vizMessager.protoFilename = fileName
+    vizMessager.planetNames = vizInterface.StringVector(["earth", "mars", "mars barycenter", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
+    vizMessager.protoFilename = fileNamePath
+
 
     # see if celestial body planet ephemeris messages must be created
     if (gravFactory != None):

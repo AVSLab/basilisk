@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -16,12 +16,13 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module vis_message_interface
-%{
-    #include "visMessageInterface.h"
-%}
 
-%include "swig_common_model.i"
+#define MAX_FILENAME_LENGTH 10000
 
-%include "sys_model.h"
-%include "visMessageInterface.h"
+/*! @brief Structure used to define the output definition for attitude guidance*/
+typedef struct {
+    double timeTag;          /*!< [s]   Current vehicle time-tag associated with measurements*/
+    int64_t cameraID;          /*!< [-]   ID of the camera that took the snapshot*/
+    uint8_t imageFile[MAX_FILENAME_LENGTH];        //!< -- Name of the file containing the image
+}CameraImageMsg;
+

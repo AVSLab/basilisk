@@ -311,12 +311,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 #        )
 # ~~~~~~~~~~~~~
 # This case illustrates a circular Low Mars Orbit or LMO with a non-zero orbit
-# inclination.  If you wish to visualize this simulation, be sure to change the celestial object name in
-#~~~~~~~~~~~~~~{.py}
-# unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'mars')
-# # The Viz only support 'earth', 'mars', or 'sun'
-#~~~~~~~~~~~~~~
-# from 'earth' to 'mars'.  In this simulation setup the planet's spherical harmonics are turned on.  The
+# inclination.  In this simulation setup the planet's spherical harmonics are turned on.  The
 # resulting position coordinates and semi-major axis time histories are shown below.
 # ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1LEO0Mars.svg "Position history")
 # ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2LEO0Mars.svg "Orbit Illustration")

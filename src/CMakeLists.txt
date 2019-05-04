@@ -6,6 +6,10 @@ if(POLICY CMP0025)
   cmake_policy(SET CMP0025 NEW)
 endif()
 
+if(POLICY CMP0057)
+  cmake_policy(SET CMP0057 NEW)
+endif()
+
 project("basilisk")
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -22,16 +26,23 @@ conan_add_remote(NAME conan-community URL https://api.bintray.com/conan/conan-co
 
 set(required_conan_libraries eigen/3.3.5@conan/stable)
 
+
 option(USE_PROTOBUFFERS "Include modules which use Google Protobuffers" OFF)
 option(USE_OPENCV "Include modules which use OpenCV" OFF)
+option(USE_ZMQ "Include modules which use ZMQ" OFF)
+
+set(requires_protobuff_modules "viz_interface/vizInterface.i")
+set(requires_zmq_modules "viz_interface/vizInterface.i")
 
 if(USE_PROTOBUFFERS)
-  list(APPEND required_conan_libraries protobuf/3.6.1@bincrafters/stable)
+  list(APPEND required_conan_libraries protobuf/3.5.1@bincrafters/stable)
 endif()
-
 if(USE_OPENCV)
   list(APPEND required_conan_libraries opencv/3.4.5@conan/stable)
+endif()
 
+if(USE_ZMQ)
+  list(APPEND required_conan_libraries cppzmq/4.3.0@bincrafters/stable)
 endif()
 
 conan_cmake_run(REQUIRES ${required_conan_libraries}
@@ -52,8 +63,23 @@ if(USE_OPENCV)
    set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 endif()
 
+if(USE_ZMQ)
+   #! USE_ZMQ
+   find_package(cppzmq CONFIG REQUIRED)
+   message(STATUS "Using ZMQ ${cppzmq_VERSION}")
+   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+endif()
 
-#
+
+# HACK: Create Release and Debug directories for conan
+# Conan hasn't fixed this issue yet, this removes warnings
+
+foreach (library ${CONAN_LIB_DIRS})
+   file(MAKE_DIRECTORY "${library}/Release")
+   file(MAKE_DIRECTORY "${library}/Debug") 
+endforeach(library)
+
+
 # Create a Swig module
 # Avoids a deprecation error in CMAKE versions less than 3 by calling the correct API depending on version
 # SWIG_ADD_MODULE
@@ -173,6 +199,7 @@ endfunction(make_python_package_dir)
 
 
 function(findAndCreateSwigModules SubModule)
+
 	find_package(SWIG REQUIRED)
 	include(${SWIG_USE_FILE})
 	find_package(PythonLibs)
@@ -199,19 +226,17 @@ function(findAndCreateSwigModules SubModule)
 	get_property(LIBRARY_BUILD_LIST GLOBAL PROPERTY BUILT_LIB_LIST)
 	get_property(ALG_LIST GLOBAL PROPERTY ALG_LIB_LIST)
 
-	foreach(module ${swig_modules})
+	foreach(module ${swig_modules})	
 	    get_filename_component(FileBase ${module} NAME_WE)
-	    get_filename_component(FileDir ${module} DIRECTORY)
-		set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
+            get_filename_component(FileDir ${module} DIRECTORY)
 		
-		if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/CMakeLists.txt")
- 		    continue()
-		endif()
+	
+ 	    if((NOT USE_PROTOBUFFERS OR NOT USE_ZMQ) AND (module IN_LIST requires_protobuff_modules OR module IN_LIST requires_zmq_modules))
+               continue()
+ 	    endif()
 		
-		# if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/CMakeLists.txt")
-		# 	        continue()
-		# 	    endif()
-		
+	    set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
+	
 	    file(GLOB impl_files
 		    "${FileDir}/*.cpp"
 		    "${FileDir}/*.c"
@@ -244,10 +269,10 @@ function(findAndCreateSwigModules SubModule)
 	    endif()
 
 		# Make a python package
-		set(moduleFilePath "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
+		set(moduleFilePath "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")		
 		make_python_package(${FileBase} ${FileDir} ${moduleFilePath})
-
-	    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${FileDir})
+		
+	    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${FileDir})	
 	    set_source_files_properties(${module} PROPERTIES CPLUSPLUS ON)
 		set_property(SOURCE ${module} PROPERTY SWIG_FLAGS "-I${CMAKE_SOURCE_DIR}/simulation/_GeneralModuleFiles" "-I${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/")
 		# MESSAGE("${SWIG_FLAGS}")
@@ -256,8 +281,12 @@ function(findAndCreateSwigModules SubModule)
 	               PROPERTIES COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/simulation")
 	    set(SWIG_MODULE_${FileBase}_EXTRA_DEPS ${impl_files} ${gen_files} ${swig_dep_files})
 	    MAKE_SWIG_MODULE(${FileBase} python ${module} ${impl_files} ${gen_files})
-	    SWIG_LINK_LIBRARIES(${FileBase} ${PYTHON_LIBRARIES})
 
+	    SWIG_LINK_LIBRARIES(${FileBase} ${PYTHON_LIBRARIES})
+	    SWIG_LINK_LIBRARIES(${FileBase} ${CONAN_LIBS})
+            if (USE_PROTOBUFFERS)
+	       SWIG_LINK_LIBRARIES(${FileBase} protocode)
+            endif()
 	    foreach(LibFile ${LIBRARY_BUILD_LIST})
 	         SWIG_LINK_LIBRARIES(${FileBase} ${LibFile})
 	    endforeach()
@@ -281,7 +310,7 @@ function(findAndCreateSwigModules SubModule)
 		set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
 			LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Basilisk/${SubModule}${FileBase}")
 	    set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-		    COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}")
+		    COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}")			
 	endforeach()
 endfunction(findAndCreateSwigModules)
 
@@ -505,6 +534,9 @@ message(STATUS "Adding Basilisk module to python with: ${PROGRAM} ${ARG} in ${CM
 This resulted in the output:
 ${out}")
 
+if(USE_PROTOBUFFERS)
+  add_subdirectory("utilities/vizProtobuffer")
+endif()
 add_subdirectory("simulation")
 add_subdirectory("fswAlgorithms")
 add_subdirectory("topLevelModules")

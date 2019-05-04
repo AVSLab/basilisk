@@ -22,12 +22,11 @@
 #
 #   Unit Test Support Script
 #
-import sys
 import math
 import os,errno
-import platform
 import numpy as np
 import matplotlib as mpl
+
 mpl.rc("figure", facecolor="white")
 mpl.rc('xtick', labelsize=9)
 mpl.rc('ytick', labelsize=9)
@@ -36,8 +35,6 @@ mpl.rc('axes', labelsize=10)
 mpl.rc('legend', fontsize=9)
 mpl.rc('figure', autolayout=True)
 
-if platform.system() == 'Darwin':
-    mpl.use('MacOSX')
 
 
 
@@ -46,10 +43,7 @@ import matplotlib.cm as cmx
 
 import macros
 
-# import Viz messaging related modules
-from Basilisk.simulation import vis_message_interface
-from Basilisk.simulation import vis_clock_synch
-from Basilisk.simulation import spice_interface
+
 from Basilisk import __path__
 bskPath = __path__[0]
 

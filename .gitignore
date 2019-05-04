@@ -1,5 +1,6 @@
 .eggs/
 CMakeFiles/
+**/_VizFiles/
 CMakeCache.txt
 .DS_Store
 dist/
@@ -13,6 +14,7 @@ xml/*
 lastfailed
 .idea
 **/AutoTex/
+**/AutoTeX/
 cmake-build*/*
 *.aux
 *.log
