@@ -141,18 +141,20 @@ def setupSuKFData(filterObject):
     filterObject.beta = 2.0
     filterObject.kappa = 0.0
 
-    filterObject.state = [1.0, 0.1, 0., 0., 0.]
-    filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0,
-                          0.0, 1., 0.0, 0.0, 0.0,
-                          0.0, 0.0, 1., 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.01, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.01]
+    filterObject.stateInit = [1.0, 0.1, 0., 0., 0., 1.]
+    filterObject.covarInit = [1., 0.0, 0.0, 0.0, 0.0, 0.0,
+                          0.0, 1., 0.0, 0.0, 0.0, 0.0,
+                          0.0, 0.0, 1., 0.0, 0.0, 0.0,
+                          0.0, 0.0, 0.0, 0.01, 0.0, 0.0,
+                          0.0, 0.0, 0.0, 0.0, 0.01, 0.0,
+                          0.0, 0.0, 0.0, 0.0, 0.0, 0.0001]
 
 
-    qNoiseIn = np.identity(5)
+    qNoiseIn = np.identity(6)
     qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.001**2
     qNoiseIn[3:5, 3:5] = qNoiseIn[3:5, 3:5]*0.0001**2
-    filterObject.qNoise = qNoiseIn.reshape(25).tolist()
+    qNoiseIn[5, 5] = qNoiseIn[5, 5]*0.000001**2
+    filterObject.qNoise = qNoiseIn.reshape(36).tolist()
     filterObject.qObsVal = 0.017**2
     filterObject.sensorUseThresh = np.sqrt(filterObject.qObsVal)*5
 
@@ -474,6 +476,8 @@ def setupSuKFData(filterObject):
 # ------
 #
 # The 5th scenario uses the same Switch formulation but in a square-root uKF (named Switch-uKF).
+# This one has an additional state: the sun intensity (equal to 1 at 1AU). This state has low process noise
+# and low initial covariance given it's well determined nature generally.
 #
 # ~~~~~~~~~~~~~{.py}
 # filterObject.navStateOutMsgName = "sunline_state_estimate"
@@ -485,18 +489,20 @@ def setupSuKFData(filterObject):
 # filterObject.beta = 2.0
 # filterObject.kappa = 0.0
 #
-# filterObject.state = [1.0, 0.1, 0., 0., 0.]
-# filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0,
-#                       0.0, 1., 0.0, 0.0, 0.0,
-#                       0.0, 0.0, 1., 0.0, 0.0,
-#                       0.0, 0.0, 0.0, 0.01, 0.0,
-#                       0.0, 0.0, 0.0, 0.0, 0.01]
+# filterObject.stateInit = [1.0, 0.1, 0., 0., 0., 1.]
+# filterObject.covarInit = [1., 0.0, 0.0, 0.0, 0.0, 0.0,
+#                       0.0, 1., 0.0, 0.0, 0.0, 0.0,
+#                       0.0, 0.0, 1., 0.0, 0.0, 0.0,
+#                       0.0, 0.0, 0.0, 0.01, 0.0, 0.0,
+#                       0.0, 0.0, 0.0, 0.0, 0.01 0.0,
+#                       0.0, 0.0, 0.0, 0.0, 0.0 0.0001]
 #
 #
 # qNoiseIn = np.identity(5)
 # qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.001**2
 # qNoiseIn[3:5, 3:5] = qNoiseIn[3:5, 3:5]*0.0001**2
-# filterObject.qNoise = qNoiseIn.reshape(25).tolist()
+# qNoiseIn[5, 5] = qNoiseIn[5, 5]*0.000001**2
+# filterObject.qNoise = qNoiseIn.reshape(36).tolist()
 # filterObject.qObsVal = 0.017**2
 # filterObject.sensorUseThresh = np.sqrt(filterObject.qObsVal)*5
 # ~~~~~~~~~~~~~
@@ -654,7 +660,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
 
 
     if FilterType == 'SuKF':
-        numStates = 5
+        numStates = 6
         moduleConfig = sunlineSuKF.SunlineSuKFConfig()
         moduleWrap = scSim.setModelDataWrap(moduleConfig)
         moduleWrap.ModelTag = "SunlineSuKF"
@@ -776,7 +782,7 @@ def run(saveFigures, show_plots, FilterType, simTime):
 if __name__ == "__main__":
     run(False,       # save figures to file
         True,      # show_plots
-        'SEKF',
+        'SuKF',
          400
        )
 
