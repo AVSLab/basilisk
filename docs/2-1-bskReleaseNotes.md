@@ -15,6 +15,9 @@ We are very excited by the great capabilities that this software already has, an
 ##  Upcoming Version 0.X.X
 <ul>
     <li>
+        Added a new `vizInterface` module.  This version is able to record a BSK simulation which can then be played back in the BSK Vizard visualization program.  Vizard must be downloaded separately.  To enable this capabilty, see the scenario tutorial files.  `scenariosBasicOrbit.py` discusses how to enable this.  The python support macro `vizSupport.enableUnityVisualization()` is commented out by default.  Further, to compile `vizInterface` the CMake flags `USE_PROTOBUFFERS` and `USE_ZEROMQ` must be turned on.  A new MD FAQ support file discusses the Cmake options.
+    </li>
+    <li>
         Updated `inertialUKF` module documenation and unit tests.
     </li>
     <li>
