@@ -94,7 +94,7 @@ In the case a control frame is not fully defined (i.e. only 1 or 2 control axes 
 \end{equation}
 
 \begin{equation}
-	\label{eq:th:min}
+	\label{eq:th:min1}
 	{}^{\mathcal{B}}\bm F = [CD]^{T}([CD][CD]^{T})^{-1} {}^{\mathcal{C}}\bar{\bm L}_{r}
 \end{equation}
 
@@ -105,9 +105,9 @@ $$ [C] = \begin{pmatrix}
 0 & 0 & 0 \\
 \end{pmatrix} $$
 and 
-$$ \bm {}^{\mathcal B}L_r = (1.0, -0.5, 0.7)^T $$
+$$ \bm {}^{\mathcal B} \bm L_r = (1.0, -0.5, 0.7)^T $$
 then 
-$$ \bm {}^{\mathcal C}L_r = (1.0, 0.7, 0.0)^T $$
+$$ \bm {}^{\mathcal C} \bm L_r = (1.0, 0.7, 0.0)^T $$
 
 and 
  $$ [CD] = \begin{pmatrix}
@@ -153,7 +153,7 @@ such that ${}^{\mathcal{C}}L_3$ will never be mapped onto the body frame force c
 
 
 \subsection{2-Stage Minimum Norm ACS Thruster Mapping Algorithm}
-To increase the robustness of the sign-constrained minimum norm thruster force solution, as 2nd stage is included if the number of available ACS thrusters is not equal to the number of installed thrusters.  This simulates scenarios where some thrusters are now offline.    The minimum norm solution from the earlier solution is first evaluated, and then shifted by subtracting the minimum $F_{i}$ value.  
+To increase the robustness of the sign-constrained minimum norm thruster force solution  2nd stage is included.  This is helpful in configurations where the number of available ACS thrusters is not equal to the number of installed thrusters.  This simulates scenarios where some thrusters are now offline.  To engage this 2nd loop the module flag {\tt use2ndLoop} must be set to 1.  The default value is zero where the 2nd loop is not engaged.     The minimum norm solution from the earlier solution is first evaluated, and then shifted by subtracting the minimum $F_{i}$ value.  
 
 Each thruster can only produce a positive force.  With off-pulsing, the nominal thrust force plus the negative correction must still yield a non-negative thrust force.  The module parameter {\tt thrForceSign} is either +1 or -1 to account for the desired force sign.  The value of this parameter is represented through $s_{F}$.  With the ACS thruster configuration this value would always be +1.  
 
@@ -191,7 +191,7 @@ The next step is to sum the individual $\bar{\bm F}$ thruster solutions to the y
 
 
 \subsection{DV Thruster Firing Strategy}
-With a DV thruster configuration the thruster force axes are parallel.  As such, this configuration cannot produce a torque along the DV thrust axis.  A slightly modified version of the above algorithm is used in this case.  With the DV configuration the attitude along the axes orthogonal to the thrust vector are controlled via off-pulsing.  As such, the thruster firing mapping must produce negative $F_{i}$ values and the {\tt thrForceSign} sign must be set to -1.  
+With a DV thruster configuration the thruster force axes are parallel.  As such, this configuration cannot produce a torque along the DV thrust axis.  A slightly modified version of the above algorithm is used in this case.  With the DV configuration the attitude along the axes orthogonal to the thrust vector are controlled via off-pulsing.  As such, the thruster firing mapping must produce negative $F_{i}$ values and the {\tt thrForceSign} sign must be set to -1.  With this  {\tt thrForceSign} value the flag {\tt use2ndLoop} is ignored and the second loop is always engaged.
 
 The modified algorithm still evaluates the first minimum norm inverse, but does not subtract out the $\text{min}(\bm F)$ value.  Rather, the 2nd stage is used to determine which DV thrusters produce the torque with a negative torque value to generate the corresponding $[\bar D]$ matrix.  After performing the 2nd minimum norm inverse with $[\bar D]$ the subtraction of  $\text{min}(\bm F)$ is not performed.  
 

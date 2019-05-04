@@ -41,6 +41,8 @@ Not that in python the matrix is given in a 1D form by defining {\tt controlAxes
 
 \item \textbf{\tt thrForceSign Parameter}: Before this module can be run, the parameter {\tt thrForceSign} must be set to either +1 (on-pulsing with the ACS configuration) or -1 (off-pulsing with the DV configuration).
 
+\item \testbf{\tt use2ndLoop} Flag: If the  {\tt thrForceSign} flag is set to +1 then an on-pulsing configuration is setup.  By default the optional flag  {\tt use2ndLoop} is 0 and the algorithm  only uses the least-squares fitting loop once.  By setting the {\tt use2ndLoop} to +1 then the 2nd least squares fitting loop is used during this on-pulsing configuration,. 
+
 \item \textbf{{\tt angErrThresh} Parameter}: The default value of {\tt angErrThresh} is 0\dg.  This means that during periods of thruster saturation the thruster force solution $\bm F$ is scaled such that $|F_{i}| \le F_{\text{max}}$.  If this scaling should only be done if $\bm\tau$ and $\bar{\bm L}_{r}$ differ by an angle $\alpha$, then set {\tt angErrThresh} equal to $\alpha$.  To turn off this force scaling during thruster saturation the parameter   {\tt angErrThresh} should be set to a value larger than 180\dg.  
 
 \end{enumerate}
