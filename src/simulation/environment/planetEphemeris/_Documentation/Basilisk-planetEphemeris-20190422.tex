@@ -48,11 +48,12 @@
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
 
 
-\newcommand{\ModuleName}{Module Name}
-\newcommand{\subject}{Module Name Model}
-\newcommand{\status}{Status}
-\newcommand{\preparer}{F. Last}
-\newcommand{\summary}{Summary of the document goes here.}
+\newcommand{\ModuleName}{planetEphemeris}
+\newcommand{\subject}{Planet Ephemeris from Classical Orbit Elements}
+\newcommand{\status}{Released}
+\newcommand{\preparer}{H. Schaub}
+\newcommand{\summary}{The planetEphemeris module uses classical heliocentric orbit elements to specify a planet's
+    position and velocity vectors.  Optionally, the planet's orientation can also be specified through a right ascension angle, a declination angle, and a location sidereal time at epoch.  The planet rotation about its third (polar) axis can be specified as well.  If the planet attitude information is not complete or missing then an inertially fixed zero planet orientation is modeled.  The module is able to receive a stack or vector of classical orbit elements and orientation information to output a series of planet ephemeris messages. }
 
 \begin{document}
 
@@ -69,9 +70,7 @@
 \hline
 {\bfseries Rev} & {\bfseries Change Description} & {\bfseries By}& {\bfseries Date} \\
 \hline
-1.0 & Revision Description & F. Last1 & YYYYMMDD\\
-\hline
-1.1 & Revision Description& F. Last2 & YYYYMMDD\\
+1.0 & First release & H. Schaub & 2019-05-04\\
 \hline
 
 \end{longtable}
@@ -94,8 +93,6 @@
 
 
 
-{\bfseries Note:}. To \TeX\ this document you must run {\tt pytest} first.  This documents includes content that is auto-generated in the Python unit test and stored in a local folder called {\tt AutoTeX}.  
-\vskip 2em
 	
 \input{secModuleDescription.tex} %This section includes mathematical models, code description, etc.
 

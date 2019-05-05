@@ -44,7 +44,6 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 from Basilisk.simulation import planetEphemeris
 from Basilisk.utilities import macros
 
@@ -167,7 +166,7 @@ def fswModuleTestFunction(show_plots, setRAN, setDEC, setLST, setRate):
     unitTestSim.ExecuteSimulation()
 
     accuracy = 1e-3
-    unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
+    unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)

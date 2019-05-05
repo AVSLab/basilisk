@@ -1,4 +1,4 @@
-% !TEX root = ./Basilisk-MODULENAME-yyyymmdd.tex
+% !TEX root = ./Basilisk-planetEphemeris-20190422.tex
 
 
 \begin{figure}[h]
@@ -11,57 +11,33 @@
 
 
 \section{Model Description}
+The purpose of this module is to create planetary ephemeris messages where the planetary motion is modeled through classical orbit elements.  The module output messages are illustrated in Figure~\ref{fig:moduleImg}.  Note that there are not input messages.  The planetary translational motion, and optionally the rotational motion, are specified through the module parameters directly.  
 
-\begin{figure}[t]
-	\centerline{
-		\includegraphics{Figures/Fig1}
-	}
-	\caption{Sample Figure Inclusion.}
-	\label{fig:Fig1}
-\end{figure}
 
-Provide a brief introduction to the material being discussed in this report.  For example, include what the motivation is, maybe provide a supportive figure such as Figure~\ref{fig:Fig1}, reference earlier work if needed in a literature review.
-Describe the module including mathematics, implementation, etc.
+\subsection{Specifying the required planetary translational information}
+The first step is to specify the planet names that are to be modeled.  This is done by creating a C++ vector of strings and storing it in the module {\tt planetNames} variable.  The length of this vector determines how many output messages are created.  The planet name string provided is used to fill the output message {\tt PlanetName} variable.
 
-\subsection{Equations}
-Equations are centered with the equation number flush to the right. In the text, these equations should be referenced by name as Eq.~\eqref{eq:ab} or Equation~\eqref{eq:ab} (e.g., not eq.  1, (1), or Equation 1).
+Next the translational planetary motion is specified through a C++ vector of classical orbit element structures called {\tt planetElements}.  The true anomaly provided is assumes to be the anomaly angle at epoch.  This is the same time as the zero'th simulation time step. 
+
+
+
+
+
+
+\subsection{Specifying the optional planetary orientational information}
+The planet orientation information is optional.  However, if it is specified for one planet it must be specified for all planets.  The planet polar rotation axis $\hat{\bm e}$, i.e. the 3rd axis of the planet fixed frame, is specified through the right ascension angle RAN and declination angle DEC using
 \begin{equation}
-	\label{eq:ab}
-	a = b^{2}
+	\leftexp{N}{\hat{\bm e}} = \leftexp{N}{\begin{bmatrix}
+		\cos(\text{RAN}) \cos(\text{DEC}) \\
+		\sin(\text{RAN}) \cos(\text{DEC}) \\
+		\sin(\text{DEC})
+	\end{bmatrix}}
 \end{equation}
 
-\subsection{Citation}
-The citation of bibliographical references is indicated in the text by superscripted Arabic numerals, preferably at the end of a sentence.  This is the default style included in this report \LaTeX\ class.\cite{pines1973}
+The initial angular rotation about this axis is given by the local sidereal time (LST) angle $\gamma_{0}$ at the epoch time.  The LST at the current time is determined using the planet's polar rotation rate $\omega_{P/N}$:
+\begin{equation}
+	\gamma(t) = \gamma_{0} + \omega_{P/N} (t - t_{\text{epoch}})
+\end{equation}
+From these states the planet's DCM $[PN]$ and DCM rate $[\dot{PN}]$ are evaluated.
 
-References listed at the end of the paper are indicated in the text by a superscript Arabic number. If this causes confusion in mathematics or if a superscript is not appropriate for other reasons, this can be expressed as (Ref.~1). 
-
-\subsection{Figures}
-Illustrations are referred to by name in the text as Figure~1, Figure 2, etc., or, Figures 3 and 4 (e.g., not figure 1, Fig. 1, or \emph{Figure} 1). Captions are in title case (miniscule lettering with the first letter of major words majuscule); they are 10-point serif font and centered below the figure as shown in Figure~\ref{fig:Fig1}. Each illustration should have a caption unless it is a mere sketch. An explanatory caption of several sentences is permissible. Each included illustration must be called out (mentioned) in the text. Ideally, figures should appear within the text just before they are called out. 
-
-The figure files (PDF preferred) should be stored in a common ``Figure'' sub-folder.  If available, any drawing documents used to create this figure can be stored in a ``Support'' sub-folder.
-
-\subsection{Tables}
-Tables are referred to by name in the text as Table 1, or, Tables 2 and 3 (e.g., not table 1, Tbl. 1, or Table 1). The title is centered above the table, as shown in Table~\ref{tab:label}. The minimum number of lines needed for clarity is desired. The table font may be adjusted smaller than the body text as necessary.
-
-\begin{table}[htbp]
-	\caption{A Caption Goes Here}
-	\label{tab:label}
-	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{c | r | r } % Column formatting, 
-		\hline 
-		Animal    & Description & Price (\$)\\
-		\hline 
-		Gnat      & per gram & 13.65 \\
-		& each     &  0.01 \\
-		Gnu       & stuffed  & 92.50 \\
-		Emu       & stuffed  & 33.33 \\
-		Armadillo & frozen   &  8.99 \\
-		\hline
-	\end{tabular}
-\end{table}
-
-\subsection{Mathematical model}
-There can be subsections, like this one.
-
-\subsubsection{Gravity models}
-Even subsubsections. 
+If the planet orientation information is computed, then the output message {\tt computeOrient} is set to +1.  If not, then {\tt computeOrient} is 0.  If the orientation is not specified, then the planet DCM is set to the identity matrix with $[PN] = [I_{3\times 3}]$.  The DCM rate is set to zero.  If any orientation states are not specified, then the module will output this default zero orientation attitude.  

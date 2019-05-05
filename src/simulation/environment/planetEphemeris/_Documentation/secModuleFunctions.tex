@@ -1,12 +1,11 @@
-% !TEX root = ./Basilisk-MODULENAME-yyyymmdd.tex
+% !TEX root = ./Basilisk-planetEphemeris-20190422.tex
 
 
 \section{Module Functions}
-This section will contain a bullet-list and descriptions of what functions this module performs. For example:
 \begin{itemize}
-	\item \textbf{Calculate A Thing}: This module calculates a thing with great precision
-	\item \textbf{Communicate Something}: This module interfaces with X, Y, and Z via the messaging system.
+	\item \textbf{Compute planet heliocentric position and velocity vectors}: Classical heliocentric orbit elements are used to determine the inertial position and velocity vectors
+	\item \textbf{Optionally model a constant polar axis rotation}: The module can model a constant inertial rotation of the planet and evaluate the corresponding DCM and DCM rate information.
 \end{itemize}
 
 \section{Module Assumptions and Limitations}
-This section should describe the assumptions used in formulating the mathematical model and how those assumptions limit the usefulness of the module.
+The module assumes the heliocentric motion is unperturbed.  The optional rotational motion is assumed to be an inertially fixed rotation of the planet. 
