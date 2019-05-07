@@ -73,9 +73,9 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     int32_t i, badUpdate;
     double tempMatrix[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
     badUpdate = 0;
-    mSetZero(configData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
 
     /*! - Zero the local configuration data structures and outputs */
+    mSetZero(configData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
     memset(&cssConfigInBuffer, 0x0, sizeof(CSSConfigFswMsg));
     memset(&(configData->outputSunline), 0x0, sizeof(NavAttIntMsg));
     
