@@ -25,11 +25,12 @@
 #include "simFswInterfaceMessages/navTransIntMsg.h"
 #include "simFswInterfaceMessages/ephemerisIntMsg.h"
 #include <stdint.h>
-//#include "../_GeneralModuleFiles/sunlineEphemFswMsg.h"
-
 
 
 /*! \defgroup sunlineEphem
+ * @brief This module computes an ephemeris-based sunline heading.
+ *
+ * More information can be found in the [PDF Description](Basilisk-SunlineEphem-20181204.pdf).
  * @{
  */
 
@@ -37,20 +38,15 @@
 typedef struct {
 
     /* declare module IO interfaces */
-    NavAttIntMsg outputSunline;   /*!< -- Output sunline estimate data */
-    EphemerisIntMsg sunEphemBuffer; /*!< -- Input sun ephemeris data */
-    NavTransIntMsg scTransBuffer; /*!< -- Input spacecraft position data */
-    NavAttIntMsg scAttBuffer; /*!< -- Input spacecraft attitude data */
+    char navStateOutMsgName[MAX_STAT_MSG_LENGTH];   //!< The name of the output message
+    char sunPositionInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the sun ephemeris input message
+    char scPositionInMsgName[MAX_STAT_MSG_LENGTH];  //!< The name of the spacecraft ephemeris input message
+    char scAttitudeInMsgName[MAX_STAT_MSG_LENGTH];  //!< The name of the spacecraft attitude input message
     
-    char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
-    char sunPositionInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the sun ephemeris input message*/
-    char scPositionInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the spacecraft ephemeris input message*/
-    char scAttitudeInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the spacecraft attitude input message*/
-    
-    int32_t navStateOutMsgId;     /*!<  [-]  ID for the outgoing body estimate message*/
-    int32_t sunPositionInMsgId;/*!<  [-]  ID for the incoming CSS sensor message*/
-    int32_t scPositionInMsgId; /*!<  [-]  ID for the incoming spacecraft position message*/
-    int32_t scAttitudeInMsgId; /*!<  [-]  ID for the incoming spacecraft attitude message*/
+    int32_t navStateOutMsgId;   //!<  [-]  ID for the outgoing body estimate message
+    int32_t sunPositionInMsgId; //!<  [-]  ID for the incoming CSS sensor message
+    int32_t scPositionInMsgId;  //!<  [-]  ID for the incoming spacecraft position message
+    int32_t scAttitudeInMsgId;  //!<  [-]  ID for the incoming spacecraft attitude message
 
 }sunlineEphemConfig;
 

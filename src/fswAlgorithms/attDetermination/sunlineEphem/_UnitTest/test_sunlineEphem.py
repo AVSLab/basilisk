@@ -122,26 +122,17 @@ def sunlineEphemTestFunction(show_plots):
     vehPosData = sunlineEphem.NavTransIntMsg()
     sunData = sunlineEphem.EphemerisIntMsg()
 
-    q = RigidBodyKinematics.addEuler123([np.pi/2, 0, 0],[0,0,0])
-    sigma = RigidBodyKinematics.PRV2MRP(q)
 
-    vehAttData.sigma_BN = sigma
-    vehPosData.r_BN_N = [0.0, 0.0, 0.0]
+    # Artificially put sun at the origin.
     sunData.r_BdyZero_N = [0.0, 0.0, 0.0]
-
-
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
                                sunlineEphemConfig.scAttitudeInMsgName,
                                vehAttData)
 
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               sunlineEphemConfig.sunPositionInMsgName,
-                               sunData)
 
-
-    # Initial test is all of the principal body axes
+    # Place spacecraft unit length away on each coordinate axis
+    vehAttData.sigma_BN = [0.0, 0.0, 0.0]
     TestVectors = [[-1.0, 0.0, 0.0],
                    [0.0, -1.0, 0.0],
                    [0.0, 0.0, -1.0],
@@ -179,11 +170,11 @@ def sunlineEphemTestFunction(show_plots):
     # set the filtered output truth states
     trueVector = [
                [1.0, 0.0, 0.0],
-               [0.0, 0.0, -1.0],
                [0.0, 1.0, 0.0],
-               [-1.0, 0.0, 0.0],
                [0.0, 0.0, 1.0],
-                [0.0, -1.0, 0.0]
+               [-1.0, 0.0, 0.0],
+               [0.0, -1.0, 0.0],
+                [0.0, 0.0, -1.0]
                ]
 
     # compare the module results to the truth values
@@ -194,7 +185,7 @@ def sunlineEphemTestFunction(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: " + sunlineEphemWrap.ModelTag + " Module failed " +
                                 moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
+                                str(estVector[i,0]*macros.NANO2SEC) +
                                 "sec\n")
 
 
