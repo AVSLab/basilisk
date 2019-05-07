@@ -37,7 +37,6 @@
 typedef struct {
     char outputDataName[MAX_STAT_MSG_LENGTH]; //!< The name of the output message
     char inputBurnDataName[MAX_STAT_MSG_LENGTH];//<! Input message that configures the vehicle burn
-    double dvMag;            //!< (m/s) Magnitude of the requested deltaV
     int32_t outputMsgID;     //!< (-) ID for the outgoing body estimate message
     int32_t inputBurnCmdID;  //!< [-] ID for the incoming burn command data
 }dvGuidanceConfig;

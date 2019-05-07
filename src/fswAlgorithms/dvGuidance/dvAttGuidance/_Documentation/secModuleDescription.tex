@@ -56,12 +56,12 @@ Note that if $\hat{\bm r}$ and $\Delta\bm v$ are orthogonal to begin with, then 
 
 
 \subsection{Burn Time}
-The input message contains a time tag $t_{\text{start}}$ when the $\Delta\bm v$ burn is to begin.  The time since this start tiem is thus evaluated using
+The input message contains a time tag $t_{\text{start}}$ when the $\Delta\bm v$ burn is to begin.  The time since this start time is thus evaluated using
 \begin{equation}
 	\label{eq:dvAttGuid4}
 		\Delta t = t - t_{\text{start}}
 \end{equation}
-where $t$ is the current time.
+where $t$ is the current time. A negative signed $\Delta t$ is a valid burn duration and corresponds to a rotation towards the nominal attitude at the start of the burn.
 
 \subsection{Current Burn Frame}
 The current burn frame is defined as ${\cal B}_{u,t} = \{\hat{\bm b}_{u_{t},1}, \hat{\bm b}_{u_{t},2}, \hat{\bm b}_{u_{t},3} \}$.  It differs from the base burn frame through a third base-frame axis rotation.  The rotation rate $\dot\theta$ is given in the input message as {\tt dvRotVecMag}.  The current angle $\theta$ is 

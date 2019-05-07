@@ -29,12 +29,13 @@
  output message
  @return void
  @param ConfigData The configuration data associated with the delta-V maneuver guidance
+ @param moduleID The unique module identifier
  */
-void SelfInit_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t moduleID)
+void SelfInit_dvGuidance(dvGuidanceConfig *configData, uint64_t moduleID)
 {
     /*! - Create output message for module */
-    ConfigData->outputMsgID = CreateNewMessage(
-        ConfigData->outputDataName, sizeof(AttRefFswMsg), "AttRefFswMsg", moduleID);
+    configData->outputMsgID = CreateNewMessage(configData->outputDataName,
+                                               sizeof(AttRefFswMsg), "AttRefFswMsg", moduleID);
     return;
     
 }
@@ -44,20 +45,21 @@ void SelfInit_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t moduleID)
  created elsewhere.
  @return void
  @param ConfigData The configuration data associated with the attitude maneuver guidance
+ @param moduleID The unique module identifier
  */
-void CrossInit_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t moduleID)
+void CrossInit_dvGuidance(dvGuidanceConfig *configData, uint64_t moduleID)
 {
-    ConfigData->inputBurnCmdID = subscribeToMessage(ConfigData->inputBurnDataName,
+    configData->inputBurnCmdID = subscribeToMessage(configData->inputBurnDataName,
                                                     sizeof(DvBurnCmdFswMsg), moduleID);
     return;
-    
+
 }
 
 /*! @brief This resets the module.
  @return void
  @param ConfigData The configuration data associated with this module
  @param callTime The clock time at which the function was called (nanoseconds)
- @param moduleID The ID associated with the ConfigData
+ @param moduleID The unique module identifier
  */
 void Reset_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
                        uint64_t moduleID)
@@ -71,32 +73,32 @@ void Reset_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
  @return void
  @param ConfigData The configuration data associated with the delta-V maneuver guidance
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The unique module identifier
  */
-void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
+void Update_dvGuidance(dvGuidanceConfig *configData, uint64_t callTime,
     uint64_t moduleID)
 {
     double dcm_BubN[3][3];           /* dcm, inertial to base burn frame */
     double dcm_ButN[3][3];           /* dcm, inertial to current burn frame */
     double dcm_ButBub[3][3];         /* dcm, rotating from base to current burn frame */
-    double dvHat_N[3];
-    double bu2_N[3];
-	double burnTime;
-	double rotPRV[3];
+    double dvHat_N[3];               /* unit vector, direction of delta velocity in the inertial frame */
+    double bu2_N[3];                 /* vector, vector which becomes the BubN DCM's second basis vector */
+	double burnTime;                 /* duration for which to thrust */
+	double rotPRV[3];                /* principle rotation vector about which to rotate during the burn */
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
-    DvBurnCmdFswMsg localBurnData;  /* [-] input message container */
-    AttRefFswMsg attCmd;            /* [-] Output attitude command data to send */
+    DvBurnCmdFswMsg localBurnData;   /* [-] input message container */
+    AttRefFswMsg attCmd;             /* [-] Output attitude command data to send */
 
     /*! - zero the input and output message containers */
     memset(&localBurnData, 0x0, sizeof(DvBurnCmdFswMsg));
     memset(&attCmd, 0x0, sizeof(AttRefFswMsg));
 
     /*! - read in DV burn command input message */
-    ReadMessage(ConfigData->inputBurnCmdID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->inputBurnCmdID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(DvBurnCmdFswMsg), &localBurnData, moduleID);
 
     /*! - evaluate DCM from inertial to the base Burn Frame */
-    ConfigData->dvMag = v3Norm(localBurnData.dvInrtlCmd);           /* HPS: this variable is never used, can we remove it? */
     v3Normalize(localBurnData.dvInrtlCmd, dvHat_N);
     v3Copy(dvHat_N, dcm_BubN[0]);
     v3Cross(localBurnData.dvRotVecUnit, dvHat_N, bu2_N);
@@ -106,7 +108,6 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
 
     /*! - evaluate the time since the burn start time */
     burnTime = ((int64_t) callTime - (int64_t) localBurnData.burnStartTime)*NANO2SEC;
-    /* HPS: should we be adding a sanity check on this burnTime calculation, ensuring it is not negative, etc. */
 
     /*! - evaluate the DCM from inertial to the current Burn frame.
      The current frame differs from the base burn frame via a constant 3-axis rotation */
@@ -124,7 +125,7 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
     v3SetZero(attCmd.domega_RN_N);
 
     /*! - Write the output message */
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttRefFswMsg),
+    WriteMessage(configData->outputMsgID, callTime, sizeof(AttRefFswMsg),
         &attCmd, moduleID);
     
     return;
