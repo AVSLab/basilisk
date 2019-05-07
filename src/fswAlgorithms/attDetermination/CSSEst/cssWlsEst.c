@@ -144,7 +144,6 @@ int computeWlsmn(int numActiveCss, double *H, double *W,
         for(i = 0; i < 3; i=i+1) {
             x[i] = H[0*MAX_NUM_CSS_SENSORS+i] * y[0];
         }
-        status = 1;
     } else if(numActiveCss == 2) { /*! - If we have two, then do a 2x2 fit */
         
         /*!   -# Find minimum norm solution */
@@ -194,7 +193,6 @@ void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
     /* Zero output message*/
     memset(&sunlineOutBuffer, 0x0, sizeof(NavAttIntMsg));
     
-    /*! <b> Begin method steps </b>*/
     /*! Message Read and Setup*/
     /*! - Read the input parsed CSS sensor data message*/
     memset(&InputBuffer, 0x0, sizeof(CSSArraySensorIntMsg));
