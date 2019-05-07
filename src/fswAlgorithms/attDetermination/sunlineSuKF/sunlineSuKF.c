@@ -67,10 +67,10 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
                       uint64_t moduleID)
 {
     
-    int32_t i, badUpdate;
     CSSConfigFswMsg cssConfigInBuffer;
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
+    int32_t i, badUpdate;
     double tempMatrix[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
     badUpdate = 0;
     mSetZero(configData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
@@ -93,8 +93,8 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     configData->numCSSTotal = cssConfigInBuffer.nCSS;
     
     /*! - Initialize filter parameters to max values */
-    configData->timeTag = callTime*NANO2SEC;
     configData->dt = 0.0;
+    configData->timeTag = callTime*NANO2SEC;
     configData->numStates = SKF_N_STATES_SWITCH;
     configData->countHalfSPs = SKF_N_STATES_SWITCH;
     configData->numObs = MAX_N_CSS_MEAS;
