@@ -72,13 +72,158 @@ def setupFilterData(filterObject, initialized):
 
 
 def test_all_sunline_kf(show_plots, kellyOn):
+    [testResults, testMessage] = SwitchMethods()
+    assert testResults < 1, testMessage
     [testResults, testMessage] = StatePropSunLine(show_plots)
     assert testResults < 1, testMessage
     [testResults, testMessage] = StateUpdateSunLine(show_plots, kellyOn)
     assert testResults < 1, testMessage
-    [testResults, testMessage] = test_FaultScenarios()
+    [testResults, testMessage] = FaultScenarios()
     assert testResults < 1, testMessage
 
+
+def SwitchMethods():
+    # The __tracebackhide__ setting influences pytest showing of tracebacks:
+    # the mrp_steering_tracking() function will not be shown unless the
+    # --fulltrace command line option is specified.
+    __tracebackhide__ = True
+
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
+    ###################################################################################
+    ## Test the sunlineSEKFComputeDCM_BS method
+    ###################################################################################
+    numStates = 6
+
+    inputStates = [2, 1, 0.75, 0.1, 0.4, 0.]
+    sunheading = inputStates[:3]
+    bvec1 = [0., 1., 0.]
+    b1 = numpy.array(bvec1)
+
+    dcm_BS = [1., 0., 0.,
+             0., 1., 0.,
+             0., 0., 1.]
+
+    # Fill in expected values for test
+
+    DCM_exp = numpy.zeros([3,3])
+    W_exp = numpy.eye(numStates)
+
+    DCM_exp[:, 0] = numpy.array(inputStates[0:3]) / (numpy.linalg.norm(numpy.array(inputStates[0:3])))
+    DCM_exp[:, 1] = numpy.cross(DCM_exp[:, 0], b1) / numpy.linalg.norm(numpy.array(numpy.cross(DCM_exp[:, 0], b1)))
+    DCM_exp[:, 2] = numpy.cross(DCM_exp[:, 0], DCM_exp[:, 1]) / numpy.linalg.norm(
+        numpy.cross(DCM_exp[:, 0], DCM_exp[:, 1]))
+
+    # Fill in the variables for the test
+    dcm = sunlineSuKF.new_doubleArray(3 * 3)
+
+    for j in range(9):
+        sunlineSuKF.doubleArray_setitem(dcm, j, dcm_BS[j])
+
+    sunlineSuKF.sunlineSuKFComputeDCM_BS(sunheading, bvec1, dcm)
+
+    switchBSout = []
+    dcmOut = []
+    for j in range(9):
+        dcmOut.append(sunlineSuKF.doubleArray_getitem(dcm, j))
+
+
+    errorNorm = numpy.zeros(1)
+    errorNorm[0] = numpy.linalg.norm(DCM_exp - numpy.array(dcmOut).reshape([3, 3]))
+
+    for i in range(len(errorNorm)):
+        if (errorNorm[i] > 1.0E-10):
+            testFailCount += 1
+            testMessages.append("Frame switch failure \n")
+
+    ###################################################################################
+    ## Test the Switching method
+    ###################################################################################
+
+    inputStates = [2,1,0.75,0.1,0.4, 1.]
+    bvec1 = [0.,1.,0.]
+    b1 = numpy.array(bvec1)
+    covar = [1., 0., 0., 1., 0., 0.,
+             0., 1., 0., 0., 1., 0.,
+             0., 0., 1., 0., 0., 1.,
+             1., 0., 0., 1., 0., 0.,
+             0., 1., 0., 0., 1., 0.,
+             0., 0., 1., 0., 0., 1.]
+    noise =0.01
+
+    # Fill in expected values for test
+
+    DCM_BSold = numpy.zeros([3,3])
+    DCM_BSnew = numpy.zeros([3,3])
+    Switch = numpy.eye(numStates)
+    SwitchBSold = numpy.eye(numStates)
+    SwitchBSnew = numpy.eye(numStates)
+
+    DCM_BSold[:,0] = numpy.array(inputStates[0:3])/(numpy.linalg.norm(numpy.array(inputStates[0:3])))
+    DCM_BSold[:,1] = numpy.cross(DCM_BSold[:,0], b1)/numpy.linalg.norm(numpy.array(numpy.cross(DCM_BSold[:,0], b1)))
+    DCM_BSold[:,2] = numpy.cross(DCM_BSold[:,0], DCM_BSold[:,1])/numpy.linalg.norm(numpy.cross(DCM_BSold[:,0], DCM_BSold[:,1]))
+    SwitchBSold[3:5, 3:5] = DCM_BSold[1:3, 1:3]
+
+    b2 = numpy.array([1.,0.,0.])
+    DCM_BSnew[:,0] = numpy.array(inputStates[0:3])/(numpy.linalg.norm(numpy.array(inputStates[0:3])))
+    DCM_BSnew[:,1] = numpy.cross(DCM_BSnew[:,0], b2)/numpy.linalg.norm(numpy.array(numpy.cross(DCM_BSnew[:,0], b2)))
+    DCM_BSnew[:,2] = numpy.cross(DCM_BSnew[:,0], DCM_BSnew[:,1])/numpy.linalg.norm(numpy.cross(DCM_BSnew[:,0], DCM_BSnew[:,1]))
+    SwitchBSnew[3:5, 3:5] = DCM_BSnew[1:3, 1:3]
+
+    DCM_newOld = numpy.dot(DCM_BSnew.T, DCM_BSold)
+    Switch[3:5, 3:5] = DCM_newOld[1:3,1:3]
+
+    # Fill in the variables for the test
+    bvec = sunlineSuKF.new_doubleArray(3)
+    states = sunlineSuKF.new_doubleArray(numStates)
+    covarMat = sunlineSuKF.new_doubleArray(numStates * numStates)
+
+    for i in range(3):
+        sunlineSuKF.doubleArray_setitem(bvec, i, bvec1[i])
+    for i in range(numStates):
+        sunlineSuKF.doubleArray_setitem(states, i, inputStates[i])
+    for j in range(numStates*numStates):
+        sunlineSuKF.doubleArray_setitem(covarMat, j, covar[j])
+        # sunlineSEKF.doubleArray_setitem(switchBS, j, switchInput[j])
+
+    sunlineSuKF.sunlineSuKFSwitch(bvec, states, covarMat)
+
+    switchBSout = []
+    covarOut = []
+    stateOut = []
+    bvecOut = []
+    for i in range(3):
+        bvecOut.append(sunlineSuKF.doubleArray_getitem(bvec, i))
+    for i in range(numStates):
+        stateOut.append(sunlineSuKF.doubleArray_getitem(states, i))
+    for j in range(numStates*numStates):
+        covarOut.append(sunlineSuKF.doubleArray_getitem(covarMat, j))
+
+
+    expectedState = numpy.dot(Switch, numpy.array(inputStates))
+    Pk = numpy.array(covar).reshape([numStates, numStates])
+    expectedP = numpy.dot(Switch, numpy.dot(Pk, Switch.T))
+
+    errorNorm = numpy.zeros(3)
+    errorNorm[0] = numpy.linalg.norm(numpy.array(stateOut) - expectedState)
+    errorNorm[1] = numpy.linalg.norm(expectedP - numpy.array(covarOut).reshape([numStates, numStates]))
+    errorNorm[2] = numpy.linalg.norm(numpy.array(bvecOut) - b2)
+
+    for i in range(len(errorNorm)):
+        if (errorNorm[i] > 1.0E-10):
+            testFailCount += 1
+            testMessages.append("Frame switch failure \n")
+
+
+    # print out success message if no error were found
+    if testFailCount == 0:
+        print "PASSED: " + " SuKF switch tests"
+    else:
+        print str(testFailCount) + ' tests failed'
+        print testMessages
+    # return fail count and join into a single string all messages in the list
+    # testMessage
+    return [testFailCount, ''.join(testMessages)]
 
 def StateUpdateSunLine(show_plots, kellyOn):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -320,7 +465,7 @@ def StatePropSunLine(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def test_FaultScenarios():
+def FaultScenarios():
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -431,4 +576,4 @@ def test_FaultScenarios():
 if __name__ == "__main__":
     # test_all_sunline_kf(True)
     # StateUpdateSunLine(True, True)
-    test_FaultScenarios()
+    SwitchMethods()
