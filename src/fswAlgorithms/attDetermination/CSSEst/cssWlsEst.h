@@ -49,7 +49,6 @@ typedef struct {
     double sensorUseThresh;                             //!< Threshold below which we discount sensors
     uint64_t priorTime;                                 //!< [ns] Last time the attitude control is called
     CSSConfigFswMsg cssConfigInBuffer;                  //!< CSS constellation configuration message buffer
-    NavAttIntMsg sunlineOutBuffer;                      //!< Nav message
     SunlineFilterFswMsg filtStatus;                     //!< Filter message
     int32_t cssDataInMsgID;                             //!< ID for the incoming CSS sensor message
     int32_t cssConfigInMsgID;                           //!< ID for the incoming CSS configuration message
@@ -61,11 +60,11 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID);
-    void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
+    void SelfInit_cssWlsEst(CSSWLSConfig *configData, uint64_t moduleID);
+    void CrossInit_cssWlsEst(CSSWLSConfig *configData, uint64_t moduleID);
+    void Update_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime,
         uint64_t moduleID);
-    void Reset_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void Reset_cssWlsEst(CSSWLSConfig *configData, uint64_t callTime, uint64_t moduleID);
     int computeWlsmn(int numActiveCss, double *H, double *W,
                      double *y, double x[3]);
     void computeWlsResiduals(double *cssMeas, CSSConfigFswMsg *cssConfig,
