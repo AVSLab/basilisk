@@ -77,7 +77,6 @@ void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     /*! - Zero the local configuration data structures and outputs */
     mSetZero(configData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
     memset(&cssConfigInBuffer, 0x0, sizeof(CSSConfigFswMsg));
-    memset(&(configData->outputSunline), 0x0, sizeof(NavAttIntMsg));
     
     /*! - Read in mass properties and coarse sun sensor configuration information.*/
     ReadMessage(configData->cssConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
@@ -176,16 +175,17 @@ void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
     SunlineFilterFswMsg sunlineDataOutBuffer;
     double maxSens;
     
-    /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
     timeOfMsgWritten = 0;
     sizeOfMsgWritten = 0;
+    memset(&(sunlineDataOutBuffer), 0x0, sizeof(SunlineFilterFswMsg));
     memset(&(configData->cssSensorInBuffer), 0x0, sizeof(CSSArraySensorIntMsg));
+    memset(&(configData->outputSunline), 0x0, sizeof(NavAttIntMsg));
     ReadMessage(configData->cssDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
         sizeof(CSSArraySensorIntMsg), (void*) (&(configData->cssSensorInBuffer)), moduleID);
     
     /*! If the filter is not initialized manually, give it an initial guess using the CSS with the strongest signal.*/
-    if(0==configData->filterInitialized)
+    if(configData->filterInitialized==0)
     {
         vSetZero(configData->stateInit, SKF_N_STATES_SWITCH);
         configData->stateInit[5] = 1;
@@ -256,9 +256,9 @@ void Update_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
 	WriteMessage(configData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
 		&(configData->outputSunline), moduleID);
     
-    /* Switch the rates back to omega_BN instead of oemga_SB */
+    /*! - Switch the rates back to omega_BN instead of omega_SB */
     vCopy(configData->state, SKF_N_STATES_SWITCH, states_BN);
-    vScale(-1, &(states_BN[3]), 2, &(states_BN[3]));
+    vScale(-1, &(states_BN[3]), 2, &(states_BN[3])); /*! The Filter currently outputs omega_SB = -omega_BN (check doc for details)*/
     
     /*! - Populate the filter states output buffer and write the output message*/
     sunlineDataOutBuffer.timeTag = configData->timeTag;
@@ -294,7 +294,6 @@ void sunlineStateProp(double *stateInOut, double *b_Vec, double dt)
     /* Set local variables to zero*/
     vSetZero(propagatedVel, SKF_N_STATES_HALF);
     
-    /*! Begin state update steps */
     /*! Take omega cross d*/
     v3Cross(omega_BN_B, stateInOut, omegaCrossd);
     
