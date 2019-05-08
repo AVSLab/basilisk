@@ -10,6 +10,10 @@ if(POLICY CMP0057)
   cmake_policy(SET CMP0057 NEW)
 endif()
 
+if(POLICY CMP0086)
+  cmake_policy(SET CMP0086 NEW)
+endif()
+
 project("basilisk")
 
 if(NOT CMAKE_BUILD_TYPE)
