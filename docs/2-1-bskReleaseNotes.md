@@ -29,6 +29,9 @@ We are very excited by the great capabilities that this software already has, an
     <li>
         updated unit test and documentation of `sunlineEphem()`
     </li>
+    <li>
+        updated cmake files to set the policy for CMP0086 required by Cmake 3.14.x and higher
+    </li>
 </ul>
 
 
