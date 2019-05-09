@@ -32,6 +32,9 @@ We are very excited by the great capabilities that this software already has, an
     <li>
         updated cmake files to set the policy for CMP0086 required by Cmake 3.14.x and higher
     </li>
+    <li>
+        updated `thrForceMapping` module after code review with new expansive unit tests and updated PDF documentation
+    </li>
 </ul>
 
 
