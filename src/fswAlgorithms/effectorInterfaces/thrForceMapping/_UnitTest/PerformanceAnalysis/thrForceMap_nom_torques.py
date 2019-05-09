@@ -39,7 +39,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
 from Basilisk.simulation import simFswInterfaceMessages
 
-from Support import Results_thrForceMapping
+from fswAlgorithms.effectorInterfaces.thrForceMapping._UnitTest.Support import Results_thrForceMapping
 import numpy as np
 
 

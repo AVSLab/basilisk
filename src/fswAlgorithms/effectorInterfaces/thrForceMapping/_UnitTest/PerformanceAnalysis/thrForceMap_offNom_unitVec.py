@@ -36,7 +36,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
 from Basilisk.simulation import simFswInterfaceMessages
 
-from Support import Results_thrForceMapping
+from fswAlgorithms.effectorInterfaces.thrForceMapping._UnitTest.Support import Results_thrForceMapping
 
 import os, inspect
 import numpy as np
@@ -53,13 +53,19 @@ path = os.path.dirname(os.path.abspath(filename))
 #   of the multiple test runs for this test.
 
 @pytest.mark.parametrize("useDVThruster", [True, False])
-@pytest.mark.parametrize("useCOMOffset", [False])
-@pytest.mark.parametrize("dropThruster", [0, 1, 2])
-@pytest.mark.parametrize("asymmetricDrop", [False])
-@pytest.mark.parametrize("numControlAxis", [0, 1])
-@pytest.mark.parametrize("saturateThrusters", [0])
-@pytest.mark.parametrize("misconfigThruster", [True, False])
-
+@pytest.mark.parametrize("useCOMOffset", [True, False])
+@pytest.mark.parametrize("dropThruster, asymmetricDrop", [ #asymmetric drop makes sure the thrusters that are lost aren't symmetric around the COM
+    (0, False),
+    (1, False),
+    (2, False),
+    (2, True),
+    (3, False),
+    (4, False),
+    (4, True)
+    ]) # Odd drops already incorporate symmetry so no need to test for them.
+@pytest.mark.parametrize("numControlAxis", [1, 2, 3])
+@pytest.mark.parametrize("saturateThrusters", [0, 1, 2])
+@pytest.mark.parametrize("misconfigThruster", [False])
 
 
 
@@ -287,7 +293,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
                                          vehicleConfigOut.CoM_B, rcsLocationData,
                                          rcsDirectionData, moduleConfig.thrForceSign,
                                          moduleConfig.thrForcMag, moduleConfig.angErrThresh,
-                                         numThrusters, moduleConfig.epsilon, False)
+                                         numThrusters, moduleConfig.epsilon)
     F, DNew = results.results_thrForceMapping()
 
     trueVector = np.zeros((2, MAX_EFF_CNT))
@@ -389,7 +395,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     snippetTex += "D-Matrix:\n" + str(D) + "\n\n"
     snippetTex += "Forces:\n" + str(np.transpose(F)) + "\n\n"
 
-    directory = "ConfigErr/"
+    directory = "OffNom/UnitVec/"
 
 
     # Any solutions that dont have the correct torque, but do have the correct unit direction are called successful.
@@ -431,11 +437,11 @@ if __name__ == "__main__":
     test_module(              # update "module" in function name
                  False,
                  True,           # useDVThruster
-                 False,           # use COM offset
-                 0,               # num drop thruster(s)
+                 True,           # use COM offset
+                 3,               # num drop thruster(s)
                  False,            # asymmetric drop
-                 1,               # num control axis
-                 0,               # saturateThrusters
+                 2,               # num control axis
+                 1,               # saturateThrusters
                  False            # misconfigThruster
 
     )

@@ -74,7 +74,7 @@ extern "C" {
     void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, uint64_t moduleID);
     void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, uint64_t moduleID);
 
-    void substractMin(thrForceMappingConfig *configData, double *F, uint32_t size, double D[3][MAX_EFF_CNT]);
+    void substractMin(double *F, uint32_t size);
     void findMinimumNormForce(thrForceMappingConfig *configData,
                               double D[3][MAX_EFF_CNT], double Lr_B[3], uint32_t numForces, double F[MAX_EFF_CNT]);
     double computeTorqueAngErr(double D[3][MAX_EFF_CNT], double BLr[3], uint32_t numForces, double epsilon,

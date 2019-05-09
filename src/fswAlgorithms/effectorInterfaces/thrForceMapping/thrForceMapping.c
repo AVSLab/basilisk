@@ -207,7 +207,7 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
     /*! - Remove forces components that are contributing to the RCS Null space (this is due to the geometry of the thrusters) */
     if (configData->thrForceSign>0)
     {
-        substractMin(configData, F, configData->numThrusters, D);
+        substractMin(F, configData->numThrusters);
     }
     
     if (configData->thrForceSign<0 || configData->use2ndLoop)
@@ -226,7 +226,10 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
         }
 
         findMinimumNormForce(configData, Dbar, Lr_B_Bar, counterPosForces, Fbar);
-
+        if (configData->thrForceSign > 0)
+        {
+            substractMin(Fbar, counterPosForces);
+        }
         c = 0;
         for (i=0;i<configData->numThrusters;i++) {
             if (thrusterUsed[i]) {
@@ -275,16 +278,16 @@ void Update_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime
  will become zero, while other forces increase.  This assumes that the thrusters are aligned such that if all
  thrusters are firing, then no torque or force is applied.  This ensures only positive force values are computed.
  */
-void substractMin(thrForceMappingConfig *configData, double *F, uint32_t size, double D[3][MAX_EFF_CNT])
+void substractMin(double *F, uint32_t size)
 {
     int    i;
     double minValue = 0.0;
-    for (i=0; i < configData->numThrusters;i++){
+    for (i=0; i < size;i++){
         if(F[i] < minValue){
             minValue = F[i];
         }
     }
-    for (i=0; i < configData->numThrusters;i++){
+    for (i=0; i < size;i++){
         F[i] = F[i] - minValue;
     }
     return;

@@ -3,7 +3,7 @@ import numpy as np
 
 
 class Results_thrForceMapping():
-    def __init__(self, Lr, COrig, COM, rData, gData, thrForceSign, thrForceMag, angErrThresh, numThrusters, epsilon):
+    def __init__(self, Lr, COrig, COM, rData, gData, thrForceSign, thrForceMag, angErrThresh, numThrusters, epsilon, use2ndLoop):
         self.rData = np.array(rData)
         self.gData = np.array(gData)
         self.Lr_B = np.array(Lr) #Original Requested Torque in B Frame
@@ -19,6 +19,7 @@ class Results_thrForceMapping():
         self.C = np.reshape(self.C, ((len(self.C)/3),3),'C')
 
         self.epsilon = epsilon
+        self.use2ndLoop = use2ndLoop
         return
 
     def results_thrForceMapping(self):
@@ -39,28 +40,32 @@ class Results_thrForceMapping():
 
         # Subtract off minimum force (remove null space contribution)
         if self.thrForceSign > 0:
-            F = self.subtractPairwiseNullSpace(F, D)
+            #F = self.subtractPairwiseNullSpace(F, D)
+            F = self.subtractMin(F, self.numThrusters)
 
         # Identify any negative forces
         t = (F[:]*self.thrForceSign > self.epsilon)
 
         # Recompute the D Matrix with negative forces removed and compute Force
-        DNew = np.array([])
-        for i in range(0,len(F)):
-            if t[i]:
-                DNew = np.append(DNew, np.cross((self.rData[i,:] - self.COM), self.gData[i]))
-        DNew = np.reshape(DNew, (3, (len(DNew) / 3)), 'F')
-        FNew = self.mapToForce(DNew, Lr_Bar)
-
-        # Remove minumum force
-        count = 0
-        for i in range(0,len(F)):
-            if t[i]:
-                F[i] = FNew[count]
-                count += 1
-            else:
-                F[i] = 0.0
-
+        if self.thrForceSign < 0 or self.use2ndLoop:
+            DNew = np.array([])
+            for i in range(0,len(F)):
+                if t[i]:
+                    DNew = np.append(DNew, np.cross((self.rData[i,:] - self.COM), self.gData[i]))
+            DNew = np.reshape(DNew, (3, (len(DNew) / 3)), 'F')
+            FNew = self.mapToForce(DNew, Lr_Bar)
+            if (self.thrForceSign > 0):
+                FNew = self.subtractMin(FNew,len(DNew[0])) # Produced negative forces when doing 2nd loop, dropped thruster, and COM offset
+            # Remove minumum force
+            count = 0
+            for i in range(0,len(F)):
+                if t[i]:
+                    F[i] = FNew[count]
+                    count += 1
+                else:
+                    F[i] = 0.0
+        else:
+            DNew = D
         angle = self.results_computeAngErr(D, Lr_Bar, F)
 
         if angle > self.angErrThresh:
@@ -143,5 +148,16 @@ class Results_thrForceMapping():
                         F[j] -= F[i]
                         break
                 F[i] = 0.0
+
+        return F
+
+    def subtractMin(self, F, size):
+        minValue = 0.0
+        for i in range(size):
+            if F[i] < minValue:
+                minValue = F[i]
+
+        for i in range(size):
+            F[i] -= minValue
 
         return F

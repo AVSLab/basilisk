@@ -39,7 +39,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
 from Basilisk.simulation import simFswInterfaceMessages
 
-from Support import Results_thrForceMapping
+from fswAlgorithms.effectorInterfaces.thrForceMapping._UnitTest.Support import Results_thrForceMapping
 import numpy as np
 
 
@@ -210,7 +210,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
 
 
     if dropThruster > 0:
-        if (dropThruster % 2==0) and asymmetricDrop: # Drop thrusters that dont share the same torque direction
+        if (dropThruster % 2==0) and asymmetricDrop: # Drop thrusters that don't share the same torque direction
             removedThrusters = 0
             for i in range(0, numThrusters, 2):
                 rcsLocationData[i] = [0.0, 0.0, 0.0]

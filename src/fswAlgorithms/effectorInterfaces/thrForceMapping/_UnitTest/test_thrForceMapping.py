@@ -23,6 +23,9 @@
 #   Author:             Hanspeter Schaub
 #   Creation Date:      July 4, 2016
 #
+import os, inspect
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
 
 import pytest
 
@@ -37,12 +40,8 @@ from Basilisk.utilities import fswSetupThrusters
 from Basilisk.simulation import simFswInterfaceMessages
 
 from Support import Results_thrForceMapping
-
-import os, inspect
 import numpy as np
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -53,31 +52,27 @@ path = os.path.dirname(os.path.abspath(filename))
 #   of the multiple test runs for this test.
 
 @pytest.mark.parametrize("useDVThruster", [True, False])
-@pytest.mark.parametrize("useCOMOffset", [True, False])
-@pytest.mark.parametrize("dropThruster, asymmetricDrop", [ #asymmetric drop makes sure the thrusters that are lost aren't symmetric around the COM
-    (0, False),
-    (1, False),
-    (2, False),
-    (2, True),
-    (3, False),
-    (4, False),
-    (4, True)
-    ]) # Odd drops already incorporate symmetry so no need to test for them.
+@pytest.mark.parametrize(["useCOMOffset","dropThruster", "use2ndLoop"],[
+                         (False, 0, False),
+                         (False, 1, True),
+                         (False, 2, True), # Any time we drop a thruster we should recompute the solution
+                         (True, 0, False)]) # We don't handle the case where there is a dropped thruster and and COM offset--see performance analysis.
+@pytest.mark.parametrize("asymmetricDrop", [False])
 @pytest.mark.parametrize("numControlAxis", [1, 2, 3])
-@pytest.mark.parametrize("saturateThrusters", [0, 1, 2])
+@pytest.mark.parametrize("saturateThrusters", [0,1,2])
 @pytest.mark.parametrize("misconfigThruster", [False])
 
 
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop, numControlAxis, saturateThrusters, misconfigThruster):
+def test_module(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop, numControlAxis, saturateThrusters, misconfigThruster, use2ndLoop):
     # each test method requires a single assert method to be called
     [testResults, testMessage] = thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop,
-                                                   numControlAxis, saturateThrusters, misconfigThruster)
+                                                   numControlAxis, saturateThrusters, misconfigThruster, use2ndLoop)
     assert testResults < 1, testMessage
 
 
-def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop, numControlAxis, saturateThrusters, misconfigThruster):
+def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop, numControlAxis, saturateThrusters, misconfigThruster,use2ndLoop):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -110,6 +105,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     moduleConfig.inputThrusterConfName = "RCSThrusters"
     moduleConfig.outputDataName = "thrusterForceOut"
     moduleConfig.inputVehicleConfigDataName = "vehicleConfigName"
+    moduleConfig.use2ndLoop = use2ndLoop
 
     # write vehicle configuration message
     vehicleConfigOut = thrForceMapping.VehicleConfigFswMsg()
@@ -218,7 +214,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
 
 
     if dropThruster > 0:
-        if (dropThruster % 2==0) and asymmetricDrop: # Drop thrusters that dont share the same torque direction
+        if (dropThruster % 2==0) and asymmetricDrop: # Drop thrusters that don't share the same torque direction
             removedThrusters = 0
             for i in range(0, numThrusters, 2):
                 rcsLocationData[i] = [0.0, 0.0, 0.0]
@@ -288,12 +284,12 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     if useDVThruster and numControlAxis == 3:
         return [testFailCount, ''.join(testMessages)] # 3 control axes doesn't work for dv thrusters (only two axes controllable)
 
-
     results = Results_thrForceMapping.Results_thrForceMapping(requestedTorque, moduleConfig.controlAxes_B,
                                          vehicleConfigOut.CoM_B, rcsLocationData,
                                          rcsDirectionData, moduleConfig.thrForceSign,
                                          moduleConfig.thrForcMag, moduleConfig.angErrThresh,
-                                         numThrusters, moduleConfig.epsilon)
+                                         numThrusters, moduleConfig.epsilon, use2ndLoop)
+
     F, DNew = results.results_thrForceMapping()
 
     trueVector = np.zeros((2, MAX_EFF_CNT))
@@ -339,10 +335,8 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     # Check that Python Math and C Math are Identical
     testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([F]), np.array([moduleOutput[0]]), accuracy,
                                                                  "CompareForces",
-                                                                 numThrusters, testFailCount, testMessages)
-    if testFailCount > 0:
-        print F
-        print moduleOutput[0]
+                                                                 MAX_EFF_CNT, testFailCount, testMessages)
+
 
     # Checks to make sure that no forces are negative
     if not useDVThruster and np.any(moduleOutput[0,1:]<0):
@@ -360,7 +354,6 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     # Check that Torques are Sensible
     print "\nReq Lr_Bar [B]: " + str(Lr_Req_Bar_B)
     print "Rec Lr_Bar [B]: " + str(Lr_Rec_Bar_B[1:4])
-
 
     testFailCount = 0
     testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([Lr_Req_Bar_B_Unit]),
@@ -395,8 +388,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     snippetTex += "D-Matrix:\n" + str(D) + "\n\n"
     snippetTex += "Forces:\n" + str(np.transpose(F)) + "\n\n"
 
-    directory = "OffNom/UnitVec/"
-
+    directory = "Nom/UnitVec/"
 
     # Any solutions that dont have the correct torque, but do have the correct unit direction are called successful.
 
@@ -426,6 +418,10 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
+    if testFailCount > 0:
+        print "Python:\t " + str(F)
+        print "C: \t:" + str(moduleOutput[0])
+
     return [testFailCount, ''.join(testMessages)]
 
 
@@ -436,12 +432,12 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
 if __name__ == "__main__":
     test_module(              # update "module" in function name
                  False,
-                 True,           # useDVThruster
-                 True,           # use COM offset
-                 3,               # num drop thruster(s)
-                 False,            # asymmetric drop
-                 2,               # num control axis
-                 1,               # saturateThrusters
-                 False            # misconfigThruster
-
+                 False,           # useDVThruster
+                 False,           # use COM offset
+                 2,               # num drop thruster(s)
+                 False,           # asymmetric drop
+                 3,               # num control axis
+                 2,               # saturateThrusters
+                 False,           # misconfigThruster
+                 False            # Use 2nd loop
     )
