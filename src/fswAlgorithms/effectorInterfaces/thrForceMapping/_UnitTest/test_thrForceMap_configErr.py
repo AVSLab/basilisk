@@ -26,11 +26,6 @@
 
 import pytest
 
-
-
-
-
-
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.simulation import alg_contain
@@ -39,6 +34,15 @@ import matplotlib.pyplot as plt
 from Basilisk.fswAlgorithms import thrForceMapping
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
+from Basilisk.simulation import simFswInterfaceMessages
+
+from Support import Results_thrForceMapping
+
+import os, inspect
+import numpy as np
+
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -47,30 +51,27 @@ from Basilisk.utilities import fswSetupThrusters
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useDVThruster, useCOMOffset, dropThruster, dropAxis, saturateThrusters", [
-      (False, False, False, False, 0)
-    , (False, False, False, True, 0)
-    , (False, True, False, False, 0)
-    # , (False, False, True, False, 0)   #the thruster availability message has not been implemented yet.
-    , (False, False, False, False, 1)
-    , (False, False, False, False, 2)
-    , (False, False, False, False, 3)
-    , (True, False, False, False, 0)
-    , (True, False, True, False, 0)
-    , (True, True, False, False, 0)
-    , (True, False, False, False, 1)
-    , (True, False, False, False, 2)
-])
+
+@pytest.mark.parametrize("useDVThruster", [True, False])
+@pytest.mark.parametrize("useCOMOffset", [False])
+@pytest.mark.parametrize("dropThruster", [0, 1, 2])
+@pytest.mark.parametrize("asymmetricDrop", [False])
+@pytest.mark.parametrize("numControlAxis", [0, 1])
+@pytest.mark.parametrize("saturateThrusters", [0])
+@pytest.mark.parametrize("misconfigThruster", [True, False])
+
+
+
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, useDVThruster, useCOMOffset, dropThruster, dropAxis, saturateThrusters):
+def test_module(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop, numControlAxis, saturateThrusters, misconfigThruster):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster,
-                                                   dropAxis, saturateThrusters)
+    [testResults, testMessage] = thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop,
+                                                   numControlAxis, saturateThrusters, misconfigThruster)
     assert testResults < 1, testMessage
 
 
-def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dropAxis, saturateThrusters):
+def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asymmetricDrop, numControlAxis, saturateThrusters, misconfigThruster):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -112,7 +113,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
     if useCOMOffset == 1:
-        CoM_B = [0,0,0.02]
+        CoM_B = [0.03,0.001,0.02]
     else:
         CoM_B = [0,0,0]
     vehicleConfigOut.CoM_B = CoM_B
@@ -130,7 +131,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
                                           inputMessageSize,
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
 
-    requestedTorque = [1.0, -0.5, 0.7]              # Set up a list as a 3-vector
+    requestedTorque = [1.0, -0.5, 0.7]             # Set up a list as a 3-vector
     if saturateThrusters>0:        # default angErrThresh is 0, thus this should trigger scaling
         requestedTorque = [10.0, -5.0, 7.0]
     if saturateThrusters==2:        # angle is set and small enough to trigger scaling
@@ -146,79 +147,48 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
 
     moduleConfig.epsilon = 0.0005
     fswSetupThrusters.clearSetup()
+    MAX_EFF_CNT = simFswInterfaceMessages.MAX_EFF_CNT
+    rcsLocationData = np.zeros((MAX_EFF_CNT, 3))
+    rcsDirectionData = np.zeros((MAX_EFF_CNT, 3))
+
+    controlAxes_B = np.array([
+        [1, 0, 0],
+        [0, 1, 0],
+        [0, 0, 1]
+    ])
+
+    controlAxes_B = controlAxes_B[0:numControlAxis]
+    if len(controlAxes_B) is 0:
+        controlAxes_B = np.array([[]])
+
+    controlAxes_B = np.reshape(controlAxes_B, (1, 3 * numControlAxis))
+    moduleConfig.controlAxes_B = controlAxes_B[0].tolist()
+
     if useDVThruster:
         # DV thruster setup
         moduleConfig.thrForceSign = -1
-        moduleConfig.controlAxes_B = [
-              1, 0, 0
-            , 0, 1, 0
-        ]
-        if dropThruster:
-            rcsLocationData = [ \
+        numThrusters = 6
+        rcsLocationData[0:6] = [ \
+            [0, 0.413, -0.1671],
+            [0, -0.413, -0.1671],
             [0.35766849176297305, 0.20650000000000013, -0.1671],
             [0.3576684917629732, -0.20649999999999988, -0.1671],
-            [-0.35766849176297305, -0.20650000000000018, -0.1671],
-            [-0.35766849176297333, 0.20649999999999968, -0.1671] \
-                    ]
-            rcsDirectionData = [ \
-                [0.0, 0.0, 1.0],
-                [0.0, 0.0, 1.0],
-                [0.0, 0.0, 1.0],
-                [0.0, 0.0, 1.0] \
-                ]
-        else:
-            rcsLocationData = [ \
-                [0, 0.413, -0.1671],
-                [0.35766849176297305, 0.20650000000000013, -0.1671],
-                [0.3576684917629732, -0.20649999999999988, -0.1671],
-                [0, -0.413, -0.1671],
-                [-0.35766849176297305, -0.20650000000000018, -0.1671],
-                [-0.35766849176297333, 0.20649999999999968, -0.1671] \
-                ]
-            rcsDirectionData = [ \
-                [0.0, 0.0, 1.0],
-                [0.0, 0.0, 1.0],
-                [0.0, 0.0, 1.0],
-                [0.0, 0.0, 1.0],
-                [0.0, 0.0, 1.0],
-                [0.0, 0.0, 1.0] \
-                ]
-
+            [-0.35766849176297333, 0.20649999999999968, -0.1671],
+            [-0.35766849176297305, -0.20650000000000018, -0.1671] \
+            ]
+        rcsDirectionData[0:6] = [ \
+            [0.0, 0.0, 1.0],
+            [0.0, 0.0, 1.0],
+            [0.0, 0.0, 1.0],
+            [0.0, 0.0, 1.0],
+            [0.0, 0.0, 1.0],
+            [0.0, 0.0, 1.0] \
+            ]
     else:
         # RCS thruster setup
         moduleConfig.thrForceSign = +1
-        if dropAxis:
-            moduleConfig.controlAxes_B = [
-                1, 0, 0
-                , 0, 0, 1
-            ]
-        else:
-            moduleConfig.controlAxes_B = [
-                  1, 0, 0
-                , 0, 1, 0
-                , 0, 0, 1
-            ]
-        if dropThruster:
-            rcsLocationData = [ \
-                [-0.86360, -0.82550, 1.79070],
-                [-0.82550, -0.86360, 1.79070],
-                [0.82550, 0.86360, 1.79070],
-                [0.86360, 0.82550, 1.79070],
-                [-0.86360, -0.82550, -1.79070],
-                [-0.82550, -0.86360, -1.79070],
-                [0.82550, 0.86360, -1.79070] \
-                ]
-            rcsDirectionData = [ \
-                [1.0, 0.0, 0.0],
-                [0.0, 1.0, 0.0],
-                [0.0, -1.0, 0.0],
-                [-1.0, 0.0, 0.0],
-                [1.0, 0.0, 0.0],
-                [0.0, 1.0, 0.0],
-                [0.0, -1.0, 0.0] \
-                ]
-        else:
-            rcsLocationData = [ \
+        numThrusters = 8
+        rcsLocationData[0:8] = [ \
                 [-0.86360, -0.82550, 1.79070],
                 [-0.82550, -0.86360, 1.79070],
                 [0.82550, 0.86360, 1.79070],
@@ -228,27 +198,63 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
                 [0.82550, 0.86360, -1.79070],
                 [0.86360, 0.82550, -1.79070] \
                 ]
-            rcsDirectionData = [ \
-                [1.0, 0.0, 0.0],
-                [0.0, 1.0, 0.0],
-                [0.0, -1.0, 0.0],
-                [-1.0, 0.0, 0.0],
-                [1.0, 0.0, 0.0],
-                [0.0, 1.0, 0.0],
-                [0.0, -1.0, 0.0],
-                [-1.0, 0.0, 0.0] \
-                ]
 
+        rcsDirectionData[0:8] = [ \
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, -1.0, 0.0],
+            [-1.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, -1.0, 0.0],
+            [-1.0, 0.0, 0.0] \
+            ]
+
+
+    if dropThruster > 0:
+        if (dropThruster % 2==0) and asymmetricDrop: # Drop thrusters that dont share the same torque direction
+            removedThrusters = 0
+            for i in range(0, numThrusters, 2):
+                rcsLocationData[i] = [0.0, 0.0, 0.0]
+                rcsDirectionData[i] = [0.0, 0.0, 0.0]
+                removedThrusters += 1
+            if removedThrusters < dropThruster:
+                rcsLocationData[1] = [0.0, 0.0, 0.0]
+                removedThrusters += 1
+        else:
+            for i in range(dropThruster):
+                rcsLocationData[numThrusters - 1 - i, :] = [0.0, 0.0, 0.0]
+                rcsDirectionData[numThrusters - 1 - i, :] = [0.0, 0.0, 0.0]
+
+        indices = []
+        for i in range(numThrusters):
+            if np.linalg.norm(rcsLocationData[i]) == 0:
+                indices = np.append(indices, i)
+
+        offset = 0
+        for i in indices:
+            idx = (int) (i - offset)
+            rcsLocationData = np.delete(rcsLocationData, idx, axis=0)
+            rcsDirectionData = np.delete(rcsDirectionData, idx, axis=0)
+            rcsLocationData = np.append(rcsLocationData,[[0.0, 0.0, 0.0]], axis=0)
+            rcsDirectionData = np.append(rcsDirectionData, [[0.0, 0.0, 0.0]], axis=0)
+            offset = offset + 1
+
+        numThrusters = numThrusters - dropThruster
     maxThrust = 0.95
     if useDVThruster:
         maxThrust = 10.0
 
-    for i in range(len(rcsLocationData)):
-        fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], maxThrust)
+
+    for i in range(numThrusters):
+        if misconfigThruster and i == 0:
+            maxThrustConfig = 0.0
+        else:
+            maxThrustConfig = maxThrust
+        fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], maxThrustConfig)
     fswSetupThrusters.writeConfigMessage(  moduleConfig.inputThrusterConfName,
                                            unitTestSim.TotalSim,
                                            unitProcessName)
-    numThrusters = fswSetupThrusters.getNumOfDevices()
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
@@ -269,102 +275,44 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "thrForce"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(numThrusters))
-    print moduleOutput
+                                                  range(MAX_EFF_CNT))
 
-    # set the output truth states
-    trueVector=[];
-    if useDVThruster:
-        # DV Thruster results
-        if useCOMOffset:
-            trueVector = [
-                [0, 0, -0.1081312318123977, -1.6142050040355125, -1.5060737722231148, 0],
-                [0, 0, -0.1081312318123977, -1.6142050040355125, -1.5060737722231148, 0]
-            ]
-        elif dropThruster:
-            trueVector = [
-                [0, -1.722336235847909, -3.120278776258626, 0],
-                [0, -1.722336235847909, -3.120278776258626, 0]
-            ]
-        elif saturateThrusters == 1:
-            trueVector = [
-                [0, 0, -0.6698729, -10.00000, -9.3301270, 0],
-                [0, 0, -0.6698729, -10.00000, -9.3301270, 0]
-            ]
-        elif saturateThrusters == 2:
-            trueVector = [
-                [0, 0, -1.081312318123977, -16.142050040355125, -15.060737722231148, 0],
-                [0, 0, -1.081312318123977, -16.142050040355125, -15.060737722231148, 0]
-            ]
-        else:
-            trueVector = [
-                [0, 0, -0.1081312318123977, -1.6142050040355125, -1.5060737722231148, 0],
-                [0, 0, -0.1081312318123977, -1.6142050040355125, -1.5060737722231148, 0]
-            ]
-    else:
-        # RCS thruster results
-        if dropAxis:
-            trueVector = [
-                [0.351603, 0., 0.27922, 0.351603, 0.351603, 0.27922, 0., 0.351603],
-                [0.351603, 0., 0.27922, 0.351603, 0.351603, 0.27922, 0., 0.351603]
-            ]
-        elif useCOMOffset:
-            trueVector = [
-                [0.284128, 0.00311817, 0.279186, 0.422161, 0.423721, 0.282304, 0., 0.282569],
-                [0.284128, 0.00311817, 0.279186, 0.422161, 0.423721, 0.282304, 0., 0.282569]
-            ]
-        elif dropThruster:
-            trueVector = [
-                [0.563596,0,0.27922,0.421408,0.421408,0.27922,0],
-                [0.563596,0,0.27922,0.421408,0.421408,0.27922,0]
-            ]
-        elif saturateThrusters == 1 or saturateThrusters == 2:
-            trueVector = [
-                [0.63527, 0., 0.62946, 0.95, 0.95, 0.62946, 0., 0.63527],
-                [0.63527, 0., 0.62946, 0.95, 0.95, 0.62946, 0., 0.63527]
-            ]
-        elif saturateThrusters == 3:
-            trueVector = [
-                [2.817978, 0., 2.792204, 4.2140804, 4.2140804, 2.792204, 0., 2.81797836],
-                [2.817978, 0., 2.792204, 4.2140804, 4.2140804, 2.792204, 0., 2.81797836]
-            ]
-        else:
-            trueVector = [
-                [0.281798, 0., 0.27922, 0.421408, 0.421408, 0.27922, 0., 0.281798],
-                [0.281798, 0., 0.27922, 0.421408, 0.421408, 0.27922, 0., 0.281798]
-            ]
+    if misconfigThruster:
+        return [testFailCount, ''.join(testMessages)] # We don't handle cases where a thruster is configured incorrectly.
 
-    print trueVector
+    if useDVThruster and numControlAxis == 3:
+        return [testFailCount, ''.join(testMessages)] # 3 control axes doesn't work for dv thrusters (only two axes controllable)
 
 
-    # compare the module results to the truth values
-    accuracy = 1e-6
-    for i in range(0,len(trueVector)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], numThrusters, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
-                                "sec\n")
- 
-    # If the argument provided at commandline "--show_plots" evaluates as true,
-    # plot all figures
-    # if show_plots:
-    #     # plot a sample variable.
-    #     plt.figure(1)
-    #     plt.plot(variableState[:,0]*macros.NANO2SEC, variableState[:,1], label='Sample Variable')
-    #     plt.legend(loc='upper left')
-    #     plt.xlabel('Time [s]')
-    #     plt.ylabel('Variable Description [unit]')
-    #     plt.show()
+    results = Results_thrForceMapping.Results_thrForceMapping(requestedTorque, moduleConfig.controlAxes_B,
+                                         vehicleConfigOut.CoM_B, rcsLocationData,
+                                         rcsDirectionData, moduleConfig.thrForceSign,
+                                         moduleConfig.thrForcMag, moduleConfig.angErrThresh,
+                                         numThrusters, moduleConfig.epsilon, False)
+    F, DNew = results.results_thrForceMapping()
 
-    #   print out success message if no error were found
+    accuracy = 1E-6
+
+    # Check that Python Math and C Math are Identical
+    testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([F]), np.array([moduleOutput[0]]), accuracy,
+                                                                 "CompareForces",
+                                                                 numThrusters, testFailCount, testMessages)
+
+
+    unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
+
+    snippentName = "passFail_" + str(useDVThruster) + "_" + str(useCOMOffset) + "_" + str(dropThruster) + "_" + str(
+        numControlAxis) + "_" + str(saturateThrusters) + "_" + str(misconfigThruster)
     if testFailCount == 0:
+        colorText = 'ForestGreen'
         print "PASSED: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        print "Failed: " + moduleWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
-    # each test method requires a single assert method to be called
-    # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
 
@@ -375,9 +323,12 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
 if __name__ == "__main__":
     test_module(              # update "module" in function name
                  False,
-                 False,           # useDVThruster
+                 True,           # useDVThruster
                  False,           # use COM offset
-                 False,           # drop thruster(s)
-                 False,           # drop control axis
-                 0                # saturateThrusters
+                 0,               # num drop thruster(s)
+                 False,            # asymmetric drop
+                 1,               # num control axis
+                 0,               # saturateThrusters
+                 False            # misconfigThruster
+
     )
