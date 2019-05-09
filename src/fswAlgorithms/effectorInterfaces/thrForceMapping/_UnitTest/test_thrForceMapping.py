@@ -235,8 +235,9 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
 
         offset = 0
         for i in indices:
-            rcsLocationData = np.delete(rcsLocationData, i-offset ,axis=0)
-            rcsDirectionData = np.delete(rcsDirectionData, i-offset, axis=0)
+            idx = (int) (i - offset)
+            rcsLocationData = np.delete(rcsLocationData, idx, axis=0)
+            rcsDirectionData = np.delete(rcsDirectionData, idx, axis=0)
             rcsLocationData = np.append(rcsLocationData,[[0.0, 0.0, 0.0]], axis=0)
             rcsDirectionData = np.append(rcsDirectionData, [[0.0, 0.0, 0.0]], axis=0)
             offset = offset + 1

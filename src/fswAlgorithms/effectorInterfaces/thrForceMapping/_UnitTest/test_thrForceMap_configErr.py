@@ -233,8 +233,9 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
 
         offset = 0
         for i in indices:
-            rcsLocationData = np.delete(rcsLocationData, i-offset ,axis=0)
-            rcsDirectionData = np.delete(rcsDirectionData, i-offset, axis=0)
+            idx = (int) (i - offset)
+            rcsLocationData = np.delete(rcsLocationData, idx, axis=0)
+            rcsDirectionData = np.delete(rcsDirectionData, idx, axis=0)
             rcsLocationData = np.append(rcsLocationData,[[0.0, 0.0, 0.0]], axis=0)
             rcsDirectionData = np.append(rcsDirectionData, [[0.0, 0.0, 0.0]], axis=0)
             offset = offset + 1
@@ -290,6 +291,13 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
                                          numThrusters, moduleConfig.epsilon, False)
     F, DNew = results.results_thrForceMapping()
 
+    accuracy = 1E-6
+
+    # Check that Python Math and C Math are Identical
+    testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([F]), np.array([moduleOutput[0]]), accuracy,
+                                                                 "CompareForces",
+                                                                 numThrusters, testFailCount, testMessages)
+
     trueVector = np.zeros((2, MAX_EFF_CNT))
     trueVector[0,:] = F
     trueVector[1,:] = F
@@ -328,12 +336,6 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
 
 
 
-    accuracy = 1E-6
-
-    # Check that Python Math and C Math are Identical
-    testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([F]), np.array([moduleOutput[0]]), accuracy,
-                                                                 "CompareForces",
-                                                                 numThrusters, testFailCount, testMessages)
     if testFailCount > 0:
         print F
         print moduleOutput[0]
