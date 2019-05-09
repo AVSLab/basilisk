@@ -115,7 +115,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
     if useCOMOffset == 1:
-        CoM_B = [0.00,0.00,0.02]
+        CoM_B = [0.03,0.001,0.02]
     else:
         CoM_B = [0,0,0]
     vehicleConfigOut.CoM_B = CoM_B
@@ -404,68 +404,6 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
         unitTestSupport.writeTeXSnippet(directory+"/Passed/" + snippetName, snippetTex, path)
         print "PASSED: " + moduleWrap.ModelTag
 
-
-    # Confirm that the results match the original mathematica results
-    trueVector = []
-    if useDVThruster:
-        # DV Thruster results
-        if useCOMOffset:
-            trueVector = [
-                [0, 0, -0.1081312318123977, -1.6142050040355125, -1.5060737722231148, 0],
-                [0, 0, -0.1081312318123977, -1.6142050040355125, -1.5060737722231148, 0]
-            ]
-        elif dropThruster:
-            trueVector = [
-                [0, -1.722336235847909, -3.120278776258626, 0],
-                [0, -1.722336235847909, -3.120278776258626, 0]
-            ]
-        elif saturateThrusters == 1:
-            trueVector = [
-                [0, 0, -0.6698729, -10.00000, -9.3301270, 0],
-                [0, 0, -0.6698729, -10.00000, -9.3301270, 0]
-            ]
-        elif saturateThrusters == 2:
-            trueVector = [
-                [0, 0, -1.081312318123977, -16.142050040355125, -15.060737722231148, 0],
-                [0, 0, -1.081312318123977, -16.142050040355125, -15.060737722231148, 0]
-            ]
-        else:
-            trueVector = [
-                [0, 0, -0.1081312318123977, -1.6142050040355125, -1.5060737722231148, 0],
-                [0, 0, -0.1081312318123977, -1.6142050040355125, -1.5060737722231148, 0]
-            ]
-    else:
-        # RCS thruster results
-        if dropAxis:
-            trueVector = [
-                [0.351603, 0., 0.27922, 0.351603, 0.351603, 0.27922, 0., 0.351603],
-                [0.351603, 0., 0.27922, 0.351603, 0.351603, 0.27922, 0., 0.351603]
-            ]
-        elif useCOMOffset:
-            trueVector = [
-                [0.284128, 0.00311817, 0.279186, 0.422161, 0.423721, 0.282304, 0., 0.282569],
-                [0.284128, 0.00311817, 0.279186, 0.422161, 0.423721, 0.282304, 0., 0.282569]
-            ]
-        elif dropThruster:
-            trueVector = [
-                [0.563596, 0, 0.27922, 0.421408, 0.421408, 0.27922, 0],
-                [0.563596, 0, 0.27922, 0.421408, 0.421408, 0.27922, 0]
-            ]
-        elif saturateThrusters == 1 or saturateThrusters == 2:
-            trueVector = [
-                [0.63527, 0., 0.62946, 0.95, 0.95, 0.62946, 0., 0.63527],
-                [0.63527, 0., 0.62946, 0.95, 0.95, 0.62946, 0., 0.63527]
-            ]
-        elif saturateThrusters == 3:
-            trueVector = [
-                [2.817978, 0., 2.792204, 4.2140804, 4.2140804, 2.792204, 0., 2.81797836],
-                [2.817978, 0., 2.792204, 4.2140804, 4.2140804, 2.792204, 0., 2.81797836]
-            ]
-        else:
-            trueVector = [
-                [0.281798, 0., 0.27922, 0.421408, 0.421408, 0.27922, 0., 0.281798],
-                [0.281798, 0., 0.27922, 0.421408, 0.421408, 0.27922, 0., 0.281798]
-            ]
 
     unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
 
