@@ -12,6 +12,13 @@ We are very excited by the great capabilities that this software already has, an
 * Python 3 support
 * live plotting capability during a BSK run
 
+##  Upcoming Version 0.X.X
+<ul>
+    <li>
+      release notes go here    
+    </li>
+</ul>
+
 ##  Upcoming Version 0.6.0
 <ul>
     <li>
