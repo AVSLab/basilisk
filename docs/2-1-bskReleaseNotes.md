@@ -7,12 +7,12 @@ We are very excited by the great capabilities that this software already has, an
 * ability to integrate custom Basilisk modules that are kept outside of the core Basilisk folder
 * GPU based methods to evaluate solar radiation pressure forces and torques
 * atmospheric drag evaluation using multi-faceted spacecraft model
-* New Unity-based Basilisk visualization tool called Vizard
+* Updates to the Vizard Unity-based Basilisk visualization tool
 * Ability to playback BSK simulation file within Vizard
 * Python 3 support
 * live plotting capability during a BSK run
 
-##  Upcoming Version 0.X.X
+##  Upcoming Version 0.6.0
 <ul>
     <li>
         Added a new `vizInterface` module.  This version is able to record a BSK simulation which can then be played back in the BSK Vizard visualization program.  Vizard must be downloaded separately.  To enable this capabilty, see the scenario tutorial files.  `scenariosBasicOrbit.py` discusses how to enable this.  The python support macro `vizSupport.enableUnityVisualization()` is commented out by default.  Further, to compile `vizInterface` the CMake flags `USE_PROTOBUFFERS` and `USE_ZEROMQ` must be turned on.  A new MD FAQ support file discusses the Cmake options.
