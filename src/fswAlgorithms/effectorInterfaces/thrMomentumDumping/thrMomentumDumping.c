@@ -78,7 +78,6 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t cal
      first function call */
     configData->priorTime = 0;
 
-
     /*! - read in number of thrusters installed and maximum thrust values */
     memset(&localThrusterData, 0x0, sizeof(THRArrayConfigFswMsg));
     ReadMessage(configData->thrusterConfInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
@@ -129,8 +128,7 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t ca
 
         /* - compute control update time */
         dt = (callTime - configData->priorTime)*NANO2SEC;
-        if (dt > 10.0) dt = 10.0;           /* cap the maximum control time step possible */
-        if (dt < 0.0) dt = 0.0;             /* ensure no negative numbers are used */
+        if (dt < 0.0) {dt = 0.0;}             /* ensure no negative numbers are used */
 
         /*! - Read the requester thruster impulse input message */
         memset(&thrusterImpulseInMsg, 0x0, sizeof(THRArrayCmdForceFswMsg));
@@ -148,8 +146,9 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t ca
                 mCopy(configData->thrOnTimeRemaining, 1, configData->numThrusters, tOnOut);
                 /* subtract next control period from remaining impulse time */
                 for (i=0;i<configData->numThrusters;i++) {
-                    if (configData->thrOnTimeRemaining[i] >0.0)
+                    if (configData->thrOnTimeRemaining[i] >0.0){
                         configData->thrOnTimeRemaining[i] -= dt;
+                    }
                 }
                 /* reset the dumping counter */
                 configData->thrDumpingCounter = configData->maxCounterValue;
@@ -179,18 +178,24 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t ca
         /*! - check for negative, saturated firing times or negative remaining times */
         for (i=0;i<configData->numThrusters;i++) {
             /* if thruster on time is less than the minimum firing time, set thrust time command to zero */
-            if (tOnOut[i] < configData->thrMinFireTime) tOnOut[i] = 0.0;
+            if (tOnOut[i] < configData->thrMinFireTime){
+                tOnOut[i] = 0.0;
+            }
             /* if the thruster time remainder is negative, zero out the remainder */
-            if (configData->thrOnTimeRemaining[i] < 0.0) configData->thrOnTimeRemaining[i] = 0.0;
+            if (configData->thrOnTimeRemaining[i] < 0.0){
+                configData->thrOnTimeRemaining[i] = 0.0;
+            }
             /* if the thruster on time is larger than the control period, set it equal to control period */
-            if (tOnOut[i] > dt)  tOnOut[i] = dt;
+            if (tOnOut[i] > dt){
+                tOnOut[i] = dt;
+            }
         }
     }
 
     configData->priorTime = callTime;
 
     /*! - write out the output message */
-    WriteMessage(configData->thrusterOnTimeOutMsgID, callTime, sizeof(THRArrayOnTimeCmdIntMsg), 
+    WriteMessage(configData->thrusterOnTimeOutMsgID, callTime, sizeof(THRArrayOnTimeCmdIntMsg),
                  (void*) &thrOnTimeOut, moduleID);
 
     return;
