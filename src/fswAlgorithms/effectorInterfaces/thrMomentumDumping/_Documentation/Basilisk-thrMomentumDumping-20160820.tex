@@ -67,7 +67,7 @@ To manage the Reaction Wheel (RW) angular momentum build-up over time, a thruste
 
 
 \subsection{Momentum Management Algorithm}
-The following module algorithm logic is presented as a flow-diagram in Figure~\ref{fig:Fig2}.  This modules receives the vector of thruster impulses $\Delta\bm p$ from a thruster mapping module.  It first checks to see if this $\Delta\bm p$ is new.  If yes,  the overall thruster on-time values are computed using
+The following module algorithm logic is presented as a flow-diagram in Figure~\ref{fig:Fig2}.  This modules receives the vector of thruster impulses $\Delta\bm p$ from a thruster mapping module.  It first checks to see if this $\Delta\bm p$ is new by comparing the time tag of the input message with the time tag of the last used thruster impulse message.  If yes,  the overall thruster on-time values are computed using
 \begin{equation}
 	\bm t_{i,\text{on}} = \frac{\Delta \bm p}{F_{i,\text{max}}}
 \end{equation}
@@ -99,7 +99,7 @@ The module input and output messages are illustrated in Figure~\ref{fig:moduleIm
 There are 2 required input messages.  The message of type {\tt THRArrayConfigFswMsg} is read in during the {\tt Reset()} method and provides the thruster configuration states.  The message of type {\tt THRArrayCmdForceFswMsg} provides the currently requested thruster impulse values and is read in during the {\tt Update()} method.
 
 \subsection{{\tt Reset()} Method}
-The {\tt Reset()} method reads in the thruster message, and then resets dumping counter flag.  The stored thruster on time remainders and the request thruster impulse arrays are reset to zero.  
+The {\tt Reset()} method reads in the thruster message, and then resets dumping counter flag.  The stored thruster on time remainders and the request thruster impulse arrays are reset to zero.  Further, the thruster impulse request input message is red to see if an old message exists.  If yes, then the module variable tracking the time tag of the last impulse request is reset to this current message time tag. This avoids an old message being used after a reset.  If the input message has never been written, then the prior message time tag is set to zero.
 
 
 
