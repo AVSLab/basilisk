@@ -41,6 +41,7 @@ typedef struct {
     /* declare module private variables */
     int32_t     thrDumpingCounter;                      //!<        counter to specify after how many contro period a thruster firing should occur.
     double      Delta_p[MAX_EFF_CNT];                   //!<        vector of desired total thruster impulses
+    uint64_t    lastDelta_pInMsgTime;                   //!<        time tag of the last impulse input message 
     double      thrOnTimeRemaining[MAX_EFF_CNT];        //!<        vector of remaining thruster on times
     uint64_t    priorTime;                              //!< [ns]   Last time the attitude control is called
     int         numThrusters;                           //!<        number of thrusters installed

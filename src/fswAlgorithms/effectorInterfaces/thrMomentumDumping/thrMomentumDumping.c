@@ -70,6 +70,7 @@ void CrossInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t
 void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
     THRArrayConfigFswMsg   localThrusterData;     /* local copy of the thruster data message */
+    THRArrayCmdForceFswMsg DeltaPInMsg;
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
     int                 i;
@@ -90,8 +91,19 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t cal
     /*! - reset dumping counter */
     configData->thrDumpingCounter = 0;
 
-    /*! - zero out some vectors */
+    /*! - zero out thruster on time array */
     mSetZero(configData->thrOnTimeRemaining, 1, MAX_EFF_CNT);
+
+    /*! - set the time tag of the last Delta_p message */
+    memset(&localThrusterData, 0x0, sizeof(THRArrayConfigFswMsg));
+    ReadMessage(configData->thrusterImpulseInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+                sizeof(THRArrayCmdForceFswMsg), (void *) &DeltaPInMsg, moduleID);
+    if (sizeOfMsgWritten > 0) {
+        /* prior message has been written, copy its time tag as the last prior message */
+        configData->lastDelta_pInMsgTime = timeOfMsgWritten;
+    } else {
+        configData->lastDelta_pInMsgTime = 0;
+    }
     mSetZero(configData->Delta_p, 1, MAX_EFF_CNT);
 
     /*! - perform sanity check that the module maxCounterValue value is set to a positive value */
@@ -136,11 +148,19 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t ca
                     sizeof(THRArrayCmdForceFswMsg), (void*) &thrusterImpulseInMsg, moduleID);
         Delta_P_input = thrusterImpulseInMsg.thrForce;
 
+<<<<<<< HEAD
         /*! - check if the thruster impulse input message is identical to current values (continue
          with current momentum dumping), or if the message is new (setup new dumping strategy)  */
         if (memcmp(Delta_P_input, configData->Delta_p, configData->numThrusters*sizeof(double)) == 0) {
             /* idential net thruster impulse request case, continue with existing RW momentum dumping */
 
+=======
+        /*! - check if the thruster impulse input message time tag is identical to current values (continue
+         with current momentum dumping), or if the message is new (setup new dumping strategy)
+         Check time of message written instead*/
+        if (configData->lastDelta_pInMsgTime == timeOfMsgWritten){
+            /* identical net thruster impulse request case, continue with existing RW momentum dumping */
+>>>>>>> [BSK-1340] added new logic to reset Delta_p if the time tag is new
             if (configData->thrDumpingCounter <= 0) {
                 /* time to fire thrusters again */
                 mCopy(configData->thrOnTimeRemaining, 1, configData->numThrusters, tOnOut);
@@ -160,6 +180,7 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t ca
 
         } else {
             /* new net thruster impulse request case */
+            configData->lastDelta_pInMsgTime = timeOfMsgWritten;
             mCopy(Delta_P_input, 1, configData->numThrusters, configData->Delta_p); /* store current Delta_p */
             for (i=0;i<configData->numThrusters;i++) {
                 /* compute net time required to implement requested thruster impulse */
