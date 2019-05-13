@@ -23,6 +23,14 @@ simulations that include hardware-in-the-loop scenarios.
 
 \image html Images/bskImg1.png "Basilisk Concept Illustration" width=245px 
 
+A companion Visualization program is called [Vizard](#vizard).  This stand-alone program is based on the Unity rendering engine and can display the Basilisk simulation states in an interactive manner.  The following image links to a video showing the basic features.
+
+<a href="https://hanspeterschaub.info/Movies/Vizard-Basic-Features.mp4">
+\image html https://hanspeterschaub.info/Movies/Vizard-Basic-Features.jpg "Video of Basic Vizard Interface Features" width=360px
+</a>
+
+
+
 Name/Logo Description
 ---------------------
 The name Basilisk was chosen to reflect both the reptilian (Python) 
