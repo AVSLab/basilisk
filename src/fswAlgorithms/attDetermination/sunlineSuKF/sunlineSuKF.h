@@ -118,8 +118,8 @@ extern "C" {
         uint64_t moduleID);
 	void Reset_sunlineSuKF(SunlineSuKFConfig *configData, uint64_t callTime,
 		uint64_t moduleID);
-	void sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime);
-    void sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime);
+	int sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime);
+    int sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime);
 	void sunlineStateProp(double *stateInOut,  double *b_vec, double dt);
     void sunlineSuKFMeasModel(SunlineSuKFConfig *configData);
     void sunlineSuKFComputeDCM_BS(double sunheading[SKF_N_STATES_HALF], double bVec[SKF_N_STATES_HALF], double *dcm);

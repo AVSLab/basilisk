@@ -490,6 +490,7 @@ def FaultScenarios():
     unitTestSim.TotalSim.terminateSimulation()
     moduleConfigClean1 = sunlineSuKF.SunlineSuKFConfig()
     moduleConfigClean1.numStates = 6
+    moduleConfigClean1.countHalfSPs = moduleConfigClean1.numStates
     moduleConfigClean1.state = [0., 0., 0., 0., 0., 0.]
     moduleConfigClean1.statePrev = [0., 0., 0., 0., 0., 0.]
     moduleConfigClean1.sBar = [0., 0., 0., 0., 0., 0.,
@@ -549,21 +550,6 @@ def FaultScenarios():
         testFailCount += 1
         testMessages.append("Failed to catch bad Update and clean in Meas update")
 
-    moduleConfigClean1.wC = [1] * (moduleConfigClean1.numStates * 2 + 1)
-    moduleConfigClean1.wM = [1] * (moduleConfigClean1.numStates * 2 + 1)
-    qNoiseIn = numpy.identity(6)
-    qNoiseIn[0:3, 0:3] = -qNoiseIn[0:3, 0:3] * 0.0017 * 0.0017
-    qNoiseIn[3:6, 3:6] = -qNoiseIn[3:6, 3:6] * 0.00017 * 0.00017
-    moduleConfigClean1.qNoise = qNoiseIn.reshape(36).tolist()
-    retTime = sunlineSuKF.sunlineSuKFTimeUpdate(moduleConfigClean1, 1)
-    retMease = sunlineSuKF.sunlineSuKFMeasUpdate(moduleConfigClean1, 1)
-
-    if retTime == 0:
-        testFailCount += 1
-        testMessages.append("Failed to catch bad Update and clean in Time update")
-    if retMease == 0:
-        testFailCount += 1
-        testMessages.append("Failed to catch bad Update and clean in Meas update")
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -576,4 +562,4 @@ def FaultScenarios():
 if __name__ == "__main__":
     # test_all_sunline_kf(True)
     # StateUpdateSunLine(True, True)
-    SwitchMethods()
+    FaultScenarios()

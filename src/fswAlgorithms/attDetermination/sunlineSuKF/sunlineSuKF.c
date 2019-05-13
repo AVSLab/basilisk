@@ -312,7 +312,7 @@ void sunlineStateProp(double *stateInOut, double *b_Vec, double dt)
      @param configData The configuration data associated with the CSS estimator
      @param updateTime The time that we need to fix the filter to (seconds)
 */
-void sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
+int sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
 {
 	int i, Index, badUpdate;
 	double sBarT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
@@ -322,15 +322,19 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
 	double *spPtr;
     double procNoise[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH];
     badUpdate = 0;
+    
+    vCopy(configData->state, configData->numStates, configData->statePrev);
+    mCopy(configData->sBar, configData->numStates, configData->numStates, configData->sBarPrev);
+    mCopy(configData->covar, configData->numStates, configData->numStates, configData->covarPrev);
     configData->dt = updateTime - configData->timeTag;
     mCopy(configData->sQnoise, SKF_N_STATES_SWITCH, SKF_N_STATES_SWITCH, procNoise);
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
 	vCopy(configData->state, configData->numStates,
 		&(configData->SP[0 * configData->numStates + 0]));
 	mSetZero(rAT, configData->countHalfSPs, configData->countHalfSPs);
-	sunlineStateProp(&(configData->SP[0 * configData->numStates + 0]), configData->bVec_B, configData->dt);
+	sunlineStateProp(&(configData->SP[0]), configData->bVec_B, configData->dt);
     /*! - Scale that Sigma point by the appopriate scaling factor (Wm[0])*/
-	vScale(configData->wM[0], &(configData->SP[0 * configData->numStates + 0]),
+	vScale(configData->wM[0], &(configData->SP[0]),
         configData->numStates, configData->xBar);
     /*! - Get the transpose of the sBar matrix because it is easier to extract Rows vs columns*/
     mTranspose(configData->sBar, configData->numStates, configData->numStates,
@@ -369,6 +373,7 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
         vScale(-1.0, configData->xBar, configData->numStates, aRow);
         vAdd(aRow, configData->numStates,
              &(configData->SP[(i+1)*configData->numStates]), aRow);
+        if (configData->wC[i+1] <0){return -1;}
         vScale(sqrt(configData->wC[i+1]), aRow, configData->numStates, aRow);
 		memcpy((void *)&AT[i*configData->numStates], (void *)aRow,
 			configData->numStates*sizeof(double));
@@ -407,8 +412,9 @@ void sunlineSuKFTimeUpdate(SunlineSuKFConfig *configData, double updateTime)
     
     if (badUpdate<0){
         sunlineSuKFCleanUpdate(configData);
-        return;
+        return -1;
     }
+    return 0;
 }
 
 /*! This method computes what the expected measurement vector is for each CSS 
@@ -475,7 +481,7 @@ void sunlineSuKFMeasModel(SunlineSuKFConfig *configData)
  @param configData The configuration data associated with the CSS estimator
  @param updateTime The time that we need to fix the filter to (seconds)
  */
-void sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime)
+int sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime)
 {
     uint32_t i;
     int32_t badUpdate;
@@ -484,10 +490,13 @@ void sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime)
     double xHat[SKF_N_STATES_SWITCH], sBarT[SKF_N_STATES_SWITCH*SKF_N_STATES_SWITCH], tempYVec[MAX_N_CSS_MEAS];
     double AT[(2 * SKF_N_STATES_SWITCH + MAX_N_CSS_MEAS)*MAX_N_CSS_MEAS], qChol[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
     double rAT[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], syT[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
-    double sy[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
-    double updMat[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], pXY[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS];
+    double sy[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], Ucol[SKF_N_STATES_SWITCH];
+    double updMat[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], pXY[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], Umat[SKF_N_STATES_SWITCH*3];
     badUpdate = 0;
-    /*! Begin method steps*/
+    
+    vCopy(configData->state, configData->numStates, configData->statePrev);
+    mCopy(configData->sBar, configData->numStates, configData->numStates, configData->sBarPrev);
+    mCopy(configData->covar, configData->numStates, configData->numStates, configData->covarPrev);
     
     /*! - Compute the valid observations and the measurement model for all observations*/
     sunlineSuKFMeasModel(configData);
@@ -513,6 +522,7 @@ void sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime)
         vScale(-1.0, yBar, configData->numObs, tempYVec);
         vAdd(tempYVec, configData->numObs,
              &(configData->yMeas[(i+1)*configData->numObs]), tempYVec);
+        if (configData->wC[i+1] <0){return -1;}
         vScale(sqrt(configData->wC[i+1]), tempYVec, configData->numObs, tempYVec);
         memcpy(&(AT[i*configData->numObs]), tempYVec,
                configData->numObs*sizeof(double));
@@ -583,16 +593,16 @@ void sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime)
     /*! - Compute the updated matrix U from equation 28.  Note that I then transpose it 
          so that I can extract "columns" from adjacent memory*/
     mMultM(kMat, configData->numStates, configData->numObs, sy,
-           configData->numObs, configData->numObs, pXY);
-    mTranspose(pXY, configData->numStates, configData->numObs, pXY);
-    /*! - For each column in the update matrix, perform a cholesky down-date on it to 
-          get the total shifted S matrix (called sBar in internal parameters*/
+           configData->numObs, configData->numObs, Umat);
+    mTranspose(Umat, configData->numStates, configData->numObs, Umat);
+    /*! - For each column in the update matrix, perform a cholesky down-date on it to
+     get the total shifted S matrix (called sBar in internal parameters*/
     for(i=0; i<configData->numObs; i++)
     {
-        vCopy(&(pXY[i*configData->numStates]), configData->numStates, tempYVec);
-        badUpdate += ukfCholDownDate(configData->sBar, tempYVec, -1.0, configData->numStates, sBarT);
+        vCopy(&(Umat[i*configData->numStates]), configData->numStates, Ucol);
+        badUpdate += ukfCholDownDate(configData->sBar, Ucol, -1.0, configData->numStates, sBarT);
         mCopy(sBarT, configData->numStates, configData->numStates,
-            configData->sBar);
+              configData->sBar);
     }
     /*! - Compute equivalent covariance based on updated sBar matrix*/
     mTranspose(configData->sBar, configData->numStates, configData->numStates,
@@ -603,8 +613,9 @@ void sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime)
     
     if (badUpdate<0){
         sunlineSuKFCleanUpdate(configData);
-        return;
+        return -1;
     }
+    return 0;
 }
 
 

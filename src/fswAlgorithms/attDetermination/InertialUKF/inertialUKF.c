@@ -425,6 +425,8 @@ int inertialUKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
     mCopy(configData->sBar, configData->numStates, configData->numStates, configData->sBarPrev);
     mCopy(configData->covar, configData->numStates, configData->numStates, configData->covarPrev);
     
+    mSetZero(rAT, 3, 3);
+    mSetZero(AT, (2 * AKF_N_STATES + AKF_N_STATES), AKF_N_STATES);
     mCopy(configData->sQnoise, AKF_N_STATES, AKF_N_STATES, procNoise);
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
 	vCopy(configData->state, configData->numStates,
@@ -668,6 +670,8 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
     /*! - Compute the valid observations and the measurement model for all observations*/
     inertialUKFMeasModel(configData, currentST);
     
+    mSetZero(rAT, 3, 3);
+    mSetZero(AT, (2 * AKF_N_STATES + AKF_N_STATES), AKF_N_STATES);
     /*! - Compute the value for the yBar parameter (note that this is equation 23 in the 
           time update section of the reference document*/
     vSetZero(yBar, configData->numObs);
