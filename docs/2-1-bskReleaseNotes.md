@@ -15,7 +15,7 @@ We are very excited by the great capabilities that this software already has, an
 ##  Upcoming Version 0.X.X
 <ul>
     <li>
-      release notes go here    
+      Created a user guide MD file that is included in the BSK Doxygen HTML documentation.    
     </li>
 </ul>
 
