@@ -20,6 +20,10 @@
 #ifndef OPNAV_MESSAGE_H
 #define OPNAV_MESSAGE_H
 
+#define ODUKF_N_STATES 6
+#define ODUKF_N_STATES_HALF 3
+#define ODUKF_N_MEAS 3
+
 /*! @brief structure for filter-states output for the unscented kalman filter
  implementation of the sunline state estimator*/
 typedef struct {

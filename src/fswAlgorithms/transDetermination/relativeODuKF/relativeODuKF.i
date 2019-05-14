@@ -16,29 +16,29 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module relativeODSuKF
+%module relativeODuKF
 %{
-   #include "relativeODSuKF.h"
+   #include "relativeODuKF.h"
    #include "../_GeneralModuleFiles/ukfUtilities.h"
 %}
 
 %include "swig_conly_data.i"
-%constant void Update_relativeODSuKF(void*, uint64_t, uint64_t);
-%ignore Update_relativeODSuKF;
-%constant void SelfInit_relativeODSuKF(void*, uint64_t);
-%ignore SelfInit_relativeODSuKF;
-%constant void CrossInit_relativeODSuKF(void*, uint64_t);
-%ignore CrossInit_relativeODSuKF;
-%constant void Reset_relativeODSuKF(void*, uint64_t, uint64_t);
-%ignore Reset_relativeODSuKF;
+%constant void Update_relativeODuKF(void*, uint64_t, uint64_t);
+%ignore Update_relativeODuKF;
+%constant void SelfInit_relativeODuKF(void*, uint64_t);
+%ignore SelfInit_relativeODuKF;
+%constant void CrossInit_relativeODuKF(void*, uint64_t);
+%ignore CrossInit_relativeODuKF;
+%constant void Reset_relativeODuKF(void*, uint64_t, uint64_t);
+%ignore Reset_relativeODuKF;
 GEN_SIZEOF(RelativeODFilterFswMsg);
 GEN_SIZEOF(VehicleConfigFswMsg);
 GEN_SIZEOF(CSSConfigFswMsg);
-GEN_SIZEOF(RelativeODSuKFConfig);
-%include "relativeODSuKF.h"
+GEN_SIZEOF(RelativeODuKFConfig);
+%include "relativeODuKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
 %include "../../fswMessages/vehicleConfigFswMsg.h"
-%include "../../fswMessages/relativeODFilterFswMsg.h"
+%include "../../fswMessages/opnavFswMsg.h"
 %include "../../fswMessages/cssConfigFswMsg.h"
 
 %pythoncode %{
