@@ -398,7 +398,7 @@ def run(show_plots, dscovr, marsOrbit):
     #
     #   initialize Simulation
     #
-    vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
     scSim.InitializeSimulationAndDiscover()
 
     #
