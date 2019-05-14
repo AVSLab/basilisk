@@ -19,7 +19,7 @@
 '''
 
 #
-# Basilisk Scenario Script and Integrated Testeccomending treatment or not.
+# Basilisk Scenario Script and Integrated Test
 #
 # Purpose:  Test the validity of a simple exponential atmosphere model.
 # Author:   Andrew Harris
@@ -48,16 +48,14 @@ from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import exponentialAtmosphere
 from Basilisk.simulation import facetDragDynamicEffector
 from Basilisk.utilities import unitTestSupport
-from Basilisk.utilities import simIncludeGravBody
 #print dir(exponentialAtmosphere)
 
 
-def test_unitFacetDrag():
+def test_unitAtmosphere():
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
 
     #   Initialize new atmosphere and drag model, add them to task
-    #newDrag = facetDragDynamicEffector.FacetDragDynamicEffector()
     newDrag = facetDragDynamicEffector.FacetDragDynamicEffector()
     showVal = False
     testResults = []
@@ -66,10 +64,7 @@ def test_unitFacetDrag():
     planetRes, planetMsg = SetDensityMsgTest(newDrag)
     testMessage.append(planetMsg)
     testResults.append(planetRes)
-
-    dragRes, dragMsg = TestDragCalculation()
-    testMessage.append(dragMsg)
-    testResults.append(dragRes)
+    
 
 
     testSum = sum(testResults)
@@ -82,6 +77,8 @@ def SetDensityMsgTest(dragEffector):
     # create the dynamics task and specify the integration update time
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
+    scObject.hub.useTranslation = True
+    scObject.hub.useRotation = False
 
     scObject.addDynamicEffector(dragEffector)
 
@@ -109,10 +106,9 @@ def TestDragCalculation():
     dynProcess = scSim.CreateNewProcess(simProcessName)
     simulationTimeStep = macros.sec2nano(10.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+    spacecraft = spacecraftPlus.SpacecraftPlus()
 
-    # initialize spacecraftPlus object and set properties
-    scObject = spacecraftPlus.SpacecraftPlus()
-    scObject.ModelTag = "spacecraftBody"
+
     ##   Initialize new atmosphere and drag model, add them to task
     newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
     newAtmo.ModelTag = "ExpAtmo"
@@ -125,20 +121,45 @@ def TestDragCalculation():
         B_locations = [np.array([0.1,0,0]), np.array([0,0.1,0])]
 
         for ind in range(0,len(scAreas)):
-            newDrag.addFacet(scAreas[ind], scCoeff[ind], B_normals[ind], B_locations[ind])
+            newDrag.addFacet(scAreas[ind], scCoeff[ind], base_normals[ind], facet_locations[ind])
+
+        spacecraft.mass = 6.0
     except:
         testFailCount += 1
         testMessage.append("ERROR: FacetDrag unit test failed while setting facet parameters.")
         return testFailCount, testMessage
 
+    # Create simulation variable names
+    simTaskName = "simTask"
+    simProcessName = "simProcess"
 
+    #  Create a sim module as an empty container
+    scSim = SimulationBaseClass.SimBaseClass()
+    scSim.TotalSim.terminateSimulation()
+
+    #  create the simulation process
+    dynProcess = scSim.CreateNewProcess(simProcessName)
+
+    # create the dynamics task and specify the integration update time
+    simulationTimeStep = macros.sec2nano(10.)
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+
+    unitTestSupport.createMessage
+
+
+    #
+    #   setup the simulation tasks/objects
+    #
+
+    # initialize spacecraftPlus object and set properties
+    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject.ModelTag = "spacecraftBody"
 
 
     # clear prior gravitational body and SPICE setup definitions
     gravFactory = simIncludeGravBody.gravBodyFactory()
     newAtmo.addSpacecraftToModel(scObject.scStateOutMsgName)
-    newDrag.setDensityMessage(newAtmo.ModelTag+"_0_data")
-    newDrag.ModelTag = "FacetDrag"
+    newDrag.setDensityMsg(newAtmo.ModelTag+"_0_data")
 
     planet = gravFactory.createEarth()
 
@@ -160,45 +181,60 @@ def TestDragCalculation():
     newAtmo.scaleHeight = refScaleHeight
     newAtmo.planetRadius = r_eq
 
-    rN = np.array([r_eq+200.0e3,0,0])
-    vN = np.array([7e3,0,0])
-    sig_BN = np.array([0,0,0])
+    oe.a = r_eq + 300.*1000
+    oe.e = 0.0
+    oe.i = 0.0*macros.D2R
 
+    oe.Omega = 0.0*macros.D2R
+    oe.omega = 0.0*macros.D2R
+    oe.f     = 0.0*macros.D2R
+    rN, vN = orbitalMotion.elem2rv(mu, oe)
+    oe = orbitalMotion.rv2elem(mu, rN, vN)      # this stores consistent initial orbit elements
+    # with circular or equatorial orbit, some angles are
+    # arbitrary
+
+    #
     #   initialize Spacecraft States with the initialization variables
+    #
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_CN_N
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_CN_N
-    scObject.hub.sigma_BNInit =  unitTestSupport.np2EigenVectorXd(sig_BN)
 
 
-    simulationTime = macros.sec2nano(100.)
+    # set the simulation time
+    n = np.sqrt(mu/oe.a/oe.a/oe.a)
+    P = 2.*np.pi/n
+
+    simulationTime = macros.sec2nano(0.5*P)
 
     #
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 10
-
-    # add BSK objects to the simulation process
-    scSim.AddModelToTask(simTaskName, scObject)
-    scSim.AddModelToTask(simTaskName, newAtmo)
-    scSim.AddModelToTask(simTaskName, newDrag)
-
-    #
-    #   initialize Simulation
-    #
-    scSim.InitializeSimulation()
-
     samplingTime = simulationTime / (numDataPoints-1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(newAtmo.ModelTag+"_0_data", samplingTime)
 
 
-    scSim.AddVariableForLogging(newDrag.ModelTag + ".forceExternal_N",
-                                      simulationTimeStep, 0, 2, 'double')
-    scSim.AddVariableForLogging(newDrag.ModelTag + ".torqueExternalPntB_B",
-                                      simulationTimeStep, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(newDrag.ModelTag + ".forceExternal_B",
+                                      simulationTime, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(NewDrag.ModelTag + ".forceExternal_N",
+                                      simulationTime, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(newDrag.ModelTag + ".torqueExternalPntB_B",
+                                      simulationTime, 0, 2, 'double')
+
+
+    # add BSK objects to the simulation process
+    scSim.AddModelToTask(simTaskName, scObject)
+    scSim.AddModelToTask(simTaskName, newAtmo)
 
 
 
+
+
+    #
+    #   initialize Simulation
+    #
+    scSim.InitializeSimulation()
 
     #
     #   configure a simulation stop time time and execute the simulation run
@@ -211,19 +247,15 @@ def TestDragCalculation():
     #
 
 
-    #dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".forceExternal_B")
-    dragDataForce_N = scSim.GetLogVariableData(newDrag.ModelTag + ".forceExternal_N")
-    dragTorqueData = scSim.GetLogVariableData(newDrag.ModelTag + ".torqueExternalPntB_B")
+    dragDataForce_B = unitTestSim.GetLogVariableData(srpDynEffector.ModelTag + ".forceExternal_B")
+    dragDataForce_N = unitTestSim.GetLogVariableData(srpDynEffector.ModelTag + ".forceExternal_N")
+    dragTorqueData = unitTestSim.GetLogVariableData(srpDynEffector.ModelTag + ".torqueExternalPntB_B")
     posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', range(3))
     densData = scSim.pullMessageLogData(newAtmo.ModelTag+"_0_data.neutralDensity")
     np.set_printoptions(precision=16)
 
-    def checkCannonballDragForce(dens, area, coeff, inertial_vel):
-        drag_force = 0.5 * dens * coeff * inertial_vel**2.0
-        return drag_force
 
-    test_val = checkCannonballDragForce(densData[0,1],scAreas[1],scCoeff[1],np.linalg.norm(velData[0,1:]))
+
 
     #   Compare to expected values
     accuracy = 1e-5
@@ -231,13 +263,15 @@ def TestDragCalculation():
 
     if len(densData) > 0:
         for ind in range(0,len(densData)):
+            dist = np.linalg.norm(posData[ind, 1:])
+            alt = dist - newAtmo.planetRadius
+
+            trueDensity = expAtmoComp(alt, refBaseDens, refScaleHeight)
             # check a vector values
-            if not unitTestSupport.isDoubleEqualRelative(dragDataForce_N, test_val,accuracy):
+            if not unitTestSupport.isDoubleEqualRelative(densData[ind,1], trueDensity,accuracy):
                 testFailCount += 1
                 testMessages.append(
-                    "FAILED:  FacetDragEffector failed force unit test at t=" + str(densData[ind, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(densData[ind,1]-trueDensity))
-
-
+                    "FAILED:  ExpAtmo failed density unit test at t=" + str(densData[ind, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(densData[ind,1]-trueDensity))
     else:
         testFailCount += 1
         testMessages.append("FAILED:  ExpAtmo failed to pull any logged data")
@@ -245,6 +279,5 @@ def TestDragCalculation():
     return testFailCount, testMessages
 
 
-if __name__=="__main__":
-    test_unitFacetDrag()
+
 

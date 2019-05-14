@@ -32,6 +32,7 @@ FacetDragDynamicEffector::FacetDragDynamicEffector()
 	this->coreParams.dragCoeff = 0.0;
 
 	this->atmoDensInMsgName = "atmo_dens_0_data";
+	this->modelType = "cannonball";
 	this->forceExternal_B.fill(0.0);
 	this->torqueExternalPntB_B.fill(0.0);
 	this->forceExternal_N.fill(0.0);
@@ -70,11 +71,6 @@ void FacetDragDynamicEffector::CrossInit()
 																	 sizeof(AtmoPropsSimMsg), moduleID);
 }
 
-
-void FacetDragDynamicEffector::Reset()
-{
-    return;
-}
 /*! This method is used to set the input density message produced by some atmospheric model.
 @return void
 */
@@ -201,7 +197,7 @@ void FacetDragDynamicEffector::plateDrag(){
 /*! This method computes the body forces and torques for the dragEffector in a simulation loop,
 selecting the model type based on the settable attribute "modelType."
 */
-void FacetDragDynamicEffector::computeForceTorque(double integTime){
+void FacetDragDynamicEffector::computeBodyForceTorque(double integTime){
 	updateDragDir();
 	plateDrag();
   return;
