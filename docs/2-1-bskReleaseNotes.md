@@ -17,6 +17,9 @@ We are very excited by the great capabilities that this software already has, an
     <li>
       Created a user guide MD file that is included in the BSK Doxygen HTML documentation.    
     </li>
+    <li>
+      Removed the BOOST library from Basilisk as it is no longer needed.  This makes the BSK repository much leaner.  Note that this removes the capability to communicate with the old Qt-based Visualization that is now defunct and replaced with the new Vizard Visualization.
+    </li>
 </ul>
 
 ##  Upcoming Version 0.6.0

@@ -349,14 +349,11 @@ ENDIF()
 #############################################################################################
 
 # Add platform specific compiler flags
-set(Boost_USE_STATIC_LIBS ON)
-set(Boost_USE_STATIC_RUNTIME ON)
 if(MSVC)
     add_definitions(/MP)
     add_definitions(/D _CRT_SECURE_NO_WARNINGS)
     add_definitions(/D _WINSOCK_DEPRECATED_NO_WARNINGS)
     add_definitions(/D _WIN32_WINNT=0x0501) # Targets Windows xp
-    add_definitions(/D BOOST_ALL_NO_LIB)
     add_definitions(/W3)
     add_definitions(/wd"4913")
     add_definitions(/wd"4251")
@@ -386,8 +383,6 @@ else()
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -gdwarf-3")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}  -Wall")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}  -Wall")
-    set(Boost_USE_STATIC_LIBS OFF)
-    set(Boost_USE_STATIC_RUNTIME OFF)
 endif()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -406,14 +401,7 @@ endif()
 include_directories(simulation)
 include_directories(../libs)
 
-# Set options used by "FindBoost.cmake".
-# Either specify BOOST_ROOT or BOOST_INCLUDEDIR and BOOST_LIBRARYDIR.
-set (BOOST_INCLUDEDIR "../libs/boost_1_61_0/boost")
-set(ENV{BOOST_ROOT} "../libs/boost_1_61_0")
-set(BOOST_ROOT "../libs/boost_1_61_0")
-set(Boost_NO_SYSTEM_PATHS ON)
-set(Boost_USE_MULTITHREADED ON)
-set(Boost_USE_DEBUG_RUNTIME OFF)
+
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
   set(_arch_suffix 64)
@@ -421,58 +409,17 @@ else()
   set(_arch_suffix 32)
 endif()
 
-if("x${CMAKE_CXX_COMPILER_ID}" STREQUAL "xMSVC")
-    if(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19)
-      list(APPEND componentlibvar ${BOOST_ROOT}/lib${_arch_suffix}-msvc-14.0)
-    elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 18)
-      list(APPEND componentlibvar ${BOOST_ROOT}/lib${_arch_suffix}-msvc-12.0)
-    elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 17)
-      list(APPEND componentlibvar ${BOOST_ROOT}/lib${_arch_suffix}-msvc-11.0)
-    elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 16)
-      list(APPEND componentlibvar ${BOOST_ROOT}/lib${_arch_suffix}-msvc-10.0)
-    elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 15)
-      list(APPEND componentlibvar ${BOOST_ROOT}/lib${_arch_suffix}-msvc-9.0)
-    elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14)
-      list(APPEND componentlibvar ${BOOST_ROOT}/lib${_arch_suffix}-msvc-8.0)
-    endif()
-elseif(APPLE)
-	list(APPEND componentlibvar ${BOOST_ROOT}/lib${_arch_suffix}-osx)
-elseif(UNIX)
-	list(APPEND componentlibvar ${BOOST_ROOT}/lib${_arch_suffix}-unix)
-endif()
-set(BOOST_LIBRARYDIR ${CMAKE_SOURCE_DIR}/${componentlibvar})
 
-# The components "system" and "filesystem" from "Boost" version 1.55.0 or
-# greater are required.
-find_package (Boost 1.61.0 REQUIRED COMPONENTS filesystem serialization thread system)
 
-if (Boost_FOUND)
-  # From the offical documentation:
-  # Add include directories to the build. [...] If the SYSTEM option is given,
-  # the compiler will be told the directories are meant as system include
-  # directories on some platforms (signalling this setting might achieve effects
-  # such as the compiler skipping warnings [...])."
-  include_directories (SYSTEM ${Boost_INCLUDE_DIR})
-
-  # From the offical documentation:
-  # "Specify directories in which the linker will look for libraries. [...] Note
-  # that this command is rarely necessary. Library locations returned by
-  # find_package() and find_library() are absolute paths. Pass these absolute
-  # library file paths directly to the target_link_libraries() command. CMake
-  # will ensure the linker finds them."
-  link_directories (${Boost_LIBRARY_DIRS})
-endif ()
 
 # Manually create list of libraries depending on system
 if(WIN32)
 	set(library_dependencies
       	${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_win${_arch_suffix}.lib
-		${Boost_LIBRARIES}
 	)
 elseif(APPLE)
 	set(library_dependencies
 		${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice_osx.a
-		${Boost_LIBRARIES}
 		# ${CMAKE_SOURCE_DIR}/../libs/boost_1_61_0/lib64-osx/libboost_system.a
 # 		${CMAKE_SOURCE_DIR}/../libs/boost_1_61_0/lib64-osx/libboost_serialization.a
 # 		${CMAKE_SOURCE_DIR}/../libs/boost_1_61_0/lib64-osx/libboost_filesystem.a
@@ -495,7 +442,6 @@ elseif(APPLE)
 else()
 	set(library_dependencies
 		${CMAKE_SOURCE_DIR}/../libs/cspice/lib/cspice.a
-		${Boost_LIBRARIES}
 	)
 	SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
 	set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
