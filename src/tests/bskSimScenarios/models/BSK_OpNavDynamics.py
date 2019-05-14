@@ -95,13 +95,12 @@ class BSKDynamicModels():
     def SetLocalConfigData(self, sim):
         cameraConfig = simFswInterfaceMessages.CameraConfigMsg()
         cameraConfig.cameraID = 1
-        cameraConfig.renderRate = int(59 * 1E9)  # in ns
+        cameraConfig.renderRate = int(30 * 1E9)  # in ns
         cameraConfig.cameraDir_B = [0., 0., 1.]
         cameraConfig.cameraPos_B = [5000. * 1E-3, 0., 0.]  # in meters
-        cameraConfig.fieldOfView = 0.62  # in degrees
-        cameraConfig.sensorSize = [30.72 , 30.72 ]  # in mm
-        cameraConfig.resolution = [2048, 2048]  # in pixels
-        cameraConfig.renderRate = int(590 * 1E9)
+        cameraConfig.fieldOfView = 50.  # in degrees
+        cameraConfig.sensorSize = [10. , 10. ]  # in mm
+        cameraConfig.resolution = [512, 512]  # in pixels
         cameraMsgName = 'camera_config_data'
         cameraMessageSize = cameraConfig.getStructSize()
         sim.TotalSim.CreateNewMessage(sim.DynamicsProcessName, cameraMsgName, cameraMessageSize, 2, "CameraConfigMsg")
@@ -117,7 +116,7 @@ class BSKDynamicModels():
             os.mkdir(home + '_VizFiles')
         fileName = home + '_VizFiles/' + name
 
-        self.vizInterface.liveStream = 0
+        self.vizInterface.liveStream = 1
         self.vizInterface.saveFile = 1
         self.vizInterface.spiceInMsgName = vizInterface.StringVector(["earth_planet_data",
                                                                 "mars barycenter_planet_data",

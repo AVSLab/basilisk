@@ -337,8 +337,7 @@ path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/..')
 from BSK_masters import BSKSim, BSKScenario
 import BSK_OpNavDynamics, BSK_OpNavFsw
-import BSK_Dynamics, BSK_Fsw
-import BSK_VizDynamics, BSK_VizFsw
+
 
 # Import plotting file for your scenario
 sys.path.append(path + '/../plotting')

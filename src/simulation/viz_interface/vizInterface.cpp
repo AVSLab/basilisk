@@ -65,15 +65,18 @@ void VizInterface::SelfInit()
         context = zmq_ctx_new();
         requester_socket = zmq_socket(context, ZMQ_REQ);
         zmq_connect(requester_socket, "tcp://localhost:5556");
+
+        void* message = malloc(4 * sizeof(char));
+        memcpy(message, "PING", 4);
+        zmq_msg_t request;
         
-        // debugging ZMQ
-        //sleep(10);
         std::cout << "initialized" << std::endl;
         
-        char buffer[10];
-        zmq_send (requester_socket, "Ping", 5, 0);
-        zmq_recv (requester_socket, buffer, 10, 0);
-        zmq_send (requester_socket, "PING", 5, 0);
+        zmq_msg_init_data(&request, message, 4, message_buffer_deallocate, NULL);
+        zmq_msg_send(&request, requester_socket, 0);
+        char buffer[4];
+        zmq_recv (requester_socket, buffer, 4, 0);
+        zmq_send (requester_socket, "PING", 4, 0);
     }
 
     return;
@@ -442,12 +445,11 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             // receive pong
             zmq_msg_t receive_buffer;
             zmq_msg_init(&receive_buffer);
-
             zmq_msg_recv (&receive_buffer, requester_socket, 0);
+            
             // send protobuffer raw over zmq_socket as ping
             void* serialized_message = malloc(byteCount);
             message->SerializeToArray(serialized_message, byteCount);
-
 
             // fill messages
             zmq_msg_t request_header;
@@ -457,8 +459,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
             void* header_message = malloc(10 * sizeof(char));
             memcpy(header_message, "SIM_UPDATE", 10);
-
-
+            
             zmq_msg_init_data(&request_header, header_message, 10, message_buffer_deallocate, NULL);
             zmq_msg_init(&empty_frame1);
             zmq_msg_init(&empty_frame2);
@@ -468,16 +469,34 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             zmq_msg_send(&empty_frame1, requester_socket, ZMQ_SNDMORE);
             zmq_msg_send(&empty_frame2, requester_socket, ZMQ_SNDMORE);
             zmq_msg_send(&request_buffer, requester_socket, 0);
-
-            // this is actually a pretty good place to receive the pong
-            // we should think about a push pull architecture if we have performance problems
-            // receive pong
-            char buffer[10];
-            zmq_recv(requester_socket, buffer, 10, 0);
-            // send protobuffer raw over zmq_socket as ping
-            std::string serialized_rec_message;
-            message->SerializeToString(&serialized_rec_message);
-            zmq_send(requester_socket, serialized_rec_message.c_str(), serialized_rec_message.length(), 0);
+            
+            if (CurrentSimNanos%this->cameraConfigMessage.renderRate == 0){
+                // If we want BSK to wait for Unity at every step, we need to uncomment this code
+                char buffer[10];
+                zmq_recv(requester_socket, buffer, 10, 0);
+                
+                void* img_message = malloc(13 * sizeof(char));
+                memcpy(img_message, "REQUEST_IMAGE", 13);
+                zmq_msg_t img_request;
+                zmq_msg_init_data(&img_request, img_message, 13, message_buffer_deallocate, NULL);
+                zmq_msg_send(&img_request, requester_socket, 0);
+                
+                zmq_msg_t image;
+                zmq_msg_init(&image);
+                zmq_msg_recv(&image, requester_socket, 0);
+                
+                void* keep_alive = malloc(4 * sizeof(char));
+                memcpy(keep_alive, "PING", 4);
+                zmq_msg_t request_life;
+                zmq_msg_init_data(&request_life, keep_alive, 4, message_buffer_deallocate, NULL);
+                zmq_msg_send(&request_life, requester_socket, 0);
+                return;
+                
+                // If we want BSK to wait for Unity at every step, we need to uncomment this code
+                //            char buffer[10];
+                //            zmq_recv(requester_socket, buffer, 10, 0);
+            }
+            
         }
         // Write protobuffer to file
         if (!this->saveFile  || !message->SerializeToOstream(this->outputStream)) {
