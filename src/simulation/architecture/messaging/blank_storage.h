@@ -28,19 +28,18 @@ class __declspec(dllexport) BlankStorage
 class BlankStorage
 #endif
 {
+public:
+    BlankStorage();  //! -- The memory space for a process message buffer and an integer with the size
+    ~BlankStorage();  //! -- destruction
+    BlankStorage(const BlankStorage &mainCopy);  //! -- Initialize with some already written memory
+    void IncreaseStorage(uint64_t NewVolume);  //! -- Copy to new memory of size NewVolume bytes
+    void ClearStorage();  //! -- null out the BlankStorage
+    uint64_t GetCurrentSize() const {return(this->BufferStorageSize);}  //! -- size in bytes of the StorageBuffer
     
 public:
-    BlankStorage();
-    ~BlankStorage();
-    BlankStorage(const BlankStorage &mainCopy);
-    void IncreaseStorage(uint64_t NewVolume);
-    void ClearStorage();
-    uint64_t GetCurrentSize() const {return(BufferStorageSize);}
-    
-public:
-    uint8_t* StorageBuffer;
+    uint8_t* StorageBuffer;  //! -- The memory where a process buffer writes messages
 private:
-    uint64_t BufferStorageSize;
+    uint64_t BufferStorageSize;  //! -- size of StorageBuffer in bytes
 };
 
 #endif /* _BlankStorage_H_ */

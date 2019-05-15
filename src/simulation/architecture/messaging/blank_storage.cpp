@@ -20,64 +20,80 @@
 #include "architecture/messaging/blank_storage.h"
 #include <cstring>
 
-BlankStorage :: BlankStorage()
+/*!
+ * Constructor for BlankStorage
+ */
+BlankStorage::BlankStorage()
 {
-    StorageBuffer = NULL;
-    BufferStorageSize = 0;
-    
+    this->StorageBuffer = NULL;
+    this->BufferStorageSize = 0;
 }
 
+/*!
+ * Destructor for BlankStorage
+ */
 BlankStorage::~BlankStorage()
 {
-    if(StorageBuffer != NULL)
+    if(this->StorageBuffer != NULL)
     {
-        delete [] StorageBuffer;
-        StorageBuffer = NULL;
+        delete [] this->StorageBuffer;
+        this->StorageBuffer = NULL;
     }
-    BufferStorageSize = 0;
+    this->BufferStorageSize = 0;
 }
 
-
-BlankStorage :: BlankStorage(const BlankStorage &mainCopy)
+/*!
+ * Initialize a BlankStorage with some non-blank storage
+ * @param BlankStorage& mainCopy
+ */
+BlankStorage::BlankStorage(const BlankStorage &mainCopy)
 {
-    BufferStorageSize = 0;
-    StorageBuffer= NULL;
-    IncreaseStorage(mainCopy.GetCurrentSize());
-    if(BufferStorageSize > 0)
+    this->BufferStorageSize = 0;
+    this->StorageBuffer= NULL;
+    this->IncreaseStorage(mainCopy.GetCurrentSize());
+    if(this->BufferStorageSize > 0)
     {
-        memcpy(StorageBuffer, mainCopy.StorageBuffer, BufferStorageSize);
+        memcpy(this->StorageBuffer, mainCopy.StorageBuffer, this->BufferStorageSize);
     }
 }
 
+/*!
+ * Kill the BlankStorage()
+ * @return void
+ */
 void BlankStorage::ClearStorage()
 {
-    if(StorageBuffer != NULL)
+    if(this->StorageBuffer != NULL)
     {
-        delete [] StorageBuffer;
+        delete [] this->StorageBuffer;
     }
     return;
 }
 
+/*!
+ * Copy StorageBuffer data into a new block of memory of size NewVolume
+ * Also delete the old memory block
+ * @param uint64_t NewVolume total volume in bytes of StorageBuffer to increase to
+ * @return void
+ */
 void BlankStorage::IncreaseStorage(uint64_t NewVolume)
 {
-    if(NewVolume <= BufferStorageSize)
+    if(NewVolume <= this->BufferStorageSize)
     {
         return;
     }
     
     uint8_t *NewBuffer = new uint8_t[NewVolume];
-    uint8_t *OldBuffer = StorageBuffer;
+    uint8_t *OldBuffer = this->StorageBuffer;
     memset(NewBuffer, '\0', NewVolume);
-    if(BufferStorageSize > 0 && StorageBuffer != NULL)
+    if(this->BufferStorageSize > 0 && this->StorageBuffer != NULL)
     {
-        memcpy(NewBuffer, StorageBuffer, BufferStorageSize);
+        memcpy(NewBuffer, this->StorageBuffer, this->BufferStorageSize);
     }
-    BufferStorageSize = NewVolume;
-    StorageBuffer = NewBuffer;
-    if(OldBuffer != NULL)
-    {
-        delete [] OldBuffer;
+    this->BufferStorageSize = NewVolume;
+    this->StorageBuffer = NewBuffer;
+    if(OldBuffer != NULL) {
+        delete[] OldBuffer;
     }
-    
 }
 
