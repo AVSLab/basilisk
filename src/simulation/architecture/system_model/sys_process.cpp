@@ -25,91 +25,90 @@
 /*! The task constructor.  */
 SysProcess :: SysProcess()
 {
-    nextTaskTime = 0;
-    processActive = true;
-    processPriority = -1;
-    disableProcess();
+    this->nextTaskTime = 0;
+    this->processActive = true;
+    this->processPriority = -1;
+    this->disableProcess();
 }
-/*! A construction option that allows the user to set all Task parameters.
- Note that the only required argument is InputPeriod.
- @param InputPeriod The amount of nanoseconds between calls to this Task.
- @param InputDelay How long to delay the input by in nanoseconds
- @param FirstStartTime The offset in a given frame to start the Task with.
+/*! Make a process AND attach a storage bucket with the provided name. Give
+ * the process the same name.
+ @return void
+ @param std::string messagecontainer The amount of nanoseconds between calls to this Task.
  */
 SysProcess::SysProcess(std::string messageContainer)
 {
-    nextTaskTime = 0;
-    processActive = true;
-    processName = messageContainer;
-    messageBuffer = SystemMessaging::GetInstance()->
+    this->nextTaskTime = 0;
+    this->processActive = true;
+    this->processName = messageContainer;
+    this->messageBuffer = SystemMessaging::GetInstance()->
         AttachStorageBucket(messageContainer);
     SystemMessaging::GetInstance()->ClearMessageBuffer();
-    prevRouteTime = 0xFF;
-    disableProcess();
+    this->prevRouteTime = 0xFF;
+    this->disableProcess();
 }
 
-//! The destructor.  Everything is handled by STL.
+/*! The destructor does nothing.
+ @return void
+ */
 SysProcess::~SysProcess()
 {
-    
 }
 
-/*! This method self-initializes all of the models that have been added to the Task.
+/*! This method sets the nextTaskTime = 0 and calls SelfInitTaskList() for
+ * all process tasks.
  @return void
  */
 void SysProcess::selfInitProcess()
 {
     //! Begin Method steps
     std::vector<ModelScheduleEntry>::iterator it;
-    SystemMessaging::GetInstance()->selectMessageBuffer(messageBuffer);
-    nextTaskTime = 0;
+    SystemMessaging::GetInstance()->selectMessageBuffer(this->messageBuffer);
+    this->nextTaskTime = 0;
     //! - Iterate through model list and call the Task model self-initializer
-    for(it = processTasks.begin(); it != processTasks.end(); it++)
+    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
     {
         SysModelTask *localTask = it->TaskPtr;
         localTask->SelfInitTaskList();
     }
 }
 
-/*! This method cross-initializes all of the models that have been added to the Task.
+/*! This method asks all process tasks to CrossInitTaskLists.
  @return void
  */
 void SysProcess::crossInitProcess()
 {
     //! Begin Method steps
     std::vector<ModelScheduleEntry>::iterator it;
-    SystemMessaging::GetInstance()->selectMessageBuffer(messageBuffer);
-    for(it = processTasks.begin(); it != processTasks.end(); it++)
+    SystemMessaging::GetInstance()->selectMessageBuffer(this->messageBuffer);
+    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
     {
         SysModelTask *localTask = it->TaskPtr;
         localTask->CrossInitTaskList();
     }
-    
     return;
 }
 
 /*! This method resets each task and associated model-set inside the process 
     ensuring that all parameters go back to their default state.
     @return void
-    @param currentTime [ns] Current simulation time that reset is occurring at
+    @param uint64_t currentTime Current simulation time in ns that reset is occurring at
 */
 void SysProcess::resetProcess(uint64_t currentTime)
 {
     //! Begin Method steps
     std::vector<ModelScheduleEntry>::iterator it;
-    SystemMessaging::GetInstance()->selectMessageBuffer(messageBuffer);
-    for(it = processTasks.begin(); it != processTasks.end(); it++)
+    SystemMessaging::GetInstance()->selectMessageBuffer(this->messageBuffer);
+    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
     {
         SysModelTask *localTask = it->TaskPtr;
-        localTask->ResetTaskList(currentTime); //! Time of reset is zero as we are starting over
+        localTask->ResetTaskList(currentTime); //! Time of reset. Models that utilize currentTime will start at this.
     }
-    
     return;
 }
 
-/*! This method re-initializes the process and the various tasks contained inside 
-    of it to zero-time for cases when a simulation is re-run or another sim is 
-    started using a previously-run set of simulation architecture.
+/*! This method does two things: 1) resets the next task time for
+ *  all process tasks to the first task time. 2) clears the process list
+ *  and then adds everything back into the process with the correct priority.
     @return void
 */
 void SysProcess::reInitProcess()
@@ -118,31 +117,33 @@ void SysProcess::reInitProcess()
     std::vector<ModelScheduleEntry>::iterator it;
     std::vector<ModelScheduleEntry> taskPtrs;
     std::vector<ModelScheduleEntry>::iterator taskIt;
-    SystemMessaging::GetInstance()->selectMessageBuffer(messageBuffer);
-    for(it = processTasks.begin(); it != processTasks.end(); it++)
+    SystemMessaging::GetInstance()->selectMessageBuffer(this->messageBuffer);
+    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
     {
         SysModelTask *localTask = it->TaskPtr;
         localTask->ResetTask();
     }
-    taskPtrs = processTasks;
-    processTasks.clear();
+    taskPtrs = this->processTasks;
+    this->processTasks.clear();
     for(taskIt = taskPtrs.begin(); taskIt != taskPtrs.end(); taskIt++)
     {
-        addNewTask(taskIt->TaskPtr, taskIt->taskPriority);
+        this->addNewTask(taskIt->TaskPtr, taskIt->taskPriority);
     }
-    
-    
     return;
 }
 
+/*! This method steps the next task up to currentNanos
+ * unless it isn't supposed to run yet.
+ @return void
+ */
 void SysProcess::singleStepNextTask(uint64_t currentNanos)
 {
     std::vector<ModelScheduleEntry>::iterator it;
     int32_t localPriority;
     //! Begin Method steps
     //! - Check to make sure that there are models to be called.
-    it = processTasks.begin();
-    if(it == processTasks.end())
+    it = this->processTasks.begin();
+    if(it == this->processTasks.end())
     {
         BSK_PRINT_BRIEF(MSG_WARNING, "Received a step command on sim that has no active Tasks.");
         return;
@@ -150,34 +151,34 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
     //! - If the requested time does not meet our next start time, just return
     if(it->NextTaskStart > currentNanos)
     {
-        nextTaskTime = it->NextTaskStart;
+        this->nextTaskTime = it->NextTaskStart;
         return;
     }
     //! - Call the next scheduled model, and set the time to its start
-    if(currentNanos != prevRouteTime)
+    if(currentNanos != this->prevRouteTime)
     {
         routeInterfaces();
-        prevRouteTime = currentNanos;
+        this->prevRouteTime = currentNanos;
     }
-    SystemMessaging::GetInstance()->selectMessageBuffer(messageBuffer);
+    SystemMessaging::GetInstance()->selectMessageBuffer(this->messageBuffer);
     SysModelTask *localTask = it->TaskPtr;
     localTask->ExecuteTaskList(currentNanos);
     
     //! - Erase the current call from the stack and schedule the next call
     localPriority = it->taskPriority;
-    processTasks.erase(it);
-    addNewTask(localTask, localPriority);
+    this->processTasks.erase(it);
+    this->addNewTask(localTask, localPriority);
     
     //! - Figure out when we are going to be called next for scheduling purposes
-    it = processTasks.begin();
-    nextTaskTime = it->NextTaskStart;
+    it = this->processTasks.begin();
+    this->nextTaskTime = it->NextTaskStart;
 }
 
-/*! This method adds a new model into the Task list.  Note that the Priority
- parameter is option as it defaults to -1 (lowest)
+/*! This method adds a new task into the T\task list.  Note that
+ * taskPriority parameter is option as it defaults to -1 (lowest)
  @return void
- @param NewModel The new model that we are adding to the Task
- @param Priority The selected priority of the model being added
+ @param SysModelTask* newTask The new task that we are adding to the list
+ @param int32_t taskPriority The selected priority of the task being added
  */
 void SysProcess::addNewTask(SysModelTask *newTask, int32_t taskPriority)
 {
@@ -186,8 +187,8 @@ void SysProcess::addNewTask(SysModelTask *newTask, int32_t taskPriority)
     localEntry.TaskUpdatePeriod = newTask->TaskPeriod;
     localEntry.NextTaskStart = newTask->NextStartTime;
     localEntry.taskPriority = taskPriority;
-    scheduleTask(localEntry);
-    enableProcess();
+    this->scheduleTask(localEntry);
+    this->enableProcess();
 }
 
 /*! This method is used to place the task from the caller into the correct
@@ -195,7 +196,7 @@ void SysProcess::addNewTask(SysModelTask *newTask, int32_t taskPriority)
  the caller will set the correct parameters in the calling argument and that
  the simulation will faithfully schedule it.
  @return void
- @param TaskCall Pointer to a struct that contains start time and task handle.
+ @param ModelScheduleEntry& taskCall Pointer to a struct that contains start time and task handle.
  */
 void SysProcess::scheduleTask(ModelScheduleEntry & taskCall)
 {
@@ -203,32 +204,32 @@ void SysProcess::scheduleTask(ModelScheduleEntry & taskCall)
     //! Begin Method steps
     std::vector<ModelScheduleEntry>::iterator it;
     //! - Iteratre through all of the task models to find correct place
-    for(it = processTasks.begin(); it != processTasks.end(); it++)
+    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
     {
         //! - If the next Task starts after new Task, pop it on just prior
         if(it->NextTaskStart > taskCall.NextTaskStart ||
            (it->NextTaskStart == taskCall.NextTaskStart &&
             taskCall.taskPriority > it->taskPriority))
         {
-            processTasks.insert(it, taskCall);
+            this->processTasks.insert(it, taskCall);
             return;
         }
     }
     //! - Default case is to put the Task at the end of the schedule
-    processTasks.push_back(taskCall);
+    this->processTasks.push_back(taskCall);
 }
 
 /*! This method is used to ensure that all necessary input messages are routed 
-    from their source buffer to the process' message buffer.  It needs to be 
-    executed prior to dispatching the process' models
+    from their source buffer to this process' message buffer.
+    It needs to be executed prior to dispatching the process' models
     @return void
 */
 void SysProcess::routeInterfaces()
 {
     std::vector<SysInterface *>::iterator it;
-    for(it=intRefs.begin(); it!= intRefs.end(); it++)
+    for(it=this->intRefs.begin(); it!= this->intRefs.end(); it++)
     {
-        (*it)->routeInputs(messageBuffer);
+        (*it)->routeInputs(this->messageBuffer);
     }
 }
 
@@ -241,8 +242,8 @@ void SysProcess::disableAllTasks()
 {
     //! Begin Method steps
     std::vector<ModelScheduleEntry>::iterator it;
-    //! - Iteratre through all of the task models to disable them
-    for(it = processTasks.begin(); it != processTasks.end(); it++)
+    //! - Iterate through all of the tasks to disable them
+    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
     {
         it->TaskPtr->disableTask();
     }
@@ -256,26 +257,25 @@ void SysProcess::enableAllTasks()
 {
     //! Begin Method steps
     std::vector<ModelScheduleEntry>::iterator it;
-    //! - Iteratre through all of the task models to disable them
-    for(it = processTasks.begin(); it != processTasks.end(); it++)
+    //! - Iterate through all of the task models to disable them
+    for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
     {
         it->TaskPtr->enableTask();
     }
 }
 
 /*! This method updates a specified task's period once it locates that task 
-    in the list.  It will warn the user if a task is not found and will then 
-	seed the task into the task-list appropriately.
-	@param taskName The name of the task you want to change period of
-	@param newPeriod the new number of nanoseconds you want between calls
+    in the list.  It will warn the user if a task is not found.
     @return void
+	@param std::string taskName The name of the task you want to change period of
+	@param uint64_t newPeriod the new number of nanoseconds you want between calls
 */
 void SysProcess::changeTaskPeriod(std::string taskName, uint64_t newPeriod)
 {
 	//! Begin Method steps
 	std::vector<ModelScheduleEntry>::iterator it;
 	//! - Iteratre through all of the task models to disable them
-	for (it = processTasks.begin(); it != processTasks.end(); it++)
+	for (it = this->processTasks.begin(); it != this->processTasks.end(); it++)
 	{
 		if (it->TaskPtr->TaskName == taskName)
 		{
@@ -285,8 +285,8 @@ void SysProcess::changeTaskPeriod(std::string taskName, uint64_t newPeriod)
 			localEntry.TaskUpdatePeriod = it->TaskPtr->TaskPeriod;
 			localEntry.NextTaskStart = it->TaskPtr->NextStartTime;
 			localEntry.taskPriority = it->taskPriority;
-			processTasks.erase(it);
-			scheduleTask(localEntry);
+            this->processTasks.erase(it);
+            this->scheduleTask(localEntry);
 			return;
 		}
 	}

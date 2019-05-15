@@ -32,12 +32,12 @@
 //! Structure that contains the information needed to call a Task
 typedef struct {
     uint64_t NextTaskStart;  /*!< Time to call Task next*/
-    uint64_t TaskUpdatePeriod;   /*!< Period of update for Task*/
-    int32_t taskPriority;   /*!< [-] Priority level for the task*/
+    uint64_t TaskUpdatePeriod;  /*!< Period of update for Task*/
+    int32_t taskPriority;  /*!< [-] Priority level for the task*/
     SysModelTask *TaskPtr;  /*!< Handle to the Task that needs to be called*/
 }ModelScheduleEntry;
 
-//! Class used to group a set of models into one "Task" of execution
+//! Class used to group a set of tasks into one process (task group) of execution
 class SysProcess
 {
     
@@ -50,32 +50,32 @@ public:
     void crossInitProcess();
     void resetProcess(uint64_t currentTime);
     void reInitProcess();
-    void enableProcess() { processActive = true; }
-    void disableProcess() { processActive = false; }
+    void enableProcess() {this->processActive = true;}
+    void disableProcess() {this->processActive = false;}
     void scheduleTask(ModelScheduleEntry & taskCall);
     void selectProcess()
-    {SystemMessaging::GetInstance()->selectMessageBuffer(messageBuffer);}
-    void setProcessName(std::string newName){processName = newName;}
+    {SystemMessaging::GetInstance()->selectMessageBuffer(this->messageBuffer);}
+    void setProcessName(std::string newName){this->processName = newName;}
     std::string getProcessName() { return(processName);}
-    uint64_t getNextTime() { return(nextTaskTime);}
+    uint64_t getNextTime() { return(this->nextTaskTime);}
     void singleStepNextTask(uint64_t currentNanos);
-    bool processEnabled() {return processActive;}
-    void addInterfaceRef(SysInterface *newInt) {intRefs.push_back(newInt);}
+    bool processEnabled() {return this->processActive;}
+    void addInterfaceRef(SysInterface *newInt) {this->intRefs.push_back(newInt);}
 	void changeTaskPeriod(std::string taskName, uint64_t newPeriod);
-    void setPriority(int64_t newPriority) {processPriority = newPriority;}
+    void setPriority(int64_t newPriority) {this->processPriority = newPriority;}
     void routeInterfaces();
     void disableAllTasks();
     void enableAllTasks();
     
 public:
-    std::vector<SysInterface*> intRefs;         //!< -- Interface references to move data to process
-    std::vector<ModelScheduleEntry> processTasks; //!< -- Array that has pointers to all GNC laws
-    uint64_t messageBuffer;                     //!< -- Message buffer for data
-    uint64_t nextTaskTime;                      //!< ns time for the next Task
-    uint64_t prevRouteTime;                     //!< ns Time that interfaces were previously routed
-    std::string processName;                      //!< -- Identified for Task
-	bool processActive;                           //!< -- Flag indicating whether the Task has been disabled
-    int64_t processPriority;                    //!< [-] Priority level for process (higher first)
+    std::vector<SysInterface*> intRefs;  //!< -- Interface references to move data to process
+    std::vector<ModelScheduleEntry> processTasks;  //!< -- Array that has pointers to all process tasks
+    uint64_t messageBuffer;  //!< -- Message buffer for this process
+    uint64_t nextTaskTime;  //!< [ns] time for the next Task
+    uint64_t prevRouteTime;  //!< [ns] Time that interfaces were previously routed
+    std::string processName;  //!< -- Identifier for process
+	bool processActive;  //!< -- Flag indicating whether the Process is active
+    int64_t processPriority;  //!< [-] Priority level for process (higher first)
 };
 
 /*! @} */
