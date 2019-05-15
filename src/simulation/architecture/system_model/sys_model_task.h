@@ -29,8 +29,8 @@
 
 //! Structure used to pair a model and its requested priority
 typedef struct {
-    int32_t CurrentModelPriority;   //!< The current model priority (lower is lower priority)
-    SysModel *ModelPtr;             //!< The model associated with this priority
+    int32_t CurrentModelPriority;  //!< The current model priority. Higher goes first
+    SysModel *ModelPtr;  //!< The model associated with this priority
 }ModelPriorityPair;
 
 //! Class used to group a set of models into one "Task" of execution
@@ -47,20 +47,21 @@ public:
     void CrossInitTaskList();
     void ExecuteTaskList(uint64_t CurrentSimTime);
 	void ResetTaskList(uint64_t CurrentSimTime);
-    void ResetTask() {NextStartTime = FirstTaskTime;}
-	void enableTask() { taskActive = true; }
-	void disableTask() { taskActive = false; }
-	void updatePeriod(uint64_t newPeriod) { NextStartTime = NextStartTime - TaskPeriod + newPeriod; TaskPeriod = newPeriod; }
+    void ResetTask() {this->NextStartTime = this->FirstTaskTime;}
+	void enableTask() {this->taskActive = true;}
+	void disableTask() {this->taskActive = false;}
+	void updatePeriod(uint64_t newPeriod) {this->NextStartTime = this->NextStartTime - this->TaskPeriod + newPeriod;
+	                                        this->TaskPeriod = newPeriod;}
     
 public:
-    std::vector<ModelPriorityPair> TaskModels; //!< -- Array that has pointers to all task sysModels
-    std::string TaskName;                      //!< -- Identified for Task
-    uint64_t NextStartTime;                      //!< ns Next time to start model
-    uint64_t NextPickupTime;                     //!< ns Next time read Task outputs
-    uint64_t TaskPeriod;                       //!< ns Cycle rate for Task
-    uint64_t PickupDelay;                        //!< ns Time between dispatches
-    uint64_t FirstTaskTime;                    //!< ns Time to start Task for first time
-	bool taskActive;                           //!< -- Flag indicating whether the Task has been disabled 
+    std::vector<ModelPriorityPair> TaskModels;  //!< -- Array that has pointers to all task sysModels
+    std::string TaskName;  //!< -- Identifier for Task
+    uint64_t NextStartTime;  //!< [ns] Next time to start task
+    uint64_t NextPickupTime;  //!< [ns] Next time read Task outputs
+    uint64_t TaskPeriod;  //!< [ns] Cycle rate for Task
+    uint64_t PickupDelay;  //!< [ns] Time between dispatches
+    uint64_t FirstTaskTime;  //!< [ns] Time to start Task for first time
+	bool taskActive;  //!< -- Flag indicating whether the Task has been disabled
 };
 
 /*! @} */
