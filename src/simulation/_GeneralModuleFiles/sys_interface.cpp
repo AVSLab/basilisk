@@ -23,90 +23,110 @@
 #include <iostream>
 #include "utilities/bsk_Print.h"
 
+/*!
+ * Contruct an InterfaceDataExchange()
+ */
 InterfaceDataExchange::InterfaceDataExchange()
 {
-    exchangeActive = true;
-    messageTraffic.clear();
-    processData.messageDest = "";
-    processData.messageSource = "";
-    processData.destination = -1;
-    processData.source = -1;
-    msgBufferSize = 0;
-    msgBuffer = NULL;
-    needDelete = false;
+    this->exchangeActive = true;
+    this->messageTraffic.clear();
+    this->processData.messageDest = "";
+    this->processData.messageSource = "";
+    this->processData.destination = -1;
+    this->processData.source = -1;
+    this->msgBufferSize = 0;
+    this->msgBuffer = NULL;
+    this->needDelete = false;
 }
 
+/*!
+ * Destroy an InterfaceDataExchange()
+ */
 InterfaceDataExchange::~InterfaceDataExchange()
 {
-
 }
 
+/*!
+ * Get IDs for the to/from processes
+ * @return bool buffersFound
+ */
 bool InterfaceDataExchange::linkProcesses()
 {
     bool buffersFound = true;
-    processData.destination = SystemMessaging::GetInstance()->
-    findMessageBuffer(processData.messageDest);
-    if(processData.destination < 0)
+    this->processData.destination = SystemMessaging::GetInstance()->
+    findMessageBuffer(this->processData.messageDest);
+    if(this->processData.destination < 0)
     {
-        BSK_PRINT_BRIEF(MSG_ERROR, "Failed to find a messaging buffer with name: %s", processData.messageDest.c_str());
+        BSK_PRINT_BRIEF(MSG_ERROR, "Failed to find a messaging buffer with name: "
+                                   "%s", this->processData.messageDest.c_str());
         buffersFound = false;
     }
-    processData.source = SystemMessaging::GetInstance()->
-    findMessageBuffer(processData.messageSource);
-    if(processData.source < 0)
+    this->processData.source = SystemMessaging::GetInstance()->
+    findMessageBuffer(this->processData.messageSource);
+    if(this->processData.source < 0)
     {
-        BSK_PRINT_BRIEF(MSG_ERROR, "Failed to find a messaging buffer with name: %s", processData.messageSource.c_str());
+        BSK_PRINT_BRIEF(MSG_ERROR, "Failed to find a messaging buffer with name: %s", this->processData.messageSource.c_str());
         buffersFound = false;
     }
     return(buffersFound);
 }
 
+/*!
+ * This method checks the destination buffer for unpublished messages
+ * Then, it switches to the source buffer and if the message exists, adds it to the messageTraffic
+ */
 void InterfaceDataExchange::discoverMessages()
 {
     std::set<std::string> unknownPublisher;
     std::set<std::string>::iterator it;
-    SystemMessaging::GetInstance()->selectMessageBuffer(processData.destination);
+    SystemMessaging::GetInstance()->selectMessageBuffer(this->processData.destination);
     unknownPublisher = SystemMessaging::GetInstance()->getUnpublishedMessages();
-    SystemMessaging::GetInstance()->selectMessageBuffer(processData.source);
+    SystemMessaging::GetInstance()->selectMessageBuffer(this->processData.source);
     for(it=unknownPublisher.begin(); it!=unknownPublisher.end(); it++)
     {
         int64_t messageID = SystemMessaging::GetInstance()->FindMessageID(*it);
         if(messageID >= 0)
         {
             MessageInterfaceMatch newMessage;
-            newMessage.source = -1;
-            newMessage.destination = -1;
-            newMessage.messageSource = *it;
+            newMessage.source = -1;  // Message ID in the source buffer
+            newMessage.destination = -1;  // ID for the message within the destination buffer
+            newMessage.messageSource = *it; // The name of the message that was published elsewhere
             newMessage.messageDest = "";
             newMessage.updateCounter = 0;
-            messageTraffic.push_back(newMessage);
+            this->messageTraffic.push_back(newMessage);
         }
     }
 }
 
+/*!
+ * This method links the messages across buffers, which means:
+ * 1) It gets Write permission in the destination buffer
+ * 2) It gets Read permision in the source buffer
+ * @return bool messagedLinked whether or not the messages are linked
+ */
 bool InterfaceDataExchange::linkMessages()
 {
     bool messagesLinked = true;
     std::vector<MessageInterfaceMatch>::iterator it;
-    for(it=messageTraffic.begin(); it != messageTraffic.end(); it++)
+    for(it=this->messageTraffic.begin(); it != this->messageTraffic.end(); it++)
     {
         SystemMessaging::GetInstance()->
-            selectMessageBuffer(processData.destination);
+            selectMessageBuffer(this->processData.destination);
         it->destination = SystemMessaging::GetInstance()->
             FindMessageID(it->messageSource);
         if(it->destination >= 0)
         {
             SystemMessaging::GetInstance()->obtainWriteRights(it->destination,
-                                                              moduleID);
+                                                              this->moduleID);
         }
         SystemMessaging::GetInstance()->
-        selectMessageBuffer(processData.source);
+        selectMessageBuffer(this->processData.source);
         it->source = SystemMessaging::GetInstance()->
         FindMessageID(it->messageSource);
         if(it->source >= 0)
         {
             SystemMessaging::GetInstance()->obtainReadRights(it->source,
-                moduleID);
+                                                             this->moduleID);
         }
         if(it->destination < 0 || it->source < 0)
         {
@@ -116,26 +136,31 @@ bool InterfaceDataExchange::linkMessages()
     return(messagesLinked);
 }
 
+/*!
+ * Read all messages from source and write to destination
+ * @return void
+ */
 void InterfaceDataExchange::routeMessages()
 {
     SingleMessageHeader dataHeader;
     std::vector<MessageInterfaceMatch>::iterator it;
-    for(it=messageTraffic.begin(); it != messageTraffic.end(); it++)
+    for(it=this->messageTraffic.begin(); it!=this->messageTraffic.end(); it++)
     {
         SystemMessaging::GetInstance()->
         selectMessageBuffer(processData.source);
         MessageHeaderData* localHdr = SystemMessaging::GetInstance()->
             FindMsgHeader(it->source);
-        if(localHdr->MaxMessageSize > msgBufferSize)
+        if(localHdr->MaxMessageSize > this->msgBufferSize)
         {
-            if(msgBuffer != NULL)
+            if(this->msgBuffer != NULL)
             {
-                delete [] msgBuffer;
+                delete [] this->msgBuffer;
             }
-            msgBuffer = new uint8_t[localHdr->MaxMessageSize];
-            memset(msgBuffer, 0x0, localHdr->MaxMessageSize);
-            msgBufferSize = localHdr->MaxMessageSize;
+            this->msgBuffer = new uint8_t[localHdr->MaxMessageSize];
+            memset(this->msgBuffer, 0x0, localHdr->MaxMessageSize);
+            this->msgBufferSize = localHdr->MaxMessageSize;
         }
+        // Don't route it if it hasn't been updated
         if(localHdr->UpdateCounter == it->updateCounter)
         {
             continue;
@@ -143,24 +168,29 @@ void InterfaceDataExchange::routeMessages()
         SystemMessaging::GetInstance()->ReadMessage(it->source, &dataHeader,
             localHdr->MaxMessageSize, msgBuffer, moduleID);
         SystemMessaging::GetInstance()->
-        selectMessageBuffer(processData.destination);
+        selectMessageBuffer(this->processData.destination);
         SystemMessaging::GetInstance()->WriteMessage(it->destination,
-            dataHeader.WriteClockNanos, dataHeader.WriteSize, msgBuffer, moduleID);
+            dataHeader.WriteClockNanos, dataHeader.WriteSize, this->msgBuffer, this->moduleID);
         it->updateCounter = localHdr->UpdateCounter;
-        
     }
 }
 
+/*!
+ * Create a SysInterface
+ */
 SysInterface::SysInterface()
 {
-    interfaceActive = true;
-    interfacesLinked = false;
+    this->interfaceActive = true;
+    this->interfacesLinked = false;
 }
 
+/*!
+ * Destruct a SysInterface
+ */
 SysInterface::~SysInterface()
 {
     std::vector<InterfaceDataExchange*>::iterator itPtr;
-    for(itPtr = interfaceDef.begin(); itPtr != interfaceDef.end(); itPtr++)
+    for(itPtr = this->interfaceDef.begin(); itPtr != this->interfaceDef.end(); itPtr++)
     {
         if((*itPtr)->needDelete)
         {
@@ -169,9 +199,14 @@ SysInterface::~SysInterface()
     }
 }
 
+/*!
+ * Add an existing interface, but resets the destination and source to -1
+ * @param InterfaceDataExchange* newInterface
+ * @return void
+ */
 void SysInterface::addNewInterface(InterfaceDataExchange * newInterface)
 {
-    interfaceDef.push_back(newInterface);
+    this->interfaceDef.push_back(newInterface);
     std::vector<MessageInterfaceMatch>::iterator it;
     newInterface->exchangeActive = true;
     newInterface->processData.destination = -1;
@@ -182,9 +217,17 @@ void SysInterface::addNewInterface(InterfaceDataExchange * newInterface)
         it->destination = -1;
         it->source = -1;
     }
-    interfacesLinked = false;
+    this->interfacesLinked = false;
 }
 
+/*!
+ * Create a new interface from "from" process to "to" process.
+ * Auto-names the interface if the name provided is "".
+ * @param std::string from process to read messages from
+ * @param std::string to process to copy messages to
+ * @param std::string intName name of this new interface
+ * @return void
+ */
 void SysInterface::addNewInterface(std::string from, std::string to, std::string intName)
 {
 
@@ -198,13 +241,17 @@ void SysInterface::addNewInterface(std::string from, std::string to, std::string
     }
     newInterface->ModelTag = intName;
     newInterface->needDelete = true;
-    interfaceDef.push_back(newInterface);
-    interfacesLinked = false;
-    it = interfaceDef.end() - 1;
-    currentInterface = (*it);
-
+    this->interfaceDef.push_back(newInterface);
+    this->interfacesLinked = false;
+    it = this->interfaceDef.end() - 1;
+    this->currentInterface = (*it);
 }
 
+/*!
+ * This method connects interfaces. If the processes won't link, the interface is disabled
+ * and the user is warned
+ * @return void
+ */
 void SysInterface::connectInterfaces()
 {
     std::vector<InterfaceDataExchange*>::iterator it;
@@ -219,32 +266,41 @@ void SysInterface::connectInterfaces()
         }
         (*it)->linkMessages();
     }
-    interfacesLinked = true;
+    this->interfacesLinked = true;
 }
 
+/*!
+ * Routes messages. Only if the interface is active. If interfaces are not
+ * linked, then they are connected first.
+ * @param uint64_t processBuffer not used
+ * @return void
+ */
 void SysInterface::routeInputs(uint64_t processBuffer)
 {
     std::vector<InterfaceDataExchange*>::iterator it;
     
-    if(!interfaceActive)
+    if(!this->interfaceActive)
     {
         return;
     }
-    if(!interfacesLinked)
+    if(!this->interfacesLinked)
     {
         connectInterfaces();
     }
 
-    for(it=interfaceDef.begin(); it!=interfaceDef.end(); it++)
+    for(it=this->interfaceDef.begin(); it!=this->interfaceDef.end(); it++)
     {
         (*it)->routeMessages();
     }
 }
 
+/*!
+ * This method goes over all interfaces and links processes and discovers messages
+ */
 void SysInterface::discoverAllMessages()
 {
     std::vector<InterfaceDataExchange*>::iterator it;
-    for(it=interfaceDef.begin(); it!=interfaceDef.end(); it++)
+    for(it=this->interfaceDef.begin(); it!=this->interfaceDef.end(); it++)
     {
         (*it)->linkProcesses();
         (*it)->discoverMessages();
