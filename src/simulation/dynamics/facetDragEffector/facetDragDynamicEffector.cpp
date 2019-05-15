@@ -177,6 +177,8 @@ void FacetDragDynamicEffector::plateDrag(){
 	dcm_BN = sigmaLocal_BN.toRotationMatrix();
 	//! Begin method steps
 	//! - Zero out the structure force/torque for the drag set
+	TotalDragForce.setZero();
+	TotalDragTorque.setZero();
 	this->forceExternal_B.setZero();
 	this->forceExternal_N.setZero();
 
@@ -184,8 +186,8 @@ void FacetDragDynamicEffector::plateDrag(){
 	this->torqueExternalPntB_B.setZero();
 	for(int ind = 0; ind < this->numFacets; ind++){
 		projectedArea = this->scGeometry.facetAreas[ind] * (this->scGeometry.B_facetNormals[ind].dot(dcm_BN * this->dragDirection));
-		if(projectedArea > 0.0){
-			FacetDragForce = 0.5 * pow(this->coreParams.velocityMag, 2.0) * this->scGeometry.facetCoeffs[ind] * projectedArea * this->atmoInData.neutralDensity * this->dragDirection;
+		if(projectedArea < 0.0){
+			FacetDragForce = 0.5 * pow(this->coreParams.velocityMag, 2.0) * this->scGeometry.facetCoeffs[ind] * (-projectedArea) * this->atmoInData.neutralDensity * this->dragDirection;
 			FacetDragTorque = FacetDragForce.cross(this->scGeometry.B_facetLocations[ind]);
 			TotalDragForce = TotalDragForce + FacetDragForce;
 			TotalDragTorque = TotalDragTorque + FacetDragTorque;
