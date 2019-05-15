@@ -21,16 +21,16 @@
 #include "architecture/messaging/system_messaging.h"
 SysModel::SysModel()
 {
-    ModelTag = "";
-    RNGSeed = 0x1badcad1;
-    moduleID = SystemMessaging::GetInstance()->checkoutModuleID();
+    this->ModelTag = "";
+    this->RNGSeed = 0x1badcad1;
+    this->moduleID = SystemMessaging::GetInstance()->checkoutModuleID();
 }
 
 SysModel::SysModel(const SysModel &obj)
 {
-    ModelTag = obj.ModelTag;
-    RNGSeed = obj.RNGSeed;
-    moduleID = SystemMessaging::GetInstance()->checkoutModuleID();
+    this->ModelTag = obj.ModelTag;
+    this->RNGSeed = obj.RNGSeed;
+    this->moduleID = SystemMessaging::GetInstance()->checkoutModuleID();
 }
 
 SysModel::~SysModel()

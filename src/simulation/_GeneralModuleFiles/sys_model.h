@@ -34,17 +34,17 @@ public:
     SysModel();
     SysModel(const SysModel &obj);
     virtual ~SysModel();
-    virtual void SelfInit();
-    virtual void CrossInit();
-    virtual void IntegratedInit();
-    virtual void UpdateState(uint64_t CurrentSimNanos);
-    virtual void Reset(uint64_t CurrentSimNanos);
+    virtual void SelfInit();  //!< -- initialize the module, create messages
+    virtual void CrossInit();  //!< -- link to other modules' messages and any necessary init based on them
+    virtual void IntegratedInit();  //!< -- ???
+    virtual void UpdateState(uint64_t CurrentSimNanos);  //!< -- What the module does each time step
+    virtual void Reset(uint64_t CurrentSimNanos);  //!< -- Reset module to specified time
     
 public:
-    std::string ModelTag;        //!< -- name for the algorithm to base off of
-    uint64_t CallCounts=0;       //!< -- Counts on the model being called
-    uint32_t RNGSeed;            //!< -- Giving everyone a random seed for ease of MC
-    uint64_t moduleID;           //!< -- Module ID for this module
+    std::string ModelTag;  //!< -- name for the algorithm to base off of
+    uint64_t CallCounts=0;  //!< -- Counts on the model being called
+    uint32_t RNGSeed;  //!< -- Giving everyone a random seed for ease of MC
+    uint64_t moduleID;  //!< -- Module ID for this module  (handed out by messaging system)
 };
 
 /* @} */
