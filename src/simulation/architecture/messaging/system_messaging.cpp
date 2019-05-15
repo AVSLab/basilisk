@@ -155,7 +155,7 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
 {
     if (FindMessageID(MessageName) >= 0)
     {
-        BSK_PRINT_BRIEF(MSG_INFORMATION,"The message %s was created more than once.\n", MessageName.c_str());
+        BSK_PRINT_BRIEF(MSG_INFORMATION,"The message %s was created more than once by ModuleID %lld.\n", MessageName.c_str(), moduleID);
         if(moduleID >= 0)
         {
             std::vector<AllowAccessData>::iterator it;
@@ -174,13 +174,13 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
     }
     if(NumMessageBuffers <= 0)
     {
-        BSK_PRINT_BRIEF(MSG_ERROR,"I can't create a message with zero buffers.  I refuse.\n");
+        BSK_PRINT_BRIEF(MSG_ERROR,"I can't create a message with zero buffers.  I refuse. ModuleID %lld did this. \n", moduleID);
         CreateFails++;
         return(-1);
     }
     if(NumMessageBuffers == 1)
     {
-        BSK_PRINT_BRIEF(MSG_WARNING,"You created a message with only one buffer. This might compromise the message integrity. Watch out.\n");
+        BSK_PRINT_BRIEF(MSG_WARNING,"ModuleID %lld created a message with only one buffer. This might compromise the message integrity. Watch out.\n", moduleID);
     }
     uint64_t InitSize = GetCurrentSize();
     uint64_t StorageRequired = InitSize + sizeof(MessageHeaderData) +
@@ -205,7 +205,7 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
     uint32_t NameLength = (uint32_t)MessageName.size();
     if(NameLength > MAX_MESSAGE_SIZE)
     {
-        BSK_PRINT_BRIEF(MSG_ERROR,"Your name length for: %s. is too long, truncating name\n", MessageName.c_str());
+        BSK_PRINT_BRIEF(MSG_ERROR,"Your name length for: %s. is too long, truncating name (ModuleID %lld)\n", MessageName.c_str(), moduleID);
         CreateFails++;
         NameLength = MAX_MESSAGE_SIZE;
     }
@@ -213,7 +213,7 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
     NameLength = (uint32_t)messageStruct.size();
     if(NameLength > MAX_MESSAGE_SIZE)
     {
-        BSK_PRINT_BRIEF(MSG_ERROR,"Your struct name length for: %s. is too long, truncating name\n", messageStruct.c_str());
+        BSK_PRINT_BRIEF(MSG_ERROR,"Your struct name length for: %s. is too long, truncating name (ModuleID %lld) \n", messageStruct.c_str(), moduleID);
         CreateFails++;
         NameLength = MAX_MESSAGE_SIZE;
     }
@@ -332,7 +332,7 @@ bool SystemMessaging::WriteMessage(uint64_t MessageID, uint64_t ClockTimeNanos,
 {
     if(MessageID >= GetMessageCount())
     {
-        BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request for invalid message ID: %lld \n", MessageID);
+        BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request for invalid message ID: %lld from moduleID: %lld\n", MessageID, moduleID);
         WriteFails++;
         return(false);
     }
@@ -348,16 +348,16 @@ bool SystemMessaging::WriteMessage(uint64_t MessageID, uint64_t ClockTimeNanos,
         }
         else
         {
-            BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request from a module that doesn't publish for %s . You get nothing.\n",
-                      FindMessageName(MessageID).c_str());
+            BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request from module %lld that doesn't publish for %s . You get nothing.\n",
+                      moduleID, FindMessageName(MessageID).c_str());
             WriteFails++;
             return(false);
         }
     }
     if(MsgSize != MsgHdr->MaxMessageSize)
     {
-        BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request that was incorrect size for: %s . You get nothing.\n",
-                  MsgHdr->MessageName);
+        BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request from module %lld that was incorrect size for: %s . You get nothing.\n",
+                  moduleID, MsgHdr->MessageName);
         WriteFails++;
         return(false);
     }
@@ -408,7 +408,7 @@ bool SystemMessaging::ReadMessage(uint64_t MessageID, SingleMessageHeader
 {
     if(MessageID >= GetMessageCount())
     {
-        BSK_PRINT_BRIEF(MSG_ERROR, "Received a read request for invalid message ID: %lld \n", MessageID);
+        BSK_PRINT_BRIEF(MSG_ERROR, "Received a read request from Module %lld for invalid message ID: %lld \n ",  moduleID, MessageID);
         ReadFails++;
         return(false);
     }
