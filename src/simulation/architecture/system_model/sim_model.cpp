@@ -22,16 +22,13 @@
 #include <iostream>
 #include "utilities/bsk_Print.h"
 
-/*! This Constructor is used to initialize the top-level sim model.  It inits a
- couple of variables and then initializes the messaging system.  It only does
- that here because it needs to happen somewhere and the top-level sim model
- is a good place for it.
+/*! This Constructor is used to initialize the top-level sim model.
  */
 SimModel::SimModel()
 {
-    CurrentNanos = 0;
-    NextTaskTime = 0;
-    nextProcPriority = -1;
+    this->CurrentNanos = 0;
+    this->NextTaskTime = 0;
+    this->nextProcPriority = -1;
 }
 
 /*! Nothing to destroy really */
@@ -48,36 +45,14 @@ void SimModel::PrintSimulatedMessageData()
 }
 
 /*! This method exists to provide a hook into the messaging system for obtaining
- message data that was written in the simulation.
- @return uint64_t Message Write time that we got
- @param MessageName String name for the message we are querying
- @param MaxSize Maximum size of the message that we can pull
- @param MessageData A shapeshifting buffer that we can chunk data into
- @param LatestOffset An offset from the latest message to pull (default as zero)*/
-uint64_t SimModel::IsMsgCreated(std::string MessageName)
-{
-    MessageIdentData MessageID;
-
-    //! Begin Method steps
-    //! - Grab the message ID associated with name if it exists
-    MessageID = SystemMessaging::GetInstance()->messagePublishSearch(MessageName);
-    //! - If we got an invalid message ID back, alert the user and quit
-    if(!MessageID.itemFound)
-    {
-        return(0);      /* no message found */
-    } else {
-        return(1);      /* message has been created */
-    }
-
-}
-
-/*! This method exists to provide a hook into the messaging system for obtaining
- message data that was written in the simulation.
- @return uint64_t Message Write time that we got
- @param MessageName String name for the message we are querying
- @param MaxSize Maximum size of the message that we can pull
- @param MessageData A shapeshifting buffer that we can chunk data into
- @param LatestOffset An offset from the latest message to pull (default as zero)*/
+ message data that was written in the simulation. Should be called getWriteTime, because
+ it just returns the time the message was written
+ @return uint64_t DataHeader.WriteClockNanos Message Write time that we got
+ @param std::string MessageName String name for the message we are querying
+ @param uint64_t MaxSize Maximum size of the message that we can pull
+ @param void MessageData A shapeshifting buffer that we can chunk data into
+ @param VarAccessType logType messageBuffer or logBuffer type
+ @param uint64_t LatestOffset Zero to read most recent, 1 to read the one before that, etc.*/
 uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize,
                                 void *MessageData, VarAccessType logType, uint64_t LatestOffset)
 {
@@ -102,7 +77,7 @@ uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize,
             SystemMessaging::GetInstance()->ReadMessage(MessageID.itemID, &DataHeader, MaxSize, reinterpret_cast<uint8_t*> (MessageData), -1, LatestOffset);
             break;
         case logBuffer:
-            messageLogs.readLog(MessageID, &DataHeader,
+            this->messageLogs.readLog(MessageID, &DataHeader,
                                 MaxSize, reinterpret_cast<uint8_t*> (MessageData), LatestOffset);
             break;
         default:
@@ -114,31 +89,34 @@ uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize,
 
 /*! This method allows the user to attach a process to the simulation for 
     execution.  Note that the priority level of the process determines what 
-    order it gets called in.  Otherwise it's first-in, first-out
+    order it gets called in: higher priorities are called before lower
+    priorities. If priorities are the same, the proc added first goes first.
     @return void
+    @param SysProcess *newProc the new process to be added
 */
 void SimModel::addNewProcess(SysProcess *newProc)
 {
     std::vector<SysProcess *>::iterator it;
-    for(it = processList.begin(); it != processList.end(); it++)
+    for(it = this->processList.begin(); it != this->processList.end(); it++)
     {
         if(newProc->processPriority > (*it)->processPriority)
         {
-            processList.insert(it, newProc);
+            this->processList.insert(it, newProc);
             return;
         }
     }
-    processList.push_back(newProc);
+    this->processList.push_back(newProc);
 }
 
-/*! This method goes through all of the Task models that have been added and
- calls those Tasks to self-init their lower level models.
+/*! This method goes through all of the processes in the simulation,
+ *  all of the tasks within each process, and all of the models within
+ *  each task and self-inits them.
  @return void
  */
 void SimModel::selfInitSimulation()
 {
     std::vector<SysProcess *>::iterator it;
-    for(it=processList.begin(); it!= processList.end(); it++)
+    for(it=this->processList.begin(); it!= this->processList.end(); it++)
     {
         (*it)->selfInitProcess();
     }
@@ -146,19 +124,20 @@ void SimModel::selfInitSimulation()
     {
         throw std::range_error("Message creation failed during self.  Please examine output.\n");
     }
-    NextTaskTime = 0;
-    CurrentNanos = 0;
-    it=processList.begin();
-    nextProcPriority = (*it)->processPriority;
+    this->NextTaskTime = 0;
+    this->CurrentNanos = 0;
+    it=this->processList.begin();
+    this->nextProcPriority = (*it)->processPriority;
 }
-/*! This method goes through all of the Task models that have been added and
- calls those Tasks to cross-init their lower level models.
+/*! This method goes through all of the processes in the simulation,
+ *  all of the tasks within each process, and all of the models within
+ *  each task and cross-inits them.
  @return void
  */
 void SimModel::crossInitSimulation()
 {
     std::vector<SysProcess *>::iterator it;
-    for(it=processList.begin(); it!= processList.end(); it++)
+    for(it=this->processList.begin(); it!= this->processList.end(); it++)
     {
         (*it)->crossInitProcess();
     }
@@ -168,14 +147,15 @@ void SimModel::crossInitSimulation()
     }
     
 }
-/*! This method goes through all of the Task models that have been added and
- calls those Tasks to reset-init their lower level models.
+/*! This method goes through all of the processes in the simulation,
+ *  all of the tasks within each process, and all of the models within
+ *  each task and resets them.
  @return void
  */
 void SimModel::resetInitSimulation()
 {
     std::vector<SysProcess *>::iterator it;
-    for(it=processList.begin(); it!= processList.end(); it++)
+    for(it=this->processList.begin(); it!= this->processList.end(); it++)
     {
         (*it)->resetProcess(0);
     }
@@ -188,34 +168,34 @@ void SimModel::resetInitSimulation()
 /*! This method steps all of the processes forward to the current time.  It also 
     increments the internal simulation time appropriately as the simulation 
     processes are triggered
-    @param stopPri The priority level below which the sim won't go
+    @param int64_t stopPri The priority level below which the sim won't go
     @return void
 */
 void SimModel::SingleStepProcesses(int64_t stopPri)
 {
     uint64_t nextCallTime = ~0;
-    std::vector<SysProcess *>::iterator it = processList.begin();
-    CurrentNanos = NextTaskTime;
-    while(it!= processList.end())
+    std::vector<SysProcess *>::iterator it = this->processList.begin();
+    this->CurrentNanos = this->NextTaskTime;
+    while(it!= this->processList.end())
     {
         SysProcess *localProc = (*it);
         if(localProc->processEnabled())
         {
-            while(localProc->nextTaskTime < CurrentNanos ||
-                (localProc->nextTaskTime == CurrentNanos &&
+            while(localProc->nextTaskTime < this->CurrentNanos ||
+                (localProc->nextTaskTime == this->CurrentNanos &&
                   localProc->processPriority >= stopPri))
             {
-                localProc->singleStepNextTask(CurrentNanos);
+                localProc->singleStepNextTask(this->CurrentNanos);
             }
             if(localProc->getNextTime() < nextCallTime)
             {
                 nextCallTime = localProc->getNextTime();
-                nextProcPriority = localProc->processPriority;
+                this->nextProcPriority = localProc->processPriority;
             }
             else if(localProc->getNextTime() == nextCallTime &&
-                localProc->processPriority > nextProcPriority)
+                localProc->processPriority > this->nextProcPriority)
             {
-                nextProcPriority = localProc->processPriority;
+                this->nextProcPriority = localProc->processPriority;
             }
         }
         it++;
@@ -224,60 +204,64 @@ void SimModel::SingleStepProcesses(int64_t stopPri)
     {
         throw std::range_error("Message reads or writes failed.  Please examine output.\n");
     }
-    NextTaskTime = nextCallTime != ~0 ? nextCallTime : CurrentNanos;
+    this->NextTaskTime = nextCallTime != ~0 ? nextCallTime : this->CurrentNanos;
     //! - If a message has been added to logger, link the message IDs
-    if(!messageLogs.messagesLinked())
+    if(!this->messageLogs.messagesLinked())
     {
-        messageLogs.linkMessages();
+        this->messageLogs.linkMessages();
     }
-    messageLogs.logAllMessages();
+    this->messageLogs.logAllMessages();
 }
 
 /*! This method steps the simulation until the specified stop time and 
  stop priority have been reached.
  @return void
- @param SimStopTime Nanoseconds to step the simulation for
- @param stopPri The priority level below which the sim won't go
+ @param uint64_t SimStopTime Nanoseconds to step the simulation for
+ @param int64_t stopPri The priority level below which the sim won't go
  */
 void SimModel::StepUntilStop(uint64_t SimStopTime, int64_t stopPri)
 {
     //! Begin Method steps
     /*! - Note that we have to step until both the time is greater and the next
-     Task's start time is in the future */
-    int64_t inPri = SimStopTime == NextTaskTime ? stopPri : -1;
-    while(NextTaskTime < SimStopTime || (NextTaskTime == SimStopTime &&
-        nextProcPriority >= stopPri) )
+     Task's start time is in the future. If the NextTaskTime is less than
+     SimStopTime, then the inPri shouldn't come into effect, so set it to -1
+     (that's less than all process priorities, so it will run through the next
+     process)*/
+    int64_t inPri = SimStopTime == this->NextTaskTime ? stopPri : -1;
+    while(this->NextTaskTime < SimStopTime || (this->NextTaskTime == SimStopTime &&
+            this->nextProcPriority >= stopPri) )
     {
-        SingleStepProcesses(inPri);
-        inPri = SimStopTime == NextTaskTime ? stopPri : -1;
+        this->SingleStepProcesses(inPri);
+        inPri = SimStopTime == this->NextTaskTime ? stopPri : -1;
     }
 }
-/*! This method is used to push the current simulation forward in time by the
- next Task in the schedule.  It calls the next Task, schedules it
- according to when it thinks it should be called next, and sets the current
- simulation time information.
+
+/*! This method is used to reset a simulation to time 0. It sets all process and
+ * tasks back to the initial call times. It clears all message logs. However,
+ * it does not clear all message buffers and does not reset individual models.
  @return void
  */
-
 void SimModel::ResetSimulation()
 {
     std::vector<SysProcess *>::iterator it;
     //! - Iterate through model list and call the Task model initializer
-    for(it = processList.begin(); it != processList.end(); it++)
+    for(it = this->processList.begin(); it != this->processList.end(); it++)
     {
         (*it)->reInitProcess();
     }
-    messageLogs.clearLogs();
-    CurrentNanos = 0;
-    NextTaskTime = 0;
+    this->messageLogs.clearLogs();
+    this->CurrentNanos = 0;
+    this->NextTaskTime = 0;
 }
 
 /*! This method exists to provide a hook into the messaging system for creating
- messages for use by the simulation
+ messages for use by the simulation.
  @return void
- @param MessageName String name for the message we are querying
- @param MessageSize Maximum size of the message that we can pull
- @param NumBuffers The count of message buffers to create*/
+ @param std::string processName Name of process that we create the message in
+ @param std::string MessageName Name for the message we are creating
+ @param uint64_t MessageSize Size in bytes of the message we want to make
+ @param uint64_t NumBuffers The count of message buffers to create
+ @param std::string messageStruct A name for the message struct type */
 void SimModel::CreateNewMessage(std::string processName, std::string MessageName,
     uint64_t MessageSize, uint64_t NumBuffers, std::string messageStruct)
 {
@@ -301,28 +285,28 @@ void SimModel::CreateNewMessage(std::string processName, std::string MessageName
 /*! This method exists to provide a hook into the messaging system for writing
  message data into existing messages
  @return void
- @param MessageName String name for the message we are querying
- @param MessageSize Maximum size of the message that we can pull
- @param MessageData A shapeshifting buffer that we can chunk data into
- @param timeOfMsg The time that the message was written to*/
+ @param std::string MessageName Name for the message we are writing
+ @param uint64_t MessageSize Size in bytes of the message we're trying to write
+ @param uint64_t ClockTime The time that we are writing the message in nanoseconds
+ @param void *MessageData A shapeshifting buffer that we can chunk data into*/
 void SimModel::WriteMessageData(std::string MessageName, uint64_t MessageSize,
-                                uint64_t timeOfMsg, void *MessageData)
+                                uint64_t ClockTime, void *MessageData)
 {
-    MessageIdentData MessageID;
+    MessageIdentData MessageID; // A class with all of the message identifying information, including the ID
     
     //! Begin Method steps
     //! - Grab the message ID associated with name if it exists
-    //! - Note that if you are trying to write  a shared message with no publisher things will get weird
     MessageID = SystemMessaging::GetInstance()->
         messagePublishSearch(MessageName);
     //! - If we got an invalid message ID back, alert the user and quit
     if(!MessageID.itemFound)
     {
-        BSK_PRINT_BRIEF(MSG_ERROR, "You requested a message name: %s that message does not exist.", MessageName.c_str());
+        BSK_PRINT_BRIEF(MSG_ERROR, "You tried to write to message name: %s that message does not exist.",
+                MessageName.c_str());
         return;
     }
     SystemMessaging::GetInstance()->selectMessageBuffer(MessageID.processBuffer);
-    SystemMessaging::GetInstance()->WriteMessage(MessageID.itemID, timeOfMsg,
+    SystemMessaging::GetInstance()->WriteMessage(MessageID.itemID, ClockTime,
                                                  MessageSize, reinterpret_cast<uint8_t*> (MessageData));
 }
 /*! This method functions as a pass-through to the message logging structure
@@ -330,12 +314,12 @@ void SimModel::WriteMessageData(std::string MessageName, uint64_t MessageSize,
  main simulation level without having to hook in the message logger
  somewhere else.
  @return void
- @param messageName -- The name of the message that we want to log
- @param messagePeriod ns The minimum time between messages that we want to allow
+ @param std::string messageName The name of the message that we want to log
+ @param uint64_t messagePeriod The minimum time between messages to allow in ns
  */ 
 void SimModel::logThisMessage(std::string messageName, uint64_t messagePeriod)
 {
-    messageLogs.addMessageLog(messageName, messagePeriod);
+    this->messageLogs.addMessageLog(messageName, messagePeriod);
 }
 
 /*! This method gets the current number of messages that have been created in 
@@ -347,8 +331,8 @@ uint64_t SimModel::getNumMessages() {
 }
 /*! This method finds the name associated with the message ID that is passed 
     in.
-    @return std::string The message name for the ID
-    @param messageID The message id that we wish to find the name for
+    @return std::string messageName The message name for the ID
+    @param uint64_t messageID The message id that we wish to find the name for
 */
 std::string SimModel::getMessageName(uint64_t messageID)
 {
@@ -358,31 +342,28 @@ std::string SimModel::getMessageName(uint64_t messageID)
 /*! This method obtains the header information associated with a given message.
    Note the copy out to the incoming message.  The assumption is that this 
    method is called from the python level where the storage for headerOut is 
-   created.  This way we don't connect a pointer to the internal messager at the 
+   created.  This way we don't connect a pointer to the internal message at the
    python level
    @return void
-   @param messageID The ID we want to pull header information for
-   @param headerOut The output header information we extract from the simulation
+   @param std::string messageName The name of the message we want to pull header information for
+   @param MessageHeaderData* headerOut The output header information we extract from the simulation
 */
 void SimModel::populateMessageHeader(std::string messageName,
                            MessageHeaderData* headerOut)
 {
     MessageIdentData messageID = SystemMessaging::GetInstance()->
         messagePublishSearch(messageName);
-    memset(headerOut, 0x0 ,sizeof(MessageHeaderData));
-    if(messageID.itemFound)
-    {
-        SystemMessaging::GetInstance()->selectMessageBuffer(messageID.processBuffer);
-        MessageHeaderData *locHeader = SystemMessaging::GetInstance()->
-            FindMsgHeader(messageID.itemID);
-        memcpy(headerOut, locHeader, sizeof(MessageHeaderData));
-    }
+    SystemMessaging::GetInstance()->selectMessageBuffer(messageID.processBuffer);
+    MessageHeaderData *locHeader = SystemMessaging::GetInstance()->
+        FindMsgHeader(messageID.itemID);
+    memcpy(headerOut, locHeader, sizeof(MessageHeaderData));
 }
 
-/*! This method find the ID associated with the message name and returns it to 
-    the caller.  Mostly used to make sure a message is valid.
-    @return int64_t ID of the message associated with messageName
-    @param messageName The name of the message that you want the ID for
+/*! This method finds the ID associated with the message name and returns it to
+    the caller.  Mostly used to make sure a message is valid. If it's not, you'll
+    just get -1, not a warning or failure.
+    @return int64_t messageID ID of the message associated with messageName
+    @param std::string messageName The name of the message that you want the ID for
 */
 MessageIdentData SimModel::getMessageID(std::string messageName)
 {
@@ -392,9 +373,8 @@ MessageIdentData SimModel::getMessageID(std::string messageName)
 }
 
 /*! This method gets the list of unique message names present in the simulation 
-    so that the user can see what messages have been created with no duplicates 
-    from the shadow messages
-    @return set of strings that constitute the unique names
+    so that the user can see what messages have been created with no duplicates
+    @return std::set<std::string> set of strings that constitute the unique names
 */
 std::set<std::string> SimModel::getUniqueMessageNames()
 {
@@ -403,8 +383,7 @@ std::set<std::string> SimModel::getUniqueMessageNames()
     return(outputSet);
 }
 
-/*! This method clears out the messaging interface so that the process can be 
-    used again for another run.  Note that once you do this, the simulation 
+/*! This method clears all messages.  Note that once you do this, the simulation
     object itself is really dead.
     @return void
 */
@@ -414,10 +393,11 @@ void SimModel::terminateSimulation()
 }
 
 /*! This method returns all of the read/write pairs for the entire simulation 
-    for a given message.  That alloww us to capture and analyze our data flow in
+    for a given message.  That allows us to capture and analyze our data flow in
     a very clean manner.
-    @return Write/Read pairs for the entire simulation run
-    @param messageName The name of the message to find pairs for
+    @return std::set<std::pair> returnPairs Write/Read pairs for the entire simulation run
+    @param std::string messageName The name of the message to find pairs for
+    @param std::set<unsigned long> procList procs to check for read/write pairs
 */
 std::set<std::pair<long int, long int>> SimModel::getMessageExchangeData(std::string messageName,
      std::set<unsigned long> procList)
@@ -447,7 +427,8 @@ std::set<std::pair<long int, long int>> SimModel::getMessageExchangeData(std::st
     
     if(!messageFound)
     {
-        BSK_PRINT_BRIEF(MSG_WARNING, "I couldn't find a message with the name: %s Can't give you exchange pairs for it.", messageName.c_str());
+        BSK_PRINT_BRIEF(MSG_WARNING, "I couldn't find a message with the name:"
+                                     " %s Can't give you exchange pairs for it.", messageName.c_str());
     }
     return(returnPairs);
     
