@@ -20,6 +20,9 @@ We are very excited by the great capabilities that this software already has, an
     <li>
       Removed the BOOST library from Basilisk as it is no longer needed.  This makes the BSK repository much leaner.  Note that this removes the capability to communicate with the old Qt-based Visualization that is now defunct and replaced with the new Vizard Visualization.
     </li>
+    <li>
+      Updated switch unscented kalman filter for sunline estimation with code cleanup and documentation updates.
+    </li>
 </ul>
 
 ##  Upcoming Version 0.6.0
