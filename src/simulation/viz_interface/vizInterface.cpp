@@ -481,8 +481,14 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 zmq_msg_init_data(&img_request, img_message, 13, message_buffer_deallocate, NULL);
                 zmq_msg_send(&img_request, requester_socket, 0);
                 
+                zmq_msg_t width;
+                zmq_msg_t height;
                 zmq_msg_t image;
+                zmq_msg_init(&width);
+                zmq_msg_init(&height);
                 zmq_msg_init(&image);
+                zmq_msg_recv(&width, requester_socket, 0);
+                zmq_msg_recv(&height, requester_socket, 0);
                 zmq_msg_recv(&image, requester_socket, 0);
                 
                 void* keep_alive = malloc(4 * sizeof(char));
