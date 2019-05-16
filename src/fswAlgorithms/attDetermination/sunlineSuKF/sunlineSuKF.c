@@ -491,7 +491,7 @@ int sunlineSuKFMeasUpdate(SunlineSuKFConfig *configData, double updateTime)
     double AT[(2 * SKF_N_STATES_SWITCH + MAX_N_CSS_MEAS)*MAX_N_CSS_MEAS], qChol[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
     double rAT[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], syT[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
     double sy[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], Ucol[SKF_N_STATES_SWITCH];
-    double updMat[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], pXY[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], Umat[SKF_N_STATES_SWITCH*3];
+    double updMat[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], pXY[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS], Umat[SKF_N_STATES_SWITCH*MAX_N_CSS_MEAS];
     badUpdate = 0;
     
     vCopy(configData->state, configData->numStates, configData->statePrev);
