@@ -77,6 +77,8 @@ void VizInterface::SelfInit()
         char buffer[4];
         zmq_recv (requester_socket, buffer, 4, 0);
         zmq_send (requester_socket, "PING", 4, 0);
+        std::cout << "Hand shook" << std::endl;
+
     }
 
     return;
