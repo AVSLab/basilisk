@@ -20,6 +20,9 @@
 #include <cstdio>
 #include <architecture/messaging/system_messaging.h>
 #include <zmq.h>
+#include "opencv2/opencv.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/imgcodecs.hpp"
 
 #include "vizInterface.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
@@ -483,16 +486,32 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 zmq_msg_init_data(&img_request, img_message, 13, message_buffer_deallocate, NULL);
                 zmq_msg_send(&img_request, requester_socket, 0);
                 
-                zmq_msg_t width;
-                zmq_msg_t height;
+                zmq_msg_t length;
                 zmq_msg_t image;
-                zmq_msg_init(&width);
-                zmq_msg_init(&height);
+                zmq_msg_init(&length);
                 zmq_msg_init(&image);
-                zmq_msg_recv(&width, requester_socket, 0);
-                zmq_msg_recv(&height, requester_socket, 0);
+                zmq_msg_recv(&length, requester_socket, 0);
                 zmq_msg_recv(&image, requester_socket, 0);
                 
+                // Get the data in the messages
+                int32_t *lengthPoint= (int32_t *)zmq_msg_data(&length);
+                void *imagePoint= zmq_msg_data(&image);
+                int32_t length_unswapped = *lengthPoint;
+                int32_t imageBufferLength =((length_unswapped>>24)&0xff) | // move byte 3 to byte 0
+                ((length_unswapped<<8)&0xff0000) | // move byte 1 to byte 2
+                ((length_unswapped>>8)&0xff00) | // move byte 2 to byte 1
+                ((length_unswapped<<24)&0xff000000); // byte 0 to byte 3
+                
+                std::vector<unsigned char> vectorBuffer((char*)imagePoint, (char*)imagePoint + imageBufferLength);
+                cv::Mat imageTest = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR); //, IMREAD_COLOR
+                if (CurrentSimNanos > 9.0*60.0*1.0/NANO2SEC){
+                    cv::namedWindow( "Plz", CV_WINDOW_AUTOSIZE );
+                    cv::imshow( "plz work", imageTest );
+                    cv::waitKey(0);
+                }
+                
+                zmq_msg_close(&length);
+                zmq_msg_close(&image);
                 void* keep_alive = malloc(4 * sizeof(char));
                 memcpy(keep_alive, "PING", 4);
                 zmq_msg_t request_life;
