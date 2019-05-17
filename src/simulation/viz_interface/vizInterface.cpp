@@ -20,9 +20,9 @@
 #include <cstdio>
 #include <architecture/messaging/system_messaging.h>
 #include <zmq.h>
-#include "opencv2/opencv.hpp"
-#include "opencv2/highgui.hpp"
-#include "opencv2/imgcodecs.hpp"
+//#include "opencv2/opencv.hpp"
+//#include "opencv2/highgui.hpp"
+//#include "opencv2/imgcodecs.hpp"
 
 #include "vizInterface.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
@@ -38,7 +38,7 @@ void message_buffer_deallocate(void *data, void *hint);
 
 VizInterface::VizInterface()
 {
-    this->liveStream = 0;
+    this->opNavMode = 0;
     this->saveFile = 0;
     this->FrameNumber= -1;
     this->numOutputBuffers = 2;
@@ -63,7 +63,7 @@ VizInterface::~VizInterface()
 void VizInterface::SelfInit()
 {
   /* Declare output message/s */
-    if (this->liveStream == 1){
+    if (this->opNavMode == 1){
         // setup zeroMQ
         context = zmq_ctx_new();
         requester_socket = zmq_socket(context, ZMQ_REQ);
@@ -73,14 +73,14 @@ void VizInterface::SelfInit()
         memcpy(message, "PING", 4);
         zmq_msg_t request;
         
-        std::cout << "initialized" << std::endl;
+        std::cout << "Waiting for Vizard at tcp://localhost:5556" << std::endl;
         
         zmq_msg_init_data(&request, message, 4, message_buffer_deallocate, NULL);
         zmq_msg_send(&request, requester_socket, 0);
         char buffer[4];
         zmq_recv (requester_socket, buffer, 4, 0);
         zmq_send (requester_socket, "PING", 4, 0);
-        std::cout << "Hand shook" << std::endl;
+        std::cout << "Basilisk-Vizard connection made" << std::endl;
 
     }
 
@@ -444,7 +444,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             this->outputStream->write(reinterpret_cast<char* > (varIntBuffer), varIntBytes);
         }
 
-        if (this->liveStream == 1){
+        if (this->opNavMode == 1){
             // this is actually a pretty good place to receive the pong
             // we should think about a push pull architecture if we have performance problems
             // receive pong
@@ -497,21 +497,25 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 int32_t *lengthPoint= (int32_t *)zmq_msg_data(&length);
                 void *imagePoint= zmq_msg_data(&image);
                 int32_t length_unswapped = *lengthPoint;
+                // Endianness switch for the length of the buffer
                 int32_t imageBufferLength =((length_unswapped>>24)&0xff) | // move byte 3 to byte 0
                 ((length_unswapped<<8)&0xff0000) | // move byte 1 to byte 2
                 ((length_unswapped>>8)&0xff00) | // move byte 2 to byte 1
                 ((length_unswapped<<24)&0xff000000); // byte 0 to byte 3
                 
                 std::vector<unsigned char> vectorBuffer((char*)imagePoint, (char*)imagePoint + imageBufferLength);
-                cv::Mat imageTest = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR); //, IMREAD_COLOR
-                if (CurrentSimNanos > 9.0*60.0*1.0/NANO2SEC){
-                    cv::namedWindow( "Plz", CV_WINDOW_AUTOSIZE );
-                    cv::imshow( "plz work", imageTest );
-                    cv::waitKey(0);
-                }
+//                cv::Mat imageTest = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
+//                if (CurrentSimNanos > 9.0*60.0*1.0/NANO2SEC){
+//                    cv::namedWindow( "Test Window", CV_WINDOW_AUTOSIZE );
+//                    cv::imshow( "Show Image", imageTest );
+//                    cv::waitKey(0);
+//                }
                 
+                // Clean the messages to avoid memory leaks
                 zmq_msg_close(&length);
                 zmq_msg_close(&image);
+                
+                // Ping the Viz back to continue the lock-step
                 void* keep_alive = malloc(4 * sizeof(char));
                 memcpy(keep_alive, "PING", 4);
                 zmq_msg_t request_life;
@@ -519,9 +523,6 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 zmq_msg_send(&request_life, requester_socket, 0);
                 return;
                 
-                // If we want BSK to wait for Unity at every step, we need to uncomment this code
-                //            char buffer[10];
-                //            zmq_recv(requester_socket, buffer, 10, 0);
             }
             
         }

@@ -56,7 +56,7 @@ def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFact
     vizMessager = vizInterface.VizInterface()
     scSim.AddModelToTask(simTaskName, vizMessager)
     vizMessager.saveFile = 1
-    vizMessager.liveStream = 1
+    vizMessager.opNavMode = 1
     vizMessager.spiceInMsgName = vizInterface.StringVector([      "earth_planet_data",
                                                                   "mars_planet_data",
                                                                   "mars barycenter_planet_data",

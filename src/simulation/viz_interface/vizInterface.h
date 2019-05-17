@@ -75,8 +75,8 @@ public:
     std::vector <ThrClusterMap> thrMsgData;     //! [-] Name of the incoming thruster data
     std::string starTrackerInMsgName;         //! [-] Name of the incoming Star Tracker data
     uint64_t numSensors;
-    int liveStream;         //! [Bool] Set True if Unity/Viz couple in direct communication. 
-    int saveFile;         //! [Bool] Set True if Viz should save a file of the data. 
+    int opNavMode;          //! [Bool] Set True if Unity/Viz couple in direct communication.
+    int saveFile;           //! [Bool] Set True if Viz should save a file of the data.
 
     std::string vizOutMsgName;
     std::vector <std::string> planetNames;  //!< -- Names of planets we want to track, read in from python
