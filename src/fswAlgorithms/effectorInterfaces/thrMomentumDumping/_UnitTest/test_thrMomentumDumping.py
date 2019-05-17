@@ -103,6 +103,7 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
     moduleConfig.thrusterImpulseInMsgName = "thrImpulseMomentumManagement"
     moduleConfig.thrusterConfInMsgName = "thr_config_data"
     moduleConfig.thrusterOnTimeOutMsgName = "outputName"
+    moduleConfig.deltaHInMsgName = "cmd_delta_H"
 
 
     # setup thruster cluster message
@@ -138,10 +139,18 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
     # setup thruster impulse request message
     DeltaPInMsgData = thrMomentumDumping.THRArrayCmdForceFswMsg()
     DeltaPInMsgData.thrForce = [1.2, 0.2, 0.0, 1.6, 1.2, 0.2, 1.6, 0.0]
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
                                moduleConfig.thrusterImpulseInMsgName,
-                               DeltaPInMsgData.getStructSize(),
-                               2)
+                               DeltaPInMsgData)
+
+    # setup the commanded angular momentum change message
+    DeltaHInMsgData = thrMomentumDumping.CmdTorqueBodyIntMsg()
+    DeltaHInMsgData.torqueRequestBody = [0., 0., 0.]
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.deltaHInMsgName,
+                                          DeltaHInMsgData.getStructSize(),
+                                          2)
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.thrusterOnTimeOutMsgName, testProcessRate)
@@ -156,11 +165,11 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
     unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    # write the input Delta_p message
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrusterImpulseInMsgName,
-                               DeltaPInMsgData.getStructSize(),
+    # write the input Delta_H message
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.deltaHInMsgName,
+                               DeltaHInMsgData.getStructSize(),
                                macros.sec2nano(0.5),
-                               DeltaPInMsgData)
+                               DeltaHInMsgData)
 
     unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation
 
@@ -175,11 +184,11 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
         unitTestSim.ConfigureStopTime(macros.sec2nano(3.5))        # seconds to stop simulation
         unitTestSim.ExecuteSimulation()
 
-        # re-write the input Delta_p message so that it checks for a new message
-        unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrusterImpulseInMsgName,
-                                              DeltaPInMsgData.getStructSize(),
+        # re-write the input Delta_H message so that it checks for a new message
+        unitTestSim.TotalSim.WriteMessageData(moduleConfig.deltaHInMsgName,
+                                              DeltaHInMsgData.getStructSize(),
                                               macros.sec2nano(3.5),
-                                              DeltaPInMsgData)
+                                              DeltaHInMsgData)
 
         unitTestSim.ConfigureStopTime(macros.sec2nano(5.5))        # seconds to stop simulation
         unitTestSim.ExecuteSimulation()
