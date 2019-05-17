@@ -26,6 +26,9 @@ We are very excited by the great capabilities that this software already has, an
     <li>
         updated `pytest` environment to have markers registered
     </li>
+    <li>
+        added a PPTX support file that explains the core Basilisk architecture.  HTML documentation is updated to link to this.
+    </li>
 </ul>
 
 ##  Upcoming Version 0.6.0
