@@ -53,12 +53,11 @@ typedef struct {
 
     /* declare module IO interfaces */
     char thrusterOnTimeOutMsgName[MAX_STAT_MSG_LENGTH]; //!< thruster on time output message name
-    int32_t thrusterOnTimeOutMsgID;                     //!< ID of module output message
+    int32_t thrusterOnTimeOutMsgId;                     //!< ID of module output message
     char thrusterImpulseInMsgName[MAX_STAT_MSG_LENGTH]; //!< desired thruster impulse input message name
-    int32_t thrusterImpulseInMsgID;                     //!< ID of thruster impulse input message
+    int32_t thrusterImpulseInMsgId;                     //!< ID of thruster impulse input message
     char thrusterConfInMsgName[MAX_STAT_MSG_LENGTH];    //!< The name of the thruster configuration Input message
-    int32_t  thrusterConfInMsgID;                       //!< [-] ID for the incoming Thruster configuration data
-
+    int32_t  thrusterConfInMsgId;                       //!< [-] ID for the incoming Thruster configuration data
 }thrMomentumDumpingConfig;
 
 #ifdef __cplusplus

@@ -37,7 +37,7 @@
 void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t moduleID)
 {
     /*! - Create output message for module */
-    configData->thrusterOnTimeOutMsgID = CreateNewMessage(configData->thrusterOnTimeOutMsgName,
+    configData->thrusterOnTimeOutMsgId = CreateNewMessage(configData->thrusterOnTimeOutMsgName,
                                                sizeof(THRArrayOnTimeCmdIntMsg),
                                                "THRArrayOnTimeCmdIntMsg",
                                                moduleID);
@@ -52,12 +52,12 @@ void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t 
 void CrossInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t moduleID)
 {
     /*! - Get the message ID for the requested thruster impulse message */
-    configData->thrusterImpulseInMsgID = subscribeToMessage(configData->thrusterImpulseInMsgName,
+    configData->thrusterImpulseInMsgId = subscribeToMessage(configData->thrusterImpulseInMsgName,
                                                 sizeof(THRArrayCmdForceFswMsg),
                                                 moduleID);
 
     /*! - Get the message ID for the thruster configuration message */
-    configData->thrusterConfInMsgID = subscribeToMessage(configData->thrusterConfInMsgName,
+    configData->thrusterConfInMsgId = subscribeToMessage(configData->thrusterConfInMsgName,
                                                          sizeof(THRArrayConfigFswMsg),
                                                          moduleID);
 }
@@ -81,7 +81,7 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t cal
 
     /*! - read in number of thrusters installed and maximum thrust values */
     memset(&localThrusterData, 0x0, sizeof(THRArrayConfigFswMsg));
-    ReadMessage(configData->thrusterConfInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->thrusterConfInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(THRArrayConfigFswMsg), (void *) &localThrusterData, moduleID);
     configData->numThrusters = localThrusterData.numThrusters;
     for (i=0;i<configData->numThrusters;i++) {
@@ -96,7 +96,7 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t cal
 
     /*! - set the time tag of the last Delta_p message */
     memset(&localThrusterData, 0x0, sizeof(THRArrayConfigFswMsg));
-    ReadMessage(configData->thrusterImpulseInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->thrusterImpulseInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(THRArrayCmdForceFswMsg), (void *) &DeltaPInMsg, moduleID);
     if (sizeOfMsgWritten > 0) {
         /* prior message has been written, copy its time tag as the last prior message */
@@ -144,7 +144,7 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t ca
 
         /*! - Read the requester thruster impulse input message */
         memset(&thrusterImpulseInMsg, 0x0, sizeof(THRArrayCmdForceFswMsg));
-        ReadMessage(configData->thrusterImpulseInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+        ReadMessage(configData->thrusterImpulseInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                     sizeof(THRArrayCmdForceFswMsg), (void*) &thrusterImpulseInMsg, moduleID);
         Delta_P_input = thrusterImpulseInMsg.thrForce;
 
@@ -216,7 +216,7 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t ca
     configData->priorTime = callTime;
 
     /*! - write out the output message */
-    WriteMessage(configData->thrusterOnTimeOutMsgID, callTime, sizeof(THRArrayOnTimeCmdIntMsg),
+    WriteMessage(configData->thrusterOnTimeOutMsgId, callTime, sizeof(THRArrayOnTimeCmdIntMsg),
                  (void*) &thrOnTimeOut, moduleID);
 
     return;
