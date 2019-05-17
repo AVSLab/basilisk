@@ -44,8 +44,7 @@ void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t 
 }
 
 /*! This method performs the second stage of initialization for this module.
- It links to 3 required input messages of type [THRArrayCmdForceFswMsg](\ref THRArrayCmdForceFswMsg)
- and [THRArrayConfigFswMsg](\ref THRArrayConfigFswMsg).
+ It links to 3 required input messages of type [THRArrayCmdForceFswMsg](\ref THRArrayCmdForceFswMsg), [THRArrayConfigFswMsg](\ref THRArrayConfigFswMsg) and [CmdTorqueBodyIntMsg](\ref CmdTorqueBodyIntMsg).
  @return void
  @param configData The configuration data associated with this module
  */
