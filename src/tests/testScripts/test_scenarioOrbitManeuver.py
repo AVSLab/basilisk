@@ -50,6 +50,8 @@ import scenarioOrbitManeuver
 
 
 @pytest.mark.parametrize("maneuverCase", [0, 1])
+@pytest.mark.scenarioTest
+
 # provide a unique test method name, starting with test_
 def test_scenarioOrbitManeuver(show_plots, maneuverCase):
     '''This function is called by the py.test environment.'''

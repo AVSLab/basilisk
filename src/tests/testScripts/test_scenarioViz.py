@@ -57,6 +57,8 @@ import scenarioVizPoint
     (False, True),
     (True, False)]
 )
+@pytest.mark.scenarioTest
+
 def test_scenarioViz(show_plots, dscovr, marsOrbit):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called

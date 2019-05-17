@@ -49,7 +49,9 @@ import scenarioMonteCarloAttRW
 # Run normal monte carlo and plot with datashader
 
 @pytest.mark.skipif(not FOUND_DATESHADER, reason = "Datashader not found")
-@pytest.mark.slowtest()
+@pytest.mark.slowtest
+@pytest.mark.scenarioTest
+
 def test_MonteCarloSimulationDatashader(show_plots):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
@@ -61,7 +63,7 @@ def test_MonteCarloSimulationDatashader(show_plots):
 # Run initial conditions and plot with matplotlib
 @pytest.mark.parametrize("MCCases",
                          [1,2])
-@pytest.mark.slowtest()
+@pytest.mark.slowtest
 def test_MonteCarloSimulation(show_plots, MCCases):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called

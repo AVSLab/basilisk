@@ -78,7 +78,7 @@ sys.path.append(path + '/../bskSimScenarios/scenarios')
     , ('scenario_BasicOrbitFormation')
     , ('scenario_RelativePointingFormation')
                                         ])
-
+@pytest.mark.scenarioTest
 
 def test_scenarioBskScenarios(show_plots, bskSimCase):
 

@@ -56,6 +56,8 @@ import scenarioBasicOrbit
     ('LEO', True, 'Earth'),
     ('LEO', False, 'Mars')
 ])
+@pytest.mark.scenarioTest
+
 def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called

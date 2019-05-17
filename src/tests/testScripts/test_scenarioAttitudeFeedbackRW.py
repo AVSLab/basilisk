@@ -51,6 +51,8 @@ import scenarioAttitudeFeedbackRW
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("useJitterSimple, useRWVoltageIO", [(False, False), (True, False), (False, True)])
+@pytest.mark.scenarioTest
+
 # provide a unique test method name, starting with test_
 def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
     '''This function is called by the py.test environment.'''
