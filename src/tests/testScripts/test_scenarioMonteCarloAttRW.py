@@ -50,6 +50,8 @@ import scenarioMonteCarloAttRW
 
 @pytest.mark.skipif(not FOUND_DATESHADER, reason = "Datashader not found")
 @pytest.mark.slowtest
+@pytest.mark.scenarioTest
+
 def test_MonteCarloSimulationDatashader(show_plots):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called

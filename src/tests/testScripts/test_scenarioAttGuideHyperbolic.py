@@ -54,6 +54,7 @@ import scenarioAttGuideHyperbolic
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("useAltBodyFrame", [False, True])
+@pytest.mark.scenarioTest
 
 # provide a unique test method name, starting with test_
 def test_bskAttGuide_Hyperbolic(show_plots, useAltBodyFrame):

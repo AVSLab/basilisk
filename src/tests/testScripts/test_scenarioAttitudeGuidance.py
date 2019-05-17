@@ -53,6 +53,8 @@ import scenarioAttitudeGuidance
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("useAltBodyFrame", [False, True])
+@pytest.mark.scenarioTest
+
 def test_bskAttitudeGuidance(show_plots, useAltBodyFrame):
     '''This function is called by the py.test environment.'''
 

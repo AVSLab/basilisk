@@ -53,6 +53,8 @@ import scenarioAttitudeFeedback
     , (True, True, False)
     , (True, False, True)
 ])
+@pytest.mark.scenarioTest
+
 def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     '''This function is called by the py.test environment.'''
     # provide a unique test method name, starting with test_

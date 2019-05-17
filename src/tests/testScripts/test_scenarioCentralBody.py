@@ -53,6 +53,8 @@ import scenarioCentralBody
     (False, False),
     (False, True)
 ])
+@pytest.mark.scenarioTest
+
 def test_scenarioCentralBody(show_plots, useCentral):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called

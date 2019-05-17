@@ -42,6 +42,7 @@ path = os.path.dirname(os.path.abspath(filename))
 
 sys.path.append(path + '/../scenarios')
 import scenarioHingedRigidBody
+@pytest.mark.scenarioTest
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)

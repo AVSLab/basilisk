@@ -48,6 +48,7 @@ import scenarioCSSFilters
     , ('SEKF', 400)
     , ('SuKF', 400)
 ])
+@pytest.mark.scenarioTest
 
 # provide a unique test method name, starting with test_
 def test_Filters(show_plots, FilterType, simTime):

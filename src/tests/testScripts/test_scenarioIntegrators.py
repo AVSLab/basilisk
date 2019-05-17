@@ -48,6 +48,8 @@ import scenarioIntegrators
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("integratorCase", ["rk4", "euler", "rk2"])
+@pytest.mark.scenarioTest
+
 def test_scenarioIntegrators(show_plots, integratorCase):
     '''This function is called by the py.test environment.'''
 

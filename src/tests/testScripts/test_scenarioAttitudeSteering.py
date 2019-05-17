@@ -51,6 +51,8 @@ import scenarioAttitudeSteering
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("simCase", [0, 1, 2, 3])
+@pytest.mark.scenarioTest
+
 def test_bskAttitudeFeedbackRW(show_plots, simCase):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called

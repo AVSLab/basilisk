@@ -48,6 +48,8 @@ import scenarioOrbitMultiBody
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("scCase", ['Hubble', 'NewHorizons'])
+@pytest.mark.scenarioTest
+
 def test_scenarioOrbitMultiBodyCopy(show_plots, scCase):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called

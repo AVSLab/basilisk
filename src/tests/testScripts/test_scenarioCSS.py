@@ -48,6 +48,8 @@ import scenarioCSS
       (False, False, False, True),
       (True, False, False, False)
 ])
+@pytest.mark.scenarioTest
+
 def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
