@@ -23,6 +23,9 @@ We are very excited by the great capabilities that this software already has, an
     <li>
       Updated switch unscented kalman filter for sunline estimation with code cleanup and documentation updates.
     </li>
+    <li>
+        updated `pytest` environment to have markers registered
+    </li>
 </ul>
 
 ##  Upcoming Version 0.6.0
