@@ -1300,7 +1300,8 @@ HTML_EXTRA_FILES       = ../src/simulation/dynamics/extForceTorque/_Documentatio
                          ../src/fswAlgorithms/_fswTemplateFolder/fswModuleTemplate/_Documentation/Basilisk-MODULENAME-yyyymmdd.pdf \
                          ../src/fswAlgorithms/transDetermination/navAggregate/_Documentation/Basilisk-navAggregate-2019-02-21.pdf \
                          ../src/fswAlgorithms/transDetermination/dvAccumulation/_Documentation/Basilisk-dvAccumulation-2019-03-28.pdf \
-                         mac_fix_path.pth
+                         mac_fix_path.pth \
+                         Documents/UnderstandingBskArchitecture.pptx
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen
 # will adjust the colors in the style sheet and background images according to
