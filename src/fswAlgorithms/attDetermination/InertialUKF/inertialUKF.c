@@ -669,7 +669,7 @@ int inertialUKFMeasUpdate(InertialUKFConfig *configData, int currentST)
     /*! - Compute the valid observations and the measurement model for all observations*/
     inertialUKFMeasModel(configData, currentST);
 
-    mSetZero(rAT, AKF_N_STATES, AKF_N_STATES);
+    mSetZero(rAT, 3, 3);
     /*! - Compute the value for the yBar parameter (note that this is equation 23 in the
           time update section of the reference document*/
     vSetZero(yBar, configData->numObs);
