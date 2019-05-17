@@ -17,7 +17,7 @@
 
  */
 /*
-    FSW MODULE Template
+    FSW MODULE thrMomentumDumping
  
  */
 
