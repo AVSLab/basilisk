@@ -21,3 +21,4 @@ cmake-build*/*
 *.out
 *.gz
 *.toc
+src/cmake-build-debug/*

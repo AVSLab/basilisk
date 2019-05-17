@@ -2,15 +2,11 @@
 
 \section{Model Description}
 \subsection{General Module Function}
-The purpose of this module is to implement an exponential neutral atmospheric density and temperature model.
-By invoking the atmosphere module, the default values are set such that this basic exponential atmosphere model returns zero for all inputs. Initial values can be specified using the {\tt setSimPlanetEnvironment.exponentialAtmosphere()} macro.
-The reach of the model controlled by setting the variables {\tt envMinReach} and {\tt envMaxReach} to positive values.  These values are the altitude above the planets surfaces assuming an equatorial radius and spherical shape.  The default values are -1 which turns of this checking where the atmosphere model as unbounded reach.  
-
-\subsection{Exponential Atmosphere}
-Under the assumption of an isothermal atmosphere, an expression for atmospheric density can be readily arrived at by combining the equations of hydrostatic equilibrium with the ideal gas law and integrating, yielding:
+The purpose of this module is to implement simple, attitude-dependent drag forces and torques for spacecraft with convex (i.e., non-self-shadowing) shape models. Spacecraft are considered as collections of facets consisting of an area, an offset from Point B, a surface normal (defined in the body frame), and a drag coefficient. Facets can be added from the Python level by using the \verb|addFacetToModel| method. This module does not support self-shadowing.
+\subsection{Facet Model}
+The simplest model of spacecraft drag that considers the dependence of attitude is a faceted model. These models compute drag by considering the spacecraft as a collection of facets. The drag force contributed by an individual facet is given by
 \begin{equation}
 \label{eq:expAtmo}
-\rho = \rho_0 e^{\frac{-h}{h_0}}
+\mathbf{ F}_D = -\frac{1}{2} C_D \rho A_{\text{facet}} (\hat{n} \cdot \hat{v}) |\mathbf{v}|^2 \hat{v}
 \end{equation}
-where $\rho_0$ is the density at the planet's surface, $h$ is the altitude, and $h_0$ is the atmospheric scale height derived from the weighted-average behavior of the species that make up the atmosphere. A list of these parameters
-for atmospheric bodies in the solar system is available from NASA \href{https://nssdc.gsfc.nasa.gov/planetary/planetfact.html}{here}. For more detail, see Reference ~\citenum{vallado2013}. 
+where $C_D$ is the facet's drag coefficient, $\rho$ is the local neutral density, $A_{\text{facet}}$ is total facet area, $\hat{n}$ is the facet surface normal unit vector, and $\mathbf{v}$ is the atmosphere-relative velocity.

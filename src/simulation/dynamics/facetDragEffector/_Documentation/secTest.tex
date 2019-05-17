@@ -5,21 +5,23 @@ This section describes the specific unit tests conducted on this module.
 
 \subsection{General Functionality}
 
-\subsubsection{setEpoch}
+\subsubsection{setDensityMessage}
 
-This test verifies that the user can set the initial date (``epoch'') arbitrarily.
+This test verifies that the user can specify the atmospheric density message used by the module.
 
-\subsubsection{addSpacecraftToModel}
+\subsubsection{testDragForce}
 
-This test verifies that the user can both add additional spacecraft to the module. This is accomplished by checking the number of input and output messages of the module after adding multiple spacecraft.
+This test verifies that the module correctly calculates the drag force given the model's assumptions. It also implicitly tests the compatibility of facetDrag and exponentialAtmosphere. 
+
+\subsubsection{testShadow}
+
+This test verifies that panels that are not in the flow are correctly ignored for the purposes of drag calculation.
 
 \subsection{Model-Specific Tests}
 
-\subsubsection{test\_integratedTestAtmosphere.py}
-This integrated runs a section of an orbit and verifies that the exponential atmosphere model both correctly calculates the orbit altitude and the atmospheric density against a Python implementation of the model.   A single spacecraft is simulated about Earth, and no minimum or maximum reach is set.  No planet ephemeris message is setup causing the simulation to assume the planet center is at the coordinate frame origin.
+\subsubsection{test\_unitFacetDrag.py}
 
-\subsubsection{test\_unitTestAtmosphere.py}
-This unit test only runs the atmosphere Basilisk module with two fixed spacecraft state input messages.  The simulation option {\tt useDefault} checks if the default atmosphere parameters for an Earth-based exponential atmosphere module are used, or if the exponential model information is setup manually.  The option {\tt useMinReach} dictates if the minimum altitude check is performed, while the option {\tt useMaxReach} checks if the maximum reach check is performed.  The option {\tt usePlanetEphemeris} checks if a planet state input message should be created.  All permutations are checked.
+This unit test runs setDensityMessage, testDragForce, and testShadow to verify the functionality of the module. 
 
 \section{Test Parameters}
 The simulation tolerances are shown in Table~\ref{tab:errortol}.  In each simulation the neutral density output message is checked relative to python computed true values.  
@@ -31,10 +33,8 @@ The simulation tolerances are shown in Table~\ref{tab:errortol}.  In each simula
 		\hline\hline
 		\textbf{Output Value Tested}  & \textbf{Tolerated Error}  \\ 
 		\hline
-		{\tt length(atmo.scStateInMsgNames)}        & {\tt 0 (int)}   \\
-		{\tt length(atmo.envOutMsgNames)}        & {\tt 0 (int)}   \\ 
-		{\tt neutralDensity}        & \input{AutoTeX/toleranceValue} (relative) \\ 
-		\hline\hline
+		{\tt facetDragDynamicEffector.atmoDensInMsgName }       & {\tt 0 (str)}   \\
+		{\tt newDrag.forceExternal\_N}        & \input{AutoTeX/toleranceValue} (relative)   \\ 		\hline\hline
 	\end{tabular}
 \end{table}
 
@@ -42,23 +42,21 @@ The simulation tolerances are shown in Table~\ref{tab:errortol}.  In each simula
 
 
 \section{Test Results}
-The following two tables show the test results.  All tests are expected to pass.
+The following table shows the test result.
 
 
 \begin{table}[H]
-	\caption{Test result for test\_integratedTestAtmosphere.py}
+	\caption{Test result for test\_unitFacetDrag.py}
 	\label{tab:results}
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{c  | c } % Column formatting, 
 		\hline\hline
 		\textbf{Check} &  \textbf{Pass/Fail} \\ 
 		\hline
-		1 &  \input{AutoTeX/passFail} \\ 
+		1 &  \input{AutoTeX/unitTestPassFail} \\ 
 		\hline
 		\hline
 	\end{tabular}
-\end{table}
-
 \end{table}
 
 

@@ -3,40 +3,36 @@
 \section{User Guide}
 
 \subsection{General Module Setup}
-This section outlines the steps needed to add an Atmosphere module to a sim.
-First, the atmosphere must be imported and initialized:
+This section outlines the steps needed to add a facetDrag effector to a spacecraft, add facets to that module, and connect said module to an atmosphere module.
+
+First, import the module and set its tag:
 \begin{verbatim}
-from Basilisk.simulation import exponentialAtmosphere
-newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
-newAtmo.ModelTag = "ExpAtmo"
-\end{verbatim}
-By default the module uses parameters such that there is no neutral density, and the output is zero'd.  To add specific exponential atmosphere model parameters, use:
-\begin{verbatim}
-    newAtmo.exponentialParams.baseDensity = baseDensityValue
-    newAtmo.exponentialParams.scaleHeight = scaleHeightValue
-    newAtmo.planetRadius = planetRadiusValue
-\end{verbatim}
-To specify a preset exponential model, such as for Earth, the following macro can be used:
-\begin{verbatim}
-	simSetPlanetEnvironment.exponentialAtmosphere(testModule, "earth")
+from Basilisk.simulation import facetDragDynamicEffector
+newDrag = facetDragDynamicEffector.FacetDragDynamicEffector()
+newDrag.ModelTag = "FacetDrag"
 \end{verbatim}
 
-The model can then be added to a task like other simModels. Each Atmosphere calculates atmospheric parameters based on the output state messages for a set of spacecraft.
+Assuming an atmospheric density model has already been set up, the density message to be used by this drag effector can be set by calling
+\begin{verbatim}
+newDrag.setDensityMessage(atmoModule.envOutMsgNames[-1])
+\end{verbatim}
 
-To add spacecraft to the model the spacecraft state output message name is sent to the \verb|addScToModel| method:
+By default, the module has no facets and drag calculation is skipped. To add a facet, call th \verb|addFacet| function with an area, drag coefficient, body-frame normal vector, and body-frame facet location. For example, to add multiple facets, call
+\begin{verbatim}
+scAreas = [1.0, 1.0]
+scCoeff = np.array([2.0, 2.0])
+B_normals = [np.array([1, 0, 0]), np.array([0, 1, 0])]
+B_locations = [np.array([0.1,0,0]), np.array([0,0.1,0])]
+
+for ind in range(0,len(scAreas)):
+	newDrag.addFacet(scAreas[ind], scCoeff[ind], B_normals[ind], B_locations[ind])
+\end{verbatim}
+
+
+Finally, add the module to a spacecraftPlus object using the \verb|addDynamicEffector| method:
 \begin{verbatim}
 scObject = spacecraftPlus.SpacecraftPlus()
 scObject.ModelTag = "spacecraftBody"
-newAtmo.addSpacecraftToModel(scObject.scStateOutMsgName)
+scObject.addDynamicEffector(newDrag)
 \end{verbatim}
-
-\subsection{Planet Ephemeris Information}
-The optional planet state message name can be set by directly adjusting that attribute of the class:
-\begin{verbatim}
-newAtmo.planetPosInMsgName = "PlanetSPICEMsgName"
-\end{verbatim}
-If SPICE is not being used, the planet is assumed to reside at the origin.
-
-\subsection{Setting the Model Reach}
-By default the model doesn't perform any checks on the altitude to see if the specified atmosphere model should be used.  This is set through the parameters {\tt envMinReach} and {\tt envMaxReach}.  Their default values are -1.  If these are set to positive values, then if the altitude is smaller than {\tt envMinReach} or larger than {\tt envMaxReach}, the density is set to zero.
 
