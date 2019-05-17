@@ -59,7 +59,6 @@ public:
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void cannonballDrag();
-    void plateDrag();
     void updateDragDir();
     void setDensityMessage(std::string newDensMessage);
 

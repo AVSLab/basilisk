@@ -145,15 +145,6 @@ void DragDynamicEffector::cannonballDrag(){
   	return;
 }
 
-/*! This method WILL implement a more complex flat-plate aerodynamics model with attitude
-dependence and lift forces.
-*/
-void DragDynamicEffector::plateDrag(){
-  	cannonballDrag(); //! Right now, it just calls the cannonball model.
-  	return;
-}
-
-
 /*! This method computes the body forces and torques for the dragEffector in a simulation loop,
 selecting the model type based on the settable attribute "modelType."
 */
@@ -161,9 +152,6 @@ void DragDynamicEffector::computeForceTorque(double integTime){
 	updateDragDir();
 	if(this->modelType == "cannonball"){
 		cannonballDrag();
-  	}
-  	else if(this->modelType == "plate"){
-	  	plateDrag();
   	}
   	return;
 }
