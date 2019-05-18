@@ -34,14 +34,10 @@
  */
 void SelfInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
 {
-    /*! Begin method steps */
     /*! - Loop over number of thruster blocks and create output messages */
-  
     ConfigData->outputThrID = CreateNewMessage(
         ConfigData->outputThrName, sizeof(THRArrayOnTimeCmdIntMsg),
         "THRArrayOnTimeCmdIntMsg", moduleID);
-  
-    
 }
 
 /*! This method performs the second stage of initialization for the thruster RW desat
@@ -120,7 +116,6 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
     double fireValue;             /* Amount of time to fire the jet for */
 	THRArrayOnTimeCmdIntMsg outputData;    /* Local output firings */
   
-    /*! Begin method steps*/
     /*! - If we haven't met the cooldown threshold, do nothing */
 	if ((callTime - ConfigData->previousFiring)*1.0E-9 < 
 		ConfigData->thrFiringPeriod)

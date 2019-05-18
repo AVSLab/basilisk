@@ -511,7 +511,6 @@ void VSCMGStateEffector::SelfInit()
 	VSCMGCmdInitializer.u_s_cmd = 0.0;
 	VSCMGCmdInitializer.u_g_cmd = 0.0;
 
-	//! Begin method steps
 	//! - Clear out any currently firing VSCMGs and re-init cmd array
 	NewVSCMGCmds.clear();
 	NewVSCMGCmds.insert(NewVSCMGCmds.begin(), VSCMGData.size(), VSCMGCmdInitializer );
@@ -541,7 +540,6 @@ void VSCMGStateEffector::SelfInit()
  */
 void VSCMGStateEffector::CrossInit()
 {
-	//! Begin method steps
 	//! - Find the message ID associated with the InputCmds string.
 	//! - Warn the user if the message is not successfully linked.
 	CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(InputCmds,
@@ -658,8 +656,8 @@ void VSCMGStateEffector::ReadInputs()
 //
 	std::vector<double>::iterator CmdIt;
 	uint64_t i;
-	//! Begin method steps
-	//! - If the input message ID is invalid, return without touching states
+
+    //! - If the input message ID is invalid, return without touching states
 	if(CmdsInMsgID < 0)
 	{
 		return;
@@ -698,7 +696,6 @@ void VSCMGStateEffector::ReadInputs()
 // */
 void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 {
-	//! Begin method steps
 	std::vector<VSCMGCmdSimMsg>::iterator CmdIt;
 	int it = 0;
 	double u_s;
@@ -805,10 +802,8 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
  */
 void VSCMGStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
-	//! Begin method steps
 	//! - Read the inputs and then call ConfigureVSCMGRequests to set up dynamics
 	ReadInputs();
 	ConfigureVSCMGRequests(CurrentSimNanos*NANO2SEC);
 	WriteOutputMessages(CurrentSimNanos);
-//
 }

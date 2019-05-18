@@ -31,8 +31,6 @@
  */
 void SelfInit_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->thrData.outputMsgID = CreateNewMessage(
         ConfigData->thrData.outputDataName, sizeof(THRArrayOnTimeCmdIntMsg),
@@ -63,12 +61,10 @@ void CrossInit_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t moduleID)
 void Update_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
-    
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     CmdTorqueBodyIntMsg cntrRequest;
     
-    /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
     ReadMessage(ConfigData->inputMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CmdTorqueBodyIntMsg), (void*) &(cntrRequest), moduleID);

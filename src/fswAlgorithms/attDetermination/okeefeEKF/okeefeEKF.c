@@ -32,10 +32,8 @@
  */
 void SelfInit_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t moduleID)
 {
-    
     mSetZero(ConfigData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
     
-    /*! Begin method steps */
     /*! - Create output message for module */
 	ConfigData->navStateOutMsgId = CreateNewMessage(ConfigData->navStateOutMsgName,
 		sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
@@ -53,15 +51,12 @@ void SelfInit_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t moduleID)
  */
 void CrossInit_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t moduleID)
 {
-    /*! Begin method steps */
     /*! - Find the message ID for the coarse sun sensor data message */
     ConfigData->cssDataInMsgId = subscribeToMessage(ConfigData->cssDataInMsgName,
         sizeof(CSSArraySensorIntMsg), moduleID);
     /*! - Find the message ID for the coarse sun sensor configuration message */
     ConfigData->cssConfigInMsgId = subscribeToMessage(ConfigData->cssConfigInMsgName,
                                                    sizeof(CSSConfigFswMsg), moduleID);
-    
-    
 }
 
 /*! This method resets the sunline attitude filter to an initial state and
@@ -79,7 +74,6 @@ void Reset_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t callTime,
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     
-    /*! Begin method steps*/
     /*! - Zero the local configuration data structures and outputs */
     memset(&cssConfigInBuffer, 0x0, sizeof(CSSConfigFswMsg));
     memset(&(ConfigData->outputSunline), 0x0, sizeof(NavAttIntMsg));
@@ -138,7 +132,6 @@ void Update_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t callTime,
     uint32_t sizeOfMsgWritten;
     SunlineFilterFswMsg sunlineDataOutBuffer;
     
-    /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
     timeOfMsgWritten = 0;
     sizeOfMsgWritten = 0;
@@ -203,7 +196,7 @@ void sunlineTimeUpdate(okeefeEKFConfig *ConfigData, double updateTime)
     double stmT[SKF_N_STATES_HALF*SKF_N_STATES_HALF], covPhiT[SKF_N_STATES_HALF*SKF_N_STATES_HALF];
     double qGammaT[SKF_N_STATES_HALF*SKF_N_STATES_HALF], gammaQGammaT[SKF_N_STATES_HALF*SKF_N_STATES_HALF];
     
-	/*! Begin method steps*/
+	/*! Compute time step */
 	ConfigData->dt = updateTime - ConfigData->timeTag;
     
     /*! - Propagate the previous reference states and STM to the current time */
@@ -353,8 +346,6 @@ void sunlineDynMatrix(double omega[SKF_N_STATES_HALF], double dt, double *dynMat
  */
 void sunlineMeasUpdate(okeefeEKFConfig *ConfigData, double updateTime)
 {
-
-    /*! Begin method steps*/
     /*! - Compute the valid observations and the measurement model for all observations*/
     sunlineHMatrixYMeas(ConfigData->state, ConfigData->numCSSTotal, ConfigData->cssSensorInBuffer.CosValue, ConfigData->sensorUseThresh, ConfigData->cssNHat_B,
                         ConfigData->CBias, ConfigData->obs, ConfigData->yMeas, &(ConfigData->numObs), ConfigData->measMat);
@@ -514,7 +505,6 @@ void sunlineHMatrixYMeas(double states[SKF_N_STATES_HALF], int numCSS, double cs
     
     v3SetZero(sensorNormal);
 
-    /* Begin method steps */
     obsCounter = 0;
     /*! - Loop over all available coarse sun sensors and only use ones that meet validity threshold*/
     for(i=0; i<numCSS; i++)
@@ -559,7 +549,6 @@ void sunlineKalmanGain(double covarBar[SKF_N_STATES_HALF*SKF_N_STATES_HALF], dou
     mSetZero(hCovarHT, MAX_N_CSS_MEAS, MAX_N_CSS_MEAS);
     mSetZero(rMat, MAX_N_CSS_MEAS, MAX_N_CSS_MEAS);
     
-    /* Begin method steps */
     mTranspose(hObs, numObs, SKF_N_STATES_HALF, hObsT);
     
     mMultM(covarBar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, hObsT, SKF_N_STATES_HALF, numObs, covHT);

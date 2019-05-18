@@ -34,7 +34,6 @@
  */
 void SelfInit_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t moduleID)
 {
-    /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->attReferenceOutMsgID = CreateNewMessage(ConfigData->attReferenceOutMsgName,
                                                sizeof(AttRefFswMsg),

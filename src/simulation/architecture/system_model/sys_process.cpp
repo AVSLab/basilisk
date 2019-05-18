@@ -60,7 +60,6 @@ SysProcess::~SysProcess()
  */
 void SysProcess::selfInitProcess()
 {
-    //! Begin Method steps
     std::vector<ModelScheduleEntry>::iterator it;
     SystemMessaging::GetInstance()->selectMessageBuffer(this->messageBuffer);
     this->nextTaskTime = 0;
@@ -77,7 +76,6 @@ void SysProcess::selfInitProcess()
  */
 void SysProcess::crossInitProcess()
 {
-    //! Begin Method steps
     std::vector<ModelScheduleEntry>::iterator it;
     SystemMessaging::GetInstance()->selectMessageBuffer(this->messageBuffer);
     for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
@@ -95,7 +93,6 @@ void SysProcess::crossInitProcess()
 */
 void SysProcess::resetProcess(uint64_t currentTime)
 {
-    //! Begin Method steps
     std::vector<ModelScheduleEntry>::iterator it;
     SystemMessaging::GetInstance()->selectMessageBuffer(this->messageBuffer);
     for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
@@ -113,7 +110,6 @@ void SysProcess::resetProcess(uint64_t currentTime)
 */
 void SysProcess::reInitProcess()
 {
-    //! Begin Method steps
     std::vector<ModelScheduleEntry>::iterator it;
     std::vector<ModelScheduleEntry> taskPtrs;
     std::vector<ModelScheduleEntry>::iterator taskIt;
@@ -140,7 +136,7 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
 {
     std::vector<ModelScheduleEntry>::iterator it;
     int32_t localPriority;
-    //! Begin Method steps
+
     //! - Check to make sure that there are models to be called.
     it = this->processTasks.begin();
     if(it == this->processTasks.end())
@@ -200,8 +196,6 @@ void SysProcess::addNewTask(SysModelTask *newTask, int32_t taskPriority)
  */
 void SysProcess::scheduleTask(ModelScheduleEntry & taskCall)
 {
-    
-    //! Begin Method steps
     std::vector<ModelScheduleEntry>::iterator it;
     //! - Iteratre through all of the task models to find correct place
     for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
@@ -240,7 +234,6 @@ void SysProcess::routeInterfaces()
 */
 void SysProcess::disableAllTasks()
 {
-    //! Begin Method steps
     std::vector<ModelScheduleEntry>::iterator it;
     //! - Iterate through all of the tasks to disable them
     for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
@@ -255,7 +248,6 @@ void SysProcess::disableAllTasks()
  */
 void SysProcess::enableAllTasks()
 {
-    //! Begin Method steps
     std::vector<ModelScheduleEntry>::iterator it;
     //! - Iterate through all of the task models to disable them
     for(it = this->processTasks.begin(); it != this->processTasks.end(); it++)
@@ -272,7 +264,6 @@ void SysProcess::enableAllTasks()
 */
 void SysProcess::changeTaskPeriod(std::string taskName, uint64_t newPeriod)
 {
-	//! Begin Method steps
 	std::vector<ModelScheduleEntry>::iterator it;
 	//! - Iteratre through all of the task models to disable them
 	for (it = this->processTasks.begin(); it != this->processTasks.end(); it++)

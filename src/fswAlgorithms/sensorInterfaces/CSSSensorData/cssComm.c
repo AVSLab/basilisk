@@ -44,8 +44,6 @@ void SelfInit_cssProcessTelem(CSSConfigData *configData, uint64_t moduleID)
  */
 void CrossInit_cssProcessTelem(CSSConfigData *configData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
     configData->SensorMsgID = subscribeToMessage(
         configData->SensorListName, sizeof(CSSArraySensorIntMsg), moduleID);
 }
@@ -100,7 +98,6 @@ void Update_cssProcessTelem(CSSConfigData *configData, uint64_t callTime,
     ReadMessage(configData->SensorMsgID, &timeOfMsgWritten, &sizeOfMsgWritten, sizeof(CSSArraySensorIntMsg),
                 (void*) (InputValues), moduleID);
     
-    /*! Begin method steps*/
     /*! - Loop over the sensors and compute data
          -# Check appropriate range on sensor and calibrate
          -# If Chebyshev polynomials are configured:

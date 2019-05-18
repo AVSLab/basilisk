@@ -39,7 +39,6 @@
  */
 void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t moduleID)
 {
-    /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->onTimeOutMsgId = CreateNewMessage(ConfigData->onTimeOutMsgName,
                                                sizeof(THRArrayOnTimeCmdIntMsg),

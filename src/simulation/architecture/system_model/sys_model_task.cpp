@@ -63,7 +63,6 @@ void SysModelTask::SelfInitTaskList()
     std::vector<ModelPriorityPair>::iterator ModelPair;
     SysModel* NonIt;
     
-    //! Begin method steps
     //! - Loop over all models and do the self init for each
     for(ModelPair = this->TaskModels.begin(); ModelPair != this->TaskModels.end();
         ModelPair++)
@@ -82,7 +81,6 @@ void SysModelTask::CrossInitTaskList()
     std::vector<ModelPriorityPair>::iterator ModelPair;
     SysModel* NonIt;
     
-    //! Begin method steps
     //! - Loop over all of the models and do the CrossInit
     for(ModelPair = this->TaskModels.begin(); ModelPair != this->TaskModels.end();
         ModelPair++)
@@ -118,7 +116,6 @@ void SysModelTask::ExecuteTaskList(uint64_t CurrentSimNanos)
     std::vector<ModelPriorityPair>::iterator ModelPair;
     SysModel* NonIt;
     
-    //! Begin method steps
     //! - Loop over all of the models in the simulation and call their UpdateState
     for(ModelPair = this->TaskModels.begin(); (ModelPair != this->TaskModels.end() && this->taskActive);
         ModelPair++)
@@ -142,7 +139,6 @@ void SysModelTask::AddNewObject(SysModel *NewModel, int32_t Priority)
     std::vector<ModelPriorityPair>::iterator ModelPair;
     ModelPriorityPair LocalPair;
     
-    //! Begin method steps
     //! - Set the local pair with the requested priority and mode
     LocalPair.CurrentModelPriority = Priority;
     LocalPair.ModelPtr = NewModel;

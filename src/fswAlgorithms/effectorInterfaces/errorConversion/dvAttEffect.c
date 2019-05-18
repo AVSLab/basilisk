@@ -32,7 +32,7 @@
 void SelfInit_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t moduleID)
 {
     uint32_t i;
-    /*! Begin method steps */
+
     /*! - Loop over number of thruster blocks and create output messages */
     for(i=0; i<ConfigData->numThrGroups; i=i+1)
     {
@@ -91,7 +91,6 @@ void Update_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime,
     uint32_t i;
     CmdTorqueBodyIntMsg cntrRequest;
     
-    /*! Begin method steps*/
     /*! - Read the input requested torque from the feedback controller*/
     ReadMessage(ConfigData->inputMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CmdTorqueBodyIntMsg), (void*) &(cntrRequest), moduleID);
@@ -114,7 +113,6 @@ CmdTorqueBodyIntMsg *contrReq, uint64_t moduleID)
     uint32_t i;
     double localRequest[3];
     
-    /*! Begin method steps*/
     v3Copy(contrReq->torqueRequestBody, localRequest);      /* to generate a positive torque onto the spacecraft */
     mMultV(thrData->thrOnMap, thrData->numEffectors, 3,
            localRequest, unSortOnTime);

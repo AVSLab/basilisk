@@ -33,8 +33,6 @@
  */
 void SelfInit_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->attGuidanceOutMsgID = CreateNewMessage(ConfigData->attGuidanceOutMsgName,
         sizeof(AttGuidFswMsg), "AttGuidFswMsg", moduleID);
@@ -108,7 +106,6 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
     double omega_RN_B[3];           /*!< r/s local copy of the desired reference frame rate */
 
     NavAttIntMsg localImuDataInBuffer;
-    /*! Begin method steps*/
     /* zero the input message containers */
     memset(&(navMsg), 0x0, sizeof(NavAttIntMsg));
     memset(&(localImuDataInBuffer), 0x0, sizeof(NavAttIntMsg));

@@ -49,7 +49,7 @@ void CrossInit_stProcessTelem(STConfigData *ConfigData, uint64_t moduleID)
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     VehicleConfigFswMsg LocalConfigData;
-    /*! Begin method steps */
+
     /*! - Link the message ID for the incoming sensor data message to here */
     ConfigData->SensorMsgID = subscribeToMessage(ConfigData->InputDataName,
         sizeof(STSensorIntMsg), moduleID);

@@ -59,7 +59,6 @@ uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize,
     MessageIdentData MessageID;
     SingleMessageHeader DataHeader;
     
-    //! Begin Method steps
     //! - Grab the message ID associated with name if it exists
     MessageID = SystemMessaging::GetInstance()->messagePublishSearch(MessageName);
     //! - If we got an invalid message ID back, alert the user and quit
@@ -221,7 +220,6 @@ void SimModel::SingleStepProcesses(int64_t stopPri)
  */
 void SimModel::StepUntilStop(uint64_t SimStopTime, int64_t stopPri)
 {
-    //! Begin Method steps
     /*! - Note that we have to step until both the time is greater and the next
      Task's start time is in the future. If the NextTaskTime is less than
      SimStopTime, then the inPri shouldn't come into effect, so set it to -1
@@ -294,7 +292,6 @@ void SimModel::WriteMessageData(std::string MessageName, uint64_t MessageSize,
 {
     MessageIdentData MessageID; // A class with all of the message identifying information, including the ID
     
-    //! Begin Method steps
     //! - Grab the message ID associated with name if it exists
     MessageID = SystemMessaging::GetInstance()->
         messagePublishSearch(MessageName);

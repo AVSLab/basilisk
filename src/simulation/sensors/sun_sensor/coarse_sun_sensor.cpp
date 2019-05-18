@@ -84,7 +84,6 @@ CoarseSunSensor::~CoarseSunSensor()
  */
 void CoarseSunSensor::setUnitDirectionVectorWithPerturbation(double cssThetaPerturb, double cssPhiPerturb)
 {
-    //! Begin Method Steps
     double tempPhi = this->phi + cssPhiPerturb;
     double tempTheta = this->theta + cssThetaPerturb;
     
@@ -123,7 +122,6 @@ void CoarseSunSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll
  the output message*/
 void CoarseSunSensor::SelfInit()
 {
-    //! Begin Method Steps
     Eigen::VectorXd nMatrix;
     nMatrix.resize(1,1);
     nMatrix(0,0) = this->senNoiseStd*1.5;
@@ -157,7 +155,6 @@ void CoarseSunSensor::SelfInit()
  are matched correctly.*/
 void CoarseSunSensor::CrossInit()
 {
-    //! Begin Method Steps
     //! - Subscribe to the Sun ephemeris message and the vehicle state ephemeris
     this->sunInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->sunInMsgName,
                                                                           sizeof(SpicePlanetStateSimMsg),
@@ -183,9 +180,7 @@ void CoarseSunSensor::CrossInit()
 void CoarseSunSensor::readInputMessages()
 {
     SingleMessageHeader localHeader;
-    
-    //! Begin Method Steps
-    
+
     //! - Zero ephemeris information
     memset(&this->sunData, 0x0, sizeof(SpicePlanetStateSimMsg));
     memset(&this->stateCurrent, 0x0, sizeof(SCPlusStatesSimMsg));
@@ -225,10 +220,9 @@ void CoarseSunSensor::computeSunData()
     Eigen::Vector3d sunPos;
     Eigen::MRPd sigma_BN_eigen;
     
-    //! Begin Method Steps for sun heading vector
     //! - Get the position from spacecraft to Sun
     
-    //Read Message data to eigen
+    //! - Read Message data to eigen
     r_BN_N_eigen = cArray2EigenVector3d(this->stateCurrent.r_BN_N);
     sunPos = cArray2EigenVector3d(this->sunData.PositionVector);
     sigma_BN_eigen = cArray2EigenVector3d(this->stateCurrent.sigma_BN);
@@ -242,7 +236,7 @@ void CoarseSunSensor::computeSunData()
     dcm_BN = sigma_BN_eigen.toRotationMatrix().transpose();
     this->sHat_B = dcm_BN * sHat_N;
     
-    //! Begin Method Steps for sun distance factor
+    //! - compute sun distance factor
     double r_Sun_Sc = Sc2Sun_Inrtl.norm();
     this->sunDistanceFactor = pow(AU*1000., 2.)/pow(r_Sun_Sc, 2.);
     
@@ -251,8 +245,6 @@ void CoarseSunSensor::computeSunData()
 /*! This method computes the tru sensed values for the sensor */
 void CoarseSunSensor::computeTrueOutput()
 {
-    //! Begin Method Steps
-    
     this->directValue = this->nHat_B.dot(this->sHat_B) >= cos(this->fov) ? this->nHat_B.dot(this->sHat_B) : 0.0;
     // Define epsilon that will avoid dividing by a very small kelly factor, i.e 0.0.
     double eps = 1e-10;
@@ -283,7 +275,7 @@ void CoarseSunSensor::applySensorErrors()
         this->sensedValue = this->directValue + this->senBias;
         return;
     }
-    //! Begin Method Steps
+
     //! - Get current error from random number generator
     this->noiseModel.computeNextState();
     Eigen::VectorXd currentErrorEigen =  this->noiseModel.getCurrentState();
@@ -315,7 +307,6 @@ void CoarseSunSensor::applySaturation()
  @param Clock The current simulation time*/
 void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
 {
-    //! Begin Method Steps
     CSSRawDataSimMsg localMessage;
     //! - Zero the output message
     memset(&localMessage, 0x0, sizeof(CSSRawDataSimMsg));
@@ -334,7 +325,6 @@ void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
  @param CurrentSimNanos The current simulation time from the architecture*/
 void CoarseSunSensor::UpdateState(uint64_t CurrentSimNanos)
 {
-    //! Begin Method Steps
     //! - Read the inputs
     this->readInputMessages();
     //! - Get sun vector
@@ -370,7 +360,7 @@ CSSConstellation::~CSSConstellation()
 void CSSConstellation::SelfInit()
 {
     std::vector<CoarseSunSensor>::iterator it;
-    //! Begin Method Steps
+
     //! - Loop over the sensor list and initialize all children
     for(it=this->sensorList.begin(); it!= this->sensorList.end(); it++)
     {
@@ -389,7 +379,7 @@ void CSSConstellation::SelfInit()
 void CSSConstellation::CrossInit()
 {
     std::vector<CoarseSunSensor>::iterator it;
-    //! Begin Method Steps
+
     //! - Loop over the sensor list and initialize all children
     for(it=this->sensorList.begin(); it!= this->sensorList.end(); it++)
     {
@@ -400,7 +390,7 @@ void CSSConstellation::CrossInit()
 void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
 {
     std::vector<CoarseSunSensor>::iterator it;
-    //! Begin Method Steps
+
     //! - Loop over the sensor list and update all data
     for(it=this->sensorList.begin(); it!= this->sensorList.end(); it++)
     {

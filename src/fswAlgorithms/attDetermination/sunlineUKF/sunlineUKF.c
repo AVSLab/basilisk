@@ -33,10 +33,8 @@
  */
 void SelfInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID)
 {
-    
     mSetZero(ConfigData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
     
-    /*! Begin method steps */
     /*! - Create output message for module */
 	ConfigData->navStateOutMsgId = CreateNewMessage(ConfigData->navStateOutMsgName,
 		sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
@@ -54,7 +52,6 @@ void SelfInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID)
  */
 void CrossInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID)
 {
-    /*! Begin method steps */
     /*! - Find the message ID for the coarse sun sensor data message */
     ConfigData->cssDataInMsgId = subscribeToMessage(ConfigData->cssDataInMsgName,
         sizeof(CSSArraySensorIntMsg), moduleID);
@@ -80,7 +77,6 @@ void Reset_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     uint32_t sizeOfMsgWritten;
     double tempMatrix[SKF_N_STATES*SKF_N_STATES];
     
-    /*! Begin method steps*/
     /*! - Zero the local configuration data structures and outputs */
     memset(&cssConfigInBuffer, 0x0, sizeof(CSSConfigFswMsg));
     memset(&(ConfigData->outputSunline), 0x0, sizeof(NavAttIntMsg));
@@ -166,7 +162,6 @@ void Update_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     uint32_t sizeOfMsgWritten;
     SunlineFilterFswMsg sunlineDataOutBuffer;
     
-    /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
     timeOfMsgWritten = 0;
     sizeOfMsgWritten = 0;
@@ -240,7 +235,6 @@ void sunlineStateProp(double *stateInOut, double dt)
     double pointUnit[3];
     double unitComp;
     
-    /*! Begin method steps */
     /*! - Unitize the current estimate to find direction to restrict motion*/
     v3Normalize(stateInOut, pointUnit);
     unitComp = v3Dot(&(stateInOut[3]), pointUnit);
@@ -269,7 +263,8 @@ void sunlineUKFTimeUpdate(SunlineUKFConfig *ConfigData, double updateTime)
 	double aRow[SKF_N_STATES], rAT[SKF_N_STATES*SKF_N_STATES], xErr[SKF_N_STATES]; 
 	double sBarUp[SKF_N_STATES*SKF_N_STATES];
 	double *spPtr;
-	/*! Begin method steps*/
+
+    /*! Compute time step */
 	ConfigData->dt = updateTime - ConfigData->timeTag;
     
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
@@ -363,7 +358,7 @@ void sunlineUKFMeasModel(SunlineUKFConfig *ConfigData)
 {
     uint32_t i, j, obsCounter;
     double sensorNormal[3];
-    /* Begin method steps */
+
     obsCounter = 0;
     /*! - Loop over all available coarse sun sensors and only use ones that meet validity threshold*/
     for(i=0; i<ConfigData->numCSSTotal; i++)
@@ -406,9 +401,7 @@ void sunlineUKFMeasUpdate(SunlineUKFConfig *ConfigData, double updateTime)
     double rAT[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], syT[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
     double sy[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
     double updMat[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], pXY[SKF_N_STATES*MAX_N_CSS_MEAS];
-    
-    /*! Begin method steps*/
-    
+        
     /*! - Compute the valid observations and the measurement model for all observations*/
     sunlineUKFMeasModel(ConfigData);
     

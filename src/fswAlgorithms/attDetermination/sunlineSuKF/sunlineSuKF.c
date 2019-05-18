@@ -433,7 +433,7 @@ void sunlineSuKFMeasModel(SunlineSuKFConfig *configData)
     double stateNorm;
     double expectedMeas;
     double kellDelta;
-    /* Begin method steps */
+
     obsCounter = 0;
     /*! - Loop over all available coarse sun sensors and only use ones that meet validity threshold*/
     for(i=0; i<configData->numCSSTotal; i++)

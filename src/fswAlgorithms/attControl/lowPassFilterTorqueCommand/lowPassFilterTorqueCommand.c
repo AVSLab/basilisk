@@ -38,14 +38,11 @@
  */
 void SelfInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
                                                sizeof(CmdTorqueBodyIntMsg),
                                                 "CmdTorqueBodyIntMsg",
                                                 moduleID);
-
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -59,7 +56,6 @@ void CrossInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *Conf
     ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputDataName,
                                                 sizeof(CmdTorqueBodyIntMsg),
                                                 moduleID);
-
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -93,7 +89,6 @@ void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigD
     double      v3[3];                      /*!<      3d vector sub-result */
     int         i;
 
-    /*! Begin method steps*/
     /*! - Read the input messages */
     ReadMessage(ConfigData->inputMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CmdTorqueBodyIntMsg), (void*) &(ConfigData->Lr[0]), moduleID);

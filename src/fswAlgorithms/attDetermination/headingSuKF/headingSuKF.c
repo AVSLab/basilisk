@@ -33,7 +33,6 @@
  */
 void SelfInit_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t moduleID)
 {
-        /*! Begin method steps */
     /*! - Create output message for module */
 	ConfigData->opnavDataOutMsgId = CreateNewMessage(ConfigData->opnavOutMsgName,
 		sizeof(OpnavFswMsg), "OpnavFswMsg", moduleID);
@@ -50,7 +49,6 @@ void SelfInit_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t moduleID)
  */
 void CrossInit_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t moduleID)
 {
-    /*! Begin method steps */
     /*! - Find the message ID for the coarse sun sensor data message */
     ConfigData->opnavDataInMsgId = subscribeToMessage(ConfigData->opnavDataInMsgName,
         sizeof(OpnavFswMsg), moduleID);
@@ -70,7 +68,6 @@ void Reset_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t callTime,
     int32_t i;
     double tempMatrix[HEAD_N_STATES_SWITCH*HEAD_N_STATES_SWITCH];
     
-    /*! Begin method steps*/
     /*! - Zero the local configuration data structures and outputs */
     memset(&(ConfigData->outputHeading), 0x0, sizeof(NavAttIntMsg));
 
@@ -152,7 +149,6 @@ void Update_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t callTime,
     HeadingFilterFswMsg headingDataOutBuffer;
     OpnavFswMsg opnavOutputBuffer;
     
-    /*! Begin method steps*/
     /*! - Read the input parsed heading sensor data message*/
     ClockTime = 0;
     ReadSize = 0;
@@ -272,8 +268,8 @@ void headingSuKFTimeUpdate(HeadingSuKFConfig *ConfigData, double updateTime)
 	double aRow[HEAD_N_STATES_SWITCH], rAT[HEAD_N_STATES_SWITCH*HEAD_N_STATES_SWITCH], xErr[HEAD_N_STATES_SWITCH];
 	double sBarUp[HEAD_N_STATES_SWITCH*HEAD_N_STATES_SWITCH];
 	double *spPtr;
-	/*! Begin method steps*/
-	ConfigData->dt = updateTime - ConfigData->timeTag;
+
+    ConfigData->dt = updateTime - ConfigData->timeTag;
     
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
 	vCopy(ConfigData->state, ConfigData->numStates,
@@ -362,7 +358,6 @@ void headingSuKFTimeUpdate(HeadingSuKFConfig *ConfigData, double updateTime)
  */
 void headingSuKFMeasModel(HeadingSuKFConfig *ConfigData)
 {
-    /* Begin method steps */
     /*! - Loop over sigma points */
     int j;
     int i;
@@ -397,9 +392,7 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *ConfigData, double updateTime)
     double rAT[OPNAV_MEAS*OPNAV_MEAS], syT[OPNAV_MEAS*OPNAV_MEAS];
     double sy[OPNAV_MEAS*OPNAV_MEAS];
     double updMat[OPNAV_MEAS*OPNAV_MEAS], pXY[HEAD_N_STATES_SWITCH*OPNAV_MEAS];
-    
-    /*! Begin method steps*/
-    
+        
     /*! - Compute the valid observations and the measurement model for all observations*/
     headingSuKFMeasModel(ConfigData);
     

@@ -47,8 +47,6 @@
  */
 void SelfInit_simpleDeadband(simpleDeadbandConfig *ConfigData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputGuidID = CreateNewMessage(ConfigData->outputDataName,
                                                sizeof(AttGuidFswMsg),

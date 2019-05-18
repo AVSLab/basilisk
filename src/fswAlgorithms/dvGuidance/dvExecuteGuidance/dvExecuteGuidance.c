@@ -32,8 +32,6 @@
  */
 void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig *ConfigData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(
         ConfigData->outputDataName, sizeof(dvExecutionData), "dvExecutionData", moduleID);

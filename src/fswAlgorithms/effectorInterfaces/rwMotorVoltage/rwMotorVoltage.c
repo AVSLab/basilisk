@@ -34,8 +34,6 @@
  */
 void SelfInit_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->voltageOutMsgID = CreateNewMessage(ConfigData->voltageOutMsgName,
                                                sizeof(RWArrayVoltageIntMsg),

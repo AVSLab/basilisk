@@ -75,7 +75,6 @@ void SpiceInterface::clearKeeper()
  @return void*/
 void SpiceInterface::SelfInit()
 {
-    //! Begin method steps
     //! - Bail if the SPICEDataPath is not present
     if(this->SPICEDataPath == "")
     {
@@ -119,7 +118,7 @@ void SpiceInterface::SelfInit()
 void SpiceInterface::initTimeData()
 {
     double EpochDelteET;
-    //! Begin method steps
+
     //! -Get the time value associated with the GPS epoch
     str2et_c(this->GPSEpochTime.c_str(), &this->JDGPSEpoch);
     //! - Get the time value associate with the requested UTC date
@@ -143,7 +142,6 @@ void SpiceInterface::computeGPSData()
 {
     double JDDifference;
     
-    //! Begin method steps
     //! - The difference between the epochs in julian date terms is the total
     JDDifference = this->J2000Current - this->JDGPSEpoch;
     //! - Scale the elapsed by a week's worth of seconds to get week
@@ -166,7 +164,7 @@ void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
 {
     std::map<uint32_t, SpicePlanetStateSimMsg>::iterator planit;
     SpiceTimeSimMsg OutputData;
-    //! Begin method steps
+
     //! - Set the members of the time output message structure and write
     OutputData.J2000Current = this->J2000Current;
     OutputData.JulianDateCurrent = this->julianDateCurrent;
@@ -192,7 +190,6 @@ void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
  */
 void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
 {
-    //! Begin method steps
     //! - Increment the J2000 elapsed time based on init value and Current sim
     this->J2000Current = this->J2000ETInit + CurrentSimNanos*1.0E-9;
     
@@ -221,9 +218,7 @@ void SpiceInterface::computePlanetData()
 {
     std::vector<std::string>::iterator it;
     std::map<uint32_t, SpicePlanetStateSimMsg>::iterator planit;
-    
-    //! Begin method steps
-    
+
     //! - Check to see if our planet vectors don't match (new planet requested)
     if(this->planetData.size() != this->planetNames.size())
     {
@@ -311,7 +306,6 @@ int SpiceInterface::loadSpiceKernel(char *kernelName, const char *dataPath)
     char *fileName = new char[this->charBufferSize];
     SpiceChar *name = new SpiceChar[this->charBufferSize];
     
-    //! Begin method steps
     //! - The required calls come from the SPICE documentation.
     //! - The most critical call is furnsh_c
     strcpy(name, "REPORT");
@@ -344,7 +338,6 @@ int SpiceInterface::unloadSpiceKernel(char *kernelName, const char *dataPath)
     char *fileName = new char[this->charBufferSize];
     SpiceChar *name = new SpiceChar[this->charBufferSize];
     
-    //! Begin method steps
     //! - The required calls come from the SPICE documentation.
     //! - The most critical call is furnsh_c
     strcpy(name, "REPORT");

@@ -54,10 +54,7 @@ BoreAngCalc::~BoreAngCalc()
  */
 void BoreAngCalc::SelfInit()
 {
-    
-    //! Begin method steps
     //! - Determine what the size of the output should be and create the message
-    
     AngOutMsgID = SystemMessaging::GetInstance()->
         CreateNewMessage( OutputDataString, sizeof(AngOffValuesSimMsg), OutputBufferCount,
         "AngOffValuesSimMsg", moduleID);
@@ -81,13 +78,9 @@ void BoreAngCalc::CrossInit()
  */
 void BoreAngCalc::WriteOutputMessages(uint64_t CurrentClock)
 {
-    
-    //! Begin method steps
-    
     SystemMessaging::GetInstance()->WriteMessage(AngOutMsgID, CurrentClock,
         sizeof(AngOffValuesSimMsg), reinterpret_cast<uint8_t*> (&boresightAng),
         moduleID);
-    
 }
 
 /*! This method reads the input messages in from the system and sets the
@@ -96,7 +89,6 @@ void BoreAngCalc::WriteOutputMessages(uint64_t CurrentClock)
  */
 void BoreAngCalc::ReadInputs()
 {
-    //! Begin method steps
     SingleMessageHeader localHeader;
     
     //! - Set the input pointer and size appropriately based on input type
@@ -168,7 +160,6 @@ void BoreAngCalc::computeOutputData()
  */
 void BoreAngCalc::UpdateState(uint64_t CurrentSimNanos)
 {
-    //! Begin method steps
     //! - If we need to reinit, call SelfInit, CrossInit, and set flag false
     if(ReinitSelf)
     {

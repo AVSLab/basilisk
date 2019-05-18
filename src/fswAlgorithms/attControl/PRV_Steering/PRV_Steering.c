@@ -37,8 +37,6 @@
  */
 void SelfInit_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
         sizeof(RateCmdFswMsg), "RateCmdFswMsg", moduleID);
@@ -79,8 +77,6 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
     AttGuidFswMsg      guidCmd;            /*!< Guidance Message */
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
-
-    /*! Begin method steps*/
         
     /*! - Read the dynamic input messages */
     ReadMessage(ConfigData->inputGuidID, &timeOfMsgWritten, &sizeOfMsgWritten,
