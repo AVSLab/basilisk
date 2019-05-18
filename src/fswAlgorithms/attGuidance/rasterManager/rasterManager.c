@@ -39,59 +39,59 @@
 
 
 
-void SelfInit_rasterManager(rasterManagerConfig *ConfigData, uint64_t moduleID)
+void SelfInit_rasterManager(rasterManagerConfig *configData, uint64_t moduleID)
 {
     /*! - Create output message for module */
-    ConfigData->AttStateOutMsgID = CreateNewMessage(ConfigData->AttStateOutMsgName,
+    configData->AttStateOutMsgID = CreateNewMessage(configData->AttStateOutMsgName,
                                                  sizeof(AttStateFswMsg),
                                                  "AttStateFswMsg",
                                                  moduleID);
-    ConfigData->mnvrActive = 0;
-    ConfigData->scanSelector = 0;
+    configData->mnvrActive = 0;
+    configData->scanSelector = 0;
     
 }
 
-void CrossInit_rasterManager(rasterManagerConfig *ConfigData, uint64_t moduleID)
+void CrossInit_rasterManager(rasterManagerConfig *configData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
 }
 
-void Reset_rasterManager(rasterManagerConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Reset_rasterManager(rasterManagerConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
-    ConfigData->mnvrActive = 0;
-    ConfigData->scanSelector = 0;
+    configData->mnvrActive = 0;
+    configData->scanSelector = 0;
 }
 
 
-void Update_rasterManager(rasterManagerConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Update_rasterManager(rasterManagerConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
     uint64_t currentMnvrTime;
-    ConfigData->scanSelector = ConfigData->scanSelector % ConfigData->numRasters;
-    if (ConfigData->mnvrActive == 0)
+    configData->scanSelector = configData->scanSelector % configData->numRasters;
+    if (configData->mnvrActive == 0)
     {
-        ConfigData->mnvrStartTime = callTime;
-        ConfigData->mnvrActive = 1;
+        configData->mnvrStartTime = callTime;
+        configData->mnvrActive = 1;
     }
-    currentMnvrTime = (callTime - ConfigData->mnvrStartTime) * 1E-9;
-    if (currentMnvrTime < ConfigData->rasterTimes[ConfigData->scanSelector])
+    currentMnvrTime = (callTime - configData->mnvrStartTime) * 1E-9;
+    if (currentMnvrTime < configData->rasterTimes[configData->scanSelector])
     {
-        v3Copy(&ConfigData->scanningAngles[3 * ConfigData->scanSelector], ConfigData->attOutSet.state);
-        v3Copy(&ConfigData->scanningRates[3 * ConfigData->scanSelector], ConfigData->attOutSet.rate);
+        v3Copy(&configData->scanningAngles[3 * configData->scanSelector], configData->attOutSet.state);
+        v3Copy(&configData->scanningRates[3 * configData->scanSelector], configData->attOutSet.rate);
     } else {
-        ConfigData->mnvrActive = 0.0;
-        ConfigData->scanSelector += 1;
-        BSK_PRINT(MSG_INFORMATION,"Raster: %i. AngleSet = [%f, %f, %f], RateSet = [%f, %f, %f] \n", ConfigData->scanSelector,
-               ConfigData->attOutSet.state[0],
-               ConfigData->attOutSet.state[1],
-               ConfigData->attOutSet.state[2],
-               ConfigData->attOutSet.rate[0],
-               ConfigData->attOutSet.rate[1],
-               ConfigData->attOutSet.rate[2]);
+        configData->mnvrActive = 0.0;
+        configData->scanSelector += 1;
+        BSK_PRINT(MSG_INFORMATION,"Raster: %i. AngleSet = [%f, %f, %f], RateSet = [%f, %f, %f] \n", configData->scanSelector,
+               configData->attOutSet.state[0],
+               configData->attOutSet.state[1],
+               configData->attOutSet.state[2],
+               configData->attOutSet.rate[0],
+               configData->attOutSet.rate[1],
+               configData->attOutSet.rate[2]);
     }
     
     
-    WriteMessage(ConfigData->AttStateOutMsgID, callTime, sizeof(AttStateFswMsg),
-                 (void*) &(ConfigData->attOutSet), moduleID);
+    WriteMessage(configData->AttStateOutMsgID, callTime, sizeof(AttStateFswMsg),
+                 (void*) &(configData->attOutSet), moduleID);
     return;
 }
 

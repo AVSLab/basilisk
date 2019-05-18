@@ -40,8 +40,6 @@
  */
 void SelfInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
     /*! - Create output message for module */
     configData->cmdTorqueOutMsgId = CreateNewMessage(configData->outputDataName,
         sizeof(CmdTorqueBodyIntMsg), "CmdTorqueBodyIntMsg", moduleID);
@@ -158,9 +156,7 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, uin
     double              v3_7[3];
     int                 i;
     double              intLimCheck;
-    
-    /*! Begin method steps*/
-    
+        
     /*! - zero the output message */
     memset(&controlOut, 0x0, sizeof(CmdTorqueBodyIntMsg));
     

@@ -60,7 +60,6 @@ bool StarTracker::LinkMessages()
 
 void StarTracker::SelfInit()
 {
-    //! Begin method steps
     uint64_t numStates = 3;
     this->outputStateID = SystemMessaging::GetInstance()->
         CreateNewMessage(this->outputStateMessage, sizeof(STSensorIntMsg),

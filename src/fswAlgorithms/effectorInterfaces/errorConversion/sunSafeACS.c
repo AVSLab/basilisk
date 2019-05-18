@@ -23,19 +23,17 @@
 #include <string.h>
 #include <math.h>
 
-/*! This method initializes the ConfigData for the sun safe ACS control.
+/*! This method initializes the configData for the sun safe ACS control.
  It checks to ensure that the inputs are sane and then creates the
  output message
  @return void
- @param ConfigData The configuration data associated with the sun safe control
+ @param configData The configuration data associated with the sun safe control
  */
-void SelfInit_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t moduleID)
+void SelfInit_sunSafeACS(sunSafeACSConfig *configData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
     /*! - Create output message for module */
-    ConfigData->thrData.outputMsgID = CreateNewMessage(
-        ConfigData->thrData.outputDataName, sizeof(THRArrayOnTimeCmdIntMsg),
+    configData->thrData.outputMsgID = CreateNewMessage(
+        configData->thrData.outputDataName, sizeof(THRArrayOnTimeCmdIntMsg),
         "THRArrayOnTimeCmdIntMsg", moduleID);
     
 }
@@ -44,12 +42,12 @@ void SelfInit_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t moduleID)
  interface.  It's primary function is to link the input messages that were
  created elsewhere.
  @return void
- @param ConfigData The configuration data associated with the sun safe ACS control
+ @param configData The configuration data associated with the sun safe ACS control
  */
-void CrossInit_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t moduleID)
+void CrossInit_sunSafeACS(sunSafeACSConfig *configData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
-    ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputControlName,
+    configData->inputMsgID = subscribeToMessage(configData->inputControlName,
         sizeof(CmdTorqueBodyIntMsg), moduleID);
     
 }
@@ -57,22 +55,20 @@ void CrossInit_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t moduleID)
 /*! This method takes the estimated body-observed sun vector and computes the
  current attitude/attitude rate errors to pass on to control.
  @return void
- @param ConfigData The configuration data associated with the sun safe ACS control
+ @param configData The configuration data associated with the sun safe ACS control
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t callTime,
+void Update_sunSafeACS(sunSafeACSConfig *configData, uint64_t callTime,
     uint64_t moduleID)
 {
-    
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     CmdTorqueBodyIntMsg cntrRequest;
     
-    /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
-    ReadMessage(ConfigData->inputMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->inputMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CmdTorqueBodyIntMsg), (void*) &(cntrRequest), moduleID);
-    computeSingleThrustBlock(&(ConfigData->thrData), callTime,
+    computeSingleThrustBlock(&(configData->thrData), callTime,
                              &cntrRequest, moduleID);
     
     return;

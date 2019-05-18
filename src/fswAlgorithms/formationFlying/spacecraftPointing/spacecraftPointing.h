@@ -52,11 +52,11 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t moduleID);
-    void Update_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t callTime,
+    void SelfInit_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t moduleID);
+    void CrossInit_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t moduleID);
+    void Update_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t callTime,
         uint64_t moduleID);
-    void Reset_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void Reset_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t callTime, uint64_t moduleID);
 
 #ifdef __cplusplus
 }

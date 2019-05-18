@@ -34,7 +34,7 @@
  It checks to ensure that the inputs are sane and then creates the
  output message
  @return void
- @param ConfigData The configuration data associated with this module
+ @param configData The configuration data associated with this module
  @param moduleID The Basilisk module identifier
  */
 void SelfInit_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t moduleID)
@@ -73,7 +73,7 @@ void Reset_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTim
 
 /*! This method performs a time step update of the module.
  @return void
- @param ConfigData The configuration data associated with the module
+ @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  @param moduleID The Basilisk module identifier
  */

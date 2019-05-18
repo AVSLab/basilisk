@@ -68,7 +68,6 @@ void ExtForceTorque::SelfInit()
  */
 void ExtForceTorque::CrossInit()
 {
-    //! Begin method steps
     //! - Find the message ID associated with the InputCmds string.
     this->cmdTorqueInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cmdTorqueInMsgName,
                                                                                 sizeof(CmdTorqueBodyIntMsg), moduleID);
@@ -148,8 +147,6 @@ void ExtForceTorque::readInputMessages()
 void ExtForceTorque::computeForceTorque(double integTime)
 {
 	Eigen::Vector3d cmdVec;
-    //! Begin method steps
-
 
     /* add the cmd force in inertial frame components set via Python */
     this->forceExternal_N = this->extForce_N;

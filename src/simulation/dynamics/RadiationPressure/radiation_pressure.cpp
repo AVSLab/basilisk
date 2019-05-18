@@ -107,7 +107,7 @@ void RadiationPressure::linkInStates(DynParamManager& statesIn)
 void RadiationPressure::readInputMessages()
 {
     bool succesfulRead;
-    //! Begin method steps
+
     //! - Zero the command buffer and read the incoming command array
     SingleMessageHeader localHeader;
     memset(&localHeader, 0x0, sizeof(localHeader));

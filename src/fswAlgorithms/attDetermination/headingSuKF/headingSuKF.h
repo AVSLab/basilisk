@@ -91,16 +91,16 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t moduleID);
-    void Update_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t callTime,
+    void SelfInit_headingSuKF(HeadingSuKFConfig *configData, uint64_t moduleID);
+    void CrossInit_headingSuKF(HeadingSuKFConfig *configData, uint64_t moduleID);
+    void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
         uint64_t moduleID);
-	void Reset_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t callTime,
+	void Reset_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
 		uint64_t moduleID);
-	void headingSuKFTimeUpdate(HeadingSuKFConfig *ConfigData, double updateTime);
-    void headingSuKFMeasUpdate(HeadingSuKFConfig *ConfigData, double updateTime);
+	void headingSuKFTimeUpdate(HeadingSuKFConfig *configData, double updateTime);
+    void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime);
 	void headingStateProp(double *stateInOut,  double *b_vec, double dt);
-    void headingSuKFMeasModel(HeadingSuKFConfig *ConfigData);
+    void headingSuKFMeasModel(HeadingSuKFConfig *configData);
     void headingSuKFComputeDCM_BS(double heading[HEAD_N_STATES], double bVec[HEAD_N_STATES], double *dcm);
     void headingSuKFSwitch(double *bVec_B, double *states, double *covar);
 

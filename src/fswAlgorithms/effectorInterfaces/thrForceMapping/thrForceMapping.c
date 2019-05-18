@@ -31,7 +31,7 @@
 /*! This method creates the module output message of type [THRArrayCmdForceFswMsg](\ref THRArrayCmdForceFswMsg).
  @return void
  @param configData The configuration data associated with this module
- @param moduleID The ID associated with the ConfigData
+ @param moduleID The ID associated with the configData
  */
 void SelfInit_thrForceMapping(thrForceMappingConfig *configData, uint64_t moduleID)
 {
@@ -46,7 +46,7 @@ void SelfInit_thrForceMapping(thrForceMappingConfig *configData, uint64_t module
  It's primary function is to link the input messages that were created elsewhere.
  @return void
  @param configData The configuration data associated with this module
- @param moduleID The ID associated with the ConfigData
+ @param moduleID The ID associated with the configData
  */
 void CrossInit_thrForceMapping(thrForceMappingConfig *configData, uint64_t moduleID)
 {
@@ -70,7 +70,7 @@ void CrossInit_thrForceMapping(thrForceMappingConfig *configData, uint64_t modul
  time varying states between function calls are reset to their default values.
  @return void
  @param configData The configuration data associated with the module
- @param moduleID The ID associated with the ConfigData
+ @param moduleID The ID associated with the configData
  */
 void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime, uint64_t moduleID)
 {

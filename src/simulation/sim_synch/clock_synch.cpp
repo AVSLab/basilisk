@@ -50,7 +50,6 @@ ClockSynch::~ClockSynch()
 */
 void ClockSynch::SelfInit()
 {
-    //! Begin method steps
     //! - Initialize the output message
     clockOutputID = SystemMessaging::GetInstance()->
     CreateNewMessage(clockOutputName, sizeof(SynchClockSimMsg), outputBufferCount,
@@ -81,8 +80,6 @@ void ClockSynch::UpdateState(uint64_t CurrentSimNanos)
 {
 	std::chrono::high_resolution_clock::time_point currentTime;
 	int64_t sleepAmount;
-
-    //! Begin method steps
     
     //! - If we haven't initialized the timers yet, initialize the start times and flag it as initialized
 	if (!timeInitialized)

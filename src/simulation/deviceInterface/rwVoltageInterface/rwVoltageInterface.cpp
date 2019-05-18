@@ -68,7 +68,6 @@ void RWVoltageInterface::SelfInit()
 */
 void RWVoltageInterface::CrossInit()
 {
-    //! Begin method steps
     //! - Obtain the ID associated with the input state name and alert if not found.
     this->rwVoltageInMsgID = SystemMessaging::GetInstance()->
         subscribeToMessage(this->rwVoltageInMsgName,

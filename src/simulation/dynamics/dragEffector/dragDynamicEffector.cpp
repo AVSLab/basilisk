@@ -61,8 +61,6 @@ void DragDynamicEffector::SelfInit()
  */
 void DragDynamicEffector::CrossInit()
 {
-
-	//! Begin method steps
 	//! - Find the message ID associated with the atmoDensInMsgName string.
 	this->DensInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->atmoDensInMsgName,
 																	 sizeof(AtmoPropsSimMsg), moduleID);
@@ -132,8 +130,8 @@ void DragDynamicEffector::updateDragDir(){
 void DragDynamicEffector::cannonballDrag(){
   	Eigen::Vector3d SingleDragForce;
   	Eigen::Vector3d SingleDragTorque;
-  	//! Begin method steps
-  	//! - Zero out the structure force/torque for the drag set
+
+    //! - Zero out the structure force/torque for the drag set
   	this->forceExternal_B.setZero();
   	this->forceExternal_N.setZero();
   	this->torqueExternalPntB_B.setZero();

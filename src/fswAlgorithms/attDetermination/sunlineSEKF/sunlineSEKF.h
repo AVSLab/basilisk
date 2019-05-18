@@ -89,14 +89,14 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t moduleID);
-	void Reset_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
+    void SelfInit_sunlineSEKF(sunlineSEKFConfig *configData, uint64_t moduleID);
+    void CrossInit_sunlineSEKF(sunlineSEKFConfig *configData, uint64_t moduleID);
+	void Reset_sunlineSEKF(sunlineSEKFConfig *configData, uint64_t callTime,
 		uint64_t moduleID);
-    void Update_sunlineSEKF(sunlineSEKFConfig *ConfigData, uint64_t callTime,
+    void Update_sunlineSEKF(sunlineSEKFConfig *configData, uint64_t callTime,
                            uint64_t moduleID);
-	void sunlineTimeUpdate(sunlineSEKFConfig *ConfigData, double updateTime);
-    void sunlineMeasUpdate(sunlineSEKFConfig *ConfigData, double updateTime);
+	void sunlineTimeUpdate(sunlineSEKFConfig *configData, double updateTime);
+    void sunlineMeasUpdate(sunlineSEKFConfig *configData, double updateTime);
 	void sunlineStateSTMProp(double dynMat[EKF_N_STATES_SWITCH*EKF_N_STATES_SWITCH], double bVec[SKF_N_STATES], double dt, double *stateInOut, double *stateTransition);
     
     void sunlineHMatrixYMeas(double states[EKF_N_STATES_SWITCH], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS*3], double *obs, double *yMeas, int *numObs, double *measMat);

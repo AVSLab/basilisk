@@ -60,12 +60,12 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_hillPoint(hillPointConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_hillPoint(hillPointConfig *ConfigData, uint64_t moduleID);
-    void Update_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_hillPoint(hillPointConfig *configData, uint64_t moduleID);
+    void CrossInit_hillPoint(hillPointConfig *configData, uint64_t moduleID);
+    void Update_hillPoint(hillPointConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void Reset_hillPoint(hillPointConfig *configData, uint64_t callTime, uint64_t moduleID);
 
-    void computeHillPointingReference(hillPointConfig *ConfigData,
+    void computeHillPointingReference(hillPointConfig *configData,
                                       double r_BN_N[3],
                                       double v_BN_N[3],
                                       double celBdyPositonVector[3],

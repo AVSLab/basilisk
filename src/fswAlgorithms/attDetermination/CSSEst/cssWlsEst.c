@@ -29,8 +29,6 @@
  */
 void SelfInit_cssWlsEst(CSSWLSConfig *configData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
     /*! - Create output message for module */
     configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName, sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
     if(strlen(configData->cssWLSFiltResOutMsgName) > 0) {
@@ -137,7 +135,6 @@ int computeWlsmn(int numActiveCss, double *H, double *W,
     double  m3N_2[3*MAX_NUM_CSS_SENSORS];
     uint32_t i;
     
-    /*! Begin method steps */
     /*! - If we only have one sensor, output best guess (cone of possiblities)*/
     if(numActiveCss == 1) {
         /* Here's a guess.  Do with it what you will. */

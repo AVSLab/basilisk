@@ -32,7 +32,6 @@
 void SelfInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData,
     uint64_t moduleID)
 {
-    /*! Begin method steps */
     /*! - Create output message for module */
     configData->outputMsgID = CreateNewMessage(configData->outputDataName,
                                                sizeof(AttRefFswMsg),

@@ -45,10 +45,10 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_rateMsgConverter(rateMsgConverterConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_rateMsgConverter(rateMsgConverterConfig *ConfigData, uint64_t moduleID);
-    void Update_rateMsgConverter(rateMsgConverterConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_rateMsgConverter(rateMsgConverterConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t moduleID);
+    void CrossInit_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t moduleID);
+    void Update_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void Reset_rateMsgConverter(rateMsgConverterConfig *configData, uint64_t callTime, uint64_t moduleID);
     
 #ifdef __cplusplus
 }

@@ -47,10 +47,10 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-void Update_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t callTime, uint64_t moduleID);
-void SelfInit_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t moduleID);
-void Reset_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t callTime, uint64_t moduleID);
-void CrossInit_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t moduleID);
+void Update_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, uint64_t moduleID);
+void SelfInit_vehicleConfigData(VehConfigInputData *configData, uint64_t moduleID);
+void Reset_vehicleConfigData(VehConfigInputData *configData, uint64_t callTime, uint64_t moduleID);
+void CrossInit_vehicleConfigData(VehConfigInputData *configData, uint64_t moduleID);
 #ifdef __cplusplus
 }
 #endif

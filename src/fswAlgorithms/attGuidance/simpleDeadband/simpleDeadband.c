@@ -39,33 +39,31 @@
 #include "simulation/utilities/linearAlgebra.h"
 
 
-/*! This method initializes the ConfigData for this module.
+/*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
  output message
  @return void
- @param ConfigData The configuration data associated with this module
+ @param configData The configuration data associated with this module
  */
-void SelfInit_simpleDeadband(simpleDeadbandConfig *ConfigData, uint64_t moduleID)
+void SelfInit_simpleDeadband(simpleDeadbandConfig *configData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
     /*! - Create output message for module */
-    ConfigData->outputGuidID = CreateNewMessage(ConfigData->outputDataName,
+    configData->outputGuidID = CreateNewMessage(configData->outputDataName,
                                                sizeof(AttGuidFswMsg),
                                                "AttGuidFswMsg",
                                                moduleID);
-    ConfigData->wasControlOff = 1;
+    configData->wasControlOff = 1;
 }
 
 /*! This method performs the second stage of initialization for this module.
  It's primary function is to link the input messages that were created elsewhere.
  @return void
- @param ConfigData The configuration data associated with this module
+ @param configData The configuration data associated with this module
  */
-void CrossInit_simpleDeadband(simpleDeadbandConfig *ConfigData, uint64_t moduleID)
+void CrossInit_simpleDeadband(simpleDeadbandConfig *configData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
-    ConfigData->inputGuidID = subscribeToMessage(ConfigData->inputGuidName,
+    configData->inputGuidID = subscribeToMessage(configData->inputGuidName,
                                                 sizeof(AttGuidFswMsg),
                                                 moduleID);
 }
@@ -73,37 +71,37 @@ void CrossInit_simpleDeadband(simpleDeadbandConfig *ConfigData, uint64_t moduleI
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
- @param ConfigData The configuration data associated with the MRP steering control
+ @param configData The configuration data associated with the MRP steering control
  */
-void Reset_simpleDeadband(simpleDeadbandConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Reset_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
-    ConfigData->wasControlOff = 1;
+    configData->wasControlOff = 1;
 }
 
 /*! This method parses the input data, checks if the deadband needs to be applied and outputs
  the guidance command with simples either zeroed (control OFF) or left unchanged (control ON)
  @return void
- @param ConfigData The configuration data associated with the attitude tracking simple module
+ @param configData The configuration data associated with the attitude tracking simple module
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_simpleDeadband(simpleDeadbandConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Update_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
     /*! - Read the input message and set it as the output by default */
     uint64_t    timeOfMsgWritten;
     uint32_t    sizeOfMsgWritten;
-    ReadMessage(ConfigData->inputGuidID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(AttGuidFswMsg), (void*) &(ConfigData->attGuidOut), moduleID);
+    ReadMessage(configData->inputGuidID, &timeOfMsgWritten, &sizeOfMsgWritten,
+                sizeof(AttGuidFswMsg), (void*) &(configData->attGuidOut), moduleID);
     
     /*! - Evaluate average simple in attitude and rates */
-    ConfigData->attError = 4.0 * atan(v3Norm(ConfigData->attGuidOut.sigma_BR));
-    ConfigData->rateError = v3Norm(ConfigData->attGuidOut.omega_BR_B);
+    configData->attError = 4.0 * atan(v3Norm(configData->attGuidOut.sigma_BR));
+    configData->rateError = v3Norm(configData->attGuidOut.omega_BR_B);
     
     /*! - Check whether control should be ON or OFF */
-    applyDBLogic_simpleDeadband(ConfigData);
+    applyDBLogic_simpleDeadband(configData);
     
     /*! - Write output guidance message and update module knowledge of control status*/
-    WriteMessage(ConfigData->outputGuidID, callTime, sizeof(AttGuidFswMsg),
-                 (void*) &(ConfigData->attGuidOut), moduleID);
+    WriteMessage(configData->outputGuidID, callTime, sizeof(AttGuidFswMsg),
+                 (void*) &(configData->attGuidOut), moduleID);
     return;
 }
 
@@ -111,25 +109,25 @@ void Update_simpleDeadband(simpleDeadbandConfig *ConfigData, uint64_t callTime, 
 /*! This method applies a two-level deadbanding logic (according to the current average simple compared with the set threshold)
  and decides whether control should be switched ON/OFF or not.
  @return void
- @param ConfigData The configuration data associated with the attitude tracking simple module
+ @param configData The configuration data associated with the attitude tracking simple module
  */
-void applyDBLogic_simpleDeadband(simpleDeadbandConfig *ConfigData)
+void applyDBLogic_simpleDeadband(simpleDeadbandConfig *configData)
 {
-    uint32_t areErrorsBelowUpperThresh = (ConfigData->attError < ConfigData->outerAttThresh && ConfigData->rateError < ConfigData->outerRateThresh);
-    uint32_t areErrorsBelowLowerThresh = (ConfigData->attError < ConfigData->innerAttThresh && ConfigData->rateError < ConfigData->innerRateThresh);
+    uint32_t areErrorsBelowUpperThresh = (configData->attError < configData->outerAttThresh && configData->rateError < configData->outerRateThresh);
+    uint32_t areErrorsBelowLowerThresh = (configData->attError < configData->innerAttThresh && configData->rateError < configData->innerRateThresh);
     
     if (areErrorsBelowUpperThresh)
     {
-        if ((areErrorsBelowLowerThresh == 1) || ((areErrorsBelowLowerThresh == 0) && ConfigData->wasControlOff))
+        if ((areErrorsBelowLowerThresh == 1) || ((areErrorsBelowLowerThresh == 0) && configData->wasControlOff))
         {
             /* Set simples to zero in order to turn off control */
-            v3SetZero(ConfigData->attGuidOut.sigma_BR);
-            v3SetZero(ConfigData->attGuidOut.omega_BR_B);
-            ConfigData->wasControlOff = 1;
+            v3SetZero(configData->attGuidOut.sigma_BR);
+            v3SetZero(configData->attGuidOut.omega_BR_B);
+            configData->wasControlOff = 1;
         } else {
-            ConfigData->wasControlOff = 0;
+            configData->wasControlOff = 0;
         }
-    } else { ConfigData->wasControlOff = 0; }
+    } else { configData->wasControlOff = 0; }
 }
 
 

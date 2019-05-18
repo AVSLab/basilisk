@@ -29,18 +29,16 @@
 #include <math.h>
 
 
-/*! This method initializes the ConfigData for this module.
+/*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
  output message
  @return void
- @param ConfigData The configuration data associated with this module
+ @param configData The configuration data associated with this module
  */
-void SelfInit_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t moduleID)
+void SelfInit_PRV_Steering(PRV_SteeringConfig *configData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
     /*! - Create output message for module */
-    ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
+    configData->outputMsgID = CreateNewMessage(configData->outputDataName,
         sizeof(RateCmdFswMsg), "RateCmdFswMsg", moduleID);
     
 }
@@ -48,21 +46,21 @@ void SelfInit_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t moduleID)
 /*! This method performs the second stage of initialization for this module.
  It's primary function is to link the input messages that were created elsewhere.
  @return void
- @param ConfigData The configuration data associated with this module
+ @param configData The configuration data associated with this module
  */
-void CrossInit_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t moduleID)
+void CrossInit_PRV_Steering(PRV_SteeringConfig *configData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
-    ConfigData->inputGuidID = subscribeToMessage(ConfigData->inputGuidName,
+    configData->inputGuidID = subscribeToMessage(configData->inputGuidName,
                                                  sizeof(AttGuidFswMsg), moduleID);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
- @param ConfigData The configuration data associated with the MRP steering control
+ @param configData The configuration data associated with the MRP steering control
  */
-void Reset_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Reset_PRV_Steering(PRV_SteeringConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
     return;
 }
@@ -70,28 +68,26 @@ void Reset_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime, uint6
 /*! This method takes the attitude and rate errors relative to the Reference frame, as well as
     the reference frame angular rates and acceleration, and computes the required control torque Lr.
  @return void
- @param ConfigData The configuration data associated with the MRP Steering attitude control
+ @param configData The configuration data associated with the MRP Steering attitude control
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
+void Update_PRV_Steering(PRV_SteeringConfig *configData, uint64_t callTime,
     uint64_t moduleID)
 {
     AttGuidFswMsg      guidCmd;            /*!< Guidance Message */
     uint64_t            timeOfMsgWritten;
     uint32_t            sizeOfMsgWritten;
-
-    /*! Begin method steps*/
         
     /*! - Read the dynamic input messages */
-    ReadMessage(ConfigData->inputGuidID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->inputGuidID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);
     
     /* evalute MRP kinematic steering law */
-    PRVSteeringLaw(ConfigData, guidCmd.sigma_BR, ConfigData->outMsg.omega_BastR_B, ConfigData->outMsg.omegap_BastR_B);
+    PRVSteeringLaw(configData, guidCmd.sigma_BR, configData->outMsg.omega_BastR_B, configData->outMsg.omegap_BastR_B);
     
     /* Store the output message and pass it to the message bus */
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(RateCmdFswMsg),
-                 (void*) &(ConfigData->outMsg), moduleID);
+    WriteMessage(configData->outputMsgID, callTime, sizeof(RateCmdFswMsg),
+                 (void*) &(configData->outMsg), moduleID);
     
     return;
 }
@@ -101,7 +97,7 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
  attitude error measure of the body relative to a reference frame.  The function returns the commanded
  body rate, as well as the body frame derivative of this rate command.
  @return void
- @param ConfigData  The configuration data associated with this module
+ @param configData  The configuration data associated with this module
  @param sigma_BR    MRP attitude error of B relative to R
  @param omega_ast   Commanded body rates
  @param omega_ast_p Body frame derivative of the commanded body rates

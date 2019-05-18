@@ -23,21 +23,21 @@
 #include <string.h>
 #include <math.h>
 
-/*! This method initializes the ConfigData for the sun safe ACS control.
+/*! This method initializes the configData for the sun safe ACS control.
  It checks to ensure that the inputs are sane and then creates the
  output message
  @return void
- @param ConfigData The configuration data associated with the sun safe control
+ @param configData The configuration data associated with the sun safe control
  */
-void SelfInit_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t moduleID)
+void SelfInit_dvAttEffect(dvAttEffectConfig *configData, uint64_t moduleID)
 {
     uint32_t i;
-    /*! Begin method steps */
+
     /*! - Loop over number of thruster blocks and create output messages */
-    for(i=0; i<ConfigData->numThrGroups; i=i+1)
+    for(i=0; i<configData->numThrGroups; i=i+1)
     {
-        ConfigData->thrGroups[i].outputMsgID = CreateNewMessage(
-            ConfigData->thrGroups[i].outputDataName, sizeof(THRArrayOnTimeCmdIntMsg),
+        configData->thrGroups[i].outputMsgID = CreateNewMessage(
+            configData->thrGroups[i].outputDataName, sizeof(THRArrayOnTimeCmdIntMsg),
             "THRArrayOnTimeCmdIntMsg", moduleID);
     }
  
@@ -48,16 +48,16 @@ void SelfInit_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t moduleID)
  interface.  It's primary function is to link the input messages that were
  created elsewhere.
  @return void
- @param ConfigData The configuration data associated with the sun safe ACS control
+ @param configData The configuration data associated with the sun safe ACS control
  */
-void CrossInit_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t moduleID)
+void CrossInit_dvAttEffect(dvAttEffectConfig *configData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
-    ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputControlName,
+    configData->inputMsgID = subscribeToMessage(configData->inputControlName,
         sizeof(CmdTorqueBodyIntMsg), moduleID);
     
 }
-void Reset_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime,
+void Reset_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
                         uint64_t moduleID)
 {
     uint32_t i;
@@ -65,13 +65,13 @@ void Reset_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime,
     
     memset(&(nullEffect), 0x0, sizeof(THRArrayOnTimeCmdIntMsg));
     
-    for(i=0; i<ConfigData->numThrGroups; i=i+1)
+    for(i=0; i<configData->numThrGroups; i=i+1)
     {
-        memcpy(&(ConfigData->thrGroups[i].cmdRequests), &nullEffect,
+        memcpy(&(configData->thrGroups[i].cmdRequests), &nullEffect,
             sizeof(THRArrayOnTimeCmdIntMsg));
-        WriteMessage(ConfigData->thrGroups[i].outputMsgID, callTime,
+        WriteMessage(configData->thrGroups[i].outputMsgID, callTime,
             sizeof(THRArrayOnTimeCmdIntMsg), (void*)
-            &(ConfigData->thrGroups[i].cmdRequests), moduleID);
+            &(configData->thrGroups[i].cmdRequests), moduleID);
     }
 
 }
@@ -79,10 +79,10 @@ void Reset_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime,
 /*! This method takes the estimated body-observed sun vector and computes the
  current attitude/attitude rate errors to pass on to control.
  @return void
- @param ConfigData The configuration data associated with the sun safe ACS control
+ @param configData The configuration data associated with the sun safe ACS control
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime,
+void Update_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
     uint64_t moduleID)
 {
 
@@ -91,14 +91,13 @@ void Update_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime,
     uint32_t i;
     CmdTorqueBodyIntMsg cntrRequest;
     
-    /*! Begin method steps*/
     /*! - Read the input requested torque from the feedback controller*/
-    ReadMessage(ConfigData->inputMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->inputMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CmdTorqueBodyIntMsg), (void*) &(cntrRequest), moduleID);
     
-    for(i=0; i<ConfigData->numThrGroups; i=i+1)
+    for(i=0; i<configData->numThrGroups; i=i+1)
     {
-        computeSingleThrustBlock(&(ConfigData->thrGroups[i]), callTime,
+        computeSingleThrustBlock(&(configData->thrGroups[i]), callTime,
             &cntrRequest, moduleID);
     }
     
@@ -114,7 +113,6 @@ CmdTorqueBodyIntMsg *contrReq, uint64_t moduleID)
     uint32_t i;
     double localRequest[3];
     
-    /*! Begin method steps*/
     v3Copy(contrReq->torqueRequestBody, localRequest);      /* to generate a positive torque onto the spacecraft */
     mMultV(thrData->thrOnMap, thrData->numEffectors, 3,
            localRequest, unSortOnTime);

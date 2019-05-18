@@ -360,7 +360,6 @@ void ReactionWheelStateEffector::SelfInit()
 	RWCmdSimMsg RWCmdInitializer;
 	RWCmdInitializer.u_cmd = 0.0;
 
-	//! Begin method steps
 	//! - Clear out any currently firing RWs and re-init cmd array
 	NewRWCmds.clear();
 	NewRWCmds.insert(NewRWCmds.begin(), ReactionWheelData.size(), RWCmdInitializer );
@@ -390,7 +389,6 @@ void ReactionWheelStateEffector::SelfInit()
  */
 void ReactionWheelStateEffector::CrossInit()
 {
-	//! Begin method steps
 	//! - Find the message ID associated with the InputCmds string.
 	//! - Warn the user if the message is not successfully linked.
 	CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(InputCmds,
@@ -491,8 +489,8 @@ void ReactionWheelStateEffector::ReadInputs()
 //
 	std::vector<double>::iterator CmdIt;
 	uint64_t i;
-	//! Begin method steps
-	//! - If the input message ID is invalid, return without touching states
+
+    //! - If the input message ID is invalid, return without touching states
 	if(CmdsInMsgID < 0)
 	{
 		return;
@@ -529,7 +527,6 @@ void ReactionWheelStateEffector::ReadInputs()
 // */
 void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
 {
-	//! Begin method steps
 	std::vector<RWCmdSimMsg>::iterator CmdIt;
 	int RWIter = 0;
 
@@ -575,7 +572,6 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
  */
 void ReactionWheelStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
-	//! Begin method steps
 	//! - Read the inputs and then call ConfigureRWRequests to set up dynamics
 	ReadInputs();
 	ConfigureRWRequests(CurrentSimNanos*NANO2SEC);

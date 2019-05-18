@@ -54,10 +54,10 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_sunlineEphem(sunlineEphemConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_sunlineEphem(sunlineEphemConfig *ConfigData, uint64_t moduleID);
-    void Update_sunlineEphem(sunlineEphemConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_sunlineEphem(sunlineEphemConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_sunlineEphem(sunlineEphemConfig *configData, uint64_t moduleID);
+    void CrossInit_sunlineEphem(sunlineEphemConfig *configData, uint64_t moduleID);
+    void Update_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void Reset_sunlineEphem(sunlineEphemConfig *configData, uint64_t callTime, uint64_t moduleID);
     
 #ifdef __cplusplus
 }

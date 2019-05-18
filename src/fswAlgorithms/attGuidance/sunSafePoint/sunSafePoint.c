@@ -25,21 +25,19 @@
 #include "simulation/utilities/astroConstants.h"
 #include "simulation/utilities/bsk_Print.h"
 
-/*! This method initializes the ConfigData for the sun safe attitude guidance.
+/*! This method initializes the configData for the sun safe attitude guidance.
  It checks to ensure that the inputs are sane and then creates the
  output message
  @return void
- @param ConfigData The configuration data associated with the sun safe guidance
+ @param configData The configuration data associated with the sun safe guidance
  */
-void SelfInit_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t moduleID)
+void SelfInit_sunSafePoint(sunSafePointConfig *configData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
     /*! - Create output message for module */
-    ConfigData->attGuidanceOutMsgID = CreateNewMessage(ConfigData->attGuidanceOutMsgName,
+    configData->attGuidanceOutMsgID = CreateNewMessage(configData->attGuidanceOutMsgName,
         sizeof(AttGuidFswMsg), "AttGuidFswMsg", moduleID);
-    memset(ConfigData->attGuidanceOutBuffer.omega_RN_B, 0x0, 3*sizeof(double));
-    memset(ConfigData->attGuidanceOutBuffer.domega_RN_B, 0x0, 3*sizeof(double));
+    memset(configData->attGuidanceOutBuffer.omega_RN_B, 0x0, 3*sizeof(double));
+    memset(configData->attGuidanceOutBuffer.domega_RN_B, 0x0, 3*sizeof(double));
     
 }
 
@@ -47,14 +45,14 @@ void SelfInit_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t moduleID)
  interface.  It's primary function is to link the input messages that were
  created elsewhere.
  @return void
- @param ConfigData The configuration data associated with the sun safe attitude guidance
+ @param configData The configuration data associated with the sun safe attitude guidance
  */
-void CrossInit_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t moduleID)
+void CrossInit_sunSafePoint(sunSafePointConfig *configData, uint64_t moduleID)
 {
     /*! - Loop over the number of sensors and find IDs for each one */
-    ConfigData->sunDirectionInMsgID = subscribeToMessage(ConfigData->sunDirectionInMsgName,
+    configData->sunDirectionInMsgID = subscribeToMessage(configData->sunDirectionInMsgName,
         sizeof(NavAttIntMsg), moduleID);
-    ConfigData->imuInMsgID = subscribeToMessage(ConfigData->imuInMsgName,
+    configData->imuInMsgID = subscribeToMessage(configData->imuInMsgName,
         sizeof(NavAttIntMsg), moduleID);
     
 }
@@ -62,29 +60,29 @@ void CrossInit_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t moduleID)
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
- @param ConfigData The configuration data associated with the guidance module
+ @param configData The configuration data associated with the guidance module
  */
-void Reset_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Reset_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
     double v1[3];
 
     /* compute an Eigen axis orthogonal to sHatBdyCmd */
-    if (v3Norm(ConfigData->sHatBdyCmd)  < 0.1) {
+    if (v3Norm(configData->sHatBdyCmd)  < 0.1) {
         BSK_PRINT(MSG_ERROR,"The module vector sHatBdyCmd is not setup as a unit vector [%f, %f %f]",
-                  ConfigData->sHatBdyCmd[0], ConfigData->sHatBdyCmd[1], ConfigData->sHatBdyCmd[2]);
+                  configData->sHatBdyCmd[0], configData->sHatBdyCmd[1], configData->sHatBdyCmd[2]);
     } else {
         v3Set(1., 0., 0., v1);
-        v3Normalize(ConfigData->sHatBdyCmd, ConfigData->sHatBdyCmd);    /* ensure that this vector is a unit vector */
-        v3Cross(ConfigData->sHatBdyCmd, v1, ConfigData->eHat180_B);
-        if (v3Norm(ConfigData->eHat180_B) < 0.1) {
+        v3Normalize(configData->sHatBdyCmd, configData->sHatBdyCmd);    /* ensure that this vector is a unit vector */
+        v3Cross(configData->sHatBdyCmd, v1, configData->eHat180_B);
+        if (v3Norm(configData->eHat180_B) < 0.1) {
             v3Set(0., 1., 0., v1);
-            v3Cross(ConfigData->sHatBdyCmd, v1, ConfigData->eHat180_B);
+            v3Cross(configData->sHatBdyCmd, v1, configData->eHat180_B);
         }
-        v3Normalize(ConfigData->eHat180_B, ConfigData->eHat180_B);
+        v3Normalize(configData->eHat180_B, configData->eHat180_B);
     }
 
-    memset(ConfigData->attGuidanceOutBuffer.omega_RN_B, 0x0, 3*sizeof(double));
-    memset(ConfigData->attGuidanceOutBuffer.domega_RN_B, 0x0, 3*sizeof(double));
+    memset(configData->attGuidanceOutBuffer.omega_RN_B, 0x0, 3*sizeof(double));
+    memset(configData->attGuidanceOutBuffer.domega_RN_B, 0x0, 3*sizeof(double));
 
     return;
 }
@@ -92,10 +90,10 @@ void Reset_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime, uint6
 /*! This method takes the estimated body-observed sun vector and computes the
  current attitude/attitude rate errors to pass on to control.
  @return void
- @param ConfigData The configuration data associated with the sun safe attitude guidance
+ @param configData The configuration data associated with the sun safe attitude guidance
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
+void Update_sunSafePoint(sunSafePointConfig *configData, uint64_t callTime,
     uint64_t moduleID)
 {
     NavAttIntMsg navMsg;
@@ -108,64 +106,63 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
     double omega_RN_B[3];           /*!< r/s local copy of the desired reference frame rate */
 
     NavAttIntMsg localImuDataInBuffer;
-    /*! Begin method steps*/
     /* zero the input message containers */
     memset(&(navMsg), 0x0, sizeof(NavAttIntMsg));
     memset(&(localImuDataInBuffer), 0x0, sizeof(NavAttIntMsg));
     /*! - Read the current sun body vector estimate*/
-    ReadMessage(ConfigData->sunDirectionInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->sunDirectionInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavAttIntMsg), (void*) &(navMsg), moduleID);
-    ReadMessage(ConfigData->imuInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->imuInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavAttIntMsg), (void*) &(localImuDataInBuffer), moduleID);
     v3Copy(localImuDataInBuffer.omega_BN_B, omega_BN_B);
 
     /*! - Compute the current error vector if it is valid*/
     sNorm = v3Norm(navMsg.vehSunPntBdy);
-    if(sNorm > ConfigData->minUnitMag)
+    if(sNorm > configData->minUnitMag)
     {
         /* a good sun direction vector is available */
-        ctSNormalized = v3Dot(ConfigData->sHatBdyCmd, navMsg.vehSunPntBdy)/sNorm;
+        ctSNormalized = v3Dot(configData->sHatBdyCmd, navMsg.vehSunPntBdy)/sNorm;
         ctSNormalized = fabs(ctSNormalized) > 1.0 ?
         ctSNormalized/fabs(ctSNormalized) : ctSNormalized;
-        ConfigData->sunAngleErr = acos(ctSNormalized);
+        configData->sunAngleErr = acos(ctSNormalized);
 
         /*
             Compute the heading error relative to the sun direction vector 
          */
-        if (ConfigData->sunAngleErr < ConfigData->smallAngle) {
+        if (configData->sunAngleErr < configData->smallAngle) {
             /* sun heading and desired body axis are essentially aligned.  Set attitude error to zero. */
-             v3SetZero(ConfigData->attGuidanceOutBuffer.sigma_BR);
+             v3SetZero(configData->attGuidanceOutBuffer.sigma_BR);
         } else {
-            if (M_PI - ConfigData->sunAngleErr < ConfigData->smallAngle) {
+            if (M_PI - configData->sunAngleErr < configData->smallAngle) {
                 /* the commanded body vector nearly is opposite the sun heading */
-                v3Copy(ConfigData->eHat180_B, e_hat);
+                v3Copy(configData->eHat180_B, e_hat);
             } else {
                 /* normal case where sun and commanded body vectors are not aligned */
-                v3Cross(navMsg.vehSunPntBdy, ConfigData->sHatBdyCmd, e_hat);
+                v3Cross(navMsg.vehSunPntBdy, configData->sHatBdyCmd, e_hat);
             }
-            v3Normalize(e_hat, ConfigData->sunMnvrVec);
-            v3Scale(tan(ConfigData->sunAngleErr*0.25), ConfigData->sunMnvrVec,
-                    ConfigData->attGuidanceOutBuffer.sigma_BR);
-            MRPswitch(ConfigData->attGuidanceOutBuffer.sigma_BR, 1.0, ConfigData->attGuidanceOutBuffer.sigma_BR);
+            v3Normalize(e_hat, configData->sunMnvrVec);
+            v3Scale(tan(configData->sunAngleErr*0.25), configData->sunMnvrVec,
+                    configData->attGuidanceOutBuffer.sigma_BR);
+            MRPswitch(configData->attGuidanceOutBuffer.sigma_BR, 1.0, configData->attGuidanceOutBuffer.sigma_BR);
         }
 
         /* rate tracking error are the body rates to bring spacecraft to rest */
-        v3Scale(ConfigData->sunAxisSpinRate/sNorm, navMsg.vehSunPntBdy, omega_RN_B);
-        v3Subtract(omega_BN_B, omega_RN_B, ConfigData->attGuidanceOutBuffer.omega_BR_B);
-        v3Copy(omega_RN_B, ConfigData->attGuidanceOutBuffer.omega_RN_B);
+        v3Scale(configData->sunAxisSpinRate/sNorm, navMsg.vehSunPntBdy, omega_RN_B);
+        v3Subtract(omega_BN_B, omega_RN_B, configData->attGuidanceOutBuffer.omega_BR_B);
+        v3Copy(omega_RN_B, configData->attGuidanceOutBuffer.omega_RN_B);
 
     } else {
         /* no proper sun direction vector is available */
-        v3SetZero(ConfigData->attGuidanceOutBuffer.sigma_BR);
+        v3SetZero(configData->attGuidanceOutBuffer.sigma_BR);
 
         /* specify a body-fixed constant search rotation rate */
-        v3Subtract(omega_BN_B, ConfigData->omega_RN_B, ConfigData->attGuidanceOutBuffer.omega_BR_B);
-        v3Copy(ConfigData->omega_RN_B, ConfigData->attGuidanceOutBuffer.omega_RN_B);
+        v3Subtract(omega_BN_B, configData->omega_RN_B, configData->attGuidanceOutBuffer.omega_BR_B);
+        v3Copy(configData->omega_RN_B, configData->attGuidanceOutBuffer.omega_RN_B);
     }
 
     /* write the Guidance output message */
-    WriteMessage(ConfigData->attGuidanceOutMsgID, callTime, sizeof(AttGuidFswMsg),
-                 (void*) &(ConfigData->attGuidanceOutBuffer), moduleID);
+    WriteMessage(configData->attGuidanceOutMsgID, callTime, sizeof(AttGuidFswMsg),
+                 (void*) &(configData->attGuidanceOutBuffer), moduleID);
     
     return;
 }

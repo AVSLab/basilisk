@@ -25,20 +25,19 @@
 #include <string.h>
 #include <math.h>
 
-/*! This method initializes the ConfigData for the heading estimator.
+/*! This method initializes the configData for the heading estimator.
  It checks to ensure that the inputs are sane and then creates the
  output message
  @return void
- @param ConfigData The configuration data associated with the heading estimator
+ @param configData The configuration data associated with the heading estimator
  */
-void SelfInit_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t moduleID)
+void SelfInit_headingSuKF(HeadingSuKFConfig *configData, uint64_t moduleID)
 {
-        /*! Begin method steps */
     /*! - Create output message for module */
-	ConfigData->opnavDataOutMsgId = CreateNewMessage(ConfigData->opnavOutMsgName,
+	configData->opnavDataOutMsgId = CreateNewMessage(configData->opnavOutMsgName,
 		sizeof(OpnavFswMsg), "OpnavFswMsg", moduleID);
     /*! - Create filter states output message which is mostly for debug*/
-    ConfigData->filtDataOutMsgId = CreateNewMessage(ConfigData->filtDataOutMsgName,
+    configData->filtDataOutMsgId = CreateNewMessage(configData->filtDataOutMsgName,
         sizeof(HeadingFilterFswMsg), "HeadingFilterFswMsg", moduleID);
     
 }
@@ -46,13 +45,12 @@ void SelfInit_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t moduleID)
 /*! This method performs the second stage of initialization for the heading filter.  It's primary function is to link the input messages that were
  created elsewhere.
  @return void
- @param ConfigData The configuration data associated with the heading filter
+ @param configData The configuration data associated with the heading filter
  */
-void CrossInit_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t moduleID)
+void CrossInit_headingSuKF(HeadingSuKFConfig *configData, uint64_t moduleID)
 {
-    /*! Begin method steps */
     /*! - Find the message ID for the coarse sun sensor data message */
-    ConfigData->opnavDataInMsgId = subscribeToMessage(ConfigData->opnavDataInMsgName,
+    configData->opnavDataInMsgId = subscribeToMessage(configData->opnavDataInMsgName,
         sizeof(OpnavFswMsg), moduleID);
     
 }
@@ -60,74 +58,73 @@ void CrossInit_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t moduleID)
 /*! This method resets the heading attitude filter to an initial state and
  initializes the internal estimation matrices.
  @return void
- @param ConfigData The configuration data associated with the heading estimator
+ @param configData The configuration data associated with the heading estimator
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Reset_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t callTime,
+void Reset_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
                       uint64_t moduleID)
 {
     
     int32_t i;
     double tempMatrix[HEAD_N_STATES_SWITCH*HEAD_N_STATES_SWITCH];
     
-    /*! Begin method steps*/
     /*! - Zero the local configuration data structures and outputs */
-    memset(&(ConfigData->outputHeading), 0x0, sizeof(NavAttIntMsg));
+    memset(&(configData->outputHeading), 0x0, sizeof(NavAttIntMsg));
 
     
     /*! - Initialize filter parameters to max values */
-    ConfigData->timeTag = callTime*NANO2SEC;
-    ConfigData->dt = 0.0;
-    ConfigData->numStates = HEAD_N_STATES_SWITCH;
-    ConfigData->countHalfSPs = HEAD_N_STATES_SWITCH;
+    configData->timeTag = callTime*NANO2SEC;
+    configData->dt = 0.0;
+    configData->numStates = HEAD_N_STATES_SWITCH;
+    configData->countHalfSPs = HEAD_N_STATES_SWITCH;
     
     /*! Initalize the filter to use b_1 of the body frame to make frame*/
-    v3Set(1, 0, 0, ConfigData->bVec_B);
-    ConfigData->switchTresh = 0.866;
+    v3Set(1, 0, 0, configData->bVec_B);
+    configData->switchTresh = 0.866;
     
     /*! - Ensure that all internal filter matrices are zeroed*/
-    vSetZero(ConfigData->obs, OPNAV_MEAS);
-    vSetZero(ConfigData->wM, ConfigData->countHalfSPs * 2 + 1);
-    vSetZero(ConfigData->wC, ConfigData->countHalfSPs * 2 + 1);
-    mSetZero(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates);
-    mSetZero(ConfigData->SP, ConfigData->countHalfSPs * 2 + 1,
-             ConfigData->numStates);
-    mSetZero(ConfigData->sQnoise, ConfigData->numStates, ConfigData->numStates);
+    vSetZero(configData->obs, OPNAV_MEAS);
+    vSetZero(configData->wM, configData->countHalfSPs * 2 + 1);
+    vSetZero(configData->wC, configData->countHalfSPs * 2 + 1);
+    mSetZero(configData->sBar, configData->numStates, configData->numStates);
+    mSetZero(configData->SP, configData->countHalfSPs * 2 + 1,
+             configData->numStates);
+    mSetZero(configData->sQnoise, configData->numStates, configData->numStates);
     
     /*! - Set lambda/gamma to standard value for unscented kalman filters */
-    ConfigData->lambdaVal = ConfigData->alpha*ConfigData->alpha*
-    (ConfigData->numStates + ConfigData->kappa) - ConfigData->numStates;
-    ConfigData->gamma = sqrt(ConfigData->numStates + ConfigData->lambdaVal);
+    configData->lambdaVal = configData->alpha*configData->alpha*
+    (configData->numStates + configData->kappa) - configData->numStates;
+    configData->gamma = sqrt(configData->numStates + configData->lambdaVal);
     
     
     /*! - Set the wM/wC vectors to standard values for unscented kalman filters*/
-    ConfigData->wM[0] = ConfigData->lambdaVal / (ConfigData->numStates +
-                                                 ConfigData->lambdaVal);
-    ConfigData->wC[0] = ConfigData->lambdaVal / (ConfigData->numStates +
-                                                 ConfigData->lambdaVal) + (1 - ConfigData->alpha*ConfigData->alpha + ConfigData->beta);
-    for (i = 1; i<ConfigData->countHalfSPs * 2 + 1; i++)
+    configData->wM[0] = configData->lambdaVal / (configData->numStates +
+                                                 configData->lambdaVal);
+    configData->wC[0] = configData->lambdaVal / (configData->numStates +
+                                                 configData->lambdaVal) + (1 - configData->alpha*configData->alpha + configData->beta);
+    for (i = 1; i<configData->countHalfSPs * 2 + 1; i++)
     {
-        ConfigData->wM[i] = 1.0 / 2.0*1.0 / (ConfigData->numStates +
-                                             ConfigData->lambdaVal);
-        ConfigData->wC[i] = ConfigData->wM[i];
+        configData->wM[i] = 1.0 / 2.0*1.0 / (configData->numStates +
+                                             configData->lambdaVal);
+        configData->wC[i] = configData->wM[i];
     }
     
-    vCopy(ConfigData->stateInit, ConfigData->numStates, ConfigData->state);
+    vCopy(configData->stateInit, configData->numStates, configData->state);
     
     /*! - User a cholesky decomposition to obtain the sBar and sQnoise matrices for use in 
           filter at runtime*/
-    mCopy(ConfigData->covarInit, ConfigData->numStates, ConfigData->numStates,
-          ConfigData->covar);
-    mCopy(ConfigData->covar, ConfigData->numStates, ConfigData->numStates,
-          ConfigData->sBar);
-    ukfCholDecomp(ConfigData->sBar, ConfigData->numStates,
-                  ConfigData->numStates, tempMatrix);
-    mCopy(tempMatrix, ConfigData->numStates, ConfigData->numStates,
-          ConfigData->sBar);
-    ukfCholDecomp(ConfigData->qNoise, ConfigData->numStates,
-                  ConfigData->numStates, ConfigData->sQnoise);
-    mTranspose(ConfigData->sQnoise, ConfigData->numStates,
-               ConfigData->numStates, ConfigData->sQnoise);
+    mCopy(configData->covarInit, configData->numStates, configData->numStates,
+          configData->covar);
+    mCopy(configData->covar, configData->numStates, configData->numStates,
+          configData->sBar);
+    ukfCholDecomp(configData->sBar, configData->numStates,
+                  configData->numStates, tempMatrix);
+    mCopy(tempMatrix, configData->numStates, configData->numStates,
+          configData->sBar);
+    ukfCholDecomp(configData->qNoise, configData->numStates,
+                  configData->numStates, configData->sQnoise);
+    mTranspose(configData->sQnoise, configData->numStates,
+               configData->numStates, configData->sQnoise);
     
     return;
 }
@@ -135,10 +132,10 @@ void Reset_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t callTime,
 /*! This method takes the parsed heading sensor data and outputs an estimate of the
  sun vector in the ADCS body frame
  @return void
- @param ConfigData The configuration data associated with the heading estimator
+ @param configData The configuration data associated with the heading estimator
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t callTime,
+void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     uint64_t moduleID)
 {
     double newTimeTag;
@@ -152,74 +149,73 @@ void Update_headingSuKF(HeadingSuKFConfig *ConfigData, uint64_t callTime,
     HeadingFilterFswMsg headingDataOutBuffer;
     OpnavFswMsg opnavOutputBuffer;
     
-    /*! Begin method steps*/
     /*! - Read the input parsed heading sensor data message*/
     ClockTime = 0;
     ReadSize = 0;
-    memset(&(ConfigData->opnavInBuffer), 0x0, sizeof(OpnavFswMsg));
-    v3SetZero(ConfigData->obs);
-    v3SetZero(ConfigData->postFits);
-    ReadMessage(ConfigData->opnavDataInMsgId, &ClockTime, &ReadSize,
-        sizeof(OpnavFswMsg), (void*) (&(ConfigData->opnavInBuffer)), moduleID);
+    memset(&(configData->opnavInBuffer), 0x0, sizeof(OpnavFswMsg));
+    v3SetZero(configData->obs);
+    v3SetZero(configData->postFits);
+    ReadMessage(configData->opnavDataInMsgId, &ClockTime, &ReadSize,
+        sizeof(OpnavFswMsg), (void*) (&(configData->opnavInBuffer)), moduleID);
     
-    v3Normalize(&ConfigData->state[0], heading_hat);
+    v3Normalize(&configData->state[0], heading_hat);
     
     
     /*! - Check for switching frames */
-    if (v3Dot(ConfigData->bVec_B, heading_hat) > ConfigData->switchTresh)
+    if (v3Dot(configData->bVec_B, heading_hat) > configData->switchTresh)
     {
-        headingSuKFSwitch(ConfigData->bVec_B, ConfigData->state, ConfigData->covar);
+        headingSuKFSwitch(configData->bVec_B, configData->state, configData->covar);
     }
     
     /*! - If the time tag from the measured data is new compared to previous step, 
           propagate and update the filter*/
     newTimeTag = ClockTime * NANO2SEC;
-    if(newTimeTag >= ConfigData->timeTag && ReadSize > 0)
+    if(newTimeTag >= configData->timeTag && ReadSize > 0)
     {
-        headingSuKFTimeUpdate(ConfigData, newTimeTag);
-        headingSuKFMeasUpdate(ConfigData, newTimeTag);
+        headingSuKFTimeUpdate(configData, newTimeTag);
+        headingSuKFMeasUpdate(configData, newTimeTag);
     }
     
     /*! - If current clock time is further ahead than the measured time, then
           propagate to this current time-step*/
     newTimeTag = callTime*NANO2SEC;
-    if(newTimeTag > ConfigData->timeTag)
+    if(newTimeTag > configData->timeTag)
     {
-        headingSuKFTimeUpdate(ConfigData, newTimeTag);
+        headingSuKFTimeUpdate(configData, newTimeTag);
     }
     
     /*! - Compute the value for the yBar parameter (equation 23)*/
     vSetZero(yBar, OPNAV_MEAS);
-    for(i=0; i<ConfigData->countHalfSPs*2+1; i++)
+    for(i=0; i<configData->countHalfSPs*2+1; i++)
     {
-        vCopy(&(ConfigData->yMeas[i*OPNAV_MEAS]), OPNAV_MEAS,
+        vCopy(&(configData->yMeas[i*OPNAV_MEAS]), OPNAV_MEAS,
               tempYVec);
-        vScale(ConfigData->wM[i], tempYVec, OPNAV_MEAS, tempYVec);
+        vScale(configData->wM[i], tempYVec, OPNAV_MEAS, tempYVec);
         vAdd(yBar, OPNAV_MEAS, tempYVec, yBar);
     }
     
     /*! - The post fits are y - ybar if a measurement was read, if observations are zero,
      do not compute post fit residuals*/
-    if(!v3IsZero(ConfigData->obs, 1E-10)){
-        mSubtract(ConfigData->obs, OPNAV_MEAS, 1, yBar, ConfigData->postFits);}
+    if(!v3IsZero(configData->obs, 1E-10)){
+        mSubtract(configData->obs, OPNAV_MEAS, 1, yBar, configData->postFits);}
     
     /* Switch the rates back to omega_BN instead of oemga_SB */
-    vCopy(ConfigData->state, HEAD_N_STATES_SWITCH, states_BN);
+    vCopy(configData->state, HEAD_N_STATES_SWITCH, states_BN);
     vScale(-1, &(states_BN[3]), 2, &(states_BN[3]));
     
     /*! - Populate the filter states output buffer and write the output message*/
-    headingDataOutBuffer.timeTag = ConfigData->timeTag;
-    mCopy(ConfigData->covar, HEAD_N_STATES_SWITCH, HEAD_N_STATES_SWITCH, headingDataOutBuffer.covar);
+    headingDataOutBuffer.timeTag = configData->timeTag;
+    mCopy(configData->covar, HEAD_N_STATES_SWITCH, HEAD_N_STATES_SWITCH, headingDataOutBuffer.covar);
     vCopy(states_BN, HEAD_N_STATES_SWITCH, headingDataOutBuffer.state);
-    v3Copy(ConfigData->postFits, headingDataOutBuffer.postFitRes);
-    WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(HeadingFilterFswMsg),
+    v3Copy(configData->postFits, headingDataOutBuffer.postFitRes);
+    WriteMessage(configData->filtDataOutMsgId, callTime, sizeof(HeadingFilterFswMsg),
                  &headingDataOutBuffer, moduleID);
     
     /*! - Write the heading estimate into the copy of the OpNav message structure*/
-    opnavOutputBuffer.timeTag = ConfigData->timeTag;
-    m33Copy(RECAST3X3 ConfigData->covar, RECAST3X3 opnavOutputBuffer.covar);
+    opnavOutputBuffer.timeTag = configData->timeTag;
+    m33Copy(RECAST3X3 configData->covar, RECAST3X3 opnavOutputBuffer.covar);
     v3Copy(&states_BN[0], opnavOutputBuffer.rel_pos);
-    WriteMessage(ConfigData->opnavDataOutMsgId, callTime, sizeof(OpnavFswMsg),
+    WriteMessage(configData->opnavDataOutMsgId, callTime, sizeof(OpnavFswMsg),
                  &opnavOutputBuffer, moduleID);
     
     return;
@@ -261,10 +257,10 @@ void headingStateProp(double *stateInOut, double *b_Vec, double dt)
      It propagates the sigma points forward in time and then gets the current 
 	 covariance and state estimates.
 	 @return void
-     @param ConfigData The configuration data associated with the heading estimator
+     @param configData The configuration data associated with the heading estimator
      @param updateTime The time that we need to fix the filter to (seconds)
 */
-void headingSuKFTimeUpdate(HeadingSuKFConfig *ConfigData, double updateTime)
+void headingSuKFTimeUpdate(HeadingSuKFConfig *configData, double updateTime)
 {
 	int i, Index;
 	double sBarT[HEAD_N_STATES_SWITCH*HEAD_N_STATES_SWITCH];
@@ -272,111 +268,110 @@ void headingSuKFTimeUpdate(HeadingSuKFConfig *ConfigData, double updateTime)
 	double aRow[HEAD_N_STATES_SWITCH], rAT[HEAD_N_STATES_SWITCH*HEAD_N_STATES_SWITCH], xErr[HEAD_N_STATES_SWITCH];
 	double sBarUp[HEAD_N_STATES_SWITCH*HEAD_N_STATES_SWITCH];
 	double *spPtr;
-	/*! Begin method steps*/
-	ConfigData->dt = updateTime - ConfigData->timeTag;
+
+    configData->dt = updateTime - configData->timeTag;
     
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
-	vCopy(ConfigData->state, ConfigData->numStates,
-		&(ConfigData->SP[0 * ConfigData->numStates + 0]));
-	headingStateProp(&(ConfigData->SP[0 * ConfigData->numStates + 0]), ConfigData->bVec_B, ConfigData->dt);
+	vCopy(configData->state, configData->numStates,
+		&(configData->SP[0 * configData->numStates + 0]));
+	headingStateProp(&(configData->SP[0 * configData->numStates + 0]), configData->bVec_B, configData->dt);
     /*! - Scale that Sigma point by the appopriate scaling factor (Wm[0])*/
-	vScale(ConfigData->wM[0], &(ConfigData->SP[0 * ConfigData->numStates + 0]),
-        ConfigData->numStates, ConfigData->xBar);
+	vScale(configData->wM[0], &(configData->SP[0 * configData->numStates + 0]),
+        configData->numStates, configData->xBar);
     /*! - Get the transpose of the sBar matrix because it is easier to extract Rows vs columns*/
-    mTranspose(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
+    mTranspose(configData->sBar, configData->numStates, configData->numStates,
                sBarT);
     /*! - For each Sigma point, apply sBar-based error, propagate forward, and scale by Wm just like 0th.
           Note that we perform +/- sigma points simultaneously in loop to save loop values.*/
-	for (i = 0; i<ConfigData->countHalfSPs; i++)
+	for (i = 0; i<configData->countHalfSPs; i++)
 	{
 		Index = i + 1;
-		spPtr = &(ConfigData->SP[Index*ConfigData->numStates]);
-		vCopy(&sBarT[i*ConfigData->numStates], ConfigData->numStates, spPtr);
-		vScale(ConfigData->gamma, spPtr, ConfigData->numStates, spPtr);
-		vAdd(spPtr, ConfigData->numStates, ConfigData->state, spPtr);
-		headingStateProp(spPtr, ConfigData->bVec_B, ConfigData->dt);
-		vScale(ConfigData->wM[Index], spPtr, ConfigData->numStates, xComp);
-		vAdd(xComp, ConfigData->numStates, ConfigData->xBar, ConfigData->xBar);
+		spPtr = &(configData->SP[Index*configData->numStates]);
+		vCopy(&sBarT[i*configData->numStates], configData->numStates, spPtr);
+		vScale(configData->gamma, spPtr, configData->numStates, spPtr);
+		vAdd(spPtr, configData->numStates, configData->state, spPtr);
+		headingStateProp(spPtr, configData->bVec_B, configData->dt);
+		vScale(configData->wM[Index], spPtr, configData->numStates, xComp);
+		vAdd(xComp, configData->numStates, configData->xBar, configData->xBar);
 		
-		Index = i + 1 + ConfigData->countHalfSPs;
-        spPtr = &(ConfigData->SP[Index*ConfigData->numStates]);
-        vCopy(&sBarT[i*ConfigData->numStates], ConfigData->numStates, spPtr);
-        vScale(-ConfigData->gamma, spPtr, ConfigData->numStates, spPtr);
-        vAdd(spPtr, ConfigData->numStates, ConfigData->state, spPtr);
-        headingStateProp(spPtr, ConfigData->bVec_B, ConfigData->dt);
-        vScale(ConfigData->wM[Index], spPtr, ConfigData->numStates, xComp);
-        vAdd(xComp, ConfigData->numStates, ConfigData->xBar, ConfigData->xBar);
+		Index = i + 1 + configData->countHalfSPs;
+        spPtr = &(configData->SP[Index*configData->numStates]);
+        vCopy(&sBarT[i*configData->numStates], configData->numStates, spPtr);
+        vScale(-configData->gamma, spPtr, configData->numStates, spPtr);
+        vAdd(spPtr, configData->numStates, configData->state, spPtr);
+        headingStateProp(spPtr, configData->bVec_B, configData->dt);
+        vScale(configData->wM[Index], spPtr, configData->numStates, xComp);
+        vAdd(xComp, configData->numStates, configData->xBar, configData->xBar);
 	}
     /*! - Zero the AT matrix prior to assembly*/
-    mSetZero(AT, (2 * ConfigData->countHalfSPs + ConfigData->numStates),
-        ConfigData->countHalfSPs);
+    mSetZero(AT, (2 * configData->countHalfSPs + configData->numStates),
+        configData->countHalfSPs);
 	/*! - Assemble the AT matrix.  Note that this matrix is the internals of 
           the qr decomposition call in the source design documentation.  It is 
           the inside of equation 20 in that document*/
-	for (i = 0; i<2 * ConfigData->countHalfSPs; i++)
+	for (i = 0; i<2 * configData->countHalfSPs; i++)
 	{
 		
-        vScale(-1.0, ConfigData->xBar, ConfigData->numStates, aRow);
-        vAdd(aRow, ConfigData->numStates,
-             &(ConfigData->SP[(i+1)*ConfigData->numStates]), aRow);
-        vScale(sqrt(ConfigData->wC[i+1]), aRow, ConfigData->numStates, aRow);
-		memcpy((void *)&AT[i*ConfigData->numStates], (void *)aRow,
-			ConfigData->numStates*sizeof(double));
+        vScale(-1.0, configData->xBar, configData->numStates, aRow);
+        vAdd(aRow, configData->numStates,
+             &(configData->SP[(i+1)*configData->numStates]), aRow);
+        vScale(sqrt(configData->wC[i+1]), aRow, configData->numStates, aRow);
+		memcpy((void *)&AT[i*configData->numStates], (void *)aRow,
+			configData->numStates*sizeof(double));
 	}
     /*! - Pop the sQNoise matrix on to the end of AT prior to getting QR decomposition*/
-	memcpy(&AT[2 * ConfigData->countHalfSPs*ConfigData->numStates],
-		ConfigData->sQnoise, ConfigData->numStates*ConfigData->numStates
+	memcpy(&AT[2 * configData->countHalfSPs*configData->numStates],
+		configData->sQnoise, configData->numStates*configData->numStates
         *sizeof(double));
     /*! - QR decomposition (only R computed!) of the AT matrix provides the new sBar matrix*/
-    ukfQRDJustR(AT, 2 * ConfigData->countHalfSPs + ConfigData->numStates,
-                ConfigData->countHalfSPs, rAT);
-    mCopy(rAT, ConfigData->numStates, ConfigData->numStates, sBarT);
-    mTranspose(sBarT, ConfigData->numStates, ConfigData->numStates,
-        ConfigData->sBar);
+    ukfQRDJustR(AT, 2 * configData->countHalfSPs + configData->numStates,
+                configData->countHalfSPs, rAT);
+    mCopy(rAT, configData->numStates, configData->numStates, sBarT);
+    mTranspose(sBarT, configData->numStates, configData->numStates,
+        configData->sBar);
     
     /*! - Shift the sBar matrix over by the xBar vector using the appropriate weight 
           like in equation 21 in design document.*/
-    vScale(-1.0, ConfigData->xBar, ConfigData->numStates, xErr);
-    vAdd(xErr, ConfigData->numStates, &ConfigData->SP[0], xErr);
-    ukfCholDownDate(ConfigData->sBar, xErr, ConfigData->wC[0],
-        ConfigData->numStates, sBarUp);
+    vScale(-1.0, configData->xBar, configData->numStates, xErr);
+    vAdd(xErr, configData->numStates, &configData->SP[0], xErr);
+    ukfCholDownDate(configData->sBar, xErr, configData->wC[0],
+        configData->numStates, sBarUp);
     
     /*! - Save current sBar matrix, covariance, and state estimate off for further use*/
-    mCopy(sBarUp, ConfigData->numStates, ConfigData->numStates, ConfigData->sBar);
-    mTranspose(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
-        ConfigData->covar);
-	mMultM(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
-        ConfigData->covar, ConfigData->numStates, ConfigData->numStates,
-           ConfigData->covar);
-    vCopy(&(ConfigData->SP[0]), ConfigData->numStates, ConfigData->state );
+    mCopy(sBarUp, configData->numStates, configData->numStates, configData->sBar);
+    mTranspose(configData->sBar, configData->numStates, configData->numStates,
+        configData->covar);
+	mMultM(configData->sBar, configData->numStates, configData->numStates,
+        configData->covar, configData->numStates, configData->numStates,
+           configData->covar);
+    vCopy(&(configData->SP[0]), configData->numStates, configData->state );
 	
-	ConfigData->timeTag = updateTime;
+	configData->timeTag = updateTime;
 }
 
 /*! This method computes what the expected measurement vector is for each opnave measurement.  All data is transacted from the main
     data structure for the model because there are many variables that would 
     have to be updated otherwise.
  @return void
- @param ConfigData The configuration data associated with the heading estimator
+ @param configData The configuration data associated with the heading estimator
 
  */
-void headingSuKFMeasModel(HeadingSuKFConfig *ConfigData)
+void headingSuKFMeasModel(HeadingSuKFConfig *configData)
 {
-    /* Begin method steps */
     /*! - Loop over sigma points */
     int j;
     int i;
-    v3Copy(ConfigData->opnavInBuffer.rel_pos, ConfigData->obs);
-    for(j=0; j<ConfigData->countHalfSPs*2+1; j++)
+    v3Copy(configData->opnavInBuffer.rel_pos, configData->obs);
+    for(j=0; j<configData->countHalfSPs*2+1; j++)
     {
         for(i=0; i<3; i++)
-        ConfigData->yMeas[i*(ConfigData->countHalfSPs*2+1) + j] =
-            ConfigData->SP[i + j*HEAD_N_STATES_SWITCH];
+        configData->yMeas[i*(configData->countHalfSPs*2+1) + j] =
+            configData->SP[i + j*HEAD_N_STATES_SWITCH];
     }
     
     /*! - yMeas matrix was set backwards deliberately so we need to transpose it through*/
-    mTranspose(ConfigData->yMeas, OPNAV_MEAS, ConfigData->countHalfSPs*2+1,
-        ConfigData->yMeas);
+    mTranspose(configData->yMeas, OPNAV_MEAS, configData->countHalfSPs*2+1,
+        configData->yMeas);
     
 }
 
@@ -384,10 +379,10 @@ void headingSuKFMeasModel(HeadingSuKFConfig *ConfigData)
  It applies the observations in the obs vectors to the current state estimate and 
  updates the state/covariance with that information.
  @return void
- @param ConfigData The configuration data associated with the heading estimator
+ @param configData The configuration data associated with the heading estimator
  @param updateTime The time that we need to fix the filter to (seconds)
  */
-void headingSuKFMeasUpdate(HeadingSuKFConfig *ConfigData, double updateTime)
+void headingSuKFMeasUpdate(HeadingSuKFConfig *configData, double updateTime)
 {
     uint32_t i;
     double yBar[OPNAV_MEAS], syInv[OPNAV_MEAS*OPNAV_MEAS];
@@ -397,34 +392,32 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *ConfigData, double updateTime)
     double rAT[OPNAV_MEAS*OPNAV_MEAS], syT[OPNAV_MEAS*OPNAV_MEAS];
     double sy[OPNAV_MEAS*OPNAV_MEAS];
     double updMat[OPNAV_MEAS*OPNAV_MEAS], pXY[HEAD_N_STATES_SWITCH*OPNAV_MEAS];
-    
-    /*! Begin method steps*/
-    
+        
     /*! - Compute the valid observations and the measurement model for all observations*/
-    headingSuKFMeasModel(ConfigData);
+    headingSuKFMeasModel(configData);
     
     /*! - Compute the value for the yBar parameter (note that this is equation 23 in the 
           time update section of the reference document*/
     vSetZero(yBar, OPNAV_MEAS);
-    for(i=0; i<ConfigData->countHalfSPs*2+1; i++)
+    for(i=0; i<configData->countHalfSPs*2+1; i++)
     {
-        vCopy(&(ConfigData->yMeas[i*OPNAV_MEAS]), OPNAV_MEAS,
+        vCopy(&(configData->yMeas[i*OPNAV_MEAS]), OPNAV_MEAS,
               tempYVec);
-        vScale(ConfigData->wM[i], tempYVec, OPNAV_MEAS, tempYVec);
+        vScale(configData->wM[i], tempYVec, OPNAV_MEAS, tempYVec);
         vAdd(yBar, OPNAV_MEAS, tempYVec, yBar);
     }
     
     /*! - Populate the matrix that we perform the QR decomposition on in the measurement 
           update section of the code.  This is based on the differenence between the yBar 
           parameter and the calculated measurement models.  Equation 24 in driving doc. */
-    mSetZero(AT, ConfigData->countHalfSPs*2+OPNAV_MEAS,
+    mSetZero(AT, configData->countHalfSPs*2+OPNAV_MEAS,
         OPNAV_MEAS);
-    for(i=0; i<ConfigData->countHalfSPs*2; i++)
+    for(i=0; i<configData->countHalfSPs*2; i++)
     {
         vScale(-1.0, yBar, OPNAV_MEAS, tempYVec);
         vAdd(tempYVec, OPNAV_MEAS,
-             &(ConfigData->yMeas[(i+1)*OPNAV_MEAS]), tempYVec);
-        vScale(sqrt(ConfigData->wC[i+1]), tempYVec, OPNAV_MEAS, tempYVec);
+             &(configData->yMeas[(i+1)*OPNAV_MEAS]), tempYVec);
+        vScale(sqrt(configData->wC[i+1]), tempYVec, OPNAV_MEAS, tempYVec);
         memcpy(&(AT[i*OPNAV_MEAS]), tempYVec,
                OPNAV_MEAS*sizeof(double));
     }
@@ -432,23 +425,23 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *ConfigData, double updateTime)
     /*! - This is the square-root of the Rk matrix which we treat as the Cholesky
         decomposition of the observation variance matrix constructed for our number 
         of observations*/
-    mSetIdentity(ConfigData->qObs, OPNAV_MEAS, OPNAV_MEAS);
-    mScale(ConfigData->qObsVal, ConfigData->qObs, OPNAV_MEAS,
-           OPNAV_MEAS, ConfigData->qObs);
-    ukfCholDecomp(ConfigData->qObs, OPNAV_MEAS, OPNAV_MEAS, qChol);
-    memcpy(&(AT[2*ConfigData->countHalfSPs*OPNAV_MEAS]),
+    mSetIdentity(configData->qObs, OPNAV_MEAS, OPNAV_MEAS);
+    mScale(configData->qObsVal, configData->qObs, OPNAV_MEAS,
+           OPNAV_MEAS, configData->qObs);
+    ukfCholDecomp(configData->qObs, OPNAV_MEAS, OPNAV_MEAS, qChol);
+    memcpy(&(AT[2*configData->countHalfSPs*OPNAV_MEAS]),
            qChol, OPNAV_MEAS*OPNAV_MEAS*sizeof(double));
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the 
           current Sy matrix*/
-    ukfQRDJustR(AT, 2*ConfigData->countHalfSPs+OPNAV_MEAS,
+    ukfQRDJustR(AT, 2*configData->countHalfSPs+OPNAV_MEAS,
                 OPNAV_MEAS, rAT);
     mCopy(rAT, OPNAV_MEAS, OPNAV_MEAS, syT);
     mTranspose(syT, OPNAV_MEAS, OPNAV_MEAS, sy);
     /*! - Shift the matrix over by the difference between the 0th SP-based measurement 
           model and the yBar matrix (cholesky down-date again)*/
     vScale(-1.0, yBar, OPNAV_MEAS, tempYVec);
-    vAdd(tempYVec, OPNAV_MEAS, &(ConfigData->yMeas[0]), tempYVec);
-    ukfCholDownDate(sy, tempYVec, ConfigData->wC[0],
+    vAdd(tempYVec, OPNAV_MEAS, &(configData->yMeas[0]), tempYVec);
+    ukfCholDownDate(sy, tempYVec, configData->wC[0],
                     OPNAV_MEAS, updMat);
     /*! - Shifted matrix represents the Sy matrix */
     mCopy(updMat, OPNAV_MEAS, OPNAV_MEAS, sy);
@@ -456,18 +449,18 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *ConfigData, double updateTime)
 
     /*! - Construct the Pxy matrix (equation 26) which multiplies the Sigma-point cloud 
           by the measurement model cloud (weighted) to get the total Pxy matrix*/
-    mSetZero(pXY, ConfigData->numStates, OPNAV_MEAS);
-    for(i=0; i<2*ConfigData->countHalfSPs+1; i++)
+    mSetZero(pXY, configData->numStates, OPNAV_MEAS);
+    for(i=0; i<2*configData->countHalfSPs+1; i++)
     {
         vScale(-1.0, yBar, OPNAV_MEAS, tempYVec);
         vAdd(tempYVec, OPNAV_MEAS,
-             &(ConfigData->yMeas[i*OPNAV_MEAS]), tempYVec);
-        vSubtract(&(ConfigData->SP[i*ConfigData->numStates]), ConfigData->numStates,
-                  ConfigData->xBar, xHat);
-        vScale(ConfigData->wC[i], xHat, ConfigData->numStates, xHat);
-        mMultM(xHat, ConfigData->numStates, 1, tempYVec, 1, OPNAV_MEAS,
+             &(configData->yMeas[i*OPNAV_MEAS]), tempYVec);
+        vSubtract(&(configData->SP[i*configData->numStates]), configData->numStates,
+                  configData->xBar, xHat);
+        vScale(configData->wC[i], xHat, configData->numStates, xHat);
+        mMultM(xHat, configData->numStates, 1, tempYVec, 1, OPNAV_MEAS,
             kMat);
-        mAdd(pXY, ConfigData->numStates, OPNAV_MEAS, kMat, pXY);
+        mAdd(pXY, configData->numStates, OPNAV_MEAS, kMat, pXY);
     }
 
     /*! - Then we need to invert the SyT*Sy matrix to get the Kalman gain factor.  Since
@@ -476,40 +469,40 @@ void headingSuKFMeasUpdate(HeadingSuKFConfig *ConfigData, double updateTime)
           multiplication is done (equation 27), we have the Kalman Gain.*/
     ukfUInv(syT, OPNAV_MEAS, OPNAV_MEAS, syInv);
     
-    mMultM(pXY, ConfigData->numStates, OPNAV_MEAS, syInv,
+    mMultM(pXY, configData->numStates, OPNAV_MEAS, syInv,
            OPNAV_MEAS, OPNAV_MEAS, kMat);
     ukfLInv(sy, OPNAV_MEAS, OPNAV_MEAS, syInv);
-    mMultM(kMat, ConfigData->numStates, OPNAV_MEAS, syInv,
+    mMultM(kMat, configData->numStates, OPNAV_MEAS, syInv,
            OPNAV_MEAS, OPNAV_MEAS, kMat);
     
     
     /*! - Difference the yBar and the observations to get the observed error and 
           multiply by the Kalman Gain to get the state update.  Add the state update 
           to the state to get the updated state value (equation 27).*/
-    vSubtract(ConfigData->obs, OPNAV_MEAS, yBar, tempYVec);
-    mMultM(kMat, ConfigData->numStates, OPNAV_MEAS, tempYVec,
+    vSubtract(configData->obs, OPNAV_MEAS, yBar, tempYVec);
+    mMultM(kMat, configData->numStates, OPNAV_MEAS, tempYVec,
         OPNAV_MEAS, 1, xHat);
-    vAdd(ConfigData->state, ConfigData->numStates, xHat, ConfigData->state);
+    vAdd(configData->state, configData->numStates, xHat, configData->state);
     /*! - Compute the updated matrix U from equation 28.  Note that I then transpose it 
          so that I can extract "columns" from adjacent memory*/
-    mMultM(kMat, ConfigData->numStates, OPNAV_MEAS, sy,
+    mMultM(kMat, configData->numStates, OPNAV_MEAS, sy,
            OPNAV_MEAS, OPNAV_MEAS, pXY);
-    mTranspose(pXY, ConfigData->numStates, OPNAV_MEAS, pXY);
+    mTranspose(pXY, configData->numStates, OPNAV_MEAS, pXY);
     /*! - For each column in the update matrix, perform a cholesky down-date on it to 
           get the total shifted S matrix (called sBar in internal parameters*/
     for(i=0; i<OPNAV_MEAS; i++)
     {
-        vCopy(&(pXY[i*ConfigData->numStates]), ConfigData->numStates, tempYVec);
-        ukfCholDownDate(ConfigData->sBar, tempYVec, -1.0, ConfigData->numStates, sBarT);
-        mCopy(sBarT, ConfigData->numStates, ConfigData->numStates,
-            ConfigData->sBar);
+        vCopy(&(pXY[i*configData->numStates]), configData->numStates, tempYVec);
+        ukfCholDownDate(configData->sBar, tempYVec, -1.0, configData->numStates, sBarT);
+        mCopy(sBarT, configData->numStates, configData->numStates,
+            configData->sBar);
     }
     /*! - Compute equivalent covariance based on updated sBar matrix*/
-    mTranspose(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
-               ConfigData->covar);
-    mMultM(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
-           ConfigData->covar, ConfigData->numStates, ConfigData->numStates,
-           ConfigData->covar);
+    mTranspose(configData->sBar, configData->numStates, configData->numStates,
+               configData->covar);
+    mMultM(configData->sBar, configData->numStates, configData->numStates,
+           configData->covar, configData->numStates, configData->numStates,
+           configData->covar);
 }
 
 

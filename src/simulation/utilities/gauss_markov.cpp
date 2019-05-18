@@ -60,7 +60,6 @@ void GaussMarkov::computeNextState()
     Eigen::VectorXd ranNums;
     int i;
     
-    //! Begin method steps
     //! - Check for consistent sizes on all of the user-settable matrices.  Quit if they don't match.
     if((this->propMatrix.size() != this->noiseMatrix.size()) ||
        (this->propMatrix.size() != this->numStates*this->numStates))

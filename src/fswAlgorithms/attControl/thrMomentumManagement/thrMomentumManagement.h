@@ -61,10 +61,10 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint64_t moduleID);
-    void Update_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64_t moduleID);
+    void CrossInit_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64_t moduleID);
+    void Update_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void Reset_thrMomentumManagement(thrMomentumManagementConfig *configData, uint64_t callTime, uint64_t moduleID);
     
 #ifdef __cplusplus
 }

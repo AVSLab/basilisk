@@ -53,9 +53,7 @@ OrbElemConvert::~OrbElemConvert()
  */
 void OrbElemConvert::SelfInit()
 {
-    
-    //! Begin method steps
-    //! - Determine what the size of the output should be and create the message
+        //! - Determine what the size of the output should be and create the message
 	stateMsgSize = useEphemFormat ? sizeof(SpicePlanetStateSimMsg) :
 		sizeof(SCPlusStatesSimMsg);
 	std::string stateMsgType = useEphemFormat ? "SpicePlanetStateSimMsg" :
@@ -67,7 +65,6 @@ void OrbElemConvert::SelfInit()
     StateOutMsgID = SystemMessaging::GetInstance()->
         CreateNewMessage( OutputDataString, OutputSize, OutputBufferCount,
         messageType, moduleID);
-    
 }
 
 /*! This method links up the desired input method with whoever created it.
@@ -98,7 +95,7 @@ void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
 	SpicePlanetStateSimMsg planetIn;
 	uint8_t *msgPtr = useEphemFormat ? reinterpret_cast<uint8_t *> (&planetIn) :
 		reinterpret_cast<uint8_t *> (&statesIn);
-    //! Begin method steps
+
     //! - If it is outputting cartesian, create a StateData struct and write out.
     //! - If it is outputting elements, just write the current elements out
     if(Elements2Cart)
@@ -148,7 +145,6 @@ void OrbElemConvert::Cartesian2Elements()
  */
 void OrbElemConvert::ReadInputs()
 {
-    //! Begin method steps
     //! - Quit if we don't have a valid input ID.
     if(StateInMsgID < 0)
     {
@@ -199,7 +195,6 @@ void OrbElemConvert::ReadInputs()
  */
 void OrbElemConvert::UpdateState(uint64_t CurrentSimNanos)
 {
-    //! Begin method steps
     //! - If we need to reinit, call SelfInit, CrossInit, and set flag false
     if(ReinitSelf)
     {

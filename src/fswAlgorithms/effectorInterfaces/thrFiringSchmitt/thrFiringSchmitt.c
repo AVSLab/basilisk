@@ -32,16 +32,15 @@
 
 
 
-/*! This method initializes the ConfigData for this module.  It creates a single output message of type
+/*! This method initializes the configData for this module.  It creates a single output message of type
  [THRArrayOnTimeCmdIntMsg](\ref THRArrayOnTimeCmdIntMsg).
  @return void
- @param ConfigData The configuration data associated with this module
+ @param configData The configuration data associated with this module
  */
-void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t moduleID)
+void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t moduleID)
 {
-    /*! Begin method steps */
     /*! - Create output message for module */
-    ConfigData->onTimeOutMsgId = CreateNewMessage(ConfigData->onTimeOutMsgName,
+    configData->onTimeOutMsgId = CreateNewMessage(configData->onTimeOutMsgName,
                                                sizeof(THRArrayOnTimeCmdIntMsg),
                                                "THRArrayOnTimeCmdIntMsg",          /* add the output structure name */
                                                moduleID);
@@ -51,15 +50,15 @@ void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t modu
  It links to 2 required input messages of type [THRArrayCmdForceFswMsg](\ref THRArrayCmdForceFswMsg)
  and [THRArrayConfigFswMsg](\ref THRArrayConfigFswMsg).
  @return void
- @param ConfigData The configuration data associated with this module
+ @param configData The configuration data associated with this module
  */
-void CrossInit_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t moduleID)
+void CrossInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t moduleID)
 {
 	/*! - Get the input message ID's */
-	ConfigData->thrForceInMsgId = subscribeToMessage(ConfigData->thrForceInMsgName,
+	configData->thrForceInMsgId = subscribeToMessage(configData->thrForceInMsgName,
 														 sizeof(THRArrayCmdForceFswMsg),
 														 moduleID);
-	ConfigData->thrConfInMsgId = subscribeToMessage(ConfigData->thrConfInMsgName,
+	configData->thrConfInMsgId = subscribeToMessage(configData->thrConfInMsgName,
 												sizeof(THRArrayConfigFswMsg),
 												moduleID);
 }
@@ -67,38 +66,38 @@ void CrossInit_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t mod
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
- @param ConfigData The configuration data associated with the module
+ @param configData The configuration data associated with the module
  */
-void Reset_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Reset_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
 	THRArrayConfigFswMsg   localThrusterData;     /* local copy of the thruster data message */
 	uint64_t            timeOfMsgWritten;
 	uint32_t            sizeOfMsgWritten;
 	int 				i;
 
-	ConfigData->prevCallTime = 0;
+	configData->prevCallTime = 0;
 
 	/*! - Zero and read in the support messages */
     memset(&localThrusterData, 0x0, sizeof(THRArrayConfigFswMsg));
-	ReadMessage(ConfigData->thrConfInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
+	ReadMessage(configData->thrConfInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
 				sizeof(THRArrayConfigFswMsg), &localThrusterData, moduleID);
 
     /*! - store the number of installed thrusters */
-	ConfigData->numThrusters = localThrusterData.numThrusters;
+	configData->numThrusters = localThrusterData.numThrusters;
 
     /*! - loop over all thrusters and for each copy over maximum thrust, set last state to off */
-	for(i=0; i<ConfigData->numThrusters; i++) {
-		ConfigData->maxThrust[i] = localThrusterData.thrusters[i].maxThrust;
-		ConfigData->lastThrustState[i] = BOOL_FALSE;
+	for(i=0; i<configData->numThrusters; i++) {
+		configData->maxThrust[i] = localThrusterData.thrusters[i].maxThrust;
+		configData->lastThrustState[i] = BOOL_FALSE;
 	}
 }
 
 /*! This method maps the input thruster command forces into thruster on times using a remainder tracking logic.
  @return void
- @param ConfigData The configuration data associated with the module
+ @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Update_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
 
 	uint64_t            timeOfMsgWritten;
@@ -115,35 +114,35 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTi
 
     /*! - the first time update() is called there is no information on the time step.  Here
      return either all thrusters off or on depending on the baseThrustState state */
-	if(ConfigData->prevCallTime == 0) {
-		ConfigData->prevCallTime = callTime;
+	if(configData->prevCallTime == 0) {
+		configData->prevCallTime = callTime;
 
-		for(i = 0; i < ConfigData->numThrusters; i++) {
-			thrOnTimeOut.OnTimeRequest[i] = (double)(ConfigData->baseThrustState) * 2.0;
+		for(i = 0; i < configData->numThrusters; i++) {
+			thrOnTimeOut.OnTimeRequest[i] = (double)(configData->baseThrustState) * 2.0;
 		}
 
-		WriteMessage(ConfigData->onTimeOutMsgId, callTime, sizeof(THRArrayOnTimeCmdIntMsg),
+		WriteMessage(configData->onTimeOutMsgId, callTime, sizeof(THRArrayOnTimeCmdIntMsg),
 					 (void*) &(thrOnTimeOut), moduleID);
 		return;
 	}
 
     /*! - compute control time period Delta_t */
-	controlPeriod = ((double)(callTime - ConfigData->prevCallTime)) * NANO2SEC;
-	ConfigData->prevCallTime = callTime;
+	controlPeriod = ((double)(callTime - configData->prevCallTime)) * NANO2SEC;
+	configData->prevCallTime = callTime;
 
     /*! - Zero and read the input thruster force message */
     memset(&thrForceIn, 0x0, sizeof(THRArrayCmdForceFswMsg));
-	ReadMessage(ConfigData->thrForceInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
+	ReadMessage(configData->thrForceInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
 				sizeof(THRArrayCmdForceFswMsg), (void*) &thrForceIn, moduleID);
 
     /*! - Loop through thrusters */
-	for(i = 0; i < ConfigData->numThrusters; i++) {
+	for(i = 0; i < configData->numThrusters; i++) {
 
         /*! - Correct for off-pulsing if necessary.  Here the requested force is negative, and the maximum thrust
          needs to be added.  If not control force is requested in off-pulsing mode, then the thruster force should
          be set to the maximum thrust value */
-		if (ConfigData->baseThrustState == 1) {
-			thrForceIn.thrForce[i] += ConfigData->maxThrust[i];
+		if (configData->baseThrustState == 1) {
+			thrForceIn.thrForce[i] += configData->maxThrust[i];
 		}
 
         /*! - Do not allow thrust requests less than zero */
@@ -151,37 +150,37 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTi
 			thrForceIn.thrForce[i] = 0.0;
 		}
         /*! - Compute T_on from thrust request, max thrust, and control period */
-		onTime[i] = thrForceIn.thrForce[i]/ConfigData->maxThrust[i]*controlPeriod;
+		onTime[i] = thrForceIn.thrForce[i]/configData->maxThrust[i]*controlPeriod;
 
         /*! - Apply Schmitt trigger logic */
-		if (onTime[i] < ConfigData->thrMinFireTime) {
+		if (onTime[i] < configData->thrMinFireTime) {
 			/*! - Request is less than minimum fire time */
-			level = onTime[i]/ConfigData->thrMinFireTime;
-			if (level >= ConfigData->level_on) {
-				ConfigData->lastThrustState[i] = BOOL_TRUE;
-				onTime[i] = ConfigData->thrMinFireTime;
-			} else if (level <= ConfigData->level_off) {
-				ConfigData->lastThrustState[i] = BOOL_FALSE;
+			level = onTime[i]/configData->thrMinFireTime;
+			if (level >= configData->level_on) {
+				configData->lastThrustState[i] = BOOL_TRUE;
+				onTime[i] = configData->thrMinFireTime;
+			} else if (level <= configData->level_off) {
+				configData->lastThrustState[i] = BOOL_FALSE;
 				onTime[i] = 0.0;
-			} else if (ConfigData->lastThrustState[i] == BOOL_TRUE) {
-				onTime[i] = ConfigData->thrMinFireTime;
+			} else if (configData->lastThrustState[i] == BOOL_TRUE) {
+				onTime[i] = configData->thrMinFireTime;
 			} else {
 				onTime[i] = 0.0;
 			}
 		} else if (onTime[i] >= controlPeriod) {
             /*! - Request is greater than control period then oversaturate onTime */
-			ConfigData->lastThrustState[i] = BOOL_TRUE;
+			configData->lastThrustState[i] = BOOL_TRUE;
 			onTime[i] = 1.1*controlPeriod; // oversaturate to avoid numerical error
 		} else {
 			/*! - Request is greater than minimum fire time and less than control period */
-			ConfigData->lastThrustState[i] = BOOL_TRUE;
+			configData->lastThrustState[i] = BOOL_TRUE;
 		}
 
 		/*! Set the output data */
 		thrOnTimeOut.OnTimeRequest[i] = onTime[i];
 	}
 
-	WriteMessage(ConfigData->onTimeOutMsgId, callTime, sizeof(THRArrayOnTimeCmdIntMsg),
+	WriteMessage(configData->onTimeOutMsgId, callTime, sizeof(THRArrayOnTimeCmdIntMsg),
 				 (void*) &thrOnTimeOut, moduleID);
 
 	return;

@@ -363,7 +363,6 @@ void GravityEffector::SelfInit()
 
 void GravityEffector::CrossInit()
 {
-    //! Begin method steps
     //! - For each gravity body in the data vector, find message ID
     std::vector<GravBodyData *>::iterator it;
     for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
@@ -374,7 +373,6 @@ void GravityEffector::CrossInit()
 
 void GravityEffector::UpdateState(uint64_t CurrentSimNanos)
 {
-    //! Begin method steps
     //! - Updates the grav body planet ephemerides
     std::vector<GravBodyData *>::iterator it;
     for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)

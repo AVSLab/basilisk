@@ -73,7 +73,6 @@ SimpleNav::~SimpleNav()
 */
 void SimpleNav::SelfInit()
 {
-    //! Begin method steps
     uint64_t numStates = 18;
     //! - Create a new message for the output simple nav state data
     this->outputAttID = SystemMessaging::GetInstance()->
@@ -108,7 +107,6 @@ void SimpleNav::SelfInit()
 */
 void SimpleNav::CrossInit()
 {
-    //! Begin method steps
     //! - Obtain the ID associated with the input state name and alert if not found.
     this->inputStateID = SystemMessaging::GetInstance()->
     SystemMessaging::GetInstance()->
@@ -131,7 +129,6 @@ void SimpleNav::CrossInit()
  */
 void SimpleNav::readInputMessages()
 {
-    //! Begin method steps
     SingleMessageHeader localHeader;
     memset(&this->sunState, 0x0, sizeof(SpicePlanetStateSimMsg));
     memset(&this->inertialState, 0x0, sizeof(SCPlusStatesSimMsg));
@@ -153,7 +150,6 @@ void SimpleNav::readInputMessages()
  */
 void SimpleNav::writeOutputMessages(uint64_t Clock)
 {
-    //! Begin method steps
     SystemMessaging::GetInstance()->
     WriteMessage(this->outputAttID, Clock, sizeof(NavAttIntMsg),
                  reinterpret_cast<uint8_t*> (&estAttState), this->moduleID);

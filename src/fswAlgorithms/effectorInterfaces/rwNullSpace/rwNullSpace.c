@@ -26,7 +26,7 @@
 
 /*! @brief This method creates the module output message of type [RWArrayTorqueIntMsg](\ref RWArrayTorqueIntMsg).
  @return void
- @param ConfigData The configuration data associated with RW null space model
+ @param configData The configuration data associated with RW null space model
  */
 void SelfInit_rwNullSpace(rwNullSpaceConfig *configData, uint64_t moduleID)
 {
@@ -41,7 +41,7 @@ void SelfInit_rwNullSpace(rwNullSpaceConfig *configData, uint64_t moduleID)
  interface.  It's primary function is to link the input messages that were
  created elsewhere.
  @return void
- @param ConfigData The configuration data associated with the sun safe ACS control
+ @param configData The configuration data associated with the sun safe ACS control
  */
 void CrossInit_rwNullSpace(rwNullSpaceConfig *configData, uint64_t moduleID)
 {
@@ -59,9 +59,9 @@ void CrossInit_rwNullSpace(rwNullSpaceConfig *configData, uint64_t moduleID)
 
 /*! @brief This resets the module to original states by reading in the RW configuration messages and recreating any module specific variables.  The output message is reset to zero.
     @return void
-    @param ConfigData The configuration data associated with the null space control
+    @param configData The configuration data associated with the null space control
     @param callTime The clock time at which the function was called (nanoseconds)
-    @param moduleID The ID associated with the ConfigData
+    @param moduleID The ID associated with the configData
  */
 void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
                         uint64_t moduleID)
@@ -109,9 +109,9 @@ void Reset_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
     reaction wheel speeds and balances the commands so that the overall vehicle 
 	momentum is minimized.
  @return void
- @param ConfigData The configuration data associated with the null space control
+ @param configData The configuration data associated with the null space control
  @param callTime The clock time at which the function was called (nanoseconds)
- @param moduleID The ID associated with the ConfigData
+ @param moduleID The ID associated with the configData
  */
 void Update_rwNullSpace(rwNullSpaceConfig *configData, uint64_t callTime,
     uint64_t moduleID)
