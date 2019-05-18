@@ -26,16 +26,16 @@
 #include "simulation/utilities/astroConstants.h"
 #include "simulation/utilities/bsk_Print.h"
 
-/*! This method initializes the ConfigData for the spacecraft pointing module
+/*! This method initializes the configData for the spacecraft pointing module
  It checks to ensure that the inputs are sane and then creates the
  output message
  @return void
- @param ConfigData The configuration data associated with the spacecraft pointing module
+ @param configData The configuration data associated with the spacecraft pointing module
  */
-void SelfInit_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t moduleID)
+void SelfInit_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t moduleID)
 {
     /*! - Create output message for module */
-    ConfigData->attReferenceOutMsgID = CreateNewMessage(ConfigData->attReferenceOutMsgName,
+    configData->attReferenceOutMsgID = CreateNewMessage(configData->attReferenceOutMsgName,
                                                sizeof(AttRefFswMsg),
                                                "AttRefFswMsg",
                                                moduleID);
@@ -46,13 +46,13 @@ void SelfInit_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t 
  module interface. It's primary function is to link the input messages that were
  created elsewhere.
  @return void
- @param ConfigData The configuration data associated with the spacecraft pointing module
+ @param configData The configuration data associated with the spacecraft pointing module
  */
-void CrossInit_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t moduleID)
+void CrossInit_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t moduleID)
 {
-    ConfigData->chiefPositionInMsgID = subscribeToMessage(ConfigData->chiefPositionInMsgName,
+    configData->chiefPositionInMsgID = subscribeToMessage(configData->chiefPositionInMsgName,
                                                           sizeof(NavTransIntMsg), moduleID);
-    ConfigData->deputyPositionInMsgID = subscribeToMessage(ConfigData->deputyPositionInMsgName,
+    configData->deputyPositionInMsgID = subscribeToMessage(configData->deputyPositionInMsgName,
                                                            sizeof(NavTransIntMsg), moduleID);
     
 }
@@ -60,9 +60,9 @@ void CrossInit_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
- @param ConfigData The configuration data associated with the pointing module
+ @param configData The configuration data associated with the pointing module
  */
-void Reset_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Reset_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
     /* Build a coordinate system around the vector within the body frame that points towards the antenna and write the orientation
      of the B-frame with respect to the A-frame. */
@@ -72,24 +72,24 @@ void Reset_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t cal
     double A_y_B[3];                                /*!< ---  y-axis of A-frame expressed in B-frame components */
     double A_z_B[3];                                /*!< ---  z-axis of A-frame expresses in B-frame components */
     double sigma_AB[3];                             /*!< ---  MRP of A-frame with respect to B-frame */
-    v3Normalize(ConfigData->alignmentVector_B, dcm_AB[0]);
-    v3Cross(temp_z, ConfigData->alignmentVector_B, A_y_B);
+    v3Normalize(configData->alignmentVector_B, dcm_AB[0]);
+    v3Cross(temp_z, configData->alignmentVector_B, A_y_B);
     /* If the alignment vector aligns with the z-axis of the body frame, the cross product is performed with a temporary y-axis. */
     if (v3Norm(A_y_B) < 1e-6){
-        v3Cross(ConfigData->alignmentVector_B, temp_y, A_y_B);
+        v3Cross(configData->alignmentVector_B, temp_y, A_y_B);
     }
     v3Normalize(A_y_B, dcm_AB[1]);
     v3Cross(dcm_AB[0], dcm_AB[1], A_z_B);
     v3Normalize(A_z_B, dcm_AB[2]);
     C2MRP(dcm_AB, sigma_AB);
-    v3Scale(-1, sigma_AB, ConfigData->sigma_BA);
+    v3Scale(-1, sigma_AB, configData->sigma_BA);
     
     /* Set initial values of the sigma and omega of the previous timestep to zero. */
-    v3SetZero(ConfigData->old_sigma_RN);
-    v3SetZero(ConfigData->old_omega_RN_N);
+    v3SetZero(configData->old_sigma_RN);
+    v3SetZero(configData->old_omega_RN_N);
     
     /* Set the numerical error flag to zero. */
-    ConfigData->i = 0;
+    configData->i = 0;
     
     return;
 }
@@ -99,10 +99,10 @@ void Reset_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t cal
  respect to the inertial reference frame in inertial reference frame components and passes them to
  the attitude tracking error module, where that attitude error can be calculated.
  @return void
- @param ConfigData The configuration data associated with the spacecraft pointing module
+ @param configData The configuration data associated with the spacecraft pointing module
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t callTime,
+void Update_spacecraftPointing(spacecraftPointingConfig *configData, uint64_t callTime,
     uint64_t moduleID)
 {
     NavTransIntMsg chiefTransMsg;                   /*!< ---  Input message that consists of the position and velocity of the chief */
@@ -139,9 +139,9 @@ void Update_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t ca
     memset(&(chiefTransMsg), 0x0, sizeof(NavTransIntMsg));
     memset(&(deputyTransMsg), 0x0, sizeof(NavTransIntMsg));
     
-    ReadMessage(ConfigData->chiefPositionInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->chiefPositionInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavTransIntMsg), (void*) &(chiefTransMsg), moduleID);
-    ReadMessage(ConfigData->deputyPositionInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->deputyPositionInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavTransIntMsg), (void*) &(deputyTransMsg), moduleID);
 
     /* Find the vector that points from the deputy spacecraft to the chief spacecraft. */
@@ -162,8 +162,8 @@ void Update_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t ca
 
     /* Determine omega_RN_N */
     /* Delta sigma is calculated and the shadow delta sigma. */
-    v3Subtract(sigma_RN, ConfigData->old_sigma_RN, delta_sigma_RN);
-    MRPswitch(ConfigData->old_sigma_RN, 0.0, old_sigma_RN_shadow);
+    v3Subtract(sigma_RN, configData->old_sigma_RN, delta_sigma_RN);
+    MRPswitch(configData->old_sigma_RN, 0.0, old_sigma_RN_shadow);
     v3Subtract(sigma_RN, old_sigma_RN_shadow, delta_sigma_RN_shadow);
 
     /* Usually, the norm of delta_sigma_RN_shadow is way larger than delta_sigma_RN (and not the correct delta to take).
@@ -171,12 +171,12 @@ void Update_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t ca
        give the correct delta. So the if statement below makes sure that this is done. */
     if (v3Norm(delta_sigma_RN) >= v3Norm(delta_sigma_RN_shadow)){
         v3Copy(delta_sigma_RN_shadow, delta_sigma_RN);
-        v3Copy(old_sigma_RN_shadow, ConfigData->old_sigma_RN);
+        v3Copy(old_sigma_RN_shadow, configData->old_sigma_RN);
         }
 
     /* Find the timestep of the simulation. */
-    dt = (callTime - ConfigData->priorTime) * NANO2SEC;
-    ConfigData->priorTime = callTime;
+    dt = (callTime - configData->priorTime) * NANO2SEC;
+    configData->priorTime = callTime;
         
     /* sigma_dot_RN is calculated by dividing the difference in sigma by the timestep. */
     v3Scale((1.0/dt), delta_sigma_RN, sigma_dot_RN);
@@ -184,12 +184,12 @@ void Update_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t ca
     /* Due to the fact that sigma_dot_RN is actually the average increase in sigma over the timeperiod between t-1 and t,
        it turned out that the bevaviour of the simulation significantly improves in case the average of the B-matrix of old_sigma_RN
        and new_sigma_RN is taken, as well as the average of 1/((1+sigma^2)^2) (see Schaub and Junkins eq. 3.163). */
-    old_sigma_RN_squared = ConfigData->old_sigma_RN[0]*ConfigData->old_sigma_RN[0] + ConfigData->old_sigma_RN[1]*ConfigData->old_sigma_RN[1] + ConfigData->old_sigma_RN[2]*ConfigData->old_sigma_RN[2];
+    old_sigma_RN_squared = configData->old_sigma_RN[0]*configData->old_sigma_RN[0] + configData->old_sigma_RN[1]*configData->old_sigma_RN[1] + configData->old_sigma_RN[2]*configData->old_sigma_RN[2];
     sigma_RN_squared = sigma_RN[0]*sigma_RN[0] + sigma_RN[1]*sigma_RN[1] + sigma_RN[2]*sigma_RN[2];
         
-    m33Set(1.0 - old_sigma_RN_squared + 2.0*ConfigData->old_sigma_RN[0]*ConfigData->old_sigma_RN[0], 2.0*(ConfigData->old_sigma_RN[0]*ConfigData->old_sigma_RN[1] - ConfigData->old_sigma_RN[2]), 2.0*(ConfigData->old_sigma_RN[0]*ConfigData->old_sigma_RN[2] + ConfigData->old_sigma_RN[1]),
-        2.0*(ConfigData->old_sigma_RN[1]*ConfigData->old_sigma_RN[0] + ConfigData->old_sigma_RN[2]), 1.0 - old_sigma_RN_squared + 2.0*ConfigData->old_sigma_RN[1]*ConfigData->old_sigma_RN[1], 2.0*(ConfigData->old_sigma_RN[1]*ConfigData->old_sigma_RN[2] - ConfigData->old_sigma_RN[0]),
-        2.0*(ConfigData->old_sigma_RN[2]*ConfigData->old_sigma_RN[0] - ConfigData->old_sigma_RN[1]), 2.0*(ConfigData->old_sigma_RN[2]*ConfigData->old_sigma_RN[1] + ConfigData->old_sigma_RN[0]), 1.0 - old_sigma_RN_squared + 2.0*ConfigData->old_sigma_RN[2]*ConfigData->old_sigma_RN[2],
+    m33Set(1.0 - old_sigma_RN_squared + 2.0*configData->old_sigma_RN[0]*configData->old_sigma_RN[0], 2.0*(configData->old_sigma_RN[0]*configData->old_sigma_RN[1] - configData->old_sigma_RN[2]), 2.0*(configData->old_sigma_RN[0]*configData->old_sigma_RN[2] + configData->old_sigma_RN[1]),
+        2.0*(configData->old_sigma_RN[1]*configData->old_sigma_RN[0] + configData->old_sigma_RN[2]), 1.0 - old_sigma_RN_squared + 2.0*configData->old_sigma_RN[1]*configData->old_sigma_RN[1], 2.0*(configData->old_sigma_RN[1]*configData->old_sigma_RN[2] - configData->old_sigma_RN[0]),
+        2.0*(configData->old_sigma_RN[2]*configData->old_sigma_RN[0] - configData->old_sigma_RN[1]), 2.0*(configData->old_sigma_RN[2]*configData->old_sigma_RN[1] + configData->old_sigma_RN[0]), 1.0 - old_sigma_RN_squared + 2.0*configData->old_sigma_RN[2]*configData->old_sigma_RN[2],
         old_B_sigma_RN);
         
     m33Set(1.0 - sigma_RN_squared + 2.0*sigma_RN[0]*sigma_RN[0], 2.0*(sigma_RN[0]*sigma_RN[1] - sigma_RN[2]), 2.0*(sigma_RN[0]*sigma_RN[2] +         sigma_RN[1]),
@@ -216,23 +216,23 @@ void Update_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t ca
     m33MultV3(dcm_NR, omega_RN_R, omega_RN_N);
     
     /* Determine domega_RN_N. */
-    v3Subtract(omega_RN_N, ConfigData->old_omega_RN_N, delta_omega_RN_N);
+    v3Subtract(omega_RN_N, configData->old_omega_RN_N, delta_omega_RN_N);
     v3Scale((1.0/dt), delta_omega_RN_N, domega_RN_N);
-    v3Copy(omega_RN_N, ConfigData->old_omega_RN_N);
+    v3Copy(omega_RN_N, configData->old_omega_RN_N);
 
     /* Copy the sigma_RN variable to the old_sigma_RN variable. */
-    v3Copy(sigma_RN, ConfigData->old_sigma_RN);
+    v3Copy(sigma_RN, configData->old_sigma_RN);
     
     /* Due to the numerical method used the first result from omega and the first two results of domega are incorrect.
         For this reason, these values are set to zero. Take into account that the first data point is an initialization
         datapoint. This is equal to zero for all parameters. So the actual simulation only starts after this first initialization
         datapoint. */
-    if (ConfigData->i < 2){
+    if (configData->i < 2){
         v3SetZero(omega_RN_N);
     }
-    if (ConfigData->i < 3){
+    if (configData->i < 3){
         v3SetZero(domega_RN_N);
-        ConfigData->i += 1;
+        configData->i += 1;
     }
     
     /* One of the requirements for this module is that the user should be able to fill in a vector within the B-frame that points at
@@ -240,13 +240,13 @@ void Update_spacecraftPointing(spacecraftPointingConfig *ConfigData, uint64_t ca
         orientation with respect to the N-frame (add sigma_BA to sigma_RN). This results in the orientation of the R1-frame with respect
         to the N-frame (sigma_R1N). In case the spacecraft B-frame points towards the R1-frame, the A-frame will point towards the R-frame,
         which results in an antenna vector that aligns with the vector that points to the chief spacecraft. */
-    addMRP(sigma_RN, ConfigData->sigma_BA, sigma_R1N);
-    v3Copy(sigma_R1N, ConfigData->attReferenceOutBuffer.sigma_RN);
-    v3Copy(omega_RN_N, ConfigData->attReferenceOutBuffer.omega_RN_N);
-    v3Copy(domega_RN_N, ConfigData->attReferenceOutBuffer.domega_RN_N);
+    addMRP(sigma_RN, configData->sigma_BA, sigma_R1N);
+    v3Copy(sigma_R1N, configData->attReferenceOutBuffer.sigma_RN);
+    v3Copy(omega_RN_N, configData->attReferenceOutBuffer.omega_RN_N);
+    v3Copy(domega_RN_N, configData->attReferenceOutBuffer.domega_RN_N);
     
     /* write the Guidance output message */
-    WriteMessage(ConfigData->attReferenceOutMsgID, callTime, sizeof(AttRefFswMsg),
-                 (void*) &(ConfigData->attReferenceOutBuffer), moduleID);
+    WriteMessage(configData->attReferenceOutMsgID, callTime, sizeof(AttRefFswMsg),
+                 (void*) &(configData->attReferenceOutBuffer), moduleID);
     return;
 }

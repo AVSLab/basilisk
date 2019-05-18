@@ -24,18 +24,18 @@
 #include <string.h>
 #include <math.h>
 
-/*! This method initializes the ConfigData for the nominal delta-V maneuver guidance.
+/*! This method initializes the configData for the nominal delta-V maneuver guidance.
  It checks to ensure that the inputs are sane and then creates the
  output message
  @return void
- @param ConfigData The configuration data associated with the delta-V maneuver guidance
+ @param configData The configuration data associated with the delta-V maneuver guidance
  */
-void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig *ConfigData, uint64_t moduleID)
+void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t moduleID)
 {
     /*! - Create output message for module */
-    ConfigData->outputMsgID = CreateNewMessage(
-        ConfigData->outputDataName, sizeof(dvExecutionData), "dvExecutionData", moduleID);
-    ConfigData->outputThrID = CreateNewMessage(ConfigData->outputThrName, sizeof(THRArrayOnTimeCmdIntMsg),
+    configData->outputMsgID = CreateNewMessage(
+        configData->outputDataName, sizeof(dvExecutionData), "dvExecutionData", moduleID);
+    configData->outputThrID = CreateNewMessage(configData->outputThrName, sizeof(THRArrayOnTimeCmdIntMsg),
                                                "THRArrayOnTimeCmdIntMsg", moduleID);
     return;
     
@@ -45,14 +45,14 @@ void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig *ConfigData, uint64_t mo
  interface.  It's primary function is to link the input messages that were
  created elsewhere.
  @return void
- @param ConfigData The configuration data associated with the attitude maneuver guidance
+ @param configData The configuration data associated with the attitude maneuver guidance
  */
-void CrossInit_dvExecuteGuidance(dvExecuteGuidanceConfig *ConfigData, uint64_t moduleID)
+void CrossInit_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t moduleID)
 {
-    /*ConfigData->inputMPID = subscribeToMessage(ConfigData->inputMassPropName, sizeof() <#int64_t moduleID#>)(ConfigData->inputMassPropName);*/
-    ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavDataName,
+    /*configData->inputMPID = subscribeToMessage(configData->inputMassPropName, sizeof() <#int64_t moduleID#>)(configData->inputMassPropName);*/
+    configData->inputNavID = subscribeToMessage(configData->inputNavDataName,
         sizeof(NavTransIntMsg), moduleID);
-    ConfigData->inputBurnCmdID = subscribeToMessage(ConfigData->inputBurnDataName,
+    configData->inputBurnCmdID = subscribeToMessage(configData->inputBurnDataName,
                                                     sizeof(DvBurnCmdFswMsg), moduleID);
     return;
     
@@ -62,10 +62,10 @@ void CrossInit_dvExecuteGuidance(dvExecuteGuidanceConfig *ConfigData, uint64_t m
     command to use for burn execution.  It also flags whether the burn should 
     be happening or not.
  @return void
- @param ConfigData The configuration data associated with the delta-V maneuver guidance
+ @param configData The configuration data associated with the delta-V maneuver guidance
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *ConfigData, uint64_t callTime,
+void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *configData, uint64_t callTime,
     uint64_t moduleID)
 {
     double burnAccum[3];
@@ -79,43 +79,43 @@ void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *ConfigData, uint64_t call
     dvExecutionData localExeData;
     THRArrayOnTimeCmdIntMsg effCmd;
     
-    ReadMessage(ConfigData->inputNavID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->inputNavID, &timeOfMsgWritten, &sizeOfMsgWritten,
         sizeof(NavTransIntMsg), &navData, moduleID);
-    ReadMessage(ConfigData->inputBurnCmdID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->inputBurnCmdID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(DvBurnCmdFswMsg), &localBurnData, moduleID);
     
     burnTime = ((int64_t) callTime - (int64_t) localBurnData.burnStartTime)*1.0E-9;
     v3SetZero(burnAccum);
-    if((ConfigData->burnExecuting == 0 && burnTime >= 0.0)
-        && ConfigData->burnComplete != 1)
+    if((configData->burnExecuting == 0 && burnTime >= 0.0)
+        && configData->burnComplete != 1)
     {
-        ConfigData->burnExecuting = 1;
-        v3Copy(navData.vehAccumDV, ConfigData->dvInit);
-        ConfigData->burnComplete = 0;
+        configData->burnExecuting = 1;
+        v3Copy(navData.vehAccumDV, configData->dvInit);
+        configData->burnComplete = 0;
     }
 
-    if(ConfigData->burnExecuting)
+    if(configData->burnExecuting)
     {
-        v3Subtract(navData.vehAccumDV, ConfigData->dvInit, burnAccum);
+        v3Subtract(navData.vehAccumDV, configData->dvInit, burnAccum);
     }
     
     dvMag = v3Norm(localBurnData.dvInrtlCmd);
     dvExecuteMag = v3Norm(burnAccum);
-    ConfigData->burnComplete = ConfigData->burnComplete == 1 ||
+    configData->burnComplete = configData->burnComplete == 1 ||
         dvExecuteMag > dvMag;
-    ConfigData->burnExecuting = ConfigData->burnComplete != 1 &&
-        ConfigData->burnExecuting == 1;
+    configData->burnExecuting = configData->burnComplete != 1 &&
+        configData->burnExecuting == 1;
     
-    if(ConfigData->burnComplete)
+    if(configData->burnComplete)
     {
         memset(&effCmd, 0x0, sizeof(THRArrayOnTimeCmdIntMsg));
-        WriteMessage(ConfigData->outputThrID, callTime,
+        WriteMessage(configData->outputThrID, callTime,
             sizeof(THRArrayOnTimeCmdIntMsg), &effCmd, moduleID);
     }
     
-    localExeData.burnComplete = ConfigData->burnComplete;
-    localExeData.burnExecuting = ConfigData->burnExecuting;
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(dvExecutionData),
+    localExeData.burnComplete = configData->burnComplete;
+    localExeData.burnExecuting = configData->burnExecuting;
+    WriteMessage(configData->outputMsgID, callTime, sizeof(dvExecutionData),
         &localExeData, moduleID);
     
     return;

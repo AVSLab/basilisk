@@ -30,16 +30,16 @@
 
 
 
-/*! This method initializes the ConfigData for this module.
+/*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
  output message
  @return void
- @param ConfigData The configuration data associated with this module
+ @param configData The configuration data associated with this module
  */
-void SelfInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t moduleID)
+void SelfInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configData, uint64_t moduleID)
 {
     /*! - Create output message for module */
-    ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
+    configData->outputMsgID = CreateNewMessage(configData->outputDataName,
                                                sizeof(CmdTorqueBodyIntMsg),
                                                 "CmdTorqueBodyIntMsg",
                                                 moduleID);
@@ -48,12 +48,12 @@ void SelfInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *Confi
 /*! This method performs the second stage of initialization for this module.
  It's primary function is to link the input messages that were created elsewhere.
  @return void
- @param ConfigData The configuration data associated with this module
+ @param configData The configuration data associated with this module
  */
-void CrossInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t moduleID)
+void CrossInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
-    ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputDataName,
+    configData->inputMsgID = subscribeToMessage(configData->inputDataName,
                                                 sizeof(CmdTorqueBodyIntMsg),
                                                 moduleID);
 }
@@ -61,27 +61,27 @@ void CrossInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *Conf
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
- @param ConfigData The configuration data associated with the MRP steering control
+ @param configData The configuration data associated with the MRP steering control
  */
-void Reset_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Reset_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
     int i;
 
-    ConfigData->reset  = BOOL_TRUE;         /* reset the first run flag */
+    configData->reset  = BOOL_TRUE;         /* reset the first run flag */
 
     for (i=0;i<NUM_LPF;i++) {
-        v3SetZero(ConfigData->Lr[i]);
-        v3SetZero(ConfigData->LrF[i]);
+        v3SetZero(configData->Lr[i]);
+        v3SetZero(configData->LrF[i]);
     }
 }
 
 /*! This method takes the attitude and rate errors relative to the Reference frame, as well as
     the reference frame angular rates and acceleration, and computes the required control torque Lr.
  @return void
- @param ConfigData The configuration data associated with the MRP Steering attitude control
+ @param configData The configuration data associated with the MRP Steering attitude control
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t callTime,
+void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *configData, uint64_t callTime,
     uint64_t moduleID)
 {
     uint64_t    timeOfMsgWritten;
@@ -90,34 +90,34 @@ void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigD
     int         i;
 
     /*! - Read the input messages */
-    ReadMessage(ConfigData->inputMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(CmdTorqueBodyIntMsg), (void*) &(ConfigData->Lr[0]), moduleID);
+    ReadMessage(configData->inputMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+                sizeof(CmdTorqueBodyIntMsg), (void*) &(configData->Lr[0]), moduleID);
 
     /*
         check if the filter states must be reset
      */
-    if (ConfigData->reset) {
+    if (configData->reset) {
         /* populate the filter history with 1st input */
         for (i=1;i<NUM_LPF;i++) {
-            v3Copy(ConfigData->Lr[0], ConfigData->Lr[i]);
+            v3Copy(configData->Lr[0], configData->Lr[i]);
         }
 
         /* zero the history of filtered outputs */
         for (i=0;i<NUM_LPF;i++) {
-            v3SetZero(ConfigData->LrF[i]);
+            v3SetZero(configData->LrF[i]);
         }
 
         /* compute h times the prewarped critical filter frequency */
-        ConfigData->hw = tan(ConfigData->wc * ConfigData->h / 2.0)*2.0;
+        configData->hw = tan(configData->wc * configData->h / 2.0)*2.0;
 
         /* determine 1st order low-pass filter coefficients */
-        ConfigData->a[0] = 2.0 + ConfigData->hw;
-        ConfigData->a[1] = 2.0 - ConfigData->hw;
-        ConfigData->b[0] = ConfigData->hw;
-        ConfigData->b[1] = ConfigData->hw;
+        configData->a[0] = 2.0 + configData->hw;
+        configData->a[1] = 2.0 - configData->hw;
+        configData->b[0] = configData->hw;
+        configData->b[1] = configData->hw;
 
         /* turn off first run flag */
-        ConfigData->reset = BOOL_FALSE;
+        configData->reset = BOOL_FALSE;
 
     }
     
@@ -125,31 +125,31 @@ void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigD
         regular filter run
      */
 
-    v3SetZero(ConfigData->LrF[0]);
+    v3SetZero(configData->LrF[0]);
     for (i=0;i<NUM_LPF;i++) {
-        v3Scale(ConfigData->b[i], ConfigData->Lr[i], v3);
-        v3Add(v3, ConfigData->LrF[0], ConfigData->LrF[0]);
+        v3Scale(configData->b[i], configData->Lr[i], v3);
+        v3Add(v3, configData->LrF[0], configData->LrF[0]);
     }
     for (i=1;i<NUM_LPF;i++) {
-        v3Scale(ConfigData->a[i], ConfigData->LrF[i], v3);
-        v3Add(v3, ConfigData->LrF[0], ConfigData->LrF[0]);
+        v3Scale(configData->a[i], configData->LrF[i], v3);
+        v3Add(v3, configData->LrF[0], configData->LrF[0]);
     }
-    v3Scale(1.0/ConfigData->a[0], ConfigData->LrF[0], ConfigData->LrF[0]);
+    v3Scale(1.0/configData->a[0], configData->LrF[0], configData->LrF[0]);
 
 
     /* reset the filter state history */
     for (i=1;i<NUM_LPF;i++) {
-        v3Copy(ConfigData->Lr[NUM_LPF-1-i],  ConfigData->Lr[NUM_LPF-i]);
-        v3Copy(ConfigData->LrF[NUM_LPF-1-i], ConfigData->LrF[NUM_LPF-i]);
+        v3Copy(configData->Lr[NUM_LPF-1-i],  configData->Lr[NUM_LPF-i]);
+        v3Copy(configData->LrF[NUM_LPF-1-i], configData->LrF[NUM_LPF-i]);
     }
 
     /*
         store the output message 
      */
-    v3Copy(ConfigData->LrF[0], ConfigData->controlOut.torqueRequestBody);
+    v3Copy(configData->LrF[0], configData->controlOut.torqueRequestBody);
     
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(CmdTorqueBodyIntMsg),
-                 (void*) &(ConfigData->controlOut), moduleID);
+    WriteMessage(configData->outputMsgID, callTime, sizeof(CmdTorqueBodyIntMsg),
+                 (void*) &(configData->controlOut), moduleID);
 
     return;
 }

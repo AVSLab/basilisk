@@ -24,21 +24,21 @@
 #include <string.h>
 #include <math.h>
 
-/*! This method initializes the ConfigData for theCSS WLS estimator.
+/*! This method initializes the configData for theCSS WLS estimator.
  It checks to ensure that the inputs are sane and then creates the
  output message
  @return void
- @param ConfigData The configuration data associated with the CSS WLS estimator
+ @param configData The configuration data associated with the CSS WLS estimator
  */
-void SelfInit_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t moduleID)
+void SelfInit_okeefeEKF(okeefeEKFConfig *configData, uint64_t moduleID)
 {
-    mSetZero(ConfigData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
+    mSetZero(configData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
     
     /*! - Create output message for module */
-	ConfigData->navStateOutMsgId = CreateNewMessage(ConfigData->navStateOutMsgName,
+	configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
 		sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
     /*! - Create filter states output message which is mostly for debug*/
-    ConfigData->filtDataOutMsgId = CreateNewMessage(ConfigData->filtDataOutMsgName,
+    configData->filtDataOutMsgId = CreateNewMessage(configData->filtDataOutMsgName,
         sizeof(SunlineFilterFswMsg), "SunlineFilterFswMsg", moduleID);
     
 }
@@ -47,25 +47,25 @@ void SelfInit_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t moduleID)
  interface.  It's primary function is to link the input messages that were
  created elsewhere.
  @return void
- @param ConfigData The configuration data associated with the CSS interface
+ @param configData The configuration data associated with the CSS interface
  */
-void CrossInit_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t moduleID)
+void CrossInit_okeefeEKF(okeefeEKFConfig *configData, uint64_t moduleID)
 {
     /*! - Find the message ID for the coarse sun sensor data message */
-    ConfigData->cssDataInMsgId = subscribeToMessage(ConfigData->cssDataInMsgName,
+    configData->cssDataInMsgId = subscribeToMessage(configData->cssDataInMsgName,
         sizeof(CSSArraySensorIntMsg), moduleID);
     /*! - Find the message ID for the coarse sun sensor configuration message */
-    ConfigData->cssConfigInMsgId = subscribeToMessage(ConfigData->cssConfigInMsgName,
+    configData->cssConfigInMsgId = subscribeToMessage(configData->cssConfigInMsgName,
                                                    sizeof(CSSConfigFswMsg), moduleID);
 }
 
 /*! This method resets the sunline attitude filter to an initial state and
  initializes the internal estimation matrices.
  @return void
- @param ConfigData The configuration data associated with the CSS estimator
+ @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Reset_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t callTime,
+void Reset_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
                       uint64_t moduleID)
 {
     
@@ -76,43 +76,43 @@ void Reset_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t callTime,
     
     /*! - Zero the local configuration data structures and outputs */
     memset(&cssConfigInBuffer, 0x0, sizeof(CSSConfigFswMsg));
-    memset(&(ConfigData->outputSunline), 0x0, sizeof(NavAttIntMsg));
+    memset(&(configData->outputSunline), 0x0, sizeof(NavAttIntMsg));
     
     /*! - Read in coarse sun sensor configuration information.*/
-    ReadMessage(ConfigData->cssConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->cssConfigInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CSSConfigFswMsg), &cssConfigInBuffer, moduleID);
     
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/
     for(i=0; i<cssConfigInBuffer.nCSS; i++)
     {
-        v3Copy(cssConfigInBuffer.cssVals[i].nHat_B, &(ConfigData->cssNHat_B[i*3]));
-        ConfigData->CBias[i] = cssConfigInBuffer.cssVals[i].CBias;
+        v3Copy(cssConfigInBuffer.cssVals[i].nHat_B, &(configData->cssNHat_B[i*3]));
+        configData->CBias[i] = cssConfigInBuffer.cssVals[i].CBias;
     }
     /*! - Save the count of sun sensors for later use */
-    ConfigData->numCSSTotal = cssConfigInBuffer.nCSS;
+    configData->numCSSTotal = cssConfigInBuffer.nCSS;
     
     /*! - Initialize filter parameters to max values */
-    ConfigData->timeTag = callTime*NANO2SEC;
-    ConfigData->dt = 0.0;
-    ConfigData->numStates = SKF_N_STATES_HALF;
-    ConfigData->numObs = MAX_N_CSS_MEAS;
+    configData->timeTag = callTime*NANO2SEC;
+    configData->dt = 0.0;
+    configData->numStates = SKF_N_STATES_HALF;
+    configData->numObs = MAX_N_CSS_MEAS;
     
     /*! - Ensure that all internal filter matrices are zeroed*/
-    vSetZero(ConfigData->obs, ConfigData->numObs);
-    vSetZero(ConfigData->yMeas, ConfigData->numObs);
-    vSetZero(ConfigData->xBar, ConfigData->numStates);
-//    vSetZero(ConfigData->omega, ConfigData->numStates);
-    vSetZero(ConfigData->prev_states, ConfigData->numStates);
+    vSetZero(configData->obs, configData->numObs);
+    vSetZero(configData->yMeas, configData->numObs);
+    vSetZero(configData->xBar, configData->numStates);
+//    vSetZero(configData->omega, configData->numStates);
+    vSetZero(configData->prev_states, configData->numStates);
     
-    mSetZero(ConfigData->covarBar, ConfigData->numStates, ConfigData->numStates);
-    mSetZero(ConfigData->dynMat, ConfigData->numStates, ConfigData->numStates);
-    mSetZero(ConfigData->measMat, ConfigData->numObs, ConfigData->numStates);
-    mSetZero(ConfigData->kalmanGain, ConfigData->numStates, ConfigData->numObs);
-    mSetZero(ConfigData->measNoise, ConfigData->numObs, ConfigData->numObs);
+    mSetZero(configData->covarBar, configData->numStates, configData->numStates);
+    mSetZero(configData->dynMat, configData->numStates, configData->numStates);
+    mSetZero(configData->measMat, configData->numObs, configData->numStates);
+    mSetZero(configData->kalmanGain, configData->numStates, configData->numObs);
+    mSetZero(configData->measNoise, configData->numObs, configData->numObs);
     
-    mSetIdentity(ConfigData->stateTransition, ConfigData->numStates, ConfigData->numStates);
-    mSetIdentity(ConfigData->procNoise,  ConfigData->numStates, ConfigData->numStates);
-    mScale(ConfigData->qProcVal, ConfigData->procNoise, ConfigData->numStates, ConfigData->numStates, ConfigData->procNoise);
+    mSetIdentity(configData->stateTransition, configData->numStates, configData->numStates);
+    mSetIdentity(configData->procNoise,  configData->numStates, configData->numStates);
+    mScale(configData->qProcVal, configData->procNoise, configData->numStates, configData->numStates, configData->procNoise);
     
     return;
 }
@@ -120,10 +120,10 @@ void Reset_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t callTime,
 /*! This method takes the parsed CSS sensor data and outputs an estimate of the
  sun vector in the ADCS body frame
  @return void
- @param ConfigData The configuration data associated with the CSS estimator
+ @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t callTime,
+void Update_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
     uint64_t moduleID)
 {
     double newTimeTag;
@@ -135,50 +135,50 @@ void Update_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t callTime,
     /*! - Read the input parsed CSS sensor data message*/
     timeOfMsgWritten = 0;
     sizeOfMsgWritten = 0;
-    memset(&(ConfigData->cssSensorInBuffer), 0x0, sizeof(CSSArraySensorIntMsg));
-    ReadMessage(ConfigData->cssDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-        sizeof(CSSArraySensorIntMsg), (void*) (&(ConfigData->cssSensorInBuffer)), moduleID);
+    memset(&(configData->cssSensorInBuffer), 0x0, sizeof(CSSArraySensorIntMsg));
+    ReadMessage(configData->cssDataInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
+        sizeof(CSSArraySensorIntMsg), (void*) (&(configData->cssSensorInBuffer)), moduleID);
     
     /*! - If the time tag from the measured data is new compared to previous step, 
           propagate and update the filter*/
     newTimeTag = timeOfMsgWritten * NANO2SEC;
-    if(newTimeTag >= ConfigData->timeTag && sizeOfMsgWritten > 0)
+    if(newTimeTag >= configData->timeTag && sizeOfMsgWritten > 0)
     {
-        sunlineTimeUpdate(ConfigData, newTimeTag);
-        sunlineMeasUpdate(ConfigData, newTimeTag);
+        sunlineTimeUpdate(configData, newTimeTag);
+        sunlineMeasUpdate(configData, newTimeTag);
     }
     
     /*! - If current clock time is further ahead than the measured time, then
           propagate to this current time-step*/
     newTimeTag = callTime*NANO2SEC;
-    if(newTimeTag > ConfigData->timeTag)
+    if(newTimeTag > configData->timeTag)
     {
-        sunlineTimeUpdate(ConfigData, newTimeTag);
-        vCopy(ConfigData->xBar, SKF_N_STATES_HALF, ConfigData->x);
-        mCopy(ConfigData->covarBar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, ConfigData->covar);
+        sunlineTimeUpdate(configData, newTimeTag);
+        vCopy(configData->xBar, SKF_N_STATES_HALF, configData->x);
+        mCopy(configData->covarBar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, configData->covar);
     }
     
     /* Compute post fit residuals once that data has been processed */
-    mMultM(ConfigData->measMat, ConfigData->numObs, SKF_N_STATES, ConfigData->x, SKF_N_STATES, 1, Hx);
-    mSubtract(ConfigData->yMeas, ConfigData->numObs, 1, Hx, ConfigData->postFits);
+    mMultM(configData->measMat, configData->numObs, SKF_N_STATES, configData->x, SKF_N_STATES, 1, Hx);
+    mSubtract(configData->yMeas, configData->numObs, 1, Hx, configData->postFits);
     
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
-	v3Copy(ConfigData->state, ConfigData->outputSunline.vehSunPntBdy);
-    v3Normalize(ConfigData->outputSunline.vehSunPntBdy,
-        ConfigData->outputSunline.vehSunPntBdy);
-    ConfigData->outputSunline.timeTag = ConfigData->timeTag;
-	WriteMessage(ConfigData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
-		&(ConfigData->outputSunline), moduleID);
+	v3Copy(configData->state, configData->outputSunline.vehSunPntBdy);
+    v3Normalize(configData->outputSunline.vehSunPntBdy,
+        configData->outputSunline.vehSunPntBdy);
+    configData->outputSunline.timeTag = configData->timeTag;
+	WriteMessage(configData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
+		&(configData->outputSunline), moduleID);
     
     /*! - Populate the filter states output buffer and write the output message*/
-    sunlineDataOutBuffer.timeTag = ConfigData->timeTag;
-    sunlineDataOutBuffer.numObs = ConfigData->numObs;
-    memmove(sunlineDataOutBuffer.covar, ConfigData->covar,
+    sunlineDataOutBuffer.timeTag = configData->timeTag;
+    sunlineDataOutBuffer.numObs = configData->numObs;
+    memmove(sunlineDataOutBuffer.covar, configData->covar,
             SKF_N_STATES_HALF*SKF_N_STATES_HALF*sizeof(double));
-    memmove(sunlineDataOutBuffer.state, ConfigData->state, SKF_N_STATES*sizeof(double));
-    memmove(sunlineDataOutBuffer.stateError, ConfigData->x, SKF_N_STATES*sizeof(double));
-    memmove(sunlineDataOutBuffer.postFitRes, ConfigData->postFits, MAX_N_CSS_MEAS*sizeof(double));
-    WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(SunlineFilterFswMsg),
+    memmove(sunlineDataOutBuffer.state, configData->state, SKF_N_STATES*sizeof(double));
+    memmove(sunlineDataOutBuffer.stateError, configData->x, SKF_N_STATES*sizeof(double));
+    memmove(sunlineDataOutBuffer.postFitRes, configData->postFits, MAX_N_CSS_MEAS*sizeof(double));
+    WriteMessage(configData->filtDataOutMsgId, callTime, sizeof(SunlineFilterFswMsg),
                  &sunlineDataOutBuffer, moduleID);
     
     return;
@@ -188,40 +188,40 @@ void Update_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t callTime,
      It calls for the updated Dynamics Matrix, as well as the new states and STM.
      It then updates the covariance, with process noise.
 	 @return void
-     @param ConfigData The configuration data associated with the CSS estimator
+     @param configData The configuration data associated with the CSS estimator
      @param updateTime The time that we need to fix the filter to (seconds)
 */
-void sunlineTimeUpdate(okeefeEKFConfig *ConfigData, double updateTime)
+void sunlineTimeUpdate(okeefeEKFConfig *configData, double updateTime)
 {
     double stmT[SKF_N_STATES_HALF*SKF_N_STATES_HALF], covPhiT[SKF_N_STATES_HALF*SKF_N_STATES_HALF];
     double qGammaT[SKF_N_STATES_HALF*SKF_N_STATES_HALF], gammaQGammaT[SKF_N_STATES_HALF*SKF_N_STATES_HALF];
     
 	/*! Compute time step */
-	ConfigData->dt = updateTime - ConfigData->timeTag;
+	configData->dt = updateTime - configData->timeTag;
     
     /*! - Propagate the previous reference states and STM to the current time */
-    sunlineDynMatrix(ConfigData->omega, ConfigData->dt, ConfigData->dynMat);
-    sunlineStateSTMProp(ConfigData->dynMat, ConfigData->dt, ConfigData->omega, ConfigData->state, ConfigData->prev_states, ConfigData->stateTransition);
-    sunlineRateCompute(ConfigData->state, ConfigData->dt, ConfigData->prev_states, ConfigData->omega);
+    sunlineDynMatrix(configData->omega, configData->dt, configData->dynMat);
+    sunlineStateSTMProp(configData->dynMat, configData->dt, configData->omega, configData->state, configData->prev_states, configData->stateTransition);
+    sunlineRateCompute(configData->state, configData->dt, configData->prev_states, configData->omega);
 
 
     /* xbar = Phi*x */
-    mMultV(ConfigData->stateTransition, SKF_N_STATES_HALF, SKF_N_STATES_HALF, ConfigData->x, ConfigData->xBar);
+    mMultV(configData->stateTransition, SKF_N_STATES_HALF, SKF_N_STATES_HALF, configData->x, configData->xBar);
     
     /*! - Update the covariance */
     /*Pbar = Phi*P*Phi^T + Gamma*Q*Gamma^T*/
-    mTranspose(ConfigData->stateTransition, SKF_N_STATES_HALF, SKF_N_STATES_HALF, stmT);
-    mMultM(ConfigData->covar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, stmT, SKF_N_STATES_HALF, SKF_N_STATES_HALF, covPhiT);
-    mMultM(ConfigData->stateTransition, SKF_N_STATES_HALF, SKF_N_STATES_HALF, covPhiT, SKF_N_STATES_HALF, SKF_N_STATES_HALF, ConfigData->covarBar);
+    mTranspose(configData->stateTransition, SKF_N_STATES_HALF, SKF_N_STATES_HALF, stmT);
+    mMultM(configData->covar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, stmT, SKF_N_STATES_HALF, SKF_N_STATES_HALF, covPhiT);
+    mMultM(configData->stateTransition, SKF_N_STATES_HALF, SKF_N_STATES_HALF, covPhiT, SKF_N_STATES_HALF, SKF_N_STATES_HALF, configData->covarBar);
     
     /*Compute Gamma and add gammaQGamma^T to Pbar. This is the process noise addition*/
-    double Gamma[3][3]={{ConfigData->dt*ConfigData->dt/2,0,0},{0,ConfigData->dt*ConfigData->dt/2,0},{0,0,ConfigData->dt*ConfigData->dt/2}};
+    double Gamma[3][3]={{configData->dt*configData->dt/2,0,0},{0,configData->dt*configData->dt/2,0},{0,0,configData->dt*configData->dt/2}};
     
-    mMultMt(ConfigData->procNoise, SKF_N_STATES_HALF, SKF_N_STATES_HALF, Gamma, SKF_N_STATES_HALF, SKF_N_STATES_HALF, qGammaT);
+    mMultMt(configData->procNoise, SKF_N_STATES_HALF, SKF_N_STATES_HALF, Gamma, SKF_N_STATES_HALF, SKF_N_STATES_HALF, qGammaT);
     mMultM(Gamma, SKF_N_STATES_HALF, SKF_N_STATES_HALF, qGammaT, SKF_N_STATES_HALF, SKF_N_STATES_HALF, gammaQGammaT);
-    mAdd(ConfigData->covarBar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, gammaQGammaT, ConfigData->covarBar);
+    mAdd(configData->covarBar, SKF_N_STATES_HALF, SKF_N_STATES_HALF, gammaQGammaT, configData->covarBar);
     
-	ConfigData->timeTag = updateTime;
+	configData->timeTag = updateTime;
 }
 
 
@@ -341,27 +341,27 @@ void sunlineDynMatrix(double omega[SKF_N_STATES_HALF], double dt, double *dynMat
  It applies the observations in the obs vectors to the current state estimate and
  updates the state/covariance with that information.
  @return void
- @param ConfigData The configuration data associated with the CSS estimator
+ @param configData The configuration data associated with the CSS estimator
  @param updateTime The time that we need to fix the filter to (seconds)
  */
-void sunlineMeasUpdate(okeefeEKFConfig *ConfigData, double updateTime)
+void sunlineMeasUpdate(okeefeEKFConfig *configData, double updateTime)
 {
     /*! - Compute the valid observations and the measurement model for all observations*/
-    sunlineHMatrixYMeas(ConfigData->state, ConfigData->numCSSTotal, ConfigData->cssSensorInBuffer.CosValue, ConfigData->sensorUseThresh, ConfigData->cssNHat_B,
-                        ConfigData->CBias, ConfigData->obs, ConfigData->yMeas, &(ConfigData->numObs), ConfigData->measMat);
+    sunlineHMatrixYMeas(configData->state, configData->numCSSTotal, configData->cssSensorInBuffer.CosValue, configData->sensorUseThresh, configData->cssNHat_B,
+                        configData->CBias, configData->obs, configData->yMeas, &(configData->numObs), configData->measMat);
     
     /*! - Compute the Kalman Gain. */
-    sunlineKalmanGain(ConfigData->covarBar, ConfigData->measMat, ConfigData->qObsVal, ConfigData->numObs, ConfigData->kalmanGain);
+    sunlineKalmanGain(configData->covarBar, configData->measMat, configData->qObsVal, configData->numObs, configData->kalmanGain);
     
     /* Logic to switch from EKF to CKF. If the covariance is too large, switching references through an EKF could lead to filter divergence in extreme cases. In order to remedy this, past a certain infinite norm of the covariance, we update with a CKF in order to bring down the covariance. */
     
-    if (vMaxAbs(ConfigData->covar, SKF_N_STATES_HALF*SKF_N_STATES_HALF) > ConfigData->eKFSwitch){
+    if (vMaxAbs(configData->covar, SKF_N_STATES_HALF*SKF_N_STATES_HALF) > configData->eKFSwitch){
     /*! - Compute the update with a CKF */
-    sunlineCKFUpdate(ConfigData->xBar, ConfigData->kalmanGain, ConfigData->covarBar, ConfigData->qObsVal, ConfigData->numObs, ConfigData->yMeas, ConfigData->measMat, ConfigData->x,ConfigData->covar);
+    sunlineCKFUpdate(configData->xBar, configData->kalmanGain, configData->covarBar, configData->qObsVal, configData->numObs, configData->yMeas, configData->measMat, configData->x,configData->covar);
     }
     else{
 //    /*! - Compute the update with a EKF, notice the reference state is added as an argument because it is changed by the filter update */
-    okeefeEKFUpdate(ConfigData->kalmanGain, ConfigData->covarBar, ConfigData->qObsVal, ConfigData->numObs, ConfigData->yMeas, ConfigData->measMat, ConfigData->state, ConfigData->x, ConfigData->covar);
+    okeefeEKFUpdate(configData->kalmanGain, configData->covarBar, configData->qObsVal, configData->numObs, configData->yMeas, configData->measMat, configData->state, configData->x, configData->covar);
     }
 }
 

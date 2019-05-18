@@ -36,7 +36,7 @@
 /*! @brief This method sets up the module output message of type [CmdTorqueBodyIntMsg](\ref CmdTorqueBodyIntMsg)
  @return void
  @param configData The configuration data associated with this module
- @param moduleID The ID associated with the ConfigData
+ @param moduleID The ID associated with the configData
 */
 void SelfInit_MRP_Feedback(MRP_FeedbackConfig *configData, uint64_t moduleID)
 {

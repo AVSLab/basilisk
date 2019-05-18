@@ -34,8 +34,8 @@
 /*! @brief This method initializes the configData for mrpRotation model.  It creates the module
  output message.
  @return void
- @param ConfigData The configuration data associated with the null space control
- @param moduleID The ID associated with the ConfigData
+ @param configData The configuration data associated with the null space control
+ @param moduleID The ID associated with the configData
  */
 void SelfInit_mrpRotation(mrpRotationConfig *configData, uint64_t moduleID)
 {
@@ -52,8 +52,8 @@ void SelfInit_mrpRotation(mrpRotationConfig *configData, uint64_t moduleID)
  interface. It subscribes to the input reference frame message, and an optional desired
  attitude scanning message.
  @return void
- @param ConfigData The configuration data associated with the null space control
- @param moduleID The ID associated with the ConfigData
+ @param configData The configuration data associated with the null space control
+ @param moduleID The ID associated with the configData
  */
 void CrossInit_mrpRotation(mrpRotationConfig *configData, uint64_t moduleID)
 {

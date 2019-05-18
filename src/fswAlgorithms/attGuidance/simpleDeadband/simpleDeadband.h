@@ -54,11 +54,11 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_simpleDeadband(simpleDeadbandConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_simpleDeadband(simpleDeadbandConfig *ConfigData, uint64_t moduleID);
-    void Update_simpleDeadband(simpleDeadbandConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_simpleDeadband(simpleDeadbandConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void applyDBLogic_simpleDeadband(simpleDeadbandConfig *ConfigData);
+    void SelfInit_simpleDeadband(simpleDeadbandConfig *configData, uint64_t moduleID);
+    void CrossInit_simpleDeadband(simpleDeadbandConfig *configData, uint64_t moduleID);
+    void Update_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void Reset_simpleDeadband(simpleDeadbandConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void applyDBLogic_simpleDeadband(simpleDeadbandConfig *configData);
 
 #ifdef __cplusplus
 }

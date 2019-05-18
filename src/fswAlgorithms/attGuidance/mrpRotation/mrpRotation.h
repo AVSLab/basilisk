@@ -62,14 +62,14 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_mrpRotation(mrpRotationConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_mrpRotation(mrpRotationConfig *ConfigData, uint64_t moduleID);
-    void Reset_mrpRotation(mrpRotationConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Update_mrpRotation(mrpRotationConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_mrpRotation(mrpRotationConfig *configData, uint64_t moduleID);
+    void CrossInit_mrpRotation(mrpRotationConfig *configData, uint64_t moduleID);
+    void Reset_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void Update_mrpRotation(mrpRotationConfig *configData, uint64_t callTime, uint64_t moduleID);
     
-    void checkRasterCommands(mrpRotationConfig *ConfigData);
-    void computeTimeStep(mrpRotationConfig *ConfigData, uint64_t callTime);
-    void computeMRPRotationReference(mrpRotationConfig *ConfigData,
+    void checkRasterCommands(mrpRotationConfig *configData);
+    void computeTimeStep(mrpRotationConfig *configData, uint64_t callTime);
+    void computeMRPRotationReference(mrpRotationConfig *configData,
                                      double sigma_R0N[3],
                                      double omega_R0N_N[3],
                                      double domega_R0N_N[3],

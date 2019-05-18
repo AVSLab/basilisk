@@ -65,12 +65,12 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint64_t moduleID);
-    void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void parseInputMessages(celestialTwoBodyPointConfig *ConfigData, uint64_t moduleID);
-    void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint64_t callTime);
+    void SelfInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64_t moduleID);
+    void CrossInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64_t moduleID);
+    void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void parseInputMessages(celestialTwoBodyPointConfig *configData, uint64_t moduleID);
+    void computeCelestialTwoBodyPoint(celestialTwoBodyPointConfig *configData, uint64_t callTime);
     
 #ifdef __cplusplus
 }

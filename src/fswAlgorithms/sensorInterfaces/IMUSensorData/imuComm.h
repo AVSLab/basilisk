@@ -46,9 +46,9 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_imuProcessTelem(IMUConfigData *ConfigData, uint64_t moduleID);
-    void CrossInit_imuProcessTelem(IMUConfigData *ConfigData, uint64_t moduleID);
-    void Update_imuProcessTelem(IMUConfigData *ConfigData, uint64_t callTime,
+    void SelfInit_imuProcessTelem(IMUConfigData *configData, uint64_t moduleID);
+    void CrossInit_imuProcessTelem(IMUConfigData *configData, uint64_t moduleID);
+    void Update_imuProcessTelem(IMUConfigData *configData, uint64_t callTime,
         uint64_t moduleID);
     
 #ifdef __cplusplus

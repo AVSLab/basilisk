@@ -88,14 +88,14 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t moduleID);
-	void Reset_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t callTime,
+    void SelfInit_okeefeEKF(okeefeEKFConfig *configData, uint64_t moduleID);
+    void CrossInit_okeefeEKF(okeefeEKFConfig *configData, uint64_t moduleID);
+	void Reset_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
 		uint64_t moduleID);
-    void Update_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t callTime,
+    void Update_okeefeEKF(okeefeEKFConfig *configData, uint64_t callTime,
                            uint64_t moduleID);
-	void sunlineTimeUpdate(okeefeEKFConfig *ConfigData, double updateTime);
-    void sunlineMeasUpdate(okeefeEKFConfig *ConfigData, double updateTime);
+	void sunlineTimeUpdate(okeefeEKFConfig *configData, double updateTime);
+    void sunlineMeasUpdate(okeefeEKFConfig *configData, double updateTime);
 	void sunlineStateSTMProp(double dynMat[SKF_N_STATES*SKF_N_STATES], double dt, double omega[SKF_N_STATES_HALF],double *stateInOut, double *prevstates, double *stateTransition);
     
     void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS*3], double CBias[MAX_NUM_CSS_SENSORS], double *obs, double *yMeas, int *numObs, double *measMat);

@@ -35,11 +35,11 @@
 //#include "simulation/utilities/astroConstants.h"
 
 
-/*! This method initializes the ConfigData for this module.
+/*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
  output message
  @return void
- @param ConfigData The configuration data associated with this module
+ @param configData The configuration data associated with this module
  */
 void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t moduleID)
 {
@@ -55,7 +55,7 @@ void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t mo
  It's primary function is to link the input messages that were created elsewhere.
  Nothing else should be happening in this function.
  @return void
- @param ConfigData The configuration data associated with this module
+ @param configData The configuration data associated with this module
  */
 void CrossInit_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t moduleID)
 {
@@ -70,7 +70,7 @@ void CrossInit_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t m
  time varying states between function calls are reset to their default values.  The local copy of the
  message output buffer should be cleared.
  @return void
- @param ConfigData The configuration data associated with the module
+ @param configData The configuration data associated with the module
  */
 void Reset_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
@@ -81,7 +81,7 @@ void Reset_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callT
 
 /*! Add a description of what this main Update() routine does for this module
  @return void
- @param ConfigData The configuration data associated with the module
+ @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_fswModuleTemplate(fswModuleTemplateConfig *configData, uint64_t callTime, uint64_t moduleID)

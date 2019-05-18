@@ -28,23 +28,23 @@
 /*! This method creates the output navigation message (translation only) for 
     the ephemeris model
  @return void
- @param ConfigData The configuration data associated with the ephemeris model
+ @param configData The configuration data associated with the ephemeris model
  */
-void SelfInit_chebyPosEphem(ChebyPosEphemData *ConfigData, uint64_t moduleID)
+void SelfInit_chebyPosEphem(ChebyPosEphemData *configData, uint64_t moduleID)
 {
-    ConfigData->posFitOutMsgID = CreateNewMessage(ConfigData->posFitOutMsgName,
+    configData->posFitOutMsgID = CreateNewMessage(configData->posFitOutMsgName,
         sizeof(EphemerisIntMsg), "EphemerisIntMsg", moduleID);
 }
 
 /*! This method initializes the input time correlation factor structure
  @return void
- @param ConfigData The configuration data associated with the ephemeris model
+ @param configData The configuration data associated with the ephemeris model
  */
-void CrossInit_chebyPosEphem(ChebyPosEphemData *ConfigData, uint64_t moduleID)
+void CrossInit_chebyPosEphem(ChebyPosEphemData *configData, uint64_t moduleID)
 {
 
-    ConfigData->clockCorrInMsgID = subscribeToMessage(
-        ConfigData->clockCorrInMsgName, sizeof(TDBVehicleClockCorrelationFswMsg), moduleID);
+    configData->clockCorrInMsgID = subscribeToMessage(
+        configData->clockCorrInMsgName, sizeof(TDBVehicleClockCorrelationFswMsg), moduleID);
 
 }
 
@@ -52,10 +52,10 @@ void CrossInit_chebyPosEphem(ChebyPosEphemData *ConfigData, uint64_t moduleID)
     estimator and computes the coefficients needed to estimate the time 
     derivative of that position vector (velocity).
  @return void
- @param ConfigData The configuration data associated with the ephemeris model
+ @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Reset_chebyPosEphem(ChebyPosEphemData *ConfigData, uint64_t callTime,
+void Reset_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime,
                          uint64_t moduleID)
 {
 
@@ -65,7 +65,7 @@ void Reset_chebyPosEphem(ChebyPosEphemData *ConfigData, uint64_t callTime,
     memset(tempCVec, 0x0, MAX_CHEB_COEFF*sizeof(double));
     for(i=0; i< MAX_CHEB_RECORDS; i++)
     {
-        currRec = &(ConfigData->ephArray[i]);
+        currRec = &(configData->ephArray[i]);
         n=currRec->nChebCoeff;
         for(k=0; k<3; k++)
         {
@@ -92,10 +92,10 @@ void Reset_chebyPosEphem(ChebyPosEphemData *ConfigData, uint64_t callTime,
     using that time and the stored Chebyshev coefficients.  If the time provided 
     is outside the specified range, the position vectors rail high/low appropriately.
  @return void
- @param ConfigData The configuration data associated with the ephemeris model
+ @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_chebyPosEphem(ChebyPosEphemData *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Update_chebyPosEphem(ChebyPosEphemData *configData, uint64_t callTime, uint64_t moduleID)
 {
 
     double currentEphTime;
@@ -106,26 +106,26 @@ void Update_chebyPosEphem(ChebyPosEphemData *ConfigData, uint64_t callTime, uint
     int i;
     TDBVehicleClockCorrelationFswMsg localCorr;
     
-    ReadMessage(ConfigData->clockCorrInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->clockCorrInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(TDBVehicleClockCorrelationFswMsg), &localCorr, moduleID);
     
-    memset(&ConfigData->outputState, 0x0, sizeof(EphemerisIntMsg));
+    memset(&configData->outputState, 0x0, sizeof(EphemerisIntMsg));
     
     currentEphTime = callTime*NANO2SEC;
     currentEphTime += localCorr.ephemerisTime - localCorr.vehicleClockTime;
     
-    ConfigData->coeffSelector = 0;
+    configData->coeffSelector = 0;
     for(i=0; i<MAX_CHEB_RECORDS; i++)
     {
-        if(fabs(currentEphTime - ConfigData->ephArray[i].ephemTimeMid) <=
-            ConfigData->ephArray[i].ephemTimeRad)
+        if(fabs(currentEphTime - configData->ephArray[i].ephemTimeMid) <=
+            configData->ephArray[i].ephemTimeRad)
         {
-            ConfigData->coeffSelector = i;
+            configData->coeffSelector = i;
             break;
         }
     }
    
-    currRec = &(ConfigData->ephArray[ConfigData->coeffSelector]);
+    currRec = &(configData->ephArray[configData->coeffSelector]);
     currentScaledValue = (currentEphTime - currRec->ephemTimeMid)
         /currRec->ephemTimeRad;
     if(fabs(currentScaledValue) > 1.0)
@@ -133,21 +133,21 @@ void Update_chebyPosEphem(ChebyPosEphemData *ConfigData, uint64_t callTime, uint
         currentScaledValue = currentScaledValue/fabs(currentScaledValue);
     }
     
-    ConfigData->outputState.timeTag = callTime*NANO2SEC;
+    configData->outputState.timeTag = callTime*NANO2SEC;
     
     for(i=0; i<3; i++)
     {
-        ConfigData->outputState.r_BdyZero_N[i] = calculateChebyValue(
+        configData->outputState.r_BdyZero_N[i] = calculateChebyValue(
             &(currRec->posChebyCoeff[i*currRec->nChebCoeff]),
             currRec->nChebCoeff, currentScaledValue);
-        ConfigData->outputState.v_BdyZero_N[i] = calculateChebyValue(
+        configData->outputState.v_BdyZero_N[i] = calculateChebyValue(
             &(currRec->velChebyCoeff[i*currRec->nChebCoeff]),
             currRec->nChebCoeff, currentScaledValue);
         
     }
     
-    WriteMessage(ConfigData->posFitOutMsgID, callTime,
-                 sizeof(EphemerisIntMsg), &ConfigData->outputState, moduleID);
+    WriteMessage(configData->posFitOutMsgID, callTime,
+                 sizeof(EphemerisIntMsg), &configData->outputState, moduleID);
 
     return;
 

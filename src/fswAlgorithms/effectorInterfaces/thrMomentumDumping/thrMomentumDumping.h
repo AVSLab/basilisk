@@ -64,10 +64,10 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t moduleID);
-    void Update_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t moduleID);
+    void CrossInit_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t moduleID);
+    void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t callTime, uint64_t moduleID);
     
 #ifdef __cplusplus
 }

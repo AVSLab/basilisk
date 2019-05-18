@@ -40,31 +40,31 @@
 #include "simulation/utilities/rigidBodyKinematics.h"
 
 
-/*! This method initializes the ConfigData for this module.
+/*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
  output message
  @return void
- @param ConfigData The configuration data associated with this module
+ @param configData The configuration data associated with this module
  */
-void SelfInit_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t moduleID)
+void SelfInit_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t moduleID)
 {
     /*! - Create output message for module */
-    ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
+    configData->outputMsgID = CreateNewMessage(configData->outputDataName,
                                                sizeof(AttRefFswMsg),
                                                "AttRefFswMsg",
                                                moduleID);
-    ConfigData->priorTime = 0;
+    configData->priorTime = 0;
 }
 
 /*! This method performs the second stage of initialization for this module.
  It's primary function is to link the input messages that were created elsewhere.
  @return void
- @param ConfigData The configuration data associated with this module
+ @param configData The configuration data associated with this module
  */
-void CrossInit_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t moduleID)
+void CrossInit_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
-    ConfigData->inputRefID = subscribeToMessage(ConfigData->inputRefName,
+    configData->inputRefID = subscribeToMessage(configData->inputRefName,
                                                 sizeof(AttRefFswMsg),
                                                 moduleID);
 }
@@ -72,56 +72,56 @@ void CrossInit_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t moduleI
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
- @param ConfigData The configuration data associated with the MRP steering control
+ @param configData The configuration data associated with the MRP steering control
  */
-void Reset_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Reset_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
 
-    ConfigData->priorTime = 0;              /* reset the prior time flag state.  If set
+    configData->priorTime = 0;              /* reset the prior time flag state.  If set
                                              to zero, the control time step is not evaluated on the
                                              first function call */
 }
 
 /*! This method performs all the main computations of the module
  @return void
- @param ConfigData The configuration data associated with the MRP Steering attitude control
+ @param configData The configuration data associated with the MRP Steering attitude control
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
     /*! - Read input message */
     AttRefFswMsg inputRef;
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
-    ReadMessage(ConfigData->inputRefID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->inputRefID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(AttRefFswMsg), (void*) &(inputRef), moduleID);
     
     /*! - Get input reference and compute integration time step to use downstream */
     double dt; /* integration time step [s] */
-    if (ConfigData->priorTime == 0)
+    if (configData->priorTime == 0)
     {
         dt = 0.0;
-        v3Copy(inputRef.sigma_RN, ConfigData->sigma_RN);
+        v3Copy(inputRef.sigma_RN, configData->sigma_RN);
     } else {
-        dt = (callTime - ConfigData->priorTime) * NANO2SEC;
+        dt = (callTime - configData->priorTime) * NANO2SEC;
     }
     
     /*! - Generate inertial 3D Spinning Reference */
-    computeReference_inertial3DSpin(ConfigData,
+    computeReference_inertial3DSpin(configData,
                                     inputRef.omega_RN_N,
                                     inputRef.domega_RN_N,
-                                    ConfigData->omega_spin,
+                                    configData->omega_spin,
                                     dt);
     
     /*! - Write output message */
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttRefFswMsg),
-                 (void*) &(ConfigData->attRefOut), moduleID);
+    WriteMessage(configData->outputMsgID, callTime, sizeof(AttRefFswMsg),
+                 (void*) &(configData->attRefOut), moduleID);
     
     /*! Update prior time to current for next evaluation */
-    ConfigData->priorTime = callTime;
+    configData->priorTime = callTime;
 }
 
-void computeReference_inertial3DSpin(inertial3DSpinConfig *ConfigData,
+void computeReference_inertial3DSpin(inertial3DSpinConfig *configData,
                                      double omega_R0N_N[3],
                                      double domega_R0N_N[3],
                                      double omega_RR0_R[3],
@@ -133,7 +133,7 @@ void computeReference_inertial3DSpin(inertial3DSpinConfig *ConfigData,
     /*! Compute angular rate */
     double dcm_RN[3][3];   /* DCM from inertial frame N to generated ref frame R */
     double omega_RR0_N[3]; /* angular rate of the generated ref R wrt the base ref R0 in inertial N components */
-    MRP2C(ConfigData->sigma_RN, dcm_RN);
+    MRP2C(configData->sigma_RN, dcm_RN);
     m33tMultV3(dcm_RN, omega_RR0_R, omega_RR0_N);
     v3Add(omega_R0N_N, omega_RR0_N, omega_RN_N);
     
@@ -146,14 +146,14 @@ void computeReference_inertial3DSpin(inertial3DSpinConfig *ConfigData,
     double B[3][3]; /* MRP rate matrix */
     double omega_RN_R[3]; /* inertial angular rate of ref R in R frame components */
     m33MultV3(dcm_RN, omega_RN_N, omega_RN_R);
-    BmatMRP(ConfigData->sigma_RN, B);
+    BmatMRP(configData->sigma_RN, B);
     m33Scale(0.25 * dt, B, B);
     m33MultV3(B, omega_RN_R, v3Temp);
-    v3Add(ConfigData->sigma_RN, v3Temp, ConfigData->sigma_RN);
-    MRPswitch(ConfigData->sigma_RN, 1.0, ConfigData->sigma_RN);
+    v3Add(configData->sigma_RN, v3Temp, configData->sigma_RN);
+    MRPswitch(configData->sigma_RN, 1.0, configData->sigma_RN);
     
     /*! Copy output in AttRefFswMsg struct */
-    v3Copy(ConfigData->sigma_RN, ConfigData->attRefOut.sigma_RN);
-    v3Copy(omega_RN_N, ConfigData->attRefOut.omega_RN_N);
-    v3Copy(domega_RN_N, ConfigData->attRefOut.domega_RN_N);
+    v3Copy(configData->sigma_RN, configData->attRefOut.sigma_RN);
+    v3Copy(omega_RN_N, configData->attRefOut.omega_RN_N);
+    v3Copy(domega_RN_N, configData->attRefOut.domega_RN_N);
 }

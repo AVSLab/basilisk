@@ -68,10 +68,10 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t moduleID);
-    void Update_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t moduleID);
+    void CrossInit_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t moduleID);
+    void Update_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void Reset_thrFiringSchmitt(thrFiringSchmittConfig *configData, uint64_t callTime, uint64_t moduleID);
     
 #ifdef __cplusplus
 }

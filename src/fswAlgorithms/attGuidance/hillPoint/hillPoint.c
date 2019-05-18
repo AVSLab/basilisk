@@ -33,36 +33,36 @@
 
 
 
-void SelfInit_hillPoint(hillPointConfig *ConfigData, uint64_t moduleID)
+void SelfInit_hillPoint(hillPointConfig *configData, uint64_t moduleID)
 {
     /*! - Create output message for module */
-    ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
+    configData->outputMsgID = CreateNewMessage(configData->outputDataName,
                                                sizeof(AttRefFswMsg),
                                                "AttRefFswMsg",
                                                moduleID);
 }
 
-void CrossInit_hillPoint(hillPointConfig *ConfigData, uint64_t moduleID)
+void CrossInit_hillPoint(hillPointConfig *configData, uint64_t moduleID)
 {
     /*! - subscribe to other message*/
     /*! - inputCelID provides the planet ephemeris message.  Note that if this message does
           not exist, this subscribe function will create an empty planet message.  This behavior
           is by design such that if a planet doesn't have a message, default (0,0,0) position
           and velocity vectors are assumed. */
-    ConfigData->inputCelID = subscribeToMessage(ConfigData->inputCelMessName,
+    configData->inputCelID = subscribeToMessage(configData->inputCelMessName,
                                                 sizeof(EphemerisIntMsg), moduleID);
     /*! - inputNavID provides the current spacecraft location and velocity */
-    ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavDataName,
+    configData->inputNavID = subscribeToMessage(configData->inputNavDataName,
                                                 sizeof(NavTransIntMsg), moduleID);
 }
 
-void Reset_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Reset_hillPoint(hillPointConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
     
 }
 
 
-void Update_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Update_hillPoint(hillPointConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
     /*! - Read input message */
     uint64_t            timeOfMsgWritten;
@@ -73,26 +73,26 @@ void Update_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t m
     /* zero the local planet ephemeris message */
     memset(&primPlanet, 0x0, sizeof(EphemerisIntMsg));
     
-    ReadMessage(ConfigData->inputCelID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->inputCelID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(EphemerisIntMsg), &primPlanet, moduleID);
-    ReadMessage(ConfigData->inputNavID, &timeOfMsgWritten, &sizeOfMsgWritten,
+    ReadMessage(configData->inputNavID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavTransIntMsg), &navData, moduleID);
 
     /*! - Compute and store output message */
-    computeHillPointingReference(ConfigData,
+    computeHillPointingReference(configData,
                                  navData.r_BN_N,
                                  navData.v_BN_N,
                                  primPlanet.r_BdyZero_N,
                                  primPlanet.v_BdyZero_N);
     
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttRefFswMsg),   /* update module name */
-                 (void*) &(ConfigData->attRefOut), moduleID);
+    WriteMessage(configData->outputMsgID, callTime, sizeof(AttRefFswMsg),   /* update module name */
+                 (void*) &(configData->attRefOut), moduleID);
     
     return;
 }
 
 
-void computeHillPointingReference(hillPointConfig *ConfigData,
+void computeHillPointingReference(hillPointConfig *configData,
                                   double r_BN_N[3],
                                   double v_BN_N[3],
                                   double celBdyPositonVector[3],
@@ -124,7 +124,7 @@ void computeHillPointingReference(hillPointConfig *ConfigData,
     v3Cross(dcm_RN[2], dcm_RN[0], dcm_RN[1]);
     
     /* Compute R-frame orientation */
-    C2MRP(dcm_RN, ConfigData->attRefOut.sigma_RN);
+    C2MRP(dcm_RN, configData->attRefOut.sigma_RN);
     
     /* Compute R-frame inertial rate and acceleration */
     rm = v3Norm(relPosVector);
@@ -144,7 +144,7 @@ void computeHillPointingReference(hillPointConfig *ConfigData,
     domega_RN_R[2] = ddfdt2;
 
     m33Transpose(dcm_RN, temp33);
-    m33MultV3(temp33, omega_RN_R, ConfigData->attRefOut.omega_RN_N);
-    m33MultV3(temp33, domega_RN_R, ConfigData->attRefOut.domega_RN_N);
+    m33MultV3(temp33, omega_RN_R, configData->attRefOut.omega_RN_N);
+    m33MultV3(temp33, domega_RN_R, configData->attRefOut.domega_RN_N);
     
 }

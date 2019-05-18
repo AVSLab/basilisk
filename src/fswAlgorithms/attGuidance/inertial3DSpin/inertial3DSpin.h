@@ -53,11 +53,11 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t moduleID);
-    void Update_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void computeReference_inertial3DSpin(inertial3DSpinConfig *ConfigData,
+    void SelfInit_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t moduleID);
+    void CrossInit_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t moduleID);
+    void Update_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void Reset_inertial3DSpin(inertial3DSpinConfig *configData, uint64_t callTime, uint64_t moduleID);
+    void computeReference_inertial3DSpin(inertial3DSpinConfig *configData,
                                          double omega_R0N_N[3],
                                          double domega_R0N_N[3],
                                          double omega_RR0_R[3],

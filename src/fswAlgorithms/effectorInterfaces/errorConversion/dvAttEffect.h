@@ -55,11 +55,11 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t moduleID);
-    void Update_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime,
+    void SelfInit_dvAttEffect(dvAttEffectConfig *configData, uint64_t moduleID);
+    void CrossInit_dvAttEffect(dvAttEffectConfig *configData, uint64_t moduleID);
+    void Update_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
         uint64_t moduleID);
-    void Reset_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime,
+    void Reset_dvAttEffect(dvAttEffectConfig *configData, uint64_t callTime,
                            uint64_t moduleID);
     void effectorVSort(effPairs *Input, effPairs *Output, size_t dim);
     void computeSingleThrustBlock(ThrustGroupData *thrData, uint64_t callTime,

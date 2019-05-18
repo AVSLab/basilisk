@@ -33,16 +33,16 @@
  */
 
 
-/*! This method initializes the ConfigData for this module.
+/*! This method initializes the configData for this module.
  It checks to ensure that the inputs are sane and then creates the
  output message
  @return void
- @param ConfigData The configuration data associated with this module
+ @param configData The configuration data associated with this module
  */
-void SelfInit_rwConfigData(rwConfigData_Config *ConfigData, uint64_t moduleID)
+void SelfInit_rwConfigData(rwConfigData_Config *configData, uint64_t moduleID)
 {
     /*! - Create output message for module */
-    ConfigData->rwParamsOutMsgID = CreateNewMessage(ConfigData->rwParamsOutMsgName,
+    configData->rwParamsOutMsgID = CreateNewMessage(configData->rwParamsOutMsgName,
                                                     sizeof(RWArrayConfigFswMsg), "RWArrayConfigFswMsg", moduleID);
     
 }
@@ -50,20 +50,20 @@ void SelfInit_rwConfigData(rwConfigData_Config *ConfigData, uint64_t moduleID)
 /*! This method performs the second stage of initialization for this module.
  It's primary function is to link the input messages that were created elsewhere.
  @return void
- @param ConfigData The configuration data associated with this module
+ @param configData The configuration data associated with this module
  */
-void CrossInit_rwConfigData(rwConfigData_Config *ConfigData, uint64_t moduleID)
+void CrossInit_rwConfigData(rwConfigData_Config *configData, uint64_t moduleID)
 {
     /*! - Read vehicle config data, convert RW info from S to B and write it in the output mesage */
     /*! - NOTE: it is important that this initialization takes place in CrossInit and not Reset.
      When Reset call takes place in all the modules, this RW message should already be available.*/
-    ConfigData->vehConfigInMsgID = subscribeToMessage(ConfigData->vehConfigInMsgName,
+    configData->vehConfigInMsgID = subscribeToMessage(configData->vehConfigInMsgName,
                                                               sizeof(VehicleConfigFswMsg), moduleID);
 
-    ConfigData->rwConstellationInMsgID = -1;
-    if(strlen(ConfigData->rwConstellationInMsgName) > 0)
+    configData->rwConstellationInMsgID = -1;
+    if(strlen(configData->rwConstellationInMsgName) > 0)
     {
-        ConfigData->rwConstellationInMsgID = subscribeToMessage(ConfigData->rwConstellationInMsgName,
+        configData->rwConstellationInMsgID = subscribeToMessage(configData->rwConstellationInMsgName,
                                                           sizeof(RWConstellationFswMsg), moduleID);
     }
 
@@ -73,40 +73,40 @@ void CrossInit_rwConfigData(rwConfigData_Config *ConfigData, uint64_t moduleID)
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
- @param ConfigData The configuration data associated with the module
+ @param configData The configuration data associated with the module
  */
-void Reset_rwConfigData(rwConfigData_Config *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Reset_rwConfigData(rwConfigData_Config *configData, uint64_t callTime, uint64_t moduleID)
 {
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     int i;
 
-    if(ConfigData->rwConstellationInMsgID >= 0)
+    if(configData->rwConstellationInMsgID >= 0)
     {
-        ReadMessage(ConfigData->rwConstellationInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten, sizeof(RWConstellationFswMsg),
-                    (void *) &ConfigData->rwConstellation, moduleID);
+        ReadMessage(configData->rwConstellationInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten, sizeof(RWConstellationFswMsg),
+                    (void *) &configData->rwConstellation, moduleID);
     }
-    ConfigData->rwConfigParamsOut.numRW = ConfigData->rwConstellation.numRW;
+    configData->rwConfigParamsOut.numRW = configData->rwConstellation.numRW;
 
-    for(i=0; i<ConfigData->rwConfigParamsOut.numRW; i=i+1)
+    for(i=0; i<configData->rwConfigParamsOut.numRW; i=i+1)
     {
-        ConfigData->rwConfigParamsOut.JsList[i] = ConfigData->rwConstellation.reactionWheels[i].Js;
-        ConfigData->rwConfigParamsOut.uMax[i] = ConfigData->rwConstellation.reactionWheels[i].uMax;
-        v3Copy(ConfigData->rwConstellation.reactionWheels[i].gsHat_B, &ConfigData->rwConfigParamsOut.GsMatrix_B[i*3]);
+        configData->rwConfigParamsOut.JsList[i] = configData->rwConstellation.reactionWheels[i].Js;
+        configData->rwConfigParamsOut.uMax[i] = configData->rwConstellation.reactionWheels[i].uMax;
+        v3Copy(configData->rwConstellation.reactionWheels[i].gsHat_B, &configData->rwConfigParamsOut.GsMatrix_B[i*3]);
     }
 
     /*! - Write output RW config data to the messaging system*/
-    WriteMessage(ConfigData->rwParamsOutMsgID, callTime, sizeof(RWArrayConfigFswMsg),
-                 &(ConfigData->rwConfigParamsOut), moduleID);
+    WriteMessage(configData->rwParamsOutMsgID, callTime, sizeof(RWArrayConfigFswMsg),
+                 &(configData->rwConfigParamsOut), moduleID);
 
 }
 
 /*! Add a description of what this main Update() routine does for this module
  @return void
- @param ConfigData The configuration data associated with the module
+ @param configData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_rwConfigData(rwConfigData_Config *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Update_rwConfigData(rwConfigData_Config *configData, uint64_t callTime, uint64_t moduleID)
 {
     /*! Nothing done in this method.  Make sure this is still true!*/
     return;
