@@ -329,7 +329,7 @@ from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
 
 
 # Get current file path
-import sys, os, inspect
+import sys, os, inspect, time, signal
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
@@ -421,7 +421,7 @@ class scenario_OpNav(BSKScenario):
 def run(showPlots):
 
     # Instantiate base simulation
-    TheBSKSim = BSKSim()
+    TheBSKSim = BSKSim(fswRate=0.5, dynRate=0.5)
     TheBSKSim.set_DynModel(BSK_OpNavDynamics)
     TheBSKSim.set_FswModel(BSK_OpNavFsw)
     TheBSKSim.initInterfaces()
@@ -435,15 +435,19 @@ def run(showPlots):
     TheBSKSim.InitializeSimulationAndDiscover()
 
     # Configure run time and execute simulation
-    simulationTime = macros.min2nano(500.)
+    simulationTime = macros.min2nano(100.)
     TheBSKSim.ConfigureStopTime(simulationTime)
     print 'Starting Execution'
+    t1 = time.time()
     TheBSKSim.ExecuteSimulation()
-    print 'Finished Execution. Post-processing results'
+    t2 = time.time()
+    print 'Finished Execution in ', t2-t1, ' seconds. Post-processing results'
 
     # Pull the results of the base simulation running the chosen scenario
     figureList = TheScenario.pull_outputs(showPlots)
 
+    if TheBSKSim.get_DynModel().vizProcessID is not None:
+        os.kill(TheBSKSim.get_DynModel().vizProcessID, signal.SIG_DFL)
     return figureList
 
 

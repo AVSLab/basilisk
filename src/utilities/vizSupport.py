@@ -23,7 +23,7 @@
 #
 #   Unit Test Support Script
 #
-import sys, os
+import sys, os, subprocess
 from Basilisk.utilities import unitTestSupport
 from Basilisk import __path__
 bskPath = __path__[0]
@@ -50,13 +50,17 @@ def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFact
     if not os.path.isdir(home + '_VizFiles'):
         os.mkdir(home + '_VizFiles')
     fileNamePath = home + '_VizFiles/' + name
-
+    appPath = '/Applications/Vizard.app/'
 
     # setup the Vizard interface module
     vizMessager = vizInterface.VizInterface()
     scSim.AddModelToTask(simTaskName, vizMessager)
     vizMessager.saveFile = 1
     vizMessager.opNavMode = 1
+    procID = None
+    if vizMessager.opNavMode == 1:
+        proc = subprocess.Popen(["open", appPath, "--args", "-opNavMode", "tcp://localhost:5556", "-batchmode"])
+        procID = proc.pid
     vizMessager.spiceInMsgName = vizInterface.StringVector([      "earth_planet_data",
                                                                   "mars_planet_data",
                                                                   "mars barycenter_planet_data",
@@ -71,6 +75,8 @@ def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFact
                                                                   "saturn barycenter_planet_data"])
     vizMessager.planetNames = vizInterface.StringVector(["earth", "mars", "mars barycenter", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
     vizMessager.protoFilename = fileNamePath
+
+    return procID
 
 
     # see if celestial body planet ephemeris messages must be created

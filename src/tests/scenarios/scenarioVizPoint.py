@@ -404,8 +404,11 @@ def run(show_plots, dscovr, marsOrbit):
     #
     #   configure a simulation stop time time and execute the simulation run
     #
+    t1 = time.time()
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
+    t2 = time.time()
+    print "Time for run = ", t2-t1
 
     #
     #   retrieve the logged data

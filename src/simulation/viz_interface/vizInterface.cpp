@@ -20,9 +20,9 @@
 #include <cstdio>
 #include <architecture/messaging/system_messaging.h>
 #include <zmq.h>
-//#include "opencv2/opencv.hpp"
-//#include "opencv2/highgui.hpp"
-//#include "opencv2/imgcodecs.hpp"
+#include "opencv2/opencv.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/imgcodecs.hpp"
 
 #include "vizInterface.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
@@ -292,7 +292,7 @@ void VizInterface::ReadBSKMessages()
         CameraConfigMsg localCameraConfigArray;
         SingleMessageHeader localCameraConfigHeader;
         SystemMessaging::GetInstance()->ReadMessage(cameraConfMsgId.msgID, &localCameraConfigHeader, sizeof(CameraConfigMsg), reinterpret_cast<uint8_t*>(&localCameraConfigArray));
-        if(localCameraConfigHeader.WriteSize > 0 && localCameraConfigHeader.WriteClockNanos != cssConfInMsgId.lastTimeTag)
+        if(localCameraConfigHeader.WriteSize > 0 && localCameraConfigHeader.WriteClockNanos != cameraConfMsgId.lastTimeTag)
         {
             cameraConfMsgId.lastTimeTag = localCameraConfigHeader.WriteClockNanos;
             cameraConfMsgId.dataFresh = true;
@@ -504,13 +504,13 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 ((length_unswapped<<24)&0xff000000); // byte 0 to byte 3
                 
                 std::vector<unsigned char> vectorBuffer((char*)imagePoint, (char*)imagePoint + imageBufferLength);
-//                cv::Mat imageTest = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
+                cv::Mat imageTest = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
+                
 //                if (CurrentSimNanos > 9.0*60.0*1.0/NANO2SEC){
 //                    cv::namedWindow( "Test Window", CV_WINDOW_AUTOSIZE );
 //                    cv::imshow( "Show Image", imageTest );
-//                    cv::waitKey(0);
 //                }
-                
+//
                 // Clean the messages to avoid memory leaks
                 zmq_msg_close(&length);
                 zmq_msg_close(&image);

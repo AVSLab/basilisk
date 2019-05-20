@@ -19,7 +19,7 @@
 '''
 
 import numpy as np
-import math, sys, os, inspect
+import math, sys, os, inspect, subprocess, commands, signal
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import unitTestSupport as sp
 from Basilisk.simulation import (spacecraftPlus, gravityEffector, extForceTorque, simple_nav, spice_interface,
@@ -49,6 +49,7 @@ class BSKDynamicModels():
         
         # Instantiate Dyn modules as objects
         self.simBasePath = bskPath
+        self.vizProcessID = None
 
         self.SpiceObject = spice_interface.SpiceInterface()
         self.scObject = spacecraftPlus.SpacecraftPlus()
@@ -95,7 +96,7 @@ class BSKDynamicModels():
     def SetLocalConfigData(self, sim):
         cameraConfig = simFswInterfaceMessages.CameraConfigMsg()
         cameraConfig.cameraID = 1
-        cameraConfig.renderRate = int(30 * 1E9)  # in ns
+        cameraConfig.renderRate = int(60 * 1E9)  # in ns
         cameraConfig.cameraDir_B = [0., 0., 1.]
         cameraConfig.cameraPos_B = [5000. * 1E-3, 0., 0.]  # in meters
         cameraConfig.fieldOfView = 50.  # in degrees
@@ -108,6 +109,7 @@ class BSKDynamicModels():
 
     def SetVizInterface(self):
         fileName = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
+        appPath = '/Applications/Vizard.app/'
         home = os.path.dirname(fileName)
         if len(home) != 0:
             home += '/'
@@ -116,8 +118,16 @@ class BSKDynamicModels():
             os.mkdir(home + '_VizFiles')
         fileName = home + '_VizFiles/' + name
 
-        self.vizInterface.liveStream = 1
+        self.vizInterface.opNavMode = 1
         self.vizInterface.saveFile = 1
+        if self.vizInterface.opNavMode == 1:
+            oldId = commands.getstatusoutput("ps aux | grep -v grep |grep -i Vizard | awk '{print $2;}'")[1]
+            if oldId != '':
+                os.kill(int(oldId), signal.SIG_DFL)
+            subprocess.call(["open", appPath, "--args", "-opNavMode", "tcp://localhost:5556"])#, "-batchmode"])
+            id = commands.getstatusoutput("ps aux | grep -v grep |grep -i Vizard | awk '{print $2;}'")[1]
+            self.vizProcessID = int(id)
+
         self.vizInterface.spiceInMsgName = vizInterface.StringVector(["earth_planet_data",
                                                                 "mars barycenter_planet_data",
                                                                 "sun_planet_data",
