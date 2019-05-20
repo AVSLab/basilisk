@@ -26,6 +26,7 @@
 #include "fswMessages/thrArrayConfigFswMsg.h"
 #include "fswMessages/thrArrayCmdForceFswMsg.h"
 #include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
+#include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 
 /*! \defgroup thrMomentumDumping
  !@brief This module reads in the desired impulse that each thruster must produce to create inertial momentum change to despin the RWs.
@@ -41,6 +42,7 @@ typedef struct {
     /* declare module private variables */
     int32_t     thrDumpingCounter;                      //!<        counter to specify after how many contro period a thruster firing should occur.
     double      Delta_p[MAX_EFF_CNT];                   //!<        vector of desired total thruster impulses
+    uint64_t    lastDeltaHInMsgTime;                    //!<        time tag of the last momentum change input message 
     double      thrOnTimeRemaining[MAX_EFF_CNT];        //!<        vector of remaining thruster on times
     uint64_t    priorTime;                              //!< [ns]   Last time the attitude control is called
     int         numThrusters;                           //!<        number of thrusters installed
@@ -52,12 +54,13 @@ typedef struct {
 
     /* declare module IO interfaces */
     char thrusterOnTimeOutMsgName[MAX_STAT_MSG_LENGTH]; //!< thruster on time output message name
-    int32_t thrusterOnTimeOutMsgID;                     //!< ID of module output message
+    int32_t thrusterOnTimeOutMsgId;                     //!< ID of module output message
     char thrusterImpulseInMsgName[MAX_STAT_MSG_LENGTH]; //!< desired thruster impulse input message name
-    int32_t thrusterImpulseInMsgID;                     //!< ID of thruster impulse input message
+    int32_t thrusterImpulseInMsgId;                     //!< ID of thruster impulse input message
     char thrusterConfInMsgName[MAX_STAT_MSG_LENGTH];    //!< The name of the thruster configuration Input message
-    int32_t  thrusterConfInMsgID;                       //!< [-] ID for the incoming Thruster configuration data
-
+    int32_t  thrusterConfInMsgId;                       //!< [-] ID for the incoming Thruster configuration data
+    char deltaHInMsgName[MAX_STAT_MSG_LENGTH];          //!< The name of the requested momentum change input message
+    int32_t  deltaHInMsgId;                             //!< [-] ID for the incoming Thruster configuration data
 }thrMomentumDumpingConfig;
 
 #ifdef __cplusplus
