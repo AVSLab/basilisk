@@ -155,22 +155,13 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t ca
                     sizeof(THRArrayCmdForceFswMsg), (void*) &thrusterImpulseInMsg, moduleID);
         Delta_P_input = thrusterImpulseInMsg.thrForce;
 
-<<<<<<< HEAD
-        /*! - check if the thruster impulse input message is identical to current values (continue
-         with current momentum dumping), or if the message is new (setup new dumping strategy)  */
-        if (memcmp(Delta_P_input, configData->Delta_p, configData->numThrusters*sizeof(double)) == 0) {
-            /* idential net thruster impulse request case, continue with existing RW momentum dumping */
-
-=======
         /*! - check if the thruster impulse input message time tag is identical to current values (continue
-         with current momentum dumping), or if the message is new (setup new dumping strategy)
-         Check time of message written instead*/
+         with current momentum dumping) */
         memset(&DeltaHInMsg, 0x0, sizeof(CmdTorqueBodyIntMsg));
         ReadMessage(configData->deltaHInMsgId, &timeOfDeltaHMsg, &sizeOfDeltaHMsg,
                     sizeof(CmdTorqueBodyIntMsg), (void *) &DeltaHInMsg, moduleID);
         if (configData->lastDeltaHInMsgTime == timeOfDeltaHMsg){
             /* identical net thruster impulse request case, continue with existing RW momentum dumping */
->>>>>>> [BSK-1340] added new logic to reset Delta_p if the time tag is new
             if (configData->thrDumpingCounter <= 0) {
                 /* time to fire thrusters again */
                 mCopy(configData->thrOnTimeRemaining, 1, configData->numThrusters, tOnOut);
