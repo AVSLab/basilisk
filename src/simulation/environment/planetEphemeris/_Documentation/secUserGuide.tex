@@ -1,0 +1,19 @@
+% !TEX root = ./Basilisk-planetEphemeris-20190422.tex
+
+\section{User Guide}
+\subsection{Required Module Parameters}
+\begin{itemize}
+	\item {\tt planetNames} --  C++ vector of strings containing the planet names
+	\item {\tt planetElements} --  C++ vector of {\tt classicElements} structures containing the planet ephemeris information
+\end{itemize}
+
+
+\subsection{Optional Module Parameters}
+The planet orientation information is optional.  If not specified, then the planet output message default the planet orientation to an identity matrix with a zero DCM rate matrix.  If any of the following orientation parameters are missing, then the module will throw an error message and output the default zero orientation.
+
+\begin{itemize}
+	\item {\tt rightAscension} --  C++ vector of doubles containing the planet rotation axis right ascension angles in radians
+	\item {\tt declination} --  C++ vector of doubles containing the planet rotation axis declination angles in radian
+	\item {\tt lst0} --  C++ vector of doubles containing the planet epoch local sidereal time angles in radians
+	\item {\tt rotRate} --  C++ vector of doubles containing the planet polar axis rotation rate in rad/sec
+\end{itemize}

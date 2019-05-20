@@ -29,6 +29,9 @@ We are very excited by the great capabilities that this software already has, an
     <li>
         added a PPTX support file that explains the core Basilisk architecture.  HTML documentation is updated to link to this.
     </li>
+    <li>
+        Creates new simulation module called `planetEphemeris` which creates a planet Spice ephemeris message given a set of classical orbit elements.
+    </li>
 </ul>
 
 ##  Upcoming Version 0.6.0

@@ -1,0 +1,74 @@
+% !TEX root = ./Basilisk-planetEphemeris-20190422.tex
+
+\section{Test Description and Success Criteria}
+The unit test configures the module to model general orbital motions of Earth and Venus.  In each case the translational motion is compute for 3 times steps from 0 to 1 second using a 0.5 second time step.  The planet orientation information is only set if the appropriate simulation parameter is set.  The following sub-sections discuss these flags.  If none of these flags are set, then the module default orientation behavior is expected.  If all the flags are set, then a constant rotation is set.  If only a partial set of orientation information is provided then the reset routine will force the module to throw an error message and only output a default constant zero orientation of the planet. 
+
+\subsection{{\tt setRAN}}
+This flag specifies if a set of right ascension angles are specified in the unit test.
+
+\subsection{{\tt setDEC}}
+This flag specifies if a set of declination angles are specified in the unit test.
+
+\subsection{{\tt setLST}}
+This flag specifies if a set of local sidereal time angles are specified in the unit test.
+
+\subsection{{\tt setRate}}
+This flag specifies if a set of planetary polar rotation rates are specified in the unit test.
+
+
+
+
+\section{Test Parameters}
+The unit test verify that the module output guidance message vectors match expected values.
+\begin{table}[htbp]
+	\caption{Error tolerance for each test.}
+	\label{tab:errortol}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c } % Column formatting, 
+		\hline\hline
+		\textbf{Output Value Tested}  & \textbf{Tolerated Error}  \\ 
+		\hline
+		{\tt J2000Current}        & \input{AutoTeX/toleranceValue} s   \\ 
+		{\tt PositionVector}        & \input{AutoTeX/toleranceValue} m   \\ 
+		{\tt VelocityVector}        & \input{AutoTeX/toleranceValue} m/s   \\ 
+		{\tt J20002Pfix}        & \input{AutoTeX/toleranceValue}    \\ 
+		{\tt J20002Pfix\_dot}        & $10^{-10}$ rad/s   \\ 
+		{\tt computeOrient}        & \input{AutoTeX/toleranceValue}    \\ 
+		\hline\hline
+	\end{tabular}
+\end{table}
+
+
+
+
+\section{Test Results}
+All orientation flag permutations are tested and are expected to pass.
+
+\begin{table}[H]
+	\caption{Test results}
+	\label{tab:results}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{c | c  | c | c | c } % Column formatting, 
+		\hline\hline
+		{\tt setRAN} & {\tt setDEC} & {\tt setLST} & {\tt setRate} &\textbf{Pass/Fail} \\ 
+		\hline
+	   True & True & True & True & \input{AutoTeX/passFailTrueTrueTrueTrue} \\ 
+	   True & True & True & False & \input{AutoTeX/passFailTrueTrueTrueFalse} \\ 
+	   True & True & False & True & \input{AutoTeX/passFailTrueTrueFalseTrue} \\ 
+	   True & True & False & False & \input{AutoTeX/passFailTrueTrueFalseFalse} \\ 
+	   True & False & True & True & \input{AutoTeX/passFailTrueFalseTrueTrue} \\ 
+	   True & False & True & False & \input{AutoTeX/passFailTrueFalseTrueFalse} \\ 
+	   True & False & False & True & \input{AutoTeX/passFailTrueFalseFalseTrue} \\ 
+	   True & False & False & False & \input{AutoTeX/passFailTrueFalseFalseFalse} \\ 
+	   False & True & True & True & \input{AutoTeX/passFailFalseTrueTrueTrue} \\ 
+	   False & True & True & False & \input{AutoTeX/passFailFalseTrueTrueFalse} \\ 
+	   False & True & False & True & \input{AutoTeX/passFailFalseTrueFalseTrue} \\ 
+	   False & True & False & False & \input{AutoTeX/passFailFalseTrueFalseFalse} \\ 
+	   False & False & True & True & \input{AutoTeX/passFailFalseFalseTrueTrue} \\ 
+	   False & False & True & False & \input{AutoTeX/passFailFalseFalseTrueFalse} \\ 
+	   False & False & False & True & \input{AutoTeX/passFailFalseFalseFalseTrue} \\ 
+	   False & False & False & False & \input{AutoTeX/passFailFalseFalseFalseFalse} \\ 
+	   \hline\hline
+	\end{tabular}
+\end{table}
+
