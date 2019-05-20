@@ -24,8 +24,7 @@ typedef struct {
     double timeTag;         //!< --[s]   Current vehicle time-tag associated with measurements*/
     int64_t cameraID;          //!< -- [-]   ID of the camera that took the snapshot*/
     void* imagePointer;        //!< -- Pointer to the image
-    int16_t imageHeight;        //!< -- Height of the image in pixels
-    int16_t imageWidth;         //!< -- Weidth of the image in pixels
+    int16_t imageBufferLength; //!< -- Length of the buffer for recasting
     int8_t imageType;         //!< -- Number of channels in each pixel, RGB = 3, RGBA = 4
 }CameraImageMsg;
 

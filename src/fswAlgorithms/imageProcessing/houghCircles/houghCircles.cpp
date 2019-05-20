@@ -109,12 +109,9 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     }
 
     /*! - Recast image pointer to Eigen type*/
-//    double* pMat[imageBuffer.imageWidth][imageBuffer.imageHeight] = static_cast<double>(*imageBuffer.imagePointer);
-    uint32_t* pMat = (uint32_t *) imageBuffer.imagePointer;
-    cv::Mat src(imageBuffer.imageWidth,imageBuffer.imageHeight,CV_32SC4);
-    std::memcpy(src.data, pMat, imageBuffer.imageWidth*imageBuffer.imageHeight*imageBuffer.imageType*sizeof(uint8_t));
-//    src = cv::imdecode(imageBuffer.imagePointer, cv::IMREAD_ANYCOLOR);
-    cv::blur(grey, blurred, cv::Size(this->blurrSize,this->blurrSize) );
+    std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePoint, (char*)imageBuffer.imagePoint + imageBuffer.imageBufferLength);
+    cv::Mat imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
+    cv::blur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize) );
 //    cv::imshow( "Hough Circle Transform Demo", src );
 //    cv::waitKey(0);
 
