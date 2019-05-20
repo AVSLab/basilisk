@@ -32,6 +32,9 @@ We are very excited by the great capabilities that this software already has, an
     <li>
         Creates new simulation module called `planetEphemeris` which creates a planet Spice ephemeris message given a set of classical orbit elements.
     </li>
+    <li>
+        updated the `thrMomentumDumping` module to read in the `thrMomentumManagement` module output message to determine if a new momentum dumping sequence is required.  
+    </li>
 </ul>
 
 ##  Upcoming Version 0.6.0

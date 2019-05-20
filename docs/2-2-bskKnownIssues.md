@@ -8,6 +8,9 @@
     <li>
         This version of Basilisk no longer support the ASIO module that communicated with the Qt-based visualization as the BOOST library has been removed.  This visualization has been replaced with the new Vizard visualization.
     </li>
+    <li>
+        The `thrMomentumDumping` now reads in a 2nd required input message to determine if a new dumping sequence is requested.
+    </li>
 </ul>
 
 ## Version 0.6.0
