@@ -33,6 +33,11 @@
 
 
 
+/*! This method creates the module output message of type [AttRefFswMsg](\ref AttRefFswMsg).
+ @return void
+ @param configData The configuration data associated with RW null space model
+ @param moduleID The ID associated with the configData
+ */
 void SelfInit_hillPoint(hillPointConfig *configData, uint64_t moduleID)
 {
     /*! - Create output message for module */
@@ -42,6 +47,12 @@ void SelfInit_hillPoint(hillPointConfig *configData, uint64_t moduleID)
                                                moduleID);
 }
 
+/*! This method performs the second stage of initialization
+ interface.  This module has two messages to subscribe to of type [EphemerisIntMsg](\ref EphemerisIntMsg) and [NavTransIntMsg](\ref NavTransIntMsg).
+ @return void
+ @param configData The configuration data associated with this module
+ @param moduleID The ID associated with the configData
+ */
 void CrossInit_hillPoint(hillPointConfig *configData, uint64_t moduleID)
 {
     /*! - subscribe to other message*/
@@ -56,12 +67,24 @@ void CrossInit_hillPoint(hillPointConfig *configData, uint64_t moduleID)
                                                 sizeof(NavTransIntMsg), moduleID);
 }
 
+/*! This method performs the module reset capability.  This module has no actions.
+ @return void
+ @param configData The configuration data associated with this module
+ @param moduleID The ID associated with the configData
+ */
 void Reset_hillPoint(hillPointConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
     
 }
 
 
+/*! This method creates a orbit hill frame reference message.  The desired orientation is
+ defined within the module.
+ @return void
+ @param configData The configuration data associated with the null space control
+ @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the configData
+ */
 void Update_hillPoint(hillPointConfig *configData, uint64_t callTime, uint64_t moduleID)
 {
     /*! - Read input message */
