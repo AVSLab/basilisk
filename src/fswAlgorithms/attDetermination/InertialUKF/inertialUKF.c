@@ -289,7 +289,7 @@ void Update_inertialUKF(InertialUKFConfig *configData, uint64_t callTime,
                 && configData->maxTimeJump > 0)
             {
                 configData->timeTag = newTimeTag - configData->maxTimeJump;
-                BSK_PRINT(MSG_WARNING, "Large jump in state time that was set to max\n");
+                BSK_PRINT(MSG_WARNING, "Large jump in state time that was set to max.");
             }
             trackerValid += inertialUKFTimeUpdate(configData, newTimeTag);
             trackerValid += inertialUKFMeasUpdate(configData, configData->stSensorOrder[i]);

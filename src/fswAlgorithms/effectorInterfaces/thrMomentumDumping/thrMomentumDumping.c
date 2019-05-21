@@ -112,7 +112,7 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *configData, uint64_t cal
 
     /*! - perform sanity check that the module maxCounterValue value is set to a positive value */
     if (configData->maxCounterValue < 1) {
-        BSK_PRINT(MSG_WARNING,"The maxCounterValue flag must be set to a positive value.\n");
+        BSK_PRINT(MSG_WARNING,"The maxCounterValue flag must be set to a positive value.");
     }
 
 }

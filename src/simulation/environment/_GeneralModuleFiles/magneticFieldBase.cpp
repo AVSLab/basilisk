@@ -232,7 +232,7 @@ bool MagneticFieldBase::readMessages()
                 this->scStates.push_back(scMsg);
             }
     } else {
-        BSK_PRINT(MSG_ERROR, "Atmosphere model has no spacecraft added to it.\n");
+        BSK_PRINT(MSG_ERROR, "Atmosphere model has no spacecraft added to it.");
         scRead = false;
     }
 

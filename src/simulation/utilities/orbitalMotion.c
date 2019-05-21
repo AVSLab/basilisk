@@ -601,7 +601,7 @@ void atmosphericDrag(double Cd, double A, double m, double *rvec, double *vvec,
 
     /* Checking if user supplied a orbital position is inside the earth */
     if(alt <= 0.) {
-        BSK_PRINT(MSG_ERROR, "atmosphericDrag() received rvec = [%g %g %g]The value of rvec should produce a positive altitude for the Earth.\n",  rvec[1], rvec[2], rvec[3]);
+        BSK_PRINT(MSG_ERROR, "atmosphericDrag() received rvec = [%g %g %g]The value of rvec should produce a positive altitude for the Earth.",  rvec[1], rvec[2], rvec[3]);
         v3Set(NAN, NAN, NAN, advec);
         return;
     }

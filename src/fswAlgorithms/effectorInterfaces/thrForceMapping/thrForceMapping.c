@@ -93,10 +93,10 @@ void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime,
         }
     }
     if (configData->numControlAxes==0) {
-        BSK_PRINT(MSG_ERROR,"thrForceMapping() is not setup to control any axes!\n");
+        BSK_PRINT(MSG_ERROR,"thrForceMapping() is not setup to control any axes!");
     }
     if (configData->thrForceSign==0) {
-        BSK_PRINT(MSG_ERROR,"thrForceMapping() must have posThrustFlag set to either +1 or -1\n");
+        BSK_PRINT(MSG_ERROR,"thrForceMapping() must have posThrustFlag set to either +1 or -1");
     }
 
 
@@ -115,7 +115,7 @@ void Reset_thrForceMapping(thrForceMappingConfig *configData, uint64_t callTime,
         v3Copy(localThrusterData.thrusters[i].rThrust_B, configData->rThruster_B[i]);
         v3Copy(localThrusterData.thrusters[i].tHatThrust_B, configData->gtThruster_B[i]);
         if(localThrusterData.thrusters[i].maxThrust <= 0.0){
-            BSK_PRINT(MSG_ERROR, "A configured thruster has a non-sensible saturation limit of <= 0 N!\n");
+            BSK_PRINT(MSG_ERROR, "A configured thruster has a non-sensible saturation limit of <= 0 N!");
         } else {
             configData->thrForcMag[i] = localThrusterData.thrusters[i].maxThrust;
         }

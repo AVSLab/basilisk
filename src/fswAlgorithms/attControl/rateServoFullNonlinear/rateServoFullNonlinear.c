@@ -77,7 +77,7 @@ void CrossInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *configData, 
             configData->rwSpeedsInMsgId = subscribeToMessage(configData->inputRWSpeedsName,
                                                              sizeof(RWSpeedIntMsg), moduleID);
         } else {
-            BSK_PRINT(MSG_ERROR,"The inputRWSpeedsName wasn't set while rwParamsInMsgName was set.\n");
+            BSK_PRINT(MSG_ERROR,"The inputRWSpeedsName wasn't set while rwParamsInMsgName was set.");
         }
         if(strlen(configData->rwAvailInMsgName) > 0) {
             configData->rwAvailInMsgId = subscribeToMessage(configData->rwAvailInMsgName,

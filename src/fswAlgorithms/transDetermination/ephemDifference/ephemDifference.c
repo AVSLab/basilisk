@@ -46,7 +46,7 @@ void SelfInit_ephemDifference(EphemDifferenceData *configData, uint64_t moduleID
     }
 
     if (configData->ephBdyCount == 0) {
-        BSK_PRINT(MSG_WARNING, "Your outgoing ephemeris message count is zero. Be sure to specify desired output messages.\n");
+        BSK_PRINT(MSG_WARNING, "Your outgoing ephemeris message count is zero. Be sure to specify desired output messages.");
     }
 }
 

@@ -80,7 +80,7 @@ void Update_rasterManager(rasterManagerConfig *configData, uint64_t callTime, ui
     } else {
         configData->mnvrActive = 0.0;
         configData->scanSelector += 1;
-        BSK_PRINT(MSG_INFORMATION,"Raster: %i. AngleSet = [%f, %f, %f], RateSet = [%f, %f, %f] \n", configData->scanSelector,
+        BSK_PRINT(MSG_INFORMATION,"Raster: %i. AngleSet = [%f, %f, %f], RateSet = [%f, %f, %f] ", configData->scanSelector,
                configData->attOutSet.state[0],
                configData->attOutSet.state[1],
                configData->attOutSet.state[2],

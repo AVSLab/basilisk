@@ -404,7 +404,7 @@ void ReactionWheelStateEffector::CrossInit()
 	{
         if (it->betaStatic == 0.0)
         {
-            BSK_PRINT(MSG_WARNING, "Stribeck coefficent currently zero and should be positive to active this friction model, or negative to turn it off!\n");
+            BSK_PRINT(MSG_WARNING, "Stribeck coefficent currently zero and should be positive to active this friction model, or negative to turn it off!");
         }
 		//! Define CoM offset d and off-diagonal inertia J13 if using fully coupled model
 		if (it->RWModel == JitterFullyCoupled) {
