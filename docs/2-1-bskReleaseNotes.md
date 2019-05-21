@@ -38,6 +38,9 @@ We are very excited by the great capabilities that this software already has, an
     <li>
         updated the hillPoint and velocityPoint scenarios on how to connect a planet ephemeris message.
     </li>
+    <li>
+        updated `hillPoint` and `velocityPoint` to meet BSK coding guidelines
+    </li>
 </ul>
 
 ##  Upcoming Version 0.6.0
