@@ -170,7 +170,10 @@ def plot_orientation(timeLineSet, dataPos, dataVel, dataSigmaBN):
 #     attGuidanceWrap = scSim.setModelDataWrap(attGuidanceConfig)
 #     attGuidanceWrap.ModelTag = "hillPoint"
 #     attGuidanceConfig.inputNavDataName = sNavObject.outputTransName
-#     attGuidanceConfig.inputCelMessName = earth.bodyInMsgName
+#     # if you want to set attGuidanceConfig.inputCelMessName, then you need a planet ephemeris message of
+#     # type EphemerisIntMsg.  In the line below a non-existing message name is used to create an empty planet
+#     # ephemeris message which puts the earth at (0,0,0) origin with zero speed.
+#     attGuidanceConfig.inputCelMessName = "empty_earth_msg"
 #     attGuidanceConfig.outputDataName = "guidanceOut"
 #     scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
 # ~~~~~~~~~~~~~
@@ -179,10 +182,12 @@ def plot_orientation(timeLineSet, dataPos, dataVel, dataSigmaBN):
 # spacecraft's position and velocity information.  The planet ephemeris message relative to which the Hill pointing
 # is being achieved by setting the `inputCelMessName` message.
 # This is useful, for example, if orbiting the sun, and wanting to point the spacecraft back at the
-# Earth which is also orbiting the sun.  In this scenario, however, the spacecraft is to point at the
-# Earth while already orbiting the Earth.  Thus, this planet ephemeris input message is not set, which
-# in return zeros the planets position and velocity vector states in the guidance module.
-#
+# Earth which is also orbiting the sun.
+# Note that while the celestial body ephemeris input message must be set, it can be a non-existing message.
+# In that case a zero message is created which corresponds to the planet having a zero position and velocity vector.
+# If non-zero ephemeris information is required then the input name must point to a message of type EphemerisIntMsg.
+# In this scenario, however, the spacecraft is to point at the Earth while already orbiting the Earth and the input
+# message name is set to a dummy message.
 #
 # Setup 1
 # -----
@@ -336,7 +341,10 @@ def run(show_plots, useAltBodyFrame):
     attGuidanceWrap = scSim.setModelDataWrap(attGuidanceConfig)
     attGuidanceWrap.ModelTag = "hillPoint"
     attGuidanceConfig.inputNavDataName = sNavObject.outputTransName
-    attGuidanceConfig.inputCelMessName = earth.bodyInMsgName
+    # if you want to set attGuidanceConfig.inputCelMessName, then you need a planet ephemeris message of
+    # type EphemerisIntMsg.  In the line below a non-existing message name is used to create an empty planet
+    # ephemeris message which puts the earth at (0,0,0) origin with zero speed.
+    attGuidanceConfig.inputCelMessName = "empty_earth_msg"
     attGuidanceConfig.outputDataName = "guidanceOut"
     scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
 
