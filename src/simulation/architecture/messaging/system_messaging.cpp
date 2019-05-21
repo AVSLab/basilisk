@@ -90,7 +90,7 @@ void SystemMessaging::selectMessageBuffer(uint64_t bufferUse)
 
     if(bufferUse >= this->dataBuffers.size())
     {
-        BSK_PRINT_BRIEF(MSG_ERROR,"You've attempted to access a message buffer that does not exist. Yikes.\n");
+        BSK_PRINT_BRIEF(MSG_ERROR,"You've attempted to access a message buffer that does not exist. Yikes.");
         this->messageStorage = *this->dataBuffers.begin();
         return;
     }
@@ -107,7 +107,7 @@ void SystemMessaging::SetNumMessages(uint64_t MessageCount)
 {
     if(this->messageStorage == NULL)
     {
-        BSK_PRINT_BRIEF(MSG_ERROR,"Received a request to set num messages for a NULL buffer.\n");
+        BSK_PRINT_BRIEF(MSG_ERROR,"Received a request to set num messages for a NULL buffer.");
         return;
     }
     memcpy(&(this->messageStorage->messageStorage.StorageBuffer[0]), &MessageCount, sizeof(uint64_t));
@@ -208,7 +208,7 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
 {
     if (this->FindMessageID(MessageName) >= 0)
     {
-        BSK_PRINT_BRIEF(MSG_INFORMATION,"The message %s was created more than once.\n", MessageName.c_str());
+        BSK_PRINT_BRIEF(MSG_INFORMATION,"The message %s was created more than once.", MessageName.c_str());
         if(moduleID >= 0)
         {
             std::vector<AllowAccessData>::iterator it;
@@ -221,19 +221,19 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
     }
     if(MessageName == "")
     {
-        BSK_PRINT_BRIEF(MSG_ERROR,"Module ID: %lld tried to create a message without a name.  Please try again.\n", moduleID);
+        BSK_PRINT_BRIEF(MSG_ERROR,"Module ID: %lld tried to create a message without a name.  Please try again.", moduleID);
         this->CreateFails++;
         return(-1);
     }
     if(NumMessageBuffers <= 0)
     {
-        BSK_PRINT_BRIEF(MSG_ERROR,"I can't create a message with zero buffers.  I refuse.\n");
+        BSK_PRINT_BRIEF(MSG_ERROR,"I can't create a message with zero buffers.  I refuse.");
         this->CreateFails++;
         return(-1);
     }
     if(NumMessageBuffers == 1)
     {
-        BSK_PRINT_BRIEF(MSG_WARNING,"You created a message with only one buffer. This might compromise the message integrity. Watch out.\n");
+        BSK_PRINT_BRIEF(MSG_WARNING,"You created a message with only one buffer. This might compromise the message integrity. Watch out.");
     }
     uint64_t InitSize = this->GetCurrentSize();
     uint64_t StorageRequired = InitSize + sizeof(MessageHeaderData) +
@@ -261,7 +261,7 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
     uint32_t NameLength = (uint32_t)MessageName.size();
     if(NameLength > MAX_MESSAGE_SIZE)
     {
-        BSK_PRINT_BRIEF(MSG_ERROR,"Your name length for: %s. is too long, truncating name\n", MessageName.c_str());
+        BSK_PRINT_BRIEF(MSG_ERROR,"Your name length for: %s. is too long, truncating name", MessageName.c_str());
         this->CreateFails++;
         NameLength = MAX_MESSAGE_SIZE;
     }
@@ -270,7 +270,7 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
     NameLength = (uint32_t)messageStruct.size();
     if(NameLength > MAX_MESSAGE_SIZE)
     {
-        BSK_PRINT_BRIEF(MSG_ERROR,"Your struct name length for: %s. is too long, truncating name\n", messageStruct.c_str());
+        BSK_PRINT_BRIEF(MSG_ERROR,"Your struct name length for: %s. is too long, truncating name", messageStruct.c_str());
         this->CreateFails++;
         NameLength = MAX_MESSAGE_SIZE;
     }
@@ -422,8 +422,8 @@ bool SystemMessaging::WriteMessage(uint64_t MessageID, uint64_t ClockTimeNanos,
     // Check if the message is valid
     if(MessageID >= this->GetMessageCount())
     {
-        BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request for invalid message ID: %llu \n"
-                                   " from ModuleID: %lld \n ", MessageID, moduleID);
+        BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request for invalid message ID: %llu "
+                                   " from ModuleID: %lld ", MessageID, moduleID);
         this->WriteFails++;
         return(false);
     }
@@ -440,7 +440,7 @@ bool SystemMessaging::WriteMessage(uint64_t MessageID, uint64_t ClockTimeNanos,
         }
         else
         {
-            BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request from a module that doesn't publish for %s . You get nothing.\n",
+            BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request from a module that doesn't publish for %s . You get nothing.",
                             this->FindMessageName(MessageID).c_str());
             this->WriteFails++;
             return(false);
@@ -449,7 +449,7 @@ bool SystemMessaging::WriteMessage(uint64_t MessageID, uint64_t ClockTimeNanos,
     // Check the message size
     if(MsgSize != MsgHdr->MaxMessageSize)
     {
-        BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request that was incorrect size for: %s . You get nothing.\n",
+        BSK_PRINT_BRIEF(MSG_ERROR, "Received a write request that was incorrect size for: %s . You get nothing.",
                   MsgHdr->MessageName);
         this->WriteFails++;
         return(false);
@@ -512,7 +512,7 @@ bool SystemMessaging::ReadMessage(uint64_t MessageID, SingleMessageHeader
 {
     if(MessageID >= this->GetMessageCount())
     {
-        BSK_PRINT_BRIEF(MSG_ERROR, "Received a read request for invalid message ID: %lld \n", MessageID);
+        BSK_PRINT_BRIEF(MSG_ERROR, "Received a read request for invalid message ID: %lld ", MessageID);
         this->ReadFails++;
         return(false);
     }
@@ -537,7 +537,7 @@ bool SystemMessaging::ReadMessage(uint64_t MessageID, SingleMessageHeader
     if(accIt->accessList.find(moduleID) == accIt->accessList.end()
         && moduleID != -1)
     {
-        BSK_PRINT_BRIEF(MSG_WARNING, "Message %s was read by module ID %lld who is not on access list.\n", MsgHdr->MessageName, moduleID);
+        BSK_PRINT_BRIEF(MSG_WARNING, "Message %s was read by module ID %lld who is not on access list.", MsgHdr->MessageName, moduleID);
     }
     
     exIt->exchangeList.insert(std::pair<long int, long int>
@@ -559,7 +559,7 @@ bool SystemMessaging::ReadMessage(uint64_t MessageID, SingleMessageHeader
 void SystemMessaging::PrintAllMessageData()
 {
     uint64_t TotalMessageCount = this->GetMessageCount();
-    BSK_PRINT_BRIEF(MSG_INFORMATION, "Number of Messages: %lld \n", TotalMessageCount);
+    BSK_PRINT_BRIEF(MSG_INFORMATION, "Number of Messages: %lld ", TotalMessageCount);
     for(uint64_t i=0; i<TotalMessageCount; i++)
     {
         this->PrintMessageStats(i);
@@ -603,10 +603,10 @@ void SystemMessaging::PrintMessageStats(uint64_t MessageID)
     MessageHeaderData* MsgHdr = this->FindMsgHeader(MessageID);
     if(MsgHdr == NULL)
     {
-        BSK_PRINT_BRIEF(MSG_ERROR, "Received a print request for ID: %llu That ID is not valid.\n", MessageID);
+        BSK_PRINT_BRIEF(MSG_ERROR, "Received a print request for ID: %llu That ID is not valid.", MessageID);
         return;
     }
-    BSK_PRINT_BRIEF(MSG_INFORMATION, "INFORMATION:\n Name: %s\n Writes: %llu \n MsgSize: %llu \n NumberBuffers: %u\n MsgID: %llu\n",
+    BSK_PRINT_BRIEF(MSG_INFORMATION, "INFORMATION:\n Name: %s\n Writes: %llu \n MsgSize: %llu \n NumberBuffers: %u\n MsgID: %llu",
               MsgHdr->MessageName, MsgHdr->UpdateCounter, MsgHdr->MaxMessageSize, MsgHdr->MaxNumberBuffers, MessageID);
 }
 
