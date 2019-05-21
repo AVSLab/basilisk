@@ -35,6 +35,9 @@ We are very excited by the great capabilities that this software already has, an
     <li>
         updated the `thrMomentumDumping` module to read in the `thrMomentumManagement` module output message to determine if a new momentum dumping sequence is required.  
     </li>
+    <li>
+        updated the hillPoint and velocityPoint scenarios on how to connect a planet ephemeris message.
+    </li>
 </ul>
 
 ##  Upcoming Version 0.6.0
