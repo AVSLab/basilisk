@@ -49,7 +49,7 @@ class BSKDynamicModels():
         
         # Instantiate Dyn modules as objects
         self.simBasePath = bskPath
-        self.vizProcessID = None
+        self.vizProcessID = -1
 
         self.SpiceObject = spice_interface.SpiceInterface()
         self.scObject = spacecraftPlus.SpacecraftPlus()
@@ -118,13 +118,10 @@ class BSKDynamicModels():
             os.mkdir(home + '_VizFiles')
         fileName = home + '_VizFiles/' + name
 
-        self.vizInterface.opNavMode = 1
+        self.vizInterface.opNavMode = 0
         self.vizInterface.saveFile = 1
         if self.vizInterface.opNavMode == 1:
-            oldId = commands.getstatusoutput("ps aux | grep -v grep |grep -i Vizard | awk '{print $2;}'")[1]
-            if oldId != '':
-                os.kill(int(oldId), signal.SIG_DFL)
-            subprocess.call(["open", appPath, "--args", "-opNavMode", "tcp://localhost:5556"])#, "-batchmode"])
+            subprocess.call(["open", appPath, "--args", "-opNavMode", "tcp://localhost:5556", "-batchmode"])
             id = commands.getstatusoutput("ps aux | grep -v grep |grep -i Vizard | awk '{print $2;}'")[1]
             self.vizProcessID = int(id)
 

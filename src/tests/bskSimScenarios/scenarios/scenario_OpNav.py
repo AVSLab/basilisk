@@ -446,8 +446,6 @@ def run(showPlots):
     # Pull the results of the base simulation running the chosen scenario
     figureList = TheScenario.pull_outputs(showPlots)
 
-    if TheBSKSim.get_DynModel().vizProcessID is not None:
-        os.kill(TheBSKSim.get_DynModel().vizProcessID, signal.SIG_DFL)
     return figureList
 
 
