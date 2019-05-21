@@ -60,7 +60,7 @@ void CrossInit_inertial3D(inertial3DConfig *configData, uint64_t moduleID)
 
 }
 
-/*! This method performs the module reset capability.  This module has actions.
+/*! This method performs the module reset capability.  This module has no actions.
  @return void
  @param configData The configuration data associated with this module
  @param moduleID The ID associated with the configData

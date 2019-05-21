@@ -30,34 +30,31 @@
 #include "fswMessages/attRefFswMsg.h"
 
 /*! \defgroup velocityPoint
- * @{
- */
+ @brief This attitude guidance module computes the velocity reference frame states.
 
-/*!@brief Data structure for module to compute the orbital velocity spinning pointing navigation solution.
-
- The module
+ The orbit can be any type of Keplerian motion, including circular, elliptical or hyperbolic.  The module
  [PDF Description](velocityPoint.pdf)
  contains further information on this module's function,
  how to run it, as well as testing.
+ * @{
  */
 
+
+/*!@brief Data structure for module to compute the orbital velocity spinning pointing navigation solution.
+ */
 typedef struct {
     
     /* declare module private variables */
-    double mu;                                      /*!< Planet gravitational parameter */
-    classicElements oe;                             /*!< Orbit Elements set */
+    double mu;                                      //!< Planet gravitational parameter 
    
     /* declare module IO interfaces */
-    char outputDataName[MAX_STAT_MSG_LENGTH];       /*!<        The name of the output message */
-    int32_t outputMsgID;                            /*!< (-)    ID for the outgoing message */
-    char inputNavDataName[MAX_STAT_MSG_LENGTH];     /*<!        The name of the incoming attitude command*/
-    int32_t inputNavID;                             /*!< (-)    ID for the incoming IMU data message*/
-    char inputCelMessName[MAX_STAT_MSG_LENGTH];     /*<!        The name of the celestial body message */
-    int32_t inputCelID;                             /*!< (-)    ID for the planet input message */
+    char outputDataName[MAX_STAT_MSG_LENGTH];       //!<        The name of the output message
+    int32_t outputMsgID;                            //!< (-)    ID for the outgoing message
+    char inputNavDataName[MAX_STAT_MSG_LENGTH];     //!<        The name of the incoming attitude command
+    int32_t inputNavID;                             //!< (-)    ID for the incoming IMU data message
+    char inputCelMessName[MAX_STAT_MSG_LENGTH];     //!<        The name of the celestial body message
+    int32_t inputCelID;                             //!< (-)    ID for the planet input message
     
-    /*  copy of the output message */
-    AttRefFswMsg attRefOut;
-
 }velocityPointConfig;
 
 #ifdef __cplusplus
@@ -73,7 +70,8 @@ extern "C" {
                                           double r_BN_N[3],
                                           double v_BN_N[3],
                                           double celBdyPositonVector[3],
-                                          double celBdyVelocityVector[3]);
+                                          double celBdyVelocityVector[3],
+                                          AttRefFswMsg *attRefOut);
 
 #ifdef __cplusplus
 }
