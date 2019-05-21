@@ -41,6 +41,9 @@ We are very excited by the great capabilities that this software already has, an
     <li>
         updated `hillPoint` and `velocityPoint` to meet BSK coding guidelines
     </li>
+    <li>
+        updated BSK_PRINT macro to automatically now add a new line symbol at the end of the message
+    </li>
 </ul>
 
 ##  Upcoming Version 0.6.0
