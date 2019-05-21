@@ -29,10 +29,10 @@
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
-
-
 void message_buffer_deallocate(void *data, void *hint);
 
+/*! VizInterface Constructor
+ */
 VizInterface::VizInterface()
 {
     this->opNavMode = 0;
@@ -50,6 +50,8 @@ VizInterface::VizInterface()
     return;
 }
 
+/*! VizInterface Destructor
+ */
 VizInterface::~VizInterface()
 {
     return;
@@ -59,9 +61,9 @@ VizInterface::~VizInterface()
  */
 void VizInterface::SelfInit()
 {
-  /* Declare output message/s */
+  /*! Declare output messages */
     if (this->opNavMode == 1){
-        // setup zeroMQ
+        /*! setup zeroMQ */
         context = zmq_ctx_new();
         requester_socket = zmq_socket(context, ZMQ_REQ);
         zmq_connect(requester_socket, "tcp://localhost:5556");
@@ -88,7 +90,7 @@ void VizInterface::SelfInit()
  */
 void VizInterface::CrossInit()
 {
-    /* Define CSS input messages */
+    /*! Define CSS input messages */
     this->cssDataInMsgId.msgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cssDataInMsgName,
                                                                               sizeof(CSSArraySensorIntMsg), moduleID);
     this->cssDataInMsgId.dataFresh = false;
@@ -98,19 +100,19 @@ void VizInterface::CrossInit()
     this->cssConfInMsgId.dataFresh = false;
     this->cssConfInMsgId.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
     
-    /* Define Camera input messages */
+    /*! Define Camera input messages */
     this->cameraConfMsgId.msgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cameraConfInMsgName,
                                                                                     sizeof(CameraConfigMsg), moduleID);
     this->cameraConfMsgId.dataFresh = false;
     this->cameraConfMsgId.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
     
-    /* Define SCPlus input message */
+    /*! Define SCPlus input message */
     this->scPlusInMsgID.msgID = SystemMessaging::GetInstance()->subscribeToMessage(scPlusInMsgName,
             sizeof(SCPlusStatesSimMsg), moduleID);
     this->scPlusInMsgID.dataFresh = false;
     this->scPlusInMsgID.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
 
-    /* Define Spice input message */
+    /*! Define Spice input message */
     {
     int i=0;
     MsgCurrStatus spiceStatus;
@@ -128,13 +130,13 @@ void VizInterface::CrossInit()
     this->spiceMessage.resize(this->spiceInMsgID.size());
     }
     
-    /* Define StarTracker input message */
+    /*! Define StarTracker input message */
     this->starTrackerInMsgID.msgID = SystemMessaging::GetInstance()->subscribeToMessage(starTrackerInMsgName,
             sizeof(STSensorIntMsg), moduleID);
     this->starTrackerInMsgID.dataFresh = false;
     this->starTrackerInMsgID.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
     
-    /* Define RW input message */
+    /*! Define RW input message */
     {
         MsgCurrStatus rwStatus;
         rwStatus.dataFresh = false;
@@ -150,7 +152,7 @@ void VizInterface::CrossInit()
     this->rwInMessage.resize(this->rwInMsgID.size());
     }
     
-    /* Define Thr input message */
+    /*! Define Thr input message */
     {
         MsgCurrStatus thrStatus;
         thrStatus.dataFresh = false;
@@ -200,7 +202,7 @@ void VizInterface::ReadBSKMessages()
     }
     this->scPlusMessage = localSCPlusArray;
     }
-    /* Read BSK Spice constellation msg */
+    /*! Read BSK Spice constellation msg */
     {
     int i=0;
     std::vector<std::string>::iterator it;
@@ -222,7 +224,7 @@ void VizInterface::ReadBSKMessages()
     }
     }
 
-    /* Read BSK RW constellation msg */
+    /*! Read BSK RW constellation msg */
     {
     for (int idx=0;idx< this->numRW; idx++)
     {
@@ -240,7 +242,7 @@ void VizInterface::ReadBSKMessages()
     }
     }
     
-     // Read incoming Thruster constellation msg
+     /*! Read incoming Thruster constellation msg */
     {
     for (int idx=0;idx< this->numThr; idx++){
         if (this->thrMsgID[idx].msgID != -1){
@@ -259,7 +261,7 @@ void VizInterface::ReadBSKMessages()
     }
     
     
-    /* Read CSS data msg */
+    /*! Read CSS data msg */
     if (this->cssDataInMsgId.msgID != -1){
         CSSArraySensorIntMsg localCSSDataArray;
         SingleMessageHeader localCSSDataHeader;
@@ -271,7 +273,7 @@ void VizInterface::ReadBSKMessages()
         }
     }
     
-    /* Read incoming CSS config msg */
+    /*! Read incoming CSS config msg */
     if (this->cssConfInMsgId.msgID != -1){
         CSSConfigFswMsg localCSSConfigArray;
         SingleMessageHeader localCSSConfigHeader;
@@ -284,7 +286,7 @@ void VizInterface::ReadBSKMessages()
         this->cssConfigMessage = localCSSConfigArray;
     }
     
-    /* Read incoming camera config msg */
+    /*! Read incoming camera config msg */
     if (this->cameraConfMsgId.msgID != -1){
         CameraConfigMsg localCameraConfigArray;
         SingleMessageHeader localCameraConfigHeader;
@@ -298,7 +300,7 @@ void VizInterface::ReadBSKMessages()
     }
     
     
-    /* Read incoming ST constellation msg */
+    /*! Read incoming ST constellation msg */
     if (this->starTrackerInMsgID.msgID != -1){
         STSensorIntMsg localSTArray;
         SingleMessageHeader localSTHeader;
@@ -321,14 +323,14 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     vizProtobufferMessage::VizMessage* message = new vizProtobufferMessage::VizMessage;
 
 
-    /* Write timestamp output msg */
+    /*! Write timestamp output msg */
     vizProtobufferMessage::VizMessage::TimeStamp* time = new vizProtobufferMessage::VizMessage::TimeStamp;
     time->set_framenumber(this->FrameNumber);
     time->set_simtimeelapsed(CurrentSimNanos);
     message->set_allocated_currenttime(time);
 
 
-    /* Write SCPlus output msg */
+    /*! Write SCPlus output msg */
     if (scPlusInMsgID.msgID != -1 && scPlusInMsgID.dataFresh){
         vizProtobufferMessage::VizMessage::Spacecraft* scp = message->add_spacecraft();
         scp->set_spacecraftname("inertial");
@@ -339,7 +341,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         }
         //scPlusInMsgID.dataFresh = false;
 
-        /* Write RW output msg */
+        /*! Write RW output msg */
         for (int idx =0; idx < this->numRW; idx++)
         {
             if (rwInMsgID[idx].msgID != -1 && rwInMsgID[idx].dataFresh){
@@ -354,7 +356,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             }
         }
 
-        /* Write Thr output msg */
+        /*! Write Thr output msg */
         for (int idx =0; idx < this->numThr; idx++)
         {
             if (thrMsgID[idx].msgID != -1 && thrMsgID[idx].dataFresh){
@@ -369,7 +371,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             }
         }
         
-        // Write camera output msg
+        /*! Write camera output msg */
         if (cameraConfMsgId.msgID != -1 && cameraConfMsgId.dataFresh){
             vizProtobufferMessage::VizMessage::CameraConfig* camera = message->add_cameras();
             for (int j=0; j<3; j++){
@@ -411,7 +413,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
 
 
-        /* Write spice output msgs */
+        /*! Write spice output msgs */
         int k=0;
         std::vector<std::string>::iterator it;
         for(it = this->planetNames.begin(); it != this->planetNames.end(); it++)
@@ -441,19 +443,18 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             this->outputStream->write(reinterpret_cast<char* > (varIntBuffer), varIntBytes);
         }
 
+        /*! Enter in lock-step with the vizard to simulate a camera */
         if (this->opNavMode == 1){
-            // this is actually a pretty good place to receive the pong
-            // we should think about a push pull architecture if we have performance problems
-            // receive pong
+            // Receive pong
             zmq_msg_t receive_buffer;
             zmq_msg_init(&receive_buffer);
             zmq_msg_recv (&receive_buffer, requester_socket, 0);
             
-            // send protobuffer raw over zmq_socket as ping
+            /*! - send protobuffer raw over zmq_socket */
             void* serialized_message = malloc(byteCount);
             message->SerializeToArray(serialized_message, byteCount);
 
-            // fill messages
+            /*! - Normal sim step by sending protobuffers */
             zmq_msg_t request_header;
             zmq_msg_t empty_frame1;
             zmq_msg_t empty_frame2;
@@ -472,11 +473,11 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             zmq_msg_send(&empty_frame2, requester_socket, ZMQ_SNDMORE);
             zmq_msg_send(&request_buffer, requester_socket, 0);
             
+            /*! - If the camera is requesting periodic images, request them */
             if (CurrentSimNanos%this->cameraConfigMessage.renderRate == 0){
-                // If we want BSK to wait for Unity at every step, we need to uncomment this code
                 char buffer[10];
                 zmq_recv(requester_socket, buffer, 10, 0);
-                
+                /*! -- Send request */
                 void* img_message = malloc(13 * sizeof(char));
                 memcpy(img_message, "REQUEST_IMAGE", 13);
                 zmq_msg_t img_request;
@@ -489,24 +490,12 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 zmq_msg_init(&image);
                 zmq_msg_recv(&length, requester_socket, 0);
                 zmq_msg_recv(&image, requester_socket, 0);
-                
-                // Get the data in the messages
-                int32_t *lengthPoint= (int32_t *)zmq_msg_data(&length);
-                void *imagePoint= zmq_msg_data(&image);
-                int32_t length_unswapped = *lengthPoint;
-                // Endianness switch for the length of the buffer
-                int32_t imageBufferLength =((length_unswapped>>24)&0xff) | // move byte 3 to byte 0
-                ((length_unswapped<<8)&0xff0000) | // move byte 1 to byte 2
-                ((length_unswapped>>8)&0xff00) | // move byte 2 to byte 1
-                ((length_unswapped<<24)&0xff000000); // byte 0 to byte 3
-                
-                // Write image message here
 
-                // Clean the messages to avoid memory leaks
+                /*! -- Clean the messages to avoid memory leaks */
                 zmq_msg_close(&length);
                 zmq_msg_close(&image);
                 
-                // Ping the Viz back to continue the lock-step
+                /*! -- Ping the Viz back to continue the lock-step */
                 void* keep_alive = malloc(4 * sizeof(char));
                 memcpy(keep_alive, "PING", 4);
                 zmq_msg_t request_life;
@@ -517,7 +506,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             }
             
         }
-        // Write protobuffer to file
+        /*!  Write protobuffer to file */
         if (!this->saveFile  || !message->SerializeToOstream(this->outputStream)) {
             return;
         }
@@ -528,6 +517,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
 }
 
+/*! Update this module at the task rate
+ @param CurrentSimNanos The current sim time
+ */
 void VizInterface::UpdateState(uint64_t CurrentSimNanos)
 {
 
