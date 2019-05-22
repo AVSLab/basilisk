@@ -30,6 +30,7 @@ from collections import defaultdict
 
 import pytest
 import sys, os, inspect
+import ctypes
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 import numpy as np
 
@@ -54,7 +55,6 @@ except ImportError:
 # Uncomment this line if this test has an expected failure, adjust message as needed.
 # @pytest.mark.xfail(conditionstring)
 # Provide a unique test method name, starting with 'test_'.
-
 
 # update "module" in this function name to reflect the module name
 def test_module(show_plots):
@@ -97,26 +97,19 @@ def houghCirclesTest(show_plots):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
-
+    moduleConfig.saveImages = 1
     moduleConfig.imageInMsgName = "sample_image"
     moduleConfig.opnavCirclesOutMsgName = "circles"
-    data = sim_model.new_intArray(input_image.width*input_image.height*len(input_image.mode))
+    imagePtrString = str(input_image.im.ptr).split()[-1][0:-1]
+    print imagePtrString
+    moduleConfig.pointerChar = imagePtrString
+    moduleConfig.lengthInt = input_image.decodermaxblock
 
-     # = sim_model.new_cByteArray(len(hex(int(id(input_image)))))
-    for i in range(len(input_image.mode)):
-        for j in range(input_image.height):
-            for k in range(input_image.width):
-                sim_model.intArray_setitem(data, (j*input_image.width + k)*len(input_image.mode) + i, input_image.im[j*input_image.width + k][i])
-
-        # sim_model.cByteArray_setitem(pointerToStuff, i, int(hex(int(id(input_image)))[i], 16))
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     inputMessageData = houghCircles.CameraImageMsg()
     inputMessageData.timeTag = int(1E9)
     inputMessageData.cameraID = 1
-    inputMessageData.imagePointer = data
-    inputMessageData.imageHeight = input_image.height
-    inputMessageData.imageWidth = input_image.width
     inputMessageData.imageType = len(input_image.mode)
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,

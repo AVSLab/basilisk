@@ -34,8 +34,9 @@
 It also sets some default values at its creation */
 HoughCircles::HoughCircles()
 {
+    this->pointerChar = "";
     this->blurrSize = 5;
-    this->saveImages = false;
+    this->saveImages = 0;
     this->OutputBufferCount = 2;
     this->cannyThresh1 = 200;
     this->cannyThresh2 = 20;
@@ -110,6 +111,11 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
         SystemMessaging::GetInstance()->ReadMessage(this->imageInMsgID, &localHeader,
                                                     sizeof(CameraImageMsg), reinterpret_cast<uint8_t*>(&imageBuffer), this->moduleID);
         this->sensorTimeTag = localHeader.WriteClockNanos;
+    }
+    /* Added for debugging purposes*/
+    if (!this->pointerChar.empty()){
+        imageBuffer.imagePointer = (void*)this->pointerChar.c_str();
+        imageBuffer.imageBufferLength = this->lengthInt;
     }
 
     /*! - Recast image pointer to Eigen type*/

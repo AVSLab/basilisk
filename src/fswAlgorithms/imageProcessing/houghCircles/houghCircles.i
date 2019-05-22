@@ -25,8 +25,8 @@
 %include "stdint.i"
 %include "sys_model.h"
 %include "houghCircles.h"
-%include "../../../simulation/simFswInterfaceMessages/circlesOpNavMsg.h"
-%include "../../../simulation/simFswInterfaceMessages/cameraImageMsg.h"
+%include "../simulation/simFswInterfaceMessages/circlesOpNavMsg.h"
+%include "../simulation/simFswInterfaceMessages/cameraImageMsg.h"
 GEN_SIZEOF(CirclesOpNavMsg)
 GEN_SIZEOF(CameraImageMsg)
 
