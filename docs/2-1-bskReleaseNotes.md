@@ -12,7 +12,7 @@ We are very excited by the great capabilities that this software already has, an
 * Python 3 support
 * live plotting capability during a BSK run
 
-##  Upcoming Version 0.X.X
+##  Upcoming Version 0.6.1
 <ul>
     <li>
       Created a user guide MD file that is included in the BSK Doxygen HTML documentation.    
