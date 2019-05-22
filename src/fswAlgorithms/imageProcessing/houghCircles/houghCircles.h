@@ -69,6 +69,8 @@ public:
     int32_t houghMinRadius;
     int32_t houghMaxRadius;
     
+    bool saveImages; //! Flag to save images to PNG for analysis
+    
 private:
     uint64_t OutputBufferCount;       //!< [-] Count on the number of output message buffers
     int32_t opnavCirclesOutMsgID;                      //! ID for the outgoing message */

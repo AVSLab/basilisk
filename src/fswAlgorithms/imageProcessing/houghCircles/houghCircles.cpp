@@ -35,6 +35,7 @@ It also sets some default values at its creation */
 HoughCircles::HoughCircles()
 {
     this->blurrSize = 5;
+    this->saveImages = false;
     this->OutputBufferCount = 2;
     this->cannyThresh1 = 200;
     this->cannyThresh2 = 20;
@@ -95,9 +96,12 @@ void HoughCircles::Reset(uint64_t CurrentSimNanos)
  */
 void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
 {
+    std::string filenamePre;
     CameraImageMsg imageBuffer;
     CirclesOpNavMsg circleBuffer;
     cv::Mat canny, grey, blurred;
+    filenamePre = "PreprocessedImage_" + std::to_string(CurrentSimNanos);
+
     /*! - Read in the bitmap*/
     SingleMessageHeader localHeader;
     memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
@@ -109,16 +113,18 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     }
 
     /*! - Recast image pointer to Eigen type*/
-    std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePoint, (char*)imageBuffer.imagePoint + imageBuffer.imageBufferLength);
+    std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer, (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
     cv::Mat imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
     cv::blur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize) );
-//    cv::imshow( "Hough Circle Transform Demo", src );
-//    cv::waitKey(0);
 
     std::vector<cv::Vec4f> circles;
     /*! - Apply the Hough Transform to find the circles*/
-    cv::HoughCircles( blurred, circles, CV_HOUGH_GRADIENT, 1, src.rows/2, this->cannyThresh1,this->cannyThresh2, this->houghMinRadius, this->houghMaxRadius );
+    cv::HoughCircles( blurred, circles, CV_HOUGH_GRADIENT, 1, blurred.rows/2, this->cannyThresh1,this->cannyThresh2, this->houghMinRadius, this->houghMaxRadius );
     
+    if (this->saveImages){
+        cv::imwrite(filenamePre, imageCV);
+    }
+
     circleBuffer.timeTag = this->sensorTimeTag;
     circleBuffer.cameraID = imageBuffer.cameraID;
     for( size_t i = 0; i < MAX_CIRCLE_NUM; i++ )
