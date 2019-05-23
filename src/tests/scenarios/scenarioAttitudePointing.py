@@ -58,6 +58,7 @@ from Basilisk.utilities import vizSupport
 # Used to get the location of supporting data.
 from Basilisk import __path__
 bskPath = __path__[0]
+fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
 ## \defgroup scenarioAttitudePointingGroup
