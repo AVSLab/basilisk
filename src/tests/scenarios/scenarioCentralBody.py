@@ -51,7 +51,8 @@ from Basilisk.utilities import vizSupport
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.
-vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
+fileName = os.path.basename(os.path.splitext(__file__)[0])
+
 
 ## \defgroup scenarioCentralBodyGroup
 ## @{
@@ -209,7 +210,7 @@ def run(show_plots, useCentral):
     scSim.TotalSim.logThisMessage("earth_planet_data", samplingTime)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
 
 
     #
@@ -247,8 +248,6 @@ def run(show_plots, useCentral):
     #
     #   plot the results
     #
-    fileName = os.path.basename(os.path.splitext(__file__)[0])
-
     # draw the inertial position vector components
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)

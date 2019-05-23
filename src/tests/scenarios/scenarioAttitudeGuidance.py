@@ -63,7 +63,8 @@ from Basilisk.utilities import vizSupport
 # Used to get the location of supporting data.
 from Basilisk import __path__
 bskPath = __path__[0]
-vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
+fileName = os.path.basename(os.path.splitext(__file__)[0])
+
 
 # Plotting functions
 def plot_attitude_error(timeLineSet, dataSigmaBR):
@@ -395,7 +396,7 @@ def run(show_plots, useAltBodyFrame):
                                vehicleConfigOut)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
 
     #
     #   initialize Simulation
@@ -422,8 +423,6 @@ def run(show_plots, useAltBodyFrame):
     #
     #   plot the results
     #
-    fileName = os.path.basename(os.path.splitext(__file__)[0])
-
     timeLineSet = dataSigmaBR[:, 0] * macros.NANO2MIN
     plt.close("all")  # clears out plots from earlier test runs
 
