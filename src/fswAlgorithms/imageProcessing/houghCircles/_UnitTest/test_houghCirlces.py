@@ -24,14 +24,8 @@
 #   Creation Date:      March 13, 2019
 #
 from PIL import Image, ImageDraw
-from math import sqrt, pi, cos, sin
-from cannyDetection import canny_edge_detector
-from collections import defaultdict
-
 import pytest
 import sys, os, inspect
-import ctypes
-# import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -43,7 +37,6 @@ splitPath = path.split(bskName)
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport
 from Basilisk.utilities import macros
-from Basilisk.simulation import sim_model
 
 try:
     from Basilisk.fswAlgorithms import houghCircles
@@ -56,18 +49,22 @@ except ImportError:
 # @pytest.mark.xfail(conditionstring)
 # Provide a unique test method name, starting with 'test_'.
 
+@pytest.mark.parametrize("image, blur, maxCircles, minDist, minRad, cannyLow, cannyHigh, dp", [
+                    ("mars.png",    5,          1,      50,     20,       20,       200,   1), #Mars image
+                   ("moons.png",    5,         10,      25,     10,       20,       200,   1) # Moon images
+    ])
+
 # update "module" in this function name to reflect the module name
-def test_module(show_plots):
+def test_module(show_plots, image, blur, maxCircles , minDist , minRad, cannyLow, cannyHigh, dp):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = houghCirclesTest(show_plots)
+    [testResults, testMessage] = houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, cannyLow, cannyHigh, dp)
     assert testResults < 1, testMessage
 
 
-def houghCirclesTest(show_plots):
-
+def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, cannyLow, cannyHigh, dp):
 
     # Truth values from python
-    input_image = Image.open("circles.png")
+    input_image = Image.open(image)
     input_image.load()
     #################################################
 
@@ -101,16 +98,27 @@ def houghCirclesTest(show_plots):
     moduleConfig.imageInMsgName = "sample_image"
     moduleConfig.opnavCirclesOutMsgName = "circles"
     imagePtrString = str(input_image.im.ptr).split()[-1][0:-1]
-    print imagePtrString
-    moduleConfig.pointerChar = imagePtrString
-    moduleConfig.lengthInt = input_image.decodermaxblock
 
+    moduleConfig.filename = image
+    moduleConfig.expectedCircles = maxCircles
+    moduleConfig.cannyThresh1 = cannyHigh
+    moduleConfig.cannyThresh2 = cannyLow
+    moduleConfig.houghMinDist = minDist
+    moduleConfig.houghMinRadius = minRad
+    moduleConfig.blurrSize = blur
+    moduleConfig.speed = dp
+    moduleConfig.houghMaxRadius = int(input_image.size[0]/1.25)
+
+    circles = []
+    if image == "mars.png":
+        circles = [(250, 260, 110)]
+    if image == "moons.png":
+        circles = [(205, 155, 48.900001525878906), (590, 313, 46.29999923706055), (590, 165, 46.29999923706055), (400, 313, 43.79999923706055), (400, 151.5, 45), (210, 313, 45)]
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     inputMessageData = houghCircles.CameraImageMsg()
     inputMessageData.timeTag = int(1E9)
     inputMessageData.cameraID = 1
-    inputMessageData.imageType = len(input_image.mode)
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
                                moduleConfig.imageInMsgName,
@@ -132,56 +140,34 @@ def houghCirclesTest(show_plots):
     unitTestSim.ExecuteSimulation()
 
     # pointer = unitTestSim.pullMessageLogData(moduleConfig.imageInMsgName + ".imagePointer", range(pointerLength))
-    centers = unitTestSim.pullMessageLogData(moduleConfig.opnavCirclesOutMsgName + ".circlesCenters", range(3*2))
-    radii = unitTestSim.pullMessageLogData(moduleConfig.opnavCirclesOutMsgName + ".circlesRadii", range(3 * 2))
+    centers = unitTestSim.pullMessageLogData(moduleConfig.opnavCirclesOutMsgName + ".circlesCenters", range(10*2))
+    radii = unitTestSim.pullMessageLogData(moduleConfig.opnavCirclesOutMsgName + ".circlesRadii", range(10))
 
     # Output image:
     output_image = Image.new("RGB", input_image.size)
     output_image.paste(input_image)
     draw_result = ImageDraw.Draw(output_image)
 
-    # Find circles
-    rmin = 5
-    rmax = int(input_image.size[0]/2)
-    steps = 100
-    threshold = 0.4
-
-    points = []
-    for r in range(rmin, rmax + 1):
-        for t in range(steps):
-            points.append((r, int(r * cos(2 * pi * t / steps)), int(r * sin(2 * pi * t / steps))))
-
-    acc = defaultdict(int)
-    for x, y in canny_edge_detector(input_image):
-        for r, dx, dy in points:
-            a = x - dx
-            b = y - dy
-            acc[(a, b, r)] += 1
-
-    circles = []
-    for k, v in sorted(acc.items(), key=lambda i: -i[1]):
-        x, y, r = k
-        if float(v) / steps >= threshold and all((x - xc) ** 2 + (y - yc) ** 2 > rc ** 2 for xc, yc, rc in circles):
-            circles.append((x, y, r))
-
-    for x, y, r in circles:
+    imageProcCircles = []
+    for j in range(len(radii[-1,1:])):
+        if radii[-1,j] > 0:
+            imageProcCircles.append((centers[-1, 2*j+1], centers[-1, 2*j+2], radii[-1, j+1]))
+    for x, y, r in imageProcCircles:
         draw_result.ellipse((x - r, y - r, x + r, y + r), outline=(255, 0, 0, 0))
 
     # Save output image
-    output_image.save("result.png")
+    output_image.save("result_"+ image)
+
+    if show_plots:
+        output_image.show()
 
 
     #   print out success message if no error were found
-    # snippentName = "passFail"
-    # if testFailCount == 0:
-    #     colorText = 'ForestGreen'
-    #     print "PASSED: " + moduleWrap.ModelTag
-    #     passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
-    # else:
-    #     colorText = 'Red'
-    #     print "Failed: " + moduleWrap.ModelTag
-    #     passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
-    # unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    for testCircle, refCircle in zip(imageProcCircles, circles):
+        for i in range(3):
+            if np.abs((testCircle[i] - refCircle[i])/refCircle[i])>1:
+                testFailCount+=1
+                testMessages.append("Test failed processing " + image)
 
 
     # each test method requires a single assert method to be called
@@ -194,6 +180,4 @@ def houghCirclesTest(show_plots):
 # stand-along python script
 #
 if __name__ == "__main__":
-    houghCirclesTest(
-                 False
-               )
+    houghCirclesTest(True, "moons.png",     5,         10,      25,     10,       20,       200,   1) # Moon images
