@@ -45,14 +45,36 @@ void SimModel::PrintSimulatedMessageData()
 }
 
 /*! This method exists to provide a hook into the messaging system for obtaining
- message data that was written in the simulation. Should be called getWriteTime, because
- it just returns the time the message was written
- @return uint64_t DataHeader.WriteClockNanos Message Write time that we got
- @param std::string MessageName String name for the message we are querying
- @param uint64_t MaxSize Maximum size of the message that we can pull
- @param void MessageData A shapeshifting buffer that we can chunk data into
- @param VarAccessType logType messageBuffer or logBuffer type
- @param uint64_t LatestOffset Zero to read most recent, 1 to read the one before that, etc.*/
+ message data that was written in the simulation.
+ @return uint64_t Message Write time that we got
+ @param MessageName String name for the message we are querying
+ @param MaxSize Maximum size of the message that we can pull
+ @param MessageData A shapeshifting buffer that we can chunk data into
+ @param LatestOffset An offset from the latest message to pull (default as zero)*/
+uint64_t SimModel::IsMsgCreated(std::string MessageName)
+{
+    MessageIdentData MessageID;
+
+    //! Begin Method steps
+    //! - Grab the message ID associated with name if it exists
+    MessageID = SystemMessaging::GetInstance()->messagePublishSearch(MessageName);
+    //! - If we got an invalid message ID back, alert the user and quit
+    if(!MessageID.itemFound)
+    {
+        return(0);      /* no message found */
+    } else {
+        return(1);      /* message has been created */
+    }
+
+}
+
+/*! This method exists to provide a hook into the messaging system for obtaining
+ message data that was written in the simulation.
+ @return uint64_t Message Write time that we got
+ @param MessageName String name for the message we are querying
+ @param MaxSize Maximum size of the message that we can pull
+ @param MessageData A shapeshifting buffer that we can chunk data into
+ @param LatestOffset An offset from the latest message to pull (default as zero)*/
 uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize,
                                 void *MessageData, VarAccessType logType, uint64_t LatestOffset)
 {
