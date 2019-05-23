@@ -27,12 +27,14 @@
 # Creation Date:  Nov. 01, 2018
 #
 
-import os, sys
+import os
 import numpy as np
-import time
 from Basilisk import __path__
 bskPath = __path__[0]
-vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
+fileName = os.path.basename(os.path.splitext(__file__)[0])
+fileNamePath = os.path.abspath(__file__)
+
+
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
@@ -44,7 +46,7 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import extForceTorque
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import simple_nav, simFswInterfaceMessages, spice_interface
+from Basilisk.simulation import simple_nav, simFswInterfaceMessages
 
 # import FSW Algorithm related support
 from Basilisk.fswAlgorithms import MRP_Feedback
@@ -398,17 +400,14 @@ def run(show_plots, dscovr, marsOrbit):
     #
     #   initialize Simulation
     #
-    vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
+    vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, saveFile=fileNamePath, gravBodies=gravFactory)
     scSim.InitializeSimulationAndDiscover()
 
     #
     #   configure a simulation stop time time and execute the simulation run
     #
-    t1 = time.time()
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
-    t2 = time.time()
-    print "Time for run = ", t2-t1
 
     #
     #   retrieve the logged data
@@ -423,8 +422,6 @@ def run(show_plots, dscovr, marsOrbit):
     #
     #   plot the results
     #
-    fileName = os.path.basename(os.path.splitext(__file__)[0])
-
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
     for idx in range(1, 4):
