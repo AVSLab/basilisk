@@ -50,6 +50,12 @@ We are very excited by the great capabilities that this software already has, an
     <li>
         updated BSK_PRINT macro to automatically now add a new line symbol at the end of the message
     </li>
+    <li>
+        updated Viz_Interface module with opNavMode flag. This triggers logic to link Basilisk and Vizard with a TCP connection. This is ground work for closed loop visual navigation capabilities.
+    </li>
+    <li>
+        updated enableUnityViz python function in utilities/vizSupport. It now takes in key word arguments to simplify the user interface. It also reliably saves Vizard files for play back in the same directory as the scenario that calls it. 
+    </li>
 </ul>
 
 ##  Upcoming Version 0.6.0

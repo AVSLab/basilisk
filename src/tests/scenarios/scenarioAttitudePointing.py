@@ -58,7 +58,8 @@ from Basilisk.utilities import vizSupport
 # Used to get the location of supporting data.
 from Basilisk import __path__
 bskPath = __path__[0]
-vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
+fileName = os.path.basename(os.path.splitext(__file__)[0])
+
 
 ## \defgroup scenarioAttitudePointingGroup
 ##   @{
@@ -251,7 +252,7 @@ def run(show_plots, useLargeTumble):
                                vehicleConfigOut)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile)
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, saveFile=fileName)
 
     #
     #   initialize Simulation
@@ -275,8 +276,6 @@ def run(show_plots, useLargeTumble):
     #
     #   plot the results
     #
-    fileName = os.path.basename(os.path.splitext(__file__)[0])
-
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
     for idx in range(1, 4):

@@ -70,7 +70,7 @@ from Basilisk.utilities import vizSupport
 # Used to get the location of supporting data.
 from Basilisk import __path__
 bskPath = __path__[0]
-vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
+fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
 ## \defgroup scenarioAttitudePythonPDGroup
@@ -499,7 +499,7 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
 
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, scSim.simTaskPreControlName, scSim.simPreControlProc, vizFile, gravFactory)
+    # vizSupport.enableUnityVisualization(scSim, scSim.simTaskPreControlName, scSim.simPreControlProc, gravBodies=gravFactory, saveFile=fileName)
 
     #
     #   initialize Simulation

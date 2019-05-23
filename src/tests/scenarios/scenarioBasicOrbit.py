@@ -28,7 +28,6 @@
 # Creation Date:  Nov. 26, 2016
 #
 
-import sys
 import os
 import numpy as np
 
@@ -37,7 +36,8 @@ import matplotlib.pyplot as plt
 # Used to get the location of supporting data.
 from Basilisk import __path__
 bskPath = __path__[0]
-vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
+fileName = os.path.basename(os.path.splitext(__file__)[0])
+
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
 # general support file with common unit test functions
@@ -96,7 +96,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 # Vizard and played back after running the BSK simulation.
 # To enable this, uncomment line 430 in this tutorial script.
 #~~~~~~~~~~~~~~{.py}
-# vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
+# vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
 #~~~~~~~~~~~~~~
 #
 # The vizInterface module must be built into BSK.  This is done if the correct CMake options are selected.
@@ -423,7 +423,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
 
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
 
     #
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
@@ -450,8 +450,6 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     #
     #   plot the results
     #
-    fileName = os.path.basename(os.path.splitext(__file__)[0])
-
     # draw the inertial position vector components
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)

@@ -47,7 +47,7 @@ from Basilisk.utilities import simSetPlanetEnvironment
 
 #attempt to import vizard
 from Basilisk.utilities import vizSupport
-vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
+fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 
 ## \defgroup scenarioMagneticFieldCenteredDipoleGroup
@@ -340,7 +340,7 @@ def run(show_plots, orbitCase, planetCase):
         scSim.TotalSim.logThisMessage(magModule2.envOutMsgNames[0], samplingTime)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
 
     #
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
@@ -369,8 +369,6 @@ def run(show_plots, orbitCase, planetCase):
     #
     #   plot the results
     #
-    fileName = os.path.basename(os.path.splitext(__file__)[0])
-
     # draw the inertial position vector components
     plt.close("all")  # clears out plots from earlier test runs
 

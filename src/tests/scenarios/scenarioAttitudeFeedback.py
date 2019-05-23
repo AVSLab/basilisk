@@ -58,7 +58,8 @@ from Basilisk.utilities import vizSupport
 # Used to get the location of supporting data.
 from Basilisk import __path__
 bskPath = __path__[0]
-vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
+fileName = os.path.basename(os.path.splitext(__file__)[0])
+
 
 ## \defgroup scenarioAttitudeFeedbackGroup
 ##   @{
@@ -422,7 +423,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
 
     #
     #   initialize Simulation
@@ -447,8 +448,6 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     #
     #   plot the results
     #
-    fileName = os.path.basename(os.path.splitext(__file__)[0])
-
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
     for idx in range(1, 4):

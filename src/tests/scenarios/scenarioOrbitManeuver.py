@@ -52,7 +52,8 @@ from Basilisk.utilities import vizSupport
 # Used to get the location of supporting data.
 from Basilisk import __path__
 bskPath = __path__[0]
-vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
+fileName = os.path.basename(os.path.splitext(__file__)[0])
+
 
 ## \defgroup scenarioOrbitManeuverGroup
 ## @{
@@ -227,7 +228,7 @@ def run(show_plots, maneuverCase):
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, vizFile, gravFactory)
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
 
     #
     #   initialize Simulation
@@ -317,8 +318,6 @@ def run(show_plots, maneuverCase):
     #
     #   plot the results
     #
-    fileName = os.path.basename(os.path.splitext(__file__)[0])
-
     # draw the inertial position vector components
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
