@@ -57,7 +57,7 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     
 public:
-    std::string pointerChar; //! String of pointer for debugging*/
+    std::string filename;       //! Filename for debugging*/
     std::string opnavCirclesOutMsgName;  //! The name of the CirclesOpnavMsg output message*/
     std::string imageInMsgName;          //! The name of the ImageFswMsg output message*/
     uint64_t sensorTimeTag;              //! [ns] Current time tag for sensor out
@@ -69,6 +69,9 @@ public:
     int32_t houghMinRadius;
     int32_t houghMaxRadius;
     int32_t lengthInt;
+    int32_t speed;
+    int32_t expectedCircles;
+    std::shared_ptr<double> test;
     
     int saveImages; //! Flag to save images to PNG for analysis
     

@@ -34,10 +34,12 @@
 It also sets some default values at its creation */
 HoughCircles::HoughCircles()
 {
-    this->pointerChar = "";
+    this->filename = "";
     this->blurrSize = 5;
     this->saveImages = 0;
+    this->speed = 1;
     this->OutputBufferCount = 2;
+    this->expectedCircles = MAX_CIRCLE_NUM;
     this->cannyThresh1 = 200;
     this->cannyThresh2 = 20;
     this->houghMinDist = 50;
@@ -100,12 +102,13 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     std::string filenamePre;
     CameraImageMsg imageBuffer;
     CirclesOpNavMsg circleBuffer;
-    cv::Mat canny, grey, blurred;
+    cv::Mat imageCV, blurred;
     filenamePre = "PreprocessedImage_" + std::to_string(CurrentSimNanos);
 
     /*! - Read in the bitmap*/
     SingleMessageHeader localHeader;
     memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
+    memset(&circleBuffer, 0x0, sizeof(CirclesOpNavMsg));
     if(this->imageInMsgID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(this->imageInMsgID, &localHeader,
@@ -113,27 +116,25 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
         this->sensorTimeTag = localHeader.WriteClockNanos;
     }
     /* Added for debugging purposes*/
-    if (!this->pointerChar.empty()){
-        imageBuffer.imagePointer = (void*)this->pointerChar.c_str();
-        imageBuffer.imageBufferLength = this->lengthInt;
+    if (!this->filename.empty()){
+        imageCV = imread(this->filename, cv::IMREAD_COLOR);
     }
-
-    /*! - Recast image pointer to Eigen type*/
-    std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer, (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
-    cv::Mat imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
+    else{
+        /*! - Recast image pointer to CV type*/
+        std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer, (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
+        imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
+    }
+    cv::cvtColor( imageCV, imageCV, CV_BGR2GRAY);
+    cv::threshold(imageCV, imageCV, 15, 255, cv::THRESH_BINARY_INV);
     cv::blur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize) );
-
+    
     std::vector<cv::Vec4f> circles;
     /*! - Apply the Hough Transform to find the circles*/
-    cv::HoughCircles( blurred, circles, CV_HOUGH_GRADIENT, 1, blurred.rows/2, this->cannyThresh1,this->cannyThresh2, this->houghMinRadius, this->houghMaxRadius );
-    
-    if (this->saveImages){
-        cv::imwrite(filenamePre, imageCV);
-    }
+    cv::HoughCircles( blurred, circles, CV_HOUGH_GRADIENT, this->speed, this->houghMinDist, this->cannyThresh1,this->cannyThresh2, this->houghMinRadius, this->houghMaxRadius );
 
     circleBuffer.timeTag = this->sensorTimeTag;
     circleBuffer.cameraID = imageBuffer.cameraID;
-    for( size_t i = 0; i < MAX_CIRCLE_NUM; i++ )
+    for( size_t i = 0; i < this->expectedCircles && i<circles.size(); i++ )
     {
         circleBuffer.circlesCenters[2*i] = circles[i][0];
         circleBuffer.circlesCenters[2*i+1] = circles[i][1];
@@ -141,6 +142,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     }
     SystemMessaging::GetInstance()->WriteMessage(this->opnavCirclesOutMsgID, CurrentSimNanos, sizeof(CirclesOpNavMsg), reinterpret_cast<uint8_t *>(&circleBuffer), this->moduleID);
     
+    free(imageBuffer.imagePointer);
     return;
 }
 
