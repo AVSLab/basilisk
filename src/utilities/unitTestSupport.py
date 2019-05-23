@@ -378,12 +378,13 @@ def foundNAN(array):
 #
 #   macro to create and write a general message
 #
-def setMessage(simObject, processName, msgName, inputMessageData):
+def setMessage(simObject, processName, msgName, inputMessageData, msgStrName = ""):
     inputMessageSize = inputMessageData.getStructSize()
     simObject.CreateNewMessage(processName,
                                msgName,
                                inputMessageSize,
-                               2)
+                               2,
+                               msgStrName)
     simObject.WriteMessageData(msgName,
                                inputMessageSize,
                                0,
