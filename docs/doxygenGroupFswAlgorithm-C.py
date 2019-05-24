@@ -1,5 +1,5 @@
-## \defgroup fswAlgorithms fswAlgorithm C-Modules
-# @brief Folder with Basilisk Flight Software Algorithm Modules using ANSI-C.
+## \defgroup fswAlgorithms fswAlgorithm Modules
+# @brief Folder with Basilisk Flight Software Algorithm Modules using ANSI-C or C++.
 # The collection provide a self-study guide
 # to learn how to setup Basilisk astrodynamics simulations.  The chapters provide groupings of
 # common sub-topics.
@@ -114,6 +114,12 @@
 #       \defgroup ephemNavConverter ephemNavConverter
 #       \defgroup navAggregate navAggregate
 #       \defgroup oeStateEphem oeStateEphem
+#   @}
+#
+#   \defgroup imageProcessing imageProcessing
+#   @brief Contains modules that relate to image processing modules and visual navigation.
+#   @{
+#       \defgroup houghCircles houghCircles
 #   @}
 #
 #   \defgroup vehicleConfigData vehicleConfigData
