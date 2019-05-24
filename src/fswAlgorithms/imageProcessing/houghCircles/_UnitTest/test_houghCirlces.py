@@ -23,7 +23,7 @@
 #   Author:             Thibaud Teil
 #   Creation Date:      March 13, 2019
 #
-from PIL import Image, ImageDraw
+
 import pytest
 import sys, os, inspect
 import numpy as np
@@ -33,6 +33,13 @@ path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
 
+# Import all of the modules that we are going to be called in this simulation
+importErr = False
+try:
+    from PIL import Image, ImageDraw
+except ImportError:
+    importErr = True
+    reasonErr = "python Pillow package not installed---can't test HoughCircle module"
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport
@@ -41,7 +48,8 @@ from Basilisk.utilities import macros
 try:
     from Basilisk.fswAlgorithms import houghCircles
 except ImportError:
-    pytest.skip("Hough Circles not built---check OpenCV option")
+    importErr = True
+    reasonErr = "Hough Circles not built---check OpenCV option"
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -49,6 +57,7 @@ except ImportError:
 # @pytest.mark.xfail(conditionstring)
 # Provide a unique test method name, starting with 'test_'.
 
+@pytest.mark.skipif(importErr, reason= reasonErr)
 @pytest.mark.parametrize("image, blur, maxCircles, minDist, minRad, cannyLow, cannyHigh, dp, saveImage", [
                     ("mars.png",    5,          1,      50,     20,       20,       200,   1, False), #Mars image
                    ("moons.png",    5,         10,      25,     10,       20,       200,   1, False) # Moon images
