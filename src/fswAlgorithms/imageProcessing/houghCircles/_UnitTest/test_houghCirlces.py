@@ -35,6 +35,7 @@ splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
 importErr = False
+reasonErr = ""
 try:
     from PIL import Image, ImageDraw
 except ImportError:
