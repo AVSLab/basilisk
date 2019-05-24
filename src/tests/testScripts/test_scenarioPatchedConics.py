@@ -42,6 +42,8 @@ sys.path.append(path + '/../scenarios')
 
 import scenarioPatchedConics
 
+@pytest.mark.scenarioTest
+@pytest.mark.slowtest
 
 
 
