@@ -36,8 +36,7 @@ HoughCircles::HoughCircles()
 {
     this->filename = "";
     this->blurrSize = 5;
-    this->saveImages = 0;
-    this->speed = 1;
+    this->dpValue = 1;
     this->OutputBufferCount = 2;
     this->expectedCircles = MAX_CIRCLE_NUM;
     this->cannyThresh1 = 200;
@@ -124,7 +123,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     
     std::vector<cv::Vec4f> circles;
     /*! - Apply the Hough Transform to find the circles*/
-    cv::HoughCircles( blurred, circles, CV_HOUGH_GRADIENT, this->speed, this->houghMinDist, this->cannyThresh1,this->cannyThresh2, this->houghMinRadius, this->houghMaxRadius );
+    cv::HoughCircles( blurred, circles, CV_HOUGH_GRADIENT, this->dpValue, this->houghMinDist, this->cannyThresh1,this->cannyThresh2, this->houghMinRadius, this->houghMaxRadius );
 
     circleBuffer.timeTag = this->sensorTimeTag;
     circleBuffer.cameraID = imageBuffer.cameraID;

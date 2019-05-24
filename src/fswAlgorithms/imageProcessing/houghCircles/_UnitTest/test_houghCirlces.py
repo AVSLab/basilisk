@@ -105,10 +105,8 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleConfig)
-    moduleConfig.saveImages = 1
     moduleConfig.imageInMsgName = "sample_image"
     moduleConfig.opnavCirclesOutMsgName = "circles"
-    imagePtrString = str(input_image.im.ptr).split()[-1][0:-1]
 
     moduleConfig.filename = imagePath
     moduleConfig.expectedCircles = maxCircles
@@ -117,7 +115,7 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
     moduleConfig.houghMinDist = minDist
     moduleConfig.houghMinRadius = minRad
     moduleConfig.blurrSize = blur
-    moduleConfig.speed = dp
+    moduleConfig.dpValue = dp
     moduleConfig.houghMaxRadius = int(input_image.size[0]/1.25)
 
     circles = []

@@ -1,30 +1,23 @@
 % !TEX root = ./Basilisk-rateMsgConverter-20180630.tex
 
 \section{Test Description and Success Criteria}
-The single check has the rate vector of the input message is set to specific values.  The rate info of the output vector is then compared to truth model.  Further, the MRP and heading vectors should be zero vectors.
-
-
-
+In order to test the proper function of this module, two test images are provided.
+The algorithm needs to find all the circles in the images within 1 pixel of relative error.
 
 \section{Test Parameters}
-The unit test checks the value of the angular rate output and compares it to expected value.  It also makes sure that the attitude and sun sun heading sets are returned as zero.
 
 \begin{table}[htbp]
 	\caption{Error tolerance for each test.}
 	\label{tab:errortol}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ c | c } % Column formatting, 
+	\begin{tabular}{ c | c | c  } % Column formatting, 
 		\hline\hline
-		\textbf{Output Value Tested}  & \textbf{Tolerated Error}  \\ 
-		\hline
-		{\tt sigma\_BN}        & \input{AutoTeX/toleranceValue}	   \\ 
-		{\tt omega\_BN\_B}        & \input{AutoTeX/toleranceValue}	   \\ 
-		{\tt vehSunPntBdy}        & \input{AutoTeX/toleranceValue}	   \\ 
+		\textbf{Test image}  & Expected Circles & \textbf{Tolerated Error}  \\  \hline
+		mars    & 1 &1 px	   \\ 
+		moons        & 6 &1 px   \\ 
 		\hline\hline
 	\end{tabular}
 \end{table}
-
-
 
 
 \section{Test Results}
@@ -38,19 +31,25 @@ The following table shows the results of the unit test described above.
 		\hline\hline
 		\textbf{Check} 						  		&\textbf{Pass/Fail} \\ 
 		\hline
-	   1	   			& \input{AutoTeX/passFail} \\ 
+	   mars   			& PASS \\ 
+	   moons   			& PASS  \\
 	   \hline\hline
 	\end{tabular}
 \end{table}
 
+The test does not generate the result image unless called explicitly from python in order to not add images to the repository.
 
+\begin{figure}[h!]
+\centering
+  \includegraphics[width = 0.5\linewidth]{../_UnitTest/result_mars.png}
+  \caption{Mars Circles}
+  \label{fig:mars}
+\end{figure}
 
-The test output are shown in the following tables.
-
-\input{AutoTeX/testMRP.tex}
-\input{AutoTeX/testRate.tex}
-\input{AutoTeX/testSunHeading.tex}
-
-
-
+\begin{figure}[h!]
+\centering
+  \includegraphics[width = 0.5\linewidth]{../_UnitTest/result_moons.png}
+  \caption{Moon crescents circles}
+  \label{fig:moons}
+\end{figure}
 

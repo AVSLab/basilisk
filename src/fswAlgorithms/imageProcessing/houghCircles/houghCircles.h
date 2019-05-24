@@ -69,11 +69,9 @@ public:
     int32_t houghMinRadius;
     int32_t houghMaxRadius;
     int32_t lengthInt;
-    int32_t speed;
+    int32_t dpValue;
     int32_t expectedCircles;
     std::shared_ptr<double> test;
-    
-    int saveImages; //! Flag to save images to PNG for analysis
     
 private:
     uint64_t OutputBufferCount;       //!< [-] Count on the number of output message buffers
