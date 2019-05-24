@@ -49,22 +49,23 @@ except ImportError:
 # @pytest.mark.xfail(conditionstring)
 # Provide a unique test method name, starting with 'test_'.
 
-@pytest.mark.parametrize("image, blur, maxCircles, minDist, minRad, cannyLow, cannyHigh, dp", [
-                    ("mars.png",    5,          1,      50,     20,       20,       200,   1), #Mars image
-                   ("moons.png",    5,         10,      25,     10,       20,       200,   1) # Moon images
+@pytest.mark.parametrize("image, blur, maxCircles, minDist, minRad, cannyLow, cannyHigh, dp, saveImage", [
+                    ("mars.png",    5,          1,      50,     20,       20,       200,   1, False), #Mars image
+                   ("moons.png",    5,         10,      25,     10,       20,       200,   1, False) # Moon images
     ])
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, image, blur, maxCircles , minDist , minRad, cannyLow, cannyHigh, dp):
+def test_module(show_plots, image, blur, maxCircles , minDist , minRad, cannyLow, cannyHigh, dp, saveImage):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, cannyLow, cannyHigh, dp)
+    [testResults, testMessage] = houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, cannyLow, cannyHigh, dp, saveImage)
     assert testResults < 1, testMessage
 
 
-def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, cannyLow, cannyHigh, dp):
+def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, cannyLow, cannyHigh, dp, saveImage):
 
     # Truth values from python
-    input_image = Image.open(image)
+    imagePath = path + '/' + image
+    input_image = Image.open(imagePath)
     input_image.load()
     #################################################
 
@@ -99,7 +100,7 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
     moduleConfig.opnavCirclesOutMsgName = "circles"
     imagePtrString = str(input_image.im.ptr).split()[-1][0:-1]
 
-    moduleConfig.filename = image
+    moduleConfig.filename = imagePath
     moduleConfig.expectedCircles = maxCircles
     moduleConfig.cannyThresh1 = cannyHigh
     moduleConfig.cannyThresh2 = cannyLow
@@ -156,7 +157,8 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
         draw_result.ellipse((x - r, y - r, x + r, y + r), outline=(255, 0, 0, 0))
 
     # Save output image
-    output_image.save("result_"+ image)
+    if saveImage:
+        output_image.save("result_"+ image)
 
     if show_plots:
         output_image.show()
@@ -180,4 +182,4 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
 # stand-along python script
 #
 if __name__ == "__main__":
-    houghCirclesTest(True, "moons.png",     5,         10,      25,     10,       20,       200,   1) # Moon images
+    houghCirclesTest(True, "moons.png",     5,         10,      25,     10,       20,       200,   1, True) # Moon images
