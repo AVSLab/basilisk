@@ -25,7 +25,7 @@
 typedef struct {
     double timeTag;                             /*!< [s] Current time of validity for output */
     double covar[3*3];    /*!< [-] Current covariance of the filter */
-    double r_B[3];                 /*!< [-] Current estimated state of the filter */
+    double r_B[3];                 /*!< [km] Current estimated state of the filter */
 }OpnavFswMsg;
 
 

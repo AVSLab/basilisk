@@ -26,6 +26,8 @@
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "fswMessages/opnavFswMsg.h"
 #include "utilities/linearAlgebra.h"
+#include "utilities/astroConstants.h"
+
 
 /*! This method transforms pixel, line, and diameter data into heading data for orbit determination or heading determination.
  @return void
@@ -62,7 +64,7 @@ void Reset_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTim
 
 }
 
-/*! This method reads in the camera and circle messages and extracts navigation data from them. It outputs the heading (norm and direction) to the celestial body identified in the body frame. 
+/*! This method reads in the camera and circle messages and extracts navigation data from them. It outputs the heading (norm and direction) to the celestial body identified in the body frame. It provides the heading to the most robust circle identified by the image processing algorithm. 
  @return void
  @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
@@ -84,10 +86,49 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
                 sizeof(CameraConfigMsg), &cameraSpecs, moduleID);
     ReadMessage(configData->circlesInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(CirclesOpNavMsg), &circlesIn, moduleID);
+    
+    /*! - Find pixel size using camera specs */
+    double X, Y;
+    X = cameraSpecs.sensorSize[0]*0.001/cameraSpecs.resolution[0];
+    Y = cameraSpecs.sensorSize[1]*0.001/cameraSpecs.resolution[1];
 
-    /*! - map timeTag, position and velocity vector to output message */
-
+    /*! - Get the heading */
+    double rtilde_C[2];
+    double rHat_C[3];
+    double rNorm = 1;
+    double planetRad, denom;
+    double covar_map[3*3], covar_In[3*3];
+    double x_map, y_map, rho_map;
+    double scale_map[3];
+    
+    rtilde_C[0] = 1./cameraSpecs.focalLength*(X*circlesIn.circlesCenters[0]);
+    rtilde_C[1] = 1./cameraSpecs.focalLength*(Y*circlesIn.circlesCenters[1]);
+    v2Set(rtilde_C[0], rtilde_C[1], rHat_C);
+    rHat_C[2] = 1;
+    v3Normalize(rHat_C, rHat_C);
+    
+    if(configData->planetTarget > 0){
+        if(configData->planetTarget ==1){planetRad = REQ_EARTH;} //in km
+        if(configData->planetTarget ==2){planetRad = REQ_MARS;} //in km
+        if(configData->planetTarget ==3){planetRad = REQ_JUPITER;} //in km
+        
+        denom = sin(atan(X*circlesIn.circlesRadii[0]/cameraSpecs.focalLength));
+        rNorm = planetRad/denom; //in km
+        
+        /*! - Compute the uncertainty */
+        x_map =   planetRad/denom*(X/cameraSpecs.focalLength);
+        y_map =  planetRad/denom*(Y/cameraSpecs.focalLength);
+        rho_map = planetRad*(X/(cameraSpecs.focalLength*sqrt(1 + pow(circlesIn.circlesRadii[0]*X/cameraSpecs.focalLength,2)))-cameraSpecs.focalLength*sqrt(1 + pow(circlesIn.circlesRadii[0]*X/cameraSpecs.focalLength,2))/(pow(circlesIn.circlesRadii[0], 2)*X));
+        v3Set(x_map, y_map, rho_map, scale_map);
+        m33MultV3(RECAST3X3 covar_map, scale_map, covar_map);
+        mCopy(circlesIn.uncertainty, 3, 3, covar_In);
+        mMultM(covar_map, 3, 3, covar_In, 3, 3, covar_In);
+        mMultMt(covar_In, 3, 3, covar_map, 3, 3, covar_In);
+    }
+    
     /*! - write output message */
+    v3Scale(rNorm, rHat_C, opNavMsgOut.r_B);
+    mCopy(covar_In, 3, 3, opNavMsgOut.covar);
     WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpnavFswMsg),
                  &opNavMsgOut, moduleID);
 
