@@ -19,7 +19,7 @@
 /*
     Hough Circle Finder
 
-    Note:   this module takes a bit-map image and writes out the circles that are found in the image by OpenCV's HoughCricle Transform.
+    Note:   This module takes a bit-map image and writes out the circles that are found in the image by OpenCV's HoughCricle Transform.
     Author: Thibaud Teil
     Date:   February 13, 2019
  

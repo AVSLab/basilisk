@@ -33,19 +33,18 @@
 #include "../simulation/utilities/avsEigenMRP.h"
 
 
-/*! \addtogroup SimModelGroup
- * @{
- */
+/*! \defgroup houghCircles
 
-//!@brief Sensor model to simulate a Star Tracker.
-/*!
+ @brief Module takes a bit-map image and writes out the circles that are found in the image by OpenCV's HoughCricle Transform.
+
  The module
- [PDF Description](Basilisk-star_tracker-20161101.pdf)
+ [PDF Description](Basilisk-houghCircles-20190213.pdf)
  contains further information on this module's function,
  how to run it, as well as testing.
- The corruption types are outlined in this
- [PDF document](BasiliskCorruptions.pdf).
+
+ @{
  */
+
 class HoughCircles: public SysModel {
 public:
     HoughCircles();
@@ -57,11 +56,11 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     
 public:
-    std::string filename;       //! Filename for debugging*/
-    std::string opnavCirclesOutMsgName;  //! The name of the CirclesOpnavMsg output message*/
-    std::string imageInMsgName;          //! The name of the ImageFswMsg output message*/
-    uint64_t sensorTimeTag;              //! [ns] Current time tag for sensor out
-    /*! OpenCV specific arguments need for HoughCircle finding*/
+    std::string filename;                //!< Filename for debugging
+    std::string opnavCirclesOutMsgName;  //!< The name of the CirclesOpnavMsg output message
+    std::string imageInMsgName;          //!< The name of the ImageFswMsg output message
+    uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
+    /* OpenCV specific arguments needed for HoughCircle finding*/
     int32_t blurrSize;
     int32_t cannyThresh1;
     int32_t cannyThresh2;
@@ -74,9 +73,9 @@ public:
     std::shared_ptr<double> test;
     
 private:
-    uint64_t OutputBufferCount;       //!< [-] Count on the number of output message buffers
-    int32_t opnavCirclesOutMsgID;                      //! ID for the outgoing message */
-    int32_t imageInMsgID;                           //! ID for the outgoing message */
+    uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
+    int32_t opnavCirclesOutMsgID;        //!< ID for the outgoing message
+    int32_t imageInMsgID;                //!< ID for the outgoing message
 };
 
 /* @} */

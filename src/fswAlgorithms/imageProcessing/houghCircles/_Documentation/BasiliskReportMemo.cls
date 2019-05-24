@@ -21,7 +21,9 @@
 \RequirePackage{lastpage}
 %\RequirePackage[original,runin]{abstract}
 \RequirePackage[total={6.5in,9in},top=1in, left=1in]{geometry}
-\RequirePackage[colorlinks=false,hyperfootnotes=false]{hyperref}
+\RequirePackage[colorlinks=true,linkcolor=MidnightBlue,
+			urlcolor=MidnightBlue,
+		        citecolor=MidnightBlue,hyperfootnotes=false]{hyperref}
 \RequirePackage{url}
 \RequirePackage{titling}
 \RequirePackage[compact]{titlesec}
