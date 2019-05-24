@@ -16,6 +16,7 @@ We are very excited by the great capabilities that this software already has, an
 ## Upcoming Version 0.X.X
    <ul>
     <li>Added the enableViz method to the bskSim scnearios.</li>
+    <li>Added dvGuidance PDF module description</li>
    </ul>
    
 ##  Version 0.6.2
