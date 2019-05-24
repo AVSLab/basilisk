@@ -19,7 +19,7 @@
 /*
     Hough Circle Finder
 
-    Note:   This module takes a bit-map image and writes out the circles that are found in the image by OpenCV's HoughCricle Transform.
+    Note:   This module takes an image and writes out the circles that are found in the image by OpenCV's HoughCricle Transform.
     Author: Thibaud Teil
     Date:   February 13, 2019
  
@@ -30,8 +30,7 @@
 #include "houghCircles.h"
 
 
-/*! This method constructs the module.
-It also sets some default values at its creation */
+/*! The constructor for the HoughCircles module. It also sets some default values at its creation.  */
 HoughCircles::HoughCircles()
 {
     this->filename = "";
@@ -39,14 +38,14 @@ HoughCircles::HoughCircles()
     this->dpValue = 1;
     this->OutputBufferCount = 2;
     this->expectedCircles = MAX_CIRCLE_NUM;
-    this->cannyThresh1 = 200;
-    this->cannyThresh2 = 20;
+    this->cannyThresh = 200;
+    this->voteThresh = 20;
     this->houghMinDist = 50;
     this->houghMinRadius = 0;
     this->houghMaxRadius = 0; // Maximum circle radius. If <= 0, uses the maximum image dimension. If < 0, returns centers without finding the radius
 }
 
-/*! This method performs the first stage of initialization for this module.
+/*! Selfinit performs the first stage of initialization for this module.
  It's primary function is to create messages that will be written to.
  @return void
  */
@@ -57,7 +56,7 @@ void HoughCircles::SelfInit()
 }
 
 
-/*! This method performs the second stage of initialization for this module.
+/*! CrossInit performs the second stage of initialization for this module.
  It's primary function is to link the input messages that were created elsewhere.
  @return void
  */
@@ -67,17 +66,14 @@ void HoughCircles::CrossInit()
     this->imageInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->imageInMsgName,sizeof(CameraImageMsg), moduleID);
 }
 
-/*! This is the destructor
- @return void
- */
+/*! This is the destructor */
 HoughCircles::~HoughCircles()
 {
     return;
 }
 
 
-/*! This method performs a complete reset of the module.  Local module variables that retain
- time varying states between function calls are reset to their default values.
+/*! This method performs a complete reset of the module.  Local module variables that retain time varying states between function calls are reset to their default values.
  @return void
  @param this The configuration data associated with the module
  */
@@ -86,7 +82,7 @@ void HoughCircles::Reset(uint64_t CurrentSimNanos)
     return;
 }
 
-/*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle Transform.
+/*! This module reads an OpNav image and extracts circle information from its content using OpenCV's HoughCircle Transform. It performs a greyscale, a bur, and a threshold on the image to facilitate circle-finding. 
  @return void
  @param CurrentSimNanos The clock time at which the function was called (nanoseconds)
  */
@@ -123,7 +119,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     
     std::vector<cv::Vec4f> circles;
     /*! - Apply the Hough Transform to find the circles*/
-    cv::HoughCircles( blurred, circles, CV_HOUGH_GRADIENT, this->dpValue, this->houghMinDist, this->cannyThresh1,this->cannyThresh2, this->houghMinRadius, this->houghMaxRadius );
+    cv::HoughCircles( blurred, circles, CV_HOUGH_GRADIENT, this->dpValue, this->houghMinDist, this->cannyThresh,this->voteThresh, this->houghMinRadius, this->houghMaxRadius );
 
     circleBuffer.timeTag = this->sensorTimeTag;
     circleBuffer.cameraID = imageBuffer.cameraID;

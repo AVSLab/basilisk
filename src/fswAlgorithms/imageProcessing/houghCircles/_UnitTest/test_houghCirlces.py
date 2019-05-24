@@ -110,8 +110,8 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
 
     moduleConfig.filename = imagePath
     moduleConfig.expectedCircles = maxCircles
-    moduleConfig.cannyThresh1 = cannyHigh
-    moduleConfig.cannyThresh2 = cannyLow
+    moduleConfig.cannyThresh = cannyHigh
+    moduleConfig.voteThresh = cannyLow
     moduleConfig.houghMinDist = minDist
     moduleConfig.houghMinRadius = minRad
     moduleConfig.blurrSize = blur
