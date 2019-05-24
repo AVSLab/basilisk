@@ -152,7 +152,7 @@
 
 
 # Import utilities
-from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
+from Basilisk.utilities import orbitalMotion, macros, unitTestSupport, vizSupport
 
 # Get current file path
 import sys, os, inspect
@@ -271,6 +271,11 @@ def run(showPlots):
     TheScenario = scenario_AttitudeEclipse(TheBSKSim)
     TheScenario.log_outputs()
     TheScenario.configure_initial_conditions()
+
+    # if this scenario is to interface with the BSK Viz, uncomment the following line
+    # vizSupport.enableUnityVisualization(TheBSKSim, TheBSKSim.DynModels.taskName, TheBSKSim.DynamicsProcessName,
+    #                                     gravBodies=TheBSKSim.DynModels.gravFactory,
+    #                                     saveFile=filename)
 
     # Initialize simulation
     TheBSKSim.InitializeSimulationAndDiscover()
