@@ -54,11 +54,7 @@ HoughCircles::HoughCircles()
 void HoughCircles::SelfInit()
 {
     /*! - Create output message for module */
-    this->opnavCirclesOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(this->opnavCirclesOutMsgName,
-                                                  sizeof(CirclesOpNavMsg),
-                                                  this->OutputBufferCount,
-                                                  "CirclesOpNavMsg",
-                                                  moduleID);
+    this->opnavCirclesOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(this->opnavCirclesOutMsgName,sizeof(CirclesOpNavMsg),this->OutputBufferCount,"CirclesOpNavMsg",moduleID);
 }
 
 
@@ -69,9 +65,7 @@ void HoughCircles::SelfInit()
 void HoughCircles::CrossInit()
 {
     /*! - Get the image data message ID*/
-    this->imageInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->imageInMsgName,
-                                                sizeof(CameraImageMsg),
-                                                moduleID);
+    this->imageInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->imageInMsgName,sizeof(CameraImageMsg), moduleID);
 }
 
 /*! This is the destructor
