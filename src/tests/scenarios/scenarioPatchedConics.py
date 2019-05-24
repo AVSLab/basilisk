@@ -49,8 +49,8 @@ from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIn
 # -----
 # This tutorial considers a patched conics approach to an interplanetary transfer from Earth to Jupiter, by way of a
 # heliocentric Hohmann transfer.  The patched conic solution is evaluated making the typical conic trajectory
-# assumptions where an impulsive Dv changes a Earth centric circular orbit into a hyperbolic departure orbit that
-# excapes the Earth system in the Earth's heliocentric direction.  After an elliptical heliocentric transfer orbit
+# assumptions where an impulsive Dv changes an Earth-centric circular orbit into a hyperbolic departure orbit that
+# escapes the Earth system in the Earth's heliocentric direction.  After an elliptical heliocentric transfer orbit
 # the craft reaches the Jupiter region.  The Jupiter relative arrival is a hyperbolic arrival orbit.
 # To simulate this solution, a continuous multi-body gravity integration is performed to illustrate
 # how close the patched conic solution is to reaching a Jupiter fly-by.  The simulation is started and stopped to
@@ -107,7 +107,7 @@ from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIn
 # entering Jupiter's Sphere of Influence. This ensures the spacecraft has the correct heliocentric and relative
 # positions and velocities even when the planets are not moving.
 #
-# Initially the Earth centered departure logging is set to 5 seconds.
+# Initially the Earth-centered departure logging is set to 5 seconds.
 # However, in order to speed up computation, we need to update the simulation time step for an interplanetary transfer.
 #
 # The simulation is stopped when the spacecraft reaches the edge of Earth's Sphere of Influence, and a new time step of
@@ -172,7 +172,7 @@ from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIn
 # The position and velocity data of the spacecraft within Jupiter's SOI are adjusted to be Jupiter centered so the
 # trajectory of the flyby with respect to Jupiter can be shown.
 #
-# Plots found when running this scenario show the Earth centered departure, the heliocentric Hohmann transfer, the
+# Plots found when running this scenario show the Earth-centered departure, the heliocentric Hohmann transfer, the
 # Jupiter centered fly-by, and a heliocentric log plot of the entire transfer.
 #
 # ![Earth Centered Departure Perifocal Frame](Images/Scenarios/scenarioPatchedConics1.svg "Earth Centered Departure Perifocal Frame")
