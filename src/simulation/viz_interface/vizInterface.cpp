@@ -61,7 +61,6 @@ VizInterface::~VizInterface()
  */
 void VizInterface::SelfInit()
 {
-  /*! Declare output messages */
     if (this->opNavMode == 1){
         /*! setup zeroMQ */
         context = zmq_ctx_new();
@@ -80,6 +79,9 @@ void VizInterface::SelfInit()
         zmq_recv (requester_socket, buffer, 4, 0);
         zmq_send (requester_socket, "PING", 4, 0);
         std::cout << "Basilisk-Vizard connection made" << std::endl;
+        
+        /*! - Create output message for module in opNav mode */
+        this->imageOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(this->opnavImageOutMsgName,sizeof(CameraImageMsg),this->ImageBufferCount,"CirclesOpNavMsg", moduleID);
 
     }
 
@@ -490,6 +492,23 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 zmq_msg_init(&image);
                 zmq_msg_recv(&length, requester_socket, 0);
                 zmq_msg_recv(&image, requester_socket, 0);
+                
+                int32_t *lengthPoint= (int32_t *)zmq_msg_data(&length);
+                void *imagePoint= zmq_msg_data(&image);
+                int32_t length_unswapped = *lengthPoint;
+                /*! --  Endianness switch for the length of the buffer */
+                int32_t imageBufferLength =((length_unswapped>>24)&0xff) | // move byte 3 to byte 0
+                ((length_unswapped<<8)&0xff0000) | // move byte 1 to byte 2
+                ((length_unswapped>>8)&0xff00) | // move byte 2 to byte 1
+                ((length_unswapped<<24)&0xff000000); // byte 0 to byte 3
+                
+                /*! -- Write out the image information to the Image message */
+                CameraImageMsg imageData;
+                imageData.imagePointer = imagePoint;
+                imageData.imageBufferLength = imageBufferLength;
+                imageData.cameraID = this->cameraConfigMessage.cameraID;
+                imageData.imageType = 4;
+                SystemMessaging::GetInstance()->WriteMessage(this->imageOutMsgID, CurrentSimNanos, sizeof(CameraImageMsg), reinterpret_cast<uint8_t *>(&imageData), this->moduleID);
 
                 /*! -- Clean the messages to avoid memory leaks */
                 zmq_msg_close(&length);

@@ -17,14 +17,13 @@
 
  */
 
-#define MAX_FILENAME_LENGTH 10000
+#define MAX_CIRCLE_NUM 10
 
 /*! @brief Structure used to define the output definition for attitude guidance*/
 typedef struct {
     double timeTag;         //!< --[s]   Current vehicle time-tag associated with measurements*/
     int64_t cameraID;          //!< -- [-]   ID of the camera that took the snapshot*/
-    void* imagePointer;        //!< -- Pointer to the image
-    int32_t imageBufferLength; //!< -- Length of the buffer for recasting
-    int8_t imageType;         //!< -- Number of channels in each pixel, RGB = 3, RGBA = 4
-}CameraImageMsg;
+    double circlesCenters[2*MAX_CIRCLE_NUM];          //!< -- [-]   Center x, y in pixels of the circles*/
+    double circlesRadii[MAX_CIRCLE_NUM];          //!< -- [-]   Radius rho in pixels of the circles*/
+}CirclesOpNavMsg;
 

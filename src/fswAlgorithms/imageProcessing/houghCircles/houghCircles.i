@@ -1,7 +1,7 @@
-/*
+ /*
  ISC License
 
- Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -16,15 +16,23 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
+%module houghCircles
+%{
+   #include "houghCircles.h"
+%}
 
-#define MAX_FILENAME_LENGTH 10000
+%include "swig_common_model.i"
+%include "stdint.i"
+%include "sys_model.h"
+%include "houghCircles.h"
+%include "../simulation/simFswInterfaceMessages/circlesOpNavMsg.h"
+%include "../simulation/simFswInterfaceMessages/cameraImageMsg.h"
+GEN_SIZEOF(CirclesOpNavMsg)
+GEN_SIZEOF(CameraImageMsg)
 
-/*! @brief Structure used to define the output definition for attitude guidance*/
-typedef struct {
-    double timeTag;         //!< --[s]   Current vehicle time-tag associated with measurements*/
-    int64_t cameraID;          //!< -- [-]   ID of the camera that took the snapshot*/
-    void* imagePointer;        //!< -- Pointer to the image
-    int32_t imageBufferLength; //!< -- Length of the buffer for recasting
-    int8_t imageType;         //!< -- Number of channels in each pixel, RGB = 3, RGBA = 4
-}CameraImageMsg;
+
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}
 

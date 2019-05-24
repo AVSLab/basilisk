@@ -18,6 +18,7 @@ We are very excited by the great capabilities that this software already has, an
     <li>Added the enableViz method to the bskSim scnearios.</li>
     <li>Added dvGuidance PDF module description</li>
     <li>Added new orbital simulation tutorial on a transfer orbit from Earth to Jupiter using a patched-conic Delta_v</li>
+    <li>Added the first image processing FSW module using OpenCV's HoughCirlces.</li>
    </ul>
    
 ##  Version 0.6.2
