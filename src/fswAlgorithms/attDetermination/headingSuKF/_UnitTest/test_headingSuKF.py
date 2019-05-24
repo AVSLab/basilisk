@@ -375,7 +375,7 @@ def StateUpdateSunLine(show_plots):
                                       2)  # number of buffers (leave at 2 as default, don't make zero)
 
     stateTarget = testVector.tolist()
-    inputData.rel_pos = stateTarget
+    inputData.r_B = stateTarget
     stateTarget.extend([0.0, 0.0])
     moduleConfig.stateInit = [1., 0.2, 0.1, 0.01, 0.001]
 
@@ -384,7 +384,7 @@ def StateUpdateSunLine(show_plots):
     for i in range(t1):
         if i > 0 and i%50 == 0:
             inputData.timeTag = macros.sec2nano(i * 0.5)
-            inputData.rel_pos += np.random.normal(0, 0.001, 3)
+            inputData.r_B += np.random.normal(0, 0.001, 3)
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.opnavDataInMsgName,
                                       inputMessageSize,
                                       unitTestSim.TotalSim.CurrentNanos,
@@ -409,13 +409,13 @@ def StateUpdateSunLine(show_plots):
 
     testVector = np.array([0.6, -0.1, 0.2])
     stateTarget = testVector.tolist()
-    inputData.rel_pos = stateTarget
+    inputData.r_B = stateTarget
     stateTarget.extend([0.0, 0.0])
 
     for i in range(t1):
         if i%50 == 0:
             inputData.timeTag = macros.sec2nano(i*0.5 +t1 +1)
-            inputData.rel_pos += np.random.normal(0, 0.001, 3)
+            inputData.r_B += np.random.normal(0, 0.001, 3)
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.opnavDataInMsgName,
                                       inputMessageSize,
                                       unitTestSim.TotalSim.CurrentNanos,
