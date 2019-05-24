@@ -17,6 +17,7 @@ We are very excited by the great capabilities that this software already has, an
    <ul>
     <li>Added the enableViz method to the bskSim scnearios.</li>
     <li>Added dvGuidance PDF module description</li>
+    <li>Added new orbital simulation tutorial on a transfer orbit from Earth to Jupiter using a patched-conic Delta_v</li>
    </ul>
    
 ##  Version 0.6.2
