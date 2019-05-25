@@ -38,14 +38,10 @@ Note: Depending on your system setup, administrative permissions (sudo or su) ma
     $ apt-get install swig
 ```
 
-4. Boost Libraries 1.61: Available using
-```
-    $ apt-get install libboost-all-dev
-```
 
-5. A C/C++ Compiler: This is included by default with most Linux systems (gcc), but is necessary to build Basilisk.
+4. A C/C++ Compiler: This is included by default with most Linux systems (gcc), but is necessary to build Basilisk.
 
-6. A install of Conan. Install with pip, an example is below
+5. A install of Conan. Install with pip, an example is below
 ```
     $ pip install conan
 ```

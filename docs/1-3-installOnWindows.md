@@ -26,15 +26,6 @@ C:\Users\patrick> pip --trusted-host=pypi.python.org install <package name>
 ```
 
 
-#### Configuring Boost
-
-If you require a different version of Boost than that provided with the project you may download and build the Boost libraries. To download the version of the Boost C++ libraries noted in the project [readme](@ref README). Executing the following commands from within the Boost directory will build all Boost libraries. Again selecting the appropriate architecture (32 or 64 bit) and ensure the runtime linkage parameter is set to 'static'.
-
-```
-C:\Users\patrick\Downloads\boost_1_61_0\boost_1_61_0> bootstrap
-C:\Users\patrick\Downloads\boost_1_61_0\boost_1_61_0> b2 address-model=64 runtime-link=static
-```
-
 #### Configuring Swig
 
 The standard windows swig setup is suitable for Basilisk. [Configuration Instructions](http://www.swig.org/Doc1.3/Windows.html#Windows_swig_exe).
