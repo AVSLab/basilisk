@@ -19,9 +19,6 @@
 %module pixel_line_converter
 %{
    #include "pixelLineConverter.h"
-   #include "simFswInterfaceMessages/circlesOpNavMsg.h"
-   #include "simFswInterfaceMessages/cameraConfigMsg.h"
-   #include "fswMessages/opnavFswMsg.h"
    
 %}
 
@@ -34,13 +31,12 @@
 %ignore CrossInit_pixelLineConverter;
 %constant void Reset_pixelLineConverter(void*, uint64_t, uint64_t);
 %ignore Reset_pixelLineConverter;
-
-#include "pixelLineConverter.h"
-#include "simFswInterfaceMessages/circlesOpNavMsg.h"
+%include "pixelLineConverter.h"
+%include "simFswInterfaceMessages/circlesOpNavMsg.h"
 GEN_SIZEOF(CirclesOpNavMsg)
-#include "simFswInterfaceMessages/cameraConfigMsg.h"
+%include "simFswInterfaceMessages/cameraConfigMsg.h"
 GEN_SIZEOF(CameraConfigMsg)
-#include "fswMessages/opnavFswMsg.h"
+%include "../fswAlgorithms/fswMessages/opnavFswMsg.h"
 GEN_SIZEOF(OpnavFswMsg)
 
 %pythoncode %{
