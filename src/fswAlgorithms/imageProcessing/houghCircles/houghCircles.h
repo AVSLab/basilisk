@@ -35,7 +35,7 @@
 
 /*! \defgroup houghCircles
 
- @brief Module takes a bit-map image and writes out the circles that are found in the image by OpenCV's HoughCricle Transform.
+ @brief Module reads in a message containing a pointer to an image and writes out the circles that are found in the image by OpenCV's HoughCricle Transform.
 
  The module
  [PDF Description](Basilisk-houghCircles-20190213.pdf)
@@ -56,21 +56,19 @@ public:
     void Reset(uint64_t CurrentSimNanos);
     
 public:
-    std::string filename;                //!< Filename for debugging
+    std::string filename;                //!< Filename for module to read an image directly
     std::string opnavCirclesOutMsgName;  //!< The name of the CirclesOpnavMsg output message
     std::string imageInMsgName;          //!< The name of the ImageFswMsg output message
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
     /* OpenCV specific arguments needed for HoughCircle finding*/
-    int32_t blurrSize;
-    int32_t cannyThresh1;
-    int32_t cannyThresh2;
-    int32_t houghMinDist;
-    int32_t houghMinRadius;
-    int32_t houghMaxRadius;
-    int32_t lengthInt;
-    int32_t dpValue;
-    int32_t expectedCircles;
-    std::shared_ptr<double> test;
+    int32_t blurrSize;                   //!< [px] Size of the blurring box in pixels
+    int32_t cannyThresh;                 //!< [px] Canny edge detection Threshold
+    int32_t voteThresh;                  //!< [-] Threshold in number of votes to qualify a circle as detected
+    int32_t houghMinDist;                //!< [px] Min distance between 2 detected circles
+    int32_t houghMinRadius;              //!< [-] Min radius of a detected circle
+    int32_t houghMaxRadius;              //!< [-] Max radius of a detected circle
+    int32_t dpValue;                     //!< [-] Subscaling of image for circle searching, 1 searches full image
+    int32_t expectedCircles;             //!< [-] Number of expected circles to be found
     
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
