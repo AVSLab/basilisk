@@ -37,7 +37,7 @@
 
  @brief Module reads in a message containing a pointer to an image and writes out the circles that are found in the image by OpenCV's HoughCricle Transform.
 
- The file
+ The module
  [PDF Description](Basilisk-houghCircles-20190213.pdf)
  contains further information on this module's function,
  how to run it, as well as testing.
@@ -68,7 +68,7 @@ public:
     int32_t houghMinRadius;              //!< [-] Min radius of a detected circle
     int32_t houghMaxRadius;              //!< [-] Max radius of a detected circle
     int32_t dpValue;                     //!< [-] Subscaling of image for circle searching, 1 searches full image
-    int32_t expectedCircles;            //!< [-] Number of expected circles to be found
+    int32_t expectedCircles;             //!< [-] Number of expected circles to be found
     
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
