@@ -21,14 +21,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "pixelLineConverter.h"
-#include "simFswInterfaceMessages/circlesOpNavMsg.h"
-#include "simFswInterfaceMessages/cameraConfigMsg.h"
-#include "simFswInterfaceMessages/navAttIntMsg.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "fswMessages/opnavFswMsg.h"
-#include "utilities/linearAlgebra.h"
-#include "utilities/astroConstants.h"
-#include "utilities/rigidBodyKinematics.h"
+
 
 
 /*! This method transforms pixel, line, and diameter data into heading data for orbit determination or heading determination.
@@ -77,7 +70,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
 {
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
-    double dcm_BC[3][3], dcm_BN[3][3];
+    double dcm_NC[3][3];
     CameraConfigMsg cameraSpecs;
     CirclesOpNavMsg circlesIn;
     OpnavFswMsg opNavMsgOut;
@@ -95,16 +88,18 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     ReadMessage(configData->attInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavAttIntMsg), &attInfo, moduleID);
     
-    MRP2C(cameraSpecs.sigma_BC, dcm_BC);
-    MRP2C(attInfo.sigma_BN, dcm_BN);
+    v3Scale(-1, attInfo.sigma_BN, attInfo.sigma_BN); // sigma_NB now
+    addMRP(attInfo.sigma_BN, cameraSpecs.sigma_BC, attInfo.sigma_BN); // sigma_NC now
+    MRP2C(attInfo.sigma_BN, dcm_NC);
+
     /*! - Find pixel size using camera specs */
     double X, Y;
-    X = cameraSpecs.sensorSize[0]*0.001/cameraSpecs.resolution[0];
+    X = cameraSpecs.sensorSize[0]*0.001/cameraSpecs.resolution[0]; // mm to meters
     Y = cameraSpecs.sensorSize[1]*0.001/cameraSpecs.resolution[1];
 
     /*! - Get the heading */
     double rtilde_C[2];
-    double rHat_C[3], rHat_B[3], rHat_N[3];
+    double rHat_C[3], rHat_N[3];
     double rNorm = 1;
     double planetRad, denom;
     double covar_map[3*3], covar_In[3*3];
@@ -117,8 +112,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     rHat_C[2] = 1;
     v3Normalize(rHat_C, rHat_C);
     
-    m33MultV3(dcm_BC, rHat_C, rHat_B);
-    mtMultM(dcm_BN, 3, 3, rHat_B, 3, 3, rHat_N);
+    m33MultV3(dcm_NC, rHat_C, rHat_N);
 
     if(configData->planetTarget > 0){
         if(configData->planetTarget ==1){planetRad = REQ_EARTH;} //in km
@@ -137,6 +131,9 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
         mCopy(circlesIn.uncertainty, 3, 3, covar_In);
         mMultM(covar_map, 3, 3, covar_In, 3, 3, covar_In);
         mMultMt(covar_In, 3, 3, covar_map, 3, 3, covar_In);
+        /*! - Changer the mapped covariance to inertial frame */
+        mMultM(dcm_NC, 3, 3, covar_In, 3, 3, covar_In);
+        mMultMt(covar_In, 3, 3, dcm_NC, 3, 3, covar_In);
     }
     
     /*! - write output message */

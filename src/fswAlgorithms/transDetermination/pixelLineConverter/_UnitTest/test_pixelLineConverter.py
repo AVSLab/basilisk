@@ -5,12 +5,42 @@
 #
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.fswAlgorithms import ephem_nav_converter, pixelLineConverter
+from Basilisk.fswAlgorithms import pixelLineConverter
 from Basilisk.utilities import astroFunctions
 
 import os, inspect
+import numpy as np
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
+
+def mapState(state, planet, camera):
+    D = planet["diameter"]
+    f = camera["focal"]
+    d_x = camera["pixelSizeX"]
+    d_y = camera["pixelSizeY"]
+    A = 2 * np.arctan(state[2]*d_x/f)
+
+    norm = 0.5 * D/np.sin(0.5*A)
+    vec = np.array([state[0]*d_x/f, state[1]*d_y/f, 1.])
+    return norm*vec/np.linalg.norm(vec)
+
+# def algebraic((state, planet, camera):
+#     A = 1./())
+
+
+def mapCovar(CovarXYR, rho, planet, camera):
+    D = planet["diameter"]
+    f = camera["focal"]
+    d_x = camera["pixelSizeX"]
+    d_y = camera["pixelSizeY"]
+    A = 2 * np.arctan(rho*d_x/f)
+
+    # rho_map = (0.33 * D * np.cos(A)/np.sin(A/2.)**2. * 2./f * 1./(1. + (rho/f)**2.) * (d_x/f) )
+    rho_map = 0.5*D*(-f*np.sqrt(1 + rho**2*d_x**2/f**2)/(rho**2*d_x) + d_x/(f*np.sqrt(1 + rho**2*d_x**2/f**2)))
+    x_map =   0.5 * D/np.sin(0.5*A)*(d_x/f)
+    y_map =  0.5 * D/np.sin(0.5*A)*(d_y/f)
+    CovarMap = np.array([[x_map,0.,0.],[0., y_map, 0.],[0.,0., rho_map]])
+    return np.dot(CovarMap, np.dot(CovarXYR, CovarMap.T))
 
 def test_pixelLine_converter():
     """ Test ephemNavConverter. """
@@ -42,6 +72,7 @@ def pixelLineConverterTestFunction():
     pixelLine = pixelLineConverter.PixelLineConvertData()  # Create a config struct
     pixelLine.circlesInMsgName = "circles_name"
     pixelLine.cameraConfigMsgName = "camera_config_name"
+    pixelLine.attInMsgName = "nav_att_name"
     # ephemNavConfig.outputState = simFswInterfaceMessages.NavTransIntMsg()
 
     # This calls the algContain to setup the selfInit, crossInit, update, and reset
@@ -54,16 +85,32 @@ def pixelLineConverterTestFunction():
     # Create the input messages.
     inputCamera = pixelLineConverter.CameraConfigMsg()
     inputCircles = pixelLineConverter.CirclesOpNavMsg()
+    inputAtt = pixelLineConverter.NavAttIntMsg()
+    outputOpNav = pixelLineConverter.OpnavFswMsg()
+
+    # Set camera
+    inputCamera.focalLength = 1.
+    inputCamera.sensorSize = [10, 10] # In mm
+    inputCamera.resolution = [512, 512]
+    inputCamera.sigma_BC = [1.,0.,0.]
+    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.cameraConfigMsgName, inputCamera)
+
+    # Set circles
+    inputCircles.circlesCenters = [152, 251]
+    inputCircles.circlesRadii = [75]
+    inputCircles.uncertainty = [0.5, 0.5, 1]
+    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.circlesInMsgName, inputCircles)
+
+    # Set attitude
+    inputAtt.sigma_BN = [0., 1., 0.]
+    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.attInMsgName, inputAtt)
 
     # Get the Earth's position and velocity
     pixelLine.planetTarget = 2
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.ephInMsgName, inputCamera)
-
-    unitTestSim.TotalSim.logThisMessage(pixelLine.stateOutMsgName)
+    unitTestSim.TotalSim.logThisMessage(pixelLine.opNavOutMsgName)
 
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
-
     # The result isn't going to change with more time. The module will continue to produce the same result
     unitTestSim.ConfigureStopTime(testProcessRate)  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
@@ -73,9 +120,9 @@ def pixelLineConverterTestFunction():
     unitTestSupport.writeTeXSnippet("toleranceValuePos", str(posAcc), path)
     unitTestSupport.writeTeXSnippet("toleranceValueVel", str(velAcc), path)
 
-    # outputR = unitTestSim.pullMessageLogData(pixelLine.stateOutMsgName + '.r_BN_N',  range(3))
-    # outputV = unitTestSim.pullMessageLogData(pixelLine.stateOutMsgName + '.v_BN_N',  range(3))
-    # outputTime = unitTestSim.pullMessageLogData(pixelLine.stateOutMsgName + '.timeTag')
+    outputR = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.r_B',  range(3))
+    outputCovar = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.covar',  range(9))
+    outputTime = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.timeTag')
     #
     # trueR = [position, position]
     # trueV = [velocity, velocity]

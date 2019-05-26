@@ -21,6 +21,14 @@
 #define _PIXEL_LINE_CONVERTER_H_
 
 #include "messaging/static_messaging.h"
+#include "simFswInterfaceMessages/circlesOpNavMsg.h"
+#include "simFswInterfaceMessages/cameraConfigMsg.h"
+#include "simFswInterfaceMessages/navAttIntMsg.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "fswMessages/opnavFswMsg.h"
+#include "utilities/linearAlgebra.h"
+#include "utilities/astroConstants.h"
+#include "utilities/rigidBodyKinematics.h"
 
 /*! \defgroup pixelLineConverter
  *  @brief Converter that takes a image processing message and camera information and outputs a relative position to the object [PDF Description](Basilisk-pixelLineConverter-20190524.pdf).

@@ -16,26 +16,28 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module pixel_line_converter
+%module pixelLineConverter
 %{
    #include "pixelLineConverter.h"
-   
 %}
 
 %include "swig_conly_data.i"
-%constant void Update_pixelLineConverter(void*, uint64_t, uint64_t);
-%ignore Update_pixelLineConverter;
 %constant void SelfInit_pixelLineConverter(void*, uint64_t);
 %ignore SelfInit_pixelLineConverter;
 %constant void CrossInit_pixelLineConverter(void*, uint64_t);
 %ignore CrossInit_pixelLineConverter;
 %constant void Reset_pixelLineConverter(void*, uint64_t, uint64_t);
 %ignore Reset_pixelLineConverter;
+%constant void Update_pixelLineConverter(void*, uint64_t, uint64_t);
+%ignore Update_pixelLineConverter;
 %include "pixelLineConverter.h"
+
 %include "simFswInterfaceMessages/circlesOpNavMsg.h"
 GEN_SIZEOF(CirclesOpNavMsg)
 %include "simFswInterfaceMessages/cameraConfigMsg.h"
 GEN_SIZEOF(CameraConfigMsg)
+%include "simFswInterfaceMessages/navAttIntMsg.h"
+GEN_SIZEOF(NavAttIntMsg)
 %include "../fswAlgorithms/fswMessages/opnavFswMsg.h"
 GEN_SIZEOF(OpnavFswMsg)
 
@@ -43,4 +45,5 @@ GEN_SIZEOF(OpnavFswMsg)
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
+
 
