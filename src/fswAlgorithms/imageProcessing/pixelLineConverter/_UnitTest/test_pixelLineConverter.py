@@ -86,7 +86,6 @@ def pixelLineConverterTestFunction():
     inputCamera = pixelLineConverter.CameraConfigMsg()
     inputCircles = pixelLineConverter.CirclesOpNavMsg()
     inputAtt = pixelLineConverter.NavAttIntMsg()
-    outputOpNav = pixelLineConverter.OpnavFswMsg()
 
     # Set camera
     inputCamera.focalLength = 1.
@@ -107,6 +106,7 @@ def pixelLineConverterTestFunction():
 
     # Get the Earth's position and velocity
     pixelLine.planetTarget = 2
+    pixelLine.opNavOutMsgName = "output_nav_msg"
     unitTestSim.TotalSim.logThisMessage(pixelLine.opNavOutMsgName)
 
     # Initialize the simulation

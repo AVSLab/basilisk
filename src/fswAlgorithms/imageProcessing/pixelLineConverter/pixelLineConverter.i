@@ -30,16 +30,17 @@
 %ignore Reset_pixelLineConverter;
 %constant void Update_pixelLineConverter(void*, uint64_t, uint64_t);
 %ignore Update_pixelLineConverter;
+STRUCTASLIST(PixelLineConvertData)
+GEN_SIZEOF(CirclesOpNavMsg)
+GEN_SIZEOF(CameraConfigMsg)
+GEN_SIZEOF(NavAttIntMsg)
+GEN_SIZEOF(OpnavFswMsg)
+%include "simFswInterfaceMessages/circlesOpNavMsg.h"
+%include "simFswInterfaceMessages/cameraConfigMsg.h"
+%include "simFswInterfaceMessages/navAttIntMsg.h"
+%include "../fswAlgorithms/fswMessages/opnavFswMsg.h"
 %include "pixelLineConverter.h"
 
-%include "simFswInterfaceMessages/circlesOpNavMsg.h"
-GEN_SIZEOF(CirclesOpNavMsg)
-%include "simFswInterfaceMessages/cameraConfigMsg.h"
-GEN_SIZEOF(CameraConfigMsg)
-%include "simFswInterfaceMessages/navAttIntMsg.h"
-GEN_SIZEOF(NavAttIntMsg)
-%include "../fswAlgorithms/fswMessages/opnavFswMsg.h"
-GEN_SIZEOF(OpnavFswMsg)
 
 %pythoncode %{
 import sys

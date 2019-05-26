@@ -33,7 +33,7 @@ void SelfInit_pixelLineConverter(PixelLineConvertData *configData, uint64_t modu
 {
     configData->stateOutMsgID = CreateNewMessage(configData->opNavOutMsgName,
                                                  sizeof(OpnavFswMsg),
-                                                 "OpnavFsw",
+                                                 "OpnavFswMsg",
                                                  moduleID);
 }
 
