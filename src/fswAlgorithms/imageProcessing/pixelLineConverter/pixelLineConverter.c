@@ -103,9 +103,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     double rNorm = 1;
     double planetRad, denom;
     double covar_map[3*3], covar_In[3*3];
-    double x_map, y_map, rho_map;
-    double scale_map[3];
-    
+    double x_map, y_map, rho_map;    
     rtilde_C[0] = 1./cameraSpecs.focalLength*(X*circlesIn.circlesCenters[0]);
     rtilde_C[1] = 1./cameraSpecs.focalLength*(Y*circlesIn.circlesCenters[1]);
     v2Set(rtilde_C[0], rtilde_C[1], rHat_C);
@@ -126,9 +124,10 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
         x_map =   planetRad/denom*(X/cameraSpecs.focalLength);
         y_map =  planetRad/denom*(Y/cameraSpecs.focalLength);
         rho_map = planetRad*(X/(cameraSpecs.focalLength*sqrt(1 + pow(circlesIn.circlesRadii[0]*X/cameraSpecs.focalLength,2)))-cameraSpecs.focalLength*sqrt(1 + pow(circlesIn.circlesRadii[0]*X/cameraSpecs.focalLength,2))/(pow(circlesIn.circlesRadii[0], 2)*X));
-        v3Set(x_map, y_map, rho_map, scale_map);
         mSetIdentity(covar_map, 3, 3);
-        m33MultV3(RECAST3X3 covar_map, scale_map, covar_map);
+        covar_map[0] = x_map;
+        covar_map[4] = y_map;
+        covar_map[8] = rho_map;
         mCopy(circlesIn.uncertainty, 3, 3, covar_In);
         mMultM(covar_map, 3, 3, covar_In, 3, 3, covar_In);
         mMultMt(covar_In, 3, 3, covar_map, 3, 3, covar_In);
