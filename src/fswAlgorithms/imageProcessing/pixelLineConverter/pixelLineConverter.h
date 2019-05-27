@@ -34,7 +34,7 @@
  *  @brief Converter that takes a image processing message and camera information and outputs a relative position to the object [PDF Description](Basilisk-pixelLineConverter-20190524.pdf).
  *  @{
  */
-/*! @brief The configuration structure for the ephemNavConverter module.*/
+/*! @brief The configuration structure for the pixelLine Converter module.*/
 typedef struct {
     char opNavOutMsgName[MAX_STAT_MSG_LENGTH]; //!< [-] The name of the output navigation message for relative position
     char cameraConfigMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the camera config message
