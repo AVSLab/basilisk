@@ -6,7 +6,7 @@
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 from Basilisk.fswAlgorithms import pixelLineConverter
-from Basilisk.utilities import astroFunctions
+from Basilisk.utilities import RigidBodyKinematics as rbk
 
 import os, inspect
 import numpy as np
@@ -40,7 +40,8 @@ def mapCovar(CovarXYR, rho, planet, camera):
     x_map =   0.5 * D/np.sin(0.5*A)*(d_x/f)
     y_map =  0.5 * D/np.sin(0.5*A)*(d_y/f)
     CovarMap = np.array([[x_map,0.,0.],[0., y_map, 0.],[0.,0., rho_map]])
-    return np.dot(CovarMap, np.dot(CovarXYR, CovarMap.T))
+    CoarIn = np.array(CovarXYR).reshape([3,3])
+    return np.dot(CovarMap, np.dot(CoarIn, CovarMap.T))
 
 def test_pixelLine_converter():
     """ Test ephemNavConverter. """
@@ -97,7 +98,7 @@ def pixelLineConverterTestFunction():
     # Set circles
     inputCircles.circlesCenters = [152, 251]
     inputCircles.circlesRadii = [75]
-    inputCircles.uncertainty = [0.5, 0.5, 1]
+    inputCircles.uncertainty = [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.circlesInMsgName, inputCircles)
 
     # Set attitude
@@ -115,10 +116,33 @@ def pixelLineConverterTestFunction():
     unitTestSim.ConfigureStopTime(testProcessRate)  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    posAcc = 1e1
-    velAcc = 1e-4
-    unitTestSupport.writeTeXSnippet("toleranceValuePos", str(posAcc), path)
-    unitTestSupport.writeTeXSnippet("toleranceValueVel", str(velAcc), path)
+    # Truth Vlaues
+    planet = {}
+    camera = {}
+    planet["name"] = "Mars"
+    planet["diameter"] = 3396.19 * 2  # m
+
+    camera["focal"] = inputCamera.focalLength  # m
+    camera["pixelSizeX"] = inputCamera.sensorSize[0]/inputCamera.resolution[0] * 1E-3  # m
+    camera["pixelSizeY"] = inputCamera.sensorSize[1]/inputCamera.resolution[1] * 1E-3  # m
+
+    state = [inputCircles.circlesCenters[0], inputCircles.circlesCenters[1], inputCircles.circlesRadii[0]]
+
+    r_Cexp = mapState(state, planet, camera)
+    covar_Cexp = mapCovar(inputCircles.uncertainty, state[2], planet, camera)
+
+    dcm_BC = rbk.MRP2C(inputCamera.sigma_BC)
+    dcm_BN = rbk.MRP2C(inputAtt.sigma_BN)
+
+    dcm_NC = np.dot(dcm_BN.T, dcm_BC)
+
+    r_Nexp = np.dot(dcm_NC, r_Cexp)
+    covar_Nexp = np.dot(dcm_NC, np.dot(covar_Cexp, dcm_NC.T))
+
+    posErr = 1e-10
+    covarErr = 1e-10
+    unitTestSupport.writeTeXSnippet("toleranceValuePos", str(posErr), path)
+    unitTestSupport.writeTeXSnippet("toleranceValueVel", str(covarErr), path)
 
     outputR = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.r_B',  range(3))
     outputCovar = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.covar',  range(9))

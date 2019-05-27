@@ -127,6 +127,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
         y_map =  planetRad/denom*(Y/cameraSpecs.focalLength);
         rho_map = planetRad*(X/(cameraSpecs.focalLength*sqrt(1 + pow(circlesIn.circlesRadii[0]*X/cameraSpecs.focalLength,2)))-cameraSpecs.focalLength*sqrt(1 + pow(circlesIn.circlesRadii[0]*X/cameraSpecs.focalLength,2))/(pow(circlesIn.circlesRadii[0], 2)*X));
         v3Set(x_map, y_map, rho_map, scale_map);
+        mSetIdentity(covar_map, 3, 3);
         m33MultV3(RECAST3X3 covar_map, scale_map, covar_map);
         mCopy(circlesIn.uncertainty, 3, 3, covar_In);
         mMultM(covar_map, 3, 3, covar_In, 3, 3, covar_In);
