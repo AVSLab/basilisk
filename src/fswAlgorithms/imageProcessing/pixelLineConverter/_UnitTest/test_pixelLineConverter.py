@@ -99,6 +99,7 @@ def pixelLineConverterTestFunction():
     inputCircles.circlesCenters = [152, 251]
     inputCircles.circlesRadii = [75]
     inputCircles.uncertainty = [0.5, 0., 0., 0., 0.5, 0., 0., 0., 1.]
+    inputCircles.timeTag = 12345
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.circlesInMsgName, inputCircles)
 
     # Set attitude
@@ -137,7 +138,8 @@ def pixelLineConverterTestFunction():
     dcm_NC = np.dot(dcm_BN.T, dcm_BC)
 
     r_Nexp = np.dot(dcm_NC, r_Cexp)
-    covar_Nexp = np.dot(dcm_NC, np.dot(covar_Cexp, dcm_NC.T))
+    covar_Nexp = np.dot(dcm_NC, np.dot(covar_Cexp, dcm_NC.T)).flatten()
+    timTagExp = inputCircles.timeTag
 
     posErr = 1e-10
     covarErr = 1e-10
@@ -148,35 +150,32 @@ def pixelLineConverterTestFunction():
     outputCovar = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.covar',  range(9))
     outputTime = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.timeTag')
     #
-    # trueR = [position, position]
-    # trueV = [velocity, velocity]
-    # trueTime = [inputEphem.timeTag, inputEphem.timeTag]
     #
-    # # At each timestep, make sure the vehicleConfig values haven't changed from the initial values
-    # testFailCount, testMessages = unitTestSupport.compareArrayND(trueR, outputR,
-    #                                                              posAcc,
-    #                                                              "ephemNavConverter output Position",
-    #                                                              2, testFailCount, testMessages)
-    # testFailCount, testMessages = unitTestSupport.compareArrayND(trueV, outputV,
-    #                                                              velAcc,
-    #                                                              "ephemNavConverter output Velocity",
-    #                                                              2, testFailCount, testMessages)
-    # testFailCount, testMessages = unitTestSupport.compareDoubleArray(trueTime, outputTime,
-    #                                                              velAcc,
-    #                                                              "ephemNavConverter output Time",
-    #                                                              testFailCount, testMessages)
+    for i in range(len(outputR[-1, 1:])):
+        if np.abs(r_Nexp[i] - outputR[-1, i+1]) > 1E-10 and np.isnan(outputR.any()):
+            testFailCount += 1
+            testMessages.append("FAILED: Position Check in pixelLine")
+
+    for i in range(len(outputCovar[-1, 1:])):
+        if np.abs((covar_Nexp[i] - outputCovar[-1, i+1])) > 1E-10 and np.isnan(outputTime.any()):
+            testFailCount += 1
+            testMessages.append("FAILED: Covar Check in pixelLine")
+
+    if np.abs((timTagExp - outputTime[-1, 1])/timTagExp) > 1E-10 and np.isnan(outputTime.any()):
+        testFailCount += 1
+        testMessages.append("FAILED: Time Check in pixelLine")
     #
-    # #   print out success message if no error were found
-    # snippentName = "passFail"
-    # if testFailCount == 0:
-    #     colorText = 'ForestGreen'
-    #     print "PASSED: " + ephemNavWrap.ModelTag
-    #     passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
-    # else:
-    #     colorText = 'Red'
-    #     print "Failed: " + ephemNavWrap.ModelTag
-    #     passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
-    # unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
+    #   print out success message if no error were found
+    snippentName = "passFail"
+    if testFailCount == 0:
+        colorText = 'ForestGreen'
+        print "PASSED: " + pixelLineWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        print "Failed: " + pixelLineWrap.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
 
     return [testFailCount, ''.join(testMessages)]

@@ -60,7 +60,7 @@ void Reset_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTim
 
 }
 
-/*! This method reads in the camera and circle messages and extracts navigation data from them. It outputs the heading (norm and direction) to the celestial body identified in the body frame. It provides the heading to the most robust circle identified by the image processing algorithm. 
+/*! This method reads in the camera and circle messages and extracts navigation data from them. It outputs the heading (norm and direction) to the celestial body identified in the inertial frame. It provides the heading to the most robust circle identified by the image processing algorithm.
  @return void
  @param configData The configuration data associated with the ephemeris model
  @param callTime The clock time at which the function was called (nanoseconds)
@@ -103,7 +103,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     double rNorm = 1;
     double planetRad, denom;
     double covar_map[3*3], covar_In[3*3];
-    double x_map, y_map, rho_map;    
+    double x_map, y_map, rho_map;
     rtilde_C[0] = 1./cameraSpecs.focalLength*(X*circlesIn.circlesCenters[0]);
     rtilde_C[1] = 1./cameraSpecs.focalLength*(Y*circlesIn.circlesCenters[1]);
     v2Set(rtilde_C[0], rtilde_C[1], rHat_C);
@@ -139,6 +139,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     /*! - write output message */
     v3Scale(rNorm, rHat_N, opNavMsgOut.r_B);
     mCopy(covar_In, 3, 3, opNavMsgOut.covar);
+    opNavMsgOut.timeTag = circlesIn.timeTag;
     WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpnavFswMsg),
                  &opNavMsgOut, moduleID);
 
