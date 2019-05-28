@@ -361,7 +361,7 @@ void headingSuKFMeasModel(HeadingSuKFConfig *configData)
     /*! - Loop over sigma points */
     int j;
     int i;
-    v3Copy(configData->opnavInBuffer.r_B, configData->obs);
+    v3Copy(configData->opnavInBuffer.state, configData->obs);
     for(j=0; j<configData->countHalfSPs*2+1; j++)
     {
         for(i=0; i<3; i++)
