@@ -30,8 +30,8 @@ DragDynamicEffector::DragDynamicEffector()
     this->coreParams.comOffset.setZero();
 	this->atmoDensInMsgName = "atmo_dens_0_data";
 	this->modelType = "cannonball";
-	this->f_B.fill(0.0);
-	this->tau_B.fill(0.0);
+	this->extForce_B.fill(0.0);
+	this->extTorque_B.fill(0.0);
 	this->v_B.fill(0.0);
 	this->v_hat_B.fill(0.0);
 	this->densInMsgId = -1;
@@ -59,7 +59,6 @@ void DragDynamicEffector::SelfInit()
  */
 void DragDynamicEffector::CrossInit()
 {
-	//! Begin method steps
 	//! - Find the message ID associated with the atmoDensInMsgName string.
 	this->densInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->atmoDensInMsgName,
 																	 sizeof(AtmoPropsSimMsg), moduleID);
@@ -93,16 +92,15 @@ bool DragDynamicEffector::ReadInputs()
 {
 	bool dataGood;
 	//! - Zero the command buffer and read the incoming command array
-	SingleMessageHeader LocalHeader;
+	SingleMessageHeader localHeader;
     memset(&this->attDataBuffer, 0x0, sizeof(NavAttIntMsg));
     memset(&this->atmoInData, 0x0, sizeof(AtmoPropsSimMsg));
 	
-	memset(&LocalHeader, 0x0, sizeof(LocalHeader));
-	dataGood = SystemMessaging::GetInstance()->ReadMessage(this->densInMsgId, &LocalHeader,
+	memset(&localHeader, 0x0, sizeof(localHeader));
+	dataGood = SystemMessaging::GetInstance()->ReadMessage(this->densInMsgId, &localHeader,
 														  sizeof(AtmoPropsSimMsg),
 														   reinterpret_cast<uint8_t*> (&this->atmoInData), moduleID);
-    memset(&LocalHeader, 0x0, sizeof(LocalHeader));
-    dataGood = SystemMessaging::GetInstance()->ReadMessage(this->navAttInMsgId, &LocalHeader,
+    dataGood = SystemMessaging::GetInstance()->ReadMessage(this->navAttInMsgId, &localHeader,
                                                            sizeof(AtmoPropsSimMsg),
                                                            reinterpret_cast<uint8_t*> (&this->attDataBuffer), moduleID);
 	return(dataGood);
@@ -138,11 +136,11 @@ void DragDynamicEffector::updateDragDir(){
 void DragDynamicEffector::cannonballDrag(){
   	//! Begin method steps
   	//! - Zero out the structure force/torque for the drag set
-  	this->f_B.setZero();
-    this->tau_B.setZero();
+  	this->extForce_B.setZero();
+    this->extTorque_B.setZero();
     
-  	this->f_B  = 0.5 * this->coreParams.dragCoeff * pow(this->v_B.norm(), 2.0) * this->coreParams.projectedArea * this->atmoInData.neutralDensity * this->v_hat_B;
-  	this->tau_B = this->coreParams.comOffset.cross(f_B);
+  	this->extForce_B  = 0.5 * this->coreParams.dragCoeff * pow(this->v_B.norm(), 2.0) * this->coreParams.projectedArea * this->atmoInData.neutralDensity * this->v_hat_B;
+  	this->extTorque_B = this->coreParams.comOffset.cross(extForce_B);
 
   	return;
 }

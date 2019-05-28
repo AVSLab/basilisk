@@ -41,8 +41,8 @@
 typedef struct {
   std::vector<double> facetAreas;
   std::vector<double> facetCoeffs;
-  std::vector<Eigen::Vector3d> B_facetNormals;
-  std::vector<Eigen::Vector3d> B_facetLocations;
+  std::vector<Eigen::Vector3d> facetNormals_B;
+  std::vector<Eigen::Vector3d> facetLocations_B;
 }SpacecraftGeometryData;
 
 //! @brief Drag dynamics class used to compute drag effects on spacecraft bodies
@@ -73,17 +73,20 @@ private:
     void updateDragDir();
 public:
     uint64_t numFacets;
-    DragBaseData coreParams;                               //!< -- Struct used to hold drag parameters
     std::string atmoDensInMsgName;                         //!< -- message used to read command inputs
+    std::string navAttInMsgName;                         //!< -- message used to read command inputs
     StateData *hubSigma;                                   //!< -- Hub/Inertial attitude represented by MRP
     StateData *hubVelocity;                                //!< m/s Hub inertial velocity vector
-    Eigen::Vector3d locInertialVel;                         //!< m/s local variable to hold the inertial velocity
-    AtmoPropsSimMsg densityBuffer;                           //!< -- Struct to hold local atmospheric conditions
+    Eigen::Vector3d v_B;                         //!< m/s local variable to hold the inertial velocity
+    Eigen::Vector3d v_hat_B;
+    Eigen::Vector3d extForce_B;
+    Eigen::Vector3d extTorque_B;
 
 private:
-    int64_t DensInMsgId;                            //!< -- Message ID for incoming data
+    int64_t densInMsgId;                            //!< -- Message ID for incoming data
     AtmoPropsSimMsg atmoInData;
-    Eigen::Vector3d dragDirection;
+    uint64_t navAttInMsgId;                            //!< -- Message ID for incoming data
+    NavAttIntMsg attDataBuffer;
     SpacecraftGeometryData scGeometry;                      //!< -- Struct to hold spacecraft facet data
 
 };
