@@ -21,10 +21,6 @@
 #include <math.h>
 #include "transDetermination/relativeODuKF/relativeODuKF.h"
 #include "transDetermination/_GeneralModuleFiles/ukfUtilities.h"
-#include "simulation/utilities/linearAlgebra.h"
-#include "simulation/utilities/rigidBodyKinematics.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "simulation/utilities/bsk_Print.h"
 
 /*! This method creates the two moduel output messages.
  @return void
@@ -34,10 +30,10 @@ void SelfInit_relODuKF(InertialUKFConfig *configData, uint64_t moduleId)
 {
     /*! - Create output message for module */
     configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
-                                                    sizeof(NavAttIntMsg), "NavAttIntMsg", moduleId);
+                                                    sizeof(NavTransIntMsg), "NavTransIntMsg", moduleId);
     /*! - Create filter states output message which is mostly for debug*/
     configData->filtDataOutMsgId = CreateNewMessage(configData->filtDataOutMsgName,
-                                                    sizeof(OpnavFswMsg), "InertialFilterFswMsg", moduleId);
+                                                    sizeof(OpNavFilterFswMsg), "OpNavFilterFswMsg", moduleId);
     
 }
 
@@ -47,11 +43,8 @@ void SelfInit_relODuKF(InertialUKFConfig *configData, uint64_t moduleId)
  */
 void CrossInit_relODuKF(InertialUKFConfig *configData, uint64_t moduleId)
 {
-    configData->massPropsInMsgId = subscribeToMessage(configData->massPropsInMsgName,
-                                                      sizeof(VehicleConfigFswMsg), moduleId);
-    /*! - Find the message Id for the vehicle mass properties configuration message */
-    configData->circlesInMsgId = subscribeToMessage(configData->circlesInMsgName,
-                                                     sizeof(CameraImageMsg), moduleId);
+    configData->opNavInMsgId = subscribeToMessage(configData->opNavInMsgName,
+                                                      sizeof(OpnavFswMsg), moduleId);
     
 }
 
@@ -67,15 +60,7 @@ void Reset_relODuKF(InertialUKFConfig *configData, uint64_t callTime,
     
     int32_t i;
     int32_t badUpdate=0; /* Negative badUpdate is faulty, */
-    uint64_t timeOfMsgWritten;
-    uint32_t sizeOfMsgWritten;
     double tempMatrix[ODUKF_N_STATES*ODUKF_N_STATES];
-    
-    /*! - Zero the local configuration data structures and outputs */
-    memset(&(configData->localConfigData), 0x0, sizeof(VehicleConfigFswMsg));
-    /*! - Read static RW config data message and store it in module variables */
-    ReadMessage(configData->massPropsInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(VehicleConfigFswMsg), &(configData->localConfigData), moduleId);
     
     /*! - Initialize filter parameters to max values */
     configData->timeTag = callTime*NANO2SEC;
@@ -155,29 +140,25 @@ void Update_relODuKF(InertialUKFConfig *configData, uint64_t callTime,
     uint32_t sizeOfMsgWritten = 0;  /* [-] Non-zero size indicates we received ST msg*/
     uint32_t otherSize; /* [-] Size of messages that are assumed to be good*/
     int32_t trackerValid; /* [-] Indicates whether the star tracker was valid*/
-    OpnavFswMsg opNavOutBuffer; /* [-] Output filter info*/
-    NavAttIntMsg outputRelOD;
+    OpNavFilterFswMsg opNavOutBuffer; /* [-] Output filter info*/
+    NavTransIntMsg outputRelOD;
     
     // Reset update check to zero
     if (v3Norm(configData->state) > configData->switchMag) //Little extra margin
     {
         MRPswitch(configData->state, configData->switchMag, configData->state);
     }
-    memset(&(outputRelOD), 0x0, sizeof(NavAttIntMsg));
+    memset(&(outputRelOD), 0x0, sizeof(NavTransIntMsg));
     memset(&opNavOutBuffer, 0x0, sizeof(OpnavFswMsg));
-    memset(&(configData->localConfigData), 0x0, sizeof(VehicleConfigFswMsg));
-    ReadMessage(configData->massPropsInMsgId, &timeOfMsgWritten, &otherSize,
-                sizeof(VehicleConfigFswMsg), &(configData->localConfigData), moduleId);
-    ReadMessage(configData->circlesInMsgId, &timeOfMsgWritten, &otherSize,
+    ReadMessage(configData->opNavInMsgId, &timeOfMsgWritten, &otherSize,
                 sizeof(OpnavFswMsg), &outputRelOD, moduleId);
     
-    m33Inverse(RECAST3X3 configData->localConfigData.ISCPntB_B, configData->IInv);
     /*! - Handle initializing time in filter and discard initial messages*/
     
     trackerValid = 0;
     /*! - If the star tracker has provided a new message compared to last time,
      update the filter to the new measurement*/
-    if(newTimeTag >= configData->timeTag && sizeOfMsgWritten == sizeof(CameraImageMsg))
+    if(newTimeTag >= configData->timeTag && sizeOfMsgWritten == sizeof(OpnavFswMsg))
     {
         trackerValid = 1;
         if((newTimeTag - configData->timeTag) > configData->maxTimeJump
@@ -196,14 +177,14 @@ void Update_relODuKF(InertialUKFConfig *configData, uint64_t callTime,
 //    v3Copy(configData->omega_BN_BOut, outputInertial.omega_BN_B);
 //    outputInertial.timeTag = configData->timeTagOut;
     
-    WriteMessage(configData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
+    WriteMessage(configData->navStateOutMsgId, callTime, sizeof(NavTransIntMsg),
                  &(opNavOutBuffer), moduleId);
     
     /*! - Populate the filter states output buffer and write the output message*/
     opNavOutBuffer.timeTag = configData->timeTag;
-    memmove(opNavOutBuffer.covar_B, configData->covar,
+    memmove(opNavOutBuffer.covar, configData->covar,
             ODUKF_N_STATES_HALF*ODUKF_N_STATES_HALF*sizeof(double));
-    memmove(opNavOutBuffer.r_B, configData->state, ODUKF_N_STATES_HALF*sizeof(double));
+    memmove(opNavOutBuffer.state, configData->state, ODUKF_N_STATES_HALF*sizeof(double));
     WriteMessage(configData->filtDataOutMsgId, callTime, sizeof(OpnavFswMsg),
                  &opNavOutBuffer, moduleId);
     

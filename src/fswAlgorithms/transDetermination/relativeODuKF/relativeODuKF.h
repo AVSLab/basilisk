@@ -20,12 +20,16 @@
 #ifndef _RELOD_UKF_H_
 #define _RELOD_UKF_H_
 
-#include "messaging/static_messaging.h"
-#include "simFswInterfaceMessages/navAttIntMsg.h"
-#include "simFswInterfaceMessages/cameraImageMsg.h"
-#include "fswMessages/opnavFswMsg.h"
-#include "fswMessages/vehicleConfigFswMsg.h"
 #include <stdint.h>
+
+#include "messaging/static_messaging.h"
+#include "simFswInterfaceMessages/navTransIntMsg.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "fswMessages/opnavFswMsg.h"
+#include "fswMessages/opNavFilterFswMsg.h"
+#include "simulation/utilities/linearAlgebra.h"
+#include "simulation/utilities/rigidBodyKinematics.h"
+#include "simulation/utilities/bsk_Print.h"
 
 
 /*! \defgroup relative orbit determination UKF
@@ -41,8 +45,7 @@
 typedef struct {
     char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the output message
     char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the output filter data message
-    char massPropsInMsgName[MAX_STAT_MSG_LENGTH]; //!< [-] The name of the mass props message
-    char circlesInMsgName[MAX_STAT_MSG_LENGTH];  //!< [-] The name of the input RW speeds message
+    char opNavInMsgName[MAX_STAT_MSG_LENGTH];  //!< [-] The name of the input RW speeds message
     
     int numStates;                //!< [-] Number of states for this filter
     int countHalfSPs;             //!< [-] Number of sigma points over 2
@@ -87,16 +90,14 @@ typedef struct {
     double timeTagOut;       //!< [s] Output time-tag information
     double maxTimeJump;      //!< [s] Maximum time jump to allow in propagation
     
-    CameraImageMsg circlesIn; //!< [-] ST sensor data read in from message bus
+    OpnavFswMsg opNavInMsg; //!< [-] ST sensor data read in from message bus
     uint64_t ClockTimeCircles[ODUKF_N_MEAS]; //!< [-] All of the ClockTimes for the STs
     uint64_t ReadSizeCirlces[ODUKF_N_MEAS];  //!< [-] All of the ReadSizes for the STs
     
-    VehicleConfigFswMsg localConfigData;   //!< [-] Vehicle configuration data
 
     int32_t navStateOutMsgId;     //!< -- Id for the outgoing body estimate message
     int32_t filtDataOutMsgId;     //!< [-] Id for the filter data output message
-    int32_t massPropsInMsgId;     //!< [-] Id for the incoming mass properties message
-    int32_t circlesInMsgId;      //!< [-] Id for the incoming RW speeds
+    int32_t opNavInMsgId;     //!< [-] Id for the incoming mass properties message
     
 }InertialUKFConfig;
 
