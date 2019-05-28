@@ -1,7 +1,7 @@
 #
 #   Unit Test Script
-#   Module Name:        ephemNavConverter
-#   Creation Date:      October 16, 2018
+#   Module Name:        pixelLineConverter.py
+#   Creation Date:      May 16, 2019
 #
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
@@ -23,9 +23,6 @@ def mapState(state, planet, camera):
     norm = 0.5 * D/np.sin(0.5*A)
     vec = np.array([state[0]*d_x/f, state[1]*d_y/f, 1.])
     return norm*vec/np.linalg.norm(vec)
-
-# def algebraic((state, planet, camera):
-#     A = 1./())
 
 
 def mapCovar(CovarXYR, rho, planet, camera):

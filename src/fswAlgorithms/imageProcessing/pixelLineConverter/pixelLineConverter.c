@@ -71,6 +71,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     double dcm_NC[3][3];
+    double sigma_NC[3];
     CameraConfigMsg cameraSpecs;
     CirclesOpNavMsg circlesIn;
     OpnavFswMsg opNavMsgOut;
@@ -89,8 +90,8 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
                 sizeof(NavAttIntMsg), &attInfo, moduleID);
     
     v3Scale(-1, attInfo.sigma_BN, attInfo.sigma_BN); // sigma_NB now
-    addMRP(attInfo.sigma_BN, cameraSpecs.sigma_BC, attInfo.sigma_BN); // sigma_NC now
-    MRP2C(attInfo.sigma_BN, dcm_NC);
+    addMRP(attInfo.sigma_BN, cameraSpecs.sigma_BC, sigma_NC); // sigma_NC now
+    MRP2C(sigma_NC, dcm_NC);
 
     /*! - Find pixel size using camera specs */
     double X, Y;
@@ -102,12 +103,13 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     double rHat_C[3], rHat_N[3];
     double rNorm = 1;
     double planetRad, denom;
-    double covar_map[3*3], covar_In[3*3];
+    double covar_map_C[3*3], covar_In_C[3*3];
+    double covar_In_N[3*3];
     double x_map, y_map, rho_map;
-    rtilde_C[0] = 1./cameraSpecs.focalLength*(X*circlesIn.circlesCenters[0]);
-    rtilde_C[1] = 1./cameraSpecs.focalLength*(Y*circlesIn.circlesCenters[1]);
+    rtilde_C[0] = (X*circlesIn.circlesCenters[0])/cameraSpecs.focalLength;
+    rtilde_C[1] = (Y*circlesIn.circlesCenters[1])/cameraSpecs.focalLength;
     v2Set(rtilde_C[0], rtilde_C[1], rHat_C);
-    rHat_C[2] = 1;
+    rHat_C[2] = 1.0;
     v3Normalize(rHat_C, rHat_C);
     
     m33MultV3(dcm_NC, rHat_C, rHat_N);
@@ -121,24 +123,24 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
         rNorm = planetRad/denom; //in km
         
         /*! - Compute the uncertainty */
-        x_map =   planetRad/denom*(X/cameraSpecs.focalLength);
-        y_map =  planetRad/denom*(Y/cameraSpecs.focalLength);
+        x_map = planetRad/denom*(X/cameraSpecs.focalLength);
+        y_map = planetRad/denom*(Y/cameraSpecs.focalLength);
         rho_map = planetRad*(X/(cameraSpecs.focalLength*sqrt(1 + pow(circlesIn.circlesRadii[0]*X/cameraSpecs.focalLength,2)))-cameraSpecs.focalLength*sqrt(1 + pow(circlesIn.circlesRadii[0]*X/cameraSpecs.focalLength,2))/(pow(circlesIn.circlesRadii[0], 2)*X));
-        mSetIdentity(covar_map, 3, 3);
-        covar_map[0] = x_map;
-        covar_map[4] = y_map;
-        covar_map[8] = rho_map;
-        mCopy(circlesIn.uncertainty, 3, 3, covar_In);
-        mMultM(covar_map, 3, 3, covar_In, 3, 3, covar_In);
-        mMultMt(covar_In, 3, 3, covar_map, 3, 3, covar_In);
+        mSetIdentity(covar_map_C, 3, 3);
+        covar_map_C[0] = x_map;
+        covar_map_C[4] = y_map;
+        covar_map_C[8] = rho_map;
+        mCopy(circlesIn.uncertainty, 3, 3, covar_In_C);
+        mMultM(covar_map_C, 3, 3, covar_In_C, 3, 3, covar_In_C);
+        mMultMt(covar_In_C, 3, 3, covar_map_C, 3, 3, covar_In_C);
         /*! - Changer the mapped covariance to inertial frame */
-        mMultM(dcm_NC, 3, 3, covar_In, 3, 3, covar_In);
-        mMultMt(covar_In, 3, 3, dcm_NC, 3, 3, covar_In);
+        mMultM(dcm_NC, 3, 3, covar_In_C, 3, 3, covar_In_N);
+        mMultMt(covar_In_N, 3, 3, dcm_NC, 3, 3, covar_In_N);
     }
     
     /*! - write output message */
-    v3Scale(rNorm, rHat_N, opNavMsgOut.r_B);
-    mCopy(covar_In, 3, 3, opNavMsgOut.covar);
+    v3Scale(rNorm, rHat_N, opNavMsgOut.r_N);
+    mCopy(covar_In_N, 3, 3, opNavMsgOut.covar_N);
     opNavMsgOut.timeTag = circlesIn.timeTag;
     WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpnavFswMsg),
                  &opNavMsgOut, moduleID);
