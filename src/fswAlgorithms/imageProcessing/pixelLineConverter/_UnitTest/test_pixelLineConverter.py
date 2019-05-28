@@ -106,7 +106,7 @@ def pixelLineConverterTestFunction():
     inputAtt.sigma_BN = [0., 1., 0.]
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.attInMsgName, inputAtt)
 
-    # Get the Earth's position and velocity
+    # Set module for Mars
     pixelLine.planetTarget = 2
     pixelLine.opNavOutMsgName = "output_nav_msg"
     unitTestSim.TotalSim.logThisMessage(pixelLine.opNavOutMsgName)

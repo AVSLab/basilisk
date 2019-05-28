@@ -1,13 +1,13 @@
 % !TEX root = ./Basilisk-ephemNavConverter-20190326.tex
 
 \section{Test Description and Success Criteria}
-The unit test for this converter modules creates an ephemeris message for Earth, and then translates the information into the expected output.  The output position, velocity and time stamp values are compared to those of the input message.
 
+The unit test for this converter modules creates all three input messages. Using the same values added in those messages, it computes the expected position and covariance of the spacecraft.
 
 
 \section{Test Parameters}
 
-The unit test verify that the module output  message states match expected values.
+The unit test verify that the module output message states match expected values.
 \begin{table}[htbp]
 	\caption{Error tolerance for each test.}
 	\label{tab:errortol}
@@ -16,15 +16,12 @@ The unit test verify that the module output  message states match expected value
 		\hline\hline
 		\textbf{Output Value Tested}  & \textbf{Tolerated Error}  \\ 
 		\hline
-		{\tt r\_BN\_N}        & \input{AutoTeX/toleranceValuePos}	   \\ 
-		{\tt v\_BN\_N}        & \input{AutoTeX/toleranceValueVel}	   \\ 
-		{\tt timeTag}        & \input{AutoTeX/toleranceValueVel}	   \\ 
+		{\tt r\_N}        & \input{AutoTeX/toleranceValuePos}	   \\ 
+		{\tt covar\_N}        & \input{AutoTeX/toleranceValueVel}	   \\ 
+		{\tt timeTag}        & \input{AutoTeX/toleranceValuePos}	   \\ 
 		\hline\hline
 	\end{tabular}
 \end{table}
-
-
-
 
 \section{Test Results}
 The unit test is expected to pass.
