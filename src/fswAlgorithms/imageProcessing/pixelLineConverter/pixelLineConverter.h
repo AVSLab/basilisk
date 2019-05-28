@@ -31,7 +31,13 @@
 #include "utilities/rigidBodyKinematics.h"
 
 /*! \defgroup pixelLineConverter
- *  @brief Converter that takes a image processing message and camera information and outputs a relative position to the object [PDF Description](Basilisk-pixelLineConverter-20190524.pdf).
+ *  @brief Converter that takes a image processing message and camera information and outputs a relative position to the object.
+ 
+ The module
+ [PDF Description](Basilisk-pixelLineConverter-20190524.pdf)
+ contains further information on this module's function,
+ how to run it, as well as testing.
+
  *  @{
  */
 /*! @brief The configuration structure for the pixelLine Converter module.*/

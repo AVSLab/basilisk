@@ -120,6 +120,7 @@
 #   @brief Contains modules that relate to image processing modules and visual navigation.
 #   @{
 #       \defgroup houghCircles houghCircles
+#       \defgroup pixelLineConverter pixelLineConverter
 #   @}
 #
 #   \defgroup vehicleConfigData vehicleConfigData
