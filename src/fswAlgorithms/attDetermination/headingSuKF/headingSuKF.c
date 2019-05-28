@@ -213,7 +213,7 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     
     /*! - Write the heading estimate into the copy of the OpNav message structure*/
     opnavOutputBuffer.timeTag = configData->timeTag;
-    m33Copy(RECAST3X3 configData->covar, RECAST3X3 opnavOutputBuffer.covar);
+    m33Copy(RECAST3X3 configData->covar, RECAST3X3 opnavOutputBuffer.covar_B);
     v3Copy(&states_BN[0], opnavOutputBuffer.r_B);
     WriteMessage(configData->opnavDataOutMsgId, callTime, sizeof(OpnavFswMsg),
                  &opnavOutputBuffer, moduleID);
