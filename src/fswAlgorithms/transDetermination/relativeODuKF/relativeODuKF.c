@@ -201,9 +201,9 @@ void Update_relODuKF(InertialUKFConfig *configData, uint64_t callTime,
     
     /*! - Populate the filter states output buffer and write the output message*/
     opNavOutBuffer.timeTag = configData->timeTag;
-    memmove(opNavOutBuffer.covar, configData->covar,
-            ODUKF_N_STATES*ODUKF_N_STATES*sizeof(double));
-    memmove(opNavOutBuffer.state, configData->state, ODUKF_N_STATES*sizeof(double));
+    memmove(opNavOutBuffer.covar_B, configData->covar,
+            ODUKF_N_STATES_HALF*ODUKF_N_STATES_HALF*sizeof(double));
+    memmove(opNavOutBuffer.r_B, configData->state, ODUKF_N_STATES_HALF*sizeof(double));
     WriteMessage(configData->filtDataOutMsgId, callTime, sizeof(OpnavFswMsg),
                  &opNavOutBuffer, moduleId);
     
