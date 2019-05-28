@@ -55,6 +55,7 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.simulation import exponentialAtmosphere
 from Basilisk.simulation import facetDragDynamicEffector
+from Basilisk.simulation import simple_nav
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import simIncludeGravBody
 #print dir(exponentialAtmosphere)
@@ -139,6 +140,11 @@ def TestDragCalculation():
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
+
+    simpleNavObj = simple_nav.SimpleNav()
+    simpleNavObj.inputStateName = scObject.scStateOutMsgName
+    simpleNavObj.outputAttName = 'nav_att_out'
+
     ##   Initialize new atmosphere and drag model, add them to task
     newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
     newAtmo.ModelTag = "ExpAtmo"
@@ -146,6 +152,7 @@ def TestDragCalculation():
 
     newDrag = facetDragDynamicEffector.FacetDragDynamicEffector()
     newDrag.setDensityMessage(newAtmo.envOutMsgNames[-1])
+    newDrag.navAttInMsgName = 'nav_att_out'
     newDrag.ModelTag = "FacetDrag"
 
     scObject.addDynamicEffector(newDrag)
@@ -213,9 +220,9 @@ def TestDragCalculation():
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(newAtmo.ModelTag+"_0_data", samplingTime)
 
-    scSim.AddVariableForLogging(newDrag.ModelTag + ".forceExternal_N",
+    scSim.AddVariableForLogging(newDrag.ModelTag + ".extForce_B",
                                       simulationTimeStep, 0, 2, 'double')
-    scSim.AddVariableForLogging(newDrag.ModelTag + ".torqueExternalPntB_B",
+    scSim.AddVariableForLogging(newDrag.ModelTag + ".extTorque_B",
                                       simulationTimeStep, 0, 2, 'double')
 
     #   configure a simulation stop time time and execute the simulation run
@@ -224,9 +231,8 @@ def TestDragCalculation():
     scSim.ExecuteSimulation()
 
     #   Retrieve logged data
-    #dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".forceExternal_B")
-    dragDataForce_N = scSim.GetLogVariableData(newDrag.ModelTag + ".forceExternal_N")
-    dragTorqueData = scSim.GetLogVariableData(newDrag.ModelTag + ".torqueExternalPntB_B")
+    dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".extForce_B")
+    dragTorqueData = scSim.GetLogVariableData(newDrag.ModelTag + ".extTorque_B")
     posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
     velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', range(3))
     attData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN', range(3))
@@ -247,11 +253,12 @@ def TestDragCalculation():
     if len(densData) > 0:
         for ind in range(1,len(densData)):
             test_val = checkFacetDragForce(densData[ind,1], scAreas[1], scCoeff[1], B_normals[1], attData[ind, 1:], velData[ind, 1:])
+            print test_val
                             #   isArrayEqualRelative(result, truth, dim, accuracy):
-            if not unitTestSupport.isArrayEqualRelative(dragDataForce_N[ind,:], test_val, 3,accuracy):
+            if not unitTestSupport.isArrayEqualRelative(dragDataForce_B[ind,:], test_val, 3,accuracy):
                 testFailCount += 1
                 testMessages.append(
-                    "FAILED:  FacetDragEffector failed force unit test at t=" + str(dragDataForce_N[ind,0]* macros.NANO2SEC) + "sec with a value difference of "+str(dragDataForce_N[ind,1:]-test_val))
+                    "FAILED:  FacetDragEffector failed force unit test at t=" + str(dragDataForce_B[ind,0]* macros.NANO2SEC) + "sec with a value difference of "+str(dragDataForce_B[ind,1:]-test_val))
 
 
     else:
@@ -282,6 +289,11 @@ def TestShadowCalculation():
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
+
+    simpleNavObj = simple_nav.SimpleNav()
+    simpleNavObj.inputStateName = scObject.scStateOutMsgName
+    simpleNavObj.outputAttName = 'nav_att_out'
+
     ##   Initialize new atmosphere and drag model, add them to task
     newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
     newAtmo.ModelTag = "ExpAtmo"
@@ -289,7 +301,9 @@ def TestShadowCalculation():
 
     newDrag = facetDragDynamicEffector.FacetDragDynamicEffector()
     newDrag.setDensityMessage(newAtmo.envOutMsgNames[-1])
+    newDrag.navAttInMsgName = 'nav_att_out'
     newDrag.ModelTag = "FacetDrag"
+
 
     scObject.addDynamicEffector(newDrag)
 
@@ -357,9 +371,9 @@ def TestShadowCalculation():
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(newAtmo.ModelTag+"_0_data", samplingTime)
 
-    scSim.AddVariableForLogging(newDrag.ModelTag + ".forceExternal_N",
+    scSim.AddVariableForLogging(newDrag.ModelTag + ".extForce_B",
                                       simulationTimeStep, 0, 2, 'double')
-    scSim.AddVariableForLogging(newDrag.ModelTag + ".torqueExternalPntB_B",
+    scSim.AddVariableForLogging(newDrag.ModelTag + ".extTorque_B",
                                       simulationTimeStep, 0, 2, 'double')
 
     #   configure a simulation stop time time and execute the simulation run
@@ -368,9 +382,9 @@ def TestShadowCalculation():
     scSim.ExecuteSimulation()
 
     #   Retrieve logged data
-    #dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".forceExternal_B")
-    dragDataForce_N = scSim.GetLogVariableData(newDrag.ModelTag + ".forceExternal_N")
-    dragTorqueData = scSim.GetLogVariableData(newDrag.ModelTag + ".torqueExternalPntB_B")
+    #dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".extForce_B")
+    dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".extForce_B")
+    dragTorqueData = scSim.GetLogVariableData(newDrag.ModelTag + ".extTorque_B")
     posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
     velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', range(3))
     attData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN', range(3))
@@ -390,10 +404,10 @@ def TestShadowCalculation():
 
     if len(densData) > 0:
         for ind in range(1,len(densData)):
-            if not unitTestSupport.isArrayZero(dragDataForce_N[ind,:], 3,accuracy):
+            if not unitTestSupport.isArrayZero(dragDataForce_B[ind,:], 3,accuracy):
                 testFailCount += 1
                 testMessages.append(
-                    "FAILED:  FacetDragEffector failed shadow unit test at t=" + str(dragDataForce_N[ind,0]* macros.NANO2SEC) + "sec with a value difference of "+str(dragDataForce_N[ind,1:]))
+                    "FAILED:  FacetDragEffector failed shadow unit test at t=" + str(dragDataForce_B[ind,0]* macros.NANO2SEC) + "sec with a value difference of "+str(dragDataForce_B[ind,1:]))
 
 
     else:

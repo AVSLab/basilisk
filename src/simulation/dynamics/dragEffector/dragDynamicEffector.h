@@ -71,16 +71,16 @@ public:
     std::string modelType;                                 //!< -- String used to set the type of model used to compute drag
     StateData *hubSigma;                                   //!< -- Hub/Inertial attitude represented by MRP
     StateData *hubVelocity;                                //!< m/s Hub inertial velocity vector
-    Eigen::Vector3d v_hat_B;                          //!< -- Drag force direction in the inertial frame
     Eigen::Vector3d v_B;                         //!< m/s local variable to hold the inertial velocity
-    Eigen::Vector3d f_B;                          //!< -- Drag force direction in the inertial frame
-    Eigen::Vector3d tau_B;
+    Eigen::Vector3d v_hat_B;                          //!< -- Drag force direction in the inertial frame
+    Eigen::Vector3d extForce_B;                          //!< -- Drag force direction in the inertial frame
+    Eigen::Vector3d extTorque_B;
     
 
 private:
     uint64_t densInMsgId;                            //!< -- Message ID for incoming data
-    uint64_t navAttInMsgId;                            //!< -- Message ID for incoming data
     AtmoPropsSimMsg atmoInData;
+    uint64_t navAttInMsgId;                            //!< -- Message ID for incoming data
     NavAttIntMsg attDataBuffer;
     
 };

@@ -39,8 +39,8 @@ from Basilisk.utilities import orbitalMotion
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import exponentialAtmosphere
-from Basilisk.utilities import unitTestSupport
+from Basilisk.simulation import exponentialAtmosphere, simple_nav
+from Basilisk.utilities import unitTestSupport, RigidBodyKinematics
 #print dir(exponentialAtmosphere)
 from Basilisk.simulation import dragDynamicEffector
 
@@ -88,10 +88,12 @@ def expAtmoComp(alt, baseDens, scaleHeight):
     dens = baseDens * math.exp(-alt/scaleHeight)
     return dens
 
-def cannonballDragComp(dragCoeff, dens, area, vel):
-    dragDir = -vel / np.linalg.norm(vel)
+def cannonballDragComp(dragCoeff, dens, area, vel, att):
+    dragDir_N = -vel / np.linalg.norm(vel)
+    dcm_BN = RigidBodyKinematics.MRP2C(att)
+    dragDir_B = dcm_BN.dot(dragDir_N)
 
-    dragForce = 0.5 * dragCoeff * dens * area * np.linalg.norm(vel)**2.0 * dragDir
+    dragForce = 0.5 * dragCoeff * dens * area * np.linalg.norm(vel)**2.0 * dragDir_B
     return dragForce
 
 
@@ -116,6 +118,8 @@ def run(show_plots, orbitCase, planetCase):
     simulationTimeStep = macros.sec2nano(1.0)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
+
+
     #   Initialize new atmosphere and drag model, add them to task
     newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
     atmoTaskName = "atmosphere"
@@ -131,6 +135,7 @@ def run(show_plots, orbitCase, planetCase):
     dragEffector.coreParams.projectedArea = projArea
     dragEffector.coreParams.dragCoeff = dragCoeff
     dragEffector.coreParams.comOffset =  [1., 0., 0.]
+    dragEffector.navAttInMsgName = 'nav_att_out'
 
     dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
     dynProcess.addTask(scSim.CreateNewTask(dragEffectorTaskName, simulationTimeStep))
@@ -144,6 +149,10 @@ def run(show_plots, orbitCase, planetCase):
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
+
+    simpleNavObj = simple_nav.SimpleNav()
+    simpleNavObj.inputStateName = scObject.scStateOutMsgName
+    simpleNavObj.outputAttName = 'nav_att_out'
 
     scObject.addDynamicEffector(dragEffector)
 
@@ -220,8 +229,8 @@ def run(show_plots, orbitCase, planetCase):
     samplingTime = simulationTime / (numDataPoints-1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(newAtmo.envOutMsgNames[-1], samplingTime)
-    scSim.AddVariableForLogging('DragEff.forceExternal_N', samplingTime, StartIndex=0, StopIndex=2)
-    scSim.AddVariableForLogging('DragEff.coreParams.velocityMag', samplingTime)
+    scSim.TotalSim.logThisMessage(simpleNavObj.outputAttName,samplingTime)
+    scSim.AddVariableForLogging('DragEff.extForce_B', samplingTime, StartIndex=0, StopIndex=2)
     #
     #   initialize Spacecraft States with initialization variables
     #
@@ -244,7 +253,8 @@ def run(show_plots, orbitCase, planetCase):
     #
     posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
     velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N',range(3))
-    dragForce = scSim.GetLogVariableData('DragEff.forceExternal_N')
+    attData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN', range(3))
+    dragForce = scSim.GetLogVariableData('DragEff.extForce_B')
     densData = scSim.pullMessageLogData(newAtmo.envOutMsgNames[-1]+'.neutralDensity')
     np.set_printoptions(precision=16)
 
@@ -261,7 +271,7 @@ def run(show_plots, orbitCase, planetCase):
         # print "Position data:", posData[ind,1:]
         # print "Velocity data:", velData[ind,1:]
         # print "Density data:", densData[ind,1]
-        refDragForce[ind,:] = cannonballDragComp(dragCoeff,densData[ind,1],projArea,velData[ind,1:])
+        refDragForce[ind,:] = cannonballDragComp(dragCoeff,densData[ind,1],projArea,velData[ind,1:], attData[ind,1:])
         # print "Reference drag data:", refDragForce[ind,:]
         # print "Drag Data:", dragForce[ind,1:]
         # print ""
