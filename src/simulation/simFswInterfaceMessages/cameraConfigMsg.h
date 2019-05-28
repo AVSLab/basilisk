@@ -26,6 +26,6 @@ typedef struct {
     double focalLength;        //!< [m]   Camera Focal Length in meters*/
     double sensorSize[2];      //!< [mm]   Size of the camera sensor-paired with resolution gives you pixel size in mm*/
     double cameraPos_B[3];     //!< [m] Camera position in body frame */
-    double cameraDir_B[3];     //!< [m] Rotation to the camera frame MRP*/
+    double sigma_BC[3];     //!< [m] Rotation to the camera frame MRP*/
 }CameraConfigMsg;
 

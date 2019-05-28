@@ -381,7 +381,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 camera->add_resolution(this->cameraConfigMessage.resolution[j]);
                 camera->add_sensorsize(this->cameraConfigMessage.sensorSize[j]);
                 }
-                camera->add_cameradir_b(this->cameraConfigMessage.cameraDir_B[j]);
+                camera->add_cameradir_b(this->cameraConfigMessage.sigma_BC[j]);
                 camera->add_camerapos_b(this->cameraConfigMessage.cameraPos_B[j]);            }
             camera->set_renderrate(this->cameraConfigMessage.renderRate);
             camera->set_cameraid(this->cameraConfigMessage.cameraID);
