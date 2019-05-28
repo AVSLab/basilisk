@@ -92,7 +92,7 @@ def pixelLineConverterTestFunction():
     inputCamera.focalLength = 1.
     inputCamera.sensorSize = [10, 10] # In mm
     inputCamera.resolution = [512, 512]
-    inputCamera.sigma_BC = [1.,0.,0.]
+    inputCamera.sigma_BC = [1.,0.3,0.1]
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.cameraConfigMsgName, inputCamera)
 
     # Set circles
@@ -103,7 +103,7 @@ def pixelLineConverterTestFunction():
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.circlesInMsgName, inputCircles)
 
     # Set attitude
-    inputAtt.sigma_BN = [0., 1., 0.]
+    inputAtt.sigma_BN = [0.6, 1., 0.1]
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.attInMsgName, inputAtt)
 
     # Set module for Mars
