@@ -40,7 +40,6 @@
  * @{
  */
 
-
 /*! @brief Top level structure for the Inertial unscented kalman filter.
  Used to estimate the spacecraft's inertial attitude. Measurements are StarTracker data and gyro data.
  */

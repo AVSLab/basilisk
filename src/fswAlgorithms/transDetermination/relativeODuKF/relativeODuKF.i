@@ -23,23 +23,24 @@
 %}
 
 %include "swig_conly_data.i"
-%constant void Update_relativeODuKF(void*, uint64_t, uint64_t);
-%ignore Update_relativeODuKF;
-%constant void SelfInit_relativeODuKF(void*, uint64_t);
-%ignore SelfInit_relativeODuKF;
-%constant void CrossInit_relativeODuKF(void*, uint64_t);
-%ignore CrossInit_relativeODuKF;
-%constant void Reset_relativeODuKF(void*, uint64_t, uint64_t);
-%ignore Reset_relativeODuKF;
-GEN_SIZEOF(RelativeODFilterFswMsg);
-GEN_SIZEOF(VehicleConfigFswMsg);
-GEN_SIZEOF(CSSConfigFswMsg);
+%constant void Update_relODuKF(void*, uint64_t, uint64_t);
+%ignore Update_relODuKF;
+%constant void SelfInit_relODuKF(void*, uint64_t);
+%ignore SelfInit_relODuKF;
+%constant void CrossInit_relODuKF(void*, uint64_t);
+%ignore CrossInit_relODuKF;
+%constant void Reset_relODuKF(void*, uint64_t, uint64_t);
+%ignore Reset_relODuKF;
+GEN_SIZEOF(NavTransIntMsg);
+GEN_SIZEOF(OpNavFilterFswMsg);
+GEN_SIZEOF(OpnavFswMsg);
 GEN_SIZEOF(RelODuKFConfig);
 %include "relativeODuKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
-%include "../../fswMessages/vehicleConfigFswMsg.h"
 %include "../../fswMessages/opnavFswMsg.h"
-%include "../../fswMessages/cssConfigFswMsg.h"
+%include "../../fswMessages/opNavFilterFswMsg.h"
+%include "simFswInterfaceMessages/navTransIntMsg.h"
+
 
 %pythoncode %{
 import sys
