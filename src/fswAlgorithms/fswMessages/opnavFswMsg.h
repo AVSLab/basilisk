@@ -28,6 +28,7 @@ typedef struct {
     double covar_B[3*3];    /*!< [-] Current covariance of the filter */
     double r_N[3];                 /*!< [km] Current estimated state of the filter */
     double r_B[3];                 /*!< [km] Current estimated state of the filter */
+    int planetID;       /*!< [-] Planet being navigated, Earth=1, Mars=2, Jupiter=3 */
 }OpnavFswMsg;
 
 

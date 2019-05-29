@@ -30,6 +30,8 @@
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
 #include "simulation/utilities/bsk_Print.h"
+#include "utilities/astroConstants.h"
+
 
 
 /*! \defgroup relative orbit determination UKF
@@ -80,11 +82,12 @@ typedef struct {
     
     double SP[(2*ODUKF_N_STATES+1)*ODUKF_N_STATES];          //!< [-]    sigma point matrix
     
-    double qNoise[ODUKF_N_MEAS*ODUKF_N_STATES*ODUKF_N_STATES];       //!< [-] process noise matrix
-    double sQnoise[ODUKF_N_MEAS*ODUKF_N_STATES*ODUKF_N_STATES];      //!< [-] cholesky of Qnoise
-    double IInv[3][3];
+    double qNoise[ODUKF_N_MEAS*ODUKF_N_STATES];       //!< [-] process noise matrix
+    double sQnoise[ODUKF_N_MEAS*ODUKF_N_STATES];      //!< [-] cholesky of Qnoise
+    double measNoise[ODUKF_N_MEAS*ODUKF_N_MEAS];      //!< [-] Measurement Noise
     
-    uint32_t firstPassComplete;
+    int planetId;                    //!< [-] Planet being navigated
+    uint32_t firstPassComplete;         //!< [-] Flag to know if first filter update
     double sigma_BNOut[3];   //!< [-] Output MRP
     double omega_BN_BOut[3]; //!< [r/s] Body rate output data
     double timeTagOut;       //!< [s] Output time-tag information
@@ -99,24 +102,24 @@ typedef struct {
     int32_t filtDataOutMsgId;     //!< [-] Id for the filter data output message
     int32_t opNavInMsgId;     //!< [-] Id for the incoming mass properties message
     
-}InertialUKFConfig;
+}RelODuKFConfig;
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     
-    void SelfInit_relODuKF(InertialUKFConfig *configData, uint64_t moduleId);
-    void CrossInit_relODuKF(InertialUKFConfig *configData, uint64_t moduleId);
-    void Update_relODuKF(InertialUKFConfig *configData, uint64_t callTime,
+    void SelfInit_relODuKF(RelODuKFConfig *configData, uint64_t moduleId);
+    void CrossInit_relODuKF(RelODuKFConfig *configData, uint64_t moduleId);
+    void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
                             uint64_t moduleId);
-    void Reset_relODuKF(InertialUKFConfig *configData, uint64_t callTime,
+    void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
                            uint64_t moduleId);
-    int relODuKFTimeUpdate(InertialUKFConfig *configData, double updateTime);
-    int relODuKFMeasUpdate(InertialUKFConfig *configData);
-    void relODuKFCleanUpdate(InertialUKFConfig *configData);
-    void inertialStateProp(InertialUKFConfig *configData, double *stateInOut, double dt);
-    void relODuKFMeasModel(InertialUKFConfig *configData);
+    int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime);
+    int relODuKFMeasUpdate(RelODuKFConfig *configData);
+    void relODuKFCleanUpdate(RelODuKFConfig *configData);
+    void inertialStateProp(RelODuKFConfig *configData, double *stateInOut, double dt);
+    void relODuKFMeasModel(RelODuKFConfig *configData);
     
 #ifdef __cplusplus
 }

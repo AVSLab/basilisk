@@ -34,7 +34,7 @@
 GEN_SIZEOF(RelativeODFilterFswMsg);
 GEN_SIZEOF(VehicleConfigFswMsg);
 GEN_SIZEOF(CSSConfigFswMsg);
-GEN_SIZEOF(RelativeODuKFConfig);
+GEN_SIZEOF(RelODuKFConfig);
 %include "relativeODuKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
 %include "../../fswMessages/vehicleConfigFswMsg.h"

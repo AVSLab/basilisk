@@ -26,7 +26,7 @@
  @return void
  @param configData The configuration data associated with the CSS WLS estimator
  */
-void SelfInit_relODuKF(InertialUKFConfig *configData, uint64_t moduleId)
+void SelfInit_relODuKF(RelODuKFConfig *configData, uint64_t moduleId)
 {
     /*! - Create output message for module */
     configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
@@ -41,7 +41,7 @@ void SelfInit_relODuKF(InertialUKFConfig *configData, uint64_t moduleId)
  @return void
  @param configData The configuration data associated with the CSS interface
  */
-void CrossInit_relODuKF(InertialUKFConfig *configData, uint64_t moduleId)
+void CrossInit_relODuKF(RelODuKFConfig *configData, uint64_t moduleId)
 {
     configData->opNavInMsgId = subscribeToMessage(configData->opNavInMsgName,
                                                       sizeof(OpnavFswMsg), moduleId);
@@ -54,7 +54,7 @@ void CrossInit_relODuKF(InertialUKFConfig *configData, uint64_t moduleId)
  @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Reset_relODuKF(InertialUKFConfig *configData, uint64_t callTime,
+void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
                        uint64_t moduleId)
 {
     
@@ -78,6 +78,7 @@ void Reset_relODuKF(InertialUKFConfig *configData, uint64_t callTime,
     mSetZero(configData->SP, configData->countHalfSPs * 2 + 1,
              configData->numStates);
     mSetZero(configData->sQnoise, configData->numStates, configData->numStates);
+    mSetZero(configData->measNoise, ODUKF_N_MEAS, ODUKF_N_MEAS);
     
     /*! - Set lambda/gamma to standard value for unscented kalman filters */
     configData->lambdaVal = configData->alpha*configData->alpha*
@@ -92,8 +93,7 @@ void Reset_relODuKF(InertialUKFConfig *configData, uint64_t callTime,
                                                  configData->lambdaVal) + (1 - configData->alpha*configData->alpha + configData->beta);
     for (i = 1; i<configData->countHalfSPs * 2 + 1; i++)
     {
-        configData->wM[i] = 1.0 / 2.0*1.0 / (configData->numStates +
-                                             configData->lambdaVal);
+        configData->wM[i] = 1.0 / 2.0*1.0 / (configData->numStates + configData->lambdaVal);
         configData->wC[i] = configData->wM[i];
     }
     
@@ -132,7 +132,7 @@ void Reset_relODuKF(InertialUKFConfig *configData, uint64_t callTime,
  @param configData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_relODuKF(InertialUKFConfig *configData, uint64_t callTime,
+void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
                         uint64_t moduleId)
 {
     double newTimeTag = 0.0;  /* [s] Local Time-tag variable*/
@@ -153,7 +153,8 @@ void Update_relODuKF(InertialUKFConfig *configData, uint64_t callTime,
     memset(&opNavOutBuffer, 0x0, sizeof(OpnavFswMsg));
     memset(&inputRelOD, 0x0, sizeof(OpnavFswMsg));
     ReadMessage(configData->opNavInMsgId, &timeOfMsgWritten, &otherSize,
-                sizeof(OpnavFswMsg), &inputRelOD, moduleId);
+                sizeof(OpnavFswMsg), &configData->opNavInMsg, moduleId);
+    configData->planetId = configData->opNavInMsg.planetID;
 
     /*! - Handle initializing time in filter and discard initial messages*/
     trackerValid = 0;
@@ -193,31 +194,30 @@ void Update_relODuKF(InertialUKFConfig *configData, uint64_t callTime,
 }
 
 /*! This method propagates a relative OD state vector forward in time.  Note
- that the calling parameter is updated in place to save on data copies.
+ that the calling parameter is updated in place to save on data copies. Only two body dynamics is used currently, but SRP, Solar Gravity, spherical harmonics can be added here. 
  @return void
  @param stateInOut The state that is propagated
  */
-void relODStateProp(InertialUKFConfig *configData, double *stateInOut, double dt)
+void relODStateProp(RelODuKFConfig *configData, double *stateInOut, double dt)
 {
     
-    double sigmaDot[3];
-    double BMatrix[3][3];
-    double torqueTotal[3];
-    double angAccelTotal[3];
+    double rNorm, muPlanet;
+    double stateDeriv[ODUKF_N_STATES];
+    double dvdt[3];
     
     /*! - Convert the state derivative (body rate) to sigmaDot and propagate
      the attitude MRPs*/
-    BmatMRP(stateInOut, BMatrix);
-    m33Scale(0.25, BMatrix, BMatrix);
-    m33MultV3(BMatrix, &(stateInOut[3]), sigmaDot);
-    v3Scale(dt, sigmaDot, sigmaDot);
-    v3Add(stateInOut, sigmaDot, stateInOut);
+    rNorm = v3Norm(stateInOut);
+    if(configData->planetId ==1){muPlanet = MU_EARTH;} //in km
+    if(configData->planetId ==2){muPlanet = MU_MARS;} //in km
+    if(configData->planetId ==3){muPlanet = MU_JUPITER;} //in km
     
+    v3Copy(&stateInOut[3], stateDeriv);
+    v3Copy(stateInOut, dvdt);
+    v3Scale(-muPlanet/pow(rNorm, 3), dvdt, &stateDeriv[3]);
     
-    /*! - Get the angular acceleration and propagate the state forward (euler prop)*/
-    m33MultV3(configData->IInv, torqueTotal, angAccelTotal);
-    v3Scale(dt, angAccelTotal, angAccelTotal);
-    v3Add(&(stateInOut[3]), angAccelTotal, &(stateInOut[3]));
+    v3Scale(dt, stateDeriv, stateDeriv);
+    v3Add(stateInOut, stateDeriv, stateInOut);
     return;
 }
 
@@ -228,7 +228,7 @@ void relODStateProp(InertialUKFConfig *configData, double *stateInOut, double dt
  @param configData The configuration data associated with the CSS estimator
  @param updateTime The time that we need to fix the filter to (seconds)
  */
-int relODuKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
+int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
 {
     int i, Index, k;
     double sBarT[ODUKF_N_STATES*ODUKF_N_STATES];
@@ -342,24 +342,26 @@ int relODuKFTimeUpdate(InertialUKFConfig *configData, double updateTime)
     return(0);
 }
 
-/*! This method computes what the expected measurement vector is for each CSS
- that is present on the spacecraft.  All data is transacted from the main
- data structure for the model because there are many variables that would
- have to be updated otherwise.
+/*! This method computes the measurement model.  Given that the data is coming from
+ the pixelLine Converter, the transformation has already taken place from pixel data to spacecraft position.
  @return void
  @param configData The configuration data associated with the CSS estimator
  
  */
-void relODuKFMeasModel(InertialUKFConfig *configData)
+void relODuKFMeasModel(RelODuKFConfig *configData)
 {
-    int i;
-    
-    /*! - The measurement model is the same as the states since the star tracker
-     measures the relative orbit directly.*/
-    for(i=0; i<configData->countHalfSPs*2+1; i++)
+    int i, j;
+    v3Copy(configData->opNavInMsg.r_N, configData->obs);
+    for(j=0; j<configData->countHalfSPs*2+1; j++)
     {
-        v3Copy(&(configData->SP[i*ODUKF_N_STATES]), &(configData->yMeas[i*3]));
+        for(i=0; i<3; i++)
+            configData->yMeas[i*(configData->countHalfSPs*2+1) + j] =
+            configData->SP[i + j*ODUKF_N_STATES];
     }
+    
+    /*! - yMeas matrix was set backwards deliberately so we need to transpose it through*/
+    mTranspose(configData->yMeas, ODUKF_N_MEAS, configData->countHalfSPs*2+1,
+               configData->yMeas);
     
 }
 
@@ -370,13 +372,13 @@ void relODuKFMeasModel(InertialUKFConfig *configData)
  @param configData The configuration data associated with the CSS estimator
  @param updateTime The time that we need to fix the filter to (seconds)
  */
-int relODuKFMeasUpdate(InertialUKFConfig *configData)
+int relODuKFMeasUpdate(RelODuKFConfig *configData)
 {
     uint32_t i;
     double yBar[3], syInv[3*3];
-    double kMat[ODUKF_N_STATES*3];
+    double kMat[ODUKF_N_STATES*3], cholNoise[ODUKF_N_MEAS*ODUKF_N_MEAS];
     double xHat[ODUKF_N_STATES], Ucol[ODUKF_N_STATES], sBarT[ODUKF_N_STATES*ODUKF_N_STATES], tempYVec[3];
-    double AT[(2 * ODUKF_N_STATES + 3)*3], qChol[3*3];
+    double AT[(2 * ODUKF_N_STATES + 3)*3];
     double rAT[3*3], syT[3*3];
     double sy[3*3];
     double updMat[3*3], pXY[ODUKF_N_STATES*3], Umat[ODUKF_N_STATES*3];
@@ -418,9 +420,11 @@ int relODuKFMeasUpdate(InertialUKFConfig *configData)
     /*! - This is the square-root of the Rk matrix which we treat as the Cholesky
      decomposition of the observation variance matrix constructed for our number
      of observations*/
-    badUpdate += ukfCholDecomp(configData->sQnoise, configData->numObs, configData->numObs, qChol);
+    mSetIdentity(configData->measNoise, ODUKF_N_MEAS, ODUKF_N_MEAS);
+    mCopy(configData->opNavInMsg.covar_N, ODUKF_N_MEAS, ODUKF_N_MEAS, configData->measNoise);
+    badUpdate += ukfCholDecomp(configData->measNoise, ODUKF_N_MEAS, ODUKF_N_MEAS, cholNoise);
     memcpy(&(AT[2*configData->countHalfSPs*configData->numObs]),
-           qChol, configData->numObs*configData->numObs*sizeof(double));
+           cholNoise, configData->numObs*configData->numObs*sizeof(double));
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the
      current Sy matrix*/
     ukfQRDJustR(AT, 2*configData->countHalfSPs+configData->numObs,
@@ -509,7 +513,7 @@ int relODuKFMeasUpdate(InertialUKFConfig *configData)
  @return void
  @param configData The configuration data associated with the CSS estimator
  */
-void relODuKFCleanUpdate(InertialUKFConfig *configData){
+void relODuKFCleanUpdate(RelODuKFConfig *configData){
     int i;
     /*! - Reset the observations, state, and covariannces to a previous safe value*/
     vSetZero(configData->obs, configData->numObs);
