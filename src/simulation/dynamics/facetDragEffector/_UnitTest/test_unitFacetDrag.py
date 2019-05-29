@@ -141,10 +141,6 @@ def TestDragCalculation():
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
 
-    simpleNavObj = simple_nav.SimpleNav()
-    simpleNavObj.inputStateName = scObject.scStateOutMsgName
-    simpleNavObj.outputAttName = 'nav_att_out'
-
     ##   Initialize new atmosphere and drag model, add them to task
     newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
     newAtmo.ModelTag = "ExpAtmo"
@@ -163,8 +159,8 @@ def TestDragCalculation():
         B_normals = [np.array([1, 0, 0]), np.array([0, 1, 0])]
         B_locations = [np.array([0.1,0,0]), np.array([0,0.1,0])]
 
-        for ind in range(0,len(scAreas)):
-            newDrag.addFacet(scAreas[ind], scCoeff[ind], B_normals[ind], B_locations[ind])
+        for i in range(0,len(scAreas)):
+            newDrag.addFacet(scAreas[i], scCoeff[i], B_normals[i], B_locations[i])
     except:
         testFailCount += 1
         testMessage.append("ERROR: FacetDrag unit test failed while setting facet parameters.")
@@ -222,7 +218,7 @@ def TestDragCalculation():
 
     scSim.AddVariableForLogging(newDrag.ModelTag + ".extForce_B",
                                       simulationTimeStep, 0, 2, 'double')
-    scSim.AddVariableForLogging(newDrag.ModelTag + ".extTorque_B",
+    scSim.AddVariableForLogging(newDrag.ModelTag + ".extTorquePntB_B",
                                       simulationTimeStep, 0, 2, 'double')
 
     #   configure a simulation stop time time and execute the simulation run
@@ -232,7 +228,7 @@ def TestDragCalculation():
 
     #   Retrieve logged data
     dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".extForce_B")
-    dragTorqueData = scSim.GetLogVariableData(newDrag.ModelTag + ".extTorque_B")
+    dragTorqueData = scSim.GetLogVariableData(newDrag.ModelTag + ".extTorquePntB_B")
     posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
     velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', range(3))
     attData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN', range(3))
@@ -240,9 +236,14 @@ def TestDragCalculation():
     np.set_printoptions(precision=16)
 
     def checkFacetDragForce(dens, area, coeff, facet_dir, sigma_BN, inertial_vel):
-        vel_dir = inertial_vel / np.linalg.norm(inertial_vel)
         dcm = rbk.MRP2C(sigma_BN)
-        drag_force = -0.5 * dens * area * (facet_dir.dot(dcm.dot(vel_dir))) *  coeff * np.linalg.norm(inertial_vel)**2.0 * vel_dir
+        vMag = np.linalg.norm(inertial_vel)
+        v_hat_B = dcm.dot(inertial_vel) / vMag
+        projArea = area * (-1.0*facet_dir.dot(v_hat_B))
+        if projArea > 0:
+            drag_force = -0.5 * dens * projArea * coeff * vMag**2.0 * v_hat_B
+        else:
+            drag_force = 0.0
         return drag_force
 
 
@@ -250,17 +251,16 @@ def TestDragCalculation():
     accuracy = 1e-4
     #unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
+    test_val = [0.0, 0.0, 0.0]
+    for i in range(len(scAreas)):
+        test_val += checkFacetDragForce(densData[1, 1], scAreas[i], scCoeff[i], B_normals[i], attData[1, 1:],
+                                       velData[1, 1:])
+
     if len(densData) > 0:
-        for ind in range(1,len(densData)):
-            test_val = checkFacetDragForce(densData[ind,1], scAreas[1], scCoeff[1], B_normals[1], attData[ind, 1:], velData[ind, 1:])
-            print test_val
-                            #   isArrayEqualRelative(result, truth, dim, accuracy):
-            if not unitTestSupport.isArrayEqualRelative(dragDataForce_B[ind,:], test_val, 3,accuracy):
-                testFailCount += 1
-                testMessages.append(
-                    "FAILED:  FacetDragEffector failed force unit test at t=" + str(dragDataForce_B[ind,0]* macros.NANO2SEC) + "sec with a value difference of "+str(dragDataForce_B[ind,1:]-test_val))
-
-
+        if not unitTestSupport.isArrayEqualRelative(dragDataForce_B[1,:], test_val, 3,accuracy):
+            testFailCount += 1
+            testMessages.append(
+                "FAILED:  FacetDragEffector failed force unit test at t=" + str(dragDataForce_B[1,0]* macros.NANO2SEC) + "sec with a value difference of "+str(dragDataForce_B[1,1:]-test_val))
     else:
         testFailCount += 1
         testMessages.append("FAILED:  ExpAtmo failed to pull any logged data")
@@ -373,7 +373,7 @@ def TestShadowCalculation():
 
     scSim.AddVariableForLogging(newDrag.ModelTag + ".extForce_B",
                                       simulationTimeStep, 0, 2, 'double')
-    scSim.AddVariableForLogging(newDrag.ModelTag + ".extTorque_B",
+    scSim.AddVariableForLogging(newDrag.ModelTag + ".extTorquePntB_B",
                                       simulationTimeStep, 0, 2, 'double')
 
     #   configure a simulation stop time time and execute the simulation run
@@ -384,18 +384,12 @@ def TestShadowCalculation():
     #   Retrieve logged data
     #dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".extForce_B")
     dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".extForce_B")
-    dragTorqueData = scSim.GetLogVariableData(newDrag.ModelTag + ".extTorque_B")
+    dragTorqueData = scSim.GetLogVariableData(newDrag.ModelTag + ".extTorquePntB_B")
     posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
     velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', range(3))
     attData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN', range(3))
     densData = scSim.pullMessageLogData(newAtmo.ModelTag+"_0_data.neutralDensity")
     np.set_printoptions(precision=16)
-
-    def checkFacetDragForce(dens, area, coeff, facet_dir, sigma_BN, inertial_vel):
-        vel_dir = inertial_vel / np.linalg.norm(inertial_vel)
-        dcm = rbk.MRP2C(sigma_BN)
-        drag_force = -0.5 * dens * area * (facet_dir.dot(dcm.dot(vel_dir))) *  coeff * np.linalg.norm(inertial_vel)**2.0 * vel_dir
-        return drag_force
 
 
     #   Compare to expected values

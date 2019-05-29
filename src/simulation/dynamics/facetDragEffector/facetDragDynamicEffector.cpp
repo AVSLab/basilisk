@@ -29,11 +29,10 @@ FacetDragDynamicEffector::FacetDragDynamicEffector()
 {
 	this->atmoDensInMsgName = "atmo_dens_0_data";
     this->extForce_B.fill(0.0);
-    this->extTorque_B.fill(0.0);
+    this->extTorquePntB_B.fill(0.0);
     this->v_B.fill(0.0);
     this->v_hat_B.fill(0.0);
     this->densInMsgId = -1;
-    this->navAttInMsgId = -1;
 	this->numFacets = 0;
 	return;
 }
@@ -62,8 +61,6 @@ void FacetDragDynamicEffector::CrossInit()
 	//! - Find the message ID associated with the atmoDensInMsgName string.
     this->densInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->atmoDensInMsgName,
                                                                            sizeof(AtmoPropsSimMsg), moduleID);
-    this->navAttInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->navAttInMsgName,
-                                                                             sizeof(NavAttIntMsg), moduleID);
 }
 
 
@@ -98,15 +95,11 @@ bool FacetDragDynamicEffector::ReadInputs()
     bool dataGood;
     //! - Zero the command buffer and read the incoming command array
     SingleMessageHeader localHeader;
-    memset(&this->attDataBuffer, 0x0, sizeof(NavAttIntMsg));
     memset(&this->atmoInData, 0x0, sizeof(AtmoPropsSimMsg));
     memset(&localHeader, 0x0, sizeof(localHeader));
     dataGood = SystemMessaging::GetInstance()->ReadMessage(this->densInMsgId, &localHeader,
                                                            sizeof(AtmoPropsSimMsg),
                                                            reinterpret_cast<uint8_t*> (&this->atmoInData), moduleID);
-    dataGood = SystemMessaging::GetInstance()->ReadMessage(this->navAttInMsgId, &localHeader,
-                                                           sizeof(NavAttIntMsg),
-                                                           reinterpret_cast<uint8_t*> (&this->attDataBuffer), moduleID);
     return(dataGood);
 }
 
@@ -137,7 +130,7 @@ void FacetDragDynamicEffector::updateDragDir(){
     Eigen::Matrix3d dcm_BN = sigmaBN.toRotationMatrix().transpose();
     
     this->v_B = dcm_BN*this->hubVelocity->getState(); // [m/s] sc velocity
-    this->v_hat_B = -(this->v_B / this->v_B.norm());
+    this->v_hat_B = this->v_B / this->v_B.norm();
     
     return;
 }
@@ -154,19 +147,19 @@ void FacetDragDynamicEffector::plateDrag(){
 	totalDragForce.setZero();
 	totalDragTorque.setZero();
     this->extForce_B.setZero();
-    this->extTorque_B.setZero();
+    this->extTorquePntB_B.setZero();
     
-	for(int ind = 0; ind < this->numFacets; ind++){
-		projectedArea = this->scGeometry.facetAreas[ind] * (this->scGeometry.facetNormals_B[ind].dot(this->v_hat_B));
-		if(projectedArea < 0.0){
-			facetDragForce = 0.5 * pow(this->v_B.norm(), 2.0) * this->scGeometry.facetCoeffs[ind] * (-projectedArea) * this->atmoInData.neutralDensity * this->v_hat_B;
-			facetDragTorque = facetDragForce.cross(this->scGeometry.facetLocations_B[ind]);
+	for(int i = 0; i < this->numFacets; i++){
+		projectedArea = this->scGeometry.facetAreas[i] * -1.0*(this->scGeometry.facetNormals_B[i].dot(this->v_hat_B));
+		if(projectedArea > 0.0){
+			facetDragForce = 0.5 * pow(this->v_B.norm(), 2.0) * this->scGeometry.facetCoeffs[i] * projectedArea * this->atmoInData.neutralDensity * (-1.0)*this->v_hat_B;
+			facetDragTorque = facetDragForce.cross(this->scGeometry.facetLocations_B[i]);
 			totalDragForce = totalDragForce + facetDragForce;
 			totalDragTorque = totalDragTorque + facetDragTorque;
 		}
 	}
 	this->extForce_B = totalDragForce;
-	this->extTorque_B = totalDragTorque;
+	this->extTorquePntB_B = totalDragTorque;
 
   return;
 }

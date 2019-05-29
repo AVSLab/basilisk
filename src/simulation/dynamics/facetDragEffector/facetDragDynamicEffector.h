@@ -80,13 +80,11 @@ public:
     Eigen::Vector3d v_B;                         //!< m/s local variable to hold the inertial velocity
     Eigen::Vector3d v_hat_B;
     Eigen::Vector3d extForce_B;
-    Eigen::Vector3d extTorque_B;
+    Eigen::Vector3d extTorquePntB_B;
 
 private:
     int64_t densInMsgId;                            //!< -- Message ID for incoming data
     AtmoPropsSimMsg atmoInData;
-    uint64_t navAttInMsgId;                            //!< -- Message ID for incoming data
-    NavAttIntMsg attDataBuffer;
     SpacecraftGeometryData scGeometry;                      //!< -- Struct to hold spacecraft facet data
 
 };
