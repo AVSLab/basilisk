@@ -142,6 +142,7 @@ void Update_relODuKF(InertialUKFConfig *configData, uint64_t callTime,
     int32_t trackerValid; /* [-] Indicates whether the star tracker was valid*/
     OpNavFilterFswMsg opNavOutBuffer; /* [-] Output filter info*/
     NavTransIntMsg outputRelOD;
+    OpnavFswMsg inputRelOD;
     
     // Reset update check to zero
     if (v3Norm(configData->state) > configData->switchMag) //Little extra margin
@@ -150,11 +151,11 @@ void Update_relODuKF(InertialUKFConfig *configData, uint64_t callTime,
     }
     memset(&(outputRelOD), 0x0, sizeof(NavTransIntMsg));
     memset(&opNavOutBuffer, 0x0, sizeof(OpnavFswMsg));
+    memset(&inputRelOD, 0x0, sizeof(OpnavFswMsg));
     ReadMessage(configData->opNavInMsgId, &timeOfMsgWritten, &otherSize,
-                sizeof(OpnavFswMsg), &outputRelOD, moduleId);
-    
+                sizeof(OpnavFswMsg), &inputRelOD, moduleId);
+
     /*! - Handle initializing time in filter and discard initial messages*/
-    
     trackerValid = 0;
     /*! - If the star tracker has provided a new message compared to last time,
      update the filter to the new measurement*/
@@ -173,9 +174,9 @@ void Update_relODuKF(InertialUKFConfig *configData, uint64_t callTime,
     
    
     /*! - Write the relative OD estimate into the copy of the navigation message structure*/
-//    v3Copy(configData->sigma_BNOut, outputInertial.sigma_BN);
-//    v3Copy(configData->omega_BN_BOut, outputInertial.omega_BN_B);
-//    outputInertial.timeTag = configData->timeTagOut;
+    v3Copy(configData->state, outputRelOD.r_BN_N);
+    v3Copy(&configData->state[3], outputRelOD.v_BN_N);
+    outputRelOD.timeTag = configData->timeTagOut;
     
     WriteMessage(configData->navStateOutMsgId, callTime, sizeof(NavTransIntMsg),
                  &(opNavOutBuffer), moduleId);
