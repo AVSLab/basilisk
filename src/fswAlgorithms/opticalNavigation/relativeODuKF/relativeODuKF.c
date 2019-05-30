@@ -19,8 +19,8 @@
 
 #include <string.h>
 #include <math.h>
-#include "transDetermination/relativeODuKF/relativeODuKF.h"
-#include "transDetermination/_GeneralModuleFiles/ukfUtilities.h"
+#include "relativeODuKF.h"
+#include "../_GeneralModuleFiles/ukfUtilities.h"
 
 /*! This method creates the two moduel output messages.
  @return void
@@ -215,9 +215,9 @@ void relODStateProp(RelODuKFConfig *configData, double *stateInOut, double dt)
     v3Copy(&stateInOut[3], stateDeriv);
     v3Copy(stateInOut, dvdt);
     v3Scale(-muPlanet/pow(rNorm, 3), dvdt, &stateDeriv[3]);
-    
-    v3Scale(dt, stateDeriv, stateDeriv);
-    v3Add(stateInOut, stateDeriv, stateInOut);
+
+    v6Scale(dt, stateDeriv, stateDeriv);
+    vAdd(stateInOut, ODUKF_N_STATES, stateDeriv, stateInOut);
     return;
 }
 

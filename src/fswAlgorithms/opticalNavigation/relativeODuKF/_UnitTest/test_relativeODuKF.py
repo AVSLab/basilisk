@@ -22,16 +22,10 @@ import numpy as np
 import pytest
 import math
 
-
-
-
-
-
-
 from Basilisk.utilities import SimulationBaseClass, macros, unitTestSupport
 from Basilisk.simulation import coarse_sun_sensor
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import relativeODuKF, cssComm, fswMessages  # import the module that is to be tested
+from Basilisk.fswAlgorithms import relativeODuKF, fswMessages  # import the module that is to be tested
 
 import relativeODuKF_test_utilities as FilterPlots
 
@@ -98,21 +92,22 @@ def relOD_method_test(show_plots):
     data.opNavInMsg = msg
     data.countHalfSPs = 6
 
-    Covar = np.eye(3)
+    Covar = np.eye(6)
     SPexp = np.zeros([6, 2*6+1])
     SPexp[:,0] = np.array(state)
     for i in range(1, 6+1):
-        SPexp[:,i] = np.array(state) + Covar[:,i]
-        SPexp[:, i+6] = np.array(state) - Covar[:,i]
+        SPexp[:,i] = np.array(state) + Covar[:,i-1]
+        SPexp[:, i+6] = np.array(state) - Covar[:,i-1]
 
-    data.SP =  SPexp
+
+    data.SP =  np.transpose(SPexp).flatten().tolist()
     relativeODuKF.relODuKFMeasModel(data)
 
     measurements = data.yMeas
 
-    if np.linalg.norm(np.array(propedState) - expected) > 1.0E-15:
+    if np.linalg.norm(np.array(measurements) - np.transpose(SPexp[0:3,:]).flatten()) > 1.0E-15:
         testFailCount += 1
-        testMessages.append("State Prop Failure")
+        testMessages.append("Measurement Model Failure")
 
     # Dynamics Model Test
     data.planetId = 2
@@ -121,7 +116,7 @@ def relOD_method_test(show_plots):
     for i in range(len(state)):
         relativeODuKF.doubleArray_setitem(stateIn, i, state[i])
 
-    relativeODuKF.inertialStateProp(data, stateIn, dt)
+    relativeODuKF.relODStateProp(data, stateIn, dt)
 
     propedState = []
     for i in range(6):
@@ -129,7 +124,7 @@ def relOD_method_test(show_plots):
 
     dydt = np.zeros(6)
     dydt[0:3] = state[3:6]
-    dydt[3:6] = -mu/np.linalg.norm(state[0:3])**3.*state[0:3]
+    dydt[3:6] = -mu/np.linalg.norm(state[0:3])**3.*np.array(state[0:3])
 
     expected = np.array(state) + dt*dydt
 
@@ -144,7 +139,7 @@ def StateUpdateRelOD(show_plots):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
-    
+
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -161,116 +156,91 @@ def StateUpdateRelOD(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = relativeODuKF.relativeODuKFConfig()
+    moduleConfig = relativeODuKF.RelativeODuKFConfig()
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "relativeODuKF"
+    moduleWrap.ModelTag = "headingSuKF"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-    
-    setupFilterData(moduleConfig)
-    
-    cssConstelation = fswMessages.CSSConfigFswMsg()
-    
-    CSSOrientationList = [
-       [0.70710678118654746, -0.5, 0.5],
-       [0.70710678118654746, -0.5, -0.5],
-       [0.70710678118654746, 0.5, -0.5],
-       [0.70710678118654746, 0.5, 0.5],
-       [-0.70710678118654746, 0, 0.70710678118654757],
-       [-0.70710678118654746, 0.70710678118654757, 0.0],
-       [-0.70710678118654746, 0, -0.70710678118654757],
-       [-0.70710678118654746, -0.70710678118654757, 0.0],
-    ]
-    totalCSSList = []
-    for CSSHat in CSSOrientationList:
-        newCSS = fswMessages.CSSUnitConfigFswMsg()
-        newCSS.CBias = 1.0
-        newCSS.nHat_B = CSSHat
-        totalCSSList.append(newCSS)
-    cssConstelation.nCSS = len(CSSOrientationList)
-    cssConstelation.cssVals = totalCSSList
-    unitTestSupport.setMessage(unitTestSim.TotalSim,
-                               unitProcessName,
-                               moduleConfig.cssConfigInMsgName,
-                               cssConstelation)
-    unitTestSim.TotalSim.logThisMessage('relod_filter_data', testProcessRate)
 
-    testVector = np.array([-0.7, 0.7, 0.0])
-    inputData = cssComm.CSSArraySensorIntMsg()
-    dotList = []
-    for element in CSSOrientationList:
-        dotProd = np.dot(np.array(element), testVector)
-        dotList.append(dotProd)
-    inputData.CosValue = dotList
+    setupFilterData(moduleConfig)
+    unitTestSim.TotalSim.logThisMessage('heading_filter_data', testProcessRate)
+
+    testVector = np.array([0.9, 0.1, 0.02])
+    testOmega = np.array([0.01, 0.05, 0.001])
+    inputData = relativeODuKF.OpnavFswMsg()
     inputMessageSize = inputData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                      moduleConfig.cssDataInMsgName,
-                                      inputMessageSize,
-                                      2)  # number of buffers (leave at 2 as default, don't make zero)
+                                          moduleConfig.opnavDataInMsgName,
+                                          inputMessageSize,
+                                          2)  # number of buffers (leave at 2 as default, don't make zero)
 
     stateTarget = testVector.tolist()
+    inputData.r_B = stateTarget
     stateTarget.extend([0.0, 0.0])
-    moduleConfig.stateInit = [0.7, 0.7, 0.0, 0.01, 0.001]
+    moduleConfig.stateInit = [1., 0.2, 0.1, 0.01, 0.001]
 
     unitTestSim.InitializeSimulation()
-
-    for i in range(400):
-        if i > 20:
-            unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
-                                      inputMessageSize,
-                                      unitTestSim.TotalSim.CurrentNanos,
-                                      inputData)
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
+    t1 = 1000
+    for i in range(t1):
+        if i > 0 and i % 50 == 0:
+            inputData.timeTag = macros.sec2nano(i * 0.5)
+            inputData.r_B += np.random.normal(0, 0.001, 3)
+            unitTestSim.TotalSim.WriteMessageData(moduleConfig.opnavDataInMsgName,
+                                                  inputMessageSize,
+                                                  unitTestSim.TotalSim.CurrentNanos,
+                                                  inputData)
+        unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".state", range(5))
-    postFitLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".postFitRes", range(8))
-    covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", range(5*5))
+    stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", range(5))
+    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", range(3))
+    covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", range(5 * 5))
 
     for i in range(5):
-        if(covarLog[-1, i*5+1+i] > covarLog[0, i*5+1+i]/100):
+        # check covariance immediately after measurement is taken,
+        # ensure order of magnitude less than initial covariance.
+        if (covarLog[951, i * 5 + 1 + i] > covarLog[0, i * 5 + 1 + i] / 10):
             testFailCount += 1
             testMessages.append("Covariance update failure")
-        if(abs(stateLog[-1, i+1] - stateTarget[i]) > 1.0E-5):
-            print abs(stateLog[-1, i+1] - stateTarget[i])
+        if (abs(stateLog[-1, i + 1] - stateTarget[i]) > 1.0E-1):
+            print abs(stateLog[-1, i + 1] - stateTarget[i])
             testFailCount += 1
             testMessages.append("State update failure")
 
-    testVector = np.array([-0.8, -0.9, 0.0])
-    inputData = cssComm.CSSArraySensorIntMsg()
-    dotList = []
-    for element in CSSOrientationList:
-        dotProd = np.dot(np.array(element), testVector)
-        dotList.append(dotProd)
-    inputData.CosValue = dotList
-        
-    for i in range(400):
-        if i > 20:
-            unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
-                                      inputMessageSize,
-                                      unitTestSim.TotalSim.CurrentNanos,
-                                      inputData)
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i+401)*0.5))
-        unitTestSim.ExecuteSimulation()
-
-    stateLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".state", range(5))
-    postFitLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".postFitRes", range(8))
-    covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", range(5*5))
-
+    testVector = np.array([0.6, -0.1, 0.2])
     stateTarget = testVector.tolist()
-    stateTarget.extend([0.0, 0.0, 0.0])
+    inputData.r_B = stateTarget
+    stateTarget.extend([0.0, 0.0])
+
+    for i in range(t1):
+        if i % 50 == 0:
+            inputData.timeTag = macros.sec2nano(i * 0.5 + t1 + 1)
+            inputData.r_B += np.random.normal(0, 0.001, 3)
+            unitTestSim.TotalSim.WriteMessageData(moduleConfig.opnavDataInMsgName,
+                                                  inputMessageSize,
+                                                  unitTestSim.TotalSim.CurrentNanos,
+                                                  inputData)
+        unitTestSim.ConfigureStopTime(macros.sec2nano((i + t1 + 1) * 0.5))
+        unitTestSim.ExecuteSimulation()
+
+    stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", range(5))
+    stateErrorLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".stateError", range(5))
+    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", range(3))
+    covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", range(5 * 5))
+
     for i in range(5):
-        if(covarLog[-1, i*5+1+i] > covarLog[0, i*5+1+i]/100):
+        if (covarLog[1951, i * 5 + 1 + i] > covarLog[0, i * 5 + 1 + i] / 10):
             testFailCount += 1
             testMessages.append("Covariance update failure")
-        if(abs(stateLog[-1, i+1] - stateTarget[i]) > 1.0E-5):
-            print abs(stateLog[-1, i+1] - stateTarget[i])
+        if (abs(stateLog[-1, i + 1] - stateTarget[i]) > 1.0E-1):
+            print abs(stateLog[-1, i + 1] - stateTarget[i])
             testFailCount += 1
             testMessages.append("State update failure")
 
-    FilterPlots.StateCovarPlot(stateLog, covarLog, show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, show_plots)
+    FilterPlots.StateCovarPlot(stateLog, covarLog, 'Update', show_plots)
+    FilterPlots.StateCovarPlot(stateErrorLog, covarLog, 'Update_Error', show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, 'Update', show_plots)
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -280,12 +250,13 @@ def StateUpdateRelOD(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
+
 def StatePropRelOD(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
-    
+
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -302,34 +273,32 @@ def StatePropRelOD(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = relativeODuKF.relativeODuKFConfig()
+    moduleConfig = headingSuKF.HeadingSuKFConfig()
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "relativeODuKF"
+    moduleWrap.ModelTag = "headingSuKF"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-    
+
     setupFilterData(moduleConfig)
-    unitTestSim.TotalSim.logThisMessage('relod_filter_data', testProcessRate)
+    unitTestSim.TotalSim.logThisMessage('heading_filter_data', testProcessRate)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
-    
-    stateLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".state", range(5))
-    postFitLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".postFitRes", range(8))
-    covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", range(5*5))
 
-    FilterPlots.StateCovarPlot(stateLog, covarLog,show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, show_plots)
+    stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", range(5))
+    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", range(3))
+    covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", range(5 * 5))
+
+    FilterPlots.StateCovarPlot(stateLog, covarLog, 'Prop', show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, 'Prop', show_plots)
 
     for i in range(5):
-        if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > 1.0E-10):
-            print abs(stateLog[-1, i+1] - stateLog[0, i+1])
+        if (abs(stateLog[-1, i + 1] - stateLog[0, i + 1]) > 1.0E-10):
+            print abs(stateLog[-1, i + 1] - stateLog[0, i + 1])
             testFailCount += 1
             testMessages.append("State propagation failure")
-
-    
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -600,4 +569,4 @@ def relOD_utilities_test(show_plots):
 
 if __name__ == "__main__":
     # test_all_relOD_kf(True)
-    StateUpdaterelOD(True, True)
+    relOD_method_test(False)

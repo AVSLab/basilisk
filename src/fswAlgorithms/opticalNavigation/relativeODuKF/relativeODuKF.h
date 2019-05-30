@@ -117,7 +117,7 @@ extern "C" {
     int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime);
     int relODuKFMeasUpdate(RelODuKFConfig *configData);
     void relODuKFCleanUpdate(RelODuKFConfig *configData);
-    void inertialStateProp(RelODuKFConfig *configData, double *stateInOut, double dt);
+    void relODStateProp(RelODuKFConfig *configData, double *stateInOut, double dt);
     void relODuKFMeasModel(RelODuKFConfig *configData);
     
 #ifdef __cplusplus
