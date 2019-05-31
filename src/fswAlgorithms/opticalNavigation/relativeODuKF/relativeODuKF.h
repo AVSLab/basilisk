@@ -81,14 +81,14 @@ typedef struct {
     
     double SP[(2*ODUKF_N_STATES+1)*ODUKF_N_STATES];          //!< [-]    sigma point matrix
     
-    double qNoise[ODUKF_N_MEAS*ODUKF_N_STATES];       //!< [-] process noise matrix
-    double sQnoise[ODUKF_N_MEAS*ODUKF_N_STATES];      //!< [-] cholesky of Qnoise
+    double qNoise[ODUKF_N_STATES*ODUKF_N_STATES];       //!< [-] process noise matrix
+    double sQnoise[ODUKF_N_STATES*ODUKF_N_STATES];      //!< [-] cholesky of Qnoise
     double measNoise[ODUKF_N_MEAS*ODUKF_N_MEAS];      //!< [-] Measurement Noise
     
-    int planetId;                    //!< [-] Planet being navigated
+    int planetIdInit;                    //!< [-] Planet being navigated inital value
+    int planetId;                   //!< [-] Planet being navigated as per measurement
     uint32_t firstPassComplete;         //!< [-] Flag to know if first filter update
-    double sigma_BNOut[3];   //!< [-] Output MRP
-    double omega_BN_BOut[3]; //!< [r/s] Body rate output data
+    double postFits[3];      //!< [-] PostFit residuals
     double timeTagOut;       //!< [s] Output time-tag information
     double maxTimeJump;      //!< [s] Maximum time jump to allow in propagation
     

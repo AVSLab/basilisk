@@ -69,6 +69,7 @@ void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     configData->countHalfSPs = ODUKF_N_STATES;
     configData->numObs = 3;
     configData->firstPassComplete = 0;
+    configData->planetId = configData->planetIdInit;
     
     /*! - Ensure that all internal filter matrices are zeroed*/
     vSetZero(configData->obs, configData->numObs);
@@ -116,8 +117,6 @@ void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     mTranspose(configData->sQnoise, configData->numStates,
                configData->numStates, configData->sQnoise);
     
-    v3Copy(configData->state, configData->sigma_BNOut);
-    v3Copy(&(configData->state[3]), configData->omega_BN_BOut);
     configData->timeTagOut = configData->timeTag;
     
     if (badUpdate <0){
@@ -138,40 +137,55 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     double newTimeTag = 0.0;  /* [s] Local Time-tag variable*/
     uint64_t timeOfMsgWritten; /* [ns] Read time for the message*/
     uint32_t sizeOfMsgWritten = 0;  /* [-] Non-zero size indicates we received ST msg*/
-    uint32_t otherSize; /* [-] Size of messages that are assumed to be good*/
     int32_t trackerValid; /* [-] Indicates whether the star tracker was valid*/
+    double yBar[3], tempYVec[3];
+    int i;
     OpNavFilterFswMsg opNavOutBuffer; /* [-] Output filter info*/
     NavTransIntMsg outputRelOD;
     OpnavFswMsg inputRelOD;
     
-    // Reset update check to zero
-    if (v3Norm(configData->state) > configData->switchMag) //Little extra margin
-    {
-        MRPswitch(configData->state, configData->switchMag, configData->state);
-    }
     memset(&(outputRelOD), 0x0, sizeof(NavTransIntMsg));
     memset(&opNavOutBuffer, 0x0, sizeof(OpnavFswMsg));
     memset(&inputRelOD, 0x0, sizeof(OpnavFswMsg));
-    ReadMessage(configData->opNavInMsgId, &timeOfMsgWritten, &otherSize,
-                sizeof(OpnavFswMsg), &configData->opNavInMsg, moduleId);
-    configData->planetId = configData->opNavInMsg.planetID;
+    ReadMessage(configData->opNavInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
+                sizeof(OpnavFswMsg), &inputRelOD, moduleId);
 
     /*! - Handle initializing time in filter and discard initial messages*/
     trackerValid = 0;
-    /*! - If the star tracker has provided a new message compared to last time,
-     update the filter to the new measurement*/
-    if(newTimeTag >= configData->timeTag && sizeOfMsgWritten == sizeof(OpnavFswMsg))
+    /*! - If the time tag from the measured data is new compared to previous step,
+     propagate and update the filter*/
+    newTimeTag = timeOfMsgWritten * NANO2SEC;
+    if(newTimeTag >= configData->timeTag && sizeOfMsgWritten > 0)
     {
-        trackerValid = 1;
-        if((newTimeTag - configData->timeTag) > configData->maxTimeJump
-           && configData->maxTimeJump > 0)
-        {
-            configData->timeTag = newTimeTag - configData->maxTimeJump;
-            BSK_PRINT(MSG_WARNING, "Large jump in state time that was set to max\n");
-        }
-        trackerValid += relODuKFTimeUpdate(configData, newTimeTag);
-        trackerValid += relODuKFMeasUpdate(configData);
+        configData->opNavInMsg = inputRelOD;
+        configData->planetId = inputRelOD.planetID;
+        relODuKFTimeUpdate(configData, newTimeTag);
+        relODuKFMeasUpdate(configData);
     }
+    /*! - If current clock time is further ahead than the measured time, then
+     propagate to this current time-step*/
+    newTimeTag = callTime*NANO2SEC;
+    if(newTimeTag > configData->timeTag)
+    {
+        relODuKFTimeUpdate(configData, newTimeTag);
+    }
+    
+    /*! - Compute Post Fit Residuals, first get Y (eq 22) using the states post fit*/
+    relODuKFMeasModel(configData);
+    
+    /*! - Compute the value for the yBar parameter (equation 23)*/
+    vSetZero(yBar, configData->numObs);
+    for(i=0; i<configData->countHalfSPs*2+1; i++)
+    {
+        vCopy(&(configData->yMeas[i*configData->numObs]), configData->numObs,
+              tempYVec);
+        vScale(configData->wM[i], tempYVec, configData->numObs, tempYVec);
+        vAdd(yBar, configData->numObs, tempYVec, yBar);
+    }
+    
+    /*! - The post fits are y - ybar if a measurement was read, if observations are zero, do not compute post fit residuals*/
+    if(!v3IsZero(configData->obs, 1E-10)){
+        mSubtract(configData->obs, ODUKF_N_MEAS, 1, yBar, configData->postFits);}
     
    
     /*! - Write the relative OD estimate into the copy of the navigation message structure*/
@@ -185,9 +199,10 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     /*! - Populate the filter states output buffer and write the output message*/
     opNavOutBuffer.timeTag = configData->timeTag;
     memmove(opNavOutBuffer.covar, configData->covar,
-            ODUKF_N_STATES_HALF*ODUKF_N_STATES_HALF*sizeof(double));
-    memmove(opNavOutBuffer.state, configData->state, ODUKF_N_STATES_HALF*sizeof(double));
-    WriteMessage(configData->filtDataOutMsgId, callTime, sizeof(OpnavFswMsg),
+            ODUKF_N_STATES*ODUKF_N_STATES*sizeof(double));
+    memmove(opNavOutBuffer.state, configData->state, ODUKF_N_STATES*sizeof(double));
+    memmove(opNavOutBuffer.postFitRes, configData->postFits, ODUKF_N_MEAS*sizeof(double));
+    WriteMessage(configData->filtDataOutMsgId, callTime, sizeof(OpNavFilterFswMsg),
                  &opNavOutBuffer, moduleId);
     
     return;
@@ -205,8 +220,6 @@ void relODStateProp(RelODuKFConfig *configData, double *stateInOut, double dt)
     double stateDeriv[ODUKF_N_STATES];
     double dvdt[3];
     
-    /*! - Convert the state derivative (body rate) to sigmaDot and propagate
-     the attitude MRPs*/
     rNorm = v3Norm(stateInOut);
     if(configData->planetId ==1){muPlanet = MU_EARTH;} //in km
     if(configData->planetId ==2){muPlanet = MU_MARS;} //in km
@@ -243,6 +256,9 @@ int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
     vCopy(configData->state, configData->numStates, configData->statePrev);
     mCopy(configData->sBar, configData->numStates, configData->numStates, configData->sBarPrev);
     mCopy(configData->covar, configData->numStates, configData->numStates, configData->covarPrev);
+    
+    /*! - Read the planet ID from the message*/
+    if(configData->planetId == 0){BSK_PRINT(MSG_ERROR, "Need a planet to navigate")} //in km
     
     mCopy(configData->sQnoise, ODUKF_N_STATES, ODUKF_N_STATES, procNoise);
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/

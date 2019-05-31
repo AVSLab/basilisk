@@ -31,8 +31,74 @@ splitPath = path.split('fswAlgorithms')
 
 import matplotlib.pyplot as plt
 
+def StatePlot(x, testName, show_plots):
 
-def StateCovarPlot(x, Pflat, show_plots):
+    numStates = len(x[0,:])-1
+
+    t= np.zeros(len(x[:,0]))
+    for i in range(len(t)):
+        t[i] = x[i, 0]*1E-9
+
+    plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
+    plt.subplot(321)
+    plt.plot(t , x[:, 1], "b", label='Error Filter')
+    plt.legend(loc='best')
+    plt.title('First pos component')
+    plt.grid()
+
+    plt.subplot(322)
+    plt.plot(t , x[:, 4], "b")
+    plt.title('Second rate component')
+    plt.grid()
+
+    plt.subplot(323)
+    plt.plot(t , x[:, 2], "b")
+    plt.title('Second pos component')
+    plt.grid()
+
+    plt.subplot(324)
+    plt.plot(t , x[:, 5], "b")
+    plt.xlabel('t(s)')
+    plt.title('Third rate component')
+    plt.grid()
+
+    plt.subplot(325)
+    plt.plot(t , x[:, 3], "b")
+    plt.xlabel('t(s)')
+    plt.title('Third pos component')
+    plt.grid()
+
+    plt.subplot(326)
+    plt.plot(t , x[:, 6], "b")
+    plt.xlabel('t(s)')
+    plt.title('Third rate component')
+    plt.grid()
+
+    unitTestSupport.writeFigureLaTeX('StatesPlot' + testName, 'State error', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+    if show_plots:
+        plt.show()
+    plt.close()
+
+def EnergyPlot(t, energy, testName, show_plots):
+
+    conserved= np.zeros(len(t))
+    for i in range(len(t)):
+        conserved[i] = (energy[i] - energy[0])/energy[0]
+
+    plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
+    plt.plot(t , conserved, "b", label='Energy')
+    plt.legend(loc='best')
+    plt.title('First pos component')
+    plt.grid()
+
+
+    unitTestSupport.writeFigureLaTeX('Energy' + testName, 'Orbital Energy', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+    if show_plots:
+        plt.show()
+    plt.close()
+
+
+def StateCovarPlot(x, Pflat, testName, show_plots):
 
     numStates = len(x[0,:])-1
 
@@ -42,39 +108,31 @@ def StateCovarPlot(x, Pflat, show_plots):
         t[i] = x[i, 0]*1E-9
         P[i,:,:] = Pflat[i,1:(numStates*numStates+1)].reshape([numStates,numStates])
 
+
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
     plt.subplot(321)
     plt.plot(t , x[:, 1], "b", label='Error Filter')
     plt.plot(t , x[:, 1]+3 * np.sqrt(P[:, 0, 0]), 'r--',  label='Covar Filter')
     plt.plot(t , x[:, 1]-3 * np.sqrt(P[:, 0, 0]), 'r--')
     plt.legend(loc='best')
-    plt.title('First LOS component')
+    plt.title('First pos component')
     plt.grid()
 
-
-    plt.subplot(323)
-    plt.plot(t , x[:, 2], "b")
-    plt.plot(t , x[:, 2]+3 * np.sqrt(P[:, 1, 1]), 'r--')
-    plt.plot(t , x[:, 2]-3 * np.sqrt(P[:, 1, 1]), 'r--')
-    plt.title('Second LOS component')
-    plt.grid()
-
-    plt.subplot(324)
+    plt.subplot(322)
     plt.plot(t , x[:, 4], "b")
     plt.plot(t , x[:, 4]+3 * np.sqrt(P[:, 3, 3]), 'r--')
     plt.plot(t , x[:, 4]-3 * np.sqrt(P[:, 3, 3]), 'r--')
     plt.title('Second rate component')
     plt.grid()
 
-    plt.subplot(325)
-    plt.plot(t , x[:, 3], "b")
-    plt.plot(t , x[:, 3]+3 * np.sqrt(P[:, 2, 2]), 'r--')
-    plt.plot(t , x[:, 3]-3 * np.sqrt(P[:, 2, 2]), 'r--')
-    plt.xlabel('t(s)')
-    plt.title('Third LOS component')
+    plt.subplot(323)
+    plt.plot(t , x[:, 2], "b")
+    plt.plot(t , x[:, 2]+3 * np.sqrt(P[:, 1, 1]), 'r--')
+    plt.plot(t , x[:, 2]-3 * np.sqrt(P[:, 1, 1]), 'r--')
+    plt.title('Second pos component')
     plt.grid()
 
-    plt.subplot(326)
+    plt.subplot(324)
     plt.plot(t , x[:, 5], "b")
     plt.plot(t , x[:, 5]+3 * np.sqrt(P[:, 4, 4]), 'r--')
     plt.plot(t , x[:, 5]-3 * np.sqrt(P[:, 4, 4]), 'r--')
@@ -82,14 +140,30 @@ def StateCovarPlot(x, Pflat, show_plots):
     plt.title('Third rate component')
     plt.grid()
 
-    unitTestSupport.writeFigureLaTeX('StatesPlot', 'State error and covariance', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+    plt.subplot(325)
+    plt.plot(t , x[:, 3], "b")
+    plt.plot(t , x[:, 3]+3 * np.sqrt(P[:, 2, 2]), 'r--')
+    plt.plot(t , x[:, 3]-3 * np.sqrt(P[:, 2, 2]), 'r--')
+    plt.xlabel('t(s)')
+    plt.title('Third pos component')
+    plt.grid()
+
+    plt.subplot(326)
+    plt.plot(t , x[:, 6], "b")
+    plt.plot(t , x[:, 6]+3 * np.sqrt(P[:, 5, 5]), 'r--')
+    plt.plot(t , x[:, 6]-3 * np.sqrt(P[:, 5, 5]), 'r--')
+    plt.xlabel('t(s)')
+    plt.title('Third rate component')
+    plt.grid()
+
+    unitTestSupport.writeFigureLaTeX('StatesPlot' + testName, 'State error and covariance', plt, 'height=0.9\\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
     plt.close()
 
 
 
-def PostFitResiduals(Res, noise, show_plots):
+def PostFitResiduals(Res, noise, testName, show_plots):
 
     MeasNoise = np.zeros(len(Res[:,0]))
     t= np.zeros(len(Res[:,0]))
@@ -102,74 +176,33 @@ def PostFitResiduals(Res, noise, show_plots):
                 Res[i, j+1] = np.nan
 
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
-    plt.subplot(421)
+    plt.subplot(311)
     plt.plot(t , Res[:, 1], "b.", label='Residual')
     plt.plot(t , MeasNoise, 'r--', label='Covar')
     plt.plot(t , -MeasNoise, 'r--')
     plt.legend(loc='best')
     plt.ylim([-10*noise, 10*noise])
-    plt.title('First CSS')
+    plt.title('First Meas Comp')
     plt.grid()
 
-    plt.subplot(422)
-    plt.plot(t , Res[:, 5], "b.")
-    plt.plot(t , MeasNoise, 'r--')
-    plt.plot(t , -MeasNoise, 'r--')
-    plt.ylim([-10*noise, 10*noise])
-    plt.title('Fifth CSS')
-    plt.grid()
-
-    plt.subplot(423)
+    plt.subplot(312)
     plt.plot(t , Res[:, 2], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
     plt.ylim([-10*noise, 10*noise])
-    plt.title('Second CSS')
+    plt.title('Second Meas Comp')
     plt.grid()
 
-    plt.subplot(424)
-    plt.plot(t , Res[:, 6], "b.")
-    plt.plot(t , MeasNoise, 'r--')
-    plt.plot(t , -MeasNoise, 'r--')
-    plt.ylim([-10*noise, 10*noise])
-    plt.title('Sixth CSS')
-    plt.grid()
-
-    plt.subplot(425)
+    plt.subplot(313)
     plt.plot(t , Res[:, 3], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
     plt.ylim([-10*noise, 10*noise])
-    plt.title('Third CSS')
+    plt.title('Third Meas Comp')
     plt.grid()
 
-    plt.subplot(426)
-    plt.plot(t , Res[:, 7], "b.")
-    plt.plot(t , MeasNoise, 'r--')
-    plt.plot(t , -MeasNoise, 'r--')
-    plt.ylim([-10*noise, 10*noise])
-    plt.title('Seventh CSS')
-    plt.grid()
 
-    plt.subplot(427)
-    plt.plot(t , Res[:, 4], "b.")
-    plt.plot(t , MeasNoise, 'r--')
-    plt.plot(t , -MeasNoise, 'r--')
-    plt.ylim([-10*noise, 10*noise])
-    plt.xlabel('t(s)')
-    plt.title('Fourth CSS')
-    plt.grid()
-
-    plt.subplot(428)
-    plt.plot(t , Res[:, 8], "b.")
-    plt.plot(t , MeasNoise, 'r--')
-    plt.plot(t , -MeasNoise, 'r--')
-    plt.ylim([-10*noise, 10*noise])
-    plt.xlabel('t(s)')
-    plt.title('Eight CSS')
-    plt.grid()
-
-    unitTestSupport.writeFigureLaTeX('PostFit' , 'Post Fit Residuals', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+    unitTestSupport.writeFigureLaTeX('PostFit' + testName, 'Post Fit Residuals', plt, 'height=0.9\\textwidth, keepaspectratio', path)
 
     if show_plots:
         plt.show()
