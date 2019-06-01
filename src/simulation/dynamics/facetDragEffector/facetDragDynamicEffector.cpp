@@ -144,13 +144,15 @@ void FacetDragDynamicEffector::plateDrag(){
     
 	//! - Zero out the structure force/torque for the drag set
     double projectedArea = 0.0;
+    double projectionTerm = 0.0;
 	totalDragForce.setZero();
 	totalDragTorque.setZero();
     this->extForce_B.setZero();
     this->extTorquePntB_B.setZero();
     
 	for(int i = 0; i < this->numFacets; i++){
-		projectedArea = this->scGeometry.facetAreas[i] * -1.0*(this->scGeometry.facetNormals_B[i].dot(this->v_hat_B));
+	    projectionTerm = this->scGeometry.facetNormals_B[i].dot(this->v_hat_B);
+		projectedArea = this->scGeometry.facetAreas[i] * projectionTerm;
 		if(projectedArea > 0.0){
 			facetDragForce = 0.5 * pow(this->v_B.norm(), 2.0) * this->scGeometry.facetCoeffs[i] * projectedArea * this->atmoInData.neutralDensity * (-1.0)*this->v_hat_B;
 			facetDragTorque = facetDragForce.cross(this->scGeometry.facetLocations_B[i]);
