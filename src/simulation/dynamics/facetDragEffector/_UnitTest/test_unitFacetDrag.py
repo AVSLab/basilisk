@@ -239,11 +239,11 @@ def TestDragCalculation():
         dcm = rbk.MRP2C(sigma_BN)
         vMag = np.linalg.norm(inertial_vel)
         v_hat_B = dcm.dot(inertial_vel) / vMag
-        projArea = area * (-1.0*facet_dir.dot(v_hat_B))
+        projArea = area * (facet_dir.dot(v_hat_B))
         if projArea > 0:
             drag_force = -0.5 * dens * projArea * coeff * vMag**2.0 * v_hat_B
         else:
-            drag_force = 0.0
+            drag_force = np.zeros([3,])
         return drag_force
 
 
@@ -251,10 +251,9 @@ def TestDragCalculation():
     accuracy = 1e-4
     #unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
-    test_val = [0.0, 0.0, 0.0]
+    test_val = np.zeros([3,])
     for i in range(len(scAreas)):
-        test_val += checkFacetDragForce(densData[1, 1], scAreas[i], scCoeff[i], B_normals[i], attData[1, 1:],
-                                       velData[1, 1:])
+        test_val += checkFacetDragForce(densData[1, i], scAreas[i], scCoeff[i], B_normals[i], attData[1, 1:], velData[1, 1:])
 
     if len(densData) > 0:
         if not unitTestSupport.isArrayEqualRelative(dragDataForce_B[1,:], test_val, 3,accuracy):
@@ -412,4 +411,5 @@ def TestShadowCalculation():
 
 if __name__=="__main__":
     test_unitFacetDrag()
-
+    #TestShadowCalculation()
+    #TestDragCalculation()
