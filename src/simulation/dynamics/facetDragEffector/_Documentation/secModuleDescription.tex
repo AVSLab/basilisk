@@ -1,0 +1,12 @@
+% !TEX root = ./Basilisk-atmosphere-20190221.tex
+
+\section{Model Description}
+\subsection{General Module Function}
+The purpose of this module is to implement simple, attitude-dependent drag forces and torques for spacecraft with convex (i.e., non-self-shadowing) shape models. Spacecraft are considered as collections of facets consisting of an area, an offset from Point B, a surface normal (defined in the body frame), and a drag coefficient. Facets can be added from the Python level by using the \verb|addFacetToModel| method. This module does not support self-shadowing.
+\subsection{Facet Model}
+The simplest model of spacecraft drag that considers the dependence of attitude is a faceted model. These models compute drag by considering the spacecraft as a collection of facets. The drag force contributed by an individual facet is given by
+\begin{equation}
+\label{eq:expAtmo}
+\mathbf{ F}_D = -\frac{1}{2} C_D \rho A_{\text{facet}} (\hat{n} \cdot \hat{v}) |\mathbf{v}|^2 \hat{v}
+\end{equation}
+where $C_D$ is the facet's drag coefficient, $\rho$ is the local neutral density, $A_{\text{facet}}$ is total facet area, $\hat{n}$ is the facet surface normal unit vector, and $\mathbf{v}$ is the atmosphere-relative velocity.

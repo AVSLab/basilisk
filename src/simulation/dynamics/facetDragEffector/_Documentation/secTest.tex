@@ -1,0 +1,63 @@
+% !TEX root = ./Basilisk-atmosphere-20190221.tex
+
+\section{Test Description and Success Criteria}
+This section describes the specific unit tests conducted on this module.
+
+\subsection{General Functionality}
+
+\subsubsection{setDensityMessage}
+
+This test verifies that the user can specify the atmospheric density message used by the module.
+
+\subsubsection{testDragForce}
+
+This test verifies that the module correctly calculates the drag force given the model's assumptions. It also implicitly tests the compatibility of facetDrag and exponentialAtmosphere. 
+
+\subsubsection{testShadow}
+
+This test verifies that panels that are not in the flow are correctly ignored for the purposes of drag calculation.
+
+\subsection{Model-Specific Tests}
+
+\subsubsection{test\_unitFacetDrag.py}
+
+This unit test runs setDensityMessage, testDragForce, and testShadow to verify the functionality of the module. 
+
+\section{Test Parameters}
+The simulation tolerances are shown in Table~\ref{tab:errortol}.  In each simulation the neutral density output message is checked relative to python computed true values.  
+\begin{table}[htbp]
+	\caption{Error tolerance for each test.}
+	\label{tab:errortol}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c } % Column formatting, 
+		\hline\hline
+		\textbf{Output Value Tested}  & \textbf{Tolerated Error}  \\ 
+		\hline
+		{\tt facetDragDynamicEffector.atmoDensInMsgName }       & {\tt 0 (str)}   \\
+		{\tt newDrag.forceExternal\_N}        & \input{AutoTeX/toleranceValue} (relative)   \\ 		\hline\hline
+	\end{tabular}
+\end{table}
+
+
+
+
+\section{Test Results}
+The following table shows the test result.
+
+
+\begin{table}[H]
+	\caption{Test result for test\_unitFacetDrag.py}
+	\label{tab:results}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{c  | c } % Column formatting, 
+		\hline\hline
+		\textbf{Check} &  \textbf{Pass/Fail} \\ 
+		\hline
+		1 &  \input{AutoTeX/unitTestPassFail} \\ 
+		\hline
+		\hline
+	\end{tabular}
+\end{table}
+
+
+

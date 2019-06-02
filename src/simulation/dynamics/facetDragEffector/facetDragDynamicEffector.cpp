@@ -1,0 +1,188 @@
+/*
+ ISC License
+
+ Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+
+ Permission to use, copy, modify, and/or distribute this software for any
+ purpose with or without fee is hereby granted, provided that the above
+ copyright notice and this permission notice appear in all copies.
+
+ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+ */
+
+#include <iostream>
+#include "facetDragDynamicEffector.h"
+#include "architecture/messaging/system_messaging.h"
+#include "utilities/linearAlgebra.h"
+#include "utilities/astroConstants.h"
+#include "utilities/avsEigenSupport.h"
+#include "../simulation/utilities/avsEigenMRP.h"
+
+FacetDragDynamicEffector::FacetDragDynamicEffector()
+{
+	this->atmoDensInMsgName = "atmo_dens_0_data";
+    this->extForce_B.fill(0.0);
+    this->extTorquePntB_B.fill(0.0);
+    this->v_B.fill(0.0);
+    this->v_hat_B.fill(0.0);
+    this->densInMsgId = -1;
+	this->numFacets = 0;
+	return;
+}
+
+/*! The destructor.*/
+FacetDragDynamicEffector::~FacetDragDynamicEffector()
+{
+	return;
+}
+
+/*! This method currently does very little.
+ @return void
+ */
+void FacetDragDynamicEffector::SelfInit()
+{
+  return;
+}
+
+/*! This method is used to connect the input density message to the drag effector.
+ It sets the message ID based on what it finds for the input string.
+ @return void
+ */
+void FacetDragDynamicEffector::CrossInit()
+{
+
+	//! - Find the message ID associated with the atmoDensInMsgName string.
+    this->densInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->atmoDensInMsgName,
+                                                                           sizeof(AtmoPropsSimMsg), moduleID);
+}
+
+
+void FacetDragDynamicEffector::Reset()
+{
+    return;
+}
+/*! This method is used to set the input density message produced by some atmospheric model.
+@return void
+*/
+void FacetDragDynamicEffector::setDensityMessage(std::string newDensMessage)
+{
+	this->atmoDensInMsgName = newDensMessage;
+	return;
+}
+
+/*! The DragEffector does not write output messages to the rest of the sim.
+@return void
+ */
+void FacetDragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock)
+{
+	return;
+}
+
+
+/*! This method is used to read the incoming density message and update the internal density/
+atmospheric data.
+ @return void
+ */
+bool FacetDragDynamicEffector::ReadInputs()
+{
+    bool dataGood;
+    //! - Zero the command buffer and read the incoming command array
+    SingleMessageHeader localHeader;
+    memset(&this->atmoInData, 0x0, sizeof(AtmoPropsSimMsg));
+    memset(&localHeader, 0x0, sizeof(localHeader));
+    dataGood = SystemMessaging::GetInstance()->ReadMessage(this->densInMsgId, &localHeader,
+                                                           sizeof(AtmoPropsSimMsg),
+                                                           reinterpret_cast<uint8_t*> (&this->atmoInData), moduleID);
+    return(dataGood);
+}
+
+void FacetDragDynamicEffector::addFacet(double area, double dragCoeff, Eigen::Vector3d B_normal_hat, Eigen::Vector3d B_location){
+	this->scGeometry.facetAreas.push_back(area);
+	this->scGeometry.facetCoeffs.push_back(dragCoeff);
+	this->scGeometry.facetNormals_B.push_back(B_normal_hat);
+	this->scGeometry.facetLocations_B.push_back(B_location);
+	this->numFacets = this->numFacets + 1;
+}
+
+/*! This method is used to link the dragEffector to the hub attitude and velocity,
+which are required for calculating drag forces and torques.
+ @return void
+ @param currentTime The current simulation time converted to a double
+ */
+
+void FacetDragDynamicEffector::linkInStates(DynParamManager& states){
+	this->hubSigma = states.getStateObject("hubSigma");
+	this->hubVelocity = states.getStateObject("hubVelocity");
+}
+
+/*! This method updates the internal drag direction based on the spacecraft velocity vector.
+*/
+void FacetDragDynamicEffector::updateDragDir(){
+    Eigen::MRPd sigmaBN;
+    sigmaBN = (Eigen::Vector3d)this->hubSigma->getState();
+    Eigen::Matrix3d dcm_BN = sigmaBN.toRotationMatrix().transpose();
+    
+    this->v_B = dcm_BN*this->hubVelocity->getState(); // [m/s] sc velocity
+    this->v_hat_B = this->v_B / this->v_B.norm();
+    
+    return;
+}
+
+/*! This method WILL implement a more complex flat-plate aerodynamics model with attitude
+dependence and lift forces.
+*/
+void FacetDragDynamicEffector::plateDrag(){
+	Eigen::Vector3d facetDragForce, facetDragTorque;
+	Eigen::Vector3d totalDragForce, totalDragTorque;
+    
+	//! - Zero out the structure force/torque for the drag set
+    double projectedArea = 0.0;
+    double projectionTerm = 0.0;
+	totalDragForce.setZero();
+	totalDragTorque.setZero();
+    this->extForce_B.setZero();
+    this->extTorquePntB_B.setZero();
+    
+	for(int i = 0; i < this->numFacets; i++){
+	    projectionTerm = this->scGeometry.facetNormals_B[i].dot(this->v_hat_B);
+		projectedArea = this->scGeometry.facetAreas[i] * projectionTerm;
+		if(projectedArea > 0.0){
+			facetDragForce = 0.5 * pow(this->v_B.norm(), 2.0) * this->scGeometry.facetCoeffs[i] * projectedArea * this->atmoInData.neutralDensity * (-1.0)*this->v_hat_B;
+			facetDragTorque = facetDragForce.cross(this->scGeometry.facetLocations_B[i]);
+			totalDragForce = totalDragForce + facetDragForce;
+			totalDragTorque = totalDragTorque + facetDragTorque;
+		}
+	}
+	this->extForce_B = totalDragForce;
+	this->extTorquePntB_B = totalDragTorque;
+
+  return;
+}
+
+
+/*! This method computes the body forces and torques for the dragEffector in a simulation loop,
+selecting the model type based on the settable attribute "modelType."
+*/
+void FacetDragDynamicEffector::computeForceTorque(double integTime){
+	updateDragDir();
+	plateDrag();
+  return;
+}
+
+/*! This method is called to update the local atmospheric conditions at each timestep.
+Naturally, this means that conditions are held piecewise-constant over an integration step.
+ @return void
+ @param CurrentSimNanos The current simulation time in nanoseconds
+ */
+void FacetDragDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
+{
+	ReadInputs();
+	return;
+}

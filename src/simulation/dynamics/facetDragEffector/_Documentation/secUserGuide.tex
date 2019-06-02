@@ -1,0 +1,38 @@
+% !TEX root = ./Basilisk-atmosphere-20190221.tex
+
+\section{User Guide}
+
+\subsection{General Module Setup}
+This section outlines the steps needed to add a facetDrag effector to a spacecraft, add facets to that module, and connect said module to an atmosphere module.
+
+First, import the module and set its tag:
+\begin{verbatim}
+from Basilisk.simulation import facetDragDynamicEffector
+newDrag = facetDragDynamicEffector.FacetDragDynamicEffector()
+newDrag.ModelTag = "FacetDrag"
+\end{verbatim}
+
+Assuming an atmospheric density model has already been set up, the density message to be used by this drag effector can be set by calling
+\begin{verbatim}
+newDrag.setDensityMessage(atmoModule.envOutMsgNames[-1])
+\end{verbatim}
+
+By default, the module has no facets and drag calculation is skipped. To add a facet, call th \verb|addFacet| function with an area, drag coefficient, body-frame normal vector, and body-frame facet location. For example, to add multiple facets, call
+\begin{verbatim}
+scAreas = [1.0, 1.0]
+scCoeff = np.array([2.0, 2.0])
+B_normals = [np.array([1, 0, 0]), np.array([0, 1, 0])]
+B_locations = [np.array([0.1,0,0]), np.array([0,0.1,0])]
+
+for ind in range(0,len(scAreas)):
+	newDrag.addFacet(scAreas[ind], scCoeff[ind], B_normals[ind], B_locations[ind])
+\end{verbatim}
+
+
+Finally, add the module to a spacecraftPlus object using the \verb|addDynamicEffector| method:
+\begin{verbatim}
+scObject = spacecraftPlus.SpacecraftPlus()
+scObject.ModelTag = "spacecraftBody"
+scObject.addDynamicEffector(newDrag)
+\end{verbatim}
+

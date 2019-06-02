@@ -1,7 +1,7 @@
 /*
  ISC License
 
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ Copyright (c) 2016-2018, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -18,8 +18,8 @@
  */
 
 
-#ifndef DRAG_DYNAMIC_EFFECTOR_H
-#define DRAG_DYNAMIC_EFFECTOR_H
+#ifndef FACET_DRAG_DYNAMIC_EFFECTOR_H
+#define FACET_DRAG_DYNAMIC_EFFECTOR_H
 
 #include <Eigen/Dense>
 #include <vector>
@@ -27,9 +27,8 @@
 #include "../_GeneralModuleFiles/stateData.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../../simMessages/atmoPropsSimMsg.h"
-#include "../../simFswInterfaceMessages/navAttIntMsg.h"
-#include "utilities/avsEigenMRP.h"
-#include "utilities/avsEigenSupport.h"
+#include "../dragEffector/dragDynamicEffector.h"
+#include "../../utilities/rigidBodyKinematics.h"
 
 
 
@@ -38,51 +37,56 @@
  * @{
  */
 
-//! @brief Container for basic drag parameters - the spacecraft's atmosphere-relative velocity, its projected area, and its drag coefficient.
+
 typedef struct {
-    double projectedArea;                    //!< m^2   Area of spacecraft projected in velocity direction
-    double dragCoeff;                    //!< --  Nondimensional drag coefficient
-    Eigen::Vector3d comOffset;               //!< m distance from center of mass to center of projected area
-}DragBaseData;
+  std::vector<double> facetAreas;
+  std::vector<double> facetCoeffs;
+  std::vector<Eigen::Vector3d> facetNormals_B;
+  std::vector<Eigen::Vector3d> facetLocations_B;
+}SpacecraftGeometryData;
 
 //! @brief Drag dynamics class used to compute drag effects on spacecraft bodies
 /*! This class is used to implement drag dynamic effects on spacecraft using a variety of simple or complex models, which will include
 cannonball (attitude-independent) drag, single flat-plate drag, faceted drag models, and an interface to full-CAD GPU-accellerated
 drag models. */
-class DragDynamicEffector: public SysModel, public DynamicEffector {
+
+class FacetDragDynamicEffector: public SysModel, public DynamicEffector {
 public:
-    DragDynamicEffector();
-    ~DragDynamicEffector();
+
+
+    FacetDragDynamicEffector();
+    ~FacetDragDynamicEffector();
     void linkInStates(DynParamManager& states);
     void computeForceTorque(double integTime);
     void SelfInit();
     void CrossInit();
+    void Reset();
     void UpdateState(uint64_t CurrentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
-    void cannonballDrag();
-    void updateDragDir();
     void setDensityMessage(std::string newDensMessage);
+    void addFacet(double area, double dragCoeff, Eigen::Vector3d B_normal_hat, Eigen::Vector3d B_location);
 
+private:
+
+    void plateDrag();
+    void updateDragDir();
 public:
-    DragBaseData coreParams;                               //!< -- Struct used to hold drag parameters
+    uint64_t numFacets;
     std::string atmoDensInMsgName;                         //!< -- message used to read command inputs
-    std::string navAttInMsgName;                         //!< -- message used to read spacecraft attitude
-    std::string modelType;                                 //!< -- String used to set the type of model used to compute drag
+    std::string navAttInMsgName;                         //!< -- message used to read command inputs
     StateData *hubSigma;                                   //!< -- Hub/Inertial attitude represented by MRP
     StateData *hubVelocity;                                //!< m/s Hub inertial velocity vector
     Eigen::Vector3d v_B;                         //!< m/s local variable to hold the inertial velocity
-    Eigen::Vector3d v_hat_B;                          //!< -- Drag force direction in the inertial frame
-    Eigen::Vector3d extForce_B;                          //!< -- Drag force direction in the inertial frame
+    Eigen::Vector3d v_hat_B;
+    Eigen::Vector3d extForce_B;
     Eigen::Vector3d extTorquePntB_B;
-    
 
 private:
-    uint64_t densInMsgId;                            //!< -- Message ID for incoming data
+    int64_t densInMsgId;                            //!< -- Message ID for incoming data
     AtmoPropsSimMsg atmoInData;
-    
+    SpacecraftGeometryData scGeometry;                      //!< -- Struct to hold spacecraft facet data
+
 };
 
-/* @} */
-
-#endif /* THRUSTER_DYNAMIC_EFFECTOR_H */
+#endif 
