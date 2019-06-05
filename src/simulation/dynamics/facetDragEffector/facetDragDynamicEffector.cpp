@@ -28,8 +28,8 @@
 FacetDragDynamicEffector::FacetDragDynamicEffector()
 {
 	this->atmoDensInMsgName = "atmo_dens_0_data";
-    this->extForce_B.fill(0.0);
-    this->extTorquePntB_B.fill(0.0);
+    this->forceExternal_B.fill(0.0);
+    this->torqueExternalPntB_B.fill(0.0);
     this->v_B.fill(0.0);
     this->v_hat_B.fill(0.0);
     this->densInMsgId = -1;
@@ -147,8 +147,8 @@ void FacetDragDynamicEffector::plateDrag(){
     double projectionTerm = 0.0;
 	totalDragForce.setZero();
 	totalDragTorque.setZero();
-    this->extForce_B.setZero();
-    this->extTorquePntB_B.setZero();
+    this->forceExternal_B.setZero();
+    this->torqueExternalPntB_B.setZero();
     
 	for(int i = 0; i < this->numFacets; i++){
 	    projectionTerm = this->scGeometry.facetNormals_B[i].dot(this->v_hat_B);
@@ -160,8 +160,8 @@ void FacetDragDynamicEffector::plateDrag(){
 			totalDragTorque = totalDragTorque + facetDragTorque;
 		}
 	}
-	this->extForce_B = totalDragForce;
-	this->extTorquePntB_B = totalDragTorque;
+	this->forceExternal_B = totalDragForce;
+	this->torqueExternalPntB_B = totalDragTorque;
 
   return;
 }

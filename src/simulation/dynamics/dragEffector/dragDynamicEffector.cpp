@@ -30,8 +30,8 @@ DragDynamicEffector::DragDynamicEffector()
     this->coreParams.comOffset.setZero();
 	this->atmoDensInMsgName = "atmo_dens_0_data";
 	this->modelType = "cannonball";
-	this->extForce_B.fill(0.0);
-	this->extTorquePntB_B.fill(0.0);
+	this->forceExternal_B.fill(0.0);
+	this->torqueExternalPntB_B.fill(0.0);
 	this->v_B.fill(0.0);
 	this->v_hat_B.fill(0.0);
 	this->densInMsgId = -1;
@@ -128,11 +128,11 @@ void DragDynamicEffector::updateDragDir(){
 void DragDynamicEffector::cannonballDrag(){
   	//! Begin method steps
   	//! - Zero out the structure force/torque for the drag set
-  	this->extForce_B.setZero();
-    this->extTorquePntB_B.setZero();
+  	this->forceExternal_B.setZero();
+    this->torqueExternalPntB_B.setZero();
     
-  	this->extForce_B  = 0.5 * this->coreParams.dragCoeff * pow(this->v_B.norm(), 2.0) * this->coreParams.projectedArea * this->atmoInData.neutralDensity * (-1.0)*this->v_hat_B;
-  	this->extTorquePntB_B = this->coreParams.comOffset.cross(extForce_B);
+  	this->forceExternal_B  = 0.5 * this->coreParams.dragCoeff * pow(this->v_B.norm(), 2.0) * this->coreParams.projectedArea * this->atmoInData.neutralDensity * (-1.0)*this->v_hat_B;
+  	this->torqueExternalPntB_B = this->coreParams.comOffset.cross(forceExternal_B);
 
   	return;
 }

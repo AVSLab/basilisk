@@ -230,7 +230,7 @@ def run(show_plots, orbitCase, planetCase):
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(newAtmo.envOutMsgNames[-1], samplingTime)
     scSim.TotalSim.logThisMessage(simpleNavObj.outputAttName,samplingTime)
-    scSim.AddVariableForLogging('DragEff.extForce_B', samplingTime, StartIndex=0, StopIndex=2)
+    scSim.AddVariableForLogging('DragEff.forceExternal_B', samplingTime, StartIndex=0, StopIndex=2)
     #
     #   initialize Spacecraft States with initialization variables
     #
@@ -254,7 +254,7 @@ def run(show_plots, orbitCase, planetCase):
     posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
     velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N',range(3))
     attData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN', range(3))
-    dragForce = scSim.GetLogVariableData('DragEff.extForce_B')
+    dragForce = scSim.GetLogVariableData('DragEff.forceExternal_B')
     densData = scSim.pullMessageLogData(newAtmo.envOutMsgNames[-1]+'.neutralDensity')
     np.set_printoptions(precision=16)
 

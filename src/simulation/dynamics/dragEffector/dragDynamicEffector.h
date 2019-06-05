@@ -73,9 +73,6 @@ public:
     StateData *hubVelocity;                                //!< m/s Hub inertial velocity vector
     Eigen::Vector3d v_B;                         //!< m/s local variable to hold the inertial velocity
     Eigen::Vector3d v_hat_B;                          //!< -- Drag force direction in the inertial frame
-    Eigen::Vector3d extForce_B;                          //!< -- Drag force direction in the inertial frame
-    Eigen::Vector3d extTorquePntB_B;
-    
 
 private:
     uint64_t densInMsgId;                            //!< -- Message ID for incoming data

@@ -134,7 +134,7 @@ def TestDragCalculation():
     scSim.TotalSim.terminateSimulation()
 
     dynProcess = scSim.CreateNewProcess(simProcessName)
-    simulationTimeStep = macros.sec2nano(10.)
+    simulationTimeStep = macros.sec2nano(5.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # initialize spacecraftPlus object and set properties
@@ -196,7 +196,7 @@ def TestDragCalculation():
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_CN_N
     scObject.hub.sigma_BNInit =  unitTestSupport.np2EigenVectorXd(sig_BN)
 
-    simulationTime = macros.sec2nano(10.)
+    simulationTime = macros.sec2nano(5.)
     #
     #   Setup data logging before the simulation is initialized
     #
@@ -216,9 +216,9 @@ def TestDragCalculation():
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(newAtmo.ModelTag+"_0_data", samplingTime)
 
-    scSim.AddVariableForLogging(newDrag.ModelTag + ".extForce_B",
+    scSim.AddVariableForLogging(newDrag.ModelTag + ".forceExternal_B",
                                       simulationTimeStep, 0, 2, 'double')
-    scSim.AddVariableForLogging(newDrag.ModelTag + ".extTorquePntB_B",
+    scSim.AddVariableForLogging(newDrag.ModelTag + ".torqueExternalPntB_B",
                                       simulationTimeStep, 0, 2, 'double')
 
     #   configure a simulation stop time time and execute the simulation run
@@ -227,8 +227,8 @@ def TestDragCalculation():
     scSim.ExecuteSimulation()
 
     #   Retrieve logged data
-    dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".extForce_B")
-    dragTorqueData = scSim.GetLogVariableData(newDrag.ModelTag + ".extTorquePntB_B")
+    dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".forceExternal_B")
+    dragTorqueData = scSim.GetLogVariableData(newDrag.ModelTag + ".torqueExternalPntB_B")
     posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
     velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', range(3))
     attData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN', range(3))
@@ -248,7 +248,7 @@ def TestDragCalculation():
 
 
     #   Compare to expected values
-    accuracy = 1e-4
+    accuracy = 1e-3
     #unitTestSupport.writeTeXSnippet("toleranceValue", str(accuracy), path)
 
     test_val = np.zeros([3,])
@@ -370,9 +370,9 @@ def TestShadowCalculation():
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(newAtmo.ModelTag+"_0_data", samplingTime)
 
-    scSim.AddVariableForLogging(newDrag.ModelTag + ".extForce_B",
+    scSim.AddVariableForLogging(newDrag.ModelTag + ".forceExternal_B",
                                       simulationTimeStep, 0, 2, 'double')
-    scSim.AddVariableForLogging(newDrag.ModelTag + ".extTorquePntB_B",
+    scSim.AddVariableForLogging(newDrag.ModelTag + ".torqueExternalPntB_B",
                                       simulationTimeStep, 0, 2, 'double')
 
     #   configure a simulation stop time time and execute the simulation run
@@ -381,9 +381,9 @@ def TestShadowCalculation():
     scSim.ExecuteSimulation()
 
     #   Retrieve logged data
-    #dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".extForce_B")
-    dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".extForce_B")
-    dragTorqueData = scSim.GetLogVariableData(newDrag.ModelTag + ".extTorquePntB_B")
+    #dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".forceExternal_B")
+    dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".forceExternal_B")
+    dragTorqueData = scSim.GetLogVariableData(newDrag.ModelTag + ".torqueExternalPntB_B")
     posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
     velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', range(3))
     attData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN', range(3))
