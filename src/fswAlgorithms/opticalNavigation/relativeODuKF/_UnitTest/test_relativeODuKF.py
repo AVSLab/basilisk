@@ -32,6 +32,26 @@ import relativeODuKF_test_utilities as FilterPlots
 import math
 import numpy as np
 
+def rk4(f, t, x0):
+    x = np.zeros([len(t),len(x0)+1])
+    h = (t[len(t)-1] - t[0])/len(t)
+    x[0,1:] = x0
+    for i in range(len(t)-1):
+        x[i,0] = t[i]
+        k1 = h * f(t[i], x[i,1:])
+        k2 = h * f(t[i] + 0.5 * h, x[i,1:] + 0.5 * k1)
+        k3 = h * f(t[i] + 0.5 * h, x[i,1:] + 0.5 * k2)
+        k4 = h * f(t[i] + h, x[i,1:] + k3)
+        x[i+1,1:] = x[i,1:] + (k1 + 2.*k2 + 2.*k3 + k4) / 6.
+    return x
+
+def twoBodyGrav(t, x, mu = 42828.314):
+    dxdt = np.zeros(np.shape(x))
+    dxdt[0:3] = x[3:]
+    dxdt[3:] = -mu/np.linalg.norm(x[0:3])**3.*x[0:3]
+    return dxdt
+
+
 def setupFilterData(filterObject):
     filterObject.navStateOutMsgName = "relod_state_estimate"
     filterObject.filtDataOutMsgName = "relod_filter_data"
@@ -71,13 +91,16 @@ def setupFilterData(filterObject):
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 
-def test_all_relOD_kf(show_plots):
+def test_utilitites_kf(show_plots):
     [testResults, testMessage] = relOD_utilities_test(show_plots)
     assert testResults < 1, testMessage
+def test_methods_kf(show_plots):
     [testResults, testMessage] = relOD_method_test(show_plots)
     assert testResults < 1, testMessage
+def test_propagation_kf(show_plots):
     [testResults, testMessage] = StatePropRelOD(show_plots)
     assert testResults < 1, testMessage
+def test_measurements_kf(show_plots):
     [testResults, testMessage] = StateUpdateRelOD(show_plots)
     assert testResults < 1, testMessage
 
@@ -186,7 +209,8 @@ def StateUpdateRelOD(show_plots):
     expected[0,1:] = moduleConfig.stateInit
     mu = 42828.314
     energy[0] = -mu/(2*orbitalMotion.rv2elem(mu, expected[0,1:4], expected[0,4:]).a)
-    kick = np.zeros(3)
+
+
     for i in range(1, len(time)):
         dydt[0:3] = expected[i-1,4:]
         if time[i] == t1:
@@ -212,7 +236,7 @@ def StateUpdateRelOD(show_plots):
     for i in range(t1):
         if i > 0 and i % 50 == 0:
             inputData.timeTag = macros.sec2nano(i * dt)
-            inputData.r_N = expected[i,1:4] + np.random.normal(0, 10, 3)
+            inputData.r_N = expected[i,1:4] #+ np.random.normal(0, 10, 3)
             inputData.covar_N = [10., 0.,0.,
                                  0., 10., 0.,
                                  0., 0., 10.]
@@ -240,7 +264,7 @@ def StateUpdateRelOD(show_plots):
     for i in range(t1, 2*t1):
         if i % 50 == 0:
             inputData.timeTag = macros.sec2nano(i * dt + 1)
-            inputData.r_N = expected[i,1:4] +  np.random.normal(0, 10, 3)
+            inputData.r_N = expected[i,1:4] #+  np.random.normal(0, 10, 3)
             inputData.covar_N = [10., 0.,0.,
                                  0., 10., 0.,
                                  0., 0., 10.]
@@ -261,7 +285,7 @@ def StateUpdateRelOD(show_plots):
     FilterPlots.EnergyPlot(time, energy, 'Update', show_plots)
     FilterPlots.StateCovarPlot(stateLog, covarLog, 'Update', show_plots)
     FilterPlots.StatePlot(diff, 'Update', show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, 1, 'Update', show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, 100, 'Update', show_plots)
 
     for i in range(5):
         if (covarLog[t1*2, i * 5 + 1 + i] > covarLog[0, i * 5 + 1 + i] / 10):
@@ -313,17 +337,6 @@ def StatePropRelOD(show_plots):
     setupFilterData(moduleConfig)
     unitTestSim.TotalSim.logThisMessage('relod_filter_data', testProcessRate)
 
-    inputData = relativeODuKF.OpnavFswMsg()
-    inputMessageSize = inputData.getStructSize()
-    inputData.planetID = 2
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.opNavInMsgName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.opNavInMsgName,
-                                          inputMessageSize,
-                                          0,
-                                          inputData)
     timeSim = 60
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.min2nano(timeSim))
@@ -336,13 +349,16 @@ def StatePropRelOD(show_plots):
     expected[0,1:] = moduleConfig.stateInit
     mu = 42828.314
     energy[0] = -mu/(2*orbitalMotion.rv2elem(mu, expected[0,1:4], expected[0,4:]).a)
+    energyRK4 = np.copy(energy)
 
+    expRK4 = rk4(twoBodyGrav, time, moduleConfig.stateInit)
     for i in range(1, len(time)):
         dydt[0:3] = expected[i-1,4:]
         dydt[3:6] = - mu / np.linalg.norm(expected[i-1,1:4])**3.*np.array(expected[i-1,1:4])
         expected[i,0] = time[i]*1E9
         expected[i,1:] = expected[i-1,1:] + (time[i]-time[i-1])*dydt
         energy[i] = - mu / (2 * orbitalMotion.rv2elem(mu, expected[i, 1:4], expected[i, 4:]).a)
+        energyRK4[i] = - mu / (2 * orbitalMotion.rv2elem(mu, expRK4[i, 1:4], expRK4[i, 4:]).a)
 
     stateLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".state", range(6))
     postFitLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".postFitRes", range(3))
@@ -350,10 +366,11 @@ def StatePropRelOD(show_plots):
 
     diff = np.copy(expected)
     diff[:,1:]-=stateLog[:,1:]
+    FilterPlots.EnergyPlot(time, energyRK4, 'Prop', show_plots)
     FilterPlots.EnergyPlot(time, energy, 'Prop', show_plots)
     FilterPlots.StateCovarPlot(stateLog, covarLog, 'Prop', show_plots)
     FilterPlots.StatePlot(diff, 'Prop', show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, 1, 'Prop', show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, 100, 'Prop', show_plots)
 
     if (np.linalg.norm(diff[-1,1:]) > 1.0E-10):
         testFailCount += 1
@@ -628,4 +645,4 @@ def relOD_utilities_test(show_plots):
 
 if __name__ == "__main__":
     # test_all_relOD_kf(True)
-    StateUpdateRelOD(True)
+    StatePropRelOD(True)

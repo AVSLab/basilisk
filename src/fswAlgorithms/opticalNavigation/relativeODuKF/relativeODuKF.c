@@ -316,10 +316,10 @@ int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
         
     }
     /*! - Scale sQNoise matrix depending on the dt*/
-    for (k=0;k<3;k++){
-        procNoise[k*ODUKF_N_STATES+k] *= configData->dt*configData->dt/2;
-        procNoise[(k+3)*ODUKF_N_STATES+(k+3)] *= configData->dt;
-    }
+//    for (k=0;k<3;k++){
+//        procNoise[k*ODUKF_N_STATES+k] *= configData->dt*configData->dt/2;
+//        procNoise[(k+3)*ODUKF_N_STATES+(k+3)] *= configData->dt;
+//    }
     /*! - Pop the sQNoise matrix on to the end of AT prior to getting QR decomposition*/
     memcpy(&AT[2 * configData->countHalfSPs*configData->numStates],
            procNoise, configData->numStates*configData->numStates
