@@ -20,6 +20,7 @@ We are very excited by the great capabilities that this software already has, an
     <li>Added new orbital simulation tutorial on a transfer orbit from Earth to Jupiter using a patched-conic Delta_v</li>
     <li>Added the first image processing FSW module using OpenCV's HoughCirlces.</li>
     <li>Added the a module to convert pixel/line and apparent diameter data from circle-finding algorithm to a OpNav message with relative position and covariance.</li>
+    <li>New faceted model for atmospheric drag evaluation</li>
    </ul>
    
 ##  Version 0.6.2
