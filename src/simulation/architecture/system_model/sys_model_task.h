@@ -50,8 +50,7 @@ public:
     void ResetTask() {this->NextStartTime = this->FirstTaskTime;}
 	void enableTask() {this->taskActive = true;}
 	void disableTask() {this->taskActive = false;}
-	void updatePeriod(uint64_t newPeriod) {this->NextStartTime = this->NextStartTime - this->TaskPeriod + newPeriod;
-	                                        this->TaskPeriod = newPeriod;}
+    void updatePeriod(uint64_t newPeriod);
     
 public:
     std::vector<ModelPriorityPair> TaskModels;  //!< -- Array that has pointers to all task sysModels

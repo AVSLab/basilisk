@@ -155,3 +155,26 @@ void SysModelTask::AddNewObject(SysModel *NewModel, int32_t Priority)
     //! - If we make it to the end of the loop, this is lowest priority, put it at end
     this->TaskModels.push_back(LocalPair);
 }
+
+/*! This method changes the period of a given task over to the requested period.
+   It attempts to keep the same offset relative to the original offset that
+   was specified at task creation.
+ @return void
+ @param uint64_t newPeriod The period that the task should run at going forward
+ */
+void SysModelTask::updatePeriod(uint64_t newPeriod)
+{
+    //! - If the requested time is above the min time, set the next time based on the previos time plus the new period
+    if(this->NextStartTime > this->TaskPeriod)
+    {
+        this->NextStartTime = this->NextStartTime - this->TaskPeriod + newPeriod;
+    }
+    //! - Otherwise, we just should keep the original requested first call time for the task
+    else
+    {
+        this->NextStartTime = this->FirstTaskTime;
+    }
+    //! - Change the period of the task so that future calls will be based on the new period
+    this->TaskPeriod = newPeriod;
+    
+}
