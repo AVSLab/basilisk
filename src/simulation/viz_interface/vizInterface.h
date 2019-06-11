@@ -39,6 +39,7 @@
 #include "../fswAlgorithms/fswMessages/cssConfigFswMsg.h"
 #include "../fswAlgorithms/fswMessages/thrArrayConfigFswMsg.h"
 
+
 typedef struct {
     int64_t msgID;        //!< [-] message ID associated with source
     uint64_t lastTimeTag; //!< [ns] The previous read time-tag for msg
@@ -74,9 +75,12 @@ public:
     std::vector <std::string> rwInMsgName;    //! [-] Name of the incoming rw data
     std::vector <ThrClusterMap> thrMsgData;     //! [-] Name of the incoming thruster data
     std::string starTrackerInMsgName;         //! [-] Name of the incoming Star Tracker data
+    
+    std::string opnavImageOutMsgName;           //! The name of the Image output message*/
+
     uint64_t numSensors;
-    int liveStream;         //! [Bool] Set True if Unity/Viz couple in direct communication. 
-    int saveFile;         //! [Bool] Set True if Viz should save a file of the data. 
+    int opNavMode;          //! [Bool] Set True if Unity/Viz couple in direct communication.
+    int saveFile;           //! [Bool] Set True if Viz should save a file of the data.
 
     std::string vizOutMsgName;
     std::vector <std::string> planetNames;  //!< -- Names of planets we want to track, read in from python
@@ -101,6 +105,9 @@ private:
     MsgCurrStatus cssDataInMsgId;                   //! [-] ID of the incoming css data
     MsgCurrStatus cssConfInMsgId;                  //! [-] ID of the incoming css constellation data
     MsgCurrStatus cameraConfMsgId;                  //! [-] ID of the incoming camera  data
+    int32_t imageOutMsgID;                           //! ID for the outgoing Image message */
+    uint64_t ImageBufferCount;       //!< [-] Count on the number of output message buffers
+
 
     std::vector <RWConfigLogSimMsg> rwInMessage;  //! [-] RW data message
     STSensorIntMsg STMessage;                 //! [-] ST data message

@@ -13,6 +13,7 @@
 #       \defgroup scenarioOrbitManeuverGroup                1.3 Doing Impulsive Orbit Maneuvers
 #       \defgroup scenarioOrbitMultiBodyGroup               1.4 Using Multiple Gravitational Bodies
 #       \defgroup scenarioCentralBodyGroup                  1.5 Setting States Relative to Planets
+#       \defgroup scenarioPatchedConicGroup                 1.6 Simulating a Patched Conic Solution
 #   @}
 #
 #   \defgroup Tutorial_2 Chapter 2: Attitude Simulations

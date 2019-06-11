@@ -21,6 +21,7 @@
 %{
 #include "cameraConfigMsg.h"
 #include "cameraImageMsg.h"
+#include "circlesOpNavMsg.h"
 #include "cmdForceBodyIntMsg.h"
 #include "cmdForceInertialIntMsg.h"
 #include "cmdTorqueBodyIntMsg.h"
@@ -44,6 +45,12 @@
 GEN_SIZEOF(CameraConfigMsg)
 %include "cameraImageMsg.h"
 GEN_SIZEOF(CameraImageMsg)
+%include "circlesOpNavMsg.h"
+GEN_SIZEOF(CirclesOpNavMsg)
+%include "cmdForceBodyIntMsg.h"
+GEN_SIZEOF(CmdForceBodyIntMsg)
+%include "cmdForceInertialIntMsg.h"
+GEN_SIZEOF(CmdForceInertialIntMsg)
 %include "cmdTorqueBodyIntMsg.h"
 GEN_SIZEOF(CmdTorqueBodyIntMsg)
 %include "cssArraySensorIntMsg.h"

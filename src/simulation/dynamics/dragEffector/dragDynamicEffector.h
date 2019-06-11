@@ -27,6 +27,9 @@
 #include "../_GeneralModuleFiles/stateData.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../../simMessages/atmoPropsSimMsg.h"
+#include "../../simFswInterfaceMessages/navAttIntMsg.h"
+#include "utilities/avsEigenMRP.h"
+#include "utilities/avsEigenSupport.h"
 
 
 
@@ -37,7 +40,6 @@
 
 //! @brief Container for basic drag parameters - the spacecraft's atmosphere-relative velocity, its projected area, and its drag coefficient.
 typedef struct {
-    double velocityMag;                 //!< m/s Magnitude of the atmosphere-relative velocity
     double projectedArea;                    //!< m^2   Area of spacecraft projected in velocity direction
     double dragCoeff;                    //!< --  Nondimensional drag coefficient
     Eigen::Vector3d comOffset;               //!< m distance from center of mass to center of projected area
@@ -59,23 +61,23 @@ public:
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void cannonballDrag();
-    void plateDrag();
     void updateDragDir();
     void setDensityMessage(std::string newDensMessage);
 
 public:
     DragBaseData coreParams;                               //!< -- Struct used to hold drag parameters
     std::string atmoDensInMsgName;                         //!< -- message used to read command inputs
+    std::string navAttInMsgName;                         //!< -- message used to read spacecraft attitude
     std::string modelType;                                 //!< -- String used to set the type of model used to compute drag
     StateData *hubSigma;                                   //!< -- Hub/Inertial attitude represented by MRP
     StateData *hubVelocity;                                //!< m/s Hub inertial velocity vector
-    Eigen::Vector3d locInertialVel;                         //!< m/s local variable to hold the inertial velocity
-    AtmoPropsSimMsg densityBuffer;                           //!< -- Struct to hold local atmospheric conditions
+    Eigen::Vector3d v_B;                         //!< m/s local variable to hold the inertial velocity
+    Eigen::Vector3d v_hat_B;                          //!< -- Drag force direction in the inertial frame
 
 private:
-    uint64_t DensInMsgId;                            //!< -- Message ID for incoming data
+    uint64_t densInMsgId;                            //!< -- Message ID for incoming data
     AtmoPropsSimMsg atmoInData;
-    Eigen::Vector3d dragDirection;
+    
 };
 
 /* @} */

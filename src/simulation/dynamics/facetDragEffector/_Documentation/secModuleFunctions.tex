@@ -1,0 +1,14 @@
+% !TEX root = ./Basilisk-atmosphere-20190221.tex
+
+
+\section{Module Functions}
+This module will:
+\begin{itemize}
+	\item \textbf{Compute atmospheric drag}: Each of the provided models is fundamentally intended to compute the neutral atmospheric density and temperature for a spacecraft relative to a body. These parameters are stored in the AtmoPropsSimMsg struct. Supporting parameters needed by each model, such as planet-relative position, are also computed.
+	\item \textbf{Support simple spacecraft geometry dependence}: This module interfaces with modules that subscribe to neutral density messages via the messaging system.
+	\item \textbf {Subscribe to model-relevant information:} Each provided atmospheric model requires different input information to operate, such as current space weather conditions and spacecraft positions. This module automatically attempts to subscribe to the relevant messages for a specified model. \end{itemize}
+
+\section{Module Assumptions and Limitations}
+This module is only intended for simple convex geometries that do not self-shadow; facets that are turned ``away'' from the flow are considered to be non-interacting, while facets that are turned ``into'' the flow are, regardless of other panel geometry. Additionally, specular reflection is not considered, so lift effects are not calculated. 
+
+Drag modeling is complex and subject to a variety of assumptions and limitations. For further details, an interested reader is pointed to ~\citenum{vallado2013}. 

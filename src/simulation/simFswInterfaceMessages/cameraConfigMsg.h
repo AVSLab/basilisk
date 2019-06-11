@@ -21,11 +21,11 @@
 typedef struct {
     int64_t cameraID;          //!< [-]   ID of the camera that took the snapshot*/
     double fieldOfView;        //!< [deg]   Camera Field of View in degrees*/
-    double resolution[2];      //!< [-] Camera resolution, width/height in pixels (pixelWidth/pixelHeight in Unity) in pixels*/
-    double renderRate;         //!< [ns] Rate at which to capture images in nano sec */
+    int resolution[2];      //!< [-] Camera resolution, width/height in pixels (pixelWidth/pixelHeight in Unity) in pixels*/
+    uint64_t renderRate;       //!< [ns] Rate at which to capture images in nano sec */
     double focalLength;        //!< [m]   Camera Focal Length in meters*/
     double sensorSize[2];      //!< [mm]   Size of the camera sensor-paired with resolution gives you pixel size in mm*/
     double cameraPos_B[3];     //!< [m] Camera position in body frame */
-    double cameraDir_B[3];     //!< [m] Rotation to the camera frame MRP*/
+    double sigma_BC[3];     //!< [m] Rotation to the camera frame MRP*/
 }CameraConfigMsg;
 

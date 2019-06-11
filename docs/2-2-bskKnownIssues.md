@@ -1,7 +1,22 @@
 # Basilisk Known Issues {#bskKnownIssues}
 
 
-## Version 0.X.X
+## Upcoming Version 0.X.X
+   <ul>
+    <li>text here</li>
+   </ul>
+   
+## Version 0.6.2
+   <ul>
+        <li>WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk `src/` directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.
+    </li>
+    <li>
+        The enableUnityViz python function how has different inputs.  Earlier python scripts must be updated.  See the scenarios for examples.  The arguments are now provided as optional keywords.
+    </li>
+ </ul>
+ 
+ 
+## Version 0.6.1
    <ul>
         <li>WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk `src/` directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.
     </li>

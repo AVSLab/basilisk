@@ -38,25 +38,37 @@ except ImportError:
     vizFound = False
 
 
-def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFactory = None):
+def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
     if not vizFound:
         print 'Could not find vizInterface when import attempted.  Be sure to build BSK with vizInterface support.'
         return
 
-    home = os.path.dirname(fileName)
-    if len(home)!=0:
-        home +='/'
-    namePath, name = os.path.split(fileName)
-    if not os.path.isdir(home + '_VizFiles'):
-        os.mkdir(home + '_VizFiles')
-    fileNamePath = home + '_VizFiles/' + name
-
-
     # setup the Vizard interface module
-    vizMessager = vizInterface.VizInterface()
-    scSim.AddModelToTask(simTaskName, vizMessager)
-    vizMessager.saveFile = 1
-    vizMessager.spiceInMsgName = vizInterface.StringVector([      "earth_planet_data",
+    vizMessenger = vizInterface.VizInterface()
+    scSim.AddModelToTask(simTaskName, vizMessenger)
+
+    # note that the following logic can receive a single file name, or a full path + file name.
+    # In both cases a local results are stored in a local sub-folder.
+    vizMessenger.saveFile = 0
+    if kwargs.has_key('saveFile'):
+        fileNamePath = kwargs['saveFile']
+        fileName = os.path.splitext(os.path.basename(fileNamePath))[0]
+        filePath = os.path.dirname(fileNamePath)
+        if filePath == "":
+            filePath = "."
+        if not os.path.isdir(filePath + '/_VizFiles'):
+            os.mkdir(filePath + '/_VizFiles')
+        vizFileNamePath = filePath + '/_VizFiles/' + fileName + '_UnityViz.bin'
+        vizMessenger.saveFile = 1
+        vizMessenger.protoFilename = vizFileNamePath
+        print "Saving Viz file to " + vizFileNamePath
+
+    vizMessenger.opNavMode = 0
+    if kwargs.has_key('opNavMode'):
+        if kwargs['opNavMode'] == True:
+            vizMessenger.opNavMode = 1
+
+    vizMessenger.spiceInMsgName = vizInterface.StringVector([      "earth_planet_data",
                                                                   "mars_planet_data",
                                                                   "mars barycenter_planet_data",
                                                                   "sun_planet_data",
@@ -68,12 +80,12 @@ def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFact
                                                                   "neptune barycenter_planet_data",
                                                                   "pluto barycenter_planet_data",
                                                                   "saturn barycenter_planet_data"])
-    vizMessager.planetNames = vizInterface.StringVector(["earth", "mars", "mars barycenter", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
-    vizMessager.protoFilename = fileNamePath
+    vizMessenger.planetNames = vizInterface.StringVector(["earth", "mars", "mars barycenter", "sun", "jupiter barycenter", "moon", "venus", "mercury", "uranus barycenter", "neptune barycenter", "pluto barycenter", "saturn barycenter"])
 
 
     # see if celestial body planet ephemeris messages must be created
-    if (gravFactory != None):
+    if (kwargs.has_key('gravBodies')):
+        gravFactory = kwargs['gravBodies']
         gravBodies = gravFactory.gravBodies
         if (gravBodies):
             for key in gravBodies:
@@ -86,6 +98,8 @@ def enableUnityVisualization(scSim, simTaskName, processName, fileName, gravFact
                     ephemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
                     ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
                     ephemData.PlanetName = key
-                    unitTestSupport.setMessage(scSim.TotalSim, processName, msgName, ephemData)
+                    # setting the msg structure name is required below to all the planet msg to be logged
+                    unitTestSupport.setMessage(scSim.TotalSim, processName, msgName,
+                                               ephemData, "SpicePlanetStateSimMsg")
 
-    return
+    return vizMessenger

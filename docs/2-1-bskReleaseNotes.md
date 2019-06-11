@@ -12,7 +12,30 @@ We are very excited by the great capabilities that this software already has, an
 * Python 3 support
 * live plotting capability during a BSK run
 
-##  Upcoming Version 0.X.X
+
+## Upcoming Version 0.X.X
+   <ul>
+    <li>Added the enableViz method to the bskSim scnearios.</li>
+    <li>Added dvGuidance PDF module description</li>
+    <li>Added new orbital simulation tutorial on a transfer orbit from Earth to Jupiter using a patched-conic Delta_v</li>
+    <li>Added the first image processing FSW module using OpenCV's HoughCirlces.</li>
+    <li>Added the a module to convert pixel/line and apparent diameter data from circle-finding algorithm to a OpNav message with relative position and covariance.</li>
+   </ul>
+   
+##  Version 0.6.2
+<ul>
+    <li>
+        hot fix that adds back a missing method in sim_model.c/h that causes the `enableViz` support method to not work.
+    </li>
+    <li>
+        updated Viz_Interface module with opNavMode flag. This triggers logic to link Basilisk and Vizard with a TCP connection. This is ground work for closed loop visual navigation capabilities.
+    </li>
+    <li>
+        updated enableUnityViz python function in utilities/vizSupport. It now takes in key word arguments to simplify the user interface. It also reliably saves Vizard files for play back in the same directory as the scenario that calls it. 
+    </li>
+</ul>
+   
+##  Version 0.6.1
 <ul>
     <li>
       Created a user guide MD file that is included in the BSK Doxygen HTML documentation.    
@@ -46,7 +69,7 @@ We are very excited by the great capabilities that this software already has, an
     </li>
 </ul>
 
-##  Upcoming Version 0.6.0
+##  Version 0.6.0
 <ul>
     <li>
         Added a new `vizInterface` module.  This version is able to record a BSK simulation which can then be played back in the BSK Vizard visualization program.  Vizard must be downloaded separately.  To enable this capabilty, see the scenario tutorial files.  `scenariosBasicOrbit.py` discusses how to enable this.  The python support macro `vizSupport.enableUnityVisualization()` is commented out by default.  Further, to compile `vizInterface` the CMake flags `USE_PROTOBUFFERS` and `USE_ZEROMQ` must be turned on.  A new MD FAQ support file discusses the Cmake options.
