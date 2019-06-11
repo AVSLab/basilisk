@@ -60,7 +60,7 @@ public:
     void computeForceTorque(double integTime);
     void SelfInit();
     void CrossInit();
-    void Reset();
+    void Reset(uint64_t CurrentSimNanos);
     void UpdateState(uint64_t CurrentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
@@ -73,17 +73,17 @@ private:
     void updateDragDir();
 public:
     uint64_t numFacets;
-    std::string atmoDensInMsgName;                         //!< -- message used to read command inputs
-    std::string navAttInMsgName;                         //!< -- message used to read command inputs
-    StateData *hubSigma;                                   //!< -- Hub/Inertial attitude represented by MRP
-    StateData *hubVelocity;                                //!< m/s Hub inertial velocity vector
-    Eigen::Vector3d v_B;                         //!< m/s local variable to hold the inertial velocity
+    std::string atmoDensInMsgName;                  //!< -- message used to read command inputs
+    std::string navAttInMsgName;                    //!< -- message used to read command inputs
+    StateData *hubSigma;                            //!< -- Hub/Inertial attitude represented by MRP
+    StateData *hubVelocity;                         //!< m/s Hub inertial velocity vector
+    Eigen::Vector3d v_B;                            //!< m/s local variable to hold the inertial velocity
     Eigen::Vector3d v_hat_B;
 
 private:
     int64_t densInMsgId;                            //!< -- Message ID for incoming data
     AtmoPropsSimMsg atmoInData;
-    SpacecraftGeometryData scGeometry;                      //!< -- Struct to hold spacecraft facet data
+    SpacecraftGeometryData scGeometry;              //!< -- Struct to hold spacecraft facet data
 
 };
 

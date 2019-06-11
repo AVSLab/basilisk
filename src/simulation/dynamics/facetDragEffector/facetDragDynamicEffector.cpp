@@ -64,7 +64,7 @@ void FacetDragDynamicEffector::CrossInit()
 }
 
 
-void FacetDragDynamicEffector::Reset()
+void FacetDragDynamicEffector::Reset(uint64_t CurrentSimNanos)
 {
     return;
 }
