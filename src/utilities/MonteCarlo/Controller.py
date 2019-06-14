@@ -30,19 +30,15 @@ import os
 import random
 import traceback
 import shutil
-import matplotlib.pyplot as plt
-
+import pandas
 import copy
-
 import gzip
 import json
-import cPickle as pickle
-
-from multiprocessing import Pool, cpu_count
 import signal
-
+import time
 import numpy as np
-
+import multiprocessing as mp
+import cPickle as pickle
 
 class Controller:
     """
@@ -55,7 +51,9 @@ class Controller:
         self.executionCount = 0
         self.ICrunFlag = False
         self.icDirectory = ""
-        self.numProcess = cpu_count()
+        self.numProcess = mp.cpu_count()
+        self.multiProcManager = mp.Manager()
+        self.dataOutQueue = self.multiProcManager.Queue()
         self.simParams = SimulationParameters(
             creationFunction=None,
             executionFunction=None,
@@ -67,6 +65,8 @@ class Controller:
             filename="",
             icfilename=""
         )
+        self.dataWriter = DataWriter(self.dataOutQueue)
+        self.dataWriter.daemon = False
 
     @staticmethod
     def load(runDirectory):
@@ -322,7 +322,7 @@ class Controller:
 
         # The simulation executor is responsible for executing simulation given a simulation's parameters
         # It is called within worker threads with each worker's simulation parameters
-        simulationExecutor = SimulationExecutor()
+        simulationExecutor = SimulationExecutor(self.dataOutQueue)
         #
         if self.numProcess == 1:  # don't make child thread
             if self.simParams.verbose:
@@ -335,10 +335,10 @@ class Controller:
                     failed.append(i)
                 i += 1
         else:
-            pool = Pool(self.numProcess)
+            pool = mp.Pool(self.numProcess)
             try:
                 # yields results *as* the workers finish jobs
-                for result in pool.imap_unordered(simulationExecutor, simGenerator):
+                for result in pool.imap_unordered(simulationExecutor, [simGenerator, self.dataOutQueue]):
                     if result[0] is not True:  # workers return True on success
                         failed.append(result[1])  # add failed jobs to the list of failures
                         print "Job", result[1], "failed..."
@@ -446,7 +446,6 @@ class Controller:
             data = self.getRetainedData(simIndex)
             for retentionPolicy in retentionPolicies:
                 retentionPolicy.executeCallback(data)
-                
 
     def executeSimulations(self):
         ''' Execute simulations in parallel
@@ -473,6 +472,10 @@ class Controller:
 
         numSims = self.executionCount
 
+        # start data writer process
+        self.dataWriter.setLogDir(self.archiveDir)
+        self.dataWriter.start()
+
         # Avoid building a full list of all simulations to run in memory,
         # instead only generating simulations right before they are needed by a waiting worker
         # This is accomplished using a generator and pool.imap, -- simulations are only built
@@ -492,15 +495,15 @@ class Controller:
             i = 0
             for sim in simGenerator:
                 try:
-                    simulationExecutor(sim)
+                    simulationExecutor(sim, self.dataOutQueue)
                 except:
                     failed.append(i)
                 i += 1
         else:
-            pool = Pool(self.numProcess)
+            pool = mp.Pool(self.numProcess)
             try:
                 # yields results *as* the workers finish jobs
-                for result in pool.imap_unordered(simulationExecutor, simGenerator):
+                for result in pool.imap_unordered(simulationExecutor, [(x, self.dataOutQueue) for x in simGenerator]):
                     if result[0] is not True:  # workers return True on success
                         failed.append(result[1])  # add failed jobs to the list of failures
                         print "Job", result[1], "failed..."
@@ -522,6 +525,10 @@ class Controller:
                 traceback.print_exc()
                 pool.terminate()
             finally:
+                while not self.dataOutQueue.empty():
+                    time.sleep(1)
+                self.dataOutQueue.put((None, None, True))
+                time.sleep(1)
                 pool.join()
 
         # if there are failures
@@ -662,12 +669,9 @@ class RetentionPolicy():
                 }
             }
         """
-
-        data = {}
-        data["messages"] = {}
-        data["variables"] = {}
-        data["custom"] = {}
-
+        data = {"messages": {}, "variables": {}, "custom": {}}
+        df = pandas.DataFrame()
+        dataFrames = []
         for retentionPolicy in retentionPolicies:
             for message in retentionPolicy.messageLogList:
                 for (param, dataType) in message.retainedVars:
@@ -685,11 +689,116 @@ class RetentionPolicy():
                 tmpModuleData = func(simInstance)
                 for (key, value) in tmpModuleData.iteritems():
                     data["custom"][key] = value
-
         return data
 
 
-class SimulationExecutor():
+class DataWriter(mp.Process):
+    """ Class to be launched as separate process to pull data from queue and write out to .csv dataFrames
+        Args:
+            q: queue object from multiprocessing.Manager.queue
+        Returns:
+            Nil
+    """
+    def __init__(self, q):
+        super(DataWriter, self).__init__()
+        self._queue = q
+        self._endToken = None
+        self._logDir = ""
+        self._dataFiles = set()
+
+    def run(self):
+        """ The process run loop. Gets data from a queue and writes it out to per message csv files
+            Args:
+                Nil
+            Returns:
+                Nil
+        """
+        while self._endToken is None:
+            data, mcSimIndex, self._endToken = self._queue.get()
+            if self._endToken:
+                continue
+
+            for msgName, msgData in data["messages"].items():
+                fileName = msgName.replace(".", "_")
+                filePath = self._logDir + fileName + ".csv"
+                self._dataFiles.add(filePath)
+                colName = msgName + "_" + str(mcSimIndex)
+
+                # Do we have scalar data or vector data?
+                if msgData.shape[1] > 2:
+                    df = pandas.DataFrame([msgData[:, 1:].tolist()], [colName]).T
+                    df = df.set_index(msgData[:, 0])
+                else:
+                    df = pandas.DataFrame({colName: msgData[:, 1].tolist()})
+                    df = df.set_index(msgData[:, 0])
+
+                # If the data .csv file doesn't exist save the dataframe to create the file
+                # and skip the remainder of the loop
+                if not os.path.exists(filePath):
+                    allData = df
+                    allData.to_csv(filePath, index_label="index")
+                    continue
+
+                allData = pandas.read_csv(filePath, index_col=0)
+                allData[colName] = df.iloc[0:, 0].values
+                allData.to_csv(filePath, index_label="index")
+
+            for varName, varData in data["variables"].items():
+                fileName = varName.replace(".", "_")
+                filePath = self._logDir + fileName + ".csv"
+                self._dataFiles.add(filePath)
+                colName = varName + "_" + str(mcSimIndex)
+
+                # Do we have scalar data or vector data?
+                if varData.shape[1] > 2:
+                    df = pandas.DataFrame([varData[:, 1:].tolist()], [colName]).T
+                    df = df.set_index(varData[:, 0])
+                else:
+                    df = pandas.DataFrame({colName: varData[:, 1].tolist()})
+                    df = df.set_index(varData[:, 0])
+
+                # If the data .csv file doesn't exist save the dataframe to create the file
+                # and skip the remainder of the loop
+                if not os.path.exists(filePath):
+                    allData = df
+                    allData.to_csv(filePath, index_label="index")
+                    continue
+
+                allData = pandas.read_csv(filePath, index_col=0)
+                allData[colName] = df.iloc[0:, 0].values
+                allData.to_csv(filePath, index_label="index")
+
+            # Now handle custom data held by the rentention policies.
+            # This only handles scalar/single valued data, not vectors
+            for customName, customData in data["custom"].items():
+                fileName = customName.replace(".", "_")
+                filePath = self._logDir + fileName + ".csv"
+                self._dataFiles.add(filePath)
+                colName = customName + "_" + str(mcSimIndex)
+
+                df = pandas.DataFrame([customData], columns=[colName])
+
+                # If the data .csv file doesn't exist save the dataframe to create the file
+                # and skip the remainder of the loop
+                if not os.path.exists(filePath):
+                    allData = df
+                    allData.to_csv(filePath, index_label="index")
+                    continue
+
+                allData = pandas.read_csv(filePath, index_col=0)
+                allData[colName] = df.iloc[0:, 0].values
+                allData.to_csv(filePath, index_label="index")
+
+        for filePath in self._dataFiles:
+            allData = pandas.read_csv(filePath, index_col=0)
+            allData = allData.reindex(sorted(allData.columns, key=lambda name: int(name.split("_")[-1])), axis=1)
+            allData.to_csv(filePath, index_label="index")
+
+    def setLogDir(self, logDir):
+        self._logDir = logDir
+
+
+class SimulationExecutor:
     '''
     This class is used to execute a simulation in a worker thread.
     To use, create an instance of this class, and then call the instance with the simulation parameters to run them in.
@@ -699,20 +808,23 @@ class SimulationExecutor():
     successFlag = executor(simParams)
 
     This class can be used to execute a simulation on a different thread, by using this class as the processes target.
-    Note, this class has no instance variables, it is used essentially as a collection of static methods.
     '''
+    #
 
     @classmethod
-    def __call__(cls, simParams):
+    def __call__(cls, params):
         ''' In each worker process, we execute this function (by calling this object)
         Args:
-            simParams: SimulationParameters
-                The simulation parameters for the simulation to be executed.
+            params [simParams, data out queue]:
+                A SimulationParameters object for the simulation to be executed and the output data queue
+                for the data writer.
         Returns:
             success: bool
                 (True, simParams.index) if simulation run was successful
                 (False, simParams.index) if simulation run was unsuccessful
         '''
+        simParams = params[0]
+        dataOutQueue = params[1]
 
         try:
             signal.signal(signal.SIGINT, signal.SIG_IGN)  # On ctrl-c ignore the signal... let the parent deal with it.
@@ -782,8 +894,10 @@ class SimulationExecutor():
                 if simParams.verbose:
                     print "Retaining data for run in", retentionFile
 
+                retainedData = RetentionPolicy.getDataForRetention(simInstance, simParams.retentionPolicies)
+                dataOutQueue.put((retainedData, simParams.index, None))
+
                 with gzip.open(retentionFile, "w") as archive:
-                    retainedData = RetentionPolicy.getDataForRetention(simInstance, simParams.retentionPolicies)
                     retainedData["index"] = simParams.index # add run index
                     pickle.dump(retainedData, archive)
 
