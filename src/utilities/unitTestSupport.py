@@ -47,7 +47,7 @@ from Basilisk import __path__
 bskPath = __path__[0]
 # import Viz messaging related modules
 #from Basilisk.simulation import vis_message_interface
-from Basilisk.simulation import vis_clock_synch
+#from Basilisk.simulation import vis_clock_synch
 from Basilisk.simulation import spice_interface
 
 import tabulate as T
