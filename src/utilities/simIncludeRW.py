@@ -21,18 +21,19 @@
 #   Simulation Setup Utilities for RW
 #
 
-import sys, os, inspect
+import sys
 import numpy
 
 import macros
 from Basilisk.simulation import simMessages
+from collections import OrderedDict
 
 class rwFactory(object):
     def __init__(self):
         self.BalancedWheels = 0
         self.JitterSimple = 1
         self.JitterFullyCoupled = 2
-        self.rwList = {}
+        self.rwList = OrderedDict()
         self.maxMomentum = 0.0
 
     def create(self, rwType, gsHat_B, **kwargs):
