@@ -28,6 +28,8 @@
 %ignore SelfInit_dvAccumulation;
 %constant void CrossInit_dvAccumulation(void*, uint64_t);
 %ignore CrossInit_dvAccumulation;
+%constant void Reset_dvAccumulation(void*, uint64_t, uint64_t);
+%ignore Reset_dvAccumulation;
 %include "dvAccumulation.h"
 
 %include "simFswInterfaceMessages/navTransIntMsg.h"
