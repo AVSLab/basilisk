@@ -27,12 +27,12 @@ import sys, os, inspect
 import numpy
 
 from Basilisk.simulation import simMessages
-
+from collections import OrderedDict
 
 class thrusterFactory(object):
     def __init__(self):
         self.useMinPulseTime = True
-        self.thrusterList = {}
+        self.thrusterList = OrderedDict()
 
     def create(self, thrusterType, r_B, tHat_B, **kwargs):
         """
