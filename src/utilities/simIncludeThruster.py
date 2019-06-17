@@ -178,11 +178,8 @@ class thrusterFactory(object):
 
         thDynamicEffector.ModelTag = modelTag
 
-
-        for key, th in self.thrusterList.iteritems():
+        for key, th in self.thrusterList.items():
             thDynamicEffector.addThruster(th)
-
-        # fuelTankEffector.addThrusterSet(thDynamicEffector)
 
         scPlus.addDynamicEffector(thDynamicEffector)
 

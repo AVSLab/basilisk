@@ -256,12 +256,14 @@ class rwFactory(object):
 
             Parameters
             ----------
+            :param modelTag:  string with the model tag
             :param rwStateEffector:
             :param scPlus:
         """
+
         rwStateEffector.ModelTag = modelTag
 
-        for key, rw in self.rwList.iteritems():
+        for key, rw in self.rwList.items():
             rwStateEffector.addReactionWheel(rw)
 
         scPlus.addStateEffector(rwStateEffector)
