@@ -21,6 +21,7 @@ We are very excited by the great capabilities that this software already has, an
     <li>Added the first image processing FSW module using OpenCV's HoughCirlces.</li>
     <li>Added the a module to convert pixel/line and apparent diameter data from circle-finding algorithm to a OpNav message with relative position and covariance.</li>
     <li>New faceted model for atmospheric drag evaluation</li>
+    <li>Updated RW and Thruster Simulation factory classes to use ordered dictionary lists.  This ensures that the devices are used in the order they are added. 
    </ul>
    
 ##  Version 0.6.2
