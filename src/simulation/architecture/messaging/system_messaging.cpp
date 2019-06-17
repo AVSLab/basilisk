@@ -101,16 +101,16 @@ void SystemMessaging::selectMessageBuffer(uint64_t bufferUse)
 /*!
  * This method records the current number of messages in the messageStorage space
  * @return void
- * @param uint64_t MessageCount
+ * @param int64_t MessageCount
  */
-void SystemMessaging::SetNumMessages(uint64_t MessageCount)
+void SystemMessaging::SetNumMessages(int64_t MessageCount)
 {
     if(this->messageStorage == NULL)
     {
         BSK_PRINT_BRIEF(MSG_ERROR,"Received a request to set num messages for a NULL buffer.");
         return;
     }
-    memcpy(&(this->messageStorage->messageStorage.StorageBuffer[0]), &MessageCount, sizeof(uint64_t));
+    memcpy(&(this->messageStorage->messageStorage.StorageBuffer[0]), &MessageCount, sizeof(int64_t));
 }
 
 /*!
@@ -146,14 +146,14 @@ void SystemMessaging::clearMessaging()
 /*! This method gets the number of messages in the selected or requested buffer
  *
  * @param int32_t bufferSelect
- * @return uint64_t CurrentMessageCount
+ * @return int64_t CurrentMessageCount
  */
-uint64_t SystemMessaging::GetMessageCount(int32_t bufferSelect)
+int64_t SystemMessaging::GetMessageCount(int32_t bufferSelect)
 {
-    uint64_t *CurrentMessageCount;
+    int64_t *CurrentMessageCount;
     if(bufferSelect < 0)
     {
-       CurrentMessageCount = reinterpret_cast<uint64_t*>
+       CurrentMessageCount = reinterpret_cast<int64_t*>
            (&this->messageStorage->messageStorage.StorageBuffer[0]);
     }
     else
@@ -161,26 +161,26 @@ uint64_t SystemMessaging::GetMessageCount(int32_t bufferSelect)
         std::vector<MessageStorageContainer *>::iterator it;
         it = this->dataBuffers.begin();
         it += bufferSelect;
-        CurrentMessageCount = reinterpret_cast<uint64_t*>
+        CurrentMessageCount = reinterpret_cast<int64_t*>
         (&((*it)->messageStorage.StorageBuffer[0]));
     }
     return(*CurrentMessageCount);
 }
 
 /*! This method returns total size of message buffer in bytes including:
- *  - a uint64_t for num msgs
+ *  - a int64_t for num msgs
  *  - a MessageHeaderData Struct for each message
  *  - (the size of a message + a single message header) * the number of buffers for that message
  * @return void
  */
-uint64_t SystemMessaging::GetCurrentSize()
+int64_t SystemMessaging::GetCurrentSize()
 {
-    uint64_t TotalBufferSize = sizeof(uint64_t); // -- The num-messages count;
+    int64_t TotalBufferSize = sizeof(int64_t); // -- The num-messages count;
     MessageHeaderData *MessHeader = reinterpret_cast<MessageHeaderData *>
-    (&this->messageStorage->messageStorage.StorageBuffer[sizeof(uint64_t)]);
-    uint64_t TotalMessageCount = this->GetMessageCount();
+    (&this->messageStorage->messageStorage.StorageBuffer[sizeof(int64_t)]);
+    int64_t TotalMessageCount = this->GetMessageCount();
     uint64_t SingleHeaderSize = sizeof(SingleMessageHeader);
-    for(uint64_t i=0; i<TotalMessageCount; i++)
+    for(int64_t i=0; i<TotalMessageCount; i++)
     {
         TotalBufferSize += sizeof(MessageHeaderData);
         TotalBufferSize += MessHeader->MaxNumberBuffers *
@@ -331,11 +331,11 @@ int64_t SystemMessaging::subscribeToMessage(std::string messageName,
 
 /*!
  * This message gives the requesting module write rights if the module and message are valid
- * @param uint64_t messageID the ID of the message to write to
+ * @param int64_t messageID the ID of the message to write to
  * @param int64_t moduleID The ID of the requesting module
  * @return bool rightsObtained True if access was granted, else false
  */
-bool SystemMessaging::obtainWriteRights(uint64_t messageID, int64_t moduleID)
+bool SystemMessaging::obtainWriteRights(int64_t messageID, int64_t moduleID)
 {
     bool rightsObtained = false;
     
@@ -353,11 +353,11 @@ bool SystemMessaging::obtainWriteRights(uint64_t messageID, int64_t moduleID)
 
 /*!
  * this method gives the requesting module permission to read the requested message
- * @param uint64_t messageID The message to get read rights to
+ * @param int64_t messageID The message to get read rights to
  * @param int64_t moduleID The requesting module
  * @return bool rightsObtained True if rights granted, else false
  */
-bool SystemMessaging::obtainReadRights(uint64_t messageID, int64_t moduleID)
+bool SystemMessaging::obtainReadRights(int64_t messageID, int64_t moduleID)
 {
  
     bool rightsObtained = false;
@@ -409,14 +409,14 @@ MessageIdentData SystemMessaging::messagePublishSearch(std::string messageName)
 
 /*!
  * This method writes data to an already-created message if the requester has the right to
- * @param uin64_t MessageID The message to write to
+ * @param in64_t MessageID The message to write to
  * @param uint64_t ClockTimeNanos The time to say the message was written in ns since sim start
  * @param uint64_t MsgSize Size of the message
  * @param void* MsgPayload The data in the message
  * @param int64_t moduleID The requester ID
  * @return bool -- whether or not the message was written
  */
-bool SystemMessaging::WriteMessage(uint64_t MessageID, uint64_t ClockTimeNanos,
+bool SystemMessaging::WriteMessage(int64_t MessageID, uint64_t ClockTimeNanos,
                                    uint64_t MsgSize, void *MsgPayload, int64_t moduleID)
 {
     // Check if the message is valid
@@ -499,7 +499,7 @@ void SystemMessaging::AccessMessageData(uint8_t *MsgBuffer, uint64_t maxMsgBytes
 
 /*!
  * This method reads a message. A warning is thrown if the requester isn't supposed to be reading this message.
- * @param uint64_t MessageID  ID of the message to read
+ * @param int64_t MessageID  ID of the message to read
  * @param SingleMessageHeader* DataHeader Message header pointer to put message header data into
  * @param uint64_t MaxBytes The maximum number of bytes to read into MsgPayload
  * @param void* MsgPayload A pointer to memory to toss the message data into
@@ -507,7 +507,7 @@ void SystemMessaging::AccessMessageData(uint8_t *MsgBuffer, uint64_t maxMsgBytes
  * @param uint64_t CurrentOffset
  * @return bool -- Whether the message was read successfully or not
  */
-bool SystemMessaging::ReadMessage(uint64_t MessageID, SingleMessageHeader
+bool SystemMessaging::ReadMessage(int64_t MessageID, SingleMessageHeader
                                   *DataHeader, uint64_t MaxBytes, void *MsgPayload, int64_t moduleID, uint64_t CurrentOffset)
 {
     if(MessageID >= this->GetMessageCount())
@@ -558,9 +558,9 @@ bool SystemMessaging::ReadMessage(uint64_t MessageID, SingleMessageHeader
  */
 void SystemMessaging::PrintAllMessageData()
 {
-    uint64_t TotalMessageCount = this->GetMessageCount();
+    int64_t TotalMessageCount = this->GetMessageCount();
     BSK_PRINT_BRIEF(MSG_INFORMATION, "Number of Messages: %lld ", TotalMessageCount);
-    for(uint64_t i=0; i<TotalMessageCount; i++)
+    for(int64_t i=0; i<TotalMessageCount; i++)
     {
         this->PrintMessageStats(i);
     }
@@ -568,11 +568,11 @@ void SystemMessaging::PrintAllMessageData()
 
 /*!
  * This method returns the MessageHeaderData for a MessageID in the bufferSelect buffer
- * @param uint64_t MessageID The message to query for the header
+ * @param int64_t MessageID The message to query for the header
  * @param int32_t bufferSelect The buffer to query for the message
  * @return MessageHeaderdata* MsgHdr The data requested
  */
-MessageHeaderData* SystemMessaging::FindMsgHeader(uint64_t MessageID, int32_t bufferSelect)
+MessageHeaderData* SystemMessaging::FindMsgHeader(int64_t MessageID, int32_t bufferSelect)
 {
     MessageHeaderData* MsgHdr;
     if(MessageID >= this->GetMessageCount(bufferSelect))
@@ -595,10 +595,10 @@ MessageHeaderData* SystemMessaging::FindMsgHeader(uint64_t MessageID, int32_t bu
 
 /*!
  *  This message prints MessageHeaderData information for the requested MessageID
- * @param uint64_t MessageID The message to query
+ * @param int64_t MessageID The message to query
  * @return void
  */
-void SystemMessaging::PrintMessageStats(uint64_t MessageID)
+void SystemMessaging::PrintMessageStats(int64_t MessageID)
 {
     MessageHeaderData* MsgHdr = this->FindMsgHeader(MessageID);
     if(MsgHdr == NULL)
@@ -612,11 +612,11 @@ void SystemMessaging::PrintMessageStats(uint64_t MessageID)
 
 /*!
  * Finds the message name for the requested message in the selected buffer
- * @param uint64_t MessageID The message to query for the name
+ * @param int64_t MessageID The message to query for the name
  * @param int32_t bufferSelect The buffer to query for the message
  * @return std::string MessageName The name of the six fingered man
  */
-std::string SystemMessaging::FindMessageName(uint64_t MessageID, int32_t bufferSelect)
+std::string SystemMessaging::FindMessageName(int64_t MessageID, int32_t bufferSelect)
 {
     if(MessageID >= this->GetMessageCount(bufferSelect))
     {
@@ -631,12 +631,12 @@ std::string SystemMessaging::FindMessageName(uint64_t MessageID, int32_t bufferS
  * This message takes a MessageName and gives a message ID
  * @param std::string MessageName The name to query for the ID
  * @param int32_t bufferSelect The buffer to query for the name
- * @return uint64_t -- the message ID
+ * @return int64_t -- the message ID
  */
 int64_t SystemMessaging::FindMessageID(std::string MessageName, int32_t bufferSelect)
 {
     MessageHeaderData* MsgHdr;
-    for(uint64_t i=0; i<this->GetMessageCount(bufferSelect); i++)
+    for(int64_t i=0; i<this->GetMessageCount(bufferSelect); i++)
     {
         MsgHdr = this->FindMsgHeader(i, bufferSelect);
         if(MessageName == std::string(MsgHdr->MessageName))
@@ -706,7 +706,7 @@ std::set<std::string> SystemMessaging::getUniqueMessageNames()
     std::vector<MessageStorageContainer *>::iterator it;
     for(it = this->dataBuffers.begin(); it != this->dataBuffers.end(); it++)
     {
-        for(uint64_t i=0; i<this->GetMessageCount(it - this->dataBuffers.begin()); i++)
+        for(int64_t i=0; i<this->GetMessageCount(it - this->dataBuffers.begin()); i++)
         {
             outputNames.insert(this->FindMessageName(i, it - this->dataBuffers.begin()));
             
@@ -717,11 +717,11 @@ std::set<std::string> SystemMessaging::getUniqueMessageNames()
 
 /*!
  * This message gets the exchangeData for a given messageID
- * @param uint64_t messageID
+ * @param int64_t messageID
  * @return std::set<std::pair<long int, long int>> exchangeList
  */
 std::set<std::pair<long int, long int>>
-    SystemMessaging::getMessageExchangeData(uint64_t messageID)
+    SystemMessaging::getMessageExchangeData(int64_t messageID)
 {
     std::vector<MessageExchangeData>::iterator it;
     it = this->messageStorage->exchangeData.begin();

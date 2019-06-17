@@ -91,7 +91,7 @@ typedef struct {
 typedef struct {
     std::string bufferName;  //! (-) String associated with the message buffer
     uint64_t processBuffer;  //! (-) Buffer ID for where this message originally lives
-    uint64_t itemID;  //! (-) ID associated with request
+    int64_t itemID;  //! (-) ID associated with request
     bool itemFound;  //! (-) Indicator of whether the buffer was found
 }MessageIdentData;
 
@@ -106,23 +106,23 @@ class SystemMessaging
 public:
     static SystemMessaging* GetInstance();  //! -- returns a pointer to the sim instance of SystemMessaging
     uint64_t AttachStorageBucket(std::string bufferName = "");  //! -- adds a new buffer to the messaging system
-    void SetNumMessages(uint64_t MessageCount);  //! --updates message count in buffer header
-    uint64_t GetMessageCount(int32_t bufferSelect = -1);  //! --gets the number of messages in buffer bufferSelect
+    void SetNumMessages(int64_t MessageCount);  //! --updates message count in buffer header
+    int64_t GetMessageCount(int32_t bufferSelect = -1);  //! --gets the number of messages in buffer bufferSelect
     void ClearMessageBuffer();  //! -- sets current buffer to zeros
-    uint64_t GetCurrentSize();  //! -- returns size of current buffer
+    int64_t GetCurrentSize();  //! -- returns size of current buffer
     int64_t CreateNewMessage(std::string MessageName, uint64_t MaxSize,
         uint64_t NumMessageBuffers = 2, std::string messageStruct = "", int64_t moduleID = -1);
-    bool WriteMessage(uint64_t MessageID, uint64_t ClockTimeNanos, uint64_t MsgSize,
+    bool WriteMessage(int64_t MessageID, uint64_t ClockTimeNanos, uint64_t MsgSize,
                       void *MsgPayload, int64_t moduleID = -1);
-    bool ReadMessage(uint64_t MessageID, SingleMessageHeader *DataHeader,
+    bool ReadMessage(int64_t MessageID, SingleMessageHeader *DataHeader,
                      uint64_t MaxBytes, void *MsgPayload, int64_t moduleID=-1, uint64_t CurrentOffset=0);
     static void AccessMessageData(uint8_t *MsgBuffer, uint64_t maxMsgBytes,
                                   uint64_t CurrentOffset, SingleMessageHeader *DataHeader,
                                   uint64_t maxReadBytes, uint8_t *OutputBuffer);
-    MessageHeaderData* FindMsgHeader(uint64_t MessageID, int32_t bufferSelect=-1);  //! -- returns a MessageHeaderData
+    MessageHeaderData* FindMsgHeader(int64_t MessageID, int32_t bufferSelect=-1);  //! -- returns a MessageHeaderData
     void PrintAllMessageData();  //! -- prints data for messages in current buffer
-    void PrintMessageStats(uint64_t MessageID);  //! -- prints data for a single message by ID
-    std::string FindMessageName(uint64_t MessageID, int32_t bufferSelect=-1);  //! -- searches only the selected buffer
+    void PrintMessageStats(int64_t MessageID);  //! -- prints data for a single message by ID
+    std::string FindMessageName(int64_t MessageID, int32_t bufferSelect=-1);  //! -- searches only the selected buffer
     int64_t FindMessageID(std::string MessageName, int32_t bufferSelect=-1);  //! -- searches only the selected buffer
     int64_t subscribeToMessage(std::string messageName, uint64_t messageSize,
         int64_t moduleID);
@@ -134,10 +134,10 @@ public:
     std::set<std::string> getUnpublishedMessages();  //! -- returns msgs no one has access rights to
     std::set<std::string> getUniqueMessageNames();  //! -- searched across all buffers
     std::set<std::pair<long int, long int>>
-        getMessageExchangeData(uint64_t messageID);
+        getMessageExchangeData(int64_t messageID);
     void clearMessaging();  //! -- wipes out all messages and buffers. total messaging system reset.
-    bool obtainWriteRights(uint64_t messageID, int64_t moduleID);  //! -- grants rights to the requesting module
-    bool obtainReadRights(uint64_t messageID, int64_t moduleID);  //! -- grants rights to the requesting module
+    bool obtainWriteRights(int64_t messageID, int64_t moduleID);  //! -- grants rights to the requesting module
+    bool obtainReadRights(int64_t messageID, int64_t moduleID);  //! -- grants rights to the requesting module
     uint64_t getFailureCount() {return (this->CreateFails + this->ReadFails + this->WriteFails);}
 
 private:
