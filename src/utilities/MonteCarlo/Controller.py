@@ -691,7 +691,6 @@ class RetentionPolicy():
                     data["custom"][key] = value
         return data
 
-
 class DataWriter(mp.Process):
     """ Class to be launched as separate process to pull data from queue and write out to .csv dataFrames
         Args:
@@ -718,85 +717,59 @@ class DataWriter(mp.Process):
             if self._endToken:
                 continue
 
-            for msgName, msgData in data["messages"].items():
-                fileName = msgName.replace(".", "_")
-                filePath = self._logDir + fileName + ".csv"
-                self._dataFiles.add(filePath)
-                colName = msgName + "_" + str(mcSimIndex)
+            for dictName, dictData in data.iteritems(): # Loops through Messages, Variables, Custom dictionaries in the retention policy
+                for itemName, itemData in dictData.iteritems(): # Loop through all items and their data
+                    filePath = self._logDir + itemName + ".data"
+                    self._dataFiles.add(filePath)
 
-                # Do we have scalar data or vector data?
-                if msgData.shape[1] > 2:
-                    df = pandas.DataFrame([msgData[:, 1:].tolist()], [colName]).T
-                    df = df.set_index(msgData[:, 0])
-                else:
-                    df = pandas.DataFrame({colName: msgData[:, 1].tolist()})
-                    df = df.set_index(msgData[:, 0])
+                    # Is the data a vector, scalar, or non-existant?
+                    try:
+                        variLen = itemData[:,1:].shape[1]
+                    except:
+                        variLen = 0
 
-                # If the data .csv file doesn't exist save the dataframe to create the file
-                # and skip the remainder of the loop
-                if not os.path.exists(filePath):
-                    allData = df
-                    allData.to_csv(filePath, index_label="index")
-                    continue
+                    # Generate the MultiLabel
+                    outerLabel = [mcSimIndex]
+                    innerLabel = []
 
-                allData = pandas.read_csv(filePath, index_col=0)
-                allData[colName] = df.iloc[0:, 0].values
-                allData.to_csv(filePath, index_label="index")
+                    for i in range(variLen):
+                        innerLabel.append(i)
+                    if variLen == 0:
+                        innerLabel.append(1) # May not be necessary, might be able to leave blank and get a None
+                    labels = pandas.MultiIndex.from_product([outerLabel, innerLabel], names=["runNum", "varIdx"])
 
-            for varName, varData in data["variables"].items():
-                fileName = varName.replace(".", "_")
-                filePath = self._logDir + fileName + ".csv"
-                self._dataFiles.add(filePath)
-                colName = varName + "_" + str(mcSimIndex)
+                    # Generate the individual run's dataframe
+                    if variLen >= 2:
+                        df = pandas.DataFrame(itemData[:, 1:].tolist(), index=itemData[:,0], columns=labels)
+                    elif variLen == 1:
+                        df = pandas.DataFrame(itemData[:, 1].tolist(), index=itemData[:,0], columns=labels)
+                    else:
+                        df = pandas.DataFrame([np.nan], columns=labels)
 
-                # Do we have scalar data or vector data?
-                if varData.shape[1] > 2:
-                    df = pandas.DataFrame([varData[:, 1:].tolist()], [colName]).T
-                    df = df.set_index(varData[:, 0])
-                else:
-                    df = pandas.DataFrame({colName: varData[:, 1].tolist()})
-                    df = df.set_index(varData[:, 0])
+                    # If the .data file doesn't exist save the dataframe to create the file
+                    # and skip the remainder of the loop
+                    if not os.path.exists(filePath):
+                        allData = df
+                        allData.to_pickle(filePath)
+                        continue
 
-                # If the data .csv file doesn't exist save the dataframe to create the file
-                # and skip the remainder of the loop
-                if not os.path.exists(filePath):
-                    allData = df
-                    allData.to_csv(filePath, index_label="index")
-                    continue
+                    # If the .data file does exists, append the run's df.
+                    allData = pandas.read_pickle(filePath)
+                    allData = pandas.concat([allData,df],axis=1)
+                    allData.to_pickle(filePath)
 
-                allData = pandas.read_csv(filePath, index_col=0)
-                allData[colName] = df.iloc[0:, 0].values
-                allData.to_csv(filePath, index_label="index")
-
-            # Now handle custom data held by the rentention policies.
-            # This only handles scalar/single valued data, not vectors
-            for customName, customData in data["custom"].items():
-                fileName = customName.replace(".", "_")
-                filePath = self._logDir + fileName + ".csv"
-                self._dataFiles.add(filePath)
-                colName = customName + "_" + str(mcSimIndex)
-
-                df = pandas.DataFrame([customData], columns=[colName])
-
-                # If the data .csv file doesn't exist save the dataframe to create the file
-                # and skip the remainder of the loop
-                if not os.path.exists(filePath):
-                    allData = df
-                    allData.to_csv(filePath, index_label="index")
-                    continue
-
-                allData = pandas.read_csv(filePath, index_col=0)
-                allData[colName] = df.iloc[0:, 0].values
-                allData.to_csv(filePath, index_label="index")
-
+        # Sort by the MultiIndex (first by run number then by variable component)
         for filePath in self._dataFiles:
-            allData = pandas.read_csv(filePath, index_col=0)
-            allData = allData.reindex(sorted(allData.columns, key=lambda name: int(name.split("_")[-1])), axis=1)
-            allData.to_csv(filePath, index_label="index")
+            # We create a new index so that we populate any missing run data (in the case that a run breaks) with NaNs.
+            allData = pandas.read_pickle(filePath)
+            newMultInd = pandas.MultiIndex.from_product([range(allData.columns.min()[0], allData.columns.max()[0]+1),
+                                                         range(allData.columns.min()[1], allData.columns.max()[1]+1)])
+            #allData = allData.sort_index(axis=1, level=[0,1]) #TODO: When we dont lose MCs anymore, we should just use this call
+            allData = allData.reindex(columns=newMultInd)
+            allData.to_pickle(filePath)
 
     def setLogDir(self, logDir):
         self._logDir = logDir
-
 
 class SimulationExecutor:
     '''
