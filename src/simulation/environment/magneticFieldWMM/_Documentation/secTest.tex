@@ -1,0 +1,59 @@
+% !TEX root = ./Basilisk-magFieldDipole-20190309.tex
+
+\section{Test Description and Success Criteria}
+This section describes the specific unit tests conducted on this module. 
+This unit test only runs the magnetic field Basilisk module with two fixed spacecraft state input messages.  The simulation option {\tt useDefault} checks if the module default settings are used that lead to a zero magnetic field vector, or if the centered dipole parameters are setup manually.  The option {\tt useMinReach} dictates if the minimum orbit radius check is performed, while the option {\tt useMaxReach} checks if the maximum reach check is performed.  The option {\tt usePlanetEphemeris} checks if a planet state input message should be created.  All permutations are checked.
+
+\section{Test Parameters}
+The simulation tolerances are shown in Table~\ref{tab:errortol}.  In each simulation the neutral density output message is checked relative to python computed true values.  
+\begin{table}[htbp]
+	\caption{Error tolerance for each test.}
+	\label{tab:errortol}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c } % Column formatting, 
+		\hline\hline
+		\textbf{Output Value Tested}  & \textbf{Tolerated Error}  \\ 
+		\hline
+		{\tt magneticField vector}        & \input{AutoTeX/unitTestToleranceValue} (relative) \\ 
+		\hline\hline
+	\end{tabular}
+\end{table}
+
+
+
+
+\section{Test Results}
+The following two tables show the test results.  All tests are expected to pass.
+
+
+
+\begin{table}[H]
+	\caption{Test result for {\tt test\_unitTestMagneticField.py}}
+	\label{tab:results}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{c | c | c | c | c } % Column formatting, 
+		\hline\hline
+		{\tt useDefault} & {\tt useMinReach} & {\tt useMaxReach} & {\tt usePlanetEphemeris} & \textbf{Pass/Fail} \\ 
+		\hline
+	   False & False & False & False	& \input{AutoTeX/unitTestPassFailFalseFalseFalseFalse} \\ 
+	   False & False & False & True	& \input{AutoTeX/unitTestPassFailFalseFalseFalseTrue} \\ 
+	   False & False & True & False	& \input{AutoTeX/unitTestPassFailFalseFalseTrueFalse} \\ 
+	   False & False & True & True	& \input{AutoTeX/unitTestPassFailFalseFalseTrueTrue} \\ 
+	   False & True & False & False	& \input{AutoTeX/unitTestPassFailFalseTrueFalseFalse} \\ 
+	   False & True & False & True	& \input{AutoTeX/unitTestPassFailFalseTrueFalseTrue} \\ 
+	   False & True & True & False	& \input{AutoTeX/unitTestPassFailFalseTrueTrueFalse} \\ 
+	   False & True & True & True	& \input{AutoTeX/unitTestPassFailFalseTrueTrueTrue} \\ 
+	   True & False & False & False	& \input{AutoTeX/unitTestPassFailFalseFalseFalseFalse} \\ 
+	   True & False & False & True	& \input{AutoTeX/unitTestPassFailTrueFalseFalseTrue} \\ 
+	   True & False & True & False	& \input{AutoTeX/unitTestPassFailTrueFalseTrueFalse} \\ 
+	   True & False & True & True	& \input{AutoTeX/unitTestPassFailTrueFalseTrueTrue} \\ 
+	   True & True & False & False	& \input{AutoTeX/unitTestPassFailTrueTrueFalseFalse} \\ 
+	   True & True & False & True	& \input{AutoTeX/unitTestPassFailTrueTrueFalseTrue} \\ 
+	   True & True & True & False	& \input{AutoTeX/unitTestPassFailTrueTrueTrueFalse} \\ 
+	   True & True & True & True	& \input{AutoTeX/unitTestPassFailTrueTrueTrueTrue} \\ 
+	   \hline\hline
+	\end{tabular}
+\end{table}
+
+
+
