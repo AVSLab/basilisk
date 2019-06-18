@@ -80,6 +80,7 @@ def dvAccumulationTestFunction():
     moduleConfig = dvAccumulation.DVAccumulationData()  # Create a config struct
     moduleConfig.accPktInMsgName = "inputs_acceleration_packets"
     moduleConfig.outputNavName = "output_navigation_name"
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputNavName, testProcessRate)
 
     # This calls the algContain to setup the selfInit, crossInit, update, and reset
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
@@ -95,12 +96,9 @@ def dvAccumulationTestFunction():
     random.seed(12345)
     inputAccData.accPkts = generateAccData()
 
-    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.accPktInMsgName, inputAccData)
-
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputNavName, testProcessRate)
-
     # Initialize the simulation
     unitTestSim.InitializeSimulation()
+    unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, moduleConfig.accPktInMsgName, inputAccData)
 
     #   Step the simulation to 3*process rate so 4 total steps including zero
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
