@@ -45,9 +45,9 @@ From Basilisk root directory:
 ```
 mkdir dist $$ cd dist
 ```
-Configure and Build:
+Configuration and Build:
 ```
-cmake -G "Visual Studio 15 2017 Win64" ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF
+cmake -G "Visual Studio <MSVC Version> <MSVC Toolset/Year> Win<arch>" ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF
 cmake --build . --target ALL_BUILD --config Release
 ```
 For arch x86:
