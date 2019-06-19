@@ -24,6 +24,7 @@ import math
 
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion
 import matplotlib.pyplot as plt
+import scipy.integrate as integ
 from Basilisk.fswAlgorithms import relativeODuKF, fswMessages  # import the module that is to be tested
 
 import relativeODuKF_test_utilities as FilterPlots
@@ -35,17 +36,26 @@ import numpy as np
 def rk4(f, t, x0):
     x = np.zeros([len(t),len(x0)+1])
     h = (t[len(t)-1] - t[0])/len(t)
+    x[0,0] = t[0]
     x[0,1:] = x0
     for i in range(len(t)-1):
+        h = t[i+1] - t[i]
         x[i,0] = t[i]
         k1 = h * f(t[i], x[i,1:])
         k2 = h * f(t[i] + 0.5 * h, x[i,1:] + 0.5 * k1)
         k3 = h * f(t[i] + 0.5 * h, x[i,1:] + 0.5 * k2)
         k4 = h * f(t[i] + h, x[i,1:] + k3)
         x[i+1,1:] = x[i,1:] + (k1 + 2.*k2 + 2.*k3 + k4) / 6.
+        x[i+1,0] = t[i+1]
     return x
 
 def twoBodyGrav(t, x, mu = 42828.314):
+    dxdt = np.zeros(np.shape(x))
+    dxdt[0:3] = x[3:]
+    dxdt[3:] = -mu/np.linalg.norm(x[0:3])**3.*x[0:3]
+    return dxdt
+
+def twoBodyGravODE(x, t, mu = 42828.314):
     dxdt = np.zeros(np.shape(x))
     dxdt[0:3] = x[3:]
     dxdt[3:] = -mu/np.linalg.norm(x[0:3])**3.*x[0:3]
@@ -81,8 +91,8 @@ def setupFilterData(filterObject):
                               0.0, 0.0, 0.0, 0.0, 0.0, 5.]
 
     qNoiseIn = np.identity(6)
-    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.00001*0.00001
-    qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6]*0.0001*0.0001
+    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.0001*0.0001
+    qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6]*0.001*0.001
     filterObject.qNoise = qNoiseIn.reshape(36).tolist()
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -154,14 +164,8 @@ def relOD_method_test(show_plots):
     propedState = []
     for i in range(6):
         propedState.append(relativeODuKF.doubleArray_getitem(stateIn, i))
-
-    dydt = np.zeros(6)
-    dydt[0:3] = state[3:6]
-    dydt[3:6] = -mu/np.linalg.norm(state[0:3])**3.*np.array(state[0:3])
-
-    expected = np.array(state) + dt*dydt
-
-    if np.linalg.norm(np.array(propedState) - expected) > 1.0E-15:
+    expected = rk4(twoBodyGrav, [0, dt], state)
+    if np.linalg.norm((np.array(propedState) - expected[-1,1:])/expected[-1,1:]) > 1.0E-15:
         testFailCount += 1
         testMessages.append("State Prop Failure")
     return [testFailCount, ''.join(testMessages)]
@@ -185,7 +189,7 @@ def StateUpdateRelOD(show_plots):
 
     # Create test thread
     dt = 1
-    t1 = 500
+    t1 = 700
 
     testProcessRate = macros.sec2nano(dt)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
@@ -202,7 +206,7 @@ def StateUpdateRelOD(show_plots):
     setupFilterData(moduleConfig)
     unitTestSim.TotalSim.logThisMessage('relod_filter_data', testProcessRate)
 
-    time = np.linspace(0,2*t1,2*t1/dt+1)
+    time = np.linspace(0,3*t1,3*t1/dt+1)
     dydt = np.zeros(6)
     energy = np.zeros(len(time))
     expected=np.zeros([len(time), 7])
@@ -210,16 +214,11 @@ def StateUpdateRelOD(show_plots):
     mu = 42828.314
     energy[0] = -mu/(2*orbitalMotion.rv2elem(mu, expected[0,1:4], expected[0,4:]).a)
 
+    kick = np.array([0.,0.,0.,-0.01, 0.01, 0.02]) * 10
 
+    expected[0:t1,:] = rk4(twoBodyGrav, time[0:t1], moduleConfig.stateInit)
+    expected[t1:3*t1+1,:] = rk4(twoBodyGrav, time[t1:len(time)], expected[t1-1,1:] + kick)
     for i in range(1, len(time)):
-        dydt[0:3] = expected[i-1,4:]
-        if time[i] == t1:
-            kick = np.array([-0.01, 0.01, 0.02])*10
-            dydt[3:6] = - mu / np.linalg.norm(expected[i-1,1:4])**3.*np.array(expected[i-1,1:4]) + kick
-        else:
-            dydt[3:6] = - mu / np.linalg.norm(expected[i - 1, 1:4]) ** 3. * np.array(expected[i - 1, 1:4])
-        expected[i,0] = time[i]*1E9
-        expected[i,1:] = expected[i-1,1:] + (time[i]-time[i-1])*dydt
         energy[i] = - mu / (2 * orbitalMotion.rv2elem(mu, expected[i, 1:4], expected[i, 4:]).a)
 
     inputData = relativeODuKF.OpnavFswMsg()
@@ -236,10 +235,10 @@ def StateUpdateRelOD(show_plots):
     for i in range(t1):
         if i > 0 and i % 50 == 0:
             inputData.timeTag = macros.sec2nano(i * dt)
-            inputData.r_N = expected[i,1:4] #+ np.random.normal(0, 10, 3)
-            inputData.covar_N = [10., 0.,0.,
-                                 0., 10., 0.,
-                                 0., 0., 10.]
+            inputData.r_N = expected[i,1:4] + np.random.normal(0, 5, 3)
+            inputData.covar_N = [5., 0.,0.,
+                                 0., 5., 0.,
+                                 0., 0., 5.]
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.opNavInMsgName,
                                                   inputMessageSize,
                                                   unitTestSim.TotalSim.CurrentNanos,
@@ -251,23 +250,18 @@ def StateUpdateRelOD(show_plots):
     postFitLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".postFitRes", range(3))
     covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", range(6 * 6))
 
-    for i in range(5):
-        # check covariance immediately after measurement is taken,
-        # ensure order of magnitude less than initial covariance.
-        if (covarLog[t1, i * 5 + 1 + i] > covarLog[0, i * 5 + 1 + i] / 10):
+    for i in range(6):
+        if (covarLog[t1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i] / 1000):
             testFailCount += 1
             testMessages.append("Covariance update failure")
-        if (abs(stateLog[-1, i + 1] - expected[t1, i+1]) > 1.0E-1):
-            testFailCount += 1
-            testMessages.append("State update failure")
 
-    for i in range(t1, 2*t1):
+    for i in range(t1, 3*t1):
         if i % 50 == 0:
             inputData.timeTag = macros.sec2nano(i * dt + 1)
-            inputData.r_N = expected[i,1:4] #+  np.random.normal(0, 10, 3)
-            inputData.covar_N = [10., 0.,0.,
-                                 0., 10., 0.,
-                                 0., 0., 10.]
+            inputData.r_N = expected[i,1:4] +  np.random.normal(0, 5, 3)
+            inputData.covar_N = [5., 0.,0.,
+                                 0., 5., 0.,
+                                 0., 0., 5.]
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.opNavInMsgName,
                                                   inputMessageSize,
                                                   unitTestSim.TotalSim.CurrentNanos,
@@ -282,18 +276,19 @@ def StateUpdateRelOD(show_plots):
 
     diff = np.copy(expected)
     diff[:,1:]-=stateLog[:,1:]
-    FilterPlots.EnergyPlot(time, energy, 'Update', show_plots)
-    FilterPlots.StateCovarPlot(stateLog, covarLog, 'Update', show_plots)
-    FilterPlots.StatePlot(diff, 'Update', show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, 100, 'Update', show_plots)
+    # FilterPlots.EnergyPlot(time, energy, 'Update', show_plots)
+    # FilterPlots.StateCovarPlot(stateLog, covarLog, 'Update', show_plots)
+    # FilterPlots.StatePlot(diff, 'Update', show_plots)
+    # FilterPlots.PostFitResiduals(postFitLog, 100, 'Update', show_plots)
 
-    for i in range(5):
-        if (covarLog[t1*2, i * 5 + 1 + i] > covarLog[0, i * 5 + 1 + i] / 10):
+    for i in range(6):
+        if (covarLog[t1*3, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i] / 1000):
             testFailCount += 1
             testMessages.append("Covariance update failure")
-        if (abs(stateLog[-1, i + 1] - expected[-1,i+1]) > 1.0E-1):
-            testFailCount += 1
-            testMessages.append("State update failure")
+
+    if (np.linalg.norm(diff[-1, 1:]/expected[-1,1:]) > 1.0E-1):
+        testFailCount += 1
+        testMessages.append("State propagation failure")
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -321,7 +316,7 @@ def StatePropRelOD(show_plots):
     unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
-    dt = 5
+    dt = 1
     testProcessRate = macros.sec2nano(dt)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
@@ -349,16 +344,9 @@ def StatePropRelOD(show_plots):
     expected[0,1:] = moduleConfig.stateInit
     mu = 42828.314
     energy[0] = -mu/(2*orbitalMotion.rv2elem(mu, expected[0,1:4], expected[0,4:]).a)
-    energyRK4 = np.copy(energy)
-
-    expRK4 = rk4(twoBodyGrav, time, moduleConfig.stateInit)
+    expected = rk4(twoBodyGrav, time, moduleConfig.stateInit)
     for i in range(1, len(time)):
-        dydt[0:3] = expected[i-1,4:]
-        dydt[3:6] = - mu / np.linalg.norm(expected[i-1,1:4])**3.*np.array(expected[i-1,1:4])
-        expected[i,0] = time[i]*1E9
-        expected[i,1:] = expected[i-1,1:] + (time[i]-time[i-1])*dydt
         energy[i] = - mu / (2 * orbitalMotion.rv2elem(mu, expected[i, 1:4], expected[i, 4:]).a)
-        energyRK4[i] = - mu / (2 * orbitalMotion.rv2elem(mu, expRK4[i, 1:4], expRK4[i, 4:]).a)
 
     stateLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".state", range(6))
     postFitLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".postFitRes", range(3))
@@ -366,13 +354,16 @@ def StatePropRelOD(show_plots):
 
     diff = np.copy(expected)
     diff[:,1:]-=stateLog[:,1:]
-    FilterPlots.EnergyPlot(time, energyRK4, 'PropRK4', show_plots)
     FilterPlots.EnergyPlot(time, energy, 'Prop', show_plots)
     FilterPlots.StateCovarPlot(stateLog, covarLog, 'Prop', show_plots)
     FilterPlots.StatePlot(diff, 'Prop', show_plots)
     FilterPlots.PostFitResiduals(postFitLog, 100, 'Prop', show_plots)
 
-    if (np.linalg.norm(diff[-1,1:]) > 1.0E-10):
+    if (np.linalg.norm(diff[-1,1:]/expected[-1,1:]) > 1.0E-10):
+        testFailCount += 1
+        testMessages.append("State propagation failure")
+
+    if energy[0] - energy[-1] > 1.0E-10:
         testFailCount += 1
         testMessages.append("State propagation failure")
 
@@ -645,4 +636,4 @@ def relOD_utilities_test(show_plots):
 
 if __name__ == "__main__":
     # test_all_relOD_kf(True)
-    StatePropRelOD(True)
+    StateUpdateRelOD(True)
