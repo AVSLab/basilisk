@@ -103,11 +103,17 @@ void VizInterface::CrossInit()
     this->cssConfInMsgId.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
     
     /*! Define Camera input messages */
-    this->cameraConfMsgId.msgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cameraConfInMsgName,
+    MessageIdentData msgInfo;
+    msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(this->cameraConfInMsgName);
+    if (msgInfo.itemFound) {
+        this->cameraConfMsgId.msgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cameraConfInMsgName,
                                                                                     sizeof(CameraConfigMsg), moduleID);
-    this->cameraConfMsgId.dataFresh = false;
-    this->cameraConfMsgId.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
-    
+        this->cameraConfMsgId.dataFresh = false;
+        this->cameraConfMsgId.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+    } else {
+        this->cameraConfMsgId.msgID = -1;
+    }
+
     /*! Define SCPlus input message */
     this->scPlusInMsgID.msgID = SystemMessaging::GetInstance()->subscribeToMessage(scPlusInMsgName,
             sizeof(SCPlusStatesSimMsg), moduleID);
