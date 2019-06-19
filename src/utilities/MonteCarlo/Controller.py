@@ -52,8 +52,7 @@ class Controller:
         self.ICrunFlag = False
         self.icDirectory = ""
         self.numProcess = mp.cpu_count()
-        self.multiProcManager = mp.Manager()
-        self.dataOutQueue = self.multiProcManager.Queue()
+
         self.simParams = SimulationParameters(
             creationFunction=None,
             executionFunction=None,
@@ -65,8 +64,7 @@ class Controller:
             filename="",
             icfilename=""
         )
-        self.dataWriter = DataWriter(self.dataOutQueue)
-        self.dataWriter.daemon = False
+
 
     @staticmethod
     def load(runDirectory):
@@ -80,6 +78,10 @@ class Controller:
             data = pickle.load(pickledData)
             if data.simParams.verbose:
                 print "Loading montecarlo at", filename
+            data.multiProcManager = mp.Manager()
+            data.dataOutQueue = data.multiProcManager.Queue()
+            data.dataWriter = DataWriter(data.dataOutQueue)
+            data.dataWriter.daemon = False
             return data
 
     def setExecutionFunction(self, newModule):
@@ -276,7 +278,7 @@ class Controller:
 
             # execute simulation with dispersion
             executor = SimulationExecutor()
-            success = executor(simParams)
+            success = executor([simParams, self.dataOutQueue])
 
             if not success:
                 print "Error re-executing run", caseNumber
@@ -309,6 +311,7 @@ class Controller:
         if self.simParams.shouldArchiveParameters:
             if not os.path.exists(self.icDirectory):
                 print "Cannot run initial conditions: the directory given does not exist"
+
             if self.simParams.verbose:
                 print "Archiving a copy of this simulation before running it in 'MonteCarlo.data'"
             try:
@@ -317,12 +320,18 @@ class Controller:
             except Exception as e:
                 print "Unknown exception while trying to pickle monte-carlo-controller... \ncontinuing...\n\n", e
 
+
+        self.multiProcManager = mp.Manager()
+        self.dataOutQueue = self.multiProcManager.Queue()
+        self.dataWriter = DataWriter(self.dataOutQueue)
+        self.dataWriter.daemon = False
+
         simGenerator = self.generateICSims(caseList)
         jobsFinished = 0  # keep track of what simulations have finished
 
         # The simulation executor is responsible for executing simulation given a simulation's parameters
         # It is called within worker threads with each worker's simulation parameters
-        simulationExecutor = SimulationExecutor(self.dataOutQueue)
+        simulationExecutor = SimulationExecutor()
         #
         if self.numProcess == 1:  # don't make child thread
             if self.simParams.verbose:
@@ -330,7 +339,7 @@ class Controller:
             i = 0
             for sim in simGenerator:
                 try:
-                    simulationExecutor(sim)
+                    simulationExecutor([sim,  self.dataOutQueue])
                 except:
                     failed.append(i)
                 i += 1
@@ -338,7 +347,7 @@ class Controller:
             pool = mp.Pool(self.numProcess)
             try:
                 # yields results *as* the workers finish jobs
-                for result in pool.imap_unordered(simulationExecutor, [simGenerator, self.dataOutQueue]):
+                for result in pool.imap_unordered(simulationExecutor, [(x, self.dataOutQueue) for x in simGenerator]):
                     if result[0] is not True:  # workers return True on success
                         failed.append(result[1])  # add failed jobs to the list of failures
                         print "Job", result[1], "failed..."
@@ -469,6 +478,11 @@ class Controller:
                     pickle.dump(self, pickleFile)  # dump this controller object into a file.
             except Exception as e:
                 print "Unknown exception while trying to pickle monte-carlo-controller... \ncontinuing...\n\n", e
+
+        self.multiProcManager = mp.Manager()
+        self.dataOutQueue = self.multiProcManager.Queue()
+        self.dataWriter = DataWriter(self.dataOutQueue)
+        self.dataWriter.daemon = False
 
         numSims = self.executionCount
 
