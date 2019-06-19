@@ -28,13 +28,14 @@ C:\Users\patrick> pip --trusted-host=pypi.python.org install <package name>
 
 #### Configuring Swig
 
-The standard windows swig setup is suitable for Basilisk. [Configuration Instructions](http://www.swig.org/Doc1.3/Windows.html#Windows_swig_exe).
+The standard windows swig setup is suitable for Basilisk (see [Configuration Instructions](http://www.swig.org/Doc1.3/Windows.html#Windows_swig_exe)).
 
 Example added path formats:
 
-* PYTHON_INCLUDE = C:\Program Files\Python27\include
-* PYTHON_LIB = C:\Program Files\Python27\libs\python27.lib
-
+```
+PYTHON_INCLUDE = C:\Program Files\Python27\include 
+PYTHON_LIB = C:\Program Files\Python27\libs\python27.lib
+```
 
 #### Install Conan
 Go to the [Conan Website](https://conan.io/downloads.html) and download the windows installer. Proceed with installation. If it asks to be added to the PATH, allow it to add itself to the PATH.
