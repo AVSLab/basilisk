@@ -766,6 +766,7 @@ class DataWriter(mp.Process):
                                                          range(allData.columns.min()[1], allData.columns.max()[1]+1)])
             #allData = allData.sort_index(axis=1, level=[0,1]) #TODO: When we dont lose MCs anymore, we should just use this call
             allData = allData.reindex(columns=newMultInd)
+            allData.index.name = 'time[ns]'
             allData.to_pickle(filePath)
 
     def setLogDir(self, logDir):
