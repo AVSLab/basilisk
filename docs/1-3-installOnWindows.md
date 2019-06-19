@@ -52,7 +52,7 @@ cmake --build . --target ALL_BUILD --config Release
 ```
 For arch x86:
 ```
-cmake -G "Visual Studio 15 2017 Win32" ../src
+cmake -G "Visual Studio <MSVC Version> <MSVC Toolset/Year> Win32" ../src
 ```
 
 ### How to run tests
