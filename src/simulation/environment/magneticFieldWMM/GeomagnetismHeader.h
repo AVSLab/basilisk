@@ -12,6 +12,9 @@
  *
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifndef _POSIX_C_SOURCE
 #define _POSIX_C_SOURCE
@@ -501,3 +504,7 @@ void MAG_PrintUserDataWithUncertainty(MAGtype_GeoMagneticElements GeomagElements
 
 
 #endif /*GEOMAGHEADER_H*/
+
+#ifdef __cplusplus
+}
+#endif

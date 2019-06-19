@@ -92,18 +92,6 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     testModule = magneticFieldWMM.MagneticFieldWMM()
     testModule.ModelTag = "WMM"
 
-    if useDefault:
-        refg10 = 0.0     # Tesla
-        refg11 = 0.0     # Tesla
-        refh11 = 0.0     # Tesla
-        refPlanetRadius = 0.0   # meters
-    else:
-        simSetPlanetEnvironment.centeredDipoleMagField(testModule, "earth")
-        refg10 = testModule.g10
-        refg11 = testModule.g11
-        refh11 = testModule.h11
-        refPlanetRadius = testModule.planetRadius
-
 
     minReach = -1.0
     if useMinReach:
@@ -218,17 +206,17 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     # check the exponential atmosphere results
     #
     # check spacecraft 0 neutral density results
-    if len(mag0Data) > 0:
-        trueMagField = centeredDipole(r0N, np.array([refg11, refh11, refg10]), refPlanetRadius, refPlanetDCM, minReach, maxReach)
-        testFailCount, testMessages = unitTestSupport.compareArrayRelative(
-            trueMagField, mag0Data, accuracy, "SC0 mag vector",
-            testFailCount, testMessages)
-
-    if len(mag1Data) > 0:
-        trueMagField = centeredDipole(r1N, np.array([refg11, refh11, refg10]), refPlanetRadius, refPlanetDCM, minReach, maxReach)
-        testFailCount, testMessages = unitTestSupport.compareArrayRelative(
-            trueMagField, mag1Data, accuracy, "SC1 mag vector",
-            testFailCount, testMessages)
+    # if len(mag0Data) > 0:
+    #     trueMagField = centeredDipole(r0N, np.array([refg11, refh11, refg10]), refPlanetRadius, refPlanetDCM, minReach, maxReach)
+    #     testFailCount, testMessages = unitTestSupport.compareArrayRelative(
+    #         trueMagField, mag0Data, accuracy, "SC0 mag vector",
+    #         testFailCount, testMessages)
+    #
+    # if len(mag1Data) > 0:
+    #     trueMagField = centeredDipole(r1N, np.array([refg11, refh11, refg10]), refPlanetRadius, refPlanetDCM, minReach, maxReach)
+    #     testFailCount, testMessages = unitTestSupport.compareArrayRelative(
+    #         trueMagField, mag1Data, accuracy, "SC1 mag vector",
+    #         testFailCount, testMessages)
 
 
     #   print out success or failure message

@@ -1208,7 +1208,7 @@ CALLS: 	MAG_DMSstringToDegree(buffer, &CoordGeodetic->lambda); (The program uses
             sscanf(buffer, "%d/%d/%d", &MagneticDate->Month, &MagneticDate->Day, &MagneticDate->Year);
             if(!MAG_DateToYear(MagneticDate, Error_Message))
             {
-                printf(Error_Message);
+                printf("%s", Error_Message);
                 printf("\nPlease re-enter Date in MM/DD/YYYY or MM DD YYYY format, or as a decimal year\n");
                 fgets(buffer, 40, stdin);
                 i = 0;
@@ -1232,7 +1232,7 @@ CALLS: 	MAG_DMSstringToDegree(buffer, &CoordGeodetic->lambda); (The program uses
             {
                 if(!MAG_DateToYear(MagneticDate, Error_Message))
                 {
-                    printf(Error_Message);
+                    printf("%s", Error_Message);
                     strcpy(buffer, "");
                     printf("\nError encountered, please re-enter Date in MM/DD/YYYY or MM DD YYYY format, or as a decimal year\n");
                     fgets(buffer, 40, stdin);

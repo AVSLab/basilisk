@@ -21,8 +21,8 @@
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
 #include "utilities/rigidBodyKinematics.h"
-#include "cspice/include/SpiceUsr.h"
-#include "WMM/EGM9615.h"
+//#include "cspice/include/SpiceUsr.h"
+#include "EGM9615.h"
 
 #define MAX_CHAR_LENGTH 100
 
@@ -43,7 +43,7 @@ MagneticFieldWMM::MagneticFieldWMM()
  */
 MagneticFieldWMM::~MagneticFieldWMM()
 {
-    cleanupEarthMagFieldModel();
+//    cleanupEarthMagFieldModel();
 
     return;
 }
@@ -74,11 +74,14 @@ void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldSimMsg *msg, doub
 
     //! - compute the WMM magnetic field model
     char str[MAX_CHAR_LENGTH];
-    double ET0;
-    double decimalYear;
+//    double ET0;
+//    double decimalYear;
     sprintf(str, "JD %.17f", this->epochDate);
-    str2et_c(str, &ET0);
-    timout_c(ET0 + currentTime, "YYYY.#########", 14, str);
+//    str2et_c(str, &ET0);
+//    timout_c(ET0 + currentTime, "YYYY.#########", 14, str);
+
+    printf("%s\n", str);
+
 //    decimalYear = shuntingYard(str);
 
     //computeWmmField(decimalYear, phi, lambda, h, B_M);
@@ -150,8 +153,8 @@ void MagneticFieldWMM::initializeWmm(const char *dataPath)
     strcpy(fileName, dataPath);
     strcat(fileName, "WMM.cof");
 //    MAG_robustReadMagModels(fileName, &magneticModels, this->epochs);
-    MAG_robustReadMagModels(fileName, &(this->magneticModels), this->epochs);
-    MAG_robustReadMagModels(<#char *filename#>, <#MAGtype_MagneticModel *(*magneticmodels)[]#>, <#int array_size#>);
+//    MAG_robustReadMagModels(fileName, &(this->magneticModels), this->epochs);
+//    MAG_robustReadMagModels(<#char *filename#>, <#MAGtype_MagneticModel *(*magneticmodels)[]#>, <#int array_size#>);
 
     if(nMax < magneticModels[0]->nMax) {
         nMax = magneticModels[0]->nMax;

@@ -29,8 +29,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/magneticFieldSimMsg.h"
 #include "../_GeneralModuleFiles/magneticFieldBase.h"
-#include "WMM/GeomagnetismHeader.h"
-#include "WMM/GeomagnetismLibrary.h"
+#include "GeomagnetismHeader.h"
 
 /*! \addtogroup SimModelGroup
  * @{
@@ -56,7 +55,7 @@ public:
 private:
     MAGtype_MagneticModel *magneticModels[1];
     MAGtype_MagneticModel *timedMagneticModel;
-    int                    epochs = 1;
+//    int                    epochs = 1;
     MAGtype_Ellipsoid      ellip;
     MAGtype_Geoid          geoid;
     MAGtype_Date           userDate;
