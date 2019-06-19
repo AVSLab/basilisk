@@ -114,6 +114,7 @@ extern "C" {
                             uint64_t moduleId);
     void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
                            uint64_t moduleId);
+    double* relODuKFTwoBodyDyn(double state[ODUKF_N_STATES], double mu);
     int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime);
     int relODuKFMeasUpdate(RelODuKFConfig *configData);
     void relODuKFCleanUpdate(RelODuKFConfig *configData);

@@ -18,6 +18,7 @@
  */
 
 #include <string.h>
+#include <stdlib.h>
 #include <math.h>
 #include "relativeODuKF.h"
 #include "../_GeneralModuleFiles/ukfUtilities.h"
@@ -216,22 +217,58 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
 void relODStateProp(RelODuKFConfig *configData, double *stateInOut, double dt)
 {
     
-    double rNorm, muPlanet;
-    double stateDeriv[ODUKF_N_STATES];
-    double dvdt[3];
-    
-    rNorm = v3Norm(stateInOut);
+    double muPlanet;
+    double k1[ODUKF_N_STATES], k2[ODUKF_N_STATES], k3[ODUKF_N_STATES], k4[ODUKF_N_STATES];
+    double states1[ODUKF_N_STATES], states2[ODUKF_N_STATES], states3[ODUKF_N_STATES];
     if(configData->planetId ==1){muPlanet = MU_EARTH;} //in km
     if(configData->planetId ==2){muPlanet = MU_MARS;} //in km
     if(configData->planetId ==3){muPlanet = MU_JUPITER;} //in km
     
-    v3Copy(&stateInOut[3], stateDeriv);
-    v3Copy(stateInOut, dvdt);
-    v3Scale(-muPlanet/pow(rNorm, 3), dvdt, &stateDeriv[3]);
-
-    v6Scale(dt, stateDeriv, stateDeriv);
-    vAdd(stateInOut, ODUKF_N_STATES, stateDeriv, stateInOut);
+    /*! Start RK4 */
+    /*! - Compute k1 */
+    vCopy(relODuKFTwoBodyDyn(stateInOut, muPlanet), ODUKF_N_STATES, k1);
+    vScale(dt/2, k1, ODUKF_N_STATES, k1); // k1 is now k1/2
+    /*! - Compute k2 */
+    vAdd(stateInOut, ODUKF_N_STATES, k1, states1);
+    vCopy(relODuKFTwoBodyDyn(states1, muPlanet), ODUKF_N_STATES, k2);
+    vScale(dt/2, k2, ODUKF_N_STATES, k2); // k2 is now k2/2
+    /*! - Compute k3 */
+    vAdd(stateInOut, ODUKF_N_STATES, k2, states2);
+    vCopy(relODuKFTwoBodyDyn(states2, muPlanet), ODUKF_N_STATES, k3);
+    vScale(dt, k3, ODUKF_N_STATES, k3);
+    /*! - Compute k4 */
+    vAdd(stateInOut, ODUKF_N_STATES, k3, states3);
+    vCopy(relODuKFTwoBodyDyn(states3, muPlanet), ODUKF_N_STATES, k4);
+    vScale(dt, k4, ODUKF_N_STATES, k4);
+    /*! - Gather all terms with proper scales */
+    vScale(1./3., k1, ODUKF_N_STATES, k1); // k1 is now k1/6
+    vScale(2./3., k2, ODUKF_N_STATES, k2); // k2 is now k2/3
+    vScale(1./3., k3, ODUKF_N_STATES, k3); // k3 is now k2/3
+    vScale(1./6., k4, ODUKF_N_STATES, k4); // k4 is now k2/6
+    
+    vAdd(stateInOut, ODUKF_N_STATES, k1, stateInOut);
+    vAdd(stateInOut, ODUKF_N_STATES, k2, stateInOut);
+    vAdd(stateInOut, ODUKF_N_STATES, k3, stateInOut);
+    vAdd(stateInOut, ODUKF_N_STATES, k4, stateInOut);
+    
     return;
+}
+
+/*! Function for two body dynamics solvers in order to use in the RK4
+ @return double Next state
+ @param state The starting state
+ */
+double* relODuKFTwoBodyDyn(double state[ODUKF_N_STATES], double muPlanet)
+{
+    double rNorm;
+    double* stateDeriv = malloc(sizeof(double) * 6);
+    double dvdt[3];
+    
+    rNorm = v3Norm(state);
+    v3Copy(&state[3], stateDeriv);
+    v3Copy(state, dvdt);
+    v3Scale(-muPlanet/pow(rNorm, 3), dvdt, &stateDeriv[3]);
+    return &stateDeriv[0];
 }
 
 /*! This method performs the time update for the relative OD kalman filter.
