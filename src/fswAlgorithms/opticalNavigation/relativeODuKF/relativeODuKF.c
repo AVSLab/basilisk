@@ -243,7 +243,7 @@ void relODStateProp(RelODuKFConfig *configData, double *stateInOut, double dt)
  */
 int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
 {
-    int i, Index, k;
+    int i, Index;
     double sBarT[ODUKF_N_STATES*ODUKF_N_STATES];
     double xComp[ODUKF_N_STATES], AT[(2 * ODUKF_N_STATES + ODUKF_N_STATES)*ODUKF_N_STATES];
     double aRow[ODUKF_N_STATES], rAT[ODUKF_N_STATES*ODUKF_N_STATES], xErr[ODUKF_N_STATES];

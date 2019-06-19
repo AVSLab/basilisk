@@ -88,7 +88,7 @@ def EnergyPlot(t, energy, testName, show_plots):
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(t , conserved, "b", label='Energy')
     plt.legend(loc='best')
-    plt.title('First pos component')
+    plt.title('Energy ' + testName)
     plt.grid()
 
 

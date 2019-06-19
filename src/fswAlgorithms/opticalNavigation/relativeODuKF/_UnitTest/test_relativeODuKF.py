@@ -366,7 +366,7 @@ def StatePropRelOD(show_plots):
 
     diff = np.copy(expected)
     diff[:,1:]-=stateLog[:,1:]
-    FilterPlots.EnergyPlot(time, energyRK4, 'Prop', show_plots)
+    FilterPlots.EnergyPlot(time, energyRK4, 'PropRK4', show_plots)
     FilterPlots.EnergyPlot(time, energy, 'Prop', show_plots)
     FilterPlots.StateCovarPlot(stateLog, covarLog, 'Prop', show_plots)
     FilterPlots.StatePlot(diff, 'Prop', show_plots)
