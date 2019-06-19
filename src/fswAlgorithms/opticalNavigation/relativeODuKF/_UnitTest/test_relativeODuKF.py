@@ -83,16 +83,16 @@ def setupFilterData(filterObject):
     r, v = orbitalMotion.elem2rv(mu, elementsInit)
 
     filterObject.stateInit = r.tolist() + v.tolist()
-    filterObject.covarInit = [10000, 0.0, 0.0, 0.0, 0.0, 0.0,
-                              0.0, 10000., 0.0, 0.0, 0.0, 0.0,
-                              0.0, 0.0, 10000., 0.0, 0.0, 0.0,
+    filterObject.covarInit = [1000, 0.0, 0.0, 0.0, 0.0, 0.0,
+                              0.0, 1000., 0.0, 0.0, 0.0, 0.0,
+                              0.0, 0.0, 1000., 0.0, 0.0, 0.0,
                               0.0, 0.0, 0.0, 5., 0.0, 0.0,
                               0.0, 0.0, 0.0, 0.0, 5., 0.0,
                               0.0, 0.0, 0.0, 0.0, 0.0, 5.]
 
     qNoiseIn = np.identity(6)
-    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.0001*0.0001
-    qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6]*0.001*0.001
+    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.00001*0.00001
+    qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6]*0.0001*0.0001
     filterObject.qNoise = qNoiseIn.reshape(36).tolist()
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -246,8 +246,6 @@ def StateUpdateRelOD(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * dt))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".state", range(6))
-    postFitLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".postFitRes", range(3))
     covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", range(6 * 6))
 
     for i in range(6):
@@ -266,7 +264,7 @@ def StateUpdateRelOD(show_plots):
                                                   inputMessageSize,
                                                   unitTestSim.TotalSim.CurrentNanos,
                                                   inputData)
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) *dt))
+        unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1)*dt))
         unitTestSim.ExecuteSimulation()
 
     stateLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".state", range(6))
@@ -276,10 +274,10 @@ def StateUpdateRelOD(show_plots):
 
     diff = np.copy(expected)
     diff[:,1:]-=stateLog[:,1:]
-    # FilterPlots.EnergyPlot(time, energy, 'Update', show_plots)
-    # FilterPlots.StateCovarPlot(stateLog, covarLog, 'Update', show_plots)
-    # FilterPlots.StatePlot(diff, 'Update', show_plots)
-    # FilterPlots.PostFitResiduals(postFitLog, 100, 'Update', show_plots)
+    FilterPlots.EnergyPlot(time, energy, 'Update', show_plots)
+    FilterPlots.StateCovarPlot(stateLog, covarLog, 'Update', show_plots)
+    FilterPlots.StatePlot(diff, 'Update', show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, 100, 'Update', show_plots)
 
     for i in range(6):
         if (covarLog[t1*3, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i] / 1000):
