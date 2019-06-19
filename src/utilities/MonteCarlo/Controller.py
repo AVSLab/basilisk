@@ -30,19 +30,15 @@ import os
 import random
 import traceback
 import shutil
-import matplotlib.pyplot as plt
-
+import pandas
 import copy
-
 import gzip
 import json
-import cPickle as pickle
-
-from multiprocessing import Pool, cpu_count
 import signal
-
+import time
 import numpy as np
-
+import multiprocessing as mp
+import cPickle as pickle
 
 class Controller:
     """
@@ -55,7 +51,8 @@ class Controller:
         self.executionCount = 0
         self.ICrunFlag = False
         self.icDirectory = ""
-        self.numProcess = cpu_count()
+        self.numProcess = mp.cpu_count()
+
         self.simParams = SimulationParameters(
             creationFunction=None,
             executionFunction=None,
@@ -67,6 +64,7 @@ class Controller:
             filename="",
             icfilename=""
         )
+
 
     @staticmethod
     def load(runDirectory):
@@ -80,6 +78,10 @@ class Controller:
             data = pickle.load(pickledData)
             if data.simParams.verbose:
                 print "Loading montecarlo at", filename
+            data.multiProcManager = mp.Manager()
+            data.dataOutQueue = data.multiProcManager.Queue()
+            data.dataWriter = DataWriter(data.dataOutQueue)
+            data.dataWriter.daemon = False
             return data
 
     def setExecutionFunction(self, newModule):
@@ -276,7 +278,7 @@ class Controller:
 
             # execute simulation with dispersion
             executor = SimulationExecutor()
-            success = executor(simParams)
+            success = executor([simParams, self.dataOutQueue])
 
             if not success:
                 print "Error re-executing run", caseNumber
@@ -309,6 +311,7 @@ class Controller:
         if self.simParams.shouldArchiveParameters:
             if not os.path.exists(self.icDirectory):
                 print "Cannot run initial conditions: the directory given does not exist"
+
             if self.simParams.verbose:
                 print "Archiving a copy of this simulation before running it in 'MonteCarlo.data'"
             try:
@@ -316,6 +319,12 @@ class Controller:
                     pickle.dump(self, pickleFile)  # dump this controller object into a file.
             except Exception as e:
                 print "Unknown exception while trying to pickle monte-carlo-controller... \ncontinuing...\n\n", e
+
+
+        self.multiProcManager = mp.Manager()
+        self.dataOutQueue = self.multiProcManager.Queue()
+        self.dataWriter = DataWriter(self.dataOutQueue)
+        self.dataWriter.daemon = False
 
         simGenerator = self.generateICSims(caseList)
         jobsFinished = 0  # keep track of what simulations have finished
@@ -330,15 +339,15 @@ class Controller:
             i = 0
             for sim in simGenerator:
                 try:
-                    simulationExecutor(sim)
+                    simulationExecutor([sim,  self.dataOutQueue])
                 except:
                     failed.append(i)
                 i += 1
         else:
-            pool = Pool(self.numProcess)
+            pool = mp.Pool(self.numProcess)
             try:
                 # yields results *as* the workers finish jobs
-                for result in pool.imap_unordered(simulationExecutor, simGenerator):
+                for result in pool.imap_unordered(simulationExecutor, [(x, self.dataOutQueue) for x in simGenerator]):
                     if result[0] is not True:  # workers return True on success
                         failed.append(result[1])  # add failed jobs to the list of failures
                         print "Job", result[1], "failed..."
@@ -446,7 +455,6 @@ class Controller:
             data = self.getRetainedData(simIndex)
             for retentionPolicy in retentionPolicies:
                 retentionPolicy.executeCallback(data)
-                
 
     def executeSimulations(self):
         ''' Execute simulations in parallel
@@ -471,7 +479,16 @@ class Controller:
             except Exception as e:
                 print "Unknown exception while trying to pickle monte-carlo-controller... \ncontinuing...\n\n", e
 
+        self.multiProcManager = mp.Manager()
+        self.dataOutQueue = self.multiProcManager.Queue()
+        self.dataWriter = DataWriter(self.dataOutQueue)
+        self.dataWriter.daemon = False
+
         numSims = self.executionCount
+
+        # start data writer process
+        self.dataWriter.setLogDir(self.archiveDir)
+        self.dataWriter.start()
 
         # Avoid building a full list of all simulations to run in memory,
         # instead only generating simulations right before they are needed by a waiting worker
@@ -492,15 +509,15 @@ class Controller:
             i = 0
             for sim in simGenerator:
                 try:
-                    simulationExecutor(sim)
+                    simulationExecutor(sim, self.dataOutQueue)
                 except:
                     failed.append(i)
                 i += 1
         else:
-            pool = Pool(self.numProcess)
+            pool = mp.Pool(self.numProcess)
             try:
                 # yields results *as* the workers finish jobs
-                for result in pool.imap_unordered(simulationExecutor, simGenerator):
+                for result in pool.imap_unordered(simulationExecutor, [(x, self.dataOutQueue) for x in simGenerator]):
                     if result[0] is not True:  # workers return True on success
                         failed.append(result[1])  # add failed jobs to the list of failures
                         print "Job", result[1], "failed..."
@@ -522,6 +539,10 @@ class Controller:
                 traceback.print_exc()
                 pool.terminate()
             finally:
+                while not self.dataOutQueue.empty():
+                    time.sleep(1)
+                self.dataOutQueue.put((None, None, True))
+                time.sleep(1)
                 pool.join()
 
         # if there are failures
@@ -662,12 +683,9 @@ class RetentionPolicy():
                 }
             }
         """
-
-        data = {}
-        data["messages"] = {}
-        data["variables"] = {}
-        data["custom"] = {}
-
+        data = {"messages": {}, "variables": {}, "custom": {}}
+        df = pandas.DataFrame()
+        dataFrames = []
         for retentionPolicy in retentionPolicies:
             for message in retentionPolicy.messageLogList:
                 for (param, dataType) in message.retainedVars:
@@ -685,11 +703,90 @@ class RetentionPolicy():
                 tmpModuleData = func(simInstance)
                 for (key, value) in tmpModuleData.iteritems():
                     data["custom"][key] = value
-
         return data
 
+class DataWriter(mp.Process):
+    """ Class to be launched as separate process to pull data from queue and write out to .csv dataFrames
+        Args:
+            q: queue object from multiprocessing.Manager.queue
+        Returns:
+            Nil
+    """
+    def __init__(self, q):
+        super(DataWriter, self).__init__()
+        self._queue = q
+        self._endToken = None
+        self._logDir = ""
+        self._dataFiles = set()
 
-class SimulationExecutor():
+    def run(self):
+        """ The process run loop. Gets data from a queue and writes it out to per message csv files
+            Args:
+                Nil
+            Returns:
+                Nil
+        """
+        while self._endToken is None:
+            data, mcSimIndex, self._endToken = self._queue.get()
+            if self._endToken:
+                continue
+
+            for dictName, dictData in data.iteritems(): # Loops through Messages, Variables, Custom dictionaries in the retention policy
+                for itemName, itemData in dictData.iteritems(): # Loop through all items and their data
+                    filePath = self._logDir + itemName + ".data"
+                    self._dataFiles.add(filePath)
+
+                    # Is the data a vector, scalar, or non-existant?
+                    try:
+                        variLen = itemData[:,1:].shape[1]
+                    except:
+                        variLen = 0
+
+                    # Generate the MultiLabel
+                    outerLabel = [mcSimIndex]
+                    innerLabel = []
+
+                    for i in range(variLen):
+                        innerLabel.append(i)
+                    if variLen == 0:
+                        innerLabel.append(1) # May not be necessary, might be able to leave blank and get a None
+                    labels = pandas.MultiIndex.from_product([outerLabel, innerLabel], names=["runNum", "varIdx"])
+
+                    # Generate the individual run's dataframe
+                    if variLen >= 2:
+                        df = pandas.DataFrame(itemData[:, 1:].tolist(), index=itemData[:,0], columns=labels)
+                    elif variLen == 1:
+                        df = pandas.DataFrame(itemData[:, 1].tolist(), index=itemData[:,0], columns=labels)
+                    else:
+                        df = pandas.DataFrame([np.nan], columns=labels)
+
+                    # If the .data file doesn't exist save the dataframe to create the file
+                    # and skip the remainder of the loop
+                    if not os.path.exists(filePath):
+                        allData = df
+                        allData.to_pickle(filePath)
+                        continue
+
+                    # If the .data file does exists, append the run's df.
+                    allData = pandas.read_pickle(filePath)
+                    allData = pandas.concat([allData,df],axis=1)
+                    allData.to_pickle(filePath)
+
+        # Sort by the MultiIndex (first by run number then by variable component)
+        for filePath in self._dataFiles:
+            # We create a new index so that we populate any missing run data (in the case that a run breaks) with NaNs.
+            allData = pandas.read_pickle(filePath)
+            newMultInd = pandas.MultiIndex.from_product([range(allData.columns.min()[0], allData.columns.max()[0]+1),
+                                                         range(allData.columns.min()[1], allData.columns.max()[1]+1)])
+            #allData = allData.sort_index(axis=1, level=[0,1]) #TODO: When we dont lose MCs anymore, we should just use this call
+            allData = allData.reindex(columns=newMultInd)
+            allData.index.name = 'time[ns]'
+            allData.to_pickle(filePath)
+
+    def setLogDir(self, logDir):
+        self._logDir = logDir
+
+class SimulationExecutor:
     '''
     This class is used to execute a simulation in a worker thread.
     To use, create an instance of this class, and then call the instance with the simulation parameters to run them in.
@@ -699,20 +796,23 @@ class SimulationExecutor():
     successFlag = executor(simParams)
 
     This class can be used to execute a simulation on a different thread, by using this class as the processes target.
-    Note, this class has no instance variables, it is used essentially as a collection of static methods.
     '''
+    #
 
     @classmethod
-    def __call__(cls, simParams):
+    def __call__(cls, params):
         ''' In each worker process, we execute this function (by calling this object)
         Args:
-            simParams: SimulationParameters
-                The simulation parameters for the simulation to be executed.
+            params [simParams, data out queue]:
+                A SimulationParameters object for the simulation to be executed and the output data queue
+                for the data writer.
         Returns:
             success: bool
                 (True, simParams.index) if simulation run was successful
                 (False, simParams.index) if simulation run was unsuccessful
         '''
+        simParams = params[0]
+        dataOutQueue = params[1]
 
         try:
             signal.signal(signal.SIGINT, signal.SIG_IGN)  # On ctrl-c ignore the signal... let the parent deal with it.
@@ -782,8 +882,10 @@ class SimulationExecutor():
                 if simParams.verbose:
                     print "Retaining data for run in", retentionFile
 
+                retainedData = RetentionPolicy.getDataForRetention(simInstance, simParams.retentionPolicies)
+                dataOutQueue.put((retainedData, simParams.index, None))
+
                 with gzip.open(retentionFile, "w") as archive:
-                    retainedData = RetentionPolicy.getDataForRetention(simInstance, simParams.retentionPolicies)
                     retainedData["index"] = simParams.index # add run index
                     pickle.dump(retainedData, archive)
 
