@@ -55,7 +55,7 @@ protected:
     bool readMessages();
     void updateLocalMagField(double currentTime);
     void updateRelativePos(SpicePlanetStateSimMsg  *planetState, SCPlusStatesSimMsg *scState); 
-    virtual void evaluateMagneticFieldModel(MagneticFieldSimMsg *msg) = 0;
+    virtual void evaluateMagneticFieldModel(MagneticFieldSimMsg *msg, double currentTime) = 0;
     virtual void customSelfInit();
     virtual void customCrossInit();
     virtual void customReset(uint64_t CurrentClock);

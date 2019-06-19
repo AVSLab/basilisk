@@ -43,7 +43,7 @@ public:
     ~MagneticFieldCenteredDipole();
 
 private:
-    void evaluateMagneticFieldModel(MagneticFieldSimMsg *msg);
+    void evaluateMagneticFieldModel(MagneticFieldSimMsg *msg, double currentTime);
 
 
 public:

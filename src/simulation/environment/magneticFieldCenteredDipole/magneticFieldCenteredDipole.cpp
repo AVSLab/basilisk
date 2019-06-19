@@ -25,7 +25,7 @@
  */
 MagneticFieldCenteredDipole::MagneticFieldCenteredDipole()
 {
-    //! - Set the default atmospheric properties to yield a zero response
+    //! - Set the default magnetic properties to yield a zero response
     this->g10 = 0.0;            // [T]
     this->g11 = 0.0;            // [T]
     this->h11 = 0.0;            // [T]
@@ -46,7 +46,7 @@ MagneticFieldCenteredDipole::~MagneticFieldCenteredDipole()
  @param msg magnetic field message structure
  @return void
  */
-void MagneticFieldCenteredDipole::evaluateMagneticFieldModel(MagneticFieldSimMsg *msg)
+void MagneticFieldCenteredDipole::evaluateMagneticFieldModel(MagneticFieldSimMsg *msg, double currentTime)
 {
     Eigen::Vector3d magField_P;         // [T] magnetic field in Planet fixed frame
     Eigen::Vector3d rHat_P;             // [] normalized position vector in E frame components

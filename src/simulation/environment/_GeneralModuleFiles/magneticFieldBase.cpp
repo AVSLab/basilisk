@@ -33,7 +33,7 @@ MagneticFieldBase::MagneticFieldBase()
     this->OutputBufferCount = 2;
 
     //! - zero class variables
-    this->planetRadius = 0.0; // [m] Earth magnetic spherical reference radius (see p. 404 in doi:10.1007/978-1-4939-0802-8)
+    this->planetRadius = 0.0; 
     this->r_BP_N.fill(0.0);
     this->r_BP_P.fill(0.0);
     this->scStateInMsgNames.clear();
@@ -283,7 +283,7 @@ void MagneticFieldBase::updateLocalMagField(double currentTime)
         if(this->orbitRadius > this->envMinReach &&
            (this->orbitRadius < this->envMaxReach || this->envMaxReach < 0)) {
             //! - compute the local magnetic field.  The evaluateMageticFieldModel() method must be implement for each model
-            evaluateMagneticFieldModel(&(*magMsgIt));
+            evaluateMagneticFieldModel(&(*magMsgIt), currentTime);
         }
     }
 
