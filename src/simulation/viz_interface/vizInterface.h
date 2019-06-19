@@ -106,7 +106,6 @@ private:
     MsgCurrStatus cssConfInMsgId;                  //! [-] ID of the incoming css constellation data
     MsgCurrStatus cameraConfMsgId;                  //! [-] ID of the incoming camera  data
     int32_t imageOutMsgID;                           //! ID for the outgoing Image message */
-    uint64_t ImageBufferCount;       //!< [-] Count on the number of output message buffers
 
 
     std::vector <RWConfigLogSimMsg> rwInMessage;  //! [-] RW data message

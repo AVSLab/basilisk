@@ -81,7 +81,8 @@ void VizInterface::SelfInit()
         std::cout << "Basilisk-Vizard connection made" << std::endl;
         
         /*! - Create output message for module in opNav mode */
-        this->imageOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(this->opnavImageOutMsgName,sizeof(CameraImageMsg),this->ImageBufferCount,"CirclesOpNavMsg", moduleID);
+        int imageBufferCount = 2;
+        this->imageOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(this->opnavImageOutMsgName,sizeof(CameraImageMsg),imageBufferCount,"CirclesOpNavMsg", moduleID);
 
     }
 

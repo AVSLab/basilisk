@@ -67,6 +67,7 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
     if kwargs.has_key('opNavMode'):
         if kwargs['opNavMode'] == True:
             vizMessenger.opNavMode = 1
+            vizMessenger.opnavImageOutMsgName = "opnav_circles"
 
     vizMessenger.spiceInMsgName = vizInterface.StringVector([      "earth_planet_data",
                                                                   "mars_planet_data",
