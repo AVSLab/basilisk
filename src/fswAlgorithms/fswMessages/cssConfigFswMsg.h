@@ -20,6 +20,7 @@
 #ifndef CSS_CONFIG_MESSAGE_H
 #define CSS_CONFIG_MESSAGE_H
 
+#include <stdint.h>
 #include "cssUnitConfigFswMsg.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 

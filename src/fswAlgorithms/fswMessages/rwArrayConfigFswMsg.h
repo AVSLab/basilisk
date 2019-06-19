@@ -20,6 +20,7 @@
 #ifndef RW_CONFIG_MESSAGE_H
 #define RW_CONFIG_MESSAGE_H
 
+#include <stdint.h>
 #include "simFswInterfaceMessages/macroDefinitions.h"
 
 /*! \defgroup fswMessages
