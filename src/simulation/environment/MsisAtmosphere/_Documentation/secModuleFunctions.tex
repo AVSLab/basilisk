@@ -7,7 +7,8 @@ This module will:
 	\item \textbf{Compute atmospheric density and temperature}: Each of the provided models is fundamentally intended to compute the neutral atmospheric density and temperature for a spacecraft relative to a body. These parameters are stored in the AtmoPropsSimMsg struct. Supporting parameters needed by each model, such as planet-relative position, are also computed.
 	\item \textbf{Communicate neutral density and temperature}: This module interfaces with modules that subscribe to neutral density messages via the messaging system.
 	\item \textbf {Subscribe to model-relevant information:} Each provided atmospheric model requires different input information to operate, such as current space weather conditions and spacecraft positions. This module automatically attempts to subscribe to the relevant messages for a specified model. 
-	\item \textbf{Support for multiple spacecraft and model types} Only one Atmosphere module is required for each planet, and can support an arbitrary number of spacecraft. Output messages for individual spacecraft are automatically named based on the environment type.
+	\item \textbf{Support for multiple spacecraft} Only one NRLMSISE-00 atmosphere model is needed to compute densities for several spacecraft.
+	\item \textbf{Support dynamic space-weather coupled density forecasting}: A primary benefit of the NRLMSISE-00 model is its ability to provide forecasts of neutral density in response to space weather events, changing atmospheric conditions, and the like that are not captured in simpler models.
 \end{itemize}
 
 \section{Module Assumptions and Limitations}

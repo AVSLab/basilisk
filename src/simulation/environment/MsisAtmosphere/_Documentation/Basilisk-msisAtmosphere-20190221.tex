@@ -45,15 +45,11 @@
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
 
 
-\newcommand{\ModuleName}{Atmosphere}
-\newcommand{\subject}{Atmosphere}
-\newcommand{\status}{Released}
+\newcommand{\ModuleName}{MsisAtmosphere}
+\newcommand{\subject}{MsisAtmosphere}
+\newcommand{\status}{In Review}
 \newcommand{\preparer}{A. Harris}
-\newcommand{\summary}{The {\tt Atmosphere} class used to calculate temperature / density above a body using multiple models.
- This class is used to hold relevant atmospheric properties and to compute the density for a given set of spacecraft 
-relative to a specified planet. Planetary parameters, including position and input message, are settable by the user. 
-Internal support is provided for Venus, Earth, and Mars. In a given simulation, each planet of interest should have only
-one Atmosphere model associated with it linked to the spacecraft in orbit about that body. }
+\newcommand{\summary}{The {\tt MsisAtmosphere} class used to calculate temperature, density, and neutral species for a spacecraft in Earth orbit up to 1000km using the NRLMSISE-00 neutral density model.  }
 
 \begin{document}
 
@@ -70,8 +66,7 @@ one Atmosphere model associated with it linked to the spacecraft in orbit about 
 \hline
 {\bfseries Rev} & {\bfseries Change Description} & {\bfseries By}& {\bfseries Date} \\
 \hline
-1.0 & Initial release & A. Harris & 02-26-2019\\
-1.1 & Update with new unit tests & H. Schaub & 03-09-2019\\
+1.0 & Initial release & A. Harris & 06-20-2019\\
 \hline
 
 \end{longtable}

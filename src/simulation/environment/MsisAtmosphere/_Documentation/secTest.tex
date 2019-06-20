@@ -18,14 +18,10 @@ This test verifies that the user can both add additional spacecraft to the modul
 
 \subsection{Model-Specific Tests}
 
-\subsubsection{test\_integratedTestAtmosphere.py}
-This integrated runs a section of an orbit and verifies that the exponential atmosphere model both correctly calculates the orbit altitude and the atmospheric density against a Python implementation of the model.   A single spacecraft is simulated about Earth, and no minimum or maximum reach is set.  No planet ephemeris message is setup causing the simulation to assume the planet center is at the coordinate frame origin.
-
-\subsubsection{test\_unitTestAtmosphere.py}
-This unit test only runs the atmosphere Basilisk module with two fixed spacecraft state input messages.  The simulation option {\tt useDefault} checks if the default atmosphere parameters for an Earth-based exponential atmosphere module are used, or if the exponential model information is setup manually.  The option {\tt useMinReach} dictates if the minimum altitude check is performed, while the option {\tt useMaxReach} checks if the maximum reach check is performed.  The option {\tt usePlanetEphemeris} checks if a planet state input message should be created.  All permutations are checked.
+By design, this module shares much of its functionality with \verb|exponentialAtmosphere|; shared functionality is not checked by redundant tests.
 
 \subsubsection{test\_unitTestNrlmsise00.py}
-This integrated test evaluates the NRLMSISE-00 model at a given point in an orbit with zero'd (i.e., nonphysical) space weather inputs and verifies its outputs against the outputs of the 
+This integrated test evaluates the NRLMSISE-00 model at a given point in an orbit with zero'd (i.e., nonphysical) space weather inputs and verifies its outputs against the outputs of the base C model with identical inputs. This is a comprehensive test of the NRLMSISE-00 implementation in BSK, as it checks out the end-to-end functionality of the space weather messaging system, the geodetic conversion, and the interface to NRLMSISE-00 itself.
 
 \section{Test Parameters}
 The simulation tolerances are shown in Table~\ref{tab:errortol}.  In each simulation the neutral density output message is checked relative to python computed true values.  
@@ -37,10 +33,8 @@ The simulation tolerances are shown in Table~\ref{tab:errortol}.  In each simula
 		\hline\hline
 		\textbf{Output Value Tested}  & \textbf{Tolerated Error}  \\ 
 		\hline
-		{\tt length(atmo.scStateInMsgNames)}        & {\tt 0 (int)}   \\
-		{\tt length(atmo.envOutMsgNames)}        & {\tt 0 (int)}   \\ 
-		{\tt atmo.envType}        & {\tt 0 (string)}   \\ 
-		{\tt neutralDensity}        & \input{AutoTeX/toleranceValue} (relative) \\ 
+		{Output Neutral Mass Density}        & {\input{AutoTeX/unitTestToleranceValue} (relative) }  \\
+		{Output Temperature}        & \input{AutoTeX/unitTestToleranceValue} (relative)  \\ 
 		\hline\hline
 	\end{tabular}
 \end{table}
@@ -53,47 +47,17 @@ The following two tables show the test results.  All tests are expected to pass.
 
 
 \begin{table}[H]
-	\caption{Test result for test\_integratedTestAtmosphere.py}
+	\caption{Test result for test\_unitMsisAtmosphere.py}
 	\label{tab:results}
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{c  | c } % Column formatting, 
 		\hline\hline
 		\textbf{Check} &  \textbf{Pass/Fail} \\ 
 		\hline
-		1 &  \input{AutoTeX/passFail} \\ 
+		1 &  \input{AutoTeX/unitTestPassFail} \\ 
 		\hline
 		\hline
 	\end{tabular}
 \end{table}
-
-
-\begin{table}[H]
-	\caption{Test result for test\_unitTestAtmosphere.py}
-	\label{tab:results}
-	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{c | c | c | c | c } % Column formatting, 
-		\hline\hline
-		{\tt useDefault} & {\tt useMinReach} & {\tt useMaxReach} & {\tt usePlanetEphemeris} & \textbf{Pass/Fail} \\ 
-		\hline
-	   False & False & False & False	& \input{AutoTeX/unitTestPassFailFalseFalseFalseFalse} \\ 
-	   False & False & False & True	& \input{AutoTeX/unitTestPassFailFalseFalseFalseTrue} \\ 
-	   False & False & True & False	& \input{AutoTeX/unitTestPassFailFalseFalseTrueFalse} \\ 
-	   False & False & True & True	& \input{AutoTeX/unitTestPassFailFalseFalseTrueTrue} \\ 
-	   False & True & False & False	& \input{AutoTeX/unitTestPassFailFalseTrueFalseFalse} \\ 
-	   False & True & False & True	& \input{AutoTeX/unitTestPassFailFalseTrueFalseTrue} \\ 
-	   False & True & True & False	& \input{AutoTeX/unitTestPassFailFalseTrueTrueFalse} \\ 
-	   False & True & True & True	& \input{AutoTeX/unitTestPassFailFalseTrueTrueTrue} \\ 
-	   True & False & False & False	& \input{AutoTeX/unitTestPassFailFalseFalseFalseFalse} \\ 
-	   True & False & False & True	& \input{AutoTeX/unitTestPassFailTrueFalseFalseTrue} \\ 
-	   True & False & True & False	& \input{AutoTeX/unitTestPassFailTrueFalseTrueFalse} \\ 
-	   True & False & True & True	& \input{AutoTeX/unitTestPassFailTrueFalseTrueTrue} \\ 
-	   True & True & False & False	& \input{AutoTeX/unitTestPassFailTrueTrueFalseFalse} \\ 
-	   True & True & False & True	& \input{AutoTeX/unitTestPassFailTrueTrueFalseTrue} \\ 
-	   True & True & True & False	& \input{AutoTeX/unitTestPassFailTrueTrueTrueFalse} \\ 
-	   True & True & True & True	& \input{AutoTeX/unitTestPassFailTrueTrueTrueTrue} \\ 
-	   \hline\hline
-	\end{tabular}
-\end{table}
-
 
 
