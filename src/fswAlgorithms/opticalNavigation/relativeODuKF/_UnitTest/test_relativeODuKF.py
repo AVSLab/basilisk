@@ -55,12 +55,6 @@ def twoBodyGrav(t, x, mu = 42828.314*1E9):
     dxdt[3:] = -mu/np.linalg.norm(x[0:3])**3.*x[0:3]
     return dxdt
 
-def twoBodyGravODE(x, t, mu = 42828.314*1E9):
-    dxdt = np.zeros(np.shape(x))
-    dxdt[0:3] = x[3:]
-    dxdt[3:] = -mu/np.linalg.norm(x[0:3])**3.*x[0:3]
-    return dxdt
-
 
 def setupFilterData(filterObject):
     filterObject.navStateOutMsgName = "relod_state_estimate"
@@ -161,8 +155,9 @@ def relOD_method_test(show_plots):
     propedState = []
     for i in range(6):
         propedState.append(relativeODuKF.doubleArray_getitem(stateIn, i))
-    expected = rk4(twoBodyGrav, [0, dt], state)
-    if np.linalg.norm((np.array(propedState) - expected[-1,1:])/expected[-1,1:]) > 1.0E-15:
+    expected = rk4(twoBodyGrav, [0, dt], np.array(state)*1E3)
+    expected[:,1:]*=1E-3
+    if np.linalg.norm((np.array(propedState) - expected[-1,1:])/(expected[-1,1:])) > 1.0E-15:
         testFailCount += 1
         testMessages.append("State Prop Failure")
     return [testFailCount, ''.join(testMessages)]
@@ -372,4 +367,4 @@ def StatePropRelOD(show_plots):
 
 if __name__ == "__main__":
     # test_all_relOD_kf(True)
-    StateUpdateRelOD(True)
+    relOD_method_test(True)
