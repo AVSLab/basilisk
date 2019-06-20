@@ -130,7 +130,11 @@ void MsisAtmosphere::defaultMsisInitialConditions()
  */
 void MsisAtmosphere::setEpoch(double julianDate)
 {
+    int startYear = 0;
     this->epochDate = julianDate;
+    startYear = int(julianDate/365.25);
+    this->startDoy = julianDate - double(startYear);
+
     return;
 }
 
@@ -178,7 +182,9 @@ void MsisAtmosphere::customWriteMessages(uint64_t CurrentClock)
 bool MsisAtmosphere::customReadMessages(){
     bool swRead = false;
     int failCount = 0;
+    SingleMessageHeader localHeader;
     SwDataSimMsg tmpSwData;
+
     /* WIP - Also read in all the MSISE inputs.*/
     //! Iterate over swData message ids
     for(int ind = 0; ind < 23; ind++) {
@@ -187,7 +193,7 @@ bool MsisAtmosphere::customReadMessages(){
                                                                     sizeof(SwDataSimMsg),
                                                                     reinterpret_cast<uint8_t *>(&tmpSwData),
                                                                     moduleID);
-            if (good_read) {
+            if (swRead) {
                 this->swDataList.push_back(tmpSwData);
             } else {
                 failCount = failCount + 1;
@@ -247,13 +253,13 @@ void MsisAtmosphere::updateSwIndices()
 
 }
 
-void MsisAtmosphere::evaluateAtmosphereModel(AtmoPropsSimMsg *msg)
+void MsisAtmosphere::evaluateAtmosphereModel(AtmoPropsSimMsg *msg, double currentTime)
 {
     this->updateSwIndices();
     this->updateInputParams();
     //! Compute the geodetic position using the planet orientation.
 
-    this->currentLLA = PCI2LLA(this->relativePos_N, this->planetState.J20002Pfix, this->planetRadius);
+    this->currentLLA = PCI2LLA(this->r_BP_N, this->planetState.J20002Pfix, this->planetRadius);
     this->msisInput.g_lat = R2D*this->currentLLA[0];
     this->msisInput.g_long = R2D*this->currentLLA[1];
     this->msisInput.alt = this->currentLLA[2]/1000.0; // NRLMSISE Altitude input must be in kilometers!
