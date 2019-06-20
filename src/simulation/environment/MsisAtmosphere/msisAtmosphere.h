@@ -18,8 +18,8 @@
  */
 
 
-#ifndef ATMOSPHERE_H
-#define ATMOSPHERE_H
+#ifndef MSIS_ATMOSPHERE_H
+#define MSIS_ATMOSPHERE_H
 
 #include <Eigen/Dense>
 #include <vector>
@@ -39,9 +39,6 @@ extern "C" {
  * @{
  */
 
-#define MODEL_EXPONENTIAL "exponential"
-#define MODEL_MSISE "nrlmsise_00"
-
 //! @brief Atmosphere class used to calculate temperature / density above a body using multiple models.
 /*! This class is used to hold relevant atmospheric properties and to compute the density for a given set of spacecraft
 relative to a specified planet. Planetary parameters, including position and input message, are settable by the user.
@@ -51,7 +48,6 @@ class MsisAtmosphere: public AtmosphereBase {
 public:
     MsisAtmosphere();
     ~MsisAtmosphere();
-    void setEpoch(double julianDate);
 
 private:
     void customSelfInit();
@@ -71,7 +67,7 @@ public:
     int64_t swDataInMsgIds[23];
     // Message struct attributes
     std::vector<SwDataSimMsg> swDataList; //!< Vector of space weather messages
-
+    std::vector<std::string> swDataInMsgNames; //!< Vector of space weather message names
     // NRLMSISE-00 Specific attributes
     nrlmsise_input msisInput; //!< Struct containing NRLMSISE-00 input values; see their doc for details.
     nrlmsise_output msisOutput; //!< Struct containing NRLMSISE-00 output values; see their doc for details.

@@ -33,10 +33,7 @@
 MsisAtmosphere::MsisAtmosphere()
 {
     //! - Set the default atmospheric properties to yield a zero response
-    this->baseDensity = 0.0;            // [T]
-    this->scaleHeight = 1.0;            // [m]
     this->planetRadius = 0.0;   // [m]
-    this->localTemp = 1.0; // [K]
 
     this->defaultMsisInitialConditions();
 
@@ -144,9 +141,6 @@ that were added using AddSpacecraftToModel. Additional model outputs are also in
 */
 void MsisAtmosphere::customSelfInit()
 {
-    if(this->envType.compare(MODEL_MSISE)==0) {
-        BSK_PRINT(MSG_WARNING, "NRLMSISE-00 specific messages are not implemented..\n")
-    }
     return;
 }
 
@@ -173,7 +167,7 @@ void MsisAtmosphere::customCrossInit()
 void MsisAtmosphere::customWriteMessages(uint64_t CurrentClock)
 {
         /* [WIP] - Include additional outputs for other MSISE outputs (species count, etc.)*/
-    }
+
 }
 
 
