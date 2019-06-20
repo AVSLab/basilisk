@@ -28,7 +28,6 @@
 %include "../_GeneralModuleFiles/atmosphereBase.h"
 %include "msisAtmosphere.h"
 #include "nrlmsise-00.h"
-%include "nrlmsise-00.h"
 %include "../../simMessages/spicePlanetStateSimMsg.h"
 %include "../../simMessages/scPlusStatesSimMsg.h"
 %include "../../simMessages/atmoPropsSimMsg.h"
