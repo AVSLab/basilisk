@@ -139,8 +139,9 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     }
     
     /*! - write output message */
-    v3Scale(rNorm, rHat_N, opNavMsgOut.r_N);
+    v3Scale(rNorm*1E3, rHat_N, opNavMsgOut.r_N); //in m
     mCopy(covar_In_N, 3, 3, opNavMsgOut.covar_N);
+    vScale(1E6, opNavMsgOut.covar_N, 6*6, opNavMsgOut.covar_N);//in m
     opNavMsgOut.timeTag = circlesIn.timeTag;
     WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpnavFswMsg),
                  &opNavMsgOut, moduleID);
