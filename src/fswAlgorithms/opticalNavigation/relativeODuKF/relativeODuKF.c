@@ -140,11 +140,13 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     uint32_t sizeOfMsgWritten = 0;  /* [-] Non-zero size indicates we received ST msg*/
     int32_t trackerValid; /* [-] Indicates whether the star tracker was valid*/
     double yBar[3], tempYVec[3];
-    int i;
+    int i, computePostFits;
     OpNavFilterFswMsg opNavOutBuffer; /* [-] Output filter info*/
     NavTransIntMsg outputRelOD;
     OpnavFswMsg inputRelOD;
     
+    computePostFits = 0;
+    v3SetZero(configData->postFits);
     memset(&(outputRelOD), 0x0, sizeof(NavTransIntMsg));
     memset(&opNavOutBuffer, 0x0, sizeof(OpnavFswMsg));
     memset(&inputRelOD, 0x0, sizeof(OpnavFswMsg));
@@ -162,6 +164,7 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
         configData->planetId = inputRelOD.planetID;
         relODuKFTimeUpdate(configData, newTimeTag);
         relODuKFMeasUpdate(configData);
+        computePostFits = 1;
     }
     /*! - If current clock time is further ahead than the measured time, then
      propagate to this current time-step*/
@@ -185,8 +188,9 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     }
     
     /*! - The post fits are y - ybar if a measurement was read, if observations are zero, do not compute post fit residuals*/
-    if(!v3IsZero(configData->obs, 1E-10)){
-        mSubtract(configData->obs, ODUKF_N_MEAS, 1, yBar, configData->postFits);}
+    if(computePostFits == 1){
+        mSubtract(configData->obs, ODUKF_N_MEAS, 1, yBar, configData->postFits);
+    }
     
    
     /*! - Write the relative OD estimate into the copy of the navigation message structure*/

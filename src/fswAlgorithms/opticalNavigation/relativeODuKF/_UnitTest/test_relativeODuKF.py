@@ -189,7 +189,8 @@ def StateUpdateRelOD(show_plots):
 
     # Create test thread
     dt = 1
-    t1 = 700
+    t1 = 250
+    multT1 = 8
 
     testProcessRate = macros.sec2nano(dt)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
@@ -206,7 +207,7 @@ def StateUpdateRelOD(show_plots):
     setupFilterData(moduleConfig)
     unitTestSim.TotalSim.logThisMessage('relod_filter_data', testProcessRate)
 
-    time = np.linspace(0,3*t1,3*t1/dt+1)
+    time = np.linspace(0,multT1*t1,multT1*t1/dt+1)
     dydt = np.zeros(6)
     energy = np.zeros(len(time))
     expected=np.zeros([len(time), 7])
@@ -217,7 +218,7 @@ def StateUpdateRelOD(show_plots):
     kick = np.array([0.,0.,0.,-0.01, 0.01, 0.02]) * 10
 
     expected[0:t1,:] = rk4(twoBodyGrav, time[0:t1], moduleConfig.stateInit)
-    expected[t1:3*t1+1,:] = rk4(twoBodyGrav, time[t1:len(time)], expected[t1-1,1:] + kick)
+    expected[t1:multT1*t1+1,:] = rk4(twoBodyGrav, time[t1:len(time)], expected[t1-1,1:] + kick)
     for i in range(1, len(time)):
         energy[i] = - mu / (2 * orbitalMotion.rv2elem(mu, expected[i, 1:4], expected[i, 4:]).a)
 
@@ -249,11 +250,11 @@ def StateUpdateRelOD(show_plots):
     covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", range(6 * 6))
 
     for i in range(6):
-        if (covarLog[t1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i] / 1000):
+        if (covarLog[t1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i] / 100):
             testFailCount += 1
-            testMessages.append("Covariance update failure")
+            testMessages.append("Covariance update failure at " + str(t1))
 
-    for i in range(t1, 3*t1):
+    for i in range(t1, multT1*t1):
         if i % 50 == 0:
             inputData.timeTag = macros.sec2nano(i * dt + 1)
             inputData.r_N = expected[i,1:4] +  np.random.normal(0, 5, 3)
@@ -272,17 +273,17 @@ def StateUpdateRelOD(show_plots):
     postFitLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".postFitRes", range(3))
     covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", range(6 * 6))
 
-    diff = np.copy(expected)
-    diff[:,1:]-=stateLog[:,1:]
+    diff = np.copy(stateLog)
+    diff[:,1:]-=expected[:,1:]
     FilterPlots.EnergyPlot(time, energy, 'Update', show_plots)
     FilterPlots.StateCovarPlot(stateLog, covarLog, 'Update', show_plots)
     FilterPlots.StatePlot(diff, 'Update', show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, 100, 'Update', show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, np.sqrt(5), 'Update', show_plots)
 
     for i in range(6):
-        if (covarLog[t1*3, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i] / 1000):
+        if (covarLog[t1*multT1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i] / 100):
             testFailCount += 1
-            testMessages.append("Covariance update failure")
+            testMessages.append("Covariance update failure at " + str(t1*multT1))
 
     if (np.linalg.norm(diff[-1, 1:]/expected[-1,1:]) > 1.0E-1):
         testFailCount += 1
@@ -350,12 +351,12 @@ def StatePropRelOD(show_plots):
     postFitLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".postFitRes", range(3))
     covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", range(6 * 6))
 
-    diff = np.copy(expected)
-    diff[:,1:]-=stateLog[:,1:]
+    diff = np.copy(stateLog)
+    diff[:,1:]-=expected[:,1:]
     FilterPlots.EnergyPlot(time, energy, 'Prop', show_plots)
     FilterPlots.StateCovarPlot(stateLog, covarLog, 'Prop', show_plots)
     FilterPlots.StatePlot(diff, 'Prop', show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, 100, 'Prop', show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, np.sqrt(5), 'Prop', show_plots)
 
     if (np.linalg.norm(diff[-1,1:]/expected[-1,1:]) > 1.0E-10):
         testFailCount += 1
