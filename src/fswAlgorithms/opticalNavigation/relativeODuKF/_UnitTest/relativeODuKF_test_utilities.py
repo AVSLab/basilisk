@@ -43,35 +43,35 @@ def StatePlot(x, testName, show_plots):
     plt.subplot(321)
     plt.plot(t , x[:, 1], "b", label='Error Filter')
     plt.legend(loc='best')
-    plt.title('First pos component')
+    plt.title('First pos component (m)')
     plt.grid()
 
     plt.subplot(322)
     plt.plot(t , x[:, 4], "b")
-    plt.title('Second rate component')
+    plt.title('Second rate component (m/s)')
     plt.grid()
 
     plt.subplot(323)
     plt.plot(t , x[:, 2], "b")
-    plt.title('Second pos component')
+    plt.title('Second pos component (m)')
     plt.grid()
 
     plt.subplot(324)
     plt.plot(t , x[:, 5], "b")
     plt.xlabel('t(s)')
-    plt.title('Third rate component')
+    plt.title('Third rate component (m/s)')
     plt.grid()
 
     plt.subplot(325)
     plt.plot(t , x[:, 3], "b")
     plt.xlabel('t(s)')
-    plt.title('Third pos component')
+    plt.title('Third pos component (m)')
     plt.grid()
 
     plt.subplot(326)
     plt.plot(t , x[:, 6], "b")
     plt.xlabel('t(s)')
-    plt.title('Third rate component')
+    plt.title('Third rate component (m/s)')
     plt.grid()
 
     unitTestSupport.writeFigureLaTeX('StatesPlot' + testName, 'State error', plt, 'height=0.9\\textwidth, keepaspectratio', path)
@@ -115,21 +115,21 @@ def StateCovarPlot(x, Pflat, testName, show_plots):
     plt.plot(t , x[:, 1]+3 * np.sqrt(P[:, 0, 0]), 'r--',  label='Covar Filter')
     plt.plot(t , x[:, 1]-3 * np.sqrt(P[:, 0, 0]), 'r--')
     plt.legend(loc='best')
-    plt.title('First pos component')
+    plt.title('First pos component (m)')
     plt.grid()
 
     plt.subplot(322)
     plt.plot(t , x[:, 4], "b")
     plt.plot(t , x[:, 4]+3 * np.sqrt(P[:, 3, 3]), 'r--')
     plt.plot(t , x[:, 4]-3 * np.sqrt(P[:, 3, 3]), 'r--')
-    plt.title('Second rate component')
+    plt.title('Second rate component (m/s)')
     plt.grid()
 
     plt.subplot(323)
     plt.plot(t , x[:, 2], "b")
     plt.plot(t , x[:, 2]+3 * np.sqrt(P[:, 1, 1]), 'r--')
     plt.plot(t , x[:, 2]-3 * np.sqrt(P[:, 1, 1]), 'r--')
-    plt.title('Second pos component')
+    plt.title('Second pos component (m)')
     plt.grid()
 
     plt.subplot(324)
@@ -137,7 +137,7 @@ def StateCovarPlot(x, Pflat, testName, show_plots):
     plt.plot(t , x[:, 5]+3 * np.sqrt(P[:, 4, 4]), 'r--')
     plt.plot(t , x[:, 5]-3 * np.sqrt(P[:, 4, 4]), 'r--')
     plt.xlabel('t(s)')
-    plt.title('Third rate component')
+    plt.title('Third rate component (m/s)')
     plt.grid()
 
     plt.subplot(325)
@@ -145,7 +145,7 @@ def StateCovarPlot(x, Pflat, testName, show_plots):
     plt.plot(t , x[:, 3]+3 * np.sqrt(P[:, 2, 2]), 'r--')
     plt.plot(t , x[:, 3]-3 * np.sqrt(P[:, 2, 2]), 'r--')
     plt.xlabel('t(s)')
-    plt.title('Third pos component')
+    plt.title('Third pos component (m)')
     plt.grid()
 
     plt.subplot(326)
@@ -153,7 +153,7 @@ def StateCovarPlot(x, Pflat, testName, show_plots):
     plt.plot(t , x[:, 6]+3 * np.sqrt(P[:, 5, 5]), 'r--')
     plt.plot(t , x[:, 6]-3 * np.sqrt(P[:, 5, 5]), 'r--')
     plt.xlabel('t(s)')
-    plt.title('Third rate component')
+    plt.title('Third rate component (m/s)')
     plt.grid()
 
     unitTestSupport.writeFigureLaTeX('StatesPlot' + testName, 'State error and covariance', plt, 'height=0.9\\textwidth, keepaspectratio', path)
@@ -182,7 +182,7 @@ def PostFitResiduals(Res, noise, testName, show_plots):
     plt.plot(t , -MeasNoise, 'r--')
     plt.legend(loc='best')
     plt.ylim([-10*noise, 10*noise])
-    plt.title('First Meas Comp')
+    plt.title('First Meas Comp (m)')
     plt.grid()
 
     plt.subplot(312)
@@ -190,7 +190,7 @@ def PostFitResiduals(Res, noise, testName, show_plots):
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
     plt.ylim([-10*noise, 10*noise])
-    plt.title('Second Meas Comp')
+    plt.title('Second Meas Comp (m)')
     plt.grid()
 
     plt.subplot(313)
@@ -198,7 +198,7 @@ def PostFitResiduals(Res, noise, testName, show_plots):
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
     plt.ylim([-10*noise, 10*noise])
-    plt.title('Third Meas Comp')
+    plt.title('Third Meas Comp (m)')
     plt.grid()
 
 

@@ -100,12 +100,15 @@ void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     }
     
     vCopy(configData->stateInit, configData->numStates, configData->state);
-    
+    v6Scale(1E-3, configData->state, configData->state); // Convert to km
     /*! - User a cholesky decomposition to obtain the sBar and sQnoise matrices for use in filter at runtime*/
     mCopy(configData->covarInit, configData->numStates, configData->numStates,
           configData->sBar);
+    vScale(1E-6, configData->sBar, ODUKF_N_STATES*ODUKF_N_STATES, configData->sBar); // Convert to km
     mCopy(configData->covarInit, configData->numStates, configData->numStates,
           configData->covar);
+    vScale(1E-6, configData->covar, ODUKF_N_STATES*ODUKF_N_STATES, configData->covar); // Convert to km
+    
     mSetZero(tempMatrix, configData->numStates, configData->numStates);
     badUpdate += ukfCholDecomp(configData->sBar, configData->numStates,
                                configData->numStates, tempMatrix);
@@ -152,7 +155,8 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     memset(&inputRelOD, 0x0, sizeof(OpnavFswMsg));
     ReadMessage(configData->opNavInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(OpnavFswMsg), &inputRelOD, moduleId);
-
+    v3Scale(1E-3, inputRelOD.r_N, inputRelOD.r_N);
+    vScale(1E-6, inputRelOD.covar_N, ODUKF_N_STATES_HALF*ODUKF_N_STATES_HALF,inputRelOD.covar_N);
     /*! - Handle initializing time in filter and discard initial messages*/
     trackerValid = 0;
     /*! - If the time tag from the measured data is new compared to previous step,
@@ -195,7 +199,9 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
    
     /*! - Write the relative OD estimate into the copy of the navigation message structure*/
     v3Copy(configData->state, outputRelOD.r_BN_N);
+    v3Scale(1E3, outputRelOD.r_BN_N, outputRelOD.r_BN_N); // Convert to m
     v3Copy(&configData->state[3], outputRelOD.v_BN_N);
+    v3Scale(1E3, outputRelOD.v_BN_N, outputRelOD.v_BN_N); // Convert to m
     outputRelOD.timeTag = configData->timeTagOut;
     
     WriteMessage(configData->navStateOutMsgId, callTime, sizeof(NavTransIntMsg),
@@ -207,6 +213,9 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
             ODUKF_N_STATES*ODUKF_N_STATES*sizeof(double));
     memmove(opNavOutBuffer.state, configData->state, ODUKF_N_STATES*sizeof(double));
     memmove(opNavOutBuffer.postFitRes, configData->postFits, ODUKF_N_MEAS*sizeof(double));
+    v6Scale(1E3, opNavOutBuffer.state, opNavOutBuffer.state); // Convert to m
+    v3Scale(1E3, opNavOutBuffer.postFitRes, opNavOutBuffer.postFitRes); // Convert to m
+    vScale(1E6, opNavOutBuffer.covar, ODUKF_N_STATES*ODUKF_N_STATES, opNavOutBuffer.covar); // Convert to m
     WriteMessage(configData->filtDataOutMsgId, callTime, sizeof(OpNavFilterFswMsg),
                  &opNavOutBuffer, moduleId);
     

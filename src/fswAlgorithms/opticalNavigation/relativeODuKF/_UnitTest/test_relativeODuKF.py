@@ -49,13 +49,13 @@ def rk4(f, t, x0):
         x[i+1,0] = t[i+1]
     return x
 
-def twoBodyGrav(t, x, mu = 42828.314):
+def twoBodyGrav(t, x, mu = 42828.314*1E9):
     dxdt = np.zeros(np.shape(x))
     dxdt[0:3] = x[3:]
     dxdt[3:] = -mu/np.linalg.norm(x[0:3])**3.*x[0:3]
     return dxdt
 
-def twoBodyGravODE(x, t, mu = 42828.314):
+def twoBodyGravODE(x, t, mu = 42828.314*1E9):
     dxdt = np.zeros(np.shape(x))
     dxdt[0:3] = x[3:]
     dxdt[3:] = -mu/np.linalg.norm(x[0:3])**3.*x[0:3]
@@ -72,9 +72,9 @@ def setupFilterData(filterObject):
     filterObject.beta = 2.0
     filterObject.kappa = 0.0
 
-    mu = 42828.314
+    mu = 42828.314*1E9 #m^3/s^2
     elementsInit = orbitalMotion.ClassicElements()
-    elementsInit.a = 4000
+    elementsInit.a = 4000*1E3 #m
     elementsInit.e = 0.2
     elementsInit.i = 10
     elementsInit.Omega = 0.001
@@ -83,16 +83,16 @@ def setupFilterData(filterObject):
     r, v = orbitalMotion.elem2rv(mu, elementsInit)
 
     filterObject.stateInit = r.tolist() + v.tolist()
-    filterObject.covarInit = [1000, 0.0, 0.0, 0.0, 0.0, 0.0,
-                              0.0, 1000., 0.0, 0.0, 0.0, 0.0,
-                              0.0, 0.0, 1000., 0.0, 0.0, 0.0,
-                              0.0, 0.0, 0.0, 5., 0.0, 0.0,
-                              0.0, 0.0, 0.0, 0.0, 5., 0.0,
-                              0.0, 0.0, 0.0, 0.0, 0.0, 5.]
+    filterObject.covarInit = [1000.*1E6, 0.0, 0.0, 0.0, 0.0, 0.0,
+                              0.0, 1000.*1E6, 0.0, 0.0, 0.0, 0.0,
+                              0.0, 0.0, 1000.*1E6, 0.0, 0.0, 0.0,
+                              0.0, 0.0, 0.0, 5*1E6, 0.0, 0.0,
+                              0.0, 0.0, 0.0, 0.0, 5*1E6, 0.0,
+                              0.0, 0.0, 0.0, 0.0, 0.0, 5*1E6]
 
     qNoiseIn = np.identity(6)
-    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.00001*0.00001
-    qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6]*0.0001*0.0001
+    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.00001*0.00001*1E-6
+    qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6]*0.0001*0.0001*1E-6
     filterObject.qNoise = qNoiseIn.reshape(36).tolist()
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -209,10 +209,10 @@ def StateUpdateRelOD(show_plots):
     energy = np.zeros(len(time))
     expected=np.zeros([len(time), 7])
     expected[0,1:] = moduleConfig.stateInit
-    mu = 42828.314
+    mu = 42828.314*1E9
     energy[0] = -mu/(2*orbitalMotion.rv2elem(mu, expected[0,1:4], expected[0,4:]).a)
 
-    kick = np.array([0.,0.,0.,-0.01, 0.01, 0.02]) * 10
+    kick = np.array([0.,0.,0.,-0.01, 0.01, 0.02]) * 10 *1E3
 
     expected[0:t1,:] = rk4(twoBodyGrav, time[0:t1], moduleConfig.stateInit)
     expected[t1:multT1*t1+1,:] = rk4(twoBodyGrav, time[t1:len(time)], expected[t1-1,1:] + kick)
@@ -233,10 +233,10 @@ def StateUpdateRelOD(show_plots):
     for i in range(t1):
         if i > 0 and i % 50 == 0:
             inputData.timeTag = macros.sec2nano(i * dt)
-            inputData.r_N = expected[i,1:4] + np.random.normal(0, 5, 3)
-            inputData.covar_N = [5., 0.,0.,
-                                 0., 5., 0.,
-                                 0., 0., 5.]
+            inputData.r_N = expected[i,1:4] + np.random.normal(0, 5*1E3, 3)
+            inputData.covar_N = [5.*1E6, 0.,0.,
+                                 0., 5.*1E6, 0.,
+                                 0., 0., 5.*1E6]
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.opNavInMsgName,
                                                   inputMessageSize,
                                                   unitTestSim.TotalSim.CurrentNanos,
@@ -254,10 +254,10 @@ def StateUpdateRelOD(show_plots):
     for i in range(t1, multT1*t1):
         if i % 50 == 0:
             inputData.timeTag = macros.sec2nano(i * dt + 1)
-            inputData.r_N = expected[i,1:4] +  np.random.normal(0, 5, 3)
-            inputData.covar_N = [5., 0.,0.,
-                                 0., 5., 0.,
-                                 0., 0., 5.]
+            inputData.r_N = expected[i,1:4] +  np.random.normal(0, 5*1E3, 3)
+            inputData.covar_N = [5.*1E6, 0.,0.,
+                                 0., 5.*1E6, 0.,
+                                 0., 0., 5.*1E6]
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.opNavInMsgName,
                                                   inputMessageSize,
                                                   unitTestSim.TotalSim.CurrentNanos,
@@ -275,7 +275,7 @@ def StateUpdateRelOD(show_plots):
     FilterPlots.EnergyPlot(time, energy, 'Update', show_plots)
     FilterPlots.StateCovarPlot(stateLog, covarLog, 'Update', show_plots)
     FilterPlots.StatePlot(diff, 'Update', show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, np.sqrt(5), 'Update', show_plots)
+    FilterPlots.PostFitResiduals(postFitLog, np.sqrt(5*1E6), 'Update', show_plots)
 
     for i in range(6):
         if (covarLog[t1*multT1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i] / 100):
@@ -338,14 +338,13 @@ def StatePropRelOD(show_plots):
     energy = np.zeros(len(time))
     expected=np.zeros([len(time), 7])
     expected[0,1:] = moduleConfig.stateInit
-    mu = 42828.314
+    mu = 42828.314*1E9
     energy[0] = -mu/(2*orbitalMotion.rv2elem(mu, expected[0,1:4], expected[0,4:]).a)
     expected = rk4(twoBodyGrav, time, moduleConfig.stateInit)
     for i in range(1, len(time)):
         energy[i] = - mu / (2 * orbitalMotion.rv2elem(mu, expected[i, 1:4], expected[i, 4:]).a)
 
     stateLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".state", range(6))
-    postFitLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".postFitRes", range(3))
     covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", range(6 * 6))
 
     diff = np.copy(stateLog)
@@ -353,13 +352,12 @@ def StatePropRelOD(show_plots):
     FilterPlots.EnergyPlot(time, energy, 'Prop', show_plots)
     FilterPlots.StateCovarPlot(stateLog, covarLog, 'Prop', show_plots)
     FilterPlots.StatePlot(diff, 'Prop', show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, np.sqrt(5), 'Prop', show_plots)
 
     if (np.linalg.norm(diff[-1,1:]/expected[-1,1:]) > 1.0E-10):
         testFailCount += 1
         testMessages.append("State propagation failure")
 
-    if energy[0] - energy[-1] > 1.0E-10:
+    if (energy[0] - energy[-1])/energy[0] > 1.0E-10:
         testFailCount += 1
         testMessages.append("State propagation failure")
 

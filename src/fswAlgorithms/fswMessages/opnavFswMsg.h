@@ -24,10 +24,10 @@
  implementation of the sunline state estimator*/
 typedef struct {
     double timeTag;                             /*!< [s] Current time of validity for output */
-    double covar_N[3*3];    /*!< [-] Current covariance of the filter */
-    double covar_B[3*3];    /*!< [-] Current covariance of the filter */
-    double r_N[3];                 /*!< [km] Current estimated state of the filter */
-    double r_B[3];                 /*!< [km] Current estimated state of the filter */
+    double covar_N[3*3];    /*!< [m^2] Current covariance of the filter */
+    double covar_B[3*3];    /*!< [m^2] Current covariance of the filter */
+    double r_N[3];                 /*!< [m] Current estimated state of the filter */
+    double r_B[3];                 /*!< [m] Current estimated state of the filter */
     int planetID;       /*!< [-] Planet being navigated, Earth=1, Mars=2, Jupiter=3 */
 }OpnavFswMsg;
 
