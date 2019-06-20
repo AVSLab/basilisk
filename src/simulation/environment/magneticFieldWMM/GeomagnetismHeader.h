@@ -5,9 +5,9 @@
  *	3. Sun Solaris with GCC Compiler
  *
  *
- *      Revision Number: $Revision: 1288 $
+ *      Revision Number: $Revision: 1437 $
  *      Last changed by: $Author: awoods $
- *      Last changed on: $Date: 2014-12-09 16:43:07 -0700 (Tue, 09 Dec 2014) $
+ *      Last changed on: $Date: 2016-03-01 10:49:40 -0700 (Tue, 01 Mar 2016) $
  *
  *
  */
@@ -68,7 +68,6 @@ extern "C" {
 #define DEG2RAD(deg)    ((deg)*(M_PI/180.0L))
 #define ATanH(x)	    (0.5 * log((1 + x) / (1 - x)))
 
-
 #ifndef TRUE
 #define TRUE            ((int)1)
 #endif
@@ -87,6 +86,18 @@ extern "C" {
 #define MAG_GEO_POLE_TOLERANCE  1e-5
 #define MAG_USE_GEOID	1    /* 1 Geoid - Ellipsoid difference should be corrected, 0 otherwise */
 
+#define LAT_BOUND_MIN -90
+#define LAT_BOUND_MAX 90
+#define LON_BOUND_MIN -180
+#define LON_BOUND_MAX 360
+#define ALT_BOUND_MIN -10
+#define NO_ALT_MAX -99999
+#define USER_GAVE_UP -1
+
+#define WGS84ON 1
+#define MSLON 2
+
+
 /*
 Data types and prototype declaration for
 World Magnetic Model (WMM) subroutines.
@@ -95,6 +106,22 @@ July 28, 2009
 
 manoj.c.nair@noaa.gov*/
 
+
+
+#define MODEL_RELEASE_DATE "04 Feb 2019"
+#define VERSIONDATE_LARGE "$Date: 2019-02-04 10:40:43 -0700 (Mon, 04 Feb 2019) $"
+
+
+typedef enum { 
+    DECLINATION, 
+    INCLINATION, 
+    HOR_INTENSITY,
+    TOTAL_INTENSITY,
+    X_COMPONENT,
+    Y_COMPONENT,
+    Z_COMPONENT,
+    ALL
+} MAGenum_Comp;
 
 typedef struct {
     double EditionDate;
@@ -280,7 +307,7 @@ int MAG_Grid(MAGtype_CoordGeodetic minimum,
 
 int MAG_robustReadMagneticModel_Large(char *filename, char* filenameSV, MAGtype_MagneticModel **MagneticModel);
 
-int MAG_robustReadMagModels(char *filename, MAGtype_MagneticModel *(*magneticmodels)[], int array_size);
+int MAG_robustReadMagModels(char *filename, MAGtype_MagneticModel *(*magneticmodels)[1], int array_size);
 
 int MAG_SetDefaults(MAGtype_Ellipsoid *Ellip, MAGtype_Geoid *Geoid);
 
@@ -288,7 +315,7 @@ int MAG_SetDefaults(MAGtype_Ellipsoid *Ellip, MAGtype_Geoid *Geoid);
 
 void MAG_Error(int control);
 
-char MAG_GeomagIntroduction_WMM(MAGtype_MagneticModel *MagneticModel, char *VersionDate);
+char MAG_GeomagIntroduction_WMM(MAGtype_MagneticModel *MagneticModel, char *VersionDate, char *ModelDate);
 
 char MAG_GeomagIntroduction_EMM(MAGtype_MagneticModel *MagneticModel, char *VersionDate);
 
@@ -319,9 +346,7 @@ void MAG_PrintUserData(MAGtype_GeoMagneticElements GeomagElements,
 
 
 
-int MAG_ValidateDMSstringlat(char *input, char *Error);
-
-int MAG_ValidateDMSstringlong(char *input, char *Error);
+int MAG_ValidateDMSstring(char *input, int min, int max, char *Error);
 
 int MAG_Warnings(int control, double value, MAGtype_MagneticModel *MagneticModel);
 
@@ -500,6 +525,8 @@ void MAG_PrintUserDataWithUncertainty(MAGtype_GeoMagneticElements GeomagElements
         MAGtype_MagneticModel *MagneticModel,
         MAGtype_Geoid *Geoid);
 
+void MAG_GetDeg(char* Query_String, double* latitude, double bounds[2]);
+int MAG_GetAltitude(char* Query_String, MAGtype_Geoid *Geoid, MAGtype_CoordGeodetic* coords, int bounds[2], int AltitudeSetting);
 
 
 

@@ -7,14 +7,14 @@
 #include <assert.h>
 #include "GeomagnetismHeader.h"
 
-/* $Id: GeomagnetismLibrary.c 1287 2014-12-09 22:55:09Z awoods $
+/* $Id: GeomagnetismLibrary.c 1521 2017-01-24 17:52:41Z awoods $
  *
  * ABSTRACT
  *
  * The purpose of Geomagnetism Library is primarily to support the World Magnetic Model (WMM) 2015-2020.
  * It however is built to be used for spherical harmonic models of the Earth's magnetic field
  * generally and supports models even with a large (>>12) number of degrees.  It is also used in many 
- * other geomagnetic models distributed by NGDC.
+ * other geomagnetic models distributed by NCEI.
  *
  * REUSE NOTES
  *
@@ -49,22 +49,20 @@
  *
 
 
- *  National Geophysical Data Center
- *  NOAA EGC/2
- *  325 Broadway
- *  Boulder, CO 80303 USA
- *  Attn: Susan McLean
- *  Phone:  (303) 497-6478
- *  Email:  Susan.McLean@noaa.gov
-
+ *  National Centers for Environmental Information
+ *  NOAA E/NE42, 325 Broadway
+ *  Boulder, CO 80305 USA
+ *  Attn: Arnaud Chulliat
+ *  Phone:  (303) 497-6522
+ *  Email:  Arnaud.Chulliat@noaa.gov
 
  *  Software and Model Support
- *  National Geophysical Data Center
+ *  National Centers for Environmental Information
  *  NOAA EGC/2
- *  325 Broadway"
- *  Boulder, CO 80303 USA
- *  Attn: Manoj Nair or Arnaud Chulliat
- *  Phone:  (303) 497-4642 or -6522
+ *  325 Broadway
+ *  Boulder, CO 80305 USA
+ *  Attn: Adam Woods or Manoj Nair
+ *  Phone:  (303) 497-6640 or -4642
  *  Email:  geomag.models@noaa.gov
  *  URL: http://www.ngdc.noaa.gov/Geomagnetic/WMM/DoDWMM.shtml
 
@@ -75,11 +73,8 @@
 
  *  Nov 23, 2009
  *  Written by Manoj C Nair and Adam Woods
- *  Manoj.C.Nair@Noaa.Gov
- *  Revision Number: $Revision: 1287 $
- *  Last changed by: $Author: awoods $
- *  Last changed on: $Date: 2014-12-09 15:55:09 -0700 (Tue, 09 Dec 2014) $
-
+ *  Manoj.C.Nair@noaa.Gov
+ *  Adam.Woods@noaa.gov
  */
 
 
@@ -542,7 +537,10 @@ int MAG_robustReadMagneticModel_Large(char *filename, char *filenameSV, MAGtype_
     if(MODELFILE == 0) {
         return 0;
     }
-    fgets(line, MAXLINELENGTH, MODELFILE);
+    if (NULL == fgets(line, MAXLINELENGTH, MODELFILE))
+    {
+        return 0;
+    }    
     do
     {
         if(NULL == fgets(line, MAXLINELENGTH, MODELFILE))
@@ -557,7 +555,8 @@ int MAG_robustReadMagneticModel_Large(char *filename, char *filenameSV, MAGtype_
         return 0;
     }
     n = 0;
-    fgets(line, MAXLINELENGTH, MODELFILE);
+    if (NULL == fgets(line, MAXLINELENGTH, MODELFILE))
+        return 0;
     do
     {
         if(NULL == fgets(line, MAXLINELENGTH, MODELFILE))
@@ -585,7 +584,7 @@ int MAG_robustReadMagneticModel_Large(char *filename, char *filenameSV, MAGtype_
     return 1;
 } /*MAG_robustReadMagneticModel_Large*/
 
-int MAG_robustReadMagModels(char *filename, MAGtype_MagneticModel *(*magneticmodels)[], int array_size)
+int MAG_robustReadMagModels(char *filename, MAGtype_MagneticModel *(*magneticmodels)[1], int array_size)
 {
     char line[MAXLINELENGTH];
     int n, nMax = 0, num_terms, a;
@@ -594,9 +593,12 @@ int MAG_robustReadMagModels(char *filename, MAGtype_MagneticModel *(*magneticmod
     if(MODELFILE == 0) {
         return 0;
     }
-    fgets(line, MAXLINELENGTH, MODELFILE);
-    if(line[0] == '%')
+    if (NULL==fgets(line, MAXLINELENGTH, MODELFILE)){
+        return 0;
+    }
+    if(line[0] == '%'){
         MAG_readMagneticModel_SHDF(filename, magneticmodels, array_size);
+    }
     else if(array_size == 1)
     {
 
@@ -714,7 +716,7 @@ char MAG_GeomagIntroduction_EMM(MAGtype_MagneticModel *MagneticModel, char* Vers
 {
     char ans = 'h';
     printf("\n\n Welcome to the Enhanced Magnetic Model (EMM) %d C-Program\n\n", (int) MagneticModel->epoch);
-    printf("             --- Model Release Date: 15 Dec %d ---\n", (int) MagneticModel->epoch - 1);
+    printf("             --- Model Release Year: %d ---\n", (int) MagneticModel->epoch);
     printf("            --- Software Release Date: %s ---\n\n", VersionDate);
     printf("\n This program estimates the strength and direction of ");
     printf("\n Earth's main Magnetic field and crustal variation for a given point/area.");
@@ -747,7 +749,7 @@ char MAG_GeomagIntroduction_EMM(MAGtype_MagneticModel *MagneticModel, char* Vers
             printf("\n Variation are measured in units of degrees and are considered");
             printf("\n positive when east or north.  Inclination is measured in units");
             printf("\n of degrees and is considered positive when pointing down (into");
-            printf("\n the Earth).  The WMM is reference to the WGS-84 ellipsoid and");
+            printf("\n the Earth).  The EMM is referenced to the WGS-84 ellipsoid and");
             printf("\n is valid for 5 years after the base epoch.");
 
             printf("\n\n\n It is very important to note that a degree and  order 720 model,");
@@ -761,16 +763,15 @@ char MAG_GeomagIntroduction_EMM(MAGtype_MagneticModel *MagneticModel, char* Vers
             printf("\n field  from model  values.  If the required  declination accuracy  is");
             printf("\n more stringent than the EMM  series of models provide, the user is");
             printf("\n advised to request special (regional or local) surveys be performed");
-            printf("\n and models prepared. Please make requests of this nature to the");
-            printf("\n National Geospatial-Intelligence Agency (NGA) at the address below.");
+            printf("\n and models prepared.");
 
             printf("\n\n\n Contact Information");
 
             printf("\n  Software and Model Support");
-            printf("\n	National Geophysical Data Center");
+            printf("\n	National Centers for Environmental Information");
             printf("\n	NOAA EGC/2");
             printf("\n	325 Broadway");
-            printf("\n	Boulder, CO 80303 USA");
+            printf("\n	Boulder, CO 80305 USA");
             printf("\n	Attn: Adam Woods or Manoj Nair");
             printf("\n	Phone:  (303) 497-6640 or -4642");
             printf("\n	Email:  geomag.models@noaa.gov \n");
@@ -779,7 +780,7 @@ char MAG_GeomagIntroduction_EMM(MAGtype_MagneticModel *MagneticModel, char* Vers
     return ans;
 }
 
-char MAG_GeomagIntroduction_WMM(MAGtype_MagneticModel *MagneticModel, char *VersionDate)
+char MAG_GeomagIntroduction_WMM(MAGtype_MagneticModel *MagneticModel, char *VersionDate, char *ModelDate)
 /*Prints the introduction to the Geomagnetic program.  It needs the Magnetic model for the epoch.
 
  * INPUT  MagneticModel		: MAGtype_MagneticModel With Model epoch 	(input)
@@ -790,7 +791,7 @@ char MAG_GeomagIntroduction_WMM(MAGtype_MagneticModel *MagneticModel, char *Vers
     char help = 'h';
     char ans;
     printf("\n\n Welcome to the World Magnetic Model (WMM) %d C-Program\n\n", (int) MagneticModel->epoch);
-    printf("              --- Model Release Date: 15 Dec %d ---\n", (int) MagneticModel->epoch - 1);
+    printf("              --- Model Release Date: %s ---\n", ModelDate);
     printf("            --- Software Release Date: %s ---\n\n", VersionDate);
     printf("\n This program estimates the strength and direction of ");
     printf("\n Earth's main Magnetic field for a given point/area.");
@@ -848,16 +849,16 @@ char MAG_GeomagIntroduction_WMM(MAGtype_MagneticModel *MagneticModel, char *Vers
             printf("\n and models prepared. The World Magnetic Model is a joint product of");
             printf("\n the United States’ National Geospatial-Intelligence Agency (NGA) and");
             printf("\n the United Kingdom’s Defence Geographic Centre (DGC). The WMM was");
-            printf("\n developed jointly by the National Geophysical Data Center (NGDC, Boulder");
+            printf("\n developed jointly by the National Centers for Environmental Information (NCEI, Boulder");
             printf("\n CO, USA) and the British Geological Survey (BGS, Edinburgh, Scotland). ");
 
             printf("\n\n\n Contact Information");
 
             printf("\n  Software and Model Support");
-            printf("\n	National Geophysical Data Center");
+            printf("\n	National Centers for Environmental Information");
             printf("\n	NOAA EGC/2");
             printf("\n	325 Broadway");
-            printf("\n	Boulder, CO 80303 USA");
+            printf("\n	Boulder, CO 80305 USA");
             printf("\n	Attn: Manoj Nair or Arnaud Chulliat");
             printf("\n	Phone:  (303) 497-4642 or -6522"); 
             printf("\n	Email:  Geomag.Models@noaa.gov \n");
@@ -898,77 +899,121 @@ CALLS : none
     int dummy;
 
     printf("Please Enter Minimum Latitude (in decimal degrees):\n");
-    fgets(buffer, 20, stdin);
-    sscanf(buffer, "%lf", &minimum->phi);
+    if (NULL == fgets(buffer, 20, stdin)) {
+        minimum->phi = 0;
+        printf("Unrecognized input default %lf used\n", minimum->phi);
+    }else {
+        sscanf(buffer, "%lf", &minimum->phi);
+    }
     strcpy(buffer, "");
     printf("Please Enter Maximum Latitude (in decimal degrees):\n");
-    fgets(buffer, 20, stdin);
-    sscanf(buffer, "%lf", &maximum->phi);
+    if (NULL == fgets(buffer, 20, stdin)) {
+        maximum->phi = 0;
+        printf("Unrecognized input default %lf used\n", maximum->phi);
+    } else {
+        sscanf(buffer, "%lf", &maximum->phi);
+    }
     strcpy(buffer, "");
     printf("Please Enter Minimum Longitude (in decimal degrees):\n");
-    fgets(buffer, 20, stdin);
-    sscanf(buffer, "%lf", &minimum->lambda);
+    if (NULL == fgets(buffer, 20, stdin)) {
+        minimum->lambda = 0;
+        printf("Unrecognized input default %lf used\n", minimum->lambda);
+    } else {
+        sscanf(buffer, "%lf", &minimum->lambda);
+    }
     strcpy(buffer, "");
     printf("Please Enter Maximum Longitude (in decimal degrees):\n");
-    fgets(buffer, 20, stdin);
-    sscanf(buffer, "%lf", &maximum->lambda);
+    if (NULL == fgets(buffer, 20, stdin)){
+        maximum->lambda = 0;
+        printf("Unrecognized input default %lf used\n", maximum->lambda);
+    } else {
+        sscanf(buffer, "%lf", &maximum->lambda);
+    }
     strcpy(buffer, "");
     printf("Please Enter Step Size (in decimal degrees):\n");
-    fgets(buffer, 20, stdin);
-    sscanf(buffer, "%lf", step_size);
+    if (NULL == fgets(buffer, 20, stdin)){
+        *step_size = fmax(maximum->phi - minimum->phi, maximum->lambda - minimum->lambda);
+        printf("Unrecognized input default %lf used\n", *step_size);
+    } else {
+        sscanf(buffer, "%lf", step_size);
+    }
     strcpy(buffer, "");
     printf("Select height (default : above MSL) \n1. Above Mean Sea Level\n2. Above WGS-84 Ellipsoid \n");
-    fgets(buffer, 20, stdin);
-    sscanf(buffer, "%d", &dummy);
-    if(dummy == 2) Geoid->UseGeoid = 0;
-    else Geoid->UseGeoid = 1;
+    if (NULL == fgets(buffer, 20, stdin)) {
+        Geoid->UseGeoid = 1;
+        printf("Unrecognized option, height above MSL used.");
+    } else {
+        sscanf(buffer, "%d", &dummy);
+        if(dummy == 2) Geoid->UseGeoid = 0;
+        else Geoid->UseGeoid = 1;
+    }
     strcpy(buffer, "");
     if(Geoid->UseGeoid == 1)
     {
         printf("Please Enter Minimum Height above MSL (in km):\n");
-        fgets(buffer, 20, stdin);
-        sscanf(buffer, "%lf", &minimum->HeightAboveGeoid);
+        if (NULL == fgets(buffer, 20, stdin)) {
+            minimum->HeightAboveGeoid = 0;
+            printf("Unrecognized input default %lf used\n", minimum->HeightAboveGeoid);
+        } else {
+            sscanf(buffer, "%lf", &minimum->HeightAboveGeoid);
+        }
         strcpy(buffer, "");
         printf("Please Enter Maximum Height above MSL (in km):\n");
-        fgets(buffer, 20, stdin);
-        sscanf(buffer, "%lf", &maximum->HeightAboveGeoid);
+        if (NULL == fgets(buffer, 20, stdin)) {
+            maximum->HeightAboveGeoid = 0;
+            printf("Unrecognized input default %lf used\n", maximum->HeightAboveGeoid);
+        } else {
+            sscanf(buffer, "%lf", &maximum->HeightAboveGeoid);
+        }
         strcpy(buffer, "");
-        printf("Please Enter height step size (in km):\n");
-        fgets(buffer, 20, stdin);
-        sscanf(buffer, "%lf", a_step_size);
-        strcpy(buffer, "");
+
     } else
     {
         printf("Please Enter Minimum Height above the WGS-84 Ellipsoid (in km):\n");
-        fgets(buffer, 20, stdin);
+        if (NULL == fgets(buffer, 20, stdin))
         sscanf(buffer, "%lf", &minimum->HeightAboveGeoid);
         minimum->HeightAboveEllipsoid = minimum->HeightAboveGeoid;
         strcpy(buffer, "");
         printf("Please Enter Maximum Height above the WGS-84 Ellipsoid (in km):\n");
-        fgets(buffer, 20, stdin);
+        if (NULL == fgets(buffer, 20, stdin))
         sscanf(buffer, "%lf", &maximum->HeightAboveGeoid);
-        maximum->HeightAboveEllipsoid = minimum->HeightAboveGeoid;
-        strcpy(buffer, "");
-        printf("Please Enter height step size (in km):\n");
-        fgets(buffer, 20, stdin);
-        sscanf(buffer, "%lf", a_step_size);
+        maximum->HeightAboveEllipsoid = maximum->HeightAboveGeoid;
         strcpy(buffer, "");
     }
+    printf("Please Enter height step size (in km):\n");
+    if (NULL == fgets(buffer, 20, stdin)) {
+        *a_step_size = maximum->HeightAboveGeoid - minimum->HeightAboveGeoid;
+        printf("Unrecognized input default %lf used\n", *a_step_size);
+    } else {
+        sscanf(buffer, "%lf", a_step_size);
+    }
+    strcpy(buffer, "");
     printf("\nPlease Enter the decimal year starting time:\n");
-    fgets(buffer, 20, stdin);
+    while (NULL == fgets(buffer, 20, stdin)) {
+        printf("\nUnrecognized input, please re-enter a decimal year\n");
+    }
     sscanf(buffer, "%lf", &StartDate->DecimalYear);
     strcpy(buffer, "");
     printf("Please Enter the decimal year ending time:\n");
-    fgets(buffer, 20, stdin);
+    while (NULL == fgets(buffer, 20, stdin)) {
+        printf("\nUnrecognized input, please re-enter a decimal year\n");
+    }
     sscanf(buffer, "%lf", &EndDate->DecimalYear);
     strcpy(buffer, "");
     printf("Please Enter the time step size:\n");
-    fgets(buffer, 20, stdin);
-    sscanf(buffer, "%lf", step_time);
+    if (NULL == fgets(buffer, 20, stdin)) {
+        *step_time = EndDate->DecimalYear - StartDate->DecimalYear;
+        printf("Unrecognized input, default of %lf used\n", *step_time);
+    } else {
+        sscanf(buffer, "%lf", step_time);
+    }
     strcpy(buffer, "");
     printf("Enter a geomagnetic element to print. Your options are:\n");
     printf(" 1. Declination	9.   Ddot\n 2. Inclination	10. Idot\n 3. F		11. Fdot\n 4. H		12. Hdot\n 5. X		13. Xdot\n 6. Y		14. Ydot\n 7. Z		15. Zdot\n 8. GV		16. GVdot\nFor gradients enter: 17\n");
-    fgets(buffer, 20, stdin);
+    if (NULL == fgets(buffer, 20, stdin)) {
+        *ElementOption = 1;
+        printf("Unrecognized input, default of %d used\n", *ElementOption);
+    }
     sscanf(buffer, "%d", ElementOption);
     strcpy(buffer, "");
     if(*ElementOption == 17)
@@ -978,22 +1023,29 @@ CALLS : none
         printf(" 4. dX/dlambda \t5. dY/dlambda \t6. dZ/dlambda\n");
         printf(" 7. dX/dz \t8. dY/dz \t9. dZ/dz\n");
         strcpy(buffer, "");
-        fgets(buffer, 32, stdin);
-        sscanf(buffer, "%d", ElementOption);
+        if (NULL == fgets(buffer, 20, stdin)) {
+            *ElementOption=1;
+            printf("Unrecognized input, default of %d used\n", *ElementOption);
+        } else {
+            sscanf(buffer, "%d", ElementOption);
+        }
         strcpy(buffer, "");
         *ElementOption+=16;
     }
     printf("Select output :\n");
     printf(" 1. Print to a file \n 2. Print to Screen\n");
-    fgets(buffer, 20, stdin);
-    sscanf(buffer, "%d", PrintOption);
+    if (NULL ==fgets(buffer, 20, stdin)){
+        *PrintOption = 2;
+        printf("Unrecognized input, default of printing to screen\n");
+    } else {
+        sscanf(buffer, "%d", PrintOption);
+    }
     strcpy(buffer, "");
     fileout = fopen(filename, "a");
     if(*PrintOption == 1)
     {
         printf("Please enter output filename\nfor default ('GridResults.txt') press enter:\n");
-        fgets(buffer, 20, stdin);
-        if(strlen(buffer) <= 1)
+        if(NULL==fgets(buffer, 20, stdin) || strlen(buffer) <= 1)
         {
             strcpy(OutputFile, "GridResults.txt");
             fprintf(fileout, "\nResults printed in: GridResults.txt\n");
@@ -1051,148 +1103,26 @@ CALLS: 	MAG_DMSstringToDegree(buffer, &CoordGeodetic->lambda); (The program uses
 {
     char Error_Message[255];
     char buffer[40];
-    char tmp;
     int i, j, a, b, c, done = 0;
+	double lat_bound[2] = {LAT_BOUND_MIN, LAT_BOUND_MAX};
+	double lon_bound[2] = {LON_BOUND_MIN, LON_BOUND_MAX};
+    int alt_bound[2] = {ALT_BOUND_MIN, NO_ALT_MAX}; 
+	char* Qstring = malloc(sizeof(char) * 1028);
     strcpy(buffer, ""); /*Clear the input    */
-    printf("\nPlease enter latitude");
-    printf("\nNorth Latitude positive, For example:");
-    printf("\n30, 30, 30 (D,M,S) or 30.508 (Decimal Degrees) (both are north)\n");
-    fgets(buffer, 40, stdin);
-    for(i = 0, done = 0, j = 0; i <= 40 && !done; i++)
-    {
-        if(buffer[i] == '.')
-        {
-            j = sscanf(buffer, "%lf", &CoordGeodetic->phi);
-            if(j == 1)
-                done = 1;
-            else
-                done = -1;
-        }
-        if(buffer[i] == ',')
-        {
-            if(MAG_ValidateDMSstringlat(buffer, Error_Message))
-            {
-                MAG_DMSstringToDegree(buffer, &CoordGeodetic->phi);
-                done = 1;
-            } else
-                done = -1;
-        }
-        if(buffer[i] == ' ')/* This detects if there is a ' ' somewhere in the string,
-		if there is the program tries to interpret the input as Degrees Minutes Seconds.*/
-        {
-            if(MAG_ValidateDMSstringlat(buffer, Error_Message))
-            {
-                MAG_DMSstringToDegree(buffer, &CoordGeodetic->phi);
-                done = 1;
-            } else
-                done = -1;
-        }
-        if(buffer[i] == '\0' || done == -1)
-        {
-            if(MAG_ValidateDMSstringlat(buffer, Error_Message) && done != -1)
-            {
-                sscanf(buffer, "%lf", &CoordGeodetic->phi);
-                done = 1;
-            } else
-            {
-                printf("%s", Error_Message);
-                strcpy(buffer, "");
-                printf("\nError encountered, please re-enter as '(-)DDD,MM,SS' or in Decimal Degrees DD.ddd:\n");
-                fgets(buffer, 40, stdin);
-                i = -1;
-                done = 0;
-            }
-        }
-    }
+	strcpy(Qstring, "\nPlease enter latitude\nNorth Latitude positive, For example:\n30, 30, 30 (D,M,S) or 30.508 (Decimal Degrees) (both are north)\n");
+	MAG_GetDeg(Qstring, &CoordGeodetic->phi, lat_bound);
     strcpy(buffer, ""); /*Clear the input*/
-    printf("\nPlease enter longitude");
-    printf("\nEast longitude positive, West negative.  For example:");
-    printf("\n-100.5 or -100, 30, 0 for 100.5 degrees west\n");
-    fgets(buffer, 40, stdin);
-    for(i = 0, done = 0, j = 0; i <= 40 && !done; i++)/*This for loop determines how the user is trying to enter their data, and makes sure that it is copied into the correct location*/
-    {
-        if(buffer[i] == '.') /*This detects if there is a '.' somewhere in the string, if there is the program tries to interpret the input as a double, and copies it to the longitude*/
-        {
-            j = sscanf(buffer, "%lf", &CoordGeodetic->lambda);
-            if(j == 1)
-                done = 1; /*This control ends the loop*/
-            else
-                done = -1; /*This copies an end string into the buffer so that the user is sent to the Re-enter input message*/
-        }
-        if(buffer[i] == ',')/*This detects if there is a ',' somewhere in the string, if there is the program tries to interpret the input as Degrees, Minutes, Seconds.*/
-        {
-            if(MAG_ValidateDMSstringlong(buffer, Error_Message))
-            {
-                MAG_DMSstringToDegree(buffer, &CoordGeodetic->lambda); /*The program uses this to convert the string into a decimal longitude.*/
-                done = 1;
-            } else
-                done = -1;
-        }
-        if(buffer[i] == ' ')/* This detects if there is a ' ' somewhere in the string, if there is the program tries to interpret the input as Degrees Minutes Seconds.*/
-        {
-            if(MAG_ValidateDMSstringlong(buffer, Error_Message))
-            {
-                MAG_DMSstringToDegree(buffer, &CoordGeodetic->lambda);
-                done = 1;
-            } else
-                done = -1;
-        }
-        if(buffer[i] == '\0' || done == -1) /*If the program reaches the end of the string before finding a "." or a "," or if its been sent by an error it does this*/
-        {
-            MAG_ValidateDMSstringlong(buffer, Error_Message); /*The program attempts to determine if all the characters in the string are legal, and then tries to interpret the string as a simple degree entry, like "0", or "67"*/
-            if(MAG_ValidateDMSstringlong(buffer, Error_Message) && done != -1)
-            {
-                sscanf(buffer, "%lf", &CoordGeodetic->lambda);
-                done = 1;
-            } else /*The string is neither DMS, a decimal degree, or a simple degree input, or has some error*/
-            {
-                printf("%s", Error_Message);
-                strcpy(buffer, ""); /*Clear the input*/
-                printf("\nError encountered, please re-enter as '(-)DDD,MM,SS' or in Decimal Degrees DD.ddd:\n"); /*Request new input*/
-                fgets(buffer, 40, stdin);
-                i = -1; /*Restart the loop, at the end of this loop i will be incremented to 0, effectively restarting the loop*/
-                done = 0;
-            }
-        }
-    }
-    printf("\nPlease enter height above mean sea level (in kilometers):\n[For height above WGS-84 Ellipsoid prefix E, for example (E20.1)]\n");
-    done = 0;
-    while(!done)
-    {
-        strcpy(buffer, "");
-        fgets(buffer, 40, stdin);
-        j = 0;
-        if(buffer[0] == 'e' || buffer[0] == 'E') /* User entered height above WGS-84 ellipsoid, copy it to CoordGeodetic->HeightAboveEllipsoid */
-        {
-            j = sscanf(buffer, "%c%lf", &tmp, &CoordGeodetic->HeightAboveEllipsoid);
-            if(j == 2)
-                j = 1;
-            Geoid->UseGeoid = 0;
-        } else /* User entered height above MSL, convert it to the height above WGS-84 ellipsoid */
-        {
-            Geoid->UseGeoid = 1;
-            j = sscanf(buffer, "%lf", &CoordGeodetic->HeightAboveGeoid);
-            MAG_ConvertGeoidToEllipsoidHeight(CoordGeodetic, Geoid);
-        }
-        if(j == 1)
-            done = 1;
-        else
-            printf("\nIllegal Format, please re-enter as '(-)HHH.hhh:'\n");
-        if(CoordGeodetic->HeightAboveEllipsoid < -10.0 && done == 1)
-            switch(MAG_Warnings(3, CoordGeodetic->HeightAboveEllipsoid, MagneticModel)) {
-                case 0:
-                    return 0;
-                case 1:
-                    done = 0;
-                    printf("Please enter height above sea level (in kilometers):\n");
-                    break;
-                case 2:
-                    break;
-            }
-    }
+    strcpy(Qstring,"\nPlease enter longitude\nEast longitude positive, West negative.  For example:\n-100.5 or -100, 30, 0 for 100.5 degrees west\n");
+	MAG_GetDeg(Qstring, &CoordGeodetic->lambda, lon_bound);
+	    
+	strcpy(Qstring,"\nPlease enter height above mean sea level (in kilometers):\n[For height above WGS-84 Ellipsoid prefix E, for example (E20.1)]\n");
+    if(MAG_GetAltitude(Qstring, Geoid, CoordGeodetic, alt_bound, FALSE)==USER_GAVE_UP)
+        return FALSE;
     strcpy(buffer, "");
     printf("\nPlease enter the decimal year or calendar date\n (YYYY.yyy, MM DD YYYY or MM/DD/YYYY):\n");
-    fgets(buffer, 40, stdin);
+    while (NULL == fgets(buffer, 40, stdin)) {
+        printf("\nPlease enter the decimal year or calendar date\n (YYYY.yyy, MM DD YYYY or MM/DD/YYYY):\n");
+    }
     for(i = 0, done = 0; i <= 40 && !done; i++)
     {
         if(buffer[i] == '.')
@@ -1210,7 +1140,9 @@ CALLS: 	MAG_DMSstringToDegree(buffer, &CoordGeodetic->lambda); (The program uses
             {
                 printf("%s", Error_Message);
                 printf("\nPlease re-enter Date in MM/DD/YYYY or MM DD YYYY format, or as a decimal year\n");
-                fgets(buffer, 40, stdin);
+                while (NULL == fgets(buffer, 40, stdin)) {
+                    printf("\nPlease re-enter Date in MM/DD/YYYY or MM DD YYYY format, or as a decimal year\n");
+                }
                 i = 0;
             } else
                 done = 1;
@@ -1235,7 +1167,9 @@ CALLS: 	MAG_DMSstringToDegree(buffer, &CoordGeodetic->lambda); (The program uses
                     printf("%s", Error_Message);
                     strcpy(buffer, "");
                     printf("\nError encountered, please re-enter Date in MM/DD/YYYY or MM DD YYYY format, or as a decimal year\n");
-                    fgets(buffer, 40, stdin);
+                    while( NULL== fgets(buffer, 40, stdin)){
+                        printf("\nError encountered, please re-enter Date in MM/DD/YYYY or MM DD YYYY format, or as a decimal year\n");
+                    }
                     i = -1;
                 } else
                     done = 1;
@@ -1245,7 +1179,9 @@ CALLS: 	MAG_DMSstringToDegree(buffer, &CoordGeodetic->lambda); (The program uses
         {
             strcpy(buffer, "");
             printf("\nError encountered, please re-enter as MM/DD/YYYY, MM DD YYYY, or as YYYY.yyy:\n");
-            fgets(buffer, 40, stdin);
+            while (NULL ==fgets(buffer, 40, stdin)) {
+                printf("\nError encountered, please re-enter as MM/DD/YYYY, MM DD YYYY, or as YYYY.yyy:\n"); 
+            }
             i = -1;
         }
         if(done)
@@ -1260,7 +1196,9 @@ CALLS: 	MAG_DMSstringToDegree(buffer, &CoordGeodetic->lambda); (The program uses
                         i = -1;
                         strcpy(buffer, "");
                         printf("\nPlease enter the decimal year or calendar date\n (YYYY.yyy, MM DD YYYY or MM/DD/YYYY):\n");
-                        fgets(buffer, 40, stdin);
+                        while(NULL == fgets(buffer, 40, stdin)){
+                            printf("\nPlease enter the decimal year or calendar date\n (YYYY.yyy, MM DD YYYY or MM/DD/YYYY):\n");
+                        }
                         break;
                     case 2:
                         break;
@@ -1268,7 +1206,8 @@ CALLS: 	MAG_DMSstringToDegree(buffer, &CoordGeodetic->lambda); (The program uses
             }
         }
     }
-    return 1;
+    free(Qstring);
+    return TRUE;
 } /*MAG_GetUserInput*/
 
 void MAG_PrintGradient(MAGtype_Gradient Gradient)
@@ -1408,7 +1347,7 @@ INPUT :  GeomagElements : Data structure MAGtype_GeoMagneticElements with the fo
 
 }/*MAG_PrintUserData*/
 
-int MAG_ValidateDMSstringlat(char *input, char *Error)
+int MAG_ValidateDMSstring(char *input, int min, int max, char *Error)
 
 /* Validates a latitude DMS string, and returns 1 for a success and returns 0 for a failure.
 It copies an error message to the Error string in the event of a failure.
@@ -1450,12 +1389,12 @@ CALLS : none
         strcpy(Error, "\nError: Not enough numbers used for Degrees, Minutes, Seconds format\n or they were incorrectly formatted\n The legal format is DD,MM,SS or DD MM SS\n");
         return FALSE;
     }
-    if(degree > 90 || degree < -90)
+    if(degree > max || degree < min)
     {
-        strcpy(Error, "\nError: Degree input is outside legal range for latitude\n The legal range is from -90 to 90\n");
+        sprintf(Error, "\nError: Degree input is outside legal range\n The legal range is from %d to %d\n", min, max);
         return FALSE;
     }
-    if(abs(degree) == 90)
+    if(degree == max || degree == min)
         max_minute = 0;
     if(minute > max_minute || minute < 0)
     {
@@ -1470,73 +1409,7 @@ CALLS : none
         return FALSE;
     }
     return TRUE;
-} /*MAG_ValidateDMSstringlat*/
-
-int MAG_ValidateDMSstringlong(char *input, char *Error)
-
-/*Validates a given longitude DMS string and returns 1 for a success and returns 0 for a failure.
-It copies an error message to the Error string in the event of a failure.
-
-INPUT : input (DMS string)
-OUTPUT : Error : Error string
-CALLS : none
-
- */
-{
-    int degree, minute, second, j = 0, max_minute = 60, max_second = 60, n;
-    int i;
-    degree = -1000;
-    minute = -1;
-    second = -1;
-    n = (int) strlen(input);
-
-    for(i = 0; i <= n - 1; i++) /* tests for legal characters */
-    {
-        if((input[i] < '0' || input[i] > '9') && (input[i] != ',' && input[i] != ' ' && input[i] != '-' && input[i] != '\0' && input[i] != '\n'))
-        {
-            strcpy(Error, "\nError: Input contains an illegal character, legal characters for Degree, Minute, Second format are:\n '0-9' ',' '-' '[space]' '[Enter]'\n");
-            return FALSE;
-        }
-        if(input[i] == ',')
-            j++;
-    }
-    if(j >= 2)
-        j = sscanf(input, "%d, %d, %d", &degree, &minute, &second); /* tests for legal formatting and range */
-    else
-        j = sscanf(input, "%d %d %d", &degree, &minute, &second);
-    if(j == 1)
-    {
-        minute = 0;
-        second = 0;
-        j = 3;
-    }
-    if(j != 3)
-    {
-        strcpy(Error, "\nError: Not enough numbers read for Degrees, Minutes, Seconds format\n or they were incorrectly formatted\n The legal format is DD,MM,SS or DD MM SS\n");
-        return FALSE;
-    }
-    sscanf(input, "%d, %d, %d", &degree, &minute, &second); /* tests for legal formatting and range */
-    if(degree > 360 || degree < -180)
-    {
-        strcpy(Error, "\nError: Degree input is outside legal range\n The legal range is from -180 to 360\n");
-        return FALSE;
-    }
-    if(degree == 360 || degree == -180)
-        max_minute = 0;
-    if(minute > max_minute || minute < 0)
-    {
-        strcpy(Error, "\nError: Minute input is outside legal range\n The legal minute range is from 0 to 60\n");
-        return FALSE;
-    }
-    if(minute == max_minute)
-        max_second = 0;
-    if(second > max_second || second < 0)
-    {
-        strcpy(Error, "\nError: Second input is outside legal range\n The legal second range is from 0 to 60\n");
-        return FALSE;
-    }
-    return TRUE;
-} /*MAG_ValidateDMSstringlong*/
+} /*MAG_ValidateDMSstring*/
 
 int MAG_Warnings(int control, double value, MAGtype_MagneticModel *MagneticModel)
 
@@ -1554,25 +1427,30 @@ CALLS : none
 {
     char ans[20];
     strcpy(ans, "");
+    
     switch(control) {
         case 1:/* Horizontal Field strength low */
-            printf("\nWarning: The Horizontal Field strength at this location is only %f\n", value);
-            printf("	Compass readings have large uncertainties in areas where H\n	is smaller than 5000 nT\n");
-            printf("Press enter to continue...\n");
-            fgets(ans, 20, stdin);
+            do {
+                printf("\nWarning: The Horizontal Field strength at this location is only %f\n", value);
+                printf("	Compass readings have large uncertainties in areas where H\n	is smaller than 5000 nT\n");
+                printf("Press enter to continue...\n");
+            } while(NULL == fgets(ans, 20, stdin)); 
             break;
         case 2:/* Horizontal Field strength very low */
-            printf("\nWarning: The Horizontal Field strength at this location is only %f\n", value);
-            printf("	Compass readings have VERY LARGE uncertainties in areas where\n	where H is smaller than 1000 nT\n");
-            printf("Press enter to continue...\n");
-            fgets(ans, 20, stdin);
+            do {
+                printf("\nWarning: The Horizontal Field strength at this location is only %f\n", value);
+                printf("	Compass readings have VERY LARGE uncertainties in areas where\n	where H is smaller than 1000 nT\n");
+                printf("Press enter to continue...\n");
+            } while(NULL == fgets(ans, 20, stdin));
             break;
         case 3:/* Elevation outside the recommended range */
             printf("\nWarning: The value you have entered of %f km for the elevation is outside of the recommended range.\n Elevations above -10.0 km are recommended for accurate results. \n", value);
             while(1)
             {
                 printf("\nPlease press 'C' to continue, 'G' to get new data or 'X' to exit...\n");
-                fgets(ans, 20, stdin);
+                while( NULL == fgets(ans, 20, stdin)) {
+                    printf("\nInvalid input\n");
+                }
                 switch(ans[0]) {
                     case 'X':
                     case 'x':
@@ -1591,26 +1469,53 @@ CALLS : none
             break;
 
         case 4:/*Date outside the recommended range*/
-            printf("\nWARNING - TIME EXTENDS BEYOND INTENDED USAGE RANGE\n CONTACT NGDC FOR PRODUCT UPDATES:\n");
-            printf("	National Geophysical Data Center\n");
+            printf("\nWARNING - TIME EXTENDS BEYOND INTENDED USAGE RANGE\n CONTACT NCEI FOR PRODUCT UPDATES:\n");
+            printf("	National Centers for Environmental Information\n");
             printf("	NOAA EGC/2\n");
             printf("	325 Broadway\n");
+            printf("\n	Boulder, CO 80305 USA");
             printf("	Attn: Manoj Nair or Arnaud Chulliat\n");
             printf("	Phone:	(303) 497-4642 or -6522\n");
             printf("	Email:	geomag.models@noaa.gov\n");
-            printf("	Web: http://www.ngdc.noaa.gov/Geomagnetic/WMM/DoDWMM.shtml\n");
+            printf("	Web: http://www.ngdc.noaa.gov/geomag/WMM/DoDWMM.shtml\n");
             printf("\n VALID RANGE  = %d - %d\n", (int) MagneticModel->epoch, (int) MagneticModel->CoefficientFileEndDate);
             printf(" TIME   = %f\n", value);
             while(1)
             {
                 printf("\nPlease press 'C' to continue, 'N' to enter new data or 'X' to exit...\n");
-                fgets(ans, 20, stdin);
+                while (NULL ==fgets(ans, 20, stdin)){
+                    printf("\nInvalid input\n");
+                }
                 switch(ans[0]) {
                     case 'X':
                     case 'x':
                         return 0;
                     case 'N':
                     case 'n':
+                        return 1;
+                    case 'C':
+                    case 'c':
+                        return 2;
+                    default:
+                        printf("\nInvalid input %c\n", ans[0]);
+                        break;
+                }
+            }
+            break;
+		case 5:/*Elevation outside the allowable range*/
+		    printf("\nError: The value you have entered of %f km for the elevation is outside of the recommended range.\n Elevations above -10.0 km are recommended for accurate results. \n", value);
+            while(1)
+            {
+                printf("\nPlease press 'C' to continue, 'G' to get new data or 'X' to exit...\n");
+                while (NULL ==fgets(ans, 20, stdin)){
+                    printf("\nInvalid input\n");
+                }
+                switch(ans[0]) {
+                    case 'X':
+                    case 'x':
+                        return 0;
+                    case 'G':
+                    case 'g':
                         return 1;
                     case 'C':
                     case 'c':
@@ -2110,8 +2015,8 @@ void MAG_PrintSHDFFormat(char *filename, MAGtype_MagneticModel *(*MagneticModel)
 	/*lines = (int)(UFM_DEGREE / 2.0 * (UFM_DEGREE + 3));*/
 	for(i = 0; i < epochs; i++)
 	{
-            if(i < epochs - 1) epochRange = (int)((*MagneticModel)[i+1]->epoch - (*MagneticModel)[i]->epoch);
-            else epochRange = (int)((*MagneticModel)[i]->epoch - (*MagneticModel)[i-1]->epoch);
+            if(i < epochs - 1) epochRange = (*MagneticModel)[i+1]->epoch - (*MagneticModel)[i]->epoch;
+            else epochRange = (*MagneticModel)[i]->epoch - (*MagneticModel)[i-1]->epoch;
             fprintf(SHDF_file, "%%SHDF 16695 Definitive Geomagnetic Reference Field Model Coefficient File\n");
 		fprintf(SHDF_file, "%%ModelName: %s\n", (*MagneticModel)[i]->ModelName);
 		fprintf(SHDF_file, "%%Publisher: International Association of Geomagnetism and Aeronomy (IAGA), Working Group V-Mod\n");
@@ -2194,7 +2099,9 @@ int MAG_readMagneticModel(char *filename, MAGtype_MagneticModel * MagneticModel)
     MagneticModel->epoch = epoch;
     while(EOF_Flag == 0)
     {
-        fgets(c_str, 80, MAG_COF_File);
+        if (NULL == fgets(c_str, 80, MAG_COF_File)){
+            break;
+        }
         /* CHECK FOR LAST LINE IN FILE */
         for(i = 0; i < 4 && (c_str[i] != '\0'); i++)
         {
@@ -2258,16 +2165,28 @@ int MAG_readMagneticModel_Large(char *filename, char *filenameSV, MAGtype_Magnet
     MagneticModel->Main_Field_Coeff_G[0] = 0.0;
     MagneticModel->Secular_Var_Coeff_H[0] = 0.0;
     MagneticModel->Secular_Var_Coeff_G[0] = 0.0;
-    fgets(c_str, 80, MAG_COF_File);
+    if (NULL == fgets(c_str, 80, MAG_COF_File)){
+        fclose(MAG_COF_File);
+        fclose(MAG_COFSV_File);
+        return FALSE;
+    }
     sscanf(c_str, "%lf%s", &epoch, MagneticModel->ModelName);
     MagneticModel->epoch = epoch;
     a = CALCULATE_NUMTERMS(MagneticModel->nMaxSecVar);
     b = CALCULATE_NUMTERMS(MagneticModel->nMax);
     for(i = 0; i < a; i++)
     {
-        fgets(c_str, 80, MAG_COF_File);
+        if (NULL == fgets(c_str, 80, MAG_COF_File)){
+            fclose(MAG_COF_File);
+            fclose(MAG_COFSV_File);
+            return FALSE;
+        }
         sscanf(c_str, "%d%d%lf%lf", &n, &m, &gnm, &hnm);
-        fgets(c_str2, 80, MAG_COFSV_File);
+        if (NULL == fgets(c_str2, 80, MAG_COFSV_File)){
+            fclose(MAG_COF_File);
+            fclose(MAG_COFSV_File);
+            return FALSE;
+        }
         sscanf(c_str2, "%d%d%lf%lf", &n, &m, &dgnm, &dhnm);
         if(m <= n)
         {
@@ -2280,7 +2199,11 @@ int MAG_readMagneticModel_Large(char *filename, char *filenameSV, MAGtype_Magnet
     }
     for(i = a; i < b; i++)
     {
-        fgets(c_str, 80, MAG_COF_File);
+        if (NULL == fgets(c_str, 80, MAG_COF_File)){
+            fclose(MAG_COF_File);
+            fclose(MAG_COFSV_File);
+            return FALSE;
+        }
         sscanf(c_str, "%d%d%lf%lf", &n, &m, &gnm, &hnm);
         if(m <= n)
         {
@@ -2768,7 +2691,7 @@ CALLS : none
 {
     int DMS[3], i;
     double temp = DegreesOfArc;
-    char tempstring[32] = "";
+    char tempstring[36] = "";
     char tempstring2[32] = "";
     strcpy(DMSstring, "");
     if(UnitDepth > 3)
@@ -3018,8 +2941,8 @@ OUTPUT : UTMParameters : Pointer to data structure MAGtype_UTMParameters with th
 
     Eps = 0.081819190842621494335;
     Epssq = 0.0066943799901413169961;
-    K0R4 = 6367449.1458234153093;
-    K0R4oa = 0.99832429843125277950;
+    K0R4 = 6367449.1458234153093*K0;
+    K0R4oa = K0R4/6378137;
 
 
     Acoeff[0] = 8.37731820624469723600E-04;
@@ -3428,7 +3351,7 @@ CALLS : none
     if((CalendarDate->Year % 4 == 0 && CalendarDate->Year % 100 != 0) || CalendarDate->Year % 400 == 0)
         ExtraDay = 1;
 
-    DayOfTheYear = (int)(floor((CalendarDate->DecimalYear - (double) CalendarDate->Year) * (365.0 + (double) ExtraDay)+0.5) + 1);
+    DayOfTheYear = floor((CalendarDate->DecimalYear - (double) CalendarDate->Year) * (365.0 + (double) ExtraDay)+0.5) + 1;
     /*The above floor is used for rounding, this only works for positive integers*/
 
 
@@ -4526,4 +4449,134 @@ void MAG_PrintUserDataWithUncertainty(MAGtype_GeoMagneticElements GeomagElements
 
 }/*MAG_PrintUserDataWithUncertainty*/
 
+void MAG_GetDeg(char* Query_String, double* latitude, double bounds[2]) {
+	/*Gets a degree value from the user using the standard input*/
+	char buffer[64], Error_Message[255];
+	int done, i, j;
+	
+	printf("%s", Query_String);
+    while (NULL == fgets(buffer, 64, stdin)){
+        printf("%s", Query_String);
+    }
+    for(i = 0, done = 0, j = 0; i <= 64 && !done; i++)
+    {
+        if(buffer[i] == '.')
+        {
+            j = sscanf(buffer, "%lf", latitude);
+            if(j == 1)
+                done = 1;
+            else
+                done = -1;
+        }
+        if(buffer[i] == ',')
+        {
+            if(MAG_ValidateDMSstring(buffer, bounds[0], bounds[1], Error_Message))
+            {
+                MAG_DMSstringToDegree(buffer, latitude);
+                done = 1;
+            } else
+                done = -1;
+        }
+        if(buffer[i] == ' ')/* This detects if there is a ' ' somewhere in the string,
+		if there is the program tries to interpret the input as Degrees Minutes Seconds.*/
+        {
+            if(MAG_ValidateDMSstring(buffer, bounds[0], bounds[1], Error_Message))
+            {
+                MAG_DMSstringToDegree(buffer, latitude);
+                done = 1;
+            } else
+                done = -1;
+        }
+        if(buffer[i] == '\0' || done == -1)
+        {
+            if(MAG_ValidateDMSstring(buffer, bounds[0], bounds[1], Error_Message) && done != -1)
+            {
+                sscanf(buffer, "%lf", latitude);
+                done = 1;
+            } else
+            {
+                printf("%s", Error_Message);
+                strcpy(buffer, "");
+                printf("\nError encountered, please re-enter as '(-)DDD,MM,SS' or in Decimal Degrees DD.ddd:\n");
+                while(NULL == fgets(buffer, 40, stdin)) {
+                    printf("\nError encountered, please re-enter as '(-)DDD,MM,SS' or in Decimal Degrees DD.ddd:\n");
+                }
+                i = -1;
+                done = 0;
+            }
+        }
+    }
+}
+
+int MAG_GetAltitude(char* Query_String, MAGtype_Geoid *Geoid, MAGtype_CoordGeodetic* coords, int bounds[2], int AltitudeSetting){
+	int done, j, UpBoundOn;
+	char tmp;
+	char buffer[64];
+	double value;
+	done = 0;
+    if(bounds[1] != NO_ALT_MAX){
+        UpBoundOn = TRUE;    
+    } else {
+        UpBoundOn = FALSE;
+    }
+    printf("%s", Query_String);
+	
+    while(!done)
+    {
+        strcpy(buffer, "");
+        while(NULL == fgets(buffer, 40, stdin)) {
+            printf("%s", Query_String);
+        }
+        j = 0;
+        if((AltitudeSetting != MSLON) && (buffer[0] == 'e' || buffer[0] == 'E' || AltitudeSetting == WGS84ON)) /* User entered height above WGS-84 ellipsoid, copy it to CoordGeodetic->HeightAboveEllipsoid */
+        {
+			if(buffer[0]=='e' || buffer[0]=='E') {
+				j = sscanf(buffer, "%c%lf", &tmp, &coords->HeightAboveEllipsoid);
+			} else {
+				j = sscanf(buffer, "%lf", &coords->HeightAboveEllipsoid);
+			}
+            if(j == 2)
+                j = 1;
+            Geoid->UseGeoid = 0;
+            coords->HeightAboveGeoid = coords->HeightAboveEllipsoid;
+			value = coords->HeightAboveEllipsoid;
+        } else /* User entered height above MSL, convert it to the height above WGS-84 ellipsoid */
+        {
+            Geoid->UseGeoid = 1;
+            j = sscanf(buffer, "%lf", &coords->HeightAboveGeoid);
+            MAG_ConvertGeoidToEllipsoidHeight(coords, Geoid);
+			value = coords->HeightAboveGeoid;
+        }
+        if(j == 1)
+            done = 1;
+        else
+            printf("\nIllegal Format, please re-enter as '(-)HHH.hhh:'\n");
+        if((value < bounds[0] || (value > bounds[1] && UpBoundOn)) && done == 1) {
+			if(UpBoundOn) {
+				done = 0;
+				printf("\nWarning: The value you have entered of %f km for the elevation is outside of the required range.\n", value);
+				printf(" An elevation between %d km and %d km is needed. \n", bounds[0], bounds[1]);
+				if (AltitudeSetting == WGS84ON){
+				    printf("Please enter height above WGS-84 Ellipsoid (in kilometers):\n");
+				} else if (AltitudeSetting==MSLON){
+				    printf("Please enter height above mean sea level (in kilometers):\n");
+				} else {
+				    printf("Please enter height in kilometers (prepend E for height above WGS-84 Ellipsoid):");
+				}
+			} else {
+				switch(MAG_Warnings(3, value, NULL)) {
+					case 0:
+						return USER_GAVE_UP;
+					case 1:
+						done = 0;
+						printf("Please enter height above sea level (in kilometers):\n");
+						break;
+					case 2:
+						break;
+				}
+            }
+        }
+    }
+    return 0;
+}
 
