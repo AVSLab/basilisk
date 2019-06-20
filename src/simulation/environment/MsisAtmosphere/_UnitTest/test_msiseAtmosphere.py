@@ -38,19 +38,19 @@ import pytest
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
-from Basilisk.simulation import sim_model
 from Basilisk.simulation import msisAtmosphere
 
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import simple_nav
 
-# import FSW Algorithm related support
-from Basilisk.utilities import simulationArchTypes
+
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+bskName = 'Basilisk'
+splitPath = path.split(bskName)
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -223,6 +223,7 @@ def run(show_plots, orbitCase, planetCase):
 
     accuracy = 1e-8
 
+    unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
     #for ind in range(0, posData.shape[0]-1):
     #   Test atmospheric density calculation...
     if not unitTestSupport.isDoubleEqualRelative(densData[0,1], refAtmoData[5],accuracy):
@@ -234,6 +235,18 @@ def run(show_plots, orbitCase, planetCase):
         testFailCount += 1
         testMessages.append(
         "FAILED:  NRLMSISE-00 failed temperature unit test at t=" + str(densData[0, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(tempData[0,1]-refAtmoData[-1]))
+
+
+    snippentName = "unitTestPassFail"
+    if testFailCount == 0:
+        colorText = 'ForestGreen'
+        print "PASSED: " + newAtmo.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        print "Failed: " + newAtmo.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     return testFailCount, testMessages
 

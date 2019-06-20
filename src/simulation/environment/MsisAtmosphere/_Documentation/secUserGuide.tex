@@ -3,23 +3,22 @@
 \section{User Guide}
 
 \subsection{General Module Setup}
-This section outlines the steps needed to add an Atmosphere module to a sim.
+This section outlines the steps needed to add an MsisAtmosphere module to a sim.
 First, the atmosphere must be imported and initialized:
 \begin{verbatim}
-from Basilisk.simulation import atmosphere
-newAtmo = atmosphere.Atmosphere()
-newAtmo.ModelTag = "ExpAtmo"
+from Basilisk.simulation import msisAtmosphere
+newAtmo = msisAtmosphere.MsisAtmosphere()
+newAtmo.ModelTag = "MsisAtmo"
 \end{verbatim}
-By default the model assumes an exponential atmosphere model about the Earth.
 
-Optionally, if a different model type is required, the desired model type must be set by calling "\verb|setEnvType|":
+By default, the module assumes no planet radius or date. These can be set by calling
 \begin{verbatim}
-newAtmo.setEnvType("exponential")
+newAtmo.setEpoch(julian_date)
+newAtmo.planetRadius = r_eq
 \end{verbatim}
-
 The model can then be added to a task like other simModels. Each Atmosphere calculates atmospheric parameters based on the output state messages for a set of spacecraft.
 
-To add spacecraft to the model the spacecraft state output message name is sent to the \verb|addScToModel| method:
+To add spacecraft to the model the spacecraft state output message name is sent to the \verb|addScToModel| method common to environmental models:
 \begin{verbatim}
 scObject = spacecraftPlus.SpacecraftPlus()
 scObject.ModelTag = "spacecraftBody"
@@ -37,10 +36,14 @@ If SPICE is not being used, the planet is assumed to reside at the origin.
 By default the model doesn't perform any checks on the altitude to see if the specified atmosphere model should be used.  This is set through the parameters {\tt envMinReach} and {\tt envMaxReach}.  Their default values are -1.  If these are set to positive values, then if the altitude is smaller than {\tt envMinReach} or larger than {\tt envMaxReach}, the density is set to zero.
 
 
-\subsection{Exponential atmosphere user guide}
-If the module's \verb|envType| is set to \verb|"exponential"|, the parameters of the exponential atmosphere can be set by calling
+\subsection{NRLMSISE-00 atmosphere user guide}
+NRLMSISE-00 is dependent on a variety of space weather indexes, times, and locations. During initialization, a starting date must be set; this will be updated as the sim progresses using the simulation time. NRLMSISE-00 will attempt to subscribe to a standard set of message names that can be produced by the WIP space-weather data factory module, or set by hand. These messages are
 \begin{verbatim}
-    newAtmo.exponentialParams.baseDensity = baseDensityValue
-    newAtmo.exponentialParams.scaleHeight = scaleHeightValue
-    newAtmo.planetRadius = planetRadiusValue
+sw_msg_names = [
+"ap_24_0", "ap_3_0", "ap_3_-3","ap_3_-6","ap_3_-9",
+"ap_3_-12","ap_3_-15","ap_3_-18","ap_3_-21","ap_3_-24",
+"ap_3_-27", "ap_3_-30","ap_3_-33","ap_3_-36","ap_3_-39",
+"ap_3_-42", "ap_3_-45", "ap_3_-48","ap_3_-51","ap_3_-54",
+"ap_3_-57","f107_1944_0","f107_24_-24"
+]
 \end{verbatim}
