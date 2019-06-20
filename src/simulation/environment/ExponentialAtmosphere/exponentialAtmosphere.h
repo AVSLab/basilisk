@@ -44,7 +44,7 @@ public:
     ~ExponentialAtmosphere();
 
 private:
-    void evaluateAtmosphereModel(AtmoPropsSimMsg *msg);
+    void evaluateAtmosphereModel(AtmoPropsSimMsg *msg, double currentTime);
 
 
 public:
