@@ -29,6 +29,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/atmoPropsSimMsg.h"
 #include "../_GeneralModuleFiles/atmosphereBase.h"
+#include "simMessages/swDataSimMsg.h"
 
 extern "C" {
   #include "nrlmsise-00.h"
