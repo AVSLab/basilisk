@@ -34,7 +34,7 @@
 
 
 
-/*! \defgroup relative orbit determination UKF
+/*! \defgroup relativeODuKF
  @brief This module filters position measurements that have been processed from planet images in order to estimate spacecraft relative position to an observed body in the inertial frame. The filter used is an unscented Kalman filter, and the images are first processed by houghCricles and pixelLineConverter in order to produce this filter's measurements.
  
  * @{
