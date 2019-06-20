@@ -42,8 +42,7 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.simulation import sim_model
-from Basilisk.simulation import atmosphere
-from Basilisk.simulation import dragDynamicEffector
+from Basilisk.simulation import msisAtmosphere
 
 # import simulation related support
 from Basilisk.simulation import spacecraftPlus
@@ -107,10 +106,10 @@ def run(show_plots, orbitCase, planetCase):
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     #   Initialize new atmosphere and drag model, add them to task
-    newAtmo = atmosphere.Atmosphere()
+    newAtmo = msisAtmosphere.MsisAtmosphere()
     atmoTaskName = "atmosphere"
     newAtmo.ModelTag = "MsisAtmo"
-    newAtmo.setEnvType(atmosphere.MODEL_MSISE)
+    newAtmo.setEpoch(1)
 
     dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
     scSim.AddModelToTask(atmoTaskName, newAtmo)
@@ -164,6 +163,8 @@ def run(show_plots, orbitCase, planetCase):
     n = np.sqrt(mu/oe.a/oe.a/oe.a)
     P = 2.*np.pi/n
 
+    newAtmo.planetRadius = r_eq
+
     simulationTime = macros.sec2nano(0.001*P)
 
     #
@@ -180,7 +181,7 @@ def run(show_plots, orbitCase, planetCase):
 
     for swName in sw_msg_names:
         msgName = swName
-        msgData = atmosphere.SwDataSimMsg()
+        msgData = msisAtmosphere.SwDataSimMsg()
         msgData.dataValue=0.
         unitTestSupport.setMessage(scSim.TotalSim, simProcessName, msgName, msgData)
 

@@ -24,8 +24,8 @@
 %}
 
 %include "swig_common_model.i"
-%include "../_GeneralModuleFiles/atmosphereBase.h"
 %include "sys_model.h"
+%include "../_GeneralModuleFiles/atmosphereBase.h"
 %include "msisAtmosphere.h"
 #include "nrlmsise-00.h"
 %include "nrlmsise-00.h"
