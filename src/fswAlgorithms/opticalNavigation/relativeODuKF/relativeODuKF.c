@@ -25,7 +25,7 @@
 
 /*! This method creates the two moduel output messages.
  @return void
- @param configData The configuration data associated with the CSS WLS estimator
+ @param configData The configuration data associated with the OD filter
  */
 void SelfInit_relODuKF(RelODuKFConfig *configData, uint64_t moduleId)
 {
@@ -40,7 +40,7 @@ void SelfInit_relODuKF(RelODuKFConfig *configData, uint64_t moduleId)
 
 /*! This method performs the second stage of initialization for the OD filter.  It's primary function is to link the input messages that were created elsewhere.
  @return void
- @param configData The configuration data associated with the CSS interface
+ @param configData The configuration data associated with the OD filter
  */
 void CrossInit_relODuKF(RelODuKFConfig *configData, uint64_t moduleId)
 {
@@ -52,7 +52,7 @@ void CrossInit_relODuKF(RelODuKFConfig *configData, uint64_t moduleId)
 /*! This method resets the relative OD filter to an initial state and
  initializes the internal estimation matrices.
  @return void
- @param configData The configuration data associated with the CSS estimator
+ @param configData The configuration data associated with the OD filter
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
@@ -126,10 +126,10 @@ void Reset_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     return;
 }
 
-/*! This method takes the parsed CSS sensor data and outputs an estimate of the
- sun vector in the ADCS body frame
+/*! This method takes the relative position measurements and outputs an estimate of the
+ spacecraft states in the intertial frame.
  @return void
- @param configData The configuration data associated with the CSS estimator
+ @param configData The configuration data associated with the OD filter
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
@@ -214,7 +214,7 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
 }
 
 /*! This method propagates a relative OD state vector forward in time.  Note
- that the calling parameter is updated in place to save on data copies. Only two body dynamics is used currently, but SRP, Solar Gravity, spherical harmonics can be added here. 
+ that the calling parameter is updated in place to save on data copies.
  @return void
  @param stateInOut The state that is propagated
  */
@@ -258,7 +258,7 @@ void relODStateProp(RelODuKFConfig *configData, double *stateInOut, double dt)
     return;
 }
 
-/*! Function for two body dynamics solvers in order to use in the RK4
+/*! Function for two body dynamics solvers in order to use in the RK4. Only two body dynamics is used currently, but SRP, Solar Gravity, spherical harmonics can be added here.
  @return double Next state
  @param state The starting state
  */
@@ -279,7 +279,7 @@ double* relODuKFTwoBodyDyn(double state[ODUKF_N_STATES], double muPlanet)
  It propagates the sigma points forward in time and then gets the current
  covariance and state estimates.
  @return void
- @param configData The configuration data associated with the CSS estimator
+ @param configData The configuration data associated with the OD filter
  @param updateTime The time that we need to fix the filter to (seconds)
  */
 int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
@@ -356,11 +356,6 @@ int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
                configData->numStates*sizeof(double));
         
     }
-    /*! - Scale sQNoise matrix depending on the dt*/
-//    for (k=0;k<3;k++){
-//        procNoise[k*ODUKF_N_STATES+k] *= configData->dt*configData->dt/2;
-//        procNoise[(k+3)*ODUKF_N_STATES+(k+3)] *= configData->dt;
-//    }
     /*! - Pop the sQNoise matrix on to the end of AT prior to getting QR decomposition*/
     memcpy(&AT[2 * configData->countHalfSPs*configData->numStates],
            procNoise, configData->numStates*configData->numStates
@@ -402,7 +397,7 @@ int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
 /*! This method computes the measurement model.  Given that the data is coming from
  the pixelLine Converter, the transformation has already taken place from pixel data to spacecraft position.
  @return void
- @param configData The configuration data associated with the CSS estimator
+ @param configData The configuration data associated with the OD filter
  
  */
 void relODuKFMeasModel(RelODuKFConfig *configData)
@@ -426,7 +421,7 @@ void relODuKFMeasModel(RelODuKFConfig *configData)
  It applies the observations in the obs vectors to the current state estimate and
  updates the state/covariance with that information.
  @return void
- @param configData The configuration data associated with the CSS estimator
+ @param configData The configuration data associated with the OD filter
  @param updateTime The time that we need to fix the filter to (seconds)
  */
 int relODuKFMeasUpdate(RelODuKFConfig *configData)
@@ -568,7 +563,7 @@ int relODuKFMeasUpdate(RelODuKFConfig *configData)
  It removes the potentially corrupted previous estimates and puts the filter
  back to a working state.
  @return void
- @param configData The configuration data associated with the CSS estimator
+ @param configData The configuration data associated with the OD filter
  */
 void relODuKFCleanUpdate(RelODuKFConfig *configData){
     int i;

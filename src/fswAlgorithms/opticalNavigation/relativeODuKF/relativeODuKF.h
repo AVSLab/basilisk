@@ -35,13 +35,13 @@
 
 
 /*! \defgroup relative orbit determination UKF
- @brief This module filters incoming star tracker measurements and reaction wheel data in order to get the best possible inertial attitude estimate. The filter used is an unscented Kalman filter using the Modified Rodrigues Parameters (MRPs) as a non-singular attitude measure.  Measurements can be coming in from several camera heads.
+ @brief This module filters position measurements that have been processed from planet images in order to estimate spacecraft relative position to an observed body in the inertial frame. The filter used is an unscented Kalman filter, and the images are first processed by houghCricles and pixelLineConverter in order to produce this filter's measurements.
  
  * @{
  */
 
-/*! @brief Top level structure for the Inertial unscented kalman filter.
- Used to estimate the spacecraft's inertial attitude. Measurements are StarTracker data and gyro data.
+/*! @brief Top level structure for the relative OD unscented kalman filter.
+ Used to estimate the spacecraft's inertial position relative to a body.
  */
 typedef struct {
     char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the output message
@@ -76,7 +76,7 @@ typedef struct {
     double covarInit[ODUKF_N_STATES*ODUKF_N_STATES];    //!< [-] Covariance to init filter with
     double xBar[ODUKF_N_STATES];            //!< [-] Current mean state estimate
     
-    double obs[3];          //!< [-] Observation vector for frame
+    double obs[3];                               //!< [-] Observation vector for frame
     double yMeas[3*(2*ODUKF_N_STATES+1)];        //!< [-] Measurement model data
     
     double SP[(2*ODUKF_N_STATES+1)*ODUKF_N_STATES];          //!< [-]    sigma point matrix
