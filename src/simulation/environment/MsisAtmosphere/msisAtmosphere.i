@@ -18,16 +18,15 @@
  */
 
 
-%module atmosphere
+%module msisAtmosphere
 %{
-   #include "atmosphere.h"
+   #include "msisAtmosphere.h"
 %}
 
 %include "swig_common_model.i"
-%include "../_GeneralModuleFiles/planetEnvironmentModel.h"
+%include "../_GeneralModuleFiles/atmosphereBase.h"
 %include "sys_model.h"
-%include "atmosphere.h"
-%include "std_string.i"
+%include "msisAtmosphere.h"
 #include "nrlmsise-00.h"
 %include "nrlmsise-00.h"
 %include "../../simMessages/spicePlanetStateSimMsg.h"
