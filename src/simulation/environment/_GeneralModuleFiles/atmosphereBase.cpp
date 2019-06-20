@@ -304,7 +304,7 @@ void AtmosphereBase::updateLocalAtmosphere(double currentTime)
         if(this->orbitAltitude > this->envMinReach &&
            (this->orbitAltitude < this->envMaxReach || this->envMaxReach < 0)) {
             //! - compute the local magnetic field.  The evaluateMageticFieldModel() method must be implement for each model
-            evaluateAtmosphereModel(&(*envMsgIt));
+            evaluateAtmosphereModel(&(*envMsgIt), currentTime);
         }
     }
 

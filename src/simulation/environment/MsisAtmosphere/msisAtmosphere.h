@@ -48,7 +48,7 @@ class MsisAtmosphere: public AtmosphereBase {
 public:
     MsisAtmosphere();
     ~MsisAtmosphere();
-
+    void setEpoch(double julianDate);
 private:
     void customSelfInit();
     void customCrossInit();
@@ -58,7 +58,7 @@ private:
     bool ReadInputs();
     void updateInputParams();
     void updateSwIndices();
-    void evaluateAtmosphereModel(AtmoPropsSimMsg *msg);
+    void evaluateAtmosphereModel(AtmoPropsSimMsg *msg, double currentTime);
     void defaultMsisInitialConditions();
 
 public:

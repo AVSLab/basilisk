@@ -54,7 +54,7 @@ protected:
     bool readMessages();
     void updateLocalAtmosphere(double currentTime);
     void updateRelativePos(SpicePlanetStateSimMsg  *planetState, SCPlusStatesSimMsg *scState);
-    virtual void evaluateAtmosphereModel(AtmoPropsSimMsg *msg) = 0;
+    virtual void evaluateAtmosphereModel(AtmoPropsSimMsg *msg, double currentTime) = 0;
     virtual void customSelfInit();
     virtual void customCrossInit();
     virtual void customReset(uint64_t CurrentClock);
