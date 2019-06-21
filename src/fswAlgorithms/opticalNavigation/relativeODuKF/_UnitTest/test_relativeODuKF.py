@@ -23,14 +23,9 @@ import pytest
 import math
 
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion
-import matplotlib.pyplot as plt
-import scipy.integrate as integ
 from Basilisk.fswAlgorithms import relativeODuKF, fswMessages  # import the module that is to be tested
 
 import relativeODuKF_test_utilities as FilterPlots
-
-
-import math
 import numpy as np
 
 def rk4(f, t, x0):
