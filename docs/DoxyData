@@ -1304,6 +1304,7 @@ HTML_EXTRA_FILES       = ../src/simulation/dynamics/extForceTorque/_Documentatio
                          ../src/fswAlgorithms/transDetermination/dvAccumulation/_Documentation/Basilisk-dvAccumulation-2019-03-28.pdf \
                          ../src/fswAlgorithms/imageProcessing/houghCircles/_Documentation/Basilisk-houghCircles-20190213.pdf \
                          ../src/fswAlgorithms/imageProcessing/pixelLineConverter/_Documentation/Basilisk-pixelLineConverter-20190524.pdf \
+                         ../src/fswAlgorithms/opticalNavigation/relativeODuKF/_Documentation/Basilisk-relativeOD-20190620.pdf \
                          mac_fix_path.pth \
                          Documents/UnderstandingBskArchitecture.pptx
 
