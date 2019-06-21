@@ -308,7 +308,7 @@ int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
     mCopy(configData->covar, configData->numStates, configData->numStates, configData->covarPrev);
     
     /*! - Read the planet ID from the message*/
-    if(configData->planetId == 0){BSK_PRINT(MSG_ERROR, "Need a planet to navigate")} //in km
+    if(configData->planetId == 0){BSK_PRINT(MSG_ERROR, "Need a planet to navigate")}
     
     mCopy(configData->sQnoise, ODUKF_N_STATES, ODUKF_N_STATES, procNoise);
     /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
