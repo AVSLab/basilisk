@@ -294,12 +294,12 @@ void relODuKFTwoBodyDyn(double state[ODUKF_N_STATES], double muPlanet, double *s
 int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
 {
     int i, Index;
-    double sBarT[ODUKF_N_STATES*ODUKF_N_STATES];
-    double xComp[ODUKF_N_STATES], AT[(2 * ODUKF_N_STATES + ODUKF_N_STATES)*ODUKF_N_STATES];
-    double aRow[ODUKF_N_STATES], rAT[ODUKF_N_STATES*ODUKF_N_STATES], xErr[ODUKF_N_STATES];
-    double sBarUp[ODUKF_N_STATES*ODUKF_N_STATES];
-    double *spPtr;
-    double procNoise[ODUKF_N_STATES*ODUKF_N_STATES];
+    double sBarT[ODUKF_N_STATES*ODUKF_N_STATES]; // Sbar transpose (chol decomp of covar)
+    double xComp[ODUKF_N_STATES], AT[(2 * ODUKF_N_STATES + ODUKF_N_STATES)*ODUKF_N_STATES]; // Intermediate state, process noise chol decomp
+    double aRow[ODUKF_N_STATES], rAT[ODUKF_N_STATES*ODUKF_N_STATES], xErr[ODUKF_N_STATES]; //Row of A mat, R of QR decomp of A, state error
+    double sBarUp[ODUKF_N_STATES*ODUKF_N_STATES]; // S bar cholupdate
+    double *spPtr; //sigma point intermediate varaible
+    double procNoise[ODUKF_N_STATES*ODUKF_N_STATES]; //process noise
     int32_t badUpdate=0;
     
     configData->dt = updateTime - configData->timeTag;
@@ -435,13 +435,13 @@ void relODuKFMeasModel(RelODuKFConfig *configData)
 int relODuKFMeasUpdate(RelODuKFConfig *configData)
 {
     uint32_t i;
-    double yBar[3], syInv[3*3];
-    double kMat[ODUKF_N_STATES*3], cholNoise[ODUKF_N_MEAS*ODUKF_N_MEAS];
-    double xHat[ODUKF_N_STATES], Ucol[ODUKF_N_STATES], sBarT[ODUKF_N_STATES*ODUKF_N_STATES], tempYVec[3];
-    double AT[(2 * ODUKF_N_STATES + 3)*3];
-    double rAT[3*3], syT[3*3];
-    double sy[3*3];
-    double updMat[3*3], pXY[ODUKF_N_STATES*3], Umat[ODUKF_N_STATES*3];
+    double yBar[3], syInv[3*3]; //measurement, Sy inv
+    double kMat[ODUKF_N_STATES*3], cholNoise[ODUKF_N_MEAS*ODUKF_N_MEAS];//Kalman Gain, chol decomp of noise
+    double xHat[ODUKF_N_STATES], Ucol[ODUKF_N_STATES], sBarT[ODUKF_N_STATES*ODUKF_N_STATES], tempYVec[3];// state error, U column eq 28, intermediate variables
+    double AT[(2 * ODUKF_N_STATES + 3)*3]; //Process noise matrix
+    double rAT[3*3], syT[3*3]; //QR R decomp, Sy transpose
+    double sy[3*3]; // Chol of covariance
+    double updMat[3*3], pXY[ODUKF_N_STATES*3], Umat[ODUKF_N_STATES*3]; // Intermediate variable, covariance eq 26, U eq 28
     int32_t badUpdate=0;
     
     vCopy(configData->state, configData->numStates, configData->statePrev);
