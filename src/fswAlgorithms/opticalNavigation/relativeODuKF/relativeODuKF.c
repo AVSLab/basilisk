@@ -240,19 +240,19 @@ void relODStateProp(RelODuKFConfig *configData, double *stateInOut, double dt)
     
     /*! Start RK4 */
     /*! - Compute k1 */
-    vCopy(relODuKFTwoBodyDyn(stateInOut, muPlanet), ODUKF_N_STATES, k1);
+    relODuKFTwoBodyDyn(stateInOut, muPlanet, &k1[0]);
     vScale(dt/2, k1, ODUKF_N_STATES, k1); // k1 is now k1/2
     /*! - Compute k2 */
     vAdd(stateInOut, ODUKF_N_STATES, k1, states1);
-    vCopy(relODuKFTwoBodyDyn(states1, muPlanet), ODUKF_N_STATES, k2);
+    relODuKFTwoBodyDyn(states1, muPlanet, &k2[0]);
     vScale(dt/2, k2, ODUKF_N_STATES, k2); // k2 is now k2/2
     /*! - Compute k3 */
     vAdd(stateInOut, ODUKF_N_STATES, k2, states2);
-    vCopy(relODuKFTwoBodyDyn(states2, muPlanet), ODUKF_N_STATES, k3);
+    relODuKFTwoBodyDyn(states2, muPlanet, &k3[0]);
     vScale(dt, k3, ODUKF_N_STATES, k3);
     /*! - Compute k4 */
     vAdd(stateInOut, ODUKF_N_STATES, k3, states3);
-    vCopy(relODuKFTwoBodyDyn(states3, muPlanet), ODUKF_N_STATES, k4);
+    relODuKFTwoBodyDyn(states3, muPlanet, &k4[0]);
     vScale(dt, k4, ODUKF_N_STATES, k4);
     /*! - Gather all terms with proper scales */
     vScale(1./3., k1, ODUKF_N_STATES, k1); // k1 is now k1/6
@@ -272,17 +272,16 @@ void relODStateProp(RelODuKFConfig *configData, double *stateInOut, double dt)
  @return double Next state
  @param state The starting state
  */
-double* relODuKFTwoBodyDyn(double state[ODUKF_N_STATES], double muPlanet)
+void relODuKFTwoBodyDyn(double state[ODUKF_N_STATES], double muPlanet, double *stateDeriv)
 {
     double rNorm;
-    double* stateDeriv = malloc(sizeof(double) * 6);
     double dvdt[3];
     
     rNorm = v3Norm(state);
     v3Copy(&state[3], stateDeriv);
     v3Copy(state, dvdt);
     v3Scale(-muPlanet/pow(rNorm, 3), dvdt, &stateDeriv[3]);
-    return &stateDeriv[0];
+    return;
 }
 
 /*! This method performs the time update for the relative OD kalman filter.
