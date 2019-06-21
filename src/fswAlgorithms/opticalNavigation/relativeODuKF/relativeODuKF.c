@@ -29,10 +29,10 @@
  */
 void SelfInit_relODuKF(RelODuKFConfig *configData, uint64_t moduleId)
 {
-    /*! - Create output message for module */
+    /*! - Create a navigation message to be used for control */
     configData->navStateOutMsgId = CreateNewMessage(configData->navStateOutMsgName,
                                                     sizeof(NavTransIntMsg), "NavTransIntMsg", moduleId);
-    /*! - Create filter states output message which is mostly for debug*/
+    /*! - Create filter states output message for filter states, covariance, postfits, and debugging*/
     configData->filtDataOutMsgId = CreateNewMessage(configData->filtDataOutMsgName,
                                                     sizeof(OpNavFilterFswMsg), "OpNavFilterFswMsg", moduleId);
     
@@ -44,6 +44,7 @@ void SelfInit_relODuKF(RelODuKFConfig *configData, uint64_t moduleId)
  */
 void CrossInit_relODuKF(RelODuKFConfig *configData, uint64_t moduleId)
 {
+    /*! Read in the treated position measurement from pixelLineConverter */
     configData->opNavInMsgId = subscribeToMessage(configData->opNavInMsgName,
                                                       sizeof(OpnavFswMsg), moduleId);
     
@@ -407,7 +408,6 @@ int relODuKFTimeUpdate(RelODuKFConfig *configData, double updateTime)
  the pixelLine Converter, the transformation has already taken place from pixel data to spacecraft position.
  @return void
  @param configData The configuration data associated with the OD filter
- 
  */
 void relODuKFMeasModel(RelODuKFConfig *configData)
 {
