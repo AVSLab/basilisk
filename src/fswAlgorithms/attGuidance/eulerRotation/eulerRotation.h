@@ -50,6 +50,10 @@ typedef struct {
     
     char        desiredAttInMsgName[MAX_STAT_MSG_LENGTH];   //!< The name of the incoming message containing the desired EA set
     int32_t     desiredAttInMsgID;                          //!< [-] ID for the incoming EA set message
+   
+    AttStateFswMsg attStateOut;
+    char           attStateOutMsgName[MAX_STAT_MSG_LENGTH];
+    int32_t        attStateOutMsgID;
 }eulerRotationConfig;
 
 #ifdef __cplusplus

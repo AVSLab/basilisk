@@ -50,6 +50,8 @@ void SelfInit_eulerRotation(eulerRotationConfig *configData, uint64_t moduleID)
                                                sizeof(AttRefFswMsg),
                                                "AttRefFswMsg",
                                                moduleID);
+    
+    configData->attStateOutMsgID = CreateNewMessage(configData->attStateOutMsgName, sizeof(AttStateFswMsg), "AttStateFswMsg", moduleID);
 }
 
 /*! @brief This method performs the second stage of initialization for the module
@@ -132,10 +134,16 @@ void Update_eulerRotation(eulerRotationConfig *configData, uint64_t callTime, ui
                                   inputRef.omega_RN_N,
                                   inputRef.domega_RN_N,
                                   &attRefOut);
-
+    AttStateFswMsg outputStates;
+    memset(&outputStates, 0x0, sizeof(AttStateFswMsg));
+    memcpy(&outputStates.state, &(configData->angleSet), 3*sizeof(double));
+    memcpy(&outputStates.rate, &(configData->angleRates), 3*sizeof(double));
+    
     /* - Write output messages */
     WriteMessage(configData->attRefOutMsgID, callTime, sizeof(AttRefFswMsg),
                  (void*) &(attRefOut), moduleID);
+    
+    WriteMessage(configData->attStateOutMsgID, callTime, sizeof(AttStateFswMsg), (void*) &(outputStates), moduleID);
 
     /* - Update last time the module was called to current call time */
     configData->priorTime = callTime;
