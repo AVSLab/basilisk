@@ -23,6 +23,7 @@ We are very excited by the great capabilities that this software already has, an
     <li>New faceted model for atmospheric drag evaluation</li>
     <li>Updated RW and Thruster Simulation factory classes to use ordered dictionary lists.  This ensures that the devices are used in the order they are added. </li>
     <li>Fixed issue where the Viz would show a custom camera window on startup if playing back a data file from bskSim scenarios.</li>
+    <li>Added relative Orbit Determination filter (relativeODuKF) in fswAlgorithms/opticalNavigation. This filter reads measurements treated by the image processing block to estimate spacecraft position and velocity</li>
    </ul>
    
 ##  Version 0.6.2

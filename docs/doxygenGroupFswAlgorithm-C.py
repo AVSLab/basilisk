@@ -122,6 +122,15 @@
 #       \defgroup houghCircles houghCircles
 #       \defgroup pixelLineConverter pixelLineConverter
 #   @}
+#   \defgroup opticalNavigation opticalNavigation
+#   @brief Contains modules that relate to optical navigation.
+#   @{
+#       \defgroup _GeneralModuleFiles _GeneralModuleFiles
+#       @{
+#           \defgroup ukfUtilities ukfUtilities
+#       @}
+#       \defgroup relativeODuKF relativeODuKF
+#   @}
 #
 #   \defgroup vehicleConfigData vehicleConfigData
 #
