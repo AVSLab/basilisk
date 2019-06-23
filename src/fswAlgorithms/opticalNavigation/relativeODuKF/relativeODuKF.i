@@ -33,11 +33,11 @@
 %ignore Reset_relODuKF;
 GEN_SIZEOF(NavTransIntMsg);
 GEN_SIZEOF(OpNavFilterFswMsg);
-GEN_SIZEOF(OpnavFswMsg);
+GEN_SIZEOF(OpNavFswMsg);
 GEN_SIZEOF(RelODuKFConfig);
 %include "relativeODuKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
-%include "../../fswMessages/opnavFswMsg.h"
+%include "../../fswMessages/opNavFswMsg.h"
 %include "../../fswMessages/opNavFilterFswMsg.h"
 %include "simFswInterfaceMessages/navTransIntMsg.h"
 

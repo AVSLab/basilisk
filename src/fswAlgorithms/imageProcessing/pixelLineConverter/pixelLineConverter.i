@@ -34,11 +34,11 @@ STRUCTASLIST(PixelLineConvertData)
 GEN_SIZEOF(CirclesOpNavMsg)
 GEN_SIZEOF(CameraConfigMsg)
 GEN_SIZEOF(NavAttIntMsg)
-GEN_SIZEOF(OpnavFswMsg)
+GEN_SIZEOF(OpNavFswMsg)
 %include "simFswInterfaceMessages/circlesOpNavMsg.h"
 %include "simFswInterfaceMessages/cameraConfigMsg.h"
 %include "simFswInterfaceMessages/navAttIntMsg.h"
-%include "../fswAlgorithms/fswMessages/opnavFswMsg.h"
+%include "../fswAlgorithms/fswMessages/opNavFswMsg.h"
 %include "pixelLineConverter.h"
 
 

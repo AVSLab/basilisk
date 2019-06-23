@@ -115,7 +115,7 @@ def relOD_method_test(show_plots):
     mu = 42828.314
     # Measurement Model Test
     data = relativeODuKF.RelODuKFConfig()
-    msg = relativeODuKF.OpnavFswMsg()
+    msg = relativeODuKF.OpNavFswMsg()
     msg.r_N = [300, 200, 100]
     data.planetId = 2
     data.opNavInMsg = msg
@@ -209,7 +209,7 @@ def StateUpdateRelOD(show_plots):
     for i in range(1, len(time)):
         energy[i] = - mu / (2 * orbitalMotion.rv2elem(mu, expected[i, 1:4], expected[i, 4:]).a)
 
-    inputData = relativeODuKF.OpnavFswMsg()
+    inputData = relativeODuKF.OpNavFswMsg()
     inputMessageSize = inputData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.opNavInMsgName,

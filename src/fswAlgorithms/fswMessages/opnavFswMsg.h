@@ -29,7 +29,7 @@ typedef struct {
     double r_N[3];                 /*!< [m] Current estimated state of the filter */
     double r_B[3];                 /*!< [m] Current estimated state of the filter */
     int planetID;       /*!< [-] Planet being navigated, Earth=1, Mars=2, Jupiter=3 */
-}OpnavFswMsg;
+}OpNavFswMsg;
 
 
 

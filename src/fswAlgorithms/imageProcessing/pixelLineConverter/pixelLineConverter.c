@@ -32,8 +32,8 @@
 void SelfInit_pixelLineConverter(PixelLineConvertData *configData, uint64_t moduleID)
 {
     configData->stateOutMsgID = CreateNewMessage(configData->opNavOutMsgName,
-                                                 sizeof(OpnavFswMsg),
-                                                 "OpnavFswMsg",
+                                                 sizeof(OpNavFswMsg),
+                                                 "OpNavFswMsg",
                                                  moduleID);
 }
 
@@ -74,12 +74,12 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     double sigma_NC[3];
     CameraConfigMsg cameraSpecs;
     CirclesOpNavMsg circlesIn;
-    OpnavFswMsg opNavMsgOut;
+    OpNavFswMsg opNavMsgOut;
     NavAttIntMsg attInfo;
     memset(&cameraSpecs, 0x0, sizeof(CameraConfigMsg));
     memset(&attInfo, 0x0, sizeof(NavAttIntMsg));
     memset(&circlesIn, 0x0, sizeof(CirclesOpNavMsg));
-    memset(&opNavMsgOut, 0x0, sizeof(OpnavFswMsg));
+    memset(&opNavMsgOut, 0x0, sizeof(OpNavFswMsg));
 
     /*! - read input messages */
     ReadMessage(configData->cameraConfigMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
@@ -143,7 +143,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     mCopy(covar_In_N, 3, 3, opNavMsgOut.covar_N);
     vScale(1E6, opNavMsgOut.covar_N, 6*6, opNavMsgOut.covar_N);//in m
     opNavMsgOut.timeTag = circlesIn.timeTag;
-    WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpnavFswMsg),
+    WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
                  &opNavMsgOut, moduleID);
 
     return;

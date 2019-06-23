@@ -25,7 +25,7 @@
 #include "simFswInterfaceMessages/cameraConfigMsg.h"
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
-#include "fswMessages/opnavFswMsg.h"
+#include "fswMessages/opNavFswMsg.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
 #include "utilities/rigidBodyKinematics.h"

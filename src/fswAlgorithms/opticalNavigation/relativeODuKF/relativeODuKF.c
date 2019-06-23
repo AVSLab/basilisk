@@ -46,7 +46,7 @@ void CrossInit_relODuKF(RelODuKFConfig *configData, uint64_t moduleId)
 {
     /*! Read in the treated position measurement from pixelLineConverter */
     configData->opNavInMsgId = subscribeToMessage(configData->opNavInMsgName,
-                                                      sizeof(OpnavFswMsg), moduleId);
+                                                      sizeof(OpNavFswMsg), moduleId);
     
 }
 
@@ -147,15 +147,15 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     int i, computePostFits;
     OpNavFilterFswMsg opNavOutBuffer; /* [-] Output filter info*/
     NavTransIntMsg outputRelOD;
-    OpnavFswMsg inputRelOD;
+    OpNavFswMsg inputRelOD;
     
     computePostFits = 0;
     v3SetZero(configData->postFits);
     memset(&(outputRelOD), 0x0, sizeof(NavTransIntMsg));
-    memset(&opNavOutBuffer, 0x0, sizeof(OpnavFswMsg));
-    memset(&inputRelOD, 0x0, sizeof(OpnavFswMsg));
+    memset(&opNavOutBuffer, 0x0, sizeof(OpNavFswMsg));
+    memset(&inputRelOD, 0x0, sizeof(OpNavFswMsg));
     ReadMessage(configData->opNavInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
-                sizeof(OpnavFswMsg), &inputRelOD, moduleId);
+                sizeof(OpNavFswMsg), &inputRelOD, moduleId);
     v3Scale(1E-3, inputRelOD.r_N, inputRelOD.r_N);
     vScale(1E-6, inputRelOD.covar_N, ODUKF_N_STATES_HALF*ODUKF_N_STATES_HALF,inputRelOD.covar_N);
     /*! - Handle initializing time in filter and discard initial messages*/
