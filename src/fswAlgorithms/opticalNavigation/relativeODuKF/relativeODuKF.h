@@ -96,10 +96,6 @@ typedef struct {
     double maxTimeJump;      //!< [s] Maximum time jump to allow in propagation
     
     OpNavFswMsg opNavInMsg; //!< [-] ST sensor data read in from message bus
-    uint64_t ClockTimeCircles[ODUKF_N_MEAS]; //!< [-] All of the ClockTimes for the STs
-    uint64_t ReadSizeCirlces[ODUKF_N_MEAS];  //!< [-] All of the ReadSizes for the STs
-    
-
     int32_t navStateOutMsgId;     //!< -- Id for the outgoing body estimate message
     int32_t filtDataOutMsgId;     //!< [-] Id for the filter data output message
     int32_t opNavInMsgId;     //!< [-] Id for the incoming mass properties message
