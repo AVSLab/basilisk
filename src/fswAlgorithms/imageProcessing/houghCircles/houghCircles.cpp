@@ -108,7 +108,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     if (!this->filename.empty()){
         imageCV = imread(this->filename, cv::IMREAD_COLOR);
     }
-    else if(localHeader.WriteSize>0){
+    else if(imageBuffer.valid == 1){
         /*! - Recast image pointer to CV type*/
         std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer, (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
