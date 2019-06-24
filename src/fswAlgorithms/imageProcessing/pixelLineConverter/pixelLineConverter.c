@@ -89,6 +89,13 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     ReadMessage(configData->attInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavAttIntMsg), &attInfo, moduleID);
     
+    if (circlesIn.valid == 0){
+        opNavMsgOut.valid = 0;
+        WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
+                     &opNavMsgOut, moduleID);
+        return;
+    }
+    
     v3Scale(-1, attInfo.sigma_BN, attInfo.sigma_BN); // sigma_NB now
     addMRP(attInfo.sigma_BN, cameraSpecs.sigma_BC, sigma_NC); // sigma_NC now
     MRP2C(sigma_NC, dcm_NC);
@@ -143,6 +150,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     mCopy(covar_In_N, 3, 3, opNavMsgOut.covar_N);
     vScale(1E6, opNavMsgOut.covar_N, 6*6, opNavMsgOut.covar_N);//in m
     opNavMsgOut.timeTag = circlesIn.timeTag;
+    opNavMsgOut.valid =1;
     WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
                  &opNavMsgOut, moduleID);
 

@@ -163,7 +163,7 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     /*! - If the time tag from the measured data is new compared to previous step,
      propagate and update the filter*/
     newTimeTag = timeOfMsgWritten * NANO2SEC;
-    if(newTimeTag >= configData->timeTag && sizeOfMsgWritten > 0)
+    if(newTimeTag >= configData->timeTag && sizeOfMsgWritten > 0 && inputRelOD.valid ==1)
     {
         configData->opNavInMsg = inputRelOD;
         configData->planetId = inputRelOD.planetID;

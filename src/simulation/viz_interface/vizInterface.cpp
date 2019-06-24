@@ -552,10 +552,13 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 
                 /*! -- Write out the image information to the Image message */
                 CameraImageMsg imageData;
+                imageData.timeTag = CurrentSimNanos;
+                imageData.valid = 0;
                 imageData.imagePointer = imagePoint;
                 imageData.imageBufferLength = imageBufferLength;
                 imageData.cameraID = this->cameraConfigMessage.cameraID;
                 imageData.imageType = 4;
+                if (imageBufferLength>0){imageData.valid = 1;}
                 SystemMessaging::GetInstance()->WriteMessage(this->imageOutMsgID, CurrentSimNanos, sizeof(CameraImageMsg), reinterpret_cast<uint8_t *>(&imageData), this->moduleID);
 
                 /*! -- Clean the messages to avoid memory leaks */
