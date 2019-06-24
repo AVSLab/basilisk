@@ -69,7 +69,7 @@ public:
     int32_t houghMaxRadius;              //!< [-] Max radius of a detected circle
     int32_t dpValue;                     //!< [-] Subscaling of image for circle searching, 1 searches full image
     int32_t expectedCircles;             //!< [-] Number of expected circles to be found
-    
+    int32_t saveImages;                  //!< [-] 1 to save images to file for debugging
 private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
     int32_t opnavCirclesOutMsgID;        //!< ID for the outgoing message

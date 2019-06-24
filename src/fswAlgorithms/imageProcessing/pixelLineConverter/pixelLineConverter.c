@@ -95,7 +95,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
                      &opNavMsgOut, moduleID);
         return;
     }
-    
+    configData->planetTarget = circlesIn.planetIds[0];
     v3Scale(-1, attInfo.sigma_BN, attInfo.sigma_BN); // sigma_NB now
     addMRP(attInfo.sigma_BN, cameraSpecs.sigma_BC, sigma_NC); // sigma_NC now
     MRP2C(sigma_NC, dcm_NC);
@@ -122,9 +122,18 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     m33MultV3(dcm_NC, rHat_C, rHat_N);
 
     if(configData->planetTarget > 0){
-        if(configData->planetTarget ==1){planetRad = REQ_EARTH;} //in km
-        if(configData->planetTarget ==2){planetRad = REQ_MARS;} //in km
-        if(configData->planetTarget ==3){planetRad = REQ_JUPITER;} //in km
+        if(configData->planetTarget ==1){
+            planetRad = REQ_EARTH;//in km
+            opNavMsgOut.planetID = configData->planetTarget;
+        }
+        if(configData->planetTarget ==2){
+            planetRad = REQ_MARS;//in km
+            opNavMsgOut.planetID = configData->planetTarget;
+        }
+        if(configData->planetTarget ==3){
+            planetRad = REQ_JUPITER;//in km
+            opNavMsgOut.planetID = configData->planetTarget;
+        }
         
         denom = sin(atan(X*circlesIn.circlesRadii[0]/cameraSpecs.focalLength));
         rNorm = planetRad/denom; //in km
@@ -148,7 +157,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     /*! - write output message */
     v3Scale(rNorm*1E3, rHat_N, opNavMsgOut.r_N); //in m
     mCopy(covar_In_N, 3, 3, opNavMsgOut.covar_N);
-    vScale(1E6, opNavMsgOut.covar_N, 6*6, opNavMsgOut.covar_N);//in m
+    vScale(1E6, opNavMsgOut.covar_N, 3*3, opNavMsgOut.covar_N);//in m
     opNavMsgOut.timeTag = circlesIn.timeTag;
     opNavMsgOut.valid =1;
     WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
