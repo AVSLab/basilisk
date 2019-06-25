@@ -58,7 +58,7 @@ def ckWrite(handle, time, MRPArray, avArray, startSeg, sc = -62, rf = "J2000"):
     pyswice.str2et_c(startSeg, et)
     starts = pyswice.new_doubleArray(1)
     pyswice.sce2c_c(sc, pyswice.doubleArray_getitem(et, 0), starts)
-    zeroTime = pyswice.doubleArray_getitem(starts, 0)
+    zeroTime = 0  # pyswice.doubleArray_getitem(starts, 0)
     for w in range(velLen):
         for m in range(3):
             if shapeavArray[1] == 4:
@@ -76,11 +76,13 @@ def ckWrite(handle, time, MRPArray, avArray, startSeg, sc = -62, rf = "J2000"):
                 quat = RigidBodyKinematics.MRP2EP(MRPArray[i, 0:3])
                 quat[1:4] = -quat[1:4]
             pyswice.doubleArray_setitem(quatArray, (4 * i) + j, quat[j])
-        pyswice.doubleArray_setitem(timeArray, i, time[i] * 1E-9 + zeroTime)
+        sclkdp = pyswice.new_doubleArray(1)
+        pyswice.sce2c_c(-62, time[i] + zeroTime*1.0E-9, sclkdp)
+        pyswice.doubleArray_setitem(timeArray, i, pyswice.doubleArray_getitem(sclkdp, 0))
     # Getting time into usable format
-    encStartTime = time[0]*1E-9 + zeroTime - 1.0E-3 #Pad the beginning for roundoff
-    encEndTime = time[z-1]*1E-9 + zeroTime + 1.0E-3 #Pad the end for roundoff
-    pyswice.ckw03_c(pyswice.intArray_getitem(fileHandle, 0), encStartTime, encEndTime, sc, rf, 1,
+    encStartTime = pyswice.doubleArray_getitem(timeArray, 0) - 1.0e-3 #Pad the beginning for roundoff
+    encEndTime = pyswice.doubleArray_getitem(timeArray, z-1) + 1.0e-3 #Pad the end for roundoff
+    pyswice.ckw03_c(pyswice.intArray_getitem(fileHandle, 0), encStartTime, encEndTime, -62000, rf, 1,
                     "InertialData", z, timeArray, quatArray, velArray, 1, starts)
     pyswice.ckcls_c(pyswice.intArray_getitem(fileHandle, 0))
     return
