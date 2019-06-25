@@ -509,7 +509,7 @@ class Controller:
             i = 0
             for sim in simGenerator:
                 try:
-                    simulationExecutor(sim, self.dataOutQueue)
+                    simulationExecutor([sim, self.dataOutQueue])
                 except:
                     failed.append(i)
                 i += 1
