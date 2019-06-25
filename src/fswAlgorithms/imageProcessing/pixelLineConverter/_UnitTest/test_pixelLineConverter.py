@@ -89,7 +89,7 @@ def pixelLineConverterTestFunction():
     inputCamera.focalLength = 1.
     inputCamera.sensorSize = [10, 10] # In mm
     inputCamera.resolution = [512, 512]
-    inputCamera.sigma_BC = [1.,0.3,0.1]
+    inputCamera.sigma_CB = [1.,0.3,0.1]
     unitTestSupport.setMessage(unitTestSim.TotalSim, unitProcessName, pixelLine.cameraConfigMsgName, inputCamera)
 
     # Set circles
@@ -129,10 +129,10 @@ def pixelLineConverterTestFunction():
     r_Cexp = mapState(state, planet, camera)
     covar_Cexp = mapCovar(inputCircles.uncertainty, state[2], planet, camera)
 
-    dcm_BC = rbk.MRP2C(inputCamera.sigma_BC)
+    dcm_CB = rbk.MRP2C(inputCamera.sigma_CB)
     dcm_BN = rbk.MRP2C(inputAtt.sigma_BN)
 
-    dcm_NC = np.dot(dcm_BN.T, dcm_BC)
+    dcm_NC = np.dot(dcm_CB, dcm_BN).T
 
     r_Nexp = np.dot(dcm_NC, r_Cexp)
     covar_Nexp = np.dot(dcm_NC, np.dot(covar_Cexp, dcm_NC.T)).flatten()

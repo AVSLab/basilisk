@@ -123,7 +123,7 @@ from Basilisk.utilities import vizSupport
 # cameraConfig = simFswInterfaceMessages.CameraConfigMsg()
 # cameraConfig.cameraID = 1
 # cameraConfig.renderRate = int(59 * 1E9)  # in ns
-# cameraConfig.sigma_BC = [0, 0, 1]
+# cameraConfig.sigma_CB = [0, 0, 1]
 # cameraConfig.cameraPos_B = [5000. * 1E-3, 0., 0.]  # in meters
 # cameraConfig.fieldOfView = 0.62  # in degrees
 # cameraConfig.sensorSize = [30.72, 30.72]  # in mm
@@ -173,7 +173,7 @@ from Basilisk.utilities import vizSupport
 # cameraConfig = simFswInterfaceMessages.CameraConfigMsg()
 # cameraConfig.cameraID = 1
 # cameraConfig.renderRate = int(30 * 1E9)  # in ns
-# cameraConfig.sigma_BC = [0, 0, 1]
+# cameraConfig.sigma_CB = [0, 0, 1]
 # cameraConfig.cameraPos_B = [5000. * 1E-3, 0., 0.]  # in meters
 # cameraConfig.fieldOfView = 50.  # in degrees
 # cameraConfig.sensorSize = [10., 10.]  # in mm
@@ -237,7 +237,7 @@ def run(show_plots, dscovr, marsOrbit):
         cameraConfig = simFswInterfaceMessages.CameraConfigMsg()
         cameraConfig.cameraID = 1
         cameraConfig.renderRate = int(59 * 1E9)  # in ns
-        cameraConfig.sigma_BC = [0, 0, 1]
+        cameraConfig.sigma_CB = [0, 0, 1]
         cameraConfig.cameraPos_B = [5000. * 1E-3, 0., 0.]  # in meters
         cameraConfig.fieldOfView = 0.62  # in degrees
         cameraConfig.sensorSize = [30.72 , 30.72 ]  # in mm
@@ -256,7 +256,7 @@ def run(show_plots, dscovr, marsOrbit):
         cameraConfig = simFswInterfaceMessages.CameraConfigMsg()
         cameraConfig.cameraID = 1
         cameraConfig.renderRate = int(30 * 1E9)  # in ns
-        cameraConfig.sigma_BC = [0, 0, 1]
+        cameraConfig.sigma_CB = [0, 0, 1]
         cameraConfig.cameraPos_B = [5000. * 1E-3, 0., 0.]  # in meters
         cameraConfig.fieldOfView = 50.  # in degrees
         cameraConfig.sensorSize = [10. , 10. ]  # in mm

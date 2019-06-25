@@ -96,8 +96,8 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
         return;
     }
     configData->planetTarget = circlesIn.planetIds[0];
-    v3Scale(-1, attInfo.sigma_BN, attInfo.sigma_BN); // sigma_NB now
-    addMRP(attInfo.sigma_BN, cameraSpecs.sigma_BC, sigma_NC); // sigma_NC now
+    addMRP(cameraSpecs.sigma_CB, attInfo.sigma_BN, sigma_NC); // sigma_CN now
+    v3Scale(-1, sigma_NC, sigma_NC); // sigma_NC now
     MRP2C(sigma_NC, dcm_NC);
 
     /*! - Find pixel size using camera specs */
