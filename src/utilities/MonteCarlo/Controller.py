@@ -728,11 +728,16 @@ class DataWriter(mp.Process):
         """
         while self._endToken is None:
             data, mcSimIndex, self._endToken = self._queue.get()
+            print "Starting to log: " + str(mcSimIndex)
             if self._endToken:
                 continue
 
             for dictName, dictData in data.iteritems(): # Loops through Messages, Variables, Custom dictionaries in the retention policy
                 for itemName, itemData in dictData.iteritems(): # Loop through all items and their data
+
+                    if itemName == "OrbitalElements.Omega": # Protects from OS that aren't case sensitive.
+                        itemName = "OrbitalElements.Omega_Captial"
+
                     filePath = self._logDir + itemName + ".data"
                     self._dataFiles.add(filePath)
 
@@ -749,7 +754,7 @@ class DataWriter(mp.Process):
                     for i in range(variLen):
                         innerLabel.append(i)
                     if variLen == 0:
-                        innerLabel.append(1) # May not be necessary, might be able to leave blank and get a None
+                        innerLabel.append(0) # May not be necessary, might be able to leave blank and get a None
                     labels = pandas.MultiIndex.from_product([outerLabel, innerLabel], names=["runNum", "varIdx"])
 
                     # Generate the individual run's dataframe
@@ -763,21 +768,29 @@ class DataWriter(mp.Process):
                     # If the .data file doesn't exist save the dataframe to create the file
                     # and skip the remainder of the loop
                     if not os.path.exists(filePath):
-                        allData = df
-                        allData.to_pickle(filePath)
+                        pickle.dump([df], open(filePath, "wb"))
                         continue
 
-                    # If the .data file does exists, append the run's df.
-                    allData = pandas.read_pickle(filePath)
-                    allData = pandas.concat([allData,df],axis=1)
-                    allData.to_pickle(filePath)
+                    # If the .data file does exists, append the message's pickle.
+                    with open(filePath, "a+") as pkl:
+                        pickle.dump([df], pkl)
+
+            print "Finished logging: " + str(mcSimIndex)
 
         # Sort by the MultiIndex (first by run number then by variable component)
         for filePath in self._dataFiles:
             # We create a new index so that we populate any missing run data (in the case that a run breaks) with NaNs.
-            allData = pandas.read_pickle(filePath)
+            allData = []
+            with open(filePath, 'rb') as pkl:
+                try:
+                    while True:
+                        allData.extend(pickle.load(pkl))
+                except EOFError:
+                    pass
+            allData = pandas.concat(allData, axis=1)
             newMultInd = pandas.MultiIndex.from_product([range(allData.columns.min()[0], allData.columns.max()[0]+1),
-                                                         range(allData.columns.min()[1], allData.columns.max()[1]+1)])
+                                                         range(allData.columns.min()[1], allData.columns.max()[1]+1)],
+                                                         names=["runNum", "varIdx"])
             #allData = allData.sort_index(axis=1, level=[0,1]) #TODO: When we dont lose MCs anymore, we should just use this call
             allData = allData.reindex(columns=newMultInd)
             allData.index.name = 'time[ns]'
