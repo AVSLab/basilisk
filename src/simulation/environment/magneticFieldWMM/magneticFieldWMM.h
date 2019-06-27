@@ -36,8 +36,9 @@
  * @{
  */
 
-/*! @brief Evaluate a centered dipole magnetic field model about a planet for a range of spacecraft locations.
-    For more information on this module see this [PDF Documentation](Basilisk-magFieldDipole-20190309.pdf).
+/*! @brief Evaluate a magnetic field model about Earth for a range of spacecraft locations using the World Magnetic Model (WMM).
+ 
+    For more information on this module see this [PDF Documentation](Basilisk-magFieldWMM-20190618.pdf).
  */
 class MagneticFieldWMM:  public MagneticFieldBase {
 public:
