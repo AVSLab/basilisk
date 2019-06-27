@@ -134,7 +134,9 @@ def plot_OnTimeRequest(timeDataFSW, dataSchm, numTh):
 # illustrate how a set of thrusters can be added to the rigid SpacecraftPlus() hub, and what
 # FSW modules are needed to control these thrusters. The simulation setup is performed with two
 # processes, similarly to [scenarioAttitudeFeedback2T.py](@ref scenarioAttitudeFeedback2T),
-# in which the dynamics and the FSW algorithms are run at different time steps.
+# in which the dynamics and the FSW algorithms are run at different time steps.  The control setup is the same
+# as in [scenarioAttitudeFeedbackRW.py](@ref scenarioAttitudeFeedbackRW), but here the RW actuation is replaced with
+# thruster based control torque solution.
 #
 # To run the scenario, call the python script from a Terminal window through:
 #
@@ -143,7 +145,7 @@ def plot_OnTimeRequest(timeDataFSW, dataSchm, numTh):
 # The simulation layout is shown in the following illustration. The two processes (SIM and FSW) are simulated
 # and run at different time rates. Interface messages are shared across SIM and
 # FSW message passing interfaces (MPIs).
-# ![Simulation Flow Diagram](Images/doc/test_scenarioAttitudeFeedback2T_TH.png "Illustration")
+# ![Simulation Flow Diagram](Images/doc/test_scenarioAttitudeFeedback2T_TH.svg "Illustration")
 #
 # When the simulation completes several plots are shown for the MRP attitude history, the rate
 # tracking errors, the requested torque, the requested forces for each thruster and the On-Time commands.

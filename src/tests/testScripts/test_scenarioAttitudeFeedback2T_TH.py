@@ -24,7 +24,7 @@
 #
 # Purpose:  Integrated test of the spacecraftPlus(), RWs, simpleNav() and
 #           MRP_Feedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit
-#           while using the RWs to do the attitude control actuation.
+#           while using the Thrusters to do the attitude control actuation.
 # Author:   Giulio Napolitano
 # Creation Date:  Jan. 7, 2017
 #
