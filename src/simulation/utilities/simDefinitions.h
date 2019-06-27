@@ -28,3 +28,12 @@ typedef enum {
     OVER_RATING,
     MAX_DEVICE_CONDITION_STATE
 } DeviceConditionState_t;
+
+
+#define EPOCH_YEAR        2019
+#define EPOCH_MONTH       01
+#define EPOCH_DAY         01
+#define EPOCH_HOUR        00
+#define EPOCH_MIN         00
+#define EPOCH_SECONDS     0.00
+
