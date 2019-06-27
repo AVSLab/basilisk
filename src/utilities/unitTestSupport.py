@@ -26,6 +26,7 @@ import math
 import os,errno
 import numpy as np
 import matplotlib as mpl
+from datetime import datetime, timedelta
 
 mpl.rc("figure", facecolor="white")
 mpl.rc('xtick', labelsize=9)
@@ -423,3 +424,11 @@ def pullVectorSetFromData(inpMat):
     outMat = np.array(inpMat).transpose()
     return outMat[1:].transpose()
 
+
+
+def decimalYearToDateTime(start):
+    year = int(start)
+    rem = start - year
+
+    base = datetime(year, 1, 1)
+    return base + timedelta(seconds=(base.replace(year=base.year + 1) - base).total_seconds() * rem)
