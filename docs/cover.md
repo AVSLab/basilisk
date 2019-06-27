@@ -60,9 +60,7 @@ The Basilisk framework is being designed from inception to support several diffe
 - **Hardware-in-the-Loop:** Basilisk will provide synchronization to realtime via software-based 
     clock tracking modules.  This allows the package to synchronize itself to 
     one or more timing frames in order to provide deterministic behavior in a 
-    realtime environment.  External communication is handled via the [Boost](http://www.boost.org) 
-    library with ethernet currently available and serial planned in the near 
-    future.
+    realtime environment.  
 
 - **Scriptability:** The Python user interface to the C/C++ layer relies on the [Simplified Wrapper 
     and Interface Generator](http://swig.org) (SWIG) software, a cross-platform, open-source 
@@ -82,7 +80,7 @@ The Basilisk framework is being designed from inception to support several diffe
 
 - **Cross-Platform Solution:** Basilisk is inherently cross-platform in nature, and is 
     supported on macOS, Windows, and Linux systems.  The Python layer, C programming 
-    language, Boost communication library and Qt/Open-GL visualization are active 
+    language, ZeroMQ communication library and Unity visualization are active 
     cross-platform developments.
 
 - **Validation and Verification:** Each simulation or FSW algorithm module has unit test 
@@ -95,8 +93,8 @@ The Basilisk framework is being designed from inception to support several diffe
     repeatable Monte-Carlo runs.  The simulation parameters can be disturbed through a 
     range of distribution functions.
 
-- **3D Visualization:** Basilisk has an accompanying stand-alone visualization that 
-    uses [Qt](https://www.qt.io)/[OpenGL](https://www.opengl.org) to visualize the 
+- **3D Visualization:** Basilisk has an accompanying stand-alone visualization called [Vizard](https://hanspeterschaub.info/bskHtml/vizard.html) that 
+    uses [Unity](https://unity.com) to visualize the 
     spacecraft, its orientation and orbits, the local planets, and various qualitative 
     data and indicators for sensors and actuators. Simulation events and device faults 
     may be triggered directly from the visualization.

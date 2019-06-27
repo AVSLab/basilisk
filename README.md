@@ -10,7 +10,7 @@
 Of the following requirements Python is the only one for which prebuilt libraries are not included in the project repository:
 
 * [Cmake](https://cmake.org) for configuring the and generating the Visual Studio solution file or macOS XCode proejct.
-* [Python 2.7](https://www.python.org/downloads/windows/) (numpy, matplotlib, pytest)
+* [Python 2.7](https://www.python.org/downloads/windows/) (numpy, matplotlib, pytest, pandas)
 
 [Setup a macOS Development Environment](http://hanspeterschaub.info/bskHtml/install_mac_o_s.html)
 
@@ -44,9 +44,9 @@ Now, when you want to use a tutorial, navigate inside that folder, and edit and 
 
 <!--Any new BSK module development should not occur within the BSK folder as this will be updated rapidly.  Rather, new FSW algorithm or simulation coce modules should be created in a custom folder outside of the BSK directory.  A sample folder is provided named `BasiliskCustom` wich contains sample FSW and Simulation modules.-->
 
-At this limited alpha release stage it is not recommended that custom BSK modules are written.  We are working on the ability to develop custom BSK modules outside of the Basilisk folder.  This will enable developers to safely write their own BSK modules and still be able to do a drop in replacement of future BSK releases.
+We are working on the ability to develop custom BSK modules outside of the Basilisk folder.  This will enable developers to safely write their own BSK modules and still be able to do a drop in replacement of future BSK releases.
 
-To use the standalone 3D Visualization, download the Basilisk Qt code.  This is more experimental, but does provide a 3D view of many of the simualtion states.  The Viz and BSK simulation talk through TCP/IP.  After opening the Viz, use the `open connection` or `CMD-O` command to open the default 127.0.0.1 address.  In the `test_scenarioXXX.py` script, uncomment the marked 3 lines to enable a communication interface with the Viz.
+To use the standalone 3D Visualization, download the [Vizard](https://hanspeterschaub.info/bskMain.html).  This is in development, but does provide a 3D view of many of the simualtion states.  
 
 
 ### Who do I talk to? ###

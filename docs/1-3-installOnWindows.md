@@ -1,6 +1,6 @@
 # Installing On Windows {#installWindows}
 
-The following was developed using Windows 7, Python 2.7.12 release candidate 1, Visual Studio Community 2015 and Boost C++ libraries 1.61.
+The following was developed using Windows 7, Python 2.7.12 release candidate 1, Visual Studio Community 2017.
 
 ## Software setup
 
