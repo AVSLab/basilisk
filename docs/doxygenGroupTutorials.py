@@ -41,7 +41,8 @@
 #           \defgroup scenarioAttGuideHyperbolicGroup       2.2.2 Velocity Frame Guidance
 #       @}
 #       \defgroup scenarioAttitudeFeedbackRWGroup           2.3 Reaction Wheel Control
-#       \defgroup scenarioAttitudeSteeringGroup             2.4 MRP Steering Attitude Control
+#       \defgroup scenarioAttitudeFeedback2T_THGroup        2.4 Thrusters Control
+#       \defgroup scenarioAttitudeSteeringGroup             2.5 MRP Steering Attitude Control
 #   @}
 #
 #   \defgroup Tutorial_3 Chapter 3: Complex Spacecraft Dynamics Simulations
