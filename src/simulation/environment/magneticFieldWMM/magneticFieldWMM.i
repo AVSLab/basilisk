@@ -31,10 +31,12 @@
 %include "../../simMessages/spicePlanetStateSimMsg.h"
 %include "../../simMessages/scPlusStatesSimMsg.h"
 %include "../../simMessages/magneticFieldSimMsg.h"
+%include "../../simMessages/epochSimMsg.h"
 
 GEN_SIZEOF(MagneticFieldSimMsg)
 GEN_SIZEOF(SpicePlanetStateSimMsg)
 GEN_SIZEOF(SCPlusStatesSimMsg)
+GEN_SIZEOF(EpochSimMsg)
 
 %pythoncode %{
 import sys

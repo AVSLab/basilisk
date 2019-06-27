@@ -28,6 +28,7 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/magneticFieldSimMsg.h"
+#include "simMessages/epochSimMsg.h"
 #include "../_GeneralModuleFiles/magneticFieldBase.h"
 #include "GeomagnetismHeader.h"
 
@@ -48,19 +49,21 @@ private:
     void initializeWmm(const char *dataPath);
     void cleanupEarthMagFieldModel();
     void computeWmmField(double decimalYear, double phi, double lambda, double h, double B_M[3]);
-
+    void customReset(uint64_t CurrentClock);
+    void customCrossInit();
 
 public:
+    std::string epochInMsgName;             //!< -- Message name of the epoch message
+
 
 private:
-    MAGtype_MagneticModel *magneticModels[1];
+    MAGtype_MagneticModel * magneticModels[1];
     MAGtype_MagneticModel *timedMagneticModel;
-//    int                    epochs = 1;
     MAGtype_Ellipsoid      ellip;
     MAGtype_Geoid          geoid;
     MAGtype_Date           userDate;
-
-
+    struct tm              epochDateTime;
+    int64_t epochInMsgId;                   //!< ID of the epoch message
 };
 
 /*! @} */
