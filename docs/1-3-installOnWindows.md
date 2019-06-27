@@ -56,6 +56,14 @@ For arch x86:
 cmake -G "Visual Studio <MSVC Version> <MSVC Toolset/Year> Win32" ../src
 ```
 
+Example build commands include:
+```
+cmake -G "Visual Studio 16 2019" -A x64 ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF
+```
+or 
+```
+cmake -G "Visual Studio 15 2017 Win64" ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF
+```
 ### How to run tests
 
 Tests are run and managed by Pytest. To execute all tests the py.test command can be executed on the `src` directory from the command line.
