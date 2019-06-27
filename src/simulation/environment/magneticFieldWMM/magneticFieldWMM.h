@@ -54,6 +54,7 @@ private:
 
 public:
     std::string epochInMsgName;             //!< -- Message name of the epoch message
+    std::string dataPath;                   //!< -- String with the path to the WMM coefficient file
 
 
 private:
