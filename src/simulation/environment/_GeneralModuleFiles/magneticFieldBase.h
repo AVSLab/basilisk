@@ -68,7 +68,7 @@ public:
     std::string planetPosInMsgName;          //!< Message name for the planet's SPICE position message
     double envMinReach; //!< [m] Minimum planet-relative position needed for the environment to work, default is off (neg. value)
     double envMaxReach; //!< [m] Maximum distance at which the environment will be calculated, default is off (neg. value)
-    double epochDate;                       //!< [JD2000] Specified epoch date, default is a Julian date format
+    double epochDate;                       //!< Specified epoch date, date type is dictated by the mag field module needs
     double planetRadius;                    //!< [m]      Radius of the planet
 
 protected:
