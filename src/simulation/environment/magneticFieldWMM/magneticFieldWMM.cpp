@@ -48,7 +48,7 @@ MagneticFieldWMM::MagneticFieldWMM()
     if (!MAG_DateToYear(&calendar, Error_Message)){
         BSK_PRINT(MSG_ERROR, "Could not convert default date to decimal year in constructor. \nError message: %s", Error_Message);
     }
-    this->epochDate = calendar.DecimalYear;
+    this->epochDate = calendar.DecimalYear + EPOCH_HOUR/(24.*365);
 
     return;
 }
@@ -167,7 +167,7 @@ void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldSimMsg *msg, doub
     //! - compute spacecraft latitude and longitude
     phi = asin(rHat_P[2]);
     lambda = atan2(rHat_P[1], rHat_P[0]);
-    h = r_BP_P.norm()/1000. - this->planetRadius; /* must be in km */
+    h = this->orbitRadius/1000. - this->planetRadius; /* must be in km */
 
     //! - compute current decimalYear value
     MAGtype_Date calendar;
