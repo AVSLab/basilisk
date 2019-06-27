@@ -185,8 +185,6 @@ void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldSimMsg *msg, doub
 
     //! - evaluate NED magnetic field
     computeWmmField(calendar.DecimalYear + localDateTime.tm_hour/(24.*365), phi, lambda, h, B_M);
-    printf("HPS: DecimalYear= %f\n", calendar.DecimalYear);
-    printf("HPS: h=%f phi=%f lambda=%f\n", h, phi*R2D, lambda*R2D);
 
     //! - convert NED magnetic field M vector components into N-frame components and store in output message
     Euler2(phi + M_PI_2, M2);
@@ -194,8 +192,6 @@ void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldSimMsg *msg, doub
     m33MultM33(M3, M2, PM);
     m33tMultM33(this->planetState.J20002Pfix, PM, NM);
     m33MultV3(NM, B_M, msg->magField_N);
-    m33PrintScreen("NM:", NM);
-    v3PrintScreen("B_M:", B_M);
 
     return;
 }
