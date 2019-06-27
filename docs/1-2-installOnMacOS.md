@@ -95,6 +95,7 @@ For more information about this file see this [online discussion](https://apple.
 ```
 $ pip install --user numpy==1.15.4
 $ pip install --user matplotlib
+$ pip install --user pandas
 ```
 * Basilisk uses conan for package managing. In order to do so, users must install conan and set the remote repositories for libraries:
 ```
