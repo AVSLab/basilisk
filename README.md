@@ -10,7 +10,7 @@
 Of the following requirements Python is the only one for which prebuilt libraries are not included in the project repository:
 
 * [Cmake](https://cmake.org) for configuring the and generating the Visual Studio solution file or macOS XCode proejct.
-* [Python 2.7](https://www.python.org/downloads/windows/) (numpy, matplotlib, pytest, pandas)
+* [Python 2.7](https://www.python.org/downloads/windows/) (numpy v1.15.4, matplotlib, pytest, pandas)
 
 [Setup a macOS Development Environment](http://hanspeterschaub.info/bskHtml/install_mac_o_s.html)
 

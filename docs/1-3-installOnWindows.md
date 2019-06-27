@@ -7,7 +7,7 @@ The following was developed using Windows 7, Python 2.7.12 release candidate 1, 
 In order to run Basilisk, the following software will be necessary:
 
 * [Cmake](https://cmake.org/)
-* [Python 2.7 (numpy==1.15.4, matplotlib, pytest)](https://www.python.org/downloads/mac-osx/)
+* [Python 2.7 (numpy==1.15.4, matplotlib, pytest, conan, pandas)](https://www.python.org/downloads/windows/)
 * [pip](https://pip.pypa.io/en/stable/installing/)
 * Visual Studios 15 or Greater
 * [Swig](http://www.swig.org/download.html)

@@ -25,6 +25,8 @@ We are very excited by the great capabilities that this software already has, an
     <li>Fixed issue where the Viz would show a custom camera window on startup if playing back a data file from bskSim scenarios.</li>
     <li>Added relative Orbit Determination filter (relativeODuKF) in fswAlgorithms/opticalNavigation. This filter reads measurements treated by the image processing block to estimate spacecraft position and velocity</li>
     <li>Changed the C++ message ID to consitently be of type int64_t, not uint64_t</li>
+    <li>Rearchitected how data is retained in BSK monte carlo runs using Pandas.  The python pandas package is now required to run MC runs.</li>
+    <li>Updated the CMake to handle both Microsoft Visual Studio 2017 and 2019</li>
    </ul>
    
 ##  Version 0.6.2
