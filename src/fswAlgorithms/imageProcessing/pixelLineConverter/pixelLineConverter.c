@@ -72,6 +72,7 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     uint32_t sizeOfMsgWritten;
     double dcm_NC[3][3];
     double sigma_NC[3];
+    double reCentered[2];
     CameraConfigMsg cameraSpecs;
     CirclesOpNavMsg circlesIn;
     OpNavFswMsg opNavMsgOut;
@@ -95,6 +96,8 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
                      &opNavMsgOut, moduleID);
         return;
     }
+    reCentered[0] = circlesIn.circlesCenters[0] -cameraSpecs.resolution[0]/2;
+    reCentered[1] = circlesIn.circlesCenters[1] -cameraSpecs.resolution[1]/2;
     configData->planetTarget = circlesIn.planetIds[0];
     addMRP(cameraSpecs.sigma_CB, attInfo.sigma_BN, sigma_NC); // sigma_CN now
     v3Scale(-1, sigma_NC, sigma_NC); // sigma_NC now
@@ -113,10 +116,11 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     double covar_map_C[3*3], covar_In_C[3*3];
     double covar_In_N[3*3];
     double x_map, y_map, rho_map;
-    rtilde_C[0] = (X*circlesIn.circlesCenters[0])/cameraSpecs.focalLength;
-    rtilde_C[1] = (Y*circlesIn.circlesCenters[1])/cameraSpecs.focalLength;
+    rtilde_C[0] = (X*reCentered[0])/cameraSpecs.focalLength;
+    rtilde_C[1] = (Y*reCentered[1])/cameraSpecs.focalLength;
     v2Set(rtilde_C[0], rtilde_C[1], rHat_C);
     rHat_C[2] = 1.0;
+    v3Scale(-1, rHat_C, rHat_C);
     v3Normalize(rHat_C, rHat_C);
     
     m33MultV3(dcm_NC, rHat_C, rHat_N);
