@@ -60,6 +60,8 @@ protected:
     virtual void customReset(uint64_t CurrentClock);
     virtual void customWriteMessages(uint64_t CurrentClock);
     virtual bool customReadMessages();
+    virtual void customSetEpochFromMessage();
+    virtual void customSetEpochFromVariable();
 
 public:
     std::vector<std::string> scStateInMsgNames;    //!< Vector of the spacecraft position/velocity message names
@@ -68,7 +70,7 @@ public:
     double envMinReach; //!< [m] Minimum planet-relative position needed for the environment to work, default is off (neg. value)
     double envMaxReach; //!< [m] Maximum distance at which the environment will be calculated, default is off (neg. value)
     double epochDate;                       //!< Specified epoch date, date type is dictated by the mag field module needs
-    double planetRadius;                    //!< [m]      Radius of the planet
+    double planetRadius;                     //!< [m]      Radius of the planet
 
 protected:
     Eigen::Vector3d r_BP_N;                 //!< [m] sc position vector relative to planet in inertial N frame components
@@ -81,6 +83,7 @@ protected:
     int64_t planetPosInMsgId;               //!< ID of the planet state message
     std::vector<SCPlusStatesSimMsg> scStates;//!< vector of the spacecraft state messages
     SpicePlanetStateSimMsg planetState;     //!< planet state message
+    int64_t epochInMsgId;                   //!< ID of the epoch message
 
 };
 

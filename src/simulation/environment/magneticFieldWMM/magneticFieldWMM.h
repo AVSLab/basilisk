@@ -65,7 +65,6 @@ private:
     MAGtype_Geoid          geoid;
     MAGtype_Date           userDate;
     struct tm              epochDateTime;
-    int64_t epochInMsgId;                   //!< ID of the epoch message
 };
 
 /*! @} */

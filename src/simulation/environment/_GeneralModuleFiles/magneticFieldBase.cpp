@@ -43,6 +43,9 @@ MagneticFieldBase::MagneticFieldBase()
     this->envMinReach = -1;
     this->envMaxReach = -1;
 
+    //! - turn off the epoch message ID
+    this->epochInMsgId = -1;
+
     //! - zero the planet message, and set the DCM to an identity matrix
     memset(&this->planetState, 0x0, sizeof(SpicePlanetStateSimMsg));
     m33SetIdentity(this->planetState.J20002Pfix);
@@ -129,6 +132,12 @@ void MagneticFieldBase::Reset(uint64_t CurrentSimNanos)
     //! - call the custom environment module reset method
     customReset(CurrentSimNanos);
 
+    /* set epoch information.  If provided, then the epoch message information should be used.  */
+    if (this->epochInMsgId >= 0) {
+        customSetEpochFromMessage();
+    } else {
+        customSetEpochFromVariable();
+    }
     return;
 }
 
@@ -154,6 +163,24 @@ void MagneticFieldBase::customCrossInit()
  @return void
  */
 void MagneticFieldBase::customReset(uint64_t CurrentClock)
+{
+    return;
+}
+
+/*! Custom customSetEpochFromMessage() method.  This allows a child class to specify how the module epoch information
+ is read in from an epoch BSK message.
+ @return void
+ */
+void MagneticFieldBase::customSetEpochFromMessage()
+{
+    return;
+}
+
+/*! Custom customSetEpochFromVariable() method.  This allows a child class to specify how the module epoch information
+ is set by a module variable.
+ @return void
+ */
+void MagneticFieldBase::customSetEpochFromVariable()
 {
     return;
 }
