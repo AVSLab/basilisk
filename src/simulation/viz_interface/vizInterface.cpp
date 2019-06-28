@@ -26,7 +26,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include "sensors/sun_sensor/coarse_sun_sensor.h"
 #include "utilities/linearAlgebra.h"
-#include "utilities/bsk_Print.h"
+#include "utilities/rigidBodyKinematics.h"
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
@@ -383,7 +383,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     /*! Write SCPlus output msg */
     if (scPlusInMsgID.msgID != -1 && scPlusInMsgID.dataFresh){
         vizProtobufferMessage::VizMessage::Spacecraft* scp = message->add_spacecraft();
-        scp->set_spacecraftname("Spacecraft");
+        scp->set_spacecraftname("inertial");
         for (int i=0; i<3; i++){
             scp->add_position(this->scPlusMessage.r_BN_N[i]);
             scp->add_velocity(this->scPlusMessage.v_BN_N[i]);
@@ -423,13 +423,17 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         
         /*! Write camera output msg */
         if (cameraConfMsgId.msgID != -1 && cameraConfMsgId.dataFresh){
+            /*! This corrective rotation allows unity to place the camera as is expected by the python setting. Unity has a -x pointing camera, with z vertical on the sensor, and y horizontal which is not the OpNav frame */
+            double correctiveRotation[3] = {1./3.,1./3., -1./3.};
+            double unityCameraMRP[3];
+            addMRP(correctiveRotation, this->cameraConfigMessage.sigma_CB, unityCameraMRP);
             vizProtobufferMessage::VizMessage::CameraConfig* camera = message->add_cameras();
             for (int j=0; j<3; j++){
                 if (j < 2){
                 camera->add_resolution(this->cameraConfigMessage.resolution[j]);
                 camera->add_sensorsize(this->cameraConfigMessage.sensorSize[j]);
                 }
-                camera->add_cameradir_b(this->cameraConfigMessage.sigma_CB[j]);
+                camera->add_cameradir_b(unityCameraMRP[j]);
                 camera->add_camerapos_b(this->cameraConfigMessage.cameraPos_B[j]);            }
             camera->set_renderrate(this->cameraConfigMessage.renderRate);
             camera->set_cameraid(this->cameraConfigMessage.cameraID);
