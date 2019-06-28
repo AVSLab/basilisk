@@ -36,8 +36,8 @@
 MagneticFieldWMM::MagneticFieldWMM()
 {
     //! - Set the default magnetic field properties
-    this->planetRadius = REQ_EARTH;
     this->magneticModels[0] = NULL;
+    this->planetRadius = REQ_EARTH*1000.;
 
     //! - Set default epoch date.  This is over-written if an epoch message is provided
     MAGtype_Date calendar;
@@ -167,7 +167,7 @@ void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldSimMsg *msg, doub
     //! - compute spacecraft latitude and longitude
     phi = asin(rHat_P[2]);
     lambda = atan2(rHat_P[1], rHat_P[0]);
-    h = this->orbitRadius/1000. - this->planetRadius; /* must be in km */
+    h = (this->orbitRadius - this->planetRadius)/1000.; /* must be in km */
 
     //! - compute current decimalYear value
     MAGtype_Date calendar;
