@@ -46,7 +46,6 @@ public:
     void SelfInit();
     void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
-    void setEpoch(double julianDate);
     void addSpacecraftToModel(std::string tmpScMsgName); 
     void UpdateState(uint64_t CurrentSimNanos); 
 

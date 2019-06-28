@@ -58,17 +58,6 @@ MagneticFieldBase::~MagneticFieldBase()
     return;
 }
 
-/*! Sets the epoch date used by some models. The default is setting a julian date.  If other date formats are required by
-    the environmental model, then these setEpoch() method should be redefined in the child class.
- @return void
- @param julianDate The specified epoch date in JD2000.
- */
-void MagneticFieldBase::setEpoch(double julianDate)
-{
-    this->epochDate = julianDate;
-    return;
-}
-
 /*! Adds the spacecraft message name to a vector of sc message names and automatically creates an output message name.
  @return void
  @param tmpScMsgName A spacecraft state message name.
