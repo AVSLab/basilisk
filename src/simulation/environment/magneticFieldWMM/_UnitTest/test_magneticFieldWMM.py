@@ -206,7 +206,6 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     mag0Data = unitTestSim.pullMessageLogData(testModule.envOutMsgNames[0] + ".magField_N", range(3))*1e9
     mag1Data = unitTestSim.pullMessageLogData(testModule.envOutMsgNames[1] + ".magField_N", range(3))*1e9
-    print "BSK:" + str(mag0Data)
 
     def wmmInertial(pos_N, Bx, By, Bz, phi, long, refPlanetDCM, minReach, maxReach):
         radius = np.linalg.norm(pos_N)
@@ -215,8 +214,6 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
         M3 = rbk.euler3(-long)
         PM = np.dot(M3,M2)
         NM = np.dot(refPlanetDCM.transpose(), PM)
-        print NM
-        print B_M
         magField_N = [np.dot(NM, B_M).tolist()]
 
 
@@ -238,7 +235,6 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
     if len(mag0Data) > 0:
         trueMagField = wmmInertial(r0N, BxTrue, ByTrue, BzTrue, phi, long, refPlanetDCM, minReach, maxReach)
 
-        print "B(true):" + str(trueMagField)
         testFailCount, testMessages = unitTestSupport.compareArray(
             trueMagField, mag0Data, accuracy, "SC0 mag vector",
             testFailCount, testMessages)
@@ -281,8 +277,8 @@ if __name__ == "__main__":
                  37584.4,        # BxTrue (nT)
                  235.7,        # ByTrue (nT)
                  -10600.5,       # BzTrue (nT)
-                 True,          # useDefault
-                 True,         # useMsg
+                 False,          # useDefault
+                 False,         # useMsg
                  False,         # useMinReach
                  False,         # useMaxReach
                  False          # usePlanetEphemeris

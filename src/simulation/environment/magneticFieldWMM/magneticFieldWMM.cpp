@@ -22,10 +22,8 @@
 #include "utilities/astroConstants.h"
 #include "utilities/rigidBodyKinematics.h"
 #include "utilities/bsk_Print.h"
-#include "utilities/simDefinitions.h"
 #include "EGM9615.h"
 #include "architecture/messaging/system_messaging.h"
-#include <time.h>
 
 #define MAX_CHAR_LENGTH 100
 
@@ -36,19 +34,9 @@
 MagneticFieldWMM::MagneticFieldWMM()
 {
     //! - Set the default magnetic field properties
-    this->planetRadius = REQ_EARTH*1000.;
-    this->magneticModels[0] = nullptr;
-
-    //! - Set default epoch date.  This is over-written if an epoch message is provided
-    MAGtype_Date calendar;
-    char Error_Message[255];
-    calendar.Year = EPOCH_YEAR;
-    calendar.Month = EPOCH_MONTH;
-    calendar.Day = EPOCH_DAY;
-    if (!MAG_DateToYear(&calendar, Error_Message)){
-        BSK_PRINT(MSG_ERROR, "Could not convert default date to decimal year in constructor. \nError message: %s", Error_Message);
-    }
-    this->epochDateFractionalYear = calendar.DecimalYear + EPOCH_HOUR/(24.*365);
+    this->planetRadius = REQ_EARTH*1000.;   // must be the radius of Earth for WMM
+    this->magneticModels[0] = nullptr;      // a nullptr means no WMM coefficients have been loaded
+    this->epochDateFractionalYear = -1;     // negative value means this variable has not been set
 
     return;
 }
@@ -102,41 +90,99 @@ void MagneticFieldWMM::customReset(uint64_t CurrentClock)
     //! - Initialize the WMM evaluation routines
     initializeWmm(this->dataPath.c_str());
 
-    //! - Set the epoch time in terms of a fractional year
-    if (this->epochInMsgId>=0) {
-        // Read in the epoch message and set the internal time structure
-        EpochSimMsg epochMsg;
-        SingleMessageHeader LocalHeader;
-        memset(&epochMsg, 0x0, sizeof(EpochSimMsg));
-        SystemMessaging::GetInstance()->ReadMessage(this->epochInMsgId, &LocalHeader,
-                                                    sizeof(EpochSimMsg),
-                                                    reinterpret_cast<uint8_t*> (&epochMsg), moduleID);
-        this->epochDateTime.tm_year = epochMsg.year - 1900;
-        this->epochDateTime.tm_mon = epochMsg.month - 1;
-        this->epochDateTime.tm_mday = epochMsg.day;
-        this->epochDateTime.tm_hour = epochMsg.hours;
-        this->epochDateTime.tm_min = epochMsg.minutes;
-        this->epochDateTime.tm_sec = (int) round(epochMsg.seconds);
-    } else {
-        // If an epoch message is not provided, the epochTime variable must be set directly
-        MAGtype_Date calendar;
-        char Error[255];
-        calendar.DecimalYear = this->epochDateFractionalYear;
-        MAG_YearToDate(&calendar);
-        this->epochDateTime.tm_year = calendar.Year- 1900;
-        this->epochDateTime.tm_mon = calendar.Month - 1;
-        this->epochDateTime.tm_mday = calendar.Day;
-        MAG_DateToYear(&calendar, Error);
-        double diff = this->epochDateFractionalYear - calendar.DecimalYear;
-        this->epochDateTime.tm_hour = (int) round(diff*(24.*365));
-        this->epochDateTime.tm_min = 0;
-        this->epochDateTime.tm_sec = 0;
+    return;
+}
+
+/*! Custom customSetEpochFromVariable() method.  This allows specifying epochDateFractionYear directly from Python.  If an epoch message is set then this variable is not used.
+ @return void
+ */
+void MagneticFieldWMM::customSetEpochFromVariable()
+{
+    //! - only convert if the fraction year variable was set to a non-zero value.  Otherwise use the BSK epoch default setup by the base class.
+    if (this->epochDateFractionalYear > 0.0) {
+        decimalYear2Gregorian(this->epochDateFractionalYear, &this->epochDateTime);
     }
+
+    return;
+}
+
+/*! Convert a fraction year double value into a time structure with gregorian date/time information
+ @return void
+ */
+void MagneticFieldWMM::decimalYear2Gregorian(double fractionalYear, struct tm *gregorian)
+{
+    //! -Use the WMM routine to get the year, month and day information
+    MAGtype_Date calendar;
+    char Error[255];
+    calendar.DecimalYear = this->epochDateFractionalYear;
+    MAG_YearToDate(&calendar);
+    gregorian->tm_year = calendar.Year- 1900;
+    gregorian->tm_mon = calendar.Month - 1;
+    gregorian->tm_mday = calendar.Day;
+
+    //! - Find the unused remained of the fractional year and add to the gregorian calendar
+    //! - determine number of days in this year
+    double daysInYear = 365;
+    if((calendar.Year % 4 == 0 && calendar.Year % 100 != 0) || calendar.Year % 400 == 0)
+        daysInYear = 366;
+
+    //! - determine missing hours
+    MAG_DateToYear(&calendar, Error);
+    double diff = this->epochDateFractionalYear - calendar.DecimalYear;
+    this->epochDateTime.tm_hour = (int) round(diff*(24.*daysInYear));
+    diff -= this->epochDateTime.tm_hour / ( 24. * daysInYear);
+
+    //! - determine missing minutes
+    this->epochDateTime.tm_min = (int) round(diff*(24.*60*daysInYear));
+    diff -= this->epochDateTime.tm_min / (24. * 60 * daysInYear);
+
+    //! - determine missing seconds
+    this->epochDateTime.tm_sec = (int) round(diff*(24.*60*60*daysInYear));
+
+    //! - ensure that daylight saving flag is off
     this->epochDateTime.tm_isdst = -1;
+
+    //! - make sure a proper time structure is setup
     mktime(&this->epochDateTime);
 
     return;
 }
+
+/*! Convert a time structure with gregorian date/time information into a fraction year value.
+ @return double
+ */
+double MagneticFieldWMM::gregorian2DecimalYear(double currentTime)
+{
+    double decimalYear;                 // [years]  fraction year date/time format
+    struct tm localDateTime;            // []       date/time structure
+
+    //! - compute current decimalYear value
+    MAGtype_Date calendar;
+    char Error_Message[255];
+    localDateTime = this->epochDateTime;
+    localDateTime.tm_sec += (int) round(currentTime);   // sets the current seconds
+    mktime(&localDateTime);
+
+    calendar.Year = localDateTime.tm_year + 1900;
+    calendar.Month = localDateTime.tm_mon + 1;
+    calendar.Day = localDateTime.tm_mday;
+    if (!MAG_DateToYear(&calendar, Error_Message)){
+        BSK_PRINT(MSG_ERROR, "Could not convert date to decimal year. \nError message: %s", Error_Message);
+    }
+
+    //! - determine number of days in this year
+    double daysInYear = 365;
+    if((calendar.Year % 4 == 0 && calendar.Year % 100 != 0) || calendar.Year % 400 == 0)
+        daysInYear = 366;
+
+    decimalYear = calendar.DecimalYear;
+    decimalYear += localDateTime.tm_hour / (24. * daysInYear);
+    decimalYear += localDateTime.tm_min / (24. * 60. * daysInYear);
+    decimalYear += localDateTime.tm_sec / (24. * 60. * 60. * daysInYear);
+
+    return decimalYear;
+}
+
 
 /*! This method is evaluates the centered dipole magnetic field model.
  @param msg magnetic field message structure
@@ -153,7 +199,6 @@ void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldSimMsg *msg, doub
     double B_M[3];                      // [T]   magnetic field in Magnetic field aligned frame
     double M2[3][3];                    // []    2nd axis rotation DCM
     double M3[3][3];                    // []    3rd axis rotation DCM
-    struct tm localDateTime;            // []    date/time structure
 
     if (this->magneticModels[0] == NULL) {
         // no magnetic field was setup, set field to zero and return
@@ -169,22 +214,8 @@ void MagneticFieldWMM::evaluateMagneticFieldModel(MagneticFieldSimMsg *msg, doub
     lambda = atan2(rHat_P[1], rHat_P[0]);
     h = (this->orbitRadius - this->planetRadius)/1000.; /* must be in km */
 
-    //! - compute current decimalYear value
-    MAGtype_Date calendar;
-    char Error_Message[255];
-    localDateTime = this->epochDateTime;
-    localDateTime.tm_sec = (int) round(currentTime);   // sets the current seconds
-    mktime(&localDateTime);
-
-    calendar.Year = localDateTime.tm_year + 1900;
-    calendar.Month = localDateTime.tm_mon + 1;
-    calendar.Day = localDateTime.tm_mday;
-    if (!MAG_DateToYear(&calendar, Error_Message)){
-        BSK_PRINT(MSG_ERROR, "Could not convert default date to decimal year. \nError message: %s", Error_Message);
-    }
-
     //! - evaluate NED magnetic field
-    computeWmmField(calendar.DecimalYear + localDateTime.tm_hour/(24.*365), phi, lambda, h, B_M);
+    computeWmmField(gregorian2DecimalYear(currentTime), phi, lambda, h, B_M);
 
     //! - convert NED magnetic field M vector components into N-frame components and store in output message
     Euler2(phi + M_PI_2, M2);

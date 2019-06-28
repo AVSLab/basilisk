@@ -31,6 +31,7 @@
 #include "simMessages/epochSimMsg.h"
 #include "../_GeneralModuleFiles/magneticFieldBase.h"
 #include "GeomagnetismHeader.h"
+#include <time.h>
 
 /*! \addtogroup SimModelGroup
  * @{
@@ -52,7 +53,9 @@ private:
     void computeWmmField(double decimalYear, double phi, double lambda, double h, double B_M[3]);
     void customReset(uint64_t CurrentClock);
     void customCrossInit();
-
+    void customSetEpochFromVariable();
+    void decimalYear2Gregorian(double fractionalYear, struct tm *gregorian);
+    double gregorian2DecimalYear(double currentTime);
 public:
     std::string epochInMsgName;             //!< -- Message name of the epoch message
     std::string dataPath;                   //!< -- String with the path to the WMM coefficient file

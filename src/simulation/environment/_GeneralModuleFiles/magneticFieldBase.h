@@ -60,7 +60,6 @@ protected:
     virtual void customReset(uint64_t CurrentClock);
     virtual void customWriteMessages(uint64_t CurrentClock);
     virtual bool customReadMessages();
-    virtual void customSetEpochFromMessage();
     virtual void customSetEpochFromVariable();
 
 public:

@@ -35,5 +35,5 @@ typedef enum {
 #define EPOCH_DAY         01
 #define EPOCH_HOUR        00
 #define EPOCH_MIN         00
-#define EPOCH_SECONDS     0.00
+#define EPOCH_SEC          0.00
 
