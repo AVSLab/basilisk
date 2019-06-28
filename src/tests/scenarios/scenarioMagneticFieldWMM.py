@@ -137,8 +137,8 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 #                                epochMsg)
 #~~~~~~~~~~~~~~~~~~~
 # The WMM model is driven of a time variable that is a decimal year value.  The module can set this as well by
-# specifying the module parameter `epochDate`.  However, note that if the epoch message is specified, the message
-# information is used instead of the `epochDate` variable.
+# specifying the module parameter `epochDateFractionalYear`.  However, note that if the epoch message is specified, the message
+# information is used instead of the `epochDateFractionalYear` variable.
 #
 # Every time a spacecraft is added to the magnetic field module, an automated output message name is created.
 # For `magModule` is "CenteredDipole_0_data" as the ModelTag string is `CenteredDipole` and the spacecraft number is 0.

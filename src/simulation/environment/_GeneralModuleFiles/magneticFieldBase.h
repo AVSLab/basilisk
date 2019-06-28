@@ -69,14 +69,13 @@ public:
     std::string planetPosInMsgName;          //!< Message name for the planet's SPICE position message
     double envMinReach; //!< [m] Minimum planet-relative position needed for the environment to work, default is off (neg. value)
     double envMaxReach; //!< [m] Maximum distance at which the environment will be calculated, default is off (neg. value)
-    double epochDate;                       //!< Specified epoch date, date type is dictated by the mag field module needs
     double planetRadius;                     //!< [m]      Radius of the planet
 
 protected:
     Eigen::Vector3d r_BP_N;                 //!< [m] sc position vector relative to planet in inertial N frame components
     Eigen::Vector3d r_BP_P;                 //!< [m] sc position vector relative to planet in planet-fixed frame components
     double orbitRadius;                     //!< [m] sc orbit radius about planet
-    uint64_t OutputBufferCount;                //!< number of output buffers for messaging system
+    uint64_t OutputBufferCount;             //!< number of output buffers for messaging system
     std::vector<MagneticFieldSimMsg> magFieldOutBuffer; //!< -- Message buffer for magnetic field messages
     std::vector<int64_t>  envOutMsgIds;     //!< vector of module output message IDs
     std::vector<int64_t> scStateInMsgIds;   //!< vector of spacecraft state message IDs

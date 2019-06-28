@@ -48,7 +48,7 @@ MagneticFieldWMM::MagneticFieldWMM()
     if (!MAG_DateToYear(&calendar, Error_Message)){
         BSK_PRINT(MSG_ERROR, "Could not convert default date to decimal year in constructor. \nError message: %s", Error_Message);
     }
-    this->epochDate = calendar.DecimalYear + EPOCH_HOUR/(24.*365);
+    this->epochDateFractionalYear = calendar.DecimalYear + EPOCH_HOUR/(24.*365);
 
     return;
 }

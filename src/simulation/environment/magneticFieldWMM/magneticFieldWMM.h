@@ -56,6 +56,7 @@ private:
 public:
     std::string epochInMsgName;             //!< -- Message name of the epoch message
     std::string dataPath;                   //!< -- String with the path to the WMM coefficient file
+    double      epochDateFractionalYear;    //!< Specified epoch date as a fractional year
 
 
 private:

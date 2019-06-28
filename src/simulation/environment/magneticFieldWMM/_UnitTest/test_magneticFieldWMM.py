@@ -109,7 +109,7 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
     testModule.dataPath = splitPath[0] + 'Basilisk/supportData/MagneticField/'
 
     if not useDefault:
-        testModule.epochDate = decimalYear
+        testModule.epochDateFractionalYear = decimalYear
 
     if useMsg:
         testModule.epochInMsgName = "simEpoch"
@@ -126,7 +126,7 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
                                   testModule.epochInMsgName,
                                   epochMsg)
         if not useDefault:
-            testModule.epochDate = decimalYear + 1.0
+            testModule.epochDateFractionalYear = decimalYear + 1.0
 
     minReach = -1.0
     if useMinReach:
