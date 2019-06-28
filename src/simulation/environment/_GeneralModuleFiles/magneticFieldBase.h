@@ -82,6 +82,7 @@ protected:
     int64_t planetPosInMsgId;               //!< ID of the planet state message
     std::vector<SCPlusStatesSimMsg> scStates;//!< vector of the spacecraft state messages
     SpicePlanetStateSimMsg planetState;     //!< planet state message
+    struct tm epochDateTime;                //!< time/date structure containing the epoch information using a Gregorian calendar
     int64_t epochInMsgId;                   //!< ID of the epoch message
 
 };

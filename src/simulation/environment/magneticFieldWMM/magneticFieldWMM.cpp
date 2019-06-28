@@ -121,13 +121,13 @@ void MagneticFieldWMM::customReset(uint64_t CurrentClock)
         // If an epoch message is not provided, the epochTime variable must be set directly
         MAGtype_Date calendar;
         char Error[255];
-        calendar.DecimalYear = this->epochDate;
+        calendar.DecimalYear = this->epochDateFractionalYear;
         MAG_YearToDate(&calendar);
         this->epochDateTime.tm_year = calendar.Year- 1900;
         this->epochDateTime.tm_mon = calendar.Month - 1;
         this->epochDateTime.tm_mday = calendar.Day;
         MAG_DateToYear(&calendar, Error);
-        double diff = this->epochDate - calendar.DecimalYear;
+        double diff = this->epochDateFractionalYear - calendar.DecimalYear;
         this->epochDateTime.tm_hour = (int) round(diff*(24.*365));
         this->epochDateTime.tm_min = 0;
         this->epochDateTime.tm_sec = 0;

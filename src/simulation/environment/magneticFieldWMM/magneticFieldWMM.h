@@ -65,7 +65,6 @@ private:
     MAGtype_Ellipsoid      ellip;
     MAGtype_Geoid          geoid;
     MAGtype_Date           userDate;
-    struct tm              epochDateTime;
 };
 
 /*! @} */
