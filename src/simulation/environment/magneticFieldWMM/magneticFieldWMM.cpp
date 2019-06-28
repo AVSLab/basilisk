@@ -36,8 +36,8 @@
 MagneticFieldWMM::MagneticFieldWMM()
 {
     //! - Set the default magnetic field properties
-    this->magneticModels[0] = NULL;
     this->planetRadius = REQ_EARTH*1000.;
+    this->magneticModels[0] = nullptr;
 
     //! - Set default epoch date.  This is over-written if an epoch message is provided
     MAGtype_Date calendar;
@@ -58,7 +58,7 @@ MagneticFieldWMM::MagneticFieldWMM()
  */
 MagneticFieldWMM::~MagneticFieldWMM()
 {
-    if (this->magneticModels[0] != NULL) {
+    if (this->magneticModels[0] != nullptr) {
         cleanupEarthMagFieldModel();
     }
 
@@ -87,10 +87,10 @@ void MagneticFieldWMM::customCrossInit()
  */
 void MagneticFieldWMM::customReset(uint64_t CurrentClock)
 {
-    if (this->magneticModels[0] != NULL) {
+    if (this->magneticModels[0] != nullptr) {
         /* clean up the prior initialization */
         cleanupEarthMagFieldModel();
-        this->magneticModels[0] = NULL;
+        this->magneticModels[0] = nullptr;
     }
 
     //! - Check that required module variables are set
