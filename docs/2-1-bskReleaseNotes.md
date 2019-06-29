@@ -13,6 +13,11 @@ We are very excited by the great capabilities that this software already has, an
 * live plotting capability during a BSK run
 
 
+## Upcoming Version 0.X.X
+<ul>
+    <li>text goes here</li>
+</ul>
+
 ## Upcoming Version 0.7.0
    <ul>
     <li>Added the enableViz method to the bskSim scnearios.</li>
