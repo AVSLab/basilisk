@@ -33,6 +33,8 @@ We are very excited by the great capabilities that this software already has, an
     <li>Rearchitected how data is retained in BSK monte carlo runs using Pandas.  The python pandas package is now required to run MC runs.</li>
     <li>Updated the CMake to handle both Microsoft Visual Studio 2017 and 2019</li>
     <li>Added a new attitude control scenario that uses a cluster of thrusters to produce the required ADCS control torque.</li>
+    <li>Added a new plotting utility library to support interactive plotting using datashaders with Python3.</li>
+    <li>Fixed a garbage collecting leak in the monte carlo controller to minimize impact on computer memory.</li>
    </ul>
    
 ##  Version 0.6.2
