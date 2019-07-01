@@ -511,7 +511,7 @@ class Controller:
                 print "Executing sequentially..."
             i = 0
             for i in range(numSims):
-                simGenerator = self.generateSims((i))
+                simGenerator = self.generateSims(range(i,i+1))
                 for sim in simGenerator:
                     try:
                         simulationExecutor([sim, self.dataOutQueue])
