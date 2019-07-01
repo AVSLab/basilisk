@@ -495,7 +495,7 @@ class Controller:
         # This is accomplished using a generator and pool.imap, -- simulations are only built
         # when they are about to be passed to a worker, avoiding memory overhead of first building simulations
         # There is a system-dependent chunking behavior, sometimes 10-20 are generated at a time.
-        simGenerator = self.generateSims(range(numSims))
+        # simGenerator = self.generateSims(range(numSims))
         failed = []  # keep track of the indices of failed simulations
         jobsFinished = 0  # keep track of what simulations have finished
 
@@ -503,47 +503,61 @@ class Controller:
         # It is called within worker threads with each worker's simulation parameters
         simulationExecutor = SimulationExecutor()
 
+        # The outermost for-loop for both the serial and multiprocessed sim generator is not necessary. It
+        # is a temporary fix to a memory leak which is assumed to be a result of the simGenerator not collecting
+        # garbage properly. # TODO: Find a more permenant solution to the leak.
         if self.numProcess == 1:  # don't make child thread
             if self.simParams.verbose:
                 print "Executing sequentially..."
             i = 0
-            for sim in simGenerator:
-                try:
-                    simulationExecutor([sim, self.dataOutQueue])
-                except:
-                    failed.append(i)
-                i += 1
+            for i in range(numSims):
+                simGenerator = self.generateSims((i))
+                for sim in simGenerator:
+                    try:
+                        simulationExecutor([sim, self.dataOutQueue])
+                    except:
+                        failed.append(i)
+                    i += 1
         else:
-            pool = mp.Pool(self.numProcess)
-            try:
-                # yields results *as* the workers finish jobs
-                for result in pool.imap_unordered(simulationExecutor, [(x, self.dataOutQueue) for x in simGenerator]):
-                    if result[0] is not True:  # workers return True on success
-                        failed.append(result[1])  # add failed jobs to the list of failures
-                        print "Job", result[1], "failed..."
+            for i in range(numSims/self.numProcess):
+                # If number of sims doesn't factor evenly into the number of processes:
+                if numSims % self.numProcess != 0 and i == len(range(numSims/self.numProcess))-1:
+                    offset = numSims % self.numProcess
+                else:
+                    offset = 0
+                simGenerator = self.generateSims(range(self.numProcess*i,self.numProcess*(i+1)+offset))
+                pool = mp.Pool(self.numProcess)
+                try:
+                    # yields results *as* the workers finish jobs
+                    for result in pool.imap_unordered(simulationExecutor, [(x, self.dataOutQueue) for x in simGenerator]):
+                        if result[0] is not True:  # workers return True on success
+                            failed.append(result[1])  # add failed jobs to the list of failures
+                            print "Job", result[1], "failed..."
 
-                    jobsFinished += 1
-                    if self.simParams.verbose:
-                        if jobsFinished % max(1, numSims / 20) == 0:  # print percentage after every ~5%
-                            print "Finished", jobsFinished, "/", numSims, \
-                                  "\t-- {}%".format(int(100 * float(jobsFinished) / numSims))
-                pool.close()
-            except KeyboardInterrupt as e:
-                print "Ctrl-C was hit, closing pool"
-                failed.extend(range(jobsFinished, numSims))  # fail all potentially running jobs...
-                pool.terminate()
-                raise e
-            except Exception as e:
-                print "Unknown exception while running simulations:", e
-                failed.extend(range(jobsFinished, numSims))  # fail all potentially running jobs...
-                traceback.print_exc()
-                pool.terminate()
-            finally:
-                while not self.dataOutQueue.empty():
-                    time.sleep(1)
-                self.dataOutQueue.put((None, None, True))
-                time.sleep(1)
-                pool.join()
+                        jobsFinished += 1
+                        if self.simParams.verbose:
+                            if jobsFinished % max(1, numSims / 20) == 0:  # print percentage after every ~5%
+                                print "Finished", jobsFinished, "/", numSims, \
+                                      "\t-- {}%".format(int(100 * float(jobsFinished) / numSims))
+                    pool.close()
+                except KeyboardInterrupt as e:
+                    print "Ctrl-C was hit, closing pool"
+                    failed.extend(range(jobsFinished, numSims))  # fail all potentially running jobs...
+                    pool.terminate()
+                    raise e
+                except Exception as e:
+                    print "Unknown exception while running simulations:", e
+                    failed.extend(range(jobsFinished, numSims))  # fail all potentially running jobs...
+                    traceback.print_exc()
+                    pool.terminate()
+                finally:
+                    # Wait until all data is logged from the spawned runs before proceeding with the next set.
+                    pool.join()
+            # Wait until all data logging is finished before concatenation dataframes and shutting down the pool
+            while not self.dataOutQueue.empty():
+               time.sleep(1)
+            self.dataOutQueue.put((None, None, True))
+            time.sleep(1)
 
         # if there are failures
         if len(failed) > 0:
@@ -728,11 +742,16 @@ class DataWriter(mp.Process):
         """
         while self._endToken is None:
             data, mcSimIndex, self._endToken = self._queue.get()
+            print "Starting to log: " + str(mcSimIndex)
             if self._endToken:
                 continue
-
+            print "Logging Dataframes from run " + str(mcSimIndex)
             for dictName, dictData in data.iteritems(): # Loops through Messages, Variables, Custom dictionaries in the retention policy
                 for itemName, itemData in dictData.iteritems(): # Loop through all items and their data
+
+                    if itemName == "OrbitalElements.Omega": # Protects from OS that aren't case sensitive.
+                        itemName = "OrbitalElements.Omega_Capital"
+
                     filePath = self._logDir + itemName + ".data"
                     self._dataFiles.add(filePath)
 
@@ -749,7 +768,7 @@ class DataWriter(mp.Process):
                     for i in range(variLen):
                         innerLabel.append(i)
                     if variLen == 0:
-                        innerLabel.append(1) # May not be necessary, might be able to leave blank and get a None
+                        innerLabel.append(0) # May not be necessary, might be able to leave blank and get a None
                     labels = pandas.MultiIndex.from_product([outerLabel, innerLabel], names=["runNum", "varIdx"])
 
                     # Generate the individual run's dataframe
@@ -763,25 +782,35 @@ class DataWriter(mp.Process):
                     # If the .data file doesn't exist save the dataframe to create the file
                     # and skip the remainder of the loop
                     if not os.path.exists(filePath):
-                        allData = df
-                        allData.to_pickle(filePath)
+                        pickle.dump([df], open(filePath, "wb"))
                         continue
 
-                    # If the .data file does exists, append the run's df.
-                    allData = pandas.read_pickle(filePath)
-                    allData = pandas.concat([allData,df],axis=1)
-                    allData.to_pickle(filePath)
+                    # If the .data file does exists, append the message's pickle.
+                    with open(filePath, "a+") as pkl:
+                        pickle.dump([df], pkl)
+
+            print "Finished logging dataframes from run" + str(mcSimIndex)
 
         # Sort by the MultiIndex (first by run number then by variable component)
+        print "Starting to concatenate dataframes"
         for filePath in self._dataFiles:
             # We create a new index so that we populate any missing run data (in the case that a run breaks) with NaNs.
-            allData = pandas.read_pickle(filePath)
+            allData = []
+            with open(filePath, 'rb') as pkl:
+                try:
+                    while True:
+                        allData.extend(pickle.load(pkl))
+                except EOFError:
+                    pass
+            allData = pandas.concat(allData, axis=1)
             newMultInd = pandas.MultiIndex.from_product([range(allData.columns.min()[0], allData.columns.max()[0]+1),
-                                                         range(allData.columns.min()[1], allData.columns.max()[1]+1)])
+                                                         range(allData.columns.min()[1], allData.columns.max()[1]+1)],
+                                                         names=["runNum", "varIdx"])
             #allData = allData.sort_index(axis=1, level=[0,1]) #TODO: When we dont lose MCs anymore, we should just use this call
             allData = allData.reindex(columns=newMultInd)
             allData.index.name = 'time[ns]'
             allData.to_pickle(filePath)
+        print "Finished concatenating dataframes"
 
     def setLogDir(self, logDir):
         self._logDir = logDir
