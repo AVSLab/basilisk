@@ -320,13 +320,12 @@ class Controller:
             except Exception as e:
                 print "Unknown exception while trying to pickle monte-carlo-controller... \ncontinuing...\n\n", e
 
-
+        # Create Queue, but don't ever start it.
         self.multiProcManager = mp.Manager()
         self.dataOutQueue = self.multiProcManager.Queue()
         self.dataWriter = DataWriter(self.dataOutQueue)
         self.dataWriter.daemon = False
 
-        simGenerator = self.generateICSims(caseList)
         jobsFinished = 0  # keep track of what simulations have finished
 
         # The simulation executor is responsible for executing simulation given a simulation's parameters
@@ -337,35 +336,49 @@ class Controller:
             if self.simParams.verbose:
                 print "Executing sequentially..."
             i = 0
-            for sim in simGenerator:
-                try:
-                    simulationExecutor([sim,  self.dataOutQueue])
-                except:
-                    failed.append(i)
+            for i in range(len(caseList)):
+                simGenerator = self.generateICSims(caseList[i:i+1])
+                for sim in simGenerator:
+                    try:
+                        simulationExecutor([sim,  self.dataOutQueue])
+                    except:
+                        failed.append(i)
                 i += 1
         else:
-            pool = mp.Pool(self.numProcess)
-            try:
-                # yields results *as* the workers finish jobs
-                for result in pool.imap_unordered(simulationExecutor, [(x, self.dataOutQueue) for x in simGenerator]):
-                    if result[0] is not True:  # workers return True on success
-                        failed.append(result[1])  # add failed jobs to the list of failures
-                        print "Job", result[1], "failed..."
+            numSims = len(caseList)
+            if self.numProcess > numSims:
+                print "Fewer MCs spawned than processes assigned (%d < %d). Changing processes count to %d." % (numSims, self.numProcess, numSims)
+                self.numProcess = numSims
+            for i in range(numSims/self.numProcess):
+                # If number of sims doesn't factor evenly into the number of processes:
+                if numSims % self.numProcess != 0 and i == len(range(numSims/self.numProcess))-1:
+                    offset = numSims % self.numProcess
+                else:
+                    offset = 0
 
-                    jobsFinished += 1
-                pool.close()
-            except KeyboardInterrupt as e:
-                print "Ctrl-C was hit, closing pool"
-                # failed.extend(range(jobsFinished, numSims))  # fail all potentially running jobs...
-                pool.terminate()
-                raise e
-            except Exception as e:
-                print "Unknown exception while running simulations:", e
-                # failed.extend(range(jobsFinished, numSims))  # fail all potentially running jobs...
-                traceback.print_exc()
-                pool.terminate()
-            finally:
-                pool.join()
+                simGenerator = self.generateICSims(caseList[self.numProcess*i:self.numProcess*(i+1)+offset])
+                pool = mp.Pool(self.numProcess)
+                try:
+                    # yields results *as* the workers finish jobs
+                    for result in pool.imap_unordered(simulationExecutor, [(x, self.dataOutQueue) for x in simGenerator]):
+                        if result[0] is not True:  # workers return True on success
+                            failed.append(result[1])  # add failed jobs to the list of failures
+                            print "Job", result[1], "failed..."
+
+                        jobsFinished += 1
+                    pool.close()
+                except KeyboardInterrupt as e:
+                    print "Ctrl-C was hit, closing pool"
+                    # failed.extend(range(jobsFinished, numSims))  # fail all potentially running jobs...
+                    pool.terminate()
+                    raise e
+                except Exception as e:
+                    print "Unknown exception while running simulations:", e
+                    # failed.extend(range(jobsFinished, numSims))  # fail all potentially running jobs...
+                    traceback.print_exc()
+                    pool.terminate()
+                finally:
+                    pool.join()
 
         # if there are failures
         if len(failed) > 0:
@@ -556,11 +569,12 @@ class Controller:
                 finally:
                     # Wait until all data is logged from the spawned runs before proceeding with the next set.
                     pool.join()
-            # Wait until all data logging is finished before concatenation dataframes and shutting down the pool
-            while not self.dataOutQueue.empty():
-               time.sleep(1)
-            self.dataOutQueue.put((None, None, True))
-            time.sleep(1)
+
+        # Wait until all data logging is finished before concatenation dataframes and shutting down the pool
+        while not self.dataOutQueue.empty():
+           time.sleep(1)
+        self.dataOutQueue.put((None, None, True))
+        time.sleep(1)
 
         # if there are failures
         if len(failed) > 0:
