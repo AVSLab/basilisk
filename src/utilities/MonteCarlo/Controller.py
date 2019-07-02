@@ -519,6 +519,9 @@ class Controller:
                         failed.append(i)
                     i += 1
         else:
+            if self.numProcess > numSims:
+                print "Fewer MCs spawned than processes assigned (%d < %d). Changing processes count to %d." % (numSims, self.numProcess, numSims)
+                self.numProcess = numSims
             for i in range(numSims/self.numProcess):
                 # If number of sims doesn't factor evenly into the number of processes:
                 if numSims % self.numProcess != 0 and i == len(range(numSims/self.numProcess))-1:
