@@ -31,9 +31,9 @@ import numpy as np
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
-splitPath = path.split(bskName)
 
-
+from Basilisk import __path__
+bskPath = __path__[0]
 
 
 
@@ -106,7 +106,7 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
     # Construct algorithm and associated C++ container
     testModule = magneticFieldWMM.MagneticFieldWMM()
     testModule.ModelTag = "WMM"
-    testModule.dataPath = splitPath[0] + 'Basilisk/supportData/MagneticField/'
+    testModule.dataPath = bskPath + '/supportData/MagneticField/'
 
     if not useDefault:
         testModule.epochDateFractionalYear = decimalYear
