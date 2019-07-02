@@ -13,7 +13,7 @@ We are very excited by the great capabilities that this software already has, an
 * live plotting capability during a BSK run
 
 
-## Upcoming Version 0.X.X
+## Upcoming Version 0.7.1
 <ul>
     <li>Added a new plotting utility library to support interactive plotting using datashaders with Python3.</li>
     <li>Fixed a garbage collecting leak in the monte carlo controller to minimize impact on computer memory.</li>
