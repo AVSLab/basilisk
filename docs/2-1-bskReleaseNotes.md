@@ -15,7 +15,7 @@ We are very excited by the great capabilities that this software already has, an
 
 ## Upcoming Version 0.X.X
 <ul>
-    <li>Text goes here</li>
+    <li>Added a new Earth magnetic field model based on the <a href="https://www.ngdc.noaa.gov/geomag/WMM/DoDWMM.shtml">World Magnetic Model</a> (WMM).  The module has PDF documetnation, and extensive unit test within the source code folder, as well as a tutorial script demonstrating how to run this. </li>
 </ul>
 
 
