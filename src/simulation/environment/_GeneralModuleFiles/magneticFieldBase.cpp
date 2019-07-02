@@ -23,6 +23,8 @@
 #include "utilities/bsk_Print.h"
 #include "utilities/linearAlgebra.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
+#include "utilities/simDefinitions.h"
+#include "simMessages/epochSimMsg.h"
 
 /*! This method initializes some basic parameters for the module.
  @return void
@@ -43,6 +45,18 @@ MagneticFieldBase::MagneticFieldBase()
     this->envMinReach = -1;
     this->envMaxReach = -1;
 
+    //! - turn off the epoch message ID
+    this->epochInMsgId = -1;
+
+    //! - set the default epoch information
+    this->epochDateTime.tm_year = EPOCH_YEAR - 1900;
+    this->epochDateTime.tm_mon = EPOCH_MONTH - 1;
+    this->epochDateTime.tm_mday = EPOCH_DAY;
+    this->epochDateTime.tm_hour = EPOCH_HOUR;
+    this->epochDateTime.tm_min = EPOCH_MIN;
+    this->epochDateTime.tm_sec = (int) round(EPOCH_SEC);
+
+
     //! - zero the planet message, and set the DCM to an identity matrix
     memset(&this->planetState, 0x0, sizeof(SpicePlanetStateSimMsg));
     m33SetIdentity(this->planetState.J20002Pfix);
@@ -55,17 +69,6 @@ MagneticFieldBase::MagneticFieldBase()
  */
 MagneticFieldBase::~MagneticFieldBase()
 {
-    return;
-}
-
-/*! Sets the epoch date used by some models. The default is setting a julian date.  If other date formats are required by
-    the environmental model, then these setEpoch() method should be redefined in the child class.
- @return void
- @param julianDate The specified epoch date in JD2000.
- */
-void MagneticFieldBase::setEpoch(double julianDate)
-{
-    this->epochDate = julianDate;
     return;
 }
 
@@ -140,6 +143,28 @@ void MagneticFieldBase::Reset(uint64_t CurrentSimNanos)
     //! - call the custom environment module reset method
     customReset(CurrentSimNanos);
 
+    /* set epoch information.  If provided, then the epoch message information should be used.  */
+    if (this->epochInMsgId >= 0) {
+        if (this->epochInMsgId>=0) {
+            // Read in the epoch message and set the internal time structure
+            EpochSimMsg epochMsg;
+            SingleMessageHeader LocalHeader;
+            memset(&epochMsg, 0x0, sizeof(EpochSimMsg));
+            SystemMessaging::GetInstance()->ReadMessage(this->epochInMsgId, &LocalHeader,
+                                                        sizeof(EpochSimMsg),
+                                                        reinterpret_cast<uint8_t*> (&epochMsg), moduleID);
+            this->epochDateTime.tm_year = epochMsg.year - 1900;
+            this->epochDateTime.tm_mon = epochMsg.month - 1;
+            this->epochDateTime.tm_mday = epochMsg.day;
+            this->epochDateTime.tm_hour = epochMsg.hours;
+            this->epochDateTime.tm_min = epochMsg.minutes;
+            this->epochDateTime.tm_sec = (int) round(epochMsg.seconds);
+            this->epochDateTime.tm_isdst = -1;
+            mktime(&this->epochDateTime);
+        }
+    } else {
+        customSetEpochFromVariable();
+    }
     return;
 }
 
@@ -165,6 +190,15 @@ void MagneticFieldBase::customCrossInit()
  @return void
  */
 void MagneticFieldBase::customReset(uint64_t CurrentClock)
+{
+    return;
+}
+
+/*! Custom customSetEpochFromVariable() method.  This allows a child class to specify how the module epoch information
+ is set by a module variable.
+ @return void
+ */
+void MagneticFieldBase::customSetEpochFromVariable()
 {
     return;
 }

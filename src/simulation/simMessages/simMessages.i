@@ -43,6 +43,7 @@
 #include "hingedRigidBodySimMsg.h"
 #include "pyBatteryOutMsg.h"
 #include "atmoPropsSimMsg.h"
+#include "epochSimMsg.h"
 %}
 
 %include "swig_conly_data.i"
@@ -101,6 +102,8 @@ GEN_SIZEOF(HingedRigidBodySimMsg)
 GEN_SIZEOF(PyBatteryOutMsg)
 %include "atmoPropsSimMsg.h"
 GEN_SIZEOF(AtmoPropsSimMsg)
+%include "epochSimMsg.h"
+GEN_SIZEOF(EpochSimMsg)
 
 #ifndef CSHARP_ROX
 %pythoncode %{

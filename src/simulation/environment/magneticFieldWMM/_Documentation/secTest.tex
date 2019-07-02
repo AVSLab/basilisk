@@ -1,0 +1,31 @@
+% !TEX root = ./Basilisk-magFieldWMM-20190618.tex
+
+\section{Test Description and Success Criteria}
+The WMM software provides a PDF with 12 sample locations and magnetic field values that should be returned in the NED frame.  
+The unit test runs the magnetic field Basilisk module with two fixed spacecraft state input messages.  Their locations are identical and set to the WMM test locations.  The simulation option {\tt useDefault} checks if the module epoch time value default settings are used, or if the epoch time in terms of a decimal year is specified directly. The option {\tt useMsg} determines if the epoch time is read in through a message.  If this message is available, it is supposed to over-rule the epochYear variable.  The option {\tt useMinReach} dictates if the minimum orbit radius check is performed, while the option {\tt useMaxReach} checks if the maximum reach check is performed.  The option {\tt usePlanetEphemeris} checks if a planet state input message should be created.  All permutations are checked.
+
+\section{Test Parameters}
+The simulation tolerances are shown in Table~\ref{tab:errortol}.  In each simulation the neutral density output message is checked relative to python computed true values.  
+\begin{table}[htbp]
+	\caption{Error tolerance for each test.}
+	\label{tab:errortol}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c } % Column formatting, 
+		\hline\hline
+		\textbf{Output Value Tested}  & \textbf{Tolerated Error}  \\ 
+		\hline
+		{\tt magneticField vector}        & \input{AutoTeX/unitTestToleranceValue} (nT, relative) \\ 
+		\hline\hline
+	\end{tabular}
+\end{table}
+
+
+
+
+\section{Test Results}
+Over 200 test permutations are run by the unit test.  All are expected to pass.
+
+
+
+
+

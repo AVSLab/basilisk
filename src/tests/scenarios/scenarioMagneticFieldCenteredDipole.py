@@ -88,7 +88,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 #
 # The dynamics simulation is setup using a SpacecraftPlus() module.  The magnetic field module is created using:
 #~~~~~~~~~~~~~~~~~{.py}
-#     magModule = magneticField.MagneticField()
+#     magModule = magneticFieldCenteredDipole.MagneticFieldCenteredDipole()()
 #     magModule.ModelTag = "CenteredDipole"
 #~~~~~~~~~~~~~~~~~
 # Note that the magnetic field module are zeroed, and appropriate parameters must be specified for the planet.  The
@@ -176,8 +176,8 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 #
 # This scenario places the spacecraft about the Earth in a circular LEO orbit.  The
 # resulting position coordinates and magnetic field components are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioMagneticField1circularEarth.svg "Position history")
-# ![Magnetic Field Illustration](Images/Scenarios/scenarioMagneticField2circularEarth.svg "Magnetic Field Illustration")
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioMagneticFieldCenteredDipole1circularEarth.svg "Position history")
+# ![Magnetic Field Illustration](Images/Scenarios/scenarioMagneticFieldCenteredDipole2circularEarth.svg "Magnetic Field Illustration")
 #
 # Setup 2
 # -----
@@ -194,8 +194,8 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 # This case illustrates an elliptical Earth orbit inclination where 2 dipole magnetic fields are attached.
 # One model acts above 1.3 Earth radius, and the other below that region.  The
 # resulting position coordinates and magnetic field illustrations are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioMagneticField1ellipticalEarth.svg "Position history")
-# ![Magnetic Field Illustration with model 1 as solid and model 2 as dashed](Images/Scenarios/scenarioMagneticField2ellipticalEarth.svg "Magnetic Field Illustration")
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioMagneticFieldCenteredDipole1ellipticalEarth.svg "Position history")
+# ![Magnetic Field Illustration with model 1 as solid and model 2 as dashed](Images/Scenarios/scenarioMagneticFieldCenteredDipole2ellipticalEarth.svg "Magnetic Field Illustration")
 #
 #
 # Setup 3
@@ -212,8 +212,8 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 # ~~~~~~~~~~~~~
 # This case illustrates an elliptical orbit about Jupiter.  The
 # resulting position coordinates and magnetic field illustrations are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioMagneticField1ellipticalJupiter.svg "Position history")
-# ![Magnetic Field Illustration](Images/Scenarios/scenarioMagneticField2ellipticalJupiter.svg "Magnetic Field Illustration")
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioMagneticFieldCenteredDipole1ellipticalJupiter.svg "Position history")
+# ![Magnetic Field Illustration](Images/Scenarios/scenarioMagneticFieldCenteredDipole2ellipticalJupiter.svg "Magnetic Field Illustration")
 #
 ## @}
 def run(show_plots, orbitCase, planetCase):

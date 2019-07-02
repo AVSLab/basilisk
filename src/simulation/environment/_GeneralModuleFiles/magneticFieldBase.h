@@ -46,7 +46,6 @@ public:
     void SelfInit();
     void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
-    void setEpoch(double julianDate);
     void addSpacecraftToModel(std::string tmpScMsgName); 
     void UpdateState(uint64_t CurrentSimNanos); 
 
@@ -61,6 +60,7 @@ protected:
     virtual void customReset(uint64_t CurrentClock);
     virtual void customWriteMessages(uint64_t CurrentClock);
     virtual bool customReadMessages();
+    virtual void customSetEpochFromVariable();
 
 public:
     std::vector<std::string> scStateInMsgNames;    //!< Vector of the spacecraft position/velocity message names
@@ -68,20 +68,21 @@ public:
     std::string planetPosInMsgName;          //!< Message name for the planet's SPICE position message
     double envMinReach; //!< [m] Minimum planet-relative position needed for the environment to work, default is off (neg. value)
     double envMaxReach; //!< [m] Maximum distance at which the environment will be calculated, default is off (neg. value)
-    double epochDate;                       //!< [JD2000] Specified epoch date, default is a Julian date format
-    double planetRadius;                    //!< [m]      Radius of the planet
+    double planetRadius;                     //!< [m]      Radius of the planet
 
 protected:
     Eigen::Vector3d r_BP_N;                 //!< [m] sc position vector relative to planet in inertial N frame components
     Eigen::Vector3d r_BP_P;                 //!< [m] sc position vector relative to planet in planet-fixed frame components
     double orbitRadius;                     //!< [m] sc orbit radius about planet
-    uint64_t OutputBufferCount;                //!< number of output buffers for messaging system
+    uint64_t OutputBufferCount;             //!< number of output buffers for messaging system
     std::vector<MagneticFieldSimMsg> magFieldOutBuffer; //!< -- Message buffer for magnetic field messages
     std::vector<int64_t>  envOutMsgIds;     //!< vector of module output message IDs
     std::vector<int64_t> scStateInMsgIds;   //!< vector of spacecraft state message IDs
     int64_t planetPosInMsgId;               //!< ID of the planet state message
     std::vector<SCPlusStatesSimMsg> scStates;//!< vector of the spacecraft state messages
     SpicePlanetStateSimMsg planetState;     //!< planet state message
+    struct tm epochDateTime;                //!< time/date structure containing the epoch information using a Gregorian calendar
+    int64_t epochInMsgId;                   //!< ID of the epoch message
 
 };
 

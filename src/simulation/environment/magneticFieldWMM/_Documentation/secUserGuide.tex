@@ -1,0 +1,58 @@
+% !TEX root = ./Basilisk-magFieldWMM-20190618.tex
+
+\section{User Guide}
+
+\subsection{General Module Setup}
+This section outlines the steps needed to add a {\tt MagneticField} module to a sim.
+First, the planet magnetic field model must be imported and initialized:
+\begin{verbatim}
+     from Basilisk.simulation import magneticFieldWMM
+     magModule = magneticFieldWMM.MagneticFieldWMM()
+     magModule.ModelTag = "WMM"
+     magModule.dataPath = splitPath[0] + 'Basilisk/supportData/MagneticField/'
+\end{verbatim}
+By default the model assumes the BSK epoch date and time.  To set a common epoch time across various BSK modules, then the {\tt EpochSimMsg} must be created and written.
+\begin{verbatim}
+     epochMsg = simMessages.EpochSimMsg()
+     dt = unitTestSupport.decimalYearToDateTime(decimalYear)
+     epochMsg.year = year
+     epochMsg.month = month
+     epochMsg.day = day
+     epochMsg.hours = hour
+     epochMsg.minutes = minute
+     epochMsg.seconds = second
+     unitTestSupport.setMessage(unitTestSim.TotalSim,
+                                  unitProcessName,
+                                  testModule.epochInMsgName,
+                                  epochMsg)
+\end{verbatim}
+If the user wants to set the WMM epoch directly, this is done by defining the {\tt epochDate} variable in terms of a decimal year format required by WMM. 
+\begin{verbatim}
+	magModule.epochDate = decimalYear
+\end{verbatim}
+Not that the epoch message, if available, over-writes the information of setting {\tt epochDate}.  
+
+The model can  be added to a task like other simModels. 
+\begin{verbatim}
+unitTestSim.AddModelToTask(unitTaskName, testModule)
+\end{verbatim}
+
+Each {\tt MagneticField} module calculates the magnetic field based on the output state messages for a set of spacecraft.
+To add spacecraft to the model the spacecraft state output message name is sent to the \verb|addScToModel| method:
+\begin{verbatim}
+scObject = spacecraftPlus.SpacecraftPlus()
+scObject.ModelTag = "spacecraftBody"
+magModule.addSpacecraftToModel(scObject.scStateOutMsgName)
+\end{verbatim}
+
+\subsection{Planet Ephemeris Information}
+The optional planet state message name can be set by directly adjusting that attribute of the class:
+\begin{verbatim}
+magModule.planetPosInMsgName = "PlanetSPICEMsgName"
+\end{verbatim}
+If SPICE is not being used, the planet is assumed to reside at the origin and $\bm r_{P/O} = \bm 0$.
+
+\subsection{Setting the Model Reach}
+By default the model doesn't perform any checks on the altitude to see if the specified magnetic field model should be used.  This is set through the parameters {\tt envMinReach} and {\tt envMaxReach}.  Their default values are -1.  If these are set to positive values, then if the spacecraft orbit radius is smaller than {\tt envMinReach} or larger than {\tt envMaxReach}, the magnetic field vector is set to zero.
+
+

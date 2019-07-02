@@ -107,11 +107,11 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
 
     minReach = -1.0
     if useMinReach:
-        minReach = 200*1000.0     # meters
+        minReach = (orbitalMotion.REQ_EARTH+300.)*1000.0     # meters
         testModule.envMinReach = minReach
     maxReach = -1.0
     if useMaxReach:
-        maxReach = 200*1000.0     # meters
+        maxReach = (orbitalMotion.REQ_EARTH+100.)     # meters
         testModule.envMaxReach = maxReach
     planetPosition = np.array([0.0, 0.0, 0.0])
     refPlanetDCM = np.array(((1, 0, 0), (0, 1, 0), (0, 0, 1)))

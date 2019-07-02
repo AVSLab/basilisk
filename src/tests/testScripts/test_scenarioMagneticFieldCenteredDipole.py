@@ -97,7 +97,7 @@ def test_scenarioMagneticField(show_plots, orbitCase, planetCase):
         ]
 
     # compare the results to the truth values
-    accuracy = 1.0  # meters
+    accuracy = 1e-8  # Tesla
 
     testFailCount, testMessages = unitTestSupport.compareArray(
         trueMag, dataMagRed, accuracy, "magField_N Vector",

@@ -61,6 +61,7 @@
 #       @brief This section covers planetary magnetic field models.
 #       @{
 #           \defgroup scenarioMagneticFieldCenteredDipoleGroup   4.1.1 Centered Dipole Model
+#           \defgroup scenarioMagneticFieldWMM                   4.1.2 World Magnetic Model WMM
 #       @}
 #   @}
 #

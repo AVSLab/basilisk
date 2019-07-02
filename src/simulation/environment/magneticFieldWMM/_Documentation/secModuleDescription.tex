@@ -1,0 +1,42 @@
+% !TEX root = ./Basilisk-magFieldWMM-20190618.tex
+
+\section{Model Description}
+\subsection{General Module Behavior}
+The purpose of this WMM magnetic field module is to implement a magnetic field model that rotates with an Earth-fixed frame \frameDefinition{P}.  Note that this model is specific to Earth, and is not applicable to other planets.  The Earth-fixed frame has $\hat{\bm p}_{3}$ being the typical positive rotation axis and $\hat{\bm p}_{1}$ and $\hat{\bm p}_{2}$ span the Earth's equatorial plane where $\hat{\bm p}_{1}$ points towards the prime meridian.
+
+{\tt MagneticFieldWMM} is a child of the {\tt MagneticFieldBase} base class and provides an Earth specific magnetic field model based on the \href{https://www.ngdc.noaa.gov/geomag/WMM/DoDWMM.shtml}{World Magnetic Model}. 
+By invoking the magnetic field module, the default epoch values are set to  the BSK default epoch value of Jan 01 2019 00:00:00.
+The reach of the model controlled by setting the variables {\tt envMinReach} and {\tt envMaxReach} to positive values.  These values are the radial distance from the planet center.  The default values are -1 which turns off this checking where the magnetic model as unbounded reach.  
+
+There are a multitude of magnetic field models.\footnote{\url { https://geomag.colorado.edu/geomagnetic-and-electric-field-models.html}} The goal with Basilisk is to provide a simple and consistent interface to a range of models.  The list of models is expected to grow over time.
+
+
+\subsection{Planet Centric Spacecraft Position Vector}
+
+For the following developments, the spacecraft location relative to the planet frame is required.  Let $\bm r_{B/P}$ be the spacecraft position vector relative to the planet center.  In the simulation the spacecraft location is given relative to an inertial frame origin $O$.  The planet centric position vector is computed using
+\begin{equation}
+	\bm r_{B/P} = \bm r_{B/O} - \bm r_{P/O}
+\end{equation}
+If no planet ephemeris message is specified, then the planet position vector $\bm r_{P/O}$ is set to zero.  
+
+Let $[PN]$ be the direction cosine matrix\cite{schaub} that relates the rotating planet-fixed frame relative to an inertial frame \frameDefinition{N}.  The simulation provides the spacecraft position vector in inertial frame components.  The planet centric position vector is then written in Earth-fixed frame components using
+\begin{equation}
+	\leftexp{P}{\bm r}_{B/P} = [PN] \ \leftexp{N}{\bm r}_{B/P}
+\end{equation}
+
+
+
+
+\subsection{World Magnetic Model --- WMM}
+The World Magnetic Model (WMM) is a large spatial-scale representation of the Earth's magnetic field. It consists of a degree and order 12 spherical harmonic expansion of the magnetic potential of the geomagnetic main field generated in the Earth's core. Apart from the 168 spherical-harmonic "Gauss" coefficients, the model also has an equal number of spherical-harmonic Secular-Variation (SV) coefficients predicting the temporal evolution of the field over the upcoming five-year epoch. 
+
+Updated model coefficients are released at 5-year intervals, with WMM2015 (released Dec 15, 2014) supposed to last until December 31, 2019. However, due to extraordinarily large and erratic movements of the north magnetic pole, an out-of-cycle update (WMM2015v2) was released in February 2019 (delayed by a few weeks due to the U.S. federal government shutdown) to accurately model the magnetic field above 55\dg north latitude until the end of 2019. The next regular update (WMM2020) will occur in late 2019.
+
+The WMM magnetic vector $\bm B$ is evaluated in a local North-East-Down (NED) frame $\cal M$-frame.  Let $\phi$ and $\lambda$ be the local latitude and longitude of the spacecraft location relative the Earth-fixed frame $\cal P$.  The DCM mapping from $\cal M$ to $\cal P$ is
+\begin{equation}
+	[PM] = [M_{3}(-\lambda)][M_{2}(\phi + \frac{\pi}{2})]
+\end{equation}
+The $\bm B$ vector is mapped into $\cal N$-frame components by returning
+\begin{equation}
+	\leftexp{N}{\bm B} = [PN]^{T} [PM] \ \leftexp{M}{\bm B}
+\end{equation}
