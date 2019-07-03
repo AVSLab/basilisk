@@ -83,6 +83,12 @@ void SpiceInterface::clearKeeper()
  @return void*/
 void SpiceInterface::SelfInit()
 {
+    //! - Create the output time message for SPICE
+    this->timeOutMsgID = SystemMessaging::GetInstance()->
+    CreateNewMessage(this->outputTimePort, sizeof(SpiceTimeSimMsg),
+                     this->outputBufferCount, "SpiceTimeSimMsg", this->moduleID);
+
+
     //! - Bail if the SPICEDataPath is not present
     if(this->SPICEDataPath == "")
     {
@@ -149,11 +155,7 @@ void SpiceInterface::initTimeData()
     
     //! - Take the JD epoch and get the elapsed time for it
     deltet_c(this->JDGPSEpoch, "ET", &EpochDelteET);
-    
-    //! - Create the output time message for SPICE
-    this->timeOutMsgID = SystemMessaging::GetInstance()->
-        CreateNewMessage(this->outputTimePort, sizeof(SpiceTimeSimMsg),
-        this->outputBufferCount, "SpiceTimeSimMsg", this->moduleID);
+
 }
 
 /*! This method computes the GPS time data for the current elapsed time.  It uses
