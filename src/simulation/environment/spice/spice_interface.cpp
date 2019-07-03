@@ -24,6 +24,7 @@
 #include <string.h>
 #include "utilities/bsk_Print.h"
 #include "utilities/simDefinitions.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
 
 /*! This constructor initializes the variables that spice uses.  Most of them are
  not intended to be changed, but a couple are user configurable.
@@ -198,7 +199,7 @@ void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
 void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - Increment the J2000 elapsed time based on init value and Current sim
-    this->J2000Current = this->J2000ETInit + CurrentSimNanos*1.0E-9;
+    this->J2000Current = this->J2000ETInit + CurrentSimNanos*NANO2SEC;
     
     //! - Compute the current Julian Date string and cast it over to the double
     et2utc_c(this->J2000Current, "J", 14, this->charBufferSize - 1, reinterpret_cast<SpiceChar*>
