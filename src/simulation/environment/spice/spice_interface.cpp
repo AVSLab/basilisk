@@ -118,6 +118,21 @@ void SpiceInterface::SelfInit()
     this->Reset(0);
 }
 
+/*! Custom CrossInit() method.  Subscribe to the epoch message.
+ @return void
+ */
+void SpiceInterface::CrossInit()
+{
+    //! - Subscribe to the optional Epoch Date/Time message
+    this->epochInMsgId = -1;
+    if (this->epochInMsgName.length() > 0) {
+        this->epochInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->epochInMsgName, sizeof(EpochSimMsg), moduleID);
+    }
+
+    return;
+}
+
+
 /*! This method is used to initialize the zero-time that will be used to
  calculate all system time values in the Update method.  It also creates the
  output message for time data
