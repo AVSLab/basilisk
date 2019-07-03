@@ -88,40 +88,7 @@ void SpiceInterface::SelfInit()
     CreateNewMessage(this->outputTimePort, sizeof(SpiceTimeSimMsg),
                      this->outputBufferCount, "SpiceTimeSimMsg", this->moduleID);
 
-
-    //! - Bail if the SPICEDataPath is not present
-    if(this->SPICEDataPath == "")
-    {
-        BSK_PRINT(MSG_ERROR, "SPICE data path was not set.  No SPICE.");
-        return;
-    }
-    //!- Load the SPICE kernels if they haven't already been loaded
-    if(!this->SPICELoaded)
-    {
-        if(loadSpiceKernel((char *)"naif0012.tls", this->SPICEDataPath.c_str())) {
-            BSK_PRINT(MSG_ERROR, "Unable to load %s", "naif0012.tls");
-        }
-        if(loadSpiceKernel((char *)"pck00010.tpc", this->SPICEDataPath.c_str())) {
-            BSK_PRINT(MSG_ERROR, "Unable to load %s", "pck00010.tpc");
-        }
-        if(loadSpiceKernel((char *)"de-403-masses.tpc", this->SPICEDataPath.c_str())) {
-            BSK_PRINT(MSG_ERROR, "Unable to load %s", "de-403-masses.tpc");
-        }
-        if(loadSpiceKernel((char *)"de430.bsp", this->SPICEDataPath.c_str())) {
-            BSK_PRINT(MSG_ERROR, "Unable to load %s", "de430.tpc");
-        }
-        this->SPICELoaded = true;
-    }
-    //! Set the zero time values that will be used to compute the system time
-    this->initTimeData();
-    this->J2000Current = this->J2000ETInit;
-    //! Compute planetary data so that it is present at time zero
-    this->planetData.clear();
-    this->computePlanetData();
-    this->timeDataInit = true;
-
-    // - This method populates the output messages at time zero
-    this->Reset(0);
+    return;
 }
 
 /*! Custom CrossInit() method.  Subscribe to the epoch message.
@@ -231,6 +198,38 @@ void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
 
 void SpiceInterface::Reset(uint64_t CurrenSimNanos)
 {
+    //! - Bail if the SPICEDataPath is not present
+    if(this->SPICEDataPath == "")
+    {
+        BSK_PRINT(MSG_ERROR, "SPICE data path was not set.  No SPICE.");
+        return;
+    }
+    //!- Load the SPICE kernels if they haven't already been loaded
+    if(!this->SPICELoaded)
+    {
+        if(loadSpiceKernel((char *)"naif0012.tls", this->SPICEDataPath.c_str())) {
+            BSK_PRINT(MSG_ERROR, "Unable to load %s", "naif0012.tls");
+        }
+        if(loadSpiceKernel((char *)"pck00010.tpc", this->SPICEDataPath.c_str())) {
+            BSK_PRINT(MSG_ERROR, "Unable to load %s", "pck00010.tpc");
+        }
+        if(loadSpiceKernel((char *)"de-403-masses.tpc", this->SPICEDataPath.c_str())) {
+            BSK_PRINT(MSG_ERROR, "Unable to load %s", "de-403-masses.tpc");
+        }
+        if(loadSpiceKernel((char *)"de430.bsp", this->SPICEDataPath.c_str())) {
+            BSK_PRINT(MSG_ERROR, "Unable to load %s", "de430.tpc");
+        }
+        this->SPICELoaded = true;
+    }
+
+    //! Set the zero time values that will be used to compute the system time
+    this->initTimeData();
+    this->J2000Current = this->J2000ETInit;
+    //! Compute planetary data so that it is present at time zero
+    this->planetData.clear();
+    this->computePlanetData();
+    this->timeDataInit = true;
+
     // - Call Update state so that the spice bodies are inputted into the messaging system on reset
     this->UpdateState(CurrenSimNanos);
 }

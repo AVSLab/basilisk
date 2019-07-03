@@ -51,12 +51,12 @@ public:
     ~SpiceInterface();
     
     void UpdateState(uint64_t CurrentSimNanos);
-    void Reset(uint64_t CurrentSimNanos);
     int loadSpiceKernel(char *kernelName, const char *dataPath);
     int unloadSpiceKernel(char *kernelName, const char *dataPath);
 	std::string getCurrentTimeString();
     void SelfInit();
     void CrossInit();
+    void Reset(uint64_t CurrentSimNanos);
     void initTimeData();
     void computeGPSData();
     void computePlanetData();
