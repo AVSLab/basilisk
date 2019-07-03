@@ -23,6 +23,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include <string.h>
 #include "utilities/bsk_Print.h"
+#include "utilities/simDefinitions.h"
 
 /*! This constructor initializes the variables that spice uses.  Most of them are
  not intended to be changed, but a couple are user configurable.
@@ -49,6 +50,12 @@ SpiceInterface::SpiceInterface()
     referenceBase = "j2000";
     zeroBase = "SSB";
 	timeOutPicture = "MON DD,YYYY  HR:MN:SC.#### (UTC) ::UTC";
+
+    //! - set default epoch time information
+    char string[255];
+    sprintf(string, "%4d/%02d/%02d, %02d:%02d:%04.1f TDB", EPOCH_YEAR, EPOCH_MONTH, EPOCH_DAY, EPOCH_HOUR, EPOCH_MIN, EPOCH_SEC);
+    this->UTCCalInit = string;
+
     return;
 }
 
