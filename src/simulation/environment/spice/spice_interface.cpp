@@ -86,7 +86,7 @@ void SpiceInterface::SelfInit()
     //! - Bail if the SPICEDataPath is not present
     if(this->SPICEDataPath == "")
     {
-        BSK_PRINT(MSG_WARNING, "SPICE data path was not set.  No SPICE.");
+        BSK_PRINT(MSG_ERROR, "SPICE data path was not set.  No SPICE.");
         return;
     }
     //!- Load the SPICE kernels if they haven't already been loaded
