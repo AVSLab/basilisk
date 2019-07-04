@@ -115,6 +115,21 @@ void SpiceInterface::initTimeData()
 {
     double EpochDelteET;
 
+    /* set epoch information.  If provided, then the epoch message information should be used.  */
+    if (this->epochInMsgId >= 0) {
+        // Read in the epoch message and set the internal time structure
+        EpochSimMsg epochMsg;
+        SingleMessageHeader LocalHeader;
+        memset(&epochMsg, 0x0, sizeof(EpochSimMsg));
+        SystemMessaging::GetInstance()->ReadMessage(this->epochInMsgId, &LocalHeader,
+                                                    sizeof(EpochSimMsg),
+                                                    reinterpret_cast<uint8_t*> (&epochMsg), moduleID);
+
+        char string[255];
+        sprintf(string, "%4d/%02d/%02d, %02d:%02d:%04.1f TDB", epochMsg.year, epochMsg.month, epochMsg.day, epochMsg.hours, epochMsg.minutes, epochMsg.seconds);
+        this->UTCCalInit = string;
+    }
+
     //! -Get the time value associated with the GPS epoch
     str2et_c(this->GPSEpochTime.c_str(), &this->JDGPSEpoch);
     //! - Get the time value associate with the requested UTC date
