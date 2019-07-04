@@ -8,6 +8,7 @@ The spice\_interface module contains methods allowing it to perform several task
 	\item \textbf{Get Planet Data}: Pulls the desired planet's ephemeris from the Spice kernel.
 	\item \textbf{Get current time string}: Pull the current time string.
 	\item \textbf{Write Spice message}: This module then writes out the spice ephemeris message
+	\item \textbf{Read Optional Epoch Message}:  This this message name is specified, then the epoch date and time information is pulled from this message.  This makes it simple to synchronize the epoch information across multiple modules using this one epoch message. 
 \end{itemize}
 
 
