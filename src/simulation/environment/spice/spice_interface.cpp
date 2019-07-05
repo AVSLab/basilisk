@@ -51,10 +51,11 @@ SpiceInterface::SpiceInterface()
     referenceBase = "j2000";
     zeroBase = "SSB";
 	timeOutPicture = "MON DD,YYYY  HR:MN:SC.#### (UTC) ::UTC";
+    this->epochInMsgId = -1;
 
     //! - set default epoch time information
     char string[255];
-    sprintf(string, "%4d/%02d/%02d, %02d:%02d:%04.1f TDB", EPOCH_YEAR, EPOCH_MONTH, EPOCH_DAY, EPOCH_HOUR, EPOCH_MIN, EPOCH_SEC);
+    sprintf(string, "%4d/%02d/%02d, %02d:%02d:%04.1f (UTC)", EPOCH_YEAR, EPOCH_MONTH, EPOCH_DAY, EPOCH_HOUR, EPOCH_MIN, EPOCH_SEC);
     this->UTCCalInit = string;
 
     return;
@@ -83,26 +84,69 @@ void SpiceInterface::clearKeeper()
  @return void*/
 void SpiceInterface::SelfInit()
 {
+
+    //! - Bail if the SPICEDataPath is not present
+    if(this->SPICEDataPath == "")
+    {
+        BSK_PRINT(MSG_ERROR, "SPICE data path was not set.  No SPICE.");
+        return;
+    }
+    //!- Load the SPICE kernels if they haven't already been loaded
+    if(!this->SPICELoaded)
+    {
+        if(loadSpiceKernel((char *)"naif0012.tls", this->SPICEDataPath.c_str())) {
+            BSK_PRINT(MSG_ERROR, "Unable to load %s", "naif0012.tls");
+        }
+        if(loadSpiceKernel((char *)"pck00010.tpc", this->SPICEDataPath.c_str())) {
+            BSK_PRINT(MSG_ERROR, "Unable to load %s", "pck00010.tpc");
+        }
+        if(loadSpiceKernel((char *)"de-403-masses.tpc", this->SPICEDataPath.c_str())) {
+            BSK_PRINT(MSG_ERROR, "Unable to load %s", "de-403-masses.tpc");
+        }
+        if(loadSpiceKernel((char *)"de430.bsp", this->SPICEDataPath.c_str())) {
+            BSK_PRINT(MSG_ERROR, "Unable to load %s", "de430.tpc");
+        }
+        this->SPICELoaded = true;
+    }
+
     //! - Create the output time message for SPICE
     this->timeOutMsgID = SystemMessaging::GetInstance()->
     CreateNewMessage(this->outputTimePort, sizeof(SpiceTimeSimMsg),
                      this->outputBufferCount, "SpiceTimeSimMsg", this->moduleID);
 
-    return;
-}
-
-/*! Custom CrossInit() method.  Subscribe to the epoch message.
- @return void
- */
-void SpiceInterface::CrossInit()
-{
-    //! - Subscribe to the optional Epoch Date/Time message
-    this->epochInMsgId = -1;
     if (this->epochInMsgName.length() > 0) {
         this->epochInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->epochInMsgName, sizeof(EpochSimMsg), moduleID);
     }
 
+    //! Set the zero time values that will be used to compute the system time
+    this->initTimeData();
+    this->J2000Current = this->J2000ETInit;
+    //! Compute planetary data so that it is present at time zero
+    this->planetData.clear();
+    this->computePlanetData();
+    this->timeDataInit = true;
+
+    this->Reset(0);
+
     return;
+}
+
+/*! Should subscribe to module input messages.  However, the epoch message is subscribed to in the SelfInit() routine due to how Spice is being loaded and setup.
+ @return void
+ */
+void SpiceInterface::CrossInit()
+{
+
+    return;
+}
+
+/*! Reset the module to origina configuration values.
+ @return void
+ */
+void SpiceInterface::Reset(uint64_t CurrenSimNanos)
+{
+    // - Call Update state so that the spice bodies are inputted into the messaging system on reset
+    this->UpdateState(CurrenSimNanos);
 }
 
 
@@ -126,7 +170,8 @@ void SpiceInterface::initTimeData()
                                                     reinterpret_cast<uint8_t*> (&epochMsg), moduleID);
 
         char string[255];
-        sprintf(string, "%4d/%02d/%02d, %02d:%02d:%04.1f TDB", epochMsg.year, epochMsg.month, epochMsg.day, epochMsg.hours, epochMsg.minutes, epochMsg.seconds);
+        sprintf(string, "%4d/%02d/%02d, %02d:%02d:%04.1f (%s)", epochMsg.year, epochMsg.month, epochMsg.day, epochMsg.hours, epochMsg.minutes, epochMsg.seconds, epochMsg.timeFormat);
+        printf("HPS: %s\n", epochMsg.timeFormat);
         this->UTCCalInit = string;
     }
 
@@ -134,7 +179,6 @@ void SpiceInterface::initTimeData()
     str2et_c(this->GPSEpochTime.c_str(), &this->JDGPSEpoch);
     //! - Get the time value associate with the requested UTC date
     str2et_c(this->UTCCalInit.c_str(), &this->J2000ETInit);
-    
     //! - Take the JD epoch and get the elapsed time for it
     deltet_c(this->JDGPSEpoch, "ET", &EpochDelteET);
 
@@ -211,43 +255,6 @@ void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
     this->writeOutputMessages(CurrentSimNanos);
 }
 
-void SpiceInterface::Reset(uint64_t CurrenSimNanos)
-{
-    //! - Bail if the SPICEDataPath is not present
-    if(this->SPICEDataPath == "")
-    {
-        BSK_PRINT(MSG_ERROR, "SPICE data path was not set.  No SPICE.");
-        return;
-    }
-    //!- Load the SPICE kernels if they haven't already been loaded
-    if(!this->SPICELoaded)
-    {
-        if(loadSpiceKernel((char *)"naif0012.tls", this->SPICEDataPath.c_str())) {
-            BSK_PRINT(MSG_ERROR, "Unable to load %s", "naif0012.tls");
-        }
-        if(loadSpiceKernel((char *)"pck00010.tpc", this->SPICEDataPath.c_str())) {
-            BSK_PRINT(MSG_ERROR, "Unable to load %s", "pck00010.tpc");
-        }
-        if(loadSpiceKernel((char *)"de-403-masses.tpc", this->SPICEDataPath.c_str())) {
-            BSK_PRINT(MSG_ERROR, "Unable to load %s", "de-403-masses.tpc");
-        }
-        if(loadSpiceKernel((char *)"de430.bsp", this->SPICEDataPath.c_str())) {
-            BSK_PRINT(MSG_ERROR, "Unable to load %s", "de430.tpc");
-        }
-        this->SPICELoaded = true;
-    }
-
-    //! Set the zero time values that will be used to compute the system time
-    this->initTimeData();
-    this->J2000Current = this->J2000ETInit;
-    //! Compute planetary data so that it is present at time zero
-    this->planetData.clear();
-    this->computePlanetData();
-    this->timeDataInit = true;
-
-    // - Call Update state so that the spice bodies are inputted into the messaging system on reset
-    this->UpdateState(CurrenSimNanos);
-}
 
 /*! This method gets the state of each planet that has been added to the model
  and saves the information off into the planet array.
