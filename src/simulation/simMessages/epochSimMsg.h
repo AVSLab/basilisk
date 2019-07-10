@@ -32,7 +32,6 @@ typedef struct {
     int hours;                  //!< hours, integer
     int minutes;                //!< minutes, integer
     double seconds;             //!< seconds, double
-    char timeFormat[255];       //!< time format such as UTC, TBD, etc.
 }EpochSimMsg;
 
 /* @} */
