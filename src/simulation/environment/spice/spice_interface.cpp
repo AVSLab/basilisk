@@ -158,21 +158,24 @@ void SpiceInterface::Reset(uint64_t CurrenSimNanos)
 void SpiceInterface::initTimeData()
 {
     double EpochDelteET;
-
+    
     /* set epoch information.  If provided, then the epoch message information should be used.  */
     if (this->epochInMsgId >= 0) {
         // Read in the epoch message and set the internal time structure
         EpochSimMsg epochMsg;
         SingleMessageHeader LocalHeader;
         memset(&epochMsg, 0x0, sizeof(EpochSimMsg));
-        SystemMessaging::GetInstance()->ReadMessage(this->epochInMsgId, &LocalHeader,
+        if (!SystemMessaging::GetInstance()->ReadMessage(this->epochInMsgId, &LocalHeader,
                                                     sizeof(EpochSimMsg),
-                                                    reinterpret_cast<uint8_t*> (&epochMsg), moduleID);
-
-        char string[255];
-        sprintf(string, "%4d/%02d/%02d, %02d:%02d:%04.1f (%s)", epochMsg.year, epochMsg.month, epochMsg.day, epochMsg.hours, epochMsg.minutes, epochMsg.seconds, epochMsg.timeFormat);
-        printf("HPS: %s\n", epochMsg.timeFormat);
-        this->UTCCalInit = string;
+                                                         reinterpret_cast<uint8_t*> (&epochMsg), moduleID)) {
+            BSK_PRINT(MSG_ERROR, "The input epoch message name was set, but the message was never written.  Not using the input message.");
+            this->epochInMsgId = -1;
+        } else {
+            // Set the epoch information from the input message
+            char string[255];
+            sprintf(string, "%4d/%02d/%02d, %02d:%02d:%04.1f (UTC)", epochMsg.year, epochMsg.month, epochMsg.day, epochMsg.hours, epochMsg.minutes, epochMsg.seconds);
+            this->UTCCalInit = string;
+        }
     }
 
     //! -Get the time value associated with the GPS epoch
