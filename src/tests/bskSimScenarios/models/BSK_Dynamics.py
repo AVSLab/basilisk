@@ -24,6 +24,7 @@ from Basilisk.utilities import unitTestSupport as sp
 from Basilisk.simulation import (spacecraftPlus, gravityEffector, extForceTorque, simple_nav, spice_interface,
                                  reactionWheelStateEffector, coarse_sun_sensor, eclipse, imu_sensor)
 from Basilisk.simulation import thrusterDynamicEffector
+from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import simIncludeThruster
 from Basilisk.utilities import simIncludeRW, simIncludeGravBody
 from Basilisk.utilities import RigidBodyKinematics as rbk
@@ -88,7 +89,11 @@ class BSKDynamicModels():
         gravBodies['earth'].isCentralBody = True
 
         self.scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(self.gravFactory.gravBodies.values())
-        self.gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/', timeInitString)
+        spiceObject, epochMsg = self.gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
+                                                                      timeInitString,
+                                                                      epochInMsgName = 'simEpoch')
+        self.epochMsg = epochMsg
+
         self.gravFactory.spiceObject.zeroBase = 'Earth'
 
         pyswice.furnsh_c(self.gravFactory.spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
@@ -221,6 +226,12 @@ class BSKDynamicModels():
 
     # Global call to create every required one-time message
     def WriteInitDynMessages(self, SimBase):
+
+        unitTestSupport.setMessage(SimBase.TotalSim,
+                                   SimBase.DynamicsProcessName,
+                                   self.gravFactory.spiceObject.epochInMsgName,
+                                   self.epochMsg)
+
         return
 
 

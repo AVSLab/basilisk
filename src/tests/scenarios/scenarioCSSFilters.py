@@ -186,17 +186,21 @@ def setupSuKFData(filterObject):
 #
 # When the simulation completes several plots are written summarizing the filter performances.
 #
-# The simulation reads the Sun's poistion from SpiceInterface(). By creating this spice object and adding it to the
+# The simulation reads the Sun's position from SpiceInterface(). By creating this spice object and adding it to the
 # task, the spice object automatically writes out the ephemeris messages.
-# The date used is of no importance for this scenario.
+# The date used is of no importance for this scenario.  The epoch information is set through the epoch input message.
 # ~~~~~~~~~~~~~~~~{.py}
 #     spiceObject = spice_interface.SpiceInterface()
 #     spiceObject.planetNames = spice_interface.StringVector(["sun"])
 #     spiceObject.ModelTag = "SpiceInterfaceData"
 #     spiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
 #     spiceObject.outputBufferCount = 100000
-#     spiceObject.UTCCalInit = '2021 MAY 04 07:47:49.965 (UTC)'
-#     scSim.AddModelToTask(simTaskName, spiceObject)
+#     spiceObject.epochInMsgName = "simEpoch"
+#     epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2021 MAY 04 07:47:49.965 (UTC)')
+#     unitTestSupport.setMessage(scSim.TotalSim,
+#                                simProcessName,
+#                                spiceObject.epochInMsgName,
+#                                epochMsg)#     scSim.AddModelToTask(simTaskName, spiceObject)
 # ~~~~~~~~~~~~~~~~
 #
 # The dynamics simulation is setup using a SpacecraftPlus() module where a specific spacecraft location
@@ -548,7 +552,12 @@ def run(saveFigures, show_plots, FilterType, simTime):
     spiceObject.ModelTag = "SpiceInterfaceData"
     spiceObject.SPICEDataPath = bskPath + '/supportData/EphemerisData/'
     spiceObject.outputBufferCount = 100000
-    spiceObject.UTCCalInit = '2021 MAY 04 07:47:49.965 (UTC)'
+    spiceObject.epochInMsgName = "simEpoch"
+    epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2021 MAY 04 07:47:49.965 (UTC)')
+    unitTestSupport.setMessage(scSim.TotalSim,
+                               simProcessName,
+                               spiceObject.epochInMsgName,
+                               epochMsg)
 
     scSim.TotalSim.logThisMessage('sun_planet_data', simulationTimeStep)
     scSim.AddModelToTask(simTaskName, spiceObject)

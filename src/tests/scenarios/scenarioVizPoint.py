@@ -223,7 +223,14 @@ def run(show_plots, dscovr, marsOrbit):
         gravFactory = simIncludeGravBody.gravBodyFactory()
         bodies = gravFactory.createBodies(['earth', 'sun'])
         bodies['earth'].isCentralBody = True  # ensure this is the central gravitational body
-        spiceObject = gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/', '2018 OCT 23 04:35:25.000 (UTC)')
+        spiceObject, epochMsg = gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
+                                                       '2018 OCT 23 04:35:25.000 (UTC)',
+                                                        epochInMsgName = 'simEpoch')
+        unitTestSupport.setMessage(scSim.TotalSim,
+                                   simProcessName,
+                                   spiceObject.epochInMsgName,
+                                   epochMsg)
+
         gravFactory.spiceObject.zeroBase = 'earth'
         scSim.AddModelToTask(simTaskName, spiceObject)
         # Setup Camera
