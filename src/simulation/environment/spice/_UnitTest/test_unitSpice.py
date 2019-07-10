@@ -18,7 +18,7 @@
 
 '''
 import pytest
-import sys, os, inspect
+import os, inspect
 
 #
 # Spice Unit Test
@@ -43,7 +43,6 @@ import numpy
 from Basilisk.simulation import spice_interface
 from Basilisk.utilities import macros
 import matplotlib.pyplot as plt
-from Basilisk.simulation import simMessages
 
 
 # Class in order to plot using data accross the different paramatrized scenarios
@@ -178,15 +177,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
 
     if useMsg:
         SpiceObject.epochInMsgName = "simEpoch"
-        epochMsg = simMessages.EpochSimMsg()
-        datetime_object = datetime.datetime.strptime(DateSpice.strip(' TDB'), '%Y %B %d, %H:%M:%S.%f')
-        epochMsg.year = datetime_object.year
-        epochMsg.month = datetime_object.month
-        epochMsg.day = datetime_object.day
-        epochMsg.hours = datetime_object.hour
-        epochMsg.minutes = datetime_object.minute
-        epochMsg.seconds = datetime_object.second + datetime_object.microsecond/1e6
-        epochMsg.timeFormat = "TDB"
+        epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(DateSpice)
         unitTestSupport.setMessage(TotalSim.TotalSim,
                                   unitProcessName,
                                   SpiceObject.epochInMsgName,
@@ -195,8 +186,6 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
         # The following value is set, but should not be used by the module.  This checks that the above
         # epoch message over-rules any info set in this variable.
         SpiceObject.UTCCalInit = "1990 February 10, 00:00:00.0 TDB"
-    else:
-        SpiceObject.UTCCalInit = DateSpice
 
     # Configure simulation
     TotalSim.ConfigureStopTime(int(60.0 * 1E9))
@@ -264,6 +253,8 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
 
     # TestResults['GPSAbsTimeCheck'] = True
     AllowTolerance = 1E-4
+    if useMsg:
+        AllowTolerance = 2E-2
     if (date.isoweekday() != 7 and GPSSecDiff > AllowTolerance): #Skip test days that are Sunday because of the end of a GPS week
         testFailCount += 1
         testMessages.append("FAILED: Absolute GPS time check failed with difference of: %(DiffVal)f \n" % \
@@ -304,6 +295,8 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
 
     # Test Mars position values
     PosErrTolerance = 250
+    if useMsg:
+        PosErrTolerance = 1000
     if (PosDiffNorm > PosErrTolerance):
         testFailCount += 1
         testMessages.append("FAILED: Mars position check failed with difference of: %(DiffVal)f \n" % \
