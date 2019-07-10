@@ -42,7 +42,6 @@ from Basilisk.simulation import magneticFieldWMM
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
                                 simIncludeGravBody, unitTestSupport)
-from Basilisk.simulation import simMessages
 
 
 #attempt to import vizard
@@ -121,16 +120,10 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 #
 # The WMM module requires an epoch time to determine the magnetic field.  If this is not set, then the BSK
 # default epoch time is used.  To set a general epoch time, the module can read in an epoch message with a
-# gregorian date.  This is set using the following code:
+# gregorian UTC date.  This is set using the following code:
 #~~~~~~~~~~~~~~~~~{.py}
 #     magModule.epochInMsgName = "simEpoch"
-#     epochMsg = simMessages.EpochSimMsg()
-#     epochMsg.year = 2019
-#     epochMsg.month = 06
-#     epochMsg.day = 27
-#     epochMsg.hours = 10
-#     epochMsg.minutes = 23
-#     epochMsg.seconds = 0.0
+#     epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
 #     unitTestSupport.setMessage(scSim.TotalSim,
 #                                simProcessName,
 #                                magModule.epochInMsgName,
@@ -245,13 +238,7 @@ def run(show_plots, orbitCase):
 
     # set epoch date/time message
     magModule.epochInMsgName = "simEpoch"
-    epochMsg = simMessages.EpochSimMsg()
-    epochMsg.year = 2019
-    epochMsg.month = 06
-    epochMsg.day = 27
-    epochMsg.hours = 10
-    epochMsg.minutes = 23
-    epochMsg.seconds = 0.0
+    epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 June 27, 10:23:0.0 (UTC)')
     unitTestSupport.setMessage(scSim.TotalSim,
                                simProcessName,
                                magModule.epochInMsgName,
