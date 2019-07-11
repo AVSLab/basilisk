@@ -27,8 +27,11 @@
 %include "simMessages/spicePlanetStateSimMsg.h"
 %include "simMessages/spiceTimeSimMsg.h"
 %include "spice_interface.h"
+%include "../../simMessages/epochSimMsg.h"
+
 GEN_SIZEOF(SpicePlanetStateSimMsg);
 GEN_SIZEOF(SpiceTimeSimMsg);
+GEN_SIZEOF(EpochSimMsg)
 
 %pythoncode %{
 import sys

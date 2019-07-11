@@ -159,7 +159,13 @@ def run(show_plots, useCentral):
 
     #Set up spice with spice time
     UTCInit = "2012 MAY 1 00:28:30.0"
-    spiceObject = gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/', UTCInit)
+    spiceObject, epochMsg = gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/',
+                                                   UTCInit,
+                                                   epochInMsgName='simEpoch')
+    unitTestSupport.setMessage(scSim.TotalSim,
+                               simProcessName,
+                               spiceObject.epochInMsgName,
+                               epochMsg)
     scSim.AddModelToTask(simTaskName, spiceObject)
 
     # attach gravity model to spaceCraftPlus

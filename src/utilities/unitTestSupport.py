@@ -27,6 +27,8 @@ import os,errno
 import numpy as np
 import matplotlib as mpl
 from datetime import datetime, timedelta
+from Basilisk.simulation import simMessages
+from Basilisk import pyswice
 
 mpl.rc("figure", facecolor="white")
 mpl.rc('xtick', labelsize=9)
@@ -432,3 +434,37 @@ def decimalYearToDateTime(start):
 
     base = datetime(year, 1, 1)
     return base + timedelta(seconds=(base.replace(year=base.year + 1) - base).total_seconds() * rem)
+
+
+def timeStringToGregorianUTCMsg(DateSpice, **kwargs):
+
+    # set the data path
+    if kwargs.has_key('dataPath'):
+        dataPath = kwargs['dataPath']
+        if not isinstance(dataPath, str):
+            print 'ERROR: dataPath must be a string argument'
+            exit(1)
+    else:
+        dataPath = bskPath +'/supportData/EphemerisData/'  # default value
+
+    # load spice kernal and convert the string into a UTC date/time string
+    pyswice.furnsh_c(dataPath + 'naif0012.tls')
+    et = pyswice.new_doubleArray(1)
+    pyswice.str2et_c(DateSpice, et)
+    etEpoch = pyswice.doubleArray_getitem(et, 0)
+    ep1 = pyswice.et2utc_c(etEpoch, 'C', 6, 255, "Yo")
+    pyswice.unload_c(dataPath + 'naif0012.tls')  # leap second file
+
+    # convert UTC string to datetime object
+    datetime_object = datetime.strptime(ep1, '%Y %b %d %H:%M:%S.%f')
+
+    # populate the epochMsg with the gregorian UTC date/time information
+    epochMsg = simMessages.EpochSimMsg()
+    epochMsg.year = datetime_object.year
+    epochMsg.month = datetime_object.month
+    epochMsg.day = datetime_object.day
+    epochMsg.hours = datetime_object.hour
+    epochMsg.minutes = datetime_object.minute
+    epochMsg.seconds = datetime_object.second + datetime_object.microsecond / 1e6
+
+    return epochMsg

@@ -23,6 +23,8 @@
 #include "architecture/messaging/system_messaging.h"
 #include <string.h>
 #include "utilities/bsk_Print.h"
+#include "utilities/simDefinitions.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
 
 /*! This constructor initializes the variables that spice uses.  Most of them are
  not intended to be changed, but a couple are user configurable.
@@ -49,6 +51,13 @@ SpiceInterface::SpiceInterface()
     referenceBase = "j2000";
     zeroBase = "SSB";
 	timeOutPicture = "MON DD,YYYY  HR:MN:SC.#### (UTC) ::UTC";
+    this->epochInMsgId = -1;
+
+    //! - set default epoch time information
+    char string[255];
+    sprintf(string, "%4d/%02d/%02d, %02d:%02d:%04.1f (UTC)", EPOCH_YEAR, EPOCH_MONTH, EPOCH_DAY, EPOCH_HOUR, EPOCH_MIN, EPOCH_SEC);
+    this->UTCCalInit = string;
+
     return;
 }
 
@@ -75,10 +84,11 @@ void SpiceInterface::clearKeeper()
  @return void*/
 void SpiceInterface::SelfInit()
 {
+
     //! - Bail if the SPICEDataPath is not present
     if(this->SPICEDataPath == "")
     {
-        BSK_PRINT(MSG_WARNING, "SPICE data path was not set.  No SPICE.");
+        BSK_PRINT(MSG_ERROR, "SPICE data path was not set.  No SPICE.");
         return;
     }
     //!- Load the SPICE kernels if they haven't already been loaded
@@ -98,6 +108,16 @@ void SpiceInterface::SelfInit()
         }
         this->SPICELoaded = true;
     }
+
+    //! - Create the output time message for SPICE
+    this->timeOutMsgID = SystemMessaging::GetInstance()->
+    CreateNewMessage(this->outputTimePort, sizeof(SpiceTimeSimMsg),
+                     this->outputBufferCount, "SpiceTimeSimMsg", this->moduleID);
+
+    if (this->epochInMsgName.length() > 0) {
+        this->epochInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->epochInMsgName, sizeof(EpochSimMsg), moduleID);
+    }
+
     //! Set the zero time values that will be used to compute the system time
     this->initTimeData();
     this->J2000Current = this->J2000ETInit;
@@ -106,9 +126,29 @@ void SpiceInterface::SelfInit()
     this->computePlanetData();
     this->timeDataInit = true;
 
-    // - This method populates the output messages at time zero
     this->Reset(0);
+
+    return;
 }
+
+/*! Should subscribe to module input messages.  However, the epoch message is subscribed to in the SelfInit() routine due to how Spice is being loaded and setup.
+ @return void
+ */
+void SpiceInterface::CrossInit()
+{
+
+    return;
+}
+
+/*! Reset the module to origina configuration values.
+ @return void
+ */
+void SpiceInterface::Reset(uint64_t CurrenSimNanos)
+{
+    // - Call Update state so that the spice bodies are inputted into the messaging system on reset
+    this->UpdateState(CurrenSimNanos);
+}
+
 
 /*! This method is used to initialize the zero-time that will be used to
  calculate all system time values in the Update method.  It also creates the
@@ -118,19 +158,33 @@ void SpiceInterface::SelfInit()
 void SpiceInterface::initTimeData()
 {
     double EpochDelteET;
+    
+    /* set epoch information.  If provided, then the epoch message information should be used.  */
+    if (this->epochInMsgId >= 0) {
+        // Read in the epoch message and set the internal time structure
+        EpochSimMsg epochMsg;
+        SingleMessageHeader LocalHeader;
+        memset(&epochMsg, 0x0, sizeof(EpochSimMsg));
+        if (!SystemMessaging::GetInstance()->ReadMessage(this->epochInMsgId, &LocalHeader,
+                                                    sizeof(EpochSimMsg),
+                                                         reinterpret_cast<uint8_t*> (&epochMsg), moduleID)) {
+            BSK_PRINT(MSG_ERROR, "The input epoch message name was set, but the message was never written.  Not using the input message.");
+            this->epochInMsgId = -1;
+        } else {
+            // Set the epoch information from the input message
+            char string[255];
+            sprintf(string, "%4d/%02d/%02d, %02d:%02d:%04.1f (UTC)", epochMsg.year, epochMsg.month, epochMsg.day, epochMsg.hours, epochMsg.minutes, epochMsg.seconds);
+            this->UTCCalInit = string;
+        }
+    }
 
     //! -Get the time value associated with the GPS epoch
     str2et_c(this->GPSEpochTime.c_str(), &this->JDGPSEpoch);
     //! - Get the time value associate with the requested UTC date
     str2et_c(this->UTCCalInit.c_str(), &this->J2000ETInit);
-    
     //! - Take the JD epoch and get the elapsed time for it
     deltet_c(this->JDGPSEpoch, "ET", &EpochDelteET);
-    
-    //! - Create the output time message for SPICE
-    this->timeOutMsgID = SystemMessaging::GetInstance()->
-        CreateNewMessage(this->outputTimePort, sizeof(SpiceTimeSimMsg),
-        this->outputBufferCount, "SpiceTimeSimMsg", this->moduleID);
+
 }
 
 /*! This method computes the GPS time data for the current elapsed time.  It uses
@@ -191,7 +245,7 @@ void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
 void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
 {
     //! - Increment the J2000 elapsed time based on init value and Current sim
-    this->J2000Current = this->J2000ETInit + CurrentSimNanos*1.0E-9;
+    this->J2000Current = this->J2000ETInit + CurrentSimNanos*NANO2SEC;
     
     //! - Compute the current Julian Date string and cast it over to the double
     et2utc_c(this->J2000Current, "J", 14, this->charBufferSize - 1, reinterpret_cast<SpiceChar*>
@@ -204,11 +258,6 @@ void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
     this->writeOutputMessages(CurrentSimNanos);
 }
 
-void SpiceInterface::Reset(uint64_t CurrenSimNanos)
-{
-    // - Call Update state so that the spice bodies are inputted into the messaging system on reset
-    this->UpdateState(CurrenSimNanos);
-}
 
 /*! This method gets the state of each planet that has been added to the model
  and saves the information off into the planet array.

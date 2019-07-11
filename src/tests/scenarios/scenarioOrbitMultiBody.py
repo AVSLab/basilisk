@@ -139,9 +139,17 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 #       timeInit = datetime.strptime(timeInitString,spiceTimeStringFormat)
 # ~~~~~~~~~~~~~~~~~
 # The following is a support macro that creates a `spiceObject` instance, and fills in typical
-# default parameters.
+# default parameters.  By setting the epochInMsgName argument, this maacro provides an epoch date/time
+# message as well.  The spiceObject is set to read in this epoch message.  Using the epoch message
+# makes it trivial to synchronize the epoch information across multiple moodules.
 # ~~~~~~~~~~~~~~~~~{.py}
-#       gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/', timeInitString)
+#     spiceObject, epochMsg = gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/',
+#                                                              timeInitString,
+#                                                              epochInMsgName = 'simEpoch')
+#     unitTestSupport.setMessage(scSim.TotalSim,
+#                                simProcessName,
+#                                spiceObject.epochInMsgName,
+#                                epochMsg)
 # ~~~~~~~~~~~~~~~~~
 # Next the SPICE module is costumized.  The first step is to specify the zeroBase.  This is the inertial
 # origin relative to which all spacecraft message states are taken.  The simulation defaults to all
@@ -273,7 +281,6 @@ def run(show_plots, scCase):
     #   setup the simulation tasks/objects
     #
 
-
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
@@ -302,7 +309,14 @@ def run(show_plots, scCase):
     timeInit = datetime.strptime(timeInitString, spiceTimeStringFormat)
 
     # setup SPICE module
-    gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/', timeInitString)
+    spiceObject, epochMsg = gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/',
+                                                             timeInitString,
+                                                             epochInMsgName = 'simEpoch')
+    unitTestSupport.setMessage(scSim.TotalSim,
+                               simProcessName,
+                               spiceObject.epochInMsgName,
+                               epochMsg)
+
     # by default the SPICE object will use the solar system barycenter as the inertial origin
     # If the spacecraftPlus() output is desired relative to another celestial object, the zeroBase string
     # name of the SPICE object needs to be changed.
@@ -320,11 +334,9 @@ def run(show_plots, scCase):
     if scCase is 'NewHorizons':
         scEphemerisFileName = 'nh_pred_od077.bsp'
         scSpiceName = 'NEW HORIZONS'
-        vizPlanetName = "sun"
     else:  # default case
         scEphemerisFileName = 'hst_edited.bsp'
         scSpiceName = 'HUBBLE SPACE TELESCOPE'
-        vizPlanetName = "earth"
     pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + scEphemerisFileName)  # Hubble Space Telescope data
     pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
     pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'naif0012.tls')  # leap second file

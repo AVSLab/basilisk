@@ -20,8 +20,7 @@
 
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import spice_interface
-from Basilisk.simulation import simMessages
-
+from Basilisk.utilities import unitTestSupport
 
 class gravBodyFactory(object):
     def __init__(self, bodyNames=None):
@@ -260,6 +259,15 @@ class gravBodyFactory(object):
         for fileName in self.spiceKernelFileNames:
             self.spiceObject.loadSpiceKernel(fileName, path)
         self.spiceObject.SPICELoaded = True
+
+        if kwargs.has_key('epochInMsgName'):
+            epMsgName = kwargs['epochInMsgName']
+            if not isinstance(epMsgName, str):
+                print 'ERROR: epochInMsgName must be a string argument'
+                exit(1)
+            self.spiceObject.epochInMsgName = epMsgName
+            epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(time, dataPath = path)
+            return self.spiceObject, epochMsg
 
         return self.spiceObject
 

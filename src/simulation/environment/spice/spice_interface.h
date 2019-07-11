@@ -27,6 +27,7 @@
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/spiceTimeSimMsg.h"
 #include "utilities/avsEigenSupport.h"
+#include "simMessages/epochSimMsg.h"
 
 /*! \addtogroup SimModelGroup
  *  This group is used to model parts of the vehicle and the surrounding environment
@@ -50,11 +51,12 @@ public:
     ~SpiceInterface();
     
     void UpdateState(uint64_t CurrentSimNanos);
-    void Reset(uint64_t CurrentSimNanos);
     int loadSpiceKernel(char *kernelName, const char *dataPath);
     int unloadSpiceKernel(char *kernelName, const char *dataPath);
 	std::string getCurrentTimeString();
     void SelfInit();
+    void CrossInit();
+    void Reset(uint64_t CurrentSimNanos);
     void initTimeData();
     void computeGPSData();
     void computePlanetData();
@@ -81,7 +83,10 @@ public:
     double GPSSeconds;          //!< s Current GPS seconds
     uint16_t GPSWeek;           //!< -- Current GPS week value
     uint64_t GPSRollovers;      //!< -- Count on the number of GPS rollovers
-    
+
+    std::string epochInMsgName; //!< -- Message name of the epoch message (optional)
+    int64_t epochInMsgId;       //!< ID of the epoch message
+
 private:
     std::string GPSEpochTime;   //!< -- String for the GPS epoch
     double JDGPSEpoch;          //!< s Epoch for GPS time.  Saved for efficiency

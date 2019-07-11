@@ -18,13 +18,13 @@
 
 '''
 import pytest
-import sys, os, inspect
+import os, inspect
 
 #
 # Spice Unit Test
 #
 # Purpose:  Test the proper function of the Spice Ephemeris module.
-#           Proper function is tested by comparing Spice Ephermis to
+#           Proper function is tested by comparing Spice Ephemeris to
 #           JPL Horizons Database for different planets and times of year
 # Author:   Thibaud Teil
 # Creation Date:  Dec. 20, 2016
@@ -36,7 +36,6 @@ from Basilisk import __path__
 bskPath = __path__[0]
 
 
-# @cond DOXYGEN_IGNORE
 import datetime
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import SimulationBaseClass
@@ -44,7 +43,7 @@ import numpy
 from Basilisk.simulation import spice_interface
 from Basilisk.utilities import macros
 import matplotlib.pyplot as plt
-# @endcond
+
 
 # Class in order to plot using data accross the different paramatrized scenarios
 class DataStore:
@@ -138,18 +137,20 @@ def testPlottingFixture(show_plots):
     ("2016 October 10, 00:00:00.0 TDB", "10/10/16" , [1.674991232418756E+08, -1.090427183510760E+08, -5.456038490399034E+07],[ 1.434719792031415E+08, 4.029387436854774E+07, 1.744057129058395E+07],[5.348794087050703E+05, 4.727986075510736E+05, 1.788947974297997E+05]),
     ("2016 October 20, 00:00:00.0 TDB", "10/20/16" , [1.797014954219412E+08, -9.133803506487390E+07, -4.676932170648168E+07] , [ 1.334883617893556E+08, 6.209917895944476E+07, 2.689423661839254E+07],[5.318931290166953E+05, 4.821605725626923E+05, 1.830201949404063E+05]),
     ("2016 December 10, 00:00:00.0 TDB", "12/10/16" , [2.087370835407280E+08, 1.035903131428964E+07, -9.084001492689754E+05] ,[3.082308903715757E+07, 1.328026978502711E+08, 5.754559376449955E+07],[5.147792796720199E+05, 5.293951386498961E+05, 2.038816823549219E+05]),
-    ("2016 December 20, 00:00:00.0 TDB", "12/20/16" , [2.075411186038260E+08, 3.092173198610598E+07, 8.555251204561792E+06], [4.885421269793877E+06, 1.355125217382336E+08, 5.872015978003684E+07],[5.110736843893399E+05, 5.385860060393942E+05, 2.079481168492821E+05])#,
+    ("2016 December 20, 00:00:00.0 TDB", "12/20/16" , [2.075411186038260E+08, 3.092173198610598E+07, 8.555251204561792E+06], [4.885421269793877E+06, 1.355125217382336E+08, 5.872015978003684E+07],[5.110736843893399E+05, 5.385860060393942E+05, 2.079481168492821E+05])
 ])
+
+@pytest.mark.parametrize("useMsg", [False, True])
 
 
 # provide a unique test method name, starting with test_
-def test_unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPos , EarthTruthPos, SunTruthPos):
+def test_unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPos , EarthTruthPos, SunTruthPos, useMsg):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPos , EarthTruthPos, SunTruthPos)
+    [testResults, testMessage] = unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPos , EarthTruthPos, SunTruthPos, useMsg)
     assert testResults < 1, testMessage
 
 # Run unit test
-def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPos , EarthTruthPos, SunTruthPos):
+def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPos , EarthTruthPos, SunTruthPos, useMsg):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
@@ -173,6 +174,18 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
     SpiceObject.planetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun"])
     SpiceObject.UTCCalInit = DateSpice
     TotalSim.AddModelToTask(unitTaskName, SpiceObject)
+
+    if useMsg:
+        SpiceObject.epochInMsgName = "simEpoch"
+        epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(DateSpice)
+        unitTestSupport.setMessage(TotalSim.TotalSim,
+                                  unitProcessName,
+                                  SpiceObject.epochInMsgName,
+                                  epochMsg)
+
+        # The following value is set, but should not be used by the module.  This checks that the above
+        # epoch message over-rules any info set in this variable.
+        SpiceObject.UTCCalInit = "1990 February 10, 00:00:00.0 TDB"
 
     # Configure simulation
     TotalSim.ConfigureStopTime(int(60.0 * 1E9))
@@ -240,6 +253,8 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
 
     # TestResults['GPSAbsTimeCheck'] = True
     AllowTolerance = 1E-4
+    if useMsg:
+        AllowTolerance = 2E-2
     if (date.isoweekday() != 7 and GPSSecDiff > AllowTolerance): #Skip test days that are Sunday because of the end of a GPS week
         testFailCount += 1
         testMessages.append("FAILED: Absolute GPS time check failed with difference of: %(DiffVal)f \n" % \
@@ -280,6 +295,8 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
 
     # Test Mars position values
     PosErrTolerance = 250
+    if useMsg:
+        PosErrTolerance = 1000
     if (PosDiffNorm > PosErrTolerance):
         testFailCount += 1
         testMessages.append("FAILED: Mars position check failed with difference of: %(DiffVal)f \n" % \
@@ -354,7 +371,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print   " \n PASSED "
+        print " \n PASSED "
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -365,5 +382,13 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_unitSpice(False  # show_plots
+    test_unitSpice(
+                   testPlottingFixture,
+                   False,  # show_plots
+                   "2015 February 10, 00:00:00.00 TDB",
+                   "02/10/15",
+                   [2.049283795042291E+08, 4.654550957513031E+07, 1.580778617009296E+07],
+                   [-1.137790671899544E+08, 8.569008401822130E+07, 3.712507705247846E+07],
+                   [4.480338216752146E+05, -7.947764237588293E+04, -5.745748832696378E+04],
+                    True   # useMsg
                    )
