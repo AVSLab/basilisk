@@ -34,9 +34,9 @@
  */
 PowerStorageBase::PowerStorageBase()
 {
-    this->outputBufferCount = 2;
-    this->previousTime = 0;
-    this->nodePowerUseMsgNames.clear();
+    this->OutputBufferCount = 2;
+
+    this->scStateInMsgNames.clear();
 
     return;
 }
@@ -55,7 +55,7 @@ PowerStorageBase::~PowerStorageBase()
  @param tmpScMsgName A spacecraft state message name.
  */
 void PowerStorageBase::addPowerNodeToModel(std::string tmpNodeMsgName){
-    this->nodePowerUseMsgNames.push_back(tmpNodeMsgName);
+    this->nodePowerUseMsgNames.push_back(tmpScMsgName);
     return;
 }
 
@@ -65,8 +65,9 @@ that were added using AddSpacecraftToModel. Additional model outputs are also in
 */
 void PowerStorageBase::SelfInit()
 {
+    uint64_t tmpMagFieldMsgId;
 
-    this->batPowerOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->batPowerOutMsgName, sizeof(PowerStorageStatusSimMsg),this->outputBufferCount, "PowerStorageStatusSimMsg",this->moduleID);
+    this->batPowerOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->BatPowerOutMsgName, sizeof(BatteryOutSimMsg),this->outputBufferCount, "BatteryOutSimMsg",this->moduleID)
 
     //! - call the custom SelfInit() method to add addtional self initialization steps
     customSelfInit();
@@ -81,8 +82,12 @@ void PowerStorageBase::CrossInit()
 {
     //! - subscribe to the spacecraft messages and create associated output message buffer
     std::vector<std::string>::iterator it;
-    for(it = this->nodePowerUseMsgNames.begin(); it != this->nodePowerUseMsgNames.end(); it++){
-        this->nodePowerUseMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(PowerNodeUsageSimMsg), moduleID));
+    this->envOutBuffer.clear();
+    AtmoPropsSimMsg tmpAtmoProps;
+    memset(&tmpAtmoProps, 0x0, sizeof(AtmoPropsSimMsg));
+    for(it = this->scStateInMsgNames.begin(); it != this->scStateInMsgNames.end(); it++){
+        this->nodePowerUseMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(PowerNodeSimMsg), moduleID));
+        this->envOutBuffer.push_back(tmpAtmoProps);
     }
 
     //!- call the custom CrossInit() method to all additional cross initialization steps
@@ -96,7 +101,6 @@ void PowerStorageBase::CrossInit()
  */
 void PowerStorageBase::Reset(uint64_t CurrentSimNanos)
 {
-    this->previousTime = 0;
     //! - call the custom environment module reset method
     customReset(CurrentSimNanos);
 
@@ -135,13 +139,19 @@ void PowerStorageBase::customReset(uint64_t CurrentClock)
  */
 void PowerStorageBase::writeMessages(uint64_t CurrentClock)
 {
+    AtmoPropsSimMsg tmpAtmoPropsSimMsg;
     std::vector<int64_t>::iterator it;
+    std::vector<AtmoPropsSimMsg>::iterator atmoIt;
+    atmoIt = this->envOutBuffer.begin();
     //! - write magnetic field output messages for each spacecaft's locations
-    SystemMessaging::GetInstance()->WriteMessage(this->batPowerOutMsgId,
+    for(it = this->envOutMsgIds.begin(); it != this->envOutMsgIds.end(); it++, atmoIt++){
+        tmpAtmoPropsSimMsg = *atmoIt;
+        SystemMessaging::GetInstance()->WriteMessage(*it,
                                                      CurrentClock,
-                                                     sizeof(PowerStorageStatusSimMsg),
-                                                     reinterpret_cast<uint8_t*> (&storageStatusMsg),
+                                                     sizeof(AtmoPropsSimMsg),
+                                                     reinterpret_cast<uint8_t*>(&tmpAtmoPropsSimMsg),
                                                      moduleID);
+    }
 
     //! - call the custom method to perform additional output message writing
     customWriteMessages(CurrentClock);
@@ -162,32 +172,31 @@ void PowerStorageBase::customWriteMessages(uint64_t CurrentClock)
  */
 bool PowerStorageBase::readMessages()
 {
-    PowerNodeUsageSimMsg nodeMsg;
+    SCPlusStatesSimMsg scMsg;
     SingleMessageHeader localHeader;
 
-    this->nodeWattMsgs.clear();
+    this->scStates.clear();
 
-    //! - read in the power node use/supply messages
-    bool powerRead = true;
-    bool tmpPowerRead;
-    if(this->nodePowerUseMsgIds.size() > 0)
+    //! - read in the spacecraft state messages
+    bool powerRead;
+    if(this->scStateInMsgIds.size() > 0)
     {
+        scRead = true;
         std::vector<int64_t>::iterator it;
-        for(it = nodePowerUseMsgIds.begin(); it!= nodePowerUseMsgIds.end(); it++)
-        {
-            memset(&nodeMsg, 0x0, sizeof(PowerNodeUsageSimMsg));
+        for(it = nodePowerUseMsgIds.begin(); it!= nodePowerUseMsgIds.end(); it++){
+            bool tmpScRead;
+            memset(&scMsg, 0x0, sizeof(SCPlusStatesSimMsg));
             tmpPowerRead = SystemMessaging::GetInstance()->ReadMessage(*it, &localHeader,
                                                                     sizeof(PowerNodeUsageSimMsg),
-                                                                    reinterpret_cast<uint8_t*>(&nodeMsg),
+                                                                    reinterpret_cast<uint8_t*>(&scMsg),
                                                                     moduleID);
             powerRead = powerRead && tmpPowerRead;
 
-            this->nodeWattMsgs.push_back(nodeMsg);
+            this->scStates.push_back(scMsg);
         }
-    }
-    else {
-        BSK_PRINT(MSG_WARNING, "Power storage has no power node messages to read.");
-        powerRead = false;
+    } else {
+        BSK_PRINT(MSG_ERROR, "Power storage has no power node messages to read.");
+        scRead = false;
     }
 
     //! - call the custom method to perform additional input reading
@@ -205,31 +214,28 @@ bool PowerStorageBase::customReadMessages()
     return true;
 }
 
-double PowerStorageBase::sumAllInputs(){
-    double currentSum = 0.0;
 
-    std::vector<PowerNodeUsageSimMsg>::iterator it;
-    for(it = nodeWattMsgs.begin(); it != nodeWattMsgs.end(); it++) {
-
-        currentSum += (*it).netPower_W;
-    }
-
-    return currentSum;
-}
-
-/*! This method integrates the power use provided by the attached modules.
+/*! This method is used to update the local magnetic field based on each spacecraft's position.
   @return void
  */
 void PowerStorageBase::integratePowerStatus(double currentTime)
 {
 
-    this->currentTimestep = currentTime - this->previousTime;
+    this->current_timestep = currentTime - this->previousTime;
+    std::vector<SCPlusStatesSimMsg>::iterator it;
+    uint64_t atmoInd = 0;
 
     //! - loop over all the power nodes and sum their contributions
-    this->currentPowerSum = this->sumAllInputs();
+    std::vector<AtmoPropsSimMsg>::iterator envMsgIt;
+    envMsgIt = this->envOutBuffer.begin();
+
+    double currentSum = 0.0
+    for(it = nodeWattMsgs.begin(); it != nodeWattMsgs.end(); it++) {
+        currentSum += it.netPower_W;
+    }
 
 
-    this->evaluateBatteryModel(&(storageStatusMsg), currentTime); // Computes the battery charge status, if applicable.
+    this->chargeLevel = this->evaluateBatteryModel(currentSum);
     this->previousTime = currentTime;
     return;
 }
@@ -241,6 +247,11 @@ void PowerStorageBase::integratePowerStatus(double currentTime)
  */
 void PowerStorageBase::UpdateState(uint64_t CurrentSimNanos)
 {
+    //! - clear the output buffer
+    std::vector<AtmoPropsSimMsg>::iterator it;
+    for(it = this->envOutBuffer.begin(); it!= this->envOutBuffer.end(); it++){
+        memset(&(*it), 0x0, sizeof(AtmoPropsSimMsg));
+    }
     //! - update local neutral density information
     if(this->readMessages())
     {

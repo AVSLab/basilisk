@@ -52,8 +52,7 @@ protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
     void integratePowerStatus(double currentTime);
-    double sumAllInputs();
-    virtual void evaluateBatteryModel(PowerStorageStatusSimMsg *msg, double time) = 0;
+    virtual void evaluateBatteryModel(AtmoPropsSimMsg *msg) = 0;
     virtual void customSelfInit();
     virtual void customCrossInit();
     virtual void customReset(uint64_t CurrentClock);
@@ -62,18 +61,14 @@ protected:
 
 public:
     std::vector<std::string> nodePowerUseMsgNames;    //!< Vector of the spacecraft position/velocity message names
-    std::string batPowerOutMsgName; //!< Vector of message names to be written out by the battery
-    double storedCharge; //!< [W-hr] Stored charge in Watt-hours.
+    std::vector<std::string> BatPowerOutMsgNames; //!< Vector of message names to be written out by the battery
 
-protected:
-    std::vector<std::int64_t> nodePowerUseMsgIds;
-    int64_t batPowerOutMsgId;
+private:
+    std::vector<std::uint64_t> nodePowerUseMsgIds;
+    std::vector<std::uint64_t> batPowerOutMsgIds;
     PowerStorageStatusSimMsg storageStatusMsg;
     std::vector<PowerNodeUsageSimMsg> nodeWattMsgs;
     double previousTime; //! Previous time used for integration
-    double currentTimestep;
-    double currentPowerSum;
-    uint64_t outputBufferCount;
 
 };
 
