@@ -9,7 +9,6 @@
 typedef struct{
     double storageLevel;
     double storageCapacity;
-    double currentNetPower;
 }PowerStorageStatusSimMsg;
 
 #endif //BASILISK_POWERSTORAGESTATUSSIMMSG_H
