@@ -6,6 +6,8 @@
 
 
 void SimplePowerMonitor::SimplePowerMonitor(){
+
+    this->storageCapacity = -1;
     return;
 }
 
@@ -14,9 +16,11 @@ void SimplePowerMonitor::~SimplePowerMonitor(){
     return;
 }
 
-void SimplePowerMonitor::evaluateBatteryModel(PowerStorageStatusSimMsg *msg) {
-    msg.storageLevel = this->currentPowerSum;
-    msg.storageCapacity = -1;
+void SimplePowerMonitor::evaluateBatteryModel(PowerStorageStatusSimMsg *msg,double currentTime) {
+
+    this->storedCharge = this->storedCharge + this->currentPowerSum * (currentTime - this->previousTime);
+    msg.storageCapacity = this->storageCapacity;
+    msg.chargeLevel = this->storedCharge;
 
     return;
 }
