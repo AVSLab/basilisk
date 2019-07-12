@@ -3,26 +3,3 @@
 //
 
 #include "simplePowerMonitor.h"
-
-
-SimplePowerMonitor::SimplePowerMonitor(){
-
-    this->storageCapacity = -1;
-    this->storedCharge = 0;
-    return;
-}
-
-SimplePowerMonitor::~SimplePowerMonitor(){
-
-    return;
-}
-
-void SimplePowerMonitor::evaluateBatteryModel(PowerStorageStatusSimMsg *msg,double currentTime) {
-
-    this->storedCharge = this->storedCharge + this->currentPowerSum * (this->currentTimestep);
-    msg->storageCapacity = this->storageCapacity;
-    msg->storageLevel = this->storedCharge / 60.0; //Convert into W-Hr
-    msg->currentNetPower = this->currentPowerSum;
-
-    return;
-}
