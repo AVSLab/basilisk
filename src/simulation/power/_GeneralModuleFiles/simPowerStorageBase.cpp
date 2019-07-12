@@ -224,7 +224,7 @@ void PowerStorageBase::integratePowerStatus(double currentTime)
     this->currentPowerSum = this->sumAllInputs();
 
 
-    this->evaluateBatteryModel(this->storageStatusMsg); // Computes the battery charge status, if applicable.
+    this->evaluateBatteryModel(this->storageStatusMsg, currentTime); // Computes the battery charge status, if applicable.
     this->previousTime = currentTime;
     return;
 }
