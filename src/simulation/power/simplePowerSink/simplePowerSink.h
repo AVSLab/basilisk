@@ -5,16 +5,15 @@
 #ifndef BASILISK_SIMPLEPOWERSINK_H
 #define BASILISK_SIMPLEPOWERSINK_H
 
-#include "../_GeneralModuleFiles/simPowerNodeBase.h"
 
-class SimplePowerSink: public PowerNodeBase {
+class simplePowerSink: public simPowerNodeBase {
 
 public:
-    SimplePowerSink();
-    ~SimplePowerSink();
+    SimplePowerSink::SimplePowerSink();
+    SimplePowerSink::~SimplePowerSink();
 
 private:
-    void evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageMsg);
+    void evaulatePowerModel(PowerNodeUsageSimMsg *powerUsageMsg);
 
 };
 
