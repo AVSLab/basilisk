@@ -1,3 +1,11 @@
+//
+// Created by andrew on 7/12/19.
+//
+
+#ifndef BASILISK_SIMPOWERNODEBASE_H
+#define BASILISK_SIMPOWERNODEBASE_H
+
+
 /*
  ISC License
 
@@ -21,13 +29,8 @@
 #include <vector>
 #include <string>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "simMessages/spicePlanetStateSimMsg.h"
-#include "simMessages/scPlusStatesSimMsg.h"
-#include "simMessages/powerStorageStatusSimMsg.h"
 #include "simMessages/powerNodeUsageSimMsg.h"
-
-#ifndef BASILISK_SIMPOWERSTORAGEBASE_H
-#define BASILISK_SIMPOWERSTORAGEBASE_H
+#include "simFswInterfaceMessages/powerNodeStatusIntMsg.h"
 
 /*! \addtogroup SimModelGroup
  * @{
@@ -35,24 +38,24 @@
 
 
 
-//! @brief General power storage base class used to calculate net power in/out and stored power.
+//! @brief General power source/sink base class.
 
 
-class PowerStorageBase: public SysModel  {
+class PowerNodeBase: public SysModel  {
 public:
-    PowerStorageBase();
-    ~PowerStorageBase();
+    PowerNodeBase();
+    ~PowerNodeBase();
     void SelfInit();
     void CrossInit();
     void Reset(uint64_t CurrentSimNanos);
-    void addPowerNodeToModel(std::string tmpNodeMsgName);
+    void computePowerStatus(double currentTime);
     void UpdateState(uint64_t CurrentSimNanos);
 
 protected:
-    void writeMessages(uint64_t CurrentClock);
+    void writeMessage(uint64_t CurrentClock);
     bool readMessages();
-    void integratePowerStatus(double currentTime);
-    virtual void evaluateBatteryModel(AtmoPropsSimMsg *msg) = 0;
+    void evaluatePowerUsage(PowerNodeUsageSimMsg *powerUsageMsg);
+    virtual void customPowerModel() = 0;
     virtual void customSelfInit();
     virtual void customCrossInit();
     virtual void customReset(uint64_t CurrentClock);
@@ -60,18 +63,21 @@ protected:
     virtual bool customReadMessages();
 
 public:
-    std::vector<std::string> nodePowerUseMsgNames;    //!< Vector of the spacecraft position/velocity message names
-    std::string BatPowerOutMsgName; //!< Vector of message names to be written out by the battery
-    double storageCharge; //!< [W-hr] Stored charge in Watt-hours.
+    std::string nodePowerOutMsgName; //!< Message name for the node's output message
+    std::string nodeStatusInMsgName; //!< String for the message name that tells the node it's status
+    int_64_t nodePowerOutMsgId;
+    int_64_t nodeStatusInMsgId;
+    double nodePowerOut; //!< [W] Power provided (+) or consumed (-).
+    uint_8_t powerStatus; //!< Device power mode; by default, 0 is off and 1 is on. Additional modes can fill other slots
 
 private:
-    std::vector<std::uint64_t> nodePowerUseMsgIds;
-    std::vector<std::uint64_t> batPowerOutMsgId;
-    PowerStorageStatusSimMsg storageStatusMsg;
-    std::vector<PowerNodeUsageSimMsg> nodeWattMsgs;
+    PowerNodeUsageSimMsg nodePowerMsg;
+    PowerNodeStatusIntMsg nodeStatusMsg;
+    double currentPowerConsumption;
+
     double previousTime; //! Previous time used for integration
 
 };
 
 
-#endif //BASILISK_SIMPOWERSTORAGEBASE_H
+#endif //BASILISK_SIMPOWERNODEBASE_H
