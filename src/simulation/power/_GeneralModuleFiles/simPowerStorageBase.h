@@ -53,7 +53,7 @@ protected:
     bool readMessages();
     void integratePowerStatus(double currentTime);
     double sumAllInputs();
-    virtual void evaluateBatteryModel(PowerStorageStatusSimMsg *msg, double time) = 0;
+    virtual void evaluateBatteryModel(PowerStorageStatusSimMsg *msg) = 0;
     virtual void customSelfInit();
     virtual void customCrossInit();
     virtual void customReset(uint64_t CurrentClock);
