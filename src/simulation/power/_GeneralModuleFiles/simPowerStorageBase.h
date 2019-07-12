@@ -52,7 +52,8 @@ protected:
     void writeMessages(uint64_t CurrentClock);
     bool readMessages();
     void integratePowerStatus(double currentTime);
-    virtual void evaluateBatteryModel(AtmoPropsSimMsg *msg) = 0;
+    double sumAllInputs();
+    virtual void evaluateBatteryModel(PowerStorageStatusSimMsg *msg) = 0;
     virtual void customSelfInit();
     virtual void customCrossInit();
     virtual void customReset(uint64_t CurrentClock);
@@ -70,6 +71,7 @@ private:
     PowerStorageStatusSimMsg storageStatusMsg;
     std::vector<PowerNodeUsageSimMsg> nodeWattMsgs;
     double previousTime; //! Previous time used for integration
+    double currentPowerSum;
 
 };
 
