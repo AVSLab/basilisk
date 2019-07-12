@@ -15,6 +15,9 @@ public:
 private:
     void evaluateBatteryModel(PowerStorageStatusSimMsg *msg);
 
+public:
+    double storageCapacity;
+
 };
 
 
