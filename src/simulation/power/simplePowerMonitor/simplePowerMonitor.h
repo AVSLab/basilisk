@@ -6,17 +6,7 @@
 #define BASILISK_SIMPLEPOWERMONITOR_H
 
 
-class SimplePowerMonitor: public simPowerStorageBase {
-
-public:
-    SimplePowerMonitor::SimplePowerMonitor;
-    SimplePowerMonitor::~SimplePowerMonitor;
-
-private:
-    void evaluateBatteryModel(PowerStorageStatusSimMsg *msg);
-
-public:
-    double storageCapacity;
+class simplePowerMonitor {
 
 };
 
