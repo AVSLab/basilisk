@@ -54,7 +54,8 @@ public:
 protected:
     void writeMessage(uint64_t CurrentClock);
     bool readMessages();
-    virtual void evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageMsg)=0;
+    void evaluatePowerUsage(PowerNodeUsageSimMsg *powerUsageMsg);
+    virtual void customPowerModel() = 0;
     virtual void customSelfInit();
     virtual void customCrossInit();
     virtual void customReset(uint64_t CurrentClock);

@@ -209,9 +209,6 @@ double PowerStorageBase::sumAllInputs(){
         currentSum += it.netPower_W;
     }
 
-    return currentSum;
-}
-
 /*! This method integrates the power use provided by the attached modules.
   @return void
  */
@@ -224,7 +221,7 @@ void PowerStorageBase::integratePowerStatus(double currentTime)
     this->currentPowerSum = this->sumAllInputs();
 
 
-    this->evaluateBatteryModel(this->storageStatusMsg, currentTime); // Computes the battery charge status, if applicable.
+    this->evaluateBatteryModel(currentSum); // Computes the battery charge status, if applicable.
     this->previousTime = currentTime;
     return;
 }
