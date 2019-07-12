@@ -3,16 +3,15 @@
 //
 
 #include "simplePowerSink.h"
-#include "../../simMessages/powerNodeUsageSimMsg.h"
 
-SimplePowerSink::SimplePowerSink(){
+void SimplePowerSink::SimplePowerSink(){
 
     this->nodePowerOut = 0.0;
     return;
 
 }
 
-SimplePowerSink::~SimplePowerSink(){
+void SimplePowerSink::~SimplePowerSink(){
 
     return;
 }
@@ -20,7 +19,7 @@ SimplePowerSink::~SimplePowerSink(){
 void SimplePowerSink::evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageSimMsg){
 
 
-    powerUsageSimMsg->netPower_W = this->nodePowerOut;
+    powerUsageSimMsg.netPower_W = this->nodePowerOut;
 
     return;
 }
