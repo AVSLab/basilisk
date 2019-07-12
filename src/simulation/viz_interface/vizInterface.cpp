@@ -342,7 +342,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     /*! Write SCPlus output msg */
     if (scPlusInMsgID.msgID != -1 && scPlusInMsgID.dataFresh){
         vizProtobufferMessage::VizMessage::Spacecraft* scp = message->add_spacecraft();
-        scp->set_spacecraftname("inertial");
+        scp->set_spacecraftname("spacecraft");
         for (int i=0; i<3; i++){
             scp->add_position(this->scPlusMessage.r_BN_N[i]);
             scp->add_velocity(this->scPlusMessage.v_BN_N[i]);
