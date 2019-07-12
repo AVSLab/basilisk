@@ -75,6 +75,8 @@ public:
     std::vector <std::string> rwInMsgName;    //! [-] Name of the incoming rw data
     std::vector <ThrClusterMap> thrMsgData;     //! [-] Name of the incoming thruster data
     std::string starTrackerInMsgName;         //! [-] Name of the incoming Star Tracker data
+
+    std::string spacecraftName;               //! [-] Name of the spacecraft being simulated
     
     std::string opnavImageOutMsgName;           //! The name of the Image output message*/
 

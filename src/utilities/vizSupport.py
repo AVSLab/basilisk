@@ -47,6 +47,9 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
     vizMessenger = vizInterface.VizInterface()
     scSim.AddModelToTask(simTaskName, vizMessenger)
 
+    # set spacecraft name
+    vizMessenger.spacecraftName = "bsk-Sat"
+
     # note that the following logic can receive a single file name, or a full path + file name.
     # In both cases a local results are stored in a local sub-folder.
     vizMessenger.saveFile = 0

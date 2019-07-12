@@ -47,6 +47,8 @@ VizInterface::VizInterface()
     this->numRW = 0;
     this->numThr = 0;
     this->planetNames = {};
+
+    this->spacecraftName = "spacecraft";
     return;
 }
 
@@ -342,7 +344,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
     /*! Write SCPlus output msg */
     if (scPlusInMsgID.msgID != -1 && scPlusInMsgID.dataFresh){
         vizProtobufferMessage::VizMessage::Spacecraft* scp = message->add_spacecraft();
-        scp->set_spacecraftname("spacecraft");
+        scp->set_spacecraftname(this->spacecraftName);
         for (int i=0; i<3; i++){
             scp->add_position(this->scPlusMessage.r_BN_N[i]);
             scp->add_velocity(this->scPlusMessage.v_BN_N[i]);
