@@ -52,9 +52,10 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
 
 protected:
-    void writeMessages(uint64_t CurrentClock);
+    void writeMessage(uint64_t CurrentClock);
     bool readMessages();
-    virtual void evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageMsg)=0;
+    void evaluatePowerUsage(PowerNodeUsageSimMsg *powerUsageMsg);
+    virtual void customPowerModel() = 0;
     virtual void customSelfInit();
     virtual void customCrossInit();
     virtual void customReset(uint64_t CurrentClock);
@@ -64,20 +65,17 @@ protected:
 public:
     std::string nodePowerOutMsgName; //!< Message name for the node's output message
     std::string nodeStatusInMsgName; //!< String for the message name that tells the node it's status
-    int64_t nodePowerOutMsgId;
-    int64_t nodeStatusInMsgId;
+    int_64_t nodePowerOutMsgId;
+    int_64_t nodeStatusInMsgId;
     double nodePowerOut; //!< [W] Power provided (+) or consumed (-).
-    uint64_t powerStatus; //!< Device power mode; by default, 0 is off and 1 is on. Additional modes can fill other slots
+    uint_8_t powerStatus; //!< Device power mode; by default, 0 is off and 1 is on. Additional modes can fill other slots
 
-protected:
+private:
     PowerNodeUsageSimMsg nodePowerMsg;
     PowerNodeStatusIntMsg nodeStatusMsg;
     double currentPowerConsumption;
+
     double previousTime; //! Previous time used for integration
-
-private:
-    uint64_t outputBufferCount;
-
 
 };
 
