@@ -1,3 +1,11 @@
+//
+// Created by andrew on 7/12/19.
+//
+
+#ifndef BASILISK_SIMPOWERNODEBASE_H
+#define BASILISK_SIMPOWERNODEBASE_H
+
+
 /*
  ISC License
 
@@ -17,12 +25,6 @@
 
  */
 
-
-#ifndef BASILISK_SIMPOWERNODEBASE_H
-#define BASILISK_SIMPOWERNODEBASE_H
-
-
-
 #include <Eigen/Dense>
 #include <vector>
 #include <string>
@@ -37,14 +39,6 @@
 
 
 //! @brief General power source/sink base class.
-/*! The powerNodeBase class is used generate a standard interface and list of features for modules that consume or provide power. 
-Specifically, each PowerNodeBase:
-
-1. Writes out a PowerNodeUsageSimMsg describing its power consumption at each sim update;
-2. Can be switched on or off using a PowerNodeStatusIntMsg.
-
-Core functionality is wrapped in the evaluatePowerModel protected virtual void method, which is assumed to compute power usage based on a module specific mathematical model. 
-Protected methods prepended with "custom" are intended for module developers to override with additional, module-specific functionality. */
 
 
 class PowerNodeBase: public SysModel  {
@@ -58,32 +52,30 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
 
 protected:
-    void writeMessages(uint64_t CurrentClock);
-    bool readMessages(); 
-    virtual void evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageMsg)=0; //!< Virtual void method used to compute module-wise power usage/generation.
-    virtual void customSelfInit(){};//! Custom output input reading method.  This allows a child class to add additional functionality.
-    virtual void customCrossInit(){}; //! Custom subscription method, similar to customSelfInit.
-    virtual void customReset(uint64_t CurrentClock){}; //! Custom Reset method, similar to customSelfInit.
-    virtual void customWriteMessages(uint64_t CurrentClock){};//! custom Write method, similar to customSelfInit.
-    virtual bool customReadMessages(){return true;} //! Custom read method, similar to customSelfInit; returns `true' by default.
+    void writeMessage(uint64_t CurrentClock);
+    bool readMessages();
+    void evaluatePowerUsage(PowerNodeUsageSimMsg *powerUsageMsg);
+    virtual void customPowerModel() = 0;
+    virtual void customSelfInit();
+    virtual void customCrossInit();
+    virtual void customReset(uint64_t CurrentClock);
+    virtual void customWriteMessages(uint64_t CurrentClock);
+    virtual bool customReadMessages();
 
 public:
     std::string nodePowerOutMsgName; //!< Message name for the node's output message
     std::string nodeStatusInMsgName; //!< String for the message name that tells the node it's status
-    int64_t nodePowerOutMsgId;
-    int64_t nodeStatusInMsgId;
+    int_64_t nodePowerOutMsgId;
+    int_64_t nodeStatusInMsgId;
     double nodePowerOut; //!< [W] Power provided (+) or consumed (-).
-    uint64_t powerStatus; //!< Device power mode; by default, 0 is off and 1 is on. Additional modes can fill other slots
+    uint_8_t powerStatus; //!< Device power mode; by default, 0 is off and 1 is on. Additional modes can fill other slots
 
-protected:
+private:
     PowerNodeUsageSimMsg nodePowerMsg;
     PowerNodeStatusIntMsg nodeStatusMsg;
     double currentPowerConsumption;
+
     double previousTime; //! Previous time used for integration
-
-private:
-    uint64_t outputBufferCount;
-
 
 };
 
