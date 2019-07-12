@@ -203,6 +203,14 @@ bool PowerStorageBase::customReadMessages()
     return true;
 }
 
+double PowerStorageBase::sumAllInputs(){
+    double currentSum = 0.0
+    for(it = nodeWattMsgs.begin(); it != nodeWattMsgs.end(); it++) {
+        currentSum += it.netPower_W;
+    }
+
+    return currentSum;
+}
 
 /*! This method integrates the power use provided by the attached modules.
   @return void
@@ -211,19 +219,12 @@ void PowerStorageBase::integratePowerStatus(double currentTime)
 {
 
     this->current_timestep = currentTime - this->previousTime;
-    std::vector<SCPlusStatesSimMsg>::iterator it;
-    uint64_t atmoInd = 0;
 
     //! - loop over all the power nodes and sum their contributions
-    std::vector<AtmoPropsSimMsg>::iterator envMsgIt;
-    envMsgIt = this->envOutBuffer.begin();
+    this->currentPowerSum = this->sumAllInputs();
 
-    double currentSum = 0.0
-    for(it = nodeWattMsgs.begin(); it != nodeWattMsgs.end(); it++) {
-        currentSum += it.netPower_W;
-    }
 
-    this->evaluateBatteryModel(currentSum); // Computes the battery charge status, if applicable.
+    this->evaluateBatteryModel(this->storageStatusMsg); // Computes the battery charge status, if applicable.
     this->previousTime = currentTime;
     return;
 }
