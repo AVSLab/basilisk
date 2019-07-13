@@ -553,7 +553,7 @@ def run(show_plots, simCase):
         scObject.hub.omega_BN_BInit = [[n * HN[2, 0]], [n * HN[2, 1]], [n * HN[2, 2]]]  # rad/s - omega_CN_B
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
+    # vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName, numRW=numRW)
 
     #
     #   initialize Simulation

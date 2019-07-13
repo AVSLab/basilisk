@@ -499,7 +499,7 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
 
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, scSim.simTaskPreControlName, scSim.simPreControlProc, gravBodies=gravFactory, saveFile=fileName)
+    # vizSupport.enableUnityVisualization(scSim, scSim.simTaskPreControlName, scSim.simPreControlProc, gravBodies=gravFactory, saveFile=fileName, numRW=numRW)
 
     #
     #   initialize Simulation

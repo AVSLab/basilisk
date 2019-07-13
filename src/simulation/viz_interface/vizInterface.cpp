@@ -181,15 +181,20 @@ void VizInterface::CrossInit()
         MsgCurrStatus rwStatus;
         rwStatus.dataFresh = false;
         rwStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
-    for (int idx = 0; idx < this->numRW; idx++)
-    {
-        std::string tmpWheelMsgName = "rw_config_" + std::to_string(idx) + "_data";
-        this->rwInMsgName.push_back(tmpWheelMsgName);
-
-        rwStatus.msgID = SystemMessaging::GetInstance()->subscribeToMessage(this->rwInMsgName[idx],sizeof(RWConfigLogSimMsg), moduleID);
-        this->rwInMsgID.push_back(rwStatus);
-    }
-    this->rwInMessage.resize(this->rwInMsgID.size());
+        for (int idx = 0; idx < this->numRW; idx++)
+        {
+            std::string tmpWheelMsgName = "rw_config_" + std::to_string(idx) + "_data";
+            this->rwInMsgName.push_back(tmpWheelMsgName);
+            msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(tmpWheelMsgName);
+            if (msgInfo.itemFound) {
+                rwStatus.msgID = SystemMessaging::GetInstance()->subscribeToMessage(this->rwInMsgName[idx],sizeof(RWConfigLogSimMsg), moduleID);
+                this->rwInMsgID.push_back(rwStatus);
+            } else {
+                rwStatus.msgID = -1;
+                BSK_PRINT(MSG_WARNING, "RW(%d) msg requested but not found.", idx);
+            }
+        }
+        this->rwInMessage.resize(this->rwInMsgID.size());
     }
     
     /*! Define Thr input message */

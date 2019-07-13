@@ -106,4 +106,8 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
                     unitTestSupport.setMessage(scSim.TotalSim, processName, msgName,
                                                ephemData, "SpicePlanetStateSimMsg")
 
+    if (kwargs.has_key('numRW')):
+        numRW = kwargs['numRW']
+        vizMessenger.numRW = numRW
+
     return vizMessenger
