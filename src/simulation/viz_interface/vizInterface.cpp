@@ -26,6 +26,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include "sensors/sun_sensor/coarse_sun_sensor.h"
 #include "utilities/linearAlgebra.h"
+#include "utilities/bsk_Print.h"
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
@@ -47,8 +48,8 @@ VizInterface::VizInterface()
     this->numRW = 0;
     this->numThr = 0;
     this->planetNames = {};
-
     this->spacecraftName = "spacecraft";
+
     return;
 }
 
@@ -95,18 +96,31 @@ void VizInterface::SelfInit()
  */
 void VizInterface::CrossInit()
 {
-    /*! Define CSS input messages */
-    this->cssDataInMsgId.msgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cssDataInMsgName,
-                                                                              sizeof(CSSArraySensorIntMsg), moduleID);
-    this->cssDataInMsgId.dataFresh = false;
-    this->cssDataInMsgId.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
-    this->cssConfInMsgId.msgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cssConfInMsgName,
-                                                                              sizeof(CSSConfigFswMsg), moduleID);
-    this->cssConfInMsgId.dataFresh = false;
-    this->cssConfInMsgId.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
-    
-    /*! Define Camera input messages */
     MessageIdentData msgInfo;
+
+    /*! Define CSS data input messages */
+    msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(this->cssDataInMsgName);
+    if (msgInfo.itemFound) {
+        this->cssDataInMsgId.msgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cssDataInMsgName,
+                                                                                  sizeof(CSSArraySensorIntMsg), moduleID);
+        this->cssDataInMsgId.dataFresh = false;
+        this->cssDataInMsgId.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+    } else {
+        this->cssDataInMsgId.msgID = -1;
+    }
+
+    /*! Define CSS configuration input messages */
+    msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(this->cameraConfInMsgName);
+    if (msgInfo.itemFound) {
+        this->cssConfInMsgId.msgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cssConfInMsgName,
+                                                                                        sizeof(CSSConfigFswMsg), moduleID);
+        this->cssConfInMsgId.dataFresh = false;
+        this->cssConfInMsgId.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+    } else {
+        this->cssConfInMsgId.msgID = -1;
+    }
+
+    /*! Define Camera input messages */
     msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(this->cameraConfInMsgName);
     if (msgInfo.itemFound) {
         this->cameraConfMsgId.msgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cameraConfInMsgName,
@@ -118,35 +132,50 @@ void VizInterface::CrossInit()
     }
 
     /*! Define SCPlus input message */
-    this->scPlusInMsgID.msgID = SystemMessaging::GetInstance()->subscribeToMessage(this->scPlusInMsgName,
-            sizeof(SCPlusStatesSimMsg), moduleID);
-    this->scPlusInMsgID.dataFresh = false;
-    this->scPlusInMsgID.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+    msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(this->scPlusInMsgName);
+    if (msgInfo.itemFound) {
+        this->scPlusInMsgID.msgID = SystemMessaging::GetInstance()->subscribeToMessage(this->scPlusInMsgName,
+                sizeof(SCPlusStatesSimMsg), moduleID);
+        this->scPlusInMsgID.dataFresh = false;
+        this->scPlusInMsgID.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+    } else {
+        this->scPlusInMsgID.msgID = -1;
+    }
 
     /*! Define Spice input message */
     {
-    int i=0;
-    MsgCurrStatus spiceStatus;
-    spiceStatus.dataFresh = false;
-    spiceStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
-    std::vector<std::string>::iterator spice_it;
-    for(spice_it = this->planetNames.begin(); spice_it != this->planetNames.end(); spice_it++){
-        std::string planetMsgName = *spice_it + "_planet_data";
-        this->spiceInMsgName.push_back(planetMsgName);
-        //! Subscribe to messages
-        spiceStatus.msgID = SystemMessaging::GetInstance()->subscribeToMessage(this->spiceInMsgName[i], sizeof(SpicePlanetStateSimMsg), moduleID);
-        this->spiceInMsgID.push_back(spiceStatus);
-        i++;
-    }
-    this->spiceMessage.resize(this->spiceInMsgID.size());
+        int i=0;
+        MsgCurrStatus spiceStatus;
+        spiceStatus.dataFresh = false;
+        spiceStatus.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+        std::vector<std::string>::iterator spice_it;
+        for(spice_it = this->planetNames.begin(); spice_it != this->planetNames.end(); spice_it++){
+            std::string planetMsgName = *spice_it + "_planet_data";
+            msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(planetMsgName);
+            if (msgInfo.itemFound) {
+                this->spiceInMsgName.push_back(planetMsgName);
+                //! Subscribe to messages
+                spiceStatus.msgID = SystemMessaging::GetInstance()->subscribeToMessage(this->spiceInMsgName[i], sizeof(SpicePlanetStateSimMsg), moduleID);
+            } else {
+                spiceStatus.msgID = -1;
+            }
+            this->spiceInMsgID.push_back(spiceStatus);
+            i++;
+        }
+        this->spiceMessage.resize(this->spiceInMsgID.size());
     }
     
     /*! Define StarTracker input message */
-    this->starTrackerInMsgID.msgID = SystemMessaging::GetInstance()->subscribeToMessage(this->starTrackerInMsgName,
-            sizeof(STSensorIntMsg), moduleID);
-    this->starTrackerInMsgID.dataFresh = false;
-    this->starTrackerInMsgID.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
-    
+    msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(this->starTrackerInMsgName);
+    if (msgInfo.itemFound) {
+        this->starTrackerInMsgID.msgID = SystemMessaging::GetInstance()->subscribeToMessage(this->starTrackerInMsgName,
+                sizeof(STSensorIntMsg), moduleID);
+        this->starTrackerInMsgID.dataFresh = false;
+        this->starTrackerInMsgID.lastTimeTag = 0xFFFFFFFFFFFFFFFF;
+    } else {
+        this->starTrackerInMsgID.msgID = -1;
+    }
+
     /*! Define RW input message */
     {
         MsgCurrStatus rwStatus;
