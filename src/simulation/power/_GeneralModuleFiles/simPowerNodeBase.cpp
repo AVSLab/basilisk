@@ -78,7 +78,7 @@ void PowerNodeBase::CrossInit()
 {
     //! - subscribe to the spacecraft messages and create associated output message buffer
     if(this->nodeStatusInMsgName.length() > 0) {
-        this->nodePowerOutMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->nodeStatusInMsgName,
+        this->nodeStatusInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->nodeStatusInMsgName,
                                                                                      sizeof(PowerNodeStatusIntMsg),
                                                                                      moduleID);
     }
@@ -171,6 +171,7 @@ bool PowerNodeBase::readMessages()
                                                                        moduleID);
 
         this->nodeStatusMsg = statusMsg;
+        this->powerStatus = this->nodeStatusMsg.powerStatus;
         powerRead = powerRead && tmpStatusRead;
     }
 
@@ -198,6 +199,10 @@ void PowerNodeBase::computePowerStatus(double currentTime)
     if(this->powerStatus > 0)
     {
         this->evaluatePowerModel(&this->nodePowerMsg);
+    }
+    else
+    {
+        this->nodePowerMsg.netPower_W = 0.0;
     }
 
     return;
