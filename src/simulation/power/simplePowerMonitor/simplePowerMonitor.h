@@ -5,15 +5,17 @@
 #ifndef BASILISK_SIMPLEPOWERMONITOR_H
 #define BASILISK_SIMPLEPOWERMONITOR_H
 
+#include "../_GeneralModuleFiles/simPowerStorageBase.h"
+#include "../../simMessages/powerStorageStatusSimMsg.h"
 
-class SimplePowerMonitor: public simPowerStorageBase {
+class SimplePowerMonitor: public PowerStorageBase {
 
 public:
-    SimplePowerMonitor::SimplePowerMonitor;
-    SimplePowerMonitor::~SimplePowerMonitor;
+    SimplePowerMonitor();
+    ~SimplePowerMonitor();
 
 private:
-    void evaluateBatteryModel(PowerStorageStatusSimMsg *msg);
+    void evaluateBatteryModel(PowerStorageStatusSimMsg *msg, double currentTime);
 
 public:
     double storageCapacity;
