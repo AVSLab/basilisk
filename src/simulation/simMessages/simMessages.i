@@ -44,6 +44,8 @@
 #include "pyBatteryOutMsg.h"
 #include "atmoPropsSimMsg.h"
 #include "epochSimMsg.h"
+#include "powerNodeUsageSimMsg.h"
+#include "powerStorageStatusSimMsg.h"
 %}
 
 %include "swig_conly_data.i"
@@ -104,6 +106,10 @@ GEN_SIZEOF(PyBatteryOutMsg)
 GEN_SIZEOF(AtmoPropsSimMsg)
 %include "epochSimMsg.h"
 GEN_SIZEOF(EpochSimMsg)
+%include "powerNodeUsageSimMsg.h"
+GEN_SIZEOF(PowerNodeUsageSimMsg)
+%include "powerStorageStatusSimMsg.h"
+GEN_SIZEOF(PowerStorageStatusSimMsg)
 
 #ifndef CSHARP_ROX
 %pythoncode %{

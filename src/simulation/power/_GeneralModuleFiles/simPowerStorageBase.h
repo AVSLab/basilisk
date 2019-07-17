@@ -62,16 +62,18 @@ protected:
 
 public:
     std::vector<std::string> nodePowerUseMsgNames;    //!< Vector of the spacecraft position/velocity message names
-    std::string BatPowerOutMsgName; //!< Vector of message names to be written out by the battery
+    std::string batPowerOutMsgName; //!< Vector of message names to be written out by the battery
     double storedCharge; //!< [W-hr] Stored charge in Watt-hours.
 
-private:
-    std::vector<std::uint64_t> nodePowerUseMsgIds;
-    std::vector<std::uint64_t> batPowerOutMsgId;
+protected:
+    std::vector<std::int64_t> nodePowerUseMsgIds;
+    int64_t batPowerOutMsgId;
     PowerStorageStatusSimMsg storageStatusMsg;
     std::vector<PowerNodeUsageSimMsg> nodeWattMsgs;
     double previousTime; //! Previous time used for integration
+    double currentTimestep;
     double currentPowerSum;
+    uint64_t outputBufferCount;
 
 };
 
