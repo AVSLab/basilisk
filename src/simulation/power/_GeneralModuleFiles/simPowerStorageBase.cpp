@@ -34,7 +34,7 @@
  */
 PowerStorageBase::PowerStorageBase()
 {
-    this->OutputBufferCount = 2;
+    this->outputBufferCount = 2;
 
     this->nodePowerUseMsgNames.clear();
 
@@ -66,7 +66,7 @@ that were added using AddSpacecraftToModel. Additional model outputs are also in
 void PowerStorageBase::SelfInit()
 {
 
-    this->batPowerOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->BatPowerOutMsgName, sizeof(BatteryOutSimMsg),this->outputBufferCount, "BatteryOutSimMsg",this->moduleID)
+    this->batPowerOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->batPowerOutMsgName, sizeof(PowerStorageStatusSimMsg),this->outputBufferCount, "PowerStorageStatusSimMsg",this->moduleID);
 
     //! - call the custom SelfInit() method to add addtional self initialization steps
     customSelfInit();
@@ -81,8 +81,8 @@ void PowerStorageBase::CrossInit()
 {
     //! - subscribe to the spacecraft messages and create associated output message buffer
     std::vector<std::string>::iterator it;
-    for(it = this->scStateInMsgNames.begin(); it != this->scStateInMsgNames.end(); it++){
-        this->nodePowerUseMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(PowerNodeSimMsg), moduleID));
+    for(it = this->nodePowerUseMsgNames.begin(); it != this->nodePowerUseMsgNames.end(); it++){
+        this->nodePowerUseMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(PowerNodeUsageSimMsg), moduleID));
     }
 
     //!- call the custom CrossInit() method to all additional cross initialization steps
@@ -139,7 +139,7 @@ void PowerStorageBase::writeMessages(uint64_t CurrentClock)
     SystemMessaging::GetInstance()->WriteMessage(this->batPowerOutMsgId,
                                                      CurrentClock,
                                                      sizeof(PowerStorageStatusSimMsg),
-                                                     reinterpret_cast<uint8_t*>this->storageStatusMsg,
+                                                     reinterpret_cast<uint8_t*> (&storageStatusMsg),
                                                      moduleID);
 
     //! - call the custom method to perform additional output message writing
@@ -164,17 +164,17 @@ bool PowerStorageBase::readMessages()
     PowerNodeUsageSimMsg nodeMsg;
     SingleMessageHeader localHeader;
 
-    this->scStates.clear();
+    this->nodeWattMsgs.clear();
 
     //! - read in the power node use/supply messages
-    bool powerRead;
-    if(this->scStateInMsgIds.size() > 0)
+    bool powerRead = true;
+    bool tmpPowerRead;
+    if(this->nodePowerUseMsgIds.size() > 0)
     {
-        scRead = true;
         std::vector<int64_t>::iterator it;
-        for(it = nodePowerUseMsgIds.begin(); it!= nodePowerUseMsgIds.end(); it++){
-            bool tmpScRead;
-            memset(&scMsg, 0x0, sizeof(SCPlusStatesSimMsg));
+        for(it = nodePowerUseMsgIds.begin(); it!= nodePowerUseMsgIds.end(); it++)
+        {
+            memset(&nodeMsg, 0x0, sizeof(PowerNodeUsageSimMsg));
             tmpPowerRead = SystemMessaging::GetInstance()->ReadMessage(*it, &localHeader,
                                                                     sizeof(PowerNodeUsageSimMsg),
                                                                     reinterpret_cast<uint8_t*>(&nodeMsg),
@@ -183,9 +183,10 @@ bool PowerStorageBase::readMessages()
 
             this->nodeWattMsgs.push_back(nodeMsg);
         }
-    } else {
+    }
+    else {
         BSK_PRINT(MSG_WARNING, "Power storage has no power node messages to read.");
-        scRead = false;
+        powerRead = false;
     }
 
     //! - call the custom method to perform additional input reading
@@ -204,9 +205,12 @@ bool PowerStorageBase::customReadMessages()
 }
 
 double PowerStorageBase::sumAllInputs(){
-    double currentSum = 0.0
+    double currentSum = 0.0;
+
+    std::vector<PowerNodeUsageSimMsg>::iterator it;
     for(it = nodeWattMsgs.begin(); it != nodeWattMsgs.end(); it++) {
-        currentSum += it.netPower_W;
+
+        currentSum += (*it).netPower_W;
     }
 
     return currentSum;
@@ -218,13 +222,13 @@ double PowerStorageBase::sumAllInputs(){
 void PowerStorageBase::integratePowerStatus(double currentTime)
 {
 
-    this->current_timestep = currentTime - this->previousTime;
+    this->currentTimestep = currentTime - this->previousTime;
 
     //! - loop over all the power nodes and sum their contributions
     this->currentPowerSum = this->sumAllInputs();
 
 
-    this->evaluateBatteryModel(this->storageStatusMsg, currentTime); // Computes the battery charge status, if applicable.
+    this->evaluateBatteryModel(&(storageStatusMsg), currentTime); // Computes the battery charge status, if applicable.
     this->previousTime = currentTime;
     return;
 }
@@ -236,11 +240,6 @@ void PowerStorageBase::integratePowerStatus(double currentTime)
  */
 void PowerStorageBase::UpdateState(uint64_t CurrentSimNanos)
 {
-    //! - clear the output buffer
-    std::vector<AtmoPropsSimMsg>::iterator it;
-    for(it = this->envOutBuffer.begin(); it!= this->envOutBuffer.end(); it++){
-        memset(&(this->storageStatusMsg), 0x0, sizeof(storageStatusMsg));
-    }
     //! - update local neutral density information
     if(this->readMessages())
     {
