@@ -67,7 +67,7 @@ public:
     int64_t nodePowerOutMsgId;
     int64_t nodeStatusInMsgId;
     double nodePowerOut; //!< [W] Power provided (+) or consumed (-).
-    uint8_t powerStatus; //!< Device power mode; by default, 0 is off and 1 is on. Additional modes can fill other slots
+    uint64_t powerStatus; //!< Device power mode; by default, 0 is off and 1 is on. Additional modes can fill other slots
 
 protected:
     PowerNodeUsageSimMsg nodePowerMsg;
