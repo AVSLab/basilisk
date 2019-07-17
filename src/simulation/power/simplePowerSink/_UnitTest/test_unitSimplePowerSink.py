@@ -39,7 +39,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import simplePowerSink
 from Basilisk.simulation import simMessages
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.simulation import simFswMessages
 from Basilisk.utilities import macros
 
 
@@ -57,14 +57,11 @@ from Basilisk.utilities import macros
 
 
 # update "module" in this function name to reflect the module name
-def test_module():
+def test_module(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     # each test method requires a single assert method to be called
 
     default_results, default_message = test_default()
     status_results, status_message = test_status()
-
-    testResults = sum([default_results, status_results])
-    testMessage = [default_message, status_message]
 
     assert testResults < 1, testMessage
 
@@ -91,11 +88,13 @@ def test_default():
     # Construct algorithm and associated C++ container
     testModule = simplePowerSink.SimplePowerSink()
     testModule.ModelTag = "powerSink"
+    testModule.nodeStatusInMsgName="PowerStatusMsg"
     testModule.nodePowerOut = 10. # Watts
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(testModule.nodePowerOutMsgName, testProcessRate)
+    moduleOutputMsgName = "powerSinkDraw"
+    unitTestSim.TotalSim.logThisMessage(moduleOutputMsgName, testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -117,7 +116,7 @@ def test_default():
     accuracy = 1e-16
     unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
 
-    truePower = 10.0 #Module should be off
+    truePower = 0.0 #Module should be off
 
     testFailCount, testMessages = unitTestSupport.compareDoubleArray(
         [truePower]*3, drawData, accuracy, "powerSinkOutput",
@@ -140,6 +139,11 @@ def test_default():
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
+
+
+    # each test method requires a single assert method to be called
+    # this check below just makes sure no sub-test failures were found
+    return [testFailCount, ''.join(testMessages)]
 
 def test_status():
     testFailCount = 0                       # zero unit test result counter
@@ -168,16 +172,16 @@ def test_status():
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 
     # create the input messages
-    powerStatusMsg = simFswInterfaceMessages.PowerNodeStatusIntMsg()  # Create a structure for the input message
-    powerStatusMsg.powerStatus=0
+    powerDrawMsg = simFswMessages.PowerNodeUsageSimMsg()  # Create a structure for the input message
+    powerDrawMsg.powerStatus=0
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
-                               testModule.nodeStatusInMsgName,
-                               powerStatusMsg)
+                               "PowerStatusMsg",
+                               powerDrawMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
-
-    unitTestSim.TotalSim.logThisMessage(testModule.nodePowerOutMsgName, testProcessRate)
+    moduleOutputMsgName = "powerSinkDraw"
+    unitTestSim.TotalSim.logThisMessage(moduleOutputMsgName, testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -203,7 +207,7 @@ def test_status():
 
 
     testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        [truePower]*3, drawData, accuracy, "powerSinkStatusTest",
+        [truePower]*3, drawData, accuracy, "powerSinkOutput",
         testFailCount, testMessages)
 
     #   print out success or failure message
