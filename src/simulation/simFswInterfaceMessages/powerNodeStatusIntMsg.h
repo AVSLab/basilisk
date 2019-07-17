@@ -29,7 +29,7 @@
 
 //! @brief Simulated IMU Sensor output message definition.
 typedef struct{
-    uint_8_t powerStatus;      //!< Power status indicator; 0 is off, 1 is on, additional values
+    uint8_t powerStatus;      //!< Power status indicator; 0 is off, 1 is on, additional values
 }PowerNodeStatusIntMsg;
 
 /*! @} */
