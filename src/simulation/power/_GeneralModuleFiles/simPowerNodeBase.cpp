@@ -38,12 +38,12 @@
  */
 PowerNodeBase::PowerNodeBase()
 {
-    this->OutputBufferCount = 2;
+    this->outputBufferCount = 2;
 
     this->nodePowerOutMsgName = "powerNodeOutputMessage";
     this->nodeStatusInMsgName = ""; //By default, no node status message name is used.
     this->nodePowerOutMsgId = -1;
-    this->nodeStatusMsgId = -1;
+    this->nodeStatusInMsgId = -1;
     this->powerStatus = 1; //Node defaults to on unless overwritten.
     return;
 }
@@ -63,7 +63,7 @@ that were added using AddSpacecraftToModel. Additional model outputs are also in
 void PowerNodeBase::SelfInit()
 {
 
-    this->nodePowerOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->nodePowerOutMsgName, sizeof(PowerNodeUsageSimMsg),this->outputBufferCount, "PowerNodeUsageSimMsg",this->moduleID)
+    this->nodePowerOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->nodePowerOutMsgName, sizeof(PowerNodeUsageSimMsg),this->outputBufferCount, "PowerNodeUsageSimMsg",this->moduleID);
 
     //! - call the custom SelfInit() method to add addtional self initialization steps
     customSelfInit();
@@ -78,7 +78,7 @@ void PowerNodeBase::CrossInit()
 {
     //! - subscribe to the spacecraft messages and create associated output message buffer
     if(this->nodeStatusInMsgName.length() > 0) {
-        this->nodePowerUseMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->nodeStatusInMsgName,
+        this->nodePowerOutMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->nodeStatusInMsgName,
                                                                                      sizeof(PowerNodeStatusIntMsg),
                                                                                      moduleID);
     }
@@ -133,8 +133,8 @@ void PowerNodeBase::writeMessages(uint64_t CurrentClock)
     //! - write magnetic field output messages for each spacecaft's locations
     SystemMessaging::GetInstance()->WriteMessage(this->nodePowerOutMsgId,
                                                  CurrentClock,
-                                                 sizeof(NodePowerUsageSimMsg),
-                                                 reinterpret_cast<uint8_t*>this->nodePowerMsg,
+                                                 sizeof(PowerNodeUsageSimMsg),
+                                                 reinterpret_cast<uint8_t*>(&nodePowerOut),
                                                          moduleID);
 
     //! - call the custom method to perform additional output message writing
@@ -161,21 +161,22 @@ bool PowerNodeBase::readMessages()
 
     //! - read in the power node use/supply messages
     bool powerRead = true;
+    bool tmpStatusRead = true;
     if(this->nodeStatusInMsgId > 0)
     {
-        memset(&statusMsg, 0x0, sizeof();
-        tmpStatusRead = SystemMessaging::GetInstance()->ReadMessage(*it, &localHeader,
+        memset(&statusMsg, 0x0, sizeof(PowerNodeStatusIntMsg));
+        tmpStatusRead = SystemMessaging::GetInstance()->ReadMessage(this->nodeStatusInMsgId, &localHeader,
                                                                        sizeof(PowerNodeStatusIntMsg),
-                                                                       reinterpret_cast<uint8_t*>(&nodeMsg),
+                                                                       reinterpret_cast<uint8_t*>(&statusMsg),
                                                                        moduleID);
 
-        this->nodeStatusMsg = nodeMsg;
+        this->nodeStatusMsg = statusMsg;
         powerRead = powerRead && tmpStatusRead;
-        }
     }
 
+
     //! - call the custom method to perform additional input reading
-    bool customRead = customReadMessages();
+    bool customRead = this->customReadMessages();
 
     return(powerRead && customRead);
 }
