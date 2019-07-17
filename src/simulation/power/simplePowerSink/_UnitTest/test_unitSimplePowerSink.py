@@ -39,7 +39,7 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import simplePowerSink
 from Basilisk.simulation import simMessages
-from Basilisk.simulation import simFswMessages
+from Basilisk.simulation import simFswInterfaceMessages
 from Basilisk.utilities import macros
 
 
@@ -57,11 +57,14 @@ from Basilisk.utilities import macros
 
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
+def test_module():
     # each test method requires a single assert method to be called
 
     default_results, default_message = test_default()
     status_results, status_message = test_status()
+
+    testResults = sum(default_results, status_results)
+    testMessage = [default_message, status_message]
 
     assert testResults < 1, testMessage
 
@@ -172,7 +175,7 @@ def test_status():
     unitTestSim.AddModelToTask(unitTaskName, testModule)
 
     # create the input messages
-    powerDrawMsg = simFswMessages.PowerNodeUsageSimMsg()  # Create a structure for the input message
+    powerDrawMsg = simFswInterfaceMessages.PowerNodeStatusIntMsg()  # Create a structure for the input message
     powerDrawMsg.powerStatus=0
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
