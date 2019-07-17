@@ -1,10 +1,3 @@
-//
-// Created by andrew on 7/12/19.
-//
-
-#ifndef BASILISK_POWERNODESTATUSMSG_H
-#define BASILISK_POWERNODESTATUSMSG_H
-
 /*
  ISC License
 
@@ -23,16 +16,25 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-/*! \defgroup simFswInterfaceMessages
- *  @{
- */
-
-//! @brief Simulated IMU Sensor output message definition.
-typedef struct{
-    uint8_t powerStatus;      //!< Power status indicator; 0 is off, 1 is on, additional values
-}PowerNodeStatusIntMsg;
-
-/*! @} */
 
 
-#endif //BASILISK_POWERNODESTATUSMSG_H
+%module simplePowerSink
+%{
+    #include "simplePowerSink.h"
+%}
+
+%include "swig_common_model.i"
+%include "sys_model.h"
+%include "../_GeneralModuleFiles/simPowerNodeBase.h"
+%include "simplePowerSink.h"
+
+%include "../../simMessages/powerNodeUsageSimMsg.h"
+%include "../../simFswInterfaceMessages/powerNodeStatusIntMsg.h"
+
+GEN_SIZEOF(PowerNodeUsageSimMsg)
+GEN_SIZEOF(PowerNodeStatusIntMsg)
+
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}
