@@ -110,4 +110,15 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
     if (kwargs.has_key('numRW')):
         vizMessenger.numRW = kwargs['numRW']
 
+    if (kwargs.has_key('thrDevices')):
+        thrDevices = kwargs['thrDevices']
+        thList = []
+        for thClusterInfo in thrDevices:
+            thSet = vizInterface.ThrClusterMap()
+            thSet.thrCount = thClusterInfo[0]
+            thSet.thrTag = thClusterInfo[1]
+            thList.append(thSet)
+        vizMessenger.thrMsgData = vizInterface.VizThrConfig(thList)
+
+
     return vizMessenger

@@ -67,7 +67,7 @@ from Basilisk.utilities import vizSupport
 # Used to get the location of supporting data.
 from Basilisk import __path__
 bskPath = __path__[0]
-vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
+fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 # Plotting functions
 def plot_attitude_error(timeDataFSW, dataSigmaBR):
@@ -507,7 +507,8 @@ def run(show_plots, useDVThrusters):
     numTh = thFactory.getNumOfDevices()
 
     # create thruster object container and tie to spacecraft object
-    thFactory.addToSpacecraft("ACSThrusterDynamics", thrusterSet, scObject)
+    thrModelTag = "ACSThrusterDynamics"
+    thFactory.addToSpacecraft(thrModelTag, thrusterSet, scObject)
 
     #
     #   setup the FSW algorithm tasks
@@ -632,7 +633,7 @@ def run(show_plots, useDVThrusters):
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, fswTaskName,  fswProcessName, vizFile, gravFactory)
+    vizSupport.enableUnityVisualization(scSim, fswTaskName,  fswProcessName, gravBodies = gravFactory, saveFile=fileName, thrDevices=[(thFactory.getNumOfDevices(), thrModelTag)])
 
     #
     #   initialize Simulation
@@ -665,8 +666,6 @@ def run(show_plots, useDVThrusters):
     #
     #   plot the results
     #
-    fileName = os.path.basename(os.path.splitext(__file__)[0])
-
     timeDataFSW = dataLr[:, 0] * macros.NANO2MIN
     plt.close("all")  # clears out plots from earlier test runs
 

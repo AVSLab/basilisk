@@ -208,9 +208,15 @@ void VizInterface::CrossInit()
     {
         for(int idx=0; idx < it->thrCount; idx++) {
             std::string tmpThrustMsgName = "thruster_" + it->thrTag + "_" + std::to_string(idx) + "_data";
-            thrStatus.msgID = SystemMessaging::GetInstance()->subscribeToMessage(tmpThrustMsgName, sizeof(THROutputSimMsg), moduleID);
-            this->thrMsgID.push_back(thrStatus);
-            this->numThr++;
+            msgInfo = SystemMessaging::GetInstance()->messagePublishSearch(tmpThrustMsgName);
+            if (msgInfo.itemFound) {
+                thrStatus.msgID = SystemMessaging::GetInstance()->subscribeToMessage(tmpThrustMsgName, sizeof(THROutputSimMsg), moduleID);
+                this->thrMsgID.push_back(thrStatus);
+                this->numThr++;
+            } else {
+                thrStatus.msgID = -1;
+                BSK_PRINT(MSG_WARNING, "TH(%d) msg of tag %s requested but not found.", idx, it->thrTag.c_str());
+            }
         }
     }
     this->thrOutputMessage.resize(this->thrMsgID.size());
