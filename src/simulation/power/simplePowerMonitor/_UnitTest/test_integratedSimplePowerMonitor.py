@@ -61,10 +61,13 @@ from Basilisk.utilities import macros
 def test_module():
     # each test method requires a single assert method to be called
 
-    defaultResults, defaultMessage = test_default()
+    default_results, default_message = test_default()
+    status_results, status_message = test_status()
 
+    testResults = sum([default_results, status_results])
+    testMessage = [default_message, status_message]
 
-    assert defaultResults < 1, defaultMessage
+    assert testResults < 1, testMessage
 
 
 def test_default():
@@ -137,26 +140,21 @@ def test_default():
     accuracy = 1e-16
     unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
 
-    trueNetPower = 5.0 #Module should be off
-    trueStorageData = [0, 2.5, 5]
+    truePower = 10.0 #Module should be off
 
     testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        [trueNetPower]*3, netData, accuracy, "powerStorageNetCalculation",
-        testFailCount, testMessages)
-
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
-        trueStorageData, storageData, accuracy, "powerStorageAccumulatedCalculation",
+        [truePower]*3, drawData, accuracy, "powerSinkOutput",
         testFailCount, testMessages)
 
     #   print out success or failure message
     snippetName = "unitTestPassFailStatus"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + testMonitorModule.ModelTag
+        print "PASSED: " + testModule.ModelTag
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + testMonitorModule.ModelTag
+        print "Failed: " + testModule.ModelTag
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
 
