@@ -121,6 +121,8 @@ void MsisAtmosphere::defaultMsisInitialConditions()
         this->swDataInMsgNames.push_back("f107_1944_0");
         this->swDataInMsgNames.push_back("f107_24_-24");
 
+        this->epochInMsgId = -1;
+
     return;
 }
 
@@ -159,6 +161,13 @@ void MsisAtmosphere::customCrossInit()
         this->swDataInMsgIds[ind] = SystemMessaging::GetInstance()->subscribeToMessage(this->swDataInMsgNames[ind], sizeof(SwDataSimMsg), moduleID);
     }
 
+    //! - Subscribe to the optional Epoch Date/Time message
+    this->epochInMsgId = -1;
+    if (this->epochInMsgName.length() > 0) {
+        this->epochInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->epochInMsgName, sizeof(EpochSimMsg), moduleID);
+    }
+
+
 
     return;
 }
@@ -185,7 +194,6 @@ bool MsisAtmosphere::customReadMessages(){
     SingleMessageHeader localHeader;
     SwDataSimMsg tmpSwData;
 
-    /* WIP - Also read in all the MSISE inputs.*/
     //! Iterate over swData message ids
     for(int ind = 0; ind < 23; ind++) {
         if (this->swDataInMsgIds[ind] >= 0) {
@@ -200,6 +208,15 @@ bool MsisAtmosphere::customReadMessages(){
             }
         }
     }
+
+    if(this->epochInMsgId >= 0){
+        SystemMessaging::GetInstance()->ReadMessage(this->epochInMsgId, &localHeader, sizeof(EpochSimMsg),
+                                                                reinterpret_cast<uint8_t *> (&epochContainer), moduleID);
+        this->startDoy = this->epochContainer.day;
+        this->msisInput.year = this->epochContainer.year;
+    }
+
+
     if (failCount > 0) {
         swRead = false;
     }
@@ -266,7 +283,7 @@ void MsisAtmosphere::evaluateAtmosphereModel(AtmoPropsSimMsg *msg, double curren
 
     //! Update time.
     this->msisInput.doy = this->startDoy + floor(currentTime * 1E-09 * (1.0/86400));
-    this->msisInput.sec = this->startTime + currentTime;
+    this->msisInput.sec = (this->msisInput.doy-this->startDoy) * (86400.0);
 
     //WIP - need to actually figure out how to pull in these values.
     this->msisInput.lst = this->msisInput.sec/3600.0 + this->msisInput.g_long/15.0;
