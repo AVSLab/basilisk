@@ -28,7 +28,6 @@ import pytest
 import os, inspect
 import numpy as np
 import math
-from matplotlib import pyplot as plt
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -50,10 +49,6 @@ from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk import __path__
-bskPath = __path__[0]
-
-path = os.path.dirname(os.path.abspath(__file__))
 
 
 
@@ -63,21 +58,33 @@ path = os.path.dirname(os.path.abspath(__file__))
 # @pytest.mark.xfail(conditionstring)
 # Provide a unique test method name, starting with 'test_'.
 
-def run_scenario():
-    taskName = "unitTask"               # arbitrary name (don't change)
-    processname = "TestProcess"         # arbitrary name (don't change)
+# update "module" in this function name to reflect the module name
+def test_module():
+    # each test method requires a single assert method to be called
+
+    defaultResults, defaultMessage = test_default()
+
+
+    assert defaultResults < 1, defaultMessage
+
+
+def test_default():
+    testFailCount = 0                       # zero unit test result counter
+    testMessages = []                       # create empty array to store test log messages
+    unitTaskName = "unitTask"               # arbitrary name (don't change)
+    unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
     # Create a sim module as an empty container
-    scenarioSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim = SimulationBaseClass.SimBaseClass()
     # terminateSimulation() is needed if multiple unit test scripts are run
     # that run a simulation for the test. This creates a fresh and
     # consistent simulation environment for each test run.
-    scenarioSim.TotalSim.terminateSimulation()
+    unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
     testProcessRate = macros.sec2nano(0.5)     # update process rate update time
-    testProc = scenarioSim.CreateNewProcess(processname)
-    testProc.addTask(scenarioSim.CreateNewTask(taskName, testProcessRate))
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Create a spacecraft around Earth
     # initialize spacecraftPlus object and set properties
@@ -104,26 +111,20 @@ def run_scenario():
     oe.f     = 0.0*macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
 
-    n = np.sqrt(mu/oe.a/oe.a/oe.a)
-    P = 2.*np.pi/n
-
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)
-    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)
+    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenMatrix3d(vN)
 
     #   Create an eclipse object so the panels don't always work
     eclipseObject = eclipse.Eclipse()
     eclipseObject.addPositionMsgName(scObject.scStateOutMsgName)
     eclipseObject.addPlanetName('earth')
 
-    scenarioSim.AddModelToTask(taskName, eclipseObject)
-
     # Create a power sink/source
-    solarPanel = simpleSolarPanel.SimpleSolarPanel()
-    solarPanel.ModelTag = "solarPanel"
-    solarPanel.stateInMsgName = scObject.scStateOutMsgName
-    solarPanel.setPanelParameters(unitTestSupport.np2EigenVectorXd(np.array([1,0,0])), 0.2*0.3, 0.20)
-    solarPanel.nodePowerOutMsgName = "panelPowerMsg"
-    scenarioSim.AddModelToTask(taskName, solarPanel)
+    testPanel = simpleSolarPanel.SimpleSolarPanel()
+    testPanel.ModelTag = "solarPanel"
+    testPanel.setPanelParameters(unitTestSupport.np2EigenMatrix3d(np.array([1,0,0])), 0.2*0.3, 0.20)
+    testPanel.nodePowerOutMsgName = "panelPowerMsg"
+    unitTestSim.AddModelToTask(unitTaskName, testPanel)
 
 
     # setup Spice interface for some solar system bodies
@@ -133,56 +134,88 @@ def run_scenario():
                                      , spicePlanetNames = ["sun", "venus", "earth", "mars barycenter"]
                                      )
 
-    scenarioSim.AddModelToTask(taskName, gravFactory.spiceObject, None, -1)
+    # Create a power sink/source
+    testSourceModule = simplePowerSink.SimplePowerSink()
+    testSourceModule.ModelTag = "powerSource"
+    testSourceModule.nodePowerOut = 15. # Watts
+    testSourceModule.nodePowerOutMsgName = "powerSourceMsg"
+    unitTestSim.AddModelToTask(unitTaskName, testSourceModule)
 
-
-
-    powerSink = simplePowerSink.SimplePowerSink()
-    powerSink.ModelTag = "powerSink2"
-    powerSink.nodePowerOut = -10. # Watts
-    powerSink.nodePowerOutMsgName = "powerSinkMsg"
-    scenarioSim.AddModelToTask(taskName, powerSink)
+    testSinkModule = simplePowerSink.SimplePowerSink()
+    testSinkModule.ModelTag = "powerSink2"
+    testSinkModule.nodePowerOut = -10. # Watts
+    testSourceModule.nodePowerOutMsgName = "powerSinkMsg"
+    unitTestSim.AddModelToTask(unitTaskName, testSinkModule)
 
     # Create a simplePowerMonitor and attach the source/sink to it
-    powerMonitor = simplePowerMonitor.SimplePowerMonitor()
-    powerMonitor.ModelTag = "powerMonitor"
-    powerMonitor.batPowerOutMsgName = "powerMonitorMsg"
-    powerMonitor.addPowerNodeToModel(solarPanel.nodePowerOutMsgName)
-    powerMonitor.addPowerNodeToModel(powerSink.nodePowerOutMsgName)
-    scenarioSim.AddModelToTask(taskName, powerMonitor)
+    testMonitorModule = simplePowerMonitor.SimplePowerMonitor()
+    testMonitorModule.ModelTag = "powerMonitor"
+    testMonitorModule.batPowerOutMsgName = "powerMonitorMsg"
+    testMonitorModule.addPowerNodeToModel(testSourceModule.nodePowerOutMsgName)
+    testMonitorModule.addPowerNodeToModel(testSinkModule.nodePowerOutMsgName)
+    unitTestSim.AddModelToTask(unitTaskName, testMonitorModule)
 
 
     # Setup logging on the test module output message so that we get all the writes to it
-    scenarioSim.TotalSim.logThisMessage(solarPanel.nodePowerOutMsgName, testProcessRate)
-    scenarioSim.TotalSim.logThisMessage(powerSink.nodePowerOutMsgName, testProcessRate)
-    scenarioSim.TotalSim.logThisMessage(powerMonitor.batPowerOutMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(testSourceModule.nodePowerOutMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(testSinkModule.nodePowerOutMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(testMonitorModule.batPowerOutMsgName, testProcessRate)
 
     # Need to call the self-init and cross-init methods
-    scenarioSim.InitializeSimulation()
+    unitTestSim.InitializeSimulation()
 
     # Set the simulation time.
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    scenarioSim.ConfigureStopTime(P)        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
 
     # Begin the simulation time run set above
-    scenarioSim.ExecuteSimulation()
+    unitTestSim.ExecuteSimulation()
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    supplyData = scenarioSim.pullMessageLogData(solarPanel.nodePowerOutMsgName + ".netPower_W")
-    sinkData = scenarioSim.pullMessageLogData(powerSink.nodePowerOutMsgName + ".netPower_W")
-    storageData = scenarioSim.pullMessageLogData(powerMonitor.batPowerOutMsgName + ".storageLevel")
-    netData = scenarioSim.pullMessageLogData(powerMonitor.batPowerOutMsgName + ".currentNetPower")
+    supplyData = unitTestSim.pullMessageLogData(testSourceModule.nodePowerOutMsgName + ".netPower_W")
+    sinkData = unitTestSim.pullMessageLogData(testSinkModule.nodePowerOutMsgName + ".netPower_W")
+    storageData = unitTestSim.pullMessageLogData(testMonitorModule.batPowerOutMsgName + ".storageLevel")
+    netData = unitTestSim.pullMessageLogData(testMonitorModule.batPowerOutMsgName + ".currentNetPower")
 
-    plt.figure()
-    plt.plot(storageData)
-    plt.xlabel('Time')
-    plt.ylabel('Net Power Stored')
-    plt.show()
 
-    return
+
+
+
+
+    # compare the module results to the truth values
+    accuracy = 1e-16
+    unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
+
+    trueNetPower = 5.0 #Module should be off
+    trueStorageData = [0, 2.5, 5]
+
+    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
+        [trueNetPower]*3, netData, accuracy, "powerStorageNetCalculation",
+        testFailCount, testMessages)
+
+    testFailCount, testMessages = unitTestSupport.compareDoubleArray(
+        trueStorageData, storageData, accuracy, "powerStorageAccumulatedCalculation",
+        testFailCount, testMessages)
+
+    #   print out success or failure message
+    snippetName = "unitTestPassFailStatus"
+    if testFailCount == 0:
+        colorText = 'ForestGreen'
+        print "PASSED: " + testMonitorModule.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+    else:
+        colorText = 'Red'
+        print "Failed: " + testMonitorModule.ModelTag
+        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+    unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
+
+
+    # each test method requires a single assert method to be called
+    # this check below just makes sure no sub-test failures were found
+    return [testFailCount, ''.join(testMessages)]
 
 
 
@@ -191,4 +224,4 @@ def run_scenario():
 # stand-alone python script
 #
 if __name__ == "__main__":
-    run_scenario()
+    test_module()
