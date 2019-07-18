@@ -670,7 +670,7 @@ def run(show_plots, useDVThrusters):
     timeDataFSW = dataLr[:, 0] * macros.NANO2MIN
     plt.close("all")  # clears out plots from earlier test runs
 
-    plot_requested_torque(timeDataFSW, dataSigmaBR)
+    plot_requested_torque(timeDataFSW, dataLr)
     figureList = {}
     pltName = fileName + "1" + str(int(useDVThrusters))
     figureList[pltName] = plt.figure(1)
@@ -679,7 +679,7 @@ def run(show_plots, useDVThrusters):
     pltName = fileName + "2" + str(int(useDVThrusters))
     figureList[pltName] = plt.figure(2)
 
-    plot_attitude_error(timeDataFSW, dataLr)
+    plot_attitude_error(timeDataFSW, dataSigmaBR)
     pltName = fileName + "3" + str(int(useDVThrusters))
     figureList[pltName] = plt.figure(3)
 
