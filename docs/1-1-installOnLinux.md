@@ -6,7 +6,7 @@
 In order to run Basilisk, the following software will be necessary.  This document outline how to install this support software.
 
 * [Cmake](https://cmake.org/)
-* [Python 2.7 (numpy==1.15.4, matplotlib, pytest, conan, pandas)](https://www.python.org/downloads/mac-osx/)
+* [Python 2.7 OR Python 3.x (numpy==1.15.4, matplotlib, pytest, conan, pandas)](https://www.python.org/downloads/mac-osx/)
 * [SWIG](http://www.swig.org/)
 * [GCC](https://gcc.gnu.org/)
 
@@ -28,9 +28,10 @@ Note: Depending on your system setup, administrative permissions (sudo or su) ma
     $ apt-get install cmake
 ```
 
-2. Python 2.7 with Pip:
+2. Python 2.7 / Python 3.x with Pip:
 ```
     $ apt-get install python2.7
+    $ apt-get install python3.x
 ```
 
 3. SWIG: Available using:
@@ -46,8 +47,10 @@ Note: Depending on your system setup, administrative permissions (sudo or su) ma
     $ pip install conan
 ```
 
+## Build Process
+For Basilisk Python 2 and Python 3 inter-compatability, build using both following instructions then run using preffered python version.
 
-## Build Process via Terminal
+### Build Process via Terminal (Python 2)
 
 
 ```
@@ -73,6 +76,32 @@ Note: Depending on your system setup, administrative permissions (sudo or su) ma
     # Execute pytest
     $ pytest
 ```
+
+### Build Process via Terminal (Python 3)
+```
+    # Create directory for build and change directory to that
+    $ mkdir dist3
+    $ cd dist3
+
+    # Setup Conan Repositories (These can be consolidated into a private conan server [conan getting started docs](https://docs.conan.io/en/latest/introduction.html))
+
+    $ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+    $ conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
+
+    # CMake here in the build directory with Unix Makefiles, where the source code is located at: '../src'
+    $ cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug ../src  -DUSE_PROTOBUFFERS=OFF -DUSE_PYTHON3=ON
+
+    # Can do a multi core make by running 'make -j<number of cores +1>' such as 'make -j5'
+    # May take 3-10 minutes depending on the device
+    $ make
+
+    # Redirect to src directory where the tests are located
+    $ cd ../src/
+
+    # Execute pytest
+    $ pytest
+```
+
 
 
 
