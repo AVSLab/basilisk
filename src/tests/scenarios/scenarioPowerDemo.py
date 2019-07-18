@@ -39,7 +39,7 @@ splitPath = path.split(bskName)
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import simplePowerSink
-from Basilisk.simulation import simplePowerMonitor, simpleBattery
+from Basilisk.simulation import simplePowerMonitor
 from Basilisk.simulation import simMessages
 from Basilisk.simulation import simFswInterfaceMessages
 from Basilisk.simulation import simpleSolarPanel
@@ -75,7 +75,7 @@ def run_scenario():
     scenarioSim.TotalSim.terminateSimulation()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(1.0)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
     testProc = scenarioSim.CreateNewProcess(processname)
     testProc.addTask(scenarioSim.CreateNewTask(taskName, testProcessRate))
 
@@ -110,11 +110,6 @@ def run_scenario():
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)
 
-    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-    scObject.hub.omega_BN_BInit = [[0.001], [-0.001], [0.001]]
-    scenarioSim.AddModelToTask(taskName, scObject)
-
-
     #   Create an eclipse object so the panels don't always work
     eclipseObject = eclipse.Eclipse()
     eclipseObject.addPositionMsgName(scObject.scStateOutMsgName)
@@ -126,7 +121,6 @@ def run_scenario():
     solarPanel = simpleSolarPanel.SimpleSolarPanel()
     solarPanel.ModelTag = "solarPanel"
     solarPanel.stateInMsgName = scObject.scStateOutMsgName
-    solarPanel.sunEclipseInMsgName = "eclipse_data_0"
     solarPanel.setPanelParameters(unitTestSupport.np2EigenVectorXd(np.array([1,0,0])), 0.2*0.3, 0.20)
     solarPanel.nodePowerOutMsgName = "panelPowerMsg"
     scenarioSim.AddModelToTask(taskName, solarPanel)
@@ -145,16 +139,14 @@ def run_scenario():
 
     powerSink = simplePowerSink.SimplePowerSink()
     powerSink.ModelTag = "powerSink2"
-    powerSink.nodePowerOut = -3. # Watts
+    powerSink.nodePowerOut = -10. # Watts
     powerSink.nodePowerOutMsgName = "powerSinkMsg"
     scenarioSim.AddModelToTask(taskName, powerSink)
 
     # Create a simplePowerMonitor and attach the source/sink to it
-    powerMonitor = simpleBattery.SimpleBattery()
+    powerMonitor = simplePowerMonitor.SimplePowerMonitor()
     powerMonitor.ModelTag = "powerMonitor"
     powerMonitor.batPowerOutMsgName = "powerMonitorMsg"
-    powerMonitor.storageCapacity = 10.0
-    powerMonitor.storedCharge = 10.0
     powerMonitor.addPowerNodeToModel(solarPanel.nodePowerOutMsgName)
     powerMonitor.addPowerNodeToModel(powerSink.nodePowerOutMsgName)
     scenarioSim.AddModelToTask(taskName, powerMonitor)
@@ -172,7 +164,7 @@ def run_scenario():
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    scenarioSim.ConfigureStopTime(macros.sec2nano(P))        # seconds to stop simulation
+    scenarioSim.ConfigureStopTime(P)        # seconds to stop simulation
 
     # Begin the simulation time run set above
     scenarioSim.ExecuteSimulation()
@@ -183,19 +175,11 @@ def run_scenario():
     sinkData = scenarioSim.pullMessageLogData(powerSink.nodePowerOutMsgName + ".netPower_W")
     storageData = scenarioSim.pullMessageLogData(powerMonitor.batPowerOutMsgName + ".storageLevel")
     netData = scenarioSim.pullMessageLogData(powerMonitor.batPowerOutMsgName + ".currentNetPower")
-    tvec = supplyData[:,0]
-    tvec = tvec * macros.NANO2HOUR
 
     plt.figure()
-    plt.style.use(['aiaa'])
-    plt.plot(tvec,storageData[:,1],label='Stored Power (W-Hr)')
-    plt.plot(tvec,netData[:,1],label='Net Power (W)')
-    plt.plot(tvec,supplyData[:,1],label='Panel Power (W)')
-    plt.plot(tvec,sinkData[:,1],label='Power Draw (W)')
-    plt.xlabel('Time (Hr)')
-    plt.ylabel('Power (W)')
-    plt.grid(True)
-    plt.legend()
+    plt.plot(storageData)
+    plt.xlabel('Time')
+    plt.ylabel('Net Power Stored')
     plt.show()
 
     return
