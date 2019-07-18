@@ -30,6 +30,7 @@
 #include "simMessages/atmoPropsSimMsg.h"
 #include "../_GeneralModuleFiles/atmosphereBase.h"
 #include "simMessages/swDataSimMsg.h"
+#include "simMessages/epochSimMsg.h"
 
 extern "C" {
   #include "nrlmsise-00.h"
@@ -85,7 +86,8 @@ public:
     double lst;
     uint64_t doy;
     uint64_t startDoy; //!< [day] Day-of-Year at simulation start
-
+    std::string epochInMsgName;
+    int64_t epochInMsgId;
 
     std::string expString;
     std::string msisString;
@@ -93,7 +95,7 @@ public:
 private:
     std::vector<SwDataSimMsg> swDataBuffer;
     double currentAlt; //!< [m] Current s/c altitude
-
+    EpochSimMsg epochContainer;
     Eigen::Vector3d relativePos; //!< [-] Container for local position
     Eigen::Vector3d currentLLA; //!< [-] Container for local Latitude, Longitude, Altitude geodetic position; units are rad and km respectively.
 
