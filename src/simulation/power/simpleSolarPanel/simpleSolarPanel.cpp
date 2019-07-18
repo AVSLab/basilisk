@@ -140,8 +140,8 @@ void SimpleSolarPanel::evaluatePowerModel(PowerNodeUsageSimMsg *powerUsageSimMsg
 
     this->computeSunData();
     // SunPowerFactor = baseSunPower * distanceFactor * illuminationFactor *
-
-    double sunPowerFactor = SOLAR_FLUX_EARTH * this->sunDistanceFactor * this->sunVisibilityFactor.shadowFactor;
+    double sunPowerFactor = 0;
+    sunPowerFactor = SOLAR_FLUX_EARTH * this->sunDistanceFactor * this->sunVisibilityFactor.shadowFactor;
     powerUsageSimMsg->netPower_W = sunPowerFactor * this->projectedArea * this->panelEfficiency;
 
     return;
