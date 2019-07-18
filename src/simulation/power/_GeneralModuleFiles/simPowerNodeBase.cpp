@@ -134,7 +134,7 @@ void PowerNodeBase::writeMessages(uint64_t CurrentClock)
     SystemMessaging::GetInstance()->WriteMessage(this->nodePowerOutMsgId,
                                                  CurrentClock,
                                                  sizeof(PowerNodeUsageSimMsg),
-                                                 reinterpret_cast<uint8_t*>(&nodePowerOut),
+                                                 reinterpret_cast<uint8_t*>(&nodePowerMsg),
                                                          moduleID);
 
     //! - call the custom method to perform additional output message writing
@@ -162,7 +162,7 @@ bool PowerNodeBase::readMessages()
     //! - read in the power node use/supply messages
     bool powerRead = true;
     bool tmpStatusRead = true;
-    if(this->nodeStatusInMsgId > 0)
+    if(this->nodeStatusInMsgId >= 0)
     {
         memset(&statusMsg, 0x0, sizeof(PowerNodeStatusIntMsg));
         tmpStatusRead = SystemMessaging::GetInstance()->ReadMessage(this->nodeStatusInMsgId, &localHeader,
