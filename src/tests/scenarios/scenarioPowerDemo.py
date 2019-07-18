@@ -75,7 +75,7 @@ def run_scenario():
     scenarioSim.TotalSim.terminateSimulation()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+    testProcessRate = macros.sec2nano(1.0)     # update process rate update time
     testProc = scenarioSim.CreateNewProcess(processname)
     testProc.addTask(scenarioSim.CreateNewTask(taskName, testProcessRate))
 
@@ -110,6 +110,11 @@ def run_scenario():
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)
 
+    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
+    scObject.hub.omega_BN_BInit = [[0.8], [-0.6], [0.5]]
+    scenarioSim.AddModelToTask(taskName, scObject)
+
+
     #   Create an eclipse object so the panels don't always work
     eclipseObject = eclipse.Eclipse()
     eclipseObject.addPositionMsgName(scObject.scStateOutMsgName)
@@ -121,6 +126,7 @@ def run_scenario():
     solarPanel = simpleSolarPanel.SimpleSolarPanel()
     solarPanel.ModelTag = "solarPanel"
     solarPanel.stateInMsgName = scObject.scStateOutMsgName
+    solarPanel.sunEclipseInMsgName = "eclipse_data_0"
     solarPanel.setPanelParameters(unitTestSupport.np2EigenVectorXd(np.array([1,0,0])), 0.2*0.3, 0.20)
     solarPanel.nodePowerOutMsgName = "panelPowerMsg"
     scenarioSim.AddModelToTask(taskName, solarPanel)
@@ -139,7 +145,7 @@ def run_scenario():
 
     powerSink = simplePowerSink.SimplePowerSink()
     powerSink.ModelTag = "powerSink2"
-    powerSink.nodePowerOut = -10. # Watts
+    powerSink.nodePowerOut = -6. # Watts
     powerSink.nodePowerOutMsgName = "powerSinkMsg"
     scenarioSim.AddModelToTask(taskName, powerSink)
 
@@ -164,7 +170,7 @@ def run_scenario():
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    scenarioSim.ConfigureStopTime(P)        # seconds to stop simulation
+    scenarioSim.ConfigureStopTime(macros.sec2nano(P))        # seconds to stop simulation
 
     # Begin the simulation time run set above
     scenarioSim.ExecuteSimulation()
@@ -177,9 +183,13 @@ def run_scenario():
     netData = scenarioSim.pullMessageLogData(powerMonitor.batPowerOutMsgName + ".currentNetPower")
 
     plt.figure()
-    plt.plot(storageData)
+    plt.plot(storageData[:,1],label='Integrated Net Power')
+    plt.plot(netData[:,1],label='Net Power I/O')
+    plt.plot(supplyData[:,1],label='Panel Power')
+    plt.plot(sinkData[:,1],label='Power Draw')
     plt.xlabel('Time')
-    plt.ylabel('Net Power Stored')
+    plt.ylabel('Power (W)')
+    plt.legend()
     plt.show()
 
     return
