@@ -35,7 +35,7 @@
 PowerStorageBase::PowerStorageBase()
 {
     this->outputBufferCount = 2;
-
+    this->previousTime = 0;
     this->nodePowerUseMsgNames.clear();
 
     return;
@@ -96,6 +96,7 @@ void PowerStorageBase::CrossInit()
  */
 void PowerStorageBase::Reset(uint64_t CurrentSimNanos)
 {
+    this->previousTime = 0;
     //! - call the custom environment module reset method
     customReset(CurrentSimNanos);
 
