@@ -47,10 +47,10 @@ Note: Depending on your system setup, administrative permissions (sudo or su) ma
     $ pip install conan
 ```
 
-## Build Process
+## Build Process via Terminal
 For Basilisk Python 2 and Python 3 inter-compatability, build using both following instructions then run using preffered python version.
 
-### Build Process via Terminal (Python 2)
+### Python 2
 
 
 ```
@@ -77,7 +77,7 @@ For Basilisk Python 2 and Python 3 inter-compatability, build using both followi
     $ pytest
 ```
 
-### Build Process via Terminal (Python 3)
+### Python 3
 ```
     # Create directory for build and change directory to that
     $ mkdir dist3
