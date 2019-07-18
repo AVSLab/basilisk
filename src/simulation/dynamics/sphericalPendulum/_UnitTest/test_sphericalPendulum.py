@@ -177,7 +177,7 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     mu = planet.mu
 
     # attach gravity to the spacecraft
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # initialize orbital elements
     oe = orbitalMotion.ClassicElements()
@@ -232,9 +232,9 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     
     if testCase == 3:
         fuelMass = scSim.pullMessageLogData(scSim.fuelTankStateEffector.FuelTankOutMsgName + '.fuelMass',
-                                                  range(1))
+                                                  list(range(1)))
         fuelMassDot = scSim.pullMessageLogData(scSim.fuelTankStateEffector.FuelTankOutMsgName + '.fuelMassDot',
-                                                  range(1))
+                                                  list(range(1)))
         mass1Out = scSim.GetLogVariableData(
             "spacecraftBody.dynManager.getStateObject('sphericalPendulumMass1').getState()")
         mass2Out = scSim.GetLogVariableData(
@@ -337,10 +337,10 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
             testMessages.append("FAILED: Linear Spring Mass Damper unit test failed mass 2 dot test")
 
     if testFailCount == 0:
-        print "PASSED "
+        print("PASSED ")
     else:
-        print testFailCount
-        print testMessages
+        print(testFailCount)
+        print(testMessages)
 
     return [testFailCount, ''.join(testMessages)]
 

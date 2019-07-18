@@ -80,7 +80,7 @@ uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize,
 {
     MessageIdentData MessageID;
     SingleMessageHeader DataHeader;
-    
+
     //! - Grab the message ID associated with name if it exists
     MessageID = SystemMessaging::GetInstance()->messagePublishSearch(MessageName);
     //! - If we got an invalid message ID back, alert the user and quit
@@ -108,8 +108,8 @@ uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize,
     return(DataHeader.WriteClockNanos);
 }
 
-/*! This method allows the user to attach a process to the simulation for 
-    execution.  Note that the priority level of the process determines what 
+/*! This method allows the user to attach a process to the simulation for
+    execution.  Note that the priority level of the process determines what
     order it gets called in: higher priorities are called before lower
     priorities. If priorities are the same, the proc added first goes first.
     @return void
@@ -166,7 +166,7 @@ void SimModel::crossInitSimulation()
     {
         throw std::range_error("Message creation failed during cross.  Please examine output.\n");
     }
-    
+
 }
 /*! This method goes through all of the processes in the simulation,
  *  all of the tasks within each process, and all of the models within
@@ -186,8 +186,8 @@ void SimModel::resetInitSimulation()
     }
 }
 
-/*! This method steps all of the processes forward to the current time.  It also 
-    increments the internal simulation time appropriately as the simulation 
+/*! This method steps all of the processes forward to the current time.  It also
+    increments the internal simulation time appropriately as the simulation
     processes are triggered
     @param int64_t stopPri The priority level below which the sim won't go
     @return void
@@ -234,7 +234,7 @@ void SimModel::SingleStepProcesses(int64_t stopPri)
     this->messageLogs.logAllMessages();
 }
 
-/*! This method steps the simulation until the specified stop time and 
+/*! This method steps the simulation until the specified stop time and
  stop priority have been reached.
  @return void
  @param uint64_t SimStopTime Nanoseconds to step the simulation for
@@ -299,7 +299,7 @@ void SimModel::CreateNewMessage(std::string processName, std::string MessageName
         BSK_PRINT_BRIEF(MSG_ERROR, "You tried to create a message in a process that doesn't exist. No dice.");
         throw std::range_error("Message creation failed.  Please examine output.\n");
     }
-        
+
 }
 
 /*! This method exists to provide a hook into the messaging system for writing
@@ -313,7 +313,7 @@ void SimModel::WriteMessageData(std::string MessageName, uint64_t MessageSize,
                                 uint64_t ClockTime, void *MessageData)
 {
     MessageIdentData MessageID; // A class with all of the message identifying information, including the ID
-    
+
     //! - Grab the message ID associated with name if it exists
     MessageID = SystemMessaging::GetInstance()->
         messagePublishSearch(MessageName);
@@ -335,20 +335,20 @@ void SimModel::WriteMessageData(std::string MessageName, uint64_t MessageSize,
  @return void
  @param std::string messageName The name of the message that we want to log
  @param uint64_t messagePeriod The minimum time between messages to allow in ns
- */ 
+ */
 void SimModel::logThisMessage(std::string messageName, uint64_t messagePeriod)
 {
-    this->messageLogs.addMessageLog(messageName, messagePeriod);
+    messageLogs.addMessageLog(messageName, messagePeriod);
 }
 
-/*! This method gets the current number of messages that have been created in 
+/*! This method gets the current number of messages that have been created in
     the simulation.
     @return uint64_t The number of messages that have been created
 */
 uint64_t SimModel::getNumMessages() {
     return(SystemMessaging::GetInstance()->GetMessageCount());
 }
-/*! This method finds the name associated with the message ID that is passed 
+/*! This method finds the name associated with the message ID that is passed
     in.
     @return std::string messageName The message name for the ID
     @param uint64_t messageID The message id that we wish to find the name for
@@ -359,8 +359,8 @@ std::string SimModel::getMessageName(uint64_t messageID)
 }
 
 /*! This method obtains the header information associated with a given message.
-   Note the copy out to the incoming message.  The assumption is that this 
-   method is called from the python level where the storage for headerOut is 
+   Note the copy out to the incoming message.  The assumption is that this
+   method is called from the python level where the storage for headerOut is
    created.  This way we don't connect a pointer to the internal message at the
    python level
    @return void
@@ -391,7 +391,7 @@ MessageIdentData SimModel::getMessageID(std::string messageName)
     return(messageID);
 }
 
-/*! This method gets the list of unique message names present in the simulation 
+/*! This method gets the list of unique message names present in the simulation
     so that the user can see what messages have been created with no duplicates
     @return std::set<std::string> set of strings that constitute the unique names
 */
@@ -411,7 +411,7 @@ void SimModel::terminateSimulation()
     SystemMessaging::GetInstance()->clearMessaging();
 }
 
-/*! This method returns all of the read/write pairs for the entire simulation 
+/*! This method returns all of the read/write pairs for the entire simulation
     for a given message.  That allows us to capture and analyze our data flow in
     a very clean manner.
     @return std::set<std::pair> returnPairs Write/Read pairs for the entire simulation run
@@ -441,14 +441,14 @@ std::set<std::pair<long int, long int>> SimModel::getMessageExchangeData(std::st
             returnPairs.insert(localPairs.begin(), localPairs.end());
             messageFound = true;
         }
-        
+
     }
-    
+
     if(!messageFound)
     {
         BSK_PRINT_BRIEF(MSG_WARNING, "I couldn't find a message with the name:"
                                      " %s Can't give you exchange pairs for it.", messageName.c_str());
     }
     return(returnPairs);
-    
+
 }

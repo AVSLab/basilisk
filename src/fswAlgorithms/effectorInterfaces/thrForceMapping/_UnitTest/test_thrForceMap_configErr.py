@@ -36,7 +36,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
 from Basilisk.simulation import simFswInterfaceMessages
 
-from Support import Results_thrForceMapping
+from .Support import Results_thrForceMapping
 
 import os, inspect
 import numpy as np
@@ -275,7 +275,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "thrForce"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(MAX_EFF_CNT))
+                                                  list(range(MAX_EFF_CNT)))
 
     if misconfigThruster:
         return [testFailCount, ''.join(testMessages)] # We don't handle cases where a thruster is configured incorrectly.
@@ -305,11 +305,11 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
         numControlAxis) + "_" + str(saturateThrusters) + "_" + str(misconfigThruster)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
+        print("Failed: " + moduleWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

@@ -102,16 +102,16 @@ def unitephemeris_converter(show_plots):
     # Get the position, velocities and time for the message before and after the copy
     accuracy = 1e-12
     for planet in planets:
-        ephemPlanetPosData = sim.pullMessageLogData(planet + '_ephemeris_data' + '.r_BdyZero_N', range(3))
-        spicePlanetPosData = sim.pullMessageLogData(planet + '_planet_data' + '.PositionVector', range(3))
-        ephemPlanetVelData = sim.pullMessageLogData(planet + '_ephemeris_data' + '.v_BdyZero_N', range(3))
-        spicePlanetVelData = sim.pullMessageLogData(planet + '_planet_data' + '.VelocityVector', range(3))
+        ephemPlanetPosData = sim.pullMessageLogData(planet + '_ephemeris_data' + '.r_BdyZero_N', list(range(3)))
+        spicePlanetPosData = sim.pullMessageLogData(planet + '_planet_data' + '.PositionVector', list(range(3)))
+        ephemPlanetVelData = sim.pullMessageLogData(planet + '_ephemeris_data' + '.v_BdyZero_N', list(range(3)))
+        spicePlanetVelData = sim.pullMessageLogData(planet + '_planet_data' + '.VelocityVector', list(range(3)))
         testFailCount, testMessages = unitTestSupport.compareArrayRelative(spicePlanetPosData[:,1:4], ephemPlanetPosData, accuracy, "Position", testFailCount, testMessages)
         testFailCount, testMessages = unitTestSupport.compareArrayRelative(spicePlanetVelData[:,1:4], ephemPlanetVelData, accuracy, "Velocity", testFailCount, testMessages)
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print   " \n PASSED "
+        print(" \n PASSED ")
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

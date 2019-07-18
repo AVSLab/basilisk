@@ -262,12 +262,12 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     #
     #   Constellation Outputs and plots
     #
-    cssOutput = unitTestSim.pullMessageLogData(singleCss.cssDataOutMsgName + ".OutputData", range(1))
+    cssOutput = unitTestSim.pullMessageLogData(singleCss.cssDataOutMsgName + ".OutputData", list(range(1)))
     if useConstellation:
         constellationP1data = unitTestSim.pullMessageLogData(constellationP1.outputConstellationMessage + ".CosValue",
-                                                             range(len(constellationP1List)))
+                                                             list(range(len(constellationP1List))))
         constellationP2data = unitTestSim.pullMessageLogData(constellationP2.outputConstellationMessage + ".CosValue",
-                                                             range(len(constellationP2List)))
+                                                             list(range(len(constellationP2List))))
 
         plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
         plt.clf()
@@ -355,7 +355,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     snippetName = name + "PassFailMsg"
     snippetContent = passFailMsg
     unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
-    print "\n", passFailMsg
+    print("\n", passFailMsg)
 
     # write pytest parameters to AutoTex folder
     # "useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue, errTol, name, zLevel, lineWide"

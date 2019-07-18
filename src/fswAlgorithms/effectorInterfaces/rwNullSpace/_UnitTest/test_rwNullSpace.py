@@ -125,8 +125,8 @@ def rwNullSpaceTestFunction(numWheels):
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    outputCrtlData = unitTestSim.pullMessageLogData(moduleConfig.outputControlName+'.motorTorque', range(3))
-    print outputCrtlData
+    outputCrtlData = unitTestSim.pullMessageLogData(moduleConfig.outputControlName+'.motorTorque', list(range(3)))
+    print(outputCrtlData)
 
     if numWheels is 3:
         # in this case there is no nullspace of the RW configuration.  The output torque should be the input torque
@@ -168,11 +168,11 @@ def rwNullSpaceTestFunction(numWheels):
     snippentName = "passFail" + str(numWheels)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
+        print("Failed: " + moduleWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

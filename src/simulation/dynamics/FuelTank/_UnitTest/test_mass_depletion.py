@@ -157,14 +157,14 @@ def test_massDepletionTest(show_plots):
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
 
     thrust = unitTestSim.pullMessageLogData(thrustersDynamicEffector.thrusterOutMsgNames[0] + '.thrustForce_B',
-                                                  range(3))
+                                                  list(range(3)))
     thrustPercentage = unitTestSim.pullMessageLogData(thrustersDynamicEffector.thrusterOutMsgNames[0] + '.thrustFactor',
-                                                  range(1))
+                                                  list(range(1)))
 
     fuelMass = unitTestSim.pullMessageLogData(unitTestSim.fuelTankStateEffector.FuelTankOutMsgName + '.fuelMass',
-                                                  range(1))
+                                                  list(range(1)))
     fuelMassDot = unitTestSim.pullMessageLogData(unitTestSim.fuelTankStateEffector.FuelTankOutMsgName + '.fuelMassDot',
-                                                  range(1))
+                                                  list(range(1)))
 
 
 
@@ -214,9 +214,9 @@ def test_massDepletionTest(show_plots):
                 ]
 
     moduleOutputr_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N',
-                                                  range(3))
+                                                  list(range(3)))
     moduleOutputSigma = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
-                                                  range(3))
+                                                  list(range(3)))
 
 
     accuracy = 1e-7
@@ -239,7 +239,7 @@ def test_massDepletionTest(show_plots):
     passFail(testFailCount, snippetName)
 
     if testFailCount == 0:
-        print "PASSED: " + " Thruster Integrated Sim Test"
+        print("PASSED: " + " Thruster Integrated Sim Test")
 
     assert testFailCount < 1, testMessages
 

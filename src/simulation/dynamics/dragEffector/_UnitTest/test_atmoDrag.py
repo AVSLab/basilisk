@@ -172,7 +172,7 @@ def run(show_plots, orbitCase, planetCase):
         planet.isCentralBody = True          # ensure this is the central gravitational body
     mu = planet.mu
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     #   setup orbit and simulation time
@@ -251,9 +251,9 @@ def run(show_plots, orbitCase, planetCase):
     #
     #   retrieve the logged data
     #
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N',range(3))
-    attData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN', range(3))
+    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',list(range(3)))
+    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N',list(range(3)))
+    attData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN', list(range(3)))
     dragForce = scSim.GetLogVariableData('DragEff.forceExternal_B')
     densData = scSim.pullMessageLogData(newAtmo.envOutMsgNames[-1]+'.neutralDensity')
     np.set_printoptions(precision=16)
@@ -365,9 +365,9 @@ def run(show_plots, orbitCase, planetCase):
         plt.close("all")
 
     if testFailCount == 0:
-        print "PASSED: " + dragEffector.ModelTag
+        print("PASSED: " + dragEffector.ModelTag)
     else:
-        print "Failed: " + dragEffector.ModelTag
+        print("Failed: " + dragEffector.ModelTag)
 
     return testFailCount, testMessages
 

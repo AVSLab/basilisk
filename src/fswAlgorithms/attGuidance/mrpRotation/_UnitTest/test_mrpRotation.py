@@ -171,7 +171,7 @@ def run(show_plots, cmdStateFlag, testReset):
     #
     moduleOutputName = "sigma_RN"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     testFailCount, testMessages = unitTestSupport.compareArray(trueSigma, moduleOutput,
                                                                accuracy, "sigma_RN Set",
                                                                testFailCount, testMessages)
@@ -180,7 +180,7 @@ def run(show_plots, cmdStateFlag, testReset):
     #
     moduleOutputName = "omega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     testFailCount, testMessages = unitTestSupport.compareArray(trueOmega, moduleOutput,
                                                                accuracy, "omega_RN_N Vector",
                                                                testFailCount, testMessages)
@@ -190,7 +190,7 @@ def run(show_plots, cmdStateFlag, testReset):
     #
     moduleOutputName = "domega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     testFailCount, testMessages = unitTestSupport.compareArray(truedOmega, moduleOutput,
                                                                accuracy, "domega_RN_N Vector",
                                                                testFailCount, testMessages)
@@ -199,11 +199,11 @@ def run(show_plots, cmdStateFlag, testReset):
     snippentName = "passFail" + str(cmdStateFlag) + str(testReset)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
+        print("Failed: " + moduleWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

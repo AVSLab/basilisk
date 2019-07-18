@@ -35,10 +35,10 @@ def equalCheck(v1, v2, methodName, e_count):
     if len(v1) == len(v2):
         if np.allclose(v1, v2, atol=a_tol):
             return
-        print methodName + 'failed'
+        print(methodName + 'failed')
         e_count += 1
     else:
-        print 'Mismatching lengths.'
+        print('Mismatching lengths.')
 
 
 v1 = np.array([0.45226701686665, 0.75377836144441, 0.15075567228888, 0.45226701686665])
@@ -870,13 +870,13 @@ v_true = np.array([-1.038961038961039, 1.298701298701299, -1.558441558441558])
 equalCheck(v, v_true, 'MRPswitch', e_count)
 
 if rbk.Picheck(1.2) != 1.2:
-    print 'Picheck failed'
+    print('Picheck failed')
     e_count += 1
 if rbk.Picheck(4.2) != -2.083185307179586:
-    print 'Picheck failed'
+    print('Picheck failed')
     e_count += 1
 if rbk.Picheck(-4.2) != 2.083185307179586:
-    print 'Picheck failed'
+    print('Picheck failed')
     e_count += 1
 
 C = rbk.PRV2C(v1)

@@ -274,7 +274,7 @@ def run(show_plots, useAltBodyFrame):
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     #   initialize Spacecraft States with initialization variables
@@ -389,12 +389,12 @@ def run(show_plots, useAltBodyFrame):
     #
     #   retrieve the logged data
     #
-    dataLr = scSim.pullMessageLogData(mrpControlConfig.outputDataName + ".torqueRequestBody", range(3))
-    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", range(3))
-    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", range(3))
-    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", range(3))
-    dataVel = scSim.pullMessageLogData(sNavObject.outputTransName + ".v_BN_N", range(3))
-    dataSigmaBN = scSim.pullMessageLogData(sNavObject.outputAttName + ".sigma_BN", range(3))
+    dataLr = scSim.pullMessageLogData(mrpControlConfig.outputDataName + ".torqueRequestBody", list(range(3)))
+    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", list(range(3)))
+    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", list(range(3)))
+    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", list(range(3)))
+    dataVel = scSim.pullMessageLogData(sNavObject.outputTransName + ".v_BN_N", list(range(3)))
+    dataSigmaBN = scSim.pullMessageLogData(sNavObject.outputAttName + ".sigma_BN", list(range(3)))
     np.set_printoptions(precision=16)
 
     #

@@ -129,7 +129,7 @@ def run(show_plots, voltage):
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "motorTorque"
     moduleOutput = unitTestSim.pullMessageLogData(testModule.rwMotorTorqueOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
 
     # set truth states
 
@@ -149,7 +149,7 @@ def run(show_plots, voltage):
     resultTable = moduleOutput
     resultTable[:, 0] = macros.NANO2SEC * resultTable[:, 0]
     diff = np.delete(moduleOutput, 0, 1) - trueVector
-    resultTable = np.insert(resultTable, range(2, 2 + len(diff.transpose())), diff, axis=1)
+    resultTable = np.insert(resultTable, list(range(2, 2 + len(diff.transpose()))), diff, axis=1)
 
     tableName = "baseVoltage" + str(voltage)
     tableHeaders = ["time [s]", "$u_{s,1}$ (Nm)", "Error", "$u_{s,2}$ (Nm)", "Error", "$u_{u,3}$ (Nm)", "Error"]
@@ -166,7 +166,7 @@ def run(show_plots, voltage):
     snippetName = "passFail" + '{:1.1f}'.format(voltage)
     if testFailCount == 0:
         colorText = "ForestGreen"
-        print "PASSED: " + testModule.ModelTag
+        print("PASSED: " + testModule.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = "Red"

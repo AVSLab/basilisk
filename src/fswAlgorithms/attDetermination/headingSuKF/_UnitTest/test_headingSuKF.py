@@ -294,7 +294,7 @@ def heading_utilities_test(show_plots):
     expectIdent = np.dot(InvOut, np.array(InvSourceMat).reshape(nRow,nRow))
     errorNorm = np.linalg.norm(expectIdent - np.identity(nRow))
     if(errorNorm > 1.0E-12):
-        print errorNorm
+        print(errorNorm)
         testFailCount += 1
         testMessages.append("L Matrix Inverse accuracy failure")
 
@@ -315,7 +315,7 @@ def heading_utilities_test(show_plots):
     expectIdent = np.dot(InvOut, np.array(InvSourceMat).reshape(nRow,nRow))
     errorNorm = np.linalg.norm(expectIdent - np.identity(nRow))
     if(errorNorm > 1.0E-12):
-        print errorNorm
+        print(errorNorm)
         testFailCount += 1
         testMessages.append("U Matrix Inverse accuracy failure")
 
@@ -327,7 +327,7 @@ def heading_utilities_test(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + " UKF utilities"
+        print("PASSED: " + " UKF utilities")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -392,9 +392,9 @@ def StateUpdateSunLine(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", range(5))
-    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", range(3))
-    covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", range(5*5))
+    stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", list(range(5)))
+    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", list(range(3)))
+    covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", list(range(5*5)))
 
     for i in range(5):
         # check covariance immediately after measurement is taken,
@@ -403,7 +403,7 @@ def StateUpdateSunLine(show_plots):
             testFailCount += 1
             testMessages.append("Covariance update failure")
         if(abs(stateLog[-1, i+1] - stateTarget[i]) > 1.0E-1):
-            print abs(stateLog[-1, i+1] - stateTarget[i])
+            print(abs(stateLog[-1, i+1] - stateTarget[i]))
             testFailCount += 1
             testMessages.append("State update failure")
 
@@ -423,17 +423,17 @@ def StateUpdateSunLine(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+t1 +1)*0.5))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", range(5))
-    stateErrorLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".stateError", range(5))
-    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", range(3))
-    covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", range(5*5))
+    stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", list(range(5)))
+    stateErrorLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".stateError", list(range(5)))
+    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", list(range(3)))
+    covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", list(range(5*5)))
 
     for i in range(5):
         if(covarLog[1951, i*5+1+i] > covarLog[0, i*5+1+i]/10):
             testFailCount += 1
             testMessages.append("Covariance update failure")
         if(abs(stateLog[-1, i+1] - stateTarget[i]) > 1.0E-1):
-            print abs(stateLog[-1, i+1] - stateTarget[i])
+            print(abs(stateLog[-1, i+1] - stateTarget[i]))
             testFailCount += 1
             testMessages.append("State update failure")
 
@@ -443,7 +443,7 @@ def StateUpdateSunLine(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag + " state update"
+        print("PASSED: " + moduleWrap.ModelTag + " state update")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -485,16 +485,16 @@ def StatePropSunLine(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
     
-    stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", range(5))
-    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", range(3))
-    covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", range(5*5))
+    stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", list(range(5)))
+    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", list(range(3)))
+    covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", list(range(5*5)))
 
     FilterPlots.StateCovarPlot(stateLog, covarLog, 'Prop', show_plots)
     FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, 'Prop', show_plots)
 
     for i in range(5):
         if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > 1.0E-10):
-            print abs(stateLog[-1, i+1] - stateLog[0, i+1])
+            print(abs(stateLog[-1, i+1] - stateLog[0, i+1]))
             testFailCount += 1
             testMessages.append("State propagation failure")
 
@@ -502,7 +502,7 @@ def StatePropSunLine(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag + " state propagation"
+        print("PASSED: " + moduleWrap.ModelTag + " state propagation")
 
     # return fail count and join into a single string all messages in the list
     # testMessage

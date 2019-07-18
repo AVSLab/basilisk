@@ -314,7 +314,7 @@ def unitSimpleNav(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print   "PASSED"
+        print("PASSED")
 
     assert testFailCount < 1, testMessages
     # each test method requires a single assert method to be called

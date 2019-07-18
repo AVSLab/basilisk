@@ -235,7 +235,7 @@ def StateUpdateRelOD(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * dt))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", range(6 * 6))
+    covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", list(range(6 * 6)))
 
     for i in range(6):
         if (covarLog[t1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i] / 100):
@@ -257,10 +257,10 @@ def StateUpdateRelOD(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1)*dt))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".state", range(6))
-    stateErrorLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".stateError", range(6))
-    postFitLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".postFitRes", range(3))
-    covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", range(6 * 6))
+    stateLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".state", list(range(6)))
+    stateErrorLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".stateError", list(range(6)))
+    postFitLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".postFitRes", list(range(3)))
+    covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", list(range(6 * 6)))
 
     diff = np.copy(stateLog)
     diff[:,1:]-=expected[:,1:]
@@ -281,7 +281,7 @@ def StateUpdateRelOD(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag + " state update"
+        print("PASSED: " + moduleWrap.ModelTag + " state update")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -337,8 +337,8 @@ def StatePropRelOD(show_plots):
     for i in range(1, len(time)):
         energy[i] = - mu / (2 * orbitalMotion.rv2elem(mu, expected[i, 1:4], expected[i, 4:]).a)
 
-    stateLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".state", range(6))
-    covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", range(6 * 6))
+    stateLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".state", list(range(6)))
+    covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", list(range(6 * 6)))
 
     diff = np.copy(stateLog)
     diff[:,1:]-=expected[:,1:]
@@ -357,7 +357,7 @@ def StatePropRelOD(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag + " state propagation"
+        print("PASSED: " + moduleWrap.ModelTag + " state propagation")
 
     # return fail count and join into a single string all messages in the list
     # testMessage

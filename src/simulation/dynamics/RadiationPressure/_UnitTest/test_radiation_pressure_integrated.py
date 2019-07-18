@@ -88,7 +88,7 @@ def radiationPressureIntegratedTest(show_plots):
     sim.AddModelToTask(simTaskName, spice, None, -1)
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
@@ -137,8 +137,8 @@ def radiationPressureIntegratedTest(show_plots):
     #
     #   retrieve the logged data
     #
-    earthEphm = sim.pullMessageLogData("earth_planet_data.PositionVector", range(3))
-    posData = sim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', range(3))
+    earthEphm = sim.pullMessageLogData("earth_planet_data.PositionVector", list(range(3)))
+    posData = sim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
 
     pos_rel_earth = posData[:, 1:4] - earthEphm[:, 1:4]
     pos_rel_earth = np.insert(pos_rel_earth, 0, posData[:, 0], axis=1)
@@ -148,8 +148,8 @@ def radiationPressureIntegratedTest(show_plots):
     numTruthPoints = 10
     skipValue = int(len(pos_rel_earth) / (numTruthPoints - 1))
     pos_rel_earth_parse = pos_rel_earth[::skipValue]
-    print "earth pos:"
-    print pos_rel_earth_parse
+    print("earth pos:")
+    print(pos_rel_earth_parse)
 
     # true position for un perturbed 2 body GEO orbit with cannonball SRP
     true_pos = np.array([[ -2.18197848e+07,  3.58872415e+07,  0.00000000e+00],
@@ -171,10 +171,10 @@ def radiationPressureIntegratedTest(show_plots):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED "
+        print("PASSED ")
     else:
-        print testFailCount
-        print testMessages
+        print(testFailCount)
+        print(testMessages)
 
     plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)

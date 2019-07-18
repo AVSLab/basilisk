@@ -180,7 +180,7 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
             rwAvailabilityMessage.wheelAvailability  = [MRP_Feedback.UNAVAILABLE, MRP_Feedback.UNAVAILABLE,
                                                         MRP_Feedback.UNAVAILABLE, MRP_Feedback.UNAVAILABLE]
         else:
-            print "WARNING: unknown rw availability status"
+            print("WARNING: unknown rw availability status")
 
         unitTestSupport.setMessage(unitTestSim.TotalSim,
                                    unitProcessName,
@@ -215,7 +215,7 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
     #   Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "torqueRequestBody"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                    range(3))
+                                                    list(range(3)))
 
     # compare the module results to the truth values
     accuracy = 1e-8
@@ -227,9 +227,9 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print   "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
     else:
-        print "Failed: " + moduleWrap.ModelTag
+        print("Failed: " + moduleWrap.ModelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

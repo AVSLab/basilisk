@@ -269,7 +269,7 @@ def cssWlsEstTestFunction(show_plots):
 
         # Pull logged data out into workspace for analysis
         sHatEst = unitTestSim.pullMessageLogData(CSSWlsEstFSWConfig.navStateOutMsgName + '.vehSunPntBdy',
-                                                 range(3))
+                                                 list(range(3)))
 
         numActive = unitTestSim.GetLogVariableData("CSSWlsEst.numActiveCss")
         sHatEstUse = sHatEst[logLengthPrev:, :]  # Only data for this subtest
@@ -282,7 +282,7 @@ def cssWlsEstTestFunction(show_plots):
                                                 numActiveFailCriteria, CSSWlsEstFSWConfig.sensorUseThresh)
 
         filtRes = unitTestSim.pullMessageLogData(CSSWlsEstFSWConfig.cssWLSFiltResOutMsgName + '.postFitRes',
-            range(8))
+            list(range(8)))
         testFailCount += checkResidAccuracy(testVec, filtRes, residFailCriteria, 
                                             unitTestSim)
 
@@ -311,7 +311,7 @@ def cssWlsEstTestFunction(show_plots):
     unitTestSim.ExecuteSimulation()
     stepCount += 1
     sHatEst = unitTestSim.pullMessageLogData(CSSWlsEstFSWConfig.navStateOutMsgName + '.vehSunPntBdy',
-                                             range(3))
+                                             list(range(3)))
     numActive = unitTestSim.GetLogVariableData("CSSWlsEst.numActiveCss")
     sHatEstUse = sHatEst[logLengthPrev:, :]
     numActiveUse = numActive[logLengthPrev + 1:, :]
@@ -341,7 +341,7 @@ def cssWlsEstTestFunction(show_plots):
     numActive = unitTestSim.GetLogVariableData("CSSWlsEst.numActiveCss")
     numActiveUse = numActive[logLengthPrev + 1:, :]
     sHatEst = unitTestSim.pullMessageLogData(CSSWlsEstFSWConfig.navStateOutMsgName + '.vehSunPntBdy',
-                                             range(3))
+                                             list(range(3)))
     sHatEstUse = sHatEst[logLengthPrev + 1:, :]
     logLengthPrev = sHatEst.shape[0]
     testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse,
@@ -371,7 +371,7 @@ def cssWlsEstTestFunction(show_plots):
     # Format data for plotting
     truthData = numpy.array(truthData)
     sHatEst = unitTestSim.pullMessageLogData(CSSWlsEstFSWConfig.navStateOutMsgName + '.vehSunPntBdy',
-                                             range(3))
+                                             list(range(3)))
     numActive = unitTestSim.GetLogVariableData("CSSWlsEst.numActiveCss")
 
 
@@ -386,7 +386,7 @@ def cssWlsEstTestFunction(show_plots):
     unitTestSim.ConfigureStopTime(int((stepCount + 2) * 1E9))
     unitTestSim.ExecuteSimulation()
     sHatEstZero = unitTestSim.pullMessageLogData(CSSWlsEstFSWConfig.navStateOutMsgName + '.vehSunPntBdy',
-                                             range(3))
+                                             list(range(3)))
     sHatEstZeroUse = sHatEstZero[logLengthPrev + 1:, :]
 
     trueVector = [[0.0, 0.0, 0.0]]*len(sHatEstZeroUse)
@@ -437,7 +437,7 @@ def cssWlsEstTestFunction(show_plots):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print   "PASSED: " + CSSWlsWrap.ModelTag
+        print("PASSED: " + CSSWlsWrap.ModelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -551,7 +551,7 @@ def cssRateTestFunction(show_plots):
 
      # Pull logged data out into workspace for analysis
     omegaEst = unitTestSim.pullMessageLogData(moduleConfig.navStateOutMsgName + '.omega_BN_B',
-                                             range(3))
+                                             list(range(3)))
     accuracy = 1e-6
     trueVector = [
         [0.0, 0.0, 0.0],
@@ -571,11 +571,11 @@ def cssRateTestFunction(show_plots):
     snippentName = "passFailRate"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
+        print("Failed: " + moduleWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

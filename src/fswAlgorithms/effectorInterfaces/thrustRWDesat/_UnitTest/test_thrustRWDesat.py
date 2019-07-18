@@ -132,7 +132,7 @@ def thrustRWDesatTestFunction():
     unitTestSim.ExecuteSimulation()
 
     # This doesn't work if only 1 number is passed in as the second argument, but we don't need the second
-    outputThrData = unitTestSim.pullMessageLogData(moduleConfig.outputThrName+'.OnTimeRequest', range(numThrusters))
+    outputThrData = unitTestSim.pullMessageLogData(moduleConfig.outputThrName+'.OnTimeRequest', list(range(numThrusters)))
 
     print(outputThrData)
 

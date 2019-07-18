@@ -17,7 +17,7 @@ def generateAccData():
     accPktList = list()
     for _ in range(120):
         accPacketData = fswMessages.AccPktDataFswMsg()
-        accPacketData.measTime = abs(long(random.normal(5e7, 1e7)))
+        accPacketData.measTime = abs(int(random.normal(5e7, 1e7)))
         accPacketData.accel_B = random.normal(0.1, 0.2, 3)  # Acceleration in platform frame [m/s2]
         accPktList.append(accPacketData)
 
@@ -119,7 +119,7 @@ def dvAccumulationTestFunction():
     unitTestSim.ExecuteSimulation()
 
     # This doesn't work if only 1 number is passed in as the second argument, but we don't need the second
-    outputNavMsgData = unitTestSim.pullMessageLogData(moduleConfig.outputNavName + '.' + 'vehAccumDV', range(3))
+    outputNavMsgData = unitTestSim.pullMessageLogData(moduleConfig.outputNavName + '.' + 'vehAccumDV', list(range(3)))
     timeMsgData = unitTestSim.pullMessageLogData(moduleConfig.outputNavName + '.' + 'timeTag')
 
     # print(outputNavMsgData)
@@ -147,11 +147,11 @@ def dvAccumulationTestFunction():
     snippentName = "passFail"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
+        print("Failed: " + moduleWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

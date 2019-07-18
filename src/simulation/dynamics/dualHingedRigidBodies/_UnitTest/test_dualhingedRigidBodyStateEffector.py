@@ -256,7 +256,7 @@ def dualHingedRigidBodyTest(show_plots,useFlag,testCase):
             testMessages.append("FAILED: Dual Hinged Rigid Body Integrated Test failed rotational energy unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Dual Hinged Rigid Body Test"
+        print("PASSED: " + " Dual Hinged Rigid Body Test")
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]

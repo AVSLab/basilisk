@@ -190,8 +190,8 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    mag0Data = unitTestSim.pullMessageLogData(testModule.envOutMsgNames[0] + ".magField_N", range(3))
-    mag1Data = unitTestSim.pullMessageLogData(testModule.envOutMsgNames[1] + ".magField_N", range(3))
+    mag0Data = unitTestSim.pullMessageLogData(testModule.envOutMsgNames[0] + ".magField_N", list(range(3)))
+    mag1Data = unitTestSim.pullMessageLogData(testModule.envOutMsgNames[1] + ".magField_N", list(range(3)))
 
 
     def centeredDipole(pos_N, X, refPlanetRadius, refPlanetDCM, minReach, maxReach):
@@ -235,11 +235,11 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     snippentName = "unitTestPassFail" + str(useDefault) + str(useMinReach) + str(useMaxReach) + str(usePlanetEphemeris)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + testModule.ModelTag
+        print("PASSED: " + testModule.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + testModule.ModelTag
+        print("Failed: " + testModule.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

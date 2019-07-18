@@ -281,7 +281,7 @@ def nHingedRigidBody(show_plots,useFlag,testCase):
             testMessages.append("FAILED: N Hinged Rigid Body integrated test failed orbital energy unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " N Hinged Rigid Body integrated test"
+        print("PASSED: " + " N Hinged Rigid Body integrated test")
 
     assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list

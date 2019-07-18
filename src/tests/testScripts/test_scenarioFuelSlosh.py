@@ -78,13 +78,13 @@ def test_scenarioFuelSlosh(show_plots, damping_parameter, timeStep):
             testMessages = [testMessages, "Particle 1 settling time does not match second order systems theories"]
 
     # save the figures to the Doxygen scenario images folder
-    for pltName, plt in figureList.items():
+    for pltName, plt in list(figureList.items()):
         unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
     if testFailCount == 0:
-        print "PASSED "
+        print("PASSED ")
     else:
-        print testFailCount
-        print testMessages
+        print(testFailCount)
+        print(testMessages)
 
     return [testFailCount, ''.join(testMessages)]

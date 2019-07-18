@@ -318,7 +318,7 @@ def test_StateUpdateInertialAttitude(show_plots):
         else:
             unitTestSupport.writeTeXSnippet('passFail11', textSnippetPassed, path)
         if(abs(stateLog[-1, i+1] - stMessage1.MRP_BdyInrtl[i]) > accuracy):
-            print abs(stateLog[-1, i+1] - stMessage1.MRP_BdyInrtl[i])
+            print(abs(stateLog[-1, i+1] - stMessage1.MRP_BdyInrtl[i]))
             testFailCount += 1
             testMessages.append("State update failure")
             unitTestSupport.writeTeXSnippet('passFail11', textSnippetFailed, path)
@@ -374,7 +374,7 @@ def test_StateUpdateInertialAttitude(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag + " state update"
+        print("PASSED: " + moduleWrap.ModelTag + " state update")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -442,7 +442,7 @@ def test_StatePropInertialAttitude(show_plots):
     unitTestSupport.writeTeXSnippet("toleranceValue22", str(accuracy), path)
     for i in range(6):
         if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > accuracy):
-            print abs(stateLog[-1, i+1] - stateLog[0, i+1])
+            print(abs(stateLog[-1, i+1] - stateLog[0, i+1]))
             testFailCount += 1
             testMessages.append("State propagation failure")
             unitTestSupport.writeTeXSnippet('passFail22', textSnippetFailed, path)
@@ -456,7 +456,7 @@ def test_StatePropInertialAttitude(show_plots):
         
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag + " state propagation"
+        print("PASSED: " + moduleWrap.ModelTag + " state propagation")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -594,7 +594,7 @@ def test_StateUpdateRWInertialAttitude(show_plots):
             testFailCount += 1
             testMessages.append("Covariance update with RW failure")
         if (abs(stateLog[-1, i + 1] - stMessage1.MRP_BdyInrtl[i]) > accuracy):
-            print abs(stateLog[-1, i + 1] - stMessage1.MRP_BdyInrtl[i])
+            print(abs(stateLog[-1, i + 1] - stMessage1.MRP_BdyInrtl[i]))
             testFailCount += 1
             testMessages.append("State update with RW failure")
             unitTestSupport.writeTeXSnippet('passFail33', textSnippetFailed, path)
@@ -648,7 +648,7 @@ def test_StateUpdateRWInertialAttitude(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag + " state update with RW"
+        print("PASSED: " + moduleWrap.ModelTag + " state update with RW")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -779,7 +779,7 @@ def test_StatePropRateInertialAttitude(show_plots):
     unitTestSupport.writeTeXSnippet("toleranceValue44", str(accuracy), path)
     for i in range(3):
         if(abs(omegaLog[-1, i+1] - stateInit[i+3]) > accuracy):
-            print abs(omegaLog[-1, i+1] - stateInit[i+3])
+            print(abs(omegaLog[-1, i+1] - stateInit[i+3]))
             testFailCount += 1
             testMessages.append("State omega propagation failure")
             unitTestSupport.writeTeXSnippet('passFail44', textSnippetFailed, path)
@@ -793,9 +793,9 @@ def test_StatePropRateInertialAttitude(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag + " state rate propagation"
+        print("PASSED: " + moduleWrap.ModelTag + " state rate propagation")
     else:
-        print "Failed: " + testMessages[0]
+        print("Failed: " + testMessages[0])
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -932,7 +932,7 @@ def test_FaultScenarios(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: state rate propagation"
+        print("PASSED: state rate propagation")
 
     # return fail count and join into a single string all messages in the list
     # testMessage

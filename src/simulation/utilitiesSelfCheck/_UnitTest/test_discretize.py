@@ -49,13 +49,13 @@ def unitDiscretizeCheck(testName):
         testMessages.append("ERROR: Discretize Test.\n")
 
     if testFailCount == 0:
-        print "PASSED "
+        print("PASSED ")
         passFailText = "PASSED"
         colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX
         snippetContent = ""
     else:
-        print testFailCount
-        print testMessages
+        print(testFailCount)
+        print(testMessages)
         passFailText = 'FAILED'
         colorText = 'Red'  # color to write auto-documented "FAILED" message in in LATEX
         snippetContent = ""
@@ -68,7 +68,7 @@ def unitDiscretizeCheck(testName):
     snippetPassFailName = "discretizePass"
     snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}'
     unitTestSupport.writeTeXSnippet(snippetPassFailName, snippetContent, path + "/../_Documentation/discretize/AutoTex/")
-    print path
+    print(path)
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]

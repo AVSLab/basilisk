@@ -170,9 +170,9 @@ def test_thrusterIntegratedTest(show_plots):
                 ]
 
     moduleOutputr_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N',
-                                                  range(3))
+                                                  list(range(3)))
     moduleOutputSigma = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
-                                                  range(3))
+                                                  list(range(3)))
 
     accuracy = 1e-8
     for i in range(0,len(truePos)):
@@ -186,11 +186,11 @@ def test_thrusterIntegratedTest(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
             testFailCount += 1
-            print dataSigma[i]
+            print(dataSigma[i])
             testMessages.append("FAILED: Thruster Integrated Test failed attitude unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Thruster Integrated Sim Test"
+        print("PASSED: " + " Thruster Integrated Sim Test")
 
     assert testFailCount < 1, testMessages
 

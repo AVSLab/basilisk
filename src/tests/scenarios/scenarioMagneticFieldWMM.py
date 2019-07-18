@@ -225,7 +225,7 @@ def run(show_plots, orbitCase):
     req = planet.radEquator
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
 
     # create the magnetic field
@@ -266,7 +266,7 @@ def run(show_plots, orbitCase):
         oe.a = (rPeriapses + rApoapses) / 2.0
         oe.e = 1.0 - rPeriapses / oe.a
     else:
-        print "Unsupported orbit type " + orbitCase + " selected"
+        print("Unsupported orbit type " + orbitCase + " selected")
         exit(1)
     oe.i = 85.0 * macros.D2R
     oe.Omega = 48.2 * macros.D2R
@@ -316,8 +316,8 @@ def run(show_plots, orbitCase):
     #
     #   retrieve the logged data
     #
-    magData = scSim.pullMessageLogData(magModule.envOutMsgNames[0] + '.magField_N', range(3))
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', range(3))
+    magData = scSim.pullMessageLogData(magModule.envOutMsgNames[0] + '.magField_N', list(range(3)))
+    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
 
     np.set_printoptions(precision=16)
 

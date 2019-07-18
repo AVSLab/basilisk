@@ -104,7 +104,7 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
 
     expOut = dict() # expected output
 
-    print testCase
+    print(testCase)
     if testCase is 'basic':
         pass
 
@@ -152,11 +152,11 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
     if not 'accuracy' in vars():
         accuracy = 1e-10
 
-    for outputName in expOut.keys():
+    for outputName in list(expOut.keys()):
         for i in range(0,len(RWs)):
             if expOut[outputName][i] != getattr(ReactionWheel.ReactionWheelData[i],outputName):
-                print "expected: " + str(expOut[outputName][i])
-                print "got :" + str(getattr(ReactionWheel.ReactionWheelData[i],outputName))
+                print("expected: " + str(expOut[outputName][i]))
+                print("got :" + str(getattr(ReactionWheel.ReactionWheelData[i],outputName)))
                 testFail = 1
                 break
         if testFail:
@@ -173,7 +173,7 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
 
     # print out success message if no errors were found
     if testFailCount == 0:
-        print   "PASSED "
+        print("PASSED ")
         colorText = 'ForestGreen'
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:

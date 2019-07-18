@@ -54,14 +54,14 @@ def printResults_HillPoint(r_BN_N, v_BN_N, celBodyPosVec, celBodyVelVec):
     omega_HN_N = dfdt * i_h
     domega_HN_N = ddfdt2 * i_h
 
-    print 'sigma_HN = ', sigma_HN
-    print 'omega_HN_N = ', omega_HN_N
-    print 'domega_HN_N = ', domega_HN_N
+    print('sigma_HN = ', sigma_HN)
+    print('omega_HN_N = ', omega_HN_N)
+    print('domega_HN_N = ', domega_HN_N)
 
     HN = rbk.MRP2C(sigma_HN)
     M = rbk.Mi(0.5*np.pi, 1)
     sigma = rbk.C2MRP(np.dot(M, HN))
-    print sigma
+    print(sigma)
     return (sigma_HN, omega_HN_N, domega_HN_N)
 
 # MAIN

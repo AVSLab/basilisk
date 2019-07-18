@@ -125,7 +125,7 @@ def run(show_plots):
     #
     moduleOutputName = "sigma_RN"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     # set the filtered output truth states
     trueVector = [
         [-0.193031238249, 0.608048400483, 0.386062476497],
@@ -142,7 +142,7 @@ def run(show_plots):
     #
     moduleOutputName = "omega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     # set the filtered output truth states
     trueVector = [
         [0.101246280045,  0.000182644489,  0.001208139578],
@@ -159,7 +159,7 @@ def run(show_plots):
     #
     moduleOutputName = "domega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     # set the filtered output truth states
     trueVector = [
         [0.000000000000e+00,  -1.208139577635e-04,   1.826444892823e-05],
@@ -282,7 +282,7 @@ def run2(show_plots):
     #
     moduleOutputName = "sigma_RN"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     # set the filtered output truth states
     trueVector = [
         [-0.193031238249, 0.608048400483, 0.386062476497],
@@ -299,7 +299,7 @@ def run2(show_plots):
     #
     moduleOutputName = "omega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     # set the filtered output truth states
     trueVector = [
         [0.101246280045, 0.000182644489, 0.001208139578],
@@ -316,7 +316,7 @@ def run2(show_plots):
     #
     moduleOutputName = "domega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     # set the filtered output truth states
     trueVector = [
         [0.000000000000e+00, -1.208139577635e-04, 1.826444892823e-05],

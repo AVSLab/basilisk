@@ -159,7 +159,7 @@ def sunlineEphemTestFunction(show_plots):
 
         moduleOutputName = "vehSunPntBdy"
         moduleOutput = unitTestSim.pullMessageLogData(sunlineEphemConfig.navStateOutMsgName + '.' + moduleOutputName,
-                                                      range(3))
+                                                      list(range(3)))
 
         estVector[i] = moduleOutput[0,:]
 
@@ -193,7 +193,7 @@ def sunlineEphemTestFunction(show_plots):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print   "PASSED: " + sunlineEphemWrap.ModelTag
+        print("PASSED: " + sunlineEphemWrap.ModelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

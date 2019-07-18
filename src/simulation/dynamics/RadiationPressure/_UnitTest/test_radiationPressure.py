@@ -100,7 +100,7 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
         srpDynEffector.setUseFacetedCPUModel()
         handler = radiation_pressure.SRPLookupTableHandler()
         handler.parseAndLoadXML(os.path.dirname(__file__) + "/cube_lookup.xml")
-        for i in xrange(0, len(handler.forceBLookup)):
+        for i in range(0, len(handler.forceBLookup)):
             srpDynEffector.addForceLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.forceBLookup[i, :]))
             srpDynEffector.addTorqueLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.torqueBLookup[i, :]))
             srpDynEffector.addSHatLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.sHatBLookup[i, :]))
@@ -108,7 +108,7 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
         srpDynEffector.setUseFacetedCPUModel()
         handler = radiation_pressure.SRPLookupTableHandler()
         handler.parseAndLoadXML(os.path.dirname(__file__) + "/cannonballLookup.xml")
-        for i in xrange(0, len(handler.forceBLookup)):
+        for i in range(0, len(handler.forceBLookup)):
             srpDynEffector.addForceLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.forceBLookup[i, :]))
             srpDynEffector.addTorqueLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.torqueBLookup[i, :]))
             srpDynEffector.addSHatLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.sHatBLookup[i, :]))
@@ -249,7 +249,7 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
         modelType = modelType + 'WithEclipse'   #Do this so that the AutoTeX messages are clearly distinguishable.
 
     if testFailCount == 0:
-        print "PASSED: " + modelType
+        print("PASSED: " + modelType)
         passFailText = "PASSED"
         colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX
         snippetName = modelType + 'FailMsg'

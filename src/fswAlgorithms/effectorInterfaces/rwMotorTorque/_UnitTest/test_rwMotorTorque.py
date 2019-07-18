@@ -158,9 +158,9 @@ def rwMotorTorqueTest(show_plots):
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "motorTorque"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(rwConfigParams.numRW))
+                                                  list(range(rwConfigParams.numRW)))
 
-    print '\n', moduleOutput[:, 1:]
+    print('\n', moduleOutput[:, 1:])
 
     # set the output truth states
     trueVector = [
@@ -186,7 +186,7 @@ def rwMotorTorqueTest(show_plots):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

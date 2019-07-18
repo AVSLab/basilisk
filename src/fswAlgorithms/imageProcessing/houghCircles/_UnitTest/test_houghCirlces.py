@@ -149,8 +149,8 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
     unitTestSim.ExecuteSimulation()
 
     # pointer = unitTestSim.pullMessageLogData(moduleConfig.imageInMsgName + ".imagePointer", range(pointerLength))
-    centers = unitTestSim.pullMessageLogData(moduleConfig.opnavCirclesOutMsgName + ".circlesCenters", range(10*2))
-    radii = unitTestSim.pullMessageLogData(moduleConfig.opnavCirclesOutMsgName + ".circlesRadii", range(10))
+    centers = unitTestSim.pullMessageLogData(moduleConfig.opnavCirclesOutMsgName + ".circlesCenters", list(range(10*2)))
+    radii = unitTestSim.pullMessageLogData(moduleConfig.opnavCirclesOutMsgName + ".circlesRadii", list(range(10)))
 
     # Output image:
     output_image = Image.new("RGB", input_image.size)

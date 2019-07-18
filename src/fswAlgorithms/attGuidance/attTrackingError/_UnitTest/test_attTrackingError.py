@@ -159,7 +159,7 @@ def subModuleTestFunction(show_plots):
     #
     moduleOutputName = "sigma_BR"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))[0]
+                                                  list(range(3)))[0]
 
     sigma_RN2 = rbk.addMRP(np.array(sigma_RN), -np.array(vector))
     RN = rbk.MRP2C(sigma_RN2)
@@ -185,7 +185,7 @@ def subModuleTestFunction(show_plots):
     #
     moduleOutputName = "omega_BR_B"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))[0]
+                                                  list(range(3)))[0]
 
     # set the filtered output truth states
     trueVector = np.array(omega_BN_B) - np.dot(BN, np.array(omega_RN_N))
@@ -206,7 +206,7 @@ def subModuleTestFunction(show_plots):
     #
     moduleOutputName = "omega_RN_B"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))[0]
+                                                  list(range(3)))[0]
 
     # set the filtered output truth states
     trueVector = np.dot(BN, np.array(omega_RN_N))
@@ -228,7 +228,7 @@ def subModuleTestFunction(show_plots):
     #
     moduleOutputName = "domega_RN_B"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))[0]
+                                                  list(range(3)))[0]
 
     # set the filtered output truth states
     trueVector = np.dot(BN, np.array(domega_RN_N))

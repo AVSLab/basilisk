@@ -29,15 +29,15 @@ def arrayEqualCheck(v1, v2, methodName):
     if len(v1) == len(v2):
         if np.allclose(v1, v2, atol=a_tol):
             return 0
-        print methodName + ' failed'
+        print(methodName + ' failed')
         return 1
     else:
-        print 'Mismatching lengths.'
+        print('Mismatching lengths.')
 
 def scaleEqualCheck(s1, s2, methodName):
     if np.allclose(s1, s2, atol = s_tol):
         return 0
-    print methodName + ' failed'
+    print(methodName + ' failed')
     return 1
 
 # Function E2f
@@ -201,4 +201,4 @@ arvecCValue = np.array([-4.77259E-12, -4.77259E-12, -4.77259E-12])
 e_count += arrayEqualCheck(arvec, arvecCValue, 'solarRad')
 
 if e_count > 0:
-    print str(e_count) + " functions failed"
+    print(str(e_count) + " functions failed")

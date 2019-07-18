@@ -120,7 +120,7 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "omega_BastR_B"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
 
     # Compute truth states
     omegaAstTrue, omegaAstPTrue = findTrueValues(guidCmdData, moduleConfig)
@@ -137,7 +137,7 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
 
     moduleOutputName = "omegap_BastR_B"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                   range(3))
+                                                   list(range(3)))
 
 
     # compare the module results to the truth values
@@ -157,7 +157,7 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
 
     # return fail count and join into a single string all messages in the list
     # testMessage

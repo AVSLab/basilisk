@@ -24,7 +24,7 @@
 import sys
 import numpy
 
-import macros
+from . import macros
 from Basilisk.simulation import simMessages
 from collections import OrderedDict
 
@@ -71,81 +71,81 @@ class rwFactory(object):
         RW = simMessages.RWConfigSimMsg()
 
         # process optional input arguments
-        if kwargs.has_key('RWModel'):
+        if 'RWModel' in kwargs:
             varRWModel =  kwargs['RWModel']
             if not isinstance(varRWModel, (int)):
-                print 'ERROR: RWModel must be a INT argument'
+                print('ERROR: RWModel must be a INT argument')
                 exit(1)
         else:
             varRWModel = self.BalancedWheels    # default value
 
-        if kwargs.has_key('useRWfriction'):
+        if 'useRWfriction' in kwargs:
             varUseRWfriction = kwargs['useRWfriction']
             if not isinstance(varUseRWfriction, (bool)):
-                print 'ERROR: useRWfriction must be a BOOL argument'
+                print('ERROR: useRWfriction must be a BOOL argument')
                 exit(1)
         else:
             varUseRWfriction = False            # default value
 
-        if kwargs.has_key('useMinTorque'):
+        if 'useMinTorque' in kwargs:
             varUseMinTorque =  kwargs['useMinTorque']
             if not isinstance(varUseMinTorque, (bool)):
-                print 'ERROR: useMinTorque must be a BOOL argument'
+                print('ERROR: useMinTorque must be a BOOL argument')
                 exit(1)
         else:
             varUseMinTorque = False             # default value
 
-        if kwargs.has_key('useMaxTorque'):
+        if 'useMaxTorque' in kwargs:
             varUseMaxTorque =  kwargs['useMaxTorque']
             if not isinstance(varUseMaxTorque, (bool)):
-                print 'ERROR: useMaxTorque must be a BOOL argument'
+                print('ERROR: useMaxTorque must be a BOOL argument')
                 exit(1)
         else:
             varUseMaxTorque = True              # default value
 
-        if kwargs.has_key('maxMomentum'):
+        if 'maxMomentum' in kwargs:
             varMaxMomentum =  kwargs['maxMomentum']
             if not isinstance(varMaxMomentum, (float)):
-                print 'ERROR: maxMomentum must be a FLOAT argument'
+                print('ERROR: maxMomentum must be a FLOAT argument')
                 exit(1)
         else:
             varMaxMomentum = 0.0              # default value
         self.maxMomentum = varMaxMomentum
 
-        if kwargs.has_key('fCoulomb'):
+        if 'fCoulomb' in kwargs:
             varfCoulomb =  kwargs['fCoulomb']
             if not isinstance(varfCoulomb, (float)):
-                print 'ERROR: fCoulomb must be a FLOAT argument'
+                print('ERROR: fCoulomb must be a FLOAT argument')
                 exit(1)
         else:
             varfCoulomb = 0.0       # default value
         RW.fCoulomb = varfCoulomb
 
-        if kwargs.has_key('fStatic'):
+        if 'fStatic' in kwargs:
             varfStatic =  kwargs['fStatic']
             if not isinstance(varfStatic, (float)):
-                print 'ERROR: fStatic must be a FLOAT argument'
+                print('ERROR: fStatic must be a FLOAT argument')
                 exit(1)
         else:
             varfStatic = 0.0       # default value
         RW.fStatic = varfStatic
 
-        if kwargs.has_key('betaStatic'):
+        if 'betaStatic' in kwargs:
             varbetaStatic =  kwargs['betaStatic']
             if not isinstance(varbetaStatic, (float)):
-                print 'ERROR: betaStatic must be a FLOAT argument'
+                print('ERROR: betaStatic must be a FLOAT argument')
                 exit(1)
             if varbetaStatic == 0:
-                print 'ERROR: betaStatic cannot be set to zero.  Positive turns it on, negative turns it off'
+                print('ERROR: betaStatic cannot be set to zero.  Positive turns it on, negative turns it off')
                 exit(1)
         else:
             varbetaStatic = -1.0       # default value turns off Stribeck friction model
         RW.betaStatic = varbetaStatic
 
-        if kwargs.has_key('cViscous'):
+        if 'cViscous' in kwargs:
             varcViscous =  kwargs['cViscous']
             if not isinstance(varcViscous, (float)):
-                print 'ERROR: cViscous must be a FLOAT argument'
+                print('ERROR: cViscous must be a FLOAT argument')
                 exit(1)
         else:
             varcViscous = 0.0       # default value
@@ -153,13 +153,13 @@ class rwFactory(object):
 
 
         # set device label name
-        if kwargs.has_key('label'):
+        if 'label' in kwargs:
             varLabel = kwargs['label']
-            if not isinstance(varLabel, (basestring)):
-                print 'ERROR: label must be a string'
+            if not isinstance(varLabel, (str)):
+                print('ERROR: label must be a string')
                 exit(1)
             if len(varLabel) > 5:
-                print 'ERROR: RW label string is longer than 5 characters'
+                print('ERROR: RW label string is longer than 5 characters')
                 exit(1)
         else:
             varLabel = 'RW' + str(len(self.rwList)+1)        # default device labeling
@@ -169,7 +169,7 @@ class rwFactory(object):
         try:
             eval('self.' + rwType + '(RW)')
         except:
-            print 'ERROR: RW type ' + rwType + ' is not implemented'
+            print('ERROR: RW type ' + rwType + ' is not implemented')
             exit(1)
 
         # spin axis gs inertia [kg*m^2]
@@ -181,23 +181,23 @@ class rwFactory(object):
         self.setGsHat(RW,gsHat_B)
 
         # set RW position vector
-        if kwargs.has_key('rWB_B'):
+        if 'rWB_B' in kwargs:
             varrWB_B =  kwargs['rWB_B']
             if not isinstance(varrWB_B, list):
-                print 'ERROR: rWB_B must be a 3x1 list argument'
+                print('ERROR: rWB_B must be a 3x1 list argument')
                 exit(1)
             if not len(varrWB_B) == 3:
-                print 'ERROR: rWB_B has dimension ' + str(len(varrWB_B)) + ', must be a 3x1 list argument'
+                print('ERROR: rWB_B has dimension ' + str(len(varrWB_B)) + ', must be a 3x1 list argument')
                 exit(1)
         else:
             varrWB_B = [0., 0., 0.]             # default value
         RW.rWB_B = varrWB_B
 
         # set initial RW states
-        if kwargs.has_key('Omega'):
+        if 'Omega' in kwargs:
             varOmega =  kwargs['Omega']
             if not isinstance(varOmega, (float)):
-                print 'ERROR: Omega must be a FLOAT argument'
+                print('ERROR: Omega must be a FLOAT argument')
                 exit(1)
         else:
             varOmega = 0.0                      # default value
@@ -231,7 +231,7 @@ class rwFactory(object):
         if norm > 1e-10:
             gsHat_B = gsHat_B / norm
         else:
-            print 'Error: RW gsHat input must be non-zero 3x1 vector'
+            print('Error: RW gsHat input must be non-zero 3x1 vector')
             exit(1)
         RW.gsHat_B = [[gsHat_B[0]], [gsHat_B[1]], [gsHat_B[2]]]
 
@@ -263,7 +263,7 @@ class rwFactory(object):
 
         rwStateEffector.ModelTag = modelTag
 
-        for key, rw in self.rwList.items():
+        for key, rw in list(self.rwList.items()):
             rwStateEffector.addReactionWheel(rw)
 
         scPlus.addStateEffector(rwStateEffector)
@@ -329,11 +329,11 @@ class rwFactory(object):
             RW.U_d = 7.7E-7
         else:
             if self.maxMomentum > 0:
-                print 'ERROR: ' + sys._getframe().f_code.co_name + '() does not have a correct wheel momentum of '\
-                      +str(large)+', '+str(medium)+' or '+str(small)+' Nm. Provided ' + str(self.maxMomentum) + ' Nm'
+                print('ERROR: ' + sys._getframe().f_code.co_name + '() does not have a correct wheel momentum of '\
+                      +str(large)+', '+str(medium)+' or '+str(small)+' Nm. Provided ' + str(self.maxMomentum) + ' Nm')
             else:
-                print 'ERROR: ' + sys._getframe().f_code.co_name \
-                      + '() maxMomentum option must be set prior to calling createRW()'
+                print('ERROR: ' + sys._getframe().f_code.co_name \
+                      + '() maxMomentum option must be set prior to calling createRW()')
             exit(1)
 
         return
@@ -379,11 +379,11 @@ class rwFactory(object):
             RW.U_d = 4.6E-7
         else:
             if self.maxMomentum > 0:
-                print 'ERROR: ' + sys._getframe().f_code.co_name + '() does not have a correct wheel momentum of '\
-                      +str(large)+', '+str(medium)+' or '+str(small)+' Nm. Provided ' + str(self.maxMomentum) + ' Nm'
+                print('ERROR: ' + sys._getframe().f_code.co_name + '() does not have a correct wheel momentum of '\
+                      +str(large)+', '+str(medium)+' or '+str(small)+' Nm. Provided ' + str(self.maxMomentum) + ' Nm')
             else:
-                print 'ERROR: ' + sys._getframe().f_code.co_name \
-                      + '() maxMomentum option must be set prior to calling createRW()'
+                print('ERROR: ' + sys._getframe().f_code.co_name \
+                      + '() maxMomentum option must be set prior to calling createRW()')
             exit(1)
 
         return
@@ -430,11 +430,11 @@ class rwFactory(object):
             RW.U_d = 2.2E-7
         else:
             if self.maxMomentum > 0:
-                print 'ERROR: ' + sys._getframe().f_code.co_name + '() does not have a correct wheel momentum of '\
-                      +str(large)+', '+str(medium)+' or '+str(small)+' Nm. Provided ' + str(self.maxMomentum) + ' Nm'
+                print('ERROR: ' + sys._getframe().f_code.co_name + '() does not have a correct wheel momentum of '\
+                      +str(large)+', '+str(medium)+' or '+str(small)+' Nm. Provided ' + str(self.maxMomentum) + ' Nm')
             else:
-                print 'ERROR: ' + sys._getframe().f_code.co_name \
-                      + '() maxMomentum option must be set prior to calling createRW()'
+                print('ERROR: ' + sys._getframe().f_code.co_name \
+                      + '() maxMomentum option must be set prior to calling createRW()')
             exit(1)
 
         return

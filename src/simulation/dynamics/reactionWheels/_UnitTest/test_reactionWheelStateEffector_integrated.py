@@ -165,7 +165,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
             rwCopy2.Omega = 0.0
 
     # increase HR16 imbalance for test
-    for key, rw in rwFactory.rwList.iteritems():
+    for key, rw in rwFactory.rwList.items():
         rw.U_d *= 1e4
         rw.U_s *= 1e4
 
@@ -263,11 +263,11 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
     orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
 
-    posData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
-    sigmaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN',range(3))
-    omegaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.omega_BN_B',range(3))
+    posData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',list(range(3)))
+    sigmaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN',list(range(3)))
+    omegaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.omega_BN_B',list(range(3)))
     if testCase == 'BOE' or testCase == 'FrictionSpinDown' or testCase == 'FrictionSpinUp':
-        wheelSpeeds = unitTestSim.pullMessageLogData(rwStateEffector.OutputDataString+".wheelSpeeds", range(2))
+        wheelSpeeds = unitTestSim.pullMessageLogData(rwStateEffector.OutputDataString+".wheelSpeeds", list(range(2)))
         if testCase == 'BOE':
             thetaOut = 4.0*np.arctan(sigmaData[:,3])
             # Find BOE calculations
@@ -286,10 +286,10 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
                     wheelSpeedBOE[i] = initialWheelSpeed*macros.RPM
                     thetaBOE[i] = scObject.hub.omega_BN_BInit[2][0]*(timeBOE[i])
         if testCase == 'FrictionSpinDown' or testCase == 'FrictionSpinUp':
-            wheelSpeedBeforeInteg1 = unitTestSim.pullMessageLogData("rw_config_0_data.Omega", range(1))
-            wheelSpeedBeforeInteg2 = unitTestSim.pullMessageLogData("rw_config_1_data.Omega", range(1))
-            frictionTorque1 = unitTestSim.pullMessageLogData("rw_config_0_data.frictionTorque", range(1))
-            frictionTorque2 = unitTestSim.pullMessageLogData("rw_config_1_data.frictionTorque", range(1))
+            wheelSpeedBeforeInteg1 = unitTestSim.pullMessageLogData("rw_config_0_data.Omega", list(range(1)))
+            wheelSpeedBeforeInteg2 = unitTestSim.pullMessageLogData("rw_config_1_data.Omega", list(range(1)))
+            frictionTorque1 = unitTestSim.pullMessageLogData("rw_config_0_data.frictionTorque", list(range(1)))
+            frictionTorque2 = unitTestSim.pullMessageLogData("rw_config_1_data.frictionTorque", list(range(1)))
 
 
     dataPos = posData[-1]
@@ -500,11 +500,11 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
                 testMessages.append("FAILED: Reaction Wheel Integrated Test failed BOE wheel speed unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Reaction Wheel Integrated Sim " + testCase
+        print("PASSED: " + " Reaction Wheel Integrated Sim " + testCase)
 
         # print out success message if no errors were found
     if testCase == 'JitterSimple' and testFailCount == 0:
-        print   "PASSED "
+        print("PASSED ")
         colorText = 'ForestGreen'
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
         # Write some snippets for AutoTex

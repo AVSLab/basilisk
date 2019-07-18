@@ -88,7 +88,7 @@ def unitEclipse(show_plots, eclipseCondition, planet):
         mars = gravFactory.createMars()
         mars.isCentralBody = True
         mars.useSphericalHarmParams = False
-    scObject_0.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject_0.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # setup Spice interface for some solar system bodies
     timeInitString = '2021 MAY 04 07:47:48.965 (UTC)'
@@ -147,7 +147,7 @@ def unitEclipse(show_plots, eclipseCondition, planet):
             gravFactory.spiceObject.zeroBase = "mars barycenter"
             scObject_0.hub.r_CN_NInit = [-2930233.55919119, 2567609.100747609, 41384.23366372246] # meters
         elif eclipseCondition == "partial":
-            print "partial mars"
+            print("partial mars")
             gravFactory.spiceObject.zeroBase = "mars barycenter"
             scObject_0.hub.r_CN_NInit = [-6050166.454829555, 2813822.447404055, 571725.5651779658] # meters
         elif eclipseCondition == "none":
@@ -236,7 +236,7 @@ def unitEclipse(show_plots, eclipseCondition, planet):
 
 
     if testFailCount == 0:
-        print "PASSED: " + planet + "-" + eclipseCondition
+        print("PASSED: " + planet + "-" + eclipseCondition)
         # return fail count and join into a single string all messages in the list
         # testMessage
     if testFailCount == 0:

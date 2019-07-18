@@ -279,7 +279,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "thrForce"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(MAX_EFF_CNT))
+                                                  list(range(MAX_EFF_CNT)))
 
     if misconfigThruster:
         return [testFailCount, ''.join(testMessages)] # We don't handle cases where a thruster is configured incorrectly.
@@ -340,25 +340,25 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
                                                                  "CompareForces",
                                                                  numThrusters, testFailCount, testMessages)
     if testFailCount > 0:
-        print F
-        print moduleOutput[0]
+        print(F)
+        print(moduleOutput[0])
 
     # Checks to make sure that no forces are negative
     if not useDVThruster and np.any(moduleOutput[0,1:]<0):
         testFailCount += 1
-        print "A negative force exists in the C RCS solution. This is not allowed!\n"
+        print("A negative force exists in the C RCS solution. This is not allowed!\n")
 
     if not useDVThruster and np.any(F<0):
         testFailCount += 1
-        print "A negative force exists in the Python RCS solution. This is not allowed!\n"
+        print("A negative force exists in the Python RCS solution. This is not allowed!\n")
 
     if testFailCount > 0:
         return [testFailCount, ''.join(testMessages)]
 
 
     # Check that Torques are Sensible
-    print "\nReq Lr_Bar [B]: " + str(Lr_Req_Bar_B)
-    print "Rec Lr_Bar [B]: " + str(Lr_Rec_Bar_B[1:4])
+    print("\nReq Lr_Bar [B]: " + str(Lr_Req_Bar_B))
+    print("Rec Lr_Bar [B]: " + str(Lr_Rec_Bar_B[1:4]))
 
     # Assuming sufficent thrusters, we should always get the requested torque, as seen by the control frame.
     testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([Lr_Req_Bar_B]),
@@ -400,14 +400,14 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
 
     if testFailCount > 0:
         unitTestSupport.writeTeXSnippet(directory+"Failed/"+snippetName, snippetTex, path)
-        print "FAILED: " + moduleWrap.ModelTag
+        print("FAILED: " + moduleWrap.ModelTag)
         testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
                             moduleOutputName + " unit test at t=" +
                             str(moduleOutput[0, 0] * macros.NANO2SEC) +
                             "sec\n")
     else:
         unitTestSupport.writeTeXSnippet(directory+"/Passed/" + snippetName, snippetTex, path)
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
 
 
     unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
@@ -416,11 +416,11 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
         numControlAxis) + "_" + str(saturateThrusters) + "_" + str(misconfigThruster)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
+        print("Failed: " + moduleWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

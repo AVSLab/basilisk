@@ -215,7 +215,7 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "torqueRequestBody"
     moduleOutput = unitTestSim.pullMessageLogData(servoConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
 
 
     # Compute true values
@@ -232,7 +232,7 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
                                 " unit test at t=" + str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec \n")
 
-    print moduleOutput
+    print(moduleOutput)
 
     # If the argument provided at commandline "--show_plots" evaluates as true,
     # plot all figures
@@ -241,7 +241,7 @@ def mrp_steering_tracking(show_plots,K1, K3, omegaMax):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
 
     # return fail count and join into a single string all messages in the list
     # testMessage

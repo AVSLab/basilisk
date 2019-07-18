@@ -10,8 +10,8 @@ from datashader.colors import Sets1to3
 def pull_and_format_df(path, varIdxLen):
     df = pd.read_pickle(path)
     if len(np.unique(df.columns.codes[1])) is not varIdxLen:
-        print("Warning: " + path + " not formatted correctly!")
-        newMultIndex = pd.MultiIndex.from_product([df.columns.codes[0], range(varIdxLen)], names=['runNum', 'varIdx'])
+        print(("Warning: " + path + " not formatted correctly!"))
+        newMultIndex = pd.MultiIndex.from_product([df.columns.codes[0], list(range(varIdxLen))], names=['runNum', 'varIdx'])
         indices = pd.Index([0,1]) # Need multiple rows for curves
         df = df.reindex(columns=newMultIndex, index=indices)
     return df

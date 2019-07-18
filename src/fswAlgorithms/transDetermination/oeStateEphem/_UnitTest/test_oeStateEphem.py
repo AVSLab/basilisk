@@ -191,9 +191,9 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
         sim.ExecuteSimulation()
 
     posChebData = sim.pullMessageLogData(oeStateModel.stateFitOutMsgName + ".r_BdyZero_N",
-                                         range(3))
+                                         list(range(3)))
     velChebData = sim.pullMessageLogData(oeStateModel.stateFitOutMsgName + ".v_BdyZero_N",
-                                         range(3))
+                                         list(range(3)))
 
     if not validChebyCurveTime:
         lastLogidx = (curveDurationSeconds + logPeriod) / logPeriod - 1
@@ -297,11 +297,11 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
     snippentName = "passFail" + str(validChebyCurveTime)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + oeStateModelWrap.ModelTag
+        print("PASSED: " + oeStateModelWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + oeStateModelWrap.ModelTag
+        print("Failed: " + oeStateModelWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

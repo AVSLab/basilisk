@@ -36,7 +36,7 @@ def exponentialAtmosphere(atmosModule, name):
         atmosModule.localTemp = 293.0
 
     else:
-        print "ERROR: " + name + " not setup for exponential atmosphere model\n"
+        print("ERROR: " + name + " not setup for exponential atmosphere model\n")
 
     return
 
@@ -105,7 +105,7 @@ def centeredDipoleMagField(magFieldModule, name):
                                         magFieldModule)
 
     else:
-        print "ERROR: " + name + " not setup for centered dipole magnetic field model. Options include mercury, earth, jupiter, saturn, uranus and neptune. \n"
+        print("ERROR: " + name + " not setup for centered dipole magnetic field model. Options include mercury, earth, jupiter, saturn, uranus and neptune. \n")
 
     return
 

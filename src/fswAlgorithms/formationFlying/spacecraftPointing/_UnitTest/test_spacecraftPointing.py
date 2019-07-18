@@ -245,7 +245,7 @@ def spacecraftPointingTestFunction(show_plots, case):
         #
         moduleOutputName = "sigma_RN"
         moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attReferenceOutMsgName + '.' + moduleOutputName,
-                                                      range(3))
+                                                      list(range(3)))
         # set the filtered output truth states
         trueVector = [
                    [0.,              0.,              0.0],
@@ -272,7 +272,7 @@ def spacecraftPointingTestFunction(show_plots, case):
         #
         moduleOutputName = "omega_RN_N"
         moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attReferenceOutMsgName + '.' + moduleOutputName,
-                                                      range(3))
+                                                      list(range(3)))
 
         # set the filtered output truth states
         trueVector = [
@@ -302,7 +302,7 @@ def spacecraftPointingTestFunction(show_plots, case):
         #
         moduleOutputName = "domega_RN_N"
         moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attReferenceOutMsgName + '.' + moduleOutputName,
-                                                      range(3))
+                                                      list(range(3)))
         # set the filtered output truth states
         trueVector = [
                       [0.0, 0.0, 0.0],
@@ -338,11 +338,11 @@ def spacecraftPointingTestFunction(show_plots, case):
     snippentName = "passFail" + str(case)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "FAILED: " + moduleWrap.ModelTag
+        print("FAILED: " + moduleWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

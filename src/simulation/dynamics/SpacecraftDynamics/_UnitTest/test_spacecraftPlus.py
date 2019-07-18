@@ -123,7 +123,7 @@ def test_SCTranslation(show_plots):
         plt.close('all')
 
     moduleOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N',
-                                                  range(3))
+                                                  list(range(3)))
 
     truePos = [
                 [-4072255.7737936215, 7456050.4649078, 5258610.029627514]
@@ -165,7 +165,7 @@ def test_SCTranslation(show_plots):
             testMessages.append("FAILED: SCHub Translation test failed orbital energy unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " SCHub Translation Integrated Sim Test"
+        print("PASSED: " + " SCHub Translation Integrated Sim Test")
 
     assert testFailCount < 1, testMessages
 
@@ -236,9 +236,9 @@ def test_SCTransAndRotation(show_plots):
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
 
     r_BN_NOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N',
-                                                  range(3))
+                                                  list(range(3)))
     sigma_BNOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
-                                                  range(3))
+                                                  list(range(3)))
 
     truePos = [
                 [-4072255.7737936215, 7456050.4649078, 5258610.029627514]
@@ -347,7 +347,7 @@ def test_SCTransAndRotation(show_plots):
             testMessages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed orbital energy unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Spacecraft Translation and Rotation Integrated Sim Test"
+        print("PASSED: " + " Spacecraft Translation and Rotation Integrated Sim Test")
 
     assert testFailCount < 1, testMessages
 
@@ -447,9 +447,9 @@ def test_SCRotation(show_plots):
                  ]
 
     moduleOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
-                                                  range(3))
+                                                  list(range(3)))
     omega_BNOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.omega_BN_B',
-                                                  range(3))
+                                                  list(range(3)))
 
     check = 0
     for i in range(0,len(moduleOutput)):
@@ -572,7 +572,7 @@ def test_SCRotation(show_plots):
         testMessages.append("FAILED: Spacecraft Rotation Integrated test failed MRP Switching unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + "Spacecraft Rotation Integrated test"
+        print("PASSED: " + "Spacecraft Rotation Integrated test")
 
     assert testFailCount < 1, testMessages
 
@@ -656,9 +656,9 @@ def test_SCTransBOE(show_plots):
     unitTestSim.ExecuteSimulation()
 
     r_BN_NOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N',
-                                                  range(3))
+                                                  list(range(3)))
     v_BN_NOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N',
-                                                  range(3))
+                                                  list(range(3)))
 
     # BOE calcs
     a1 = F1/scObject.hub.mHub
@@ -719,7 +719,7 @@ def test_SCTransBOE(show_plots):
             testMessages.append("FAILED: Spacecraft Translation BOE Integrated test failed velocity unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Spacecraft Translation BOE Integrated Sim Test"
+        print("PASSED: " + " Spacecraft Translation BOE Integrated Sim Test")
 
     assert testFailCount < 1, testMessages
 
@@ -785,9 +785,9 @@ def test_SCPointBVsPointC(show_plots):
     unitTestSim.ExecuteSimulation()
 
     r_CN_NOutput1 = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_CN_N',
-                                                  range(3))
+                                                  list(range(3)))
     sigma_BNOutput1 = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
-                                                  range(3))
+                                                  list(range(3)))
 
     ####################
 
@@ -840,9 +840,9 @@ def test_SCPointBVsPointC(show_plots):
     unitTestSim.ExecuteSimulation()
 
     r_CN_NOutput2 = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_CN_N',
-                                                  range(3))
+                                                  list(range(3)))
     sigma_BNOutput2 = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
-                                                  range(3))
+                                                  list(range(3)))
 
     plt.figure()
     plt.clf()
@@ -885,7 +885,7 @@ def test_SCPointBVsPointC(show_plots):
         testMessages.append("FAILED: Spacecraft Point B Vs Point C test failed attitude unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Spacecraft Point B Vs Point C Integrated Sim Test"
+        print("PASSED: " + " Spacecraft Point B Vs Point C Integrated Sim Test")
 
     assert testFailCount < 1, testMessages
 

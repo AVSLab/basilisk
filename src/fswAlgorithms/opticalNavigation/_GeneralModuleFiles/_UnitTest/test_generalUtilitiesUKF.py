@@ -260,7 +260,7 @@ def utilities_nominal(filterModule):
     expectIdent = numpy.dot(InvOut, numpy.array(InvSourceMat).reshape(nRow, nRow))
     errorNorm = numpy.linalg.norm(expectIdent - numpy.identity(nRow))
     if (errorNorm > 1.0E-12):
-        print errorNorm
+        print(errorNorm)
         testFailCount += 1
         testMessages.append("L Matrix Inverse accuracy failure")
 
@@ -281,13 +281,13 @@ def utilities_nominal(filterModule):
     expectIdent = numpy.dot(InvOut, numpy.array(InvSourceMat).reshape(nRow, nRow))
     errorNorm = numpy.linalg.norm(expectIdent - numpy.identity(nRow))
     if (errorNorm > 1.0E-12):
-        print errorNorm
+        print(errorNorm)
         testFailCount += 1
         testMessages.append("U Matrix Inverse accuracy failure")
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + filterModule +" UKF utilities"
+        print("PASSED: " + filterModule +" UKF utilities")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -463,7 +463,7 @@ def utilities_fault(filterModule):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + filterModule + " UKF utilities"
+        print("PASSED: " + filterModule + " UKF utilities")
 
     # return fail count and join into a single string all messages in the list
     # testMessage

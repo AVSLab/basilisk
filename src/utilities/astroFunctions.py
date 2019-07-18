@@ -117,7 +117,7 @@ def OE2RV(mu, a, e, i, Omega, w, nu):
     if e!=1:
         p = a*(1-e*e)
     else:
-        print 'ERROR: parabolic case'
+        print('ERROR: parabolic case')
         return
     c = np.cos(nu)
     s = np.sin(nu)
@@ -288,7 +288,7 @@ def ephemeridesMeeus(JDE, celestialBody):
             Omega = ephem(Omega_vec, T)
             Pi = ephem(Pi_vec, T)
         else:
-            print "Meeus coefficients for " + celestialBody + " not defined"
+            print("Meeus coefficients for " + celestialBody + " not defined")
             L = 0.
             a = 0.
             e = 0.
@@ -390,8 +390,8 @@ def exactGregorianDate(JD):
 
 def optimalDate(GD0, DaysPastDeparture, TOF):
     JD0 = JulianDate(GD0) + DaysPastDeparture
-    print 'Departure Date: ', GregorianDate(JD0)
-    print 'Arrival Date: ', GregorianDate(JD0 + TOF)
+    print('Departure Date: ', GregorianDate(JD0))
+    print('Arrival Date: ', GregorianDate(JD0 + TOF))
     return (JD0, JD0+TOF)
 
 

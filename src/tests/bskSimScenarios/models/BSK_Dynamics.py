@@ -88,7 +88,7 @@ class BSKDynamicModels():
         gravBodies = self.gravFactory.createBodies(['earth', 'sun', 'moon'])
         gravBodies['earth'].isCentralBody = True
 
-        self.scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(self.gravFactory.gravBodies.values())
+        self.scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(self.gravFactory.gravBodies.values()))
         spiceObject, epochMsg = self.gravFactory.createSpiceInterface(bskPath + '/supportData/EphemerisData/',
                                                                       timeInitString,
                                                                       epochInMsgName = 'simEpoch')
@@ -199,7 +199,7 @@ class BSKDynamicModels():
 
         # store all
         cssList = []
-        for nHat_B, i in zip(nHat_B_List,range(1,numCSS+1)):
+        for nHat_B, i in zip(nHat_B_List,list(range(1,numCSS+1))):
             CSS = coarse_sun_sensor.CoarseSunSensor(CSS_default)
             CSS.ModelTag = "CSS" + str(i) + "_sensor"
             CSS.cssDataOutMsgName = "CSS" + str(i) + "_output"

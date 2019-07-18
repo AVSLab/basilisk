@@ -209,7 +209,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
     testPlottingFixture.Date.append(DatePlot[0:8])
 
     #Get the GPS time
-    date2 = datetime.datetime(1980, 01, 6) #Start of GPS time
+    date2 = datetime.datetime(1980, 0o1, 6) #Start of GPS time
     timeDiff = date-date2 #Time in days since GPS time
     GPSTimeSeconds = timeDiff.days*86400
 
@@ -242,7 +242,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
 
     # Truth values
     # For absolute GPS time check
-    if (date>datetime.datetime(2015,06,30)): # Taking into account the extra leap second added on 6/30/2015
+    if (date>datetime.datetime(2015,0o6,30)): # Taking into account the extra leap second added on 6/30/2015
         GPSEndTime = GPSTimeSeconds + 17 + 60.0 - 68.184 # 17 GPS skip seconds passed that date
     else:
         GPSEndTime = GPSTimeSeconds + 16 + 60.0 - 67.184 # 16 GPS skip seconds before
@@ -262,7 +262,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
 
     # Truth values
     # For absolute Julian date time check
-    if (date>datetime.datetime(2015,06,30)): # Taking into account the extra leap second added on 6/30/2015
+    if (date>datetime.datetime(2015,0o6,30)): # Taking into account the extra leap second added on 6/30/2015
         JDEndTime = JulianStartDate + 0.0006944440 - 68.184 / (86400)
     else:
         JDEndTime = JulianStartDate + 0.0006944440 - 67.184 / (86400)
@@ -371,7 +371,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print " \n PASSED "
+        print(" \n PASSED ")
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

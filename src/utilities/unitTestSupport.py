@@ -44,19 +44,19 @@ mpl.rc('figure', autolayout=True)
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
 
-import macros
+from . import macros
 
 
 from Basilisk import __path__
 bskPath = __path__[0]
 
-import tabulate as T
-del(T.LATEX_ESCAPE_RULES[u'$'])
-del(T.LATEX_ESCAPE_RULES[u'\\'])
-del(T.LATEX_ESCAPE_RULES[u'_'])
-del(T.LATEX_ESCAPE_RULES[u'{'])
-del(T.LATEX_ESCAPE_RULES[u'}'])
-from tabulate import *
+from . import tabulate as T
+del(T.LATEX_ESCAPE_RULES['$'])
+del(T.LATEX_ESCAPE_RULES['\\'])
+del(T.LATEX_ESCAPE_RULES['_'])
+del(T.LATEX_ESCAPE_RULES['{'])
+del(T.LATEX_ESCAPE_RULES['}'])
+from .tabulate import *
 
 
 
@@ -80,15 +80,15 @@ def isArrayEqual(result, truth, dim, accuracy):
     # the result array is of dimension dim+1, as the first entry is the time stamp
     # the truth array is of dimesion dim, no time stamp
     if dim < 1:
-        print "Incorrect array dimension " + dim + " sent to isArrayEqual"
+        print("Incorrect array dimension " + dim + " sent to isArrayEqual")
         return 0
 
     if len(result)==0:
-        print "Result array was empty"
+        print("Result array was empty")
         return 0
 
     if len(truth)==0:
-        print "Truth array was empty"
+        print("Truth array was empty")
         return 0
 
     if foundNAN(result): return 0
@@ -102,15 +102,15 @@ def isArrayEqualRelative(result, truth, dim, accuracy):
     # the result array is of dimension dim+1, as the first entry is the time stamp
     # the truth array is of dimesion dim, no time stamp
     if dim < 1:
-        print "Incorrect array dimension " + dim + " sent to isArrayEqual"
+        print("Incorrect array dimension " + dim + " sent to isArrayEqual")
         return 0
 
     if len(result)==0:
-        print "Result array was empty"
+        print("Result array was empty")
         return 0
 
     if len(truth)==0:
-        print "Truth array was empty"
+        print("Truth array was empty")
         return 0
 
     if foundNAN(result): return 0
@@ -120,7 +120,7 @@ def isArrayEqualRelative(result, truth, dim, accuracy):
             if result[i+1] == 0:
                 continue
             else:
-                print "Truth array contains zero"
+                print("Truth array contains zero")
                 return 0
         if math.fabs((result[i+1] - truth[i])/truth[i]) > accuracy:
             return 0    # return 0 to indicate the array's are not equal
@@ -131,11 +131,11 @@ def isArrayEqualRelative(result, truth, dim, accuracy):
 def isArrayZero(result, dim, accuracy):
     # the result array is of dimension dim+1, as the first entry is the time stamp
     if dim < 1:
-        print "Incorrect array dimension " + dim + " sent to isArrayEqual"
+        print("Incorrect array dimension " + dim + " sent to isArrayEqual")
         return 0
 
     if len(result)==0:
-        print "Result array was empty"
+        print("Result array was empty")
         return 0
 
     if foundNAN(result): return 0
@@ -236,7 +236,7 @@ def isDoubleEqualRelative(result, truth, accuracy):
     if foundNAN(truth): return 0
     if foundNAN(accuracy): return 0
     if truth == 0:
-        print "truth is zero, cannot compare"
+        print("truth is zero, cannot compare")
         return 0
 
     # the result array is of dimension dim+1, as the first entry is the time stamp
@@ -374,7 +374,7 @@ def writeFigureLaTeX(figureName, caption, plt, format, path):
 
 def foundNAN(array):
     if (np.isnan(np.sum(array))):
-        print "Warning: found NaN value."
+        print("Warning: found NaN value.")
         return 1        # return 1 to indicate a NaN value was found
     return 0
 
@@ -399,7 +399,7 @@ def setMessage(simObject, processName, msgName, inputMessageData, msgStrName = "
 #
 
 def getLineColor(idx,maxNum):
-    values = range(0, maxNum+2)
+    values = list(range(0, maxNum+2))
     colorMap = mpl.pyplot.get_cmap('gist_earth')
     cNorm = colors.Normalize(vmin=0, vmax=values[-1])
     scalarMap = cmx.ScalarMappable(norm=cNorm, cmap=colorMap)
@@ -439,10 +439,10 @@ def decimalYearToDateTime(start):
 def timeStringToGregorianUTCMsg(DateSpice, **kwargs):
 
     # set the data path
-    if kwargs.has_key('dataPath'):
+    if 'dataPath' in kwargs:
         dataPath = kwargs['dataPath']
         if not isinstance(dataPath, str):
-            print 'ERROR: dataPath must be a string argument'
+            print('ERROR: dataPath must be a string argument')
             exit(1)
     else:
         dataPath = bskPath +'/supportData/EphemerisData/'  # default value

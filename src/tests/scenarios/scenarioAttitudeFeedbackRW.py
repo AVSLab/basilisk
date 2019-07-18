@@ -516,7 +516,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     # add RW devices
@@ -668,7 +668,7 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     # FSW RW configuration message
     # use the same RW states in the FSW algorithm as in the simulation
     fswSetupRW.clearSetup()
-    for key, rw in rwFactory.rwList.iteritems():
+    for key, rw in rwFactory.rwList.items():
         fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
     fswSetupRW.writeConfigMessage(mrpControlConfig.rwParamsInMsgName, scSim.TotalSim, simProcessName)
 
@@ -706,16 +706,16 @@ def run(show_plots, useJitterSimple, useRWVoltageIO):
     #
     #   retrieve the logged data
     #
-    dataUsReq = scSim.pullMessageLogData(rwMotorTorqueConfig.outputDataName + ".motorTorque", range(numRW))
-    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", range(3))
-    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", range(3))
-    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", range(3))
-    dataOmegaRW = scSim.pullMessageLogData(mrpControlConfig.inputRWSpeedsName + ".wheelSpeeds", range(numRW))
+    dataUsReq = scSim.pullMessageLogData(rwMotorTorqueConfig.outputDataName + ".motorTorque", list(range(numRW)))
+    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", list(range(3)))
+    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", list(range(3)))
+    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", list(range(3)))
+    dataOmegaRW = scSim.pullMessageLogData(mrpControlConfig.inputRWSpeedsName + ".wheelSpeeds", list(range(numRW)))
     dataRW = []
     for i in range(0, numRW):
-        dataRW.append(scSim.pullMessageLogData(rwOutName[i] + ".u_current", range(1)))
+        dataRW.append(scSim.pullMessageLogData(rwOutName[i] + ".u_current", list(range(1))))
     if useRWVoltageIO:
-        dataVolt = scSim.pullMessageLogData(fswRWVoltageConfig.voltageOutMsgName + ".voltage", range(numRW))
+        dataVolt = scSim.pullMessageLogData(fswRWVoltageConfig.voltageOutMsgName + ".voltage", list(range(numRW)))
     np.set_printoptions(precision=16)
 
     #

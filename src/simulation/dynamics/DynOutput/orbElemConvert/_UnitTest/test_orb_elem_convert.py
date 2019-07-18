@@ -232,9 +232,9 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
 
     # Get r and v from message
     if orb_elemObject.useEphemFormat:
-        rMsgPlanet = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + '.PositionVector', range(3))
+        rMsgPlanet = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + '.PositionVector', list(range(3)))
         rMsgPlanet = numpy.delete(rMsgPlanet[-1], 0, axis=0)
-        vMsgPlanet = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + '.VelocityVector', range(3))
+        vMsgPlanet = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + '.VelocityVector', list(range(3)))
         vMsgPlanet = numpy.delete(vMsgPlanet[-1], 0, axis=0)
         rMsgPlanetDiff = numpy.subtract(rSim, rMsgPlanet)
         for g in range(3):
@@ -247,9 +247,9 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
                 testMessages.append(" FAILED: Planet Velocity Message, column " + str(g))
                 testFailCount1 += 1
     else:
-        rMsgSC = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + '.r_BN_N', range(3))
+        rMsgSC = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + '.r_BN_N', list(range(3)))
         rMsgSC = numpy.delete(rMsgSC[-1], 0, axis=0)
-        vMsgSC = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + '.v_BN_N', range(3))
+        vMsgSC = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + '.v_BN_N', list(range(3)))
         vMsgSC = numpy.delete(vMsgSC[-1], 0, axis=0)
         rMsgSCDiff = numpy.subtract(rSim, rMsgSC)
         for g in range(3):
@@ -428,17 +428,17 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
                 testMessages.append(" FAILED: Sim Orbital Element " + str(g))
                 testFailCount2 += 1
 
-    aMsg = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + ".a", range(1))
+    aMsg = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + ".a", list(range(1)))
     aMsg = numpy.delete(aMsg[-1], 0, axis=0)
-    eMsg = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + ".e", range(1))
+    eMsg = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + ".e", list(range(1)))
     eMsg = numpy.delete(eMsg[-1], 0, axis=0)
-    iMsg = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + ".i", range(1))
+    iMsg = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + ".i", list(range(1)))
     iMsg = numpy.delete(iMsg[-1], 0, axis=0)
-    ANMsg = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + ".Omega", range(1))
+    ANMsg = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + ".Omega", list(range(1)))
     ANMsg = numpy.delete(ANMsg[-1], 0, axis=0)
-    APMsg = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + ".omega", range(1))
+    APMsg = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + ".omega", list(range(1)))
     APMsg = numpy.delete(APMsg[-1], 0, axis=0)
-    fMsg = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + ".f", range(1))
+    fMsg = TotalSim.pullMessageLogData(orb_elemObject.OutputDataString + ".f", list(range(1)))
     fMsg = numpy.delete(fMsg[-1], 0, axis=0)
 
     ElemMsgDiff = [(aOut - aMsg), (eOut - eMsg), (iOut - iMsg), (ANOut - ANMsg), (APOut - APMsg), (fOut - fMsg)]

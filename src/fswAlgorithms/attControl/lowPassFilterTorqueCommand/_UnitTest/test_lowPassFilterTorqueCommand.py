@@ -121,7 +121,7 @@ def subModuleTestFunction(show_plots):
     #   Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "torqueRequestBody"
     LrF = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                    range(3))
+                                                    list(range(3)))
 
     #   set the filtered output truth states
     LrFtrue = [
@@ -148,7 +148,7 @@ def subModuleTestFunction(show_plots):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print   "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
 
 
     # each test method requires a single assert method to be called

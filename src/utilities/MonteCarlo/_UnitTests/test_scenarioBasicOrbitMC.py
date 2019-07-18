@@ -122,8 +122,8 @@ retainedMessageName = "inertial_state_output"
 retainedRate = macros.sec2nano(10)
 var1 = "v_BN_N"
 var2 = "r_BN_N"
-dataType1 = range(3)
-dataType2 = range(3)
+dataType1 = list(range(3))
+dataType2 = list(range(3))
 
 
 def myDataCallback(monteCarloData, retentionPolicy):

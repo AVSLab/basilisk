@@ -193,9 +193,9 @@ def test_SCConnected(show_plots):
     rotEnergy = unitTestSim.GetLogVariableData(scSystem.ModelTag + ".primaryCentralSpacecraft" + ".totRotEnergy")
 
     r_BN_NOutput = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output" + '.r_BN_N',
-                                                  range(3))
+                                                  list(range(3)))
     sigma_BNOutput = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output" + '.sigma_BN',
-                                                  range(3))
+                                                  list(range(3)))
 
     truePos = [
                 [-4072255.7737936215, 7456050.4649078, 5258610.029627514]
@@ -317,7 +317,7 @@ def test_SCConnected(show_plots):
             testMessages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed orbital energy unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Spacecraft Translation and Rotation Integrated Sim Test"
+        print("PASSED: " + " Spacecraft Translation and Rotation Integrated Sim Test")
 
     assert testFailCount < 1, testMessages
 
@@ -520,46 +520,46 @@ def test_SCConnectedAndUnconnected(show_plots):
     unitTestSim.ExecuteSimulation()
 
     r_BN_NOutput = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output" + '.r_BN_N',
-                                                  range(3))
+                                                  list(range(3)))
     sigma_BNOutput = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output" + '.sigma_BN',
-                                                  range(3))
+                                                  list(range(3)))
 
     r_BN_NOutput1 = unitTestSim.pullMessageLogData("spacecraft4_inertial_state_output" + '.r_BN_N',
-                                                  range(3))
+                                                  list(range(3)))
     sigma_BNOutput1 = unitTestSim.pullMessageLogData("spacecraft4_inertial_state_output" + '.sigma_BN',
-                                                  range(3))
+                                                  list(range(3)))
 
     r_BN_NOutput2 = unitTestSim.pullMessageLogData("spacecraft5_inertial_state_output" + '.r_BN_N',
-                                                  range(3))
+                                                  list(range(3)))
     sigma_BNOutput2 = unitTestSim.pullMessageLogData("spacecraft5_inertial_state_output" + '.sigma_BN',
-                                                  range(3))
+                                                  list(range(3)))
 
     rotEnergy = unitTestSim.pullMessageLogData("spacecraft_energy_momentum_output" + '.spacecraftRotEnergy',
-                                                  range(1))
+                                                  list(range(1)))
     orbEnergy = unitTestSim.pullMessageLogData("spacecraft_energy_momentum_output" + '.spacecraftOrbEnergy',
-                                                  range(1))
+                                                  list(range(1)))
     rotAngMom_N = unitTestSim.pullMessageLogData("spacecraft_energy_momentum_output" + '.spacecraftRotAngMomPntC_N',
-                                                  range(3))
+                                                  list(range(3)))
     orbAngMom_N = unitTestSim.pullMessageLogData("spacecraft_energy_momentum_output" + '.spacecraftOrbAngMomPntN_N',
-                                                  range(3))
+                                                  list(range(3)))
 
     rotEnergy1 = unitTestSim.pullMessageLogData("spacecraft4_energy_momentum_output" + '.spacecraftRotEnergy',
-                                                  range(1))
+                                                  list(range(1)))
     orbEnergy1 = unitTestSim.pullMessageLogData("spacecraft4_energy_momentum_output" + '.spacecraftOrbEnergy',
-                                                  range(1))
+                                                  list(range(1)))
     rotAngMom1_N = unitTestSim.pullMessageLogData("spacecraft4_energy_momentum_output" + '.spacecraftRotAngMomPntC_N',
-                                                  range(3))
+                                                  list(range(3)))
     orbAngMom1_N = unitTestSim.pullMessageLogData("spacecraft4_energy_momentum_output" + '.spacecraftOrbAngMomPntN_N',
-                                                  range(3))
+                                                  list(range(3)))
 
     rotEnergy2 = unitTestSim.pullMessageLogData("spacecraft5_energy_momentum_output" + '.spacecraftRotEnergy',
-                                                  range(1))
+                                                  list(range(1)))
     orbEnergy2 = unitTestSim.pullMessageLogData("spacecraft5_energy_momentum_output" + '.spacecraftOrbEnergy',
-                                                  range(1))
+                                                  list(range(1)))
     rotAngMom2_N = unitTestSim.pullMessageLogData("spacecraft5_energy_momentum_output" + '.spacecraftRotAngMomPntC_N',
-                                                  range(3))
+                                                  list(range(3)))
     orbAngMom2_N = unitTestSim.pullMessageLogData("spacecraft5_energy_momentum_output" + '.spacecraftOrbAngMomPntN_N',
-                                                  range(3))
+                                                  list(range(3)))
 
     truePos = [
                 [-4072255.7737936215, 7456050.4649078, 5258610.029627514]
@@ -756,7 +756,7 @@ def test_SCConnectedAndUnconnected(show_plots):
             testMessages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed orbital energy unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Spacecraft Translation and Rotation Integrated Sim Test"
+        print("PASSED: " + " Spacecraft Translation and Rotation Integrated Sim Test")
 
     assert testFailCount < 1, testMessages
 

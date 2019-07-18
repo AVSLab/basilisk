@@ -116,7 +116,7 @@ def rateMsgConvertFunction(show_plots):
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "omega_BN_B"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.navRateOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
 
     # set the filtered output truth states
     trueVector = [
@@ -132,7 +132,7 @@ def rateMsgConvertFunction(show_plots):
     resultTable = moduleOutput
     resultTable[:,0] = macros.NANO2SEC*resultTable[:,0]
     diff = np.delete(moduleOutput,0,1) - trueVector
-    resultTable = np.insert(resultTable,range(2,2+len(diff.transpose())), diff, axis=1)
+    resultTable = np.insert(resultTable,list(range(2,2+len(diff.transpose()))), diff, axis=1)
 
     tableName = "testRateMsgConverter"       # make this a unique name
     tableHeaders = ["time [s]", "Output 1", "Error", "Output 2", "Error", "Output 3 $\\bm r$", "Error"]
@@ -146,7 +146,7 @@ def rateMsgConvertFunction(show_plots):
 
     moduleOutputName = "omega_BN_B"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.navRateOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
 
     # set the filtered output truth states
     trueVector = [
@@ -162,7 +162,7 @@ def rateMsgConvertFunction(show_plots):
     resultTable = moduleOutput
     resultTable[:,0] = macros.NANO2SEC*resultTable[:,0]
     diff = np.delete(moduleOutput,0,1) - trueVector
-    resultTable = np.insert(resultTable,range(2,2+len(diff.transpose())), diff, axis=1)
+    resultTable = np.insert(resultTable,list(range(2,2+len(diff.transpose()))), diff, axis=1)
 
     tableName = "testRate"       # make this a unique name
     tableHeaders = ["time [s]", "Output 1", "Error", "Output 2", "Error", "Output 3 $\\bm \\omega_{B/N}$", "Error"]
@@ -176,7 +176,7 @@ def rateMsgConvertFunction(show_plots):
 
     moduleOutputName = "sigma_BN"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.navRateOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
 
     # set the filtered output truth states
     trueVector = [
@@ -192,7 +192,7 @@ def rateMsgConvertFunction(show_plots):
     resultTable = moduleOutput
     resultTable[:,0] = macros.NANO2SEC*resultTable[:,0]
     diff = np.delete(moduleOutput,0,1) - trueVector
-    resultTable = np.insert(resultTable,range(2,2+len(diff.transpose())), diff, axis=1)
+    resultTable = np.insert(resultTable,list(range(2,2+len(diff.transpose()))), diff, axis=1)
 
     tableName = "testMRP"       # make this a unique name
     tableHeaders = ["time [s]", "Output 1", "Error", "Output 2", "Error", "Output 3 $\\bm \\sigma$", "Error"]
@@ -206,7 +206,7 @@ def rateMsgConvertFunction(show_plots):
 
     moduleOutputName = "vehSunPntBdy"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.navRateOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
 
     # set the filtered output truth states
     trueVector = [
@@ -222,7 +222,7 @@ def rateMsgConvertFunction(show_plots):
     resultTable = moduleOutput
     resultTable[:,0] = macros.NANO2SEC*resultTable[:,0]
     diff = np.delete(moduleOutput,0,1) - trueVector
-    resultTable = np.insert(resultTable,range(2,2+len(diff.transpose())), diff, axis=1)
+    resultTable = np.insert(resultTable,list(range(2,2+len(diff.transpose()))), diff, axis=1)
 
     tableName = "testSunHeading"       # make this a unique name
     tableHeaders = ["time [s]", "Output 1", "Error", "Output 2", "Error", "Output 3 $\\bm d$", "Error"]
@@ -238,11 +238,11 @@ def rateMsgConvertFunction(show_plots):
     snippentName = "passFail"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
+        print("Failed: " + moduleWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

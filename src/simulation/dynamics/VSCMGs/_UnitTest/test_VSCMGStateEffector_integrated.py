@@ -87,9 +87,9 @@ def computeFFT(y,dt):
     k = np.arange(n)
     T = n/Fs
     frq = k/T # two sides frequency range
-    frq = frq[range(n/2)] # one side frequency range
+    frq = frq[list(range(n/2))] # one side frequency range
     Y = np.fft.fft(y)/n # fft computing and normalization
-    Y = Y[range(n/2)]
+    Y = Y[list(range(n/2))]
     Y = abs(Y)
     return [frq,Y]
 
@@ -282,11 +282,11 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
     orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
 
-    wheelSpeeds = unitTestSim.pullMessageLogData(rwStateEffector.OutputDataString + "." + "wheelSpeeds",range(3))
-    gimbalAngles = unitTestSim.pullMessageLogData(rwStateEffector.OutputDataString + "." + "gimbalAngles",range(3))
-    gimbalRates = unitTestSim.pullMessageLogData(rwStateEffector.OutputDataString + "." + "gimbalRates",range(3))
-    sigmaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN',range(3))
-    omegaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.omega_BN_B',range(3))
+    wheelSpeeds = unitTestSim.pullMessageLogData(rwStateEffector.OutputDataString + "." + "wheelSpeeds",list(range(3)))
+    gimbalAngles = unitTestSim.pullMessageLogData(rwStateEffector.OutputDataString + "." + "gimbalAngles",list(range(3)))
+    gimbalRates = unitTestSim.pullMessageLogData(rwStateEffector.OutputDataString + "." + "gimbalRates",list(range(3)))
+    sigmaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN',list(range(3)))
+    omegaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.omega_BN_B',list(range(3)))
 
     dataPos = posRef.getState()
     dataSigma = sigmaRef.getState()
@@ -523,7 +523,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
 
        # print out success message if no errors were found
     if  testFailCount == 0:
-        print   "PASSED "
+        print("PASSED ")
         colorText = 'ForestGreen'
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
         # Write some snippets for AutoTex
@@ -537,7 +537,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
         unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
 
     if testFailCount == 0:
-        print "PASSED: " + " VSCMG Integrated Sim Test"
+        print("PASSED: " + " VSCMG Integrated Sim Test")
 
     assert testFailCount < 1, testMessages
 

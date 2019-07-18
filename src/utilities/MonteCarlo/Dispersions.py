@@ -25,9 +25,7 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 import collections
 
 
-class SingleVariableDispersion(object):
-    __metaclass__ = abc.ABCMeta
-
+class SingleVariableDispersion(object, metaclass=abc.ABCMeta):
     def __init__(self, varName, bounds):
         self.varName = varName
         self.bounds = bounds
@@ -77,9 +75,7 @@ class NormalDispersion(SingleVariableDispersion):
         return dispValue
 
 
-class VectorVariableDispersion(object):
-    __metaclass__ = abc.ABCMeta
-
+class VectorVariableDispersion(object, metaclass=abc.ABCMeta):
     def __init__(self, varName, bounds):
         self.varName = varName
         self.bounds = bounds
@@ -250,8 +246,8 @@ class NormalThrusterUnitDirectionVectorDispersion(VectorVariableDispersion):
 
     def generate(self, sim=None):
         if sim is None:
-            print("No simulation object parameter set in '" + self.generate.__name__
-                  + "()' dispersions will not be set for variable " + self.varName)
+            print(("No simulation object parameter set in '" + self.generate.__name__
+                  + "()' dispersions will not be set for variable " + self.varName))
             return
         else:
             separator = '.'
@@ -321,8 +317,8 @@ class InertiaTensorDispersion:
 
     def generate(self, sim=None):
         if sim is None:
-            print("No simulation object parameter set in '" + self.generate.__name__
-                  + "()' dispersions will not be set for variable " + self.varName)
+            print(("No simulation object parameter set in '" + self.generate.__name__
+                  + "()' dispersions will not be set for variable " + self.varName))
             return
         else:
             vehDynObject = getattr(sim, self.varNameComponents[0])

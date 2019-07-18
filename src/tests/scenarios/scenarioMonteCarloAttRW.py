@@ -37,7 +37,7 @@ DATASHADER_FOUND = True
 try:
     from Basilisk.utilities import datashaderGraphingInterface as datashaderLibrary
 except ImportError:
-    print "Datashader library not found. Will use matplotlib"
+    print("Datashader library not found. Will use matplotlib")
     DATASHADER_FOUND = False
 
 
@@ -539,14 +539,14 @@ def run(saveFigures, case, show_plots, useDatashader):
     # used for plotting/processing the retained data.
     retentionPolicy = RetentionPolicy()
     # define the data to retain
-    retentionPolicy.addMessageLog(rwMotorTorqueConfigOutputDataName, [("motorTorque", range(5))], samplingTime)
-    retentionPolicy.addMessageLog(attErrorConfigOutputDataName, [("sigma_BR", range(3)), ("omega_BR_B", range(3))], samplingTime)
-    retentionPolicy.addMessageLog(sNavObjectOutputTransName, [("r_BN_N", range(3))], samplingTime)
-    retentionPolicy.addMessageLog(mrpControlConfigInputRWSpeedsName, [("wheelSpeeds", range(3))], samplingTime)
-    retentionPolicy.addMessageLog(fswRWVoltageConfigVoltageOutMsgName, [("voltage", range(3))], samplingTime)
+    retentionPolicy.addMessageLog(rwMotorTorqueConfigOutputDataName, [("motorTorque", list(range(5)))], samplingTime)
+    retentionPolicy.addMessageLog(attErrorConfigOutputDataName, [("sigma_BR", list(range(3))), ("omega_BR_B", list(range(3)))], samplingTime)
+    retentionPolicy.addMessageLog(sNavObjectOutputTransName, [("r_BN_N", list(range(3)))], samplingTime)
+    retentionPolicy.addMessageLog(mrpControlConfigInputRWSpeedsName, [("wheelSpeeds", list(range(3)))], samplingTime)
+    retentionPolicy.addMessageLog(fswRWVoltageConfigVoltageOutMsgName, [("voltage", list(range(3)))], samplingTime)
 
     for message in rwOutName:
-        retentionPolicy.addMessageLog(message, [("u_current", range(1))], samplingTime)
+        retentionPolicy.addMessageLog(message, [("u_current", list(range(1)))], samplingTime)
     if show_plots:
         # plot data only if show_plots is true, otherwise just retain
         retentionPolicy.setDataCallback(plotSim)
@@ -616,10 +616,10 @@ def run(saveFigures, case, show_plots, useDatashader):
         # And possibly show the plots
         if show_plots:
             if useDatashader and DATASHADER_FOUND:
-                print "Test concluded, showing plots now via datashader"
+                print("Test concluded, showing plots now via datashader")
                 datashaderLibrary.datashaderDriver(DATASHADER_FOUND)
             else:
-                print "Test concluded, showing plots now via matplot..."
+                print("Test concluded, showing plots now via matplot...")
                 plt.show()
                 # close the plots being saved off to avoid over-writing old and new figures
                 plt.close("all")
@@ -646,7 +646,7 @@ def run(saveFigures, case, show_plots, useDatashader):
         # And possibly show the plots
         if show_plots:
             if useDatashader and DATASHADER_FOUND:
-                print "Test conclused, showing plots now via datashader"
+                print("Test conclused, showing plots now via datashader")
                 datashaderLibrary.datashaderDriver(DATASHADER_FOUND)
             else:
                 plt.show()
@@ -719,7 +719,7 @@ def createScenarioAttitudeFeedbackRW():
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
     #
     # add RW devices
     #
@@ -852,7 +852,7 @@ def createScenarioAttitudeFeedbackRW():
     # FSW RW configuration message
     # use the same RW states in the FSW algorithm as in the simulation
     fswSetupRW.clearSetup()
-    for key, rw in rwFactory.rwList.iteritems():
+    for key, rw in rwFactory.rwList.items():
         fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
     fswSetupRW.writeConfigMessage(mrpControlConfig.rwParamsInMsgName, scSim.TotalSim, simProcessName)
 
@@ -975,7 +975,7 @@ def plotSim(data, retentionPolicy):
 
 def plotSimAndSave(data, retentionPolicy):
     figureList = plotSim(data, retentionPolicy)
-    for pltName, plt in figureList.items():
+    for pltName, plt in list(figureList.items()):
         # plt.subplots_adjust(top = 0.6, bottom = 0.4)
         unitTestSupport.saveScenarioFigure(
             fileNameString + "_" + pltName
@@ -1059,7 +1059,7 @@ def configureDatashader():
                                 )
 
     if ONLY_GRAPH_DATA:
-        print "Datashading from existing csv files"
+        print("Datashading from existing csv files")
         datashaderLibrary.graph(fromCSV = True)
         return
 

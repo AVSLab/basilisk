@@ -38,7 +38,7 @@ import signal
 import time
 import numpy as np
 import multiprocessing as mp
-import cPickle as pickle
+import pickle as pickle
 
 class Controller:
     """
@@ -77,7 +77,7 @@ class Controller:
         with gzip.open(filename) as pickledData:
             data = pickle.load(pickledData)
             if data.simParams.verbose:
-                print "Loading montecarlo at", filename
+                print("Loading montecarlo at", filename)
             data.multiProcManager = mp.Manager()
             data.dataOutQueue = data.multiProcManager.Queue()
             data.dataWriter = DataWriter(data.dataOutQueue)
@@ -258,11 +258,11 @@ class Controller:
 
         for caseNumber in caseList:
             if self.simParams.verbose:
-                print "Rerunning", caseNumber
+                print("Rerunning", caseNumber)
 
             oldRunFile = self.archiveDir + "run" + str(caseNumber) + ".json"
             if not os.path.exists(oldRunFile):
-                print "ERROR re-running case: " + oldRunFile
+                print("ERROR re-running case: " + oldRunFile)
                 continue
 
             # use old simulation parameters, modified slightly.
@@ -281,12 +281,12 @@ class Controller:
             success = executor([simParams, self.dataOutQueue])
 
             if not success:
-                print "Error re-executing run", caseNumber
+                print("Error re-executing run", caseNumber)
                 failed.append(caseNumber)
 
         if len(failed) > 0:
             failed.sort()
-            print "Failed rerunning cases:", failed
+            print("Failed rerunning cases:", failed)
 
         return failed
 
@@ -306,19 +306,19 @@ class Controller:
         assert self.ICrunFlag is not False, "IC run flag was not set"
 
         if self.simParams.verbose:
-            print "Beginning simulation with {0} runs on {1} threads".format(self.executionCount, self.numProcess)
+            print("Beginning simulation with {0} runs on {1} threads".format(self.executionCount, self.numProcess))
 
         if self.simParams.shouldArchiveParameters:
             if not os.path.exists(self.icDirectory):
-                print "Cannot run initial conditions: the directory given does not exist"
+                print("Cannot run initial conditions: the directory given does not exist")
 
             if self.simParams.verbose:
-                print "Archiving a copy of this simulation before running it in 'MonteCarlo.data'"
+                print("Archiving a copy of this simulation before running it in 'MonteCarlo.data'")
             try:
                 with gzip.open(self.icDirectory + "MonteCarlo.data", "w") as pickleFile:
                     pickle.dump(self, pickleFile)  # dump this controller object into a file.
             except Exception as e:
-                print "Unknown exception while trying to pickle monte-carlo-controller... \ncontinuing...\n\n", e
+                print("Unknown exception while trying to pickle monte-carlo-controller... \ncontinuing...\n\n", e)
 
         # Create Queue, but don't ever start it.
         self.multiProcManager = mp.Manager()
@@ -334,7 +334,7 @@ class Controller:
         #
         if self.numProcess == 1:  # don't make child thread
             if self.simParams.verbose:
-                print "Executing sequentially..."
+                print("Executing sequentially...")
             i = 0
             for i in range(len(caseList)):
                 simGenerator = self.generateICSims(caseList[i:i+1])
@@ -347,11 +347,11 @@ class Controller:
         else:
             numSims = len(caseList)
             if self.numProcess > numSims:
-                print "Fewer MCs spawned than processes assigned (%d < %d). Changing processes count to %d." % (numSims, self.numProcess, numSims)
+                print("Fewer MCs spawned than processes assigned (%d < %d). Changing processes count to %d." % (numSims, self.numProcess, numSims))
                 self.numProcess = numSims
             for i in range(numSims/self.numProcess):
                 # If number of sims doesn't factor evenly into the number of processes:
-                if numSims % self.numProcess != 0 and i == len(range(numSims/self.numProcess))-1:
+                if numSims % self.numProcess != 0 and i == len(list(range(numSims/self.numProcess)))-1:
                     offset = numSims % self.numProcess
                 else:
                     offset = 0
@@ -363,17 +363,17 @@ class Controller:
                     for result in pool.imap_unordered(simulationExecutor, [(x, self.dataOutQueue) for x in simGenerator]):
                         if result[0] is not True:  # workers return True on success
                             failed.append(result[1])  # add failed jobs to the list of failures
-                            print "Job", result[1], "failed..."
+                            print("Job", result[1], "failed...")
 
                         jobsFinished += 1
                     pool.close()
                 except KeyboardInterrupt as e:
-                    print "Ctrl-C was hit, closing pool"
+                    print("Ctrl-C was hit, closing pool")
                     # failed.extend(range(jobsFinished, numSims))  # fail all potentially running jobs...
                     pool.terminate()
                     raise e
                 except Exception as e:
-                    print "Unknown exception while running simulations:", e
+                    print("Unknown exception while running simulations:", e)
                     # failed.extend(range(jobsFinished, numSims))  # fail all potentially running jobs...
                     traceback.print_exc()
                     pool.terminate()
@@ -385,7 +385,7 @@ class Controller:
             failed.sort()
 
             if self.simParams.verbose:
-                print "Failed", failed, "saving to 'failures.txt'"
+                print("Failed", failed, "saving to 'failures.txt'")
 
             if self.simParams.shouldArchiveParameters:
                 # write a file that contains log of failed runs
@@ -411,11 +411,11 @@ class Controller:
         # simulations to execute
         for caseNumber in caseList:
             if self.simParams.verbose:
-                print "Running IC ", caseNumber
+                print("Running IC ", caseNumber)
 
             oldRunFile = self.icDirectory + "run" + str(caseNumber) + ".json"
             if not os.path.exists(oldRunFile):
-                print "ERROR running IC case: " + oldRunFile
+                print("ERROR running IC case: " + oldRunFile)
                 continue
 
             # use old simulation parameters, modified slightly.
@@ -459,7 +459,7 @@ class Controller:
         """
 
         if rng is None:
-            rng = range(self.executionCount)
+            rng = list(range(self.executionCount))
 
         if retentionPolicies == []:
             retentionPolicies = self.simParams.retentionPolicies
@@ -478,19 +478,19 @@ class Controller:
         '''
 
         if self.simParams.verbose:
-            print "Beginning simulation with {0} runs on {1} threads".format(self.executionCount, self.numProcess)
+            print("Beginning simulation with {0} runs on {1} threads".format(self.executionCount, self.numProcess))
 
         if self.simParams.shouldArchiveParameters:
             if os.path.exists(self.archiveDir):
                 shutil.rmtree(self.archiveDir)
             os.mkdir(self.archiveDir)
             if self.simParams.verbose:
-                print "Archiving a copy of this simulation before running it in 'MonteCarlo.data'"
+                print("Archiving a copy of this simulation before running it in 'MonteCarlo.data'")
             try:
                 with gzip.open(self.archiveDir + "MonteCarlo.data", "w") as pickleFile:
                     pickle.dump(self, pickleFile)  # dump this controller object into a file.
             except Exception as e:
-                print "Unknown exception while trying to pickle monte-carlo-controller... \ncontinuing...\n\n", e
+                print("Unknown exception while trying to pickle monte-carlo-controller... \ncontinuing...\n\n", e)
 
         self.multiProcManager = mp.Manager()
         self.dataOutQueue = self.multiProcManager.Queue()
@@ -521,10 +521,10 @@ class Controller:
         # garbage properly. # TODO: Find a more permenant solution to the leak.
         if self.numProcess == 1:  # don't make child thread
             if self.simParams.verbose:
-                print "Executing sequentially..."
+                print("Executing sequentially...")
             i = 0
             for i in range(numSims):
-                simGenerator = self.generateSims(range(i,i+1))
+                simGenerator = self.generateSims(list(range(i,i+1)))
                 for sim in simGenerator:
                     try:
                         simulationExecutor([sim, self.dataOutQueue])
@@ -533,37 +533,37 @@ class Controller:
                     i += 1
         else:
             if self.numProcess > numSims:
-                print "Fewer MCs spawned than processes assigned (%d < %d). Changing processes count to %d." % (numSims, self.numProcess, numSims)
+                print("Fewer MCs spawned than processes assigned (%d < %d). Changing processes count to %d." % (numSims, self.numProcess, numSims))
                 self.numProcess = numSims
             for i in range(numSims/self.numProcess):
                 # If number of sims doesn't factor evenly into the number of processes:
-                if numSims % self.numProcess != 0 and i == len(range(numSims/self.numProcess))-1:
+                if numSims % self.numProcess != 0 and i == len(list(range(numSims/self.numProcess)))-1:
                     offset = numSims % self.numProcess
                 else:
                     offset = 0
-                simGenerator = self.generateSims(range(self.numProcess*i,self.numProcess*(i+1)+offset))
+                simGenerator = self.generateSims(list(range(self.numProcess*i,self.numProcess*(i+1)+offset)))
                 pool = mp.Pool(self.numProcess)
                 try:
                     # yields results *as* the workers finish jobs
                     for result in pool.imap_unordered(simulationExecutor, [(x, self.dataOutQueue) for x in simGenerator]):
                         if result[0] is not True:  # workers return True on success
                             failed.append(result[1])  # add failed jobs to the list of failures
-                            print "Job", result[1], "failed..."
+                            print("Job", result[1], "failed...")
 
                         jobsFinished += 1
                         if self.simParams.verbose:
                             if jobsFinished % max(1, numSims / 20) == 0:  # print percentage after every ~5%
-                                print "Finished", jobsFinished, "/", numSims, \
-                                      "\t-- {}%".format(int(100 * float(jobsFinished) / numSims))
+                                print("Finished", jobsFinished, "/", numSims, \
+                                      "\t-- {}%".format(int(100 * float(jobsFinished) / numSims)))
                     pool.close()
                 except KeyboardInterrupt as e:
-                    print "Ctrl-C was hit, closing pool"
-                    failed.extend(range(jobsFinished, numSims))  # fail all potentially running jobs...
+                    print("Ctrl-C was hit, closing pool")
+                    failed.extend(list(range(jobsFinished, numSims)))  # fail all potentially running jobs...
                     pool.terminate()
                     raise e
                 except Exception as e:
-                    print "Unknown exception while running simulations:", e
-                    failed.extend(range(jobsFinished, numSims))  # fail all potentially running jobs...
+                    print("Unknown exception while running simulations:", e)
+                    failed.extend(list(range(jobsFinished, numSims)))  # fail all potentially running jobs...
                     traceback.print_exc()
                     pool.terminate()
                 finally:
@@ -581,7 +581,7 @@ class Controller:
             failed.sort()
 
             if self.simParams.verbose:
-                print "Failed", failed, "saving to 'failures.txt'"
+                print("Failed", failed, "saving to 'failures.txt'")
 
             if self.simParams.shouldArchiveParameters:
                 # write a file that contains log of failed runs
@@ -732,7 +732,7 @@ class RetentionPolicy():
 
             for func in retentionPolicy.retentionFunctions:
                 tmpModuleData = func(simInstance)
-                for (key, value) in tmpModuleData.iteritems():
+                for (key, value) in tmpModuleData.items():
                     data["custom"][key] = value
         return data
 
@@ -759,12 +759,12 @@ class DataWriter(mp.Process):
         """
         while self._endToken is None:
             data, mcSimIndex, self._endToken = self._queue.get()
-            print "Starting to log: " + str(mcSimIndex)
+            print("Starting to log: " + str(mcSimIndex))
             if self._endToken:
                 continue
-            print "Logging Dataframes from run " + str(mcSimIndex)
-            for dictName, dictData in data.iteritems(): # Loops through Messages, Variables, Custom dictionaries in the retention policy
-                for itemName, itemData in dictData.iteritems(): # Loop through all items and their data
+            print("Logging Dataframes from run " + str(mcSimIndex))
+            for dictName, dictData in data.items(): # Loops through Messages, Variables, Custom dictionaries in the retention policy
+                for itemName, itemData in dictData.items(): # Loop through all items and their data
 
                     if itemName == "OrbitalElements.Omega": # Protects from OS that aren't case sensitive.
                         itemName = "OrbitalElements.Omega_Capital"
@@ -806,10 +806,10 @@ class DataWriter(mp.Process):
                     with open(filePath, "a+") as pkl:
                         pickle.dump([df], pkl)
 
-            print "Finished logging dataframes from run" + str(mcSimIndex)
+            print("Finished logging dataframes from run" + str(mcSimIndex))
 
         # Sort by the MultiIndex (first by run number then by variable component)
-        print "Starting to concatenate dataframes"
+        print("Starting to concatenate dataframes")
         for filePath in self._dataFiles:
             # We create a new index so that we populate any missing run data (in the case that a run breaks) with NaNs.
             allData = []
@@ -820,14 +820,14 @@ class DataWriter(mp.Process):
                 except EOFError:
                     pass
             allData = pandas.concat(allData, axis=1)
-            newMultInd = pandas.MultiIndex.from_product([range(allData.columns.min()[0], allData.columns.max()[0]+1),
-                                                         range(allData.columns.min()[1], allData.columns.max()[1]+1)],
+            newMultInd = pandas.MultiIndex.from_product([list(range(allData.columns.min()[0], allData.columns.max()[0]+1)),
+                                                         list(range(allData.columns.min()[1], allData.columns.max()[1]+1))],
                                                          names=["runNum", "varIdx"])
             #allData = allData.sort_index(axis=1, level=[0,1]) #TODO: When we dont lose MCs anymore, we should just use this call
             allData = allData.reindex(columns=newMultInd)
             allData.index.name = 'time[ns]'
             allData.to_pickle(filePath)
-        print "Finished concatenating dataframes"
+        print("Finished concatenating dataframes")
 
     def setLogDir(self, logDir):
         self._logDir = logDir
@@ -877,7 +877,7 @@ class SimulationExecutor:
             if simParams.shouldDisperseSeeds:
                 # generate the random seeds for the model (but don't apply them yet)
                 randomSeedDispersions = cls.disperseSeeds(simInstance)
-                for name, value in randomSeedDispersions.items():
+                for name, value in list(randomSeedDispersions.items()):
                     modifications[name] = value
 
             # we may want to disperse parameters
@@ -898,24 +898,24 @@ class SimulationExecutor:
 
             if simParams.configureFunction is not None:
                 if simParams.verbose:
-                    print "Configuring sim"
+                    print("Configuring sim")
                 simParams.configureFunction(simInstance)
 
             # apply the dispersions and the random seeds
-            for variable, value in modifications.items():
+            for variable, value in list(modifications.items()):
                 disperseStatement = "simInstance." + variable + "=" + value
                 if simParams.verbose:
-                    print "Executing parameter modification -> ", disperseStatement
-                exec disperseStatement
+                    print("Executing parameter modification -> ", disperseStatement)
+                exec(disperseStatement)
 
             # setup data logging
             if len(simParams.retentionPolicies) > 0:
                 if simParams.verbose:
-                    print "Adding retained data"
+                    print("Adding retained data")
                 RetentionPolicy.addRetentionPoliciesToSim(simInstance, simParams.retentionPolicies)
 
             if simParams.verbose:
-                print "Executing simulation"
+                print("Executing simulation")
             # execute the simulation, with the user-supplied executionFunction
             simParams.executionFunction(simInstance)
 
@@ -926,7 +926,7 @@ class SimulationExecutor:
                     retentionFile = simParams.filename + ".data"
 
                 if simParams.verbose:
-                    print "Retaining data for run in", retentionFile
+                    print("Retaining data for run in", retentionFile)
 
                 retainedData = RetentionPolicy.getDataForRetention(simInstance, simParams.retentionPolicies)
                 dataOutQueue.put((retainedData, simParams.index, None))
@@ -936,18 +936,18 @@ class SimulationExecutor:
                     pickle.dump(retainedData, archive)
 
             if simParams.verbose:
-                print "Terminating simulation"
+                print("Terminating simulation")
 
             # terminate the simulation
             simInstance.terminateSimulation()
 
             if simParams.verbose:
-                print "Thread", os.getpid(), "Job", simParams.index, "finished successfully"
+                print("Thread", os.getpid(), "Job", simParams.index, "finished successfully")
 
             return (True, simParams.index)  # this function returns true only if the simulation was successful
 
         except Exception as e:
-            print "Error in worker thread", e
+            print("Error in worker thread", e)
             traceback.print_exc()
             return (False, simParams.index)  # there was an error
 
@@ -978,7 +978,7 @@ class SimulationExecutor:
                 rand = str(random.randint(0, 1 << 32 - 1))
                 try:
                     execStatement = "simInstance." + taskVar + "=" + str(rand)
-                    exec execStatement  # if this fails don't add to the list of modification
+                    exec(execStatement)  # if this fails don't add to the list of modification
                     randomSeeds[taskVar] = rand
                 except:
                     pass

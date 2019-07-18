@@ -144,7 +144,7 @@ def sunline_individual_test():
     DynOut = np.array(DynOut).reshape(numStates, numStates)
     errorNorm = np.linalg.norm(expDynMat - DynOut)
     if(errorNorm > 1.0E-10):
-        print errorNorm, "Dyn Matrix"
+        print(errorNorm, "Dyn Matrix")
         testFailCount += 1
         testMessages.append("Dynamics Matrix generation Failure Dyn " + "\n")
 
@@ -305,7 +305,7 @@ def sunline_individual_test():
     errorNorm = np.linalg.norm(KalmanOut[:,0:numObs] - expectedK)
 
     if (errorNorm > 1.0E-10):
-        print errorNorm, "Kalman Gain Error"
+        print(errorNorm, "Kalman Gain Error")
         testFailCount += 1
         testMessages.append("Kalman Gain update failure \n")
 
@@ -557,10 +557,10 @@ def sunline_individual_test():
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + " SEKF individual tests"
+        print("PASSED: " + " SEKF individual tests")
     else:
-        print str(testFailCount) + ' tests failed'
-        print testMessages
+        print(str(testFailCount) + ' tests failed')
+        print(testMessages)
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
@@ -622,7 +622,7 @@ def StatePropStatic():
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + "SEKF static state propagation"
+        print("PASSED: " + "SEKF static state propagation")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -771,7 +771,7 @@ def StatePropVariable(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + "SEKF general state propagation"
+        print("PASSED: " + "SEKF general state propagation")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -885,12 +885,12 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         unitTestSim.ExecuteSimulation()
 
 
-    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", range(6))
-    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", range(6*6))
+    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", list(range(6)))
+    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", list(range(6*6)))
 
     for i in range(numStates):
         if (abs(covarLog[-1, i *numStates  + 1 + i] - covarLog[0, i * numStates + 1 + i] / 100.) > 1E-1):
-            print abs(covarLog[-1, i *numStates  + 1 + i] - covarLog[0, i * numStates + 1 + i] / 100.)
+            print(abs(covarLog[-1, i *numStates  + 1 + i] - covarLog[0, i * numStates + 1 + i] / 100.))
             testFailCount += 1
             testMessages.append("Covariance update failure")
         if (abs(stateLog[-1, i + 1] - stateTarget1[i]) > 1.0E-1):
@@ -920,9 +920,9 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + SimHalfLength+1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", range(5))
-    postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", range(8))
-    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", range(5*5))
+    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", list(range(5)))
+    postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", list(range(8)))
+    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", list(range(5*5)))
     stateErrorLog = unitTestSim.GetLogVariableData('sunlineSEKF.x')
 
 
@@ -943,7 +943,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + "SEKF full test"
+        print("PASSED: " + "SEKF full test")
 
     # return fail count and join into a single string all messages in the list
     # testMessage

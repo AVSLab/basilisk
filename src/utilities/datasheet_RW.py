@@ -19,7 +19,7 @@
 '''
 
 
-import macros as mc
+from . import macros as mc
 
 #   Honeywell HR16 (100Nm, 75Nm, 50Nm)
 #

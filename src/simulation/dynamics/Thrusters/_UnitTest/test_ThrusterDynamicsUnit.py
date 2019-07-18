@@ -714,7 +714,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
 
 
     if testFailCount == 0:
-        print "PASSED"
+        print("PASSED")
         testFixture.PassFail.append("PASSED")
     else:
         testFixture.PassFail.append("FAILED")

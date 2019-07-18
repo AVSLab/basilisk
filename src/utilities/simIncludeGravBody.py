@@ -18,8 +18,8 @@
 
 '''
 
-from Basilisk.simulation import gravityEffector
-from Basilisk.simulation import spice_interface
+from Basilisk.simulation.gravityEffector import gravityEffector
+from Basilisk.simulation.spice_interface import spice_interface
 from Basilisk.utilities import unitTestSupport
 
 class gravBodyFactory(object):
@@ -69,7 +69,7 @@ class gravBodyFactory(object):
             elif name == "sun":
                 self.createSun()
             else:
-                print "gravBody " + name + " not found in gravBodyUtilities.py"
+                print("gravBody " + name + " not found in gravBodyUtilities.py")
         return self.gravBodies
 
 
@@ -230,7 +230,7 @@ class gravBodyFactory(object):
                 A configured Basilisk spice module.
         """
 
-        if kwargs.has_key('spiceKernalFileNames'):
+        if 'spiceKernalFileNames' in kwargs:
             try:
                 for fileName in kwargs['spiceKernalFileNames']:
                     self.spiceKernelFileNames.append(fileName)
@@ -240,14 +240,14 @@ class gravBodyFactory(object):
             self.spiceKernelFileNames.extend(['de430.bsp', 'naif0012.tls', 'de-403-masses.tpc', 'pck00010.tpc'])
 
         self.spicePlanetNames = []
-        if kwargs.has_key('spicePlanetNames'):
+        if 'spicePlanetNames' in kwargs:
             try:
                 for planetName in kwargs['spicePlanetNames']:
                     self.spicePlanetNames.append(planetName)
             except(TypeError):
                 raise TypeError('spicePlanetNames expects a list')
         else:
-            self.spicePlanetNames = self.gravBodies.keys()
+            self.spicePlanetNames = list(self.gravBodies.keys())
 
         self.spiceObject = spice_interface.SpiceInterface()
         self.spiceObject.ModelTag = "SpiceInterfaceData"
@@ -260,10 +260,10 @@ class gravBodyFactory(object):
             self.spiceObject.loadSpiceKernel(fileName, path)
         self.spiceObject.SPICELoaded = True
 
-        if kwargs.has_key('epochInMsgName'):
+        if 'epochInMsgName' in kwargs:
             epMsgName = kwargs['epochInMsgName']
             if not isinstance(epMsgName, str):
-                print 'ERROR: epochInMsgName must be a string argument'
+                print('ERROR: epochInMsgName must be a string argument')
                 exit(1)
             self.spiceObject.epochInMsgName = epMsgName
             epochMsg = unitTestSupport.timeStringToGregorianUTCMsg(time, dataPath = path)
@@ -299,4 +299,3 @@ def loadGravFromFile(fileName, spherHarm, maxDeg=2):
             Note that this function calls the gravityEffector function loadGravFromFile().
     """
     gravityEffector.loadGravFromFile(fileName, spherHarm, maxDeg)
-

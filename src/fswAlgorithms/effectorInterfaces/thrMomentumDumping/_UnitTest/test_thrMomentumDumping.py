@@ -197,7 +197,7 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "OnTimeRequest"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.thrusterOnTimeOutMsgName + '.' + moduleOutputName,
-                                                  range(numThrusters))
+                                                  list(range(numThrusters)))
 
     # set the filtered output truth states
     if resetCheck==1:
@@ -247,11 +247,11 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
     snippentName = "passFail" + str(resetCheck) + str(largeMinFireTime)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
+        print("Failed: " + moduleWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

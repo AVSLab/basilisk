@@ -195,7 +195,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     # This pulls the actual data log from the simulation run.
     moduleOutputName = "voltage"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.voltageOutMsgName + '.' + moduleOutputName,
-                                                  range(numRW))
+                                                  list(range(numRW)))
 
 
     # set the filtered output truth states
@@ -268,7 +268,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     snippentName = "passFail" + testName
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
@@ -279,7 +279,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     resultTable = moduleOutput
     resultTable[:, 0] = macros.NANO2SEC * resultTable[:, 0]
     diff = np.delete(moduleOutput, 0, 1) - trueVector
-    resultTable = np.insert(resultTable, range(2, 2 + len(diff.transpose())), diff, axis=1)
+    resultTable = np.insert(resultTable, list(range(2, 2 + len(diff.transpose()))), diff, axis=1)
 
     tableName = "test" + str(useLargeVoltage) + str(useAvailability) + str(useTorqueLoop)
     tableHeaders = ["time [s]", "$V_{s,1}$", "Error", "$V_{s,2}$", "Error", "$V_{s,3}$", "Error", "$V_{s,4}$", "Error"]

@@ -88,9 +88,9 @@ def rwConfigDataTestFunction():
     unitTestSim.ExecuteSimulation()
 
     # Get the output from this simulation
-    JsListLog = unitTestSim.pullMessageLogData(moduleConfig.rwParamsOutMsgName+'.JsList', range(numRW))
-    uMaxLog = unitTestSim.pullMessageLogData(moduleConfig.rwParamsOutMsgName+'.uMax', range(numRW))
-    GsMatrix_B_Log = unitTestSim.pullMessageLogData(moduleConfig.rwParamsOutMsgName+'.GsMatrix_B', range(3*numRW))
+    JsListLog = unitTestSim.pullMessageLogData(moduleConfig.rwParamsOutMsgName+'.JsList', list(range(numRW)))
+    uMaxLog = unitTestSim.pullMessageLogData(moduleConfig.rwParamsOutMsgName+'.uMax', list(range(numRW)))
+    GsMatrix_B_Log = unitTestSim.pullMessageLogData(moduleConfig.rwParamsOutMsgName+'.GsMatrix_B', list(range(3*numRW)))
 
     accuracy = 1e-6
 
@@ -106,7 +106,7 @@ def rwConfigDataTestFunction():
                                                                  3*numRW, testFailCount, testMessages)
 
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
 
     return [testFailCount, ''.join(testMessages)]
 

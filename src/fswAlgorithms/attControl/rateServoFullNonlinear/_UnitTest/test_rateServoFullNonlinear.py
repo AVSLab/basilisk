@@ -185,7 +185,7 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
             rwAvailabilityMessage.wheelAvailability  = [rateServoFullNonlinear.UNAVAILABLE, rateServoFullNonlinear.UNAVAILABLE,
                                                         rateServoFullNonlinear.UNAVAILABLE, rateServoFullNonlinear.UNAVAILABLE]
         else:
-            print "WARNING: unknown rw availability status"
+            print("WARNING: unknown rw availability status")
 
         unitTestSupport.setMessage(unitTestSim.TotalSim,
                                    unitProcessName,
@@ -231,7 +231,7 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "torqueRequestBody"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
 
     # set the filtered output truth states
     LrTrue = findTrueTorques(moduleConfig, guidCmdData, rwSpeedMessage, vehicleConfigOut, jsList,
@@ -255,7 +255,7 @@ def rate_servo_full_nonlinear(show_plots,rwNum, intGain, omegap_BastR_B, omega_B
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
 
     # return fail count and join into a single string all messages in the list
     # testMessage

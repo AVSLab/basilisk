@@ -39,7 +39,7 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation.spacecraftPlus import spacecraftPlus
 # general support file with common unit test functions
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
@@ -369,7 +369,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     mu = planet.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     #   setup orbit and simulation time
@@ -419,7 +419,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     else:
         numDataPoints = 100
     samplingTime = simulationTime / (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
+    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, int(samplingTime))
 
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line
@@ -442,8 +442,8 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     #
     #   retrieve the logged data
     #
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', range(3))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', range(3))
+    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
+    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
 
     np.set_printoptions(precision=16)
 

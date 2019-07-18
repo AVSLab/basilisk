@@ -220,9 +220,9 @@ def fuelSloshTest(show_plots,useFlag,testCase):
 
     if testCase == 'MassDepletion':
         fuelMass = unitTestSim.pullMessageLogData(unitTestSim.fuelTankStateEffector.FuelTankOutMsgName + '.fuelMass',
-                                                  range(1))
+                                                  list(range(1)))
         fuelMassDot = unitTestSim.pullMessageLogData(unitTestSim.fuelTankStateEffector.FuelTankOutMsgName + '.fuelMassDot',
-                                                  range(1))
+                                                  list(range(1)))
         mass1Out = unitTestSim.GetLogVariableData(
             "spacecraftBody.dynManager.getStateObject('linearSpringMassDamperMass1').getState()")
         mass2Out = unitTestSim.GetLogVariableData(
@@ -361,7 +361,7 @@ def fuelSloshTest(show_plots,useFlag,testCase):
             testMessages.append("FAILED: Linear Spring Mass Damper unit test failed mass 3 dot test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Linear Spring Mass Damper Test"
+        print("PASSED: " + " Linear Spring Mass Damper Test")
 
     assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list

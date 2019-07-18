@@ -165,7 +165,7 @@ def run(show_plots, integratorCase):
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     #   setup orbit and simulation time
@@ -216,8 +216,8 @@ def run(show_plots, integratorCase):
     #
     #   retrieve the logged data
     #
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N', range(3))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N', range(3))
+    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N', list(range(3)))
+    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N', list(range(3)))
 
     #
     #   plot the results

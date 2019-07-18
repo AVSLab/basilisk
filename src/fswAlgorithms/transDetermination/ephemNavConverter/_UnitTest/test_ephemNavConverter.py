@@ -75,8 +75,8 @@ def ephemNavConverterTestFunction():
     unitTestSupport.writeTeXSnippet("toleranceValuePos", str(posAcc), path)
     unitTestSupport.writeTeXSnippet("toleranceValueVel", str(velAcc), path)
 
-    outputR = unitTestSim.pullMessageLogData(ephemNavConfig.stateOutMsgName + '.r_BN_N',  range(3))
-    outputV = unitTestSim.pullMessageLogData(ephemNavConfig.stateOutMsgName + '.v_BN_N',  range(3))
+    outputR = unitTestSim.pullMessageLogData(ephemNavConfig.stateOutMsgName + '.r_BN_N',  list(range(3)))
+    outputV = unitTestSim.pullMessageLogData(ephemNavConfig.stateOutMsgName + '.v_BN_N',  list(range(3)))
     outputTime = unitTestSim.pullMessageLogData(ephemNavConfig.stateOutMsgName + '.timeTag')
 
     trueR = [position, position]
@@ -101,11 +101,11 @@ def ephemNavConverterTestFunction():
     snippentName = "passFail"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + ephemNavWrap.ModelTag
+        print("PASSED: " + ephemNavWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + ephemNavWrap.ModelTag
+        print("Failed: " + ephemNavWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

@@ -237,14 +237,14 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     attTimeTag = unitTestSim.pullMessageLogData(moduleConfig.outputAttName + '.timeTag')
-    attSigma = unitTestSim.pullMessageLogData(moduleConfig.outputAttName + '.sigma_BN', range(3))
-    attOmega = unitTestSim.pullMessageLogData(moduleConfig.outputAttName + '.omega_BN_B', range(3))
-    attSunVector = unitTestSim.pullMessageLogData(moduleConfig.outputAttName + '.vehSunPntBdy', range(3))
+    attSigma = unitTestSim.pullMessageLogData(moduleConfig.outputAttName + '.sigma_BN', list(range(3)))
+    attOmega = unitTestSim.pullMessageLogData(moduleConfig.outputAttName + '.omega_BN_B', list(range(3)))
+    attSunVector = unitTestSim.pullMessageLogData(moduleConfig.outputAttName + '.vehSunPntBdy', list(range(3)))
 
     transTimeTag = unitTestSim.pullMessageLogData(moduleConfig.outputTransName + '.timeTag')
-    transPos = unitTestSim.pullMessageLogData(moduleConfig.outputTransName + '.r_BN_N', range(3))
-    transVel = unitTestSim.pullMessageLogData(moduleConfig.outputTransName + '.v_BN_N', range(3))
-    transAccum = unitTestSim.pullMessageLogData(moduleConfig.outputTransName + '.vehAccumDV', range(3))
+    transPos = unitTestSim.pullMessageLogData(moduleConfig.outputTransName + '.r_BN_N', list(range(3)))
+    transVel = unitTestSim.pullMessageLogData(moduleConfig.outputTransName + '.v_BN_N', list(range(3)))
+    transAccum = unitTestSim.pullMessageLogData(moduleConfig.outputTransName + '.vehAccumDV', list(range(3)))
 
 
     # set the filtered output truth states
@@ -353,11 +353,11 @@ def navAggregateTestFunction(show_plots, numAttNav, numTransNav):
     snippentName = "passFail" + str(numAttNav) + str(numTransNav)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
+        print("Failed: " + moduleWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

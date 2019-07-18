@@ -390,7 +390,7 @@ def run(show_plots, damping_parameter, timeStep):
     mu = planet.mu
 
     # attach gravity to the spacecraft
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # initialize orbital elements
     oe = orbitalMotion.ClassicElements()
@@ -445,8 +445,8 @@ def run(show_plots, damping_parameter, timeStep):
     scSim.ExecuteSimulation()
 
     # request states to the simulation
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_CN_N', range(3))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_CN_N', range(3))
+    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_CN_N', list(range(3)))
+    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_CN_N', list(range(3)))
 
     orbEnergy = scSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
     orbAngMom_N = scSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")

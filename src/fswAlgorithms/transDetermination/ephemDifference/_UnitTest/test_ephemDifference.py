@@ -126,8 +126,8 @@ def ephemDifferenceTestFunction(ephBdyCount):
 
         for i in range(ephBdyCount):
 
-            outputData_R = unitTestSim.pullMessageLogData('output_change_body_' + str(i) + '.r_BdyZero_N', range(3))
-            outputData_V = unitTestSim.pullMessageLogData('output_change_body_' + str(i) + '.v_BdyZero_N', range(3))
+            outputData_R = unitTestSim.pullMessageLogData('output_change_body_' + str(i) + '.r_BdyZero_N', list(range(3)))
+            outputData_V = unitTestSim.pullMessageLogData('output_change_body_' + str(i) + '.v_BdyZero_N', list(range(3)))
             timeTag = unitTestSim.pullMessageLogData('output_change_body_' + str(i) + '.timeTag')
 
             # print(outputData_R)
@@ -154,11 +154,11 @@ def ephemDifferenceTestFunction(ephBdyCount):
     snippentName = "passFail" + str(ephBdyCount)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + ephemDiffWrap.ModelTag
+        print("PASSED: " + ephemDiffWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + ephemDiffWrap.ModelTag
+        print("Failed: " + ephemDiffWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

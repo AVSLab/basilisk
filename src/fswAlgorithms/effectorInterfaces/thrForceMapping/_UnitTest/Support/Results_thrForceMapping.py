@@ -133,7 +133,7 @@ class Results_thrForceMapping():
                 raise np.linalg.LinAlgError()
         except:
             DDTInv = np.zeros((3, 3))
-            print "Singular Matrix! Outputting Zeros."
+            print("Singular Matrix! Outputting Zeros.")
 
         DDTInvLr_Bar = np.dot(DDTInv, Lr_Bar)
         F = np.dot(DT, DDTInvLr_Bar)

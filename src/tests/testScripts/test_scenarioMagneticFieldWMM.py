@@ -64,7 +64,7 @@ def test_scenarioMagneticField(show_plots, orbitCase):
     numTruthPoints = 5
     skipValue = int(len(magData) / (numTruthPoints - 1))
     dataMagRed = magData[::skipValue]
-    print dataMagRed
+    print(dataMagRed)
 
     # setup truth data for unit test
     trueMag = []
@@ -94,15 +94,15 @@ def test_scenarioMagneticField(show_plots, orbitCase):
         testFailCount, testMessages)
 
     # save the figures to the Doxygen scenario images folder
-    for pltName, plt in figureList.items():
+    for pltName, plt in list(figureList.items()):
         unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED "
+        print("PASSED ")
     else:
-        print "Failed: testFailCount is " + str(testFailCount)
-        print testMessages
+        print("Failed: testFailCount is " + str(testFailCount))
+        print(testMessages)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

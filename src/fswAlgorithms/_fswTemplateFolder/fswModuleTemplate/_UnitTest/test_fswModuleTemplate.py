@@ -151,7 +151,7 @@ def fswModuleTestFunction(plotFixture, show_plots):
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "outputVector"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.dataOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     variableState = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + "." + variableName)
 
     # Set the results variable(s) to the fixture data storage variables so that it is accessible for plotting
@@ -193,7 +193,7 @@ def fswModuleTestFunction(plotFixture, show_plots):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print   "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

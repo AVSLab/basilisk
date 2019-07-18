@@ -238,11 +238,11 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     snippentName = "unitTestPassFail" + str(useDefault) + str(useMinReach) + str(useMaxReach) + str(usePlanetEphemeris)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + testModule.ModelTag
+        print("PASSED: " + testModule.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + testModule.ModelTag
+        print("Failed: " + testModule.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

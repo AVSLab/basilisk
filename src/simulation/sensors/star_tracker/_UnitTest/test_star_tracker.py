@@ -121,11 +121,11 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
             fieldNames.append(fieldName)
             if type(getattr(StarTrackerOutput,fieldName)).__name__ == 'list':
                 fieldLengths.append(len(getattr(StarTrackerOutput,fieldName)))
-            elif isinstance(getattr(StarTrackerOutput,fieldName), (float, long, int)):
+            elif isinstance(getattr(StarTrackerOutput,fieldName), (float, int)):
                 fieldLengths.append(1)
 
     trueVector = dict()
-    print testCase
+    print(testCase)
     if testCase == 'basic':
         # this test verifies basic input and output
         simStopTime = 0.5
@@ -188,7 +188,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
     moduleOutput = dict()
     for i in range(0,len(fieldNames)):
         moduleOutputName = fieldNames[i]
-        moduleOutput[moduleOutputName] = unitSim.pullMessageLogData(StarTracker.outputStateMessage + '.' + moduleOutputName, range(fieldLengths[i]))
+        moduleOutput[moduleOutputName] = unitSim.pullMessageLogData(StarTracker.outputStateMessage + '.' + moduleOutputName, list(range(fieldLengths[i])))
 
 
 
@@ -226,7 +226,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
 
             elif testCase == 'walk bounds':
                 for i in range(0,3):
-                    print np.max(np.abs(np.asarray(moduleOutput['prvInrtl2Case'][:,i])))
+                    print(np.max(np.abs(np.asarray(moduleOutput['prvInrtl2Case'][:,i]))))
                     if np.max(np.abs(np.asarray(moduleOutput['prvInrtl2Case'][:,i]))) > trueVector['qInrtl2Case'][i]:
                         testFail = True
                         break
@@ -261,7 +261,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print   "PASSED "
+        print("PASSED ")
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

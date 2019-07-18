@@ -66,7 +66,7 @@ def computeGravityTo20(positionVector):
                 elif m == l and l != 0:
                     P[l,m] = (2*l-1)*cosPhi*P[l-1,m-1]
                 else:
-                    print l,", ", m
+                    print(l,", ", m)
         return P
 
     maxDegree = 20
@@ -182,7 +182,7 @@ def independentSphericalHarmonics(show_plots):
 
     if testFailCount == 0:
         passFailText = 'PASSED'
-        print "PASSED: " + testCase
+        print("PASSED: " + testCase)
         colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX.
         snippetName = testCase + 'FailMsg'
         snippetContent = ""
@@ -255,7 +255,7 @@ def sphericalHarmonics(show_plots):
 
     if testFailCount == 0:
         passFailText = 'PASSED'
-        print "PASSED: " + " Spherical Harmonics"
+        print("PASSED: " + " Spherical Harmonics")
         colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX.
         snippetName = testCase + 'FailMsg'
         snippetContent = ""
@@ -385,7 +385,7 @@ def singleGravityBody(show_plots):
 
     if testFailCount == 0:
         passFailText = 'PASSED'
-        print "PASSED: " + "Single-body with Spherical Harmonics"
+        print("PASSED: " + "Single-body with Spherical Harmonics")
         colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX
         snippetName = testCase + 'FailMsg'
         snippetContent = ""
@@ -533,7 +533,7 @@ def multiBodyGravity(show_plots):
     #Record test results to LaTeX
     if testFailCount == 0:
         passFailText = 'PASSED'
-        print "PASSED: " + " Multi-Body"
+        print("PASSED: " + " Multi-Body")
         colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX
         snippetName = testCase + 'FailMsg'
         snippetContent = ""

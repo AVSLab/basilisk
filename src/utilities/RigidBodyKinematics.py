@@ -4218,7 +4218,7 @@ def Mi(theta, i):
         C[2][1] = 0.
         C[2][2] = 1.
     else:
-        print 'Mi() error: incorrect axis', i, 'selected'
+        print('Mi() error: incorrect axis', i, 'selected')
     return C
 
 def v3Tilde(vector):

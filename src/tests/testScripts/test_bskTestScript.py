@@ -93,7 +93,7 @@ def test_scenarioBskScenarios(show_plots, bskSimCase):
         # save the figures to the Doxygen scenario images folder
 
         if(figureList != {}):
-            for pltName, plt in figureList.items():
+            for pltName, plt in list(figureList.items()):
                 unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
     except OSError as err:

@@ -139,7 +139,7 @@ def fswModuleTestFunction(show_plots, param1, param2):
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "outputVector"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.dataOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     variableState = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + "." + variableName)
 
     # set the filtered output truth states
@@ -212,7 +212,7 @@ def fswModuleTestFunction(show_plots, param1, param2):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
 
     # export a plot to be included in the documentation
     unitTestSupport.writeFigureLaTeX(
@@ -226,7 +226,7 @@ def fswModuleTestFunction(show_plots, param1, param2):
     resultTable = moduleOutput
     resultTable[:,0] = macros.NANO2SEC*resultTable[:,0]
     diff = np.delete(moduleOutput,0,1) - trueVector
-    resultTable = np.insert(resultTable,range(2,2+len(diff.transpose())), diff, axis=1)
+    resultTable = np.insert(resultTable,list(range(2,2+len(diff.transpose()))), diff, axis=1)
 
     tableName = "test" + str(param1) + str(param2)      # make this a unique name
     tableHeaders = ["time [s]", "Output 1", "Error", "Output 2", "Error", "Output 3 $\\bm r$", "Error"]
@@ -242,11 +242,11 @@ def fswModuleTestFunction(show_plots, param1, param2):
     snippentName = "passFail" + str(param1) + str(param2)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
+        print("Failed: " + moduleWrap.ModelTag)
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 

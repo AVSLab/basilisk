@@ -19,10 +19,11 @@
 '''
 
 
-from Basilisk.simulation import sim_model
+from Basilisk.simulation.sim_model import sim_model
 import numpy
 import array
 import importlib
+import six
 
 
 def getMessageContainers(messageModule, messageObj):
@@ -54,15 +55,19 @@ def obtainMessageVector(messageName, messageModule, messageObj, messageCount,
     swigObject = eval('localContainer.' + varName)
     swigObjectGood = type(swigObject).__name__ == 'SwigPyObject'
     timeValues = array.array('d')
-    messageNoSpace = messageName.translate(None, "[]'() .")
-    varNameClean = varName.translate(None, "[]'() .")
+    if six.PY2:
+        messageNoSpace = messageName.translate(None, "[]'() .")
+        varNameClean = varName.translate(None, "[]'() .")
+    else:
+        messageNoSpace = messageName.translate("[]'() .")
+        varNameClean = varName.translate("[]'() .")
 
     if swigObjectGood:
         functionCall = eval('sim_model.' + varType + 'Array_getitem')
     else:  # So this is weird, but weirdly we need to punch a duck now
         refFunctionString = 'def GetMessage' + messageNoSpace + varNameClean + '(self):\n'
         refFunctionString += '   return self.' + varName
-        exec refFunctionString
+        exec(refFunctionString)
         functionCall = eval('GetMessage' + messageNoSpace + varNameClean)
 
     while count < messageCount:
@@ -93,7 +98,7 @@ def obtainMessageVector(messageName, messageModule, messageObj, messageCount,
     resultArray = numpy.array(timeValues)
     arrayDim = messageCount
     if arrayDim > 0:
-        resultArray = numpy.reshape(resultArray, (arrayDim, resultArray.shape[0] / arrayDim))
+        resultArray = numpy.reshape(resultArray, (arrayDim, resultArray.shape[0] // arrayDim))
     return resultArray
 
 

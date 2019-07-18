@@ -138,8 +138,8 @@ def subModuleTestFunction(show_plots):
     #
     moduleOutputName = "sigma_RN"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
-    print '\n sigma RN = ', moduleOutput[:, 1:]
+                                                  list(range(3)))
+    print('\n sigma RN = ', moduleOutput[:, 1:])
     # set the filtered output truth states
     trueVector = [
                [0.1, 0.2, 0.3],
@@ -165,8 +165,8 @@ def subModuleTestFunction(show_plots):
     #
     moduleOutputName = "omega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
-    print '\n omega_RN_N = ', moduleOutput[:, 1:]
+                                                  list(range(3)))
+    print('\n omega_RN_N = ', moduleOutput[:, 1:])
     # set the filtered output truth states
     trueVector = [
         [0.02142849611, 0.01021197571, -0.011041933756],
@@ -190,8 +190,8 @@ def subModuleTestFunction(show_plots):
     #
     moduleOutputName = "domega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
-    print '\n domega_RN_N = ', moduleOutput[:, 1:]
+                                                  list(range(3)))
+    print('\n domega_RN_N = ', moduleOutput[:, 1:])
 
     # set the filtered output truth states
     trueVector = [
@@ -312,8 +312,8 @@ def subModuleTestFunction2(show_plots):
     #
     moduleOutputName = "sigma_RN"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
-    print '\n sigma RN = ', moduleOutput[:, 1:]
+                                                  list(range(3)))
+    print('\n sigma RN = ', moduleOutput[:, 1:])
     # set the filtered output truth states
     trueVector = [
         [0.1, 0.2, 0.3],
@@ -338,8 +338,8 @@ def subModuleTestFunction2(show_plots):
     #
     moduleOutputName = "omega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
-    print '\n omega_RN_N = ', moduleOutput[:, 1:]
+                                                  list(range(3)))
+    print('\n omega_RN_N = ', moduleOutput[:, 1:])
     # set the filtered output truth states
     trueVector = [
         [0.02142849611, 0.01021197571, -0.011041933756],
@@ -363,8 +363,8 @@ def subModuleTestFunction2(show_plots):
     #
     moduleOutputName = "domega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
-    print '\n domega_RN_N = ', moduleOutput[:, 1:]
+                                                  list(range(3)))
+    print('\n domega_RN_N = ', moduleOutput[:, 1:])
 
     # set the filtered output truth states
     trueVector = [

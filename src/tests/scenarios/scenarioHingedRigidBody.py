@@ -298,7 +298,7 @@ def run(show_plots):
     mu = earth.mu
 
     # Attach gravity model to spacecraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # Adding the HingedRigidBody State Effector
     scSim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
@@ -411,10 +411,10 @@ def run(show_plots):
     #
     #   retrieve the logged data
     #
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', range(3))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', range(3))
-    panel1thetaLog = scSim.pullMessageLogData(scSim.panel1.HingedRigidBodyOutMsgName + '.theta', range(1))
-    panel2thetaLog = scSim.pullMessageLogData(scSim.panel2.HingedRigidBodyOutMsgName + '.theta', range(1))
+    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
+    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
+    panel1thetaLog = scSim.pullMessageLogData(scSim.panel1.HingedRigidBodyOutMsgName + '.theta', list(range(1)))
+    panel2thetaLog = scSim.pullMessageLogData(scSim.panel2.HingedRigidBodyOutMsgName + '.theta', list(range(1)))
     np.set_printoptions(precision=16)
 
     #

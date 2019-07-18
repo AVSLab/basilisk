@@ -198,7 +198,7 @@ class scenario_HillPointing(BSKScenario):
         self.name = 'scenario_AttGuidance'
 
     def configure_initial_conditions(self):
-        print '%s: configure_initial_conditions' % self.name
+        print('%s: configure_initial_conditions' % self.name)
         # Configure FSW mode
         self.masterSim.modeRequest = 'hillPoint'
 
@@ -220,7 +220,7 @@ class scenario_HillPointing(BSKScenario):
 
 
     def log_outputs(self):
-        print '%s: log_outputs' % self.name
+        print('%s: log_outputs' % self.name)
         # Dynamics process outputs
         samplingTime = self.masterSim.get_DynModel().processTasksTimeStep
         self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().simpleNavObject.outputAttName, samplingTime)
@@ -233,18 +233,18 @@ class scenario_HillPointing(BSKScenario):
         self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().mrpFeedbackRWsData.outputDataName, samplingTime)
 
     def pull_outputs(self, showPlots):
-        print '%s: pull_outputs' % self.name
+        print('%s: pull_outputs' % self.name)
         # Dynamics process outputs
-        sigma_BN = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN", range(3))
-        r_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", range(3))
-        v_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", range(3))
+        sigma_BN = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN", list(range(3)))
+        r_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", list(range(3)))
+        v_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", list(range(3)))
 
         # FSW process outputs
-        sigma_RN = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData.inputRefName + ".sigma_RN", range(3))
-        omega_RN_N = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData.inputRefName + ".omega_RN_N", range(3))
-        sigma_BR = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".sigma_BR", range(3))
-        omega_BR_B = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", range(3))
-        Lr = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().mrpFeedbackRWsData.outputDataName + ".torqueRequestBody", range(3))
+        sigma_RN = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData.inputRefName + ".sigma_RN", list(range(3)))
+        omega_RN_N = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData.inputRefName + ".omega_RN_N", list(range(3)))
+        sigma_BR = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".sigma_BR", list(range(3)))
+        omega_BR_B = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", list(range(3)))
+        Lr = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().mrpFeedbackRWsData.outputDataName + ".torqueRequestBody", list(range(3)))
 
         # Plot results
         BSK_plt.clear_all_plots()

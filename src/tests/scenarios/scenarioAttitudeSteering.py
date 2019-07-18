@@ -364,7 +364,7 @@ def run(show_plots, simCase):
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # add RW devices
     rwFactory = simIncludeRW.rwFactory()
@@ -522,7 +522,7 @@ def run(show_plots, simCase):
     # FSW RW configuration message
     # use the same RW states in the FSW algorithm as in the simulation
     fswSetupRW.clearSetup()
-    for key, rw in rwFactory.rwList.iteritems():
+    for key, rw in rwFactory.rwList.items():
         fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
     fswSetupRW.writeConfigMessage(servoConfig.rwParamsInMsgName, scSim.TotalSim, simProcessName)
 
@@ -569,15 +569,15 @@ def run(show_plots, simCase):
     #
     #   retrieve the logged data
     #
-    dataUsReq = scSim.pullMessageLogData(rwMotorTorqueConfig.outputDataName + ".motorTorque", range(numRW))
-    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", range(3))
-    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", range(3))
-    dataOmegaBRAst = scSim.pullMessageLogData(mrpControlConfig.outputDataName + ".omega_BastR_B", range(3))
-    dataOmegaRW = scSim.pullMessageLogData(rwStateEffector.OutputDataString + ".wheelSpeeds", range(numRW))
-    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", range(3))
+    dataUsReq = scSim.pullMessageLogData(rwMotorTorqueConfig.outputDataName + ".motorTorque", list(range(numRW)))
+    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", list(range(3)))
+    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", list(range(3)))
+    dataOmegaBRAst = scSim.pullMessageLogData(mrpControlConfig.outputDataName + ".omega_BastR_B", list(range(3)))
+    dataOmegaRW = scSim.pullMessageLogData(rwStateEffector.OutputDataString + ".wheelSpeeds", list(range(numRW)))
+    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", list(range(3)))
     dataRW = []
     for i in range(0, numRW):
-        dataRW.append(scSim.pullMessageLogData(rwOutName[i] + ".u_current", range(1)))
+        dataRW.append(scSim.pullMessageLogData(rwOutName[i] + ".u_current", list(range(1))))
     np.set_printoptions(precision=16)
 
     #
