@@ -6,6 +6,9 @@
 #define BASILISK_SIMPLEBATTERY_H
 
 
+#include "../_GeneralModuleFiles/simPowerStorageBase.h"
+#include "../../simMessages/powerStorageStatusSimMsg.h"
+
 class SimpleBattery: public PowerStorageBase {
 
 public:

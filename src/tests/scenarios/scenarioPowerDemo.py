@@ -39,7 +39,7 @@ splitPath = path.split(bskName)
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 from Basilisk.simulation import simplePowerSink
-from Basilisk.simulation import simplePowerMonitor
+from Basilisk.simulation import simplePowerMonitor, simpleBattery
 from Basilisk.simulation import simMessages
 from Basilisk.simulation import simFswInterfaceMessages
 from Basilisk.simulation import simpleSolarPanel
@@ -111,7 +111,7 @@ def run_scenario():
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)
 
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-    scObject.hub.omega_BN_BInit = [[0.8], [-0.6], [0.5]]
+    scObject.hub.omega_BN_BInit = [[0.08], [-0.06], [0.05]]
     scenarioSim.AddModelToTask(taskName, scObject)
 
 
@@ -145,14 +145,16 @@ def run_scenario():
 
     powerSink = simplePowerSink.SimplePowerSink()
     powerSink.ModelTag = "powerSink2"
-    powerSink.nodePowerOut = -6. # Watts
+    powerSink.nodePowerOut = -3. # Watts
     powerSink.nodePowerOutMsgName = "powerSinkMsg"
     scenarioSim.AddModelToTask(taskName, powerSink)
 
     # Create a simplePowerMonitor and attach the source/sink to it
-    powerMonitor = simplePowerMonitor.SimplePowerMonitor()
+    powerMonitor = simpleBattery.SimpleBattery()
     powerMonitor.ModelTag = "powerMonitor"
     powerMonitor.batPowerOutMsgName = "powerMonitorMsg"
+    powerMonitor.storageCapacity = 10.0
+    powerMonitor.storedCharge = 10.0
     powerMonitor.addPowerNodeToModel(solarPanel.nodePowerOutMsgName)
     powerMonitor.addPowerNodeToModel(powerSink.nodePowerOutMsgName)
     scenarioSim.AddModelToTask(taskName, powerMonitor)
