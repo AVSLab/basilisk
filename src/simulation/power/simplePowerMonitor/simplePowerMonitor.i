@@ -58,7 +58,3 @@ GEN_SIZEOF(PowerStorageStatusSimMsg)
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
