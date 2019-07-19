@@ -48,23 +48,35 @@ mkdir dist $$ cd dist
 ```
 Configuration and Build:
 ```
-cmake -G "Visual Studio <MSVC Version> <MSVC Toolset/Year> Win<arch>" ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF
+cmake -G "Visual Studio <MSVC Version> <MSVC Product Year> Win<arch>" ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF
 cmake --build . --target ALL_BUILD --config Release
-```
-For arch x86:
-```
-cmake -G "Visual Studio <MSVC Version> <MSVC Toolset/Year> Win32" ../src
-```
 
-Example build commands include:
+MSVC Mapping:
+| MSVC Product Year | MSVC Version |
+|-------------------|--------------|
+| 2019              | 16           |
+| 2017              | 15.9         |
+|                   | 15.8         |
+|                   | 15.7         |
+|                   | 15.6         |
+|                   | 15.5         |
+|                   | 15.4 - 15.3  |
+|                   | 15.2 - 15.0  |
+| 2015              | 14           |
+| 2013              | 12           |
+| 2012              | 11           |
+```
+Example build commands:  
+  
+Arch x86, MSVC Year 2017, MSVC Version 15:
+```
+cmake -G "Visual Studio 15 2017 Win32" ../src
+```
+Arch x64, MSVC Year 2019, MSVC Version 16:
 ```
 cmake -G "Visual Studio 16 2019" -A x64 ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF
 ```
-or 
-```
-cmake -G "Visual Studio 15 2017 Win64" ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF
-```
-### How to run tests
+## How to run tests
 
 Tests are run and managed by Pytest. To execute all tests the py.test command can be executed on the `src` directory from the command line.
 
