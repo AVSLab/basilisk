@@ -18,9 +18,10 @@ SimpleBattery::~SimpleBattery(){
 
 void SimpleBattery::evaluateBatteryModel(PowerStorageStatusSimMsg *msg,double currentTime) {
 
-    this->storedCharge = this->storedCharge + this->currentPowerSum * (this->currentTimestep);
+    this->storedCharge = this->storedCharge + this->currentPowerSum * (this->currentTimestep/3600.0); //integrate over hours
 
-    if (this->storedCharge > this->storageCapacity) {
+
+    if(this->storedCharge > this->storageCapacity) {
         this->storedCharge = this->storageCapacity;
     }
 
@@ -30,8 +31,8 @@ void SimpleBattery::evaluateBatteryModel(PowerStorageStatusSimMsg *msg,double cu
     }
 
     msg->storageCapacity = this->storageCapacity;
-    msg->storageLevel = this->storedCharge / 60.0; //Convert into W-Hr
-    msg->currentNet2Power = this->currentPowerSum;
+    msg->storageLevel = this->storedCharge;
+    msg->currentNetPower = this->currentPowerSum;
 
     return;
 }
