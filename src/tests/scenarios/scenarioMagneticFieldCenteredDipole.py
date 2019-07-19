@@ -37,8 +37,8 @@ import matplotlib.pyplot as plt
 from Basilisk import __path__
 bskPath = __path__[0]
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
-from Basilisk.simulation import magneticFieldCenteredDipole
+from Basilisk.simulation.spacecraftPlus import spacecraftPlus
+from Basilisk.simulation.magneticFieldCenteredDipole import magneticFieldCenteredDipole
 # general support file with common unit test functions
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
@@ -333,7 +333,7 @@ def run(show_plots, orbitCase, planetCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints - 1)
+    samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(magModule.envOutMsgNames[0], samplingTime)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     if planetCase == 'Earth' and orbitCase == 'elliptical':

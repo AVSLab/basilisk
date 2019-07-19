@@ -42,7 +42,7 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation.spacecraftPlus import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
 
 # attempt to import vizard
@@ -224,7 +224,7 @@ def run(show_plots, maneuverCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints - 1)
+    samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines

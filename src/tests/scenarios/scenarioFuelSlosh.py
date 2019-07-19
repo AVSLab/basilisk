@@ -24,8 +24,8 @@ import inspect
 import numpy as np
 
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.simulation import linearSpringMassDamper
-from Basilisk.simulation import fuelTank
+from Basilisk.simulation.linearSpringMassDamper import linearSpringMassDamper
+from Basilisk.simulation.fuelTank import fuelTank
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
@@ -34,7 +34,7 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import macros
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation.spacecraftPlus import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -416,7 +416,7 @@ def run(show_plots, damping_parameter, timeStep):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints - 1)
+    samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()

@@ -35,14 +35,14 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
-from Basilisk.simulation import coarse_sun_sensor
+from Basilisk.simulation.coarse_sun_sensor import coarse_sun_sensor
 from Basilisk.utilities import orbitalMotion as om
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation.spacecraftPlus import spacecraftPlus
 
 # import message declarations
-from Basilisk.simulation import simMessages
+from Basilisk.simulation.simMessages import simMessages
 
 # The path to the location of Basilisk
 # Used to get the location of supporting data.

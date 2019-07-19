@@ -38,18 +38,18 @@ from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
-from Basilisk.simulation import extForceTorque
+from Basilisk.simulation.spacecraftPlus import spacecraftPlus
+from Basilisk.simulation.extForceTorque import extForceTorque
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation import simple_nav
+from Basilisk.simulation.simple_nav import simple_nav
 
 # import FSW Algorithm related support
-from Basilisk.fswAlgorithms import MRP_Feedback
-from Basilisk.fswAlgorithms import inertial3D
-from Basilisk.fswAlgorithms import attTrackingError
+from Basilisk.fswAlgorithms.MRP_Feedback import MRP_Feedback
+from Basilisk.fswAlgorithms.inertial3D import inertial3D
+from Basilisk.fswAlgorithms.attTrackingError import attTrackingError
 
 # import message declarations
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -388,7 +388,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 50
-    samplingTime = simulationTime / (numDataPoints - 1)
+    samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(mrpControlConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)

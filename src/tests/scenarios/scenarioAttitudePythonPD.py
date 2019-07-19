@@ -42,27 +42,27 @@ from Basilisk.utilities import unitTestSupport  # general support file with comm
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
-from Basilisk.simulation import sim_model
+from Basilisk.simulation.sim_model import sim_model
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation.spacecraftPlus import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import simIncludeRW
-from Basilisk.simulation import simple_nav
-from Basilisk.simulation import reactionWheelStateEffector
-from Basilisk.simulation import rwVoltageInterface
+from Basilisk.simulation.simple_nav import simple_nav
+from Basilisk.simulation.reactionWheelStateEffector import reactionWheelStateEffector
+from Basilisk.simulation.rwVoltageInterface import rwVoltageInterface
 
 # import FSW Algorithm related support
-from Basilisk.fswAlgorithms import MRP_PD
-from Basilisk.fswAlgorithms import inertial3D
-from Basilisk.fswAlgorithms import attTrackingError
-from Basilisk.fswAlgorithms import rwMotorTorque
+from Basilisk.fswAlgorithms.MRP_PD import MRP_PD
+from Basilisk.fswAlgorithms.inertial3D import inertial3D
+from Basilisk.fswAlgorithms.attTrackingError import attTrackingError
+from Basilisk.fswAlgorithms.rwMotorTorque import rwMotorTorque
 from Basilisk.utilities import fswSetupRW
-from Basilisk.fswAlgorithms import rwMotorVoltage
+from Basilisk.fswAlgorithms.rwMotorVoltage import rwMotorVoltage
 from Basilisk.utilities import simulationArchTypes
 
 # import message declarations
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -438,7 +438,7 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 10000
-    samplingTime = simulationTime / (numDataPoints - 1)
+    samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(rwMotorTorqueConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)

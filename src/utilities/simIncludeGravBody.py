@@ -19,6 +19,7 @@
 '''
 
 from Basilisk.simulation.gravityEffector import gravityEffector
+from Basilisk.simulation.gravityEffector import gravCoeffOps
 from Basilisk.simulation.spice_interface import spice_interface
 from Basilisk.utilities import unitTestSupport
 
@@ -298,4 +299,4 @@ def loadGravFromFile(fileName, spherHarm, maxDeg=2):
             coefficients from a data file.  The default harmonic degree is 2 unless specified.
             Note that this function calls the gravityEffector function loadGravFromFile().
     """
-    gravityEffector.loadGravFromFile(fileName, spherHarm, maxDeg)
+    gravCoeffOps.loadGravFromFile(fileName, spherHarm, maxDeg)

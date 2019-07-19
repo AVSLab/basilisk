@@ -25,7 +25,7 @@ import sys
 import numpy
 
 from . import macros
-from Basilisk.simulation import simMessages
+from Basilisk.simulation.simMessages import simMessages
 from collections import OrderedDict
 
 class rwFactory(object):

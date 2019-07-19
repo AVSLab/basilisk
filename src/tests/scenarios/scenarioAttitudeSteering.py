@@ -40,25 +40,25 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation.spacecraftPlus import spacecraftPlus
 from Basilisk.utilities import simIncludeRW
-from Basilisk.simulation import simple_nav
-from Basilisk.simulation import reactionWheelStateEffector
-from Basilisk.simulation import extForceTorque
+from Basilisk.simulation.simple_nav import simple_nav
+from Basilisk.simulation.reactionWheelStateEffector import reactionWheelStateEffector
+from Basilisk.simulation.extForceTorque import extForceTorque
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import RigidBodyKinematics as rb
 
 # import FSW Algorithm related support
-from Basilisk.fswAlgorithms import MRP_Steering
-from Basilisk.fswAlgorithms import rateServoFullNonlinear
-from Basilisk.fswAlgorithms import hillPoint
-from Basilisk.fswAlgorithms import attTrackingError
-from Basilisk.fswAlgorithms import rwMotorTorque
+from Basilisk.fswAlgorithms.MRP_Steering import MRP_Steering
+from Basilisk.fswAlgorithms.rateServoFullNonlinear import rateServoFullNonlinear
+from Basilisk.fswAlgorithms.hillPoint import hillPoint
+from Basilisk.fswAlgorithms.attTrackingError import attTrackingError
+from Basilisk.fswAlgorithms.rwMotorTorque import rwMotorTorque
 from Basilisk.utilities import fswSetupRW
 
 # import message declarations
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
@@ -497,7 +497,7 @@ def run(show_plots, simCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 200
-    samplingTime = simulationTime / (numDataPoints - 1)
+    samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(rwMotorTorqueConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)

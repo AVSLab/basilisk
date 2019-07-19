@@ -34,7 +34,9 @@ import matplotlib.pyplot as plt
 from Basilisk import __path__
 
 bskPath = __path__[0]
-from Basilisk.simulation import spacecraftPlus, simMessages, gravityEffector
+from Basilisk.simulation.spacecraftPlus import spacecraftPlus
+from Basilisk.simulation.simMessages import simMessages
+from Basilisk.simulation.gravityEffector import gravityEffector
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport
 
 
@@ -287,7 +289,7 @@ def run(show_plots):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints - 1)
+    samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()

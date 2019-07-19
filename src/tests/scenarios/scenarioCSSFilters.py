@@ -39,8 +39,15 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import orbitalMotion as om
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
-from Basilisk.simulation import spacecraftPlus, spice_interface, coarse_sun_sensor
-from Basilisk.fswAlgorithms import sunlineUKF, sunlineEKF, okeefeEKF, sunlineSEKF, sunlineSuKF, fswMessages
+from Basilisk.simulation.spacecraftPlus import spacecraftPlus
+from Basilisk.simulation.spice_interface import spice_interface
+from Basilisk.simulation.coarse_sun_sensor import coarse_sun_sensor
+from Basilisk.fswAlgorithms.sunlineUKF import sunlineUKF
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
+from Basilisk.fswAlgorithms.sunlineEKF import sunlineEKF
+from Basilisk.fswAlgorithms.okeefeEKF import okeefeEKF
+from Basilisk.fswAlgorithms.sunlineSEKF import sunlineSEKF
+from Basilisk.fswAlgorithms.sunlineSuKF import sunlineSuKF
 
 import SunLineKF_test_utilities as Fplot
 
@@ -794,4 +801,3 @@ if __name__ == "__main__":
         'SuKF',
          400
        )
-

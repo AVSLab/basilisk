@@ -26,7 +26,7 @@
 import sys, os, inspect
 import numpy
 
-from Basilisk.simulation import simMessages
+from Basilisk.simulation.simMessages import simMessages
 from collections import OrderedDict
 
 class thrusterFactory(object):

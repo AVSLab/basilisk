@@ -34,8 +34,13 @@ import os
 import numpy as np
 
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import MRP_Feedback, attTrackingError, fswMessages, velocityPoint
-from Basilisk.simulation import extForceTorque, simple_nav, spacecraftPlus
+from Basilisk.fswAlgorithms.MRP_Feedback import MRP_Feedback
+from Basilisk.fswAlgorithms.attTrackingError import attTrackingError
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
+from Basilisk.fswAlgorithms.velocityPoint import velocityPoint
+from Basilisk.simulation.extForceTorque import extForceTorque
+from Basilisk.simulation.simple_nav import simple_nav
+from Basilisk.simulation.spacecraftPlus import spacecraftPlus
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport, vizSupport
 
 # The path to the location of Basilisk
@@ -354,7 +359,7 @@ def run(show_plots, useAltBodyFrame):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints - 1)
+    samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(mrpControlConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)

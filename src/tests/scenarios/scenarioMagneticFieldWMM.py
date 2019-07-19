@@ -39,8 +39,8 @@ path = os.path.dirname(os.path.abspath(fileName))
 bskPath = path.split('src')[0]
 
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
-from Basilisk.simulation import magneticFieldWMM
+from Basilisk.simulation.spacecraftPlus import spacecraftPlus
+from Basilisk.simulation.magneticFieldWMM import magneticFieldWMM
 # general support file with common unit test functions
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
@@ -292,7 +292,7 @@ def run(show_plots, orbitCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints - 1)
+    samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(magModule.envOutMsgNames[0], samplingTime)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 

@@ -39,7 +39,7 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 # import simulation related support
-from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation.spacecraftPlus import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import svIntegrators
 
@@ -196,7 +196,7 @@ def run(show_plots, integratorCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime / numDataPoints
+    samplingTime = simulationTime // numDataPoints
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines

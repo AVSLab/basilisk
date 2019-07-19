@@ -20,7 +20,9 @@
 
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation import spice_interface
-from Basilisk import pyswice
+from Basilisk.pyswice.pyswice_spk_utilities import spkRead
+from Basilisk.pyswice import pyswice
+
 from Basilisk import __path__
 bskPath = __path__[0]
 
@@ -44,11 +46,9 @@ def planetPositionVelocity(planetName, time, ephemerisPath = '/supportData/Ephem
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/de430.bsp')
     pyswice.furnsh_c(bskPath + '/supportData/EphemerisData/naif0012.tls') #load leap seconds
     pyswice.furnsh_c(bskPath + ephemerisPath)
-    positionVelocity = pyswice.spkRead(planetName, time, frame, observer)
+    positionVelocity = spkRead(planetName, time, frame, observer)
     position = positionVelocity[0:3] * 1000
     velocity = positionVelocity[3:6] * 1000
     pyswice.unload_c(bskPath + ephemerisPath)
 
     return position, velocity # [m], [m/s]
-
-

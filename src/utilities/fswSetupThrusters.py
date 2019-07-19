@@ -27,7 +27,7 @@ import sys, os, inspect
 import math
 import numpy
 
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
 
 
 thrList = []

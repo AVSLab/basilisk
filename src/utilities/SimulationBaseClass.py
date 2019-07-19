@@ -20,12 +20,13 @@
 
 # Import some architectural stuff that we will probably always use
 import sys, os, ast
+import six
 
 # Point the path to the module storage area
 
 
 from Basilisk.simulation.sim_model import sim_model
-from Basilisk.simulation import alg_contain
+from Basilisk.simulation.alg_contain import alg_contain
 from Basilisk.utilities import MessagingAccess
 import numpy as np
 import array
@@ -233,7 +234,10 @@ class SimBaseClass:
         Subname = Subname.join(SplitName[1:])
         NoDotName = ''
         NoDotName = NoDotName.join(SplitName)
-        NoDotName = NoDotName.translate(None, "[]'()")
+        if six.PY2:
+            NoDotName = NoDotName.translate(None, "[]'()")
+        else:
+            NoDotName = NoDotName.translate("[]'()")
         inv_map = {v: k for k, v in list(self.NameReplace.items())}
         if SplitName[0] in inv_map:
             LogName = inv_map[SplitName[0]] + '.' + Subname
@@ -380,7 +384,7 @@ class SimBaseClass:
     def GetLogVariableData(self, LogName):
         TheArray = np.array(self.VarLogList[LogName].TimeValuePairs)
         ArrayDim = self.VarLogList[LogName].ArrayDim
-        TheArray = np.reshape(TheArray, (TheArray.shape[0] / ArrayDim, ArrayDim))
+        TheArray = np.reshape(TheArray, (TheArray.shape[0] // ArrayDim, ArrayDim))
         return TheArray
 
     def disableTask(self, TaskName):
@@ -640,7 +644,11 @@ class SimBaseClass:
         algList = parseDirList(dirList)
 
         # if the package has different levels we need to access the correct level of the package
-        currMod = __import__(module, globals(), locals(), [], -1)
+        if six.PY2:
+            level = -1
+        else:
+            level = 0
+        currMod = __import__(module, globals(), locals(), [], level)
 
         moduleString = "currMod."
         moduleNames = module.split(".")

@@ -504,11 +504,13 @@ add_subdirectory("fswAlgorithms")
 add_subdirectory("topLevelModules")
 
 #run python script to modify swig code for python3
-add_custom_target(OverwriteSwig ALL)
-set(ARG overwriteSwig.py ${CMAKE_BINARY_DIR})
-add_custom_command(
-	TARGET OverwriteSwig
-	POST_BUILD
-	COMMAND ${PYTHON_EXECUTABLE} ${ARG}
-	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/../src/
-	COMMENT "Modifying SWIG Generated Files for Python Version Intercompatibility")
+if(USE_PYTHON3)
+    add_custom_target(OverwriteSwig ALL)
+    set(ARG overwriteSwig.py ${CMAKE_BINARY_DIR})
+    add_custom_command(
+	      TARGET OverwriteSwig
+	      POST_BUILD
+	      COMMAND ${PYTHON_EXECUTABLE} ${ARG}
+	      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/../src/
+	      COMMENT "Modifying SWIG Generated Files for Python Version Intercompatibility")
+endif()
