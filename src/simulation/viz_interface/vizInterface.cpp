@@ -306,7 +306,6 @@ void VizInterface::ReadBSKMessages()
                 this->thrMsgID[idx].dataFresh = true;
                 this->thrOutputMessage[idx] = localThrusterArray;
             }
-
         }
     }
     }

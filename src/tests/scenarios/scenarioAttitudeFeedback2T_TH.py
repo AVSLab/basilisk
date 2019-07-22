@@ -633,7 +633,7 @@ def run(show_plots, useDVThrusters):
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    vizSupport.enableUnityVisualization(scSim, fswTaskName,  fswProcessName, gravBodies = gravFactory, saveFile=fileName, thrDevices=[(thFactory.getNumOfDevices(), thrModelTag)])
+    vizSupport.enableUnityVisualization(scSim, dynTaskName,  dynProcessName, gravBodies = gravFactory, saveFile=fileName, thrDevices=[(thFactory.getNumOfDevices(), thrModelTag)])
 
     #
     #   initialize Simulation
