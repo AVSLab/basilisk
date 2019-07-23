@@ -61,7 +61,7 @@ void MsisAtmosphere::defaultMsisInitialConditions()
         this->g_lat = 0.0;
         this->g_long = 0.0;
         this->lst = 0.0;
-        this-> f107A = 0.0;
+        this->f107A = 0.0;
         this->f107 = 0.0;
         this->ap = 0.0;
 
@@ -155,7 +155,6 @@ void MsisAtmosphere::customSelfInit()
  */
 void MsisAtmosphere::customCrossInit()
 {
-
         //* [WIP] Also do MSISE messaging setup*//
     for(int ind=0; ind < 23; ind++){
         this->swDataInMsgIds[ind] = SystemMessaging::GetInstance()->subscribeToMessage(this->swDataInMsgNames[ind], sizeof(SwDataSimMsg), moduleID);
@@ -166,8 +165,6 @@ void MsisAtmosphere::customCrossInit()
     if (this->epochInMsgName.length() > 0) {
         this->epochInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->epochInMsgName, sizeof(EpochSimMsg), moduleID);
     }
-
-
 
     return;
 }
