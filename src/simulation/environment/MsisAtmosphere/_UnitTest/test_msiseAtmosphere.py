@@ -28,7 +28,7 @@
 
 import os, inspect
 import numpy as np
-
+import pytest
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
@@ -55,28 +55,21 @@ splitPath = path.split(bskName)
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
+@pytest.mark.parametrize("orbitType", ["LPO", "LTO"])
 
 # provide a unique test method name, starting with test_
-def test_scenarioMsisAtmosphereOrbit():
+def test_scenarioMsisAtmosphereOrbit(show_plots, orbitType):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
     earthCase = "Earth"
-    orb1 = "LPO"
-    orb2 = "LTO"
     showVal = False
-    testResults = []
-    testMessage = []
-    [leoResults, leoMessages] = run(showVal, orb1, earthCase)
-    [gtoResults, gtoMessages] = run(showVal, orb2, earthCase)
 
-    testResults = leoResults+gtoResults
-    testMessage.append(leoMessages)
-    testMessage.append(gtoMessages)
+    [testResults, testMessage] = run(showVal, orbitType, earthCase)
 
     assert testResults < 1, testMessage
 
 def run(show_plots, orbitCase, planetCase):
-    '''Call this routine directly to run the tutorial scenario.'''
+    '''Call this routine directly to run the script.'''
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
@@ -128,9 +121,8 @@ def run(show_plots, orbitCase, planetCase):
 
     #   setup orbit and simulation time
     oe = orbitalMotion.ClassicElements()
-
     if planetCase == "Earth":
-        r_eq = 6378.1366 *1000.0
+        r_eq = planet.radEquator
         if orbitCase == "LPO":
             orbAltMin = 100.0*1000.0
             orbAltMax = orbAltMin
@@ -221,12 +213,12 @@ def run(show_plots, orbitCase, planetCase):
     unitTestSupport.writeTeXSnippet("unitTestToleranceValue", str(accuracy), path)
     #for ind in range(0, posData.shape[0]-1):
     #   Test atmospheric density calculation...
-    if not unitTestSupport.isDoubleEqualRelative(densData[0,1], refAtmoData[5],accuracy):
+    if not unitTestSupport.isDoubleEqualRelative(densData[0,1], refAtmoData[5], accuracy):
             testFailCount += 1
             testMessages.append(
                 "FAILED:  NRLMSISE-00 failed density unit test at t=" + str(densData[0, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(densData[0,1]-refAtmoData[5]))
 
-    if not unitTestSupport.isDoubleEqualRelative(tempData[0,1], refAtmoData[-1],accuracy):
+    if not unitTestSupport.isDoubleEqualRelative(tempData[0,1], refAtmoData[-1], accuracy):
         testFailCount += 1
         testMessages.append(
         "FAILED:  NRLMSISE-00 failed temperature unit test at t=" + str(densData[0, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(tempData[0,1]-refAtmoData[-1]))
@@ -243,7 +235,7 @@ def run(show_plots, orbitCase, planetCase):
         passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
-    return testFailCount, testMessages
+    return [testFailCount, ''.join(testMessages)]
 
 if __name__ == '__main__':
-    run(True,"LPO","Earth")
+    run(True, "LPO", "Earth")
