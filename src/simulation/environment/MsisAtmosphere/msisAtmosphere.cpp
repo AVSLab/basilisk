@@ -251,16 +251,16 @@ void MsisAtmosphere::updateSwIndices()
     this->aph.a[3] = this->swDataList[3].dataValue;
     this->aph.a[4] = this->swDataList[4].dataValue;
 
-    uint64_t mth = 5;
+    uint64_t mth;
     double tmp_avg = 0.0;
-    for(mth; mth < 13; mth++){
+    for(mth = 5; mth < 13; mth++){
         tmp_avg = tmp_avg + this->swDataList[mth].dataValue;
     }
     this->aph.a[5] = tmp_avg/8.0;
 
-    uint64_t nth = 13;
+    uint64_t nth;
     tmp_avg = 0.0;
-    for(nth; nth < 21; nth++){
+    for(nth = 13; nth < 21; nth++){
         tmp_avg = tmp_avg + this->swDataList[nth].dataValue;
     }
     this->aph.a[6] = tmp_avg/8.0;
