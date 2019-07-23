@@ -32,8 +32,8 @@
  */
 MsisAtmosphere::MsisAtmosphere()
 {
-    //! - Set the default atmospheric properties to yield a zero response
-    this->planetRadius = 0.0;   // [m]
+    //! - Set the default atmospheric properties
+    this->planetRadius = REQ_EARTH*1000.;   // must be the radius of Earth for MSIS
 
     this->defaultMsisInitialConditions();
 

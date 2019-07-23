@@ -150,8 +150,6 @@ def run(show_plots, orbitCase, planetCase):
     n = np.sqrt(mu/oe.a/oe.a/oe.a)
     P = 2.*np.pi/n
 
-    newAtmo.planetRadius = r_eq
-
     simulationTime = macros.sec2nano(0.001*P)
 
     #
