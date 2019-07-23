@@ -61,14 +61,13 @@ splitPath = path.split(bskName)
 def test_scenarioMsisAtmosphereOrbit(show_plots, orbitType):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
-    earthCase = "Earth"
     showVal = False
 
-    [testResults, testMessage] = run(showVal, orbitType, earthCase)
+    [testResults, testMessage] = run(showVal, orbitType)
 
     assert testResults < 1, testMessage
 
-def run(show_plots, orbitCase, planetCase):
+def run(show_plots, orbitCase):
     '''Call this routine directly to run the script.'''
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -121,16 +120,13 @@ def run(show_plots, orbitCase, planetCase):
 
     #   setup orbit and simulation time
     oe = orbitalMotion.ClassicElements()
-    if planetCase == "Earth":
-        r_eq = planet.radEquator
-        if orbitCase == "LPO":
-            orbAltMin = 100.0*1000.0
-            orbAltMax = orbAltMin
-        elif orbitCase == "LTO":
-            orbAltMin = 100.*1000.0
-            orbAltMax = 100.0 * 1000.0
-    else:
-        return 1, "Test failed- did not initialize planets."
+    r_eq = planet.radEquator
+    if orbitCase == "LPO":
+        orbAltMin = 100.0*1000.0
+        orbAltMax = orbAltMin
+    elif orbitCase == "LTO":
+        orbAltMin = 100.*1000.0
+        orbAltMax = 100.0 * 1000.0
 
     rMin = r_eq + orbAltMin
     rMax = r_eq + orbAltMax
@@ -167,7 +163,7 @@ def run(show_plots, orbitCase, planetCase):
     for swName in sw_msg_names:
         msgName = swName
         msgData = msisAtmosphere.SwDataSimMsg()
-        msgData.dataValue=0.
+        msgData.dataValue = 0.
         unitTestSupport.setMessage(scSim.TotalSim, simProcessName, msgName, msgData)
 
     numDataPoints = 2
@@ -236,4 +232,4 @@ def run(show_plots, orbitCase, planetCase):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == '__main__':
-    run(True, "LPO", "Earth")
+    run(True, "LPO")
