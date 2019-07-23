@@ -26,14 +26,9 @@
 # Creation Date:  Jan 18, 2017
 #
 
-import sys, os, inspect
-import matplotlib
+import os, inspect
 import numpy as np
-import ctypes
-import math
-import csv
-import logging
-import pytest
+
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
