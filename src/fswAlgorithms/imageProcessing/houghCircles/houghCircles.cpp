@@ -140,6 +140,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
         for(int j=0; j<3; j++){
             circleBuffer.uncertainty[j+3*j] = 5;
         }
+        circleBuffer.uncertainty[2+3*2] = 1;
         circlesFound+=1;
     }
     /*!- If no circles are found do not validate the image as a measurement */
