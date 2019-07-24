@@ -8,6 +8,10 @@ package vizProtobufferMessage;
 //A VizMessage should contain all Basilisk Sim messages needed to visualize a single time step
 message VizMessage{
 
+   message VizSettingsPb{
+      double ambient = 1;
+   }
+
    message TimeStamp{
       int64 frameNumber = 1; //Current message's index
       double simTimeElapsed = 2; //Elapsed time since sim start
@@ -95,4 +99,5 @@ message VizMessage{
    repeated CameraConfig cameras = 4;
    repeated CameraImage  cameraImages = 5;
    repeated ImageRequest imageRequests = 6;
+   VizSettingsPb settings = 7;
 }

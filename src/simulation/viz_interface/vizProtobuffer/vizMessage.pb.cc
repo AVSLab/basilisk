@@ -20,6 +20,11 @@
 #endif
 // @@protoc_insertion_point(includes)
 namespace vizProtobufferMessage {
+class VizMessage_VizSettingsPbDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<VizMessage_VizSettingsPb>
+      _instance;
+} _VizMessage_VizSettingsPb_default_instance_;
 class VizMessage_TimeStampDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<VizMessage_TimeStamp>
@@ -77,6 +82,27 @@ class VizMessageDefaultTypeInternal {
 } _VizMessage_default_instance_;
 }  // namespace vizProtobufferMessage
 namespace protobuf_vizMessage_2eproto {
+void InitDefaultsVizMessage_VizSettingsPbImpl() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
+#else
+  ::google::protobuf::internal::InitProtobufDefaults();
+#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  {
+    void* ptr = &::vizProtobufferMessage::_VizMessage_VizSettingsPb_default_instance_;
+    new (ptr) ::vizProtobufferMessage::VizMessage_VizSettingsPb();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::vizProtobufferMessage::VizMessage_VizSettingsPb::InitAsDefaultInstance();
+}
+
+void InitDefaultsVizMessage_VizSettingsPb() {
+  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
+  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsVizMessage_VizSettingsPbImpl);
+}
+
 void InitDefaultsVizMessage_TimeStampImpl() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -305,6 +331,7 @@ void InitDefaultsVizMessageImpl() {
   protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CameraConfig();
   protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CameraImage();
   protobuf_vizMessage_2eproto::InitDefaultsVizMessage_ImageRequest();
+  protobuf_vizMessage_2eproto::InitDefaultsVizMessage_VizSettingsPb();
   {
     void* ptr = &::vizProtobufferMessage::_VizMessage_default_instance_;
     new (ptr) ::vizProtobufferMessage::VizMessage();
@@ -318,9 +345,15 @@ void InitDefaultsVizMessage() {
   ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsVizMessageImpl);
 }
 
-::google::protobuf::Metadata file_level_metadata[11];
+::google::protobuf::Metadata file_level_metadata[12];
 
 const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, ambient_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_TimeStamp, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -429,22 +462,25 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage, cameras_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage, cameraimages_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage, imagerequests_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage, settings_),
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, sizeof(::vizProtobufferMessage::VizMessage_TimeStamp)},
-  { 7, -1, sizeof(::vizProtobufferMessage::VizMessage_CelestialBody)},
-  { 16, -1, sizeof(::vizProtobufferMessage::VizMessage_Spacecraft)},
-  { 29, -1, sizeof(::vizProtobufferMessage::VizMessage_ReactionWheel)},
-  { 38, -1, sizeof(::vizProtobufferMessage::VizMessage_Thruster)},
-  { 48, -1, sizeof(::vizProtobufferMessage::VizMessage_CoarseSunSensor)},
-  { 57, -1, sizeof(::vizProtobufferMessage::VizMessage_StarTracker)},
-  { 67, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraConfig)},
-  { 81, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraImage)},
-  { 90, -1, sizeof(::vizProtobufferMessage::VizMessage_ImageRequest)},
-  { 97, -1, sizeof(::vizProtobufferMessage::VizMessage)},
+  { 0, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
+  { 6, -1, sizeof(::vizProtobufferMessage::VizMessage_TimeStamp)},
+  { 13, -1, sizeof(::vizProtobufferMessage::VizMessage_CelestialBody)},
+  { 22, -1, sizeof(::vizProtobufferMessage::VizMessage_Spacecraft)},
+  { 35, -1, sizeof(::vizProtobufferMessage::VizMessage_ReactionWheel)},
+  { 44, -1, sizeof(::vizProtobufferMessage::VizMessage_Thruster)},
+  { 54, -1, sizeof(::vizProtobufferMessage::VizMessage_CoarseSunSensor)},
+  { 63, -1, sizeof(::vizProtobufferMessage::VizMessage_StarTracker)},
+  { 73, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraConfig)},
+  { 87, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraImage)},
+  { 96, -1, sizeof(::vizProtobufferMessage::VizMessage_ImageRequest)},
+  { 103, -1, sizeof(::vizProtobufferMessage::VizMessage)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
+  reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_VizSettingsPb_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_TimeStamp_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_CelestialBody_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_Spacecraft_default_instance_),
@@ -474,14 +510,14 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 11);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 12);
 }
 
 void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\020vizMessage.proto\022\025vizProtobufferMessag"
-      "e\"\276\r\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
+      "e\"\243\016\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
       "vizProtobufferMessage.VizMessage.TimeSta"
       "mp\022H\n\017celestialBodies\030\002 \003(\0132/.vizProtobu"
       "fferMessage.VizMessage.CelestialBody\022@\n\n"
@@ -491,43 +527,45 @@ void AddDescriptorsImpl() {
       "aConfig\022C\n\014cameraImages\030\005 \003(\0132-.vizProto"
       "bufferMessage.VizMessage.CameraImage\022E\n\r"
       "imageRequests\030\006 \003(\0132..vizProtobufferMess"
-      "age.VizMessage.ImageRequest\0328\n\tTimeStamp"
-      "\022\023\n\013frameNumber\030\001 \001(\003\022\026\n\016simTimeElapsed\030"
-      "\002 \001(\001\032W\n\rCelestialBody\022\020\n\010bodyName\030\001 \001(\t"
-      "\022\020\n\010position\030\002 \003(\001\022\020\n\010velocity\030\003 \003(\001\022\020\n\010"
-      "rotation\030\004 \003(\001\032\347\002\n\nSpacecraft\022\026\n\016spacecr"
-      "aftName\030\001 \001(\t\022\020\n\010position\030\002 \003(\001\022\020\n\010veloc"
-      "ity\030\003 \003(\001\022\020\n\010rotation\030\004 \003(\001\022G\n\016reactionW"
-      "heels\030\005 \003(\0132/.vizProtobufferMessage.VizM"
-      "essage.ReactionWheel\022=\n\tthrusters\030\006 \003(\0132"
-      "*.vizProtobufferMessage.VizMessage.Thrus"
-      "ter\022>\n\003CSS\030\007 \003(\01321.vizProtobufferMessage"
-      ".VizMessage.CoarseSunSensor\022C\n\014starTrack"
-      "ers\030\010 \003(\0132-.vizProtobufferMessage.VizMes"
-      "sage.StarTracker\032b\n\rReactionWheel\022\020\n\010pos"
-      "ition\030\002 \003(\001\022\026\n\016spinAxisVector\030\004 \003(\001\022\022\n\nw"
-      "heelSpeed\030\005 \001(\001\022\023\n\013wheelTorque\030\006 \001(\001\032u\n\010"
-      "Thruster\022\020\n\010position\030\002 \003(\001\022\024\n\014thrustVect"
-      "or\030\004 \003(\001\022\025\n\rcurrentThrust\030\005 \001(\001\022\021\n\tmaxTh"
-      "rust\030\006 \001(\001\022\027\n\017thrusterGroupID\030\007 \001(\005\032b\n\017C"
-      "oarseSunSensor\022\020\n\010position\030\002 \003(\001\022\024\n\014norm"
-      "alVector\030\004 \003(\001\022\023\n\013currentMsmt\030\005 \001(\001\022\022\n\nC"
-      "SSGroupID\030\007 \001(\005\032\202\001\n\013StarTracker\022\020\n\010posit"
-      "ion\030\002 \003(\001\022\020\n\010rotation\030\004 \003(\001\022\031\n\021fieldOfVi"
-      "ewHeight\030\005 \001(\001\022\030\n\020fieldOfViewWidth\030\006 \001(\001"
-      "\022\032\n\022starTrackerGroupID\030\007 \001(\005\032\304\001\n\014CameraC"
-      "onfig\022\020\n\010cameraID\030\001 \001(\003\022\022\n\nparentName\030\002 "
-      "\001(\t\022\023\n\013fieldOfView\030\003 \001(\001\022\022\n\nresolution\030\004"
-      " \003(\003\022\023\n\013focalLength\030\005 \001(\001\022\022\n\nsensorSize\030"
-      "\006 \003(\001\022\023\n\013cameraPos_B\030\007 \003(\001\022\023\n\013cameraDir_"
-      "B\030\010 \003(\001\022\022\n\nrenderRate\030\t \001(\004\032Z\n\013CameraIma"
-      "ge\022\020\n\010cameraID\030\001 \001(\003\022\017\n\007timeTag\030\002 \001(\001\022\025\n"
-      "\rimageFileName\030\003 \001(\t\022\021\n\timageFile\030\004 \003(\r\032"
-      "1\n\014ImageRequest\022\020\n\010cameraID\030\001 \001(\003\022\017\n\007tim"
-      "eTag\030\002 \001(\001b\006proto3"
+      "age.VizMessage.ImageRequest\022A\n\010settings\030"
+      "\007 \001(\0132/.vizProtobufferMessage.VizMessage"
+      ".VizSettingsPb\032 \n\rVizSettingsPb\022\017\n\007ambie"
+      "nt\030\001 \001(\001\0328\n\tTimeStamp\022\023\n\013frameNumber\030\001 \001"
+      "(\003\022\026\n\016simTimeElapsed\030\002 \001(\001\032W\n\rCelestialB"
+      "ody\022\020\n\010bodyName\030\001 \001(\t\022\020\n\010position\030\002 \003(\001\022"
+      "\020\n\010velocity\030\003 \003(\001\022\020\n\010rotation\030\004 \003(\001\032\347\002\n\n"
+      "Spacecraft\022\026\n\016spacecraftName\030\001 \001(\t\022\020\n\010po"
+      "sition\030\002 \003(\001\022\020\n\010velocity\030\003 \003(\001\022\020\n\010rotati"
+      "on\030\004 \003(\001\022G\n\016reactionWheels\030\005 \003(\0132/.vizPr"
+      "otobufferMessage.VizMessage.ReactionWhee"
+      "l\022=\n\tthrusters\030\006 \003(\0132*.vizProtobufferMes"
+      "sage.VizMessage.Thruster\022>\n\003CSS\030\007 \003(\01321."
+      "vizProtobufferMessage.VizMessage.CoarseS"
+      "unSensor\022C\n\014starTrackers\030\010 \003(\0132-.vizProt"
+      "obufferMessage.VizMessage.StarTracker\032b\n"
+      "\rReactionWheel\022\020\n\010position\030\002 \003(\001\022\026\n\016spin"
+      "AxisVector\030\004 \003(\001\022\022\n\nwheelSpeed\030\005 \001(\001\022\023\n\013"
+      "wheelTorque\030\006 \001(\001\032u\n\010Thruster\022\020\n\010positio"
+      "n\030\002 \003(\001\022\024\n\014thrustVector\030\004 \003(\001\022\025\n\rcurrent"
+      "Thrust\030\005 \001(\001\022\021\n\tmaxThrust\030\006 \001(\001\022\027\n\017thrus"
+      "terGroupID\030\007 \001(\005\032b\n\017CoarseSunSensor\022\020\n\010p"
+      "osition\030\002 \003(\001\022\024\n\014normalVector\030\004 \003(\001\022\023\n\013c"
+      "urrentMsmt\030\005 \001(\001\022\022\n\nCSSGroupID\030\007 \001(\005\032\202\001\n"
+      "\013StarTracker\022\020\n\010position\030\002 \003(\001\022\020\n\010rotati"
+      "on\030\004 \003(\001\022\031\n\021fieldOfViewHeight\030\005 \001(\001\022\030\n\020f"
+      "ieldOfViewWidth\030\006 \001(\001\022\032\n\022starTrackerGrou"
+      "pID\030\007 \001(\005\032\304\001\n\014CameraConfig\022\020\n\010cameraID\030\001"
+      " \001(\003\022\022\n\nparentName\030\002 \001(\t\022\023\n\013fieldOfView\030"
+      "\003 \001(\001\022\022\n\nresolution\030\004 \003(\003\022\023\n\013focalLength"
+      "\030\005 \001(\001\022\022\n\nsensorSize\030\006 \003(\001\022\023\n\013cameraPos_"
+      "B\030\007 \003(\001\022\023\n\013cameraDir_B\030\010 \003(\001\022\022\n\nrenderRa"
+      "te\030\t \001(\004\032Z\n\013CameraImage\022\020\n\010cameraID\030\001 \001("
+      "\003\022\017\n\007timeTag\030\002 \001(\001\022\025\n\rimageFileName\030\003 \001("
+      "\t\022\021\n\timageFile\030\004 \003(\r\0321\n\014ImageRequest\022\020\n\010"
+      "cameraID\030\001 \001(\003\022\017\n\007timeTag\030\002 \001(\001b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1778);
+      descriptor, 1879);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "vizMessage.proto", &protobuf_RegisterTypes);
 }
@@ -544,6 +582,242 @@ struct StaticDescriptorInitializer {
 } static_descriptor_initializer;
 }  // namespace protobuf_vizMessage_2eproto
 namespace vizProtobufferMessage {
+
+// ===================================================================
+
+void VizMessage_VizSettingsPb::InitAsDefaultInstance() {
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int VizMessage_VizSettingsPb::kAmbientFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+VizMessage_VizSettingsPb::VizMessage_VizSettingsPb()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_VizSettingsPb();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:vizProtobufferMessage.VizMessage.VizSettingsPb)
+}
+VizMessage_VizSettingsPb::VizMessage_VizSettingsPb(const VizMessage_VizSettingsPb& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ambient_ = from.ambient_;
+  // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.VizSettingsPb)
+}
+
+void VizMessage_VizSettingsPb::SharedCtor() {
+  ambient_ = 0;
+  _cached_size_ = 0;
+}
+
+VizMessage_VizSettingsPb::~VizMessage_VizSettingsPb() {
+  // @@protoc_insertion_point(destructor:vizProtobufferMessage.VizMessage.VizSettingsPb)
+  SharedDtor();
+}
+
+void VizMessage_VizSettingsPb::SharedDtor() {
+}
+
+void VizMessage_VizSettingsPb::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* VizMessage_VizSettingsPb::descriptor() {
+  ::protobuf_vizMessage_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_vizMessage_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const VizMessage_VizSettingsPb& VizMessage_VizSettingsPb::default_instance() {
+  ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_VizSettingsPb();
+  return *internal_default_instance();
+}
+
+VizMessage_VizSettingsPb* VizMessage_VizSettingsPb::New(::google::protobuf::Arena* arena) const {
+  VizMessage_VizSettingsPb* n = new VizMessage_VizSettingsPb;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void VizMessage_VizSettingsPb::Clear() {
+// @@protoc_insertion_point(message_clear_start:vizProtobufferMessage.VizMessage.VizSettingsPb)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  ambient_ = 0;
+  _internal_metadata_.Clear();
+}
+
+bool VizMessage_VizSettingsPb::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:vizProtobufferMessage.VizMessage.VizSettingsPb)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // double ambient = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(9u /* 9 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &ambient_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:vizProtobufferMessage.VizMessage.VizSettingsPb)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:vizProtobufferMessage.VizMessage.VizSettingsPb)
+  return false;
+#undef DO_
+}
+
+void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:vizProtobufferMessage.VizMessage.VizSettingsPb)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // double ambient = 1;
+  if (this->ambient() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(1, this->ambient(), output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:vizProtobufferMessage.VizMessage.VizSettingsPb)
+}
+
+::google::protobuf::uint8* VizMessage_VizSettingsPb::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:vizProtobufferMessage.VizMessage.VizSettingsPb)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // double ambient = 1;
+  if (this->ambient() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(1, this->ambient(), target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:vizProtobufferMessage.VizMessage.VizSettingsPb)
+  return target;
+}
+
+size_t VizMessage_VizSettingsPb::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:vizProtobufferMessage.VizMessage.VizSettingsPb)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // double ambient = 1;
+  if (this->ambient() != 0) {
+    total_size += 1 + 8;
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void VizMessage_VizSettingsPb::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:vizProtobufferMessage.VizMessage.VizSettingsPb)
+  GOOGLE_DCHECK_NE(&from, this);
+  const VizMessage_VizSettingsPb* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const VizMessage_VizSettingsPb>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:vizProtobufferMessage.VizMessage.VizSettingsPb)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:vizProtobufferMessage.VizMessage.VizSettingsPb)
+    MergeFrom(*source);
+  }
+}
+
+void VizMessage_VizSettingsPb::MergeFrom(const VizMessage_VizSettingsPb& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:vizProtobufferMessage.VizMessage.VizSettingsPb)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.ambient() != 0) {
+    set_ambient(from.ambient());
+  }
+}
+
+void VizMessage_VizSettingsPb::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:vizProtobufferMessage.VizMessage.VizSettingsPb)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void VizMessage_VizSettingsPb::CopyFrom(const VizMessage_VizSettingsPb& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:vizProtobufferMessage.VizMessage.VizSettingsPb)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool VizMessage_VizSettingsPb::IsInitialized() const {
+  return true;
+}
+
+void VizMessage_VizSettingsPb::Swap(VizMessage_VizSettingsPb* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void VizMessage_VizSettingsPb::InternalSwap(VizMessage_VizSettingsPb* other) {
+  using std::swap;
+  swap(ambient_, other->ambient_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata VizMessage_VizSettingsPb::GetMetadata() const {
+  protobuf_vizMessage_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_vizMessage_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
 
 // ===================================================================
 
@@ -4886,6 +5160,8 @@ void VizMessage_ImageRequest::InternalSwap(VizMessage_ImageRequest* other) {
 void VizMessage::InitAsDefaultInstance() {
   ::vizProtobufferMessage::_VizMessage_default_instance_._instance.get_mutable()->currenttime_ = const_cast< ::vizProtobufferMessage::VizMessage_TimeStamp*>(
       ::vizProtobufferMessage::VizMessage_TimeStamp::internal_default_instance());
+  ::vizProtobufferMessage::_VizMessage_default_instance_._instance.get_mutable()->settings_ = const_cast< ::vizProtobufferMessage::VizMessage_VizSettingsPb*>(
+      ::vizProtobufferMessage::VizMessage_VizSettingsPb::internal_default_instance());
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int VizMessage::kCurrentTimeFieldNumber;
@@ -4894,6 +5170,7 @@ const int VizMessage::kSpacecraftFieldNumber;
 const int VizMessage::kCamerasFieldNumber;
 const int VizMessage::kCameraImagesFieldNumber;
 const int VizMessage::kImageRequestsFieldNumber;
+const int VizMessage::kSettingsFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 VizMessage::VizMessage()
@@ -4919,11 +5196,18 @@ VizMessage::VizMessage(const VizMessage& from)
   } else {
     currenttime_ = NULL;
   }
+  if (from.has_settings()) {
+    settings_ = new ::vizProtobufferMessage::VizMessage_VizSettingsPb(*from.settings_);
+  } else {
+    settings_ = NULL;
+  }
   // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage)
 }
 
 void VizMessage::SharedCtor() {
-  currenttime_ = NULL;
+  ::memset(&currenttime_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&settings_) -
+      reinterpret_cast<char*>(&currenttime_)) + sizeof(settings_));
   _cached_size_ = 0;
 }
 
@@ -4934,6 +5218,7 @@ VizMessage::~VizMessage() {
 
 void VizMessage::SharedDtor() {
   if (this != internal_default_instance()) delete currenttime_;
+  if (this != internal_default_instance()) delete settings_;
 }
 
 void VizMessage::SetCachedSize(int size) const {
@@ -4974,6 +5259,10 @@ void VizMessage::Clear() {
     delete currenttime_;
   }
   currenttime_ = NULL;
+  if (GetArenaNoVirtual() == NULL && settings_ != NULL) {
+    delete settings_;
+  }
+  settings_ = NULL;
   _internal_metadata_.Clear();
 }
 
@@ -5054,6 +5343,18 @@ bool VizMessage::MergePartialFromCodedStream(
         break;
       }
 
+      // .vizProtobufferMessage.VizMessage.VizSettingsPb settings = 7;
+      case 7: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(58u /* 58 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+               input, mutable_settings()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -5121,6 +5422,12 @@ void VizMessage::SerializeWithCachedSizes(
       6, this->imagerequests(static_cast<int>(i)), output);
   }
 
+  // .vizProtobufferMessage.VizMessage.VizSettingsPb settings = 7;
+  if (this->has_settings()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      7, *this->settings_, output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -5180,6 +5487,13 @@ void VizMessage::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
         6, this->imagerequests(static_cast<int>(i)), deterministic, target);
+  }
+
+  // .vizProtobufferMessage.VizMessage.VizSettingsPb settings = 7;
+  if (this->has_settings()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        7, *this->settings_, deterministic, target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -5261,6 +5575,13 @@ size_t VizMessage::ByteSizeLong() const {
         *this->currenttime_);
   }
 
+  // .vizProtobufferMessage.VizMessage.VizSettingsPb settings = 7;
+  if (this->has_settings()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSize(
+        *this->settings_);
+  }
+
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = cached_size;
@@ -5298,6 +5619,9 @@ void VizMessage::MergeFrom(const VizMessage& from) {
   if (from.has_currenttime()) {
     mutable_currenttime()->::vizProtobufferMessage::VizMessage_TimeStamp::MergeFrom(from.currenttime());
   }
+  if (from.has_settings()) {
+    mutable_settings()->::vizProtobufferMessage::VizMessage_VizSettingsPb::MergeFrom(from.settings());
+  }
 }
 
 void VizMessage::CopyFrom(const ::google::protobuf::Message& from) {
@@ -5330,6 +5654,7 @@ void VizMessage::InternalSwap(VizMessage* other) {
   cameraimages_.InternalSwap(&other->cameraimages_);
   imagerequests_.InternalSwap(&other->imagerequests_);
   swap(currenttime_, other->currenttime_);
+  swap(settings_, other->settings_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
 }

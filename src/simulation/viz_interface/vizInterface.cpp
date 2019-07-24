@@ -380,6 +380,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 
     /*! Send the Vizard settings once */
     if (this->settings.dataFresh) {
+        vizProtobufferMessage::VizMessage::VizSettingsPb* vizSettings = new vizProtobufferMessage::VizMessage::VizSettingsPb;
+        vizSettings->set_ambient(this->settings.ambient);
+        message->set_allocated_settings(vizSettings);
 
         this->settings.dataFresh = false;
     }
