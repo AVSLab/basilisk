@@ -162,8 +162,8 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     v3Scale(rNorm*1E3, rHat_N, opNavMsgOut.r_N); //in m
     v3Scale(rNorm*1E3, rHat_C, opNavMsgOut.r_B); //in m
     mCopy(covar_In_N, 3, 3, opNavMsgOut.covar_N);
-    vScale(1E6, opNavMsgOut.covar_N, 3*3, opNavMsgOut.covar_B);//in m
-    mCopy(covar_In_C, 3, 3, opNavMsgOut.covar_N);
+    vScale(1E6, opNavMsgOut.covar_N, 3*3, opNavMsgOut.covar_N);//in m
+    mCopy(covar_In_C, 3, 3, opNavMsgOut.covar_B);
     vScale(1E6, opNavMsgOut.covar_B, 3*3, opNavMsgOut.covar_B);//in m
     opNavMsgOut.timeTag = circlesIn.timeTag;
     opNavMsgOut.valid =1;
