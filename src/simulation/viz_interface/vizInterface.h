@@ -51,6 +51,11 @@ typedef struct {
     uint32_t    thrCount; //!< [-] Number of thrusters used in this thruster model
 }ThrClusterMap;
 
+typedef struct {
+    double      ambient;    //!< [-] Ambient background lighting. Should be a value between 0 and 1.  A value of -1 means it is not set.
+    bool        dataFresh;  //!< [-] flag indicating if the settings have been transmitted
+}VizSettings;
+
 /*! @brief Abstract class that is used to implement an effector impacting a GRAVITY body
            that does not itself maintain a state or represent a changing component of
            the body (for example: gravity, thrusters, solar radiation pressure, etc.)
@@ -93,6 +98,7 @@ public:
     std::string protoFilename;                     //! Filename for where to save the protobuff message
     int numRW;                                //! [-] Number of RW set in python
     int numThr;                               //! [-] Number of Thrusters set in python
+    VizSettings settings;                     //! [-] container for the Viz settings that can be specified from BSK
 
 private:
     // ZeroMQ State

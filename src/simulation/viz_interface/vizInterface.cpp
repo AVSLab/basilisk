@@ -51,6 +51,9 @@ VizInterface::VizInterface()
     this->planetNames = {};
     this->spacecraftName = "spacecraft";
 
+    // turn off all Viz settings by default
+    this->settings.ambient = -1.0;
+
     return;
 }
 
@@ -234,6 +237,8 @@ void VizInterface::Reset(uint64_t CurrentSimNanos)
     if (this->saveFile == 1) {
         this->outputStream = new std::ofstream(this->protoFilename, std::ios::out |std::ios::binary);
     }
+
+    this->settings.dataFresh = true;        // reset flag to transmit Vizard settings
     return;
 }
 
@@ -373,6 +378,11 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
 {
     vizProtobufferMessage::VizMessage* message = new vizProtobufferMessage::VizMessage;
 
+    /*! Send the Vizard settings once */
+    if (this->settings.dataFresh) {
+
+        this->settings.dataFresh = false;
+    }
 
     /*! Write timestamp output msg */
     vizProtobufferMessage::VizMessage::TimeStamp* time = new vizProtobufferMessage::VizMessage::TimeStamp;
