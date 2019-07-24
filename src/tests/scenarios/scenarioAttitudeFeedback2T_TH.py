@@ -67,7 +67,7 @@ from Basilisk.utilities import vizSupport
 # Used to get the location of supporting data.
 from Basilisk import __path__
 bskPath = __path__[0]
-vizFile = os.path.splitext(sys.argv[0])[0] + '_UnityViz.bin'
+fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 # Plotting functions
 def plot_attitude_error(timeDataFSW, dataSigmaBR):
@@ -455,12 +455,38 @@ def run(show_plots, useDVThrusters):
     # create arrays for thrusters' locations and directions
     if useDVThrusters:
 
-        location = [[0.0, 0.413,  -0.1671],
-                    [0.357668, 0.2065,  -0.1671],
-                    [0.357668, -0.2065,  -0.1671],
-                    [0.0, -0.413,  -0.1671],
-                    [-0.357668, -0.2065,  -0.1671],
-                    [-0.357668, 0.2065,  -0.1671]]
+        location = [
+            [
+                0,
+                0.95,
+                -1.1
+            ],
+            [
+                0.8227241335952166,
+                0.4750000000000003,
+                -1.1
+            ],
+            [
+                0.8227241335952168,
+                -0.47499999999999976,
+                -1.1
+            ],
+            [
+                0,
+                -0.95,
+                -1.1
+            ],
+            [
+                -0.8227241335952165,
+                -0.4750000000000004,
+                -1.1
+            ],
+            [
+                -0.822724133595217,
+                0.4749999999999993,
+                -1.1
+            ]
+        ]
 
         direction = [[0.0, 0.0, 1.0],
                      [0.0, 0.0, 1.0],
@@ -470,23 +496,91 @@ def run(show_plots, useDVThrusters):
                      [0.0, 0.0, 1.0]]
     else:
 
-        location = [[1.125, 0.0, 0.75],
-                    [-1.125, 0.0, 0.75],
-                    [-1.125, 0.0, 0.75],
-                    [1.125, 0.0, 0.75],
-                    [1.125, 0.0, -0.75],
-                    [-1.125, 0.0, -0.75],
-                    [-1.125, 0.0, -0.75],
-                    [1.125, 0.0, -0.75]]
+        location = [
+            [
+                3.874945160902288e-2,
+                -1.206182747348013,
+                0.85245
+            ],
+            [
+                3.874945160902288e-2,
+                -1.206182747348013,
+                -0.85245
+            ],
+            [
+                -3.8749451609022656e-2,
+                -1.206182747348013,
+                0.85245
+            ],
+            [
+                -3.8749451609022656e-2,
+                -1.206182747348013,
+                -0.85245
+            ],
+            [
+                -3.874945160902288e-2,
+                1.206182747348013,
+                0.85245
+            ],
+            [
+                -3.874945160902288e-2,
+                1.206182747348013,
+                -0.85245
+            ],
+            [
+                3.8749451609022656e-2,
+                1.206182747348013,
+                0.85245
+            ],
+            [
+                3.8749451609022656e-2,
+                1.206182747348013,
+                -0.85245
+            ]
+        ]
 
-        direction = [[0.707107, 0.707107, 0],
-                     [-0.707107, 0.707107, 0],
-                     [-0.707107, -0.707107, 0],
-                     [0.707107, -0.707107, 0],
-                     [0.707107, 0.707107, 0],
-                     [-0.707107, 0.707107, 0],
-                     [-0.707107, -0.707107, 0],
-                     [0.707107, -0.707107, 0]]
+        direction = [
+            [
+                -0.7071067811865476,
+                0.7071067811865475,
+                0.0
+            ],
+            [
+                -0.7071067811865476,
+                0.7071067811865475,
+                0.0
+            ],
+            [
+                0.7071067811865475,
+                0.7071067811865476,
+                0.0
+            ],
+            [
+                0.7071067811865475,
+                0.7071067811865476,
+                0.0
+            ],
+            [
+                0.7071067811865476,
+                -0.7071067811865475,
+                0.0
+            ],
+            [
+                0.7071067811865476,
+                -0.7071067811865475,
+                0.0
+            ],
+            [
+                -0.7071067811865475,
+                -0.7071067811865476,
+                0.0
+            ],
+            [
+                -0.7071067811865475,
+                -0.7071067811865476,
+                0.0
+            ]
+        ]
 
     # create the set of thruster in the dynamics task
     thrusterSet = thrusterDynamicEffector.ThrusterDynamicEffector()
@@ -507,7 +601,8 @@ def run(show_plots, useDVThrusters):
     numTh = thFactory.getNumOfDevices()
 
     # create thruster object container and tie to spacecraft object
-    thFactory.addToSpacecraft("ACSThrusterDynamics", thrusterSet, scObject)
+    thrModelTag = "ACSThrusterDynamics"
+    thFactory.addToSpacecraft(thrModelTag, thrusterSet, scObject)
 
     #
     #   setup the FSW algorithm tasks
@@ -632,7 +727,7 @@ def run(show_plots, useDVThrusters):
     scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # vizSupport.enableUnityVisualization(scSim, fswTaskName,  fswProcessName, vizFile, gravFactory)
+    # vizSupport.enableUnityVisualization(scSim, dynTaskName,  dynProcessName, gravBodies = gravFactory, saveFile=fileName, thrDevices=[(thFactory.getNumOfDevices(), thrModelTag)])
 
     #
     #   initialize Simulation
@@ -665,12 +760,10 @@ def run(show_plots, useDVThrusters):
     #
     #   plot the results
     #
-    fileName = os.path.basename(os.path.splitext(__file__)[0])
-
     timeDataFSW = dataLr[:, 0] * macros.NANO2MIN
     plt.close("all")  # clears out plots from earlier test runs
 
-    plot_requested_torque(timeDataFSW, dataSigmaBR)
+    plot_requested_torque(timeDataFSW, dataLr)
     figureList = {}
     pltName = fileName + "1" + str(int(useDVThrusters))
     figureList[pltName] = plt.figure(1)
@@ -679,7 +772,7 @@ def run(show_plots, useDVThrusters):
     pltName = fileName + "2" + str(int(useDVThrusters))
     figureList[pltName] = plt.figure(2)
 
-    plot_attitude_error(timeDataFSW, dataLr)
+    plot_attitude_error(timeDataFSW, dataSigmaBR)
     pltName = fileName + "3" + str(int(useDVThrusters))
     figureList[pltName] = plt.figure(3)
 

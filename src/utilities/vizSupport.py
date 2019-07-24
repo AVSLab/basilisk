@@ -47,6 +47,9 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
     vizMessenger = vizInterface.VizInterface()
     scSim.AddModelToTask(simTaskName, vizMessenger)
 
+    # set spacecraft name
+    vizMessenger.spacecraftName = "bsk-Sat"
+
     # note that the following logic can receive a single file name, or a full path + file name.
     # In both cases a local results are stored in a local sub-folder.
     vizMessenger.saveFile = 0
@@ -102,5 +105,20 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
                     # setting the msg structure name is required below to all the planet msg to be logged
                     unitTestSupport.setMessage(scSim.TotalSim, processName, msgName,
                                                ephemData, "SpicePlanetStateSimMsg")
+
+
+    if (kwargs.has_key('numRW')):
+        vizMessenger.numRW = kwargs['numRW']
+
+    if (kwargs.has_key('thrDevices')):
+        thrDevices = kwargs['thrDevices']
+        thList = []
+        for thClusterInfo in thrDevices:
+            thSet = vizInterface.ThrClusterMap()
+            thSet.thrCount = thClusterInfo[0]
+            thSet.thrTag = thClusterInfo[1]
+            thList.append(thSet)
+        vizMessenger.thrMsgData = vizInterface.VizThrConfig(thList)
+
 
     return vizMessenger

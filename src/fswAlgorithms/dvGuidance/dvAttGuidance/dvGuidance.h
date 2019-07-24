@@ -40,7 +40,6 @@ typedef struct {
     int32_t outputMsgID;     //!< (-) ID for the outgoing body estimate message
     int32_t inputBurnCmdID;  //!< [-] ID for the incoming burn command data
 }dvGuidanceConfig;
-/* HPS: why is this module called dvGuidance, but the folder is dvAttGuidance??? */
 
 #ifdef __cplusplus
 extern "C" {

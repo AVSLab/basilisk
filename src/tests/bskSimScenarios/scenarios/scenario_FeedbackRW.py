@@ -433,7 +433,8 @@ def run(showPlots):
     # if this scenario is to interface with the BSK Viz, uncomment the following line
     # vizSupport.enableUnityVisualization(TheBSKSim, TheBSKSim.DynModels.taskName, TheBSKSim.DynamicsProcessName,
     #                                     gravBodies=TheBSKSim.DynModels.gravFactory,
-    #                                     saveFile=filename)
+    #                                     saveFile=filename,
+    #                                     numRW=TheBSKSim.DynModels.rwFactory.getNumOfDevices())
 
     # Initialize simulation
     TheBSKSim.InitializeSimulationAndDiscover()

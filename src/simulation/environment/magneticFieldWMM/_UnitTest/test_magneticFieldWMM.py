@@ -30,11 +30,9 @@ import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-bskName = 'Basilisk'
 
-from Basilisk import __path__
-bskPath = __path__[0]
-
+bskPath = path.split('src')[0]
+print bskPath
 
 
 # Import all of the modules that we are going to be called in this simulation

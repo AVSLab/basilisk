@@ -31,6 +31,7 @@ namespace std {
 }
 
 %include "vizInterface.h"
+GEN_SIZEOF(ThrClusterMap);
 
 %pythoncode %{
 import sys

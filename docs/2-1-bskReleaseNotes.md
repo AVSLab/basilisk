@@ -19,6 +19,10 @@ We are very excited by the great capabilities that this software already has, an
     <li>Updated the `spice_interface` module to be able to read in an epoch message</li>
     <li>Updated scenarios to use the epoch message</li>
     <li>Created a new support macro to convert a general date and time string into an epoch message</li>
+    <li>updated the `VizInterface` module to now provide the reaction wheel and thruster states to Vizard</li>
+    <li>Cleaned up `VizInterface` to only subscribe to BSK messages that are already created</li>
+    <li>Adjust `simpleNav` to only subscribe to the sun message it is already created</li>
+    <li>Update all the tutorial scenario and bskSim simulations to use the updated `vizSupport.enableUnityVisualization` method</li>
 </ul>
 
 

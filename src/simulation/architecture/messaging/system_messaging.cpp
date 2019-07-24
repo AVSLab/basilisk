@@ -512,7 +512,7 @@ bool SystemMessaging::ReadMessage(int64_t MessageID, SingleMessageHeader
 {
     if(MessageID >= this->GetMessageCount())
     {
-        BSK_PRINT_BRIEF(MSG_ERROR, "Received a read request for invalid message ID: %lld ", MessageID);
+        BSK_PRINT_BRIEF(MSG_ERROR, "Received a read request for invalid message ID.  Value: %lld is larger than number of available messages.", MessageID);
         this->ReadFails++;
         return(false);
     }

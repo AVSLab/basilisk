@@ -115,7 +115,7 @@ class BSKDynamicModels():
     
     def SetReactionWheelDynEffector(self):
         # Make a fresh RW factory instance, this is critical to run multiple times
-        rwFactory = simIncludeRW.rwFactory()
+        self.rwFactory = simIncludeRW.rwFactory()
         
         # specify RW momentum capacity
         maxRWMomentum = 50. # Nms
@@ -132,12 +132,12 @@ class BSKDynamicModels():
             
         for elAngle, azAngle, posVector in zip(rwElAngle, rwAzimuthAngle, rwPosVector):
             gsHat = (rbk.Mi(-azAngle,3).dot(rbk.Mi(elAngle,2))).dot(np.array([1,0,0]))
-            rwFactory.create('Honeywell_HR16',
+            self.rwFactory.create('Honeywell_HR16',
                              gsHat,
                              maxMomentum=maxRWMomentum,
                              rWB_B=posVector)
 
-        rwFactory.addToSpacecraft("RWStateEffector", self.rwStateEffector, self.scObject)
+        self.rwFactory.addToSpacecraft("RWStateEffector", self.rwStateEffector, self.scObject)
 
     def SetThrusterStateEffector(self):
         # Make a fresh TH factory instance, this is critical to run multiple times
