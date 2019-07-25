@@ -42,6 +42,7 @@ Go to the [Conan Website](https://conan.io/downloads.html) and download the wind
 
 ## Installing
 
+#### Setup
 From Basilisk root directory: 
 
 Python 2:
@@ -52,7 +53,7 @@ Python 3:
 ```
 mkdir dist3 $$ cd dist3
 ```
-Configuration and Build: 
+#### Configuration and Build: 
 
 Python 2:
 ```
