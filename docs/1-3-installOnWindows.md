@@ -42,14 +42,32 @@ Go to the [Conan Website](https://conan.io/downloads.html) and download the wind
 
 ## Installing
 
-From Basilisk root directory:
+From Basilisk root directory: 
+
+Python 2:
 ```
 mkdir dist $$ cd dist
 ```
-Configuration and Build:
+Python 3:
+```
+mkdir dist3 $$ cd dist3
+```
+Configuration and Build: 
+
+Python 2:
 ```
 cmake -G "Visual Studio <MSVC Version> <MSVC Product Year> Win<arch>" ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF
 cmake --build . --target ALL_BUILD --config Release
+```
+Python 3: 
+```
+cmake -G "Visual Studio <MSVC Version> <MSVC Product Year> Win<arch>" ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF -DUSE_PYTHON3=ON
+cmake --build . --target ALL_BUILD --config Release
+```
+Example command using x86:
+```
+cmake -G "Visual Studio <MSVC Version> <MSVC Product Year> Win32" ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF
+```
 
 MSVC Mapping:
 | MSVC Product Year | MSVC Version |
@@ -75,6 +93,9 @@ cmake -G "Visual Studio 15 2017 Win32" ../src
 Arch x64, MSVC Year 2019, MSVC Version 16:
 ```
 cmake -G "Visual Studio 16 2019" -A x64 ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF
+```
+```
+cmake -G "Visual Studio 15 2017 Win64" ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF
 ```
 ## How to run tests
 
