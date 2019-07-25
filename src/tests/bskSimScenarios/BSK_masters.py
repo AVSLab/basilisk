@@ -20,7 +20,7 @@
 
 # Import architectural modules
 from Basilisk.utilities import SimulationBaseClass, macros
-from Basilisk.simulation import sim_model
+from Basilisk.simulation.sim_model import sim_model
 
 # Get current file path
 import sys, os, inspect
@@ -99,6 +99,3 @@ class BSKScenario(object):
             Developer must override this method in their BSK_Scenario derived subclass.
         """
         pass
-
-
-

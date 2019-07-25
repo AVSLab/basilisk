@@ -21,14 +21,23 @@
 import numpy as np
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import unitTestSupport as sp
-from Basilisk.simulation import (spacecraftPlus, gravityEffector, extForceTorque, simple_nav, spice_interface,
-                                 reactionWheelStateEffector, coarse_sun_sensor, eclipse, imu_sensor)
-from Basilisk.simulation import thrusterDynamicEffector
+
+from Basilisk.simulation.spacecraftPlus import spacecraftPlus
+from Basilisk.simulation.gravityEffector import gravityEffector
+from Basilisk.simulation.extForceTorque import extForceTorque
+from Basilisk.simulation.simple_nav import simple_nav
+from Basilisk.simulation.spice_interface import spice_interface
+from Basilisk.simulation.reactionWheelStateEffector import reactionWheelStateEffector
+from Basilisk.simulation.coarse_sun_sensor import coarse_sun_sensor
+from Basilisk.simulation.eclipse import eclipse
+from Basilisk.simulation.imu_sensor import imu_sensor
+from Basilisk.simulation.thrusterDynamicEffector import thrusterDynamicEffector
+
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import simIncludeThruster
 from Basilisk.utilities import simIncludeRW, simIncludeGravBody
 from Basilisk.utilities import RigidBodyKinematics as rbk
-from Basilisk import pyswice
+from Basilisk.pyswice import pyswice
 from Basilisk import __path__
 bskPath = __path__[0]
 
@@ -40,10 +49,10 @@ class BSKDynamicModels():
         self.processName = SimBase.DynamicsProcessName
         self.taskName = "DynamicsTask"
         self.processTasksTimeStep = mc.sec2nano(dynRate)
-        
+
         # Create task
         SimBase.dynProc.addTask(SimBase.CreateNewTask(self.taskName, self.processTasksTimeStep))
-        
+
         # Instantiate Dyn modules as objects
         self.scObject = spacecraftPlus.SpacecraftPlus()
         self.gravFactory = simIncludeGravBody.gravBodyFactory()
@@ -57,7 +66,7 @@ class BSKDynamicModels():
         # Initialize all modules and write init one-time messages
         self.InitAllDynObjects()
         self.WriteInitDynMessages(SimBase)
-        
+
         # Assign initialized modules to tasks
         SimBase.AddModelToTask(self.taskName, self.scObject, None, 201)
         SimBase.AddModelToTask(self.taskName, self.simpleNavObject, None, 109)
@@ -67,10 +76,10 @@ class BSKDynamicModels():
         SimBase.AddModelToTask(self.taskName, self.rwStateEffector, None, 301)
         SimBase.AddModelToTask(self.taskName, self.extForceTorqueObject, None, 300)
 
-    
+
     # ------------------------------------------------------------------------------------------- #
     # These are module-initialization methods
-    
+
     def SetSpacecraftHub(self):
         self.scObject.ModelTag = "spacecraftBody"
         # -- Crate a new variable for the sim sc inertia I_sc. Note: this is currently accessed from FSWClass
@@ -81,8 +90,8 @@ class BSKDynamicModels():
         self.scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]  # m - position vector of body-fixed point B relative to CM
         self.scObject.hub.IHubPntBc_B = sp.np2EigenMatrix3d(self.I_sc)
         self.scObject.scStateOutMsgName = "inertial_state_output"
-    
-    
+
+
     def SetGravityBodies(self):
         timeInitString = "2012 MAY 1 00:28:30.0"
         gravBodies = self.gravFactory.createBodies(['earth', 'sun', 'moon'])
@@ -105,21 +114,21 @@ class BSKDynamicModels():
         self.eclipseObject.sunInMsgName = 'sun_planet_data'
         self.eclipseObject.addPlanetName('earth')
         self.eclipseObject.addPositionMsgName(self.scObject.scStateOutMsgName)
-    
+
     def SetExternalForceTorqueObject(self):
         self.extForceTorqueObject.ModelTag = "externalDisturbance"
         self.scObject.addDynamicEffector(self.extForceTorqueObject)
 
     def SetSimpleNavObject(self):
         self.simpleNavObject.ModelTag = "SimpleNavigation"
-    
+
     def SetReactionWheelDynEffector(self):
         # Make a fresh RW factory instance, this is critical to run multiple times
         self.rwFactory = simIncludeRW.rwFactory()
         
         # specify RW momentum capacity
         maxRWMomentum = 50. # Nms
-        
+
         # Define orthogonal RW pyramid
         # -- Pointing directions
         rwElAngle = np.array([40.0, 40.0, 40.0, 40.0])*mc.D2R
@@ -129,7 +138,7 @@ class BSKDynamicModels():
                        [-0.8, -0.8, 1.79070],
                        [-0.8, 0.8, 1.79070]
                        ]
-            
+
         for elAngle, azAngle, posVector in zip(rwElAngle, rwAzimuthAngle, rwPosVector):
             gsHat = (rbk.Mi(-azAngle,3).dot(rbk.Mi(elAngle,2))).dot(np.array([1,0,0]))
             self.rwFactory.create('Honeywell_HR16',
@@ -220,7 +229,7 @@ class BSKDynamicModels():
         self.SetSimpleNavObject()
         self.SetEclipseObject()
         self.SetCSSConstellation()
-        
+
         self.SetReactionWheelDynEffector()
         self.SetThrusterStateEffector()
 
@@ -233,5 +242,3 @@ class BSKDynamicModels():
                                    self.epochMsg)
 
         return
-
-
