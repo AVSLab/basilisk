@@ -78,8 +78,7 @@ cmake -G "Visual Studio 16 2019" -A x64 ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PR
 ```
 ## How to run tests
 
-Tests are run and managed by Pytest. To execute all tests the py.test command can be executed on the `src` directory from the command line.
-
+Tests are run and managed by Pytest. To execute all tests the py.test command can be executed on the `src` directory from the command line. 
 ```
-C:\Users\patrick\Documents\basilisk> py.test src/
+python -m pytest src/ 
 ```
