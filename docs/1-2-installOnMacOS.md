@@ -178,12 +178,23 @@ This launches the application with knowledge of the `conan` paths and you can us
     $ python scenarioBasicOrbit.py
 ```
 
+#### Building for Python 3
+Follow standard environment setup and Basilisk acquisition/cloning with your python 3.x distribution. 
+
+Required Modifications to Build Process: 
+
+1. Create build directory dist3 and build from here (opposed to dist)
+2. Enable CMAKE option USE_PYTHON3
+
+Note: Basilisk built for Python 2 and Python 3 can coexist. After building, execution of tests and scenarios follow the same format, but executed with python of the desired version.
+
+
 ## Optional Packages
 The above direction install the Basilisk base software.  There are a series of \ref installOptionalPackages "optional packages" and software installs that enhance this capability, including `pytest` to run an automated test suite of unit and integrated tests.
 
 
 
-##Power User Installation Tip  
+## Power User Installation Tip  
 
 The project can be configured and built from the command line via CMake.  Command line operations are run using the following setup.py script and parameters.
 ~~~~~~~
