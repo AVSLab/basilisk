@@ -19,7 +19,7 @@
 #ifndef VIZ_INTERFACE_H
 #define VIZ_INTERFACE_H
 
-#include "vizProtobuffer/vizMessage.pb.h"
+#include "../utilities/vizProtobuffer/vizMessage.pb.h"
 #include <vector>
 #include <fstream>
 #include <map>
