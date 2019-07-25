@@ -89,10 +89,15 @@ message VizMessage{
       double timeTag = 2; //[ns] simElapsedTime at which to capture image
    }
 
+   message VizSettingsPb{
+      double ambient = 1;
+   }
+
    TimeStamp currentTime = 1;
    repeated CelestialBody celestialBodies = 2;
    repeated Spacecraft spacecraft = 3;
    repeated CameraConfig cameras = 4;
    repeated CameraImage  cameraImages = 5;
    repeated ImageRequest imageRequests = 6;
+   VizSettingsPb settings = 7;
 }
