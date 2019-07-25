@@ -40,7 +40,7 @@ from Basilisk.utilities import orbitalMotion
 
 # import simulation related support
 from Basilisk.simulation.spacecraftPlus import spacecraftPlus
-from Basilisk.simulation. import extForceTorque
+from Basilisk.simulation.extForceTorque import extForceTorque
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation.simple_nav import simple_nav
 
