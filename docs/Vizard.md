@@ -37,6 +37,8 @@ To engage with the visualization, the view point can be rotated and the user can
 
 
 ## Space Vehicle States
+The following sections describe the basic user interface elements of Vizard.  Some settings can be set via a Basilisk script as discribed in the [scripting support page](@ref vizardSettings).
+
 ### Basic Position and Orientation
 Vizard is able to show the position and orientation of the spacecraft being simulated.  If one or more planets are being modeled, then the spacecraft is show relative to the nearest planet.  
 
@@ -78,3 +80,6 @@ Up to two custom views can be generated that look out of the spacecraft +/- x-, 
 #### `Skybox` Menu Item
 The default star field is a realistic NASA star field.  The alternate option is an ESO Milky Way star field that is more visually pleasing, but less realistic.  
 \image html Images/doc/vizard-img3.png "Illustration of Skybox Option with Milky Way Star Field" width=400px
+
+
+
