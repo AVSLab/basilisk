@@ -1,20 +1,10 @@
-% !TEX root = ./Basilisk-atmosphere-20190221.tex
+% !TEX root = ./Basilisk-msisAtmosphere-20190221.tex
 
 \section{Test Description and Success Criteria}
 This section describes the specific unit tests conducted on this module.
 
 \subsection{General Functionality}
-\subsubsection{setEnvType}
-
-This test verifies that the module is able adjust its internal state to each of the implemented atmospheric models.
-
-\subsubsection{setEpoch}
-
-This test verifies that the user can set the initial date (``epoch'') arbitrarily.
-
-\subsubsection{addSpacecraftToModel}
-
-This test verifies that the user can both add additional spacecraft to the module. This is accomplished by checking the number of input and output messages of the module after adding multiple spacecraft.
+The unit test check the neutral density calculation for a single spacecraft at a particular epoch time.  The epoch is either specified through an epoch input message, or set directly by specifying the {\tt epochDoy} day of year value.  
 
 \subsection{Model-Specific Tests}
 
@@ -50,11 +40,14 @@ The following two tables show the test results.  All tests are expected to pass.
 	\caption{Test result for test\_unitMsisAtmosphere.py}
 	\label{tab:results}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{c  | c } % Column formatting, 
+	\begin{tabular}{c  | c  | c} % Column formatting, 
 		\hline\hline
-		\textbf{Check} &  \textbf{Pass/Fail} \\ 
+		{\tt orbitCase} & {\tt useEpochMsg} &  \textbf{Pass/Fail} \\ 
 		\hline
-		1 &  \input{AutoTeX/unitTestPassFail} \\ 
+		LPO & False &  \input{AutoTeX/unitTestPassFailLPOFalse} \\ 
+		LTO & False &  \input{AutoTeX/unitTestPassFailLTOFalse} \\ 
+		LPO & True &  \input{AutoTeX/unitTestPassFailLPOTrue} \\ 
+		LTO & True &  \input{AutoTeX/unitTestPassFailLTOTrue} \\ 
 		\hline
 		\hline
 	\end{tabular}

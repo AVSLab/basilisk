@@ -231,7 +231,7 @@ def run(show_plots, orbitCase, useEpochMsg):
         "FAILED:  NRLMSISE-00 failed temperature unit test at t=" + str(densData[0, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(tempData[0,1]-refAtmoData[-1]))
 
 
-    snippentName = "unitTestPassFail"
+    snippentName = "unitTestPassFail" + str(orbitCase) + str(useEpochMsg)
     if testFailCount == 0:
         colorText = 'ForestGreen'
         print "PASSED: " + newAtmo.ModelTag
