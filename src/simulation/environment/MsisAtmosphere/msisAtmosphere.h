@@ -63,11 +63,16 @@ private:
     void customSetEpochFromVariable();
 
 public:
-    // Message ID attributes
-    int64_t swDataInMsgIds[23];
-    // Message struct attributes
+    int epochDoy;                       //!< [day] Day-of-Year at epoch
+    std::string epochInMsgName;
+
+
+private:
+    Eigen::Vector3d currentLLA; //!< [-] Container for local Latitude, Longitude, Altitude geodetic position; units are rad and km respectively.
     std::vector<SwDataSimMsg> swDataList; //!< Vector of space weather messages
     std::vector<std::string> swDataInMsgNames; //!< Vector of space weather message names
+    int64_t swDataInMsgIds[23];
+
     // NRLMSISE-00 Specific attributes
     nrlmsise_input msisInput; //!< Struct containing NRLMSISE-00 input values; see their doc for details.
     nrlmsise_output msisOutput; //!< Struct containing NRLMSISE-00 output values; see their doc for details.
@@ -76,19 +81,6 @@ public:
     double ap;
     double f107;
     double f107A;
-    int epochDoy;                       //!< [day] Day-of-Year at epoch
-    std::string epochInMsgName;
-    int64_t epochInMsgId;
-
-    std::string expString;
-    std::string msisString;
-
-private:
-    std::vector<SwDataSimMsg> swDataBuffer;
-    double currentAlt; //!< [m] Current s/c altitude
-    EpochSimMsg epochContainer;
-    Eigen::Vector3d relativePos; //!< [-] Container for local position
-    Eigen::Vector3d currentLLA; //!< [-] Container for local Latitude, Longitude, Altitude geodetic position; units are rad and km respectively.
 
 
 };
