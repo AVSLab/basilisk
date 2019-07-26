@@ -429,6 +429,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraConfig, camerapos_b_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraConfig, cameradir_b_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraConfig, renderrate_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraConfig, skyboxfilepath_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraImage, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -473,10 +474,10 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
   { 48, -1, sizeof(::vizProtobufferMessage::VizMessage_CoarseSunSensor)},
   { 57, -1, sizeof(::vizProtobufferMessage::VizMessage_StarTracker)},
   { 67, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraConfig)},
-  { 81, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraImage)},
-  { 90, -1, sizeof(::vizProtobufferMessage::VizMessage_ImageRequest)},
-  { 97, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
-  { 103, -1, sizeof(::vizProtobufferMessage::VizMessage)},
+  { 82, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraImage)},
+  { 91, -1, sizeof(::vizProtobufferMessage::VizMessage_ImageRequest)},
+  { 98, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
+  { 104, -1, sizeof(::vizProtobufferMessage::VizMessage)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -517,7 +518,7 @@ void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\020vizMessage.proto\022\025vizProtobufferMessag"
-      "e\"\243\016\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
+      "e\"\273\016\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
       "vizProtobufferMessage.VizMessage.TimeSta"
       "mp\022H\n\017celestialBodies\030\002 \003(\0132/.vizProtobu"
       "fferMessage.VizMessage.CelestialBody\022@\n\n"
@@ -553,19 +554,20 @@ void AddDescriptorsImpl() {
       "(\005\032\202\001\n\013StarTracker\022\020\n\010position\030\002 \003(\001\022\020\n\010"
       "rotation\030\004 \003(\001\022\031\n\021fieldOfViewHeight\030\005 \001("
       "\001\022\030\n\020fieldOfViewWidth\030\006 \001(\001\022\032\n\022starTrack"
-      "erGroupID\030\007 \001(\005\032\304\001\n\014CameraConfig\022\020\n\010came"
+      "erGroupID\030\007 \001(\005\032\334\001\n\014CameraConfig\022\020\n\010came"
       "raID\030\001 \001(\003\022\022\n\nparentName\030\002 \001(\t\022\023\n\013fieldO"
       "fView\030\003 \001(\001\022\022\n\nresolution\030\004 \003(\003\022\023\n\013focal"
       "Length\030\005 \001(\001\022\022\n\nsensorSize\030\006 \003(\001\022\023\n\013came"
       "raPos_B\030\007 \003(\001\022\023\n\013cameraDir_B\030\010 \003(\001\022\022\n\nre"
-      "nderRate\030\t \001(\004\032Z\n\013CameraImage\022\020\n\010cameraI"
-      "D\030\001 \001(\003\022\017\n\007timeTag\030\002 \001(\001\022\025\n\rimageFileNam"
-      "e\030\003 \001(\t\022\021\n\timageFile\030\004 \003(\r\0321\n\014ImageReque"
-      "st\022\020\n\010cameraID\030\001 \001(\003\022\017\n\007timeTag\030\002 \001(\001\032 \n"
-      "\rVizSettingsPb\022\017\n\007ambient\030\001 \001(\001b\006proto3"
+      "nderRate\030\t \001(\004\022\026\n\016skyBoxFilepath\030\n \001(\t\032Z"
+      "\n\013CameraImage\022\020\n\010cameraID\030\001 \001(\003\022\017\n\007timeT"
+      "ag\030\002 \001(\001\022\025\n\rimageFileName\030\003 \001(\t\022\021\n\timage"
+      "File\030\004 \003(\r\0321\n\014ImageRequest\022\020\n\010cameraID\030\001"
+      " \001(\003\022\017\n\007timeTag\030\002 \001(\001\032 \n\rVizSettingsPb\022\017"
+      "\n\007ambient\030\001 \001(\001b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1879);
+      descriptor, 1903);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "vizMessage.proto", &protobuf_RegisterTypes);
 }
@@ -3601,6 +3603,7 @@ const int VizMessage_CameraConfig::kSensorSizeFieldNumber;
 const int VizMessage_CameraConfig::kCameraPosBFieldNumber;
 const int VizMessage_CameraConfig::kCameraDirBFieldNumber;
 const int VizMessage_CameraConfig::kRenderRateFieldNumber;
+const int VizMessage_CameraConfig::kSkyBoxFilepathFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 VizMessage_CameraConfig::VizMessage_CameraConfig()
@@ -3624,6 +3627,10 @@ VizMessage_CameraConfig::VizMessage_CameraConfig(const VizMessage_CameraConfig& 
   if (from.parentname().size() > 0) {
     parentname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.parentname_);
   }
+  skyboxfilepath_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.skyboxfilepath().size() > 0) {
+    skyboxfilepath_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.skyboxfilepath_);
+  }
   ::memcpy(&cameraid_, &from.cameraid_,
     static_cast<size_t>(reinterpret_cast<char*>(&renderrate_) -
     reinterpret_cast<char*>(&cameraid_)) + sizeof(renderrate_));
@@ -3632,6 +3639,7 @@ VizMessage_CameraConfig::VizMessage_CameraConfig(const VizMessage_CameraConfig& 
 
 void VizMessage_CameraConfig::SharedCtor() {
   parentname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  skyboxfilepath_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&cameraid_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&renderrate_) -
       reinterpret_cast<char*>(&cameraid_)) + sizeof(renderrate_));
@@ -3645,6 +3653,7 @@ VizMessage_CameraConfig::~VizMessage_CameraConfig() {
 
 void VizMessage_CameraConfig::SharedDtor() {
   parentname_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  skyboxfilepath_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void VizMessage_CameraConfig::SetCachedSize(int size) const {
@@ -3681,6 +3690,7 @@ void VizMessage_CameraConfig::Clear() {
   camerapos_b_.Clear();
   cameradir_b_.Clear();
   parentname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  skyboxfilepath_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&cameraid_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&renderrate_) -
       reinterpret_cast<char*>(&cameraid_)) + sizeof(renderrate_));
@@ -3845,6 +3855,22 @@ bool VizMessage_CameraConfig::MergePartialFromCodedStream(
         break;
       }
 
+      // string skyBoxFilepath = 10;
+      case 10: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(82u /* 82 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_skyboxfilepath()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->skyboxfilepath().data(), static_cast<int>(this->skyboxfilepath().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "vizProtobufferMessage.VizMessage.CameraConfig.skyBoxFilepath"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -3937,6 +3963,16 @@ void VizMessage_CameraConfig::SerializeWithCachedSizes(
   // uint64 renderRate = 9;
   if (this->renderrate() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt64(9, this->renderrate(), output);
+  }
+
+  // string skyBoxFilepath = 10;
+  if (this->skyboxfilepath().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->skyboxfilepath().data(), static_cast<int>(this->skyboxfilepath().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.CameraConfig.skyBoxFilepath");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      10, this->skyboxfilepath(), output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -4036,6 +4072,17 @@ void VizMessage_CameraConfig::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(9, this->renderrate(), target);
   }
 
+  // string skyBoxFilepath = 10;
+  if (this->skyboxfilepath().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->skyboxfilepath().data(), static_cast<int>(this->skyboxfilepath().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.CameraConfig.skyBoxFilepath");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        10, this->skyboxfilepath(), target);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
@@ -4124,6 +4171,13 @@ size_t VizMessage_CameraConfig::ByteSizeLong() const {
         this->parentname());
   }
 
+  // string skyBoxFilepath = 10;
+  if (this->skyboxfilepath().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->skyboxfilepath());
+  }
+
   // int64 cameraID = 1;
   if (this->cameraid() != 0) {
     total_size += 1 +
@@ -4185,6 +4239,10 @@ void VizMessage_CameraConfig::MergeFrom(const VizMessage_CameraConfig& from) {
 
     parentname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.parentname_);
   }
+  if (from.skyboxfilepath().size() > 0) {
+
+    skyboxfilepath_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.skyboxfilepath_);
+  }
   if (from.cameraid() != 0) {
     set_cameraid(from.cameraid());
   }
@@ -4228,6 +4286,7 @@ void VizMessage_CameraConfig::InternalSwap(VizMessage_CameraConfig* other) {
   camerapos_b_.InternalSwap(&other->camerapos_b_);
   cameradir_b_.InternalSwap(&other->cameradir_b_);
   parentname_.Swap(&other->parentname_);
+  skyboxfilepath_.Swap(&other->skyboxfilepath_);
   swap(cameraid_, other->cameraid_);
   swap(fieldofview_, other->fieldofview_);
   swap(focallength_, other->focallength_);

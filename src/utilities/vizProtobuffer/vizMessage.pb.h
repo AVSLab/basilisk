@@ -1273,6 +1273,20 @@ class VizMessage_CameraConfig : public ::google::protobuf::Message /* @@protoc_i
   ::std::string* release_parentname();
   void set_allocated_parentname(::std::string* parentname);
 
+  // string skyBoxFilepath = 10;
+  void clear_skyboxfilepath();
+  static const int kSkyBoxFilepathFieldNumber = 10;
+  const ::std::string& skyboxfilepath() const;
+  void set_skyboxfilepath(const ::std::string& value);
+  #if LANG_CXX11
+  void set_skyboxfilepath(::std::string&& value);
+  #endif
+  void set_skyboxfilepath(const char* value);
+  void set_skyboxfilepath(const char* value, size_t size);
+  ::std::string* mutable_skyboxfilepath();
+  ::std::string* release_skyboxfilepath();
+  void set_allocated_skyboxfilepath(::std::string* skyboxfilepath);
+
   // int64 cameraID = 1;
   void clear_cameraid();
   static const int kCameraIDFieldNumber = 1;
@@ -1310,6 +1324,7 @@ class VizMessage_CameraConfig : public ::google::protobuf::Message /* @@protoc_i
   ::google::protobuf::RepeatedField< double > cameradir_b_;
   mutable int _cameradir_b_cached_byte_size_;
   ::google::protobuf::internal::ArenaStringPtr parentname_;
+  ::google::protobuf::internal::ArenaStringPtr skyboxfilepath_;
   ::google::protobuf::int64 cameraid_;
   double fieldofview_;
   double focallength_;
@@ -2927,6 +2942,59 @@ inline void VizMessage_CameraConfig::set_renderrate(::google::protobuf::uint64 v
   
   renderrate_ = value;
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CameraConfig.renderRate)
+}
+
+// string skyBoxFilepath = 10;
+inline void VizMessage_CameraConfig::clear_skyboxfilepath() {
+  skyboxfilepath_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& VizMessage_CameraConfig::skyboxfilepath() const {
+  // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CameraConfig.skyBoxFilepath)
+  return skyboxfilepath_.GetNoArena();
+}
+inline void VizMessage_CameraConfig::set_skyboxfilepath(const ::std::string& value) {
+  
+  skyboxfilepath_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CameraConfig.skyBoxFilepath)
+}
+#if LANG_CXX11
+inline void VizMessage_CameraConfig::set_skyboxfilepath(::std::string&& value) {
+  
+  skyboxfilepath_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:vizProtobufferMessage.VizMessage.CameraConfig.skyBoxFilepath)
+}
+#endif
+inline void VizMessage_CameraConfig::set_skyboxfilepath(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  skyboxfilepath_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:vizProtobufferMessage.VizMessage.CameraConfig.skyBoxFilepath)
+}
+inline void VizMessage_CameraConfig::set_skyboxfilepath(const char* value, size_t size) {
+  
+  skyboxfilepath_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:vizProtobufferMessage.VizMessage.CameraConfig.skyBoxFilepath)
+}
+inline ::std::string* VizMessage_CameraConfig::mutable_skyboxfilepath() {
+  
+  // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.CameraConfig.skyBoxFilepath)
+  return skyboxfilepath_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* VizMessage_CameraConfig::release_skyboxfilepath() {
+  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.CameraConfig.skyBoxFilepath)
+  
+  return skyboxfilepath_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void VizMessage_CameraConfig::set_allocated_skyboxfilepath(::std::string* skyboxfilepath) {
+  if (skyboxfilepath != NULL) {
+    
+  } else {
+    
+  }
+  skyboxfilepath_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), skyboxfilepath);
+  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.CameraConfig.skyBoxFilepath)
 }
 
 // -------------------------------------------------------------------
