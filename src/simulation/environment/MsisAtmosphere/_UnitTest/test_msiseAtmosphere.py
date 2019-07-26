@@ -56,18 +56,19 @@ splitPath = path.split(bskName)
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("orbitType", ["LPO", "LTO"])
+@pytest.mark.parametrize("useEpochMsg", [False, True])
 
 # provide a unique test method name, starting with test_
-def test_scenarioMsisAtmosphereOrbit(show_plots, orbitType):
+def test_scenarioMsisAtmosphereOrbit(show_plots, orbitType, useEpochMsg):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
     showVal = False
 
-    [testResults, testMessage] = run(showVal, orbitType)
+    [testResults, testMessage] = run(showVal, orbitType, useEpochMsg)
 
     assert testResults < 1, testMessage
 
-def run(show_plots, orbitCase):
+def run(show_plots, orbitCase, useEpochMsg):
     '''Call this routine directly to run the script.'''
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -96,7 +97,19 @@ def run(show_plots, orbitCase):
     newAtmo = msisAtmosphere.MsisAtmosphere()
     atmoTaskName = "atmosphere"
     newAtmo.ModelTag = "MsisAtmo"
-    newAtmo.epochDoy = 1        # setting epoch day of year info directly
+
+    if useEpochMsg:
+        newAtmo.epochInMsgName = "simEpoch"
+        epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 Jan 01 00:00:00.00 (UTC)')
+        unitTestSupport.setMessage(scSim.TotalSim,
+                                   simProcessName,
+                                   newAtmo.epochInMsgName,
+                                   epochMsg)
+        # setting epoch day of year info deliberately to a false value.  The epoch msg info should be used
+        newAtmo.epochDoy = 10
+
+    else:
+        newAtmo.epochDoy = 1  # setting epoch day of year info directly
 
     dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
     scSim.AddModelToTask(atmoTaskName, newAtmo)
@@ -232,4 +245,6 @@ def run(show_plots, orbitCase):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == '__main__':
-    run(True, "LPO")
+    run(True,
+        "LPO",          # orbitCase
+        False)          # useEpochMsg
