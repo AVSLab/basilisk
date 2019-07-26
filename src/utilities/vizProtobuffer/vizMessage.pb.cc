@@ -70,6 +70,31 @@ class VizMessage_ImageRequestDefaultTypeInternal {
   ::google::protobuf::internal::ExplicitlyConstructed<VizMessage_ImageRequest>
       _instance;
 } _VizMessage_ImageRequest_default_instance_;
+class VizMessage_PointLineDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<VizMessage_PointLine>
+      _instance;
+} _VizMessage_PointLine_default_instance_;
+class VizMessage_KeepOutInConeDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<VizMessage_KeepOutInCone>
+      _instance;
+} _VizMessage_KeepOutInCone_default_instance_;
+class VizMessage_CameraOneSettingsDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<VizMessage_CameraOneSettings>
+      _instance;
+} _VizMessage_CameraOneSettings_default_instance_;
+class VizMessage_CameraTwoSettingsDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<VizMessage_CameraTwoSettings>
+      _instance;
+} _VizMessage_CameraTwoSettings_default_instance_;
+class VizMessage_PlanetCameraSettingsDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<VizMessage_PlanetCameraSettings>
+      _instance;
+} _VizMessage_PlanetCameraSettings_default_instance_;
 class VizMessage_VizSettingsPbDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<VizMessage_VizSettingsPb>
@@ -296,6 +321,111 @@ void InitDefaultsVizMessage_ImageRequest() {
   ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsVizMessage_ImageRequestImpl);
 }
 
+void InitDefaultsVizMessage_PointLineImpl() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
+#else
+  ::google::protobuf::internal::InitProtobufDefaults();
+#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  {
+    void* ptr = &::vizProtobufferMessage::_VizMessage_PointLine_default_instance_;
+    new (ptr) ::vizProtobufferMessage::VizMessage_PointLine();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::vizProtobufferMessage::VizMessage_PointLine::InitAsDefaultInstance();
+}
+
+void InitDefaultsVizMessage_PointLine() {
+  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
+  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsVizMessage_PointLineImpl);
+}
+
+void InitDefaultsVizMessage_KeepOutInConeImpl() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
+#else
+  ::google::protobuf::internal::InitProtobufDefaults();
+#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  {
+    void* ptr = &::vizProtobufferMessage::_VizMessage_KeepOutInCone_default_instance_;
+    new (ptr) ::vizProtobufferMessage::VizMessage_KeepOutInCone();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::vizProtobufferMessage::VizMessage_KeepOutInCone::InitAsDefaultInstance();
+}
+
+void InitDefaultsVizMessage_KeepOutInCone() {
+  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
+  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsVizMessage_KeepOutInConeImpl);
+}
+
+void InitDefaultsVizMessage_CameraOneSettingsImpl() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
+#else
+  ::google::protobuf::internal::InitProtobufDefaults();
+#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  {
+    void* ptr = &::vizProtobufferMessage::_VizMessage_CameraOneSettings_default_instance_;
+    new (ptr) ::vizProtobufferMessage::VizMessage_CameraOneSettings();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::vizProtobufferMessage::VizMessage_CameraOneSettings::InitAsDefaultInstance();
+}
+
+void InitDefaultsVizMessage_CameraOneSettings() {
+  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
+  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsVizMessage_CameraOneSettingsImpl);
+}
+
+void InitDefaultsVizMessage_CameraTwoSettingsImpl() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
+#else
+  ::google::protobuf::internal::InitProtobufDefaults();
+#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  {
+    void* ptr = &::vizProtobufferMessage::_VizMessage_CameraTwoSettings_default_instance_;
+    new (ptr) ::vizProtobufferMessage::VizMessage_CameraTwoSettings();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::vizProtobufferMessage::VizMessage_CameraTwoSettings::InitAsDefaultInstance();
+}
+
+void InitDefaultsVizMessage_CameraTwoSettings() {
+  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
+  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsVizMessage_CameraTwoSettingsImpl);
+}
+
+void InitDefaultsVizMessage_PlanetCameraSettingsImpl() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
+#else
+  ::google::protobuf::internal::InitProtobufDefaults();
+#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  {
+    void* ptr = &::vizProtobufferMessage::_VizMessage_PlanetCameraSettings_default_instance_;
+    new (ptr) ::vizProtobufferMessage::VizMessage_PlanetCameraSettings();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::vizProtobufferMessage::VizMessage_PlanetCameraSettings::InitAsDefaultInstance();
+}
+
+void InitDefaultsVizMessage_PlanetCameraSettings() {
+  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
+  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsVizMessage_PlanetCameraSettingsImpl);
+}
+
 void InitDefaultsVizMessage_VizSettingsPbImpl() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -304,6 +434,11 @@ void InitDefaultsVizMessage_VizSettingsPbImpl() {
 #else
   ::google::protobuf::internal::InitProtobufDefaults();
 #endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  protobuf_vizMessage_2eproto::InitDefaultsVizMessage_PointLine();
+  protobuf_vizMessage_2eproto::InitDefaultsVizMessage_KeepOutInCone();
+  protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CameraOneSettings();
+  protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CameraTwoSettings();
+  protobuf_vizMessage_2eproto::InitDefaultsVizMessage_PlanetCameraSettings();
   {
     void* ptr = &::vizProtobufferMessage::_VizMessage_VizSettingsPb_default_instance_;
     new (ptr) ::vizProtobufferMessage::VizMessage_VizSettingsPb();
@@ -345,7 +480,7 @@ void InitDefaultsVizMessage() {
   ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsVizMessageImpl);
 }
 
-::google::protobuf::Metadata file_level_metadata[12];
+::google::protobuf::Metadata file_level_metadata[17];
 
 const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
@@ -447,11 +582,72 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_ImageRequest, cameraid_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_ImageRequest, timetag_),
   ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_PointLine, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_PointLine, frombodyname_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_PointLine, tobodyname_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_PointLine, linecolor_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_KeepOutInCone, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_KeepOutInCone, iskeepin_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_KeepOutInCone, position_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_KeepOutInCone, normalvector_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_KeepOutInCone, incidenceangle_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_KeepOutInCone, coneheight_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_KeepOutInCone, frombodyname_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_KeepOutInCone, tobodyname_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_KeepOutInCone, conecolor_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_KeepOutInCone, conename_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraOneSettings, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraOneSettings, spacecraftname_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraOneSettings, viewpanel_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraOneSettings, setview_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraOneSettings, spacecraftvisible_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraOneSettings, fieldofview_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraTwoSettings, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraTwoSettings, spacecraftname_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraTwoSettings, viewpanel_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraTwoSettings, setview_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraTwoSettings, spacecraftvisible_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_CameraTwoSettings, fieldofview_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_PlanetCameraSettings, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_PlanetCameraSettings, spacecraftname_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_PlanetCameraSettings, viewpanel_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_PlanetCameraSettings, setview_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_PlanetCameraSettings, spacecraftvisible_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_PlanetCameraSettings, fieldofview_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_PlanetCameraSettings, targetbodyname_),
+  ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, ambient_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, orbitlineson_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, spacecraftcson_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, planetcson_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, pointlines_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, keepoutincones_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, cameraone_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, cameratwo_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage_VizSettingsPb, planetcamera_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::vizProtobufferMessage::VizMessage, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -476,8 +672,13 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
   { 67, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraConfig)},
   { 82, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraImage)},
   { 91, -1, sizeof(::vizProtobufferMessage::VizMessage_ImageRequest)},
-  { 98, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
-  { 104, -1, sizeof(::vizProtobufferMessage::VizMessage)},
+  { 98, -1, sizeof(::vizProtobufferMessage::VizMessage_PointLine)},
+  { 106, -1, sizeof(::vizProtobufferMessage::VizMessage_KeepOutInCone)},
+  { 120, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraOneSettings)},
+  { 130, -1, sizeof(::vizProtobufferMessage::VizMessage_CameraTwoSettings)},
+  { 140, -1, sizeof(::vizProtobufferMessage::VizMessage_PlanetCameraSettings)},
+  { 151, -1, sizeof(::vizProtobufferMessage::VizMessage_VizSettingsPb)},
+  { 165, -1, sizeof(::vizProtobufferMessage::VizMessage)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -491,6 +692,11 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_CameraConfig_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_CameraImage_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_ImageRequest_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_PointLine_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_KeepOutInCone_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_CameraOneSettings_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_CameraTwoSettings_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_PlanetCameraSettings_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_VizSettingsPb_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::vizProtobufferMessage::_VizMessage_default_instance_),
 };
@@ -511,14 +717,14 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 12);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 17);
 }
 
 void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\020vizMessage.proto\022\025vizProtobufferMessag"
-      "e\"\273\016\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
+      "e\"\226\027\n\nVizMessage\022@\n\013currentTime\030\001 \001(\0132+."
       "vizProtobufferMessage.VizMessage.TimeSta"
       "mp\022H\n\017celestialBodies\030\002 \003(\0132/.vizProtobu"
       "fferMessage.VizMessage.CelestialBody\022@\n\n"
@@ -563,11 +769,39 @@ void AddDescriptorsImpl() {
       "\n\013CameraImage\022\020\n\010cameraID\030\001 \001(\003\022\017\n\007timeT"
       "ag\030\002 \001(\001\022\025\n\rimageFileName\030\003 \001(\t\022\021\n\timage"
       "File\030\004 \003(\r\0321\n\014ImageRequest\022\020\n\010cameraID\030\001"
-      " \001(\003\022\017\n\007timeTag\030\002 \001(\001\032 \n\rVizSettingsPb\022\017"
-      "\n\007ambient\030\001 \001(\001b\006proto3"
+      " \001(\003\022\017\n\007timeTag\030\002 \001(\001\032H\n\tPointLine\022\024\n\014fr"
+      "omBodyName\030\001 \001(\t\022\022\n\ntoBodyName\030\002 \001(\t\022\021\n\t"
+      "lineColor\030\003 \003(\003\032\304\001\n\rKeepOutInCone\022\020\n\010isK"
+      "eepIn\030\001 \001(\010\022\020\n\010position\030\002 \003(\001\022\024\n\014normalV"
+      "ector\030\003 \003(\001\022\026\n\016incidenceAngle\030\004 \001(\001\022\022\n\nc"
+      "oneHeight\030\005 \001(\001\022\024\n\014fromBodyName\030\006 \001(\t\022\022\n"
+      "\ntoBodyName\030\007 \001(\t\022\021\n\tconeColor\030\010 \003(\003\022\020\n\010"
+      "coneName\030\t \001(\t\032\177\n\021CameraOneSettings\022\026\n\016s"
+      "pacecraftName\030\001 \001(\t\022\021\n\tviewPanel\030\002 \001(\010\022\017"
+      "\n\007setView\030\003 \001(\003\022\031\n\021spacecraftVisible\030\004 \001"
+      "(\010\022\023\n\013fieldOfView\030\005 \001(\001\032\177\n\021CameraTwoSett"
+      "ings\022\026\n\016spacecraftName\030\001 \001(\t\022\021\n\tviewPane"
+      "l\030\002 \001(\010\022\017\n\007setView\030\003 \001(\003\022\031\n\021spacecraftVi"
+      "sible\030\004 \001(\010\022\023\n\013fieldOfView\030\005 \001(\001\032\232\001\n\024Pla"
+      "netCameraSettings\022\026\n\016spacecraftName\030\001 \001("
+      "\t\022\021\n\tviewPanel\030\002 \001(\010\022\017\n\007setView\030\003 \001(\003\022\031\n"
+      "\021spacecraftVisible\030\004 \001(\010\022\023\n\013fieldOfView\030"
+      "\005 \001(\001\022\026\n\016targetBodyName\030\006 \001(\t\032\312\003\n\rVizSet"
+      "tingsPb\022\017\n\007ambient\030\001 \001(\001\022\024\n\014orbitLinesOn"
+      "\030\002 \001(\003\022\026\n\016spacecraftCSon\030\003 \001(\003\022\022\n\nplanet"
+      "CSon\030\004 \001(\003\022\?\n\npointLines\030\005 \003(\0132+.vizProt"
+      "obufferMessage.VizMessage.PointLine\022G\n\016k"
+      "eepOutInCones\030\006 \003(\0132/.vizProtobufferMess"
+      "age.VizMessage.KeepOutInCone\022F\n\tcameraOn"
+      "e\030\007 \003(\01323.vizProtobufferMessage.VizMessa"
+      "ge.CameraOneSettings\022F\n\tcameraTwo\030\010 \003(\0132"
+      "3.vizProtobufferMessage.VizMessage.Camer"
+      "aTwoSettings\022L\n\014planetCamera\030\t \003(\01326.viz"
+      "ProtobufferMessage.VizMessage.PlanetCame"
+      "raSettingsb\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1903);
+      descriptor, 3018);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "vizMessage.proto", &protobuf_RegisterTypes);
 }
@@ -4980,10 +5214,2330 @@ void VizMessage_ImageRequest::InternalSwap(VizMessage_ImageRequest* other) {
 
 // ===================================================================
 
+void VizMessage_PointLine::InitAsDefaultInstance() {
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int VizMessage_PointLine::kFromBodyNameFieldNumber;
+const int VizMessage_PointLine::kToBodyNameFieldNumber;
+const int VizMessage_PointLine::kLineColorFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+VizMessage_PointLine::VizMessage_PointLine()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_PointLine();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:vizProtobufferMessage.VizMessage.PointLine)
+}
+VizMessage_PointLine::VizMessage_PointLine(const VizMessage_PointLine& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      linecolor_(from.linecolor_),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  frombodyname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.frombodyname().size() > 0) {
+    frombodyname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.frombodyname_);
+  }
+  tobodyname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.tobodyname().size() > 0) {
+    tobodyname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tobodyname_);
+  }
+  // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.PointLine)
+}
+
+void VizMessage_PointLine::SharedCtor() {
+  frombodyname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  tobodyname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  _cached_size_ = 0;
+}
+
+VizMessage_PointLine::~VizMessage_PointLine() {
+  // @@protoc_insertion_point(destructor:vizProtobufferMessage.VizMessage.PointLine)
+  SharedDtor();
+}
+
+void VizMessage_PointLine::SharedDtor() {
+  frombodyname_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  tobodyname_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void VizMessage_PointLine::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* VizMessage_PointLine::descriptor() {
+  ::protobuf_vizMessage_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_vizMessage_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const VizMessage_PointLine& VizMessage_PointLine::default_instance() {
+  ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_PointLine();
+  return *internal_default_instance();
+}
+
+VizMessage_PointLine* VizMessage_PointLine::New(::google::protobuf::Arena* arena) const {
+  VizMessage_PointLine* n = new VizMessage_PointLine;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void VizMessage_PointLine::Clear() {
+// @@protoc_insertion_point(message_clear_start:vizProtobufferMessage.VizMessage.PointLine)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  linecolor_.Clear();
+  frombodyname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  tobodyname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  _internal_metadata_.Clear();
+}
+
+bool VizMessage_PointLine::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:vizProtobufferMessage.VizMessage.PointLine)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // string fromBodyName = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_frombodyname()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->frombodyname().data(), static_cast<int>(this->frombodyname().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "vizProtobufferMessage.VizMessage.PointLine.fromBodyName"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string toBodyName = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_tobodyname()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->tobodyname().data(), static_cast<int>(this->tobodyname().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "vizProtobufferMessage.VizMessage.PointLine.toBodyName"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated int64 lineColor = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, this->mutable_linecolor())));
+        } else if (
+            static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 1, 26u, input, this->mutable_linecolor())));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:vizProtobufferMessage.VizMessage.PointLine)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:vizProtobufferMessage.VizMessage.PointLine)
+  return false;
+#undef DO_
+}
+
+void VizMessage_PointLine::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:vizProtobufferMessage.VizMessage.PointLine)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string fromBodyName = 1;
+  if (this->frombodyname().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->frombodyname().data(), static_cast<int>(this->frombodyname().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.PointLine.fromBodyName");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->frombodyname(), output);
+  }
+
+  // string toBodyName = 2;
+  if (this->tobodyname().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->tobodyname().data(), static_cast<int>(this->tobodyname().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.PointLine.toBodyName");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      2, this->tobodyname(), output);
+  }
+
+  // repeated int64 lineColor = 3;
+  if (this->linecolor_size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteTag(3, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
+    output->WriteVarint32(static_cast< ::google::protobuf::uint32>(
+        _linecolor_cached_byte_size_));
+  }
+  for (int i = 0, n = this->linecolor_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64NoTag(
+      this->linecolor(i), output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:vizProtobufferMessage.VizMessage.PointLine)
+}
+
+::google::protobuf::uint8* VizMessage_PointLine::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:vizProtobufferMessage.VizMessage.PointLine)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string fromBodyName = 1;
+  if (this->frombodyname().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->frombodyname().data(), static_cast<int>(this->frombodyname().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.PointLine.fromBodyName");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->frombodyname(), target);
+  }
+
+  // string toBodyName = 2;
+  if (this->tobodyname().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->tobodyname().data(), static_cast<int>(this->tobodyname().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.PointLine.toBodyName");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->tobodyname(), target);
+  }
+
+  // repeated int64 lineColor = 3;
+  if (this->linecolor_size() > 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
+      3,
+      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
+      target);
+    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
+        static_cast< ::google::protobuf::int32>(
+            _linecolor_cached_byte_size_), target);
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteInt64NoTagToArray(this->linecolor_, target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:vizProtobufferMessage.VizMessage.PointLine)
+  return target;
+}
+
+size_t VizMessage_PointLine::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:vizProtobufferMessage.VizMessage.PointLine)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // repeated int64 lineColor = 3;
+  {
+    size_t data_size = ::google::protobuf::internal::WireFormatLite::
+      Int64Size(this->linecolor_);
+    if (data_size > 0) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+            static_cast< ::google::protobuf::int32>(data_size));
+    }
+    int cached_size = ::google::protobuf::internal::ToCachedSize(data_size);
+    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+    _linecolor_cached_byte_size_ = cached_size;
+    GOOGLE_SAFE_CONCURRENT_WRITES_END();
+    total_size += data_size;
+  }
+
+  // string fromBodyName = 1;
+  if (this->frombodyname().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->frombodyname());
+  }
+
+  // string toBodyName = 2;
+  if (this->tobodyname().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->tobodyname());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void VizMessage_PointLine::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:vizProtobufferMessage.VizMessage.PointLine)
+  GOOGLE_DCHECK_NE(&from, this);
+  const VizMessage_PointLine* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const VizMessage_PointLine>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:vizProtobufferMessage.VizMessage.PointLine)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:vizProtobufferMessage.VizMessage.PointLine)
+    MergeFrom(*source);
+  }
+}
+
+void VizMessage_PointLine::MergeFrom(const VizMessage_PointLine& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:vizProtobufferMessage.VizMessage.PointLine)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  linecolor_.MergeFrom(from.linecolor_);
+  if (from.frombodyname().size() > 0) {
+
+    frombodyname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.frombodyname_);
+  }
+  if (from.tobodyname().size() > 0) {
+
+    tobodyname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tobodyname_);
+  }
+}
+
+void VizMessage_PointLine::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:vizProtobufferMessage.VizMessage.PointLine)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void VizMessage_PointLine::CopyFrom(const VizMessage_PointLine& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:vizProtobufferMessage.VizMessage.PointLine)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool VizMessage_PointLine::IsInitialized() const {
+  return true;
+}
+
+void VizMessage_PointLine::Swap(VizMessage_PointLine* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void VizMessage_PointLine::InternalSwap(VizMessage_PointLine* other) {
+  using std::swap;
+  linecolor_.InternalSwap(&other->linecolor_);
+  frombodyname_.Swap(&other->frombodyname_);
+  tobodyname_.Swap(&other->tobodyname_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata VizMessage_PointLine::GetMetadata() const {
+  protobuf_vizMessage_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_vizMessage_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
+void VizMessage_KeepOutInCone::InitAsDefaultInstance() {
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int VizMessage_KeepOutInCone::kIsKeepInFieldNumber;
+const int VizMessage_KeepOutInCone::kPositionFieldNumber;
+const int VizMessage_KeepOutInCone::kNormalVectorFieldNumber;
+const int VizMessage_KeepOutInCone::kIncidenceAngleFieldNumber;
+const int VizMessage_KeepOutInCone::kConeHeightFieldNumber;
+const int VizMessage_KeepOutInCone::kFromBodyNameFieldNumber;
+const int VizMessage_KeepOutInCone::kToBodyNameFieldNumber;
+const int VizMessage_KeepOutInCone::kConeColorFieldNumber;
+const int VizMessage_KeepOutInCone::kConeNameFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+VizMessage_KeepOutInCone::VizMessage_KeepOutInCone()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_KeepOutInCone();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:vizProtobufferMessage.VizMessage.KeepOutInCone)
+}
+VizMessage_KeepOutInCone::VizMessage_KeepOutInCone(const VizMessage_KeepOutInCone& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      position_(from.position_),
+      normalvector_(from.normalvector_),
+      conecolor_(from.conecolor_),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  frombodyname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.frombodyname().size() > 0) {
+    frombodyname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.frombodyname_);
+  }
+  tobodyname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.tobodyname().size() > 0) {
+    tobodyname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tobodyname_);
+  }
+  conename_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.conename().size() > 0) {
+    conename_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.conename_);
+  }
+  ::memcpy(&incidenceangle_, &from.incidenceangle_,
+    static_cast<size_t>(reinterpret_cast<char*>(&iskeepin_) -
+    reinterpret_cast<char*>(&incidenceangle_)) + sizeof(iskeepin_));
+  // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.KeepOutInCone)
+}
+
+void VizMessage_KeepOutInCone::SharedCtor() {
+  frombodyname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  tobodyname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  conename_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&incidenceangle_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&iskeepin_) -
+      reinterpret_cast<char*>(&incidenceangle_)) + sizeof(iskeepin_));
+  _cached_size_ = 0;
+}
+
+VizMessage_KeepOutInCone::~VizMessage_KeepOutInCone() {
+  // @@protoc_insertion_point(destructor:vizProtobufferMessage.VizMessage.KeepOutInCone)
+  SharedDtor();
+}
+
+void VizMessage_KeepOutInCone::SharedDtor() {
+  frombodyname_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  tobodyname_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  conename_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void VizMessage_KeepOutInCone::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* VizMessage_KeepOutInCone::descriptor() {
+  ::protobuf_vizMessage_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_vizMessage_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const VizMessage_KeepOutInCone& VizMessage_KeepOutInCone::default_instance() {
+  ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_KeepOutInCone();
+  return *internal_default_instance();
+}
+
+VizMessage_KeepOutInCone* VizMessage_KeepOutInCone::New(::google::protobuf::Arena* arena) const {
+  VizMessage_KeepOutInCone* n = new VizMessage_KeepOutInCone;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void VizMessage_KeepOutInCone::Clear() {
+// @@protoc_insertion_point(message_clear_start:vizProtobufferMessage.VizMessage.KeepOutInCone)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  position_.Clear();
+  normalvector_.Clear();
+  conecolor_.Clear();
+  frombodyname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  tobodyname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  conename_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&incidenceangle_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&iskeepin_) -
+      reinterpret_cast<char*>(&incidenceangle_)) + sizeof(iskeepin_));
+  _internal_metadata_.Clear();
+}
+
+bool VizMessage_KeepOutInCone::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:vizProtobufferMessage.VizMessage.KeepOutInCone)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // bool isKeepIn = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &iskeepin_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated double position = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, this->mutable_position())));
+        } else if (
+            static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(17u /* 17 & 0xFF */)) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 1, 18u, input, this->mutable_position())));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated double normalVector = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, this->mutable_normalvector())));
+        } else if (
+            static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(25u /* 25 & 0xFF */)) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 1, 26u, input, this->mutable_normalvector())));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double incidenceAngle = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(33u /* 33 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &incidenceangle_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double coneHeight = 5;
+      case 5: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(41u /* 41 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &coneheight_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string fromBodyName = 6;
+      case 6: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(50u /* 50 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_frombodyname()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->frombodyname().data(), static_cast<int>(this->frombodyname().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "vizProtobufferMessage.VizMessage.KeepOutInCone.fromBodyName"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string toBodyName = 7;
+      case 7: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(58u /* 58 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_tobodyname()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->tobodyname().data(), static_cast<int>(this->tobodyname().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "vizProtobufferMessage.VizMessage.KeepOutInCone.toBodyName"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated int64 coneColor = 8;
+      case 8: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(66u /* 66 & 0xFF */)) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, this->mutable_conecolor())));
+        } else if (
+            static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(64u /* 64 & 0xFF */)) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 1, 66u, input, this->mutable_conecolor())));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string coneName = 9;
+      case 9: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(74u /* 74 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_conename()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->conename().data(), static_cast<int>(this->conename().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "vizProtobufferMessage.VizMessage.KeepOutInCone.coneName"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:vizProtobufferMessage.VizMessage.KeepOutInCone)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:vizProtobufferMessage.VizMessage.KeepOutInCone)
+  return false;
+#undef DO_
+}
+
+void VizMessage_KeepOutInCone::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:vizProtobufferMessage.VizMessage.KeepOutInCone)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // bool isKeepIn = 1;
+  if (this->iskeepin() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(1, this->iskeepin(), output);
+  }
+
+  // repeated double position = 2;
+  if (this->position_size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteTag(2, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
+    output->WriteVarint32(static_cast< ::google::protobuf::uint32>(
+        _position_cached_byte_size_));
+    ::google::protobuf::internal::WireFormatLite::WriteDoubleArray(
+      this->position().data(), this->position_size(), output);
+  }
+
+  // repeated double normalVector = 3;
+  if (this->normalvector_size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteTag(3, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
+    output->WriteVarint32(static_cast< ::google::protobuf::uint32>(
+        _normalvector_cached_byte_size_));
+    ::google::protobuf::internal::WireFormatLite::WriteDoubleArray(
+      this->normalvector().data(), this->normalvector_size(), output);
+  }
+
+  // double incidenceAngle = 4;
+  if (this->incidenceangle() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(4, this->incidenceangle(), output);
+  }
+
+  // double coneHeight = 5;
+  if (this->coneheight() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(5, this->coneheight(), output);
+  }
+
+  // string fromBodyName = 6;
+  if (this->frombodyname().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->frombodyname().data(), static_cast<int>(this->frombodyname().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.KeepOutInCone.fromBodyName");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      6, this->frombodyname(), output);
+  }
+
+  // string toBodyName = 7;
+  if (this->tobodyname().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->tobodyname().data(), static_cast<int>(this->tobodyname().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.KeepOutInCone.toBodyName");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      7, this->tobodyname(), output);
+  }
+
+  // repeated int64 coneColor = 8;
+  if (this->conecolor_size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteTag(8, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
+    output->WriteVarint32(static_cast< ::google::protobuf::uint32>(
+        _conecolor_cached_byte_size_));
+  }
+  for (int i = 0, n = this->conecolor_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64NoTag(
+      this->conecolor(i), output);
+  }
+
+  // string coneName = 9;
+  if (this->conename().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->conename().data(), static_cast<int>(this->conename().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.KeepOutInCone.coneName");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      9, this->conename(), output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:vizProtobufferMessage.VizMessage.KeepOutInCone)
+}
+
+::google::protobuf::uint8* VizMessage_KeepOutInCone::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:vizProtobufferMessage.VizMessage.KeepOutInCone)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // bool isKeepIn = 1;
+  if (this->iskeepin() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(1, this->iskeepin(), target);
+  }
+
+  // repeated double position = 2;
+  if (this->position_size() > 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
+      2,
+      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
+      target);
+    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
+        static_cast< ::google::protobuf::int32>(
+            _position_cached_byte_size_), target);
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteDoubleNoTagToArray(this->position_, target);
+  }
+
+  // repeated double normalVector = 3;
+  if (this->normalvector_size() > 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
+      3,
+      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
+      target);
+    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
+        static_cast< ::google::protobuf::int32>(
+            _normalvector_cached_byte_size_), target);
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteDoubleNoTagToArray(this->normalvector_, target);
+  }
+
+  // double incidenceAngle = 4;
+  if (this->incidenceangle() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(4, this->incidenceangle(), target);
+  }
+
+  // double coneHeight = 5;
+  if (this->coneheight() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(5, this->coneheight(), target);
+  }
+
+  // string fromBodyName = 6;
+  if (this->frombodyname().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->frombodyname().data(), static_cast<int>(this->frombodyname().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.KeepOutInCone.fromBodyName");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        6, this->frombodyname(), target);
+  }
+
+  // string toBodyName = 7;
+  if (this->tobodyname().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->tobodyname().data(), static_cast<int>(this->tobodyname().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.KeepOutInCone.toBodyName");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        7, this->tobodyname(), target);
+  }
+
+  // repeated int64 coneColor = 8;
+  if (this->conecolor_size() > 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
+      8,
+      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
+      target);
+    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
+        static_cast< ::google::protobuf::int32>(
+            _conecolor_cached_byte_size_), target);
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteInt64NoTagToArray(this->conecolor_, target);
+  }
+
+  // string coneName = 9;
+  if (this->conename().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->conename().data(), static_cast<int>(this->conename().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.KeepOutInCone.coneName");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        9, this->conename(), target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:vizProtobufferMessage.VizMessage.KeepOutInCone)
+  return target;
+}
+
+size_t VizMessage_KeepOutInCone::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:vizProtobufferMessage.VizMessage.KeepOutInCone)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // repeated double position = 2;
+  {
+    unsigned int count = static_cast<unsigned int>(this->position_size());
+    size_t data_size = 8UL * count;
+    if (data_size > 0) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+            static_cast< ::google::protobuf::int32>(data_size));
+    }
+    int cached_size = ::google::protobuf::internal::ToCachedSize(data_size);
+    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+    _position_cached_byte_size_ = cached_size;
+    GOOGLE_SAFE_CONCURRENT_WRITES_END();
+    total_size += data_size;
+  }
+
+  // repeated double normalVector = 3;
+  {
+    unsigned int count = static_cast<unsigned int>(this->normalvector_size());
+    size_t data_size = 8UL * count;
+    if (data_size > 0) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+            static_cast< ::google::protobuf::int32>(data_size));
+    }
+    int cached_size = ::google::protobuf::internal::ToCachedSize(data_size);
+    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+    _normalvector_cached_byte_size_ = cached_size;
+    GOOGLE_SAFE_CONCURRENT_WRITES_END();
+    total_size += data_size;
+  }
+
+  // repeated int64 coneColor = 8;
+  {
+    size_t data_size = ::google::protobuf::internal::WireFormatLite::
+      Int64Size(this->conecolor_);
+    if (data_size > 0) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+            static_cast< ::google::protobuf::int32>(data_size));
+    }
+    int cached_size = ::google::protobuf::internal::ToCachedSize(data_size);
+    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+    _conecolor_cached_byte_size_ = cached_size;
+    GOOGLE_SAFE_CONCURRENT_WRITES_END();
+    total_size += data_size;
+  }
+
+  // string fromBodyName = 6;
+  if (this->frombodyname().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->frombodyname());
+  }
+
+  // string toBodyName = 7;
+  if (this->tobodyname().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->tobodyname());
+  }
+
+  // string coneName = 9;
+  if (this->conename().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->conename());
+  }
+
+  // double incidenceAngle = 4;
+  if (this->incidenceangle() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double coneHeight = 5;
+  if (this->coneheight() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // bool isKeepIn = 1;
+  if (this->iskeepin() != 0) {
+    total_size += 1 + 1;
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void VizMessage_KeepOutInCone::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:vizProtobufferMessage.VizMessage.KeepOutInCone)
+  GOOGLE_DCHECK_NE(&from, this);
+  const VizMessage_KeepOutInCone* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const VizMessage_KeepOutInCone>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:vizProtobufferMessage.VizMessage.KeepOutInCone)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:vizProtobufferMessage.VizMessage.KeepOutInCone)
+    MergeFrom(*source);
+  }
+}
+
+void VizMessage_KeepOutInCone::MergeFrom(const VizMessage_KeepOutInCone& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:vizProtobufferMessage.VizMessage.KeepOutInCone)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  position_.MergeFrom(from.position_);
+  normalvector_.MergeFrom(from.normalvector_);
+  conecolor_.MergeFrom(from.conecolor_);
+  if (from.frombodyname().size() > 0) {
+
+    frombodyname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.frombodyname_);
+  }
+  if (from.tobodyname().size() > 0) {
+
+    tobodyname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tobodyname_);
+  }
+  if (from.conename().size() > 0) {
+
+    conename_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.conename_);
+  }
+  if (from.incidenceangle() != 0) {
+    set_incidenceangle(from.incidenceangle());
+  }
+  if (from.coneheight() != 0) {
+    set_coneheight(from.coneheight());
+  }
+  if (from.iskeepin() != 0) {
+    set_iskeepin(from.iskeepin());
+  }
+}
+
+void VizMessage_KeepOutInCone::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:vizProtobufferMessage.VizMessage.KeepOutInCone)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void VizMessage_KeepOutInCone::CopyFrom(const VizMessage_KeepOutInCone& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:vizProtobufferMessage.VizMessage.KeepOutInCone)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool VizMessage_KeepOutInCone::IsInitialized() const {
+  return true;
+}
+
+void VizMessage_KeepOutInCone::Swap(VizMessage_KeepOutInCone* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void VizMessage_KeepOutInCone::InternalSwap(VizMessage_KeepOutInCone* other) {
+  using std::swap;
+  position_.InternalSwap(&other->position_);
+  normalvector_.InternalSwap(&other->normalvector_);
+  conecolor_.InternalSwap(&other->conecolor_);
+  frombodyname_.Swap(&other->frombodyname_);
+  tobodyname_.Swap(&other->tobodyname_);
+  conename_.Swap(&other->conename_);
+  swap(incidenceangle_, other->incidenceangle_);
+  swap(coneheight_, other->coneheight_);
+  swap(iskeepin_, other->iskeepin_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata VizMessage_KeepOutInCone::GetMetadata() const {
+  protobuf_vizMessage_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_vizMessage_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
+void VizMessage_CameraOneSettings::InitAsDefaultInstance() {
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int VizMessage_CameraOneSettings::kSpacecraftNameFieldNumber;
+const int VizMessage_CameraOneSettings::kViewPanelFieldNumber;
+const int VizMessage_CameraOneSettings::kSetViewFieldNumber;
+const int VizMessage_CameraOneSettings::kSpacecraftVisibleFieldNumber;
+const int VizMessage_CameraOneSettings::kFieldOfViewFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+VizMessage_CameraOneSettings::VizMessage_CameraOneSettings()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CameraOneSettings();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:vizProtobufferMessage.VizMessage.CameraOneSettings)
+}
+VizMessage_CameraOneSettings::VizMessage_CameraOneSettings(const VizMessage_CameraOneSettings& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  spacecraftname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.spacecraftname().size() > 0) {
+    spacecraftname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.spacecraftname_);
+  }
+  ::memcpy(&setview_, &from.setview_,
+    static_cast<size_t>(reinterpret_cast<char*>(&spacecraftvisible_) -
+    reinterpret_cast<char*>(&setview_)) + sizeof(spacecraftvisible_));
+  // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.CameraOneSettings)
+}
+
+void VizMessage_CameraOneSettings::SharedCtor() {
+  spacecraftname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&setview_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&spacecraftvisible_) -
+      reinterpret_cast<char*>(&setview_)) + sizeof(spacecraftvisible_));
+  _cached_size_ = 0;
+}
+
+VizMessage_CameraOneSettings::~VizMessage_CameraOneSettings() {
+  // @@protoc_insertion_point(destructor:vizProtobufferMessage.VizMessage.CameraOneSettings)
+  SharedDtor();
+}
+
+void VizMessage_CameraOneSettings::SharedDtor() {
+  spacecraftname_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void VizMessage_CameraOneSettings::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* VizMessage_CameraOneSettings::descriptor() {
+  ::protobuf_vizMessage_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_vizMessage_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const VizMessage_CameraOneSettings& VizMessage_CameraOneSettings::default_instance() {
+  ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CameraOneSettings();
+  return *internal_default_instance();
+}
+
+VizMessage_CameraOneSettings* VizMessage_CameraOneSettings::New(::google::protobuf::Arena* arena) const {
+  VizMessage_CameraOneSettings* n = new VizMessage_CameraOneSettings;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void VizMessage_CameraOneSettings::Clear() {
+// @@protoc_insertion_point(message_clear_start:vizProtobufferMessage.VizMessage.CameraOneSettings)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  spacecraftname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&setview_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&spacecraftvisible_) -
+      reinterpret_cast<char*>(&setview_)) + sizeof(spacecraftvisible_));
+  _internal_metadata_.Clear();
+}
+
+bool VizMessage_CameraOneSettings::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:vizProtobufferMessage.VizMessage.CameraOneSettings)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // string spacecraftName = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_spacecraftname()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->spacecraftname().data(), static_cast<int>(this->spacecraftname().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "vizProtobufferMessage.VizMessage.CameraOneSettings.spacecraftName"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // bool viewPanel = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &viewpanel_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // int64 setView = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &setview_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // bool spacecraftVisible = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(32u /* 32 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &spacecraftvisible_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double fieldOfView = 5;
+      case 5: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(41u /* 41 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &fieldofview_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:vizProtobufferMessage.VizMessage.CameraOneSettings)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:vizProtobufferMessage.VizMessage.CameraOneSettings)
+  return false;
+#undef DO_
+}
+
+void VizMessage_CameraOneSettings::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:vizProtobufferMessage.VizMessage.CameraOneSettings)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string spacecraftName = 1;
+  if (this->spacecraftname().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->spacecraftname().data(), static_cast<int>(this->spacecraftname().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.CameraOneSettings.spacecraftName");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->spacecraftname(), output);
+  }
+
+  // bool viewPanel = 2;
+  if (this->viewpanel() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->viewpanel(), output);
+  }
+
+  // int64 setView = 3;
+  if (this->setview() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->setview(), output);
+  }
+
+  // bool spacecraftVisible = 4;
+  if (this->spacecraftvisible() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(4, this->spacecraftvisible(), output);
+  }
+
+  // double fieldOfView = 5;
+  if (this->fieldofview() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(5, this->fieldofview(), output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:vizProtobufferMessage.VizMessage.CameraOneSettings)
+}
+
+::google::protobuf::uint8* VizMessage_CameraOneSettings::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:vizProtobufferMessage.VizMessage.CameraOneSettings)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string spacecraftName = 1;
+  if (this->spacecraftname().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->spacecraftname().data(), static_cast<int>(this->spacecraftname().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.CameraOneSettings.spacecraftName");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->spacecraftname(), target);
+  }
+
+  // bool viewPanel = 2;
+  if (this->viewpanel() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->viewpanel(), target);
+  }
+
+  // int64 setView = 3;
+  if (this->setview() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->setview(), target);
+  }
+
+  // bool spacecraftVisible = 4;
+  if (this->spacecraftvisible() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(4, this->spacecraftvisible(), target);
+  }
+
+  // double fieldOfView = 5;
+  if (this->fieldofview() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(5, this->fieldofview(), target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:vizProtobufferMessage.VizMessage.CameraOneSettings)
+  return target;
+}
+
+size_t VizMessage_CameraOneSettings::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:vizProtobufferMessage.VizMessage.CameraOneSettings)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // string spacecraftName = 1;
+  if (this->spacecraftname().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->spacecraftname());
+  }
+
+  // int64 setView = 3;
+  if (this->setview() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->setview());
+  }
+
+  // double fieldOfView = 5;
+  if (this->fieldofview() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // bool viewPanel = 2;
+  if (this->viewpanel() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // bool spacecraftVisible = 4;
+  if (this->spacecraftvisible() != 0) {
+    total_size += 1 + 1;
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void VizMessage_CameraOneSettings::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:vizProtobufferMessage.VizMessage.CameraOneSettings)
+  GOOGLE_DCHECK_NE(&from, this);
+  const VizMessage_CameraOneSettings* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const VizMessage_CameraOneSettings>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:vizProtobufferMessage.VizMessage.CameraOneSettings)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:vizProtobufferMessage.VizMessage.CameraOneSettings)
+    MergeFrom(*source);
+  }
+}
+
+void VizMessage_CameraOneSettings::MergeFrom(const VizMessage_CameraOneSettings& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:vizProtobufferMessage.VizMessage.CameraOneSettings)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.spacecraftname().size() > 0) {
+
+    spacecraftname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.spacecraftname_);
+  }
+  if (from.setview() != 0) {
+    set_setview(from.setview());
+  }
+  if (from.fieldofview() != 0) {
+    set_fieldofview(from.fieldofview());
+  }
+  if (from.viewpanel() != 0) {
+    set_viewpanel(from.viewpanel());
+  }
+  if (from.spacecraftvisible() != 0) {
+    set_spacecraftvisible(from.spacecraftvisible());
+  }
+}
+
+void VizMessage_CameraOneSettings::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:vizProtobufferMessage.VizMessage.CameraOneSettings)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void VizMessage_CameraOneSettings::CopyFrom(const VizMessage_CameraOneSettings& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:vizProtobufferMessage.VizMessage.CameraOneSettings)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool VizMessage_CameraOneSettings::IsInitialized() const {
+  return true;
+}
+
+void VizMessage_CameraOneSettings::Swap(VizMessage_CameraOneSettings* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void VizMessage_CameraOneSettings::InternalSwap(VizMessage_CameraOneSettings* other) {
+  using std::swap;
+  spacecraftname_.Swap(&other->spacecraftname_);
+  swap(setview_, other->setview_);
+  swap(fieldofview_, other->fieldofview_);
+  swap(viewpanel_, other->viewpanel_);
+  swap(spacecraftvisible_, other->spacecraftvisible_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata VizMessage_CameraOneSettings::GetMetadata() const {
+  protobuf_vizMessage_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_vizMessage_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
+void VizMessage_CameraTwoSettings::InitAsDefaultInstance() {
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int VizMessage_CameraTwoSettings::kSpacecraftNameFieldNumber;
+const int VizMessage_CameraTwoSettings::kViewPanelFieldNumber;
+const int VizMessage_CameraTwoSettings::kSetViewFieldNumber;
+const int VizMessage_CameraTwoSettings::kSpacecraftVisibleFieldNumber;
+const int VizMessage_CameraTwoSettings::kFieldOfViewFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+VizMessage_CameraTwoSettings::VizMessage_CameraTwoSettings()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CameraTwoSettings();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:vizProtobufferMessage.VizMessage.CameraTwoSettings)
+}
+VizMessage_CameraTwoSettings::VizMessage_CameraTwoSettings(const VizMessage_CameraTwoSettings& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  spacecraftname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.spacecraftname().size() > 0) {
+    spacecraftname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.spacecraftname_);
+  }
+  ::memcpy(&setview_, &from.setview_,
+    static_cast<size_t>(reinterpret_cast<char*>(&spacecraftvisible_) -
+    reinterpret_cast<char*>(&setview_)) + sizeof(spacecraftvisible_));
+  // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.CameraTwoSettings)
+}
+
+void VizMessage_CameraTwoSettings::SharedCtor() {
+  spacecraftname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&setview_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&spacecraftvisible_) -
+      reinterpret_cast<char*>(&setview_)) + sizeof(spacecraftvisible_));
+  _cached_size_ = 0;
+}
+
+VizMessage_CameraTwoSettings::~VizMessage_CameraTwoSettings() {
+  // @@protoc_insertion_point(destructor:vizProtobufferMessage.VizMessage.CameraTwoSettings)
+  SharedDtor();
+}
+
+void VizMessage_CameraTwoSettings::SharedDtor() {
+  spacecraftname_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void VizMessage_CameraTwoSettings::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* VizMessage_CameraTwoSettings::descriptor() {
+  ::protobuf_vizMessage_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_vizMessage_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const VizMessage_CameraTwoSettings& VizMessage_CameraTwoSettings::default_instance() {
+  ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CameraTwoSettings();
+  return *internal_default_instance();
+}
+
+VizMessage_CameraTwoSettings* VizMessage_CameraTwoSettings::New(::google::protobuf::Arena* arena) const {
+  VizMessage_CameraTwoSettings* n = new VizMessage_CameraTwoSettings;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void VizMessage_CameraTwoSettings::Clear() {
+// @@protoc_insertion_point(message_clear_start:vizProtobufferMessage.VizMessage.CameraTwoSettings)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  spacecraftname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&setview_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&spacecraftvisible_) -
+      reinterpret_cast<char*>(&setview_)) + sizeof(spacecraftvisible_));
+  _internal_metadata_.Clear();
+}
+
+bool VizMessage_CameraTwoSettings::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:vizProtobufferMessage.VizMessage.CameraTwoSettings)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // string spacecraftName = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_spacecraftname()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->spacecraftname().data(), static_cast<int>(this->spacecraftname().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "vizProtobufferMessage.VizMessage.CameraTwoSettings.spacecraftName"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // bool viewPanel = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &viewpanel_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // int64 setView = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &setview_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // bool spacecraftVisible = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(32u /* 32 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &spacecraftvisible_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double fieldOfView = 5;
+      case 5: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(41u /* 41 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &fieldofview_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:vizProtobufferMessage.VizMessage.CameraTwoSettings)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:vizProtobufferMessage.VizMessage.CameraTwoSettings)
+  return false;
+#undef DO_
+}
+
+void VizMessage_CameraTwoSettings::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:vizProtobufferMessage.VizMessage.CameraTwoSettings)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string spacecraftName = 1;
+  if (this->spacecraftname().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->spacecraftname().data(), static_cast<int>(this->spacecraftname().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.CameraTwoSettings.spacecraftName");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->spacecraftname(), output);
+  }
+
+  // bool viewPanel = 2;
+  if (this->viewpanel() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->viewpanel(), output);
+  }
+
+  // int64 setView = 3;
+  if (this->setview() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->setview(), output);
+  }
+
+  // bool spacecraftVisible = 4;
+  if (this->spacecraftvisible() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(4, this->spacecraftvisible(), output);
+  }
+
+  // double fieldOfView = 5;
+  if (this->fieldofview() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(5, this->fieldofview(), output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:vizProtobufferMessage.VizMessage.CameraTwoSettings)
+}
+
+::google::protobuf::uint8* VizMessage_CameraTwoSettings::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:vizProtobufferMessage.VizMessage.CameraTwoSettings)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string spacecraftName = 1;
+  if (this->spacecraftname().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->spacecraftname().data(), static_cast<int>(this->spacecraftname().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.CameraTwoSettings.spacecraftName");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->spacecraftname(), target);
+  }
+
+  // bool viewPanel = 2;
+  if (this->viewpanel() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->viewpanel(), target);
+  }
+
+  // int64 setView = 3;
+  if (this->setview() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->setview(), target);
+  }
+
+  // bool spacecraftVisible = 4;
+  if (this->spacecraftvisible() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(4, this->spacecraftvisible(), target);
+  }
+
+  // double fieldOfView = 5;
+  if (this->fieldofview() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(5, this->fieldofview(), target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:vizProtobufferMessage.VizMessage.CameraTwoSettings)
+  return target;
+}
+
+size_t VizMessage_CameraTwoSettings::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:vizProtobufferMessage.VizMessage.CameraTwoSettings)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // string spacecraftName = 1;
+  if (this->spacecraftname().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->spacecraftname());
+  }
+
+  // int64 setView = 3;
+  if (this->setview() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->setview());
+  }
+
+  // double fieldOfView = 5;
+  if (this->fieldofview() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // bool viewPanel = 2;
+  if (this->viewpanel() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // bool spacecraftVisible = 4;
+  if (this->spacecraftvisible() != 0) {
+    total_size += 1 + 1;
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void VizMessage_CameraTwoSettings::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:vizProtobufferMessage.VizMessage.CameraTwoSettings)
+  GOOGLE_DCHECK_NE(&from, this);
+  const VizMessage_CameraTwoSettings* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const VizMessage_CameraTwoSettings>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:vizProtobufferMessage.VizMessage.CameraTwoSettings)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:vizProtobufferMessage.VizMessage.CameraTwoSettings)
+    MergeFrom(*source);
+  }
+}
+
+void VizMessage_CameraTwoSettings::MergeFrom(const VizMessage_CameraTwoSettings& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:vizProtobufferMessage.VizMessage.CameraTwoSettings)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.spacecraftname().size() > 0) {
+
+    spacecraftname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.spacecraftname_);
+  }
+  if (from.setview() != 0) {
+    set_setview(from.setview());
+  }
+  if (from.fieldofview() != 0) {
+    set_fieldofview(from.fieldofview());
+  }
+  if (from.viewpanel() != 0) {
+    set_viewpanel(from.viewpanel());
+  }
+  if (from.spacecraftvisible() != 0) {
+    set_spacecraftvisible(from.spacecraftvisible());
+  }
+}
+
+void VizMessage_CameraTwoSettings::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:vizProtobufferMessage.VizMessage.CameraTwoSettings)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void VizMessage_CameraTwoSettings::CopyFrom(const VizMessage_CameraTwoSettings& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:vizProtobufferMessage.VizMessage.CameraTwoSettings)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool VizMessage_CameraTwoSettings::IsInitialized() const {
+  return true;
+}
+
+void VizMessage_CameraTwoSettings::Swap(VizMessage_CameraTwoSettings* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void VizMessage_CameraTwoSettings::InternalSwap(VizMessage_CameraTwoSettings* other) {
+  using std::swap;
+  spacecraftname_.Swap(&other->spacecraftname_);
+  swap(setview_, other->setview_);
+  swap(fieldofview_, other->fieldofview_);
+  swap(viewpanel_, other->viewpanel_);
+  swap(spacecraftvisible_, other->spacecraftvisible_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata VizMessage_CameraTwoSettings::GetMetadata() const {
+  protobuf_vizMessage_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_vizMessage_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
+void VizMessage_PlanetCameraSettings::InitAsDefaultInstance() {
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int VizMessage_PlanetCameraSettings::kSpacecraftNameFieldNumber;
+const int VizMessage_PlanetCameraSettings::kViewPanelFieldNumber;
+const int VizMessage_PlanetCameraSettings::kSetViewFieldNumber;
+const int VizMessage_PlanetCameraSettings::kSpacecraftVisibleFieldNumber;
+const int VizMessage_PlanetCameraSettings::kFieldOfViewFieldNumber;
+const int VizMessage_PlanetCameraSettings::kTargetBodyNameFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+VizMessage_PlanetCameraSettings::VizMessage_PlanetCameraSettings()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_PlanetCameraSettings();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+}
+VizMessage_PlanetCameraSettings::VizMessage_PlanetCameraSettings(const VizMessage_PlanetCameraSettings& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  spacecraftname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.spacecraftname().size() > 0) {
+    spacecraftname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.spacecraftname_);
+  }
+  targetbodyname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.targetbodyname().size() > 0) {
+    targetbodyname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.targetbodyname_);
+  }
+  ::memcpy(&setview_, &from.setview_,
+    static_cast<size_t>(reinterpret_cast<char*>(&spacecraftvisible_) -
+    reinterpret_cast<char*>(&setview_)) + sizeof(spacecraftvisible_));
+  // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+}
+
+void VizMessage_PlanetCameraSettings::SharedCtor() {
+  spacecraftname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  targetbodyname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&setview_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&spacecraftvisible_) -
+      reinterpret_cast<char*>(&setview_)) + sizeof(spacecraftvisible_));
+  _cached_size_ = 0;
+}
+
+VizMessage_PlanetCameraSettings::~VizMessage_PlanetCameraSettings() {
+  // @@protoc_insertion_point(destructor:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+  SharedDtor();
+}
+
+void VizMessage_PlanetCameraSettings::SharedDtor() {
+  spacecraftname_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  targetbodyname_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void VizMessage_PlanetCameraSettings::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* VizMessage_PlanetCameraSettings::descriptor() {
+  ::protobuf_vizMessage_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_vizMessage_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const VizMessage_PlanetCameraSettings& VizMessage_PlanetCameraSettings::default_instance() {
+  ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_PlanetCameraSettings();
+  return *internal_default_instance();
+}
+
+VizMessage_PlanetCameraSettings* VizMessage_PlanetCameraSettings::New(::google::protobuf::Arena* arena) const {
+  VizMessage_PlanetCameraSettings* n = new VizMessage_PlanetCameraSettings;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void VizMessage_PlanetCameraSettings::Clear() {
+// @@protoc_insertion_point(message_clear_start:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  spacecraftname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  targetbodyname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&setview_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&spacecraftvisible_) -
+      reinterpret_cast<char*>(&setview_)) + sizeof(spacecraftvisible_));
+  _internal_metadata_.Clear();
+}
+
+bool VizMessage_PlanetCameraSettings::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // string spacecraftName = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_spacecraftname()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->spacecraftname().data(), static_cast<int>(this->spacecraftname().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "vizProtobufferMessage.VizMessage.PlanetCameraSettings.spacecraftName"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // bool viewPanel = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &viewpanel_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // int64 setView = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &setview_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // bool spacecraftVisible = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(32u /* 32 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &spacecraftvisible_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double fieldOfView = 5;
+      case 5: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(41u /* 41 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &fieldofview_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string targetBodyName = 6;
+      case 6: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(50u /* 50 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_targetbodyname()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->targetbodyname().data(), static_cast<int>(this->targetbodyname().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "vizProtobufferMessage.VizMessage.PlanetCameraSettings.targetBodyName"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+  return false;
+#undef DO_
+}
+
+void VizMessage_PlanetCameraSettings::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string spacecraftName = 1;
+  if (this->spacecraftname().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->spacecraftname().data(), static_cast<int>(this->spacecraftname().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.PlanetCameraSettings.spacecraftName");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->spacecraftname(), output);
+  }
+
+  // bool viewPanel = 2;
+  if (this->viewpanel() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->viewpanel(), output);
+  }
+
+  // int64 setView = 3;
+  if (this->setview() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->setview(), output);
+  }
+
+  // bool spacecraftVisible = 4;
+  if (this->spacecraftvisible() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(4, this->spacecraftvisible(), output);
+  }
+
+  // double fieldOfView = 5;
+  if (this->fieldofview() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(5, this->fieldofview(), output);
+  }
+
+  // string targetBodyName = 6;
+  if (this->targetbodyname().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->targetbodyname().data(), static_cast<int>(this->targetbodyname().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.PlanetCameraSettings.targetBodyName");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      6, this->targetbodyname(), output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+}
+
+::google::protobuf::uint8* VizMessage_PlanetCameraSettings::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string spacecraftName = 1;
+  if (this->spacecraftname().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->spacecraftname().data(), static_cast<int>(this->spacecraftname().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.PlanetCameraSettings.spacecraftName");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->spacecraftname(), target);
+  }
+
+  // bool viewPanel = 2;
+  if (this->viewpanel() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->viewpanel(), target);
+  }
+
+  // int64 setView = 3;
+  if (this->setview() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->setview(), target);
+  }
+
+  // bool spacecraftVisible = 4;
+  if (this->spacecraftvisible() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(4, this->spacecraftvisible(), target);
+  }
+
+  // double fieldOfView = 5;
+  if (this->fieldofview() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(5, this->fieldofview(), target);
+  }
+
+  // string targetBodyName = 6;
+  if (this->targetbodyname().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->targetbodyname().data(), static_cast<int>(this->targetbodyname().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "vizProtobufferMessage.VizMessage.PlanetCameraSettings.targetBodyName");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        6, this->targetbodyname(), target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+  return target;
+}
+
+size_t VizMessage_PlanetCameraSettings::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // string spacecraftName = 1;
+  if (this->spacecraftname().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->spacecraftname());
+  }
+
+  // string targetBodyName = 6;
+  if (this->targetbodyname().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->targetbodyname());
+  }
+
+  // int64 setView = 3;
+  if (this->setview() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->setview());
+  }
+
+  // double fieldOfView = 5;
+  if (this->fieldofview() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // bool viewPanel = 2;
+  if (this->viewpanel() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // bool spacecraftVisible = 4;
+  if (this->spacecraftvisible() != 0) {
+    total_size += 1 + 1;
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void VizMessage_PlanetCameraSettings::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+  GOOGLE_DCHECK_NE(&from, this);
+  const VizMessage_PlanetCameraSettings* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const VizMessage_PlanetCameraSettings>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+    MergeFrom(*source);
+  }
+}
+
+void VizMessage_PlanetCameraSettings::MergeFrom(const VizMessage_PlanetCameraSettings& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.spacecraftname().size() > 0) {
+
+    spacecraftname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.spacecraftname_);
+  }
+  if (from.targetbodyname().size() > 0) {
+
+    targetbodyname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.targetbodyname_);
+  }
+  if (from.setview() != 0) {
+    set_setview(from.setview());
+  }
+  if (from.fieldofview() != 0) {
+    set_fieldofview(from.fieldofview());
+  }
+  if (from.viewpanel() != 0) {
+    set_viewpanel(from.viewpanel());
+  }
+  if (from.spacecraftvisible() != 0) {
+    set_spacecraftvisible(from.spacecraftvisible());
+  }
+}
+
+void VizMessage_PlanetCameraSettings::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void VizMessage_PlanetCameraSettings::CopyFrom(const VizMessage_PlanetCameraSettings& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool VizMessage_PlanetCameraSettings::IsInitialized() const {
+  return true;
+}
+
+void VizMessage_PlanetCameraSettings::Swap(VizMessage_PlanetCameraSettings* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void VizMessage_PlanetCameraSettings::InternalSwap(VizMessage_PlanetCameraSettings* other) {
+  using std::swap;
+  spacecraftname_.Swap(&other->spacecraftname_);
+  targetbodyname_.Swap(&other->targetbodyname_);
+  swap(setview_, other->setview_);
+  swap(fieldofview_, other->fieldofview_);
+  swap(viewpanel_, other->viewpanel_);
+  swap(spacecraftvisible_, other->spacecraftvisible_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata VizMessage_PlanetCameraSettings::GetMetadata() const {
+  protobuf_vizMessage_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_vizMessage_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
 void VizMessage_VizSettingsPb::InitAsDefaultInstance() {
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int VizMessage_VizSettingsPb::kAmbientFieldNumber;
+const int VizMessage_VizSettingsPb::kOrbitLinesOnFieldNumber;
+const int VizMessage_VizSettingsPb::kSpacecraftCSonFieldNumber;
+const int VizMessage_VizSettingsPb::kPlanetCSonFieldNumber;
+const int VizMessage_VizSettingsPb::kPointLinesFieldNumber;
+const int VizMessage_VizSettingsPb::kKeepOutInConesFieldNumber;
+const int VizMessage_VizSettingsPb::kCameraOneFieldNumber;
+const int VizMessage_VizSettingsPb::kCameraTwoFieldNumber;
+const int VizMessage_VizSettingsPb::kPlanetCameraFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 VizMessage_VizSettingsPb::VizMessage_VizSettingsPb()
@@ -4997,14 +7551,23 @@ VizMessage_VizSettingsPb::VizMessage_VizSettingsPb()
 VizMessage_VizSettingsPb::VizMessage_VizSettingsPb(const VizMessage_VizSettingsPb& from)
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL),
+      pointlines_(from.pointlines_),
+      keepoutincones_(from.keepoutincones_),
+      cameraone_(from.cameraone_),
+      cameratwo_(from.cameratwo_),
+      planetcamera_(from.planetcamera_),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ambient_ = from.ambient_;
+  ::memcpy(&ambient_, &from.ambient_,
+    static_cast<size_t>(reinterpret_cast<char*>(&planetcson_) -
+    reinterpret_cast<char*>(&ambient_)) + sizeof(planetcson_));
   // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.VizSettingsPb)
 }
 
 void VizMessage_VizSettingsPb::SharedCtor() {
-  ambient_ = 0;
+  ::memset(&ambient_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&planetcson_) -
+      reinterpret_cast<char*>(&ambient_)) + sizeof(planetcson_));
   _cached_size_ = 0;
 }
 
@@ -5045,7 +7608,14 @@ void VizMessage_VizSettingsPb::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  ambient_ = 0;
+  pointlines_.Clear();
+  keepoutincones_.Clear();
+  cameraone_.Clear();
+  cameratwo_.Clear();
+  planetcamera_.Clear();
+  ::memset(&ambient_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&planetcson_) -
+      reinterpret_cast<char*>(&ambient_)) + sizeof(planetcson_));
   _internal_metadata_.Clear();
 }
 
@@ -5067,6 +7637,103 @@ bool VizMessage_VizSettingsPb::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
                  input, &ambient_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // int64 orbitLinesOn = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &orbitlineson_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // int64 spacecraftCSon = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &spacecraftcson_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // int64 planetCSon = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(32u /* 32 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &planetcson_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .vizProtobufferMessage.VizMessage.PointLine pointLines = 5;
+      case 5: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(42u /* 42 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(input, add_pointlines()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .vizProtobufferMessage.VizMessage.KeepOutInCone keepOutInCones = 6;
+      case 6: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(50u /* 50 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(input, add_keepoutincones()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .vizProtobufferMessage.VizMessage.CameraOneSettings cameraOne = 7;
+      case 7: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(58u /* 58 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(input, add_cameraone()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .vizProtobufferMessage.VizMessage.CameraTwoSettings cameraTwo = 8;
+      case 8: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(66u /* 66 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(input, add_cameratwo()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .vizProtobufferMessage.VizMessage.PlanetCameraSettings planetCamera = 9;
+      case 9: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(74u /* 74 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(input, add_planetcamera()));
         } else {
           goto handle_unusual;
         }
@@ -5104,6 +7771,56 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteDouble(1, this->ambient(), output);
   }
 
+  // int64 orbitLinesOn = 2;
+  if (this->orbitlineson() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(2, this->orbitlineson(), output);
+  }
+
+  // int64 spacecraftCSon = 3;
+  if (this->spacecraftcson() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->spacecraftcson(), output);
+  }
+
+  // int64 planetCSon = 4;
+  if (this->planetcson() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(4, this->planetcson(), output);
+  }
+
+  // repeated .vizProtobufferMessage.VizMessage.PointLine pointLines = 5;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->pointlines_size()); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      5, this->pointlines(static_cast<int>(i)), output);
+  }
+
+  // repeated .vizProtobufferMessage.VizMessage.KeepOutInCone keepOutInCones = 6;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->keepoutincones_size()); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      6, this->keepoutincones(static_cast<int>(i)), output);
+  }
+
+  // repeated .vizProtobufferMessage.VizMessage.CameraOneSettings cameraOne = 7;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->cameraone_size()); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      7, this->cameraone(static_cast<int>(i)), output);
+  }
+
+  // repeated .vizProtobufferMessage.VizMessage.CameraTwoSettings cameraTwo = 8;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->cameratwo_size()); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      8, this->cameratwo(static_cast<int>(i)), output);
+  }
+
+  // repeated .vizProtobufferMessage.VizMessage.PlanetCameraSettings planetCamera = 9;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->planetcamera_size()); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      9, this->planetcamera(static_cast<int>(i)), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -5123,6 +7840,61 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(1, this->ambient(), target);
   }
 
+  // int64 orbitLinesOn = 2;
+  if (this->orbitlineson() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(2, this->orbitlineson(), target);
+  }
+
+  // int64 spacecraftCSon = 3;
+  if (this->spacecraftcson() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->spacecraftcson(), target);
+  }
+
+  // int64 planetCSon = 4;
+  if (this->planetcson() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(4, this->planetcson(), target);
+  }
+
+  // repeated .vizProtobufferMessage.VizMessage.PointLine pointLines = 5;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->pointlines_size()); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        5, this->pointlines(static_cast<int>(i)), deterministic, target);
+  }
+
+  // repeated .vizProtobufferMessage.VizMessage.KeepOutInCone keepOutInCones = 6;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->keepoutincones_size()); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        6, this->keepoutincones(static_cast<int>(i)), deterministic, target);
+  }
+
+  // repeated .vizProtobufferMessage.VizMessage.CameraOneSettings cameraOne = 7;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->cameraone_size()); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        7, this->cameraone(static_cast<int>(i)), deterministic, target);
+  }
+
+  // repeated .vizProtobufferMessage.VizMessage.CameraTwoSettings cameraTwo = 8;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->cameratwo_size()); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        8, this->cameratwo(static_cast<int>(i)), deterministic, target);
+  }
+
+  // repeated .vizProtobufferMessage.VizMessage.PlanetCameraSettings planetCamera = 9;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->planetcamera_size()); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        9, this->planetcamera(static_cast<int>(i)), deterministic, target);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
@@ -5140,9 +7912,85 @@ size_t VizMessage_VizSettingsPb::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
+  // repeated .vizProtobufferMessage.VizMessage.PointLine pointLines = 5;
+  {
+    unsigned int count = static_cast<unsigned int>(this->pointlines_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->pointlines(static_cast<int>(i)));
+    }
+  }
+
+  // repeated .vizProtobufferMessage.VizMessage.KeepOutInCone keepOutInCones = 6;
+  {
+    unsigned int count = static_cast<unsigned int>(this->keepoutincones_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->keepoutincones(static_cast<int>(i)));
+    }
+  }
+
+  // repeated .vizProtobufferMessage.VizMessage.CameraOneSettings cameraOne = 7;
+  {
+    unsigned int count = static_cast<unsigned int>(this->cameraone_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->cameraone(static_cast<int>(i)));
+    }
+  }
+
+  // repeated .vizProtobufferMessage.VizMessage.CameraTwoSettings cameraTwo = 8;
+  {
+    unsigned int count = static_cast<unsigned int>(this->cameratwo_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->cameratwo(static_cast<int>(i)));
+    }
+  }
+
+  // repeated .vizProtobufferMessage.VizMessage.PlanetCameraSettings planetCamera = 9;
+  {
+    unsigned int count = static_cast<unsigned int>(this->planetcamera_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->planetcamera(static_cast<int>(i)));
+    }
+  }
+
   // double ambient = 1;
   if (this->ambient() != 0) {
     total_size += 1 + 8;
+  }
+
+  // int64 orbitLinesOn = 2;
+  if (this->orbitlineson() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->orbitlineson());
+  }
+
+  // int64 spacecraftCSon = 3;
+  if (this->spacecraftcson() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->spacecraftcson());
+  }
+
+  // int64 planetCSon = 4;
+  if (this->planetcson() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->planetcson());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -5174,8 +8022,22 @@ void VizMessage_VizSettingsPb::MergeFrom(const VizMessage_VizSettingsPb& from) {
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  pointlines_.MergeFrom(from.pointlines_);
+  keepoutincones_.MergeFrom(from.keepoutincones_);
+  cameraone_.MergeFrom(from.cameraone_);
+  cameratwo_.MergeFrom(from.cameratwo_);
+  planetcamera_.MergeFrom(from.planetcamera_);
   if (from.ambient() != 0) {
     set_ambient(from.ambient());
+  }
+  if (from.orbitlineson() != 0) {
+    set_orbitlineson(from.orbitlineson());
+  }
+  if (from.spacecraftcson() != 0) {
+    set_spacecraftcson(from.spacecraftcson());
+  }
+  if (from.planetcson() != 0) {
+    set_planetcson(from.planetcson());
   }
 }
 
@@ -5203,7 +8065,15 @@ void VizMessage_VizSettingsPb::Swap(VizMessage_VizSettingsPb* other) {
 }
 void VizMessage_VizSettingsPb::InternalSwap(VizMessage_VizSettingsPb* other) {
   using std::swap;
+  pointlines_.InternalSwap(&other->pointlines_);
+  keepoutincones_.InternalSwap(&other->keepoutincones_);
+  cameraone_.InternalSwap(&other->cameraone_);
+  cameratwo_.InternalSwap(&other->cameratwo_);
+  planetcamera_.InternalSwap(&other->planetcamera_);
   swap(ambient_, other->ambient_);
+  swap(orbitlineson_, other->orbitlineson_);
+  swap(spacecraftcson_, other->spacecraftcson_);
+  swap(planetcson_, other->planetcson_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
 }

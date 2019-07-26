@@ -74,8 +74,8 @@ message VizMessage{
       repeated double sensorSize = 6;  //[mm] Size of the camera sensor-paired with resolution gives you pixel size
       repeated double cameraPos_B = 7;  //[mm] Camera position in body frame
       repeated double cameraDir_B = 8;  //[-] Rotation to the camera frame MRP
-      uint64 renderRate = 9;  //[ns] Sim elapsed time between saved camera images      
-      string skyBoxFilepath = 10; // “none”-> black background, null or “default” -> viz default skybox, or a file path may be passed to use a custom image
+      uint64 renderRate = 9;  //[ns] Sim elapsed time between saved camera images
+      string skyBoxFilepath = 10; // “none”-> black background, null or “default” -> viz default skybox, or a file path may be passed to use a custom image 
    }
    
    message CameraImage{
@@ -89,9 +89,61 @@ message VizMessage{
       int64 cameraID = 1; //[-] ID of the camera that should take an image
       double timeTag = 2; //[ns] simElapsedTime at which to capture image
    }
+    
+    message PointLine{
+        string fromBodyName = 1;
+        string toBodyName = 2;
+        repeated int64 lineColor = 3; //Send desired RGBA as values between 0 and 255
+    }
+    
+    message KeepOutInCone{
+        bool isKeepIn = 1; //True -> keep in cone created, False -> keep out cone created
+        repeated double position = 2; //relative to from body coordinate frame
+        repeated double normalVector = 3;
+        double incidenceAngle = 4; //degrees
+        double coneHeight = 5; //sets height of visible cone (asthetic only, does not impact function)
+        string fromBodyName = 6; //body to attach cone onto
+        string toBodyName = 7; //detect changes in this bodies impingement on cone
+        repeated int64 coneColor = 8; //Send desired RGBA as values between 0 and 255
+        string coneName = 9; //If unspecified, viz will autogenerate name
+    }
+    
+    message CameraOneSettings{
+        string spacecraftName = 1; //Which spacecraft's camera 1
+        bool viewPanel = 2; //False (default) -> panel is not visible on screen
+        int64 setView = 3; // 0 -> +X, 1 -> -X, 2 -> +Y, 3 -> -Y, 4 -> +Z, 5 -> -Z
+        bool spacecraftVisible = 4; //False (default) -> spacecraft mesh is invisible to this camera
+        double fieldOfView = 5; //-1 -> use default, values between 0.0001 and 179.9999 valid
+    }
+    
+    message CameraTwoSettings{
+        string spacecraftName = 1; //Which spacecraft's camera 2
+        bool viewPanel = 2; //False (default) -> panel is not visible on screen
+        int64 setView = 3; // 0 -> +X, 1 -> -X, 2 -> +Y, 3 -> -Y, 4 -> +Z, 5 -> -Z
+        bool spacecraftVisible = 4; //False (default) -> spacecraft mesh is invisible to this camera
+        double fieldOfView = 5; //-1 -> use default, values between 0.0001 and 179.9999 valid
+    }
+    
+    message PlanetCameraSettings{
+        string spacecraftName = 1; //Which spacecraft's planet Camera
+        bool viewPanel = 2; //False (default) -> panel is not visible on screen
+        int64 setView = 3; // 0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track
+        bool spacecraftVisible = 4; //False (default) -> spacecraft mesh is invisible to this camera
+        double fieldOfView = 5; //-1 -> use default, values between 0.0001 and 179.9999 valid
+        string targetBodyName = 6; //What body should this camera point at?
+    }
+    
 
    message VizSettingsPb{
-      double ambient = 1;
+      double ambient = 1; //Value of -1 to use viz default or specify value between 0 and 8
+      int64 orbitLinesOn = 2; // Value of -1 to use viz default, 0 for false, 1 for true
+      int64 spacecraftCSon = 3; // Value of -1 to use viz default, 0 for false, 1 for true
+      int64 planetCSon = 4; // Value of -1 to use viz default, 0 for false, 1 for true
+      repeated PointLine pointLines = 5;
+      repeated KeepOutInCone keepOutInCones = 6;
+      repeated CameraOneSettings cameraOne = 7;
+      repeated CameraTwoSettings cameraTwo = 8;
+       repeated PlanetCameraSettings planetCamera = 9;
    }
 
    TimeStamp currentTime = 1;
