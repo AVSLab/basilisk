@@ -35,6 +35,8 @@ MsisAtmosphere::MsisAtmosphere()
     //! - Set the default atmospheric properties
     this->planetRadius = REQ_EARTH*1000.;   // must be the radius of Earth for MSIS
 
+    this->epochDoy = -1;                     // negative value means this is not set
+
     this->defaultMsisInitialConditions();
 
     return;
@@ -68,9 +70,9 @@ void MsisAtmosphere::defaultMsisInitialConditions()
         for(int apInd = 0; apInd < 7; ++apInd) {
             this->aph.a[apInd] = 0.0;
         }
-        this->msisInput.year = 1984;
-        this->msisInput.doy = 1;
-        this->msisInput.sec = 0.0;
+        this->msisInput.year = this->epochDateTime.tm_year;
+        this->msisInput.doy = this->epochDateTime.tm_yday;
+        this->msisInput.sec = (double) this->epochDateTime.tm_sec;
         this->msisInput.alt = 0.0;
         this->msisInput.g_lat = 0.0;
         this->msisInput.g_long = 0.0;
@@ -89,7 +91,6 @@ void MsisAtmosphere::defaultMsisInitialConditions()
             this->msisFlags.switches[switchInd] = 1;
         }
 
-        this->startDoy = 1;
         this->startTime = 0.0;
 
         // Set other required interface values
@@ -126,20 +127,6 @@ void MsisAtmosphere::defaultMsisInitialConditions()
     return;
 }
 
-/*! Sets the epoch date used by some models. This is converted automatically to the desired units.
- @return void
- @param julianDate The specified epoch date in JD2000.
- */
-void MsisAtmosphere::setEpoch(double julianDate)
-{
-    int startYear = 0;
-    this->epochDate = julianDate;
-    startYear = int(julianDate/365.25);
-    this->startDoy = julianDate - double(startYear);
-
-    return;
-}
-
 
 /*! SelfInit for this method creates a seperate density message for each of the spacecraft
 that were added using AddSpacecraftToModel. Additional model outputs are also initialized per-spacecraft.
@@ -164,6 +151,21 @@ void MsisAtmosphere::customCrossInit()
     this->epochInMsgId = -1;
     if (this->epochInMsgName.length() > 0) {
         this->epochInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->epochInMsgName, sizeof(EpochSimMsg), moduleID);
+    }
+
+    return;
+}
+
+/*! Custom customSetEpochFromVariable() method.  This allows specifying epochDoy directly from Python.  If an epoch message is set then this variable is not used.
+ @return void
+ */
+void MsisAtmosphere::customSetEpochFromVariable()
+{
+    //! - only convert if the day-in-year variable was set to a non-zero value.  Otherwise use the BSK epoch default setup by the base class.
+    if (this->epochDoy > 0.0) {
+        /* here the BSK default epoch year is used on Jan 1, mid-night, and the requested days of year are added and converted to a proper date-time structure */
+        this->epochDateTime.tm_mday = this->epochDoy;  // assumes 1 is first day of year
+        mktime(&this->epochDateTime);
     }
 
     return;
@@ -205,14 +207,6 @@ bool MsisAtmosphere::customReadMessages(){
             }
         }
     }
-
-    if(this->epochInMsgId >= 0){
-        SystemMessaging::GetInstance()->ReadMessage(this->epochInMsgId, &localHeader, sizeof(EpochSimMsg),
-                                                                reinterpret_cast<uint8_t *> (&epochContainer), moduleID);
-        this->startDoy = this->epochContainer.day;
-        this->msisInput.year = this->epochContainer.year;
-    }
-
 
     if (failCount > 0) {
         swRead = false;
@@ -279,8 +273,14 @@ void MsisAtmosphere::evaluateAtmosphereModel(AtmoPropsSimMsg *msg, double curren
     this->msisInput.alt = this->currentLLA[2]/1000.0; // NRLMSISE Altitude input must be in kilometers!
 
     //! Update time.
-    this->msisInput.doy = this->startDoy + floor(currentTime * 1E-09 * (1.0/86400));
-    this->msisInput.sec = (this->msisInput.doy-this->startDoy) * (86400.0);
+    struct tm localDateTime;                            // []       date/time structure
+    localDateTime = this->epochDateTime;
+    localDateTime.tm_sec += (int) round(currentTime);   // sets the current seconds
+    mktime(&localDateTime);
+    this->msisInput.year = localDateTime.tm_yday;
+    this->msisInput.doy = localDateTime.tm_yday + 1;    // Jan 1 is the 1st day of year, not 0th
+    this->msisInput.sec = localDateTime.tm_sec;
+
 
     //WIP - need to actually figure out how to pull in these values.
     this->msisInput.lst = this->msisInput.sec/3600.0 + this->msisInput.g_long/15.0;
