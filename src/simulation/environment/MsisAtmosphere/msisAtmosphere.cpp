@@ -37,7 +37,49 @@ MsisAtmosphere::MsisAtmosphere()
 
     this->epochDoy = -1;                     // negative value means this is not set
 
-    this->defaultMsisInitialConditions();
+    this->f107A = 0.0;
+    this->f107 = 0.0;
+    this->ap = 0.0;
+    for(int apInd = 0; apInd < 7; ++apInd) {
+        this->aph.a[apInd] = 0.0;
+    }
+    this->msisInput.ap_a = &this->aph;
+    this->updateInputParams();
+
+
+    this->msisFlags.switches[0] = 0;
+    //! Set default settings for NRLMSISE-00; we're using all the settings by default
+    for(int switchInd = 1; switchInd < 24; ++switchInd){
+        this->msisFlags.switches[switchInd] = 1;
+    }
+
+    // Set other required interface values
+    this->swDataInMsgNames.push_back("ap_24_0");
+    this->swDataInMsgNames.push_back("ap_3_0");
+    this->swDataInMsgNames.push_back("ap_3_-3");
+    this->swDataInMsgNames.push_back("ap_3_-6");
+    this->swDataInMsgNames.push_back("ap_3_-9");
+
+    this->swDataInMsgNames.push_back("ap_3_-12");
+    this->swDataInMsgNames.push_back("ap_3_-15");
+    this->swDataInMsgNames.push_back("ap_3_-18");
+    this->swDataInMsgNames.push_back("ap_3_-21");
+    this->swDataInMsgNames.push_back("ap_3_-24");
+    this->swDataInMsgNames.push_back("ap_3_-27");
+    this->swDataInMsgNames.push_back("ap_3_-30");
+    this->swDataInMsgNames.push_back("ap_3_-33");
+
+    this->swDataInMsgNames.push_back("ap_3_-36");
+    this->swDataInMsgNames.push_back("ap_3_-39");
+    this->swDataInMsgNames.push_back("ap_3_-42");
+    this->swDataInMsgNames.push_back("ap_3_-45");
+    this->swDataInMsgNames.push_back("ap_3_-48");
+    this->swDataInMsgNames.push_back("ap_3_-51");
+    this->swDataInMsgNames.push_back("ap_3_-54");
+    this->swDataInMsgNames.push_back("ap_3_-57");
+
+    this->swDataInMsgNames.push_back("f107_1944_0");
+    this->swDataInMsgNames.push_back("f107_24_-24");
 
     return;
 }
@@ -50,82 +92,6 @@ MsisAtmosphere::~MsisAtmosphere()
     return;
 }
 
-/*! Sets the model used to compute atmospheric density/temperature; must be set before init.
- @return void
- @param inputType The desired model type.
- */
-void MsisAtmosphere::defaultMsisInitialConditions()
-{
-        this->year = 1984;
-        this->doy = 1;
-        this->sec = 0.0;
-        this->alt = 0.0;
-        this->g_lat = 0.0;
-        this->g_long = 0.0;
-        this->lst = 0.0;
-        this->f107A = 0.0;
-        this->f107 = 0.0;
-        this->ap = 0.0;
-
-        for(int apInd = 0; apInd < 7; ++apInd) {
-            this->aph.a[apInd] = 0.0;
-        }
-        this->msisInput.year = this->epochDateTime.tm_year;
-        this->msisInput.doy = this->epochDateTime.tm_yday;
-        this->msisInput.sec = (double) this->epochDateTime.tm_sec;
-        this->msisInput.alt = 0.0;
-        this->msisInput.g_lat = 0.0;
-        this->msisInput.g_long = 0.0;
-        this->msisInput.lst = 0.0;
-        this->msisInput.f107A = 0.0;
-        this->msisInput.f107 = 0.0;
-        this->msisInput.ap = 0.0;
-        this->msisInput.ap_a = &this->aph;
-
-        this->updateInputParams();
-
-
-        this->msisFlags.switches[0] = 0;
-        //! Set default settings for NRLMSISE-00; we're using all the settings by default
-        for(int switchInd = 1; switchInd < 24; ++switchInd){
-            this->msisFlags.switches[switchInd] = 1;
-        }
-
-        this->startTime = 0.0;
-
-        // Set other required interface values
-
-        this->swDataInMsgNames.push_back("ap_24_0");
-        this->swDataInMsgNames.push_back("ap_3_0");
-        this->swDataInMsgNames.push_back("ap_3_-3");
-        this->swDataInMsgNames.push_back("ap_3_-6");
-        this->swDataInMsgNames.push_back("ap_3_-9");
-
-        this->swDataInMsgNames.push_back("ap_3_-12");
-        this->swDataInMsgNames.push_back("ap_3_-15");
-        this->swDataInMsgNames.push_back("ap_3_-18");
-        this->swDataInMsgNames.push_back("ap_3_-21");
-        this->swDataInMsgNames.push_back("ap_3_-24");
-        this->swDataInMsgNames.push_back("ap_3_-27");
-        this->swDataInMsgNames.push_back("ap_3_-30");
-        this->swDataInMsgNames.push_back("ap_3_-33");
-
-        this->swDataInMsgNames.push_back("ap_3_-36");
-        this->swDataInMsgNames.push_back("ap_3_-39");
-        this->swDataInMsgNames.push_back("ap_3_-42");
-        this->swDataInMsgNames.push_back("ap_3_-45");
-        this->swDataInMsgNames.push_back("ap_3_-48");
-        this->swDataInMsgNames.push_back("ap_3_-51");
-        this->swDataInMsgNames.push_back("ap_3_-54");
-        this->swDataInMsgNames.push_back("ap_3_-57");
-
-        this->swDataInMsgNames.push_back("f107_1944_0");
-        this->swDataInMsgNames.push_back("f107_24_-24");
-
-        this->epochInMsgId = -1;
-
-    return;
-}
 
 
 /*! SelfInit for this method creates a seperate density message for each of the spacecraft

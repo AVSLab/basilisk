@@ -60,7 +60,6 @@ private:
     void updateInputParams();
     void updateSwIndices();
     void evaluateAtmosphereModel(AtmoPropsSimMsg *msg, double currentTime);
-    void defaultMsisInitialConditions();
     void customSetEpochFromVariable();
 
 public:
@@ -74,17 +73,9 @@ public:
     nrlmsise_output msisOutput; //!< Struct containing NRLMSISE-00 output values; see their doc for details.
     nrlmsise_flags msisFlags;
     ap_array aph;
-    double startTime; //!< [s] Time of simulation start in seconds
     double ap;
     double f107;
     double f107A;
-    double sec;
-    double alt;
-    double year;
-    double g_lat;
-    double g_long;
-    double lst;
-    int doy;
     int epochDoy;                       //!< [day] Day-of-Year at epoch
     std::string epochInMsgName;
     int64_t epochInMsgId;
