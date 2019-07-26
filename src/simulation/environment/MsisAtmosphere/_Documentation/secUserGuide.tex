@@ -1,4 +1,4 @@
-% !TEX root = ./Basilisk-atmosphere-20190221.tex
+% !TEX root = ./Basilisk-msisAtmosphere-20190221.tex
 
 \section{User Guide}
 
@@ -11,11 +11,19 @@ newAtmo = msisAtmosphere.MsisAtmosphere()
 newAtmo.ModelTag = "MsisAtmo"
 \end{verbatim}
 
-By default, the module assumes no planet radius or date. These can be set by calling
-\begin{verbatim}
-newAtmo.setEpoch(julian_date)
-newAtmo.planetRadius = r_eq
-\end{verbatim}
+By design this module is only applicable to Earth.  The earth radius is set automatically within the module.  As with all planetary environment models, the epoch case be set in three ways:
+\begin{enumerate}
+	\item  {\bfseries Default:} If no epoch information is provided, then the BSK default epoch date and time are set.
+	\item  {\bfseries Use Epoch Message:}  An epoch message input message name is specified.  This is read in on reset.
+	\begin{verbatim}
+		newAtmo.epochInMsgName = "simEpoch"
+	\end{verbatim}
+	\item  {\bfseries Direct Setting:} The module variable {\tt epochDoy} can be set directly as well.  However, note that if the input message is specified, the {\tt epochDoy} value is not used.
+	\begin{verbatim}
+		newAtmo.epochDoy = 1
+	\end{verbatim}	
+\end{enumerate}
+
 The model can then be added to a task like other simModels. Each Atmosphere calculates atmospheric parameters based on the output state messages for a set of spacecraft.
 
 To add spacecraft to the model the spacecraft state output message name is sent to the \verb|addScToModel| method common to environmental models:
