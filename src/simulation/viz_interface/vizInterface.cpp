@@ -384,12 +384,9 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         vizSettings = new vizProtobufferMessage::VizMessage::VizSettingsPb;
 
         // define the viz ambient light setting
-        if (this->settings.ambient >= 0.0) {
-            if (this->settings.ambient <= 1.0) {
-            vizSettings->set_ambient(this->settings.ambient);
-            } else {
-                BSK_PRINT(MSG_WARNING, "The Vizard ambient light value must be within [0,1].  A value of %f was received.", this->settings.ambient);
-            }
+        vizSettings->set_ambient(this->settings.ambient);
+        if (this->settings.ambient > 8.0 || this->settings.ambient < 0.0) {
+            BSK_PRINT(MSG_WARNING, "The Vizard ambient light value must be within [0,8].  A value of %f was received.", this->settings.ambient);
         }
         
         message->set_allocated_settings(vizSettings);
