@@ -200,7 +200,7 @@ def run(show_plots, orbitCase):
 
     #   Compare to expected values
 
-    refAtmoData = np.loadtxt(path + '/test_outputs.txt')
+    refAtmoData = np.loadtxt(path + '/testOutputs.txt')
 
     accuracy = 1e-8
 
