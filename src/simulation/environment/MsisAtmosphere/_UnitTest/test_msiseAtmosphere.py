@@ -213,7 +213,7 @@ def run(show_plots, orbitCase, useEpochMsg):
 
     #   Compare to expected values
 
-    refAtmoData = np.loadtxt(path + '/testOutputs.txt')
+    refAtmoData = np.loadtxt(path + '/truthOutputs.txt')
 
     accuracy = 1e-8
 
