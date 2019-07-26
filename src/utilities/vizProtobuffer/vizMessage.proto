@@ -8,87 +8,86 @@ package vizProtobufferMessage;
 //A VizMessage should contain all Basilisk Sim messages needed to visualize a single time step
 message VizMessage{
 
-   message TimeStamp{
-      int64 frameNumber = 1; //Current message's index
-      double simTimeElapsed = 2; //Elapsed time since sim start
-   }
+    message TimeStamp{
+        int64 frameNumber = 1; //Current message's index
+        double simTimeElapsed = 2; //Elapsed time since sim start
+    }
 
-   //CelestialBody messages will carry position, velocity, and rotation data for all celestial bodies to visualized in the current run (including sun, planets, and moon)
-   message CelestialBody{
-      string bodyName = 1;
-      repeated double position = 2;   //SpicePlanetStateSimMsg.PositionVector
-      repeated double velocity = 3;   //SpicePlanetStateSimMsg.VelocityVector
-      repeated double rotation = 4;  //SpicePlanetStateSimMsg.J20002Pfix 
-   }
+    //CelestialBody messages will carry position, velocity, and rotation data for all celestial bodies to visualized in the current run (including sun, planets, and moon)
+    message CelestialBody{
+        string bodyName = 1;
+        repeated double position = 2;   //SpicePlanetStateSimMsg.PositionVector
+        repeated double velocity = 3;   //SpicePlanetStateSimMsg.VelocityVector
+        repeated double rotation = 4;  //SpicePlanetStateSimMsg.J20002Pfix
+    }
   
-   //Spacecraft message carry spacecraft position, velocity, and rotation data and proto messages for actuators and sensors
-   message Spacecraft{
-      string spacecraftName = 1;
-      repeated double position = 2;  //SCPlusStatesSimMsg.r_BN_N
-      repeated double velocity = 3;  //SCPlusStatesSimMsg.v_BN_N
-      repeated double rotation = 4;  //SCPlusStatesSimMsg.sigma_B
+    //Spacecraft message carry spacecraft position, velocity, and rotation data and proto messages for actuators and sensors
+    message Spacecraft{
+        string spacecraftName = 1;
+        repeated double position = 2;  //SCPlusStatesSimMsg.r_BN_N
+        repeated double velocity = 3;  //SCPlusStatesSimMsg.v_BN_N
+        repeated double rotation = 4;  //SCPlusStatesSimMsg.sigma_B
       
-      repeated ReactionWheel reactionWheels = 5;
-      repeated Thruster thrusters = 6;
-      repeated CoarseSunSensor CSS = 7;
-      repeated StarTracker starTrackers = 8;
+        repeated ReactionWheel reactionWheels = 5;
+        repeated Thruster thrusters = 6;
+        repeated CoarseSunSensor CSS = 7;
+        repeated StarTracker starTrackers = 8;
+}
 
-   }
+    message ReactionWheel{
+        repeated double position = 2; //Note that this is not currently populated or used in Basilisk
+        repeated double spinAxisVector = 4;
+        double wheelSpeed = 5;  //RWSpeedIntMsg.wheelSpeeds
+        double wheelTorque = 6; //RWArrayTorqueIntMsg.motorTorque
+    }
 
-   message ReactionWheel{
-      repeated double position = 2; //Note that this is not currently populated or used in Basilisk
-      repeated double spinAxisVector = 4;
-      double wheelSpeed = 5;  //RWSpeedIntMsg.wheelSpeeds
-      double wheelTorque = 6; //RWArrayTorqueIntMsg.motorTorque
-   }
+    message Thruster{
+        repeated double position = 2;
+        repeated double thrustVector = 4;
+        double currentThrust = 5;
+        double maxThrust = 6;
+        int32 thrusterGroupID = 7;
+    }
 
-   message Thruster{
-      repeated double position = 2; 
-      repeated double thrustVector = 4;
-      double currentThrust = 5;
-      double maxThrust = 6;
-      int32 thrusterGroupID = 7;
-   }
-
-  message CoarseSunSensor{
-      repeated double position = 2;
-      repeated double normalVector = 4;
-      double currentMsmt = 5;
-      int32 CSSGroupID = 7;
-   }
+    message CoarseSunSensor{
+        repeated double position = 2;
+        repeated double normalVector = 4;
+        double currentMsmt = 5;
+        int32 CSSGroupID = 7;
+    }
   
-   message StarTracker{
-      repeated double position = 2;
-      repeated double rotation = 4;
-      double fieldOfViewHeight = 5;
-      double fieldOfViewWidth = 6;  
-      int32 starTrackerGroupID = 7;
-   }
+    message StarTracker{
+        repeated double position = 2;
+        repeated double rotation = 4;
+        double fieldOfViewHeight = 5;
+        double fieldOfViewWidth = 6;
+        int32 starTrackerGroupID = 7;
+    }
 
-   message CameraConfig{
-      int64 cameraID = 1;  //[-] ID of the camera that took the snapshot
-      string parentName = 2;  //[-] Name of the parent body to which the camera should be attached
-      double fieldOfView = 3;  //[deg] Camera Field of View 
-      repeated int64 resolution = 4;  //[pixels] Desired image width and height
-      double focalLength = 5;   // [mm] Camera Focal Length
-      repeated double sensorSize = 6;  //[mm] Size of the camera sensor-paired with resolution gives you pixel size
-      repeated double cameraPos_B = 7;  //[mm] Camera position in body frame
-      repeated double cameraDir_B = 8;  //[-] Rotation to the camera frame MRP
-      uint64 renderRate = 9;  //[ns] Sim elapsed time between saved camera images
-      string skyBoxFilepath = 10; // “none”-> black background, null or “default” -> viz default skybox, or a file path may be passed to use a custom image 
-   }
+    message CameraConfig{
+        int64 cameraID = 1;  //[-] ID of the camera that took the snapshot
+        string parentName = 2;  //[-] Name of the parent body to which the camera should be attached
+        double fieldOfView = 3;  //[deg] Camera Field of View
+        repeated int64 resolution = 4;  //[pixels] Desired image width and height
+        double focalLength = 5;   // [mm] Camera Focal Length
+        repeated double sensorSize = 6;  //[mm] Size of the camera sensor-paired with resolution gives you pixel size
+        repeated double cameraPos_B = 7;  //[mm] Camera position in body frame
+        repeated double cameraDir_B = 8;  //[-] Rotation to the camera frame MRP
+        uint64 renderRate = 9;  //[ns] Sim elapsed time between saved camera images
+        string skyBoxFilepath = 10; // “none”-> black background, null or “default” -> viz default skybox, or a file path may be passed to use a custom image
+    }
    
-   message CameraImage{
-      int64 cameraID = 1;  //[-] ID of the camera that took the snapshot
-      double timeTag = 2;  //[ns] Sim time at which the image was captured
-      string imageFileName = 3;  //[-] Filepath for captured camera image
-      repeated uint32 imageFile=4;  //[-] Image data
-   }
+    message CameraImage{
+        int64 cameraID = 1;  //[-] ID of the camera that took the snapshot
+        double timeTag = 2;  //[ns] Sim time at which the image was captured
+        string imageFileName = 3;  //[-] Filepath for captured camera image
+        repeated uint32 imageFile=4;  //[-] Image data
+    }
 
-   message ImageRequest{
-      int64 cameraID = 1; //[-] ID of the camera that should take an image
-      double timeTag = 2; //[ns] simElapsedTime at which to capture image
-   }
+    message ImageRequest{
+        int64 cameraID = 1; //[-] ID of the camera that should take an image
+        double timeTag = 2; //[ns] simElapsedTime at which to capture image
+    }
     
     message PointLine{
         string fromBodyName = 1;
@@ -134,23 +133,23 @@ message VizMessage{
     }
     
 
-   message VizSettingsPb{
-      double ambient = 1; //Value of -1 to use viz default or specify value between 0 and 8
-      int64 orbitLinesOn = 2; // Value of -1 to use viz default, 0 for false, 1 for true
-      int64 spacecraftCSon = 3; // Value of -1 to use viz default, 0 for false, 1 for true
-      int64 planetCSon = 4; // Value of -1 to use viz default, 0 for false, 1 for true
-      repeated PointLine pointLines = 5;
-      repeated KeepOutInCone keepOutInCones = 6;
-      repeated CameraOneSettings cameraOne = 7;
-      repeated CameraTwoSettings cameraTwo = 8;
+    message VizSettingsPb{
+        double ambient = 1; //Value of -1 to use viz default or specify value between 0 and 8
+        int64 orbitLinesOn = 2; // Value of -1 to use viz default, 0 for false, 1 for true
+        int64 spacecraftCSon = 3; // Value of -1 to use viz default, 0 for false, 1 for true
+        int64 planetCSon = 4; // Value of -1 to use viz default, 0 for false, 1 for true
+        repeated PointLine pointLines = 5;
+        repeated KeepOutInCone keepOutInCones = 6;
+        repeated CameraOneSettings cameraOne = 7;
+        repeated CameraTwoSettings cameraTwo = 8;
        repeated PlanetCameraSettings planetCamera = 9;
-   }
+    }
 
-   TimeStamp currentTime = 1;
-   repeated CelestialBody celestialBodies = 2;
-   repeated Spacecraft spacecraft = 3;
-   repeated CameraConfig cameras = 4;
-   repeated CameraImage  cameraImages = 5;
-   repeated ImageRequest imageRequests = 6;
-   VizSettingsPb settings = 7;
+    TimeStamp currentTime = 1;
+    repeated CelestialBody celestialBodies = 2;
+    repeated Spacecraft spacecraft = 3;
+    repeated CameraConfig cameras = 4;
+    repeated CameraImage  cameraImages = 5;
+    repeated ImageRequest imageRequests = 6;
+    VizSettingsPb settings = 7;
 }
