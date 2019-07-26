@@ -49,7 +49,7 @@ class MsisAtmosphere: public AtmosphereBase {
 public:
     MsisAtmosphere();
     ~MsisAtmosphere();
-    void setEpoch(double julianDate);
+
 private:
     void customSelfInit();
     void customCrossInit();
@@ -61,9 +61,9 @@ private:
     void updateSwIndices();
     void evaluateAtmosphereModel(AtmoPropsSimMsg *msg, double currentTime);
     void defaultMsisInitialConditions();
+    void customSetEpochFromVariable();
 
 public:
-    double epochDate;                       //!< [JD2000] Specified epoch date.
     // Message ID attributes
     int64_t swDataInMsgIds[23];
     // Message struct attributes
@@ -84,8 +84,8 @@ public:
     double g_lat;
     double g_long;
     double lst;
-    uint64_t doy;
-    uint64_t startDoy; //!< [day] Day-of-Year at simulation start
+    int doy;
+    int epochDoy;                       //!< [day] Day-of-Year at epoch
     std::string epochInMsgName;
     int64_t epochInMsgId;
 

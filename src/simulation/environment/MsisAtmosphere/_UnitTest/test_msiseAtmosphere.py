@@ -96,7 +96,7 @@ def run(show_plots, orbitCase):
     newAtmo = msisAtmosphere.MsisAtmosphere()
     atmoTaskName = "atmosphere"
     newAtmo.ModelTag = "MsisAtmo"
-    newAtmo.setEpoch(1)
+    newAtmo.epochDoy = 1        # setting epoch day of year info directly
 
     dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
     scSim.AddModelToTask(atmoTaskName, newAtmo)
