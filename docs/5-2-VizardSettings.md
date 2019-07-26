@@ -14,7 +14,7 @@ The [Vizard](@ref vizard) Unity-based visualization can have its settings script
 
 ## Listing of all BSK scriptable Vizard settings
 
-- *ambient:* value to specify the ambient Vizard lighting.  Must be a value between 0 and 8.
-
-
+Variable      |  Range | Description
+------------- | ---------|-----------------
+ambient | [0,8]| value to specify the ambient Vizard lighting.
 
