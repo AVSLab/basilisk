@@ -75,6 +75,7 @@ message VizMessage{
       repeated double cameraPos_B = 7;  //[mm] Camera position in body frame
       repeated double cameraDir_B = 8;  //[-] Rotation to the camera frame MRP
       uint64 renderRate = 9;  //[ns] Sim elapsed time between saved camera images      
+      string skyBoxFilepath = 10; // “none”-> black background, null or “default” -> viz default skybox, or a file path may be passed to use a custom image
    }
    
    message CameraImage{
