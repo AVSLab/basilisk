@@ -51,9 +51,7 @@ public:
     ~MsisAtmosphere();
 
 private:
-    void customSelfInit();
     void customCrossInit();
-
     void customWriteMessages(uint64_t CurrentClock);
     bool customReadMessages();
     bool ReadInputs();
