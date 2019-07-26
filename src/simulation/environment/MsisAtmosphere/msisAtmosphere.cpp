@@ -94,14 +94,6 @@ MsisAtmosphere::~MsisAtmosphere()
 
 
 
-/*! SelfInit for this method creates a seperate density message for each of the spacecraft
-that were added using AddSpacecraftToModel. Additional model outputs are also initialized per-spacecraft.
- @return void
-*/
-void MsisAtmosphere::customSelfInit()
-{
-    return;
-}
 
 /*! This method is used to connect the input position message from the spacecraft. Additonal model-specific cross inits are also conducted.
  @return void
