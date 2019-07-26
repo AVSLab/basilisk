@@ -56,19 +56,19 @@ splitPath = path.split(bskName)
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("orbitType", ["LPO", "LTO"])
-@pytest.mark.parametrize("useEpochMsg", [False, True])
+@pytest.mark.parametrize("setEpoch", ["Default", "Direct", "Msg"])
 
 # provide a unique test method name, starting with test_
-def test_scenarioMsisAtmosphereOrbit(show_plots, orbitType, useEpochMsg):
+def test_scenarioMsisAtmosphereOrbit(show_plots, orbitType, setEpoch):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
     showVal = False
 
-    [testResults, testMessage] = run(showVal, orbitType, useEpochMsg)
+    [testResults, testMessage] = run(showVal, orbitType, setEpoch)
 
     assert testResults < 1, testMessage
 
-def run(show_plots, orbitCase, useEpochMsg):
+def run(show_plots, orbitCase, setEpoch):
     '''Call this routine directly to run the script.'''
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -98,7 +98,7 @@ def run(show_plots, orbitCase, useEpochMsg):
     atmoTaskName = "atmosphere"
     newAtmo.ModelTag = "MsisAtmo"
 
-    if useEpochMsg:
+    if setEpoch == "Msg":
         newAtmo.epochInMsgName = "simEpoch"
         epochMsg = unitTestSupport.timeStringToGregorianUTCMsg('2019 Jan 01 00:00:00.00 (UTC)')
         unitTestSupport.setMessage(scSim.TotalSim,
@@ -108,7 +108,7 @@ def run(show_plots, orbitCase, useEpochMsg):
         # setting epoch day of year info deliberately to a false value.  The epoch msg info should be used
         newAtmo.epochDoy = 10
 
-    else:
+    elif setEpoch == "Direct":
         newAtmo.epochDoy = 1  # setting epoch day of year info directly
 
     dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
@@ -231,7 +231,7 @@ def run(show_plots, orbitCase, useEpochMsg):
         "FAILED:  NRLMSISE-00 failed temperature unit test at t=" + str(densData[0, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(tempData[0,1]-refAtmoData[-1]))
 
 
-    snippentName = "unitTestPassFail" + str(orbitCase) + str(useEpochMsg)
+    snippentName = "unitTestPassFail" + str(orbitCase) + str(setEpoch)
     if testFailCount == 0:
         colorText = 'ForestGreen'
         print "PASSED: " + newAtmo.ModelTag
@@ -247,4 +247,4 @@ def run(show_plots, orbitCase, useEpochMsg):
 if __name__ == '__main__':
     run(True,
         "LPO",          # orbitCase
-        False)          # useEpochMsg
+        "Direct")          # setEpoch

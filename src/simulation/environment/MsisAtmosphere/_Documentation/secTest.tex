@@ -42,12 +42,14 @@ The following two tables show the test results.  All tests are expected to pass.
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{c  | c  | c} % Column formatting, 
 		\hline\hline
-		{\tt orbitCase} & {\tt useEpochMsg} &  \textbf{Pass/Fail} \\ 
+		{\tt orbitCase} & {\tt setEpoch} &  \textbf{Pass/Fail} \\ 
 		\hline
-		LPO & False &  \input{AutoTeX/unitTestPassFailLPOFalse} \\ 
-		LTO & False &  \input{AutoTeX/unitTestPassFailLTOFalse} \\ 
-		LPO & True &  \input{AutoTeX/unitTestPassFailLPOTrue} \\ 
-		LTO & True &  \input{AutoTeX/unitTestPassFailLTOTrue} \\ 
+		LPO & Direct &  \input{AutoTeX/unitTestPassFailLPODirect} \\ 
+		LTO & Direct &  \input{AutoTeX/unitTestPassFailLTODirect} \\ 
+		LPO & Msg &  \input{AutoTeX/unitTestPassFailLPOMsg} \\ 
+		LTO & Msg &  \input{AutoTeX/unitTestPassFailLTOMsg} \\ 
+		LPO & Default &  \input{AutoTeX/unitTestPassFailLPODefault} \\ 
+		LTO & Default &  \input{AutoTeX/unitTestPassFailLTODefault} \\ 
 		\hline
 		\hline
 	\end{tabular}
