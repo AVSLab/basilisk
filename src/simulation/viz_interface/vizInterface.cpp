@@ -424,11 +424,10 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         /*! Write camera output msg */
         if (cameraConfMsgId.msgID != -1 && cameraConfMsgId.dataFresh){
             /*! This corrective rotation allows unity to place the camera as is expected by the python setting. Unity has a -x pointing camera, with z vertical on the sensor, and y horizontal which is not the OpNav frame: z point, x horizontal, y vertical (down) */
-            double sigma_CuC[3], test[3], unityCameraMRP[3]; /*! Cu is the unity Camera frame */
-            v3Set(0, 0., 0., test);
+            double sigma_CuC[3], sigma_BCu[3], unityCameraMRP[3]; /*! Cu is the unity Camera frame */
+            v3Scale(-1, this->cameraConfigMessage.sigma_CB, sigma_BCu);
             v3Set(1./3, 1./3, -1./3, sigma_CuC);
-//            v3Set(0., 0.,0., sigma_CuC);
-            addMRP(sigma_CuC, this->cameraConfigMessage.sigma_CB, unityCameraMRP);
+            addMRP(sigma_BCu, sigma_CuC, unityCameraMRP);
             vizProtobufferMessage::VizMessage::CameraConfig* camera = message->add_cameras();
             for (int j=0; j<3; j++){
                 if (j < 2){

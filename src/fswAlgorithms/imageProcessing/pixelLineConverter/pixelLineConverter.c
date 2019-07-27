@@ -71,7 +71,6 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
     double dcm_NC[3][3], dcm_CB[3][3], dcm_BN[3][3];
-    double sigma_NC[3];
     double reCentered[2];
     CameraConfigMsg cameraSpecs;
     CirclesOpNavMsg circlesIn;
@@ -99,9 +98,10 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     reCentered[0] = circlesIn.circlesCenters[0] - cameraSpecs.resolution[0]/2 + 0.5;
     reCentered[1] = circlesIn.circlesCenters[1] - cameraSpecs.resolution[1]/2 + 0.5;
     configData->planetTarget = circlesIn.planetIds[0];
-    addMRP(cameraSpecs.sigma_CB, attInfo.sigma_BN, sigma_NC);
-    v3Scale(-1, sigma_NC, sigma_NC);
-    MRP2C(sigma_NC, dcm_NC);
+    MRP2C(cameraSpecs.sigma_CB, dcm_CB);
+    MRP2C(attInfo.sigma_BN, dcm_BN);
+    m33tMultM33(dcm_CB, dcm_BN, dcm_NC);
+    m33Transpose(dcm_NC, dcm_NC);
 
     /*! - Find pixel size using camera specs */
     double X, Y;
