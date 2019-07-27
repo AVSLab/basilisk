@@ -92,7 +92,7 @@ message VizMessage{
     message PointLine{
         string fromBodyName = 1;
         string toBodyName = 2;
-        repeated int64 lineColor = 3; //Send desired RGBA as values between 0 and 255
+        repeated int32 lineColor = 3; //Send desired RGBA as values between 0 and 255
     }
     
     message KeepOutInCone{
@@ -110,7 +110,7 @@ message VizMessage{
     message CameraOneSettings{
         string spacecraftName = 1; //Which spacecraft's camera 1
         bool viewPanel = 2; //False (default) -> panel is not visible on screen
-        int64 setView = 3; // 0 -> +X, 1 -> -X, 2 -> +Y, 3 -> -Y, 4 -> +Z, 5 -> -Z
+        int32 setView = 3; // 0 -> +X, 1 -> -X, 2 -> +Y, 3 -> -Y, 4 -> +Z, 5 -> -Z
         bool spacecraftVisible = 4; //False (default) -> spacecraft mesh is invisible to this camera
         double fieldOfView = 5; //-1 -> use default, values between 0.0001 and 179.9999 valid
     }
@@ -118,7 +118,7 @@ message VizMessage{
     message CameraTwoSettings{
         string spacecraftName = 1; //Which spacecraft's camera 2
         bool viewPanel = 2; //False (default) -> panel is not visible on screen
-        int64 setView = 3; // 0 -> +X, 1 -> -X, 2 -> +Y, 3 -> -Y, 4 -> +Z, 5 -> -Z
+        int32 setView = 3; // 0 -> +X, 1 -> -X, 2 -> +Y, 3 -> -Y, 4 -> +Z, 5 -> -Z
         bool spacecraftVisible = 4; //False (default) -> spacecraft mesh is invisible to this camera
         double fieldOfView = 5; //-1 -> use default, values between 0.0001 and 179.9999 valid
     }
@@ -126,7 +126,7 @@ message VizMessage{
     message PlanetCameraSettings{
         string spacecraftName = 1; //Which spacecraft's planet Camera
         bool viewPanel = 2; //False (default) -> panel is not visible on screen
-        int64 setView = 3; // 0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track
+        int32 setView = 3; // 0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track
         bool spacecraftVisible = 4; //False (default) -> spacecraft mesh is invisible to this camera
         double fieldOfView = 5; //-1 -> use default, values between 0.0001 and 179.9999 valid
         string targetBodyName = 6; //What body should this camera point at?

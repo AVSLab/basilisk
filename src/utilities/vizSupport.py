@@ -24,6 +24,8 @@
 #   Unit Test Support Script
 #
 import sys, os
+from matplotlib import colors
+import numpy as np
 from Basilisk.utilities import unitTestSupport
 from Basilisk import __path__
 bskPath = __path__[0]
@@ -37,11 +39,62 @@ try:
 except ImportError:
     vizFound = False
 
+def toRGBA255(color):
+    if isinstance(color, basestring):
+        # convert color name to 4D array of values with 0-255
+        answer = np.array(colors.to_rgba(color)) * 255
+    else:
+        if (not isinstance(color, list)):
+            print 'ERROR: lineColor must be a 4D array of integers'
+            exit(1)
+        if max(color) > 255 or min(color)<0:
+            print 'ERROR: lineColor values must be between [0,255]'
+            exit(1)
+        answer = color
+    return answer
+
+pointLineList = []
+def createPointLine(viz, **kwargs):
+    pointLine = vizInterface.PointLine()
+
+    if kwargs.has_key('fromBodyName'):
+        fromName = kwargs['fromBodyName']
+        if not isinstance(fromName, basestring):
+            print 'ERROR: fromBodyName must be a string'
+            exit(1)
+        pointLine.fromBodyName = fromName
+    else:
+        pointLine.fromBodyName = viz.spacecraftName
+
+    if kwargs.has_key('toBodyName'):
+        toName = kwargs['toBodyName']
+        if not isinstance(toName, basestring):
+            print 'ERROR: toBodyName must be a string'
+            exit(1)
+        pointLine.toBodyName = toName
+    else:
+        print 'ERROR: toBodyName must be a specified'
+        exit(1)
+
+    if kwargs.has_key('lineColor'):
+        pointLine.lineColor = toRGBA255(kwargs['lineColor'])
+    else:
+        print 'ERROR: lineColor must be a specified'
+        exit(1)
+
+    pointLineList.append(pointLine)
+    del viz.settings.pointLineList[:] # clear settings list to replace it with updated list
+    viz.settings.pointLineList = vizInterface.PointLineConfig(pointLineList)
+    return
+
 
 def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
     if not vizFound:
         print('Could not find vizInterface when import attempted.  Be sure to build BSK with vizInterface support.')
         return
+
+    # clear the list of point line elements
+    del pointLineList[:]
 
     # setup the Vizard interface module
     vizMessenger = vizInterface.VizInterface()

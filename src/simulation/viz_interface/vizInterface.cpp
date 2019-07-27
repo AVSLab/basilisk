@@ -410,6 +410,16 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         if (abs(this->settings.planetCSon)>1) {
             BSK_PRINT(MSG_WARNING, "The Vizard planetCSon flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.planetCSon);
         }
+
+        for (int idx = 0; idx < this->settings.pointLineList.size(); idx++) {
+            vizProtobufferMessage::VizMessage::PointLine* pl = vizSettings->add_pointlines();
+            pl->set_tobodyname(this->settings.pointLineList[idx].fromBodyName);
+            pl->set_frombodyname(this->settings.pointLineList[idx].toBodyName);
+            for (int i=0; i<4; i++){
+                pl->add_linecolor(this->settings.pointLineList[idx].lineColor[i]);
+            }
+        }
+
         message->set_allocated_settings(vizSettings);
 
         this->settings.dataFresh = false;
