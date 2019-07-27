@@ -29,6 +29,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 namespace std {
     %template(VizThrConfig) vector<ThrClusterMap>;
     %template(PointLineConfig) vector<PointLine>;
+    %template(KeepOutInConeConfig) vector<KeepOutInCone>;
 }
 
 %include "vizInterface.h"

@@ -44,7 +44,7 @@ def toRGBA255(color):
         # convert color name to 4D array of values with 0-255
         answer = np.array(colors.to_rgba(color)) * 255
     else:
-        if (not isinstance(color, list)):
+        if not isinstance(color, list):
             print 'ERROR: lineColor must be a 4D array of integers'
             exit(1)
         if max(color) > 255 or min(color)<0:
@@ -55,37 +55,130 @@ def toRGBA255(color):
 
 pointLineList = []
 def createPointLine(viz, **kwargs):
-    pointLine = vizInterface.PointLine()
+    vizElement = vizInterface.PointLine()
 
     if kwargs.has_key('fromBodyName'):
         fromName = kwargs['fromBodyName']
         if not isinstance(fromName, basestring):
             print 'ERROR: fromBodyName must be a string'
             exit(1)
-        pointLine.fromBodyName = fromName
+        vizElement.fromBodyName = fromName
     else:
-        pointLine.fromBodyName = viz.spacecraftName
+        vizElement.fromBodyName = viz.spacecraftName
 
     if kwargs.has_key('toBodyName'):
         toName = kwargs['toBodyName']
         if not isinstance(toName, basestring):
             print 'ERROR: toBodyName must be a string'
             exit(1)
-        pointLine.toBodyName = toName
+        vizElement.toBodyName = toName
     else:
         print 'ERROR: toBodyName must be a specified'
         exit(1)
 
     if kwargs.has_key('lineColor'):
-        pointLine.lineColor = toRGBA255(kwargs['lineColor'])
+        vizElement.lineColor = toRGBA255(kwargs['lineColor'])
     else:
         print 'ERROR: lineColor must be a specified'
         exit(1)
 
-    pointLineList.append(pointLine)
+    pointLineList.append(vizElement)
     del viz.settings.pointLineList[:] # clear settings list to replace it with updated list
     viz.settings.pointLineList = vizInterface.PointLineConfig(pointLineList)
     return
+
+coneInOutList = []
+def createConeInOut(viz, **kwargs):
+    vizElement = vizInterface.KeepOutInCone()
+
+    if kwargs.has_key('fromBodyName'):
+        fromName = kwargs['fromBodyName']
+        if not isinstance(fromName, basestring):
+            print 'ERROR: fromBodyName must be a string'
+            exit(1)
+        vizElement.fromBodyName = fromName
+    else:
+        vizElement.fromBodyName = viz.spacecraftName
+
+    if kwargs.has_key('toBodyName'):
+        toName = kwargs['toBodyName']
+        if not isinstance(toName, basestring):
+            print 'ERROR: toBodyName must be a string'
+            exit(1)
+        vizElement.toBodyName = toName
+    else:
+        print 'ERROR: toBodyName must be a specified'
+        exit(1)
+
+    if kwargs.has_key('coneColor'):
+        vizElement.coneColor = toRGBA255(kwargs['coneColor'])
+    else:
+        print 'ERROR: coneColor must be a specified'
+        exit(1)
+
+    if kwargs.has_key('isKeepIn'):
+        keepInFlag = kwargs['isKeepIn']
+        if not isinstance(keepInFlag, bool):
+            print 'ERROR: isKeepIn must be a BOOL'
+            exit(1)
+        vizElement.isKeepIn = keepInFlag
+    else:
+        print 'ERROR: isKeepIn must be a specified'
+        exit(1)
+
+    if kwargs.has_key('position_B'):
+        pos_B = kwargs['position_B']
+        if not isinstance(pos_B, list):
+            print 'ERROR: position_B must be a 3D array of doubles'
+            exit(1)
+        vizElement.position_B = pos_B
+    else:
+        vizElement.position_B = [0.0, 0.0, 0.0]
+
+    if kwargs.has_key('normalVector_B'):
+        n_B = kwargs['normalVector_B']
+        if not isinstance(n_B, list):
+            print 'ERROR: normalVector_B must be a 3D array of doubles'
+            exit(1)
+        vizElement.normalVector_B = n_B
+    else:
+        print 'ERROR: normalVector_B must be a specified'
+        exit(1)
+
+    if kwargs.has_key('incidenceAngle'):
+        angle = kwargs['incidenceAngle']
+        if not isinstance(angle, float):
+            print 'ERROR: incidenceAngle must be a float value'
+            exit(1)
+        vizElement.incidenceAngle = angle
+    else:
+        print 'ERROR: incidenceAngle must be a specified'
+        exit(1)
+
+    if kwargs.has_key('coneHeight'):
+        height = kwargs['coneHeight']
+        if not isinstance(height, float):
+            print 'ERROR: coneHeight must be a float value'
+            exit(1)
+        vizElement.coneHeight = height
+    else:
+        print 'ERROR: coneHeight must be a specified'
+        exit(1)
+
+    if kwargs.has_key('coneName'):
+        coneName = kwargs['coneName']
+        if not isinstance(coneName, basestring):
+            print 'ERROR: coneName must be a string'
+            exit(1)
+        vizElement.coneName = coneName
+    else:
+        vizElement.coneName = ""
+
+    coneInOutList.append(vizElement)
+    del viz.settings.coneList[:]  # clear settings list to replace it with updated list
+    viz.settings.coneList = vizInterface.KeepOutInConeConfig(coneInOutList)
+    return
+
 
 
 def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):

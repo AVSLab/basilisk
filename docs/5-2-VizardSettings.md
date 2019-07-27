@@ -35,8 +35,30 @@ The `createPointLine` support macro requires the parameters `toBodyName` and `li
 
 Each pointing line message contains the three variables listed in the next table.
 
-Variable      |  Range | Description
-------------- | ---------|-----------------
-fromBodyName | string| contains the name of the originating body
-toBodyName | string | contains the name of the body to point towards
-lineColor | int(4) | array on integer values specifying the RGBA values between 0 to 255
+Variable      |  Range | Required | Description
+------------- | ---------|------|-----------
+fromBodyName | string| No, sc name default | contains the name of the originating body
+toBodyName | string | Yes | contains the name of the body to point towards
+lineColor | int(4) | Yes | color name or array on integer values specifying the RGBA values between 0 to 255
+
+
+### Defining Keep In/Out Cones
+Vizard can create cones relative to the spacecraft which illustrated if a body axis is within some angle to the sun (i.e. keep in cone), or if a sensor axis is outside some angle to the sun (i.e. keep out cone).  These cones can be setup in Vizard, but can also be scripted from Basilisk using the helper function `createConeInOut`: 
+~~~~~~~~~~~~~~~{.py}
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
+    vizSupport.createConeInOut(viz, toBodyName="earth", coneColor="teal", normalVector_B=[1, 0, 0], incidenceAngle=30*macros.D2R, isKeepIn=True, coneHeight=5.0, coneName='sensorCone')
+    vizSupport.createConeInOut(viz, toBodyName="earth", coneColor="blue", normalVector_B=[0, 1, 0], incidenceAngle=30*macros.D2R, isKeepIn=False, coneHeight=5.0, coneName='comCone')
+~~~~~~~~~~~~~~~
+The following table illustrate the arguments for the `createConeInOut` method:
+Variable      |  Range | Required | Description
+------------- | ---------|--------|---------
+isKeepIn | bool | Yes | make cone keep in (True) or keep out (False)
+fromBodyName | string| No, sc name default | contains the name of the originating body
+toBodyName | string | Yes | contains the name of the body to point towards
+lineColor | int(4) | Yes | color name or array on integer values specifying the RGBA values between 0 to 255
+position_B | float(3) | No, (0,0,0) default | position of the cone vertex
+normalVector_B | float(3) | Yes | normal axis of the cone in body frame components
+incidenceAngle | float | Yes | angle (rad) of the cone
+coneHeight | float | Yes | height of the cone
+coneName | string | No | cone label name, if unspecified, viz will autogenerate name
+

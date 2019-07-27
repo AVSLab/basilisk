@@ -30,6 +30,7 @@
 #include "utilities/rigidBodyKinematics.h"
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
+#include "utilities/astroConstants.h"
 
 void message_buffer_deallocate(void *data, void *hint);
 
@@ -411,6 +412,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             BSK_PRINT(MSG_WARNING, "The Vizard planetCSon flag must be either -1, 0 or 1.  A value of %d was received.", this->settings.planetCSon);
         }
 
+        // define any pointing lines for Vizard
         for (int idx = 0; idx < this->settings.pointLineList.size(); idx++) {
             vizProtobufferMessage::VizMessage::PointLine* pl = vizSettings->add_pointlines();
             pl->set_tobodyname(this->settings.pointLineList[idx].fromBodyName);
@@ -418,6 +420,34 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
             for (int i=0; i<4; i++){
                 pl->add_linecolor(this->settings.pointLineList[idx].lineColor[i]);
             }
+        }
+
+        // define any keep in/out cones for Vizard
+        for (int idx = 0; idx < this->settings.coneList.size(); idx++) {
+            vizProtobufferMessage::VizMessage::KeepOutInCone* cone = vizSettings->add_keepoutincones();
+            cone->set_iskeepin(this->settings.coneList[idx].isKeepIn);
+            for (int i=0; i<3; i++) {
+                cone->add_position(this->settings.coneList[idx].position_B[i]);
+                cone->add_normalvector(this->settings.coneList[idx].normalVector_B[i]);
+            }
+            cone->set_incidenceangle(this->settings.coneList[idx].incidenceAngle*R2D);
+            cone->set_coneheight(this->settings.coneList[idx].coneHeight);
+            cone->set_tobodyname(this->settings.coneList[idx].toBodyName);
+            cone->set_frombodyname(this->settings.coneList[idx].fromBodyName);
+            for (int i=0; i<4; i++){
+                cone->add_conecolor(this->settings.coneList[idx].coneColor[i]);
+            }
+            cone->set_conename(this->settings.coneList[idx].coneName);
+
+//            printf("HPS: isKeepIn=%d\n", this->settings.coneList[idx].isKeepIn);
+//            v3PrintScreen("HPS: position_B", this->settings.coneList[idx].position_B);
+//            v3PrintScreen("HPS: normalVector_B", this->settings.coneList[idx].normalVector_B);
+//            printf("HPS: incidenceAngle=%f\n", this->settings.coneList[idx].incidenceAngle);
+//            printf("HPS: coneHeight=%f\n", this->settings.coneList[idx].coneHeight);
+//            printf("HPS: fromBodyName=%s\n", this->settings.coneList[idx].fromBodyName.c_str());
+//            printf("HPS: toBodyName=%s\n", this->settings.coneList[idx].toBodyName.c_str());
+//            printf("HPS: coneColor=%d %d %d %d\n", this->settings.coneList[idx].coneColor[0], this->settings.coneList[idx].coneColor[1], this->settings.coneList[idx].coneColor[2], this->settings.coneList[idx].coneColor[3]);
+//            printf("HPS: coneName=%s\n", this->settings.coneList[idx].coneName.c_str());
         }
 
         message->set_allocated_settings(vizSettings);

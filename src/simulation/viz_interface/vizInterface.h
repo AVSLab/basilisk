@@ -51,11 +51,24 @@ typedef struct {
     uint32_t    thrCount; //!< [-] Number of thrusters used in this thruster model
 }ThrClusterMap;
 
+// define Viz setting messages
 typedef struct {
     std::string fromBodyName;   //!< [-] name of the body to start the line
     std::string toBodyName;     //!< [-] name of the body to point the line towards
-    int lineColor[4];           //!< [0] desired RGBA as values between 0 and 255
+    int lineColor[4];           //!< [-] desired RGBA as values between 0 and 255
 }PointLine;
+
+typedef struct {
+    bool isKeepIn;              //!< True -> keep in cone created, False -> keep out cone created
+    double position_B[3];       //!< [m] cone start relative to from body coordinate frame
+    double normalVector_B[3];   //!< [-] cone normal direction vector
+    double incidenceAngle;      //!< [rad] cone incidence angle
+    double coneHeight;          //!< [m] sets height of visible cone (asthetic only, does not impact function)
+    std::string fromBodyName;   //!< name of body to attach cone onto
+    std::string toBodyName;     //!< [-] detect changes if this body has impingement on cone
+    int coneColor[4];              //!< [-] desired RGBA as values between 0 and 255
+    std::string coneName;       //!< [-] cone name, if unspecified, viz will autogenerate name
+}KeepOutInCone;
 
 typedef struct {
     double      ambient;        //!< [-] Ambient background lighting. Should be a value between 0 and 8.  A value of -1 means it is not set.
@@ -63,6 +76,7 @@ typedef struct {
     int32_t     spacecraftCSon; // toogle for showing spacecraft CS (-1, 0, 1)
     int32_t     planetCSon;     // toogle for showing planet CS (-1, 0, 1)
     std::vector<PointLine> pointLineList;   // vector of powerLine structures
+    std::vector<KeepOutInCone> coneList;    // vector of keep in/out cones
     bool        dataFresh;      //!< [-] flag indicating if the settings have been transmitted
 }VizSettings;
 
