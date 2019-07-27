@@ -49,16 +49,47 @@ Vizard can create cones relative to the spacecraft which illustrated if a body a
     vizSupport.createConeInOut(viz, toBodyName="earth", coneColor="teal", normalVector_B=[1, 0, 0], incidenceAngle=30*macros.D2R, isKeepIn=True, coneHeight=5.0, coneName='sensorCone')
     vizSupport.createConeInOut(viz, toBodyName="earth", coneColor="blue", normalVector_B=[0, 1, 0], incidenceAngle=30*macros.D2R, isKeepIn=False, coneHeight=5.0, coneName='comCone')
 ~~~~~~~~~~~~~~~
-The following table illustrate the arguments for the `createConeInOut` method:
-Variable      |  Range | Required | Description
-------------- | ---------|--------|---------
-isKeepIn | bool | Yes | make cone keep in (True) or keep out (False)
-fromBodyName | string| No, sc name default | contains the name of the originating body
-toBodyName | string | Yes | contains the name of the body to point towards
-lineColor | int(4) | Yes | color name or array on integer values specifying the RGBA values between 0 to 255
-position_B | float(3) | No, (0,0,0) default | position of the cone vertex
-normalVector_B | float(3) | Yes | normal axis of the cone in body frame components
-incidenceAngle | float | Yes | angle (rad) of the cone
-coneHeight | float | Yes | height of the cone
-coneName | string | No | cone label name, if unspecified, viz will autogenerate name
+The following table illustrates the arguments for the `createConeInOut` method:
+Variable      |  Range | Units | Required | Description
+------------- | -------|-------|----------|---------
+isKeepIn | bool | | Yes | make cone keep in (True) or keep out (False)
+fromBodyName | string| | No, sc name default | contains the name of the originating body
+toBodyName | string | | Yes | contains the name of the body to point towards
+lineColor | int(4) | | Yes | color name or array on integer values specifying the RGBA values between 0 to 255
+position_B | float(3) | m | No, (0,0,0) default | position of the cone vertex
+normalVector_B | float(3) | | Yes | normal axis of the cone in body frame components
+incidenceAngle | float | deg | Yes | angle of the cone
+coneHeight | float | m | Yes | height of the cone
+coneName | string |  | No | cone label name, if unspecified, viz will autogenerate name
+
+
+### Defining the Vizard Camera View Panels
+Vizard can create two spacecraft relative camera panels (camera One and Two) and one planet-pointing camera panel.  This functionality can be controlled by using the 'createCameraViewPanel' helper method.
+~~~~~~~~~~~~~~~{.py}
+    viz = vizSupport.enableUnityVisualization(scSim, simTaskName, simProcessName, gravBodies=gravFactory, saveFile=fileName)
+    vizSupport.createCameraViewPanel(viz, "One", viewPanel=True, setView=0)
+    vizSupport.createCameraViewPanel(viz, "Two", viewPanel=True, setView=3, spacecraftVisible=True, fieldOfView=50.)
+    vizSupport.createCameraViewPanel(viz, "Planet", viewPanel=True, setView=2, spacecraftVisible=True, fieldOfView=50., targetBodyName='earth')
+~~~~~~~~~~~~~~~
+The following table illustrates the arguments for the `createCameraViewPanel` method if invoking the spacecraft relative camera headings for cameras `One` and `Two`.
+Variable      |  Range | Units | Required | Description
+------------- | -------|-------|----------|---------
+spacecraftName | string | | No, sc name default | name of the spacecraft with respect to which the camera is shown
+viewPanel | bool | | No, default is false | flag indicating if a panel should be shown (true) or not (false)
+setView | int | | Yes | index specifying along which axis the camera is pointing (0 -> +X, 1 -> -X, 2 -> +Y, 3 -> -Y, 4 -> +Z, 5 -> -Z)
+spacecraftVisible| bool | | No, default is false | flag indicating if the spacecraft should be shown in the camera view
+fieldOfView | float | deg | No, default -1 | camera field of view, to use the Vizard default set it to -1
+
+
+The following tale illustrates the arguments for the `createCameraViewPanel` method if a planet pointing camera is setup.
+Variable      |  Range | Units | Required | Description
+------------- | -------|-------|----------|---------
+spacecraftName | string | | No, sc name default | name of the spacecraft with respect to which the camera is shown
+viewPanel | bool | | No, default is false | flag indicating if a panel should be shown (true) or not (false)
+setView | int | | Yes | index specifying along which orbit axis the camera is pointing (0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track)
+spacecraftVisible| bool | | No, default is false | flag indicating if the spacecraft should be shown in the camera view
+fieldOfView | float | deg | No, default -1 | camera field of view, to use the Vizard default set it to -1
+targetBodyName | string | | Yes | name of the planet to point at
+
+
 

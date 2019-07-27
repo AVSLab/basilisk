@@ -140,9 +140,9 @@ message VizMessage{
         int32 planetCSon = 4; // Value of -1 to use viz default, 0 for false, 1 for true
         repeated PointLine pointLines = 5;
         repeated KeepOutInCone keepOutInCones = 6;
-        repeated CameraOneSettings cameraOne = 7;
-        repeated CameraTwoSettings cameraTwo = 8;
-        repeated PlanetCameraSettings planetCamera = 9;
+        CameraOneSettings cameraOne = 7;
+        CameraTwoSettings cameraTwo = 8;
+        PlanetCameraSettings planetCamera = 9;
     }
 
     TimeStamp currentTime = 1;

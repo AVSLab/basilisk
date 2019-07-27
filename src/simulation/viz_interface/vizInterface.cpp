@@ -58,6 +58,26 @@ VizInterface::VizInterface()
     this->settings.spacecraftCSon = -1;
     this->settings.planetCSon = -1;
 
+    this->settings.cameraOne.spacecraftName = "";
+    this->settings.cameraOne.viewPanel = false;
+    this->settings.cameraOne.setView = 0;
+    this->settings.cameraOne.spacecraftVisible = false;
+    this->settings.cameraOne.fieldOfView = -1.0;
+
+    this->settings.cameraTwo.spacecraftName = "";
+    this->settings.cameraTwo.viewPanel = false;
+    this->settings.cameraTwo.setView = 0;
+    this->settings.cameraTwo.spacecraftVisible = false;
+    this->settings.cameraTwo.fieldOfView = -1.0;
+
+    this->settings.cameraPlanet.spacecraftName = "";
+    this->settings.cameraPlanet.viewPanel = false;
+    this->settings.cameraPlanet.setView = 0;
+    this->settings.cameraPlanet.spacecraftVisible = false;
+    this->settings.cameraPlanet.fieldOfView = -1.0;
+    this->settings.cameraPlanet.targetBodyName = "";
+
+
     return;
 }
 
@@ -430,7 +450,7 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 cone->add_position(this->settings.coneList[idx].position_B[i]);
                 cone->add_normalvector(this->settings.coneList[idx].normalVector_B[i]);
             }
-            cone->set_incidenceangle(this->settings.coneList[idx].incidenceAngle*R2D);
+            cone->set_incidenceangle(this->settings.coneList[idx].incidenceAngle);
             cone->set_coneheight(this->settings.coneList[idx].coneHeight);
             cone->set_tobodyname(this->settings.coneList[idx].toBodyName);
             cone->set_frombodyname(this->settings.coneList[idx].fromBodyName);
@@ -438,17 +458,35 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 cone->add_conecolor(this->settings.coneList[idx].coneColor[i]);
             }
             cone->set_conename(this->settings.coneList[idx].coneName);
-
-//            printf("HPS: isKeepIn=%d\n", this->settings.coneList[idx].isKeepIn);
-//            v3PrintScreen("HPS: position_B", this->settings.coneList[idx].position_B);
-//            v3PrintScreen("HPS: normalVector_B", this->settings.coneList[idx].normalVector_B);
-//            printf("HPS: incidenceAngle=%f\n", this->settings.coneList[idx].incidenceAngle);
-//            printf("HPS: coneHeight=%f\n", this->settings.coneList[idx].coneHeight);
-//            printf("HPS: fromBodyName=%s\n", this->settings.coneList[idx].fromBodyName.c_str());
-//            printf("HPS: toBodyName=%s\n", this->settings.coneList[idx].toBodyName.c_str());
-//            printf("HPS: coneColor=%d %d %d %d\n", this->settings.coneList[idx].coneColor[0], this->settings.coneList[idx].coneColor[1], this->settings.coneList[idx].coneColor[2], this->settings.coneList[idx].coneColor[3]);
-//            printf("HPS: coneName=%s\n", this->settings.coneList[idx].coneName.c_str());
         }
+
+        // define camera one settings
+        vizProtobufferMessage::VizMessage::CameraOneSettings* camOne = new vizProtobufferMessage::VizMessage::CameraOneSettings;
+        camOne->set_spacecraftname(this->settings.cameraOne.spacecraftName);
+        camOne->set_viewpanel(this->settings.cameraOne.viewPanel);
+        camOne->set_setview(this->settings.cameraOne.setView);
+        camOne->set_spacecraftvisible(this->settings.cameraOne.spacecraftVisible);
+        camOne->set_fieldofview(this->settings.cameraOne.fieldOfView);
+        vizSettings->set_allocated_cameraone(camOne);
+
+        // define camera two settings
+        vizProtobufferMessage::VizMessage::CameraTwoSettings* camTwo = new vizProtobufferMessage::VizMessage::CameraTwoSettings;
+        camTwo->set_spacecraftname(this->settings.cameraTwo.spacecraftName);
+        camTwo->set_viewpanel(this->settings.cameraTwo.viewPanel);
+        camTwo->set_setview(this->settings.cameraTwo.setView);
+        camTwo->set_spacecraftvisible(this->settings.cameraTwo.spacecraftVisible);
+        camTwo->set_fieldofview(this->settings.cameraTwo.fieldOfView);
+        vizSettings->set_allocated_cameratwo(camTwo);
+
+        // define planet camera settings
+        vizProtobufferMessage::VizMessage::PlanetCameraSettings* camPlanet = new vizProtobufferMessage::VizMessage::PlanetCameraSettings;
+        camPlanet->set_spacecraftname(this->settings.cameraPlanet.spacecraftName);
+        camPlanet->set_viewpanel(this->settings.cameraPlanet.viewPanel);
+        camPlanet->set_setview(this->settings.cameraPlanet.setView);
+        camPlanet->set_spacecraftvisible(this->settings.cameraPlanet.spacecraftVisible);
+        camPlanet->set_fieldofview(this->settings.cameraPlanet.fieldOfView);
+        camPlanet->set_targetbodyname(this->settings.cameraPlanet.targetBodyName);
+        vizSettings->set_allocated_planetcamera(camPlanet);
 
         message->set_allocated_settings(vizSettings);
 

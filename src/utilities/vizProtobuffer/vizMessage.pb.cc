@@ -771,32 +771,32 @@ void AddDescriptorsImpl() {
       "File\030\004 \003(\r\0321\n\014ImageRequest\022\020\n\010cameraID\030\001"
       " \001(\003\022\017\n\007timeTag\030\002 \001(\001\032H\n\tPointLine\022\024\n\014fr"
       "omBodyName\030\001 \001(\t\022\022\n\ntoBodyName\030\002 \001(\t\022\021\n\t"
-      "lineColor\030\003 \003(\003\032\304\001\n\rKeepOutInCone\022\020\n\010isK"
+      "lineColor\030\003 \003(\005\032\304\001\n\rKeepOutInCone\022\020\n\010isK"
       "eepIn\030\001 \001(\010\022\020\n\010position\030\002 \003(\001\022\024\n\014normalV"
       "ector\030\003 \003(\001\022\026\n\016incidenceAngle\030\004 \001(\001\022\022\n\nc"
       "oneHeight\030\005 \001(\001\022\024\n\014fromBodyName\030\006 \001(\t\022\022\n"
       "\ntoBodyName\030\007 \001(\t\022\021\n\tconeColor\030\010 \003(\003\022\020\n\010"
       "coneName\030\t \001(\t\032\177\n\021CameraOneSettings\022\026\n\016s"
       "pacecraftName\030\001 \001(\t\022\021\n\tviewPanel\030\002 \001(\010\022\017"
-      "\n\007setView\030\003 \001(\003\022\031\n\021spacecraftVisible\030\004 \001"
+      "\n\007setView\030\003 \001(\005\022\031\n\021spacecraftVisible\030\004 \001"
       "(\010\022\023\n\013fieldOfView\030\005 \001(\001\032\177\n\021CameraTwoSett"
       "ings\022\026\n\016spacecraftName\030\001 \001(\t\022\021\n\tviewPane"
-      "l\030\002 \001(\010\022\017\n\007setView\030\003 \001(\003\022\031\n\021spacecraftVi"
+      "l\030\002 \001(\010\022\017\n\007setView\030\003 \001(\005\022\031\n\021spacecraftVi"
       "sible\030\004 \001(\010\022\023\n\013fieldOfView\030\005 \001(\001\032\232\001\n\024Pla"
       "netCameraSettings\022\026\n\016spacecraftName\030\001 \001("
-      "\t\022\021\n\tviewPanel\030\002 \001(\010\022\017\n\007setView\030\003 \001(\003\022\031\n"
+      "\t\022\021\n\tviewPanel\030\002 \001(\010\022\017\n\007setView\030\003 \001(\005\022\031\n"
       "\021spacecraftVisible\030\004 \001(\010\022\023\n\013fieldOfView\030"
       "\005 \001(\001\022\026\n\016targetBodyName\030\006 \001(\t\032\312\003\n\rVizSet"
       "tingsPb\022\017\n\007ambient\030\001 \001(\001\022\024\n\014orbitLinesOn"
-      "\030\002 \001(\003\022\026\n\016spacecraftCSon\030\003 \001(\003\022\022\n\nplanet"
-      "CSon\030\004 \001(\003\022\?\n\npointLines\030\005 \003(\0132+.vizProt"
+      "\030\002 \001(\005\022\026\n\016spacecraftCSon\030\003 \001(\005\022\022\n\nplanet"
+      "CSon\030\004 \001(\005\022\?\n\npointLines\030\005 \003(\0132+.vizProt"
       "obufferMessage.VizMessage.PointLine\022G\n\016k"
       "eepOutInCones\030\006 \003(\0132/.vizProtobufferMess"
       "age.VizMessage.KeepOutInCone\022F\n\tcameraOn"
-      "e\030\007 \003(\01323.vizProtobufferMessage.VizMessa"
-      "ge.CameraOneSettings\022F\n\tcameraTwo\030\010 \003(\0132"
+      "e\030\007 \001(\01323.vizProtobufferMessage.VizMessa"
+      "ge.CameraOneSettings\022F\n\tcameraTwo\030\010 \001(\0132"
       "3.vizProtobufferMessage.VizMessage.Camer"
-      "aTwoSettings\022L\n\014planetCamera\030\t \003(\01326.viz"
+      "aTwoSettings\022L\n\014planetCamera\030\t \001(\01326.viz"
       "ProtobufferMessage.VizMessage.PlanetCame"
       "raSettingsb\006proto3"
   };
@@ -5340,18 +5340,18 @@ bool VizMessage_PointLine::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated int64 lineColor = 3;
+      // repeated int32 lineColor = 3;
       case 3: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, this->mutable_linecolor())));
         } else if (
             static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  1, 26u, input, this->mutable_linecolor())));
         } else {
           goto handle_unusual;
@@ -5405,14 +5405,14 @@ void VizMessage_PointLine::SerializeWithCachedSizes(
       2, this->tobodyname(), output);
   }
 
-  // repeated int64 lineColor = 3;
+  // repeated int32 lineColor = 3;
   if (this->linecolor_size() > 0) {
     ::google::protobuf::internal::WireFormatLite::WriteTag(3, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
     output->WriteVarint32(static_cast< ::google::protobuf::uint32>(
         _linecolor_cached_byte_size_));
   }
   for (int i = 0, n = this->linecolor_size(); i < n; i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64NoTag(
+    ::google::protobuf::internal::WireFormatLite::WriteInt32NoTag(
       this->linecolor(i), output);
   }
 
@@ -5452,7 +5452,7 @@ void VizMessage_PointLine::SerializeWithCachedSizes(
         2, this->tobodyname(), target);
   }
 
-  // repeated int64 lineColor = 3;
+  // repeated int32 lineColor = 3;
   if (this->linecolor_size() > 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
       3,
@@ -5462,7 +5462,7 @@ void VizMessage_PointLine::SerializeWithCachedSizes(
         static_cast< ::google::protobuf::int32>(
             _linecolor_cached_byte_size_), target);
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteInt64NoTagToArray(this->linecolor_, target);
+      WriteInt32NoTagToArray(this->linecolor_, target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -5482,10 +5482,10 @@ size_t VizMessage_PointLine::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  // repeated int64 lineColor = 3;
+  // repeated int32 lineColor = 3;
   {
     size_t data_size = ::google::protobuf::internal::WireFormatLite::
-      Int64Size(this->linecolor_);
+      Int32Size(this->linecolor_);
     if (data_size > 0) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
@@ -6288,16 +6288,16 @@ VizMessage_CameraOneSettings::VizMessage_CameraOneSettings(const VizMessage_Came
     spacecraftname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.spacecraftname_);
   }
   ::memcpy(&setview_, &from.setview_,
-    static_cast<size_t>(reinterpret_cast<char*>(&spacecraftvisible_) -
-    reinterpret_cast<char*>(&setview_)) + sizeof(spacecraftvisible_));
+    static_cast<size_t>(reinterpret_cast<char*>(&fieldofview_) -
+    reinterpret_cast<char*>(&setview_)) + sizeof(fieldofview_));
   // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.CameraOneSettings)
 }
 
 void VizMessage_CameraOneSettings::SharedCtor() {
   spacecraftname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&setview_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&spacecraftvisible_) -
-      reinterpret_cast<char*>(&setview_)) + sizeof(spacecraftvisible_));
+      reinterpret_cast<char*>(&fieldofview_) -
+      reinterpret_cast<char*>(&setview_)) + sizeof(fieldofview_));
   _cached_size_ = 0;
 }
 
@@ -6341,8 +6341,8 @@ void VizMessage_CameraOneSettings::Clear() {
 
   spacecraftname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&setview_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&spacecraftvisible_) -
-      reinterpret_cast<char*>(&setview_)) + sizeof(spacecraftvisible_));
+      reinterpret_cast<char*>(&fieldofview_) -
+      reinterpret_cast<char*>(&setview_)) + sizeof(fieldofview_));
   _internal_metadata_.Clear();
 }
 
@@ -6386,13 +6386,13 @@ bool VizMessage_CameraOneSettings::MergePartialFromCodedStream(
         break;
       }
 
-      // int64 setView = 3;
+      // int32 setView = 3;
       case 3: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &setview_)));
         } else {
           goto handle_unusual;
@@ -6469,9 +6469,9 @@ void VizMessage_CameraOneSettings::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->viewpanel(), output);
   }
 
-  // int64 setView = 3;
+  // int32 setView = 3;
   if (this->setview() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->setview(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->setview(), output);
   }
 
   // bool spacecraftVisible = 4;
@@ -6514,9 +6514,9 @@ void VizMessage_CameraOneSettings::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->viewpanel(), target);
   }
 
-  // int64 setView = 3;
+  // int32 setView = 3;
   if (this->setview() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->setview(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->setview(), target);
   }
 
   // bool spacecraftVisible = 4;
@@ -6553,16 +6553,11 @@ size_t VizMessage_CameraOneSettings::ByteSizeLong() const {
         this->spacecraftname());
   }
 
-  // int64 setView = 3;
+  // int32 setView = 3;
   if (this->setview() != 0) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
         this->setview());
-  }
-
-  // double fieldOfView = 5;
-  if (this->fieldofview() != 0) {
-    total_size += 1 + 8;
   }
 
   // bool viewPanel = 2;
@@ -6573,6 +6568,11 @@ size_t VizMessage_CameraOneSettings::ByteSizeLong() const {
   // bool spacecraftVisible = 4;
   if (this->spacecraftvisible() != 0) {
     total_size += 1 + 1;
+  }
+
+  // double fieldOfView = 5;
+  if (this->fieldofview() != 0) {
+    total_size += 1 + 8;
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -6611,14 +6611,14 @@ void VizMessage_CameraOneSettings::MergeFrom(const VizMessage_CameraOneSettings&
   if (from.setview() != 0) {
     set_setview(from.setview());
   }
-  if (from.fieldofview() != 0) {
-    set_fieldofview(from.fieldofview());
-  }
   if (from.viewpanel() != 0) {
     set_viewpanel(from.viewpanel());
   }
   if (from.spacecraftvisible() != 0) {
     set_spacecraftvisible(from.spacecraftvisible());
+  }
+  if (from.fieldofview() != 0) {
+    set_fieldofview(from.fieldofview());
   }
 }
 
@@ -6648,9 +6648,9 @@ void VizMessage_CameraOneSettings::InternalSwap(VizMessage_CameraOneSettings* ot
   using std::swap;
   spacecraftname_.Swap(&other->spacecraftname_);
   swap(setview_, other->setview_);
-  swap(fieldofview_, other->fieldofview_);
   swap(viewpanel_, other->viewpanel_);
   swap(spacecraftvisible_, other->spacecraftvisible_);
+  swap(fieldofview_, other->fieldofview_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
 }
@@ -6691,16 +6691,16 @@ VizMessage_CameraTwoSettings::VizMessage_CameraTwoSettings(const VizMessage_Came
     spacecraftname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.spacecraftname_);
   }
   ::memcpy(&setview_, &from.setview_,
-    static_cast<size_t>(reinterpret_cast<char*>(&spacecraftvisible_) -
-    reinterpret_cast<char*>(&setview_)) + sizeof(spacecraftvisible_));
+    static_cast<size_t>(reinterpret_cast<char*>(&fieldofview_) -
+    reinterpret_cast<char*>(&setview_)) + sizeof(fieldofview_));
   // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.CameraTwoSettings)
 }
 
 void VizMessage_CameraTwoSettings::SharedCtor() {
   spacecraftname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&setview_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&spacecraftvisible_) -
-      reinterpret_cast<char*>(&setview_)) + sizeof(spacecraftvisible_));
+      reinterpret_cast<char*>(&fieldofview_) -
+      reinterpret_cast<char*>(&setview_)) + sizeof(fieldofview_));
   _cached_size_ = 0;
 }
 
@@ -6744,8 +6744,8 @@ void VizMessage_CameraTwoSettings::Clear() {
 
   spacecraftname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&setview_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&spacecraftvisible_) -
-      reinterpret_cast<char*>(&setview_)) + sizeof(spacecraftvisible_));
+      reinterpret_cast<char*>(&fieldofview_) -
+      reinterpret_cast<char*>(&setview_)) + sizeof(fieldofview_));
   _internal_metadata_.Clear();
 }
 
@@ -6789,13 +6789,13 @@ bool VizMessage_CameraTwoSettings::MergePartialFromCodedStream(
         break;
       }
 
-      // int64 setView = 3;
+      // int32 setView = 3;
       case 3: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &setview_)));
         } else {
           goto handle_unusual;
@@ -6872,9 +6872,9 @@ void VizMessage_CameraTwoSettings::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->viewpanel(), output);
   }
 
-  // int64 setView = 3;
+  // int32 setView = 3;
   if (this->setview() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->setview(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->setview(), output);
   }
 
   // bool spacecraftVisible = 4;
@@ -6917,9 +6917,9 @@ void VizMessage_CameraTwoSettings::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->viewpanel(), target);
   }
 
-  // int64 setView = 3;
+  // int32 setView = 3;
   if (this->setview() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->setview(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->setview(), target);
   }
 
   // bool spacecraftVisible = 4;
@@ -6956,16 +6956,11 @@ size_t VizMessage_CameraTwoSettings::ByteSizeLong() const {
         this->spacecraftname());
   }
 
-  // int64 setView = 3;
+  // int32 setView = 3;
   if (this->setview() != 0) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
         this->setview());
-  }
-
-  // double fieldOfView = 5;
-  if (this->fieldofview() != 0) {
-    total_size += 1 + 8;
   }
 
   // bool viewPanel = 2;
@@ -6976,6 +6971,11 @@ size_t VizMessage_CameraTwoSettings::ByteSizeLong() const {
   // bool spacecraftVisible = 4;
   if (this->spacecraftvisible() != 0) {
     total_size += 1 + 1;
+  }
+
+  // double fieldOfView = 5;
+  if (this->fieldofview() != 0) {
+    total_size += 1 + 8;
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -7014,14 +7014,14 @@ void VizMessage_CameraTwoSettings::MergeFrom(const VizMessage_CameraTwoSettings&
   if (from.setview() != 0) {
     set_setview(from.setview());
   }
-  if (from.fieldofview() != 0) {
-    set_fieldofview(from.fieldofview());
-  }
   if (from.viewpanel() != 0) {
     set_viewpanel(from.viewpanel());
   }
   if (from.spacecraftvisible() != 0) {
     set_spacecraftvisible(from.spacecraftvisible());
+  }
+  if (from.fieldofview() != 0) {
+    set_fieldofview(from.fieldofview());
   }
 }
 
@@ -7051,9 +7051,9 @@ void VizMessage_CameraTwoSettings::InternalSwap(VizMessage_CameraTwoSettings* ot
   using std::swap;
   spacecraftname_.Swap(&other->spacecraftname_);
   swap(setview_, other->setview_);
-  swap(fieldofview_, other->fieldofview_);
   swap(viewpanel_, other->viewpanel_);
   swap(spacecraftvisible_, other->spacecraftvisible_);
+  swap(fieldofview_, other->fieldofview_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
 }
@@ -7099,8 +7099,8 @@ VizMessage_PlanetCameraSettings::VizMessage_PlanetCameraSettings(const VizMessag
     targetbodyname_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.targetbodyname_);
   }
   ::memcpy(&setview_, &from.setview_,
-    static_cast<size_t>(reinterpret_cast<char*>(&spacecraftvisible_) -
-    reinterpret_cast<char*>(&setview_)) + sizeof(spacecraftvisible_));
+    static_cast<size_t>(reinterpret_cast<char*>(&fieldofview_) -
+    reinterpret_cast<char*>(&setview_)) + sizeof(fieldofview_));
   // @@protoc_insertion_point(copy_constructor:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
 }
 
@@ -7108,8 +7108,8 @@ void VizMessage_PlanetCameraSettings::SharedCtor() {
   spacecraftname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   targetbodyname_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&setview_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&spacecraftvisible_) -
-      reinterpret_cast<char*>(&setview_)) + sizeof(spacecraftvisible_));
+      reinterpret_cast<char*>(&fieldofview_) -
+      reinterpret_cast<char*>(&setview_)) + sizeof(fieldofview_));
   _cached_size_ = 0;
 }
 
@@ -7155,8 +7155,8 @@ void VizMessage_PlanetCameraSettings::Clear() {
   spacecraftname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   targetbodyname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&setview_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&spacecraftvisible_) -
-      reinterpret_cast<char*>(&setview_)) + sizeof(spacecraftvisible_));
+      reinterpret_cast<char*>(&fieldofview_) -
+      reinterpret_cast<char*>(&setview_)) + sizeof(fieldofview_));
   _internal_metadata_.Clear();
 }
 
@@ -7200,13 +7200,13 @@ bool VizMessage_PlanetCameraSettings::MergePartialFromCodedStream(
         break;
       }
 
-      // int64 setView = 3;
+      // int32 setView = 3;
       case 3: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &setview_)));
         } else {
           goto handle_unusual;
@@ -7299,9 +7299,9 @@ void VizMessage_PlanetCameraSettings::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->viewpanel(), output);
   }
 
-  // int64 setView = 3;
+  // int32 setView = 3;
   if (this->setview() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->setview(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->setview(), output);
   }
 
   // bool spacecraftVisible = 4;
@@ -7354,9 +7354,9 @@ void VizMessage_PlanetCameraSettings::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->viewpanel(), target);
   }
 
-  // int64 setView = 3;
+  // int32 setView = 3;
   if (this->setview() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->setview(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->setview(), target);
   }
 
   // bool spacecraftVisible = 4;
@@ -7411,16 +7411,11 @@ size_t VizMessage_PlanetCameraSettings::ByteSizeLong() const {
         this->targetbodyname());
   }
 
-  // int64 setView = 3;
+  // int32 setView = 3;
   if (this->setview() != 0) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
         this->setview());
-  }
-
-  // double fieldOfView = 5;
-  if (this->fieldofview() != 0) {
-    total_size += 1 + 8;
   }
 
   // bool viewPanel = 2;
@@ -7431,6 +7426,11 @@ size_t VizMessage_PlanetCameraSettings::ByteSizeLong() const {
   // bool spacecraftVisible = 4;
   if (this->spacecraftvisible() != 0) {
     total_size += 1 + 1;
+  }
+
+  // double fieldOfView = 5;
+  if (this->fieldofview() != 0) {
+    total_size += 1 + 8;
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -7473,14 +7473,14 @@ void VizMessage_PlanetCameraSettings::MergeFrom(const VizMessage_PlanetCameraSet
   if (from.setview() != 0) {
     set_setview(from.setview());
   }
-  if (from.fieldofview() != 0) {
-    set_fieldofview(from.fieldofview());
-  }
   if (from.viewpanel() != 0) {
     set_viewpanel(from.viewpanel());
   }
   if (from.spacecraftvisible() != 0) {
     set_spacecraftvisible(from.spacecraftvisible());
+  }
+  if (from.fieldofview() != 0) {
+    set_fieldofview(from.fieldofview());
   }
 }
 
@@ -7511,9 +7511,9 @@ void VizMessage_PlanetCameraSettings::InternalSwap(VizMessage_PlanetCameraSettin
   spacecraftname_.Swap(&other->spacecraftname_);
   targetbodyname_.Swap(&other->targetbodyname_);
   swap(setview_, other->setview_);
-  swap(fieldofview_, other->fieldofview_);
   swap(viewpanel_, other->viewpanel_);
   swap(spacecraftvisible_, other->spacecraftvisible_);
+  swap(fieldofview_, other->fieldofview_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
 }
@@ -7527,6 +7527,12 @@ void VizMessage_PlanetCameraSettings::InternalSwap(VizMessage_PlanetCameraSettin
 // ===================================================================
 
 void VizMessage_VizSettingsPb::InitAsDefaultInstance() {
+  ::vizProtobufferMessage::_VizMessage_VizSettingsPb_default_instance_._instance.get_mutable()->cameraone_ = const_cast< ::vizProtobufferMessage::VizMessage_CameraOneSettings*>(
+      ::vizProtobufferMessage::VizMessage_CameraOneSettings::internal_default_instance());
+  ::vizProtobufferMessage::_VizMessage_VizSettingsPb_default_instance_._instance.get_mutable()->cameratwo_ = const_cast< ::vizProtobufferMessage::VizMessage_CameraTwoSettings*>(
+      ::vizProtobufferMessage::VizMessage_CameraTwoSettings::internal_default_instance());
+  ::vizProtobufferMessage::_VizMessage_VizSettingsPb_default_instance_._instance.get_mutable()->planetcamera_ = const_cast< ::vizProtobufferMessage::VizMessage_PlanetCameraSettings*>(
+      ::vizProtobufferMessage::VizMessage_PlanetCameraSettings::internal_default_instance());
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int VizMessage_VizSettingsPb::kAmbientFieldNumber;
@@ -7553,11 +7559,23 @@ VizMessage_VizSettingsPb::VizMessage_VizSettingsPb(const VizMessage_VizSettingsP
       _internal_metadata_(NULL),
       pointlines_(from.pointlines_),
       keepoutincones_(from.keepoutincones_),
-      cameraone_(from.cameraone_),
-      cameratwo_(from.cameratwo_),
-      planetcamera_(from.planetcamera_),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  if (from.has_cameraone()) {
+    cameraone_ = new ::vizProtobufferMessage::VizMessage_CameraOneSettings(*from.cameraone_);
+  } else {
+    cameraone_ = NULL;
+  }
+  if (from.has_cameratwo()) {
+    cameratwo_ = new ::vizProtobufferMessage::VizMessage_CameraTwoSettings(*from.cameratwo_);
+  } else {
+    cameratwo_ = NULL;
+  }
+  if (from.has_planetcamera()) {
+    planetcamera_ = new ::vizProtobufferMessage::VizMessage_PlanetCameraSettings(*from.planetcamera_);
+  } else {
+    planetcamera_ = NULL;
+  }
   ::memcpy(&ambient_, &from.ambient_,
     static_cast<size_t>(reinterpret_cast<char*>(&planetcson_) -
     reinterpret_cast<char*>(&ambient_)) + sizeof(planetcson_));
@@ -7565,9 +7583,9 @@ VizMessage_VizSettingsPb::VizMessage_VizSettingsPb(const VizMessage_VizSettingsP
 }
 
 void VizMessage_VizSettingsPb::SharedCtor() {
-  ::memset(&ambient_, 0, static_cast<size_t>(
+  ::memset(&cameraone_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&planetcson_) -
-      reinterpret_cast<char*>(&ambient_)) + sizeof(planetcson_));
+      reinterpret_cast<char*>(&cameraone_)) + sizeof(planetcson_));
   _cached_size_ = 0;
 }
 
@@ -7577,6 +7595,9 @@ VizMessage_VizSettingsPb::~VizMessage_VizSettingsPb() {
 }
 
 void VizMessage_VizSettingsPb::SharedDtor() {
+  if (this != internal_default_instance()) delete cameraone_;
+  if (this != internal_default_instance()) delete cameratwo_;
+  if (this != internal_default_instance()) delete planetcamera_;
 }
 
 void VizMessage_VizSettingsPb::SetCachedSize(int size) const {
@@ -7610,9 +7631,18 @@ void VizMessage_VizSettingsPb::Clear() {
 
   pointlines_.Clear();
   keepoutincones_.Clear();
-  cameraone_.Clear();
-  cameratwo_.Clear();
-  planetcamera_.Clear();
+  if (GetArenaNoVirtual() == NULL && cameraone_ != NULL) {
+    delete cameraone_;
+  }
+  cameraone_ = NULL;
+  if (GetArenaNoVirtual() == NULL && cameratwo_ != NULL) {
+    delete cameratwo_;
+  }
+  cameratwo_ = NULL;
+  if (GetArenaNoVirtual() == NULL && planetcamera_ != NULL) {
+    delete planetcamera_;
+  }
+  planetcamera_ = NULL;
   ::memset(&ambient_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&planetcson_) -
       reinterpret_cast<char*>(&ambient_)) + sizeof(planetcson_));
@@ -7643,13 +7673,13 @@ bool VizMessage_VizSettingsPb::MergePartialFromCodedStream(
         break;
       }
 
-      // int64 orbitLinesOn = 2;
+      // int32 orbitLinesOn = 2;
       case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &orbitlineson_)));
         } else {
           goto handle_unusual;
@@ -7657,13 +7687,13 @@ bool VizMessage_VizSettingsPb::MergePartialFromCodedStream(
         break;
       }
 
-      // int64 spacecraftCSon = 3;
+      // int32 spacecraftCSon = 3;
       case 3: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &spacecraftcson_)));
         } else {
           goto handle_unusual;
@@ -7671,13 +7701,13 @@ bool VizMessage_VizSettingsPb::MergePartialFromCodedStream(
         break;
       }
 
-      // int64 planetCSon = 4;
+      // int32 planetCSon = 4;
       case 4: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(32u /* 32 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &planetcson_)));
         } else {
           goto handle_unusual;
@@ -7707,33 +7737,36 @@ bool VizMessage_VizSettingsPb::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .vizProtobufferMessage.VizMessage.CameraOneSettings cameraOne = 7;
+      // .vizProtobufferMessage.VizMessage.CameraOneSettings cameraOne = 7;
       case 7: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(58u /* 58 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(input, add_cameraone()));
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+               input, mutable_cameraone()));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // repeated .vizProtobufferMessage.VizMessage.CameraTwoSettings cameraTwo = 8;
+      // .vizProtobufferMessage.VizMessage.CameraTwoSettings cameraTwo = 8;
       case 8: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(66u /* 66 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(input, add_cameratwo()));
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+               input, mutable_cameratwo()));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // repeated .vizProtobufferMessage.VizMessage.PlanetCameraSettings planetCamera = 9;
+      // .vizProtobufferMessage.VizMessage.PlanetCameraSettings planetCamera = 9;
       case 9: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(74u /* 74 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(input, add_planetcamera()));
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+               input, mutable_planetcamera()));
         } else {
           goto handle_unusual;
         }
@@ -7771,19 +7804,19 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteDouble(1, this->ambient(), output);
   }
 
-  // int64 orbitLinesOn = 2;
+  // int32 orbitLinesOn = 2;
   if (this->orbitlineson() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(2, this->orbitlineson(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->orbitlineson(), output);
   }
 
-  // int64 spacecraftCSon = 3;
+  // int32 spacecraftCSon = 3;
   if (this->spacecraftcson() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->spacecraftcson(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->spacecraftcson(), output);
   }
 
-  // int64 planetCSon = 4;
+  // int32 planetCSon = 4;
   if (this->planetcson() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(4, this->planetcson(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->planetcson(), output);
   }
 
   // repeated .vizProtobufferMessage.VizMessage.PointLine pointLines = 5;
@@ -7800,25 +7833,22 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
       6, this->keepoutincones(static_cast<int>(i)), output);
   }
 
-  // repeated .vizProtobufferMessage.VizMessage.CameraOneSettings cameraOne = 7;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->cameraone_size()); i < n; i++) {
+  // .vizProtobufferMessage.VizMessage.CameraOneSettings cameraOne = 7;
+  if (this->has_cameraone()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      7, this->cameraone(static_cast<int>(i)), output);
+      7, *this->cameraone_, output);
   }
 
-  // repeated .vizProtobufferMessage.VizMessage.CameraTwoSettings cameraTwo = 8;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->cameratwo_size()); i < n; i++) {
+  // .vizProtobufferMessage.VizMessage.CameraTwoSettings cameraTwo = 8;
+  if (this->has_cameratwo()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      8, this->cameratwo(static_cast<int>(i)), output);
+      8, *this->cameratwo_, output);
   }
 
-  // repeated .vizProtobufferMessage.VizMessage.PlanetCameraSettings planetCamera = 9;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->planetcamera_size()); i < n; i++) {
+  // .vizProtobufferMessage.VizMessage.PlanetCameraSettings planetCamera = 9;
+  if (this->has_planetcamera()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      9, this->planetcamera(static_cast<int>(i)), output);
+      9, *this->planetcamera_, output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -7840,19 +7870,19 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(1, this->ambient(), target);
   }
 
-  // int64 orbitLinesOn = 2;
+  // int32 orbitLinesOn = 2;
   if (this->orbitlineson() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(2, this->orbitlineson(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->orbitlineson(), target);
   }
 
-  // int64 spacecraftCSon = 3;
+  // int32 spacecraftCSon = 3;
   if (this->spacecraftcson() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->spacecraftcson(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->spacecraftcson(), target);
   }
 
-  // int64 planetCSon = 4;
+  // int32 planetCSon = 4;
   if (this->planetcson() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(4, this->planetcson(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->planetcson(), target);
   }
 
   // repeated .vizProtobufferMessage.VizMessage.PointLine pointLines = 5;
@@ -7871,28 +7901,25 @@ void VizMessage_VizSettingsPb::SerializeWithCachedSizes(
         6, this->keepoutincones(static_cast<int>(i)), deterministic, target);
   }
 
-  // repeated .vizProtobufferMessage.VizMessage.CameraOneSettings cameraOne = 7;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->cameraone_size()); i < n; i++) {
+  // .vizProtobufferMessage.VizMessage.CameraOneSettings cameraOne = 7;
+  if (this->has_cameraone()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        7, this->cameraone(static_cast<int>(i)), deterministic, target);
+        7, *this->cameraone_, deterministic, target);
   }
 
-  // repeated .vizProtobufferMessage.VizMessage.CameraTwoSettings cameraTwo = 8;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->cameratwo_size()); i < n; i++) {
+  // .vizProtobufferMessage.VizMessage.CameraTwoSettings cameraTwo = 8;
+  if (this->has_cameratwo()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        8, this->cameratwo(static_cast<int>(i)), deterministic, target);
+        8, *this->cameratwo_, deterministic, target);
   }
 
-  // repeated .vizProtobufferMessage.VizMessage.PlanetCameraSettings planetCamera = 9;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->planetcamera_size()); i < n; i++) {
+  // .vizProtobufferMessage.VizMessage.PlanetCameraSettings planetCamera = 9;
+  if (this->has_planetcamera()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        9, this->planetcamera(static_cast<int>(i)), deterministic, target);
+        9, *this->planetcamera_, deterministic, target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -7934,37 +7961,25 @@ size_t VizMessage_VizSettingsPb::ByteSizeLong() const {
     }
   }
 
-  // repeated .vizProtobufferMessage.VizMessage.CameraOneSettings cameraOne = 7;
-  {
-    unsigned int count = static_cast<unsigned int>(this->cameraone_size());
-    total_size += 1UL * count;
-    for (unsigned int i = 0; i < count; i++) {
-      total_size +=
-        ::google::protobuf::internal::WireFormatLite::MessageSize(
-          this->cameraone(static_cast<int>(i)));
-    }
+  // .vizProtobufferMessage.VizMessage.CameraOneSettings cameraOne = 7;
+  if (this->has_cameraone()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSize(
+        *this->cameraone_);
   }
 
-  // repeated .vizProtobufferMessage.VizMessage.CameraTwoSettings cameraTwo = 8;
-  {
-    unsigned int count = static_cast<unsigned int>(this->cameratwo_size());
-    total_size += 1UL * count;
-    for (unsigned int i = 0; i < count; i++) {
-      total_size +=
-        ::google::protobuf::internal::WireFormatLite::MessageSize(
-          this->cameratwo(static_cast<int>(i)));
-    }
+  // .vizProtobufferMessage.VizMessage.CameraTwoSettings cameraTwo = 8;
+  if (this->has_cameratwo()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSize(
+        *this->cameratwo_);
   }
 
-  // repeated .vizProtobufferMessage.VizMessage.PlanetCameraSettings planetCamera = 9;
-  {
-    unsigned int count = static_cast<unsigned int>(this->planetcamera_size());
-    total_size += 1UL * count;
-    for (unsigned int i = 0; i < count; i++) {
-      total_size +=
-        ::google::protobuf::internal::WireFormatLite::MessageSize(
-          this->planetcamera(static_cast<int>(i)));
-    }
+  // .vizProtobufferMessage.VizMessage.PlanetCameraSettings planetCamera = 9;
+  if (this->has_planetcamera()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSize(
+        *this->planetcamera_);
   }
 
   // double ambient = 1;
@@ -7972,24 +7987,24 @@ size_t VizMessage_VizSettingsPb::ByteSizeLong() const {
     total_size += 1 + 8;
   }
 
-  // int64 orbitLinesOn = 2;
+  // int32 orbitLinesOn = 2;
   if (this->orbitlineson() != 0) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
         this->orbitlineson());
   }
 
-  // int64 spacecraftCSon = 3;
+  // int32 spacecraftCSon = 3;
   if (this->spacecraftcson() != 0) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
         this->spacecraftcson());
   }
 
-  // int64 planetCSon = 4;
+  // int32 planetCSon = 4;
   if (this->planetcson() != 0) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
         this->planetcson());
   }
 
@@ -8024,9 +8039,15 @@ void VizMessage_VizSettingsPb::MergeFrom(const VizMessage_VizSettingsPb& from) {
 
   pointlines_.MergeFrom(from.pointlines_);
   keepoutincones_.MergeFrom(from.keepoutincones_);
-  cameraone_.MergeFrom(from.cameraone_);
-  cameratwo_.MergeFrom(from.cameratwo_);
-  planetcamera_.MergeFrom(from.planetcamera_);
+  if (from.has_cameraone()) {
+    mutable_cameraone()->::vizProtobufferMessage::VizMessage_CameraOneSettings::MergeFrom(from.cameraone());
+  }
+  if (from.has_cameratwo()) {
+    mutable_cameratwo()->::vizProtobufferMessage::VizMessage_CameraTwoSettings::MergeFrom(from.cameratwo());
+  }
+  if (from.has_planetcamera()) {
+    mutable_planetcamera()->::vizProtobufferMessage::VizMessage_PlanetCameraSettings::MergeFrom(from.planetcamera());
+  }
   if (from.ambient() != 0) {
     set_ambient(from.ambient());
   }
@@ -8067,9 +8088,9 @@ void VizMessage_VizSettingsPb::InternalSwap(VizMessage_VizSettingsPb* other) {
   using std::swap;
   pointlines_.InternalSwap(&other->pointlines_);
   keepoutincones_.InternalSwap(&other->keepoutincones_);
-  cameraone_.InternalSwap(&other->cameraone_);
-  cameratwo_.InternalSwap(&other->cameratwo_);
-  planetcamera_.InternalSwap(&other->planetcamera_);
+  swap(cameraone_, other->cameraone_);
+  swap(cameratwo_, other->cameratwo_);
+  swap(planetcamera_, other->planetcamera_);
   swap(ambient_, other->ambient_);
   swap(orbitlineson_, other->orbitlineson_);
   swap(spacecraftcson_, other->spacecraftcson_);

@@ -1688,16 +1688,16 @@ class VizMessage_PointLine : public ::google::protobuf::Message /* @@protoc_inse
 
   // accessors -------------------------------------------------------
 
-  // repeated int64 lineColor = 3;
+  // repeated int32 lineColor = 3;
   int linecolor_size() const;
   void clear_linecolor();
   static const int kLineColorFieldNumber = 3;
-  ::google::protobuf::int64 linecolor(int index) const;
-  void set_linecolor(int index, ::google::protobuf::int64 value);
-  void add_linecolor(::google::protobuf::int64 value);
-  const ::google::protobuf::RepeatedField< ::google::protobuf::int64 >&
+  ::google::protobuf::int32 linecolor(int index) const;
+  void set_linecolor(int index, ::google::protobuf::int32 value);
+  void add_linecolor(::google::protobuf::int32 value);
+  const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
       linecolor() const;
-  ::google::protobuf::RepeatedField< ::google::protobuf::int64 >*
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
       mutable_linecolor();
 
   // string fromBodyName = 1;
@@ -1732,7 +1732,7 @@ class VizMessage_PointLine : public ::google::protobuf::Message /* @@protoc_inse
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::RepeatedField< ::google::protobuf::int64 > linecolor_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > linecolor_;
   mutable int _linecolor_cached_byte_size_;
   ::google::protobuf::internal::ArenaStringPtr frombodyname_;
   ::google::protobuf::internal::ArenaStringPtr tobodyname_;
@@ -2038,17 +2038,11 @@ class VizMessage_CameraOneSettings : public ::google::protobuf::Message /* @@pro
   ::std::string* release_spacecraftname();
   void set_allocated_spacecraftname(::std::string* spacecraftname);
 
-  // int64 setView = 3;
+  // int32 setView = 3;
   void clear_setview();
   static const int kSetViewFieldNumber = 3;
-  ::google::protobuf::int64 setview() const;
-  void set_setview(::google::protobuf::int64 value);
-
-  // double fieldOfView = 5;
-  void clear_fieldofview();
-  static const int kFieldOfViewFieldNumber = 5;
-  double fieldofview() const;
-  void set_fieldofview(double value);
+  ::google::protobuf::int32 setview() const;
+  void set_setview(::google::protobuf::int32 value);
 
   // bool viewPanel = 2;
   void clear_viewpanel();
@@ -2062,15 +2056,21 @@ class VizMessage_CameraOneSettings : public ::google::protobuf::Message /* @@pro
   bool spacecraftvisible() const;
   void set_spacecraftvisible(bool value);
 
+  // double fieldOfView = 5;
+  void clear_fieldofview();
+  static const int kFieldOfViewFieldNumber = 5;
+  double fieldofview() const;
+  void set_fieldofview(double value);
+
   // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.CameraOneSettings)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::internal::ArenaStringPtr spacecraftname_;
-  ::google::protobuf::int64 setview_;
-  double fieldofview_;
+  ::google::protobuf::int32 setview_;
   bool viewpanel_;
   bool spacecraftvisible_;
+  double fieldofview_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
   friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CameraOneSettingsImpl();
@@ -2173,17 +2173,11 @@ class VizMessage_CameraTwoSettings : public ::google::protobuf::Message /* @@pro
   ::std::string* release_spacecraftname();
   void set_allocated_spacecraftname(::std::string* spacecraftname);
 
-  // int64 setView = 3;
+  // int32 setView = 3;
   void clear_setview();
   static const int kSetViewFieldNumber = 3;
-  ::google::protobuf::int64 setview() const;
-  void set_setview(::google::protobuf::int64 value);
-
-  // double fieldOfView = 5;
-  void clear_fieldofview();
-  static const int kFieldOfViewFieldNumber = 5;
-  double fieldofview() const;
-  void set_fieldofview(double value);
+  ::google::protobuf::int32 setview() const;
+  void set_setview(::google::protobuf::int32 value);
 
   // bool viewPanel = 2;
   void clear_viewpanel();
@@ -2197,15 +2191,21 @@ class VizMessage_CameraTwoSettings : public ::google::protobuf::Message /* @@pro
   bool spacecraftvisible() const;
   void set_spacecraftvisible(bool value);
 
+  // double fieldOfView = 5;
+  void clear_fieldofview();
+  static const int kFieldOfViewFieldNumber = 5;
+  double fieldofview() const;
+  void set_fieldofview(double value);
+
   // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.CameraTwoSettings)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::internal::ArenaStringPtr spacecraftname_;
-  ::google::protobuf::int64 setview_;
-  double fieldofview_;
+  ::google::protobuf::int32 setview_;
   bool viewpanel_;
   bool spacecraftvisible_;
+  double fieldofview_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
   friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_CameraTwoSettingsImpl();
@@ -2322,17 +2322,11 @@ class VizMessage_PlanetCameraSettings : public ::google::protobuf::Message /* @@
   ::std::string* release_targetbodyname();
   void set_allocated_targetbodyname(::std::string* targetbodyname);
 
-  // int64 setView = 3;
+  // int32 setView = 3;
   void clear_setview();
   static const int kSetViewFieldNumber = 3;
-  ::google::protobuf::int64 setview() const;
-  void set_setview(::google::protobuf::int64 value);
-
-  // double fieldOfView = 5;
-  void clear_fieldofview();
-  static const int kFieldOfViewFieldNumber = 5;
-  double fieldofview() const;
-  void set_fieldofview(double value);
+  ::google::protobuf::int32 setview() const;
+  void set_setview(::google::protobuf::int32 value);
 
   // bool viewPanel = 2;
   void clear_viewpanel();
@@ -2346,16 +2340,22 @@ class VizMessage_PlanetCameraSettings : public ::google::protobuf::Message /* @@
   bool spacecraftvisible() const;
   void set_spacecraftvisible(bool value);
 
+  // double fieldOfView = 5;
+  void clear_fieldofview();
+  static const int kFieldOfViewFieldNumber = 5;
+  double fieldofview() const;
+  void set_fieldofview(double value);
+
   // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.PlanetCameraSettings)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::internal::ArenaStringPtr spacecraftname_;
   ::google::protobuf::internal::ArenaStringPtr targetbodyname_;
-  ::google::protobuf::int64 setview_;
-  double fieldofview_;
+  ::google::protobuf::int32 setview_;
   bool viewpanel_;
   bool spacecraftvisible_;
+  double fieldofview_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
   friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_PlanetCameraSettingsImpl();
@@ -2468,41 +2468,32 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   const ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_KeepOutInCone >&
       keepoutincones() const;
 
-  // repeated .vizProtobufferMessage.VizMessage.CameraOneSettings cameraOne = 7;
-  int cameraone_size() const;
+  // .vizProtobufferMessage.VizMessage.CameraOneSettings cameraOne = 7;
+  bool has_cameraone() const;
   void clear_cameraone();
   static const int kCameraOneFieldNumber = 7;
-  const ::vizProtobufferMessage::VizMessage_CameraOneSettings& cameraone(int index) const;
-  ::vizProtobufferMessage::VizMessage_CameraOneSettings* mutable_cameraone(int index);
-  ::vizProtobufferMessage::VizMessage_CameraOneSettings* add_cameraone();
-  ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_CameraOneSettings >*
-      mutable_cameraone();
-  const ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_CameraOneSettings >&
-      cameraone() const;
+  const ::vizProtobufferMessage::VizMessage_CameraOneSettings& cameraone() const;
+  ::vizProtobufferMessage::VizMessage_CameraOneSettings* release_cameraone();
+  ::vizProtobufferMessage::VizMessage_CameraOneSettings* mutable_cameraone();
+  void set_allocated_cameraone(::vizProtobufferMessage::VizMessage_CameraOneSettings* cameraone);
 
-  // repeated .vizProtobufferMessage.VizMessage.CameraTwoSettings cameraTwo = 8;
-  int cameratwo_size() const;
+  // .vizProtobufferMessage.VizMessage.CameraTwoSettings cameraTwo = 8;
+  bool has_cameratwo() const;
   void clear_cameratwo();
   static const int kCameraTwoFieldNumber = 8;
-  const ::vizProtobufferMessage::VizMessage_CameraTwoSettings& cameratwo(int index) const;
-  ::vizProtobufferMessage::VizMessage_CameraTwoSettings* mutable_cameratwo(int index);
-  ::vizProtobufferMessage::VizMessage_CameraTwoSettings* add_cameratwo();
-  ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_CameraTwoSettings >*
-      mutable_cameratwo();
-  const ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_CameraTwoSettings >&
-      cameratwo() const;
+  const ::vizProtobufferMessage::VizMessage_CameraTwoSettings& cameratwo() const;
+  ::vizProtobufferMessage::VizMessage_CameraTwoSettings* release_cameratwo();
+  ::vizProtobufferMessage::VizMessage_CameraTwoSettings* mutable_cameratwo();
+  void set_allocated_cameratwo(::vizProtobufferMessage::VizMessage_CameraTwoSettings* cameratwo);
 
-  // repeated .vizProtobufferMessage.VizMessage.PlanetCameraSettings planetCamera = 9;
-  int planetcamera_size() const;
+  // .vizProtobufferMessage.VizMessage.PlanetCameraSettings planetCamera = 9;
+  bool has_planetcamera() const;
   void clear_planetcamera();
   static const int kPlanetCameraFieldNumber = 9;
-  const ::vizProtobufferMessage::VizMessage_PlanetCameraSettings& planetcamera(int index) const;
-  ::vizProtobufferMessage::VizMessage_PlanetCameraSettings* mutable_planetcamera(int index);
-  ::vizProtobufferMessage::VizMessage_PlanetCameraSettings* add_planetcamera();
-  ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_PlanetCameraSettings >*
-      mutable_planetcamera();
-  const ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_PlanetCameraSettings >&
-      planetcamera() const;
+  const ::vizProtobufferMessage::VizMessage_PlanetCameraSettings& planetcamera() const;
+  ::vizProtobufferMessage::VizMessage_PlanetCameraSettings* release_planetcamera();
+  ::vizProtobufferMessage::VizMessage_PlanetCameraSettings* mutable_planetcamera();
+  void set_allocated_planetcamera(::vizProtobufferMessage::VizMessage_PlanetCameraSettings* planetcamera);
 
   // double ambient = 1;
   void clear_ambient();
@@ -2510,23 +2501,23 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   double ambient() const;
   void set_ambient(double value);
 
-  // int64 orbitLinesOn = 2;
+  // int32 orbitLinesOn = 2;
   void clear_orbitlineson();
   static const int kOrbitLinesOnFieldNumber = 2;
-  ::google::protobuf::int64 orbitlineson() const;
-  void set_orbitlineson(::google::protobuf::int64 value);
+  ::google::protobuf::int32 orbitlineson() const;
+  void set_orbitlineson(::google::protobuf::int32 value);
 
-  // int64 spacecraftCSon = 3;
+  // int32 spacecraftCSon = 3;
   void clear_spacecraftcson();
   static const int kSpacecraftCSonFieldNumber = 3;
-  ::google::protobuf::int64 spacecraftcson() const;
-  void set_spacecraftcson(::google::protobuf::int64 value);
+  ::google::protobuf::int32 spacecraftcson() const;
+  void set_spacecraftcson(::google::protobuf::int32 value);
 
-  // int64 planetCSon = 4;
+  // int32 planetCSon = 4;
   void clear_planetcson();
   static const int kPlanetCSonFieldNumber = 4;
-  ::google::protobuf::int64 planetcson() const;
-  void set_planetcson(::google::protobuf::int64 value);
+  ::google::protobuf::int32 planetcson() const;
+  void set_planetcson(::google::protobuf::int32 value);
 
   // @@protoc_insertion_point(class_scope:vizProtobufferMessage.VizMessage.VizSettingsPb)
  private:
@@ -2534,13 +2525,13 @@ class VizMessage_VizSettingsPb : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_PointLine > pointlines_;
   ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_KeepOutInCone > keepoutincones_;
-  ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_CameraOneSettings > cameraone_;
-  ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_CameraTwoSettings > cameratwo_;
-  ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_PlanetCameraSettings > planetcamera_;
+  ::vizProtobufferMessage::VizMessage_CameraOneSettings* cameraone_;
+  ::vizProtobufferMessage::VizMessage_CameraTwoSettings* cameratwo_;
+  ::vizProtobufferMessage::VizMessage_PlanetCameraSettings* planetcamera_;
   double ambient_;
-  ::google::protobuf::int64 orbitlineson_;
-  ::google::protobuf::int64 spacecraftcson_;
-  ::google::protobuf::int64 planetcson_;
+  ::google::protobuf::int32 orbitlineson_;
+  ::google::protobuf::int32 spacecraftcson_;
+  ::google::protobuf::int32 planetcson_;
   mutable int _cached_size_;
   friend struct ::protobuf_vizMessage_2eproto::TableStruct;
   friend void ::protobuf_vizMessage_2eproto::InitDefaultsVizMessage_VizSettingsPbImpl();
@@ -4131,31 +4122,31 @@ inline void VizMessage_PointLine::set_allocated_tobodyname(::std::string* tobody
   // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.PointLine.toBodyName)
 }
 
-// repeated int64 lineColor = 3;
+// repeated int32 lineColor = 3;
 inline int VizMessage_PointLine::linecolor_size() const {
   return linecolor_.size();
 }
 inline void VizMessage_PointLine::clear_linecolor() {
   linecolor_.Clear();
 }
-inline ::google::protobuf::int64 VizMessage_PointLine::linecolor(int index) const {
+inline ::google::protobuf::int32 VizMessage_PointLine::linecolor(int index) const {
   // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.PointLine.lineColor)
   return linecolor_.Get(index);
 }
-inline void VizMessage_PointLine::set_linecolor(int index, ::google::protobuf::int64 value) {
+inline void VizMessage_PointLine::set_linecolor(int index, ::google::protobuf::int32 value) {
   linecolor_.Set(index, value);
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.PointLine.lineColor)
 }
-inline void VizMessage_PointLine::add_linecolor(::google::protobuf::int64 value) {
+inline void VizMessage_PointLine::add_linecolor(::google::protobuf::int32 value) {
   linecolor_.Add(value);
   // @@protoc_insertion_point(field_add:vizProtobufferMessage.VizMessage.PointLine.lineColor)
 }
-inline const ::google::protobuf::RepeatedField< ::google::protobuf::int64 >&
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
 VizMessage_PointLine::linecolor() const {
   // @@protoc_insertion_point(field_list:vizProtobufferMessage.VizMessage.PointLine.lineColor)
   return linecolor_;
 }
-inline ::google::protobuf::RepeatedField< ::google::protobuf::int64 >*
+inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
 VizMessage_PointLine::mutable_linecolor() {
   // @@protoc_insertion_point(field_mutable_list:vizProtobufferMessage.VizMessage.PointLine.lineColor)
   return &linecolor_;
@@ -4527,15 +4518,15 @@ inline void VizMessage_CameraOneSettings::set_viewpanel(bool value) {
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CameraOneSettings.viewPanel)
 }
 
-// int64 setView = 3;
+// int32 setView = 3;
 inline void VizMessage_CameraOneSettings::clear_setview() {
-  setview_ = GOOGLE_LONGLONG(0);
+  setview_ = 0;
 }
-inline ::google::protobuf::int64 VizMessage_CameraOneSettings::setview() const {
+inline ::google::protobuf::int32 VizMessage_CameraOneSettings::setview() const {
   // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CameraOneSettings.setView)
   return setview_;
 }
-inline void VizMessage_CameraOneSettings::set_setview(::google::protobuf::int64 value) {
+inline void VizMessage_CameraOneSettings::set_setview(::google::protobuf::int32 value) {
   
   setview_ = value;
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CameraOneSettings.setView)
@@ -4640,15 +4631,15 @@ inline void VizMessage_CameraTwoSettings::set_viewpanel(bool value) {
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CameraTwoSettings.viewPanel)
 }
 
-// int64 setView = 3;
+// int32 setView = 3;
 inline void VizMessage_CameraTwoSettings::clear_setview() {
-  setview_ = GOOGLE_LONGLONG(0);
+  setview_ = 0;
 }
-inline ::google::protobuf::int64 VizMessage_CameraTwoSettings::setview() const {
+inline ::google::protobuf::int32 VizMessage_CameraTwoSettings::setview() const {
   // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.CameraTwoSettings.setView)
   return setview_;
 }
-inline void VizMessage_CameraTwoSettings::set_setview(::google::protobuf::int64 value) {
+inline void VizMessage_CameraTwoSettings::set_setview(::google::protobuf::int32 value) {
   
   setview_ = value;
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.CameraTwoSettings.setView)
@@ -4753,15 +4744,15 @@ inline void VizMessage_PlanetCameraSettings::set_viewpanel(bool value) {
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.PlanetCameraSettings.viewPanel)
 }
 
-// int64 setView = 3;
+// int32 setView = 3;
 inline void VizMessage_PlanetCameraSettings::clear_setview() {
-  setview_ = GOOGLE_LONGLONG(0);
+  setview_ = 0;
 }
-inline ::google::protobuf::int64 VizMessage_PlanetCameraSettings::setview() const {
+inline ::google::protobuf::int32 VizMessage_PlanetCameraSettings::setview() const {
   // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.PlanetCameraSettings.setView)
   return setview_;
 }
-inline void VizMessage_PlanetCameraSettings::set_setview(::google::protobuf::int64 value) {
+inline void VizMessage_PlanetCameraSettings::set_setview(::google::protobuf::int32 value) {
   
   setview_ = value;
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.PlanetCameraSettings.setView)
@@ -4866,43 +4857,43 @@ inline void VizMessage_VizSettingsPb::set_ambient(double value) {
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.ambient)
 }
 
-// int64 orbitLinesOn = 2;
+// int32 orbitLinesOn = 2;
 inline void VizMessage_VizSettingsPb::clear_orbitlineson() {
-  orbitlineson_ = GOOGLE_LONGLONG(0);
+  orbitlineson_ = 0;
 }
-inline ::google::protobuf::int64 VizMessage_VizSettingsPb::orbitlineson() const {
+inline ::google::protobuf::int32 VizMessage_VizSettingsPb::orbitlineson() const {
   // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.orbitLinesOn)
   return orbitlineson_;
 }
-inline void VizMessage_VizSettingsPb::set_orbitlineson(::google::protobuf::int64 value) {
+inline void VizMessage_VizSettingsPb::set_orbitlineson(::google::protobuf::int32 value) {
   
   orbitlineson_ = value;
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.orbitLinesOn)
 }
 
-// int64 spacecraftCSon = 3;
+// int32 spacecraftCSon = 3;
 inline void VizMessage_VizSettingsPb::clear_spacecraftcson() {
-  spacecraftcson_ = GOOGLE_LONGLONG(0);
+  spacecraftcson_ = 0;
 }
-inline ::google::protobuf::int64 VizMessage_VizSettingsPb::spacecraftcson() const {
+inline ::google::protobuf::int32 VizMessage_VizSettingsPb::spacecraftcson() const {
   // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.spacecraftCSon)
   return spacecraftcson_;
 }
-inline void VizMessage_VizSettingsPb::set_spacecraftcson(::google::protobuf::int64 value) {
+inline void VizMessage_VizSettingsPb::set_spacecraftcson(::google::protobuf::int32 value) {
   
   spacecraftcson_ = value;
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.spacecraftCSon)
 }
 
-// int64 planetCSon = 4;
+// int32 planetCSon = 4;
 inline void VizMessage_VizSettingsPb::clear_planetcson() {
-  planetcson_ = GOOGLE_LONGLONG(0);
+  planetcson_ = 0;
 }
-inline ::google::protobuf::int64 VizMessage_VizSettingsPb::planetcson() const {
+inline ::google::protobuf::int32 VizMessage_VizSettingsPb::planetcson() const {
   // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.planetCSon)
   return planetcson_;
 }
-inline void VizMessage_VizSettingsPb::set_planetcson(::google::protobuf::int64 value) {
+inline void VizMessage_VizSettingsPb::set_planetcson(::google::protobuf::int32 value) {
   
   planetcson_ = value;
   // @@protoc_insertion_point(field_set:vizProtobufferMessage.VizMessage.VizSettingsPb.planetCSon)
@@ -4968,94 +4959,154 @@ VizMessage_VizSettingsPb::keepoutincones() const {
   return keepoutincones_;
 }
 
-// repeated .vizProtobufferMessage.VizMessage.CameraOneSettings cameraOne = 7;
-inline int VizMessage_VizSettingsPb::cameraone_size() const {
-  return cameraone_.size();
+// .vizProtobufferMessage.VizMessage.CameraOneSettings cameraOne = 7;
+inline bool VizMessage_VizSettingsPb::has_cameraone() const {
+  return this != internal_default_instance() && cameraone_ != NULL;
 }
 inline void VizMessage_VizSettingsPb::clear_cameraone() {
-  cameraone_.Clear();
+  if (GetArenaNoVirtual() == NULL && cameraone_ != NULL) {
+    delete cameraone_;
+  }
+  cameraone_ = NULL;
 }
-inline const ::vizProtobufferMessage::VizMessage_CameraOneSettings& VizMessage_VizSettingsPb::cameraone(int index) const {
+inline const ::vizProtobufferMessage::VizMessage_CameraOneSettings& VizMessage_VizSettingsPb::cameraone() const {
+  const ::vizProtobufferMessage::VizMessage_CameraOneSettings* p = cameraone_;
   // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.cameraOne)
-  return cameraone_.Get(index);
+  return p != NULL ? *p : *reinterpret_cast<const ::vizProtobufferMessage::VizMessage_CameraOneSettings*>(
+      &::vizProtobufferMessage::_VizMessage_CameraOneSettings_default_instance_);
 }
-inline ::vizProtobufferMessage::VizMessage_CameraOneSettings* VizMessage_VizSettingsPb::mutable_cameraone(int index) {
+inline ::vizProtobufferMessage::VizMessage_CameraOneSettings* VizMessage_VizSettingsPb::release_cameraone() {
+  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.VizSettingsPb.cameraOne)
+  
+  ::vizProtobufferMessage::VizMessage_CameraOneSettings* temp = cameraone_;
+  cameraone_ = NULL;
+  return temp;
+}
+inline ::vizProtobufferMessage::VizMessage_CameraOneSettings* VizMessage_VizSettingsPb::mutable_cameraone() {
+  
+  if (cameraone_ == NULL) {
+    cameraone_ = new ::vizProtobufferMessage::VizMessage_CameraOneSettings;
+  }
   // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.VizSettingsPb.cameraOne)
-  return cameraone_.Mutable(index);
-}
-inline ::vizProtobufferMessage::VizMessage_CameraOneSettings* VizMessage_VizSettingsPb::add_cameraone() {
-  // @@protoc_insertion_point(field_add:vizProtobufferMessage.VizMessage.VizSettingsPb.cameraOne)
-  return cameraone_.Add();
-}
-inline ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_CameraOneSettings >*
-VizMessage_VizSettingsPb::mutable_cameraone() {
-  // @@protoc_insertion_point(field_mutable_list:vizProtobufferMessage.VizMessage.VizSettingsPb.cameraOne)
-  return &cameraone_;
-}
-inline const ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_CameraOneSettings >&
-VizMessage_VizSettingsPb::cameraone() const {
-  // @@protoc_insertion_point(field_list:vizProtobufferMessage.VizMessage.VizSettingsPb.cameraOne)
   return cameraone_;
 }
+inline void VizMessage_VizSettingsPb::set_allocated_cameraone(::vizProtobufferMessage::VizMessage_CameraOneSettings* cameraone) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == NULL) {
+    delete cameraone_;
+  }
+  if (cameraone) {
+    ::google::protobuf::Arena* submessage_arena = NULL;
+    if (message_arena != submessage_arena) {
+      cameraone = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, cameraone, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  cameraone_ = cameraone;
+  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.VizSettingsPb.cameraOne)
+}
 
-// repeated .vizProtobufferMessage.VizMessage.CameraTwoSettings cameraTwo = 8;
-inline int VizMessage_VizSettingsPb::cameratwo_size() const {
-  return cameratwo_.size();
+// .vizProtobufferMessage.VizMessage.CameraTwoSettings cameraTwo = 8;
+inline bool VizMessage_VizSettingsPb::has_cameratwo() const {
+  return this != internal_default_instance() && cameratwo_ != NULL;
 }
 inline void VizMessage_VizSettingsPb::clear_cameratwo() {
-  cameratwo_.Clear();
+  if (GetArenaNoVirtual() == NULL && cameratwo_ != NULL) {
+    delete cameratwo_;
+  }
+  cameratwo_ = NULL;
 }
-inline const ::vizProtobufferMessage::VizMessage_CameraTwoSettings& VizMessage_VizSettingsPb::cameratwo(int index) const {
+inline const ::vizProtobufferMessage::VizMessage_CameraTwoSettings& VizMessage_VizSettingsPb::cameratwo() const {
+  const ::vizProtobufferMessage::VizMessage_CameraTwoSettings* p = cameratwo_;
   // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.cameraTwo)
-  return cameratwo_.Get(index);
+  return p != NULL ? *p : *reinterpret_cast<const ::vizProtobufferMessage::VizMessage_CameraTwoSettings*>(
+      &::vizProtobufferMessage::_VizMessage_CameraTwoSettings_default_instance_);
 }
-inline ::vizProtobufferMessage::VizMessage_CameraTwoSettings* VizMessage_VizSettingsPb::mutable_cameratwo(int index) {
+inline ::vizProtobufferMessage::VizMessage_CameraTwoSettings* VizMessage_VizSettingsPb::release_cameratwo() {
+  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.VizSettingsPb.cameraTwo)
+  
+  ::vizProtobufferMessage::VizMessage_CameraTwoSettings* temp = cameratwo_;
+  cameratwo_ = NULL;
+  return temp;
+}
+inline ::vizProtobufferMessage::VizMessage_CameraTwoSettings* VizMessage_VizSettingsPb::mutable_cameratwo() {
+  
+  if (cameratwo_ == NULL) {
+    cameratwo_ = new ::vizProtobufferMessage::VizMessage_CameraTwoSettings;
+  }
   // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.VizSettingsPb.cameraTwo)
-  return cameratwo_.Mutable(index);
-}
-inline ::vizProtobufferMessage::VizMessage_CameraTwoSettings* VizMessage_VizSettingsPb::add_cameratwo() {
-  // @@protoc_insertion_point(field_add:vizProtobufferMessage.VizMessage.VizSettingsPb.cameraTwo)
-  return cameratwo_.Add();
-}
-inline ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_CameraTwoSettings >*
-VizMessage_VizSettingsPb::mutable_cameratwo() {
-  // @@protoc_insertion_point(field_mutable_list:vizProtobufferMessage.VizMessage.VizSettingsPb.cameraTwo)
-  return &cameratwo_;
-}
-inline const ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_CameraTwoSettings >&
-VizMessage_VizSettingsPb::cameratwo() const {
-  // @@protoc_insertion_point(field_list:vizProtobufferMessage.VizMessage.VizSettingsPb.cameraTwo)
   return cameratwo_;
 }
+inline void VizMessage_VizSettingsPb::set_allocated_cameratwo(::vizProtobufferMessage::VizMessage_CameraTwoSettings* cameratwo) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == NULL) {
+    delete cameratwo_;
+  }
+  if (cameratwo) {
+    ::google::protobuf::Arena* submessage_arena = NULL;
+    if (message_arena != submessage_arena) {
+      cameratwo = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, cameratwo, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  cameratwo_ = cameratwo;
+  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.VizSettingsPb.cameraTwo)
+}
 
-// repeated .vizProtobufferMessage.VizMessage.PlanetCameraSettings planetCamera = 9;
-inline int VizMessage_VizSettingsPb::planetcamera_size() const {
-  return planetcamera_.size();
+// .vizProtobufferMessage.VizMessage.PlanetCameraSettings planetCamera = 9;
+inline bool VizMessage_VizSettingsPb::has_planetcamera() const {
+  return this != internal_default_instance() && planetcamera_ != NULL;
 }
 inline void VizMessage_VizSettingsPb::clear_planetcamera() {
-  planetcamera_.Clear();
+  if (GetArenaNoVirtual() == NULL && planetcamera_ != NULL) {
+    delete planetcamera_;
+  }
+  planetcamera_ = NULL;
 }
-inline const ::vizProtobufferMessage::VizMessage_PlanetCameraSettings& VizMessage_VizSettingsPb::planetcamera(int index) const {
+inline const ::vizProtobufferMessage::VizMessage_PlanetCameraSettings& VizMessage_VizSettingsPb::planetcamera() const {
+  const ::vizProtobufferMessage::VizMessage_PlanetCameraSettings* p = planetcamera_;
   // @@protoc_insertion_point(field_get:vizProtobufferMessage.VizMessage.VizSettingsPb.planetCamera)
-  return planetcamera_.Get(index);
+  return p != NULL ? *p : *reinterpret_cast<const ::vizProtobufferMessage::VizMessage_PlanetCameraSettings*>(
+      &::vizProtobufferMessage::_VizMessage_PlanetCameraSettings_default_instance_);
 }
-inline ::vizProtobufferMessage::VizMessage_PlanetCameraSettings* VizMessage_VizSettingsPb::mutable_planetcamera(int index) {
+inline ::vizProtobufferMessage::VizMessage_PlanetCameraSettings* VizMessage_VizSettingsPb::release_planetcamera() {
+  // @@protoc_insertion_point(field_release:vizProtobufferMessage.VizMessage.VizSettingsPb.planetCamera)
+  
+  ::vizProtobufferMessage::VizMessage_PlanetCameraSettings* temp = planetcamera_;
+  planetcamera_ = NULL;
+  return temp;
+}
+inline ::vizProtobufferMessage::VizMessage_PlanetCameraSettings* VizMessage_VizSettingsPb::mutable_planetcamera() {
+  
+  if (planetcamera_ == NULL) {
+    planetcamera_ = new ::vizProtobufferMessage::VizMessage_PlanetCameraSettings;
+  }
   // @@protoc_insertion_point(field_mutable:vizProtobufferMessage.VizMessage.VizSettingsPb.planetCamera)
-  return planetcamera_.Mutable(index);
-}
-inline ::vizProtobufferMessage::VizMessage_PlanetCameraSettings* VizMessage_VizSettingsPb::add_planetcamera() {
-  // @@protoc_insertion_point(field_add:vizProtobufferMessage.VizMessage.VizSettingsPb.planetCamera)
-  return planetcamera_.Add();
-}
-inline ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_PlanetCameraSettings >*
-VizMessage_VizSettingsPb::mutable_planetcamera() {
-  // @@protoc_insertion_point(field_mutable_list:vizProtobufferMessage.VizMessage.VizSettingsPb.planetCamera)
-  return &planetcamera_;
-}
-inline const ::google::protobuf::RepeatedPtrField< ::vizProtobufferMessage::VizMessage_PlanetCameraSettings >&
-VizMessage_VizSettingsPb::planetcamera() const {
-  // @@protoc_insertion_point(field_list:vizProtobufferMessage.VizMessage.VizSettingsPb.planetCamera)
   return planetcamera_;
+}
+inline void VizMessage_VizSettingsPb::set_allocated_planetcamera(::vizProtobufferMessage::VizMessage_PlanetCameraSettings* planetcamera) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == NULL) {
+    delete planetcamera_;
+  }
+  if (planetcamera) {
+    ::google::protobuf::Arena* submessage_arena = NULL;
+    if (message_arena != submessage_arena) {
+      planetcamera = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, planetcamera, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  planetcamera_ = planetcamera;
+  // @@protoc_insertion_point(field_set_allocated:vizProtobufferMessage.VizMessage.VizSettingsPb.planetCamera)
 }
 
 // -------------------------------------------------------------------

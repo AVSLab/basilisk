@@ -179,6 +179,87 @@ def createConeInOut(viz, **kwargs):
     viz.settings.coneList = vizInterface.KeepOutInConeConfig(coneInOutList)
     return
 
+def createCameraViewPanel(viz, camName, **kwargs):
+    if camName == "One":
+        cam = viz.settings.cameraOne
+    elif camName == "Two":
+        cam = viz.settings.cameraTwo
+    elif camName == "Planet":
+        cam = viz.settings.cameraPlanet
+    else:
+        print 'ERROR: camera name ' + camName + ' is not know.  Supported camera names are One, Two and Planet'
+        exit(1)
+
+    if kwargs.has_key('spacecraftName'):
+        scName = kwargs['spacecraftName']
+        if not isinstance(scName, basestring):
+            print 'ERROR: ' + camName + ' spacecraftName must be a string'
+            exit(1)
+        cam.spacecraftName = scName
+    else:
+        cam.spacecraftName = viz.spacecraftName
+
+    if kwargs.has_key('viewPanel'):
+        viewPanel = kwargs['viewPanel']
+        if not isinstance(viewPanel, bool):
+            print 'ERROR: ' + camName + ' viewPanel must be a bool'
+            exit(1)
+        cam.viewPanel = viewPanel
+
+    if kwargs.has_key('setView'):
+        setView = kwargs['setView']
+        if not isinstance(setView, int):
+            print 'ERROR: ' + camName + ' setView must be an integer'
+            exit(1)
+        if camName=="Planet":
+            if setView < 0 or setView > 2:
+                print 'ERROR: ' + camName + ' setView must be a number of [0,5]'
+                print '0 -> Nadir, 1 -> Orbit Normal, 2 -> Along Track'
+                exit(1)
+        else:
+            if setView < 0 or setView > 5:
+                print 'ERROR: ' + camName + ' setView must be a number of [0,5]'
+                print '0 -> +X, 1 -> -X, 2 -> +Y, 3 -> -Y, 4 -> +Z, 5 -> -Z'
+                exit(1)
+        cam.setView = setView
+    else:
+        print 'ERROR: ' + camName + ' setView must be a specified'
+        exit(1)
+
+    if kwargs.has_key('spacecraftVisible'):
+        spacecraftVisible = kwargs['spacecraftVisible']
+        if not isinstance(spacecraftVisible, bool):
+            print 'ERROR: ' + camName + ' spacecraftVisible must be a bool'
+            exit(1)
+        cam.spacecraftVisible = spacecraftVisible
+    else:
+        cam.spacecraftVisible = False
+
+    if kwargs.has_key('fieldOfView'):
+        fieldOfView = kwargs['fieldOfView']
+        if not isinstance(fieldOfView, float):
+            print 'ERROR: ' + camName + ' spacecraftVisible must be a float in degrees'
+            exit(1)
+        cam.fieldOfView = fieldOfView
+    else:
+        cam.fieldOfView = -1.0
+
+    if kwargs.has_key('targetBodyName'):
+        if camName=="Planet":
+            targetBodyName = kwargs['targetBodyName']
+            if not isinstance(targetBodyName, basestring):
+                print 'ERROR: ' + camName + ' targetBodyName must be a string'
+                exit(1)
+            cam.targetBodyName = targetBodyName
+        else:
+            print 'WARNING: targetBodyName is not used for camera view One and Two'
+    else:
+        if camName=="Planet":
+            print 'ERROR: targetBodyName must be a specified'
+            exit(1)
+
+    return
+
 
 
 def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
