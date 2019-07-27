@@ -52,8 +52,18 @@ typedef struct {
 }ThrClusterMap;
 
 typedef struct {
-    double      ambient;    //!< [-] Ambient background lighting. Should be a value between 0 and 1.  A value of -1 means it is not set.
-    bool        dataFresh;  //!< [-] flag indicating if the settings have been transmitted
+    std::string fromBodyName;   //!< [-] name of the body to start the line
+    std::string toBodyName;     //!< [-] name of the body to point the line towards
+    int lineColor[4];           //!< [0] desired RGBA as values between 0 and 255
+}PointLine;
+
+typedef struct {
+    double      ambient;        //!< [-] Ambient background lighting. Should be a value between 0 and 8.  A value of -1 means it is not set.
+    int32_t     orbitLinesOn;   // toogle for showing orbit lines (-1, 0, 1)
+    int32_t     spacecraftCSon; // toogle for showing spacecraft CS (-1, 0, 1)
+    int32_t     planetCSon;     // toogle for showing planet CS (-1, 0, 1)
+    std::vector<PointLine> pointLineList;   // vector of powerLine structures
+    bool        dataFresh;      //!< [-] flag indicating if the settings have been transmitted
 }VizSettings;
 
 /*! @brief Abstract class that is used to implement an effector impacting a GRAVITY body
