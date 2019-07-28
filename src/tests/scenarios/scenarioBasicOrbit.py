@@ -88,7 +88,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 #
 # Vizard Visualization Option
 # -----
-# If you wish to transmit the simulation data to the United based Vizard Visualization application,
+# If you wish to transmit the simulation data to the United based [Vizard](@ref vizard) Visualization application,
 # then uncomment the following
 # line (line 430 in the script) from the python scenario script.  This will cause the BSK simulation data to
 # be stored in a binary file inside the _VizFiles sub-folder with the scenario folder.  This file can be read in by
@@ -109,6 +109,9 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 # or decreased.  Further, some display elements such as thruster or reaction wheel panels are only visible if
 # such devices are being simulated in BSK.
 #
+# While Vizard has many visualization features that can be customized from within the application, many Vizard
+# settings can also be scripted from the Basilisk python script.  A complete discussion on these options and
+# features can be found the the [Vizard Settings](@ref vizardSettings) page.
 #
 # Simulation Scenario Setup Details
 # -----
