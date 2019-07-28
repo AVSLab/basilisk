@@ -617,6 +617,7 @@ class SimulationParameters():
         self.icfilename = icfilename
         self.verbose = verbose
         self.modifications = modifications
+        self.dispersionMag = {}
 
 
 class VariableRetentionParameters:
@@ -872,6 +873,7 @@ class SimulationExecutor:
 
             # build a list of the parameter and random seed modifications to make
             modifications = simParams.modifications
+            magnitudes = simParams.dispersionMag
 
             # we may want to disperse random seeds
             if simParams.shouldDisperseSeeds:
@@ -885,6 +887,7 @@ class SimulationExecutor:
                 name = disp.getName()
                 if name not in modifications:  # could be using a saved parameter.
                     modifications[name] = disp.generateString(simInstance)
+                    magnitudes[name] = disp.generateMagString()
 
             # if archiving, this run's parameters and random seeds are saved in its own json file
             if simParams.shouldArchiveParameters:
@@ -895,6 +898,8 @@ class SimulationExecutor:
                 else:
                     with open(simParams.filename + ".json", 'w') as outfile:
                         json.dump(modifications, outfile)
+                    with open(simParams.filename + "Mag.json", 'w') as outfileMag:
+                        json.dump(magnitudes, outfileMag)
 
             if simParams.configureFunction is not None:
                 if simParams.verbose:
