@@ -166,6 +166,14 @@ class Controller:
         """
         self.simParams.verbose = verbose
 
+    def setDispMagnitudeFile(self, magnitudes):
+        """ Save .txt with the magnitude of each dispersion in % or sigma away from mean
+        Args:
+            magnitudes: bool
+                Whether to save extra files for analysis.
+        """
+        self.simParams.saveDispMag = magnitudes
+
     def setShouldArchiveParameters(self, shouldArchiveParameters):
         self.simParams.shouldArchiveParameters = shouldArchiveParameters
 
@@ -485,7 +493,7 @@ class Controller:
 
         if self.simParams.shouldArchiveParameters:
             if os.path.exists(self.archiveDir):
-                shutil.rmtree(self.archiveDir)
+                shutil.rmtree(self.archiveDir, ignore_errors=True)
             os.mkdir(self.archiveDir)
             if self.simParams.verbose:
                 print("Archiving a copy of this simulation before running it in 'MonteCarlo.data'")
@@ -621,6 +629,7 @@ class SimulationParameters():
         self.verbose = verbose
         self.modifications = modifications
         self.dispersionMag = {}
+        self.saveDispMag = False
 
 
 class VariableRetentionParameters:
@@ -910,8 +919,10 @@ class SimulationExecutor:
                 else:
                     with open(simParams.filename + ".json", 'w') as outfile:
                         json.dump(modifications, outfile)
-                    with open(simParams.filename + "Mag.json", 'w') as outfileMag:
-                        json.dump(magnitudes, outfileMag)
+                    if simParams.saveDispMag:
+                        with open(simParams.filename + "mag.txt", 'w') as outfileMag:
+                            for k in sorted(magnitudes.keys()):
+                                outfileMag.write("'%s':'%s', \n" % (k, magnitudes[k]))
 
             if simParams.configureFunction is not None:
                 if simParams.verbose:
