@@ -23,6 +23,7 @@ def curve_per_df_component(df):
     :return:
     '''
     idx = pd.IndexSlice
+    df = df.interpolate(method = "linear")
     df_list = []
     for i in np.unique(df.columns.codes[1]):
         # Select all of the component
