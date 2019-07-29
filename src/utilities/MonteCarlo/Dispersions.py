@@ -69,7 +69,6 @@ class UniformDispersion(SingleVariableDispersion):
 
     def generate(self, sim):
         dispValue = random.uniform(self.bounds[0], self.bounds[1])
-
         mid = (self.bounds[1] + self.bounds[0])/2.
         scale = self.bounds[1] - mid
         self.magnitude.append(str(round((dispValue - mid)/scale*100,2)) + " %")
