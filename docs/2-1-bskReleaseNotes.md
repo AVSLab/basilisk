@@ -23,6 +23,9 @@ We are very excited by the great capabilities that this software already has, an
     <li>Cleaned up `VizInterface` to only subscribe to BSK messages that are already created</li>
     <li>Adjust `simpleNav` to only subscribe to the sun message it is already created</li>
     <li>Update all the tutorial scenario and bskSim simulations to use the updated `vizSupport.enableUnityVisualization` method</li>
+    <li>Fixed and cleaned up bugs in heading and opnav UKFs, pixelLineConverter, houghCircles, and vizInterface</li>
+    <li>Added validity falg to OpNav messages in order to exclude potential measurements</li>
+    <li>Fixed camera orientation given the Unity camera frame definition</li>
 </ul>
 
 
