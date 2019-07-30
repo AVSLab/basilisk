@@ -27,6 +27,7 @@
 #include "sensors/sun_sensor/coarse_sun_sensor.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/bsk_Print.h"
+#include "utilities/rigidBodyKinematics.h"
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
@@ -423,13 +424,18 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
         
         /*! Write camera output msg */
         if (cameraConfMsgId.msgID != -1 && cameraConfMsgId.dataFresh){
+            /*! This corrective rotation allows unity to place the camera as is expected by the python setting. Unity has a -x pointing camera, with z vertical on the sensor, and y horizontal which is not the OpNav frame: z point, x horizontal, y vertical (down) */
+            double sigma_CuC[3], sigma_BCu[3], unityCameraMRP[3]; /*! Cu is the unity Camera frame */
+            v3Scale(-1, this->cameraConfigMessage.sigma_CB, sigma_BCu);
+            v3Set(1./3, 1./3, -1./3, sigma_CuC);
+            addMRP(sigma_BCu, sigma_CuC, unityCameraMRP);
             vizProtobufferMessage::VizMessage::CameraConfig* camera = message->add_cameras();
             for (int j=0; j<3; j++){
                 if (j < 2){
                 camera->add_resolution(this->cameraConfigMessage.resolution[j]);
                 camera->add_sensorsize(this->cameraConfigMessage.sensorSize[j]);
                 }
-                camera->add_cameradir_b(this->cameraConfigMessage.sigma_BC[j]);
+                camera->add_cameradir_b(unityCameraMRP[j]);
                 camera->add_camerapos_b(this->cameraConfigMessage.cameraPos_B[j]);            }
             camera->set_renderrate(this->cameraConfigMessage.renderRate);
             camera->set_cameraid(this->cameraConfigMessage.cameraID);
@@ -552,10 +558,13 @@ void VizInterface::WriteProtobuffer(uint64_t CurrentSimNanos)
                 
                 /*! -- Write out the image information to the Image message */
                 CameraImageMsg imageData;
+                imageData.timeTag = CurrentSimNanos;
+                imageData.valid = 0;
                 imageData.imagePointer = imagePoint;
                 imageData.imageBufferLength = imageBufferLength;
                 imageData.cameraID = this->cameraConfigMessage.cameraID;
                 imageData.imageType = 4;
+                if (imageBufferLength>0){imageData.valid = 1;}
                 SystemMessaging::GetInstance()->WriteMessage(this->imageOutMsgID, CurrentSimNanos, sizeof(CameraImageMsg), reinterpret_cast<uint8_t *>(&imageData), this->moduleID);
 
                 /*! -- Clean the messages to avoid memory leaks */

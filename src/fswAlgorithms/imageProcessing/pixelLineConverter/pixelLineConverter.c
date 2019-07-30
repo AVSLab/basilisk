@@ -32,8 +32,8 @@
 void SelfInit_pixelLineConverter(PixelLineConvertData *configData, uint64_t moduleID)
 {
     configData->stateOutMsgID = CreateNewMessage(configData->opNavOutMsgName,
-                                                 sizeof(OpnavFswMsg),
-                                                 "OpnavFswMsg",
+                                                 sizeof(OpNavFswMsg),
+                                                 "OpNavFswMsg",
                                                  moduleID);
 }
 
@@ -70,16 +70,16 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
 {
     uint64_t timeOfMsgWritten;
     uint32_t sizeOfMsgWritten;
-    double dcm_NC[3][3];
-    double sigma_NC[3];
+    double dcm_NC[3][3], dcm_CB[3][3], dcm_BN[3][3];
+    double reCentered[2];
     CameraConfigMsg cameraSpecs;
     CirclesOpNavMsg circlesIn;
-    OpnavFswMsg opNavMsgOut;
+    OpNavFswMsg opNavMsgOut;
     NavAttIntMsg attInfo;
     memset(&cameraSpecs, 0x0, sizeof(CameraConfigMsg));
     memset(&attInfo, 0x0, sizeof(NavAttIntMsg));
     memset(&circlesIn, 0x0, sizeof(CirclesOpNavMsg));
-    memset(&opNavMsgOut, 0x0, sizeof(OpnavFswMsg));
+    memset(&opNavMsgOut, 0x0, sizeof(OpNavFswMsg));
 
     /*! - read input messages */
     ReadMessage(configData->cameraConfigMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
@@ -89,9 +89,19 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     ReadMessage(configData->attInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(NavAttIntMsg), &attInfo, moduleID);
     
-    v3Scale(-1, attInfo.sigma_BN, attInfo.sigma_BN); // sigma_NB now
-    addMRP(attInfo.sigma_BN, cameraSpecs.sigma_BC, sigma_NC); // sigma_NC now
-    MRP2C(sigma_NC, dcm_NC);
+    if (circlesIn.valid == 0){
+        opNavMsgOut.valid = 0;
+        WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
+                     &opNavMsgOut, moduleID);
+        return;
+    }
+    reCentered[0] = circlesIn.circlesCenters[0] - cameraSpecs.resolution[0]/2 + 0.5;
+    reCentered[1] = circlesIn.circlesCenters[1] - cameraSpecs.resolution[1]/2 + 0.5;
+    configData->planetTarget = circlesIn.planetIds[0];
+    MRP2C(cameraSpecs.sigma_CB, dcm_CB);
+    MRP2C(attInfo.sigma_BN, dcm_BN);
+    m33tMultM33(dcm_CB, dcm_BN, dcm_NC);
+    m33Transpose(dcm_NC, dcm_NC);
 
     /*! - Find pixel size using camera specs */
     double X, Y;
@@ -106,18 +116,27 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     double covar_map_C[3*3], covar_In_C[3*3];
     double covar_In_N[3*3];
     double x_map, y_map, rho_map;
-    rtilde_C[0] = (X*circlesIn.circlesCenters[0])/cameraSpecs.focalLength;
-    rtilde_C[1] = (Y*circlesIn.circlesCenters[1])/cameraSpecs.focalLength;
-    v2Set(rtilde_C[0], rtilde_C[1], rHat_C);
-    rHat_C[2] = 1.0;
+    rtilde_C[0] = (X*reCentered[0])/cameraSpecs.focalLength;
+    rtilde_C[1] = (Y*reCentered[1])/cameraSpecs.focalLength;
+    v3Set(rtilde_C[0], rtilde_C[1], 1.0, rHat_C);
+    v3Scale(-1, rHat_C, rHat_C);
     v3Normalize(rHat_C, rHat_C);
     
     m33MultV3(dcm_NC, rHat_C, rHat_N);
 
     if(configData->planetTarget > 0){
-        if(configData->planetTarget ==1){planetRad = REQ_EARTH;} //in km
-        if(configData->planetTarget ==2){planetRad = REQ_MARS;} //in km
-        if(configData->planetTarget ==3){planetRad = REQ_JUPITER;} //in km
+        if(configData->planetTarget ==1){
+            planetRad = REQ_EARTH;//in km
+            opNavMsgOut.planetID = configData->planetTarget;
+        }
+        if(configData->planetTarget ==2){
+            planetRad = REQ_MARS;//in km
+            opNavMsgOut.planetID = configData->planetTarget;
+        }
+        if(configData->planetTarget ==3){
+            planetRad = REQ_JUPITER;//in km
+            opNavMsgOut.planetID = configData->planetTarget;
+        }
         
         denom = sin(atan(X*circlesIn.circlesRadii[0]/cameraSpecs.focalLength));
         rNorm = planetRad/denom; //in km
@@ -139,10 +158,15 @@ void Update_pixelLineConverter(PixelLineConvertData *configData, uint64_t callTi
     }
     
     /*! - write output message */
-    v3Scale(rNorm, rHat_N, opNavMsgOut.r_N);
+    v3Scale(rNorm*1E3, rHat_N, opNavMsgOut.r_N); //in m
+    v3Scale(rNorm*1E3, rHat_C, opNavMsgOut.r_B); //in m
     mCopy(covar_In_N, 3, 3, opNavMsgOut.covar_N);
+    vScale(1E6, opNavMsgOut.covar_N, 3*3, opNavMsgOut.covar_N);//in m
+    mCopy(covar_In_C, 3, 3, opNavMsgOut.covar_B);
+    vScale(1E6, opNavMsgOut.covar_B, 3*3, opNavMsgOut.covar_B);//in m
     opNavMsgOut.timeTag = circlesIn.timeTag;
-    WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpnavFswMsg),
+    opNavMsgOut.valid =1;
+    WriteMessage(configData->stateOutMsgID, callTime, sizeof(OpNavFswMsg),
                  &opNavMsgOut, moduleID);
 
     return;

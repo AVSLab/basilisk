@@ -115,7 +115,7 @@ def relOD_method_test(show_plots):
     mu = 42828.314
     # Measurement Model Test
     data = relativeODuKF.RelODuKFConfig()
-    msg = relativeODuKF.OpnavFswMsg()
+    msg = relativeODuKF.OpNavFswMsg()
     msg.r_N = [300, 200, 100]
     data.planetId = 2
     data.opNavInMsg = msg
@@ -209,7 +209,7 @@ def StateUpdateRelOD(show_plots):
     for i in range(1, len(time)):
         energy[i] = - mu / (2 * orbitalMotion.rv2elem(mu, expected[i, 1:4], expected[i, 4:]).a)
 
-    inputData = relativeODuKF.OpnavFswMsg()
+    inputData = relativeODuKF.OpNavFswMsg()
     inputMessageSize = inputData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.opNavInMsgName,
@@ -223,10 +223,11 @@ def StateUpdateRelOD(show_plots):
     for i in range(t1):
         if i > 0 and i % 50 == 0:
             inputData.timeTag = macros.sec2nano(i * dt)
-            inputData.r_N = expected[i,1:4] + np.random.normal(0, 5*1E3, 3)
-            inputData.covar_N = [5.*1E6, 0.,0.,
-                                 0., 5.*1E6, 0.,
-                                 0., 0., 5.*1E6]
+            inputData.r_N = expected[i,1:4] + np.random.normal(0, 5*1E-2, 3)
+            inputData.valid = 1
+            inputData.covar_N = [5.*1E-2, 0.,0.,
+                                 0., 5.*1E-2, 0.,
+                                 0., 0., 5.*1E-2]
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.opNavInMsgName,
                                                   inputMessageSize,
                                                   unitTestSim.TotalSim.CurrentNanos,
@@ -244,10 +245,11 @@ def StateUpdateRelOD(show_plots):
     for i in range(t1, multT1*t1):
         if i % 50 == 0:
             inputData.timeTag = macros.sec2nano(i * dt + 1)
-            inputData.r_N = expected[i,1:4] +  np.random.normal(0, 5*1E3, 3)
-            inputData.covar_N = [5.*1E6, 0.,0.,
-                                 0., 5.*1E6, 0.,
-                                 0., 0., 5.*1E6]
+            inputData.r_N = expected[i,1:4] +  np.random.normal(0, 5*1E-2, 3)
+            inputData.valid = 1
+            inputData.covar_N = [5.*1E-2, 0.,0.,
+                                 0., 5.*1E-2, 0.,
+                                 0., 0., 5.*1E-2]
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.opNavInMsgName,
                                                   inputMessageSize,
                                                   unitTestSim.TotalSim.CurrentNanos,
@@ -265,7 +267,8 @@ def StateUpdateRelOD(show_plots):
     FilterPlots.EnergyPlot(time, energy, 'Update', show_plots)
     FilterPlots.StateCovarPlot(stateLog, covarLog, 'Update', show_plots)
     FilterPlots.StatePlot(diff, 'Update', show_plots)
-    FilterPlots.PostFitResiduals(postFitLog, np.sqrt(5*1E6), 'Update', show_plots)
+    FilterPlots.plot_TwoOrbits(expected[:,0:4], stateLog[:,0:4])
+    FilterPlots.PostFitResiduals(postFitLog, np.sqrt(5*1E-2*1E6), 'Update', show_plots)
 
     for i in range(6):
         if (covarLog[t1*multT1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i] / 100):
@@ -339,6 +342,7 @@ def StatePropRelOD(show_plots):
 
     diff = np.copy(stateLog)
     diff[:,1:]-=expected[:,1:]
+    FilterPlots.plot_TwoOrbits(expected[:,0:4], stateLog[:,0:4])
     FilterPlots.EnergyPlot(time, energy, 'Prop', show_plots)
     FilterPlots.StateCovarPlot(stateLog, covarLog, 'Prop', show_plots)
     FilterPlots.StatePlot(diff, 'Prop', show_plots)
@@ -361,5 +365,6 @@ def StatePropRelOD(show_plots):
 
 
 if __name__ == "__main__":
-    # test_all_relOD_kf(True)
-    relOD_method_test(True)
+    # relOD_method_test(True)
+    # StatePropRelOD(True)
+    StateUpdateRelOD(True)

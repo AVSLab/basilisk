@@ -25,7 +25,7 @@
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/headingFilterFswMsg.h"
-#include "fswMessages/opnavFswMsg.h"
+#include "fswMessages/opNavFswMsg.h"
 
 
 /*! \defgroup headingSuKF
@@ -80,7 +80,7 @@ typedef struct {
 
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
 	NavAttIntMsg outputHeading;   /*!< -- Output heading estimate data */
-    OpnavFswMsg opnavInBuffer;
+    OpNavFswMsg opnavInBuffer;
     
     int32_t opnavDataOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/

@@ -169,6 +169,7 @@ def houghCirclesTest(show_plots, image, blur, maxCircles , minDist , minRad, can
         output_image.save("result_"+ image)
 
     if show_plots:
+        print imageProcCircles[0]
         output_image.show()
 
 

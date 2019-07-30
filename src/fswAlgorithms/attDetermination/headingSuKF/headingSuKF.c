@@ -35,7 +35,7 @@ void SelfInit_headingSuKF(HeadingSuKFConfig *configData, uint64_t moduleID)
 {
     /*! - Create output message for module */
 	configData->opnavDataOutMsgId = CreateNewMessage(configData->opnavOutMsgName,
-		sizeof(OpnavFswMsg), "OpnavFswMsg", moduleID);
+		sizeof(OpNavFswMsg), "OpNavFswMsg", moduleID);
     /*! - Create filter states output message which is mostly for debug*/
     configData->filtDataOutMsgId = CreateNewMessage(configData->filtDataOutMsgName,
         sizeof(HeadingFilterFswMsg), "HeadingFilterFswMsg", moduleID);
@@ -51,7 +51,7 @@ void CrossInit_headingSuKF(HeadingSuKFConfig *configData, uint64_t moduleID)
 {
     /*! - Find the message ID for the coarse sun sensor data message */
     configData->opnavDataInMsgId = subscribeToMessage(configData->opnavDataInMsgName,
-        sizeof(OpnavFswMsg), moduleID);
+        sizeof(OpNavFswMsg), moduleID);
     
 }
 
@@ -147,16 +147,16 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     uint64_t ClockTime;
     uint32_t ReadSize;
     HeadingFilterFswMsg headingDataOutBuffer;
-    OpnavFswMsg opnavOutputBuffer;
+    OpNavFswMsg opnavOutputBuffer;
     
     /*! - Read the input parsed heading sensor data message*/
     ClockTime = 0;
     ReadSize = 0;
-    memset(&(configData->opnavInBuffer), 0x0, sizeof(OpnavFswMsg));
+    memset(&(configData->opnavInBuffer), 0x0, sizeof(OpNavFswMsg));
     v3SetZero(configData->obs);
     v3SetZero(configData->postFits);
     ReadMessage(configData->opnavDataInMsgId, &ClockTime, &ReadSize,
-        sizeof(OpnavFswMsg), (void*) (&(configData->opnavInBuffer)), moduleID);
+        sizeof(OpNavFswMsg), (void*) (&(configData->opnavInBuffer)), moduleID);
     
     v3Normalize(&configData->state[0], heading_hat);
     
@@ -215,7 +215,7 @@ void Update_headingSuKF(HeadingSuKFConfig *configData, uint64_t callTime,
     opnavOutputBuffer.timeTag = configData->timeTag;
     m33Copy(RECAST3X3 configData->covar, RECAST3X3 opnavOutputBuffer.covar_B);
     v3Copy(&states_BN[0], opnavOutputBuffer.r_B);
-    WriteMessage(configData->opnavDataOutMsgId, callTime, sizeof(OpnavFswMsg),
+    WriteMessage(configData->opnavDataOutMsgId, callTime, sizeof(OpNavFswMsg),
                  &opnavOutputBuffer, moduleID);
     
     return;

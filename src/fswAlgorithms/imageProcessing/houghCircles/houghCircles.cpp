@@ -34,6 +34,7 @@
 HoughCircles::HoughCircles()
 {
     this->filename = "";
+    this->saveImages = 0;
     this->blurrSize = 5;
     this->dpValue = 1;
     this->OutputBufferCount = 2;
@@ -92,13 +93,14 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     CameraImageMsg imageBuffer;
     CirclesOpNavMsg circleBuffer;
     cv::Mat imageCV, blurred;
-    filenamePre = "PreprocessedImage_" + std::to_string(CurrentSimNanos);
+    int circlesFound=0;
+    filenamePre = "PreprocessedImage_" + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
 
     /*! - Read in the bitmap*/
     SingleMessageHeader localHeader;
     memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
     memset(&circleBuffer, 0x0, sizeof(CirclesOpNavMsg));
-    if(this->imageInMsgID >= 0)
+    if(this->imageInMsgName != "")
     {
         SystemMessaging::GetInstance()->ReadMessage(this->imageInMsgID, &localHeader,
                                                     sizeof(CameraImageMsg), reinterpret_cast<uint8_t*>(&imageBuffer), this->moduleID);
@@ -108,11 +110,18 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     if (!this->filename.empty()){
         imageCV = imread(this->filename, cv::IMREAD_COLOR);
     }
-    else{
+    else if(imageBuffer.valid == 1 && imageBuffer.timeTag >= CurrentSimNanos){
         /*! - Recast image pointer to CV type*/
         std::vector<unsigned char> vectorBuffer((char*)imageBuffer.imagePointer, (char*)imageBuffer.imagePointer + imageBuffer.imageBufferLength);
         imageCV = cv::imdecode(vectorBuffer, cv::IMREAD_COLOR);
+        if (this->saveImages == 1){
+            cv::imwrite(filenamePre, imageCV);
+        }
     }
+    else{
+        /*! - If no image is present, write zeros in message */
+        SystemMessaging::GetInstance()->WriteMessage(this->opnavCirclesOutMsgID, CurrentSimNanos, sizeof(CirclesOpNavMsg), reinterpret_cast<uint8_t *>(&circleBuffer), this->moduleID);
+        return;}
     cv::cvtColor( imageCV, imageCV, CV_BGR2GRAY);
     cv::threshold(imageCV, imageCV, 15, 255, cv::THRESH_BINARY_INV);
     cv::blur(imageCV, blurred, cv::Size(this->blurrSize,this->blurrSize) );
@@ -128,10 +137,21 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
         circleBuffer.circlesCenters[2*i] = circles[i][0];
         circleBuffer.circlesCenters[2*i+1] = circles[i][1];
         circleBuffer.circlesRadii[i] = circles[i][2];
+        for(int j=0; j<3; j++){
+            circleBuffer.uncertainty[j+3*j] = 3;
+        }
+        circleBuffer.uncertainty[2+3*2] = 1;
+        circlesFound+=1;
     }
+    /*!- If no circles are found do not validate the image as a measurement */
+    if (circlesFound >0){
+        circleBuffer.valid = 1;
+        circleBuffer.planetIds[0] = 2;
+    }
+    
     SystemMessaging::GetInstance()->WriteMessage(this->opnavCirclesOutMsgID, CurrentSimNanos, sizeof(CirclesOpNavMsg), reinterpret_cast<uint8_t *>(&circleBuffer), this->moduleID);
     
-    free(imageBuffer.imagePointer);
+//    free(imageBuffer.imagePointer);
     return;
 }
 

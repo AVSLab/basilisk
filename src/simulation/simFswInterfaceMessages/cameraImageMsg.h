@@ -22,6 +22,7 @@
 /*! @brief Structure used to define the output definition for attitude guidance*/
 typedef struct {
     double timeTag;         //!< --[s]   Current vehicle time-tag associated with measurements*/
+    int valid;          //!< --  A valid image is present for 1, 0 if not*/
     int64_t cameraID;          //!< -- [-]   ID of the camera that took the snapshot*/
     void* imagePointer;        //!< -- Pointer to the image
     int32_t imageBufferLength; //!< -- Length of the buffer for recasting

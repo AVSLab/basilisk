@@ -26,10 +26,16 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('fswAlgorithms')
 
-
-
-
+import matplotlib as mpl
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.patches import Ellipse
+
+
+color_x = 'dodgerblue'
+color_y = 'salmon'
+color_z = 'lightgreen'
+m2km = 1.0 / 1000.0
 
 def StatePlot(x, testName, show_plots):
 
@@ -207,3 +213,17 @@ def PostFitResiduals(Res, noise, testName, show_plots):
     if show_plots:
         plt.show()
     plt.close()
+
+def plot_TwoOrbits(r_BN, r_BN2):
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
+    ax.set_xlabel('$R_x$, km')
+    ax.set_ylabel('$R_y$, km')
+    ax.set_zlabel('$R_z$, km')
+    ax.plot(r_BN[:, 1] * m2km, r_BN[:, 2] * m2km, r_BN[:, 3] * m2km, color_x, label="True orbit")
+    for i in range(len(r_BN2[:,0])):
+        if np.abs(r_BN2[i, 1])>0 or np.abs(r_BN2[i, 2])>0:
+            ax.scatter(r_BN2[i, 1] * m2km, r_BN2[i, 2] * m2km, r_BN2[i, 3] * m2km, color=color_y, label="Meas orbit")
+    ax.scatter(0, 0, color='r')
+    ax.set_title('Spacecraft Orbits')
+    return

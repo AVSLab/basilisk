@@ -367,7 +367,7 @@ def StateUpdateSunLine(show_plots):
 
     testVector = np.array([0.9, 0.1, 0.02])
     testOmega = np.array([0.01, 0.05, 0.001])
-    inputData = headingSuKF.OpnavFswMsg()
+    inputData = headingSuKF.OpNavFswMsg()
     inputMessageSize = inputData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                       moduleConfig.opnavDataInMsgName,

@@ -25,7 +25,7 @@
 #include "messaging/static_messaging.h"
 #include "simFswInterfaceMessages/navTransIntMsg.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
-#include "fswMessages/opnavFswMsg.h"
+#include "fswMessages/opNavFswMsg.h"
 #include "fswMessages/opNavFilterFswMsg.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
@@ -95,7 +95,7 @@ typedef struct {
     double timeTagOut;       //!< [s] Output time-tag information
     double maxTimeJump;      //!< [s] Maximum time jump to allow in propagation
     
-    OpnavFswMsg opNavInMsg; //!< [-] ST sensor data read in from message bus
+    OpNavFswMsg opNavInMsg; //!< [-] ST sensor data read in from message bus
     int32_t navStateOutMsgId;     //!< -- Id for the outgoing body estimate message
     int32_t filtDataOutMsgId;     //!< [-] Id for the filter data output message
     int32_t opNavInMsgId;     //!< [-] Id for the incoming mass properties message
