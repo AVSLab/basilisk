@@ -27,6 +27,7 @@
 #
 
 import os
+import sys
 import random
 import traceback
 import shutil
@@ -54,6 +55,7 @@ class Controller:
         self.executionCount = 0
         self.ICrunFlag = False
         self.icDirectory = ""
+        self.archiveDir = None
         self.numProcess = mp.cpu_count()
 
         self.simParams = SimulationParameters(
@@ -337,6 +339,20 @@ class Controller:
         self.dataWriter = DataWriter(self.dataOutQueue)
         self.dataWriter.daemon = False
 
+        # If archiving the rerun data -- make sure not to delete the original data!
+        if self.archiveDir is not None:
+            if self.archiveDir != self.icDirectory:
+                if os.path.exists(self.archiveDir):
+                    shutil.rmtree(self.archiveDir)
+                os.mkdir(self.archiveDir)
+                self.dataWriter.setLogDir(self.archiveDir)
+                self.dataWriter.start()
+            else:
+                print "WARNING: The archive directory is set as the icDirectory. Proceeding would have overwriten all data within: " + self.archiveDir + " with the select rerun cases! Exiting.\n"
+                sys.exit("Change the archive directory to a new location when rerunning cases.")
+        else:
+            print "No archive data specified; no data will be logged to dataframes"
+
         jobsFinished = 0  # keep track of what simulations have finished
 
         # The simulation executor is responsible for executing simulation given a simulation's parameters
@@ -390,6 +406,13 @@ class Controller:
                     pool.terminate()
                 finally:
                     pool.join()
+
+        # If the data was archiving, close the queue. 
+        if self.archiveDir is not None and self.archiveDir != self.icDirectory:
+            while not self.dataOutQueue.empty():
+               time.sleep(1)
+            self.dataOutQueue.put((None, None, True))
+            time.sleep(1)
 
         # if there are failures
         if len(failed) > 0:
