@@ -32,7 +32,6 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 bskPath = path.split('src')[0]
-print bskPath
 
 
 # Import all of the modules that we are going to be called in this simulation
@@ -149,7 +148,6 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
                                    planetStateMsg)
         testModule.planetPosInMsgName = planetStateMsgName
 
-
     # add spacecraft to environment model
     sc0StateMsgName = "sc0_state"
     sc1StateMsgName = "sc1_state"
@@ -164,7 +162,7 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
     r0 = (orbitalMotion.REQ_EARTH + Height) * 1000.0  # meters
     phi = Lat * macros.D2R
     long = Lon * macros.D2R
-    r0P = np.array([np.cos(phi)*np.cos(int),np.cos(phi)*np.sin(int),np.sin(phi)])*r0
+    r0P = np.array([np.cos(phi)*np.cos(long),np.cos(phi)*np.sin(long),np.sin(phi)])*r0
     r0N = np.dot(refPlanetDCM.transpose(),r0P)
 
     # create the input messages
@@ -186,7 +184,9 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
     unitTestSim.TotalSim.logThisMessage(testModule.envOutMsgNames[1], testProcessRate)
 
     # Need to call the self-init and cross-init methods
+    print("\nhere")
     unitTestSim.InitializeSimulation()
+    print("\nhere")
 
     unitTestSim.TotalSim.SingleStepProcesses()
 
@@ -209,7 +209,7 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
         radius = np.linalg.norm(pos_N)
         B_M = np.array([Bx, By, Bz])
         M2 = rbk.euler2(phi + np.pi/2.0)
-        M3 = rbk.euler3(-int)
+        M3 = rbk.euler3(-long)
         PM = np.dot(M3,M2)
         NM = np.dot(refPlanetDCM.transpose(), PM)
         magField_N = [np.dot(NM, B_M).tolist()]
@@ -231,7 +231,7 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
     #
     # check spacecraft 0 neutral density results
     if len(mag0Data) > 0:
-        trueMagField = wmmInertial(r0N, BxTrue, ByTrue, BzTrue, phi, int, refPlanetDCM, minReach, maxReach)
+        trueMagField = wmmInertial(r0N, BxTrue, ByTrue, BzTrue, phi, long, refPlanetDCM, minReach, maxReach)
 
         testFailCount, testMessages = unitTestSupport.compareArray(
             trueMagField, mag0Data, accuracy, "SC0 mag vector",

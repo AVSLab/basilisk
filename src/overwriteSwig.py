@@ -46,7 +46,7 @@ def replaceImport(initFile):
                     importMod = line.split(' ')[1]
                     importMod = importMod.strip('.')
                     if importMod != ".":
-                        newFile.write('from . import {} \n'.format(importMod))
+                        newFile.write('from .{} import * \n'.format(importMod))
                 else:
                     newFile.write(line)
     os.remove(initFile)

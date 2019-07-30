@@ -1,4 +1,3 @@
-''' '''
 '''
  ISC License
 
@@ -51,11 +50,19 @@ from Basilisk import __path__
 bskPath = __path__[0]
 
 from . import tabulate as T
+'''
 del(T.LATEX_ESCAPE_RULES['$'])
 del(T.LATEX_ESCAPE_RULES['\\'])
 del(T.LATEX_ESCAPE_RULES['_'])
 del(T.LATEX_ESCAPE_RULES['{'])
 del(T.LATEX_ESCAPE_RULES['}'])
+'''
+
+del(T.LATEX_ESCAPE_RULES[u'$'])
+del(T.LATEX_ESCAPE_RULES[u'\\'])
+del(T.LATEX_ESCAPE_RULES[u'_'])
+del(T.LATEX_ESCAPE_RULES[u'{'])
+del(T.LATEX_ESCAPE_RULES[u'}'])
 from .tabulate import *
 
 

@@ -24,8 +24,8 @@ import inspect
 import numpy as np
 
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.simulation.linearSpringMassDamper import linearSpringMassDamper
-from Basilisk.simulation.fuelTank import fuelTank
+from Basilisk.simulation import linearSpringMassDamper
+from Basilisk.simulation import fuelTank
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
@@ -34,11 +34,12 @@ from Basilisk.utilities import orbitalMotion
 from Basilisk.utilities import macros
 
 # import simulation related support
-from Basilisk.simulation.spacecraftPlus import spacecraftPlus
+from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
+
 
 
 ## \defgroup scenarioFuelSloshGroup

@@ -292,9 +292,9 @@ def StatesVsTargets(target1, target2, stateLog, show_plots):
     numStates = len(stateLog[0,:])-1
 
     target = np.ones([len(stateLog[:, 0]),5])
-    for i in range((len(stateLog[:, 0])-1)/2):
+    for i in range((len(stateLog[:, 0])-1)//2):
         target[i, :] = target1
-        target[i+(len(stateLog[:, 0]) - 1) / 2,:] = target2
+        target[i+(len(stateLog[:, 0]) - 1) // 2,:] = target2
 
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
     plt.subplot(321)

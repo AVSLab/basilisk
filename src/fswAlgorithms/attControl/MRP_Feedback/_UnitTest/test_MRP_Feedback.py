@@ -40,8 +40,8 @@ import numpy as np
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport
-from Basilisk.fswAlgorithms import MRP_Feedback
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.fswAlgorithms.MRP_Feedback import MRP_Feedback
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -204,9 +204,9 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
     #   Step the simulation to 3*process rate so 4 total steps including zero
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
-    
-    moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds) 
-    
+
+    moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
+
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 

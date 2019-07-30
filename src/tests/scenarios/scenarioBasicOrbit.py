@@ -39,7 +39,7 @@ bskPath = __path__[0]
 fileName = os.path.basename(os.path.splitext(__file__)[0])
 
 # import simulation related support
-from Basilisk.simulation.spacecraftPlus import spacecraftPlus
+from Basilisk.simulation import spacecraftPlus
 # general support file with common unit test functions
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
@@ -418,8 +418,8 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
         numDataPoints = 400
     else:
         numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints - 1)
-    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, int(samplingTime))
+    samplingTime = simulationTime // (numDataPoints - 1)
+    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
 
     # if this scenario is to interface with the BSK Viz, uncomment the following line

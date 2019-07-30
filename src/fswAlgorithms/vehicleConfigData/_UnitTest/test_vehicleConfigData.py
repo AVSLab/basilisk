@@ -7,7 +7,7 @@
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import vehicleConfigData
+from Basilisk.fswAlgorithms.vehicleConfigData import vehicleConfigData
 
 def test_vehicleConfigData():
     [testResults, testMessage] = vehicleConfigDataTestFunction()

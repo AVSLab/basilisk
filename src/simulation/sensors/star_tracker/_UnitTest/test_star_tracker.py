@@ -31,6 +31,7 @@ import ctypes
 import math
 import csv
 import logging
+import six
 
 from Basilisk.utilities import MessagingAccess
 from Basilisk.utilities import SimulationBaseClass
@@ -114,6 +115,11 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
     StarTrackerOutput = star_tracker.STSensorIntMsg()
     fieldNames = list()
     fieldLengths = list()
+    #python3 only has one integral type (int), though int behaves just as long
+    if six.PY2:
+        dtypeTuple = (float, long, int)
+    else:
+        dtypeTuple = (float, int, int)
     for fieldName in dir(StarTrackerOutput):
         if fieldName.find('__') < 0 and fieldName.find('this') < 0:
             if(callable(getattr(StarTrackerOutput,fieldName))):
@@ -121,7 +127,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
             fieldNames.append(fieldName)
             if type(getattr(StarTrackerOutput,fieldName)).__name__ == 'list':
                 fieldLengths.append(len(getattr(StarTrackerOutput,fieldName)))
-            elif isinstance(getattr(StarTrackerOutput,fieldName), (float, int)):
+            elif isinstance(getattr(StarTrackerOutput,fieldName), dtypeTuple):
                 fieldLengths.append(1)
 
     trueVector = dict()

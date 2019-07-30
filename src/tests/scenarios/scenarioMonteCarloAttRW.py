@@ -104,7 +104,7 @@ rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 # We also will need the simulationTime and samplingTimes
 numDataPoints = 500
 simulationTime = macros.min2nano(10.)
-samplingTime = simulationTime / (numDataPoints-1)
+samplingTime = simulationTime // (numDataPoints-1)
 
 
 

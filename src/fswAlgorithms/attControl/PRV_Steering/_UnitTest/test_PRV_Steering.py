@@ -40,17 +40,17 @@ import logging
 
 #   Import all of the modules that we are going to call in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
+from Basilisk.simulation.alg_contain import alg_contain
 # general support files with common unit test functions
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport
 import matplotlib.pyplot as plt
 # import the module that is to be tested
-from Basilisk.fswAlgorithms import PRV_Steering
-from Basilisk.fswAlgorithms import rateServoFullNonlinear
+from Basilisk.fswAlgorithms.PRV_Steering import PRV_Steering
+from Basilisk.fswAlgorithms.rateServoFullNonlinear import rateServoFullNonlinear
 # import module(s) that creates the needed input message declaration
-from Basilisk.fswAlgorithms import fswMessages
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
+from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -219,7 +219,7 @@ def subModuleTestFunction(show_plots, simCase):
     unitTestSim.ExecuteSimulation()
 
     servoWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
-    
+
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 

@@ -5,7 +5,7 @@
 #
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.fswAlgorithms import pixelLineConverter
+from Basilisk.fswAlgorithms.pixelLineConverter import pixelLineConverter
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
 import os, inspect

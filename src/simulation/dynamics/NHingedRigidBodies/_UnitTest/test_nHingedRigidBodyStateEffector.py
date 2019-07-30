@@ -56,19 +56,19 @@ def nHingedRigidBody(show_plots,useFlag,testCase):
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
 
-    testFailCount = 0  # zero unit test result counter  
+    testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
-    
+
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
-    
+
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
-    
+
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
     unitTestSim.TotalSim.terminateSimulation()
-    
+
     # Create test thread
     testProcessRate = macros.sec2nano(0.0001)  # update process rate update time
     plottingRate = 0.01
@@ -109,7 +109,7 @@ def nHingedRigidBody(show_plots,useFlag,testCase):
     unitTestSim.effector2.addHingedPanel(unitTestSim.panel)
     unitTestSim.effector2.addHingedPanel(unitTestSim.panel)
     unitTestSim.effector2.addHingedPanel(unitTestSim.panel)
-    
+
     # Add effector to spaceCraft
     scObject.addStateEffector(unitTestSim.effector1)
     scObject.addStateEffector(unitTestSim.effector2)
@@ -141,7 +141,7 @@ def nHingedRigidBody(show_plots,useFlag,testCase):
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
 
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
-    
+
     unitTestSim.InitializeSimulation()
 
     unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('nHingedRigidBody1Theta').getState()", plottingRate, 0, 3, 'double')

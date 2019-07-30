@@ -35,7 +35,7 @@ import numpy as np
 
 # import general simulation support files
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation.sim_model import sim_model
+from Basilisk.simulation import sim_model
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
@@ -44,21 +44,21 @@ from Basilisk.utilities import fswSetupThrusters
 from Basilisk.utilities import simIncludeThruster
 
 # import simulation related support
-from Basilisk.simulation.spacecraftPlus import spacecraftPlus
-from Basilisk.simulation.extForceTorque import extForceTorque
+from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import extForceTorque
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation.simple_nav import simple_nav
-from Basilisk.simulation.thrusterDynamicEffector import thrusterDynamicEffector
+from Basilisk.simulation import simple_nav
+from Basilisk.simulation import thrusterDynamicEffector
 
 # import FSW Algorithm related support
-from Basilisk.fswAlgorithms.MRP_Feedback import MRP_Feedback
-from Basilisk.fswAlgorithms.inertial3D import inertial3D
-from Basilisk.fswAlgorithms.attTrackingError import attTrackingError
-from Basilisk.fswAlgorithms.thrForceMapping import thrForceMapping
-from Basilisk.fswAlgorithms.thrFiringSchmitt import thrFiringSchmitt
+from Basilisk.fswAlgorithms import MRP_Feedback
+from Basilisk.fswAlgorithms import inertial3D
+from Basilisk.fswAlgorithms import attTrackingError
+from Basilisk.fswAlgorithms import thrForceMapping
+from Basilisk.fswAlgorithms import thrFiringSchmitt
 
 # import message declarations
-from Basilisk.fswAlgorithms.fswMessages import fswMessages
+from Basilisk.fswAlgorithms import fswMessages
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport

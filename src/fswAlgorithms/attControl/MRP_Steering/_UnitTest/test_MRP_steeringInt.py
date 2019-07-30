@@ -30,10 +30,10 @@ import pytest
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import MRP_Steering  # import the module that is to be tested
-from Basilisk.fswAlgorithms import rateServoFullNonlinear
-from Basilisk.fswAlgorithms import fswMessages
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.fswAlgorithms.MRP_Steering import MRP_Steering  # import the module that is to be tested
+from Basilisk.fswAlgorithms.rateServoFullNonlinear import rateServoFullNonlinear
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
+from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics
 

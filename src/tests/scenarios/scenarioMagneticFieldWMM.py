@@ -39,8 +39,8 @@ path = os.path.dirname(os.path.abspath(fileName))
 bskPath = path.split('src')[0]
 
 # import simulation related support
-from Basilisk.simulation.spacecraftPlus import spacecraftPlus
-from Basilisk.simulation.magneticFieldWMM import magneticFieldWMM
+from Basilisk.simulation import spacecraftPlus
+from Basilisk.simulation import magneticFieldWMM
 # general support file with common unit test functions
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,

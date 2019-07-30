@@ -206,7 +206,7 @@ def TestExponentialAtmosphere():
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 10
-    samplingTime = simulationTime / (numDataPoints-1)
+    samplingTime = simulationTime // (numDataPoints-1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(newAtmo.ModelTag+"_0_data", samplingTime)
 

@@ -44,7 +44,7 @@ def controlAxes1D():
 
 def computeTorqueU(CArray, Gs_B, Lr, availMsg):
 
-    numControlAxes = len(CArray)/3
+    numControlAxes = len(CArray)//3
     numWheels = len(availMsg)
     nonAvailWheels = 0
 
@@ -107,7 +107,7 @@ def exampleComputation():
 
     Lr = np.array([1.0, -0.5, 0.7])
     rwAvailability = np.array([1, 1, 1, 1])
-    
+
     print('3D Control')
     u_s = computeTorqueU(controlAxes3D(), Gs_B, Lr)
     print('U_s = ', u_s, '\n')
@@ -119,5 +119,3 @@ def exampleComputation():
     print('1D Control')
     u_s = computeTorqueU(controlAxes1D(), Gs_B, Lr)
     print('U_s = ', u_s)
-
-

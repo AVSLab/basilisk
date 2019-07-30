@@ -338,7 +338,7 @@ void SimModel::WriteMessageData(std::string MessageName, uint64_t MessageSize,
  */
 void SimModel::logThisMessage(std::string messageName, uint64_t messagePeriod)
 {
-    messageLogs.addMessageLog(messageName, messagePeriod);
+    this->messageLogs.addMessageLog(messageName, messagePeriod);
 }
 
 /*! This method gets the current number of messages that have been created in

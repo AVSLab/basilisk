@@ -146,7 +146,7 @@ def run(doUnitTests, show_plots, integratorCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime / numDataPoints
+    samplingTime = simulationTime // numDataPoints
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
 

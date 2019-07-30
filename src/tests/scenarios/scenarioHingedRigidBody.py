@@ -39,12 +39,12 @@ from Basilisk.utilities import unitTestSupport  # general support file with comm
 from Basilisk.utilities import macros  # Some unit conversions
 from Basilisk.utilities import orbitalMotion
 # import simulation related support
-from Basilisk.simulation.spacecraftPlus import \
+from Basilisk.simulation import \
     spacecraftPlus  # The base of any spacecraft simulation which deals with spacecraft dynamics
 from Basilisk.utilities import simIncludeGravBody
-from Basilisk.simulation.hingedRigidBodyStateEffector import hingedRigidBodyStateEffector
+from Basilisk.simulation import hingedRigidBodyStateEffector
 # Allows for forces to act on the spacecraft without adding an effector like a thruster
-from Basilisk.simulation.extForceTorque import extForceTorque
+from Basilisk.simulation import extForceTorque
 # import non-basilisk libraries
 import matplotlib.pyplot as plt
 

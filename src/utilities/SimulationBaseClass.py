@@ -237,7 +237,9 @@ class SimBaseClass:
         if six.PY2:
             NoDotName = NoDotName.translate(None, "[]'()")
         else:
-            NoDotName = NoDotName.translate("[]'()")
+            tr = str.maketrans("","", "[]'()")
+            NoDotName = NoDotName.translate(tr)
+            #NoDotName = NoDotName.translate({ord(c): None for c in "[]'()"})
         inv_map = {v: k for k, v in list(self.NameReplace.items())}
         if SplitName[0] in inv_map:
             LogName = inv_map[SplitName[0]] + '.' + Subname

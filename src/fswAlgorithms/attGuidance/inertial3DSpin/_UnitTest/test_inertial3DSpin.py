@@ -37,10 +37,10 @@ import numpy as np
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
+from Basilisk.simulation.alg_contain import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import inertial3DSpin                   # import the module that is to be tested
+from Basilisk.fswAlgorithms.inertial3DSpin import inertial3DSpin                   # import the module that is to be tested
 from Basilisk.utilities import macros as mc
 
 
@@ -211,7 +211,7 @@ def subModuleTestFunction(show_plots):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i,0] * mc.NANO2SEC) +
                                 "sec\n")
-    
+
     # Note that we can continue to step the simulation however we feel like.
     # Just because we stop and query data does not mean everything has to stop for good
     unitTestSim.ConfigureStopTime(mc.sec2nano(0.6))    # run an additional 0.6 seconds

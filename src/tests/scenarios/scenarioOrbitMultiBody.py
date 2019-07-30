@@ -44,17 +44,15 @@ from Basilisk.utilities import astroFunctions
 from Basilisk.utilities import MessagingAccess
 
 # import simulation related support
-from Basilisk.simulation.spacecraftPlus import spacecraftPlus
-from Basilisk.simulation import spice_interface
+from Basilisk.simulation import spacecraftPlus, spice_interface
 from Basilisk.utilities import simIncludeGravBody
 
 # attempt to import vizard
 from Basilisk.utilities import vizSupport
 
 # Used to get the location of supporting data.
-from Basilisk.pyswice import pyswice
+from Basilisk import pyswice
 from Basilisk.pyswice.pyswice_spk_utilities import spkRead
-
 from Basilisk import __path__
 bskPath = __path__[0]
 

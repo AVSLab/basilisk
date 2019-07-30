@@ -29,10 +29,11 @@ bskPath = __path__[0]
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import cheby_pos_ephem
-from Basilisk.simulation import sim_model
+from Basilisk.fswAlgorithms.cheby_pos_ephem import cheby_pos_ephem
+from Basilisk.simulation.sim_model import sim_model
 import ctypes
-from Basilisk import pyswice
+from Basilisk.pyswice import pyswice
+from Basilisk.pyswice.pyswice_spk_utilities import spkRead
 import matplotlib.pyplot as plt
 
 orbitPosAccuracy = 1.0
@@ -182,7 +183,7 @@ def test_earthOrbitFit(show_plots):
 
     for timeVal in timeHistory:
         stringCurrent = pyswice.et2utc_c(timeVal, 'C', 4, 1024, "Yo")
-        stateOut = pyswice.spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, integFrame, zeroBase)
+        stateOut = spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, integFrame, zeroBase)
         hubblePosList.append(stateOut[0:3].tolist())
         hubbleVelList.append(stateOut[3:6].tolist())
 

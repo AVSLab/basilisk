@@ -16,7 +16,7 @@ class Results_thrForceMapping():
         self.numThrusters = numThrusters # number of explicitly configured thrusters
 
         self.C = np.array(COrig) # Control "Frame" (could be 1, 2, or 3 axii controllable)
-        self.C = np.reshape(self.C, ((len(self.C)/3),3),'C')
+        self.C = np.reshape(self.C, ((len(self.C)//3),3),'C')
 
         self.epsilon = epsilon
         self.use2ndLoop = use2ndLoop
@@ -52,7 +52,7 @@ class Results_thrForceMapping():
             for i in range(0,len(F)):
                 if t[i]:
                     DNew = np.append(DNew, np.cross((self.rData[i,:] - self.COM), self.gData[i]))
-            DNew = np.reshape(DNew, (3, (len(DNew) / 3)), 'F')
+            DNew = np.reshape(DNew, (3, (len(DNew) // 3)), 'F')
             FNew = self.mapToForce(DNew, Lr_Bar)
             if (self.thrForceSign > 0):
                 FNew = self.subtractMin(FNew,len(DNew[0])) # Produced negative forces when doing 2nd loop, dropped thruster, and COM offset

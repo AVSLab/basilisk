@@ -29,9 +29,9 @@ import numpy as np
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.fswAlgorithms import eulerRotation                    # import the module that is to be tested
+from Basilisk.fswAlgorithms.eulerRotation import eulerRotation                    # import the module that is to be tested
 from Basilisk.utilities import macros as mc
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -170,7 +170,7 @@ def run(show_plots):
     testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
                                                                accuracy, "domega_RN_N Vector",
                                                                testFailCount, testMessages)
-    
+
 
     # If the argument provided at commandline "--show_plots" evaluates as true,
     # plot all figures

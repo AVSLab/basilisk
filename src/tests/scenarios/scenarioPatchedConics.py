@@ -34,9 +34,7 @@ import matplotlib.pyplot as plt
 from Basilisk import __path__
 
 bskPath = __path__[0]
-from Basilisk.simulation.spacecraftPlus import spacecraftPlus
-from Basilisk.simulation.simMessages import simMessages
-from Basilisk.simulation.gravityEffector import gravityEffector
+from Basilisk.simulation import spacecraftPlus, simMessages, gravityEffector
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion, simIncludeGravBody, unitTestSupport
 
 

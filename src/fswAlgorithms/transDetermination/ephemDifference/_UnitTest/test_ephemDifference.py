@@ -130,9 +130,6 @@ def ephemDifferenceTestFunction(ephBdyCount):
             outputData_V = unitTestSim.pullMessageLogData('output_change_body_' + str(i) + '.v_BdyZero_N', list(range(3)))
             timeTag = unitTestSim.pullMessageLogData('output_change_body_' + str(i) + '.timeTag')
 
-            # print(outputData_R)
-            # print(outputData_V)
-
             # At each timestep, make sure the vehicleConfig values haven't changed from the initial values
             testFailCount, testMessages = unitTestSupport.compareArrayND([trueRVector[i]], outputData_R,
                                                                          posAcc,
@@ -149,7 +146,6 @@ def ephemDifferenceTestFunction(ephBdyCount):
     if ephemDiffConfig.ephBdyCount is not ephBdyCount:
         testFailCount += 1
         testMessages.append("input/output message count is wrong.")
-
 
     snippentName = "passFail" + str(ephBdyCount)
     if testFailCount == 0:

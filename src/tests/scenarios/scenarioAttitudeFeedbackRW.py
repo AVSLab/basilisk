@@ -33,17 +33,9 @@ import sys
 import numpy as np
 import os
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms.MRP_Feedback import MRP_Feedback
-from Basilisk.fswAlgorithms.attTrackingError import attTrackingError
-from Basilisk.fswAlgorithms.fswMessages import fswMessages
-from Basilisk.fswAlgorithms.inertial3D import inertial3D
-from Basilisk.fswAlgorithms.rwMotorTorque import rwMotorTorque
-from Basilisk.fswAlgorithms.rwMotorVoltage import rwMotorVoltage
-
-from Basilisk.simulation.reactionWheelStateEffector import reactionWheelStateEffector
-from Basilisk.simulation.rwVoltageInterface import rwVoltageInterface
-from Basilisk.simulation.simple_nav import simple_nav
-from Basilisk.simulation.spacecraftPlus import spacecraftPlus
+from Basilisk.fswAlgorithms import (MRP_Feedback, attTrackingError, fswMessages,
+                                    inertial3D, rwMotorTorque, rwMotorVoltage)
+from Basilisk.simulation import reactionWheelStateEffector, rwVoltageInterface, simple_nav, spacecraftPlus
 from Basilisk.utilities import (SimulationBaseClass, fswSetupRW, macros,
                                 orbitalMotion, simIncludeGravBody,
                                 simIncludeRW, unitTestSupport, vizSupport)

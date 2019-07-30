@@ -87,9 +87,9 @@ def computeFFT(y,dt):
     k = np.arange(n)
     T = n/Fs
     frq = k/T # two sides frequency range
-    frq = frq[list(range(n/2))] # one side frequency range
+    frq = frq[list(range(n//2))] # one side frequency range
     Y = np.fft.fft(y)/n # fft computing and normalization
-    Y = Y[list(range(n/2))]
+    Y = Y[list(range(n//2))]
     Y = abs(Y)
     return [frq,Y]
 
@@ -435,23 +435,23 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
             fitOrd = 11
         else:
             fitOrd = 9
-    
+
         thetaFit = np.empty([len(sigmaDataCut[:,0]),2])
         thetaFit[:,0] = thetaData[:,0]
         p = np.polyfit(thetaData[:,0]*1e-9,thetaData[:,1],fitOrd)
         thetaFit[:,1] = np.polyval(p,thetaFit[:,0]*1e-9)
-    
+
         plt.figure()
         plt.plot(thetaData[:,0]*1e-9, thetaData[:,1]-thetaFit[:,1])
         plt.title("Principle Angle Fit")
         plt.xlabel('Time (s)')
         plt.ylabel(r'$\theta$ (deg)')
-    
+
         [frq,Y] = computeFFT(thetaData[:,1]-thetaFit[:,1],dt)
         peakIdxs = findPeaks(Y,N)
         wheelSpeeds_data = np.array(frq[peakIdxs])*60.
         wheelSpeeds_true = np.sort(abs(np.array([VSCMG.Omega/macros.RPM for VSCMG in VSCMGs])))
-    
+
         fig, ax = plt.subplots(2,1)
         ax[0].plot(thetaFit[:,0]*1e-9,thetaData[:,1]-thetaFit[:,1])
         ax[0].set_xlabel('Time')
@@ -461,7 +461,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
         ax[1].set_ylabel('Magnitude')
         ax[1].plot(frq[peakIdxs],Y[peakIdxs],'bo')
         plt.xlim((0,VSCMGs[0].Omega_max/macros.RPM/60.))
-    
+
         plt.figure()
         plt.plot(thetaData[:,0]*1e-9, thetaData[:,1])
         plt.title("Principle Angle")

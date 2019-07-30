@@ -29,7 +29,8 @@ from Basilisk.utilities import macros
 from Basilisk.simulation import sim_model
 
 from Basilisk.utilities import simIncludeRW
-from Basilisk.simulation import reactionWheelStateEffector, spacecraftPlus
+from Basilisk.simulation import reactionWheelStateEffector
+from Basilisk.simulation import spacecraftPlus
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -220,7 +221,7 @@ def test_StateUpdateInertialAttitude(show_plots):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
-    
+
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -247,7 +248,7 @@ def test_StateUpdateInertialAttitude(show_plots):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-    
+
     setupFilterData(moduleConfig)
     moduleConfig.maxTimeJump = 10
 
@@ -266,7 +267,7 @@ def test_StateUpdateInertialAttitude(show_plots):
                                                 inputMessageSize,
                                                 0,
                                                 vehicleConfigOut)
-                                                
+
     stMessage1 = inertialUKF.STAttFswMsg()
     stMessage1.MRP_BdyInrtl = [0.3, 0.4, 0.5]
 
@@ -386,7 +387,7 @@ def test_StatePropInertialAttitude(show_plots):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
-    
+
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -413,7 +414,7 @@ def test_StatePropInertialAttitude(show_plots):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-    
+
     setupFilterData(moduleConfig)
     vehicleConfigOut = inertialUKF.VehicleConfigFswMsg()
     inputMessageSize = vehicleConfigOut.getStructSize()
@@ -434,7 +435,7 @@ def test_StatePropInertialAttitude(show_plots):
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
-    
+
     covarLog = unitTestSim.GetLogVariableData('InertialUKF.covar')
     stateLog = unitTestSim.GetLogVariableData('InertialUKF.state')
 
@@ -453,7 +454,7 @@ def test_StatePropInertialAttitude(show_plots):
        if(covarLog[-1, i*6+i+1] <= covarLog[0, i*6+i+1]):
            testFailCount += 1
            testMessages.append("State covariance failure")
-        
+
     # print out success message if no error were found
     if testFailCount == 0:
         print("PASSED: " + moduleWrap.ModelTag + " state propagation")
@@ -660,7 +661,7 @@ def test_StatePropRateInertialAttitude(show_plots):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
-    
+
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -768,10 +769,10 @@ def test_StatePropRateInertialAttitude(show_plots):
                                               gyroBufferData.getStructSize(),
                                               (int(i*0.5*1E9)),
                                               gyroBufferData)
-        
+
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
         unitTestSim.ExecuteSimulation()
-    
+
     covarLog = unitTestSim.GetLogVariableData('InertialUKF.covar')
     sigmaLog = unitTestSim.GetLogVariableData('InertialUKF.sigma_BNOut')
     omegaLog = unitTestSim.GetLogVariableData('InertialUKF.omega_BN_BOut')
@@ -873,7 +874,7 @@ def test_FaultScenarios(show_plots):
     moduleConfigClean1.rwConfigParams.JsList = [1., 1.]
     moduleConfigClean1.rwConfigParams.GsMatrix_B = [1., 0., 0., 1., 0., 0.]
     moduleConfigClean1.speedDt = 1.
-    moduleConfigClean1.IInv = [1., 0., 0., 0., 1., 0., 0., 0., 1.]
+    #moduleConfigClean1.IInv = [1., 0., 0., 0., 1., 0., 0., 0., 1.]
 
     # Bad Time and Measurement Update
     st1 = inertialUKF.STAttFswMsg()
@@ -913,7 +914,6 @@ def test_FaultScenarios(show_plots):
     if retMease == 0:
         testFailCount += 1
         testMessages.append("Failed to catch bad Update and clean in Meas update")
-
     moduleConfigClean1.wC = [1] * (moduleConfigClean1.numStates * 2 + 1)
     moduleConfigClean1.wM = [1] * (moduleConfigClean1.numStates * 2 + 1)
     qNoiseIn = numpy.identity(6)
@@ -941,4 +941,3 @@ def test_FaultScenarios(show_plots):
 
 if __name__ == "__main__":
     test_FilterMethods()
-

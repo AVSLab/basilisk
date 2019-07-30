@@ -9,7 +9,7 @@ import pytest
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import cssComm
+from Basilisk.fswAlgorithms.cssComm import cssComm
 from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
 
 import os, inspect

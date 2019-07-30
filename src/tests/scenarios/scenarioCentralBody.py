@@ -37,7 +37,7 @@ import matplotlib.pyplot as plt
 from Basilisk import __path__
 bskPath = __path__[0]
 # import simulation related support
-from Basilisk.simulation.spacecraftPlus import spacecraftPlus
+from Basilisk.simulation import spacecraftPlus
 # general support file with common unit test functions
 # import general simulation support files
 from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,

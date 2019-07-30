@@ -23,9 +23,11 @@ import pytest
 import math
 
 from Basilisk.utilities import SimulationBaseClass, macros, unitTestSupport
-from Basilisk.simulation import coarse_sun_sensor
+from Basilisk.simulation.coarse_sun_sensor import coarse_sun_sensor
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import sunlineSuKF, cssComm, fswMessages  # import the module that is to be tested
+from Basilisk.fswAlgorithms.sunlineSuKF import sunlineSuKF  # import the module that is to be tested
+from Basilisk.fswAlgorithms.cssComm import cssComm
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
 
 import SunLineSuKF_test_utilities as FilterPlots
 
@@ -230,7 +232,7 @@ def StateUpdateSunLine(show_plots, kellyOn):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
-    
+
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -253,10 +255,10 @@ def StateUpdateSunLine(show_plots, kellyOn):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-    
+
     setupFilterData(moduleConfig, False)
     cssConstelation = fswMessages.CSSConfigFswMsg()
-    
+
     CSSOrientationList = [
        [0.70710678118654746, -0.5, 0.5],
        [0.70710678118654746, -0.5, -0.5],
@@ -357,7 +359,7 @@ def StateUpdateSunLine(show_plots, kellyOn):
         dotProd = numpy.dot(numpy.array(element), testVector)
         dotList.append(dotProd)
     inputData.CosValue = dotList
-        
+
     for i in range(time):
         if i > 20:
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
@@ -410,7 +412,7 @@ def StatePropSunLine(show_plots):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
-    
+
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -433,7 +435,7 @@ def StatePropSunLine(show_plots):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-    
+
     setupFilterData(moduleConfig, True)
     numStates = 6
     unitTestSim.TotalSim.logThisMessage('sunline_filter_data', testProcessRate)
@@ -441,7 +443,7 @@ def StatePropSunLine(show_plots):
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
-    
+
     stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", list(range(numStates)))
     postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", list(range(8)))
     covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", list(range(numStates*numStates)))
@@ -455,7 +457,7 @@ def StatePropSunLine(show_plots):
             testFailCount += 1
             testMessages.append("State propagation failure")
 
-    
+
 
     # print out success message if no error were found
     if testFailCount == 0:

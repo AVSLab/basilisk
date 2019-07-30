@@ -73,12 +73,12 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     # add task to the dynamical process
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-    #  create spacecraft object 
+    #  create spacecraft object
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
 
     scSim.AddModelToTask(simTaskName, scObject)
-   
+
     # Pendulum 1
     scSim.pendulum1 = sphericalPendulum.SphericalPendulum()
     # Define Variables for pendulum 1
@@ -97,9 +97,9 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     scSim.pendulum1.pHat_02=[[0],[1],[0]]			               # second unit vector of the Pendulum frame
     scSim.pendulum1.pHat_03=[[-np.sqrt(2)/2],[0],[np.sqrt(2)/2]]   # third unit vector of the Pendulum frame
 
-    # Pendulum 2 
+    # Pendulum 2
     scSim.pendulum2 = sphericalPendulum.SphericalPendulum()
-    # Define Variables for pendulum 2 
+    # Define Variables for pendulum 2
     scSim.pendulum2.pendulumRadius = 0.4  #  m/s
     scSim.pendulum2.d = [[0.1], [0.1], [0.1]] # m
     scSim.pendulum2.D = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]] # N*s/m
@@ -112,7 +112,7 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     scSim.pendulum2.thetaDotInit = 0.5 # rad/s
     scSim.pendulum2.massInit =40.0 # kg
     # Pendulum frame same as Body frame
-    
+
     if testCase == 3:
         thrusterCommandName = "acs_thruster_cmds"
         # add thruster devices
@@ -159,7 +159,7 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
 
     # define hub properties
     scObject.hub.mHub = 1500 # kg
-    scObject.hub.r_BcB_B = [[1.0], [0.5], [0.1]] # m 
+    scObject.hub.r_BcB_B = [[1.0], [0.5], [0.1]] # m
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]] # kg*m^2
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]] # rad
     scObject.hub.omega_BN_BInit = [[1.0], [0.5], [0.1]] # rad/s
@@ -200,7 +200,7 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints-1)
+    samplingTime = simulationTime // (numDataPoints-1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
@@ -209,7 +209,7 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     #   then the all messages are auto-discovered that are shared across different BSK threads.
     #
     scSim.InitializeSimulation()
-    
+
     scSim.AddVariableForLogging(scObject.ModelTag + ".totOrbEnergy", simulationTimeStep, 0, 0, 'double')
     scSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", simulationTimeStep, 0, 2, 'double')
     scSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", simulationTimeStep, 0, 2, 'double')
@@ -229,7 +229,7 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
     #
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
-    
+
     if testCase == 3:
         fuelMass = scSim.pullMessageLogData(scSim.fuelTankStateEffector.FuelTankOutMsgName + '.fuelMass',
                                                   list(range(1)))
@@ -295,7 +295,7 @@ def sphericalPendulumTest(show_plots, useFlag,testCase):
         mDotParicle2True = mDotFuel*(40./100.)
         mDotParicle1Data = [0,(mass1Out[2,1] - mass1Out[1,1])/((mass1Out[2,0] - mass1Out[1,0])*1e-9)]
         mDotParicle2Data = [0,(mass2Out[2,1] - mass2Out[1,1])/((mass2Out[2,0] - mass2Out[1,0])*1e-9)]
- 
+
     if show_plots:
         plt.show()
         plt.close('all')

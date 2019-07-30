@@ -19,7 +19,7 @@
 '''
 
 
-from Basilisk.simulation.sim_model import sim_model
+from Basilisk.simulation import sim_model
 import numpy
 import array
 import importlib
@@ -59,9 +59,9 @@ def obtainMessageVector(messageName, messageModule, messageObj, messageCount,
         messageNoSpace = messageName.translate(None, "[]'() .")
         varNameClean = varName.translate(None, "[]'() .")
     else:
-        messageNoSpace = messageName.translate("[]'() .")
-        varNameClean = varName.translate("[]'() .")
-
+        tr = str.maketrans("","", "[]'() .")
+        messageNoSpace = messageName.translate(tr)
+        varNameClean = varName.translate(tr)
     if swigObjectGood:
         functionCall = eval('sim_model.' + varType + 'Array_getitem')
     else:  # So this is weird, but weirdly we need to punch a duck now

@@ -36,9 +36,9 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import cssWlsEst
-from Basilisk.fswAlgorithms import fswMessages
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.fswAlgorithms.cssWlsEst import cssWlsEst
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
+from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -129,7 +129,7 @@ def checkResidAccuracy(testVec, sResids, sThresh, TotalSim):
             errorString += str(testVec).strip('[]') + "\n"
             errorString += "Criteria violation of: "
             errorString += str(sNormObs)
-            logging.error(errorString) 
+            logging.error(errorString)
         j += 1
     return testFailCount
 
@@ -283,7 +283,7 @@ def cssWlsEstTestFunction(show_plots):
 
         filtRes = unitTestSim.pullMessageLogData(CSSWlsEstFSWConfig.cssWLSFiltResOutMsgName + '.postFitRes',
             list(range(8)))
-        testFailCount += checkResidAccuracy(testVec, filtRes, residFailCriteria, 
+        testFailCount += checkResidAccuracy(testVec, filtRes, residFailCriteria,
                                             unitTestSim)
 
         # Pop truth state onto end of array for plotting purposes

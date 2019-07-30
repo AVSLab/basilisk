@@ -39,7 +39,7 @@ import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion
 # import simulation related support
-from Basilisk.simulation.spacecraftPlus import spacecraftPlus
+from Basilisk.simulation import spacecraftPlus
 from Basilisk.utilities import simIncludeGravBody
 from Basilisk.simulation import svIntegrators
 

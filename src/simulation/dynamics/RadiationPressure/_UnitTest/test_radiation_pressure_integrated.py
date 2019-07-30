@@ -116,7 +116,7 @@ def radiationPressureIntegratedTest(show_plots):
 
     #   Setup data logging before the simulation is initialized
     numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints - 1)
+    samplingTime = simulationTime // (numDataPoints - 1)
     sim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     sim.TotalSim.logThisMessage('earth_planet_data', samplingTime)
 

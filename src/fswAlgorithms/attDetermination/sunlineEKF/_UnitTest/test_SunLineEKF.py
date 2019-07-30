@@ -26,12 +26,12 @@ import numpy as np
 import pytest
 
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
-from Basilisk.fswAlgorithms import sunlineEKF
-from Basilisk.fswAlgorithms import cssComm
+from Basilisk.simulation.alg_contain import alg_contain
+from Basilisk.fswAlgorithms.sunlineEKF import sunlineEKF
+from Basilisk.fswAlgorithms.cssComm import cssComm
 from Basilisk.utilities import macros
 import SunLineEKF_test_utilities as FilterPlots
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
 
 
 def setupFilterData(filterObject):

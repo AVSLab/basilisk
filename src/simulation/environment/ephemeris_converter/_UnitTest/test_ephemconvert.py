@@ -54,7 +54,7 @@ def unitephemeris_converter(show_plots):
 
     simulationTime = macros.sec2nano(30.)
     numDataPoints = 600
-    samplingTime = simulationTime / (numDataPoints-1)
+    samplingTime = simulationTime // (numDataPoints-1)
     DynUnitTestProc = sim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
     DynUnitTestProc.addTask(sim.CreateNewTask(unitTaskName, samplingTime))

@@ -30,8 +30,10 @@ import math
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import sunlineUKF, fswMessages, cssComm  # import the module that is to be tested
-from Basilisk.simulation import coarse_sun_sensor
+from Basilisk.fswAlgorithms.sunlineUKF import sunlineUKF
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
+from Basilisk.fswAlgorithms.cssComm import cssComm
+from Basilisk.simulation.coarse_sun_sensor import coarse_sun_sensor
 import SunLineuKF_test_utilities as FilterPlots
 
 
@@ -82,12 +84,12 @@ def sunline_utilities_test(show_plots):
 
     # Initialize the test module configuration data
     AMatrix = [0.488894, 0.888396, 0.325191, 0.319207,
-                1.03469, -1.14707, -0.754928, 0.312859, 
+                1.03469, -1.14707, -0.754928, 0.312859,
                 0.726885, -1.06887, 1.3703, -0.86488,
                -0.303441, -0.809499, -1.71152, -0.0300513,
                 0.293871, -2.94428, -0.102242, -0.164879,
                -0.787283, 1.43838, -0.241447, 0.627707]
-   
+
     RVector = sunlineUKF.new_doubleArray(len(AMatrix))
     AVector = sunlineUKF.new_doubleArray(len(AMatrix))
     for i in range(len(AMatrix)):
@@ -107,7 +109,7 @@ def sunline_utilities_test(show_plots):
     if numpy.linalg.norm(r - RBaseNumpy) > 1.0E-15:
         testFailCount += 1
         testMessages.append("QR Decomposition accuracy failure")
-    
+
     AMatrix = [1.09327, 1.10927, -0.863653, 1.32288,
      -1.21412, -1.1135, -0.00684933, -2.43508,
      -0.769666, 0.371379, -0.225584, -1.76492,
@@ -133,7 +135,7 @@ def sunline_utilities_test(show_plots):
     if numpy.linalg.norm(r - RBaseNumpy) > 1.0E-14:
         testFailCount += 1
         testMessages.append("QR Decomposition accuracy failure")
-    
+
     AMatrix = [ 0.2236,         0,
                0,    0.2236,
                -0.2236,         0,
@@ -168,7 +170,7 @@ def sunline_utilities_test(show_plots):
     LVector = sunlineUKF.new_doubleArray(len(LUSourceMat))
     UVector = sunlineUKF.new_doubleArray(len(LUSourceMat))
     intSwapVector = sunlineUKF.new_intArray(3)
-    
+
     for i in range(len(LUSourceMat)):
         sunlineUKF.doubleArray_setitem(LUSVector, i, LUSourceMat[i])
         sunlineUKF.doubleArray_setitem(UVector, i, 0.0)
@@ -196,7 +198,7 @@ def sunline_utilities_test(show_plots):
     LMatrix = numpy.array(LMatrix).reshape(3,3)
     UMatrix = numpy.array(UMatrix).reshape(3,3)
     outMat = numpy.dot(LMatrix, UMatrix)
-    outMatSwap = numpy.zeros((3,3)) 
+    outMatSwap = numpy.zeros((3,3))
     for i in range(3):
         currRow = sunlineUKF.intArray_getitem(intSwapVector, i)
         outMatSwap[i,:] = outMat[currRow, :]
@@ -210,19 +212,19 @@ def sunline_utilities_test(show_plots):
     EqnSourceMat = [2.0, 1.0, 3.0, 2.0, 6.0, 8.0, 6.0, 8.0, 18.0]
     BVector = [1.0, 3.0, 5.0]
     EqnVector = sunlineUKF.new_doubleArray(len(EqnSourceMat))
-    EqnBVector = sunlineUKF.new_doubleArray(len(LUSourceMat)/3)
-    EqnOutVector = sunlineUKF.new_doubleArray(len(LUSourceMat)/3)
+    EqnBVector = sunlineUKF.new_doubleArray(len(LUSourceMat)//3)
+    EqnOutVector = sunlineUKF.new_doubleArray(len(LUSourceMat)//3)
 
     for i in range(len(EqnSourceMat)):
         sunlineUKF.doubleArray_setitem(EqnVector, i, EqnSourceMat[i])
-        sunlineUKF.doubleArray_setitem(EqnBVector, i/3, BVector[i/3])
-        sunlineUKF.intArray_setitem(intSwapVector, i/3, 0)
+        sunlineUKF.doubleArray_setitem(EqnBVector, i//3, BVector[i//3])
+        sunlineUKF.intArray_setitem(intSwapVector, i//3, 0)
         sunlineUKF.doubleArray_setitem(LVector, i, 0.0)
-    
+
     exCount = sunlineUKF.ukfLUD(EqnVector, 3, 3, LVector, intSwapVector)
-    
+
     sunlineUKF.ukfLUBckSlv(LVector, 3, 3, intSwapVector, EqnBVector, EqnOutVector)
-    
+
     expectedSol = [3.0/10.0, 4.0/10.0, 0.0]
     errorVal = 0.0
     for i in range(3):
@@ -253,7 +255,7 @@ def sunline_utilities_test(show_plots):
         testFailCount += 1
         testMessages.append("LU Matrix Inverse accuracy failure")
 
-    
+
     cholTestMat = [1.0, 0.0, 0.0, 0.0, 10.0, 5.0, 0.0, 5.0, 10.0]
     SourceVector = sunlineUKF.new_doubleArray(len(cholTestMat))
     CholVector = sunlineUKF.new_doubleArray(len(cholTestMat))
@@ -278,7 +280,7 @@ def sunline_utilities_test(show_plots):
                1.0974804773131115, 1.9010439702743847, 0.0, 0.0,
                0.0, 1.2672359635912551, 1.7923572711881284, 0.0,
                1.0974804773131113, -0.63357997864171967, 1.7920348101787789, 0.033997451205364251]
-               
+
     SourceVector = sunlineUKF.new_doubleArray(len(InvSourceMat))
     InvVector = sunlineUKF.new_doubleArray(len(InvSourceMat))
     for i in range(len(InvSourceMat)):
@@ -340,7 +342,7 @@ def testStateUpdateSunLine(show_plots):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
-    
+
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -363,11 +365,11 @@ def testStateUpdateSunLine(show_plots):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-    
+
     setupFilterData(moduleConfig)
-    
+
     cssConstelation = fswMessages.CSSConfigFswMsg()
-    
+
     CSSOrientationList = [
        [0.70710678118654746, -0.5, 0.5],
        [0.70710678118654746, -0.5, -0.5],
@@ -442,7 +444,7 @@ def testStateUpdateSunLine(show_plots):
         dotProd = numpy.dot(numpy.array(element), testVector)
         dotList.append(dotProd)
     inputData.CosValue = dotList
-        
+
     for i in range(400):
         if i > 20:
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
@@ -483,7 +485,7 @@ def testStatePropSunLine(show_plots):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
-    
+
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -506,7 +508,7 @@ def testStatePropSunLine(show_plots):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-    
+
     setupFilterData(moduleConfig)
     unitTestSim.TotalSim.logThisMessage('sunline_filter_data', testProcessRate)
 
@@ -514,7 +516,7 @@ def testStatePropSunLine(show_plots):
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
-    
+
     stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", list(range(6)))
     postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", list(range(8)))
     covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", list(range(6*6)))
@@ -522,14 +524,14 @@ def testStatePropSunLine(show_plots):
     FilterPlots.StateCovarPlot(stateLog, covarLog, 'prop', show_plots)
     FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, 'prop', show_plots)
 
-    
+
     for i in range(6):
         if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > 1.0E-10):
             print(abs(stateLog[-1, i+1] - stateLog[0, i+1]))
             testFailCount += 1
             testMessages.append("State propagation failure")
 
-    
+
 
     # print out success message if no error were found
     if testFailCount == 0:

@@ -35,9 +35,9 @@ import numpy as np
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.fswAlgorithms import mrpRotation                    # import the module that is to be tested
+from Basilisk.fswAlgorithms.mrpRotation import mrpRotation                    # import the module that is to be tested
 from Basilisk.utilities import macros as mc
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
 
 
 sys.path.append(path + '/Support')

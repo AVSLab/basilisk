@@ -3,6 +3,8 @@
 
 """Pretty-print tabular data."""
 
+from __future__ import print_function
+from __future__ import unicode_literals
 
 
 from collections import namedtuple
@@ -15,9 +17,9 @@ if python_version_tuple()[0] < "3":
     from functools import partial
     _none_type = type(None)
     _int_type = int
-    _long_type = int
+    _long_type = long
     _float_type = float
-    _text_type = str
+    _text_type = unicode
     _binary_type = str
 
     def _is_file(f):

@@ -349,9 +349,9 @@ class Controller:
             if self.numProcess > numSims:
                 print("Fewer MCs spawned than processes assigned (%d < %d). Changing processes count to %d." % (numSims, self.numProcess, numSims))
                 self.numProcess = numSims
-            for i in range(numSims/self.numProcess):
+            for i in range(numSims//self.numProcess):
                 # If number of sims doesn't factor evenly into the number of processes:
-                if numSims % self.numProcess != 0 and i == len(list(range(numSims/self.numProcess)))-1:
+                if numSims % self.numProcess != 0 and i == len(list(range(numSims//self.numProcess)))-1:
                     offset = numSims % self.numProcess
                 else:
                     offset = 0
@@ -487,7 +487,7 @@ class Controller:
             if self.simParams.verbose:
                 print("Archiving a copy of this simulation before running it in 'MonteCarlo.data'")
             try:
-                with gzip.open(self.archiveDir + "MonteCarlo.data", "w") as pickleFile:
+                with gzip.open(self.archiveDir + "MonteCarlo.data", "wb") as pickleFile:
                     pickle.dump(self, pickleFile)  # dump this controller object into a file.
             except Exception as e:
                 print("Unknown exception while trying to pickle monte-carlo-controller... \ncontinuing...\n\n", e)
@@ -535,9 +535,9 @@ class Controller:
             if self.numProcess > numSims:
                 print("Fewer MCs spawned than processes assigned (%d < %d). Changing processes count to %d." % (numSims, self.numProcess, numSims))
                 self.numProcess = numSims
-            for i in range(numSims/self.numProcess):
+            for i in range(numSims//self.numProcess):
                 # If number of sims doesn't factor evenly into the number of processes:
-                if numSims % self.numProcess != 0 and i == len(list(range(numSims/self.numProcess)))-1:
+                if numSims % self.numProcess != 0 and i == len(list(range(numSims//self.numProcess)))-1:
                     offset = numSims % self.numProcess
                 else:
                     offset = 0
@@ -552,7 +552,7 @@ class Controller:
 
                         jobsFinished += 1
                         if self.simParams.verbose:
-                            if jobsFinished % max(1, numSims / 20) == 0:  # print percentage after every ~5%
+                            if jobsFinished % max(1, numSims // 20) == 0:  # print percentage after every ~5%
                                 print("Finished", jobsFinished, "/", numSims, \
                                       "\t-- {}%".format(int(100 * float(jobsFinished) / numSims)))
                     pool.close()
@@ -803,7 +803,7 @@ class DataWriter(mp.Process):
                         continue
 
                     # If the .data file does exists, append the message's pickle.
-                    with open(filePath, "a+") as pkl:
+                    with open(filePath, "a+b") as pkl:
                         pickle.dump([df], pkl)
 
             print("Finished logging dataframes from run" + str(mcSimIndex))

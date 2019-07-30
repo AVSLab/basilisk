@@ -25,7 +25,9 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 import collections
 
 
-class SingleVariableDispersion(object, metaclass=abc.ABCMeta):
+class SingleVariableDispersion(object):
+    __metaclass__ = abc.ABCMeta
+
     def __init__(self, varName, bounds):
         self.varName = varName
         self.bounds = bounds
@@ -75,7 +77,9 @@ class NormalDispersion(SingleVariableDispersion):
         return dispValue
 
 
-class VectorVariableDispersion(object, metaclass=abc.ABCMeta):
+class VectorVariableDispersion(object):
+    __metaclass__ = abc.ABCMeta
+    
     def __init__(self, varName, bounds):
         self.varName = varName
         self.bounds = bounds

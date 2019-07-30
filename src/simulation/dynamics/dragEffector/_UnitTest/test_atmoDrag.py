@@ -226,7 +226,7 @@ def run(show_plots, orbitCase, planetCase):
 
 
     numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints-1)
+    samplingTime = simulationTime // (numDataPoints-1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(newAtmo.envOutMsgNames[-1], samplingTime)
     scSim.TotalSim.logThisMessage(simpleNavObj.outputAttName,samplingTime)
