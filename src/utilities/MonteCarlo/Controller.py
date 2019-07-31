@@ -802,6 +802,9 @@ class DataWriter(mp.Process):
                     if itemName == "OrbitalElements.Omega": # Protects from OS that aren't case sensitive.
                         itemName = "OrbitalElements.Omega_Capital"
 
+                    if itemName == "sunline_filter_data.covar" or itemName == "inertial_filter_data.covar" :
+                        continue
+
                     filePath = self._logDir + itemName + ".data"
                     self._dataFiles.add(filePath)
 
