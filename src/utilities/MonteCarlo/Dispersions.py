@@ -69,6 +69,7 @@ class UniformDispersion(SingleVariableDispersion):
 
     def generate(self, sim):
         dispValue = random.uniform(self.bounds[0], self.bounds[1])
+
         mid = (self.bounds[1] + self.bounds[0])/2.
         scale = self.bounds[1] - mid
         self.magnitude.append(str(round((dispValue - mid)/scale*100,2)) + " %")
@@ -249,11 +250,16 @@ class UniformVectorAngleDispersion(VectorVariableDispersion):
         meanPhi = vectorSphere[1] # Nominal phi
         meanTheta = vectorSphere[2] #Nominal theta
 
-        self.phiBounds = [meanPhi + self.phiBoundsOffNom[0], meanPhi + self.phiBoundsOffNom[1]]
-        self.thetaBounds = [meanTheta + self.thetaBoundsOffNom[0],  meanTheta + self.thetaBoundsOffNom[1]]
+        if self.thetaBounds == None:
+            self.thetaBounds = [meanTheta - np.pi, meanTheta + np.pi]
+        if self.phiBounds == None:
+            self.phiBounds = [meanPhi - np.pi / 2, meanPhi + np.pi / 2]
 
         phiRnd = np.random.uniform(meanPhi+self.phiBounds[0], meanPhi+self.phiBounds[1])
         thetaRnd = np.random.uniform(meanTheta+self.thetaBounds[0], meanTheta+self.thetaBounds[1])
+
+        self.phiBounds = [meanPhi + self.phiBoundsOffNom[0], meanPhi + self.phiBoundsOffNom[1]]
+        self.thetaBounds = [meanTheta + self.thetaBoundsOffNom[0],  meanTheta + self.thetaBoundsOffNom[1]]
 
         phiRnd = self.checkBounds(phiRnd, self.phiBounds)
         thetaRnd = self.checkBounds(thetaRnd, self.thetaBounds)
