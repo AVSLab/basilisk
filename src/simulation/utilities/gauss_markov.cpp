@@ -26,13 +26,15 @@
 /*! The constructor initialies the random number generator used for the walks*/
 GaussMarkov::GaussMarkov()
 {
+    this->RNGSeed = 0x1badcad1;
     std::normal_distribution<double>::param_type updatePair(0.0, 1.0/3.0);
     this->rGen.seed((unsigned int)this->RNGSeed);
     this->rNum.param(updatePair);
 }
 
-GaussMarkov::GaussMarkov(uint32_t size) : GaussMarkov() {
-    this->propMatrix.resize((int64_t) size, (int64_t) size);
+GaussMarkov::GaussMarkov(uint64_t size, uint64_t newSeed) : GaussMarkov() {
+    this->RNGSeed = newSeed;
+    this->propMatrix.resize(size,size);
     this->propMatrix.fill(0.0);
     this->currentState.resize((int64_t) size);
     this->currentState.fill(0.0);
@@ -41,6 +43,7 @@ GaussMarkov::GaussMarkov(uint32_t size) : GaussMarkov() {
     this->stateBounds.resize((int64_t) size);
     this->stateBounds.fill(0.0);
     this->numStates = size;
+    this->rGen.seed((unsigned int)this->RNGSeed);
 }
 
 /*! The destructor is a placeholder for one that might do something*/

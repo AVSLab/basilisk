@@ -44,8 +44,8 @@ ImuSensor::ImuSensor()
     memset(&this->StatePrevious, 0x0, sizeof(SCPlusStatesSimMsg));
     memset(&this->StateCurrent, 0x0, sizeof(SCPlusStatesSimMsg));
     
-    this->errorModelGyro =  GaussMarkov(this->numStates);
-    this->errorModelAccel = GaussMarkov(this->numStates);
+    this->errorModelGyro =  GaussMarkov(this->numStates, this->RNGSeed);
+    this->errorModelAccel = GaussMarkov(this->numStates, this->RNGSeed);
     
     this->aDisc = Discretize(this->numStates);
     this->oDisc = Discretize(this->numStates);
