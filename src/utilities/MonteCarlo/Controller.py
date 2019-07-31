@@ -409,7 +409,7 @@ class Controller:
             while not self.dataOutQueue.empty():
                time.sleep(1)
             self.dataOutQueue.put((None, None, True))
-            time.sleep(1)
+            time.sleep(5)
 
         # if there are failures
         if len(failed) > 0:
@@ -605,7 +605,7 @@ class Controller:
         while not self.dataOutQueue.empty():
            time.sleep(1)
         self.dataOutQueue.put((None, None, True))
-        time.sleep(1)
+        time.sleep(5)
 
         # if there are failures
         if len(failed) > 0:
@@ -832,6 +832,17 @@ class DataWriter(mp.Process):
                     else:
                         df = pandas.DataFrame([np.nan], columns=labels)
 
+                    for i in range(0, variLen):
+                        try: # if the data is numeric reduce it to float32 rather than float64 to reduce storage footprint
+                            # Note: You might think you can simplify these three lines into a single:
+                            # df.iloc[:,i] = df.iloc[:,i].apply(pandas.to_numeric, downcast="float")
+                            # but you'd be wrong.
+                            varComp = df.iloc[:,i]
+                            varComp = pandas.to_numeric(varComp, downcast='float')
+                            df.iloc[:,i] = varComp
+                        except:
+                            pass
+
                     # If the .data file doesn't exist save the dataframe to create the file
                     # and skip the remainder of the loop
                     if not os.path.exists(filePath):
@@ -972,6 +983,7 @@ class SimulationExecutor:
 
                 retainedData = RetentionPolicy.getDataForRetention(simInstance, simParams.retentionPolicies)
                 dataOutQueue.put((retainedData, simParams.index, None))
+                time.sleep(1)
 
                 with gzip.open(retentionFile, "w") as archive:
                     retainedData["index"] = simParams.index # add run index

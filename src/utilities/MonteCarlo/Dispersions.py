@@ -68,6 +68,7 @@ class UniformDispersion(SingleVariableDispersion):
 
     def generate(self, sim):
         dispValue = random.uniform(self.bounds[0], self.bounds[1])
+
         mid = (self.bounds[1] + self.bounds[0])/2.
         scale = self.bounds[1] - mid
         self.magnitude.append(str(round((dispValue - mid)/scale*100,2)) + " %")
@@ -130,6 +131,29 @@ class VectorVariableDispersion(object):
             if self.stdDeviation != 0 :
                 self.magnitude.append(str(round((dispValues[i] - self.mean)/self.stdDeviation,2)) + " $\sigma$")
         return dispValues
+
+    def cart2Spherical(self, cartVector):
+        # Spherical Coordinate Set: [rho, theta, phi]
+        x = cartVector[0]
+        y = cartVector[1]
+        z = cartVector[2]
+
+        rho = np.linalg.norm(cartVector)
+        phi = np.arctan2(y, x)[0]
+        theta = np.arccos(z)[0]
+
+        return [rho, phi, theta]
+
+    def spherical2Cart(self, spherVec):
+        rho = spherVec[0]
+        phi = spherVec[1]
+        theta = spherVec[2]
+
+        x = rho * np.sin(theta) * np.cos(phi)
+        y = rho * np.sin(theta) * np.sin(phi)
+        z = rho * np.cos(theta)
+
+        return [x,y,z]
 
     @staticmethod
     def eigAxisAndAngleToDCM(axis, angle):
@@ -202,33 +226,98 @@ class NormalVectorDispersion(VectorVariableDispersion):
 
 
 class UniformVectorAngleDispersion(VectorVariableDispersion):
-    def __init__(self, varName, phiBounds=None, thetaBounds=None):
+    def __init__(self, varName, phiBoundsOffNom=None, thetaBoundsOffNom=None):
         super(UniformVectorAngleDispersion, self).__init__(varName, None)
         # @TODO these bounds are not currently being applied to the generated values
-        self.phiBounds = phiBounds
-        if phiBounds is None:
-            self.phiBounds = ([0.0, 2 * np.pi])
-        self.thetaBounds = thetaBounds
-        if thetaBounds is None:
-            self.thetaBounds = self.phiBounds
+
+        self.phiBoundsOffNom = phiBoundsOffNom
+        self.thetaBoundsOffNom = thetaBoundsOffNom
+
+        if phiBoundsOffNom is None:
+            self.phiBoundsOffNom = [-np.pi / 2, np.pi / 2]
+        if thetaBoundsOffNom is None:
+            self.thetaBoundsOffNom = [-np.pi, np.pi]
+
         self.magnitude = []
 
     def generate(self, sim=None):
-        vector = eval('sim.' + self.varName)
-        phiRnd = random.uniform(self.phiBounds[0], self.phiBounds[1])
-        thetaRnd = random.uniform(self.thetaBounds[0], self.thetaBounds[1])
-        dispVec = np.array(vector) + np.array([[np.sin(phiRnd) * np.cos(thetaRnd)],
-                                               [np.sin(phiRnd) * np.sin(thetaRnd)],
-                                               [phiRnd]])
-        dispVec = dispVec / np.linalg.norm(dispVec)
+        # Note this dispersion is applied off of the nominal
+        vectorCart = eval('sim.' + self.varName)
+        vectorCart = vectorCart/np.linalg.norm(vectorCart)
+        vectorSphere = self.cart2Spherical(vectorCart)
+
+        meanPhi = vectorSphere[1] # Nominal phi
+        meanTheta = vectorSphere[2] #Nominal theta
+
+        if self.thetaBounds == None:
+            self.thetaBounds = [meanTheta - np.pi, meanTheta + np.pi]
+        if self.phiBounds == None:
+            self.phiBounds = [meanPhi - np.pi / 2, meanPhi + np.pi / 2]
+
+        phiRnd = np.random.uniform(meanPhi+self.phiBounds[0], meanPhi+self.phiBounds[1])
+        thetaRnd = np.random.uniform(meanTheta+self.thetaBounds[0], meanTheta+self.thetaBounds[1])
+
+        self.phiBounds = [meanPhi + self.phiBoundsOffNom[0], meanPhi + self.phiBoundsOffNom[1]]
+        self.thetaBounds = [meanTheta + self.thetaBoundsOffNom[0],  meanTheta + self.thetaBoundsOffNom[1]]
+
+        phiRnd = self.checkBounds(phiRnd, self.phiBounds)
+        thetaRnd = self.checkBounds(thetaRnd, self.thetaBounds)
+
+        newVec = self.spherical2Cart([1.0, phiRnd, thetaRnd])
+        dispVec = newVec/np.linalg.norm(newVec) # Shouldn't technically need the normalization but doing it for completeness
+
         midPhi = (self.phiBounds[1] + self.phiBounds[0])/2.
         scalePhi = self.phiBounds[1] - midPhi
         midTheta = (self.thetaBounds[1] + self.thetaBounds[0])/2.
         scaleTheta = self.thetaBounds[1] - midTheta
         self.magnitude.append(str(round((phiRnd - midPhi)/scalePhi*100,2)) + " %")
         self.magnitude.append(str(round((thetaRnd - midTheta)/scaleTheta*100,2)) + " %")
+
         return dispVec
 
+
+class NormalVectorAngleDispersion(VectorVariableDispersion):
+    def __init__(self, varName, thetaStd = np.pi/3.0, phiStd=np.pi/3.0, thetaBoundsOffNom=None, phiBoundsOffNom=None):
+        super(NormalVectorAngleDispersion, self).__init__(varName, None)
+        # @TODO these bounds are not currently being applied to the generated values
+
+        self.thetaStd = thetaStd
+        self.phiStd = phiStd
+
+        self.phiBoundsOffNom = phiBoundsOffNom
+        self.thetaBoundsOffNom = thetaBoundsOffNom
+
+        if phiBoundsOffNom is None:
+            self.phiBoundsOffNom = [-np.pi/2, np.pi/2]
+        if thetaBoundsOffNom is None:
+            self.thetaBoundsOffNom = [-np.pi, np.pi]
+
+        self.magnitude = []
+
+    def generate(self, sim=None):
+        vectorCart = eval('sim.' + self.varName)
+        vectorCart = vectorCart/np.linalg.norm(vectorCart)
+        vectorSphere = self.cart2Spherical(vectorCart)
+
+        meanPhi = vectorSphere[1] # Nominal phi
+        meanTheta = vectorSphere[2] # Nominal theta
+
+        phiRnd = np.random.normal(meanPhi, self.phiStd, 1)
+        thetaRnd = np.random.normal(meanTheta, self.thetaStd, 1)
+
+        self.phiBounds = [meanPhi + self.phiBoundsOffNom[0], meanPhi + self.phiBoundsOffNom[1]]
+        self.thetaBounds = [meanTheta + self.thetaBoundsOffNom[0],  meanTheta + self.thetaBoundsOffNom[1]]
+
+        phiRnd = self.checkBounds(phiRnd, self.phiBounds)
+        thetaRnd = self.checkBounds(thetaRnd, self.thetaBounds)
+
+        newVec = self.spherical2Cart([1.0, phiRnd, thetaRnd])
+        dispVec = newVec/np.linalg.norm(newVec) # Shouldn't technically need the normalization but doing it for completeness
+
+        self.magnitude.append(str(round((phiRnd - meanPhi) / self.phiStd, 2)) + " $\sigma$")
+        self.magnitude.append(str(round((thetaRnd - meanTheta) / self.thetaStd, 2)) + " $\sigma$")
+
+        return dispVec
 
 class UniformEulerAngleMRPDispersion(VectorVariableDispersion):
     def __init__(self, varName, bounds=None):
