@@ -44,7 +44,7 @@ CoarseSunSensor::CoarseSunSensor()
     this->senBias = 0.0;
     this->senNoiseStd = 0.0;
     this->walkBounds = 1E-15; //don't allow random walk by default
-    this->noiseModel = GaussMarkov(1);
+    this->noiseModel = GaussMarkov(1, this->RNGSeed);
     this->faultState = MAX_CSSFAULT;
     this->nHat_B.fill(0.0);
     this->directValue = 0.0;

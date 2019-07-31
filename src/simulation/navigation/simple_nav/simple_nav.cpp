@@ -49,7 +49,7 @@ SimpleNav::SimpleNav()
     this->PMatrix.fill(0.0);
     this->walkBounds.resize(18);
     this->walkBounds.fill(0.0);
-    this->errorModel =  GaussMarkov(18);
+    this->errorModel =  GaussMarkov(18, this->RNGSeed);
     return;
 }
 
