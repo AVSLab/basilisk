@@ -250,16 +250,11 @@ class UniformVectorAngleDispersion(VectorVariableDispersion):
         meanPhi = vectorSphere[1] # Nominal phi
         meanTheta = vectorSphere[2] #Nominal theta
 
-        if self.thetaBounds == None:
-            self.thetaBounds = [meanTheta - np.pi, meanTheta + np.pi]
-        if self.phiBounds == None:
-            self.phiBounds = [meanPhi - np.pi / 2, meanPhi + np.pi / 2]
+        self.phiBounds = [meanPhi + self.phiBoundsOffNom[0], meanPhi + self.phiBoundsOffNom[1]]
+        self.thetaBounds = [meanTheta + self.thetaBoundsOffNom[0],  meanTheta + self.thetaBoundsOffNom[1]]
 
         phiRnd = np.random.uniform(meanPhi+self.phiBounds[0], meanPhi+self.phiBounds[1])
         thetaRnd = np.random.uniform(meanTheta+self.thetaBounds[0], meanTheta+self.thetaBounds[1])
-
-        self.phiBounds = [meanPhi + self.phiBoundsOffNom[0], meanPhi + self.phiBoundsOffNom[1]]
-        self.thetaBounds = [meanTheta + self.thetaBoundsOffNom[0],  meanTheta + self.thetaBoundsOffNom[1]]
 
         phiRnd = self.checkBounds(phiRnd, self.phiBounds)
         thetaRnd = self.checkBounds(thetaRnd, self.thetaBounds)
