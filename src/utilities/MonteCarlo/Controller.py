@@ -924,9 +924,12 @@ class SimulationExecutor:
             # we may want to disperse random seeds
             if simParams.shouldDisperseSeeds:
                 # generate the random seeds for the model (but don't apply them yet)
-                randomSeedDispersions = cls.disperseSeeds(simInstance)
-                for name, value in list(randomSeedDispersions.items()):
+                randomSeedDispersions = cls.disperseSeeds(simInstance) #Note: This sets the RNGSeeds before all other modifications
+                for name, value in randomSeedDispersions.items():
                     modifications[name] = value
+
+            # used if rerunning ICs from a .json file, modifications will contain the RNGSeeds that need to be set before selfInit()
+            cls.populateSeeds(simInstance, modifications)
 
             # we may want to disperse parameters
             for disp in simParams.dispersions:
@@ -1050,3 +1053,18 @@ class SimulationExecutor:
                 except:
                     pass
         return randomSeeds
+
+    @staticmethod
+    def populateSeeds(simInstance, modifications):
+        """  only populate the RNG seeds of all the tasks in the sim
+        Args:
+            simInstance: SimulationBaseClass
+                A basilisk simulation to set random seeds on
+            modifications:
+                A dictionary containing RNGSeeds to be populate for the sim, among other sim modifications.
+        """
+        for variable, value in modifications.items():
+            if ".RNGSeed" in variable:
+                rngStatement = "simInstance." + variable + "=" + value
+                exec rngStatement
+
