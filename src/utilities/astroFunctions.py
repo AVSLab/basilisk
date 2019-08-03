@@ -308,11 +308,11 @@ def computeCOE(L,a,e,i,Omega,Pi):
 
     w = Pi - Omega
     M = L - Pi
-    C_cen = (2*e - 1/4 * np.power(e,3) + 5/96 * np.power(e,5)) * np.sin(M) +\
-            (5/4 * np.power(e,2) - 11/24 * np.power(e,4)) * np.sin(2*M) +\
-            (13/12 * np.power(e,3) - 43/64 * np.power(e,5)) * np.sin(3*M) +\
-            103/96 * np.power(e,4) * np.sin(4*M) +\
-            1097/960 * np.power(e,5) * np.sin(5*M)
+    C_cen = (2*e - 1//4 * np.power(e,3) + 5//96 * np.power(e,5)) * np.sin(M) +\
+            (5//4 * np.power(e,2) - 11//24 * np.power(e,4)) * np.sin(2*M) +\
+            (13//12 * np.power(e,3) - 43//64 * np.power(e,5)) * np.sin(3*M) +\
+            103//96 * np.power(e,4) * np.sin(4*M) +\
+            1097//960 * np.power(e,5) * np.sin(5*M)
     nu = M + C_cen
     return (a, e, i, Omega, w, nu)
 
@@ -639,3 +639,9 @@ def Tisserand_ESU():
     TisserandPlot(a_Saturn, v_inf_S_vec[3], 'cyan')
 
     plt.show()
+
+def main():
+    Mars_RV(JulianDate([2018, 10, 16]))
+
+if __name__ == '__main__':
+    main()
