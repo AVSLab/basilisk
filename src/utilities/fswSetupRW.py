@@ -25,7 +25,7 @@
 
 import sys, os, inspect
 
-from Basilisk.fswAlgorithms.fswMessages import fswMessages
+from Basilisk.fswAlgorithms import fswMessages
 import numpy
 
 

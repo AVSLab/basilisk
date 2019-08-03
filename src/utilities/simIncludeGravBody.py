@@ -19,7 +19,6 @@
 '''
 
 from Basilisk.simulation.gravityEffector import gravityEffector
-from Basilisk.simulation.gravityEffector import gravCoeffOps
 from Basilisk.simulation.spice_interface import spice_interface
 from Basilisk.utilities import unitTestSupport
 
