@@ -18,8 +18,8 @@
 
 '''
 
-from Basilisk.simulation.gravityEffector import gravityEffector
-from Basilisk.simulation.spice_interface import spice_interface
+from Basilisk.simulation import gravityEffector
+from Basilisk.simulation import spice_interface
 from Basilisk.utilities import unitTestSupport
 
 class gravBodyFactory(object):
