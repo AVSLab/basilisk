@@ -26,7 +26,10 @@ import numpy
 
 from . import macros
 from Basilisk.simulation import simMessages
-from collections import OrderedDict
+try:
+    from collections.abc import OrderedDict
+except ImportError:
+    from collections import OrderedDict
 
 class rwFactory(object):
     def __init__(self):

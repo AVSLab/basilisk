@@ -195,7 +195,7 @@ def StateUpdateRelOD(show_plots):
     setupFilterData(moduleConfig)
     unitTestSim.TotalSim.logThisMessage('relod_filter_data', testProcessRate)
 
-    time = np.linspace(0,multT1*t1,multT1*t1/dt+1)
+    time = np.linspace(0,multT1*t1,multT1*t1//dt+1)
     dydt = np.zeros(6)
     energy = np.zeros(len(time))
     expected=np.zeros([len(time), 7])
@@ -327,7 +327,7 @@ def StatePropRelOD(show_plots):
     unitTestSim.ConfigureStopTime(macros.min2nano(timeSim))
     unitTestSim.ExecuteSimulation()
 
-    time = np.linspace(0,timeSim*60,timeSim*60/dt+1)
+    time = np.linspace(0,timeSim*60,timeSim*60//dt+1)
     dydt = np.zeros(6)
     energy = np.zeros(len(time))
     expected=np.zeros([len(time), 7])
