@@ -21,6 +21,7 @@
 from Basilisk.simulation import gravityEffector
 from Basilisk.simulation.gravityEffector import gravCoeffOps
 from Basilisk.simulation import spice_interface
+from Basilisk.simulation.gravityEffector import gravCoeffOps
 from Basilisk.utilities import unitTestSupport
 
 class gravBodyFactory(object):
