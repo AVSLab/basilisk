@@ -25,7 +25,9 @@
  */
 
 #define ODUKF_N_STATES 6
-#define ODUKF_N_STATES_HALF 3
+#define ODUKF_N_STATES_B 9
+#define ODUKF_N_STATES_DYN 6
+#define ODUKF_N_MEAS_B 6
 #define ODUKF_N_MEAS 3
 
 /*! @brief structure for filter-states output for the unscented kalman filter
