@@ -41,6 +41,8 @@ except NameError:
 from Basilisk.utilities import simulationArchTypes
 from Basilisk.simulation import simMessages
 
+import warnings
+
 
 class LogBaseClass:
     def __init__(self, ReplaceName, LogPeriod, RefFunction, DataCols=1):
@@ -187,6 +189,7 @@ class SimBaseClass:
         self.dataStructIndex = self.simBasePath + '/xml/index.xml'
         self.indexParsed = False
         self.simulationInitialized = False
+        self.simulationFinished = False
 
     def AddModelToTask(self, TaskName, NewModel, ModelData=None, ModelPriority=-1):
         i = 0
@@ -342,10 +345,14 @@ class SimBaseClass:
                     minNextTime = CurrSimTime + LogValue.Period
         return minNextTime
 
-    def ExecuteSimulation(self, simComm, Scenario):
+    def ExecuteSimulation(self, simComm=None, scenario=None):
         self.initializeEventChecks()
-        shareDataThread = threading.Thread(target=self.shareData, args=(simComm, Scenario))
-        shareDataThread.start()
+
+        #Live Plotting Thread
+        if scenario is not None and scenario.livePlots:
+            shareDataThread = threading.Thread(target=self.shareData, args=(simComm, scenario))
+            shareDataThread.daemon = True
+            shareDataThread.start()
         nextStopTime = self.TotalSim.NextTaskTime
         nextPriority = -1
         pyProcPresent = False
@@ -379,24 +386,21 @@ class SimBaseClass:
                 nextStopTime = nextLogTime
                 nextPriority = -1
             nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
+        if simComm is not None:
+            simComm.send("TERM")
+        if scenario is not None and scenario.showPlots:
+            scenario.pull_outputs(scenario.showPlots)
 
-    def shareData(self, simComm, Scenario):
+    def shareData(self, simComm, scenario):
         while True:
-            comm = self.pullMessageLogData(Scenario.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", range(3))
-            if comm.size != 0:
-                simComm.send(comm.tolist())
-
-            '''
-            comm = self.pullMessageLogData(Scenario.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", range(3))
-            if comm.size != 0:
-                sharedArr = simComm
-                del sharedArr[:]
-                print(comm.shape[0])
-                for i in range(comm.shape[1]):
-                    sharedArr.append(comm[:,i])
-                simComm = sharedArr
-            sleep(1)
-            '''
+            inComm = simComm.recv()
+            outData = []
+            outComm = {}
+            for req in inComm["dataReq"]:
+                outData.append(self.pullMessageLogData(req, range(3)))
+            if len(outData) != 0:
+                outComm["plotID"] = inComm["plotID"]; outComm["dataResp"] = outData
+                simComm.send(outComm)
 
     def GetLogVariableData(self, LogName):
         TheArray = np.array(self.VarLogList[LogName].TimeValuePairs)

@@ -230,7 +230,7 @@
 # Import utilities
 from Basilisk.utilities import orbitalMotion, macros, unitTestSupport
 
-import multiprocessing
+from multiprocessing import Pipe, Process, Lock
 from time import sleep
 import threading
 import matplotlib.pyplot as plt
@@ -256,10 +256,11 @@ sys.path.append(path + '/../../scenarios')
 
 # Create your own scenario child class
 class scenario_BasicOrbit(BSKScenario):
-    def __init__(self, masterSim):
+    def __init__(self, masterSim, showPlots, livePlots):
         super(scenario_BasicOrbit, self).__init__(masterSim)
         self.name = 'scenario_BasicOrbit'
-        self.r_BN_N = np.array([])
+        self.showPlots = showPlots
+        self.livePlots = livePlots
 
     def configure_initial_conditions(self):
         print '%s: configure_initial_conditions' % self.name
@@ -292,16 +293,18 @@ class scenario_BasicOrbit(BSKScenario):
     def pull_outputs(self, showPlots):
         print '%s: pull_outputs' % self.name
         # Dynamics process outputs
-        #sigma_BN = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN", range(3))
-        #r_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", range(3))
-        #v_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", range(3))
+        sigma_BN = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN", range(3))
+        r_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", range(3))
+        v_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", range(3))
 
         # Plot results
-        liveFlag = False
         BSK_plt.clear_all_plots()
-        timeLineSet = self.r_BN_N[:, 0] * macros.NANO2MIN
-        BSK_plt.plot_orbit(self.r_BN_N, liveFlag)
-        #BSK_plt.plot_orientation(timeLineSet, r_BN_N, v_BN_N, sigma_BN)
+        timeLineSet = r_BN_N[:, 0] * macros.NANO2MIN
+
+        plotID = min([num for num in range(1,10) if not plt.fignum_exists(num)])
+        BSK_plt.plot_orbit(r_BN_N, plotID)
+        plotID = min([num for num in range(1,10) if not plt.fignum_exists(num)])
+        BSK_plt.plot_orientation(timeLineSet, r_BN_N, v_BN_N, sigma_BN, plotID)
 
         figureList = {}
         if showPlots:
@@ -313,23 +316,47 @@ class scenario_BasicOrbit(BSKScenario):
 
         return figureList
 
-    def online_outputs(self, showPlots, simProc, plotComm):
-        plt.figure()
-        liveFlag = True
+    def online_outputs(self, plotComm, rate):
+        dataRequests = self.setup_plotting()
+        lock = Lock()
         while True:
-            comm = np.array(plotComm.recv())
-            with warnings.catch_warnings():
-                warnings.simplefilter(action='ignore', category=FutureWarning)
-                if comm == "term":
-                    break
-            self.r_BN_N = comm
-            if self.r_BN_N.size != 0:
-                BSK_plt.plot_orbit(self.r_BN_N, liveFlag)
-                plt.show(block=False)
-                plt.pause(.01)
-        figureList = self.pull_outputs(showPlots)
+            for request in dataRequests:
+                #send request for data
+                plotComm.send(request)
+                #recieve request and supress warning
+                response = plotComm.recv()
+                with warnings.catch_warnings():
+                    warnings.simplefilter(action='ignore', category=FutureWarning)
+                if response == "TERM":
+                    return
+                #define what to do with each data request
+                if response["plotID"] == 0:
+                    lock.acquire()
+                    BSK_plt.plot_orbit(np.array(response["dataResp"][0]), response["plotID"])
+                    plt.show(block=False)
+                    lock.release()
+                    plt.pause(.01)
+                elif response["plotID"] == 1:
+                    lock.acquire()
+                    r_BN_N = np.array(response["dataResp"][0])
+                    sigma_BN = np.array(response["dataResp"][1])
+                    v_BN_N = np.array(response["dataResp"][2])
+                    timeLineSet = r_BN_N[:, 0] * macros.NANO2MIN
+                    BSK_plt.plot_orientation(timeLineSet, r_BN_N, v_BN_N, sigma_BN, response["plotID"], True)
+                    lock.release()
+                    plt.pause(.01)
+            sleep(rate/1000.)
 
-def run(showPlots):
+    def setup_plotting(self):
+        #define plots here
+        dataRequests = [ {"plotID" : 0, "dataReq" : [self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N"]}, \
+                        {"plotID" : 1, "dataReq" : [self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", \
+                                                    self.masterSim.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN", \
+                                                    self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N"]} ]
+        return dataRequests
+
+
+def run(showPlots, livePlots):
     # Instantiate base simulation
     TheBSKSim = BSKSim()
     TheBSKSim.set_DynModel(BSK_Dynamics)
@@ -337,34 +364,34 @@ def run(showPlots):
     TheBSKSim.initInterfaces()
 
     # Configure a scenario in the base simulation
-    TheScenario = scenario_BasicOrbit(TheBSKSim)
+    TheScenario = scenario_BasicOrbit(TheBSKSim, showPlots, livePlots)
     TheScenario.log_outputs()
     TheScenario.configure_initial_conditions()
 
     # Initialize simulation
     TheBSKSim.InitializeSimulationAndDiscover()
 
-    # Configure run time and execute simulation
+    # Configure run time
     simulationTime = macros.min2nano(10.)
     TheBSKSim.ConfigureStopTime(simulationTime)
 
-    #communicationQ = multiprocessing.Queue()
-    plotComm, simComm = multiprocessing.Pipe()
-    #commManager = multiprocessing.Manager()
-    #plotComm = commManager.list()
-
-    #TheBSKSim.ExecuteSimulation(simComm, TheScenario)
-
-    simProc = multiprocessing.Process(target = TheBSKSim.ExecuteSimulation, args = (simComm, TheScenario,))
-    plotProc = multiprocessing.Process(target = TheScenario.online_outputs, args = (showPlots, simProc, plotComm,))
-    simProc.start()
-    plotProc.start()
-
-    simProc.join()
-    simComm.send('term')
-    plotProc.join()
+    # Run simulation
+    if livePlots:
+        #plotting refresh rate in ms
+        refreshRate = 200
+        plotComm, simComm = Pipe()
+        simProc = Process(target = TheBSKSim.ExecuteSimulation, args = (simComm, TheScenario,))
+        plotProc = Process(target = TheScenario.online_outputs, args = (plotComm, refreshRate))
+        # Execute simulation and live plotting
+        simProc.start()
+        plotProc.start()
+        simProc.join()
+        plotProc.join()
+    else:
+        TheBSKSim.ExecuteSimulation()
+        TheScenario.pull_outputs(showPlots)
 
     return
 
 if __name__ == "__main__":
-    run(True)
+    run(True, True)
