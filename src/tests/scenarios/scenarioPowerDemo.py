@@ -111,7 +111,7 @@ def run_scenario():
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)
 
     scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
-    scObject.hub.omega_BN_BInit = [[0.08], [-0.06], [0.05]]
+    scObject.hub.omega_BN_BInit = [[0.001], [-0.001], [0.001]]
     scenarioSim.AddModelToTask(taskName, scObject)
 
 
@@ -183,14 +183,18 @@ def run_scenario():
     sinkData = scenarioSim.pullMessageLogData(powerSink.nodePowerOutMsgName + ".netPower_W")
     storageData = scenarioSim.pullMessageLogData(powerMonitor.batPowerOutMsgName + ".storageLevel")
     netData = scenarioSim.pullMessageLogData(powerMonitor.batPowerOutMsgName + ".currentNetPower")
+    tvec = supplyData[:,0]
+    tvec = tvec * macros.NANO2HOUR
 
     plt.figure()
-    plt.plot(storageData[:,1],label='Integrated Net Power')
-    plt.plot(netData[:,1],label='Net Power I/O')
-    plt.plot(supplyData[:,1],label='Panel Power')
-    plt.plot(sinkData[:,1],label='Power Draw')
-    plt.xlabel('Time')
+    plt.style.use(['aiaa'])
+    plt.plot(tvec,storageData[:,1],label='Stored Power (W-Hr)')
+    plt.plot(tvec,netData[:,1],label='Net Power (W)')
+    plt.plot(tvec,supplyData[:,1],label='Panel Power (W)')
+    plt.plot(tvec,sinkData[:,1],label='Power Draw (W)')
+    plt.xlabel('Time (Hr)')
     plt.ylabel('Power (W)')
+    plt.grid(True)
     plt.legend()
     plt.show()
 
