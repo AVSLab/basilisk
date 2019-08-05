@@ -157,7 +157,7 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     ReadMessage(configData->opNavInMsgId, &timeOfMsgWritten, &sizeOfMsgWritten,
                 sizeof(OpNavFswMsg), &inputRelOD, moduleId);
     v3Scale(1E-3, inputRelOD.r_N, inputRelOD.r_N);
-    vScale(1E-6, inputRelOD.covar_N, ODUKF_N_STATES_HALF*ODUKF_N_STATES_HALF,inputRelOD.covar_N);
+    vScale(1E-6, inputRelOD.covar_N, ODUKF_N_MEAS*ODUKF_N_MEAS,inputRelOD.covar_N);
     /*! - Handle initializing time in filter and discard initial messages*/
     trackerValid = 0;
     /*! - If the time tag from the measured data is new compared to previous step,
