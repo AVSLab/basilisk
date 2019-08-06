@@ -36,7 +36,7 @@ mpl.rc("figure", figsize=(5.75,2.5))
 mpl.rc('axes', labelsize=10)
 mpl.rc('legend', fontsize=9)
 mpl.rc('figure', autolayout=True)
-
+mpl.rc('figure', max_open_warning=0)
 
 
 
