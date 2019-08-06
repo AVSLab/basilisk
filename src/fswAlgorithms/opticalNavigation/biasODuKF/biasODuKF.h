@@ -60,6 +60,7 @@ typedef struct {
     double kappa;                 //!< [-] Kappa parameter for filter
     double lambdaVal;             //!< [-] Lambda parameter for filter
     double gamma;                 //!< [-] Gamma parameter for filter
+    double eta;                 //!< [-] Gamma parameter for filter
     double switchMag;             //!< [-] Threshold for where we switch MRP set
     
     double dt;                     //!< [s] seconds since last data epoch
