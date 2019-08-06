@@ -267,6 +267,7 @@ def fuelSloshTest(show_plots,useFlag,testCase):
                 [rotEnergy[-1,0], rotEnergy[-1,1]]
                  ]
 
+    plt.close('all')
     if testCase != 'MassDepletion':
         plt.figure()
         plt.clf()

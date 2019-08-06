@@ -127,6 +127,7 @@ dataType2 = list(range(3))
 
 
 def myDataCallback(monteCarloData, retentionPolicy):
+    plt.close("all")
     data = np.array(monteCarloData["messages"]["inertial_state_output.v_BN_N"])
     plt.plot(data[:, 1], data[:, 2])
 

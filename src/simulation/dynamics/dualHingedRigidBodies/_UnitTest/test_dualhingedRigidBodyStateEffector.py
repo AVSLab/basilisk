@@ -202,6 +202,7 @@ def dualHingedRigidBodyTest(show_plots,useFlag,testCase):
                 [rotEnergy[-1,0], rotEnergy[-1,1]]
                  ]
 
+    plt.close('all')
     plt.figure()
     plt.clf()
     plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])

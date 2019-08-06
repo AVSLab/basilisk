@@ -215,6 +215,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
     TotalSim.scObject.hub.registerStates(TotalSim.newManager)
     thrusterSet.linkInStates(TotalSim.newManager)
 
+    plt.close("all")
     if ramp == "OFF":
         # Run the simulation
         executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime))
@@ -255,6 +256,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
         PlotName = "Force_" +  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" +str(int(long_angle))+"deg_"+ "Loc"+str(int(location[2][0]))+ "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
         PlotTitle = "Force on Y with " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " +str(int(long_angle))+" deg "+ "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
 
+        plt.close("all")
         plt.figure(1)
         plt.clf()
         plt.plot(thrForce[:,0]*macros.NANO2SEC, thrForce[:,2])

@@ -160,6 +160,7 @@ def test_singleGravityBody(show_plots):
 
     print(numpy.max(abs(posError[:,1:4])))
 
+    plt.close("all")
     plt.figure()
     plt.plot(posError[:,0], posError[:,1:4])
     plt.xlabel('Time (s)')
@@ -280,6 +281,7 @@ def test_multiBodyGravity(show_plots):
     pyswice.unload_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
     pyswice.unload_c(path + '/../_UnitTest/nh_pred_od077.bsp')
 
+    plt.close("all")
     plt.figure()
     plt.plot(posError[:,0], posError[:,1:4])
     plt.xlabel('Time (s)')
