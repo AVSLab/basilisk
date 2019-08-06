@@ -67,27 +67,28 @@ typedef struct {
     double gyrAggTimeTag;          //!< [s] Time-tag for aggregated gyro data
     double aggSigma_b2b1[3];       //!< [-] Aggregated attitude motion from gyros
     double dcm_BdyGyrpltf[3][3];   //!< [-] DCM for converting gyro data to body frame
-    double wM[2 * ODUKF_N_STATES + 1]; //!< [-] Weighting vector for sigma points
-    double wC[2 * ODUKF_N_STATES + 1]; //!< [-] Weighting vector for sigma points
+    double wM[2 * ODUKF_N_STATES_B + 1]; //!< [-] Weighting vector for sigma points
+    double wC[2 * ODUKF_N_STATES_B + 1]; //!< [-] Weighting vector for sigma points
     
-    double stateInit[ODUKF_N_STATES];    //!< [-] State estimate to initialize filter to
-    double state[ODUKF_N_STATES];        //!< [-] State estimate for time TimeTag
-    double statePrev[ODUKF_N_STATES];        //!< [-] State estimate for time TimeTag at previous time
-    double sBar[ODUKF_N_STATES*ODUKF_N_STATES];         //!< [-] Time updated covariance
-    double sBarPrev[ODUKF_N_STATES*ODUKF_N_STATES];     //!< [-] Time updated covariance at previous time
-    double covar[ODUKF_N_STATES*ODUKF_N_STATES];        //!< [-] covariance
-    double covarPrev[ODUKF_N_STATES*ODUKF_N_STATES];    //!< [-] covariance at previous time
-    double covarInit[ODUKF_N_STATES*ODUKF_N_STATES];    //!< [-] Covariance to init filter with
-    double xBar[ODUKF_N_STATES];            //!< [-] Current mean state estimate
+    double stateInit[ODUKF_N_STATES_B];    //!< [-] State estimate to initialize filter to
+    double state[ODUKF_N_STATES_B];        //!< [-] State estimate for time TimeTag
+    double statePrev[ODUKF_N_STATES_B];        //!< [-] State estimate for time TimeTag at previous time
+    double sBar[ODUKF_N_STATES_B*ODUKF_N_STATES_B];         //!< [-] Time updated covariance
+    double sBarPrev[ODUKF_N_STATES_B*ODUKF_N_STATES_B];     //!< [-] Time updated covariance at previous time
+    double covar[ODUKF_N_STATES_B*ODUKF_N_STATES_B];        //!< [-] covariance
+    double covarPrev[ODUKF_N_STATES_B*ODUKF_N_STATES_B];    //!< [-] covariance at previous time
+    double covarInit[ODUKF_N_STATES_B*ODUKF_N_STATES_B];    //!< [-] Covariance to init filter with
+    double xBar[ODUKF_N_STATES_B];            //!< [-] Current mean state estimate
     
-    double obs[ODUKF_N_MEAS];                               //!< [-] Observation vector for frame
-    double yMeas[ODUKF_N_STATES_DYN*(2*ODUKF_N_STATES+1)];        //!< [-] Measurement model data, can include bias making it 6x2n+1
+    double obs[ODUKF_N_MEAS_B];                               //!< [-] Observation vector for frame
+    double yMeas[ODUKF_N_STATES_DYN*(2*ODUKF_N_STATES_B+1)];        //!< [-] Measurement model data, can include bias making it 6x2n+1
     
-    double SP[(2*ODUKF_N_STATES+1)*ODUKF_N_STATES];          //!< [-]    sigma point matrix
+    double SP[(2*ODUKF_N_STATES_B+1)*ODUKF_N_STATES_B];          //!< [-]    sigma point matrix
     
-    double qNoise[ODUKF_N_STATES*ODUKF_N_STATES];       //!< [-] process noise matrix
-    double sQnoise[ODUKF_N_STATES*ODUKF_N_STATES];      //!< [-] cholesky of Qnoise
+    double qNoise[ODUKF_N_STATES_B*ODUKF_N_STATES_B];       //!< [-] process noise matrix
+    double sQnoise[ODUKF_N_STATES_B*ODUKF_N_STATES_B];      //!< [-] cholesky of Qnoise
     double measNoise[ODUKF_N_MEAS*ODUKF_N_MEAS];      //!< [-] Measurement Noise
+    double totalMeasNoise[ODUKF_N_MEAS_B*ODUKF_N_MEAS_B];      //!< [-] Measurement Noise with Bias terms
     
     int planetIdInit;                    //!< [-] Planet being navigated inital value
     int planetId;                   //!< [-] Planet being navigated as per measurement
@@ -114,7 +115,7 @@ extern "C" {
                             uint64_t moduleId);
     void Reset_biasODuKF(BiasODuKFConfig *configData, uint64_t callTime,
                            uint64_t moduleId);
-    void biasODuKFTwoBodyDyn(double state[ODUKF_N_STATES], double mu, double *stateDeriv);
+    void biasODuKFTwoBodyDyn(double state[ODUKF_N_STATES_B], double mu, double *stateDeriv);
     int biasODuKFTimeUpdate(BiasODuKFConfig *configData, double updateTime);
     int biasODuKFMeasUpdate(BiasODuKFConfig *configData);
     void biasODuKFCleanUpdate(BiasODuKFConfig *configData);

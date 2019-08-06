@@ -34,9 +34,9 @@
  implementation of the sunline state estimator*/
 typedef struct {
     double timeTag;                             //!< [s] Current time of validity for output 
-    double covar[ODUKF_N_STATES*ODUKF_N_STATES];    //!< [-] Current covariance of the filter
-    double state[ODUKF_N_STATES];                 //!< [-] Current estimated state of the filter
-    double stateError[ODUKF_N_STATES];            //!< [-] Current deviation of the state from the reference state
+    double covar[ODUKF_N_STATES_B*ODUKF_N_STATES_B];    //!< [-] Current covariance of the filter
+    double state[ODUKF_N_STATES_B];                 //!< [-] Current estimated state of the filter
+    double stateError[ODUKF_N_STATES_B];            //!< [-] Current deviation of the state from the reference state
     double postFitRes[ODUKF_N_MEAS];          //!< [-] PostFit Residuals
     int numObs;                                 //!< [-] Valid observation count for this frame
 }OpNavFilterFswMsg;

@@ -62,11 +62,12 @@ void Reset_biasODuKF(BiasODuKFConfig *configData, uint64_t callTime,
     
     int32_t i;
     int32_t badUpdate=0; /* Negative badUpdate is faulty, */
-    double tempMatrix[configData->numStates*configData->numStates];
+    double tempMatrix[ODUKF_N_STATES_B*ODUKF_N_STATES_B];
     
     /*! - Initialize filter parameters to max values */
     configData->timeTag = callTime*NANO2SEC;
     configData->dt = 0.0;
+    configData->numStates = ODUKF_N_STATES_B;
     configData->countHalfSPs = ODUKF_N_STATES_B;
     configData->numObs = ODUKF_N_MEAS_B;
     configData->imageObsNum = ODUKF_N_MEAS;
@@ -82,6 +83,8 @@ void Reset_biasODuKF(BiasODuKFConfig *configData, uint64_t callTime,
              configData->numStates);
     mSetZero(configData->sQnoise, configData->numStates, configData->numStates);
     mSetZero(configData->measNoise, configData->imageObsNum, configData->imageObsNum);
+    mSetZero(configData->totalMeasNoise, configData->numObs, configData->numObs);
+    
     
     /*! - Set lambda/gamma to standard value for unscented kalman filters */
     configData->lambdaVal = configData->alpha*configData->alpha*
@@ -158,6 +161,8 @@ void Update_biasODuKF(BiasODuKFConfig *configData, uint64_t callTime,
                 sizeof(OpNavFswMsg), &inputBiasOD, moduleId);
     v3Scale(1E-3, inputBiasOD.r_N, inputBiasOD.r_N);
     vScale(1E-6, inputBiasOD.covar_N, configData->imageObsNum*configData->imageObsNum, configData->measNoise);
+    mSetSubMatrix(configData->measNoise, configData->imageObsNum, configData->imageObsNum, configData->totalMeasNoise, configData->numObs, configData->numObs, 0, 0);
+    mSetSubMatrix(configData->measNoise, configData->imageObsNum, configData->imageObsNum, configData->totalMeasNoise, configData->numObs, configData->numObs, 3, 3);
     /*! - Handle initializing time in filter and discard initial messages*/
     trackerValid = 0;
     /*! - If the time tag from the measured data is new compared to previous step,
@@ -179,21 +184,20 @@ void Update_biasODuKF(BiasODuKFConfig *configData, uint64_t callTime,
         biasODuKFTimeUpdate(configData, newTimeTag);
     }
     
-    /*! - Compute Post Fit Residuals, first get Y (eq 22) using the states post fit*/
-    biasODuKFMeasModel(configData);
-    
-    /*! - Compute the value for the yBar parameter (equation 23)*/
-    vSetZero(yBar, configData->numObs);
-    for(i=0; i<configData->countHalfSPs*2+1; i++)
-    {
-        vCopy(&(configData->yMeas[i*configData->numObs]), configData->numObs,
-              tempYVec);
-        vScale(configData->wM[i], tempYVec, configData->numObs, tempYVec);
-        vAdd(yBar, configData->numObs, tempYVec, yBar);
-    }
-    
     /*! - The post fits are y - ybar if a measurement was read, if observations are zero, do not compute post fit residuals*/
     if(computePostFits == 1){
+        /*! - Compute Post Fit Residuals, first get Y (eq 22) using the states post fit*/
+        biasODuKFMeasModel(configData);
+        
+        /*! - Compute the value for the yBar parameter (equation 23)*/
+        vSetZero(yBar, configData->numObs);
+        for(i=0; i<configData->countHalfSPs*2+1; i++)
+        {
+            vCopy(&(configData->yMeas[i*configData->numObs]), configData->numObs,
+                  tempYVec);
+            vScale(configData->wM[i], tempYVec, configData->numObs, tempYVec);
+            vAdd(yBar, configData->numObs, tempYVec, yBar);
+        }
         mSubtract(configData->obs, ODUKF_N_MEAS, 1, yBar, configData->postFits);
     }
     
@@ -294,12 +298,12 @@ void biasODuKFTwoBodyDyn(double state[ODUKF_N_STATES_DYN], double muPlanet, doub
 int biasODuKFTimeUpdate(BiasODuKFConfig *configData, double updateTime)
 {
     int i, Index;
-    double sBarT[configData->numStates*configData->numStates]; // Sbar transpose (chol decomp of covar)
-    double xComp[configData->numStates], AT[(2 * configData->numStates + configData->numStates)*configData->numStates]; // Intermediate state, process noise chol decomp
-    double aRow[configData->numStates], rAT[configData->numStates*configData->numStates], xErr[configData->numStates]; //Row of A mat, R of QR decomp of A, state error
-    double sBarUp[configData->numStates*configData->numStates]; // S bar cholupdate
+    double sBarT[ODUKF_N_STATES_B*ODUKF_N_STATES_B]; // Sbar transpose (chol decomp of covar)
+    double xComp[ODUKF_N_STATES_B], AT[(2 * ODUKF_N_STATES_B + ODUKF_N_STATES_B)*ODUKF_N_STATES_B]; // Intermediate state, process noise chol decomp
+    double aRow[ODUKF_N_STATES_B], rAT[ODUKF_N_STATES_B*ODUKF_N_STATES_B], xErr[ODUKF_N_STATES_B]; //Row of A mat, R of QR decomp of A, state error
+    double sBarUp[ODUKF_N_STATES_B*ODUKF_N_STATES_B]; // S bar cholupdate
     double *spPtr; //sigma point intermediate varaible
-    double procNoise[configData->numStates*configData->numStates]; //process noise
+    double procNoise[ODUKF_N_STATES_B*ODUKF_N_STATES_B]; //process noise
     int32_t badUpdate=0;
     
     configData->dt = updateTime - configData->timeTag;
@@ -411,24 +415,18 @@ int biasODuKFTimeUpdate(BiasODuKFConfig *configData, double updateTime)
 void biasODuKFMeasModel(BiasODuKFConfig *configData)
 {
     int i, j;
+    vSetZero(configData->obs, configData->numObs);
     v3Copy(configData->opNavInMsg.r_N, configData->obs);
-
     for(j=0; j<configData->countHalfSPs*2+1; j++)
     {
-        for(i=0; i<3; i++)
-            configData->yMeas[i*(configData->countHalfSPs*2+1) + j] =
-            configData->SP[i + j*configData->numStates];
-    }
-    if (configData->numStates == 9){
-        for(j=0; j<configData->countHalfSPs*2+1; j++)
-        {
-            for(i=0; i<3; i++)
-                configData->yMeas[(i+3)*(configData->countHalfSPs*2+1) + j] =
-                configData->obs[i] - configData->SP[i + j*configData->numStates];
+        for(i=0; i<3; i++){
+            configData->yMeas[i*(configData->countHalfSPs*2+1) + j] = configData->SP[i + j*configData->numStates];
+            configData->yMeas[(i + configData->imageObsNum)*(configData->countHalfSPs*2+1) + j] = configData->obs[i] - configData->SP[i + j*configData->numStates];
         }
-
-        v3Subtract(configData->obs, &configData->state[configData->numObs], configData->obs);
     }
+
+    v3Subtract(configData->state,configData->obs, &configData->obs[3]);
+    
     /*! - yMeas matrix was set backwards deliberately so we need to transpose it through*/
     mTranspose(configData->yMeas, configData->numObs, configData->countHalfSPs*2+1,
                configData->yMeas);
@@ -444,13 +442,13 @@ int biasODuKFMeasUpdate(BiasODuKFConfig *configData)
 {
     uint32_t i;
     int32_t badUpdate;
-    double yBar[configData->numObs], syInv[configData->numObs*configData->numObs];
-    double kMat[configData->numStates*configData->numObs];
-    double xHat[configData->numStates], sBarT[configData->numStates*configData->numStates], tempYVec[configData->numObs];
-    double AT[(2 * configData->numStates + configData->numObs)*configData->numObs], qChol[configData->numObs*configData->numObs];
-    double rAT[configData->numObs*configData->numObs], syT[configData->numObs*configData->numObs];
-    double sy[configData->numObs*configData->numObs], Ucol[configData->numStates];
-    double updMat[configData->numObs*configData->numObs], pXY[configData->numStates*configData->numObs], Umat[configData->numStates*configData->numObs];
+    double yBar[ODUKF_N_MEAS_B], syInv[ODUKF_N_MEAS_B*ODUKF_N_MEAS_B];
+    double kMat[ODUKF_N_STATES_B*ODUKF_N_MEAS_B];
+    double xHat[ODUKF_N_STATES_B], sBarT[ODUKF_N_STATES_B*ODUKF_N_STATES_B], tempYVec[ODUKF_N_MEAS_B];
+    double AT[(2 * ODUKF_N_STATES_B + ODUKF_N_MEAS_B)*ODUKF_N_MEAS_B], qChol[ODUKF_N_MEAS_B*ODUKF_N_MEAS_B];
+    double rAT[ODUKF_N_MEAS_B*ODUKF_N_MEAS_B], syT[ODUKF_N_MEAS_B*ODUKF_N_MEAS_B];
+    double sy[ODUKF_N_MEAS_B*ODUKF_N_MEAS_B], Ucol[ODUKF_N_STATES_B];
+    double updMat[ODUKF_N_MEAS_B*ODUKF_N_MEAS_B], pXY[ODUKF_N_STATES_B*ODUKF_N_MEAS_B], Umat[ODUKF_N_STATES_B*ODUKF_N_MEAS_B];
     badUpdate = 0;
     
     vCopy(configData->state, configData->numStates, configData->statePrev);
@@ -490,7 +488,7 @@ int biasODuKFMeasUpdate(BiasODuKFConfig *configData)
     /*! - This is the square-root of the Rk matrix which we treat as the Cholesky
      decomposition of the observation variance matrix constructed for our number
      of observations*/
-    ukfCholDecomp(configData->measNoise, configData->numObs, configData->numObs, qChol);
+    ukfCholDecomp(configData->totalMeasNoise, configData->numObs, configData->numObs, qChol);
     memcpy(&(AT[2*configData->countHalfSPs*configData->numObs]),
            qChol, configData->numObs*configData->numObs*sizeof(double));
     /*! - Perform QR decomposition (only R again) of the above matrix to obtain the
