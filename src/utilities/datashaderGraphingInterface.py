@@ -27,6 +27,7 @@
 import inspect
 import os
 import datetime
+import warnings
 
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -37,17 +38,18 @@ path = os.path.dirname(os.path.abspath(filename))
 from Basilisk import __path__
 bskPath = __path__[0]
 
-
 import numpy as np
-import pandas as pd
-import holoviews as hv
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", category=DeprecationWarning)
+    import pandas as pd
+    import holoviews as hv
+    import datashader as ds
+    from holoviews.operation.datashader import datashade
+    from datashader.colors import colormap_select, Greys9, viridis
+    import datashader.transfer_functions as tf
+    from datashader.utils import export_image
 from Basilisk.utilities import macros
-import datashader as ds
-import datashader.transfer_functions as tf
-from datashader.utils import export_image
-from holoviews.operation.datashader import datashade
 from functools import partial
-from datashader.colors import colormap_select, Greys9, viridis
 from colorcet import fire
 from bokeh.palettes import GnBu9
 from matplotlib.cm import jet

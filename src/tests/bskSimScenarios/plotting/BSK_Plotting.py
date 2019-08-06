@@ -59,25 +59,25 @@ def plot3components(vec):
 
 def plot_sigma(sigma):
     plot3components(sigma)
-    plt.legend(['$\sigma_1$', '$\sigma_2$', '$\sigma_3$'])
+    plt.legend([r'$\sigma_1$', r'$\sigma_2$', r'$\sigma_3$'])
     plt.ylabel('MRP')
 
 
 def plot_omega(omega):
     plot3components(omega)
     plt.ylabel('Angular Rate, rad/s')
-    plt.legend(['$\omega_1$', '$\omega_2$', '$\omega_3$'])
+    plt.legend([r'$\omega_1$', r'$\omega_2$', r'$\omega_3$'])
 
 def subplot_sigma(subplot, sigma):
     plot3components(sigma)
-    plt.legend(['$\sigma_1$', '$\sigma_2$', '$\sigma_3$'])
+    plt.legend([r'$\sigma_1$', r'$\sigma_2$', r'$\sigma_3$'])
     plt.ylabel('MRP')
 
 
 def subplot_omega(subplot, omega):
     plot3components(omega)
     plt.ylabel('Angular Rate, rad/s')
-    plt.legend(['$\omega_1$', '$\omega_2$', '$\omega_3$'])
+    plt.legend([r'$\omega_1$', r'$\omega_2$', r'$\omega_3$'])
 
 
 # ------------------------------------- MAIN PLOT HANDLING ------------------------------------------------------ #
@@ -93,7 +93,7 @@ def subplot_omega(subplot, omega):
 def plot_controlTorque(Lr):
     plt.figure()
     plot3components(Lr)
-    plt.ylabel('Control Torque, $N \cdot m$')
+    plt.ylabel(r'Control Torque, $N \cdot m$')
     plt.legend(['$L_{r,1}$', '$L_{r,2}$', '$L_{r,3}$'])
     plt.title('Control Torque $L_r$')
     return
@@ -103,12 +103,12 @@ def plot_trackingError(sigma_BR, omega_BR_B):
     # plt.figure()
     plt.subplot(211)
     plot_sigma(sigma_BR)
-    plt.title('Att Error: $\sigma_{BR}$')
-    
+    plt.title(r'Att Error: $\sigma_{BR}$')
+
     plt.subplot(212)
     #plt.figure()
     plot_omega(omega_BR_B)
-    plt.title('Rate Error: $^B{\omega_{BR}}$')
+    plt.title(r'Rate Error: $^B{\omega_{BR}}$')
     return
 
 
@@ -117,12 +117,12 @@ def plot_attitudeGuidance(sigma_RN, omega_RN_N):
     plt.subplot(211)
     plot_sigma(sigma_RN)
     plt.ylim([-1.0, 1.0])
-    plt.title('Ref Att: $\sigma_{RN}$')
-    
+    plt.title(r'Ref Att: $\sigma_{RN}$')
+
     plt.subplot(212)
     #plt.figure()
     plot_omega(omega_RN_N)
-    plt.title('Ref Rate: $^N{\omega_{RN}}$')
+    plt.title(r'Ref Rate: $^N{\omega_{RN}}$')
     return
 
 
@@ -130,12 +130,12 @@ def plot_rotationalNav(sigma_BN, omega_BN_B):
     plt.figure()
     plt.subplot(211)
     plot_sigma(sigma_BN)
-    plt.title('Sc Att: $\sigma_{BN}$')
-    
+    plt.title(r'Sc Att: $\sigma_{BN}$')
+
     plt.subplot(212)
     #plt.figure()
     plot_omega(omega_BN_B)
-    plt.title('Sc Rate: $^B{\omega_{BN}}$')
+    plt.title(r'Sc Rate: $^B{\omega_{BN}}$')
     return
 
 def plot_shadow_fraction(time, shadow_factor):
@@ -174,7 +174,7 @@ def plot_attitude_error(timeLineSet, dataSigmaBR):
              color=unitTestSupport.getLineColor(1, 3),
              )
     plt.xlabel('Time [min]')
-    plt.ylabel('Attitude Error Norm $|\sigma_{B/R}|$')
+    plt.ylabel(r'Attitude Error Norm $|\sigma_{B/R}|$')
     ax.set_yscale('log')
 
 def plot_control_torque(timeLineSet, dataLr):
@@ -192,7 +192,7 @@ def plot_rate_error(timeLineSet, dataOmegaBR):
     for idx in range(1, 4):
         plt.plot(timeLineSet, dataOmegaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label='$\omega_{BR,' + str(idx) + '}$')
+                 label=r'$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error [rad/s] ')
@@ -228,7 +228,7 @@ def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
                  color=unitTestSupport.getLineColor(idx, numRW),
-                 label='$\hat u_{s,' + str(idx) + '}$')
+                 label=r'$\hat u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Motor Torque (Nm)')
@@ -238,7 +238,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     for idx in range(1, numRW + 1):
         plt.plot(timeData, dataOmegaRW[:, idx] / mc.RPM,
                  color=unitTestSupport.getLineColor(idx, numRW),
-                 label='$\Omega_{' + str(idx) + '}$')
+                 label=r'$\Omega_{' + str(idx) + '}$')
     plt.legend(loc='upper right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')

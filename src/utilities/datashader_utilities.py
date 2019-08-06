@@ -1,11 +1,13 @@
-import holoviews as hv
 import numpy as np
-import pandas as pd
-import datashader as ds
-from holoviews.streams import RangeXY
-from holoviews.operation.datashader import datashade, dynspread
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", category=DeprecationWarning)
+    import pandas as pd
+    import datashader as ds
+    import holoviews as hv
+    from holoviews.operation.datashader import datashade, dynspread
+    from holoviews.streams import RangeXY
+    from datashader.colors import Sets1to3
 from Basilisk.utilities import macros
-from datashader.colors import Sets1to3
 
 def pull_and_format_df(path, varIdxLen):
     df = pd.read_pickle(path)

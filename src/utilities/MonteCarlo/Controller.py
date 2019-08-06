@@ -30,7 +30,10 @@ import os
 import random
 import traceback
 import shutil
-import pandas
+import warnings
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", category=DeprecationWarning)
+    import pandas
 import copy
 import gzip
 import json

@@ -27,11 +27,14 @@
 
 FOUND_DATESHADER = True
 import sys, os, inspect
+import warnings
 import pytest
 try:
-    import datashader
-    import holoviews
-    import pandas
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=DeprecationWarning)
+        import pandas
+        import datashader
+        import holoviews
     import bokeh
     from bokeh.io import export_png
 except ImportError:
@@ -69,5 +72,3 @@ def test_MonteCarloSimulation(show_plots, MCCases):
     # each test method requires a single assert method to be called
     scenarioMonteCarloAttRW.run(True, MCCases , show_plots, False)
     return
-
-

@@ -32,14 +32,12 @@ import os
 import numpy as np
 import shutil
 import matplotlib.pyplot as plt
-
 DATASHADER_FOUND = True
 try:
     from Basilisk.utilities import datashaderGraphingInterface as datashaderLibrary
 except ImportError:
     print("Datashader library not found. Will use matplotlib")
     DATASHADER_FOUND = False
-
 
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -922,10 +920,10 @@ def plotSim(data, retentionPolicy):
     pltName = 'AttitudeError'
     for idx in range(1,4):
         plt.plot(timeData, dataSigmaBR[:, idx],
-                 label='Run ' + str(data["index"]) + ' $\sigma_'+str(idx)+'$')
+                 label='Run ' + str(data["index"]) + r' $\sigma_'+str(idx)+'$')
     # plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
-    plt.ylabel('Attitude Error $\sigma_{B/R}$')
+    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
     figureList[pltName] = plt.figure(1)
 
     plt.figure(2)
@@ -933,7 +931,7 @@ def plotSim(data, retentionPolicy):
     for idx in range(1,4):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
-                 label='Run ' + str(data["index"]) + ' $\hat u_{s,'+str(idx)+'}$')
+                 label='Run ' + str(data["index"]) + r' $\hat u_{s,'+str(idx)+'}$')
         plt.plot(timeData, dataRW[idx-1][:, 1],
                  label='Run ' + str(data["index"]) + ' $u_{s,' + str(idx) + '}$')
     # plt.legend(loc='lower right')
@@ -945,7 +943,7 @@ def plotSim(data, retentionPolicy):
     pltName = 'RateTrackingError'
     for idx in range(1,4):
         plt.plot(timeData, dataOmegaBR[:, idx],
-                 label='Run ' + str(data["index"]) + ' $\omega_{BR,'+str(idx)+'}$')
+                 label='Run ' + str(data["index"]) + r' $\omega_{BR,'+str(idx)+'}$')
     # plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error (rad/s) ')
@@ -955,7 +953,7 @@ def plotSim(data, retentionPolicy):
     pltName = 'RWSpeed'
     for idx in range(1,len(rwOutName)+1):
         plt.plot(timeData, dataOmegaRW[:, idx]/macros.RPM,
-                 label='Run ' + str(data["index"]) + ' $\Omega_{'+str(idx)+'}$')
+                 label='Run ' + str(data["index"]) + r' $\Omega_{'+str(idx)+'}$')
     # plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')
