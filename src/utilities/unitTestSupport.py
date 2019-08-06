@@ -160,11 +160,11 @@ def isArrayZero(result, dim, accuracy):
 def compareVector(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
     if (len(trueStates) != len(dataStates)):
         testFailCount += 1
-        testMessages.append("FAILED: "+msg+" unequal data array sizes\n")
+        testMessages.append("FAILED: "+msg+ r" unequal data array sizes\n")
     else:
         if not isVectorEqual(dataStates, trueStates, accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: "+msg+"\n")
+            testMessages.append("FAILED: "+msg+ r"\n")
     return testFailCount, testMessages
 
 
@@ -174,16 +174,16 @@ def compareVector(trueStates, dataStates, accuracy, msg, testFailCount, testMess
 def compareArray(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
     if (len(trueStates) != len(dataStates)):
         testFailCount += 1
-        testMessages.append("FAILED: "+msg+" unequal data array sizes\n")
+        testMessages.append("FAILED: "+msg+ r" unequal data array sizes\n")
     elif (len(trueStates) == 0 or len(dataStates) == 0):
         testFailCount += 1
-        testMessages.append("FAILED: " + msg + " data had empty arrays\n")
+        testMessages.append("FAILED: " + msg + r" data had empty arrays\n")
     else:
         for i in range(0, len(trueStates)):
             # check a vector values
             if not isArrayEqual(dataStates[i], trueStates[i], 3, accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: "+msg+" at t="+str(dataStates[i, 0]*macros.NANO2SEC)+"sec\n")
+                testMessages.append("FAILED: "+msg+" at t="+str(dataStates[i, 0]*macros.NANO2SEC)+r"sec\n")
     return testFailCount, testMessages
 
 #
@@ -192,16 +192,16 @@ def compareArray(trueStates, dataStates, accuracy, msg, testFailCount, testMessa
 def compareArrayND(trueStates, dataStates, accuracy, msg, size, testFailCount, testMessages):
     if (len(trueStates) != len(dataStates)):
         testFailCount += 1
-        testMessages.append("FAILED: "+msg+" unequal data array sizes\n")
+        testMessages.append("FAILED: "+msg+r" unequal data array sizes\n")
     elif (len(trueStates) == 0 or len(dataStates) == 0):
         testFailCount += 1
-        testMessages.append("FAILED: " + msg + " data had empty arrays\n")
+        testMessages.append("FAILED: " + msg + r" data had empty arrays\n")
     else:
         for i in range(0, len(trueStates)):
             # check a vector values
             if not isArrayEqual(dataStates[i], trueStates[i], size, accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: "+msg+" at t="+str(dataStates[i, 0]*macros.NANO2SEC)+"sec\n")
+                testMessages.append("FAILED: "+msg+" at t="+str(dataStates[i, 0]*macros.NANO2SEC)+r"sec\n")
     return testFailCount, testMessages
 
 
@@ -211,16 +211,16 @@ def compareArrayND(trueStates, dataStates, accuracy, msg, size, testFailCount, t
 def compareArrayRelative(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
     if (len(trueStates) != len(dataStates)):
         testFailCount += 1
-        testMessages.append("FAILED: "+msg+" unequal data array sizes\n")
+        testMessages.append("FAILED: "+msg+r" unequal data array sizes\n")
     elif (len(trueStates) == 0 or len(dataStates) == 0):
         testFailCount += 1
-        testMessages.append("FAILED: " + msg + " data had empty arrays\n")
+        testMessages.append("FAILED: " + msg + r" data had empty arrays\n")
     else:
         for i in range(0, len(trueStates)):
             # check a vector values
             if not isArrayEqualRelative(dataStates[i], trueStates[i], 3, accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: "+msg+" at t="+str(dataStates[i, 0]*macros.NANO2SEC)+"sec\n")
+                testMessages.append("FAILED: "+msg+" at t="+str(dataStates[i, 0]*macros.NANO2SEC)+r"sec\n")
     return testFailCount, testMessages
 
 #
@@ -258,16 +258,16 @@ def isDoubleEqualRelative(result, truth, accuracy):
 def compareDoubleArrayRelative(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
     if (len(trueStates) != len(dataStates)):
         testFailCount += 1
-        testMessages.append("FAILED: "+msg+" unequal data array sizes\n")
+        testMessages.append("FAILED: "+msg+r" unequal data array sizes\n")
     elif (len(trueStates) == 0 or len(dataStates) == 0):
         testFailCount += 1
-        testMessages.append("FAILED: " + msg + " data had empty arrays\n")
+        testMessages.append("FAILED: " + msg + r" data had empty arrays\n")
     else:
         for i in range(0, len(trueStates)):
             # check a vector values
             if not isDoubleEqualRelative(dataStates[i,1], trueStates[i], accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: "+msg+" at t="+str(dataStates[i, 0]*macros.NANO2SEC)+"sec\n")
+                testMessages.append("FAILED: "+msg+" at t="+str(dataStates[i, 0]*macros.NANO2SEC)+r"sec\n")
     return testFailCount, testMessages
 
 #
@@ -276,16 +276,16 @@ def compareDoubleArrayRelative(trueStates, dataStates, accuracy, msg, testFailCo
 def compareDoubleArray(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
     if (len(trueStates) != len(dataStates)):
         testFailCount += 1
-        testMessages.append("FAILED: "+msg+" unequal data array sizes\n")
+        testMessages.append("FAILED: "+msg+r" unequal data array sizes\n")
     elif (len(trueStates) == 0 or len(dataStates) == 0):
         testFailCount += 1
-        testMessages.append("FAILED: " + msg + " data had empty arrays\n")
+        testMessages.append("FAILED: " + msg + r" data had empty arrays\n")
     else:
         for i in range(0, len(trueStates)):
             # check a vector values
             if not isDoubleEqual(dataStates[i], trueStates[i], accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED: "+msg+" at t="+str(dataStates[i, 0]*macros.NANO2SEC)+"sec\n")
+                testMessages.append("FAILED: "+msg+" at t="+str(dataStates[i, 0]*macros.NANO2SEC)+r"sec\n")
     return testFailCount, testMessages
 
 
@@ -306,12 +306,12 @@ def writeTableLaTeX(tableName, tableHeaders, caption, array, path):
                          numalign="center"
                          )
 
-        texTable.write('\\begin{table}[htbp]\n')
-        texTable.write('\caption{' + caption + '}\n')
-        texTable.write('\label{tbl:' + tableName + '}\n')
-        texTable.write('\centering\n')
+        texTable.write(r'\\begin{table}[htbp]\n')
+        texTable.write(r'\caption{' + caption + '}\n')
+        texTable.write(r'\label{tbl:' + tableName + '}\n')
+        texTable.write(r'\centering\n')
         texTable.write(table)
-        texTable.write('\end{table}')
+        texTable.write(r'\end{table}')
         texTable.close()
 
     return
@@ -366,12 +366,12 @@ def writeFigureLaTeX(figureName, caption, plt, format, path):
             if exc.errno != errno.EEXIST:
                 raise
     with open(texFileName, "w") as texFigure:
-        texFigure.write('\\begin{figure}[htbp]\n')
-        texFigure.write('\centerline{\n')
-        texFigure.write('\includegraphics['+ format +']{AutoTeX/' + figureName + '}}\n')
-        texFigure.write('\caption{' + caption + '}\n')
-        texFigure.write('\label{fig:'+ figureName +'}\n')
-        texFigure.write('\end{figure}')
+        texFigure.write(r'\\begin{figure}[htbp]\n')
+        texFigure.write(r'\centerline{\n')
+        texFigure.write(r'\includegraphics['+ format +']{AutoTeX/' + figureName + '}}\n')
+        texFigure.write(r'\caption{' + caption + '}\n')
+        texFigure.write(r'\label{fig:'+ figureName +'}\n')
+        texFigure.write(r'\end{figure}')
         texFigure.close()
 
         texFileName = path + "/../_Documentation/AutoTeX/" + figureName + ".pdf"
