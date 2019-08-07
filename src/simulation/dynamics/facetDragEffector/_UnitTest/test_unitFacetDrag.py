@@ -91,11 +91,11 @@ def test_unitFacetDrag():
     if testSum == 0:
         colorText = 'ForestGreen'
         print("PASSED")
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
         print("Failed")
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
 
     assert testSum < 1, testMessage

@@ -392,10 +392,10 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     for idx in range(1, 4):
         plt.plot(dataSigmaBR[:, 0] * macros.NANO2MIN, dataSigmaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label='$\sigma_' + str(idx) + '$')
+                 label=r'$\sigma_' + str(idx) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
-    plt.ylabel('Attitude Error $\sigma_{B/R}$')
+    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
     figureList = {}
     pltName = fileName + "1" + str(int(useUnmodeledTorque)) + str(int(useIntGain))
     figureList[pltName] = plt.figure(1)
@@ -415,7 +415,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     for idx in range(1, 4):
         plt.plot(dataOmegaBR[:, 0] * macros.NANO2MIN, dataOmegaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label='$\omega_{BR,' + str(idx) + '}$')
+                 label=r'$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error [rad/s] ')
@@ -433,7 +433,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain):
     for idx in range(1, 4):
         plt.plot(dataSigmaBN[:, 0] * macros.NANO2MIN, dataSigmaBN[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label='$\sigma_{BN,' + str(idx) + '}$')
+                 label=r'$\sigma_{BN,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Inertial MRP Attitude ')

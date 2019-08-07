@@ -62,7 +62,7 @@ class ResultsStore:
                 textColor = 'ForestGreen'
             elif self.PassFail[i] == 'FAILED':
                 textColor = 'Red'
-            texSnippet =  '\\textcolor{' + textColor + '}{'+ self.PassFail[i] + '}'
+            texSnippet =  r'\textcolor{' + textColor + '}{'+ self.PassFail[i] + '}'
             unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
 
 @pytest.fixture(scope="module")
@@ -232,23 +232,23 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
         mDotData = TotalSim.GetLogVariableData('ACSThrusterDynamics.mDotTotal')
 
         # Auto Generate LaTex Figures
-        format = "width=0.8\\textwidth"
+        format = r"width=0.8\textwidth"
 
         snippetName = "Snippet" + str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" +\
                       str(int(long_angle))+"deg_"+ "Loc"+ str(int(loc1[2])) + "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
         if thrustNumber==1:
-            texSnippet = "The thruster is set at " +str(int(long_angle))+"$^\circ$ off the x-axis " +str(int(lat_angle))+"$^\circ$ off the z-axis, in the position $\\bm r = \left("+\
+            texSnippet = "The thruster is set at " +str(int(long_angle))+r"$^\circ$ off the x-axis " +str(int(lat_angle))+r"$^\circ$ off the z-axis, in the position $\bm r = \left("+\
                          str(loc1[0])+","+str(loc1[1])+"," +str(loc1[2])+ \
-                         "\\right)$. The test is launched using " + str(thrustNumber) + " thruster, for " + \
+                         r"\right)$. The test is launched using " + str(thrustNumber) + " thruster, for " + \
                          str(duration)+ " seconds. The test rate is " + str(int(1./(testRate*macros.NANO2SEC))) + " steps per second"
         if thrustNumber==2:
-            texSnippet = "The first thruster is set at " + str(int(long_angle)) + "$^\circ$ off the x-axis " + str(
-                int(lat_angle)) + "$^\circ$ off the z-axis, in the position $\\bm r = \left(" + \
+            texSnippet = "The first thruster is set at " + str(int(long_angle)) + r"$^\circ$ off the x-axis " + str(
+                int(lat_angle)) + r"$^\circ$ off the z-axis, in the position $\bm r = \left(" + \
                          str(loc1[0]) + "," + str(loc1[1]) + "," + str(loc1[2]) + \
-                         "\\right)$. The second thruster is set at " + str(int(long_angle+45)) + "$^\circ$ off the x-axis " + str(
-                int(lat_angle+45)) + "$^\circ$ off the z-axis, in the position $\\bm r = \left(" + \
+                         r"\right)$. The second thruster is set at " + str(int(long_angle+45)) + r"$^\circ$ off the x-axis " + str(
+                int(lat_angle+45)) + r"$^\circ$ off the z-axis, in the position $\bm r = \left(" + \
                          str(loc2[0]) + "," + str(loc2[1]) + "," + str(loc2[2]) + \
-                         "\\right)$. The test uses these " + str(thrustNumber) + " thrusters for " + \
+                         r"\right)$. The test uses these " + str(thrustNumber) + " thrusters for " + \
                          str(duration) + " seconds. The test rate is " + str(
                 int(1. / (testRate * macros.NANO2SEC))) + " steps per second"
         unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
@@ -348,7 +348,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
 
 
     if ramp == "ON":
-        format = "width=0.8\\textwidth"
+        format = r"width=0.8\textwidth"
         rampsteps = 10
         sparetime = 3.*1/macros.NANO2SEC
         thrStartTime = sparetime - 1.*1/macros.NANO2SEC
@@ -391,9 +391,9 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
 
                 snippetName = "Snippet" + "Ramp_" + str(rampsteps) +"steps_" + str(int(duration)) + "s"+  "_Cutoff" + cutoff + "_Rate" + str(
                     int(1. / (testRate * macros.NANO2SEC))) + "_Cutoff" + cutoff
-                texSnippet = "We test the ramped thrust with " + str(rampsteps) + " incremental steps. The single thruster is set at the default " +str(int(long_angle))+"$^\circ$ off the x-axis " +str(int(lat_angle))+"$^\circ$ off the z-axis, at $\\bm r = \left(" + \
+                texSnippet = "We test the ramped thrust with " + str(rampsteps) + " incremental steps. The single thruster is set at the default " +str(int(long_angle))+r"$^\circ$ off the x-axis " +str(int(lat_angle))+r"$^\circ$ off the z-axis, at $\bm r = \left(" + \
                              str(loc1[0]) + "," + str(loc1[1]) + "," + str(loc1[2]) + \
-                             "\\right)$. The thrust is set for " + \
+                             r"\right)$. The thrust is set for " + \
                              str(duration) + " seconds with a test rate of " + str(
                     int(1. / (testRate * macros.NANO2SEC))) + " steps per second. The Cutoff test is " + cutoff
                 unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
@@ -509,9 +509,9 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
 
                 snippetName = "Snippet" + "Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff + "_Rate" + str(
                     int(1. / (testRate * macros.NANO2SEC)))  + "_Cutoff" + cutoff
-                texSnippet = "We test the ramped thrust with " + str(rampsteps) + " incremental steps. The single thruster is set at the default " +str(int(long_angle))+"$^\circ$ off the x-axis " +str(int(lat_angle))+"$^\circ$ off the z-axis, at $\\bm r = \left(" + \
+                texSnippet = "We test the ramped thrust with " + str(rampsteps) + " incremental steps. The single thruster is set at the default " +str(int(long_angle))+r"$^\circ$ off the x-axis " +str(int(lat_angle))+r"$^\circ$ off the z-axis, at $\bm r = \left(" + \
                              str(loc1[0]) + "," + str(loc1[1]) + "," + str(loc1[2]) + \
-                             "\\right)$. The thrust is set for " + \
+                             r"\right)$. The thrust is set for " + \
                              str(duration) + " seconds with a test rate of " + str(
                     int(1. / (testRate * macros.NANO2SEC))) + " steps per second. The Cutoff test is " + cutoff
                 unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
@@ -612,9 +612,9 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration  ,  lon
             snippetName = "Snippet" + "Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff + "_Rate" + str(
                 int(1. / (testRate * macros.NANO2SEC)))+ "rampDown" + rampDown
             texSnippet = "We test the ramped thrust with " + str(
-                rampsteps) + " incremental steps. The single thruster is set at the default "+str(int(long_angle))+"$^\circ$ off the x-axis " +str(int(lat_angle))+"$^\circ$ off the z-axis, at $\\bm r = \left(" + \
+                rampsteps) + " incremental steps. The single thruster is set at the default "+str(int(long_angle))+r"$^\circ$ off the x-axis " +str(int(lat_angle))+r"$^\circ$ off the z-axis, at $\bm r = \left(" + \
                          str(loc1[0]) + "," + str(loc1[1]) + "," + str(loc1[2]) + \
-                         "\\right)$. The thrust is set for " + \
+                         r"\right)$. The thrust is set for " + \
                          str(RDstart) + " seconds initially with a test rate of " + str(
                 int(1. / (testRate * macros.NANO2SEC))) + " steps per second. The Cutoff test is " + cutoff + \
                         " the RampDown test is " + rampDown + "."

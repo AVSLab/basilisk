@@ -34,8 +34,8 @@ from Basilisk.simulation import spacecraftPlus
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-textSnippetPassed = '\\textcolor{ForestGreen}{' + "PASSED" + '}'
-textSnippetFailed = '\\textcolor{Red}{' + "Failed" + '}'
+textSnippetPassed = r'\textcolor{ForestGreen}{' + "PASSED" + '}'
+textSnippetFailed = r'\textcolor{Red}{' + "Failed" + '}'
 
 def setupFilterData(filterObject):
     filterObject.navStateOutMsgName = "inertial_state_estimate"

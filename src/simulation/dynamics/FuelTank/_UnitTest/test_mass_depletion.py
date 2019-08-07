@@ -376,7 +376,7 @@ def passFail(testFailCountInput, snippetName):
         textMsg = 'FAILED'
         textColor = 'Red'
 
-    texSnippet =  '\\textcolor{' + textColor + '}{'+ textMsg + '}'
+    texSnippet =  r'\textcolor{' + textColor + '}{'+ textMsg + '}'
     unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
 
 if __name__ == "__main__":

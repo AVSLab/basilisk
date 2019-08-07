@@ -525,13 +525,13 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     if  testFailCount == 0:
         print("PASSED ")
         colorText = 'ForestGreen'
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
         # Write some snippets for AutoTex
         snippetName = testCase + 'PassFail'
         unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
     elif testFailCount > 0:
         colorText = 'Red'
-        passedText = '\\textcolor{' + colorText + '}{' + "FAILED" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "FAILED" + '}'
         # Write some snippets for AutoTex
         snippetName = testCase + 'PassFail'
         unitTestSupport.writeTeXSnippet(snippetName, passedText, path)

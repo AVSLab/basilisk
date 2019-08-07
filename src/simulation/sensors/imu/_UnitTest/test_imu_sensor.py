@@ -530,10 +530,10 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
 
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        passedText = '\\textcolor{' + colorText + '}{' + "FAILED" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "FAILED" + '}'
 
     passFailSnippetName = testCase+"passFail"
     passFailSnippetContent = passedText

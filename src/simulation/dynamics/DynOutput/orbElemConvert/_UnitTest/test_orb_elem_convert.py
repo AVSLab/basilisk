@@ -325,13 +325,13 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
         if testFailCount1 == 0:
             colorText = 'ForestGreen'
             passFailMsg = ""  # "Passed: " + name + "."
-            passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+            passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
         else:
             colorText = 'Red'
             passFailMsg = "Failed: " + name + "."
             testMessages.append(passFailMsg)
             testMessages.append(" | ")
-            passedText = '\\textcolor{' + colorText + '}{' + "FAILED" + '}'
+            passedText = r'\textcolor{' + colorText + '}{' + "FAILED" + '}'
 
         # Write some snippets for AutoTex
         snippetName = name + "PassedText1"
@@ -588,13 +588,13 @@ def orbElem(a, e, i, AN, AP, f, mu, name, DispPlot):
         if testFailCount2 == 0:
             colorText = 'ForestGreen'
             passFailMsg = ""  # "Passed: " + name + "."
-            passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+            passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
         else:
             colorText = 'Red'
             passFailMsg = "Failed: " + name + "."
             testMessages.append(passFailMsg)
             testMessages.append(" | ")
-            passedText = '\\textcolor{' + colorText + '}{' + "FAILED" + '}'
+            passedText = r'\textcolor{' + colorText + '}{' + "FAILED" + '}'
 
         # Write some snippets for AutoTex
         snippetName = name + "PassedText2"

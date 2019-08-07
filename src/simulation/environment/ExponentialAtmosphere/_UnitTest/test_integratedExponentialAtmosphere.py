@@ -64,10 +64,10 @@ def test_unitExponentialAtmosphere():
     testSum = sum(testResults)
     if testSum == 0:
         colorText = 'ForestGreen'
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
 
 

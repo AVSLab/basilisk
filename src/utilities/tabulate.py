@@ -140,8 +140,8 @@ def _html_row_with_attrs(celltag, cell_values, colwidths, colaligns):
 def _latex_line_begin_tabular(colwidths, colaligns, booktabs=False):
     alignment = { "left": "l", "right": "r", "center": "c", "decimal": "r" }
     tabular_columns_fmt = "".join([alignment.get(a, "l") for a in colaligns])
-    return "\n".join(["\\begin{tabular}{" + tabular_columns_fmt + "}",
-                      r"\\toprule" if booktabs else r"\hline"])
+    return "\n".join([r"\begin{tabular}{" + tabular_columns_fmt + "}",
+                      r"\toprule" if booktabs else r"\hline"])
 
 LATEX_ESCAPE_RULES = {r"&": r"\&", r"%": r"\%", r"$": r"\$", r"#": r"\#",
                       r"_": r"\_", r"^": r"\^{}", r"{": r"\{", r"}": r"\}",
@@ -153,7 +153,7 @@ def _latex_row(cell_values, colwidths, colaligns):
     def escape_char(c):
         return LATEX_ESCAPE_RULES.get(c, c)
     escaped_values = ["".join(map(escape_char, cell)) for cell in cell_values]
-    rowfmt = DataRow("", "&", "\\\\")
+    rowfmt = DataRow("", "&", r"\\")
     return _build_simple_row(escaped_values, rowfmt)
 
 
@@ -240,17 +240,17 @@ _table_formats = {"simple":
                               padding=0, with_header_hide=None),
                   "latex":
                   TableFormat(lineabove=_latex_line_begin_tabular,
-                              linebelowheader=Line("\\hline", "", "", ""),
+                              linebelowheader=Line(r"\hline", "", "", ""),
                               linebetweenrows=None,
-                              linebelow=Line("\\hline\n\\end{tabular}", "", "", ""),
+                              linebelow=Line(r"\hline\end{tabular}", "", "", ""),
                               headerrow=_latex_row,
                               datarow=_latex_row,
                               padding=1, with_header_hide=None),
                   "latex_booktabs":
                   TableFormat(lineabove=partial(_latex_line_begin_tabular, booktabs=True),
-                              linebelowheader=Line("\\midrule", "", "", ""),
+                              linebelowheader=Line(r"\midrule", "", "", ""),
                               linebetweenrows=None,
-                              linebelow=Line("\\bottomrule\n\\end{tabular}", "", "", ""),
+                              linebelow=Line(r"\bottomrule\end{tabular}", "", "", ""),
                               headerrow=_latex_row,
                               datarow=_latex_row,
                               padding=1, with_header_hide=None),

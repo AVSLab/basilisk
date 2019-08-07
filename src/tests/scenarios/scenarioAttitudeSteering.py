@@ -75,10 +75,10 @@ def plot_attitude_error(timeData, dataSigmaBR):
     for idx in range(1, 4):
         plt.semilogy(timeData, np.abs(dataSigmaBR[:, idx]),
                      color=unitTestSupport.getLineColor(idx, 3),
-                     label='$|\sigma_' + str(idx) + '|$')
+                     label=r'$|\sigma_' + str(idx) + '|$')
     plt.legend(loc='upper right')
     plt.xlabel('Time [min]')
-    plt.ylabel('Attitude Error $\sigma_{B/R}$')
+    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
 
 def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
     plt.figure(2)
@@ -86,7 +86,7 @@ def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
                  color=unitTestSupport.getLineColor(idx, numRW),
-                 label='$\hat u_{s,' + str(idx) + '}$')
+                 label=r'$\hat u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Motor Torque (Nm)')
@@ -106,7 +106,7 @@ def plot_rate_error(timeData, dataOmegaBR, dataOmegaBRAst):
     for idx in range(1, 4):
         plt.semilogy(timeData, np.abs(dataOmegaBR[:, idx]) / macros.D2R,
                      color=unitTestSupport.getLineColor(idx, 3),
-                     label='$|\omega_{BR,' + str(idx) + '}|$')
+                     label=r'$|\omega_{BR,' + str(idx) + '}|$')
     for idx in range(1, 4):
         plt.semilogy(timeData, np.abs(dataOmegaBRAst[:, idx]) / macros.D2R,
                      '--',
@@ -122,7 +122,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     for idx in range(1, numRW + 1):
         plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
                  color=unitTestSupport.getLineColor(idx, numRW),
-                 label='$\Omega_{' + str(idx) + '}$')
+                 label=r'$\Omega_{' + str(idx) + '}$')
     plt.legend(loc='upper right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')

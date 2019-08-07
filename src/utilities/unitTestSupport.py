@@ -306,10 +306,10 @@ def writeTableLaTeX(tableName, tableHeaders, caption, array, path):
                          numalign="center"
                          )
 
-        texTable.write(r'\\begin{table}[htbp]\n')
-        texTable.write(r'\caption{' + caption + '}\n')
-        texTable.write(r'\label{tbl:' + tableName + '}\n')
-        texTable.write(r'\centering\n')
+        texTable.write(r'\begin{table}[htbp]')
+        texTable.write(r'\caption{' + caption + '}')
+        texTable.write(r'\label{tbl:' + tableName + '}')
+        texTable.write(r'\centering')
         texTable.write(table)
         texTable.write(r'\end{table}')
         texTable.close()
@@ -366,11 +366,11 @@ def writeFigureLaTeX(figureName, caption, plt, format, path):
             if exc.errno != errno.EEXIST:
                 raise
     with open(texFileName, "w") as texFigure:
-        texFigure.write(r'\\begin{figure}[htbp]\n')
-        texFigure.write(r'\centerline{\n')
-        texFigure.write(r'\includegraphics['+ format +']{AutoTeX/' + figureName + '}}\n')
-        texFigure.write(r'\caption{' + caption + '}\n')
-        texFigure.write(r'\label{fig:'+ figureName +'}\n')
+        texFigure.write(r'\begin{figure}[htbp]')
+        texFigure.write(r'\centerline{')
+        texFigure.write(r'\includegraphics['+ format +']{AutoTeX/' + figureName + r'}}')
+        texFigure.write(r'\caption{' + caption + r'}')
+        texFigure.write(r'\label{fig:'+ figureName +r'}')
         texFigure.write(r'\end{figure}')
         texFigure.close()
 

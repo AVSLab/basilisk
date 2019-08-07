@@ -396,7 +396,7 @@ def run(show_plots, orbitCase, planetCase):
     for idx in range(1, 4):
         plt.plot(magData[:, 0] * macros.NANO2SEC / P, magData[:, idx] *1e9,
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label='$B\_N_{' + str(idx) + '}$')
+                 label=r'$B\_N_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [orbits]')
     plt.ylabel('Magnetic Field [nT]')
@@ -404,7 +404,7 @@ def run(show_plots, orbitCase, planetCase):
         for idx in range(1, 4):
             plt.plot(magData2[:, 0] * macros.NANO2SEC / P, magData2[:, idx] * 1e9, '--',
                      color=unitTestSupport.getLineColor(idx, 3),
-                     label='$B\_N_{' + str(idx) + '}$')
+                     label=r'$B\_N_{' + str(idx) + '}$')
     pltName = fileName + "2" + orbitCase + planetCase
     figureList[pltName] = plt.figure(2)
 

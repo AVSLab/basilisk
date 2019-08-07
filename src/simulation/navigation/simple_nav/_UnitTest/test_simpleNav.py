@@ -268,7 +268,7 @@ def unitSimpleNav(show_plots):
     plt.legend(loc='upper left')
     plt.xlabel('Time (s)')
     plt.ylabel('Position (m)')
-    unitTestSupport.writeFigureLaTeX('SimpleNavPos', 'Simple Navigation Position Signal', plt, 'height=0.4\\textwidth, keepaspectratio', path)
+    unitTestSupport.writeFigureLaTeX('SimpleNavPos', 'Simple Navigation Position Signal', plt, r'height=0.4\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
         plt.close('all')
@@ -283,7 +283,7 @@ def unitSimpleNav(show_plots):
     plt.legend(loc='upper left')
     plt.xlabel('Time (s)')
     plt.ylabel('Attitude (rad)')
-    unitTestSupport.writeFigureLaTeX('SimpleNavAtt', 'Simple Navigation Att Signal', plt, 'height=0.4\\textwidth, keepaspectratio', path)
+    unitTestSupport.writeFigureLaTeX('SimpleNavAtt', 'Simple Navigation Att Signal', plt, r'height=0.4\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
         plt.close('all')

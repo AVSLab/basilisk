@@ -288,15 +288,15 @@ def run(doUnitTests, show_plots, integratorCase):
             print(testMessages)
             passFailText = 'FAILED'
             colorText = 'Red'  # color to write auto-documented "FAILED" message in in LATEX
-            snippetContent = "\\begin{verbatim}"
+            snippetContent = r"\begin{verbatim}"
             for message in testMessages:
                 snippetContent +=   message
-            snippetContent += "\\end{verbatim}"
+            snippetContent += r"\end{verbatim}"
         snippetMsgName = fileNameString + 'Msg-' + integratorCase
         unitTestSupport.writeTeXSnippet(snippetMsgName, snippetContent,
                                     path)
         snippetPassFailName = fileNameString + 'TestMsg-' + integratorCase
-        snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}'
+        snippetContent = r'\textcolor{' + colorText + '}{' + passFailText + '}'
         unitTestSupport.writeTeXSnippet(snippetPassFailName, snippetContent,
                                     path)
 

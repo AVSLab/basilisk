@@ -41,8 +41,8 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-textSnippetPassed = '\\textcolor{ForestGreen}{' + "PASSED" + '}'
-textSnippetFailed = '\\textcolor{Red}{' + "Failed" + '}'
+textSnippetPassed = r'\textcolor{ForestGreen}{' + "PASSED" + '}'
+textSnippetFailed = r'\textcolor{Red}{' + "Failed" + '}'
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

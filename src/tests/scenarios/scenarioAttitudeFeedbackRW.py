@@ -53,10 +53,10 @@ def plot_attitude_error(timeData, dataSigmaBR):
     for idx in range(1, 4):
         plt.plot(timeData, dataSigmaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label='$\sigma_' + str(idx) + '$')
+                 label=r'$\sigma_' + str(idx) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
-    plt.ylabel('Attitude Error $\sigma_{B/R}$')
+    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
 
 def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
     plt.figure(2)
@@ -64,7 +64,7 @@ def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
                  color=unitTestSupport.getLineColor(idx, numRW),
-                 label='$\hat u_{s,' + str(idx) + '}$')
+                 label=r'$\hat u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Motor Torque (Nm)')
@@ -75,7 +75,7 @@ def plot_rw_motor_torque(timeData, dataUsReq, dataRW, numRW):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
                  color=unitTestSupport.getLineColor(idx, numRW),
-                 label='$\hat u_{s,' + str(idx) + '}$')
+                 label=r'$\hat u_{s,' + str(idx) + '}$')
         plt.plot(timeData, dataRW[idx - 1][:, 1],
                  color=unitTestSupport.getLineColor(idx, numRW),
                  label='$u_{s,' + str(idx) + '}$')
@@ -88,7 +88,7 @@ def plot_rate_error(timeData, dataOmegaBR):
     for idx in range(1, 4):
         plt.plot(timeData, dataOmegaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label='$\omega_{BR,' + str(idx) + '}$')
+                 label=r'$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error (rad/s) ')
@@ -98,7 +98,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     for idx in range(1, numRW + 1):
         plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
                  color=unitTestSupport.getLineColor(idx, numRW),
-                 label='$\Omega_{' + str(idx) + '}$')
+                 label=r'$\Omega_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')

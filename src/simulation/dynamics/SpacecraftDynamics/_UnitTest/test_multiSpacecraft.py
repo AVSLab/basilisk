@@ -245,7 +245,7 @@ def test_SCConnected(show_plots):
     plt.ylabel("Relative Difference")
     PlotName = "ChangeInOrbitalAngularMomentumSystem"
     PlotTitle = "Change in Orbital Angular Momentum with Gravity"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
@@ -608,7 +608,7 @@ def test_SCConnectedAndUnconnected(show_plots):
     plt.ylabel("Relative Difference")
     PlotName = "ChangeInOrbitalAngularMomentum"
     PlotTitle = "Change in Orbital Angular Momentum with Gravity"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
@@ -646,7 +646,7 @@ def test_SCConnectedAndUnconnected(show_plots):
     plt.ylabel("Relative Difference")
     PlotName = "ChangeInOrbitalAngularMomentum1"
     PlotTitle = "Change in Orbital Angular Momentum with Gravity"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
@@ -684,7 +684,7 @@ def test_SCConnectedAndUnconnected(show_plots):
     plt.ylabel("Relative Difference")
     PlotName = "ChangeInOrbitalAngularMomentum2"
     PlotTitle = "Change in Orbital Angular Momentum with Gravity"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()

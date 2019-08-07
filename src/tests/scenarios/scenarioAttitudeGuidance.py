@@ -77,7 +77,7 @@ def plot_attitude_error(timeLineSet, dataSigmaBR):
              color=unitTestSupport.getLineColor(1, 3),
              )
     plt.xlabel('Time [min]')
-    plt.ylabel('Attitude Error Norm $|\sigma_{B/R}|$')
+    plt.ylabel(r'Attitude Error Norm $|\sigma_{B/R}|$')
     ax.set_yscale('log')
 
 def plot_control_torque(timeLineSet, dataLr):
@@ -95,7 +95,7 @@ def plot_rate_error(timeLineSet, dataOmegaBR):
     for idx in range(1, 4):
         plt.plot(timeLineSet, dataOmegaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label='$\omega_{BR,' + str(idx) + '}$')
+                 label=r'$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error [rad/s] ')

@@ -505,7 +505,7 @@ def run(show_plots, scCase):
     for idx in range(1, 4):
         plt.plot(posData[:, 0] * macros.NANO2MIN, np.array(posError)[:, idx - 1],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label='$\Delta r_{' + str(idx) + '}$')
+                 label=r'$\Delta r_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Inertial Position Differences [m]')

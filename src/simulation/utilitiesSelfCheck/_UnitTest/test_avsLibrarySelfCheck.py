@@ -94,7 +94,7 @@ def unitAVSLibrarySelfCheck(testName):
     unitTestSupport.writeTeXSnippet(snippetMsgName, snippetContent, path + "/../_Documentation/")
 
     snippetPassFailName = fileName + 'TestMsg-' + testName
-    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}'
+    snippetContent = r'\textcolor{' + colorText + '}{' + passFailText + '}'
     unitTestSupport.writeTeXSnippet(snippetPassFailName, snippetContent, path + "/../_Documentation/")
 
     # each test method requires a single assert method to be called

@@ -232,7 +232,7 @@ def runRegularTask(show_plots, useJitterSimple, useRWVoltageIO):
         plt.plot(timeData, dataSigmaBR[:, idx],
                  timeDataBase, dataSigmaBRBase[:, idx], '--')
     plt.xlabel('Time [min]')
-    plt.ylabel('Attitude Error $\sigma_{B/R}$')
+    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
     figureList = {}
     pltName = fileName + "1" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
     figureList[pltName] = plt.figure(1)
@@ -241,7 +241,7 @@ def runRegularTask(show_plots, useJitterSimple, useRWVoltageIO):
     for idx in range(1, 4):
         plt.plot(timeData, dataSigmaBR[:, idx] - dataSigmaBRBase[:, idx])
     plt.xlabel('Time [min]')
-    plt.ylabel('Attitude Difference $\sigma_{B/R}$')
+    plt.ylabel(r'Attitude Difference $\sigma_{B/R}$')
 
     plt.figure(3)
     for idx in range(1, 4):

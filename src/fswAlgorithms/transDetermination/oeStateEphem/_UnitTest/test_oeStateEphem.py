@@ -266,7 +266,7 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
             plt.plot(posChebData[:, 0] * macros.NANO2HOUR, posChebData[:, idx]  - tdrssPosList[:, idx-1],
                      color=unitTestSupport.getLineColor(idx, 3),
                      linewidth=0.5,
-                     label='$\Delta r_{' + str(idx) + '}$')
+                     label=r'$\Delta r_{' + str(idx) + '}$')
         plt.plot(velChebData[:, 0] * macros.NANO2HOUR, orbitPosAccuracy*numpy.ones(arrayLength),
                  color='r', linewidth=1)
         plt.plot(velChebData[:, 0] * macros.NANO2HOUR, -orbitPosAccuracy * numpy.ones(arrayLength),
@@ -282,7 +282,7 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
             plt.plot(velChebData[:, 0] * macros.NANO2HOUR, velChebData[:, idx]  - tdrssVelList[:, idx-1],
                      color=unitTestSupport.getLineColor(idx, 3),
                      linewidth=0.5,
-                     label='$\Delta v_{' + str(idx) + '}$')
+                     label=r'$\Delta v_{' + str(idx) + '}$')
         plt.plot(velChebData[:, 0] * macros.NANO2HOUR, orbitVelAccuracy*numpy.ones(arrayLength),
                  color='r', linewidth=1)
         plt.plot(velChebData[:, 0] * macros.NANO2HOUR, -orbitVelAccuracy * numpy.ones(arrayLength),
@@ -299,11 +299,11 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
     if testFailCount == 0:
         colorText = 'ForestGreen'
         print("PASSED: " + oeStateModelWrap.ModelTag)
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
         print("Failed: " + oeStateModelWrap.ModelTag)
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     # return fail count and join into a single string all messages in the list

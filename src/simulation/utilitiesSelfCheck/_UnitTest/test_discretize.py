@@ -66,7 +66,7 @@ def unitDiscretizeCheck(testName):
     path = os.path.dirname(os.path.abspath(__file__))
 
     snippetPassFailName = "discretizePass"
-    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}'
+    snippetContent = r'\textcolor{' + colorText + '}{' + passFailText + '}'
     unitTestSupport.writeTeXSnippet(snippetPassFailName, snippetContent, path + "/../_Documentation/discretize/AutoTex/")
     print(path)
     # each test method requires a single assert method to be called

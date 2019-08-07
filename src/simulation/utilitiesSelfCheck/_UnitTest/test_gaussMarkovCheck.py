@@ -66,7 +66,7 @@ def unitGaussMarkovSelfCheck(testName):
     path = os.path.dirname(os.path.abspath(__file__))
 
     snippetPassFailName = "markovPass"
-    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}'
+    snippetContent = r'\textcolor{' + colorText + '}{' + passFailText + '}'
     unitTestSupport.writeTeXSnippet(snippetPassFailName, snippetContent, path + "/../_Documentation/gaussMarkov/AutoTex/")
     print(path)
     # each test method requires a single assert method to be called

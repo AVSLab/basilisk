@@ -572,11 +572,11 @@ def cssRateTestFunction(show_plots):
     if testFailCount == 0:
         colorText = 'ForestGreen'
         print("PASSED: " + moduleWrap.ModelTag)
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
         print("Failed: " + moduleWrap.ModelTag)
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
 

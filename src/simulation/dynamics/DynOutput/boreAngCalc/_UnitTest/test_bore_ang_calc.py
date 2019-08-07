@@ -53,7 +53,7 @@ class ResultsStore:
                 textColor = 'ForestGreen'
             elif self.PassFail[i] == 'FAILED':
                 textColor = 'Red'
-            texSnippet =  '\\textcolor{' + textColor + '}{'+ self.PassFail[i] + '}'
+            texSnippet =  r'\textcolor{' + textColor + '}{'+ self.PassFail[i] + '}'
             unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
 
 @pytest.fixture(scope="module")

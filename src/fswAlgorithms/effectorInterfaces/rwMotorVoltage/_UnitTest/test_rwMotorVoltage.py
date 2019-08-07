@@ -109,7 +109,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
                                    unitProcessName,
                                    moduleConfig.inputRWSpeedsInMsgName,
                                    rwSpeedMessage)
-        unitTestSupport.writeTeXSnippet("Omega1", "$\\bm\Omega = " \
+        unitTestSupport.writeTeXSnippet("Omega1", r"$\bm\Omega = " \
                                         + str(rwSpeedMessage.wheelSpeeds[0:4]) + "$"
                                         , path)
 
@@ -178,7 +178,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
                                               rwSpeedMessage.getStructSize(),
                                               0,
                                               rwSpeedMessage)
-        unitTestSupport.writeTeXSnippet("Omega2", "$\\bm\Omega = " \
+        unitTestSupport.writeTeXSnippet("Omega2", r"$\bm\Omega = " \
                                         + str(rwSpeedMessage.wheelSpeeds[0:4]) + "$"
                                         , path)
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.5))        # seconds to stop simulation
@@ -269,10 +269,10 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     if testFailCount == 0:
         colorText = 'ForestGreen'
         print("PASSED: " + moduleWrap.ModelTag)
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     # write TeX Tables for documentation

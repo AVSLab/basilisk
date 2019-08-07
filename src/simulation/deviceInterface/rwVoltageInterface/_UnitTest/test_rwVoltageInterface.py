@@ -167,10 +167,10 @@ def run(show_plots, voltage):
     if testFailCount == 0:
         colorText = "ForestGreen"
         print("PASSED: " + testModule.ModelTag)
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = "Red"
-        passedText = '\\textcolor{' + colorText + '}{' + "FAILED" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "FAILED" + '}'
     unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
 
 

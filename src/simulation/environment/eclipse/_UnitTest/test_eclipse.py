@@ -242,13 +242,13 @@ def unitEclipse(show_plots, eclipseCondition, planet):
     if testFailCount == 0:
         colorText = 'ForestGreen'
         passFailMsg = ""  # "Passed: " + name + "."
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
         passFailMsg = "Failed: " + eclipseCondition + "."
         testMessages.append(passFailMsg)
         testMessages.append(" | ")
-        passedText = '\\textcolor{' + colorText + '}{' + "FAILED" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "FAILED" + '}'
 
     # Write some snippets for AutoTex
     snippetName = planet+eclipseCondition + "PassedText"

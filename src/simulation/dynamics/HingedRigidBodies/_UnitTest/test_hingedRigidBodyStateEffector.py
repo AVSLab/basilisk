@@ -199,7 +199,7 @@ def test_hingedRigidBodyGravity(show_plots):
     plt.ylabel('Relative Difference')
     PlotName = "ChangeInOrbitalAngularMomentumGravity"
     PlotTitle = "Change in Orbital Angular Momentum with Gravity"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
@@ -411,7 +411,7 @@ def test_hingedRigidBodyNoGravity(show_plots):
     plt.ylabel('Relative Difference')
     PlotName = "ChangeInOrbitalAngularMomentumNoGravity"
     PlotTitle = "Change in Orbital Angular Momentum No Gravity"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
@@ -619,7 +619,7 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
     plt.ylabel('Relative Difference')
     PlotName = "ChangeInOrbitalAngularMomentumNoGravityDamping"
     PlotTitle = "Change in Orbital Angular Momentum No Gravity with Damping"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
@@ -844,7 +844,7 @@ def test_hingedRigidBodyThetaSS(show_plots):
     plt.legend(loc ='upper right',numpoints = 1)
     PlotName = "BOECalculationForSteadyStateTheta1DeflectionVsSimulation"
     PlotTitle = "BOE Calculation for Steady State Theta 1 Deflection vs Simulation"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
@@ -857,7 +857,7 @@ def test_hingedRigidBodyThetaSS(show_plots):
     plt.legend(loc ='upper right',numpoints = 1)
     PlotName = "BOECalculationForSteadyStateTheta2DeflectionVsSimulation"
     PlotTitle = "BOE Calculation for Steady State Theta 2 Deflection vs Simulation"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
     
     if show_plots:
@@ -1125,7 +1125,7 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     plt.legend(loc ='upper left',numpoints = 1)
     PlotName = "MaxThetaWhileForcing"
     PlotTitle = "Max Theta While Forcing"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     # Write Results to tex snippet
@@ -1354,7 +1354,7 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     plt.legend(loc ='upper left',numpoints = 1)
     PlotName = "XPositionLagrangianVsBasilisk"
     PlotTitle = "X Position Lagrangian Vs Basilisk"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
@@ -1367,7 +1367,7 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     plt.legend(loc ='upper left',numpoints = 1)
     PlotName = "YPositionLagrangianVsBasilisk"
     PlotTitle = "Y Position Lagrangian Vs Basilisk"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
@@ -1380,7 +1380,7 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     plt.legend(loc ='upper left',numpoints = 1)
     PlotName = "ThetaLagrangianVsBasilisk"
     PlotTitle = "Theta Lagrangian Vs Basilisk"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
@@ -1393,7 +1393,7 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     plt.legend(loc ='upper left',numpoints = 1)
     PlotName = "Theta1LagrangianVsBasilisk"
     PlotTitle = "Theta 1 Position Lagrangian Vs Basilisk"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
@@ -1406,7 +1406,7 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     plt.legend(loc ='lower left',numpoints = 1)
     PlotName = "Theta2LagrangianVsBasilisk"
     PlotTitle = "Theta 2 Lagrangian Vs Basilisk"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     if show_plots:

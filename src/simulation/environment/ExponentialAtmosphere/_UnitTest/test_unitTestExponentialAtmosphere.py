@@ -239,11 +239,11 @@ def run(show_plots, useDefault, useMinReach, useMaxReach, usePlanetEphemeris):
     if testFailCount == 0:
         colorText = 'ForestGreen'
         print("PASSED: " + testModule.ModelTag)
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
         print("Failed: " + testModule.ModelTag)
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
 

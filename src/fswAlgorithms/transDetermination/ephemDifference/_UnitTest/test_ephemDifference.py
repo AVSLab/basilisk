@@ -151,11 +151,11 @@ def ephemDifferenceTestFunction(ephBdyCount):
     if testFailCount == 0:
         colorText = 'ForestGreen'
         print("PASSED: " + ephemDiffWrap.ModelTag)
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
         print("Failed: " + ephemDiffWrap.ModelTag)
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     return [testFailCount, ''.join(testMessages)]

@@ -500,7 +500,7 @@ def EarthResonantOrbit(v_inf_in, V1, R1, v_inf_out, V2, N):
     plt.plot(PHI_GA1, rp_GA1, 'm', PHI_GA2, rp_GA2, 'b')
     plt.axhline(E_radius, color='k')
     plt.legend(['EGA 1', 'EGA 2', 'r$_{P, min}$'])
-    plt.xlabel('$\phi$ [rad]')
+    plt.xlabel(r'$\phi$ [rad]')
     plt.ylabel('Perigee Radius [km]')
     # plt.show()
     return
@@ -627,8 +627,8 @@ def Tisserand_P1_2_P2(r_planet_vec, v_inf_P1_vec, v_inf_P2_vec):
     plt.ylim([ra_min, ra_max])
     plt.xlabel('Radius of Periapse [AU]')
     plt.ylabel('Radius of Apoapse [AU]')
-    plt.title('$v_{\infty}^{Earth} $ = '+ str(v_inf_P1_vec) +' km/s \n'
-              '$v_{\infty}^{Saturn} $ = '+ str(v_inf_P2_vec) +' km/s')
+    plt.title(r'$v_{\infty}^{Earth} $ = '+ str(v_inf_P1_vec) +r' km/s \n'
+              r'$v_{\infty}^{Saturn} $ = '+ str(v_inf_P2_vec) +' km/s')
 
 def Tisserand_ESU():
     r_planet_vec = np.array([a_E, a_Saturn, a_U])
