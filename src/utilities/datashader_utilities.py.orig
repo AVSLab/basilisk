@@ -25,7 +25,11 @@ def curve_per_df_component(df):
     :return:
     '''
     idx = pd.IndexSlice
+<<<<<<< HEAD
+    df = df.interpolate(method="linear")
+=======
     df = df.interpolate(method = "linear")
+>>>>>>> d5b8e074e... [BSK] Interpolating in plots to prevent plot truncation when log rates vary
     df_list = []
     for i in np.unique(df.columns.codes[1]):
         # Select all of the component
@@ -175,10 +179,4 @@ class DS_Plot():
                 {n: hv.Points([np.nan, np.nan], label=str(n)).opts(style=dict(color=c)) for n, c in color_key})
             image = image*legend
 
-<<<<<<< HEAD
         return image
-=======
-        return image, self.title
-
-
->>>>>>> cd373bd6f... [BSK] Added a title output to the plots to aid with debugging.
