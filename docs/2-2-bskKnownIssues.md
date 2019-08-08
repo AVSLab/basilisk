@@ -1,10 +1,11 @@
 # Basilisk Known Issues {#bskKnownIssues}
 
 
-## Upcoming Version 0.X.X
+## Upcoming Version 0.7.2
    <ul>
     <li>WINDOWS ONLY: Windows users cannot currently run pytest directly on Basilisk `src/` directory (there will be non-resolved python path issues that will result in erroneous ImportErrors). Instead, to verify proper installation of Basilisk, windows users must enter the specific subdirectory they are attempting to test, only then to run pytest. This should result in appropriate behavior.  Right now there is no known solution to this issue.</li>
     <li>The python pandas package is now required to run BSK.  The installation instructions have been updated to reflect this.</li>
+    <li>Swig version 4 was released over the summer. This version is not compatible with our current Basilisk software.  Be sure to install swig version 3.0.12.</li>
    </ul>
 
 ## Version 0.7.1

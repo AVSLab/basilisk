@@ -13,7 +13,7 @@ We are very excited by the great capabilities that this software already has, an
 * live plotting capability during a BSK run
 
 
-## Upcoming Version 0.X.X
+## Upcoming Version 0.7.2
 <ul>
     <li>Added a new Earth magnetic field model based on the <a href="https://www.ngdc.noaa.gov/geomag/WMM/DoDWMM.shtml">World Magnetic Model</a> (WMM).  The module has PDF documetnation, and extensive unit test within the source code folder, as well as a tutorial script demonstrating how to run this. </li>
     <li>Updated the `spice_interface` module to be able to read in an epoch message</li>
@@ -26,6 +26,7 @@ We are very excited by the great capabilities that this software already has, an
     <li>Fixed and cleaned up bugs in heading and opnav UKFs, pixelLineConverter, houghCircles, and vizInterface</li>
     <li>Added validity falg to OpNav messages in order to exclude potential measurements</li>
     <li>Fixed camera orientation given the Unity camera frame definition</li>
+    <li>Updated BSK installation instructions to warn about not using swig v4</li>
 </ul>
 
 
