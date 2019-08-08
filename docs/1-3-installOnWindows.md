@@ -28,7 +28,7 @@ C:\Users\patrick> pip --trusted-host=pypi.python.org install <package name>
 
 #### Configuring Swig
 
-The standard windows swig setup is suitable for Basilisk (see [Configuration Instructions](http://www.swig.org/Doc1.3/Windows.html#Windows_swig_exe)).
+The standard windows swig version 3.0.12 setup is suitable for Basilisk (see [Configuration Instructions](http://www.swig.org/Doc1.3/Windows.html#Windows_swig_exe)).  Note that swig version 4.0 is not currently compatible with Basilisk.
 
 Example added path formats:
 
