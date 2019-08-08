@@ -1,4 +1,4 @@
-# Installing With Cmake Configuration Options
+# Installing With Cmake Configuration Options {#cmakeOptions}
 
 This documents discusses the various Cmake build options that can be used when compiling Basilisk.  These build options can be set via the GUI Cmake program or specified via the command line.
 

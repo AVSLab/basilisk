@@ -5,7 +5,7 @@
 
 The `pytest` program can run a series of test on python scripts that begin with `test_`.  Install the `pytest` program with:
 
-`pip install --user pytest`
+`pip3 install --user pytest`
 
 Note that version 4.0.0 or higher works properly with Basilisk, while versions between 3.6.1 and 4.0.0 had some bugs that impacted some Basilisk tests.
 
@@ -14,11 +14,11 @@ Note that version 4.0.0 or higher works properly with Basilisk, while versions b
 
 While Basilisk is a single threaded simulation, it is possible to run `pytest` in a multi-threaded manner.  Install the `pytest-xdist` package using:
 ```
-pip install --user pytest-xdist
+pip3 install --user pytest-xdist
 ```
 After installing this utility you now run the multi-threaded version of `pytest` for 8 threads using
 ```
-pytest -n 8
+python3 -m pytest -n 8
 ```
 or replace 8 with the number of cores your computer has available
 
@@ -29,8 +29,8 @@ or replace 8 with the number of cores your computer has available
 In order to run the full `datashader` capabilities of the  [Monte Carlo scenarios](@ref MonteCarloSimulation), you must run the following commands:
 
 ```
-pip install --user datashader
-pip install --user holoviews
+pip3 install --user datashader
+pip3 install --user holoviews
 ```
 Installing `datashader` will automatically install `bokeh` and `pandas` packages.  It is possible to use just `pandas` and `datashader` to output images of the data; however, without `holoviews` and `bokeh` there will be no graph axis, title, etc.
 
