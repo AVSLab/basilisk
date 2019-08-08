@@ -162,7 +162,7 @@ void Update_biasODuKF(BiasODuKFConfig *configData, uint64_t callTime,
     v3Scale(1E-3, inputBiasOD.r_N, inputBiasOD.r_N);
     vScale(1E-6, inputBiasOD.covar_N, configData->imageObsNum*configData->imageObsNum, configData->measNoise);
     mSetSubMatrix(configData->measNoise, configData->imageObsNum, configData->imageObsNum, configData->totalMeasNoise, configData->numObs, configData->numObs, 0, 0);
-    mScale(1, configData->measNoise, configData->imageObsNum, configData->imageObsNum, configData->measNoise);
+//    mScale(1, configData->measNoise, configData->imageObsNum, configData->imageObsNum, configData->measNoise);
     mSetSubMatrix(configData->measNoise, configData->imageObsNum, configData->imageObsNum, configData->totalMeasNoise, configData->numObs, configData->numObs, 3, 3);
     /*! - Handle initializing time in filter and discard initial messages*/
     trackerValid = 0;
@@ -549,8 +549,6 @@ int biasODuKFMeasUpdate(BiasODuKFConfig *configData)
     mMultM(kMat, configData->numStates, configData->numObs, tempYVec,
            configData->numObs, 1, xHat);
     vAdd(configData->state, configData->numStates, xHat, configData->state);
-    /*! Remove the estimated bias from the final state*/
-    vSubtract(&(configData->state[ODUKF_N_STATES_DYN]), configData->imageObsNum, &(configData->state[0]),  &(configData->state[0]));
     /*! - Compute the updated matrix U from equation 28.  Note that I then transpose it
      so that I can extract "columns" from adjacent memory*/
     mMultM(kMat, configData->numStates, configData->numObs, sy,
