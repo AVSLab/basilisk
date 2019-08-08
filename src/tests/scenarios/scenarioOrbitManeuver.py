@@ -77,7 +77,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 #
 # To run the default scenario 1., call the python script through
 #
-#       python scenarioOrbitManeuver.py
+#       python3 scenarioOrbitManeuver.py
 #
 # The simulation layout is shown in the following illustration.  A single simulation process is created
 # which contains the spacecraft object.  The BSK simulation is run for a fixed period.  After stopping, the

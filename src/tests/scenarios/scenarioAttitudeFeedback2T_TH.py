@@ -140,7 +140,7 @@ def plot_OnTimeRequest(timeDataFSW, dataSchm, numTh):
 #
 # To run the scenario, call the python script from a Terminal window through:
 #
-#       python scenarioAttitudeFeedback2T_TH.py
+#       python3 scenarioAttitudeFeedback2T_TH.py
 #
 # The simulation layout is shown in the following illustration. The two processes (SIM and FSW) are simulated
 # and run at different time rates. Interface messages are shared across SIM and

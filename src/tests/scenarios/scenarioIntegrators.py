@@ -74,7 +74,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 #
 # To run the default scenario 1., call the python script through
 #
-#       python scenarioIntegrators.py
+#       python3 scenarioIntegrators.py
 #
 # When the simulation completes a plot is shown for illustrating both the true and the numerically
 # evaluated orbit.

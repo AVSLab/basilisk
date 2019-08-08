@@ -93,7 +93,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 #
 # To run the default scenario 1., call the python script through
 #
-#       python scenarioAttitudePythonPD.py
+#       python3 scenarioAttitudePythonPD.py
 #
 # When the simulation completes 3 plots are shown for the MRP attitude history, the differences
 # between the attitude history, and the differences between the RWA commands.  The attitude history

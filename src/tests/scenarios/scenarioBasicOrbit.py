@@ -69,7 +69,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 #
 # To run the default scenario 1 from the Basilisk/src/tests/scenarios folder, call the python script through
 #
-#       python scenarioBasicOrbit.py
+#       python3 scenarioBasicOrbit.py
 #
 # *However*, to play with any scenario scripts as tutorials, you should make a copy of them into a custom folder
 # outside of the Basilisk directory.

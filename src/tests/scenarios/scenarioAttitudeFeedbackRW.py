@@ -142,7 +142,7 @@ def plot_rw_voltages(timeData, dataVolt, numRW):
 #
 # To run the default scenario 1., call the python script from a Terminal window through
 #
-#       python scenarioAttitudeFeedbackRW.py
+#       python3 scenarioAttitudeFeedbackRW.py
 #
 # The simulation layout is shown in the following illustration.  A single simulation process is created
 # which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm

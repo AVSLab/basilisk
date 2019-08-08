@@ -72,7 +72,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 #
 # To run the default scenario 1 from the Basilisk/src/tests/scenarios folder, call the python script through
 #
-#       python scenarioMagneticFieldCenteredDipole.py
+#       python3 scenarioMagneticFieldCenteredDipole.py
 #
 #
 # Simulation Scenario Setup Details

@@ -72,7 +72,7 @@ bskPath = __path__[0]
 #
 # To run the default scenario 1., call the python script through
 #
-#       python scenarioCSS.py
+#       python3 scenarioCSS.py
 #
 # When the simulation completes a plot is shown for the CSS sensor signal history.
 #

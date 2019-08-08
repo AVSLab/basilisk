@@ -182,7 +182,7 @@ def setupSuKFData(filterObject):
 #
 # To run the default scenario, call the python script through
 #
-#       python scenarioCSSFilters.py
+#       python3 scenarioCSSFilters.py
 #
 # When the simulation completes several plots are written summarizing the filter performances.
 #

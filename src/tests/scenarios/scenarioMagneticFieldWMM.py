@@ -76,7 +76,7 @@ from Basilisk.utilities import vizSupport
 #
 # To run the default scenario 1 call the python script through
 #
-#       python scenarioMagneticFieldWMM.py
+#       python3 scenarioMagneticFieldWMM.py
 #
 #
 # Simulation Scenario Setup Details

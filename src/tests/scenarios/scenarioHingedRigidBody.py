@@ -85,7 +85,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 #
 # To run the default scenario, call the python script through
 #
-#       python scenarioHingedRigidBody.py
+#       python3 scenarioHingedRigidBody.py
 #
 # The simulation layout is shown in the following illustration.
 # ![Simulation Flow Diagram](Images/doc/test_scenarioHingedRigidBody.svg "Illustration")

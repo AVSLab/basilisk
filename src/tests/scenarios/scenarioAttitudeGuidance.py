@@ -144,7 +144,7 @@ def plot_orientation(timeLineSet, dataPos, dataVel, dataSigmaBN):
 #
 # To run the default scenario 1., call the python script through
 #
-#       python scenarioAttitudeGuidance.py
+#       python3 scenarioAttitudeGuidance.py
 #
 # The simulation layout is shown in the following illustration.  A single simulation process is created
 # which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm

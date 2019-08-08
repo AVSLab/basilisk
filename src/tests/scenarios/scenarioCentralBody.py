@@ -75,7 +75,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 #
 # To run the default scenario 1 from the Basilisk/scenarios folder, call the python script through
 #
-#       python scenarioCentralBody.py
+#       python3 scenarioCentralBody.py
 #
 # Simulation Scenario Setup Details
 # -----

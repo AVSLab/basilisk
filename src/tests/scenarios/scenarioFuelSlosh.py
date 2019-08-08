@@ -63,7 +63,7 @@ path = os.path.dirname(os.path.abspath(filename))
 #
 # To run the default scenario 1 from the Basilisk/scenarios folder, call the python script through
 #
-#       python scenarioFuelSlosh.py
+#       python3 scenarioFuelSlosh.py
 #
 # However, to play with any scenario scripts as tutorials, you should make a copy of this
 # `scenarioXXX.py` file into a custom folder outside of the Basilisk directory.  Next,

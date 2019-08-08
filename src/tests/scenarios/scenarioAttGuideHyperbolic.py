@@ -136,7 +136,7 @@ def plot_orbit(oe, mu, planet_radius, dataPos, dataVel):
 #
 # To run the default scenario 1., call the python script through
 #
-#       python scenarioAttGuideHyperbolic.py
+#       python3 scenarioAttGuideHyperbolic.py
 #
 # The simulation layout is shown in the following illustration.  A single simulation process is created
 # which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm

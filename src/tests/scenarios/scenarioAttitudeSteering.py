@@ -156,7 +156,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
 #
 # To run the default scenario 1., call the python script from a Terminal window through
 #
-#       python scenarioAttitudeSteering.py
+#       python3 scenarioAttitudeSteering.py
 #
 # The simulation layout is shown in the following illustration.  A single simulation process is created
 # which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm

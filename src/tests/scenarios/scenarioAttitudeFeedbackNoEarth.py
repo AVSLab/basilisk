@@ -87,7 +87,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 #
 # To run the default scenario 1., call the python script through
 #
-#       python scenarioAttitudeFeedbackNoEarth.py
+#       python3 scenarioAttitudeFeedbackNoEarth.py
 #
 # When the simulation completes 3 plots are shown for the MRP attitude history, the rate
 # tracking errors, as well as the control torque vector.

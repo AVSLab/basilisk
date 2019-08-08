@@ -126,7 +126,7 @@ samplingTime = simulationTime // (numDataPoints-1)
 #
 # To run the MC simulation, call the python script from a Terminal window through
 #
-#       python scenarioMonteCarloAttRW.py
+#       python3 scenarioMonteCarloAttRW.py
 #
 # For more information on the Attitude Feedback Simulation with RW, please see the documentation
 # on the [scenarioAttitudeFeedbackRW.py](@ref scenarioAttitudeFeedbackRW) file.

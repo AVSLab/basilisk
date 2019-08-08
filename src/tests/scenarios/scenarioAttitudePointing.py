@@ -82,7 +82,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 #
 # To run the default scenario 1., call the python script through
 #
-#       python scenarioAttitudePointing.py
+#       python3 scenarioAttitudePointing.py
 #
 # As with [scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback), when
 # the simulation completes 3 plots are shown for the MRP attitude history, the rate

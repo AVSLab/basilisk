@@ -79,7 +79,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 #
 # To run the default scenario 1, call the python script through
 #
-#       python scenarioOrbitMultiBody.py
+#       python3 scenarioOrbitMultiBody.py
 #
 # When the simulation completes 2-3 plots are shown for each case.  One plot always shows
 # the inertial position vector components, while the third plot shows the inertial differences
