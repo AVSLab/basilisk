@@ -35,7 +35,7 @@ Note: Depending on your system setup, administrative permissions (sudo or su) ma
 
 3. SWIG: Available using:
 ```
-    $ apt-get install swig
+    $ apt-get install swig3.0
 ```
 
 
