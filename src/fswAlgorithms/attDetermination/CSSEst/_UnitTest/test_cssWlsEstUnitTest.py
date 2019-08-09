@@ -421,7 +421,7 @@ def cssWlsEstTestFunction(show_plots):
         plt.plot(truthData[:, 0] * 1.0E-9, truthData[:, 1], 'r--', label='Truth')
         plt.xlabel('Time (s)')
         plt.ylabel('X Component (--)')
-        plt.legend(loc='best')
+        plt.legend(loc='lower right')
         plt.subplot(3, 1, 2)
         plt.plot(sHatEst[:, 0] * 1.0E-9, sHatEst[:, 2], label='Est')
         plt.plot(truthData[:, 0] * 1.0E-9, truthData[:, 2], 'r--', label='Truth')

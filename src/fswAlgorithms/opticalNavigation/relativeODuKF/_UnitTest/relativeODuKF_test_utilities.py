@@ -48,7 +48,7 @@ def StatePlot(x, testName, show_plots):
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
     plt.subplot(321)
     plt.plot(t , x[:, 1], "b", label='Error Filter')
-    plt.legend(loc='best')
+    plt.legend(loc='lower right')
     plt.title('First pos component (m)')
     plt.grid()
 
@@ -93,7 +93,7 @@ def EnergyPlot(t, energy, testName, show_plots):
 
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(t , conserved, "b", label='Energy')
-    plt.legend(loc='best')
+    plt.legend(loc='lower right')
     plt.title('Energy ' + testName)
     plt.grid()
 
@@ -120,7 +120,7 @@ def StateCovarPlot(x, Pflat, testName, show_plots):
     plt.plot(t , x[:, 1], "b", label='Error Filter')
     plt.plot(t , x[:, 1]+3 * np.sqrt(P[:, 0, 0]), 'r--',  label='Covar Filter')
     plt.plot(t , x[:, 1]-3 * np.sqrt(P[:, 0, 0]), 'r--')
-    plt.legend(loc='best')
+    plt.legend(loc='lower right')
     plt.title('First pos component (m)')
     plt.grid()
 
@@ -186,7 +186,7 @@ def PostFitResiduals(Res, noise, testName, show_plots):
     plt.plot(t , Res[:, 1], "b.", label='Residual')
     plt.plot(t , MeasNoise, 'r--', label='Covar')
     plt.plot(t , -MeasNoise, 'r--')
-    plt.legend(loc='best')
+    plt.legend(loc='lower right')
     plt.ylim([-10*noise, 10*noise])
     plt.title('First Meas Comp (m)')
     plt.grid()

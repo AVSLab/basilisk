@@ -368,9 +368,9 @@ def writeFigureLaTeX(figureName, caption, plt, format, path):
     with open(texFileName, "w") as texFigure:
         texFigure.write(r'\begin{figure}[htbp]')
         texFigure.write(r'\centerline{')
-        texFigure.write(r'\includegraphics['+ format +']{AutoTeX/' + figureName + r'}}')
+        texFigure.write(r'\includegraphics[' + format +']{AutoTeX/' + figureName + r'}}')
         texFigure.write(r'\caption{' + caption + r'}')
-        texFigure.write(r'\label{fig:'+ figureName +r'}')
+        texFigure.write(r'\label{fig:' + figureName + r'}')
         texFigure.write(r'\end{figure}')
         texFigure.close()
 
