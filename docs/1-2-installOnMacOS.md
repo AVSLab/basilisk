@@ -164,6 +164,7 @@ $ cmake ../src -G Xcode -DUSE_PYTHON3=ON
 ```
 <span style="color: gray">If you are using Python 2, then follow the same instructions but make the destimation folder `dist`.  It is ok to have both `dist3` and `dist` folders.  Basilisk is setup such that it can be compiled for both Python 2 and 3.</span><br>
 This terminal command will both run the `configure` and `generate` steps outlined in the next step.  You can now skip to step 8.<br>
+If you have issues running `cmake`, especially if switching between python 2 and 3 compiling, trying following the clean build instructions on \ref FAQ.
 
 7. After successfully running `cmake` from the command line at least once, you can launch the GUI Cmake.app program from the terminal using
 ```
