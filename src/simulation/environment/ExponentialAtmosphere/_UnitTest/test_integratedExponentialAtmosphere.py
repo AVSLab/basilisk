@@ -47,10 +47,6 @@ def test_unitExponentialAtmosphere():
     testResults = []
     testMessage = []
 
-    epochRes, epochMsg = setEpoch(newAtmo)
-    testMessage.append(epochMsg)
-    testResults.append(epochRes)
-
     addScRes, addScMsg = AddSpacecraftToModel(newAtmo)
     testMessage.append(addScMsg)
     testResults.append(addScRes)
@@ -72,18 +68,6 @@ def test_unitExponentialAtmosphere():
 
 
     assert testSum < 1, testMessage
-
-def setEpoch(atmoModel):
-    testFailCount = 0
-    testMessages = []
-    dateVec = [20000, 2000.]
-    for date in dateVec:
-        atmoModel.setEpoch(date)
-        if atmoModel.epochDate != date:
-            testFailCount += 1
-            testMessages.append("FAILED: ExponentialAtmosphere could not set date to "+str(date)+".")
-
-    return testFailCount, testMessages
 
 def AddSpacecraftToModel(atmoModel):
     testFailCount = 0
