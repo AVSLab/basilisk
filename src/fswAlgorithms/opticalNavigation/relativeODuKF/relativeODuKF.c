@@ -174,39 +174,40 @@ void Update_relODuKF(RelODuKFConfig *configData, uint64_t callTime,
     /*! - If current clock time is further ahead than the measured time, then
      propagate to this current time-step*/
     newTimeTag = callTime*NANO2SEC;
-    if(newTimeTag > configData->timeTag)
+    if(newTimeTag >= configData->timeTag)
     {
         relODuKFTimeUpdate(configData, newTimeTag);
     }
-    
-    /*! - Compute Post Fit Residuals, first get Y (eq 22) using the states post fit*/
-    relODuKFMeasModel(configData);
-    
-    /*! - Compute the value for the yBar parameter (equation 23)*/
-    vSetZero(yBar, configData->numObs);
-    for(i=0; i<configData->countHalfSPs*2+1; i++)
-    {
-        vCopy(&(configData->yMeas[i*configData->numObs]), configData->numObs,
-              tempYVec);
-        vScale(configData->wM[i], tempYVec, configData->numObs, tempYVec);
-        vAdd(yBar, configData->numObs, tempYVec, yBar);
-    }
+
     
     /*! - The post fits are y - ybar if a measurement was read, if observations are zero, do not compute post fit residuals*/
     if(computePostFits == 1){
+        /*! - Compute Post Fit Residuals, first get Y (eq 22) using the states post fit*/
+        relODuKFMeasModel(configData);
+        
+        /*! - Compute the value for the yBar parameter (equation 23)*/
+        vSetZero(yBar, configData->numObs);
+        for(i=0; i<configData->countHalfSPs*2+1; i++)
+        {
+            vCopy(&(configData->yMeas[i*configData->numObs]), configData->numObs,
+                  tempYVec);
+            vScale(configData->wM[i], tempYVec, configData->numObs, tempYVec);
+            vAdd(yBar, configData->numObs, tempYVec, yBar);
+        }
         mSubtract(configData->obs, ODUKF_N_MEAS, 1, yBar, configData->postFits);
     }
     
    
     /*! - Write the relative OD estimate into the copy of the navigation message structure*/
     v3Copy(configData->state, outputRelOD.r_BN_N);
+    outputRelOD.timeTag = configData->timeTag;
     v3Scale(1E3, outputRelOD.r_BN_N, outputRelOD.r_BN_N); // Convert to m
     v3Copy(&configData->state[3], outputRelOD.v_BN_N);
     v3Scale(1E3, outputRelOD.v_BN_N, outputRelOD.v_BN_N); // Convert to m
     outputRelOD.timeTag = configData->timeTagOut;
     
     WriteMessage(configData->navStateOutMsgId, callTime, sizeof(NavTransIntMsg),
-                 &(opNavOutBuffer), moduleId);
+                 &(outputRelOD), moduleId);
     
     /*! - Populate the filter states output buffer and write the output message*/
     opNavOutBuffer.timeTag = configData->timeTag;
