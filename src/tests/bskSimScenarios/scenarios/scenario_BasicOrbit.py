@@ -316,8 +316,8 @@ class scenario_BasicOrbit(BSKScenario):
 
         return figureList
 
-    def online_outputs(self, plotComm, rate):
-        dataRequests = self.setup_plotting()
+    def live_outputs(self, plotComm, rate):
+        dataRequests = self.setup_live_outputs()
         lock = Lock()
         while True:
             for request in dataRequests:
@@ -329,30 +329,36 @@ class scenario_BasicOrbit(BSKScenario):
                     warnings.simplefilter(action='ignore', category=FutureWarning)
                 if response == "TERM":
                     return
-                #define what to do with each data request
-                if response["plotID"] == 0:
+                pltArgs = []
+                if response["plotFun"] == "plot_orbit":
                     lock.acquire()
-                    BSK_plt.plot_orbit(np.array(response["dataResp"][0]), response["plotID"])
-                    plt.show(block=False)
+                    for resp in response["dataResp"]:
+                        pltArgs.append(np.array(resp))
+                    pltArgs.append(response["plotID"])
+                    getattr(BSK_plt, response["plotFun"])(*pltArgs)
                     lock.release()
                     plt.pause(.01)
-                elif response["plotID"] == 1:
+                elif response["plotFun"] == "plot_orientation":
                     lock.acquire()
-                    r_BN_N = np.array(response["dataResp"][0])
-                    sigma_BN = np.array(response["dataResp"][1])
-                    v_BN_N = np.array(response["dataResp"][2])
-                    timeLineSet = r_BN_N[:, 0] * macros.NANO2MIN
-                    BSK_plt.plot_orientation(timeLineSet, r_BN_N, v_BN_N, sigma_BN, response["plotID"], True)
+                    pltArgs.append(response["dataResp"][0][:, 0] * macros.NANO2MIN)
+                    for resp in response["dataResp"]:
+                        pltArgs.append(np.array(resp))
+                    pltArgs.extend((response["plotID"], True))
+                    getattr(BSK_plt, response["plotFun"])(*pltArgs)
                     lock.release()
                     plt.pause(.01)
             sleep(rate/1000.)
 
-    def setup_plotting(self):
+    def setup_live_outputs(self):
         #define plots here
-        dataRequests = [ {"plotID" : 0, "dataReq" : [self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N"]}, \
-                        {"plotID" : 1, "dataReq" : [self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", \
-                                                    self.masterSim.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN", \
-                                                    self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N"]} ]
+        dataRequests = [{"plotID" : 0,
+                        "plotFun" : "plot_orbit",
+                        "dataReq" : [self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N"]},
+                        {"plotID" : 1,
+                        "plotFun" : "plot_orientation",
+                        "dataReq" : [self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N",
+                                    self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N",
+                                    self.masterSim.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN"]}]
         return dataRequests
 
 
@@ -374,19 +380,18 @@ def run(showPlots, livePlots):
     # Configure run time
     simulationTime = macros.min2nano(10.)
     TheBSKSim.ConfigureStopTime(simulationTime)
+    print(getattr(BSK_plt, 'plot_orbit'))
 
     # Run simulation
     if livePlots:
         #plotting refresh rate in ms
-        refreshRate = 200
+        refreshRate = 250
         plotComm, simComm = Pipe()
         simProc = Process(target = TheBSKSim.ExecuteSimulation, args = (simComm, TheScenario,))
-        plotProc = Process(target = TheScenario.online_outputs, args = (plotComm, refreshRate))
+        plotProc = Process(target = TheScenario.live_outputs, args = (plotComm, refreshRate))
         # Execute simulation and live plotting
-        simProc.start()
-        plotProc.start()
-        simProc.join()
-        plotProc.join()
+        simProc.start(), plotProc.start()
+        simProc.join(), plotProc.join()
     else:
         TheBSKSim.ExecuteSimulation()
         TheScenario.pull_outputs(showPlots)
