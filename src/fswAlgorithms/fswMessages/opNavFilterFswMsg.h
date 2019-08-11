@@ -17,15 +17,14 @@
 
  */
 
-#ifndef SUNLINE_FILTER_MESSAGE_H
-#define SUNLINE_FILTER_MESSAGE_H
+#ifndef OPNAV_FILTER_MESSAGE_H
+#define OPNAV_FILTER_MESSAGE_H
 
 /*! \defgroup fswMessages
  *  @{
  */
 
 #define ODUKF_N_STATES 6
-#define ODUKF_N_STATES_DYN 6
 #define ODUKF_N_MEAS 3
 
 /*! @brief structure for filter-states output for the unscented kalman filter
