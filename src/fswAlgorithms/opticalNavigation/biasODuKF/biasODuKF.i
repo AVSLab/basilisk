@@ -32,14 +32,23 @@
 %constant void Reset_biasODuKF(void*, uint64_t, uint64_t);
 %ignore Reset_biasODuKF;
 GEN_SIZEOF(NavTransIntMsg);
-GEN_SIZEOF(OpNavFilterFswMsg);
 GEN_SIZEOF(OpNavFswMsg);
 GEN_SIZEOF(BiasODuKFConfig);
 %include "biasODuKF.h"
+GEN_SIZEOF(CirclesOpNavMsg)
+GEN_SIZEOF(CameraConfigMsg)
+GEN_SIZEOF(NavAttIntMsg)
+GEN_SIZEOF(OpNavFswMsg)
+GEN_SIZEOF(BiasOpNavFilterMsg)
+GEN_SIZEOF(BiasOpNavMsg)
+%include "../fswAlgorithms/fswMessages/opNavFswMsg.h"
+%include "../fswAlgorithms/fswMessages/biasOpNavFilterMsg.h"
+%include "../fswAlgorithms/fswMessages/biasOpNavMsg.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
-%include "../../fswMessages/opNavFswMsg.h"
-%include "../../fswMessages/opNavFilterFswMsg.h"
 %include "simFswInterfaceMessages/navTransIntMsg.h"
+%include "simFswInterfaceMessages/circlesOpNavMsg.h"
+%include "simFswInterfaceMessages/cameraConfigMsg.h"
+%include "simFswInterfaceMessages/navAttIntMsg.h"
 
 
 %pythoncode %{

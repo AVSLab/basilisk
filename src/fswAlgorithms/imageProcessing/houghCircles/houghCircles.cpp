@@ -54,6 +54,9 @@ void HoughCircles::SelfInit()
 {
     /*! - Create output message for module */
     this->opnavCirclesOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(this->opnavCirclesOutMsgName,sizeof(CirclesOpNavMsg),this->OutputBufferCount,"CirclesOpNavMsg",moduleID);
+    if (this->biasMsgName != ""){
+        this->circlesBiasMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->circlesBiasMsgName,sizeof(CirclesOpNavMsg),this->OutputBufferCount,"CirclesOpNavMsg",moduleID);
+    }
 }
 
 
@@ -65,6 +68,9 @@ void HoughCircles::CrossInit()
 {
     /*! - Get the image data message ID*/
     this->imageInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->imageInMsgName,sizeof(CameraImageMsg), moduleID);
+    if (this->biasMsgName != ""){
+        this->biasMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->biasMsgName,sizeof(BiasOpNavMsg), moduleID);
+    }
 }
 
 /*! This is the destructor */
@@ -92,14 +98,17 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     std::string filenamePre;
     CameraImageMsg imageBuffer;
     CirclesOpNavMsg circleBuffer;
+    CirclesOpNavMsg circlesBiased;
+    memset(&circlesBiased, 0x0, sizeof(CirclesOpNavMsg));
+    memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
+    memset(&circleBuffer, 0x0, sizeof(CirclesOpNavMsg));
+    
     cv::Mat imageCV, blurred;
     int circlesFound=0;
     filenamePre = "PreprocessedImage_" + std::to_string(CurrentSimNanos*1E-9) + ".jpg";
 
     /*! - Read in the bitmap*/
     SingleMessageHeader localHeader;
-    memset(&imageBuffer, 0x0, sizeof(CameraImageMsg));
-    memset(&circleBuffer, 0x0, sizeof(CirclesOpNavMsg));
     if(this->imageInMsgName != "")
     {
         SystemMessaging::GetInstance()->ReadMessage(this->imageInMsgID, &localHeader,
@@ -121,6 +130,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
     else{
         /*! - If no image is present, write zeros in message */
         SystemMessaging::GetInstance()->WriteMessage(this->opnavCirclesOutMsgID, CurrentSimNanos, sizeof(CirclesOpNavMsg), reinterpret_cast<uint8_t *>(&circleBuffer), this->moduleID);
+        SystemMessaging::GetInstance()->WriteMessage(this->circlesBiasMsgId, CurrentSimNanos, sizeof(CirclesOpNavMsg), reinterpret_cast<uint8_t *>(&circlesBiased), this->moduleID);
         return;}
     cv::cvtColor( imageCV, imageCV, CV_BGR2GRAY);
     cv::threshold(imageCV, imageCV, 15, 255, cv::THRESH_BINARY_INV);
@@ -148,9 +158,33 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
         circleBuffer.valid = 1;
         circleBuffer.planetIds[0] = 2;
     }
-    
+    if (this->biasMsgName != ""){
+        BiasOpNavMsg biases;
+        memset(&biases, 0x0, sizeof(BiasOpNavMsg));
+        SystemMessaging::GetInstance()->ReadMessage(this->biasMsgId, &localHeader,
+                                                        sizeof(BiasOpNavMsg), &biases, this->moduleID);
+        circlesBiased.timeTag = this->sensorTimeTag;
+        circlesBiased.cameraID = imageBuffer.cameraID;
+        for( size_t i = 0; i < this->expectedCircles && i<circles.size(); i++ )
+        {
+            circlesBiased.circlesCenters[2*i] = circles[i][0] + 2;
+            circlesBiased.circlesCenters[2*i+1] = circles[i][1] + 2;
+            circlesBiased.circlesRadii[i] = circles[i][2] - 1;
+            for(int j=0; j<3; j++){
+                circlesBiased.uncertainty[j+3*j] = 3;
+            }
+            circlesBiased.uncertainty[2+3*2] = 1;
+            circlesFound+=1;
+        }
+        /*!- If no circles are found do not validate the image as a measurement */
+        if (circlesFound >0){
+            circlesBiased.valid = 1;
+            circlesBiased.planetIds[0] = 2;
+        }
+        SystemMessaging::GetInstance()->WriteMessage(this->circlesBiasMsgId, CurrentSimNanos, sizeof(CirclesOpNavMsg), reinterpret_cast<uint8_t *>(&circlesBiased), this->moduleID);
+    }
     SystemMessaging::GetInstance()->WriteMessage(this->opnavCirclesOutMsgID, CurrentSimNanos, sizeof(CirclesOpNavMsg), reinterpret_cast<uint8_t *>(&circleBuffer), this->moduleID);
-    
+
 //    free(imageBuffer.imagePointer);
     return;
 }

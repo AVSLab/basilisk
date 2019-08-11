@@ -1,4 +1,4 @@
- /*
+/*
  ISC License
 
  Copyright (c) 2016, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
@@ -16,25 +16,19 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module houghCircles
-%{
-   #include "houghCircles.h"
-%}
 
-%include "swig_common_model.i"
-%include "stdint.i"
-%include "sys_model.h"
-%include "houghCircles.h"
-%include "../simulation/simFswInterfaceMessages/circlesOpNavMsg.h"
-%include "../simulation/simFswInterfaceMessages/cameraImageMsg.h"
-%include "../fswAlgorithms/fswMessages/biasOpNavMsg.h"
-GEN_SIZEOF(CirclesOpNavMsg)
-GEN_SIZEOF(CameraImageMsg)
-GEN_SIZEOF(BiasOpNavMsg)
+#ifndef BIAS_MESSAGE_H
+#define BIAS_MESSAGE_H
+
+/*! @brief structure for filter-states output for the unscented kalman filter
+ implementation of the sunline state estimator*/
+typedef struct {
+    double timeTag;                             /*!< [s] Current time of validity for output */
+    double bias_pxl[3];                   /*!< [px] Bias in pixels on image proc */
+    double bias_r_BN_N[3];                 /*!< [m] Bias on measured position */
+}BiasOpNavMsg;
 
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
 
+
+#endif

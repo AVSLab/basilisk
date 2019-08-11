@@ -25,6 +25,8 @@
     #include "../fswMessages/TDBVehicleClockCorrelationFswMsg.h"
     #include "../fswMessages/attGuidFswMsg.h"
     #include "../fswMessages/attRefFswMsg.h"
+    #include "../fswMessages/biasOpNavFilterMsg.h"
+    #include "../fswMessages/biasOpNavMsg.h"
     #include "../fswMessages/cssConfigFswMsg.h"
     #include "../fswMessages/cssUnitConfigFswMsg.h"
     #include "../fswMessages/dvBurnCmdFswMsg.h"
@@ -68,6 +70,10 @@ GEN_SIZEOF(AttGuidFswMsg)
 %include "../fswMessages/attRefFswMsg.h"
 GEN_SIZEOF(AttRefFswMsg);
 %include "../fswMessages/cssConfigFswMsg.h"
+GEN_SIZEOF(BiasOpNavFilterMsg)
+%include "../fswMessages/biasOpNavFilterMsg.h"
+GEN_SIZEOF(BiasOpNavMsg);
+%include "../fswMessages/biasOpNavMsg.h"
 GEN_SIZEOF(CSSConfigFswMsg)
 %include "../fswMessages/cssUnitConfigFswMsg.h"
 GEN_SIZEOF(CSSUnitConfigFswMsg)
