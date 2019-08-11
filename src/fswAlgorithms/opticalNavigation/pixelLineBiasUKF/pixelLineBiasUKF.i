@@ -16,39 +16,30 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module biasODuKF
+%module pixelLineBiasUKF
 %{
-   #include "biasODuKF.h"
+   #include "pixelLineBiasUKF.h"
    #include "../_GeneralModuleFiles/ukfUtilities.h"
 %}
 
 %include "swig_conly_data.i"
-%constant void Update_biasODuKF(void*, uint64_t, uint64_t);
-%ignore Update_biasODuKF;
-%constant void SelfInit_biasODuKF(void*, uint64_t);
-%ignore SelfInit_biasODuKF;
-%constant void CrossInit_biasODuKF(void*, uint64_t);
-%ignore CrossInit_biasODuKF;
-%constant void Reset_biasODuKF(void*, uint64_t, uint64_t);
-%ignore Reset_biasODuKF;
+%constant void Update_pixelLineBiasUKF(void*, uint64_t, uint64_t);
+%ignore Update_pixelLineBiasUKF;
+%constant void SelfInit_pixelLineBiasUKF(void*, uint64_t);
+%ignore SelfInit_pixelLineBiasUKF;
+%constant void CrossInit_pixelLineBiasUKF(void*, uint64_t);
+%ignore CrossInit_pixelLineBiasUKF;
+%constant void Reset_pixelLineBiasUKF(void*, uint64_t, uint64_t);
+%ignore Reset_pixelLineBiasUKF;
 GEN_SIZEOF(NavTransIntMsg);
+GEN_SIZEOF(OpNavFilterFswMsg);
 GEN_SIZEOF(OpNavFswMsg);
-GEN_SIZEOF(BiasODuKFConfig);
-%include "biasODuKF.h"
-GEN_SIZEOF(CirclesOpNavMsg)
-GEN_SIZEOF(CameraConfigMsg)
-GEN_SIZEOF(NavAttIntMsg)
-GEN_SIZEOF(OpNavFswMsg)
-GEN_SIZEOF(BiasOpNavFilterMsg)
-GEN_SIZEOF(BiasOpNavMsg)
-%include "../fswAlgorithms/fswMessages/opNavFswMsg.h"
-%include "../fswAlgorithms/fswMessages/biasOpNavFilterMsg.h"
-%include "../fswAlgorithms/fswMessages/biasOpNavMsg.h"
+GEN_SIZEOF(PixelLineBiasUKFConfig);
+%include "pixelLineBiasUKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
+%include "../../fswMessages/opNavFswMsg.h"
+%include "../../fswMessages/opNavFilterFswMsg.h"
 %include "simFswInterfaceMessages/navTransIntMsg.h"
-%include "simFswInterfaceMessages/circlesOpNavMsg.h"
-%include "simFswInterfaceMessages/cameraConfigMsg.h"
-%include "simFswInterfaceMessages/navAttIntMsg.h"
 
 
 %pythoncode %{
