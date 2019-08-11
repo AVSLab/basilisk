@@ -2,15 +2,6 @@
 
 With release Basilisk v0.8.x onward the software framework now supports using Python 3.  The purpose of this document is to illustrate how to migrate Python 2 BSK scripts such that they will function in both Python 3 and Python 2.  For the time being Python 2 is still supported as a depreciated functionality.  But, python scripts committed to Basilisk should be written such that they support Python 3 and 2 for now. 
 
-## Importing Python Modules
-With Python 2 BSK scripts it was possible to use an indirect method of importing Python modules.  For example, consider this old import method
-```
-from Basilisk.fswAlgorithms import fswModuleTemplate
-```
-This must be upgraded to use a direct import method such as:
-```
-from Basilisk.fswAlgorithms.fswModuleTemplate import fswModuleTemplate
-```
 
 
 ## Dividing Scalars
