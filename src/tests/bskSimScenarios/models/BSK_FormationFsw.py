@@ -20,20 +20,10 @@
 
 import math
 from Basilisk.utilities import macros as mc
-
-from Basilisk.fswAlgorithms.hillPoint import hillPoint
-from Basilisk.fswAlgorithms.inertial3D import inertial3D
-from Basilisk.fswAlgorithms.attTrackingError import attTrackingError
-from Basilisk.fswAlgorithms.MRP_Feedback import MRP_Feedback
-from Basilisk.fswAlgorithms.rwMotorTorque import rwMotorTorque
-from Basilisk.fswAlgorithms.fswMessages import fswMessages
-from Basilisk.fswAlgorithms.velocityPoint import velocityPoint
-from Basilisk.fswAlgorithms.MRP_Steering import MRP_Steering
-from Basilisk.fswAlgorithms.rateServoFullNonlinear import rateServoFullNonlinear
-from Basilisk.fswAlgorithms.sunSafePoint import sunSafePoint
-from Basilisk.fswAlgorithms.cssWlsEst import cssWlsEst
-from Basilisk.fswAlgorithms.spacecraftPointing import spacecraftPointing
-
+from Basilisk.fswAlgorithms import (hillPoint, inertial3D, attTrackingError, MRP_Feedback,
+                                    rwMotorTorque, fswMessages,
+                                    velocityPoint, MRP_Steering, rateServoFullNonlinear,
+                                    sunSafePoint, cssWlsEst, spacecraftPointing)
 import numpy as np
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import fswSetupRW

@@ -21,18 +21,9 @@
 import numpy as np
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import unitTestSupport as sp
-
-from Basilisk.simulation.spacecraftPlus import spacecraftPlus
-from Basilisk.simulation.gravityEffector import gravityEffector
-from Basilisk.simulation.extForceTorque import extForceTorque
-from Basilisk.simulation.simple_nav import simple_nav
-from Basilisk.simulation.spice_interface import spice_interface
-from Basilisk.simulation.reactionWheelStateEffector import reactionWheelStateEffector
-from Basilisk.simulation.coarse_sun_sensor import coarse_sun_sensor
-from Basilisk.simulation.eclipse import eclipse
-from Basilisk.simulation.imu_sensor import imu_sensor
-from Basilisk.simulation.thrusterDynamicEffector import thrusterDynamicEffector
-
+from Basilisk.simulation import (spacecraftPlus, gravityEffector, extForceTorque, simple_nav, spice_interface,
+                                 reactionWheelStateEffector, coarse_sun_sensor, eclipse, imu_sensor)
+from Basilisk.simulation import thrusterDynamicEffector
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import simIncludeThruster
 from Basilisk.utilities import simIncludeRW, simIncludeGravBody
