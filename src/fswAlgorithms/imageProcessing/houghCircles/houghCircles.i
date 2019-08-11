@@ -27,10 +27,8 @@
 %include "houghCircles.h"
 %include "../simulation/simFswInterfaceMessages/circlesOpNavMsg.h"
 %include "../simulation/simFswInterfaceMessages/cameraImageMsg.h"
-%include "../fswAlgorithms/fswMessages/biasOpNavMsg.h"
 GEN_SIZEOF(CirclesOpNavMsg)
 GEN_SIZEOF(CameraImageMsg)
-GEN_SIZEOF(BiasOpNavMsg)
 
 
 %pythoncode %{

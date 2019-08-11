@@ -31,7 +31,6 @@
 #include "../simulation/simFswInterfaceMessages/circlesOpNavMsg.h"
 #include "../simulation/_GeneralModuleFiles/sys_model.h"
 #include "../simulation/utilities/avsEigenMRP.h"
-#include "fswMessages/biasOpNavMsg.h"
 
 
 
@@ -59,9 +58,7 @@ public:
     
 public:
     std::string filename;                //!< Filename for module to read an image directly
-    std::string circlesBiasMsgName;     //!< Name for the message to save data for biases
     std::string opnavCirclesOutMsgName;  //!< The name of the CirclesOpnavMsg output message
-    std::string biasMsgName;             //!< Optional message containing pixel bias being estimated
     std::string imageInMsgName;          //!< The name of the ImageFswMsg output message
     
     uint64_t sensorTimeTag;              //!< [ns] Current time tag for sensor out
@@ -79,8 +76,6 @@ private:
     uint64_t OutputBufferCount;          //!< [-] Count on the number of output message buffers
     int32_t opnavCirclesOutMsgID;        //!< ID for the outgoing message
     int32_t imageInMsgID;                //!< ID for the outgoing message
-    int32_t biasMsgId;                   //!< ID for the bias message
-    int32_t circlesBiasMsgId;         //!< ID for the safe-circle message
 };
 
 /* @} */
