@@ -405,7 +405,7 @@ class SimBaseClass:
             for req in inComm["dataReq"]:
                 outData.append(self.pullMessageLogData(req, range(3)))
             if len(outData) != 0:
-                outComm["plotID"] = inComm["plotID"]; outComm["dataResp"] = outData
+                outComm["plotID"] = inComm["plotID"]; outComm["dataResp"] = outData; outComm["plotFun"] = inComm["plotFun"]
                 simComm.send(outComm)
 
     def GetLogVariableData(self, LogName):
