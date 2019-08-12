@@ -45,8 +45,9 @@ void SelfInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t modu
 void CrossInit_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t moduleId)
 {
     /*! Read in the treated position measurement from pixelLineConverter */
-    configData->circlesInMsgId = subscribeToMessage(configData->circlesInMsgName,
-                                                      sizeof(CirclesOpNavMsg), moduleId);
+    configData->circlesInMsgId = subscribeToMessage(configData->circlesInMsgName, sizeof(CirclesOpNavMsg), moduleId);
+    configData->cameraConfigMsgID = subscribeToMessage(configData->cameraConfigMsgName,sizeof(CameraConfigMsg),moduleId);
+    configData->attInMsgID = subscribeToMessage(configData->attInMsgName, sizeof(NavAttIntMsg),moduleId);
     
 }
 
@@ -105,10 +106,10 @@ void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTim
     /*! - User a cholesky decomposition to obtain the sBar and sQnoise matrices for use in filter at runtime*/
     mCopy(configData->covarInit, configData->numStates, configData->numStates,
           configData->sBar);
-    vScale(1E-6, configData->sBar, PIXLINE_N_STATES*PIXLINE_N_STATES, configData->sBar); // Convert to km
+    vScale(1E-6, configData->sBar, PIXLINE_DYN_STATES*PIXLINE_DYN_STATES, configData->sBar); // Convert to km
     mCopy(configData->covarInit, configData->numStates, configData->numStates,
           configData->covar);
-    vScale(1E-6, configData->covar, PIXLINE_N_STATES*PIXLINE_N_STATES, configData->covar); // Convert to km
+    vScale(1E-6, configData->covar, PIXLINE_DYN_STATES*PIXLINE_DYN_STATES, configData->covar); // Convert to km
     
     mSetZero(tempMatrix, configData->numStates, configData->numStates);
     badUpdate += ukfCholDecomp(configData->sBar, configData->numStates,
@@ -148,6 +149,7 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
     PixelLineFilterFswMsg opNavOutBuffer; /* [-] Output filter info*/
     NavTransIntMsg outputRelOD;
     CirclesOpNavMsg inputCircles;
+    configData->moduleId = moduleId;
     
     computePostFits = 0;
     v3SetZero(configData->postFits);
@@ -213,8 +215,7 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
     memmove(opNavOutBuffer.state, configData->state, PIXLINE_N_STATES*sizeof(double));
     memmove(opNavOutBuffer.postFitRes, configData->postFits, PIXLINE_N_MEAS*sizeof(double));
     v6Scale(1E3, opNavOutBuffer.state, opNavOutBuffer.state); // Convert to m
-    v3Scale(1E3, opNavOutBuffer.postFitRes, opNavOutBuffer.postFitRes); // Convert to m
-    vScale(1E6, opNavOutBuffer.covar, PIXLINE_N_STATES*PIXLINE_N_STATES, opNavOutBuffer.covar); // Convert to m
+    vScale(1E6, opNavOutBuffer.covar, PIXLINE_DYN_STATES*PIXLINE_DYN_STATES, opNavOutBuffer.covar); // Convert to m
     WriteMessage(configData->filtDataOutMsgId, callTime, sizeof(PixelLineFilterFswMsg),
                  &opNavOutBuffer, moduleId);
     
@@ -409,12 +410,73 @@ int pixelLineBiasUKFTimeUpdate(PixelLineBiasUKFConfig *configData, double update
 void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig *configData)
 {
     int i, j;
+    uint64_t timeOfMsgWritten;
+    uint32_t sizeOfMsgWritten;
+    double dcm_CN[3][3], dcm_CB[3][3], dcm_BN[3][3];
+    double reCentered[2], rNorm, denom, planetRad;
+    double r_C[3];
+    CameraConfigMsg cameraSpecs;
+    NavAttIntMsg attInfo;
+    memset(&cameraSpecs, 0x0, sizeof(CameraConfigMsg));
+    memset(&attInfo, 0x0, sizeof(NavAttIntMsg));
+    
+    /*! - read input messages */
+    ReadMessage(configData->cameraConfigMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+                sizeof(CameraConfigMsg), &cameraSpecs, configData->moduleId);
+    ReadMessage(configData->attInMsgID, &timeOfMsgWritten, &sizeOfMsgWritten,
+                sizeof(NavAttIntMsg), &attInfo, configData->moduleId);
+    
     v3Set(configData->cirlcesInMsg.circlesCenters[0], configData->cirlcesInMsg.circlesCenters[1], configData->cirlcesInMsg.circlesRadii[0], configData->obs);
+
+    MRP2C(cameraSpecs.sigma_CB, dcm_CB);
+    MRP2C(attInfo.sigma_BN, dcm_BN);
+    m33tMultM33(dcm_CB, dcm_BN, dcm_CN);
+    double X, Y;
+    X = cameraSpecs.sensorSize[0]*0.001/cameraSpecs.resolution[0]; // mm to meters
+    Y = cameraSpecs.sensorSize[1]*0.001/cameraSpecs.resolution[1];
+    
+    if(configData->cirlcesInMsg.planetIds[0] > 0){
+        if(configData->cirlcesInMsg.planetIds[0] ==1){
+            planetRad = REQ_EARTH;//in km
+        }
+        if(configData->cirlcesInMsg.planetIds[0] ==2){
+            planetRad = REQ_MARS;//in km
+        }
+        if(configData->cirlcesInMsg.planetIds[0] ==3){
+            planetRad = REQ_JUPITER;//in km
+        }
+    }
+    
     for(j=0; j<configData->countHalfSPs*2+1; j++)
     {
-        for(i=0; i<3; i++)
-            configData->yMeas[i*(configData->countHalfSPs*2+1) + j] =
-            configData->SP[i + j*PIXLINE_N_STATES];
+        v3Add(configData->obs, &configData->SP[j*configData->numStates+PIXLINE_DYN_STATES], configData->obs);
+        for(i=0; i<3; i++){
+            double centers[2], r_N_bar[3], radius=0;
+            v2SetZero(centers);
+            v3SetZero(r_N_bar);
+            
+            v3Copy(&configData->SP[j*configData->numStates], r_N_bar);
+            rNorm = v3Norm(r_N_bar);
+            
+            m33MultV3(dcm_CN, r_N_bar, r_C);
+            v3Scale(-1./r_C[2], r_C, r_C);
+            
+            /*! - Find pixel size using camera specs */
+            reCentered[0] = r_C[0]*cameraSpecs.focalLength/X;
+            reCentered[1] = r_C[1]*cameraSpecs.focalLength/Y;
+            
+            centers[0] = reCentered[0] + cameraSpecs.resolution[0]/2 - 0.5;
+            centers[1] = reCentered[1] + cameraSpecs.resolution[1]/2 - 0.5;
+            
+            denom = planetRad/rNorm;
+            radius = cameraSpecs.focalLength/X*tan(asin(denom));
+            if (i<2){
+                configData->yMeas[i*(configData->countHalfSPs*2+1) + j] = centers[i];
+            }
+            if (i==2){
+                configData->yMeas[i*(configData->countHalfSPs*2+1) + j] = radius;
+            }
+        }
     }
     
     /*! - yMeas matrix was set backwards deliberately so we need to transpose it through*/

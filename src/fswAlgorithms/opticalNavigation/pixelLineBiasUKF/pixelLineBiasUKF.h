@@ -26,6 +26,8 @@
 #include "simFswInterfaceMessages/navTransIntMsg.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "simFswInterfaceMessages/circlesOpNavMsg.h"
+#include "simFswInterfaceMessages/cameraConfigMsg.h"
+#include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "fswMessages/pixelLineFilterFswMsg.h"
 #include "simulation/utilities/linearAlgebra.h"
 #include "simulation/utilities/rigidBodyKinematics.h"
@@ -50,6 +52,10 @@ typedef struct {
     char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the output message
     char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the output filter data message
     char circlesInMsgName[MAX_STAT_MSG_LENGTH];  //!< [-] The name of the input RW speeds message
+    char cameraConfigMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the camera config message
+    char attInMsgName[MAX_STAT_MSG_LENGTH]; //!< The name of the attitude message
+    
+    int moduleId; 
     
     int numStates;                //!< [-] Number of states for this filter
     int countHalfSPs;             //!< [-] Number of sigma points over 2
@@ -99,6 +105,8 @@ typedef struct {
     int32_t navStateOutMsgId;     //!< -- Id for the outgoing body estimate message
     int32_t filtDataOutMsgId;     //!< [-] Id for the filter data output message
     int32_t circlesInMsgId;     //!< [-] Id for the incoming mass properties message
+    int32_t attInMsgID;    //!< [-] The ID associated with the outgoing message
+    int32_t cameraConfigMsgID;  //!< [-] The ID associated with the incoming camera config
     
 }PixelLineBiasUKFConfig;
 
