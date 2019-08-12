@@ -106,10 +106,10 @@ void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTim
     /*! - User a cholesky decomposition to obtain the sBar and sQnoise matrices for use in filter at runtime*/
     mCopy(configData->covarInit, configData->numStates, configData->numStates,
           configData->sBar);
-    vScale(1E-6, configData->sBar, PIXLINE_DYN_STATES*PIXLINE_DYN_STATES, configData->sBar); // Convert to km
+    vScale(1E-6, configData->sBar, PIXLINE_DYN_STATES*PIXLINE_N_STATES + PIXLINE_DYN_STATES, configData->sBar); // Convert to km
     mCopy(configData->covarInit, configData->numStates, configData->numStates,
           configData->covar);
-    vScale(1E-6, configData->covar, PIXLINE_DYN_STATES*PIXLINE_DYN_STATES, configData->covar); // Convert to km
+    vScale(1E-6, configData->covar, PIXLINE_DYN_STATES*PIXLINE_N_STATES + PIXLINE_DYN_STATES, configData->covar); // Convert to km
     
     mSetZero(tempMatrix, configData->numStates, configData->numStates);
     badUpdate += ukfCholDecomp(configData->sBar, configData->numStates,
@@ -174,7 +174,7 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
     /*! - If current clock time is further ahead than the measured time, then
      propagate to this current time-step*/
     newTimeTag = callTime*NANO2SEC;
-    if(newTimeTag >= configData->timeTag)
+    if(newTimeTag > configData->timeTag)
     {
         pixelLineBiasUKFTimeUpdate(configData, newTimeTag);
     }
@@ -215,7 +215,7 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
     memmove(opNavOutBuffer.state, configData->state, PIXLINE_N_STATES*sizeof(double));
     memmove(opNavOutBuffer.postFitRes, configData->postFits, PIXLINE_N_MEAS*sizeof(double));
     v6Scale(1E3, opNavOutBuffer.state, opNavOutBuffer.state); // Convert to m
-    vScale(1E6, opNavOutBuffer.covar, PIXLINE_DYN_STATES*PIXLINE_DYN_STATES, opNavOutBuffer.covar); // Convert to m
+    vScale(1E6, opNavOutBuffer.covar, PIXLINE_DYN_STATES*PIXLINE_N_STATES+PIXLINE_DYN_STATES, opNavOutBuffer.covar); // Convert to m
     WriteMessage(configData->filtDataOutMsgId, callTime, sizeof(PixelLineFilterFswMsg),
                  &opNavOutBuffer, moduleId);
     
@@ -449,7 +449,7 @@ void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig *configData)
     
     for(j=0; j<configData->countHalfSPs*2+1; j++)
     {
-        v3Add(configData->obs, &configData->SP[j*configData->numStates+PIXLINE_DYN_STATES], configData->obs);
+//        v3Add(configData->obs, &configData->SP[j*configData->numStates+PIXLINE_DYN_STATES], configData->obs);
         for(i=0; i<3; i++){
             double centers[2], r_N_bar[3], radius=0;
             v2SetZero(centers);
@@ -471,10 +471,10 @@ void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig *configData)
             denom = planetRad/rNorm;
             radius = cameraSpecs.focalLength/X*tan(asin(denom));
             if (i<2){
-                configData->yMeas[i*(configData->countHalfSPs*2+1) + j] = centers[i];
+                configData->yMeas[i*(configData->countHalfSPs*2+1) + j] = centers[i] + configData->SP[j*configData->numStates+PIXLINE_DYN_STATES + i];
             }
             if (i==2){
-                configData->yMeas[i*(configData->countHalfSPs*2+1) + j] = radius;
+                configData->yMeas[i*(configData->countHalfSPs*2+1) + j] = radius + configData->SP[j*configData->numStates+PIXLINE_DYN_STATES + i];
             }
         }
     }
@@ -495,13 +495,13 @@ void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig *configData)
 int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData)
 {
     uint32_t i;
-    double yBar[3], syInv[3*3]; //measurement, Sy inv
-    double kMat[PIXLINE_N_STATES*3], cholNoise[PIXLINE_N_MEAS*PIXLINE_N_MEAS];//Kalman Gain, chol decomp of noise
+    double yBar[PIXLINE_N_MEAS], syInv[PIXLINE_N_MEAS*PIXLINE_N_MEAS]; //measurement, Sy inv
+    double kMat[PIXLINE_N_STATES*PIXLINE_N_MEAS], cholNoise[PIXLINE_N_MEAS*PIXLINE_N_MEAS];//Kalman Gain, chol decomp of noise
     double xHat[PIXLINE_N_STATES], Ucol[PIXLINE_N_STATES], sBarT[PIXLINE_N_STATES*PIXLINE_N_STATES], tempYVec[3];// state error, U column eq 28, intermediate variables
-    double AT[(2 * PIXLINE_N_STATES + 3)*3]; //Process noise matrix
-    double rAT[3*3], syT[3*3]; //QR R decomp, Sy transpose
-    double sy[3*3]; // Chol of covariance
-    double updMat[3*3], pXY[PIXLINE_N_STATES*3], Umat[PIXLINE_N_STATES*3]; // Intermediate variable, covariance eq 26, U eq 28
+    double AT[(2 * PIXLINE_N_STATES + PIXLINE_N_MEAS)*PIXLINE_N_MEAS]; //Process noise matrix
+    double rAT[PIXLINE_N_MEAS*PIXLINE_N_MEAS], syT[PIXLINE_N_MEAS*PIXLINE_N_MEAS]; //QR R decomp, Sy transpose
+    double sy[PIXLINE_N_MEAS*PIXLINE_N_MEAS]; // Chol of covariance
+    double updMat[PIXLINE_N_MEAS*PIXLINE_N_MEAS], pXY[PIXLINE_N_STATES*PIXLINE_N_MEAS], Umat[PIXLINE_N_STATES*PIXLINE_N_MEAS]; // Intermediate variable, covariance eq 26, U eq 28
     int32_t badUpdate=0;
     
     vCopy(configData->state, configData->numStates, configData->statePrev);
