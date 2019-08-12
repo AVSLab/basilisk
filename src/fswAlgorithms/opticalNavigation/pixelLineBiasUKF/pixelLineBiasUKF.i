@@ -32,13 +32,11 @@
 %constant void Reset_pixelLineBiasUKF(void*, uint64_t, uint64_t);
 %ignore Reset_pixelLineBiasUKF;
 GEN_SIZEOF(NavTransIntMsg);
-GEN_SIZEOF(OpNavFilterFswMsg);
-GEN_SIZEOF(OpNavFswMsg);
+GEN_SIZEOF(PixelLineFilterFswMsg);
 GEN_SIZEOF(PixelLineBiasUKFConfig);
 %include "pixelLineBiasUKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
-%include "../../fswMessages/opNavFswMsg.h"
-%include "../../fswMessages/opNavFilterFswMsg.h"
+%include "../../fswMessages/pixelLineFilterFswMsg.h"
 %include "simFswInterfaceMessages/navTransIntMsg.h"
 
 

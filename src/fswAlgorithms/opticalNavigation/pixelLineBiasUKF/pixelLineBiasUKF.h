@@ -34,10 +34,10 @@
 
 
 
-/*! \defgroup relativeODuKF
+/*! \defgroup PixelLineBiasUKF
  @brief This module filters position measurements that have been processed from planet images in order to estimate spacecraft relative position to an observed body in the inertial frame. The filter used is an unscented Kalman filter, and the images are first processed by houghCricles and pixelLineConverter in order to produce this filter's measurements.
 
- The module [PDF Description](Basilisk-relativeOD-20190620.pdf) contains further information on this module's function,
+ The module [PDF Description](Basilisk-PixelLineBiasUKF-20190620.pdf) contains further information on this module's function,
  how to run it, as well as testing.
  
  * @{
