@@ -40,10 +40,10 @@ path = os.path.dirname(os.path.abspath(filename))
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
+from Basilisk.simulation.alg_contain import alg_contain
 from Basilisk.utilities import unitTestSupport              # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import attTrackingError                  # import the module that is to be tested
+from Basilisk.fswAlgorithms.attTrackingError import attTrackingError                  # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
@@ -159,7 +159,7 @@ def subModuleTestFunction(show_plots):
     #
     moduleOutputName = "sigma_BR"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))[0]
+                                                  list(range(3)))[0]
 
     sigma_RN2 = rbk.addMRP(np.array(sigma_RN), -np.array(vector))
     RN = rbk.MRP2C(sigma_RN2)
@@ -167,7 +167,7 @@ def subModuleTestFunction(show_plots):
     BR = np.dot(BN, RN.T)
     # set the filtered output truth states
     trueVector = rbk.C2MRP(BR)
-   
+
     # compare the module results to the truth values
     accuracy = 1e-12
     if not unitTestSupport.isArrayEqual(moduleOutput,trueVector,3,accuracy):
@@ -185,7 +185,7 @@ def subModuleTestFunction(show_plots):
     #
     moduleOutputName = "omega_BR_B"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))[0]
+                                                  list(range(3)))[0]
 
     # set the filtered output truth states
     trueVector = np.array(omega_BN_B) - np.dot(BN, np.array(omega_RN_N))
@@ -206,7 +206,7 @@ def subModuleTestFunction(show_plots):
     #
     moduleOutputName = "omega_RN_B"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))[0]
+                                                  list(range(3)))[0]
 
     # set the filtered output truth states
     trueVector = np.dot(BN, np.array(omega_RN_N))
@@ -228,7 +228,7 @@ def subModuleTestFunction(show_plots):
     #
     moduleOutputName = "domega_RN_B"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))[0]
+                                                  list(range(3)))[0]
 
     # set the filtered output truth states
     trueVector = np.dot(BN, np.array(domega_RN_N))
@@ -244,7 +244,7 @@ def subModuleTestFunction(show_plots):
         unitTestSupport.writeTeXSnippet("passFail_domega_RN_B", "FAILED", path)
     else:
         unitTestSupport.writeTeXSnippet("passFail_domega_RN_B", "PASSED", path)
-    
+
     # Note that we can continue to step the simulation however we feel like.
     # Just because we stop and query data does not mean everything has to stop for good
     unitTestSim.ConfigureStopTime(macros.sec2nano(0.6))    # run an additional 0.6 seconds

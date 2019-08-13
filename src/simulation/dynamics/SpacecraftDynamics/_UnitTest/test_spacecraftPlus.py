@@ -111,19 +111,19 @@ def test_SCTranslation(show_plots):
     plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("scPlusChangeInOrbitalAngularMomentumTranslationOnly", "Change in Orbital Angular Momentum Translation Only", plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("scPlusChangeInOrbitalAngularMomentumTranslationOnly", "Change in Orbital Angular Momentum Translation Only", plt, r"width=0.8\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("scPlusChangeInOrbitalEnergyTranslationOnly", "Change in Orbital Energy Translation Only", plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("scPlusChangeInOrbitalEnergyTranslationOnly", "Change in Orbital Energy Translation Only", plt, r"width=0.8\textwidth", path)
     if show_plots:
         plt.show()
         plt.close('all')
 
     moduleOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N',
-                                                  range(3))
+                                                  list(range(3)))
 
     truePos = [
                 [-4072255.7737936215, 7456050.4649078, 5258610.029627514]
@@ -165,7 +165,7 @@ def test_SCTranslation(show_plots):
             testMessages.append("FAILED: SCHub Translation test failed orbital energy unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " SCHub Translation Integrated Sim Test"
+        print("PASSED: " + " SCHub Translation Integrated Sim Test")
 
     assert testFailCount < 1, testMessages
 
@@ -236,9 +236,9 @@ def test_SCTransAndRotation(show_plots):
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
 
     r_BN_NOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N',
-                                                  range(3))
+                                                  list(range(3)))
     sigma_BNOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
-                                                  range(3))
+                                                  list(range(3)))
 
     truePos = [
                 [-4072255.7737936215, 7456050.4649078, 5258610.029627514]
@@ -280,30 +280,31 @@ def test_SCTransAndRotation(show_plots):
                 [rotEnergy[-1,0], rotEnergy[-1,1]]
                  ]
 
+    plt.close('all')
     plt.figure()
     plt.clf()
     plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("scPlusChangeInOrbitalAngularMomentumTranslationAndRotation", "Change in Orbital Angular Momentum Translation And Rotation", plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("scPlusChangeInOrbitalAngularMomentumTranslationAndRotation", "Change in Orbital Angular Momentum Translation And Rotation", plt, r"width=0.8\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("scPlusChangeInOrbitalEnergyTranslationAndRotation", "Change in Orbital Energy Translation And Rotation", plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("scPlusChangeInOrbitalEnergyTranslationAndRotation", "Change in Orbital Energy Translation And Rotation", plt, r"width=0.8\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("scPlusChangeInRotationalAngularMomentumTranslationAndRotation", "Change in Rotational Angular Momentum Translation And Rotation", plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("scPlusChangeInRotationalAngularMomentumTranslationAndRotation", "Change in Rotational Angular Momentum Translation And Rotation", plt, r"width=0.8\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("scPlusChangeInRotationalEnergyTranslationAndRotation", "Change in Rotational Energy Translation And Rotation", plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("scPlusChangeInRotationalEnergyTranslationAndRotation", "Change in Rotational Energy Translation And Rotation", plt, r"width=0.8\textwidth", path)
     if show_plots:
         plt.show()
         plt.close('all')
@@ -347,7 +348,7 @@ def test_SCTransAndRotation(show_plots):
             testMessages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed orbital energy unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Spacecraft Translation and Rotation Integrated Sim Test"
+        print("PASSED: " + " Spacecraft Translation and Rotation Integrated Sim Test")
 
     assert testFailCount < 1, testMessages
 
@@ -447,9 +448,9 @@ def test_SCRotation(show_plots):
                  ]
 
     moduleOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
-                                                  range(3))
+                                                  list(range(3)))
     omega_BNOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.omega_BN_B',
-                                                  range(3))
+                                                  list(range(3)))
 
     check = 0
     for i in range(0,len(moduleOutput)):
@@ -496,7 +497,7 @@ def test_SCRotation(show_plots):
     plt.plot(moduleOutput[index-1,0]*1e-9, moduleOutput[index-1,1],'bo')
     plt.xlabel("Time (s)")
     plt.ylabel("MRPs")
-    unitTestSupport.writeFigureLaTeX("scPlusMRPs", "Attitude of Spacecraft in MRPs", plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("scPlusMRPs", "Attitude of Spacecraft in MRPs", plt, r"width=0.8\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(moduleOutput[index - 3: index + 3,0]*1e-9, moduleOutput[index - 3: index + 3,1],"b")
@@ -509,19 +510,19 @@ def test_SCRotation(show_plots):
     plt.legend(loc ='upper right',numpoints = 1)
     plt.xlabel("Time (s)")
     plt.ylabel("MRPs")
-    unitTestSupport.writeFigureLaTeX("scPlusMRPSwitching", "MRP Switching", plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("scPlusMRPSwitching", "MRP Switching", plt, r"width=0.8\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMomMag - rotAngMomMag[0])/rotAngMomMag[0])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("scPlusChangeInRotationalAngularMomentumRotationOnly", "Change in Rotational Angular Momentum Rotation Only", plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("scPlusChangeInRotationalAngularMomentumRotationOnly", "Change in Rotational Angular Momentum Rotation Only", plt, r"width=0.8\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("scPlusChangeInRotationalEnergyRotationOnly", "Change in Rotational Energy Rotation Only", plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("scPlusChangeInRotationalEnergyRotationOnly", "Change in Rotational Energy Rotation Only", plt, r"width=0.8\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(omega_BNOutput[:,0]*1e-9,omega_BNOutput[:,1],label = r"$\omega_1$" + " Basilisk")
@@ -533,7 +534,7 @@ def test_SCRotation(show_plots):
     plt.xlabel("Time (s)")
     plt.ylabel("Angular Velocity (rad/s)")
     plt.legend(loc ='lower right',numpoints = 1, prop = {'size': 6.5})
-    unitTestSupport.writeFigureLaTeX("scPlusBasiliskVsBOECalcForRotation", "Basilisk Vs BOE Calc For Rotation", plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("scPlusBasiliskVsBOECalcForRotation", "Basilisk Vs BOE Calc For Rotation", plt, r"width=0.8\textwidth", path)
     if show_plots:
         plt.show()
         plt.close("all")
@@ -572,7 +573,7 @@ def test_SCRotation(show_plots):
         testMessages.append("FAILED: Spacecraft Rotation Integrated test failed MRP Switching unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + "Spacecraft Rotation Integrated test"
+        print("PASSED: " + "Spacecraft Rotation Integrated test")
 
     assert testFailCount < 1, testMessages
 
@@ -656,9 +657,9 @@ def test_SCTransBOE(show_plots):
     unitTestSim.ExecuteSimulation()
 
     r_BN_NOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N',
-                                                  range(3))
+                                                  list(range(3)))
     v_BN_NOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N',
-                                                  range(3))
+                                                  list(range(3)))
 
     # BOE calcs
     a1 = F1/scObject.hub.mHub
@@ -678,6 +679,7 @@ def test_SCTransBOE(show_plots):
     basiliskV = [v_BN_NOutput[int(t1/timeStep), 1], v_BN_NOutput[int(t2/timeStep), 1], v_BN_NOutput[int(t3/timeStep), 1]]
     basiliskX = [r_BN_NOutput[int(t1/timeStep), 1], r_BN_NOutput[int(t2/timeStep), 1], r_BN_NOutput[int(t3/timeStep), 1]]
 
+    plt.close('all')
     plt.figure()
     plt.clf()
     plt.plot(r_BN_NOutput[:,0]*1e-9, r_BN_NOutput[:,1],'-b',label = "Basilisk")
@@ -687,7 +689,7 @@ def test_SCTransBOE(show_plots):
     plt.legend(loc ='upper left',numpoints = 1)
     PlotName = "scPlusTranslationPositionBOE"
     PlotTitle = "Translation Position BOE"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
@@ -699,7 +701,7 @@ def test_SCTransBOE(show_plots):
     plt.legend(loc ='lower left',numpoints = 1)
     PlotName = "scPlusTranslationVelocityBOE"
     PlotTitle = "Translation Velocity BOE"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
     if show_plots:
         plt.show()
@@ -719,7 +721,7 @@ def test_SCTransBOE(show_plots):
             testMessages.append("FAILED: Spacecraft Translation BOE Integrated test failed velocity unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Spacecraft Translation BOE Integrated Sim Test"
+        print("PASSED: " + " Spacecraft Translation BOE Integrated Sim Test")
 
     assert testFailCount < 1, testMessages
 
@@ -785,9 +787,9 @@ def test_SCPointBVsPointC(show_plots):
     unitTestSim.ExecuteSimulation()
 
     r_CN_NOutput1 = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_CN_N',
-                                                  range(3))
+                                                  list(range(3)))
     sigma_BNOutput1 = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
-                                                  range(3))
+                                                  list(range(3)))
 
     ####################
 
@@ -840,9 +842,9 @@ def test_SCPointBVsPointC(show_plots):
     unitTestSim.ExecuteSimulation()
 
     r_CN_NOutput2 = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_CN_N',
-                                                  range(3))
+                                                  list(range(3)))
     sigma_BNOutput2 = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
-                                                  range(3))
+                                                  list(range(3)))
 
     plt.figure()
     plt.clf()
@@ -855,7 +857,7 @@ def test_SCPointBVsPointC(show_plots):
     plt.legend(loc ='upper left', handlelength=3.5)
     PlotName = "scPlusPointBVsPointCTranslation"
     PlotTitle = "PointB Vs PointC Translation"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
@@ -869,7 +871,7 @@ def test_SCPointBVsPointC(show_plots):
     plt.legend(loc ='upper right', handlelength=3.5)
     PlotName = "scPlusPointBVsPointCAttitude"
     PlotTitle = "PointB Vs PointC Attitude"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
     if show_plots:
         plt.show()
@@ -885,7 +887,7 @@ def test_SCPointBVsPointC(show_plots):
         testMessages.append("FAILED: Spacecraft Point B Vs Point C test failed attitude unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Spacecraft Point B Vs Point C Integrated Sim Test"
+        print("PASSED: " + " Spacecraft Point B Vs Point C Integrated Sim Test")
 
     assert testFailCount < 1, testMessages
 

@@ -31,7 +31,7 @@ path = os.path.dirname(os.path.abspath(filename))
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.fswAlgorithms import MRP_PD  # import the module that is to be tested
+from Basilisk.fswAlgorithms.MRP_PD import MRP_PD  # import the module that is to be tested
 from Basilisk.utilities import macros
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -117,7 +117,7 @@ def mrp_PD_tracking(show_plots, setExtTorque):
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "torqueRequestBody"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
 
     trueVector = [findTrueTorques(moduleConfig, guidCmdData, vehicleConfigOut)]*3
     # print trueVector
@@ -132,12 +132,12 @@ def mrp_PD_tracking(show_plots, setExtTorque):
     snippentName = "passFail" + str(setExtTorque)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("PASSED: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print("Failed: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     # return fail count and join into a single string all messages in the list
@@ -174,5 +174,3 @@ def findTrueTorques(moduleConfig, guidCmdData, vehicleConfigOut):
 
 if __name__ == "__main__":
     test_mrp_PD_tracking(False, False)
-
-

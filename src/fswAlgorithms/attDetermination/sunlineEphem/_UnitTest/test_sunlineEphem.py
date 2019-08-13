@@ -30,13 +30,13 @@ import sys, os, inspect
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
+from Basilisk.simulation.alg_contain import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import sunlineEphem  # import the module that is to be tested
+from Basilisk.fswAlgorithms.sunlineEphem import sunlineEphem  # import the module that is to be tested
 from Basilisk.utilities import macros
-from Basilisk.simulation import simFswInterfaceMessages
-from Basilisk.simulation import simMessages
+from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
+from Basilisk.simulation.simMessages import simMessages
 from Basilisk.utilities import RigidBodyKinematics
 import numpy as np
 
@@ -159,7 +159,7 @@ def sunlineEphemTestFunction(show_plots):
 
         moduleOutputName = "vehSunPntBdy"
         moduleOutput = unitTestSim.pullMessageLogData(sunlineEphemConfig.navStateOutMsgName + '.' + moduleOutputName,
-                                                      range(3))
+                                                      list(range(3)))
 
         estVector[i] = moduleOutput[0,:]
 
@@ -193,7 +193,7 @@ def sunlineEphemTestFunction(show_plots):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print   "PASSED: " + sunlineEphemWrap.ModelTag
+        print("PASSED: " + sunlineEphemWrap.ModelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

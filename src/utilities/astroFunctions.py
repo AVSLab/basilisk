@@ -117,7 +117,7 @@ def OE2RV(mu, a, e, i, Omega, w, nu):
     if e!=1:
         p = a*(1-e*e)
     else:
-        print 'ERROR: parabolic case'
+        print('ERROR: parabolic case')
         return
     c = np.cos(nu)
     s = np.sin(nu)
@@ -288,7 +288,7 @@ def ephemeridesMeeus(JDE, celestialBody):
             Omega = ephem(Omega_vec, T)
             Pi = ephem(Pi_vec, T)
         else:
-            print "Meeus coefficients for " + celestialBody + " not defined"
+            print("Meeus coefficients for " + celestialBody + " not defined")
             L = 0.
             a = 0.
             e = 0.
@@ -308,11 +308,11 @@ def computeCOE(L,a,e,i,Omega,Pi):
 
     w = Pi - Omega
     M = L - Pi
-    C_cen = (2*e - 1/4 * np.power(e,3) + 5/96 * np.power(e,5)) * np.sin(M) +\
-            (5/4 * np.power(e,2) - 11/24 * np.power(e,4)) * np.sin(2*M) +\
-            (13/12 * np.power(e,3) - 43/64 * np.power(e,5)) * np.sin(3*M) +\
-            103/96 * np.power(e,4) * np.sin(4*M) +\
-            1097/960 * np.power(e,5) * np.sin(5*M)
+    C_cen = (2*e - 1//4 * np.power(e,3) + 5//96 * np.power(e,5)) * np.sin(M) +\
+            (5//4 * np.power(e,2) - 11//24 * np.power(e,4)) * np.sin(2*M) +\
+            (13//12 * np.power(e,3) - 43//64 * np.power(e,5)) * np.sin(3*M) +\
+            103//96 * np.power(e,4) * np.sin(4*M) +\
+            1097//960 * np.power(e,5) * np.sin(5*M)
     nu = M + C_cen
     return (a, e, i, Omega, w, nu)
 
@@ -390,8 +390,8 @@ def exactGregorianDate(JD):
 
 def optimalDate(GD0, DaysPastDeparture, TOF):
     JD0 = JulianDate(GD0) + DaysPastDeparture
-    print 'Departure Date: ', GregorianDate(JD0)
-    print 'Arrival Date: ', GregorianDate(JD0 + TOF)
+    print('Departure Date: ', GregorianDate(JD0))
+    print('Arrival Date: ', GregorianDate(JD0 + TOF))
     return (JD0, JD0+TOF)
 
 
@@ -499,8 +499,8 @@ def EarthResonantOrbit(v_inf_in, V1, R1, v_inf_out, V2, N):
 
     plt.plot(PHI_GA1, rp_GA1, 'm', PHI_GA2, rp_GA2, 'b')
     plt.axhline(E_radius, color='k')
-    plt.legend(['EGA 1', 'EGA 2', 'r$_{P, min}$'])
-    plt.xlabel('$\phi$ [rad]')
+    plt.legend(['EGA 1', 'EGA 2', 'r$_{P, min}$'], loc='lower right')
+    plt.xlabel(r'$\phi$ [rad]')
     plt.ylabel('Perigee Radius [km]')
     # plt.show()
     return
@@ -627,8 +627,8 @@ def Tisserand_P1_2_P2(r_planet_vec, v_inf_P1_vec, v_inf_P2_vec):
     plt.ylim([ra_min, ra_max])
     plt.xlabel('Radius of Periapse [AU]')
     plt.ylabel('Radius of Apoapse [AU]')
-    plt.title('$v_{\infty}^{Earth} $ = '+ str(v_inf_P1_vec) +' km/s \n'
-              '$v_{\infty}^{Saturn} $ = '+ str(v_inf_P2_vec) +' km/s')
+    plt.title(r'$v_{\infty}^{Earth} $ = '+ str(v_inf_P1_vec) +r' km/s \n'
+              r'$v_{\infty}^{Saturn} $ = '+ str(v_inf_P2_vec) +' km/s')
 
 def Tisserand_ESU():
     r_planet_vec = np.array([a_E, a_Saturn, a_U])
@@ -639,3 +639,9 @@ def Tisserand_ESU():
     TisserandPlot(a_Saturn, v_inf_S_vec[3], 'cyan')
 
     plt.show()
+
+def main():
+    Mars_RV(JulianDate([2018, 10, 16]))
+
+if __name__ == '__main__':
+    main()

@@ -50,7 +50,7 @@ class BSKFswModels():
         self.inertial3DData = inertial3D.inertial3DConfig()
         self.inertial3DWrap = SimBase.setModelDataWrap(self.inertial3DData)
         self.inertial3DWrap.ModelTag = "inertial3D"
-        
+
         self.trackingErrorData = attTrackingError.attTrackingErrorConfig()
         self.trackingErrorWrap = SimBase.setModelDataWrap(self.trackingErrorData)
         self.trackingErrorWrap.ModelTag = "trackingError"
@@ -58,7 +58,7 @@ class BSKFswModels():
         self.mrpFeedbackRWsData = MRP_Feedback.MRP_FeedbackConfig()
         self.mrpFeedbackRWsWrap = SimBase.setModelDataWrap(self.mrpFeedbackRWsData)
         self.mrpFeedbackRWsWrap.ModelTag = "mrpFeedbackRWs"
-        
+
         self.rwMotorTorqueData = rwMotorTorque.rwMotorTorqueConfig()
         self.rwMotorTorqueWrap = SimBase.setModelDataWrap(self.rwMotorTorqueData)
         self.rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
@@ -87,10 +87,10 @@ class BSKFswModels():
         self.mrpFeedbackControlData = MRP_Feedback.MRP_FeedbackConfig()
         self.mrpFeedbackControlWrap = SimBase.setModelDataWrap(self.mrpFeedbackControlData)
         self.mrpFeedbackControlWrap.ModelTag = "mrpFeedbackControl"
-        
+
         # Initialize all modules
         self.InitAllFSWObjects(SimBase)
-        
+
         # Assign initialized modules to tasks
         SimBase.AddModelToTask("inertial3DPointTask", self.inertial3DWrap, self.inertial3DData, 10)
         SimBase.AddModelToTask("inertial3DPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
@@ -109,7 +109,7 @@ class BSKFswModels():
 
         SimBase.AddModelToTask("spacecraftPointingTask", self.spacecraftPointingWrap, self.spacecraftPointing, 8)
         SimBase.AddModelToTask("spacecraftPointingTask", self.trackingErrorWrap2, self.trackingErrorData2, 7)
-        
+
         # Create events to be called for triggering GN&C maneuvers
         SimBase.fswProc.disableAllTasks()
 
@@ -177,7 +177,7 @@ class BSKFswModels():
         rwElAngle = np.array([40.0, 40.0, 40.0, 40.0]) * mc.D2R
         rwAzimuthAngle = np.array([45.0, 135.0, 225.0, 315.0]) * mc.D2R
         wheelJs = 50.0 / (6000.0 * math.pi * 2.0 / 60)
-        
+
         fswSetupRW.clearSetup()
         for elAngle, azAngle in zip(rwElAngle, rwAzimuthAngle):
             gsHat = (rbk.Mi(-azAngle, 3).dot(rbk.Mi(elAngle, 2))).dot(np.array([1, 0, 0]))

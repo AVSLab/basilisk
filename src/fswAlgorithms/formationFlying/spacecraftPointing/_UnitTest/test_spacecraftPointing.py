@@ -39,11 +39,11 @@ path = os.path.dirname(os.path.abspath(filename))
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
+from Basilisk.simulation.alg_contain import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import spacecraftPointing           # import the module that is to be tested
-from Basilisk.fswAlgorithms import cheby_pos_ephem
+from Basilisk.fswAlgorithms.spacecraftPointing import spacecraftPointing           # import the module that is to be tested
+from Basilisk.fswAlgorithms.cheby_pos_ephem import cheby_pos_ephem
 from Basilisk.utilities import macros
 import numpy as np
 from Basilisk.utilities import astroFunctions as af
@@ -245,7 +245,7 @@ def spacecraftPointingTestFunction(show_plots, case):
         #
         moduleOutputName = "sigma_RN"
         moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attReferenceOutMsgName + '.' + moduleOutputName,
-                                                      range(3))
+                                                      list(range(3)))
         # set the filtered output truth states
         trueVector = [
                    [0.,              0.,              0.0],
@@ -272,7 +272,7 @@ def spacecraftPointingTestFunction(show_plots, case):
         #
         moduleOutputName = "omega_RN_N"
         moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attReferenceOutMsgName + '.' + moduleOutputName,
-                                                      range(3))
+                                                      list(range(3)))
 
         # set the filtered output truth states
         trueVector = [
@@ -302,7 +302,7 @@ def spacecraftPointingTestFunction(show_plots, case):
         #
         moduleOutputName = "domega_RN_N"
         moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attReferenceOutMsgName + '.' + moduleOutputName,
-                                                      range(3))
+                                                      list(range(3)))
         # set the filtered output truth states
         trueVector = [
                       [0.0, 0.0, 0.0],
@@ -338,12 +338,12 @@ def spacecraftPointingTestFunction(show_plots, case):
     snippentName = "passFail" + str(case)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("PASSED: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "FAILED: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print("FAILED: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     # each test method requires a single assert method to be called

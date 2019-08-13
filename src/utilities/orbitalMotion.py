@@ -280,7 +280,7 @@ def M2E(M, e):
             E1 -= dE
             count += 1
             if count > maxIteration:
-                print 'Iteration error in M2E({},{})'.format(str(M), str(e))
+                print('Iteration error in M2E({},{})'.format(str(M), str(e)))
                 dE = 0.0
         return E1
     raise ValueError('Error: M2E() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
@@ -307,7 +307,7 @@ def N2H(N, e):
             H1 -= dH
             count += 1
             if count > maxIteration:
-                print 'Iteration error in M2E({},{})'.format(str(N), str(e))
+                print('Iteration error in M2E({},{})'.format(str(N), str(e)))
                 dH = 0.
         return H1
     raise ValueError('Error: N2H() received e = {}, the value of e should be 0 <= e < 1'.format(str(e)))
@@ -420,7 +420,7 @@ def elem2rv(mu, elements):
     vVec = np.zeros(3)
 
     if 1.0 + elements.e * math.cos(elements.f) < tolerance:
-        print 'WARNING: Radius is near infinite in elem2rv conversion.'
+        print('WARNING: Radius is near infinite in elem2rv conversion.')
 
     # Calculate the semilatus rectum and the radius #
     p = elements.a * (1.0 - elements.e * elements.e)
@@ -617,7 +617,7 @@ def rv2elem(mu, rVec, vVec):
     elements = ClassicElements()
 
     if (np.isnan(np.sum(rVec)) or np.isnan(np.sum(vVec))):
-        print "ERROR: received NAN rVec or vVec values."
+        print("ERROR: received NAN rVec or vVec values.")
         elements.a = np.NaN
         elements.alpha = np.NaN
         elements.e = np.NaN
@@ -704,7 +704,7 @@ def rv2elem(mu, rVec, vVec):
         if rVec[1] < 0:
             elements.f = 2.0 * np.pi - elements.f
     else:
-        print "Error: rv2elem couldn't identify orbit type."
+        print("Error: rv2elem couldn't identify orbit type.")
     if elements.e > 1.0 and math.fabs(elements.f) > np.pi:
         twopiSigned = math.copysign(2.0 * np.pi, elements.f)
         elements.f -= twopiSigned
@@ -810,9 +810,9 @@ def atmosphericDrag(Cd, A, m, rvec, vvec):
 
     # Checking if user supplied a orbital position is insede the earth #
     if alt <= 0.:
-        print "ERROR: atmosphericDrag() received rvec = [{} {} {}].". \
-            format(str(rvec[1]), str(rvec[2]), str(rvec[3]))
-        print 'The value of rvec should produce a positive altitude for the Earth.'
+        print("ERROR: atmosphericDrag() received rvec = [{} {} {}].". \
+            format(str(rvec[1]), str(rvec[2]), str(rvec[3])))
+        print('The value of rvec should produce a positive altitude for the Earth.')
         advec.fill(np.NaN)
         return
 

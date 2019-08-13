@@ -36,10 +36,10 @@ import sys, os, inspect
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
+from Basilisk.simulation.alg_contain import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import rwMotorTorque
+from Basilisk.fswAlgorithms.rwMotorTorque import rwMotorTorque
 from Basilisk.utilities import macros
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -158,9 +158,9 @@ def rwMotorTorqueTest(show_plots):
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "motorTorque"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(rwConfigParams.numRW))
+                                                  list(range(rwConfigParams.numRW)))
 
-    print '\n', moduleOutput[:, 1:]
+    print('\n', moduleOutput[:, 1:])
 
     # set the output truth states
     trueVector = [
@@ -186,7 +186,7 @@ def rwMotorTorqueTest(show_plots):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

@@ -74,13 +74,13 @@ def unitAVSLibrarySelfCheck(testName):
             testMessages.append("ERROR: Space Environment Library Failed Self Test.\n")
 
     if testFailCount == 0:
-        print "PASSED "
+        print("PASSED ")
         passFailText = "PASSED"
         colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX
         snippetContent = ""
     else:
-        print testFailCount
-        print testMessages
+        print(testFailCount)
+        print(testMessages)
         passFailText = 'FAILED'
         colorText = 'Red'  # color to write auto-documented "FAILED" message in in LATEX
         snippetContent = ""
@@ -94,7 +94,7 @@ def unitAVSLibrarySelfCheck(testName):
     unitTestSupport.writeTeXSnippet(snippetMsgName, snippetContent, path + "/../_Documentation/")
 
     snippetPassFailName = fileName + 'TestMsg-' + testName
-    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}'
+    snippetContent = r'\textcolor{' + colorText + '}{' + passFailText + '}'
     unitTestSupport.writeTeXSnippet(snippetPassFailName, snippetContent, path + "/../_Documentation/")
 
     # each test method requires a single assert method to be called

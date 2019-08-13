@@ -126,12 +126,9 @@ def ephemDifferenceTestFunction(ephBdyCount):
 
         for i in range(ephBdyCount):
 
-            outputData_R = unitTestSim.pullMessageLogData('output_change_body_' + str(i) + '.r_BdyZero_N', range(3))
-            outputData_V = unitTestSim.pullMessageLogData('output_change_body_' + str(i) + '.v_BdyZero_N', range(3))
+            outputData_R = unitTestSim.pullMessageLogData('output_change_body_' + str(i) + '.r_BdyZero_N', list(range(3)))
+            outputData_V = unitTestSim.pullMessageLogData('output_change_body_' + str(i) + '.v_BdyZero_N', list(range(3)))
             timeTag = unitTestSim.pullMessageLogData('output_change_body_' + str(i) + '.timeTag')
-
-            # print(outputData_R)
-            # print(outputData_V)
 
             # At each timestep, make sure the vehicleConfig values haven't changed from the initial values
             testFailCount, testMessages = unitTestSupport.compareArrayND([trueRVector[i]], outputData_R,
@@ -150,16 +147,15 @@ def ephemDifferenceTestFunction(ephBdyCount):
         testFailCount += 1
         testMessages.append("input/output message count is wrong.")
 
-
     snippentName = "passFail" + str(ephBdyCount)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + ephemDiffWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("PASSED: " + ephemDiffWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + ephemDiffWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print("Failed: " + ephemDiffWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     return [testFailCount, ''.join(testMessages)]

@@ -162,7 +162,7 @@ def test_hingedRigidBodyGravity(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    sigmaOut = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.sigma_BN',range(3))
+    sigmaOut = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.sigma_BN',list(range(3)))
 
     forcePanel1 = unitTestSim.GetLogVariableData(unitTestSim.panel1.ModelTag + ".forceOnBody_B")
     forcePanel2 = unitTestSim.GetLogVariableData(unitTestSim.panel2.ModelTag + ".forceOnBody_B")
@@ -191,6 +191,7 @@ def test_hingedRigidBodyGravity(show_plots):
 
     finalRotEnergy = [rotEnergy[-1]]
 
+    plt.close("all")
     plt.figure()
     plt.clf()
     plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
@@ -198,7 +199,7 @@ def test_hingedRigidBodyGravity(show_plots):
     plt.ylabel('Relative Difference')
     PlotName = "ChangeInOrbitalAngularMomentumGravity"
     PlotTitle = "Change in Orbital Angular Momentum with Gravity"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
@@ -276,7 +277,7 @@ def test_hingedRigidBodyGravity(show_plots):
             testMessages.append("FAILED: Hinged Rigid Body integrated test failed gravity orbital energy unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Hinged Rigid Body gravity integrated test"
+        print("PASSED: " + " Hinged Rigid Body gravity integrated test")
 
     assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list
@@ -369,9 +370,9 @@ def test_hingedRigidBodyNoGravity(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    sigmaOut = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.sigma_BN',range(3))
-    rOut_BN_N = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.r_BN_N',range(3))
-    vOut_CN_N = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.v_CN_N',range(3))
+    sigmaOut = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.sigma_BN',list(range(3)))
+    rOut_BN_N = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.r_BN_N',list(range(3)))
+    vOut_CN_N = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.v_CN_N',list(range(3)))
 
     orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy")
     orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbAngMomPntN_N")
@@ -402,6 +403,7 @@ def test_hingedRigidBodyNoGravity(show_plots):
 
     finalRotEnergy = [rotEnergy[-1]]
 
+    plt.close("all")
     plt.figure()
     plt.clf()
     plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
@@ -409,7 +411,7 @@ def test_hingedRigidBodyNoGravity(show_plots):
     plt.ylabel('Relative Difference')
     PlotName = "ChangeInOrbitalAngularMomentumNoGravity"
     PlotTitle = "Change in Orbital Angular Momentum No Gravity"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
@@ -499,7 +501,7 @@ def test_hingedRigidBodyNoGravity(show_plots):
             testMessages.append("FAILED: Hinged Rigid Body integrated test failed orbital energy unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Hinged Rigid Body integrated test"
+        print("PASSED: " + " Hinged Rigid Body integrated test")
 
     assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list
@@ -591,7 +593,7 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    vOut_CN_N = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.v_CN_N',range(3))
+    vOut_CN_N = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.v_CN_N',list(range(3)))
 
     orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbEnergy")
     orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".primaryCentralSpacecraft" + ".totOrbAngMomPntN_N")
@@ -609,6 +611,7 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
 
     finalOrbEnergy = [orbEnergy[-1]]
 
+    plt.close("all")
     plt.figure()
     plt.clf()
     plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
@@ -616,7 +619,7 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
     plt.ylabel('Relative Difference')
     PlotName = "ChangeInOrbitalAngularMomentumNoGravityDamping"
     PlotTitle = "Change in Orbital Angular Momentum No Gravity with Damping"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
@@ -679,7 +682,7 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
             testMessages.append("FAILED: Hinged Rigid Body integrated test with damping failed orbital energy unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Hinged Rigid Body integrated test with damping"
+        print("PASSED: " + " Hinged Rigid Body integrated test with damping")
 
     assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list
@@ -830,6 +833,7 @@ def test_hingedRigidBodyThetaSS(show_plots):
     tolerance = 1e-10
     thetaSS = newtonRapshon(boxAndWingsFandFPrime,thetaSSGuess,tolerance,variablesIn)
 
+    plt.close("all")
     plt.figure()
     plt.clf()
     plt.plot(time, X[3,:],'-b',label = "Lagrangian")
@@ -840,7 +844,7 @@ def test_hingedRigidBodyThetaSS(show_plots):
     plt.legend(loc ='upper right',numpoints = 1)
     PlotName = "BOECalculationForSteadyStateTheta1DeflectionVsSimulation"
     PlotTitle = "BOE Calculation for Steady State Theta 1 Deflection vs Simulation"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
@@ -853,7 +857,7 @@ def test_hingedRigidBodyThetaSS(show_plots):
     plt.legend(loc ='upper right',numpoints = 1)
     PlotName = "BOECalculationForSteadyStateTheta2DeflectionVsSimulation"
     PlotTitle = "BOE Calculation for Steady State Theta 2 Deflection vs Simulation"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
     
     if show_plots:
@@ -871,7 +875,7 @@ def test_hingedRigidBodyThetaSS(show_plots):
         testMessages.append("FAILED: Hinged Rigid Body integrated steady state test failed theta 2 comparison ")
 
     if testFailCount == 0:
-        print "PASSED: " + " Hinged Rigid Body steady state Integrated test"
+        print("PASSED: " + " Hinged Rigid Body steady state Integrated test")
 
     assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list
@@ -978,8 +982,8 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    rOut_BN_N = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.r_BN_N',range(3))
-    sigmaOut_BN = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.sigma_BN',range(3))
+    rOut_BN_N = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.r_BN_N',list(range(3)))
+    sigmaOut_BN = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.sigma_BN',list(range(3)))
     thetaOut = 4.0*numpy.arctan(sigmaOut_BN[:,3])
 
     theta1Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState()")
@@ -1121,7 +1125,7 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     plt.legend(loc ='upper left',numpoints = 1)
     PlotName = "MaxThetaWhileForcing"
     PlotTitle = "Max Theta While Forcing"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     # Write Results to tex snippet
@@ -1153,7 +1157,7 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
         testMessages.append("FAILED: Hinged Rigid Body integrated theta max test failed max 2 comparison ")
 
     if testFailCount == 0:
-        print "PASSED: " + "Hinged Rigid Body Frequency and Amplitude Integrated test"
+        print("PASSED: " + "Hinged Rigid Body Frequency and Amplitude Integrated test")
 
     assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list
@@ -1289,8 +1293,8 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     theta1Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta1').getState()")
     theta2Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('spacecrafthingedRigidBodyTheta2').getState()")
 
-    rOut_BN_N = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.r_BN_N',range(3))
-    sigmaOut_BN = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.sigma_BN',range(3))
+    rOut_BN_N = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.r_BN_N',list(range(3)))
+    sigmaOut_BN = unitTestSim.pullMessageLogData("spacecraft_inertial_state_output"+'.sigma_BN',list(range(3)))
     thetaOut = 4.0*numpy.arctan(sigmaOut_BN[:,3])
 
     # Developing the lagrangian result
@@ -1350,7 +1354,7 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     plt.legend(loc ='upper left',numpoints = 1)
     PlotName = "XPositionLagrangianVsBasilisk"
     PlotTitle = "X Position Lagrangian Vs Basilisk"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
@@ -1363,7 +1367,7 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     plt.legend(loc ='upper left',numpoints = 1)
     PlotName = "YPositionLagrangianVsBasilisk"
     PlotTitle = "Y Position Lagrangian Vs Basilisk"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
@@ -1376,7 +1380,7 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     plt.legend(loc ='upper left',numpoints = 1)
     PlotName = "ThetaLagrangianVsBasilisk"
     PlotTitle = "Theta Lagrangian Vs Basilisk"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
@@ -1389,7 +1393,7 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     plt.legend(loc ='upper left',numpoints = 1)
     PlotName = "Theta1LagrangianVsBasilisk"
     PlotTitle = "Theta 1 Position Lagrangian Vs Basilisk"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
@@ -1402,7 +1406,7 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     plt.legend(loc ='lower left',numpoints = 1)
     PlotName = "Theta2LagrangianVsBasilisk"
     PlotTitle = "Theta 2 Lagrangian Vs Basilisk"
-    format = "width=0.8\\textwidth"
+    format = r"width=0.8\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     if show_plots:
@@ -1413,7 +1417,7 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     timeList = [25, 75, 125, 175]
     for i in timeList:
         if abs(X[0,i] - (rOut_BN_N[i,1]-rOut_BN_N[0,1])) > accuracy:
-            print abs(X[0,i] - (rOut_BN_N[i,1]-rOut_BN_N[0,1]))
+            print(abs(X[0,i] - (rOut_BN_N[i,1]-rOut_BN_N[0,1])))
             testFailCount += 1
             testMessages.append("FAILED: Hinged Rigid Body integrated test Lagrangian vs. Basilisk failed x position comparison ")
         if abs(X[1,i] - (rOut_BN_N[i,2]-rOut_BN_N[0,2])) > accuracy:
@@ -1431,7 +1435,7 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
 
 
     if testFailCount == 0:
-        print "PASSED: " + " Hinged Rigid Body Transient Integrated test"
+        print("PASSED: " + " Hinged Rigid Body Transient Integrated test")
 
     assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list

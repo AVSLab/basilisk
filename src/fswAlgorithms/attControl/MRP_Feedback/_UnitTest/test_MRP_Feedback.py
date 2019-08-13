@@ -40,8 +40,8 @@ import numpy as np
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport
-from Basilisk.fswAlgorithms import MRP_Feedback
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.fswAlgorithms.MRP_Feedback import MRP_Feedback
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -180,7 +180,7 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
             rwAvailabilityMessage.wheelAvailability  = [MRP_Feedback.UNAVAILABLE, MRP_Feedback.UNAVAILABLE,
                                                         MRP_Feedback.UNAVAILABLE, MRP_Feedback.UNAVAILABLE]
         else:
-            print "WARNING: unknown rw availability status"
+            print("WARNING: unknown rw availability status")
 
         unitTestSupport.setMessage(unitTestSim.TotalSim,
                                    unitProcessName,
@@ -204,9 +204,9 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
     #   Step the simulation to 3*process rate so 4 total steps including zero
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
-    
-    moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds) 
-    
+
+    moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
+
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
@@ -215,7 +215,7 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
     #   Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "torqueRequestBody"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                    range(3))
+                                                    list(range(3)))
 
     # compare the module results to the truth values
     accuracy = 1e-8
@@ -227,9 +227,9 @@ def run(show_plots, intGain, rwNum, integralLimit, useRwAvailability):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print   "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
     else:
-        print "Failed: " + moduleWrap.ModelTag
+        print("Failed: " + moduleWrap.ModelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

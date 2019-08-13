@@ -63,9 +63,9 @@ def printResults_VelocityPoint(r_BN_N, v_BN_N, celBodyPosVec, celBodyVelVec, mu)
     omega_VN_N = (-dBdt + dfdt) * i_h
     domega_VN_N = (-ddBdt2 + ddfdt2) * i_h
 
-    print 'sigma_VN = ', sigma_VN
-    print 'omega_VN_N = ', omega_VN_N
-    print 'domega_VN_N = ', domega_VN_N
+    print('sigma_VN = ', sigma_VN)
+    print('omega_VN_N = ', omega_VN_N)
+    print('domega_VN_N = ', domega_VN_N)
 
     return (sigma_VN, omega_VN_N, domega_VN_N)
 

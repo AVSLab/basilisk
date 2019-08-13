@@ -28,8 +28,8 @@ import pytest
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import MRP_Steering  # import the module that is to be tested
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.fswAlgorithms.MRP_Steering import MRP_Steering  # import the module that is to be tested
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
 from Basilisk.utilities import macros
 from Basilisk.utilities import RigidBodyKinematics
 
@@ -120,7 +120,7 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "omega_BastR_B"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
 
     # Compute truth states
     omegaAstTrue, omegaAstPTrue = findTrueValues(guidCmdData, moduleConfig)
@@ -137,7 +137,7 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
 
     moduleOutputName = "omegap_BastR_B"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                   range(3))
+                                                   list(range(3)))
 
 
     # compare the module results to the truth values
@@ -157,7 +157,7 @@ def mrp_steering_tracking(show_plots, K1, K3, omegaMax):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
 
     # return fail count and join into a single string all messages in the list
     # testMessage

@@ -254,7 +254,7 @@ class scenario_BasicOrbit(BSKScenario):
         self.name = 'scenario_BasicOrbit'
 
     def configure_initial_conditions(self):
-        print '%s: configure_initial_conditions' % self.name
+        print('%s: configure_initial_conditions' % self.name)
         # Configure FSW mode
         self.masterSim.modeRequest = 'standby'
 
@@ -275,18 +275,18 @@ class scenario_BasicOrbit(BSKScenario):
         self.masterSim.get_DynModel().scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # rad/s - omega_BN_B
 
     def log_outputs(self):
-        print '%s: log_outputs' % self.name
+        print('%s: log_outputs' % self.name)
         # Dynamics process outputs
         samplingTime = self.masterSim.get_DynModel().processTasksTimeStep
         self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().simpleNavObject.outputAttName, samplingTime)
         self.masterSim.TotalSim.logThisMessage(self.masterSim.get_DynModel().simpleNavObject.outputTransName, samplingTime)
 
     def pull_outputs(self, showPlots):
-        print '%s: pull_outputs' % self.name
+        print('%s: pull_outputs' % self.name)
         # Dynamics process outputs
-        sigma_BN = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN", range(3))
-        r_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", range(3))
-        v_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", range(3))
+        sigma_BN = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN", list(range(3)))
+        r_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", list(range(3)))
+        v_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", list(range(3)))
 
         # Plot results
         BSK_plt.clear_all_plots()

@@ -74,7 +74,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 #
 # To run the default scenario 1., call the python script through
 #
-#       python scenarioIntegrators.py
+#       python3 scenarioIntegrators.py
 #
 # When the simulation completes a plot is shown for illustrating both the true and the numerically
 # evaluated orbit.
@@ -165,7 +165,7 @@ def run(show_plots, integratorCase):
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     #   setup orbit and simulation time
@@ -196,7 +196,7 @@ def run(show_plots, integratorCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime / numDataPoints
+    samplingTime = simulationTime // numDataPoints
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
@@ -216,8 +216,8 @@ def run(show_plots, integratorCase):
     #
     #   retrieve the logged data
     #
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N', range(3))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N', range(3))
+    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N', list(range(3)))
+    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N', list(range(3)))
 
     #
     #   plot the results

@@ -235,7 +235,7 @@ class scenario_RelativePointingFormation(BSKScenario):
         self.name = 'scenario_RelativePointingFormation'
 
     def configure_initial_conditions(self):
-        print '%s: configure_initial_conditions' % self.name
+        print('%s: configure_initial_conditions' % self.name)
         # Configure FSW mode
         self.masterSim.modeRequest = 'spacecraftPointing'
 
@@ -272,7 +272,7 @@ class scenario_RelativePointingFormation(BSKScenario):
         self.masterSim.get_DynModel().scObject2.hub.omega_BN_BInit = [[0.003], [-0.02], [0.01]]  # rad/s - omega_BN_B
 
     def log_outputs(self):
-        print '%s: log_outputs' % self.name
+        print('%s: log_outputs' % self.name)
 
         samplingTime = self.masterSim.get_DynModel().processTasksTimeStep
 
@@ -292,25 +292,25 @@ class scenario_RelativePointingFormation(BSKScenario):
         self.masterSim.TotalSim.logThisMessage(self.masterSim.get_FswModel().mrpFeedbackControlData.outputDataName, samplingTime)
 
     def pull_outputs(self, showPlots):
-        print '%s: pull_outputs' % self.name
+        print('%s: pull_outputs' % self.name)
         # Dynamics process outputs
-        r_BN_N_chief = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", range(3))
-        r_BN_N_deputy = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject2.outputTransName + ".r_BN_N", range(3))
+        r_BN_N_chief = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".r_BN_N", list(range(3)))
+        r_BN_N_deputy = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject2.outputTransName + ".r_BN_N", list(range(3)))
 
-        v_BN_N_chief = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", range(3))
-        v_BN_N_deputy = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject2.outputTransName + ".v_BN_N", range(3))
+        v_BN_N_chief = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputTransName + ".v_BN_N", list(range(3)))
+        v_BN_N_deputy = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject2.outputTransName + ".v_BN_N", list(range(3)))
 
-        sigma_BN_chief = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN", range(3))
-        sigma_BN_deputy = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject2.outputAttName + ".sigma_BN", range(3))
+        sigma_BN_chief = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject.outputAttName + ".sigma_BN", list(range(3)))
+        sigma_BN_deputy = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().simpleNavObject2.outputAttName + ".sigma_BN", list(range(3)))
 
         # FSW process outputs
-        omega_BR_B_chief = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", range(3))
-        omega_BR_B_deputy = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData2.outputDataName + ".omega_BR_B", range(3))
+        omega_BR_B_chief = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", list(range(3)))
+        omega_BR_B_deputy = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData2.outputDataName + ".omega_BR_B", list(range(3)))
 
-        sigma_BR_deputy = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData2.outputDataName + ".sigma_BR", range(3))
+        sigma_BR_deputy = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().trackingErrorData2.outputDataName + ".sigma_BR", list(range(3)))
 
-        sigma_RN = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().spacecraftPointing.attReferenceOutMsgName + ".sigma_RN", range(3))
-        omega_RN_N = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().spacecraftPointing.attReferenceOutMsgName + ".omega_RN_N", range(3))
+        sigma_RN = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().spacecraftPointing.attReferenceOutMsgName + ".sigma_RN", list(range(3)))
+        omega_RN_N = self.masterSim.pullMessageLogData(self.masterSim.get_FswModel().spacecraftPointing.attReferenceOutMsgName + ".omega_RN_N", list(range(3)))
 
 
         # Plot results

@@ -31,7 +31,7 @@ to get the `graphviz` tools installed.
 
 **How do I perform a clean build of Basilisk?**
 * IDE's like X-Code provide a "clean" function.  This will remove some compiled code, but in Basilisk it does not get rid of all the SWIG'd code, and there can be compiler warnings related to the last CMAKE settings used.  To really have a clean clean build, you can
-    * delete the contents of `dist`, but leave the folder itself
+    * delete the folder of `dist3` or `dist` and create a new folder with that name
     * delete any CMake cache
     * delete the `.conan` directory in your home folder.
 * Now when you run CMAke it will pull a fresh copy of any required libraries and proceed to build freshly minted version of Basilisk.

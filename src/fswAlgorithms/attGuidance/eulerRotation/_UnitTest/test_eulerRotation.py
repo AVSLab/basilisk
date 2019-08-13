@@ -29,9 +29,9 @@ import numpy as np
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.fswAlgorithms import eulerRotation                    # import the module that is to be tested
+from Basilisk.fswAlgorithms.eulerRotation import eulerRotation                    # import the module that is to be tested
 from Basilisk.utilities import macros as mc
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -125,7 +125,7 @@ def run(show_plots):
     #
     moduleOutputName = "sigma_RN"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     # set the filtered output truth states
     trueVector = [
         [-0.193031238249, 0.608048400483, 0.386062476497],
@@ -142,7 +142,7 @@ def run(show_plots):
     #
     moduleOutputName = "omega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     # set the filtered output truth states
     trueVector = [
         [0.101246280045,  0.000182644489,  0.001208139578],
@@ -159,7 +159,7 @@ def run(show_plots):
     #
     moduleOutputName = "domega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     # set the filtered output truth states
     trueVector = [
         [0.000000000000e+00,  -1.208139577635e-04,   1.826444892823e-05],
@@ -170,7 +170,7 @@ def run(show_plots):
     testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
                                                                accuracy, "domega_RN_N Vector",
                                                                testFailCount, testMessages)
-    
+
 
     # If the argument provided at commandline "--show_plots" evaluates as true,
     # plot all figures
@@ -282,7 +282,7 @@ def run2(show_plots):
     #
     moduleOutputName = "sigma_RN"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     # set the filtered output truth states
     trueVector = [
         [-0.193031238249, 0.608048400483, 0.386062476497],
@@ -299,7 +299,7 @@ def run2(show_plots):
     #
     moduleOutputName = "omega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     # set the filtered output truth states
     trueVector = [
         [0.101246280045, 0.000182644489, 0.001208139578],
@@ -316,7 +316,7 @@ def run2(show_plots):
     #
     moduleOutputName = "domega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     # set the filtered output truth states
     trueVector = [
         [0.000000000000e+00, -1.208139577635e-04, 1.826444892823e-05],

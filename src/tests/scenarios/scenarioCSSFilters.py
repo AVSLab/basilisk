@@ -182,7 +182,7 @@ def setupSuKFData(filterObject):
 #
 # To run the default scenario, call the python script through
 #
-#       python scenarioCSSFilters.py
+#       python3 scenarioCSSFilters.py
 #
 # When the simulation completes several plots are written summarizing the filter performances.
 #
@@ -706,16 +706,16 @@ def run(saveFigures, show_plots, FilterType, simTime):
     #
 
     # Get messages that will make true data
-    OutSunPos = scSim.pullMessageLogData('sun_planet_data' + ".PositionVector", range(3))
-    Outr_BN_N = scSim.pullMessageLogData('inertial_state_output' + ".r_BN_N", range(3))
-    OutSigma_BN = scSim.pullMessageLogData('inertial_state_output' + ".sigma_BN", range(3))
-    Outomega_BN = scSim.pullMessageLogData('inertial_state_output' + ".omega_BN_B", range(3))
+    OutSunPos = scSim.pullMessageLogData('sun_planet_data' + ".PositionVector", list(range(3)))
+    Outr_BN_N = scSim.pullMessageLogData('inertial_state_output' + ".r_BN_N", list(range(3)))
+    OutSigma_BN = scSim.pullMessageLogData('inertial_state_output' + ".sigma_BN", list(range(3)))
+    Outomega_BN = scSim.pullMessageLogData('inertial_state_output' + ".omega_BN_B", list(range(3)))
 
     # Get the filter outputs through the messages
-    stateLog = scSim.pullMessageLogData('sunline_filter_data' + ".state", range(numStates))
-    postFitLog = scSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", range(8))
-    covarLog = scSim.pullMessageLogData('sunline_filter_data' + ".covar", range(numStates*numStates))
-    obsLog = scSim.pullMessageLogData('sunline_filter_data' + ".numObs", range(1))
+    stateLog = scSim.pullMessageLogData('sunline_filter_data' + ".state", list(range(numStates)))
+    postFitLog = scSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", list(range(8)))
+    covarLog = scSim.pullMessageLogData('sunline_filter_data' + ".covar", list(range(numStates*numStates)))
+    obsLog = scSim.pullMessageLogData('sunline_filter_data' + ".numObs", list(range(1)))
     dcmLog = np.zeros([len(stateLog[:,0]),3,3])
     omegaExp = np.zeros([len(stateLog[:,0]),3])
     if FilterType == 'SEKF':
@@ -794,4 +794,3 @@ if __name__ == "__main__":
         'SuKF',
          400
        )
-

@@ -173,10 +173,10 @@ def fswModuleTestFunction(show_plots, setRAN, setDEC, setLST, setRate):
     c = 0
     for planet in planetNames:
         J2000Current = unitTestSim.pullMessageLogData(planet + '_planet_data.J2000Current')
-        PositionVector = unitTestSim.pullMessageLogData(planet + '_planet_data.PositionVector', range(3))
-        VelocityVector = unitTestSim.pullMessageLogData(planet + '_planet_data.VelocityVector', range(3))
-        J20002Pfix = unitTestSim.pullMessageLogData(planet + '_planet_data.J20002Pfix', range(9))
-        J20002Pfix_dot = unitTestSim.pullMessageLogData(planet + '_planet_data.J20002Pfix_dot', range(9))
+        PositionVector = unitTestSim.pullMessageLogData(planet + '_planet_data.PositionVector', list(range(3)))
+        VelocityVector = unitTestSim.pullMessageLogData(planet + '_planet_data.VelocityVector', list(range(3)))
+        J20002Pfix = unitTestSim.pullMessageLogData(planet + '_planet_data.J20002Pfix', list(range(9)))
+        J20002Pfix_dot = unitTestSim.pullMessageLogData(planet + '_planet_data.J20002Pfix_dot', list(range(9)))
         computeOrient = unitTestSim.pullMessageLogData(planet + '_planet_data.computeOrient')
 
         # check that the proper planet name string is set
@@ -256,12 +256,12 @@ def fswModuleTestFunction(show_plots, setRAN, setDEC, setLST, setRate):
     snippentName = "passFail" + str(setRAN) + str(setDEC) + str(setLST) + str(setRate)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleConfig.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("PASSED: " + moduleConfig.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleConfig.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print("Failed: " + moduleConfig.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     # each test method requires a single assert method to be called

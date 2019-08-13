@@ -210,7 +210,7 @@ def run(show_plots):
     # If the spacecraftPlus() output is desired relative to another celestial object, the zeroBase string
     # name of the SPICE object needs to be changed.
     earth.isCentralBody = True
-    scObject.gravField.setGravBodies(gravityEffector.GravBodyVector(gravFactory.gravBodies.values()))
+    scObject.gravField.setGravBodies(gravityEffector.GravBodyVector(list(gravFactory.gravBodies.values())))
     scSim.AddModelToTask(simTaskName, scObject)
 
     # create simulation messages
@@ -287,7 +287,7 @@ def run(show_plots):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints - 1)
+    samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
@@ -317,8 +317,8 @@ def run(show_plots):
     scSim.ConfigureStopTime(simulationTime + macros.sec2nano(110000))
     scSim.ExecuteSimulation()
 
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', range(3))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', range(3))
+    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
+    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
 
     endEarthTime = len(posData)
 
@@ -352,8 +352,8 @@ def run(show_plots):
     scSim.ConfigureStopTime(simulationTime + macros.sec2nano(110000) + T2 - macros.sec2nano(6058000))
     scSim.ExecuteSimulation()
 
-    hohmann_PosData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', range(3))
-    hohmann_VelData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', range(3))
+    hohmann_PosData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
+    hohmann_VelData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
 
     endSunTime = len(hohmann_PosData)
 
@@ -369,7 +369,7 @@ def run(show_plots):
     scSim.ConfigureStopTime(simulationTime + macros.sec2nano(110000) + T2)
     scSim.ExecuteSimulation()
 
-    timeSwitch_posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', range(3))
+    timeSwitch_posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
     endTimeStepSwitchTime = len(timeSwitch_posData)
 
     ##############################################################
@@ -399,8 +399,8 @@ def run(show_plots):
 
     scSim.ExecuteSimulation()
     #   retrieve the logged data
-    dataPos = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', range(3))
-    dataVel = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', range(3))
+    dataPos = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
+    dataVel = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
 
     posJup = dataPos[endTimeStepSwitchTime:-1]
     velJup = dataVel[endTimeStepSwitchTime:-1]
@@ -598,7 +598,7 @@ def run(show_plots):
     plt.plot(dataTime_TS * macros.NANO2HOUR, rData_TS, color='#555555', label='Time Switch')
     plt.plot(dataTime_JC * macros.NANO2HOUR, rData_JC, color='orangered', label='Jupiter Centered')
     plt.yscale('log')
-    plt.legend()
+    plt.legend(loc='upper right')
     plt.xlabel('Time [h]')
     plt.ylabel('Heliocentric Radius [km]')
     pltName = fileName + "5"

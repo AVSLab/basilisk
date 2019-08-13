@@ -31,15 +31,15 @@ import pytest
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
+from Basilisk.simulation.alg_contain import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import thrForceMapping
+from Basilisk.fswAlgorithms.thrForceMapping import thrForceMapping
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
 
-from Support import Results_thrForceMapping
+from .Support import Results_thrForceMapping
 import numpy as np
 
 
@@ -277,7 +277,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "thrForce"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(MAX_EFF_CNT))
+                                                  list(range(MAX_EFF_CNT)))
 
     if misconfigThruster:
         return [testFailCount, ''.join(testMessages)] # We don't handle cases where a thruster is configured incorrectly.
@@ -342,19 +342,19 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     # Checks to make sure that no forces are negative
     if not useDVThruster and np.any(moduleOutput[0,1:]<0):
         testFailCount += 1
-        print "A negative force exists in the C RCS solution. This is not allowed!\n"
+        print("A negative force exists in the C RCS solution. This is not allowed!\n")
 
     if not useDVThruster and np.any(F<0):
         testFailCount += 1
-        print "A negative force exists in the Python RCS solution. This is not allowed!\n"
+        print("A negative force exists in the Python RCS solution. This is not allowed!\n")
 
     if testFailCount > 0:
         return [testFailCount, ''.join(testMessages)]
 
 
     # Check that Torques are Sensible
-    print "\nReq Lr_Bar [B]: " + str(Lr_Req_Bar_B)
-    print "Rec Lr_Bar [B]: " + str(Lr_Rec_Bar_B[1:4])
+    print("\nReq Lr_Bar [B]: " + str(Lr_Req_Bar_B))
+    print("Rec Lr_Bar [B]: " + str(Lr_Rec_Bar_B[1:4]))
 
     testFailCount = 0
     testFailCount, testMessages = unitTestSupport.compareArrayND(np.array([Lr_Req_Bar_B_Unit]),
@@ -395,14 +395,14 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
 
     if testFailCount > 0:
         unitTestSupport.writeTeXSnippet(directory+"Failed/"+snippetName, snippetTex, path)
-        print "FAILED: " + moduleWrap.ModelTag
+        print("FAILED: " + moduleWrap.ModelTag)
         testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
                             moduleOutputName + " unit test at t=" +
                             str(moduleOutput[0, 0] * macros.NANO2SEC) +
                             "sec\n")
     else:
         unitTestSupport.writeTeXSnippet(directory+"/Passed/" + snippetName, snippetTex, path)
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
 
 
     unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
@@ -411,17 +411,17 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
         numControlAxis) + "_" + str(saturateThrusters) + "_" + str(misconfigThruster)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("PASSED: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print("Failed: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     if testFailCount > 0:
-        print "Python:\t " + str(F)
-        print "C: \t:" + str(moduleOutput[0])
+        print("Python:\t " + str(F))
+        print("C: \t:" + str(moduleOutput[0]))
 
     return [testFailCount, ''.join(testMessages)]
 

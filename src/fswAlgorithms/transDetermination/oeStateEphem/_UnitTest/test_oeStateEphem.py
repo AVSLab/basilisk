@@ -23,9 +23,10 @@ import math
 import pytest
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import oe_state_ephem
-from Basilisk.simulation import sim_model
-from Basilisk import pyswice
+from Basilisk.fswAlgorithms.oe_state_ephem import oe_state_ephem
+from Basilisk.simulation.sim_model import sim_model
+from Basilisk.pyswice import pyswice
+from Basilisk.pyswice.pyswice_spk_utilities import spkRead
 import matplotlib.pyplot as plt
 from Basilisk.utilities import unitTestSupport
 
@@ -66,7 +67,7 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
 
     numCurvePoints = 4*8640+1
     curveDurationSeconds = 4*86400
-    logPeriod = curveDurationSeconds / (numCurvePoints - 1)
+    logPeriod = curveDurationSeconds // (numCurvePoints - 1)
     degChebCoeff = 14
     integFrame = "j2000"
     zeroBase = "Earth"
@@ -102,7 +103,7 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
 
     for timeVal in timeHistory:
         stringCurrent = pyswice.et2utc_c(timeVal, 'C', 4, 1024, "Yo")
-        stateOut = pyswice.spkRead('-221', stringCurrent, integFrame, zeroBase)
+        stateOut = spkRead('-221', stringCurrent, integFrame, zeroBase)
         for i in range(3):
             pyswice.doubleArray_setitem(posCArray, i, stateOut[i]*1000.0)
             pyswice.doubleArray_setitem(velCArray, i, stateOut[i+3]*1000.0)
@@ -191,12 +192,12 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
         sim.ExecuteSimulation()
 
     posChebData = sim.pullMessageLogData(oeStateModel.stateFitOutMsgName + ".r_BdyZero_N",
-                                         range(3))
+                                         list(range(3)))
     velChebData = sim.pullMessageLogData(oeStateModel.stateFitOutMsgName + ".v_BdyZero_N",
-                                         range(3))
+                                         list(range(3)))
 
     if not validChebyCurveTime:
-        lastLogidx = (curveDurationSeconds + logPeriod) / logPeriod - 1
+        lastLogidx = (curveDurationSeconds + logPeriod) // logPeriod - 1
         secondLastPos = posChebData[lastLogidx + 1, 1:] - tdrssPosList[lastLogidx, :]
         lastPos = posChebData[lastLogidx, 1:] - tdrssPosList[lastLogidx, :]
         if not numpy.array_equal(secondLastPos, lastPos):
@@ -265,7 +266,7 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
             plt.plot(posChebData[:, 0] * macros.NANO2HOUR, posChebData[:, idx]  - tdrssPosList[:, idx-1],
                      color=unitTestSupport.getLineColor(idx, 3),
                      linewidth=0.5,
-                     label='$\Delta r_{' + str(idx) + '}$')
+                     label=r'$\Delta r_{' + str(idx) + '}$')
         plt.plot(velChebData[:, 0] * macros.NANO2HOUR, orbitPosAccuracy*numpy.ones(arrayLength),
                  color='r', linewidth=1)
         plt.plot(velChebData[:, 0] * macros.NANO2HOUR, -orbitPosAccuracy * numpy.ones(arrayLength),
@@ -281,7 +282,7 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
             plt.plot(velChebData[:, 0] * macros.NANO2HOUR, velChebData[:, idx]  - tdrssVelList[:, idx-1],
                      color=unitTestSupport.getLineColor(idx, 3),
                      linewidth=0.5,
-                     label='$\Delta v_{' + str(idx) + '}$')
+                     label=r'$\Delta v_{' + str(idx) + '}$')
         plt.plot(velChebData[:, 0] * macros.NANO2HOUR, orbitVelAccuracy*numpy.ones(arrayLength),
                  color='r', linewidth=1)
         plt.plot(velChebData[:, 0] * macros.NANO2HOUR, -orbitVelAccuracy * numpy.ones(arrayLength),
@@ -297,12 +298,12 @@ def chebyPosFitAllTest(show_plots, validChebyCurveTime, anomFlag):
     snippentName = "passFail" + str(validChebyCurveTime)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + oeStateModelWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("PASSED: " + oeStateModelWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + oeStateModelWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print("Failed: " + oeStateModelWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     # return fail count and join into a single string all messages in the list

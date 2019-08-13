@@ -5,7 +5,7 @@
 #
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.fswAlgorithms import pixelLineConverter
+from Basilisk.fswAlgorithms.pixelLineConverter import pixelLineConverter
 from Basilisk.utilities import RigidBodyKinematics as rbk
 
 import os, inspect
@@ -143,8 +143,8 @@ def pixelLineConverterTestFunction():
     unitTestSupport.writeTeXSnippet("toleranceValuePos", str(posErr), path)
     unitTestSupport.writeTeXSnippet("toleranceValueVel", str(covarErr), path)
 
-    outputR = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.r_N',  range(3))
-    outputCovar = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.covar_N',  range(9))
+    outputR = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.r_N',  list(range(3)))
+    outputCovar = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.covar_N',  list(range(9)))
     outputTime = unitTestSim.pullMessageLogData(pixelLine.opNavOutMsgName + '.timeTag')
     #
     #
@@ -166,12 +166,12 @@ def pixelLineConverterTestFunction():
     snippentName = "passFail"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + pixelLineWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("PASSED: " + pixelLineWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + pixelLineWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print("Failed: " + pixelLineWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
 

@@ -7,7 +7,7 @@
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import vehicleConfigData
+from Basilisk.fswAlgorithms.vehicleConfigData import vehicleConfigData
 
 def test_vehicleConfigData():
     [testResults, testMessage] = vehicleConfigDataTestFunction()
@@ -64,8 +64,8 @@ def vehicleConfigDataTestFunction():
     # Ilog = unitTestSim.GetLogVariableData('vehicleConfigData.ISCPntB_B')
     # CoMLog = unitTestSim.GetLogVariableData('vehicleConfigData.CoM_B')
 
-    Ilog = unitTestSim.pullMessageLogData(moduleConfig.outputPropsName+'.ISCPntB_B', range(9))
-    CoMLog = unitTestSim.pullMessageLogData(moduleConfig.outputPropsName+'.CoM_B', range(3))
+    Ilog = unitTestSim.pullMessageLogData(moduleConfig.outputPropsName+'.ISCPntB_B', list(range(9)))
+    CoMLog = unitTestSim.pullMessageLogData(moduleConfig.outputPropsName+'.CoM_B', list(range(3)))
 
     accuracy = 1e-6
 
@@ -78,7 +78,7 @@ def vehicleConfigDataTestFunction():
                                                                  3, testFailCount, testMessages)
 
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
 
     return [testFailCount, ''.join(testMessages)]
 

@@ -52,6 +52,7 @@ from Basilisk.utilities import vizSupport
 
 # Used to get the location of supporting data.
 from Basilisk import pyswice
+from Basilisk.pyswice.pyswice_spk_utilities import spkRead
 from Basilisk import __path__
 bskPath = __path__[0]
 
@@ -78,7 +79,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 #
 # To run the default scenario 1, call the python script through
 #
-#       python scenarioOrbitMultiBody.py
+#       python3 scenarioOrbitMultiBody.py
 #
 # When the simulation completes 2-3 plots are shown for each case.  One plot always shows
 # the inertial position vector components, while the third plot shows the inertial differences
@@ -301,7 +302,7 @@ def run(show_plots, scCase):
                                      , 100
                                      )
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # setup simulation start date/time
     timeInitString = "2012 MAY 1 00:28:30.0"
@@ -347,7 +348,7 @@ def run(show_plots, scCase):
     #
     #   Setup spacecraft initial states
     #
-    scInitialState = 1000 * pyswice.spkRead(scSpiceName, timeInitString, 'J2000', 'EARTH')
+    scInitialState = 1000 * spkRead(scSpiceName, timeInitString, 'J2000', 'EARTH')
     rN = scInitialState[0:3]  # meters
     vN = scInitialState[3:6]  # m/s
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_CN_N
@@ -362,7 +363,7 @@ def run(show_plots, scCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints - 1)
+    samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
     # if this scenario is to interface with the BSK Unity Viz, uncomment the following lines
@@ -378,13 +379,13 @@ def run(show_plots, scCase):
     #
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
-    
+
     MessagingAccess.findMessageMatches('earth', scSim.TotalSim)
     #
     #   retrieve the logged data
     #
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', range(3))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', range(3))
+    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
+    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
 
     np.set_printoptions(precision=16)
     #
@@ -459,7 +460,7 @@ def run(show_plots, scCase):
         for idx in range(0, numDataPoints):
             time += timedelta(seconds=sec, microseconds=usec)
             timeString = time.strftime(spiceTimeStringFormat)
-            scState = 1000.0 * pyswice.spkRead(scSpiceName, timeString, 'J2000', 'EARTH')
+            scState = 1000.0 * spkRead(scSpiceName, timeString, 'J2000', 'EARTH')
             rN = scState[0:3]  # meters
             vN = scState[3:6]  # m/s
             oeData = orbitalMotion.rv2elem(gravBodies['earth'].mu, rN, vN)
@@ -481,7 +482,7 @@ def run(show_plots, scCase):
 
     else:
         time = gravFactory.spiceObject.getCurrentTimeString()
-        scState = 1000.0 * pyswice.spkRead(scSpiceName,
+        scState = 1000.0 * spkRead(scSpiceName,
                                            gravFactory.spiceObject.getCurrentTimeString(),
                                            'J2000',
                                            'EARTH')
@@ -499,12 +500,12 @@ def run(show_plots, scCase):
         usec = (macros.NANO2SEC * posData[idx, 0] - sec) * 1000000
         time = timeInit + timedelta(seconds=sec, microseconds=usec)
         timeString = time.strftime(spiceTimeStringFormat)
-        scState = 1000 * pyswice.spkRead(scSpiceName, timeString, 'J2000', 'EARTH')
+        scState = 1000 * spkRead(scSpiceName, timeString, 'J2000', 'EARTH')
         posError.append(posData[idx, 1:4] - np.array(scState[0:3]))  # meters
     for idx in range(1, 4):
         plt.plot(posData[:, 0] * macros.NANO2MIN, np.array(posError)[:, idx - 1],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label='$\Delta r_{' + str(idx) + '}$')
+                 label=r'$\Delta r_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Inertial Position Differences [m]')

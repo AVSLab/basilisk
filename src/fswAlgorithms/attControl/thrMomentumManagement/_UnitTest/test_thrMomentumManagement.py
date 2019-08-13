@@ -38,9 +38,9 @@ path = os.path.dirname(os.path.abspath(filename))
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
+from Basilisk.simulation.alg_contain import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.fswAlgorithms import thrMomentumManagement            # import the module that is to be tested
+from Basilisk.fswAlgorithms.thrMomentumManagement import thrMomentumManagement            # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupRW
 
@@ -143,7 +143,7 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "torqueRequestBody"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.deltaHOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
 
     # print moduleOutput
 
@@ -168,12 +168,12 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
     snippentName = "passFail" + str(hsMinCheck)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("PASSED: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print("Failed: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
 

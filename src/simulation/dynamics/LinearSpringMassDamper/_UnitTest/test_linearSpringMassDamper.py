@@ -220,9 +220,9 @@ def fuelSloshTest(show_plots,useFlag,testCase):
 
     if testCase == 'MassDepletion':
         fuelMass = unitTestSim.pullMessageLogData(unitTestSim.fuelTankStateEffector.FuelTankOutMsgName + '.fuelMass',
-                                                  range(1))
+                                                  list(range(1)))
         fuelMassDot = unitTestSim.pullMessageLogData(unitTestSim.fuelTankStateEffector.FuelTankOutMsgName + '.fuelMassDot',
-                                                  range(1))
+                                                  list(range(1)))
         mass1Out = unitTestSim.GetLogVariableData(
             "spacecraftBody.dynManager.getStateObject('linearSpringMassDamperMass1').getState()")
         mass2Out = unitTestSim.GetLogVariableData(
@@ -267,32 +267,33 @@ def fuelSloshTest(show_plots,useFlag,testCase):
                 [rotEnergy[-1,0], rotEnergy[-1,1]]
                  ]
 
+    plt.close('all')
     if testCase != 'MassDepletion':
         plt.figure()
         plt.clf()
         plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
         plt.xlabel("Time (s)")
         plt.ylabel("Relative Difference")
-        unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCase, "Change in Orbital Angular Momentum " + testCase, plt, "width=0.8\\textwidth", path)
+        unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCase, "Change in Orbital Angular Momentum " + testCase, plt, r"width=0.8\textwidth", path)
         plt.figure()
         plt.clf()
         plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
         plt.xlabel("Time (s)")
         plt.ylabel("Relative Difference")
-        unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCase, "Change in Orbital Energy " + testCase, plt, "width=0.8\\textwidth", path)
+        unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCase, "Change in Orbital Energy " + testCase, plt, r"width=0.8\textwidth", path)
         plt.figure()
         plt.clf()
         plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
         plt.xlabel("Time (s)")
         plt.ylabel("Relative Difference")
-        unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase, "Change in Rotational Angular Momentum " + testCase, plt, "width=0.8\\textwidth", path)
+        unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase, "Change in Rotational Angular Momentum " + testCase, plt, r"width=0.8\textwidth", path)
     if testCase == 'Gravity' or testCase == 'NoGravity':
         plt.figure()
         plt.clf()
         plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
         plt.xlabel("Time (s)")
         plt.ylabel("Relative Difference")
-        unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, "width=0.8\\textwidth", path)
+        unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, r"width=0.8\textwidth", path)
     if testCase == 'MassDepletion':
         plt.figure()
         plt.plot(fuelMass[:,0]*1e-9, fuelMass[:,1])
@@ -361,7 +362,7 @@ def fuelSloshTest(show_plots,useFlag,testCase):
             testMessages.append("FAILED: Linear Spring Mass Damper unit test failed mass 3 dot test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Linear Spring Mass Damper Test"
+        print("PASSED: " + " Linear Spring Mass Damper Test")
 
     assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list

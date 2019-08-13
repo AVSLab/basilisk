@@ -28,13 +28,13 @@ sys.path.append(splitPath[0] + '/modules')
 sys.path.append(splitPath[0] + '/PythonModules')
 
 import SunLineOEKF_test_utilities as FilterPlots
-from Basilisk.fswAlgorithms import okeefeEKF
+from Basilisk.fswAlgorithms.okeefeEKF import okeefeEKF
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
-from Basilisk.fswAlgorithms import cssComm
+from Basilisk.simulation.alg_contain import alg_contain
+from Basilisk.fswAlgorithms.cssComm import cssComm
 from Basilisk.utilities import macros
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
 
 
 def setupFilterData(filterObject):
@@ -124,7 +124,7 @@ def sunline_individual_test():
     DynOut = np.array(DynOut).reshape(3, 3)
     errorNorm = np.linalg.norm(expDynMat - DynOut)
     if(errorNorm > 1.0E-12):
-        print errorNorm
+        print(errorNorm)
         testFailCount += 1
         testMessages.append("Dynamics Matrix generation Failure \n")
 
@@ -153,7 +153,7 @@ def sunline_individual_test():
     omegaOut = np.array(omegaOut)
     errorNorm = np.linalg.norm(expOmega - omegaOut)
     if(errorNorm > 1.0E-12):
-        print errorNorm
+        print(errorNorm)
         testFailCount += 1
         testMessages.append("Dynamics Matrix generation Failure \n")
 
@@ -196,13 +196,13 @@ def sunline_individual_test():
     errorNormStates = np.linalg.norm(expectedStates - StatesOut)
 
     if(errorNormSTM > 1.0E-12):
-        print errorNormSTM
+        print(errorNormSTM)
         testFailCount += 1
         testMessages.append("STM Propagation Failure \n")
 
 
     if(errorNormStates > 1.0E-12):
-        print errorNormStates
+        print(errorNormStates)
         testFailCount += 1
         testMessages.append("State Propagation Failure \n")
 
@@ -295,7 +295,7 @@ def sunline_individual_test():
 
 
     if (errorNorm > 1.0E-12):
-        print errorNorm
+        print(errorNorm)
         testFailCount += 1
         testMessages.append("Kalman Gain update failure \n")
 
@@ -418,7 +418,7 @@ def sunline_individual_test():
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + " EKF individual tests"
+        print("PASSED: " + " EKF individual tests")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -474,7 +474,7 @@ def StatePropStatic():
 
     for i in range(NUMSTATES):
         if (abs(stateLog[-1, i + 1] - stateLog[0, i + 1]) > 1.0E-10):
-            print abs(stateLog[-1, i + 1] - stateLog[0, i + 1])
+            print(abs(stateLog[-1, i + 1] - stateLog[0, i + 1]))
             testFailCount += 1
             testMessages.append("Static state propagation failure \n")
 
@@ -482,7 +482,7 @@ def StatePropStatic():
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + "EKF static state propagation"
+        print("PASSED: " + "EKF static state propagation")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -623,7 +623,7 @@ def StatePropVariable(show_plots):
 
         for i in range(NUMSTATES*NUMSTATES):
             if (abs(covarLog[j, i + 1] - expectedCovar[j, i + 1]) > 1.0E-8):
-                print abs(covarLog[j, i + 1] - expectedCovar[j, i + 1])
+                print(abs(covarLog[j, i + 1] - expectedCovar[j, i + 1]))
                 abs(covarLog[j, i + 1] - expectedCovar[j, i + 1])
                 testFailCount += 1
                 # testMessages.append("General state propagation failure: Covariance Prop \n")
@@ -633,7 +633,7 @@ def StatePropVariable(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + "EKF general state propagation"
+        print("PASSED: " + "EKF general state propagation")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -748,8 +748,8 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", range(3))
-    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", range(3*3))
+    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", list(range(3)))
+    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", list(range(3*3)))
 
 
     if not AddMeasNoise:
@@ -791,9 +791,9 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + SimHalfLength+1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", range(3))
-    postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", range(8))
-    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", range(3*3))
+    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", list(range(3)))
+    postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", list(range(8)))
+    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", list(range(3*3)))
     stateErrorLog = unitTestSim.GetLogVariableData('okeefeEKF.x')
 
 
@@ -823,7 +823,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + "EKF full test"
+        print("PASSED: " + "EKF full test")
 
     # return fail count and join into a single string all messages in the list
     # testMessage

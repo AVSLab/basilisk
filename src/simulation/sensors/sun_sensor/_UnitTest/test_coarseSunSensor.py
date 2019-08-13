@@ -39,8 +39,8 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
 from Basilisk.utilities import macros
 from Basilisk.utilities import orbitalMotion as om
-from Basilisk.simulation import coarse_sun_sensor
-from Basilisk.simulation import simMessages
+from Basilisk.simulation.coarse_sun_sensor import coarse_sun_sensor
+from Basilisk.simulation.simMessages import simMessages
 
 path = os.path.dirname(os.path.abspath(__file__))
 
@@ -262,12 +262,12 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     #
     #   Constellation Outputs and plots
     #
-    cssOutput = unitTestSim.pullMessageLogData(singleCss.cssDataOutMsgName + ".OutputData", range(1))
+    cssOutput = unitTestSim.pullMessageLogData(singleCss.cssDataOutMsgName + ".OutputData", list(range(1)))
     if useConstellation:
         constellationP1data = unitTestSim.pullMessageLogData(constellationP1.outputConstellationMessage + ".CosValue",
-                                                             range(len(constellationP1List)))
+                                                             list(range(len(constellationP1List))))
         constellationP2data = unitTestSim.pullMessageLogData(constellationP2.outputConstellationMessage + ".CosValue",
-                                                             range(len(constellationP2List)))
+                                                             list(range(len(constellationP2List))))
 
         plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
         plt.clf()
@@ -339,13 +339,13 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     if testFailCount == 0:
         colorText = 'ForestGreen'
         passFailMsg = ""  # "Passed: " + name + "."
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
         passFailMsg = "Failed: " + name + "."
         testMessages.append(passFailMsg)
         testMessages.append(" | ")
-        passedText = '\\textcolor{' + colorText + '}{' + "FAILED" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "FAILED" + '}'
 
     # Write some snippets for AutoTex
     snippetName = name + "PassedText"
@@ -355,7 +355,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     snippetName = name + "PassFailMsg"
     snippetContent = passFailMsg
     unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
-    print "\n", passFailMsg
+    print("\n", passFailMsg)
 
     # write pytest parameters to AutoTex folder
     # "useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue, errTol, name, zLevel, lineWide"

@@ -1,17 +1,19 @@
-import holoviews as hv
 import numpy as np
-import pandas as pd
-import datashader as ds
-from holoviews.streams import RangeXY
-from holoviews.operation.datashader import datashade, dynspread
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", category=DeprecationWarning)
+    import pandas as pd
+    import datashader as ds
+    import holoviews as hv
+    from holoviews.operation.datashader import datashade, dynspread
+    from holoviews.streams import RangeXY
+    from datashader.colors import Sets1to3
 from Basilisk.utilities import macros
-from datashader.colors import Sets1to3
 
 def pull_and_format_df(path, varIdxLen):
     df = pd.read_pickle(path)
     if len(np.unique(df.columns.codes[1])) is not varIdxLen:
         print("Warning: " + path + " not formatted correctly!")
-        newMultIndex = pd.MultiIndex.from_product([df.columns.codes[0], range(varIdxLen)], names=['runNum', 'varIdx'])
+        newMultIndex = pd.MultiIndex.from_product([df.columns.codes[0], list(range(varIdxLen))], names=['runNum', 'varIdx'])
         indices = pd.Index([0,1]) # Need multiple rows for curves
         df = df.reindex(columns=newMultIndex, index=indices)
     return df
@@ -174,5 +176,3 @@ class DS_Plot():
             image = image*legend
 
         return image
-
-

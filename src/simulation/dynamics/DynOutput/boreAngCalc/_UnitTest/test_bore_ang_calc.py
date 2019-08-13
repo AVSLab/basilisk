@@ -53,7 +53,7 @@ class ResultsStore:
                 textColor = 'ForestGreen'
             elif self.PassFail[i] == 'FAILED':
                 textColor = 'Red'
-            texSnippet =  '\\textcolor{' + textColor + '}{'+ self.PassFail[i] + '}'
+            texSnippet =  r'\textcolor{' + textColor + '}{'+ self.PassFail[i] + '}'
             unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
 
 @pytest.fixture(scope="module")
@@ -165,8 +165,8 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
     #
     # Begin testing module results to truth values
 
-    simMiss = TotalSim.pullMessageLogData(BACObject.OutputDataString + '.missAngle', range(1))
-    simAz = TotalSim.pullMessageLogData(BACObject.OutputDataString + '.azimuth', range(1))
+    simMiss = TotalSim.pullMessageLogData(BACObject.OutputDataString + '.missAngle', list(range(1)))
+    simAz = TotalSim.pullMessageLogData(BACObject.OutputDataString + '.azimuth', list(range(1)))
     simBoreVecPt = TotalSim.GetLogVariableData(BACObject.ModelTag + ".boreVecPoint")
 
     # Truth values
@@ -230,7 +230,7 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
     if boresightMissAng == numpy.pi / 2:
         simAz_final = numpy.array(simAz[-1])
         boresightAzimuth = simAz_final[-1]
-        print "The miss angle is 0, therefore the miss angle is ill defined!"
+        print("The miss angle is 0, therefore the miss angle is ill defined!")
     else:
         boresightAzimuth = numpy.arctan2(boreVecPoint_1[2], boreVecPoint_1[1])
 
@@ -252,7 +252,7 @@ def bore_ang_calc_func(testFixture, show_plots, boresightLoc, eulerLoc):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED"
+        print("PASSED")
         testFixture.PassFail.append("PASSED")
     else:
         testFixture.PassFail.append("FAILED")

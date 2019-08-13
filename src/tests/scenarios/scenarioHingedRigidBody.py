@@ -85,7 +85,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 #
 # To run the default scenario, call the python script through
 #
-#       python scenarioHingedRigidBody.py
+#       python3 scenarioHingedRigidBody.py
 #
 # The simulation layout is shown in the following illustration.
 # ![Simulation Flow Diagram](Images/doc/test_scenarioHingedRigidBody.svg "Illustration")
@@ -298,7 +298,7 @@ def run(show_plots):
     mu = earth.mu
 
     # Attach gravity model to spacecraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # Adding the HingedRigidBody State Effector
     scSim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
@@ -381,7 +381,7 @@ def run(show_plots):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints - 1)
+    samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(scSim.panel1.HingedRigidBodyOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(scSim.panel2.HingedRigidBodyOutMsgName, samplingTime)
@@ -411,10 +411,10 @@ def run(show_plots):
     #
     #   retrieve the logged data
     #
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', range(3))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', range(3))
-    panel1thetaLog = scSim.pullMessageLogData(scSim.panel1.HingedRigidBodyOutMsgName + '.theta', range(1))
-    panel2thetaLog = scSim.pullMessageLogData(scSim.panel2.HingedRigidBodyOutMsgName + '.theta', range(1))
+    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
+    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
+    panel1thetaLog = scSim.pullMessageLogData(scSim.panel1.HingedRigidBodyOutMsgName + '.theta', list(range(1)))
+    panel2thetaLog = scSim.pullMessageLogData(scSim.panel2.HingedRigidBodyOutMsgName + '.theta', list(range(1)))
     np.set_printoptions(precision=16)
 
     #

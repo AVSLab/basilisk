@@ -5,8 +5,9 @@
 #
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros, fswSetupThrusters
-from Basilisk.fswAlgorithms import thrustRWDesat, fswMessages
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.fswAlgorithms.thrustRWDesat import thrustRWDesat
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
+from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
 
 
 def test_thrustRWDesat():
@@ -132,7 +133,7 @@ def thrustRWDesatTestFunction():
     unitTestSim.ExecuteSimulation()
 
     # This doesn't work if only 1 number is passed in as the second argument, but we don't need the second
-    outputThrData = unitTestSim.pullMessageLogData(moduleConfig.outputThrName+'.OnTimeRequest', range(numThrusters))
+    outputThrData = unitTestSim.pullMessageLogData(moduleConfig.outputThrName+'.OnTimeRequest', list(range(numThrusters)))
 
     print(outputThrData)
 

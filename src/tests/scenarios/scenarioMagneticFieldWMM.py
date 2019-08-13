@@ -76,7 +76,7 @@ from Basilisk.utilities import vizSupport
 #
 # To run the default scenario 1 call the python script through
 #
-#       python scenarioMagneticFieldWMM.py
+#       python3 scenarioMagneticFieldWMM.py
 #
 #
 # Simulation Scenario Setup Details
@@ -225,7 +225,7 @@ def run(show_plots, orbitCase):
     req = planet.radEquator
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
 
     # create the magnetic field
@@ -266,7 +266,7 @@ def run(show_plots, orbitCase):
         oe.a = (rPeriapses + rApoapses) / 2.0
         oe.e = 1.0 - rPeriapses / oe.a
     else:
-        print "Unsupported orbit type " + orbitCase + " selected"
+        print("Unsupported orbit type " + orbitCase + " selected")
         exit(1)
     oe.i = 85.0 * macros.D2R
     oe.Omega = 48.2 * macros.D2R
@@ -292,7 +292,7 @@ def run(show_plots, orbitCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints - 1)
+    samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(magModule.envOutMsgNames[0], samplingTime)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
@@ -316,8 +316,8 @@ def run(show_plots, orbitCase):
     #
     #   retrieve the logged data
     #
-    magData = scSim.pullMessageLogData(magModule.envOutMsgNames[0] + '.magField_N', range(3))
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', range(3))
+    magData = scSim.pullMessageLogData(magModule.envOutMsgNames[0] + '.magField_N', list(range(3)))
+    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
 
     np.set_printoptions(precision=16)
 
@@ -357,7 +357,7 @@ def run(show_plots, orbitCase):
     for idx in range(1, 4):
         plt.plot(magData[:, 0] * macros.NANO2SEC / P, magData[:, idx] *1e9,
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label='$B\_N_{' + str(idx) + '}$')
+                 label=r'$B\_N_{' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [orbits]')
     plt.ylabel('Magnetic Field [nT]')

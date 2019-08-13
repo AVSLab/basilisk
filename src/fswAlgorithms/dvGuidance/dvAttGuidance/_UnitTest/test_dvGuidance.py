@@ -7,8 +7,8 @@
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import dvGuidance
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.fswAlgorithms.dvGuidance import dvGuidance
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
 import matplotlib.pyplot as plt
 import os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -85,9 +85,9 @@ def dvGuidanceTestFunction(show_plots):
 
     # Get the output from this simulation
     moduleOutputName = 'dvAttGuidance'
-    outSigma = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + 'sigma_RN', range(3))
-    outOmega = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + 'omega_RN_N', range(3))
-    outDOmega = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + 'domega_RN_N', range(3))
+    outSigma = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + 'sigma_RN', list(range(3)))
+    outOmega = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + 'omega_RN_N', list(range(3)))
+    outDOmega = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + 'domega_RN_N', list(range(3)))
 
     # NOTE: these values are just from a previous run. These should be validated
     trueSigma = [[5.69822629e-01, 1.99143700e-01, 2.72649472e-01],
@@ -155,12 +155,12 @@ def dvGuidanceTestFunction(show_plots):
     snippentName = "passFail"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("PASSED: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print("Failed: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     return [testFailCount, ''.join(testMessages)]

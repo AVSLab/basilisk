@@ -38,9 +38,9 @@ path = os.path.dirname(os.path.abspath(filename))
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport
-from Basilisk.fswAlgorithms import rwMotorTorque
+from Basilisk.fswAlgorithms.rwMotorTorque import rwMotorTorque
 from Basilisk.utilities import macros
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
 from Support import results_rwMotorTorque
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -235,7 +235,7 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "motorTorque"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(MAX_EFF_CNT))
+                                                  list(range(MAX_EFF_CNT)))
     trueVector = np.array([
         [0.0] * MAX_EFF_CNT,
         [0.0] * MAX_EFF_CNT
@@ -279,16 +279,16 @@ def rwMotorTorqueTest(show_plots, numControlAxes, numWheels, RWAvailMsg):
 
     #   print out success message if no error were found
     unitTestSupport.writeTeXSnippet('toleranceValue', str(accuracy), path)
-    
+
     snippentName = "passFail_"+str(numControlAxes) + str(numWheels) + RWAvailMsg
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("PASSED: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print("Failed: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
 

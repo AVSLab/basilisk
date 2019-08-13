@@ -40,7 +40,7 @@ path = os.path.dirname(os.path.abspath(filename))
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.fswAlgorithms import thrFiringSchmitt            # import the module that is to be tested
+from Basilisk.fswAlgorithms.thrFiringSchmitt import thrFiringSchmitt            # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
 
@@ -221,7 +221,7 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "OnTimeRequest"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.onTimeOutMsgName + '.' + moduleOutputName,
-                                                  range(numThrusters))
+                                                  list(range(numThrusters)))
     # print moduleOutput
 
     # set the filtered output truth states
@@ -293,14 +293,14 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
     snippentName = "passFail" + str(resetCheck) + str(dvOn)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("PASSED: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print("Failed: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
-    
+
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]

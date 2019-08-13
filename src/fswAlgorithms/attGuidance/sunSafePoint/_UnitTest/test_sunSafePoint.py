@@ -41,8 +41,8 @@ path = os.path.dirname(os.path.abspath(filename))
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import sunSafePoint                   # import the module that is to be tested
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.fswAlgorithms.sunSafePoint import sunSafePoint                   # import the module that is to be tested
+from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
 from Basilisk.utilities import macros as mc
 
 
@@ -166,7 +166,7 @@ def sunSafePointTestFunction(show_plots, case):
     #
     moduleOutputName = "sigma_BR"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attGuidanceOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     # set the filtered output truth states
     if (case == 1 or case == 7):
         eHat = np.cross(sunVec_B,sHat_Cmd_B)
@@ -223,7 +223,7 @@ def sunSafePointTestFunction(show_plots, case):
     #
     moduleOutputName = "omega_BR_B"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attGuidanceOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     # set the filtered output truth states
     if (case == 1 or case == 3 or case == 4 or case == 5 or case == 6):
         trueVector = [
@@ -253,7 +253,7 @@ def sunSafePointTestFunction(show_plots, case):
     #
     moduleOutputName = "omega_RN_B"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attGuidanceOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     # set the filtered output truth states
     if (case == 1 or case == 3 or case == 4 or case == 5 or case == 6):
         trueVector = [
@@ -282,7 +282,7 @@ def sunSafePointTestFunction(show_plots, case):
     #
     moduleOutputName = "domega_RN_B"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attGuidanceOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     # set the filtered output truth states
     trueVector = [
                [0.0, 0.0, 0.0],
@@ -317,12 +317,12 @@ def sunSafePointTestFunction(show_plots, case):
     snippentName = "passFail" + str(case)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("PASSED: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "FAILED: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print("FAILED: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
 

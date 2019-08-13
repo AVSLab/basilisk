@@ -32,14 +32,12 @@ import os
 import numpy as np
 import shutil
 import matplotlib.pyplot as plt
-
 DATASHADER_FOUND = True
 try:
     from Basilisk.utilities import datashaderGraphingInterface as datashaderLibrary
 except ImportError:
-    print "Datashader library not found. Will use matplotlib"
+    print("Datashader library not found. Will use matplotlib")
     DATASHADER_FOUND = False
-
 
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -104,7 +102,7 @@ rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 # We also will need the simulationTime and samplingTimes
 numDataPoints = 500
 simulationTime = macros.min2nano(10.)
-samplingTime = simulationTime / (numDataPoints-1)
+samplingTime = simulationTime // (numDataPoints-1)
 
 
 
@@ -128,7 +126,7 @@ samplingTime = simulationTime / (numDataPoints-1)
 #
 # To run the MC simulation, call the python script from a Terminal window through
 #
-#       python scenarioMonteCarloAttRW.py
+#       python3 scenarioMonteCarloAttRW.py
 #
 # For more information on the Attitude Feedback Simulation with RW, please see the documentation
 # on the [scenarioAttitudeFeedbackRW.py](@ref scenarioAttitudeFeedbackRW) file.
@@ -539,14 +537,14 @@ def run(saveFigures, case, show_plots, useDatashader):
     # used for plotting/processing the retained data.
     retentionPolicy = RetentionPolicy()
     # define the data to retain
-    retentionPolicy.addMessageLog(rwMotorTorqueConfigOutputDataName, [("motorTorque", range(5))], samplingTime)
-    retentionPolicy.addMessageLog(attErrorConfigOutputDataName, [("sigma_BR", range(3)), ("omega_BR_B", range(3))], samplingTime)
-    retentionPolicy.addMessageLog(sNavObjectOutputTransName, [("r_BN_N", range(3))], samplingTime)
-    retentionPolicy.addMessageLog(mrpControlConfigInputRWSpeedsName, [("wheelSpeeds", range(3))], samplingTime)
-    retentionPolicy.addMessageLog(fswRWVoltageConfigVoltageOutMsgName, [("voltage", range(3))], samplingTime)
+    retentionPolicy.addMessageLog(rwMotorTorqueConfigOutputDataName, [("motorTorque", list(range(5)))], samplingTime)
+    retentionPolicy.addMessageLog(attErrorConfigOutputDataName, [("sigma_BR", list(range(3))), ("omega_BR_B", list(range(3)))], samplingTime)
+    retentionPolicy.addMessageLog(sNavObjectOutputTransName, [("r_BN_N", list(range(3)))], samplingTime)
+    retentionPolicy.addMessageLog(mrpControlConfigInputRWSpeedsName, [("wheelSpeeds", list(range(3)))], samplingTime)
+    retentionPolicy.addMessageLog(fswRWVoltageConfigVoltageOutMsgName, [("voltage", list(range(3)))], samplingTime)
 
     for message in rwOutName:
-        retentionPolicy.addMessageLog(message, [("u_current", range(1))], samplingTime)
+        retentionPolicy.addMessageLog(message, [("u_current", list(range(1)))], samplingTime)
     if show_plots:
         # plot data only if show_plots is true, otherwise just retain
         retentionPolicy.setDataCallback(plotSim)
@@ -616,10 +614,10 @@ def run(saveFigures, case, show_plots, useDatashader):
         # And possibly show the plots
         if show_plots:
             if useDatashader and DATASHADER_FOUND:
-                print "Test concluded, showing plots now via datashader"
+                print("Test concluded, showing plots now via datashader")
                 datashaderLibrary.datashaderDriver(DATASHADER_FOUND)
             else:
-                print "Test concluded, showing plots now via matplot..."
+                print("Test concluded, showing plots now via matplot...")
                 plt.show()
                 # close the plots being saved off to avoid over-writing old and new figures
                 plt.close("all")
@@ -646,7 +644,7 @@ def run(saveFigures, case, show_plots, useDatashader):
         # And possibly show the plots
         if show_plots:
             if useDatashader and DATASHADER_FOUND:
-                print "Test conclused, showing plots now via datashader"
+                print("Test conclused, showing plots now via datashader")
                 datashaderLibrary.datashaderDriver(DATASHADER_FOUND)
             else:
                 plt.show()
@@ -719,7 +717,7 @@ def createScenarioAttitudeFeedbackRW():
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
     #
     # add RW devices
     #
@@ -852,7 +850,7 @@ def createScenarioAttitudeFeedbackRW():
     # FSW RW configuration message
     # use the same RW states in the FSW algorithm as in the simulation
     fswSetupRW.clearSetup()
-    for key, rw in rwFactory.rwList.iteritems():
+    for key, rw in rwFactory.rwList.items():
         fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
     fswSetupRW.writeConfigMessage(mrpControlConfig.rwParamsInMsgName, scSim.TotalSim, simProcessName)
 
@@ -922,10 +920,10 @@ def plotSim(data, retentionPolicy):
     pltName = 'AttitudeError'
     for idx in range(1,4):
         plt.plot(timeData, dataSigmaBR[:, idx],
-                 label='Run ' + str(data["index"]) + ' $\sigma_'+str(idx)+'$')
+                 label='Run ' + str(data["index"]) + r' $\sigma_'+str(idx)+'$')
     # plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
-    plt.ylabel('Attitude Error $\sigma_{B/R}$')
+    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
     figureList[pltName] = plt.figure(1)
 
     plt.figure(2)
@@ -933,7 +931,7 @@ def plotSim(data, retentionPolicy):
     for idx in range(1,4):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
-                 label='Run ' + str(data["index"]) + ' $\hat u_{s,'+str(idx)+'}$')
+                 label='Run ' + str(data["index"]) + r' $\hat u_{s,'+str(idx)+'}$')
         plt.plot(timeData, dataRW[idx-1][:, 1],
                  label='Run ' + str(data["index"]) + ' $u_{s,' + str(idx) + '}$')
     # plt.legend(loc='lower right')
@@ -945,7 +943,7 @@ def plotSim(data, retentionPolicy):
     pltName = 'RateTrackingError'
     for idx in range(1,4):
         plt.plot(timeData, dataOmegaBR[:, idx],
-                 label='Run ' + str(data["index"]) + ' $\omega_{BR,'+str(idx)+'}$')
+                 label='Run ' + str(data["index"]) + r' $\omega_{BR,'+str(idx)+'}$')
     # plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error (rad/s) ')
@@ -955,7 +953,7 @@ def plotSim(data, retentionPolicy):
     pltName = 'RWSpeed'
     for idx in range(1,len(rwOutName)+1):
         plt.plot(timeData, dataOmegaRW[:, idx]/macros.RPM,
-                 label='Run ' + str(data["index"]) + ' $\Omega_{'+str(idx)+'}$')
+                 label='Run ' + str(data["index"]) + r' $\Omega_{'+str(idx)+'}$')
     # plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')
@@ -975,7 +973,7 @@ def plotSim(data, retentionPolicy):
 
 def plotSimAndSave(data, retentionPolicy):
     figureList = plotSim(data, retentionPolicy)
-    for pltName, plt in figureList.items():
+    for pltName, plt in list(figureList.items()):
         # plt.subplots_adjust(top = 0.6, bottom = 0.4)
         unitTestSupport.saveScenarioFigure(
             fileNameString + "_" + pltName
@@ -1059,7 +1057,7 @@ def configureDatashader():
                                 )
 
     if ONLY_GRAPH_DATA:
-        print "Datashading from existing csv files"
+        print("Datashading from existing csv files")
         datashaderLibrary.graph(fromCSV = True)
         return
 

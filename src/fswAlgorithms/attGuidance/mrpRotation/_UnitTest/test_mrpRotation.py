@@ -35,9 +35,9 @@ import numpy as np
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.fswAlgorithms import mrpRotation                    # import the module that is to be tested
+from Basilisk.fswAlgorithms.mrpRotation import mrpRotation                    # import the module that is to be tested
 from Basilisk.utilities import macros as mc
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
 
 
 sys.path.append(path + '/Support')
@@ -171,7 +171,7 @@ def run(show_plots, cmdStateFlag, testReset):
     #
     moduleOutputName = "sigma_RN"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     testFailCount, testMessages = unitTestSupport.compareArray(trueSigma, moduleOutput,
                                                                accuracy, "sigma_RN Set",
                                                                testFailCount, testMessages)
@@ -180,7 +180,7 @@ def run(show_plots, cmdStateFlag, testReset):
     #
     moduleOutputName = "omega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     testFailCount, testMessages = unitTestSupport.compareArray(trueOmega, moduleOutput,
                                                                accuracy, "omega_RN_N Vector",
                                                                testFailCount, testMessages)
@@ -190,7 +190,7 @@ def run(show_plots, cmdStateFlag, testReset):
     #
     moduleOutputName = "domega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.attRefOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     testFailCount, testMessages = unitTestSupport.compareArray(truedOmega, moduleOutput,
                                                                accuracy, "domega_RN_N Vector",
                                                                testFailCount, testMessages)
@@ -199,12 +199,12 @@ def run(show_plots, cmdStateFlag, testReset):
     snippentName = "passFail" + str(cmdStateFlag) + str(testReset)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("PASSED: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print("Failed: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
 

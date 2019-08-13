@@ -330,10 +330,10 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
         unitSim.TotalSim.WriteMessageData("inertial_state_output", 8 * 3 * 11, unitSim.TotalSim.CurrentNanos, StateCurrent)
 
     # Pull output time histories from messaging system
-    DRout       = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "DRFramePlatform", range(3))
-    omegaOut    = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "AngVelPlatform", range(3))
-    rDotDotOut  = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "AccelPlatform", range(3))
-    DVout       = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "DVFramePlatform", range(3))
+    DRout       = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "DRFramePlatform", list(range(3)))
+    omegaOut    = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "AngVelPlatform", list(range(3)))
+    rDotDotOut  = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "AccelPlatform", list(range(3)))
+    DVout       = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + "DVFramePlatform", list(range(3)))
 
     # truth/output comparison plots and AutoTex output
     plt.figure(1,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
@@ -530,10 +530,10 @@ def unitSimIMU(show_plots,   testCase,       stopTime,       procRate, gyroLSBIn
 
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        passedText = '\\textcolor{' + colorText + '}{' + "FAILED" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "FAILED" + '}'
 
     passFailSnippetName = testCase+"passFail"
     passFailSnippetContent = passedText

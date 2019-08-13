@@ -24,8 +24,12 @@ import math
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import sunlineSuKF, inertialUKF, fswMessages, cssComm  # import the module that is to be tested
-from Basilisk.simulation import coarse_sun_sensor
+from Basilisk.fswAlgorithms.sunlineSuKF import sunlineSuKF  # import the module that is to be tested
+from Basilisk.fswAlgorithms.inertialUKF import inertialUKF
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
+from Basilisk.fswAlgorithms.cssComm import cssComm
+
+from Basilisk.simulation.coarse_sun_sensor import coarse_sun_sensor
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -179,13 +183,13 @@ def utilities_nominal(filterModule):
     EqnSourceMat = [2.0, 1.0, 3.0, 2.0, 6.0, 8.0, 6.0, 8.0, 18.0]
     BVector = [1.0, 3.0, 5.0]
     EqnVector = eval(filterModule + '.new_doubleArray(len(EqnSourceMat))')
-    EqnBVector = eval(filterModule + '.new_doubleArray(len(LUSourceMat) / 3)')
-    EqnOutVector = eval(filterModule + '.new_doubleArray(len(LUSourceMat) / 3)')
+    EqnBVector = eval(filterModule + '.new_doubleArray(len(LUSourceMat) // 3)')
+    EqnOutVector = eval(filterModule + '.new_doubleArray(len(LUSourceMat) // 3)')
 
     for i in range(len(EqnSourceMat)):
         eval(filterModule + '.doubleArray_setitem(EqnVector, i, EqnSourceMat[i])')
-        eval(filterModule + '.doubleArray_setitem(EqnBVector, i / 3, BVector[i / 3])')
-        eval(filterModule + '.intArray_setitem(intSwapVector, i / 3, 0)')
+        eval(filterModule + '.doubleArray_setitem(EqnBVector, i // 3, BVector[i // 3])')
+        eval(filterModule + '.intArray_setitem(intSwapVector, i // 3, 0)')
         eval(filterModule + '.doubleArray_setitem(LVector, i, 0.0)')
 
     exCount = eval(filterModule + '.ukfLUD(EqnVector, 3, 3, LVector, intSwapVector)')
@@ -260,7 +264,7 @@ def utilities_nominal(filterModule):
     expectIdent = numpy.dot(InvOut, numpy.array(InvSourceMat).reshape(nRow, nRow))
     errorNorm = numpy.linalg.norm(expectIdent - numpy.identity(nRow))
     if (errorNorm > 1.0E-12):
-        print errorNorm
+        print(errorNorm)
         testFailCount += 1
         testMessages.append("L Matrix Inverse accuracy failure")
 
@@ -281,13 +285,13 @@ def utilities_nominal(filterModule):
     expectIdent = numpy.dot(InvOut, numpy.array(InvSourceMat).reshape(nRow, nRow))
     errorNorm = numpy.linalg.norm(expectIdent - numpy.identity(nRow))
     if (errorNorm > 1.0E-12):
-        print errorNorm
+        print(errorNorm)
         testFailCount += 1
         testMessages.append("U Matrix Inverse accuracy failure")
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + filterModule +" UKF utilities"
+        print("PASSED: " + filterModule +" UKF utilities")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -313,8 +317,8 @@ def utilities_fault(filterModule):
     UVector = eval(filterModule + '.new_doubleArray(len(LUSourceMat))')
     intSwapVector = eval(filterModule + '.new_intArray(3)')
     EqnVector = eval(filterModule + '.new_doubleArray(len(EqnSourceMat))')
-    EqnBVector = eval(filterModule + '.new_doubleArray(len(LUSourceMat) / 3)')
-    EqnOutVector = eval(filterModule + '.new_doubleArray(len(LUSourceMat) / 3)')
+    EqnBVector = eval(filterModule + '.new_doubleArray(len(LUSourceMat) // 3)')
+    EqnOutVector = eval(filterModule + '.new_doubleArray(len(LUSourceMat) // 3)')
 
     for i in range(len(LUSourceMat)):
         eval(filterModule + '.doubleArray_setitem(LUSVector, i, LUSourceMat[i])')
@@ -335,8 +339,8 @@ def utilities_fault(filterModule):
 
     for i in range(len(EqnSourceMat)):
         eval(filterModule + '.doubleArray_setitem(EqnVector, i, EqnSourceMat[i])')
-        eval(filterModule + '.doubleArray_setitem(EqnBVector, i / 3, BVector[i / 3])')
-        eval(filterModule + '.intArray_setitem(intSwapVector, i / 3, 0)')
+        eval(filterModule + '.doubleArray_setitem(EqnBVector, i // 3, BVector[i // 3])')
+        eval(filterModule + '.intArray_setitem(intSwapVector, i // 3, 0)')
         eval(filterModule + '.doubleArray_setitem(LVector, i, 0.0)')
 
     exCount = eval(filterModule + '.ukfLUD(EqnVector, 3, 3, LVector, intSwapVector)')
@@ -463,7 +467,7 @@ def utilities_fault(filterModule):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + filterModule + " UKF utilities"
+        print("PASSED: " + filterModule + " UKF utilities")
 
     # return fail count and join into a single string all messages in the list
     # testMessage

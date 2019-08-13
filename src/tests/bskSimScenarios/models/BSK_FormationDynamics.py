@@ -21,6 +21,7 @@
 import numpy as np
 from Basilisk.utilities import macros as mc
 from Basilisk.utilities import unitTestSupport as sp
+
 from Basilisk.simulation import (spacecraftPlus, gravityEffector, extForceTorque, simple_nav, spice_interface,
                                  reactionWheelStateEffector, coarse_sun_sensor, eclipse, imu_sensor)
 from Basilisk.simulation import thrusterDynamicEffector
@@ -59,8 +60,8 @@ class BSKDynamicModels():
         self.gravFactory = simIncludeGravBody.gravBodyFactory()
         planet = self.gravFactory.createEarth()
         planet.isCentralBody = True          # ensure this is the central gravitational body
-        self.scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(self.gravFactory.gravBodies.values())
-        self.scObject2.gravField.gravBodies = spacecraftPlus.GravBodyVector(self.gravFactory.gravBodies.values())
+        self.scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(self.gravFactory.gravBodies.values()))
+        self.scObject2.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(self.gravFactory.gravBodies.values()))
 
         # Initialize all modules and write init one-time messages
         self.InitAllDynObjects()

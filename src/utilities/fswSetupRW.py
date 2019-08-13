@@ -51,7 +51,7 @@ def create(
     if norm > 1e-10:
         gsHat_B = gsHat_B / norm
     else:
-        print 'Error: RW gsHat input must be non-zero 3x1 vector'
+        print('Error: RW gsHat input must be non-zero 3x1 vector')
         exit(1)
 
     RW.gsHat_B = gsHat_B

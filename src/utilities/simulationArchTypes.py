@@ -20,8 +20,8 @@
 
 
 
-from Basilisk.simulation import sim_model
-from Basilisk.simulation import sys_model_task
+from Basilisk.simulation.sim_model import sim_model
+from Basilisk.simulation.sys_model_task import sys_model_task
 
 
 def CreateNewMessage(messageName, messageType, moduleID):
@@ -116,7 +116,7 @@ class PythonModelClass(object):
     # It is important that ALL outputs are initialized here so that other models can
     # subscribe to these messages in their crossInit method.
     def selfInit(self):
-        print "Uhhh the model: " + self.modelName + " is just the python base class"
+        print("Uhhh the model: " + self.modelName + " is just the python base class")
         return
 
     ## The crossInit method is used to initialize all of the input messages of a class.
@@ -213,8 +213,8 @@ class PythonProcessClass(ProcessBaseClass):
             if (task.name == taskName):
                 task.addModelToTask(newModel, priority)
                 return
-        print "Attempted to add model: " + newModel.modelName
-        print "to non-existent task: " + taskName
+        print("Attempted to add model: " + newModel.modelName)
+        print("to non-existent task: " + taskName)
 
     def selfInitProcess(self):
         self.processData.selectProcess()

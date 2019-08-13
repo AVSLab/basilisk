@@ -51,4 +51,4 @@ Lr += L
 Lr *= -1.0
 
 # Print Results
-print 'Lr = ', Lr
+print('Lr = ', Lr)

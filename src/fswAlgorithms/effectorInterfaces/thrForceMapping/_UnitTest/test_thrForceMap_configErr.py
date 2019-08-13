@@ -28,15 +28,15 @@ import pytest
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
+from Basilisk.simulation.alg_contain import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import thrForceMapping
+from Basilisk.fswAlgorithms.thrForceMapping import thrForceMapping
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
 
-from Support import Results_thrForceMapping
+from .Support import Results_thrForceMapping
 
 import os, inspect
 import numpy as np
@@ -275,7 +275,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "thrForce"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(MAX_EFF_CNT))
+                                                  list(range(MAX_EFF_CNT)))
 
     if misconfigThruster:
         return [testFailCount, ''.join(testMessages)] # We don't handle cases where a thruster is configured incorrectly.
@@ -305,12 +305,12 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, asy
         numControlAxis) + "_" + str(saturateThrusters) + "_" + str(misconfigThruster)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("PASSED: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print("Failed: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     return [testFailCount, ''.join(testMessages)]

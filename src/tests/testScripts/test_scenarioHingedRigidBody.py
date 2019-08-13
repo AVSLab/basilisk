@@ -72,15 +72,15 @@ def test_scenarioOrbitManeuver(doUnitTests, show_plots):
         testMessages.append("Failed HingedRigidBody Tutorial test. Post-maneuver momentum incorrect.")
 
     # save the figures to the Doxygen scenario images folder
-    for pltName, plt in figureList.items():
+    for pltName, plt in list(figureList.items()):
         unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED "
+        print("PASSED ")
     else:
-        print "testFailCount: " + str(testFailCount)
-        print testMessages
+        print("testFailCount: " + str(testFailCount))
+        print(testMessages)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

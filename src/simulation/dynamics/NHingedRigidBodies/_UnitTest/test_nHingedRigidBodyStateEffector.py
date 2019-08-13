@@ -56,19 +56,19 @@ def nHingedRigidBody(show_plots,useFlag,testCase):
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
 
-    testFailCount = 0  # zero unit test result counter  
+    testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
-    
+
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
-    
+
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
-    
+
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
     unitTestSim.TotalSim.terminateSimulation()
-    
+
     # Create test thread
     testProcessRate = macros.sec2nano(0.0001)  # update process rate update time
     plottingRate = 0.01
@@ -109,7 +109,7 @@ def nHingedRigidBody(show_plots,useFlag,testCase):
     unitTestSim.effector2.addHingedPanel(unitTestSim.panel)
     unitTestSim.effector2.addHingedPanel(unitTestSim.panel)
     unitTestSim.effector2.addHingedPanel(unitTestSim.panel)
-    
+
     # Add effector to spaceCraft
     scObject.addStateEffector(unitTestSim.effector1)
     scObject.addStateEffector(unitTestSim.effector2)
@@ -141,7 +141,7 @@ def nHingedRigidBody(show_plots,useFlag,testCase):
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
 
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
-    
+
     unitTestSim.InitializeSimulation()
 
     unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('nHingedRigidBody1Theta').getState()", plottingRate, 0, 3, 'double')
@@ -187,25 +187,25 @@ def nHingedRigidBody(show_plots,useFlag,testCase):
     plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCase, "Change in Orbital Angular Momentum " + testCase, plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCase, "Change in Orbital Angular Momentum " + testCase, plt, r"width=0.8\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCase, "Change in Orbital Energy " + testCase, plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCase, "Change in Orbital Energy " + testCase, plt, r"width=0.8\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase, "Change in Rotational Angular Momentum " + testCase, plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase, "Change in Rotational Angular Momentum " + testCase, plt, r"width=0.8\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
     plt.xlabel("Time (s)")
     plt.ylabel("Relative Difference")
-    unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, "width=0.8\\textwidth", path)
+    unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, r"width=0.8\textwidth", path)
 
     plt.figure()
     plt.clf()
@@ -281,7 +281,7 @@ def nHingedRigidBody(show_plots,useFlag,testCase):
             testMessages.append("FAILED: N Hinged Rigid Body integrated test failed orbital energy unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " N Hinged Rigid Body integrated test"
+        print("PASSED: " + " N Hinged Rigid Body integrated test")
 
     assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list

@@ -36,11 +36,11 @@ import sys, os, inspect
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
+from Basilisk.simulation.alg_contain import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import velocityPoint                        # import the module that is to be tested
-from Basilisk.fswAlgorithms import cheby_pos_ephem
+from Basilisk.fswAlgorithms.velocityPoint import velocityPoint                        # import the module that is to be tested
+from Basilisk.fswAlgorithms.cheby_pos_ephem import cheby_pos_ephem
 from Basilisk.utilities import macros
 import numpy as np
 from Basilisk.utilities import astroFunctions as af
@@ -160,7 +160,7 @@ def velocityPointTestFunction(show_plots):
     #
     moduleOutputName = "sigma_RN"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     # set the filtered output truth states
     trueVector = [
                [0.,              0.,              0.267949192431],
@@ -177,7 +177,7 @@ def velocityPointTestFunction(show_plots):
     #
     moduleOutputName = "omega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     # set the filtered output truth states
     trueVector = [
                [0.,              0.,              0.000264539877],
@@ -195,7 +195,7 @@ def velocityPointTestFunction(show_plots):
     #
     moduleOutputName = "domega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     # set the filtered output truth states
     trueVector = [
                [0.0, 0.0, 0.0],

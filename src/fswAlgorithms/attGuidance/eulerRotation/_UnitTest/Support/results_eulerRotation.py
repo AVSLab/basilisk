@@ -73,13 +73,13 @@ def printResults_eulerRotation(configData, sigma_R0N, omega_R0N_N, domega_R0N_N,
 
     # Print results
     def printData():
-        print 'callTime = ', callTime
-        print 'eulerAngleSet = ', angleSet
-        print 'B_inv_deriv = ', B_inv_deriv
-        print 'sigma_RN = ', sigma_RN
-        print 'omega_RN_N = ', omega_RN_N
-        print 'domega_RN_N = ', domega_RN_N
-        print '\n'
+        print('callTime = ', callTime)
+        print('eulerAngleSet = ', angleSet)
+        print('B_inv_deriv = ', B_inv_deriv)
+        print('sigma_RN = ', sigma_RN)
+        print('omega_RN_N = ', omega_RN_N)
+        print('domega_RN_N = ', domega_RN_N)
+        print('\n')
     printData()
     return angleSet
 

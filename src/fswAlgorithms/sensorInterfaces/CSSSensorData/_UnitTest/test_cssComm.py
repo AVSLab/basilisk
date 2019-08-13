@@ -9,8 +9,8 @@ import pytest
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import cssComm
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.fswAlgorithms.cssComm import cssComm
+from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
 
 import os, inspect
 
@@ -99,7 +99,7 @@ def cssCommTestFunction(numSensors, sensorData):
 
     # Get the output from this simulation
     MAX_NUM_CSS_SENSORS = simFswInterfaceMessages.MAX_NUM_CSS_SENSORS
-    outputData = unitTestSim.pullMessageLogData(moduleConfig.OutputDataName+".CosValue", range(MAX_NUM_CSS_SENSORS))
+    outputData = unitTestSim.pullMessageLogData(moduleConfig.OutputDataName+".CosValue", list(range(MAX_NUM_CSS_SENSORS)))
     trueCssList= [0]*MAX_NUM_CSS_SENSORS
     if numSensors==4:
         trueCssList[0:4] = [0.0, 0.45791653042, 1.0, 0.615444781018]
@@ -128,12 +128,12 @@ def cssCommTestFunction(numSensors, sensorData):
     snippentName = "passFail_"+str(numSensors)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("PASSED: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print("Failed: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
 

@@ -79,69 +79,69 @@ class thrusterFactory(object):
         try:
             eval('self.' + thrusterType + '(TH)')
         except:
-            print 'ERROR: Thruster type ' + thrusterType + ' is not implemented'
+            print('ERROR: Thruster type ' + thrusterType + ' is not implemented')
             exit(1)
 
         # set device states from the input arguments.  Note that these may override what is set in
         # the above function call
-        if kwargs.has_key('areaNozzle'):
+        if 'areaNozzle' in kwargs:
             varAreaNozzle = kwargs['areaNozzle']
             if not isinstance(varAreaNozzle, (float)):
-                print 'ERROR: areaNozzle must be a float argument'
+                print('ERROR: areaNozzle must be a float argument')
                 exit(1)
             else:
                 TH.areaNozzle = varAreaNozzle
 
-        if kwargs.has_key('steadyIsp'):
+        if 'steadyIsp' in kwargs:
             varSteadyIsp = kwargs['steadyIsp']
             if not isinstance(varSteadyIsp, (float)):
-                print 'ERROR: steadyIsp must be a float argument'
+                print('ERROR: steadyIsp must be a float argument')
                 exit(1)
             else:
                 TH.steadyIsp = varSteadyIsp
 
-        if kwargs.has_key('MaxThrust'):
+        if 'MaxThrust' in kwargs:
             varMaxThrust = kwargs['MaxThrust']
             if not isinstance(varMaxThrust, (float)):
-                print 'ERROR: MaxThrust must be a float argument'
+                print('ERROR: MaxThrust must be a float argument')
                 exit(1)
             else:
                 TH.MaxThrust = varMaxThrust
 
-        if kwargs.has_key('thrusterMagDisp'):
+        if 'thrusterMagDisp' in kwargs:
             varThrusterMagDisp = kwargs['thrusterMagDisp']
             if not isinstance(varMaxThrust, (float)):
-                print 'ERROR: varThrusterMagDisp must be a float argument'
+                print('ERROR: varThrusterMagDisp must be a float argument')
                 exit(1)
             else:
                 TH.thrusterMagDisp = varThrusterMagDisp
 
-        if kwargs.has_key('MinOnTime'):
+        if 'MinOnTime' in kwargs:
             varMinOnTime = kwargs['MinOnTime']
             if not isinstance(varMinOnTime, (float)):
-                print 'ERROR: MinOnTime must be a float argument'
+                print('ERROR: MinOnTime must be a float argument')
                 exit(1)
             else:
                 TH.MinOnTime = varMinOnTime
 
 
-        if kwargs.has_key('useMinPulseTime'):
+        if 'useMinPulseTime' in kwargs:
             varUseMinPulseTime = kwargs['useMinPulseTime']
             if not isinstance(varUseMinPulseTime, (bool)):
-                print 'ERROR: useMinTorque must be a BOOL argument'
+                print('ERROR: useMinTorque must be a BOOL argument')
                 exit(1)
         else:
             varUseMinPulseTime = False  # default value
         if not varUseMinPulseTime:
             TH.MinOnTime = 0.0
 
-        if kwargs.has_key('label'):
+        if 'label' in kwargs:
             varLabel = kwargs['label']
-            if not isinstance(varLabel, (basestring)):
-                print 'ERROR: TH label must be a string'
+            if not isinstance(varLabel, (str)):
+                print('ERROR: TH label must be a string')
                 exit(1)
             if len(varLabel) > 5:
-                print 'ERROR: TH label string is longer than 5 characters'
+                print('ERROR: TH label string is longer than 5 characters')
                 exit(1)
         else:
             varLabel = 'TH' + str(len(self.thrusterList) + 1)  # default device labeling
@@ -152,7 +152,7 @@ class thrusterFactory(object):
         if norm > 1e-10:
             tHat_B = tHat_B / norm
         else:
-            print 'Error: Thruster ' + sys._getframe().f_code.co_name + ' direction tHat input must be non-zero 3x1 vector'
+            print('Error: Thruster ' + sys._getframe().f_code.co_name + ' direction tHat input must be non-zero 3x1 vector')
             exit(1)
         TH.thrDir_B = [[tHat_B[0]], [tHat_B[1]], [tHat_B[2]]]
 
@@ -178,7 +178,7 @@ class thrusterFactory(object):
 
         thDynamicEffector.ModelTag = modelTag
 
-        for key, th in self.thrusterList.items():
+        for key, th in list(self.thrusterList.items()):
             thDynamicEffector.addThruster(th)
 
         scPlus.addDynamicEffector(thDynamicEffector)

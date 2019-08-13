@@ -63,7 +63,7 @@ sHat_B = unitVectorXYZ(xVec,yVec,zVec)
 
 for i in range(numPoints):
     for j in range(numPoints):
-        print np.cos(theta[i]), np.sin(phi[j])
+        print(np.cos(theta[i]), np.sin(phi[j]))
         x = radius * np.cos(theta[i]) * np.sin(phi[j])
         y = radius * np.sin(theta[i]) * np.sin(phi[j])
         z = radius * np.cos(phi[j])

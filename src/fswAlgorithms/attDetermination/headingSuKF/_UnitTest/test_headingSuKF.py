@@ -81,12 +81,12 @@ def heading_utilities_test(show_plots):
 
     # Initialize the test module configuration data
     AMatrix = [0.488894, 0.888396, 0.325191, 0.319207,
-                1.03469, -1.14707, -0.754928, 0.312859, 
+                1.03469, -1.14707, -0.754928, 0.312859,
                 0.726885, -1.06887, 1.3703, -0.86488,
                -0.303441, -0.809499, -1.71152, -0.0300513,
                 0.293871, -2.94428, -0.102242, -0.164879,
                -0.787283, 1.43838, -0.241447, 0.627707]
-   
+
     RVector = headingSuKF.new_doubleArray(len(AMatrix))
     AVector = headingSuKF.new_doubleArray(len(AMatrix))
     for i in range(len(AMatrix)):
@@ -106,7 +106,7 @@ def heading_utilities_test(show_plots):
     if np.linalg.norm(r - RBaseNumpy) > 1.0E-15:
         testFailCount += 1
         testMessages.append("QR Decomposition accuracy failure")
-    
+
     AMatrix = [1.09327, 1.10927, -0.863653, 1.32288,
      -1.21412, -1.1135, -0.00684933, -2.43508,
      -0.769666, 0.371379, -0.225584, -1.76492,
@@ -132,7 +132,7 @@ def heading_utilities_test(show_plots):
     if np.linalg.norm(r - RBaseNumpy) > 1.0E-14:
         testFailCount += 1
         testMessages.append("QR Decomposition accuracy failure")
-    
+
     AMatrix = [ 0.2236,         0,
                0,    0.2236,
                -0.2236,         0,
@@ -167,7 +167,7 @@ def heading_utilities_test(show_plots):
     LVector = headingSuKF.new_doubleArray(len(LUSourceMat))
     UVector = headingSuKF.new_doubleArray(len(LUSourceMat))
     intSwapVector = headingSuKF.new_intArray(3)
-    
+
     for i in range(len(LUSourceMat)):
         headingSuKF.doubleArray_setitem(LUSVector, i, LUSourceMat[i])
         headingSuKF.doubleArray_setitem(UVector, i, 0.0)
@@ -195,7 +195,7 @@ def heading_utilities_test(show_plots):
     LMatrix = np.array(LMatrix).reshape(3,3)
     UMatrix = np.array(UMatrix).reshape(3,3)
     outMat = np.dot(LMatrix, UMatrix)
-    outMatSwap = np.zeros((3,3)) 
+    outMatSwap = np.zeros((3,3))
     for i in range(3):
         currRow = headingSuKF.intArray_getitem(intSwapVector, i)
         outMatSwap[i,:] = outMat[currRow, :]
@@ -209,19 +209,19 @@ def heading_utilities_test(show_plots):
     EqnSourceMat = [2.0, 1.0, 3.0, 2.0, 6.0, 8.0, 6.0, 8.0, 18.0]
     BVector = [1.0, 3.0, 5.0]
     EqnVector = headingSuKF.new_doubleArray(len(EqnSourceMat))
-    EqnBVector = headingSuKF.new_doubleArray(len(LUSourceMat)/3)
-    EqnOutVector = headingSuKF.new_doubleArray(len(LUSourceMat)/3)
+    EqnBVector = headingSuKF.new_doubleArray(len(LUSourceMat)//3)
+    EqnOutVector = headingSuKF.new_doubleArray(len(LUSourceMat)//3)
 
     for i in range(len(EqnSourceMat)):
         headingSuKF.doubleArray_setitem(EqnVector, i, EqnSourceMat[i])
-        headingSuKF.doubleArray_setitem(EqnBVector, i/3, BVector[i/3])
-        headingSuKF.intArray_setitem(intSwapVector, i/3, 0)
+        headingSuKF.doubleArray_setitem(EqnBVector, i//3, BVector[i//3])
+        headingSuKF.intArray_setitem(intSwapVector, i//3, 0)
         headingSuKF.doubleArray_setitem(LVector, i, 0.0)
-    
+
     exCount = headingSuKF.ukfLUD(EqnVector, 3, 3, LVector, intSwapVector)
-    
+
     headingSuKF.ukfLUBckSlv(LVector, 3, 3, intSwapVector, EqnBVector, EqnOutVector)
-    
+
     expectedSol = [3.0/10.0, 4.0/10.0, 0.0]
     errorVal = 0.0
     for i in range(3):
@@ -252,7 +252,7 @@ def heading_utilities_test(show_plots):
         testFailCount += 1
         testMessages.append("LU Matrix Inverse accuracy failure")
 
-    
+
     cholTestMat = [1.0, 0.0, 0.0, 0.0, 10.0, 5.0, 0.0, 5.0, 10.0]
     SourceVector = headingSuKF.new_doubleArray(len(cholTestMat))
     CholVector = headingSuKF.new_doubleArray(len(cholTestMat))
@@ -277,7 +277,7 @@ def heading_utilities_test(show_plots):
                1.0974804773131115, 1.9010439702743847, 0.0, 0.0,
                0.0, 1.2672359635912551, 1.7923572711881284, 0.0,
                1.0974804773131113, -0.63357997864171967, 1.7920348101787789, 0.033997451205364251]
-               
+
     SourceVector = headingSuKF.new_doubleArray(len(InvSourceMat))
     InvVector = headingSuKF.new_doubleArray(len(InvSourceMat))
     for i in range(len(InvSourceMat)):
@@ -294,7 +294,7 @@ def heading_utilities_test(show_plots):
     expectIdent = np.dot(InvOut, np.array(InvSourceMat).reshape(nRow,nRow))
     errorNorm = np.linalg.norm(expectIdent - np.identity(nRow))
     if(errorNorm > 1.0E-12):
-        print errorNorm
+        print(errorNorm)
         testFailCount += 1
         testMessages.append("L Matrix Inverse accuracy failure")
 
@@ -315,7 +315,7 @@ def heading_utilities_test(show_plots):
     expectIdent = np.dot(InvOut, np.array(InvSourceMat).reshape(nRow,nRow))
     errorNorm = np.linalg.norm(expectIdent - np.identity(nRow))
     if(errorNorm > 1.0E-12):
-        print errorNorm
+        print(errorNorm)
         testFailCount += 1
         testMessages.append("U Matrix Inverse accuracy failure")
 
@@ -327,7 +327,7 @@ def heading_utilities_test(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + " UKF utilities"
+        print("PASSED: " + " UKF utilities")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -338,7 +338,7 @@ def StateUpdateSunLine(show_plots):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
-    
+
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -361,7 +361,7 @@ def StateUpdateSunLine(show_plots):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-    
+
     setupFilterData(moduleConfig)
     unitTestSim.TotalSim.logThisMessage('heading_filter_data', testProcessRate)
 
@@ -392,9 +392,9 @@ def StateUpdateSunLine(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", range(5))
-    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", range(3))
-    covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", range(5*5))
+    stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", list(range(5)))
+    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", list(range(3)))
+    covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", list(range(5*5)))
 
     for i in range(5):
         # check covariance immediately after measurement is taken,
@@ -403,7 +403,7 @@ def StateUpdateSunLine(show_plots):
             testFailCount += 1
             testMessages.append("Covariance update failure")
         if(abs(stateLog[-1, i+1] - stateTarget[i]) > 1.0E-1):
-            print abs(stateLog[-1, i+1] - stateTarget[i])
+            print(abs(stateLog[-1, i+1] - stateTarget[i]))
             testFailCount += 1
             testMessages.append("State update failure")
 
@@ -423,17 +423,17 @@ def StateUpdateSunLine(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+t1 +1)*0.5))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", range(5))
-    stateErrorLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".stateError", range(5))
-    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", range(3))
-    covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", range(5*5))
+    stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", list(range(5)))
+    stateErrorLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".stateError", list(range(5)))
+    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", list(range(3)))
+    covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", list(range(5*5)))
 
     for i in range(5):
         if(covarLog[1951, i*5+1+i] > covarLog[0, i*5+1+i]/10):
             testFailCount += 1
             testMessages.append("Covariance update failure")
         if(abs(stateLog[-1, i+1] - stateTarget[i]) > 1.0E-1):
-            print abs(stateLog[-1, i+1] - stateTarget[i])
+            print(abs(stateLog[-1, i+1] - stateTarget[i]))
             testFailCount += 1
             testMessages.append("State update failure")
 
@@ -443,7 +443,7 @@ def StateUpdateSunLine(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag + " state update"
+        print("PASSED: " + moduleWrap.ModelTag + " state update")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -454,7 +454,7 @@ def StatePropSunLine(show_plots):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
-    
+
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -477,32 +477,32 @@ def StatePropSunLine(show_plots):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-    
+
     setupFilterData(moduleConfig)
     unitTestSim.TotalSim.logThisMessage('heading_filter_data', testProcessRate)
 
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
-    
-    stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", range(5))
-    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", range(3))
-    covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", range(5*5))
+
+    stateLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".state", list(range(5)))
+    postFitLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".postFitRes", list(range(3)))
+    covarLog = unitTestSim.pullMessageLogData('heading_filter_data' + ".covar", list(range(5*5)))
 
     FilterPlots.StateCovarPlot(stateLog, covarLog, 'Prop', show_plots)
     FilterPlots.PostFitResiduals(postFitLog, moduleConfig.qObsVal, 'Prop', show_plots)
 
     for i in range(5):
         if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > 1.0E-10):
-            print abs(stateLog[-1, i+1] - stateLog[0, i+1])
+            print(abs(stateLog[-1, i+1] - stateLog[0, i+1]))
             testFailCount += 1
             testMessages.append("State propagation failure")
 
-    
+
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag + " state propagation"
+        print("PASSED: " + moduleWrap.ModelTag + " state propagation")
 
     # return fail count and join into a single string all messages in the list
     # testMessage

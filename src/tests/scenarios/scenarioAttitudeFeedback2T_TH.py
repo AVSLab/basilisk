@@ -75,17 +75,17 @@ def plot_attitude_error(timeDataFSW, dataSigmaBR):
     for idx in range(1, 4):
         plt.plot(timeDataFSW, dataSigmaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label='$\sigma_' + str(idx) + '$')
+                 label=r'$\sigma_' + str(idx) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
-    plt.ylabel('Attitude Error $\sigma_{B/R}$')
+    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
 
 def plot_rate_error(timeDataFSW, dataOmegaBR):
     plt.figure(2)
     for idx in range(1, 4):
         plt.plot(timeDataFSW, dataOmegaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label='$\omega_{BR,' + str(idx) + '}$')
+                 label=r'$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error [rad/s] ')
@@ -140,7 +140,7 @@ def plot_OnTimeRequest(timeDataFSW, dataSchm, numTh):
 #
 # To run the scenario, call the python script from a Terminal window through:
 #
-#       python scenarioAttitudeFeedback2T_TH.py
+#       python3 scenarioAttitudeFeedback2T_TH.py
 #
 # The simulation layout is shown in the following illustration. The two processes (SIM and FSW) are simulated
 # and run at different time rates. Interface messages are shared across SIM and
@@ -435,7 +435,7 @@ def run(show_plots, useDVThrusters):
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # setup extForceTorque module
     # the control torque is read in through the messaging system
@@ -677,7 +677,7 @@ def run(show_plots, useDVThrusters):
     #
 
     numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints - 1)
+    samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(mrpControlConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
@@ -750,11 +750,11 @@ def run(show_plots, useDVThrusters):
     #
     #   retrieve the logged data
     #
-    dataLr = scSim.pullMessageLogData(mrpControlConfig.outputDataName + ".torqueRequestBody", range(3))
-    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", range(3))
-    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", range(3))
-    dataMap = scSim.pullMessageLogData(thrForceMappingConfig.outputDataName + ".thrForce", range(numTh))
-    dataSchm = scSim.pullMessageLogData(thrFiringSchmittConfig.onTimeOutMsgName + ".OnTimeRequest", range(numTh))
+    dataLr = scSim.pullMessageLogData(mrpControlConfig.outputDataName + ".torqueRequestBody", list(range(3)))
+    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", list(range(3)))
+    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", list(range(3)))
+    dataMap = scSim.pullMessageLogData(thrForceMappingConfig.outputDataName + ".thrForce", list(range(numTh)))
+    dataSchm = scSim.pullMessageLogData(thrFiringSchmittConfig.onTimeOutMsgName + ".OnTimeRequest", list(range(numTh)))
     np.set_printoptions(precision=16)
 
     #

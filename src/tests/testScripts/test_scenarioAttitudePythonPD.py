@@ -80,7 +80,7 @@ def test_bskAttitudeFeedbackPD(show_plots, useJitterSimple, useRWVoltageIO):
         testMessages.append("Failed to get accurate agreement between torque command variables")
 
     # save the figures to the Doxygen scenario images folder
-    for pltName, plt in figureList.items():
+    for pltName, plt in list(figureList.items()):
         unitTestSupport.saveScenarioFigure(pltName, plt, path)
 
     # each test method requires a single assert method to be called

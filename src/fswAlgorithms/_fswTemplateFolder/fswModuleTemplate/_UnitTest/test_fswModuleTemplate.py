@@ -30,10 +30,10 @@ import sys, os, inspect
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
+from Basilisk.simulation.alg_contain import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import fswModuleTemplate                 # import the module that is to be tested
+from Basilisk.fswAlgorithms.fswModuleTemplate import fswModuleTemplate                 # import the module that is to be tested
 from Basilisk.utilities import macros
 
 
@@ -151,7 +151,7 @@ def fswModuleTestFunction(plotFixture, show_plots):
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "outputVector"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.dataOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     variableState = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + "." + variableName)
 
     # Set the results variable(s) to the fixture data storage variables so that it is accessible for plotting
@@ -193,7 +193,7 @@ def fswModuleTestFunction(plotFixture, show_plots):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print   "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

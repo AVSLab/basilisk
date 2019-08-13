@@ -72,7 +72,7 @@ bskPath = __path__[0]
 #
 # To run the default scenario 1., call the python script through
 #
-#       python scenarioCSS.py
+#       python3 scenarioCSS.py
 #
 # When the simulation completes a plot is shown for the CSS sensor signal history.
 #
@@ -408,10 +408,10 @@ def run(show_plots, useCSSConstellation, usePlatform, useEclipse, useKelly):
     dataCSS1 = []
     dataCSS2 = []
     if useCSSConstellation:
-        dataCSSArray = scSim.pullMessageLogData(cssArray.outputConstellationMessage+".CosValue", range(len(cssList)))
+        dataCSSArray = scSim.pullMessageLogData(cssArray.outputConstellationMessage+".CosValue", list(range(len(cssList))))
     else:
-        dataCSS1 = scSim.pullMessageLogData(CSS1.cssDataOutMsgName+".OutputData", range(1))
-        dataCSS2 = scSim.pullMessageLogData(CSS2.cssDataOutMsgName+".OutputData", range(1))
+        dataCSS1 = scSim.pullMessageLogData(CSS1.cssDataOutMsgName+".OutputData", list(range(1)))
+        dataCSS2 = scSim.pullMessageLogData(CSS2.cssDataOutMsgName+".OutputData", list(range(1)))
     np.set_printoptions(precision=16)
 
     #

@@ -19,11 +19,14 @@
 '''
 
 import math
+
 from Basilisk.utilities import macros as mc
+
 from Basilisk.fswAlgorithms import (hillPoint, inertial3D, attTrackingError, MRP_Feedback,
                                     rwMotorTorque, fswMessages,
                                     velocityPoint, MRP_Steering, rateServoFullNonlinear,
                                     sunSafePoint, cssWlsEst)
+
 import numpy as np
 from Basilisk.utilities import RigidBodyKinematics as rbk
 from Basilisk.utilities import fswSetupRW
@@ -35,28 +38,28 @@ class BSKFswModels():
         # Define process name and default time-step for all FSW tasks defined later on
         self.processName = SimBase.FSWProcessName
         self.processTasksTimeStep = mc.sec2nano(fswRate)  # 0.5
-        
+
         # Create module data and module wraps
         self.inertial3DData = inertial3D.inertial3DConfig()
         self.inertial3DWrap = SimBase.setModelDataWrap(self.inertial3DData)
         self.inertial3DWrap.ModelTag = "inertial3D"
-        
+
         self.hillPointData = hillPoint.hillPointConfig()
         self.hillPointWrap = SimBase.setModelDataWrap(self.hillPointData)
         self.hillPointWrap.ModelTag = "hillPoint"
-        
+
         self.sunSafePointData = sunSafePoint.sunSafePointConfig()
         self.sunSafePointWrap = SimBase.setModelDataWrap(self.sunSafePointData)
         self.sunSafePointWrap.ModelTag = "sunSafePoint"
-        
+
         self.velocityPointData = velocityPoint.velocityPointConfig()
         self.velocityPointWrap = SimBase.setModelDataWrap(self.velocityPointData)
         self.velocityPointWrap.ModelTag  = "velocityPoint"
-        
+
         self.cssWlsEstData = cssWlsEst.CSSWLSConfig()
         self.cssWlsEstWrap = SimBase.setModelDataWrap(self.cssWlsEstData)
         self.cssWlsEstWrap.ModelTag = "cssWlsEst"
-        
+
         self.trackingErrorData = attTrackingError.attTrackingErrorConfig()
         self.trackingErrorWrap = SimBase.setModelDataWrap(self.trackingErrorData)
         self.trackingErrorWrap.ModelTag = "trackingError"
@@ -68,22 +71,22 @@ class BSKFswModels():
         self.mrpFeedbackRWsData = MRP_Feedback.MRP_FeedbackConfig()
         self.mrpFeedbackRWsWrap = SimBase.setModelDataWrap(self.mrpFeedbackRWsData)
         self.mrpFeedbackRWsWrap.ModelTag = "mrpFeedbackRWs"
-        
+
         self.mrpSteeringData = MRP_Steering.MRP_SteeringConfig()
         self.mrpSteeringWrap = SimBase.setModelDataWrap(self.mrpSteeringData)
         self.mrpSteeringWrap.ModelTag = "MRP_Steering"
-        
+
         self.rateServoData = rateServoFullNonlinear.rateServoFullNonlinearConfig()
         self.rateServoWrap = SimBase.setModelDataWrap(self.rateServoData)
         self.rateServoWrap.ModelTag = "rate_servo"
-        
+
         self.rwMotorTorqueData = rwMotorTorque.rwMotorTorqueConfig()
         self.rwMotorTorqueWrap = SimBase.setModelDataWrap(self.rwMotorTorqueData)
         self.rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
-        
+
         # Initialize all modules
         self.InitAllFSWObjects(SimBase)
-        
+
         # Create tasks
         SimBase.fswProc.addTask(SimBase.CreateNewTask("inertial3DPointTask", self.processTasksTimeStep), 20)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("hillPointTask", self.processTasksTimeStep), 20)
@@ -92,30 +95,30 @@ class BSKFswModels():
         SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackTask", self.processTasksTimeStep), 10)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpSteeringRWsTask", self.processTasksTimeStep), 10)
         SimBase.fswProc.addTask(SimBase.CreateNewTask("mrpFeedbackRWsTask", self.processTasksTimeStep), 10)
-        
+
         # Assign initialized modules to tasks
         SimBase.AddModelToTask("inertial3DPointTask", self.inertial3DWrap, self.inertial3DData, 10)
         SimBase.AddModelToTask("inertial3DPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
-        
+
         SimBase.AddModelToTask("hillPointTask", self.hillPointWrap, self.hillPointData, 10)
         SimBase.AddModelToTask("hillPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
-        
+
         SimBase.AddModelToTask("sunSafePointTask", self.sunSafePointWrap, self.sunSafePointData, 10)
         SimBase.AddModelToTask("sunSafePointTask", self.cssWlsEstWrap, self.cssWlsEstData, 9)
-        
+
         SimBase.AddModelToTask("velocityPointTask", self.velocityPointWrap, self.velocityPointData, 10)
         SimBase.AddModelToTask("velocityPointTask", self.trackingErrorWrap, self.trackingErrorData, 9)
 
         SimBase.AddModelToTask("mrpFeedbackTask", self.mrpFeedbackControlWrap, self.mrpFeedbackControlData, 10) #used for external torque
-        
+
         SimBase.AddModelToTask("mrpSteeringRWsTask", self.mrpSteeringWrap, self.mrpSteeringData, 10)
         SimBase.AddModelToTask("mrpSteeringRWsTask", self.rateServoWrap, self.rateServoData, 9)
         SimBase.AddModelToTask("mrpSteeringRWsTask", self.rwMotorTorqueWrap, self.rwMotorTorqueData, 8)
-        
+
         SimBase.AddModelToTask("mrpFeedbackRWsTask", self.mrpFeedbackRWsWrap, self.mrpFeedbackRWsData, 9)
         SimBase.AddModelToTask("mrpFeedbackRWsTask", self.rwMotorTorqueWrap, self.rwMotorTorqueData, 8)
         #masterSim.AddModelToTask("mrpFeedbackRWsTask", self.RWANullSpaceDataWrap,self.RWANullSpaceData, 7)
-        
+
         # Create events to be called for triggering GN&C maneuvers
         SimBase.fswProc.disableAllTasks()
 
@@ -129,7 +132,7 @@ class BSKFswModels():
                                ["self.fswProc.disableAllTasks()",
                                 "self.enableTask('inertial3DPointTask')",
                                 "self.enableTask('mrpFeedbackRWsTask')"])
-                                
+
         SimBase.createNewEvent("initiateHillPoint", self.processTasksTimeStep, True,
                                ["self.modeRequest == 'hillPoint'"],
                                ["self.fswProc.disableAllTasks()",
@@ -217,7 +220,7 @@ class BSKFswModels():
         self.mrpFeedbackControlData.vehConfigInMsgName = "adcs_config_data"
         self.mrpFeedbackControlData.outputDataName = SimBase.DynModels.extForceTorqueObject.cmdTorqueInMsgName
         # Note: SimBase.DynModels.extForceTorqueObject.cmdTorqueInMsgName = "extTorquePntB_B_cmds"
-        
+
         self.mrpFeedbackControlData.K = 3.5
         self.mrpFeedbackControlData.Ki = -1.0 # Note: make value negative to turn off integral feedback
         self.mrpFeedbackControlData.P = 30.0
@@ -271,14 +274,14 @@ class BSKFswModels():
         rwElAngle = np.array([40.0, 40.0, 40.0, 40.0]) * mc.D2R
         rwAzimuthAngle = np.array([45.0, 135.0, 225.0, 315.0]) * mc.D2R
         wheelJs = 50.0 / (6000.0 * math.pi * 2.0 / 60)
-        
+
         fswSetupRW.clearSetup()
         for elAngle, azAngle in zip(rwElAngle, rwAzimuthAngle):
             gsHat = (rbk.Mi(-azAngle, 3).dot(rbk.Mi(elAngle, 2))).dot(np.array([1, 0, 0]))
             fswSetupRW.create(gsHat,  # spin axis
                               wheelJs,  # kg*m^2
                               0.2)  # Nm        uMax
-        
+
         fswSetupRW.writeConfigMessage("rwa_config_data", SimBase.TotalSim, SimBase.FSWProcessName)
 
 
@@ -292,7 +295,7 @@ class BSKFswModels():
         self.rwMotorTorqueData.inputVehControlName = "controlTorqueRaw"
         self.rwMotorTorqueData.outputDataName = SimBase.DynModels.rwStateEffector.InputCmds  # "reactionwheel_cmds"
         self.rwMotorTorqueData.rwParamsInMsgName = "rwa_config_data"
-    
+
     # Global call to initialize every module
     def InitAllFSWObjects(self, SimBase):
         self.SetInertial3DPointGuidance()

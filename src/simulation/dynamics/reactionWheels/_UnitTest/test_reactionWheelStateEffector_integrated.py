@@ -165,7 +165,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
             rwCopy2.Omega = 0.0
 
     # increase HR16 imbalance for test
-    for key, rw in rwFactory.rwList.iteritems():
+    for key, rw in rwFactory.rwList.items():
         rw.U_d *= 1e4
         rw.U_s *= 1e4
 
@@ -263,11 +263,11 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
     orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
 
-    posData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
-    sigmaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN',range(3))
-    omegaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.omega_BN_B',range(3))
+    posData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',list(range(3)))
+    sigmaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN',list(range(3)))
+    omegaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.omega_BN_B',list(range(3)))
     if testCase == 'BOE' or testCase == 'FrictionSpinDown' or testCase == 'FrictionSpinUp':
-        wheelSpeeds = unitTestSim.pullMessageLogData(rwStateEffector.OutputDataString+".wheelSpeeds", range(2))
+        wheelSpeeds = unitTestSim.pullMessageLogData(rwStateEffector.OutputDataString+".wheelSpeeds", list(range(2)))
         if testCase == 'BOE':
             thetaOut = 4.0*np.arctan(sigmaData[:,3])
             # Find BOE calculations
@@ -286,10 +286,10 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
                     wheelSpeedBOE[i] = initialWheelSpeed*macros.RPM
                     thetaBOE[i] = scObject.hub.omega_BN_BInit[2][0]*(timeBOE[i])
         if testCase == 'FrictionSpinDown' or testCase == 'FrictionSpinUp':
-            wheelSpeedBeforeInteg1 = unitTestSim.pullMessageLogData("rw_config_0_data.Omega", range(1))
-            wheelSpeedBeforeInteg2 = unitTestSim.pullMessageLogData("rw_config_1_data.Omega", range(1))
-            frictionTorque1 = unitTestSim.pullMessageLogData("rw_config_0_data.frictionTorque", range(1))
-            frictionTorque2 = unitTestSim.pullMessageLogData("rw_config_1_data.frictionTorque", range(1))
+            wheelSpeedBeforeInteg1 = unitTestSim.pullMessageLogData("rw_config_0_data.Omega", list(range(1)))
+            wheelSpeedBeforeInteg2 = unitTestSim.pullMessageLogData("rw_config_1_data.Omega", list(range(1)))
+            frictionTorque1 = unitTestSim.pullMessageLogData("rw_config_0_data.frictionTorque", list(range(1)))
+            frictionTorque2 = unitTestSim.pullMessageLogData("rw_config_1_data.frictionTorque", list(range(1)))
 
 
     dataPos = posData[-1]
@@ -361,25 +361,25 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
         plt.xlabel("Time (s)")
         plt.ylabel("Relative Difference")
-        unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCase, "Change in Orbital Angular Momentum " + testCase, plt, "width=0.8\\textwidth", path)
+        unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentum" + testCase, "Change in Orbital Angular Momentum " + testCase, plt, r"width=0.8\textwidth", path)
         plt.figure()
         plt.clf()
         plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
         plt.xlabel("Time (s)")
         plt.ylabel("Relative Difference")
-        unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCase, "Change in Orbital Energy " + testCase, plt, "width=0.8\\textwidth", path)
+        unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergy" + testCase, "Change in Orbital Energy " + testCase, plt, r"width=0.8\textwidth", path)
         plt.figure()
         plt.clf()
         plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
         plt.xlabel("Time (s)")
         plt.ylabel("Relative Difference")
-        unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase, "Change in Rotational Angular Momentum " + testCase, plt, "width=0.8\\textwidth", path)
+        unitTestSupport.writeFigureLaTeX("ChangeInRotationalAngularMomentum" + testCase, "Change in Rotational Angular Momentum " + testCase, plt, r"width=0.8\textwidth", path)
         plt.figure()
         plt.clf()
         plt.plot(rotEnergy[int(len(rotEnergy)/2)+1:,0]*1e-9, (rotEnergy[int(len(rotEnergy)/2)+1:,1] - rotEnergy[int(len(rotEnergy)/2)+1,1])/rotEnergy[int(len(rotEnergy)/2)+1,1])
         plt.xlabel("Time (s)")
         plt.ylabel("Relative Difference")
-        unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, "width=0.8\\textwidth", path)
+        unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergy" + testCase, "Change in Rotational Energy " + testCase, plt, r"width=0.8\textwidth", path)
         if show_plots:
             plt.show()
             plt.close('all')
@@ -388,29 +388,29 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         plt.figure()
         plt.clf()
         plt.plot(sigmaData[:,0]*1e-9, thetaOut, label = 'Basilisk')
-        plt.plot(timeBOE, thetaBOE, 'ro', label = 'BOE')
-        plt.legend(loc ='upper left',numpoints = 1)
+        plt.plot(timeBOE, thetaBOE, 'ro', label='BOE')
+        plt.legend(loc='upper left', numpoints=1)
         plt.xlabel("Time (s)")
         plt.ylabel("Theta (rad)")
-        unitTestSupport.writeFigureLaTeX("ReactionWheelBOETheta", "Reaction Wheel BOE Theta", plt, "width=0.8\\textwidth", path)
+        unitTestSupport.writeFigureLaTeX("ReactionWheelBOETheta", "Reaction Wheel BOE Theta", plt, r"width=0.8\textwidth", path)
 
         plt.figure()
         plt.clf()
         plt.plot(omegaData[:,0]*1e-9, omegaData[:,3], label = 'Basilisk')
-        plt.plot(timeBOE, omegaBOE, 'ro', label = 'BOE')
-        plt.legend(loc ='upper right',numpoints = 1)
+        plt.plot(timeBOE, omegaBOE, 'ro', label='BOE')
+        plt.legend(loc='upper right', numpoints=1)
         plt.xlabel("Time (s)")
         plt.ylabel("Body Rate (rad/s)")
-        unitTestSupport.writeFigureLaTeX("ReactionWheelBOEBodyRate", "Reaction Wheel BOE Body Rate", plt, "width=0.8\\textwidth", path)
+        unitTestSupport.writeFigureLaTeX("ReactionWheelBOEBodyRate", "Reaction Wheel BOE Body Rate", plt, r"width=0.8\textwidth", path)
 
         plt.figure()
         plt.clf()
         plt.plot(wheelSpeeds[:,0]*1e-9, wheelSpeeds[:,1], label = 'Basilisk')
-        plt.plot(timeBOE, wheelSpeedBOE, 'ro', label = 'BOE')
-        plt.legend(loc ='upper left',numpoints = 1)
+        plt.plot(timeBOE, wheelSpeedBOE, 'ro', label='BOE')
+        plt.legend(loc ='upper left', numpoints=1)
         plt.xlabel("Time (s)")
         plt.ylabel("Wheel Speed (rad/s)")
-        unitTestSupport.writeFigureLaTeX("ReactionWheelBOERWRate", "Reaction Wheel BOE RW Rate", plt, "width=0.8\\textwidth", path)
+        unitTestSupport.writeFigureLaTeX("ReactionWheelBOERWRate", "Reaction Wheel BOE RW Rate", plt, r"width=0.8\textwidth", path)
         if show_plots:
             plt.show()
             plt.close('all')
@@ -418,30 +418,30 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     if testCase == 'FrictionSpinDown' or testCase == 'FrictionSpinUp':
         plt.figure()
         plt.clf()
-        plt.plot(omegaData[:,0]*1e-9, omegaData[:,3], label = 'Basilisk')
+        plt.plot(omegaData[:,0]*1e-9, omegaData[:,3], label='Basilisk')
         plt.xlabel("Time (s)")
         plt.ylabel("Body Rate (rad/s)")
-        unitTestSupport.writeFigureLaTeX("ReactionWheel" + testCase + "TestBodyRates", "Reaction Wheel " + testCase + " Test Body Rates", plt, "width=0.8\\textwidth", path)
+        unitTestSupport.writeFigureLaTeX("ReactionWheel" + testCase + "TestBodyRates", "Reaction Wheel " + testCase + " Test Body Rates", plt, r"width=0.8\textwidth", path)
 
         plt.figure()
         plt.clf()
         plt.plot(wheelSpeeds[:,0]*1e-9, wheelSpeeds[:,1], label = 'RW 1 Wheel Speed')
         plt.plot(wheelSpeeds[:,0]*1e-9, wheelSpeeds[:,2], label = 'RW 2 Wheel Speed')
-        plt.legend()
+        plt.legend(loc='upper right')
         plt.xlabel("Time (s)")
         plt.ylabel("Wheel Speed (rad/s)")
-        unitTestSupport.writeFigureLaTeX("ReactionWheel" + testCase + "TestWheelSpeed", "Reaction Wheel " + testCase + " Test Wheel Speed", plt, "width=0.8\\textwidth", path)
+        unitTestSupport.writeFigureLaTeX("ReactionWheel" + testCase + "TestWheelSpeed", "Reaction Wheel " + testCase + " Test Wheel Speed", plt, r"width=0.8\textwidth", path)
 
         plt.figure()
         plt.clf()
         plt.plot(wheelSpeedBeforeInteg1[:,1], frictionTorque1[:,1], label = 'RW 1 Friction Torque')
         plt.plot(wheelSpeedBeforeInteg2[:,1], frictionTorque2[:,1], label = 'RW 2 Friction Torque')
-        plt.legend()
+        plt.legend(loc='upper right')
         plt.xlabel("Wheel Speed (rad/s)")
         plt.ylabel("Friction Torque (N-m)")
         axes = plt.gca()
         plt.xlim([-15, 15])
-        unitTestSupport.writeFigureLaTeX("ReactionWheel" + testCase + "TestFrictionTorque", "Reaction Wheel " + testCase + " Test Friction Torque", plt, "width=0.8\\textwidth", path)
+        unitTestSupport.writeFigureLaTeX("ReactionWheel" + testCase + "TestFrictionTorque", "Reaction Wheel " + testCase + " Test Friction Torque", plt, r"width=0.8\textwidth", path)
         if show_plots:
             plt.show()
             plt.close('all')
@@ -500,19 +500,19 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
                 testMessages.append("FAILED: Reaction Wheel Integrated Test failed BOE wheel speed unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Reaction Wheel Integrated Sim " + testCase
+        print("PASSED: " + " Reaction Wheel Integrated Sim " + testCase)
 
         # print out success message if no errors were found
     if testCase == 'JitterSimple' and testFailCount == 0:
-        print   "PASSED "
+        print("PASSED ")
         colorText = 'ForestGreen'
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
         # Write some snippets for AutoTex
         snippetName = testCase + 'PassFail'
         unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
     elif testCase == 'JitterSimple' and testFailCount > 0:
         colorText = 'Red'
-        passedText = '\\textcolor{' + colorText + '}{' + "FAILED" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "FAILED" + '}'
         # Write some snippets for AutoTex
         snippetName = testCase + 'PassFail'
         unitTestSupport.writeTeXSnippet(snippetName, passedText, path)

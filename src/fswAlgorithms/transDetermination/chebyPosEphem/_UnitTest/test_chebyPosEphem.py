@@ -29,10 +29,11 @@ bskPath = __path__[0]
 
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import cheby_pos_ephem
-from Basilisk.simulation import sim_model
+from Basilisk.fswAlgorithms.cheby_pos_ephem import cheby_pos_ephem
+from Basilisk.simulation.sim_model import sim_model
 import ctypes
-from Basilisk import pyswice
+from Basilisk.pyswice import pyswice
+from Basilisk.pyswice.pyswice_spk_utilities import spkRead
 import matplotlib.pyplot as plt
 
 orbitPosAccuracy = 1.0
@@ -127,7 +128,7 @@ def test_sineCosine(show_plots):
     TotalSim.ExecuteSimulation()
 
     posChebData = TotalSim.pullMessageLogData(chebyFitModel.posFitOutMsgName + ".r_BdyZero_N",
-        range(3))
+        list(range(3)))
 
     angleSpaceFine = numpy.linspace(-3*math.pi, 3*math.pi, numCurvePoints*10-9)
 
@@ -139,11 +140,11 @@ def test_sineCosine(show_plots):
         max(abs(posChebData[:,2] - sineValuesFine)),
         max(abs(posChebData[:,3] - oopValuesFine))]
 
-    print "Sine Wave error: " +  str(max(maxErrVec))
+    print("Sine Wave error: " +  str(max(maxErrVec)))
     assert max(maxErrVec) < orbitPosAccuracy
 
     if testFailCount == 0:
-        print "PASSED: " + " Sine and Cosine curve fit"
+        print("PASSED: " + " Sine and Cosine curve fit")
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
@@ -182,7 +183,7 @@ def test_earthOrbitFit(show_plots):
 
     for timeVal in timeHistory:
         stringCurrent = pyswice.et2utc_c(timeVal, 'C', 4, 1024, "Yo")
-        stateOut = pyswice.spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, integFrame, zeroBase)
+        stateOut = spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, integFrame, zeroBase)
         hubblePosList.append(stateOut[0:3].tolist())
         hubbleVelList.append(stateOut[3:6].tolist())
 
@@ -237,17 +238,17 @@ def test_earthOrbitFit(show_plots):
     TotalSim.ExecuteSimulation()
 
     posChebData = TotalSim.pullMessageLogData(chebyFitModel.posFitOutMsgName + ".r_BdyZero_N",
-                                              range(3))
+                                              list(range(3)))
     velChebData = TotalSim.pullMessageLogData(chebyFitModel.posFitOutMsgName + ".v_BdyZero_N",
-                                                  range(3))
+                                                  list(range(3)))
     maxErrVec = [abs(max(posChebData[:,1] - hubblePosList[:,0])),
         abs(max(posChebData[:,2] - hubblePosList[:,1])),
         abs(max(posChebData[:,3] - hubblePosList[:,2]))]
     maxVelErrVec = [abs(max(velChebData[:,1] - hubbleVelList[:,0])),
              abs(max(velChebData[:,2] - hubbleVelList[:,1])),
              abs(max(velChebData[:,3] - hubbleVelList[:,2]))]
-    print "Hubble Orbit Accuracy: " + str(max(maxErrVec))
-    print "Hubble Velocity Accuracy: " + str(max(maxVelErrVec))
+    print("Hubble Orbit Accuracy: " + str(max(maxErrVec)))
+    print("Hubble Velocity Accuracy: " + str(max(maxVelErrVec)))
     assert (max(maxErrVec)) < orbitPosAccuracy
     assert (max(maxVelErrVec)) < orbitVelAccuracy
     plt.figure()
@@ -258,7 +259,7 @@ def test_earthOrbitFit(show_plots):
         plt.close('all')
 
     if testFailCount == 0:
-        print "PASSED: " + " Orbit curve fit"
+        print("PASSED: " + " Orbit curve fit")
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]

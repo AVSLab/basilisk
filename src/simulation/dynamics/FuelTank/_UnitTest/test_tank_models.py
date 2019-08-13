@@ -132,7 +132,7 @@ def tankModelConstantVolume(show_plots):
             testMessages.append("FAILED: Fuel Tank constant volume unit test failed rPPrime_TcT_T test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Fuel Tank constant volume unit test"
+        print("PASSED: " + " Fuel Tank constant volume unit test")
 
     snippetName = 'ConstVolPassFail'
     passFail(testFailCount, snippetName)
@@ -197,7 +197,7 @@ def tankModelConstantDensity(show_plots):
         dataIPrimeTank = model.IPrimeTankPntT_T
         dataIPrimeTank = [0] + [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_T[idx],9,accuracy):
-            print dataIPrimeTank, idx
+            print(dataIPrimeTank, idx)
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank constant volume unit test failed IPrimeTankPntT_T test")
 
@@ -220,7 +220,7 @@ def tankModelConstantDensity(show_plots):
             testMessages.append("FAILED: Fuel Tank constant volume unit test failed rPPrime_TcT_T test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Fuel Tank constant volume unit test"
+        print("PASSED: " + " Fuel Tank constant volume unit test")
 
     snippetName = 'ConstDensPassFail'
     passFail(testFailCount, snippetName)
@@ -307,7 +307,7 @@ def tankModelEmptying(show_plots):
             testMessages.append("FAILED: Fuel Tank emptying unit test failed rPPrime_TcT_T test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Fuel Tank constant volume unit test"
+        print("PASSED: " + " Fuel Tank constant volume unit test")
 
     snippetName = 'EmptyingPassFail'
     passFail(testFailCount, snippetName)
@@ -395,7 +395,7 @@ def tankModelUniformBurn(show_plots):
             testMessages.append("FAILED: Fuel Tank centrifugal burn unit test failed rPPrime_TcT_T test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Fuel Tank constant volume unit test"
+        print("PASSED: " + " Fuel Tank constant volume unit test")
 
     snippetName = 'UniformBurnPassFail'
     passFail(testFailCount, snippetName)
@@ -484,7 +484,7 @@ def tankModelCentrifugalBurn(show_plots):
             testMessages.append("FAILED: Fuel Tank uniform burn unit test failed rPPrime_TcT_T test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Fuel Tank constant volume unit test"
+        print("PASSED: " + " Fuel Tank constant volume unit test")
 
     snippetName = 'CentrifugalPassFail'
     passFail(testFailCount, snippetName)
@@ -503,7 +503,7 @@ def passFail(testFailCountInput, snippetName):
         textMsg = 'FAILED'
         textColor = 'Red'
 
-    texSnippet =  '\\textcolor{' + textColor + '}{'+ textMsg + '}'
+    texSnippet =  r'\textcolor{' + textColor + '}{'+ textMsg + '}'
     unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
 
 

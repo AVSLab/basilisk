@@ -66,7 +66,7 @@ def computeGravityTo20(positionVector):
                 elif m == l and l != 0:
                     P[l,m] = (2*l-1)*cosPhi*P[l-1,m-1]
                 else:
-                    print l,", ", m
+                    print(l,", ", m)
         return P
 
     maxDegree = 20
@@ -182,7 +182,7 @@ def independentSphericalHarmonics(show_plots):
 
     if testFailCount == 0:
         passFailText = 'PASSED'
-        print "PASSED: " + testCase
+        print("PASSED: " + testCase)
         colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX.
         snippetName = testCase + 'FailMsg'
         snippetContent = ""
@@ -199,7 +199,7 @@ def independentSphericalHarmonics(show_plots):
         unitTestSupport.writeTeXSnippet(snippetName, snippetContent,
                                         path)  # write formatted LATEX string to file to be used by auto-documentation.
     snippetName = testCase + 'PassFail'  # name of file to be written for auto-documentation which specifies if this test was passed or failed.
-    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}'  # write formatted LATEX string to file to be used by auto-documentation.
+    snippetContent = r'\textcolor{' + colorText + '}{' + passFailText + '}'  # write formatted LATEX string to file to be used by auto-documentation.
     unitTestSupport.writeTeXSnippet(snippetName, snippetContent,
                                     path)  # write formatted LATEX string to file to be used by auto-documentation.
 
@@ -255,7 +255,7 @@ def sphericalHarmonics(show_plots):
 
     if testFailCount == 0:
         passFailText = 'PASSED'
-        print "PASSED: " + " Spherical Harmonics"
+        print("PASSED: " + " Spherical Harmonics")
         colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX.
         snippetName = testCase + 'FailMsg'
         snippetContent = ""
@@ -270,7 +270,7 @@ def sphericalHarmonics(show_plots):
         snippetContent += "."
         unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
     snippetName = testCase + 'PassFail'  # name of file to be written for auto-documentation which specifies if this test was passed or failed.
-    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}' #write formatted LATEX string to file to be used by auto-documentation.
+    snippetContent = r'\textcolor{' + colorText + '}{' + passFailText + '}' #write formatted LATEX string to file to be used by auto-documentation.
     unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
 
     # return fail count and join into a single string all messages in the list
@@ -385,7 +385,7 @@ def singleGravityBody(show_plots):
 
     if testFailCount == 0:
         passFailText = 'PASSED'
-        print "PASSED: " + "Single-body with Spherical Harmonics"
+        print("PASSED: " + "Single-body with Spherical Harmonics")
         colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX
         snippetName = testCase + 'FailMsg'
         snippetContent = ""
@@ -400,7 +400,7 @@ def singleGravityBody(show_plots):
         snippetContent += "."
         unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
     snippetName = testCase + 'PassFail'  # name of file to be written for auto-documentation which specifies if this test was passed or failed.
-    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}' #write formatted LATEX string to file to be used by auto-documentation.
+    snippetContent = r'\textcolor{' + colorText + '}{' + passFailText + '}' #write formatted LATEX string to file to be used by auto-documentation.
     unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
 
 
@@ -533,7 +533,7 @@ def multiBodyGravity(show_plots):
     #Record test results to LaTeX
     if testFailCount == 0:
         passFailText = 'PASSED'
-        print "PASSED: " + " Multi-Body"
+        print("PASSED: " + " Multi-Body")
         colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX
         snippetName = testCase + 'FailMsg'
         snippetContent = ""
@@ -548,7 +548,7 @@ def multiBodyGravity(show_plots):
         snippetContent += "."
         unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
     snippetName = testCase + 'PassFail'  # name of file to be written for auto-documentation which specifies if this test was passed or failed.
-    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}' #write formatted LATEX string to file to be used by auto-documentation.
+    snippetContent = r'\textcolor{' + colorText + '}{' + passFailText + '}' #write formatted LATEX string to file to be used by auto-documentation.
     unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
 
     return [testFailCount, ''.join(testMessages)]

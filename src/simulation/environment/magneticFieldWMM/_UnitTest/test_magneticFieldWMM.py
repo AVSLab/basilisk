@@ -32,7 +32,6 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 bskPath = path.split('src')[0]
-print bskPath
 
 
 # Import all of the modules that we are going to be called in this simulation
@@ -149,7 +148,6 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
                                    planetStateMsg)
         testModule.planetPosInMsgName = planetStateMsgName
 
-
     # add spacecraft to environment model
     sc0StateMsgName = "sc0_state"
     sc1StateMsgName = "sc1_state"
@@ -186,7 +184,9 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
     unitTestSim.TotalSim.logThisMessage(testModule.envOutMsgNames[1], testProcessRate)
 
     # Need to call the self-init and cross-init methods
+    print("\nhere")
     unitTestSim.InitializeSimulation()
+    print("\nhere")
 
     unitTestSim.TotalSim.SingleStepProcesses()
 
@@ -202,8 +202,8 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    mag0Data = unitTestSim.pullMessageLogData(testModule.envOutMsgNames[0] + ".magField_N", range(3))*1e9
-    mag1Data = unitTestSim.pullMessageLogData(testModule.envOutMsgNames[1] + ".magField_N", range(3))*1e9
+    mag0Data = unitTestSim.pullMessageLogData(testModule.envOutMsgNames[0] + ".magField_N", list(range(3)))*1e9
+    mag1Data = unitTestSim.pullMessageLogData(testModule.envOutMsgNames[1] + ".magField_N", list(range(3)))*1e9
 
     def wmmInertial(pos_N, Bx, By, Bz, phi, long, refPlanetDCM, minReach, maxReach):
         radius = np.linalg.norm(pos_N)
@@ -247,12 +247,12 @@ def run(show_plots, decimalYear, Height, Lat, Lon, BxTrue, ByTrue, BzTrue, useDe
     snippentName = "unitTestPassFail" + str(useDefault) + str(useMinReach) + str(useMaxReach) + str(usePlanetEphemeris)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + testModule.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("PASSED: " + testModule.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + testModule.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print("Failed: " + testModule.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
 

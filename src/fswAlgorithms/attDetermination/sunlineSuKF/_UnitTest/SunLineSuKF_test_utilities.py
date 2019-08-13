@@ -47,7 +47,7 @@ def StateCovarPlot(x, Pflat, show_plots):
     plt.plot(t , x[:, 1], "b", label='Error Filter')
     plt.plot(t , x[:, 1]+3 * np.sqrt(P[:, 0, 0]), 'r--',  label='Covar Filter')
     plt.plot(t , x[:, 1]-3 * np.sqrt(P[:, 0, 0]), 'r--')
-    plt.legend(loc='best')
+    plt.legend(loc='lower right')
     plt.title('First LOS component')
     plt.grid()
 
@@ -113,7 +113,7 @@ def PostFitResiduals(Res, noise, show_plots):
     plt.plot(t , Res[:, 1], "b.", label='Residual')
     plt.plot(t , MeasNoise, 'r--', label='Covar')
     plt.plot(t , -MeasNoise, 'r--')
-    plt.legend(loc='best')
+    plt.legend(loc='lower right')
     plt.ylim([-10*noise, 10*noise])
     plt.title('First CSS')
     plt.grid()

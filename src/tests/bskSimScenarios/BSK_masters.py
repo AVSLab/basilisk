@@ -99,6 +99,3 @@ class BSKScenario(object):
             Developer must override this method in their BSK_Scenario derived subclass.
         """
         pass
-
-
-

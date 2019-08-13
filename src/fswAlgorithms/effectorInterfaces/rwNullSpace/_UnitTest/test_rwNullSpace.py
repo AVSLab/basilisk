@@ -5,8 +5,9 @@
 #
 
 from Basilisk.utilities import SimulationBaseClass, unitTestSupport, macros
-from Basilisk.fswAlgorithms import rwNullSpace, fswMessages
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.fswAlgorithms.rwNullSpace import rwNullSpace
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
+from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
 import pytest
 import numpy as np
 import os, inspect
@@ -125,8 +126,8 @@ def rwNullSpaceTestFunction(numWheels):
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
-    outputCrtlData = unitTestSim.pullMessageLogData(moduleConfig.outputControlName+'.motorTorque', range(3))
-    print outputCrtlData
+    outputCrtlData = unitTestSim.pullMessageLogData(moduleConfig.outputControlName+'.motorTorque', list(range(3)))
+    print(outputCrtlData)
 
     if numWheels is 3:
         # in this case there is no nullspace of the RW configuration.  The output torque should be the input torque
@@ -168,12 +169,12 @@ def rwNullSpaceTestFunction(numWheels):
     snippentName = "passFail" + str(numWheels)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("PASSED: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print("Failed: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
 

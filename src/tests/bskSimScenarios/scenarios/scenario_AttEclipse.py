@@ -180,7 +180,7 @@ class scenario_AttitudeEclipse(BSKScenario):
         self.masterSim = masterSim
 
     def configure_initial_conditions(self):
-        print '%s: configure_initial_conditions' % self.name
+        print('%s: configure_initial_conditions' % self.name)
         # Configure FSW mode
         self.masterSim.modeRequest = 'sunSafePoint'
 
@@ -203,7 +203,7 @@ class scenario_AttitudeEclipse(BSKScenario):
 
 
     def log_outputs(self):
-        print '%s: log_outputs' % self.name
+        print('%s: log_outputs' % self.name)
         samplingTime = self.masterSim.get_DynModel().processTasksTimeStep
 
         # Dynamics process outputs: log messages below if desired.
@@ -218,24 +218,24 @@ class scenario_AttitudeEclipse(BSKScenario):
         return
 
     def pull_outputs(self, showPlots):
-        print '%s: pull_outputs' % self.name
+        print('%s: pull_outputs' % self.name)
         num_RW = 4 # number of wheels used in the scenario
 
         # Dynamics process outputs: pull log messages below if any
-        r_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().scObject.scStateOutMsgName + ".r_BN_N", range(3))
+        r_BN_N = self.masterSim.pullMessageLogData(self.masterSim.get_DynModel().scObject.scStateOutMsgName + ".r_BN_N", list(range(3)))
         shadowFactor = self.masterSim.pullMessageLogData("eclipse_data_0.shadowFactor")
 
         # FSW process outputs
         dataUsReq = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().rwMotorTorqueData.outputDataName + ".motorTorque", range(num_RW))
+            self.masterSim.get_FswModel().rwMotorTorqueData.outputDataName + ".motorTorque", list(range(num_RW)))
         sigma_BR = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".sigma_BR", range(3))
+            self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".sigma_BR", list(range(3)))
         omega_BR_B = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", range(3))
+            self.masterSim.get_FswModel().trackingErrorData.outputDataName + ".omega_BR_B", list(range(3)))
         RW_speeds = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().mrpFeedbackRWsData.inputRWSpeedsName + ".wheelSpeeds", range(num_RW))
+            self.masterSim.get_FswModel().mrpFeedbackRWsData.inputRWSpeedsName + ".wheelSpeeds", list(range(num_RW)))
         sunPoint = self.masterSim.pullMessageLogData(
-            self.masterSim.get_FswModel().sunSafePointData.sunDirectionInMsgName + ".vehSunPntBdy", range(3))
+            self.masterSim.get_FswModel().sunSafePointData.sunDirectionInMsgName + ".vehSunPntBdy", list(range(3)))
 
         # Plot results
         BSK_plt.clear_all_plots()
@@ -283,9 +283,9 @@ def run(showPlots):
     # Configure run time and execute simulation
     simulationTime = macros.min2nano(60.0)
     TheBSKSim.ConfigureStopTime(simulationTime)
-    print 'Starting Execution'
+    print('Starting Execution')
     TheBSKSim.ExecuteSimulation()
-    print 'Finished Execution. Post-processing results'
+    print('Finished Execution. Post-processing results')
 
     # Pull the results of the base simulation running the chosen scenario
     figureList = TheScenario.pull_outputs(showPlots)

@@ -75,10 +75,10 @@ def plot_attitude_error(timeData, dataSigmaBR):
     for idx in range(1, 4):
         plt.semilogy(timeData, np.abs(dataSigmaBR[:, idx]),
                      color=unitTestSupport.getLineColor(idx, 3),
-                     label='$|\sigma_' + str(idx) + '|$')
+                     label=r'$|\sigma_' + str(idx) + '|$')
     plt.legend(loc='upper right')
     plt.xlabel('Time [min]')
-    plt.ylabel('Attitude Error $\sigma_{B/R}$')
+    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
 
 def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
     plt.figure(2)
@@ -86,7 +86,7 @@ def plot_rw_cmd_torque(timeData, dataUsReq, numRW):
         plt.plot(timeData, dataUsReq[:, idx],
                  '--',
                  color=unitTestSupport.getLineColor(idx, numRW),
-                 label='$\hat u_{s,' + str(idx) + '}$')
+                 label=r'$\hat u_{s,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Motor Torque (Nm)')
@@ -106,7 +106,7 @@ def plot_rate_error(timeData, dataOmegaBR, dataOmegaBRAst):
     for idx in range(1, 4):
         plt.semilogy(timeData, np.abs(dataOmegaBR[:, idx]) / macros.D2R,
                      color=unitTestSupport.getLineColor(idx, 3),
-                     label='$|\omega_{BR,' + str(idx) + '}|$')
+                     label=r'$|\omega_{BR,' + str(idx) + '}|$')
     for idx in range(1, 4):
         plt.semilogy(timeData, np.abs(dataOmegaBRAst[:, idx]) / macros.D2R,
                      '--',
@@ -122,7 +122,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
     for idx in range(1, numRW + 1):
         plt.plot(timeData, dataOmegaRW[:, idx] / macros.RPM,
                  color=unitTestSupport.getLineColor(idx, numRW),
-                 label='$\Omega_{' + str(idx) + '}$')
+                 label=r'$\Omega_{' + str(idx) + '}$')
     plt.legend(loc='upper right')
     plt.xlabel('Time [min]')
     plt.ylabel('RW Speed (RPM) ')
@@ -156,7 +156,7 @@ def plot_rw_speeds(timeData, dataOmegaRW, numRW):
 #
 # To run the default scenario 1., call the python script from a Terminal window through
 #
-#       python scenarioAttitudeSteering.py
+#       python3 scenarioAttitudeSteering.py
 #
 # The simulation layout is shown in the following illustration.  A single simulation process is created
 # which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
@@ -364,7 +364,7 @@ def run(show_plots, simCase):
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # add RW devices
     rwFactory = simIncludeRW.rwFactory()
@@ -497,7 +497,7 @@ def run(show_plots, simCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 200
-    samplingTime = simulationTime / (numDataPoints - 1)
+    samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(rwMotorTorqueConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
@@ -522,7 +522,7 @@ def run(show_plots, simCase):
     # FSW RW configuration message
     # use the same RW states in the FSW algorithm as in the simulation
     fswSetupRW.clearSetup()
-    for key, rw in rwFactory.rwList.iteritems():
+    for key, rw in rwFactory.rwList.items():
         fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
     fswSetupRW.writeConfigMessage(servoConfig.rwParamsInMsgName, scSim.TotalSim, simProcessName)
 
@@ -569,15 +569,15 @@ def run(show_plots, simCase):
     #
     #   retrieve the logged data
     #
-    dataUsReq = scSim.pullMessageLogData(rwMotorTorqueConfig.outputDataName + ".motorTorque", range(numRW))
-    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", range(3))
-    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", range(3))
-    dataOmegaBRAst = scSim.pullMessageLogData(mrpControlConfig.outputDataName + ".omega_BastR_B", range(3))
-    dataOmegaRW = scSim.pullMessageLogData(rwStateEffector.OutputDataString + ".wheelSpeeds", range(numRW))
-    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", range(3))
+    dataUsReq = scSim.pullMessageLogData(rwMotorTorqueConfig.outputDataName + ".motorTorque", list(range(numRW)))
+    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", list(range(3)))
+    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", list(range(3)))
+    dataOmegaBRAst = scSim.pullMessageLogData(mrpControlConfig.outputDataName + ".omega_BastR_B", list(range(3)))
+    dataOmegaRW = scSim.pullMessageLogData(rwStateEffector.OutputDataString + ".wheelSpeeds", list(range(numRW)))
+    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", list(range(3)))
     dataRW = []
     for i in range(0, numRW):
-        dataRW.append(scSim.pullMessageLogData(rwOutName[i] + ".u_current", range(1)))
+        dataRW.append(scSim.pullMessageLogData(rwOutName[i] + ".u_current", list(range(1))))
     np.set_printoptions(precision=16)
 
     #

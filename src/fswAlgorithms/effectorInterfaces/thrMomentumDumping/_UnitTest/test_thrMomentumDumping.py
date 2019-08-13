@@ -39,7 +39,7 @@ path = os.path.dirname(os.path.abspath(filename))
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
-from Basilisk.fswAlgorithms import thrMomentumDumping            # import the module that is to be tested
+from Basilisk.fswAlgorithms.thrMomentumDumping import thrMomentumDumping            # import the module that is to be tested
 from Basilisk.utilities import macros
 from Basilisk.utilities import fswSetupThrusters
 
@@ -197,7 +197,7 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "OnTimeRequest"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.thrusterOnTimeOutMsgName + '.' + moduleOutputName,
-                                                  range(numThrusters))
+                                                  list(range(numThrusters)))
 
     # set the filtered output truth states
     if resetCheck==1:
@@ -247,12 +247,12 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
     snippentName = "passFail" + str(resetCheck) + str(largeMinFireTime)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("PASSED: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print("Failed: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     # each test method requires a single assert method to be called

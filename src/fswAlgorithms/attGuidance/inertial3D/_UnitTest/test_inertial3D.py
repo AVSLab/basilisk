@@ -38,10 +38,10 @@ path = os.path.dirname(os.path.abspath(filename))
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
+from Basilisk.simulation.alg_contain import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import inertial3D                   # import the module that is to be tested
+from Basilisk.fswAlgorithms.inertial3D import inertial3D                   # import the module that is to be tested
 from Basilisk.utilities import macros
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -76,7 +76,7 @@ def subModuleTestFunction(show_plots):
 
     # Construct algorithm and associated C++ container
     moduleConfig = inertial3D.inertial3DConfig()
-    
+
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
 
     moduleWrap.ModelTag = "inertial3D"
@@ -112,7 +112,7 @@ def subModuleTestFunction(show_plots):
     #
     moduleOutputName = "sigma_RN"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
 
     # set the filtered output truth states
     trueVector = [
@@ -136,7 +136,7 @@ def subModuleTestFunction(show_plots):
     #
     moduleOutputName = "omega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
 
     # set the filtered output truth states
     trueVector = [
@@ -163,7 +163,7 @@ def subModuleTestFunction(show_plots):
     #
     moduleOutputName = "domega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
 
     # set the filtered output truth states
     trueVector = [
@@ -186,12 +186,12 @@ def subModuleTestFunction(show_plots):
     snippentName = "passFail"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("PASSED: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print("Failed: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
 

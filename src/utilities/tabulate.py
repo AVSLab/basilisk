@@ -5,7 +5,12 @@
 
 from __future__ import print_function
 from __future__ import unicode_literals
-from collections import namedtuple
+
+
+try:
+    from collections.abc import namedtuple
+except ImportError:
+    from collections import namedtuple
 from platform import python_version_tuple
 import re
 
@@ -135,8 +140,8 @@ def _html_row_with_attrs(celltag, cell_values, colwidths, colaligns):
 def _latex_line_begin_tabular(colwidths, colaligns, booktabs=False):
     alignment = { "left": "l", "right": "r", "center": "c", "decimal": "r" }
     tabular_columns_fmt = "".join([alignment.get(a, "l") for a in colaligns])
-    return "\n".join(["\\begin{tabular}{" + tabular_columns_fmt + "}",
-                      "\\toprule" if booktabs else "\hline"])
+    return "\n".join([r"\begin{tabular}{" + tabular_columns_fmt + "}",
+                      r"\toprule" if booktabs else r"\hline"])
 
 LATEX_ESCAPE_RULES = {r"&": r"\&", r"%": r"\%", r"$": r"\$", r"#": r"\#",
                       r"_": r"\_", r"^": r"\^{}", r"{": r"\{", r"}": r"\}",
@@ -148,7 +153,7 @@ def _latex_row(cell_values, colwidths, colaligns):
     def escape_char(c):
         return LATEX_ESCAPE_RULES.get(c, c)
     escaped_values = ["".join(map(escape_char, cell)) for cell in cell_values]
-    rowfmt = DataRow("", "&", "\\\\")
+    rowfmt = DataRow("", "&", r"\\")
     return _build_simple_row(escaped_values, rowfmt)
 
 
@@ -235,17 +240,17 @@ _table_formats = {"simple":
                               padding=0, with_header_hide=None),
                   "latex":
                   TableFormat(lineabove=_latex_line_begin_tabular,
-                              linebelowheader=Line("\\hline", "", "", ""),
+                              linebelowheader=Line(r"\hline", "", "", ""),
                               linebetweenrows=None,
-                              linebelow=Line("\\hline\n\\end{tabular}", "", "", ""),
+                              linebelow=Line(r"\hline\end{tabular}", "", "", ""),
                               headerrow=_latex_row,
                               datarow=_latex_row,
                               padding=1, with_header_hide=None),
                   "latex_booktabs":
                   TableFormat(lineabove=partial(_latex_line_begin_tabular, booktabs=True),
-                              linebelowheader=Line("\\midrule", "", "", ""),
+                              linebelowheader=Line(r"\midrule", "", "", ""),
                               linebetweenrows=None,
-                              linebelow=Line("\\bottomrule\n\\end{tabular}", "", "", ""),
+                              linebelow=Line(r"\bottomrule\end{tabular}", "", "", ""),
                               headerrow=_latex_row,
                               datarow=_latex_row,
                               padding=1, with_header_hide=None),
@@ -261,7 +266,7 @@ tabulate_formats = list(sorted(_table_formats.keys()))
 
 
 _invisible_codes = re.compile(r"\x1b\[\d*m|\x1b\[\d*\;\d*\;\d*m")  # ANSI color codes
-_invisible_codes_bytes = re.compile(b"\x1b\[\d*m|\x1b\[\d*\;\d*\;\d*m")  # ANSI color codes
+_invisible_codes_bytes = re.compile(r"\x1b\[\d*m|\x1b\[\d*\;\d*\;\d*m")  # ANSI color codes
 
 
 def simple_separated_format(separator):
@@ -467,7 +472,7 @@ def _align_column(strings, alignment, minwidth=0, has_invisible=True):
     else:
         width_fn = len
 
-    maxwidth = max(max(map(width_fn, strings)), minwidth)
+    maxwidth = max(max(list(map(width_fn, strings))), minwidth)
     padded_strings = [padfn(maxwidth, s, has_invisible) for s in strings]
     return padded_strings
 
@@ -578,11 +583,11 @@ def _normalize_tabular_data(tabular_data, headers):
         # dict-like and pandas.DataFrame?
         if hasattr(tabular_data.values, "__call__"):
             # likely a conventional dict
-            keys = tabular_data.keys()
-            rows = list(izip_longest(*tabular_data.values()))  # columns have to be transposed
+            keys = list(tabular_data.keys())
+            rows = list(zip_longest(*list(tabular_data.values())))  # columns have to be transposed
         elif hasattr(tabular_data, "index"):
             # values is a property, has .index => it's likely a pandas.DataFrame (pandas 0.11.0)
-            keys = tabular_data.keys()
+            keys = list(tabular_data.keys())
             vals = tabular_data.values  # values matrix doesn't need to be transposed
             names = tabular_data.index
             rows = [[v]+list(row) for v,row in zip(names, vals)]
@@ -613,11 +618,11 @@ def _normalize_tabular_data(tabular_data, headers):
             keys = [] # storage for set
             if headers == "firstrow":
                 firstdict = rows[0] if len(rows) > 0 else {}
-                keys.extend(firstdict.keys())
+                keys.extend(list(firstdict.keys()))
                 uniq_keys.update(keys)
                 rows = rows[1:]
             for row in rows:
-                for k in row.keys():
+                for k in list(row.keys()):
                     #Save unique items in input order
                     if k not in uniq_keys:
                         keys.append(k)
@@ -639,7 +644,7 @@ def _normalize_tabular_data(tabular_data, headers):
             rows = [[row.get(k) for k in keys] for row in rows]
         elif headers == "keys" and len(rows) > 0:
             # keys are column indices
-            headers = list(map(_text_type, range(len(rows[0]))))
+            headers = list(map(_text_type, list(range(len(rows[0])))))
 
     # take headers from the first row if necessary
     if headers == "firstrow" and len(rows) > 0:
@@ -888,7 +893,7 @@ def tabulate(tabular_data, headers=(), tablefmt="simple",
      spam &  41.9999 \\\\
      eggs & 451      \\\\
     \\bottomrule
-    \end{tabular}
+    \\end{tabular}
     """
     if tabular_data is None:
         tabular_data = []
@@ -1081,7 +1086,7 @@ def _main():
 def _pprint_file(fobject, headers, tablefmt, sep, floatfmt, file):
     rows = fobject.readlines()
     table = [re.split(sep, r.rstrip()) for r in rows]
-    print(tabulate(table, headers, tablefmt, floatfmt=floatfmt), file=file)
+    print(tabulate(table, headers, tablefmt, floatfmt=floatfmt, file=file))
 
 
 if __name__ == "__main__":

@@ -27,6 +27,7 @@
 import inspect
 import os
 import datetime
+import warnings
 
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -37,17 +38,18 @@ path = os.path.dirname(os.path.abspath(filename))
 from Basilisk import __path__
 bskPath = __path__[0]
 
-
 import numpy as np
-import pandas as pd
-import holoviews as hv
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", category=DeprecationWarning)
+    import pandas as pd
+    import holoviews as hv
+    import datashader as ds
+    from holoviews.operation.datashader import datashade
+    from datashader.colors import colormap_select, Greys9, viridis
+    import datashader.transfer_functions as tf
+    from datashader.utils import export_image
 from Basilisk.utilities import macros
-import datashader as ds
-import datashader.transfer_functions as tf
-from datashader.utils import export_image
-from holoviews.operation.datashader import datashade
 from functools import partial
-from datashader.colors import colormap_select, Greys9, viridis
 from colorcet import fire
 from bokeh.palettes import GnBu9
 from matplotlib.cm import jet
@@ -55,7 +57,7 @@ from matplotlib.cm import jet
 # This import is for reaggregating data when zooming if that is ever pursued
 # from datashader.bokeh_ext import InteractiveImage
 
-from itertools import izip, count
+from itertools import count
 from bokeh.plotting import show, output_file
 from bokeh.models import Range1d
 
@@ -128,7 +130,7 @@ def plotSim(data, retentionPolicy):
     # Get the data from messages using the global data names
     global globalDataFrames
 
-    for i, dataframe, index in izip(count(), globalDataFrames, retainedDataList):
+    for i, dataframe, index in zip(count(), globalDataFrames, retainedDataList):
         dataMessage = data["messages"][index]
         globalDataFrames[i] = updateDataframes(dataMessage, dataframe)
 
@@ -143,7 +145,7 @@ def systemWriteDirectories(path):
     try:
         os.makedirs(path)
     except OSError:
-        print "Creating failed, may be a directory there already"
+        print("Creating failed, may be a directory there already")
 
 # This methods adds the next run of the monte carlo below the previous run, with the two runs separated
 # by a row of NaN values.
@@ -167,13 +169,13 @@ def updateDataframes(data, dataframe):
 # it would be a waste of space.
 def saveDataframesToFile():
 
-    print "beginning writing csv..", datetime.datetime.now()
+    print("beginning writing csv..", datetime.datetime.now())
 
     for dataframe, index in zip(globalDataFrames, retainedDataList):
         path = mainDirectoryName + subDirectories[0] + "/" + index + ".csv"
         dataframe.to_csv(path, encoding = 'utf-8', index = False)
 
-    print "done writing csv..", datetime.datetime.now()
+    print("done writing csv..", datetime.datetime.now())
 
 
 # This method is the driver method for graphing all of the data. It loops through the retained data list (strings)
@@ -208,7 +210,7 @@ def configureGraph(dataName, fromCSV, dataFrame, graph):
     # and instead just use the global dataframes to plot the data. However, writing to file
     # can be advantageous since you can toggle ONLY_GRAPH to skip all of the simulating and
     # solely graph the data.
-    print "beginning graphing process", datetime.datetime.now()
+    print("beginning graphing process", datetime.datetime.now())
 
     if fromCSV:
         df = pd.read_csv(
@@ -302,7 +304,7 @@ def holoviews_interface(dataName, df, yAxisLabel, xAxisLabel, ranges, color, dim
     # if saveFigures:
     #     export_png(plot, mainDirectoryName + subDirectories[1] + dataName+".png")
 
-    print "done graphing...", datetime.datetime.now()
+    print("done graphing...", datetime.datetime.now())
 
 # Function that creates datashaded images and saves them as png.
 def datashade_interface(dataName, df, ranges, color, dimension):
@@ -405,11 +407,11 @@ def graphWithoutCSV():
 
 def datashaderDriver(DATASHADER_FOUND):
     if DATASHADER_FOUND == False:
-        print "datashader library not found"
+        print("datashader library not found")
         return
 
-    print saveData
-    print "showing graphs via datashader"
+    print(saveData)
+    print("showing graphs via datashader")
     if saveData:
         # Write the data to csv files, and then read from it and graph.
         writeDataSaveFilesGraph()

@@ -75,7 +75,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 #
 # To run the default scenario 1 from the Basilisk/scenarios folder, call the python script through
 #
-#       python scenarioCentralBody.py
+#       python3 scenarioCentralBody.py
 #
 # Simulation Scenario Setup Details
 # -----
@@ -169,7 +169,7 @@ def run(show_plots, useCentral):
     scSim.AddModelToTask(simTaskName, spiceObject)
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     #   setup orbit and simulation time
@@ -211,7 +211,7 @@ def run(show_plots, useCentral):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints - 1)
+    samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage("earth_planet_data", samplingTime)
 
@@ -237,10 +237,10 @@ def run(show_plots, useCentral):
     #   retrieve the logged data
     #
     #Note: position and velocity are returned relative to the zerobase (SSB by default)
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', range(3))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', range(3))
-    earthPositionHistory = scSim.pullMessageLogData("earth_planet_data.PositionVector", range(3))
-    earthVelocityHistory = scSim.pullMessageLogData("earth_planet_data.VelocityVector", range(3))
+    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
+    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
+    earthPositionHistory = scSim.pullMessageLogData("earth_planet_data.PositionVector", list(range(3)))
+    earthVelocityHistory = scSim.pullMessageLogData("earth_planet_data.VelocityVector", list(range(3)))
 
     #bring the s/c pos, vel back to earth relative coordinates to plot
     posData[:, 1:4] -= earthPositionHistory[:, 1:4]

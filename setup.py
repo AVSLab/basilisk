@@ -19,6 +19,7 @@
 '''
 import os
 import sys
+import six
 
 from setuptools import Command, setup
 from setuptools.command.test import test as TestCommand
@@ -30,7 +31,7 @@ verbose = False
 def runCommand(cmd, dir=None):
     if not verbose:
         cmd += "> /dev/null"
-    print "Running command:", cmd
+    print("Running command:", cmd)
 
     originalDir = os.getcwd()
     if dir is not None:
@@ -93,11 +94,11 @@ class CMakeBuildCommand(Command):
 
     def run(self):
         assert os.getcwd() == self.cwd, 'Must be in package root: %s' % self.cwd
-        print "Making distribution directory"
+        print("Making distribution directory")
         runCommand("mkdir dist/")
-        print "Executing CMake build into dist/ directory"
+        print("Executing CMake build into dist/ directory")
         # if we switch to using mostly setup.py for the build, install will not be done by CMake
-        print "This also will install Basilisk locally..."
+        print("This also will install Basilisk locally...")
         runCommand("cmake -G Xcode ../src/", "dist/")
 
 
@@ -113,7 +114,7 @@ class XCodeBuildCommand(Command):
 
     def run(self):
         assert os.getcwd() == self.cwd, 'Must be in package root: %s' % self.cwd
-        print "Executing XCode build into dist/ directory"
+        print("Executing XCode build into dist/ directory")
         runCommand("xcodebuild -project dist/basilisk.xcodeproj -target ALL_BUILD")
 
 
@@ -130,7 +131,7 @@ class LintCommand(Command):
 
     def run(self):
         assert os.getcwd() == self.cwd, 'Must be in package root: %s' % self.cwd
-        print "Executing linter"
+        print("Executing linter")
         runCommand("flake8 src/")
 
 
@@ -148,9 +149,13 @@ class BuildDocsCommand(Command):
 
     def run(self):
         assert os.getcwd() == self.cwd, 'Must be in package root: %s' % self.cwd
-        print "Building documentation"
+        print("Building documentation")
         runCommand("doxygen DoxyData", "docs/")
 
+if six.PY3:
+    package_dir = "dist3"
+else:
+    package_dir = "dist"
 
 setup(
     name='Basilisk',
@@ -161,7 +166,7 @@ setup(
     long_description=open('./README.md').read(),
     author_email='basilisk-info@colorado.edu',
     url='http://hanspeterschaub.info/bskMain.html',
-    package_dir={'': 'dist'},
+    package_dir={'': package_dir},
     install_requires=[
         'matplotlib',
         'numpy'

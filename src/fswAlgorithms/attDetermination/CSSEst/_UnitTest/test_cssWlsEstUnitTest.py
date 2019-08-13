@@ -36,9 +36,9 @@ from Basilisk.utilities import SimulationBaseClass
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 from Basilisk.utilities import macros
-from Basilisk.fswAlgorithms import cssWlsEst
-from Basilisk.fswAlgorithms import fswMessages
-from Basilisk.simulation import simFswInterfaceMessages
+from Basilisk.fswAlgorithms.cssWlsEst import cssWlsEst
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
+from Basilisk.simulation.simFswInterfaceMessages import simFswInterfaceMessages
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -129,7 +129,7 @@ def checkResidAccuracy(testVec, sResids, sThresh, TotalSim):
             errorString += str(testVec).strip('[]') + "\n"
             errorString += "Criteria violation of: "
             errorString += str(sNormObs)
-            logging.error(errorString) 
+            logging.error(errorString)
         j += 1
     return testFailCount
 
@@ -269,7 +269,7 @@ def cssWlsEstTestFunction(show_plots):
 
         # Pull logged data out into workspace for analysis
         sHatEst = unitTestSim.pullMessageLogData(CSSWlsEstFSWConfig.navStateOutMsgName + '.vehSunPntBdy',
-                                                 range(3))
+                                                 list(range(3)))
 
         numActive = unitTestSim.GetLogVariableData("CSSWlsEst.numActiveCss")
         sHatEstUse = sHatEst[logLengthPrev:, :]  # Only data for this subtest
@@ -282,8 +282,8 @@ def cssWlsEstTestFunction(show_plots):
                                                 numActiveFailCriteria, CSSWlsEstFSWConfig.sensorUseThresh)
 
         filtRes = unitTestSim.pullMessageLogData(CSSWlsEstFSWConfig.cssWLSFiltResOutMsgName + '.postFitRes',
-            range(8))
-        testFailCount += checkResidAccuracy(testVec, filtRes, residFailCriteria, 
+            list(range(8)))
+        testFailCount += checkResidAccuracy(testVec, filtRes, residFailCriteria,
                                             unitTestSim)
 
         # Pop truth state onto end of array for plotting purposes
@@ -311,7 +311,7 @@ def cssWlsEstTestFunction(show_plots):
     unitTestSim.ExecuteSimulation()
     stepCount += 1
     sHatEst = unitTestSim.pullMessageLogData(CSSWlsEstFSWConfig.navStateOutMsgName + '.vehSunPntBdy',
-                                             range(3))
+                                             list(range(3)))
     numActive = unitTestSim.GetLogVariableData("CSSWlsEst.numActiveCss")
     sHatEstUse = sHatEst[logLengthPrev:, :]
     numActiveUse = numActive[logLengthPrev + 1:, :]
@@ -341,7 +341,7 @@ def cssWlsEstTestFunction(show_plots):
     numActive = unitTestSim.GetLogVariableData("CSSWlsEst.numActiveCss")
     numActiveUse = numActive[logLengthPrev + 1:, :]
     sHatEst = unitTestSim.pullMessageLogData(CSSWlsEstFSWConfig.navStateOutMsgName + '.vehSunPntBdy',
-                                             range(3))
+                                             list(range(3)))
     sHatEstUse = sHatEst[logLengthPrev + 1:, :]
     logLengthPrev = sHatEst.shape[0]
     testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse,
@@ -371,7 +371,7 @@ def cssWlsEstTestFunction(show_plots):
     # Format data for plotting
     truthData = numpy.array(truthData)
     sHatEst = unitTestSim.pullMessageLogData(CSSWlsEstFSWConfig.navStateOutMsgName + '.vehSunPntBdy',
-                                             range(3))
+                                             list(range(3)))
     numActive = unitTestSim.GetLogVariableData("CSSWlsEst.numActiveCss")
 
 
@@ -386,7 +386,7 @@ def cssWlsEstTestFunction(show_plots):
     unitTestSim.ConfigureStopTime(int((stepCount + 2) * 1E9))
     unitTestSim.ExecuteSimulation()
     sHatEstZero = unitTestSim.pullMessageLogData(CSSWlsEstFSWConfig.navStateOutMsgName + '.vehSunPntBdy',
-                                             range(3))
+                                             list(range(3)))
     sHatEstZeroUse = sHatEstZero[logLengthPrev + 1:, :]
 
     trueVector = [[0.0, 0.0, 0.0]]*len(sHatEstZeroUse)
@@ -421,7 +421,7 @@ def cssWlsEstTestFunction(show_plots):
         plt.plot(truthData[:, 0] * 1.0E-9, truthData[:, 1], 'r--', label='Truth')
         plt.xlabel('Time (s)')
         plt.ylabel('X Component (--)')
-        plt.legend(loc='best')
+        plt.legend(loc='lower right')
         plt.subplot(3, 1, 2)
         plt.plot(sHatEst[:, 0] * 1.0E-9, sHatEst[:, 2], label='Est')
         plt.plot(truthData[:, 0] * 1.0E-9, truthData[:, 2], 'r--', label='Truth')
@@ -437,7 +437,7 @@ def cssWlsEstTestFunction(show_plots):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print   "PASSED: " + CSSWlsWrap.ModelTag
+        print("PASSED: " + CSSWlsWrap.ModelTag)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -551,7 +551,7 @@ def cssRateTestFunction(show_plots):
 
      # Pull logged data out into workspace for analysis
     omegaEst = unitTestSim.pullMessageLogData(moduleConfig.navStateOutMsgName + '.omega_BN_B',
-                                             range(3))
+                                             list(range(3)))
     accuracy = 1e-6
     trueVector = [
         [0.0, 0.0, 0.0],
@@ -571,12 +571,12 @@ def cssRateTestFunction(show_plots):
     snippentName = "passFailRate"
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("PASSED: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print("Failed: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
 

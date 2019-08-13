@@ -90,12 +90,12 @@ def test_unitFacetDrag():
 
     if testSum == 0:
         colorText = 'ForestGreen'
-        print "PASSED"
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("PASSED")
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed"
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print("Failed")
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippetName, passedText, path)
 
     assert testSum < 1, testMessage
@@ -173,7 +173,7 @@ def TestDragCalculation():
     planet.isCentralBody = True          # ensure this is the central gravitational body
     mu = planet.mu
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     #   setup orbit and simulation time
@@ -229,9 +229,9 @@ def TestDragCalculation():
     #   Retrieve logged data
     dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".forceExternal_B")
     dragTorqueData = scSim.GetLogVariableData(newDrag.ModelTag + ".torqueExternalPntB_B")
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', range(3))
-    attData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN', range(3))
+    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',list(range(3)))
+    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
+    attData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN', list(range(3)))
     densData = scSim.pullMessageLogData(newAtmo.ModelTag+"_0_data.neutralDensity")
     np.set_printoptions(precision=16)
 
@@ -326,7 +326,7 @@ def TestShadowCalculation():
     planet.isCentralBody = True          # ensure this is the central gravitational body
     mu = planet.mu
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     #   setup orbit and simulation time
@@ -384,9 +384,9 @@ def TestShadowCalculation():
     #dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".forceExternal_B")
     dragDataForce_B = scSim.GetLogVariableData(newDrag.ModelTag + ".forceExternal_B")
     dragTorqueData = scSim.GetLogVariableData(newDrag.ModelTag + ".torqueExternalPntB_B")
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', range(3))
-    attData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN', range(3))
+    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',list(range(3)))
+    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
+    attData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN', list(range(3)))
     densData = scSim.pullMessageLogData(newAtmo.ModelTag+"_0_data.neutralDensity")
     np.set_printoptions(precision=16)
 

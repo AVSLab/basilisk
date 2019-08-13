@@ -48,7 +48,7 @@ def StateErrorCovarPlot(x, Pflat, show_plots):
     plt.plot(t , x[:, 1], "b", label='Error Filter')
     plt.plot(t , 3 * np.sqrt(P[:, 0, 0]), 'r--',  label='Covar Filter')
     plt.plot(t , -3 * np.sqrt(P[:, 0, 0]), 'r--')
-    plt.legend(loc='best')
+    plt.legend(loc='lower right')
     plt.title('First LOS component')
     plt.grid()
 
@@ -114,7 +114,7 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2, show_plots):
     plt.plot(t[0:30] , x2[0:30, 1], "g", label='Error Expected')
     plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 0, 0]), 'c--', label='Covar Expected')
     plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 0, 0]), 'c--')
-    plt.legend(loc='best')
+    plt.legend(loc='lower right')
     plt.title('First LOS component')
     plt.grid()
 
@@ -193,7 +193,7 @@ def PostFitResiduals(Res, noise, show_plots):
     plt.plot(t , Res[:, 1], "b.", label='Residual')
     plt.plot(t , MeasNoise, 'r--', label='Covar')
     plt.plot(t , -MeasNoise, 'r--')
-    plt.legend(loc='best')
+    plt.legend(loc='lower right')
     plt.ylim([-10*noise, 10*noise])
     plt.title('First CSS')
     plt.grid()
@@ -267,7 +267,7 @@ def StatesVsExpected(stateLog, expectedStateArray, show_plots):
     plt.subplot(321)
     plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  1], 'b--', label='Expected')
     plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  1], 'r', label='Filter')
-    plt.legend(loc='best')
+    plt.legend(loc='lower right')
     plt.title('First LOS component')
     plt.grid()
 
@@ -309,15 +309,15 @@ def StatesVsTargets(target1, target2, stateLog, show_plots):
 
 
     target = np.ones([len(stateLog[:, 0]),6])
-    for i in range((len(stateLog[:, 0])-1)/2):
+    for i in range((len(stateLog[:, 0])-1)//2):
         target[i, :] = target1
-        target[i+(len(stateLog[:, 0]) - 1) / 2,:] = target2
+        target[i+(len(stateLog[:, 0]) - 1) // 2,:] = target2
 
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
     plt.subplot(321)
     plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 1], 'b', label='Filter')
     plt.plot(stateLog[:, 0] * 1.0E-9, target[:, 0], 'r--', label='Expected')
-    plt.legend(loc='best')
+    plt.legend(loc='lower right')
     plt.title('First LOS component')
     plt.grid()
 

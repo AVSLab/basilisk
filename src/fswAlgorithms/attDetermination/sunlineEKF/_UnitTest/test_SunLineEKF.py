@@ -26,12 +26,12 @@ import numpy as np
 import pytest
 
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
-from Basilisk.fswAlgorithms import sunlineEKF
-from Basilisk.fswAlgorithms import cssComm
+from Basilisk.simulation.alg_contain import alg_contain
+from Basilisk.fswAlgorithms.sunlineEKF import sunlineEKF
+from Basilisk.fswAlgorithms.cssComm import cssComm
 from Basilisk.utilities import macros
 import SunLineEKF_test_utilities as FilterPlots
-from Basilisk.fswAlgorithms import fswMessages
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
 
 
 def setupFilterData(filterObject):
@@ -127,7 +127,7 @@ def sunline_individual_test():
     DynOut = np.array(DynOut).reshape(6, 6)
     errorNorm = np.linalg.norm(expDynMat - DynOut)
     if(errorNorm > 1.0E-10):
-        print errorNorm
+        print(errorNorm)
         testFailCount += 1
         testMessages.append("Dynamics Matrix generation Failure \n")
 
@@ -267,7 +267,7 @@ def sunline_individual_test():
     errorNorm = np.linalg.norm(KalmanOut[:,0:numObs] - expectedK)
 
     if (errorNorm > 1.0E-10):
-        print errorNorm
+        print(errorNorm)
         testFailCount += 1
         testMessages.append("Kalman Gain update failure \n")
 
@@ -397,7 +397,7 @@ def sunline_individual_test():
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + " EKF individual tests"
+        print("PASSED: " + " EKF individual tests")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -457,7 +457,7 @@ def StatePropStatic():
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + "EKF static state propagation"
+        print("PASSED: " + "EKF static state propagation")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -589,7 +589,7 @@ def StatePropVariable(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + "EKF general state propagation"
+        print("PASSED: " + "EKF general state propagation")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -698,8 +698,8 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", range(6))
-    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", range(6*6))
+    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", list(range(6)))
+    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", list(range(6*6)))
 
 
     for i in range(6):
@@ -733,9 +733,9 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + SimHalfLength+1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", range(6))
-    postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", range(8))
-    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", range(6*6))
+    stateLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".state", list(range(6)))
+    postFitLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".postFitRes", list(range(8)))
+    covarLog = unitTestSim.pullMessageLogData('sunline_filter_data' + ".covar", list(range(6*6)))
     stateErrorLog = unitTestSim.GetLogVariableData('SunlineEKF.x')
 
 
@@ -755,7 +755,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + "EKF full test"
+        print("PASSED: " + "EKF full test")
 
     # return fail count and join into a single string all messages in the list
     # testMessage

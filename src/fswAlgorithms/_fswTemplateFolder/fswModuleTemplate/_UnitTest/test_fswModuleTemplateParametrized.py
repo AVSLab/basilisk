@@ -42,10 +42,10 @@ splitPath = path.split(bskName)
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
+from Basilisk.simulation.alg_contain import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import fswModuleTemplate                # import the module that is to be tested
+from Basilisk.fswAlgorithms.fswModuleTemplate import fswModuleTemplate                # import the module that is to be tested
 from Basilisk.utilities import macros
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -139,7 +139,7 @@ def fswModuleTestFunction(show_plots, param1, param2):
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "outputVector"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.dataOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     variableState = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + "." + variableName)
 
     # set the filtered output truth states
@@ -212,7 +212,7 @@ def fswModuleTestFunction(show_plots, param1, param2):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag
+        print("PASSED: " + moduleWrap.ModelTag)
 
     # export a plot to be included in the documentation
     unitTestSupport.writeFigureLaTeX(
@@ -226,7 +226,7 @@ def fswModuleTestFunction(show_plots, param1, param2):
     resultTable = moduleOutput
     resultTable[:,0] = macros.NANO2SEC*resultTable[:,0]
     diff = np.delete(moduleOutput,0,1) - trueVector
-    resultTable = np.insert(resultTable,range(2,2+len(diff.transpose())), diff, axis=1)
+    resultTable = np.insert(resultTable,list(range(2,2+len(diff.transpose()))), diff, axis=1)
 
     tableName = "test" + str(param1) + str(param2)      # make this a unique name
     tableHeaders = ["time [s]", "Output 1", "Error", "Output 2", "Error", "Output 3 $\\bm r$", "Error"]
@@ -242,12 +242,12 @@ def fswModuleTestFunction(show_plots, param1, param2):
     snippentName = "passFail" + str(param1) + str(param2)
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("PASSED: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        print "Failed: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        print("Failed: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
 

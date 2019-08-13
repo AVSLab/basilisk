@@ -23,7 +23,8 @@ import pytest
 import math
 
 from Basilisk.utilities import SimulationBaseClass, macros, orbitalMotion
-from Basilisk.fswAlgorithms import relativeODuKF, fswMessages  # import the module that is to be tested
+from Basilisk.fswAlgorithms.relativeODuKF import relativeODuKF  # import the module that is to be tested
+from Basilisk.fswAlgorithms.fswMessages import fswMessages
 
 import relativeODuKF_test_utilities as FilterPlots
 import numpy as np
@@ -194,7 +195,7 @@ def StateUpdateRelOD(show_plots):
     setupFilterData(moduleConfig)
     unitTestSim.TotalSim.logThisMessage('relod_filter_data', testProcessRate)
 
-    time = np.linspace(0,multT1*t1,multT1*t1/dt+1)
+    time = np.linspace(0,multT1*t1,multT1*t1//dt+1)
     dydt = np.zeros(6)
     energy = np.zeros(len(time))
     expected=np.zeros([len(time), 7])
@@ -235,7 +236,7 @@ def StateUpdateRelOD(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * dt))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", range(6 * 6))
+    covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", list(range(6 * 6)))
 
     for i in range(6):
         if (covarLog[t1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i] / 100):
@@ -257,10 +258,10 @@ def StateUpdateRelOD(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1)*dt))
         unitTestSim.ExecuteSimulation()
 
-    stateLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".state", range(6))
-    stateErrorLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".stateError", range(6))
-    postFitLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".postFitRes", range(3))
-    covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", range(6 * 6))
+    stateLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".state", list(range(6)))
+    stateErrorLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".stateError", list(range(6)))
+    postFitLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".postFitRes", list(range(3)))
+    covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", list(range(6 * 6)))
 
     diff = np.copy(stateLog)
     diff[:,1:]-=expected[:,1:]
@@ -281,7 +282,7 @@ def StateUpdateRelOD(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag + " state update"
+        print("PASSED: " + moduleWrap.ModelTag + " state update")
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -326,7 +327,7 @@ def StatePropRelOD(show_plots):
     unitTestSim.ConfigureStopTime(macros.min2nano(timeSim))
     unitTestSim.ExecuteSimulation()
 
-    time = np.linspace(0,timeSim*60,timeSim*60/dt+1)
+    time = np.linspace(0,timeSim*60,timeSim*60//dt+1)
     dydt = np.zeros(6)
     energy = np.zeros(len(time))
     expected=np.zeros([len(time), 7])
@@ -337,8 +338,8 @@ def StatePropRelOD(show_plots):
     for i in range(1, len(time)):
         energy[i] = - mu / (2 * orbitalMotion.rv2elem(mu, expected[i, 1:4], expected[i, 4:]).a)
 
-    stateLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".state", range(6))
-    covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", range(6 * 6))
+    stateLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".state", list(range(6)))
+    covarLog = unitTestSim.pullMessageLogData('relod_filter_data' + ".covar", list(range(6 * 6)))
 
     diff = np.copy(stateLog)
     diff[:,1:]-=expected[:,1:]
@@ -357,7 +358,7 @@ def StatePropRelOD(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag + " state propagation"
+        print("PASSED: " + moduleWrap.ModelTag + " state propagation")
 
     # return fail count and join into a single string all messages in the list
     # testMessage

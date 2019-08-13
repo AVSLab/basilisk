@@ -36,10 +36,10 @@ path = os.path.dirname(os.path.abspath(filename))
 
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
+from Basilisk.simulation.alg_contain import alg_contain
 from Basilisk.utilities import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-from Basilisk.fswAlgorithms import rwMotorVoltage
+from Basilisk.fswAlgorithms.rwMotorVoltage import rwMotorVoltage
 from Basilisk.utilities import fswSetupRW
 from Basilisk.utilities import macros
 
@@ -109,7 +109,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
                                    unitProcessName,
                                    moduleConfig.inputRWSpeedsInMsgName,
                                    rwSpeedMessage)
-        unitTestSupport.writeTeXSnippet("Omega1", "$\\bm\Omega = " \
+        unitTestSupport.writeTeXSnippet("Omega1", r"$\bm\Omega = " \
                                         + str(rwSpeedMessage.wheelSpeeds[0:4]) + "$"
                                         , path)
 
@@ -178,7 +178,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
                                               rwSpeedMessage.getStructSize(),
                                               0,
                                               rwSpeedMessage)
-        unitTestSupport.writeTeXSnippet("Omega2", "$\\bm\Omega = " \
+        unitTestSupport.writeTeXSnippet("Omega2", r"$\bm\Omega = " \
                                         + str(rwSpeedMessage.wheelSpeeds[0:4]) + "$"
                                         , path)
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.5))        # seconds to stop simulation
@@ -195,7 +195,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     # This pulls the actual data log from the simulation run.
     moduleOutputName = "voltage"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.voltageOutMsgName + '.' + moduleOutputName,
-                                                  range(numRW))
+                                                  list(range(numRW)))
 
 
     # set the filtered output truth states
@@ -268,18 +268,18 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop, testName):
     snippentName = "passFail" + testName
     if testFailCount == 0:
         colorText = 'ForestGreen'
-        print "PASSED: " + moduleWrap.ModelTag
-        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
+        print("PASSED: " + moduleWrap.ModelTag)
+        passedText = r'\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        passedText = '\\textcolor{' + colorText + '}{' + "Failed" + '}'
+        passedText = r'\textcolor{' + colorText + '}{' + "Failed" + '}'
     unitTestSupport.writeTeXSnippet(snippentName, passedText, path)
 
     # write TeX Tables for documentation
     resultTable = moduleOutput
     resultTable[:, 0] = macros.NANO2SEC * resultTable[:, 0]
     diff = np.delete(moduleOutput, 0, 1) - trueVector
-    resultTable = np.insert(resultTable, range(2, 2 + len(diff.transpose())), diff, axis=1)
+    resultTable = np.insert(resultTable, list(range(2, 2 + len(diff.transpose()))), diff, axis=1)
 
     tableName = "test" + str(useLargeVoltage) + str(useAvailability) + str(useTorqueLoop)
     tableHeaders = ["time [s]", "$V_{s,1}$", "Error", "$V_{s,2}$", "Error", "$V_{s,3}$", "Error", "$V_{s,4}$", "Error"]

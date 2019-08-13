@@ -20,6 +20,7 @@
 
 # Import some architectural stuff that we will probably always use
 import sys, os, ast
+import six
 
 # Point the path to the module storage area
 
@@ -130,8 +131,8 @@ class StructDocData:
         try:
             xmlData = ET.parse(xmlFileUse)
         except:
-            print "Failed to parse the XML structure for: " + self.strName
-            print "This file does not exist most likely: " + xmlFileUse
+            print("Failed to parse the XML structure for: " + self.strName)
+            print("This file does not exist most likely: " + xmlFileUse)
             return
         root = xmlData.getroot()
         validElement = root.find("./compounddef[@id='" + self.strName + "']")
@@ -154,13 +155,13 @@ class StructDocData:
             self.structPopulated = True
 
     def printElem(self):
-        print "    " + self.strName + " Structure Elements:"
-        for key, value in self.structElements.iteritems():
+        print("    " + self.strName + " Structure Elements:")
+        for key, value in self.structElements.items():
             outputString = ''
             outputString += value.type + " " + value.name
             outputString += value.argstring if value.argstring is not None else ''
             outputString += ': ' + value.desc if value.desc is not None else ''
-        print "      " + outputString
+        print("      " + outputString)
 
 class DataPairClass:
     def __init__(self):
@@ -202,8 +203,8 @@ class SimBaseClass:
                     self.simModules.add(inspect.getmodule(NewModel))
                 return
             i += 1
-        print "Could not find a Task with name: %(TaskName)s" % \
-              {"TaskName": TaskName}
+        print("Could not find a Task with name: %(TaskName)s" % \
+              {"TaskName": TaskName})
 
     def CreateNewProcess(self, procName, priority = -1):
         proc = simulationArchTypes.ProcessBaseClass(procName, priority)
@@ -233,8 +234,13 @@ class SimBaseClass:
         Subname = Subname.join(SplitName[1:])
         NoDotName = ''
         NoDotName = NoDotName.join(SplitName)
-        NoDotName = NoDotName.translate(None, "[]'()")
-        inv_map = {v: k for k, v in self.NameReplace.items()}
+        if six.PY2:
+            NoDotName = NoDotName.translate(None, "[]'()")
+        else:
+            tr = str.maketrans("","", "[]'()")
+            NoDotName = NoDotName.translate(tr)
+            #NoDotName = NoDotName.translate({ord(c): None for c in "[]'()"})
+        inv_map = {v: k for k, v in list(self.NameReplace.items())}
         if SplitName[0] in inv_map:
             LogName = inv_map[SplitName[0]] + '.' + Subname
             if (LogName in self.VarLogList):
@@ -278,8 +284,8 @@ class SimBaseClass:
             self.VarLogList[VarName] = LogBaseClass(LogName, LogPeriod,
                                                     methodHandle, StopIndex - StartIndex + 1)
         else:
-            print "Could not find a structure that has the ModelTag: %(ModName)s" % \
-                  {"ModName": SplitName[0]}
+            print("Could not find a structure that has the ModelTag: %(ModName)s" % \
+                  {"ModName": SplitName[0]})
 
     def ResetTask(self, taskName):
         for Task in self.TaskList:
@@ -297,7 +303,7 @@ class SimBaseClass:
         self.TotalSim.resetInitSimulation()
         for proc in self.pyProcList:
             proc.resetProcess(0)
-        for LogItem, LogValue in self.VarLogList.iteritems():
+        for LogItem, LogValue in self.VarLogList.items():
             LogValue.clearItem()
         self.simulationInitialized = True
 
@@ -317,7 +323,7 @@ class SimBaseClass:
     def RecordLogVars(self):
         CurrSimTime = self.TotalSim.CurrentNanos
         minNextTime = -1
-        for LogItem, LogValue in self.VarLogList.iteritems():
+        for LogItem, LogValue in self.VarLogList.items():
             LocalPrev = LogValue.PrevLogTime
             if (LocalPrev != None and (CurrSimTime -
                                            LocalPrev) < LogValue.Period):
@@ -380,7 +386,7 @@ class SimBaseClass:
     def GetLogVariableData(self, LogName):
         TheArray = np.array(self.VarLogList[LogName].TimeValuePairs)
         ArrayDim = self.VarLogList[LogName].ArrayDim
-        TheArray = np.reshape(TheArray, (TheArray.shape[0] / ArrayDim, ArrayDim))
+        TheArray = np.reshape(TheArray, (TheArray.shape[0] // ArrayDim, ArrayDim))
         return TheArray
 
     def disableTask(self, TaskName):
@@ -398,7 +404,7 @@ class SimBaseClass:
         try:
             xmlData = ET.parse(self.dataStructIndex)
         except:
-            print "Failed to parse the XML index.  Likely that it isn't present"
+            print("Failed to parse the XML index.  Likely that it isn't present")
             return
         root = xmlData.getroot()
         for child in root:
@@ -416,13 +422,13 @@ class SimBaseClass:
             if message == searchString:
                 exactMessage = message
                 continue
-            print message
+            print(message)
 
         if (exactMessage == searchString):
             searchComplete = True
             headerData = sim_model.MessageHeaderData()
             self.TotalSim.populateMessageHeader(exactMessage, headerData)
-            print headerData.MessageName + ": " + headerData.messageStruct
+            print(headerData.MessageName + ": " + headerData.messageStruct)
             if self.indexParsed == False:
                 self.parseDataIndex()
             if headerData.messageStruct in self.dataStructureDictionary:
@@ -437,7 +443,7 @@ class SimBaseClass:
         splitName = varName.split('.')
         messageID = self.TotalSim.getMessageID(splitName[0])
         if not (messageID.itemFound):
-            print "Failed to pull log due to invalid ID for this message: " + splitName[0]
+            print("Failed to pull log due to invalid ID for this message: " + splitName[0])
             return []
         headerData = sim_model.MessageHeaderData()
         self.TotalSim.populateMessageHeader(splitName[0], headerData)
@@ -459,7 +465,7 @@ class SimBaseClass:
                         moduleFound = moduleData.__name__
                         break
         if moduleFound == '':
-            print "Failed to find valid message structure for: " + headerData.messageStruct
+            print("Failed to find valid message structure for: " + headerData.messageStruct)
             return []
         messageCount = self.TotalSim.messageLogs.getLogCount(messageID.processBuffer, messageID.itemID)
         resplit = varName.split(splitName[0] + '.')
@@ -486,7 +492,7 @@ class SimBaseClass:
 
     def createNewEvent(self, eventName, eventRate=int(1E9), eventActive=False,
                        conditionList=[], actionList=[]):
-        if (eventName in self.eventMap.keys()):
+        if (eventName in list(self.eventMap.keys())):
             return
         newEvent = EventHandlerClass(eventName, eventRate, eventActive,
                                      conditionList, actionList)
@@ -494,7 +500,7 @@ class SimBaseClass:
 
     def initializeEventChecks(self):
         self.eventList = []
-        for key, value in self.eventMap.iteritems():
+        for key, value in self.eventMap.items():
             value.methodizeEvent()
             self.eventList.append(value)
         self.nextEventTime = 0
@@ -509,8 +515,8 @@ class SimBaseClass:
 
 
     def setEventActivity(self, eventName, activityCommand):
-        if eventName not in self.eventMap.keys():
-            print "You asked me to set the status of an event that I don't have."
+        if eventName not in list(self.eventMap.keys()):
+            print("You asked me to set the status of an event that I don't have.")
             return
         self.eventMap[eventName].eventActive = activityCommand
     def terminateSimulation(self):
@@ -571,7 +577,7 @@ class SimBaseClass:
         messageDataMap = self.getDataMap(processList)
         fDesc.write('digraph messages {\n')
         fDesc.write('node [shape=record];\n')
-        for key, value in messageDataMap.iteritems():
+        for key, value in messageDataMap.items():
             if(str(key) == 'None'):
                 continue
             fDesc.write('    ' + str(key))
@@ -590,7 +596,7 @@ class SimBaseClass:
                     fDesc.write(' | ')
                 i += 1
             fDesc.write('}"];\n')
-            for outputConn, ConnValue in value.outputDict.iteritems():
+            for outputConn, ConnValue in value.outputDict.items():
                 for outputModule in ConnValue:
                     if(outputModule == None):
                         continue
@@ -640,7 +646,11 @@ class SimBaseClass:
         algList = parseDirList(dirList)
 
         # if the package has different levels we need to access the correct level of the package
-        currMod = __import__(module, globals(), locals(), [], -1)
+        if six.PY2:
+            level = -1
+        else:
+            level = 0
+        currMod = __import__(module, globals(), locals(), [], level)
 
         moduleString = "currMod."
         moduleNames = module.split(".")

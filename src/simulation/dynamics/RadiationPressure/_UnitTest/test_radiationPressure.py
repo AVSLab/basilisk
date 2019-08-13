@@ -100,7 +100,7 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
         srpDynEffector.setUseFacetedCPUModel()
         handler = radiation_pressure.SRPLookupTableHandler()
         handler.parseAndLoadXML(os.path.dirname(__file__) + "/cube_lookup.xml")
-        for i in xrange(0, len(handler.forceBLookup)):
+        for i in range(0, len(handler.forceBLookup)):
             srpDynEffector.addForceLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.forceBLookup[i, :]))
             srpDynEffector.addTorqueLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.torqueBLookup[i, :]))
             srpDynEffector.addSHatLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.sHatBLookup[i, :]))
@@ -108,7 +108,7 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
         srpDynEffector.setUseFacetedCPUModel()
         handler = radiation_pressure.SRPLookupTableHandler()
         handler.parseAndLoadXML(os.path.dirname(__file__) + "/cannonballLookup.xml")
-        for i in xrange(0, len(handler.forceBLookup)):
+        for i in range(0, len(handler.forceBLookup)):
             srpDynEffector.addForceLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.forceBLookup[i, :]))
             srpDynEffector.addTorqueLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.torqueBLookup[i, :]))
             srpDynEffector.addSHatLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.sHatBLookup[i, :]))
@@ -249,7 +249,7 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
         modelType = modelType + 'WithEclipse'   #Do this so that the AutoTeX messages are clearly distinguishable.
 
     if testFailCount == 0:
-        print "PASSED: " + modelType
+        print("PASSED: " + modelType)
         passFailText = "PASSED"
         colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX
         snippetName = modelType + 'FailMsg'
@@ -265,7 +265,7 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
         snippetContent += "."
         unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
     snippetName = modelType + 'PassFail'  # name of file to be written for auto-documentation which specifies if this test was passed or failed.
-    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}' #write formatted LATEX string to file to be used by auto-documentation.
+    snippetContent = r'\textcolor{' + colorText + '}{' + passFailText + '}' #write formatted LATEX string to file to be used by auto-documentation.
     unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
 
     # write test accuracy to LATEX file for AutoTex

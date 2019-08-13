@@ -30,10 +30,10 @@ import numpy as np
 from numpy import linalg as la
 # Import all of the modules that we are going to be called in this simulation
 from Basilisk.utilities import SimulationBaseClass
-from Basilisk.simulation import alg_contain
+from Basilisk.simulation.alg_contain import alg_contain
 from Basilisk.utilities import unitTestSupport  # general support file with common unit test functions
-from Basilisk.fswAlgorithms import celestialTwoBodyPoint  # module that is to be tested
-from Basilisk.fswAlgorithms import cheby_pos_ephem  # module that creates needed input
+from Basilisk.fswAlgorithms.celestialTwoBodyPoint import celestialTwoBodyPoint  # module that is to be tested
+from Basilisk.fswAlgorithms.cheby_pos_ephem import cheby_pos_ephem  # module that creates needed input
 from Basilisk.utilities import macros
 from Basilisk.utilities import astroFunctions as af
 from Basilisk.utilities import RigidBodyKinematics as rbk
@@ -41,8 +41,8 @@ from Basilisk.utilities import RigidBodyKinematics as rbk
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-textSnippetPassed = '\\textcolor{ForestGreen}{' + "PASSED" + '}'
-textSnippetFailed = '\\textcolor{Red}{' + "Failed" + '}'
+textSnippetPassed = r'\textcolor{ForestGreen}{' + "PASSED" + '}'
+textSnippetFailed = r'\textcolor{Red}{' + "Failed" + '}'
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -240,7 +240,7 @@ def celestialTwoBodyPointTestFunction(show_plots):
     moduleOutputName = "sigma_RN"
 
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
 
     # compare the module results to the truth values
     accuracy = 1e-12
@@ -259,7 +259,7 @@ def celestialTwoBodyPointTestFunction(show_plots):
     # check omega_RN_N
     moduleOutputName = "omega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
 
     # compare the module results to the truth values
     # check a vector values
@@ -277,7 +277,7 @@ def celestialTwoBodyPointTestFunction(show_plots):
     # check domega_RN_N
     moduleOutputName = "domega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
 
     # compare the module results to the truth values
     # check a vector values
@@ -415,7 +415,7 @@ def secBodyCelestialTwoBodyPointTestFunction(show_plots):
     moduleOutputName = "sigma_RN"
 
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
     # set the filtered output truth states
     trueVector = [0.474475084038,  0.273938317493,  0.191443718765]
 
@@ -440,7 +440,7 @@ def secBodyCelestialTwoBodyPointTestFunction(show_plots):
     # check omega_RN_N
     moduleOutputName = "omega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
 
     # set the filtered output truth states
     trueVector = [1.59336987e-04,   2.75979758e-04,   2.64539877e-04]
@@ -460,7 +460,7 @@ def secBodyCelestialTwoBodyPointTestFunction(show_plots):
     # check domega_RN_N
     moduleOutputName = "domega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
+                                                  list(range(3)))
 
     # set the filtered output truth states
     trueVector = [-2.12284893e-07,   5.69968291e-08,  -4.83648052e-08]

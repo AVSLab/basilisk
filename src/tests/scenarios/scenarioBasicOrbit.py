@@ -69,7 +69,7 @@ from Basilisk.utilities import (SimulationBaseClass, macros, orbitalMotion,
 #
 # To run the default scenario 1 from the Basilisk/src/tests/scenarios folder, call the python script through
 #
-#       python scenarioBasicOrbit.py
+#       python3 scenarioBasicOrbit.py
 #
 # *However*, to play with any scenario scripts as tutorials, you should make a copy of them into a custom folder
 # outside of the Basilisk directory.
@@ -369,7 +369,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     mu = planet.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     #   setup orbit and simulation time
@@ -418,7 +418,7 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
         numDataPoints = 400
     else:
         numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints - 1)
+    samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
 
@@ -442,8 +442,8 @@ def run(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     #
     #   retrieve the logged data
     #
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', range(3))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', range(3))
+    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', list(range(3)))
+    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_BN_N', list(range(3)))
 
     np.set_printoptions(precision=16)
 

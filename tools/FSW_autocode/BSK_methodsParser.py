@@ -31,7 +31,7 @@ import numpy as np
 def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
     simTag='TheSim', localPath = os.path.dirname(os.path.abspath(filename))):
     def areTasksInSimTaskList(taskActivityDir, TheSim):
-        print 'TASKS BEING PARSED: '
+        print('TASKS BEING PARSED: ')
         taskIdxDir = []
         taskOrderedList = []
         procLength = len(TheSim.TotalSim.processList)
@@ -58,10 +58,10 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
             # taskOrderedList[i_task][1] = taskPriority
             # taskOrderedList[i_task][2] = theTask
             taskName = taskOrderedList[i_task][0]
-            if taskName in taskActivityDir.keys():
+            if taskName in list(taskActivityDir.keys()):
                 idxUse = getTaskIndex(TheSim, taskOrderedList[i_task][2].TaskPtr)
                 taskIdxDir.append(idxUse)
-                print i_task, taskName
+                print(i_task, taskName)
         return taskIdxDir
 
     # First Parsing Method:
@@ -267,7 +267,7 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
             dirList = dir(sysMod)
             parsed_dirList = parseSwigVars(dirList)
             addressDict = evalParsedList(parsed_dirList, module)
-            for k, v in addressDict.items():
+            for k, v in list(addressDict.items()):
                 (methodType, methodCallTime) = checkMethodType(k)
                 dictUse = eval(methodType + '_dict')
                 modelID = findAddressMatch(v, modelTag, dictUse)

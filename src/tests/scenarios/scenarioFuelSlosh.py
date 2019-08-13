@@ -41,6 +41,7 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 
 
+
 ## \defgroup scenarioFuelSloshGroup
 ## @{
 ## Demonstration of basic 6-DOF orbit and fuel slosh simulation setup.
@@ -62,7 +63,7 @@ path = os.path.dirname(os.path.abspath(filename))
 #
 # To run the default scenario 1 from the Basilisk/scenarios folder, call the python script through
 #
-#       python scenarioFuelSlosh.py
+#       python3 scenarioFuelSlosh.py
 #
 # However, to play with any scenario scripts as tutorials, you should make a copy of this
 # `scenarioXXX.py` file into a custom folder outside of the Basilisk directory.  Next,
@@ -390,7 +391,7 @@ def run(show_plots, damping_parameter, timeStep):
     mu = planet.mu
 
     # attach gravity to the spacecraft
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     # initialize orbital elements
     oe = orbitalMotion.ClassicElements()
@@ -416,7 +417,7 @@ def run(show_plots, damping_parameter, timeStep):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints - 1)
+    samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
@@ -445,8 +446,8 @@ def run(show_plots, damping_parameter, timeStep):
     scSim.ExecuteSimulation()
 
     # request states to the simulation
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_CN_N', range(3))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_CN_N', range(3))
+    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_CN_N', list(range(3)))
+    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName + '.v_CN_N', list(range(3)))
 
     orbEnergy = scSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
     orbAngMom_N = scSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
@@ -540,7 +541,7 @@ def run(show_plots, damping_parameter, timeStep):
         plt.figure(6, figsize=(5, 4))
         plt.plot(rhoj1Out[:, 0] * 1e-9, rhoj1Out[:, 1], rhoj2Out[:, 0] *
                  1e-9, rhoj2Out[:, 1], rhoj3Out[:, 0] * 1e-9, rhoj3Out[:, 1])
-        plt.legend(['Particle 1', 'Particle 2', 'Particle 3'])
+        plt.legend(['Particle 1', 'Particle 2', 'Particle 3'], loc='lower right')
         plt.xlabel('Time (s)')
         plt.ylabel('Displacement (m)')
         pltName = fileName + "ParticleMotion"

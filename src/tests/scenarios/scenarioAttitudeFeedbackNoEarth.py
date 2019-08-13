@@ -87,7 +87,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 #
 # To run the default scenario 1., call the python script through
 #
-#       python scenarioAttitudeFeedbackNoEarth.py
+#       python3 scenarioAttitudeFeedbackNoEarth.py
 #
 # When the simulation completes 3 plots are shown for the MRP attitude history, the rate
 # tracking errors, as well as the control torque vector.
@@ -298,7 +298,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 50
-    samplingTime = simulationTime / (numDataPoints - 1)
+    samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(mrpControlConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
@@ -335,10 +335,10 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     #
     #   retrieve the logged data
     #
-    dataLr = scSim.pullMessageLogData(mrpControlConfig.outputDataName + ".torqueRequestBody", range(3))
-    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", range(3))
-    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", range(3))
-    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", range(3))
+    dataLr = scSim.pullMessageLogData(mrpControlConfig.outputDataName + ".torqueRequestBody", list(range(3)))
+    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", list(range(3)))
+    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", list(range(3)))
+    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", list(range(3)))
     np.set_printoptions(precision=16)
 
     #
@@ -349,10 +349,10 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     for idx in range(1, 4):
         plt.plot(dataSigmaBR[:, 0] * macros.NANO2MIN, dataSigmaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label='$\sigma_' + str(idx) + '$')
+                 label=r'$\sigma_' + str(idx) + '$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
-    plt.ylabel('Attitude Error $\sigma_{B/R}$')
+    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
     figureList = {}
     pltName = fileName + "1" + str(int(useUnmodeledTorque)) + str(int(useIntGain))+ str(int(useKnownTorque))
     figureList[pltName] = plt.figure(1)
@@ -372,7 +372,7 @@ def run(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     for idx in range(1, 4):
         plt.plot(dataOmegaBR[:, 0] * macros.NANO2MIN, dataOmegaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label='$\omega_{BR,' + str(idx) + '}$')
+                 label=r'$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error [rad/s] ')

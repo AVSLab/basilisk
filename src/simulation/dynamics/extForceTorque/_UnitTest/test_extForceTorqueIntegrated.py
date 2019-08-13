@@ -136,7 +136,7 @@ def test_extForceBodyAndTorque():
             testMessages.append("FAILED: External Body Force and Torque failed attitude unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " External Body Force and Torque Inegrated Sim Test"
+        print("PASSED: " + " External Body Force and Torque Inegrated Sim Test")
 
     assert testFailCount < 1, testMessages
 
@@ -232,7 +232,7 @@ def test_extForceInertialAndTorque():
             testMessages.append("FAILED: External Inertial Force and Torque failed attitude unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " External Inertial Force and Torque Inegrated Sim Test"
+        print("PASSED: " + " External Inertial Force and Torque Inegrated Sim Test")
 
     assert testFailCount < 1, testMessages
 

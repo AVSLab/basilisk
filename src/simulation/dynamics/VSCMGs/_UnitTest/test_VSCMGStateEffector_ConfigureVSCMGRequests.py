@@ -138,7 +138,7 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
 
     expOut = dict() # expected output
 
-    print testCase
+    print(testCase)
     if testCase is 'basic':
         pass
 
@@ -201,11 +201,11 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
     if not 'accuracy' in vars():
         accuracy = 1e-10
 
-    for outputName in expOut.keys():
+    for outputName in list(expOut.keys()):
         for i in range(0,numVSCMG):
             if expOut[outputName][i] != getattr(VSCMG.VSCMGData[i],outputName):
-                print "expected: " + str(expOut[outputName][i])
-                print "got :" + str(getattr(VSCMG.VSCMGData[i],outputName))
+                print("expected: " + str(expOut[outputName][i]))
+                print("got :" + str(getattr(VSCMG.VSCMGData[i],outputName)))
                 testFail = 1
                 break
         if testFail:
@@ -222,7 +222,7 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
 
     # print out success message if no errors were found
     if testFailCount == 0:
-        print   "PASSED "
+        print("PASSED ")
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

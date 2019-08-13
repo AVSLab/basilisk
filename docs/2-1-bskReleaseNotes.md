@@ -15,7 +15,11 @@ We are very excited by the great capabilities that this software already has, an
 
 ## Upcoming Version 0.X.X
 <ul>
-    <li>text here</li>
+    <li>ADDED PYTHON 3 SUPPORT!  This is a major step for Basilisk.  Python 2 remains suppored, but is now treated as a depreciated capability.  It is possible to compile BSK for P3 into a `dist3` folder, and for P2 into a `dist` folder at the same time.</li>
+    <li>Updated the BSK installation notes to reflect a default installation using Python 3</li>
+    <li>Updated all unit test BSK scripts to work in both Python 2 and 3</li>
+    <li>Updated all tutorial scripts to work in both Python 3 and 2.  Default instructions are now for Python 3</li>
+    <li>Added a new support file with tips on migrating a Python 2 BSK script to function in both Python 3 and 2.  This is called Migrating BSK Scripts to Python 3.</li>
 </ul>
 
 ## Version 0.7.2

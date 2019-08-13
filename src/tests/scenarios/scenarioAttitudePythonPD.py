@@ -93,7 +93,7 @@ fileName = os.path.basename(os.path.splitext(__file__)[0])
 #
 # To run the default scenario 1., call the python script through
 #
-#       python scenarioAttitudePythonPD.py
+#       python3 scenarioAttitudePythonPD.py
 #
 # When the simulation completes 3 plots are shown for the MRP attitude history, the differences
 # between the attitude history, and the differences between the RWA commands.  The attitude history
@@ -232,7 +232,7 @@ def runRegularTask(show_plots, useJitterSimple, useRWVoltageIO):
         plt.plot(timeData, dataSigmaBR[:, idx],
                  timeDataBase, dataSigmaBRBase[:, idx], '--')
     plt.xlabel('Time [min]')
-    plt.ylabel('Attitude Error $\sigma_{B/R}$')
+    plt.ylabel(r'Attitude Error $\sigma_{B/R}$')
     figureList = {}
     pltName = fileName + "1" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
     figureList[pltName] = plt.figure(1)
@@ -241,7 +241,7 @@ def runRegularTask(show_plots, useJitterSimple, useRWVoltageIO):
     for idx in range(1, 4):
         plt.plot(timeData, dataSigmaBR[:, idx] - dataSigmaBRBase[:, idx])
     plt.xlabel('Time [min]')
-    plt.ylabel('Attitude Difference $\sigma_{B/R}$')
+    plt.ylabel(r'Attitude Difference $\sigma_{B/R}$')
 
     plt.figure(3)
     for idx in range(1, 4):
@@ -306,7 +306,7 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     # add RW devices
@@ -438,7 +438,7 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 10000
-    samplingTime = simulationTime / (numDataPoints - 1)
+    samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(rwMotorTorqueConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
@@ -472,7 +472,7 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     # FSW RW configuration message
     # use the same RW states in the FSW algorithm as in the simulation
     fswSetupRW.clearSetup()
-    for key, rw in rwFactory.rwList.iteritems():
+    for key, rw in rwFactory.rwList.items():
         fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
     fswSetupRW.writeConfigMessage(rwMotorTorqueConfig.rwParamsInMsgName, scSim.TotalSim, scSim.simPreControlProc)
     fswSetupRW.writeConfigMessage(rwMotorTorqueConfig.rwParamsInMsgName, scSim.TotalSim, scSim.simControlProc)
@@ -512,16 +512,16 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 
-    dataUsReq = scSim.pullMessageLogData(rwMotorTorqueConfig.outputDataName + ".motorTorque", range(numRW))
-    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", range(3))
-    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", range(3))
-    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", range(3))
-    dataOmegaRW = scSim.pullMessageLogData(rwStateEffector.OutputDataString + ".wheelSpeeds", range(numRW))
+    dataUsReq = scSim.pullMessageLogData(rwMotorTorqueConfig.outputDataName + ".motorTorque", list(range(numRW)))
+    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", list(range(3)))
+    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", list(range(3)))
+    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", list(range(3)))
+    dataOmegaRW = scSim.pullMessageLogData(rwStateEffector.OutputDataString + ".wheelSpeeds", list(range(numRW)))
     dataRW = []
     for i in range(0, numRW):
-        dataRW.append(scSim.pullMessageLogData(rwOutName[i] + ".u_current", range(1)))
+        dataRW.append(scSim.pullMessageLogData(rwOutName[i] + ".u_current", list(range(1))))
     if useRWVoltageIO:
-        dataVolt = scSim.pullMessageLogData(fswRWVoltageConfig.voltageOutMsgName + ".voltage", range(numRW))
+        dataVolt = scSim.pullMessageLogData(fswRWVoltageConfig.voltageOutMsgName + ".voltage", list(range(numRW)))
 
     return dataUsReq, dataSigmaBR, dataOmegaBR, dataPos, dataOmegaRW, dataRW
 
@@ -620,10 +620,10 @@ class PythonMRPPD(simulationArchTypes.PythonModelClass):
         simulationArchTypes.WriteMessage(self.outputDataID, currentTime, self.outputMessageData, self.moduleID)
 
         def print_output():
-            print currentTime * 1.0E-9
-            print outTorque.torqueRequestBody
-            print localAttErr.sigma_BR
-            print localAttErr.omega_BR_B
+            print(currentTime * 1.0E-9)
+            print(outTorque.torqueRequestBody)
+            print(localAttErr.sigma_BR)
+            print(localAttErr.omega_BR_B)
 
         return
 

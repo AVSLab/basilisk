@@ -130,7 +130,7 @@ def test_stateData(show_plots):
 
 
     if testFailCount == 0:
-        print "PASSED: " + " State data"
+        print("PASSED: " + " State data")
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
@@ -187,7 +187,7 @@ def test_stateProperties(show_plots):
 
 
     if testFailCount == 0:
-        print "PASSED: " + " State properties"
+        print("PASSED: " + " State properties")
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
@@ -256,7 +256,7 @@ def test_stateArchitecture(show_plots):
         testMessages.append("Position state propagation via state-manager failed")
 
     if testFailCount == 0:
-        print "PASSED: " + " State manager"
+        print("PASSED: " + " State manager")
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
@@ -289,7 +289,7 @@ def test_EigenConversions(show_plots):
 
     for i in range(len(flatList)):
         if(flatList[i] != sim_model.doubleArray_getitem(outputArray, i)):
-            print sim_model.doubleArray_getitem(outputArray, i)
+            print(sim_model.doubleArray_getitem(outputArray, i))
             testFailCount += 1
             testMessages.append("3x3 matrix conversion failed")
 
@@ -301,12 +301,12 @@ def test_EigenConversions(show_plots):
 
     for i in range(len(flatList)):
         if(flatList[i] != sim_model.doubleArray_getitem(outputArray, i)):
-            print sim_model.doubleArray_getitem(outputArray, i)
+            print(sim_model.doubleArray_getitem(outputArray, i))
             testFailCount += 1
             testMessages.append("3x4 matrix conversion failed")
 
     if testFailCount == 0:
-        print "PASSED: " + " Eigen Conversions"
+        print("PASSED: " + " Eigen Conversions")
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]

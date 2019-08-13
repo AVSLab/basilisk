@@ -1,16 +1,16 @@
 # Installing On Windows {#installWindows}
 
-The following was developed using Windows 7, Python 2.7.12 release candidate 1, Visual Studio Community 2017.
+The following was developed using Windows 7, Python 2.7.12 release candidate 1, Visual Studio Community 2017. The preferred method is to use Python 3.  For now support is also provided to use the built-in Python 2, but Python 2 support is now a depreciated functionality.
 
 ## Software setup
 
 In order to run Basilisk, the following software will be necessary:
 
 * [Cmake](https://cmake.org/)
-* [Python 2.7 (numpy==1.15.4, matplotlib, pytest, conan, pandas)](https://www.python.org/downloads/windows/)
+* [Python 3.7 or 2.7 (numpy==1.15.4, matplotlib, pytest, conan, pandas)](https://www.python.org/downloads/windows/)
 * [pip](https://pip.pypa.io/en/stable/installing/)
 * Visual Studios 15 or Greater
-* [Swig](http://www.swig.org/download.html)
+* [Swig](http://www.swig.org/download.html) version 3.0.12
 
 
 
@@ -28,7 +28,7 @@ C:\Users\patrick> pip --trusted-host=pypi.python.org install <package name>
 
 #### Configuring Swig
 
-The standard windows swig version 3.0.12 setup is suitable for Basilisk (see [Configuration Instructions](http://www.swig.org/Doc1.3/Windows.html#Windows_swig_exe)).  Note that swig version 4.0 is not currently compatible with Basilisk.
+The standard windows swig version 3.0.12 setup is suitable for Basilisk (see [Configuration Instructions](http://www.swig.org/Doc1.3/Windows.html#Windows_swig_exe)). Note that swig version 4.0 is not currently compatible with Basilisk
 
 Example added path formats:
 
@@ -42,14 +42,33 @@ Go to the [Conan Website](https://conan.io/downloads.html) and download the wind
 
 ## Installing
 
-From Basilisk root directory:
+#### Setup
+From Basilisk root directory: 
+
+Python 2:
 ```
 mkdir dist $$ cd dist
 ```
-Configuration and Build:
+Python 3:
+```
+mkdir dist3 $$ cd dist3
+```
+#### Configuration and Build: 
+
+Python 2:
 ```
 cmake -G "Visual Studio <MSVC Version> <MSVC Product Year> Win<arch>" ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF
 cmake --build . --target ALL_BUILD --config Release
+```
+Python 3: 
+```
+cmake -G "Visual Studio <MSVC Version> <MSVC Product Year> Win<arch>" ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF -DUSE_PYTHON3=ON
+cmake --build . --target ALL_BUILD --config Release
+```
+Example command using x86:
+```
+cmake -G "Visual Studio <MSVC Version> <MSVC Product Year> Win32" ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF
+```
 
 MSVC Mapping:
 | MSVC Product Year | MSVC Version |
@@ -76,10 +95,12 @@ Arch x64, MSVC Year 2019, MSVC Version 16:
 ```
 cmake -G "Visual Studio 16 2019" -A x64 ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF
 ```
+```
+cmake -G "Visual Studio 15 2017 Win64" ../src -DCMAKE_BUILD_TYPE=Debug -DUSE_PROTOBUFFERS=OFF
+```
 ## How to run tests
 
-Tests are run and managed by Pytest. To execute all tests the py.test command can be executed on the `src` directory from the command line.
-
+Tests are run and managed by Pytest. To execute all tests the py.test command can be executed on the `src` directory from the command line. 
 ```
-C:\Users\patrick\Documents\basilisk> py.test src/
+python -m pytest src/ 
 ```

@@ -40,7 +40,7 @@ except ImportError:
 
 def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
     if not vizFound:
-        print 'Could not find vizInterface when import attempted.  Be sure to build BSK with vizInterface support.'
+        print('Could not find vizInterface when import attempted.  Be sure to build BSK with vizInterface support.')
         return
 
     # setup the Vizard interface module
@@ -53,7 +53,7 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
     # note that the following logic can receive a single file name, or a full path + file name.
     # In both cases a local results are stored in a local sub-folder.
     vizMessenger.saveFile = 0
-    if kwargs.has_key('saveFile'):
+    if 'saveFile' in kwargs:
         fileNamePath = kwargs['saveFile']
         fileName = os.path.splitext(os.path.basename(fileNamePath))[0]
         filePath = os.path.dirname(fileNamePath)
@@ -64,10 +64,10 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
         vizFileNamePath = filePath + '/_VizFiles/' + fileName + '_UnityViz.bin'
         vizMessenger.saveFile = 1
         vizMessenger.protoFilename = vizFileNamePath
-        print "Saving Viz file to " + vizFileNamePath
+        print("Saving Viz file to " + vizFileNamePath)
 
     vizMessenger.opNavMode = 0
-    if kwargs.has_key('opNavMode'):
+    if 'opNavMode' in kwargs:
         if kwargs['opNavMode'] == True:
             vizMessenger.opNavMode = 1
             vizMessenger.opnavImageOutMsgName = "opnav_circles"
@@ -88,7 +88,7 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
 
 
     # see if celestial body planet ephemeris messages must be created
-    if (kwargs.has_key('gravBodies')):
+    if ('gravBodies' in kwargs):
         gravFactory = kwargs['gravBodies']
         gravBodies = gravFactory.gravBodies
         if (gravBodies):
@@ -106,11 +106,10 @@ def enableUnityVisualization(scSim, simTaskName, processName, **kwargs):
                     unitTestSupport.setMessage(scSim.TotalSim, processName, msgName,
                                                ephemData, "SpicePlanetStateSimMsg")
 
-
-    if (kwargs.has_key('numRW')):
+    if 'numRW' in kwargs:
         vizMessenger.numRW = kwargs['numRW']
 
-    if (kwargs.has_key('thrDevices')):
+    if 'thrDevices' in kwargs:
         thrDevices = kwargs['thrDevices']
         thList = []
         for thClusterInfo in thrDevices:

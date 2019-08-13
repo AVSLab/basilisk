@@ -49,10 +49,10 @@ def printResults3DSpin(sigma_R0N, omega_R0N_N, domega_R0N_N, omega_RR0_R, dt):
     rbk.MRPswitch(sigma_RN, 1)
 
     # Print results
-    print 'sigma_RN = ', sigma_RN
-    print 'omega_RN_N = ', omega_RN_N
-    print 'domega_RN_N = ', domega_RN_N
-    print '\n'
+    print('sigma_RN = ', sigma_RN)
+    print('omega_RN_N = ', omega_RN_N)
+    print('domega_RN_N = ', domega_RN_N)
+    print('\n')
     return sigma_RN
 
 
@@ -60,7 +60,7 @@ sigma_R0N = np.array([0.1, 0.2, 0.3])
 omega_R0N_N = np.array([0., 0., 0.])
 domega_R0N_N = np.array([0., 0., 0.])
 omega_spin = np.array([1., -1., 0.5]) * mc.D2R
-print 'CallTime = 0.0'
+print('CallTime = 0.0')
 dt = 0.0
 sigma_RN = printResults3DSpin(sigma_R0N, omega_R0N_N, domega_R0N_N, omega_spin, dt)
 dt = 0.5

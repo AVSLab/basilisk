@@ -185,7 +185,7 @@ def run(show_plots, offCount):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print   "PASSED "
+        print("PASSED ")
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

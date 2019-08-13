@@ -84,7 +84,7 @@ def test_singleGravityBody(show_plots):
     gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/', stringCurrent)
     gravFactory.spiceObject.zeroBase = 'Earth'
 
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     unitTestSim.AddModelToTask(unitTaskName, gravFactory.spiceObject, None, 10)
 
@@ -158,8 +158,9 @@ def test_singleGravityBody(show_plots):
     pyswice.unload_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
     pyswice.unload_c(path + '/../_UnitTest/hst_edited.bsp')
 
-    print numpy.max(abs(posError[:,1:4]))
+    print(numpy.max(abs(posError[:,1:4])))
 
+    plt.close("all")
     plt.figure()
     plt.plot(posError[:,0], posError[:,1:4])
     plt.xlabel('Time (s)')
@@ -167,7 +168,7 @@ def test_singleGravityBody(show_plots):
 
 
     if testFailCount == 0:
-        print "PASSED: " + " Single body with spherical harmonics"
+        print("PASSED: " + " Single body with spherical harmonics")
     # return fail count and join into a single string all messages in the list
     # testMessage
 
@@ -206,7 +207,7 @@ def test_multiBodyGravity(show_plots):
     gravFactory.createSpiceInterface(bskPath +'/supportData/EphemerisData/', stringCurrent)
     gravFactory.spiceObject.zeroBase = 'Earth'
 
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     unitTestSim.AddModelToTask(unitTaskName, gravFactory.spiceObject, None, 10)
 
@@ -280,6 +281,7 @@ def test_multiBodyGravity(show_plots):
     pyswice.unload_c(bskPath + '/supportData/EphemerisData/pck00010.tpc')
     pyswice.unload_c(path + '/../_UnitTest/nh_pred_od077.bsp')
 
+    plt.close("all")
     plt.figure()
     plt.plot(posError[:,0], posError[:,1:4])
     plt.xlabel('Time (s)')
@@ -290,7 +292,7 @@ def test_multiBodyGravity(show_plots):
         plt.close('all')
 
     if testFailCount == 0:
-        print "PASSED: " + " multi-point source bodies"
+        print("PASSED: " + " multi-point source bodies")
     # return fail count and join into a single string all messages in the list
     # testMessage
 

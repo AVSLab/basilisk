@@ -54,7 +54,7 @@ def plot_track_error_norm(timeLineSet, dataSigmaBR):
              color=unitTestSupport.getLineColor(1, 3),
              )
     plt.xlabel('Time [min]')
-    plt.ylabel('Attitude Error Norm $|\sigma_{B/R}|$')
+    plt.ylabel(r'Attitude Error Norm $|\sigma_{B/R}|$')
     ax.set_yscale('log')
 
 def plot_control_torque(timeLineSet, dataLr):
@@ -72,7 +72,7 @@ def plot_rate_error(timeLineSet, dataOmegaBR):
     for idx in range(1, 4):
         plt.plot(timeLineSet, dataOmegaBR[:, idx],
                  color=unitTestSupport.getLineColor(idx, 3),
-                 label='$\omega_{BR,' + str(idx) + '}$')
+                 label=r'$\omega_{BR,' + str(idx) + '}$')
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Rate Tracking Error [rad/s] ')
@@ -136,7 +136,7 @@ def plot_orbit(oe, mu, planet_radius, dataPos, dataVel):
 #
 # To run the default scenario 1., call the python script through
 #
-#       python scenarioAttGuideHyperbolic.py
+#       python3 scenarioAttGuideHyperbolic.py
 #
 # The simulation layout is shown in the following illustration.  A single simulation process is created
 # which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
@@ -274,7 +274,7 @@ def run(show_plots, useAltBodyFrame):
     mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(list(gravFactory.gravBodies.values()))
 
     #
     #   initialize Spacecraft States with initialization variables
@@ -354,7 +354,7 @@ def run(show_plots, useAltBodyFrame):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints - 1)
+    samplingTime = simulationTime // (numDataPoints - 1)
     scSim.TotalSim.logThisMessage(mrpControlConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
@@ -389,12 +389,12 @@ def run(show_plots, useAltBodyFrame):
     #
     #   retrieve the logged data
     #
-    dataLr = scSim.pullMessageLogData(mrpControlConfig.outputDataName + ".torqueRequestBody", range(3))
-    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", range(3))
-    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", range(3))
-    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", range(3))
-    dataVel = scSim.pullMessageLogData(sNavObject.outputTransName + ".v_BN_N", range(3))
-    dataSigmaBN = scSim.pullMessageLogData(sNavObject.outputAttName + ".sigma_BN", range(3))
+    dataLr = scSim.pullMessageLogData(mrpControlConfig.outputDataName + ".torqueRequestBody", list(range(3)))
+    dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".sigma_BR", list(range(3)))
+    dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName + ".omega_BR_B", list(range(3)))
+    dataPos = scSim.pullMessageLogData(sNavObject.outputTransName + ".r_BN_N", list(range(3)))
+    dataVel = scSim.pullMessageLogData(sNavObject.outputTransName + ".v_BN_N", list(range(3)))
+    dataSigmaBN = scSim.pullMessageLogData(sNavObject.outputAttName + ".sigma_BN", list(range(3)))
     np.set_printoptions(precision=16)
 
     #
