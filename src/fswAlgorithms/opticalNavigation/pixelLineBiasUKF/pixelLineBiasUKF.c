@@ -70,7 +70,7 @@ void Reset_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTim
     configData->dt = 0.0;
     configData->numStates = PIXLINE_N_STATES;
     configData->countHalfSPs = PIXLINE_N_STATES;
-    configData->numObs = 3;
+    configData->numObs = PIXLINE_N_MEAS;
     configData->firstPassComplete = 0;
     configData->planetId = configData->planetIdInit;
     
@@ -144,7 +144,7 @@ void Update_pixelLineBiasUKF(PixelLineBiasUKFConfig *configData, uint64_t callTi
     uint64_t timeOfMsgWritten; /* [ns] Read time for the message*/
     uint32_t sizeOfMsgWritten = 0;  /* [-] Non-zero size indicates we received ST msg*/
     int32_t trackerValid; /* [-] Indicates whether the star tracker was valid*/
-    double yBar[3], tempYVec[3];
+    double yBar[PIXLINE_N_MEAS], tempYVec[PIXLINE_N_MEAS];
     int i, computePostFits;
     PixelLineFilterFswMsg opNavOutBuffer; /* [-] Output filter info*/
     NavTransIntMsg outputRelOD;
@@ -449,36 +449,39 @@ void pixelLineBiasUKFMeasModel(PixelLineBiasUKFConfig *configData)
     
     for(j=0; j<configData->countHalfSPs*2+1; j++)
     {
-//        v3Add(configData->obs, &configData->SP[j*configData->numStates+PIXLINE_DYN_STATES], configData->obs);
+        double centers[2], r_N_bar[3], radius=0;
+        v2SetZero(centers);
+        v3SetZero(r_N_bar);
+        
+        v3Copy(&configData->SP[j*configData->numStates], r_N_bar);
+        rNorm = v3Norm(r_N_bar);
+        
+        m33MultV3(dcm_CN, r_N_bar, r_C);
+        v3Scale(-1./r_C[2], r_C, r_C);
+        
+        /*! - Find pixel size using camera specs */
+        reCentered[0] = r_C[0]*cameraSpecs.focalLength/X;
+        reCentered[1] = r_C[1]*cameraSpecs.focalLength/Y;
+        
+        centers[0] = reCentered[0] + cameraSpecs.resolution[0]/2 - 0.5;
+        centers[1] = reCentered[1] + cameraSpecs.resolution[1]/2 - 0.5;
+        
+        denom = planetRad/rNorm;
+        radius = cameraSpecs.focalLength/X*tan(asin(denom));
+        if (j==0){
+            v2Subtract(centers, configData->obs, &configData->obs[3]);
+            configData->obs[5] = radius - configData->obs[2];
+        }
         for(i=0; i<3; i++){
-            double centers[2], r_N_bar[3], radius=0;
-            v2SetZero(centers);
-            v3SetZero(r_N_bar);
-            
-            v3Copy(&configData->SP[j*configData->numStates], r_N_bar);
-            rNorm = v3Norm(r_N_bar);
-            
-            m33MultV3(dcm_CN, r_N_bar, r_C);
-            v3Scale(-1./r_C[2], r_C, r_C);
-            
-            /*! - Find pixel size using camera specs */
-            reCentered[0] = r_C[0]*cameraSpecs.focalLength/X;
-            reCentered[1] = r_C[1]*cameraSpecs.focalLength/Y;
-            
-            centers[0] = reCentered[0] + cameraSpecs.resolution[0]/2 - 0.5;
-            centers[1] = reCentered[1] + cameraSpecs.resolution[1]/2 - 0.5;
-            
-            denom = planetRad/rNorm;
-            radius = cameraSpecs.focalLength/X*tan(asin(denom));
             if (i<2){
-                configData->yMeas[i*(configData->countHalfSPs*2+1) + j] = centers[i] + configData->SP[j*configData->numStates+PIXLINE_DYN_STATES + i];
+                configData->yMeas[i*(configData->countHalfSPs*2+1) + j] = centers[i];// + configData->SP[j*configData->numStates+PIXLINE_DYN_STATES + i];
             }
             if (i==2){
-                configData->yMeas[i*(configData->countHalfSPs*2+1) + j] = radius + configData->SP[j*configData->numStates+PIXLINE_DYN_STATES + i];
+                configData->yMeas[i*(configData->countHalfSPs*2+1) + j] = radius;// + configData->SP[j*configData->numStates+PIXLINE_DYN_STATES + i];
             }
+            configData->yMeas[(i+PIXLINE_N_MEAS/2)*(configData->countHalfSPs*2+1) + j] = configData->SP[j*configData->numStates+ PIXLINE_DYN_STATES + i];
         }
     }
-    
     /*! - yMeas matrix was set backwards deliberately so we need to transpose it through*/
     mTranspose(configData->yMeas, PIXLINE_N_MEAS, configData->countHalfSPs*2+1,
                configData->yMeas);
@@ -497,7 +500,7 @@ int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData)
     uint32_t i;
     double yBar[PIXLINE_N_MEAS], syInv[PIXLINE_N_MEAS*PIXLINE_N_MEAS]; //measurement, Sy inv
     double kMat[PIXLINE_N_STATES*PIXLINE_N_MEAS], cholNoise[PIXLINE_N_MEAS*PIXLINE_N_MEAS];//Kalman Gain, chol decomp of noise
-    double xHat[PIXLINE_N_STATES], Ucol[PIXLINE_N_STATES], sBarT[PIXLINE_N_STATES*PIXLINE_N_STATES], tempYVec[3];// state error, U column eq 28, intermediate variables
+    double xHat[PIXLINE_N_STATES], Ucol[PIXLINE_N_STATES], sBarT[PIXLINE_N_STATES*PIXLINE_N_STATES], tempYVec[PIXLINE_N_MEAS];// state error, U column eq 28, intermediate variables
     double AT[(2 * PIXLINE_N_STATES + PIXLINE_N_MEAS)*PIXLINE_N_MEAS]; //Process noise matrix
     double rAT[PIXLINE_N_MEAS*PIXLINE_N_MEAS], syT[PIXLINE_N_MEAS*PIXLINE_N_MEAS]; //QR R decomp, Sy transpose
     double sy[PIXLINE_N_MEAS*PIXLINE_N_MEAS]; // Chol of covariance
@@ -540,8 +543,11 @@ int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData)
     /*! - This is the square-root of the Rk matrix which we treat as the Cholesky
      decomposition of the observation variance matrix constructed for our number
      of observations*/
-    mSetIdentity(configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS);
-    mCopy(configData->cirlcesInMsg.uncertainty, PIXLINE_N_MEAS, PIXLINE_N_MEAS, configData->measNoise);
+    mSetZero(configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS);
+    mSetSubMatrix(configData->cirlcesInMsg.uncertainty, 3, 3, configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS, 3,3);
+    vScale(10, configData->measNoise, PIXLINE_N_MEAS*PIXLINE_N_MEAS, configData->measNoise);
+    mSetSubMatrix(configData->cirlcesInMsg.uncertainty, 3, 3, configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS, 0, 0);
+    vScale(10, configData->measNoise, PIXLINE_N_MEAS/2*PIXLINE_N_MEAS+PIXLINE_N_MEAS, configData->measNoise);
     badUpdate += ukfCholDecomp(configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS, cholNoise);
     memcpy(&(AT[2*configData->countHalfSPs*configData->numObs]),
            cholNoise, configData->numObs*configData->numObs*sizeof(double));

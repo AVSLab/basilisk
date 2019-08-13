@@ -26,7 +26,7 @@
 
 #define PIXLINE_N_STATES 9
 #define PIXLINE_DYN_STATES 6
-#define PIXLINE_N_MEAS 3
+#define PIXLINE_N_MEAS 6
 
 /*! @brief structure for filter-states output for the unscented kalman filter
  implementation of the sunline state estimator*/

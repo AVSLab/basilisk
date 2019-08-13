@@ -85,8 +85,8 @@ typedef struct {
     double covarInit[PIXLINE_N_STATES*PIXLINE_N_STATES];    //!< [-] Covariance to init filter with
     double xBar[PIXLINE_N_STATES];            //!< [-] Current mean state estimate
     
-    double obs[3];                               //!< [-] Observation vector for frame
-    double yMeas[3*(2*PIXLINE_N_STATES+1)];        //!< [-] Measurement model data
+    double obs[PIXLINE_N_MEAS];                               //!< [-] Observation vector for frame
+    double yMeas[PIXLINE_N_MEAS*(2*PIXLINE_N_STATES+1)];        //!< [-] Measurement model data
     
     double SP[(2*PIXLINE_N_STATES+1)*PIXLINE_N_STATES];          //!< [-]    sigma point matrix
     

@@ -139,7 +139,7 @@ void HoughCircles::UpdateState(uint64_t CurrentSimNanos)
         circleBuffer.circlesCenters[2*i+1] = circles[i][1];
         circleBuffer.circlesRadii[i] = circles[i][2];
         for(int j=0; j<2; j++){
-            circleBuffer.uncertainty[j+3*j] = 1;
+            circleBuffer.uncertainty[j+3*j] = 2;
         }
         circleBuffer.uncertainty[2+3*2] = 2;
         circlesFound+=1;
