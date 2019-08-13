@@ -1,6 +1,7 @@
 # Migrating BSK Scripts to Python 3 {#migratingToPython3}
 
 With release Basilisk v0.8.x onward the software framework now supports using Python 3.  The purpose of this document is to illustrate how to migrate Python 2 BSK scripts such that they will function in both Python 3 and Python 2.  For the time being Python 2 is still supported as a depreciated functionality.  But, python scripts committed to Basilisk should be written such that they support Python 3 and 2 for now. 
+This document serves as compilation of BSK common syntactical adjustments needed to use Python 3. It is not a comprehensive list of the differences between Python 2 and Python 3.
 
 
 
@@ -11,7 +12,7 @@ Python 2 and 3 treat the devide operator `/` differently if two integers operate
 ```
 resulted in an integer value of 1 in Python 2, but yields a float value of 1.5 in Python 3.  To get the same result in Python 3 and 2, you can use either of the following options which work in both version of Python:
 ```
-    a = 3//2       
+    a = 3//2
     a = 3./2 
 ```
 Without modification the user will see an error in Python 3 complaining about an unsupported type conversion.
@@ -24,4 +25,38 @@ NotImplementedError: Wrong number or type of arguments for overloaded function '
     SimModel::logThisMessage(std::string)
 ```
 
+##Returning Lists Instead of Iterables 
+### Iterating Dictionaries
+Python 3 removed iteritems() method. The same functionality can be achieved in both Python 2 and 3 with items().
+
+### Range, Map, Zip
+In Python 2 range() returns a list, while in Python 3 it returns an iterable object. To preserve functionality, cast as a list:
+```
+    list(range(x))
+```
+
+## Print
+Print is treated as a statement in Python 2 and strictly a function in Python 3. For both 3 and 2:
+```
+print(x)
+```
+
+##Strings
+External python packages will give warnings if python strings include '\x' where x is not a valid escape character. These warnings did not appear using Python 2, when using strings as input for latex or for other text processing, they should be made a raw string by appending an r:
+```
+r"..."
+```
+
+##Pyswice Imports
+Changes to BSK module importing has changed the pyswice importing convention to be completely explicit:
+From:
+```
+from Basilisk import pyswice
+pyswice.spkRead(...)
+```
+To:
+```
+from Basilisk.pyswice.pyswice_spk_utilities import spkRead
+spkRead(...)
+```
 
