@@ -34,7 +34,7 @@
     #include "../fswMessages/inertialFilterFswMsg.h"
     #include "../fswMessages/opNavFswMsg.h"
     #include "../fswMessages/opNavFilterFswMsg.h"
-    #include "../fswmessages/pixelLineFilterFswMsg.h"
+    #include "../fswMessages/pixelLineFilterFswMsg.h"
     #include "../fswMessages/rwArrayConfigFswMsg.h"
     #include "../fswMessages/rwAvailabilityFswMsg.h"
     #include "../fswMessages/rwConfigElementFswMsg.h"

@@ -545,9 +545,7 @@ int pixelLineBiasUKFMeasUpdate(PixelLineBiasUKFConfig *configData)
      of observations*/
     mSetZero(configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS);
     mSetSubMatrix(configData->cirlcesInMsg.uncertainty, 3, 3, configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS, 3,3);
-    vScale(10, configData->measNoise, PIXLINE_N_MEAS*PIXLINE_N_MEAS, configData->measNoise);
     mSetSubMatrix(configData->cirlcesInMsg.uncertainty, 3, 3, configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS, 0, 0);
-    vScale(10, configData->measNoise, PIXLINE_N_MEAS/2*PIXLINE_N_MEAS+PIXLINE_N_MEAS, configData->measNoise);
     badUpdate += ukfCholDecomp(configData->measNoise, PIXLINE_N_MEAS, PIXLINE_N_MEAS, cholNoise);
     memcpy(&(AT[2*configData->countHalfSPs*configData->numObs]),
            cholNoise, configData->numObs*configData->numObs*sizeof(double));
